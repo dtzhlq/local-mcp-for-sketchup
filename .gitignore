@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+.venv/
+projects/image-structured-modeler/.venv/
+
+# Generated outputs
+output/
+.session/
+.alma-snapshots/
+
+# Logs and env
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.env
+.env.*
+
+# OS/editor noise
+.DS_Store
+*.swp
+.vscode/
+.idea/
+
+# Local copied user config
+Users/

@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "units": "mm",
+  "operations": [
+    { "op": "reset" },
+    { "op": "material", "name": "Warm_Wood", "color": "#9b6b43" },
+    { "op": "material", "name": "Dark_Metal", "color": "#333333" },
+    { "op": "box", "name": "Translated_Base", "origin": [0, 0, 0], "size": [900, 300, 120], "material": "Warm_Wood", "transform": { "translate": [1000, 500, 0] } },
+    { "op": "lofted_solid", "name": "Turned_Post_A", "origin": [0, 0, 0], "profile": [[0, 70], [250, 110], [700, 80], [1100, 55]], "segments": 12, "material": "Warm_Wood", "smooth": "all" },
+    { "op": "lofted_solid", "name": "Turned_Post_B", "origin": [1600, 0, 0], "profile": [[0, 70], [250, 110], [700, 80], [1100, 55]], "segments": 12, "material": "Warm_Wood", "smooth": "all" },
+    { "op": "swept_path", "name": "Curved_Handrail", "path": [[0, 0, 1100], [500, 0, 1220], [1100, 0, 1220], [1600, 0, 1100]], "radius": 45, "segments": 10, "material": "Dark_Metal", "smooth": "all" },
+    { "op": "scene", "name": "Official_Gap_Slice_View", "camera": { "eye": [3200, -4200, 2400], "target": [800, 0, 650], "up": [0, 0, 1], "fov": 35 } }
+  ]
+}

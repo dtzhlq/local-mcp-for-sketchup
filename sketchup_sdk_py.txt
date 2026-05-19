@@ -1,0 +1,554 @@
+
+
+
+Cloud SketchUp MCP server for generating .skp files.
+
+AVAILABLE TOOLS:
+  get_docs           — returns this SDK documentation
+  build_model        — executes Python code against the model (auto-starts session
+                       and creates an empty model on first call; can be called multiple times)
+  save_model         — saves the model and returns a download URL (session ends
+                       automatically unless keep_session=true)
+
+MODEL SNAPSHOTS (automatically returned after every build_model call):
+  - totals: cumulative face/edge/group/instance counts across the whole model
+  - groups: name, face/edge counts, and bounding_box for every top-level group
+  - materials: all registered material names
+  - bounding_box: min/max world coordinates across all entities, plus w/d/h
+
+Typical signals in the snapshot:
+  bounding_box extends far beyond the coordinates the code passed in — a
+    transform error (flipped axis, runaway swept-path frame, wrong translation)
+    has placed a group in unexpected space.
+  group count is lower than the number of Group() calls made — a duplicate
+    material name triggered SU_ERROR_PARTIAL_SUCCESS and one call failed silently.
+  a group has face=0 — degenerate geometry (non-coplanar vertices, zero radius,
+    or an empty fill).
+  bounding_box unchanged after a geometry-adding call — fill() did not run,
+    commonly because the group was not added to the model before fill.
+  two groups' bounding_boxes intersect — SketchUp accepts overlapping solids
+    as two objects occupying the same coordinates; on export this reads as one
+    object clipping through another.
+
+build_model NAMESPACE (pre-loaded — do NOT import anything):
+  model                       — the open Model object
+  SUPoint2D(x, y)             — 2D points for UV mapping
+  SUPoint3D(x, y, z)
+  SUVector3D(x, y, z)
+  SUTransformation(flat_16)   — 4x4 column-major matrix
+  SUColor(r, g, b, a)
+  Face, Edge, Material, Layer, ArcCurve, Curve
+  Camera, Scene, Style        — view / scene / style state
+  Texture, Image, ImageRep    — textures and embedded images
+  GeometryInput, LoopInput    — bulk face creation
+  Group, ComponentDefinition, ComponentInstance
+  SUMaterialWorkflow          — PBR workflow enum
+  SUModelVersion              — file-format version enum
+  RenderingOptionKey, ShadowInfoKey, TypedValue  — for RO / ShadowInfo access
+  RenderMode, EdgeType, EdgeDisplayMode          — rendering value enums
+  Exception                   — base exception class for try/except
+  math                        — Python math module
+
+Set result = {...} in your code to return data to the caller.
+
+RULES:
+  - NO import statements. Writing 'import math' crashes with __import__ not found. Everything you need is pre-loaded.
+  - Units: INCHES only. 1 ft = 12 in. An 8 ft wall = 96 in tall.
+  - All face vertices MUST be coplanar. Always use triangles (always safe). Quads only if all 4 vertices share the same X, Y, or Z value.
+  - Coordinate system: X = width, Y = depth, Z = height (Z = 0 is ground).
+  - Walls are always 5 inches thick.
+  - Doors, windows, and any wall openings MUST use inner loops to cut the hole.
+    Do NOT split walls into multiple segments around openings.
+    A wall with a door = outer loop (wall boundary) + inner loop (door rectangle, reversed winding) + jamb/header/sill faces to close the wall thickness.
+  - Save incrementally after each major component.
+  - Prefer simple approaches. Use boxes with softened edges before reaching for curved patterns. Only use lofted/swept/domed patterns when the shape genuinely requires it.
+  - When uncertain about an API, enumerate instead of guessing. list(ro.keys()) and dir(camera) are free and authoritative — trust them over memory.
+
+MATERIALS:
+  Built-in .skm materials are NOT available in the cloud environment (Linux containers do not have SketchUp installed).
+  Use solid color materials instead:
+
+Solid Color Materials:
+  mat = Material()                          # Use direct constructor — NOT Material.create()
+  mat.set_name("Wall_Paint")
+  mat.set_color(SUColor(245, 240, 230, 255))
+  model.add_materials([mat])                # Register with the model AFTER configuring it
+
+Material Application — apply face-by-face (group.set_material() does not render reliably):
+  for face in group.get_entities().get_faces():
+      face.set_front_material(mat)
+      face.set_back_material(mat)
+
+Material Deduplication — adding a material with a duplicate name causes SU_ERROR_PARTIAL_SUCCESS:
+  existing = {m.get_name(): m for m in model.get_materials()}  # get_materials() returns a list
+  if "Wall_Paint" not in existing:
+      mat = Material()
+      mat.set_name("Wall_Paint")
+      mat.set_color(SUColor(245, 240, 230, 255))
+      model.add_materials([mat])
+  else:
+      mat = existing["Wall_Paint"]
+
+Applying materials — face-by-face only (group.set_material() does not render reliably):
+  for face in group.get_entities().get_faces():
+      face.set_front_material(mat)
+      face.set_back_material(mat)
+
+KEY PATTERNS:
+
+Choose the right pattern for the shape you are building. Do NOT use boxes for
+curved shapes — the result will look crude and blocky.
+
+Vertex Indexing — gi.add_vertex() returns the GeometryInput itself (NOT a tuple). Track indices by position:
+  gi = GeometryInput()
+  gi.add_vertex(SUPoint3D(0, 0, 0))    # index 0
+  gi.add_vertex(SUPoint3D(12, 0, 0))   # index 1
+  gi.add_vertex(SUPoint3D(6, 12, 0))   # index 2
+
+Bulk Vertices (alternative):
+  geom = GeometryInput()
+  geom.set_vertices([SUPoint3D(0,0,0), SUPoint3D(12,0,0), SUPoint3D(6,12,0)])
+
+Adding Faces — add_face returns (face_index, GeometryInput):
+  loop = LoopInput()
+  loop.add_vertex_index(0); loop.add_vertex_index(1); loop.add_vertex_index(2)
+  face_idx, geom = geom.add_face(loop)
+
+Fill Geometry:
+  model.get_entities().fill(geom, weld_vertices=True)
+
+--- Pattern: Box (12 triangles) ---
+Use for: walls, shelves, flat panels, rectangular frames, any flat-sided shape.
+
+  geom = GeometryInput()
+  geom.set_vertices([SUPoint3D(0,0,0), SUPoint3D(w,0,0), SUPoint3D(w,d,0), SUPoint3D(0,d,0),
+                     SUPoint3D(0,0,h), SUPoint3D(w,0,h), SUPoint3D(w,d,h), SUPoint3D(0,d,h)])
+  for tri in [[0,1,5],[0,5,4],[1,2,6],[1,6,5],[2,3,7],[2,7,6],
+               [3,0,4],[3,4,7],[4,5,6],[4,6,7],[0,3,2],[0,2,1]]:
+      loop = LoopInput()
+      for i in tri: loop.add_vertex_index(i)
+      _, geom = geom.add_face(loop)
+  model.get_entities().fill(geom, weld_vertices=True)
+
+Overlap note: two box groups sharing coordinates are both rendered. The
+per-group bounding_boxes in the snapshot surface this — a group whose
+bbox intersects an existing group's bbox is overlapping it in world space.
+
+--- Curved Geometry Helpers ---
+All curved patterns below share these three helpers. Define them once per
+build_model call, then use any combination of patterns.
+
+  def circle_pts(cx, cy, cz, r, n=10):
+      """Generate n points in a circle. Returns list of SUPoint3D."""
+      pts = []
+      for i in range(n):
+          a = 2 * math.pi * i / n
+          pts.append(SUPoint3D(cx + r * math.cos(a), cy + r * math.sin(a), cz))
+      return pts
+
+  def skin_rings(geom, ring_b, ring_t, n):
+      """Skin 2n triangles between two rings of vertex indices. Returns geom."""
+      for j in range(n):
+          j2 = (j + 1) % n
+          lp = LoopInput()
+          lp.add_vertex_index(ring_b[j]); lp.add_vertex_index(ring_b[j2]); lp.add_vertex_index(ring_t[j2])
+          _, geom = geom.add_face(lp)
+          lp2 = LoopInput()
+          lp2.add_vertex_index(ring_b[j]); lp2.add_vertex_index(ring_t[j2]); lp2.add_vertex_index(ring_t[j])
+          _, geom = geom.add_face(lp2)
+      return geom
+
+  def cap_fan(geom, indices, rev=False):
+      """Fan-triangulate a ring to close a tube end. Returns geom."""
+      n = len(indices)
+      for i in range(1, n - 1):
+          lp = LoopInput()
+          if rev:
+              lp.add_vertex_index(indices[0]); lp.add_vertex_index(indices[i+1]); lp.add_vertex_index(indices[i])
+          else:
+              lp.add_vertex_index(indices[0]); lp.add_vertex_index(indices[i]); lp.add_vertex_index(indices[i+1])
+          _, geom = geom.add_face(lp)
+      return geom
+
+--- Pattern: Lofted Solid (Solid of Revolution) ---
+Build a closed solid from a height/radius profile. The profile defines
+cross-section circles stacked along the Z axis.
+Use for: columns, turned posts, vases, bottles, balusters, knobs, spindles,
+         legs, bollards — any shape that is round when viewed from above.
+
+  def build_lofted_solid(profile, n=10):
+      """profile = [(h0,r0), (h1,r1), ...] bottom to top. Returns GeometryInput."""
+      geom = GeometryInput()
+      all_verts = []
+      for h, r in profile:
+          all_verts.extend(circle_pts(0, 0, h, r, n))
+      geom.set_vertices(all_verts)
+      rings = [list(range(i*n, (i+1)*n)) for i in range(len(profile))]
+      for i in range(len(rings) - 1):
+          geom = skin_rings(geom, rings[i], rings[i+1], n)
+      geom = cap_fan(geom, rings[0], rev=True)
+      geom = cap_fan(geom, rings[-1], rev=False)
+      return geom
+
+  # Usage:
+  geom = build_lofted_solid([(0, 2.0), (3, 2.5), (8, 1.5), (20, 1.8)], n=10)
+  group = Group()
+  model.get_entities().add_group(group)
+  group.get_entities().fill(geom, weld_vertices=True)
+  for edge in group.get_entities().get_edges():
+      edge.set_soft(True); edge.set_smooth(True)
+  group.set_name("My_Column")
+  group.set_transform(SUTransformation([1,0,0,0, 0,1,0,0, 0,0,1,0, tx,ty,tz,1]))
+
+--- Pattern: Swept Path ---
+Loft a circular cross-section along a 3D centerline path.
+Use for: arches, curved rails, pipes, handrails, tubes, curved trim.
+
+  def build_swept_path(path_pts, radius, n_prof=8):
+      """path_pts = [(x,y,z), ...] centerline. Returns GeometryInput.
+      Default: cross-section rings in Y-Z plane (path along X).
+      For paths along Y: swap ring axes to X-Z.
+      For paths along Z: use lofted solid instead."""
+      geom = GeometryInput()
+      all_verts = []
+      rings = []
+      for cx, cy, cz in path_pts:
+          ring = []
+          for j in range(n_prof):
+              a = 2 * math.pi * j / n_prof
+              # Rings in Y-Z plane (path primarily along X)
+              ring.append(SUPoint3D(cx, cy + radius * math.cos(a), cz + radius * math.sin(a)))
+          all_verts.extend(ring)
+          start = len(all_verts) - n_prof
+          rings.append(list(range(start, start + n_prof)))
+      geom.set_vertices(all_verts)
+      for i in range(len(rings) - 1):
+          geom = skin_rings(geom, rings[i], rings[i+1], n_prof)
+      geom = cap_fan(geom, rings[0], rev=True)
+      geom = cap_fan(geom, rings[-1], rev=False)
+      return geom
+
+  # Usage — parabolic arch:
+  pts = []
+  for i in range(17):
+      t = i / 16.0
+      x = -24 + t * 48
+      z = 80 + 8 * (1 - (2*t - 1)**2)
+      pts.append((x, 0, z))
+  geom = build_swept_path(pts, radius=1.5, n_prof=8)
+
+--- Pattern: Domed / Crowned Surface ---
+A rectangular surface with a parametric dome or crown on top.
+Use for: cushions, padded surfaces, terrain patches, soft-top shapes.
+
+  def build_dome(w, d, base_z, thick, crown_h, nx=8, ny=8):
+      """w,d = footprint; thick = base slab; crown_h = dome rise at center."""
+      geom = GeometryInput()
+      all_verts = []
+      bot, top = [], []
+      for iy in range(ny + 1):
+          for ix in range(nx + 1):
+              u, v = ix / float(nx), iy / float(ny)
+              x, y = -w/2 + u * w, -d/2 + v * d
+              du, dv = (u - 0.5) * 2, (v - 0.5) * 2
+              dome = crown_h * (1 - du*du) * (1 - dv*dv)
+              all_verts.append(SUPoint3D(x, y, base_z))
+              bot.append(len(all_verts) - 1)
+              all_verts.append(SUPoint3D(x, y, base_z + thick + dome))
+              top.append(len(all_verts) - 1)
+      geom.set_vertices(all_verts)
+      cols = nx + 1
+      def bi(ix, iy): return bot[iy * cols + ix]
+      def ti(ix, iy): return top[iy * cols + ix]
+      for iy in range(ny):
+          for ix in range(nx):
+              for tri in [(ti(ix,iy), ti(ix+1,iy), ti(ix+1,iy+1)),
+                          (ti(ix,iy), ti(ix+1,iy+1), ti(ix,iy+1))]:
+                  lp = LoopInput()
+                  for idx in tri: lp.add_vertex_index(idx)
+                  _, geom = geom.add_face(lp)
+              for tri in [(bi(ix,iy), bi(ix+1,iy+1), bi(ix+1,iy)),
+                          (bi(ix,iy), bi(ix,iy+1), bi(ix+1,iy+1))]:
+                  lp = LoopInput()
+                  for idx in tri: lp.add_vertex_index(idx)
+                  _, geom = geom.add_face(lp)
+      # Side skirt
+      for ix in range(nx):
+          for tri in [(bi(ix,0),bi(ix+1,0),ti(ix+1,0)),(bi(ix,0),ti(ix+1,0),ti(ix,0))]:
+              lp = LoopInput(); [lp.add_vertex_index(i) for i in tri]; _, geom = geom.add_face(lp)
+          for tri in [(bi(ix,ny),ti(ix,ny),ti(ix+1,ny)),(bi(ix,ny),ti(ix+1,ny),bi(ix+1,ny))]:
+              lp = LoopInput(); [lp.add_vertex_index(i) for i in tri]; _, geom = geom.add_face(lp)
+      for iy in range(ny):
+          for tri in [(bi(0,iy),ti(0,iy),ti(0,iy+1)),(bi(0,iy),ti(0,iy+1),bi(0,iy+1))]:
+              lp = LoopInput(); [lp.add_vertex_index(i) for i in tri]; _, geom = geom.add_face(lp)
+          for tri in [(bi(nx,iy),bi(nx,iy+1),ti(nx,iy+1)),(bi(nx,iy),ti(nx,iy+1),ti(nx,iy))]:
+              lp = LoopInput(); [lp.add_vertex_index(i) for i in tri]; _, geom = geom.add_face(lp)
+      return geom
+
+--- Pattern: Bowed Panel ---
+A flat panel with parametric convex/concave curvature.
+Use for: curved walls, barrel vaults, bowed doors, curved backrests.
+
+  def build_bowed_panel(w, h, base_y, thick, bow_depth, nx=8, nz=8):
+      """Panel in X-Z plane, bowed along Y. bow_depth > 0 = convex outward."""
+      geom = GeometryInput()
+      all_verts = []
+      front, back = [], []
+      for iz in range(nz + 1):
+          for ix in range(nx + 1):
+              u, v = ix / float(nx), iz / float(nz)
+              x, z = -w/2 + u * w, v * h
+              du, dv = (u - 0.5) * 2, (v - 0.5) * 2
+              bow = bow_depth * (1 - du*du) * (1 - dv*dv)
+              all_verts.append(SUPoint3D(x, base_y, z))
+              front.append(len(all_verts) - 1)
+              all_verts.append(SUPoint3D(x, base_y + thick + bow, z))
+              back.append(len(all_verts) - 1)
+      geom.set_vertices(all_verts)
+      cols = nx + 1
+      def fi(ix, iz): return front[iz * cols + ix]
+      def bk(ix, iz): return back[iz * cols + ix]
+      for iz in range(nz):
+          for ix in range(nx):
+              for tri in [(fi(ix,iz),fi(ix+1,iz+1),fi(ix+1,iz)),
+                          (fi(ix,iz),fi(ix,iz+1),fi(ix+1,iz+1))]:
+                  lp = LoopInput()
+                  for idx in tri: lp.add_vertex_index(idx)
+                  _, geom = geom.add_face(lp)
+              for tri in [(bk(ix,iz),bk(ix+1,iz),bk(ix+1,iz+1)),
+                          (bk(ix,iz),bk(ix+1,iz+1),bk(ix,iz+1))]:
+                  lp = LoopInput()
+                  for idx in tri: lp.add_vertex_index(idx)
+                  _, geom = geom.add_face(lp)
+      # Close edges with triangle pairs (same approach as dome skirt)
+      return geom
+
+--- Choosing the Right Pattern ---
+  Flat-sided / rectilinear                 → Box
+  Round solid along Z axis                 → Lofted Solid
+  Round solid along X or Y axis            → Swept Path
+  Crowned / padded rectangular surface     → Domed Surface
+  Curved flat panel                        → Bowed Panel
+  Complex organic shape                    → Compose multiple patterns (only if simpler approach won't suffice)
+
+--- Ring Resolution Guide ---
+  n=6    low-poly, background objects, tiny details
+  n=8    default for most curved parts
+  n=10   prominent visible curves
+  n=12+  hero shapes, close-up objects
+
+--- Quality Checklist ---
+  Every curved/organic group has ALL edges soft+smooth after fill (hides triangle seams)
+  Every flat-sided group (box, wall, panel, frame) has coplanar edges soft+smooth after fill (hides diagonal triangle seams, keeps corners sharp)
+  Every soft/organic object (couch, cushion, pillow, upholstered furniture, bed) has ALL edges soft+smooth even if built from boxes
+  Every group has a descriptive set_name()
+  Ring resolution (n) matches the part's visual prominence
+  Profiles have enough sample points to capture the shape (5+ for curves)
+  Both ends of every tube/solid are capped — no open holes
+  Materials applied face-by-face with set_front_material / set_back_material
+  No degenerate rings (avoid radius=0; use r=0.01 minimum)
+
+Geometry Inside a Group:
+  group = Group()
+  model.get_entities().add_group(group)   # add to model FIRST
+  geom = GeometryInput()
+  # ... add vertices and faces ...
+  group.get_entities().fill(geom, weld_vertices=True)
+
+Face with a Hole / Cutout (Inner Loop) — use for ALL wall openings (doors, windows, etc.):
+  geom = GeometryInput()
+  geom.set_vertices([...all verts including hole verts...])
+  outer = LoopInput()
+  for i in [0,1,2,3]: outer.add_vertex_index(i)    # counter-clockwise
+  face_index, geom = geom.add_face(outer)
+  inner = LoopInput()
+  for i in [4,7,6,5]: inner.add_vertex_index(i)    # reversed winding cuts the hole
+  geom = geom.face_add_inner_loop(face_index, inner)
+  # Add jamb/header/sill faces to close wall thickness
+  model.get_entities().fill(geom, weld_vertices=True)
+  # Use multiple inner loops on same face_index for complex cutouts.
+
+Soften Edges — two patterns:
+
+  # Pattern A: ALL edges (curved/organic objects)
+  # Apply to: lofted solids, swept paths, domed/bowed surfaces, AND any object that
+  # should look soft — couches, cushions, pillows, beds, upholstered furniture, rugs.
+  group.get_entities().fill(geom, weld_vertices=True)
+  for edge in group.get_entities().get_edges():
+      edge.set_soft(True)
+      edge.set_smooth(True)
+
+  # Pattern B: COPLANAR edges only (boxes, walls, flat panels, frames)
+  # ALWAYS DO THIS: detects coplanar adjacent faces and delete shared edges so that faces are clean!!!
+  # Use this after fill() on any flat-sided geometry built from triangles.
+  group.get_entities().fill(geom, weld_vertices=True)
+  for edge in group.get_entities().get_edges():
+    faces = edge.get_faces()
+    if len(faces) == 2:
+        n0 = faces[0].get_normal()  # returns SUVector3D — use .x .y .z, NOT n0[0]
+        n1 = faces[1].get_normal()
+        dot = n0.x*n1.x + n0.y*n1.y + n0.z*n1.z
+        if dot > 0.999:
+            edge.set_soft(True)
+            edge.set_smooth(True)
+
+Transforms (column-major, flat 16 values):
+  SUTransformation([1,0,0,0, 0,1,0,0, 0,0,1,0, tx,ty,tz,1])  # identity + translation
+  # Rotate around Z then translate to pivot:
+  cos_a = math.cos(math.radians(angle)); sin_a = math.sin(math.radians(angle))
+  t = SUTransformation([cos_a, sin_a, 0, 0, -sin_a, cos_a, 0, 0, 0, 0, 1, 0, px, py, 0, 1])
+  group.set_transform(t)
+
+Entity Removal:
+  entities.erase_entities([list_of_entities])    # correct
+
+Component Definitions — register with model BEFORE adding geometry:
+  comp_def = ComponentDefinition()
+  comp_def.set_name("My Component")
+  model.add_component_definitions([comp_def])    # register FIRST
+  cd_ents = comp_def.get_entities()
+  # add geometry to cd_ents...
+  inst = comp_def.create_instance()
+  inst.set_transform(SUTransformation([1,0,0,0, 0,1,0,0, 0,0,1,0, x,y,z,1]))
+  model.get_entities().add_instance(inst)
+
+STYLES — mental model, and what NOT to do with .style files.
+
+Where style state lives:
+  - Styles are IN the model, as Style objects. model.get_styles().get_active_style()
+    returns the live object; its state is authoritative.
+  - .style files are export artifacts — packaged presets for sharing with other
+    SketchUp users. They are NOT the editable source of truth.
+  - Most of what you think of as "style" (background/face/edge colors, render mode,
+    silhouettes, fog, transparency) lives in RenderingOptions and ShadowInfo, NOT
+    in the Style object. Use model.get_rendering_options() / get_shadow_info() for
+    those. The Style object mostly controls the preset's name + description.
+
+To rename or redescribe the active style — edit the in-memory object:
+  active_style = model.get_styles().get_active_style()
+  active_style.set_name("Furniture Studio")
+  active_style.set_description("Product studio with soft shadows")
+  # Done. save_model persists the renamed style as part of the model. No .style file needed.
+
+DO NOT:
+  - save_to_file, edit the .style XML, then re-import. This is a round-trip through
+    a serialization boundary that does NOTHING the setters don't already do.
+  - reach for zipfile / re / __builtins__ / __import__ to crack open a .style file.
+    The sandbox blocks imports by policy; the SDK setters already do what you want.
+
+When save_to_file IS the right call:
+  Only when producing a .style artifact to ship to another SketchUp user.
+  To save the model with its style, call save_model — the style travels with it.
+
+StylesManager surface (model.get_styles()):
+  get_active_style() -> Style         # the live object — mutate this
+  get_styles() -> list[Style]         # all styles in the model
+  add_style(path, activate: bool)     # IMPORT someone else's .style preset
+  remove_style(style)                 # remove by object
+  apply_style_to_scene(style, scene)
+
+Camera — every saved model needs a camera set before save_model.
+Core methods on Camera:
+  enable_perspective(enabled: bool = True)       # NOT set_perspective(...) — that method does not exist
+  set_perspective_frustum_fov(fov: float)        # vertical FOV in degrees
+  set_orientation(eye: SUPoint3D, target: SUPoint3D, up: SUVector3D)
+  get_orientation() -> (eye, target, up)         # returns a 3-tuple of SUPoint3D/SUVector3D
+  is_perspective() -> bool
+  set_aspect_ratio(ratio: float)                 # optional; default is model view ratio
+
+Finish-model recipe — the bookend after all geometry is placed:
+  cam = Camera()
+  cam.enable_perspective(True)
+  cam.set_perspective_frustum_fov(35.0)
+  cam.set_orientation(
+      SUPoint3D(eye_x, eye_y, eye_z),
+      SUPoint3D(target_x, target_y, target_z),
+      SUVector3D(0, 0, 1),
+  )
+  model.set_camera(cam)
+  # then call save_model
+
+RenderingOptions + ShadowInfo — authoritative key enumeration.
+Access via model.get_rendering_options() and model.get_shadow_info(). Keys
+are enum members of RenderingOptionKey / ShadowInfoKey (both pre-loaded).
+Values are TypedValue wrappers — also pre-loaded. Canonical pattern:
+
+  ro = model.get_rendering_options()
+  ro[RenderingOptionKey.BACKGROUND_COLOR] = TypedValue(color_value=SUColor(245,240,230,255))
+  ro[RenderingOptionKey.DRAW_HORIZON]     = TypedValue(bool_value=False)
+  ro[RenderingOptionKey.SILHOUETTE_WIDTH] = TypedValue(int_value=2)
+  ro[RenderingOptionKey.RENDER_MODE]      = TypedValue(int_value=RenderMode.NPR.value)
+
+  si = model.get_shadow_info()
+  si[ShadowInfoKey.DISPLAY_SHADOWS] = TypedValue(bool_value=True)
+  si[ShadowInfoKey.LIGHT]           = TypedValue(int_value=80)
+
+TypedValue accepts exactly one keyword: bool_value, int_value, float_value,
+double_value, string_value, color_value, vector_3d_value. The key's type
+(see key definitions) must match the TypedValue's type or SDK raises SUError.
+
+If a key you expect is not in these lists, it does not exist (e.g. DRAW_SKY
+is NOT a key — the sky renders when DRAW_GROUND and DRAW_HORIZON are both
+off, and SKY_COLOR controls its color).
+
+RenderingOption keys (common subset — call list(ro.keys()) for the full set):
+  BACKGROUND_COLOR, FOREGROUND_COLOR, FACE_FRONT_COLOR, FACE_BACK_COLOR,
+  HIGHLIGHT_COLOR, LOCKED_COLOR, SKY_COLOR, GROUND_COLOR, HORIZON_COLOR,
+  DRAW_GROUND, DRAW_HORIZON, DRAW_SILHOUETTES, DRAW_DEPTH_QUE, DRAW_HIDDEN,
+  DRAW_PROFILES_ONLY, DISPLAY_FOG, DISPLAY_SKETCH_AXES, DISPLAY_WATERMARKS,
+  DISPLAY_DIMS, DISPLAY_TEXT, RENDER_MODE, EDGE_DISPLAY_MODE, EDGE_TYPE,
+  SILHOUETTE_WIDTH, MODEL_TRANSPARENCY, MATERIAL_TRANSPARENCY,
+  AMBIENT_OCCLUSION_ENABLED, AMBIENT_OCCLUSION_COLOR, AMBIENT_OCCLUSION_INTENSITY,
+  TEXTURE
+
+ShadowInfo keys (full enumeration — small enough to list):
+  DISPLAY_SHADOWS, DISPLAY_ON_GROUND_PLANE, DISPLAY_ON_ALL_FACES, DISPLAY_NORTH,
+  EDGES_CAST_SHADOWS, USE_SUN_FOR_ALL_SHADING, DAYLIGHT_SAVINGS,
+  LIGHT, DARK, DAY_OF_YEAR, SHADOW_TIME, SHADOW_TIME_EPOCH,
+  LATITUDE, LONGITUDE, NORTH_ANGLE, TZOFFSET, CITY, COUNTRY,
+  SUN_DIRECTION, SUN_RISE_TIME, SUN_RISE_TIME_EPOCH,
+  SUN_SET_TIME, SUN_SET_TIME_EPOCH
+
+Rendering value enums — EXHAUSTIVE member lists. Do NOT guess members;
+if a name is not listed here, it does not exist on the enum.
+
+  RenderMode (for RENDER_MODE key — int_value=RenderMode.X.value):
+    WIREFRAME, HIDDEN, FLAT, SMOOTH, TEXTURE_OBSOLETE, NO_MATERIALS,
+    PHYSICALLY_BASED
+    NOTE: there is no RenderMode.TEXTURED. Textures render when the
+    TEXTURE RenderingOption is True; SMOOTH is the normal shaded mode.
+
+  EdgeType (for EDGE_TYPE key):
+    STANDARD, NPR
+
+  EdgeDisplayMode (for EDGE_DISPLAY_MODE key):
+    NONE, ALL, STANDALONE
+
+COMMON MISTAKES:
+  WRONG: import math                           RIGHT: (already in scope)
+  WRONG: geom.add_face(loop)                   RIGHT: _, geom = geom.add_face(loop)
+  WRONG: fill(geom)                            RIGHT: fill(geom, weld_vertices=True)
+  WRONG: model.add_group()                     RIGHT: group = Group(); model.get_entities().add_group(group)
+  WRONG: group.fill(geom)                      RIGHT: group.get_entities().fill(geom, weld_vertices=True)
+  WRONG: group.entities                        RIGHT: group.get_entities()
+  WRONG: idx, _ = gi.add_vertex(pt)            RIGHT: gi.add_vertex(pt)  # returns gi, not tuple
+  WRONG: entities.erase(entity)                RIGHT: entities.erase_entities([entity])
+  WRONG: model.add_materials([mat]) (dupes)    RIGHT: check existing names first
+  WRONG: gi.face_set_front_material(fi, mat)   RIGHT: gi.face_set_front_material(fi, uv_coords, mat)
+  WRONG: splitting walls around openings       RIGHT: inner loops to punch holes
+  WRONG: group.set_material(mat)               RIGHT: face-by-face set_front/back_material
+  WRONG: using built-in .skm materials         RIGHT: use solid color materials (no SketchUp install in cloud)
+  WRONG: using boxes for curved shapes         RIGHT: use lofted/swept/domed patterns + soften edges
+  WRONG: no edge softening on box geometry     RIGHT: soften coplanar edges (dot > 0.999) to hide diagonal triangle seams
+  WRONG: 2-point profile for a curved solid    RIGHT: 5+ profile points to capture the shape
+  WRONG: skipping caps on tube ends            RIGHT: always cap_fan both ends for watertight solid
+  WRONG: mat = Material.create(model)          RIGHT: mat = Material()  then  model.add_materials([mat])
+  WRONG: model.get_materials().add_material()  RIGHT: model.get_materials() returns a plain list — iterate it, don't call methods on it
+  WRONG: model.add_materials([mat]) before     RIGHT: configure name + color on mat FIRST, then add_materials() setting name/color
+  WRONG: n = face.get_normal(); n[0]           RIGHT: get_normal() returns SUVector3D — use n.x, n.y, n.z (not subscriptable)
+  WRONG: zipfile-rewriting a .style file       RIGHT: active_style.set_name(...) / set_description(...) — the SDK setters exist
+  WRONG: cam.set_perspective(True)             RIGHT: cam.enable_perspective(True) — set_perspective does not exist
+  WRONG: ro[RenderingOptionKey.DRAW_SKY]       RIGHT: DRAW_SKY does not exist. Sky draws when DRAW_GROUND+DRAW_HORIZON are both False; SKY_COLOR sets its color
+  WRONG: RenderMode.TEXTURED                   RIGHT: RenderMode has WIREFRAME/HIDDEN/FLAT/SMOOTH/NO_MATERIALS/PHYSICALLY_BASED. For textured look: SMOOTH + TEXTURE=True
+  WRONG: sketchup.model.<anything>             RIGHT: sketchup is only sketchup_api. Use bare names (Camera, Scene, Style, Image, ...) — they are pre-loaded
+  

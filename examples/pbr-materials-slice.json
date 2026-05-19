@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "units": "mm",
+  "operations": [
+    { "op": "reset" },
+    {
+      "op": "material",
+      "name": "Brushed_Metal_PBR",
+      "color": "#8a8178",
+      "workflow": "pbr_metallic_roughness",
+      "alpha": 1,
+      "texture": { "path": "textures/brushed-metal-albedo.jpg", "width": 1200, "height": 1200 },
+      "pbr": {
+        "metallic_factor": 0.85,
+        "roughness_factor": 0.32,
+        "ao_strength": 0.55,
+        "normal_style": "opengl",
+        "normal_scale": 1,
+        "textures": {
+          "metallic": "textures/brushed-metal-metallic.jpg",
+          "roughness": "textures/brushed-metal-roughness.jpg",
+          "normal": "textures/brushed-metal-normal.jpg",
+          "ao": "textures/brushed-metal-ao.jpg",
+          "opacity": "textures/brushed-metal-opacity.jpg"
+        }
+      }
+    },
+    { "op": "material", "name": "Tinted_Glass", "color": "#8ecae6", "alpha": 0.42 },
+    { "op": "material", "name": "Warm_Oak_Texture", "color": "#9b6b43", "texture": "textures/warm-oak-albedo.jpg" },
+    { "op": "box", "name": "PBR_Metal_Block", "origin": [0, 0, 0], "size": [1200, 800, 500], "material": "Brushed_Metal_PBR" },
+    { "op": "box", "name": "Glass_Panel", "origin": [1400, 0, 0], "size": [80, 800, 1200], "material": "Tinted_Glass" },
+    { "op": "box", "name": "Textured_Wood_Plank", "origin": [0, 1100, 0], "size": [1600, 260, 120], "material": "Warm_Oak_Texture" },
+    { "op": "scene", "name": "PBR_Materials_View", "camera": { "eye": [3600, -3600, 2200], "target": [800, 450, 420], "up": [0, 0, 1], "fov": 35 } }
+  ]
+}

@@ -1,0 +1,584 @@
+{
+  "version": 1,
+  "object": {
+    "type": "game_controller",
+    "name": "Switch Joy-Con Grip Controller",
+    "source_images": [
+      "test/手柄/IMG_0152.jpeg",
+      "test/手柄/IMG_0153.jpeg",
+      "test/手柄/IMG_0154.jpeg",
+      "test/手柄/IMG_0155.jpeg",
+      "test/手柄/IMG_0156.jpeg",
+      "test/手柄/IMG_0157.jpeg"
+    ]
+  },
+  "scale": {
+    "units": "mm",
+    "known_width": 280,
+    "known_height": 155,
+    "known_depth": 42,
+    "confidence": 0.62
+  },
+  "views": [
+    {
+      "id": "oblique_photo",
+      "kind": "oblique",
+      "source_image": "test/手柄/IMG_0152.jpeg",
+      "confidence": 0.51
+    },
+    {
+      "id": "side_photo",
+      "kind": "right",
+      "source_image": "test/手柄/IMG_0153.jpeg",
+      "confidence": 0.68
+    },
+    {
+      "id": "rear_photo",
+      "kind": "rear",
+      "source_image": "test/手柄/IMG_0154.jpeg",
+      "confidence": 0.78
+    },
+    {
+      "id": "oblique_photo_2",
+      "kind": "oblique",
+      "source_image": "test/手柄/IMG_0155.jpeg",
+      "confidence": 0.55
+    },
+    {
+      "id": "front_photo",
+      "kind": "front",
+      "source_image": "test/手柄/IMG_0156.jpeg",
+      "confidence": 0.74
+    },
+    {
+      "id": "oblique_photo_3",
+      "kind": "oblique",
+      "source_image": "test/手柄/IMG_0157.jpeg",
+      "confidence": 0.58
+    }
+  ],
+  "parts": [
+    {
+      "id": "center_grip_body",
+      "type": "beveled_panel",
+      "material": "Satin_Black_Plastic",
+      "parameters": {
+        "width": 96,
+        "height": 150,
+        "thickness": 26,
+        "corner_radius": 8
+      },
+      "evidence": [
+        {
+          "view": "rear_photo",
+          "kind": "silhouette",
+          "points": [
+            [
+              321.36,
+              60.8
+            ],
+            [
+              545.64,
+              60.8
+            ],
+            [
+              545.64,
+              414.2
+            ],
+            [
+              321.36,
+              414.2
+            ],
+            [
+              321.36,
+              60.8
+            ]
+          ],
+          "confidence": 0.6,
+          "note": "Likely central rear plate from rear layout."
+        },
+        {
+          "view": "front_photo",
+          "kind": "silhouette",
+          "points": [
+            [
+              356.62,
+              206.09
+            ],
+            [
+              530.38,
+              206.09
+            ],
+            [
+              530.38,
+              532.91
+            ],
+            [
+              356.62,
+              532.91
+            ],
+            [
+              356.62,
+              206.09
+            ]
+          ],
+          "confidence": 0.62,
+          "note": "Template candidate from known game-controller front layout."
+        }
+      ]
+    },
+    {
+      "id": "left_joycon_shell",
+      "type": "lofted_shell",
+      "material": "Warm_White_Plastic",
+      "parameters": {
+        "width": 92,
+        "height": 155,
+        "thickness": 24,
+        "side": "left",
+        "mirror_pair": "right_joycon_shell"
+      },
+      "evidence": [
+        {
+          "view": "front_photo",
+          "kind": "silhouette",
+          "points": [
+            [
+              193.72,
+              193.52
+            ],
+            [
+              362.05,
+              193.52
+            ],
+            [
+              362.05,
+              545.48
+            ],
+            [
+              193.72,
+              545.48
+            ],
+            [
+              193.72,
+              193.52
+            ]
+          ],
+          "confidence": 0.62,
+          "note": "Template candidate from known game-controller front layout."
+        }
+      ]
+    },
+    {
+      "id": "right_joycon_shell",
+      "type": "lofted_shell",
+      "material": "Warm_White_Plastic",
+      "parameters": {
+        "width": 92,
+        "height": 155,
+        "thickness": 24,
+        "side": "right",
+        "mirror_pair": "left_joycon_shell"
+      },
+      "evidence": [
+        {
+          "view": "front_photo",
+          "kind": "silhouette",
+          "points": [
+            [
+              524.95,
+              193.52
+            ],
+            [
+              693.2800000000001,
+              193.52
+            ],
+            [
+              693.2800000000001,
+              545.48
+            ],
+            [
+              524.95,
+              545.48
+            ],
+            [
+              524.95,
+              193.52
+            ]
+          ],
+          "confidence": 0.62,
+          "note": "Template candidate from known game-controller front layout."
+        }
+      ]
+    },
+    {
+      "id": "rear_grip_pair",
+      "type": "grip_handle",
+      "material": "Satin_Black_Plastic",
+      "parameters": {
+        "symmetric": true,
+        "width_each": 54,
+        "height": 132,
+        "thickness": 36,
+        "needs_side_profile": true
+      },
+      "evidence": [
+        {
+          "view": "side_photo",
+          "kind": "silhouette",
+          "points": [
+            [
+              166.38,
+              65.5
+            ],
+            [
+              704.62,
+              65.5
+            ],
+            [
+              704.62,
+              509.5
+            ],
+            [
+              166.38,
+              509.5
+            ],
+            [
+              166.38,
+              65.5
+            ]
+          ],
+          "confidence": 0.58,
+          "note": "Side-view depth/thickness profile candidate."
+        },
+        {
+          "view": "rear_photo",
+          "kind": "silhouette",
+          "points": [
+            [
+              97.08,
+              42.2
+            ],
+            [
+              345.39,
+              42.2
+            ],
+            [
+              345.39,
+              432.8
+            ],
+            [
+              97.08,
+              432.8
+            ],
+            [
+              97.08,
+              42.2
+            ]
+          ],
+          "confidence": 0.68,
+          "note": "Likely left rear grip silhouette from rear layout."
+        },
+        {
+          "view": "rear_photo",
+          "kind": "silhouette",
+          "points": [
+            [
+              521.61,
+              42.2
+            ],
+            [
+              769.9200000000001,
+              42.2
+            ],
+            [
+              769.9200000000001,
+              432.8
+            ],
+            [
+              521.61,
+              432.8
+            ],
+            [
+              521.61,
+              42.2
+            ]
+          ],
+          "confidence": 0.68,
+          "note": "Likely right rear grip silhouette from rear layout."
+        }
+      ]
+    },
+    {
+      "id": "left_thumbstick",
+      "type": "analog_stick",
+      "parent": "left_joycon_shell",
+      "material": "Rubber_Thumbstick",
+      "parameters": {
+        "center": [
+          -92,
+          -20,
+          26
+        ],
+        "outer_radius": 11,
+        "top_radius": 9.5,
+        "height": 14,
+        "recess_depth": 2.5
+      },
+      "evidence": [
+        {
+          "view": "front_photo",
+          "kind": "center_point",
+          "points": [
+            [
+              313.18,
+              315.03
+            ]
+          ],
+          "confidence": 0.68,
+          "note": "Likely left thumbstick center inferred from front layout."
+        }
+      ]
+    },
+    {
+      "id": "right_thumbstick",
+      "type": "analog_stick",
+      "parent": "right_joycon_shell",
+      "material": "Rubber_Thumbstick",
+      "parameters": {
+        "center": [
+          72,
+          34,
+          26
+        ],
+        "outer_radius": 10.5,
+        "top_radius": 9,
+        "height": 13,
+        "recess_depth": 2.5
+      },
+      "evidence": [
+        {
+          "view": "front_photo",
+          "kind": "center_point",
+          "points": [
+            [
+              573.82,
+              428.16
+            ]
+          ],
+          "confidence": 0.55,
+          "note": "Likely right thumbstick center inferred from front layout."
+        }
+      ],
+      "uncertainty": [
+        "Inferred from Switch controller layout; current photos need semantic confirmation."
+      ]
+    },
+    {
+      "id": "abxy_cluster",
+      "type": "button_on_panel",
+      "parent": "right_joycon_shell",
+      "material": "Gloss_Black_Button",
+      "parameters": {
+        "buttons": [
+          {
+            "label": "X",
+            "center": [
+              104,
+              -36
+            ],
+            "radius": 5.8
+          },
+          {
+            "label": "Y",
+            "center": [
+              88,
+              -20
+            ],
+            "radius": 5.6
+          },
+          {
+            "label": "A",
+            "center": [
+              120,
+              -20
+            ],
+            "radius": 5.6
+          },
+          {
+            "label": "B",
+            "center": [
+              104,
+              -4
+            ],
+            "radius": 5.6
+          }
+        ]
+      },
+      "evidence": [
+        {
+          "view": "front_photo",
+          "kind": "silhouette",
+          "points": [
+            [
+              562.96,
+              260.56
+            ],
+            [
+              666.13,
+              260.56
+            ],
+            [
+              666.13,
+              365.31
+            ],
+            [
+              562.96,
+              365.31
+            ],
+            [
+              562.96,
+              260.56
+            ]
+          ],
+          "confidence": 0.66,
+          "note": "Likely ABXY cluster region inferred from front layout."
+        }
+      ]
+    },
+    {
+      "id": "left_button_cluster",
+      "type": "button_on_panel",
+      "parent": "left_joycon_shell",
+      "material": "Gloss_Black_Button",
+      "parameters": {
+        "buttons": [
+          {
+            "label": "L1",
+            "center": [
+              -122,
+              20
+            ],
+            "radius": 4.8
+          },
+          {
+            "label": "L2",
+            "center": [
+              -108,
+              8
+            ],
+            "radius": 4.8
+          },
+          {
+            "label": "L3",
+            "center": [
+              -94,
+              20
+            ],
+            "radius": 4.8
+          },
+          {
+            "label": "L4",
+            "center": [
+              -108,
+              32
+            ],
+            "radius": 4.8
+          }
+        ]
+      },
+      "evidence": [
+        {
+          "view": "front_photo",
+          "kind": "silhouette",
+          "points": [
+            [
+              220.87,
+              377.88
+            ],
+            [
+              318.61,
+              377.88
+            ],
+            [
+              318.61,
+              478.44
+            ],
+            [
+              220.87,
+              478.44
+            ],
+            [
+              220.87,
+              377.88
+            ]
+          ],
+          "confidence": 0.55,
+          "note": "Likely left button cluster region inferred from front layout."
+        }
+      ],
+      "uncertainty": [
+        "Button labels and exact positions need manual review."
+      ]
+    },
+    {
+      "id": "shoulder_rail_pair",
+      "type": "trigger",
+      "material": "Satin_Black_Plastic",
+      "parameters": {
+        "width_each": 76,
+        "height": 11,
+        "thickness": 6
+      },
+      "evidence": [
+        {
+          "view": "side_photo",
+          "kind": "silhouette",
+          "points": [
+            [
+              166.38,
+              65.5
+            ],
+            [
+              704.62,
+              65.5
+            ],
+            [
+              704.62,
+              509.5
+            ],
+            [
+              166.38,
+              509.5
+            ],
+            [
+              166.38,
+              65.5
+            ]
+          ],
+          "confidence": 0.58,
+          "note": "Side-view depth/thickness profile candidate."
+        }
+      ]
+    }
+  ],
+  "review": {
+    "overlay_path": "projects/image-structured-modeler/examples/switch-controller/review-overlays",
+    "open_questions": [
+      "Confirm whether the generated right thumbstick position matches the real controller.",
+      "Confirm whether the left button cluster should be modeled as four round buttons or a directional cross.",
+      "Confirm rear grip thickness once a true top view or measured depth is available."
+    ],
+    "corrections_applied": [
+      "scale.known_width",
+      "scale.known_height",
+      "scale.known_depth",
+      "scale.confidence",
+      "review.open_questions"
+    ],
+    "correction_notes": [
+      "Initial Switch controller correction file. Edit this file after reviewing review/index.html.",
+      "Scale is a layout prior until a measured physical dimension is provided."
+    ]
+  }
+}

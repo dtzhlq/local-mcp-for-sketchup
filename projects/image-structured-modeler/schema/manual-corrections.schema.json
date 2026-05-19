@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/manual-corrections.schema.json",
+  "title": "Image Structured Modeler Manual Corrections",
+  "type": "object",
+  "required": ["version"],
+  "properties": {
+    "version": { "const": 1 },
+    "notes": { "type": "array", "items": { "type": "string" } },
+    "scale": {
+      "type": "object",
+      "properties": {
+        "known_width": { "type": "number", "exclusiveMinimum": 0 },
+        "known_height": { "type": "number", "exclusiveMinimum": 0 },
+        "known_depth": { "type": "number", "exclusiveMinimum": 0 },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "parts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "action"],
+        "properties": {
+          "id": { "type": "string" },
+          "action": { "enum": ["add", "update", "remove"] },
+          "type": {
+            "enum": [
+              "rounded_box",
+              "beveled_panel",
+              "lofted_shell",
+              "button_on_panel",
+              "analog_stick",
+              "trigger",
+              "grip_handle",
+              "slot",
+              "screw_hole",
+              "logo_emboss",
+              "text_engrave",
+              "mesh_reference"
+            ]
+          },
+          "parent": { "type": "string" },
+          "material": { "type": "string" },
+          "parameters": { "type": "object" },
+          "uncertainty": { "type": "array", "items": { "type": "string" } },
+          "evidence_note": { "type": "string" }
+        }
+      }
+    },
+    "review": {
+      "type": "object",
+      "properties": {
+        "open_questions": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

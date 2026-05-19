@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/image-observation.schema.json",
+  "title": "Image Observation",
+  "type": "object",
+  "required": ["version", "image", "detected_view", "observations"],
+  "properties": {
+    "version": { "const": 1 },
+    "image": {
+      "type": "object",
+      "required": ["path"],
+      "properties": {
+        "path": { "type": "string" },
+        "width": { "type": "integer" },
+        "height": { "type": "integer" }
+      }
+    },
+    "detected_view": {
+      "type": "object",
+      "required": ["kind", "confidence"],
+      "properties": {
+        "kind": { "enum": ["front", "rear", "left", "right", "top", "bottom", "oblique", "detail", "unknown"] },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "notes": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "camera_hints": {
+      "type": "object",
+      "properties": {
+        "perspective_strength": { "enum": ["low", "medium", "high", "unknown"] },
+        "symmetry_axis": { "$ref": "#/$defs/line2" },
+        "vanishing_lines": { "type": "array", "items": { "$ref": "#/$defs/line2" } }
+      }
+    },
+    "observations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "kind", "confidence"],
+        "properties": {
+          "id": { "type": "string" },
+          "kind": { "enum": ["silhouette", "component_bbox", "center_point", "edge", "curve", "color_region", "text_or_logo", "uncertain"] },
+          "component_hint": { "type": "string" },
+          "bbox": { "$ref": "#/$defs/bbox" },
+          "points": { "$ref": "#/$defs/polyline2" },
+          "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+          "note": { "type": "string" }
+        }
+      }
+    },
+    "quality_report": {
+      "type": "object",
+      "properties": {
+        "usable_for_modeling": { "type": "boolean" },
+        "risks": { "type": "array", "items": { "type": "string" } },
+        "missing_views": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  },
+  "$defs": {
+    "point2": {
+      "type": "array",
+      "prefixItems": [{ "type": "number" }, { "type": "number" }],
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "polyline2": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/point2" }
+    },
+    "line2": {
+      "type": "object",
+      "required": ["a", "b"],
+      "properties": {
+        "a": { "$ref": "#/$defs/point2" },
+        "b": { "$ref": "#/$defs/point2" }
+      }
+    },
+    "bbox": {
+      "type": "array",
+      "prefixItems": [{ "type": "number" }, { "type": "number" }, { "type": "number" }, { "type": "number" }],
+      "minItems": 4,
+      "maxItems": 4
+    }
+  }
+}

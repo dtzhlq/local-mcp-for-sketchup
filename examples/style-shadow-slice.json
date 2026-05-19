@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "units": "mm",
+  "operations": [
+    { "op": "reset" },
+    { "op": "material", "name": "Warm_Wall", "color": "#efe7dc" },
+    { "op": "material", "name": "Shadow_Block", "color": "#8a6f52" },
+    { "op": "box", "name": "Presentation_Base", "origin": [0, 0, 0], "size": [2400, 1600, 120], "material": "Warm_Wall" },
+    { "op": "box", "name": "Sun_Test_Block", "origin": [500, 420, 120], "size": [900, 620, 760], "material": "Shadow_Block" },
+    {
+      "op": "style",
+      "name": "Warm_Presentation",
+      "display_edges": true,
+      "profiles": true,
+      "profile_width": 2,
+      "display_watermarks": false,
+      "face_style": "shaded_with_textures",
+      "background_color": "#f7f4ed",
+      "sky_color": "#cfe8ff",
+      "ground_color": "#d8d0bf",
+      "draw_ground": true,
+      "draw_sky": true
+    },
+    {
+      "op": "shadow",
+      "display": true,
+      "time": "2026-05-08T14:30:00+08:00",
+      "light": 80,
+      "dark": 35,
+      "use_sun_for_shading": true
+    },
+    {
+      "op": "rendering_options",
+      "edge_display_mode": 1,
+      "draw_hidden_geometry": false,
+      "display_color_by_layer": false,
+      "transparency": true,
+      "draw_back_edges": false
+    },
+    { "op": "scene", "name": "Style_Shadow_View", "camera": { "eye": [3600, -4200, 2400], "target": [950, 700, 380], "up": [0, 0, 1], "fov": 35 } }
+  ]
+}

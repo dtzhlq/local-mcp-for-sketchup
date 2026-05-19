@@ -1,0 +1,945 @@
+{
+  "version": 1,
+  "units": "mm",
+  "operations": [
+    {
+      "op": "reset"
+    },
+    {
+      "op": "material",
+      "name": "Concrete_Foundation",
+      "color": "#b9b5ad"
+    },
+    {
+      "op": "material",
+      "name": "Wall_Beige_Siding",
+      "color": "#d7c7aa"
+    },
+    {
+      "op": "material",
+      "name": "Cedar_Shakes",
+      "color": "#b88954"
+    },
+    {
+      "op": "material",
+      "name": "White_Trim",
+      "color": "#f4f1e8"
+    },
+    {
+      "op": "material",
+      "name": "Black_Asphalt_Roof",
+      "color": "#242424"
+    },
+    {
+      "op": "material",
+      "name": "Window_Glass",
+      "color": "#79b9d6"
+    },
+    {
+      "op": "material",
+      "name": "Door_White",
+      "color": "#eeeeee"
+    },
+    {
+      "op": "material",
+      "name": "Porch_Wood",
+      "color": "#8d6847"
+    },
+    {
+      "op": "material",
+      "name": "Stair_Wood",
+      "color": "#7b5a3d"
+    },
+    {
+      "op": "material",
+      "name": "Interior_Floor",
+      "color": "#c6a47c"
+    },
+    {
+      "op": "material",
+      "name": "Annotation_Red",
+      "color": "#d94b4b"
+    },
+    {
+      "op": "box",
+      "name": "Basement_Concrete_Slab",
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "size": [
+        8026.4,
+        7416.8,
+        101.6
+      ],
+      "material": "Concrete_Foundation"
+    },
+    {
+      "op": "box",
+      "name": "Foundation_Wall_North",
+      "origin": [
+        0,
+        7213.6,
+        0
+      ],
+      "size": [
+        8026.4,
+        203.2,
+        2438.4
+      ],
+      "material": "Concrete_Foundation"
+    },
+    {
+      "op": "box",
+      "name": "Foundation_Wall_South",
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "size": [
+        8026.4,
+        203.2,
+        2438.4
+      ],
+      "material": "Concrete_Foundation"
+    },
+    {
+      "op": "box",
+      "name": "Foundation_Wall_West",
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "size": [
+        203.2,
+        7416.8,
+        2438.4
+      ],
+      "material": "Concrete_Foundation"
+    },
+    {
+      "op": "box",
+      "name": "Foundation_Wall_East",
+      "origin": [
+        7823.2,
+        0,
+        0
+      ],
+      "size": [
+        203.2,
+        7416.8,
+        2438.4
+      ],
+      "material": "Concrete_Foundation"
+    },
+    {
+      "op": "box",
+      "name": "Main_Floor_Slab",
+      "origin": [
+        0,
+        0,
+        2438.4
+      ],
+      "size": [
+        8026.4,
+        7416.8,
+        254
+      ],
+      "material": "Interior_Floor"
+    },
+    {
+      "op": "box",
+      "name": "Second_Floor_Slab",
+      "origin": [
+        0,
+        0,
+        5181.6
+      ],
+      "size": [
+        8026.4,
+        7416.8,
+        254
+      ],
+      "material": "Interior_Floor"
+    },
+    {
+      "op": "box",
+      "name": "Main_Wall_North",
+      "origin": [
+        0,
+        7213.6,
+        2692.4
+      ],
+      "size": [
+        8026.4,
+        203.2,
+        2489.2
+      ],
+      "material": "Wall_Beige_Siding"
+    },
+    {
+      "op": "box",
+      "name": "Main_Wall_South",
+      "origin": [
+        0,
+        0,
+        2692.4
+      ],
+      "size": [
+        8026.4,
+        203.2,
+        2489.2
+      ],
+      "material": "Wall_Beige_Siding"
+    },
+    {
+      "op": "box",
+      "name": "Main_Wall_West",
+      "origin": [
+        0,
+        0,
+        2692.4
+      ],
+      "size": [
+        203.2,
+        7416.8,
+        2489.2
+      ],
+      "material": "Wall_Beige_Siding"
+    },
+    {
+      "op": "box",
+      "name": "Main_Wall_East",
+      "origin": [
+        7823.2,
+        0,
+        2692.4
+      ],
+      "size": [
+        203.2,
+        7416.8,
+        2489.2
+      ],
+      "material": "Wall_Beige_Siding"
+    },
+    {
+      "op": "box",
+      "name": "Second_Wall_North",
+      "origin": [
+        0,
+        7213.6,
+        5435.6
+      ],
+      "size": [
+        8026.4,
+        203.2,
+        2451.1
+      ],
+      "material": "Wall_Beige_Siding"
+    },
+    {
+      "op": "box",
+      "name": "Second_Wall_South",
+      "origin": [
+        0,
+        0,
+        5435.6
+      ],
+      "size": [
+        8026.4,
+        203.2,
+        2451.1
+      ],
+      "material": "Wall_Beige_Siding"
+    },
+    {
+      "op": "box",
+      "name": "Second_Wall_West",
+      "origin": [
+        0,
+        0,
+        5435.6
+      ],
+      "size": [
+        203.2,
+        7416.8,
+        2451.1
+      ],
+      "material": "Wall_Beige_Siding"
+    },
+    {
+      "op": "box",
+      "name": "Second_Wall_East",
+      "origin": [
+        7823.2,
+        0,
+        5435.6
+      ],
+      "size": [
+        203.2,
+        7416.8,
+        2451.1
+      ],
+      "material": "Wall_Beige_Siding"
+    },
+    {
+      "op": "box",
+      "name": "Front_Porch_Deck",
+      "origin": [
+        0,
+        -1524,
+        2489.2
+      ],
+      "size": [
+        8026.4,
+        1524,
+        203.2
+      ],
+      "material": "Porch_Wood"
+    },
+    {
+      "op": "box",
+      "name": "Front_Porch_Railing",
+      "origin": [
+        2438.4,
+        -1524,
+        2692.4
+      ],
+      "size": [
+        4673.6,
+        101.6,
+        914.4
+      ],
+      "material": "Porch_Wood"
+    },
+    {
+      "op": "box",
+      "name": "Front_Porch_Left_Post",
+      "origin": [
+        304.8,
+        -1422.4,
+        2489.2
+      ],
+      "size": [
+        152.4,
+        152.4,
+        2438.4
+      ],
+      "material": "White_Trim"
+    },
+    {
+      "op": "box",
+      "name": "Front_Porch_Right_Post",
+      "origin": [
+        7569.2,
+        -1422.4,
+        2489.2
+      ],
+      "size": [
+        152.4,
+        152.4,
+        2438.4
+      ],
+      "material": "White_Trim"
+    },
+    {
+      "op": "box",
+      "name": "Front_Stair_Tread_1",
+      "origin": [
+        1422.4,
+        -1803.4,
+        2362.2
+      ],
+      "size": [
+        2438.4,
+        279.4,
+        127
+      ],
+      "material": "Stair_Wood"
+    },
+    {
+      "op": "box",
+      "name": "Front_Stair_Tread_2",
+      "origin": [
+        1422.4,
+        -2082.8,
+        2235.2
+      ],
+      "size": [
+        2438.4,
+        279.4,
+        127
+      ],
+      "material": "Stair_Wood"
+    },
+    {
+      "op": "box",
+      "name": "Front_Stair_Tread_3",
+      "origin": [
+        1422.4,
+        -2362.2,
+        2108.2
+      ],
+      "size": [
+        2438.4,
+        279.4,
+        127
+      ],
+      "material": "Stair_Wood"
+    },
+    {
+      "op": "box",
+      "name": "Front_Stair_Tread_4",
+      "origin": [
+        1422.4,
+        -2641.6,
+        1981.2
+      ],
+      "size": [
+        2438.4,
+        279.4,
+        127
+      ],
+      "material": "Stair_Wood"
+    },
+    {
+      "op": "box",
+      "name": "Front_Stair_Tread_5",
+      "origin": [
+        1422.4,
+        -2921,
+        1854.2
+      ],
+      "size": [
+        2438.4,
+        279.4,
+        127
+      ],
+      "material": "Stair_Wood"
+    },
+    {
+      "op": "box",
+      "name": "Porch_Roof_Slab",
+      "origin": [
+        -304.8,
+        -1828.8,
+        5080
+      ],
+      "size": [
+        8636,
+        2133.6,
+        152.4
+      ],
+      "material": "Black_Asphalt_Roof"
+    },
+    {
+      "op": "prism",
+      "name": "Main_Gable_Roof_Prism",
+      "origin": [
+        -304.8,
+        -304.8,
+        7886.700000000001
+      ],
+      "plane": "xz",
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          4318,
+          1244.6
+        ],
+        [
+          8636,
+          0
+        ]
+      ],
+      "depth": 8026.400000000001,
+      "material": "Black_Asphalt_Roof"
+    },
+    {
+      "op": "box",
+      "name": "East_Gable_Cedar_Shakes",
+      "origin": [
+        203.2,
+        -50.8,
+        7785.1
+      ],
+      "size": [
+        7620,
+        50.8,
+        1066.8
+      ],
+      "material": "Cedar_Shakes"
+    },
+    {
+      "op": "box",
+      "name": "West_Gable_Cedar_Shakes",
+      "origin": [
+        203.2,
+        7416.8,
+        7785.1
+      ],
+      "size": [
+        7620,
+        50.8,
+        1066.8
+      ],
+      "material": "Cedar_Shakes"
+    },
+    {
+      "op": "box",
+      "name": "Front_Door",
+      "origin": [
+        1066.8,
+        -50.8,
+        2743.2
+      ],
+      "size": [
+        914.4,
+        50.8,
+        2032
+      ],
+      "material": "Door_White"
+    },
+    {
+      "op": "box",
+      "name": "Front_Living_Window",
+      "origin": [
+        3962.4,
+        -50.8,
+        3657.6
+      ],
+      "size": [
+        2514.6,
+        50.8,
+        1066.8
+      ],
+      "material": "Window_Glass"
+    },
+    {
+      "op": "box",
+      "name": "Front_Second_Window_Left",
+      "origin": [
+        2133.6,
+        -50.8,
+        6350
+      ],
+      "size": [
+        1066.8,
+        50.8,
+        1066.8
+      ],
+      "material": "Window_Glass"
+    },
+    {
+      "op": "box",
+      "name": "Front_Second_Window_Right",
+      "origin": [
+        4013.2,
+        -50.8,
+        6350
+      ],
+      "size": [
+        1066.8,
+        50.8,
+        1066.8
+      ],
+      "material": "Window_Glass"
+    },
+    {
+      "op": "box",
+      "name": "Rear_Door",
+      "origin": [
+        6604,
+        7416.8,
+        2743.2
+      ],
+      "size": [
+        914.4,
+        50.8,
+        2032
+      ],
+      "material": "Door_White"
+    },
+    {
+      "op": "box",
+      "name": "West_Large_Window",
+      "origin": [
+        609.6,
+        7416.8,
+        3454.4
+      ],
+      "size": [
+        1371.6,
+        50.8,
+        1524
+      ],
+      "material": "Window_Glass"
+    },
+    {
+      "op": "box",
+      "name": "West_Main_Window",
+      "origin": [
+        3657.6,
+        7416.8,
+        3606.8
+      ],
+      "size": [
+        1219.2,
+        50.8,
+        1066.8
+      ],
+      "material": "Window_Glass"
+    },
+    {
+      "op": "box",
+      "name": "West_Second_Window_Left",
+      "origin": [
+        1320.8,
+        7416.8,
+        6350
+      ],
+      "size": [
+        1219.2,
+        50.8,
+        1066.8
+      ],
+      "material": "Window_Glass"
+    },
+    {
+      "op": "box",
+      "name": "West_Second_Window_Right",
+      "origin": [
+        4368.8,
+        7416.8,
+        6350
+      ],
+      "size": [
+        762,
+        50.8,
+        1371.6
+      ],
+      "material": "Window_Glass"
+    },
+    {
+      "op": "box",
+      "name": "North_Second_Window_Left",
+      "origin": [
+        -50.8,
+        1524,
+        6350
+      ],
+      "size": [
+        50.8,
+        914.4,
+        914.4
+      ],
+      "material": "Window_Glass"
+    },
+    {
+      "op": "box",
+      "name": "North_Second_Window_Right",
+      "origin": [
+        -50.8,
+        5181.6,
+        6350
+      ],
+      "size": [
+        50.8,
+        914.4,
+        914.4
+      ],
+      "material": "Window_Glass"
+    },
+    {
+      "op": "box",
+      "name": "South_Tall_Window",
+      "origin": [
+        8026.4,
+        3352.8,
+        3606.8
+      ],
+      "size": [
+        50.8,
+        812.8,
+        1371.6
+      ],
+      "material": "Window_Glass"
+    },
+    {
+      "op": "box",
+      "name": "Main_Stair_Riser_1",
+      "origin": [
+        965.2,
+        1524,
+        2438.4
+      ],
+      "size": [
+        965.2,
+        254,
+        184.1
+      ],
+      "material": "Stair_Wood"
+    },
+    {
+      "op": "box",
+      "name": "Main_Stair_Riser_2",
+      "origin": [
+        965.2,
+        1778,
+        2622.5
+      ],
+      "size": [
+        965.2,
+        254,
+        184.1
+      ],
+      "material": "Stair_Wood"
+    },
+    {
+      "op": "box",
+      "name": "Main_Stair_Riser_3",
+      "origin": [
+        965.2,
+        2032,
+        2806.6
+      ],
+      "size": [
+        965.2,
+        254,
+        184.1
+      ],
+      "material": "Stair_Wood"
+    },
+    {
+      "op": "box",
+      "name": "Main_Stair_Riser_4",
+      "origin": [
+        965.2,
+        2286,
+        2990.7
+      ],
+      "size": [
+        965.2,
+        254,
+        184.1
+      ],
+      "material": "Stair_Wood"
+    },
+    {
+      "op": "box",
+      "name": "Main_Stair_Riser_5",
+      "origin": [
+        965.2,
+        2540,
+        3174.8
+      ],
+      "size": [
+        965.2,
+        254,
+        184.1
+      ],
+      "material": "Stair_Wood"
+    },
+    {
+      "op": "box",
+      "name": "Main_Stair_Riser_6",
+      "origin": [
+        965.2,
+        2794,
+        3358.9
+      ],
+      "size": [
+        965.2,
+        254,
+        184.1
+      ],
+      "material": "Stair_Wood"
+    },
+    {
+      "op": "box",
+      "name": "Main_Stair_Riser_7",
+      "origin": [
+        965.2,
+        3048,
+        3543
+      ],
+      "size": [
+        965.2,
+        254,
+        184.1
+      ],
+      "material": "Stair_Wood"
+    },
+    {
+      "op": "box",
+      "name": "Main_Stair_Riser_8",
+      "origin": [
+        965.2,
+        3302,
+        3727.1
+      ],
+      "size": [
+        965.2,
+        254,
+        184.1
+      ],
+      "material": "Stair_Wood"
+    },
+    {
+      "op": "box",
+      "name": "Main_Stair_Riser_9",
+      "origin": [
+        965.2,
+        3556,
+        3911.2
+      ],
+      "size": [
+        965.2,
+        254,
+        184.1
+      ],
+      "material": "Stair_Wood"
+    },
+    {
+      "op": "box",
+      "name": "Main_Stair_Riser_10",
+      "origin": [
+        965.2,
+        3810,
+        4095.3
+      ],
+      "size": [
+        965.2,
+        254,
+        184.1
+      ],
+      "material": "Stair_Wood"
+    },
+    {
+      "op": "box",
+      "name": "Main_Stair_Riser_11",
+      "origin": [
+        965.2,
+        4064,
+        4279.4
+      ],
+      "size": [
+        965.2,
+        254,
+        184.1
+      ],
+      "material": "Stair_Wood"
+    },
+    {
+      "op": "box",
+      "name": "Main_Stair_Riser_12",
+      "origin": [
+        965.2,
+        4318,
+        4463.5
+      ],
+      "size": [
+        965.2,
+        254,
+        184.1
+      ],
+      "material": "Stair_Wood"
+    },
+    {
+      "op": "box",
+      "name": "Main_Stair_Riser_13",
+      "origin": [
+        965.2,
+        4572,
+        4647.6
+      ],
+      "size": [
+        965.2,
+        254,
+        184.1
+      ],
+      "material": "Stair_Wood"
+    },
+    {
+      "op": "box",
+      "name": "Main_Stair_Riser_14",
+      "origin": [
+        965.2,
+        4826,
+        4831.7
+      ],
+      "size": [
+        965.2,
+        254,
+        184.1
+      ],
+      "material": "Stair_Wood"
+    },
+    {
+      "op": "box",
+      "name": "Main_Stair_Riser_15",
+      "origin": [
+        965.2,
+        5080,
+        5015.8
+      ],
+      "size": [
+        965.2,
+        254,
+        184.1
+      ],
+      "material": "Stair_Wood"
+    },
+    {
+      "op": "box",
+      "name": "Interior_Load_Bearing_Beam",
+      "origin": [
+        2540,
+        3200.4,
+        4749.8
+      ],
+      "size": [
+        4267.2,
+        152.4,
+        203.2
+      ],
+      "material": "White_Trim"
+    },
+    {
+      "op": "box",
+      "name": "Dimension_Marker_26ft4_Width",
+      "origin": [
+        0,
+        -2133.6,
+        2692.4
+      ],
+      "size": [
+        8026.4,
+        50.8,
+        50.8
+      ],
+      "material": "Annotation_Red"
+    },
+    {
+      "op": "box",
+      "name": "Dimension_Marker_24ft4_Depth",
+      "origin": [
+        -609.6,
+        0,
+        2692.4
+      ],
+      "size": [
+        50.8,
+        7416.8,
+        50.8
+      ],
+      "material": "Annotation_Red"
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "version": 1,
+  "units": "mm",
+  "operations": [
+    { "op": "reset" },
+    { "op": "material", "name": "Golden_Concrete", "color": "#b8b2a8" },
+    { "op": "material", "name": "Golden_Wall_Paint", "color": "#efe7dc" },
+    { "op": "material", "name": "Golden_Roof", "color": "#5d4037" },
+    { "op": "material", "name": "Golden_Wood", "color": "#8a5a35" },
+    { "op": "material", "name": "Golden_Glass", "color": "#88ccee", "alpha": 0.45 },
+    { "op": "material", "name": "Golden_Metal", "color": "#44484d" },
+    { "op": "level", "name": "Golden_Level_1", "elevation": 0, "height": 3000 },
+    { "op": "level", "name": "Golden_Level_2", "elevation": 3000, "height": 2600 },
+    { "op": "floor_slab", "name": "Golden_Level_1_Slab", "origin": [0, 0, 0], "width": 6400, "depth": 4200, "thickness": 180, "material": "Golden_Concrete" },
+    { "op": "floor_slab", "name": "Golden_Level_2_Slab", "origin": [0, 0, 3000], "width": 5200, "depth": 3600, "thickness": 160, "material": "Golden_Concrete" },
+    { "op": "wall", "name": "Golden_Front_Wall", "start": [0, 0, 180], "end": [6400, 0, 180], "height": 2820, "thickness": 140, "openings": [
+      { "name": "Entry_Opening", "x": 700, "y": 0, "width": 1000, "height": 2200 },
+      { "name": "Living_Window_Opening", "x": 2600, "y": 900, "width": 1600, "height": 1050 }
+    ], "material": "Golden_Wall_Paint" },
+    { "op": "wall", "name": "Golden_Back_Wall", "start": [0, 4200, 180], "end": [6400, 4200, 180], "height": 2820, "thickness": 140, "openings": [
+      { "name": "Rear_Window_Opening", "x": 3400, "y": 980, "width": 1300, "height": 950 }
+    ], "material": "Golden_Wall_Paint" },
+    { "op": "wall", "name": "Golden_Left_Wall", "start": [0, 0, 180], "end": [0, 4200, 180], "height": 2820, "thickness": 140, "material": "Golden_Wall_Paint" },
+    { "op": "wall", "name": "Golden_Right_Wall", "start": [6400, 0, 180], "end": [6400, 4200, 180], "height": 2820, "thickness": 140, "openings": [
+      { "name": "Side_Window_Opening", "x": 1300, "y": 900, "width": 1100, "height": 950 }
+    ], "material": "Golden_Wall_Paint" },
+    { "op": "wall", "name": "Golden_Interior_Stair_Wall", "start": [2400, 900, 180], "end": [2400, 3500, 180], "height": 2400, "thickness": 110, "material": "Golden_Wall_Paint" },
+    { "op": "door", "name": "Golden_Entry_Door", "origin": [775, -50, 180], "plane": "xz", "width": 900, "height": 2140, "thickness": 45, "material": "Golden_Wood" },
+    { "op": "window", "name": "Golden_Living_Window", "origin": [2650, -42, 1100], "plane": "xz", "width": 1500, "height": 920, "thickness": 28, "material": "Golden_Glass" },
+    { "op": "window", "name": "Golden_Rear_Window", "origin": [3450, 4230, 1160], "plane": "xz", "width": 1200, "height": 820, "thickness": 28, "material": "Golden_Glass" },
+    { "op": "window", "name": "Golden_Side_Window", "origin": [6428, 1400, 1100], "plane": "yz", "width": 1100, "height": 880, "thickness": 28, "material": "Golden_Glass" },
+    { "op": "stairs", "name": "Golden_Entry_Stairs", "origin": [420, -1050, 0], "steps": 5, "width": 1650, "tread_depth": 300, "riser_height": 160, "direction": "y", "material": "Golden_Concrete" },
+    { "op": "stairs", "name": "Golden_Interior_Stairs", "origin": [2600, 900, 180], "steps": 8, "width": 1050, "tread_depth": 280, "riser_height": 160, "direction": "y", "material": "Golden_Wood" },
+    { "op": "railing", "name": "Golden_Front_Railing", "path": [[320, -1100, 760], [2300, -1100, 760]], "height": 860, "rail_radius": 32, "post_radius": 28, "post_spacing": 520, "material": "Golden_Metal" },
+    { "op": "railing", "name": "Golden_Interior_Railing", "path": [[2600, 950, 1200], [2600, 3100, 1200]], "height": 780, "rail_radius": 28, "post_radius": 24, "post_spacing": 520, "material": "Golden_Wood" },
+    { "op": "gable_roof", "name": "Golden_Main_Gable_Roof", "origin": [0, 0, 3000], "width": 6400, "depth": 4200, "rise": 1200, "overhang": 320, "material": "Golden_Roof" },
+    { "op": "shed_roof", "name": "Golden_Porch_Shed_Roof", "origin": [320, -1300, 2600], "width": 2300, "depth": 1200, "rise": 360, "overhang": 180, "material": "Golden_Roof" },
+    { "op": "scene", "name": "Golden_Architecture_Hero", "camera": { "eye": [9000, -8200, 5400], "target": [3200, 1800, 1700], "up": [0, 0, 1], "fov": 35 } },
+    { "op": "scene", "name": "Golden_Architecture_Section_Check", "camera": { "eye": [2500, -7200, 3200], "target": [2700, 2100, 1550], "up": [0, 0, 1], "fov": 42 } },
+    { "op": "style", "name": "Golden_Architecture_Presentation", "display_edges": true, "profiles": true, "profile_width": 2, "display_watermarks": false, "face_style": "shaded_with_textures", "background_color": "#f7f4ed", "sky_color": "#cfe8ff", "ground_color": "#d8d0bf" },
+    { "op": "shadow", "display": true, "time": "2026-05-11T14:30:00+08:00", "light": 82, "dark": 34, "use_sun_for_shading": true },
+    { "op": "rendering_options", "edge_display_mode": 1, "draw_hidden_geometry": false, "display_color_by_layer": false, "transparency": true, "draw_ground": true }
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "version": 1,
+  "units": "mm",
+  "operations": [
+    { "op": "reset" },
+    { "op": "material", "name": "Golden_Product_Body", "color": "#f2f2f0" },
+    { "op": "material", "name": "Golden_Product_Back", "color": "#222426" },
+    { "op": "material", "name": "Golden_Product_Rubber", "color": "#111111" },
+    { "op": "material", "name": "Golden_Product_Button", "color": "#e8e8e5" },
+    { "op": "material", "name": "Golden_Product_Accent", "color": "#2bb7ff" },
+    { "op": "material", "name": "Golden_Product_Metal", "color": "#777b80" },
+    { "op": "component_definition", "name": "Golden_Round_Button_Def", "operations": [
+      { "op": "cylinder", "name": "Button_Cap", "origin": [0, 0, 0], "radius": 95, "height": 38, "segments": 16, "material": "Golden_Product_Button", "smooth": "all" }
+    ] },
+    { "op": "component_definition", "name": "Golden_Dpad_Key_Def", "size": [210, 78, 34], "material": "Golden_Product_Button" },
+    { "op": "component_definition", "name": "Golden_Screw_Def", "operations": [
+      { "op": "cylinder", "name": "Screw_Disc", "origin": [0, 0, 0], "radius": 34, "height": 12, "segments": 12, "material": "Golden_Product_Metal", "smooth": "all" }
+    ] },
+    { "op": "component_definition", "name": "Golden_Status_LED_Def", "size": [76, 28, 12], "material": "Golden_Product_Accent" },
+    { "op": "mesh", "name": "Golden_Controller_Shell_Mesh", "vertices": [
+      [260, 520, 0], [620, 220, 0], [2920, 220, 0], [3280, 520, 0], [3380, 1660, 0], [2960, 1960, 0], [580, 1960, 0], [160, 1660, 0],
+      [260, 520, 160], [620, 220, 160], [2920, 220, 160], [3280, 520, 160], [3380, 1660, 160], [2960, 1960, 160], [580, 1960, 160], [160, 1660, 160]
+    ], "faces": [
+      [0, 1, 2, 3, 4, 5, 6, 7], [8, 15, 14, 13, 12, 11, 10, 9],
+      [0, 8, 9, 1], [1, 9, 10, 2], [2, 10, 11, 3], [3, 11, 12, 4],
+      [4, 12, 13, 5], [5, 13, 14, 6], [6, 14, 15, 7], [7, 15, 8, 0]
+    ], "material": "Golden_Product_Body", "smooth": "coplanar" },
+    { "op": "domed_surface", "name": "Golden_Faceplate_Soft_Dome", "origin": [520, 420, 145], "width": 2500, "depth": 1240, "thickness": 38, "crown_height": 58, "segments_x": 8, "segments_y": 6, "material": "Golden_Product_Body", "smooth": "all" },
+    { "op": "shell_from_front_side_profiles", "name": "Golden_Profile_Derived_Mini_Shell", "origin": [1760, 70, 110], "front_profile": [[-210, 0], [210, 0], [260, 90], [190, 210], [0, 260], [-190, 210], [-260, 90]], "side_profile": [[0, 34], [120, 82], [260, 48]], "material": "Golden_Product_Body", "smooth": "all" },
+    { "op": "beveled_panel", "name": "Golden_Chamfered_Center_Recess", "origin": [1420, 1320, 190], "size": [720, 260, 8], "bevel": 28, "material": "Golden_Product_Back" },
+    { "op": "fillet", "name": "Golden_Left_Soft_Edge_Insert", "origin": [620, 560, 178], "size": [360, 190, 18], "radius": 34, "segments": 5, "material": "Golden_Product_Button", "smooth": "all" },
+    { "op": "chamfer", "name": "Golden_Right_Chamfered_Edge_Insert", "origin": [2440, 1340, 178], "size": [360, 190, 18], "amount": 32, "material": "Golden_Product_Button" },
+    { "op": "recess", "name": "Golden_Status_LED_Recess", "center": [1670, 1548, 202], "size": [420, 76], "depth": 10, "radius": 18, "segments": 5, "material": "Golden_Product_Back", "smooth": "all" },
+    { "op": "bowed_panel", "name": "Golden_Back_Grip_Bowed_Panel", "origin": [720, 1760, 20], "width": 2100, "height": 360, "thickness": 90, "bow_depth": 130, "segments_x": 8, "segments_z": 4, "material": "Golden_Product_Back", "smooth": "all" },
+    { "op": "loft_between_profiles", "name": "Golden_Left_Grip_Profile_Loft", "profiles": [
+      { "origin": [360, 360, 92], "plane": "xy", "points": [[120, 0], [500, 0], [640, 460], [560, 1120], [120, 1180], [-40, 520]] },
+      { "origin": [330, 330, 190], "plane": "xy", "points": [[140, 0], [530, 20], [690, 500], [590, 1160], [110, 1210], [-70, 560]] },
+      { "origin": [390, 410, 280], "plane": "xy", "points": [[100, 0], [440, 10], [560, 420], [500, 980], [120, 1040], [-10, 500]] }
+    ], "material": "Golden_Product_Body", "smooth": "all" },
+    { "op": "analog_stick", "name": "Golden_Left_Analog_Stick", "origin": [1120, 1060, 175], "profile": [[0, 135], [55, 180], [125, 128]], "segments": 18, "material": "Golden_Product_Rubber", "smooth": "all" },
+    { "op": "analog_stick", "name": "Golden_Right_Analog_Stick", "origin": [2320, 820, 175], "profile": [[0, 135], [55, 180], [125, 128]], "segments": 18, "material": "Golden_Product_Rubber", "smooth": "all" },
+    { "op": "swept_path", "name": "Golden_Front_Accent_Seam", "path": [[620, 1780, 190], [1700, 1780, 190], [2820, 1780, 190]], "radius": 16, "segments": 8, "material": "Golden_Product_Accent", "smooth": "all" },
+    { "op": "pipe_between_points", "name": "Golden_Right_Shoulder_Pipe", "points": [[2460, 1640, 218], [2700, 1720, 252], [2960, 1560, 230]], "radius": 18, "segments": 10, "material": "Golden_Product_Accent", "smooth": "all" },
+    { "op": "engraved_line", "name": "Golden_Controller_Split_Line", "points": [[720, 1660, 202], [1760, 1700, 202], [2780, 1660, 202]], "width": 18, "depth": 3, "material": "Golden_Product_Back" },
+    { "op": "slot", "name": "Golden_Speaker_Slot", "center": [1760, 1480, 204], "length": 420, "width": 52, "depth": 8, "segments": 6, "material": "Golden_Product_Back", "smooth": "all" },
+    { "op": "boolean_cutout", "name": "Golden_USB_Cutout_Panel", "origin": [1590, 1600, 210], "size": [340, 110, 12], "cutouts": [{ "name": "Golden_USB_Rect", "center": [170, 55], "size": [146, 42] }], "material": "Golden_Product_Back" },
+    { "op": "text_engrave", "name": "Golden_ALMA_Logo_Engrave", "center": [1760, 1388, 204], "text": "ALMA", "height": 64, "depth": 4, "spacing": 8, "align": "center", "material": "Golden_Product_Back" },
+    { "op": "button_on_panel", "name": "Golden_Center_Home_Button", "center": [1760, 1060, 178], "radius": 88, "height": 28, "segments": 18, "material": "Golden_Product_Button", "smooth": "all" },
+    { "op": "face_on_cylinder", "name": "Golden_Right_Handle_Flat_Pad", "cylinder_center": [3080, 1060, 178], "cylinder_radius": 165, "center": [3245, 1060, 230], "width": 190, "height": 130, "depth": 12, "material": "Golden_Product_Button" },
+    { "op": "button_on_panel", "name": "Golden_Center_Pill_Button", "center": [1760, 1320, 186], "size": [260, 92], "corner_radius": 46, "height": 18, "segments": 8, "material": "Golden_Product_Button", "smooth": "all" },
+    { "op": "component_instance", "name": "Golden_Button_A", "definition": "Golden_Round_Button_Def", "origin": [2780, 980, 184] },
+    { "op": "component_instance", "name": "Golden_Button_B", "definition": "Golden_Round_Button_Def", "origin": [2580, 780, 184] },
+    { "op": "component_instance", "name": "Golden_Button_X", "definition": "Golden_Round_Button_Def", "origin": [2580, 1180, 184] },
+    { "op": "component_instance", "name": "Golden_Button_Y", "definition": "Golden_Round_Button_Def", "origin": [2380, 980, 184] },
+    { "op": "component_instance", "name": "Golden_Dpad_Left", "definition": "Golden_Dpad_Key_Def", "origin": [760, 820, 184] },
+    { "op": "component_instance", "name": "Golden_Dpad_Right", "definition": "Golden_Dpad_Key_Def", "origin": [1050, 820, 184] },
+    { "op": "component_instance", "name": "Golden_Dpad_Up", "definition": "Golden_Dpad_Key_Def", "origin": [960, 700, 184], "transform": { "rotateZ": 90 } },
+    { "op": "component_instance", "name": "Golden_Dpad_Down", "definition": "Golden_Dpad_Key_Def", "origin": [960, 990, 184], "transform": { "rotateZ": 90 } },
+    { "op": "screw_hole", "name": "Golden_Screw_Top_Left", "center": [560, 480, 190], "radius": 28, "depth": 12, "head_radius": 42, "head_depth": 5, "segments": 12, "material": "Golden_Product_Metal" },
+    { "op": "screw_hole", "name": "Golden_Screw_Top_Right", "center": [3000, 480, 190], "radius": 28, "depth": 12, "head_radius": 42, "head_depth": 5, "segments": 12, "material": "Golden_Product_Metal" },
+    { "op": "screw_hole", "name": "Golden_Screw_Bottom_Left", "center": [520, 1600, 190], "radius": 28, "depth": 12, "head_radius": 42, "head_depth": 5, "segments": 12, "material": "Golden_Product_Metal" },
+    { "op": "screw_hole", "name": "Golden_Screw_Bottom_Right", "center": [3020, 1600, 190], "radius": 28, "depth": 12, "head_radius": 42, "head_depth": 5, "segments": 12, "material": "Golden_Product_Metal" },
+    { "op": "component_instance", "name": "Golden_LED_1", "definition": "Golden_Status_LED_Def", "origin": [1520, 1540, 186] },
+    { "op": "component_instance", "name": "Golden_LED_2", "definition": "Golden_Status_LED_Def", "origin": [1620, 1540, 186] },
+    { "op": "component_instance", "name": "Golden_LED_3", "definition": "Golden_Status_LED_Def", "origin": [1720, 1540, 186] },
+    { "op": "component_instance", "name": "Golden_LED_4", "definition": "Golden_Status_LED_Def", "origin": [1820, 1540, 186] },
+    { "op": "scene", "name": "Golden_Product_Front", "camera": { "eye": [1780, -3600, 2300], "target": [1760, 1080, 120], "up": [0, 0, 1], "fov": 38 } },
+    { "op": "scene", "name": "Golden_Product_Top_QA", "camera": { "eye": [1760, 1080, 5200], "target": [1760, 1080, 120], "up": [0, 1, 0], "fov": 32 } },
+    { "op": "style", "name": "Golden_Product_Presentation", "display_edges": true, "profiles": true, "profile_width": 2, "face_style": "shaded_with_textures", "background_color": "#f4f5f7", "sky_color": "#eef6ff", "ground_color": "#d9dde2" },
+    { "op": "shadow", "display": true, "time": "2026-05-11T10:30:00+08:00", "light": 78, "dark": 42, "use_sun_for_shading": true },
+    { "op": "rendering_options", "edge_display_mode": 1, "draw_hidden_geometry": false, "display_color_by_layer": false, "transparency": true }
+  ]
+}

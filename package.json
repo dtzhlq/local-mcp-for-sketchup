@@ -1,0 +1,38 @@
+{
+  "name": "sketchup-mcp-replica",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Local MVP replica of SketchUp Cloud MCP workflow for Alma.",
+  "bin": {
+    "sketchup-modeler": "./bin/sketchup-modeler"
+  },
+  "scripts": {
+    "get-docs": "node src/cli.mjs get_docs",
+    "demo": "node src/cli.mjs build_model --runtime mock --code-file examples/demo-room.json",
+    "reset": "node src/cli.mjs reset_model --runtime mock",
+    "save": "node src/cli.mjs save_model --runtime mock --path output/mock-model.json",
+    "server": "node src/http-server.mjs",
+    "mcp": "node src/mcp-server.mjs",
+    "qa:mock": "node scripts/generate-qa-reports.mjs --expected-runtime mock --actual-runtime mock --output-dir output/qa-reports/mock",
+    "qa:queue": "node scripts/generate-qa-reports.mjs --expected-runtime mock --actual-runtime queue --timeout-ms 60000 --face-tolerance 1 --edge-tolerance 3 --output-dir output/qa-reports/queue",
+    "image-structured:analyze-switch": "node projects/image-structured-modeler/scripts/analyze-image-set.mjs --input test/手柄 --output projects/image-structured-modeler/examples/switch-controller/observations.json --view-hints-file projects/image-structured-modeler/examples/switch-controller/model-plan.example.json",
+    "image-structured:generate-switch": "node projects/image-structured-modeler/scripts/generate-model-plan.mjs --input projects/image-structured-modeler/examples/switch-controller/observations.json --output projects/image-structured-modeler/examples/switch-controller/model-plan.json --manual-corrections projects/image-structured-modeler/examples/switch-controller/manual-corrections.json",
+    "image-structured:compile-switch": "node projects/image-structured-modeler/scripts/compile-plan-to-sketchup-dsl.mjs --input projects/image-structured-modeler/examples/switch-controller/model-plan.json --output projects/image-structured-modeler/examples/switch-controller/output.json",
+    "image-structured:review-switch": "node projects/image-structured-modeler/scripts/make-review-report.mjs --observations projects/image-structured-modeler/examples/switch-controller/observations.json --model-plan projects/image-structured-modeler/examples/switch-controller/model-plan.json --output-dsl projects/image-structured-modeler/examples/switch-controller/output.json --manual-corrections projects/image-structured-modeler/examples/switch-controller/manual-corrections.json --output projects/image-structured-modeler/examples/switch-controller/review/index.html",
+    "image-structured:build-switch": "npm run image-structured:analyze-switch && npm run image-structured:generate-switch && npm run image-structured:compile-switch && npm run image-structured:review-switch",
+    "test:image-structured": "node projects/image-structured-modeler/test/validate.mjs",
+    "test": "node test/mock-validation.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "canvas": "^3.2.3",
+    "exifr": "^7.1.3",
+    "sharp": "^0.34.5"
+  },
+  "devDependencies": {
+    "ajv": "^8.20.0"
+  }
+}

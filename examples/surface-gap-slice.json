@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "units": "mm",
+  "operations": [
+    { "op": "reset" },
+    { "op": "material", "name": "Soft_Fabric", "color": "#c58f72" },
+    { "op": "material", "name": "Curved_Wall", "color": "#e7dfd2" },
+    { "op": "domed_surface", "name": "Padded_Cushion", "origin": [0, 0, 0], "width": 1800, "depth": 900, "thickness": 140, "crown_height": 220, "segments_x": 8, "segments_y": 8, "material": "Soft_Fabric", "smooth": "all" },
+    { "op": "bowed_panel", "name": "Curved_Back_Wall", "origin": [0, 1200, 0], "width": 1800, "height": 1200, "thickness": 100, "bow_depth": 260, "segments_x": 8, "segments_z": 8, "material": "Curved_Wall", "smooth": "all" },
+    { "op": "scene", "name": "Surface_Gap_Slice_View", "camera": { "eye": [3200, -3600, 2200], "target": [900, 700, 550], "up": [0, 0, 1], "fov": 35 } }
+  ]
+}

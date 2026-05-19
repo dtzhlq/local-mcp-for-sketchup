@@ -1,0 +1,3029 @@
+{
+  "version": 1,
+  "units": "mm",
+  "operations": [
+    {
+      "op": "reset"
+    },
+    {
+      "op": "material",
+      "name": "Concrete_Foundation",
+      "color": "#b9b5ad"
+    },
+    {
+      "op": "material",
+      "name": "Beige_Vinyl_Siding",
+      "color": "#d8c9ad"
+    },
+    {
+      "op": "material",
+      "name": "Natural_Cedar_Shakes",
+      "color": "#b98b5c"
+    },
+    {
+      "op": "material",
+      "name": "White_Trim_Fascia",
+      "color": "#f4f1e8"
+    },
+    {
+      "op": "material",
+      "name": "Black_Asphalt_Shingle",
+      "color": "#242424"
+    },
+    {
+      "op": "material",
+      "name": "Blue_Window_Glass",
+      "color": "#86bcd3",
+      "alpha": 0.5
+    },
+    {
+      "op": "material",
+      "name": "White_Entry_Door",
+      "color": "#eeeeee"
+    },
+    {
+      "op": "material",
+      "name": "Pressure_Treated_Wood",
+      "color": "#8a6848"
+    },
+    {
+      "op": "material",
+      "name": "Interior_Wood_Floor",
+      "color": "#c6a47c"
+    },
+    {
+      "op": "material",
+      "name": "Dark_Roof_Shadow",
+      "color": "#171717"
+    },
+    {
+      "op": "material",
+      "name": "Plan_Reference_Red",
+      "color": "#d94b4b"
+    },
+    {
+      "op": "level",
+      "name": "Basement",
+      "elevation": 0,
+      "height": 2438.4
+    },
+    {
+      "op": "level",
+      "name": "Main Floor",
+      "elevation": 2438.4,
+      "height": 2489.2
+    },
+    {
+      "op": "level",
+      "name": "Upper Floor",
+      "elevation": 5181.6,
+      "height": 2451.1
+    },
+    {
+      "op": "box",
+      "name": "Basement_4in_Concrete_Slab",
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "size": [
+        8026.4,
+        7416.8,
+        101.6
+      ],
+      "material": "Concrete_Foundation"
+    },
+    {
+      "op": "box",
+      "name": "Main_Subfloor_26ft4_by_24ft4",
+      "origin": [
+        0,
+        0,
+        2438.4
+      ],
+      "size": [
+        8026.4,
+        7416.8,
+        254
+      ],
+      "material": "Interior_Wood_Floor"
+    },
+    {
+      "op": "box",
+      "name": "Upper_Subfloor_24ft_by_24ft4",
+      "origin": [
+        203.2,
+        0,
+        5181.6
+      ],
+      "size": [
+        7620,
+        7416.8,
+        254
+      ],
+      "material": "Interior_Wood_Floor"
+    },
+    {
+      "op": "panel_with_openings",
+      "name": "Foundation_Front_With_Basement_Windows",
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "plane": "xz",
+      "size": [
+        8026.4,
+        2438.4
+      ],
+      "thickness": 203.2,
+      "openings": [
+        {
+          "name": "Front_Basement_Window_Left",
+          "x": 1066.8,
+          "y": 304.8,
+          "width": 1219.2,
+          "height": 457.2
+        },
+        {
+          "name": "Front_Basement_Window_Mid",
+          "x": 3048,
+          "y": 304.8,
+          "width": 1219.2,
+          "height": 457.2
+        },
+        {
+          "name": "Front_Basement_Window_Right",
+          "x": 4876.8,
+          "y": 304.8,
+          "width": 1219.2,
+          "height": 457.2
+        }
+      ],
+      "material": "Concrete_Foundation"
+    },
+    {
+      "op": "panel_with_openings",
+      "name": "Foundation_Rear",
+      "origin": [
+        0,
+        7213.6,
+        0
+      ],
+      "plane": "xz",
+      "size": [
+        8026.4,
+        2438.4
+      ],
+      "thickness": 203.2,
+      "openings": [
+        {
+          "name": "Rear_Basement_Door",
+          "x": 5181.6,
+          "y": 0,
+          "width": 1524,
+          "height": 2032
+        }
+      ],
+      "material": "Concrete_Foundation"
+    },
+    {
+      "op": "panel_with_openings",
+      "name": "Foundation_Left",
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "plane": "yz",
+      "size": [
+        7416.8,
+        2438.4
+      ],
+      "thickness": 203.2,
+      "openings": [],
+      "material": "Concrete_Foundation"
+    },
+    {
+      "op": "panel_with_openings",
+      "name": "Foundation_Right_With_Window",
+      "origin": [
+        7823.2,
+        0,
+        0
+      ],
+      "plane": "yz",
+      "size": [
+        7416.8,
+        2438.4
+      ],
+      "thickness": 203.2,
+      "openings": [
+        {
+          "name": "Side_Basement_Window",
+          "x": 5334,
+          "y": 304.8,
+          "width": 1066.8,
+          "height": 508
+        }
+      ],
+      "material": "Concrete_Foundation"
+    },
+    {
+      "op": "panel_with_openings",
+      "name": "East_Front_Main_Wall_With_Door_And_Picture_Window",
+      "origin": [
+        0,
+        0,
+        2692.4
+      ],
+      "plane": "xz",
+      "size": [
+        8026.4,
+        2489.2
+      ],
+      "thickness": 203.2,
+      "openings": [
+        {
+          "name": "Front_Entry_Door",
+          "x": 711.2,
+          "y": 0,
+          "width": 914.4,
+          "height": 2032
+        },
+        {
+          "name": "Front_Living_Triple_Window",
+          "x": 3378.2,
+          "y": 711.2,
+          "width": 2514.6,
+          "height": 1066.8
+        }
+      ],
+      "material": "Beige_Vinyl_Siding"
+    },
+    {
+      "op": "panel_with_openings",
+      "name": "West_Rear_Main_Wall_With_Door_And_Windows",
+      "origin": [
+        0,
+        7213.6,
+        2692.4
+      ],
+      "plane": "xz",
+      "size": [
+        8026.4,
+        2489.2
+      ],
+      "thickness": 203.2,
+      "openings": [
+        {
+          "name": "Rear_Tall_Window",
+          "x": 685.8,
+          "y": 457.2,
+          "width": 1524,
+          "height": 1676.4
+        },
+        {
+          "name": "Rear_Kitchen_Window",
+          "x": 4114.8,
+          "y": 914.4,
+          "width": 1270,
+          "height": 1066.8
+        },
+        {
+          "name": "Rear_Door",
+          "x": 6705.6,
+          "y": 0,
+          "width": 914.4,
+          "height": 2032
+        }
+      ],
+      "material": "Beige_Vinyl_Siding"
+    },
+    {
+      "op": "panel_with_openings",
+      "name": "North_Right_Main_Wall",
+      "origin": [
+        0,
+        0,
+        2692.4
+      ],
+      "plane": "yz",
+      "size": [
+        7416.8,
+        2489.2
+      ],
+      "thickness": 203.2,
+      "openings": [
+        {
+          "name": "North_Basement_Walkout_Door_Visual",
+          "x": 5181.6,
+          "y": 0,
+          "width": 1524,
+          "height": 2032
+        }
+      ],
+      "material": "Beige_Vinyl_Siding"
+    },
+    {
+      "op": "panel_with_openings",
+      "name": "South_Left_Main_Wall_With_Narrow_Window",
+      "origin": [
+        7823.2,
+        0,
+        2692.4
+      ],
+      "plane": "yz",
+      "size": [
+        7416.8,
+        2489.2
+      ],
+      "thickness": 203.2,
+      "openings": [
+        {
+          "name": "South_Narrow_Window",
+          "x": 3454.4,
+          "y": 609.6,
+          "width": 609.6,
+          "height": 1422.4
+        }
+      ],
+      "material": "Beige_Vinyl_Siding"
+    },
+    {
+      "op": "panel_with_openings",
+      "name": "East_Front_Upper_Wall_Two_Windows",
+      "origin": [
+        0,
+        0,
+        5435.6
+      ],
+      "plane": "xz",
+      "size": [
+        8026.4,
+        2451.1
+      ],
+      "thickness": 203.2,
+      "openings": [
+        {
+          "name": "Upper_Front_Left_Window",
+          "x": 2133.6,
+          "y": 660.4,
+          "width": 1066.8,
+          "height": 1066.8
+        },
+        {
+          "name": "Upper_Front_Right_Window",
+          "x": 3962.4,
+          "y": 660.4,
+          "width": 1066.8,
+          "height": 1066.8
+        }
+      ],
+      "material": "Beige_Vinyl_Siding"
+    },
+    {
+      "op": "panel_with_openings",
+      "name": "West_Rear_Upper_Wall_Windows",
+      "origin": [
+        0,
+        7213.6,
+        5435.6
+      ],
+      "plane": "xz",
+      "size": [
+        8026.4,
+        2451.1
+      ],
+      "thickness": 203.2,
+      "openings": [
+        {
+          "name": "Upper_Rear_Double_Window",
+          "x": 1219.2,
+          "y": 609.6,
+          "width": 1270,
+          "height": 1219.2
+        },
+        {
+          "name": "Upper_Rear_Narrow_Window",
+          "x": 4572,
+          "y": 609.6,
+          "width": 762,
+          "height": 1320.8
+        }
+      ],
+      "material": "Beige_Vinyl_Siding"
+    },
+    {
+      "op": "panel_with_openings",
+      "name": "North_Right_Upper_Wall_Two_Square_Windows",
+      "origin": [
+        0,
+        0,
+        5435.6
+      ],
+      "plane": "yz",
+      "size": [
+        7416.8,
+        2451.1
+      ],
+      "thickness": 203.2,
+      "openings": [
+        {
+          "name": "North_Upper_Window_Left",
+          "x": 762,
+          "y": 914.4,
+          "width": 914.4,
+          "height": 914.4
+        },
+        {
+          "name": "North_Upper_Window_Right",
+          "x": 5384.8,
+          "y": 914.4,
+          "width": 914.4,
+          "height": 914.4
+        }
+      ],
+      "material": "Beige_Vinyl_Siding"
+    },
+    {
+      "op": "panel_with_openings",
+      "name": "South_Left_Upper_Wall",
+      "origin": [
+        7823.2,
+        0,
+        5435.6
+      ],
+      "plane": "yz",
+      "size": [
+        7416.8,
+        2451.1
+      ],
+      "thickness": 203.2,
+      "openings": [],
+      "material": "Beige_Vinyl_Siding"
+    },
+    {
+      "op": "box",
+      "name": "Front_3ft_Entry_Door",
+      "origin": [
+        711.2,
+        -25.4,
+        2692.4
+      ],
+      "size": [
+        914.4,
+        50.8,
+        2032
+      ],
+      "material": "White_Entry_Door"
+    },
+    {
+      "op": "box",
+      "name": "Front_3ft_Entry_Door_Frame_Top_Trim",
+      "origin": [
+        635,
+        -50.8,
+        4724.4
+      ],
+      "size": [
+        1066.8,
+        50.8,
+        76.2
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Front_3ft_Entry_Door_Frame_Bottom_Trim",
+      "origin": [
+        635,
+        -50.8,
+        2616.2
+      ],
+      "size": [
+        1066.8,
+        50.8,
+        76.2
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Front_3ft_Entry_Door_Frame_Left_Trim",
+      "origin": [
+        635,
+        -50.8,
+        2616.2
+      ],
+      "size": [
+        76.2,
+        50.8,
+        2184.4
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Front_3ft_Entry_Door_Frame_Right_Trim",
+      "origin": [
+        1625.6,
+        -50.8,
+        2616.2
+      ],
+      "size": [
+        76.2,
+        50.8,
+        2184.4
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Front_3ft_Entry_Door_Frame_Center_Muntin",
+      "origin": [
+        1143,
+        -51.8,
+        2692.4
+      ],
+      "size": [
+        50.8,
+        52.8,
+        2032
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Front_3ft_Entry_Door_Frame_Mid_Rail",
+      "origin": [
+        711.2,
+        -51.8,
+        3683
+      ],
+      "size": [
+        914.4,
+        52.8,
+        50.8
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Front_3ft_Entry_Door_Inset_Panel_Upper",
+      "origin": [
+        939.8,
+        -76.2,
+        3667.8
+      ],
+      "size": [
+        457.2,
+        25.4,
+        772.2
+      ],
+      "material": "Blue_Window_Glass"
+    },
+    {
+      "op": "box",
+      "name": "Front_3ft_Entry_Door_Inset_Panel_Lower_L",
+      "origin": [
+        839.2,
+        -76.2,
+        2936.2
+      ],
+      "size": [
+        246.9,
+        25.4,
+        467.4
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Front_3ft_Entry_Door_Inset_Panel_Lower_R",
+      "origin": [
+        1250.7,
+        -76.2,
+        2936.2
+      ],
+      "size": [
+        246.9,
+        25.4,
+        467.4
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Front_Living_Triple_Window_Glass",
+      "origin": [
+        3378.2,
+        -25.4,
+        3403.6
+      ],
+      "size": [
+        2514.6,
+        38.1,
+        1066.8
+      ],
+      "material": "Blue_Window_Glass"
+    },
+    {
+      "op": "box",
+      "name": "Front_Living_Triple_Window_Top_Trim",
+      "origin": [
+        3302,
+        -50.8,
+        4470.4
+      ],
+      "size": [
+        2667,
+        50.8,
+        76.2
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Front_Living_Triple_Window_Bottom_Trim",
+      "origin": [
+        3302,
+        -50.8,
+        3327.4
+      ],
+      "size": [
+        2667,
+        50.8,
+        76.2
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Front_Living_Triple_Window_Left_Trim",
+      "origin": [
+        3302,
+        -50.8,
+        3327.4
+      ],
+      "size": [
+        76.2,
+        50.8,
+        1219.2
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Front_Living_Triple_Window_Right_Trim",
+      "origin": [
+        5892.8,
+        -50.8,
+        3327.4
+      ],
+      "size": [
+        76.2,
+        50.8,
+        1219.2
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Front_Living_Triple_Window_Center_Muntin",
+      "origin": [
+        4610.1,
+        -51.8,
+        3403.6
+      ],
+      "size": [
+        50.8,
+        52.8,
+        1066.8
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Front_Living_Triple_Window_Mid_Rail",
+      "origin": [
+        3378.2,
+        -51.8,
+        3911.6
+      ],
+      "size": [
+        2514.6,
+        52.8,
+        50.8
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Upper_Front_Left_Window_Glass",
+      "origin": [
+        2133.6,
+        -25.4,
+        6096
+      ],
+      "size": [
+        1066.8,
+        38.1,
+        1066.8
+      ],
+      "material": "Blue_Window_Glass"
+    },
+    {
+      "op": "box",
+      "name": "Upper_Front_Left_Window_Top_Trim",
+      "origin": [
+        2057.4,
+        -50.8,
+        7162.8
+      ],
+      "size": [
+        1219.2,
+        50.8,
+        76.2
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Upper_Front_Left_Window_Bottom_Trim",
+      "origin": [
+        2057.4,
+        -50.8,
+        6019.8
+      ],
+      "size": [
+        1219.2,
+        50.8,
+        76.2
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Upper_Front_Left_Window_Left_Trim",
+      "origin": [
+        2057.4,
+        -50.8,
+        6019.8
+      ],
+      "size": [
+        76.2,
+        50.8,
+        1219.2
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Upper_Front_Left_Window_Right_Trim",
+      "origin": [
+        3200.4,
+        -50.8,
+        6019.8
+      ],
+      "size": [
+        76.2,
+        50.8,
+        1219.2
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Upper_Front_Left_Window_Center_Muntin",
+      "origin": [
+        2641.6,
+        -51.8,
+        6096
+      ],
+      "size": [
+        50.8,
+        52.8,
+        1066.8
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Upper_Front_Left_Window_Mid_Rail",
+      "origin": [
+        2133.6,
+        -51.8,
+        6604
+      ],
+      "size": [
+        1066.8,
+        52.8,
+        50.8
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Upper_Front_Right_Window_Glass",
+      "origin": [
+        3962.4,
+        -25.4,
+        6096
+      ],
+      "size": [
+        1066.8,
+        38.1,
+        1066.8
+      ],
+      "material": "Blue_Window_Glass"
+    },
+    {
+      "op": "box",
+      "name": "Upper_Front_Right_Window_Top_Trim",
+      "origin": [
+        3886.2,
+        -50.8,
+        7162.8
+      ],
+      "size": [
+        1219.2,
+        50.8,
+        76.2
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Upper_Front_Right_Window_Bottom_Trim",
+      "origin": [
+        3886.2,
+        -50.8,
+        6019.8
+      ],
+      "size": [
+        1219.2,
+        50.8,
+        76.2
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Upper_Front_Right_Window_Left_Trim",
+      "origin": [
+        3886.2,
+        -50.8,
+        6019.8
+      ],
+      "size": [
+        76.2,
+        50.8,
+        1219.2
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Upper_Front_Right_Window_Right_Trim",
+      "origin": [
+        5029.2,
+        -50.8,
+        6019.8
+      ],
+      "size": [
+        76.2,
+        50.8,
+        1219.2
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Upper_Front_Right_Window_Center_Muntin",
+      "origin": [
+        4470.4,
+        -51.8,
+        6096
+      ],
+      "size": [
+        50.8,
+        52.8,
+        1066.8
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Upper_Front_Right_Window_Mid_Rail",
+      "origin": [
+        3962.4,
+        -51.8,
+        6604
+      ],
+      "size": [
+        1066.8,
+        52.8,
+        50.8
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Rear_Tall_Window_Glass",
+      "origin": [
+        685.8,
+        7429.5,
+        3149.6
+      ],
+      "size": [
+        1524,
+        38.1,
+        1676.4
+      ],
+      "material": "Blue_Window_Glass"
+    },
+    {
+      "op": "box",
+      "name": "Rear_Tall_Window_Top_Trim",
+      "origin": [
+        609.6,
+        7442.2,
+        4826
+      ],
+      "size": [
+        1676.4,
+        50.8,
+        76.2
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Rear_Tall_Window_Bottom_Trim",
+      "origin": [
+        609.6,
+        7442.2,
+        3073.4
+      ],
+      "size": [
+        1676.4,
+        50.8,
+        76.2
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Rear_Tall_Window_Left_Trim",
+      "origin": [
+        609.6,
+        7442.2,
+        3073.4
+      ],
+      "size": [
+        76.2,
+        50.8,
+        1828.8
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Rear_Tall_Window_Right_Trim",
+      "origin": [
+        2209.8,
+        7442.2,
+        3073.4
+      ],
+      "size": [
+        76.2,
+        50.8,
+        1828.8
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Rear_Tall_Window_Center_Muntin",
+      "origin": [
+        1422.4,
+        7441.2,
+        3149.6
+      ],
+      "size": [
+        50.8,
+        52.8,
+        1676.4
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Rear_Tall_Window_Mid_Rail",
+      "origin": [
+        685.8,
+        7441.2,
+        3962.4
+      ],
+      "size": [
+        1524,
+        52.8,
+        50.8
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Rear_Kitchen_Window_Glass",
+      "origin": [
+        4114.8,
+        7429.5,
+        3606.8
+      ],
+      "size": [
+        1270,
+        38.1,
+        1066.8
+      ],
+      "material": "Blue_Window_Glass"
+    },
+    {
+      "op": "box",
+      "name": "Rear_Kitchen_Window_Top_Trim",
+      "origin": [
+        4038.6,
+        7442.2,
+        4673.6
+      ],
+      "size": [
+        1422.4,
+        50.8,
+        76.2
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Rear_Kitchen_Window_Bottom_Trim",
+      "origin": [
+        4038.6,
+        7442.2,
+        3530.6
+      ],
+      "size": [
+        1422.4,
+        50.8,
+        76.2
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Rear_Kitchen_Window_Left_Trim",
+      "origin": [
+        4038.6,
+        7442.2,
+        3530.6
+      ],
+      "size": [
+        76.2,
+        50.8,
+        1219.2
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Rear_Kitchen_Window_Right_Trim",
+      "origin": [
+        5384.8,
+        7442.2,
+        3530.6
+      ],
+      "size": [
+        76.2,
+        50.8,
+        1219.2
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Rear_Kitchen_Window_Center_Muntin",
+      "origin": [
+        4724.4,
+        7441.2,
+        3606.8
+      ],
+      "size": [
+        50.8,
+        52.8,
+        1066.8
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Rear_Kitchen_Window_Mid_Rail",
+      "origin": [
+        4114.8,
+        7441.2,
+        4114.8
+      ],
+      "size": [
+        1270,
+        52.8,
+        50.8
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Rear_White_Door",
+      "origin": [
+        6705.6,
+        7429.5,
+        2692.4
+      ],
+      "size": [
+        914.4,
+        50.8,
+        2032
+      ],
+      "material": "White_Entry_Door"
+    },
+    {
+      "op": "box",
+      "name": "Upper_Rear_Double_Window_Glass",
+      "origin": [
+        1219.2,
+        7429.5,
+        6045.2
+      ],
+      "size": [
+        1270,
+        38.1,
+        1219.2
+      ],
+      "material": "Blue_Window_Glass"
+    },
+    {
+      "op": "box",
+      "name": "Upper_Rear_Double_Window_Top_Trim",
+      "origin": [
+        1143,
+        7442.2,
+        7264.4
+      ],
+      "size": [
+        1422.4,
+        50.8,
+        76.2
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Upper_Rear_Double_Window_Bottom_Trim",
+      "origin": [
+        1143,
+        7442.2,
+        5969
+      ],
+      "size": [
+        1422.4,
+        50.8,
+        76.2
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Upper_Rear_Double_Window_Left_Trim",
+      "origin": [
+        1143,
+        7442.2,
+        5969
+      ],
+      "size": [
+        76.2,
+        50.8,
+        1371.6
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Upper_Rear_Double_Window_Right_Trim",
+      "origin": [
+        2489.2,
+        7442.2,
+        5969
+      ],
+      "size": [
+        76.2,
+        50.8,
+        1371.6
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Upper_Rear_Double_Window_Center_Muntin",
+      "origin": [
+        1828.8,
+        7441.2,
+        6045.2
+      ],
+      "size": [
+        50.8,
+        52.8,
+        1219.2
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Upper_Rear_Double_Window_Mid_Rail",
+      "origin": [
+        1219.2,
+        7441.2,
+        6629.4
+      ],
+      "size": [
+        1270,
+        52.8,
+        50.8
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Upper_Rear_Narrow_Window_Glass",
+      "origin": [
+        4572,
+        7429.5,
+        6045.2
+      ],
+      "size": [
+        762,
+        38.1,
+        1320.8
+      ],
+      "material": "Blue_Window_Glass"
+    },
+    {
+      "op": "box",
+      "name": "Upper_Rear_Narrow_Window_Top_Trim",
+      "origin": [
+        4495.8,
+        7442.2,
+        7366
+      ],
+      "size": [
+        914.4,
+        50.8,
+        76.2
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Upper_Rear_Narrow_Window_Bottom_Trim",
+      "origin": [
+        4495.8,
+        7442.2,
+        5969
+      ],
+      "size": [
+        914.4,
+        50.8,
+        76.2
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Upper_Rear_Narrow_Window_Left_Trim",
+      "origin": [
+        4495.8,
+        7442.2,
+        5969
+      ],
+      "size": [
+        76.2,
+        50.8,
+        1473.2
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Upper_Rear_Narrow_Window_Right_Trim",
+      "origin": [
+        5334,
+        7442.2,
+        5969
+      ],
+      "size": [
+        76.2,
+        50.8,
+        1473.2
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Upper_Rear_Narrow_Window_Center_Muntin",
+      "origin": [
+        4927.6,
+        7441.2,
+        6045.2
+      ],
+      "size": [
+        50.8,
+        52.8,
+        1320.8
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Upper_Rear_Narrow_Window_Mid_Rail",
+      "origin": [
+        4572,
+        7441.2,
+        6680.2
+      ],
+      "size": [
+        762,
+        52.8,
+        50.8
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "North_Upper_Window_Left_Glass",
+      "origin": [
+        -38.1,
+        762,
+        6350
+      ],
+      "size": [
+        38.1,
+        914.4,
+        914.4
+      ],
+      "material": "Blue_Window_Glass"
+    },
+    {
+      "op": "box",
+      "name": "North_Upper_Window_Left_Top_Trim",
+      "origin": [
+        -50.8,
+        685.8,
+        7264.4
+      ],
+      "size": [
+        50.8,
+        1066.8,
+        76.2
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "North_Upper_Window_Left_Bottom_Trim",
+      "origin": [
+        -50.8,
+        685.8,
+        6273.8
+      ],
+      "size": [
+        50.8,
+        1066.8,
+        76.2
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "North_Upper_Window_Left_Left_Trim",
+      "origin": [
+        -50.8,
+        685.8,
+        6273.8
+      ],
+      "size": [
+        50.8,
+        76.2,
+        1066.8
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "North_Upper_Window_Left_Right_Trim",
+      "origin": [
+        -50.8,
+        1676.4,
+        6273.8
+      ],
+      "size": [
+        50.8,
+        76.2,
+        1066.8
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "North_Upper_Window_Left_Center_Muntin",
+      "origin": [
+        -51.8,
+        1193.8,
+        6350
+      ],
+      "size": [
+        52.8,
+        50.8,
+        914.4
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "North_Upper_Window_Right_Glass",
+      "origin": [
+        -38.1,
+        5384.8,
+        6350
+      ],
+      "size": [
+        38.1,
+        914.4,
+        914.4
+      ],
+      "material": "Blue_Window_Glass"
+    },
+    {
+      "op": "box",
+      "name": "North_Upper_Window_Right_Top_Trim",
+      "origin": [
+        -50.8,
+        5308.6,
+        7264.4
+      ],
+      "size": [
+        50.8,
+        1066.8,
+        76.2
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "North_Upper_Window_Right_Bottom_Trim",
+      "origin": [
+        -50.8,
+        5308.6,
+        6273.8
+      ],
+      "size": [
+        50.8,
+        1066.8,
+        76.2
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "North_Upper_Window_Right_Left_Trim",
+      "origin": [
+        -50.8,
+        5308.6,
+        6273.8
+      ],
+      "size": [
+        50.8,
+        76.2,
+        1066.8
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "North_Upper_Window_Right_Right_Trim",
+      "origin": [
+        -50.8,
+        6299.2,
+        6273.8
+      ],
+      "size": [
+        50.8,
+        76.2,
+        1066.8
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "North_Upper_Window_Right_Center_Muntin",
+      "origin": [
+        -51.8,
+        5816.6,
+        6350
+      ],
+      "size": [
+        52.8,
+        50.8,
+        914.4
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "South_Narrow_Window_Glass",
+      "origin": [
+        8039.1,
+        3454.4,
+        3302
+      ],
+      "size": [
+        38.1,
+        609.6,
+        1422.4
+      ],
+      "material": "Blue_Window_Glass"
+    },
+    {
+      "op": "box",
+      "name": "South_Narrow_Window_Top_Trim",
+      "origin": [
+        8051.8,
+        3378.2,
+        4724.4
+      ],
+      "size": [
+        50.8,
+        762,
+        76.2
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "South_Narrow_Window_Bottom_Trim",
+      "origin": [
+        8051.8,
+        3378.2,
+        3225.8
+      ],
+      "size": [
+        50.8,
+        762,
+        76.2
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "South_Narrow_Window_Left_Trim",
+      "origin": [
+        8051.8,
+        3378.2,
+        3225.8
+      ],
+      "size": [
+        50.8,
+        76.2,
+        1574.8
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "South_Narrow_Window_Right_Trim",
+      "origin": [
+        8051.8,
+        4064,
+        3225.8
+      ],
+      "size": [
+        50.8,
+        76.2,
+        1574.8
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "South_Narrow_Window_Center_Muntin",
+      "origin": [
+        8050.8,
+        3733.8,
+        3302
+      ],
+      "size": [
+        52.8,
+        50.8,
+        1422.4
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Wood_Porch_5ft_Depth",
+      "origin": [
+        0,
+        -1524,
+        2387.6
+      ],
+      "size": [
+        8026.4,
+        1524,
+        203.2
+      ],
+      "material": "Pressure_Treated_Wood"
+    },
+    {
+      "op": "box",
+      "name": "Porch_Front_Railing",
+      "origin": [
+        1879.6,
+        -1524,
+        3098.8
+      ],
+      "size": [
+        5435.6,
+        76.2,
+        914.4
+      ],
+      "material": "Pressure_Treated_Wood"
+    },
+    {
+      "op": "box",
+      "name": "Porch_Left_Side_Railing",
+      "origin": [
+        0,
+        -1524,
+        3098.8
+      ],
+      "size": [
+        76.2,
+        1524,
+        914.4
+      ],
+      "material": "Pressure_Treated_Wood"
+    },
+    {
+      "op": "cylinder",
+      "name": "Turned_Porch_Post_Left",
+      "origin": [
+        101.6,
+        -1422.4,
+        2438.4
+      ],
+      "radius": 81.3,
+      "height": 2743.2,
+      "segments": 16,
+      "material": "White_Trim_Fascia",
+      "smooth": "all"
+    },
+    {
+      "op": "box",
+      "name": "Porch_Post_Base_Left",
+      "origin": [
+        25.4,
+        -1498.6,
+        2438.4
+      ],
+      "size": [
+        152.4,
+        152.4,
+        355.6
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Porch_Post_Capital_Left",
+      "origin": [
+        25.4,
+        -1498.6,
+        4927.6
+      ],
+      "size": [
+        152.4,
+        152.4,
+        254
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "cylinder",
+      "name": "Turned_Porch_Post_Mid",
+      "origin": [
+        3530.6,
+        -1422.4,
+        2438.4
+      ],
+      "radius": 81.3,
+      "height": 2743.2,
+      "segments": 16,
+      "material": "White_Trim_Fascia",
+      "smooth": "all"
+    },
+    {
+      "op": "box",
+      "name": "Porch_Post_Base_Mid",
+      "origin": [
+        3454.4,
+        -1498.6,
+        2438.4
+      ],
+      "size": [
+        152.4,
+        152.4,
+        355.6
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Porch_Post_Capital_Mid",
+      "origin": [
+        3454.4,
+        -1498.6,
+        4927.6
+      ],
+      "size": [
+        152.4,
+        152.4,
+        254
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "cylinder",
+      "name": "Turned_Porch_Post_Right",
+      "origin": [
+        7924.8,
+        -1422.4,
+        2438.4
+      ],
+      "radius": 81.3,
+      "height": 2743.2,
+      "segments": 16,
+      "material": "White_Trim_Fascia",
+      "smooth": "all"
+    },
+    {
+      "op": "box",
+      "name": "Porch_Post_Base_Right",
+      "origin": [
+        7848.6,
+        -1498.6,
+        2438.4
+      ],
+      "size": [
+        152.4,
+        152.4,
+        355.6
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Porch_Post_Capital_Right",
+      "origin": [
+        7848.6,
+        -1498.6,
+        4927.6
+      ],
+      "size": [
+        152.4,
+        152.4,
+        254
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Front_Wood_Step_1",
+      "origin": [
+        812.8,
+        -1803.4,
+        2235.2
+      ],
+      "size": [
+        2438.4,
+        279.4,
+        152.4
+      ],
+      "material": "Pressure_Treated_Wood"
+    },
+    {
+      "op": "box",
+      "name": "Front_Wood_Step_2",
+      "origin": [
+        812.8,
+        -2082.8,
+        2082.8
+      ],
+      "size": [
+        2438.4,
+        279.4,
+        152.4
+      ],
+      "material": "Pressure_Treated_Wood"
+    },
+    {
+      "op": "box",
+      "name": "Front_Wood_Step_3",
+      "origin": [
+        812.8,
+        -2362.2,
+        1930.4
+      ],
+      "size": [
+        2438.4,
+        279.4,
+        152.4
+      ],
+      "material": "Pressure_Treated_Wood"
+    },
+    {
+      "op": "box",
+      "name": "Front_Wood_Step_4",
+      "origin": [
+        812.8,
+        -2641.6,
+        1778
+      ],
+      "size": [
+        2438.4,
+        279.4,
+        152.4
+      ],
+      "material": "Pressure_Treated_Wood"
+    },
+    {
+      "op": "box",
+      "name": "Front_Wood_Step_5",
+      "origin": [
+        812.8,
+        -2921,
+        1625.6
+      ],
+      "size": [
+        2438.4,
+        279.4,
+        152.4
+      ],
+      "material": "Pressure_Treated_Wood"
+    },
+    {
+      "op": "box",
+      "name": "Front_Wood_Step_6",
+      "origin": [
+        812.8,
+        -3200.4,
+        1473.2
+      ],
+      "size": [
+        2438.4,
+        279.4,
+        152.4
+      ],
+      "material": "Pressure_Treated_Wood"
+    },
+    {
+      "op": "prism",
+      "name": "Main_4_12_Gable_Roof_From_Roof_Plan",
+      "origin": [
+        -304.8,
+        -304.8,
+        7886.7
+      ],
+      "plane": "xz",
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          4318,
+          1219.2
+        ],
+        [
+          8636,
+          0
+        ]
+      ],
+      "depth": 8026.4,
+      "material": "Black_Asphalt_Shingle"
+    },
+    {
+      "op": "box",
+      "name": "Front_White_6in_Fascia",
+      "origin": [
+        -304.8,
+        -330.2,
+        7734.3
+      ],
+      "size": [
+        8636,
+        76.2,
+        203.2
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Rear_White_6in_Fascia",
+      "origin": [
+        -304.8,
+        7670.8,
+        7734.3
+      ],
+      "size": [
+        8636,
+        76.2,
+        203.2
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "prism",
+      "name": "Front_Cedar_Shake_Gable_Triangle",
+      "origin": [
+        0,
+        -50.8,
+        7886.7
+      ],
+      "plane": "xz",
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          4013.2,
+          1016
+        ],
+        [
+          8026.4,
+          0
+        ]
+      ],
+      "depth": 50.8,
+      "material": "Natural_Cedar_Shakes"
+    },
+    {
+      "op": "prism",
+      "name": "Rear_Cedar_Shake_Gable_Triangle",
+      "origin": [
+        0,
+        7416.8,
+        7886.7
+      ],
+      "plane": "xz",
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          4013.2,
+          1016
+        ],
+        [
+          8026.4,
+          0
+        ]
+      ],
+      "depth": 50.8,
+      "material": "Natural_Cedar_Shakes"
+    },
+    {
+      "op": "prism",
+      "name": "Porch_6_12_Front_Gable_Roof",
+      "origin": [
+        -304.8,
+        -1828.8,
+        5105.4
+      ],
+      "plane": "xz",
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          1676.4,
+          660.4
+        ],
+        [
+          3352.8,
+          0
+        ]
+      ],
+      "depth": 2133.6,
+      "material": "Black_Asphalt_Shingle"
+    },
+    {
+      "op": "box",
+      "name": "Porch_Roof_Right_Shed_Wing",
+      "origin": [
+        3251.2,
+        -1828.8,
+        5105.4
+      ],
+      "size": [
+        5080,
+        2133.6,
+        152.4
+      ],
+      "material": "Black_Asphalt_Shingle"
+    },
+    {
+      "op": "prism",
+      "name": "Porch_Cedar_Shake_Gable_Face",
+      "origin": [
+        0,
+        -1879.6,
+        5105.4
+      ],
+      "plane": "xz",
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          1676.4,
+          584.2
+        ],
+        [
+          3352.8,
+          0
+        ]
+      ],
+      "depth": 50.8,
+      "material": "Natural_Cedar_Shakes"
+    },
+    {
+      "op": "box",
+      "name": "Porch_White_Fascia",
+      "origin": [
+        -304.8,
+        -1854.2,
+        5003.8
+      ],
+      "size": [
+        8636,
+        76.2,
+        203.2
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Front_Sparse_Vinyl_Siding_Course_01",
+      "origin": [
+        0,
+        -38.1,
+        2997.2
+      ],
+      "size": [
+        8026.4,
+        25.4,
+        20.3
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Front_Sparse_Vinyl_Siding_Course_02",
+      "origin": [
+        0,
+        -38.1,
+        3302
+      ],
+      "size": [
+        8026.4,
+        25.4,
+        20.3
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Front_Sparse_Vinyl_Siding_Course_03",
+      "origin": [
+        0,
+        -38.1,
+        3606.8
+      ],
+      "size": [
+        8026.4,
+        25.4,
+        20.3
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Front_Sparse_Vinyl_Siding_Course_04",
+      "origin": [
+        0,
+        -38.1,
+        3911.6
+      ],
+      "size": [
+        8026.4,
+        25.4,
+        20.3
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Front_Sparse_Vinyl_Siding_Course_05",
+      "origin": [
+        0,
+        -38.1,
+        4216.4
+      ],
+      "size": [
+        8026.4,
+        25.4,
+        20.3
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Front_Sparse_Vinyl_Siding_Course_06",
+      "origin": [
+        0,
+        -38.1,
+        4521.2
+      ],
+      "size": [
+        8026.4,
+        25.4,
+        20.3
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Front_Sparse_Vinyl_Siding_Course_07",
+      "origin": [
+        0,
+        -38.1,
+        4826
+      ],
+      "size": [
+        8026.4,
+        25.4,
+        20.3
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Front_Sparse_Vinyl_Siding_Course_08",
+      "origin": [
+        0,
+        -38.1,
+        5130.8
+      ],
+      "size": [
+        8026.4,
+        25.4,
+        20.3
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Front_Sparse_Vinyl_Siding_Course_09",
+      "origin": [
+        0,
+        -38.1,
+        5435.6
+      ],
+      "size": [
+        8026.4,
+        25.4,
+        20.3
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Front_Sparse_Vinyl_Siding_Course_10",
+      "origin": [
+        0,
+        -38.1,
+        5740.4
+      ],
+      "size": [
+        8026.4,
+        25.4,
+        20.3
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Front_Sparse_Vinyl_Siding_Course_11",
+      "origin": [
+        0,
+        -38.1,
+        6045.2
+      ],
+      "size": [
+        8026.4,
+        25.4,
+        20.3
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Front_Sparse_Vinyl_Siding_Course_12",
+      "origin": [
+        0,
+        -38.1,
+        6350
+      ],
+      "size": [
+        8026.4,
+        25.4,
+        20.3
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Front_Sparse_Vinyl_Siding_Course_13",
+      "origin": [
+        0,
+        -38.1,
+        6654.8
+      ],
+      "size": [
+        8026.4,
+        25.4,
+        20.3
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Front_Sparse_Vinyl_Siding_Course_14",
+      "origin": [
+        0,
+        -38.1,
+        6959.6
+      ],
+      "size": [
+        8026.4,
+        25.4,
+        20.3
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Front_Sparse_Vinyl_Siding_Course_15",
+      "origin": [
+        0,
+        -38.1,
+        7264.4
+      ],
+      "size": [
+        8026.4,
+        25.4,
+        20.3
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Front_Sparse_Vinyl_Siding_Course_16",
+      "origin": [
+        0,
+        -38.1,
+        7569.2
+      ],
+      "size": [
+        8026.4,
+        25.4,
+        20.3
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Front_Gable_Cedar_Shake_Batten_01",
+      "origin": [
+        0,
+        -76.2,
+        7988.3
+      ],
+      "size": [
+        50.8,
+        25.4,
+        914.4
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Front_Gable_Cedar_Shake_Batten_02",
+      "origin": [
+        802.6,
+        -76.2,
+        8064.5
+      ],
+      "size": [
+        50.8,
+        25.4,
+        914.4
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Front_Gable_Cedar_Shake_Batten_03",
+      "origin": [
+        1605.3,
+        -76.2,
+        8140.7
+      ],
+      "size": [
+        50.8,
+        25.4,
+        914.4
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Front_Gable_Cedar_Shake_Batten_04",
+      "origin": [
+        2407.9,
+        -76.2,
+        7988.3
+      ],
+      "size": [
+        50.8,
+        25.4,
+        914.4
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Front_Gable_Cedar_Shake_Batten_05",
+      "origin": [
+        3210.6,
+        -76.2,
+        8064.5
+      ],
+      "size": [
+        50.8,
+        25.4,
+        914.4
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Front_Gable_Cedar_Shake_Batten_06",
+      "origin": [
+        4013.2,
+        -76.2,
+        8140.7
+      ],
+      "size": [
+        50.8,
+        25.4,
+        914.4
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Front_Gable_Cedar_Shake_Batten_07",
+      "origin": [
+        4815.8,
+        -76.2,
+        7988.3
+      ],
+      "size": [
+        50.8,
+        25.4,
+        914.4
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Front_Gable_Cedar_Shake_Batten_08",
+      "origin": [
+        5618.5,
+        -76.2,
+        8064.5
+      ],
+      "size": [
+        50.8,
+        25.4,
+        914.4
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Front_Gable_Cedar_Shake_Batten_09",
+      "origin": [
+        6421.1,
+        -76.2,
+        8140.7
+      ],
+      "size": [
+        50.8,
+        25.4,
+        914.4
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Front_Gable_Cedar_Shake_Batten_10",
+      "origin": [
+        7223.8,
+        -76.2,
+        7988.3
+      ],
+      "size": [
+        50.8,
+        25.4,
+        914.4
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Main_Stair_Run_15R_From_Plan",
+      "origin": [
+        1041.4,
+        1219.2,
+        2692.4
+      ],
+      "size": [
+        1041.4,
+        2997.2,
+        127
+      ],
+      "material": "Pressure_Treated_Wood"
+    },
+    {
+      "op": "box",
+      "name": "Main_Stair_Tread_01",
+      "origin": [
+        1041.4,
+        1219.2,
+        2692.4
+      ],
+      "size": [
+        1041.4,
+        203.2,
+        50.8
+      ],
+      "material": "Pressure_Treated_Wood"
+    },
+    {
+      "op": "box",
+      "name": "Main_Stair_Tread_02",
+      "origin": [
+        1041.4,
+        1417.3,
+        2858.3
+      ],
+      "size": [
+        1041.4,
+        203.2,
+        50.8
+      ],
+      "material": "Pressure_Treated_Wood"
+    },
+    {
+      "op": "box",
+      "name": "Main_Stair_Tread_03",
+      "origin": [
+        1041.4,
+        1615.4,
+        3024.3
+      ],
+      "size": [
+        1041.4,
+        203.2,
+        50.8
+      ],
+      "material": "Pressure_Treated_Wood"
+    },
+    {
+      "op": "box",
+      "name": "Main_Stair_Tread_04",
+      "origin": [
+        1041.4,
+        1813.5,
+        3190.2
+      ],
+      "size": [
+        1041.4,
+        203.2,
+        50.8
+      ],
+      "material": "Pressure_Treated_Wood"
+    },
+    {
+      "op": "box",
+      "name": "Main_Stair_Tread_05",
+      "origin": [
+        1041.4,
+        2011.6,
+        3356.2
+      ],
+      "size": [
+        1041.4,
+        203.2,
+        50.8
+      ],
+      "material": "Pressure_Treated_Wood"
+    },
+    {
+      "op": "box",
+      "name": "Main_Stair_Tread_06",
+      "origin": [
+        1041.4,
+        2209.7,
+        3522.1
+      ],
+      "size": [
+        1041.4,
+        203.2,
+        50.8
+      ],
+      "material": "Pressure_Treated_Wood"
+    },
+    {
+      "op": "box",
+      "name": "Main_Stair_Tread_07",
+      "origin": [
+        1041.4,
+        2407.8,
+        3688.1
+      ],
+      "size": [
+        1041.4,
+        203.2,
+        50.8
+      ],
+      "material": "Pressure_Treated_Wood"
+    },
+    {
+      "op": "box",
+      "name": "Main_Stair_Tread_08",
+      "origin": [
+        1041.4,
+        2605.9,
+        3854
+      ],
+      "size": [
+        1041.4,
+        203.2,
+        50.8
+      ],
+      "material": "Pressure_Treated_Wood"
+    },
+    {
+      "op": "box",
+      "name": "Main_Stair_Tread_09",
+      "origin": [
+        1041.4,
+        2804,
+        4020
+      ],
+      "size": [
+        1041.4,
+        203.2,
+        50.8
+      ],
+      "material": "Pressure_Treated_Wood"
+    },
+    {
+      "op": "box",
+      "name": "Main_Stair_Tread_10",
+      "origin": [
+        1041.4,
+        3002.1,
+        4185.9
+      ],
+      "size": [
+        1041.4,
+        203.2,
+        50.8
+      ],
+      "material": "Pressure_Treated_Wood"
+    },
+    {
+      "op": "box",
+      "name": "Main_Stair_Tread_11",
+      "origin": [
+        1041.4,
+        3200.2,
+        4351.9
+      ],
+      "size": [
+        1041.4,
+        203.2,
+        50.8
+      ],
+      "material": "Pressure_Treated_Wood"
+    },
+    {
+      "op": "box",
+      "name": "Main_Stair_Tread_12",
+      "origin": [
+        1041.4,
+        3398.3,
+        4517.8
+      ],
+      "size": [
+        1041.4,
+        203.2,
+        50.8
+      ],
+      "material": "Pressure_Treated_Wood"
+    },
+    {
+      "op": "box",
+      "name": "Main_Stair_Tread_13",
+      "origin": [
+        1041.4,
+        3596.4,
+        4683.8
+      ],
+      "size": [
+        1041.4,
+        203.2,
+        50.8
+      ],
+      "material": "Pressure_Treated_Wood"
+    },
+    {
+      "op": "box",
+      "name": "Main_Stair_Tread_14",
+      "origin": [
+        1041.4,
+        3794.5,
+        4849.7
+      ],
+      "size": [
+        1041.4,
+        203.2,
+        50.8
+      ],
+      "material": "Pressure_Treated_Wood"
+    },
+    {
+      "op": "box",
+      "name": "Main_Stair_Tread_15",
+      "origin": [
+        1041.4,
+        3992.6,
+        5015.7
+      ],
+      "size": [
+        1041.4,
+        203.2,
+        50.8
+      ],
+      "material": "Pressure_Treated_Wood"
+    },
+    {
+      "op": "box",
+      "name": "Kitchen_Cabinet_L_Run",
+      "origin": [
+        2438.4,
+        1270,
+        2692.4
+      ],
+      "size": [
+        558.8,
+        2133.6,
+        914.4
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Kitchen_Island_From_Plan",
+      "origin": [
+        4013.2,
+        1930.4,
+        2692.4
+      ],
+      "size": [
+        914.4,
+        1828.8,
+        914.4
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Main_Bath_Volume",
+      "origin": [
+        711.2,
+        4165.6,
+        2692.4
+      ],
+      "size": [
+        1320.8,
+        1219.2,
+        2133.6
+      ],
+      "material": "White_Trim_Fascia"
+    },
+    {
+      "op": "box",
+      "name": "Upper_Master_Bedroom_Label_Block",
+      "origin": [
+        3759.2,
+        3657.6,
+        5435.6
+      ],
+      "size": [
+        3530.6,
+        3733.8,
+        50.8
+      ],
+      "material": "Plan_Reference_Red"
+    },
+    {
+      "op": "box",
+      "name": "Upper_Bedroom2_Label_Block",
+      "origin": [
+        3759.2,
+        304.8,
+        5435.6
+      ],
+      "size": [
+        3530.6,
+        3276.6,
+        50.8
+      ],
+      "material": "Plan_Reference_Red"
+    },
+    {
+      "op": "box",
+      "name": "Detached_Garage_4in_Slab",
+      "origin": [
+        10464.8,
+        609.6,
+        0
+      ],
+      "size": [
+        4876.8,
+        6096,
+        101.6
+      ],
+      "material": "Concrete_Foundation"
+    },
+    {
+      "op": "panel_with_openings",
+      "name": "Detached_Garage_Front_With_10x8_Door",
+      "origin": [
+        10464.8,
+        609.6,
+        101.6
+      ],
+      "plane": "xz",
+      "size": [
+        4876.8,
+        2895.6
+      ],
+      "thickness": 203.2,
+      "openings": [
+        {
+          "name": "Garage_10x8_Overhead_Door",
+          "x": 914.4,
+          "y": 0,
+          "width": 3048,
+          "height": 2438.4
+        }
+      ],
+      "material": "Beige_Vinyl_Siding"
+    },
+    {
+      "op": "panel_with_openings",
+      "name": "Detached_Garage_Rear_Wall",
+      "origin": [
+        10464.8,
+        6502.4,
+        101.6
+      ],
+      "plane": "xz",
+      "size": [
+        4876.8,
+        2895.6
+      ],
+      "thickness": 203.2,
+      "openings": [],
+      "material": "Beige_Vinyl_Siding"
+    },
+    {
+      "op": "panel_with_openings",
+      "name": "Detached_Garage_Left_Wall",
+      "origin": [
+        10464.8,
+        609.6,
+        101.6
+      ],
+      "plane": "yz",
+      "size": [
+        6096,
+        2895.6
+      ],
+      "thickness": 203.2,
+      "openings": [],
+      "material": "Beige_Vinyl_Siding"
+    },
+    {
+      "op": "panel_with_openings",
+      "name": "Detached_Garage_Right_Wall_With_Door",
+      "origin": [
+        15138.4,
+        609.6,
+        101.6
+      ],
+      "plane": "yz",
+      "size": [
+        6096,
+        2895.6
+      ],
+      "thickness": 203.2,
+      "openings": [
+        {
+          "name": "Garage_3ft_Man_Door",
+          "x": 2895.6,
+          "y": 0,
+          "width": 914.4,
+          "height": 2336.8
+        }
+      ],
+      "material": "Beige_Vinyl_Siding"
+    },
+    {
+      "op": "box",
+      "name": "Garage_10x8_Overhead_Door_Panel",
+      "origin": [
+        11379.2,
+        584.2,
+        101.6
+      ],
+      "size": [
+        3048,
+        50.8,
+        2438.4
+      ],
+      "material": "White_Entry_Door"
+    },
+    {
+      "op": "prism",
+      "name": "Detached_Garage_4_12_Roof",
+      "origin": [
+        10160,
+        304.8,
+        2997.2
+      ],
+      "plane": "xz",
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          2743.2,
+          812.8
+        ],
+        [
+          5486.4,
+          0
+        ]
+      ],
+      "depth": 6705.6,
+      "material": "Black_Asphalt_Shingle"
+    },
+    {
+      "op": "style",
+      "name": "Architectural_Drawing_Check",
+      "display_edges": true,
+      "profiles": true,
+      "profile_width": 1,
+      "face_style": "shaded_with_textures",
+      "background_color": "#f7f4ed",
+      "sky_color": "#cfe8ff",
+      "ground_color": "#d8d0bf"
+    },
+    {
+      "op": "shadow",
+      "display": true,
+      "time": "2026-05-09T10:45:00+08:00",
+      "light": 78,
+      "dark": 35,
+      "use_sun_for_shading": true
+    },
+    {
+      "op": "rendering_options",
+      "edge_display_mode": 1,
+      "draw_hidden_geometry": false,
+      "display_color_by_layer": false,
+      "transparency": true
+    },
+    {
+      "op": "scene",
+      "name": "Calgary_Front_Elevation_Check",
+      "camera": {
+        "eye": [
+          4013.2,
+          -13716,
+          5486.4
+        ],
+        "target": [
+          4013.2,
+          0,
+          3657.6
+        ],
+        "up": [
+          0,
+          0,
+          1
+        ],
+        "fov": 28
+      }
+    },
+    {
+      "op": "scene",
+      "name": "Calgary_Three_Quarter_With_Garage",
+      "camera": {
+        "eye": [
+          16560.8,
+          -10972.8,
+          6705.6
+        ],
+        "target": [
+          4013.2,
+          3708.4,
+          2743.2
+        ],
+        "up": [
+          0,
+          0,
+          1
+        ],
+        "fov": 35
+      }
+    },
+    {
+      "op": "camera",
+      "eye": [
+        16560.8,
+        -10972.8,
+        6705.6
+      ],
+      "target": [
+        4013.2,
+        3708.4,
+        2743.2
+      ],
+      "up": [
+        0,
+        0,
+        1
+      ],
+      "fov": 35
+    }
+  ]
+}

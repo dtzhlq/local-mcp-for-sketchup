@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "notes": [
+    "Initial Switch controller correction file. Edit this file after reviewing review/index.html.",
+    "Scale is a layout prior until a measured physical dimension is provided."
+  ],
+  "scale": {
+    "known_width": 280,
+    "known_height": 155,
+    "known_depth": 42,
+    "confidence": 0.62
+  },
+  "parts": [],
+  "review": {
+    "open_questions": [
+      "Confirm whether the generated right thumbstick position matches the real controller.",
+      "Confirm whether the left button cluster should be modeled as four round buttons or a directional cross.",
+      "Confirm rear grip thickness once a true top view or measured depth is available."
+    ]
+  }
+}

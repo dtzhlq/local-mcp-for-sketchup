@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "units": "mm",
+  "operations": [
+    { "op": "reset" },
+    { "op": "material", "name": "Helper_Plastic", "color": "#d8d8d0" },
+    { "op": "material", "name": "Helper_Dark", "color": "#050505" },
+    { "op": "material", "name": "Helper_Accent", "color": "#3aa7ff" },
+    { "op": "rounded_box", "name": "Helper_Demo_Internal_Panel", "origin": [-90, -60, 0], "size": [180, 120, 8], "radius": 12, "segments": 5, "material": "Helper_Plastic", "smooth": "all" },
+    { "op": "slot_array", "name": "Helper_Demo_Speaker_Grille", "center": [0, -24, 12], "count": 5, "spacing": 54, "length": 44, "width": 7, "depth": 2.5, "direction": "x", "segments": 4, "material": "Helper_Dark", "smooth": "all" },
+    { "op": "rib", "name": "Helper_Demo_Rib_X", "origin": [-70, 34, 8], "length": 140, "height": 22, "thickness": 5, "direction": "x", "material": "Helper_Plastic" },
+    { "op": "rib", "name": "Helper_Demo_Rib_Y", "origin": [-4, -48, 8], "length": 96, "height": 18, "thickness": 4, "direction": "y", "material": "Helper_Plastic" },
+    { "op": "standoff_boss", "name": "Helper_Demo_Left_Standoff", "center": [-58, 38, 8], "outer_radius": 15, "inner_radius": 4.5, "height": 24, "segments": 14, "material": "Helper_Plastic", "hole_material": "Helper_Dark", "smooth": "all" },
+    { "op": "standoff_boss", "name": "Helper_Demo_Right_Standoff", "center": [58, 38, 8], "outer_radius": 15, "inner_radius": 4.5, "height": 24, "segments": 14, "material": "Helper_Plastic", "hole_material": "Helper_Dark", "smooth": "all" },
+    { "op": "text_emboss", "name": "Helper_Demo_Internal_Label", "center": [0, 42, 34], "text": "07", "height": 11, "depth": 1.8, "align": "center", "material": "Helper_Accent" },
+    { "op": "scene", "name": "Structured_Product_Helper_Top", "camera": { "eye": [0, -420, 320], "target": [0, 0, 18], "up": [0, 0, 1], "fov": 35 } }
+  ]
+}

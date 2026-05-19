@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "units": "mm",
+  "operations": [
+    { "op": "reset" },
+    { "op": "level", "name": "Level_1", "elevation": 0, "height": 3000 },
+    { "op": "material", "name": "Concrete", "color": "#b8b2a8" },
+    { "op": "material", "name": "Wall", "color": "#eee5d6" },
+    { "op": "material", "name": "Wood", "color": "#8a5a35" },
+    { "op": "material", "name": "Glass", "color": "#88ccee" },
+    { "op": "floor_slab", "name": "Level_1_Slab", "origin": [0, 0, 0], "width": 3600, "depth": 2400, "thickness": 160, "material": "Concrete" },
+    { "op": "wall", "name": "Front_Wall", "start": [0, 0, 160], "end": [3600, 0, 160], "height": 2600, "thickness": 120, "openings": [
+      { "name": "Door_Opening", "x": 400, "y": 0, "width": 900, "height": 2100 },
+      { "name": "Window_Opening", "x": 1900, "y": 900, "width": 900, "height": 800 }
+    ], "material": "Wall" },
+    { "op": "wall", "name": "Side_Wall", "start": [0, 0, 160], "end": [0, 2400, 160], "height": 2600, "thickness": 120, "material": "Wall" },
+    { "op": "door", "name": "Entry_Door", "origin": [425, -45, 160], "plane": "xz", "width": 850, "height": 2050, "thickness": 40, "material": "Wood" },
+    { "op": "window", "name": "Front_Window", "origin": [1925, -35, 1080], "plane": "xz", "width": 850, "height": 720, "thickness": 24, "material": "Glass" },
+    { "op": "stairs", "name": "Entry_Stairs", "origin": [0, -900, 0], "steps": 4, "width": 1400, "tread_depth": 300, "riser_height": 160, "direction": "y", "material": "Concrete" },
+    { "op": "railing", "name": "Front_Railing", "path": [[0, -940, 640], [1800, -940, 640]], "height": 900, "rail_radius": 35, "post_radius": 30, "post_spacing": 600, "material": "Wood" },
+    { "op": "scene", "name": "Building_DSL_View", "camera": { "eye": [5000, -5200, 2800], "target": [1400, 500, 900], "up": [0, 0, 1], "fov": 35 } }
+  ]
+}

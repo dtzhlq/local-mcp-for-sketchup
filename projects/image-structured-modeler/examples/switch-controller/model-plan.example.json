@@ -1,0 +1,109 @@
+{
+  "version": 1,
+  "object": {
+    "type": "game_controller",
+    "name": "Switch Joy-Con Grip Controller",
+    "source_images": [
+      "test/手柄/IMG_0152.jpeg",
+      "test/手柄/IMG_0153.jpeg",
+      "test/手柄/IMG_0154.jpeg",
+      "test/手柄/IMG_0155.jpeg",
+      "test/手柄/IMG_0156.jpeg",
+      "test/手柄/IMG_0157.jpeg"
+    ]
+  },
+  "scale": {
+    "units": "mm",
+    "known_width": null,
+    "known_height": null,
+    "known_depth": null,
+    "confidence": 0.35
+  },
+  "views": [
+    { "id": "front_photo", "kind": "front", "source_image": "test/手柄/IMG_0156.jpeg", "confidence": 0.74 },
+    { "id": "rear_photo", "kind": "rear", "source_image": "test/手柄/IMG_0154.jpeg", "confidence": 0.78 },
+    { "id": "side_photo", "kind": "right", "source_image": "test/手柄/IMG_0153.jpeg", "confidence": 0.68 },
+    { "id": "low_front_photo", "kind": "oblique", "source_image": "test/手柄/IMG_0157.jpeg", "confidence": 0.55 }
+  ],
+  "parts": [
+    {
+      "id": "center_grip_body",
+      "type": "beveled_panel",
+      "material": "Satin_Black_Plastic",
+      "parameters": { "width": 96, "height": 155, "thickness": 32, "corner_radius": 8 },
+      "evidence": [
+        { "view": "front_photo", "kind": "silhouette", "confidence": 0.7, "note": "black central rectangular grip visible in front" },
+        { "view": "rear_photo", "kind": "silhouette", "confidence": 0.8, "note": "rear black bridge and central back plate" }
+      ]
+    },
+    {
+      "id": "left_joycon_shell",
+      "type": "lofted_shell",
+      "material": "Warm_White_Plastic",
+      "parameters": { "mirror_pair": "right_joycon_shell", "needs_profile_trace": true },
+      "evidence": [
+        { "view": "front_photo", "kind": "silhouette", "confidence": 0.65, "note": "white shell has rounded outside edge and near-straight inner rail" },
+        { "view": "side_photo", "kind": "edge", "confidence": 0.55, "note": "thickness tapers into black rear grip" }
+      ],
+      "uncertainty": ["not a true orthographic photo; needs rectification"]
+    },
+    {
+      "id": "right_joycon_shell",
+      "type": "lofted_shell",
+      "material": "Warm_White_Plastic",
+      "parameters": { "mirror_pair": "left_joycon_shell", "needs_profile_trace": true },
+      "evidence": [
+        { "view": "front_photo", "kind": "silhouette", "confidence": 0.65 },
+        { "view": "side_photo", "kind": "edge", "confidence": 0.55 }
+      ],
+      "uncertainty": ["button side has occlusion from perspective"]
+    },
+    {
+      "id": "left_thumbstick",
+      "type": "analog_stick",
+      "parent": "left_joycon_shell",
+      "material": "Rubber_Thumbstick",
+      "parameters": { "center": [-112, 24, 27], "outer_radius": 19, "top_radius": 18, "height": 20, "recess_depth": 3 },
+      "evidence": [
+        { "view": "front_photo", "kind": "center_point", "confidence": 0.82 },
+        { "view": "side_photo", "kind": "edge", "confidence": 0.6, "note": "stick protrusion visible from side" }
+      ]
+    },
+    {
+      "id": "abxy_cluster",
+      "type": "button_on_panel",
+      "parent": "right_joycon_shell",
+      "material": "Gloss_Black_Button",
+      "parameters": {
+        "buttons": [
+          { "label": "X", "center": [104, 35], "radius": 12 },
+          { "label": "Y", "center": [84, 14], "radius": 11 },
+          { "label": "A", "center": [128, 8], "radius": 11 },
+          { "label": "B", "center": [106, -17], "radius": 11 }
+        ]
+      },
+      "evidence": [
+        { "view": "front_photo", "kind": "center_point", "confidence": 0.85 }
+      ]
+    },
+    {
+      "id": "rear_grip_pair",
+      "type": "grip_handle",
+      "material": "Satin_Black_Plastic",
+      "parameters": { "symmetric": true, "needs_side_profile": true, "needs_rear_profile": true },
+      "evidence": [
+        { "view": "rear_photo", "kind": "silhouette", "confidence": 0.78, "note": "large black bulbous rear handles" },
+        { "view": "side_photo", "kind": "silhouette", "confidence": 0.72, "note": "egg-shaped handle depth" }
+      ],
+      "uncertainty": ["requires loft_between_profiles for realistic handle shape"]
+    }
+  ],
+  "review": {
+    "overlay_path": null,
+    "open_questions": [
+      "Need a rectified front silhouette before rebuilding Joy-Con shells.",
+      "Need side thickness profile for back grips.",
+      "Known physical width would improve scale confidence."
+    ]
+  }
+}

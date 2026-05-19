@@ -1,0 +1,126 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/model-plan.schema.json",
+  "title": "Image Structured Model Plan",
+  "type": "object",
+  "required": ["version", "object", "scale", "parts"],
+  "properties": {
+    "version": { "const": 1 },
+    "object": {
+      "type": "object",
+      "required": ["type", "name"],
+      "properties": {
+        "type": { "type": "string", "examples": ["game_controller", "tent", "furniture", "gadget"] },
+        "name": { "type": "string" },
+        "source_images": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "scale": {
+      "type": "object",
+      "required": ["units"],
+      "properties": {
+        "units": { "const": "mm" },
+        "known_width": { "type": ["number", "null"] },
+        "known_height": { "type": ["number", "null"] },
+        "known_depth": { "type": ["number", "null"] },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "views": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "kind", "source_image"],
+        "properties": {
+          "id": { "type": "string" },
+          "kind": { "enum": ["front", "rear", "left", "right", "top", "bottom", "oblique", "detail"] },
+          "source_image": { "type": "string" },
+          "rectified_image": { "type": "string" },
+          "confidence": { "type": "number", "minimum": 0, "maximum": 1 }
+        }
+      }
+    },
+    "parts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "type", "material", "evidence"],
+        "properties": {
+          "id": { "type": "string" },
+          "type": {
+            "enum": [
+              "rounded_box",
+              "beveled_panel",
+              "lofted_shell",
+              "button_on_panel",
+              "analog_stick",
+              "trigger",
+              "grip_handle",
+              "slot",
+              "screw_hole",
+              "logo_emboss",
+              "text_engrave",
+              "mesh_reference"
+            ]
+          },
+          "parent": { "type": "string" },
+          "material": { "type": "string" },
+          "transform": {
+            "type": "object",
+            "properties": {
+              "origin": { "$ref": "#/$defs/vec3" },
+              "rotateZ": { "type": "number" }
+            }
+          },
+          "parameters": { "type": "object" },
+          "profile_front": { "$ref": "#/$defs/polyline2" },
+          "profile_side": { "$ref": "#/$defs/polyline2" },
+          "profile_top": { "$ref": "#/$defs/polyline2" },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["view", "kind"],
+              "properties": {
+                "view": { "type": "string" },
+                "kind": { "enum": ["silhouette", "center_point", "edge", "color_region", "text_label", "manual_note"] },
+                "points": { "$ref": "#/$defs/polyline2" },
+                "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+                "note": { "type": "string" }
+              }
+            }
+          },
+          "uncertainty": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      }
+    },
+    "review": {
+      "type": "object",
+      "properties": {
+        "overlay_path": { "type": ["string", "null"] },
+        "open_questions": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  },
+  "$defs": {
+    "vec3": {
+      "type": "array",
+      "prefixItems": [{ "type": "number" }, { "type": "number" }, { "type": "number" }],
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "point2": {
+      "type": "array",
+      "prefixItems": [{ "type": "number" }, { "type": "number" }],
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "polyline2": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/point2" }
+    }
+  }
+}

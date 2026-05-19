@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "units": "mm",
+  "operations": [
+    { "op": "reset" },
+    { "op": "material", "name": "Edit_Base", "color": "#d7d9dc" },
+    { "op": "material", "name": "Edit_Accent", "color": "#3498db" },
+    { "op": "material", "name": "Edit_Hidden", "color": "#222222" },
+    { "op": "box", "name": "Editable_Block", "origin": [0, 0, 0], "size": [100, 60, 20], "material": "Edit_Base" },
+    { "op": "box", "name": "Temporary_Block", "origin": [130, 0, 0], "size": [30, 30, 20], "material": "Edit_Hidden" },
+    { "op": "box", "name": "Center_Pivot_Block", "origin": [220, 0, 0], "size": [40, 30, 20], "material": "Edit_Base" },
+    { "op": "rename", "name": "Editable_Block", "new_name": "Edited_Block" },
+    { "op": "set_material", "name": "Edited_Block", "material": "Edit_Accent" },
+    { "op": "transform_object", "name": "Edited_Block", "translate": [20, 10, 5], "rotateZ": 15, "scale": [1.2, 1, 1] },
+    { "op": "transform_object", "name": "Center_Pivot_Block", "pivot": "center", "scale": [1.5, 1, 1], "rotateZ": 20 },
+    { "op": "set_visibility", "name": "Temporary_Block", "visible": false },
+    { "op": "profile_extrude", "name": "Panel_Profile_With_Hole", "origin": [0, 120, 0], "plane": "xy", "outer": [[0, 0], [140, 0], [140, 90], [0, 90]], "holes": [{ "points": [[45, 25], [95, 25], [95, 60], [45, 60]] }], "depth": 12, "material": "Edit_Base" },
+    { "op": "face_with_holes", "name": "Flat_Profile_With_Hole", "origin": [180, 120, 0], "plane": "xy", "outer": [[0, 0], [90, 0], [90, 60], [0, 60]], "holes": [{ "points": [[30, 18], [60, 18], [60, 42], [30, 42]] }], "material": "Edit_Accent" },
+    { "op": "delete", "name": "Temporary_Block" },
+    { "op": "scene", "name": "Editing_Profile_QA", "camera": { "eye": [260, -420, 260], "target": [110, 80, 20], "up": [0, 0, 1], "fov": 35 } }
+  ]
+}

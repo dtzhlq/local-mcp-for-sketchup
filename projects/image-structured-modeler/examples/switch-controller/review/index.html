@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Switch Joy-Con Grip Controller</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #1d2430;
+      --muted: #5c6675;
+      --line: #d9dde3;
+      --panel: #ffffff;
+      --soft: #f5f7fa;
+      --accent: #0f766e;
+      --warn: #a15c00;
+      --bad: #b42318;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: #eef1f5;
+      line-height: 1.45;
+    }
+    header {
+      padding: 28px 32px 18px;
+      background: #ffffff;
+      border-bottom: 1px solid var(--line);
+    }
+    main { padding: 24px 32px 40px; max-width: 1440px; margin: 0 auto; }
+    h1 { margin: 0 0 6px; font-size: 28px; font-weight: 760; letter-spacing: 0; }
+    h2 { margin: 0 0 14px; font-size: 18px; font-weight: 720; letter-spacing: 0; }
+    h3 { margin: 0 0 10px; font-size: 15px; font-weight: 720; letter-spacing: 0; }
+    p { margin: 0; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.92em; }
+    .subtle { color: var(--muted); }
+    .grid { display: grid; gap: 16px; }
+    .summary { grid-template-columns: repeat(4, minmax(0, 1fr)); margin-bottom: 20px; }
+    .metric {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      padding: 14px;
+      min-height: 88px;
+    }
+    .metric strong { display: block; font-size: 24px; margin-top: 6px; }
+    .section {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      padding: 18px;
+      margin-bottom: 18px;
+    }
+    .two { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+    .image-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .image-block {
+      border: 1px solid var(--line);
+      background: var(--soft);
+      min-width: 0;
+    }
+    .image-block img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-bottom: 1px solid var(--line);
+      background: #111;
+    }
+    .image-body { padding: 12px; }
+    .tag {
+      display: inline-block;
+      padding: 2px 7px;
+      border: 1px solid var(--line);
+      background: #fff;
+      margin: 0 5px 5px 0;
+      font-size: 12px;
+    }
+    .tag.warn { color: var(--warn); border-color: #e2bd7d; background: #fff8e8; }
+    .tag.good { color: var(--accent); border-color: #9dd9d1; background: #eefaf8; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { background: var(--soft); font-weight: 700; }
+    ul { margin: 0; padding-left: 18px; }
+    li + li { margin-top: 4px; }
+    .mono-list li { word-break: break-word; }
+    @media (max-width: 900px) {
+      header { padding: 22px 18px 14px; }
+      main { padding: 18px; }
+      .summary, .two, .image-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Switch Joy-Con Grip Controller</h1>
+    <p class="subtle">Generated from deterministic CV baseline plus optional manual corrections. Review before queue runtime export.</p>
+  </header>
+  <main>
+    <section class="grid summary">
+      <div class="metric"><span class="subtle">Image Quality</span><strong>medium</strong></div>
+      <div class="metric"><span class="subtle">Images</span><strong>6</strong></div>
+      <div class="metric"><span class="subtle">Parts</span><strong>9</strong></div>
+      <div class="metric"><span class="subtle">DSL Ops</span><strong>44</strong></div>
+    </section>
+
+    <section class="grid two">
+      <div class="section">
+        <h2>Coverage</h2>
+        <p><span class="tag good">oblique</span><span class="tag good">right</span><span class="tag good">rear</span><span class="tag good">front</span></p>
+        <h3 style="margin-top:14px">Missing Views</h3>
+        <p><span class="tag warn">top</span></p>
+        <h3 style="margin-top:14px">Risks</h3>
+        <ul><li>true top view is missing</li></ul>
+      </div>
+      <div class="section">
+        <h2>Manual Corrections</h2>
+        <p><span class="tag ">0 part corrections</span><span class="tag good">5 applied</span></p>
+  <h3 style="margin-top:14px">Scale</h3>
+  <p class="subtle">width 280 · height 155 · depth 42 · confidence 0.62</p>
+  <h3 style="margin-top:14px">Notes</h3><ul><li>Initial Switch controller correction file. Edit this file after reviewing review/index.html.</li><li>Scale is a layout prior until a measured physical dimension is provided.</li></ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Open Questions</h2>
+      <ul><li>Confirm whether the generated right thumbstick position matches the real controller.</li><li>Confirm whether the left button cluster should be modeled as four round buttons or a directional cross.</li><li>Confirm rear grip thickness once a true top view or measured depth is available.</li></ul>
+    </section>
+
+    <section class="section">
+      <h2>Review Overlays</h2>
+      <div class="grid image-grid">
+        <article class="image-block">
+    <img src="../review-overlays/IMG_0152-overlay.png" alt="IMG_0152 review overlay">
+    <div class="image-body">
+      <h3>IMG_0152.jpeg</h3>
+      <p><span class="tag good">oblique</span><span class="tag ">confidence 0.51</span></p>
+      <p class="subtle">edges 28635 · density 0.04714 · symmetry 0.178</p>
+      <h3 style="margin-top:12px">Component Candidates</h3>
+      <p><span class="tag ">uncertain_main_object</span></p>
+      <h3 style="margin-top:12px">Risks</h3><ul><li>weak vertical symmetry signal</li><li>view kind needs manual confirmation</li></ul>
+    </div>
+  </article>
+<article class="image-block">
+    <img src="../review-overlays/IMG_0153-overlay.png" alt="IMG_0153 review overlay">
+    <div class="image-body">
+      <h3>IMG_0153.jpeg</h3>
+      <p><span class="tag good">right</span><span class="tag ">confidence 0.68</span></p>
+      <p class="subtle">edges 22878 · density 0.03766 · symmetry 0.168</p>
+      <h3 style="margin-top:12px">Component Candidates</h3>
+      <p><span class="tag ">side_thickness_profile</span></p>
+      <h3 style="margin-top:12px">Risks</h3><ul><li>weak vertical symmetry signal</li></ul>
+    </div>
+  </article>
+<article class="image-block">
+    <img src="../review-overlays/IMG_0154-overlay.png" alt="IMG_0154 review overlay">
+    <div class="image-body">
+      <h3>IMG_0154.jpeg</h3>
+      <p><span class="tag good">rear</span><span class="tag ">confidence 0.78</span></p>
+      <p class="subtle">edges 26836 · density 0.04417 · symmetry 0.324</p>
+      <h3 style="margin-top:12px">Component Candidates</h3>
+      <p><span class="tag ">rear_grip_left</span><span class="tag ">center_grip_body</span><span class="tag ">rear_grip_right</span></p>
+      
+    </div>
+  </article>
+<article class="image-block">
+    <img src="../review-overlays/IMG_0155-overlay.png" alt="IMG_0155 review overlay">
+    <div class="image-body">
+      <h3>IMG_0155.jpeg</h3>
+      <p><span class="tag good">oblique</span><span class="tag ">confidence 0.55</span></p>
+      <p class="subtle">edges 27122 · density 0.04465 · symmetry 0.278</p>
+      <h3 style="margin-top:12px">Component Candidates</h3>
+      <p><span class="tag ">uncertain_main_object</span></p>
+      <h3 style="margin-top:12px">Risks</h3><ul><li>view kind needs manual confirmation</li></ul>
+    </div>
+  </article>
+<article class="image-block">
+    <img src="../review-overlays/IMG_0156-overlay.png" alt="IMG_0156 review overlay">
+    <div class="image-body">
+      <h3>IMG_0156.jpeg</h3>
+      <p><span class="tag good">front</span><span class="tag ">confidence 0.74</span></p>
+      <p class="subtle">edges 22123 · density 0.03642 · symmetry 0.65</p>
+      <h3 style="margin-top:12px">Component Candidates</h3>
+      <p><span class="tag ">left_joycon_shell</span><span class="tag ">center_grip_body</span><span class="tag ">right_joycon_shell</span><span class="tag ">abxy_cluster</span><span class="tag ">left_button_cluster</span></p>
+      
+    </div>
+  </article>
+<article class="image-block">
+    <img src="../review-overlays/IMG_0157-overlay.png" alt="IMG_0157 review overlay">
+    <div class="image-body">
+      <h3>IMG_0157.jpeg</h3>
+      <p><span class="tag good">oblique</span><span class="tag ">confidence 0.58</span></p>
+      <p class="subtle">edges 23084 · density 0.038 · symmetry 0.348</p>
+      <h3 style="margin-top:12px">Component Candidates</h3>
+      <p><span class="tag ">uncertain_main_object</span></p>
+      <h3 style="margin-top:12px">Risks</h3><ul><li>view kind needs manual confirmation</li></ul>
+    </div>
+  </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Model Plan Parts</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Part</th><th>Type</th><th>Material</th><th>Evidence</th><th>Uncertainty</th></tr></thead>
+          <tbody>
+            <tr>
+    <td><code>center_grip_body</code></td>
+    <td>beveled_panel</td>
+    <td>Satin_Black_Plastic</td>
+    <td>rear_photo:silhouette, front_photo:silhouette</td>
+    <td></td>
+  </tr>
+<tr>
+    <td><code>left_joycon_shell</code></td>
+    <td>lofted_shell</td>
+    <td>Warm_White_Plastic</td>
+    <td>front_photo:silhouette</td>
+    <td></td>
+  </tr>
+<tr>
+    <td><code>right_joycon_shell</code></td>
+    <td>lofted_shell</td>
+    <td>Warm_White_Plastic</td>
+    <td>front_photo:silhouette</td>
+    <td></td>
+  </tr>
+<tr>
+    <td><code>rear_grip_pair</code></td>
+    <td>grip_handle</td>
+    <td>Satin_Black_Plastic</td>
+    <td>side_photo:silhouette, rear_photo:silhouette, rear_photo:silhouette</td>
+    <td></td>
+  </tr>
+<tr>
+    <td><code>left_thumbstick</code></td>
+    <td>analog_stick</td>
+    <td>Rubber_Thumbstick</td>
+    <td>front_photo:center_point</td>
+    <td></td>
+  </tr>
+<tr>
+    <td><code>right_thumbstick</code></td>
+    <td>analog_stick</td>
+    <td>Rubber_Thumbstick</td>
+    <td>front_photo:center_point</td>
+    <td>Inferred from Switch controller layout; current photos need semantic confirmation.</td>
+  </tr>
+<tr>
+    <td><code>abxy_cluster</code></td>
+    <td>button_on_panel</td>
+    <td>Gloss_Black_Button</td>
+    <td>front_photo:silhouette</td>
+    <td></td>
+  </tr>
+<tr>
+    <td><code>left_button_cluster</code></td>
+    <td>button_on_panel</td>
+    <td>Gloss_Black_Button</td>
+    <td>front_photo:silhouette</td>
+    <td>Button labels and exact positions need manual review.</td>
+  </tr>
+<tr>
+    <td><code>shoulder_rail_pair</code></td>
+    <td>trigger</td>
+    <td>Satin_Black_Plastic</td>
+    <td>side_photo:silhouette</td>
+    <td></td>
+  </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="grid two">
+      <div class="section">
+        <h2>Output DSL</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Operation</th><th>Count</th></tr></thead>
+            <tbody><tr><td><code>reset</code></td><td>1</td></tr><tr><td><code>material</code></td><td>6</td></tr><tr><td><code>component_definition</code></td><td>4</td></tr><tr><td><code>rounded_box</code></td><td>6</td></tr><tr><td><code>domed_surface</code></td><td>2</td></tr><tr><td><code>bowed_panel</code></td><td>2</td></tr><tr><td><code>lofted_solid</code></td><td>2</td></tr><tr><td><code>component_instance</code></td><td>16</td></tr><tr><td><code>scene</code></td><td>2</td></tr><tr><td><code>style</code></td><td>1</td></tr><tr><td><code>shadow</code></td><td>1</td></tr><tr><td><code>rendering_options</code></td><td>1</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="section">
+        <h2>Source Files</h2>
+        <ul class="mono-list"><li><code>observationsPath</code>: <code>projects/image-structured-modeler/examples/switch-controller/observations.json</code></li><li><code>modelPlanPath</code>: <code>projects/image-structured-modeler/examples/switch-controller/model-plan.json</code></li><li><code>outputDslPath</code>: <code>projects/image-structured-modeler/examples/switch-controller/output.json</code></li><li><code>correctionsPath</code>: <code>projects/image-structured-modeler/examples/switch-controller/manual-corrections.json</code></li></ul>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
