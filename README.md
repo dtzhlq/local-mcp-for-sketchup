@@ -344,7 +344,7 @@ mock snapshot 会额外给出零面组、bounding box 碰撞等结构化 warning
 #### 复用与性能
 
 - 重复按钮/螺丝/LED 等应采用 `component_definition` + `component_instance`
-- 当前 mesh 直接落 SKP 文件体积过大（手柄 39MB），需降低重复 mesh、支持可调曲面分辨率
+- 早期 mesh 直接落 SKP 时手柄文件曾到 39MB；当前 Switch queue baseline 已通过产品 primitive / component 复用降到约 253KB，但仍需保留可调曲面分辨率和 SKP size budget
 - [x] snapshot warning 分类：零面/退化面 `geometry.degenerate`、真实 bbox 碰撞 `geometry.bbox_collision`、接触关系内部识别但默认不输出噪声 warning
 
 #### 图像辅助流程
