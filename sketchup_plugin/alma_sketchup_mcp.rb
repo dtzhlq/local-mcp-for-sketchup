@@ -68,6 +68,32 @@ module AlmaSketchupMCP
     }
   end
 
+  def qa_metadata(operation)
+    qa = operation['qa']
+    return nil unless qa.is_a?(Hash)
+
+    sanitized = {}
+    %w[role part_id intent].each do |key|
+      value = qa[key]
+      sanitized[key] = value.to_s unless value.nil? || value.to_s.empty?
+    end
+    contacts = qa['expected_contacts'] || qa['expectedContacts']
+    if contacts.is_a?(Array)
+      sanitized['expected_contacts'] = contacts.each_with_object([]) do |contact, list|
+        next unless contact.is_a?(Hash)
+
+        with_name = contact['with'] || contact['object'] || contact['name']
+        bucket = contact['bucket']
+        next if with_name.to_s.empty? || bucket.to_s.empty?
+
+        entry = { 'with' => with_name.to_s, 'bucket' => bucket.to_s }
+        entry['note'] = contact['note'].to_s unless contact['note'].nil? || contact['note'].to_s.empty?
+        list << entry
+      end
+    end
+    sanitized.empty? ? nil : sanitized
+  end
+
   def dispatch(method, params)
     case method
     when 'get_capabilities'
@@ -987,7 +1013,11 @@ module AlmaSketchupMCP
 
   def annotate_group(group, operation, fallback_kind)
     kind = operation['kind'] || operation['op'] || fallback_kind
-    group.set_attribute('AlmaSketchupMCP', 'kind', kind) if group.respond_to?(:set_attribute) && kind
+    if group.respond_to?(:set_attribute)
+      group.set_attribute('AlmaSketchupMCP', 'kind', kind) if kind
+      qa = qa_metadata(operation)
+      group.set_attribute('AlmaSketchupMCP', 'qa', JSON.generate(qa)) if qa
+    end
     group
   end
 
@@ -995,6 +1025,17 @@ module AlmaSketchupMCP
     return nil unless group.respond_to?(:get_attribute)
 
     group.get_attribute('AlmaSketchupMCP', 'kind')
+  end
+
+  def entity_qa(entity)
+    return nil unless entity.respond_to?(:get_attribute)
+
+    raw = entity.get_attribute('AlmaSketchupMCP', 'qa')
+    return nil if raw.nil? || raw.to_s.empty?
+
+    JSON.parse(raw)
+  rescue JSON::ParserError
+    nil
   end
 
   def add_level(operation)
@@ -1458,7 +1499,7 @@ module AlmaSketchupMCP
     overhang = non_negative_number(operation['overhang'], 0, "#{name}.overhang")
     x = origin[0].to_f - overhang; y = origin[1].to_f - overhang; z = origin[2].to_f
     w = width + 2 * overhang; d = depth + 2 * overhang; t = operation['thickness'] || 80
-    add_mesh(parent_entities, 'name' => name, 'vertices' => [[x,y,z],[x+w,y,z+rise],[x+w,y+d,z+rise],[x,y+d,z],[x,y,z-t],[x+w,y,z+rise-t],[x+w,y+d,z+rise-t],[x,y+d,z-t]], 'faces' => [[0,1,2,3],[4,7,6,5],[0,4,5,1],[1,5,6,2],[2,6,7,3],[3,7,4,0]], 'material' => operation['material'], 'smooth' => 'coplanar', 'kind' => 'shed_roof')
+    add_mesh(parent_entities, 'name' => name, 'vertices' => [[x,y,z],[x+w,y,z+rise],[x+w,y+d,z+rise],[x,y+d,z],[x,y,z-t],[x+w,y,z+rise-t],[x+w,y+d,z+rise-t],[x,y+d,z-t]], 'faces' => [[0,1,2,3],[4,7,6,5],[0,4,5,1],[1,5,6,2],[2,6,7,3],[3,7,4,0]], 'material' => operation['material'], 'smooth' => 'coplanar', 'kind' => 'shed_roof', 'qa' => operation['qa'])
   end
 
   def add_cylinder(parent_entities, operation)
@@ -1477,7 +1518,7 @@ module AlmaSketchupMCP
     (1...(segments - 1)).each { |i| faces << [0, i + 1, i] }
     (1...(segments - 1)).each { |i| faces << [segments, segments + i, segments + i + 1] }
     segments.times { |i| faces << [i, (i + 1) % segments, segments + ((i + 1) % segments), segments + i] }
-    add_mesh(parent_entities, 'name' => name, 'vertices' => vertices, 'faces' => faces, 'material' => operation['material'], 'smooth' => operation['smooth'] || 'all', 'kind' => operation['kind'] || 'cylinder')
+    add_mesh(parent_entities, 'name' => name, 'vertices' => vertices, 'faces' => faces, 'material' => operation['material'], 'smooth' => operation['smooth'] || 'all', 'kind' => operation['kind'] || 'cylinder', 'qa' => operation['qa'])
   end
 
   def add_loft_between_profiles(parent_entities, operation)
@@ -1506,7 +1547,7 @@ module AlmaSketchupMCP
     (1...(point_count - 1)).each { |i| faces << [0, i + 1, i] }
     top_start = (sections.length - 1) * point_count
     (1...(point_count - 1)).each { |i| faces << [top_start, top_start + i, top_start + i + 1] }
-    add_mesh(parent_entities, 'name' => name, 'vertices' => vertices, 'faces' => faces, 'material' => operation['material'], 'smooth' => operation['smooth'] || 'all', 'transform' => operation['transform'], 'kind' => operation['kind'] || 'loft_between_profiles')
+    add_mesh(parent_entities, 'name' => name, 'vertices' => vertices, 'faces' => faces, 'material' => operation['material'], 'smooth' => operation['smooth'] || 'all', 'transform' => operation['transform'], 'kind' => operation['kind'] || 'loft_between_profiles', 'qa' => operation['qa'])
     group = parent_entities.grep(Sketchup::Group).last
     group.set_attribute('AlmaSketchupMCP', 'segments_z', sections.length - 1) if group&.respond_to?(:set_attribute)
   end
@@ -1567,7 +1608,7 @@ module AlmaSketchupMCP
       faces << [i, nxt, count + nxt]
       faces << [i, count + nxt, count + i]
     end
-    add_mesh(parent_entities, 'name' => name, 'vertices' => front_vertices + back_vertices, 'faces' => faces, 'material' => operation['material'], 'smooth' => operation['smooth'] || 'all', 'transform' => operation['transform'], 'kind' => operation['kind'] || 'shell_from_front_side_profiles')
+    add_mesh(parent_entities, 'name' => name, 'vertices' => front_vertices + back_vertices, 'faces' => faces, 'material' => operation['material'], 'smooth' => operation['smooth'] || 'all', 'transform' => operation['transform'], 'kind' => operation['kind'] || 'shell_from_front_side_profiles', 'qa' => operation['qa'])
     group = parent_entities.grep(Sketchup::Group).last
     group.set_attribute('AlmaSketchupMCP', 'segments', count) if group&.respond_to?(:set_attribute)
   end
@@ -1626,7 +1667,7 @@ module AlmaSketchupMCP
       make_point.call(-half_width, -half_height, depth), make_point.call(half_width, -half_height, depth), make_point.call(half_width, half_height, depth), make_point.call(-half_width, half_height, depth)
     ]
     faces = [[0, 1, 2, 3], [4, 7, 6, 5], [0, 4, 5, 1], [1, 5, 6, 2], [2, 6, 7, 3], [3, 7, 4, 0]]
-    add_mesh(parent_entities, 'name' => name, 'vertices' => vertices, 'faces' => faces, 'material' => operation['material'], 'smooth' => operation['smooth'] || 'coplanar', 'transform' => operation['transform'], 'kind' => operation['kind'] || 'face_on_cylinder')
+    add_mesh(parent_entities, 'name' => name, 'vertices' => vertices, 'faces' => faces, 'material' => operation['material'], 'smooth' => operation['smooth'] || 'coplanar', 'transform' => operation['transform'], 'kind' => operation['kind'] || 'face_on_cylinder', 'qa' => operation['qa'])
   end
 
   def add_lofted_solid(parent_entities, operation)
@@ -1661,7 +1702,7 @@ module AlmaSketchupMCP
     (1...(segments - 1)).each { |i| faces << [0, i + 1, i] }
     top_start = (profile.length - 1) * segments
     (1...(segments - 1)).each { |i| faces << [top_start, top_start + i, top_start + i + 1] }
-    add_mesh(parent_entities, 'name' => name, 'vertices' => vertices, 'faces' => faces, 'material' => operation['material'], 'smooth' => operation['smooth'] || 'all', 'transform' => operation['transform'], 'kind' => operation['kind'] || 'lofted_solid')
+    add_mesh(parent_entities, 'name' => name, 'vertices' => vertices, 'faces' => faces, 'material' => operation['material'], 'smooth' => operation['smooth'] || 'all', 'transform' => operation['transform'], 'kind' => operation['kind'] || 'lofted_solid', 'qa' => operation['qa'])
   end
 
   def add_analog_stick(parent_entities, operation)
@@ -1728,7 +1769,7 @@ module AlmaSketchupMCP
     (1...(segments - 1)).each { |i| faces << [0, i + 1, i] }
     top_start = (points.length - 1) * segments
     (1...(segments - 1)).each { |i| faces << [top_start, top_start + i, top_start + i + 1] }
-    add_mesh(parent_entities, 'name' => name, 'vertices' => vertices, 'faces' => faces, 'material' => operation['material'], 'smooth' => operation['smooth'] || 'all', 'transform' => operation['transform'], 'kind' => operation['kind'] || 'pipe_between_points')
+    add_mesh(parent_entities, 'name' => name, 'vertices' => vertices, 'faces' => faces, 'material' => operation['material'], 'smooth' => operation['smooth'] || 'all', 'transform' => operation['transform'], 'kind' => operation['kind'] || 'pipe_between_points', 'qa' => operation['qa'])
     group = parent_entities.grep(Sketchup::Group).last
     group.set_attribute('AlmaSketchupMCP', 'segments', segments) if group&.respond_to?(:set_attribute)
   end
@@ -1789,7 +1830,7 @@ module AlmaSketchupMCP
     (1...(segments - 1)).each { |i| faces << [0, i + 1, i] }
     top_start = (points.length - 1) * segments
     (1...(segments - 1)).each { |i| faces << [top_start, top_start + i, top_start + i + 1] }
-    add_mesh(parent_entities, 'name' => name, 'vertices' => vertices, 'faces' => faces, 'material' => operation['material'], 'smooth' => operation['smooth'] || 'all', 'transform' => operation['transform'], 'kind' => operation['kind'] || 'swept_path')
+    add_mesh(parent_entities, 'name' => name, 'vertices' => vertices, 'faces' => faces, 'material' => operation['material'], 'smooth' => operation['smooth'] || 'all', 'transform' => operation['transform'], 'kind' => operation['kind'] || 'swept_path', 'qa' => operation['qa'])
   end
 
   def add_domed_surface(parent_entities, operation)
@@ -1829,7 +1870,7 @@ module AlmaSketchupMCP
       end
     end
     add_grid_skirt_faces(faces, bottom_index, top_index, x_segments, y_segments)
-    add_mesh(parent_entities, 'name' => name, 'vertices' => vertices, 'faces' => faces, 'material' => operation['material'], 'smooth' => operation['smooth'] || 'all', 'transform' => operation['transform'], 'kind' => operation['kind'] || 'domed_surface')
+    add_mesh(parent_entities, 'name' => name, 'vertices' => vertices, 'faces' => faces, 'material' => operation['material'], 'smooth' => operation['smooth'] || 'all', 'transform' => operation['transform'], 'kind' => operation['kind'] || 'domed_surface', 'qa' => operation['qa'])
   end
 
   def add_bowed_panel(parent_entities, operation)
@@ -1871,7 +1912,7 @@ module AlmaSketchupMCP
       end
     end
     add_grid_skirt_faces(faces, front_index, back_index, x_segments, z_segments)
-    add_mesh(parent_entities, 'name' => name, 'vertices' => vertices, 'faces' => faces, 'material' => operation['material'], 'smooth' => operation['smooth'] || 'all', 'transform' => operation['transform'], 'kind' => operation['kind'] || 'bowed_panel')
+    add_mesh(parent_entities, 'name' => name, 'vertices' => vertices, 'faces' => faces, 'material' => operation['material'], 'smooth' => operation['smooth'] || 'all', 'transform' => operation['transform'], 'kind' => operation['kind'] || 'bowed_panel', 'qa' => operation['qa'])
   end
 
   def add_grid_skirt_faces(faces, lower_index, upper_index, x_segments, y_segments)
@@ -2005,6 +2046,8 @@ module AlmaSketchupMCP
     rotation = rotate_z ? Geom::Transformation.rotation(ORIGIN, Z_AXIS, rotate_z.to_f.degrees) : Geom::Transformation.new
     instance = model.entities.add_instance(definition, rotation)
     instance.name = name
+    qa = qa_metadata(operation)
+    instance.set_attribute('AlmaSketchupMCP', 'qa', JSON.generate(qa)) if qa && instance.respond_to?(:set_attribute)
     translate = transform['translate'] || transform['translation'] || operation['translation'] || [0, 0, 0]
     extra_translate = vector(translate, "#{name}.transform.translate").map { |value| mm_to_model_units(value) }
     instance.transform!(Geom::Transformation.translation([
@@ -2257,7 +2300,8 @@ module AlmaSketchupMCP
         'edges' => count_edges(group.entities),
         'vertices' => count_vertices(group.entities),
         'bounding_box' => bounds_hash(bounds),
-        'material' => first_entities_material(group.entities)
+        'material' => first_entities_material(group.entities),
+        'qa' => entity_qa(group)
       }
     end
     instances = model.entities.grep(Sketchup::ComponentInstance).map do |instance|
@@ -2268,7 +2312,8 @@ module AlmaSketchupMCP
         'edges' => count_edges(instance.definition.entities),
         'vertices' => count_vertices(instance.definition.entities),
         'bounding_box' => bounds_hash(instance.bounds),
-        'material' => first_entities_material(instance.definition.entities)
+        'material' => first_entities_material(instance.definition.entities),
+        'qa' => entity_qa(instance)
       }
     end
     visible_items = groups + instances

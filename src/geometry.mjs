@@ -893,7 +893,8 @@ export function addMesh(model, operation) {
     mesh_faces: normalizedFaces,
     transform: normalizeTransform(operation, name),
     smooth,
-    bounding_box: bbox
+    bounding_box: bbox,
+    qa: normalizeQaMetadata(operation.qa)
   });
 }
 
@@ -1074,7 +1075,7 @@ export function addShedRoof(model, { name, origin = [0, 0, 0], width, depth, ris
   model.groups[model.groups.length - 1].kind = 'shed_roof';
 }
 
-export function addCylinder(model, { name, origin = [0, 0, 0], radius, height, segments = 16, material, smooth = 'all' }) {
+export function addCylinder(model, { name, origin = [0, 0, 0], radius, height, segments = 16, material, smooth = 'all', transform, qa }) {
   if (!name || typeof name !== 'string') throw new Error('cylinder operation requires a string name');
   const [x, y, z] = normalizeVector(origin, [0, 0, 0], `${name}.origin`);
   const r = positiveNumber(radius, undefined, `${name}.radius`);
@@ -1090,13 +1091,13 @@ export function addCylinder(model, { name, origin = [0, 0, 0], radius, height, s
   for (let i = 1; i < n - 1; i += 1) faces.push([0, i + 1, i]);
   for (let i = 1; i < n - 1; i += 1) faces.push([n, n + i, n + i + 1]);
   for (let i = 0; i < n; i += 1) faces.push([i, (i + 1) % n, n + ((i + 1) % n), n + i]);
-  addMesh(model, { name, vertices, faces, material, smooth });
+  addMesh(model, { name, vertices, faces, material, smooth, transform, qa });
   model.groups[model.groups.length - 1].kind = 'cylinder';
   model.groups[model.groups.length - 1].segments = n;
 }
 
 export function addButtonOnPanel(model, operation) {
-  const { name, center = operation.origin, size, radius, height, segments = 16, material, smooth = 'all' } = operation;
+  const { name, center = operation.origin, size, radius, height, segments = 16, material, smooth = 'all', qa } = operation;
   if (!name || typeof name !== 'string') throw new Error('button_on_panel operation requires a string name');
   const [x, y, z] = normalizeVector(center, [0, 0, 0], `${name}.center`);
   const h = positiveNumber(height, undefined, `${name}.height`);
@@ -1105,9 +1106,9 @@ export function addButtonOnPanel(model, operation) {
     const [w, d] = normalizePlanSize(size, `${name}.size`);
     const cornerRadius = operation.corner_radius ?? operation.cornerRadius ?? Math.min(w, d) / 2;
     const r = Math.min(nonNegativeNumber(cornerRadius, 0, `${name}.corner_radius`), w / 2, d / 2);
-    addRoundedBox(model, { name, origin: [x - w / 2, y - d / 2, z], size: [w, d, h], radius: r, segments: n, material, smooth, transform: operation.transform });
+    addRoundedBox(model, { name, origin: [x - w / 2, y - d / 2, z], size: [w, d, h], radius: r, segments: n, material, smooth, transform: operation.transform, qa });
   } else {
-    addCylinder(model, { name, origin: [x, y, z], radius, height: h, segments: n, material, smooth });
+    addCylinder(model, { name, origin: [x, y, z], radius, height: h, segments: n, material, smooth, transform: operation.transform, qa });
   }
   const group = model.groups[model.groups.length - 1];
   group.kind = 'button_on_panel';
@@ -1317,7 +1318,8 @@ export function addComponentInstance(model, operation) {
     edges: componentDefinition.edges,
     material: componentDefinition.material,
     transform: normalizeTransform({ transform: { ...transform, translate: [translation[0] + extraTranslate[0], translation[1] + extraTranslate[1], translation[2] + extraTranslate[2]] } }, name),
-    bounding_box: boundingBox
+    bounding_box: boundingBox,
+    qa: normalizeQaMetadata(operation.qa)
   });
 }
 
@@ -1565,7 +1567,7 @@ export function addFaceOnCylinder(model, operation) {
   group.kind = 'face_on_cylinder';
 }
 
-export function addLoftedSolid(model, { name, origin = [0, 0, 0], profile, segments = 10, n, material, smooth = 'all', transform }) {
+export function addLoftedSolid(model, { name, origin = [0, 0, 0], profile, segments = 10, n, material, smooth = 'all', transform, qa }) {
   if (!name || typeof name !== 'string') throw new Error('lofted_solid operation requires a string name');
   const [x, y, z] = normalizeVector(origin, [0, 0, 0], `${name}.origin`);
   const ringCount = integerInRange(n ?? segments, 3, 96, `${name}.segments`);
@@ -1594,13 +1596,13 @@ export function addLoftedSolid(model, { name, origin = [0, 0, 0], profile, segme
   for (let i = 1; i < ringCount - 1; i += 1) faces.push([0, i + 1, i]);
   const topStart = (normalizedProfile.length - 1) * ringCount;
   for (let i = 1; i < ringCount - 1; i += 1) faces.push([topStart, topStart + i, topStart + i + 1]);
-  addMesh(model, { name, vertices, faces, material, smooth, transform });
+  addMesh(model, { name, vertices, faces, material, smooth, transform, qa });
   model.groups[model.groups.length - 1].kind = 'lofted_solid';
   model.groups[model.groups.length - 1].segments = ringCount;
 }
 
 export function addAnalogStick(model, operation) {
-  const { name, origin = [0, 0, 0], profile, segments = 18, n, material, smooth = 'all', transform } = operation;
+  const { name, origin = [0, 0, 0], profile, segments = 18, n, material, smooth = 'all', transform, qa } = operation;
   if (!name || typeof name !== 'string') throw new Error('analog_stick operation requires a string name');
   const height = positiveNumber(operation.height, 125, `${name}.height`);
   const shaftHeight = positiveNumber(operation.shaft_height ?? operation.shaftHeight, height * 0.45, `${name}.shaft_height`);
@@ -1610,13 +1612,13 @@ export function addAnalogStick(model, operation) {
   const capRadius = positiveNumber(operation.cap_radius ?? operation.capRadius, 180, `${name}.cap_radius`);
   const topRadius = positiveNumber(operation.top_radius ?? operation.topRadius, Math.max(shaftRadius, capRadius * 0.72), `${name}.top_radius`);
   const stickProfile = profile || [[0, baseRadius], [shaftHeight, shaftRadius], [height * 0.72, capRadius], [height, topRadius]];
-  addLoftedSolid(model, { name, origin, profile: stickProfile, segments, n, material, smooth, transform });
+  addLoftedSolid(model, { name, origin, profile: stickProfile, segments, n, material, smooth, transform, qa });
   const group = model.groups[model.groups.length - 1];
   group.kind = 'analog_stick';
 }
 
 export function addScrewHole(model, operation) {
-  const { name, center = operation.origin, segments = 16, n, material = 'Hole_Dark', smooth = 'all', transform } = operation;
+  const { name, center = operation.origin, segments = 16, n, material = 'Hole_Dark', smooth = 'all', transform, qa } = operation;
   if (!name || typeof name !== 'string') throw new Error('screw_hole operation requires a string name');
   const [x, y, z] = normalizeVector(center, [0, 0, 0], `${name}.center`);
   const radius = positiveNumber(operation.radius, undefined, `${name}.radius`);
@@ -1631,7 +1633,7 @@ export function addScrewHole(model, operation) {
   const profile = headRadius > radius
     ? [[0, headRadius], [clampedHeadDepth, radius], [depth, radius]]
     : [[0, radius], [depth, radius]];
-  addLoftedSolid(model, { name, origin: [x, y, z - depth], profile, segments, n, material, smooth, transform });
+  addLoftedSolid(model, { name, origin: [x, y, z - depth], profile, segments, n, material, smooth, transform, qa });
   const group = model.groups[model.groups.length - 1];
   group.kind = 'screw_hole';
 }
@@ -1747,7 +1749,8 @@ export function addDomedSurface(model, operation) {
     ny,
     material,
     smooth = 'all',
-    transform
+    transform,
+    qa
   } = operation;
   if (!name || typeof name !== 'string') throw new Error('domed_surface operation requires a string name');
   const [x0, y0, z0] = normalizeVector(origin, [0, 0, 0], `${name}.origin`);
@@ -1784,7 +1787,7 @@ export function addDomedSurface(model, operation) {
     }
   }
   addGridSkirtFaces(faces, bottomIndex, topIndex, xSegments, ySegments);
-  addMesh(model, { name, vertices, faces, material, smooth, transform });
+  addMesh(model, { name, vertices, faces, material, smooth, transform, qa });
   model.groups[model.groups.length - 1].kind = 'domed_surface';
   model.groups[model.groups.length - 1].segments_x = xSegments;
   model.groups[model.groups.length - 1].segments_y = ySegments;
@@ -1805,7 +1808,8 @@ export function addBowedPanel(model, operation) {
     nz,
     material,
     smooth = 'all',
-    transform
+    transform,
+    qa
   } = operation;
   if (!name || typeof name !== 'string') throw new Error('bowed_panel operation requires a string name');
   const [x0, y0, z0] = normalizeVector(origin, [0, 0, 0], `${name}.origin`);
@@ -1843,7 +1847,7 @@ export function addBowedPanel(model, operation) {
     }
   }
   addGridSkirtFaces(faces, frontIndex, backIndex, xSegments, zSegments);
-  addMesh(model, { name, vertices, faces, material, smooth, transform });
+  addMesh(model, { name, vertices, faces, material, smooth, transform, qa });
   model.groups[model.groups.length - 1].kind = 'bowed_panel';
   model.groups[model.groups.length - 1].segments_x = xSegments;
   model.groups[model.groups.length - 1].segments_z = zSegments;
@@ -1881,6 +1885,45 @@ function normalizeTransform(operation = {}, fieldName = 'transform') {
     translate: normalizeVector(translate, [0, 0, 0], `${fieldName}.transform.translate`),
     rotateZ: Number(rotateZ)
   };
+}
+
+function normalizeQaMetadata(qa) {
+  if (qa === undefined || qa === null) return null;
+  if (typeof qa !== 'object' || Array.isArray(qa)) throw new Error('qa metadata must be an object');
+  const normalized = {};
+  if (qa.role !== undefined) normalized.role = nonEmptyString(qa.role, 'qa.role');
+  if (qa.part_id !== undefined || qa.partId !== undefined) normalized.part_id = nonEmptyString(qa.part_id ?? qa.partId, 'qa.part_id');
+  if (qa.intent !== undefined) normalized.intent = nonEmptyString(qa.intent, 'qa.intent');
+  if (qa.expected_contacts !== undefined || qa.expectedContacts !== undefined) {
+    const contacts = qa.expected_contacts ?? qa.expectedContacts;
+    if (!Array.isArray(contacts)) throw new Error('qa.expected_contacts must be an array');
+    normalized.expected_contacts = contacts.map((contact, index) => normalizeExpectedContact(contact, index));
+  }
+  for (const [key, value] of Object.entries(qa)) {
+    if (['role', 'part_id', 'partId', 'intent', 'expected_contacts', 'expectedContacts'].includes(key)) continue;
+    if (isJsonValue(value)) normalized[key] = structuredClone(value);
+  }
+  return Object.keys(normalized).length > 0 ? normalized : null;
+}
+
+function normalizeExpectedContact(contact, index) {
+  if (!contact || typeof contact !== 'object' || Array.isArray(contact)) throw new Error(`qa.expected_contacts[${index}] must be an object`);
+  const withName = contact.with ?? contact.object ?? contact.name;
+  const bucket = contact.bucket;
+  const note = contact.note;
+  return {
+    with: nonEmptyString(withName, `qa.expected_contacts[${index}].with`),
+    bucket: nonEmptyString(bucket, `qa.expected_contacts[${index}].bucket`),
+    ...(note !== undefined ? { note: nonEmptyString(note, `qa.expected_contacts[${index}].note`) } : {})
+  };
+}
+
+function isJsonValue(value) {
+  if (value === null) return true;
+  if (['string', 'number', 'boolean'].includes(typeof value)) return Number.isFinite(value) || typeof value !== 'number';
+  if (Array.isArray(value)) return value.every(isJsonValue);
+  if (typeof value === 'object') return Object.values(value).every(isJsonValue);
+  return false;
 }
 
 function applyTransform(vertices, operation = {}, fieldName = 'transform') {
@@ -2051,7 +2094,8 @@ export function createSnapshot(model) {
       bounding_box: group.bounding_box,
       material: group.material || null,
       transform: group.transform || null,
-      visible: group.hidden ? false : true
+      visible: group.hidden ? false : true,
+      qa: group.qa || null
     };
     // Surface resolution tracking
     if (group.vertices && Array.isArray(group.vertices)) {
@@ -2074,7 +2118,8 @@ export function createSnapshot(model) {
       bounding_box: instance.bounding_box,
       material: instance.material || null,
       transform: instance.transform || null,
-      visible: instance.hidden ? false : true
+      visible: instance.hidden ? false : true,
+      qa: instance.qa || null
     };
     if (instance.vertices && Array.isArray(instance.vertices)) {
       entry.vertices = instance.vertices.length;
