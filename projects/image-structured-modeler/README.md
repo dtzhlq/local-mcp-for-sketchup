@@ -61,6 +61,9 @@ npm run image-structured:analyze-switch
 npm run image-structured:generate-switch
 npm run image-structured:compile-switch
 npm run image-structured:review-switch
+npm run image-structured:snapshot-switch
+npm run image-structured:snapshot-switch:queue
+npm run image-structured:diff-switch:queue
 npm run image-structured:build-switch
 npm run test:image-structured
 ```
@@ -75,6 +78,25 @@ npm run test:image-structured
 - `projects/image-structured-modeler/examples/switch-controller/model-plan.json`
 - `projects/image-structured-modeler/examples/switch-controller/output.json`
 - `projects/image-structured-modeler/examples/switch-controller/review/index.html`
+- `projects/image-structured-modeler/examples/switch-controller/review/snapshot-report.json`
+- `projects/image-structured-modeler/examples/switch-controller/review/snapshot-report.md`
+
+`snapshot-switch` 会对当前 DSL 运行 mock snapshot，并把 warning 分成 expected contact / shallow overlap / needs review 等 bucket。当前 Switch DSL 会为 face dome、rear grip、thumbstick、buttons、screws 写入 `qa.expected_contacts`，warning 分类会优先使用这些元数据，而不是只靠对象命名启发式。当前 mounted detail 已改用 `analog_stick`、`button_on_panel`、`screw_hole`，rear grip attachment 已调整为接触不穿插，mock geometry warning 已收敛到 0。
+
+`snapshot-switch:queue` 会通过 SketchUp queue runtime 生成真实 `.skp` 和 queue snapshot report，运行前需要 SketchUp 已启动 Alma SketchUp MCP Bridge。更新 `sketchup_plugin/alma_sketchup_mcp.rb` 后，需要重载插件或重启 SketchUp，queue snapshot 才会带出最新的 `qa` 元数据。
+
+`diff-switch:queue` 会复用根项目 `src/snapshot-diff.mjs` 的 mock/queue snapshot 对比逻辑，生成：
+
+- `projects/image-structured-modeler/examples/switch-controller/review/snapshot-diff-queue.json`
+- `projects/image-structured-modeler/examples/switch-controller/review/snapshot-diff-queue.md`
+
+它会自动对照 totals、bbox、scene/material parity，并把 mock/queue 两侧 warning bucket 做 delta 汇总；运行前同样需要 SketchUp + Alma SketchUp MCP Bridge 正在响应 queue runtime。
+
+当前 Switch 示例的 warning budget 在：
+
+- `projects/image-structured-modeler/examples/switch-controller/warning-budget.json`
+
+`npm run test:image-structured` 会读取该 budget，校验 mock/queue snapshot report 中没有 error warning、没有 `needs_geometry_review`，并锁定当前 expected bucket baseline。测试还会卡住 bbox、groups/instances/scenes、不能回退到粗 `mesh` / `box` primitive，并要求 mock 和已生成的 queue geometry warning 分类全部来自 `qa.expected_contacts`。
 
 人工修正入口：
 
@@ -209,9 +231,9 @@ npm run test:image-structured
 
 生成安全 DSL：
 
-- `component_definition` for repeated buttons/screws/LEDs
+- `component_definition` for simple repeated markers such as LEDs
 - `component_instance` for reuse
-- high-level primitives: `rounded_box`, `beveled_panel`, `loft_between_profiles`, `button_on_panel`, `text_emboss`
+- high-level primitives: `rounded_box`, `beveled_panel`, `loft_between_profiles`, `analog_stick`, `button_on_panel`, `screw_hole`, `text_emboss`
 - scenes for front/top/side/rear review
 
 ### 7. 质量回路

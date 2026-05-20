@@ -6,6 +6,58 @@
 
 ---
 
+## 当前执行计划（2026-05-20）
+
+当前已完成 Switch 手柄示例的端到端 baseline：`observations.json -> model-plan.json -> output.json -> review/index.html -> output/image-structured-switch-controller.skp`。下一阶段不继续堆复杂识别，而是先把 baseline 做稳，再逐步增加证据提取和几何质量。
+
+执行顺序：
+
+1. **稳住 baseline**
+   - 修复测试/验证链路。
+   - 同步 `MEMO.md`、`QUEUE_VERIFICATION.md` 和真实产物指标。
+   - 建立 mock/queue snapshot 对照报告。
+   - 将 warning 分成 expected contact、intentional shallow overlap、real collision、bbox false positive。
+
+2. **增强建模证据**
+   - 从 edge sample 提升到 contour/polyline。
+   - 提取 keypoints：外壳角点、按钮中心、摇杆中心、肩键边界。
+   - 生成 component candidates：shell、center grip、thumbstick、button cluster、screw、rail。
+   - 参考 Free2CAD 的约束思路增加对称轴、平行边、同心圆、等距按钮阵列检测。
+
+3. **产品化人工修正**
+   - 扩展 `manual-corrections.json`，支持修改 part 参数。
+   - 给 part 标记 `visually_detected` / `inferred` / `manually_confirmed`。
+   - review report 显示 part id、参数、evidence 和 correction 示例。
+   - 增加 correction-driven regression tests。
+
+4. **提升 SketchUp 几何质量**
+   - 补 `button_on_panel`、`recess`、`screw_hole`、`slot`、`beveled_panel`、`shell_from_front_side_profiles`。
+   - 编译器根据 evidence/part 参数选择 primitive。
+   - 用 recess/contact metadata 降低粗 overlap warning。
+
+5. **开始泛化**
+   - 增加第二个产品样例。
+   - 将 Switch-specific prior 收敛到 `object_profile`。
+   - 抽象通用 part taxonomy。
+   - 评估是否接入 VLM，只用于语义判断，不替代几何测量。
+
+当前第一步已完成，并已执行第一轮 overlap reduction：
+
+- `npm run test:image-structured` 的 Ajv import 卡住问题已修复，验证脚本改为项目内轻量 JSON Schema subset validator。
+- 已新增 `image-structured:snapshot-switch`，默认生成 mock snapshot report。
+- 当前 mock geometry warnings 已从 22 个降到 0 个，没有剩余未分类 warning。
+- 已新增并验证 `image-structured:snapshot-switch:queue`，可生成真实 SketchUp `.skp` 和 queue snapshot report。
+- 已新增并验证 `image-structured:diff-switch:queue`，复用 `src/snapshot-diff.mjs` 生成 mock/queue snapshot diff report；当前正式 queue diff artifact 已生成，结果 `pass`，0 diffs。
+- 已新增 `examples/switch-controller/warning-budget.json`，`npm run test:image-structured` 会用它校验 warning budget。
+- 已给当前 Switch 输出增加质量门槛：bbox、groups/instances/scenes、0 error warning，以及禁止回退到粗 `mesh` / `box` primitive。
+- 已把当前 mock warning 分类推进到 DSL/runtime `qa.expected_contacts` 元数据；当前 mock snapshot report 中 geometry warning 为 0。
+- SketchUp 插件文件已补 group/component instance 的 `qa` snapshot 支持；2026-05-20 已安装到 SketchUp 2026 Plugins 目录、重启 SketchUp、通过 Extensions 菜单启动 Bridge，并重新跑通 `npm run image-structured:snapshot-switch:queue` 和 `npm run image-structured:diff-switch:queue`。
+- 当前 queue snapshot/diff 已验证：geometry warning 为 0，4 个 PBR warning 来自 `runtime_material_capability`，mock/queue diff 为 `pass` / `ok` / `0` diffs。
+- 已把按钮/螺丝/摇杆从“穿插/贴面”改成 `button_on_panel`、`screw_hole`、`analog_stick` 这类产品 primitive，并同步收紧 `warning-budget.json`。
+- 已把 rear grip attachment 从粗 bbox overlap 改成接触不穿插的几何；下一步转向 correction-driven regression tests。
+
+---
+
 ## 总体架构
 
 ```

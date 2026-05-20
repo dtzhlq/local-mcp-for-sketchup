@@ -2,7 +2,8 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { repoRoot } from './lib/image-analysis.mjs';
+
+const repoRoot = path.resolve(fileURLToPath(new URL('../../..', import.meta.url)));
 
 async function main() {
   const options = parseArgs(process.argv.slice(2));
@@ -23,8 +24,22 @@ export function compilePlanToSketchUpDsl(modelPlan) {
   const halfHeight = height / 2;
   const shellWidth = (width - 96) / 2;
   const topZ = depth * 0.58;
-  const buttonZ = topZ + 2;
+  const faceDomeBaseZ = topZ + 0.05;
+  const faceDomeThickness = 2;
+  const faceDomeCrown = 1.5;
+  const faceDomeTopZ = faceDomeBaseZ + faceDomeThickness + faceDomeCrown;
+  const mountedBaseZ = faceDomeTopZ + 0.1;
+  const stickHeight = Math.max(8, depth - 2 - mountedBaseZ);
+  const rearGripY = halfHeight;
+  const rearGripThickness = 2;
+  const rearGripBowDepth = 10;
   const parts = new Map((modelPlan.parts || []).map((part) => [part.id, part]));
+  const leftShellName = 'Left_Joycon_Shell_From_Image_Plan';
+  const rightShellName = 'Right_Joycon_Shell_From_Image_Plan';
+  const leftFaceDomeName = 'Left_Joycon_Face_Dome_From_Image_Plan';
+  const rightFaceDomeName = 'Right_Joycon_Face_Dome_From_Image_Plan';
+  const leftRearGripName = 'Left_Rear_Grip_From_Image_Plan';
+  const rightRearGripName = 'Right_Rear_Grip_From_Image_Plan';
 
   const operations = [
     { op: 'reset' },
@@ -34,27 +49,18 @@ export function compilePlanToSketchUpDsl(modelPlan) {
     { op: 'material', name: 'Rubber_Thumbstick', color: '#161719', workflow: 'pbr_metallic_roughness', pbr: { metallic_factor: 0.01, roughness_factor: 0.75, ao_strength: 0.75 } },
     { op: 'material', name: 'Indicator_Green', color: '#43d17a' },
     { op: 'material', name: 'Dark_Seam', color: '#282a2d' },
-    { op: 'component_definition', name: 'Switch_Round_Button_Def', operations: [
-      { op: 'cylinder', name: 'Button_Cap', origin: [0, 0, 0], radius: 5.8, height: 3.8, segments: 16, material: 'Gloss_Black_Button', smooth: 'all' }
-    ] },
-    { op: 'component_definition', name: 'Switch_Dpad_Button_Def', operations: [
-      { op: 'cylinder', name: 'Dpad_Button_Cap', origin: [0, 0, 0], radius: 4.8, height: 3.4, segments: 14, material: 'Gloss_Black_Button', smooth: 'all' }
-    ] },
     { op: 'component_definition', name: 'Switch_LED_Def', size: [6, 2, 1.6], material: 'Indicator_Green' },
-    { op: 'component_definition', name: 'Switch_Screw_Def', operations: [
-      { op: 'cylinder', name: 'Screw_Head', origin: [0, 0, 0], radius: 2.4, height: 1.2, segments: 12, material: 'Dark_Seam', smooth: 'all' }
-    ] }
   ];
 
   operations.push(
-    { op: 'rounded_box', name: 'Left_Joycon_Shell_From_Image_Plan', origin: [-halfWidth, -halfHeight, 0], size: [shellWidth, height, topZ], radius: 18, segments: 8, material: 'Warm_White_Plastic', smooth: 'all' },
-    { op: 'rounded_box', name: 'Right_Joycon_Shell_From_Image_Plan', origin: [48, -halfHeight, 0], size: [shellWidth, height, topZ], radius: 18, segments: 8, material: 'Warm_White_Plastic', smooth: 'all' },
+    { op: 'rounded_box', name: leftShellName, origin: [-halfWidth, -halfHeight, 0], size: [shellWidth, height, topZ], radius: 18, segments: 8, material: 'Warm_White_Plastic', smooth: 'all', qa: qaMetadata('shell', 'left_joycon_shell') },
+    { op: 'rounded_box', name: rightShellName, origin: [48, -halfHeight, 0], size: [shellWidth, height, topZ], radius: 18, segments: 8, material: 'Warm_White_Plastic', smooth: 'all', qa: qaMetadata('shell', 'right_joycon_shell') },
     { op: 'rounded_box', name: 'Center_Grip_Body_From_Image_Plan', origin: [-48, -height * 0.47, 0], size: [96, height * 0.94, depth * 0.54], radius: 11, segments: 6, material: 'Satin_Black_Plastic', smooth: 'all' },
-    { op: 'rounded_box', name: 'Center_Front_Recess_From_Image_Plan', origin: [-34, -height * 0.36, buttonZ - 2], size: [68, height * 0.72, 3], radius: 6, segments: 5, material: 'Dark_Seam', smooth: 'all' },
-    { op: 'domed_surface', name: 'Left_Joycon_Face_Dome_From_Image_Plan', origin: [-halfWidth + 8, -halfHeight + 9, topZ - 1], width: shellWidth - 14, depth: height - 18, thickness: 2.5, crown_height: 4.5, segments_x: 6, segments_y: 8, material: 'Warm_White_Plastic', smooth: 'all' },
-    { op: 'domed_surface', name: 'Right_Joycon_Face_Dome_From_Image_Plan', origin: [48 + 6, -halfHeight + 9, topZ - 1], width: shellWidth - 14, depth: height - 18, thickness: 2.5, crown_height: 4.5, segments_x: 6, segments_y: 8, material: 'Warm_White_Plastic', smooth: 'all' },
-    { op: 'bowed_panel', name: 'Left_Rear_Grip_From_Image_Plan', origin: [-halfWidth + 18, halfHeight - 18, 2], width: 52, height: depth * 0.8, thickness: 10, bow_depth: 20, segments_x: 6, segments_z: 4, material: 'Satin_Black_Plastic', smooth: 'all' },
-    { op: 'bowed_panel', name: 'Right_Rear_Grip_From_Image_Plan', origin: [halfWidth - 70, halfHeight - 18, 2], width: 52, height: depth * 0.8, thickness: 10, bow_depth: 20, segments_x: 6, segments_z: 4, material: 'Satin_Black_Plastic', smooth: 'all' },
+    { op: 'rounded_box', name: 'Center_Front_Recess_From_Image_Plan', origin: [-34, -height * 0.36, mountedBaseZ - 3], size: [68, height * 0.72, 2.5], radius: 6, segments: 5, material: 'Dark_Seam', smooth: 'all' },
+    { op: 'domed_surface', name: leftFaceDomeName, origin: [-halfWidth + 8, -halfHeight + 19, faceDomeBaseZ], width: shellWidth - 14, depth: height - 38, thickness: faceDomeThickness, crown_height: faceDomeCrown, segments_x: 6, segments_y: 8, material: 'Warm_White_Plastic', smooth: 'all', qa: qaMetadata('face_dome', 'left_joycon_face_dome', [expectedContact(leftShellName, 'intentional_shallow_overlap', 'Face dome is a cosmetic skin layered onto the controller shell.')]) },
+    { op: 'domed_surface', name: rightFaceDomeName, origin: [48 + 6, -halfHeight + 19, faceDomeBaseZ], width: shellWidth - 14, depth: height - 38, thickness: faceDomeThickness, crown_height: faceDomeCrown, segments_x: 6, segments_y: 8, material: 'Warm_White_Plastic', smooth: 'all', qa: qaMetadata('face_dome', 'right_joycon_face_dome', [expectedContact(rightShellName, 'intentional_shallow_overlap', 'Face dome is a cosmetic skin layered onto the controller shell.')]) },
+    { op: 'bowed_panel', name: leftRearGripName, origin: [-halfWidth + 18, rearGripY, 2], width: 52, height: depth * 0.8, thickness: rearGripThickness, bow_depth: rearGripBowDepth, segments_x: 6, segments_z: 4, material: 'Satin_Black_Plastic', smooth: 'all', qa: qaMetadata('rear_grip', 'left_rear_grip', [expectedContact(leftShellName, 'expected_grip_attachment', 'Rear grip intentionally contacts the shell rear face without bbox penetration.')]) },
+    { op: 'bowed_panel', name: rightRearGripName, origin: [halfWidth - 70, rearGripY, 2], width: 52, height: depth * 0.8, thickness: rearGripThickness, bow_depth: rearGripBowDepth, segments_x: 6, segments_z: 4, material: 'Satin_Black_Plastic', smooth: 'all', qa: qaMetadata('rear_grip', 'right_rear_grip', [expectedContact(rightShellName, 'expected_grip_attachment', 'Rear grip intentionally contacts the shell rear face without bbox penetration.')]) },
     { op: 'rounded_box', name: 'Top_Left_Shoulder_Rail_From_Image_Plan', origin: [-halfWidth + 16, -halfHeight - 7, topZ - 2], size: [76, 7, 6], radius: 3, segments: 4, material: 'Satin_Black_Plastic', smooth: 'all' },
     { op: 'rounded_box', name: 'Top_Right_Shoulder_Rail_From_Image_Plan', origin: [halfWidth - 92, -halfHeight - 7, topZ - 2], size: [76, 7, 6], radius: 3, segments: 4, material: 'Satin_Black_Plastic', smooth: 'all' }
   );
@@ -62,40 +68,69 @@ export function compilePlanToSketchUpDsl(modelPlan) {
   const leftStick = parts.get('left_thumbstick')?.parameters || {};
   const rightStick = parts.get('right_thumbstick')?.parameters || {};
   operations.push(
-    analogStick('Left_Thumbstick_From_Image_Plan', leftStick.center || [-92, -20, buttonZ], leftStick, 'Rubber_Thumbstick'),
-    analogStick('Right_Thumbstick_From_Image_Plan', rightStick.center || [72, 34, buttonZ], rightStick, 'Rubber_Thumbstick')
+    analogStick('Left_Thumbstick_From_Image_Plan', leftStick.center || [-92, -20, mountedBaseZ], { ...leftStick, height: stickHeight }, 'Rubber_Thumbstick', leftFaceDomeName, mountedBaseZ),
+    analogStick('Right_Thumbstick_From_Image_Plan', rightStick.center || [72, 34, mountedBaseZ], { ...rightStick, height: stickHeight }, 'Rubber_Thumbstick', rightFaceDomeName, mountedBaseZ)
   );
 
   const abxyButtons = parts.get('abxy_cluster')?.parameters?.buttons || [];
   for (const button of abxyButtons) {
+    const name = `ABXY_${safeName(button.label)}_Button_From_Image_Plan`;
     operations.push({
-      op: 'component_instance',
-      name: `ABXY_${safeName(button.label)}_Button_From_Image_Plan`,
-      definition: 'Switch_Round_Button_Def',
-      origin: [button.center[0], button.center[1], buttonZ + 2]
+      op: 'button_on_panel',
+      name,
+      center: [button.center[0], button.center[1], mountedBaseZ],
+      radius: 5.8,
+      height: 3.8,
+      segments: 16,
+      material: 'Gloss_Black_Button',
+      smooth: 'all',
+      qa: mountedDetailQa(name, rightFaceDomeName, 'button')
     });
   }
 
   const leftButtons = parts.get('left_button_cluster')?.parameters?.buttons || [];
   for (const button of leftButtons) {
+    const name = `Left_${safeName(button.label)}_Button_From_Image_Plan`;
     operations.push({
-      op: 'component_instance',
-      name: `Left_${safeName(button.label)}_Button_From_Image_Plan`,
-      definition: 'Switch_Dpad_Button_Def',
-      origin: [button.center[0], button.center[1], buttonZ + 2]
+      op: 'button_on_panel',
+      name,
+      center: [button.center[0], button.center[1], mountedBaseZ],
+      radius: 4.8,
+      height: 3.4,
+      segments: 14,
+      material: 'Gloss_Black_Button',
+      smooth: 'all',
+      qa: mountedDetailQa(name, leftFaceDomeName, 'button')
     });
   }
 
   for (const [index, x] of [-18, -6, 6, 18].entries()) {
-    operations.push({ op: 'component_instance', name: `Center_LED_${index + 1}_From_Image_Plan`, definition: 'Switch_LED_Def', origin: [x, halfHeight - 22, buttonZ + 2] });
+    operations.push({ op: 'component_instance', name: `Center_LED_${index + 1}_From_Image_Plan`, definition: 'Switch_LED_Def', origin: [x, halfHeight - 22, mountedBaseZ] });
   }
   for (const [name, x, y] of [
     ['Top_Left', -halfWidth + 22, -halfHeight + 18],
-    ['Bottom_Left', -halfWidth + 24, halfHeight - 20],
+    ['Bottom_Left', -halfWidth + 24, halfHeight - 23],
     ['Top_Right', halfWidth - 24, -halfHeight + 18],
-    ['Bottom_Right', halfWidth - 22, halfHeight - 20]
+    ['Bottom_Right', halfWidth - 22, halfHeight - 23]
   ]) {
-    operations.push({ op: 'component_instance', name: `Screw_${name}_From_Image_Plan`, definition: 'Switch_Screw_Def', origin: [x, y, buttonZ + 1] });
+    const screwName = `Screw_${name}_From_Image_Plan`;
+    const sideFaceDome = name.includes('Left') ? leftFaceDomeName : rightFaceDomeName;
+    const sideRearGrip = name.includes('Left') ? leftRearGripName : rightRearGripName;
+    const contacts = [expectedContact(sideFaceDome, 'expected_mounted_detail', 'Screws are mounted on the face panel and share bbox volume with it.')];
+    if (name.includes('Bottom')) contacts.push(expectedContact(sideRearGrip, 'expected_grip_attachment', 'Bottom screw sits near the rear grip attachment volume.'));
+    operations.push({
+      op: 'screw_hole',
+      name: screwName,
+      center: [x, y, mountedBaseZ + 1.2],
+      radius: 1.8,
+      depth: 1.2,
+      head_radius: 2.4,
+      head_depth: 0.45,
+      segments: 12,
+      material: 'Dark_Seam',
+      smooth: 'all',
+      qa: qaMetadata('screw', screwName, contacts)
+    });
   }
 
   operations.push(
@@ -109,20 +144,39 @@ export function compilePlanToSketchUpDsl(modelPlan) {
   return { version: 1, units: 'mm', operations };
 }
 
-function analogStick(name, center, parameters, material) {
-  const [x, y, z] = center;
+function analogStick(name, center, parameters, material, faceDomeName, mountedBaseZ) {
+  const [x, y] = center;
   const outer = positive(parameters.outer_radius, 10.5);
   const top = positive(parameters.top_radius, outer * 0.86);
   const height = positive(parameters.height, 13);
   return {
-    op: 'lofted_solid',
+    op: 'analog_stick',
     name,
-    origin: [x, y, z],
+    origin: [x, y, mountedBaseZ],
     profile: [[0, outer * 0.72], [height * 0.42, outer], [height, top]],
     segments: 18,
     material,
-    smooth: 'all'
+    smooth: 'all',
+    qa: mountedDetailQa(name, faceDomeName, 'thumbstick')
   };
+}
+
+function mountedDetailQa(partId, faceDomeName, role) {
+  return qaMetadata(role, partId, [
+    expectedContact(faceDomeName, 'expected_mounted_detail', 'Mounted controls intentionally sit on the face panel and share bbox volume with it.')
+  ]);
+}
+
+function qaMetadata(role, partId, expectedContacts = []) {
+  return {
+    role,
+    part_id: partId,
+    expected_contacts: expectedContacts
+  };
+}
+
+function expectedContact(withName, bucket, note) {
+  return { with: withName, bucket, note };
 }
 
 function parseArgs(argv) {
