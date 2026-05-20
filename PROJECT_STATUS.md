@@ -74,12 +74,14 @@
 
 **已完成并通过 mock/queue 验证：**
 - `delete`、`rename`、`set_material`、`set_visibility`
+- 对象身份第一切片：group / component instance snapshot 回传 `id`，编辑操作支持 `target_id`，旧 `name` 引用保持兼容
 - `transform_object`：translate、rotateX/Y/Z、scale、mirror
 - `transform_object` pivot：默认 origin、`"center"`、显式 `[x,y,z]`
 - `face_with_holes`、`profile_extrude`（仅矩形 outer + 矩形 holes）
+- Operation contract 测试：manifest、mock runtime、Ruby queue runtime、component_definition dispatch 覆盖自动校验
 
 **待做（P0 第二切片）：**
-- [ ] **对象身份稳定性**：当前用 `name` 字符串查找 groups/instances，重名、改名后引用会断。需要持久 id（如 `persistent_id` 或 `guid`），让编辑操作能稳定引用对象。
+- [ ] **对象身份稳定性补强**：当前已有 DSL `id` / `target_id` 和 queue `persistent_id` snapshot，但仍需做 queue 端真实编辑链验收、id 唯一性策略和 rename/duplicate 冲突策略。
 - [ ] **更通用 profile**：当前 `profile_extrude` / `face_with_holes` 只支持矩形。需要支持任意闭合多边形 profile（点数组）+ 带洞。
 - [ ] **本地轴 / 更完整 transform**：当前 `transform_object` 的 rotate 是围绕模型空间轴。需要支持对象本地坐标轴旋转、任意轴旋转（axis + angle）。
 
@@ -141,8 +143,8 @@
 
 | 优先级 | 任务 | 原因 |
 |---|---|---|
-| **P0** | 对象身份稳定性（persistent id / guid） | 阶段 2 的核心缺口，没有它编辑链路不稳 |
-| **P0** | Operation registry / runtime contract 自动检查 | 55 个 op 已经需要防止 manifest、mock、queue、component definition dispatch 漂移 |
+| **P0** | 对象身份稳定性补强 | 第一切片已支持 `id` / `target_id`，还要补 queue 真实编辑链验收和唯一性策略 |
+| **P0** | Operation registry / runtime contract 自动检查扩展 | 基础测试已覆盖 dispatch；下一步把支持状态、schema 和 component-scope 明确成单一注册表 |
 | **P0** | 通用 profile（任意多边形 outer + holes） | `profile_extrude` / `face_with_holes` 当前太受限 |
 | **P0** | 本地轴 / 任意轴旋转 | transform 当前只支持模型空间轴，产品建模需要本地轴 |
 | **P1** | Tag / Layer 管理 | 组织大型模型的基础 |
@@ -179,7 +181,7 @@
 短期不建议重写架构；应先做三件能直接降低主线风险的收口：
 
 1. **对象身份层**：为 group / component instance 引入稳定 `id` / `guid`，编辑操作优先使用 `target_id`，`name` 只保留为兼容 fallback。mock snapshot、queue snapshot 和 DSL 都要同时承载该字段。
-2. **Operation contract 测试**：自动检查 manifest、mock runtime dispatch、Ruby queue dispatch、component definition dispatch 的 op 覆盖一致性，并把 runtime partial/support 状态变成测试门槛。
+2. **Operation contract 测试**：已新增基础测试，自动检查 manifest、mock runtime dispatch、Ruby queue dispatch、component definition dispatch 的 op 覆盖一致性；下一步把 runtime partial/support 状态也变成测试门槛。
 3. **模块边界拆分**：在新增大能力前，先把 `geometry.mjs` 和 Ruby 插件按 editing、primitive geometry、product helpers、architecture helpers、snapshot/QA 分层，减少新增 op 的重复接线成本。
 
 ---

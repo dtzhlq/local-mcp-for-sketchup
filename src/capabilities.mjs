@@ -14,7 +14,9 @@ export const STABILITY = Object.freeze({
   experimental: 'experimental'
 });
 
-const commonPlacement = ['material', 'transform.translate', 'transform.rotateZ'];
+const objectIdentity = ['id', 'object_id', 'guid'];
+const objectTarget = ['target_id', 'targetId', 'target', 'object'];
+const commonPlacement = [...objectIdentity, 'material', 'transform.translate', 'transform.rotateZ'];
 
 export const OPERATION_CAPABILITIES = Object.freeze([
   {
@@ -36,7 +38,7 @@ export const OPERATION_CAPABILITIES = Object.freeze([
   {
     op: 'delete',
     description: 'Delete an existing named group or component instance from the current model session.',
-    schema: { required: ['op', 'name'], optional: [] },
+    schema: { required: ['op'], optional: ['name', ...objectTarget] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
     notes: 'Phase 2 editing operation. Names must be unique enough to identify a top-level group or instance.'
@@ -44,7 +46,7 @@ export const OPERATION_CAPABILITIES = Object.freeze([
   {
     op: 'rename',
     description: 'Rename an existing named group or component instance.',
-    schema: { required: ['op', 'name', 'new_name'], optional: [] },
+    schema: { required: ['op', 'new_name'], optional: ['name', ...objectTarget] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
     notes: 'Fails if the target does not exist or the new name is already present in mock.'
@@ -52,7 +54,7 @@ export const OPERATION_CAPABILITIES = Object.freeze([
   {
     op: 'set_material',
     description: 'Assign a material to an existing named group or component instance.',
-    schema: { required: ['op', 'name', 'material'], optional: [] },
+    schema: { required: ['op', 'material'], optional: ['name', ...objectTarget] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
     notes: 'Creates the material if needed and applies it to the target object faces in queue.'
@@ -60,7 +62,7 @@ export const OPERATION_CAPABILITIES = Object.freeze([
   {
     op: 'set_visibility',
     description: 'Show or hide an existing named group or component instance.',
-    schema: { required: ['op', 'name', 'visible'], optional: ['hidden'] },
+    schema: { required: ['op', 'visible'], optional: ['name', 'hidden', ...objectTarget] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
     notes: 'Hidden objects remain listed in snapshots with visible=false but are excluded from visible totals and bbox QA.'
@@ -68,10 +70,10 @@ export const OPERATION_CAPABILITIES = Object.freeze([
   {
     op: 'transform_object',
     description: 'Apply a safe transform to an existing named group or component instance.',
-    schema: { required: ['op', 'name'], optional: ['translate', 'rotateX', 'rotateY', 'rotateZ', 'scale', 'mirror', 'pivot'] },
+    schema: { required: ['op'], optional: ['name', ...objectTarget, 'translate', 'rotateX', 'rotateY', 'rotateZ', 'scale', 'mirror', 'pivot'] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
-    notes: "Phase 2 object-editing slice. Default pivot is model origin. Use pivot: 'center' for object-center transforms or pivot: [x,y,z] for an explicit model-space pivot; local-axis editing remains out of scope."
+    notes: "Phase 2 object-editing slice. Prefer target_id for stable references; name remains supported as a compatibility fallback. Default pivot is model origin. Use pivot: 'center' for object-center transforms or pivot: [x,y,z] for an explicit model-space pivot; local-axis editing remains out of scope."
   },
   {
     op: 'box',

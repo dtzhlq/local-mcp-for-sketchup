@@ -197,7 +197,7 @@ node src/cli.mjs save_model --runtime queue --path "$PWD/output/demo-room.skp" -
 当前支持的 operation 以 `src/capabilities.mjs` 的 manifest 为单一真源；`get_docs` 会从该 manifest 生成 mock/queue 支持矩阵，避免文档和 runtime 能力漂移。
 
 - 基础：`reset`、`material`、`box`、`room`、`level`。
-- 编辑：`delete`、`rename`、`set_material`、`set_visibility`、`transform_object`；`transform_object` 支持 `pivot: "origin"`（默认）、`pivot: "center"` 和显式 `[x,y,z]`。
+- 编辑：`delete`、`rename`、`set_material`、`set_visibility`、`transform_object`；编辑操作优先支持 `target_id` 稳定引用，旧的 `name` 引用仍可用；`transform_object` 支持 `pivot: "origin"`（默认）、`pivot: "center"` 和显式 `[x,y,z]`。
 - 几何：`prism`、`mesh`、`face_with_holes`、`profile_extrude`、`panel_with_openings`、`boolean_cutout`、`fillet`、`chamfer`、`cylinder`、`loft_between_profiles`、`shell_from_front_side_profiles`、`lofted_solid`、`face_on_cylinder`、`pipe_between_points`、`swept_path`、`domed_surface`、`bowed_panel`。
 - 产品 helper：`rounded_box`、`beveled_panel`、`recess`、`engraved_line`、`text_emboss`、`text_engrave`、`slot`、`slot_array`、`rib`、`standoff_boss`、`button_on_panel`、`analog_stick`、`screw_hole`。
 - 建筑 helper：`floor_slab`、`wall`、`door`、`window`、`stairs`、`railing`、`gable_roof`、`shed_roof`。
@@ -210,7 +210,7 @@ node src/cli.mjs save_model --runtime queue --path "$PWD/output/demo-room.skp" -
 
 - 单位统一用毫米（mm）；SketchUp 插件内部会换算到 SketchUp 原生长度单位，snapshot 再回写为毫米。
 - X = 宽，Y = 深，Z = 高。
-- 每个 group 必须命名。
+- 每个 group / component instance 必须命名；可额外提供稳定 `id`（兼容别名：`object_id`、`objectId`、`guid`），snapshot 会回传 `id`。后续编辑建议用 `target_id`，避免 rename 或重名导致引用漂移。
 - 材质按名称查重后复用；旧写法 `{ "op": "material", "name": "Wall_Paint", "color": "#efe7dc" }` 仍可用。
 - `material` 支持 `alpha`、基础 `texture`（路径字符串或 `{ "path", "width", "height" }`）和 SketchUp 2025+ 的 `workflow: "pbr_metallic_roughness"`。
 - PBR 字段支持 `pbr.metallic_factor`、`pbr.roughness_factor`、`pbr.ao_strength`、`pbr.normal_style`、`pbr.normal_scale`、`pbr.textures.{metallic,roughness,normal,ao,opacity}`。

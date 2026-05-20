@@ -94,6 +94,11 @@ module AlmaSketchupMCP
     sanitized.empty? ? nil : sanitized
   end
 
+  def object_id(operation, fallback_name)
+    raw = operation['id'] || operation['object_id'] || operation['objectId'] || operation['guid'] || fallback_name
+    raw.to_s
+  end
+
   def dispatch(method, params)
     case method
     when 'get_capabilities'
@@ -368,38 +373,40 @@ module AlmaSketchupMCP
 
 
   def delete_object(model, operation)
-    entity = find_named_entity(model, operation.fetch('name'))
+    entity = find_referenced_entity(model, operation, 'delete')
     entity.erase!
   end
 
   def rename_object(model, operation)
-    entity = find_named_entity(model, operation.fetch('name'))
+    entity = find_referenced_entity(model, operation, 'rename')
     entity.name = operation.fetch('new_name')
   end
 
   def set_object_material(model, operation)
-    entity = find_named_entity(model, operation.fetch('name'))
+    entity = find_referenced_entity(model, operation, 'set_material')
     material = ensure_material(operation.fetch('material'), '#cccccc')
     apply_material_to_entity(entity, material)
   end
 
   def set_object_visibility(model, operation)
-    entity = find_named_entity(model, operation.fetch('name'))
+    entity = find_referenced_entity(model, operation, 'set_visibility')
     visible = operation.key?('visible') ? boolean_value(operation['visible'], 'set_visibility.visible') : !boolean_value(operation['hidden'], 'set_visibility.hidden')
     entity.hidden = !visible if entity.respond_to?(:hidden=)
   end
 
   def transform_object(model, operation)
-    entity = find_named_entity(model, operation.fetch('name'))
+    reference = object_reference(operation, 'transform_object')
+    entity = find_referenced_entity(model, operation, 'transform_object')
+    label = operation['name'] || reference_label(reference)
     transform = operation['transform'] || operation
     scale = transform['scale'] || 1
-    scale_values = scale.is_a?(Array) ? vector(scale, "#{operation['name']}.scale") : [positive_number(scale, 1, "#{operation['name']}.scale")] * 3
+    scale_values = scale.is_a?(Array) ? vector(scale, "#{label}.scale") : [positive_number(scale, 1, "#{label}.scale")] * 3
     mirror = transform['mirror'] || []
     mirror_axes = mirror.is_a?(Array) ? mirror : [mirror]
     sx = scale_values[0] * (mirror_axes.include?('x') ? -1 : 1)
     sy = scale_values[1] * (mirror_axes.include?('y') ? -1 : 1)
     sz = scale_values[2] * (mirror_axes.include?('z') ? -1 : 1)
-    pivot = transform_pivot(entity, transform['pivot'] || operation['pivot'], "#{operation['name']}.pivot")
+    pivot = transform_pivot(entity, transform['pivot'] || operation['pivot'], "#{label}.pivot")
     t = Geom::Transformation.scaling(pivot, sx, sy, sz)
     rx = transform['rotateX'] || transform['rotationX']
     ry = transform['rotateY'] || transform['rotationY']
@@ -408,7 +415,7 @@ module AlmaSketchupMCP
     t = Geom::Transformation.rotation(pivot, Y_AXIS, ry.to_f.degrees) * t if ry
     t = Geom::Transformation.rotation(pivot, Z_AXIS, rz.to_f.degrees) * t if rz
     translate = transform['translate'] || transform['translation']
-    t = Geom::Transformation.translation(vector(translate, "#{operation['name']}.translate").map { |value| mm_to_model_units(value) }) * t if translate
+    t = Geom::Transformation.translation(vector(translate, "#{label}.translate").map { |value| mm_to_model_units(value) }) * t if translate
     entity.transform!(t)
     entity
   end
@@ -429,11 +436,45 @@ module AlmaSketchupMCP
     raise "#{field_name} must be origin, center, or a [x,y,z] vector"
   end
 
-  def find_named_entity(model, name)
-    entity = (model.entities.grep(Sketchup::Group) + model.entities.grep(Sketchup::ComponentInstance)).find { |item| item.name == name }
-    raise "object not found: #{name}" unless entity
+  def object_reference(operation, op_name)
+    raw_id = operation['target_id'] || operation['targetId'] || operation['id'] || operation['object_id'] || operation['objectId'] || operation['guid']
+    raw_name = operation['name'] || operation['target'] || operation['object']
+    reference = {}
+    reference['id'] = raw_id.to_s unless raw_id.nil? || raw_id.to_s.empty?
+    reference['name'] = raw_name.to_s unless raw_name.nil? || raw_name.to_s.empty?
+    raise "#{op_name} requires target_id or name" if reference.empty?
+
+    reference
+  end
+
+  def reference_label(reference)
+    reference['id'] ? "id:#{reference['id']}" : "name:#{reference['name']}"
+  end
+
+  def find_referenced_entity(model, operation, op_name)
+    reference = object_reference(operation, op_name)
+    entity = (model.entities.grep(Sketchup::Group) + model.entities.grep(Sketchup::ComponentInstance)).find { |item| entity_matches_reference(item, reference) }
+    raise "object not found: #{reference_label(reference)}" unless entity
 
     entity
+  end
+
+  def entity_matches_reference(entity, reference)
+    return true if reference['id'] && [entity_id(entity), entity_persistent_id(entity)].compact.include?(reference['id'])
+    return true if reference['name'] && entity.name == reference['name']
+
+    false
+  end
+
+  def entity_id(entity)
+    return nil unless entity.respond_to?(:get_attribute)
+
+    raw = entity.get_attribute('AlmaSketchupMCP', 'id')
+    raw.nil? || raw.to_s.empty? ? nil : raw.to_s
+  end
+
+  def entity_persistent_id(entity)
+    entity.respond_to?(:persistent_id) ? entity.persistent_id.to_s : nil
   end
 
   def apply_material_to_entity(entity, material)
@@ -1014,6 +1055,7 @@ module AlmaSketchupMCP
   def annotate_group(group, operation, fallback_kind)
     kind = operation['kind'] || operation['op'] || fallback_kind
     if group.respond_to?(:set_attribute)
+      group.set_attribute('AlmaSketchupMCP', 'id', object_id(operation, group.name || fallback_kind))
       group.set_attribute('AlmaSketchupMCP', 'kind', kind) if kind
       qa = qa_metadata(operation)
       group.set_attribute('AlmaSketchupMCP', 'qa', JSON.generate(qa)) if qa
@@ -2046,6 +2088,7 @@ module AlmaSketchupMCP
     rotation = rotate_z ? Geom::Transformation.rotation(ORIGIN, Z_AXIS, rotate_z.to_f.degrees) : Geom::Transformation.new
     instance = model.entities.add_instance(definition, rotation)
     instance.name = name
+    instance.set_attribute('AlmaSketchupMCP', 'id', object_id(operation, name)) if instance.respond_to?(:set_attribute)
     qa = qa_metadata(operation)
     instance.set_attribute('AlmaSketchupMCP', 'qa', JSON.generate(qa)) if qa && instance.respond_to?(:set_attribute)
     translate = transform['translate'] || transform['translation'] || operation['translation'] || [0, 0, 0]
@@ -2294,6 +2337,8 @@ module AlmaSketchupMCP
     groups = model.entities.grep(Sketchup::Group).map do |group|
       bounds = group.bounds
       {
+        'id' => entity_id(group) || group.name,
+        'persistent_id' => entity_persistent_id(group),
         'name' => group.name,
         'kind' => group_kind(group),
         'faces' => count_faces(group.entities),
@@ -2306,6 +2351,8 @@ module AlmaSketchupMCP
     end
     instances = model.entities.grep(Sketchup::ComponentInstance).map do |instance|
       {
+        'id' => entity_id(instance) || instance.name,
+        'persistent_id' => entity_persistent_id(instance),
         'name' => instance.name,
         'definition' => instance.definition.name,
         'faces' => count_faces(instance.definition.entities),

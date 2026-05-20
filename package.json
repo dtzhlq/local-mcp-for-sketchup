@@ -25,7 +25,7 @@
     "image-structured:diff-switch:queue": "node projects/image-structured-modeler/scripts/make-snapshot-report.mjs --compare-runtime queue --timeout-ms 180000 --output-dsl projects/image-structured-modeler/examples/switch-controller/output.json --output-dir projects/image-structured-modeler/examples/switch-controller/review",
     "image-structured:build-switch": "npm run image-structured:analyze-switch && npm run image-structured:generate-switch && npm run image-structured:compile-switch && npm run image-structured:review-switch && npm run image-structured:snapshot-switch",
     "test:image-structured": "node projects/image-structured-modeler/test/validate.mjs",
-    "test": "node test/mock-validation.mjs"
+    "test": "node test/mock-validation.mjs && node test/operation-contract.mjs"
   },
   "engines": {
     "node": ">=20"

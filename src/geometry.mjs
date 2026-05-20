@@ -173,6 +173,7 @@ export function addBox(model, operation) {
   const [w, d, h] = normalizedSize;
   const vertices = boxVertices([x, y, z], [w, d, h]);
   model.groups.push({
+    id: objectId(operation, name),
     name,
     kind: 'box',
     faces: 6,
@@ -185,34 +186,34 @@ export function addBox(model, operation) {
 
 
 export function deleteObject(model, operation) {
-  const target = requireObjectName(operation, 'delete');
+  const target = resolveObjectReference(operation, 'delete');
   const beforeGroups = model.groups.length;
   const beforeInstances = (model.instances || []).length;
-  model.groups = model.groups.filter((group) => group.name !== target);
-  model.instances = (model.instances || []).filter((instance) => instance.name !== target);
-  if (model.groups.length === beforeGroups && (model.instances || []).length === beforeInstances) throw new Error(`delete target not found: ${target}`);
+  model.groups = model.groups.filter((group) => !matchesObjectReference(group, target));
+  model.instances = (model.instances || []).filter((instance) => !matchesObjectReference(instance, target));
+  if (model.groups.length === beforeGroups && (model.instances || []).length === beforeInstances) throw new Error(`delete target not found: ${referenceLabel(target)}`);
 }
 
 export function renameObject(model, operation) {
-  const target = findModelObject(model, requireObjectName(operation, 'rename'));
+  const target = findModelObject(model, resolveObjectReference(operation, 'rename'));
   const newName = nonEmptyString(operation.new_name ?? operation.newName, 'rename.new_name');
-  if (findModelObject(model, newName, false)) throw new Error(`rename target already exists: ${newName}`);
+  if (findModelObject(model, { name: newName }, false)) throw new Error(`rename target already exists: ${newName}`);
   target.item.name = newName;
 }
 
 export function setObjectMaterial(model, operation) {
-  const target = findModelObject(model, requireObjectName(operation, 'set_material'));
+  const target = findModelObject(model, resolveObjectReference(operation, 'set_material'));
   target.item.material = ensureMaterial(model, operation.material ?? operation.material_name ?? operation.materialName);
 }
 
 export function setObjectVisibility(model, operation) {
-  const target = findModelObject(model, requireObjectName(operation, 'set_visibility'));
+  const target = findModelObject(model, resolveObjectReference(operation, 'set_visibility'));
   const visible = normalizeBoolean(operation.visible ?? !operation.hidden, 'set_visibility.visible');
   target.item.hidden = !visible;
 }
 
 export function transformObject(model, operation) {
-  const target = findModelObject(model, requireObjectName(operation, 'transform_object'));
+  const target = findModelObject(model, resolveObjectReference(operation, 'transform_object'));
   const object = target.item;
   const transform = normalizeObjectTransform(operation, object);
   const corners = boxVertices(object.bounding_box.min, [object.bounding_box.w, object.bounding_box.d, object.bounding_box.h]);
@@ -220,16 +221,36 @@ export function transformObject(model, operation) {
   object.transform = mergeObjectTransform(object.transform, transform);
 }
 
-function requireObjectName(operation, opName) {
-  return nonEmptyString(operation.name ?? operation.target ?? operation.object, `${opName}.name`);
+function objectId(operation, fallbackName) {
+  return nonEmptyString(operation.id ?? operation.object_id ?? operation.objectId ?? operation.guid ?? fallbackName, `${fallbackName}.id`);
 }
 
-function findModelObject(model, name, required = true) {
-  const groupIndex = model.groups.findIndex((group) => group.name === name);
+function resolveObjectReference(operation, opName) {
+  const rawId = operation.target_id ?? operation.targetId ?? operation.id ?? operation.object_id ?? operation.objectId ?? operation.guid;
+  const rawName = operation.name ?? operation.target ?? operation.object;
+  const reference = {};
+  if (rawId !== undefined) reference.id = nonEmptyString(rawId, `${opName}.target_id`);
+  if (rawName !== undefined) reference.name = nonEmptyString(rawName, `${opName}.name`);
+  if (!reference.id && !reference.name) throw new Error(`${opName} requires target_id or name`);
+  return reference;
+}
+
+function matchesObjectReference(item, reference) {
+  if (reference.id && (item.id === reference.id || item.guid === reference.id || item.persistent_id === reference.id)) return true;
+  if (reference.name && item.name === reference.name) return true;
+  return false;
+}
+
+function referenceLabel(reference) {
+  return reference.id ? `id:${reference.id}` : `name:${reference.name}`;
+}
+
+function findModelObject(model, reference, required = true) {
+  const groupIndex = model.groups.findIndex((group) => matchesObjectReference(group, reference));
   if (groupIndex >= 0) return { collection: 'groups', index: groupIndex, item: model.groups[groupIndex] };
-  const instanceIndex = (model.instances || []).findIndex((instance) => instance.name === name);
+  const instanceIndex = (model.instances || []).findIndex((instance) => matchesObjectReference(instance, reference));
   if (instanceIndex >= 0) return { collection: 'instances', index: instanceIndex, item: model.instances[instanceIndex] };
-  if (required) throw new Error(`object not found: ${name}`);
+  if (required) throw new Error(`object not found: ${referenceLabel(reference)}`);
   return null;
 }
 
@@ -506,6 +527,7 @@ export function addSlotArray(model, operation) {
   }
   const corners = boxes.flatMap((box) => boxVertices(box.origin, box.size));
   model.groups.push({
+    id: objectId(operation, name),
     name,
     kind: 'slot_array',
     faces: slotFaces * slotCount,
@@ -544,6 +566,7 @@ export function addStandoffBoss(model, operation) {
   ensureMaterial(model, hole_material ?? holeMaterial);
   const corners = boxVertices([x - outer, y - outer, z], [outer * 2, outer * 2, bossHeight]);
   model.groups.push({
+    id: objectId(operation, name),
     name,
     kind: 'standoff_boss',
     faces: (3 * n - 4) * 2,
@@ -750,7 +773,8 @@ function interpolatePoint(a, b, t) {
 
 
 
-export function addPanelWithOpenings(model, { name, origin = [0, 0, 0], plane = 'xz', size, thickness, openings = [], material }) {
+export function addPanelWithOpenings(model, operation) {
+  const { name, origin = [0, 0, 0], plane = 'xz', size, thickness, openings = [], material } = operation;
   if (!name || typeof name !== 'string') {
     throw new Error('panel_with_openings operation requires a string name');
   }
@@ -776,6 +800,7 @@ export function addPanelWithOpenings(model, { name, origin = [0, 0, 0], plane = 
   const openingCount = normalizedOpenings.length;
   const openingEdges = normalizedOpenings.reduce((sum, opening) => sum + openingEdgeContribution(opening, width, height), 0);
   model.groups.push({
+    id: objectId(operation, name),
     name,
     kind: 'panel_with_openings',
     faces: 6 + openingCount * 4,
@@ -884,6 +909,7 @@ export function addMesh(model, operation) {
   const transformedVertices = applyTransform(normalizedVertices, operation, name);
   const bbox = boundingBoxForVertices(transformedVertices);
   model.groups.push({
+    id: objectId(operation, name),
     name,
     kind: 'mesh',
     faces: normalizedFaces.length,
@@ -910,7 +936,8 @@ function countMeshEdges(faces) {
   return edges.size;
 }
 
-export function addPrism(model, { name, origin = [0, 0, 0], plane = 'xy', points, depth, material }) {
+export function addPrism(model, operation) {
+  const { name, origin = [0, 0, 0], plane = 'xy', points, depth, material } = operation;
   if (!name || typeof name !== 'string') {
     throw new Error('prism operation requires a string name');
   }
@@ -938,6 +965,7 @@ export function addPrism(model, { name, origin = [0, 0, 0], plane = 'xy', points
   const vertices = prismVertices(normalizedOrigin, plane, normalizedPoints, extrusionDepth);
   const bbox = mergeBoundingBoxes(vertices.map(([x, y, z]) => ({ min: [x, y, z], max: [x, y, z] })));
   model.groups.push({
+    id: objectId(operation, name),
     name,
     kind: 'prism',
     faces: normalizedPoints.length + 2,
@@ -972,6 +1000,7 @@ export function addFaceWithHoles(model, operation) {
   const bbox = rectProfileBoundingBox(normalizedOrigin, plane, outerRect, 0);
   const materialName = ensureMaterial(model, material);
   model.groups.push({
+    id: objectId(operation, name),
     name,
     kind: 'face_with_holes',
     faces: 1,
@@ -1251,6 +1280,12 @@ function applyComponentDefinitionOperation(model, operation, componentName) {
     case 'prism':
       addPrism(model, operation);
       break;
+    case 'face_with_holes':
+      addFaceWithHoles(model, operation);
+      break;
+    case 'profile_extrude':
+      addProfileExtrude(model, operation);
+      break;
     case 'gable_roof':
       addGableRoof(model, operation);
       break;
@@ -1312,6 +1347,7 @@ export function addComponentInstance(model, operation) {
     }
   }, name));
   model.instances.push({
+    id: objectId(operation, name),
     name,
     definition,
     faces: componentDefinition.faces,
@@ -2087,6 +2123,7 @@ export function addDemoRoom(model, operation = {}) {
 export function createSnapshot(model) {
   const groups = model.groups.map((group) => {
     const entry = {
+      id: group.id || group.name,
       name: group.name,
       kind: group.kind || 'group',
       faces: group.faces,
@@ -2111,6 +2148,7 @@ export function createSnapshot(model) {
   });
   const instances = (model.instances || []).map((instance) => {
     const entry = {
+      id: instance.id || instance.name,
       name: instance.name,
       definition: instance.definition,
       faces: instance.faces,
