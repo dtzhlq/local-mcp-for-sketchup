@@ -103,6 +103,9 @@ const fakeQueueReset = await fakeQueueBridge.reset_model({ runtime: 'queue' });
 assert.equal(fakeQueueReset.snapshot.runtime.version, 'queue-plugin-test');
 assert.equal(fakeQueueReset.snapshot.runtime.plugin.name, 'Alma SketchUp MCP Bridge');
 assert.equal(fakeQueueReset.snapshot.runtime.operation_support.material.status, 'partial');
+assert.deepEqual(fakeQueueReset.snapshot.runtime.operation_support.box.schema.required, ['op', 'name', 'origin', 'size']);
+assert.equal(fakeQueueReset.snapshot.runtime.operation_support.box.component_scope.status, 'supported');
+assert.equal(fakeQueueReset.snapshot.runtime.operation_support.camera.component_scope.status, 'unsupported');
 assert.equal(fakeQueueReset.snapshot.runtime.compatibility.ok, true);
 
 const driftedQueueBridge = new SketchUpBridge({

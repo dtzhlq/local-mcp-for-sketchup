@@ -5,7 +5,8 @@ export const RUNTIME_CAPABILITY_VERSION = '0.1.0-capabilities.1';
 export const SUPPORT_STATUS = Object.freeze({
   supported: 'supported',
   partial: 'partial',
-  metadataOnly: 'metadata-only'
+  metadataOnly: 'metadata-only',
+  unsupported: 'unsupported'
 });
 
 export const STABILITY = Object.freeze({
@@ -18,7 +19,52 @@ const objectIdentity = ['id', 'object_id', 'objectId', 'guid'];
 const objectTarget = ['target_id', 'targetId', 'target', 'object'];
 const commonPlacement = [...objectIdentity, 'material', 'transform.translate', 'transform.rotateZ'];
 
-export const OPERATION_CAPABILITIES = Object.freeze([
+export const COMPONENT_DEFINITION_OPERATION_NAMES = Object.freeze([
+  'material',
+  'box',
+  'rounded_box',
+  'beveled_panel',
+  'fillet',
+  'chamfer',
+  'recess',
+  'engraved_line',
+  'text_emboss',
+  'text_engrave',
+  'slot',
+  'slot_array',
+  'rib',
+  'standoff_boss',
+  'button_on_panel',
+  'floor_slab',
+  'wall',
+  'door',
+  'window',
+  'stairs',
+  'railing',
+  'panel_with_openings',
+  'boolean_cutout',
+  'mesh',
+  'prism',
+  'face_with_holes',
+  'profile_extrude',
+  'gable_roof',
+  'shed_roof',
+  'cylinder',
+  'loft_between_profiles',
+  'shell_from_front_side_profiles',
+  'lofted_solid',
+  'face_on_cylinder',
+  'analog_stick',
+  'screw_hole',
+  'pipe_between_points',
+  'swept_path',
+  'domed_surface',
+  'bowed_panel'
+]);
+
+const COMPONENT_DEFINITION_OPERATION_SET = new Set(COMPONENT_DEFINITION_OPERATION_NAMES);
+
+const BASE_OPERATION_CAPABILITIES = [
   {
     op: 'reset',
     description: 'Clear the current model session before appending new geometry.',
@@ -459,7 +505,18 @@ export const OPERATION_CAPABILITIES = Object.freeze([
     stability: STABILITY.stable,
     notes: 'Convenience helper, not intended as a generic room/floor-plan generator.'
   }
-]);
+];
+
+export const OPERATION_CAPABILITIES = Object.freeze(
+  BASE_OPERATION_CAPABILITIES.map((capability) => Object.freeze({
+    ...capability,
+    component_scope: {
+      status: COMPONENT_DEFINITION_OPERATION_SET.has(capability.op)
+        ? SUPPORT_STATUS.supported
+        : SUPPORT_STATUS.unsupported
+    }
+  }))
+);
 
 export const CORE_DSL_OPERATIONS = Object.freeze(OPERATION_CAPABILITIES.map((capability) => capability.op));
 
@@ -469,6 +526,10 @@ export function getOperationManifest() {
 
 export function getOperationNames() {
   return CORE_DSL_OPERATIONS.slice();
+}
+
+export function getComponentDefinitionOperationNames() {
+  return COMPONENT_DEFINITION_OPERATION_NAMES.slice();
 }
 
 export function getRuntimeCapabilities(runtime = 'mock') {
@@ -490,7 +551,9 @@ export function getRuntimeCapabilities(runtime = 'mock') {
         capability.op,
         {
           status: capability.runtime_support[runtime],
-          stability: capability.stability
+          stability: capability.stability,
+          schema: clone(capability.schema),
+          component_scope: clone(capability.component_scope)
         }
       ])
     ),
@@ -504,7 +567,8 @@ export function formatCapabilityMatrixMarkdown() {
   const rows = OPERATION_CAPABILITIES.map((capability) => {
     const required = capability.schema.required.length > 0 ? capability.schema.required.join(', ') : '-';
     const optional = capability.schema.optional.length > 0 ? capability.schema.optional.join(', ') : '-';
-    return `| \`${capability.op}\` | ${capability.description} | ${required} | ${optional} | ${capability.runtime_support.mock} | ${capability.runtime_support.queue} | ${capability.stability} | ${capability.notes} |`;
+    const componentScope = capability.component_scope.status;
+    return `| \`${capability.op}\` | ${capability.description} | ${required} | ${optional} | ${capability.runtime_support.mock} | ${capability.runtime_support.queue} | ${componentScope} | ${capability.stability} | ${capability.notes} |`;
   });
 
   return [
@@ -512,8 +576,8 @@ export function formatCapabilityMatrixMarkdown() {
     '',
     `Manifest version: \`${CAPABILITY_MANIFEST_VERSION}\`; DSL version: \`${DSL_VERSION}\`; runtime capability version: \`${RUNTIME_CAPABILITY_VERSION}\`.`,
     '',
-    '| Operation | Description | Required fields | Optional fields | Mock | Queue | Stability | Notes |',
-    '|---|---|---|---|---|---|---|---|',
+    '| Operation | Description | Required fields | Optional fields | Mock | Queue | Component definition | Stability | Notes |',
+    '|---|---|---|---|---|---|---|---|---|',
     ...rows
   ].join('\n');
 }

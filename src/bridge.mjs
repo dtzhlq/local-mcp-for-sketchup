@@ -143,10 +143,31 @@ function attachCompatibilityReport(descriptor, runtime) {
         actual: actualSupport.status
       });
     }
+    if (actualSupport.schema !== undefined && !sameJson(actualSupport.schema, expectedSupport.schema)) {
+      issues.push({
+        type: 'runtime.operation_schema_mismatch',
+        severity: 'warn',
+        message: `Runtime ${runtime} operation ${operation} schema differs from manifest`,
+        operation,
+        expected: expectedSupport.schema,
+        actual: actualSupport.schema
+      });
+    }
+    if (actualSupport.component_scope !== undefined && !sameJson(actualSupport.component_scope, expectedSupport.component_scope)) {
+      issues.push({
+        type: 'runtime.operation_component_scope_mismatch',
+        severity: 'warn',
+        message: `Runtime ${runtime} operation ${operation} component scope differs from manifest`,
+        operation,
+        expected: expectedSupport.component_scope,
+        actual: actualSupport.component_scope
+      });
+    }
   }
 
   return {
     ...actual,
+    operation_support: normalizeOperationSupport(actual.operation_support, expected.operation_support),
     compatibility: {
       ok: !issues.some((issue) => issue.severity === 'error'),
       level: compatibilityLevel(issues),
@@ -158,6 +179,27 @@ function attachCompatibilityReport(descriptor, runtime) {
       issues
     }
   };
+}
+
+function normalizeOperationSupport(actualSupport = {}, expectedSupport = {}) {
+  const normalized = {};
+  for (const [operation, expected] of Object.entries(expectedSupport || {})) {
+    const actual = actualSupport?.[operation] || {};
+    normalized[operation] = {
+      ...expected,
+      ...actual,
+      schema: actual.schema ?? expected.schema,
+      component_scope: actual.component_scope ?? expected.component_scope
+    };
+  }
+  for (const [operation, actual] of Object.entries(actualSupport || {})) {
+    if (!normalized[operation]) normalized[operation] = actual;
+  }
+  return normalized;
+}
+
+function sameJson(left, right) {
+  return JSON.stringify(left) === JSON.stringify(right);
 }
 
 function addScalarIssue(issues, field, expected, actual, severity) {

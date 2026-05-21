@@ -82,6 +82,7 @@
 - `transform_object` pivot：默认 origin、`"center"`、显式 `[x,y,z]`
 - `face_with_holes`、`profile_extrude`（仅矩形 outer + 矩形 holes）
 - Operation contract 测试：manifest、mock runtime、Ruby queue runtime、component_definition dispatch 覆盖自动校验
+- Operation registry / runtime contract 扩展：manifest 现在显式记录 `schema` 和 `component_scope`，runtime descriptor 会归一化暴露字段契约，contract 测试会拦截 component_definition dispatch 与 registry 漂移
 
 **待做（P0 第二切片）：**
 - [ ] **更通用 profile**：当前 `profile_extrude` / `face_with_holes` 只支持矩形。需要支持任意闭合多边形 profile（点数组）+ 带洞。
@@ -145,7 +146,6 @@
 
 | 优先级 | 任务 | 原因 |
 |---|---|---|
-| **P0** | Operation registry / runtime contract 自动检查扩展 | 基础测试已覆盖 dispatch；下一步把支持状态、schema 和 component-scope 明确成单一注册表 |
 | **P0** | 通用 profile（任意多边形 outer + holes） | `profile_extrude` / `face_with_holes` 当前太受限 |
 | **P0** | 本地轴 / 任意轴旋转 | transform 当前只支持模型空间轴，产品建模需要本地轴 |
 | **P1** | Tag / Layer 管理 | 组织大型模型的基础 |

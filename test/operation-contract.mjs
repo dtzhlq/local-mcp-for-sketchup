@@ -1,11 +1,12 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { getOperationManifest, getOperationNames } from '../src/capabilities.mjs';
+import { getComponentDefinitionOperationNames, getOperationManifest, getOperationNames, getRuntimeCapabilities, SUPPORT_STATUS } from '../src/capabilities.mjs';
 
 const repoRoot = path.resolve('.');
 const manifest = getOperationManifest();
 const manifestOperations = new Set(getOperationNames());
+const componentDefinitionOperations = new Set(getComponentDefinitionOperationNames());
 const capabilityByOperation = new Map(manifest.map((capability) => [capability.op, capability]));
 const targetOperations = new Set(['delete', 'rename', 'set_material', 'set_visibility', 'transform_object']);
 const identityOperations = new Set([
@@ -21,6 +22,20 @@ const identityOperations = new Set([
 const mockRuntimeSource = await fs.readFile(path.join(repoRoot, 'src/mock-runtime.mjs'), 'utf8');
 const geometrySource = await fs.readFile(path.join(repoRoot, 'src/geometry.mjs'), 'utf8');
 const rubyPluginSource = await fs.readFile(path.join(repoRoot, 'sketchup_plugin/alma_sketchup_mcp.rb'), 'utf8');
+
+assert.deepEqual(
+  sorted(new Set(manifest.map((capability) => capability.op))),
+  sorted(manifestOperations),
+  'manifest operation names should be unique and match getOperationNames'
+);
+for (const capability of manifest) {
+  assert.ok(capability.schema, `${capability.op} should declare schema`);
+  assert.ok(Array.isArray(capability.schema.required), `${capability.op} schema.required should be an array`);
+  assert.ok(Array.isArray(capability.schema.optional), `${capability.op} schema.optional should be an array`);
+  assert.equal(capability.component_scope?.status === SUPPORT_STATUS.supported || capability.component_scope?.status === SUPPORT_STATUS.unsupported, true, `${capability.op} should declare component_scope status`);
+  assert.equal(typeof capability.description, 'string', `${capability.op} should declare description`);
+  assert.equal(typeof capability.notes, 'string', `${capability.op} should declare notes`);
+}
 
 const mockBuildOperations = extractCases(
   mockRuntimeSource,
@@ -52,6 +67,11 @@ assert.deepEqual(
   sorted(rubyComponentOperations),
   'JS and Ruby component_definition operation dispatch should stay in parity'
 );
+assert.deepEqual(
+  sorted(jsComponentOperations),
+  sorted(componentDefinitionOperations),
+  'component_definition dispatch should be defined by registry component_scope'
+);
 for (const operation of jsComponentOperations) {
   assert.ok(manifestOperations.has(operation), `component_definition dispatch op should exist in manifest: ${operation}`);
 }
@@ -63,12 +83,24 @@ for (const operation of identityOperations) {
   assertOptionalFields(operation, ['id', 'object_id', 'objectId', 'guid']);
 }
 
+for (const runtime of ['mock', 'queue']) {
+  const runtimeCapabilities = getRuntimeCapabilities(runtime);
+  for (const operation of manifestOperations) {
+    const support = runtimeCapabilities.operation_support[operation];
+    const capability = capabilityByOperation.get(operation);
+    assert.ok(support, `${runtime} runtime descriptor should include operation_support.${operation}`);
+    assert.deepEqual(support.schema, capability.schema, `${runtime} operation_support.${operation}.schema should mirror registry`);
+    assert.deepEqual(support.component_scope, capability.component_scope, `${runtime} operation_support.${operation}.component_scope should mirror registry`);
+  }
+}
+
 process.stdout.write(`${JSON.stringify({
   ok: true,
   manifest_operations: manifestOperations.size,
   mock_dispatch_operations: mockBuildOperations.size,
   ruby_dispatch_operations: rubyBuildOperations.size,
-  component_dispatch_operations: jsComponentOperations.size
+  component_dispatch_operations: jsComponentOperations.size,
+  registry_component_operations: componentDefinitionOperations.size
 }, null, 2)}\n`);
 
 function extractCases(source, startMarker, endMarker) {
