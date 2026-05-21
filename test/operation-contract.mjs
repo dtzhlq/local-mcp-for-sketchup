@@ -1,10 +1,22 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { getOperationNames } from '../src/capabilities.mjs';
+import { getOperationManifest, getOperationNames } from '../src/capabilities.mjs';
 
 const repoRoot = path.resolve('.');
+const manifest = getOperationManifest();
 const manifestOperations = new Set(getOperationNames());
+const capabilityByOperation = new Map(manifest.map((capability) => [capability.op, capability]));
+const targetOperations = new Set(['delete', 'rename', 'set_material', 'set_visibility', 'transform_object']);
+const identityOperations = new Set([
+  'box', 'rounded_box', 'beveled_panel', 'fillet', 'chamfer', 'recess', 'engraved_line',
+  'text_emboss', 'text_engrave', 'slot', 'slot_array', 'rib', 'standoff_boss',
+  'button_on_panel', 'prism', 'panel_with_openings', 'boolean_cutout', 'face_with_holes',
+  'profile_extrude', 'mesh', 'gable_roof', 'shed_roof', 'cylinder', 'loft_between_profiles',
+  'shell_from_front_side_profiles', 'lofted_solid', 'face_on_cylinder', 'analog_stick',
+  'screw_hole', 'pipe_between_points', 'swept_path', 'domed_surface', 'bowed_panel',
+  'floor_slab', 'wall', 'door', 'window', 'component_instance'
+]);
 
 const mockRuntimeSource = await fs.readFile(path.join(repoRoot, 'src/mock-runtime.mjs'), 'utf8');
 const geometrySource = await fs.readFile(path.join(repoRoot, 'src/geometry.mjs'), 'utf8');
@@ -44,6 +56,13 @@ for (const operation of jsComponentOperations) {
   assert.ok(manifestOperations.has(operation), `component_definition dispatch op should exist in manifest: ${operation}`);
 }
 
+for (const operation of targetOperations) {
+  assertOptionalFields(operation, ['target_id', 'targetId', 'target', 'object']);
+}
+for (const operation of identityOperations) {
+  assertOptionalFields(operation, ['id', 'object_id', 'objectId', 'guid']);
+}
+
 process.stdout.write(`${JSON.stringify({
   ok: true,
   manifest_operations: manifestOperations.size,
@@ -74,6 +93,14 @@ function extractOperationNames(source, startMarker, endMarker, pattern) {
 function assertSetIncludesAll(actual, expected, label) {
   const missing = [...expected].filter((operation) => !actual.has(operation));
   assert.deepEqual(missing, [], `${label} missing manifest operations`);
+}
+
+function assertOptionalFields(operation, fields) {
+  const capability = capabilityByOperation.get(operation);
+  assert.ok(capability, `manifest operation should exist: ${operation}`);
+  const optional = new Set(capability.schema.optional || []);
+  const missing = fields.filter((field) => !optional.has(field));
+  assert.deepEqual(missing, [], `${operation} manifest optional fields should include ${fields.join(', ')}`);
 }
 
 function sorted(set) {

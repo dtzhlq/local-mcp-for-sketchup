@@ -14,7 +14,7 @@ export const STABILITY = Object.freeze({
   experimental: 'experimental'
 });
 
-const objectIdentity = ['id', 'object_id', 'guid'];
+const objectIdentity = ['id', 'object_id', 'objectId', 'guid'];
 const objectTarget = ['target_id', 'targetId', 'target', 'object'];
 const commonPlacement = [...objectIdentity, 'material', 'transform.translate', 'transform.rotateZ'];
 
@@ -318,7 +318,7 @@ export const OPERATION_CAPABILITIES = Object.freeze([
   {
     op: 'swept_path',
     description: 'Sweep a circular tube along a polyline path.',
-    schema: { required: ['op', 'name', 'path', 'radius'], optional: ['segments', 'smooth', 'material'] },
+    schema: { required: ['op', 'name', 'path', 'radius'], optional: ['segments', 'smooth', ...commonPlacement] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.partial },
     stability: STABILITY.beta,
     notes: 'Legacy MVP frame is most reliable for rail/pipe paths primarily running along X; prefer pipe_between_points for arbitrary directions.'
@@ -358,7 +358,7 @@ export const OPERATION_CAPABILITIES = Object.freeze([
   {
     op: 'wall',
     description: 'Create an axis-aligned wall segment with optional rectangular openings.',
-    schema: { required: ['op', 'name', 'start', 'end', 'height'], optional: ['thickness', 'openings', 'material'] },
+    schema: { required: ['op', 'name', 'start', 'end', 'height'], optional: ['thickness', 'openings', ...commonPlacement] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.stable,
     notes: 'Current MVP supports axis-aligned walls only.'
@@ -366,7 +366,7 @@ export const OPERATION_CAPABILITIES = Object.freeze([
   {
     op: 'door',
     description: 'Create a simple vertical door infill marker.',
-    schema: { required: ['op', 'name', 'origin', 'width', 'height'], optional: ['plane', 'thickness', 'material'] },
+    schema: { required: ['op', 'name', 'origin', 'width', 'height'], optional: ['plane', 'thickness', ...commonPlacement] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.stable,
     notes: 'Door objects are marker geometry, not a full parametric door family.'
@@ -374,7 +374,7 @@ export const OPERATION_CAPABILITIES = Object.freeze([
   {
     op: 'window',
     description: 'Create a simple vertical window infill marker.',
-    schema: { required: ['op', 'name', 'origin', 'width', 'height'], optional: ['plane', 'thickness', 'material'] },
+    schema: { required: ['op', 'name', 'origin', 'width', 'height'], optional: ['plane', 'thickness', ...commonPlacement] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.stable,
     notes: 'Window objects are marker geometry, not a full parametric window family.'
@@ -406,7 +406,7 @@ export const OPERATION_CAPABILITIES = Object.freeze([
   {
     op: 'component_instance',
     description: 'Place an instance of a previously defined component.',
-    schema: { required: ['op', 'name', 'definition', 'origin'], optional: ['transform'] },
+    schema: { required: ['op', 'name', 'definition', 'origin'], optional: ['transform', ...objectIdentity] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
     notes: 'Supports translate/rotateZ transforms in the current DSL baseline.'

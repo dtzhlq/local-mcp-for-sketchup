@@ -6,6 +6,7 @@ import { formatSnapshotReportMarkdown } from '../src/snapshot-report.mjs';
 
 const DEFAULT_EXAMPLES = [
   'examples/demo-room.json',
+  'examples/editing-identity.json',
   'examples/golden-architecture.json',
   'examples/golden-product.json'
 ];

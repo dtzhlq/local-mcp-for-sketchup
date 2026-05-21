@@ -88,9 +88,11 @@ node src/cli.mjs compare_snapshots --expected-file output/mock-a.json --actual-f
 node src/cli.mjs compare_model --code-file examples/demo-room.json --expected-runtime mock --actual-runtime mock --max-faces 5000
 node src/cli.mjs compare_model --code-file examples/demo-room.json --expected-runtime mock --actual-runtime mock --max-faces 5000 --format markdown --output-file output/mock-parity-report.md
 npm run qa:mock
+npm run qa:identity:mock
 # 打开 SketchUp 插件后，把 actual-runtime 改成 queue：
 node src/cli.mjs compare_model --code-file examples/demo-room.json --expected-runtime mock --actual-runtime queue --timeout-ms 60000 --max-faces 5000 --format markdown --output-file output/live-demo-room-report.md
 npm run qa:queue
+npm run qa:identity:queue
 # qa:queue 默认启用 --face-tolerance 1 --edge-tolerance 3，用于吸收 SketchUp sweep/railing 的轻微拓扑计数差异。
 ```
 
@@ -100,6 +102,7 @@ Golden examples 用于稳定回归建筑向与产品/工业设计向能力：
 node src/cli.mjs build_model --runtime mock --code-file examples/golden-architecture.json
 node src/cli.mjs build_model --runtime mock --code-file examples/golden-product.json
 node src/cli.mjs build_model --runtime mock --code-file examples/structured-product-helpers.json
+node src/cli.mjs build_model --runtime mock --code-file examples/editing-identity.json
 node src/cli.mjs build_model --runtime mock --code-file examples/editing-transform-profile.json
 ```
 
@@ -210,7 +213,7 @@ node src/cli.mjs save_model --runtime queue --path "$PWD/output/demo-room.skp" -
 
 - 单位统一用毫米（mm）；SketchUp 插件内部会换算到 SketchUp 原生长度单位，snapshot 再回写为毫米。
 - X = 宽，Y = 深，Z = 高。
-- 每个 group / component instance 必须命名；可额外提供稳定 `id`（兼容别名：`object_id`、`objectId`、`guid`），snapshot 会回传 `id`。后续编辑建议用 `target_id`，避免 rename 或重名导致引用漂移。
+- 每个 group / component instance 必须命名；可额外提供稳定 `id`（兼容别名：`object_id`、`objectId`、`guid`），snapshot 会回传 `id`。同一个 entity scope 内 `id` 和 `name` 都必须唯一；后续编辑建议用 `target_id`，避免 rename 导致引用漂移。如果编辑操作同时传 `target_id` 和 `name`，两者必须指向同一个对象。
 - 材质按名称查重后复用；旧写法 `{ "op": "material", "name": "Wall_Paint", "color": "#efe7dc" }` 仍可用。
 - `material` 支持 `alpha`、基础 `texture`（路径字符串或 `{ "path", "width", "height" }`）和 SketchUp 2025+ 的 `workflow: "pbr_metallic_roughness"`。
 - PBR 字段支持 `pbr.metallic_factor`、`pbr.roughness_factor`、`pbr.ao_strength`、`pbr.normal_style`、`pbr.normal_scale`、`pbr.textures.{metallic,roughness,normal,ao,opacity}`。

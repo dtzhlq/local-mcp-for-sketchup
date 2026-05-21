@@ -172,33 +172,58 @@ assert.ok(snapshot.warnings.every((w) => w.type && w.severity && w.category && w
 // totals.vertices should exist
 assert.ok(typeof snapshot.totals.vertices === 'number');
 
-const identityCode = JSON.stringify({
-  version: 1,
-  units: 'mm',
-  operations: [
-    { op: 'reset' },
-    { op: 'material', name: 'Identity_Material', color: '#111111' },
-    { op: 'material', name: 'Identity_Updated', color: '#222222' },
-    { op: 'box', id: 'stable-shell-id', name: 'Original_Shell_Name', origin: [0, 0, 0], size: [10, 10, 10], material: 'Identity_Material' },
-    { op: 'box', id: 'delete-by-id', name: 'Delete_By_Id', origin: [100, 0, 0], size: [10, 10, 10], material: 'Identity_Material' },
-    { op: 'rename', target_id: 'stable-shell-id', new_name: 'Renamed_Shell' },
-    { op: 'set_material', target_id: 'stable-shell-id', material: 'Identity_Updated' },
-    { op: 'transform_object', target_id: 'stable-shell-id', translate: [20, 0, 0] },
-    { op: 'delete', target_id: 'delete-by-id' },
-    { op: 'component_definition', name: 'Identity_Component_Def', size: [5, 5, 5], material: 'Identity_Material' },
-    { op: 'component_instance', id: 'stable-instance-id', name: 'Stable_Instance', definition: 'Identity_Component_Def', origin: [0, 20, 0] },
-    { op: 'set_visibility', target_id: 'stable-instance-id', visible: false }
-  ]
-});
-const identitySnapshot = (await bridge.build_model({ runtime: 'mock', code: identityCode })).snapshot;
-const identityShell = identitySnapshot.groups.find((group) => group.id === 'stable-shell-id');
-assert.equal(identityShell.name, 'Renamed_Shell');
-assert.equal(identityShell.material, 'Identity_Updated');
-assert.equal(identityShell.bounding_box.min[0], 20);
-assert.equal(identitySnapshot.groups.some((group) => group.id === 'delete-by-id'), false);
-const identityInstance = identitySnapshot.instances.find((instance) => instance.id === 'stable-instance-id');
-assert.equal(identityInstance.name, 'Stable_Instance');
+const identitySnapshot = (await buildExample('examples/editing-identity.json')).snapshot;
+const identityPanel = identitySnapshot.groups.find((group) => group.id === 'stable-panel-id');
+assert.equal(identityPanel.name, 'Panel_Renamed');
+assert.equal(identityPanel.material, 'Identity_Accent');
+assert.equal(identityPanel.bounding_box.min[0], 25);
+assert.equal(identitySnapshot.groups.some((group) => group.id === 'delete-target-id'), false);
+const identityInstance = identitySnapshot.instances.find((instance) => instance.id === 'stable-led-id');
+assert.equal(identityInstance.name, 'LED_Original');
 assert.equal(identityInstance.visible, false);
+assert.equal(identityInstance.bounding_box.min[1], 150);
+
+await assert.rejects(
+  () => bridge.build_model({ runtime: 'mock', code: JSON.stringify({
+    version: 1,
+    units: 'mm',
+    operations: [
+      { op: 'reset' },
+      { op: 'box', id: 'duplicate-id', name: 'Duplicate_A', origin: [0, 0, 0], size: [10, 10, 10] },
+      { op: 'box', id: 'duplicate-id', name: 'Duplicate_B', origin: [20, 0, 0], size: [10, 10, 10] }
+    ]
+  }) }),
+  /object id already exists: duplicate-id/
+);
+
+await assert.rejects(
+  () => bridge.build_model({ runtime: 'mock', code: JSON.stringify({
+    version: 1,
+    units: 'mm',
+    operations: [
+      { op: 'reset' },
+      { op: 'box', id: 'rename-a', name: 'Rename_A', origin: [0, 0, 0], size: [10, 10, 10] },
+      { op: 'box', id: 'rename-b', name: 'Rename_B', origin: [20, 0, 0], size: [10, 10, 10] },
+      { op: 'rename', target_id: 'rename-a', new_name: 'Rename_B' }
+    ]
+  }) }),
+  /rename target already exists: Rename_B/
+);
+
+await assert.rejects(
+  () => bridge.build_model({ runtime: 'mock', code: JSON.stringify({
+    version: 1,
+    units: 'mm',
+    operations: [
+      { op: 'reset' },
+      { op: 'material', name: 'Conflict_Material', color: '#333333' },
+      { op: 'box', id: 'conflict-a', name: 'Conflict_A', origin: [0, 0, 0], size: [10, 10, 10] },
+      { op: 'box', id: 'conflict-b', name: 'Conflict_B', origin: [20, 0, 0], size: [10, 10, 10] },
+      { op: 'set_material', target_id: 'conflict-a', name: 'Conflict_B', material: 'Conflict_Material' }
+    ]
+  }) }),
+  /object not found: id:conflict-a name:Conflict_B/
+);
 
 const prismCode = JSON.stringify({
   version: 1,

@@ -172,8 +172,10 @@ export function addBox(model, operation) {
   const [x, y, z] = normalizedOrigin;
   const [w, d, h] = normalizedSize;
   const vertices = boxVertices([x, y, z], [w, d, h]);
+  const id = objectId(operation, name);
+  assertObjectIdentityAvailable(model, { id, name });
   model.groups.push({
-    id: objectId(operation, name),
+    id,
     name,
     kind: 'box',
     faces: 6,
@@ -225,6 +227,18 @@ function objectId(operation, fallbackName) {
   return nonEmptyString(operation.id ?? operation.object_id ?? operation.objectId ?? operation.guid ?? fallbackName, `${fallbackName}.id`);
 }
 
+function objectIdentityFields(operation = {}) {
+  const explicitId = operation.id ?? operation.object_id ?? operation.objectId ?? operation.guid;
+  return explicitId === undefined ? {} : { id: explicitId };
+}
+
+function assertObjectIdentityAvailable(model, reference) {
+  const duplicateById = findModelObject(model, { id: reference.id }, false);
+  if (duplicateById) throw new Error(`object id already exists: ${reference.id}`);
+  const duplicateByName = findModelObject(model, { name: reference.name }, false);
+  if (duplicateByName) throw new Error(`object name already exists: ${reference.name}`);
+}
+
 function resolveObjectReference(operation, opName) {
   const rawId = operation.target_id ?? operation.targetId ?? operation.id ?? operation.object_id ?? operation.objectId ?? operation.guid;
   const rawName = operation.name ?? operation.target ?? operation.object;
@@ -236,13 +250,16 @@ function resolveObjectReference(operation, opName) {
 }
 
 function matchesObjectReference(item, reference) {
-  if (reference.id && (item.id === reference.id || item.guid === reference.id || item.persistent_id === reference.id)) return true;
-  if (reference.name && item.name === reference.name) return true;
-  return false;
+  const idMatches = !reference.id || item.id === reference.id || item.guid === reference.id || item.persistent_id === reference.id;
+  const nameMatches = !reference.name || item.name === reference.name;
+  return idMatches && nameMatches;
 }
 
 function referenceLabel(reference) {
-  return reference.id ? `id:${reference.id}` : `name:${reference.name}`;
+  return [
+    reference.id ? `id:${reference.id}` : null,
+    reference.name ? `name:${reference.name}` : null
+  ].filter(Boolean).join(' ');
 }
 
 function findModelObject(model, reference, required = true) {
@@ -348,7 +365,7 @@ export function addBeveledPanel(model, operation) {
   if ([w, d, h].some((value) => value <= 0)) throw new Error(`${name}.size values must be positive`);
   const b = Math.min(nonNegativeNumber(bevel, 0, `${name}.bevel`), w / 2, d / 2);
   const points = beveledRectPoints(x, y, w, d, b);
-  addFootprintExtrusionMesh(model, { name, material, transform: operation.transform }, points, z, h, smooth);
+  addFootprintExtrusionMesh(model, { ...objectIdentityFields(operation), name, material, transform: operation.transform }, points, z, h, smooth);
   const group = model.groups[model.groups.length - 1];
   group.kind = 'beveled_panel';
   group.bevel = b;
@@ -363,7 +380,7 @@ export function addFillet(model, operation) {
   const r = Math.min(nonNegativeNumber(radius, 0, `${name}.radius`), w / 2, d / 2);
   const n = integerInRange(segments, 1, 32, `${name}.segments`);
   const points = roundedRectPoints(x, y, w, d, r, n);
-  addFootprintExtrusionMesh(model, { name, material, transform }, points, z, h, smooth);
+  addFootprintExtrusionMesh(model, { ...objectIdentityFields(operation), name, material, transform }, points, z, h, smooth);
   const group = model.groups[model.groups.length - 1];
   group.kind = 'fillet';
   group.radius = r;
@@ -378,7 +395,7 @@ export function addChamfer(model, operation) {
   if ([w, d, h].some((value) => value <= 0)) throw new Error(`${name}.size values must be positive`);
   const c = Math.min(nonNegativeNumber(bevel, 0, `${name}.amount`), w / 2, d / 2);
   const points = beveledRectPoints(x, y, w, d, c);
-  addFootprintExtrusionMesh(model, { name, material, transform }, points, z, h, smooth);
+  addFootprintExtrusionMesh(model, { ...objectIdentityFields(operation), name, material, transform }, points, z, h, smooth);
   const group = model.groups[model.groups.length - 1];
   group.kind = 'chamfer';
   group.bevel = c;
@@ -400,7 +417,7 @@ export function addRecess(model, operation) {
   for (let index = 0; index < count; index += 1) {
     faces.push([index, (index + 1) % count, count + ((index + 1) % count), count + index]);
   }
-  addMesh(model, { name, vertices: [...top, ...bottom], faces, material, smooth, transform });
+  addMesh(model, { ...objectIdentityFields(operation), name, vertices: [...top, ...bottom], faces, material, smooth, transform });
   const group = model.groups[model.groups.length - 1];
   group.kind = 'recess';
   group.segments = n;
@@ -432,14 +449,14 @@ export function addEngravedLine(model, operation) {
     );
     faces.push([base + 4, base + 7, base + 6, base + 5], [base, base + 4, base + 5, base + 1], [base + 1, base + 5, base + 6, base + 2], [base + 2, base + 6, base + 7, base + 3], [base + 3, base + 7, base + 4, base]);
   }
-  addMesh(model, { name, vertices, faces, material, smooth, transform });
+  addMesh(model, { ...objectIdentityFields(operation), name, vertices, faces, material, smooth, transform });
   model.groups[model.groups.length - 1].kind = 'engraved_line';
 }
 
 export function addTextEmboss(model, operation) {
   const { name, material = 'Text_Emboss', smooth = 'coplanar', transform } = operation;
   const marker = textMarkerMesh(operation, `${name || 'text_emboss'}`, 1);
-  addMesh(model, { name, vertices: marker.vertices, faces: marker.faces, material, smooth, transform });
+  addMesh(model, { ...objectIdentityFields(operation), name, vertices: marker.vertices, faces: marker.faces, material, smooth, transform });
   const group = model.groups[model.groups.length - 1];
   group.kind = 'text_emboss';
   group.glyphs = marker.glyphs;
@@ -448,7 +465,7 @@ export function addTextEmboss(model, operation) {
 export function addTextEngrave(model, operation) {
   const { name, material = 'Text_Engrave_Dark', smooth = 'coplanar', transform } = operation;
   const marker = textMarkerMesh(operation, `${name || 'text_engrave'}`, -1);
-  addMesh(model, { name, vertices: marker.vertices, faces: marker.faces, material, smooth, transform });
+  addMesh(model, { ...objectIdentityFields(operation), name, vertices: marker.vertices, faces: marker.faces, material, smooth, transform });
   const group = model.groups[model.groups.length - 1];
   group.kind = 'text_engrave';
   group.glyphs = marker.glyphs;
@@ -493,7 +510,7 @@ export function addSlot(model, operation) {
   const slotLength = positiveNumber(length, undefined, `${name}.length`);
   const slotWidth = positiveNumber(width, undefined, `${name}.width`);
   if (slotLength < slotWidth) throw new Error(`${name}.length must be greater than or equal to width`);
-  addRecess(model, { name, center, size: [slotLength, slotWidth], depth, radius: slotWidth / 2, segments, material, smooth, transform });
+  addRecess(model, { ...objectIdentityFields(operation), name, center, size: [slotLength, slotWidth], depth, radius: slotWidth / 2, segments, material, smooth, transform });
   const group = model.groups[model.groups.length - 1];
   group.kind = 'slot';
 }
@@ -526,8 +543,10 @@ export function addSlotArray(model, operation) {
     boxes.push(slotBox(slotCenter, slotLength, slotWidth, slotDepth, direction));
   }
   const corners = boxes.flatMap((box) => boxVertices(box.origin, box.size));
+  const id = objectId(operation, name);
+  assertObjectIdentityAvailable(model, { id, name });
   model.groups.push({
-    id: objectId(operation, name),
+    id,
     name,
     kind: 'slot_array',
     faces: slotFaces * slotCount,
@@ -549,7 +568,7 @@ export function addRib(model, operation) {
   const ribThickness = positiveNumber(thickness, undefined, `${name}.thickness`);
   if (!['x', 'y'].includes(direction)) throw new Error(`${name}.direction must be x or y`);
   const size = direction === 'x' ? [ribLength, ribThickness, ribHeight] : [ribThickness, ribLength, ribHeight];
-  addBox(model, { name, origin, size, material, transform });
+  addBox(model, { ...objectIdentityFields(operation), name, origin, size, material, transform });
   model.groups[model.groups.length - 1].kind = 'rib';
 }
 
@@ -565,8 +584,10 @@ export function addStandoffBoss(model, operation) {
   const materialName = ensureMaterial(model, material);
   ensureMaterial(model, hole_material ?? holeMaterial);
   const corners = boxVertices([x - outer, y - outer, z], [outer * 2, outer * 2, bossHeight]);
+  const id = objectId(operation, name);
+  assertObjectIdentityAvailable(model, { id, name });
   model.groups.push({
-    id: objectId(operation, name),
+    id,
     name,
     kind: 'standoff_boss',
     faces: (3 * n - 4) * 2,
@@ -657,9 +678,10 @@ function boxVertices([x, y, z], [w, d, h]) {
   ];
 }
 
-export function addFloorSlab(model, { name, origin = [0, 0, 0], width, depth, thickness = 150, material, transform } = {}) {
+export function addFloorSlab(model, operation = {}) {
+  const { name, origin = [0, 0, 0], width, depth, thickness = 150, material, transform } = operation;
   if (!name || typeof name !== 'string') throw new Error('floor_slab operation requires a string name');
-  addBox(model, { name, origin, size: [positiveNumber(width, undefined, `${name}.width`), positiveNumber(depth, undefined, `${name}.depth`), positiveNumber(thickness, undefined, `${name}.thickness`)], material, transform });
+  addBox(model, { ...objectIdentityFields(operation), name, origin, size: [positiveNumber(width, undefined, `${name}.width`), positiveNumber(depth, undefined, `${name}.depth`), positiveNumber(thickness, undefined, `${name}.thickness`)], material, transform });
   model.groups[model.groups.length - 1].kind = 'floor_slab';
 }
 
@@ -676,10 +698,10 @@ export function addWall(model, operation = {}) {
   if (Math.abs(dx) === 0 && Math.abs(dy) === 0) throw new Error(`${name}.start and end must not be identical`);
   if (Math.abs(dx) >= Math.abs(dy)) {
     const origin = [Math.min(wallStart[0], wallEnd[0]), wallStart[1], wallStart[2]];
-    addPanelWithOpenings(model, { name, origin, plane: 'xz', size: [Math.abs(dx), wallHeight], thickness: wallThickness, openings, material });
+    addPanelWithOpenings(model, { ...objectIdentityFields(operation), name, origin, plane: 'xz', size: [Math.abs(dx), wallHeight], thickness: wallThickness, openings, material });
   } else {
     const origin = [wallStart[0], Math.min(wallStart[1], wallEnd[1]), wallStart[2]];
-    addPanelWithOpenings(model, { name, origin, plane: 'yz', size: [Math.abs(dy), wallHeight], thickness: wallThickness, openings, material });
+    addPanelWithOpenings(model, { ...objectIdentityFields(operation), name, origin, plane: 'yz', size: [Math.abs(dy), wallHeight], thickness: wallThickness, openings, material });
   }
   model.groups[model.groups.length - 1].kind = 'wall';
 }
@@ -692,13 +714,14 @@ export function addWindow(model, operation = {}) {
   addVerticalPanel(model, operation, 'window', 'window operation requires a string name');
 }
 
-function addVerticalPanel(model, { name, origin = [0, 0, 0], plane = 'xz', width, height, thickness = 40, material, transform } = {}, kind, errorMessage) {
+function addVerticalPanel(model, operation = {}, kind, errorMessage) {
+  const { name, origin = [0, 0, 0], plane = 'xz', width, height, thickness = 40, material, transform } = operation;
   if (!name || typeof name !== 'string') throw new Error(errorMessage);
   const panelWidth = positiveNumber(width, undefined, `${name}.width`);
   const panelHeight = positiveNumber(height, undefined, `${name}.height`);
   const panelThickness = positiveNumber(thickness, undefined, `${name}.thickness`);
-  if (plane === 'xz') addBox(model, { name, origin, size: [panelWidth, panelThickness, panelHeight], material, transform });
-  else if (plane === 'yz') addBox(model, { name, origin, size: [panelThickness, panelWidth, panelHeight], material, transform });
+  if (plane === 'xz') addBox(model, { ...objectIdentityFields(operation), name, origin, size: [panelWidth, panelThickness, panelHeight], material, transform });
+  else if (plane === 'yz') addBox(model, { ...objectIdentityFields(operation), name, origin, size: [panelThickness, panelWidth, panelHeight], material, transform });
   else throw new Error(`${name}.plane must be xz or yz`);
   model.groups[model.groups.length - 1].kind = kind;
 }
@@ -799,8 +822,10 @@ export function addPanelWithOpenings(model, operation) {
   const bbox = mergeBoundingBoxes(vertices.map(([x, y, z]) => ({ min: [x, y, z], max: [x, y, z] })));
   const openingCount = normalizedOpenings.length;
   const openingEdges = normalizedOpenings.reduce((sum, opening) => sum + openingEdgeContribution(opening, width, height), 0);
+  const id = objectId(operation, name);
+  assertObjectIdentityAvailable(model, { id, name });
   model.groups.push({
-    id: objectId(operation, name),
+    id,
     name,
     kind: 'panel_with_openings',
     faces: 6 + openingCount * 4,
@@ -821,7 +846,7 @@ export function addBooleanCutout(model, operation) {
   if ([width, depth, thickness].some((value) => value <= 0)) throw new Error(`${name}.size values must be positive`);
   if (transform !== undefined) throw new Error(`${name}.transform is not supported yet for boolean_cutout safe slice`);
   const openings = normalizeBooleanCutouts(cutouts, width, depth, name);
-  addPanelWithOpenings(model, { name, origin, plane: 'xy', size: [width, depth], thickness, openings, material, smooth });
+  addPanelWithOpenings(model, { ...objectIdentityFields(operation), name, origin, plane: 'xy', size: [width, depth], thickness, openings, material, smooth });
   const group = model.groups[model.groups.length - 1];
   group.kind = 'boolean_cutout';
   group.cutouts = openings;
@@ -908,8 +933,10 @@ export function addMesh(model, operation) {
   const materialName = ensureMaterial(model, material);
   const transformedVertices = applyTransform(normalizedVertices, operation, name);
   const bbox = boundingBoxForVertices(transformedVertices);
+  const id = objectId(operation, name);
+  assertObjectIdentityAvailable(model, { id, name });
   model.groups.push({
-    id: objectId(operation, name),
+    id,
     name,
     kind: 'mesh',
     faces: normalizedFaces.length,
@@ -964,8 +991,10 @@ export function addPrism(model, operation) {
   const materialName = ensureMaterial(model, material);
   const vertices = prismVertices(normalizedOrigin, plane, normalizedPoints, extrusionDepth);
   const bbox = mergeBoundingBoxes(vertices.map(([x, y, z]) => ({ min: [x, y, z], max: [x, y, z] })));
+  const id = objectId(operation, name);
+  assertObjectIdentityAvailable(model, { id, name });
   model.groups.push({
-    id: objectId(operation, name),
+    id,
     name,
     kind: 'prism',
     faces: normalizedPoints.length + 2,
@@ -999,8 +1028,10 @@ export function addFaceWithHoles(model, operation) {
   const holeRects = holes.map((hole, index) => normalizeRectProfile(hole.points ?? hole, `${name}.holes[${index}]`));
   const bbox = rectProfileBoundingBox(normalizedOrigin, plane, outerRect, 0);
   const materialName = ensureMaterial(model, material);
+  const id = objectId(operation, name);
+  assertObjectIdentityAvailable(model, { id, name });
   model.groups.push({
-    id: objectId(operation, name),
+    id,
     name,
     kind: 'face_with_holes',
     faces: 1,
@@ -1027,7 +1058,7 @@ export function addProfileExtrude(model, operation) {
     return { name: `Hole_${index + 1}`, x: box.minX - outerBox.minX, y: box.minY - outerBox.minY, width: box.maxX - box.minX, height: box.maxY - box.minY };
   });
   const panelOrigin = profilePanelOrigin(normalizedOrigin, plane, outerBox);
-  addPanelWithOpenings(model, { name, origin: panelOrigin, plane, size: [outerBox.maxX - outerBox.minX, outerBox.maxY - outerBox.minY], thickness: extrusionDepth, openings, material });
+  addPanelWithOpenings(model, { ...objectIdentityFields(operation), name, origin: panelOrigin, plane, size: [outerBox.maxX - outerBox.minX, outerBox.maxY - outerBox.minY], thickness: extrusionDepth, openings, material });
   const group = model.groups[model.groups.length - 1];
   group.kind = 'profile_extrude';
   group.profile = { outer: outerRect, holes: holeRects.length };
@@ -1067,7 +1098,8 @@ function rectProfileBoundingBox(origin, plane, points, thickness) {
   return boundingBoxForVertices(vertices);
 }
 
-export function addGableRoof(model, { name, origin = [0, 0, 0], width, depth, rise, overhang = 0, material }) {
+export function addGableRoof(model, operation) {
+  const { name, origin = [0, 0, 0], width, depth, rise, overhang = 0, material } = operation;
   const roofWidth = positiveNumber(width, undefined, `${name}.width`);
   const roofDepth = positiveNumber(depth, undefined, `${name}.depth`);
   const roofRise = positiveNumber(rise, undefined, `${name}.rise`);
@@ -1075,6 +1107,7 @@ export function addGableRoof(model, { name, origin = [0, 0, 0], width, depth, ri
   const [x, y, z] = normalizeVector(origin, [0, 0, 0], `${name}.origin`);
   const points = [[0, 0], [(roofWidth + 2 * roofOverhang) / 2, roofRise], [roofWidth + 2 * roofOverhang, 0]];
   addPrism(model, {
+    ...objectIdentityFields(operation),
     name,
     origin: [x - roofOverhang, y - roofOverhang, z],
     plane: 'xz',
@@ -1085,7 +1118,8 @@ export function addGableRoof(model, { name, origin = [0, 0, 0], width, depth, ri
   model.groups[model.groups.length - 1].kind = 'gable_roof';
 }
 
-export function addShedRoof(model, { name, origin = [0, 0, 0], width, depth, rise, overhang = 0, material }) {
+export function addShedRoof(model, operation) {
+  const { name, origin = [0, 0, 0], width, depth, rise, overhang = 0, material } = operation;
   if (!name || typeof name !== 'string') throw new Error('shed_roof operation requires a string name');
   const roofWidth = positiveNumber(width, undefined, `${name}.width`);
   const roofDepth = positiveNumber(depth, undefined, `${name}.depth`);
@@ -1100,11 +1134,12 @@ export function addShedRoof(model, { name, origin = [0, 0, 0], width, depth, ris
     [minX, minY, z - 80], [minX + roofWidth + 2 * roofOverhang, minY, z + roofRise - 80],
     [minX + roofWidth + 2 * roofOverhang, minY + roofDepth + 2 * roofOverhang, z + roofRise - 80], [minX, minY + roofDepth + 2 * roofOverhang, z - 80]
   ];
-  addMesh(model, { name, vertices, faces: [[0,1,2,3],[4,7,6,5],[0,4,5,1],[1,5,6,2],[2,6,7,3],[3,7,4,0]], material, smooth: 'coplanar' });
+  addMesh(model, { ...objectIdentityFields(operation), name, vertices, faces: [[0,1,2,3],[4,7,6,5],[0,4,5,1],[1,5,6,2],[2,6,7,3],[3,7,4,0]], material, smooth: 'coplanar' });
   model.groups[model.groups.length - 1].kind = 'shed_roof';
 }
 
-export function addCylinder(model, { name, origin = [0, 0, 0], radius, height, segments = 16, material, smooth = 'all', transform, qa }) {
+export function addCylinder(model, operation) {
+  const { name, origin = [0, 0, 0], radius, height, segments = 16, material, smooth = 'all', transform, qa } = operation;
   if (!name || typeof name !== 'string') throw new Error('cylinder operation requires a string name');
   const [x, y, z] = normalizeVector(origin, [0, 0, 0], `${name}.origin`);
   const r = positiveNumber(radius, undefined, `${name}.radius`);
@@ -1120,7 +1155,7 @@ export function addCylinder(model, { name, origin = [0, 0, 0], radius, height, s
   for (let i = 1; i < n - 1; i += 1) faces.push([0, i + 1, i]);
   for (let i = 1; i < n - 1; i += 1) faces.push([n, n + i, n + i + 1]);
   for (let i = 0; i < n; i += 1) faces.push([i, (i + 1) % n, n + ((i + 1) % n), n + i]);
-  addMesh(model, { name, vertices, faces, material, smooth, transform, qa });
+  addMesh(model, { ...objectIdentityFields(operation), name, vertices, faces, material, smooth, transform, qa });
   model.groups[model.groups.length - 1].kind = 'cylinder';
   model.groups[model.groups.length - 1].segments = n;
 }
@@ -1135,9 +1170,9 @@ export function addButtonOnPanel(model, operation) {
     const [w, d] = normalizePlanSize(size, `${name}.size`);
     const cornerRadius = operation.corner_radius ?? operation.cornerRadius ?? Math.min(w, d) / 2;
     const r = Math.min(nonNegativeNumber(cornerRadius, 0, `${name}.corner_radius`), w / 2, d / 2);
-    addRoundedBox(model, { name, origin: [x - w / 2, y - d / 2, z], size: [w, d, h], radius: r, segments: n, material, smooth, transform: operation.transform, qa });
+    addRoundedBox(model, { ...objectIdentityFields(operation), name, origin: [x - w / 2, y - d / 2, z], size: [w, d, h], radius: r, segments: n, material, smooth, transform: operation.transform, qa });
   } else {
-    addCylinder(model, { name, origin: [x, y, z], radius, height: h, segments: n, material, smooth, transform: operation.transform, qa });
+    addCylinder(model, { ...objectIdentityFields(operation), name, origin: [x, y, z], radius, height: h, segments: n, material, smooth, transform: operation.transform, qa });
   }
   const group = model.groups[model.groups.length - 1];
   group.kind = 'button_on_panel';
@@ -1346,8 +1381,10 @@ export function addComponentInstance(model, operation) {
       translate: [translation[0] + extraTranslate[0], translation[1] + extraTranslate[1], translation[2] + extraTranslate[2]]
     }
   }, name));
+  const id = objectId(operation, name);
+  assertObjectIdentityAvailable(model, { id, name });
   model.instances.push({
-    id: objectId(operation, name),
+    id,
     name,
     definition,
     faces: componentDefinition.faces,
@@ -1479,7 +1516,7 @@ export function addLoftBetweenProfiles(model, operation) {
   for (let i = 1; i < pointCount - 1; i += 1) faces.push([0, i + 1, i]);
   const topStart = (sections.length - 1) * pointCount;
   for (let i = 1; i < pointCount - 1; i += 1) faces.push([topStart, topStart + i, topStart + i + 1]);
-  addMesh(model, { name, vertices, faces, material, smooth, transform });
+  addMesh(model, { ...objectIdentityFields(operation), name, vertices, faces, material, smooth, transform });
   const group = model.groups[model.groups.length - 1];
   group.kind = 'loft_between_profiles';
   group.segments_z = sections.length - 1;
@@ -1533,7 +1570,7 @@ export function addShellFromFrontSideProfiles(model, operation) {
     faces.push([i, next, count + next]);
     faces.push([i, count + next, count + i]);
   }
-  addMesh(model, { name, vertices, faces, material, smooth, transform });
+  addMesh(model, { ...objectIdentityFields(operation), name, vertices, faces, material, smooth, transform });
   const group = model.groups[model.groups.length - 1];
   group.kind = 'shell_from_front_side_profiles';
   group.segments = count;
@@ -1598,12 +1635,13 @@ export function addFaceOnCylinder(model, operation) {
     makePoint(-halfWidth, halfHeight, patchDepth)
   ];
   const faces = [[0, 1, 2, 3], [4, 7, 6, 5], [0, 4, 5, 1], [1, 5, 6, 2], [2, 6, 7, 3], [3, 7, 4, 0]];
-  addMesh(model, { name, vertices, faces, material, smooth, transform });
+  addMesh(model, { ...objectIdentityFields(operation), name, vertices, faces, material, smooth, transform });
   const group = model.groups[model.groups.length - 1];
   group.kind = 'face_on_cylinder';
 }
 
-export function addLoftedSolid(model, { name, origin = [0, 0, 0], profile, segments = 10, n, material, smooth = 'all', transform, qa }) {
+export function addLoftedSolid(model, operation) {
+  const { name, origin = [0, 0, 0], profile, segments = 10, n, material, smooth = 'all', transform, qa } = operation;
   if (!name || typeof name !== 'string') throw new Error('lofted_solid operation requires a string name');
   const [x, y, z] = normalizeVector(origin, [0, 0, 0], `${name}.origin`);
   const ringCount = integerInRange(n ?? segments, 3, 96, `${name}.segments`);
@@ -1632,7 +1670,7 @@ export function addLoftedSolid(model, { name, origin = [0, 0, 0], profile, segme
   for (let i = 1; i < ringCount - 1; i += 1) faces.push([0, i + 1, i]);
   const topStart = (normalizedProfile.length - 1) * ringCount;
   for (let i = 1; i < ringCount - 1; i += 1) faces.push([topStart, topStart + i, topStart + i + 1]);
-  addMesh(model, { name, vertices, faces, material, smooth, transform, qa });
+  addMesh(model, { ...objectIdentityFields(operation), name, vertices, faces, material, smooth, transform, qa });
   model.groups[model.groups.length - 1].kind = 'lofted_solid';
   model.groups[model.groups.length - 1].segments = ringCount;
 }
@@ -1648,7 +1686,7 @@ export function addAnalogStick(model, operation) {
   const capRadius = positiveNumber(operation.cap_radius ?? operation.capRadius, 180, `${name}.cap_radius`);
   const topRadius = positiveNumber(operation.top_radius ?? operation.topRadius, Math.max(shaftRadius, capRadius * 0.72), `${name}.top_radius`);
   const stickProfile = profile || [[0, baseRadius], [shaftHeight, shaftRadius], [height * 0.72, capRadius], [height, topRadius]];
-  addLoftedSolid(model, { name, origin, profile: stickProfile, segments, n, material, smooth, transform, qa });
+  addLoftedSolid(model, { ...objectIdentityFields(operation), name, origin, profile: stickProfile, segments, n, material, smooth, transform, qa });
   const group = model.groups[model.groups.length - 1];
   group.kind = 'analog_stick';
 }
@@ -1669,7 +1707,7 @@ export function addScrewHole(model, operation) {
   const profile = headRadius > radius
     ? [[0, headRadius], [clampedHeadDepth, radius], [depth, radius]]
     : [[0, radius], [depth, radius]];
-  addLoftedSolid(model, { name, origin: [x, y, z - depth], profile, segments, n, material, smooth, transform, qa });
+  addLoftedSolid(model, { ...objectIdentityFields(operation), name, origin: [x, y, z - depth], profile, segments, n, material, smooth, transform, qa });
   const group = model.groups[model.groups.length - 1];
   group.kind = 'screw_hole';
 }
@@ -1707,7 +1745,7 @@ export function addPipeBetweenPoints(model, operation) {
   for (let i = 1; i < ringCount - 1; i += 1) faces.push([0, i + 1, i]);
   const topStart = (path.length - 1) * ringCount;
   for (let i = 1; i < ringCount - 1; i += 1) faces.push([topStart, topStart + i, topStart + i + 1]);
-  addMesh(model, { name, vertices, faces, material, smooth, transform });
+  addMesh(model, { ...objectIdentityFields(operation), name, vertices, faces, material, smooth, transform });
   const group = model.groups[model.groups.length - 1];
   group.kind = 'pipe_between_points';
   group.segments = ringCount;
@@ -1739,7 +1777,8 @@ function normalize3(vector) {
   return vector.map((value) => value / length);
 }
 
-export function addSweptPath(model, { name, path, radius, segments = 8, n, material, smooth = 'all', transform }) {
+export function addSweptPath(model, operation) {
+  const { name, path, radius, segments = 8, n, material, smooth = 'all', transform } = operation;
   if (!name || typeof name !== 'string') throw new Error('swept_path operation requires a string name');
   if (!Array.isArray(path) || path.length < 2) throw new Error(`${name}.path must contain at least 2 [x, y, z] points`);
   const normalizedPath = path.map((point, index) => normalizeVector(point, [0, 0, 0], `${name}.path[${index}]`));
@@ -1765,7 +1804,7 @@ export function addSweptPath(model, { name, path, radius, segments = 8, n, mater
   for (let i = 1; i < ringCount - 1; i += 1) faces.push([0, i + 1, i]);
   const topStart = (normalizedPath.length - 1) * ringCount;
   for (let i = 1; i < ringCount - 1; i += 1) faces.push([topStart, topStart + i, topStart + i + 1]);
-  addMesh(model, { name, vertices, faces, material, smooth, transform });
+  addMesh(model, { ...objectIdentityFields(operation), name, vertices, faces, material, smooth, transform });
   model.groups[model.groups.length - 1].kind = 'swept_path';
   model.groups[model.groups.length - 1].segments = ringCount;
 }
@@ -1823,7 +1862,7 @@ export function addDomedSurface(model, operation) {
     }
   }
   addGridSkirtFaces(faces, bottomIndex, topIndex, xSegments, ySegments);
-  addMesh(model, { name, vertices, faces, material, smooth, transform, qa });
+  addMesh(model, { ...objectIdentityFields(operation), name, vertices, faces, material, smooth, transform, qa });
   model.groups[model.groups.length - 1].kind = 'domed_surface';
   model.groups[model.groups.length - 1].segments_x = xSegments;
   model.groups[model.groups.length - 1].segments_y = ySegments;
@@ -1883,7 +1922,7 @@ export function addBowedPanel(model, operation) {
     }
   }
   addGridSkirtFaces(faces, frontIndex, backIndex, xSegments, zSegments);
-  addMesh(model, { name, vertices, faces, material, smooth, transform, qa });
+  addMesh(model, { ...objectIdentityFields(operation), name, vertices, faces, material, smooth, transform, qa });
   model.groups[model.groups.length - 1].kind = 'bowed_panel';
   model.groups[model.groups.length - 1].segments_x = xSegments;
   model.groups[model.groups.length - 1].segments_z = zSegments;

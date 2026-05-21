@@ -75,13 +75,15 @@
 **已完成并通过 mock/queue 验证：**
 - `delete`、`rename`、`set_material`、`set_visibility`
 - 对象身份第一切片：group / component instance snapshot 回传 `id`，编辑操作支持 `target_id`，旧 `name` 引用保持兼容
+- 对象身份补强：mock/queue 创建侧强制同 scope 内 `id` / `name` 唯一；编辑操作同时传 `target_id` 和 `name` 时必须匹配同一对象
+- `examples/editing-identity.json`：专门覆盖 `id -> rename -> set_material -> transform -> visibility/delete` 编辑链
 - `transform_object`：translate、rotateX/Y/Z、scale、mirror
 - `transform_object` pivot：默认 origin、`"center"`、显式 `[x,y,z]`
 - `face_with_holes`、`profile_extrude`（仅矩形 outer + 矩形 holes）
 - Operation contract 测试：manifest、mock runtime、Ruby queue runtime、component_definition dispatch 覆盖自动校验
 
 **待做（P0 第二切片）：**
-- [ ] **对象身份稳定性补强**：当前已有 DSL `id` / `target_id` 和 queue `persistent_id` snapshot，但仍需做 queue 端真实编辑链验收、id 唯一性策略和 rename/duplicate 冲突策略。
+- [ ] **对象身份 live queue 验收**：当前已有 mock 验证和 queue 侧实现，但还需要在 SketchUp Bridge 在线时跑 `npm run qa:identity:queue` 并固化报告。
 - [ ] **更通用 profile**：当前 `profile_extrude` / `face_with_holes` 只支持矩形。需要支持任意闭合多边形 profile（点数组）+ 带洞。
 - [ ] **本地轴 / 更完整 transform**：当前 `transform_object` 的 rotate 是围绕模型空间轴。需要支持对象本地坐标轴旋转、任意轴旋转（axis + angle）。
 
@@ -143,7 +145,7 @@
 
 | 优先级 | 任务 | 原因 |
 |---|---|---|
-| **P0** | 对象身份稳定性补强 | 第一切片已支持 `id` / `target_id`，还要补 queue 真实编辑链验收和唯一性策略 |
+| **P0** | 对象身份 live queue 验收 | 第一切片已支持 `id` / `target_id` 和唯一性策略，还要补真实 SketchUp 编辑链报告 |
 | **P0** | Operation registry / runtime contract 自动检查扩展 | 基础测试已覆盖 dispatch；下一步把支持状态、schema 和 component-scope 明确成单一注册表 |
 | **P0** | 通用 profile（任意多边形 outer + holes） | `profile_extrude` / `face_with_holes` 当前太受限 |
 | **P0** | 本地轴 / 任意轴旋转 | transform 当前只支持模型空间轴，产品建模需要本地轴 |

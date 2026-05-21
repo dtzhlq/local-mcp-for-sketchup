@@ -379,7 +379,11 @@ module AlmaSketchupMCP
 
   def rename_object(model, operation)
     entity = find_referenced_entity(model, operation, 'rename')
-    entity.name = operation.fetch('new_name')
+    new_name = operation.fetch('new_name')
+    duplicate = (model.entities.grep(Sketchup::Group) + model.entities.grep(Sketchup::ComponentInstance)).find { |item| item != entity && item.name == new_name }
+    raise "rename target already exists: #{new_name}" if duplicate
+
+    entity.name = new_name
   end
 
   def set_object_material(model, operation)
@@ -448,7 +452,7 @@ module AlmaSketchupMCP
   end
 
   def reference_label(reference)
-    reference['id'] ? "id:#{reference['id']}" : "name:#{reference['name']}"
+    [reference['id'] ? "id:#{reference['id']}" : nil, reference['name'] ? "name:#{reference['name']}" : nil].compact.join(' ')
   end
 
   def find_referenced_entity(model, operation, op_name)
@@ -460,10 +464,9 @@ module AlmaSketchupMCP
   end
 
   def entity_matches_reference(entity, reference)
-    return true if reference['id'] && [entity_id(entity), entity_persistent_id(entity)].compact.include?(reference['id'])
-    return true if reference['name'] && entity.name == reference['name']
-
-    false
+    id_matches = !reference['id'] || [entity_id(entity), entity_persistent_id(entity)].compact.include?(reference['id'])
+    name_matches = !reference['name'] || entity.name == reference['name']
+    id_matches && name_matches
   end
 
   def entity_id(entity)
@@ -937,7 +940,7 @@ module AlmaSketchupMCP
 
     add_recess(parent_entities, operation.merge('size' => [length, width], 'radius' => width / 2.0, 'material' => operation['material'] || 'Slot_Dark', 'smooth' => operation['smooth'] || 'all', 'kind' => 'slot'))
     group = parent_entities.grep(Sketchup::Group).last
-    annotate_group(group, { 'kind' => 'slot' }, 'slot') if group
+    annotate_group(group, operation.merge('kind' => 'slot'), 'slot') if group
   end
 
   def add_slot_array(parent_entities, operation)
@@ -1000,7 +1003,7 @@ module AlmaSketchupMCP
     size = direction == 'x' ? [length, thickness, height] : [thickness, length, height]
     add_box(parent_entities, operation.merge('size' => size, 'kind' => 'rib'))
     group = parent_entities.grep(Sketchup::Group).last
-    annotate_group(group, { 'kind' => 'rib' }, 'rib') if group
+    annotate_group(group, operation.merge('kind' => 'rib'), 'rib') if group
   end
 
   def add_standoff_boss(parent_entities, operation)
@@ -1055,7 +1058,9 @@ module AlmaSketchupMCP
   def annotate_group(group, operation, fallback_kind)
     kind = operation['kind'] || operation['op'] || fallback_kind
     if group.respond_to?(:set_attribute)
-      group.set_attribute('AlmaSketchupMCP', 'id', object_id(operation, group.name || fallback_kind))
+      id = object_id(operation, group.name || fallback_kind)
+      assert_entity_identity_available(group, id, group.name)
+      group.set_attribute('AlmaSketchupMCP', 'id', id)
       group.set_attribute('AlmaSketchupMCP', 'kind', kind) if kind
       qa = qa_metadata(operation)
       group.set_attribute('AlmaSketchupMCP', 'qa', JSON.generate(qa)) if qa
@@ -1078,6 +1083,22 @@ module AlmaSketchupMCP
     JSON.parse(raw)
   rescue JSON::ParserError
     nil
+  end
+
+  def assert_entity_identity_available(entity, id, name)
+    siblings = entity_parent_entities(entity)
+    entities = siblings.grep(Sketchup::Group) + siblings.grep(Sketchup::ComponentInstance)
+    duplicate_id = entities.find { |item| item != entity && [entity_id(item), entity_persistent_id(item)].compact.include?(id) }
+    duplicate_name = entities.find { |item| item != entity && item.name == name }
+    if duplicate_id || duplicate_name
+      entity.erase! if entity.respond_to?(:erase!)
+      raise(duplicate_id ? "object id already exists: #{id}" : "object name already exists: #{name}")
+    end
+  end
+
+  def entity_parent_entities(entity)
+    parent = entity.respond_to?(:parent) ? entity.parent : nil
+    parent.respond_to?(:entities) ? parent.entities : Sketchup.active_model.entities
   end
 
   def add_level(operation)
@@ -1277,7 +1298,7 @@ module AlmaSketchupMCP
     panel_origin = profile_panel_origin(origin, plane, bounds)
     add_panel_with_openings(parent_entities, operation.merge('origin' => panel_origin, 'plane' => plane, 'size' => [bounds[:max_x] - bounds[:min_x], bounds[:max_y] - bounds[:min_y]], 'thickness' => operation.fetch('depth'), 'openings' => openings, 'kind' => 'profile_extrude'))
     group = parent_entities.grep(Sketchup::Group).last
-    annotate_group(group, { 'kind' => 'profile_extrude' }, 'profile_extrude') if group
+    annotate_group(group, operation.merge('kind' => 'profile_extrude'), 'profile_extrude') if group
     apply_transform(group, operation) if group
     group
   end
@@ -2088,9 +2109,13 @@ module AlmaSketchupMCP
     rotation = rotate_z ? Geom::Transformation.rotation(ORIGIN, Z_AXIS, rotate_z.to_f.degrees) : Geom::Transformation.new
     instance = model.entities.add_instance(definition, rotation)
     instance.name = name
-    instance.set_attribute('AlmaSketchupMCP', 'id', object_id(operation, name)) if instance.respond_to?(:set_attribute)
-    qa = qa_metadata(operation)
-    instance.set_attribute('AlmaSketchupMCP', 'qa', JSON.generate(qa)) if qa && instance.respond_to?(:set_attribute)
+    if instance.respond_to?(:set_attribute)
+      id = object_id(operation, name)
+      assert_entity_identity_available(instance, id, name)
+      instance.set_attribute('AlmaSketchupMCP', 'id', id)
+      qa = qa_metadata(operation)
+      instance.set_attribute('AlmaSketchupMCP', 'qa', JSON.generate(qa)) if qa
+    end
     translate = transform['translate'] || transform['translation'] || operation['translation'] || [0, 0, 0]
     extra_translate = vector(translate, "#{name}.transform.translate").map { |value| mm_to_model_units(value) }
     instance.transform!(Geom::Transformation.translation([
@@ -2346,6 +2371,7 @@ module AlmaSketchupMCP
         'vertices' => count_vertices(group.entities),
         'bounding_box' => bounds_hash(bounds),
         'material' => first_entities_material(group.entities),
+        'visible' => entity_visible?(group),
         'qa' => entity_qa(group)
       }
     end
@@ -2360,11 +2386,14 @@ module AlmaSketchupMCP
         'vertices' => count_vertices(instance.definition.entities),
         'bounding_box' => bounds_hash(instance.bounds),
         'material' => first_entities_material(instance.definition.entities),
+        'visible' => entity_visible?(instance),
         'qa' => entity_qa(instance)
       }
     end
-    visible_items = groups + instances
-    totals = visible_items.each_with_object({ 'faces' => 0, 'edges' => 0, 'vertices' => 0, 'groups' => groups.length, 'instances' => instances.length }) do |item, acc|
+    visible_groups = groups.select { |group| group['visible'] != false }
+    visible_instances = instances.select { |instance| instance['visible'] != false }
+    visible_items = visible_groups + visible_instances
+    totals = visible_items.each_with_object({ 'faces' => 0, 'edges' => 0, 'vertices' => 0, 'groups' => visible_groups.length, 'instances' => visible_instances.length }) do |item, acc|
       acc['faces'] += item['faces']
       acc['edges'] += item['edges']
       acc['vertices'] += (item['vertices'] || 0)
@@ -2382,7 +2411,7 @@ module AlmaSketchupMCP
       'style_state' => @style_state,
       'shadow_state' => @shadow_state,
       'rendering_options' => @rendering_options_state,
-      'bounding_box' => bounds_hash(model.bounds),
+      'bounding_box' => snapshot_items_bounds(visible_items),
       'warnings' => all_warnings,
       'warning_messages' => all_warnings.map { |w| w['message'] },
       'warning_summary' => warning_summary(all_warnings),
@@ -2393,6 +2422,27 @@ module AlmaSketchupMCP
 
   def sketchup_group_definition?(definition)
     definition.respond_to?(:group?) && definition.group?
+  end
+
+  def entity_visible?(entity)
+    return !entity.hidden? if entity.respond_to?(:hidden?)
+    return !entity.hidden if entity.respond_to?(:hidden)
+
+    true
+  end
+
+  def snapshot_items_bounds(items)
+    return { 'min' => [0, 0, 0], 'max' => [0, 0, 0], 'w' => 0, 'd' => 0, 'h' => 0 } if items.empty?
+
+    mins = [0, 1, 2].map { |index| items.map { |item| item['bounding_box']['min'][index] }.min }
+    maxs = [0, 1, 2].map { |index| items.map { |item| item['bounding_box']['max'][index] }.max }
+    {
+      'min' => mins,
+      'max' => maxs,
+      'w' => (maxs[0] - mins[0]).round(6),
+      'd' => (maxs[1] - mins[1]).round(6),
+      'h' => (maxs[2] - mins[2]).round(6)
+    }
   end
 
   def snapshot_warnings(groups)
