@@ -26,8 +26,8 @@ module AlmaSketchupMCP
   RESPONSE_DIR = File.join(STATE_DIR, 'responses')
   MM_PER_INCH = 25.4
   DEFAULT_OPERATION_LIMIT = 2000
-  PLUGIN_VERSION = 'queue-plugin-0.1.0-ruby-geometry-family-split.1'
-  CAPABILITY_MANIFEST_VERSION = '2026-05-phase2-appearance-slice'
+  PLUGIN_VERSION = 'queue-plugin-0.1.0-transform-local-matrix.1'
+  CAPABILITY_MANIFEST_VERSION = '2026-05-phase2-local-matrix-slice'
   RUNTIME_CAPABILITY_VERSION = '0.1.0-capabilities.1'
   DSL_VERSION = 1
 

@@ -112,7 +112,7 @@
 
 当前 JSON DSL 适合安全、可回归的结构化建模，但还不是通用 CAD/SketchUp 几何层。重要缺口：
 
-- 更完整的 transform matrix 分解和局部 matrix；当前 `transform_object` 已支持 translate、rotateX/Y/Z、模型空间 `axis + angle`、本地轴 `local_axis + local_angle`、SketchUp-compatible 16-number `matrix`、scale、mirror，以及默认 origin / 对象中心 / 显式坐标 pivot，并已覆盖 group 与 component instance 的组合验证。
+- 更完整的 transform matrix 分解；当前 `transform_object` 已支持 translate、rotateX/Y/Z、模型空间 `axis + angle`、本地轴 `local_axis + local_angle`、SketchUp-compatible 16-number `matrix`、本地坐标系 `local_matrix` 第一切片、scale、mirror，以及默认 origin / 对象中心 / 显式坐标 pivot，并已覆盖 group 与 component instance 的组合验证。
 - 更完整的 sweep / frame 控制；当前 `pipe_between_points` 已支持任意 3D 点管线，旧 `swept_path` 仍偏 MVP，主要适合沿 X 的管线。
 - 非轴向墙、坡地、多层复杂楼梯、可参数化窗门族库。
 - 任意选边 CAD fillet/chamfer（当前 `fillet` / `chamfer` 已进入第二阶段产品 DSL 基线，但稳定 slice 只处理盒体/面板 XY footprint 的垂直边圆角与倒角）。

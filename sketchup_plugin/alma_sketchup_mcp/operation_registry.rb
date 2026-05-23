@@ -152,7 +152,7 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op'],
-        'optional' => ['name', 'target_id', 'targetId', 'target', 'object', 'translate', 'rotateX', 'rotateY', 'rotateZ', 'axis', 'angle', 'rotate_axis', 'rotateAxis', 'local_axis', 'localAxis', 'local_angle', 'localAngle', 'rotate_local', 'rotateLocal', 'matrix', 'matrix4x4', 'scale', 'mirror', 'pivot']
+        'optional' => ['name', 'target_id', 'targetId', 'target', 'object', 'translate', 'rotateX', 'rotateY', 'rotateZ', 'axis', 'angle', 'rotate_axis', 'rotateAxis', 'local_axis', 'localAxis', 'local_angle', 'localAngle', 'rotate_local', 'rotateLocal', 'matrix', 'matrix4x4', 'local_matrix', 'localMatrix', 'matrix_local', 'matrixLocal', 'scale', 'mirror', 'pivot']
       },
       'component_scope' => {
         'status' => 'unsupported'

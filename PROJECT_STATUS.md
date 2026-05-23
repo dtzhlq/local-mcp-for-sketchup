@@ -1,7 +1,7 @@
 # SketchUp MCP Replica — 项目状态与计划
 
 > 更新日期：2026-05-23
-> 当前状态：阶段 2 P0 第一/第二切片已收口，operation registry/runtime contract 已单一注册表化，阶段 3 大量 helper 已提前完成
+> 当前状态：阶段 2 P0 第一/第二切片已收口，P1 transform local matrix 第一切片进入本地验证，operation registry/runtime contract 已单一注册表化
 
 ---
 
@@ -111,7 +111,7 @@
 - 对象身份补强：mock/queue 创建侧强制同 scope 内 `id` / `name` 唯一；编辑操作同时传 `target_id` 和 `name` 时必须匹配同一对象
 - `examples/editing-identity.json`：专门覆盖 `id -> rename -> set_material -> transform -> visibility/delete` 编辑链
 - 对象身份 live queue 验收：`npm run qa:identity:queue` 已通过，mock/queue diff 为 0
-- `transform_object`：translate、rotateX/Y/Z、任意模型空间 `axis + angle`、对象本地轴 `local_axis + local_angle`、SketchUp-compatible 16-number `matrix`、scale、mirror
+- `transform_object`：translate、rotateX/Y/Z、任意模型空间 `axis + angle`、对象本地轴 `local_axis + local_angle`、SketchUp-compatible 16-number `matrix`、本地坐标系 `local_matrix`、scale、mirror
 - `transform_object` pivot：默认 origin、`"center"`、显式 `[x,y,z]`
 - `face_with_holes`、`profile_extrude` 通用 profile 第一切片：支持简单闭合多边形 outer + 多边形 holes，拒绝自交、触边和重叠洞；已通过 mock/queue 对照验证
 - Operation contract 测试：manifest、mock runtime、Ruby queue runtime、component_definition dispatch 覆盖自动校验
@@ -120,7 +120,7 @@
 **待做（P1）：**
 - [x] 二次编辑的 chain 支持：新增 `examples/transform-chain-regression.json`，连续多个 `transform_object` 叠加时的 center pivot、本地轴、模型轴、平移和 matrix 已通过 mock/queue 对照验证。
 - [x] 通用 profile 扩展覆盖：新增凹多边形、多洞、竖向 profile、component_definition 内嵌 profile 和失败样例；已通过 mock/queue 对照验证。
-- [ ] 更完整 transform：模型轴、本地轴、4x4 matrix、连续 chain 已覆盖 group 与 component instance mock/queue 对照；后续继续补 matrix 分解和局部 matrix。
+- [ ] 更完整 transform：模型轴、本地轴、模型空间 4x4 matrix、连续 chain 已覆盖 group 与 component instance mock/queue 对照；`local_matrix` 第一切片已进入本地验证，后续补 live queue 复验和 matrix 分解。
 
 ### ✅ 阶段 3 — 高频几何 helper（大量提前完成）
 
@@ -179,7 +179,7 @@
 
 | 优先级 | 任务 | 原因 |
 |---|---|---|
-| **P1** | Transform 后续 | 模型空间任意轴、对象本地轴、4x4 matrix 和连续 chain 均已通过 group/component instance mock/queue；后续补 matrix 分解和局部 matrix |
+| **P1** | Transform 后续 | 模型空间任意轴、对象本地轴、模型空间 4x4 matrix 和连续 chain 均已通过 group/component instance mock/queue；`local_matrix` 已本地验证，后续补 live queue 复验和 matrix 分解 |
 | **P1** | 拆分大 runtime 文件 | JS mock runtime 与 Ruby queue runtime 主边界/operation-family 边界已拆出；后续只剩更细粒度整理或提交切片 |
 | **P1** | Queue 发布收口 | 手动验收清单、troubleshooting、性能基准、SKP size 阈值、串行锁和 release packaging 已固化；后续做提交切片 |
 | **P2** | Expert Mode v1 | 提升 DSL 生成效率 |
@@ -190,6 +190,7 @@
 
 ## 5. 最近的验证记录
 
+- **2026-05-23**：`transform_object.local_matrix` 第一切片完成：新增 `examples/transform-local-matrix.json`，mock 和 Ruby queue runtime 均支持 `local_matrix` / `localMatrix` / `matrix_local` / `matrixLocal` 16-number matrix，按对象当前本地坐标系解释线性与平移分量；manifest 推进到 `2026-05-phase2-local-matrix-slice`，插件版本推进到 `queue-plugin-0.1.0-transform-local-matrix.1`。已通过 `npm test`；待重新安装/重启 SketchUp 后跑 live queue 单例和全量回归。
 - **2026-05-23**：Ruby queue runtime geometry family 拆分完成：`geometry_operations.rb` 从 1496 行降到 157 行，新增 `primitive_operations.rb`、`product_operations.rb`、`profile_operations.rb`、`surface_operations.rb` 和 `demo_operations.rb`；主插件加载顺序和 `scripts/package-sketchup-plugin.mjs` 打包清单同步更新，插件版本推进到 `queue-plugin-0.1.0-ruby-geometry-family-split.1`。已通过 Ruby syntax、`npm run plugin:check`、`npm test`、`npm run plugin:install` 和 `npm run plugin:package`；重启 SketchUp 后 live `get_capabilities` 回报新版本、compatibility `ok`、issues 为空，`npm run qa:queue` 9 个默认样例全部 pass，`npm run qa:budget:queue` 4 个预算样例全部 pass。
 - **2026-05-23**：JS mock runtime 主边界拆分完成：新增 `src/model-state.mjs`、`src/operation-utils.mjs`、`src/material-operations.mjs`、`src/primitive-operations.mjs`、`src/profile-operations.mjs`、`src/surface-operations.mjs`、`src/product-operations.mjs` 和 `src/demo-operations.mjs`，`src/geometry.mjs` 收敛为 10 行兼容聚合导出入口，`src/mock-runtime.mjs` 只负责 session/dispatch。已通过 `node --check`、`npm test`、`npm run qa:mock`、`npm run qa:budget:mock`、`npm run plugin:check` 和 `git diff --check`，contract 输出 manifest/mock/Ruby dispatch 均 63，component_definition registry/dispatch 均 41；本轮未改 Ruby 插件，未重跑 live queue。
 - **2026-05-23**：JS mock runtime 拆分第三刀完成：新增 `src/snapshot.mjs`，将 snapshot 构建、warning summary、bbox 合并和碰撞 warning 从 `src/geometry.mjs` 拆出；`geometry.mjs` 从 1529 行降到 1320 行，`src/mock-runtime.mjs`、`src/architecture-operations.mjs`、`src/component-operations.mjs` 和 `src/object-operations.mjs` 改为从 `src/snapshot.mjs` 取 `createSnapshot` / bbox helper。已通过 `node --check`、`npm test`、`npm run qa:mock`、`npm run qa:budget:mock`、`npm run plugin:check` 和 `git diff --check`，contract 输出 manifest/mock/Ruby dispatch 均 63，component_definition registry/dispatch 均 41。
@@ -218,7 +219,7 @@
 - **2026-05-19**：`transform_object` pivot 增强（origin/center/显式坐标）通过 mock/queue 验证。
 - `examples/editing-transform-profile.json` mock-vs-queue compare：Verdict `pass`，Level `ok`，Total diffs 0，报告见 `output/editing-transform-profile-queue-report.md`。
 - `npm test`、`npm run qa:mock` 通过。
-- Queue capability handshake：当前 SketchUp Bridge 已加载 manifest `2026-05-phase2-appearance-slice` / plugin `queue-plugin-0.1.0-ruby-geometry-family-split.1`，runtime compatibility `ok`，issues 为空；supported operations 63，包含 `uv_project_planar` / `uv_project_box`。
+- Queue capability handshake：上一轮 live SketchUp Bridge 已加载 manifest `2026-05-phase2-appearance-slice` / plugin `queue-plugin-0.1.0-ruby-geometry-family-split.1` 且 compatibility `ok`；当前源码已推进到 manifest `2026-05-phase2-local-matrix-slice` / plugin `queue-plugin-0.1.0-transform-local-matrix.1`，需重新安装并完整重启 SketchUp 后复验。
 
 ---
 

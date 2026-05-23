@@ -1135,6 +1135,28 @@ assert.equal(chainInstance.transform.object_transform.angle, 15);
 assert.deepEqual(chainInstance.transform.object_transform.translate, [18, 10, 6]);
 assert.ok(chainInstance.bounding_box.h > 35 && chainInstance.bounding_box.h < 36);
 
+const transformLocalMatrixCode = await fs.readFile(path.resolve('examples/transform-local-matrix.json'), 'utf8');
+const transformLocalMatrixBuilt = await bridge.build_model({ runtime: 'mock', code: transformLocalMatrixCode });
+const transformLocalMatrixSnapshot = transformLocalMatrixBuilt.snapshot;
+const localMatrixGroup = transformLocalMatrixSnapshot.groups.find((group) => group.name === 'Local_Matrix_Group');
+const localMatrixInstance = transformLocalMatrixSnapshot.instances.find((instance) => instance.name === 'Local_Matrix_Instance');
+assert.equal(transformLocalMatrixSnapshot.totals.groups, 1);
+assert.equal(transformLocalMatrixSnapshot.totals.instances, 1);
+assert.ok(transformLocalMatrixSnapshot.component_definitions.includes('Local_Matrix_Widget_Def'));
+assert.ok(transformLocalMatrixSnapshot.scenes.some((scene) => scene.name === 'Local_Matrix_QA'));
+assert.equal(localMatrixGroup.id, 'local-matrix-group');
+assert.equal(localMatrixGroup.kind, 'box');
+assert.deepEqual(localMatrixGroup.transform.object_transform.local_matrix, [1, 0, 0, 0, 0.2, 1, 0, 0, 0, 0, 1, 0, 0, 30, 6, 1]);
+assert.equal(localMatrixGroup.bounding_box.h, 10);
+assert.equal(localMatrixGroup.bounding_box.min[2], 6);
+assert.ok(localMatrixGroup.bounding_box.d > 44 && localMatrixGroup.bounding_box.d < 45);
+assert.equal(localMatrixInstance.id, 'local-matrix-instance');
+assert.equal(localMatrixInstance.definition, 'Local_Matrix_Widget_Def');
+assert.deepEqual(localMatrixInstance.transform.object_transform.local_matrix, [1, 0.25, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 20, 0, 4, 1]);
+assert.equal(localMatrixInstance.bounding_box.h, 18);
+assert.equal(localMatrixInstance.bounding_box.min[2], 4);
+assert.ok(localMatrixInstance.bounding_box.d > 44 && localMatrixInstance.bounding_box.d < 45);
+
 const profileEdgeCasesCode = await fs.readFile(path.resolve('examples/profile-edge-cases.json'), 'utf8');
 const profileEdgeCasesBuilt = await bridge.build_model({ runtime: 'mock', code: profileEdgeCasesCode });
 const profileEdgeCasesSnapshot = profileEdgeCasesBuilt.snapshot;

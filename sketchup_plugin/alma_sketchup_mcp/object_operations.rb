@@ -95,6 +95,8 @@ module AlmaSketchupMCP
     t = Geom::Transformation.rotation(pivot, Geom::Vector3d.new(*axis_rotation[:axis]), axis_rotation[:angle].degrees) * t if axis_rotation
     local_rotation = local_axis_rotation_transform(entity, transform, label)
     t = Geom::Transformation.rotation(pivot, local_rotation[:axis], local_rotation[:angle].degrees) * t if local_rotation
+    local_matrix = local_matrix_transform(entity, transform, pivot, label)
+    t = local_matrix * t if local_matrix
     translate = transform['translate'] || transform['translation']
     t = Geom::Transformation.translation(vector(translate, "#{label}.translate").map { |value| mm_to_model_units(value) }) * t if translate
     matrix = transform_matrix(transform, label)
@@ -166,15 +168,29 @@ module AlmaSketchupMCP
     raw = transform['matrix'] || transform['matrix4x4']
     return nil if raw.nil?
 
+    transform_matrix_values(raw, label, 'matrix')
+  end
+
+  def local_matrix_transform(entity, transform, pivot, label)
+    raw = transform['local_matrix'] || transform['localMatrix'] || transform['matrix_local'] || transform['matrixLocal']
+    return nil if raw.nil?
+
+    local_matrix = Geom::Transformation.new(transform_matrix_values(raw, label, 'local_matrix'))
+    entity_transform = entity.respond_to?(:transformation) ? entity.transformation : Geom::Transformation.new
+    local_to_model = Geom::Transformation.axes(pivot, entity_transform.xaxis, entity_transform.yaxis, entity_transform.zaxis)
+    local_to_model * local_matrix * local_to_model.inverse
+  end
+
+  def transform_matrix_values(raw, label, field_name)
     values = if raw.is_a?(Array) && raw.length == 4 && raw.all? { |row| row.is_a?(Array) && row.length == 4 }
                raw.flatten
              else
                raw
              end
-    raise "#{label}.matrix must be a 16-number SketchUp-compatible transform array" unless values.is_a?(Array) && values.length == 16
+    raise "#{label}.#{field_name} must be a 16-number SketchUp-compatible transform array" unless values.is_a?(Array) && values.length == 16
 
     values.each_with_index.map do |value, index|
-      number = finite_number(value, "#{label}.matrix[#{index}]")
+      number = finite_number(value, "#{label}.#{field_name}[#{index}]")
       [12, 13, 14].include?(index) ? mm_to_model_units(number) : number
     end
   end

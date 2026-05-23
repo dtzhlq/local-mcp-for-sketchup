@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "units": "mm",
+  "operations": [
+    { "op": "reset" },
+    { "op": "material", "name": "Local_Matrix_Base", "color": "#d8dee8" },
+    { "op": "material", "name": "Local_Matrix_Accent", "color": "#3f8f72" },
+    { "op": "box", "id": "local-matrix-group", "name": "Local_Matrix_Group", "origin": [0, 0, 0], "size": [50, 20, 10], "material": "Local_Matrix_Base" },
+    { "op": "component_definition", "name": "Local_Matrix_Widget_Def", "operations": [
+      { "op": "box", "name": "Local_Matrix_Widget_Body", "origin": [0, 0, 0], "size": [44, 18, 12], "material": "Local_Matrix_Base" },
+      { "op": "box", "name": "Local_Matrix_Widget_Tab", "origin": [32, 5, 12], "size": [12, 8, 6], "material": "Local_Matrix_Accent" }
+    ] },
+    { "op": "component_instance", "id": "local-matrix-instance", "name": "Local_Matrix_Instance", "definition": "Local_Matrix_Widget_Def", "origin": [140, 0, 0], "transform": { "rotateZ": 25 } },
+    { "op": "transform_object", "target_id": "local-matrix-group", "pivot": "center", "rotateZ": 30 },
+    { "op": "transform_object", "target_id": "local-matrix-group", "pivot": "center", "local_matrix": [1, 0, 0, 0, 0.2, 1, 0, 0, 0, 0, 1, 0, 0, 30, 6, 1] },
+    { "op": "transform_object", "target_id": "local-matrix-instance", "pivot": "center", "matrix_local": [1, 0.25, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 20, 0, 4, 1] },
+    { "op": "scene", "name": "Local_Matrix_QA", "camera": { "eye": [230, -160, 120], "target": [95, 25, 18], "up": [0, 0, 1] } }
+  ]
+}

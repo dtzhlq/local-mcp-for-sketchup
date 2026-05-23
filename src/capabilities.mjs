@@ -1,5 +1,5 @@
 export const DSL_VERSION = 1;
-export const CAPABILITY_MANIFEST_VERSION = '2026-05-phase2-appearance-slice';
+export const CAPABILITY_MANIFEST_VERSION = '2026-05-phase2-local-matrix-slice';
 export const RUNTIME_CAPABILITY_VERSION = '0.1.0-capabilities.1';
 
 export const SUPPORT_STATUS = Object.freeze({
@@ -128,10 +128,10 @@ const OPERATION_REGISTRY_ENTRIES = [
   {
     op: 'transform_object',
     description: 'Apply a safe transform to an existing named group or component instance.',
-    schema: { required: ['op'], optional: ['name', ...objectTarget, 'translate', 'rotateX', 'rotateY', 'rotateZ', 'axis', 'angle', 'rotate_axis', 'rotateAxis', 'local_axis', 'localAxis', 'local_angle', 'localAngle', 'rotate_local', 'rotateLocal', 'matrix', 'matrix4x4', 'scale', 'mirror', 'pivot'] },
+    schema: { required: ['op'], optional: ['name', ...objectTarget, 'translate', 'rotateX', 'rotateY', 'rotateZ', 'axis', 'angle', 'rotate_axis', 'rotateAxis', 'local_axis', 'localAxis', 'local_angle', 'localAngle', 'rotate_local', 'rotateLocal', 'matrix', 'matrix4x4', 'local_matrix', 'localMatrix', 'matrix_local', 'matrixLocal', 'scale', 'mirror', 'pivot'] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
-    notes: "Phase 2 object-editing slice. Prefer target_id for stable references; name remains supported as a compatibility fallback. Supports model-space rotateX/Y/Z, arbitrary model-space axis+angle, local-axis rotations, and SketchUp-compatible 16-number 4x4 matrices."
+    notes: "Phase 2 object-editing slice. Prefer target_id for stable references; name remains supported as a compatibility fallback. Supports model-space rotateX/Y/Z, arbitrary model-space axis+angle, local-axis rotations, model-space 4x4 matrices, and local_matrix 4x4 transforms interpreted in the object's current local axes."
   },
   {
     op: 'box',

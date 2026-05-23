@@ -100,11 +100,13 @@ export function transformObject(model, operation) {
 function normalizeObjectTransform(operation, object) {
   const transform = operation.transform || operation;
   const name = object.name;
+  const orientation = object._orientation || identityMatrix3();
   const translate = transform.translate ?? transform.translation ?? [0, 0, 0];
   const rotate = transform.rotate ?? transform.rotation ?? {};
   const axisRotation = normalizeAxisRotation(transform, rotate, name);
-  const localRotation = normalizeLocalRotation(transform, rotate, object._orientation || identityMatrix3(), name);
+  const localRotation = normalizeLocalRotation(transform, rotate, orientation, name);
   const matrix = normalizeObjectMatrix(transform, name);
+  const localMatrix = normalizeObjectLocalMatrix(transform, name);
   const scaleRaw = transform.scale ?? 1;
   const mirrorRaw = transform.mirror ?? [];
   const pivotRaw = transform.pivot ?? operation.pivot ?? 'origin';
@@ -126,6 +128,8 @@ function normalizeObjectTransform(operation, object) {
     local_angle: localRotation.local_angle,
     local_model_axis: localRotation.local_model_axis,
     matrix,
+    local_matrix: localMatrix,
+    orientation,
     scale,
     mirror: mirrorAxes.filter(Boolean),
     pivot: normalizeTransformPivot(pivotRaw, object.bounding_box, `${name}.pivot`)
@@ -135,11 +139,21 @@ function normalizeObjectTransform(operation, object) {
 function normalizeObjectMatrix(transform, name) {
   const raw = transform.matrix ?? transform.matrix4x4;
   if (raw === undefined) return null;
+  return normalizeTransformMatrixValues(raw, name, 'matrix');
+}
+
+function normalizeObjectLocalMatrix(transform, name) {
+  const raw = transform.local_matrix ?? transform.localMatrix ?? transform.matrix_local ?? transform.matrixLocal;
+  if (raw === undefined) return null;
+  return normalizeTransformMatrixValues(raw, name, 'local_matrix');
+}
+
+function normalizeTransformMatrixValues(raw, name, fieldName) {
   const values = Array.isArray(raw) && raw.length === 4 && raw.every((row) => Array.isArray(row) && row.length === 4)
     ? raw.flat()
     : raw;
-  if (!Array.isArray(values) || values.length !== 16) throw new Error(`${name}.matrix must be a 16-number SketchUp-compatible transform array`);
-  return values.map((value, index) => finiteNumber(value, undefined, `${name}.matrix[${index}]`));
+  if (!Array.isArray(values) || values.length !== 16) throw new Error(`${name}.${fieldName} must be a 16-number SketchUp-compatible transform array`);
+  return values.map((value, index) => finiteNumber(value, undefined, `${name}.${fieldName}[${index}]`));
 }
 
 function normalizeLocalRotation(transform, rotate, orientation, name) {
@@ -228,11 +242,12 @@ function applyObjectTransform(vertices, transform) {
     [x, y] = [x * cz - y * szn, x * szn + y * cz];
     [x, y, z] = applyMatrix3([x, y, z], arbitrary);
     [x, y, z] = applyMatrix3([x, y, z], local);
+    [x, y, z] = applyLocalTransformMatrix4([x, y, z], transform.local_matrix, transform.orientation);
     return applyTransformMatrix4([
       x + px + transform.translate[0],
       y + py + transform.translate[1],
       z + pz + transform.translate[2]
-    ], transform.matrix);
+    ], transform.matrix, 'transform_object.matrix');
   });
 }
 
@@ -243,6 +258,7 @@ function applyOrientationTransform(orientation, transform) {
   next = multiplyMatrix3(rotationZMatrix(transform.rotateZ), next);
   next = multiplyMatrix3(axisRotationMatrix(transform.axis, transform.angle), next);
   next = multiplyMatrix3(axisRotationMatrix(transform.local_model_axis, transform.local_angle), next);
+  next = multiplyMatrix3(next, linearMatrix3FromTransformMatrix4(transform.local_matrix));
   next = multiplyMatrix3(linearMatrix3FromTransformMatrix4(transform.matrix), next);
   return next;
 }
@@ -294,14 +310,22 @@ function applyMatrix3([x, y, z], matrix) {
   ];
 }
 
-function applyTransformMatrix4([x, y, z], matrix) {
+function applyTransformMatrix4([x, y, z], matrix, label = 'transform_object.matrix') {
   if (!matrix) return [x, y, z];
   const w = x * matrix[3] + y * matrix[7] + z * matrix[11] + matrix[15];
   const nx = x * matrix[0] + y * matrix[4] + z * matrix[8] + matrix[12];
   const ny = x * matrix[1] + y * matrix[5] + z * matrix[9] + matrix[13];
   const nz = x * matrix[2] + y * matrix[6] + z * matrix[10] + matrix[14];
-  if (Math.abs(w) <= 1e-9) throw new Error('transform_object.matrix produced a point with zero homogeneous w');
+  if (Math.abs(w) <= 1e-9) throw new Error(`${label} produced a point with zero homogeneous w`);
   return [nx / w, ny / w, nz / w];
+}
+
+function applyLocalTransformMatrix4(relativePoint, matrix, orientation) {
+  if (!matrix) return relativePoint;
+  const inverse = invertMatrix3(orientation);
+  const localPoint = applyMatrix3(relativePoint, inverse);
+  const transformedLocalPoint = applyTransformMatrix4(localPoint, matrix, 'transform_object.local_matrix');
+  return applyMatrix3(transformedLocalPoint, orientation);
 }
 
 function linearMatrix3FromTransformMatrix4(matrix) {
@@ -319,9 +343,25 @@ function multiplyMatrix3(a, b) {
   )));
 }
 
+function invertMatrix3(matrix) {
+  const [
+    [a, b, c],
+    [d, e, f],
+    [g, h, i]
+  ] = matrix;
+  const det = a * (e * i - f * h) - b * (d * i - f * g) + c * (d * h - e * g);
+  if (Math.abs(det) <= 1e-12) throw new Error('transform_object.local_matrix requires an invertible object orientation');
+  return [
+    [(e * i - f * h) / det, (c * h - b * i) / det, (b * f - c * e) / det],
+    [(f * g - d * i) / det, (a * i - c * g) / det, (c * d - a * f) / det],
+    [(d * h - e * g) / det, (b * g - a * h) / det, (a * e - b * d) / det]
+  ];
+}
+
 function mergeObjectTransform(existing = {}, transform) {
+  const { orientation, ...publicTransform } = transform;
   return {
     ...(existing || {}),
-    object_transform: transform
+    object_transform: publicTransform
   };
 }
