@@ -22,6 +22,7 @@ module AlmaSketchupMCP
         'texture_transform' => entity_texture_transform(group),
         'image' => group.respond_to?(:get_attribute) ? group.get_attribute('AlmaSketchupMCP', 'image') : nil,
         'attributes' => entity_attributes(group),
+        'transform' => entity_object_transform(group),
         'visible' => group.respond_to?(:hidden?) ? !group.hidden? : true,
         'qa' => entity_qa(group)
       }
@@ -41,6 +42,7 @@ module AlmaSketchupMCP
         'classification' => entity_classification(instance),
         'texture_transform' => entity_texture_transform(instance),
         'attributes' => entity_attributes(instance),
+        'transform' => entity_object_transform(instance),
         'visible' => instance.respond_to?(:hidden?) ? !instance.hidden? : true,
         'qa' => entity_qa(instance)
       }

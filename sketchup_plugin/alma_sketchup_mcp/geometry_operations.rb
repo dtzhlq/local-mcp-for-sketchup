@@ -62,13 +62,24 @@ module AlmaSketchupMCP
     entity.attribute_dictionaries.each do |dictionary|
       values = {}
       dictionary.each_pair do |key, value|
-        next if dictionary.name == 'AlmaSketchupMCP' && %w[id kind qa].include?(key.to_s)
+        next if dictionary.name == 'AlmaSketchupMCP' && %w[id kind qa object_transform_json].include?(key.to_s)
 
         values[key.to_s] = attribute_snapshot_value(value)
       end
       result[dictionary.name] = values unless values.empty?
     end
     result.empty? ? nil : result
+  end
+
+  def entity_object_transform(entity)
+    return nil unless entity.respond_to?(:get_attribute)
+
+    raw = entity.get_attribute('AlmaSketchupMCP', 'object_transform_json')
+    return nil if raw.nil? || raw.to_s.empty?
+
+    { 'object_transform' => JSON.parse(raw.to_s) }
+  rescue JSON::ParserError
+    nil
   end
 
   def entity_classification(entity)

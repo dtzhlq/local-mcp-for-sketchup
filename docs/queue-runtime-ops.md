@@ -63,7 +63,7 @@ node src/cli.mjs compare_model --code-file examples/golden-product.json --expect
 | 能力组 | 样例 | 检查点 |
 |---|---|---|
 | 身份与编辑 | `examples/editing-identity.json` | `id` / `target_id` 编辑链可执行；rename 后仍能继续 set material / transform / visibility / delete；隐藏对象不计入 totals 和 bbox |
-| Transform | `examples/transform-chain-regression.json`、`examples/component-transform-composition.json` | group 与 component instance 的 center pivot、本地轴、模型轴、平移和 matrix 叠加方向正确 |
+| Transform | `examples/transform-chain-regression.json`、`examples/component-transform-composition.json`、`examples/transform-local-matrix.json` | group 与 component instance 的 center pivot、本地轴、模型轴、平移、matrix/local_matrix 叠加方向正确；matrix decomposition metadata 回传 translation、basis axes、scale、shear、determinant 和 mirrored |
 | Profile | `examples/profile-edge-cases.json` | 凹多边形、多洞、`xz` 竖向 profile 和 component_definition 内嵌 profile 成功；洞外、洞重叠等失败样例返回结构化 error |
 | 组织元数据 | `examples/metadata-organization-slice.json` | Tags/Layers、attributes、classification snapshot 字段回传；SketchUp attribute dictionary 中有镜像数据 |
 | Appearance | `examples/appearance-texture-slice.json` | `texture_transform`、planar/box UV metadata、image plane 和 component_definition 内嵌 image plane 均回传；贴图缺失只 warning 不失败 |

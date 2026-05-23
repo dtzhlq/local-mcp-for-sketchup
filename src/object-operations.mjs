@@ -107,6 +107,8 @@ function normalizeObjectTransform(operation, object) {
   const localRotation = normalizeLocalRotation(transform, rotate, orientation, name);
   const matrix = normalizeObjectMatrix(transform, name);
   const localMatrix = normalizeObjectLocalMatrix(transform, name);
+  const matrixDecomposition = decomposeTransformMatrix4(matrix);
+  const localMatrixDecomposition = decomposeTransformMatrix4(localMatrix);
   const scaleRaw = transform.scale ?? 1;
   const mirrorRaw = transform.mirror ?? [];
   const pivotRaw = transform.pivot ?? operation.pivot ?? 'origin';
@@ -128,7 +130,9 @@ function normalizeObjectTransform(operation, object) {
     local_angle: localRotation.local_angle,
     local_model_axis: localRotation.local_model_axis,
     matrix,
+    matrix_decomposition: matrixDecomposition,
     local_matrix: localMatrix,
+    local_matrix_decomposition: localMatrixDecomposition,
     orientation,
     scale,
     mirror: mirrorAxes.filter(Boolean),
@@ -334,6 +338,53 @@ function linearMatrix3FromTransformMatrix4(matrix) {
     [matrix[0], matrix[4], matrix[8]],
     [matrix[1], matrix[5], matrix[9]],
     [matrix[2], matrix[6], matrix[10]]
+  ];
+}
+
+function decomposeTransformMatrix4(matrix) {
+  if (!matrix) return null;
+  const xColumn = [matrix[0], matrix[1], matrix[2]];
+  const yColumn = [matrix[4], matrix[5], matrix[6]];
+  const zColumn = [matrix[8], matrix[9], matrix[10]];
+  const determinant = dotVector(xColumn, crossVector(yColumn, zColumn));
+  const xAxis = normalizeMatrixAxis(xColumn);
+  const yAxis = normalizeMatrixAxis(yColumn);
+  const zAxis = normalizeMatrixAxis(zColumn);
+  return {
+    translate: [matrix[12], matrix[13], matrix[14]],
+    scale: [vectorLength(xColumn), vectorLength(yColumn), vectorLength(zColumn)],
+    x_axis: xAxis,
+    y_axis: yAxis,
+    z_axis: zAxis,
+    shear: {
+      xy: dotVector(xAxis, yAxis),
+      xz: dotVector(xAxis, zAxis),
+      yz: dotVector(yAxis, zAxis)
+    },
+    determinant,
+    mirrored: determinant < 0
+  };
+}
+
+function normalizeMatrixAxis(axis) {
+  const length = vectorLength(axis);
+  if (length <= 1e-12) return [0, 0, 0];
+  return axis.map((value) => value / length);
+}
+
+function vectorLength(axis) {
+  return Math.hypot(axis[0], axis[1], axis[2]);
+}
+
+function dotVector(a, b) {
+  return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+}
+
+function crossVector(a, b) {
+  return [
+    a[1] * b[2] - a[2] * b[1],
+    a[2] * b[0] - a[0] * b[2],
+    a[0] * b[1] - a[1] * b[0]
   ];
 }
 

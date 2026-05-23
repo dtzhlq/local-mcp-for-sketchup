@@ -60,6 +60,7 @@
 最近一次验证：
 
 - runtime module split：Ruby queue 插件最近 live handshake 已加载 `queue-plugin-0.1.0-ruby-geometry-family-split.1`，compatibility `ok`，issues 为空；`qa:queue` 9 个默认样例 pass，`qa:budget:queue` 4 个预算样例 pass。JS mock runtime 已拆出 model state、operation utils、material、primitive、profile、surface、product、architecture、demo、component、view、object identity/editing 和 snapshot/QA 模块，`npm test` contract 输出 manifest/mock/Ruby dispatch 均为 `63`，component_definition registry/dispatch 均为 `41`。
+- transform matrix decomposition：源码已推进到 manifest `2026-05-phase2-matrix-decomposition-slice`，mock `matrix` / `local_matrix` snapshot 和 Ruby queue transform metadata 均包含 translation、basis axes、scale、shear、determinant 和 mirrored 分解字段；live queue 仍待安装新版插件并完整重启 SketchUp 后复验。
 - performance budget：`npm run qa:budget:mock` / `npm run qa:budget:queue` 已覆盖 architecture/product/structured/appearance 四个发布样例；queue 真实 SKP size 当前均低于 5MB 阈值。
 - release packaging：`npm run plugin:check` / `npm run plugin:install` / `npm run plugin:package` 已固化 Ruby 插件文件清单、安装检查和 `.rbz` 打包入口。
 - registry/runtime contract：Ruby `operation_registry.rb` 由 `src/capabilities.mjs` 生成，`registry:check` 已纳入测试和插件检查；Node queue runtime 通过 lock 文件串行化同一个 SketchUp file queue。
@@ -112,7 +113,7 @@
 
 当前 JSON DSL 适合安全、可回归的结构化建模，但还不是通用 CAD/SketchUp 几何层。重要缺口：
 
-- 更完整的 transform matrix 分解；当前 `transform_object` 已支持 translate、rotateX/Y/Z、模型空间 `axis + angle`、本地轴 `local_axis + local_angle`、SketchUp-compatible 16-number `matrix`、本地坐标系 `local_matrix` 第一切片、scale、mirror，以及默认 origin / 对象中心 / 显式坐标 pivot，并已覆盖 group 与 component instance 的组合验证。
+- 更复杂的 transform 分解仍需继续补（例如 Euler/非仿射报告与 live queue 对照细化）；当前 `transform_object` 已支持 translate、rotateX/Y/Z、模型空间 `axis + angle`、本地轴 `local_axis + local_angle`、SketchUp-compatible 16-number `matrix`、本地坐标系 `local_matrix`、scale、mirror，以及默认 origin / 对象中心 / 显式坐标 pivot，并已为 matrix/local_matrix snapshot 增加 translation、basis axes、scale、shear、determinant 和 mirrored 分解元数据。
 - 更完整的 sweep / frame 控制；当前 `pipe_between_points` 已支持任意 3D 点管线，旧 `swept_path` 仍偏 MVP，主要适合沿 X 的管线。
 - 非轴向墙、坡地、多层复杂楼梯、可参数化窗门族库。
 - 任意选边 CAD fillet/chamfer（当前 `fillet` / `chamfer` 已进入第二阶段产品 DSL 基线，但稳定 slice 只处理盒体/面板 XY footprint 的垂直边圆角与倒角）。

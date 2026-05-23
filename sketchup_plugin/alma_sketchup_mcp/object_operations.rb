@@ -95,6 +95,8 @@ module AlmaSketchupMCP
     t = Geom::Transformation.rotation(pivot, Geom::Vector3d.new(*axis_rotation[:axis]), axis_rotation[:angle].degrees) * t if axis_rotation
     local_rotation = local_axis_rotation_transform(entity, transform, label)
     t = Geom::Transformation.rotation(pivot, local_rotation[:axis], local_rotation[:angle].degrees) * t if local_rotation
+    matrix_values = transform_matrix_metadata_values(transform, label)
+    local_matrix_values = local_matrix_metadata_values(transform, label)
     local_matrix = local_matrix_transform(entity, transform, pivot, label)
     t = local_matrix * t if local_matrix
     translate = transform['translate'] || transform['translation']
@@ -102,6 +104,7 @@ module AlmaSketchupMCP
     matrix = transform_matrix(transform, label)
     t = Geom::Transformation.new(matrix) * t if matrix
     entity.transform!(t)
+    write_object_transform_metadata(entity, object_transform_metadata(transform, label, scale_values, mirror_axes, pivot, axis_rotation, local_rotation, matrix_values, local_matrix_values))
     entity
   end
 
@@ -140,7 +143,12 @@ module AlmaSketchupMCP
     raise "#{label}.local_axis resolved to zero model vector" if model_axis.length <= 1e-9
     model_axis.normalize!
 
-    { axis: model_axis, angle: finite_number(angle, "#{label}.local_angle") }
+    {
+      axis: model_axis,
+      local_axis: local_axis,
+      model_axis: [model_axis.x, model_axis.y, model_axis.z],
+      angle: finite_number(angle, "#{label}.local_angle")
+    }
   end
 
   def normalize_local_axis(axis, label)
@@ -171,8 +179,15 @@ module AlmaSketchupMCP
     transform_matrix_values(raw, label, 'matrix')
   end
 
+  def transform_matrix_metadata_values(transform, label)
+    raw = transform['matrix'] || transform['matrix4x4']
+    return nil if raw.nil?
+
+    transform_matrix_values(raw, label, 'matrix', convert_translation: false)
+  end
+
   def local_matrix_transform(entity, transform, pivot, label)
-    raw = transform['local_matrix'] || transform['localMatrix'] || transform['matrix_local'] || transform['matrixLocal']
+    raw = local_matrix_raw(transform)
     return nil if raw.nil?
 
     local_matrix = Geom::Transformation.new(transform_matrix_values(raw, label, 'local_matrix'))
@@ -181,7 +196,18 @@ module AlmaSketchupMCP
     local_to_model * local_matrix * local_to_model.inverse
   end
 
-  def transform_matrix_values(raw, label, field_name)
+  def local_matrix_metadata_values(transform, label)
+    raw = local_matrix_raw(transform)
+    return nil if raw.nil?
+
+    transform_matrix_values(raw, label, 'local_matrix', convert_translation: false)
+  end
+
+  def local_matrix_raw(transform)
+    transform['local_matrix'] || transform['localMatrix'] || transform['matrix_local'] || transform['matrixLocal']
+  end
+
+  def transform_matrix_values(raw, label, field_name, convert_translation: true)
     values = if raw.is_a?(Array) && raw.length == 4 && raw.all? { |row| row.is_a?(Array) && row.length == 4 }
                raw.flatten
              else
@@ -191,8 +217,86 @@ module AlmaSketchupMCP
 
     values.each_with_index.map do |value, index|
       number = finite_number(value, "#{label}.#{field_name}[#{index}]")
-      [12, 13, 14].include?(index) ? mm_to_model_units(number) : number
+      convert_translation && [12, 13, 14].include?(index) ? mm_to_model_units(number) : number
     end
+  end
+
+  def object_transform_metadata(transform, label, scale_values, mirror_axes, pivot, axis_rotation, local_rotation, matrix_values, local_matrix_values)
+    translate = transform['translate'] || transform['translation']
+    {
+      'translate' => translate ? vector(translate, "#{label}.translate") : [0, 0, 0],
+      'rotateX' => finite_number(transform['rotateX'] || transform['rotationX'] || 0, "#{label}.rotateX"),
+      'rotateY' => finite_number(transform['rotateY'] || transform['rotationY'] || 0, "#{label}.rotateY"),
+      'rotateZ' => finite_number(transform['rotateZ'] || transform['rotationZ'] || 0, "#{label}.rotateZ"),
+      'axis' => axis_rotation ? axis_rotation[:axis] : nil,
+      'angle' => axis_rotation ? axis_rotation[:angle] : 0,
+      'local_axis' => local_rotation ? local_rotation[:local_axis] : nil,
+      'local_angle' => local_rotation ? local_rotation[:angle] : 0,
+      'local_model_axis' => local_rotation ? local_rotation[:model_axis] : nil,
+      'matrix' => matrix_values,
+      'matrix_decomposition' => transform_matrix_decomposition(matrix_values),
+      'local_matrix' => local_matrix_values,
+      'local_matrix_decomposition' => transform_matrix_decomposition(local_matrix_values),
+      'scale' => scale_values,
+      'mirror' => mirror_axes.compact,
+      'pivot' => [model_units_to_mm(pivot.x), model_units_to_mm(pivot.y), model_units_to_mm(pivot.z)]
+    }
+  end
+
+  def transform_matrix_decomposition(values)
+    return nil if values.nil?
+
+    x_column = [values[0], values[1], values[2]]
+    y_column = [values[4], values[5], values[6]]
+    z_column = [values[8], values[9], values[10]]
+    determinant = vector_dot(x_column, vector_cross(y_column, z_column))
+    x_axis = normalize_matrix_axis(x_column)
+    y_axis = normalize_matrix_axis(y_column)
+    z_axis = normalize_matrix_axis(z_column)
+    {
+      'translate' => [values[12], values[13], values[14]],
+      'scale' => [vector_length(x_column), vector_length(y_column), vector_length(z_column)],
+      'x_axis' => x_axis,
+      'y_axis' => y_axis,
+      'z_axis' => z_axis,
+      'shear' => {
+        'xy' => vector_dot(x_axis, y_axis),
+        'xz' => vector_dot(x_axis, z_axis),
+        'yz' => vector_dot(y_axis, z_axis)
+      },
+      'determinant' => determinant,
+      'mirrored' => determinant.negative?
+    }
+  end
+
+  def normalize_matrix_axis(axis)
+    length = vector_length(axis)
+    return [0, 0, 0] if length <= 1e-12
+
+    axis.map { |value| value / length }
+  end
+
+  def vector_length(axis)
+    Math.sqrt(axis.map { |value| value * value }.sum)
+  end
+
+  def vector_dot(a, b)
+    a[0] * b[0] + a[1] * b[1] + a[2] * b[2]
+  end
+
+  def vector_cross(a, b)
+    [
+      a[1] * b[2] - a[2] * b[1],
+      a[2] * b[0] - a[0] * b[2],
+      a[0] * b[1] - a[1] * b[0]
+    ]
+  end
+
+  def write_object_transform_metadata(entity, metadata)
+    return entity unless entity.respond_to?(:set_attribute)
+
+    entity.set_attribute('AlmaSketchupMCP', 'object_transform_json', JSON.generate(metadata))
+    entity
   end
 
   def transform_pivot(entity, raw_pivot, field_name)

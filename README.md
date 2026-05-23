@@ -91,6 +91,7 @@ examples/structured-product-helpers.json # 结构化产品 helper capability sli
 examples/editing-transform-profile.json # 阶段2 P0 编辑/变换/profile capability slice
 examples/component-transform-composition.json # component instance transform composition slice
 examples/transform-chain-regression.json # 连续 transform_object 叠加/pivot/local-axis regression slice
+examples/transform-local-matrix.json # local_matrix 和 matrix decomposition regression slice
 examples/metadata-organization-slice.json # Tags / attributes / classification metadata capability slice
 examples/profile-edge-cases.json # 通用 profile 凹多边形/多洞 regression slice
 examples/appearance-texture-slice.json # texture transform / image plane appearance slice
@@ -249,7 +250,7 @@ node src/cli.mjs save_model --runtime queue --path "$PWD/output/demo-room.skp" -
 当前支持的 operation 以 `src/capabilities.mjs` 的 manifest 为单一真源；`get_docs` 会从该 manifest 生成 mock/queue 支持矩阵，避免文档和 runtime 能力漂移。
 
 - 基础：`reset`、`material`、`box`、`room`、`level`。
-- 编辑：`delete`、`rename`、`set_material`、`set_visibility`、`transform_object`；编辑操作优先支持 `target_id` 稳定引用，旧的 `name` 引用仍可用；`transform_object` 支持 translate、rotateX/Y/Z、模型空间 `axis + angle`、本地轴 `local_axis + local_angle`、SketchUp-compatible 16-number `matrix`、scale、mirror，以及 `pivot: "origin"`（默认）、`pivot: "center"` 和显式 `[x,y,z]`。
+- 编辑：`delete`、`rename`、`set_material`、`set_visibility`、`transform_object`；编辑操作优先支持 `target_id` 稳定引用，旧的 `name` 引用仍可用；`transform_object` 支持 translate、rotateX/Y/Z、模型空间 `axis + angle`、本地轴 `local_axis + local_angle`、SketchUp-compatible 16-number `matrix`、本地坐标系 `local_matrix`、scale、mirror，以及 `pivot: "origin"`（默认）、`pivot: "center"` 和显式 `[x,y,z]`；matrix/local_matrix snapshot 会附带 decomposition metadata。
 - 几何：`prism`、`mesh`、`face_with_holes`、`profile_extrude`、`panel_with_openings`、`boolean_cutout`、`fillet`、`chamfer`、`cylinder`、`loft_between_profiles`、`shell_from_front_side_profiles`、`lofted_solid`、`face_on_cylinder`、`pipe_between_points`、`swept_path`、`domed_surface`、`bowed_panel`。
 - 产品 helper：`rounded_box`、`beveled_panel`、`recess`、`engraved_line`、`text_emboss`、`text_engrave`、`slot`、`slot_array`、`rib`、`standoff_boss`、`button_on_panel`、`analog_stick`、`screw_hole`。
 - 建筑 helper：`floor_slab`、`wall`、`door`、`window`、`stairs`、`railing`、`gable_roof`、`shed_roof`。
@@ -281,7 +282,7 @@ node src/cli.mjs save_model --runtime queue --path "$PWD/output/demo-room.skp" -
     "name": "mock",
     "version": "mock-runtime-0.1.0",
     "capability_version": "0.1.0-capabilities.1",
-    "manifest_version": "2026-05-phase2-local-matrix-slice",
+    "manifest_version": "2026-05-phase2-matrix-decomposition-slice",
     "dsl_version": 1,
     "supported_operations": ["reset", "material", "box"],
     "operation_support": {
@@ -295,7 +296,7 @@ node src/cli.mjs save_model --runtime queue --path "$PWD/output/demo-room.skp" -
     "compatibility": {
       "ok": true,
       "level": "ok",
-      "checked_against": { "manifest_version": "2026-05-phase2-local-matrix-slice", "capability_version": "0.1.0-capabilities.1", "dsl_version": 1 },
+      "checked_against": { "manifest_version": "2026-05-phase2-matrix-decomposition-slice", "capability_version": "0.1.0-capabilities.1", "dsl_version": 1 },
       "issues": []
     }
   },
@@ -363,8 +364,8 @@ mock snapshot 会额外给出零面组、bounding box 碰撞等结构化 warning
 ## 当前 MVP 状态
 
 - `get_docs`、`build_model`、`reset_model`、`save_model` 已完成 Node bridge、CLI、HTTP bridge 和 stdio MCP server 入口。
-- `mock` runtime 已支持基础房间、墙洞面板、棱柱、mesh、通用 profile face/extrude（简单闭合多边形 outer + holes）、圆角盒/倒角面板/凹槽/长圆槽/刻线/面板按钮/摇杆/螺丝孔位、屋顶 helper、圆柱、旋转体、扫掠管、domed/bowed 曲面、楼层/楼板/墙/门窗/楼梯/栏杆、Tags/attributes/classification 元数据、texture_transform/image_plane 表现层、组件定义/实例、基础 transform、对象任意模型轴旋转、本地轴旋转、模型空间 4x4 matrix、本地坐标系 local_matrix、相机、scene、材质 texture/PBR 字段记录、style/shadow/rendering options 表现层状态和 snapshot 校验；bridge 会在 snapshot 中附加 runtime capability descriptor。
-- `queue` runtime 已能把请求交给 SketchUp Ruby 插件，插件侧实现同一套 DSL 的真实建模、基础 transform、对象任意模型轴旋转、本地轴旋转、4x4 matrix、通用 profile face/extrude、Tags/attributes/classification 元数据、texture_transform/image_plane 表现层、圆角盒/倒角面板/凹槽/长圆槽/刻线/面板按钮/摇杆/螺丝孔位、domed/bowed 曲面、楼层/楼板/墙/门窗/楼梯/栏杆、材质 color/alpha/texture/SketchUp 2025+ PBR、style/shadow/rendering options、scene 和 `.skp` 保存；第一阶段已接入 `get_capabilities` 插件握手，snapshot 中的 queue runtime descriptor 来自已安装插件，包含插件版本、SketchUp 版本、Ruby 版本、队列路径和 operation 支持状态，并通过 `runtime.compatibility` 对照当前 manifest。
+- `mock` runtime 已支持基础房间、墙洞面板、棱柱、mesh、通用 profile face/extrude（简单闭合多边形 outer + holes）、圆角盒/倒角面板/凹槽/长圆槽/刻线/面板按钮/摇杆/螺丝孔位、屋顶 helper、圆柱、旋转体、扫掠管、domed/bowed 曲面、楼层/楼板/墙/门窗/楼梯/栏杆、Tags/attributes/classification 元数据、texture_transform/image_plane 表现层、组件定义/实例、基础 transform、对象任意模型轴旋转、本地轴旋转、模型空间 4x4 matrix、本地坐标系 local_matrix、matrix/local_matrix decomposition metadata、相机、scene、材质 texture/PBR 字段记录、style/shadow/rendering options 表现层状态和 snapshot 校验；bridge 会在 snapshot 中附加 runtime capability descriptor。
+- `queue` runtime 已能把请求交给 SketchUp Ruby 插件，插件侧实现同一套 DSL 的真实建模、基础 transform、对象任意模型轴旋转、本地轴旋转、4x4 matrix、本地坐标系 local_matrix、transform metadata 回传、通用 profile face/extrude、Tags/attributes/classification 元数据、texture_transform/image_plane 表现层、圆角盒/倒角面板/凹槽/长圆槽/刻线/面板按钮/摇杆/螺丝孔位、domed/bowed 曲面、楼层/楼板/墙/门窗/楼梯/栏杆、材质 color/alpha/texture/SketchUp 2025+ PBR、style/shadow/rendering options、scene 和 `.skp` 保存；第一阶段已接入 `get_capabilities` 插件握手，snapshot 中的 queue runtime descriptor 来自已安装插件，包含插件版本、SketchUp 版本、Ruby 版本、队列路径和 operation 支持状态，并通过 `runtime.compatibility` 对照当前 manifest。
 - 离线测试 `npm test` 已覆盖核心 DSL、建筑 DSL、产品/工业设计 golden examples、snapshot totals/QA、材质、PBR 字段、表现层状态、组件、相机、保存流程、queue capability handshake 注入、descriptor 漂移检测、带 top issues / recommendations / budget 检查的 snapshot diff report、Markdown QA report，以及 `compare_model` 一键对照骨架。
 - `mock` runtime 的 session 写入使用文件锁和临时文件原子 rename；并行运行 `npm test` 与 `npm run qa:mock` 时会串行化同一 session 的读写，避免半写 JSON 污染。
 - JS mock runtime 已完成主边界模块拆分：session/model state 位于 `src/model-state.mjs`；通用归一化和 transform helper 位于 `src/operation-utils.mjs`；material/PBR/texture、primitive、profile、surface、product、architecture 和 demo helper 分别位于对应 `*-operations.mjs`；component_definition/instance 位于 `src/component-operations.mjs`；camera/scene/style/shadow/rendering 位于 `src/view-operations.mjs`；对象编辑和身份引用位于 `src/object-operations.mjs` / `src/object-identity.mjs`；snapshot、warning summary 和 bbox QA 位于 `src/snapshot.mjs`；`src/geometry.mjs` 仅保留兼容聚合导出。
