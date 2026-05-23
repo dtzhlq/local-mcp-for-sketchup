@@ -52,8 +52,36 @@ src/http-server.mjs      # HTTP bridge，可选
 src/mcp-server.mjs       # stdio MCP server，可接入支持 MCP 的客户端
 src/mock-runtime.mjs     # 离线可验证 runtime
 src/queue-runtime.mjs    # SketchUp 插件队列 runtime
-src/geometry.mjs         # mock runtime 几何、校验和 snapshot 逻辑
+src/geometry.mjs         # mock runtime operation modules 兼容聚合导出入口
+src/model-state.mjs      # mock runtime 空 session/model state
+src/operation-utils.mjs  # mock runtime 通用归一化、transform、camera、QA metadata helper
+src/material-operations.mjs # mock runtime material/PBR/texture 字段记录
+src/primitive-operations.mjs # mock runtime mesh/prism/cylinder 和 profile vertices helper
+src/profile-operations.mjs # mock runtime panel/openings/profile/roof helpers
+src/surface-operations.mjs # mock runtime loft/shell/sweep/screw/domed/bowed helpers
+src/product-operations.mjs # mock runtime box/product helpers
+src/architecture-operations.mjs # mock runtime level/floor/wall/stairs/railing helpers
+src/demo-operations.mjs  # mock runtime demo room helper
+src/component-operations.mjs # mock runtime component_definition / component_instance
+src/view-operations.mjs  # mock runtime camera/scene/style/shadow/rendering options
+src/snapshot.mjs         # mock runtime snapshot、warning summary 和 bbox QA helper
+src/object-operations.mjs # mock runtime 对象编辑、metadata、texture transform 操作
+src/object-identity.mjs  # mock runtime 对象身份/引用 helper
+src/object-operation-utils.mjs # object operation 字段归一化 helper
 sketchup_plugin/         # SketchUp Ruby 插件
+sketchup_plugin/alma_sketchup_mcp/operation_registry.rb # 由 src/capabilities.mjs 生成的 Ruby runtime contract 表
+sketchup_plugin/alma_sketchup_mcp/object_operations.rb # Ruby queue runtime 对象编辑/metadata/texture transform
+sketchup_plugin/alma_sketchup_mcp/materials.rb # Ruby queue runtime 材质/PBR/贴图 helper
+sketchup_plugin/alma_sketchup_mcp/geometry_operations.rb # Ruby queue runtime 共享 geometry/entity helper
+sketchup_plugin/alma_sketchup_mcp/primitive_operations.rb # Ruby queue runtime mesh/prism/cylinder
+sketchup_plugin/alma_sketchup_mcp/product_operations.rb # Ruby queue runtime box/product helper
+sketchup_plugin/alma_sketchup_mcp/profile_operations.rb # Ruby queue runtime panel/profile/roof helper
+sketchup_plugin/alma_sketchup_mcp/surface_operations.rb # Ruby queue runtime loft/shell/sweep/domed/bowed helper
+sketchup_plugin/alma_sketchup_mcp/demo_operations.rb # Ruby queue runtime demo room helper
+sketchup_plugin/alma_sketchup_mcp/architecture_operations.rb # Ruby queue runtime 建筑 helper：level/floor/wall/stairs/railing
+sketchup_plugin/alma_sketchup_mcp/component_operations.rb # Ruby queue runtime component_definition / component_instance
+sketchup_plugin/alma_sketchup_mcp/view_operations.rb # Ruby queue runtime camera/scene/style/shadow/rendering options
+sketchup_plugin/alma_sketchup_mcp/snapshot.rb # Ruby queue runtime snapshot/count/material/tag 快照
 examples/demo-room.json  # 基础房间 demo DSL
 examples/pbr-materials-slice.json # 材质贴图 / PBR demo DSL
 examples/style-shadow-slice.json # 样式 / 阴影 / 渲染选项 demo DSL
@@ -61,6 +89,11 @@ examples/golden-architecture.json # 建筑向 golden regression DSL
 examples/golden-product.json # 产品/工业设计向 golden regression DSL
 examples/structured-product-helpers.json # 结构化产品 helper capability slice
 examples/editing-transform-profile.json # 阶段2 P0 编辑/变换/profile capability slice
+examples/component-transform-composition.json # component instance transform composition slice
+examples/transform-chain-regression.json # 连续 transform_object 叠加/pivot/local-axis regression slice
+examples/metadata-organization-slice.json # Tags / attributes / classification metadata capability slice
+examples/profile-edge-cases.json # 通用 profile 凹多边形/多洞 regression slice
+examples/appearance-texture-slice.json # texture transform / image plane appearance slice
 test/mock-validation.mjs # 离线验证
 alma-skill/              # Alma skill 原型说明
 ```
@@ -73,6 +106,8 @@ alma-skill/              # Alma skill 原型说明
 npm test
 npm run demo
 npm run save
+npm run registry:check
+npm run plugin:check
 ```
 
 也可以直接调用 CLI：
@@ -93,7 +128,10 @@ npm run qa:identity:mock
 node src/cli.mjs compare_model --code-file examples/demo-room.json --expected-runtime mock --actual-runtime queue --timeout-ms 60000 --max-faces 5000 --format markdown --output-file output/live-demo-room-report.md
 npm run qa:queue
 npm run qa:identity:queue
-# qa:queue 默认启用 --face-tolerance 1 --edge-tolerance 3，用于吸收 SketchUp sweep/railing 的轻微拓扑计数差异。
+npm run qa:budget:mock
+npm run qa:budget:queue
+# qa:queue 默认使用 180s queue timeout，并启用 --face-tolerance 1 --edge-tolerance 3，用于吸收 SketchUp sweep/railing 的轻微拓扑计数差异。
+# queue runtime 绑定单个 SketchUp 进程，qa:queue 和 qa:budget:queue 应串行执行。
 ```
 
 Golden examples 用于稳定回归建筑向与产品/工业设计向能力：
@@ -104,9 +142,13 @@ node src/cli.mjs build_model --runtime mock --code-file examples/golden-product.
 node src/cli.mjs build_model --runtime mock --code-file examples/structured-product-helpers.json
 node src/cli.mjs build_model --runtime mock --code-file examples/editing-identity.json
 node src/cli.mjs build_model --runtime mock --code-file examples/editing-transform-profile.json
+node src/cli.mjs build_model --runtime mock --code-file examples/transform-chain-regression.json
+node src/cli.mjs build_model --runtime mock --code-file examples/metadata-organization-slice.json
+node src/cli.mjs build_model --runtime mock --code-file examples/profile-edge-cases.json
+node src/cli.mjs build_model --runtime mock --code-file examples/appearance-texture-slice.json
 ```
 
-`npm test` 会自动加载这两个样例，检查 scene、materials、component 复用、结构化 warnings、resolution hint 和 snapshot QA 字段。
+`npm test` 会自动加载 golden examples 和主线 capability slices，检查 scene、materials、component 复用、结构化 warnings、resolution hint、runtime contract 和 snapshot QA 字段。
 
 ## MCP stdio 接入
 
@@ -143,11 +185,16 @@ curl -X POST http://127.0.0.1:3977/tools/build_model \
 
 ## SketchUp 插件安装
 
-把插件复制到对应版本的 SketchUp Plugins 目录：
+自动安装到 SketchUp 2026 Plugins 目录：
 
 ```bash
-mkdir -p "$HOME/Library/Application Support/SketchUp 2026/SketchUp/Plugins"
-cp sketchup_plugin/alma_sketchup_mcp.rb "$HOME/Library/Application Support/SketchUp 2026/SketchUp/Plugins/"
+npm run plugin:install
+```
+
+`plugin:install` 会复制主文件和 `alma_sketchup_mcp/` 子模块，并对安装后的 Ruby 文件执行语法检查。打包 `.rbz` 用：
+
+```bash
+npm run plugin:package
 ```
 
 然后：
@@ -160,6 +207,8 @@ cp sketchup_plugin/alma_sketchup_mcp.rb "$HOME/Library/Application Support/Sketc
 node src/cli.mjs build_model --runtime queue --code-file examples/demo-room.json --timeout-ms 60000
 node src/cli.mjs save_model --runtime queue --path "$PWD/output/demo-room.skp" --timeout-ms 60000
 ```
+
+更完整的 queue 手动验收和排障见 `docs/queue-runtime-ops.md`；性能和 SKP size 预算见 `docs/performance-budgets.md`；发布检查见 `docs/release-checklist.md`。
 
 队列 runtime 不执行 shell，也不 eval Ruby；它只把 JSON 请求写到队列，由插件解析受控 DSL。
 
@@ -200,10 +249,12 @@ node src/cli.mjs save_model --runtime queue --path "$PWD/output/demo-room.skp" -
 当前支持的 operation 以 `src/capabilities.mjs` 的 manifest 为单一真源；`get_docs` 会从该 manifest 生成 mock/queue 支持矩阵，避免文档和 runtime 能力漂移。
 
 - 基础：`reset`、`material`、`box`、`room`、`level`。
-- 编辑：`delete`、`rename`、`set_material`、`set_visibility`、`transform_object`；编辑操作优先支持 `target_id` 稳定引用，旧的 `name` 引用仍可用；`transform_object` 支持 `pivot: "origin"`（默认）、`pivot: "center"` 和显式 `[x,y,z]`。
+- 编辑：`delete`、`rename`、`set_material`、`set_visibility`、`transform_object`；编辑操作优先支持 `target_id` 稳定引用，旧的 `name` 引用仍可用；`transform_object` 支持 translate、rotateX/Y/Z、模型空间 `axis + angle`、本地轴 `local_axis + local_angle`、SketchUp-compatible 16-number `matrix`、scale、mirror，以及 `pivot: "origin"`（默认）、`pivot: "center"` 和显式 `[x,y,z]`。
 - 几何：`prism`、`mesh`、`face_with_holes`、`profile_extrude`、`panel_with_openings`、`boolean_cutout`、`fillet`、`chamfer`、`cylinder`、`loft_between_profiles`、`shell_from_front_side_profiles`、`lofted_solid`、`face_on_cylinder`、`pipe_between_points`、`swept_path`、`domed_surface`、`bowed_panel`。
 - 产品 helper：`rounded_box`、`beveled_panel`、`recess`、`engraved_line`、`text_emboss`、`text_engrave`、`slot`、`slot_array`、`rib`、`standoff_boss`、`button_on_panel`、`analog_stick`、`screw_hole`。
 - 建筑 helper：`floor_slab`、`wall`、`door`、`window`、`stairs`、`railing`、`gable_roof`、`shed_roof`。
+- 组织/元数据：`tag`、`assign_tag`、`attribute`、`classification`。
+- 表现/贴图：`texture_transform`、`uv_project_planar`、`uv_project_box`、`image_plane`。
 - 变换：`transform.translate`、`transform.rotateZ`，可用于 mesh 类几何和组件实例；`origin` 仍是首选定位字段。
 - 复用：`component_definition`、`component_instance`。
 - 视图：`camera`、`scene`。
@@ -230,7 +281,7 @@ node src/cli.mjs save_model --runtime queue --path "$PWD/output/demo-room.skp" -
     "name": "mock",
     "version": "mock-runtime-0.1.0",
     "capability_version": "0.1.0-capabilities.1",
-    "manifest_version": "2026-05-phase2-pivot-editing-slice",
+    "manifest_version": "2026-05-phase2-appearance-slice",
     "dsl_version": 1,
     "supported_operations": ["reset", "material", "box"],
     "operation_support": {
@@ -244,7 +295,7 @@ node src/cli.mjs save_model --runtime queue --path "$PWD/output/demo-room.skp" -
     "compatibility": {
       "ok": true,
       "level": "ok",
-      "checked_against": { "manifest_version": "2026-05-phase2-pivot-editing-slice", "capability_version": "0.1.0-capabilities.1", "dsl_version": 1 },
+      "checked_against": { "manifest_version": "2026-05-phase2-appearance-slice", "capability_version": "0.1.0-capabilities.1", "dsl_version": 1 },
       "issues": []
     }
   },
@@ -301,7 +352,7 @@ mock snapshot 会额外给出零面组、bounding box 碰撞等结构化 warning
 
 当前离线骨架先比较 runtime compatibility、totals（不含 `vertices`，因为 mock/queue 顶点统计语义不同）、artifact size、materials、component definitions、groups、instances、scenes、levels 和整体 bounding box；可选 topology tolerance 支持 `--face-tolerance`、`--edge-tolerance`、`--group-tolerance`、`--instance-tolerance`，用于显式吸收 SketchUp 真实拓扑和 mock 估算之间的小差异；可选 budget 支持 `max_faces`、`max_edges`、`max_vertices`、`max_groups`、`max_instances`、`max_artifact_size_bytes`。后续真实 queue 对照时可以继续扩展退化面、预期接触/碰撞和 SKP size budget 分析。
 
-`compare_model` 是更高层的一键对照：同一份 DSL 先用 `expected_runtime` 构建，再用 `actual_runtime` 构建，随后复用 `compare_snapshots` 产出 QA report。默认是 `mock -> queue`；纯离线可显式传 `--actual-runtime mock`，打开 SketchUp 插件后再改回 `queue`。CLI 默认输出 JSON；加 `--format markdown --output-file output/report.md` 可保存人类可读 Markdown 报告。`scripts/generate-qa-reports.mjs` 会批量跑默认 golden set（demo room、golden architecture、golden product），为每个样例输出 JSON/Markdown，并生成 `index.md` 总览；快捷命令是 `npm run qa:mock` 和 `npm run qa:queue`。
+`compare_model` 是更高层的一键对照：同一份 DSL 先用 `expected_runtime` 构建，再用 `actual_runtime` 构建，随后复用 `compare_snapshots` 产出 QA report。默认是 `mock -> queue`；纯离线可显式传 `--actual-runtime mock`，打开 SketchUp 插件后再改回 `queue`。CLI 默认输出 JSON；加 `--format markdown --output-file output/report.md` 可保存人类可读 Markdown 报告。`scripts/generate-qa-reports.mjs` 会批量跑默认 golden set（demo room、golden architecture、golden product），为每个样例输出 JSON/Markdown，并生成 `index.md` 总览；快捷命令是 `npm run qa:mock` 和 `npm run qa:queue`。Node 侧 queue runtime 会通过 `~/.sketchup-mcp-replica/queue-runtime.lock` 串行化 SketchUp file queue 访问；如需调大等待时间，可设置 `ALMA_SKETCHUP_QUEUE_LOCK_TIMEOUT_MS=<毫秒>`。
 
 ## 安全限制
 
@@ -312,9 +363,12 @@ mock snapshot 会额外给出零面组、bounding box 碰撞等结构化 warning
 ## 当前 MVP 状态
 
 - `get_docs`、`build_model`、`reset_model`、`save_model` 已完成 Node bridge、CLI、HTTP bridge 和 stdio MCP server 入口。
-- `mock` runtime 已支持基础房间、墙洞面板、棱柱、mesh、圆角盒/倒角面板/凹槽/长圆槽/刻线/面板按钮/摇杆/螺丝孔位、屋顶 helper、圆柱、旋转体、扫掠管、domed/bowed 曲面、楼层/楼板/墙/门窗/楼梯/栏杆、组件定义/实例、基础 transform、相机、scene、材质 texture/PBR 字段记录、style/shadow/rendering options 表现层状态和 snapshot 校验；bridge 会在 snapshot 中附加 runtime capability descriptor。
-- `queue` runtime 已能把请求交给 SketchUp Ruby 插件，插件侧实现同一套 DSL 的真实建模、基础 transform、圆角盒/倒角面板/凹槽/长圆槽/刻线/面板按钮/摇杆/螺丝孔位、domed/bowed 曲面、楼层/楼板/墙/门窗/楼梯/栏杆、材质 color/alpha/texture/SketchUp 2025+ PBR、style/shadow/rendering options、scene 和 `.skp` 保存；第一阶段已接入 `get_capabilities` 插件握手，snapshot 中的 queue runtime descriptor 来自已安装插件，包含插件版本、SketchUp 版本、Ruby 版本、队列路径和 operation 支持状态，并通过 `runtime.compatibility` 对照当前 manifest。`runtime.operation_support` 会归一化暴露每个 operation 的 `schema` 和 `component_scope`，用于检查字段契约与 component_definition 子作用域漂移。
+- `mock` runtime 已支持基础房间、墙洞面板、棱柱、mesh、通用 profile face/extrude（简单闭合多边形 outer + holes）、圆角盒/倒角面板/凹槽/长圆槽/刻线/面板按钮/摇杆/螺丝孔位、屋顶 helper、圆柱、旋转体、扫掠管、domed/bowed 曲面、楼层/楼板/墙/门窗/楼梯/栏杆、Tags/attributes/classification 元数据、texture_transform/image_plane 表现层、组件定义/实例、基础 transform、对象任意模型轴旋转、本地轴旋转、4x4 matrix、相机、scene、材质 texture/PBR 字段记录、style/shadow/rendering options 表现层状态和 snapshot 校验；bridge 会在 snapshot 中附加 runtime capability descriptor。
+- `queue` runtime 已能把请求交给 SketchUp Ruby 插件，插件侧实现同一套 DSL 的真实建模、基础 transform、对象任意模型轴旋转、本地轴旋转、4x4 matrix、通用 profile face/extrude、Tags/attributes/classification 元数据、texture_transform/image_plane 表现层、圆角盒/倒角面板/凹槽/长圆槽/刻线/面板按钮/摇杆/螺丝孔位、domed/bowed 曲面、楼层/楼板/墙/门窗/楼梯/栏杆、材质 color/alpha/texture/SketchUp 2025+ PBR、style/shadow/rendering options、scene 和 `.skp` 保存；第一阶段已接入 `get_capabilities` 插件握手，snapshot 中的 queue runtime descriptor 来自已安装插件，包含插件版本、SketchUp 版本、Ruby 版本、队列路径和 operation 支持状态，并通过 `runtime.compatibility` 对照当前 manifest。
 - 离线测试 `npm test` 已覆盖核心 DSL、建筑 DSL、产品/工业设计 golden examples、snapshot totals/QA、材质、PBR 字段、表现层状态、组件、相机、保存流程、queue capability handshake 注入、descriptor 漂移检测、带 top issues / recommendations / budget 检查的 snapshot diff report、Markdown QA report，以及 `compare_model` 一键对照骨架。
+- `mock` runtime 的 session 写入使用文件锁和临时文件原子 rename；并行运行 `npm test` 与 `npm run qa:mock` 时会串行化同一 session 的读写，避免半写 JSON 污染。
+- JS mock runtime 已完成主边界模块拆分：session/model state 位于 `src/model-state.mjs`；通用归一化和 transform helper 位于 `src/operation-utils.mjs`；material/PBR/texture、primitive、profile、surface、product、architecture 和 demo helper 分别位于对应 `*-operations.mjs`；component_definition/instance 位于 `src/component-operations.mjs`；camera/scene/style/shadow/rendering 位于 `src/view-operations.mjs`；对象编辑和身份引用位于 `src/object-operations.mjs` / `src/object-identity.mjs`；snapshot、warning summary 和 bbox QA 位于 `src/snapshot.mjs`；`src/geometry.mjs` 仅保留兼容聚合导出。
+- Ruby queue runtime 已完成模块拆分：runtime contract 表由 `src/capabilities.mjs` 生成到 `sketchup_plugin/alma_sketchup_mcp/operation_registry.rb`；对象编辑、Tags、attributes、classification、texture transform 和 `transform_object` 位于 `object_operations.rb`；材质、PBR 和贴图 helper 位于 `materials.rb`；共享 geometry/entity helper 位于 `geometry_operations.rb`；mesh/prism/cylinder 位于 `primitive_operations.rb`；box/product helper 位于 `product_operations.rb`；panel/profile/roof helper 位于 `profile_operations.rb`；loft/shell/sweep/domed/bowed helper 位于 `surface_operations.rb`；demo room 位于 `demo_operations.rb`；建筑、组件、view 和 snapshot 分别位于对应模块，均由主插件文件 `require_relative` 加载。
 
 ## 下一步
 
@@ -324,6 +378,7 @@ mock snapshot 会额外给出零面组、bounding box 碰撞等结构化 warning
 - [x] mock / queue snapshot 对照（各 demo 均通过两边验证）。
 - [x] dome/bowed panel、建筑高层 DSL、材质贴图+PBR、style/shadow/rendering。
 - [x] component_definition / component_instance 基础复用。
+- [x] component instance 上的 `transform_object` 组合验证：模型轴、本地轴、4x4 matrix。
 - [x] snapshot QA 分类、曲面分辨率、文件体积字段。
 - [x] golden examples：`examples/golden-architecture.json` 与 `examples/golden-product.json`。
 
@@ -337,6 +392,7 @@ mock snapshot 会额外给出零面组、bounding box 碰撞等结构化 warning
 - [x] `beveled_panel` — 带倒角的薄壁面板，手持设备外壳
 - [x] `fillet` / `chamfer` — 盒体/面板垂直边圆角与倒角（稳定 slice；任意选边 CAD 版本后续）
 - [x] `loft_between_profiles` — 多截面放样，用于握把/手柄曲线
+- [x] `face_with_holes` / `profile_extrude` — 通用 profile 第一切片：简单闭合多边形 outer + holes（mock/queue 对照通过）
 - [x] `shell_from_front_side_profiles` — 从正脸闭合轮廓 + 侧面半深度曲线生成对称壳体（需要视觉 QA 检查轮廓顺序/比例）
 - [x] `pipe_between_points` — 任意 3D 点管线，替代当前 `swept_path` 的 Y/斜向限制
 - [x] `face_on_cylinder` — 在圆柱面上贴平按钮区域（视觉 helper，非 boolean / wrap）
@@ -355,7 +411,7 @@ mock snapshot 会额外给出零面组、bounding box 碰撞等结构化 warning
 #### 复用与性能
 
 - 重复按钮/螺丝/LED 等应采用 `component_definition` + `component_instance`
-- 早期 mesh 直接落 SKP 时手柄文件曾到 39MB；当前 Switch queue baseline 已通过产品 primitive / component 复用降到约 253KB，但仍需保留可调曲面分辨率和 SKP size budget
+- 早期 mesh 直接落 SKP 时手柄文件曾到 39MB；当前 Switch queue baseline 已通过产品 primitive / component 复用降到约 253KB，主线 `qa:budget:*` 会继续约束 face/vertex/SKP size
 - [x] snapshot warning 分类：零面/退化面 `geometry.degenerate`、真实 bbox 碰撞 `geometry.bbox_collision`、接触关系内部识别但默认不输出噪声 warning
 
 #### 图像辅助流程
