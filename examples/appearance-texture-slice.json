@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "units": "mm",
+  "operations": [
+    { "op": "reset" },
+    { "op": "material", "name": "Appearance_Base", "color": "#d9dee7" },
+    { "op": "material", "name": "Reference_Tint", "color": "#f2f7ff", "alpha": 0.72 },
+    { "op": "box", "id": "appearance-panel-id", "name": "Appearance_Textured_Panel", "origin": [0, 0, 0], "size": [180, 18, 110], "material": "Appearance_Base" },
+    { "op": "uv_project_box", "target_id": "appearance-panel-id", "material": "Appearance_Base", "offset": [12, 8], "scale": [1.5, 0.75], "rotation": 30 },
+    { "op": "image_plane", "id": "appearance-reference-id", "name": "Appearance_Reference_Plane", "origin": [220, 0, 0], "plane": "xz", "size": [160, 90], "material": "Reference_Tint", "texture_transform": { "projection": "planar", "offset": [0, 0], "scale": [1, 1], "rotation": 0 } },
+    { "op": "uv_project_planar", "target_id": "appearance-reference-id", "material": "Reference_Tint", "offset": [4, 6], "scale": [1, 1], "rotation": 0 },
+    { "op": "component_definition", "name": "Appearance_Label_Def", "operations": [
+      { "op": "material", "name": "Label_Tint", "color": "#fff5d6", "alpha": 0.8 },
+      { "op": "image_plane", "name": "Label_Face", "origin": [0, 0, 0], "plane": "xy", "size": [80, 32], "material": "Label_Tint" }
+    ] },
+    { "op": "component_instance", "id": "appearance-label-instance", "name": "Appearance_Label_Instance", "definition": "Appearance_Label_Def", "origin": [0, 42, 116], "transform": { "rotateZ": 12 } },
+    { "op": "scene", "name": "Appearance_Texture_QA", "camera": { "eye": [360, -420, 240], "target": [150, 30, 60], "up": [0, 0, 1], "fov": 35 } }
+  ]
+}

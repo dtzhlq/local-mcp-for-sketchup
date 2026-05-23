@@ -7,6 +7,11 @@ import { formatSnapshotReportMarkdown } from '../src/snapshot-report.mjs';
 const DEFAULT_EXAMPLES = [
   'examples/demo-room.json',
   'examples/editing-identity.json',
+  'examples/metadata-organization-slice.json',
+  'examples/component-transform-composition.json',
+  'examples/transform-chain-regression.json',
+  'examples/profile-edge-cases.json',
+  'examples/appearance-texture-slice.json',
   'examples/golden-architecture.json',
   'examples/golden-product.json'
 ];
@@ -19,10 +24,17 @@ async function main() {
   await fs.mkdir(options.outputDir, { recursive: true });
 
   const results = [];
-  for (const examplePath of examples) {
-    const result = await runExample(examplePath, options);
-    results.push(result);
-    process.stderr.write(`${result.report.ok ? 'PASS' : 'FAIL'} ${result.name} -> ${result.markdown_path}\n`);
+  const run = async (activeBridge) => {
+    for (const examplePath of examples) {
+      const result = await runExample(examplePath, options, activeBridge);
+      results.push(result);
+      process.stderr.write(`${result.report.ok ? 'PASS' : 'FAIL'} ${result.name} -> ${result.markdown_path}\n`);
+    }
+  };
+  if (options.actualRuntime === 'queue' || options.expectedRuntime === 'queue') {
+    await bridge.withRuntimeLock('queue', { timeoutMs: options.timeoutMs }, run);
+  } else {
+    await run(bridge);
   }
 
   const indexMarkdown = formatIndexMarkdown(results, options);
@@ -34,11 +46,11 @@ async function main() {
   process.stdout.write(`${JSON.stringify({ ok: aggregate.ok, level: aggregate.level, verdict: aggregate.verdict, count: results.length, index_json: indexJsonPath, index_markdown: indexMarkdownPath }, null, 2)}\n`);
 }
 
-async function runExample(examplePath, options) {
+async function runExample(examplePath, options, activeBridge) {
   const absoluteExamplePath = path.resolve(examplePath);
   const code = await fs.readFile(absoluteExamplePath, 'utf8');
   const name = path.basename(examplePath, path.extname(examplePath));
-  const result = await bridge.compare_model({
+  const result = await activeBridge.compare_model({
     code,
     expected_runtime: options.expectedRuntime,
     actual_runtime: options.actualRuntime,

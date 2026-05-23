@@ -5,6 +5,7 @@ projects/image-structured-modeler/.venv/
 
 # Generated outputs
 output/
+out/
 .session/
 .alma-snapshots/
 

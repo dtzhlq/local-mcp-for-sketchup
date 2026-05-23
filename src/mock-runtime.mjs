@@ -1,9 +1,22 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { emptyModel, ensureMaterial, addLevel, addBox, addRoundedBox, addBeveledPanel, addFillet, addChamfer, addRecess, addEngravedLine, addTextEmboss, addTextEngrave, addSlot, addSlotArray, addRib, addStandoffBoss, addButtonOnPanel, addFloorSlab, addWall, addDoor, addWindow, addStairs, addRailing, addPanelWithOpenings, addBooleanCutout, addMesh, addPrism, addFaceWithHoles, addProfileExtrude, addGableRoof, addShedRoof, addCylinder, addLoftBetweenProfiles, addShellFromFrontSideProfiles, addLoftedSolid, addFaceOnCylinder, addAnalogStick, addScrewHole, addPipeBetweenPoints, addSweptPath, addDomedSurface, addBowedPanel, addComponentDefinition, addComponentInstance, deleteObject, renameObject, setObjectMaterial, setObjectVisibility, transformObject, setCamera, addScene, setStyle, setShadow, setRenderingOptions, addDemoRoom, createSnapshot } from './geometry.mjs';
-import { mockSessionPath, sessionDir } from './paths.mjs';
+import { emptyModel } from './model-state.mjs';
+import { ensureMaterial } from './material-operations.mjs';
+import { addMesh, addPrism, addCylinder } from './primitive-operations.mjs';
+import { addBooleanCutout, addFaceWithHoles, addGableRoof, addPanelWithOpenings, addProfileExtrude, addShedRoof } from './profile-operations.mjs';
+import { addAnalogStick, addBowedPanel, addDomedSurface, addFaceOnCylinder, addLoftBetweenProfiles, addLoftedSolid, addPipeBetweenPoints, addScrewHole, addShellFromFrontSideProfiles, addSweptPath } from './surface-operations.mjs';
+import { addBeveledPanel, addBox, addButtonOnPanel, addChamfer, addEngravedLine, addFillet, addImagePlane, addRecess, addRib, addRoundedBox, addSlot, addSlotArray, addStandoffBoss, addTextEmboss, addTextEngrave } from './product-operations.mjs';
+import { addDoor, addFloorSlab, addLevel, addRailing, addStairs, addWall, addWindow } from './architecture-operations.mjs';
+import { addComponentDefinition, addComponentInstance } from './component-operations.mjs';
+import { addDemoRoom } from './demo-operations.mjs';
+import { addTag, assignTag, deleteObject, renameObject, setObjectAttribute, setObjectClassification, setObjectMaterial, setObjectTextureTransform, setObjectVisibility, transformObject } from './object-operations.mjs';
+import { mockSessionPath } from './paths.mjs';
+import { createSnapshot } from './snapshot.mjs';
+import { addScene, setCamera, setRenderingOptions, setShadow, setStyle } from './view-operations.mjs';
 
 const DEFAULT_OPERATION_LIMIT = 2000;
+const DEFAULT_LOCK_TIMEOUT_MS = 30000;
+const STALE_LOCK_MS = 60000;
 
 function operationLimit() {
   const raw = process.env.ALMA_SKETCHUP_MAX_OPERATIONS;
@@ -16,27 +29,53 @@ function operationLimit() {
 }
 
 export class MockRuntime {
-  constructor({ sessionPath = mockSessionPath } = {}) {
+  constructor({ sessionPath = process.env.ALMA_SKETCHUP_MOCK_SESSION_PATH || mockSessionPath, lockTimeoutMs = DEFAULT_LOCK_TIMEOUT_MS } = {}) {
     this.sessionPath = sessionPath;
+    this.lockPath = `${sessionPath}.lock`;
+    this.lockTimeoutMs = lockTimeoutMs;
   }
 
   async resetModel() {
-    const model = emptyModel();
-    await this.writeModel(model);
-    return createSnapshot(model);
+    return this.withSessionLock(async () => {
+      const model = emptyModel();
+      await this.writeModel(model);
+      return createSnapshot(model);
+    });
   }
 
   async buildModel(code) {
-    const document = parseDsl(code);
-    let model = await this.readModel();
+    return this.withSessionLock(async () => {
+      const document = parseDsl(code);
+      let model = await this.readModel();
 
-    for (const operation of document.operations) {
-      switch (operation.op) {
+      for (const operation of document.operations) {
+        switch (operation.op) {
         case 'reset':
           model = emptyModel();
           break;
         case 'material':
           ensureMaterial(model, operation);
+          break;
+        case 'tag':
+          addTag(model, operation);
+          break;
+        case 'assign_tag':
+          assignTag(model, operation);
+          break;
+        case 'attribute':
+          setObjectAttribute(model, operation);
+          break;
+        case 'classification':
+          setObjectClassification(model, operation);
+          break;
+        case 'texture_transform':
+          setObjectTextureTransform(model, operation);
+          break;
+        case 'uv_project_planar':
+          setObjectTextureTransform(model, { ...operation, projection: 'planar' });
+          break;
+        case 'uv_project_box':
+          setObjectTextureTransform(model, { ...operation, projection: 'box' });
           break;
         case 'delete':
           deleteObject(model, operation);
@@ -97,6 +136,9 @@ export class MockRuntime {
           break;
         case 'button_on_panel':
           addButtonOnPanel(model, operation);
+          break;
+        case 'image_plane':
+          addImagePlane(model, operation);
           break;
         case 'floor_slab':
           addFloorSlab(model, operation);
@@ -199,27 +241,30 @@ export class MockRuntime {
           break;
         default:
           throw new Error(`Unsupported operation: ${operation.op}`);
+        }
       }
-    }
 
-    await this.writeModel(model);
-    return createSnapshot(model);
+      await this.writeModel(model);
+      return createSnapshot(model);
+    });
   }
 
   async saveModel({ outputPath, keepSession = true } = {}) {
-    const model = await this.readModel();
-    const targetPath = path.resolve(outputPath || path.join('output', 'mock-model.json'));
-    await fs.mkdir(path.dirname(targetPath), { recursive: true });
-    await fs.writeFile(targetPath, `${JSON.stringify({ model, snapshot: createSnapshot(model) }, null, 2)}\n`, 'utf8');
-    const stats = await fs.stat(targetPath);
-    if (!keepSession) {
-      await this.resetModel();
-    }
-    return {
-      file_path: targetPath,
-      file_size_bytes: stats.size,
-      snapshot: createSnapshot(model)
-    };
+    return this.withSessionLock(async () => {
+      const model = await this.readModel();
+      const targetPath = path.resolve(outputPath || path.join('output', 'mock-model.json'));
+      await fs.mkdir(path.dirname(targetPath), { recursive: true });
+      await fs.writeFile(targetPath, `${JSON.stringify({ model, snapshot: createSnapshot(model) }, null, 2)}\n`, 'utf8');
+      const stats = await fs.stat(targetPath);
+      if (!keepSession) {
+        await this.writeModel(emptyModel());
+      }
+      return {
+        file_path: targetPath,
+        file_size_bytes: stats.size,
+        snapshot: createSnapshot(model)
+      };
+    });
   }
 
   async readModel() {
@@ -233,9 +278,54 @@ export class MockRuntime {
   }
 
   async writeModel(model) {
-    await fs.mkdir(sessionDir, { recursive: true });
-    await fs.writeFile(this.sessionPath, `${JSON.stringify(model, null, 2)}\n`, 'utf8');
+    await fs.mkdir(path.dirname(this.sessionPath), { recursive: true });
+    const tmpPath = `${this.sessionPath}.${process.pid}.${Date.now()}.tmp`;
+    await fs.writeFile(tmpPath, `${JSON.stringify(model, null, 2)}\n`, 'utf8');
+    await fs.rename(tmpPath, this.sessionPath);
   }
+
+  async withSessionLock(callback) {
+    await fs.mkdir(path.dirname(this.sessionPath), { recursive: true });
+    const startedAt = Date.now();
+    while (true) {
+      let handle;
+      try {
+        handle = await fs.open(this.lockPath, 'wx');
+        await handle.writeFile(JSON.stringify({ pid: process.pid, created_at: new Date().toISOString() }));
+        await handle.close();
+        break;
+      } catch (error) {
+        if (handle) await handle.close().catch(() => {});
+        if (error.code !== 'EEXIST') throw error;
+        await this.removeStaleLock();
+        if (Date.now() - startedAt > this.lockTimeoutMs) {
+          throw new Error(`Timed out waiting for mock runtime session lock: ${this.lockPath}`);
+        }
+        await sleep(50);
+      }
+    }
+
+    try {
+      return await callback();
+    } finally {
+      await fs.rm(this.lockPath, { force: true });
+    }
+  }
+
+  async removeStaleLock() {
+    try {
+      const stats = await fs.stat(this.lockPath);
+      if (Date.now() - stats.mtimeMs > STALE_LOCK_MS) {
+        await fs.rm(this.lockPath, { force: true });
+      }
+    } catch (error) {
+      if (error.code !== 'ENOENT') throw error;
+    }
+  }
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 export function parseDsl(code) {

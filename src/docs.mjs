@@ -78,6 +78,9 @@ build_model accepts a JSON string, not executable Ruby or shell code. The suppor
 - X = width, Y = depth, Z = height.
 - All groups must be named.
 - Materials are created by name and reused. \`material\` supports \`color\`, \`alpha\`, base \`texture\` as a path string or \`{path,width,height}\`, and SketchUp 2025+ PBR via \`workflow: "pbr_metallic_roughness"\` plus \`pbr.metallic_factor\`, \`pbr.roughness_factor\`, \`pbr.ao_strength\`, \`pbr.normal_style\`, \`pbr.normal_scale\`, and \`pbr.textures.{metallic,roughness,normal,ao,opacity}\`.
+- \`tag\` creates SketchUp Tags/Layers, \`assign_tag\` assigns tags to top-level groups or component instances, \`attribute\` writes JSON-compatible metadata to SketchUp attribute dictionaries, and \`classification\` attaches BIM/classification metadata returned as a first-class snapshot field.
+- \`texture_transform\` records deterministic texture projection/offset/scale/rotation metadata for top-level objects, \`uv_project_planar\` and \`uv_project_box\` are semantic projection aliases, and \`image_plane\` creates flat reference or image planes with material/texture metadata.
+- \`transform_object\` edits existing top-level groups or component instances by stable \`target_id\` or legacy \`name\`; it supports translate, rotateX/Y/Z, model-space \`axis + angle\`, local-axis \`local_axis + local_angle\`, SketchUp-compatible 16-number \`matrix\`, scale, mirror, and origin/center/explicit pivots.
 - Texture paths are passed to SketchUp as file paths; prefer absolute paths for queue runtime. Missing files are skipped with warnings in SketchUp.
 - \`box\` creates an axis-aligned cuboid from \`origin\` and \`size\`.
 - \`rounded_box\` creates a Z-extruded rounded-rectangle footprint from \`origin/size/radius\`; use \`segments\` to control corner resolution.
@@ -87,6 +90,7 @@ build_model accepts a JSON string, not executable Ruby or shell code. The suppor
 - \`engraved_line\` creates dark recessed groove segments from \`points/width/depth\`; use it for seam lines, panel splits, and decorative product grooves.
 - \`slot\` creates a visual rounded long slot from \`center/length/width/depth\`; use it for speaker slots, USB openings, and elongated product cutout markers. It is not a true boolean cut yet.
 - \`boolean_cutout\` creates a rectangular XY slab with deterministic rectangular through-holes from local \`cutouts[].center/size\`. It is a safe true-hole slice, not arbitrary solid boolean.
+- \`face_with_holes\` and \`profile_extrude\` accept simple non-self-intersecting 2D \`outer\` loops plus optional polygon \`holes[].points\`; holes must stay strictly inside the outer loop and cannot overlap.
 - \`pipe_between_points\` creates a round pipe through arbitrary 3D \`points\` or \`start/end\`; use it for rods, cables, shoulder rails, and diagonal/Y-oriented tubes that legacy \`swept_path\` cannot frame reliably.
 - \`loft_between_profiles\` creates a mesh body through matching profile sections; use it for grip bulges and organic product shells where each profile has the same point count.
 - \`shell_from_front_side_profiles\` creates a symmetric shell from a closed front \`[x,z]\` silhouette and a side \`[z, half_depth]\` curve. This is deterministic, but visual QA is recommended for point order, silhouette quality, and proportions.
@@ -122,9 +126,14 @@ Use these deterministic regression examples when checking broad DSL behavior:
 - \`examples/golden-architecture.json\` — architectural semantic model covering levels, slabs, walls with openings, door/window markers, stairs, railings, gable/shed roofs, scenes, style, shadows, and rendering options.
 - \`examples/golden-product.json\` — product/industrial design baseline covering reusable component definitions/instances, an editable shell mesh, domed/bowed surfaces, lofted analog sticks, swept accent seams, cylinders, transforms, scenes, materials, structured warning QA, and resolution hints.
 - \`examples/structured-product-helpers.json\` — focused capability slice for structural product helpers such as \`slot_array\`, \`rib\`, and \`standoff_boss\`, kept separate from the presentation-oriented product baseline.
-- \`examples/editing-transform-profile.json\` — phase 2 editing capability slice covering \`delete\`, \`rename\`, \`set_material\`, \`set_visibility\`, \`transform_object\`, \`face_with_holes\`, and \`profile_extrude\`.
+- \`examples/editing-transform-profile.json\` — phase 2 editing capability slice covering \`delete\`, \`rename\`, \`set_material\`, \`set_visibility\`, \`transform_object\` including model-space axis, local-axis, and matrix transforms, \`face_with_holes\`, and \`profile_extrude\`.
+- \`examples/component-transform-composition.json\` — component instance transform composition slice covering nested component geometry plus \`transform_object\` local-axis, model-axis, and matrix edits on component instances.
+- \`examples/transform-chain-regression.json\` — focused transform chain regression covering repeated \`transform_object\` edits on a group and component instance with center pivots, local axes, model axes, translation, and matrix transforms.
+- \`examples/metadata-organization-slice.json\` — phase 4 organization slice covering \`tag\`, \`assign_tag\`, \`attribute\`, and \`classification\` metadata returned in snapshots.
+- \`examples/profile-edge-cases.json\` — generic profile regression slice covering concave outer loops, multiple holes, vertical \`xz\` face profiles, and nested component-definition profiles.
+- \`examples/appearance-texture-slice.json\` — appearance regression slice covering \`texture_transform\`, \`uv_project_planar\`, \`uv_project_box\`, top-level \`image_plane\`, and component-definition scoped \`image_plane\`.
 
-Both examples are exercised by \`npm test\` through the mock runtime only; they do not require SketchUp to be open.
+The golden examples and capability slices are exercised by \`npm test\` through the mock runtime only; they do not require SketchUp to be open.
 
 ## Snapshot Schema
 
@@ -164,7 +173,7 @@ export function getDocs() {
     TOOL_DOCS.trim(),
     '## Capability Baseline',
     '',
-    'The capability matrix is generated from `src/capabilities.mjs`, which is the first-phase manifest for DSL operation support across runtimes. The queue runtime also performs a live `get_capabilities` handshake with the installed SketchUp Ruby plugin before attaching runtime descriptors to snapshots, then adds `runtime.compatibility` to flag manifest/version drift.',
+    'The capability matrix is generated from the single operation registry in `src/capabilities.mjs`. Manifest rows, runtime `operation_support`, schemas, component-definition scope, docs, and contract tests all derive from that registry. The queue runtime also performs a live `get_capabilities` handshake with the installed SketchUp Ruby plugin before attaching runtime descriptors to snapshots, then adds `runtime.compatibility` to flag manifest/version drift.',
     '',
     formatCapabilityMatrixMarkdown(),
     '',

@@ -56,8 +56,24 @@ export class SketchUpBridge {
     topologyTolerance,
     budgets,
     topIssueLimit,
-    include_snapshots = false
+    include_snapshots = false,
+    runtimeLockHeld = false
   } = {}) {
+    if (!runtimeLockHeld && [expected_runtime, actual_runtime].includes('queue')) {
+      return this.withRuntimeLock('queue', { timeoutMs }, (lockedBridge) => lockedBridge.compare_model({
+        code,
+        expected_runtime,
+        actual_runtime,
+        timeoutMs,
+        reset_first,
+        toleranceMm,
+        topologyTolerance,
+        budgets,
+        topIssueLimit,
+        include_snapshots,
+        runtimeLockHeld: true
+      }));
+    }
     if (reset_first) {
       await this.reset_model({ runtime: expected_runtime, timeoutMs });
     }
@@ -94,6 +110,21 @@ export class SketchUpBridge {
     if (runtime === 'mock') return this.mockRuntime;
     if (runtime === 'queue') return this.options.queueRuntime || new QueueRuntime({ ...(this.options.queue || {}), timeoutMs });
     throw new Error(`Unknown runtime: ${runtime}`);
+  }
+
+  async withRuntimeLock(runtime, { timeoutMs } = {}, callback) {
+    const selectedRuntime = this.selectRuntime(runtime, { timeoutMs });
+    if (typeof selectedRuntime.withExclusiveAccess !== 'function') {
+      return callback(this);
+    }
+    return selectedRuntime.withExclusiveAccess(async () => {
+      const lockedBridge = new SketchUpBridge({
+        ...this.options,
+        ...(runtime === 'queue' ? { queueRuntime: selectedRuntime } : {})
+      });
+      if (runtime === 'mock') lockedBridge.mockRuntime = selectedRuntime;
+      return callback(lockedBridge);
+    }, { method: `${runtime}-runtime-session` });
   }
 }
 
@@ -141,6 +172,16 @@ function attachCompatibilityReport(descriptor, runtime) {
         operation,
         expected: expectedSupport.status,
         actual: actualSupport.status
+      });
+    }
+    if (actualSupport.stability !== undefined && actualSupport.stability !== expectedSupport.stability) {
+      issues.push({
+        type: 'runtime.operation_stability_mismatch',
+        severity: 'warn',
+        message: `Runtime ${runtime} operation ${operation} reports ${actualSupport.stability} stability, manifest expects ${expectedSupport.stability}`,
+        operation,
+        expected: expectedSupport.stability,
+        actual: actualSupport.stability
       });
     }
     if (actualSupport.schema !== undefined && !sameJson(actualSupport.schema, expectedSupport.schema)) {

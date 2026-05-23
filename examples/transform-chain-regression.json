@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "units": "mm",
+  "operations": [
+    { "op": "reset" },
+    { "op": "material", "name": "Chain_Base", "color": "#d7dde6" },
+    { "op": "material", "name": "Chain_Accent", "color": "#d46a4c" },
+    { "op": "box", "id": "chain-group-a", "name": "Transform_Chain_Group_A", "origin": [0, 0, 0], "size": [44, 22, 12], "material": "Chain_Base" },
+    { "op": "component_definition", "name": "Transform_Chain_Def", "operations": [
+      { "op": "box", "name": "Chain_Def_Body", "origin": [0, 0, 0], "size": [36, 18, 12], "material": "Chain_Base" },
+      { "op": "box", "name": "Chain_Def_Tab", "origin": [24, 4, 12], "size": [12, 10, 8], "material": "Chain_Accent" }
+    ] },
+    { "op": "component_instance", "id": "chain-instance-a", "name": "Transform_Chain_Instance_A", "definition": "Transform_Chain_Def", "origin": [120, 0, 0], "transform": { "rotateZ": 20 } },
+    { "op": "transform_object", "target_id": "chain-group-a", "pivot": "center", "rotateZ": 25 },
+    { "op": "transform_object", "target_id": "chain-group-a", "pivot": "center", "local_axis": "x", "local_angle": 35 },
+    { "op": "transform_object", "target_id": "chain-group-a", "matrix": [1, 0, 0, 0, 0.15, 1, 0, 0, 0, 0, 1, 0, 8, -6, 4, 1] },
+    { "op": "transform_object", "target_id": "chain-instance-a", "pivot": "center", "local_axis": "y", "local_angle": -30 },
+    { "op": "transform_object", "target_id": "chain-instance-a", "translate": [18, 10, 6], "axis": [0, 0, 1], "angle": 15 },
+    { "op": "scene", "name": "Transform_Chain_QA", "camera": { "eye": [210, -170, 110], "target": [85, 12, 18], "up": [0, 0, 1] } }
+  ]
+}

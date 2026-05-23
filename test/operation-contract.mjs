@@ -1,18 +1,25 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { getComponentDefinitionOperationNames, getOperationManifest, getOperationNames, getRuntimeCapabilities, SUPPORT_STATUS } from '../src/capabilities.mjs';
+import {
+  getComponentDefinitionOperationNames,
+  getOperationManifest,
+  getOperationNames,
+  getRuntimeCapabilities,
+  OPERATION_REGISTRY,
+  SUPPORT_STATUS
+} from '../src/capabilities.mjs';
 
 const repoRoot = path.resolve('.');
 const manifest = getOperationManifest();
 const manifestOperations = new Set(getOperationNames());
 const componentDefinitionOperations = new Set(getComponentDefinitionOperationNames());
 const capabilityByOperation = new Map(manifest.map((capability) => [capability.op, capability]));
-const targetOperations = new Set(['delete', 'rename', 'set_material', 'set_visibility', 'transform_object']);
+const targetOperations = new Set(['delete', 'rename', 'set_material', 'set_visibility', 'transform_object', 'assign_tag', 'attribute', 'classification', 'texture_transform', 'uv_project_planar', 'uv_project_box']);
 const identityOperations = new Set([
   'box', 'rounded_box', 'beveled_panel', 'fillet', 'chamfer', 'recess', 'engraved_line',
   'text_emboss', 'text_engrave', 'slot', 'slot_array', 'rib', 'standoff_boss',
-  'button_on_panel', 'prism', 'panel_with_openings', 'boolean_cutout', 'face_with_holes',
+  'button_on_panel', 'image_plane', 'prism', 'panel_with_openings', 'boolean_cutout', 'face_with_holes',
   'profile_extrude', 'mesh', 'gable_roof', 'shed_roof', 'cylinder', 'loft_between_profiles',
   'shell_from_front_side_profiles', 'lofted_solid', 'face_on_cylinder', 'analog_stick',
   'screw_hole', 'pipe_between_points', 'swept_path', 'domed_surface', 'bowed_panel',
@@ -20,9 +27,15 @@ const identityOperations = new Set([
 ]);
 
 const mockRuntimeSource = await fs.readFile(path.join(repoRoot, 'src/mock-runtime.mjs'), 'utf8');
-const geometrySource = await fs.readFile(path.join(repoRoot, 'src/geometry.mjs'), 'utf8');
+const componentOperationsSource = await fs.readFile(path.join(repoRoot, 'src/component-operations.mjs'), 'utf8');
 const rubyPluginSource = await fs.readFile(path.join(repoRoot, 'sketchup_plugin/alma_sketchup_mcp.rb'), 'utf8');
+const rubyComponentSource = await fs.readFile(path.join(repoRoot, 'sketchup_plugin/alma_sketchup_mcp/component_operations.rb'), 'utf8');
 
+assert.deepEqual(
+  sorted(new Set(Object.keys(OPERATION_REGISTRY))),
+  sorted(manifestOperations),
+  'operation registry keys should match exported operation names'
+);
 assert.deepEqual(
   sorted(new Set(manifest.map((capability) => capability.op))),
   sorted(manifestOperations),
@@ -32,7 +45,11 @@ for (const capability of manifest) {
   assert.ok(capability.schema, `${capability.op} should declare schema`);
   assert.ok(Array.isArray(capability.schema.required), `${capability.op} schema.required should be an array`);
   assert.ok(Array.isArray(capability.schema.optional), `${capability.op} schema.optional should be an array`);
-  assert.equal(capability.component_scope?.status === SUPPORT_STATUS.supported || capability.component_scope?.status === SUPPORT_STATUS.unsupported, true, `${capability.op} should declare component_scope status`);
+  assert.equal(capability.component_definition, undefined, `${capability.op} should expose component_scope, not raw registry markers`);
+  assert.ok(
+    [SUPPORT_STATUS.supported, SUPPORT_STATUS.unsupported].includes(capability.component_scope?.status),
+    `${capability.op} should declare component_scope status`
+  );
   assert.equal(typeof capability.description, 'string', `${capability.op} should declare description`);
   assert.equal(typeof capability.notes, 'string', `${capability.op} should declare notes`);
 }
@@ -42,22 +59,22 @@ const mockBuildOperations = extractCases(
   'async buildModel(code)',
   'await this.writeModel(model);'
 );
-assertSetIncludesAll(mockBuildOperations, manifestOperations, 'mock runtime buildModel dispatch');
+assertSetEquals(mockBuildOperations, manifestOperations, 'mock runtime buildModel dispatch');
 
 const rubyBuildOperations = extractWhens(
   rubyPluginSource,
   'def apply_operation(model, operation)',
-  'def delete_object(model, operation)'
+  'def object_reference(operation, op_name)'
 );
-assertSetIncludesAll(rubyBuildOperations, manifestOperations, 'Ruby queue apply_operation dispatch');
+assertSetEquals(rubyBuildOperations, manifestOperations, 'Ruby queue apply_operation dispatch');
 
 const jsComponentOperations = extractCases(
-  geometrySource,
+  componentOperationsSource,
   'function applyComponentDefinitionOperation(model, operation, componentName)',
   'export function addComponentInstance(model, operation)'
 );
 const rubyComponentOperations = extractWhens(
-  rubyPluginSource,
+  rubyComponentSource,
   'def apply_component_definition_operation(entities, operation, component_name)',
   'def add_component_instance(model, operation)'
 );
@@ -70,7 +87,7 @@ assert.deepEqual(
 assert.deepEqual(
   sorted(jsComponentOperations),
   sorted(componentDefinitionOperations),
-  'component_definition dispatch should be defined by registry component_scope'
+  'component_definition dispatch should be defined by the operation registry'
 );
 for (const operation of jsComponentOperations) {
   assert.ok(manifestOperations.has(operation), `component_definition dispatch op should exist in manifest: ${operation}`);
@@ -85,10 +102,22 @@ for (const operation of identityOperations) {
 
 for (const runtime of ['mock', 'queue']) {
   const runtimeCapabilities = getRuntimeCapabilities(runtime);
-  for (const operation of manifestOperations) {
+  const expectedRuntimeOperations = new Set(
+    manifest
+      .filter((capability) => capability.runtime_support[runtime] !== undefined && capability.runtime_support[runtime] !== SUPPORT_STATUS.unsupported)
+      .map((capability) => capability.op)
+  );
+  assert.deepEqual(
+    sorted(new Set(runtimeCapabilities.supported_operations)),
+    sorted(expectedRuntimeOperations),
+    `${runtime} supported_operations should be derived from registry runtime_support`
+  );
+  for (const operation of expectedRuntimeOperations) {
     const support = runtimeCapabilities.operation_support[operation];
     const capability = capabilityByOperation.get(operation);
     assert.ok(support, `${runtime} runtime descriptor should include operation_support.${operation}`);
+    assert.equal(support.status, capability.runtime_support[runtime], `${runtime} operation_support.${operation}.status should mirror registry`);
+    assert.equal(support.stability, capability.stability, `${runtime} operation_support.${operation}.stability should mirror registry`);
     assert.deepEqual(support.schema, capability.schema, `${runtime} operation_support.${operation}.schema should mirror registry`);
     assert.deepEqual(support.component_scope, capability.component_scope, `${runtime} operation_support.${operation}.component_scope should mirror registry`);
   }
@@ -122,9 +151,8 @@ function extractOperationNames(source, startMarker, endMarker, pattern) {
   return names;
 }
 
-function assertSetIncludesAll(actual, expected, label) {
-  const missing = [...expected].filter((operation) => !actual.has(operation));
-  assert.deepEqual(missing, [], `${label} missing manifest operations`);
+function assertSetEquals(actual, expected, label) {
+  assert.deepEqual(sorted(actual), sorted(expected), `${label} should match manifest operations`);
 }
 
 function assertOptionalFields(operation, fields) {

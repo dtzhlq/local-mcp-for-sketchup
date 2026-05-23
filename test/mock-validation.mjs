@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { getOperationManifest, getOperationNames } from '../src/capabilities.mjs';
+import { getOperationManifest, getOperationNames, getRuntimeCapabilities } from '../src/capabilities.mjs';
 import { SketchUpBridge } from '../src/bridge.mjs';
 import { compareSnapshots } from '../src/snapshot-diff.mjs';
 import { formatSnapshotReportMarkdown } from '../src/snapshot-report.mjs';
@@ -10,16 +10,9 @@ const bridge = new SketchUpBridge();
 const demoPath = path.resolve('examples/demo-room.json');
 const demoCode = await fs.readFile(demoPath, 'utf8');
 const fakeQueueRuntimeDescriptor = {
+  ...getRuntimeCapabilities('queue'),
   name: 'queue',
   version: 'queue-plugin-test',
-  capability_version: '0.1.0-capabilities.1',
-  manifest_version: '2026-05-phase2-pivot-editing-slice',
-  dsl_version: 1,
-  supported_operations: getOperationNames(),
-  operation_support: {
-    box: { status: 'supported', stability: 'stable' },
-    material: { status: 'partial', stability: 'stable' }
-  },
   plugin: {
     name: 'Alma SketchUp MCP Bridge',
     version: 'queue-plugin-test',
@@ -117,7 +110,8 @@ const driftedQueueBridge = new SketchUpBridge({
         supported_operations: fakeQueueRuntimeDescriptor.supported_operations.filter((operation) => operation !== 'box'),
         operation_support: {
           ...fakeQueueRuntimeDescriptor.operation_support,
-          material: { status: 'supported', stability: 'stable' }
+          material: { status: 'supported', stability: 'stable' },
+          tag: { ...fakeQueueRuntimeDescriptor.operation_support.tag, stability: 'stable' }
         }
       };
     },
@@ -131,6 +125,7 @@ assert.equal(driftedQueueCapabilities.runtime.compatibility.ok, false);
 assert.equal(driftedQueueCapabilities.runtime.compatibility.level, 'error');
 assert.ok(driftedQueueCapabilities.runtime.compatibility.issues.some((issue) => issue.type === 'runtime.operation_missing' && issue.operation === 'box'));
 assert.ok(driftedQueueCapabilities.runtime.compatibility.issues.some((issue) => issue.type === 'runtime.operation_status_mismatch' && issue.operation === 'material'));
+assert.ok(driftedQueueCapabilities.runtime.compatibility.issues.some((issue) => issue.type === 'runtime.operation_stability_mismatch' && issue.operation === 'tag'));
 assert.ok(driftedQueueCapabilities.runtime.compatibility.issues.some((issue) => issue.field === 'runtime.manifest_version'));
 
 const mockParity = await bridge.compare_model({ code: demoCode, expected_runtime: 'mock', actual_runtime: 'mock', toleranceMm: 1, budgets: { max_faces: 1000 }, topIssueLimit: 5 });
@@ -185,6 +180,27 @@ const identityInstance = identitySnapshot.instances.find((instance) => instance.
 assert.equal(identityInstance.name, 'LED_Original');
 assert.equal(identityInstance.visible, false);
 assert.equal(identityInstance.bounding_box.min[1], 150);
+
+const metadataBuilt = await bridge.build_model({ runtime: 'mock', code: JSON.stringify({
+  version: 1,
+  units: 'mm',
+  operations: [
+    { op: 'reset' },
+    { op: 'tag', name: 'Structure', color: '#336699', visible: true },
+    { op: 'box', id: 'metadata-panel-id', name: 'Metadata_Panel', origin: [0, 0, 0], size: [100, 40, 8] },
+    { op: 'assign_tag', target_id: 'metadata-panel-id', tag: 'Structure' },
+    { op: 'attribute', target_id: 'metadata-panel-id', dictionary: 'BIM', attributes: { system: 'frame', level: 1 } },
+    { op: 'attribute', target_id: 'metadata-panel-id', dictionary: 'BIM', key: 'status', value: 'existing' },
+    { op: 'classification', target_id: 'metadata-panel-id', system: 'IFC', type: 'IfcBuildingElementProxy', identifier: 'PANEL-001', attributes: { predefined_type: 'ELEMENT', load_bearing: false } }
+  ]
+}) });
+const metadataSnapshot = metadataBuilt.snapshot;
+const metadataPanel = metadataSnapshot.groups.find((group) => group.id === 'metadata-panel-id');
+assert.deepEqual(metadataSnapshot.tags, [{ name: 'Structure', color: '#336699', visible: true }]);
+assert.equal(metadataPanel.tag, 'Structure');
+assert.deepEqual(metadataPanel.classification, { system: 'IFC', type: 'IfcBuildingElementProxy', identifier: 'PANEL-001', attributes: { predefined_type: 'ELEMENT', load_bearing: false } });
+assert.deepEqual(metadataPanel.attributes.BIM, { system: 'frame', level: 1, status: 'existing' });
+assert.deepEqual(metadataPanel.attributes.Classification, { system: 'IFC', type: 'IfcBuildingElementProxy', identifier: 'PANEL-001', attributes_json: '{"predefined_type":"ELEMENT","load_bearing":false}' });
 
 await assert.rejects(
   () => bridge.build_model({ runtime: 'mock', code: JSON.stringify({
@@ -424,13 +440,20 @@ const editingTransformProfileCode = JSON.stringify({
     { op: 'box', name: 'Editable_Block', origin: [0, 0, 0], size: [100, 60, 20], material: 'Edit_Base' },
     { op: 'box', name: 'Temporary_Block', origin: [130, 0, 0], size: [30, 30, 20], material: 'Edit_Hidden' },
     { op: 'box', name: 'Center_Pivot_Block', origin: [220, 0, 0], size: [40, 30, 20], material: 'Edit_Base' },
+    { op: 'box', name: 'Axis_Rotated_Block', origin: [300, 0, 0], size: [50, 30, 18], material: 'Edit_Base' },
+    { op: 'box', name: 'Local_Axis_Block', origin: [390, 0, 0], size: [50, 30, 18], material: 'Edit_Base' },
+    { op: 'box', name: 'Matrix_Block', origin: [0, -80, 0], size: [40, 20, 15], material: 'Edit_Base' },
     { op: 'rename', name: 'Editable_Block', new_name: 'Edited_Block' },
     { op: 'set_material', name: 'Edited_Block', material: 'Edit_Accent' },
     { op: 'transform_object', name: 'Edited_Block', translate: [20, 10, 5], rotateZ: 15, scale: [1.2, 1, 1] },
     { op: 'transform_object', name: 'Center_Pivot_Block', pivot: 'center', scale: [1.5, 1, 1], rotateZ: 20 },
+    { op: 'transform_object', name: 'Axis_Rotated_Block', pivot: 'center', axis: [1, 1, 0], angle: 35 },
+    { op: 'transform_object', name: 'Local_Axis_Block', pivot: 'center', rotateZ: 35 },
+    { op: 'transform_object', name: 'Local_Axis_Block', pivot: 'center', local_axis: 'x', local_angle: 40 },
+    { op: 'transform_object', name: 'Matrix_Block', matrix: [1, 0, 0, 0, 0.4, 1, 0, 0, 0, 0, 1, 0, 0, 0, 5, 1] },
     { op: 'set_visibility', name: 'Temporary_Block', visible: false },
-    { op: 'profile_extrude', name: 'Panel_Profile_With_Hole', origin: [0, 120, 0], plane: 'xy', outer: [[0, 0], [140, 0], [140, 90], [0, 90]], holes: [{ points: [[45, 25], [95, 25], [95, 60], [45, 60]] }], depth: 12, material: 'Edit_Base' },
-    { op: 'face_with_holes', name: 'Flat_Profile_With_Hole', origin: [180, 120, 0], plane: 'xy', outer: [[0, 0], [90, 0], [90, 60], [0, 60]], holes: [{ points: [[30, 18], [60, 18], [60, 42], [30, 42]] }], material: 'Edit_Accent' },
+    { op: 'profile_extrude', name: 'Panel_Profile_With_Hole', origin: [0, 120, 0], plane: 'xy', outer: [[0, 0], [120, 0], [150, 45], [110, 90], [20, 90], [0, 45]], holes: [{ points: [[70, 30], [88, 45], [70, 62], [52, 45]] }], depth: 12, material: 'Edit_Base' },
+    { op: 'face_with_holes', name: 'Flat_Profile_With_Hole', origin: [180, 120, 0], plane: 'xy', outer: [[0, 0], [90, 0], [110, 35], [80, 70], [15, 60], [-10, 25]], holes: [{ points: [[35, 25], [65, 25], [50, 48]] }], material: 'Edit_Accent' },
     { op: 'delete', name: 'Temporary_Block' }
   ]
 });
@@ -440,7 +463,10 @@ const editedBlock = editingTransformProfileSnapshot.groups.find((group) => group
 const profilePanel = editingTransformProfileSnapshot.groups.find((group) => group.name === 'Panel_Profile_With_Hole');
 const flatProfile = editingTransformProfileSnapshot.groups.find((group) => group.name === 'Flat_Profile_With_Hole');
 const centerPivotBlock = editingTransformProfileSnapshot.groups.find((group) => group.name === 'Center_Pivot_Block');
-assert.equal(editingTransformProfileSnapshot.totals.groups, 4);
+const axisRotatedBlock = editingTransformProfileSnapshot.groups.find((group) => group.name === 'Axis_Rotated_Block');
+const localAxisBlock = editingTransformProfileSnapshot.groups.find((group) => group.name === 'Local_Axis_Block');
+const matrixBlock = editingTransformProfileSnapshot.groups.find((group) => group.name === 'Matrix_Block');
+assert.equal(editingTransformProfileSnapshot.totals.groups, 7);
 assert.equal(editingTransformProfileSnapshot.groups.some((group) => group.name === 'Temporary_Block'), false);
 assert.equal(editedBlock.kind, 'box');
 assert.equal(editedBlock.material, 'Edit_Accent');
@@ -450,18 +476,60 @@ assert.equal(centerPivotBlock.kind, 'box');
 assert.ok(centerPivotBlock.bounding_box.w > 65);
 assert.ok(centerPivotBlock.bounding_box.d > 45);
 assert.ok(centerPivotBlock.bounding_box.min[0] < 220);
+assert.equal(axisRotatedBlock.kind, 'box');
+assert.ok(axisRotatedBlock.bounding_box.w > 55);
+assert.ok(axisRotatedBlock.bounding_box.h > 35);
+assert.deepEqual(axisRotatedBlock.transform.object_transform.axis, [1 / Math.sqrt(2), 1 / Math.sqrt(2), 0]);
+assert.equal(axisRotatedBlock.transform.object_transform.angle, 35);
+assert.equal(localAxisBlock.kind, 'box');
+assert.ok(localAxisBlock.bounding_box.w > 55);
+assert.ok(localAxisBlock.bounding_box.h > 30);
+assert.deepEqual(localAxisBlock.transform.object_transform.local_axis, [1, 0, 0]);
+assert.equal(localAxisBlock.transform.object_transform.local_angle, 40);
+assert.ok(Math.abs(localAxisBlock.transform.object_transform.local_model_axis[0] - Math.cos(35 * Math.PI / 180)) < 1e-12);
+assert.ok(Math.abs(localAxisBlock.transform.object_transform.local_model_axis[1] - Math.sin(35 * Math.PI / 180)) < 1e-12);
+assert.ok(Math.abs(localAxisBlock.transform.object_transform.local_model_axis[2]) < 1e-12);
+assert.equal(matrixBlock.kind, 'box');
+assert.equal(matrixBlock.bounding_box.w, 48);
+assert.equal(matrixBlock.bounding_box.h, 15);
+assert.deepEqual(matrixBlock.bounding_box.min, [-32, -80, 5]);
+assert.deepEqual(matrixBlock.transform.object_transform.matrix, [1, 0, 0, 0, 0.4, 1, 0, 0, 0, 0, 1, 0, 0, 0, 5, 1]);
 assert.equal(profilePanel.kind, 'profile_extrude');
-assert.equal(profilePanel.faces, 10);
-assert.equal(profilePanel.edges, 24);
-assert.equal(profilePanel.bounding_box.w, 140);
+assert.equal(profilePanel.faces, 12);
+assert.equal(profilePanel.edges, 30);
+assert.equal(profilePanel.bounding_box.w, 150);
 assert.equal(profilePanel.bounding_box.d, 90);
 assert.equal(profilePanel.bounding_box.h, 12);
 assert.equal(flatProfile.kind, 'face_with_holes');
 assert.equal(flatProfile.faces, 1);
-assert.equal(flatProfile.edges, 8);
-assert.equal(flatProfile.bounding_box.w, 90);
-assert.equal(flatProfile.bounding_box.d, 60);
+assert.equal(flatProfile.edges, 9);
+assert.equal(flatProfile.bounding_box.w, 120);
+assert.equal(flatProfile.bounding_box.d, 70);
 assert.ok(editingTransformProfileSnapshot.material_names.includes('Edit_Accent'));
+
+await assert.rejects(
+  () => bridge.build_model({ runtime: 'mock', code: JSON.stringify({
+    version: 1,
+    units: 'mm',
+    operations: [
+      { op: 'reset' },
+      { op: 'profile_extrude', name: 'Self_Intersecting_Profile', origin: [0, 0, 0], plane: 'xy', outer: [[0, 0], [100, 0], [20, 80], [80, -20], [100, 80]], depth: 10 }
+    ]
+  }) }),
+  /Self_Intersecting_Profile\.outer must not self-intersect/
+);
+
+await assert.rejects(
+  () => bridge.build_model({ runtime: 'mock', code: JSON.stringify({
+    version: 1,
+    units: 'mm',
+    operations: [
+      { op: 'reset' },
+      { op: 'face_with_holes', name: 'Boundary_Touching_Hole', origin: [0, 0, 0], plane: 'xy', outer: [[0, 0], [100, 0], [100, 80], [0, 80]], holes: [{ points: [[0, 20], [20, 20], [20, 40], [0, 40]] }] }
+    ]
+  }) }),
+  /Boundary_Touching_Hole\.holes\[0\] must fit inside outer profile without touching boundary/
+);
 
 const structuredProductHelpersCode = JSON.stringify({
   version: 1,
@@ -1019,6 +1087,142 @@ assert.ok(goldenProductGrip.vertices > 0, 'golden product grip should report ver
 assert.deepEqual(goldenProductGrip.resolution_hint, { segments_x: 8, segments_z: 4 });
 assert.deepEqual(goldenProductStick.resolution_hint, { segments: 18 });
 assert.ok(goldenProductSnapshot.totals.vertices > 0, 'golden product should report aggregate vertices');
+
+const componentTransformCode = await fs.readFile(path.resolve('examples/component-transform-composition.json'), 'utf8');
+const componentTransformBuilt = await bridge.build_model({ runtime: 'mock', code: componentTransformCode });
+const componentTransformSnapshot = componentTransformBuilt.snapshot;
+const componentA = componentTransformSnapshot.instances.find((instance) => instance.name === 'Component_Transform_A');
+const componentB = componentTransformSnapshot.instances.find((instance) => instance.name === 'Component_Transform_B');
+const componentC = componentTransformSnapshot.instances.find((instance) => instance.name === 'Component_Transform_C');
+assert.equal(componentTransformSnapshot.totals.instances, 3);
+assert.ok(componentTransformSnapshot.component_definitions.includes('Transform_Widget_Def'));
+assert.equal(componentA.definition, 'Transform_Widget_Def');
+assert.equal(componentA.faces, 12);
+assert.ok(componentA.bounding_box.w > 65);
+assert.ok(componentA.bounding_box.h > 30);
+assert.deepEqual(componentA.transform.object_transform.matrix, [1, 0, 0, 0, 0.25, 1, 0, 0, 0, 0, 1, 0, 0, 12, 6, 1]);
+assert.equal(componentB.definition, 'Transform_Widget_Def');
+assert.ok(componentB.bounding_box.h > 45);
+assert.deepEqual(componentB.transform.object_transform.axis, [0, 1 / Math.sqrt(2), 1 / Math.sqrt(2)]);
+assert.equal(componentB.transform.object_transform.angle, 28);
+assert.equal(componentC.definition, 'Transform_Widget_Def');
+assert.ok(componentC.bounding_box.h > 30);
+assert.deepEqual(componentC.transform.object_transform.local_axis, [1, 0, 0]);
+assert.equal(componentC.transform.object_transform.local_angle, 32);
+assert.ok(Math.abs(componentC.transform.object_transform.local_model_axis[0] - Math.cos(25 * Math.PI / 180)) < 1e-12);
+assert.ok(Math.abs(componentC.transform.object_transform.local_model_axis[1] - Math.sin(25 * Math.PI / 180)) < 1e-12);
+
+const transformChainCode = await fs.readFile(path.resolve('examples/transform-chain-regression.json'), 'utf8');
+const transformChainBuilt = await bridge.build_model({ runtime: 'mock', code: transformChainCode });
+const transformChainSnapshot = transformChainBuilt.snapshot;
+const chainGroup = transformChainSnapshot.groups.find((group) => group.name === 'Transform_Chain_Group_A');
+const chainInstance = transformChainSnapshot.instances.find((instance) => instance.name === 'Transform_Chain_Instance_A');
+assert.equal(transformChainSnapshot.totals.groups, 1);
+assert.equal(transformChainSnapshot.totals.instances, 1);
+assert.ok(transformChainSnapshot.component_definitions.includes('Transform_Chain_Def'));
+assert.ok(transformChainSnapshot.scenes.some((scene) => scene.name === 'Transform_Chain_QA'));
+assert.equal(chainGroup.id, 'chain-group-a');
+assert.equal(chainGroup.kind, 'box');
+assert.ok(chainGroup.bounding_box.w > 49 && chainGroup.bounding_box.w < 51);
+assert.ok(chainGroup.bounding_box.d > 40 && chainGroup.bounding_box.d < 42);
+assert.ok(chainGroup.bounding_box.h > 22 && chainGroup.bounding_box.h < 23);
+assert.deepEqual(chainGroup.transform.object_transform.matrix, [1, 0, 0, 0, 0.15, 1, 0, 0, 0, 0, 1, 0, 8, -6, 4, 1]);
+assert.equal(chainInstance.id, 'chain-instance-a');
+assert.equal(chainInstance.definition, 'Transform_Chain_Def');
+assert.equal(chainInstance.transform.rotateZ, 20);
+assert.deepEqual(chainInstance.transform.object_transform.axis, [0, 0, 1]);
+assert.equal(chainInstance.transform.object_transform.angle, 15);
+assert.deepEqual(chainInstance.transform.object_transform.translate, [18, 10, 6]);
+assert.ok(chainInstance.bounding_box.h > 35 && chainInstance.bounding_box.h < 36);
+
+const profileEdgeCasesCode = await fs.readFile(path.resolve('examples/profile-edge-cases.json'), 'utf8');
+const profileEdgeCasesBuilt = await bridge.build_model({ runtime: 'mock', code: profileEdgeCasesCode });
+const profileEdgeCasesSnapshot = profileEdgeCasesBuilt.snapshot;
+const concaveProfile = profileEdgeCasesSnapshot.groups.find((group) => group.name === 'Concave_Profile_Two_Holes');
+const verticalFace = profileEdgeCasesSnapshot.groups.find((group) => group.name === 'Vertical_Concave_Face_Two_Holes');
+assert.equal(profileEdgeCasesSnapshot.totals.groups, 2);
+assert.equal(profileEdgeCasesSnapshot.totals.instances, 2);
+assert.ok(profileEdgeCasesSnapshot.component_definitions.includes('Profile_Insert_Def'));
+assert.equal(concaveProfile.kind, 'profile_extrude');
+assert.equal(concaveProfile.faces, 18);
+assert.equal(concaveProfile.edges, 48);
+assert.deepEqual(concaveProfile.bounding_box.min, [0, 0, 0]);
+assert.equal(concaveProfile.bounding_box.w, 180);
+assert.equal(concaveProfile.bounding_box.d, 120);
+assert.equal(concaveProfile.bounding_box.h, 14);
+assert.equal(verticalFace.kind, 'face_with_holes');
+assert.equal(verticalFace.faces, 1);
+assert.equal(verticalFace.edges, 16);
+assert.deepEqual(verticalFace.bounding_box.min, [230, 0, 0]);
+assert.equal(verticalFace.bounding_box.w, 140);
+assert.equal(verticalFace.bounding_box.d, 0);
+assert.equal(verticalFace.bounding_box.h, 90);
+
+await assert.rejects(
+  () => bridge.build_model({ runtime: 'mock', code: JSON.stringify({
+    version: 1,
+    units: 'mm',
+    operations: [
+      { op: 'reset' },
+      {
+        op: 'profile_extrude',
+        name: 'Overlapping_Profile_Holes',
+        origin: [0, 0, 0],
+        plane: 'xy',
+        outer: [[0, 0], [120, 0], [120, 80], [0, 80]],
+        holes: [
+          { points: [[20, 20], [60, 20], [60, 50], [20, 50]] },
+          { points: [[45, 30], [85, 30], [85, 60], [45, 60]] }
+        ],
+        depth: 10
+      }
+    ]
+  }) }),
+  /Overlapping_Profile_Holes\.holes\[0\] must not overlap Overlapping_Profile_Holes\.holes\[1\]/
+);
+
+await assert.rejects(
+  () => bridge.build_model({ runtime: 'mock', code: JSON.stringify({
+    version: 1,
+    units: 'mm',
+    operations: [
+      { op: 'reset' },
+      {
+        op: 'face_with_holes',
+        name: 'Outside_Profile_Hole',
+        origin: [0, 0, 0],
+        plane: 'xy',
+        outer: [[0, 0], [100, 0], [100, 80], [0, 80]],
+        holes: [{ points: [[70, 50], [120, 50], [120, 70], [70, 70]] }]
+      }
+    ]
+  }) }),
+  /Outside_Profile_Hole\.holes\[0\] must fit inside outer profile without touching boundary/
+);
+
+const appearanceTextureCode = await fs.readFile(path.resolve('examples/appearance-texture-slice.json'), 'utf8');
+const appearanceTextureBuilt = await bridge.build_model({ runtime: 'mock', code: appearanceTextureCode });
+const appearanceTextureSnapshot = appearanceTextureBuilt.snapshot;
+const texturedPanel = appearanceTextureSnapshot.groups.find((group) => group.name === 'Appearance_Textured_Panel');
+const referencePlane = appearanceTextureSnapshot.groups.find((group) => group.name === 'Appearance_Reference_Plane');
+const labelInstance = appearanceTextureSnapshot.instances.find((instance) => instance.name === 'Appearance_Label_Instance');
+assert.equal(appearanceTextureSnapshot.totals.groups, 2);
+assert.equal(appearanceTextureSnapshot.totals.instances, 1);
+assert.ok(appearanceTextureSnapshot.component_definitions.includes('Appearance_Label_Def'));
+assert.equal(texturedPanel.kind, 'box');
+assert.deepEqual(texturedPanel.texture_transform, { projection: 'box', offset: [12, 8], scale: [1.5, 0.75], rotation: 30, material: 'Appearance_Base' });
+assert.deepEqual(texturedPanel.attributes.TextureTransform, { projection: 'box', offset_u: 12, offset_v: 8, scale_u: 1.5, scale_v: 0.75, rotation: 30, material: 'Appearance_Base' });
+assert.equal(referencePlane.kind, 'image_plane');
+assert.equal(referencePlane.faces, 1);
+assert.equal(referencePlane.edges, 4);
+assert.deepEqual(referencePlane.bounding_box.min, [220, 0, 0]);
+assert.equal(referencePlane.bounding_box.w, 160);
+assert.equal(referencePlane.bounding_box.d, 0);
+assert.equal(referencePlane.bounding_box.h, 90);
+assert.deepEqual(referencePlane.texture_transform, { projection: 'planar', offset: [4, 6], scale: [1, 1], rotation: 0, material: 'Reference_Tint' });
+assert.equal(labelInstance.definition, 'Appearance_Label_Def');
+assert.equal(labelInstance.faces, 1);
+assert.equal(labelInstance.edges, 4);
 
 const largeOperationCode = JSON.stringify({
   version: 1,

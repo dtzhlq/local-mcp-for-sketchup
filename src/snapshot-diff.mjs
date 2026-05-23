@@ -16,6 +16,7 @@ export function compareSnapshots(expected, actual, {
   checkBudgets(diffs, actual, budgets);
   compareStringSets(diffs, 'materials', expected?.material_names || [], actual?.material_names || []);
   compareStringSets(diffs, 'component_definitions', expected?.component_definitions || [], actual?.component_definitions || []);
+  compareStringSets(diffs, 'tags', (expected?.tags || []).map((tag) => tag.name), (actual?.tags || []).map((tag) => tag.name));
   compareNamedCollections(diffs, 'groups', expected?.groups || [], actual?.groups || [], toleranceMm, normalizedTopologyTolerance);
   compareNamedCollections(diffs, 'instances', expected?.instances || [], actual?.instances || [], toleranceMm, normalizedTopologyTolerance);
   compareScenes(diffs, expected?.scenes || [], actual?.scenes || []);
@@ -120,6 +121,10 @@ function compareNamedCollections(diffs, path, expectedItems, actualItems, tolera
     }
     compareField(diffs, `${path}.${name}.kind`, expectedItem.kind, actualItem.kind, 'info', name);
     compareField(diffs, `${path}.${name}.material`, expectedItem.material, actualItem.material, 'warn', name);
+    compareField(diffs, `${path}.${name}.tag`, expectedItem.tag, actualItem.tag, 'warn', name);
+    compareField(diffs, `${path}.${name}.classification`, stableJson(expectedItem.classification || null), stableJson(actualItem.classification || null), 'warn', name);
+    compareField(diffs, `${path}.${name}.texture_transform`, stableJson(expectedItem.texture_transform || null), stableJson(actualItem.texture_transform || null), 'warn', name);
+    compareField(diffs, `${path}.${name}.image`, expectedItem.image || null, actualItem.image || null, 'info', name);
     compareMetric(diffs, `${path}.${name}.faces`, expectedItem.faces, actualItem.faces, topologyTolerance.faces, 'warn', name);
     compareMetric(diffs, `${path}.${name}.edges`, expectedItem.edges, actualItem.edges, topologyTolerance.edges, 'warn', name);
     compareBoundingBox(diffs, `${path}.${name}.bounding_box`, expectedItem.bounding_box, actualItem.bounding_box, toleranceMm, 'warn', name);
@@ -128,6 +133,16 @@ function compareNamedCollections(diffs, path, expectedItems, actualItems, tolera
   for (const [name, actualItem] of actualByName) {
     if (!expectedByName.has(name)) addDiff(diffs, `${path}.extra`, 'info', path, `${path} item extra: ${name}`, null, actualItem, name);
   }
+}
+
+function stableJson(value) {
+  return JSON.stringify(sortJsonValue(value));
+}
+
+function sortJsonValue(value) {
+  if (Array.isArray(value)) return value.map(sortJsonValue);
+  if (!value || typeof value !== 'object') return value;
+  return Object.fromEntries(Object.entries(value).sort(([a], [b]) => a.localeCompare(b)).map(([key, item]) => [key, sortJsonValue(item)]));
 }
 
 function compareScenes(diffs, expectedScenes, actualScenes) {

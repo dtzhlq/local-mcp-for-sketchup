@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "units": "mm",
+  "operations": [
+    { "op": "reset" },
+    { "op": "material", "name": "Component_Base", "color": "#c9ced6" },
+    { "op": "material", "name": "Component_Accent", "color": "#4f8fba" },
+    { "op": "component_definition", "name": "Transform_Widget_Def", "operations": [
+      { "op": "box", "name": "Widget_Body", "origin": [0, 0, 0], "size": [60, 30, 18], "material": "Component_Base" },
+      { "op": "box", "name": "Widget_Tab", "origin": [44, 8, 18], "size": [16, 14, 8], "material": "Component_Accent" }
+    ] },
+    { "op": "component_instance", "id": "component-transform-a", "name": "Component_Transform_A", "definition": "Transform_Widget_Def", "origin": [100, 0, 0], "transform": { "rotateZ": 25 } },
+    { "op": "component_instance", "id": "component-transform-b", "name": "Component_Transform_B", "definition": "Transform_Widget_Def", "origin": [220, 0, 0] },
+    { "op": "component_instance", "id": "component-transform-c", "name": "Component_Transform_C", "definition": "Transform_Widget_Def", "origin": [340, 0, 0], "transform": { "rotateZ": 25 } },
+    { "op": "transform_object", "target_id": "component-transform-a", "pivot": "center", "local_axis": "x", "local_angle": 32 },
+    { "op": "transform_object", "target_id": "component-transform-a", "matrix": [1, 0, 0, 0, 0.25, 1, 0, 0, 0, 0, 1, 0, 0, 12, 6, 1] },
+    { "op": "transform_object", "target_id": "component-transform-b", "pivot": "center", "axis": [0, 1, 1], "angle": 28 },
+    { "op": "transform_object", "target_id": "component-transform-c", "pivot": "center", "local_axis": "x", "local_angle": 32 }
+  ]
+}

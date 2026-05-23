@@ -1,5 +1,5 @@
 export const DSL_VERSION = 1;
-export const CAPABILITY_MANIFEST_VERSION = '2026-05-phase2-pivot-editing-slice';
+export const CAPABILITY_MANIFEST_VERSION = '2026-05-phase2-appearance-slice';
 export const RUNTIME_CAPABILITY_VERSION = '0.1.0-capabilities.1';
 
 export const SUPPORT_STATUS = Object.freeze({
@@ -19,52 +19,7 @@ const objectIdentity = ['id', 'object_id', 'objectId', 'guid'];
 const objectTarget = ['target_id', 'targetId', 'target', 'object'];
 const commonPlacement = [...objectIdentity, 'material', 'transform.translate', 'transform.rotateZ'];
 
-export const COMPONENT_DEFINITION_OPERATION_NAMES = Object.freeze([
-  'material',
-  'box',
-  'rounded_box',
-  'beveled_panel',
-  'fillet',
-  'chamfer',
-  'recess',
-  'engraved_line',
-  'text_emboss',
-  'text_engrave',
-  'slot',
-  'slot_array',
-  'rib',
-  'standoff_boss',
-  'button_on_panel',
-  'floor_slab',
-  'wall',
-  'door',
-  'window',
-  'stairs',
-  'railing',
-  'panel_with_openings',
-  'boolean_cutout',
-  'mesh',
-  'prism',
-  'face_with_holes',
-  'profile_extrude',
-  'gable_roof',
-  'shed_roof',
-  'cylinder',
-  'loft_between_profiles',
-  'shell_from_front_side_profiles',
-  'lofted_solid',
-  'face_on_cylinder',
-  'analog_stick',
-  'screw_hole',
-  'pipe_between_points',
-  'swept_path',
-  'domed_surface',
-  'bowed_panel'
-]);
-
-const COMPONENT_DEFINITION_OPERATION_SET = new Set(COMPONENT_DEFINITION_OPERATION_NAMES);
-
-const BASE_OPERATION_CAPABILITIES = [
+const OPERATION_REGISTRY_ENTRIES = [
   {
     op: 'reset',
     description: 'Clear the current model session before appending new geometry.',
@@ -79,7 +34,64 @@ const BASE_OPERATION_CAPABILITIES = [
     schema: { required: ['op', 'name'], optional: ['color', 'alpha', 'texture', 'workflow', 'pbr'] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.partial },
     stability: STABILITY.stable,
+    component_definition: true,
     notes: 'Mock records material fields; queue applies supported SketchUp material/PBR fields and warns on missing texture files.'
+  },
+  {
+    op: 'tag',
+    description: 'Create or update a SketchUp tag/layer used to organize model entities.',
+    schema: { required: ['op', 'name'], optional: ['color', 'visible'] },
+    runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
+    stability: STABILITY.beta,
+    notes: 'SketchUp 2020+ calls these Tags; Ruby exposes them through the legacy Layers API.'
+  },
+  {
+    op: 'assign_tag',
+    description: 'Assign an existing or implicit tag to a top-level group or component instance.',
+    schema: { required: ['op', 'tag'], optional: ['name', 'tag_name', 'tagName', ...objectTarget] },
+    runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
+    stability: STABILITY.beta,
+    notes: 'Targets the same stable id/name reference path used by editing operations.'
+  },
+  {
+    op: 'attribute',
+    description: 'Write structured metadata onto a top-level group or component instance.',
+    schema: { required: ['op'], optional: ['name', ...objectTarget, 'dictionary', 'namespace', 'key', 'attr_key', 'attrKey', 'value', 'attributes'] },
+    runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
+    stability: STABILITY.beta,
+    notes: 'Stores JSON-compatible values under a SketchUp attribute dictionary and returns them in snapshots.'
+  },
+  {
+    op: 'classification',
+    description: 'Attach BIM/classification metadata to a top-level group or component instance.',
+    schema: { required: ['op'], optional: ['name', ...objectTarget, 'system', 'schema', 'type', 'classification', 'class', 'ifc_class', 'ifcClass', 'identifier', 'attributes'] },
+    runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
+    stability: STABILITY.beta,
+    notes: 'Stores a normalized classification snapshot and mirrors fields to a SketchUp Classification attribute dictionary.'
+  },
+  {
+    op: 'texture_transform',
+    description: 'Attach texture mapping metadata to a top-level group or component instance.',
+    schema: { required: ['op'], optional: ['name', ...objectTarget, 'material', 'projection', 'offset', 'offset_u', 'offsetU', 'offset_v', 'offsetV', 'scale', 'scale_u', 'scaleU', 'scale_v', 'scaleV', 'rotation', 'rotation_degrees', 'rotationDegrees'] },
+    runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
+    stability: STABILITY.beta,
+    notes: 'First texture-mapping slice: records deterministic UV/projection metadata in snapshots and mirrors it to SketchUp attributes.'
+  },
+  {
+    op: 'uv_project_planar',
+    description: 'Attach planar UV projection metadata to a top-level group or component instance.',
+    schema: { required: ['op'], optional: ['name', ...objectTarget, 'material', 'offset', 'offset_u', 'offsetU', 'offset_v', 'offsetV', 'scale', 'scale_u', 'scaleU', 'scale_v', 'scaleV', 'rotation', 'rotation_degrees', 'rotationDegrees'] },
+    runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
+    stability: STABILITY.beta,
+    notes: 'Semantic alias for texture_transform with projection=planar.'
+  },
+  {
+    op: 'uv_project_box',
+    description: 'Attach box UV projection metadata to a top-level group or component instance.',
+    schema: { required: ['op'], optional: ['name', ...objectTarget, 'material', 'offset', 'offset_u', 'offsetU', 'offset_v', 'offsetV', 'scale', 'scale_u', 'scaleU', 'scale_v', 'scaleV', 'rotation', 'rotation_degrees', 'rotationDegrees'] },
+    runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
+    stability: STABILITY.beta,
+    notes: 'Semantic alias for texture_transform with projection=box.'
   },
   {
     op: 'delete',
@@ -116,10 +128,10 @@ const BASE_OPERATION_CAPABILITIES = [
   {
     op: 'transform_object',
     description: 'Apply a safe transform to an existing named group or component instance.',
-    schema: { required: ['op'], optional: ['name', ...objectTarget, 'translate', 'rotateX', 'rotateY', 'rotateZ', 'scale', 'mirror', 'pivot'] },
+    schema: { required: ['op'], optional: ['name', ...objectTarget, 'translate', 'rotateX', 'rotateY', 'rotateZ', 'axis', 'angle', 'rotate_axis', 'rotateAxis', 'local_axis', 'localAxis', 'local_angle', 'localAngle', 'rotate_local', 'rotateLocal', 'matrix', 'matrix4x4', 'scale', 'mirror', 'pivot'] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
-    notes: "Phase 2 object-editing slice. Prefer target_id for stable references; name remains supported as a compatibility fallback. Default pivot is model origin. Use pivot: 'center' for object-center transforms or pivot: [x,y,z] for an explicit model-space pivot; local-axis editing remains out of scope."
+    notes: "Phase 2 object-editing slice. Prefer target_id for stable references; name remains supported as a compatibility fallback. Supports model-space rotateX/Y/Z, arbitrary model-space axis+angle, local-axis rotations, and SketchUp-compatible 16-number 4x4 matrices."
   },
   {
     op: 'box',
@@ -127,6 +139,7 @@ const BASE_OPERATION_CAPABILITIES = [
     schema: { required: ['op', 'name', 'origin', 'size'], optional: commonPlacement },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.stable,
+    component_definition: true,
     notes: 'Basic primitive used by many higher-level helpers.'
   },
   {
@@ -135,6 +148,7 @@ const BASE_OPERATION_CAPABILITIES = [
     schema: { required: ['op', 'name', 'origin', 'size', 'radius'], optional: ['segments', 'smooth', ...commonPlacement] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
+    component_definition: true,
     notes: 'Product-design helper for softened shells, caps, panels, and compact devices.'
   },
   {
@@ -143,6 +157,7 @@ const BASE_OPERATION_CAPABILITIES = [
     schema: { required: ['op', 'name', 'origin', 'size', 'bevel'], optional: ['smooth', ...commonPlacement] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
+    component_definition: true,
     notes: 'Product-design helper for device face plates, recessed panels, and chamfered caps.'
   },
   {
@@ -151,6 +166,7 @@ const BASE_OPERATION_CAPABILITIES = [
     schema: { required: ['op', 'name', 'origin', 'size', 'radius'], optional: ['segments', 'smooth', ...commonPlacement] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
+    component_definition: true,
     notes: 'Second-phase product edge-treatment helper. This stable slice fillets the XY footprint/vertical edges; arbitrary selected-edge CAD fillets remain out of scope.'
   },
   {
@@ -159,6 +175,7 @@ const BASE_OPERATION_CAPABILITIES = [
     schema: { required: ['op', 'name', 'origin', 'size', 'amount'], optional: ['bevel', 'smooth', ...commonPlacement] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
+    component_definition: true,
     notes: 'Second-phase product edge-treatment helper. This stable slice chamfers the XY footprint/vertical edges; arbitrary selected-edge CAD chamfers remain out of scope.'
   },
   {
@@ -167,6 +184,7 @@ const BASE_OPERATION_CAPABILITIES = [
     schema: { required: ['op', 'name', 'center', 'size', 'depth'], optional: ['radius', 'segments', 'smooth', ...commonPlacement] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
+    component_definition: true,
     notes: 'Visual recessed detail for product panels; true boolean removal remains a later boolean_cutout capability.'
   },
   {
@@ -175,6 +193,7 @@ const BASE_OPERATION_CAPABILITIES = [
     schema: { required: ['op', 'name', 'points', 'width'], optional: ['depth', 'smooth', ...commonPlacement] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
+    component_definition: true,
     notes: 'Useful for product seams, split lines, decorative grooves, and controller panel outlines.'
   },
   {
@@ -183,6 +202,7 @@ const BASE_OPERATION_CAPABILITIES = [
     schema: { required: ['op', 'name', 'text', 'height'], optional: ['origin', 'center', 'width', 'depth', 'spacing', 'align', 'smooth', ...commonPlacement] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
+    component_definition: true,
     notes: 'Deterministic visual product-detail marker using simple glyph blocks; not a true font outline or boolean operation.'
   },
   {
@@ -191,6 +211,7 @@ const BASE_OPERATION_CAPABILITIES = [
     schema: { required: ['op', 'name', 'text', 'height'], optional: ['origin', 'center', 'width', 'depth', 'spacing', 'align', 'smooth', ...commonPlacement] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
+    component_definition: true,
     notes: 'Deterministic visual product-detail marker using simple sunken glyph blocks; true boolean text engraving remains out of scope.'
   },
   {
@@ -199,6 +220,7 @@ const BASE_OPERATION_CAPABILITIES = [
     schema: { required: ['op', 'name', 'center', 'length', 'width', 'depth'], optional: ['segments', 'smooth', ...commonPlacement] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
+    component_definition: true,
     notes: 'Visual long-hole or speaker/USB slot helper; true boolean cutting remains a later boolean_cutout capability.'
   },
   {
@@ -207,6 +229,7 @@ const BASE_OPERATION_CAPABILITIES = [
     schema: { required: ['op', 'name', 'count', 'spacing', 'length', 'width', 'depth'], optional: ['center', 'origin', 'direction', 'segments', 'smooth', ...commonPlacement] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
+    component_definition: true,
     notes: 'Safe repetition helper: records one semantic slot-array group in mock and creates deterministic rounded recess geometry in queue; not true perforating boolean cuts.'
   },
   {
@@ -215,6 +238,7 @@ const BASE_OPERATION_CAPABILITIES = [
     schema: { required: ['op', 'name', 'origin', 'length', 'height', 'thickness'], optional: ['direction', ...commonPlacement] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
+    component_definition: true,
     notes: 'Structure helper backed by box-like geometry; direction controls whether length runs along X or Y.'
   },
   {
@@ -223,6 +247,7 @@ const BASE_OPERATION_CAPABILITIES = [
     schema: { required: ['op', 'name', 'center', 'outer_radius', 'inner_radius', 'height'], optional: ['segments', 'hole_material', 'smooth', ...commonPlacement] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
+    component_definition: true,
     notes: 'Visual mounting-post helper for structured product interiors. The inner hole is represented as a dark cylinder marker, not a true boolean subtraction.'
   },
   {
@@ -231,7 +256,17 @@ const BASE_OPERATION_CAPABILITIES = [
     schema: { required: ['op', 'name', 'center', 'height'], optional: ['radius', 'size', 'corner_radius', 'segments', 'smooth', ...commonPlacement] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
+    component_definition: true,
     notes: 'Use radius for round buttons; use size plus optional corner_radius for pill or rounded-rectangle buttons.'
+  },
+  {
+    op: 'image_plane',
+    description: 'Create a flat reference/image plane with optional material or texture-backed image material.',
+    schema: { required: ['op', 'name', 'origin', 'size'], optional: ['plane', 'image', 'texture', 'material', 'alpha', 'texture_transform', ...objectIdentity, 'transform.translate', 'transform.rotateZ'] },
+    runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
+    stability: STABILITY.beta,
+    component_definition: true,
+    notes: 'First image/reference plane slice. If image/texture is provided, queue attempts to apply it as a material texture; missing files become structured warnings.'
   },
   {
     op: 'prism',
@@ -239,6 +274,7 @@ const BASE_OPERATION_CAPABILITIES = [
     schema: { required: ['op', 'name', 'plane', 'points', 'depth'], optional: commonPlacement },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.stable,
+    component_definition: true,
     notes: 'Best for simple coplanar polygon profiles.'
   },
   {
@@ -247,6 +283,7 @@ const BASE_OPERATION_CAPABILITIES = [
     schema: { required: ['op', 'name', 'origin', 'plane', 'size', 'thickness'], optional: ['openings', ...commonPlacement] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.stable,
+    component_definition: true,
     notes: 'Openings use local x/y/width/height coordinates in the panel plane.'
   },
   {
@@ -255,23 +292,26 @@ const BASE_OPERATION_CAPABILITIES = [
     schema: { required: ['op', 'name', 'origin', 'size', 'cutouts'], optional: ['smooth', ...commonPlacement] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
+    component_definition: true,
     notes: 'Safe boolean slice for product panels: deterministic rectangular through-holes in an XY slab. Arbitrary solid boolean operations remain out of scope.'
   },
   {
     op: 'face_with_holes',
-    description: 'Create a coplanar rectangular face with rectangular hole loops.',
+    description: 'Create a coplanar polygon face with optional polygon hole loops.',
     schema: { required: ['op', 'name', 'origin', 'plane', 'outer'], optional: ['holes', ...commonPlacement] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
-    notes: 'Safe profile slice: outer and holes must be axis-aligned rectangles in local 2D profile coordinates.'
+    component_definition: true,
+    notes: 'First generic profile slice: outer and holes are simple non-self-intersecting 2D loops; holes must be strictly inside and non-overlapping.'
   },
   {
     op: 'profile_extrude',
-    description: 'Extrude a rectangular 2D profile with rectangular holes along the profile normal.',
+    description: 'Extrude a polygon 2D profile with optional polygon holes along the profile normal.',
     schema: { required: ['op', 'name', 'origin', 'plane', 'outer', 'depth'], optional: ['holes', ...commonPlacement] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
-    notes: 'Phase 2 safe substitute for arbitrary profile solids. It supports rectangular outer profiles and rectangular through-holes only.'
+    component_definition: true,
+    notes: 'First generic profile solid slice. It supports simple closed loops with through-holes; self-intersection, touching holes, and arbitrary boolean cleanup remain out of scope.'
   },
   {
     op: 'mesh',
@@ -279,6 +319,7 @@ const BASE_OPERATION_CAPABILITIES = [
     schema: { required: ['op', 'name', 'vertices', 'faces'], optional: ['smooth', ...commonPlacement] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
+    component_definition: true,
     notes: 'Prefer triangles or coplanar quads; complex topology is intentionally not a full CAD kernel.'
   },
   {
@@ -287,6 +328,7 @@ const BASE_OPERATION_CAPABILITIES = [
     schema: { required: ['op', 'name', 'origin', 'width', 'depth', 'rise'], optional: ['overhang', ...commonPlacement] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.stable,
+    component_definition: true,
     notes: 'High-level architectural helper built from deterministic prism-like geometry.'
   },
   {
@@ -295,6 +337,7 @@ const BASE_OPERATION_CAPABILITIES = [
     schema: { required: ['op', 'name', 'origin', 'width', 'depth', 'rise'], optional: ['overhang', ...commonPlacement] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.stable,
+    component_definition: true,
     notes: 'Useful for porches, lean-tos, and simple sloped roof masses.'
   },
   {
@@ -303,6 +346,7 @@ const BASE_OPERATION_CAPABILITIES = [
     schema: { required: ['op', 'name', 'origin', 'radius', 'height'], optional: ['segments', 'smooth', ...commonPlacement] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.stable,
+    component_definition: true,
     notes: 'Use segments and smooth=all to tune round-looking geometry.'
   },
   {
@@ -311,6 +355,7 @@ const BASE_OPERATION_CAPABILITIES = [
     schema: { required: ['op', 'name', 'profiles'], optional: ['smooth', ...commonPlacement] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
+    component_definition: true,
     notes: 'Product/body helper for grips and organic shells. Each profile must have the same point count; use object sections with origin/plane/points or direct 3D point arrays.'
   },
   {
@@ -319,6 +364,7 @@ const BASE_OPERATION_CAPABILITIES = [
     schema: { required: ['op', 'name', 'origin', 'front_profile', 'side_profile'], optional: ['smooth', ...commonPlacement] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
+    component_definition: true,
     notes: 'Hard-shape product helper for handles and controller bodies. Front profile is a closed [x,z] silhouette; side profile maps z to half-depth. Visual QA is recommended for silhouette point order and proportions.'
   },
   {
@@ -327,6 +373,7 @@ const BASE_OPERATION_CAPABILITIES = [
     schema: { required: ['op', 'name', 'origin', 'profile'], optional: ['segments', 'smooth', ...commonPlacement] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
+    component_definition: true,
     notes: 'Good for posts, knobs, bottles, and baluster-like rotational forms.'
   },
   {
@@ -335,6 +382,7 @@ const BASE_OPERATION_CAPABILITIES = [
     schema: { required: ['op', 'name', 'center', 'cylinder_radius', 'width', 'height'], optional: ['cylinder_center', 'angle', 'depth', 'smooth', ...commonPlacement] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
+    component_definition: true,
     notes: 'Visual product helper for flat button/contact patches on round handles or cylindrical housings; not a boolean projection or conformal wrap.'
   },
   {
@@ -343,6 +391,7 @@ const BASE_OPERATION_CAPABILITIES = [
     schema: { required: ['op', 'name', 'origin'], optional: ['height', 'shaft_height', 'base_radius', 'shaft_radius', 'cap_radius', 'top_radius', 'profile', 'segments', 'smooth', ...commonPlacement] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
+    component_definition: true,
     notes: 'Product-design helper for gamepad/controller sticks; accepts profile to override the default shaft/cap silhouette.'
   },
   {
@@ -351,6 +400,7 @@ const BASE_OPERATION_CAPABILITIES = [
     schema: { required: ['op', 'name', 'center', 'radius'], optional: ['depth', 'head_radius', 'head_depth', 'segments', 'smooth', ...commonPlacement] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
+    component_definition: true,
     notes: 'Visual/product-detail helper; true solid boolean cutting remains a later boolean_cutout/recess capability.'
   },
   {
@@ -359,6 +409,7 @@ const BASE_OPERATION_CAPABILITIES = [
     schema: { required: ['op', 'name', 'points', 'radius'], optional: ['path', 'start', 'end', 'segments', 'smooth', ...commonPlacement] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
+    component_definition: true,
     notes: 'Product/industrial helper for rods, tubes, shoulder rails, cables, and diagonal/Y-oriented pipes; supersedes swept_path for arbitrary 3D directions.'
   },
   {
@@ -367,6 +418,7 @@ const BASE_OPERATION_CAPABILITIES = [
     schema: { required: ['op', 'name', 'path', 'radius'], optional: ['segments', 'smooth', ...commonPlacement] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.partial },
     stability: STABILITY.beta,
+    component_definition: true,
     notes: 'Legacy MVP frame is most reliable for rail/pipe paths primarily running along X; prefer pipe_between_points for arbitrary directions.'
   },
   {
@@ -375,6 +427,7 @@ const BASE_OPERATION_CAPABILITIES = [
     schema: { required: ['op', 'name', 'origin', 'width', 'depth', 'thickness', 'crown_height'], optional: ['segments_x', 'segments_y', 'smooth', ...commonPlacement] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
+    component_definition: true,
     notes: 'Records resolution hints in snapshots for QA and LOD review.'
   },
   {
@@ -383,6 +436,7 @@ const BASE_OPERATION_CAPABILITIES = [
     schema: { required: ['op', 'name', 'origin', 'width', 'height', 'thickness', 'bow_depth'], optional: ['segments_x', 'segments_z', 'smooth', ...commonPlacement] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
+    component_definition: true,
     notes: 'Useful for curved walls, backrests, bowed doors, and barrel-vault-like panels.'
   },
   {
@@ -399,6 +453,7 @@ const BASE_OPERATION_CAPABILITIES = [
     schema: { required: ['op', 'name', 'origin', 'width', 'depth'], optional: ['thickness', ...commonPlacement] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.stable,
+    component_definition: true,
     notes: 'Architectural helper equivalent to a named slab box.'
   },
   {
@@ -407,6 +462,7 @@ const BASE_OPERATION_CAPABILITIES = [
     schema: { required: ['op', 'name', 'start', 'end', 'height'], optional: ['thickness', 'openings', ...commonPlacement] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.stable,
+    component_definition: true,
     notes: 'Current MVP supports axis-aligned walls only.'
   },
   {
@@ -415,6 +471,7 @@ const BASE_OPERATION_CAPABILITIES = [
     schema: { required: ['op', 'name', 'origin', 'width', 'height'], optional: ['plane', 'thickness', ...commonPlacement] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.stable,
+    component_definition: true,
     notes: 'Door objects are marker geometry, not a full parametric door family.'
   },
   {
@@ -423,6 +480,7 @@ const BASE_OPERATION_CAPABILITIES = [
     schema: { required: ['op', 'name', 'origin', 'width', 'height'], optional: ['plane', 'thickness', ...commonPlacement] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.stable,
+    component_definition: true,
     notes: 'Window objects are marker geometry, not a full parametric window family.'
   },
   {
@@ -431,6 +489,7 @@ const BASE_OPERATION_CAPABILITIES = [
     schema: { required: ['op', 'name', 'origin', 'steps', 'width', 'tread_depth', 'riser_height'], optional: ['direction', 'material'] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.stable,
+    component_definition: true,
     notes: 'Straight stair runs only; complex stair families are out of scope for this phase.'
   },
   {
@@ -439,6 +498,7 @@ const BASE_OPERATION_CAPABILITIES = [
     schema: { required: ['op', 'name', 'path'], optional: ['height', 'rail_radius', 'post_radius', 'post_spacing', 'smooth', 'material'] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
+    component_definition: true,
     notes: 'Top rail now uses pipe_between_points for stable arbitrary-direction frame parity; post spacing remains intentionally simple in this baseline.'
   },
   {
@@ -507,16 +567,14 @@ const BASE_OPERATION_CAPABILITIES = [
   }
 ];
 
-export const OPERATION_CAPABILITIES = Object.freeze(
-  BASE_OPERATION_CAPABILITIES.map((capability) => Object.freeze({
-    ...capability,
-    component_scope: {
-      status: COMPONENT_DEFINITION_OPERATION_SET.has(capability.op)
-        ? SUPPORT_STATUS.supported
-        : SUPPORT_STATUS.unsupported
-    }
-  }))
-);
+export const OPERATION_REGISTRY = Object.freeze(Object.fromEntries(
+  OPERATION_REGISTRY_ENTRIES.map((capability) => {
+    const normalized = normalizeOperationCapability(capability);
+    return [normalized.op, Object.freeze(normalized)];
+  })
+));
+
+export const OPERATION_CAPABILITIES = Object.freeze(Object.values(OPERATION_REGISTRY));
 
 export const CORE_DSL_OPERATIONS = Object.freeze(OPERATION_CAPABILITIES.map((capability) => capability.op));
 
@@ -529,7 +587,9 @@ export function getOperationNames() {
 }
 
 export function getComponentDefinitionOperationNames() {
-  return COMPONENT_DEFINITION_OPERATION_NAMES.slice();
+  return OPERATION_CAPABILITIES
+    .filter((capability) => capability.component_scope.status === SUPPORT_STATUS.supported)
+    .map((capability) => capability.op);
 }
 
 export function getRuntimeCapabilities(runtime = 'mock') {
@@ -544,18 +604,20 @@ export function getRuntimeCapabilities(runtime = 'mock') {
     manifest_version: CAPABILITY_MANIFEST_VERSION,
     dsl_version: DSL_VERSION,
     supported_operations: OPERATION_CAPABILITIES
-      .filter((capability) => capability.runtime_support[runtime] !== undefined)
+      .filter((capability) => isRuntimeSupported(capability.runtime_support[runtime]))
       .map((capability) => capability.op),
     operation_support: Object.fromEntries(
-      OPERATION_CAPABILITIES.map((capability) => [
-        capability.op,
-        {
-          status: capability.runtime_support[runtime],
-          stability: capability.stability,
-          schema: clone(capability.schema),
-          component_scope: clone(capability.component_scope)
-        }
-      ])
+      OPERATION_CAPABILITIES
+        .filter((capability) => isRuntimeSupported(capability.runtime_support[runtime]))
+        .map((capability) => [
+          capability.op,
+          {
+            status: capability.runtime_support[runtime],
+            stability: capability.stability,
+            schema: clone(capability.schema),
+            component_scope: clone(capability.component_scope)
+          }
+        ])
     ),
     notes: runtime === 'mock'
       ? 'Deterministic offline runtime for tests, snapshots, and Alma iteration.'
@@ -580,6 +642,27 @@ export function formatCapabilityMatrixMarkdown() {
     '|---|---|---|---|---|---|---|---|---|',
     ...rows
   ].join('\n');
+}
+
+function normalizeOperationCapability({ component_definition = false, ...capability }) {
+  return {
+    ...capability,
+    schema: normalizeSchema(capability),
+    component_scope: {
+      status: component_definition ? SUPPORT_STATUS.supported : SUPPORT_STATUS.unsupported
+    }
+  };
+}
+
+function normalizeSchema(capability) {
+  return {
+    required: [...(capability.schema?.required || [])],
+    optional: [...(capability.schema?.optional || [])]
+  };
+}
+
+function isRuntimeSupported(status) {
+  return status !== undefined && status !== SUPPORT_STATUS.unsupported;
 }
 
 function clone(value) {

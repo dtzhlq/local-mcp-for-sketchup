@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "units": "mm",
+  "operations": [
+    { "op": "reset" },
+    { "op": "tag", "name": "Structure", "color": "#336699", "visible": true },
+    { "op": "tag", "name": "Equipment", "color": "#cc6633", "visible": true },
+    { "op": "material", "name": "Frame_Metal", "color": "#8d99ae" },
+    { "op": "material", "name": "Equipment_Plastic", "color": "#2b2d42" },
+    { "op": "box", "id": "frame-base-id", "name": "Tagged_Frame_Base", "origin": [0, 0, 0], "size": [600, 280, 40], "material": "Frame_Metal" },
+    { "op": "box", "id": "equipment-module-id", "name": "Tagged_Equipment_Module", "origin": [80, 70, 40], "size": [180, 120, 90], "material": "Equipment_Plastic" },
+    { "op": "assign_tag", "target_id": "frame-base-id", "tag": "Structure" },
+    { "op": "assign_tag", "target_id": "equipment-module-id", "tag": "Equipment" },
+    { "op": "attribute", "target_id": "frame-base-id", "dictionary": "BIM", "attributes": { "system": "frame", "level": 1, "status": "existing" } },
+    { "op": "attribute", "target_id": "equipment-module-id", "dictionary": "BIM", "attributes": { "system": "equipment", "level": 1, "status": "new" } },
+    { "op": "classification", "target_id": "frame-base-id", "system": "IFC", "type": "IfcBuildingElementProxy", "identifier": "FRAME-001", "attributes": { "predefined_type": "ELEMENT", "load_bearing": true } },
+    { "op": "classification", "target_id": "equipment-module-id", "system": "IFC", "type": "IfcDistributionElement", "identifier": "EQUIP-001", "attributes": { "predefined_type": "USERDEFINED", "discipline": "MEP" } },
+    { "op": "scene", "name": "Metadata_Organization_QA", "camera": { "eye": [760, -620, 420], "target": [260, 120, 60], "up": [0, 0, 1], "fov": 35 } }
+  ]
+}

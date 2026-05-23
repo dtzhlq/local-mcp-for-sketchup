@@ -14,8 +14,15 @@
     "save": "node src/cli.mjs save_model --runtime mock --path output/mock-model.json",
     "server": "node src/http-server.mjs",
     "mcp": "node src/mcp-server.mjs",
+    "registry:sync": "node scripts/generate-ruby-operation-registry.mjs",
+    "registry:check": "node scripts/generate-ruby-operation-registry.mjs --check",
+    "plugin:check": "npm run registry:check && node scripts/package-sketchup-plugin.mjs --check",
+    "plugin:install": "npm run registry:check && node scripts/package-sketchup-plugin.mjs --check --install",
+    "plugin:package": "npm run registry:check && node scripts/package-sketchup-plugin.mjs --check --package",
     "qa:mock": "node scripts/generate-qa-reports.mjs --expected-runtime mock --actual-runtime mock --output-dir output/qa-reports/mock",
-    "qa:queue": "node scripts/generate-qa-reports.mjs --expected-runtime mock --actual-runtime queue --timeout-ms 60000 --face-tolerance 1 --edge-tolerance 3 --output-dir output/qa-reports/queue",
+    "qa:queue": "node scripts/generate-qa-reports.mjs --expected-runtime mock --actual-runtime queue --timeout-ms 180000 --face-tolerance 1 --edge-tolerance 3 --output-dir output/qa-reports/queue",
+    "qa:budget:mock": "node scripts/run-performance-budgets.mjs --runtime mock --output-dir output/performance-budgets/mock",
+    "qa:budget:queue": "node scripts/run-performance-budgets.mjs --runtime queue --timeout-ms 180000 --output-dir output/performance-budgets/queue",
     "qa:identity:mock": "node scripts/generate-qa-reports.mjs --example examples/editing-identity.json --expected-runtime mock --actual-runtime mock --output-dir output/qa-reports/identity-mock",
     "qa:identity:queue": "node scripts/generate-qa-reports.mjs --example examples/editing-identity.json --expected-runtime mock --actual-runtime queue --timeout-ms 60000 --output-dir output/qa-reports/identity-queue",
     "image-structured:analyze-switch": "node projects/image-structured-modeler/scripts/analyze-image-set.mjs --input test/手柄 --output projects/image-structured-modeler/examples/switch-controller/observations.json --view-hints-file projects/image-structured-modeler/examples/switch-controller/model-plan.example.json",
@@ -27,7 +34,7 @@
     "image-structured:diff-switch:queue": "node projects/image-structured-modeler/scripts/make-snapshot-report.mjs --compare-runtime queue --timeout-ms 180000 --output-dsl projects/image-structured-modeler/examples/switch-controller/output.json --output-dir projects/image-structured-modeler/examples/switch-controller/review",
     "image-structured:build-switch": "npm run image-structured:analyze-switch && npm run image-structured:generate-switch && npm run image-structured:compile-switch && npm run image-structured:review-switch && npm run image-structured:snapshot-switch",
     "test:image-structured": "node projects/image-structured-modeler/test/validate.mjs",
-    "test": "node test/mock-validation.mjs && node test/operation-contract.mjs"
+    "test": "node test/mock-validation.mjs && node test/operation-contract.mjs && node test/queue-runtime-lock.mjs && npm run registry:check"
   },
   "engines": {
     "node": ">=20"
