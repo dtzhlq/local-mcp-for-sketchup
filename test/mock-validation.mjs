@@ -71,9 +71,11 @@ assert.equal(reset.snapshot.runtime.compatibility.level, 'ok');
 assert.equal(reset.snapshot.totals.groups, 0);
 assert.deepEqual(reset.snapshot.bounding_box.min, [0, 0, 0]);
 
+let fakeQueueCapabilityCalls = 0;
 const fakeQueueBridge = new SketchUpBridge({
   queueRuntime: {
     async getCapabilities() {
+      fakeQueueCapabilityCalls += 1;
       return fakeQueueRuntimeDescriptor;
     },
     async resetModel() {
@@ -88,11 +90,13 @@ const fakeQueueBridge = new SketchUpBridge({
   }
 });
 const fakeQueueCapabilities = await fakeQueueBridge.get_capabilities({ runtime: 'queue' });
+assert.equal(fakeQueueCapabilityCalls, 1);
 assert.equal(fakeQueueCapabilities.runtime.plugin.sketchup_version, '2026.0');
 assert.equal(fakeQueueCapabilities.runtime.handshake.transport, 'file_queue');
 assert.equal(fakeQueueCapabilities.runtime.compatibility.ok, true);
 assert.equal(fakeQueueCapabilities.runtime.compatibility.level, 'ok');
 const fakeQueueReset = await fakeQueueBridge.reset_model({ runtime: 'queue' });
+assert.equal(fakeQueueCapabilityCalls, 1, 'queue capabilities should be cached for non-handshake calls');
 assert.equal(fakeQueueReset.snapshot.runtime.version, 'queue-plugin-test');
 assert.equal(fakeQueueReset.snapshot.runtime.plugin.name, 'Alma SketchUp MCP Bridge');
 assert.equal(fakeQueueReset.snapshot.runtime.operation_support.material.status, 'partial');
@@ -100,6 +104,11 @@ assert.deepEqual(fakeQueueReset.snapshot.runtime.operation_support.box.schema.re
 assert.equal(fakeQueueReset.snapshot.runtime.operation_support.box.component_scope.status, 'supported');
 assert.equal(fakeQueueReset.snapshot.runtime.operation_support.camera.component_scope.status, 'unsupported');
 assert.equal(fakeQueueReset.snapshot.runtime.compatibility.ok, true);
+const fakeQueueBuild = await fakeQueueBridge.build_model({ runtime: 'queue', code: demoCode });
+assert.equal(fakeQueueBuild.snapshot.runtime.version, 'queue-plugin-test');
+assert.equal(fakeQueueCapabilityCalls, 1, 'cached queue capabilities should be reused across build calls');
+await fakeQueueBridge.get_capabilities({ runtime: 'queue' });
+assert.equal(fakeQueueCapabilityCalls, 2, 'explicit get_capabilities should refresh the live queue descriptor');
 
 const driftedQueueBridge = new SketchUpBridge({
   queueRuntime: {

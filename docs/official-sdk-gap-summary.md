@@ -59,8 +59,8 @@
 
 最近一次验证：
 
-- runtime module split：Ruby queue 插件最近 live handshake 已加载 `queue-plugin-0.1.0-ruby-geometry-family-split.1`，compatibility `ok`，issues 为空；`qa:queue` 9 个默认样例 pass，`qa:budget:queue` 4 个预算样例 pass。JS mock runtime 已拆出 model state、operation utils、material、primitive、profile、surface、product、architecture、demo、component、view、object identity/editing 和 snapshot/QA 模块，`npm test` contract 输出 manifest/mock/Ruby dispatch 均为 `63`，component_definition registry/dispatch 均为 `41`。
-- transform matrix decomposition：源码已推进到 manifest `2026-05-phase2-matrix-decomposition-slice`，mock `matrix` / `local_matrix` snapshot 和 Ruby queue transform metadata 均包含 translation、basis axes、scale、shear、determinant 和 mirrored 分解字段；live queue 仍待安装新版插件并完整重启 SketchUp 后复验。
+- runtime module split：Ruby queue runtime 和 JS mock runtime 已完成主边界/operation-family 边界拆分；`npm test` contract 输出 manifest/mock/Ruby dispatch 均为 `63`，component_definition registry/dispatch 均为 `41`。
+- transform matrix decomposition：live SketchUp Bridge 已加载 `queue-plugin-0.1.0-transform-matrix-decomposition.1` / manifest `2026-05-phase2-matrix-decomposition-slice`，compatibility `ok`，issues 为空；mock `matrix` / `local_matrix` snapshot 和 Ruby queue transform metadata 均包含 translation、basis axes、scale、shear、determinant 和 mirrored 分解字段；`examples/transform-local-matrix.json` queue 单例 diff 0，`npm run qa:queue` 9 个默认样例 pass。
 - performance budget：`npm run qa:budget:mock` / `npm run qa:budget:queue` 已覆盖 architecture/product/structured/appearance 四个发布样例；queue 真实 SKP size 当前均低于 5MB 阈值。
 - release packaging：`npm run plugin:check` / `npm run plugin:install` / `npm run plugin:package` 已固化 Ruby 插件文件清单、安装检查和 `.rbz` 打包入口。
 - registry/runtime contract：Ruby `operation_registry.rb` 由 `src/capabilities.mjs` 生成，`registry:check` 已纳入测试和插件检查；Node queue runtime 通过 lock 文件串行化同一个 SketchUp file queue。

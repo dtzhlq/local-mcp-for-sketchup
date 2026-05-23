@@ -8,6 +8,7 @@ export class SketchUpBridge {
   constructor(options = {}) {
     this.options = options;
     this.mockRuntime = new MockRuntime(options.mock || {});
+    this.runtimeCapabilitiesCache = new Map();
   }
 
   async get_docs() {
@@ -16,7 +17,7 @@ export class SketchUpBridge {
 
   async get_capabilities({ runtime = 'mock', timeoutMs } = {}) {
     const selectedRuntime = this.selectRuntime(runtime, { timeoutMs });
-    return { runtime: await this.resolveRuntimeCapabilities(selectedRuntime, runtime) };
+    return { runtime: await this.resolveRuntimeCapabilities(selectedRuntime, runtime, { force: true }) };
   }
 
   async build_model({ code, runtime = 'mock', timeoutMs } = {}) {
@@ -92,11 +93,16 @@ export class SketchUpBridge {
     };
   }
 
-  async resolveRuntimeCapabilities(selectedRuntime, runtime) {
+  async resolveRuntimeCapabilities(selectedRuntime, runtime, { force = false } = {}) {
+    if (!force && this.runtimeCapabilitiesCache.has(runtime)) {
+      return this.runtimeCapabilitiesCache.get(runtime);
+    }
     const descriptor = typeof selectedRuntime.getCapabilities === 'function'
       ? await selectedRuntime.getCapabilities()
       : getRuntimeCapabilities(runtime);
-    return attachCompatibilityReport(descriptor, runtime);
+    const runtimeCapabilities = attachCompatibilityReport(descriptor, runtime);
+    this.runtimeCapabilitiesCache.set(runtime, runtimeCapabilities);
+    return runtimeCapabilities;
   }
 
   attachRuntimeCapabilities(snapshot, runtimeCapabilities) {

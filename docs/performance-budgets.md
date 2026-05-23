@@ -62,10 +62,10 @@ node scripts/run-performance-budgets.mjs --runtime queue --timeout-ms 180000 --m
 
 | Example | Faces | Edges | Vertices | Groups | Instances | SKP Bytes |
 |---|---:|---:|---:|---:|---:|---:|
-| golden-architecture | 447 | 819 | 446 | 39 | 0 | 213538 |
-| golden-product | 1528 | 2570 | 1118 | 24 | 12 | 256039 |
-| structured-product-helpers | 297 | 646 | 372 | 7 | 0 | 169978 |
-| appearance-texture-slice | 8 | 20 | 16 | 2 | 1 | 152061 |
+| golden-architecture | 447 | 819 | 446 | 39 | 0 | 215076 |
+| golden-product | 1528 | 2570 | 1118 | 24 | 12 | 260263 |
+| structured-product-helpers | 297 | 646 | 372 | 7 | 0 | 171462 |
+| appearance-texture-slice | 8 | 20 | 16 | 2 | 1 | 152109 |
 
 Verdict: `pass`，报告见 `output/performance-budgets/queue/index.md`。
 
