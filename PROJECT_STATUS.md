@@ -62,7 +62,7 @@
 | `src/object-operations.mjs` | mock runtime 对象编辑、Tags、attributes、classification、texture transform、transform_object |
 | `src/object-identity.mjs` | mock runtime 对象 id、target 引用、唯一性和 box/orientation 基础 helper |
 | `src/object-operation-utils.mjs` | object operation 字段归一化和 snapshot attribute helper |
-| `src/capabilities.mjs` | 单一真源 operation registry，63 个 operation 的支持状态/稳定性/schema/component-scope |
+| `src/capabilities.mjs` | 单一真源 operation registry，64 个 operation 的支持状态/稳定性/schema/component-scope |
 | `src/snapshot-diff.mjs` | snapshot 对比 QA：totals、bbox、materials、groups、instances、levels、scenes |
 | `sketchup_plugin/alma_sketchup_mcp.rb` | SketchUp 2026 Ruby 插件，读队列、执行 DSL、返回 snapshot |
 | `sketchup_plugin/alma_sketchup_mcp/operation_registry.rb` | 由 `src/capabilities.mjs` 生成的 Ruby queue runtime operation support 表 |
@@ -115,7 +115,7 @@
 - `transform_object` pivot：默认 origin、`"center"`、显式 `[x,y,z]`
 - `face_with_holes`、`profile_extrude` 通用 profile 第一切片：支持简单闭合多边形 outer + 多边形 holes，拒绝自交、触边和重叠洞；已通过 mock/queue 对照验证
 - Operation contract 测试：manifest、mock runtime、Ruby queue runtime、component_definition dispatch 覆盖自动校验
-- Operation registry / runtime contract 单一注册表化：`src/capabilities.mjs` 作为唯一 operation registry，manifest、runtime `operation_support`、schema、component-scope、docs matrix、contract tests 均从 registry 派生；当前 63 个 operation，41 个 component_definition-scoped operation
+- Operation registry / runtime contract 单一注册表化：`src/capabilities.mjs` 作为唯一 operation registry，manifest、runtime `operation_support`、schema、component-scope、docs matrix、contract tests 均从 registry 派生；当前 64 个 operation，42 个 component_definition-scoped operation
 
 **待做（P1）：**
 - [x] 二次编辑的 chain 支持：新增 `examples/transform-chain-regression.json`，连续多个 `transform_object` 叠加时的 center pivot、本地轴、模型轴、平移和 matrix 已通过 mock/queue 对照验证。
@@ -146,10 +146,11 @@
 - `classification`：给 group / component instance 写入 BIM/classification metadata，snapshot 回传一等 `classification` 字段，并镜像到 SketchUp `Classification` attribute dictionary；已通过 mock/queue 对照验证
 - `texture_transform` / `uv_project_planar` / `uv_project_box`：给 group / component instance 写入贴图投影、offset、scale、rotation metadata，snapshot 回传一等 `texture_transform` 字段，并镜像到 SketchUp `TextureTransform` attribute dictionary；已通过 mock/queue 对照验证
 - `image_plane`：创建平面参考/贴图面，支持顶层与 component_definition 内嵌；已通过 mock/queue 对照验证
+- `text_3d`：新增真实字体轮廓 3D text operation；queue runtime 调 SketchUp `Entities#add_3d_text`，mock runtime 回传稳定估算 bbox 与 `Text3D` metadata；已通过 mock/contract/plugin checks、live `get_capabilities`、`examples/text-3d-slice.json` queue 构建、全量 `qa:queue` 和 `qa:budget:queue`
 - `component_definition` / `component_instance` 基础复用
 
 **待做：**
-- [ ] 真正的 `text_3d`（当前 text_emboss 只是简化方块）
+- [ ] `text_3d` 后续只剩按真实项目需要补 boolean emboss/engrave 贴合或字体参数扩展；阶段 4 发布收口项已完成
 
 ### ⏸️ 阶段 5 — Expert Mode v1（后置，未开始）
 
@@ -160,7 +161,7 @@
 ### 🔄 阶段 6 — 发布级收口（部分开始）
 
 **已有：**
-- Golden examples（architecture / product / structured-helpers / editing-transform-profile / profile-edge-cases / transform-chain-regression / metadata-organization / appearance-texture）
+- Golden examples（architecture / product / structured-helpers / editing-transform-profile / profile-edge-cases / transform-chain-regression / metadata-organization / appearance-texture / text-3d）
 - Gap summary 文档
 - Queue 手动验收清单与 troubleshooting：`docs/queue-runtime-ops.md`
 - 性能 / SKP size budget：`docs/performance-budgets.md`，`npm run qa:budget:mock` / `npm run qa:budget:queue`
@@ -190,6 +191,7 @@
 
 ## 5. 最近的验证记录
 
+- **2026-05-24**：`text_3d` 收口完成：manifest 推进到 `2026-05-phase4-text-3d-slice` / capability `0.1.0-capabilities.2`，Ruby 插件版本推进到 `queue-plugin-0.1.0-text-3d.1`。新增 `text_3d` operation、mock bbox/`Text3D` metadata、Ruby queue `Entities#add_3d_text` 实现、component_definition dispatch、`examples/text-3d-slice.json` 和文档/status 同步。已通过 `node --check`、Ruby syntax、`npm test`、`npm run qa:mock`、`npm run plugin:check`、`git diff --check`、`node src/cli.mjs get_capabilities --runtime mock`；contract 输出 manifest/mock/Ruby dispatch 均 64，component_definition registry/dispatch 均 42。安装并重启 SketchUp 后，live `get_capabilities` 回报 `queue-plugin-0.1.0-text-3d.1`、compatibility `ok`、issues 为空；`examples/text-3d-slice.json` queue 构建成功，主文字 snapshot 为 `kind: text_3d`、153 faces / 423 edges、warnings 0；`npm run qa:queue` 9/9 pass，`npm run qa:budget:queue` 4/4 pass。
 - **2026-05-23**：`transform_object` matrix decomposition live queue 收口：mock `matrix` / `local_matrix` snapshot 追加 `matrix_decomposition` / `local_matrix_decomposition`，Ruby queue runtime 写入同构 `transform.object_transform` metadata，覆盖 translation、basis axes、scale、shear、determinant 和 mirrored；manifest `2026-05-phase2-matrix-decomposition-slice` 与插件 `queue-plugin-0.1.0-transform-matrix-decomposition.1` live `get_capabilities` compatibility `ok`、issues 为空。已通过 `node --check`、Ruby syntax、`npm test`、`npm run qa:mock`、`npm run qa:budget:mock`、`npm run plugin:check`、`npm run plugin:install`、`npm run plugin:package`、`examples/transform-local-matrix.json` queue 单例 diff 0、`npm run qa:queue` 9/9 pass、`npm run qa:budget:queue` 4/4 pass。
 - **2026-05-23**：Bridge runtime descriptor cache 完成：显式 `get_capabilities` 继续强制 live handshake，普通 `reset_model` / `build_model` / `save_model` 在同一 `SketchUpBridge` 生命周期内复用已验证 descriptor，避免长批量 queue 回归中重复 capability handshake 偶发 timeout；新增测试覆盖 cache 复用和显式刷新。
 - **2026-05-23**：`transform_object.local_matrix` 第一切片完成：新增 `examples/transform-local-matrix.json`，mock 和 Ruby queue runtime 均支持 `local_matrix` / `localMatrix` / `matrix_local` / `matrixLocal` 16-number matrix，按对象当前本地坐标系解释线性与平移分量；manifest 推进到 `2026-05-phase2-local-matrix-slice`，插件版本推进到 `queue-plugin-0.1.0-transform-local-matrix.1`。已通过 `npm test`；待重新安装/重启 SketchUp 后跑 live queue 单例和全量回归。
@@ -221,7 +223,7 @@
 - **2026-05-19**：`transform_object` pivot 增强（origin/center/显式坐标）通过 mock/queue 验证。
 - `examples/editing-transform-profile.json` mock-vs-queue compare：Verdict `pass`，Level `ok`，Total diffs 0，报告见 `output/editing-transform-profile-queue-report.md`。
 - `npm test`、`npm run qa:mock` 通过。
-- Queue capability handshake：当前 live SketchUp Bridge 已加载 manifest `2026-05-phase2-matrix-decomposition-slice` / plugin `queue-plugin-0.1.0-transform-matrix-decomposition.1`，compatibility `ok`，issues 为空。
+- Queue capability handshake：当前 live SketchUp Bridge 已加载 manifest `2026-05-phase4-text-3d-slice` / plugin `queue-plugin-0.1.0-text-3d.1`，compatibility `ok`，issues 为空。
 
 ---
 

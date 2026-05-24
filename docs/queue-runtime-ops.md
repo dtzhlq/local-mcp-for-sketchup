@@ -50,6 +50,7 @@ npm run qa:queue
 ```bash
 node src/cli.mjs compare_model --code-file examples/appearance-texture-slice.json --expected-runtime mock --actual-runtime queue --timeout-ms 60000 --face-tolerance 1 --edge-tolerance 3 --format markdown --output-file output/appearance-texture-queue-report.md
 node src/cli.mjs compare_model --code-file examples/golden-product.json --expected-runtime mock --actual-runtime queue --timeout-ms 180000 --face-tolerance 1 --edge-tolerance 3 --format markdown --output-file output/golden-product-queue-report.md
+node src/cli.mjs build_model --runtime queue --timeout-ms 60000 --code-file examples/text-3d-slice.json
 ```
 
 通过标准：
@@ -67,6 +68,7 @@ node src/cli.mjs compare_model --code-file examples/golden-product.json --expect
 | Profile | `examples/profile-edge-cases.json` | 凹多边形、多洞、`xz` 竖向 profile 和 component_definition 内嵌 profile 成功；洞外、洞重叠等失败样例返回结构化 error |
 | 组织元数据 | `examples/metadata-organization-slice.json` | Tags/Layers、attributes、classification snapshot 字段回传；SketchUp attribute dictionary 中有镜像数据 |
 | Appearance | `examples/appearance-texture-slice.json` | `texture_transform`、planar/box UV metadata、image plane 和 component_definition 内嵌 image plane 均回传；贴图缺失只 warning 不失败 |
+| Text 3D | `examples/text-3d-slice.json` | queue 中应生成真实字体轮廓 3D text；snapshot kind 为 `text_3d`，`Text3D` attribute metadata 回传；mock bbox 是估算值，最终以视觉检查为准 |
 | 产品/建筑 golden | `examples/golden-product.json`、`examples/golden-architecture.json` | 组件复用、曲面 helper、建筑 helper、scene/style/shadow 保存稳定；bbox 和主要 group/instance 数量与报告一致 |
 
 ## Queue 常见故障

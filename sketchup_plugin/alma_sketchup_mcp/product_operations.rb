@@ -267,6 +267,69 @@ module AlmaSketchupMCP
     group.set_attribute('AlmaSketchupMCP', 'glyphs', marker[:glyphs]) if group&.respond_to?(:set_attribute)
   end
 
+  def add_text_3d(parent_entities, operation)
+    name = operation.fetch('name')
+    text = non_empty_string(operation['text'], "#{name}.text")
+    raise "#{name}.text must include at least one non-space character" if text.each_char.all? { |character| character.match?(/\s/) }
+
+    height = mm_to_model_units(positive_number(operation['height'], nil, "#{name}.height"))
+    extrusion = mm_to_model_units(non_negative_number(operation['extrusion'] || operation['depth'], 1, "#{name}.extrusion"))
+    tolerance = non_negative_number(operation['tolerance'], 0, "#{name}.tolerance")
+    font = non_empty_string(operation['font'] || 'Arial', "#{name}.font")
+    bold = operation.key?('bold') ? boolean_value(operation['bold'], "#{name}.bold") : false
+    italic = operation.key?('italic') ? boolean_value(operation['italic'], "#{name}.italic") : false
+    filled = operation.key?('filled') ? boolean_value(operation['filled'], "#{name}.filled") : true
+    align = (operation['align'] || (operation.key?('center') ? 'center' : 'left')).to_s.strip.downcase.tr(' -', '_')
+    alignment = text_3d_alignment(align, name)
+    anchor = vector(operation['center'] || operation['origin'] || [0, 0, 0], "#{name}.#{operation.key?('center') ? 'center' : 'origin'}").map { |value| mm_to_model_units(value) }
+
+    group = parent_entities.add_group
+    group.name = name
+    annotate_group(group, operation, 'text_3d')
+    success = group.entities.add_3d_text(text, alignment, font, bold, italic, height, tolerance, 0.0, filled, extrusion)
+    unless success
+      group.erase! if group.respond_to?(:erase!)
+      raise "Failed to create 3D text for #{name}"
+    end
+
+    material_name = operation['material']
+    if material_name
+      material = ensure_material(material_name, '#cccccc')
+      group.entities.grep(Sketchup::Face).each do |face|
+        face.material = material
+        face.back_material = material
+      end
+    end
+    if group.respond_to?(:set_attribute)
+      group.set_attribute('Text3D', 'text', text)
+      group.set_attribute('Text3D', 'font', font)
+      group.set_attribute('Text3D', 'align', align)
+      group.set_attribute('Text3D', 'bold', bold)
+      group.set_attribute('Text3D', 'italic', italic)
+      group.set_attribute('Text3D', 'filled', filled)
+      group.set_attribute('Text3D', 'height', operation['height'].to_f)
+      group.set_attribute('Text3D', 'extrusion', model_units_to_mm(extrusion))
+      group.set_attribute('Text3D', 'tolerance', tolerance)
+    end
+    group.transform!(Geom::Transformation.translation(anchor))
+    apply_transform(group, operation)
+    group
+  end
+
+  def text_3d_alignment(align, name)
+    normalized = align.to_s.strip.downcase.tr(' -', '_')
+    case normalized
+    when 'left'
+      TextAlignLeft
+    when 'center'
+      TextAlignCenter
+    when 'right'
+      TextAlignRight
+    else
+      raise "#{name}.align must be one of left, center, right"
+    end
+  end
+
   def text_marker_mesh(operation, name, direction)
     text = operation['text']
     raise "#{name}.text must be a non-empty string" unless text.is_a?(String) && !text.empty?

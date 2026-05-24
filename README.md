@@ -95,6 +95,7 @@ examples/transform-local-matrix.json # local_matrix 和 matrix decomposition reg
 examples/metadata-organization-slice.json # Tags / attributes / classification metadata capability slice
 examples/profile-edge-cases.json # 通用 profile 凹多边形/多洞 regression slice
 examples/appearance-texture-slice.json # texture transform / image plane appearance slice
+examples/text-3d-slice.json # true font-outline text_3d capability slice
 test/mock-validation.mjs # 离线验证
 alma-skill/              # Alma skill 原型说明
 ```
@@ -252,7 +253,7 @@ node src/cli.mjs save_model --runtime queue --path "$PWD/output/demo-room.skp" -
 - 基础：`reset`、`material`、`box`、`room`、`level`。
 - 编辑：`delete`、`rename`、`set_material`、`set_visibility`、`transform_object`；编辑操作优先支持 `target_id` 稳定引用，旧的 `name` 引用仍可用；`transform_object` 支持 translate、rotateX/Y/Z、模型空间 `axis + angle`、本地轴 `local_axis + local_angle`、SketchUp-compatible 16-number `matrix`、本地坐标系 `local_matrix`、scale、mirror，以及 `pivot: "origin"`（默认）、`pivot: "center"` 和显式 `[x,y,z]`；matrix/local_matrix snapshot 会附带 decomposition metadata。
 - 几何：`prism`、`mesh`、`face_with_holes`、`profile_extrude`、`panel_with_openings`、`boolean_cutout`、`fillet`、`chamfer`、`cylinder`、`loft_between_profiles`、`shell_from_front_side_profiles`、`lofted_solid`、`face_on_cylinder`、`pipe_between_points`、`swept_path`、`domed_surface`、`bowed_panel`。
-- 产品 helper：`rounded_box`、`beveled_panel`、`recess`、`engraved_line`、`text_emboss`、`text_engrave`、`slot`、`slot_array`、`rib`、`standoff_boss`、`button_on_panel`、`analog_stick`、`screw_hole`。
+- 产品 helper：`rounded_box`、`beveled_panel`、`recess`、`engraved_line`、`text_emboss`、`text_engrave`、`text_3d`、`slot`、`slot_array`、`rib`、`standoff_boss`、`button_on_panel`、`analog_stick`、`screw_hole`。
 - 建筑 helper：`floor_slab`、`wall`、`door`、`window`、`stairs`、`railing`、`gable_roof`、`shed_roof`。
 - 组织/元数据：`tag`、`assign_tag`、`attribute`、`classification`。
 - 表现/贴图：`texture_transform`、`uv_project_planar`、`uv_project_box`、`image_plane`。
@@ -269,6 +270,7 @@ node src/cli.mjs save_model --runtime queue --path "$PWD/output/demo-room.skp" -
 - 材质按名称查重后复用；旧写法 `{ "op": "material", "name": "Wall_Paint", "color": "#efe7dc" }` 仍可用。
 - `material` 支持 `alpha`、基础 `texture`（路径字符串或 `{ "path", "width", "height" }`）和 SketchUp 2025+ 的 `workflow: "pbr_metallic_roughness"`。
 - PBR 字段支持 `pbr.metallic_factor`、`pbr.roughness_factor`、`pbr.ao_strength`、`pbr.normal_style`、`pbr.normal_scale`、`pbr.textures.{metallic,roughness,normal,ao,opacity}`。
+- `text_3d` 在 queue runtime 使用 SketchUp Ruby `Entities#add_3d_text` 生成真实字体轮廓，支持 `font`、`align`、`bold`、`italic`、`filled`、`height` 和 `extrusion/depth`；mock runtime 回传稳定的估算 bbox 与 `Text3D` metadata，用于离线 contract/QA。
 - `queue` runtime 会把贴图路径交给 SketchUp Ruby API；建议使用绝对路径。贴图文件不存在时跳过贴图并写入 warning，不会中断建模。
 - `style` 负责常用表现层：边线、轮廓线、轮廓线宽、水印开关、`face_style`、背景/天空/地面色。
 - `shadow` 负责阴影开关、ISO-8601 时间、明暗强度和是否用太阳做全局着色。
@@ -281,8 +283,8 @@ node src/cli.mjs save_model --runtime queue --path "$PWD/output/demo-room.skp" -
   "runtime": {
     "name": "mock",
     "version": "mock-runtime-0.1.0",
-    "capability_version": "0.1.0-capabilities.1",
-    "manifest_version": "2026-05-phase2-matrix-decomposition-slice",
+    "capability_version": "0.1.0-capabilities.2",
+    "manifest_version": "2026-05-phase4-text-3d-slice",
     "dsl_version": 1,
     "supported_operations": ["reset", "material", "box"],
     "operation_support": {
@@ -296,7 +298,7 @@ node src/cli.mjs save_model --runtime queue --path "$PWD/output/demo-room.skp" -
     "compatibility": {
       "ok": true,
       "level": "ok",
-      "checked_against": { "manifest_version": "2026-05-phase2-matrix-decomposition-slice", "capability_version": "0.1.0-capabilities.1", "dsl_version": 1 },
+      "checked_against": { "manifest_version": "2026-05-phase4-text-3d-slice", "capability_version": "0.1.0-capabilities.2", "dsl_version": 1 },
       "issues": []
     }
   },
@@ -364,8 +366,8 @@ mock snapshot 会额外给出零面组、bounding box 碰撞等结构化 warning
 ## 当前 MVP 状态
 
 - `get_docs`、`build_model`、`reset_model`、`save_model` 已完成 Node bridge、CLI、HTTP bridge 和 stdio MCP server 入口。
-- `mock` runtime 已支持基础房间、墙洞面板、棱柱、mesh、通用 profile face/extrude（简单闭合多边形 outer + holes）、圆角盒/倒角面板/凹槽/长圆槽/刻线/面板按钮/摇杆/螺丝孔位、屋顶 helper、圆柱、旋转体、扫掠管、domed/bowed 曲面、楼层/楼板/墙/门窗/楼梯/栏杆、Tags/attributes/classification 元数据、texture_transform/image_plane 表现层、组件定义/实例、基础 transform、对象任意模型轴旋转、本地轴旋转、模型空间 4x4 matrix、本地坐标系 local_matrix、matrix/local_matrix decomposition metadata、相机、scene、材质 texture/PBR 字段记录、style/shadow/rendering options 表现层状态和 snapshot 校验；bridge 会在 snapshot 中附加 runtime capability descriptor。
-- `queue` runtime 已能把请求交给 SketchUp Ruby 插件，插件侧实现同一套 DSL 的真实建模、基础 transform、对象任意模型轴旋转、本地轴旋转、4x4 matrix、本地坐标系 local_matrix、transform metadata 回传、通用 profile face/extrude、Tags/attributes/classification 元数据、texture_transform/image_plane 表现层、圆角盒/倒角面板/凹槽/长圆槽/刻线/面板按钮/摇杆/螺丝孔位、domed/bowed 曲面、楼层/楼板/墙/门窗/楼梯/栏杆、材质 color/alpha/texture/SketchUp 2025+ PBR、style/shadow/rendering options、scene 和 `.skp` 保存；第一阶段已接入 `get_capabilities` 插件握手，snapshot 中的 queue runtime descriptor 来自已安装插件，包含插件版本、SketchUp 版本、Ruby 版本、队列路径和 operation 支持状态，并通过 `runtime.compatibility` 对照当前 manifest；当前 matrix decomposition slice 已通过 live `qa:queue` 与 `qa:budget:queue`。
+- `mock` runtime 已支持基础房间、墙洞面板、棱柱、mesh、通用 profile face/extrude（简单闭合多边形 outer + holes）、圆角盒/倒角面板、凹槽、长圆槽、刻线、text_3d bbox metadata、面板按钮、摇杆、螺丝孔位、屋顶 helper、圆柱、旋转体、扫掠管、domed/bowed 曲面、楼层/楼板/墙/门窗/楼梯/栏杆、Tags/attributes/classification 元数据、texture_transform/image_plane 表现层、组件定义/实例、基础 transform、对象任意模型轴旋转、本地轴旋转、模型空间 4x4 matrix、本地坐标系 local_matrix、matrix/local_matrix decomposition metadata、相机、scene、材质 texture/PBR 字段记录、style/shadow/rendering options 表现层状态和 snapshot 校验；bridge 会在 snapshot 中附加 runtime capability descriptor。
+- `queue` runtime 已能把请求交给 SketchUp Ruby 插件，插件侧实现同一套 DSL 的真实建模、基础 transform、对象任意模型轴旋转、本地轴旋转、4x4 matrix、本地坐标系 local_matrix、transform metadata 回传、通用 profile face/extrude、Tags/attributes/classification 元数据、texture_transform/image_plane 表现层、圆角盒/倒角面板、凹槽、长圆槽、刻线、真实字体轮廓 text_3d、面板按钮、摇杆、螺丝孔位、domed/bowed 曲面、楼层/楼板/墙/门窗/楼梯/栏杆、材质 color/alpha/texture/SketchUp 2025+ PBR、style/shadow/rendering options、scene 和 `.skp` 保存；第一阶段已接入 `get_capabilities` 插件握手，snapshot 中的 queue runtime descriptor 来自已安装插件，包含插件版本、SketchUp 版本、Ruby 版本、队列路径和 operation 支持状态，并通过 `runtime.compatibility` 对照当前 manifest；当前 text_3d slice 已通过 live `get_capabilities`、queue 单例构建、全量 `qa:queue` 和 `qa:budget:queue`。
 - 离线测试 `npm test` 已覆盖核心 DSL、建筑 DSL、产品/工业设计 golden examples、snapshot totals/QA、材质、PBR 字段、表现层状态、组件、相机、保存流程、queue capability handshake 注入、descriptor 漂移检测、带 top issues / recommendations / budget 检查的 snapshot diff report、Markdown QA report，以及 `compare_model` 一键对照骨架。
 - `mock` runtime 的 session 写入使用文件锁和临时文件原子 rename；并行运行 `npm test` 与 `npm run qa:mock` 时会串行化同一 session 的读写，避免半写 JSON 污染。
 - JS mock runtime 已完成主边界模块拆分：session/model state 位于 `src/model-state.mjs`；通用归一化和 transform helper 位于 `src/operation-utils.mjs`；material/PBR/texture、primitive、profile、surface、product、architecture 和 demo helper 分别位于对应 `*-operations.mjs`；component_definition/instance 位于 `src/component-operations.mjs`；camera/scene/style/shadow/rendering 位于 `src/view-operations.mjs`；对象编辑和身份引用位于 `src/object-operations.mjs` / `src/object-identity.mjs`；snapshot、warning summary 和 bbox QA 位于 `src/snapshot.mjs`；`src/geometry.mjs` 仅保留兼容聚合导出。
@@ -408,6 +410,7 @@ mock snapshot 会额外给出零面组、bounding box 碰撞等结构化 warning
 - [x] `screw_hole` — 螺丝孔位 / 沉孔视觉标记（非 boolean cut）
 - [x] `engraved_line` — 可视化刻线 / 拼缝 / 装饰槽
 - [x] `text_emboss` / `text_engrave` — 简化凸起/凹陷文字与 logo 视觉标记（非真实字体轮廓 / boolean cut）
+- [x] `text_3d` — queue runtime 真实字体轮廓 3D text，mock runtime 稳定 bbox/metadata
 
 #### 复用与性能
 

@@ -605,14 +605,16 @@ const textMarkerCode = JSON.stringify({
     { op: 'material', name: 'Text_Light', color: '#eeeeee' },
     { op: 'material', name: 'Text_Dark', color: '#111111' },
     { op: 'text_emboss', name: 'Logo_Emboss', center: [0, 0, 10], text: 'ALMA', height: 12, depth: 2, spacing: 1, material: 'Text_Light' },
-    { op: 'text_engrave', name: 'Logo_Engrave', origin: [40, 0, 10], text: '07', height: 10, depth: 1.5, align: 'right', material: 'Text_Dark' }
+    { op: 'text_engrave', name: 'Logo_Engrave', origin: [40, 0, 10], text: '07', height: 10, depth: 1.5, align: 'right', material: 'Text_Dark' },
+    { op: 'text_3d', name: 'True_Text_3D', center: [0, 24, 12], text: 'ALMA', height: 14, extrusion: 3, font: 'Arial', align: 'center', bold: true, material: 'Text_Light' }
   ]
 });
 const textMarkerBuilt = await bridge.build_model({ runtime: 'mock', code: textMarkerCode });
 const textMarkerSnapshot = textMarkerBuilt.snapshot;
 const logoEmboss = textMarkerSnapshot.groups.find((group) => group.name === 'Logo_Emboss');
 const logoEngrave = textMarkerSnapshot.groups.find((group) => group.name === 'Logo_Engrave');
-assert.equal(textMarkerSnapshot.totals.groups, 2);
+const trueText3d = textMarkerSnapshot.groups.find((group) => group.name === 'True_Text_3D');
+assert.equal(textMarkerSnapshot.totals.groups, 3);
 assert.equal(logoEmboss.kind, 'text_emboss');
 assert.equal(logoEmboss.faces, 24);
 assert.equal(logoEmboss.edges, 48);
@@ -625,6 +627,25 @@ assert.equal(logoEngrave.edges, 24);
 assert.equal(logoEngrave.bounding_box.min[0], 26);
 assert.equal(logoEngrave.bounding_box.max[0], 40);
 assert.equal(logoEngrave.bounding_box.h, 1.5);
+assert.equal(trueText3d.kind, 'text_3d');
+assert.equal(trueText3d.faces, 40);
+assert.equal(trueText3d.edges, 96);
+assert.ok(Math.abs(trueText3d.bounding_box.w - 40.2164) < 1e-9);
+assert.equal(trueText3d.bounding_box.d, 14);
+assert.equal(trueText3d.bounding_box.h, 3);
+assert.deepEqual(trueText3d.attributes.Text3D, {
+  text: 'ALMA',
+  font: 'Arial',
+  align: 'center',
+  bold: true,
+  italic: false,
+  filled: true,
+  height: 14,
+  extrusion: 3,
+  tolerance: 0,
+  glyphs: 4,
+  mock_bounds: true
+});
 assert.ok(textMarkerSnapshot.material_names.includes('Text_Light'));
 assert.ok(textMarkerSnapshot.material_names.includes('Text_Dark'));
 

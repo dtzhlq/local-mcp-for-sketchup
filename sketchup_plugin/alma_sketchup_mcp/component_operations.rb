@@ -43,6 +43,8 @@ module AlmaSketchupMCP
       add_text_emboss(entities, operation)
     when 'text_engrave'
       add_text_engrave(entities, operation)
+    when 'text_3d'
+      add_text_3d(entities, operation)
     when 'slot'
       add_slot(entities, operation)
     when 'slot_array'

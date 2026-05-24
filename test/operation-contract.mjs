@@ -18,7 +18,7 @@ const capabilityByOperation = new Map(manifest.map((capability) => [capability.o
 const targetOperations = new Set(['delete', 'rename', 'set_material', 'set_visibility', 'transform_object', 'assign_tag', 'attribute', 'classification', 'texture_transform', 'uv_project_planar', 'uv_project_box']);
 const identityOperations = new Set([
   'box', 'rounded_box', 'beveled_panel', 'fillet', 'chamfer', 'recess', 'engraved_line',
-  'text_emboss', 'text_engrave', 'slot', 'slot_array', 'rib', 'standoff_boss',
+  'text_emboss', 'text_engrave', 'text_3d', 'slot', 'slot_array', 'rib', 'standoff_boss',
   'button_on_panel', 'image_plane', 'prism', 'panel_with_openings', 'boolean_cutout', 'face_with_holes',
   'profile_extrude', 'mesh', 'gable_roof', 'shed_roof', 'cylinder', 'loft_between_profiles',
   'shell_from_front_side_profiles', 'lofted_solid', 'face_on_cylinder', 'analog_stick',

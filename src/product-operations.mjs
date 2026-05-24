@@ -12,7 +12,7 @@ export {
 } from './object-identity.mjs';
 import { ensureMaterial } from './material-operations.mjs';
 import { addCylinder, addMesh, profilePlaneVertices } from './primitive-operations.mjs';
-import { applyTransform, integerInRange, nonEmptyString, nonNegativeNumber, normalizeKeyword, normalizePlanSize, normalizeTransform, normalizeVector, positiveNumber } from './operation-utils.mjs';
+import { applyTransform, integerInRange, nonEmptyString, nonNegativeNumber, normalizeBoolean, normalizeKeyword, normalizePlanSize, normalizeQaMetadata, normalizeTransform, normalizeVector, positiveNumber } from './operation-utils.mjs';
 import { normalizeSize2, normalizeTextureTransform } from './object-operation-utils.mjs';
 import { boundingBoxForVertices } from './snapshot.mjs';
 
@@ -178,6 +178,30 @@ export function addTextEngrave(model, operation) {
   group.glyphs = marker.glyphs;
 }
 
+export function addText3d(model, operation) {
+  const { name, material, transform } = operation;
+  if (!name || typeof name !== 'string') throw new Error('text_3d operation requires a string name');
+  const spec = normalizeText3dSpec(operation);
+  const materialName = ensureMaterial(model, material);
+  const localBox = text3dLocalBox(spec);
+  const vertices = boxVertices(localBox.origin, localBox.size);
+  const transformedVertices = applyTransform(vertices, { transform }, name);
+  const id = objectId(operation, name);
+  assertObjectIdentityAvailable(model, { id, name });
+  model.groups.push({
+    id,
+    name,
+    kind: 'text_3d',
+    faces: spec.filled ? Math.max(1, spec.glyphs) * (spec.extrusion > 0 ? 10 : 1) : 0,
+    edges: Math.max(1, spec.glyphs) * (spec.extrusion > 0 ? 24 : 8),
+    material: materialName,
+    transform: normalizeTransform(operation, name),
+    bounding_box: boundingBoxForVertices(transformedVertices),
+    attributes: { Text3D: text3dAttributeSnapshot(spec) },
+    qa: normalizeQaMetadata(operation.qa)
+  });
+}
+
 function textMarkerMesh(operation, fieldPrefix, direction) {
   const { name, text } = operation;
   if (!name || typeof name !== 'string') throw new Error(`${direction > 0 ? 'text_emboss' : 'text_engrave'} operation requires a string name`);
@@ -209,6 +233,77 @@ function textMarkerMesh(operation, fieldPrefix, direction) {
   }
   if (glyphs === 0) throw new Error(`${fieldPrefix}.text must include at least one non-space character`);
   return { vertices, faces, glyphs };
+}
+
+function normalizeText3dSpec(operation) {
+  const { name } = operation;
+  const text = nonEmptyString(operation.text, `${name}.text`);
+  const height = positiveNumber(operation.height, undefined, `${name}.height`);
+  const extrusion = nonNegativeNumber(operation.extrusion ?? operation.depth, 1, `${name}.extrusion`);
+  const tolerance = nonNegativeNumber(operation.tolerance, 0, `${name}.tolerance`);
+  const font = nonEmptyString(operation.font ?? 'Arial', `${name}.font`);
+  const alignDefault = operation.center ? 'center' : 'left';
+  const align = normalizeKeyword(operation.align ?? alignDefault, ['left', 'center', 'right'], `${name}.align`);
+  const originField = operation.center ? 'center' : 'origin';
+  const anchor = normalizeVector(operation.center ?? operation.origin ?? [0, 0, 0], [0, 0, 0], `${name}.${originField}`);
+  const bold = operation.bold === undefined ? false : normalizeBoolean(operation.bold, `${name}.bold`);
+  const italic = operation.italic === undefined ? false : normalizeBoolean(operation.italic, `${name}.italic`);
+  const filled = operation.filled === undefined ? true : normalizeBoolean(operation.filled, `${name}.filled`);
+  const glyphs = Array.from(text).filter((character) => !/\s/u.test(character)).length;
+  if (glyphs === 0) throw new Error(`${name}.text must include at least one non-space character`);
+  return {
+    text,
+    height,
+    extrusion,
+    tolerance,
+    font,
+    align,
+    anchor,
+    bold,
+    italic,
+    filled,
+    glyphs,
+    width: estimateText3dWidth(text, height, bold, italic)
+  };
+}
+
+function estimateText3dWidth(text, height, bold, italic) {
+  const width = Array.from(text).reduce((sum, character) => {
+    if (/\s/u.test(character)) return sum + height * 0.35;
+    if (/[ilI1.,:;]/u.test(character)) return sum + height * 0.28;
+    if (/[MW@#%&]/u.test(character)) return sum + height * 0.85;
+    return sum + height * 0.62;
+  }, 0);
+  return width * (bold ? 1.06 : 1) * (italic ? 1.03 : 1);
+}
+
+function text3dLocalBox(spec) {
+  const startX = spec.align === 'center'
+    ? spec.anchor[0] - spec.width / 2
+    : spec.align === 'right'
+      ? spec.anchor[0] - spec.width
+      : spec.anchor[0];
+  const depth = spec.extrusion > 0 ? spec.extrusion : 0.01;
+  return {
+    origin: [startX, spec.anchor[1], spec.anchor[2]],
+    size: [spec.width, spec.height, depth]
+  };
+}
+
+function text3dAttributeSnapshot(spec) {
+  return {
+    text: spec.text,
+    font: spec.font,
+    align: spec.align,
+    bold: spec.bold,
+    italic: spec.italic,
+    filled: spec.filled,
+    height: spec.height,
+    extrusion: spec.extrusion,
+    tolerance: spec.tolerance,
+    glyphs: spec.glyphs,
+    mock_bounds: true
+  };
 }
 
 export function addSlot(model, operation) {

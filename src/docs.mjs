@@ -31,6 +31,7 @@ build_model accepts a JSON string, not executable Ruby or shell code. The suppor
     {"op": "slot", "name": "Speaker_Slot", "center": [90, 72, 34], "length": 68, "width": 8, "depth": 2, "segments": 5, "material": "Wall_Paint"},
     {"op": "boolean_cutout", "name": "USB_Cutout_Panel", "origin": [60, 82, 36], "size": [60, 20, 4], "cutouts": [{"center": [30, 10], "size": [24, 8]}], "material": "Wall_Paint"},
     {"op": "text_engrave", "name": "Logo_Mark", "center": [90, 58, 34], "text": "ALMA", "height": 8, "depth": 1, "spacing": 1, "align": "center", "material": "Wall_Paint"},
+    {"op": "text_3d", "name": "Raised_Font_Label", "center": [90, 30, 40], "text": "ALMA 3D", "height": 14, "extrusion": 2, "font": "Arial", "align": "center", "bold": true, "filled": true, "material": "Wall_Paint"},
     {"op": "pipe_between_points", "name": "Shoulder_Pipe", "points": [[24, 94, 38], [90, 112, 48], [156, 94, 38]], "radius": 4, "segments": 8, "material": "Wall_Paint", "smooth": "all"},
     {"op": "loft_between_profiles", "name": "Grip_Loft", "profiles": [{"origin": [20, 20, 36], "plane": "xy", "points": [[0,0],[44,0],[50,32],[0,28]]}, {"origin": [18, 18, 56], "plane": "xy", "points": [[0,0],[52,0],[60,40],[0,34]]}], "material": "Wall_Paint", "smooth": "all"},
     {"op": "shell_from_front_side_profiles", "name": "Profile_Shell", "origin": [92, 20, 38], "front_profile": [[-22,0],[22,0],[28,20],[0,34],[-28,20]], "side_profile": [[0,5],[18,12],[34,7]], "material": "Wall_Paint", "smooth": "all"},
@@ -88,6 +89,7 @@ build_model accepts a JSON string, not executable Ruby or shell code. The suppor
 - \`fillet\` / \`chamfer\` create stable box-like edge-treatment solids from \`origin/size\`; this slice rounds or bevels the XY footprint / vertical edges, while arbitrary selected-edge CAD fillets remain out of scope.
 - \`recess\` creates a visible sunken tray from \`center/size/depth\`; add \`radius/segments\` for rounded control wells, LED pockets, and inset panels. It is not a true boolean cut yet.
 - \`engraved_line\` creates dark recessed groove segments from \`points/width/depth\`; use it for seam lines, panel splits, and decorative product grooves.
+- \`text_3d\` creates real font-outline text in queue runtime through SketchUp \`Entities#add_3d_text\`; mock runtime records deterministic estimated bounds plus \`Text3D\` metadata for offline QA. Use \`font\`, \`align\`, \`bold\`, \`italic\`, \`filled\`, \`height\`, and \`extrusion\` or \`depth\`.
 - \`slot\` creates a visual rounded long slot from \`center/length/width/depth\`; use it for speaker slots, USB openings, and elongated product cutout markers. It is not a true boolean cut yet.
 - \`boolean_cutout\` creates a rectangular XY slab with deterministic rectangular through-holes from local \`cutouts[].center/size\`. It is a safe true-hole slice, not arbitrary solid boolean.
 - \`face_with_holes\` and \`profile_extrude\` accept simple non-self-intersecting 2D \`outer\` loops plus optional polygon \`holes[].points\`; holes must stay strictly inside the outer loop and cannot overlap.
@@ -132,6 +134,7 @@ Use these deterministic regression examples when checking broad DSL behavior:
 - \`examples/metadata-organization-slice.json\` — phase 4 organization slice covering \`tag\`, \`assign_tag\`, \`attribute\`, and \`classification\` metadata returned in snapshots.
 - \`examples/profile-edge-cases.json\` — generic profile regression slice covering concave outer loops, multiple holes, vertical \`xz\` face profiles, and nested component-definition profiles.
 - \`examples/appearance-texture-slice.json\` — appearance regression slice covering \`texture_transform\`, \`uv_project_planar\`, \`uv_project_box\`, top-level \`image_plane\`, and component-definition scoped \`image_plane\`.
+- \`examples/text-3d-slice.json\` — true font-outline text slice covering top-level and component-definition scoped \`text_3d\`.
 
 The golden examples and capability slices are exercised by \`npm test\` through the mock runtime only; they do not require SketchUp to be open.
 

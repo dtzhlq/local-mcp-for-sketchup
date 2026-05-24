@@ -26,9 +26,9 @@ module AlmaSketchupMCP
   RESPONSE_DIR = File.join(STATE_DIR, 'responses')
   MM_PER_INCH = 25.4
   DEFAULT_OPERATION_LIMIT = 2000
-  PLUGIN_VERSION = 'queue-plugin-0.1.0-transform-matrix-decomposition.1'
-  CAPABILITY_MANIFEST_VERSION = '2026-05-phase2-matrix-decomposition-slice'
-  RUNTIME_CAPABILITY_VERSION = '0.1.0-capabilities.1'
+  PLUGIN_VERSION = 'queue-plugin-0.1.0-text-3d.1'
+  CAPABILITY_MANIFEST_VERSION = '2026-05-phase4-text-3d-slice'
+  RUNTIME_CAPABILITY_VERSION = '0.1.0-capabilities.2'
   DSL_VERSION = 1
 
   def start
@@ -296,6 +296,8 @@ module AlmaSketchupMCP
       add_text_emboss(model.entities, operation)
     when 'text_engrave'
       add_text_engrave(model.entities, operation)
+    when 'text_3d'
+      add_text_3d(model.entities, operation)
     when 'slot'
       add_slot(model.entities, operation)
     when 'slot_array'

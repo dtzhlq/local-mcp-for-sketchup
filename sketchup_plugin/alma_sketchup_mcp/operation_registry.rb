@@ -257,6 +257,17 @@ module AlmaSketchupMCP
         'status' => 'supported'
       }
     },
+    'text_3d' => {
+      'status' => 'supported',
+      'stability' => 'beta',
+      'schema' => {
+        'required' => ['op', 'name', 'text', 'height'],
+        'optional' => ['origin', 'center', 'font', 'align', 'bold', 'italic', 'filled', 'extrusion', 'depth', 'tolerance', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+      },
+      'component_scope' => {
+        'status' => 'supported'
+      }
+    },
     'slot' => {
       'status' => 'supported',
       'stability' => 'beta',

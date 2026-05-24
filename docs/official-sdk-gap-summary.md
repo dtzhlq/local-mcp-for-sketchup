@@ -54,12 +54,14 @@
 - `examples/metadata-organization-slice.json`：阶段 4 组织/元数据 capability slice，覆盖 `tag`、`assign_tag`、`attribute`、`classification`。
 - `examples/profile-edge-cases.json`：通用 profile regression slice，覆盖凹多边形 outer、多洞、`xz` 竖向 face profile 和 component_definition 内嵌 profile。
 - `examples/appearance-texture-slice.json`：表现层 regression slice，覆盖 `texture_transform`、`uv_project_planar`、`uv_project_box`、顶层 `image_plane` 和 component_definition 内嵌 `image_plane`。
+- `examples/text-3d-slice.json`：真实字体轮廓 capability slice，覆盖顶层与 component_definition 内嵌 `text_3d`。
 - `npm test` 会读取 golden examples 和主线 capability slices，只用 mock runtime 验证，不依赖打开 SketchUp。
 - 主线基线还会校验 `get_docs` 输出的 capability manifest 矩阵、snapshot 中的 runtime capability descriptor、queue 插件握手 descriptor 注入、schema/component-scope contract、descriptor 漂移时的结构化 compatibility issue、带 top issues / recommendations / budget 检查的 snapshot diff report，以及 `compare_model` 一键 mock/queue 对照骨架。
 
 最近一次验证：
 
-- runtime module split：Ruby queue runtime 和 JS mock runtime 已完成主边界/operation-family 边界拆分；`npm test` contract 输出 manifest/mock/Ruby dispatch 均为 `63`，component_definition registry/dispatch 均为 `41`。
+- text_3d：live SketchUp Bridge 已加载 `queue-plugin-0.1.0-text-3d.1` / manifest `2026-05-phase4-text-3d-slice`，compatibility `ok`，issues 为空；`examples/text-3d-slice.json` queue 构建成功，主文字 snapshot 为 `kind: text_3d`、153 faces / 423 edges、warnings 0；`npm run qa:queue` 9 个默认样例 pass，`npm run qa:budget:queue` 4 个预算样例 pass。
+- runtime module split：Ruby queue runtime 和 JS mock runtime 已完成主边界/operation-family 边界拆分；当前 contract 输出 manifest/mock/Ruby dispatch 均为 `64`，component_definition registry/dispatch 均为 `42`。
 - transform matrix decomposition：live SketchUp Bridge 已加载 `queue-plugin-0.1.0-transform-matrix-decomposition.1` / manifest `2026-05-phase2-matrix-decomposition-slice`，compatibility `ok`，issues 为空；mock `matrix` / `local_matrix` snapshot 和 Ruby queue transform metadata 均包含 translation、basis axes、scale、shear、determinant 和 mirrored 分解字段；`examples/transform-local-matrix.json` queue 单例 diff 0，`npm run qa:queue` 9 个默认样例 pass。
 - performance budget：`npm run qa:budget:mock` / `npm run qa:budget:queue` 已覆盖 architecture/product/structured/appearance 四个发布样例；queue 真实 SKP size 当前均低于 5MB 阈值。
 - release packaging：`npm run plugin:check` / `npm run plugin:install` / `npm run plugin:package` 已固化 Ruby 插件文件清单、安装检查和 `.rbz` 打包入口。
@@ -119,7 +121,7 @@
 - 任意选边 CAD fillet/chamfer（当前 `fillet` / `chamfer` 已进入第二阶段产品 DSL 基线，但稳定 slice 只处理盒体/面板 XY footprint 的垂直边圆角与倒角）。
 - 更通用的 profile/surface 建模；`face_with_holes` / `profile_extrude` 已进入简单闭合多边形 outer + holes 第一切片，并覆盖凹多边形、多洞和竖向 profile 的 mock/queue 对照；`loft_between_profiles` 与 `shell_from_front_side_profiles` 已进入第二阶段产品壳体/握把基线，但更复杂曲面和自动修复仍需继续补。
 - 任意 solid boolean、真实 cylinder wrap/projection（当前 `boolean_cutout` 已有矩形板 + 矩形贯穿孔安全 slice；`face_on_cylinder`、`recess` / `slot` / `screw_hole` 已有视觉贴片、凹槽、长圆槽与孔位标记）。
-- 真实字体轮廓 text emboss/engrave（当前 `text_emboss` / `text_engrave` 已进入第二阶段产品 controls 基线，但只是确定性的简化文字块视觉标记，非 true font outline / boolean cut）。
+- 真实字体轮廓 text emboss/engrave 的 boolean 贴合仍待后续；当前新增 `text_3d` 已能在 queue runtime 通过 SketchUp `Entities#add_3d_text` 生成独立真实字体轮廓，`text_emboss` / `text_engrave` 仍是确定性的简化文字块视觉标记。
 - 真正的 solid boolean / manifold 检查 / 自动修复。
 
 ### 5. QA 还需要更聪明

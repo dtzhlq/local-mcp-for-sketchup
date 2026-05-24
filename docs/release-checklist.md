@@ -1,6 +1,6 @@
 # Release Checklist
 
-更新时间：2026-05-22
+更新时间：2026-05-24
 
 本清单用于把当前本地 replica 收成可安装、可回归、可打包的 release slice。
 
@@ -17,7 +17,7 @@ git diff --check
 通过标准：
 
 - Ruby 插件主文件和所有子模块 `ruby -c` 通过。
-- Operation contract 输出 manifest / mock / Ruby dispatch 为 `63 / 63 / 63`，component registry / dispatch 为 `41 / 41`。
+- Operation contract 输出 manifest / mock / Ruby dispatch 为 `64 / 64 / 64`，component registry / dispatch 为 `42 / 42`。
 - mock QA 与 mock budget 均 Verdict `pass`。
 
 ## 2. 安装 SketchUp 插件
@@ -43,7 +43,7 @@ node src/cli.mjs get_capabilities --runtime queue --timeout-ms 10000
 - `runtime.version` 等于当前 `PLUGIN_VERSION`。
 - `runtime.compatibility.ok` 为 `true`。
 - `runtime.compatibility.issues` 为空。
-- supported operations 数量为 `63`。
+- supported operations 数量为 `64`。
 
 ## 3. Queue 回归
 

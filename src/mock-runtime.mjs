@@ -5,7 +5,7 @@ import { ensureMaterial } from './material-operations.mjs';
 import { addMesh, addPrism, addCylinder } from './primitive-operations.mjs';
 import { addBooleanCutout, addFaceWithHoles, addGableRoof, addPanelWithOpenings, addProfileExtrude, addShedRoof } from './profile-operations.mjs';
 import { addAnalogStick, addBowedPanel, addDomedSurface, addFaceOnCylinder, addLoftBetweenProfiles, addLoftedSolid, addPipeBetweenPoints, addScrewHole, addShellFromFrontSideProfiles, addSweptPath } from './surface-operations.mjs';
-import { addBeveledPanel, addBox, addButtonOnPanel, addChamfer, addEngravedLine, addFillet, addImagePlane, addRecess, addRib, addRoundedBox, addSlot, addSlotArray, addStandoffBoss, addTextEmboss, addTextEngrave } from './product-operations.mjs';
+import { addBeveledPanel, addBox, addButtonOnPanel, addChamfer, addEngravedLine, addFillet, addImagePlane, addRecess, addRib, addRoundedBox, addSlot, addSlotArray, addStandoffBoss, addText3d, addTextEmboss, addTextEngrave } from './product-operations.mjs';
 import { addDoor, addFloorSlab, addLevel, addRailing, addStairs, addWall, addWindow } from './architecture-operations.mjs';
 import { addComponentDefinition, addComponentInstance } from './component-operations.mjs';
 import { addDemoRoom } from './demo-operations.mjs';
@@ -121,6 +121,9 @@ export class MockRuntime {
           break;
         case 'text_engrave':
           addTextEngrave(model, operation);
+          break;
+        case 'text_3d':
+          addText3d(model, operation);
           break;
         case 'slot':
           addSlot(model, operation);

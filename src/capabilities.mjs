@@ -1,6 +1,6 @@
 export const DSL_VERSION = 1;
-export const CAPABILITY_MANIFEST_VERSION = '2026-05-phase2-matrix-decomposition-slice';
-export const RUNTIME_CAPABILITY_VERSION = '0.1.0-capabilities.1';
+export const CAPABILITY_MANIFEST_VERSION = '2026-05-phase4-text-3d-slice';
+export const RUNTIME_CAPABILITY_VERSION = '0.1.0-capabilities.2';
 
 export const SUPPORT_STATUS = Object.freeze({
   supported: 'supported',
@@ -213,6 +213,15 @@ const OPERATION_REGISTRY_ENTRIES = [
     stability: STABILITY.beta,
     component_definition: true,
     notes: 'Deterministic visual product-detail marker using simple sunken glyph blocks; true boolean text engraving remains out of scope.'
+  },
+  {
+    op: 'text_3d',
+    description: 'Create real font-outline 3D text using the SketchUp text engine in queue runtime.',
+    schema: { required: ['op', 'name', 'text', 'height'], optional: ['origin', 'center', 'font', 'align', 'bold', 'italic', 'filled', 'extrusion', 'depth', 'tolerance', ...commonPlacement] },
+    runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
+    stability: STABILITY.beta,
+    component_definition: true,
+    notes: 'Queue runtime calls SketchUp Entities#add_3d_text to generate true font outlines. Mock runtime records deterministic text metadata and estimated bounds for offline checks.'
   },
   {
     op: 'slot',

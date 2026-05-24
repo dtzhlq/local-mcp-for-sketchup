@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "units": "mm",
+  "operations": [
+    { "op": "reset" },
+    { "op": "material", "name": "Text3D_Base", "color": "#2f3a3f" },
+    { "op": "material", "name": "Text3D_Lettering", "color": "#f2c94c" },
+    { "op": "box", "id": "text3d-base", "name": "Text3D_Base_Plate", "origin": [0, 0, 0], "size": [180, 70, 6], "material": "Text3D_Base" },
+    { "op": "text_3d", "id": "text3d-main", "name": "Text3D_Main_Label", "center": [90, 20, 6], "text": "ALMA 3D", "height": 16, "extrusion": 2.5, "font": "Arial", "align": "center", "bold": true, "filled": true, "material": "Text3D_Lettering" },
+    { "op": "component_definition", "name": "Text3D_Badge_Def", "operations": [
+      { "op": "material", "name": "Text3D_Lettering", "color": "#f2c94c" },
+      { "op": "text_3d", "id": "text3d-nested", "name": "Text3D_Nested_Label", "origin": [0, 0, 0], "text": "OK", "height": 12, "extrusion": 2, "font": "Arial", "align": "left", "material": "Text3D_Lettering" }
+    ] },
+    { "op": "component_instance", "id": "text3d-badge-instance", "name": "Text3D_Badge_Instance", "definition": "Text3D_Badge_Def", "origin": [28, 48, 8] }
+  ]
+}
