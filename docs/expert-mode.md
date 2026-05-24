@@ -81,6 +81,14 @@ CLI 参数：
 - mock 构建后得到 12 个 component instances、2 个 groups、0 warnings
 - 拒绝 `require`、超 loop limit、超 operation limit、缺 required field、component_definition 内嵌不支持的 op 和 `while`
 
+SketchUp Bridge 重启后，live queue 单例也已通过：
+
+```bash
+node src/cli.mjs build_expert_model --runtime queue --timeout-ms 60000 --code-file examples/expert-parametric-fixture.js --seed 7 --output-file output/expert-parametric-queue.json
+```
+
+验证结果：编译 19 个 operations，queue snapshot 为 739 faces / 2079 edges / 1386 vertices / 2 groups / 12 instances，warnings 0；`Expert_Parametric_Label` 为真实 `text_3d`，277 faces / 771 edges。
+
 ## 下一切片
 
 - 暴露 MCP tool：`compile_expert` / `build_expert_model`
