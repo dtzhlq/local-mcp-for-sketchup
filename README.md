@@ -68,6 +68,7 @@ src/snapshot.mjs         # mock runtime snapshot、warning summary 和 bbox QA h
 src/object-operations.mjs # mock runtime 对象编辑、metadata、texture transform 操作
 src/object-identity.mjs  # mock runtime 对象身份/引用 helper
 src/object-operation-utils.mjs # object operation 字段归一化 helper
+src/expert-compiler.mjs # Expert Mode v1 受限脚本 -> JSON DSL compiler
 sketchup_plugin/         # SketchUp Ruby 插件
 sketchup_plugin/alma_sketchup_mcp/operation_registry.rb # 由 src/capabilities.mjs 生成的 Ruby runtime contract 表
 sketchup_plugin/alma_sketchup_mcp/object_operations.rb # Ruby queue runtime 对象编辑/metadata/texture transform
@@ -96,13 +97,21 @@ examples/metadata-organization-slice.json # Tags / attributes / classification m
 examples/profile-edge-cases.json # 通用 profile 凹多边形/多洞 regression slice
 examples/appearance-texture-slice.json # texture transform / image plane appearance slice
 examples/text-3d-slice.json # true font-outline text_3d capability slice
+examples/expert-parametric-fixture.js # Expert Mode v1 参数化 fixture 示例
 test/mock-validation.mjs # 离线验证
+test/expert-compiler.mjs # Expert Mode compiler / mock build regression
 alma-skill/              # Alma skill 原型说明
 ```
 
 ## 安装与验证
 
-不需要安装 npm 依赖，直接用 Node 内置模块即可。
+首次拉取后安装 npm 依赖：
+
+```bash
+npm install
+```
+
+基础验证：
 
 ```bash
 npm test
@@ -124,6 +133,8 @@ node src/cli.mjs save_model --runtime mock --path output/mock-model.json
 node src/cli.mjs compare_snapshots --expected-file output/mock-a.json --actual-file output/mock-b.json --tolerance-mm 1 --max-faces 5000 --max-artifact-size-bytes 50000000
 node src/cli.mjs compare_model --code-file examples/demo-room.json --expected-runtime mock --actual-runtime mock --max-faces 5000
 node src/cli.mjs compare_model --code-file examples/demo-room.json --expected-runtime mock --actual-runtime mock --max-faces 5000 --format markdown --output-file output/mock-parity-report.md
+node src/cli.mjs compile_expert --code-file examples/expert-parametric-fixture.js --format dsl --seed 7
+node src/cli.mjs build_expert_model --runtime mock --code-file examples/expert-parametric-fixture.js --seed 7
 npm run qa:mock
 npm run qa:identity:mock
 # 打开 SketchUp 插件后，把 actual-runtime 改成 queue：
@@ -148,9 +159,10 @@ node src/cli.mjs build_model --runtime mock --code-file examples/transform-chain
 node src/cli.mjs build_model --runtime mock --code-file examples/metadata-organization-slice.json
 node src/cli.mjs build_model --runtime mock --code-file examples/profile-edge-cases.json
 node src/cli.mjs build_model --runtime mock --code-file examples/appearance-texture-slice.json
+node src/cli.mjs build_expert_model --runtime mock --code-file examples/expert-parametric-fixture.js --seed 7
 ```
 
-`npm test` 会自动加载 golden examples 和主线 capability slices，检查 scene、materials、component 复用、结构化 warnings、resolution hint、runtime contract 和 snapshot QA 字段。
+`npm test` 会自动加载 golden examples、主线 capability slices 和 Expert Mode fixture，检查 scene、materials、component 复用、结构化 warnings、resolution hint、runtime contract、Expert compiler 限制和 snapshot QA 字段。
 
 ## MCP stdio 接入
 
@@ -357,6 +369,19 @@ mock snapshot 会额外给出零面组、bounding box 碰撞等结构化 warning
 
 `compare_model` 是更高层的一键对照：同一份 DSL 先用 `expected_runtime` 构建，再用 `actual_runtime` 构建，随后复用 `compare_snapshots` 产出 QA report。默认是 `mock -> queue`；纯离线可显式传 `--actual-runtime mock`，打开 SketchUp 插件后再改回 `queue`。CLI 默认输出 JSON；加 `--format markdown --output-file output/report.md` 可保存人类可读 Markdown 报告。`scripts/generate-qa-reports.mjs` 会批量跑默认 golden set（demo room、golden architecture、golden product），为每个样例输出 JSON/Markdown，并生成 `index.md` 总览；快捷命令是 `npm run qa:mock` 和 `npm run qa:queue`。Node 侧 queue runtime 会通过 `~/.sketchup-mcp-replica/queue-runtime.lock` 串行化 SketchUp file queue 访问；bridge 会在同一生命周期内缓存已验证 runtime descriptor，显式 `get_capabilities` 仍会强制 live handshake。如需调大等待时间，可设置 `ALMA_SKETCHUP_QUEUE_LOCK_TIMEOUT_MS=<毫秒>`。
 
+## Expert Mode v1
+
+Expert Mode 是 JSON DSL 的受限生成层：脚本先经过 `src/expert-compiler.mjs` 的 AST 白名单解释器编译成标准 JSON DSL，再交给现有 `build_model`。它不会直接调用 SketchUp API，也不会绕过 operation registry。
+
+当前第一切片支持变量、函数、`for` / `for...of`、数组、`Array.map`、基础 `Math`、`range`、`rand` / seeded `random`、`vec` helper 和批量 `component_instance`。默认限制为 2000 operations、10000 loop iterations、50000 statement steps、5MB 输出和 1000ms 编译 timeout。
+
+```bash
+node src/cli.mjs compile_expert --code-file examples/expert-parametric-fixture.js --format dsl --seed 7
+node src/cli.mjs build_expert_model --runtime mock --code-file examples/expert-parametric-fixture.js --seed 7
+```
+
+详细限制见 `docs/expert-mode.md`。
+
 ## 安全限制
 
 - 单次 `build_model` 默认最多接受 2000 个 `operations`，mock runtime 和 SketchUp Ruby 插件保持一致。
@@ -368,6 +393,7 @@ mock snapshot 会额外给出零面组、bounding box 碰撞等结构化 warning
 - `get_docs`、`build_model`、`reset_model`、`save_model` 已完成 Node bridge、CLI、HTTP bridge 和 stdio MCP server 入口。
 - `mock` runtime 已支持基础房间、墙洞面板、棱柱、mesh、通用 profile face/extrude（简单闭合多边形 outer + holes）、圆角盒/倒角面板、凹槽、长圆槽、刻线、text_3d bbox metadata、面板按钮、摇杆、螺丝孔位、屋顶 helper、圆柱、旋转体、扫掠管、domed/bowed 曲面、楼层/楼板/墙/门窗/楼梯/栏杆、Tags/attributes/classification 元数据、texture_transform/image_plane 表现层、组件定义/实例、基础 transform、对象任意模型轴旋转、本地轴旋转、模型空间 4x4 matrix、本地坐标系 local_matrix、matrix/local_matrix decomposition metadata、相机、scene、材质 texture/PBR 字段记录、style/shadow/rendering options 表现层状态和 snapshot 校验；bridge 会在 snapshot 中附加 runtime capability descriptor。
 - `queue` runtime 已能把请求交给 SketchUp Ruby 插件，插件侧实现同一套 DSL 的真实建模、基础 transform、对象任意模型轴旋转、本地轴旋转、4x4 matrix、本地坐标系 local_matrix、transform metadata 回传、通用 profile face/extrude、Tags/attributes/classification 元数据、texture_transform/image_plane 表现层、圆角盒/倒角面板、凹槽、长圆槽、刻线、真实字体轮廓 text_3d、面板按钮、摇杆、螺丝孔位、domed/bowed 曲面、楼层/楼板/墙/门窗/楼梯/栏杆、材质 color/alpha/texture/SketchUp 2025+ PBR、style/shadow/rendering options、scene 和 `.skp` 保存；第一阶段已接入 `get_capabilities` 插件握手，snapshot 中的 queue runtime descriptor 来自已安装插件，包含插件版本、SketchUp 版本、Ruby 版本、队列路径和 operation 支持状态，并通过 `runtime.compatibility` 对照当前 manifest；当前 text_3d slice 已通过 live `get_capabilities`、queue 单例构建、全量 `qa:queue` 和 `qa:budget:queue`。
+- Expert Mode v1 第一切片已接入 CLI/bridge：受限脚本通过 AST 白名单解释器编译成 JSON DSL，再复用现有 mock/queue runtime；`examples/expert-parametric-fixture.js` 覆盖参数化组件阵列、`range().map(...)`、seeded random、`vec` helper 和 `text_3d`。
 - 离线测试 `npm test` 已覆盖核心 DSL、建筑 DSL、产品/工业设计 golden examples、snapshot totals/QA、材质、PBR 字段、表现层状态、组件、相机、保存流程、queue capability handshake 注入、descriptor 漂移检测、带 top issues / recommendations / budget 检查的 snapshot diff report、Markdown QA report，以及 `compare_model` 一键对照骨架。
 - `mock` runtime 的 session 写入使用文件锁和临时文件原子 rename；并行运行 `npm test` 与 `npm run qa:mock` 时会串行化同一 session 的读写，避免半写 JSON 污染。
 - JS mock runtime 已完成主边界模块拆分：session/model state 位于 `src/model-state.mjs`；通用归一化和 transform helper 位于 `src/operation-utils.mjs`；material/PBR/texture、primitive、profile、surface、product、architecture 和 demo helper 分别位于对应 `*-operations.mjs`；component_definition/instance 位于 `src/component-operations.mjs`；camera/scene/style/shadow/rendering 位于 `src/view-operations.mjs`；对象编辑和身份引用位于 `src/object-operations.mjs` / `src/object-identity.mjs`；snapshot、warning summary 和 bbox QA 位于 `src/snapshot.mjs`；`src/geometry.mjs` 仅保留兼容聚合导出。

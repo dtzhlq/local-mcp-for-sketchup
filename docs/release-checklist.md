@@ -18,6 +18,7 @@ git diff --check
 
 - Ruby 插件主文件和所有子模块 `ruby -c` 通过。
 - Operation contract 输出 manifest / mock / Ruby dispatch 为 `64 / 64 / 64`，component registry / dispatch 为 `42 / 42`。
+- Expert Mode fixture 编译和 mock build 通过，且安全拒绝场景由 `test/expert-compiler.mjs` 覆盖。
 - mock QA 与 mock budget 均 Verdict `pass`。
 
 ## 2. 安装 SketchUp 插件

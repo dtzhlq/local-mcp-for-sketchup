@@ -1,5 +1,6 @@
 import { getRuntimeCapabilities } from './capabilities.mjs';
 import { getDocs } from './docs.mjs';
+import { compileExpertScript } from './expert-compiler.mjs';
 import { MockRuntime } from './mock-runtime.mjs';
 import { QueueRuntime } from './queue-runtime.mjs';
 import { compareSnapshots } from './snapshot-diff.mjs';
@@ -25,6 +26,22 @@ export class SketchUpBridge {
     const runtimeCapabilities = await this.resolveRuntimeCapabilities(selectedRuntime, runtime);
     const snapshot = await selectedRuntime.buildModel(code);
     return { snapshot: this.attachRuntimeCapabilities(snapshot, runtimeCapabilities) };
+  }
+
+  async compile_expert({ code, seed, maxOperations, maxLoopIterations, maxStatements, maxOutputBytes, expertTimeoutMs } = {}) {
+    return compileExpertScript(code, { seed, maxOperations, maxLoopIterations, maxStatements, maxOutputBytes, timeoutMs: expertTimeoutMs });
+  }
+
+  async build_expert_model({ code, runtime = 'mock', timeoutMs, seed, maxOperations, maxLoopIterations, maxStatements, maxOutputBytes, expertTimeoutMs } = {}) {
+    const compiled = await this.compile_expert({ code, seed, maxOperations, maxLoopIterations, maxStatements, maxOutputBytes, expertTimeoutMs });
+    const result = await this.build_model({ code: compiled.code, runtime, timeoutMs });
+    return {
+      compiled: {
+        document: compiled.document,
+        expert: compiled.expert
+      },
+      snapshot: result.snapshot
+    };
   }
 
   async reset_model({ runtime = 'mock', timeoutMs } = {}) {

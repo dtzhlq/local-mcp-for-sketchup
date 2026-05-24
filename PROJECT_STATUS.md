@@ -1,7 +1,7 @@
 # SketchUp MCP Replica — 项目状态与计划
 
-> 更新日期：2026-05-23
-> 当前状态：阶段 2 P0 第一/第二切片已收口，P1 transform local matrix / matrix decomposition 已通过 live queue，operation registry/runtime contract 已单一注册表化
+> 更新日期：2026-05-24
+> 当前状态：阶段 4 `text_3d` 已按发布标准收口，阶段 5 Expert Mode v1 第一切片已接入 CLI/bridge 离线 compiler
 
 ---
 
@@ -62,6 +62,7 @@
 | `src/object-operations.mjs` | mock runtime 对象编辑、Tags、attributes、classification、texture transform、transform_object |
 | `src/object-identity.mjs` | mock runtime 对象 id、target 引用、唯一性和 box/orientation 基础 helper |
 | `src/object-operation-utils.mjs` | object operation 字段归一化和 snapshot attribute helper |
+| `src/expert-compiler.mjs` | Expert Mode v1 受限脚本 AST 解释器，编译为标准 JSON DSL |
 | `src/capabilities.mjs` | 单一真源 operation registry，64 个 operation 的支持状态/稳定性/schema/component-scope |
 | `src/snapshot-diff.mjs` | snapshot 对比 QA：totals、bbox、materials、groups、instances、levels、scenes |
 | `sketchup_plugin/alma_sketchup_mcp.rb` | SketchUp 2026 Ruby 插件，读队列、执行 DSL、返回 snapshot |
@@ -80,8 +81,10 @@
 | `sketchup_plugin/alma_sketchup_mcp/snapshot.rb` | Ruby queue runtime snapshot、计数、材质/tag 快照和 bbox warning |
 | `docs/queue-runtime-ops.md` | Queue 手动验收清单、安装检查与故障排查 |
 | `docs/performance-budgets.md` | 性能基准、face/vertex/SKP size 阈值和预算报告入口 |
+| `docs/expert-mode.md` | Expert Mode v1 允许语法、禁止项、限制和验证方式 |
 | `docs/release-checklist.md` | 发布检查、插件安装、queue 回归、RBZ 打包和提交切片建议 |
 | `test/mock-validation.mjs` | 离线回归测试 |
+| `test/expert-compiler.mjs` | Expert Mode v1 编译、mock build 和安全拒绝测试 |
 | `test/queue-runtime-lock.mjs` | queue runtime 跨进程串行锁和 timeout 清理测试 |
 | `scripts/generate-ruby-operation-registry.mjs` | 从 JS operation registry 生成 Ruby runtime contract 表 |
 | `scripts/generate-qa-reports.mjs` | 批量 golden example mock/queue 对照 |
@@ -152,16 +155,29 @@
 **待做：**
 - [ ] `text_3d` 后续只剩按真实项目需要补 boolean emboss/engrave 贴合或字体参数扩展；阶段 4 发布收口项已完成
 
-### ⏸️ 阶段 5 — Expert Mode v1（后置，未开始）
+### 🔄 阶段 5 — Expert Mode v1（第一切片完成）
 
 允许受限脚本生成 JSON DSL，而非直接手写 DSL。形态：
 - 允许：变量、函数、for 循环、数组、map、数学/向量 helper、seeded random、批量 component_instance
 - 禁止：文件系统、网络、shell、import/require、eval、直接调用 SketchUp API、无限循环、超大 op 数
 
+**已完成：**
+- `src/expert-compiler.mjs`：基于 `acorn` parse 的 AST 白名单解释器，不执行原始脚本；脚本最后一个表达式必须输出 `operations` 数组或 `{ version, units, operations }`
+- CLI/bridge：`compile_expert` 可输出标准 JSON DSL，`build_expert_model` 先编译再复用现有 `build_model`
+- 内置 helper：`range`、seeded `random`/`rand`、`vec.add/sub/scale/mid/lerp`、白名单 `Math` 函数、`dsl`
+- 限制：`maxOperations`、`maxLoopIterations`、`maxStatements`、`maxOutputBytes`、`expertTimeoutMs`
+- `examples/expert-parametric-fixture.js`：参数化底板 + component definition + 3x4 component instance 阵列 + `text_3d`
+- `test/expert-compiler.mjs`：覆盖编译、mock build、seed 稳定性和拒绝 `require` / 超 loop / 超 op / 缺 required field / component 内非法 op / `while`
+
+**待做：**
+- [ ] MCP tool 面：`compile_expert` / `build_expert_model`
+- [ ] queue 单例对照与可选 `qa:expert:*` 脚本
+- [ ] 根据真实样例补更多白名单 helper，而不是放宽到任意 JS 执行
+
 ### 🔄 阶段 6 — 发布级收口（部分开始）
 
 **已有：**
-- Golden examples（architecture / product / structured-helpers / editing-transform-profile / profile-edge-cases / transform-chain-regression / metadata-organization / appearance-texture / text-3d）
+- Golden examples（architecture / product / structured-helpers / editing-transform-profile / profile-edge-cases / transform-chain-regression / metadata-organization / appearance-texture / text-3d / expert-parametric）
 - Gap summary 文档
 - Queue 手动验收清单与 troubleshooting：`docs/queue-runtime-ops.md`
 - 性能 / SKP size budget：`docs/performance-budgets.md`，`npm run qa:budget:mock` / `npm run qa:budget:queue`
@@ -183,7 +199,7 @@
 | **P1** | Transform 后续 | 模型空间任意轴、对象本地轴、模型空间 4x4 matrix、连续 chain、`local_matrix` 与 matrix decomposition 均已通过 group/component instance mock/queue；后续只剩更复杂分解语义按需补 |
 | **P1** | 拆分大 runtime 文件 | JS mock runtime 与 Ruby queue runtime 主边界/operation-family 边界已拆出；后续只剩更细粒度整理或提交切片 |
 | **P1** | Queue 发布收口 | 手动验收清单、troubleshooting、性能基准、SKP size 阈值、串行锁和 release packaging 已固化；后续做提交切片 |
-| **P2** | Expert Mode v1 | 提升 DSL 生成效率 |
+| **P2** | Expert Mode v1 后续 | MCP tool 面、queue 单例对照与 `qa:expert:*` |
 | **P2** | Image-to-structured-model 泛化 | 上游图片理解子项目已有 Switch baseline，下一步是 correction loop 和第二样例 |
 | **P3** | 完整布尔 / manifold | 通用 CAD 能力，当前用安全 slice 替代 |
 
@@ -192,6 +208,7 @@
 ## 5. 最近的验证记录
 
 - **2026-05-24**：`text_3d` 收口完成：manifest 推进到 `2026-05-phase4-text-3d-slice` / capability `0.1.0-capabilities.2`，Ruby 插件版本推进到 `queue-plugin-0.1.0-text-3d.1`。新增 `text_3d` operation、mock bbox/`Text3D` metadata、Ruby queue `Entities#add_3d_text` 实现、component_definition dispatch、`examples/text-3d-slice.json` 和文档/status 同步。已通过 `node --check`、Ruby syntax、`npm test`、`npm run qa:mock`、`npm run plugin:check`、`git diff --check`、`node src/cli.mjs get_capabilities --runtime mock`；contract 输出 manifest/mock/Ruby dispatch 均 64，component_definition registry/dispatch 均 42。安装并重启 SketchUp 后，live `get_capabilities` 回报 `queue-plugin-0.1.0-text-3d.1`、compatibility `ok`、issues 为空；`examples/text-3d-slice.json` queue 构建成功，主文字 snapshot 为 `kind: text_3d`、153 faces / 423 edges、warnings 0；`npm run qa:queue` 9/9 pass，`npm run qa:budget:queue` 4/4 pass。
+- **2026-05-24**：阶段 5 Expert Mode v1 第一切片完成：新增 `src/expert-compiler.mjs`、`examples/expert-parametric-fixture.js`、`docs/expert-mode.md` 和 `test/expert-compiler.mjs`，并在 bridge/CLI 增加 `compile_expert` / `build_expert_model`。当前 compiler 使用 AST 白名单解释器，支持变量、函数、`for` / `for...of`、`Array.map`、`range`、seeded random、`vec` helper 和白名单 `Math`，输出标准 JSON DSL 后复用现有 mock/queue runtime。`node test/expert-compiler.mjs` 已验证 19 个 operations、12 个 component instances、2 个 groups、0 warnings，并覆盖拒绝 `require`、超 loop/operation limit、缺 required field、component_definition 内非法 op 和 `while`。
 - **2026-05-23**：`transform_object` matrix decomposition live queue 收口：mock `matrix` / `local_matrix` snapshot 追加 `matrix_decomposition` / `local_matrix_decomposition`，Ruby queue runtime 写入同构 `transform.object_transform` metadata，覆盖 translation、basis axes、scale、shear、determinant 和 mirrored；manifest `2026-05-phase2-matrix-decomposition-slice` 与插件 `queue-plugin-0.1.0-transform-matrix-decomposition.1` live `get_capabilities` compatibility `ok`、issues 为空。已通过 `node --check`、Ruby syntax、`npm test`、`npm run qa:mock`、`npm run qa:budget:mock`、`npm run plugin:check`、`npm run plugin:install`、`npm run plugin:package`、`examples/transform-local-matrix.json` queue 单例 diff 0、`npm run qa:queue` 9/9 pass、`npm run qa:budget:queue` 4/4 pass。
 - **2026-05-23**：Bridge runtime descriptor cache 完成：显式 `get_capabilities` 继续强制 live handshake，普通 `reset_model` / `build_model` / `save_model` 在同一 `SketchUpBridge` 生命周期内复用已验证 descriptor，避免长批量 queue 回归中重复 capability handshake 偶发 timeout；新增测试覆盖 cache 复用和显式刷新。
 - **2026-05-23**：`transform_object.local_matrix` 第一切片完成：新增 `examples/transform-local-matrix.json`，mock 和 Ruby queue runtime 均支持 `local_matrix` / `localMatrix` / `matrix_local` / `matrixLocal` 16-number matrix，按对象当前本地坐标系解释线性与平移分量；manifest 推进到 `2026-05-phase2-local-matrix-slice`，插件版本推进到 `queue-plugin-0.1.0-transform-local-matrix.1`。已通过 `npm test`；待重新安装/重启 SketchUp 后跑 live queue 单例和全量回归。

@@ -21,6 +21,14 @@ async function main() {
       const code = options.codeFile ? await fs.readFile(options.codeFile, 'utf8') : options.code;
       return output(await bridge.build_model({ code, runtime: options.runtime || 'mock', timeoutMs: options.timeoutMs }), options);
     }
+    case 'compile_expert': {
+      const code = options.codeFile ? await fs.readFile(options.codeFile, 'utf8') : options.code;
+      return output(await bridge.compile_expert({ code, ...expertOptions(options) }), options);
+    }
+    case 'build_expert_model': {
+      const code = options.codeFile ? await fs.readFile(options.codeFile, 'utf8') : options.code;
+      return output(await bridge.build_expert_model({ code, runtime: options.runtime || 'mock', timeoutMs: options.timeoutMs, ...expertOptions(options) }), options);
+    }
     case 'save_model':
       return output(await bridge.save_model({ path: options.path, keep_session: options.keepSession !== false, runtime: options.runtime || 'mock', timeoutMs: options.timeoutMs }), options);
     case 'compare_snapshots': {
@@ -75,6 +83,12 @@ function parseArgs(argv) {
     else if (arg === '--max-groups') options.maxGroups = Number(argv[++index]);
     else if (arg === '--max-instances') options.maxInstances = Number(argv[++index]);
     else if (arg === '--max-artifact-size-bytes') options.maxArtifactSizeBytes = Number(argv[++index]);
+    else if (arg === '--max-operations') options.maxOperations = Number(argv[++index]);
+    else if (arg === '--max-loop-iterations') options.maxLoopIterations = Number(argv[++index]);
+    else if (arg === '--max-statements') options.maxStatements = Number(argv[++index]);
+    else if (arg === '--max-output-bytes') options.maxOutputBytes = Number(argv[++index]);
+    else if (arg === '--expert-timeout-ms') options.expertTimeoutMs = Number(argv[++index]);
+    else if (arg === '--seed') options.seed = Number(argv[++index]);
     else if (arg === '--timeout-ms') options.timeoutMs = Number(argv[++index]);
     else if (arg === '--no-keep-session') options.keepSession = false;
     else if (arg === '--no-reset-first') options.resetFirst = false;
@@ -82,6 +96,17 @@ function parseArgs(argv) {
     else throw new Error(`Unknown argument: ${arg}`);
   }
   return options;
+}
+
+function expertOptions(options) {
+  return {
+    seed: options.seed,
+    maxOperations: options.maxOperations,
+    maxLoopIterations: options.maxLoopIterations,
+    maxStatements: options.maxStatements,
+    maxOutputBytes: options.maxOutputBytes,
+    expertTimeoutMs: options.expertTimeoutMs
+  };
 }
 
 async function readSnapshotJson(filePath, label) {
@@ -128,6 +153,10 @@ function renderOutput(value, options, { markdownTitle } = {}) {
   if (options.format === 'markdown') {
     return formatSnapshotReportMarkdown(value, { title: markdownTitle || 'SketchUp QA Report' });
   }
+  if (options.format === 'dsl') {
+    if (typeof value.code !== 'string') throw new Error('--format dsl requires a compile_expert result');
+    return value.code;
+  }
   if (options.format && options.format !== 'json') {
     throw new Error(`Unknown format: ${options.format}`);
   }
@@ -140,6 +169,8 @@ function usage() {
   node src/cli.mjs get_capabilities [--runtime mock|queue]
   node src/cli.mjs reset_model [--runtime mock|queue]
   node src/cli.mjs build_model --code-file examples/demo-room.json [--runtime mock|queue]
+  node src/cli.mjs compile_expert --code-file examples/expert-parametric-fixture.js [--format dsl]
+  node src/cli.mjs build_expert_model --code-file examples/expert-parametric-fixture.js [--runtime mock|queue]
   node src/cli.mjs save_model --path output/model.json [--runtime mock|queue] [--no-keep-session]
   node src/cli.mjs compare_snapshots --expected-file output/mock-a.json --actual-file output/mock-b.json [--tolerance-mm 1] [--face-tolerance 1] [--edge-tolerance 3] [--max-faces 5000] [--max-artifact-size-bytes 50000000] [--format markdown] [--output-file output/report.md]
   node src/cli.mjs compare_model --code-file examples/demo-room.json [--expected-runtime mock] [--actual-runtime queue] [--timeout-ms 60000] [--face-tolerance 1] [--edge-tolerance 3] [--format markdown] [--output-file output/report.md]
