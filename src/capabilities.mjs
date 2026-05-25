@@ -1,6 +1,6 @@
 export const DSL_VERSION = 1;
-export const CAPABILITY_MANIFEST_VERSION = '2026-05-phase4-text-3d-slice';
-export const RUNTIME_CAPABILITY_VERSION = '0.1.0-capabilities.2';
+export const CAPABILITY_MANIFEST_VERSION = '2026-05-phase5-closeout-slice';
+export const RUNTIME_CAPABILITY_VERSION = '0.1.0-capabilities.3';
 
 export const SUPPORT_STATUS = Object.freeze({
   supported: 'supported',
@@ -131,7 +131,7 @@ const OPERATION_REGISTRY_ENTRIES = [
     schema: { required: ['op'], optional: ['name', ...objectTarget, 'translate', 'rotateX', 'rotateY', 'rotateZ', 'axis', 'angle', 'rotate_axis', 'rotateAxis', 'local_axis', 'localAxis', 'local_angle', 'localAngle', 'rotate_local', 'rotateLocal', 'matrix', 'matrix4x4', 'local_matrix', 'localMatrix', 'matrix_local', 'matrixLocal', 'scale', 'mirror', 'pivot'] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
-    notes: "Phase 2 object-editing slice. Prefer target_id for stable references; name remains supported as a compatibility fallback. Supports model-space rotateX/Y/Z, arbitrary model-space axis+angle, local-axis rotations, model-space 4x4 matrices, and local_matrix 4x4 transforms interpreted in the object's current local axes. Matrix snapshots include decomposition metadata for translation, basis axes, scale, shear, determinant, and mirrored state."
+    notes: "Phase 2 object-editing slice. Prefer target_id for stable references; name remains supported as a compatibility fallback. Supports model-space rotateX/Y/Z, arbitrary model-space axis+angle, local-axis rotations, model-space 4x4 matrices, and local_matrix 4x4 transforms interpreted in the object's current local axes. Matrix snapshots include decomposition metadata for translation, basis axes, scale, shear, determinant, mirrored state, affine/non-affine reasons, homogeneous perspective terms, and Euler XYZ degrees when rotation-compatible."
   },
   {
     op: 'box',
@@ -198,21 +198,21 @@ const OPERATION_REGISTRY_ENTRIES = [
   },
   {
     op: 'text_emboss',
-    description: 'Create simplified raised text/logo blocks on a product surface.',
-    schema: { required: ['op', 'name', 'text', 'height'], optional: ['origin', 'center', 'width', 'depth', 'spacing', 'align', 'smooth', ...commonPlacement] },
+    description: 'Create raised text/logo markers on a product surface, with block or font-outline mode.',
+    schema: { required: ['op', 'name', 'text', 'height'], optional: ['origin', 'center', 'width', 'depth', 'spacing', 'align', 'mode', 'text_mode', 'outline', 'font', 'bold', 'italic', 'filled', 'extrusion', 'tolerance', 'smooth', ...commonPlacement] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
     component_definition: true,
-    notes: 'Deterministic visual product-detail marker using simple glyph blocks; not a true font outline or boolean operation.'
+    notes: 'Default mode uses deterministic glyph blocks. mode=font_outline/outline=true calls SketchUp add_3d_text in queue runtime for true font outlines; still not a solid boolean union.'
   },
   {
     op: 'text_engrave',
-    description: 'Create simplified recessed text/logo blocks on a product surface.',
-    schema: { required: ['op', 'name', 'text', 'height'], optional: ['origin', 'center', 'width', 'depth', 'spacing', 'align', 'smooth', ...commonPlacement] },
+    description: 'Create recessed text/logo markers on a product surface, with block or font-outline mode.',
+    schema: { required: ['op', 'name', 'text', 'height'], optional: ['origin', 'center', 'width', 'depth', 'spacing', 'align', 'mode', 'text_mode', 'outline', 'font', 'bold', 'italic', 'filled', 'extrusion', 'tolerance', 'smooth', ...commonPlacement] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
     component_definition: true,
-    notes: 'Deterministic visual product-detail marker using simple sunken glyph blocks; true boolean text engraving remains out of scope.'
+    notes: 'Default mode uses deterministic sunken glyph blocks. mode=font_outline/outline=true calls SketchUp add_3d_text in queue runtime and offsets the outline below the surface; true boolean subtraction remains out of scope.'
   },
   {
     op: 'text_3d',

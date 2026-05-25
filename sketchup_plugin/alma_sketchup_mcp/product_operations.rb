@@ -253,6 +253,10 @@ module AlmaSketchupMCP
 
   def add_text_emboss(parent_entities, operation)
     name = operation.fetch('name')
+    if font_outline_text?(operation, name)
+      return add_font_outline_text_marker(parent_entities, operation, 'text_emboss', 1, operation['material'] || 'Text_Emboss_Light')
+    end
+
     marker = text_marker_mesh(operation, name, 1)
     add_mesh(parent_entities, operation.merge('vertices' => marker[:vertices], 'faces' => marker[:faces], 'material' => operation['material'] || 'Text_Emboss_Light', 'smooth' => operation['smooth'] || 'coplanar', 'kind' => 'text_emboss'))
     group = parent_entities.grep(Sketchup::Group).last
@@ -261,10 +265,83 @@ module AlmaSketchupMCP
 
   def add_text_engrave(parent_entities, operation)
     name = operation.fetch('name')
+    if font_outline_text?(operation, name)
+      return add_font_outline_text_marker(parent_entities, operation, 'text_engrave', -1, operation['material'] || 'Text_Engrave_Dark')
+    end
+
     marker = text_marker_mesh(operation, name, -1)
     add_mesh(parent_entities, operation.merge('vertices' => marker[:vertices], 'faces' => marker[:faces], 'material' => operation['material'] || 'Text_Engrave_Dark', 'smooth' => operation['smooth'] || 'coplanar', 'kind' => 'text_engrave'))
     group = parent_entities.grep(Sketchup::Group).last
     group.set_attribute('AlmaSketchupMCP', 'glyphs', marker[:glyphs]) if group&.respond_to?(:set_attribute)
+  end
+
+  def font_outline_text?(operation, name)
+    return boolean_value(operation['outline'], "#{name}.outline") if operation.key?('outline')
+
+    mode = operation['mode'] || operation['text_mode'] || operation['textMode']
+    return false if mode.nil?
+
+    normalized = mode.to_s.strip.downcase.tr(' -', '_')
+    return false if %w[block marker].include?(normalized)
+    return true if %w[font_outline text_3d native_text].include?(normalized)
+
+    raise "#{name}.mode must be one of block, marker, font_outline, text_3d, native_text"
+  end
+
+  def add_font_outline_text_marker(parent_entities, operation, kind, direction, default_material)
+    name = operation.fetch('name')
+    text = non_empty_string(operation['text'], "#{name}.text")
+    raise "#{name}.text must include at least one non-space character" if text.each_char.all? { |character| character.match?(/\s/) }
+
+    height_mm = positive_number(operation['height'], nil, "#{name}.height")
+    extrusion_mm = positive_number(operation['extrusion'] || operation['depth'], 1, "#{name}.depth")
+    height = mm_to_model_units(height_mm)
+    extrusion = mm_to_model_units(extrusion_mm)
+    tolerance = non_negative_number(operation['tolerance'], 0, "#{name}.tolerance")
+    font = non_empty_string(operation['font'] || 'Arial', "#{name}.font")
+    bold = operation.key?('bold') ? boolean_value(operation['bold'], "#{name}.bold") : false
+    italic = operation.key?('italic') ? boolean_value(operation['italic'], "#{name}.italic") : false
+    filled = operation.key?('filled') ? boolean_value(operation['filled'], "#{name}.filled") : true
+    align = (operation['align'] || (operation.key?('center') ? 'center' : 'left')).to_s.strip.downcase.tr(' -', '_')
+    alignment = text_3d_alignment(align, name)
+    anchor = vector(operation['center'] || operation['origin'] || [0, 0, 0], "#{name}.#{operation.key?('center') ? 'center' : 'origin'}")
+    anchor[2] -= extrusion_mm if direction.negative?
+    anchor_model = anchor.map { |value| mm_to_model_units(value) }
+
+    group = parent_entities.add_group
+    group.name = name
+    annotate_group(group, operation.merge('kind' => kind), kind)
+    success = group.entities.add_3d_text(text, alignment, font, bold, italic, height, tolerance, 0.0, filled, extrusion)
+    unless success
+      group.erase! if group.respond_to?(:erase!)
+      raise "Failed to create font outline text for #{name}"
+    end
+
+    material_name = operation['material'] || default_material
+    material = ensure_material(material_name, '#cccccc')
+    group.entities.grep(Sketchup::Face).each do |face|
+      face.material = material
+      face.back_material = material
+    end
+    if group.respond_to?(:set_attribute)
+      glyphs = text.each_char.count { |character| !character.match?(/\s/) }
+      group.set_attribute('AlmaSketchupMCP', 'glyphs', glyphs)
+      group.set_attribute('Text3D', 'text', text)
+      group.set_attribute('Text3D', 'font', font)
+      group.set_attribute('Text3D', 'align', align)
+      group.set_attribute('Text3D', 'bold', bold)
+      group.set_attribute('Text3D', 'italic', italic)
+      group.set_attribute('Text3D', 'filled', filled)
+      group.set_attribute('Text3D', 'height', height_mm)
+      group.set_attribute('Text3D', 'extrusion', extrusion_mm)
+      group.set_attribute('Text3D', 'tolerance', tolerance)
+      group.set_attribute('Text3D', 'mode', 'font_outline')
+      group.set_attribute('Text3D', 'surface_kind', kind)
+      group.set_attribute('Text3D', 'direction', direction.positive? ? 'emboss' : 'engrave')
+    end
+    group.transform!(Geom::Transformation.translation(anchor_model))
+    apply_transform(group, operation)
+    group
   end
 
   def add_text_3d(parent_entities, operation)

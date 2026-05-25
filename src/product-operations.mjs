@@ -162,6 +162,10 @@ export function addEngravedLine(model, operation) {
 
 export function addTextEmboss(model, operation) {
   const { name, material = 'Text_Emboss', smooth = 'coplanar', transform } = operation;
+  if (usesFontOutlineText(operation)) {
+    addFontOutlineTextMarker(model, operation, 'text_emboss', 1, material);
+    return;
+  }
   const marker = textMarkerMesh(operation, `${name || 'text_emboss'}`, 1);
   addMesh(model, { ...objectIdentityFields(operation), name, vertices: marker.vertices, faces: marker.faces, material, smooth, transform });
   const group = model.groups[model.groups.length - 1];
@@ -171,6 +175,10 @@ export function addTextEmboss(model, operation) {
 
 export function addTextEngrave(model, operation) {
   const { name, material = 'Text_Engrave_Dark', smooth = 'coplanar', transform } = operation;
+  if (usesFontOutlineText(operation)) {
+    addFontOutlineTextMarker(model, operation, 'text_engrave', -1, material);
+    return;
+  }
   const marker = textMarkerMesh(operation, `${name || 'text_engrave'}`, -1);
   addMesh(model, { ...objectIdentityFields(operation), name, vertices: marker.vertices, faces: marker.faces, material, smooth, transform });
   const group = model.groups[model.groups.length - 1];
@@ -200,6 +208,58 @@ export function addText3d(model, operation) {
     attributes: { Text3D: text3dAttributeSnapshot(spec) },
     qa: normalizeQaMetadata(operation.qa)
   });
+}
+
+function usesFontOutlineText(operation) {
+  const mode = operation.mode ?? operation.text_mode ?? operation.textMode;
+  if (operation.outline !== undefined) return normalizeBoolean(operation.outline, `${operation.name || 'text'}.outline`);
+  if (mode === undefined) return false;
+  const normalized = normalizeKeyword(mode, ['block', 'marker', 'font_outline', 'text_3d', 'native_text'], `${operation.name || 'text'}.mode`);
+  return ['font_outline', 'text_3d', 'native_text'].includes(normalized);
+}
+
+function addFontOutlineTextMarker(model, operation, kind, direction, material) {
+  const { name, transform } = operation;
+  if (!name || typeof name !== 'string') throw new Error(`${kind} operation requires a string name`);
+  const depth = positiveNumber(operation.extrusion ?? operation.depth, 1, `${name}.depth`);
+  const spec = normalizeText3dSpec({
+    ...operation,
+    extrusion: depth,
+    depth,
+    center: operation.center ? adjustTextAnchor(operation.center, direction, depth, name, 'center') : undefined,
+    origin: operation.center ? undefined : adjustTextAnchor(operation.origin ?? [0, 0, 0], direction, depth, name, 'origin')
+  });
+  const materialName = ensureMaterial(model, material);
+  const localBox = text3dLocalBox(spec);
+  const vertices = boxVertices(localBox.origin, localBox.size);
+  const transformedVertices = applyTransform(vertices, { transform }, name);
+  const id = objectId(operation, name);
+  assertObjectIdentityAvailable(model, { id, name });
+  model.groups.push({
+    id,
+    name,
+    kind,
+    faces: spec.filled ? Math.max(1, spec.glyphs) * (spec.extrusion > 0 ? 10 : 1) : 0,
+    edges: Math.max(1, spec.glyphs) * (spec.extrusion > 0 ? 24 : 8),
+    material: materialName,
+    transform: normalizeTransform(operation, name),
+    bounding_box: boundingBoxForVertices(transformedVertices),
+    glyphs: spec.glyphs,
+    attributes: {
+      Text3D: {
+        ...text3dAttributeSnapshot(spec),
+        mode: 'font_outline',
+        surface_kind: kind,
+        direction: direction > 0 ? 'emboss' : 'engrave'
+      }
+    },
+    qa: normalizeQaMetadata(operation.qa)
+  });
+}
+
+function adjustTextAnchor(anchor, direction, depth, name, fieldName) {
+  const normalized = normalizeVector(anchor, [0, 0, 0], `${name}.${fieldName}`);
+  return direction > 0 ? normalized : [normalized[0], normalized[1], normalized[2] - depth];
 }
 
 function textMarkerMesh(operation, fieldPrefix, direction) {

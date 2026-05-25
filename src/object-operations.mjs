@@ -350,20 +350,67 @@ function decomposeTransformMatrix4(matrix) {
   const xAxis = normalizeMatrixAxis(xColumn);
   const yAxis = normalizeMatrixAxis(yColumn);
   const zAxis = normalizeMatrixAxis(zColumn);
+  const shear = {
+    xy: dotVector(xAxis, yAxis),
+    xz: dotVector(xAxis, zAxis),
+    yz: dotVector(yAxis, zAxis)
+  };
+  const nonAffineReasons = transformMatrixNonAffineReasons(matrix);
+  const rotationCompatible = nonAffineReasons.length === 0
+    && Math.abs(determinant) > 1e-12
+    && Math.abs(shear.xy) <= 1e-6
+    && Math.abs(shear.xz) <= 1e-6
+    && Math.abs(shear.yz) <= 1e-6
+    && determinant > 0;
   return {
     translate: [matrix[12], matrix[13], matrix[14]],
     scale: [vectorLength(xColumn), vectorLength(yColumn), vectorLength(zColumn)],
     x_axis: xAxis,
     y_axis: yAxis,
     z_axis: zAxis,
-    shear: {
-      xy: dotVector(xAxis, yAxis),
-      xz: dotVector(xAxis, zAxis),
-      yz: dotVector(yAxis, zAxis)
-    },
+    shear,
     determinant,
-    mirrored: determinant < 0
+    mirrored: determinant < 0,
+    affine: nonAffineReasons.length === 0,
+    non_affine_reasons: nonAffineReasons,
+    homogeneous: {
+      perspective: [matrix[3], matrix[7], matrix[11]],
+      w: matrix[15]
+    },
+    rotation_euler_order: rotationCompatible ? 'XYZ' : null,
+    rotation_euler_degrees: rotationCompatible ? eulerXyzDegreesFromAxes(xAxis, yAxis, zAxis) : null
   };
+}
+
+function transformMatrixNonAffineReasons(matrix) {
+  const reasons = [];
+  if (Math.abs(matrix[3]) > 1e-9 || Math.abs(matrix[7]) > 1e-9 || Math.abs(matrix[11]) > 1e-9) reasons.push('perspective_terms');
+  if (Math.abs(matrix[15] - 1) > 1e-9) reasons.push('homogeneous_w_not_one');
+  return reasons;
+}
+
+function eulerXyzDegreesFromAxes(xAxis, yAxis, zAxis) {
+  const r = [
+    [xAxis[0], yAxis[0], zAxis[0]],
+    [xAxis[1], yAxis[1], zAxis[1]],
+    [xAxis[2], yAxis[2], zAxis[2]]
+  ];
+  const sy = Math.max(-1, Math.min(1, r[0][2]));
+  const y = Math.asin(sy);
+  let x;
+  let z;
+  if (Math.abs(Math.cos(y)) > 1e-9) {
+    x = Math.atan2(-r[1][2], r[2][2]);
+    z = Math.atan2(-r[0][1], r[0][0]);
+  } else {
+    x = Math.atan2(r[2][1], r[1][1]);
+    z = 0;
+  }
+  return [x, y, z].map((radians) => normalizeSmallNumber((radians * 180) / Math.PI));
+}
+
+function normalizeSmallNumber(value) {
+  return Math.abs(value) <= 1e-9 ? 0 : value;
 }
 
 function normalizeMatrixAxis(axis) {

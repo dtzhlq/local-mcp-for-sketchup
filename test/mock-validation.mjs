@@ -509,6 +509,10 @@ assert.equal(matrixBlock.transform.object_transform.matrix_decomposition.scale[0
 assert.ok(matrixBlock.transform.object_transform.matrix_decomposition.scale[1] > 1.07);
 assert.equal(matrixBlock.transform.object_transform.matrix_decomposition.determinant, 1);
 assert.equal(matrixBlock.transform.object_transform.matrix_decomposition.mirrored, false);
+assert.equal(matrixBlock.transform.object_transform.matrix_decomposition.affine, true);
+assert.deepEqual(matrixBlock.transform.object_transform.matrix_decomposition.non_affine_reasons, []);
+assert.deepEqual(matrixBlock.transform.object_transform.matrix_decomposition.homogeneous, { perspective: [0, 0, 0], w: 1 });
+assert.equal(matrixBlock.transform.object_transform.matrix_decomposition.rotation_euler_degrees, null);
 assert.equal(profilePanel.kind, 'profile_extrude');
 assert.equal(profilePanel.faces, 12);
 assert.equal(profilePanel.edges, 30);
@@ -521,6 +525,27 @@ assert.equal(flatProfile.edges, 9);
 assert.equal(flatProfile.bounding_box.w, 120);
 assert.equal(flatProfile.bounding_box.d, 70);
 assert.ok(editingTransformProfileSnapshot.material_names.includes('Edit_Accent'));
+
+const transformDecompositionCode = JSON.stringify({
+  version: 1,
+  units: 'mm',
+  operations: [
+    { op: 'reset' },
+    { op: 'box', name: 'Euler_Matrix_Block', origin: [0, 0, 0], size: [20, 10, 8] },
+    { op: 'box', name: 'Non_Affine_Block', origin: [40, 0, 0], size: [20, 10, 8] },
+    { op: 'transform_object', name: 'Euler_Matrix_Block', matrix: [0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1, 0, 10, 20, 5, 1] },
+    { op: 'transform_object', name: 'Non_Affine_Block', matrix: [1, 0, 0, 0.1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 2] }
+  ]
+});
+const transformDecompositionBuilt = await bridge.build_model({ runtime: 'mock', code: transformDecompositionCode });
+const eulerMatrixBlock = transformDecompositionBuilt.snapshot.groups.find((group) => group.name === 'Euler_Matrix_Block');
+const nonAffineBlock = transformDecompositionBuilt.snapshot.groups.find((group) => group.name === 'Non_Affine_Block');
+assert.equal(eulerMatrixBlock.transform.object_transform.matrix_decomposition.affine, true);
+assert.equal(eulerMatrixBlock.transform.object_transform.matrix_decomposition.rotation_euler_order, 'XYZ');
+assert.ok(Math.abs(eulerMatrixBlock.transform.object_transform.matrix_decomposition.rotation_euler_degrees[2] - 90) < 1e-9);
+assert.equal(nonAffineBlock.transform.object_transform.matrix_decomposition.affine, false);
+assert.deepEqual(nonAffineBlock.transform.object_transform.matrix_decomposition.non_affine_reasons, ['perspective_terms', 'homogeneous_w_not_one']);
+assert.deepEqual(nonAffineBlock.transform.object_transform.matrix_decomposition.homogeneous, { perspective: [0.1, 0, 0], w: 2 });
 
 await assert.rejects(
   () => bridge.build_model({ runtime: 'mock', code: JSON.stringify({
@@ -606,6 +631,8 @@ const textMarkerCode = JSON.stringify({
     { op: 'material', name: 'Text_Dark', color: '#111111' },
     { op: 'text_emboss', name: 'Logo_Emboss', center: [0, 0, 10], text: 'ALMA', height: 12, depth: 2, spacing: 1, material: 'Text_Light' },
     { op: 'text_engrave', name: 'Logo_Engrave', origin: [40, 0, 10], text: '07', height: 10, depth: 1.5, align: 'right', material: 'Text_Dark' },
+    { op: 'text_emboss', name: 'Outline_Emboss', center: [80, 0, 12], text: 'OK', height: 10, depth: 2, mode: 'font_outline', font: 'Arial', material: 'Text_Light' },
+    { op: 'text_engrave', name: 'Outline_Engrave', center: [80, 20, 12], text: 'CUT', height: 9, depth: 1.2, outline: true, font: 'Arial', italic: true, material: 'Text_Dark' },
     { op: 'text_3d', name: 'True_Text_3D', center: [0, 24, 12], text: 'ALMA', height: 14, extrusion: 3, font: 'Arial', align: 'center', bold: true, material: 'Text_Light' }
   ]
 });
@@ -613,8 +640,10 @@ const textMarkerBuilt = await bridge.build_model({ runtime: 'mock', code: textMa
 const textMarkerSnapshot = textMarkerBuilt.snapshot;
 const logoEmboss = textMarkerSnapshot.groups.find((group) => group.name === 'Logo_Emboss');
 const logoEngrave = textMarkerSnapshot.groups.find((group) => group.name === 'Logo_Engrave');
+const outlineEmboss = textMarkerSnapshot.groups.find((group) => group.name === 'Outline_Emboss');
+const outlineEngrave = textMarkerSnapshot.groups.find((group) => group.name === 'Outline_Engrave');
 const trueText3d = textMarkerSnapshot.groups.find((group) => group.name === 'True_Text_3D');
-assert.equal(textMarkerSnapshot.totals.groups, 3);
+assert.equal(textMarkerSnapshot.totals.groups, 5);
 assert.equal(logoEmboss.kind, 'text_emboss');
 assert.equal(logoEmboss.faces, 24);
 assert.equal(logoEmboss.edges, 48);
@@ -627,6 +656,23 @@ assert.equal(logoEngrave.edges, 24);
 assert.equal(logoEngrave.bounding_box.min[0], 26);
 assert.equal(logoEngrave.bounding_box.max[0], 40);
 assert.equal(logoEngrave.bounding_box.h, 1.5);
+assert.equal(outlineEmboss.kind, 'text_emboss');
+assert.equal(outlineEmboss.faces, 20);
+assert.equal(outlineEmboss.edges, 48);
+assert.ok(Math.abs(outlineEmboss.bounding_box.w - 12.4) < 1e-9);
+assert.equal(outlineEmboss.bounding_box.h, 2);
+assert.equal(outlineEmboss.attributes.Text3D.mode, 'font_outline');
+assert.equal(outlineEmboss.attributes.Text3D.surface_kind, 'text_emboss');
+assert.equal(outlineEmboss.attributes.Text3D.direction, 'emboss');
+assert.equal(outlineEngrave.kind, 'text_engrave');
+assert.equal(outlineEngrave.faces, 30);
+assert.equal(outlineEngrave.edges, 72);
+assert.ok(Math.abs(outlineEngrave.bounding_box.w - 17.2422) < 1e-9);
+assert.equal(outlineEngrave.bounding_box.min[2], 10.8);
+assert.ok(Math.abs(outlineEngrave.bounding_box.h - 1.2) < 1e-9);
+assert.equal(outlineEngrave.attributes.Text3D.mode, 'font_outline');
+assert.equal(outlineEngrave.attributes.Text3D.surface_kind, 'text_engrave');
+assert.equal(outlineEngrave.attributes.Text3D.direction, 'engrave');
 assert.equal(trueText3d.kind, 'text_3d');
 assert.equal(trueText3d.faces, 40);
 assert.equal(trueText3d.edges, 96);

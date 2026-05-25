@@ -1,6 +1,6 @@
 # Expert Mode v1
 
-更新时间：2026-05-24
+更新时间：2026-05-25
 
 Expert Mode 是 JSON DSL 的受限生成层。它不会直接调用 SketchUp API，也不会替代 `build_model` 的安全 JSON DSL；当前第一切片只做：
 
@@ -35,9 +35,9 @@ node src/cli.mjs build_expert_model --runtime queue --timeout-ms 60000 --code-fi
 - `for` / `for...of` 循环，带全局 loop limit
 - 数组、对象、数字、字符串、布尔值、template literal
 - 数学表达式、比较、条件表达式、`if`
-- `Array.push`、`Array.map`
-- 内置 helper：`range`、`random`、`rand`、`vec.add`、`vec.sub`、`vec.scale`、`vec.mid`、`vec.lerp`、`dsl`
-- 白名单 `Math` 函数：`abs`、`ceil`、`floor`、`max`、`min`、`pow`、`round`、`sin`、`cos`、`tan`、`sqrt`
+- `Array.push`、`Array.map`、`Array.filter`、`Array.flatMap`、`Array.reduce`、`Array.concat`
+- 内置 helper：`range`、`random`、`rand`、`clamp`、`lerp`、`rad`、`deg`、`vec.add`、`vec.sub`、`vec.scale`、`vec.mid`、`vec.lerp`、`vec.dot`、`vec.cross`、`vec.length`、`vec.distance`、`vec.norm`、`vec.normalize`、`dsl`
+- 白名单 `Math` 函数：`abs`、`ceil`、`floor`、`max`、`min`、`pow`、`round`、`sign`、`sin`、`cos`、`tan`、`asin`、`acos`、`atan`、`atan2`、`hypot`、`sqrt`
 
 脚本最后一个表达式必须返回 `operations` 数组，或返回 `{ version, units, operations }` 文档对象。
 
@@ -78,6 +78,7 @@ CLI 参数：
 
 - 参数化 fixture 编译为 19 个 DSL operations
 - `range().map(...)`、函数、双层 `for`、seeded random 和 `vec` helper
+- `Array.filter` / `flatMap` / `reduce`、`clamp` / `lerp` / `rad` / `deg`、`vec.cross` / `vec.norm` / `vec.distance` 等扩展 helper
 - mock 构建后得到 12 个 component instances、2 个 groups、0 warnings
 - 拒绝 `require`、超 loop limit、超 operation limit、缺 required field、component_definition 内嵌不支持的 op 和 `while`
 
@@ -110,9 +111,9 @@ node src/cli.mjs build_expert_model --runtime queue --timeout-ms 60000 --code-fi
 
 验证结果：编译 19 个 operations，queue snapshot 为 739 faces / 2079 edges / 1386 vertices / 2 groups / 12 instances，warnings 0；`Expert_Parametric_Label` 为真实 `text_3d`，277 faces / 771 edges。
 
-## 后续扩展
+## 扩展原则
 
-- 根据真实样例补更多白名单 helper，而不是放宽到任意 JS 执行
+后续新增 Expert helper 仍按白名单收口：只增加确定性数学、向量、数组和 DSL 生成辅助，不开放文件系统、网络、动态 import 或直接 SketchUp API。
 
 ## MCP 工具
 

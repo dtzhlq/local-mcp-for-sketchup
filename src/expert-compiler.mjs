@@ -595,11 +595,21 @@ function installBuiltins(scope, interpreter) {
     min: native('Math.min', (...values) => Math.min(...values.map(Number))),
     pow: native('Math.pow', (base, exponent) => Math.pow(Number(base), Number(exponent))),
     round: native('Math.round', (value) => Math.round(Number(value))),
+    sign: native('Math.sign', (value) => Math.sign(Number(value))),
     sin: native('Math.sin', (value) => Math.sin(Number(value))),
     cos: native('Math.cos', (value) => Math.cos(Number(value))),
     tan: native('Math.tan', (value) => Math.tan(Number(value))),
+    asin: native('Math.asin', (value) => Math.asin(Number(value))),
+    acos: native('Math.acos', (value) => Math.acos(Number(value))),
+    atan: native('Math.atan', (value) => Math.atan(Number(value))),
+    atan2: native('Math.atan2', (y, x) => Math.atan2(Number(y), Number(x))),
+    hypot: native('Math.hypot', (...values) => Math.hypot(...values.map(Number))),
     sqrt: native('Math.sqrt', (value) => Math.sqrt(Number(value)))
   }, 'const');
+  scope.define('clamp', native('clamp', (value, min, max) => clampNumber(value, min, max)), 'const');
+  scope.define('lerp', native('lerp', (start, end, amount) => Number(start) + (Number(end) - Number(start)) * Number(amount)), 'const');
+  scope.define('rad', native('rad', (degrees) => (Number(degrees) * Math.PI) / 180), 'const');
+  scope.define('deg', native('deg', (radians) => (Number(radians) * 180) / Math.PI), 'const');
   scope.define('range', native('range', (...args) => rangeValues(args)), 'const');
   scope.define('random', native('random', () => interpreter.nextRandom()), 'const');
   scope.define('rand', native('rand', (min = 0, max = 1) => Number(min) + interpreter.nextRandom() * (Number(max) - Number(min))), 'const');
@@ -608,7 +618,13 @@ function installBuiltins(scope, interpreter) {
     sub: native('vec.sub', (a, b) => vectorBinary(a, b, (left, right) => left - right)),
     scale: native('vec.scale', (a, scale) => vectorMap(a, (value) => value * Number(scale))),
     mid: native('vec.mid', (a, b) => vectorBinary(a, b, (left, right) => (left + right) / 2)),
-    lerp: native('vec.lerp', (a, b, amount) => vectorBinary(a, b, (left, right) => left + (right - left) * Number(amount)))
+    lerp: native('vec.lerp', (a, b, amount) => vectorBinary(a, b, (left, right) => left + (right - left) * Number(amount))),
+    dot: native('vec.dot', (a, b) => vectorBinary(a, b, (left, right) => left * right).reduce((sum, value) => sum + value, 0)),
+    cross: native('vec.cross', (a, b) => vectorCross(a, b)),
+    length: native('vec.length', (a) => vectorLength(a)),
+    distance: native('vec.distance', (a, b) => vectorLength(vectorBinary(a, b, (left, right) => left - right))),
+    norm: native('vec.norm', (a) => normalizeExpertVector(a)),
+    normalize: native('vec.normalize', (a) => normalizeExpertVector(a))
   }, 'const');
   scope.define('dsl', native('dsl', (operations, options = {}) => ({ version: 1, units: 'mm', ...options, operations })), 'const');
 }
@@ -636,6 +652,36 @@ function callMember(object, property, args, interpreter, node) {
       }
       return object.map((value, index) => args[0].call([value, index, object], interpreter, node));
     }
+    if (property === 'filter') {
+      if (args.length !== 1 || !(args[0] instanceof ExpertFunction)) {
+        throw new ExpertCompileError('Array.filter requires one Expert function callback', node);
+      }
+      return object.filter((value, index) => truthy(args[0].call([value, index, object], interpreter, node)));
+    }
+    if (property === 'flatMap') {
+      if (args.length !== 1 || !(args[0] instanceof ExpertFunction)) {
+        throw new ExpertCompileError('Array.flatMap requires one Expert function callback', node);
+      }
+      return object.flatMap((value, index) => {
+        const mapped = args[0].call([value, index, object], interpreter, node);
+        return Array.isArray(mapped) ? mapped : [mapped];
+      });
+    }
+    if (property === 'reduce') {
+      if (args.length < 1 || args.length > 2 || !(args[0] instanceof ExpertFunction)) {
+        throw new ExpertCompileError('Array.reduce requires an Expert function callback and optional initial value', node);
+      }
+      if (object.length === 0 && args.length < 2) {
+        throw new ExpertCompileError('Array.reduce on an empty array requires an initial value', node);
+      }
+      let accumulator = args.length === 2 ? args[1] : object[0];
+      const startIndex = args.length === 2 ? 0 : 1;
+      for (let index = startIndex; index < object.length; index += 1) {
+        accumulator = args[0].call([accumulator, object[index], index, object], interpreter, node);
+      }
+      return accumulator;
+    }
+    if (property === 'concat') return object.concat(...args);
     throw new ExpertCompileError(`Unsupported array method: ${property}`, node);
   }
 
@@ -648,7 +694,7 @@ function getMember(object, property, node) {
   if (Array.isArray(object)) {
     if (property === 'length') return object.length;
     if (Number.isInteger(Number(property))) return object[Number(property)];
-    if (property === 'push' || property === 'map') return native(`Array.${property}`, () => {
+    if (['push', 'map', 'filter', 'flatMap', 'reduce', 'concat'].includes(property)) return native(`Array.${property}`, () => {
       throw new ExpertCompileError(`Array.${property} must be called as a method`, node);
     });
     throw new ExpertCompileError(`Unsupported array property: ${property}`, node);
@@ -765,6 +811,16 @@ function rangeValues(args) {
   return values;
 }
 
+function clampNumber(value, min, max) {
+  const number = Number(value);
+  const lower = Number(min);
+  const upper = Number(max);
+  if (![number, lower, upper].every(Number.isFinite) || lower > upper) {
+    throw new ExpertCompileError('clamp expects finite value, min, and max arguments with min <= max');
+  }
+  return Math.min(upper, Math.max(lower, number));
+}
+
 function vectorBinary(a, b, fn) {
   const left = assertVector(a);
   const right = assertVector(b);
@@ -773,6 +829,28 @@ function vectorBinary(a, b, fn) {
 
 function vectorMap(vector, fn) {
   return assertVector(vector).map(fn);
+}
+
+function vectorCross(a, b) {
+  const left = assertVector(a);
+  const right = assertVector(b);
+  return [
+    left[1] * right[2] - left[2] * right[1],
+    left[2] * right[0] - left[0] * right[2],
+    left[0] * right[1] - left[1] * right[0]
+  ];
+}
+
+function vectorLength(value) {
+  const vector = assertVector(value);
+  return Math.hypot(...vector);
+}
+
+function normalizeExpertVector(value) {
+  const vector = assertVector(value);
+  const length = Math.hypot(...vector);
+  if (length <= 1e-12) throw new ExpertCompileError('Vector normalization requires a non-zero vector');
+  return vector.map((entry) => entry / length);
 }
 
 function assertVector(value) {

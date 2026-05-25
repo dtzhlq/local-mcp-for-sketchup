@@ -1,6 +1,6 @@
 # SketchUp 官方 Cloud MCP / 本地 Replica 功能差距总结
 
-更新时间：2026-05-14
+更新时间：2026-05-25
 
 本文用于发布稿事实核对。结论先行：本项目已经复刻了官方 SketchUp Cloud MCP 的核心交互闭环（`get_docs` / `build_model` / snapshot / `save_model`），但它不是官方云端 Python SDK 的完整替代品。本项目定位是：用更安全、可测试的 JSON DSL，在本地 mock runtime 和 SketchUp queue runtime 中复现主要建模体验。
 
@@ -54,7 +54,7 @@
 - `examples/metadata-organization-slice.json`：阶段 4 组织/元数据 capability slice，覆盖 `tag`、`assign_tag`、`attribute`、`classification`。
 - `examples/profile-edge-cases.json`：通用 profile regression slice，覆盖凹多边形 outer、多洞、`xz` 竖向 face profile 和 component_definition 内嵌 profile。
 - `examples/appearance-texture-slice.json`：表现层 regression slice，覆盖 `texture_transform`、`uv_project_planar`、`uv_project_box`、顶层 `image_plane` 和 component_definition 内嵌 `image_plane`。
-- `examples/text-3d-slice.json`：真实字体轮廓 capability slice，覆盖顶层与 component_definition 内嵌 `text_3d`。
+- `examples/text-3d-slice.json`：真实字体轮廓 capability slice，覆盖顶层与 component_definition 内嵌 `text_3d`，以及 font-outline `text_emboss` / `text_engrave` marker。
 - `examples/expert-parametric-fixture.js`：Expert Mode v1 参数化 fixture，覆盖受限脚本编译为 JSON DSL、组件阵列、seeded random、`vec` helper 和 `text_3d`。
 - `npm test` 会读取 golden examples、主线 capability slices 和 Expert Mode fixture，只用 mock runtime 验证，不依赖打开 SketchUp。
 - 主线基线还会校验 `get_docs` 输出的 capability manifest 矩阵、snapshot 中的 runtime capability descriptor、queue 插件握手 descriptor 注入、schema/component-scope contract、descriptor 漂移时的结构化 compatibility issue、带 top issues / recommendations / budget 检查的 snapshot diff report、`compare_model` 一键 mock/queue 对照骨架、stdio MCP server 的 `tools/list` / `tools/call` Expert Mode 路径，以及 `qa:expert:*` 的 Expert 编译/runtime/artifact/budget 发布回归。
@@ -117,13 +117,13 @@
 
 当前 JSON DSL 适合安全、可回归的结构化建模，但还不是通用 CAD/SketchUp 几何层。重要缺口：
 
-- 更复杂的 transform 分解仍需继续补（例如 Euler/非仿射报告与 live queue 对照细化）；当前 `transform_object` 已支持 translate、rotateX/Y/Z、模型空间 `axis + angle`、本地轴 `local_axis + local_angle`、SketchUp-compatible 16-number `matrix`、本地坐标系 `local_matrix`、scale、mirror，以及默认 origin / 对象中心 / 显式坐标 pivot，并已为 matrix/local_matrix snapshot 增加 translation、basis axes、scale、shear、determinant 和 mirrored 分解元数据。
+- `transform_object` 已支持 translate、rotateX/Y/Z、模型空间 `axis + angle`、本地轴 `local_axis + local_angle`、SketchUp-compatible 16-number `matrix`、本地坐标系 `local_matrix`、scale、mirror，以及默认 origin / 对象中心 / 显式坐标 pivot；matrix/local_matrix snapshot 已包含 translation、basis axes、scale、shear、determinant、mirrored、affine/non-affine reasons、homogeneous perspective terms，并在纯正向旋转兼容时回传 Euler XYZ degrees。
 - 更完整的 sweep / frame 控制；当前 `pipe_between_points` 已支持任意 3D 点管线，旧 `swept_path` 仍偏 MVP，主要适合沿 X 的管线。
 - 非轴向墙、坡地、多层复杂楼梯、可参数化窗门族库。
 - 任意选边 CAD fillet/chamfer（当前 `fillet` / `chamfer` 已进入第二阶段产品 DSL 基线，但稳定 slice 只处理盒体/面板 XY footprint 的垂直边圆角与倒角）。
 - 更通用的 profile/surface 建模；`face_with_holes` / `profile_extrude` 已进入简单闭合多边形 outer + holes 第一切片，并覆盖凹多边形、多洞和竖向 profile 的 mock/queue 对照；`loft_between_profiles` 与 `shell_from_front_side_profiles` 已进入第二阶段产品壳体/握把基线，但更复杂曲面和自动修复仍需继续补。
 - 任意 solid boolean、真实 cylinder wrap/projection（当前 `boolean_cutout` 已有矩形板 + 矩形贯穿孔安全 slice；`face_on_cylinder`、`recess` / `slot` / `screw_hole` 已有视觉贴片、凹槽、长圆槽与孔位标记）。
-- 真实字体轮廓 text emboss/engrave 的 boolean 贴合仍待后续；当前新增 `text_3d` 已能在 queue runtime 通过 SketchUp `Entities#add_3d_text` 生成独立真实字体轮廓，`text_emboss` / `text_engrave` 仍是确定性的简化文字块视觉标记。
+- `text_3d` 已能在 queue runtime 通过 SketchUp `Entities#add_3d_text` 生成独立真实字体轮廓；`text_emboss` / `text_engrave` 默认仍是确定性的简化文字块视觉标记，也可用 `mode: "font_outline"` / `outline: true` 走真实字体轮廓 marker。仍未做 solid boolean union/subtraction 贴合。
 - 真正的 solid boolean / manifold 检查 / 自动修复。
 
 ### 5. QA 还需要更聪明

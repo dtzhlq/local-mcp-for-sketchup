@@ -376,7 +376,7 @@ mock snapshot 会额外给出零面组、bounding box 碰撞等结构化 warning
 
 Expert Mode 是 JSON DSL 的受限生成层：脚本先经过 `src/expert-compiler.mjs` 的 AST 白名单解释器编译成标准 JSON DSL，再交给现有 `build_model`。它不会直接调用 SketchUp API，也不会绕过 operation registry。
 
-当前第一切片支持变量、函数、`for` / `for...of`、数组、`Array.map`、基础 `Math`、`range`、`rand` / seeded `random`、`vec` helper 和批量 `component_instance`。默认限制为 2000 operations、10000 loop iterations、50000 statement steps、5MB 输出和 1000ms 编译 timeout。
+当前支持变量、函数、`for` / `for...of`、数组、`Array.map/filter/flatMap/reduce/concat`、基础 `Math`、`range`、`clamp`、`lerp`、`rad` / `deg`、`rand` / seeded `random`、`vec` helper 和批量 `component_instance`。默认限制为 2000 operations、10000 loop iterations、50000 statement steps、5MB 输出和 1000ms 编译 timeout。
 
 ```bash
 node src/cli.mjs compile_expert --code-file examples/expert-parametric-fixture.js --format dsl --seed 7
@@ -394,9 +394,9 @@ node src/cli.mjs build_expert_model --runtime mock --code-file examples/expert-p
 ## 当前 MVP 状态
 
 - `get_docs`、`build_model`、`reset_model`、`save_model` 已完成 Node bridge、CLI、HTTP bridge 和 stdio MCP server 入口。
-- `mock` runtime 已支持基础房间、墙洞面板、棱柱、mesh、通用 profile face/extrude（简单闭合多边形 outer + holes）、圆角盒/倒角面板、凹槽、长圆槽、刻线、text_3d bbox metadata、面板按钮、摇杆、螺丝孔位、屋顶 helper、圆柱、旋转体、扫掠管、domed/bowed 曲面、楼层/楼板/墙/门窗/楼梯/栏杆、Tags/attributes/classification 元数据、texture_transform/image_plane 表现层、组件定义/实例、基础 transform、对象任意模型轴旋转、本地轴旋转、模型空间 4x4 matrix、本地坐标系 local_matrix、matrix/local_matrix decomposition metadata、相机、scene、材质 texture/PBR 字段记录、style/shadow/rendering options 表现层状态和 snapshot 校验；bridge 会在 snapshot 中附加 runtime capability descriptor。
-- `queue` runtime 已能把请求交给 SketchUp Ruby 插件，插件侧实现同一套 DSL 的真实建模、基础 transform、对象任意模型轴旋转、本地轴旋转、4x4 matrix、本地坐标系 local_matrix、transform metadata 回传、通用 profile face/extrude、Tags/attributes/classification 元数据、texture_transform/image_plane 表现层、圆角盒/倒角面板、凹槽、长圆槽、刻线、真实字体轮廓 text_3d、面板按钮、摇杆、螺丝孔位、domed/bowed 曲面、楼层/楼板/墙/门窗/楼梯/栏杆、材质 color/alpha/texture/SketchUp 2025+ PBR、style/shadow/rendering options、scene 和 `.skp` 保存；第一阶段已接入 `get_capabilities` 插件握手，snapshot 中的 queue runtime descriptor 来自已安装插件，包含插件版本、SketchUp 版本、Ruby 版本、队列路径和 operation 支持状态，并通过 `runtime.compatibility` 对照当前 manifest；当前 text_3d slice 已通过 live `get_capabilities`、queue 单例构建、全量 `qa:queue` 和 `qa:budget:queue`。
-- Expert Mode v1 第一切片已接入 CLI/bridge：受限脚本通过 AST 白名单解释器编译成 JSON DSL，再复用现有 mock/queue runtime；`examples/expert-parametric-fixture.js` 覆盖参数化组件阵列、`range().map(...)`、seeded random、`vec` helper 和 `text_3d`，并已通过 live queue 单例构建，warnings 0。
+- `mock` runtime 已支持基础房间、墙洞面板、棱柱、mesh、通用 profile face/extrude（简单闭合多边形 outer + holes）、圆角盒/倒角面板、凹槽、长圆槽、刻线、text_3d bbox metadata、font-outline `text_emboss/text_engrave` metadata、面板按钮、摇杆、螺丝孔位、屋顶 helper、圆柱、旋转体、扫掠管、domed/bowed 曲面、楼层/楼板/墙/门窗/楼梯/栏杆、Tags/attributes/classification 元数据、texture_transform/image_plane 表现层、组件定义/实例、基础 transform、对象任意模型轴旋转、本地轴旋转、模型空间 4x4 matrix、本地坐标系 local_matrix、matrix/local_matrix decomposition metadata（含 affine/non-affine 与 Euler 报告）、相机、scene、材质 texture/PBR 字段记录、style/shadow/rendering options 表现层状态和 snapshot 校验；bridge 会在 snapshot 中附加 runtime capability descriptor。
+- `queue` runtime 已能把请求交给 SketchUp Ruby 插件，插件侧实现同一套 DSL 的真实建模、基础 transform、对象任意模型轴旋转、本地轴旋转、4x4 matrix、本地坐标系 local_matrix、transform metadata 回传（含 affine/non-affine 与 Euler 报告）、通用 profile face/extrude、Tags/attributes/classification 元数据、texture_transform/image_plane 表现层、圆角盒/倒角面板、凹槽、长圆槽、刻线、真实字体轮廓 text_3d、font-outline `text_emboss/text_engrave`、面板按钮、摇杆、螺丝孔位、domed/bowed 曲面、楼层/楼板/墙/门窗/楼梯/栏杆、材质 color/alpha/texture/SketchUp 2025+ PBR、style/shadow/rendering options、scene 和 `.skp` 保存；第一阶段已接入 `get_capabilities` 插件握手，snapshot 中的 queue runtime descriptor 来自已安装插件，包含插件版本、SketchUp 版本、Ruby 版本、队列路径和 operation 支持状态，并通过 `runtime.compatibility` 对照当前 manifest；当前 text_3d slice 已通过 live `get_capabilities`、queue 单例构建、全量 `qa:queue` 和 `qa:budget:queue`。
+- Expert Mode v1 已接入 CLI/bridge：受限脚本通过 AST 白名单解释器编译成 JSON DSL，再复用现有 mock/queue runtime；`examples/expert-parametric-fixture.js` 覆盖参数化组件阵列、`range().map(...)`、seeded random、`vec` helper 和 `text_3d`，新增扩展 helper 覆盖数组 `filter/flatMap/reduce`、`clamp/lerp/rad/deg` 与 `vec.cross/norm/distance`，并已通过 live queue 单例构建，warnings 0。
 - MCP stdio server 已暴露 Expert Mode 工具：`compile_expert` 和 `build_expert_model`，客户端可以直接请求受限脚本编译或编译后构建。
 - Expert Mode 发布回归已接入并通过 `npm run qa:expert:mock` / `npm run qa:expert:queue`，输出编译、runtime build、artifact 保存、warnings 和预算报告；queue SKP artifact 保存到 `output/qa-reports/expert-queue/artifacts/expert-parametric-fixture.skp`。
 - 离线测试 `npm test` 已覆盖核心 DSL、建筑 DSL、产品/工业设计 golden examples、snapshot totals/QA、材质、PBR 字段、表现层状态、组件、相机、保存流程、queue capability handshake 注入、descriptor 漂移检测、带 top issues / recommendations / budget 检查的 snapshot diff report、Markdown QA report，以及 `compare_model` 一键对照骨架。
@@ -440,7 +440,7 @@ node src/cli.mjs build_expert_model --runtime mock --code-file examples/expert-p
 - [x] `button_on_panel` — 面板上凸起按钮（圆形 / 胶囊 / 圆角矩形）
 - [x] `screw_hole` — 螺丝孔位 / 沉孔视觉标记（非 boolean cut）
 - [x] `engraved_line` — 可视化刻线 / 拼缝 / 装饰槽
-- [x] `text_emboss` / `text_engrave` — 简化凸起/凹陷文字与 logo 视觉标记（非真实字体轮廓 / boolean cut）
+- [x] `text_emboss` / `text_engrave` — 默认简化凸起/凹陷文字与 logo 视觉标记；`mode: "font_outline"` / `outline: true` 可走 queue runtime 真实字体轮廓 marker（仍非 boolean cut）
 - [x] `text_3d` — queue runtime 真实字体轮廓 3D text，mock runtime 稳定 bbox/metadata
 
 #### 复用与性能

@@ -5,8 +5,11 @@
     { "op": "reset" },
     { "op": "material", "name": "Text3D_Base", "color": "#2f3a3f" },
     { "op": "material", "name": "Text3D_Lettering", "color": "#f2c94c" },
+    { "op": "material", "name": "Text3D_Engrave", "color": "#151515" },
     { "op": "box", "id": "text3d-base", "name": "Text3D_Base_Plate", "origin": [0, 0, 0], "size": [180, 70, 6], "material": "Text3D_Base" },
     { "op": "text_3d", "id": "text3d-main", "name": "Text3D_Main_Label", "center": [90, 20, 6], "text": "ALMA 3D", "height": 16, "extrusion": 2.5, "font": "Arial", "align": "center", "bold": true, "filled": true, "material": "Text3D_Lettering" },
+    { "op": "text_emboss", "id": "text3d-outline-emboss", "name": "Text3D_Outline_Emboss", "center": [45, 52, 6], "text": "HI", "height": 10, "depth": 1.5, "mode": "font_outline", "font": "Arial", "align": "center", "material": "Text3D_Lettering" },
+    { "op": "text_engrave", "id": "text3d-outline-engrave", "name": "Text3D_Outline_Engrave", "center": [135, 52, 7.2], "text": "CUT", "height": 9, "depth": 1.2, "outline": true, "font": "Arial", "align": "center", "material": "Text3D_Engrave" },
     { "op": "component_definition", "name": "Text3D_Badge_Def", "operations": [
       { "op": "material", "name": "Text3D_Lettering", "color": "#f2c94c" },
       { "op": "text_3d", "id": "text3d-nested", "name": "Text3D_Nested_Label", "origin": [0, 0, 0], "text": "OK", "height": 12, "extrusion": 2, "font": "Arial", "align": "left", "material": "Text3D_Lettering" }

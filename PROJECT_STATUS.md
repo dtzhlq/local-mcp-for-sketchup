@@ -1,7 +1,7 @@
 # SketchUp MCP Replica — 项目状态与计划
 
 > 更新日期：2026-05-25
-> 当前状态：阶段 4 `text_3d` 已按发布标准收口，阶段 5 Expert Mode v1 已完成发布收口
+> 当前状态：阶段 2-5 非阶段 6 发布级残项已收口；阶段 6 只剩 image-to-structured 泛化验证
 
 ---
 
@@ -108,7 +108,7 @@
 - QA 报告生成（JSON + Markdown）
 - 批量 golden regression：`npm run qa:mock` / `npm run qa:queue`
 
-### 🔄 阶段 2 — DSL v1.1 核心表达力（P0 第一/第二切片✅，剩余进行中）
+### ✅ 阶段 2 — DSL v1.1 核心表达力（发布级残项已收口）
 
 **已完成与验证状态：**
 - `delete`、`rename`、`set_material`、`set_visibility`
@@ -116,7 +116,7 @@
 - 对象身份补强：mock/queue 创建侧强制同 scope 内 `id` / `name` 唯一；编辑操作同时传 `target_id` 和 `name` 时必须匹配同一对象
 - `examples/editing-identity.json`：专门覆盖 `id -> rename -> set_material -> transform -> visibility/delete` 编辑链
 - 对象身份 live queue 验收：`npm run qa:identity:queue` 已通过，mock/queue diff 为 0
-- `transform_object`：translate、rotateX/Y/Z、任意模型空间 `axis + angle`、对象本地轴 `local_axis + local_angle`、SketchUp-compatible 16-number `matrix`、本地坐标系 `local_matrix`、scale、mirror；matrix/local_matrix snapshot 会回传 translation、basis axes、scale、shear、determinant 和 mirrored 分解元数据
+- `transform_object`：translate、rotateX/Y/Z、任意模型空间 `axis + angle`、对象本地轴 `local_axis + local_angle`、SketchUp-compatible 16-number `matrix`、本地坐标系 `local_matrix`、scale、mirror；matrix/local_matrix snapshot 会回传 translation、basis axes、scale、shear、determinant、mirrored、affine/non-affine reasons、homogeneous perspective terms，并在纯正向旋转兼容时回传 Euler XYZ degrees
 - `transform_object` pivot：默认 origin、`"center"`、显式 `[x,y,z]`
 - `face_with_holes`、`profile_extrude` 通用 profile 第一切片：支持简单闭合多边形 outer + 多边形 holes，拒绝自交、触边和重叠洞；已通过 mock/queue 对照验证
 - Operation contract 测试：manifest、mock runtime、Ruby queue runtime、component_definition dispatch 覆盖自动校验
@@ -125,7 +125,7 @@
 **待做（P1）：**
 - [x] 二次编辑的 chain 支持：新增 `examples/transform-chain-regression.json`，连续多个 `transform_object` 叠加时的 center pivot、本地轴、模型轴、平移和 matrix 已通过 mock/queue 对照验证。
 - [x] 通用 profile 扩展覆盖：新增凹多边形、多洞、竖向 profile、component_definition 内嵌 profile 和失败样例；已通过 mock/queue 对照验证。
-- [ ] 更完整 transform：模型轴、本地轴、模型空间 4x4 matrix、连续 chain 已覆盖 group 与 component instance mock/queue 对照；`local_matrix` 与 matrix decomposition 已通过 live queue 复验，后续只剩更复杂分解语义（如 Euler/非仿射报告）视需求补。
+- [x] 更完整 transform：模型轴、本地轴、模型空间 4x4 matrix、连续 chain、`local_matrix`、matrix decomposition、Euler/非仿射报告均已覆盖 mock 回归；queue runtime 同构写入 metadata，插件文件已安装，待 SketchUp 重启/Bridge 响应后做 live 单例复验。
 
 ### ✅ 阶段 3 — 高频几何 helper（大量提前完成）
 
@@ -141,7 +141,7 @@
 
 **可选后续（不优先）：** `counterbore`、`through_hole`、`chamfered_prism`
 
-### 🔄 阶段 4 — 组织、材质、视图（部分完成）
+### ✅ 阶段 4 — 组织、材质、视图（发布级残项已收口）
 
 **已完成：**
 - `scene`、`style`、`shadow`、`rendering_options`
@@ -152,22 +152,23 @@
 - `texture_transform` / `uv_project_planar` / `uv_project_box`：给 group / component instance 写入贴图投影、offset、scale、rotation metadata，snapshot 回传一等 `texture_transform` 字段，并镜像到 SketchUp `TextureTransform` attribute dictionary；已通过 mock/queue 对照验证
 - `image_plane`：创建平面参考/贴图面，支持顶层与 component_definition 内嵌；已通过 mock/queue 对照验证
 - `text_3d`：新增真实字体轮廓 3D text operation；queue runtime 调 SketchUp `Entities#add_3d_text`，mock runtime 回传稳定估算 bbox 与 `Text3D` metadata；已通过 mock/contract/plugin checks、live `get_capabilities`、`examples/text-3d-slice.json` queue 构建、全量 `qa:queue` 和 `qa:budget:queue`
+- `text_emboss` / `text_engrave`：保留默认 block marker；新增 `mode: "font_outline"` / `outline: true`，queue runtime 走 SketchUp `Entities#add_3d_text` 生成真实字体轮廓 raised/recessed marker，mock runtime 回传稳定 bbox 和 `Text3D` metadata；仍不声明 solid boolean union/subtraction
 - `component_definition` / `component_instance` 基础复用
 
 **待做：**
-- [ ] `text_3d` 后续只剩按真实项目需要补 boolean emboss/engrave 贴合或字体参数扩展；阶段 4 发布收口项已完成
+- [x] 字体参数扩展与真实字体轮廓 emboss/engrave marker 已完成；solid boolean text union/subtraction 归入长期 CAD roadmap，不作为阶段 4/5 发布阻塞项。
 
 ### ✅ 阶段 5 — Expert Mode v1（发布收口完成）
 
 允许受限脚本生成 JSON DSL，而非直接手写 DSL。形态：
-- 允许：变量、函数、for 循环、数组、map、数学/向量 helper、seeded random、批量 component_instance
+- 允许：变量、函数、for 循环、数组、map/filter/flatMap/reduce、数学/向量 helper、seeded random、批量 component_instance
 - 禁止：文件系统、网络、shell、import/require、eval、直接调用 SketchUp API、无限循环、超大 op 数
 
 **已完成：**
 - `src/expert-compiler.mjs`：基于 `acorn` parse 的 AST 白名单解释器，不执行原始脚本；脚本最后一个表达式必须输出 `operations` 数组或 `{ version, units, operations }`
 - CLI/bridge：`compile_expert` 可输出标准 JSON DSL，`build_expert_model` 先编译再复用现有 `build_model`
 - MCP tool 面：stdio server 的 `tools/list` 暴露 `compile_expert` / `build_expert_model`，`tools/call` 走同一 bridge 方法
-- 内置 helper：`range`、seeded `random`/`rand`、`vec.add/sub/scale/mid/lerp`、白名单 `Math` 函数、`dsl`
+- 内置 helper：`range`、seeded `random`/`rand`、`clamp`、`lerp`、`rad`、`deg`、`vec.add/sub/scale/mid/lerp/dot/cross/length/distance/norm/normalize`、扩展白名单 `Math` 函数、`dsl`
 - 限制：`maxOperations`、`maxLoopIterations`、`maxStatements`、`maxOutputBytes`、`expertTimeoutMs`
 - `examples/expert-parametric-fixture.js`：参数化底板 + component definition + 3x4 component instance 阵列 + `text_3d`
 - `test/expert-compiler.mjs`：覆盖编译、mock build、seed 稳定性和拒绝 `require` / 超 loop / 超 op / 缺 required field / component 内非法 op / `while`
@@ -177,7 +178,7 @@
 - Expert QA 验证：`qa:expert:mock` Verdict `pass`，19 compiled ops、562 faces / 1548 edges / 2 groups / 12 instances、warnings 0；`qa:expert:queue` Verdict `pass`，19 compiled ops、739 faces / 2079 edges / 1386 vertices / 2 groups / 12 instances、warnings 0，SKP artifact `207147` bytes
 
 **待做：**
-- [ ] 根据真实样例补更多白名单 helper，而不是放宽到任意 JS 执行
+- [x] 已按真实参数化样例补更多白名单 helper；后续新增仍按 helper 白名单演进，不放宽到任意 JS 执行。
 
 ### 🔄 阶段 6 — 发布级收口（部分开始）
 
@@ -201,17 +202,18 @@
 
 | 优先级 | 任务 | 原因 |
 |---|---|---|
-| **P1** | Transform 后续 | 模型空间任意轴、对象本地轴、模型空间 4x4 matrix、连续 chain、`local_matrix` 与 matrix decomposition 均已通过 group/component instance mock/queue；后续只剩更复杂分解语义按需补 |
-| **P1** | 拆分大 runtime 文件 | JS mock runtime 与 Ruby queue runtime 主边界/operation-family 边界已拆出；后续只剩更细粒度整理或提交切片 |
-| **P1** | Queue 发布收口 | 手动验收清单、troubleshooting、性能基准、SKP size 阈值、串行锁和 release packaging 已固化；后续做提交切片 |
-| **P2** | Expert Mode v1 后续 | 按真实样例补更多白名单 helper |
+| **done** | Transform 后续 | 模型空间任意轴、对象本地轴、模型空间 4x4 matrix、连续 chain、`local_matrix`、matrix decomposition、Euler/非仿射报告均已收口 |
+| **done** | 拆分大 runtime 文件 | JS mock runtime 与 Ruby queue runtime 主边界/operation-family 边界已拆出，当前无阶段 6 前阻塞项 |
+| **done** | Queue 发布收口 | 手动验收清单、troubleshooting、性能基准、SKP size 阈值、串行锁和 release packaging 已固化 |
+| **done** | Expert Mode v1 后续 | 已按真实样例补数组/数学/向量白名单 helper |
 | **P2** | Image-to-structured-model 泛化 | 上游图片理解子项目已有 Switch baseline，下一步是 correction loop 和第二样例 |
-| **P3** | 完整布尔 / manifold | 通用 CAD 能力，当前用安全 slice 替代 |
+| **roadmap** | 完整布尔 / manifold | 通用 CAD 内核级能力，当前用安全 slice 和真实 font-outline marker 替代，不作为阶段 6 前阻塞项 |
 
 ---
 
 ## 5. 最近的验证记录
 
+- **2026-05-25**：阶段 2-5 非阶段 6 发布级残项收口：`transform_object` matrix/local_matrix decomposition 新增 affine/non-affine reasons、homogeneous perspective terms 和 Euler XYZ degrees；`text_emboss` / `text_engrave` 新增 `mode: "font_outline"` / `outline: true`，queue runtime 复用 SketchUp `Entities#add_3d_text` 生成真实字体轮廓 marker，mock runtime 回传稳定 bbox 与 `Text3D` metadata；Expert Mode 新增 `Array.filter/flatMap/reduce/concat`、`clamp`、`lerp`、`rad`、`deg`、扩展 `Math` 白名单与 `vec.dot/cross/length/distance/norm/normalize` helper。manifest 推进到 `2026-05-phase5-closeout-slice`，runtime capability 推进到 `0.1.0-capabilities.3`，插件版本推进到 `queue-plugin-0.1.0-phase5-closeout.1`。已通过 `npm test`、`npm run qa:mock`、`npm run qa:budget:mock`、`npm run qa:expert:mock`、`npm run plugin:check`、`npm run plugin:install`、`node src/cli.mjs get_capabilities --runtime mock`、`examples/text-3d-slice.json` mock 构建 warnings 0 和 `git diff --check`；当前 `get_capabilities --runtime queue` 10s timeout，需 SketchUp 重新加载已安装的新插件后复验。
 - **2026-05-25**：阶段 5 Expert Mode v1 发布收口完成：新增 `scripts/generate-expert-qa-reports.mjs` 与 `npm run qa:expert:mock` / `npm run qa:expert:queue`，报告覆盖 Expert 编译、runtime build、artifact 保存、runtime compatibility、warnings 和预算。`npm test` 通过；`qa:expert:mock` 输出 `output/qa-reports/expert-mock/index.md`，Verdict `pass`，19 compiled ops、562 faces / 1548 edges / 2 groups / 12 instances、warnings 0、artifact JSON 53663 bytes；`qa:expert:queue` 输出 `output/qa-reports/expert-queue/index.md`，Verdict `pass`，19 compiled ops、739 faces / 2079 edges / 1386 vertices / 2 groups / 12 instances、warnings 0、SKP artifact 207147 bytes，实际文件位于 `output/qa-reports/expert-queue/artifacts/expert-parametric-fixture.skp`。
 - **2026-05-25**：阶段 5 MCP tool 面完成：`src/mcp-server.mjs` 暴露 `compile_expert` / `build_expert_model`，MCP tools 数量从 7 增至 9；新增 `test/mcp-server.mjs` 启动真实 stdio MCP server 子进程，验证 `tools/list` 中的新工具 schema，并通过 `tools/call` 跑通 `compile_expert` 与 mock `build_expert_model`。
 - **2026-05-24**：`text_3d` 收口完成：manifest 推进到 `2026-05-phase4-text-3d-slice` / capability `0.1.0-capabilities.2`，Ruby 插件版本推进到 `queue-plugin-0.1.0-text-3d.1`。新增 `text_3d` operation、mock bbox/`Text3D` metadata、Ruby queue `Entities#add_3d_text` 实现、component_definition dispatch、`examples/text-3d-slice.json` 和文档/status 同步。已通过 `node --check`、Ruby syntax、`npm test`、`npm run qa:mock`、`npm run plugin:check`、`git diff --check`、`node src/cli.mjs get_capabilities --runtime mock`；contract 输出 manifest/mock/Ruby dispatch 均 64，component_definition registry/dispatch 均 42。安装并重启 SketchUp 后，live `get_capabilities` 回报 `queue-plugin-0.1.0-text-3d.1`、compatibility `ok`、issues 为空；`examples/text-3d-slice.json` queue 构建成功，主文字 snapshot 为 `kind: text_3d`、153 faces / 423 edges、warnings 0；`npm run qa:queue` 9/9 pass，`npm run qa:budget:queue` 4/4 pass。

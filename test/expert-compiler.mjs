@@ -22,6 +22,27 @@ assert.deepEqual(firstInstance.origin, [30, 35, 0]);
 assert.ok(Math.abs(firstInstance.transform.translate[0] - -0.5224383203312755) < 1e-12);
 assert.ok(Math.abs(firstInstance.transform.translate[1] - 0.8269865293987095) < 1e-12);
 
+const helperSource = `
+const indexes = range(6).filter((index) => index % 2 === 0).flatMap((index) => [index, index + 1]);
+const total = indexes.reduce((sum, value) => sum + value, 0);
+const axis = vec.norm(vec.cross([1, 0, 0], [0, 1, 0]));
+const span = vec.distance([0, 0, 0], [3, 4, 12]);
+const angle = deg(Math.atan2(1, 1));
+[
+  {
+    op: "box",
+    name: \`Expert_Helper_\${indexes.length}_\${total}\`,
+    origin: vec.add([0, 0, 0], vec.scale(axis, 5)),
+    size: [lerp(10, 20, 0.5), clamp(span * 2, 1, 20), rad(angle * 4) / Math.PI]
+  }
+];
+`;
+const helperCompiled = compileExpertScript(helperSource, { seed: 7 });
+assert.equal(helperCompiled.document.operations.length, 1);
+assert.equal(helperCompiled.document.operations[0].name, 'Expert_Helper_6_15');
+assert.deepEqual(helperCompiled.document.operations[0].origin, [0, 0, 5]);
+assert.deepEqual(helperCompiled.document.operations[0].size, [15, 20, 1]);
+
 const bridge = new SketchUpBridge();
 const built = await bridge.build_expert_model({ code: exampleSource, runtime: 'mock', seed: 7 });
 assert.equal(built.compiled.expert.operations, 19);
@@ -36,6 +57,7 @@ assertRejectsExpert('const ops = []; for (let i = 0; i < 4; i += 1) { ops.push({
 assertRejectsExpert('const ops = [{ op: "box" }]; ops;', /missing required field: name/);
 assertRejectsExpert('const ops = [{ op: "scene", name: "Bad", camera: {} }]; dsl([{ op: "component_definition", name: "Bad_Def", operations: ops }]);', /not supported inside component_definition: scene/);
 assertRejectsExpert('while (true) {}', /Unsupported statement syntax: WhileStatement/);
+assertRejectsExpert('vec.norm([0, 0, 0]); []', /non-zero vector/);
 
 console.log(JSON.stringify({
   ok: true,

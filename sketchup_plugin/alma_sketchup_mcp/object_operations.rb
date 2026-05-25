@@ -253,20 +253,63 @@ module AlmaSketchupMCP
     x_axis = normalize_matrix_axis(x_column)
     y_axis = normalize_matrix_axis(y_column)
     z_axis = normalize_matrix_axis(z_column)
+    shear = {
+      'xy' => vector_dot(x_axis, y_axis),
+      'xz' => vector_dot(x_axis, z_axis),
+      'yz' => vector_dot(y_axis, z_axis)
+    }
+    non_affine_reasons = transform_matrix_non_affine_reasons(values)
+    rotation_compatible = non_affine_reasons.empty? &&
+                          determinant.abs > 1e-12 &&
+                          shear.values.all? { |value| value.abs <= 1e-6 } &&
+                          determinant.positive?
     {
       'translate' => [values[12], values[13], values[14]],
       'scale' => [vector_length(x_column), vector_length(y_column), vector_length(z_column)],
       'x_axis' => x_axis,
       'y_axis' => y_axis,
       'z_axis' => z_axis,
-      'shear' => {
-        'xy' => vector_dot(x_axis, y_axis),
-        'xz' => vector_dot(x_axis, z_axis),
-        'yz' => vector_dot(y_axis, z_axis)
-      },
+      'shear' => shear,
       'determinant' => determinant,
-      'mirrored' => determinant.negative?
+      'mirrored' => determinant.negative?,
+      'affine' => non_affine_reasons.empty?,
+      'non_affine_reasons' => non_affine_reasons,
+      'homogeneous' => {
+        'perspective' => [values[3], values[7], values[11]],
+        'w' => values[15]
+      },
+      'rotation_euler_order' => rotation_compatible ? 'XYZ' : nil,
+      'rotation_euler_degrees' => rotation_compatible ? euler_xyz_degrees_from_axes(x_axis, y_axis, z_axis) : nil
     }
+  end
+
+  def transform_matrix_non_affine_reasons(values)
+    reasons = []
+    reasons << 'perspective_terms' if values.values_at(3, 7, 11).any? { |value| value.abs > 1e-9 }
+    reasons << 'homogeneous_w_not_one' if (values[15] - 1).abs > 1e-9
+    reasons
+  end
+
+  def euler_xyz_degrees_from_axes(x_axis, y_axis, z_axis)
+    r = [
+      [x_axis[0], y_axis[0], z_axis[0]],
+      [x_axis[1], y_axis[1], z_axis[1]],
+      [x_axis[2], y_axis[2], z_axis[2]]
+    ]
+    sy = [[r[0][2], -1.0].max, 1.0].min
+    y = Math.asin(sy)
+    if Math.cos(y).abs > 1e-9
+      x = Math.atan2(-r[1][2], r[2][2])
+      z = Math.atan2(-r[0][1], r[0][0])
+    else
+      x = Math.atan2(r[2][1], r[1][1])
+      z = 0.0
+    end
+    [x, y, z].map { |radians| normalize_small_number(radians * 180.0 / Math::PI) }
+  end
+
+  def normalize_small_number(value)
+    value.abs <= 1e-9 ? 0.0 : value
   end
 
   def normalize_matrix_axis(axis)
