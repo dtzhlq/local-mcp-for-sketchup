@@ -42,7 +42,7 @@
 
 | 文件 | 职责 |
 |---|---|
-| `src/mcp-server.mjs` | stdio MCP server，暴露 7 个工具 |
+| `src/mcp-server.mjs` | stdio MCP server，暴露 9 个工具 |
 | `src/bridge.mjs` | 工具路由层，mock/queue 分发、runtime descriptor 附加、compatibility check 和 bridge 生命周期内 descriptor cache |
 | `src/mock-runtime.mjs` | 离线 runtime，解析 DSL operation → 调用 material / primitive / profile / surface / product / architecture / component / view / object operation modules |
 | `src/queue-runtime.mjs` | 队列 runtime，写 JSON 请求到 `~/.sketchup-mcp-replica/queue/` |
@@ -85,6 +85,7 @@
 | `docs/release-checklist.md` | 发布检查、插件安装、queue 回归、RBZ 打包和提交切片建议 |
 | `test/mock-validation.mjs` | 离线回归测试 |
 | `test/expert-compiler.mjs` | Expert Mode v1 编译、mock build 和安全拒绝测试 |
+| `test/mcp-server.mjs` | stdio MCP server tools/list 和 tools/call 回归测试 |
 | `test/queue-runtime-lock.mjs` | queue runtime 跨进程串行锁和 timeout 清理测试 |
 | `scripts/generate-ruby-operation-registry.mjs` | 从 JS operation registry 生成 Ruby runtime contract 表 |
 | `scripts/generate-qa-reports.mjs` | 批量 golden example mock/queue 对照 |
@@ -164,14 +165,15 @@
 **已完成：**
 - `src/expert-compiler.mjs`：基于 `acorn` parse 的 AST 白名单解释器，不执行原始脚本；脚本最后一个表达式必须输出 `operations` 数组或 `{ version, units, operations }`
 - CLI/bridge：`compile_expert` 可输出标准 JSON DSL，`build_expert_model` 先编译再复用现有 `build_model`
+- MCP tool 面：stdio server 的 `tools/list` 暴露 `compile_expert` / `build_expert_model`，`tools/call` 走同一 bridge 方法
 - 内置 helper：`range`、seeded `random`/`rand`、`vec.add/sub/scale/mid/lerp`、白名单 `Math` 函数、`dsl`
 - 限制：`maxOperations`、`maxLoopIterations`、`maxStatements`、`maxOutputBytes`、`expertTimeoutMs`
 - `examples/expert-parametric-fixture.js`：参数化底板 + component definition + 3x4 component instance 阵列 + `text_3d`
 - `test/expert-compiler.mjs`：覆盖编译、mock build、seed 稳定性和拒绝 `require` / 超 loop / 超 op / 缺 required field / component 内非法 op / `while`
+- `test/mcp-server.mjs`：启动真实 stdio MCP server 子进程，验证 `tools/list` 与 `tools/call compile_expert/build_expert_model`
 - live queue 单例：SketchUp Bridge 重启后 `get_capabilities --runtime queue` compatibility `ok`；`build_expert_model --runtime queue --code-file examples/expert-parametric-fixture.js --seed 7` 构建成功，输出 `output/expert-parametric-queue.json`，snapshot 为 739 faces / 2079 edges / 1386 vertices / 2 groups / 12 instances，warnings 0
 
 **待做：**
-- [ ] MCP tool 面：`compile_expert` / `build_expert_model`
 - [ ] 可选 `qa:expert:mock` / `qa:expert:queue` 脚本
 - [ ] 根据真实样例补更多白名单 helper，而不是放宽到任意 JS 执行
 
@@ -200,7 +202,7 @@
 | **P1** | Transform 后续 | 模型空间任意轴、对象本地轴、模型空间 4x4 matrix、连续 chain、`local_matrix` 与 matrix decomposition 均已通过 group/component instance mock/queue；后续只剩更复杂分解语义按需补 |
 | **P1** | 拆分大 runtime 文件 | JS mock runtime 与 Ruby queue runtime 主边界/operation-family 边界已拆出；后续只剩更细粒度整理或提交切片 |
 | **P1** | Queue 发布收口 | 手动验收清单、troubleshooting、性能基准、SKP size 阈值、串行锁和 release packaging 已固化；后续做提交切片 |
-| **P2** | Expert Mode v1 后续 | MCP tool 面与 `qa:expert:*` |
+| **P2** | Expert Mode v1 后续 | `qa:expert:*` 和更多真实样例 helper |
 | **P2** | Image-to-structured-model 泛化 | 上游图片理解子项目已有 Switch baseline，下一步是 correction loop 和第二样例 |
 | **P3** | 完整布尔 / manifold | 通用 CAD 能力，当前用安全 slice 替代 |
 
@@ -209,6 +211,7 @@
 ## 5. 最近的验证记录
 
 - **2026-05-24**：`text_3d` 收口完成：manifest 推进到 `2026-05-phase4-text-3d-slice` / capability `0.1.0-capabilities.2`，Ruby 插件版本推进到 `queue-plugin-0.1.0-text-3d.1`。新增 `text_3d` operation、mock bbox/`Text3D` metadata、Ruby queue `Entities#add_3d_text` 实现、component_definition dispatch、`examples/text-3d-slice.json` 和文档/status 同步。已通过 `node --check`、Ruby syntax、`npm test`、`npm run qa:mock`、`npm run plugin:check`、`git diff --check`、`node src/cli.mjs get_capabilities --runtime mock`；contract 输出 manifest/mock/Ruby dispatch 均 64，component_definition registry/dispatch 均 42。安装并重启 SketchUp 后，live `get_capabilities` 回报 `queue-plugin-0.1.0-text-3d.1`、compatibility `ok`、issues 为空；`examples/text-3d-slice.json` queue 构建成功，主文字 snapshot 为 `kind: text_3d`、153 faces / 423 edges、warnings 0；`npm run qa:queue` 9/9 pass，`npm run qa:budget:queue` 4/4 pass。
+- **2026-05-25**：阶段 5 MCP tool 面完成：`src/mcp-server.mjs` 暴露 `compile_expert` / `build_expert_model`，MCP tools 数量从 7 增至 9；新增 `test/mcp-server.mjs` 启动真实 stdio MCP server 子进程，验证 `tools/list` 中的新工具 schema，并通过 `tools/call` 跑通 `compile_expert` 与 mock `build_expert_model`。
 - **2026-05-24**：阶段 5 Expert Mode v1 第一切片完成：新增 `src/expert-compiler.mjs`、`examples/expert-parametric-fixture.js`、`docs/expert-mode.md` 和 `test/expert-compiler.mjs`，并在 bridge/CLI 增加 `compile_expert` / `build_expert_model`。当前 compiler 使用 AST 白名单解释器，支持变量、函数、`for` / `for...of`、`Array.map`、`range`、seeded random、`vec` helper 和白名单 `Math`，输出标准 JSON DSL 后复用现有 mock/queue runtime。`node test/expert-compiler.mjs` 已验证 19 个 operations、12 个 component instances、2 个 groups、0 warnings，并覆盖拒绝 `require`、超 loop/operation limit、缺 required field、component_definition 内非法 op 和 `while`。SketchUp Bridge 重启后，live `get_capabilities` 回报 `queue-plugin-0.1.0-text-3d.1`、compatibility `ok`、issues 为空；`build_expert_model --runtime queue --code-file examples/expert-parametric-fixture.js --seed 7` 成功，queue snapshot 为 739 faces / 2079 edges / 1386 vertices / 2 groups / 12 instances、warnings 0，`Expert_Parametric_Label` 为真实 `text_3d`，277 faces / 771 edges。
 - **2026-05-23**：`transform_object` matrix decomposition live queue 收口：mock `matrix` / `local_matrix` snapshot 追加 `matrix_decomposition` / `local_matrix_decomposition`，Ruby queue runtime 写入同构 `transform.object_transform` metadata，覆盖 translation、basis axes、scale、shear、determinant 和 mirrored；manifest `2026-05-phase2-matrix-decomposition-slice` 与插件 `queue-plugin-0.1.0-transform-matrix-decomposition.1` live `get_capabilities` compatibility `ok`、issues 为空。已通过 `node --check`、Ruby syntax、`npm test`、`npm run qa:mock`、`npm run qa:budget:mock`、`npm run plugin:check`、`npm run plugin:install`、`npm run plugin:package`、`examples/transform-local-matrix.json` queue 单例 diff 0、`npm run qa:queue` 9/9 pass、`npm run qa:budget:queue` 4/4 pass。
 - **2026-05-23**：Bridge runtime descriptor cache 完成：显式 `get_capabilities` 继续强制 live handshake，普通 `reset_model` / `build_model` / `save_model` 在同一 `SketchUpBridge` 生命周期内复用已验证 descriptor，避免长批量 queue 回归中重复 capability handshake 偶发 timeout；新增测试覆盖 cache 复用和显式刷新。

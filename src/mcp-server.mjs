@@ -6,6 +6,15 @@ import { compareSnapshots } from './snapshot-diff.mjs';
 const bridge = new SketchUpBridge();
 const rl = readline.createInterface({ input: process.stdin, crlfDelay: Infinity });
 
+const expertOptionProperties = {
+  seed: { type: 'number', description: 'Seed for deterministic Expert Mode random helpers.' },
+  maxOperations: { type: 'number', description: 'Maximum number of generated DSL operations.' },
+  maxLoopIterations: { type: 'number', description: 'Maximum total loop iterations during Expert Mode compilation.' },
+  maxStatements: { type: 'number', description: 'Maximum interpreted statement/expression steps during Expert Mode compilation.' },
+  maxOutputBytes: { type: 'number', description: 'Maximum compiled JSON DSL output size in bytes.' },
+  expertTimeoutMs: { type: 'number', description: 'Expert Mode compiler timeout in milliseconds.' }
+};
+
 const tools = [
   {
     name: 'get_docs',
@@ -29,6 +38,32 @@ const tools = [
         code: { type: 'string', description: 'JSON DSL string.' },
         runtime: { type: 'string', enum: ['mock', 'queue'], default: 'mock' },
         timeoutMs: { type: 'number' }
+      },
+      required: ['code']
+    }
+  },
+  {
+    name: 'compile_expert',
+    description: 'Compile a restricted Expert Mode script into the safe JSON DSL without building geometry.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        code: { type: 'string', description: 'Expert Mode script string.' },
+        ...expertOptionProperties
+      },
+      required: ['code']
+    }
+  },
+  {
+    name: 'build_expert_model',
+    description: 'Compile a restricted Expert Mode script into JSON DSL, then build it with the selected runtime.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        code: { type: 'string', description: 'Expert Mode script string.' },
+        runtime: { type: 'string', enum: ['mock', 'queue'], default: 'mock' },
+        timeoutMs: { type: 'number', description: 'Runtime timeout in milliseconds.' },
+        ...expertOptionProperties
       },
       required: ['code']
     }

@@ -91,6 +91,14 @@ node src/cli.mjs build_expert_model --runtime queue --timeout-ms 60000 --code-fi
 
 ## 下一切片
 
-- 暴露 MCP tool：`compile_expert` / `build_expert_model`
 - 可选加入 `qa:expert:mock` / `qa:expert:queue`
 - 根据真实样例补更多白名单 helper，而不是放宽到任意 JS 执行
+
+## MCP 工具
+
+stdio MCP server 已暴露：
+
+- `compile_expert`：输入 Expert Mode script，返回编译后的 JSON DSL 文档和 compiler metadata
+- `build_expert_model`：输入 Expert Mode script，先编译为 JSON DSL，再用 `mock` 或 `queue` runtime 构建模型
+
+`test/mcp-server.mjs` 会启动真实 `src/mcp-server.mjs` 子进程，验证 `tools/list` 和 `tools/call` 路径。
