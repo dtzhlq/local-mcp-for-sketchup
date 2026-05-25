@@ -74,12 +74,33 @@ CLI 参数：
 
 ## 验证
 
-当前第一切片由 `test/expert-compiler.mjs` 覆盖：
+当前第一切片由 `test/expert-compiler.mjs` 和 Expert QA 脚本覆盖：
 
 - 参数化 fixture 编译为 19 个 DSL operations
 - `range().map(...)`、函数、双层 `for`、seeded random 和 `vec` helper
 - mock 构建后得到 12 个 component instances、2 个 groups、0 warnings
 - 拒绝 `require`、超 loop limit、超 operation limit、缺 required field、component_definition 内嵌不支持的 op 和 `while`
+
+发布回归命令：
+
+```bash
+npm run qa:expert:mock
+npm run qa:expert:queue
+```
+
+输出：
+
+```text
+output/qa-reports/expert-mock/index.md
+output/qa-reports/expert-queue/index.md
+```
+
+每个报告检查 Expert 编译、runtime build、artifact 保存、runtime compatibility、snapshot warnings 和基础预算。mock artifact 保存为 JSON，queue artifact 保存为 SKP。
+
+当前验证结果：
+
+- `qa:expert:mock` Verdict `pass`：19 compiled ops，562 faces / 1548 edges / 2 groups / 12 instances，warnings 0，artifact JSON 53663 bytes。
+- `qa:expert:queue` Verdict `pass`：19 compiled ops，739 faces / 2079 edges / 1386 vertices / 2 groups / 12 instances，warnings 0，SKP artifact 207147 bytes。
 
 SketchUp Bridge 重启后，live queue 单例也已通过：
 
@@ -89,9 +110,8 @@ node src/cli.mjs build_expert_model --runtime queue --timeout-ms 60000 --code-fi
 
 验证结果：编译 19 个 operations，queue snapshot 为 739 faces / 2079 edges / 1386 vertices / 2 groups / 12 instances，warnings 0；`Expert_Parametric_Label` 为真实 `text_3d`，277 faces / 771 edges。
 
-## 下一切片
+## 后续扩展
 
-- 可选加入 `qa:expert:mock` / `qa:expert:queue`
 - 根据真实样例补更多白名单 helper，而不是放宽到任意 JS 执行
 
 ## MCP 工具

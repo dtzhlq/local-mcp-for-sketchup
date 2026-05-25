@@ -1,6 +1,6 @@
 # Release Checklist
 
-更新时间：2026-05-24
+更新时间：2026-05-25
 
 本清单用于把当前本地 replica 收成可安装、可回归、可打包的 release slice。
 
@@ -10,6 +10,7 @@
 npm run plugin:check
 npm test
 npm run qa:mock
+npm run qa:expert:mock
 npm run qa:budget:mock
 git diff --check
 ```
@@ -20,7 +21,7 @@ git diff --check
 - Operation contract 输出 manifest / mock / Ruby dispatch 为 `64 / 64 / 64`，component registry / dispatch 为 `42 / 42`。
 - Expert Mode fixture 编译和 mock build 通过，且安全拒绝场景由 `test/expert-compiler.mjs` 覆盖。
 - MCP stdio server 的 `tools/list` 和 `tools/call compile_expert/build_expert_model` 由 `test/mcp-server.mjs` 覆盖。
-- mock QA 与 mock budget 均 Verdict `pass`。
+- mock QA、Expert mock QA 与 mock budget 均 Verdict `pass`。
 
 ## 2. 安装 SketchUp 插件
 
@@ -51,6 +52,7 @@ node src/cli.mjs get_capabilities --runtime queue --timeout-ms 10000
 
 ```bash
 npm run qa:queue
+npm run qa:expert:queue
 npm run qa:budget:queue
 ```
 
@@ -59,6 +61,7 @@ npm run qa:budget:queue
 通过标准：
 
 - `output/qa-reports/queue/index.md` Verdict `pass`，9 个默认样例 Total Diffs 为 `0`。
+- `output/qa-reports/expert-queue/index.md` Verdict `pass`，Expert fixture 编译、queue 构建、SKP artifact 保存、runtime compatibility、warnings 和基础预算均通过。
 - `output/performance-budgets/queue/index.md` Verdict `pass`，四个发布样例低于默认 face / edge / vertex / group / instance / SKP size budget。
 
 ## 4. 打包 RBZ

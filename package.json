@@ -21,6 +21,8 @@
     "plugin:package": "npm run registry:check && node scripts/package-sketchup-plugin.mjs --check --package",
     "qa:mock": "node scripts/generate-qa-reports.mjs --expected-runtime mock --actual-runtime mock --output-dir output/qa-reports/mock",
     "qa:queue": "node scripts/generate-qa-reports.mjs --expected-runtime mock --actual-runtime queue --timeout-ms 180000 --face-tolerance 1 --edge-tolerance 3 --output-dir output/qa-reports/queue",
+    "qa:expert:mock": "node scripts/generate-expert-qa-reports.mjs --runtime mock --output-dir output/qa-reports/expert-mock",
+    "qa:expert:queue": "node scripts/generate-expert-qa-reports.mjs --runtime queue --timeout-ms 180000 --output-dir output/qa-reports/expert-queue",
     "qa:budget:mock": "node scripts/run-performance-budgets.mjs --runtime mock --output-dir output/performance-budgets/mock",
     "qa:budget:queue": "node scripts/run-performance-budgets.mjs --runtime queue --timeout-ms 180000 --output-dir output/performance-budgets/queue",
     "qa:identity:mock": "node scripts/generate-qa-reports.mjs --example examples/editing-identity.json --expected-runtime mock --actual-runtime mock --output-dir output/qa-reports/identity-mock",
