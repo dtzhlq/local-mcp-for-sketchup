@@ -98,6 +98,8 @@ observations.json -> model-plan.json -> output.json -> review/index.html -> mock
   - `examples/compact-remote/review/index.html`
   - `examples/compact-remote/review/snapshot-report.json`
   - 当前 mock snapshot：`11 groups`、`529 faces`、`1234 edges`、`452 vertices`、`2 scenes`，bbox `44 x 158 x 15.85 mm`，warnings 0。
+  - 当前 queue snapshot：`11 groups`、`544 faces`、`1279 edges`、`766 vertices`、`2 scenes`，bbox `44 x 158 x 15.85 mm`，SKP `188104 bytes`，仅 3 个已分类 `queue_material_limitation` warning。
+  - 当前 mock/queue diff：report `ok`，warning gate `pass`；拓扑计数存在 mock 估算与 SketchUp 真实几何差异，level 为 `warn`。
 
 ## 已完成
 

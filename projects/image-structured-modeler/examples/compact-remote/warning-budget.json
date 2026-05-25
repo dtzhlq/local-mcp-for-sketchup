@@ -9,7 +9,11 @@
     "queue": {
       "max_error_warnings": 0,
       "max_needs_review": 0,
-      "buckets": {}
+      "buckets": {
+        "queue_material_limitation": {
+          "exact_total": 3
+        }
+      }
     }
   },
   "diffs": {
