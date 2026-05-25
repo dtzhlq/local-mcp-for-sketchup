@@ -3,6 +3,7 @@
   "object": {
     "type": "game_controller",
     "name": "Switch Joy-Con Grip Controller",
+    "profile": "switch_controller",
     "source_images": [
       "test/手柄/IMG_0152.jpeg",
       "test/手柄/IMG_0153.jpeg",

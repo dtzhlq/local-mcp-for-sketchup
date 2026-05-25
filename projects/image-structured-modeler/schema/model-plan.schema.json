@@ -12,6 +12,7 @@
       "properties": {
         "type": { "type": "string", "examples": ["game_controller", "tent", "furniture", "gadget"] },
         "name": { "type": "string" },
+        "profile": { "enum": ["switch_controller", "compact_remote"] },
         "source_images": { "type": "array", "items": { "type": "string" } }
       }
     },
@@ -93,6 +94,9 @@
           "uncertainty": {
             "type": "array",
             "items": { "type": "string" }
+          },
+          "status": {
+            "enum": ["visually_detected", "inferred", "manually_confirmed"]
           }
         }
       }

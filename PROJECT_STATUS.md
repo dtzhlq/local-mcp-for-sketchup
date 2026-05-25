@@ -1,7 +1,7 @@
 # SketchUp MCP Replica — 项目状态与计划
 
 > 更新日期：2026-05-25
-> 当前状态：阶段 2-5 非阶段 6 发布级残项已收口；阶段 6 只剩 image-to-structured 泛化验证
+> 当前状态：阶段 2-6 发布级收口完成；后续进入 roadmap / polish
 
 ---
 
@@ -180,7 +180,7 @@
 **待做：**
 - [x] 已按真实参数化样例补更多白名单 helper；后续新增仍按 helper 白名单演进，不放宽到任意 JS 执行。
 
-### 🔄 阶段 6 — 发布级收口（部分开始）
+### ✅ 阶段 6 — 发布级收口（已完成）
 
 **已有：**
 - Golden examples（architecture / product / structured-helpers / editing-transform-profile / profile-edge-cases / transform-chain-regression / metadata-organization / appearance-texture / text-3d / expert-parametric）
@@ -192,9 +192,12 @@
 - Queue runtime 串行锁：Node 侧使用 `~/.sketchup-mcp-replica/queue-runtime.lock` 防止多个 queue 命令互相插入
 - Mock regression + queue QA 报告
 - Image-to-structured Switch controller baseline：mock/queue snapshot report、warning budget、0 geometry warning、mock/queue diff pass
+- Image-to-structured correction-driven regression：`manual-corrections.regression.json` 会验证人工修正进入 model plan 和 compiled DSL
+- Image-to-structured 第二产品样例：`examples/compact-remote` 通过 `object_profile` 走独立生成/编译路径，并生成 review + mock snapshot，warnings 0
 
-**待做：**
-- [ ] Image-to-structured-model correction-driven regression、第二产品样例和泛化验证
+**后续 polish：**
+- [ ] Review/corrections authoring 工作台
+- [ ] 第三产品样例和更完整 part taxonomy
 
 ---
 
@@ -206,7 +209,7 @@
 | **done** | 拆分大 runtime 文件 | JS mock runtime 与 Ruby queue runtime 主边界/operation-family 边界已拆出，当前无阶段 6 前阻塞项 |
 | **done** | Queue 发布收口 | 手动验收清单、troubleshooting、性能基准、SKP size 阈值、串行锁和 release packaging 已固化 |
 | **done** | Expert Mode v1 后续 | 已按真实样例补数组/数学/向量白名单 helper |
-| **P2** | Image-to-structured-model 泛化 | 上游图片理解子项目已有 Switch baseline，下一步是 correction loop 和第二样例 |
+| **done** | Image-to-structured-model 泛化 | correction loop 第一条回归和 compact remote 第二产品样例已纳入 `npm run test:image-structured` |
 | **roadmap** | 完整布尔 / manifold | 通用 CAD 内核级能力，当前用安全 slice 和真实 font-outline marker 替代，不作为阶段 6 前阻塞项 |
 
 ---
@@ -214,6 +217,7 @@
 ## 5. 最近的验证记录
 
 - **2026-05-25**：阶段 2-5 非阶段 6 发布级残项收口：`transform_object` matrix/local_matrix decomposition 新增 affine/non-affine reasons、homogeneous perspective terms 和 Euler XYZ degrees；`text_emboss` / `text_engrave` 新增 `mode: "font_outline"` / `outline: true`，queue runtime 复用 SketchUp `Entities#add_3d_text` 生成真实字体轮廓 marker，mock runtime 回传稳定 bbox 与 `Text3D` metadata；Expert Mode 新增 `Array.filter/flatMap/reduce/concat`、`clamp`、`lerp`、`rad`、`deg`、扩展 `Math` 白名单与 `vec.dot/cross/length/distance/norm/normalize` helper。manifest 推进到 `2026-05-phase5-closeout-slice`，runtime capability 推进到 `0.1.0-capabilities.3`，插件版本推进到 `queue-plugin-0.1.0-phase5-closeout.1`。已通过 `npm test`、`npm run qa:mock`、`npm run qa:budget:mock`、`npm run qa:expert:mock`、`npm run plugin:check`、`npm run plugin:install`、`node src/cli.mjs get_capabilities --runtime mock`、`examples/text-3d-slice.json` mock 构建 warnings 0 和 `git diff --check`。SketchUp 重新加载插件后 live `get_capabilities --runtime queue` 回报 `queue-plugin-0.1.0-phase5-closeout.1`、compatibility `ok`、issues 为空；`examples/text-3d-slice.json` queue 单例成功，350 faces / 966 edges / 644 vertices / 4 groups / 1 instance、warnings 0，font-outline `Text3D_Outline_Emboss` 与 `Text3D_Outline_Engrave` 均回传 `mode: font_outline` attributes；transform decomposition queue 单例成功，Euler matrix 回传 `rotation_euler_degrees: [0, 0, 90]`，非仿射 matrix 回传 `non_affine_reasons: ["perspective_terms", "homogeneous_w_not_one"]`；`npm run qa:queue` 9/9 pass，`npm run qa:budget:queue` 4/4 pass，`npm run qa:expert:queue` pass，Expert queue artifact 167726 bytes。
+- **2026-05-25**：阶段 6 Image Structured Modeler 收口完成：`generate-model-plan.mjs` / `compile-plan-to-sketchup-dsl.mjs` 新增 `object_profile` 分流，Switch 保持现有 profile，新增 `compact_remote` 第二产品样例；新增 `examples/switch-controller/manual-corrections.regression.json`，`npm run test:image-structured` 会断言人工修正移动左摇杆、调整按钮数量，并同步改变 compiled DSL；新增 `examples/compact-remote` observations/manual corrections/model-plan/output/review/mock snapshot/warning budget，当前 mock snapshot 为 11 groups / 529 faces / 1234 edges / 452 vertices / 2 scenes，bbox `44 x 158 x 15.85 mm`，warnings 0。已通过 `node --check` 三个改动脚本、`npm run image-structured:build-remote`、Switch generate/compile/review/snapshot refresh、`npm run test:image-structured`、`npm test`、`npm run qa:mock`、`npm run qa:budget:mock`、`npm run plugin:check`、`git diff --check`。本轮尝试 `node src/cli.mjs get_capabilities --runtime queue --timeout-ms 10000` 超时，未新增 compact remote queue artifact；此前阶段 5 queue release gates 仍保留为最近 live queue 记录。
 - **2026-05-25**：阶段 5 Expert Mode v1 发布收口完成：新增 `scripts/generate-expert-qa-reports.mjs` 与 `npm run qa:expert:mock` / `npm run qa:expert:queue`，报告覆盖 Expert 编译、runtime build、artifact 保存、runtime compatibility、warnings 和预算。`npm test` 通过；`qa:expert:mock` 输出 `output/qa-reports/expert-mock/index.md`，Verdict `pass`，19 compiled ops、562 faces / 1548 edges / 2 groups / 12 instances、warnings 0、artifact JSON 53663 bytes；`qa:expert:queue` 输出 `output/qa-reports/expert-queue/index.md`，Verdict `pass`，19 compiled ops、739 faces / 2079 edges / 1386 vertices / 2 groups / 12 instances、warnings 0、SKP artifact 207147 bytes，实际文件位于 `output/qa-reports/expert-queue/artifacts/expert-parametric-fixture.skp`。
 - **2026-05-25**：阶段 5 MCP tool 面完成：`src/mcp-server.mjs` 暴露 `compile_expert` / `build_expert_model`，MCP tools 数量从 7 增至 9；新增 `test/mcp-server.mjs` 启动真实 stdio MCP server 子进程，验证 `tools/list` 中的新工具 schema，并通过 `tools/call` 跑通 `compile_expert` 与 mock `build_expert_model`。
 - **2026-05-24**：`text_3d` 收口完成：manifest 推进到 `2026-05-phase4-text-3d-slice` / capability `0.1.0-capabilities.2`，Ruby 插件版本推进到 `queue-plugin-0.1.0-text-3d.1`。新增 `text_3d` operation、mock bbox/`Text3D` metadata、Ruby queue `Entities#add_3d_text` 实现、component_definition dispatch、`examples/text-3d-slice.json` 和文档/status 同步。已通过 `node --check`、Ruby syntax、`npm test`、`npm run qa:mock`、`npm run plugin:check`、`git diff --check`、`node src/cli.mjs get_capabilities --runtime mock`；contract 输出 manifest/mock/Ruby dispatch 均 64，component_definition registry/dispatch 均 42。安装并重启 SketchUp 后，live `get_capabilities` 回报 `queue-plugin-0.1.0-text-3d.1`、compatibility `ok`、issues 为空；`examples/text-3d-slice.json` queue 构建成功，主文字 snapshot 为 `kind: text_3d`、153 faces / 423 edges、warnings 0；`npm run qa:queue` 9/9 pass，`npm run qa:budget:queue` 4/4 pass。

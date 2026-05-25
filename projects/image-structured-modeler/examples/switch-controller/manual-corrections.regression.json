@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "notes": [
+    "Regression fixture: proves manual corrections change both the model plan and compiled DSL without editing code."
+  ],
+  "scale": {
+    "known_width": 292,
+    "known_height": 160,
+    "known_depth": 44,
+    "confidence": 0.91
+  },
+  "parts": [
+    {
+      "id": "left_thumbstick",
+      "action": "update",
+      "parameters": {
+        "center": [-86, -24, 28],
+        "outer_radius": 13,
+        "top_radius": 11
+      },
+      "evidence_note": "Reviewer moved the left stick center and increased the cap radius from the front overlay."
+    },
+    {
+      "id": "abxy_cluster",
+      "action": "update",
+      "parameters": {
+        "buttons": [
+          { "label": "X", "center": [104, -38], "radius": 5.8 },
+          { "label": "Y", "center": [88, -22], "radius": 5.6 },
+          { "label": "A", "center": [120, -22], "radius": 5.6 },
+          { "label": "B", "center": [104, -6], "radius": 5.6 },
+          { "label": "Home", "center": [104, 14], "radius": 4.2 }
+        ]
+      },
+      "evidence_note": "Reviewer confirmed a fifth small home button in the right cluster."
+    }
+  ],
+  "review": {
+    "open_questions": [
+      "Regression fixture should add one right-cluster button and move the left thumbstick in compiled DSL."
+    ]
+  }
+}

@@ -1,0 +1,342 @@
+{
+  "version": 1,
+  "units": "mm",
+  "operations": [
+    {
+      "op": "reset"
+    },
+    {
+      "op": "material",
+      "name": "Remote_Graphite_Plastic",
+      "color": "#20252b",
+      "workflow": "pbr_metallic_roughness",
+      "pbr": {
+        "metallic_factor": 0.01,
+        "roughness_factor": 0.52,
+        "ao_strength": 0.55
+      }
+    },
+    {
+      "op": "material",
+      "name": "Remote_Satin_Face",
+      "color": "#2f3740",
+      "workflow": "pbr_metallic_roughness",
+      "pbr": {
+        "metallic_factor": 0.02,
+        "roughness_factor": 0.34,
+        "ao_strength": 0.45
+      }
+    },
+    {
+      "op": "material",
+      "name": "Remote_Button_Rubber",
+      "color": "#101317",
+      "workflow": "pbr_metallic_roughness",
+      "pbr": {
+        "metallic_factor": 0,
+        "roughness_factor": 0.78,
+        "ao_strength": 0.7
+      }
+    },
+    {
+      "op": "material",
+      "name": "Remote_Dark_Detail",
+      "color": "#050607"
+    },
+    {
+      "op": "rounded_box",
+      "name": "Compact_Remote_Body_From_Image_Plan",
+      "origin": [
+        -22,
+        -79,
+        0
+      ],
+      "size": [
+        44,
+        158,
+        11.52
+      ],
+      "radius": 10.5,
+      "segments": 8,
+      "material": "Remote_Graphite_Plastic",
+      "smooth": "all",
+      "qa": {
+        "role": "body",
+        "part_id": "remote_body",
+        "expected_contacts": []
+      }
+    },
+    {
+      "op": "rounded_box",
+      "name": "Compact_Remote_Face_Panel_From_Image_Plan",
+      "origin": [
+        -18,
+        -68,
+        11.57
+      ],
+      "size": [
+        36,
+        136,
+        2
+      ],
+      "radius": 6,
+      "segments": 6,
+      "material": "Remote_Satin_Face",
+      "smooth": "all",
+      "qa": {
+        "role": "face_panel",
+        "part_id": "remote_face_panel",
+        "expected_contacts": []
+      }
+    },
+    {
+      "op": "button_on_panel",
+      "name": "Remote_Navigation_Pad_From_Image_Plan",
+      "center": [
+        0,
+        -30,
+        13.65
+      ],
+      "height": 2.2,
+      "segments": 10,
+      "material": "Remote_Button_Rubber",
+      "smooth": "all",
+      "qa": {
+        "role": "navigation_pad",
+        "part_id": "Remote_Navigation_Pad_From_Image_Plan",
+        "expected_contacts": []
+      },
+      "size": [
+        24,
+        24
+      ],
+      "corner_radius": 12
+    },
+    {
+      "op": "button_on_panel",
+      "name": "Remote_Power_Button_From_Image_Plan",
+      "center": [
+        -10,
+        -56,
+        13.65
+      ],
+      "height": 1.9,
+      "segments": 16,
+      "material": "Remote_Button_Rubber",
+      "smooth": "all",
+      "qa": {
+        "role": "button",
+        "part_id": "Remote_Power_Button_From_Image_Plan",
+        "expected_contacts": []
+      },
+      "radius": 4.2
+    },
+    {
+      "op": "button_on_panel",
+      "name": "Remote_Home_Button_From_Image_Plan",
+      "center": [
+        10,
+        -56,
+        13.65
+      ],
+      "height": 1.9,
+      "segments": 16,
+      "material": "Remote_Button_Rubber",
+      "smooth": "all",
+      "qa": {
+        "role": "button",
+        "part_id": "Remote_Home_Button_From_Image_Plan",
+        "expected_contacts": []
+      },
+      "radius": 4.2
+    },
+    {
+      "op": "button_on_panel",
+      "name": "Remote_Back_Button_From_Image_Plan",
+      "center": [
+        -10,
+        -8,
+        13.65
+      ],
+      "height": 1.9,
+      "segments": 16,
+      "material": "Remote_Button_Rubber",
+      "smooth": "all",
+      "qa": {
+        "role": "button",
+        "part_id": "Remote_Back_Button_From_Image_Plan",
+        "expected_contacts": []
+      },
+      "radius": 3.8
+    },
+    {
+      "op": "button_on_panel",
+      "name": "Remote_Menu_Button_From_Image_Plan",
+      "center": [
+        10,
+        -8,
+        13.65
+      ],
+      "height": 1.9,
+      "segments": 16,
+      "material": "Remote_Button_Rubber",
+      "smooth": "all",
+      "qa": {
+        "role": "button",
+        "part_id": "Remote_Menu_Button_From_Image_Plan",
+        "expected_contacts": []
+      },
+      "radius": 3.8
+    },
+    {
+      "op": "button_on_panel",
+      "name": "Remote_Play_Button_From_Image_Plan",
+      "center": [
+        0,
+        4,
+        13.65
+      ],
+      "height": 1.9,
+      "segments": 16,
+      "material": "Remote_Button_Rubber",
+      "smooth": "all",
+      "qa": {
+        "role": "button",
+        "part_id": "Remote_Play_Button_From_Image_Plan",
+        "expected_contacts": []
+      },
+      "radius": 3.6
+    },
+    {
+      "op": "button_on_panel",
+      "name": "Remote_Volume_Rocker_From_Image_Plan",
+      "center": [
+        0,
+        24,
+        13.65
+      ],
+      "height": 2,
+      "segments": 10,
+      "material": "Remote_Button_Rubber",
+      "smooth": "all",
+      "qa": {
+        "role": "volume_rocker",
+        "part_id": "Remote_Volume_Rocker_From_Image_Plan",
+        "expected_contacts": []
+      },
+      "size": [
+        9,
+        28
+      ],
+      "corner_radius": 4.5
+    },
+    {
+      "op": "slot_array",
+      "name": "Remote_Speaker_Grille_From_Image_Plan",
+      "center": [
+        0,
+        -66,
+        14.1
+      ],
+      "count": 5,
+      "spacing": 4,
+      "length": 2.4,
+      "width": 1,
+      "depth": 0.35,
+      "direction": "x",
+      "segments": 5,
+      "material": "Remote_Dark_Detail",
+      "smooth": "all"
+    },
+    {
+      "op": "text_3d",
+      "name": "Remote_Brand_Label_From_Image_Plan",
+      "text": "ALMA",
+      "center": [
+        0,
+        53,
+        14.05
+      ],
+      "height": 5,
+      "extrusion": 0.45,
+      "font": "Arial",
+      "align": "center",
+      "material": "Remote_Dark_Detail",
+      "qa": {
+        "role": "label",
+        "part_id": "brand_label",
+        "expected_contacts": []
+      }
+    },
+    {
+      "op": "scene",
+      "name": "Compact_Remote_Front_Review",
+      "camera": {
+        "eye": [
+          0,
+          -360,
+          150
+        ],
+        "target": [
+          0,
+          0,
+          8
+        ],
+        "up": [
+          0,
+          0,
+          1
+        ],
+        "fov": 28
+      }
+    },
+    {
+      "op": "scene",
+      "name": "Compact_Remote_Top_QA",
+      "camera": {
+        "eye": [
+          0,
+          0,
+          360
+        ],
+        "target": [
+          0,
+          0,
+          8
+        ],
+        "up": [
+          0,
+          1,
+          0
+        ],
+        "fov": 30
+      }
+    },
+    {
+      "op": "style",
+      "name": "Compact_Remote_Product_Review",
+      "display_edges": true,
+      "profiles": true,
+      "profile_width": 2,
+      "face_style": "shaded_with_textures",
+      "background_color": "#f5f6f8",
+      "sky_color": "#eef5ff",
+      "ground_color": "#d7dce3"
+    },
+    {
+      "op": "shadow",
+      "display": true,
+      "time": "2026-05-25T09:30:00+08:00",
+      "light": 72,
+      "dark": 44,
+      "use_sun_for_shading": true
+    },
+    {
+      "op": "rendering_options",
+      "edge_display_mode": 1,
+      "draw_hidden_geometry": false,
+      "display_color_by_layer": false,
+      "transparency": false
+    }
+  ]
+}

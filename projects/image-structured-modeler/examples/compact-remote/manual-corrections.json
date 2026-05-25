@@ -1,0 +1,55 @@
+{
+  "version": 1,
+  "object_profile": "compact_remote",
+  "notes": [
+    "Second product sample for phase 6 generalization validation.",
+    "Manual corrections lock the physical size and button layout without changing generator code."
+  ],
+  "scale": {
+    "known_width": 44,
+    "known_height": 158,
+    "known_depth": 16,
+    "confidence": 0.78
+  },
+  "parts": [
+    {
+      "id": "remote_body",
+      "action": "update",
+      "parameters": {
+        "corner_radius": 10.5
+      },
+      "evidence_note": "Reviewer confirmed a soft handheld corner radius from the front silhouette."
+    },
+    {
+      "id": "primary_button_cluster",
+      "action": "update",
+      "parameters": {
+        "buttons": [
+          { "label": "Power", "center": [-10, -56], "radius": 4.2 },
+          { "label": "Home", "center": [10, -56], "radius": 4.2 },
+          { "label": "Back", "center": [-10, -8], "radius": 3.8 },
+          { "label": "Menu", "center": [10, -8], "radius": 3.8 },
+          { "label": "Play", "center": [0, 4], "radius": 3.6 }
+        ]
+      },
+      "evidence_note": "Reviewer split the visible cluster into five round buttons."
+    },
+    {
+      "id": "brand_label",
+      "action": "update",
+      "parameters": {
+        "text": "ALMA",
+        "center": [0, 53],
+        "height": 5,
+        "extrusion": 0.45
+      },
+      "evidence_note": "Reviewer confirmed a short brand label near the lower face."
+    }
+  ],
+  "review": {
+    "open_questions": [
+      "Rear battery-door seam is intentionally deferred until a rear view is added.",
+      "Top emitter window is represented by the side thickness prior only."
+    ]
+  }
+}

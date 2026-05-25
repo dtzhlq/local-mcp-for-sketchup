@@ -65,6 +65,11 @@ npm run image-structured:snapshot-switch
 npm run image-structured:snapshot-switch:queue
 npm run image-structured:diff-switch:queue
 npm run image-structured:build-switch
+npm run image-structured:generate-remote
+npm run image-structured:compile-remote
+npm run image-structured:review-remote
+npm run image-structured:snapshot-remote
+npm run image-structured:build-remote
 npm run test:image-structured
 ```
 
@@ -81,6 +86,14 @@ npm run test:image-structured
 - `projects/image-structured-modeler/examples/switch-controller/review/snapshot-report.json`
 - `projects/image-structured-modeler/examples/switch-controller/review/snapshot-report.md`
 
+`build-remote` 会使用第二产品样例 `examples/compact-remote`，验证生成器/编译器已经按 `object_profile` 分流，而不是只套 Switch-specific layout prior。该样例会生成：
+
+- `projects/image-structured-modeler/examples/compact-remote/model-plan.json`
+- `projects/image-structured-modeler/examples/compact-remote/output.json`
+- `projects/image-structured-modeler/examples/compact-remote/review/index.html`
+- `projects/image-structured-modeler/examples/compact-remote/review/snapshot-report.json`
+- `projects/image-structured-modeler/examples/compact-remote/review/snapshot-report.md`
+
 `snapshot-switch` 会对当前 DSL 运行 mock snapshot，并把 warning 分成 expected contact / shallow overlap / needs review 等 bucket。当前 Switch DSL 会为 face dome、rear grip、thumbstick、buttons、screws 写入 `qa.expected_contacts`，warning 分类会优先使用这些元数据，而不是只靠对象命名启发式。当前 mounted detail 已改用 `analog_stick`、`button_on_panel`、`screw_hole`，rear grip attachment 已调整为接触不穿插，mock geometry warning 已收敛到 0。
 
 `snapshot-switch:queue` 会通过 SketchUp queue runtime 生成真实 `.skp` 和 queue snapshot report，运行前需要 SketchUp 已启动 Alma SketchUp MCP Bridge。更新 `sketchup_plugin/alma_sketchup_mcp.rb` 后，需要重载插件或重启 SketchUp，queue snapshot 才会带出最新的 `qa` 元数据。
@@ -96,15 +109,17 @@ npm run test:image-structured
 
 - `projects/image-structured-modeler/examples/switch-controller/warning-budget.json`
 
-`npm run test:image-structured` 会读取该 budget，校验 mock/queue snapshot report 中没有 error warning、没有 `needs_geometry_review`，并锁定当前 expected bucket baseline。测试还会卡住 bbox、groups/instances/scenes、不能回退到粗 `mesh` / `box` primitive，并要求 mock 和已生成的 queue geometry warning 分类全部来自 `qa.expected_contacts`。
+`npm run test:image-structured` 会读取样例 warning budget，校验 mock/queue snapshot report 中没有 error warning、没有 `needs_geometry_review`，并锁定当前 expected bucket baseline。测试还会卡住 bbox、groups/instances/scenes、不能回退到粗 `mesh` / `box` primitive，并要求 Switch mock 和已生成的 queue geometry warning 分类全部来自 `qa.expected_contacts`。阶段 6 已新增 correction-driven regression：`manual-corrections.regression.json` 必须让 Switch `model-plan.json` 和编译后的 DSL 发生预期变化；compact remote 第二样例必须完整跑通 observations → model-plan → output → review → mock snapshot。
 
 人工修正入口：
 
 - `projects/image-structured-modeler/examples/switch-controller/manual-corrections.json`
+- `projects/image-structured-modeler/examples/switch-controller/manual-corrections.regression.json`
+- `projects/image-structured-modeler/examples/compact-remote/manual-corrections.json`
 
 改完 `manual-corrections.json` 后重新运行 `npm run image-structured:build-switch`，修正会进入 `model-plan.json`，并显示在 review report 中。
 
-当前实现是确定性的 CV baseline：缩放图片、Sobel 边缘检测、主 bbox、垂直对称轴候选、视角启发式分类。Switch 示例会额外读取 `model-plan.example.json` 里的 `views[]` 作为人工视角 hint；通用 CLI 不传 `--view-hints-file` 时仍走纯 CV 模式。它只负责给人工 review 和后续 VLM/语义识别提供第一版证据，不直接生成最终 3D 模型。
+当前实现是确定性的 CV baseline：缩放图片、Sobel 边缘检测、主 bbox、垂直对称轴候选、视角启发式分类。Switch 示例会额外读取 `model-plan.example.json` 里的 `views[]` 作为人工视角 hint；compact remote 示例使用固定 observation fixture 验证第二产品路径。通用 CLI 不传 `--view-hints-file` 时仍走纯 CV 模式。它只负责给人工 review 和后续 VLM/语义识别提供第一版证据，不直接生成最终 3D 模型。
 
 ### 两者边界
 

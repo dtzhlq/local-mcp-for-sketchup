@@ -26,8 +26,9 @@ async function main() {
 
   const jsonPath = path.join(outputDir, options.jsonName);
   const markdownPath = path.join(outputDir, options.markdownName);
+  const markdown = options.compareRuntime ? formatDiffMarkdown(report) : formatMarkdown(report);
   await fs.writeFile(jsonPath, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
-  await fs.writeFile(markdownPath, options.compareRuntime ? formatDiffMarkdown(report) : formatMarkdown(report), 'utf8');
+  await fs.writeFile(markdownPath, `${markdown.trimEnd()}\n`, 'utf8');
   process.stdout.write(`${JSON.stringify({
     ok: report.report ? report.report.ok === true : true,
     mode: report.mode,

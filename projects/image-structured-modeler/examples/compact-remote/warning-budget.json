@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "runtimes": {
+    "mock": {
+      "max_error_warnings": 0,
+      "max_needs_review": 0,
+      "buckets": {}
+    },
+    "queue": {
+      "max_error_warnings": 0,
+      "max_needs_review": 0,
+      "buckets": {}
+    }
+  },
+  "diffs": {
+    "mock_to_queue": {
+      "max_error_diffs": 0,
+      "max_unexpected_warnings": 0
+    }
+  }
+}

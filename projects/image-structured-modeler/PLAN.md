@@ -6,9 +6,9 @@
 
 ---
 
-## 当前执行计划（2026-05-20）
+## 当前执行计划（2026-05-25）
 
-当前已完成 Switch 手柄示例的端到端 baseline：`observations.json -> model-plan.json -> output.json -> review/index.html -> output/image-structured-switch-controller.skp`。下一阶段不继续堆复杂识别，而是先把 baseline 做稳，再逐步增加证据提取和几何质量。
+当前已完成 Switch 手柄示例的端到端 baseline：`observations.json -> model-plan.json -> output.json -> review/index.html -> output/image-structured-switch-controller.skp`。阶段 6 收口补齐了 correction-driven regression 和第二产品样例：`compact-remote` 通过 `object_profile` 走独立生成/编译路径，证明当前链路不再只依赖 Switch-specific prior。
 
 执行顺序：
 
@@ -28,7 +28,7 @@
    - 扩展 `manual-corrections.json`，支持修改 part 参数。
    - 给 part 标记 `visually_detected` / `inferred` / `manually_confirmed`。
    - review report 显示 part id、参数、evidence 和 correction 示例。
-   - 增加 correction-driven regression tests。
+   - 增加 correction-driven regression tests。**已完成第一条回归：Switch regression fixture 会验证 corrections 改变 model plan 和 compiled DSL。**
 
 4. **提升 SketchUp 几何质量**
    - 补 `button_on_panel`、`recess`、`screw_hole`、`slot`、`beveled_panel`、`shell_from_front_side_profiles`。
@@ -40,6 +40,7 @@
    - 将 Switch-specific prior 收敛到 `object_profile`。
    - 抽象通用 part taxonomy。
    - 评估是否接入 VLM，只用于语义判断，不替代几何测量。
+   - **已完成第一条第二产品样例：`examples/compact-remote` 能生成 model plan、DSL、review report 和 mock snapshot。**
 
 当前第一步已完成，并已执行第一轮 overlap reduction：
 
@@ -54,7 +55,9 @@
 - SketchUp 插件文件已补 group/component instance 的 `qa` snapshot 支持；2026-05-20 已安装到 SketchUp 2026 Plugins 目录、重启 SketchUp、通过 Extensions 菜单启动 Bridge，并重新跑通 `npm run image-structured:snapshot-switch:queue` 和 `npm run image-structured:diff-switch:queue`。
 - 当前 queue snapshot/diff 已验证：geometry warning 为 0，4 个 PBR warning 来自 `runtime_material_capability`，mock/queue diff 为 `pass` / `ok` / `0` diffs。
 - 已把按钮/螺丝/摇杆从“穿插/贴面”改成 `button_on_panel`、`screw_hole`、`analog_stick` 这类产品 primitive，并同步收紧 `warning-budget.json`。
-- 已把 rear grip attachment 从粗 bbox overlap 改成接触不穿插的几何；下一步转向 correction-driven regression tests。
+- 已把 rear grip attachment 从粗 bbox overlap 改成接触不穿插的几何。
+- 已新增 `examples/switch-controller/manual-corrections.regression.json`，`npm run test:image-structured` 会断言人工修正能改变 part 参数、按钮数量和编译后的 DSL。
+- 已新增 `examples/compact-remote` 第二产品样例与 `image-structured:build-remote`，当前 mock snapshot 为 11 groups / 529 faces / 1234 edges / 452 vertices / 2 scenes，warnings 0。
 
 ---
 
@@ -261,12 +264,14 @@
 - [x] scripts/make-review-overlay.mjs (PNG overlay baseline)
 - [x] scripts/make-review-report.mjs (HTML review baseline)
 - [x] examples/switch-controller/manual-corrections.json (manual correction baseline)
+- [x] examples/switch-controller/manual-corrections.regression.json (correction-driven regression)
+- [x] examples/compact-remote/* (second product generalization sample)
 - [x] scripts/compile-plan-to-sketchup-dsl.mjs (existing DSL approximation)
 - [x] examples/switch-controller/observations.json (Switch baseline)
 - [x] examples/switch-controller/model-plan.json (半自动 baseline)
 - [x] examples/switch-controller/output.json (mock-buildable baseline)
 - [x] output/image-structured-switch-controller.skp (queue runtime baseline)
-- [x] test harness (schema validation + output mock build + review report)
+- [x] test harness (schema validation + correction regression + dual-sample output mock build + review report)
 
 ---
 

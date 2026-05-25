@@ -214,12 +214,14 @@ function imageBlock(image, overlayDir, reportDir) {
   const base = path.basename(image.image.path).replace(/\.[^.]+$/, '');
   const overlayPath = overlayDir ? path.join(overlayDir, `${base}-overlay.png`) : null;
   const overlaySrc = overlayPath ? toHtmlPath(path.relative(reportDir, overlayPath)) : '';
+  const overlayLine = overlaySrc
+    ? `<img src="${escapeHtml(overlaySrc)}" alt="${escapeHtml(base)} review overlay">`
+    : '';
   const componentHints = (image.observations || [])
     .filter((observation) => observation.kind === 'component_bbox' && observation.component_hint !== 'main_object')
     .map((observation) => observation.component_hint);
   return `<article class="image-block">
-    ${overlaySrc ? `<img src="${escapeHtml(overlaySrc)}" alt="${escapeHtml(base)} review overlay">` : ''}
-    <div class="image-body">
+${overlayLine ? `    ${overlayLine}\n` : ''}    <div class="image-body">
       <h3>${escapeHtml(path.basename(image.image.path))}</h3>
       <p>${tags([{ text: image.detected_view.kind, kind: 'good' }, { text: `confidence ${image.detected_view.confidence}`, kind: '' }])}</p>
       <p class="subtle">edges ${image.metrics?.edge_count || 0} · density ${image.metrics?.edge_density || 0} · symmetry ${image.metrics?.symmetry_score || 0}</p>

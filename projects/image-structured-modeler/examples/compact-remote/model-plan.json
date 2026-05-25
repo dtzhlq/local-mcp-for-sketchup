@@ -1,0 +1,444 @@
+{
+  "version": 1,
+  "object": {
+    "type": "remote_control",
+    "name": "Compact Media Remote",
+    "profile": "compact_remote",
+    "source_images": [
+      "projects/image-structured-modeler/examples/compact-remote/reference/front-reference.png",
+      "projects/image-structured-modeler/examples/compact-remote/reference/right-reference.png"
+    ]
+  },
+  "scale": {
+    "units": "mm",
+    "known_width": 44,
+    "known_height": 158,
+    "known_depth": 16,
+    "confidence": 0.78
+  },
+  "views": [
+    {
+      "id": "front_photo",
+      "kind": "front",
+      "source_image": "projects/image-structured-modeler/examples/compact-remote/reference/front-reference.png",
+      "confidence": 0.82
+    },
+    {
+      "id": "side_photo",
+      "kind": "right",
+      "source_image": "projects/image-structured-modeler/examples/compact-remote/reference/right-reference.png",
+      "confidence": 0.69
+    }
+  ],
+  "parts": [
+    {
+      "id": "remote_body",
+      "type": "rounded_box",
+      "material": "Remote_Graphite_Plastic",
+      "parameters": {
+        "width": 44,
+        "height": 158,
+        "thickness": 16,
+        "corner_radius": 10.5
+      },
+      "evidence": [
+        {
+          "view": "front_photo",
+          "kind": "silhouette",
+          "points": [
+            [
+              178,
+              70
+            ],
+            [
+              422,
+              70
+            ],
+            [
+              422,
+              1118
+            ],
+            [
+              178,
+              1118
+            ],
+            [
+              178,
+              70
+            ]
+          ],
+          "confidence": 0.83,
+          "note": "Tall rounded handheld silhouette with low perspective distortion."
+        },
+        {
+          "view": "front_photo",
+          "kind": "silhouette",
+          "points": [
+            [
+              178,
+              70
+            ],
+            [
+              422,
+              70
+            ],
+            [
+              422,
+              1118
+            ],
+            [
+              178,
+              1118
+            ],
+            [
+              178,
+              70
+            ]
+          ],
+          "confidence": 0.82,
+          "note": "Outer remote body boundary."
+        },
+        {
+          "view": "manual_correction",
+          "kind": "manual_note",
+          "confidence": 0.95,
+          "note": "Reviewer confirmed a soft handheld corner radius from the front silhouette."
+        }
+      ],
+      "status": "visually_detected"
+    },
+    {
+      "id": "remote_face_panel",
+      "type": "beveled_panel",
+      "material": "Remote_Satin_Face",
+      "parameters": {
+        "width": 36,
+        "height": 136,
+        "thickness": 2,
+        "corner_radius": 6
+      },
+      "evidence": [
+        {
+          "view": "front_photo",
+          "kind": "silhouette",
+          "points": [
+            [
+              211,
+              135
+            ],
+            [
+              389,
+              135
+            ],
+            [
+              389,
+              1063
+            ],
+            [
+              211,
+              1063
+            ],
+            [
+              211,
+              135
+            ]
+          ],
+          "confidence": 0.74,
+          "note": "Inset face panel visible as a darker raised region."
+        }
+      ],
+      "status": "inferred"
+    },
+    {
+      "id": "navigation_pad",
+      "type": "button_on_panel",
+      "parent": "remote_face_panel",
+      "material": "Remote_Button_Rubber",
+      "parameters": {
+        "center": [
+          0,
+          -30
+        ],
+        "size": [
+          24,
+          24
+        ],
+        "corner_radius": 12,
+        "height": 2.2
+      },
+      "evidence": [
+        {
+          "view": "front_photo",
+          "kind": "center_point",
+          "points": [
+            [
+              300,
+              402
+            ]
+          ],
+          "confidence": 0.78,
+          "note": "Large central navigation pad."
+        }
+      ],
+      "status": "visually_detected"
+    },
+    {
+      "id": "primary_button_cluster",
+      "type": "button_on_panel",
+      "parent": "remote_face_panel",
+      "material": "Remote_Button_Rubber",
+      "parameters": {
+        "buttons": [
+          {
+            "label": "Power",
+            "center": [
+              -10,
+              -56
+            ],
+            "radius": 4.2
+          },
+          {
+            "label": "Home",
+            "center": [
+              10,
+              -56
+            ],
+            "radius": 4.2
+          },
+          {
+            "label": "Back",
+            "center": [
+              -10,
+              -8
+            ],
+            "radius": 3.8
+          },
+          {
+            "label": "Menu",
+            "center": [
+              10,
+              -8
+            ],
+            "radius": 3.8
+          },
+          {
+            "label": "Play",
+            "center": [
+              0,
+              4
+            ],
+            "radius": 3.6
+          }
+        ]
+      },
+      "evidence": [
+        {
+          "view": "front_photo",
+          "kind": "silhouette",
+          "points": [
+            [
+              244,
+              242
+            ],
+            [
+              356,
+              242
+            ],
+            [
+              356,
+              548
+            ],
+            [
+              244,
+              548
+            ],
+            [
+              244,
+              242
+            ]
+          ],
+          "confidence": 0.7,
+          "note": "Small command buttons around the navigation pad."
+        },
+        {
+          "view": "manual_correction",
+          "kind": "manual_note",
+          "confidence": 0.95,
+          "note": "Reviewer split the visible cluster into five round buttons."
+        }
+      ],
+      "status": "visually_detected"
+    },
+    {
+      "id": "volume_rocker",
+      "type": "button_on_panel",
+      "parent": "remote_face_panel",
+      "material": "Remote_Button_Rubber",
+      "parameters": {
+        "center": [
+          0,
+          24
+        ],
+        "size": [
+          9,
+          28
+        ],
+        "corner_radius": 4.5,
+        "height": 2
+      },
+      "evidence": [
+        {
+          "view": "front_photo",
+          "kind": "silhouette",
+          "points": [
+            [
+              276,
+              654
+            ],
+            [
+              324,
+              654
+            ],
+            [
+              324,
+              848
+            ],
+            [
+              276,
+              848
+            ],
+            [
+              276,
+              654
+            ]
+          ],
+          "confidence": 0.76,
+          "note": "Vertical rocker on the lower half."
+        }
+      ],
+      "status": "visually_detected"
+    },
+    {
+      "id": "speaker_grille",
+      "type": "slot",
+      "parent": "remote_face_panel",
+      "material": "Remote_Dark_Detail",
+      "parameters": {
+        "center": [
+          0,
+          -66
+        ],
+        "count": 5,
+        "spacing": 4,
+        "length": 2.4,
+        "width": 1,
+        "depth": 0.35
+      },
+      "evidence": [
+        {
+          "view": "front_photo",
+          "kind": "silhouette",
+          "points": [
+            [
+              265,
+              165
+            ],
+            [
+              335,
+              165
+            ],
+            [
+              335,
+              197
+            ],
+            [
+              265,
+              197
+            ],
+            [
+              265,
+              165
+            ]
+          ],
+          "confidence": 0.62,
+          "note": "Short horizontal slots near the top."
+        }
+      ],
+      "status": "inferred"
+    },
+    {
+      "id": "brand_label",
+      "type": "text_engrave",
+      "parent": "remote_face_panel",
+      "material": "Remote_Dark_Detail",
+      "parameters": {
+        "text": "ALMA",
+        "center": [
+          0,
+          53
+        ],
+        "height": 5,
+        "extrusion": 0.45
+      },
+      "evidence": [
+        {
+          "view": "front_photo",
+          "kind": "text_label",
+          "points": [
+            [
+              251,
+              898
+            ],
+            [
+              349,
+              898
+            ],
+            [
+              349,
+              942
+            ],
+            [
+              251,
+              942
+            ],
+            [
+              251,
+              898
+            ]
+          ],
+          "confidence": 0.67,
+          "note": "Brand label near the bottom of the face."
+        },
+        {
+          "view": "manual_correction",
+          "kind": "manual_note",
+          "confidence": 0.95,
+          "note": "Reviewer confirmed a short brand label near the lower face."
+        }
+      ],
+      "status": "manually_confirmed"
+    }
+  ],
+  "review": {
+    "overlay_path": null,
+    "open_questions": [
+      "Rear battery-door seam is intentionally deferred until a rear view is added.",
+      "Top emitter window is represented by the side thickness prior only."
+    ],
+    "corrections_applied": [
+      "scale.known_width",
+      "scale.known_height",
+      "scale.known_depth",
+      "scale.confidence",
+      "update:remote_body",
+      "update:primary_button_cluster",
+      "update:brand_label",
+      "review.open_questions",
+      "object.profile"
+    ],
+    "correction_notes": [
+      "Second product sample for phase 6 generalization validation.",
+      "Manual corrections lock the physical size and button layout without changing generator code."
+    ]
+  }
+}

@@ -1,21 +1,17 @@
 {
-  "generated_at": "2026-05-25T07:50:53.083Z",
+  "generated_at": "2026-05-25T07:50:49.790Z",
   "mode": "runtime_snapshot",
   "runtime": "mock",
   "source": {
-    "output_dsl": "projects/image-structured-modeler/examples/switch-controller/output.json"
+    "output_dsl": "projects/image-structured-modeler/examples/compact-remote/output.json"
   },
   "operation_counts": {
     "reset": 1,
-    "material": 6,
-    "component_definition": 1,
-    "rounded_box": 6,
-    "domed_surface": 2,
-    "bowed_panel": 2,
-    "analog_stick": 2,
-    "button_on_panel": 8,
-    "component_instance": 4,
-    "screw_hole": 4,
+    "material": 4,
+    "rounded_box": 2,
+    "button_on_panel": 7,
+    "slot_array": 1,
+    "text_3d": 1,
     "scene": 2,
     "style": 1,
     "shadow": 1,
@@ -23,38 +19,36 @@
   },
   "snapshot_summary": {
     "totals": {
-      "faces": 1776,
-      "edges": 2964,
-      "vertices": 1212,
-      "groups": 24,
-      "instances": 4
+      "faces": 529,
+      "edges": 1234,
+      "vertices": 452,
+      "groups": 11,
+      "instances": 0
     },
     "bounding_box": {
       "min": [
-        -140,
-        -84.5,
+        -22,
+        -79,
         0
       ],
       "max": [
-        140,
-        89.5,
-        40
+        22,
+        79,
+        15.850000000000001
       ],
-      "w": 280,
-      "d": 174,
-      "h": 40
+      "w": 44,
+      "d": 158,
+      "h": 15.850000000000001
     },
     "scenes": [
-      "Image_Structured_Front_Review",
-      "Image_Structured_Top_QA"
+      "Compact_Remote_Front_Review",
+      "Compact_Remote_Top_QA"
     ],
     "material_names": [
-      "Dark_Seam",
-      "Gloss_Black_Button",
-      "Indicator_Green",
-      "Rubber_Thumbstick",
-      "Satin_Black_Plastic",
-      "Warm_White_Plastic"
+      "Remote_Button_Rubber",
+      "Remote_Dark_Detail",
+      "Remote_Graphite_Plastic",
+      "Remote_Satin_Face"
     ],
     "rendering_options": {
       "draw_hidden_geometry": false,

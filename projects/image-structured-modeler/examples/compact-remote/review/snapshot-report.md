@@ -1,36 +1,32 @@
 # Switch Controller Snapshot Report
 
-- Generated: `2026-05-25T07:50:53.083Z`
+- Generated: `2026-05-25T07:50:49.790Z`
 - Runtime: `mock`
-- Output DSL: `projects/image-structured-modeler/examples/switch-controller/output.json`
+- Output DSL: `projects/image-structured-modeler/examples/compact-remote/output.json`
 
 ## Snapshot Summary
 
 | Metric | Value |
 |---|---:|
-| Groups | 24 |
-| Component instances | 4 |
-| Faces | 1776 |
-| Edges | 2964 |
-| Vertices | 1212 |
+| Groups | 11 |
+| Component instances | 0 |
+| Faces | 529 |
+| Edges | 1234 |
+| Vertices | 452 |
 | Scenes | 2 |
 
-Bounding box: `280 x 174 x 40 mm`
+Bounding box: `44 x 158 x 15.850000000000001 mm`
 
 ## Operation Counts
 
 | Operation | Count |
 |---|---:|
 | `reset` | 1 |
-| `material` | 6 |
-| `component_definition` | 1 |
-| `rounded_box` | 6 |
-| `domed_surface` | 2 |
-| `bowed_panel` | 2 |
-| `analog_stick` | 2 |
-| `button_on_panel` | 8 |
-| `component_instance` | 4 |
-| `screw_hole` | 4 |
+| `material` | 4 |
+| `rounded_box` | 2 |
+| `button_on_panel` | 7 |
+| `slot_array` | 1 |
+| `text_3d` | 1 |
 | `scene` | 2 |
 | `style` | 1 |
 | `shadow` | 1 |

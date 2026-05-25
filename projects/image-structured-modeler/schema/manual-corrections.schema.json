@@ -6,6 +6,7 @@
   "required": ["version"],
   "properties": {
     "version": { "const": 1 },
+    "object_profile": { "enum": ["switch_controller", "game_controller", "compact_remote", "remote_control", "media_remote"] },
     "notes": { "type": "array", "items": { "type": "string" } },
     "scale": {
       "type": "object",

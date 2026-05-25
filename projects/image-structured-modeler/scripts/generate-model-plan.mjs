@@ -13,9 +13,9 @@ async function main() {
     ? JSON.parse(await fs.readFile(path.resolve(repoRoot, options.manualCorrections), 'utf8'))
     : null;
   const modelPlan = generateModelPlan(observationSet, {
-    knownWidth: numberOption(options.knownWidth, 280),
-    knownHeight: numberOption(options.knownHeight, 155),
-    knownDepth: numberOption(options.knownDepth, 42),
+    knownWidth: numberOption(options.knownWidth),
+    knownHeight: numberOption(options.knownHeight),
+    knownDepth: numberOption(options.knownDepth),
     manualCorrections
   });
 
@@ -25,10 +25,12 @@ async function main() {
 }
 
 export function generateModelPlan(observationSet, options = {}) {
-  const knownWidth = options.knownWidth ?? 280;
-  const knownHeight = options.knownHeight ?? 155;
-  const knownDepth = options.knownDepth ?? 42;
   const manualCorrections = options.manualCorrections || null;
+  const objectProfile = inferObjectProfile(observationSet, manualCorrections, options.objectProfile);
+  const defaults = profileDefaults(objectProfile);
+  const knownWidth = options.knownWidth ?? manualCorrections?.scale?.known_width ?? defaults.knownWidth;
+  const knownHeight = options.knownHeight ?? manualCorrections?.scale?.known_height ?? defaults.knownHeight;
+  const knownDepth = options.knownDepth ?? manualCorrections?.scale?.known_depth ?? defaults.knownDepth;
   const viewIds = makeViewIds(observationSet.images || []);
   const views = (observationSet.images || []).map((image) => ({
     id: viewIds.get(image.image.path),
@@ -59,6 +61,7 @@ export function generateModelPlan(observationSet, options = {}) {
   const object = {
     type: observationSet.object?.type || 'game_controller',
     name: observationSet.object?.name || 'Switch Joy-Con Grip Controller',
+    profile: objectProfile,
     source_images: observationSet.object?.source_images || []
   };
 
@@ -73,7 +76,7 @@ export function generateModelPlan(observationSet, options = {}) {
       confidence: observationSet.missing_views?.includes('top') ? 0.58 : 0.72
     },
     views,
-    parts: [
+    parts: objectProfile === 'compact_remote' ? compactRemoteParts(evidence) : [
       {
         id: 'center_grip_body',
         type: 'beveled_panel',
@@ -232,9 +235,107 @@ export function applyManualCorrections(modelPlan, corrections) {
     next.review.open_questions = corrections.review.open_questions;
     applied.push('review.open_questions');
   }
+  if (corrections.object_profile) {
+    next.object.profile = normalizeObjectProfile(corrections.object_profile);
+    applied.push('object.profile');
+  }
   next.review.corrections_applied = applied;
   if (corrections.notes?.length) next.review.correction_notes = corrections.notes;
   return next;
+}
+
+function compactRemoteParts(evidence) {
+  return [
+    {
+      id: 'remote_body',
+      type: 'rounded_box',
+      material: 'Remote_Graphite_Plastic',
+      parameters: { width: 44, height: 158, thickness: 16, corner_radius: 10 },
+      evidence: evidence(['remote_body', 'main_object'], ['front', 'right']),
+      status: 'visually_detected'
+    },
+    {
+      id: 'remote_face_panel',
+      type: 'beveled_panel',
+      material: 'Remote_Satin_Face',
+      parameters: { width: 36, height: 136, thickness: 2, corner_radius: 6 },
+      evidence: evidence('remote_face_panel', ['front']),
+      status: 'inferred'
+    },
+    {
+      id: 'navigation_pad',
+      type: 'button_on_panel',
+      parent: 'remote_face_panel',
+      material: 'Remote_Button_Rubber',
+      parameters: { center: [0, -30], size: [24, 24], corner_radius: 12, height: 2.2 },
+      evidence: evidence('navigation_pad', ['front']),
+      status: 'visually_detected'
+    },
+    {
+      id: 'primary_button_cluster',
+      type: 'button_on_panel',
+      parent: 'remote_face_panel',
+      material: 'Remote_Button_Rubber',
+      parameters: {
+        buttons: [
+          { label: 'Power', center: [-10, -54], radius: 4.2 },
+          { label: 'Home', center: [10, -54], radius: 4.2 },
+          { label: 'Back', center: [-10, -10], radius: 3.8 },
+          { label: 'Menu', center: [10, -10], radius: 3.8 }
+        ]
+      },
+      evidence: evidence('primary_button_cluster', ['front']),
+      status: 'visually_detected'
+    },
+    {
+      id: 'volume_rocker',
+      type: 'button_on_panel',
+      parent: 'remote_face_panel',
+      material: 'Remote_Button_Rubber',
+      parameters: { center: [0, 24], size: [9, 28], corner_radius: 4.5, height: 2 },
+      evidence: evidence('volume_rocker', ['front']),
+      status: 'visually_detected'
+    },
+    {
+      id: 'speaker_grille',
+      type: 'slot',
+      parent: 'remote_face_panel',
+      material: 'Remote_Dark_Detail',
+      parameters: { center: [0, -66], count: 5, spacing: 4, length: 2.4, width: 1, depth: 0.35 },
+      evidence: evidence('speaker_grille', ['front']),
+      status: 'inferred'
+    },
+    {
+      id: 'brand_label',
+      type: 'text_engrave',
+      parent: 'remote_face_panel',
+      material: 'Remote_Dark_Detail',
+      parameters: { text: 'ALMA', center: [0, 52], height: 5, extrusion: 0.45 },
+      evidence: evidence('brand_label', ['front']),
+      status: 'manually_confirmed'
+    }
+  ];
+}
+
+function inferObjectProfile(observationSet, manualCorrections, optionProfile) {
+  const explicit = optionProfile || manualCorrections?.object_profile || observationSet.object?.profile;
+  if (explicit) return normalizeObjectProfile(explicit);
+  const type = observationSet.object?.type || '';
+  if (['remote_control', 'media_remote', 'compact_remote'].includes(type)) return 'compact_remote';
+  return 'switch_controller';
+}
+
+function normalizeObjectProfile(value) {
+  if (value === 'compact_remote' || value === 'remote_control' || value === 'media_remote') return 'compact_remote';
+  if (value === 'switch_controller' || value === 'game_controller') return 'switch_controller';
+  throw new Error(`Unsupported object_profile: ${value}`);
+}
+
+function profileDefaults(profile) {
+  if (profile === 'compact_remote') {
+    return { knownWidth: 44, knownHeight: 158, knownDepth: 16 };
+  }
+  return { knownWidth: 280, knownHeight: 155, knownDepth: 42 };
 }
 
 function manualEvidence(correction) {

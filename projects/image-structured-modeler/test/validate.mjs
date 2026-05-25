@@ -4,6 +4,8 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { SketchUpBridge } from '../../../src/bridge.mjs';
+import { compilePlanToSketchUpDsl } from '../scripts/compile-plan-to-sketchup-dsl.mjs';
+import { generateModelPlan } from '../scripts/generate-model-plan.mjs';
 import { evaluateDiffWarningBudget, evaluateSnapshotWarningBudget } from '../scripts/lib/warning-budget.mjs';
 
 const repoRoot = path.resolve(fileURLToPath(new URL('../../..', import.meta.url)));
@@ -14,10 +16,14 @@ const imageObservationSchema = await readJson('schema/image-observation.schema.j
 const imageSetObservationSchema = await readJson('schema/image-set-observation.schema.json');
 const manualCorrectionsSchema = await readJson('schema/manual-corrections.schema.json');
 const switchWarningBudget = await readJson('examples/switch-controller/warning-budget.json');
+const remoteWarningBudget = await readJson('examples/compact-remote/warning-budget.json');
 const SWITCH_BASELINE_GROUPS = 24;
 const SWITCH_BASELINE_INSTANCES = 4;
 const SWITCH_BASELINE_SCENES = 2;
 const SWITCH_BASELINE_GEOMETRY_WARNINGS = 0;
+const REMOTE_BASELINE_GROUPS = 11;
+const REMOTE_BASELINE_INSTANCES = 0;
+const REMOTE_BASELINE_SCENES = 2;
 
 const validateModelPlan = compileSchema(modelPlanSchema);
 const validateImageObservation = compileSchema(imageObservationSchema);
@@ -174,6 +180,9 @@ try {
   if (error.code !== 'ENOENT') throw error;
 }
 
+await assertSwitchCorrectionRegression();
+const remoteChecked = await assertCompactRemoteSample();
+
 process.stdout.write(`${JSON.stringify({
   ok: true,
   checked: {
@@ -186,6 +195,8 @@ process.stdout.write(`${JSON.stringify({
     snapshot_report: snapshotReportChecked,
     queue_snapshot_report: queueSnapshotReportChecked,
     queue_diff_report: queueDiffReportChecked,
+    correction_regression: true,
+    compact_remote_sample: remoteChecked,
     warning_budget: true,
     scripts: true
   }
@@ -232,6 +243,108 @@ function stripCollectionOnlyFields(observation) {
   const clone = structuredClone(observation);
   delete clone.metrics;
   return clone;
+}
+
+async function assertSwitchCorrectionRegression() {
+  const observationSet = JSON.parse(await fs.readFile(observationPath, 'utf8'));
+  const regressionCorrectionsPath = path.join(subprojectRoot, 'examples', 'switch-controller', 'manual-corrections.regression.json');
+  const regressionCorrections = JSON.parse(await fs.readFile(regressionCorrectionsPath, 'utf8'));
+  assertValid(validateManualCorrections, regressionCorrections, 'switch controller manual-corrections.regression.json');
+
+  const baselinePlan = generateModelPlan(observationSet, { knownWidth: 280, knownHeight: 155, knownDepth: 42 });
+  const correctedPlan = generateModelPlan(observationSet, { manualCorrections: regressionCorrections });
+  const baselineStick = partById(baselinePlan, 'left_thumbstick');
+  const correctedStick = partById(correctedPlan, 'left_thumbstick');
+  assert.notDeepEqual(correctedStick.parameters.center, baselineStick.parameters.center, 'manual correction should move left_thumbstick in model plan');
+  assert.equal(correctedStick.parameters.outer_radius, 13, 'manual correction should update left_thumbstick radius');
+  assert.equal(partById(correctedPlan, 'abxy_cluster').parameters.buttons.length, 5, 'manual correction should replace ABXY button list');
+  assert.ok(correctedPlan.review.corrections_applied.includes('update:left_thumbstick'), 'model plan should record part update correction');
+
+  const baselineDsl = compilePlanToSketchUpDsl(baselinePlan);
+  const correctedDsl = compilePlanToSketchUpDsl(correctedPlan);
+  assert.notDeepEqual(
+    operationByName(correctedDsl, 'Left_Thumbstick_From_Image_Plan').origin,
+    operationByName(baselineDsl, 'Left_Thumbstick_From_Image_Plan').origin,
+    'manual correction should move left thumbstick in compiled DSL'
+  );
+  assert.ok(
+    correctedDsl.operations.some((operation) => operation.name === 'ABXY_Home_Button_From_Image_Plan'),
+    'manual correction should add the Home button to compiled DSL'
+  );
+  assert.equal(correctedDsl.operations.filter((operation) => operation.name?.startsWith('ABXY_') && operation.name?.endsWith('_Button_From_Image_Plan')).length, 5, 'compiled DSL should contain corrected ABXY button count');
+}
+
+async function assertCompactRemoteSample() {
+  const base = path.join(subprojectRoot, 'examples', 'compact-remote');
+  const observations = JSON.parse(await fs.readFile(path.join(base, 'observations.json'), 'utf8'));
+  assertValid(validateImageSetObservation, observations, 'compact remote observations.json');
+  assert.equal(observations.object.profile, 'compact_remote', 'compact remote observations should declare object profile');
+  for (const observation of observations.images) {
+    assertValid(validateImageObservation, stripCollectionOnlyFields(observation), `${observation.image.path} image observation`);
+  }
+
+  const manualCorrections = JSON.parse(await fs.readFile(path.join(base, 'manual-corrections.json'), 'utf8'));
+  assertValid(validateManualCorrections, manualCorrections, 'compact remote manual-corrections.json');
+  assert.equal(manualCorrections.object_profile, 'compact_remote', 'compact remote manual corrections should lock object profile');
+
+  const modelPlan = JSON.parse(await fs.readFile(path.join(base, 'model-plan.json'), 'utf8'));
+  assertValid(validateModelPlan, modelPlan, 'compact remote model-plan.json');
+  assert.equal(modelPlan.object.profile, 'compact_remote', 'compact remote model plan should not use switch_controller profile');
+  assert.ok(modelPlan.review.corrections_applied.includes('object.profile'), 'compact remote model plan should record profile correction');
+  assert.ok(modelPlan.review.corrections_applied.includes('update:primary_button_cluster'), 'compact remote model plan should record button cluster correction');
+  assert.equal(partById(modelPlan, 'primary_button_cluster').parameters.buttons.length, 5, 'compact remote should keep corrected five-button cluster');
+
+  const output = JSON.parse(await fs.readFile(path.join(base, 'output.json'), 'utf8'));
+  assert.equal(output.version, 1, 'compact remote compiled output should be DSL version 1');
+  assert.equal(output.units, 'mm', 'compact remote compiled output should use mm');
+  assert.equal(output.operations.some((operation) => operation.op === 'box'), false, 'compact remote output should not regress to coarse box primitives');
+  assert.equal(output.operations.some((operation) => operation.op === 'mesh'), false, 'compact remote output should not expose raw mesh primitives');
+  assert.ok(output.operations.some((operation) => operation.op === 'rounded_box'), 'compact remote output should use rounded body primitives');
+  assert.ok(output.operations.some((operation) => operation.op === 'button_on_panel'), 'compact remote output should compile buttons');
+  assert.ok(output.operations.some((operation) => operation.op === 'slot_array'), 'compact remote output should compile grille slots');
+  assert.ok(output.operations.some((operation) => operation.op === 'text_3d'), 'compact remote output should compile brand label text');
+
+  const mockSessionPath = path.join(repoRoot, 'output', 'image-structured-modeler', 'sessions', 'validate-remote-mock-session.json');
+  await fs.mkdir(path.dirname(mockSessionPath), { recursive: true });
+  const bridge = new SketchUpBridge({ mock: { sessionPath: mockSessionPath } });
+  const result = await bridge.build_model({ runtime: 'mock', code: JSON.stringify(output) });
+  assert.equal(result.snapshot.totals.groups, REMOTE_BASELINE_GROUPS, 'compact remote mock snapshot should keep current group count');
+  assert.equal(result.snapshot.totals.instances, REMOTE_BASELINE_INSTANCES, 'compact remote mock snapshot should keep current instance count');
+  assert.equal(result.snapshot.scenes.length, REMOTE_BASELINE_SCENES, 'compact remote mock snapshot should keep current scene count');
+  assert.equal(result.snapshot.warning_summary.by_severity.error, 0, 'compact remote mock build should not create error warnings');
+  assertBoundingBoxSize(result.snapshot.bounding_box, { w: 44, d: 158, h: 15.85 }, 'compact remote mock bbox', 0.2);
+
+  const reviewHtml = await fs.readFile(path.join(base, 'review', 'index.html'), 'utf8');
+  assert.ok(reviewHtml.includes('Compact Media Remote'), 'compact remote review report should use sample name');
+  assert.ok(reviewHtml.includes('Manual Corrections'), 'compact remote review report should include corrections');
+
+  const snapshotReport = JSON.parse(await fs.readFile(path.join(base, 'review', 'snapshot-report.json'), 'utf8'));
+  assert.equal(snapshotReport.runtime, 'mock', 'compact remote snapshot report should record mock runtime');
+  assert.equal(snapshotReport.snapshot_summary.totals.groups, REMOTE_BASELINE_GROUPS, 'compact remote snapshot report should record current group count');
+  assertBudget(evaluateSnapshotWarningBudget(snapshotReport, remoteWarningBudget), 'compact remote mock snapshot warning budget');
+
+  const queueSnapshotPath = path.join(base, 'review', 'snapshot-report-queue.json');
+  try {
+    const queueSnapshotReport = JSON.parse(await fs.readFile(queueSnapshotPath, 'utf8'));
+    assert.equal(queueSnapshotReport.runtime, 'queue', 'compact remote queue snapshot report should record queue runtime');
+    assertBudget(evaluateSnapshotWarningBudget(queueSnapshotReport, remoteWarningBudget), 'compact remote queue snapshot warning budget');
+  } catch (error) {
+    if (error.code !== 'ENOENT') throw error;
+  }
+
+  return true;
+}
+
+function partById(modelPlan, id) {
+  const part = modelPlan.parts.find((item) => item.id === id);
+  assert.ok(part, `expected model plan part ${id}`);
+  return part;
+}
+
+function operationByName(dsl, name) {
+  const operation = dsl.operations.find((item) => item.name === name);
+  assert.ok(operation, `expected DSL operation ${name}`);
+  return operation;
 }
 
 function compileSchema(schema) {

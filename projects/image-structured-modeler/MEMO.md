@@ -1,10 +1,10 @@
 # Image Structured Modeler Memo
 
-更新时间：2026-05-20
+更新时间：2026-05-25
 
 ## 当前结论
 
-子项目已经从“方向和 schema”推进到“Switch 手柄示例闭环 baseline”。当前链路能从 `test/手柄` 生成：
+子项目已经从“方向和 schema”推进到“Switch 手柄示例闭环 baseline + 第二产品泛化样例”。当前 Switch 链路能从 `test/手柄` 生成：
 
 ```text
 observations.json -> model-plan.json -> output.json -> review/index.html -> mock/queue SketchUp output
@@ -12,10 +12,15 @@ observations.json -> model-plan.json -> output.json -> review/index.html -> mock
 
 它不是闭门造车：架构参考过 Free2CAD、Img2CAD、CSGNet、PartNet、DeepCAD 等项目，但当前实现没有直接照搬这些项目代码，而是吸收它们的思路后落成自己的确定性 CV baseline、人工 review/corrections 和 SketchUp DSL 编译器。
 
+阶段 6 收口新增了两个发布级门槛：
+
+- correction-driven regression：`examples/switch-controller/manual-corrections.regression.json` 会验证只改 corrections 就能改变 `model-plan.json` 里的 part 参数，并进一步改变编译后的 DSL。
+- 第二产品样例：`examples/compact-remote` 通过 `object_profile: "compact_remote"` 走独立生成/编译路径，生成 `model-plan.json`、`output.json`、`review/index.html` 和 mock snapshot。
+
 当前完成度判断：
 
-- Switch-only 可演示闭环：约 80%。
-- 通用“图片 -> 结构化 SketchUp 模型”MVP：约 55%-60%。
+- Switch-only 可演示闭环：约 85%。
+- 通用“图片 -> 结构化 SketchUp 模型”MVP：约 65%。
 - 当前优先级：先可靠，再聪明，再好看。
 
 ## 当前可用状态
@@ -85,6 +90,14 @@ observations.json -> model-plan.json -> output.json -> review/index.html -> mock
   - total diffs：`0`
   - warning gate：`pass`
   - mock/queue bbox：`280 x 174 x 40 mm -> 280 x 174 x 40 mm`
+- Compact remote 第二样例：
+  - `examples/compact-remote/observations.json`
+  - `examples/compact-remote/manual-corrections.json`
+  - `examples/compact-remote/model-plan.json`
+  - `examples/compact-remote/output.json`
+  - `examples/compact-remote/review/index.html`
+  - `examples/compact-remote/review/snapshot-report.json`
+  - 当前 mock snapshot：`11 groups`、`529 faces`、`1234 edges`、`452 vertices`、`2 scenes`，bbox `44 x 158 x 15.85 mm`，warnings 0。
 
 ## 已完成
 
@@ -106,12 +119,13 @@ observations.json -> model-plan.json -> output.json -> review/index.html -> mock
   - 基于 observations 生成 overlay PNG。
 - `scripts/generate-model-plan.mjs`：
   - 将 observations 转成半自动 `model-plan.json`。
-  - 当前仍使用 Switch controller layout prior，不是完全自动语义识别。
+  - 已按 `object_profile` 分流：`switch_controller` 保留 Switch layout prior，`compact_remote` 走遥控器样例 profile；仍不是完全自动语义识别。
 - `scripts/compile-plan-to-sketchup-dsl.mjs`：
   - 将 model plan 编译为 SketchUp JSON DSL。
   - 已使用 `rounded_box` 改善外壳、中心握把、前面板凹槽和肩键轨道。
   - 已改用直接的 `analog_stick`、`button_on_panel`、`screw_hole` 产品 helper，替代按钮/螺丝/摇杆的粗 component overlap。
   - 已给 face dome、rear grip、thumbstick、buttons、screws 写入 `qa.expected_contacts`，用于解释当前 baseline 的预期接触/包围盒 overlap。
+  - 已新增 `compact_remote` 编译路径，覆盖 rounded body、face panel、button cluster、slot_array grille、真实 `text_3d` brand label 和 review scenes。
   - 关闭了全局 transparency，SketchUp 视图不再像调试半透明图。
 - `scripts/make-review-report.mjs`：
   - 生成 `review/index.html`。
@@ -125,15 +139,17 @@ observations.json -> model-plan.json -> output.json -> review/index.html -> mock
   - 已去掉对 Ajv runtime import 的依赖，改为项目内轻量 JSON Schema subset validator。
   - 已校验 `review/snapshot-report.json` 和可选的 `review/snapshot-report-queue.json`，防止 warning 分类缺失。
   - 已校验 mock snapshot 中 `qa.expected_contacts` 被保留，并要求 mock geometry warning 分类全部来自该元数据。
+  - 已新增 correction-driven regression，断言 manual corrections 会改变 model plan 和 compiled DSL。
+  - 已新增 compact remote 第二样例校验，防止生成器/编译器回退成 Switch-only profile。
   - `npm run test:image-structured` 当前可正常退出并通过。
 
 ## 当前已知问题
 
 - 缺 true top view，厚度、后握把和肩键深度仍然靠 side/rear 和人工尺寸推断。
 - observations 仍主要是 bbox、edge sample 和 symmetry axis，还不是完整建模证据系统。
-- Switch 示例仍依赖 layout prior，不是通用语义识别。
+- Switch 示例仍依赖 layout prior；当前泛化靠 `object_profile` 分流和第二样例证明路径可扩展，不是完整通用语义识别。
 - mock/queue warning 分类已推进到 DSL/runtime `qa.expected_contacts` 元数据；queue 侧已在 SketchUp 2026 中重新验证。
-- 当前 geometry warning 已收敛到 0；下一步应转向 correction-driven regression tests，而不是继续扩 allowlist。
+- 当前 geometry warning 已收敛到 0；correction-driven regression 第一条已经进测试门禁，下一步应增强 review/corrections authoring 工作台，而不是继续扩 allowlist。
 - `QUEUE_VERIFICATION.md` 已同步最新 `rounded_box` 后的 queue 指标；后续需要改成自动生成，避免手工维护再次漂移。
 - 当前 review report 能看，但还不是 correction authoring 工作台。
 
@@ -221,6 +237,7 @@ observations.json -> model-plan.json -> output.json -> review/index.html -> mock
   - evidence
   - 推荐 correction 示例
 - 增加测试：correction 改变后，`model-plan.json` 和 `output.json` 必须发生预期变化。
+  - 当前第一条测试已落地：Switch regression fixture 会移动左摇杆、调整半径、增加 Home button，并断言编译 DSL 同步变化。
 
 验收：
 
@@ -273,13 +290,14 @@ observations.json -> model-plan.json -> output.json -> review/index.html -> mock
 - 第二个产品能跑完整链路。
 - Switch 专用逻辑减少。
 - VLM 是否接入有明确成本/收益判断。
+- 当前第二样例已落地：`compact-remote` 可跑 observations → model-plan → output → review → mock snapshot，warnings 0。VLM 仍不接入发布阻塞路径。
 
 ## 推荐下次开工入口
 
-从阶段 1 继续：
+从阶段 6 之后继续：
 
-1. 开始扩展 `manual-corrections.json`，让 part 参数调整进入 model plan、DSL 和回归测试。
-2. 提升 review/corrections 工作台，让人工修正能更直接影响 part 参数。
+1. 提升 review/corrections 工作台，让人工修正能更直接影响 part 参数。
+2. 继续把 `object_profile` 扩到鼠标、小电器外壳等第三样例。
 3. 保持 mock/queue geometry warning budget 为 0，避免产品 primitive 回退到粗 overlap。
 
 ## 2026-05-19 交接记录

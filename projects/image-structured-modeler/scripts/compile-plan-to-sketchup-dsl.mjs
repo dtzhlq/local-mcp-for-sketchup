@@ -17,6 +17,12 @@ async function main() {
 }
 
 export function compilePlanToSketchUpDsl(modelPlan) {
+  const profile = normalizeModelPlanProfile(modelPlan);
+  if (profile === 'compact_remote') return compileCompactRemotePlan(modelPlan);
+  return compileSwitchControllerPlan(modelPlan);
+}
+
+function compileSwitchControllerPlan(modelPlan) {
   const width = positive(modelPlan.scale?.known_width, 280);
   const height = positive(modelPlan.scale?.known_height, 155);
   const depth = positive(modelPlan.scale?.known_depth, 42);
@@ -144,6 +150,157 @@ export function compilePlanToSketchUpDsl(modelPlan) {
   return { version: 1, units: 'mm', operations };
 }
 
+function compileCompactRemotePlan(modelPlan) {
+  const width = positive(modelPlan.scale?.known_width, 44);
+  const height = positive(modelPlan.scale?.known_height, 158);
+  const depth = positive(modelPlan.scale?.known_depth, 16);
+  const halfWidth = width / 2;
+  const halfHeight = height / 2;
+  const parts = new Map((modelPlan.parts || []).map((part) => [part.id, part]));
+  const body = parts.get('remote_body')?.parameters || {};
+  const face = parts.get('remote_face_panel')?.parameters || {};
+  const nav = parts.get('navigation_pad')?.parameters || {};
+  const primary = parts.get('primary_button_cluster')?.parameters || {};
+  const rocker = parts.get('volume_rocker')?.parameters || {};
+  const grille = parts.get('speaker_grille')?.parameters || {};
+  const label = parts.get('brand_label')?.parameters || {};
+  const bodyTopZ = depth * 0.72;
+  const faceThickness = positive(face.thickness, 2);
+  const faceTopZ = bodyTopZ + 0.05 + faceThickness;
+  const mountedZ = faceTopZ + 0.08;
+
+  const operations = [
+    { op: 'reset' },
+    { op: 'material', name: 'Remote_Graphite_Plastic', color: '#20252b', workflow: 'pbr_metallic_roughness', pbr: { metallic_factor: 0.01, roughness_factor: 0.52, ao_strength: 0.55 } },
+    { op: 'material', name: 'Remote_Satin_Face', color: '#2f3740', workflow: 'pbr_metallic_roughness', pbr: { metallic_factor: 0.02, roughness_factor: 0.34, ao_strength: 0.45 } },
+    { op: 'material', name: 'Remote_Button_Rubber', color: '#101317', workflow: 'pbr_metallic_roughness', pbr: { metallic_factor: 0.0, roughness_factor: 0.78, ao_strength: 0.7 } },
+    { op: 'material', name: 'Remote_Dark_Detail', color: '#050607' },
+    {
+      op: 'rounded_box',
+      name: 'Compact_Remote_Body_From_Image_Plan',
+      origin: [-halfWidth, -halfHeight, 0],
+      size: [width, height, bodyTopZ],
+      radius: positive(body.corner_radius, Math.min(width * 0.24, 11)),
+      segments: 8,
+      material: 'Remote_Graphite_Plastic',
+      smooth: 'all',
+      qa: qaMetadata('body', 'remote_body')
+    },
+    {
+      op: 'rounded_box',
+      name: 'Compact_Remote_Face_Panel_From_Image_Plan',
+      origin: [-(positive(face.width, width - 8)) / 2, -(positive(face.height, height - 18)) / 2, bodyTopZ + 0.05],
+      size: [positive(face.width, width - 8), positive(face.height, height - 18), faceThickness],
+      radius: positive(face.corner_radius, 6),
+      segments: 6,
+      material: 'Remote_Satin_Face',
+      smooth: 'all',
+      qa: qaMetadata('face_panel', 'remote_face_panel')
+    }
+  ];
+
+  operations.push(buttonOnPanelFromSpec({
+    name: 'Remote_Navigation_Pad_From_Image_Plan',
+    spec: nav,
+    defaultCenter: [0, -30],
+    defaultSize: [24, 24],
+    defaultCornerRadius: 12,
+    defaultHeight: 2.2,
+    z: mountedZ,
+    material: 'Remote_Button_Rubber',
+    qaRole: 'navigation_pad'
+  }));
+
+  for (const button of primary.buttons || []) {
+    operations.push(buttonOnPanelFromSpec({
+      name: `Remote_${safeName(button.label)}_Button_From_Image_Plan`,
+      spec: button,
+      defaultCenter: [0, 0],
+      defaultRadius: 4,
+      defaultHeight: 1.9,
+      z: mountedZ,
+      material: 'Remote_Button_Rubber',
+      qaRole: 'button'
+    }));
+  }
+
+  operations.push(buttonOnPanelFromSpec({
+    name: 'Remote_Volume_Rocker_From_Image_Plan',
+    spec: rocker,
+    defaultCenter: [0, 24],
+    defaultSize: [9, 28],
+    defaultCornerRadius: 4.5,
+    defaultHeight: 2,
+    z: mountedZ,
+    material: 'Remote_Button_Rubber',
+    qaRole: 'volume_rocker'
+  }));
+
+  const grilleCount = Math.max(1, Math.min(12, Math.round(positive(grille.count, 5))));
+  operations.push({
+    op: 'slot_array',
+    name: 'Remote_Speaker_Grille_From_Image_Plan',
+    center: withZ(grille.center || [0, -66], mountedZ + 0.45),
+    count: grilleCount,
+    spacing: positive(grille.spacing, 4),
+    length: positive(grille.length, 2.4),
+    width: positive(grille.width, 1),
+    depth: positive(grille.depth, 0.35),
+    direction: 'x',
+    segments: 5,
+    material: 'Remote_Dark_Detail',
+    smooth: 'all'
+  });
+
+  operations.push({
+    op: 'text_3d',
+    name: 'Remote_Brand_Label_From_Image_Plan',
+    text: label.text || 'ALMA',
+    center: withZ(label.center || [0, 52], mountedZ + 0.4),
+    height: positive(label.height, 5),
+    extrusion: positive(label.extrusion, 0.45),
+    font: label.font || 'Arial',
+    align: 'center',
+    material: 'Remote_Dark_Detail',
+    qa: qaMetadata('label', 'brand_label')
+  });
+
+  operations.push(
+    { op: 'scene', name: 'Compact_Remote_Front_Review', camera: { eye: [0, -360, 150], target: [0, 0, depth / 2], up: [0, 0, 1], fov: 28 } },
+    { op: 'scene', name: 'Compact_Remote_Top_QA', camera: { eye: [0, 0, 360], target: [0, 0, depth / 2], up: [0, 1, 0], fov: 30 } },
+    { op: 'style', name: 'Compact_Remote_Product_Review', display_edges: true, profiles: true, profile_width: 2, face_style: 'shaded_with_textures', background_color: '#f5f6f8', sky_color: '#eef5ff', ground_color: '#d7dce3' },
+    { op: 'shadow', display: true, time: '2026-05-25T09:30:00+08:00', light: 72, dark: 44, use_sun_for_shading: true },
+    { op: 'rendering_options', edge_display_mode: 1, draw_hidden_geometry: false, display_color_by_layer: false, transparency: false }
+  );
+
+  return { version: 1, units: 'mm', operations };
+}
+
+function buttonOnPanelFromSpec({ name, spec = {}, defaultCenter, defaultRadius, defaultSize, defaultCornerRadius, defaultHeight, z, material, qaRole }) {
+  const operation = {
+    op: 'button_on_panel',
+    name,
+    center: withZ(spec.center || defaultCenter, z),
+    height: positive(spec.height, defaultHeight),
+    segments: spec.size || defaultSize ? 10 : 16,
+    material,
+    smooth: 'all',
+    qa: qaMetadata(qaRole, name)
+  };
+  const size = spec.size || defaultSize;
+  if (size) {
+    operation.size = size;
+    operation.corner_radius = positive(spec.corner_radius, defaultCornerRadius ?? Math.min(size[0], size[1]) / 2);
+  } else {
+    operation.radius = positive(spec.radius, defaultRadius);
+  }
+  return operation;
+}
+
+function withZ(point, z) {
+  return [Number(point[0]) || 0, Number(point[1]) || 0, z];
+}
+
 function analogStick(name, center, parameters, material, faceDomeName, mountedBaseZ) {
   const [x, y] = center;
   const outer = positive(parameters.outer_radius, 10.5);
@@ -202,6 +359,14 @@ function positive(value, fallback) {
 
 function safeName(value) {
   return String(value).replace(/[^A-Za-z0-9_]+/g, '_');
+}
+
+function normalizeModelPlanProfile(modelPlan) {
+  const explicit = modelPlan.object?.profile || modelPlan.object?.object_profile;
+  if (explicit === 'compact_remote' || explicit === 'remote_control' || explicit === 'media_remote') return 'compact_remote';
+  if (explicit === 'switch_controller' || explicit === 'game_controller') return 'switch_controller';
+  if (modelPlan.object?.type === 'remote_control') return 'compact_remote';
+  return 'switch_controller';
 }
 
 function usage() {

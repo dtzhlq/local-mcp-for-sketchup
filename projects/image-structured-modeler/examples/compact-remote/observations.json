@@ -1,0 +1,187 @@
+{
+  "version": 1,
+  "object": {
+    "type": "remote_control",
+    "name": "Compact Media Remote",
+    "profile": "compact_remote",
+    "source_images": [
+      "projects/image-structured-modeler/examples/compact-remote/reference/front-reference.png",
+      "projects/image-structured-modeler/examples/compact-remote/reference/right-reference.png"
+    ]
+  },
+  "image_set_quality": "medium",
+  "views_detected": ["front", "right", "detail"],
+  "missing_views": ["rear", "top"],
+  "images": [
+    {
+      "version": 1,
+      "image": {
+        "path": "projects/image-structured-modeler/examples/compact-remote/reference/front-reference.png",
+        "width": 1200,
+        "height": 2400,
+        "analysis_width": 600,
+        "analysis_height": 1200
+      },
+      "detected_view": {
+        "kind": "front",
+        "confidence": 0.82,
+        "notes": [
+          "Synthetic review fixture derived from a front product reference layout."
+        ]
+      },
+      "camera_hints": {
+        "perspective_strength": "low",
+        "symmetry_axis": {
+          "a": [300, 0],
+          "b": [300, 1200]
+        }
+      },
+      "metrics": {
+        "edge_count": 8420,
+        "edge_density": 0.0117,
+        "object_bbox": [178, 70, 244, 1048],
+        "object_bbox_ratio": 0.233,
+        "symmetry_score": 0.76
+      },
+      "observations": [
+        {
+          "id": "main_object_bbox",
+          "kind": "component_bbox",
+          "component_hint": "main_object",
+          "bbox": [178, 70, 244, 1048],
+          "confidence": 0.83,
+          "note": "Tall rounded handheld silhouette with low perspective distortion."
+        },
+        {
+          "id": "remote_body_bbox",
+          "kind": "component_bbox",
+          "component_hint": "remote_body",
+          "bbox": [178, 70, 244, 1048],
+          "confidence": 0.82,
+          "note": "Outer remote body boundary."
+        },
+        {
+          "id": "face_panel_bbox",
+          "kind": "component_bbox",
+          "component_hint": "remote_face_panel",
+          "bbox": [211, 135, 178, 928],
+          "confidence": 0.74,
+          "note": "Inset face panel visible as a darker raised region."
+        },
+        {
+          "id": "navigation_pad_center",
+          "kind": "center_point",
+          "component_hint": "navigation_pad",
+          "points": [[300, 402]],
+          "confidence": 0.78,
+          "note": "Large central navigation pad."
+        },
+        {
+          "id": "primary_button_cluster_bbox",
+          "kind": "component_bbox",
+          "component_hint": "primary_button_cluster",
+          "bbox": [244, 242, 112, 306],
+          "confidence": 0.7,
+          "note": "Small command buttons around the navigation pad."
+        },
+        {
+          "id": "volume_rocker_bbox",
+          "kind": "component_bbox",
+          "component_hint": "volume_rocker",
+          "bbox": [276, 654, 48, 194],
+          "confidence": 0.76,
+          "note": "Vertical rocker on the lower half."
+        },
+        {
+          "id": "speaker_grille_bbox",
+          "kind": "component_bbox",
+          "component_hint": "speaker_grille",
+          "bbox": [265, 165, 70, 32],
+          "confidence": 0.62,
+          "note": "Short horizontal slots near the top."
+        },
+        {
+          "id": "brand_label_bbox",
+          "kind": "text_or_logo",
+          "component_hint": "brand_label",
+          "bbox": [251, 898, 98, 44],
+          "confidence": 0.67,
+          "note": "Brand label near the bottom of the face."
+        }
+      ],
+      "quality_report": {
+        "usable_for_modeling": true,
+        "risks": [
+          "Rear battery-door seam is not visible in the current reference.",
+          "Top infrared window depth is inferred from the side profile."
+        ],
+        "missing_views": ["rear", "top"]
+      }
+    },
+    {
+      "version": 1,
+      "image": {
+        "path": "projects/image-structured-modeler/examples/compact-remote/reference/right-reference.png",
+        "width": 900,
+        "height": 2400,
+        "analysis_width": 450,
+        "analysis_height": 1200
+      },
+      "detected_view": {
+        "kind": "right",
+        "confidence": 0.69,
+        "notes": [
+          "Side profile gives a reliable thickness prior but weak button height evidence."
+        ]
+      },
+      "camera_hints": {
+        "perspective_strength": "medium",
+        "symmetry_axis": {
+          "a": [225, 0],
+          "b": [225, 1200]
+        }
+      },
+      "metrics": {
+        "edge_count": 5160,
+        "edge_density": 0.0096,
+        "object_bbox": [187, 86, 72, 1026],
+        "object_bbox_ratio": 0.07,
+        "symmetry_score": 0.48
+      },
+      "observations": [
+        {
+          "id": "side_thickness_profile",
+          "kind": "component_bbox",
+          "component_hint": "side_thickness_profile",
+          "bbox": [187, 86, 72, 1026],
+          "confidence": 0.72,
+          "note": "Side silhouette supports a slim 16mm thickness prior."
+        }
+      ],
+      "quality_report": {
+        "usable_for_modeling": true,
+        "risks": [
+          "Small raised buttons are visible only as shallow side bumps."
+        ],
+        "missing_views": ["rear", "top"]
+      }
+    }
+  ],
+  "quality_report": {
+    "usable_for_modeling": true,
+    "risks": [
+      "Second sample is a deterministic fixture for generalization, not a full semantic VLM pass.",
+      "Rear battery door and top transmitter window remain inferred."
+    ],
+    "notes": [
+      "Used to prove the model-plan generator no longer assumes the Switch controller profile."
+    ]
+  },
+  "review": {
+    "overlay_dir": null,
+    "open_questions": [
+      "Confirm whether the lower brand label should be raised text or engraved text.",
+      "Confirm whether the speaker grille is a real slot array or only printed artwork."
+    ]
+  }
+}
