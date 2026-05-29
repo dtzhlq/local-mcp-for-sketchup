@@ -1,8 +1,10 @@
 # Release Checklist
 
-更新时间：2026-05-25
+更新时间：2026-05-27
 
-本清单用于把当前本地 replica 收成可安装、可回归、可打包的 release slice。
+本清单用于把当前本地 replica 收成可安装、可回归、可打包的技术预览 slice。
+
+发布边界调整：2026-05-25 验收复盘后，当前版本不再按正式发布版本提交。下面的检查仍用于验证基础 runtime、Expert Mode、queue 回归和 RBZ 打包是否健康；阶段 7 主线已补受控真实特征编辑、queue active model 防护和 CAD boolean/manifold，子项目已补 semantic fusion、corrections workbench 和 compact remote 的 feature mapping 第一刀。正式发布前还必须用新能力复跑更多产品类验收。
 
 ## 1. 本地静态检查
 
@@ -10,6 +12,7 @@
 npm run plugin:check
 npm test
 npm run qa:mock
+npm run qa:model-layout
 npm run qa:expert:mock
 npm run qa:budget:mock
 git diff --check
@@ -18,10 +21,10 @@ git diff --check
 通过标准：
 
 - Ruby 插件主文件和所有子模块 `ruby -c` 通过。
-- Operation contract 输出 manifest / mock / Ruby dispatch 为 `64 / 64 / 64`，component registry / dispatch 为 `42 / 42`。
+- Operation contract 输出 manifest / mock / Ruby dispatch 为 `74 / 74 / 74`，component registry / dispatch 为 `42 / 42`。
 - Expert Mode fixture 编译和 mock build 通过，且安全拒绝场景由 `test/expert-compiler.mjs` 覆盖。
-- MCP stdio server 的 `tools/list` 和 `tools/call compile_expert/build_expert_model` 由 `test/mcp-server.mjs` 覆盖。
-- mock QA、Expert mock QA 与 mock budget 均 Verdict `pass`。
+- MCP stdio server 的 `tools/list` 和 `tools/call compile_expert/build_expert_model/validate_model` 由 `test/mcp-server.mjs` 覆盖。
+- mock QA、model layout QA、Expert mock QA 与 mock budget 均 Verdict `pass`；`qa:model-layout` 必须生成 Switch、救护车和儿童房的正交 preview/report，且 issues 为 `0`。
 
 ## 2. 安装 SketchUp 插件
 
@@ -46,7 +49,7 @@ node src/cli.mjs get_capabilities --runtime queue --timeout-ms 10000
 - `runtime.version` 等于当前 `PLUGIN_VERSION`。
 - `runtime.compatibility.ok` 为 `true`。
 - `runtime.compatibility.issues` 为空。
-- supported operations 数量为 `64`。
+- supported operations 数量为 `74`。
 
 ## 3. Queue 回归
 
@@ -60,7 +63,9 @@ npm run qa:budget:queue
 
 通过标准：
 
-- `output/qa-reports/queue/index.md` Verdict `pass`，9 个默认样例 Total Diffs 为 `0`。
+- `output/qa-reports/queue/index.md` 中 10 个默认样例 `OK: true`；聚合 Verdict 允许为 `review`，因为 mock/queue 真实拓扑差异会保留 warning。
+- `output/boolean-manifold-queue-report.md` 使用 solid boolean 专用 topology/bbox tolerance 后 Verdict `pass`，Total Diffs 为 `0`。
+- `output/model-qa/ambulance-reference-rerun-queue/report.md` Verdict `pass` / Level `ok` / issues `0`；救护车样例必须由 `npm run acceptance:generate-ambulance` 重新生成后再跑 queue。
 - `output/qa-reports/expert-queue/index.md` Verdict `pass`，Expert fixture 编译、queue 构建、SKP artifact 保存、runtime compatibility、warnings 和基础预算均通过。
 - `output/performance-budgets/queue/index.md` Verdict `pass`，四个发布样例低于默认 face / edge / vertex / group / instance / SKP size budget。
 
@@ -87,6 +92,8 @@ out/releases/alma-sketchup-mcp-<PLUGIN_VERSION>.rbz
 - `alma_sketchup_mcp/product_operations.rb`
 - `alma_sketchup_mcp/profile_operations.rb`
 - `alma_sketchup_mcp/surface_operations.rb`
+- `alma_sketchup_mcp/feature_operations.rb`
+- `alma_sketchup_mcp/boolean_operations.rb`
 - `alma_sketchup_mcp/demo_operations.rb`
 - `alma_sketchup_mcp/architecture_operations.rb`
 - `alma_sketchup_mcp/component_operations.rb`

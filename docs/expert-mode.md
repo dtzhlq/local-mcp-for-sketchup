@@ -101,7 +101,7 @@ output/qa-reports/expert-queue/index.md
 当前验证结果：
 
 - `qa:expert:mock` Verdict `pass`：19 compiled ops，562 faces / 1548 edges / 2 groups / 12 instances，warnings 0，artifact JSON 53663 bytes。
-- `qa:expert:queue` Verdict `pass`：19 compiled ops，739 faces / 2079 edges / 1386 vertices / 2 groups / 12 instances，warnings 0，SKP artifact 207147 bytes。
+- `qa:expert:queue` Verdict `pass`：19 compiled ops，739 faces / 2079 edges / 1386 vertices / 2 groups / 12 instances，warnings 0，SKP artifact 167582 bytes。
 
 SketchUp Bridge 重启后，live queue 单例也已通过：
 

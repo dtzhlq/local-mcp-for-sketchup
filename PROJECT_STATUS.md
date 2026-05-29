@@ -1,7 +1,7 @@
 # SketchUp MCP Replica — 项目状态与计划
 
-> 更新日期：2026-05-25
-> 当前状态：阶段 2-6 发布级收口完成；后续进入 roadmap / polish
+> 更新日期：2026-05-29
+> 当前状态：技术预览闭环已验证；阶段 7 主线 feature slice、CAD boolean/manifold、子项目 semantic fusion / corrections workbench 与 feature mapping 第一刀已完成；下一阶段进入 ProductProfile / PartGraph / Reference Visual QA 建模架构重构
 
 ---
 
@@ -10,6 +10,20 @@
 用**安全 JSON DSL + 本地 Node bridge + stdio MCP server + SketchUp Ruby queue plugin** 复现 Claude 官方 SketchUp Connector 的核心体验。
 
 **不是**官方 Cloud MCP（不做 OAuth、云端 session、download URL），**是**本地可控替代方案：安全、可测、可回归。
+
+### 2026-05-27 验收复盘后的发布判定
+
+本轮用儿童房、救护车和 Switch 手柄测试图做了更接近真实使用的验收。结论是：当前系统已经能稳定表达和保存“结构化展示模型”，但还不适合作为正式发布版本宣传为照片/多图到可编辑产品模型。
+
+主要原因：
+
+- 真实编辑能力已经补上阶段 7 主线闭环：`target_id + face + depth/through` 的受控 feature operations 之外，新增了顶层实体组的 `boolean_union` / `boolean_difference` / `boolean_intersect` 和 `manifold_check` / `manifold_repair`。它是本地 DSL 的 CAD boolean/manifold 能力，不等同于官方云端 Python SDK 或无限制 CAD kernel。
+- 模型表达仍可能退化成“盒体/曲面/贴面组合”，遇到车顶筋线、门缝、凹槽、凸起、孔洞时，已经有第一版特征级编辑语义；救护车样例已用当前 feature/boolean/manifold 能力重跑并通过 live queue，但还需要更多产品样例复验。
+- 图像理解还不能可靠判断凹/凸/贴花/开孔。救护车验收模型是人工综合多图后手写 DSL；它证明 MCP 能表达综合后的模型，不证明自动管线已有多图统一建模能力。
+- Image Structured Modeler 的 Switch 链路目前是“多图输入 + 视角分类 + Switch layout prior 模板化生成”，不是跨图联合推理后反求几何。单图批量测试也能生成完整模型，进一步说明模板补全权重过高。
+- Queue runtime 已补 active model 防护第一版；新 boolean/manifold 插件已完成 live capability handshake、queue 单例验证和救护车重跑。正式发布仍需要用这些能力重跑更多产品类验收。
+
+因此当前发布状态仍为：**技术预览可演示，正式发布暂停**。主线受控 feature operations、CAD boolean/manifold 与 queue active model 防护已补齐；Image Structured Modeler 已补齐 observation/model-plan/review evidence graph、`review.semantic_fusion` 跨图语义融合层、交互式 corrections workbench，以及 compact remote 的真实 feature mapping 第一刀。下一轮要继续用新的 boolean/manifold 能力重跑 Switch、儿童房和更多产品类验收。
 
 ---
 
@@ -59,11 +73,13 @@
 | `src/component-operations.mjs` | mock runtime component_definition / component_instance 和 transform placement |
 | `src/view-operations.mjs` | mock runtime camera/scene/style/shadow/rendering 操作 |
 | `src/snapshot.mjs` | mock runtime snapshot、warning summary、bbox 合并和碰撞 warning |
+| `src/model-qa.mjs` | 无 GUI 的语义布局 QA、正交 SVG/HTML preview、correction suggestions |
 | `src/object-operations.mjs` | mock runtime 对象编辑、Tags、attributes、classification、texture transform、transform_object |
 | `src/object-identity.mjs` | mock runtime 对象 id、target 引用、唯一性和 box/orientation 基础 helper |
 | `src/object-operation-utils.mjs` | object operation 字段归一化和 snapshot attribute helper |
+| `src/boolean-operations.mjs` | mock runtime solid boolean / manifold check-repair metadata |
 | `src/expert-compiler.mjs` | Expert Mode v1 受限脚本 AST 解释器，编译为标准 JSON DSL |
-| `src/capabilities.mjs` | 单一真源 operation registry，64 个 operation 的支持状态/稳定性/schema/component-scope |
+| `src/capabilities.mjs` | 单一真源 operation registry，74 个 operation 的支持状态/稳定性/schema/component-scope |
 | `src/snapshot-diff.mjs` | snapshot 对比 QA：totals、bbox、materials、groups、instances、levels、scenes |
 | `sketchup_plugin/alma_sketchup_mcp.rb` | SketchUp 2026 Ruby 插件，读队列、执行 DSL、返回 snapshot |
 | `sketchup_plugin/alma_sketchup_mcp/operation_registry.rb` | 由 `src/capabilities.mjs` 生成的 Ruby queue runtime operation support 表 |
@@ -74,6 +90,7 @@
 | `sketchup_plugin/alma_sketchup_mcp/product_operations.rb` | Ruby queue runtime box/product helper |
 | `sketchup_plugin/alma_sketchup_mcp/profile_operations.rb` | Ruby queue runtime panel/profile/roof helper |
 | `sketchup_plugin/alma_sketchup_mcp/surface_operations.rb` | Ruby queue runtime loft/shell/sweep/domed/bowed helper |
+| `sketchup_plugin/alma_sketchup_mcp/boolean_operations.rb` | Ruby queue runtime SketchUp solid boolean / manifold check-repair |
 | `sketchup_plugin/alma_sketchup_mcp/demo_operations.rb` | Ruby queue runtime demo room helper |
 | `sketchup_plugin/alma_sketchup_mcp/architecture_operations.rb` | Ruby queue runtime 建筑 helper：level/floor/wall/stairs/railing |
 | `sketchup_plugin/alma_sketchup_mcp/component_operations.rb` | Ruby queue runtime component_definition / component_instance 和 transform placement |
@@ -82,7 +99,8 @@
 | `docs/queue-runtime-ops.md` | Queue 手动验收清单、安装检查与故障排查 |
 | `docs/performance-budgets.md` | 性能基准、face/vertex/SKP size 阈值和预算报告入口 |
 | `docs/expert-mode.md` | Expert Mode v1 允许语法、禁止项、限制和验证方式 |
-| `docs/release-checklist.md` | 发布检查、插件安装、queue 回归、RBZ 打包和提交切片建议 |
+| `docs/release-checklist.md` | 技术预览打包检查、插件安装、queue 回归、RBZ 打包和提交切片建议 |
+| `docs/product-modeling-architecture-refactor-plan.md` | 产品建模架构重构计划：ProductProfile / PartGraph / Reference Visual QA |
 | `test/mock-validation.mjs` | 离线回归测试 |
 | `test/expert-compiler.mjs` | Expert Mode v1 编译、mock build 和安全拒绝测试 |
 | `test/mcp-server.mjs` | stdio MCP server tools/list 和 tools/call 回归测试 |
@@ -105,10 +123,11 @@
 ### ✅ 阶段 1 — Runtime 同步骨架（基本完成）
 - Queue capability handshake：插件回传版本、op 列表、compatibility
 - `compare_model`：一键 mock-vs-queue 对照
+- `validate_model`：无 GUI 的语义布局 QA，可生成正交 SVG/HTML preview 和 correction suggestions
 - QA 报告生成（JSON + Markdown）
 - 批量 golden regression：`npm run qa:mock` / `npm run qa:queue`
 
-### ✅ 阶段 2 — DSL v1.1 核心表达力（发布级残项已收口）
+### ✅ 阶段 2 — DSL v1.1 核心表达力（技术预览残项已收口）
 
 **已完成与验证状态：**
 - `delete`、`rename`、`set_material`、`set_visibility`
@@ -120,7 +139,7 @@
 - `transform_object` pivot：默认 origin、`"center"`、显式 `[x,y,z]`
 - `face_with_holes`、`profile_extrude` 通用 profile 第一切片：支持简单闭合多边形 outer + 多边形 holes，拒绝自交、触边和重叠洞；已通过 mock/queue 对照验证
 - Operation contract 测试：manifest、mock runtime、Ruby queue runtime、component_definition dispatch 覆盖自动校验
-- Operation registry / runtime contract 单一注册表化：`src/capabilities.mjs` 作为唯一 operation registry，manifest、runtime `operation_support`、schema、component-scope、docs matrix、contract tests 均从 registry 派生；当前 64 个 operation，42 个 component_definition-scoped operation
+- Operation registry / runtime contract 单一注册表化：`src/capabilities.mjs` 作为唯一 operation registry，manifest、runtime `operation_support`、schema、component-scope、docs matrix、contract tests 均从 registry 派生；当前 74 个 operation，42 个 component_definition-scoped operation
 
 **待做（P1）：**
 - [x] 二次编辑的 chain 支持：新增 `examples/transform-chain-regression.json`，连续多个 `transform_object` 叠加时的 center pivot、本地轴、模型轴、平移和 matrix 已通过 mock/queue 对照验证。
@@ -141,7 +160,7 @@
 
 **可选后续（不优先）：** `counterbore`、`through_hole`、`chamfered_prism`
 
-### ✅ 阶段 4 — 组织、材质、视图（发布级残项已收口）
+### ✅ 阶段 4 — 组织、材质、视图（技术预览残项已收口）
 
 **已完成：**
 - `scene`、`style`、`shadow`、`rendering_options`
@@ -158,7 +177,7 @@
 **待做：**
 - [x] 字体参数扩展与真实字体轮廓 emboss/engrave marker 已完成；solid boolean text union/subtraction 归入长期 CAD roadmap，不作为阶段 4/5 发布阻塞项。
 
-### ✅ 阶段 5 — Expert Mode v1（发布收口完成）
+### ✅ 阶段 5 — Expert Mode v1（技术预览收口完成）
 
 允许受限脚本生成 JSON DSL，而非直接手写 DSL。形态：
 - 允许：变量、函数、for 循环、数组、map/filter/flatMap/reduce、数学/向量 helper、seeded random、批量 component_instance
@@ -175,12 +194,12 @@
 - `test/mcp-server.mjs`：启动真实 stdio MCP server 子进程，验证 `tools/list` 与 `tools/call compile_expert/build_expert_model`
 - live queue 单例：SketchUp Bridge 重启后 `get_capabilities --runtime queue` compatibility `ok`；`build_expert_model --runtime queue --code-file examples/expert-parametric-fixture.js --seed 7` 构建成功，输出 `output/expert-parametric-queue.json`，snapshot 为 739 faces / 2079 edges / 1386 vertices / 2 groups / 12 instances，warnings 0
 - 发布回归脚本：新增 `npm run qa:expert:mock` / `npm run qa:expert:queue`，输出 `output/qa-reports/expert-mock` / `output/qa-reports/expert-queue`
-- Expert QA 验证：`qa:expert:mock` Verdict `pass`，19 compiled ops、562 faces / 1548 edges / 2 groups / 12 instances、warnings 0；`qa:expert:queue` Verdict `pass`，19 compiled ops、739 faces / 2079 edges / 1386 vertices / 2 groups / 12 instances、warnings 0，SKP artifact `207147` bytes
+- Expert QA 验证：`qa:expert:mock` Verdict `pass`，19 compiled ops、562 faces / 1548 edges / 2 groups / 12 instances、warnings 0；`qa:expert:queue` Verdict `pass`，19 compiled ops、739 faces / 2079 edges / 1386 vertices / 2 groups / 12 instances、warnings 0，SKP artifact 约 `168KB`
 
 **待做：**
 - [x] 已按真实参数化样例补更多白名单 helper；后续新增仍按 helper 白名单演进，不放宽到任意 JS 执行。
 
-### ✅ 阶段 6 — 发布级收口（已完成）
+### ✅ 阶段 6 — 技术预览收口（已完成，正式发布暂停）
 
 **已有：**
 - Golden examples（architecture / product / structured-helpers / editing-transform-profile / profile-edge-cases / transform-chain-regression / metadata-organization / appearance-texture / text-3d / expert-parametric）
@@ -196,29 +215,97 @@
 - Image-to-structured 第二产品样例：`examples/compact-remote` 通过 `object_profile` 走独立生成/编译路径，并生成 review + mock/queue snapshot，mock warnings 0，queue 仅有 3 个已分类 PBR limitation warning
 
 **后续 polish：**
-- [ ] Review/corrections authoring 工作台
+- [x] Review/corrections authoring 工作台
 - [ ] 第三产品样例和更完整 part taxonomy
+
+**发布判定调整：**
+
+阶段 6 的自动化回归和 queue 基线仍然有效，但“发布级”表述不再准确。本轮验收说明当前版本只能作为技术预览：运行链路、mock/queue 对照、示例构建、evidence graph、semantic fusion、corrections workbench、feature mapping 第一刀和主线 CAD boolean/manifold 已经站住；真实产品建模还需要用新能力做更大样例复验。
+
+### ✅ 阶段 7 — 真实特征编辑、CAD boolean/manifold 与图像侧语义融合（主线/子项目第一刀完成）
+
+目标：把系统从“结构化展示模型”推进到“可审查、可编辑、可逐步逼近照片对象的产品模型”。
+
+**7.1 主线 MCP：真实特征编辑前置切片**
+
+- [x] 新增 `cut_hole`、`cut_slot`、`cut_recess`、`add_boss`、`add_raised_rib` feature operations。
+- [x] 操作接口以 `target_id` 为中心，显式指定 `face` / `plane` / `center` / `size` / `radius` / `depth` / `through`；feature 自身使用 `feature_id`。
+- [x] 第一版覆盖受控目标：`box`、`rounded_box`、`panel_with_openings`、`boolean_cutout`、`floor_slab`、`wall` 的轴对齐平面面；mock/queue 均记录 `features` metadata。
+- [x] Queue runtime 使用 SketchUp face `pushpull` 在目标 group 内执行受控面级特征；mock runtime 同步记录拓扑变化和 feature metadata。该能力不是通用 CAD boolean / manifold kernel。
+- [x] 新增 `examples/feature-editing-slice.json` 与 mock 回归，覆盖孔、长圆槽、浅凹坑、凸台和凸筋。
+
+**7.2 Queue runtime 稳定性**
+
+- [x] Ruby 插件 `reset_model` / `build_model` / `save_model` / `snapshot` 统一使用 `active_model_or_new` / 明确错误，不能对 nil model 调 `start_operation`。
+- [x] `get_capabilities` 之外可复用 `reset_model` 作为可编辑模型健康检查。
+- [ ] 子项目 queue 批处理前先跑 `reset_model` 健康检查；失败时给出可恢复说明，而不是进入长批量。
+- [x] 相对保存路径统一在 Node 侧解析为绝对路径，避免 SketchUp 把产物写到 `~/Documents/output`。
+
+**7.3 Image Structured Modeler：图像侧语义融合**
+
+- 已完成第一层证据化：`observations.json` 原生保存 `evidence_graph`，`model-plan.review.evidence_graph` 优先合并 observation graph，并把 per-part required/confirmed/missing views、sources、conflicts 和 open questions 展示到 review artifact。
+- 已完成 graph-based 跨图语义融合：`model-plan.review.semantic_fusion` 按 part 记录 `status`、`decision`、`confidence`、required/confirmed/missing/source views、semantic evidence、feature mapping、conflict signals 和 review flags。
+- `model-plan.json` 每个 part 必须记录来源：哪个视图确认轮廓、哪个视图确认厚度、哪个视图确认按钮/开孔/凹槽/凸起。
+- 已增加凹凸/贴花/开孔语义表达：`concave`、`convex`、`flush`、`decal/printed`、`through_hole`、`blind_recess`，并在无法映射到真实 feature operation 时记录 `feature_mapping_fallback`。
+- compact remote 已完成第一版真实映射：凸起按钮/摇杆编译为 `add_boss` / `add_raised_rib`，blind recess grille 编译为 `cut_recess`；`decal_printed` brand label 仍显式保留 `text_3d` visual fallback，并有 manual correction regression 可切换到真实 `cut_recess`。
+- 冲突和不确定性进入 `review.open_questions`，不能被模板静默补全。
+- Switch profile 继续保留，但必须降低模板权重：单图不应默认生成和多图同等完整的高置信模型。
+
+**7.4 人工修正闭环产品化**
+
+- `manual-corrections.json` 升级为正式 authoring surface 的数据层，支持 part 参数、视图证据、凹凸语义、feature mapping。
+- `review/index.html` 已显示 part id、证据图、semantic fusion、当前参数、建议 correction patch 和不确定性，并提供 Corrections Workbench：可选择建议、编辑 JSON、校验、复制和下载 `manual-corrections.workbench.json`。
+- correction-driven regression 扩展到图像侧语义融合、凹凸语义和 feature operations，不只验证按钮数量/位置。
+
+**7.5 主线 MCP：CAD boolean/manifold**
+
+- [x] 新增 `boolean_union`、`boolean_difference`、`boolean_intersect`，以 top-level solid group 为目标，支持 `target_id` / `target` 与 `tool_id` / `tool_ids` / `tools` 稳定引用。
+- [x] Queue runtime 使用 SketchUp `Group#union` / `Group#intersect`，`boolean_difference` 使用 `Group#split` 并显式保留 target-minus-tool 结果；执行后记录 `AlmaBoolean.operations_json`。
+- [x] Mock runtime 提供确定性 solid boolean metadata、bbox/totals 估算和 input 消耗逻辑，便于离线 contract/QA。
+- [x] 新增 `manifold_check` / `manifold_repair`，snapshot 回传 top-level `manifold_checks` 和对象级 `manifold` report；repair 支持 cleanup 与 seal-bbox fallback 记录。
+- [x] 新增 `examples/boolean-manifold-slice.json`，覆盖 difference -> union -> intersect -> check -> repair 的完整链路。
+
+**7.6 下一轮验收门槛**
+
+- Switch：图像侧语义融合输出一个模型，part evidence 可追溯；mock/queue geometry warning 为 0；主要孔槽/凸筋不再仅靠贴面 marker。
+- 救护车：自动或半自动流程能从多图证据中融合出侧窗、车顶筋线、警灯、后窗、门缝，并区分贴花和实体特征。
+- 儿童房：继续作为场景表达能力验收，但不得掩盖产品特征编辑缺口。
+- 自动验收：新增的 `validate_model` / `npm run qa:model-layout` 必须作为大样例验收门槛，避免只靠人工打开 SketchUp 做视觉复核。
+- 文档：README / status / release checklist 只能声明已验证能力，不能暗示已经支持照片级重建或官方完整 CAD kernel。
 
 ---
 
-## 4. 待办优先级（调整后的执行顺序）
+## 4. 待办优先级（验收复盘后）
 
 | 优先级 | 任务 | 原因 |
 |---|---|---|
-| **done** | Transform 后续 | 模型空间任意轴、对象本地轴、模型空间 4x4 matrix、连续 chain、`local_matrix`、matrix decomposition、Euler/非仿射报告均已收口 |
-| **done** | 拆分大 runtime 文件 | JS mock runtime 与 Ruby queue runtime 主边界/operation-family 边界已拆出，当前无阶段 6 前阻塞项 |
-| **done** | Queue 发布收口 | 手动验收清单、troubleshooting、性能基准、SKP size 阈值、串行锁和 release packaging 已固化 |
-| **done** | Expert Mode v1 后续 | 已按真实样例补数组/数学/向量白名单 helper |
-| **done** | Image-to-structured-model 泛化 | correction loop 第一条回归和 compact remote 第二产品样例已纳入 `npm run test:image-structured` |
-| **roadmap** | 完整布尔 / manifold | 通用 CAD 内核级能力，当前用安全 slice 和真实 font-outline marker 替代，不作为阶段 6 前阻塞项 |
+| **done** | Queue active model 防护 | Ruby 入口已统一 `active_model_or_new`，Node queue save path 已绝对化 |
+| **done** | 真实特征编辑第一 slice | `cut_hole` / `cut_slot` / `cut_recess` / `add_boss` / `add_raised_rib` 已进入 registry、mock runtime、Ruby queue runtime 和 mock 回归 |
+| **done** | 文档发布措辞修正 | 当前只能声明技术预览，不能继续写“发布级收口完成” |
+| **done** | Image Structured 图像侧语义融合 | `review.semantic_fusion` 已贯通 model-plan/review/test，记录 per-part status、decision、confidence 和跨视图 signals |
+| **done** | 凹凸/贴花/开孔真实映射第一 slice | compact remote 已把 image semantics 映射到 `cut_recess` / `add_boss` / `add_raised_rib`，并保留 decal fallback 与 correction regression |
+| **done** | Review/corrections authoring | review HTML 已提供可交互选择、编辑、校验、复制和下载 corrections JSON 的工作台 |
+| **P2** | 第三产品样例 | 等特征编辑和图像侧语义融合稳定后再扩样例，避免继续扩大模板债务 |
+| **done** | Image Structured evidence layer | observations/model-plan/review/per-image summary 已记录 evidence graph、missing views、feature fallback 和 correction patch skeleton |
+| **done** | Transform / runtime / Expert / registry / QA 基线 | 这些仍是有效基础能力，但不再代表正式发布完成 |
 
 ---
 
 ## 5. 最近的验证记录
 
-- **2026-05-25**：阶段 2-5 非阶段 6 发布级残项收口：`transform_object` matrix/local_matrix decomposition 新增 affine/non-affine reasons、homogeneous perspective terms 和 Euler XYZ degrees；`text_emboss` / `text_engrave` 新增 `mode: "font_outline"` / `outline: true`，queue runtime 复用 SketchUp `Entities#add_3d_text` 生成真实字体轮廓 marker，mock runtime 回传稳定 bbox 与 `Text3D` metadata；Expert Mode 新增 `Array.filter/flatMap/reduce/concat`、`clamp`、`lerp`、`rad`、`deg`、扩展 `Math` 白名单与 `vec.dot/cross/length/distance/norm/normalize` helper。manifest 推进到 `2026-05-phase5-closeout-slice`，runtime capability 推进到 `0.1.0-capabilities.3`，插件版本推进到 `queue-plugin-0.1.0-phase5-closeout.1`。已通过 `npm test`、`npm run qa:mock`、`npm run qa:budget:mock`、`npm run qa:expert:mock`、`npm run plugin:check`、`npm run plugin:install`、`node src/cli.mjs get_capabilities --runtime mock`、`examples/text-3d-slice.json` mock 构建 warnings 0 和 `git diff --check`。SketchUp 重新加载插件后 live `get_capabilities --runtime queue` 回报 `queue-plugin-0.1.0-phase5-closeout.1`、compatibility `ok`、issues 为空；`examples/text-3d-slice.json` queue 单例成功，350 faces / 966 edges / 644 vertices / 4 groups / 1 instance、warnings 0，font-outline `Text3D_Outline_Emboss` 与 `Text3D_Outline_Engrave` 均回传 `mode: font_outline` attributes；transform decomposition queue 单例成功，Euler matrix 回传 `rotation_euler_degrees: [0, 0, 90]`，非仿射 matrix 回传 `non_affine_reasons: ["perspective_terms", "homogeneous_w_not_one"]`；`npm run qa:queue` 9/9 pass，`npm run qa:budget:queue` 4/4 pass，`npm run qa:expert:queue` pass，Expert queue artifact 167726 bytes。
+- **2026-05-29**：R1/R2 产品建模架构第一版落地：新增 `schema/product-profile.schema.json`、`schema/part-graph.schema.json`、`examples/product-profiles/vehicle_ambulance.json`、`examples/part-graphs/ambulance-reference.part-graph.json`、`src/product-modeling/part-graph-compiler.mjs` 和 `scripts/compile-part-graph-to-sketchup-dsl.mjs`。`npm run acceptance:generate-ambulance` 已迁移为 `vehicle_ambulance profile + ambulance PartGraph -> compiler -> JSON DSL`，生成的 `examples/acceptance-ambulance-reference.json` 保留当前 104-op 救护车验收模型，同时带 `metadata.source=part_graph_compiler` 和 `qa.part_id` / evidence / fallback metadata。新增 `test/part-graph-compiler.mjs` 校验 schema、编译结果、mock build、layout QA 和基础 primitive 的 QA metadata 透传；下一步从 R3 Reference Visual QA 开始，不再继续手写救护车 DSL。
+- **2026-05-29**：记录下一阶段产品建模架构重构计划：明确不重写 runtime，保留 JSON DSL / bridge / mock / queue / registry / `validate_model` 基础，把重构边界放在 runtime 之上的 `ObservationSet -> EvidenceGraph -> ProductProfile -> PartGraph -> FeatureMappingPlan -> JSON DSL -> Layout QA + Reference Visual QA -> CorrectionPatch`。新增 `docs/product-modeling-architecture-refactor-plan.md`，并在 README、`PROJECT_STATUS.md`、`projects/image-structured-modeler/PLAN.md` 和 `MEMO.md` 中设为下一轮开工入口。优先切片为 R1/R2：`ProductProfile` / `PartGraph` schema、`vehicle_ambulance` profile、手工 ambulance part graph、part graph compiler，以及把 correction target 从 DSL 坐标上移到 part graph 字段。
+- **2026-05-28**：补齐无 GUI 模型布局 QA 闭环：新增 `src/model-qa.mjs`、CLI/MCP/HTTP `validate_model` 入口、`scripts/generate-model-qa-reports.mjs`、`npm run qa:model-layout`、三份样例 spec（Switch 手柄、救护车、儿童房）和 `test/model-qa.mjs`。该 gate 基于 snapshot bbox/qa/spec 执行 `contacts`、`allowed_collisions`、`inside`、`support`、`separation` 检查，输出结构化 issues、correction suggestions、top/front/right 正交 SVG 与 HTML preview，不依赖 macOS 录屏或 SketchUp UI 控制。首轮运行暴露并修正了 Switch `Home_Button` 越界、救护车左侧踏板孔阵列碰到后轮毂、儿童房收纳柜与床梯穿插；修正后 `npm run qa:model-layout` 三个样例均 Verdict `pass` / Level `ok` / issues `0`，报告位于 `output/model-qa/`。
+- **2026-05-28**：救护车验收模型改为从 `scripts/generate-ambulance-reference-demo.mjs` 完整重新生成，不再复用旧 JSON 手工修改；新增 `npm run acceptance:generate-ambulance`。新 DSL 共 106 ops，覆盖 `cut_recess ×7`、`add_boss ×3`、`add_raised_rib ×3`、`boolean_difference ×1`、`manifold_check ×3`、5 张 `test/救护车` 参考图板、2 个场景和材质/标签/属性/分类。重跑中发现 Ruby queue `boolean_difference` 不能直接依赖 `Group#subtract` 返回值，否则容易得到 cutter 结果；已把插件推进到 `queue-plugin-0.1.0-phase7-boolean-manifold.3`，用 `Group#split` 显式保留 target-minus-tool，并安装/重启 SketchUp 后验证 live `get_capabilities` compatibility `ok`，RBZ 输出 `out/releases/alma-sketchup-mcp-queue-plugin-0.1.0-phase7-boolean-manifold.3.rbz`。`examples/boolean-manifold-slice.json` queue vs mock 在 solid boolean tolerance 下 Verdict `pass` / Level `ok` / Total Diffs `0`。救护车 queue snapshot 为 57 groups / 1156 faces / 3044 edges / 2036 vertices / 2 scenes，roof service panel boolean 结果为完整 bbox `420 x 330 x 26 mm`、11 faces / 24 edges、manifold `ok`；`validate_model` queue 报告 Verdict `pass` / Level `ok` / issues `0`，SKP 保存到 `output/acceptance-ambulance-reference.rerun.skp`。
+- **2026-05-27**：阶段 7 CAD boolean/manifold 主线能力完成并完成 live queue 复验：manifest 推进到 `2026-05-phase7-boolean-manifold`，runtime capability 推进到 `0.1.0-capabilities.5`，插件版本推进到 `queue-plugin-0.1.0-phase7-boolean-manifold.1`。新增 `src/boolean-operations.mjs` / `sketchup_plugin/alma_sketchup_mcp/boolean_operations.rb`，并接入 mock dispatch、Ruby dispatch、snapshot schema、operation registry、插件打包清单和默认 QA examples。新增 `boolean_union`、`boolean_difference`、`boolean_intersect`、`manifold_check`、`manifold_repair` 和 `examples/boolean-manifold-slice.json`；mock 构建结果为 1 group / 8 faces / 16 edges，3 条 boolean history，2 条 manifold check/repair，warnings 0。修复 queue 侧 cylinder 未透传 `id`、SketchUp solid operation 删除输入后读取旧 group 引用、boolean history 跨结果 group 丢失、以及 solid operation 临时 `TempInstance#*` definition 进入 snapshot 的问题。已通过 `node --check`、`ruby -c`、`npm test`、`npm run registry:check`、`npm run plugin:check`、`npm run qa:mock`、`npm run qa:expert:mock`、`npm run qa:budget:mock`、`npm run test:image-structured`、`git diff --check`、`npm run plugin:install` 和 `npm run plugin:package`；contract 输出 manifest/mock/Ruby dispatch 均为 `74`，component_definition registry/dispatch 均为 `42`；RBZ 输出 `out/releases/alma-sketchup-mcp-queue-plugin-0.1.0-phase7-boolean-manifold.1.rbz`。live `get_capabilities --runtime queue` 回报新插件 compatibility `ok`、issues 为空、supported operations `74`；`examples/boolean-manifold-slice.json` queue 单例成功，真实 SketchUp solid 结果为 1 group / 6 faces / 12 edges / 8 vertices，3 条 boolean history，2 条 manifold check/repair，warnings 0；使用 solid boolean 专用 topology/bbox tolerance 的 mock-vs-queue 报告 `output/boolean-manifold-queue-report.md` 为 Verdict `pass` / Level `ok` / Total Diffs `0`。`npm run qa:queue` 10/10 样例 `OK: true`，聚合仍为 `review`（既有 mock/queue 拓扑差异 warning）；`npm run qa:expert:queue` 和 `npm run qa:budget:queue` 均 pass。
+- **2026-05-27**：阶段 7 主线第一刀完成并完成 live queue 复验：manifest 推进到 `2026-05-phase7-feature-slice`，runtime capability 推进到 `0.1.0-capabilities.4`，插件版本推进到 `queue-plugin-0.1.0-phase7-feature-slice.1`。新增 `src/feature-operations.mjs` / `sketchup_plugin/alma_sketchup_mcp/feature_operations.rb`，并把 Ruby 插件 `reset_model` / `build_model` / `save_model` / `snapshot` 统一到 `active_model_or_new`。新增 `cut_hole`、`cut_slot`、`cut_recess`、`add_boss`、`add_raised_rib`，受控目标为 `box`、`rounded_box`、`panel_with_openings`、`boolean_cutout`、`floor_slab`、`wall` 的轴对齐平面面；新增 `examples/feature-editing-slice.json`，mock snapshot 为 1 group / 141 faces / 280 edges，5 条 feature metadata，bbox 高度从 16 扩到 28。Ruby queue 侧修复 `AlmaFeatures.base_bounds_json` 把 SketchUp `Length` 写成 `"240 mm"` 后二次特征减法失败的问题。已通过 `node --check src/feature-operations.mjs`、`ruby -c sketchup_plugin/alma_sketchup_mcp/feature_operations.rb`、`npm test`、`npm run qa:mock`、`npm run qa:expert:mock`、`npm run qa:budget:mock`、`npm run plugin:check`、`npm run plugin:install`、`npm run plugin:package`、mock capability handshake、live `node src/cli.mjs get_capabilities --runtime queue --timeout-ms 10000` 和 feature mock-vs-queue 对照；live compatibility `ok`，issues 为空。feature queue 对照 `OK: true`，仅余 SketchUp pushpull 拓扑计数 warning；RBZ 输出 `out/releases/alma-sketchup-mcp-queue-plugin-0.1.0-phase7-feature-slice.1.rbz`。
+- **2026-05-27**：Image Structured Modeler 阶段 7 的 1/2 项完成：`generate-model-plan.mjs` 新增 `model-plan.review.semantic_fusion`，把 evidence graph 融合为 per-part `status` / `decision` / `confidence` / semantic evidence / feature mapping signals / review flags；Switch 样例 summary 为 9 parts，2 confirmed / 7 partial / 0 needs_review，cross-view confirmed parts 为 `center_grip_body`、`rear_grip_pair`；compact remote summary 为 7 parts，4 confirmed / 2 partial / 1 needs_review，needs_review 明确落在 brand label 的 `visual_marker` fallback。`review/index.html` 新增 Semantic Fusion 和 Corrections Workbench，可选择建议 patch、编辑 JSON、校验、复制和下载 `manual-corrections.workbench.json`。已刷新 `npm run image-structured:build-switch`、`npm run image-structured:build-remote`，并通过 `node --check` 三个改动脚本和 `npm run test:image-structured`。
+- **2026-05-27**：Image Structured Modeler 技术预览 evidence layer 与 feature mapping 第一刀收口：`observations.json` 原生保存 `evidence_graph`，`generate-model-plan.mjs` 优先合并 observation graph，并在 `model-plan.review.evidence_graph` 记录 required/confirmed/missing views、sources、template-prior conflict、feature_mapping_fallback conflict 和 open questions；`model-plan.review.correction_suggestions` 与 review HTML 新增 Correction Patch Suggestions，给出可复制到 `manual-corrections.json` 的 patch skeleton。compact remote 已把 `blind_recess` / `convex` 编译为 `cut_recess` / `add_boss` / `add_raised_rib`，新增 `manual-corrections.feature-regression.json` 验证 brand label 从 `text_3d` visual fallback 切到真实 `cut_recess`。已通过 `node --check` 改动脚本、`npm run image-structured:build-switch`、`npm run image-structured:build-remote`、`npm run test:image-structured`、`npm test`、`npm run qa:mock`、`npm run qa:budget:mock`、Switch queue snapshot/diff、compact remote queue snapshot/diff 和 warning gate。compact remote queue snapshot 为 3 groups / 369 faces / 1035 edges / 690 vertices / 2 scenes，SKP `182920` bytes，`add_boss ×6`、`add_raised_rib ×1`、`cut_recess ×5`；Switch queue snapshot 为 24 groups / 4 instances / 1776 faces / 2964 edges / 1244 vertices / 2 scenes，SKP `254234` bytes。该记录发生在主线 boolean/manifold 收口前。
+- **2026-05-25 验收复盘 / 发布判定调整**：新增并运行儿童房与救护车验收 DSL，均完成 mock build、queue build、queue save：`output/acceptance-ikea-childrens-room.skp`（39 groups / 15 instances / 2607 faces / 4683 edges / 2 scenes）和 `output/acceptance-ambulance-reference.skp`（37 groups / 778 faces / 2054 edges / 2 scenes）。两者验证了当前 MCP 对场景、产品、材质、标签、属性、分类、参考图板和 scenes 的表达能力，但也暴露真实特征编辑不足：孔槽/凹坑/凸筋多为视觉 marker 或组合体，不能替代 CAD manifold boolean。Switch 手柄子项目额外跑了 6 张单图 per-image 生成，均能输出完整 41-op / 24-group / 1776-face 模型和 queue SKP；这反而确认当前子项目主要依赖 Switch layout prior 模板补全，不是多图联合推理。Queue 批处理过程中还暴露 `Sketchup.active_model` 为 nil 时 `reset_model` / `build_model` 失败的问题；打开一个 SKP 后恢复。因此正式发布暂停，下一阶段优先做 active model 防护、真实特征编辑 slice、图像侧语义融合和 correction authoring。
+- **2026-05-25 自动化回归记录**：当前 checkout 已通过原 release checklist 的本地与 queue 验收门槛：`npm run plugin:check`、`npm test`、`npm run qa:mock`、`npm run qa:expert:mock`、`npm run qa:budget:mock`、`git diff --check`、live `node src/cli.mjs get_capabilities --runtime queue --timeout-ms 10000`、`npm run qa:queue`、`npm run qa:expert:queue`、`npm run qa:budget:queue`。live SketchUp Bridge 回报 `queue-plugin-0.1.0-phase5-closeout.1` / `2026-05-phase5-closeout-slice` / `0.1.0-capabilities.3`，compatibility `ok`，issues 为空；`qa:queue` 9/9 pass 且 Total Diffs 均为 0；`qa:expert:queue` pass，19 ops、739 faces / 2079 edges / 1386 vertices / 2 groups / 12 instances、warnings 0，SKP artifact `167582` bytes；`qa:budget:queue` 4/4 pass，真实 SKP artifact 均低于 5MB 阈值。该记录说明基础回归绿灯，不再代表正式发布判定。
+- **2026-05-25**：阶段 2-5 技术预览残项收口：`transform_object` matrix/local_matrix decomposition 新增 affine/non-affine reasons、homogeneous perspective terms 和 Euler XYZ degrees；`text_emboss` / `text_engrave` 新增 `mode: "font_outline"` / `outline: true`，queue runtime 复用 SketchUp `Entities#add_3d_text` 生成真实字体轮廓 marker，mock runtime 回传稳定 bbox 与 `Text3D` metadata；Expert Mode 新增 `Array.filter/flatMap/reduce/concat`、`clamp`、`lerp`、`rad`、`deg`、扩展 `Math` 白名单与 `vec.dot/cross/length/distance/norm/normalize` helper。manifest 推进到 `2026-05-phase5-closeout-slice`，runtime capability 推进到 `0.1.0-capabilities.3`，插件版本推进到 `queue-plugin-0.1.0-phase5-closeout.1`。已通过 `npm test`、`npm run qa:mock`、`npm run qa:budget:mock`、`npm run qa:expert:mock`、`npm run plugin:check`、`npm run plugin:install`、`node src/cli.mjs get_capabilities --runtime mock`、`examples/text-3d-slice.json` mock 构建 warnings 0 和 `git diff --check`。SketchUp 重新加载插件后 live `get_capabilities --runtime queue` 回报 `queue-plugin-0.1.0-phase5-closeout.1`、compatibility `ok`、issues 为空；`examples/text-3d-slice.json` queue 单例成功，350 faces / 966 edges / 644 vertices / 4 groups / 1 instance、warnings 0，font-outline `Text3D_Outline_Emboss` 与 `Text3D_Outline_Engrave` 均回传 `mode: font_outline` attributes；transform decomposition queue 单例成功，Euler matrix 回传 `rotation_euler_degrees: [0, 0, 90]`，非仿射 matrix 回传 `non_affine_reasons: ["perspective_terms", "homogeneous_w_not_one"]`；`npm run qa:queue` 9/9 pass，`npm run qa:budget:queue` 4/4 pass，`npm run qa:expert:queue` pass，Expert queue artifact 167726 bytes。
 - **2026-05-25**：阶段 6 Image Structured Modeler 收口完成：`generate-model-plan.mjs` / `compile-plan-to-sketchup-dsl.mjs` 新增 `object_profile` 分流，Switch 保持现有 profile，新增 `compact_remote` 第二产品样例；新增 `examples/switch-controller/manual-corrections.regression.json`，`npm run test:image-structured` 会断言人工修正移动左摇杆、调整按钮数量，并同步改变 compiled DSL；新增 `examples/compact-remote` observations/manual corrections/model-plan/output/review/mock snapshot/warning budget，当前 mock snapshot 为 11 groups / 529 faces / 1234 edges / 452 vertices / 2 scenes，bbox `44 x 158 x 15.85 mm`，warnings 0。SketchUp Bridge 恢复响应后，live `get_capabilities --runtime queue` 回报 `queue-plugin-0.1.0-phase5-closeout.1`、compatibility `ok`；`npm run image-structured:snapshot-remote:queue` 成功，queue snapshot 为 11 groups / 544 faces / 1279 edges / 766 vertices / 2 scenes，bbox `44 x 158 x 15.85 mm`，SKP `188104` bytes，warnings 为 3 个已分类 `queue_material_limitation`；`npm run image-structured:diff-remote:queue` 成功，mock/queue report `ok`，warning gate pass。已通过 `node --check` 改动脚本、`npm run image-structured:build-remote`、Switch generate/compile/review/snapshot refresh、`npm run test:image-structured`、`npm test`、`npm run qa:mock`、`npm run qa:budget:mock`、`npm run plugin:check`、`git diff --check`。
-- **2026-05-25**：阶段 5 Expert Mode v1 发布收口完成：新增 `scripts/generate-expert-qa-reports.mjs` 与 `npm run qa:expert:mock` / `npm run qa:expert:queue`，报告覆盖 Expert 编译、runtime build、artifact 保存、runtime compatibility、warnings 和预算。`npm test` 通过；`qa:expert:mock` 输出 `output/qa-reports/expert-mock/index.md`，Verdict `pass`，19 compiled ops、562 faces / 1548 edges / 2 groups / 12 instances、warnings 0、artifact JSON 53663 bytes；`qa:expert:queue` 输出 `output/qa-reports/expert-queue/index.md`，Verdict `pass`，19 compiled ops、739 faces / 2079 edges / 1386 vertices / 2 groups / 12 instances、warnings 0、SKP artifact 207147 bytes，实际文件位于 `output/qa-reports/expert-queue/artifacts/expert-parametric-fixture.skp`。
+- **2026-05-25**：阶段 5 Expert Mode v1 技术预览收口完成：新增 `scripts/generate-expert-qa-reports.mjs` 与 `npm run qa:expert:mock` / `npm run qa:expert:queue`，报告覆盖 Expert 编译、runtime build、artifact 保存、runtime compatibility、warnings 和预算。`npm test` 通过；`qa:expert:mock` 输出 `output/qa-reports/expert-mock/index.md`，Verdict `pass`，19 compiled ops、562 faces / 1548 edges / 2 groups / 12 instances、warnings 0、artifact JSON 53663 bytes；`qa:expert:queue` 输出 `output/qa-reports/expert-queue/index.md`，Verdict `pass`，19 compiled ops、739 faces / 2079 edges / 1386 vertices / 2 groups / 12 instances、warnings 0、SKP artifact 207147 bytes，实际文件位于 `output/qa-reports/expert-queue/artifacts/expert-parametric-fixture.skp`。
 - **2026-05-25**：阶段 5 MCP tool 面完成：`src/mcp-server.mjs` 暴露 `compile_expert` / `build_expert_model`，MCP tools 数量从 7 增至 9；新增 `test/mcp-server.mjs` 启动真实 stdio MCP server 子进程，验证 `tools/list` 中的新工具 schema，并通过 `tools/call` 跑通 `compile_expert` 与 mock `build_expert_model`。
 - **2026-05-24**：`text_3d` 收口完成：manifest 推进到 `2026-05-phase4-text-3d-slice` / capability `0.1.0-capabilities.2`，Ruby 插件版本推进到 `queue-plugin-0.1.0-text-3d.1`。新增 `text_3d` operation、mock bbox/`Text3D` metadata、Ruby queue `Entities#add_3d_text` 实现、component_definition dispatch、`examples/text-3d-slice.json` 和文档/status 同步。已通过 `node --check`、Ruby syntax、`npm test`、`npm run qa:mock`、`npm run plugin:check`、`git diff --check`、`node src/cli.mjs get_capabilities --runtime mock`；contract 输出 manifest/mock/Ruby dispatch 均 64，component_definition registry/dispatch 均 42。安装并重启 SketchUp 后，live `get_capabilities` 回报 `queue-plugin-0.1.0-text-3d.1`、compatibility `ok`、issues 为空；`examples/text-3d-slice.json` queue 构建成功，主文字 snapshot 为 `kind: text_3d`、153 faces / 423 edges、warnings 0；`npm run qa:queue` 9/9 pass，`npm run qa:budget:queue` 4/4 pass。
 - **2026-05-24**：阶段 5 Expert Mode v1 第一切片完成：新增 `src/expert-compiler.mjs`、`examples/expert-parametric-fixture.js`、`docs/expert-mode.md` 和 `test/expert-compiler.mjs`，并在 bridge/CLI 增加 `compile_expert` / `build_expert_model`。当前 compiler 使用 AST 白名单解释器，支持变量、函数、`for` / `for...of`、`Array.map`、`range`、seeded random、`vec` helper 和白名单 `Math`，输出标准 JSON DSL 后复用现有 mock/queue runtime。`node test/expert-compiler.mjs` 已验证 19 个 operations、12 个 component instances、2 个 groups、0 warnings，并覆盖拒绝 `require`、超 loop/operation limit、缺 required field、component_definition 内非法 op 和 `while`。SketchUp Bridge 重启后，live `get_capabilities` 回报 `queue-plugin-0.1.0-text-3d.1`、compatibility `ok`、issues 为空；`build_expert_model --runtime queue --code-file examples/expert-parametric-fixture.js --seed 7` 成功，queue snapshot 为 739 faces / 2079 edges / 1386 vertices / 2 groups / 12 instances、warnings 0，`Expert_Parametric_Label` 为真实 `text_3d`，277 faces / 771 edges。
@@ -253,27 +340,48 @@
 - **2026-05-19**：`transform_object` pivot 增强（origin/center/显式坐标）通过 mock/queue 验证。
 - `examples/editing-transform-profile.json` mock-vs-queue compare：Verdict `pass`，Level `ok`，Total diffs 0，报告见 `output/editing-transform-profile-queue-report.md`。
 - `npm test`、`npm run qa:mock` 通过。
-- Queue capability handshake：当前 live SketchUp Bridge 已加载 manifest `2026-05-phase4-text-3d-slice` / plugin `queue-plugin-0.1.0-text-3d.1`，compatibility `ok`，issues 为空。
+- Queue capability handshake：最近一次成功 live 记录为 manifest `2026-05-phase7-boolean-manifold` / capability `0.1.0-capabilities.5` / plugin `queue-plugin-0.1.0-phase7-boolean-manifold.3`；compatibility `ok`，issues 为空，supported operations `74`。
 
 ---
 
 ## 6. 已知阻塞/注意事项
 
-1. **OneDrive 文件系统**：之前出现过 `ETIMEDOUT: connection timed out, read`，导致 JS 文件读取失败。已恢复，但需留意。
-2. **Ruby 插件加载**：每次更新 `alma_sketchup_mcp.rb` 后，需要重启 SketchUp 才能加载新版本。不支持热重载。
-3. **Mock 口径漂移**：`face_with_holes` 从 `1 + holes` 改为 `1` face，因为 SketchUp 中平面带洞计为 1 个 face。类似地，任何新 op 的 mock 计数都需要 queue 验证后才能确定。
-4. **文件体积**：早期 Switch mesh 输出曾到 39MB；当前产品 primitive 版本已降到 `253,177` bytes，主线已有 `qa:budget:*` 的 face/vertex/SKP size budget。后续需要用更大样例继续校准阈值。
-5. **Git 状态**：当前主线切片已按 runtime registry、docs/release、local_matrix 等提交；后续继续保持小切片提交，避免主线状态继续漂浮。
+1. **正式发布阻塞：需要用 CAD boolean/manifold 新能力继续重跑大样例**。救护车已用新插件完整重跑并通过 queue layout QA；Switch、儿童房和更多产品样例还需要继续跑 live queue 与 warning gate。
+2. **正式发布阻塞：图像侧仍不是照片级自动重建**。子项目已有 evidence graph、semantic fusion 和 corrections workbench，但 Switch 仍保留模板 prior，救护车验收是人工综合多图后手写 DSL；下一步需要在更多样例里使用 boolean/manifold 降低 visual fallback。
+3. **Queue active model 防护已补第一版**：Ruby 入口会尝试创建/获取 active model 并给出明确错误；阶段 7 插件已安装、重启并完成 live queue 复验。
+4. **OneDrive 文件系统**：之前出现过 `ETIMEDOUT: connection timed out, read`，导致 JS 文件读取失败。已恢复，但需留意。
+5. **Ruby 插件加载**：每次更新 `alma_sketchup_mcp.rb` 后，需要重启 SketchUp 才能加载新版本。不支持热重载。
+6. **Mock 口径漂移**：`face_with_holes` 从 `1 + holes` 改为 `1` face，因为 SketchUp 中平面带洞计为 1 个 face。类似地，任何新 op 的 mock 计数都需要 queue 验证后才能确定。
+7. **文件体积**：早期 Switch mesh 输出曾到 39MB；当前产品 primitive 版本已降到 `253,177` bytes，主线已有 `qa:budget:*` 的 face/vertex/SKP size budget。后续需要用更大样例继续校准阈值。
+8. **Git 状态**：当前主线切片已按 runtime registry、docs/release、local_matrix 等提交；后续继续保持小切片提交，避免主线状态继续漂浮。
 
 ---
 
 ## 7. 架构调整建议
 
-短期不建议重写架构；应先做三件能直接降低主线风险的收口：
+短期不建议重写 runtime；现有 mock/queue/registry/contract 基础可以继续承载下一阶段。需要重构的是 runtime 之上的产品建模层，把当前直接生成 DSL 的路径改为：
 
-1. **对象身份层**：为 group / component instance 引入稳定 `id` / `guid`，编辑操作优先使用 `target_id`，`name` 只保留为兼容 fallback。mock snapshot、queue snapshot 和 DSL 都要同时承载该字段。
-2. **Operation contract 测试**：已收敛到单一 operation registry，自动检查 manifest、runtime support/status/stability/schema/component-scope、mock runtime dispatch、Ruby queue dispatch、component definition dispatch 的覆盖一致性；后续新增 op 必须同时更新 registry、JS/Ruby dispatch 与 contract tests。
-3. **模块边界拆分**：JS mock runtime 已拆出 model state、operation utils、material、primitive、profile、surface、product、architecture、demo、component、view、object editing、object identity 和 snapshot/QA 模块；Ruby queue runtime 已拆出 object/editing、material/PBR/texture、geometry shared、primitive、product、profile、surface、demo、architecture、component、view 和 snapshot 模块。下一步以提交切片、live queue 复验或更细粒度 helper 清理为主。
+```text
+Images / user intent
+  -> ObservationSet
+  -> EvidenceGraph
+  -> ProductProfile
+  -> PartGraph / ModelPlan
+  -> FeatureMappingPlan
+  -> JSON DSL
+  -> mock / queue runtime
+  -> Layout QA + Reference Visual QA
+  -> CorrectionPatch
+```
+
+具体计划已固化到 `docs/product-modeling-architecture-refactor-plan.md`。R1/R2 第一版已经完成：新增 `ProductProfile` / `PartGraph` schema，建立 `vehicle_ambulance` profile，并把救护车验收从直接 DSL 生成迁移为 `profile + part graph -> compiler -> JSON DSL`。下一轮优先进入 R3 Reference Visual QA，让 layout 合格但比例/关键点不像参考图的模型能失败并给出指向 PartGraph 字段的 correction target。
+
+架构取舍：
+
+1. **保留 runtime**：feature ops、boolean/manifold、mock/queue parity、operation registry 和 `validate_model` 继续作为执行与布局 QA 基础。
+2. **重构建模计划层**：新产品样例必须先生成 `PartGraph`，记录 part taxonomy、参数、约束、evidence、fallback 和 feature intent，不能直接堆 DSL box。
+3. **重构图像结构化层**：子项目从 profile prior + evidence reporting 继续推进到 contour/keypoint、跨图 part matching、尺度校准和证据置信度。
+4. **补 Reference Visual QA**：在现有 layout QA 之外增加正交 preview 与参考图的轮廓、关键点、面积占比和部件相对位置检查，用于捕捉“布局没错但不像”的问题。
 
 ---
 

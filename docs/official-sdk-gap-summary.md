@@ -1,6 +1,6 @@
 # SketchUp 官方 Cloud MCP / 本地 Replica 功能差距总结
 
-更新时间：2026-05-25
+更新时间：2026-05-27
 
 本文用于发布稿事实核对。结论先行：本项目已经复刻了官方 SketchUp Cloud MCP 的核心交互闭环（`get_docs` / `build_model` / snapshot / `save_model`），但它不是官方云端 Python SDK 的完整替代品。本项目定位是：用更安全、可测试的 JSON DSL，在本地 mock runtime 和 SketchUp queue runtime 中复现主要建模体验。
 
@@ -55,21 +55,28 @@
 - `examples/profile-edge-cases.json`：通用 profile regression slice，覆盖凹多边形 outer、多洞、`xz` 竖向 face profile 和 component_definition 内嵌 profile。
 - `examples/appearance-texture-slice.json`：表现层 regression slice，覆盖 `texture_transform`、`uv_project_planar`、`uv_project_box`、顶层 `image_plane` 和 component_definition 内嵌 `image_plane`。
 - `examples/text-3d-slice.json`：真实字体轮廓 capability slice，覆盖顶层与 component_definition 内嵌 `text_3d`，以及 font-outline `text_emboss` / `text_engrave` marker。
+- `examples/feature-editing-slice.json`：阶段 7 主线 feature slice，覆盖 `target_id + face` 的 `cut_hole`、`cut_slot`、`cut_recess`、`add_boss`、`add_raised_rib`。
+- `examples/boolean-manifold-slice.json`：阶段 7 CAD boolean/manifold slice，覆盖 `boolean_difference` -> `boolean_union` -> `boolean_intersect` -> `manifold_check` -> `manifold_repair`。
 - `examples/expert-parametric-fixture.js`：Expert Mode v1 参数化 fixture，覆盖受限脚本编译为 JSON DSL、组件阵列、seeded random、`vec` helper 和 `text_3d`。
 - `npm test` 会读取 golden examples、主线 capability slices 和 Expert Mode fixture，只用 mock runtime 验证，不依赖打开 SketchUp。
 - 主线基线还会校验 `get_docs` 输出的 capability manifest 矩阵、snapshot 中的 runtime capability descriptor、queue 插件握手 descriptor 注入、schema/component-scope contract、descriptor 漂移时的结构化 compatibility issue、带 top issues / recommendations / budget 检查的 snapshot diff report、`compare_model` 一键 mock/queue 对照骨架、stdio MCP server 的 `tools/list` / `tools/call` Expert Mode 路径，以及 `qa:expert:*` 的 Expert 编译/runtime/artifact/budget 发布回归。
 
 最近一次验证：
 
-- text_3d：live SketchUp Bridge 已加载 `queue-plugin-0.1.0-text-3d.1` / manifest `2026-05-phase4-text-3d-slice`，compatibility `ok`，issues 为空；`examples/text-3d-slice.json` queue 构建成功，主文字 snapshot 为 `kind: text_3d`、153 faces / 423 edges、warnings 0；`npm run qa:queue` 9 个默认样例 pass，`npm run qa:budget:queue` 4 个预算样例 pass。
-- Expert Mode v1：`src/expert-compiler.mjs` 使用 AST 白名单解释器把受限脚本编译成标准 JSON DSL，再复用现有 runtime；`node test/expert-compiler.mjs` 已验证 `examples/expert-parametric-fixture.js` 产出 19 个 operations、mock build 12 个 component instances / 2 个 groups / 0 warnings，并覆盖拒绝 `require`、超 loop/operation limit、缺 required field、component 内非法 op 和 `while`。SketchUp Bridge 重启后，`build_expert_model --runtime queue --code-file examples/expert-parametric-fixture.js --seed 7` 构建成功，queue snapshot 为 739 faces / 2079 edges / 1386 vertices / 2 groups / 12 instances、warnings 0。stdio MCP server 已暴露 `compile_expert` / `build_expert_model`，`test/mcp-server.mjs` 覆盖真实 JSON-RPC `tools/list` 和 `tools/call`；`qa:expert:mock` / `qa:expert:queue` 已接入并通过 Expert 发布回归，queue SKP artifact 为 207147 bytes。
-- runtime module split：Ruby queue runtime 和 JS mock runtime 已完成主边界/operation-family 边界拆分；当前 contract 输出 manifest/mock/Ruby dispatch 均为 `64`，component_definition registry/dispatch 均为 `42`。
-- transform matrix decomposition：live SketchUp Bridge 已加载 `queue-plugin-0.1.0-transform-matrix-decomposition.1` / manifest `2026-05-phase2-matrix-decomposition-slice`，compatibility `ok`，issues 为空；mock `matrix` / `local_matrix` snapshot 和 Ruby queue transform metadata 均包含 translation、basis axes、scale、shear、determinant 和 mirrored 分解字段；`examples/transform-local-matrix.json` queue 单例 diff 0，`npm run qa:queue` 9 个默认样例 pass。
+- mainline phase7 boolean/manifold slice：manifest 已推进到 `2026-05-phase7-boolean-manifold` / capability `0.1.0-capabilities.5` / plugin `queue-plugin-0.1.0-phase7-boolean-manifold.3`；已通过 `node --check`、`ruby -c`、`npm test`、`npm run registry:check`、`npm run plugin:check`、`npm run qa:mock`、`npm run qa:expert:mock`、`npm run qa:budget:mock`、`npm run test:image-structured`、`git diff --check`、`npm run plugin:install`、`npm run plugin:package`、mock boolean slice 构建、live queue capability handshake、boolean mock-vs-queue 单例和救护车 queue 重跑。contract 输出 manifest/mock/Ruby dispatch 均为 `74`，component_definition registry/dispatch 均为 `42`。live `examples/boolean-manifold-slice.json` queue 单例在 solid boolean tolerance 下 Verdict `pass` / Total Diffs `0`；救护车重跑 queue layout QA Verdict `pass` / issues `0`，roof service panel boolean 结果为完整 bbox `420 x 330 x 26 mm` 且 manifold `ok`。
+- mainline phase7 feature slice：manifest 已推进到 `2026-05-phase7-feature-slice` / capability `0.1.0-capabilities.4` / plugin `queue-plugin-0.1.0-phase7-feature-slice.1`；已通过 `npm test`、`npm run qa:mock`、`npm run qa:expert:mock`、`npm run qa:budget:mock`、`npm run plugin:check`、`npm run plugin:install`、`npm run plugin:package`、mock capability handshake、live queue capability handshake 和 feature mock-vs-queue 对照。live queue 回报 SketchUp `26.2.242`，compatibility `ok`，issues 为空；feature queue 对照 `OK: true`，仅余 SketchUp pushpull 拓扑计数 warning。
+- image-structured feature mapping slice：compact remote 已把 `blind_recess` / `convex` 编译为 `cut_recess` / `add_boss` / `add_raised_rib`，并通过 `manual-corrections.feature-regression.json` 验证 visual fallback 可切到真实 `cut_recess`。live queue snapshot/diff 已刷新：compact remote queue snapshot 为 3 groups / 369 faces / 1035 edges / 690 vertices / 2 scenes，SKP `182920` bytes，warning gate pass；Switch queue snapshot 为 24 groups / 4 instances / 1776 faces / 2964 edges / 1244 vertices / 2 scenes，SKP `254234` bytes，warning gate pass。
+- image-structured semantic fusion / corrections workbench slice：`model-plan.review.semantic_fusion` 已记录 per-part status、decision、confidence、semantic evidence、feature mapping signals 和 review flags；review HTML 已新增 Semantic Fusion 与 Corrections Workbench，可选择建议 patch、编辑、校验、复制和下载 corrections JSON。当前剩余发布阻塞集中在把主线 CAD boolean/manifold 用到更多产品样例复验。
+- release acceptance 基线：最近一次 live SketchUp Bridge 记录为 `queue-plugin-0.1.0-phase5-closeout.1` / manifest `2026-05-phase5-closeout-slice` / capability `0.1.0-capabilities.3`，compatibility `ok`，issues 为空；当时 `npm run plugin:check`、`npm test`、`npm run qa:mock`、`npm run qa:expert:mock`、`npm run qa:budget:mock`、`npm run qa:queue`、`npm run qa:expert:queue`、`npm run qa:budget:queue` 和 `git diff --check` 均通过。
+- queue QA：最新 `npm run qa:queue` 10 个默认样例均 `OK: true`，聚合 `review` 来自既有 mock/queue 拓扑差异 warning；`npm run qa:expert:queue` pass；`npm run qa:budget:queue` 4 个发布预算样例 pass，真实 SKP artifact 均低于 5MB 阈值。
+- Expert Mode v1：`src/expert-compiler.mjs` 使用 AST 白名单解释器把受限脚本编译成标准 JSON DSL，再复用现有 runtime；`test/expert-compiler.mjs` 覆盖拒绝 `require`、超 loop/operation limit、缺 required field、component 内非法 op 和 `while`。`qa:expert:mock` / `qa:expert:queue` 已接入并通过 Expert 发布回归；queue snapshot 为 19 compiled ops、739 faces / 2079 edges / 1386 vertices / 2 groups / 12 instances、warnings 0，SKP artifact 为 167582 bytes。
+- runtime module split：Ruby queue runtime 和 JS mock runtime 已完成主边界/operation-family 边界拆分；当前 contract 输出 manifest/mock/Ruby dispatch 均为 `74`，component_definition registry/dispatch 均为 `42`。
+- transform matrix decomposition：mock `matrix` / `local_matrix` snapshot 和 Ruby queue transform metadata 均包含 translation、basis axes、scale、shear、determinant、mirrored、affine/non-affine reasons、homogeneous perspective terms 和 Euler XYZ degrees；该能力已纳入 phase5 closeout 验收。
 - performance budget：`npm run qa:budget:mock` / `npm run qa:budget:queue` 已覆盖 architecture/product/structured/appearance 四个发布样例；queue 真实 SKP size 当前均低于 5MB 阈值。
 - release packaging：`npm run plugin:check` / `npm run plugin:install` / `npm run plugin:package` 已固化 Ruby 插件文件清单、安装检查和 `.rbz` 打包入口。
 - registry/runtime contract：Ruby `operation_registry.rb` 由 `src/capabilities.mjs` 生成，`registry:check` 已纳入测试和插件检查；Node queue runtime 通过 lock 文件串行化同一个 SketchUp file queue。
-- golden architecture：39 groups / 447 faces / 819 edges / 216 vertices / 2 scenes / 2 levels。
-- golden product：7 groups / 16 instances / 1088 faces / 1730 edges / 400 vertices / 4 component definitions / 2 scenes。
+- golden architecture：39 groups / 447 faces / 819 edges / 446 vertices，SKP artifact 213514 bytes。
+- golden product：24 groups / 12 instances / 1528 faces / 2570 edges / 1118 vertices / 4 component definitions，SKP artifact 258040 bytes。
 - `save_model` 会返回 `file_size_bytes`，snapshot 会注入 `artifact_size_bytes`。
 
 ## 还没做到的官方能力 / 明确差距
@@ -122,9 +129,9 @@
 - 非轴向墙、坡地、多层复杂楼梯、可参数化窗门族库。
 - 任意选边 CAD fillet/chamfer（当前 `fillet` / `chamfer` 已进入第二阶段产品 DSL 基线，但稳定 slice 只处理盒体/面板 XY footprint 的垂直边圆角与倒角）。
 - 更通用的 profile/surface 建模；`face_with_holes` / `profile_extrude` 已进入简单闭合多边形 outer + holes 第一切片，并覆盖凹多边形、多洞和竖向 profile 的 mock/queue 对照；`loft_between_profiles` 与 `shell_from_front_side_profiles` 已进入第二阶段产品壳体/握把基线，但更复杂曲面和自动修复仍需继续补。
-- 任意 solid boolean、真实 cylinder wrap/projection（当前 `boolean_cutout` 已有矩形板 + 矩形贯穿孔安全 slice；`face_on_cylinder`、`recess` / `slot` / `screw_hole` 已有视觉贴片、凹槽、长圆槽与孔位标记）。
+- 更复杂的 cylinder wrap/projection（当前 `boolean_cutout` 已有矩形板 + 矩形贯穿孔安全 slice；`boolean_union` / `boolean_difference` / `boolean_intersect` 已支持顶层实体组 solid boolean；`face_on_cylinder`、`recess` / `slot` / `screw_hole` 仍是视觉贴片、凹槽、长圆槽与孔位标记）。
 - `text_3d` 已能在 queue runtime 通过 SketchUp `Entities#add_3d_text` 生成独立真实字体轮廓；`text_emboss` / `text_engrave` 默认仍是确定性的简化文字块视觉标记，也可用 `mode: "font_outline"` / `outline: true` 走真实字体轮廓 marker。仍未做 solid boolean union/subtraction 贴合。
-- 真正的 solid boolean / manifold 检查 / 自动修复。
+- Solid boolean / manifold 已有主线第一版：`manifold_check` 会回传对象级 report，`manifold_repair` 会执行基础 cleanup / seal-bbox 记录；后续仍需扩展到更复杂曲面、文字贴合和产品大样例。
 
 ### 5. QA 还需要更聪明
 
@@ -142,8 +149,9 @@
 
 当前状态：
 
-- `projects/image-structured-modeler/` 已定义方向、schema 和 Switch 手柄 model plan 示例。
-- 还没有实现自动图像校正、轮廓提取、关键点识别、overlay review、plan-to-DSL 编译器。
+- `projects/image-structured-modeler/` 已有 Switch controller 和 compact remote 两条产品样例，覆盖 observations、manual corrections、model plan、DSL output、review report、mock snapshot、queue snapshot 和 warning budget。
+- 已有 correction-driven regression：`manual-corrections.regression.json` 会验证人工修正进入 model plan 和 compiled DSL；`manual-corrections.feature-regression.json` 会验证 visual fallback 切到真实 feature op。
+- 仍未并入主 MCP tool 链路；自动图像校正、轮廓提取、关键点识别、主线 CAD boolean/manifold 的产品样例复用和大样例复验仍属于后续 polish。
 
 ## 发布稿建议结论
 
@@ -153,4 +161,4 @@
 
 更短的版本：
 
-> 已做到：核心 MCP 工具闭环、安全 DSL、真实 `.skp` 本地输出、snapshot QA、材质/PBR、建筑 helper、产品 golden examples。没做到：官方云端认证/session/download、完整 Python SDK 命名空间、完整 SketchUp API、通用几何/布尔/倒角、图像到结构化模型自动化。
+> 已做到：核心 MCP 工具闭环、安全 DSL、真实 `.skp` 本地输出、snapshot QA、材质/PBR、建筑 helper、产品 golden examples、主线 CAD boolean/manifold 第一版。没做到：官方云端认证/session/download、完整 Python SDK 命名空间、完整 SketchUp API、无限制 CAD kernel、图像到结构化模型自动化。

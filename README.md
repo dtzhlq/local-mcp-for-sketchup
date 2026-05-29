@@ -6,6 +6,10 @@
 
 当前 MVP 走自建本地路线：**安全 JSON DSL + 本地 Node bridge + stdio MCP server + SketchUp Ruby 队列插件 + mock runtime**。
 
+2026-05-27 验收复盘后，项目状态调整为：**技术预览闭环已验证，正式发布暂停**。主线 runtime、Expert Mode、mock/queue 回归和打包链路可继续作为基础能力使用；阶段 7 已补 `target_id + face` 的受控 feature operations、queue active model 防护，以及 `boolean_union` / `boolean_difference` / `boolean_intersect` / `manifold_check` / `manifold_repair` 组成的 CAD boolean/manifold 能力；Image Structured Modeler 已补齐 observation/model-plan/review evidence graph、`review.semantic_fusion` 跨图语义融合层、交互式 corrections workbench，以及 `blind_recess` / `convex` 到真实 feature operations 的第一版映射。正式发布仍需要用新 boolean/manifold 能力复跑更多产品类验收。
+
+2026-05-29 起，下一阶段计划不是重写 runtime，而是重构 runtime 之上的产品建模架构：`ObservationSet -> EvidenceGraph -> ProductProfile -> PartGraph -> FeatureMappingPlan -> JSON DSL -> QA`。R1/R2 第一版已落地：新增 root `ProductProfile` / `PartGraph` schema、`vehicle_ambulance` profile、救护车 part graph、part graph compiler，并让救护车验收 DSL 从 `profile + part graph` 生成。详细计划见 [Product Modeling Architecture Refactor Plan](docs/product-modeling-architecture-refactor-plan.md)。
+
 ## 已知官方形态
 
 官方 SketchUp Connector 是一个 Cloud SketchUp MCP server，不是本地 SketchUp 桌面控制器。
@@ -36,6 +40,7 @@ get_docs() -> { docs }
 build_model({ code, runtime, timeoutMs? }) -> { snapshot }
 reset_model({ runtime, timeoutMs? }) -> { snapshot }
 save_model({ path?, keep_session?, runtime, timeoutMs? }) -> { file_path, snapshot }
+validate_model({ code?|snapshot?, runtime?, spec?, includePreview? }) -> { report, preview }
 ```
 
 `runtime` 支持：
@@ -50,6 +55,7 @@ src/bridge.mjs           # 工具接口实现
 src/cli.mjs              # CLI 入口
 src/http-server.mjs      # HTTP bridge，可选
 src/mcp-server.mjs       # stdio MCP server，可接入支持 MCP 的客户端
+src/model-qa.mjs         # 无 GUI 的语义布局 QA、正交 SVG/HTML preview 和 correction suggestions
 src/mock-runtime.mjs     # 离线可验证 runtime
 src/queue-runtime.mjs    # SketchUp 插件队列 runtime
 src/geometry.mjs         # mock runtime operation modules 兼容聚合导出入口
@@ -68,6 +74,7 @@ src/snapshot.mjs         # mock runtime snapshot、warning summary 和 bbox QA h
 src/object-operations.mjs # mock runtime 对象编辑、metadata、texture transform 操作
 src/object-identity.mjs  # mock runtime 对象身份/引用 helper
 src/object-operation-utils.mjs # object operation 字段归一化 helper
+src/boolean-operations.mjs # mock runtime solid boolean / manifold check-repair metadata
 src/expert-compiler.mjs # Expert Mode v1 受限脚本 -> JSON DSL compiler
 sketchup_plugin/         # SketchUp Ruby 插件
 sketchup_plugin/alma_sketchup_mcp/operation_registry.rb # 由 src/capabilities.mjs 生成的 Ruby runtime contract 表
@@ -78,6 +85,7 @@ sketchup_plugin/alma_sketchup_mcp/primitive_operations.rb # Ruby queue runtime m
 sketchup_plugin/alma_sketchup_mcp/product_operations.rb # Ruby queue runtime box/product helper
 sketchup_plugin/alma_sketchup_mcp/profile_operations.rb # Ruby queue runtime panel/profile/roof helper
 sketchup_plugin/alma_sketchup_mcp/surface_operations.rb # Ruby queue runtime loft/shell/sweep/domed/bowed helper
+sketchup_plugin/alma_sketchup_mcp/boolean_operations.rb # Ruby queue runtime SketchUp solid boolean / manifold check-repair
 sketchup_plugin/alma_sketchup_mcp/demo_operations.rb # Ruby queue runtime demo room helper
 sketchup_plugin/alma_sketchup_mcp/architecture_operations.rb # Ruby queue runtime 建筑 helper：level/floor/wall/stairs/railing
 sketchup_plugin/alma_sketchup_mcp/component_operations.rb # Ruby queue runtime component_definition / component_instance
@@ -97,6 +105,7 @@ examples/metadata-organization-slice.json # Tags / attributes / classification m
 examples/profile-edge-cases.json # 通用 profile 凹多边形/多洞 regression slice
 examples/appearance-texture-slice.json # texture transform / image plane appearance slice
 examples/text-3d-slice.json # true font-outline text_3d capability slice
+examples/boolean-manifold-slice.json # CAD boolean / manifold capability slice
 examples/expert-parametric-fixture.js # Expert Mode v1 参数化 fixture 示例
 test/mock-validation.mjs # 离线验证
 test/expert-compiler.mjs # Expert Mode compiler / mock build regression
@@ -133,9 +142,11 @@ node src/cli.mjs save_model --runtime mock --path output/mock-model.json
 node src/cli.mjs compare_snapshots --expected-file output/mock-a.json --actual-file output/mock-b.json --tolerance-mm 1 --max-faces 5000 --max-artifact-size-bytes 50000000
 node src/cli.mjs compare_model --code-file examples/demo-room.json --expected-runtime mock --actual-runtime mock --max-faces 5000
 node src/cli.mjs compare_model --code-file examples/demo-room.json --expected-runtime mock --actual-runtime mock --max-faces 5000 --format markdown --output-file output/mock-parity-report.md
+node src/cli.mjs validate_model --code-file examples/switch-controller-demo.json --spec-file examples/model-qa/switch-controller-demo.json --preview-dir output/model-qa/switch-controller-demo --format markdown --output-file output/model-qa/switch-controller-demo/report.md
 node src/cli.mjs compile_expert --code-file examples/expert-parametric-fixture.js --format dsl --seed 7
 node src/cli.mjs build_expert_model --runtime mock --code-file examples/expert-parametric-fixture.js --seed 7
 npm run qa:mock
+npm run qa:model-layout
 npm run qa:expert:mock
 npm run qa:identity:mock
 # 打开 SketchUp 插件后，把 actual-runtime 改成 queue：
@@ -169,7 +180,7 @@ npm run qa:expert:mock
 
 ## MCP stdio 接入
 
-本项目自带一个最小 MCP stdio server，当前暴露 `get_docs`、`get_capabilities`、`build_model`、`compile_expert`、`build_expert_model`、`reset_model`、`save_model`、`compare_snapshots` 和 `compare_model`：
+本项目自带一个最小 MCP stdio server，当前暴露 `get_docs`、`get_capabilities`、`build_model`、`compile_expert`、`build_expert_model`、`reset_model`、`save_model`、`compare_snapshots`、`compare_model` 和 `validate_model`：
 
 ```bash
 node src/mcp-server.mjs
@@ -225,7 +236,7 @@ node src/cli.mjs build_model --runtime queue --code-file examples/demo-room.json
 node src/cli.mjs save_model --runtime queue --path "$PWD/output/demo-room.skp" --timeout-ms 60000
 ```
 
-更完整的 queue 手动验收和排障见 `docs/queue-runtime-ops.md`；性能和 SKP size 预算见 `docs/performance-budgets.md`；发布检查见 `docs/release-checklist.md`。
+更完整的 queue 手动验收和排障见 `docs/queue-runtime-ops.md`；性能和 SKP size 预算见 `docs/performance-budgets.md`；技术预览打包检查见 `docs/release-checklist.md`。
 
 队列 runtime 不执行 shell，也不 eval Ruby；它只把 JSON 请求写到队列，由插件解析受控 DSL。
 
@@ -267,7 +278,7 @@ node src/cli.mjs save_model --runtime queue --path "$PWD/output/demo-room.skp" -
 
 - 基础：`reset`、`material`、`box`、`room`、`level`。
 - 编辑：`delete`、`rename`、`set_material`、`set_visibility`、`transform_object`；编辑操作优先支持 `target_id` 稳定引用，旧的 `name` 引用仍可用；`transform_object` 支持 translate、rotateX/Y/Z、模型空间 `axis + angle`、本地轴 `local_axis + local_angle`、SketchUp-compatible 16-number `matrix`、本地坐标系 `local_matrix`、scale、mirror，以及 `pivot: "origin"`（默认）、`pivot: "center"` 和显式 `[x,y,z]`；matrix/local_matrix snapshot 会附带 decomposition metadata。
-- 几何：`prism`、`mesh`、`face_with_holes`、`profile_extrude`、`panel_with_openings`、`boolean_cutout`、`fillet`、`chamfer`、`cylinder`、`loft_between_profiles`、`shell_from_front_side_profiles`、`lofted_solid`、`face_on_cylinder`、`pipe_between_points`、`swept_path`、`domed_surface`、`bowed_panel`。
+- 几何：`prism`、`mesh`、`face_with_holes`、`profile_extrude`、`panel_with_openings`、`boolean_cutout`、`boolean_union`、`boolean_difference`、`boolean_intersect`、`manifold_check`、`manifold_repair`、`fillet`、`chamfer`、`cylinder`、`loft_between_profiles`、`shell_from_front_side_profiles`、`lofted_solid`、`face_on_cylinder`、`pipe_between_points`、`swept_path`、`domed_surface`、`bowed_panel`。
 - 产品 helper：`rounded_box`、`beveled_panel`、`recess`、`engraved_line`、`text_emboss`、`text_engrave`、`text_3d`、`slot`、`slot_array`、`rib`、`standoff_boss`、`button_on_panel`、`analog_stick`、`screw_hole`。
 - 建筑 helper：`floor_slab`、`wall`、`door`、`window`、`stairs`、`railing`、`gable_roof`、`shed_roof`。
 - 组织/元数据：`tag`、`assign_tag`、`attribute`、`classification`。
@@ -298,8 +309,8 @@ node src/cli.mjs save_model --runtime queue --path "$PWD/output/demo-room.skp" -
   "runtime": {
     "name": "mock",
     "version": "mock-runtime-0.1.0",
-    "capability_version": "0.1.0-capabilities.2",
-    "manifest_version": "2026-05-phase4-text-3d-slice",
+    "capability_version": "0.1.0-capabilities.5",
+    "manifest_version": "2026-05-phase7-boolean-manifold",
     "dsl_version": 1,
     "supported_operations": ["reset", "material", "box"],
     "operation_support": {
@@ -313,7 +324,7 @@ node src/cli.mjs save_model --runtime queue --path "$PWD/output/demo-room.skp" -
     "compatibility": {
       "ok": true,
       "level": "ok",
-      "checked_against": { "manifest_version": "2026-05-phase4-text-3d-slice", "capability_version": "0.1.0-capabilities.2", "dsl_version": 1 },
+      "checked_against": { "manifest_version": "2026-05-phase7-boolean-manifold", "capability_version": "0.1.0-capabilities.5", "dsl_version": 1 },
       "issues": []
     }
   },
@@ -327,9 +338,13 @@ node src/cli.mjs save_model --runtime queue --path "$PWD/output/demo-room.skp" -
       "vertices": 8,
       "resolution_hint": { "segments_x": 8, "segments_y": 6 },
       "bounding_box": { "min": [0, 0, 0], "max": [3000, 120, 2400], "w": 3000, "d": 120, "h": 2400 },
-      "material": "Wall_Paint"
+      "material": "Wall_Paint",
+      "features": [],
+      "boolean_operations": [],
+      "manifold": null
     }
   ],
+  "manifold_checks": [],
   "instances": [],
   "component_definitions": [],
   "scenes": [],
@@ -368,9 +383,11 @@ mock snapshot 会额外给出零面组、bounding box 碰撞等结构化 warning
 }
 ```
 
-当前离线骨架先比较 runtime compatibility、totals（不含 `vertices`，因为 mock/queue 顶点统计语义不同）、artifact size、materials、component definitions、groups、instances、scenes、levels 和整体 bounding box；可选 topology tolerance 支持 `--face-tolerance`、`--edge-tolerance`、`--group-tolerance`、`--instance-tolerance`，用于显式吸收 SketchUp 真实拓扑和 mock 估算之间的小差异；可选 budget 支持 `max_faces`、`max_edges`、`max_vertices`、`max_groups`、`max_instances`、`max_artifact_size_bytes`。后续真实 queue 对照时可以继续扩展退化面、预期接触/碰撞和 SKP size budget 分析。
+当前离线骨架先比较 runtime compatibility、totals（不含 `vertices`，因为 mock/queue 顶点统计语义不同）、artifact size、materials、component definitions、groups、instances、feature metadata、scenes、levels 和整体 bounding box；可选 topology tolerance 支持 `--face-tolerance`、`--edge-tolerance`、`--group-tolerance`、`--instance-tolerance`，用于显式吸收 SketchUp 真实拓扑和 mock 估算之间的小差异；可选 budget 支持 `max_faces`、`max_edges`、`max_vertices`、`max_groups`、`max_instances`、`max_artifact_size_bytes`。后续真实 queue 对照时可以继续扩展退化面、预期接触/碰撞和 SKP size budget 分析。
 
 `compare_model` 是更高层的一键对照：同一份 DSL 先用 `expected_runtime` 构建，再用 `actual_runtime` 构建，随后复用 `compare_snapshots` 产出 QA report。默认是 `mock -> queue`；纯离线可显式传 `--actual-runtime mock`，打开 SketchUp 插件后再改回 `queue`。CLI 默认输出 JSON；加 `--format markdown --output-file output/report.md` 可保存人类可读 Markdown 报告。`scripts/generate-qa-reports.mjs` 会批量跑默认 golden set（demo room、golden architecture、golden product），为每个样例输出 JSON/Markdown，并生成 `index.md` 总览；快捷命令是 `npm run qa:mock` 和 `npm run qa:queue`。Node 侧 queue runtime 会通过 `~/.sketchup-mcp-replica/queue-runtime.lock` 串行化 SketchUp file queue 访问；bridge 会在同一生命周期内缓存已验证 runtime descriptor，显式 `get_capabilities` 仍会强制 live handshake。如需调大等待时间，可设置 `ALMA_SKETCHUP_QUEUE_LOCK_TIMEOUT_MS=<毫秒>`。
+
+`validate_model` 是补充在 snapshot 之上的无 GUI 语义布局 QA：它可以直接构建 DSL，也可以校验已有 snapshot；`spec.rules` 支持 `contacts`、`allowed_collisions`、`inside`、`support` 和 `separation` 规则，规则目标可用精确名称或正则。报告会返回 `issues`、`correction_suggestions`，并生成 top/front/right 正交 SVG 与 HTML preview。`npm run qa:model-layout` 默认跑 Switch 手柄、救护车和儿童房三份验收样例，输出到 `output/model-qa/`。救护车验收 DSL 可用 `npm run acceptance:generate-ambulance` 从 `examples/product-profiles/vehicle_ambulance.json` + `examples/part-graphs/ambulance-reference.part-graph.json` 重建；也可用 `npm run part-graph:compile-ambulance` 直接调用通用 part graph compiler，避免基于旧 JSON 继续手改。
 
 ## Expert Mode v1
 
@@ -393,18 +410,28 @@ node src/cli.mjs build_expert_model --runtime mock --code-file examples/expert-p
 
 ## 当前 MVP 状态
 
-- `get_docs`、`build_model`、`reset_model`、`save_model` 已完成 Node bridge、CLI、HTTP bridge 和 stdio MCP server 入口。
-- `mock` runtime 已支持基础房间、墙洞面板、棱柱、mesh、通用 profile face/extrude（简单闭合多边形 outer + holes）、圆角盒/倒角面板、凹槽、长圆槽、刻线、text_3d bbox metadata、font-outline `text_emboss/text_engrave` metadata、面板按钮、摇杆、螺丝孔位、屋顶 helper、圆柱、旋转体、扫掠管、domed/bowed 曲面、楼层/楼板/墙/门窗/楼梯/栏杆、Tags/attributes/classification 元数据、texture_transform/image_plane 表现层、组件定义/实例、基础 transform、对象任意模型轴旋转、本地轴旋转、模型空间 4x4 matrix、本地坐标系 local_matrix、matrix/local_matrix decomposition metadata（含 affine/non-affine 与 Euler 报告）、相机、scene、材质 texture/PBR 字段记录、style/shadow/rendering options 表现层状态和 snapshot 校验；bridge 会在 snapshot 中附加 runtime capability descriptor。
-- `queue` runtime 已能把请求交给 SketchUp Ruby 插件，插件侧实现同一套 DSL 的真实建模、基础 transform、对象任意模型轴旋转、本地轴旋转、4x4 matrix、本地坐标系 local_matrix、transform metadata 回传（含 affine/non-affine 与 Euler 报告）、通用 profile face/extrude、Tags/attributes/classification 元数据、texture_transform/image_plane 表现层、圆角盒/倒角面板、凹槽、长圆槽、刻线、真实字体轮廓 text_3d、font-outline `text_emboss/text_engrave`、面板按钮、摇杆、螺丝孔位、domed/bowed 曲面、楼层/楼板/墙/门窗/楼梯/栏杆、材质 color/alpha/texture/SketchUp 2025+ PBR、style/shadow/rendering options、scene 和 `.skp` 保存；第一阶段已接入 `get_capabilities` 插件握手，snapshot 中的 queue runtime descriptor 来自已安装插件，包含插件版本、SketchUp 版本、Ruby 版本、队列路径和 operation 支持状态，并通过 `runtime.compatibility` 对照当前 manifest；当前 text_3d slice 已通过 live `get_capabilities`、queue 单例构建、全量 `qa:queue` 和 `qa:budget:queue`。
+- 当前只能声明为技术预览：儿童房、救护车、Switch 手柄验收说明系统能表达和保存结构化展示模型；主线已补受控面级 feature operations、CAD boolean/manifold 和 active model 防护，子项目已补 graph-based semantic fusion 和 corrections workbench；照片/多图到可编辑产品模型仍需要更多产品类验收和图像侧自动化收口。
+- `get_docs`、`build_model`、`reset_model`、`save_model`、`validate_model` 已完成 Node bridge、CLI、HTTP bridge 和 stdio MCP server 入口。
+- `mock` runtime 已支持基础房间、墙洞面板、棱柱、mesh、通用 profile face/extrude（简单闭合多边形 outer + holes）、圆角盒/倒角面板、凹槽、长圆槽、刻线、text_3d bbox metadata、font-outline `text_emboss/text_engrave` metadata、面板按钮、摇杆、螺丝孔位、受控 `cut_hole` / `cut_slot` / `cut_recess` / `add_boss` / `add_raised_rib` feature metadata、`boolean_union` / `boolean_difference` / `boolean_intersect` 结果记录与 `manifold_check` / `manifold_repair`、屋顶 helper、圆柱、旋转体、扫掠管、domed/bowed 曲面、楼层/楼板/墙/门窗/楼梯/栏杆、Tags/attributes/classification 元数据、texture_transform/image_plane 表现层、组件定义/实例、基础 transform、对象任意模型轴旋转、本地轴旋转、模型空间 4x4 matrix、本地坐标系 local_matrix、matrix/local_matrix decomposition metadata（含 affine/non-affine 与 Euler 报告）、相机、scene、材质 texture/PBR 字段记录、style/shadow/rendering options 表现层状态和 snapshot 校验；bridge 会在 snapshot 中附加 runtime capability descriptor。
+- `queue` runtime 已能把请求交给 SketchUp Ruby 插件，插件侧实现同一套 DSL 的真实建模、基础 transform、对象任意模型轴旋转、本地轴旋转、4x4 matrix、本地坐标系 local_matrix、transform metadata 回传（含 affine/non-affine 与 Euler 报告）、通用 profile face/extrude、Tags/attributes/classification 元数据、texture_transform/image_plane 表现层、圆角盒/倒角面板、凹槽、长圆槽、刻线、真实字体轮廓 text_3d、font-outline `text_emboss/text_engrave`、面板按钮、摇杆、螺丝孔位、受控 face pushpull feature operations、SketchUp solid boolean operations、manifold 检查/修复 metadata、domed/bowed 曲面、楼层/楼板/墙/门窗/楼梯/栏杆、材质 color/alpha/texture/SketchUp 2025+ PBR、style/shadow/rendering options、scene 和 `.skp` 保存；`reset_model` / `build_model` / `save_model` / `snapshot` 已统一使用 active model 防护；snapshot 中的 queue runtime descriptor 来自已安装插件，并通过 `runtime.compatibility` 对照当前 manifest。
 - Expert Mode v1 已接入 CLI/bridge：受限脚本通过 AST 白名单解释器编译成 JSON DSL，再复用现有 mock/queue runtime；`examples/expert-parametric-fixture.js` 覆盖参数化组件阵列、`range().map(...)`、seeded random、`vec` helper 和 `text_3d`，新增扩展 helper 覆盖数组 `filter/flatMap/reduce`、`clamp/lerp/rad/deg` 与 `vec.cross/norm/distance`，并已通过 live queue 单例构建，warnings 0。
 - MCP stdio server 已暴露 Expert Mode 工具：`compile_expert` 和 `build_expert_model`，客户端可以直接请求受限脚本编译或编译后构建。
 - Expert Mode 发布回归已接入并通过 `npm run qa:expert:mock` / `npm run qa:expert:queue`，输出编译、runtime build、artifact 保存、warnings 和预算报告；queue SKP artifact 保存到 `output/qa-reports/expert-queue/artifacts/expert-parametric-fixture.skp`。
-- 离线测试 `npm test` 已覆盖核心 DSL、建筑 DSL、产品/工业设计 golden examples、snapshot totals/QA、材质、PBR 字段、表现层状态、组件、相机、保存流程、queue capability handshake 注入、descriptor 漂移检测、带 top issues / recommendations / budget 检查的 snapshot diff report、Markdown QA report，以及 `compare_model` 一键对照骨架。
+- 离线测试 `npm test` 已覆盖核心 DSL、建筑 DSL、产品/工业设计 golden examples、snapshot totals/QA、材质、PBR 字段、表现层状态、组件、相机、保存流程、queue capability handshake 注入、descriptor 漂移检测、带 top issues / recommendations / budget 检查的 snapshot diff report、Markdown QA report、`compare_model` 一键对照骨架，以及 `validate_model` 语义布局 QA。
 - `mock` runtime 的 session 写入使用文件锁和临时文件原子 rename；并行运行 `npm test` 与 `npm run qa:mock` 时会串行化同一 session 的读写，避免半写 JSON 污染。
 - JS mock runtime 已完成主边界模块拆分：session/model state 位于 `src/model-state.mjs`；通用归一化和 transform helper 位于 `src/operation-utils.mjs`；material/PBR/texture、primitive、profile、surface、product、architecture 和 demo helper 分别位于对应 `*-operations.mjs`；component_definition/instance 位于 `src/component-operations.mjs`；camera/scene/style/shadow/rendering 位于 `src/view-operations.mjs`；对象编辑和身份引用位于 `src/object-operations.mjs` / `src/object-identity.mjs`；snapshot、warning summary 和 bbox QA 位于 `src/snapshot.mjs`；`src/geometry.mjs` 仅保留兼容聚合导出。
-- Ruby queue runtime 已完成模块拆分：runtime contract 表由 `src/capabilities.mjs` 生成到 `sketchup_plugin/alma_sketchup_mcp/operation_registry.rb`；对象编辑、Tags、attributes、classification、texture transform 和 `transform_object` 位于 `object_operations.rb`；材质、PBR 和贴图 helper 位于 `materials.rb`；共享 geometry/entity helper 位于 `geometry_operations.rb`；mesh/prism/cylinder 位于 `primitive_operations.rb`；box/product helper 位于 `product_operations.rb`；panel/profile/roof helper 位于 `profile_operations.rb`；loft/shell/sweep/domed/bowed helper 位于 `surface_operations.rb`；demo room 位于 `demo_operations.rb`；建筑、组件、view 和 snapshot 分别位于对应模块，均由主插件文件 `require_relative` 加载。
+- Ruby queue runtime 已完成模块拆分：runtime contract 表由 `src/capabilities.mjs` 生成到 `sketchup_plugin/alma_sketchup_mcp/operation_registry.rb`；对象编辑、Tags、attributes、classification、texture transform 和 `transform_object` 位于 `object_operations.rb`；材质、PBR 和贴图 helper 位于 `materials.rb`；共享 geometry/entity helper 位于 `geometry_operations.rb`；mesh/prism/cylinder 位于 `primitive_operations.rb`；box/product helper 位于 `product_operations.rb`；panel/profile/roof helper 位于 `profile_operations.rb`；loft/shell/sweep/domed/bowed helper 位于 `surface_operations.rb`；受控面级特征位于 `feature_operations.rb`；solid boolean / manifold 位于 `boolean_operations.rb`；demo room 位于 `demo_operations.rb`；建筑、组件、view 和 snapshot 分别位于对应模块，均由主插件文件 `require_relative` 加载。
 
 ## 下一步
+
+### 当前 P0
+
+- [x] Queue active model 防护：`reset_model` / `build_model` / `save_model` / `snapshot` 统一走 `active_model_or_new`；Node queue save path 先解析为绝对路径。
+- [x] 真实特征编辑第一 slice：新增 `cut_hole`、`cut_slot`、`cut_recess`、`add_boss`、`add_raised_rib`，接口以 `target_id + face + depth/through` 为核心，样例为 `examples/feature-editing-slice.json`。
+- [x] CAD boolean/manifold：新增 `boolean_union`、`boolean_difference`、`boolean_intersect`、`manifold_check`、`manifold_repair`，queue runtime 调 SketchUp solid operations，mock/runtime snapshot 记录 boolean history 与 manifold reports，样例为 `examples/boolean-manifold-slice.json`。
+- [x] Image Structured feature mapping 第一 slice：compact remote 已把 `blind_recess` / `convex` 编译为 `cut_recess` / `add_boss` / `add_raised_rib`，并通过 queue snapshot/diff 与 `feature_mapping_regression`。
+- [x] Image Structured Modeler 图像侧语义融合：`model-plan.review.semantic_fusion` 已按 part 汇总跨视图 evidence、semantic labels、feature mapping、confidence、decision/status 和 review flags；Switch/compact remote 样例已刷新。
+- [x] Review/corrections authoring 工作台：review HTML 已支持选择建议 patch、编辑 JSON、校验、复制和下载 `manual-corrections.workbench.json`；自动写盘/重跑仍留作 CLI polish。
 
 ### 已验证通过（done）
 
@@ -413,6 +440,9 @@ node src/cli.mjs build_expert_model --runtime mock --code-file examples/expert-p
 - [x] dome/bowed panel、建筑高层 DSL、材质贴图+PBR、style/shadow/rendering。
 - [x] component_definition / component_instance 基础复用。
 - [x] component instance 上的 `transform_object` 组合验证：模型轴、本地轴、4x4 matrix。
+- [x] Image Structured Modeler evidence graph + correction suggestions：observations/model-plan/review/per-image summary 已记录 `observed` / `inferred` / `template_prior` / `manual_confirmed`、missing views、feature fallback 和可复制 correction patch 骨架。
+- [x] Image Structured Modeler semantic fusion + corrections workbench：`review.semantic_fusion` 已把跨视图证据融合为 per-part status/decision/confidence，review 页面已能交互生成 corrections JSON。
+- [x] Image Structured feature mapping：compact remote queue snapshot `3 groups / 369 faces / 1035 edges / 2 scenes`，`add_boss ×6`、`add_raised_rib ×1`、`cut_recess ×5`，warning gate pass；Switch queue snapshot/diff 也已刷新并通过 warning gate。
 - [x] snapshot QA 分类、曲面分辨率、文件体积字段。
 - [x] golden examples：`examples/golden-architecture.json` 与 `examples/golden-product.json`。
 
@@ -434,6 +464,8 @@ node src/cli.mjs build_expert_model --runtime mock --code-file examples/expert-p
 - [x] `recess` — 可视化下沉凹槽 / 控制区托盘（非 boolean cut）
 - [x] `slot` — 可视化长圆槽 / 开孔标记（非 boolean cut）
 - [x] `boolean_cutout` — 安全 slice：矩形板上的矩形贯穿 cutout（非任意 solid boolean）
+- [x] `boolean_union` / `boolean_difference` / `boolean_intersect` — 顶层实体组之间的 CAD solid boolean；queue runtime 的 difference 通过 SketchUp `Group#split` 明确保留 target-minus-tool 结果，mock runtime 记录确定性结果 metadata
+- [x] `manifold_check` / `manifold_repair` — 对实体组执行 manifold report 与基础修复记录，snapshot 回传 `manifold_checks` 和对象级 `manifold`
 
 #### 细节类 DSL 缺口
 
