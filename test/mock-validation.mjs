@@ -1170,6 +1170,40 @@ assert.deepEqual(goldenProductGrip.resolution_hint, { segments_x: 8, segments_z:
 assert.deepEqual(goldenProductStick.resolution_hint, { segments: 18 });
 assert.ok(goldenProductSnapshot.totals.vertices > 0, 'golden product should report aggregate vertices');
 
+const featureEditingBuilt = await buildExample('examples/feature-editing-slice.json');
+const featureEditingSnapshot = featureEditingBuilt.snapshot;
+const featurePanel = featureEditingSnapshot.groups.find((group) => group.name === 'Feature_Test_Panel');
+assert.equal(featureEditingSnapshot.totals.groups, 1);
+assert.equal(featureEditingSnapshot.totals.faces, 141);
+assert.equal(featureEditingSnapshot.totals.edges, 280);
+assert.equal(featurePanel.kind, 'box');
+assert.equal(featurePanel.bounding_box.h, 28);
+assert.equal(featurePanel.features.length, 5);
+assert.deepEqual(featurePanel.features.map((feature) => feature.op), ['cut_hole', 'cut_slot', 'cut_recess', 'add_boss', 'add_raised_rib']);
+assert.equal(featurePanel.features[0].target_id, 'feature-test-panel');
+assert.equal(featurePanel.features[0].through, true);
+assert.equal(featurePanel.features[2].through, false);
+assert.equal(featurePanel.features[3].height, 12);
+assert.equal(featurePanel.attributes.Phase7.slice, 'feature-editing');
+assertSnapshotQualityFields(featureEditingSnapshot, 'feature editing');
+
+const booleanManifoldBuilt = await buildExample('examples/boolean-manifold-slice.json');
+const booleanManifoldSnapshot = booleanManifoldBuilt.snapshot;
+const booleanFinal = booleanManifoldSnapshot.groups.find((group) => group.name === 'Boolean_Final_Intersection');
+assert.equal(booleanManifoldSnapshot.totals.groups, 1);
+assert.equal(booleanManifoldSnapshot.totals.instances, 0);
+assert.equal(booleanManifoldSnapshot.warning_summary.by_severity.error, 0);
+assert.equal(booleanManifoldSnapshot.warning_summary.by_severity.warn, 0);
+assert.equal(booleanFinal.kind, 'solid_boolean');
+assert.equal(booleanFinal.boolean_operations.length, 3);
+assert.deepEqual(booleanFinal.boolean_operations.map((operation) => operation.op), ['boolean_difference', 'boolean_union', 'boolean_intersect']);
+assert.equal(booleanFinal.manifold.is_manifold, true);
+assert.equal(booleanFinal.manifold.repaired, true);
+assert.equal(booleanManifoldSnapshot.manifold_checks.length, 2);
+assert.equal(booleanManifoldSnapshot.manifold_checks.every((check) => check.ok), true);
+assert.equal(booleanFinal.attributes.Phase7.slice, 'boolean-manifold');
+assertSnapshotQualityFields(booleanManifoldSnapshot, 'boolean manifold');
+
 const componentTransformCode = await fs.readFile(path.resolve('examples/component-transform-composition.json'), 'utf8');
 const componentTransformBuilt = await bridge.build_model({ runtime: 'mock', code: componentTransformCode });
 const componentTransformSnapshot = componentTransformBuilt.snapshot;

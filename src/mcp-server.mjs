@@ -122,6 +122,24 @@ const tools = [
       },
       required: ['code']
     }
+  },
+  {
+    name: 'validate_model',
+    description: 'Build or inspect a model snapshot, run semantic layout QA, and return orthographic SVG/HTML previews plus correction suggestions.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        code: { type: 'string', description: 'JSON DSL string. Required unless snapshot is provided.' },
+        snapshot: { type: 'object', description: 'Existing build_model snapshot. If provided, code is not required.' },
+        runtime: { type: 'string', enum: ['mock', 'queue'], default: 'mock' },
+        timeoutMs: { type: 'number' },
+        spec: { type: 'object', description: 'Optional model QA spec with contacts, inside, support, and separation rules.' },
+        includePreview: { type: 'boolean', default: true },
+        strictCollisions: { type: 'boolean', default: true },
+        strictUnanchored: { type: 'boolean', default: false },
+        floatingDetails: { type: 'boolean', default: true }
+      }
+    }
   }
 ];
 

@@ -40,7 +40,8 @@ export class QueueRuntime {
   }
 
   async saveModel({ outputPath, keepSession = true } = {}) {
-    const result = await this.call('save_model', { path: outputPath, keep_session: keepSession });
+    const resolvedPath = outputPath ? path.resolve(outputPath) : outputPath;
+    const result = await this.call('save_model', { path: resolvedPath, keep_session: keepSession });
     // Stat the saved file to get size
     if (result && result.file_path) {
       try {

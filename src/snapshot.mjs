@@ -1,5 +1,6 @@
 const VALID_WARNING_TYPES = [
   'geometry.degenerate', 'geometry.bbox_overlap', 'geometry.bbox_collision', 'geometry.bbox_contact', 'material.missing_texture',
+  'geometry.non_manifold', 'geometry.boolean_failed',
   'material.pbr_unsupported', 'rendering.unsupported_option',
   'rendering.apply_failed', 'info.limitation', 'info.operation_skipped'
 ];
@@ -48,6 +49,9 @@ export function createSnapshot(model) {
       texture_transform: group.texture_transform || null,
       image: group.image || null,
       attributes: cloneAttributes(group.attributes),
+      features: cloneJson(group.features),
+      boolean_operations: cloneJson(group.boolean_operations),
+      manifold: cloneJson(group.manifold),
       transform: group.transform || null,
       visible: group.hidden ? false : true,
       qa: group.qa || null
@@ -76,6 +80,9 @@ export function createSnapshot(model) {
       classification: instance.classification || null,
       texture_transform: instance.texture_transform || null,
       attributes: cloneAttributes(instance.attributes),
+      features: cloneJson(instance.features),
+      boolean_operations: cloneJson(instance.boolean_operations),
+      manifold: cloneJson(instance.manifold),
       transform: instance.transform || null,
       visible: instance.hidden ? false : true,
       qa: instance.qa || null
@@ -121,6 +128,7 @@ export function createSnapshot(model) {
     totals,
     groups,
     instances,
+    manifold_checks: cloneJson(model.manifold_checks) || [],
     component_definitions: Object.keys(model.component_definitions || {}).sort(),
     scenes: model.scenes || [],
     levels: model.levels || [],
@@ -167,6 +175,11 @@ export function mergeBoundingBoxes(boxes) {
 function cloneAttributes(attributes) {
   if (!attributes || typeof attributes !== 'object') return null;
   return structuredClone(attributes);
+}
+
+function cloneJson(value) {
+  if (value === undefined || value === null) return null;
+  return structuredClone(value);
 }
 
 function overlapWarnings(items) {

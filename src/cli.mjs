@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 import fs from 'node:fs/promises';
+import path from 'node:path';
 import { SketchUpBridge } from './bridge.mjs';
+import { formatModelQaReportMarkdown } from './model-qa.mjs';
 import { compareSnapshots } from './snapshot-diff.mjs';
 import { formatSnapshotReportMarkdown } from './snapshot-report.mjs';
 
@@ -51,6 +53,26 @@ async function main() {
         include_snapshots: options.includeSnapshots === true
       }), options, { markdownTitle: 'SketchUp Model Runtime Compare Report' });
     }
+    case 'validate_model': {
+      const code = options.codeFile ? await fs.readFile(options.codeFile, 'utf8') : options.code;
+      const snapshot = options.snapshotFile ? await readSnapshotJson(options.snapshotFile, 'snapshot') : undefined;
+      const spec = options.specFile ? JSON.parse(await fs.readFile(options.specFile, 'utf8')) : undefined;
+      const result = await bridge.validate_model({
+        code,
+        snapshot,
+        spec,
+        runtime: options.runtime || 'mock',
+        timeoutMs: options.timeoutMs,
+        includePreview: options.includePreview !== false,
+        strictCollisions: options.strictCollisions,
+        strictUnanchored: options.strictUnanchored,
+        floatingDetails: options.floatingDetails
+      });
+      if (options.previewDir) {
+        await writePreviewFiles(result, options.previewDir);
+      }
+      return output(result, options, { markdownTitle: 'SketchUp Model QA Report' });
+    }
     default:
       usage();
       process.exit(command ? 1 : 0);
@@ -71,6 +93,9 @@ function parseArgs(argv) {
     else if (arg === '--format') options.format = argv[++index];
     else if (arg === '--expected-file') options.expectedFile = argv[++index];
     else if (arg === '--actual-file') options.actualFile = argv[++index];
+    else if (arg === '--snapshot-file') options.snapshotFile = argv[++index];
+    else if (arg === '--spec-file') options.specFile = argv[++index];
+    else if (arg === '--preview-dir') options.previewDir = argv[++index];
     else if (arg === '--tolerance-mm') options.toleranceMm = Number(argv[++index]);
     else if (arg === '--face-tolerance') options.faceTolerance = Number(argv[++index]);
     else if (arg === '--edge-tolerance') options.edgeTolerance = Number(argv[++index]);
@@ -93,6 +118,11 @@ function parseArgs(argv) {
     else if (arg === '--no-keep-session') options.keepSession = false;
     else if (arg === '--no-reset-first') options.resetFirst = false;
     else if (arg === '--include-snapshots') options.includeSnapshots = true;
+    else if (arg === '--no-preview') options.includePreview = false;
+    else if (arg === '--strict-collisions') options.strictCollisions = true;
+    else if (arg === '--loose-collisions') options.strictCollisions = false;
+    else if (arg === '--strict-unanchored') options.strictUnanchored = true;
+    else if (arg === '--no-floating-details') options.floatingDetails = false;
     else throw new Error(`Unknown argument: ${arg}`);
   }
   return options;
@@ -151,6 +181,9 @@ async function output(value, options, { markdownTitle } = {}) {
 
 function renderOutput(value, options, { markdownTitle } = {}) {
   if (options.format === 'markdown') {
+    if (value?.kind === 'model_qa') {
+      return formatModelQaReportMarkdown(value, { title: markdownTitle || 'SketchUp Model QA Report' });
+    }
     return formatSnapshotReportMarkdown(value, { title: markdownTitle || 'SketchUp QA Report' });
   }
   if (options.format === 'dsl') {
@@ -161,6 +194,25 @@ function renderOutput(value, options, { markdownTitle } = {}) {
     throw new Error(`Unknown format: ${options.format}`);
   }
   return `${JSON.stringify(value, null, 2)}\n`;
+}
+
+async function writePreviewFiles(report, previewDir) {
+  if (!report.preview) return;
+  await fs.mkdir(previewDir, { recursive: true });
+  const viewFiles = [];
+  for (const view of report.preview.views || []) {
+    const fileName = `${safeFileName(view.name)}.svg`;
+    const filePath = path.join(previewDir, fileName);
+    await fs.writeFile(filePath, view.svg, 'utf8');
+    viewFiles.push({ name: view.name, path: filePath });
+  }
+  const htmlPath = path.join(previewDir, 'index.html');
+  await fs.writeFile(htmlPath, report.preview.html, 'utf8');
+  report.preview_files = { html: htmlPath, views: viewFiles };
+}
+
+function safeFileName(value) {
+  return String(value || 'view').replace(/[^a-z0-9_-]+/gi, '-').replace(/^-|-$/g, '').toLowerCase() || 'view';
 }
 
 function usage() {
@@ -174,6 +226,7 @@ function usage() {
   node src/cli.mjs save_model --path output/model.json [--runtime mock|queue] [--no-keep-session]
   node src/cli.mjs compare_snapshots --expected-file output/mock-a.json --actual-file output/mock-b.json [--tolerance-mm 1] [--face-tolerance 1] [--edge-tolerance 3] [--max-faces 5000] [--max-artifact-size-bytes 50000000] [--format markdown] [--output-file output/report.md]
   node src/cli.mjs compare_model --code-file examples/demo-room.json [--expected-runtime mock] [--actual-runtime queue] [--timeout-ms 60000] [--face-tolerance 1] [--edge-tolerance 3] [--format markdown] [--output-file output/report.md]
+  node src/cli.mjs validate_model --code-file examples/demo-room.json [--runtime mock|queue] [--spec-file examples/model-qa/spec.json] [--preview-dir output/model-qa/demo] [--format markdown] [--output-file output/model-qa/demo.md]
 
 Runtime notes:
   mock  - deterministic offline runtime for tests and Alma iteration.

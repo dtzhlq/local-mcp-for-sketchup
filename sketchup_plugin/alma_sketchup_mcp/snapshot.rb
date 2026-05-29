@@ -4,7 +4,7 @@ module AlmaSketchupMCP
   extend self
 
   def snapshot
-    model = Sketchup.active_model
+    model = active_model_or_new('snapshot')
     groups = model.entities.grep(Sketchup::Group).map do |group|
       bounds = group.bounds
       {
@@ -22,6 +22,9 @@ module AlmaSketchupMCP
         'texture_transform' => entity_texture_transform(group),
         'image' => group.respond_to?(:get_attribute) ? group.get_attribute('AlmaSketchupMCP', 'image') : nil,
         'attributes' => entity_attributes(group),
+        'features' => entity_features(group),
+        'boolean_operations' => entity_boolean_operations(group),
+        'manifold' => entity_manifold_report(group),
         'transform' => entity_object_transform(group),
         'visible' => group.respond_to?(:hidden?) ? !group.hidden? : true,
         'qa' => entity_qa(group)
@@ -42,6 +45,9 @@ module AlmaSketchupMCP
         'classification' => entity_classification(instance),
         'texture_transform' => entity_texture_transform(instance),
         'attributes' => entity_attributes(instance),
+        'features' => entity_features(instance),
+        'boolean_operations' => entity_boolean_operations(instance),
+        'manifold' => entity_manifold_report(instance),
         'transform' => entity_object_transform(instance),
         'visible' => instance.respond_to?(:hidden?) ? !instance.hidden? : true,
         'qa' => entity_qa(instance)
@@ -60,7 +66,8 @@ module AlmaSketchupMCP
       'totals' => totals,
       'groups' => groups,
       'instances' => instances,
-      'component_definitions' => model.definitions.reject { |definition| sketchup_group_definition?(definition) || definition.name.empty? }.map(&:name).sort,
+      'manifold_checks' => @manifold_checks || [],
+      'component_definitions' => model.definitions.reject { |definition| sketchup_group_definition?(definition) || sketchup_temp_definition?(definition) || definition.name.empty? }.map(&:name).sort,
       'scenes' => @scenes || [],
       'levels' => @levels || [],
       'tags' => model.layers.reject { |layer| layer.name.to_s.empty? || %w[Untagged Layer0].include?(layer.name) }.map { |layer| tag_snapshot(layer) }.sort_by { |tag| tag['name'] },
@@ -80,6 +87,10 @@ module AlmaSketchupMCP
 
   def sketchup_group_definition?(definition)
     definition.respond_to?(:group?) && definition.group?
+  end
+
+  def sketchup_temp_definition?(definition)
+    definition.name.to_s.match?(/\ATempInstance#\d+\z/)
   end
 
   def snapshot_warnings(groups)

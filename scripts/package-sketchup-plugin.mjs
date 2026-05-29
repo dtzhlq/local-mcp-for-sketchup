@@ -14,6 +14,8 @@ const PLUGIN_FILES = [
   { source: 'sketchup_plugin/alma_sketchup_mcp/product_operations.rb', target: 'alma_sketchup_mcp/product_operations.rb' },
   { source: 'sketchup_plugin/alma_sketchup_mcp/profile_operations.rb', target: 'alma_sketchup_mcp/profile_operations.rb' },
   { source: 'sketchup_plugin/alma_sketchup_mcp/surface_operations.rb', target: 'alma_sketchup_mcp/surface_operations.rb' },
+  { source: 'sketchup_plugin/alma_sketchup_mcp/feature_operations.rb', target: 'alma_sketchup_mcp/feature_operations.rb' },
+  { source: 'sketchup_plugin/alma_sketchup_mcp/boolean_operations.rb', target: 'alma_sketchup_mcp/boolean_operations.rb' },
   { source: 'sketchup_plugin/alma_sketchup_mcp/demo_operations.rb', target: 'alma_sketchup_mcp/demo_operations.rb' },
   { source: 'sketchup_plugin/alma_sketchup_mcp/architecture_operations.rb', target: 'alma_sketchup_mcp/architecture_operations.rb' },
   { source: 'sketchup_plugin/alma_sketchup_mcp/component_operations.rb', target: 'alma_sketchup_mcp/component_operations.rb' },

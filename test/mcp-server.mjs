@@ -35,6 +35,7 @@ try {
   const toolNames = list.result.tools.map((tool) => tool.name);
   assert.ok(toolNames.includes('compile_expert'), 'MCP tools/list should expose compile_expert');
   assert.ok(toolNames.includes('build_expert_model'), 'MCP tools/list should expose build_expert_model');
+  assert.ok(toolNames.includes('validate_model'), 'MCP tools/list should expose validate_model');
   const compileTool = list.result.tools.find((tool) => tool.name === 'compile_expert');
   assert.deepEqual(compileTool.inputSchema.required, ['code']);
   assert.ok(compileTool.inputSchema.properties.maxOperations);
@@ -56,9 +57,31 @@ try {
   assert.equal(built.snapshot.warnings.length, 0);
   assert.ok(built.snapshot.groups.some((group) => group.name === 'MCP_Expert_Box'));
 
+  const qa = await callTool('validate_model', {
+    code: JSON.stringify({
+      version: 1,
+      units: 'mm',
+      operations: [
+        { op: 'reset' },
+        { op: 'box', name: 'MCP_QA_Panel', origin: [0, 0, 0], size: [100, 80, 10] },
+        { op: 'box', name: 'MCP_QA_Button', origin: [35, 25, 10], size: [20, 20, 5] }
+      ]
+    }),
+    runtime: 'mock',
+    includePreview: false,
+    spec: {
+      rules: {
+        inside: [{ item: 'MCP_QA_Button', parent: 'MCP_QA_Panel', axes: ['x', 'y'], tolerance_mm: 1 }],
+        support: [{ item: 'MCP_QA_Button', parent: 'MCP_QA_Panel', max_gap_mm: 1 }]
+      }
+    }
+  });
+  assert.equal(qa.kind, 'model_qa');
+  assert.equal(qa.ok, true);
+
   console.log(JSON.stringify({
     ok: true,
-    tools: ['compile_expert', 'build_expert_model'],
+    tools: ['compile_expert', 'build_expert_model', 'validate_model'],
     groups: built.snapshot.totals.groups
   }, null, 2));
 } finally {

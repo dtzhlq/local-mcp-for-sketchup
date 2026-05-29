@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "units": "mm",
+  "operations": [
+    { "op": "reset" },
+    { "op": "material", "name": "Feature_Base", "color": "#d8dde4" },
+    { "op": "box", "name": "Feature_Test_Panel", "id": "feature-test-panel", "origin": [0, 0, 0], "size": [240, 140, 16], "material": "Feature_Base" },
+    { "op": "cut_hole", "target_id": "feature-test-panel", "feature_id": "mounting-hole-left", "face": "top", "center": [44, 44], "radius": 10, "through": true, "segments": 24 },
+    { "op": "cut_slot", "target_id": "feature-test-panel", "feature_id": "speaker-slot", "face": "top", "center": [118, 44], "length": 70, "width": 14, "through": true, "segments": 12 },
+    { "op": "cut_recess", "target_id": "feature-test-panel", "feature_id": "screen-pocket", "face": "top", "center": [156, 98], "size": [86, 32], "radius": 4, "depth": 4, "segments": 6 },
+    { "op": "add_boss", "target_id": "feature-test-panel", "feature_id": "mounting-boss-right", "face": "top", "center": [208, 44], "radius": 12, "height": 12, "segments": 24 },
+    { "op": "add_raised_rib", "target_id": "feature-test-panel", "feature_id": "stiffening-rib", "face": "top", "center": [72, 105], "length": 96, "width": 8, "height": 7, "direction": "u" },
+    { "op": "attribute", "target_id": "feature-test-panel", "dictionary": "Phase7", "attributes": { "slice": "feature-editing", "validated_for": "target_id face feature operations" } },
+    { "op": "scene", "name": "Feature Editing Slice", "camera": { "eye": [260, -260, 210], "target": [120, 70, 10], "up": [0, 0, 1], "fov": 35 } }
+  ]
+}

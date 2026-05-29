@@ -6,6 +6,8 @@ import { addMesh, addPrism, addCylinder } from './primitive-operations.mjs';
 import { addBooleanCutout, addFaceWithHoles, addGableRoof, addPanelWithOpenings, addProfileExtrude, addShedRoof } from './profile-operations.mjs';
 import { addAnalogStick, addBowedPanel, addDomedSurface, addFaceOnCylinder, addLoftBetweenProfiles, addLoftedSolid, addPipeBetweenPoints, addScrewHole, addShellFromFrontSideProfiles, addSweptPath } from './surface-operations.mjs';
 import { addBeveledPanel, addBox, addButtonOnPanel, addChamfer, addEngravedLine, addFillet, addImagePlane, addRecess, addRib, addRoundedBox, addSlot, addSlotArray, addStandoffBoss, addText3d, addTextEmboss, addTextEngrave } from './product-operations.mjs';
+import { addBoss, addRaisedRib, cutHole, cutRecess, cutSlot } from './feature-operations.mjs';
+import { booleanDifference, booleanIntersect, booleanUnion, manifoldCheck, manifoldRepair } from './boolean-operations.mjs';
 import { addDoor, addFloorSlab, addLevel, addRailing, addStairs, addWall, addWindow } from './architecture-operations.mjs';
 import { addComponentDefinition, addComponentInstance } from './component-operations.mjs';
 import { addDemoRoom } from './demo-operations.mjs';
@@ -139,6 +141,36 @@ export class MockRuntime {
           break;
         case 'button_on_panel':
           addButtonOnPanel(model, operation);
+          break;
+        case 'cut_hole':
+          cutHole(model, operation);
+          break;
+        case 'cut_slot':
+          cutSlot(model, operation);
+          break;
+        case 'cut_recess':
+          cutRecess(model, operation);
+          break;
+        case 'add_boss':
+          addBoss(model, operation);
+          break;
+        case 'add_raised_rib':
+          addRaisedRib(model, operation);
+          break;
+        case 'boolean_union':
+          booleanUnion(model, operation);
+          break;
+        case 'boolean_difference':
+          booleanDifference(model, operation);
+          break;
+        case 'boolean_intersect':
+          booleanIntersect(model, operation);
+          break;
+        case 'manifold_check':
+          manifoldCheck(model, operation);
+          break;
+        case 'manifold_repair':
+          manifoldRepair(model, operation);
           break;
         case 'image_plane':
           addImagePlane(model, operation);

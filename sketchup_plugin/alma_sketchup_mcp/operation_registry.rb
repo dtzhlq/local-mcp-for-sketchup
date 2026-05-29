@@ -323,6 +323,116 @@ module AlmaSketchupMCP
         'status' => 'supported'
       }
     },
+    'cut_hole' => {
+      'status' => 'supported',
+      'stability' => 'experimental',
+      'schema' => {
+        'required' => ['op', 'center', 'radius'],
+        'optional' => ['name', 'target_id', 'targetId', 'target', 'object', 'face', 'plane', 'feature_id', 'featureId', 'depth', 'through', 'segments']
+      },
+      'component_scope' => {
+        'status' => 'unsupported'
+      }
+    },
+    'cut_slot' => {
+      'status' => 'supported',
+      'stability' => 'experimental',
+      'schema' => {
+        'required' => ['op', 'center', 'length', 'width'],
+        'optional' => ['name', 'target_id', 'targetId', 'target', 'object', 'face', 'plane', 'feature_id', 'featureId', 'depth', 'through', 'segments']
+      },
+      'component_scope' => {
+        'status' => 'unsupported'
+      }
+    },
+    'cut_recess' => {
+      'status' => 'supported',
+      'stability' => 'experimental',
+      'schema' => {
+        'required' => ['op', 'center', 'size', 'depth'],
+        'optional' => ['name', 'target_id', 'targetId', 'target', 'object', 'face', 'plane', 'feature_id', 'featureId', 'radius', 'segments']
+      },
+      'component_scope' => {
+        'status' => 'unsupported'
+      }
+    },
+    'add_boss' => {
+      'status' => 'supported',
+      'stability' => 'experimental',
+      'schema' => {
+        'required' => ['op', 'center', 'radius', 'height'],
+        'optional' => ['name', 'target_id', 'targetId', 'target', 'object', 'face', 'plane', 'feature_id', 'featureId', 'outer_radius', 'outerRadius', 'segments']
+      },
+      'component_scope' => {
+        'status' => 'unsupported'
+      }
+    },
+    'add_raised_rib' => {
+      'status' => 'supported',
+      'stability' => 'experimental',
+      'schema' => {
+        'required' => ['op', 'center', 'length', 'height'],
+        'optional' => ['name', 'target_id', 'targetId', 'target', 'object', 'face', 'plane', 'feature_id', 'featureId', 'width', 'thickness', 'direction']
+      },
+      'component_scope' => {
+        'status' => 'unsupported'
+      }
+    },
+    'boolean_union' => {
+      'status' => 'supported',
+      'stability' => 'experimental',
+      'schema' => {
+        'required' => ['op'],
+        'optional' => ['name', 'target_id', 'targetId', 'target', 'object', 'tools', 'tool_id', 'toolId', 'tool_ids', 'toolIds', 'result_name', 'resultName', 'result_id', 'resultId', 'keep_tools', 'keepTools', 'keep_originals', 'keepOriginals', 'allow_disjoint', 'allowDisjoint', 'material']
+      },
+      'component_scope' => {
+        'status' => 'unsupported'
+      }
+    },
+    'boolean_difference' => {
+      'status' => 'supported',
+      'stability' => 'experimental',
+      'schema' => {
+        'required' => ['op'],
+        'optional' => ['name', 'target_id', 'targetId', 'target', 'object', 'tools', 'tool_id', 'toolId', 'tool_ids', 'toolIds', 'result_name', 'resultName', 'result_id', 'resultId', 'keep_tools', 'keepTools', 'keep_originals', 'keepOriginals', 'allow_non_intersecting', 'allowNonIntersecting', 'material']
+      },
+      'component_scope' => {
+        'status' => 'unsupported'
+      }
+    },
+    'boolean_intersect' => {
+      'status' => 'supported',
+      'stability' => 'experimental',
+      'schema' => {
+        'required' => ['op'],
+        'optional' => ['name', 'target_id', 'targetId', 'target', 'object', 'tools', 'tool_id', 'toolId', 'tool_ids', 'toolIds', 'result_name', 'resultName', 'result_id', 'resultId', 'keep_tools', 'keepTools', 'keep_originals', 'keepOriginals', 'material']
+      },
+      'component_scope' => {
+        'status' => 'unsupported'
+      }
+    },
+    'manifold_check' => {
+      'status' => 'supported',
+      'stability' => 'experimental',
+      'schema' => {
+        'required' => ['op'],
+        'optional' => ['name', 'target_id', 'targetId', 'target', 'object', 'targets', 'target_ids', 'targetIds', 'check_id', 'checkId', 'fail_on_non_manifold', 'failOnNonManifold']
+      },
+      'component_scope' => {
+        'status' => 'unsupported'
+      }
+    },
+    'manifold_repair' => {
+      'status' => 'supported',
+      'stability' => 'experimental',
+      'schema' => {
+        'required' => ['op'],
+        'optional' => ['name', 'target_id', 'targetId', 'target', 'object', 'strategy', 'repair_id', 'repairId', 'fail_on_non_manifold', 'failOnNonManifold']
+      },
+      'component_scope' => {
+        'status' => 'unsupported'
+      }
+    },
     'image_plane' => {
       'status' => 'supported',
       'stability' => 'beta',

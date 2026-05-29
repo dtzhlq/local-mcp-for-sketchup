@@ -16,7 +16,7 @@ module AlmaSketchupMCP
 
   def ensure_material(spec_or_name, color = nil)
     spec, update_existing = material_spec(spec_or_name, color)
-    materials = Sketchup.active_model.materials
+    materials = active_model_or_new('ensure_material').materials
     material = materials[spec['name']]
     existed = !material.nil?
     material ||= materials.add(spec['name'])

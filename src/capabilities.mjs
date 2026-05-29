@@ -1,6 +1,6 @@
 export const DSL_VERSION = 1;
-export const CAPABILITY_MANIFEST_VERSION = '2026-05-phase5-closeout-slice';
-export const RUNTIME_CAPABILITY_VERSION = '0.1.0-capabilities.3';
+export const CAPABILITY_MANIFEST_VERSION = '2026-05-phase7-boolean-manifold';
+export const RUNTIME_CAPABILITY_VERSION = '0.1.0-capabilities.5';
 
 export const SUPPORT_STATUS = Object.freeze({
   supported: 'supported',
@@ -267,6 +267,86 @@ const OPERATION_REGISTRY_ENTRIES = [
     stability: STABILITY.beta,
     component_definition: true,
     notes: 'Use radius for round buttons; use size plus optional corner_radius for pill or rounded-rectangle buttons.'
+  },
+  {
+    op: 'cut_hole',
+    description: 'Cut a controlled circular feature into an existing target face.',
+    schema: { required: ['op', 'center', 'radius'], optional: ['name', ...objectTarget, 'face', 'plane', 'feature_id', 'featureId', 'depth', 'through', 'segments'] },
+    runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
+    stability: STABILITY.experimental,
+    notes: 'Phase 7 face-feature slice. Targets existing box/rounded_box/panel/floor_slab/wall groups by target_id or name, records feature metadata, and queue runtime uses SketchUp face pushpull on the selected planar face.'
+  },
+  {
+    op: 'cut_slot',
+    description: 'Cut a controlled rounded slot feature into an existing target face.',
+    schema: { required: ['op', 'center', 'length', 'width'], optional: ['name', ...objectTarget, 'face', 'plane', 'feature_id', 'featureId', 'depth', 'through', 'segments'] },
+    runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
+    stability: STABILITY.experimental,
+    notes: 'Phase 7 face-feature slice for elongated holes/vents. The first implementation covers planar target faces and uses target-local face coordinates.'
+  },
+  {
+    op: 'cut_recess',
+    description: 'Cut a controlled blind recess into an existing target face.',
+    schema: { required: ['op', 'center', 'size', 'depth'], optional: ['name', ...objectTarget, 'face', 'plane', 'feature_id', 'featureId', 'radius', 'segments'] },
+    runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
+    stability: STABILITY.experimental,
+    notes: 'Phase 7 blind face feature. Use for shallow trays, depressed button pockets, panel wells, and other non-through concave details.'
+  },
+  {
+    op: 'add_boss',
+    description: 'Raise a controlled cylindrical boss from an existing target face.',
+    schema: { required: ['op', 'center', 'radius', 'height'], optional: ['name', ...objectTarget, 'face', 'plane', 'feature_id', 'featureId', 'outer_radius', 'outerRadius', 'segments'] },
+    runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
+    stability: STABILITY.experimental,
+    notes: 'Phase 7 additive face feature. It creates a boss in the target group rather than a separate marker object; complex hollow bosses remain a later CAD slice.'
+  },
+  {
+    op: 'add_raised_rib',
+    description: 'Raise a controlled rectangular rib from an existing target face.',
+    schema: { required: ['op', 'center', 'length', 'height'], optional: ['name', ...objectTarget, 'face', 'plane', 'feature_id', 'featureId', 'width', 'thickness', 'direction'] },
+    runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
+    stability: STABILITY.experimental,
+    notes: 'Phase 7 additive face feature for ribs, roof lines, seams, and stiffeners. direction=u/v selects the target face local axis.'
+  },
+  {
+    op: 'boolean_union',
+    description: 'Union an existing target solid with one or more tool solids.',
+    schema: { required: ['op'], optional: ['name', ...objectTarget, 'tools', 'tool_id', 'toolId', 'tool_ids', 'toolIds', 'result_name', 'resultName', 'result_id', 'resultId', 'keep_tools', 'keepTools', 'keep_originals', 'keepOriginals', 'allow_disjoint', 'allowDisjoint', 'material'] },
+    runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
+    stability: STABILITY.experimental,
+    notes: 'Phase 7 CAD boolean slice. Queue runtime uses SketchUp solid operations when available; mock runtime records deterministic boolean/manifold metadata for offline regression.'
+  },
+  {
+    op: 'boolean_difference',
+    description: 'Subtract one or more tool solids from an existing target solid.',
+    schema: { required: ['op'], optional: ['name', ...objectTarget, 'tools', 'tool_id', 'toolId', 'tool_ids', 'toolIds', 'result_name', 'resultName', 'result_id', 'resultId', 'keep_tools', 'keepTools', 'keep_originals', 'keepOriginals', 'allow_non_intersecting', 'allowNonIntersecting', 'material'] },
+    runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
+    stability: STABILITY.experimental,
+    notes: 'Use for through cuts, pockets, and subtractive product tooling once cutter solids are modeled explicitly. Inputs must be manifold solids.'
+  },
+  {
+    op: 'boolean_intersect',
+    description: 'Keep the positive-volume intersection of an existing target solid and one or more tool solids.',
+    schema: { required: ['op'], optional: ['name', ...objectTarget, 'tools', 'tool_id', 'toolId', 'tool_ids', 'toolIds', 'result_name', 'resultName', 'result_id', 'resultId', 'keep_tools', 'keepTools', 'keep_originals', 'keepOriginals', 'material'] },
+    runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
+    stability: STABILITY.experimental,
+    notes: 'Use for clipping, trimming, and validating overlapping product volumes. Fails when the target/tools do not have a positive-volume intersection.'
+  },
+  {
+    op: 'manifold_check',
+    description: 'Check one or more solids for manifold/solid validity and record the report in the snapshot.',
+    schema: { required: ['op'], optional: ['name', ...objectTarget, 'targets', 'target_ids', 'targetIds', 'check_id', 'checkId', 'fail_on_non_manifold', 'failOnNonManifold'] },
+    runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
+    stability: STABILITY.experimental,
+    notes: 'Queue runtime uses SketchUp manifold/volume APIs plus edge fallback; mock runtime uses deterministic topology heuristics. Reports are returned under snapshot.manifold_checks and per-object manifold.'
+  },
+  {
+    op: 'manifold_repair',
+    description: 'Attempt to repair a target solid and record before/after manifold reports.',
+    schema: { required: ['op'], optional: ['name', ...objectTarget, 'strategy', 'repair_id', 'repairId', 'fail_on_non_manifold', 'failOnNonManifold'] },
+    runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
+    stability: STABILITY.experimental,
+    notes: 'Best-effort cleanup for SketchUp solids: queue runtime runs face-finding/edge cleanup, while mock supports cleanup metadata and seal_bbox fallback for deterministic tests.'
   },
   {
     op: 'image_plane',

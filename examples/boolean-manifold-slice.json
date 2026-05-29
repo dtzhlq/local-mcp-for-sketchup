@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "units": "mm",
+  "operations": [
+    { "op": "reset" },
+    { "op": "material", "name": "Boolean_Test_Body", "color": "#8aa1b4" },
+    { "op": "material", "name": "Boolean_Test_Tool", "color": "#efb36a", "alpha": 0.55 },
+    { "op": "box", "id": "boolean-body", "name": "Boolean_Base_Body", "origin": [0, 0, 0], "size": [120, 80, 30], "material": "Boolean_Test_Body" },
+    { "op": "cylinder", "id": "round-cutter", "name": "Round_Through_Cutter", "origin": [36, 40, -5], "radius": 12, "height": 40, "segments": 24, "material": "Boolean_Test_Tool", "smooth": "all" },
+    { "op": "boolean_difference", "target_id": "boolean-body", "tool_ids": ["round-cutter"], "result_id": "body-with-hole", "result_name": "Boolean_Body_With_Round_Cut", "keep_tools": false },
+    { "op": "box", "id": "side-boss", "name": "Side_Boss_Tool", "origin": [94, 28, 0], "size": [38, 24, 30], "material": "Boolean_Test_Body" },
+    { "op": "boolean_union", "target_id": "body-with-hole", "tool_ids": ["side-boss"], "result_id": "body-union", "result_name": "Boolean_Body_Unioned_Boss", "keep_tools": false },
+    { "op": "box", "id": "clip-volume", "name": "Intersection_Clip_Volume", "origin": [82, 18, -2], "size": [44, 44, 36], "material": "Boolean_Test_Tool" },
+    { "op": "boolean_intersect", "target_id": "body-union", "tool_ids": ["clip-volume"], "result_id": "body-intersection", "result_name": "Boolean_Final_Intersection", "keep_tools": false },
+    { "op": "manifold_check", "target_id": "body-intersection", "check_id": "final-solid-check", "fail_on_non_manifold": true },
+    { "op": "manifold_repair", "target_id": "body-intersection", "repair_id": "final-solid-cleanup", "strategy": "cleanup", "fail_on_non_manifold": true },
+    { "op": "attribute", "target_id": "body-intersection", "dictionary": "Phase7", "attributes": { "slice": "boolean-manifold", "validated": true } },
+    { "op": "camera", "eye": [260, -220, 150], "target": [80, 36, 18], "up": [0, 0, 1], "fov": 35 },
+    { "op": "scene", "name": "Boolean_Manifold_Review", "camera": { "eye": [260, -220, 150], "target": [80, 36, 18], "up": [0, 0, 1], "fov": 35 } }
+  ]
+}

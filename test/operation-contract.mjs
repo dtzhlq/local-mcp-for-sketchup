@@ -15,7 +15,11 @@ const manifest = getOperationManifest();
 const manifestOperations = new Set(getOperationNames());
 const componentDefinitionOperations = new Set(getComponentDefinitionOperationNames());
 const capabilityByOperation = new Map(manifest.map((capability) => [capability.op, capability]));
-const targetOperations = new Set(['delete', 'rename', 'set_material', 'set_visibility', 'transform_object', 'assign_tag', 'attribute', 'classification', 'texture_transform', 'uv_project_planar', 'uv_project_box']);
+const targetOperations = new Set([
+  'delete', 'rename', 'set_material', 'set_visibility', 'transform_object', 'assign_tag', 'attribute', 'classification', 'texture_transform', 'uv_project_planar', 'uv_project_box',
+  'cut_hole', 'cut_slot', 'cut_recess', 'add_boss', 'add_raised_rib',
+  'boolean_union', 'boolean_difference', 'boolean_intersect', 'manifold_check', 'manifold_repair'
+]);
 const identityOperations = new Set([
   'box', 'rounded_box', 'beveled_panel', 'fillet', 'chamfer', 'recess', 'engraved_line',
   'text_emboss', 'text_engrave', 'text_3d', 'slot', 'slot_array', 'rib', 'standoff_boss',

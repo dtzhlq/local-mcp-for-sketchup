@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "title": "Switch Controller Layout QA",
+  "rules": {
+    "allowed_collisions": [
+      { "item": "Left_Back_Grip_Lobe", "with": "Left_Warm_White_JoyCon_Shell" },
+      { "item": "Right_Back_Grip_Lobe", "with": "Right_Warm_White_JoyCon_Shell" },
+      { "item": "Back_Lower_Bridge", "with": "/^(Center_Black_Switch_Grip|Left_Warm_White_JoyCon_Shell|Right_Warm_White_JoyCon_Shell)$/" },
+      { "item": "Plus_Button_Horizontal", "with": "Plus_Button_Vertical" }
+    ],
+    "inside": [
+      { "match": "^(Left_Analog_Stick_|Dpad_|Capture_Button|Left_(Top|Bottom)_Screw)", "parent": "Left_Warm_White_JoyCon_Shell", "axes": ["x", "y"], "tolerance_mm": 1 },
+      { "match": "^(Right_Analog_Stick_|Button_[ABXY]_Button|Home_Button|Right_(Top|Bottom)_Screw)", "parent": "Right_Warm_White_JoyCon_Shell", "axes": ["x", "y"], "tolerance_mm": 1 },
+      { "match": "^(Left|Right)_Status_LED_", "parent": "Center_Black_Switch_Grip", "axes": ["x", "y"], "tolerance_mm": 1 }
+    ],
+    "support": [
+      { "match": "^(Left_Analog_Stick_Recess_Ring|Dpad_.*_Button|Capture_Button|Left_(Top|Bottom)_Screw)", "parent": "Left_Warm_White_JoyCon_Shell", "max_gap_mm": 5, "allow_penetration_mm": 1 },
+      { "match": "^(Right_Analog_Stick_Recess_Ring|Button_[ABXY]_Button|Home_Button|Right_(Top|Bottom)_Screw)", "parent": "Right_Warm_White_JoyCon_Shell", "max_gap_mm": 5, "allow_penetration_mm": 1 },
+      { "match": "^(Left|Right)_Status_LED_", "parent": "Center_Black_Switch_Grip", "max_gap_mm": 7, "allow_penetration_mm": 1 }
+    ],
+    "separation": [
+      { "name": "ABXY cluster spacing", "items": ["Button_X_Button", "Button_Y_Button", "Button_A_Button", "Button_B_Button"], "axes": ["x", "y"], "min_gap_mm": 1 },
+      { "name": "D-pad cluster spacing", "items": ["Dpad_Up_Button", "Dpad_Left_Button", "Dpad_Right_Button", "Dpad_Down_Button"], "axes": ["x", "y"], "min_gap_mm": 1 }
+    ],
+    "views": ["top", "front", "right"]
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "version": 1,
+  "title": "IKEA Style Children's Room Layout QA",
+  "rules": {
+    "allowed_collisions": [
+      {
+        "item": "/^(Child_Room_Back_Window_Glass|Wall_Pegboard_With_Grid|Floating_Book_Shelf|Mustard_Wall_Star|Sage_House_Wall_Icon|Picture_Book_|Wall_PLAY_3D_Text).*/",
+        "with": "Child_Room_Back_Wall"
+      },
+      {
+        "item": "/^(House_Bed_|Bed_Post_).*/",
+        "with": "/^(House_Bed_|Bed_Post_).*/"
+      },
+      {
+        "item": "/^(Three_By_Two_Cube_Storage_Frame|Storage_Back_Vent_Slots|Sage_Bin_|Toy_Storage_Engraved_Label).*/",
+        "with": "/^(Three_By_Two_Cube_Storage_Frame|Storage_Back_Vent_Slots|Sage_Bin_).*/"
+      },
+      {
+        "item": "/^(Wall_Pegboard_With_Grid|Pegboard_Round_Peg_).*/",
+        "with": "/^(Wall_Pegboard_With_Grid|Pegboard_Round_Peg_).*/"
+      },
+      {
+        "item": "/^(Oval_Play_Rug|Boolean_Shape_Sorter_).*/",
+        "with": "/^(Oval_Play_Rug|Boolean_Shape_Sorter_).*/"
+      },
+      {
+        "item": "Child_Room_Sliding_Door",
+        "with": "Child_Room_Right_Wall"
+      },
+      {
+        "item": "Round_Child_Stool_Cushion",
+        "with": "Rounded_Stool_Pedestal"
+      }
+    ],
+    "inside": [
+      { "match": "^(House_Bed_Low_Base|Three_By_Two_Cube_Storage_Frame|Low_Activity_Table_Top|Round_Child_Stool_Cushion|Rounded_Stool_Pedestal|Soft_Desk_Chair_Seat|Oval_Play_Rug|Boolean_Shape_Sorter_.*)$", "parent": "Child_Room_Oak_Floor", "axes": ["x", "y"], "tolerance_mm": 5 },
+      { "match": "^(Wall_Pegboard_With_Grid|Floating_Book_Shelf|Mustard_Wall_Star|Sage_House_Wall_Icon|Wall_PLAY_3D_Text|Child_Room_Back_Window_Glass|Activity_Board_Phase7_Feature_Panel)$", "parent": "Child_Room_Back_Wall", "axes": ["x", "z"], "tolerance_mm": 40 },
+      { "match": "^Picture_Book_", "parent": "Floating_Book_Shelf", "axes": ["x", "y"], "tolerance_mm": 80 },
+      { "match": "^Floating_Shelf_Front_Lip$", "parent": "Floating_Book_Shelf", "axes": ["x", "y"], "tolerance_mm": 120 },
+      { "match": "^Toy_Storage_Engraved_Label$", "parent": "Three_By_Two_Cube_Storage_Frame", "axes": ["x", "y"], "tolerance_mm": 60 },
+      { "match": "^(Soft_Cloud_Pendant_Lamp|Cloud_Lamp_Cord)$", "parent": "Child_Room_Oak_Floor", "axes": ["x", "y"], "tolerance_mm": 5 }
+    ],
+    "support": [
+      { "match": "^(House_Bed_Low_Base|Three_By_Two_Cube_Storage_Frame|Table_Leg_|Rounded_Stool_Pedestal|Oval_Play_Rug|Boolean_Shape_Sorter_.*)$", "parent": "Child_Room_Oak_Floor", "max_gap_mm": 140, "allow_penetration_mm": 10 },
+      { "match": "^Low_Activity_Table_Top$", "with": ["Table_Leg_A", "Table_Leg_B", "Table_Leg_C", "Table_Leg_D"], "max_gap_mm": 5, "allow_penetration_mm": 5 },
+      { "match": "^Round_Child_Stool_Cushion$", "parent": "Rounded_Stool_Pedestal", "max_gap_mm": 30, "allow_penetration_mm": 40 },
+      { "match": "^Soft_Desk_Chair_Seat$", "parent": "Child_Room_Oak_Floor", "max_gap_mm": 380, "allow_penetration_mm": 5 }
+    ],
+    "separation": [
+      { "name": "storage bins", "items": ["Sage_Bin_A", "Sage_Bin_B", "Sage_Bin_C"], "axes": ["x", "y"], "min_gap_mm": 8 },
+      { "name": "picture books", "items": ["Picture_Book_1", "Picture_Book_2", "Picture_Book_3", "Picture_Book_4"], "axes": ["x", "z"], "min_gap_mm": 4 }
+    ],
+    "views": ["top", "front", "right"]
+  }
+}

@@ -97,6 +97,6 @@ module AlmaSketchupMCP
     (1...(segments - 1)).each { |i| faces << [0, i + 1, i] }
     (1...(segments - 1)).each { |i| faces << [segments, segments + i, segments + i + 1] }
     segments.times { |i| faces << [i, (i + 1) % segments, segments + ((i + 1) % segments), segments + i] }
-    add_mesh(parent_entities, 'name' => name, 'vertices' => vertices, 'faces' => faces, 'material' => operation['material'], 'smooth' => operation['smooth'] || 'all', 'kind' => operation['kind'] || 'cylinder', 'qa' => operation['qa'])
+    add_mesh(parent_entities, 'name' => name, 'id' => operation['id'], 'object_id' => operation['object_id'], 'objectId' => operation['objectId'], 'guid' => operation['guid'], 'vertices' => vertices, 'faces' => faces, 'material' => operation['material'], 'smooth' => operation['smooth'] || 'all', 'kind' => operation['kind'] || 'cylinder', 'qa' => operation['qa'])
   end
 end

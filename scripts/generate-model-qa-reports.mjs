@@ -1,0 +1,116 @@
+#!/usr/bin/env node
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import { SketchUpBridge } from '../src/bridge.mjs';
+import { formatModelQaReportMarkdown } from '../src/model-qa.mjs';
+
+const DEFAULT_EXAMPLES = [
+  {
+    name: 'switch-controller-demo',
+    code: 'examples/switch-controller-demo.json',
+    spec: 'examples/model-qa/switch-controller-demo.json'
+  },
+  {
+    name: 'ambulance-reference',
+    code: 'examples/acceptance-ambulance-reference.json',
+    spec: 'examples/model-qa/ambulance-reference.json'
+  },
+  {
+    name: 'ikea-childrens-room',
+    code: 'examples/acceptance-ikea-childrens-room.json',
+    spec: 'examples/model-qa/ikea-childrens-room.json'
+  }
+];
+
+const options = parseArgs(process.argv.slice(2));
+const bridge = new SketchUpBridge();
+const outputDir = options.outputDir || 'output/model-qa';
+const examples = options.examples.length ? options.examples : DEFAULT_EXAMPLES;
+const results = [];
+
+await fs.mkdir(outputDir, { recursive: true });
+
+for (const example of examples) {
+  const code = await fs.readFile(example.code, 'utf8');
+  const spec = example.spec ? JSON.parse(await fs.readFile(example.spec, 'utf8')) : undefined;
+  const report = await bridge.validate_model({
+    code,
+    spec,
+    runtime: options.runtime || 'mock',
+    timeoutMs: options.timeoutMs,
+    strictCollisions: options.strictCollisions,
+    strictUnanchored: options.strictUnanchored
+  });
+  const exampleDir = path.join(outputDir, example.name);
+  await fs.mkdir(exampleDir, { recursive: true });
+  await writePreviewFiles(report, exampleDir);
+  const jsonPath = path.join(exampleDir, 'report.json');
+  const markdownPath = path.join(exampleDir, 'report.md');
+  await fs.writeFile(jsonPath, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
+  await fs.writeFile(markdownPath, formatModelQaReportMarkdown(report, { title: `SketchUp Model QA: ${example.name}` }), 'utf8');
+  results.push({
+    name: example.name,
+    ok: report.ok,
+    verdict: report.verdict,
+    level: report.level,
+    issues: report.summary.total,
+    errors: report.summary.by_severity.error,
+    warnings: report.summary.by_severity.warn,
+    report: markdownPath,
+    preview: report.preview_files?.html
+  });
+}
+
+await fs.writeFile(path.join(outputDir, 'index.md'), formatIndex(results), 'utf8');
+process.stdout.write(`${JSON.stringify({ ok: results.every((result) => result.ok), output_dir: outputDir, results }, null, 2)}\n`);
+if (results.some((result) => !result.ok)) process.exitCode = 1;
+
+function parseArgs(argv) {
+  const parsed = { examples: [] };
+  for (let index = 0; index < argv.length; index += 1) {
+    const arg = argv[index];
+    if (arg === '--output-dir') parsed.outputDir = argv[++index];
+    else if (arg === '--runtime') parsed.runtime = argv[++index];
+    else if (arg === '--timeout-ms') parsed.timeoutMs = Number(argv[++index]);
+    else if (arg === '--strict-collisions') parsed.strictCollisions = true;
+    else if (arg === '--loose-collisions') parsed.strictCollisions = false;
+    else if (arg === '--strict-unanchored') parsed.strictUnanchored = true;
+    else if (arg === '--example') parsed.examples.push(parseExample(argv[++index]));
+    else throw new Error(`Unknown argument: ${arg}`);
+  }
+  return parsed;
+}
+
+function parseExample(value) {
+  const [name, code, spec] = value.split(':');
+  if (!name || !code) throw new Error('--example must be name:code[:spec]');
+  return { name, code, spec };
+}
+
+async function writePreviewFiles(report, dir) {
+  const views = [];
+  for (const view of report.preview?.views || []) {
+    const fileName = `${safeFileName(view.name)}.svg`;
+    const filePath = path.join(dir, fileName);
+    await fs.writeFile(filePath, view.svg, 'utf8');
+    views.push({ name: view.name, path: filePath });
+  }
+  if (report.preview?.html) {
+    const htmlPath = path.join(dir, 'index.html');
+    await fs.writeFile(htmlPath, report.preview.html, 'utf8');
+    report.preview_files = { html: htmlPath, views };
+  }
+}
+
+function formatIndex(results) {
+  const lines = ['# SketchUp Model Layout QA', '', '| Example | Verdict | Level | Errors | Warnings | Report | Preview |', '|---|---|---|---:|---:|---|---|'];
+  for (const result of results) {
+    lines.push(`| ${result.name} | ${result.verdict} | ${result.level} | ${result.errors} | ${result.warnings} | [report](${path.relative(path.dirname(path.join(outputDir, 'index.md')), result.report)}) | [preview](${path.relative(path.dirname(path.join(outputDir, 'index.md')), result.preview)}) |`);
+  }
+  lines.push('');
+  return `${lines.join('\n')}`;
+}
+
+function safeFileName(value) {
+  return String(value || 'view').replace(/[^a-z0-9_-]+/gi, '-').replace(/^-|-$/g, '').toLowerCase() || 'view';
+}

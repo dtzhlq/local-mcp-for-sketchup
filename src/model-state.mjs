@@ -7,6 +7,7 @@ export function emptyModel() {
     instances: [],
     scenes: [],
     levels: [],
+    manifold_checks: [],
     tags: {},
     materials: {},
     warnings: [],

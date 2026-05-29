@@ -3,6 +3,7 @@ import { getDocs } from './docs.mjs';
 import { compileExpertScript } from './expert-compiler.mjs';
 import { MockRuntime } from './mock-runtime.mjs';
 import { QueueRuntime } from './queue-runtime.mjs';
+import { validateModelSnapshot } from './model-qa.mjs';
 import { compareSnapshots } from './snapshot-diff.mjs';
 
 export class SketchUpBridge {
@@ -108,6 +109,27 @@ export class SketchUpBridge {
       report,
       ...(include_snapshots ? { expected: expected.snapshot, actual: actual.snapshot } : {})
     };
+  }
+
+  async validate_model({
+    code,
+    snapshot,
+    runtime = 'mock',
+    timeoutMs,
+    spec,
+    includePreview = true,
+    strictCollisions,
+    strictUnanchored,
+    floatingDetails
+  } = {}) {
+    const builtSnapshot = snapshot || (await this.build_model({ code, runtime, timeoutMs })).snapshot;
+    return validateModelSnapshot(builtSnapshot, {
+      spec,
+      includePreview,
+      strictCollisions,
+      strictUnanchored,
+      floatingDetails
+    });
   }
 
   async resolveRuntimeCapabilities(selectedRuntime, runtime, { force = false } = {}) {

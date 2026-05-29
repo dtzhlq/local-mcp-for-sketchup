@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "title": "Ambulance Reference Layout QA",
+  "rules": {
+    "allowed_collisions": [
+      {
+        "item": "/^(Ambulance_|Front_|Left_|Right_|Rear_|Roof_).*/",
+        "with": "/^(Ambulance_High_Roof_Main_Body|Ambulance_Cab_Lower_Nose|Ambulance_Cab_Raked_Upper_Shell|Ambulance_Large_Raked_Windshield|Front_Black_Radiator_Grille|Ambulance_Left_Red_Side_Stripe|Ambulance_Front_Red_Stripe|Ambulance_Rear_Red_Stripe|Ambulance_Left_Black_Lower_Skirt|Ambulance_Right_Black_Lower_Skirt|Ambulance_Left_Side_Dark_Window|Ambulance_Rear_Dark_Window|Left_Front_Black_Tire|Left_Rear_Black_Tire|Right_Front_Black_Tire|Right_Rear_Black_Tire).*/"
+      },
+      {
+        "item": "Front_Center_Emblem_Dot",
+        "with": "Front_Chrome_Grille_Slat_2"
+      }
+    ],
+    "inside": [
+      { "match": "^Ambulance_Left_.*Window$", "parent": "Ambulance_High_Roof_Main_Body", "axes": ["x", "z"], "tolerance_mm": 20 },
+      { "match": "^Ambulance_Right_.*Window$", "parent": "Ambulance_High_Roof_Main_Body", "axes": ["x", "z"], "tolerance_mm": 20 },
+      { "match": "^Ambulance_Rear_Dark_Window$", "parent": "Ambulance_High_Roof_Main_Body", "axes": ["y", "z"], "tolerance_mm": 20 },
+      { "match": "^(Roof_Red_Emergency_Lightbar|Roof_White_Medical_Equipment_Hump|Raised_Roof_Service_Panel_With_Ridges)$", "parent": "Ambulance_High_Roof_Main_Body", "axes": ["x", "y"], "tolerance_mm": 35 },
+      { "match": "^(Left|Right)_(Front|Rear)_(Black_Tire|Silver_Hub)$", "parent": "Ambulance_High_Roof_Main_Body", "axes": ["x", "y"], "tolerance_mm": 90 },
+      { "match": "^Front_(Left|Right)_Clear_Headlight$", "parent": "Ambulance_Cab_Lower_Nose", "axes": ["y", "z"], "tolerance_mm": 12 }
+    ],
+    "support": [
+      { "match": "^(Roof_Red_Emergency_Lightbar|Roof_White_Medical_Equipment_Hump|Raised_Roof_Service_Panel_With_Ridges)$", "parent": "Ambulance_High_Roof_Main_Body", "max_gap_mm": 70, "allow_penetration_mm": 80 },
+      { "match": "^Roof_Longitudinal_Rib_", "parent": "Ambulance_High_Roof_Main_Body", "max_gap_mm": 30, "allow_penetration_mm": 30 }
+    ],
+    "separation": [
+      { "name": "left wheelbase", "items": ["Left_Front_Black_Tire", "Left_Rear_Black_Tire"], "axes": ["x", "z"], "min_gap_mm": 850 },
+      { "name": "right wheelbase", "items": ["Right_Front_Black_Tire", "Right_Rear_Black_Tire"], "axes": ["x", "z"], "min_gap_mm": 850 },
+      { "name": "front headlight spacing", "items": ["Front_Left_Clear_Headlight", "Front_Right_Clear_Headlight"], "axes": ["y", "z"], "min_gap_mm": 250 }
+    ],
+    "views": ["top", "front", "right"]
+  }
+}

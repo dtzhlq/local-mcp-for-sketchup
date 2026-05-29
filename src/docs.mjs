@@ -9,6 +9,7 @@ This project exposes a small SketchUp-like tool surface for Alma:
 - build_model({ code, runtime }) -> builds from a safe JSON DSL and returns a snapshot.
 - reset_model({ runtime }) -> clears the current model session.
 - save_model({ path, keep_session, runtime }) -> saves the current session.
+- validate_model({ code|snapshot, runtime, spec }) -> runs semantic layout QA and returns orthographic SVG/HTML previews plus correction suggestions.
 
 ## Safe DSL
 
@@ -23,6 +24,9 @@ build_model accepts a JSON string, not executable Ruby or shell code. The suppor
     {"op": "material", "name": "Brushed_Metal_PBR", "color": "#8a8178", "workflow": "pbr_metallic_roughness", "alpha": 1, "texture": {"path": "textures/brushed-metal-albedo.jpg", "width": 1200, "height": 1200}, "pbr": {"metallic_factor": 0.85, "roughness_factor": 0.32, "normal_style": "opengl", "normal_scale": 1, "textures": {"metallic": "textures/brushed-metal-metallic.jpg", "roughness": "textures/brushed-metal-roughness.jpg", "normal": "textures/brushed-metal-normal.jpg", "ao": "textures/brushed-metal-ao.jpg", "opacity": "textures/brushed-metal-opacity.jpg"}}},
     {"op": "box", "name": "Box_1", "origin": [0, 0, 0], "size": [1000, 1000, 1000], "material": "Wall_Paint"},
     {"op": "rounded_box", "name": "Soft_Product_Shell", "origin": [0, 0, 0], "size": [180, 90, 18], "radius": 14, "segments": 6, "material": "Wall_Paint", "smooth": "all"},
+    {"op": "box", "id": "demo-cutter", "name": "Boolean_Demo_Cutter", "origin": [72, 32, -2], "size": [36, 26, 24], "material": "Wall_Paint"},
+    {"op": "boolean_difference", "target": "Soft_Product_Shell", "tool_ids": ["demo-cutter"], "result_id": "shell-with-cut", "result_name": "Shell_With_Demo_Cut"},
+    {"op": "manifold_check", "target_id": "shell-with-cut", "fail_on_non_manifold": true},
     {"op": "beveled_panel", "name": "Chamfered_Faceplate", "origin": [0, 0, 20], "size": [180, 90, 5], "bevel": 8, "material": "Wall_Paint"},
     {"op": "recess", "name": "Inset_Control_Well", "center": [90, 45, 32], "size": [92, 36], "depth": 7, "radius": 10, "segments": 5, "material": "Wall_Paint", "smooth": "all"},
     {"op": "fillet", "name": "Soft_Edge_Insert", "origin": [18, 14, 42], "size": [42, 22, 5], "radius": 5, "segments": 4, "material": "Wall_Paint", "smooth": "all"},
@@ -82,6 +86,9 @@ build_model accepts a JSON string, not executable Ruby or shell code. The suppor
 - \`tag\` creates SketchUp Tags/Layers, \`assign_tag\` assigns tags to top-level groups or component instances, \`attribute\` writes JSON-compatible metadata to SketchUp attribute dictionaries, and \`classification\` attaches BIM/classification metadata returned as a first-class snapshot field.
 - \`texture_transform\` records deterministic texture projection/offset/scale/rotation metadata for top-level objects, \`uv_project_planar\` and \`uv_project_box\` are semantic projection aliases, and \`image_plane\` creates flat reference or image planes with material/texture metadata.
 - \`transform_object\` edits existing top-level groups or component instances by stable \`target_id\` or legacy \`name\`; it supports translate, rotateX/Y/Z, model-space \`axis + angle\`, local-axis \`local_axis + local_angle\`, SketchUp-compatible 16-number \`matrix\`, local-coordinate \`local_matrix\`, scale, mirror, and origin/center/explicit pivots. Matrix snapshots include translation, basis axes, scale, shear, determinant, mirrored state, affine/non-affine reasons, homogeneous perspective terms, and Euler XYZ degrees when the matrix is compatible with a pure positive-orientation rotation.
+- \`cut_hole\`, \`cut_slot\`, \`cut_recess\`, \`add_boss\`, and \`add_raised_rib\` are the phase 7 controlled face-feature operations. They edit an existing target group by \`target_id\` or name, require an explicit \`face\` plus target-face local \`center\`, and record normalized \`features\` metadata in snapshots. Queue runtime uses SketchUp face \`pushpull\` on controlled planar targets.
+- \`boolean_union\`, \`boolean_difference\`, and \`boolean_intersect\` are the phase 7 CAD boolean operations. They target an existing manifold group by \`target_id\` or name and consume one or more tool solids via \`tool_id\`, \`tool_ids\`, or \`tools\`. Use \`result_id/result_name\` for stable downstream references, and \`keep_tools/keep_originals\` only when you need review geometry preserved. Queue runtime delegates to SketchUp solid operations; mock runtime records deterministic \`boolean_operations\` and manifold metadata.
+- \`manifold_check\` and \`manifold_repair\` record solid validity reports. \`manifold_check\` writes \`snapshot.manifold_checks\` plus per-object \`manifold\`; \`fail_on_non_manifold: true\` turns invalid solids into hard errors. \`manifold_repair\` performs best-effort cleanup; queue uses SketchUp edge/face cleanup and mock supports deterministic cleanup/seal-bbox behavior.
 - Texture paths are passed to SketchUp as file paths; prefer absolute paths for queue runtime. Missing files are skipped with warnings in SketchUp.
 - \`box\` creates an axis-aligned cuboid from \`origin\` and \`size\`.
 - \`rounded_box\` creates a Z-extruded rounded-rectangle footprint from \`origin/size/radius\`; use \`segments\` to control corner resolution.
@@ -135,6 +142,8 @@ Use these deterministic regression examples when checking broad DSL behavior:
 - \`examples/profile-edge-cases.json\` — generic profile regression slice covering concave outer loops, multiple holes, vertical \`xz\` face profiles, and nested component-definition profiles.
 - \`examples/appearance-texture-slice.json\` — appearance regression slice covering \`texture_transform\`, \`uv_project_planar\`, \`uv_project_box\`, top-level \`image_plane\`, and component-definition scoped \`image_plane\`.
 - \`examples/text-3d-slice.json\` — true font-outline text slice covering top-level and component-definition scoped \`text_3d\`, plus font-outline \`text_emboss\` / \`text_engrave\` markers.
+- \`examples/feature-editing-slice.json\` — phase 7 feature editing slice covering controlled \`cut_hole\`, \`cut_slot\`, \`cut_recess\`, \`add_boss\`, and \`add_raised_rib\` on one target panel.
+- \`examples/boolean-manifold-slice.json\` — phase 7 CAD boolean/manifold slice covering \`boolean_difference\`, \`boolean_union\`, \`boolean_intersect\`, \`manifold_check\`, and \`manifold_repair\`.
 
 The golden examples and capability slices are exercised by \`npm test\` through the mock runtime only; they do not require SketchUp to be open.
 
@@ -144,10 +153,14 @@ Snapshots returned by \`build_model\`, \`reset_model\`, and \`save_model\` inclu
 
 - **\`runtime\`** — bridge-attached runtime descriptor with runtime name, version, manifest version, DSL version, and operation support status.
 - **\`totals\`** — \`{faces, edges, vertices, groups, instances}\` aggregated across all visible geometry.
-- **\`groups\`** — array of \`{name, kind, faces, edges, vertices?, bounding_box, material, transform, resolution_hint?}\`.
+- **\`groups\`** — array of \`{name, kind, faces, edges, vertices?, bounding_box, material, transform, features?, boolean_operations?, manifold?, resolution_hint?}\`.
   - \`vertices\` (optional count) is populated for mesh-type groups that have explicit vertex arrays.
   - \`resolution_hint\` (optional) reports \`segments\`, \`segments_x\`, \`segments_y\`, or \`segments_z\` for curved-surface operations (rounded_box, recess, button_on_panel, cylinder, lofted_solid, analog_stick, screw_hole, swept_path, domed_surface, bowed_panel).
+  - \`features\` (optional) records controlled target-face operations applied to the group.
+  - \`boolean_operations\` (optional) records solid boolean history applied to the group.
+  - \`manifold\` (optional) records the latest per-object manifold check/repair result.
 - **\`instances\`** — array of component instance snapshots with the same shape as groups plus \`definition\`.
+- **\`manifold_checks\`** — array of explicit \`manifold_check\` / \`manifold_repair\` reports for the current build.
 - **\`warnings\`** — array of structured warning objects: \`{type, severity, category, message, source}\`.
   - **types**: \`geometry.degenerate\` | \`geometry.bbox_overlap\` | \`material.missing_texture\` | \`material.pbr_unsupported\` | \`rendering.unsupported_option\` | \`rendering.apply_failed\` | \`info.limitation\` | \`info.operation_skipped\`
   - **severity**: \`error\` | \`warn\` | \`info\`
@@ -163,6 +176,8 @@ Snapshots returned by \`build_model\`, \`reset_model\`, and \`save_model\` inclu
 \`compare_snapshots({ expected, actual, toleranceMm?, topologyTolerance?, budgets?, topIssueLimit? })\` compares two snapshot objects and returns \`{ ok, level, verdict, tolerance_mm, topology_tolerance, budgets, summary, top_issues, recommendations, diffs }\`. It is intended for mock/queue parity checks and golden regression reports. Optional topology tolerance supports faces, edges, groups, and instances; optional budgets support max_faces, max_edges, max_vertices, max_groups, max_instances, and max_artifact_size_bytes.
 
 \`compare_model({ code, expected_runtime?, actual_runtime?, reset_first?, toleranceMm?, topologyTolerance?, budgets?, topIssueLimit?, include_snapshots? })\` builds the same DSL through two runtimes and returns \`{ expected_runtime, actual_runtime, reset_first, report }\`, optionally including both snapshots. It defaults to \`mock -> queue\`; use \`actual_runtime: "mock"\` for offline smoke tests. The CLI can render compare reports as Markdown with \`--format markdown --output-file output/report.md\`. For batch golden QA, run \`npm run qa:mock\` or \`npm run qa:queue\`.
+
+\`validate_model({ code?, snapshot?, runtime?, spec?, includePreview? })\` is the no-GUI model layout QA layer. It builds a snapshot when \`code\` is provided, or validates an existing \`snapshot\`. The optional \`spec.rules\` supports \`contacts\`, \`allowed_collisions\`, \`inside\`, \`support\`, and \`separation\` checks using exact names or regex patterns. The report returns \`{ ok, verdict, level, summary, issues, correction_suggestions, preview }\`; \`preview.views[].svg\` and \`preview.html\` provide orthographic top/front/right review artifacts that any agent can inspect without controlling SketchUp. The CLI can write these files with \`--preview-dir\`, and \`npm run qa:model-layout\` runs the Switch controller, ambulance, and children's room acceptance layout gates.
 
 ## Runtimes
 

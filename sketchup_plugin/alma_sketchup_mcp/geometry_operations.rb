@@ -151,7 +151,7 @@ module AlmaSketchupMCP
 
   def entity_parent_entities(entity)
     parent = entity.respond_to?(:parent) ? entity.parent : nil
-    parent.respond_to?(:entities) ? parent.entities : Sketchup.active_model.entities
+    parent.respond_to?(:entities) ? parent.entities : active_model_or_new('entity_parent_entities').entities
   end
 
   def point_for_plane(origin, plane, u, v)

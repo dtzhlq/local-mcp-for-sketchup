@@ -124,6 +124,7 @@ function compareNamedCollections(diffs, path, expectedItems, actualItems, tolera
     compareField(diffs, `${path}.${name}.tag`, expectedItem.tag, actualItem.tag, 'warn', name);
     compareField(diffs, `${path}.${name}.classification`, stableJson(expectedItem.classification || null), stableJson(actualItem.classification || null), 'warn', name);
     compareField(diffs, `${path}.${name}.texture_transform`, stableJson(expectedItem.texture_transform || null), stableJson(actualItem.texture_transform || null), 'warn', name);
+    compareField(diffs, `${path}.${name}.features`, stableJson(expectedItem.features || null), stableJson(actualItem.features || null), 'warn', name);
     compareField(diffs, `${path}.${name}.image`, expectedItem.image || null, actualItem.image || null, 'info', name);
     compareMetric(diffs, `${path}.${name}.faces`, expectedItem.faces, actualItem.faces, topologyTolerance.faces, 'warn', name);
     compareMetric(diffs, `${path}.${name}.edges`, expectedItem.edges, actualItem.edges, topologyTolerance.edges, 'warn', name);

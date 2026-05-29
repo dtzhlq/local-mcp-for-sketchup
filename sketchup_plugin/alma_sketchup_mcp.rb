@@ -12,6 +12,8 @@ require_relative 'alma_sketchup_mcp/primitive_operations'
 require_relative 'alma_sketchup_mcp/product_operations'
 require_relative 'alma_sketchup_mcp/profile_operations'
 require_relative 'alma_sketchup_mcp/surface_operations'
+require_relative 'alma_sketchup_mcp/feature_operations'
+require_relative 'alma_sketchup_mcp/boolean_operations'
 require_relative 'alma_sketchup_mcp/demo_operations'
 require_relative 'alma_sketchup_mcp/architecture_operations'
 require_relative 'alma_sketchup_mcp/component_operations'
@@ -26,9 +28,9 @@ module AlmaSketchupMCP
   RESPONSE_DIR = File.join(STATE_DIR, 'responses')
   MM_PER_INCH = 25.4
   DEFAULT_OPERATION_LIMIT = 2000
-  PLUGIN_VERSION = 'queue-plugin-0.1.0-phase5-closeout.1'
-  CAPABILITY_MANIFEST_VERSION = '2026-05-phase5-closeout-slice'
-  RUNTIME_CAPABILITY_VERSION = '0.1.0-capabilities.3'
+  PLUGIN_VERSION = 'queue-plugin-0.1.0-phase7-boolean-manifold.3'
+  CAPABILITY_MANIFEST_VERSION = '2026-05-phase7-boolean-manifold'
+  RUNTIME_CAPABILITY_VERSION = '0.1.0-capabilities.5'
   DSL_VERSION = 1
 
   def start
@@ -79,9 +81,13 @@ module AlmaSketchupMCP
     return nil unless qa.is_a?(Hash)
 
     sanitized = {}
-    %w[role part_id intent].each do |key|
+    %w[role part_id intent evidence_status fallback_state parent_part_id].each do |key|
       value = qa[key]
       sanitized[key] = value.to_s unless value.nil? || value.to_s.empty?
+    end
+    %w[evidence_sources feature_intents].each do |key|
+      value = qa[key]
+      sanitized[key] = value if value.is_a?(Array) || value.is_a?(Hash)
     end
     contacts = qa['expected_contacts'] || qa['expectedContacts']
     if contacts.is_a?(Array)
@@ -152,12 +158,13 @@ module AlmaSketchupMCP
   end
 
   def reset_model
-    model = Sketchup.active_model
+    model = active_model_or_new('reset_model')
     model.start_operation('Alma Reset Model', true)
     clear_model(model)
     @warnings = []
     @scenes = []
     @levels = []
+    @manifold_checks = []
     @style_state = nil
     @shadow_state = nil
     @rendering_options_state = nil
@@ -167,10 +174,11 @@ module AlmaSketchupMCP
 
   def build_model(code)
     document = parse_dsl(code)
-    model = Sketchup.active_model
+    model = active_model_or_new('build_model')
     @warnings = []
     @scenes ||= []
     @levels ||= []
+    @manifold_checks ||= []
     @style_state ||= nil
     @shadow_state ||= nil
     @rendering_options_state ||= nil
@@ -186,7 +194,7 @@ module AlmaSketchupMCP
   end
 
   def save_model(path, keep_session)
-    model = Sketchup.active_model
+    model = active_model_or_new('save_model')
     target = path.to_s.strip
     target = File.join(STATE_DIR, 'alma-sketchup-model.skp') if target.empty?
     target = File.expand_path(target)
@@ -195,6 +203,21 @@ module AlmaSketchupMCP
     result = { 'file_path' => target, 'snapshot' => snapshot }
     reset_model unless keep_session
     result
+  end
+
+  def active_model_or_new(method_name = 'queue runtime')
+    model = Sketchup.active_model
+    return model if editable_model?(model)
+
+    Sketchup.new_model if Sketchup.respond_to?(:new_model)
+    model = Sketchup.active_model
+    return model if editable_model?(model)
+
+    raise "#{method_name} requires an editable SketchUp active model. Open or create a model, then start the Alma SketchUp MCP Bridge again."
+  end
+
+  def editable_model?(model)
+    model && model.respond_to?(:entities) && model.respond_to?(:start_operation)
   end
 
 
@@ -246,6 +269,7 @@ module AlmaSketchupMCP
       @warnings = []
       @scenes = []
       @levels = []
+      @manifold_checks = []
       @view_state = nil
       @style_state = nil
       @shadow_state = nil
@@ -308,6 +332,26 @@ module AlmaSketchupMCP
       add_standoff_boss(model.entities, operation)
     when 'button_on_panel'
       add_button_on_panel(model.entities, operation)
+    when 'cut_hole'
+      cut_hole(model, operation)
+    when 'cut_slot'
+      cut_slot(model, operation)
+    when 'cut_recess'
+      cut_recess(model, operation)
+    when 'add_boss'
+      add_boss(model, operation)
+    when 'add_raised_rib'
+      add_raised_rib(model, operation)
+    when 'boolean_union'
+      boolean_union(model, operation)
+    when 'boolean_difference'
+      boolean_difference(model, operation)
+    when 'boolean_intersect'
+      boolean_intersect(model, operation)
+    when 'manifold_check'
+      manifold_check(model, operation)
+    when 'manifold_repair'
+      manifold_repair(model, operation)
     when 'image_plane'
       add_image_plane(model.entities, operation)
     when 'floor_slab'
