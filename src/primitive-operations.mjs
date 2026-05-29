@@ -100,7 +100,8 @@ export function addPrism(model, operation) {
     plane,
     points: normalizedPoints,
     depth: extrusionDepth,
-    bounding_box: bbox
+    bounding_box: bbox,
+    qa: normalizeQaMetadata(operation.qa)
   });
 }
 

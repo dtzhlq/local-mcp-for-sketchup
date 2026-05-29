@@ -12,6 +12,7 @@ const DEFAULT_EXAMPLES = [
   'examples/transform-chain-regression.json',
   'examples/profile-edge-cases.json',
   'examples/appearance-texture-slice.json',
+  'examples/boolean-manifold-slice.json',
   'examples/golden-architecture.json',
   'examples/golden-product.json'
 ];

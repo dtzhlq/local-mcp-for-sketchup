@@ -43,7 +43,8 @@ export function addBox(model, operation) {
     transform: normalizeTransform(operation, name),
     bounding_box: boundingBoxForVertices(transformedVertices),
     _vertices: transformedVertices,
-    _orientation: identityMatrix3()
+    _orientation: identityMatrix3(),
+    qa: normalizeQaMetadata(operation.qa)
   });
 }
 
@@ -455,19 +456,20 @@ export function addImagePlane(model, operation) {
     transform: normalizeTransform(operation, name),
     bounding_box: boundingBoxForVertices(transformedVertices),
     _vertices: transformedVertices,
-    _orientation: identityMatrix3()
+    _orientation: identityMatrix3(),
+    qa: normalizeQaMetadata(operation.qa)
   });
 }
 
 export function addRib(model, operation) {
-  const { name, origin = [0, 0, 0], length, height, thickness, direction = 'x', material, transform } = operation;
+  const { name, origin = [0, 0, 0], length, height, thickness, direction = 'x', material, transform, qa } = operation;
   if (!name || typeof name !== 'string') throw new Error('rib operation requires a string name');
   const ribLength = positiveNumber(length, undefined, `${name}.length`);
   const ribHeight = positiveNumber(height, undefined, `${name}.height`);
   const ribThickness = positiveNumber(thickness, undefined, `${name}.thickness`);
   if (!['x', 'y'].includes(direction)) throw new Error(`${name}.direction must be x or y`);
   const size = direction === 'x' ? [ribLength, ribThickness, ribHeight] : [ribThickness, ribLength, ribHeight];
-  addBox(model, { ...objectIdentityFields(operation), name, origin, size, material, transform });
+  addBox(model, { ...objectIdentityFields(operation), name, origin, size, material, transform, qa });
   model.groups[model.groups.length - 1].kind = 'rib';
 }
 
@@ -494,7 +496,8 @@ export function addStandoffBoss(model, operation) {
     material: materialName,
     transform: normalizeTransform(operation, name),
     segments: n,
-    bounding_box: boundingBoxForVertices(applyTransform(corners, { transform }, name))
+    bounding_box: boundingBoxForVertices(applyTransform(corners, { transform }, name)),
+    qa: normalizeQaMetadata(operation.qa)
   });
 }
 

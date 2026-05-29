@@ -1,0 +1,3046 @@
+{
+  "version": 1,
+  "id": "ambulance-reference-part-graph",
+  "profile_id": "vehicle_ambulance",
+  "dsl_version": 1,
+  "units": "mm",
+  "product": {
+    "type": "vehicle_ambulance",
+    "name": "Reference Toy Ambulance",
+    "source": "test/救护车 photo set"
+  },
+  "scale": {
+    "width": 2300,
+    "depth": 900,
+    "height": 1050,
+    "confidence": 0.72
+  },
+  "evidence_graph": {
+    "version": 1,
+    "source_images": [
+      "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+      "test/救护车/C486F074-3B8E-4F1C-A048-0AF24B687035_1_102_o.jpeg",
+      "test/救护车/IMG_0175.jpeg",
+      "test/救护车/DE9FDB12-2BD3-49D2-AD32-930CC4A33B14_1_102_o.jpeg",
+      "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg"
+    ],
+    "views_detected": [
+      "left",
+      "top",
+      "front",
+      "rear",
+      "oblique"
+    ],
+    "open_questions": [
+      "Windshield slope and cab-front curvature still come from manual approximation.",
+      "Reference Visual QA is not active yet, so part graph corrections remain manually authored."
+    ]
+  },
+  "parts": [
+    {
+      "id": "amb-main-body",
+      "name": "Ambulance_High_Roof_Main_Body",
+      "type": "vehicle_shell",
+      "role": "body",
+      "material": "Ambulance_Warm_White",
+      "intent": "rounded_box",
+      "shape": {
+        "primitive": "rounded_box",
+        "parameters": {
+          "origin": [
+            360,
+            0,
+            230
+          ],
+          "size": [
+            1900,
+            820,
+            640
+          ],
+          "radius": 70,
+          "segments": 8,
+          "smooth": "all"
+        }
+      },
+      "relationships": [],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "top",
+          "status": "manual_confirmed",
+          "confidence": 0.82,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "real_feature_op",
+      "qa": {},
+      "feature_intents": [
+        {
+          "id": "left-side-window-recess",
+          "operation": "cut_recess",
+          "face": "front",
+          "semantic": "blind_recess",
+          "fallback_state": "real_feature_op",
+          "parameters": {
+            "center": [
+              930,
+              447
+            ],
+            "size": [
+              540,
+              260
+            ],
+            "depth": 10,
+            "radius": 18,
+            "segments": 5
+          },
+          "evidence_sources": [
+            {
+              "kind": "manual_photo_interpretation",
+              "view": "left",
+              "status": "manual_confirmed",
+              "confidence": 0.82,
+              "note": "Seeded from the current ambulance acceptance reference model."
+            }
+          ]
+        },
+        {
+          "id": "right-side-window-recess",
+          "operation": "cut_recess",
+          "face": "back",
+          "semantic": "blind_recess",
+          "fallback_state": "real_feature_op",
+          "parameters": {
+            "center": [
+              930,
+              447
+            ],
+            "size": [
+              540,
+              260
+            ],
+            "depth": 10,
+            "radius": 18,
+            "segments": 5
+          },
+          "evidence_sources": [
+            {
+              "kind": "manual_photo_interpretation",
+              "view": "right",
+              "status": "manual_confirmed",
+              "confidence": 0.82,
+              "note": "Seeded from the current ambulance acceptance reference model."
+            }
+          ]
+        },
+        {
+          "id": "rear-window-recess",
+          "operation": "cut_recess",
+          "face": "right",
+          "semantic": "blind_recess",
+          "fallback_state": "real_feature_op",
+          "parameters": {
+            "center": [
+              410,
+              415
+            ],
+            "size": [
+              430,
+              240
+            ],
+            "depth": 10,
+            "radius": 16,
+            "segments": 5
+          },
+          "evidence_sources": [
+            {
+              "kind": "manual_photo_interpretation",
+              "view": "rear",
+              "status": "manual_confirmed",
+              "confidence": 0.82,
+              "note": "Seeded from the current ambulance acceptance reference model."
+            }
+          ]
+        },
+        {
+          "id": "left-sliding-door-seam-recess",
+          "operation": "cut_recess",
+          "face": "front",
+          "semantic": "blind_recess",
+          "fallback_state": "real_feature_op",
+          "parameters": {
+            "center": [
+              608,
+              300
+            ],
+            "size": [
+              18,
+              540
+            ],
+            "depth": 5,
+            "radius": 2,
+            "segments": 5
+          },
+          "evidence_sources": [
+            {
+              "kind": "manual_photo_interpretation",
+              "view": "left",
+              "status": "manual_confirmed",
+              "confidence": 0.82,
+              "note": "Seeded from the current ambulance acceptance reference model."
+            }
+          ]
+        },
+        {
+          "id": "left-rear-door-seam-recess",
+          "operation": "cut_recess",
+          "face": "front",
+          "semantic": "blind_recess",
+          "fallback_state": "real_feature_op",
+          "parameters": {
+            "center": [
+              1332,
+              300
+            ],
+            "size": [
+              18,
+              550
+            ],
+            "depth": 5,
+            "radius": 2,
+            "segments": 5
+          },
+          "evidence_sources": [
+            {
+              "kind": "manual_photo_interpretation",
+              "view": "rear",
+              "status": "manual_confirmed",
+              "confidence": 0.82,
+              "note": "Seeded from the current ambulance acceptance reference model."
+            }
+          ]
+        },
+        {
+          "id": "left-side-stripe-raised-seat",
+          "operation": "cut_recess",
+          "face": "front",
+          "semantic": "blind_recess",
+          "fallback_state": "real_feature_op",
+          "parameters": {
+            "center": [
+              950,
+              215
+            ],
+            "size": [
+              1650,
+              38
+            ],
+            "depth": 3,
+            "radius": 2,
+            "segments": 5
+          },
+          "evidence_sources": [
+            {
+              "kind": "manual_photo_interpretation",
+              "view": "left",
+              "status": "manual_confirmed",
+              "confidence": 0.82,
+              "note": "Seeded from the current ambulance acceptance reference model."
+            }
+          ]
+        },
+        {
+          "id": "roof-lightbar-base-boss",
+          "operation": "add_boss",
+          "face": "top",
+          "semantic": "convex",
+          "fallback_state": "real_feature_op",
+          "parameters": {
+            "center": [
+              350,
+              405
+            ],
+            "radius": 132,
+            "height": 18,
+            "segments": 20
+          },
+          "evidence_sources": [
+            {
+              "kind": "manual_photo_interpretation",
+              "view": "top",
+              "status": "manual_confirmed",
+              "confidence": 0.82,
+              "note": "Seeded from the current ambulance acceptance reference model."
+            }
+          ]
+        },
+        {
+          "id": "roof-left-feature-rib",
+          "operation": "add_raised_rib",
+          "face": "top",
+          "semantic": "raised_rib",
+          "fallback_state": "real_feature_op",
+          "parameters": {
+            "center": [
+              820,
+              160
+            ],
+            "length": 1060,
+            "width": 18,
+            "height": 16,
+            "direction": "u"
+          },
+          "evidence_sources": [
+            {
+              "kind": "manual_photo_interpretation",
+              "view": "top",
+              "status": "manual_confirmed",
+              "confidence": 0.82,
+              "note": "Seeded from the current ambulance acceptance reference model."
+            }
+          ]
+        },
+        {
+          "id": "roof-middle-feature-rib",
+          "operation": "add_raised_rib",
+          "face": "top",
+          "semantic": "raised_rib",
+          "fallback_state": "real_feature_op",
+          "parameters": {
+            "center": [
+              820,
+              410
+            ],
+            "length": 1140,
+            "width": 18,
+            "height": 12,
+            "direction": "u"
+          },
+          "evidence_sources": [
+            {
+              "kind": "manual_photo_interpretation",
+              "view": "top",
+              "status": "manual_confirmed",
+              "confidence": 0.82,
+              "note": "Seeded from the current ambulance acceptance reference model."
+            }
+          ]
+        },
+        {
+          "id": "roof-right-feature-rib",
+          "operation": "add_raised_rib",
+          "face": "top",
+          "semantic": "raised_rib",
+          "fallback_state": "real_feature_op",
+          "parameters": {
+            "center": [
+              820,
+              660
+            ],
+            "length": 1060,
+            "width": 18,
+            "height": 16,
+            "direction": "u"
+          },
+          "evidence_sources": [
+            {
+              "kind": "manual_photo_interpretation",
+              "view": "top",
+              "status": "manual_confirmed",
+              "confidence": 0.82,
+              "note": "Seeded from the current ambulance acceptance reference model."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "amb-cab-lower",
+      "name": "Ambulance_Cab_Lower_Nose",
+      "type": "vehicle_shell",
+      "role": "cab",
+      "material": "Ambulance_Warm_White",
+      "intent": "rounded_box",
+      "shape": {
+        "primitive": "rounded_box",
+        "parameters": {
+          "origin": [
+            60,
+            60,
+            220
+          ],
+          "size": [
+            560,
+            700,
+            300
+          ],
+          "radius": 78,
+          "segments": 8,
+          "smooth": "all"
+        }
+      },
+      "relationships": [],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "left",
+          "status": "manual_confirmed",
+          "confidence": 0.82,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "real_feature_op",
+      "qa": {},
+      "feature_intents": [
+        {
+          "id": "front-grille-recess",
+          "operation": "cut_recess",
+          "face": "left",
+          "semantic": "blind_recess",
+          "fallback_state": "real_feature_op",
+          "parameters": {
+            "center": [
+              350,
+              171
+            ],
+            "size": [
+              320,
+              132
+            ],
+            "depth": 8,
+            "radius": 6,
+            "segments": 5
+          },
+          "evidence_sources": [
+            {
+              "kind": "manual_photo_interpretation",
+              "view": "front",
+              "status": "manual_confirmed",
+              "confidence": 0.82,
+              "note": "Seeded from the current ambulance acceptance reference model."
+            }
+          ]
+        },
+        {
+          "id": "front-left-headlight-boss",
+          "operation": "add_boss",
+          "face": "left",
+          "semantic": "convex",
+          "fallback_state": "real_feature_op",
+          "parameters": {
+            "center": [
+              117,
+              191
+            ],
+            "radius": 44,
+            "height": 8,
+            "segments": 20
+          },
+          "evidence_sources": [
+            {
+              "kind": "manual_photo_interpretation",
+              "view": "front",
+              "status": "manual_confirmed",
+              "confidence": 0.82,
+              "note": "Seeded from the current ambulance acceptance reference model."
+            }
+          ]
+        },
+        {
+          "id": "front-right-headlight-boss",
+          "operation": "add_boss",
+          "face": "left",
+          "semantic": "convex",
+          "fallback_state": "real_feature_op",
+          "parameters": {
+            "center": [
+              583,
+              191
+            ],
+            "radius": 44,
+            "height": 8,
+            "segments": 20
+          },
+          "evidence_sources": [
+            {
+              "kind": "manual_photo_interpretation",
+              "view": "front",
+              "status": "manual_confirmed",
+              "confidence": 0.82,
+              "note": "Seeded from the current ambulance acceptance reference model."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "amb-cab-upper-shell",
+      "name": "Ambulance_Cab_Raked_Upper_Shell",
+      "type": "vehicle_shell",
+      "role": "cab",
+      "material": "Ambulance_Warm_White",
+      "intent": "mesh",
+      "shape": {
+        "primitive": "mesh",
+        "parameters": {
+          "vertices": [
+            [
+              190,
+              70,
+              500
+            ],
+            [
+              650,
+              70,
+              500
+            ],
+            [
+              720,
+              70,
+              820
+            ],
+            [
+              320,
+              70,
+              870
+            ],
+            [
+              190,
+              750,
+              500
+            ],
+            [
+              650,
+              750,
+              500
+            ],
+            [
+              720,
+              750,
+              820
+            ],
+            [
+              320,
+              750,
+              870
+            ]
+          ],
+          "faces": [
+            [
+              0,
+              1,
+              2,
+              3
+            ],
+            [
+              4,
+              7,
+              6,
+              5
+            ],
+            [
+              0,
+              4,
+              5,
+              1
+            ],
+            [
+              1,
+              5,
+              6,
+              2
+            ],
+            [
+              2,
+              6,
+              7,
+              3
+            ],
+            [
+              3,
+              7,
+              4,
+              0
+            ]
+          ],
+          "smooth": "coplanar"
+        }
+      },
+      "relationships": [],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "left",
+          "status": "manual_confirmed",
+          "confidence": 0.82,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "real_feature_op",
+      "qa": {}
+    },
+    {
+      "id": "amb-windshield",
+      "name": "Ambulance_Large_Raked_Windshield",
+      "type": "transparent_panel",
+      "role": "windshield",
+      "material": "Ambulance_Glass_Dark",
+      "intent": "transparent_panel",
+      "shape": {
+        "primitive": "mesh",
+        "parameters": {
+          "vertices": [
+            [
+              210,
+              58,
+              535
+            ],
+            [
+              605,
+              58,
+              548
+            ],
+            [
+              675,
+              58,
+              790
+            ],
+            [
+              305,
+              58,
+              838
+            ],
+            [
+              210,
+              44,
+              535
+            ],
+            [
+              605,
+              44,
+              548
+            ],
+            [
+              675,
+              44,
+              790
+            ],
+            [
+              305,
+              44,
+              838
+            ]
+          ],
+          "faces": [
+            [
+              0,
+              1,
+              2,
+              3
+            ],
+            [
+              4,
+              7,
+              6,
+              5
+            ],
+            [
+              0,
+              4,
+              5,
+              1
+            ],
+            [
+              1,
+              5,
+              6,
+              2
+            ],
+            [
+              2,
+              6,
+              7,
+              3
+            ],
+            [
+              3,
+              7,
+              4,
+              0
+            ]
+          ],
+          "smooth": "coplanar"
+        }
+      },
+      "relationships": [],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "left",
+          "status": "manual_confirmed",
+          "confidence": 0.82,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "box_approximation",
+      "qa": {}
+    },
+    {
+      "id": "amb-left-driver-window",
+      "name": "Ambulance_Left_Cab_Window",
+      "type": "transparent_panel",
+      "role": "cab",
+      "material": "Ambulance_Glass_Dark",
+      "intent": "transparent_panel",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            610,
+            -26,
+            540
+          ],
+          "size": [
+            360,
+            26,
+            235
+          ]
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "amb-main-body"
+        }
+      ],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "left",
+          "status": "manual_confirmed",
+          "confidence": 0.82,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "real_feature_op",
+      "qa": {}
+    },
+    {
+      "id": "amb-left-side-window",
+      "name": "Ambulance_Left_Side_Dark_Window",
+      "type": "transparent_panel",
+      "role": "window",
+      "material": "Ambulance_Glass_Dark",
+      "intent": "transparent_panel",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            1030,
+            -28,
+            552
+          ],
+          "size": [
+            520,
+            28,
+            250
+          ]
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "amb-main-body"
+        }
+      ],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "left",
+          "status": "manual_confirmed",
+          "confidence": 0.82,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "visual_helper",
+      "qa": {}
+    },
+    {
+      "id": "amb-right-driver-window",
+      "name": "Ambulance_Right_Cab_Window",
+      "type": "transparent_panel",
+      "role": "cab",
+      "material": "Ambulance_Glass_Dark",
+      "intent": "transparent_panel",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            610,
+            820,
+            540
+          ],
+          "size": [
+            360,
+            26,
+            235
+          ]
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "amb-main-body"
+        }
+      ],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "right",
+          "status": "manual_confirmed",
+          "confidence": 0.82,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "real_feature_op",
+      "qa": {}
+    },
+    {
+      "id": "amb-right-side-window",
+      "name": "Ambulance_Right_Side_Dark_Window",
+      "type": "transparent_panel",
+      "role": "window",
+      "material": "Ambulance_Glass_Dark",
+      "intent": "transparent_panel",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            1030,
+            820,
+            552
+          ],
+          "size": [
+            520,
+            28,
+            250
+          ]
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "amb-main-body"
+        }
+      ],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "right",
+          "status": "manual_confirmed",
+          "confidence": 0.82,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "visual_helper",
+      "qa": {}
+    },
+    {
+      "id": "amb-rear-window",
+      "name": "Ambulance_Rear_Dark_Window",
+      "type": "transparent_panel",
+      "role": "window",
+      "material": "Ambulance_Glass_Dark",
+      "intent": "transparent_panel",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            2248,
+            210,
+            530
+          ],
+          "size": [
+            28,
+            410,
+            230
+          ]
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "amb-main-body"
+        }
+      ],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "rear",
+          "status": "manual_confirmed",
+          "confidence": 0.82,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "visual_helper",
+      "qa": {}
+    },
+    {
+      "id": "amb-left-red-stripe",
+      "name": "Ambulance_Left_Red_Side_Stripe",
+      "type": "decal_or_label",
+      "role": "stripe",
+      "material": "Ambulance_Red_Stripe",
+      "intent": "decal_or_label",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            215,
+            -34,
+            430
+          ],
+          "size": [
+            2050,
+            24,
+            34
+          ]
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "amb-main-body"
+        }
+      ],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "left",
+          "status": "manual_confirmed",
+          "confidence": 0.82,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "visual_helper",
+      "qa": {}
+    },
+    {
+      "id": "amb-right-red-stripe",
+      "name": "Ambulance_Right_Red_Side_Stripe",
+      "type": "decal_or_label",
+      "role": "stripe",
+      "material": "Ambulance_Red_Stripe",
+      "intent": "decal_or_label",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            215,
+            830,
+            430
+          ],
+          "size": [
+            2050,
+            24,
+            34
+          ]
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "amb-main-body"
+        }
+      ],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "right",
+          "status": "manual_confirmed",
+          "confidence": 0.82,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "visual_helper",
+      "qa": {}
+    },
+    {
+      "id": "amb-front-red-stripe",
+      "name": "Ambulance_Front_Red_Stripe",
+      "type": "decal_or_label",
+      "role": "stripe",
+      "material": "Ambulance_Red_Stripe",
+      "intent": "decal_or_label",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            54,
+            120,
+            430
+          ],
+          "size": [
+            24,
+            580,
+            34
+          ]
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "amb-main-body"
+        }
+      ],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "front",
+          "status": "manual_confirmed",
+          "confidence": 0.82,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "visual_helper",
+      "qa": {}
+    },
+    {
+      "id": "amb-rear-red-stripe",
+      "name": "Ambulance_Rear_Red_Stripe",
+      "type": "decal_or_label",
+      "role": "stripe",
+      "material": "Ambulance_Red_Stripe",
+      "intent": "decal_or_label",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            2256,
+            120,
+            420
+          ],
+          "size": [
+            24,
+            580,
+            34
+          ]
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "amb-main-body"
+        }
+      ],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "rear",
+          "status": "manual_confirmed",
+          "confidence": 0.82,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "visual_helper",
+      "qa": {}
+    },
+    {
+      "id": "amb-left-black-skirt",
+      "name": "Ambulance_Left_Black_Lower_Skirt",
+      "type": "body_detail",
+      "role": "box",
+      "material": "Ambulance_Black_Rubber",
+      "intent": "box",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            360,
+            -30,
+            220
+          ],
+          "size": [
+            1740,
+            28,
+            58
+          ]
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "amb-main-body"
+        }
+      ],
+      "evidence_status": "inferred",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "left",
+          "status": "inferred",
+          "confidence": 0.58,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "visual_helper",
+      "qa": {}
+    },
+    {
+      "id": "amb-right-black-skirt",
+      "name": "Ambulance_Right_Black_Lower_Skirt",
+      "type": "body_detail",
+      "role": "box",
+      "material": "Ambulance_Black_Rubber",
+      "intent": "box",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            360,
+            822,
+            220
+          ],
+          "size": [
+            1740,
+            28,
+            58
+          ]
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "amb-main-body"
+        }
+      ],
+      "evidence_status": "inferred",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "right",
+          "status": "inferred",
+          "confidence": 0.58,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "visual_helper",
+      "qa": {}
+    },
+    {
+      "id": "amb-front-bumper",
+      "name": "Ambulance_Front_Black_Bumper",
+      "type": "body_detail",
+      "role": "bumper",
+      "material": "Ambulance_Black_Rubber",
+      "intent": "box",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            30,
+            120,
+            180
+          ],
+          "size": [
+            110,
+            580,
+            75
+          ]
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "amb-cab-lower"
+        }
+      ],
+      "evidence_status": "inferred",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "front",
+          "status": "inferred",
+          "confidence": 0.58,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "visual_helper",
+      "qa": {}
+    },
+    {
+      "id": "amb-rear-bumper",
+      "name": "Ambulance_Rear_Black_Bumper",
+      "type": "body_detail",
+      "role": "bumper",
+      "material": "Ambulance_Black_Rubber",
+      "intent": "box",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            2215,
+            110,
+            180
+          ],
+          "size": [
+            115,
+            600,
+            75
+          ]
+        }
+      },
+      "relationships": [],
+      "evidence_status": "inferred",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "rear",
+          "status": "inferred",
+          "confidence": 0.58,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "visual_helper",
+      "qa": {}
+    },
+    {
+      "id": "amb-front-grille",
+      "name": "Front_Black_Radiator_Grille",
+      "type": "body_detail",
+      "role": "grille",
+      "material": "Ambulance_Black_Rubber",
+      "intent": "box",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            36,
+            250,
+            325
+          ],
+          "size": [
+            28,
+            320,
+            132
+          ]
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "amb-cab-lower"
+        }
+      ],
+      "evidence_status": "inferred",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "front",
+          "status": "inferred",
+          "confidence": 0.58,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "visual_helper",
+      "qa": {}
+    },
+    {
+      "id": "amb-front-grille-slat-1",
+      "name": "Front_Chrome_Grille_Slat_1",
+      "type": "body_detail",
+      "role": "grille",
+      "material": "Ambulance_Wheel_Hub",
+      "intent": "box",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            31,
+            272,
+            356
+          ],
+          "size": [
+            34,
+            276,
+            10
+          ]
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "amb-cab-lower"
+        }
+      ],
+      "evidence_status": "inferred",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "front",
+          "status": "inferred",
+          "confidence": 0.58,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "visual_helper",
+      "qa": {}
+    },
+    {
+      "id": "amb-front-grille-slat-2",
+      "name": "Front_Chrome_Grille_Slat_2",
+      "type": "body_detail",
+      "role": "grille",
+      "material": "Ambulance_Wheel_Hub",
+      "intent": "box",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            31,
+            272,
+            394
+          ],
+          "size": [
+            34,
+            276,
+            10
+          ]
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "amb-cab-lower"
+        }
+      ],
+      "evidence_status": "inferred",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "front",
+          "status": "inferred",
+          "confidence": 0.58,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "visual_helper",
+      "qa": {}
+    },
+    {
+      "id": "amb-front-emblem",
+      "name": "Front_Center_Emblem_Dot",
+      "type": "box",
+      "role": "box",
+      "material": "Ambulance_Wheel_Hub",
+      "intent": "box",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            24,
+            392,
+            382
+          ],
+          "size": [
+            18,
+            36,
+            36
+          ]
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "amb-cab-lower"
+        }
+      ],
+      "evidence_status": "inferred",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "front",
+          "status": "inferred",
+          "confidence": 0.58,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "box_approximation",
+      "qa": {}
+    },
+    {
+      "id": "amb-left-headlight",
+      "name": "Front_Left_Clear_Headlight",
+      "type": "lighting",
+      "role": "lamp",
+      "material": "Ambulance_Headlight_Clear",
+      "intent": "box",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            32,
+            118,
+            382
+          ],
+          "size": [
+            28,
+            118,
+            58
+          ]
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "amb-cab-lower"
+        }
+      ],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "front",
+          "status": "manual_confirmed",
+          "confidence": 0.82,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "visual_helper",
+      "qa": {}
+    },
+    {
+      "id": "amb-right-headlight",
+      "name": "Front_Right_Clear_Headlight",
+      "type": "lighting",
+      "role": "lamp",
+      "material": "Ambulance_Headlight_Clear",
+      "intent": "box",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            32,
+            584,
+            382
+          ],
+          "size": [
+            28,
+            118,
+            58
+          ]
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "amb-cab-lower"
+        }
+      ],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "front",
+          "status": "manual_confirmed",
+          "confidence": 0.82,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "visual_helper",
+      "qa": {}
+    },
+    {
+      "id": "amb-left-mirror",
+      "name": "Left_Black_Side_Mirror",
+      "type": "body_detail",
+      "role": "rounded_box",
+      "material": "Ambulance_Black_Rubber",
+      "intent": "rounded_box",
+      "shape": {
+        "primitive": "rounded_box",
+        "parameters": {
+          "origin": [
+            500,
+            -92,
+            610
+          ],
+          "size": [
+            110,
+            52,
+            54
+          ],
+          "radius": 18,
+          "segments": 5,
+          "smooth": "all"
+        }
+      },
+      "relationships": [],
+      "evidence_status": "inferred",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "left",
+          "status": "inferred",
+          "confidence": 0.58,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "visual_helper",
+      "qa": {}
+    },
+    {
+      "id": "amb-right-mirror",
+      "name": "Right_Black_Side_Mirror",
+      "type": "body_detail",
+      "role": "rounded_box",
+      "material": "Ambulance_Black_Rubber",
+      "intent": "rounded_box",
+      "shape": {
+        "primitive": "rounded_box",
+        "parameters": {
+          "origin": [
+            500,
+            862,
+            610
+          ],
+          "size": [
+            110,
+            52,
+            54
+          ],
+          "radius": 18,
+          "segments": 5,
+          "smooth": "all"
+        }
+      },
+      "relationships": [],
+      "evidence_status": "inferred",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "right",
+          "status": "inferred",
+          "confidence": 0.58,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "visual_helper",
+      "qa": {}
+    },
+    {
+      "id": "roof-rib-left",
+      "name": "Roof_Longitudinal_Rib_Left",
+      "type": "roof_rib",
+      "role": "roof_rib",
+      "material": "Ambulance_Warm_White",
+      "intent": "feature_detail",
+      "shape": {
+        "primitive": "rib",
+        "parameters": {
+          "origin": [
+            620,
+            155,
+            872
+          ],
+          "length": 1440,
+          "height": 22,
+          "thickness": 20,
+          "direction": "x"
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "amb-main-body"
+        }
+      ],
+      "evidence_status": "inferred",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "top",
+          "status": "inferred",
+          "confidence": 0.58,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "visual_helper",
+      "qa": {}
+    },
+    {
+      "id": "roof-rib-mid",
+      "name": "Roof_Longitudinal_Rib_Middle",
+      "type": "roof_rib",
+      "role": "roof_rib",
+      "material": "Ambulance_Warm_White",
+      "intent": "feature_detail",
+      "shape": {
+        "primitive": "rib",
+        "parameters": {
+          "origin": [
+            620,
+            405,
+            875
+          ],
+          "length": 1440,
+          "height": 22,
+          "thickness": 20,
+          "direction": "x"
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "amb-main-body"
+        }
+      ],
+      "evidence_status": "inferred",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "top",
+          "status": "inferred",
+          "confidence": 0.58,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "visual_helper",
+      "qa": {}
+    },
+    {
+      "id": "roof-rib-right",
+      "name": "Roof_Longitudinal_Rib_Right",
+      "type": "roof_rib",
+      "role": "roof_rib",
+      "material": "Ambulance_Warm_White",
+      "intent": "feature_detail",
+      "shape": {
+        "primitive": "rib",
+        "parameters": {
+          "origin": [
+            620,
+            655,
+            872
+          ],
+          "length": 1440,
+          "height": 22,
+          "thickness": 20,
+          "direction": "x"
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "amb-main-body"
+        }
+      ],
+      "evidence_status": "inferred",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "top",
+          "status": "inferred",
+          "confidence": 0.58,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "visual_helper",
+      "qa": {}
+    },
+    {
+      "id": "roof-red-lightbar",
+      "name": "Roof_Red_Emergency_Lightbar",
+      "type": "lighting",
+      "role": "lightbar",
+      "material": "Ambulance_Light_Red",
+      "intent": "rounded_box",
+      "shape": {
+        "primitive": "rounded_box",
+        "parameters": {
+          "origin": [
+            520,
+            255,
+            910
+          ],
+          "size": [
+            380,
+            300,
+            72
+          ],
+          "radius": 34,
+          "segments": 6,
+          "smooth": "all"
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "amb-main-body"
+        }
+      ],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "top",
+          "status": "manual_confirmed",
+          "confidence": 0.82,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "visual_helper",
+      "qa": {}
+    },
+    {
+      "id": "roof-white-equipment",
+      "name": "Roof_White_Medical_Equipment_Hump",
+      "type": "rounded_box",
+      "role": "rounded_box",
+      "material": "Ambulance_Warm_White",
+      "intent": "rounded_box",
+      "shape": {
+        "primitive": "rounded_box",
+        "parameters": {
+          "origin": [
+            1120,
+            300,
+            898
+          ],
+          "size": [
+            360,
+            220,
+            120
+          ],
+          "radius": 45,
+          "segments": 6,
+          "smooth": "all"
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "amb-main-body"
+        }
+      ],
+      "evidence_status": "inferred",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "top",
+          "status": "inferred",
+          "confidence": 0.58,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "visual_helper",
+      "qa": {}
+    },
+    {
+      "id": "roof-service-panel-blank",
+      "name": "Roof_Service_Panel_Blank",
+      "type": "box",
+      "role": "box",
+      "material": "Ambulance_Warm_White",
+      "intent": "box",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            1580,
+            250,
+            902
+          ],
+          "size": [
+            420,
+            330,
+            26
+          ]
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "amb-main-body"
+        }
+      ],
+      "evidence_status": "profile_default",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "top",
+          "status": "profile_default",
+          "confidence": 0.58,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "box_approximation",
+      "qa": {}
+    },
+    {
+      "id": "roof-panel-channel-cutter",
+      "name": "Roof_Service_Panel_Channel_Cutter",
+      "type": "box",
+      "role": "boolean_tool",
+      "material": "Feature_Cutter_Debug",
+      "intent": "boolean_tool",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            1685,
+            465,
+            916
+          ],
+          "size": [
+            210,
+            42,
+            28
+          ]
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "amb-main-body"
+        }
+      ],
+      "evidence_status": "profile_default",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "top",
+          "status": "profile_default",
+          "confidence": 0.58,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "profile_default",
+      "qa": {}
+    },
+    {
+      "id": "wheel-left-front-tire",
+      "name": "Left_Front_Black_Tire",
+      "type": "wheel_tire",
+      "role": "tire",
+      "material": "Ambulance_Black_Rubber",
+      "intent": "prism",
+      "shape": {
+        "primitive": "prism",
+        "parameters": {
+          "origin": [
+            560,
+            -52,
+            220
+          ],
+          "plane": "xz",
+          "points": [
+            [
+              145,
+              0
+            ],
+            [
+              102.08,
+              102.08
+            ],
+            [
+              0,
+              145
+            ],
+            [
+              -102.08,
+              102.08
+            ],
+            [
+              -145,
+              0
+            ],
+            [
+              -102.08,
+              -102.08
+            ],
+            [
+              0,
+              -145
+            ],
+            [
+              102.08,
+              -102.08
+            ]
+          ],
+          "depth": 74
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "amb-cab-lower"
+        }
+      ],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "front",
+          "status": "manual_confirmed",
+          "confidence": 0.82,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "visual_helper",
+      "qa": {}
+    },
+    {
+      "id": "wheel-left-front-hub",
+      "name": "Left_Front_Silver_Hub",
+      "type": "wheel_hub",
+      "role": "wheel_hub",
+      "material": "Ambulance_Wheel_Hub",
+      "intent": "prism",
+      "shape": {
+        "primitive": "prism",
+        "parameters": {
+          "origin": [
+            560,
+            -58,
+            220
+          ],
+          "plane": "xz",
+          "points": [
+            [
+              62,
+              0
+            ],
+            [
+              43.65,
+              43.65
+            ],
+            [
+              0,
+              62
+            ],
+            [
+              -43.65,
+              43.65
+            ],
+            [
+              -62,
+              0
+            ],
+            [
+              -43.65,
+              -43.65
+            ],
+            [
+              0,
+              -62
+            ],
+            [
+              43.65,
+              -43.65
+            ]
+          ],
+          "depth": 82
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "amb-cab-lower"
+        }
+      ],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "front",
+          "status": "manual_confirmed",
+          "confidence": 0.82,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "visual_helper",
+      "qa": {}
+    },
+    {
+      "id": "wheel-left-rear-tire",
+      "name": "Left_Rear_Black_Tire",
+      "type": "wheel_tire",
+      "role": "tire",
+      "material": "Ambulance_Black_Rubber",
+      "intent": "prism",
+      "shape": {
+        "primitive": "prism",
+        "parameters": {
+          "origin": [
+            1810,
+            -52,
+            220
+          ],
+          "plane": "xz",
+          "points": [
+            [
+              145,
+              0
+            ],
+            [
+              102.08,
+              102.08
+            ],
+            [
+              0,
+              145
+            ],
+            [
+              -102.08,
+              102.08
+            ],
+            [
+              -145,
+              0
+            ],
+            [
+              -102.08,
+              -102.08
+            ],
+            [
+              0,
+              -145
+            ],
+            [
+              102.08,
+              -102.08
+            ]
+          ],
+          "depth": 74
+        }
+      },
+      "relationships": [
+        {
+          "type": "aligned_to",
+          "target": "amb-main-body"
+        }
+      ],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "rear",
+          "status": "manual_confirmed",
+          "confidence": 0.82,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "visual_helper",
+      "qa": {}
+    },
+    {
+      "id": "wheel-left-rear-hub",
+      "name": "Left_Rear_Silver_Hub",
+      "type": "wheel_hub",
+      "role": "wheel_hub",
+      "material": "Ambulance_Wheel_Hub",
+      "intent": "prism",
+      "shape": {
+        "primitive": "prism",
+        "parameters": {
+          "origin": [
+            1810,
+            -58,
+            220
+          ],
+          "plane": "xz",
+          "points": [
+            [
+              62,
+              0
+            ],
+            [
+              43.65,
+              43.65
+            ],
+            [
+              0,
+              62
+            ],
+            [
+              -43.65,
+              43.65
+            ],
+            [
+              -62,
+              0
+            ],
+            [
+              -43.65,
+              -43.65
+            ],
+            [
+              0,
+              -62
+            ],
+            [
+              43.65,
+              -43.65
+            ]
+          ],
+          "depth": 82
+        }
+      },
+      "relationships": [
+        {
+          "type": "aligned_to",
+          "target": "amb-main-body"
+        }
+      ],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "rear",
+          "status": "manual_confirmed",
+          "confidence": 0.82,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "visual_helper",
+      "qa": {}
+    },
+    {
+      "id": "wheel-right-front-tire",
+      "name": "Right_Front_Black_Tire",
+      "type": "wheel_tire",
+      "role": "tire",
+      "material": "Ambulance_Black_Rubber",
+      "intent": "prism",
+      "shape": {
+        "primitive": "prism",
+        "parameters": {
+          "origin": [
+            560,
+            830,
+            220
+          ],
+          "plane": "xz",
+          "points": [
+            [
+              145,
+              0
+            ],
+            [
+              102.08,
+              102.08
+            ],
+            [
+              0,
+              145
+            ],
+            [
+              -102.08,
+              102.08
+            ],
+            [
+              -145,
+              0
+            ],
+            [
+              -102.08,
+              -102.08
+            ],
+            [
+              0,
+              -145
+            ],
+            [
+              102.08,
+              -102.08
+            ]
+          ],
+          "depth": 74
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "amb-cab-lower"
+        }
+      ],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "front",
+          "status": "manual_confirmed",
+          "confidence": 0.82,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "visual_helper",
+      "qa": {}
+    },
+    {
+      "id": "wheel-right-front-hub",
+      "name": "Right_Front_Silver_Hub",
+      "type": "wheel_hub",
+      "role": "wheel_hub",
+      "material": "Ambulance_Wheel_Hub",
+      "intent": "prism",
+      "shape": {
+        "primitive": "prism",
+        "parameters": {
+          "origin": [
+            560,
+            824,
+            220
+          ],
+          "plane": "xz",
+          "points": [
+            [
+              62,
+              0
+            ],
+            [
+              43.65,
+              43.65
+            ],
+            [
+              0,
+              62
+            ],
+            [
+              -43.65,
+              43.65
+            ],
+            [
+              -62,
+              0
+            ],
+            [
+              -43.65,
+              -43.65
+            ],
+            [
+              0,
+              -62
+            ],
+            [
+              43.65,
+              -43.65
+            ]
+          ],
+          "depth": 82
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "amb-cab-lower"
+        }
+      ],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "front",
+          "status": "manual_confirmed",
+          "confidence": 0.82,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "visual_helper",
+      "qa": {}
+    },
+    {
+      "id": "wheel-right-rear-tire",
+      "name": "Right_Rear_Black_Tire",
+      "type": "wheel_tire",
+      "role": "tire",
+      "material": "Ambulance_Black_Rubber",
+      "intent": "prism",
+      "shape": {
+        "primitive": "prism",
+        "parameters": {
+          "origin": [
+            1810,
+            830,
+            220
+          ],
+          "plane": "xz",
+          "points": [
+            [
+              145,
+              0
+            ],
+            [
+              102.08,
+              102.08
+            ],
+            [
+              0,
+              145
+            ],
+            [
+              -102.08,
+              102.08
+            ],
+            [
+              -145,
+              0
+            ],
+            [
+              -102.08,
+              -102.08
+            ],
+            [
+              0,
+              -145
+            ],
+            [
+              102.08,
+              -102.08
+            ]
+          ],
+          "depth": 74
+        }
+      },
+      "relationships": [
+        {
+          "type": "aligned_to",
+          "target": "amb-main-body"
+        }
+      ],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "rear",
+          "status": "manual_confirmed",
+          "confidence": 0.82,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "visual_helper",
+      "qa": {}
+    },
+    {
+      "id": "wheel-right-rear-hub",
+      "name": "Right_Rear_Silver_Hub",
+      "type": "wheel_hub",
+      "role": "wheel_hub",
+      "material": "Ambulance_Wheel_Hub",
+      "intent": "prism",
+      "shape": {
+        "primitive": "prism",
+        "parameters": {
+          "origin": [
+            1810,
+            824,
+            220
+          ],
+          "plane": "xz",
+          "points": [
+            [
+              62,
+              0
+            ],
+            [
+              43.65,
+              43.65
+            ],
+            [
+              0,
+              62
+            ],
+            [
+              -43.65,
+              43.65
+            ],
+            [
+              -62,
+              0
+            ],
+            [
+              -43.65,
+              -43.65
+            ],
+            [
+              0,
+              -62
+            ],
+            [
+              43.65,
+              -43.65
+            ]
+          ],
+          "depth": 82
+        }
+      },
+      "relationships": [
+        {
+          "type": "aligned_to",
+          "target": "amb-main-body"
+        }
+      ],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "rear",
+          "status": "manual_confirmed",
+          "confidence": 0.82,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "visual_helper",
+      "qa": {}
+    },
+    {
+      "id": "left-panel-seam-a",
+      "name": "Left_Sliding_Door_Seam",
+      "type": "body_detail",
+      "role": "box",
+      "material": "Ambulance_Black_Rubber",
+      "intent": "feature_detail",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            960,
+            -42,
+            260
+          ],
+          "size": [
+            16,
+            14,
+            540
+          ]
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "amb-main-body"
+        }
+      ],
+      "evidence_status": "inferred",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "left",
+          "status": "inferred",
+          "confidence": 0.58,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "visual_helper",
+      "qa": {}
+    },
+    {
+      "id": "left-panel-seam-b",
+      "name": "Left_Rear_Door_Seam",
+      "type": "body_detail",
+      "role": "box",
+      "material": "Ambulance_Black_Rubber",
+      "intent": "feature_detail",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            1684,
+            -42,
+            255
+          ],
+          "size": [
+            16,
+            14,
+            550
+          ]
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "amb-main-body"
+        }
+      ],
+      "evidence_status": "inferred",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "rear",
+          "status": "inferred",
+          "confidence": 0.58,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "visual_helper",
+      "qa": {}
+    },
+    {
+      "id": "left-front-door-handle",
+      "name": "Left_Front_Door_Handle",
+      "type": "body_detail",
+      "role": "box",
+      "material": "Ambulance_Black_Rubber",
+      "intent": "box",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            788,
+            -48,
+            468
+          ],
+          "size": [
+            92,
+            16,
+            22
+          ]
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "amb-main-body"
+        }
+      ],
+      "evidence_status": "inferred",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "front",
+          "status": "inferred",
+          "confidence": 0.58,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "visual_helper",
+      "qa": {}
+    },
+    {
+      "id": "left-sliding-door-handle",
+      "name": "Left_Sliding_Door_Handle",
+      "type": "body_detail",
+      "role": "box",
+      "material": "Ambulance_Black_Rubber",
+      "intent": "box",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            1260,
+            -48,
+            456
+          ],
+          "size": [
+            98,
+            16,
+            22
+          ]
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "amb-main-body"
+        }
+      ],
+      "evidence_status": "inferred",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "left",
+          "status": "inferred",
+          "confidence": 0.58,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "visual_helper",
+      "qa": {}
+    },
+    {
+      "id": "rear-door-split-seam",
+      "name": "Rear_Twin_Door_Center_Seam",
+      "type": "body_detail",
+      "role": "box",
+      "material": "Ambulance_Black_Rubber",
+      "intent": "feature_detail",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            2250,
+            408,
+            260
+          ],
+          "size": [
+            18,
+            14,
+            520
+          ]
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "amb-main-body"
+        }
+      ],
+      "evidence_status": "inferred",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "rear",
+          "status": "inferred",
+          "confidence": 0.58,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "visual_helper",
+      "qa": {}
+    },
+    {
+      "id": "rear-left-tail-light",
+      "name": "Rear_Left_Vertical_Tail_Light",
+      "type": "lighting",
+      "role": "lamp",
+      "material": "Ambulance_Tail_Red",
+      "intent": "box",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            2270,
+            112,
+            320
+          ],
+          "size": [
+            30,
+            58,
+            230
+          ]
+        }
+      },
+      "relationships": [],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "rear",
+          "status": "manual_confirmed",
+          "confidence": 0.82,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "visual_helper",
+      "qa": {}
+    },
+    {
+      "id": "rear-right-tail-light",
+      "name": "Rear_Right_Vertical_Tail_Light",
+      "type": "lighting",
+      "role": "lamp",
+      "material": "Ambulance_Tail_Red",
+      "intent": "box",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            2270,
+            650,
+            320
+          ],
+          "size": [
+            30,
+            58,
+            230
+          ]
+        }
+      },
+      "relationships": [],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "rear",
+          "status": "manual_confirmed",
+          "confidence": 0.82,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "visual_helper",
+      "qa": {}
+    },
+    {
+      "id": "rear-amber-marker-left",
+      "name": "Rear_Left_Amber_Marker",
+      "type": "lighting",
+      "role": "lamp",
+      "material": "Ambulance_Amber_Light",
+      "intent": "box",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            2272,
+            210,
+            425
+          ],
+          "size": [
+            26,
+            58,
+            38
+          ]
+        }
+      },
+      "relationships": [],
+      "evidence_status": "inferred",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "rear",
+          "status": "inferred",
+          "confidence": 0.58,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "box_approximation",
+      "qa": {}
+    },
+    {
+      "id": "rear-amber-marker-right",
+      "name": "Rear_Right_Amber_Marker",
+      "type": "lighting",
+      "role": "lamp",
+      "material": "Ambulance_Amber_Light",
+      "intent": "box",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            2272,
+            552,
+            425
+          ],
+          "size": [
+            26,
+            58,
+            38
+          ]
+        }
+      },
+      "relationships": [],
+      "evidence_status": "inferred",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "rear",
+          "status": "inferred",
+          "confidence": 0.58,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "box_approximation",
+      "qa": {}
+    },
+    {
+      "id": "left-side-step-slots",
+      "name": "Left_Black_Step_Perforations",
+      "type": "body_detail",
+      "role": "slot_array",
+      "material": "Ambulance_Wheel_Hub",
+      "intent": "slot_array",
+      "shape": {
+        "primitive": "slot_array",
+        "parameters": {
+          "center": [
+            1230,
+            -58,
+            250
+          ],
+          "count": 7,
+          "spacing": 145,
+          "length": 68,
+          "width": 16,
+          "depth": 4,
+          "direction": "x",
+          "segments": 5,
+          "smooth": "all"
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "amb-main-body"
+        }
+      ],
+      "evidence_status": "inferred",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "left",
+          "status": "inferred",
+          "confidence": 0.58,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "visual_helper",
+      "qa": {}
+    },
+    {
+      "id": "amb-left-ambulance-text",
+      "name": "Left_Side_AMBULANCE_Text",
+      "type": "decal_or_label",
+      "role": "label",
+      "material": "Ambulance_Green_Text",
+      "intent": "decal_or_label",
+      "shape": {
+        "primitive": "text_3d",
+        "parameters": {
+          "text": "AMBULANCE",
+          "center": [
+            1570,
+            -62,
+            748
+          ],
+          "height": 116,
+          "extrusion": 8,
+          "font": "Arial",
+          "align": "center",
+          "bold": true,
+          "filled": true
+        }
+      },
+      "relationships": [],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "left",
+          "status": "manual_confirmed",
+          "confidence": 0.82,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "visual_helper",
+      "qa": {}
+    },
+    {
+      "id": "amb-left-ev-text",
+      "name": "Left_Side_EV_Text",
+      "type": "decal_or_label",
+      "role": "label",
+      "material": "Ambulance_Blue_Text",
+      "intent": "decal_or_label",
+      "shape": {
+        "primitive": "text_3d",
+        "parameters": {
+          "text": "EV",
+          "center": [
+            1850,
+            -62,
+            365
+          ],
+          "height": 138,
+          "extrusion": 8,
+          "font": "Arial",
+          "align": "center",
+          "bold": true,
+          "filled": true
+        }
+      },
+      "relationships": [],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "left",
+          "status": "manual_confirmed",
+          "confidence": 0.82,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "visual_helper",
+      "qa": {}
+    },
+    {
+      "id": "roof-cross-text",
+      "name": "Roof_Red_Cross_Label",
+      "type": "decal_or_label",
+      "role": "label",
+      "material": "Ambulance_Red_Stripe",
+      "intent": "decal_or_label",
+      "shape": {
+        "primitive": "text_3d",
+        "parameters": {
+          "text": "+",
+          "center": [
+            1395,
+            410,
+            1028
+          ],
+          "height": 260,
+          "extrusion": 8,
+          "font": "Arial",
+          "align": "center",
+          "bold": true,
+          "filled": true
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "amb-main-body"
+        }
+      ],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "top",
+          "status": "manual_confirmed",
+          "confidence": 0.82,
+          "note": "Seeded from the current ambulance acceptance reference model."
+        }
+      ],
+      "fallback_state": "visual_helper",
+      "qa": {}
+    }
+  ],
+  "operations": [
+    {
+      "op": "boolean_difference",
+      "result_id": "roof-service-panel",
+      "result_name": "Raised_Roof_Service_Panel_With_Ridges",
+      "keep_tools": false,
+      "target_part_id": "roof-service-panel-blank",
+      "part_id": "roof-service-panel-blank",
+      "tool_part_ids": [
+        "roof-panel-channel-cutter"
+      ]
+    },
+    {
+      "op": "manifold_check",
+      "target_id": "roof-service-panel",
+      "check_id": "roof-service-panel-manifold",
+      "fail_on_non_manifold": false
+    },
+    {
+      "op": "transform_object",
+      "pivot": "center",
+      "rotateX": 90,
+      "target_part_id": "amb-left-ambulance-text",
+      "part_id": "amb-left-ambulance-text"
+    },
+    {
+      "op": "transform_object",
+      "pivot": "center",
+      "rotateX": 90,
+      "target_part_id": "amb-left-ev-text",
+      "part_id": "amb-left-ev-text"
+    },
+    {
+      "op": "manifold_check",
+      "check_id": "main-body-manifold",
+      "fail_on_non_manifold": false,
+      "target_part_id": "amb-main-body",
+      "part_id": "amb-main-body"
+    },
+    {
+      "op": "manifold_check",
+      "check_id": "cab-lower-manifold",
+      "fail_on_non_manifold": false,
+      "target_part_id": "amb-cab-lower",
+      "part_id": "amb-cab-lower"
+    },
+    {
+      "op": "attribute",
+      "dictionary": "Acceptance",
+      "attributes": {
+        "source": "test/救护车 photo set",
+        "generation": "scripts/generate-ambulance-reference-demo.mjs",
+        "observed_features": [
+          "high roof van",
+          "red side stripe",
+          "roof lightbar",
+          "dark side glazing",
+          "roof ribs",
+          "front/rear reference planes"
+        ],
+        "validated_for": "MCP acceptance rerun"
+      },
+      "target_part_id": "amb-main-body",
+      "part_id": "amb-main-body"
+    },
+    {
+      "op": "classification",
+      "system": "Product",
+      "type": "ToyAmbulance",
+      "identifier": "ambulance-reference-001",
+      "target_part_id": "amb-main-body",
+      "part_id": "amb-main-body"
+    },
+    {
+      "op": "assign_tag",
+      "tag": "Acceptance_Ambulance_Body",
+      "target_part_id": "amb-main-body",
+      "part_id": "amb-main-body"
+    },
+    {
+      "op": "assign_tag",
+      "tag": "Acceptance_Ambulance_Details",
+      "target_part_id": "roof-red-lightbar",
+      "part_id": "roof-red-lightbar"
+    },
+    {
+      "op": "assign_tag",
+      "target_id": "ambulance-side-reference",
+      "tag": "Acceptance_Ambulance_References"
+    }
+  ],
+  "review": {
+    "fallback_summary": {
+      "real_feature_op": 5,
+      "box_approximation": 5,
+      "visual_helper": 42,
+      "profile_default": 1
+    },
+    "open_questions": [
+      "Replace box-based side decals with reference-checked decal planes or projected textures.",
+      "Move roof service panel and lightbar dimensions into reusable vehicle_ambulance constraints."
+    ],
+    "correction_targets": [
+      {
+        "part_id": "amb-windshield",
+        "path": "parts[amb-windshield].shape.parameters.vertices",
+        "reason": "Reference Visual QA should adjust windshield rake and corner keypoints.",
+        "severity": "warn"
+      },
+      {
+        "part_id": "amb-main-body",
+        "path": "parts[amb-main-body].feature_intents",
+        "reason": "Door seams, windows, roof ribs, and stripe seats are now real feature ops and should be the correction target.",
+        "severity": "info"
+      },
+      {
+        "part_id": "roof-red-lightbar",
+        "path": "parts[roof-red-lightbar].shape.parameters",
+        "reason": "Lightbar should become a reusable lens/helper once repeated across vehicle samples.",
+        "severity": "info"
+      }
+    ]
+  }
+}

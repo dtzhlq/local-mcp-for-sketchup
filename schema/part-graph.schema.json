@@ -1,0 +1,180 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/sketchup-mcp-replica/part-graph.schema.json",
+  "title": "PartGraph",
+  "type": "object",
+  "required": ["version", "id", "profile_id", "product", "units", "parts"],
+  "properties": {
+    "version": { "type": "integer", "minimum": 1 },
+    "id": { "type": "string", "minLength": 1 },
+    "profile_id": { "type": "string", "minLength": 1 },
+    "dsl_version": { "type": "integer", "minimum": 1 },
+    "units": { "const": "mm" },
+    "product": {
+      "type": "object",
+      "required": ["type", "name"],
+      "properties": {
+        "type": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "source": { "type": "string" }
+      }
+    },
+    "scale": {
+      "type": "object",
+      "properties": {
+        "width": { "type": "number", "exclusiveMinimum": 0 },
+        "depth": { "type": "number", "exclusiveMinimum": 0 },
+        "height": { "type": "number", "exclusiveMinimum": 0 },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "evidence_graph": {
+      "type": "object",
+      "properties": {
+        "version": { "const": 1 },
+        "source_images": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "views_detected": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "open_questions": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "parts": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/part" }
+    },
+    "operations": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/graph_operation" }
+    },
+    "review": {
+      "type": "object",
+      "properties": {
+        "fallback_summary": { "type": "object" },
+        "open_questions": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "correction_targets": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/correction_target" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "part": {
+      "type": "object",
+      "required": ["id", "name", "type", "role", "shape", "evidence_status", "fallback_state"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "type": { "type": "string", "minLength": 1 },
+        "role": { "type": "string", "minLength": 1 },
+        "parent": { "type": "string" },
+        "material": { "type": "string" },
+        "intent": { "type": "string" },
+        "shape": {
+          "type": "object",
+          "required": ["primitive", "parameters"],
+          "properties": {
+            "primitive": { "type": "string", "minLength": 1 },
+            "parameters": { "type": "object" }
+          }
+        },
+        "relationships": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/relationship" }
+        },
+        "evidence_status": { "$ref": "#/$defs/evidence_status" },
+        "evidence_sources": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/evidence_source" }
+        },
+        "fallback_state": { "$ref": "#/$defs/fallback_state" },
+        "feature_intents": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/feature_intent" }
+        },
+        "qa": { "type": "object" },
+        "compile": { "type": "object" }
+      }
+    },
+    "relationship": {
+      "type": "object",
+      "required": ["type", "target"],
+      "properties": {
+        "type": { "type": "string", "minLength": 1 },
+        "target": { "type": "string", "minLength": 1 },
+        "note": { "type": "string" }
+      }
+    },
+    "feature_intent": {
+      "type": "object",
+      "required": ["id", "operation", "face", "parameters", "fallback_state"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "operation": { "enum": ["cut_hole", "cut_slot", "cut_recess", "add_boss", "add_raised_rib"] },
+        "face": { "enum": ["top", "bottom", "front", "back", "left", "right"] },
+        "parameters": { "type": "object" },
+        "semantic": { "type": "string" },
+        "fallback_state": { "$ref": "#/$defs/fallback_state" },
+        "evidence_sources": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/evidence_source" }
+        }
+      }
+    },
+    "graph_operation": {
+      "type": "object",
+      "required": ["op"],
+      "properties": {
+        "op": { "type": "string", "minLength": 1 },
+        "target_part_id": { "type": "string" },
+        "tool_part_ids": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "result_part_id": { "type": "string" },
+        "part_id": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "evidence_source": {
+      "type": "object",
+      "required": ["kind", "status"],
+      "properties": {
+        "kind": { "type": "string", "minLength": 1 },
+        "view": { "type": "string" },
+        "source_image": { "type": "string" },
+        "status": { "$ref": "#/$defs/evidence_status" },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "note": { "type": "string" }
+      }
+    },
+    "correction_target": {
+      "type": "object",
+      "required": ["path", "reason"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1 },
+        "part_id": { "type": "string" },
+        "reason": { "type": "string", "minLength": 1 },
+        "severity": { "enum": ["info", "warn", "error"] }
+      }
+    },
+    "evidence_status": {
+      "enum": ["observed", "inferred", "profile_default", "manual_confirmed", "needs_review"]
+    },
+    "fallback_state": {
+      "enum": ["real_feature_op", "visual_helper", "box_approximation", "profile_default", "reference_only", "needs_review"]
+    }
+  }
+}

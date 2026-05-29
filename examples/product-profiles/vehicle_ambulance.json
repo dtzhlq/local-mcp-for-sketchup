@@ -1,0 +1,160 @@
+{
+  "version": 1,
+  "profile_id": "vehicle_ambulance",
+  "product_type": "vehicle_ambulance",
+  "name": "Toy Ambulance Product Profile",
+  "description": "Initial product profile for the ambulance reference acceptance sample. It records expected ambulance parts, runtime primitives, reference views, materials, and layout QA defaults without changing the runtime layer.",
+  "dsl_version": 1,
+  "units": "mm",
+  "default_scale": {
+    "width": 2300,
+    "depth": 900,
+    "height": 1050
+  },
+  "expected_views": ["left", "right", "front", "rear", "top", "oblique"],
+  "required_parts": [
+    { "id": "main_body", "role": "body", "required": true, "expected_count": 1, "evidence_required": ["left", "top", "rear"], "fallback_allowed": ["real_feature_op", "box_approximation"] },
+    { "id": "cab", "role": "cab", "required": true, "expected_count": 1, "evidence_required": ["front", "left"], "fallback_allowed": ["real_feature_op", "box_approximation"] },
+    { "id": "windshield", "role": "windshield", "required": true, "expected_count": 1, "evidence_required": ["front", "left"], "fallback_allowed": ["visual_helper"] },
+    { "id": "side_windows", "role": "side_window", "required": true, "expected_count": 4, "evidence_required": ["left", "right", "rear"], "fallback_allowed": ["real_feature_op", "visual_helper"] },
+    { "id": "wheel_set", "role": "wheel", "required": true, "expected_count": 4, "evidence_required": ["left", "right"], "fallback_allowed": ["visual_helper"] },
+    { "id": "roof_lights", "role": "lightbar", "required": true, "expected_count": 1, "evidence_required": ["top", "front"], "fallback_allowed": ["real_feature_op", "visual_helper"] },
+    { "id": "stripe_and_text", "role": "decal", "required": true, "expected_count": 1, "evidence_required": ["left", "rear"], "fallback_allowed": ["real_feature_op", "visual_helper"] }
+  ],
+  "allowed_primitives": [
+    "rounded_box",
+    "mesh",
+    "box",
+    "rib",
+    "prism",
+    "slot_array",
+    "text_3d",
+    "image_plane",
+    "cut_recess",
+    "add_boss",
+    "add_raised_rib",
+    "boolean_difference",
+    "manifold_check"
+  ],
+  "materials": [
+    { "name": "Ambulance_Warm_White", "color": "#f5f5ef" },
+    { "name": "Ambulance_Glass_Dark", "color": "#182029", "alpha": 0.72 },
+    { "name": "Ambulance_Red_Stripe", "color": "#c8161d" },
+    { "name": "Ambulance_Light_Red", "color": "#e51d2a", "alpha": 0.72 },
+    { "name": "Ambulance_Tail_Red", "color": "#9f1218", "alpha": 0.86 },
+    { "name": "Ambulance_Amber_Light", "color": "#f0a01f", "alpha": 0.74 },
+    { "name": "Ambulance_Headlight_Clear", "color": "#dbe8ee", "alpha": 0.62 },
+    { "name": "Ambulance_Black_Rubber", "color": "#101010" },
+    { "name": "Ambulance_Wheel_Hub", "color": "#c7c8c4" },
+    { "name": "Ambulance_Green_Text", "color": "#2d8d4d" },
+    { "name": "Ambulance_Blue_Text", "color": "#2673b7" },
+    { "name": "Reference_Image_Tint", "color": "#ffffff", "alpha": 0.86 },
+    { "name": "Feature_Cutter_Debug", "color": "#ffcc00", "alpha": 0.25 }
+  ],
+  "tags": [
+    { "name": "Acceptance_Ambulance_Body", "color": "#f5f5ef" },
+    { "name": "Acceptance_Ambulance_Details", "color": "#c8161d" },
+    { "name": "Acceptance_Ambulance_References", "color": "#2673b7" }
+  ],
+  "reference_images": [
+    {
+      "id": "ambulance-side-reference",
+      "name": "Reference_Left_Side_Photo",
+      "source": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+      "origin": [150, -1260, 60],
+      "plane": "xz",
+      "size": [1740, 1305],
+      "alpha": 0.86
+    },
+    {
+      "id": "ambulance-top-reference",
+      "name": "Reference_Top_Photo",
+      "source": "test/救护车/C486F074-3B8E-4F1C-A048-0AF24B687035_1_102_o.jpeg",
+      "origin": [500, 1130, 30],
+      "plane": "xy",
+      "size": [1320, 990],
+      "alpha": 0.72
+    },
+    {
+      "id": "ambulance-front-reference",
+      "name": "Reference_Front_Photo",
+      "source": "test/救护车/IMG_0175.jpeg",
+      "origin": [-840, -120, 80],
+      "plane": "yz",
+      "size": [1020, 765],
+      "alpha": 0.78
+    },
+    {
+      "id": "ambulance-quarter-reference",
+      "name": "Reference_Three_Quarter_Photo",
+      "source": "test/救护车/DE9FDB12-2BD3-49D2-AD32-930CC4A33B14_1_102_o.jpeg",
+      "origin": [150, -2460, 60],
+      "plane": "xz",
+      "size": [1740, 1305],
+      "alpha": 0.72
+    },
+    {
+      "id": "ambulance-rear-reference",
+      "name": "Reference_Rear_Photo",
+      "source": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+      "origin": [2580, -120, 80],
+      "plane": "yz",
+      "size": [1020, 765],
+      "alpha": 0.78
+    }
+  ],
+  "qa_rules": {
+    "layout_spec": "examples/model-qa/ambulance-reference.json",
+    "reference_visual_qa": "planned"
+  },
+  "review": {
+    "scenes": [
+      {
+        "name": "Acceptance_Ambulance_Left_Photo_Match",
+        "camera": {
+          "eye": [1180, -3650, 1250],
+          "target": [1180, 360, 520],
+          "up": [0, 0, 1],
+          "fov": 35
+        }
+      },
+      {
+        "name": "Acceptance_Ambulance_Top_Detail_Check",
+        "camera": {
+          "eye": [1160, 410, 3850],
+          "target": [1160, 410, 610],
+          "up": [0, 1, 0],
+          "fov": 30
+        }
+      }
+    ],
+    "style": {
+      "name": "Acceptance_Ambulance_Style",
+      "display_edges": true,
+      "profiles": true,
+      "profile_width": 2,
+      "face_style": "shaded_with_textures",
+      "background_color": "#f5f7f9",
+      "sky_color": "#d9eafa",
+      "ground_color": "#dad4c8"
+    },
+    "shadow": {
+      "display": true,
+      "time": "2026-05-25T11:30:00+08:00",
+      "light": 80,
+      "dark": 42,
+      "use_sun_for_shading": true
+    },
+    "rendering_options": {
+      "edge_display_mode": 1,
+      "draw_hidden_geometry": false,
+      "display_color_by_layer": false,
+      "transparency": true,
+      "draw_ground": true
+    }
+  },
+  "compiler": {
+    "name": "compile-part-graph-to-sketchup-dsl",
+    "version": "r1-r2"
+  }
+}
