@@ -168,6 +168,14 @@ function compileCompactRemotePlan(modelPlan) {
   const faceThickness = positive(face.thickness, 2);
   const faceTopZ = bodyTopZ + 0.05 + faceThickness;
   const mountedZ = faceTopZ + 0.08;
+  const facePanelWidth = positive(face.width, width - 8);
+  const facePanelHeight = positive(face.height, height - 18);
+  const facePanelName = 'Compact_Remote_Face_Panel_From_Image_Plan';
+  const facePanelTarget = {
+    name: facePanelName,
+    origin: [-facePanelWidth / 2, -facePanelHeight / 2, bodyTopZ + 0.05],
+    size: [facePanelWidth, facePanelHeight, faceThickness]
+  };
 
   const operations = [
     { op: 'reset' },
@@ -188,9 +196,9 @@ function compileCompactRemotePlan(modelPlan) {
     },
     {
       op: 'rounded_box',
-      name: 'Compact_Remote_Face_Panel_From_Image_Plan',
-      origin: [-(positive(face.width, width - 8)) / 2, -(positive(face.height, height - 18)) / 2, bodyTopZ + 0.05],
-      size: [positive(face.width, width - 8), positive(face.height, height - 18), faceThickness],
+      name: facePanelName,
+      origin: facePanelTarget.origin,
+      size: facePanelTarget.size,
       radius: positive(face.corner_radius, 6),
       segments: 6,
       material: 'Remote_Satin_Face',
@@ -201,6 +209,8 @@ function compileCompactRemotePlan(modelPlan) {
 
   operations.push(buttonOnPanelFromSpec({
     name: 'Remote_Navigation_Pad_From_Image_Plan',
+    part: parts.get('navigation_pad'),
+    target: facePanelTarget,
     spec: nav,
     defaultCenter: [0, -30],
     defaultSize: [24, 24],
@@ -214,6 +224,8 @@ function compileCompactRemotePlan(modelPlan) {
   for (const button of primary.buttons || []) {
     operations.push(buttonOnPanelFromSpec({
       name: `Remote_${safeName(button.label)}_Button_From_Image_Plan`,
+      part: parts.get('primary_button_cluster'),
+      target: facePanelTarget,
       spec: button,
       defaultCenter: [0, 0],
       defaultRadius: 4,
@@ -226,6 +238,8 @@ function compileCompactRemotePlan(modelPlan) {
 
   operations.push(buttonOnPanelFromSpec({
     name: 'Remote_Volume_Rocker_From_Image_Plan',
+    part: parts.get('volume_rocker'),
+    target: facePanelTarget,
     spec: rocker,
     defaultCenter: [0, 24],
     defaultSize: [9, 28],
@@ -237,33 +251,28 @@ function compileCompactRemotePlan(modelPlan) {
   }));
 
   const grilleCount = Math.max(1, Math.min(12, Math.round(positive(grille.count, 5))));
-  operations.push({
-    op: 'slot_array',
-    name: 'Remote_Speaker_Grille_From_Image_Plan',
-    center: withZ(grille.center || [0, -66], mountedZ + 0.45),
+  operations.push(...slotFeatureOrFallback({
+    part: parts.get('speaker_grille'),
+    target: facePanelTarget,
+    baseFeatureId: 'Remote_Speaker_Grille_From_Image_Plan',
+    visualName: 'Remote_Speaker_Grille_From_Image_Plan',
+    center: grille.center || [0, -66],
     count: grilleCount,
     spacing: positive(grille.spacing, 4),
     length: positive(grille.length, 2.4),
     width: positive(grille.width, 1),
     depth: positive(grille.depth, 0.35),
-    direction: 'x',
-    segments: 5,
-    material: 'Remote_Dark_Detail',
-    smooth: 'all'
-  });
+    z: mountedZ + 0.45,
+    material: 'Remote_Dark_Detail'
+  }));
 
-  operations.push({
-    op: 'text_3d',
-    name: 'Remote_Brand_Label_From_Image_Plan',
-    text: label.text || 'ALMA',
-    center: withZ(label.center || [0, 52], mountedZ + 0.4),
-    height: positive(label.height, 5),
-    extrusion: positive(label.extrusion, 0.45),
-    font: label.font || 'Arial',
-    align: 'center',
-    material: 'Remote_Dark_Detail',
-    qa: qaMetadata('label', 'brand_label')
-  });
+  operations.push(...labelFeatureOrFallback({
+    part: parts.get('brand_label'),
+    target: facePanelTarget,
+    label,
+    z: mountedZ + 2.5,
+    material: 'Remote_Dark_Detail'
+  }));
 
   operations.push(
     { op: 'scene', name: 'Compact_Remote_Front_Review', camera: { eye: [0, -360, 150], target: [0, 0, depth / 2], up: [0, 0, 1], fov: 28 } },
@@ -276,7 +285,39 @@ function compileCompactRemotePlan(modelPlan) {
   return { version: 1, units: 'mm', operations };
 }
 
-function buttonOnPanelFromSpec({ name, spec = {}, defaultCenter, defaultRadius, defaultSize, defaultCornerRadius, defaultHeight, z, material, qaRole }) {
+function buttonOnPanelFromSpec({ name, part, target, spec = {}, defaultCenter, defaultRadius, defaultSize, defaultCornerRadius, defaultHeight, z, material, qaRole }) {
+  const mapping = featureMapping(part);
+  if (mapping?.operation === 'add_boss' && mapping.fallback === 'none') {
+    const size = spec.size || defaultSize;
+    const radius = size
+      ? positive(spec.corner_radius, defaultCornerRadius ?? Math.min(size[0], size[1]) / 2)
+      : positive(spec.radius, defaultRadius);
+    return {
+      op: 'add_boss',
+      target_id: target.name,
+      feature_id: name,
+      face: 'top',
+      center: targetLocalPoint(spec.center || defaultCenter, target),
+      radius,
+      height: positive(spec.height, defaultHeight),
+      segments: 20
+    };
+  }
+  if (mapping?.operation === 'add_raised_rib' && mapping.fallback === 'none') {
+    const size = spec.size || defaultSize || [positive(spec.radius, defaultRadius) * 2, positive(spec.radius, defaultRadius) * 2];
+    const direction = size[1] >= size[0] ? 'v' : 'u';
+    return {
+      op: 'add_raised_rib',
+      target_id: target.name,
+      feature_id: name,
+      face: 'top',
+      center: targetLocalPoint(spec.center || defaultCenter, target),
+      length: Math.max(size[0], size[1]),
+      width: Math.min(size[0], size[1]),
+      height: positive(spec.height, defaultHeight),
+      direction
+    };
+  }
   const operation = {
     op: 'button_on_panel',
     name,
@@ -295,6 +336,109 @@ function buttonOnPanelFromSpec({ name, spec = {}, defaultCenter, defaultRadius, 
     operation.radius = positive(spec.radius, defaultRadius);
   }
   return operation;
+}
+
+function slotFeatureOrFallback({ part, target, baseFeatureId, visualName, center, count, spacing, length, width, depth, z, material }) {
+  const mapping = featureMapping(part);
+  if (mapping?.operation === 'cut_recess' && mapping.fallback === 'none') {
+    return repeatedFeatureCenters(center, count, spacing).map((slotCenter, index) => ({
+      op: 'cut_recess',
+      target_id: target.name,
+      feature_id: `${baseFeatureId}_${index + 1}`,
+      face: 'top',
+      center: targetLocalPoint(slotCenter, target),
+      size: [length, width],
+      radius: width / 2,
+      depth,
+      segments: 5
+    }));
+  }
+  if (mapping?.operation === 'cut_hole' && mapping.fallback === 'none') {
+    return repeatedFeatureCenters(center, count, spacing).map((holeCenter, index) => ({
+      op: 'cut_hole',
+      target_id: target.name,
+      feature_id: `${baseFeatureId}_${index + 1}`,
+      face: 'top',
+      center: targetLocalPoint(holeCenter, target),
+      radius: positive(part?.parameters?.radius, width / 2),
+      through: true,
+      segments: 16
+    }));
+  }
+  return [{
+    op: 'slot_array',
+    name: visualName,
+    center: withZ(center, z),
+    count,
+    spacing,
+    length,
+    width,
+    depth,
+    direction: 'x',
+    segments: 5,
+    material,
+    smooth: 'all'
+  }];
+}
+
+function labelFeatureOrFallback({ part, target, label, z, material }) {
+  const mapping = featureMapping(part);
+  const center = label.center || [0, 52];
+  const height = positive(label.height, 5);
+  if (mapping?.operation === 'cut_recess' && mapping.fallback === 'none') {
+    return [{
+      op: 'cut_recess',
+      target_id: target.name,
+      feature_id: 'Remote_Brand_Label_Recess_From_Image_Plan',
+      face: 'top',
+      center: targetLocalPoint(center, target),
+      size: label.size || [positive(label.width, height * 3.2), height],
+      radius: positive(label.radius, Math.min(height / 2, 1.5)),
+      depth: positive(label.depth ?? label.extrusion, 0.45),
+      segments: 4
+    }];
+  }
+  if (mapping?.operation === 'cut_hole' && mapping.fallback === 'none') {
+    return [{
+      op: 'cut_hole',
+      target_id: target.name,
+      feature_id: 'Remote_Brand_Label_Hole_From_Image_Plan',
+      face: 'top',
+      center: targetLocalPoint(center, target),
+      radius: positive(label.radius, height / 2),
+      through: true,
+      segments: 20
+    }];
+  }
+  return [{
+    op: 'text_3d',
+    name: 'Remote_Brand_Label_From_Image_Plan',
+    text: label.text || 'ALMA',
+    center: withZ(center, z),
+    height,
+    extrusion: positive(label.extrusion, 0.45),
+    font: label.font || 'Arial',
+    align: 'center',
+    material,
+    qa: qaMetadata('label', 'brand_label')
+  }];
+}
+
+function repeatedFeatureCenters(center, count, spacing) {
+  const [x, y] = center;
+  const start = -((count - 1) * spacing) / 2;
+  return Array.from({ length: count }, (_, index) => [x + start + index * spacing, y]);
+}
+
+function targetLocalPoint(point, target) {
+  return [
+    round2((Number(point[0]) || 0) - target.origin[0]),
+    round2((Number(point[1]) || 0) - target.origin[1])
+  ];
+}
+
+function featureMapping(part) {
+  return part?.feature_mapping || null;
 }
 
 function withZ(point, z) {
@@ -355,6 +499,10 @@ function parseArgs(argv) {
 function positive(value, fallback) {
   const number = Number(value);
   return Number.isFinite(number) && number > 0 ? number : fallback;
+}
+
+function round2(value) {
+  return Math.round(value * 100) / 100;
 }
 
 function safeName(value) {

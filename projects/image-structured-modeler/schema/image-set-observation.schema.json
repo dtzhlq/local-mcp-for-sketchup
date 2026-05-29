@@ -12,6 +12,7 @@
       "properties": {
         "type": { "type": "string" },
         "name": { "type": "string" },
+        "profile": { "enum": ["switch_controller", "compact_remote"] },
         "source_images": { "type": "array", "items": { "type": "string" } }
       }
     },
@@ -26,6 +27,7 @@
       "minItems": 1,
       "items": { "$ref": "#/$defs/image_observation" }
     },
+    "evidence_graph": { "$ref": "#/$defs/evidence_graph" },
     "quality_report": {
       "type": "object",
       "required": ["usable_for_modeling", "risks"],
@@ -135,6 +137,70 @@
       "prefixItems": [{ "type": "number" }, { "type": "number" }, { "type": "number" }, { "type": "number" }],
       "minItems": 4,
       "maxItems": 4
+    },
+    "evidence_status": {
+      "enum": ["observed", "inferred", "template_prior", "manual_confirmed"]
+    },
+    "evidence_graph": {
+      "type": "object",
+      "required": ["version", "image_count", "parts", "open_questions"],
+      "properties": {
+        "version": { "const": 1 },
+        "image_count": { "type": "integer" },
+        "views_detected": { "type": "array", "items": { "type": "string" } },
+        "missing_views": { "type": "array", "items": { "type": "string" } },
+        "parts": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/evidence_graph_part" }
+        },
+        "open_questions": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "evidence_graph_part": {
+      "type": "object",
+      "required": ["part_id", "status", "required_views", "confirmed_views", "missing_views", "sources", "open_questions"],
+      "properties": {
+        "part_id": { "type": "string" },
+        "status": { "$ref": "#/$defs/evidence_status" },
+        "template_prior": { "type": "boolean" },
+        "manual_confirmed": { "type": "boolean" },
+        "required_views": { "type": "array", "items": { "type": "string" } },
+        "confirmed_views": { "type": "array", "items": { "type": "string" } },
+        "missing_views": { "type": "array", "items": { "type": "string" } },
+        "sources": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/evidence_graph_source" }
+        },
+        "conflicts": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/evidence_graph_conflict" }
+        },
+        "open_questions": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "evidence_graph_source": {
+      "type": "object",
+      "required": ["view", "kind", "status"],
+      "properties": {
+        "view": { "type": "string" },
+        "view_kind": { "type": "string" },
+        "kind": { "type": "string" },
+        "status": { "$ref": "#/$defs/evidence_status" },
+        "source_image": { "type": "string" },
+        "observation_id": { "type": "string" },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "note": { "type": "string" }
+      }
+    },
+    "evidence_graph_conflict": {
+      "type": "object",
+      "required": ["type", "severity", "note"],
+      "properties": {
+        "type": { "type": "string" },
+        "severity": { "enum": ["info", "warn", "error"] },
+        "views": { "type": "array", "items": { "type": "string" } },
+        "note": { "type": "string" }
+      }
     }
   }
 }

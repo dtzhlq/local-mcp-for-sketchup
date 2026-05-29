@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-25T07:55:37.154Z",
+  "generated_at": "2026-05-27T07:12:46.896Z",
   "mode": "runtime_diff",
   "source": {
     "output_dsl": "projects/image-structured-modeler/examples/compact-remote/output.json"
@@ -11,8 +11,9 @@
     "reset": 1,
     "material": 4,
     "rounded_box": 2,
-    "button_on_panel": 7,
-    "slot_array": 1,
+    "add_boss": 6,
+    "add_raised_rib": 1,
+    "cut_recess": 5,
     "text_3d": 1,
     "scene": 2,
     "style": 1,
@@ -32,15 +33,16 @@
     },
     "budgets": {},
     "summary": {
-      "total": 9,
+      "total": 13,
       "by_severity": {
         "error": 0,
-        "warn": 9,
+        "warn": 13,
         "info": 0
       },
       "by_type": {
         "snapshot.total_mismatch": 2,
-        "snapshot.metric_mismatch": 7
+        "snapshot.field_mismatch": 2,
+        "snapshot.metric_mismatch": 9
       }
     },
     "top_issues": [
@@ -49,16 +51,52 @@
         "severity": "warn",
         "path": "totals.faces",
         "message": "Snapshot total faces differs",
-        "expected": 529,
-        "actual": 544
+        "expected": 364,
+        "actual": 369
       },
       {
         "type": "snapshot.total_mismatch",
         "severity": "warn",
         "path": "totals.edges",
         "message": "Snapshot total edges differs",
-        "expected": 1234,
-        "actual": 1279
+        "expected": 780,
+        "actual": 1035
+      },
+      {
+        "type": "snapshot.field_mismatch",
+        "severity": "warn",
+        "path": "groups.Compact_Remote_Body_From_Image_Plan.features",
+        "message": "groups.Compact_Remote_Body_From_Image_Plan.features differs",
+        "name": "Compact_Remote_Body_From_Image_Plan",
+        "expected": "null",
+        "actual": "[]"
+      },
+      {
+        "type": "snapshot.metric_mismatch",
+        "severity": "warn",
+        "path": "groups.Compact_Remote_Face_Panel_From_Image_Plan.faces",
+        "message": "groups.Compact_Remote_Face_Panel_From_Image_Plan.faces differs by more than 0",
+        "name": "Compact_Remote_Face_Panel_From_Image_Plan",
+        "expected": 286,
+        "actual": 276
+      },
+      {
+        "type": "snapshot.metric_mismatch",
+        "severity": "warn",
+        "path": "groups.Compact_Remote_Face_Panel_From_Image_Plan.edges",
+        "message": "groups.Compact_Remote_Face_Panel_From_Image_Plan.edges differs by more than 0",
+        "name": "Compact_Remote_Face_Panel_From_Image_Plan",
+        "expected": 576,
+        "actual": 786
+      },
+      {
+        "type": "snapshot.field_mismatch",
+        "severity": "warn",
+        "path": "groups.Remote_Brand_Label_From_Image_Plan.features",
+        "message": "groups.Remote_Brand_Label_From_Image_Plan.features differs",
+        "name": "Remote_Brand_Label_From_Image_Plan",
+        "expected": "null",
+        "actual": "[]"
       },
       {
         "type": "snapshot.metric_mismatch",
@@ -95,33 +133,6 @@
         "name": "Remote_Brand_Label_From_Image_Plan",
         "expected": 5,
         "actual": 3.953614
-      },
-      {
-        "type": "snapshot.metric_mismatch",
-        "severity": "warn",
-        "path": "groups.Remote_Brand_Label_From_Image_Plan.bounding_box.min.0",
-        "message": "groups.Remote_Brand_Label_From_Image_Plan.bounding_box.min.0 differs by more than 1",
-        "name": "Remote_Brand_Label_From_Image_Plan",
-        "expected": -6.7749999999999995,
-        "actual": 0
-      },
-      {
-        "type": "snapshot.metric_mismatch",
-        "severity": "warn",
-        "path": "groups.Remote_Brand_Label_From_Image_Plan.bounding_box.max.0",
-        "message": "groups.Remote_Brand_Label_From_Image_Plan.bounding_box.max.0 differs by more than 1",
-        "name": "Remote_Brand_Label_From_Image_Plan",
-        "expected": 6.7749999999999995,
-        "actual": 15.056634
-      },
-      {
-        "type": "snapshot.metric_mismatch",
-        "severity": "warn",
-        "path": "groups.Remote_Brand_Label_From_Image_Plan.bounding_box.max.1",
-        "message": "groups.Remote_Brand_Label_From_Image_Plan.bounding_box.max.1 differs by more than 1",
-        "name": "Remote_Brand_Label_From_Image_Plan",
-        "expected": 58,
-        "actual": 56.953614
       }
     ],
     "recommendations": [
@@ -133,16 +144,52 @@
         "severity": "warn",
         "path": "totals.faces",
         "message": "Snapshot total faces differs",
-        "expected": 529,
-        "actual": 544
+        "expected": 364,
+        "actual": 369
       },
       {
         "type": "snapshot.total_mismatch",
         "severity": "warn",
         "path": "totals.edges",
         "message": "Snapshot total edges differs",
-        "expected": 1234,
-        "actual": 1279
+        "expected": 780,
+        "actual": 1035
+      },
+      {
+        "type": "snapshot.field_mismatch",
+        "severity": "warn",
+        "path": "groups.Compact_Remote_Body_From_Image_Plan.features",
+        "message": "groups.Compact_Remote_Body_From_Image_Plan.features differs",
+        "expected": "null",
+        "actual": "[]",
+        "name": "Compact_Remote_Body_From_Image_Plan"
+      },
+      {
+        "type": "snapshot.metric_mismatch",
+        "severity": "warn",
+        "path": "groups.Compact_Remote_Face_Panel_From_Image_Plan.faces",
+        "message": "groups.Compact_Remote_Face_Panel_From_Image_Plan.faces differs by more than 0",
+        "expected": 286,
+        "actual": 276,
+        "name": "Compact_Remote_Face_Panel_From_Image_Plan"
+      },
+      {
+        "type": "snapshot.metric_mismatch",
+        "severity": "warn",
+        "path": "groups.Compact_Remote_Face_Panel_From_Image_Plan.edges",
+        "message": "groups.Compact_Remote_Face_Panel_From_Image_Plan.edges differs by more than 0",
+        "expected": 576,
+        "actual": 786,
+        "name": "Compact_Remote_Face_Panel_From_Image_Plan"
+      },
+      {
+        "type": "snapshot.field_mismatch",
+        "severity": "warn",
+        "path": "groups.Remote_Brand_Label_From_Image_Plan.features",
+        "message": "groups.Remote_Brand_Label_From_Image_Plan.features differs",
+        "expected": "null",
+        "actual": "[]",
+        "name": "Remote_Brand_Label_From_Image_Plan"
       },
       {
         "type": "snapshot.metric_mismatch",
@@ -216,10 +263,10 @@
   },
   "expected_snapshot_summary": {
     "totals": {
-      "faces": 529,
-      "edges": 1234,
-      "vertices": 452,
-      "groups": 11,
+      "faces": 364,
+      "edges": 780,
+      "vertices": 128,
+      "groups": 3,
       "instances": 0
     },
     "bounding_box": {
@@ -231,11 +278,11 @@
       "max": [
         22,
         79,
-        15.850000000000001
+        16.599999999999998
       ],
       "w": 44,
       "d": 158,
-      "h": 15.850000000000001
+      "h": 16.599999999999998
     },
     "scenes": [
       "Compact_Remote_Front_Review",
@@ -265,10 +312,10 @@
   },
   "actual_snapshot_summary": {
     "totals": {
-      "faces": 544,
-      "edges": 1279,
-      "vertices": 766,
-      "groups": 11,
+      "faces": 369,
+      "edges": 1035,
+      "vertices": 690,
+      "groups": 3,
       "instances": 0
     },
     "bounding_box": {
@@ -280,11 +327,11 @@
       "max": [
         22,
         79,
-        15.85
+        16.6
       ],
       "w": 44,
       "d": 158,
-      "h": 15.85
+      "h": 16.6
     },
     "scenes": [
       "Compact_Remote_Front_Review",

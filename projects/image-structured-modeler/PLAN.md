@@ -6,43 +6,102 @@
 
 ---
 
-## 当前执行计划（2026-05-25）
+> 说明：本文件上半部分是 2026-05-27 验收复盘后的最新执行顺序；2026-05-29 后的建模架构重构以 `../../docs/product-modeling-architecture-refactor-plan.md` 为主入口；后面的 6 周 Sprint 计划保留为历史 MVP 基线，不再作为发布判定。
 
-当前已完成 Switch 手柄示例的端到端 baseline：`observations.json -> model-plan.json -> output.json -> review/index.html -> output/image-structured-switch-controller.skp`。阶段 6 收口补齐了 correction-driven regression 和第二产品样例：`compact-remote` 通过 `object_profile` 走独立生成/编译路径，证明当前链路不再只依赖 Switch-specific prior。
+## 2026-05-29 架构重构计划入口
+
+下一阶段不是重写主线 runtime，而是把子项目输出从“图像观察 + profile prior 直接生成 DSL”推进到：
+
+```text
+ObservationSet -> EvidenceGraph -> ProductProfile -> PartGraph -> FeatureMappingPlan -> JSON DSL
+```
+
+子项目负责前三到四层：`ObservationSet`、`EvidenceGraph`、`ProductProfile` 和 `PartGraph`。主线继续负责 DSL runtime、mock/queue、operation registry 和 layout/reference QA。详细里程碑和验收标准见 `../../docs/product-modeling-architecture-refactor-plan.md`。
+
+当前状态：
+
+1. R1/R2 第一版已完成：root `ProductProfile` / `PartGraph` schema、`vehicle_ambulance` profile、救护车 part graph 和 part graph compiler 已落地。
+2. 救护车验收 DSL 已从 part graph 编译生成，不再由脚本直接摆放 DSL object。
+3. 下一步优先做 R3 Reference Visual QA，并把 correction target 指向 PartGraph 字段。
+4. 子项目后续接 R4：从 contour/keypoint、跨图 part matching 和尺度校准生成/更新 PartGraph。
+
+## 当前执行计划（2026-05-27）
+
+当前已完成 Switch 手柄示例的端到端 baseline：`observations.json -> model-plan.json -> output.json -> review/index.html -> output/image-structured-switch-controller.skp`。阶段 6 收口补齐了 correction-driven regression 和第二产品样例：`compact-remote` 通过 `object_profile` 走独立生成/编译路径。
+
+本轮验收后，执行目标调整：子项目暂不作为可发布阶段提交，先作为技术预览继续攻关。当前 Switch 链路读取了多张图，但模型生成仍高度依赖 Switch layout prior；它不是多图联合理解后的三维重建。救护车验收模型是人工综合多图后手写 DSL，也不代表子项目已经具备自动多视角融合能力。
 
 执行顺序：
 
-1. **稳住 baseline**
+1. **修正发布边界**
+   - 文档和 review artifact 明确区分：图片证据、模板补全、人工确认。
+   - 单图输入不能静默生成和多图同等完整/同等可信的模型。
+   - 子项目状态改为技术预览，不进入正式发布提交。
+   - 2026-05-25 已完成第一切片：schema、model-plan、manual corrections、review report 和测试门禁均接入 `evidence_status` / `template_prior` / `manual_confirmed`；per-image 单图产物会记录 open question 和 template-prior parts。
+
+2. **补跨图融合**
+   - 建立 evidence graph：每个 part 记录来自哪些视图。
+   - 记录轮廓、厚度、前后表面、按钮/开孔/凹槽/凸起的来源。
+   - 记录冲突和 open questions。
+   - 2026-05-25 已完成第一切片：`model-plan.review.evidence_graph` 派生 required/confirmed/missing views、sources、conflicts 和 part-level open questions；review report 与 per-image summary 已展示/记录该 graph。
+   - 2026-05-27 已完成第二切片：`observations.json` 原生保存 `evidence_graph`，model-plan 优先合并 observation graph，并把 template-prior / feature fallback conflicts、open questions 和 correction suggestions 展示到 review artifact。后续仍需做真正图像侧跨图冲突检测和基于 graph 的生成器重构。
+   - 2026-05-27 已完成第三切片：`model-plan.review.semantic_fusion` 把 graph evidence 融合为 per-part `status` / `decision` / `confidence` / semantic evidence / feature mapping signals / review flags，Switch 和 compact remote artifacts 已刷新并纳入 `test:image-structured`。
+
+3. **补凹凸/特征语义**
+   - 在 observation/model-plan/corrections 中增加 `concave`、`convex`、`flush`、`decal/printed`、`through_hole`、`blind_recess`。
+   - 编译器根据语义选择真实 feature operations；主线不支持时必须显式降级。
+   - 2026-05-27 已完成第一切片：`blind_recess -> cut_recess`、`through_hole -> cut_hole`、`convex -> add_boss/add_raised_rib` 已进入 compact remote 编译路径；review report 会显示 real feature op 或 fallback 状态。
+
+4. **产品化人工修正**
+   - `manual-corrections.json` 支持 part 参数、证据状态、凹凸语义和 feature mapping。
+   - review report 显示 part id、参数、evidence、模板来源和 Correction Patch Suggestions。
+   - 2026-05-27 已完成 authoring data 第一切片：`model-plan.review.correction_suggestions` 给出可复制的 `manual-corrections.json` patch 骨架。
+   - 2026-05-27 已完成交互式工作台切片：review HTML 新增 Corrections Workbench，可选择建议、编辑 JSON、校验、复制和下载 `manual-corrections.workbench.json`。
+
+5. **稳住 baseline**
    - 修复测试/验证链路。
    - 同步 `MEMO.md`、`QUEUE_VERIFICATION.md` 和真实产物指标。
    - 建立 mock/queue snapshot 对照报告。
    - 将 warning 分成 expected contact、intentional shallow overlap、real collision、bbox false positive。
 
-2. **增强建模证据**
+6. **增强建模证据**
    - 从 edge sample 提升到 contour/polyline。
    - 提取 keypoints：外壳角点、按钮中心、摇杆中心、肩键边界。
    - 生成 component candidates：shell、center grip、thumbstick、button cluster、screw、rail。
    - 参考 Free2CAD 的约束思路增加对称轴、平行边、同心圆、等距按钮阵列检测。
 
-3. **产品化人工修正**
-   - 扩展 `manual-corrections.json`，支持修改 part 参数。
-   - 给 part 标记 `visually_detected` / `inferred` / `manually_confirmed`。
-   - review report 显示 part id、参数、evidence 和 correction 示例。
-   - 增加 correction-driven regression tests。**已完成第一条回归：Switch regression fixture 会验证 corrections 改变 model plan 和 compiled DSL。**
+7. **提升 SketchUp 几何质量**
+   - 依赖主线 MCP 的 `cut_hole`、`cut_slot`、`cut_recess`、`add_boss`、`add_raised_rib`。
+   - 编译器根据 evidence/part 参数选择真实 feature operation，而不是视觉 marker。
+   - 已完成第一批消费：compact remote 的 button/rocker/grille 会编译为 `add_boss` / `add_raised_rib` / `cut_recess`；manual-correction regression 覆盖 decal marker 切换到真实 `cut_recess`。
 
-4. **提升 SketchUp 几何质量**
+8. **开始泛化**
+   - 在特征编辑和多图融合稳定后增加第三产品样例。
+   - 将 Switch-specific prior 收敛到可解释、可降级的 profile。
+   - 抽象通用 part taxonomy。
+   - 评估是否接入 VLM，只用于语义判断，不替代几何测量。
+
+已完成/保留的原计划能力：
+
+1. **产品化人工修正**
+   - 扩展 `manual-corrections.json`，支持修改 part 参数。
+   - 给 part 标记 `observed` / `inferred` / `template_prior` / `manual_confirmed`，并保留旧 `visually_detected` / `inferred` / `manually_confirmed` 兼容字段。
+   - review report 显示 part id、参数、evidence sources、evidence graph、模板来源、feature semantics 和 Correction Patch Suggestions。
+   - 增加 correction-driven regression tests。**已完成第一条回归：Switch regression fixture 会验证 corrections 改变 model plan、evidence status 和 compiled DSL。**
+
+2. **提升 SketchUp 几何质量**
    - 补 `button_on_panel`、`recess`、`screw_hole`、`slot`、`beveled_panel`、`shell_from_front_side_profiles`。
    - 编译器根据 evidence/part 参数选择 primitive。
    - 用 recess/contact metadata 降低粗 overlap warning。
 
-5. **开始泛化**
+3. **开始泛化**
    - 增加第二个产品样例。
    - 将 Switch-specific prior 收敛到 `object_profile`。
    - 抽象通用 part taxonomy。
    - 评估是否接入 VLM，只用于语义判断，不替代几何测量。
    - **已完成第一条第二产品样例：`examples/compact-remote` 能生成 model plan、DSL、review report 和 mock snapshot。**
 
-当前第一步已完成，并已执行第一轮 overlap reduction：
+历史 baseline 稳定工作已完成，并已执行第一轮 overlap reduction：
 
 - `npm run test:image-structured` 的 Ajv import 卡住问题已修复，验证脚本改为项目内轻量 JSON Schema subset validator。
 - 已新增 `image-structured:snapshot-switch`，默认生成 mock snapshot report。
@@ -110,7 +169,7 @@
 └────────────────────────┬────────────────────────────────────┘
                          ▼
 ┌─────────────────────────────────────────────────────────────┐
-│  PHASE 6 │ 文档 + 发布                                        │
+│  PHASE 6 │ 文档 + 技术预览收口                                │
 │  · 更新主 README 链接                                         │
 │  · 写技术发布文章                                              │
 │  · 新增 golden example (image-structured-modeler 专用)        │
@@ -118,6 +177,8 @@
 ```
 
 ---
+
+以下 Sprint 0-3 是 2026-05-11 初始计划，保留用于追踪当时的目标和取舍；2026-05-25 之后的实际执行以“当前执行计划”为准。
 
 ## Sprint 0 (Day 1-2): 快速原型验证
 
@@ -242,9 +303,9 @@
 | 图像分析精度不够 | Phase 1-2 产出差 | **混合策略**：传统 CV 负责几何，VLM 负责语义；先做半自动 |
 | VLM 成本高/延迟大 | 实时性差 | 规则兜底：VLM 只用于部件类型判断，几何计算仍用传统 CV |
 | Free2CAD 约束检测难以迁移 | Sprint 2 延期 | Sprint 0 先验证；若不行改用规则-based 约束检测 |
-| SketchUp DSL 新 primitive 未实现 | Phase 4 阻塞 | 先用 mesh/polygon approximation，后替换 |
+| SketchUp DSL 新 feature operation 覆盖仍有限 | Phase 4/阶段 7 阻塞 | 主线 `cut_*` / `add_*` 第一刀和 CAD boolean/manifold 已可用，子项目 compact remote 已接入真实映射；复杂曲面、文字贴合和更多产品样例复验仍显式保留为后续风险 |
 | 文件体积过大 | 产品模型 > 20MB | 强制 component 复用 + resolution_hint |
-| 时间不够 | 6 周做不完 | MVP 砍到只做 Switch 手柄一个 case，其他延后 |
+| 时间不够 | 正式发布延期 | 保持技术预览口径，先完成真实特征编辑和图像侧语义融合，再扩样例 |
 
 ## 关键原则（不变）
 
@@ -275,4 +336,4 @@
 
 ---
 
-*计划创建于 2026-05-11。下次 review：Sprint 1 结束时 (2026-05-25)。*
+*计划创建于 2026-05-11。2026-05-27 已复盘并调整为技术预览收口；当前 semantic fusion、交互式 corrections 工作台和主线 CAD boolean/manifold 已完成，下次 review：更多产品样例复验后。*

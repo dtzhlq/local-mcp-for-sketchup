@@ -1,0 +1,805 @@
+{
+  "version": 1,
+  "units": "mm",
+  "operations": [
+    {
+      "op": "reset"
+    },
+    {
+      "op": "material",
+      "name": "Warm_White_Plastic",
+      "color": "#e8ece8",
+      "workflow": "pbr_metallic_roughness",
+      "pbr": {
+        "metallic_factor": 0.02,
+        "roughness_factor": 0.38,
+        "ao_strength": 0.45
+      }
+    },
+    {
+      "op": "material",
+      "name": "Satin_Black_Plastic",
+      "color": "#111214",
+      "workflow": "pbr_metallic_roughness",
+      "pbr": {
+        "metallic_factor": 0.03,
+        "roughness_factor": 0.46,
+        "ao_strength": 0.65
+      }
+    },
+    {
+      "op": "material",
+      "name": "Gloss_Black_Button",
+      "color": "#050506",
+      "workflow": "pbr_metallic_roughness",
+      "pbr": {
+        "metallic_factor": 0.02,
+        "roughness_factor": 0.18,
+        "ao_strength": 0.55
+      }
+    },
+    {
+      "op": "material",
+      "name": "Rubber_Thumbstick",
+      "color": "#161719",
+      "workflow": "pbr_metallic_roughness",
+      "pbr": {
+        "metallic_factor": 0.01,
+        "roughness_factor": 0.75,
+        "ao_strength": 0.75
+      }
+    },
+    {
+      "op": "material",
+      "name": "Indicator_Green",
+      "color": "#43d17a"
+    },
+    {
+      "op": "material",
+      "name": "Dark_Seam",
+      "color": "#282a2d"
+    },
+    {
+      "op": "component_definition",
+      "name": "Switch_LED_Def",
+      "size": [
+        6,
+        2,
+        1.6
+      ],
+      "material": "Indicator_Green"
+    },
+    {
+      "op": "rounded_box",
+      "name": "Left_Joycon_Shell_From_Image_Plan",
+      "origin": [
+        -140,
+        -77.5,
+        0
+      ],
+      "size": [
+        92,
+        155,
+        24.36
+      ],
+      "radius": 18,
+      "segments": 8,
+      "material": "Warm_White_Plastic",
+      "smooth": "all",
+      "qa": {
+        "role": "shell",
+        "part_id": "left_joycon_shell",
+        "expected_contacts": []
+      }
+    },
+    {
+      "op": "rounded_box",
+      "name": "Right_Joycon_Shell_From_Image_Plan",
+      "origin": [
+        48,
+        -77.5,
+        0
+      ],
+      "size": [
+        92,
+        155,
+        24.36
+      ],
+      "radius": 18,
+      "segments": 8,
+      "material": "Warm_White_Plastic",
+      "smooth": "all",
+      "qa": {
+        "role": "shell",
+        "part_id": "right_joycon_shell",
+        "expected_contacts": []
+      }
+    },
+    {
+      "op": "rounded_box",
+      "name": "Center_Grip_Body_From_Image_Plan",
+      "origin": [
+        -48,
+        -72.85,
+        0
+      ],
+      "size": [
+        96,
+        145.7,
+        22.68
+      ],
+      "radius": 11,
+      "segments": 6,
+      "material": "Satin_Black_Plastic",
+      "smooth": "all"
+    },
+    {
+      "op": "rounded_box",
+      "name": "Center_Front_Recess_From_Image_Plan",
+      "origin": [
+        -34,
+        -55.8,
+        25.01
+      ],
+      "size": [
+        68,
+        111.6,
+        2.5
+      ],
+      "radius": 6,
+      "segments": 5,
+      "material": "Dark_Seam",
+      "smooth": "all"
+    },
+    {
+      "op": "domed_surface",
+      "name": "Left_Joycon_Face_Dome_From_Image_Plan",
+      "origin": [
+        -132,
+        -58.5,
+        24.41
+      ],
+      "width": 78,
+      "depth": 117,
+      "thickness": 2,
+      "crown_height": 1.5,
+      "segments_x": 6,
+      "segments_y": 8,
+      "material": "Warm_White_Plastic",
+      "smooth": "all",
+      "qa": {
+        "role": "face_dome",
+        "part_id": "left_joycon_face_dome",
+        "expected_contacts": [
+          {
+            "with": "Left_Joycon_Shell_From_Image_Plan",
+            "bucket": "intentional_shallow_overlap",
+            "note": "Face dome is a cosmetic skin layered onto the controller shell."
+          }
+        ]
+      }
+    },
+    {
+      "op": "domed_surface",
+      "name": "Right_Joycon_Face_Dome_From_Image_Plan",
+      "origin": [
+        54,
+        -58.5,
+        24.41
+      ],
+      "width": 78,
+      "depth": 117,
+      "thickness": 2,
+      "crown_height": 1.5,
+      "segments_x": 6,
+      "segments_y": 8,
+      "material": "Warm_White_Plastic",
+      "smooth": "all",
+      "qa": {
+        "role": "face_dome",
+        "part_id": "right_joycon_face_dome",
+        "expected_contacts": [
+          {
+            "with": "Right_Joycon_Shell_From_Image_Plan",
+            "bucket": "intentional_shallow_overlap",
+            "note": "Face dome is a cosmetic skin layered onto the controller shell."
+          }
+        ]
+      }
+    },
+    {
+      "op": "bowed_panel",
+      "name": "Left_Rear_Grip_From_Image_Plan",
+      "origin": [
+        -122,
+        77.5,
+        2
+      ],
+      "width": 52,
+      "height": 33.6,
+      "thickness": 2,
+      "bow_depth": 10,
+      "segments_x": 6,
+      "segments_z": 4,
+      "material": "Satin_Black_Plastic",
+      "smooth": "all",
+      "qa": {
+        "role": "rear_grip",
+        "part_id": "left_rear_grip",
+        "expected_contacts": [
+          {
+            "with": "Left_Joycon_Shell_From_Image_Plan",
+            "bucket": "expected_grip_attachment",
+            "note": "Rear grip intentionally contacts the shell rear face without bbox penetration."
+          }
+        ]
+      }
+    },
+    {
+      "op": "bowed_panel",
+      "name": "Right_Rear_Grip_From_Image_Plan",
+      "origin": [
+        70,
+        77.5,
+        2
+      ],
+      "width": 52,
+      "height": 33.6,
+      "thickness": 2,
+      "bow_depth": 10,
+      "segments_x": 6,
+      "segments_z": 4,
+      "material": "Satin_Black_Plastic",
+      "smooth": "all",
+      "qa": {
+        "role": "rear_grip",
+        "part_id": "right_rear_grip",
+        "expected_contacts": [
+          {
+            "with": "Right_Joycon_Shell_From_Image_Plan",
+            "bucket": "expected_grip_attachment",
+            "note": "Rear grip intentionally contacts the shell rear face without bbox penetration."
+          }
+        ]
+      }
+    },
+    {
+      "op": "rounded_box",
+      "name": "Top_Left_Shoulder_Rail_From_Image_Plan",
+      "origin": [
+        -124,
+        -84.5,
+        22.36
+      ],
+      "size": [
+        76,
+        7,
+        6
+      ],
+      "radius": 3,
+      "segments": 4,
+      "material": "Satin_Black_Plastic",
+      "smooth": "all"
+    },
+    {
+      "op": "rounded_box",
+      "name": "Top_Right_Shoulder_Rail_From_Image_Plan",
+      "origin": [
+        48,
+        -84.5,
+        22.36
+      ],
+      "size": [
+        76,
+        7,
+        6
+      ],
+      "radius": 3,
+      "segments": 4,
+      "material": "Satin_Black_Plastic",
+      "smooth": "all"
+    },
+    {
+      "op": "analog_stick",
+      "name": "Left_Thumbstick_From_Image_Plan",
+      "origin": [
+        -92,
+        -20,
+        28.01
+      ],
+      "profile": [
+        [
+          0,
+          7.92
+        ],
+        [
+          5.035799999999999,
+          11
+        ],
+        [
+          11.989999999999998,
+          9.5
+        ]
+      ],
+      "segments": 18,
+      "material": "Rubber_Thumbstick",
+      "smooth": "all",
+      "qa": {
+        "role": "thumbstick",
+        "part_id": "Left_Thumbstick_From_Image_Plan",
+        "expected_contacts": [
+          {
+            "with": "Left_Joycon_Face_Dome_From_Image_Plan",
+            "bucket": "expected_mounted_detail",
+            "note": "Mounted controls intentionally sit on the face panel and share bbox volume with it."
+          }
+        ]
+      }
+    },
+    {
+      "op": "analog_stick",
+      "name": "Right_Thumbstick_From_Image_Plan",
+      "origin": [
+        72,
+        34,
+        28.01
+      ],
+      "profile": [
+        [
+          0,
+          7.56
+        ],
+        [
+          5.035799999999999,
+          10.5
+        ],
+        [
+          11.989999999999998,
+          9
+        ]
+      ],
+      "segments": 18,
+      "material": "Rubber_Thumbstick",
+      "smooth": "all",
+      "qa": {
+        "role": "thumbstick",
+        "part_id": "Right_Thumbstick_From_Image_Plan",
+        "expected_contacts": [
+          {
+            "with": "Right_Joycon_Face_Dome_From_Image_Plan",
+            "bucket": "expected_mounted_detail",
+            "note": "Mounted controls intentionally sit on the face panel and share bbox volume with it."
+          }
+        ]
+      }
+    },
+    {
+      "op": "button_on_panel",
+      "name": "ABXY_X_Button_From_Image_Plan",
+      "center": [
+        104,
+        -36,
+        28.01
+      ],
+      "radius": 5.8,
+      "height": 3.8,
+      "segments": 16,
+      "material": "Gloss_Black_Button",
+      "smooth": "all",
+      "qa": {
+        "role": "button",
+        "part_id": "ABXY_X_Button_From_Image_Plan",
+        "expected_contacts": [
+          {
+            "with": "Right_Joycon_Face_Dome_From_Image_Plan",
+            "bucket": "expected_mounted_detail",
+            "note": "Mounted controls intentionally sit on the face panel and share bbox volume with it."
+          }
+        ]
+      }
+    },
+    {
+      "op": "button_on_panel",
+      "name": "ABXY_Y_Button_From_Image_Plan",
+      "center": [
+        88,
+        -20,
+        28.01
+      ],
+      "radius": 5.8,
+      "height": 3.8,
+      "segments": 16,
+      "material": "Gloss_Black_Button",
+      "smooth": "all",
+      "qa": {
+        "role": "button",
+        "part_id": "ABXY_Y_Button_From_Image_Plan",
+        "expected_contacts": [
+          {
+            "with": "Right_Joycon_Face_Dome_From_Image_Plan",
+            "bucket": "expected_mounted_detail",
+            "note": "Mounted controls intentionally sit on the face panel and share bbox volume with it."
+          }
+        ]
+      }
+    },
+    {
+      "op": "button_on_panel",
+      "name": "ABXY_A_Button_From_Image_Plan",
+      "center": [
+        120,
+        -20,
+        28.01
+      ],
+      "radius": 5.8,
+      "height": 3.8,
+      "segments": 16,
+      "material": "Gloss_Black_Button",
+      "smooth": "all",
+      "qa": {
+        "role": "button",
+        "part_id": "ABXY_A_Button_From_Image_Plan",
+        "expected_contacts": [
+          {
+            "with": "Right_Joycon_Face_Dome_From_Image_Plan",
+            "bucket": "expected_mounted_detail",
+            "note": "Mounted controls intentionally sit on the face panel and share bbox volume with it."
+          }
+        ]
+      }
+    },
+    {
+      "op": "button_on_panel",
+      "name": "ABXY_B_Button_From_Image_Plan",
+      "center": [
+        104,
+        -4,
+        28.01
+      ],
+      "radius": 5.8,
+      "height": 3.8,
+      "segments": 16,
+      "material": "Gloss_Black_Button",
+      "smooth": "all",
+      "qa": {
+        "role": "button",
+        "part_id": "ABXY_B_Button_From_Image_Plan",
+        "expected_contacts": [
+          {
+            "with": "Right_Joycon_Face_Dome_From_Image_Plan",
+            "bucket": "expected_mounted_detail",
+            "note": "Mounted controls intentionally sit on the face panel and share bbox volume with it."
+          }
+        ]
+      }
+    },
+    {
+      "op": "button_on_panel",
+      "name": "Left_L1_Button_From_Image_Plan",
+      "center": [
+        -122,
+        20,
+        28.01
+      ],
+      "radius": 4.8,
+      "height": 3.4,
+      "segments": 14,
+      "material": "Gloss_Black_Button",
+      "smooth": "all",
+      "qa": {
+        "role": "button",
+        "part_id": "Left_L1_Button_From_Image_Plan",
+        "expected_contacts": [
+          {
+            "with": "Left_Joycon_Face_Dome_From_Image_Plan",
+            "bucket": "expected_mounted_detail",
+            "note": "Mounted controls intentionally sit on the face panel and share bbox volume with it."
+          }
+        ]
+      }
+    },
+    {
+      "op": "button_on_panel",
+      "name": "Left_L2_Button_From_Image_Plan",
+      "center": [
+        -108,
+        8,
+        28.01
+      ],
+      "radius": 4.8,
+      "height": 3.4,
+      "segments": 14,
+      "material": "Gloss_Black_Button",
+      "smooth": "all",
+      "qa": {
+        "role": "button",
+        "part_id": "Left_L2_Button_From_Image_Plan",
+        "expected_contacts": [
+          {
+            "with": "Left_Joycon_Face_Dome_From_Image_Plan",
+            "bucket": "expected_mounted_detail",
+            "note": "Mounted controls intentionally sit on the face panel and share bbox volume with it."
+          }
+        ]
+      }
+    },
+    {
+      "op": "button_on_panel",
+      "name": "Left_L3_Button_From_Image_Plan",
+      "center": [
+        -94,
+        20,
+        28.01
+      ],
+      "radius": 4.8,
+      "height": 3.4,
+      "segments": 14,
+      "material": "Gloss_Black_Button",
+      "smooth": "all",
+      "qa": {
+        "role": "button",
+        "part_id": "Left_L3_Button_From_Image_Plan",
+        "expected_contacts": [
+          {
+            "with": "Left_Joycon_Face_Dome_From_Image_Plan",
+            "bucket": "expected_mounted_detail",
+            "note": "Mounted controls intentionally sit on the face panel and share bbox volume with it."
+          }
+        ]
+      }
+    },
+    {
+      "op": "button_on_panel",
+      "name": "Left_L4_Button_From_Image_Plan",
+      "center": [
+        -108,
+        32,
+        28.01
+      ],
+      "radius": 4.8,
+      "height": 3.4,
+      "segments": 14,
+      "material": "Gloss_Black_Button",
+      "smooth": "all",
+      "qa": {
+        "role": "button",
+        "part_id": "Left_L4_Button_From_Image_Plan",
+        "expected_contacts": [
+          {
+            "with": "Left_Joycon_Face_Dome_From_Image_Plan",
+            "bucket": "expected_mounted_detail",
+            "note": "Mounted controls intentionally sit on the face panel and share bbox volume with it."
+          }
+        ]
+      }
+    },
+    {
+      "op": "component_instance",
+      "name": "Center_LED_1_From_Image_Plan",
+      "definition": "Switch_LED_Def",
+      "origin": [
+        -18,
+        55.5,
+        28.01
+      ]
+    },
+    {
+      "op": "component_instance",
+      "name": "Center_LED_2_From_Image_Plan",
+      "definition": "Switch_LED_Def",
+      "origin": [
+        -6,
+        55.5,
+        28.01
+      ]
+    },
+    {
+      "op": "component_instance",
+      "name": "Center_LED_3_From_Image_Plan",
+      "definition": "Switch_LED_Def",
+      "origin": [
+        6,
+        55.5,
+        28.01
+      ]
+    },
+    {
+      "op": "component_instance",
+      "name": "Center_LED_4_From_Image_Plan",
+      "definition": "Switch_LED_Def",
+      "origin": [
+        18,
+        55.5,
+        28.01
+      ]
+    },
+    {
+      "op": "screw_hole",
+      "name": "Screw_Top_Left_From_Image_Plan",
+      "center": [
+        -118,
+        -59.5,
+        29.21
+      ],
+      "radius": 1.8,
+      "depth": 1.2,
+      "head_radius": 2.4,
+      "head_depth": 0.45,
+      "segments": 12,
+      "material": "Dark_Seam",
+      "smooth": "all",
+      "qa": {
+        "role": "screw",
+        "part_id": "Screw_Top_Left_From_Image_Plan",
+        "expected_contacts": [
+          {
+            "with": "Left_Joycon_Face_Dome_From_Image_Plan",
+            "bucket": "expected_mounted_detail",
+            "note": "Screws are mounted on the face panel and share bbox volume with it."
+          }
+        ]
+      }
+    },
+    {
+      "op": "screw_hole",
+      "name": "Screw_Bottom_Left_From_Image_Plan",
+      "center": [
+        -116,
+        54.5,
+        29.21
+      ],
+      "radius": 1.8,
+      "depth": 1.2,
+      "head_radius": 2.4,
+      "head_depth": 0.45,
+      "segments": 12,
+      "material": "Dark_Seam",
+      "smooth": "all",
+      "qa": {
+        "role": "screw",
+        "part_id": "Screw_Bottom_Left_From_Image_Plan",
+        "expected_contacts": [
+          {
+            "with": "Left_Joycon_Face_Dome_From_Image_Plan",
+            "bucket": "expected_mounted_detail",
+            "note": "Screws are mounted on the face panel and share bbox volume with it."
+          },
+          {
+            "with": "Left_Rear_Grip_From_Image_Plan",
+            "bucket": "expected_grip_attachment",
+            "note": "Bottom screw sits near the rear grip attachment volume."
+          }
+        ]
+      }
+    },
+    {
+      "op": "screw_hole",
+      "name": "Screw_Top_Right_From_Image_Plan",
+      "center": [
+        116,
+        -59.5,
+        29.21
+      ],
+      "radius": 1.8,
+      "depth": 1.2,
+      "head_radius": 2.4,
+      "head_depth": 0.45,
+      "segments": 12,
+      "material": "Dark_Seam",
+      "smooth": "all",
+      "qa": {
+        "role": "screw",
+        "part_id": "Screw_Top_Right_From_Image_Plan",
+        "expected_contacts": [
+          {
+            "with": "Right_Joycon_Face_Dome_From_Image_Plan",
+            "bucket": "expected_mounted_detail",
+            "note": "Screws are mounted on the face panel and share bbox volume with it."
+          }
+        ]
+      }
+    },
+    {
+      "op": "screw_hole",
+      "name": "Screw_Bottom_Right_From_Image_Plan",
+      "center": [
+        118,
+        54.5,
+        29.21
+      ],
+      "radius": 1.8,
+      "depth": 1.2,
+      "head_radius": 2.4,
+      "head_depth": 0.45,
+      "segments": 12,
+      "material": "Dark_Seam",
+      "smooth": "all",
+      "qa": {
+        "role": "screw",
+        "part_id": "Screw_Bottom_Right_From_Image_Plan",
+        "expected_contacts": [
+          {
+            "with": "Right_Joycon_Face_Dome_From_Image_Plan",
+            "bucket": "expected_mounted_detail",
+            "note": "Screws are mounted on the face panel and share bbox volume with it."
+          },
+          {
+            "with": "Right_Rear_Grip_From_Image_Plan",
+            "bucket": "expected_grip_attachment",
+            "note": "Bottom screw sits near the rear grip attachment volume."
+          }
+        ]
+      }
+    },
+    {
+      "op": "scene",
+      "name": "Image_Structured_Front_Review",
+      "camera": {
+        "eye": [
+          0,
+          -520,
+          220
+        ],
+        "target": [
+          0,
+          0,
+          20
+        ],
+        "up": [
+          0,
+          0,
+          1
+        ],
+        "fov": 34
+      }
+    },
+    {
+      "op": "scene",
+      "name": "Image_Structured_Top_QA",
+      "camera": {
+        "eye": [
+          0,
+          0,
+          620
+        ],
+        "target": [
+          0,
+          0,
+          18
+        ],
+        "up": [
+          0,
+          1,
+          0
+        ],
+        "fov": 32
+      }
+    },
+    {
+      "op": "style",
+      "name": "Image_Structured_Product_Review",
+      "display_edges": true,
+      "profiles": true,
+      "profile_width": 2,
+      "face_style": "shaded_with_textures",
+      "background_color": "#f4f5f7",
+      "sky_color": "#eef6ff",
+      "ground_color": "#d9dde2"
+    },
+    {
+      "op": "shadow",
+      "display": true,
+      "time": "2026-05-13T10:30:00+08:00",
+      "light": 78,
+      "dark": 42,
+      "use_sun_for_shading": true
+    },
+    {
+      "op": "rendering_options",
+      "edge_display_mode": 1,
+      "draw_hidden_geometry": false,
+      "display_color_by_layer": false,
+      "transparency": false
+    }
+  ]
+}

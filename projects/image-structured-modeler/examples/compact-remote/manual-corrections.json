@@ -18,6 +18,9 @@
       "parameters": {
         "corner_radius": 10.5
       },
+      "evidence_status": "manual_confirmed",
+      "manual_confirmed": true,
+      "feature_semantics": ["flush"],
       "evidence_note": "Reviewer confirmed a soft handheld corner radius from the front silhouette."
     },
     {
@@ -32,6 +35,10 @@
           { "label": "Play", "center": [0, 4], "radius": 3.6 }
         ]
       },
+      "evidence_status": "manual_confirmed",
+      "manual_confirmed": true,
+      "template_prior": false,
+      "feature_semantics": ["convex"],
       "evidence_note": "Reviewer split the visible cluster into five round buttons."
     },
     {
@@ -42,6 +49,15 @@
         "center": [0, 53],
         "height": 5,
         "extrusion": 0.45
+      },
+      "evidence_status": "manual_confirmed",
+      "manual_confirmed": true,
+      "template_prior": false,
+      "feature_semantics": ["decal_printed"],
+      "feature_mapping": {
+        "operation": "text_3d",
+        "fallback": "visual_marker",
+        "note": "Brand label is review-confirmed text; solid engraving is deferred."
       },
       "evidence_note": "Reviewer confirmed a short brand label near the lower face."
     }

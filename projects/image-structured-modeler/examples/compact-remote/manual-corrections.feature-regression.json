@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "object_profile": "compact_remote",
+  "notes": [
+    "Regression fixture: proves manual corrections can remap a decal/marker feature to a real face feature op without code changes."
+  ],
+  "scale": {
+    "known_width": 44,
+    "known_height": 158,
+    "known_depth": 16,
+    "confidence": 0.78
+  },
+  "parts": [
+    {
+      "id": "brand_label",
+      "action": "update",
+      "parameters": {
+        "center": [0, 53],
+        "size": [18, 5],
+        "depth": 0.45,
+        "radius": 1.2
+      },
+      "evidence_status": "manual_confirmed",
+      "manual_confirmed": true,
+      "template_prior": false,
+      "feature_semantics": ["blind_recess"],
+      "evidence_note": "Reviewer changed the printed label marker into a shallow recessed label pocket."
+    }
+  ],
+  "review": {
+    "open_questions": [
+      "Feature regression should compile brand_label as cut_recess, not text_3d."
+    ]
+  }
+}

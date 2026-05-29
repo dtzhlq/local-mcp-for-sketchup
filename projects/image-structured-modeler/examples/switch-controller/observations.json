@@ -3,6 +3,7 @@
   "object": {
     "type": "game_controller",
     "name": "Switch Joy-Con Grip Controller",
+    "profile": "switch_controller",
     "source_images": [
       "test/手柄/IMG_0152.jpeg",
       "test/手柄/IMG_0153.jpeg",
@@ -29566,6 +29567,397 @@
       }
     }
   ],
+  "evidence_graph": {
+    "version": 1,
+    "image_count": 6,
+    "views_detected": [
+      "oblique",
+      "right",
+      "rear",
+      "front"
+    ],
+    "missing_views": [
+      "top"
+    ],
+    "parts": [
+      {
+        "part_id": "center_grip_body",
+        "status": "observed",
+        "template_prior": true,
+        "manual_confirmed": false,
+        "required_views": [
+          "front",
+          "rear"
+        ],
+        "confirmed_views": [
+          "rear",
+          "front"
+        ],
+        "missing_views": [],
+        "sources": [
+          {
+            "view": "rear_photo",
+            "view_kind": "rear",
+            "kind": "silhouette",
+            "status": "observed",
+            "source_image": "test/手柄/IMG_0154.jpeg",
+            "observation_id": "rear_center_plate_candidate",
+            "confidence": 0.6,
+            "note": "Likely central rear plate from rear layout."
+          },
+          {
+            "view": "front_photo",
+            "view_kind": "front",
+            "kind": "silhouette",
+            "status": "observed",
+            "source_image": "test/手柄/IMG_0156.jpeg",
+            "observation_id": "front_center_grip_candidate",
+            "confidence": 0.62,
+            "note": "Template candidate from known game-controller front layout."
+          }
+        ],
+        "conflicts": [
+          {
+            "type": "template_candidate_used",
+            "severity": "info",
+            "views": [
+              "rear",
+              "front"
+            ],
+            "note": "One or more candidate records came from a layout/template heuristic."
+          }
+        ],
+        "open_questions": [
+          "center_grip_body: review template-derived candidate boxes before accepting dimensions."
+        ]
+      },
+      {
+        "part_id": "left_joycon_shell",
+        "status": "observed",
+        "template_prior": true,
+        "manual_confirmed": false,
+        "required_views": [
+          "front"
+        ],
+        "confirmed_views": [
+          "front"
+        ],
+        "missing_views": [],
+        "sources": [
+          {
+            "view": "front_photo",
+            "view_kind": "front",
+            "kind": "silhouette",
+            "status": "observed",
+            "source_image": "test/手柄/IMG_0156.jpeg",
+            "observation_id": "front_left_shell_candidate",
+            "confidence": 0.62,
+            "note": "Template candidate from known game-controller front layout."
+          }
+        ],
+        "conflicts": [
+          {
+            "type": "template_candidate_used",
+            "severity": "info",
+            "views": [
+              "front"
+            ],
+            "note": "One or more candidate records came from a layout/template heuristic."
+          }
+        ],
+        "open_questions": [
+          "left_joycon_shell: review template-derived candidate boxes before accepting dimensions."
+        ]
+      },
+      {
+        "part_id": "right_joycon_shell",
+        "status": "observed",
+        "template_prior": true,
+        "manual_confirmed": false,
+        "required_views": [
+          "front"
+        ],
+        "confirmed_views": [
+          "front"
+        ],
+        "missing_views": [],
+        "sources": [
+          {
+            "view": "front_photo",
+            "view_kind": "front",
+            "kind": "silhouette",
+            "status": "observed",
+            "source_image": "test/手柄/IMG_0156.jpeg",
+            "observation_id": "front_right_shell_candidate",
+            "confidence": 0.62,
+            "note": "Template candidate from known game-controller front layout."
+          }
+        ],
+        "conflicts": [
+          {
+            "type": "template_candidate_used",
+            "severity": "info",
+            "views": [
+              "front"
+            ],
+            "note": "One or more candidate records came from a layout/template heuristic."
+          }
+        ],
+        "open_questions": [
+          "right_joycon_shell: review template-derived candidate boxes before accepting dimensions."
+        ]
+      },
+      {
+        "part_id": "rear_grip_pair",
+        "status": "observed",
+        "template_prior": true,
+        "manual_confirmed": false,
+        "required_views": [
+          "rear",
+          "right"
+        ],
+        "confirmed_views": [
+          "right",
+          "rear"
+        ],
+        "missing_views": [],
+        "sources": [
+          {
+            "view": "side_photo",
+            "view_kind": "right",
+            "kind": "silhouette",
+            "status": "observed",
+            "source_image": "test/手柄/IMG_0153.jpeg",
+            "observation_id": "side_depth_profile_candidate",
+            "confidence": 0.58,
+            "note": "Side-view depth/thickness profile candidate."
+          },
+          {
+            "view": "rear_photo",
+            "view_kind": "rear",
+            "kind": "silhouette",
+            "status": "observed",
+            "source_image": "test/手柄/IMG_0154.jpeg",
+            "observation_id": "rear_left_grip_candidate",
+            "confidence": 0.68,
+            "note": "Likely left rear grip silhouette from rear layout."
+          },
+          {
+            "view": "rear_photo",
+            "view_kind": "rear",
+            "kind": "silhouette",
+            "status": "observed",
+            "source_image": "test/手柄/IMG_0154.jpeg",
+            "observation_id": "rear_right_grip_candidate",
+            "confidence": 0.68,
+            "note": "Likely right rear grip silhouette from rear layout."
+          }
+        ],
+        "conflicts": [
+          {
+            "type": "template_candidate_used",
+            "severity": "info",
+            "views": [
+              "rear"
+            ],
+            "note": "One or more candidate records came from a layout/template heuristic."
+          }
+        ],
+        "open_questions": [
+          "rear_grip_pair: review template-derived candidate boxes before accepting dimensions."
+        ]
+      },
+      {
+        "part_id": "left_thumbstick",
+        "status": "observed",
+        "template_prior": true,
+        "manual_confirmed": false,
+        "required_views": [
+          "front"
+        ],
+        "confirmed_views": [
+          "front"
+        ],
+        "missing_views": [],
+        "sources": [
+          {
+            "view": "front_photo",
+            "view_kind": "front",
+            "kind": "center_point",
+            "status": "observed",
+            "source_image": "test/手柄/IMG_0156.jpeg",
+            "observation_id": "front_left_thumbstick_center",
+            "confidence": 0.68,
+            "note": "Likely left thumbstick center inferred from front layout."
+          }
+        ],
+        "conflicts": [
+          {
+            "type": "template_candidate_used",
+            "severity": "info",
+            "views": [
+              "front"
+            ],
+            "note": "One or more candidate records came from a layout/template heuristic."
+          }
+        ],
+        "open_questions": [
+          "left_thumbstick: review template-derived candidate boxes before accepting dimensions."
+        ]
+      },
+      {
+        "part_id": "right_thumbstick",
+        "status": "observed",
+        "template_prior": true,
+        "manual_confirmed": false,
+        "required_views": [
+          "front"
+        ],
+        "confirmed_views": [
+          "front"
+        ],
+        "missing_views": [],
+        "sources": [
+          {
+            "view": "front_photo",
+            "view_kind": "front",
+            "kind": "center_point",
+            "status": "observed",
+            "source_image": "test/手柄/IMG_0156.jpeg",
+            "observation_id": "front_right_thumbstick_center",
+            "confidence": 0.55,
+            "note": "Likely right thumbstick center inferred from front layout."
+          }
+        ],
+        "conflicts": [
+          {
+            "type": "template_candidate_used",
+            "severity": "info",
+            "views": [
+              "front"
+            ],
+            "note": "One or more candidate records came from a layout/template heuristic."
+          }
+        ],
+        "open_questions": [
+          "right_thumbstick: review template-derived candidate boxes before accepting dimensions."
+        ]
+      },
+      {
+        "part_id": "abxy_cluster",
+        "status": "observed",
+        "template_prior": true,
+        "manual_confirmed": false,
+        "required_views": [
+          "front"
+        ],
+        "confirmed_views": [
+          "front"
+        ],
+        "missing_views": [],
+        "sources": [
+          {
+            "view": "front_photo",
+            "view_kind": "front",
+            "kind": "silhouette",
+            "status": "observed",
+            "source_image": "test/手柄/IMG_0156.jpeg",
+            "observation_id": "front_abxy_cluster_candidate",
+            "confidence": 0.66,
+            "note": "Likely ABXY cluster region inferred from front layout."
+          }
+        ],
+        "conflicts": [
+          {
+            "type": "template_candidate_used",
+            "severity": "info",
+            "views": [
+              "front"
+            ],
+            "note": "One or more candidate records came from a layout/template heuristic."
+          }
+        ],
+        "open_questions": [
+          "abxy_cluster: review template-derived candidate boxes before accepting dimensions."
+        ]
+      },
+      {
+        "part_id": "left_button_cluster",
+        "status": "observed",
+        "template_prior": true,
+        "manual_confirmed": false,
+        "required_views": [
+          "front"
+        ],
+        "confirmed_views": [
+          "front"
+        ],
+        "missing_views": [],
+        "sources": [
+          {
+            "view": "front_photo",
+            "view_kind": "front",
+            "kind": "silhouette",
+            "status": "observed",
+            "source_image": "test/手柄/IMG_0156.jpeg",
+            "observation_id": "front_left_button_cluster_candidate",
+            "confidence": 0.55,
+            "note": "Likely left button cluster region inferred from front layout."
+          }
+        ],
+        "conflicts": [
+          {
+            "type": "template_candidate_used",
+            "severity": "info",
+            "views": [
+              "front"
+            ],
+            "note": "One or more candidate records came from a layout/template heuristic."
+          }
+        ],
+        "open_questions": [
+          "left_button_cluster: review template-derived candidate boxes before accepting dimensions."
+        ]
+      },
+      {
+        "part_id": "shoulder_rail_pair",
+        "status": "observed",
+        "template_prior": false,
+        "manual_confirmed": false,
+        "required_views": [
+          "right"
+        ],
+        "confirmed_views": [
+          "right"
+        ],
+        "missing_views": [],
+        "sources": [
+          {
+            "view": "side_photo",
+            "view_kind": "right",
+            "kind": "silhouette",
+            "status": "observed",
+            "source_image": "test/手柄/IMG_0153.jpeg",
+            "observation_id": "side_depth_profile_candidate",
+            "confidence": 0.58,
+            "note": "Side-view depth/thickness profile candidate."
+          }
+        ],
+        "conflicts": [],
+        "open_questions": []
+      }
+    ],
+    "open_questions": [
+      "center_grip_body: review template-derived candidate boxes before accepting dimensions.",
+      "left_joycon_shell: review template-derived candidate boxes before accepting dimensions.",
+      "right_joycon_shell: review template-derived candidate boxes before accepting dimensions.",
+      "rear_grip_pair: review template-derived candidate boxes before accepting dimensions.",
+      "left_thumbstick: review template-derived candidate boxes before accepting dimensions.",
+      "right_thumbstick: review template-derived candidate boxes before accepting dimensions.",
+      "abxy_cluster: review template-derived candidate boxes before accepting dimensions.",
+      "left_button_cluster: review template-derived candidate boxes before accepting dimensions."
+    ]
+  },
   "quality_report": {
     "usable_for_modeling": true,
     "risks": [

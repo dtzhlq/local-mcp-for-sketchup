@@ -7,6 +7,29 @@ export const repoRoot = path.resolve(fileURLToPath(new URL('../../../..', import
 export const subprojectRoot = path.join(repoRoot, 'projects', 'image-structured-modeler');
 export const IMAGE_EXTENSIONS = new Set(['.jpg', '.jpeg', '.png', '.webp', '.tif', '.tiff']);
 
+const OBSERVATION_PART_REQUIREMENTS = {
+  switch_controller: {
+    center_grip_body: { views: ['front', 'rear'], hints: ['center_grip_body'] },
+    left_joycon_shell: { views: ['front'], hints: ['left_joycon_shell'] },
+    right_joycon_shell: { views: ['front'], hints: ['right_joycon_shell'] },
+    rear_grip_pair: { views: ['rear', 'right'], hints: ['rear_grip_left', 'rear_grip_right', 'side_thickness_profile'] },
+    left_thumbstick: { views: ['front'], hints: ['left_thumbstick'] },
+    right_thumbstick: { views: ['front'], hints: ['right_thumbstick'] },
+    abxy_cluster: { views: ['front'], hints: ['abxy_cluster'] },
+    left_button_cluster: { views: ['front'], hints: ['left_button_cluster'] },
+    shoulder_rail_pair: { views: ['right'], hints: ['side_thickness_profile'] }
+  },
+  compact_remote: {
+    remote_body: { views: ['front', 'right'], hints: ['remote_body', 'main_object', 'side_thickness_profile'] },
+    remote_face_panel: { views: ['front'], hints: ['remote_face_panel'] },
+    navigation_pad: { views: ['front'], hints: ['navigation_pad'] },
+    primary_button_cluster: { views: ['front'], hints: ['primary_button_cluster'] },
+    volume_rocker: { views: ['front'], hints: ['volume_rocker'] },
+    speaker_grille: { views: ['front'], hints: ['speaker_grille'] },
+    brand_label: { views: ['front'], hints: ['brand_label'] }
+  }
+};
+
 export async function listImageFiles(inputPath) {
   const absoluteInput = path.resolve(inputPath);
   const stat = await fs.stat(absoluteInput);
@@ -290,17 +313,20 @@ export function makeImageSetObservation({ objectType, objectName, analyses, assi
   if (!detected.includes('top')) risks.push('true top view is missing');
   if (usableCount < Math.ceil(images.length / 2)) risks.push('less than half of the images are usable by current CV heuristics');
 
+  const objectProfile = inferObjectProfile(objectType);
   return {
     version: 1,
     object: {
       type: objectType,
       name: objectName,
+      profile: objectProfile,
       source_images: analyses.map((analysis) => toRepoRelative(analysis.path))
     },
     image_set_quality: qualityLabel(images, missingViews),
     views_detected: detected,
     missing_views: missingViews,
     images,
+    evidence_graph: makeObservationEvidenceGraph({ objectProfile, images, detected, missingViews }),
     quality_report: {
       usable_for_modeling: usableCount > 0 && detected.includes('front'),
       risks,
@@ -318,6 +344,108 @@ export function makeImageSetObservation({ objectType, objectName, analyses, assi
       ]
     }
   };
+}
+
+export function makeObservationEvidenceGraph({ objectProfile, images, detected, missingViews }) {
+  const requirements = OBSERVATION_PART_REQUIREMENTS[objectProfile] || {};
+  const viewIds = makeViewIds(images);
+  const openQuestions = [];
+  const parts = Object.entries(requirements).map(([partId, requirement]) => {
+    const sources = [];
+    for (const image of images) {
+      for (const observation of image.observations || []) {
+        if (!requirement.hints.includes(observation.component_hint)) continue;
+        sources.push(observationSource(image, observation, viewIds.get(image.image.path)));
+      }
+    }
+    const confirmedViews = unique(sources
+      .filter((source) => source.status === 'observed')
+      .map((source) => source.view_kind));
+    const partMissingViews = requirement.views.filter((view) => !confirmedViews.includes(view));
+    const conflicts = [];
+    const questions = [];
+    if (partMissingViews.length > 0) {
+      conflicts.push({
+        type: 'missing_required_view',
+        severity: 'warn',
+        views: partMissingViews,
+        note: `Missing required view evidence for ${partMissingViews.join(', ')}.`
+      });
+      questions.push(`${partId}: confirm ${partMissingViews.join(', ')} view evidence.`);
+    }
+    const templateSources = sources.filter((source) => /template|layout|prior/i.test(source.note || ''));
+    if (templateSources.length > 0) {
+      conflicts.push({
+        type: 'template_candidate_used',
+        severity: 'info',
+        views: unique(templateSources.map((source) => source.view_kind)),
+        note: 'One or more candidate records came from a layout/template heuristic.'
+      });
+      questions.push(`${partId}: review template-derived candidate boxes before accepting dimensions.`);
+    }
+    for (const question of questions) openQuestions.push(question);
+    return {
+      part_id: partId,
+      status: partMissingViews.length === requirement.views.length ? 'template_prior' : partMissingViews.length > 0 ? 'inferred' : 'observed',
+      template_prior: templateSources.length > 0 || partMissingViews.length > 0,
+      manual_confirmed: false,
+      required_views: requirement.views,
+      confirmed_views: confirmedViews,
+      missing_views: partMissingViews,
+      sources,
+      conflicts,
+      open_questions: questions
+    };
+  });
+
+  return {
+    version: 1,
+    image_count: images.length,
+    views_detected: detected,
+    missing_views: missingViews,
+    parts,
+    open_questions: unique(openQuestions)
+  };
+}
+
+function makeViewIds(images) {
+  const counts = new Map();
+  const result = new Map();
+  for (const image of images) {
+    const kind = image.detected_view.kind;
+    const base = kind === 'right' || kind === 'left' ? 'side_photo' : `${kind}_photo`;
+    const count = (counts.get(base) || 0) + 1;
+    counts.set(base, count);
+    result.set(image.image.path, count === 1 ? base : `${base}_${count}`);
+  }
+  return result;
+}
+
+function observationSource(image, observation, view) {
+  return {
+    view,
+    view_kind: image.detected_view.kind,
+    kind: evidenceKind(observation.kind),
+    status: 'observed',
+    source_image: image.image.path,
+    observation_id: observation.id,
+    confidence: observation.confidence,
+    note: observation.note || `Evidence from ${observation.id}.`
+  };
+}
+
+function evidenceKind(kind) {
+  if (kind === 'center_point') return 'center_point';
+  if (kind === 'edge' || kind === 'curve') return 'edge';
+  if (kind === 'color_region') return 'color_region';
+  if (kind === 'text_or_logo') return 'text_label';
+  if (kind === 'component_bbox') return 'silhouette';
+  return 'manual_note';
+}
+
+function inferObjectProfile(objectType) {
+  if (['remote_control', 'media_remote', 'compact_remote'].includes(objectType)) return 'compact_remote';
+  return 'switch_controller';
 }
 
 export async function renderObservationOverlay(observation, outputPath, options = {}) {

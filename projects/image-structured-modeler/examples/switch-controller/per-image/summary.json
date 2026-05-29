@@ -1,0 +1,4506 @@
+{
+  "generated_at": "2026-05-25T08:42:13.772Z",
+  "count": 6,
+  "summaries": [
+    {
+      "image": "test/手柄/IMG_0152.jpeg",
+      "directory": "projects/image-structured-modeler/examples/switch-controller/per-image/IMG_0152",
+      "output_dsl": "projects/image-structured-modeler/examples/switch-controller/per-image/IMG_0152/output.json",
+      "queue_skp": "output/switch-controller-per-image/IMG_0152.skp",
+      "detected_view": {
+        "kind": "front",
+        "confidence": 0.45,
+        "notes": [
+          "Heuristic CV-only classification; review manually before modeling.",
+          "Assigned as the strongest broad symmetric view in this image set."
+        ]
+      },
+      "parts": 9,
+      "operations": 41,
+      "operation_counts": {
+        "reset": 1,
+        "material": 6,
+        "component_definition": 1,
+        "rounded_box": 6,
+        "domed_surface": 2,
+        "bowed_panel": 2,
+        "analog_stick": 2,
+        "button_on_panel": 8,
+        "component_instance": 4,
+        "screw_hole": 4,
+        "scene": 2,
+        "style": 1,
+        "shadow": 1,
+        "rendering_options": 1
+      },
+      "snapshot_summary": {
+        "totals": {
+          "faces": 1776,
+          "edges": 2964,
+          "vertices": 1244,
+          "groups": 24,
+          "instances": 4
+        },
+        "bounding_box": {
+          "min": [
+            -140,
+            -84.5,
+            0
+          ],
+          "max": [
+            140,
+            89.5,
+            40
+          ],
+          "w": 280,
+          "d": 174,
+          "h": 40
+        },
+        "scenes": [
+          "Image_Structured_Front_Review",
+          "Image_Structured_Top_QA"
+        ],
+        "material_names": [
+          "Dark_Seam",
+          "Gloss_Black_Button",
+          "Indicator_Green",
+          "Rubber_Thumbstick",
+          "Satin_Black_Plastic",
+          "Warm_White_Plastic"
+        ],
+        "rendering_options": {
+          "edge_display_mode": 1,
+          "draw_hidden_geometry": false,
+          "display_color_by_layer": false,
+          "transparency": false
+        },
+        "warning_summary": {
+          "total": 4,
+          "by_severity": {
+            "error": 0,
+            "warn": 4,
+            "info": 0
+          },
+          "by_category": {
+            "material": 4
+          }
+        }
+      },
+      "warning_classification_summary": {
+        "queue_material_limitation": {
+          "total": 4,
+          "expected": 4,
+          "needs_review": 0
+        }
+      },
+      "evidence_summary": {
+        "image_count": 1,
+        "views_detected": [
+          "front"
+        ],
+        "missing_views": [
+          "rear",
+          "right",
+          "top"
+        ],
+        "status_counts": {
+          "observed": 4,
+          "inferred": 3,
+          "template_prior": 2,
+          "manual_confirmed": 0
+        },
+        "template_prior_parts": [
+          "center_grip_body",
+          "left_joycon_shell",
+          "right_joycon_shell",
+          "rear_grip_pair",
+          "left_thumbstick",
+          "right_thumbstick",
+          "abxy_cluster",
+          "left_button_cluster",
+          "shoulder_rail_pair"
+        ],
+        "manual_confirmed_parts": []
+      },
+      "open_questions": [
+        "Confirm whether the generated right thumbstick position matches the real controller.",
+        "Confirm whether the left button cluster should be modeled as four round buttons or a directional cross.",
+        "Confirm rear grip thickness once a true top view or measured depth is available.",
+        "center_grip_body: confirm rear evidence before treating geometry as fully observed.",
+        "center_grip_body: review profile-prior dimensions and feature semantics.",
+        "left_joycon_shell: review profile-prior dimensions and feature semantics.",
+        "right_joycon_shell: review profile-prior dimensions and feature semantics.",
+        "rear_grip_pair: confirm rear, right evidence before treating geometry as fully observed.",
+        "rear_grip_pair: review profile-prior dimensions and feature semantics.",
+        "left_thumbstick: review profile-prior dimensions and feature semantics.",
+        "right_thumbstick: review profile-prior dimensions and feature semantics.",
+        "abxy_cluster: review profile-prior dimensions and feature semantics.",
+        "left_button_cluster: review profile-prior dimensions and feature semantics.",
+        "shoulder_rail_pair: confirm right evidence before treating geometry as fully observed.",
+        "shoulder_rail_pair: review profile-prior dimensions and feature semantics.",
+        "Single-image run: profile prior fills unobserved geometry; do not treat this as multi-view confirmed.",
+        "Review template-prior parts before treating them as image-confirmed: center_grip_body, left_joycon_shell, right_joycon_shell, rear_grip_pair, left_thumbstick, right_thumbstick, abxy_cluster, left_button_cluster, shoulder_rail_pair."
+      ],
+      "evidence_graph": {
+        "version": 1,
+        "image_count": 1,
+        "views_detected": [
+          "front"
+        ],
+        "missing_views": [
+          "rear",
+          "right",
+          "top"
+        ],
+        "parts": [
+          {
+            "part_id": "center_grip_body",
+            "status": "inferred",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "front",
+              "rear"
+            ],
+            "confirmed_views": [
+              "front"
+            ],
+            "missing_views": [
+              "rear"
+            ],
+            "feature_semantics": [
+              "flush"
+            ],
+            "sources": [
+              {
+                "view": "front_photo",
+                "view_kind": "front",
+                "kind": "silhouette",
+                "status": "observed",
+                "source_image": "test/手柄/IMG_0152.jpeg",
+                "observation_id": "front_center_grip_candidate",
+                "confidence": 0.35,
+                "note": "Template candidate from known game-controller front layout."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "missing_required_view",
+                "severity": "warn",
+                "views": [
+                  "rear"
+                ],
+                "note": "Missing required view evidence for rear."
+              },
+              {
+                "type": "low_confidence_evidence",
+                "severity": "info",
+                "views": [
+                  "front"
+                ],
+                "note": "1 observed evidence source(s) are below 0.5 confidence."
+              },
+              {
+                "type": "template_prior_used",
+                "severity": "info",
+                "views": [
+                  "front",
+                  "rear"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "center_grip_body: confirm rear evidence before treating geometry as fully observed.",
+              "center_grip_body: review profile-prior dimensions and feature semantics."
+            ]
+          },
+          {
+            "part_id": "left_joycon_shell",
+            "status": "observed",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "front"
+            ],
+            "confirmed_views": [
+              "front"
+            ],
+            "missing_views": [],
+            "feature_semantics": [
+              "flush"
+            ],
+            "sources": [
+              {
+                "view": "front_photo",
+                "view_kind": "front",
+                "kind": "silhouette",
+                "status": "observed",
+                "source_image": "test/手柄/IMG_0152.jpeg",
+                "observation_id": "front_left_shell_candidate",
+                "confidence": 0.35,
+                "note": "Template candidate from known game-controller front layout."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "low_confidence_evidence",
+                "severity": "info",
+                "views": [
+                  "front"
+                ],
+                "note": "1 observed evidence source(s) are below 0.5 confidence."
+              },
+              {
+                "type": "template_prior_used",
+                "severity": "info",
+                "views": [
+                  "front"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "left_joycon_shell: review profile-prior dimensions and feature semantics."
+            ]
+          },
+          {
+            "part_id": "right_joycon_shell",
+            "status": "observed",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "front"
+            ],
+            "confirmed_views": [
+              "front"
+            ],
+            "missing_views": [],
+            "feature_semantics": [
+              "flush"
+            ],
+            "sources": [
+              {
+                "view": "front_photo",
+                "view_kind": "front",
+                "kind": "silhouette",
+                "status": "observed",
+                "source_image": "test/手柄/IMG_0152.jpeg",
+                "observation_id": "front_right_shell_candidate",
+                "confidence": 0.35,
+                "note": "Template candidate from known game-controller front layout."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "low_confidence_evidence",
+                "severity": "info",
+                "views": [
+                  "front"
+                ],
+                "note": "1 observed evidence source(s) are below 0.5 confidence."
+              },
+              {
+                "type": "template_prior_used",
+                "severity": "info",
+                "views": [
+                  "front"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "right_joycon_shell: review profile-prior dimensions and feature semantics."
+            ]
+          },
+          {
+            "part_id": "rear_grip_pair",
+            "status": "template_prior",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "rear",
+              "right"
+            ],
+            "confirmed_views": [],
+            "missing_views": [
+              "rear",
+              "right"
+            ],
+            "feature_semantics": [
+              "convex"
+            ],
+            "sources": [
+              {
+                "view": "front_photo",
+                "view_kind": "front",
+                "kind": "manual_note",
+                "status": "template_prior",
+                "source_image": "test/手柄/IMG_0152.jpeg",
+                "confidence": 0.35,
+                "note": "No direct component candidate yet for rear_grip_left/rear_grip_right/side_thickness_profile; generated from controller layout prior."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "missing_required_view",
+                "severity": "warn",
+                "views": [
+                  "rear",
+                  "right"
+                ],
+                "note": "Missing required view evidence for rear, right."
+              },
+              {
+                "type": "template_prior_used",
+                "severity": "warn",
+                "views": [
+                  "rear",
+                  "right"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "rear_grip_pair: confirm rear, right evidence before treating geometry as fully observed.",
+              "rear_grip_pair: review profile-prior dimensions and feature semantics."
+            ]
+          },
+          {
+            "part_id": "left_thumbstick",
+            "status": "observed",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "front"
+            ],
+            "confirmed_views": [
+              "front"
+            ],
+            "missing_views": [],
+            "feature_semantics": [
+              "convex",
+              "blind_recess"
+            ],
+            "sources": [
+              {
+                "view": "front_photo",
+                "view_kind": "front",
+                "kind": "center_point",
+                "status": "observed",
+                "source_image": "test/手柄/IMG_0152.jpeg",
+                "observation_id": "front_left_thumbstick_center",
+                "confidence": 0.68,
+                "note": "Likely left thumbstick center inferred from front layout."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "template_prior_used",
+                "severity": "info",
+                "views": [
+                  "front"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "left_thumbstick: review profile-prior dimensions and feature semantics."
+            ]
+          },
+          {
+            "part_id": "right_thumbstick",
+            "status": "inferred",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "front"
+            ],
+            "confirmed_views": [
+              "front"
+            ],
+            "missing_views": [],
+            "feature_semantics": [
+              "convex",
+              "blind_recess"
+            ],
+            "sources": [
+              {
+                "view": "front_photo",
+                "view_kind": "front",
+                "kind": "center_point",
+                "status": "observed",
+                "source_image": "test/手柄/IMG_0152.jpeg",
+                "observation_id": "front_right_thumbstick_center",
+                "confidence": 0.55,
+                "note": "Likely right thumbstick center inferred from front layout."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "template_prior_used",
+                "severity": "info",
+                "views": [
+                  "front"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "right_thumbstick: review profile-prior dimensions and feature semantics."
+            ]
+          },
+          {
+            "part_id": "abxy_cluster",
+            "status": "observed",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "front"
+            ],
+            "confirmed_views": [
+              "front"
+            ],
+            "missing_views": [],
+            "feature_semantics": [
+              "convex"
+            ],
+            "sources": [
+              {
+                "view": "front_photo",
+                "view_kind": "front",
+                "kind": "silhouette",
+                "status": "observed",
+                "source_image": "test/手柄/IMG_0152.jpeg",
+                "observation_id": "front_abxy_cluster_candidate",
+                "confidence": 0.66,
+                "note": "Likely ABXY cluster region inferred from front layout."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "template_prior_used",
+                "severity": "info",
+                "views": [
+                  "front"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "abxy_cluster: review profile-prior dimensions and feature semantics."
+            ]
+          },
+          {
+            "part_id": "left_button_cluster",
+            "status": "inferred",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "front"
+            ],
+            "confirmed_views": [
+              "front"
+            ],
+            "missing_views": [],
+            "feature_semantics": [
+              "convex"
+            ],
+            "sources": [
+              {
+                "view": "front_photo",
+                "view_kind": "front",
+                "kind": "silhouette",
+                "status": "observed",
+                "source_image": "test/手柄/IMG_0152.jpeg",
+                "observation_id": "front_left_button_cluster_candidate",
+                "confidence": 0.55,
+                "note": "Likely left button cluster region inferred from front layout."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "template_prior_used",
+                "severity": "info",
+                "views": [
+                  "front"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "left_button_cluster: review profile-prior dimensions and feature semantics."
+            ]
+          },
+          {
+            "part_id": "shoulder_rail_pair",
+            "status": "template_prior",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "right"
+            ],
+            "confirmed_views": [],
+            "missing_views": [
+              "right"
+            ],
+            "feature_semantics": [
+              "convex"
+            ],
+            "sources": [
+              {
+                "view": "front_photo",
+                "view_kind": "front",
+                "kind": "manual_note",
+                "status": "template_prior",
+                "source_image": "test/手柄/IMG_0152.jpeg",
+                "confidence": 0.35,
+                "note": "No direct component candidate yet for side_thickness_profile; generated from controller layout prior."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "missing_required_view",
+                "severity": "warn",
+                "views": [
+                  "right"
+                ],
+                "note": "Missing required view evidence for right."
+              },
+              {
+                "type": "template_prior_used",
+                "severity": "warn",
+                "views": [
+                  "right"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "shoulder_rail_pair: confirm right evidence before treating geometry as fully observed.",
+              "shoulder_rail_pair: review profile-prior dimensions and feature semantics."
+            ]
+          }
+        ],
+        "open_questions": [
+          "center_grip_body: confirm rear evidence before treating geometry as fully observed.",
+          "center_grip_body: review profile-prior dimensions and feature semantics.",
+          "left_joycon_shell: review profile-prior dimensions and feature semantics.",
+          "right_joycon_shell: review profile-prior dimensions and feature semantics.",
+          "rear_grip_pair: confirm rear, right evidence before treating geometry as fully observed.",
+          "rear_grip_pair: review profile-prior dimensions and feature semantics.",
+          "left_thumbstick: review profile-prior dimensions and feature semantics.",
+          "right_thumbstick: review profile-prior dimensions and feature semantics.",
+          "abxy_cluster: review profile-prior dimensions and feature semantics.",
+          "left_button_cluster: review profile-prior dimensions and feature semantics.",
+          "shoulder_rail_pair: confirm right evidence before treating geometry as fully observed.",
+          "shoulder_rail_pair: review profile-prior dimensions and feature semantics."
+        ]
+      },
+      "correction_suggestions": [
+        {
+          "part_id": "center_grip_body",
+          "reason": "center_grip_body: confirm rear evidence before treating geometry as fully observed.",
+          "patch": {
+            "id": "center_grip_body",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "flush"
+            ],
+            "evidence_note": "Reviewer confirmed center_grip_body; replace this note with the view/feature evidence used."
+          }
+        },
+        {
+          "part_id": "left_joycon_shell",
+          "reason": "left_joycon_shell: review profile-prior dimensions and feature semantics.",
+          "patch": {
+            "id": "left_joycon_shell",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "flush"
+            ],
+            "evidence_note": "Reviewer confirmed left_joycon_shell; replace this note with the view/feature evidence used."
+          }
+        },
+        {
+          "part_id": "right_joycon_shell",
+          "reason": "right_joycon_shell: review profile-prior dimensions and feature semantics.",
+          "patch": {
+            "id": "right_joycon_shell",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "flush"
+            ],
+            "evidence_note": "Reviewer confirmed right_joycon_shell; replace this note with the view/feature evidence used."
+          }
+        },
+        {
+          "part_id": "rear_grip_pair",
+          "reason": "rear_grip_pair: confirm rear, right evidence before treating geometry as fully observed.",
+          "patch": {
+            "id": "rear_grip_pair",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "convex"
+            ],
+            "evidence_note": "Reviewer confirmed rear_grip_pair; replace this note with the view/feature evidence used."
+          }
+        },
+        {
+          "part_id": "left_thumbstick",
+          "reason": "left_thumbstick: review profile-prior dimensions and feature semantics.",
+          "patch": {
+            "id": "left_thumbstick",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "convex",
+              "blind_recess"
+            ],
+            "evidence_note": "Reviewer confirmed left_thumbstick; replace this note with the view/feature evidence used."
+          }
+        },
+        {
+          "part_id": "right_thumbstick",
+          "reason": "right_thumbstick: review profile-prior dimensions and feature semantics.",
+          "patch": {
+            "id": "right_thumbstick",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "convex",
+              "blind_recess"
+            ],
+            "evidence_note": "Reviewer confirmed right_thumbstick; replace this note with the view/feature evidence used."
+          }
+        },
+        {
+          "part_id": "abxy_cluster",
+          "reason": "abxy_cluster: review profile-prior dimensions and feature semantics.",
+          "patch": {
+            "id": "abxy_cluster",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "convex"
+            ],
+            "evidence_note": "Reviewer confirmed abxy_cluster; replace this note with the view/feature evidence used."
+          }
+        },
+        {
+          "part_id": "left_button_cluster",
+          "reason": "left_button_cluster: review profile-prior dimensions and feature semantics.",
+          "patch": {
+            "id": "left_button_cluster",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "convex"
+            ],
+            "evidence_note": "Reviewer confirmed left_button_cluster; replace this note with the view/feature evidence used."
+          }
+        },
+        {
+          "part_id": "shoulder_rail_pair",
+          "reason": "shoulder_rail_pair: confirm right evidence before treating geometry as fully observed.",
+          "patch": {
+            "id": "shoulder_rail_pair",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "convex"
+            ],
+            "evidence_note": "Reviewer confirmed shoulder_rail_pair; replace this note with the view/feature evidence used."
+          }
+        }
+      ]
+    },
+    {
+      "image": "test/手柄/IMG_0153.jpeg",
+      "directory": "projects/image-structured-modeler/examples/switch-controller/per-image/IMG_0153",
+      "output_dsl": "projects/image-structured-modeler/examples/switch-controller/per-image/IMG_0153/output.json",
+      "queue_skp": "output/switch-controller-per-image/IMG_0153.skp",
+      "detected_view": {
+        "kind": "right",
+        "confidence": 0.68,
+        "notes": [
+          "Heuristic CV-only classification; review manually before modeling.",
+          "Assigned as the strongest broad symmetric view in this image set.",
+          "View overridden by hint file: projects/image-structured-modeler/examples/switch-controller/model-plan.example.json."
+        ]
+      },
+      "parts": 9,
+      "operations": 41,
+      "operation_counts": {
+        "reset": 1,
+        "material": 6,
+        "component_definition": 1,
+        "rounded_box": 6,
+        "domed_surface": 2,
+        "bowed_panel": 2,
+        "analog_stick": 2,
+        "button_on_panel": 8,
+        "component_instance": 4,
+        "screw_hole": 4,
+        "scene": 2,
+        "style": 1,
+        "shadow": 1,
+        "rendering_options": 1
+      },
+      "snapshot_summary": {
+        "totals": {
+          "faces": 1776,
+          "edges": 2964,
+          "vertices": 1244,
+          "groups": 24,
+          "instances": 4
+        },
+        "bounding_box": {
+          "min": [
+            -140,
+            -84.5,
+            0
+          ],
+          "max": [
+            140,
+            89.5,
+            40
+          ],
+          "w": 280,
+          "d": 174,
+          "h": 40
+        },
+        "scenes": [
+          "Image_Structured_Front_Review",
+          "Image_Structured_Top_QA"
+        ],
+        "material_names": [
+          "Dark_Seam",
+          "Gloss_Black_Button",
+          "Indicator_Green",
+          "Rubber_Thumbstick",
+          "Satin_Black_Plastic",
+          "Warm_White_Plastic"
+        ],
+        "rendering_options": {
+          "edge_display_mode": 1,
+          "draw_hidden_geometry": false,
+          "display_color_by_layer": false,
+          "transparency": false
+        },
+        "warning_summary": {
+          "total": 4,
+          "by_severity": {
+            "error": 0,
+            "warn": 4,
+            "info": 0
+          },
+          "by_category": {
+            "material": 4
+          }
+        }
+      },
+      "warning_classification_summary": {
+        "queue_material_limitation": {
+          "total": 4,
+          "expected": 4,
+          "needs_review": 0
+        }
+      },
+      "evidence_summary": {
+        "image_count": 1,
+        "views_detected": [
+          "right"
+        ],
+        "missing_views": [
+          "front",
+          "rear",
+          "top"
+        ],
+        "status_counts": {
+          "observed": 1,
+          "inferred": 1,
+          "template_prior": 7,
+          "manual_confirmed": 0
+        },
+        "template_prior_parts": [
+          "center_grip_body",
+          "left_joycon_shell",
+          "right_joycon_shell",
+          "rear_grip_pair",
+          "left_thumbstick",
+          "right_thumbstick",
+          "abxy_cluster",
+          "left_button_cluster",
+          "shoulder_rail_pair"
+        ],
+        "manual_confirmed_parts": []
+      },
+      "open_questions": [
+        "Confirm whether the generated right thumbstick position matches the real controller.",
+        "Confirm whether the left button cluster should be modeled as four round buttons or a directional cross.",
+        "Confirm rear grip thickness once a true top view or measured depth is available.",
+        "center_grip_body: confirm front, rear evidence before treating geometry as fully observed.",
+        "center_grip_body: review profile-prior dimensions and feature semantics.",
+        "left_joycon_shell: confirm front evidence before treating geometry as fully observed.",
+        "left_joycon_shell: review profile-prior dimensions and feature semantics.",
+        "right_joycon_shell: confirm front evidence before treating geometry as fully observed.",
+        "right_joycon_shell: review profile-prior dimensions and feature semantics.",
+        "rear_grip_pair: confirm rear evidence before treating geometry as fully observed.",
+        "rear_grip_pair: review profile-prior dimensions and feature semantics.",
+        "left_thumbstick: confirm front evidence before treating geometry as fully observed.",
+        "left_thumbstick: review profile-prior dimensions and feature semantics.",
+        "right_thumbstick: confirm front evidence before treating geometry as fully observed.",
+        "right_thumbstick: review profile-prior dimensions and feature semantics.",
+        "abxy_cluster: confirm front evidence before treating geometry as fully observed.",
+        "abxy_cluster: review profile-prior dimensions and feature semantics.",
+        "left_button_cluster: confirm front evidence before treating geometry as fully observed.",
+        "left_button_cluster: review profile-prior dimensions and feature semantics.",
+        "shoulder_rail_pair: review profile-prior dimensions and feature semantics.",
+        "Single-image run: profile prior fills unobserved geometry; do not treat this as multi-view confirmed.",
+        "Review template-prior parts before treating them as image-confirmed: center_grip_body, left_joycon_shell, right_joycon_shell, rear_grip_pair, left_thumbstick, right_thumbstick, abxy_cluster, left_button_cluster, shoulder_rail_pair."
+      ],
+      "evidence_graph": {
+        "version": 1,
+        "image_count": 1,
+        "views_detected": [
+          "right"
+        ],
+        "missing_views": [
+          "front",
+          "rear",
+          "top"
+        ],
+        "parts": [
+          {
+            "part_id": "center_grip_body",
+            "status": "template_prior",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "front",
+              "rear"
+            ],
+            "confirmed_views": [],
+            "missing_views": [
+              "front",
+              "rear"
+            ],
+            "feature_semantics": [
+              "flush"
+            ],
+            "sources": [
+              {
+                "view": "side_photo",
+                "view_kind": "right",
+                "kind": "manual_note",
+                "status": "template_prior",
+                "source_image": "test/手柄/IMG_0153.jpeg",
+                "confidence": 0.35,
+                "note": "No direct component candidate yet for center_grip_body; generated from controller layout prior."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "missing_required_view",
+                "severity": "warn",
+                "views": [
+                  "front",
+                  "rear"
+                ],
+                "note": "Missing required view evidence for front, rear."
+              },
+              {
+                "type": "template_prior_used",
+                "severity": "warn",
+                "views": [
+                  "front",
+                  "rear"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "center_grip_body: confirm front, rear evidence before treating geometry as fully observed.",
+              "center_grip_body: review profile-prior dimensions and feature semantics."
+            ]
+          },
+          {
+            "part_id": "left_joycon_shell",
+            "status": "template_prior",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "front"
+            ],
+            "confirmed_views": [],
+            "missing_views": [
+              "front"
+            ],
+            "feature_semantics": [
+              "flush"
+            ],
+            "sources": [
+              {
+                "view": "side_photo",
+                "view_kind": "right",
+                "kind": "manual_note",
+                "status": "template_prior",
+                "source_image": "test/手柄/IMG_0153.jpeg",
+                "confidence": 0.35,
+                "note": "No direct component candidate yet for left_joycon_shell; generated from controller layout prior."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "missing_required_view",
+                "severity": "warn",
+                "views": [
+                  "front"
+                ],
+                "note": "Missing required view evidence for front."
+              },
+              {
+                "type": "template_prior_used",
+                "severity": "warn",
+                "views": [
+                  "front"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "left_joycon_shell: confirm front evidence before treating geometry as fully observed.",
+              "left_joycon_shell: review profile-prior dimensions and feature semantics."
+            ]
+          },
+          {
+            "part_id": "right_joycon_shell",
+            "status": "template_prior",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "front"
+            ],
+            "confirmed_views": [],
+            "missing_views": [
+              "front"
+            ],
+            "feature_semantics": [
+              "flush"
+            ],
+            "sources": [
+              {
+                "view": "side_photo",
+                "view_kind": "right",
+                "kind": "manual_note",
+                "status": "template_prior",
+                "source_image": "test/手柄/IMG_0153.jpeg",
+                "confidence": 0.35,
+                "note": "No direct component candidate yet for right_joycon_shell; generated from controller layout prior."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "missing_required_view",
+                "severity": "warn",
+                "views": [
+                  "front"
+                ],
+                "note": "Missing required view evidence for front."
+              },
+              {
+                "type": "template_prior_used",
+                "severity": "warn",
+                "views": [
+                  "front"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "right_joycon_shell: confirm front evidence before treating geometry as fully observed.",
+              "right_joycon_shell: review profile-prior dimensions and feature semantics."
+            ]
+          },
+          {
+            "part_id": "rear_grip_pair",
+            "status": "inferred",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "rear",
+              "right"
+            ],
+            "confirmed_views": [
+              "right"
+            ],
+            "missing_views": [
+              "rear"
+            ],
+            "feature_semantics": [
+              "convex"
+            ],
+            "sources": [
+              {
+                "view": "side_photo",
+                "view_kind": "right",
+                "kind": "silhouette",
+                "status": "observed",
+                "source_image": "test/手柄/IMG_0153.jpeg",
+                "observation_id": "side_depth_profile_candidate",
+                "confidence": 0.58,
+                "note": "Side-view depth/thickness profile candidate."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "missing_required_view",
+                "severity": "warn",
+                "views": [
+                  "rear"
+                ],
+                "note": "Missing required view evidence for rear."
+              },
+              {
+                "type": "template_prior_used",
+                "severity": "info",
+                "views": [
+                  "rear",
+                  "right"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "rear_grip_pair: confirm rear evidence before treating geometry as fully observed.",
+              "rear_grip_pair: review profile-prior dimensions and feature semantics."
+            ]
+          },
+          {
+            "part_id": "left_thumbstick",
+            "status": "template_prior",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "front"
+            ],
+            "confirmed_views": [],
+            "missing_views": [
+              "front"
+            ],
+            "feature_semantics": [
+              "convex",
+              "blind_recess"
+            ],
+            "sources": [
+              {
+                "view": "side_photo",
+                "view_kind": "right",
+                "kind": "manual_note",
+                "status": "template_prior",
+                "source_image": "test/手柄/IMG_0153.jpeg",
+                "confidence": 0.35,
+                "note": "No direct component candidate yet for left_thumbstick; generated from controller layout prior."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "missing_required_view",
+                "severity": "warn",
+                "views": [
+                  "front"
+                ],
+                "note": "Missing required view evidence for front."
+              },
+              {
+                "type": "template_prior_used",
+                "severity": "warn",
+                "views": [
+                  "front"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "left_thumbstick: confirm front evidence before treating geometry as fully observed.",
+              "left_thumbstick: review profile-prior dimensions and feature semantics."
+            ]
+          },
+          {
+            "part_id": "right_thumbstick",
+            "status": "template_prior",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "front"
+            ],
+            "confirmed_views": [],
+            "missing_views": [
+              "front"
+            ],
+            "feature_semantics": [
+              "convex",
+              "blind_recess"
+            ],
+            "sources": [
+              {
+                "view": "side_photo",
+                "view_kind": "right",
+                "kind": "manual_note",
+                "status": "template_prior",
+                "source_image": "test/手柄/IMG_0153.jpeg",
+                "confidence": 0.35,
+                "note": "No direct component candidate yet for right_thumbstick; generated from controller layout prior."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "missing_required_view",
+                "severity": "warn",
+                "views": [
+                  "front"
+                ],
+                "note": "Missing required view evidence for front."
+              },
+              {
+                "type": "template_prior_used",
+                "severity": "warn",
+                "views": [
+                  "front"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "right_thumbstick: confirm front evidence before treating geometry as fully observed.",
+              "right_thumbstick: review profile-prior dimensions and feature semantics."
+            ]
+          },
+          {
+            "part_id": "abxy_cluster",
+            "status": "template_prior",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "front"
+            ],
+            "confirmed_views": [],
+            "missing_views": [
+              "front"
+            ],
+            "feature_semantics": [
+              "convex"
+            ],
+            "sources": [
+              {
+                "view": "side_photo",
+                "view_kind": "right",
+                "kind": "manual_note",
+                "status": "template_prior",
+                "source_image": "test/手柄/IMG_0153.jpeg",
+                "confidence": 0.35,
+                "note": "No direct component candidate yet for abxy_cluster; generated from controller layout prior."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "missing_required_view",
+                "severity": "warn",
+                "views": [
+                  "front"
+                ],
+                "note": "Missing required view evidence for front."
+              },
+              {
+                "type": "template_prior_used",
+                "severity": "warn",
+                "views": [
+                  "front"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "abxy_cluster: confirm front evidence before treating geometry as fully observed.",
+              "abxy_cluster: review profile-prior dimensions and feature semantics."
+            ]
+          },
+          {
+            "part_id": "left_button_cluster",
+            "status": "template_prior",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "front"
+            ],
+            "confirmed_views": [],
+            "missing_views": [
+              "front"
+            ],
+            "feature_semantics": [
+              "convex"
+            ],
+            "sources": [
+              {
+                "view": "side_photo",
+                "view_kind": "right",
+                "kind": "manual_note",
+                "status": "template_prior",
+                "source_image": "test/手柄/IMG_0153.jpeg",
+                "confidence": 0.35,
+                "note": "No direct component candidate yet for left_button_cluster; generated from controller layout prior."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "missing_required_view",
+                "severity": "warn",
+                "views": [
+                  "front"
+                ],
+                "note": "Missing required view evidence for front."
+              },
+              {
+                "type": "template_prior_used",
+                "severity": "warn",
+                "views": [
+                  "front"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "left_button_cluster: confirm front evidence before treating geometry as fully observed.",
+              "left_button_cluster: review profile-prior dimensions and feature semantics."
+            ]
+          },
+          {
+            "part_id": "shoulder_rail_pair",
+            "status": "observed",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "right"
+            ],
+            "confirmed_views": [
+              "right"
+            ],
+            "missing_views": [],
+            "feature_semantics": [
+              "convex"
+            ],
+            "sources": [
+              {
+                "view": "side_photo",
+                "view_kind": "right",
+                "kind": "silhouette",
+                "status": "observed",
+                "source_image": "test/手柄/IMG_0153.jpeg",
+                "observation_id": "side_depth_profile_candidate",
+                "confidence": 0.58,
+                "note": "Side-view depth/thickness profile candidate."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "template_prior_used",
+                "severity": "info",
+                "views": [
+                  "right"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "shoulder_rail_pair: review profile-prior dimensions and feature semantics."
+            ]
+          }
+        ],
+        "open_questions": [
+          "center_grip_body: confirm front, rear evidence before treating geometry as fully observed.",
+          "center_grip_body: review profile-prior dimensions and feature semantics.",
+          "left_joycon_shell: confirm front evidence before treating geometry as fully observed.",
+          "left_joycon_shell: review profile-prior dimensions and feature semantics.",
+          "right_joycon_shell: confirm front evidence before treating geometry as fully observed.",
+          "right_joycon_shell: review profile-prior dimensions and feature semantics.",
+          "rear_grip_pair: confirm rear evidence before treating geometry as fully observed.",
+          "rear_grip_pair: review profile-prior dimensions and feature semantics.",
+          "left_thumbstick: confirm front evidence before treating geometry as fully observed.",
+          "left_thumbstick: review profile-prior dimensions and feature semantics.",
+          "right_thumbstick: confirm front evidence before treating geometry as fully observed.",
+          "right_thumbstick: review profile-prior dimensions and feature semantics.",
+          "abxy_cluster: confirm front evidence before treating geometry as fully observed.",
+          "abxy_cluster: review profile-prior dimensions and feature semantics.",
+          "left_button_cluster: confirm front evidence before treating geometry as fully observed.",
+          "left_button_cluster: review profile-prior dimensions and feature semantics.",
+          "shoulder_rail_pair: review profile-prior dimensions and feature semantics."
+        ]
+      },
+      "correction_suggestions": [
+        {
+          "part_id": "center_grip_body",
+          "reason": "center_grip_body: confirm front, rear evidence before treating geometry as fully observed.",
+          "patch": {
+            "id": "center_grip_body",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "flush"
+            ],
+            "evidence_note": "Reviewer confirmed center_grip_body; replace this note with the view/feature evidence used."
+          }
+        },
+        {
+          "part_id": "left_joycon_shell",
+          "reason": "left_joycon_shell: confirm front evidence before treating geometry as fully observed.",
+          "patch": {
+            "id": "left_joycon_shell",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "flush"
+            ],
+            "evidence_note": "Reviewer confirmed left_joycon_shell; replace this note with the view/feature evidence used."
+          }
+        },
+        {
+          "part_id": "right_joycon_shell",
+          "reason": "right_joycon_shell: confirm front evidence before treating geometry as fully observed.",
+          "patch": {
+            "id": "right_joycon_shell",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "flush"
+            ],
+            "evidence_note": "Reviewer confirmed right_joycon_shell; replace this note with the view/feature evidence used."
+          }
+        },
+        {
+          "part_id": "rear_grip_pair",
+          "reason": "rear_grip_pair: confirm rear evidence before treating geometry as fully observed.",
+          "patch": {
+            "id": "rear_grip_pair",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "convex"
+            ],
+            "evidence_note": "Reviewer confirmed rear_grip_pair; replace this note with the view/feature evidence used."
+          }
+        },
+        {
+          "part_id": "left_thumbstick",
+          "reason": "left_thumbstick: confirm front evidence before treating geometry as fully observed.",
+          "patch": {
+            "id": "left_thumbstick",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "convex",
+              "blind_recess"
+            ],
+            "evidence_note": "Reviewer confirmed left_thumbstick; replace this note with the view/feature evidence used."
+          }
+        },
+        {
+          "part_id": "right_thumbstick",
+          "reason": "right_thumbstick: confirm front evidence before treating geometry as fully observed.",
+          "patch": {
+            "id": "right_thumbstick",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "convex",
+              "blind_recess"
+            ],
+            "evidence_note": "Reviewer confirmed right_thumbstick; replace this note with the view/feature evidence used."
+          }
+        },
+        {
+          "part_id": "abxy_cluster",
+          "reason": "abxy_cluster: confirm front evidence before treating geometry as fully observed.",
+          "patch": {
+            "id": "abxy_cluster",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "convex"
+            ],
+            "evidence_note": "Reviewer confirmed abxy_cluster; replace this note with the view/feature evidence used."
+          }
+        },
+        {
+          "part_id": "left_button_cluster",
+          "reason": "left_button_cluster: confirm front evidence before treating geometry as fully observed.",
+          "patch": {
+            "id": "left_button_cluster",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "convex"
+            ],
+            "evidence_note": "Reviewer confirmed left_button_cluster; replace this note with the view/feature evidence used."
+          }
+        },
+        {
+          "part_id": "shoulder_rail_pair",
+          "reason": "shoulder_rail_pair: review profile-prior dimensions and feature semantics.",
+          "patch": {
+            "id": "shoulder_rail_pair",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "convex"
+            ],
+            "evidence_note": "Reviewer confirmed shoulder_rail_pair; replace this note with the view/feature evidence used."
+          }
+        }
+      ]
+    },
+    {
+      "image": "test/手柄/IMG_0154.jpeg",
+      "directory": "projects/image-structured-modeler/examples/switch-controller/per-image/IMG_0154",
+      "output_dsl": "projects/image-structured-modeler/examples/switch-controller/per-image/IMG_0154/output.json",
+      "queue_skp": "output/switch-controller-per-image/IMG_0154.skp",
+      "detected_view": {
+        "kind": "rear",
+        "confidence": 0.78,
+        "notes": [
+          "Heuristic CV-only classification; review manually before modeling.",
+          "Assigned as the strongest broad symmetric view in this image set.",
+          "View overridden by hint file: projects/image-structured-modeler/examples/switch-controller/model-plan.example.json."
+        ]
+      },
+      "parts": 9,
+      "operations": 41,
+      "operation_counts": {
+        "reset": 1,
+        "material": 6,
+        "component_definition": 1,
+        "rounded_box": 6,
+        "domed_surface": 2,
+        "bowed_panel": 2,
+        "analog_stick": 2,
+        "button_on_panel": 8,
+        "component_instance": 4,
+        "screw_hole": 4,
+        "scene": 2,
+        "style": 1,
+        "shadow": 1,
+        "rendering_options": 1
+      },
+      "snapshot_summary": {
+        "totals": {
+          "faces": 1776,
+          "edges": 2964,
+          "vertices": 1244,
+          "groups": 24,
+          "instances": 4
+        },
+        "bounding_box": {
+          "min": [
+            -140,
+            -84.5,
+            0
+          ],
+          "max": [
+            140,
+            89.5,
+            40
+          ],
+          "w": 280,
+          "d": 174,
+          "h": 40
+        },
+        "scenes": [
+          "Image_Structured_Front_Review",
+          "Image_Structured_Top_QA"
+        ],
+        "material_names": [
+          "Dark_Seam",
+          "Gloss_Black_Button",
+          "Indicator_Green",
+          "Rubber_Thumbstick",
+          "Satin_Black_Plastic",
+          "Warm_White_Plastic"
+        ],
+        "rendering_options": {
+          "edge_display_mode": 1,
+          "draw_hidden_geometry": false,
+          "display_color_by_layer": false,
+          "transparency": false
+        },
+        "warning_summary": {
+          "total": 4,
+          "by_severity": {
+            "error": 0,
+            "warn": 4,
+            "info": 0
+          },
+          "by_category": {
+            "material": 4
+          }
+        }
+      },
+      "warning_classification_summary": {
+        "queue_material_limitation": {
+          "total": 4,
+          "expected": 4,
+          "needs_review": 0
+        }
+      },
+      "evidence_summary": {
+        "image_count": 1,
+        "views_detected": [
+          "rear"
+        ],
+        "missing_views": [
+          "front",
+          "right",
+          "top"
+        ],
+        "status_counts": {
+          "observed": 0,
+          "inferred": 2,
+          "template_prior": 7,
+          "manual_confirmed": 0
+        },
+        "template_prior_parts": [
+          "center_grip_body",
+          "left_joycon_shell",
+          "right_joycon_shell",
+          "rear_grip_pair",
+          "left_thumbstick",
+          "right_thumbstick",
+          "abxy_cluster",
+          "left_button_cluster",
+          "shoulder_rail_pair"
+        ],
+        "manual_confirmed_parts": []
+      },
+      "open_questions": [
+        "Confirm whether the generated right thumbstick position matches the real controller.",
+        "Confirm whether the left button cluster should be modeled as four round buttons or a directional cross.",
+        "Confirm rear grip thickness once a true top view or measured depth is available.",
+        "center_grip_body: confirm front evidence before treating geometry as fully observed.",
+        "center_grip_body: review profile-prior dimensions and feature semantics.",
+        "left_joycon_shell: confirm front evidence before treating geometry as fully observed.",
+        "left_joycon_shell: review profile-prior dimensions and feature semantics.",
+        "right_joycon_shell: confirm front evidence before treating geometry as fully observed.",
+        "right_joycon_shell: review profile-prior dimensions and feature semantics.",
+        "rear_grip_pair: confirm right evidence before treating geometry as fully observed.",
+        "rear_grip_pair: review profile-prior dimensions and feature semantics.",
+        "left_thumbstick: confirm front evidence before treating geometry as fully observed.",
+        "left_thumbstick: review profile-prior dimensions and feature semantics.",
+        "right_thumbstick: confirm front evidence before treating geometry as fully observed.",
+        "right_thumbstick: review profile-prior dimensions and feature semantics.",
+        "abxy_cluster: confirm front evidence before treating geometry as fully observed.",
+        "abxy_cluster: review profile-prior dimensions and feature semantics.",
+        "left_button_cluster: confirm front evidence before treating geometry as fully observed.",
+        "left_button_cluster: review profile-prior dimensions and feature semantics.",
+        "shoulder_rail_pair: confirm right evidence before treating geometry as fully observed.",
+        "shoulder_rail_pair: review profile-prior dimensions and feature semantics.",
+        "Single-image run: profile prior fills unobserved geometry; do not treat this as multi-view confirmed.",
+        "Review template-prior parts before treating them as image-confirmed: center_grip_body, left_joycon_shell, right_joycon_shell, rear_grip_pair, left_thumbstick, right_thumbstick, abxy_cluster, left_button_cluster, shoulder_rail_pair."
+      ],
+      "evidence_graph": {
+        "version": 1,
+        "image_count": 1,
+        "views_detected": [
+          "rear"
+        ],
+        "missing_views": [
+          "front",
+          "right",
+          "top"
+        ],
+        "parts": [
+          {
+            "part_id": "center_grip_body",
+            "status": "inferred",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "front",
+              "rear"
+            ],
+            "confirmed_views": [
+              "rear"
+            ],
+            "missing_views": [
+              "front"
+            ],
+            "feature_semantics": [
+              "flush"
+            ],
+            "sources": [
+              {
+                "view": "rear_photo",
+                "view_kind": "rear",
+                "kind": "silhouette",
+                "status": "observed",
+                "source_image": "test/手柄/IMG_0154.jpeg",
+                "observation_id": "rear_center_plate_candidate",
+                "confidence": 0.6,
+                "note": "Likely central rear plate from rear layout."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "missing_required_view",
+                "severity": "warn",
+                "views": [
+                  "front"
+                ],
+                "note": "Missing required view evidence for front."
+              },
+              {
+                "type": "template_prior_used",
+                "severity": "info",
+                "views": [
+                  "front",
+                  "rear"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "center_grip_body: confirm front evidence before treating geometry as fully observed.",
+              "center_grip_body: review profile-prior dimensions and feature semantics."
+            ]
+          },
+          {
+            "part_id": "left_joycon_shell",
+            "status": "template_prior",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "front"
+            ],
+            "confirmed_views": [],
+            "missing_views": [
+              "front"
+            ],
+            "feature_semantics": [
+              "flush"
+            ],
+            "sources": [
+              {
+                "view": "rear_photo",
+                "view_kind": "rear",
+                "kind": "manual_note",
+                "status": "template_prior",
+                "source_image": "test/手柄/IMG_0154.jpeg",
+                "confidence": 0.35,
+                "note": "No direct component candidate yet for left_joycon_shell; generated from controller layout prior."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "missing_required_view",
+                "severity": "warn",
+                "views": [
+                  "front"
+                ],
+                "note": "Missing required view evidence for front."
+              },
+              {
+                "type": "template_prior_used",
+                "severity": "warn",
+                "views": [
+                  "front"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "left_joycon_shell: confirm front evidence before treating geometry as fully observed.",
+              "left_joycon_shell: review profile-prior dimensions and feature semantics."
+            ]
+          },
+          {
+            "part_id": "right_joycon_shell",
+            "status": "template_prior",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "front"
+            ],
+            "confirmed_views": [],
+            "missing_views": [
+              "front"
+            ],
+            "feature_semantics": [
+              "flush"
+            ],
+            "sources": [
+              {
+                "view": "rear_photo",
+                "view_kind": "rear",
+                "kind": "manual_note",
+                "status": "template_prior",
+                "source_image": "test/手柄/IMG_0154.jpeg",
+                "confidence": 0.35,
+                "note": "No direct component candidate yet for right_joycon_shell; generated from controller layout prior."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "missing_required_view",
+                "severity": "warn",
+                "views": [
+                  "front"
+                ],
+                "note": "Missing required view evidence for front."
+              },
+              {
+                "type": "template_prior_used",
+                "severity": "warn",
+                "views": [
+                  "front"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "right_joycon_shell: confirm front evidence before treating geometry as fully observed.",
+              "right_joycon_shell: review profile-prior dimensions and feature semantics."
+            ]
+          },
+          {
+            "part_id": "rear_grip_pair",
+            "status": "inferred",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "rear",
+              "right"
+            ],
+            "confirmed_views": [
+              "rear"
+            ],
+            "missing_views": [
+              "right"
+            ],
+            "feature_semantics": [
+              "convex"
+            ],
+            "sources": [
+              {
+                "view": "rear_photo",
+                "view_kind": "rear",
+                "kind": "silhouette",
+                "status": "observed",
+                "source_image": "test/手柄/IMG_0154.jpeg",
+                "observation_id": "rear_left_grip_candidate",
+                "confidence": 0.68,
+                "note": "Likely left rear grip silhouette from rear layout."
+              },
+              {
+                "view": "rear_photo",
+                "view_kind": "rear",
+                "kind": "silhouette",
+                "status": "observed",
+                "source_image": "test/手柄/IMG_0154.jpeg",
+                "observation_id": "rear_right_grip_candidate",
+                "confidence": 0.68,
+                "note": "Likely right rear grip silhouette from rear layout."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "missing_required_view",
+                "severity": "warn",
+                "views": [
+                  "right"
+                ],
+                "note": "Missing required view evidence for right."
+              },
+              {
+                "type": "template_prior_used",
+                "severity": "info",
+                "views": [
+                  "rear",
+                  "right"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "rear_grip_pair: confirm right evidence before treating geometry as fully observed.",
+              "rear_grip_pair: review profile-prior dimensions and feature semantics."
+            ]
+          },
+          {
+            "part_id": "left_thumbstick",
+            "status": "template_prior",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "front"
+            ],
+            "confirmed_views": [],
+            "missing_views": [
+              "front"
+            ],
+            "feature_semantics": [
+              "convex",
+              "blind_recess"
+            ],
+            "sources": [
+              {
+                "view": "rear_photo",
+                "view_kind": "rear",
+                "kind": "manual_note",
+                "status": "template_prior",
+                "source_image": "test/手柄/IMG_0154.jpeg",
+                "confidence": 0.35,
+                "note": "No direct component candidate yet for left_thumbstick; generated from controller layout prior."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "missing_required_view",
+                "severity": "warn",
+                "views": [
+                  "front"
+                ],
+                "note": "Missing required view evidence for front."
+              },
+              {
+                "type": "template_prior_used",
+                "severity": "warn",
+                "views": [
+                  "front"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "left_thumbstick: confirm front evidence before treating geometry as fully observed.",
+              "left_thumbstick: review profile-prior dimensions and feature semantics."
+            ]
+          },
+          {
+            "part_id": "right_thumbstick",
+            "status": "template_prior",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "front"
+            ],
+            "confirmed_views": [],
+            "missing_views": [
+              "front"
+            ],
+            "feature_semantics": [
+              "convex",
+              "blind_recess"
+            ],
+            "sources": [
+              {
+                "view": "rear_photo",
+                "view_kind": "rear",
+                "kind": "manual_note",
+                "status": "template_prior",
+                "source_image": "test/手柄/IMG_0154.jpeg",
+                "confidence": 0.35,
+                "note": "No direct component candidate yet for right_thumbstick; generated from controller layout prior."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "missing_required_view",
+                "severity": "warn",
+                "views": [
+                  "front"
+                ],
+                "note": "Missing required view evidence for front."
+              },
+              {
+                "type": "template_prior_used",
+                "severity": "warn",
+                "views": [
+                  "front"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "right_thumbstick: confirm front evidence before treating geometry as fully observed.",
+              "right_thumbstick: review profile-prior dimensions and feature semantics."
+            ]
+          },
+          {
+            "part_id": "abxy_cluster",
+            "status": "template_prior",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "front"
+            ],
+            "confirmed_views": [],
+            "missing_views": [
+              "front"
+            ],
+            "feature_semantics": [
+              "convex"
+            ],
+            "sources": [
+              {
+                "view": "rear_photo",
+                "view_kind": "rear",
+                "kind": "manual_note",
+                "status": "template_prior",
+                "source_image": "test/手柄/IMG_0154.jpeg",
+                "confidence": 0.35,
+                "note": "No direct component candidate yet for abxy_cluster; generated from controller layout prior."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "missing_required_view",
+                "severity": "warn",
+                "views": [
+                  "front"
+                ],
+                "note": "Missing required view evidence for front."
+              },
+              {
+                "type": "template_prior_used",
+                "severity": "warn",
+                "views": [
+                  "front"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "abxy_cluster: confirm front evidence before treating geometry as fully observed.",
+              "abxy_cluster: review profile-prior dimensions and feature semantics."
+            ]
+          },
+          {
+            "part_id": "left_button_cluster",
+            "status": "template_prior",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "front"
+            ],
+            "confirmed_views": [],
+            "missing_views": [
+              "front"
+            ],
+            "feature_semantics": [
+              "convex"
+            ],
+            "sources": [
+              {
+                "view": "rear_photo",
+                "view_kind": "rear",
+                "kind": "manual_note",
+                "status": "template_prior",
+                "source_image": "test/手柄/IMG_0154.jpeg",
+                "confidence": 0.35,
+                "note": "No direct component candidate yet for left_button_cluster; generated from controller layout prior."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "missing_required_view",
+                "severity": "warn",
+                "views": [
+                  "front"
+                ],
+                "note": "Missing required view evidence for front."
+              },
+              {
+                "type": "template_prior_used",
+                "severity": "warn",
+                "views": [
+                  "front"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "left_button_cluster: confirm front evidence before treating geometry as fully observed.",
+              "left_button_cluster: review profile-prior dimensions and feature semantics."
+            ]
+          },
+          {
+            "part_id": "shoulder_rail_pair",
+            "status": "template_prior",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "right"
+            ],
+            "confirmed_views": [],
+            "missing_views": [
+              "right"
+            ],
+            "feature_semantics": [
+              "convex"
+            ],
+            "sources": [
+              {
+                "view": "rear_photo",
+                "view_kind": "rear",
+                "kind": "manual_note",
+                "status": "template_prior",
+                "source_image": "test/手柄/IMG_0154.jpeg",
+                "confidence": 0.35,
+                "note": "No direct component candidate yet for side_thickness_profile; generated from controller layout prior."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "missing_required_view",
+                "severity": "warn",
+                "views": [
+                  "right"
+                ],
+                "note": "Missing required view evidence for right."
+              },
+              {
+                "type": "template_prior_used",
+                "severity": "warn",
+                "views": [
+                  "right"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "shoulder_rail_pair: confirm right evidence before treating geometry as fully observed.",
+              "shoulder_rail_pair: review profile-prior dimensions and feature semantics."
+            ]
+          }
+        ],
+        "open_questions": [
+          "center_grip_body: confirm front evidence before treating geometry as fully observed.",
+          "center_grip_body: review profile-prior dimensions and feature semantics.",
+          "left_joycon_shell: confirm front evidence before treating geometry as fully observed.",
+          "left_joycon_shell: review profile-prior dimensions and feature semantics.",
+          "right_joycon_shell: confirm front evidence before treating geometry as fully observed.",
+          "right_joycon_shell: review profile-prior dimensions and feature semantics.",
+          "rear_grip_pair: confirm right evidence before treating geometry as fully observed.",
+          "rear_grip_pair: review profile-prior dimensions and feature semantics.",
+          "left_thumbstick: confirm front evidence before treating geometry as fully observed.",
+          "left_thumbstick: review profile-prior dimensions and feature semantics.",
+          "right_thumbstick: confirm front evidence before treating geometry as fully observed.",
+          "right_thumbstick: review profile-prior dimensions and feature semantics.",
+          "abxy_cluster: confirm front evidence before treating geometry as fully observed.",
+          "abxy_cluster: review profile-prior dimensions and feature semantics.",
+          "left_button_cluster: confirm front evidence before treating geometry as fully observed.",
+          "left_button_cluster: review profile-prior dimensions and feature semantics.",
+          "shoulder_rail_pair: confirm right evidence before treating geometry as fully observed.",
+          "shoulder_rail_pair: review profile-prior dimensions and feature semantics."
+        ]
+      },
+      "correction_suggestions": [
+        {
+          "part_id": "center_grip_body",
+          "reason": "center_grip_body: confirm front evidence before treating geometry as fully observed.",
+          "patch": {
+            "id": "center_grip_body",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "flush"
+            ],
+            "evidence_note": "Reviewer confirmed center_grip_body; replace this note with the view/feature evidence used."
+          }
+        },
+        {
+          "part_id": "left_joycon_shell",
+          "reason": "left_joycon_shell: confirm front evidence before treating geometry as fully observed.",
+          "patch": {
+            "id": "left_joycon_shell",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "flush"
+            ],
+            "evidence_note": "Reviewer confirmed left_joycon_shell; replace this note with the view/feature evidence used."
+          }
+        },
+        {
+          "part_id": "right_joycon_shell",
+          "reason": "right_joycon_shell: confirm front evidence before treating geometry as fully observed.",
+          "patch": {
+            "id": "right_joycon_shell",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "flush"
+            ],
+            "evidence_note": "Reviewer confirmed right_joycon_shell; replace this note with the view/feature evidence used."
+          }
+        },
+        {
+          "part_id": "rear_grip_pair",
+          "reason": "rear_grip_pair: confirm right evidence before treating geometry as fully observed.",
+          "patch": {
+            "id": "rear_grip_pair",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "convex"
+            ],
+            "evidence_note": "Reviewer confirmed rear_grip_pair; replace this note with the view/feature evidence used."
+          }
+        },
+        {
+          "part_id": "left_thumbstick",
+          "reason": "left_thumbstick: confirm front evidence before treating geometry as fully observed.",
+          "patch": {
+            "id": "left_thumbstick",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "convex",
+              "blind_recess"
+            ],
+            "evidence_note": "Reviewer confirmed left_thumbstick; replace this note with the view/feature evidence used."
+          }
+        },
+        {
+          "part_id": "right_thumbstick",
+          "reason": "right_thumbstick: confirm front evidence before treating geometry as fully observed.",
+          "patch": {
+            "id": "right_thumbstick",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "convex",
+              "blind_recess"
+            ],
+            "evidence_note": "Reviewer confirmed right_thumbstick; replace this note with the view/feature evidence used."
+          }
+        },
+        {
+          "part_id": "abxy_cluster",
+          "reason": "abxy_cluster: confirm front evidence before treating geometry as fully observed.",
+          "patch": {
+            "id": "abxy_cluster",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "convex"
+            ],
+            "evidence_note": "Reviewer confirmed abxy_cluster; replace this note with the view/feature evidence used."
+          }
+        },
+        {
+          "part_id": "left_button_cluster",
+          "reason": "left_button_cluster: confirm front evidence before treating geometry as fully observed.",
+          "patch": {
+            "id": "left_button_cluster",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "convex"
+            ],
+            "evidence_note": "Reviewer confirmed left_button_cluster; replace this note with the view/feature evidence used."
+          }
+        },
+        {
+          "part_id": "shoulder_rail_pair",
+          "reason": "shoulder_rail_pair: confirm right evidence before treating geometry as fully observed.",
+          "patch": {
+            "id": "shoulder_rail_pair",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "convex"
+            ],
+            "evidence_note": "Reviewer confirmed shoulder_rail_pair; replace this note with the view/feature evidence used."
+          }
+        }
+      ]
+    },
+    {
+      "image": "test/手柄/IMG_0155.jpeg",
+      "directory": "projects/image-structured-modeler/examples/switch-controller/per-image/IMG_0155",
+      "output_dsl": "projects/image-structured-modeler/examples/switch-controller/per-image/IMG_0155/output.json",
+      "queue_skp": "output/switch-controller-per-image/IMG_0155.skp",
+      "detected_view": {
+        "kind": "front",
+        "confidence": 0.49,
+        "notes": [
+          "Heuristic CV-only classification; review manually before modeling.",
+          "Assigned as the strongest broad symmetric view in this image set."
+        ]
+      },
+      "parts": 9,
+      "operations": 41,
+      "operation_counts": {
+        "reset": 1,
+        "material": 6,
+        "component_definition": 1,
+        "rounded_box": 6,
+        "domed_surface": 2,
+        "bowed_panel": 2,
+        "analog_stick": 2,
+        "button_on_panel": 8,
+        "component_instance": 4,
+        "screw_hole": 4,
+        "scene": 2,
+        "style": 1,
+        "shadow": 1,
+        "rendering_options": 1
+      },
+      "snapshot_summary": {
+        "totals": {
+          "faces": 1776,
+          "edges": 2964,
+          "vertices": 1244,
+          "groups": 24,
+          "instances": 4
+        },
+        "bounding_box": {
+          "min": [
+            -140,
+            -84.5,
+            0
+          ],
+          "max": [
+            140,
+            89.5,
+            40
+          ],
+          "w": 280,
+          "d": 174,
+          "h": 40
+        },
+        "scenes": [
+          "Image_Structured_Front_Review",
+          "Image_Structured_Top_QA"
+        ],
+        "material_names": [
+          "Dark_Seam",
+          "Gloss_Black_Button",
+          "Indicator_Green",
+          "Rubber_Thumbstick",
+          "Satin_Black_Plastic",
+          "Warm_White_Plastic"
+        ],
+        "rendering_options": {
+          "edge_display_mode": 1,
+          "draw_hidden_geometry": false,
+          "display_color_by_layer": false,
+          "transparency": false
+        },
+        "warning_summary": {
+          "total": 4,
+          "by_severity": {
+            "error": 0,
+            "warn": 4,
+            "info": 0
+          },
+          "by_category": {
+            "material": 4
+          }
+        }
+      },
+      "warning_classification_summary": {
+        "queue_material_limitation": {
+          "total": 4,
+          "expected": 4,
+          "needs_review": 0
+        }
+      },
+      "evidence_summary": {
+        "image_count": 1,
+        "views_detected": [
+          "front"
+        ],
+        "missing_views": [
+          "rear",
+          "right",
+          "top"
+        ],
+        "status_counts": {
+          "observed": 4,
+          "inferred": 3,
+          "template_prior": 2,
+          "manual_confirmed": 0
+        },
+        "template_prior_parts": [
+          "center_grip_body",
+          "left_joycon_shell",
+          "right_joycon_shell",
+          "rear_grip_pair",
+          "left_thumbstick",
+          "right_thumbstick",
+          "abxy_cluster",
+          "left_button_cluster",
+          "shoulder_rail_pair"
+        ],
+        "manual_confirmed_parts": []
+      },
+      "open_questions": [
+        "Confirm whether the generated right thumbstick position matches the real controller.",
+        "Confirm whether the left button cluster should be modeled as four round buttons or a directional cross.",
+        "Confirm rear grip thickness once a true top view or measured depth is available.",
+        "center_grip_body: confirm rear evidence before treating geometry as fully observed.",
+        "center_grip_body: review profile-prior dimensions and feature semantics.",
+        "left_joycon_shell: review profile-prior dimensions and feature semantics.",
+        "right_joycon_shell: review profile-prior dimensions and feature semantics.",
+        "rear_grip_pair: confirm rear, right evidence before treating geometry as fully observed.",
+        "rear_grip_pair: review profile-prior dimensions and feature semantics.",
+        "left_thumbstick: review profile-prior dimensions and feature semantics.",
+        "right_thumbstick: review profile-prior dimensions and feature semantics.",
+        "abxy_cluster: review profile-prior dimensions and feature semantics.",
+        "left_button_cluster: review profile-prior dimensions and feature semantics.",
+        "shoulder_rail_pair: confirm right evidence before treating geometry as fully observed.",
+        "shoulder_rail_pair: review profile-prior dimensions and feature semantics.",
+        "Single-image run: profile prior fills unobserved geometry; do not treat this as multi-view confirmed.",
+        "Review template-prior parts before treating them as image-confirmed: center_grip_body, left_joycon_shell, right_joycon_shell, rear_grip_pair, left_thumbstick, right_thumbstick, abxy_cluster, left_button_cluster, shoulder_rail_pair."
+      ],
+      "evidence_graph": {
+        "version": 1,
+        "image_count": 1,
+        "views_detected": [
+          "front"
+        ],
+        "missing_views": [
+          "rear",
+          "right",
+          "top"
+        ],
+        "parts": [
+          {
+            "part_id": "center_grip_body",
+            "status": "inferred",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "front",
+              "rear"
+            ],
+            "confirmed_views": [
+              "front"
+            ],
+            "missing_views": [
+              "rear"
+            ],
+            "feature_semantics": [
+              "flush"
+            ],
+            "sources": [
+              {
+                "view": "front_photo",
+                "view_kind": "front",
+                "kind": "silhouette",
+                "status": "observed",
+                "source_image": "test/手柄/IMG_0155.jpeg",
+                "observation_id": "front_center_grip_candidate",
+                "confidence": 0.37,
+                "note": "Template candidate from known game-controller front layout."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "missing_required_view",
+                "severity": "warn",
+                "views": [
+                  "rear"
+                ],
+                "note": "Missing required view evidence for rear."
+              },
+              {
+                "type": "low_confidence_evidence",
+                "severity": "info",
+                "views": [
+                  "front"
+                ],
+                "note": "1 observed evidence source(s) are below 0.5 confidence."
+              },
+              {
+                "type": "template_prior_used",
+                "severity": "info",
+                "views": [
+                  "front",
+                  "rear"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "center_grip_body: confirm rear evidence before treating geometry as fully observed.",
+              "center_grip_body: review profile-prior dimensions and feature semantics."
+            ]
+          },
+          {
+            "part_id": "left_joycon_shell",
+            "status": "observed",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "front"
+            ],
+            "confirmed_views": [
+              "front"
+            ],
+            "missing_views": [],
+            "feature_semantics": [
+              "flush"
+            ],
+            "sources": [
+              {
+                "view": "front_photo",
+                "view_kind": "front",
+                "kind": "silhouette",
+                "status": "observed",
+                "source_image": "test/手柄/IMG_0155.jpeg",
+                "observation_id": "front_left_shell_candidate",
+                "confidence": 0.37,
+                "note": "Template candidate from known game-controller front layout."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "low_confidence_evidence",
+                "severity": "info",
+                "views": [
+                  "front"
+                ],
+                "note": "1 observed evidence source(s) are below 0.5 confidence."
+              },
+              {
+                "type": "template_prior_used",
+                "severity": "info",
+                "views": [
+                  "front"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "left_joycon_shell: review profile-prior dimensions and feature semantics."
+            ]
+          },
+          {
+            "part_id": "right_joycon_shell",
+            "status": "observed",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "front"
+            ],
+            "confirmed_views": [
+              "front"
+            ],
+            "missing_views": [],
+            "feature_semantics": [
+              "flush"
+            ],
+            "sources": [
+              {
+                "view": "front_photo",
+                "view_kind": "front",
+                "kind": "silhouette",
+                "status": "observed",
+                "source_image": "test/手柄/IMG_0155.jpeg",
+                "observation_id": "front_right_shell_candidate",
+                "confidence": 0.37,
+                "note": "Template candidate from known game-controller front layout."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "low_confidence_evidence",
+                "severity": "info",
+                "views": [
+                  "front"
+                ],
+                "note": "1 observed evidence source(s) are below 0.5 confidence."
+              },
+              {
+                "type": "template_prior_used",
+                "severity": "info",
+                "views": [
+                  "front"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "right_joycon_shell: review profile-prior dimensions and feature semantics."
+            ]
+          },
+          {
+            "part_id": "rear_grip_pair",
+            "status": "template_prior",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "rear",
+              "right"
+            ],
+            "confirmed_views": [],
+            "missing_views": [
+              "rear",
+              "right"
+            ],
+            "feature_semantics": [
+              "convex"
+            ],
+            "sources": [
+              {
+                "view": "front_photo",
+                "view_kind": "front",
+                "kind": "manual_note",
+                "status": "template_prior",
+                "source_image": "test/手柄/IMG_0155.jpeg",
+                "confidence": 0.35,
+                "note": "No direct component candidate yet for rear_grip_left/rear_grip_right/side_thickness_profile; generated from controller layout prior."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "missing_required_view",
+                "severity": "warn",
+                "views": [
+                  "rear",
+                  "right"
+                ],
+                "note": "Missing required view evidence for rear, right."
+              },
+              {
+                "type": "template_prior_used",
+                "severity": "warn",
+                "views": [
+                  "rear",
+                  "right"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "rear_grip_pair: confirm rear, right evidence before treating geometry as fully observed.",
+              "rear_grip_pair: review profile-prior dimensions and feature semantics."
+            ]
+          },
+          {
+            "part_id": "left_thumbstick",
+            "status": "observed",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "front"
+            ],
+            "confirmed_views": [
+              "front"
+            ],
+            "missing_views": [],
+            "feature_semantics": [
+              "convex",
+              "blind_recess"
+            ],
+            "sources": [
+              {
+                "view": "front_photo",
+                "view_kind": "front",
+                "kind": "center_point",
+                "status": "observed",
+                "source_image": "test/手柄/IMG_0155.jpeg",
+                "observation_id": "front_left_thumbstick_center",
+                "confidence": 0.68,
+                "note": "Likely left thumbstick center inferred from front layout."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "template_prior_used",
+                "severity": "info",
+                "views": [
+                  "front"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "left_thumbstick: review profile-prior dimensions and feature semantics."
+            ]
+          },
+          {
+            "part_id": "right_thumbstick",
+            "status": "inferred",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "front"
+            ],
+            "confirmed_views": [
+              "front"
+            ],
+            "missing_views": [],
+            "feature_semantics": [
+              "convex",
+              "blind_recess"
+            ],
+            "sources": [
+              {
+                "view": "front_photo",
+                "view_kind": "front",
+                "kind": "center_point",
+                "status": "observed",
+                "source_image": "test/手柄/IMG_0155.jpeg",
+                "observation_id": "front_right_thumbstick_center",
+                "confidence": 0.55,
+                "note": "Likely right thumbstick center inferred from front layout."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "template_prior_used",
+                "severity": "info",
+                "views": [
+                  "front"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "right_thumbstick: review profile-prior dimensions and feature semantics."
+            ]
+          },
+          {
+            "part_id": "abxy_cluster",
+            "status": "observed",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "front"
+            ],
+            "confirmed_views": [
+              "front"
+            ],
+            "missing_views": [],
+            "feature_semantics": [
+              "convex"
+            ],
+            "sources": [
+              {
+                "view": "front_photo",
+                "view_kind": "front",
+                "kind": "silhouette",
+                "status": "observed",
+                "source_image": "test/手柄/IMG_0155.jpeg",
+                "observation_id": "front_abxy_cluster_candidate",
+                "confidence": 0.66,
+                "note": "Likely ABXY cluster region inferred from front layout."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "template_prior_used",
+                "severity": "info",
+                "views": [
+                  "front"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "abxy_cluster: review profile-prior dimensions and feature semantics."
+            ]
+          },
+          {
+            "part_id": "left_button_cluster",
+            "status": "inferred",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "front"
+            ],
+            "confirmed_views": [
+              "front"
+            ],
+            "missing_views": [],
+            "feature_semantics": [
+              "convex"
+            ],
+            "sources": [
+              {
+                "view": "front_photo",
+                "view_kind": "front",
+                "kind": "silhouette",
+                "status": "observed",
+                "source_image": "test/手柄/IMG_0155.jpeg",
+                "observation_id": "front_left_button_cluster_candidate",
+                "confidence": 0.55,
+                "note": "Likely left button cluster region inferred from front layout."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "template_prior_used",
+                "severity": "info",
+                "views": [
+                  "front"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "left_button_cluster: review profile-prior dimensions and feature semantics."
+            ]
+          },
+          {
+            "part_id": "shoulder_rail_pair",
+            "status": "template_prior",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "right"
+            ],
+            "confirmed_views": [],
+            "missing_views": [
+              "right"
+            ],
+            "feature_semantics": [
+              "convex"
+            ],
+            "sources": [
+              {
+                "view": "front_photo",
+                "view_kind": "front",
+                "kind": "manual_note",
+                "status": "template_prior",
+                "source_image": "test/手柄/IMG_0155.jpeg",
+                "confidence": 0.35,
+                "note": "No direct component candidate yet for side_thickness_profile; generated from controller layout prior."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "missing_required_view",
+                "severity": "warn",
+                "views": [
+                  "right"
+                ],
+                "note": "Missing required view evidence for right."
+              },
+              {
+                "type": "template_prior_used",
+                "severity": "warn",
+                "views": [
+                  "right"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "shoulder_rail_pair: confirm right evidence before treating geometry as fully observed.",
+              "shoulder_rail_pair: review profile-prior dimensions and feature semantics."
+            ]
+          }
+        ],
+        "open_questions": [
+          "center_grip_body: confirm rear evidence before treating geometry as fully observed.",
+          "center_grip_body: review profile-prior dimensions and feature semantics.",
+          "left_joycon_shell: review profile-prior dimensions and feature semantics.",
+          "right_joycon_shell: review profile-prior dimensions and feature semantics.",
+          "rear_grip_pair: confirm rear, right evidence before treating geometry as fully observed.",
+          "rear_grip_pair: review profile-prior dimensions and feature semantics.",
+          "left_thumbstick: review profile-prior dimensions and feature semantics.",
+          "right_thumbstick: review profile-prior dimensions and feature semantics.",
+          "abxy_cluster: review profile-prior dimensions and feature semantics.",
+          "left_button_cluster: review profile-prior dimensions and feature semantics.",
+          "shoulder_rail_pair: confirm right evidence before treating geometry as fully observed.",
+          "shoulder_rail_pair: review profile-prior dimensions and feature semantics."
+        ]
+      },
+      "correction_suggestions": [
+        {
+          "part_id": "center_grip_body",
+          "reason": "center_grip_body: confirm rear evidence before treating geometry as fully observed.",
+          "patch": {
+            "id": "center_grip_body",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "flush"
+            ],
+            "evidence_note": "Reviewer confirmed center_grip_body; replace this note with the view/feature evidence used."
+          }
+        },
+        {
+          "part_id": "left_joycon_shell",
+          "reason": "left_joycon_shell: review profile-prior dimensions and feature semantics.",
+          "patch": {
+            "id": "left_joycon_shell",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "flush"
+            ],
+            "evidence_note": "Reviewer confirmed left_joycon_shell; replace this note with the view/feature evidence used."
+          }
+        },
+        {
+          "part_id": "right_joycon_shell",
+          "reason": "right_joycon_shell: review profile-prior dimensions and feature semantics.",
+          "patch": {
+            "id": "right_joycon_shell",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "flush"
+            ],
+            "evidence_note": "Reviewer confirmed right_joycon_shell; replace this note with the view/feature evidence used."
+          }
+        },
+        {
+          "part_id": "rear_grip_pair",
+          "reason": "rear_grip_pair: confirm rear, right evidence before treating geometry as fully observed.",
+          "patch": {
+            "id": "rear_grip_pair",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "convex"
+            ],
+            "evidence_note": "Reviewer confirmed rear_grip_pair; replace this note with the view/feature evidence used."
+          }
+        },
+        {
+          "part_id": "left_thumbstick",
+          "reason": "left_thumbstick: review profile-prior dimensions and feature semantics.",
+          "patch": {
+            "id": "left_thumbstick",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "convex",
+              "blind_recess"
+            ],
+            "evidence_note": "Reviewer confirmed left_thumbstick; replace this note with the view/feature evidence used."
+          }
+        },
+        {
+          "part_id": "right_thumbstick",
+          "reason": "right_thumbstick: review profile-prior dimensions and feature semantics.",
+          "patch": {
+            "id": "right_thumbstick",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "convex",
+              "blind_recess"
+            ],
+            "evidence_note": "Reviewer confirmed right_thumbstick; replace this note with the view/feature evidence used."
+          }
+        },
+        {
+          "part_id": "abxy_cluster",
+          "reason": "abxy_cluster: review profile-prior dimensions and feature semantics.",
+          "patch": {
+            "id": "abxy_cluster",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "convex"
+            ],
+            "evidence_note": "Reviewer confirmed abxy_cluster; replace this note with the view/feature evidence used."
+          }
+        },
+        {
+          "part_id": "left_button_cluster",
+          "reason": "left_button_cluster: review profile-prior dimensions and feature semantics.",
+          "patch": {
+            "id": "left_button_cluster",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "convex"
+            ],
+            "evidence_note": "Reviewer confirmed left_button_cluster; replace this note with the view/feature evidence used."
+          }
+        },
+        {
+          "part_id": "shoulder_rail_pair",
+          "reason": "shoulder_rail_pair: confirm right evidence before treating geometry as fully observed.",
+          "patch": {
+            "id": "shoulder_rail_pair",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "convex"
+            ],
+            "evidence_note": "Reviewer confirmed shoulder_rail_pair; replace this note with the view/feature evidence used."
+          }
+        }
+      ]
+    },
+    {
+      "image": "test/手柄/IMG_0156.jpeg",
+      "directory": "projects/image-structured-modeler/examples/switch-controller/per-image/IMG_0156",
+      "output_dsl": "projects/image-structured-modeler/examples/switch-controller/per-image/IMG_0156/output.json",
+      "queue_skp": "output/switch-controller-per-image/IMG_0156.skp",
+      "detected_view": {
+        "kind": "front",
+        "confidence": 0.74,
+        "notes": [
+          "Heuristic CV-only classification; review manually before modeling.",
+          "Assigned as the strongest broad symmetric view in this image set.",
+          "View overridden by hint file: projects/image-structured-modeler/examples/switch-controller/model-plan.example.json."
+        ]
+      },
+      "parts": 9,
+      "operations": 41,
+      "operation_counts": {
+        "reset": 1,
+        "material": 6,
+        "component_definition": 1,
+        "rounded_box": 6,
+        "domed_surface": 2,
+        "bowed_panel": 2,
+        "analog_stick": 2,
+        "button_on_panel": 8,
+        "component_instance": 4,
+        "screw_hole": 4,
+        "scene": 2,
+        "style": 1,
+        "shadow": 1,
+        "rendering_options": 1
+      },
+      "snapshot_summary": {
+        "totals": {
+          "faces": 1776,
+          "edges": 2964,
+          "vertices": 1244,
+          "groups": 24,
+          "instances": 4
+        },
+        "bounding_box": {
+          "min": [
+            -140,
+            -84.5,
+            0
+          ],
+          "max": [
+            140,
+            89.5,
+            40
+          ],
+          "w": 280,
+          "d": 174,
+          "h": 40
+        },
+        "scenes": [
+          "Image_Structured_Front_Review",
+          "Image_Structured_Top_QA"
+        ],
+        "material_names": [
+          "Dark_Seam",
+          "Gloss_Black_Button",
+          "Indicator_Green",
+          "Rubber_Thumbstick",
+          "Satin_Black_Plastic",
+          "Warm_White_Plastic"
+        ],
+        "rendering_options": {
+          "edge_display_mode": 1,
+          "draw_hidden_geometry": false,
+          "display_color_by_layer": false,
+          "transparency": false
+        },
+        "warning_summary": {
+          "total": 4,
+          "by_severity": {
+            "error": 0,
+            "warn": 4,
+            "info": 0
+          },
+          "by_category": {
+            "material": 4
+          }
+        }
+      },
+      "warning_classification_summary": {
+        "queue_material_limitation": {
+          "total": 4,
+          "expected": 4,
+          "needs_review": 0
+        }
+      },
+      "evidence_summary": {
+        "image_count": 1,
+        "views_detected": [
+          "front"
+        ],
+        "missing_views": [
+          "rear",
+          "right",
+          "top"
+        ],
+        "status_counts": {
+          "observed": 4,
+          "inferred": 3,
+          "template_prior": 2,
+          "manual_confirmed": 0
+        },
+        "template_prior_parts": [
+          "center_grip_body",
+          "left_joycon_shell",
+          "right_joycon_shell",
+          "rear_grip_pair",
+          "left_thumbstick",
+          "right_thumbstick",
+          "abxy_cluster",
+          "left_button_cluster",
+          "shoulder_rail_pair"
+        ],
+        "manual_confirmed_parts": []
+      },
+      "open_questions": [
+        "Confirm whether the generated right thumbstick position matches the real controller.",
+        "Confirm whether the left button cluster should be modeled as four round buttons or a directional cross.",
+        "Confirm rear grip thickness once a true top view or measured depth is available.",
+        "center_grip_body: confirm rear evidence before treating geometry as fully observed.",
+        "center_grip_body: review profile-prior dimensions and feature semantics.",
+        "left_joycon_shell: review profile-prior dimensions and feature semantics.",
+        "right_joycon_shell: review profile-prior dimensions and feature semantics.",
+        "rear_grip_pair: confirm rear, right evidence before treating geometry as fully observed.",
+        "rear_grip_pair: review profile-prior dimensions and feature semantics.",
+        "left_thumbstick: review profile-prior dimensions and feature semantics.",
+        "right_thumbstick: review profile-prior dimensions and feature semantics.",
+        "abxy_cluster: review profile-prior dimensions and feature semantics.",
+        "left_button_cluster: review profile-prior dimensions and feature semantics.",
+        "shoulder_rail_pair: confirm right evidence before treating geometry as fully observed.",
+        "shoulder_rail_pair: review profile-prior dimensions and feature semantics.",
+        "Single-image run: profile prior fills unobserved geometry; do not treat this as multi-view confirmed.",
+        "Review template-prior parts before treating them as image-confirmed: center_grip_body, left_joycon_shell, right_joycon_shell, rear_grip_pair, left_thumbstick, right_thumbstick, abxy_cluster, left_button_cluster, shoulder_rail_pair."
+      ],
+      "evidence_graph": {
+        "version": 1,
+        "image_count": 1,
+        "views_detected": [
+          "front"
+        ],
+        "missing_views": [
+          "rear",
+          "right",
+          "top"
+        ],
+        "parts": [
+          {
+            "part_id": "center_grip_body",
+            "status": "inferred",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "front",
+              "rear"
+            ],
+            "confirmed_views": [
+              "front"
+            ],
+            "missing_views": [
+              "rear"
+            ],
+            "feature_semantics": [
+              "flush"
+            ],
+            "sources": [
+              {
+                "view": "front_photo",
+                "view_kind": "front",
+                "kind": "silhouette",
+                "status": "observed",
+                "source_image": "test/手柄/IMG_0156.jpeg",
+                "observation_id": "front_center_grip_candidate",
+                "confidence": 0.62,
+                "note": "Template candidate from known game-controller front layout."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "missing_required_view",
+                "severity": "warn",
+                "views": [
+                  "rear"
+                ],
+                "note": "Missing required view evidence for rear."
+              },
+              {
+                "type": "template_prior_used",
+                "severity": "info",
+                "views": [
+                  "front",
+                  "rear"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "center_grip_body: confirm rear evidence before treating geometry as fully observed.",
+              "center_grip_body: review profile-prior dimensions and feature semantics."
+            ]
+          },
+          {
+            "part_id": "left_joycon_shell",
+            "status": "observed",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "front"
+            ],
+            "confirmed_views": [
+              "front"
+            ],
+            "missing_views": [],
+            "feature_semantics": [
+              "flush"
+            ],
+            "sources": [
+              {
+                "view": "front_photo",
+                "view_kind": "front",
+                "kind": "silhouette",
+                "status": "observed",
+                "source_image": "test/手柄/IMG_0156.jpeg",
+                "observation_id": "front_left_shell_candidate",
+                "confidence": 0.62,
+                "note": "Template candidate from known game-controller front layout."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "template_prior_used",
+                "severity": "info",
+                "views": [
+                  "front"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "left_joycon_shell: review profile-prior dimensions and feature semantics."
+            ]
+          },
+          {
+            "part_id": "right_joycon_shell",
+            "status": "observed",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "front"
+            ],
+            "confirmed_views": [
+              "front"
+            ],
+            "missing_views": [],
+            "feature_semantics": [
+              "flush"
+            ],
+            "sources": [
+              {
+                "view": "front_photo",
+                "view_kind": "front",
+                "kind": "silhouette",
+                "status": "observed",
+                "source_image": "test/手柄/IMG_0156.jpeg",
+                "observation_id": "front_right_shell_candidate",
+                "confidence": 0.62,
+                "note": "Template candidate from known game-controller front layout."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "template_prior_used",
+                "severity": "info",
+                "views": [
+                  "front"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "right_joycon_shell: review profile-prior dimensions and feature semantics."
+            ]
+          },
+          {
+            "part_id": "rear_grip_pair",
+            "status": "template_prior",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "rear",
+              "right"
+            ],
+            "confirmed_views": [],
+            "missing_views": [
+              "rear",
+              "right"
+            ],
+            "feature_semantics": [
+              "convex"
+            ],
+            "sources": [
+              {
+                "view": "front_photo",
+                "view_kind": "front",
+                "kind": "manual_note",
+                "status": "template_prior",
+                "source_image": "test/手柄/IMG_0156.jpeg",
+                "confidence": 0.35,
+                "note": "No direct component candidate yet for rear_grip_left/rear_grip_right/side_thickness_profile; generated from controller layout prior."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "missing_required_view",
+                "severity": "warn",
+                "views": [
+                  "rear",
+                  "right"
+                ],
+                "note": "Missing required view evidence for rear, right."
+              },
+              {
+                "type": "template_prior_used",
+                "severity": "warn",
+                "views": [
+                  "rear",
+                  "right"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "rear_grip_pair: confirm rear, right evidence before treating geometry as fully observed.",
+              "rear_grip_pair: review profile-prior dimensions and feature semantics."
+            ]
+          },
+          {
+            "part_id": "left_thumbstick",
+            "status": "observed",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "front"
+            ],
+            "confirmed_views": [
+              "front"
+            ],
+            "missing_views": [],
+            "feature_semantics": [
+              "convex",
+              "blind_recess"
+            ],
+            "sources": [
+              {
+                "view": "front_photo",
+                "view_kind": "front",
+                "kind": "center_point",
+                "status": "observed",
+                "source_image": "test/手柄/IMG_0156.jpeg",
+                "observation_id": "front_left_thumbstick_center",
+                "confidence": 0.68,
+                "note": "Likely left thumbstick center inferred from front layout."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "template_prior_used",
+                "severity": "info",
+                "views": [
+                  "front"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "left_thumbstick: review profile-prior dimensions and feature semantics."
+            ]
+          },
+          {
+            "part_id": "right_thumbstick",
+            "status": "inferred",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "front"
+            ],
+            "confirmed_views": [
+              "front"
+            ],
+            "missing_views": [],
+            "feature_semantics": [
+              "convex",
+              "blind_recess"
+            ],
+            "sources": [
+              {
+                "view": "front_photo",
+                "view_kind": "front",
+                "kind": "center_point",
+                "status": "observed",
+                "source_image": "test/手柄/IMG_0156.jpeg",
+                "observation_id": "front_right_thumbstick_center",
+                "confidence": 0.55,
+                "note": "Likely right thumbstick center inferred from front layout."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "template_prior_used",
+                "severity": "info",
+                "views": [
+                  "front"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "right_thumbstick: review profile-prior dimensions and feature semantics."
+            ]
+          },
+          {
+            "part_id": "abxy_cluster",
+            "status": "observed",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "front"
+            ],
+            "confirmed_views": [
+              "front"
+            ],
+            "missing_views": [],
+            "feature_semantics": [
+              "convex"
+            ],
+            "sources": [
+              {
+                "view": "front_photo",
+                "view_kind": "front",
+                "kind": "silhouette",
+                "status": "observed",
+                "source_image": "test/手柄/IMG_0156.jpeg",
+                "observation_id": "front_abxy_cluster_candidate",
+                "confidence": 0.66,
+                "note": "Likely ABXY cluster region inferred from front layout."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "template_prior_used",
+                "severity": "info",
+                "views": [
+                  "front"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "abxy_cluster: review profile-prior dimensions and feature semantics."
+            ]
+          },
+          {
+            "part_id": "left_button_cluster",
+            "status": "inferred",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "front"
+            ],
+            "confirmed_views": [
+              "front"
+            ],
+            "missing_views": [],
+            "feature_semantics": [
+              "convex"
+            ],
+            "sources": [
+              {
+                "view": "front_photo",
+                "view_kind": "front",
+                "kind": "silhouette",
+                "status": "observed",
+                "source_image": "test/手柄/IMG_0156.jpeg",
+                "observation_id": "front_left_button_cluster_candidate",
+                "confidence": 0.55,
+                "note": "Likely left button cluster region inferred from front layout."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "template_prior_used",
+                "severity": "info",
+                "views": [
+                  "front"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "left_button_cluster: review profile-prior dimensions and feature semantics."
+            ]
+          },
+          {
+            "part_id": "shoulder_rail_pair",
+            "status": "template_prior",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "right"
+            ],
+            "confirmed_views": [],
+            "missing_views": [
+              "right"
+            ],
+            "feature_semantics": [
+              "convex"
+            ],
+            "sources": [
+              {
+                "view": "front_photo",
+                "view_kind": "front",
+                "kind": "manual_note",
+                "status": "template_prior",
+                "source_image": "test/手柄/IMG_0156.jpeg",
+                "confidence": 0.35,
+                "note": "No direct component candidate yet for side_thickness_profile; generated from controller layout prior."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "missing_required_view",
+                "severity": "warn",
+                "views": [
+                  "right"
+                ],
+                "note": "Missing required view evidence for right."
+              },
+              {
+                "type": "template_prior_used",
+                "severity": "warn",
+                "views": [
+                  "right"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "shoulder_rail_pair: confirm right evidence before treating geometry as fully observed.",
+              "shoulder_rail_pair: review profile-prior dimensions and feature semantics."
+            ]
+          }
+        ],
+        "open_questions": [
+          "center_grip_body: confirm rear evidence before treating geometry as fully observed.",
+          "center_grip_body: review profile-prior dimensions and feature semantics.",
+          "left_joycon_shell: review profile-prior dimensions and feature semantics.",
+          "right_joycon_shell: review profile-prior dimensions and feature semantics.",
+          "rear_grip_pair: confirm rear, right evidence before treating geometry as fully observed.",
+          "rear_grip_pair: review profile-prior dimensions and feature semantics.",
+          "left_thumbstick: review profile-prior dimensions and feature semantics.",
+          "right_thumbstick: review profile-prior dimensions and feature semantics.",
+          "abxy_cluster: review profile-prior dimensions and feature semantics.",
+          "left_button_cluster: review profile-prior dimensions and feature semantics.",
+          "shoulder_rail_pair: confirm right evidence before treating geometry as fully observed.",
+          "shoulder_rail_pair: review profile-prior dimensions and feature semantics."
+        ]
+      },
+      "correction_suggestions": [
+        {
+          "part_id": "center_grip_body",
+          "reason": "center_grip_body: confirm rear evidence before treating geometry as fully observed.",
+          "patch": {
+            "id": "center_grip_body",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "flush"
+            ],
+            "evidence_note": "Reviewer confirmed center_grip_body; replace this note with the view/feature evidence used."
+          }
+        },
+        {
+          "part_id": "left_joycon_shell",
+          "reason": "left_joycon_shell: review profile-prior dimensions and feature semantics.",
+          "patch": {
+            "id": "left_joycon_shell",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "flush"
+            ],
+            "evidence_note": "Reviewer confirmed left_joycon_shell; replace this note with the view/feature evidence used."
+          }
+        },
+        {
+          "part_id": "right_joycon_shell",
+          "reason": "right_joycon_shell: review profile-prior dimensions and feature semantics.",
+          "patch": {
+            "id": "right_joycon_shell",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "flush"
+            ],
+            "evidence_note": "Reviewer confirmed right_joycon_shell; replace this note with the view/feature evidence used."
+          }
+        },
+        {
+          "part_id": "rear_grip_pair",
+          "reason": "rear_grip_pair: confirm rear, right evidence before treating geometry as fully observed.",
+          "patch": {
+            "id": "rear_grip_pair",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "convex"
+            ],
+            "evidence_note": "Reviewer confirmed rear_grip_pair; replace this note with the view/feature evidence used."
+          }
+        },
+        {
+          "part_id": "left_thumbstick",
+          "reason": "left_thumbstick: review profile-prior dimensions and feature semantics.",
+          "patch": {
+            "id": "left_thumbstick",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "convex",
+              "blind_recess"
+            ],
+            "evidence_note": "Reviewer confirmed left_thumbstick; replace this note with the view/feature evidence used."
+          }
+        },
+        {
+          "part_id": "right_thumbstick",
+          "reason": "right_thumbstick: review profile-prior dimensions and feature semantics.",
+          "patch": {
+            "id": "right_thumbstick",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "convex",
+              "blind_recess"
+            ],
+            "evidence_note": "Reviewer confirmed right_thumbstick; replace this note with the view/feature evidence used."
+          }
+        },
+        {
+          "part_id": "abxy_cluster",
+          "reason": "abxy_cluster: review profile-prior dimensions and feature semantics.",
+          "patch": {
+            "id": "abxy_cluster",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "convex"
+            ],
+            "evidence_note": "Reviewer confirmed abxy_cluster; replace this note with the view/feature evidence used."
+          }
+        },
+        {
+          "part_id": "left_button_cluster",
+          "reason": "left_button_cluster: review profile-prior dimensions and feature semantics.",
+          "patch": {
+            "id": "left_button_cluster",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "convex"
+            ],
+            "evidence_note": "Reviewer confirmed left_button_cluster; replace this note with the view/feature evidence used."
+          }
+        },
+        {
+          "part_id": "shoulder_rail_pair",
+          "reason": "shoulder_rail_pair: confirm right evidence before treating geometry as fully observed.",
+          "patch": {
+            "id": "shoulder_rail_pair",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "convex"
+            ],
+            "evidence_note": "Reviewer confirmed shoulder_rail_pair; replace this note with the view/feature evidence used."
+          }
+        }
+      ]
+    },
+    {
+      "image": "test/手柄/IMG_0157.jpeg",
+      "directory": "projects/image-structured-modeler/examples/switch-controller/per-image/IMG_0157",
+      "output_dsl": "projects/image-structured-modeler/examples/switch-controller/per-image/IMG_0157/output.json",
+      "queue_skp": "output/switch-controller-per-image/IMG_0157.skp",
+      "detected_view": {
+        "kind": "oblique",
+        "confidence": 0.58,
+        "notes": [
+          "Heuristic CV-only classification; review manually before modeling.",
+          "Assigned as the strongest broad symmetric view in this image set.",
+          "View overridden by hint file: projects/image-structured-modeler/examples/switch-controller/model-plan.example.json."
+        ]
+      },
+      "parts": 9,
+      "operations": 41,
+      "operation_counts": {
+        "reset": 1,
+        "material": 6,
+        "component_definition": 1,
+        "rounded_box": 6,
+        "domed_surface": 2,
+        "bowed_panel": 2,
+        "analog_stick": 2,
+        "button_on_panel": 8,
+        "component_instance": 4,
+        "screw_hole": 4,
+        "scene": 2,
+        "style": 1,
+        "shadow": 1,
+        "rendering_options": 1
+      },
+      "snapshot_summary": {
+        "totals": {
+          "faces": 1776,
+          "edges": 2964,
+          "vertices": 1244,
+          "groups": 24,
+          "instances": 4
+        },
+        "bounding_box": {
+          "min": [
+            -140,
+            -84.5,
+            0
+          ],
+          "max": [
+            140,
+            89.5,
+            40
+          ],
+          "w": 280,
+          "d": 174,
+          "h": 40
+        },
+        "scenes": [
+          "Image_Structured_Front_Review",
+          "Image_Structured_Top_QA"
+        ],
+        "material_names": [
+          "Dark_Seam",
+          "Gloss_Black_Button",
+          "Indicator_Green",
+          "Rubber_Thumbstick",
+          "Satin_Black_Plastic",
+          "Warm_White_Plastic"
+        ],
+        "rendering_options": {
+          "edge_display_mode": 1,
+          "draw_hidden_geometry": false,
+          "display_color_by_layer": false,
+          "transparency": false
+        },
+        "warning_summary": {
+          "total": 4,
+          "by_severity": {
+            "error": 0,
+            "warn": 4,
+            "info": 0
+          },
+          "by_category": {
+            "material": 4
+          }
+        }
+      },
+      "warning_classification_summary": {
+        "queue_material_limitation": {
+          "total": 4,
+          "expected": 4,
+          "needs_review": 0
+        }
+      },
+      "evidence_summary": {
+        "image_count": 1,
+        "views_detected": [
+          "oblique"
+        ],
+        "missing_views": [
+          "front",
+          "rear",
+          "right",
+          "top"
+        ],
+        "status_counts": {
+          "observed": 0,
+          "inferred": 0,
+          "template_prior": 9,
+          "manual_confirmed": 0
+        },
+        "template_prior_parts": [
+          "center_grip_body",
+          "left_joycon_shell",
+          "right_joycon_shell",
+          "rear_grip_pair",
+          "left_thumbstick",
+          "right_thumbstick",
+          "abxy_cluster",
+          "left_button_cluster",
+          "shoulder_rail_pair"
+        ],
+        "manual_confirmed_parts": []
+      },
+      "open_questions": [
+        "Confirm whether the generated right thumbstick position matches the real controller.",
+        "Confirm whether the left button cluster should be modeled as four round buttons or a directional cross.",
+        "Confirm rear grip thickness once a true top view or measured depth is available.",
+        "center_grip_body: confirm front, rear evidence before treating geometry as fully observed.",
+        "center_grip_body: review profile-prior dimensions and feature semantics.",
+        "left_joycon_shell: confirm front evidence before treating geometry as fully observed.",
+        "left_joycon_shell: review profile-prior dimensions and feature semantics.",
+        "right_joycon_shell: confirm front evidence before treating geometry as fully observed.",
+        "right_joycon_shell: review profile-prior dimensions and feature semantics.",
+        "rear_grip_pair: confirm rear, right evidence before treating geometry as fully observed.",
+        "rear_grip_pair: review profile-prior dimensions and feature semantics.",
+        "left_thumbstick: confirm front evidence before treating geometry as fully observed.",
+        "left_thumbstick: review profile-prior dimensions and feature semantics.",
+        "right_thumbstick: confirm front evidence before treating geometry as fully observed.",
+        "right_thumbstick: review profile-prior dimensions and feature semantics.",
+        "abxy_cluster: confirm front evidence before treating geometry as fully observed.",
+        "abxy_cluster: review profile-prior dimensions and feature semantics.",
+        "left_button_cluster: confirm front evidence before treating geometry as fully observed.",
+        "left_button_cluster: review profile-prior dimensions and feature semantics.",
+        "shoulder_rail_pair: confirm right evidence before treating geometry as fully observed.",
+        "shoulder_rail_pair: review profile-prior dimensions and feature semantics.",
+        "Single-image run: profile prior fills unobserved geometry; do not treat this as multi-view confirmed.",
+        "Review template-prior parts before treating them as image-confirmed: center_grip_body, left_joycon_shell, right_joycon_shell, rear_grip_pair, left_thumbstick, right_thumbstick, abxy_cluster, left_button_cluster, shoulder_rail_pair."
+      ],
+      "evidence_graph": {
+        "version": 1,
+        "image_count": 1,
+        "views_detected": [
+          "oblique"
+        ],
+        "missing_views": [
+          "front",
+          "rear",
+          "right",
+          "top"
+        ],
+        "parts": [
+          {
+            "part_id": "center_grip_body",
+            "status": "template_prior",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "front",
+              "rear"
+            ],
+            "confirmed_views": [],
+            "missing_views": [
+              "front",
+              "rear"
+            ],
+            "feature_semantics": [
+              "flush"
+            ],
+            "sources": [
+              {
+                "view": "oblique_photo",
+                "view_kind": "oblique",
+                "kind": "manual_note",
+                "status": "template_prior",
+                "source_image": "test/手柄/IMG_0157.jpeg",
+                "confidence": 0.35,
+                "note": "No direct component candidate yet for center_grip_body; generated from controller layout prior."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "missing_required_view",
+                "severity": "warn",
+                "views": [
+                  "front",
+                  "rear"
+                ],
+                "note": "Missing required view evidence for front, rear."
+              },
+              {
+                "type": "template_prior_used",
+                "severity": "warn",
+                "views": [
+                  "front",
+                  "rear"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "center_grip_body: confirm front, rear evidence before treating geometry as fully observed.",
+              "center_grip_body: review profile-prior dimensions and feature semantics."
+            ]
+          },
+          {
+            "part_id": "left_joycon_shell",
+            "status": "template_prior",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "front"
+            ],
+            "confirmed_views": [],
+            "missing_views": [
+              "front"
+            ],
+            "feature_semantics": [
+              "flush"
+            ],
+            "sources": [
+              {
+                "view": "oblique_photo",
+                "view_kind": "oblique",
+                "kind": "manual_note",
+                "status": "template_prior",
+                "source_image": "test/手柄/IMG_0157.jpeg",
+                "confidence": 0.35,
+                "note": "No direct component candidate yet for left_joycon_shell; generated from controller layout prior."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "missing_required_view",
+                "severity": "warn",
+                "views": [
+                  "front"
+                ],
+                "note": "Missing required view evidence for front."
+              },
+              {
+                "type": "template_prior_used",
+                "severity": "warn",
+                "views": [
+                  "front"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "left_joycon_shell: confirm front evidence before treating geometry as fully observed.",
+              "left_joycon_shell: review profile-prior dimensions and feature semantics."
+            ]
+          },
+          {
+            "part_id": "right_joycon_shell",
+            "status": "template_prior",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "front"
+            ],
+            "confirmed_views": [],
+            "missing_views": [
+              "front"
+            ],
+            "feature_semantics": [
+              "flush"
+            ],
+            "sources": [
+              {
+                "view": "oblique_photo",
+                "view_kind": "oblique",
+                "kind": "manual_note",
+                "status": "template_prior",
+                "source_image": "test/手柄/IMG_0157.jpeg",
+                "confidence": 0.35,
+                "note": "No direct component candidate yet for right_joycon_shell; generated from controller layout prior."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "missing_required_view",
+                "severity": "warn",
+                "views": [
+                  "front"
+                ],
+                "note": "Missing required view evidence for front."
+              },
+              {
+                "type": "template_prior_used",
+                "severity": "warn",
+                "views": [
+                  "front"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "right_joycon_shell: confirm front evidence before treating geometry as fully observed.",
+              "right_joycon_shell: review profile-prior dimensions and feature semantics."
+            ]
+          },
+          {
+            "part_id": "rear_grip_pair",
+            "status": "template_prior",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "rear",
+              "right"
+            ],
+            "confirmed_views": [],
+            "missing_views": [
+              "rear",
+              "right"
+            ],
+            "feature_semantics": [
+              "convex"
+            ],
+            "sources": [
+              {
+                "view": "oblique_photo",
+                "view_kind": "oblique",
+                "kind": "manual_note",
+                "status": "template_prior",
+                "source_image": "test/手柄/IMG_0157.jpeg",
+                "confidence": 0.35,
+                "note": "No direct component candidate yet for rear_grip_left/rear_grip_right/side_thickness_profile; generated from controller layout prior."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "missing_required_view",
+                "severity": "warn",
+                "views": [
+                  "rear",
+                  "right"
+                ],
+                "note": "Missing required view evidence for rear, right."
+              },
+              {
+                "type": "template_prior_used",
+                "severity": "warn",
+                "views": [
+                  "rear",
+                  "right"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "rear_grip_pair: confirm rear, right evidence before treating geometry as fully observed.",
+              "rear_grip_pair: review profile-prior dimensions and feature semantics."
+            ]
+          },
+          {
+            "part_id": "left_thumbstick",
+            "status": "template_prior",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "front"
+            ],
+            "confirmed_views": [],
+            "missing_views": [
+              "front"
+            ],
+            "feature_semantics": [
+              "convex",
+              "blind_recess"
+            ],
+            "sources": [
+              {
+                "view": "oblique_photo",
+                "view_kind": "oblique",
+                "kind": "manual_note",
+                "status": "template_prior",
+                "source_image": "test/手柄/IMG_0157.jpeg",
+                "confidence": 0.35,
+                "note": "No direct component candidate yet for left_thumbstick; generated from controller layout prior."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "missing_required_view",
+                "severity": "warn",
+                "views": [
+                  "front"
+                ],
+                "note": "Missing required view evidence for front."
+              },
+              {
+                "type": "template_prior_used",
+                "severity": "warn",
+                "views": [
+                  "front"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "left_thumbstick: confirm front evidence before treating geometry as fully observed.",
+              "left_thumbstick: review profile-prior dimensions and feature semantics."
+            ]
+          },
+          {
+            "part_id": "right_thumbstick",
+            "status": "template_prior",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "front"
+            ],
+            "confirmed_views": [],
+            "missing_views": [
+              "front"
+            ],
+            "feature_semantics": [
+              "convex",
+              "blind_recess"
+            ],
+            "sources": [
+              {
+                "view": "oblique_photo",
+                "view_kind": "oblique",
+                "kind": "manual_note",
+                "status": "template_prior",
+                "source_image": "test/手柄/IMG_0157.jpeg",
+                "confidence": 0.35,
+                "note": "No direct component candidate yet for right_thumbstick; generated from controller layout prior."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "missing_required_view",
+                "severity": "warn",
+                "views": [
+                  "front"
+                ],
+                "note": "Missing required view evidence for front."
+              },
+              {
+                "type": "template_prior_used",
+                "severity": "warn",
+                "views": [
+                  "front"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "right_thumbstick: confirm front evidence before treating geometry as fully observed.",
+              "right_thumbstick: review profile-prior dimensions and feature semantics."
+            ]
+          },
+          {
+            "part_id": "abxy_cluster",
+            "status": "template_prior",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "front"
+            ],
+            "confirmed_views": [],
+            "missing_views": [
+              "front"
+            ],
+            "feature_semantics": [
+              "convex"
+            ],
+            "sources": [
+              {
+                "view": "oblique_photo",
+                "view_kind": "oblique",
+                "kind": "manual_note",
+                "status": "template_prior",
+                "source_image": "test/手柄/IMG_0157.jpeg",
+                "confidence": 0.35,
+                "note": "No direct component candidate yet for abxy_cluster; generated from controller layout prior."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "missing_required_view",
+                "severity": "warn",
+                "views": [
+                  "front"
+                ],
+                "note": "Missing required view evidence for front."
+              },
+              {
+                "type": "template_prior_used",
+                "severity": "warn",
+                "views": [
+                  "front"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "abxy_cluster: confirm front evidence before treating geometry as fully observed.",
+              "abxy_cluster: review profile-prior dimensions and feature semantics."
+            ]
+          },
+          {
+            "part_id": "left_button_cluster",
+            "status": "template_prior",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "front"
+            ],
+            "confirmed_views": [],
+            "missing_views": [
+              "front"
+            ],
+            "feature_semantics": [
+              "convex"
+            ],
+            "sources": [
+              {
+                "view": "oblique_photo",
+                "view_kind": "oblique",
+                "kind": "manual_note",
+                "status": "template_prior",
+                "source_image": "test/手柄/IMG_0157.jpeg",
+                "confidence": 0.35,
+                "note": "No direct component candidate yet for left_button_cluster; generated from controller layout prior."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "missing_required_view",
+                "severity": "warn",
+                "views": [
+                  "front"
+                ],
+                "note": "Missing required view evidence for front."
+              },
+              {
+                "type": "template_prior_used",
+                "severity": "warn",
+                "views": [
+                  "front"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "left_button_cluster: confirm front evidence before treating geometry as fully observed.",
+              "left_button_cluster: review profile-prior dimensions and feature semantics."
+            ]
+          },
+          {
+            "part_id": "shoulder_rail_pair",
+            "status": "template_prior",
+            "template_prior": true,
+            "manual_confirmed": false,
+            "required_views": [
+              "right"
+            ],
+            "confirmed_views": [],
+            "missing_views": [
+              "right"
+            ],
+            "feature_semantics": [
+              "convex"
+            ],
+            "sources": [
+              {
+                "view": "oblique_photo",
+                "view_kind": "oblique",
+                "kind": "manual_note",
+                "status": "template_prior",
+                "source_image": "test/手柄/IMG_0157.jpeg",
+                "confidence": 0.35,
+                "note": "No direct component candidate yet for side_thickness_profile; generated from controller layout prior."
+              }
+            ],
+            "conflicts": [
+              {
+                "type": "missing_required_view",
+                "severity": "warn",
+                "views": [
+                  "right"
+                ],
+                "note": "Missing required view evidence for right."
+              },
+              {
+                "type": "template_prior_used",
+                "severity": "warn",
+                "views": [
+                  "right"
+                ],
+                "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+              }
+            ],
+            "open_questions": [
+              "shoulder_rail_pair: confirm right evidence before treating geometry as fully observed.",
+              "shoulder_rail_pair: review profile-prior dimensions and feature semantics."
+            ]
+          }
+        ],
+        "open_questions": [
+          "center_grip_body: confirm front, rear evidence before treating geometry as fully observed.",
+          "center_grip_body: review profile-prior dimensions and feature semantics.",
+          "left_joycon_shell: confirm front evidence before treating geometry as fully observed.",
+          "left_joycon_shell: review profile-prior dimensions and feature semantics.",
+          "right_joycon_shell: confirm front evidence before treating geometry as fully observed.",
+          "right_joycon_shell: review profile-prior dimensions and feature semantics.",
+          "rear_grip_pair: confirm rear, right evidence before treating geometry as fully observed.",
+          "rear_grip_pair: review profile-prior dimensions and feature semantics.",
+          "left_thumbstick: confirm front evidence before treating geometry as fully observed.",
+          "left_thumbstick: review profile-prior dimensions and feature semantics.",
+          "right_thumbstick: confirm front evidence before treating geometry as fully observed.",
+          "right_thumbstick: review profile-prior dimensions and feature semantics.",
+          "abxy_cluster: confirm front evidence before treating geometry as fully observed.",
+          "abxy_cluster: review profile-prior dimensions and feature semantics.",
+          "left_button_cluster: confirm front evidence before treating geometry as fully observed.",
+          "left_button_cluster: review profile-prior dimensions and feature semantics.",
+          "shoulder_rail_pair: confirm right evidence before treating geometry as fully observed.",
+          "shoulder_rail_pair: review profile-prior dimensions and feature semantics."
+        ]
+      },
+      "correction_suggestions": [
+        {
+          "part_id": "center_grip_body",
+          "reason": "center_grip_body: confirm front, rear evidence before treating geometry as fully observed.",
+          "patch": {
+            "id": "center_grip_body",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "flush"
+            ],
+            "evidence_note": "Reviewer confirmed center_grip_body; replace this note with the view/feature evidence used."
+          }
+        },
+        {
+          "part_id": "left_joycon_shell",
+          "reason": "left_joycon_shell: confirm front evidence before treating geometry as fully observed.",
+          "patch": {
+            "id": "left_joycon_shell",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "flush"
+            ],
+            "evidence_note": "Reviewer confirmed left_joycon_shell; replace this note with the view/feature evidence used."
+          }
+        },
+        {
+          "part_id": "right_joycon_shell",
+          "reason": "right_joycon_shell: confirm front evidence before treating geometry as fully observed.",
+          "patch": {
+            "id": "right_joycon_shell",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "flush"
+            ],
+            "evidence_note": "Reviewer confirmed right_joycon_shell; replace this note with the view/feature evidence used."
+          }
+        },
+        {
+          "part_id": "rear_grip_pair",
+          "reason": "rear_grip_pair: confirm rear, right evidence before treating geometry as fully observed.",
+          "patch": {
+            "id": "rear_grip_pair",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "convex"
+            ],
+            "evidence_note": "Reviewer confirmed rear_grip_pair; replace this note with the view/feature evidence used."
+          }
+        },
+        {
+          "part_id": "left_thumbstick",
+          "reason": "left_thumbstick: confirm front evidence before treating geometry as fully observed.",
+          "patch": {
+            "id": "left_thumbstick",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "convex",
+              "blind_recess"
+            ],
+            "evidence_note": "Reviewer confirmed left_thumbstick; replace this note with the view/feature evidence used."
+          }
+        },
+        {
+          "part_id": "right_thumbstick",
+          "reason": "right_thumbstick: confirm front evidence before treating geometry as fully observed.",
+          "patch": {
+            "id": "right_thumbstick",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "convex",
+              "blind_recess"
+            ],
+            "evidence_note": "Reviewer confirmed right_thumbstick; replace this note with the view/feature evidence used."
+          }
+        },
+        {
+          "part_id": "abxy_cluster",
+          "reason": "abxy_cluster: confirm front evidence before treating geometry as fully observed.",
+          "patch": {
+            "id": "abxy_cluster",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "convex"
+            ],
+            "evidence_note": "Reviewer confirmed abxy_cluster; replace this note with the view/feature evidence used."
+          }
+        },
+        {
+          "part_id": "left_button_cluster",
+          "reason": "left_button_cluster: confirm front evidence before treating geometry as fully observed.",
+          "patch": {
+            "id": "left_button_cluster",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "convex"
+            ],
+            "evidence_note": "Reviewer confirmed left_button_cluster; replace this note with the view/feature evidence used."
+          }
+        },
+        {
+          "part_id": "shoulder_rail_pair",
+          "reason": "shoulder_rail_pair: confirm right evidence before treating geometry as fully observed.",
+          "patch": {
+            "id": "shoulder_rail_pair",
+            "action": "update",
+            "evidence_status": "manual_confirmed",
+            "manual_confirmed": true,
+            "template_prior": false,
+            "feature_semantics": [
+              "convex"
+            ],
+            "evidence_note": "Reviewer confirmed shoulder_rail_pair; replace this note with the view/feature evidence used."
+          }
+        }
+      ]
+    }
+  ]
+}

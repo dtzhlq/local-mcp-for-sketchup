@@ -1,10 +1,12 @@
 # Image Structured Modeler Memo
 
-更新时间：2026-05-25
+更新时间：2026-05-29
 
 ## 当前结论
 
-子项目已经从“方向和 schema”推进到“Switch 手柄示例闭环 baseline + 第二产品泛化样例”。当前 Switch 链路能从 `test/手柄` 生成：
+子项目已经从“方向和 schema”推进到“Switch 手柄示例闭环 baseline + 第二产品泛化样例”，但本轮验收后结论需要下调：当前能力适合作为技术预览和研发基线，不适合按阶段成果直接发布。
+
+当前 Switch 链路能从 `test/手柄` 生成：
 
 ```text
 observations.json -> model-plan.json -> output.json -> review/index.html -> mock/queue SketchUp output
@@ -12,16 +14,34 @@ observations.json -> model-plan.json -> output.json -> review/index.html -> mock
 
 它不是闭门造车：架构参考过 Free2CAD、Img2CAD、CSGNet、PartNet、DeepCAD 等项目，但当前实现没有直接照搬这些项目代码，而是吸收它们的思路后落成自己的确定性 CV baseline、人工 review/corrections 和 SketchUp DSL 编译器。
 
-阶段 6 收口新增了两个发布级门槛：
+阶段 6 收口新增并补齐了这些技术预览门槛：
 
 - correction-driven regression：`examples/switch-controller/manual-corrections.regression.json` 会验证只改 corrections 就能改变 `model-plan.json` 里的 part 参数，并进一步改变编译后的 DSL。
 - 第二产品样例：`examples/compact-remote` 通过 `object_profile: "compact_remote"` 走独立生成/编译路径，生成 `model-plan.json`、`output.json`、`review/index.html` 和 mock snapshot。
+- evidence status 边界切片：`model-plan.json`、`manual-corrections.json`、review report 和 `npm run test:image-structured` 已接入 `observed` / `inferred` / `template_prior` / `manual_confirmed`，单图输出会记录 open question 和 template-prior 状态。
+- evidence graph：`observations.json` 已有原生 `evidence_graph`，`model-plan.review.evidence_graph` 会优先合并该图，并按 part 汇总 required/confirmed/missing views、source records、template-prior / feature fallback conflicts 和 part-level open questions；review report 已新增 Evidence Graph 表格。
+- correction patch suggestions：`model-plan.review.correction_suggestions` 和 review report 会给出可复制到 `manual-corrections.json` 的 patch 骨架，用于把待确认 part 显式标成 `manual_confirmed`，并保留当前 feature semantics / fallback 信息。
+- feature mapping 第一切片：`blind_recess -> cut_recess`、`through_hole -> cut_hole`、`convex -> add_boss/add_raised_rib` 已进入 model-plan 和 compiler；当语义仍只能降级成 marker/helper 时，model-plan graph 和 review 会显式记录 `feature_mapping_fallback` conflict。
+- semantic fusion：`model-plan.review.semantic_fusion` 会把 evidence graph 融合为 per-part `status`、`decision`、`confidence`、semantic evidence、feature mapping signals 和 review flags。
+- corrections workbench：review HTML 已新增交互式工作台，可选择建议 patch、编辑 JSON、校验、复制和下载 `manual-corrections.workbench.json`。
 
 当前完成度判断：
 
-- Switch-only 可演示闭环：约 85%。
-- 通用“图片 -> 结构化 SketchUp 模型”MVP：约 65%。
-- 当前优先级：先可靠，再聪明，再好看。
+- Switch-only 技术预览闭环：约 92%。
+- 通用“图片 -> 结构化 SketchUp 模型”MVP：约 78%。
+- 当前优先级：semantic fusion、corrections workbench 和主线 CAD boolean/manifold 已补齐；R1/R2 已把救护车验收迁移到 `ProductProfile + PartGraph -> JSON DSL`。下一步按 `../../docs/product-modeling-architecture-refactor-plan.md` 做 Reference Visual QA 和图像证据升级。
+
+下一轮建议：
+
+- Reference Visual QA 反向给出 correction patch，目标是修改 part graph 字段，而不是直接改 DSL 坐标。
+- 子项目补 contour/keypoint、跨图 part matching、尺度校准和证据置信度，让 image evidence 能生成或修正 PartGraph。
+
+本轮验收暴露的关键事实：
+
+- Switch 主流程是“多图输入 + 视角分类 + Switch layout prior 模板化生成”，不是多图联合理解后重建模型。
+- 救护车验收模型是人工综合多张图片后手写 DSL，不是子项目自动多视角融合能力。
+- 单图 per-image 测试中 6 张图片仍能生成完整 41-op / 24-group / 1776-face 模型，说明当前模板补全权重过高；当前已在 per-image `model-plan.json` / `summary.json` 中显式记录单图 open question 和 template-prior 状态，避免把完整输出误读为高可信多图结果。
+- 子项目已经有 observation/model-plan/review 贯通的 evidence graph、semantic fusion 和 corrections workbench，并能消费主线第一批真实 feature operations；图像侧语义仍主要来自确定性 CV、视角分类、profile prior 和 manual corrections，后续大样例验证不能把它误写成照片级自动重建。
 
 ## 当前可用状态
 
@@ -42,6 +62,8 @@ observations.json -> model-plan.json -> output.json -> review/index.html -> mock
   - `abxy_cluster`
   - `left_button_cluster`
   - `shoulder_rail_pair`
+  - evidence summary：7 个 `observed`、2 个 `inferred`、0 个 `manual_confirmed`；9 个 part 均带 `template_prior: true`，用于提示 Switch layout prior 仍参与参数补全。
+  - evidence graph：`observations.json` 和 `model-plan.review.evidence_graph` 都会记录 `required_views` / `confirmed_views` / `missing_views`；当前多图 Switch 所有 required views 均有 confirmed evidence，但 9 个 part 均记录 `template_prior_used` conflict。
 - `output.json`：当前 41 个 DSL operations：
   - `reset`: 1
   - `material`: 6
@@ -90,6 +112,12 @@ observations.json -> model-plan.json -> output.json -> review/index.html -> mock
   - total diffs：`0`
   - warning gate：`pass`
   - mock/queue bbox：`280 x 174 x 40 mm -> 280 x 174 x 40 mm`
+- Per-image 单图验收：
+  - `examples/switch-controller/per-image/summary.json` 已生成。
+  - `test/手柄/IMG_0152.jpeg` 到 `IMG_0157.jpeg` 均已生成独立 observations/model-plan/output/review/mock report/queue report。
+  - 对应 queue SKP 已保存到 `output/switch-controller-per-image/IMG_0152.skp` 到 `IMG_0157.skp`。
+  - 每个单图输出均为 41 ops / 24 groups / 1776 faces / 2 scenes，queue 侧均为 4 个已分类 PBR limitation warning。
+  - 每个单图 `model-plan.json` 和 `summary.json` 已记录 `evidence_summary`、`evidence_graph`、template-prior parts 和单图 open question；例如 front-only `rear_grip_pair` 会记录缺 `rear/right` 证据。
 - Compact remote 第二样例：
   - `examples/compact-remote/observations.json`
   - `examples/compact-remote/manual-corrections.json`
@@ -97,9 +125,9 @@ observations.json -> model-plan.json -> output.json -> review/index.html -> mock
   - `examples/compact-remote/output.json`
   - `examples/compact-remote/review/index.html`
   - `examples/compact-remote/review/snapshot-report.json`
-  - 当前 mock snapshot：`11 groups`、`529 faces`、`1234 edges`、`452 vertices`、`2 scenes`，bbox `44 x 158 x 15.85 mm`，warnings 0。
-  - 当前 queue snapshot：`11 groups`、`544 faces`、`1279 edges`、`766 vertices`、`2 scenes`，bbox `44 x 158 x 15.85 mm`，SKP `188104 bytes`，仅 3 个已分类 `queue_material_limitation` warning。
-  - 当前 mock/queue diff：report `ok`，warning gate `pass`；拓扑计数存在 mock 估算与 SketchUp 真实几何差异，level 为 `warn`。
+  - 当前 mock snapshot：`3 groups`、`364 faces`、`780 edges`、`128 vertices`、`2 scenes`，bbox `44 x 158 x 16.6 mm`，warnings 0。
+  - 当前 queue snapshot：`3 groups`、`369 faces`、`1035 edges`、`690 vertices`、`2 scenes`，bbox `44 x 158 x 16.6 mm`，SKP `182920 bytes`，仅 3 个已分类 `queue_material_limitation` warning。
+  - 当前 mock/queue diff：report `ok`，warning gate `pass`；拓扑计数和 brand label fallback 的 bbox 存在 mock 估算与 SketchUp 真实几何差异，level 为 `warn`。
 
 ## 已完成
 
@@ -147,17 +175,82 @@ observations.json -> model-plan.json -> output.json -> review/index.html -> mock
 
 ## 当前已知问题
 
+- 当前 Switch 输出主要由 `switch_controller` layout prior 补全；图片证据用于视角分类和局部部件证据，不是完整多图融合重建。
+- 单图 per-image 生成仍能得到完整几何模型；当前已通过 `evidence_status` / `template_prior` / open question 降低可信度，但尚未真正减少或留空证据不足的 geometry。
+- 当前 `observations.json` 和 `model-plan.review.evidence_graph` 已有原生证据图，`model-plan.review.semantic_fusion` 已把它提升为 graph-based 语义融合结果；证据来源仍主要由 deterministic CV、profile requirements 和 manual corrections 推导，还不是学习式视觉识别系统。
+- 当前 model-plan 已有初步 `feature_semantics`：`concave`、`convex`、`flush`、`decal_printed`、`through_hole`、`blind_recess`；`blind_recess` / `through_hole` / `convex` 的第一批映射已能编译到 `cut_recess` / `cut_hole` / `add_boss` / `add_raised_rib`，但语义仍主要由 part type / manual corrections 推导，还不是图像侧稳定识别结果。
+- 子项目仍依赖主线 MCP 的真实特征编辑能力；当前已接上第一批 face-feature ops，复杂 `cut_slot`、实体文字 boolean 和更广泛目标面仍属于后续 CAD slice。
 - 缺 true top view，厚度、后握把和肩键深度仍然靠 side/rear 和人工尺寸推断。
 - observations 仍主要是 bbox、edge sample 和 symmetry axis，还不是完整建模证据系统。
 - Switch 示例仍依赖 layout prior；当前泛化靠 `object_profile` 分流和第二样例证明路径可扩展，不是完整通用语义识别。
 - mock/queue warning 分类已推进到 DSL/runtime `qa.expected_contacts` 元数据；queue 侧已在 SketchUp 2026 中重新验证。
 - 当前 geometry warning 已收敛到 0；correction-driven regression 第一条已经进测试门禁，下一步应增强 review/corrections authoring 工作台，而不是继续扩 allowlist。
 - `QUEUE_VERIFICATION.md` 已同步最新 `rounded_box` 后的 queue 指标；后续需要改成自动生成，避免手工维护再次漂移。
-- 当前 review report 能看，但还不是 correction authoring 工作台。
+- 当前 review report 已提供 Correction Patch Suggestions 和 Corrections Workbench，可交互编辑、复制和下载 corrections JSON；自动写盘和重跑生成链路仍是后续 CLI polish。
 
 ## 规划路线
 
-### 阶段 1：把现有 baseline 稳住
+### 阶段 0：暂停发布，修正能力边界
+
+目标：文档、review 页面和 status 不再暗示“自动多图统一重建”已经完成。
+
+任务：
+
+- [x] 记录 per-image 单图验收结果，明确模板补全风险。
+- [x] review 页面增加“证据来源/模板补全/人工确认”区分。
+- [x] model-plan 每个 part 增加 `evidence_status`：`observed` / `inferred` / `template_prior` / `manual_confirmed`。
+- [x] 单图输入时，如果关键 evidence 缺失，生成低置信 open question，而不是静默补全完整 Switch。
+
+验收：
+
+- 用户能从 review artifact 看出哪些部件来自图片、哪些来自模板、哪些需要人工确认。
+- 单图和多图输出的置信度/证据完整度有明显差异。
+
+### 阶段 1：跨图融合 evidence graph
+
+目标：从“每张图各自 observation”升级到“同一对象的跨图部件证据表”。
+
+任务：
+
+- 为每个 candidate part 建立跨图 evidence records。
+- 记录轮廓来源、厚度来源、正反面来源、细节来源。
+- 记录冲突：不同视角对同一 part 的位置/尺寸/语义不一致时，进入 review open questions。
+- 建立凹凸语义：`concave`、`convex`、`flush`、`decal/printed`、`through_hole`、`blind_recess`。
+- `generate-model-plan.mjs` 基于 evidence graph 生成 model plan，不再直接按 profile 固定补全。
+
+当前进展：
+
+- [x] 派生 evidence graph：每个 part 记录 required/confirmed/missing views、sources、conflicts 和 open questions。
+- [x] observation schema 原生 `evidence_graph`：`observations.json` 会保存 per-part requirements、sources、conflicts 和 open questions。
+- [x] model-plan graph 优先合并 observation graph，并补充 model-plan evidence sources、template-prior 和 feature fallback conflicts。
+- [x] review report 展示 Evidence Graph 表格。
+- [x] 单图 per-image summary 写入 evidence graph，能暴露缺失 rear/right/top 证据。
+- [x] review report 展示 Correction Patch Suggestions，人工确认可复制为 `manual-corrections.json` patch。
+- [x] model-plan / review 接入 Semantic Fusion，按 part 记录 status、decision、confidence、semantic evidence 和 review flags。
+- [x] review report 提供 Corrections Workbench，支持选择 patch、编辑 JSON、校验、复制和下载。
+- [x] feature mapping 第一切片：compact remote 已把凸起按钮/摇杆和 blind recess grille 编译为 `add_boss` / `add_raised_rib` / `cut_recess`，并新增 manual-correction regression 验证 decal marker 可切到真实 `cut_recess`。
+- [ ] 更广泛产品类的图像侧凹凸/贴花/开孔语义识别、基于 graph 而非 profile prior 的生成器重构，以及第 3 项 CAD boolean/manifold 仍待做。
+
+验收：
+
+- Switch 多图 model-plan 能解释每个主要 part 的视图证据。
+- 救护车样例能把侧窗、红色腰线、车顶筋线、警灯、后窗分别映射到不同视图证据。
+
+### 阶段 2：feature operations 映射
+
+目标：把图片里的凹槽、孔、凸筋映射到主线 MCP 的真实编辑操作。
+
+任务：
+
+- 编译器支持从 `concave` / `convex` / `through_hole` / `blind_recess` 生成 `cut_hole`、`cut_slot`、`cut_recess`、`add_boss`、`add_raised_rib`。
+- 当主线 runtime 不支持对应 feature operation 时，review 输出明确降级原因，不再伪装成真实开槽。
+- 增加 correction-driven regression：人工把一个 feature 从 `decal` 改成 `recess` 后，compiled DSL 必须从贴面/文字变成 `cut_recess`。
+
+验收：
+
+- 至少一个 Switch 凹槽/螺丝孔和一个救护车车顶筋线能以真实 feature operation 表达。
+
+### 已完成阶段：把现有 baseline 稳住（历史基线）
 
 目标：当前 Switch 示例必须可重复跑、可验证、文档不误导。
 
@@ -186,7 +279,7 @@ observations.json -> model-plan.json -> output.json -> review/index.html -> mock
 - queue build warning 都能解释。
 - 文档和真实产物一致。
 
-### 阶段 2：让图片识别更像“证据系统”
+### 后续能力：图片识别证据系统（原阶段 2，已被跨图 evidence graph 扩展）
 
 目标：不是只生成 bbox，而是提取可用于建模的证据。
 
@@ -217,7 +310,7 @@ observations.json -> model-plan.json -> output.json -> review/index.html -> mock
 - `observations.json` 中有可追踪的候选部件和 keypoints。
 - review HTML 能解释“模型为什么这么生成”。
 
-### 阶段 3：人工修正闭环产品化
+### 后续能力：人工修正闭环产品化（原阶段 3，已并入新阶段 0/2）
 
 目标：用户指出错处后，修正能稳定影响模型。
 
@@ -246,7 +339,7 @@ observations.json -> model-plan.json -> output.json -> review/index.html -> mock
 - 不改代码，只改 corrections，就能调整模型关键比例。
 - 人工 review 能进入下一轮构建。
 
-### 阶段 4：提高 SketchUp 几何质量
+### 后续能力：提高 SketchUp 几何质量（原阶段 4，依赖主线 feature operations）
 
 目标：模型从“结构正确”提升到“看起来像产品”。
 
@@ -269,7 +362,7 @@ observations.json -> model-plan.json -> output.json -> review/index.html -> mock
 - warning 明显减少，或者都被标为 expected contact。
 - `.skp` 打开后能作为可继续编辑的产品模型。
 
-### 阶段 5：开始泛化
+### 后续能力：开始泛化（原阶段 5，延后到特征编辑和多图融合之后）
 
 目标：证明不是只为一个手柄硬编码。
 
@@ -296,11 +389,11 @@ observations.json -> model-plan.json -> output.json -> review/index.html -> mock
 
 ## 推荐下次开工入口
 
-从阶段 6 之后继续：
+从新的阶段 7 目标继续：
 
-1. 提升 review/corrections 工作台，让人工修正能更直接影响 part 参数。
-2. 继续把 `object_profile` 扩到鼠标、小电器外壳等第三样例。
-3. 保持 mock/queue geometry warning budget 为 0，避免产品 primitive 回退到粗 overlap。
+1. 把主线 `boolean_union` / `boolean_difference` / `boolean_intersect` / `manifold_check` / `manifold_repair` 接入更多产品样例验收，让 `cut_hole` / `cut_slot` / `cut_recess` / `add_boss` / `add_raised_rib` 之外的实体编辑也可被复验。
+2. 在更多产品样例中复用 semantic fusion、Corrections Workbench、真实 feature operations 和 boolean/manifold，继续压低 visual fallback 比例。
+3. 后续再把 workbench 的下载/复制流升级成直接写盘和一键重跑。
 
 ## 2026-05-19 交接记录
 

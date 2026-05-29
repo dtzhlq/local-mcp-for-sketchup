@@ -1,18 +1,19 @@
 {
-  "generated_at": "2026-05-25T07:55:27.375Z",
+  "generated_at": "2026-05-27T07:12:14.849Z",
   "mode": "runtime_snapshot",
   "runtime": "queue",
   "source": {
     "output_dsl": "projects/image-structured-modeler/examples/compact-remote/output.json",
     "saved_skp": "output/image-structured-compact-remote.skp",
-    "file_size_bytes": 188104
+    "file_size_bytes": 182920
   },
   "operation_counts": {
     "reset": 1,
     "material": 4,
     "rounded_box": 2,
-    "button_on_panel": 7,
-    "slot_array": 1,
+    "add_boss": 6,
+    "add_raised_rib": 1,
+    "cut_recess": 5,
     "text_3d": 1,
     "scene": 2,
     "style": 1,
@@ -21,10 +22,10 @@
   },
   "snapshot_summary": {
     "totals": {
-      "faces": 544,
-      "edges": 1279,
-      "vertices": 766,
-      "groups": 11,
+      "faces": 369,
+      "edges": 1035,
+      "vertices": 690,
+      "groups": 3,
       "instances": 0
     },
     "bounding_box": {
@@ -36,11 +37,11 @@
       "max": [
         22,
         79,
-        15.85
+        16.6
       ],
       "w": 44,
       "d": 158,
-      "h": 15.85
+      "h": 16.6
     },
     "scenes": [
       "Compact_Remote_Front_Review",

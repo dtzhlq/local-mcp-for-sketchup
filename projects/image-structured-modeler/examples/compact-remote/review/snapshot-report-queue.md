@@ -1,23 +1,23 @@
 # Switch Controller Snapshot Report
 
-- Generated: `2026-05-25T07:55:27.375Z`
+- Generated: `2026-05-27T07:12:14.849Z`
 - Runtime: `queue`
 - Output DSL: `projects/image-structured-modeler/examples/compact-remote/output.json`
 - Saved SKP: `output/image-structured-compact-remote.skp`
-- File size: `188104 bytes`
+- File size: `182920 bytes`
 
 ## Snapshot Summary
 
 | Metric | Value |
 |---|---:|
-| Groups | 11 |
+| Groups | 3 |
 | Component instances | 0 |
-| Faces | 544 |
-| Edges | 1279 |
-| Vertices | 766 |
+| Faces | 369 |
+| Edges | 1035 |
+| Vertices | 690 |
 | Scenes | 2 |
 
-Bounding box: `44 x 158 x 15.85 mm`
+Bounding box: `44 x 158 x 16.6 mm`
 
 ## Operation Counts
 
@@ -26,8 +26,9 @@ Bounding box: `44 x 158 x 15.85 mm`
 | `reset` | 1 |
 | `material` | 4 |
 | `rounded_box` | 2 |
-| `button_on_panel` | 7 |
-| `slot_array` | 1 |
+| `add_boss` | 6 |
+| `add_raised_rib` | 1 |
+| `cut_recess` | 5 |
 | `text_3d` | 1 |
 | `scene` | 2 |
 | `style` | 1 |

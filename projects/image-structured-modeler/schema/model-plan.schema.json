@@ -91,6 +91,25 @@
               }
             }
           },
+          "evidence_status": { "$ref": "#/$defs/evidence_status" },
+          "evidence_sources": {
+            "type": "array",
+            "items": { "$ref": "#/$defs/evidence_source" }
+          },
+          "template_prior": { "type": "boolean" },
+          "manual_confirmed": { "type": "boolean" },
+          "feature_semantics": {
+            "type": "array",
+            "items": { "$ref": "#/$defs/feature_semantic" }
+          },
+          "feature_mapping": {
+            "type": "object",
+            "properties": {
+              "operation": { "type": "string" },
+              "fallback": { "enum": ["none", "visual_marker", "manual_required", "runtime_unsupported"] },
+              "note": { "type": "string" }
+            }
+          },
           "uncertainty": {
             "type": "array",
             "items": { "type": "string" }
@@ -105,7 +124,13 @@
       "type": "object",
       "properties": {
         "overlay_path": { "type": ["string", "null"] },
-        "open_questions": { "type": "array", "items": { "type": "string" } }
+        "open_questions": { "type": "array", "items": { "type": "string" } },
+        "semantic_fusion": { "$ref": "#/$defs/semantic_fusion" },
+        "evidence_graph": { "$ref": "#/$defs/evidence_graph" },
+        "correction_suggestions": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/correction_suggestion" }
+        }
       }
     }
   },
@@ -125,6 +150,220 @@
     "polyline2": {
       "type": "array",
       "items": { "$ref": "#/$defs/point2" }
+    },
+    "evidence_status": {
+      "enum": ["observed", "inferred", "template_prior", "manual_confirmed"]
+    },
+    "feature_semantic": {
+      "enum": ["concave", "convex", "flush", "decal_printed", "through_hole", "blind_recess"]
+    },
+    "evidence_source": {
+      "type": "object",
+      "required": ["view", "kind", "status"],
+      "properties": {
+        "view": { "type": "string" },
+        "view_kind": { "type": "string" },
+        "kind": { "type": "string" },
+        "status": { "$ref": "#/$defs/evidence_status" },
+        "source_image": { "type": "string" },
+        "observation_id": { "type": "string" },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "note": { "type": "string" }
+      }
+    },
+    "evidence_graph": {
+      "type": "object",
+      "required": ["version", "image_count", "parts", "open_questions"],
+      "properties": {
+        "version": { "const": 1 },
+        "image_count": { "type": "integer" },
+        "views_detected": { "type": "array", "items": { "type": "string" } },
+        "missing_views": { "type": "array", "items": { "type": "string" } },
+        "parts": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/evidence_graph_part" }
+        },
+        "open_questions": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "evidence_graph_part": {
+      "type": "object",
+      "required": ["part_id", "status", "required_views", "confirmed_views", "missing_views", "sources", "open_questions"],
+      "properties": {
+        "part_id": { "type": "string" },
+        "status": { "$ref": "#/$defs/evidence_status" },
+        "template_prior": { "type": "boolean" },
+        "manual_confirmed": { "type": "boolean" },
+        "required_views": { "type": "array", "items": { "type": "string" } },
+        "confirmed_views": { "type": "array", "items": { "type": "string" } },
+        "missing_views": { "type": "array", "items": { "type": "string" } },
+        "feature_semantics": { "type": "array", "items": { "$ref": "#/$defs/feature_semantic" } },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["view", "kind", "status"],
+            "properties": {
+              "view": { "type": "string" },
+              "view_kind": { "type": "string" },
+              "kind": { "type": "string" },
+              "status": { "$ref": "#/$defs/evidence_status" },
+              "source_image": { "type": "string" },
+              "observation_id": { "type": "string" },
+              "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+              "note": { "type": "string" }
+            }
+          }
+        },
+        "conflicts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["type", "severity", "note"],
+            "properties": {
+              "type": { "type": "string" },
+              "severity": { "enum": ["info", "warn", "error"] },
+              "views": { "type": "array", "items": { "type": "string" } },
+              "note": { "type": "string" }
+            }
+          }
+        },
+        "open_questions": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "semantic_fusion": {
+      "type": "object",
+      "required": ["version", "strategy", "image_count", "summary", "parts", "open_questions"],
+      "properties": {
+        "version": { "const": 1 },
+        "strategy": { "enum": ["graph_cross_view_semantic_fusion"] },
+        "image_count": { "type": "integer" },
+        "views_detected": { "type": "array", "items": { "type": "string" } },
+        "summary": {
+          "type": "object",
+          "required": ["total_parts", "confirmed", "partial", "needs_review"],
+          "properties": {
+            "total_parts": { "type": "integer" },
+            "confirmed": { "type": "integer" },
+            "partial": { "type": "integer" },
+            "needs_review": { "type": "integer" },
+            "cross_view_confirmed_parts": { "type": "array", "items": { "type": "string" } },
+            "fallback_parts": { "type": "array", "items": { "type": "string" } },
+            "template_prior_parts": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "parts": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/semantic_fusion_part" }
+        },
+        "open_questions": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "semantic_fusion_part": {
+      "type": "object",
+      "required": ["part_id", "status", "decision", "confidence", "required_views", "confirmed_views", "missing_views", "source_views", "semantic_labels", "signals", "review_flags"],
+      "properties": {
+        "part_id": { "type": "string" },
+        "status": { "enum": ["confirmed", "partial", "needs_review"] },
+        "decision": {
+          "enum": [
+            "manual_confirmed",
+            "cross_view_confirmed",
+            "single_view_confirmed",
+            "template_prior_assisted",
+            "missing_required_view",
+            "feature_fallback",
+            "observed"
+          ]
+        },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "required_views": { "type": "array", "items": { "type": "string" } },
+        "confirmed_views": { "type": "array", "items": { "type": "string" } },
+        "missing_views": { "type": "array", "items": { "type": "string" } },
+        "source_views": { "type": "array", "items": { "type": "string" } },
+        "semantic_labels": { "type": "array", "items": { "$ref": "#/$defs/feature_semantic" } },
+        "semantic_evidence": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["semantic", "confidence", "sources"],
+            "properties": {
+              "semantic": { "$ref": "#/$defs/feature_semantic" },
+              "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+              "sources": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["view", "status", "kind"],
+                  "properties": {
+                    "view": { "type": "string" },
+                    "view_kind": { "type": "string" },
+                    "status": { "$ref": "#/$defs/evidence_status" },
+                    "kind": { "type": "string" },
+                    "confidence": { "type": "number", "minimum": 0, "maximum": 1 }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "feature_mapping": {
+          "type": ["object", "null"],
+          "properties": {
+            "operation": { "type": "string" },
+            "fallback": { "enum": ["none", "visual_marker", "manual_required", "runtime_unsupported"] },
+            "note": { "type": "string" }
+          }
+        },
+        "signals": {
+          "type": "object",
+          "required": ["image_count", "source_count", "observed_source_count", "required_view_coverage", "evidence_confidence", "feature_mapping_confidence", "conflict_types"],
+          "properties": {
+            "image_count": { "type": "integer" },
+            "source_count": { "type": "integer" },
+            "observed_source_count": { "type": "integer" },
+            "required_view_coverage": { "type": "number", "minimum": 0, "maximum": 1 },
+            "evidence_confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+            "feature_mapping_confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+            "conflict_types": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "review_flags": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "correction_suggestion": {
+      "type": "object",
+      "required": ["part_id", "reason", "patch"],
+      "properties": {
+        "part_id": { "type": "string" },
+        "reason": { "type": "string" },
+        "fusion_status": { "enum": ["confirmed", "partial", "needs_review"] },
+        "fusion_decision": { "type": "string" },
+        "patch": {
+          "type": "object",
+          "required": ["id", "action"],
+          "properties": {
+            "id": { "type": "string" },
+            "action": { "enum": ["update"] },
+            "evidence_status": { "$ref": "#/$defs/evidence_status" },
+            "manual_confirmed": { "type": "boolean" },
+            "template_prior": { "type": "boolean" },
+            "feature_semantics": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/feature_semantic" }
+            },
+            "feature_mapping": {
+              "type": "object",
+              "properties": {
+                "operation": { "type": "string" },
+                "fallback": { "enum": ["none", "visual_marker", "manual_required", "runtime_unsupported"] },
+                "note": { "type": "string" }
+              }
+            },
+            "evidence_note": { "type": "string" }
+          }
+        }
+      }
     }
   }
 }

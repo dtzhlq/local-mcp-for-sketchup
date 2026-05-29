@@ -86,6 +86,14 @@ npm run test:image-structured
 - `projects/image-structured-modeler/examples/switch-controller/review/snapshot-report.json`
 - `projects/image-structured-modeler/examples/switch-controller/review/snapshot-report.md`
 
+当前 `observations.json` 和 `model-plan.json` 都会记录 evidence graph：每个 part 有 `required_views`、`confirmed_views`、`missing_views`、`sources`、`conflicts` 和 open questions。`model-plan.review.semantic_fusion` 会进一步把跨视图 evidence 融合为 per-part `status`、`decision`、`confidence`、semantic evidence、feature mapping signals 和 review flags。Review 页面会显示 Evidence Graph、Semantic Fusion、Correction Patch Suggestions 和 Corrections Workbench，方便把人工确认直接转成可编辑/可下载的 `manual-corrections.json` patch。
+
+`feature_semantics` 的第一批真实 feature op 映射已经接入：`blind_recess` 会编译为 `cut_recess`，`through_hole` 会编译为 `cut_hole`，`convex` 会按部件形态编译为 `add_boss` 或 `add_raised_rib`。Review 的 parts 表会显示当前是 `real feature op` 还是 `fallback: visual_marker`。
+
+主线 CAD boolean/manifold 已补齐 `boolean_union`、`boolean_difference`、`boolean_intersect`、`manifold_check` 和 `manifold_repair`。子项目下一步会把这些实体操作纳入更多产品样例，减少开孔、实体相交和拓扑修复场景里的 visual fallback。
+
+当前 compact remote queue snapshot 已验证 feature mapping 链路：输出包含 `add_boss ×6`、`add_raised_rib ×1`、`cut_recess ×5`，真实 queue 产物为 `3 groups / 369 faces / 1035 edges / 690 vertices / 2 scenes`，warning gate pass。Switch queue snapshot/diff 也已刷新，warning gate pass。
+
 `build-remote` 会使用第二产品样例 `examples/compact-remote`，验证生成器/编译器已经按 `object_profile` 分流，而不是只套 Switch-specific layout prior。该样例会生成：
 
 - `projects/image-structured-modeler/examples/compact-remote/model-plan.json`
@@ -109,7 +117,7 @@ npm run test:image-structured
 
 - `projects/image-structured-modeler/examples/switch-controller/warning-budget.json`
 
-`npm run test:image-structured` 会读取样例 warning budget，校验 mock/queue snapshot report 中没有 error warning、没有 `needs_geometry_review`，并锁定当前 expected bucket baseline。测试还会卡住 bbox、groups/instances/scenes、不能回退到粗 `mesh` / `box` primitive，并要求 Switch mock 和已生成的 queue geometry warning 分类全部来自 `qa.expected_contacts`。阶段 6 已新增 correction-driven regression：`manual-corrections.regression.json` 必须让 Switch `model-plan.json` 和编译后的 DSL 发生预期变化；compact remote 第二样例必须完整跑通 observations → model-plan → output → review → mock snapshot。
+`npm run test:image-structured` 会读取样例 warning budget，校验 mock/queue snapshot report 中没有 error warning、没有 `needs_geometry_review`，并锁定当前 expected bucket baseline。测试还会卡住 bbox、groups/instances/scenes、不能回退到粗 `mesh` / `box` primitive，并要求 Switch mock 和已生成的 queue geometry warning 分类全部来自 `qa.expected_contacts`。阶段 6 已新增 correction-driven regression：`manual-corrections.regression.json` 必须让 Switch `model-plan.json` 和编译后的 DSL 发生预期变化；`manual-corrections.feature-regression.json` 会验证只改 manual corrections 就能把 compact remote 的 decal/text marker 改成真实 `cut_recess`；compact remote 第二样例必须完整跑通 observations → model-plan → output → review → mock snapshot；evidence graph / semantic fusion / corrections workbench 也纳入门禁，防止单图输出重新伪装成多图确认。
 
 人工修正入口：
 
@@ -117,7 +125,7 @@ npm run test:image-structured
 - `projects/image-structured-modeler/examples/switch-controller/manual-corrections.regression.json`
 - `projects/image-structured-modeler/examples/compact-remote/manual-corrections.json`
 
-改完 `manual-corrections.json` 后重新运行 `npm run image-structured:build-switch`，修正会进入 `model-plan.json`，并显示在 review report 中。
+改完 `manual-corrections.json` 后重新运行 `npm run image-structured:build-switch`，修正会进入 `model-plan.json`，并显示在 review report 中。Review 里的 Corrections Workbench 会基于 Correction Patch Suggestions 生成可编辑 JSON，支持选择 patch、校验、复制和下载 `manual-corrections.workbench.json`；默认把待确认 part 标为 `manual_confirmed` 并保留当前 feature semantics / fallback 信息。
 
 当前实现是确定性的 CV baseline：缩放图片、Sobel 边缘检测、主 bbox、垂直对称轴候选、视角启发式分类。Switch 示例会额外读取 `model-plan.example.json` 里的 `views[]` 作为人工视角 hint；compact remote 示例使用固定 observation fixture 验证第二产品路径。通用 CLI 不传 `--view-hints-file` 时仍走纯 CV 模式。它只负责给人工 review 和后续 VLM/语义识别提供第一版证据，不直接生成最终 3D 模型。
 
@@ -319,6 +327,8 @@ SketchUp MCP 执行
 - `slot`
 - `screw_hole`
 - `boolean_cutout`
+- `boolean_union` / `boolean_difference` / `boolean_intersect`
+- `manifold_check` / `manifold_repair`
 - `engraved_line`
 - `text_emboss`
 - `text_engrave`

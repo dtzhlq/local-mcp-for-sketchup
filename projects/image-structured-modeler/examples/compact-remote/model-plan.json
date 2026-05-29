@@ -45,6 +45,8 @@
         {
           "view": "front_photo",
           "kind": "silhouette",
+          "source_image": "projects/image-structured-modeler/examples/compact-remote/reference/front-reference.png",
+          "observation_id": "main_object_bbox",
           "points": [
             [
               178,
@@ -73,6 +75,8 @@
         {
           "view": "front_photo",
           "kind": "silhouette",
+          "source_image": "projects/image-structured-modeler/examples/compact-remote/reference/front-reference.png",
+          "observation_id": "remote_body_bbox",
           "points": [
             [
               178,
@@ -101,11 +105,50 @@
         {
           "view": "manual_correction",
           "kind": "manual_note",
+          "status": "manual_confirmed",
           "confidence": 0.95,
           "note": "Reviewer confirmed a soft handheld corner radius from the front silhouette."
         }
       ],
-      "status": "visually_detected"
+      "status": "visually_detected",
+      "evidence_status": "manual_confirmed",
+      "manual_confirmed": true,
+      "feature_semantics": [
+        "flush"
+      ],
+      "evidence_sources": [
+        {
+          "view": "front_photo",
+          "kind": "silhouette",
+          "status": "observed",
+          "source_image": "projects/image-structured-modeler/examples/compact-remote/reference/front-reference.png",
+          "observation_id": "main_object_bbox",
+          "confidence": 0.83,
+          "note": "Tall rounded handheld silhouette with low perspective distortion.",
+          "view_kind": "front"
+        },
+        {
+          "view": "front_photo",
+          "kind": "silhouette",
+          "status": "observed",
+          "source_image": "projects/image-structured-modeler/examples/compact-remote/reference/front-reference.png",
+          "observation_id": "remote_body_bbox",
+          "confidence": 0.82,
+          "note": "Outer remote body boundary.",
+          "view_kind": "front"
+        },
+        {
+          "view": "manual_correction",
+          "kind": "manual_note",
+          "status": "manual_confirmed",
+          "confidence": 0.95,
+          "note": "Reviewer confirmed a soft handheld corner radius from the front silhouette."
+        }
+      ],
+      "template_prior": true,
+      "uncertainty": [
+        "Missing required view evidence for right; current geometry uses profile assumptions."
+      ]
     },
     {
       "id": "remote_face_panel",
@@ -121,6 +164,8 @@
         {
           "view": "front_photo",
           "kind": "silhouette",
+          "source_image": "projects/image-structured-modeler/examples/compact-remote/reference/front-reference.png",
+          "observation_id": "face_panel_bbox",
           "points": [
             [
               211,
@@ -147,7 +192,25 @@
           "note": "Inset face panel visible as a darker raised region."
         }
       ],
-      "status": "inferred"
+      "status": "inferred",
+      "evidence_sources": [
+        {
+          "view": "front_photo",
+          "kind": "silhouette",
+          "status": "observed",
+          "source_image": "projects/image-structured-modeler/examples/compact-remote/reference/front-reference.png",
+          "observation_id": "face_panel_bbox",
+          "confidence": 0.74,
+          "note": "Inset face panel visible as a darker raised region.",
+          "view_kind": "front"
+        }
+      ],
+      "evidence_status": "inferred",
+      "manual_confirmed": false,
+      "template_prior": true,
+      "feature_semantics": [
+        "flush"
+      ]
     },
     {
       "id": "navigation_pad",
@@ -170,6 +233,8 @@
         {
           "view": "front_photo",
           "kind": "center_point",
+          "source_image": "projects/image-structured-modeler/examples/compact-remote/reference/front-reference.png",
+          "observation_id": "navigation_pad_center",
           "points": [
             [
               300,
@@ -180,7 +245,30 @@
           "note": "Large central navigation pad."
         }
       ],
-      "status": "visually_detected"
+      "status": "visually_detected",
+      "evidence_sources": [
+        {
+          "view": "front_photo",
+          "kind": "center_point",
+          "status": "observed",
+          "source_image": "projects/image-structured-modeler/examples/compact-remote/reference/front-reference.png",
+          "observation_id": "navigation_pad_center",
+          "confidence": 0.78,
+          "note": "Large central navigation pad.",
+          "view_kind": "front"
+        }
+      ],
+      "evidence_status": "observed",
+      "manual_confirmed": false,
+      "template_prior": false,
+      "feature_semantics": [
+        "convex"
+      ],
+      "feature_mapping": {
+        "operation": "add_boss",
+        "fallback": "none",
+        "note": "Mapped to controlled face add_boss on the remote face panel."
+      }
     },
     {
       "id": "primary_button_cluster",
@@ -235,6 +323,8 @@
         {
           "view": "front_photo",
           "kind": "silhouette",
+          "source_image": "projects/image-structured-modeler/examples/compact-remote/reference/front-reference.png",
+          "observation_id": "primary_button_cluster_bbox",
           "points": [
             [
               244,
@@ -263,11 +353,42 @@
         {
           "view": "manual_correction",
           "kind": "manual_note",
+          "status": "manual_confirmed",
           "confidence": 0.95,
           "note": "Reviewer split the visible cluster into five round buttons."
         }
       ],
-      "status": "visually_detected"
+      "status": "visually_detected",
+      "evidence_status": "manual_confirmed",
+      "template_prior": false,
+      "manual_confirmed": true,
+      "feature_semantics": [
+        "convex"
+      ],
+      "evidence_sources": [
+        {
+          "view": "front_photo",
+          "kind": "silhouette",
+          "status": "observed",
+          "source_image": "projects/image-structured-modeler/examples/compact-remote/reference/front-reference.png",
+          "observation_id": "primary_button_cluster_bbox",
+          "confidence": 0.7,
+          "note": "Small command buttons around the navigation pad.",
+          "view_kind": "front"
+        },
+        {
+          "view": "manual_correction",
+          "kind": "manual_note",
+          "status": "manual_confirmed",
+          "confidence": 0.95,
+          "note": "Reviewer split the visible cluster into five round buttons."
+        }
+      ],
+      "feature_mapping": {
+        "operation": "add_boss",
+        "fallback": "none",
+        "note": "Mapped to controlled face add_boss on the remote face panel."
+      }
     },
     {
       "id": "volume_rocker",
@@ -290,6 +411,8 @@
         {
           "view": "front_photo",
           "kind": "silhouette",
+          "source_image": "projects/image-structured-modeler/examples/compact-remote/reference/front-reference.png",
+          "observation_id": "volume_rocker_bbox",
           "points": [
             [
               276,
@@ -316,7 +439,30 @@
           "note": "Vertical rocker on the lower half."
         }
       ],
-      "status": "visually_detected"
+      "status": "visually_detected",
+      "evidence_sources": [
+        {
+          "view": "front_photo",
+          "kind": "silhouette",
+          "status": "observed",
+          "source_image": "projects/image-structured-modeler/examples/compact-remote/reference/front-reference.png",
+          "observation_id": "volume_rocker_bbox",
+          "confidence": 0.76,
+          "note": "Vertical rocker on the lower half.",
+          "view_kind": "front"
+        }
+      ],
+      "evidence_status": "observed",
+      "manual_confirmed": false,
+      "template_prior": false,
+      "feature_semantics": [
+        "convex"
+      ],
+      "feature_mapping": {
+        "operation": "add_raised_rib",
+        "fallback": "none",
+        "note": "Mapped to controlled face add_raised_rib on the remote face panel."
+      }
     },
     {
       "id": "speaker_grille",
@@ -338,6 +484,8 @@
         {
           "view": "front_photo",
           "kind": "silhouette",
+          "source_image": "projects/image-structured-modeler/examples/compact-remote/reference/front-reference.png",
+          "observation_id": "speaker_grille_bbox",
           "points": [
             [
               265,
@@ -364,7 +512,30 @@
           "note": "Short horizontal slots near the top."
         }
       ],
-      "status": "inferred"
+      "status": "inferred",
+      "evidence_sources": [
+        {
+          "view": "front_photo",
+          "kind": "silhouette",
+          "status": "observed",
+          "source_image": "projects/image-structured-modeler/examples/compact-remote/reference/front-reference.png",
+          "observation_id": "speaker_grille_bbox",
+          "confidence": 0.62,
+          "note": "Short horizontal slots near the top.",
+          "view_kind": "front"
+        }
+      ],
+      "evidence_status": "inferred",
+      "manual_confirmed": false,
+      "template_prior": true,
+      "feature_semantics": [
+        "blind_recess"
+      ],
+      "feature_mapping": {
+        "operation": "cut_recess",
+        "fallback": "none",
+        "note": "Mapped to controlled face cut_recess using target-local face coordinates."
+      }
     },
     {
       "id": "brand_label",
@@ -384,6 +555,8 @@
         {
           "view": "front_photo",
           "kind": "text_label",
+          "source_image": "projects/image-structured-modeler/examples/compact-remote/reference/front-reference.png",
+          "observation_id": "brand_label_bbox",
           "points": [
             [
               251,
@@ -412,18 +585,58 @@
         {
           "view": "manual_correction",
           "kind": "manual_note",
+          "status": "manual_confirmed",
           "confidence": 0.95,
           "note": "Reviewer confirmed a short brand label near the lower face."
         }
       ],
-      "status": "manually_confirmed"
+      "status": "manually_confirmed",
+      "evidence_status": "manual_confirmed",
+      "template_prior": false,
+      "manual_confirmed": true,
+      "feature_semantics": [
+        "decal_printed"
+      ],
+      "feature_mapping": {
+        "operation": "text_3d",
+        "fallback": "visual_marker",
+        "note": "Brand label is review-confirmed text; solid engraving is deferred."
+      },
+      "evidence_sources": [
+        {
+          "view": "front_photo",
+          "kind": "text_label",
+          "status": "observed",
+          "source_image": "projects/image-structured-modeler/examples/compact-remote/reference/front-reference.png",
+          "observation_id": "brand_label_bbox",
+          "confidence": 0.67,
+          "note": "Brand label near the bottom of the face.",
+          "view_kind": "front"
+        },
+        {
+          "view": "manual_correction",
+          "kind": "manual_note",
+          "status": "manual_confirmed",
+          "confidence": 0.95,
+          "note": "Reviewer confirmed a short brand label near the lower face."
+        }
+      ]
     }
   ],
   "review": {
     "overlay_path": null,
     "open_questions": [
       "Rear battery-door seam is intentionally deferred until a rear view is added.",
-      "Top emitter window is represented by the side thickness prior only."
+      "Top emitter window is represented by the side thickness prior only.",
+      "remote_body: review template-derived candidate boxes before accepting dimensions.",
+      "remote_body: review profile-prior dimensions and feature semantics.",
+      "remote_face_panel: review profile-prior dimensions and feature semantics.",
+      "speaker_grille: review profile-prior dimensions and feature semantics.",
+      "brand_label: confirm whether decal_printed should stay as visual_marker or wait for real feature editing.",
+      "remote_face_panel: semantic fusion is partial; confirm before treating as fully image-derived.",
+      "speaker_grille: semantic fusion is partial; confirm before treating as fully image-derived.",
+      "brand_label: semantic fusion needs review (feature_mapping_fallback).",
+      "Review template-prior parts before treating them as image-confirmed: remote_body, remote_face_panel, speaker_grille."
     ],
     "corrections_applied": [
       "scale.known_width",
@@ -439,6 +652,874 @@
     "correction_notes": [
       "Second product sample for phase 6 generalization validation.",
       "Manual corrections lock the physical size and button layout without changing generator code."
+    ],
+    "evidence_summary": {
+      "image_count": 2,
+      "views_detected": [
+        "front",
+        "right",
+        "detail"
+      ],
+      "missing_views": [
+        "rear",
+        "top"
+      ],
+      "status_counts": {
+        "observed": 2,
+        "inferred": 2,
+        "template_prior": 0,
+        "manual_confirmed": 3
+      },
+      "template_prior_parts": [
+        "remote_body",
+        "remote_face_panel",
+        "speaker_grille"
+      ],
+      "manual_confirmed_parts": [
+        "remote_body",
+        "primary_button_cluster",
+        "brand_label"
+      ]
+    },
+    "evidence_graph": {
+      "version": 1,
+      "image_count": 2,
+      "views_detected": [
+        "front",
+        "right",
+        "detail"
+      ],
+      "missing_views": [
+        "rear",
+        "top"
+      ],
+      "parts": [
+        {
+          "part_id": "remote_body",
+          "status": "manual_confirmed",
+          "template_prior": true,
+          "manual_confirmed": true,
+          "required_views": [
+            "front",
+            "right"
+          ],
+          "confirmed_views": [
+            "front",
+            "right",
+            "manual_correction"
+          ],
+          "missing_views": [],
+          "feature_semantics": [
+            "flush"
+          ],
+          "sources": [
+            {
+              "view": "front_photo",
+              "view_kind": "front",
+              "kind": "silhouette",
+              "status": "observed",
+              "source_image": "projects/image-structured-modeler/examples/compact-remote/reference/front-reference.png",
+              "observation_id": "main_object_bbox",
+              "confidence": 0.83,
+              "note": "Tall rounded handheld silhouette with low perspective distortion."
+            },
+            {
+              "view": "front_photo",
+              "view_kind": "front",
+              "kind": "silhouette",
+              "status": "observed",
+              "source_image": "projects/image-structured-modeler/examples/compact-remote/reference/front-reference.png",
+              "observation_id": "remote_body_bbox",
+              "confidence": 0.82,
+              "note": "Outer remote body boundary."
+            },
+            {
+              "view": "side_photo",
+              "view_kind": "right",
+              "kind": "silhouette",
+              "status": "observed",
+              "source_image": "projects/image-structured-modeler/examples/compact-remote/reference/right-reference.png",
+              "observation_id": "side_thickness_profile",
+              "confidence": 0.72,
+              "note": "Side silhouette supports a slim 16mm thickness prior."
+            },
+            {
+              "view": "manual_correction",
+              "view_kind": "manual_correction",
+              "kind": "manual_note",
+              "status": "manual_confirmed",
+              "confidence": 0.95,
+              "note": "Reviewer confirmed a soft handheld corner radius from the front silhouette."
+            }
+          ],
+          "conflicts": [
+            {
+              "type": "template_candidate_used",
+              "severity": "info",
+              "views": [
+                "right"
+              ],
+              "note": "One or more candidate records came from a layout/template heuristic."
+            },
+            {
+              "type": "template_prior_used",
+              "severity": "info",
+              "views": [
+                "front",
+                "right"
+              ],
+              "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+            }
+          ],
+          "open_questions": [
+            "remote_body: review template-derived candidate boxes before accepting dimensions.",
+            "remote_body: review profile-prior dimensions and feature semantics."
+          ]
+        },
+        {
+          "part_id": "remote_face_panel",
+          "status": "inferred",
+          "template_prior": true,
+          "manual_confirmed": false,
+          "required_views": [
+            "front"
+          ],
+          "confirmed_views": [
+            "front"
+          ],
+          "missing_views": [],
+          "feature_semantics": [
+            "flush"
+          ],
+          "sources": [
+            {
+              "view": "front_photo",
+              "view_kind": "front",
+              "kind": "silhouette",
+              "status": "observed",
+              "source_image": "projects/image-structured-modeler/examples/compact-remote/reference/front-reference.png",
+              "observation_id": "face_panel_bbox",
+              "confidence": 0.74,
+              "note": "Inset face panel visible as a darker raised region."
+            }
+          ],
+          "conflicts": [
+            {
+              "type": "template_prior_used",
+              "severity": "info",
+              "views": [
+                "front"
+              ],
+              "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+            }
+          ],
+          "open_questions": [
+            "remote_face_panel: review profile-prior dimensions and feature semantics."
+          ]
+        },
+        {
+          "part_id": "navigation_pad",
+          "status": "observed",
+          "template_prior": false,
+          "manual_confirmed": false,
+          "required_views": [
+            "front"
+          ],
+          "confirmed_views": [
+            "front"
+          ],
+          "missing_views": [],
+          "feature_semantics": [
+            "convex"
+          ],
+          "sources": [
+            {
+              "view": "front_photo",
+              "view_kind": "front",
+              "kind": "center_point",
+              "status": "observed",
+              "source_image": "projects/image-structured-modeler/examples/compact-remote/reference/front-reference.png",
+              "observation_id": "navigation_pad_center",
+              "confidence": 0.78,
+              "note": "Large central navigation pad."
+            }
+          ],
+          "conflicts": [],
+          "open_questions": []
+        },
+        {
+          "part_id": "primary_button_cluster",
+          "status": "manual_confirmed",
+          "template_prior": false,
+          "manual_confirmed": true,
+          "required_views": [
+            "front"
+          ],
+          "confirmed_views": [
+            "front",
+            "manual_correction"
+          ],
+          "missing_views": [],
+          "feature_semantics": [
+            "convex"
+          ],
+          "sources": [
+            {
+              "view": "front_photo",
+              "view_kind": "front",
+              "kind": "silhouette",
+              "status": "observed",
+              "source_image": "projects/image-structured-modeler/examples/compact-remote/reference/front-reference.png",
+              "observation_id": "primary_button_cluster_bbox",
+              "confidence": 0.7,
+              "note": "Small command buttons around the navigation pad."
+            },
+            {
+              "view": "manual_correction",
+              "view_kind": "manual_correction",
+              "kind": "manual_note",
+              "status": "manual_confirmed",
+              "confidence": 0.95,
+              "note": "Reviewer split the visible cluster into five round buttons."
+            }
+          ],
+          "conflicts": [],
+          "open_questions": []
+        },
+        {
+          "part_id": "volume_rocker",
+          "status": "observed",
+          "template_prior": false,
+          "manual_confirmed": false,
+          "required_views": [
+            "front"
+          ],
+          "confirmed_views": [
+            "front"
+          ],
+          "missing_views": [],
+          "feature_semantics": [
+            "convex"
+          ],
+          "sources": [
+            {
+              "view": "front_photo",
+              "view_kind": "front",
+              "kind": "silhouette",
+              "status": "observed",
+              "source_image": "projects/image-structured-modeler/examples/compact-remote/reference/front-reference.png",
+              "observation_id": "volume_rocker_bbox",
+              "confidence": 0.76,
+              "note": "Vertical rocker on the lower half."
+            }
+          ],
+          "conflicts": [],
+          "open_questions": []
+        },
+        {
+          "part_id": "speaker_grille",
+          "status": "inferred",
+          "template_prior": true,
+          "manual_confirmed": false,
+          "required_views": [
+            "front"
+          ],
+          "confirmed_views": [
+            "front"
+          ],
+          "missing_views": [],
+          "feature_semantics": [
+            "blind_recess"
+          ],
+          "sources": [
+            {
+              "view": "front_photo",
+              "view_kind": "front",
+              "kind": "silhouette",
+              "status": "observed",
+              "source_image": "projects/image-structured-modeler/examples/compact-remote/reference/front-reference.png",
+              "observation_id": "speaker_grille_bbox",
+              "confidence": 0.62,
+              "note": "Short horizontal slots near the top."
+            }
+          ],
+          "conflicts": [
+            {
+              "type": "template_prior_used",
+              "severity": "info",
+              "views": [
+                "front"
+              ],
+              "note": "Profile prior contributes to this part; review before considering it image-confirmed."
+            }
+          ],
+          "open_questions": [
+            "speaker_grille: review profile-prior dimensions and feature semantics."
+          ]
+        },
+        {
+          "part_id": "brand_label",
+          "status": "manual_confirmed",
+          "template_prior": false,
+          "manual_confirmed": true,
+          "required_views": [
+            "front"
+          ],
+          "confirmed_views": [
+            "front",
+            "manual_correction"
+          ],
+          "missing_views": [],
+          "feature_semantics": [
+            "decal_printed"
+          ],
+          "sources": [
+            {
+              "view": "front_photo",
+              "view_kind": "front",
+              "kind": "text_label",
+              "status": "observed",
+              "source_image": "projects/image-structured-modeler/examples/compact-remote/reference/front-reference.png",
+              "observation_id": "brand_label_bbox",
+              "confidence": 0.67,
+              "note": "Brand label near the bottom of the face."
+            },
+            {
+              "view": "manual_correction",
+              "view_kind": "manual_correction",
+              "kind": "manual_note",
+              "status": "manual_confirmed",
+              "confidence": 0.95,
+              "note": "Reviewer confirmed a short brand label near the lower face."
+            }
+          ],
+          "conflicts": [
+            {
+              "type": "feature_mapping_fallback",
+              "severity": "warn",
+              "note": "Feature maps to text_3d with visual_marker fallback: Brand label is review-confirmed text; solid engraving is deferred."
+            }
+          ],
+          "open_questions": [
+            "brand_label: confirm whether decal_printed should stay as visual_marker or wait for real feature editing."
+          ]
+        }
+      ],
+      "open_questions": [
+        "remote_body: review template-derived candidate boxes before accepting dimensions.",
+        "remote_body: review profile-prior dimensions and feature semantics.",
+        "remote_face_panel: review profile-prior dimensions and feature semantics.",
+        "speaker_grille: review profile-prior dimensions and feature semantics.",
+        "brand_label: confirm whether decal_printed should stay as visual_marker or wait for real feature editing."
+      ]
+    },
+    "semantic_fusion": {
+      "version": 1,
+      "strategy": "graph_cross_view_semantic_fusion",
+      "image_count": 2,
+      "views_detected": [
+        "front",
+        "right",
+        "detail"
+      ],
+      "summary": {
+        "total_parts": 7,
+        "confirmed": 4,
+        "partial": 2,
+        "needs_review": 1,
+        "cross_view_confirmed_parts": [],
+        "fallback_parts": [
+          "brand_label"
+        ],
+        "template_prior_parts": [
+          "remote_body",
+          "remote_face_panel",
+          "speaker_grille"
+        ]
+      },
+      "parts": [
+        {
+          "part_id": "remote_body",
+          "status": "confirmed",
+          "decision": "manual_confirmed",
+          "confidence": 0.882,
+          "required_views": [
+            "front",
+            "right"
+          ],
+          "confirmed_views": [
+            "front",
+            "right",
+            "manual_correction"
+          ],
+          "missing_views": [],
+          "source_views": [
+            "front",
+            "right",
+            "manual_correction"
+          ],
+          "semantic_labels": [
+            "flush"
+          ],
+          "semantic_evidence": [
+            {
+              "semantic": "flush",
+              "confidence": 0.78,
+              "sources": [
+                {
+                  "view": "front_photo",
+                  "view_kind": "front",
+                  "status": "observed",
+                  "kind": "silhouette",
+                  "confidence": 0.83
+                },
+                {
+                  "view": "front_photo",
+                  "view_kind": "front",
+                  "status": "observed",
+                  "kind": "silhouette",
+                  "confidence": 0.82
+                },
+                {
+                  "view": "side_photo",
+                  "view_kind": "right",
+                  "status": "observed",
+                  "kind": "silhouette",
+                  "confidence": 0.72
+                },
+                {
+                  "view": "manual_correction",
+                  "view_kind": "manual_correction",
+                  "status": "manual_confirmed",
+                  "kind": "manual_note",
+                  "confidence": 0.95
+                }
+              ]
+            }
+          ],
+          "feature_mapping": null,
+          "signals": {
+            "image_count": 2,
+            "source_count": 4,
+            "observed_source_count": 4,
+            "required_view_coverage": 1,
+            "evidence_confidence": 0.83,
+            "feature_mapping_confidence": 0.5,
+            "conflict_types": [
+              "template_candidate_used",
+              "template_prior_used"
+            ]
+          },
+          "review_flags": [
+            "template_prior"
+          ]
+        },
+        {
+          "part_id": "remote_face_panel",
+          "status": "partial",
+          "decision": "single_view_confirmed",
+          "confidence": 0.732,
+          "required_views": [
+            "front"
+          ],
+          "confirmed_views": [
+            "front"
+          ],
+          "missing_views": [],
+          "source_views": [
+            "front"
+          ],
+          "semantic_labels": [
+            "flush"
+          ],
+          "semantic_evidence": [
+            {
+              "semantic": "flush",
+              "confidence": 0.62,
+              "sources": [
+                {
+                  "view": "front_photo",
+                  "view_kind": "front",
+                  "status": "observed",
+                  "kind": "silhouette",
+                  "confidence": 0.74
+                }
+              ]
+            }
+          ],
+          "feature_mapping": null,
+          "signals": {
+            "image_count": 2,
+            "source_count": 1,
+            "observed_source_count": 1,
+            "required_view_coverage": 1,
+            "evidence_confidence": 0.74,
+            "feature_mapping_confidence": 0.5,
+            "conflict_types": [
+              "template_prior_used"
+            ]
+          },
+          "review_flags": [
+            "template_prior"
+          ]
+        },
+        {
+          "part_id": "navigation_pad",
+          "status": "confirmed",
+          "decision": "single_view_confirmed",
+          "confidence": 0.952,
+          "required_views": [
+            "front"
+          ],
+          "confirmed_views": [
+            "front"
+          ],
+          "missing_views": [],
+          "source_views": [
+            "front"
+          ],
+          "semantic_labels": [
+            "convex"
+          ],
+          "semantic_evidence": [
+            {
+              "semantic": "convex",
+              "confidence": 0.78,
+              "sources": [
+                {
+                  "view": "front_photo",
+                  "view_kind": "front",
+                  "status": "observed",
+                  "kind": "center_point",
+                  "confidence": 0.78
+                }
+              ]
+            }
+          ],
+          "feature_mapping": {
+            "operation": "add_boss",
+            "fallback": "none",
+            "note": "Mapped to controlled face add_boss on the remote face panel."
+          },
+          "signals": {
+            "image_count": 2,
+            "source_count": 1,
+            "observed_source_count": 1,
+            "required_view_coverage": 1,
+            "evidence_confidence": 0.78,
+            "feature_mapping_confidence": 0.86,
+            "conflict_types": []
+          },
+          "review_flags": []
+        },
+        {
+          "part_id": "primary_button_cluster",
+          "status": "confirmed",
+          "decision": "manual_confirmed",
+          "confidence": 1,
+          "required_views": [
+            "front"
+          ],
+          "confirmed_views": [
+            "front",
+            "manual_correction"
+          ],
+          "missing_views": [],
+          "source_views": [
+            "front",
+            "manual_correction"
+          ],
+          "semantic_labels": [
+            "convex"
+          ],
+          "semantic_evidence": [
+            {
+              "semantic": "convex",
+              "confidence": 0.9,
+              "sources": [
+                {
+                  "view": "front_photo",
+                  "view_kind": "front",
+                  "status": "observed",
+                  "kind": "silhouette",
+                  "confidence": 0.7
+                },
+                {
+                  "view": "manual_correction",
+                  "view_kind": "manual_correction",
+                  "status": "manual_confirmed",
+                  "kind": "manual_note",
+                  "confidence": 0.95
+                }
+              ]
+            }
+          ],
+          "feature_mapping": {
+            "operation": "add_boss",
+            "fallback": "none",
+            "note": "Mapped to controlled face add_boss on the remote face panel."
+          },
+          "signals": {
+            "image_count": 2,
+            "source_count": 2,
+            "observed_source_count": 2,
+            "required_view_coverage": 1,
+            "evidence_confidence": 0.825,
+            "feature_mapping_confidence": 0.86,
+            "conflict_types": []
+          },
+          "review_flags": []
+        },
+        {
+          "part_id": "volume_rocker",
+          "status": "confirmed",
+          "decision": "single_view_confirmed",
+          "confidence": 0.945,
+          "required_views": [
+            "front"
+          ],
+          "confirmed_views": [
+            "front"
+          ],
+          "missing_views": [],
+          "source_views": [
+            "front"
+          ],
+          "semantic_labels": [
+            "convex"
+          ],
+          "semantic_evidence": [
+            {
+              "semantic": "convex",
+              "confidence": 0.76,
+              "sources": [
+                {
+                  "view": "front_photo",
+                  "view_kind": "front",
+                  "status": "observed",
+                  "kind": "silhouette",
+                  "confidence": 0.76
+                }
+              ]
+            }
+          ],
+          "feature_mapping": {
+            "operation": "add_raised_rib",
+            "fallback": "none",
+            "note": "Mapped to controlled face add_raised_rib on the remote face panel."
+          },
+          "signals": {
+            "image_count": 2,
+            "source_count": 1,
+            "observed_source_count": 1,
+            "required_view_coverage": 1,
+            "evidence_confidence": 0.76,
+            "feature_mapping_confidence": 0.86,
+            "conflict_types": []
+          },
+          "review_flags": []
+        },
+        {
+          "part_id": "speaker_grille",
+          "status": "partial",
+          "decision": "single_view_confirmed",
+          "confidence": 0.777,
+          "required_views": [
+            "front"
+          ],
+          "confirmed_views": [
+            "front"
+          ],
+          "missing_views": [],
+          "source_views": [
+            "front"
+          ],
+          "semantic_labels": [
+            "blind_recess"
+          ],
+          "semantic_evidence": [
+            {
+              "semantic": "blind_recess",
+              "confidence": 0.5,
+              "sources": [
+                {
+                  "view": "front_photo",
+                  "view_kind": "front",
+                  "status": "observed",
+                  "kind": "silhouette",
+                  "confidence": 0.62
+                }
+              ]
+            }
+          ],
+          "feature_mapping": {
+            "operation": "cut_recess",
+            "fallback": "none",
+            "note": "Mapped to controlled face cut_recess using target-local face coordinates."
+          },
+          "signals": {
+            "image_count": 2,
+            "source_count": 1,
+            "observed_source_count": 1,
+            "required_view_coverage": 1,
+            "evidence_confidence": 0.62,
+            "feature_mapping_confidence": 0.86,
+            "conflict_types": [
+              "template_prior_used"
+            ]
+          },
+          "review_flags": [
+            "template_prior"
+          ]
+        },
+        {
+          "part_id": "brand_label",
+          "status": "needs_review",
+          "decision": "feature_fallback",
+          "confidence": 0.816,
+          "required_views": [
+            "front"
+          ],
+          "confirmed_views": [
+            "front",
+            "manual_correction"
+          ],
+          "missing_views": [],
+          "source_views": [
+            "front",
+            "manual_correction"
+          ],
+          "semantic_labels": [
+            "decal_printed"
+          ],
+          "semantic_evidence": [
+            {
+              "semantic": "decal_printed",
+              "confidence": 0.74,
+              "sources": [
+                {
+                  "view": "front_photo",
+                  "view_kind": "front",
+                  "status": "observed",
+                  "kind": "text_label",
+                  "confidence": 0.67
+                },
+                {
+                  "view": "manual_correction",
+                  "view_kind": "manual_correction",
+                  "status": "manual_confirmed",
+                  "kind": "manual_note",
+                  "confidence": 0.95
+                }
+              ]
+            }
+          ],
+          "feature_mapping": {
+            "operation": "text_3d",
+            "fallback": "visual_marker",
+            "note": "Brand label is review-confirmed text; solid engraving is deferred."
+          },
+          "signals": {
+            "image_count": 2,
+            "source_count": 2,
+            "observed_source_count": 2,
+            "required_view_coverage": 1,
+            "evidence_confidence": 0.81,
+            "feature_mapping_confidence": 0.42,
+            "conflict_types": [
+              "feature_mapping_fallback"
+            ]
+          },
+          "review_flags": [
+            "feature_mapping_fallback"
+          ]
+        }
+      ],
+      "open_questions": [
+        "remote_face_panel: semantic fusion is partial; confirm before treating as fully image-derived.",
+        "speaker_grille: semantic fusion is partial; confirm before treating as fully image-derived.",
+        "brand_label: semantic fusion needs review (feature_mapping_fallback)."
+      ]
+    },
+    "correction_suggestions": [
+      {
+        "part_id": "remote_body",
+        "reason": "remote_body: review template-derived candidate boxes before accepting dimensions.",
+        "fusion_status": "confirmed",
+        "fusion_decision": "manual_confirmed",
+        "patch": {
+          "id": "remote_body",
+          "action": "update",
+          "evidence_status": "manual_confirmed",
+          "manual_confirmed": true,
+          "template_prior": false,
+          "feature_semantics": [
+            "flush"
+          ],
+          "evidence_note": "Reviewer confirmed remote_body; replace this note with the view/feature evidence used."
+        }
+      },
+      {
+        "part_id": "remote_face_panel",
+        "reason": "remote_face_panel: review profile-prior dimensions and feature semantics.",
+        "fusion_status": "partial",
+        "fusion_decision": "single_view_confirmed",
+        "patch": {
+          "id": "remote_face_panel",
+          "action": "update",
+          "evidence_status": "manual_confirmed",
+          "manual_confirmed": true,
+          "template_prior": false,
+          "feature_semantics": [
+            "flush"
+          ],
+          "evidence_note": "Reviewer confirmed remote_face_panel; replace this note with the view/feature evidence used."
+        }
+      },
+      {
+        "part_id": "speaker_grille",
+        "reason": "speaker_grille: review profile-prior dimensions and feature semantics.",
+        "fusion_status": "partial",
+        "fusion_decision": "single_view_confirmed",
+        "patch": {
+          "id": "speaker_grille",
+          "action": "update",
+          "evidence_status": "manual_confirmed",
+          "manual_confirmed": true,
+          "template_prior": false,
+          "feature_semantics": [
+            "blind_recess"
+          ],
+          "feature_mapping": {
+            "operation": "cut_recess",
+            "fallback": "none",
+            "note": "Mapped to controlled face cut_recess using target-local face coordinates."
+          },
+          "evidence_note": "Reviewer confirmed speaker_grille; replace this note with the view/feature evidence used."
+        }
+      },
+      {
+        "part_id": "brand_label",
+        "reason": "Feature maps to text_3d with visual_marker fallback: Brand label is review-confirmed text; solid engraving is deferred.",
+        "fusion_status": "needs_review",
+        "fusion_decision": "feature_fallback",
+        "patch": {
+          "id": "brand_label",
+          "action": "update",
+          "evidence_status": "manual_confirmed",
+          "manual_confirmed": true,
+          "template_prior": false,
+          "feature_semantics": [
+            "decal_printed"
+          ],
+          "feature_mapping": {
+            "operation": "text_3d",
+            "fallback": "visual_marker",
+            "note": "Brand label is review-confirmed text; solid engraving is deferred."
+          },
+          "evidence_note": "Reviewer confirmed brand_label; replace this note with the view/feature evidence used."
+        }
+      }
     ]
   }
 }

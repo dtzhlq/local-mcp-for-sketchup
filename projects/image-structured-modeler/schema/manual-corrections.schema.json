@@ -44,6 +44,25 @@
           "parent": { "type": "string" },
           "material": { "type": "string" },
           "parameters": { "type": "object" },
+          "evidence_status": { "$ref": "#/$defs/evidence_status" },
+          "evidence_sources": {
+            "type": "array",
+            "items": { "$ref": "#/$defs/evidence_source" }
+          },
+          "template_prior": { "type": "boolean" },
+          "manual_confirmed": { "type": "boolean" },
+          "feature_semantics": {
+            "type": "array",
+            "items": { "$ref": "#/$defs/feature_semantic" }
+          },
+          "feature_mapping": {
+            "type": "object",
+            "properties": {
+              "operation": { "type": "string" },
+              "fallback": { "enum": ["none", "visual_marker", "manual_required", "runtime_unsupported"] },
+              "note": { "type": "string" }
+            }
+          },
           "uncertainty": { "type": "array", "items": { "type": "string" } },
           "evidence_note": { "type": "string" }
         }
@@ -53,6 +72,28 @@
       "type": "object",
       "properties": {
         "open_questions": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  },
+  "$defs": {
+    "evidence_status": {
+      "enum": ["observed", "inferred", "template_prior", "manual_confirmed"]
+    },
+    "feature_semantic": {
+      "enum": ["concave", "convex", "flush", "decal_printed", "through_hole", "blind_recess"]
+    },
+    "evidence_source": {
+      "type": "object",
+      "required": ["view", "kind", "status"],
+      "properties": {
+        "view": { "type": "string" },
+        "view_kind": { "type": "string" },
+        "kind": { "type": "string" },
+        "status": { "$ref": "#/$defs/evidence_status" },
+        "source_image": { "type": "string" },
+        "observation_id": { "type": "string" },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "note": { "type": "string" }
       }
     }
   }

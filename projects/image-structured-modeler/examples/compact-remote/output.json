@@ -90,163 +90,181 @@
       }
     },
     {
-      "op": "button_on_panel",
-      "name": "Remote_Navigation_Pad_From_Image_Plan",
+      "op": "add_boss",
+      "target_id": "Compact_Remote_Face_Panel_From_Image_Plan",
+      "feature_id": "Remote_Navigation_Pad_From_Image_Plan",
+      "face": "top",
       "center": [
-        0,
-        -30,
-        13.65
+        18,
+        38
       ],
+      "radius": 12,
       "height": 2.2,
-      "segments": 10,
-      "material": "Remote_Button_Rubber",
-      "smooth": "all",
-      "qa": {
-        "role": "navigation_pad",
-        "part_id": "Remote_Navigation_Pad_From_Image_Plan",
-        "expected_contacts": []
-      },
-      "size": [
-        24,
-        24
-      ],
-      "corner_radius": 12
+      "segments": 20
     },
     {
-      "op": "button_on_panel",
-      "name": "Remote_Power_Button_From_Image_Plan",
+      "op": "add_boss",
+      "target_id": "Compact_Remote_Face_Panel_From_Image_Plan",
+      "feature_id": "Remote_Power_Button_From_Image_Plan",
+      "face": "top",
       "center": [
-        -10,
-        -56,
-        13.65
+        8,
+        12
       ],
+      "radius": 4.2,
       "height": 1.9,
-      "segments": 16,
-      "material": "Remote_Button_Rubber",
-      "smooth": "all",
-      "qa": {
-        "role": "button",
-        "part_id": "Remote_Power_Button_From_Image_Plan",
-        "expected_contacts": []
-      },
-      "radius": 4.2
+      "segments": 20
     },
     {
-      "op": "button_on_panel",
-      "name": "Remote_Home_Button_From_Image_Plan",
+      "op": "add_boss",
+      "target_id": "Compact_Remote_Face_Panel_From_Image_Plan",
+      "feature_id": "Remote_Home_Button_From_Image_Plan",
+      "face": "top",
       "center": [
-        10,
-        -56,
-        13.65
+        28,
+        12
       ],
+      "radius": 4.2,
       "height": 1.9,
-      "segments": 16,
-      "material": "Remote_Button_Rubber",
-      "smooth": "all",
-      "qa": {
-        "role": "button",
-        "part_id": "Remote_Home_Button_From_Image_Plan",
-        "expected_contacts": []
-      },
-      "radius": 4.2
+      "segments": 20
     },
     {
-      "op": "button_on_panel",
-      "name": "Remote_Back_Button_From_Image_Plan",
+      "op": "add_boss",
+      "target_id": "Compact_Remote_Face_Panel_From_Image_Plan",
+      "feature_id": "Remote_Back_Button_From_Image_Plan",
+      "face": "top",
       "center": [
-        -10,
-        -8,
-        13.65
+        8,
+        60
       ],
+      "radius": 3.8,
       "height": 1.9,
-      "segments": 16,
-      "material": "Remote_Button_Rubber",
-      "smooth": "all",
-      "qa": {
-        "role": "button",
-        "part_id": "Remote_Back_Button_From_Image_Plan",
-        "expected_contacts": []
-      },
-      "radius": 3.8
+      "segments": 20
     },
     {
-      "op": "button_on_panel",
-      "name": "Remote_Menu_Button_From_Image_Plan",
+      "op": "add_boss",
+      "target_id": "Compact_Remote_Face_Panel_From_Image_Plan",
+      "feature_id": "Remote_Menu_Button_From_Image_Plan",
+      "face": "top",
       "center": [
-        10,
-        -8,
-        13.65
+        28,
+        60
       ],
+      "radius": 3.8,
       "height": 1.9,
-      "segments": 16,
-      "material": "Remote_Button_Rubber",
-      "smooth": "all",
-      "qa": {
-        "role": "button",
-        "part_id": "Remote_Menu_Button_From_Image_Plan",
-        "expected_contacts": []
-      },
-      "radius": 3.8
+      "segments": 20
     },
     {
-      "op": "button_on_panel",
-      "name": "Remote_Play_Button_From_Image_Plan",
+      "op": "add_boss",
+      "target_id": "Compact_Remote_Face_Panel_From_Image_Plan",
+      "feature_id": "Remote_Play_Button_From_Image_Plan",
+      "face": "top",
       "center": [
-        0,
-        4,
-        13.65
+        18,
+        72
       ],
+      "radius": 3.6,
       "height": 1.9,
-      "segments": 16,
-      "material": "Remote_Button_Rubber",
-      "smooth": "all",
-      "qa": {
-        "role": "button",
-        "part_id": "Remote_Play_Button_From_Image_Plan",
-        "expected_contacts": []
-      },
-      "radius": 3.6
+      "segments": 20
     },
     {
-      "op": "button_on_panel",
-      "name": "Remote_Volume_Rocker_From_Image_Plan",
+      "op": "add_raised_rib",
+      "target_id": "Compact_Remote_Face_Panel_From_Image_Plan",
+      "feature_id": "Remote_Volume_Rocker_From_Image_Plan",
+      "face": "top",
       "center": [
-        0,
-        24,
-        13.65
+        18,
+        92
       ],
+      "length": 28,
+      "width": 9,
       "height": 2,
-      "segments": 10,
-      "material": "Remote_Button_Rubber",
-      "smooth": "all",
-      "qa": {
-        "role": "volume_rocker",
-        "part_id": "Remote_Volume_Rocker_From_Image_Plan",
-        "expected_contacts": []
-      },
-      "size": [
-        9,
-        28
-      ],
-      "corner_radius": 4.5
+      "direction": "v"
     },
     {
-      "op": "slot_array",
-      "name": "Remote_Speaker_Grille_From_Image_Plan",
+      "op": "cut_recess",
+      "target_id": "Compact_Remote_Face_Panel_From_Image_Plan",
+      "feature_id": "Remote_Speaker_Grille_From_Image_Plan_1",
+      "face": "top",
       "center": [
-        0,
-        -66,
-        14.1
+        10,
+        2
       ],
-      "count": 5,
-      "spacing": 4,
-      "length": 2.4,
-      "width": 1,
+      "size": [
+        2.4,
+        1
+      ],
+      "radius": 0.5,
       "depth": 0.35,
-      "direction": "x",
-      "segments": 5,
-      "material": "Remote_Dark_Detail",
-      "smooth": "all"
+      "segments": 5
+    },
+    {
+      "op": "cut_recess",
+      "target_id": "Compact_Remote_Face_Panel_From_Image_Plan",
+      "feature_id": "Remote_Speaker_Grille_From_Image_Plan_2",
+      "face": "top",
+      "center": [
+        14,
+        2
+      ],
+      "size": [
+        2.4,
+        1
+      ],
+      "radius": 0.5,
+      "depth": 0.35,
+      "segments": 5
+    },
+    {
+      "op": "cut_recess",
+      "target_id": "Compact_Remote_Face_Panel_From_Image_Plan",
+      "feature_id": "Remote_Speaker_Grille_From_Image_Plan_3",
+      "face": "top",
+      "center": [
+        18,
+        2
+      ],
+      "size": [
+        2.4,
+        1
+      ],
+      "radius": 0.5,
+      "depth": 0.35,
+      "segments": 5
+    },
+    {
+      "op": "cut_recess",
+      "target_id": "Compact_Remote_Face_Panel_From_Image_Plan",
+      "feature_id": "Remote_Speaker_Grille_From_Image_Plan_4",
+      "face": "top",
+      "center": [
+        22,
+        2
+      ],
+      "size": [
+        2.4,
+        1
+      ],
+      "radius": 0.5,
+      "depth": 0.35,
+      "segments": 5
+    },
+    {
+      "op": "cut_recess",
+      "target_id": "Compact_Remote_Face_Panel_From_Image_Plan",
+      "feature_id": "Remote_Speaker_Grille_From_Image_Plan_5",
+      "face": "top",
+      "center": [
+        26,
+        2
+      ],
+      "size": [
+        2.4,
+        1
+      ],
+      "radius": 0.5,
+      "depth": 0.35,
+      "segments": 5
     },
     {
       "op": "text_3d",
@@ -255,7 +273,7 @@
       "center": [
         0,
         53,
-        14.05
+        16.15
       ],
       "height": 5,
       "extrusion": 0.45,

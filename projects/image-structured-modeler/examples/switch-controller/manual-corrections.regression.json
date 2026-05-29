@@ -18,6 +18,10 @@
         "outer_radius": 13,
         "top_radius": 11
       },
+      "evidence_status": "manual_confirmed",
+      "manual_confirmed": true,
+      "template_prior": false,
+      "feature_semantics": ["convex", "blind_recess"],
       "evidence_note": "Reviewer moved the left stick center and increased the cap radius from the front overlay."
     },
     {
@@ -32,6 +36,10 @@
           { "label": "Home", "center": [104, 14], "radius": 4.2 }
         ]
       },
+      "evidence_status": "manual_confirmed",
+      "manual_confirmed": true,
+      "template_prior": false,
+      "feature_semantics": ["convex"],
       "evidence_note": "Reviewer confirmed a fifth small home button in the right cluster."
     }
   ],

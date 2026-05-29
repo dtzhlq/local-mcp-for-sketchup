@@ -1,0 +1,149 @@
+{
+  "generated_at": "2026-05-25T08:41:21.378Z",
+  "mode": "runtime_snapshot",
+  "runtime": "queue",
+  "source": {
+    "output_dsl": "projects/image-structured-modeler/examples/switch-controller/per-image/IMG_0155/output.json",
+    "saved_skp": "output/switch-controller-per-image/IMG_0155.skp",
+    "file_size_bytes": 260625
+  },
+  "operation_counts": {
+    "reset": 1,
+    "material": 6,
+    "component_definition": 1,
+    "rounded_box": 6,
+    "domed_surface": 2,
+    "bowed_panel": 2,
+    "analog_stick": 2,
+    "button_on_panel": 8,
+    "component_instance": 4,
+    "screw_hole": 4,
+    "scene": 2,
+    "style": 1,
+    "shadow": 1,
+    "rendering_options": 1
+  },
+  "snapshot_summary": {
+    "totals": {
+      "faces": 1776,
+      "edges": 2964,
+      "vertices": 1244,
+      "groups": 24,
+      "instances": 4
+    },
+    "bounding_box": {
+      "min": [
+        -140,
+        -84.5,
+        0
+      ],
+      "max": [
+        140,
+        89.5,
+        40
+      ],
+      "w": 280,
+      "d": 174,
+      "h": 40
+    },
+    "scenes": [
+      "Image_Structured_Front_Review",
+      "Image_Structured_Top_QA"
+    ],
+    "material_names": [
+      "Dark_Seam",
+      "Gloss_Black_Button",
+      "Indicator_Green",
+      "Rubber_Thumbstick",
+      "Satin_Black_Plastic",
+      "Warm_White_Plastic"
+    ],
+    "rendering_options": {
+      "edge_display_mode": 1,
+      "draw_hidden_geometry": false,
+      "display_color_by_layer": false,
+      "transparency": false
+    },
+    "warning_summary": {
+      "total": 4,
+      "by_severity": {
+        "error": 0,
+        "warn": 4,
+        "info": 0
+      },
+      "by_category": {
+        "material": 4
+      }
+    }
+  },
+  "warning_classification_summary": {
+    "queue_material_limitation": {
+      "total": 4,
+      "expected": 4,
+      "needs_review": 0
+    }
+  },
+  "warnings": [
+    {
+      "type": "material.pbr_unsupported",
+      "severity": "warn",
+      "category": "material",
+      "message": "Warm_White_Plastic uses PBR material fields, but SketchUp 2025+ is required; skipped PBR settings.",
+      "source": "Warm_White_Plastic",
+      "classification": {
+        "bucket": "queue_material_limitation",
+        "severity_override": "info",
+        "expected": true,
+        "source": "runtime_material_capability",
+        "note": "SketchUp runtime does not apply the PBR fields used by the DSL material metadata."
+      }
+    },
+    {
+      "type": "material.pbr_unsupported",
+      "severity": "warn",
+      "category": "material",
+      "message": "Satin_Black_Plastic uses PBR material fields, but SketchUp 2025+ is required; skipped PBR settings.",
+      "source": "Satin_Black_Plastic",
+      "classification": {
+        "bucket": "queue_material_limitation",
+        "severity_override": "info",
+        "expected": true,
+        "source": "runtime_material_capability",
+        "note": "SketchUp runtime does not apply the PBR fields used by the DSL material metadata."
+      }
+    },
+    {
+      "type": "material.pbr_unsupported",
+      "severity": "warn",
+      "category": "material",
+      "message": "Gloss_Black_Button uses PBR material fields, but SketchUp 2025+ is required; skipped PBR settings.",
+      "source": "Gloss_Black_Button",
+      "classification": {
+        "bucket": "queue_material_limitation",
+        "severity_override": "info",
+        "expected": true,
+        "source": "runtime_material_capability",
+        "note": "SketchUp runtime does not apply the PBR fields used by the DSL material metadata."
+      }
+    },
+    {
+      "type": "material.pbr_unsupported",
+      "severity": "warn",
+      "category": "material",
+      "message": "Rubber_Thumbstick uses PBR material fields, but SketchUp 2025+ is required; skipped PBR settings.",
+      "source": "Rubber_Thumbstick",
+      "classification": {
+        "bucket": "queue_material_limitation",
+        "severity_override": "info",
+        "expected": true,
+        "source": "runtime_material_capability",
+        "note": "SketchUp runtime does not apply the PBR fields used by the DSL material metadata."
+      }
+    }
+  ],
+  "next_actions": [
+    "Move this report generation into the regular image-structured build/check loop.",
+    "Use expected warning buckets as the first warning budget allowlist.",
+    "Reduce expected overlap buckets with more accurate contact/recess primitives."
+  ]
+}

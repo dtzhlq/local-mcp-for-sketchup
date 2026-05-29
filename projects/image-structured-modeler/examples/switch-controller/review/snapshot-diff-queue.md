@@ -1,7 +1,7 @@
 # Switch Controller Mock/Queue Snapshot Diff Report
 
-- Verdict: **pass**
-- Level: **ok**
+- Verdict: **review**
+- Level: **warn**
 - OK: **true**
 - Tolerance: `1 mm`
 - Expected runtime: `mock`
@@ -12,18 +12,35 @@
 
 | Metric | Count |
 |---|---:|
-| Total diffs | 0 |
+| Total diffs | 28 |
 | Errors | 0 |
-| Warnings | 0 |
+| Warnings | 28 |
 | Info | 0 |
 
 ## Top Issues
 
-No issues. Nice and clean.
+| Severity | Type | Path | Name | Message |
+|---|---|---|---|---|
+| warn | `snapshot.field_mismatch` | `groups.Left_Joycon_Shell_From_Image_Plan.features` | Left_Joycon_Shell_From_Image_Plan | groups.Left_Joycon_Shell_From_Image_Plan.features differs |
+| warn | `snapshot.field_mismatch` | `groups.Right_Joycon_Shell_From_Image_Plan.features` | Right_Joycon_Shell_From_Image_Plan | groups.Right_Joycon_Shell_From_Image_Plan.features differs |
+| warn | `snapshot.field_mismatch` | `groups.Center_Grip_Body_From_Image_Plan.features` | Center_Grip_Body_From_Image_Plan | groups.Center_Grip_Body_From_Image_Plan.features differs |
+| warn | `snapshot.field_mismatch` | `groups.Center_Front_Recess_From_Image_Plan.features` | Center_Front_Recess_From_Image_Plan | groups.Center_Front_Recess_From_Image_Plan.features differs |
+| warn | `snapshot.field_mismatch` | `groups.Left_Joycon_Face_Dome_From_Image_Plan.features` | Left_Joycon_Face_Dome_From_Image_Plan | groups.Left_Joycon_Face_Dome_From_Image_Plan.features differs |
+| warn | `snapshot.field_mismatch` | `groups.Right_Joycon_Face_Dome_From_Image_Plan.features` | Right_Joycon_Face_Dome_From_Image_Plan | groups.Right_Joycon_Face_Dome_From_Image_Plan.features differs |
+| warn | `snapshot.field_mismatch` | `groups.Left_Rear_Grip_From_Image_Plan.features` | Left_Rear_Grip_From_Image_Plan | groups.Left_Rear_Grip_From_Image_Plan.features differs |
+| warn | `snapshot.field_mismatch` | `groups.Right_Rear_Grip_From_Image_Plan.features` | Right_Rear_Grip_From_Image_Plan | groups.Right_Rear_Grip_From_Image_Plan.features differs |
+| warn | `snapshot.field_mismatch` | `groups.Top_Left_Shoulder_Rail_From_Image_Plan.features` | Top_Left_Shoulder_Rail_From_Image_Plan | groups.Top_Left_Shoulder_Rail_From_Image_Plan.features differs |
+| warn | `snapshot.field_mismatch` | `groups.Top_Right_Shoulder_Rail_From_Image_Plan.features` | Top_Right_Shoulder_Rail_From_Image_Plan | groups.Top_Right_Shoulder_Rail_From_Image_Plan.features differs |
 
 ## Recommendations
 
 - No follow-up needed from the current report.
+
+## Diff Type Breakdown
+
+| Type | Count |
+|---|---:|
+| `snapshot.field_mismatch` | 28 |
 
 ## Snapshot Pair Summary
 
@@ -49,6 +66,4 @@ Bounding boxes: expected `280 x 174 x 40 mm`, actual `280 x 174 x 40 mm`
 
 ## Image Structured Next Actions
 
-- Promote this diff report into the regular image-structured test loop as the queue parity baseline.
-- Reload the SketchUp plugin after QA metadata changes, then verify queue-side warning classifications use runtime metadata.
-
+- Review warning-level snapshot diffs and decide whether they need topology tolerance or real geometry fixes.

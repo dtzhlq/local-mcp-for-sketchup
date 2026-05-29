@@ -76,6 +76,7 @@
     }
     .tag.warn { color: var(--warn); border-color: #e2bd7d; background: #fff8e8; }
     .tag.good { color: var(--accent); border-color: #9dd9d1; background: #eefaf8; }
+    .tag.bad { color: var(--bad); border-color: #efb2ac; background: #fff1f0; }
     .table-wrap { overflow-x: auto; }
     table { width: 100%; border-collapse: collapse; font-size: 13px; }
     th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
@@ -83,10 +84,77 @@
     ul { margin: 0; padding-left: 18px; }
     li + li { margin-top: 4px; }
     .mono-list li { word-break: break-word; }
+    .workbench {
+      display: grid;
+      gap: 14px;
+    }
+    .workbench-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .workbench-grid {
+      display: grid;
+      grid-template-columns: minmax(280px, 0.95fr) minmax(320px, 1.05fr);
+      gap: 14px;
+      align-items: start;
+    }
+    .suggestion-list {
+      border: 1px solid var(--line);
+      max-height: 460px;
+      overflow: auto;
+      background: var(--soft);
+    }
+    .suggestion-item {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 10px;
+      padding: 10px;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+    }
+    .suggestion-item:last-child { border-bottom: 0; }
+    .suggestion-item input { margin-top: 3px; }
+    .suggestion-title {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+      margin-bottom: 5px;
+    }
+    button {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      padding: 7px 10px;
+      font: inherit;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    button.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    button:focus-visible, textarea:focus-visible {
+      outline: 2px solid #2563eb;
+      outline-offset: 2px;
+    }
+    textarea {
+      width: 100%;
+      min-height: 460px;
+      resize: vertical;
+      border: 1px solid var(--line);
+      padding: 10px;
+      font: 12px/1.45 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      color: var(--ink);
+      background: #fff;
+    }
     @media (max-width: 900px) {
       header { padding: 22px 18px 14px; }
       main { padding: 18px; }
-      .summary, .two, .image-grid { grid-template-columns: 1fr; }
+      .summary, .two, .image-grid, .workbench-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -101,6 +169,10 @@
       <div class="metric"><span class="subtle">Images</span><strong>6</strong></div>
       <div class="metric"><span class="subtle">Parts</span><strong>9</strong></div>
       <div class="metric"><span class="subtle">DSL Ops</span><strong>41</strong></div>
+      <div class="metric"><span class="subtle">Observed</span><strong>7</strong></div>
+      <div class="metric"><span class="subtle">Template Prior</span><strong>9</strong></div>
+      <div class="metric"><span class="subtle">Fusion Confirmed</span><strong>2</strong></div>
+      <div class="metric"><span class="subtle">Needs Review</span><strong>0</strong></div>
     </section>
 
     <section class="grid two">
@@ -123,7 +195,366 @@
 
     <section class="section">
       <h2>Open Questions</h2>
-      <ul><li>Confirm whether the generated right thumbstick position matches the real controller.</li><li>Confirm whether the left button cluster should be modeled as four round buttons or a directional cross.</li><li>Confirm rear grip thickness once a true top view or measured depth is available.</li></ul>
+      <ul><li>Confirm whether the generated right thumbstick position matches the real controller.</li><li>Confirm whether the left button cluster should be modeled as four round buttons or a directional cross.</li><li>Confirm rear grip thickness once a true top view or measured depth is available.</li><li>center_grip_body: review template-derived candidate boxes before accepting dimensions.</li><li>center_grip_body: review profile-prior dimensions and feature semantics.</li><li>left_joycon_shell: review template-derived candidate boxes before accepting dimensions.</li><li>left_joycon_shell: review profile-prior dimensions and feature semantics.</li><li>right_joycon_shell: review template-derived candidate boxes before accepting dimensions.</li><li>right_joycon_shell: review profile-prior dimensions and feature semantics.</li><li>rear_grip_pair: review template-derived candidate boxes before accepting dimensions.</li><li>rear_grip_pair: review profile-prior dimensions and feature semantics.</li><li>left_thumbstick: review template-derived candidate boxes before accepting dimensions.</li><li>left_thumbstick: review profile-prior dimensions and feature semantics.</li><li>right_thumbstick: review template-derived candidate boxes before accepting dimensions.</li><li>right_thumbstick: review profile-prior dimensions and feature semantics.</li><li>abxy_cluster: review template-derived candidate boxes before accepting dimensions.</li><li>abxy_cluster: review profile-prior dimensions and feature semantics.</li><li>left_button_cluster: review template-derived candidate boxes before accepting dimensions.</li><li>left_button_cluster: review profile-prior dimensions and feature semantics.</li><li>shoulder_rail_pair: review profile-prior dimensions and feature semantics.</li><li>left_joycon_shell: semantic fusion is partial; confirm before treating as fully image-derived.</li><li>right_joycon_shell: semantic fusion is partial; confirm before treating as fully image-derived.</li><li>left_thumbstick: semantic fusion is partial; confirm before treating as fully image-derived.</li><li>right_thumbstick: semantic fusion is partial; confirm before treating as fully image-derived.</li><li>abxy_cluster: semantic fusion is partial; confirm before treating as fully image-derived.</li><li>left_button_cluster: semantic fusion is partial; confirm before treating as fully image-derived.</li><li>shoulder_rail_pair: semantic fusion is partial; confirm before treating as fully image-derived.</li><li>Review template-prior parts before treating them as image-confirmed: center_grip_body, left_joycon_shell, right_joycon_shell, rear_grip_pair, left_thumbstick, right_thumbstick, abxy_cluster, left_button_cluster, shoulder_rail_pair.</li></ul>
+    </section>
+
+    <section class="section">
+      <h2>Evidence Status</h2>
+      <div class="grid two">
+    <div>
+      <h3>Status Counts</h3>
+      <p><span class="tag good">observed 7</span><span class="tag warn">inferred 2</span><span class="tag bad">template 0</span><span class="tag good">manual 0</span></p>
+      <h3 style="margin-top:14px">View Coverage</h3>
+      <p><span class="tag good">oblique</span><span class="tag good">right</span><span class="tag good">rear</span><span class="tag good">front</span></p>
+    </div>
+    <div>
+      <h3>Template Prior Parts</h3>
+      <ul><li>center_grip_body</li><li>left_joycon_shell</li><li>right_joycon_shell</li><li>rear_grip_pair</li><li>left_thumbstick</li><li>right_thumbstick</li><li>abxy_cluster</li><li>left_button_cluster</li><li>shoulder_rail_pair</li></ul>
+      <h3 style="margin-top:14px">Manual Confirmed Parts</h3>
+      <ul><li>None</li></ul>
+    </div>
+  </div>
+    </section>
+
+    <section class="section">
+      <h2>Evidence Graph</h2>
+      <div class="table-wrap">
+    <table>
+      <thead><tr><th>Part</th><th>Required Views</th><th>Confirmed Views</th><th>Missing</th><th>Conflicts / Questions</th></tr></thead>
+      <tbody>
+        <tr>
+    <td><code>center_grip_body</code><br><span class="tag good">observed</span><br><span class="tag warn">template prior</span></td>
+    <td>front, rear</td>
+    <td>rear, front</td>
+    <td>none</td>
+    <td>template_candidate_used: One or more candidate records came from a layout/template heuristic.; template_prior_used: Profile prior contributes to this part; review before considering it image-confirmed.; center_grip_body: review template-derived candidate boxes before accepting dimensions.; center_grip_body: review profile-prior dimensions and feature semantics.</td>
+  </tr>
+<tr>
+    <td><code>left_joycon_shell</code><br><span class="tag good">observed</span><br><span class="tag warn">template prior</span></td>
+    <td>front</td>
+    <td>front</td>
+    <td>none</td>
+    <td>template_candidate_used: One or more candidate records came from a layout/template heuristic.; template_prior_used: Profile prior contributes to this part; review before considering it image-confirmed.; left_joycon_shell: review template-derived candidate boxes before accepting dimensions.; left_joycon_shell: review profile-prior dimensions and feature semantics.</td>
+  </tr>
+<tr>
+    <td><code>right_joycon_shell</code><br><span class="tag good">observed</span><br><span class="tag warn">template prior</span></td>
+    <td>front</td>
+    <td>front</td>
+    <td>none</td>
+    <td>template_candidate_used: One or more candidate records came from a layout/template heuristic.; template_prior_used: Profile prior contributes to this part; review before considering it image-confirmed.; right_joycon_shell: review template-derived candidate boxes before accepting dimensions.; right_joycon_shell: review profile-prior dimensions and feature semantics.</td>
+  </tr>
+<tr>
+    <td><code>rear_grip_pair</code><br><span class="tag good">observed</span><br><span class="tag warn">template prior</span></td>
+    <td>rear, right</td>
+    <td>right, rear</td>
+    <td>none</td>
+    <td>template_candidate_used: One or more candidate records came from a layout/template heuristic.; template_prior_used: Profile prior contributes to this part; review before considering it image-confirmed.; rear_grip_pair: review template-derived candidate boxes before accepting dimensions.; rear_grip_pair: review profile-prior dimensions and feature semantics.</td>
+  </tr>
+<tr>
+    <td><code>left_thumbstick</code><br><span class="tag good">observed</span><br><span class="tag warn">template prior</span></td>
+    <td>front</td>
+    <td>front</td>
+    <td>none</td>
+    <td>template_candidate_used: One or more candidate records came from a layout/template heuristic.; template_prior_used: Profile prior contributes to this part; review before considering it image-confirmed.; left_thumbstick: review template-derived candidate boxes before accepting dimensions.; left_thumbstick: review profile-prior dimensions and feature semantics.</td>
+  </tr>
+<tr>
+    <td><code>right_thumbstick</code><br><span class="tag warn">inferred</span><br><span class="tag warn">template prior</span></td>
+    <td>front</td>
+    <td>front</td>
+    <td>none</td>
+    <td>template_candidate_used: One or more candidate records came from a layout/template heuristic.; template_prior_used: Profile prior contributes to this part; review before considering it image-confirmed.; right_thumbstick: review template-derived candidate boxes before accepting dimensions.; right_thumbstick: review profile-prior dimensions and feature semantics.</td>
+  </tr>
+<tr>
+    <td><code>abxy_cluster</code><br><span class="tag good">observed</span><br><span class="tag warn">template prior</span></td>
+    <td>front</td>
+    <td>front</td>
+    <td>none</td>
+    <td>template_candidate_used: One or more candidate records came from a layout/template heuristic.; template_prior_used: Profile prior contributes to this part; review before considering it image-confirmed.; abxy_cluster: review template-derived candidate boxes before accepting dimensions.; abxy_cluster: review profile-prior dimensions and feature semantics.</td>
+  </tr>
+<tr>
+    <td><code>left_button_cluster</code><br><span class="tag warn">inferred</span><br><span class="tag warn">template prior</span></td>
+    <td>front</td>
+    <td>front</td>
+    <td>none</td>
+    <td>template_candidate_used: One or more candidate records came from a layout/template heuristic.; template_prior_used: Profile prior contributes to this part; review before considering it image-confirmed.; left_button_cluster: review template-derived candidate boxes before accepting dimensions.; left_button_cluster: review profile-prior dimensions and feature semantics.</td>
+  </tr>
+<tr>
+    <td><code>shoulder_rail_pair</code><br><span class="tag good">observed</span><br><span class="tag warn">template prior</span></td>
+    <td>right</td>
+    <td>right</td>
+    <td>none</td>
+    <td>template_prior_used: Profile prior contributes to this part; review before considering it image-confirmed.; shoulder_rail_pair: review profile-prior dimensions and feature semantics.</td>
+  </tr>
+      </tbody>
+    </table>
+  </div>
+  <h3 style="margin-top:14px">Graph Open Questions</h3>
+  <ul><li>center_grip_body: review template-derived candidate boxes before accepting dimensions.</li><li>center_grip_body: review profile-prior dimensions and feature semantics.</li><li>left_joycon_shell: review template-derived candidate boxes before accepting dimensions.</li><li>left_joycon_shell: review profile-prior dimensions and feature semantics.</li><li>right_joycon_shell: review template-derived candidate boxes before accepting dimensions.</li><li>right_joycon_shell: review profile-prior dimensions and feature semantics.</li><li>rear_grip_pair: review template-derived candidate boxes before accepting dimensions.</li><li>rear_grip_pair: review profile-prior dimensions and feature semantics.</li><li>left_thumbstick: review template-derived candidate boxes before accepting dimensions.</li><li>left_thumbstick: review profile-prior dimensions and feature semantics.</li><li>right_thumbstick: review template-derived candidate boxes before accepting dimensions.</li><li>right_thumbstick: review profile-prior dimensions and feature semantics.</li><li>abxy_cluster: review template-derived candidate boxes before accepting dimensions.</li><li>abxy_cluster: review profile-prior dimensions and feature semantics.</li><li>left_button_cluster: review template-derived candidate boxes before accepting dimensions.</li><li>left_button_cluster: review profile-prior dimensions and feature semantics.</li><li>shoulder_rail_pair: review profile-prior dimensions and feature semantics.</li></ul>
+    </section>
+
+    <section class="section">
+      <h2>Semantic Fusion</h2>
+      <div class="grid two">
+    <div>
+      <h3>Fusion Summary</h3>
+      <p><span class="tag good">confirmed 2</span><span class="tag warn">partial 7</span><span class="tag bad">needs review 0</span><span class="tag ">strategy graph_cross_view_semantic_fusion</span></p>
+      <h3 style="margin-top:14px">Cross-View Confirmed</h3>
+      <ul><li>center_grip_body</li><li>rear_grip_pair</li></ul>
+    </div>
+    <div>
+      <h3>Review Drivers</h3>
+      <p><span class="tag good">fallback 0</span><span class="tag warn">template prior 9</span></p>
+      <h3 style="margin-top:14px">Open Questions</h3>
+      <ul><li>left_joycon_shell: semantic fusion is partial; confirm before treating as fully image-derived.</li><li>right_joycon_shell: semantic fusion is partial; confirm before treating as fully image-derived.</li><li>left_thumbstick: semantic fusion is partial; confirm before treating as fully image-derived.</li><li>right_thumbstick: semantic fusion is partial; confirm before treating as fully image-derived.</li><li>abxy_cluster: semantic fusion is partial; confirm before treating as fully image-derived.</li><li>left_button_cluster: semantic fusion is partial; confirm before treating as fully image-derived.</li><li>shoulder_rail_pair: semantic fusion is partial; confirm before treating as fully image-derived.</li></ul>
+    </div>
+  </div>
+  <div class="table-wrap" style="margin-top:14px">
+    <table>
+      <thead><tr><th>Part</th><th>Status</th><th>Decision</th><th>Confidence</th><th>Signals</th><th>Review Flags</th></tr></thead>
+      <tbody>
+        <tr>
+    <td><code>center_grip_body</code><br>flush</td>
+    <td><span class="tag good">confirmed</span></td>
+    <td>cross_view_confirmed</td>
+    <td>0.687</td>
+    <td>coverage 1; sources 2/2; mapping 0.5</td>
+    <td><span class="tag ">template_prior</span></td>
+  </tr>
+<tr>
+    <td><code>left_joycon_shell</code><br>flush</td>
+    <td><span class="tag warn">partial</span></td>
+    <td>single_view_confirmed</td>
+    <td>0.691</td>
+    <td>coverage 1; sources 1/1; mapping 0.5</td>
+    <td><span class="tag ">template_prior</span></td>
+  </tr>
+<tr>
+    <td><code>right_joycon_shell</code><br>flush</td>
+    <td><span class="tag warn">partial</span></td>
+    <td>single_view_confirmed</td>
+    <td>0.691</td>
+    <td>coverage 1; sources 1/1; mapping 0.5</td>
+    <td><span class="tag ">template_prior</span></td>
+  </tr>
+<tr>
+    <td><code>rear_grip_pair</code><br>convex</td>
+    <td><span class="tag good">confirmed</span></td>
+    <td>cross_view_confirmed</td>
+    <td>0.7</td>
+    <td>coverage 1; sources 3/3; mapping 0.5</td>
+    <td><span class="tag ">template_prior</span></td>
+  </tr>
+<tr>
+    <td><code>left_thumbstick</code><br>convex, blind_recess</td>
+    <td><span class="tag warn">partial</span></td>
+    <td>single_view_confirmed</td>
+    <td>0.711</td>
+    <td>coverage 1; sources 1/1; mapping 0.5</td>
+    <td><span class="tag ">template_prior</span></td>
+  </tr>
+<tr>
+    <td><code>right_thumbstick</code><br>convex, blind_recess</td>
+    <td><span class="tag warn">partial</span></td>
+    <td>single_view_confirmed</td>
+    <td>0.667</td>
+    <td>coverage 1; sources 1/1; mapping 0.5</td>
+    <td><span class="tag ">template_prior</span></td>
+  </tr>
+<tr>
+    <td><code>abxy_cluster</code><br>convex</td>
+    <td><span class="tag warn">partial</span></td>
+    <td>single_view_confirmed</td>
+    <td>0.704</td>
+    <td>coverage 1; sources 1/1; mapping 0.5</td>
+    <td><span class="tag ">template_prior</span></td>
+  </tr>
+<tr>
+    <td><code>left_button_cluster</code><br>convex</td>
+    <td><span class="tag warn">partial</span></td>
+    <td>single_view_confirmed</td>
+    <td>0.667</td>
+    <td>coverage 1; sources 1/1; mapping 0.5</td>
+    <td><span class="tag ">template_prior</span></td>
+  </tr>
+<tr>
+    <td><code>shoulder_rail_pair</code><br>convex</td>
+    <td><span class="tag warn">partial</span></td>
+    <td>single_view_confirmed</td>
+    <td>0.677</td>
+    <td>coverage 1; sources 1/1; mapping 0.5</td>
+    <td><span class="tag ">template_prior</span></td>
+  </tr>
+      </tbody>
+    </table>
+  </div>
+    </section>
+
+    <section class="section">
+      <h2>Corrections Workbench</h2>
+      <div class="workbench" id="corrections-workbench">
+    <p class="subtle">Select suggested patches, edit the JSON payload, then copy or download it for <code>projects/image-structured-modeler/examples/switch-controller/manual-corrections.json</code>.</p>
+    <div class="workbench-toolbar">
+      <button type="button" id="select-all-corrections">Select all</button>
+      <button type="button" id="clear-corrections">Clear</button>
+      <button type="button" id="validate-corrections">Validate JSON</button>
+      <button type="button" class="primary" id="copy-corrections">Copy JSON</button>
+      <button type="button" id="download-corrections">Download JSON</button>
+      <span class="subtle" id="corrections-status">9 suggested patch(es) selected</span>
+    </div>
+    <div class="workbench-grid">
+      <div class="suggestion-list" aria-label="Correction suggestions">
+        <label class="suggestion-item" data-correction-suggestion="center_grip_body">
+    <input type="checkbox" class="correction-checkbox" data-index="0" checked>
+    <span>
+      <span class="suggestion-title">
+        <code>center_grip_body</code>
+        <span class="tag warn">fusion confirmed</span><span class="tag ">decision cross_view_confirmed</span>
+      </span>
+      <span class="subtle">center_grip_body: review template-derived candidate boxes before accepting dimensions.</span>
+    </span>
+  </label>
+<label class="suggestion-item" data-correction-suggestion="left_joycon_shell">
+    <input type="checkbox" class="correction-checkbox" data-index="1" checked>
+    <span>
+      <span class="suggestion-title">
+        <code>left_joycon_shell</code>
+        <span class="tag warn">fusion partial</span><span class="tag ">decision single_view_confirmed</span>
+      </span>
+      <span class="subtle">left_joycon_shell: review template-derived candidate boxes before accepting dimensions.</span>
+    </span>
+  </label>
+<label class="suggestion-item" data-correction-suggestion="right_joycon_shell">
+    <input type="checkbox" class="correction-checkbox" data-index="2" checked>
+    <span>
+      <span class="suggestion-title">
+        <code>right_joycon_shell</code>
+        <span class="tag warn">fusion partial</span><span class="tag ">decision single_view_confirmed</span>
+      </span>
+      <span class="subtle">right_joycon_shell: review template-derived candidate boxes before accepting dimensions.</span>
+    </span>
+  </label>
+<label class="suggestion-item" data-correction-suggestion="rear_grip_pair">
+    <input type="checkbox" class="correction-checkbox" data-index="3" checked>
+    <span>
+      <span class="suggestion-title">
+        <code>rear_grip_pair</code>
+        <span class="tag warn">fusion confirmed</span><span class="tag ">decision cross_view_confirmed</span>
+      </span>
+      <span class="subtle">rear_grip_pair: review template-derived candidate boxes before accepting dimensions.</span>
+    </span>
+  </label>
+<label class="suggestion-item" data-correction-suggestion="left_thumbstick">
+    <input type="checkbox" class="correction-checkbox" data-index="4" checked>
+    <span>
+      <span class="suggestion-title">
+        <code>left_thumbstick</code>
+        <span class="tag warn">fusion partial</span><span class="tag ">decision single_view_confirmed</span>
+      </span>
+      <span class="subtle">left_thumbstick: review template-derived candidate boxes before accepting dimensions.</span>
+    </span>
+  </label>
+<label class="suggestion-item" data-correction-suggestion="right_thumbstick">
+    <input type="checkbox" class="correction-checkbox" data-index="5" checked>
+    <span>
+      <span class="suggestion-title">
+        <code>right_thumbstick</code>
+        <span class="tag warn">fusion partial</span><span class="tag ">decision single_view_confirmed</span>
+      </span>
+      <span class="subtle">right_thumbstick: review template-derived candidate boxes before accepting dimensions.</span>
+    </span>
+  </label>
+<label class="suggestion-item" data-correction-suggestion="abxy_cluster">
+    <input type="checkbox" class="correction-checkbox" data-index="6" checked>
+    <span>
+      <span class="suggestion-title">
+        <code>abxy_cluster</code>
+        <span class="tag warn">fusion partial</span><span class="tag ">decision single_view_confirmed</span>
+      </span>
+      <span class="subtle">abxy_cluster: review template-derived candidate boxes before accepting dimensions.</span>
+    </span>
+  </label>
+<label class="suggestion-item" data-correction-suggestion="left_button_cluster">
+    <input type="checkbox" class="correction-checkbox" data-index="7" checked>
+    <span>
+      <span class="suggestion-title">
+        <code>left_button_cluster</code>
+        <span class="tag warn">fusion partial</span><span class="tag ">decision single_view_confirmed</span>
+      </span>
+      <span class="subtle">left_button_cluster: review template-derived candidate boxes before accepting dimensions.</span>
+    </span>
+  </label>
+<label class="suggestion-item" data-correction-suggestion="shoulder_rail_pair">
+    <input type="checkbox" class="correction-checkbox" data-index="8" checked>
+    <span>
+      <span class="suggestion-title">
+        <code>shoulder_rail_pair</code>
+        <span class="tag warn">fusion partial</span><span class="tag ">decision single_view_confirmed</span>
+      </span>
+      <span class="subtle">shoulder_rail_pair: review profile-prior dimensions and feature semantics.</span>
+    </span>
+  </label>
+      </div>
+      <div>
+        <textarea id="corrections-json" spellcheck="false" aria-label="Manual corrections JSON"></textarea>
+      </div>
+    </div>
+  </div>
+    </section>
+
+    <section class="section">
+      <h2>Correction Patch Suggestions</h2>
+      <div class="table-wrap">
+    <table>
+      <thead><tr><th>Part</th><th>Reason</th><th>Patch</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><code>center_grip_body</code></td>
+          <td>center_grip_body: review template-derived candidate boxes before accepting dimensions.</td>
+          <td><code>{&quot;id&quot;:&quot;center_grip_body&quot;,&quot;action&quot;:&quot;update&quot;,&quot;evidence_status&quot;:&quot;manual_confirmed&quot;,&quot;manual_confirmed&quot;:true,&quot;template_prior&quot;:false,&quot;feature_semantics&quot;:[&quot;flush&quot;],&quot;evidence_note&quot;:&quot;Reviewer confirmed center_grip_body; replace this note with the view/feature evidence used.&quot;}</code></td>
+        </tr>
+<tr>
+          <td><code>left_joycon_shell</code></td>
+          <td>left_joycon_shell: review template-derived candidate boxes before accepting dimensions.</td>
+          <td><code>{&quot;id&quot;:&quot;left_joycon_shell&quot;,&quot;action&quot;:&quot;update&quot;,&quot;evidence_status&quot;:&quot;manual_confirmed&quot;,&quot;manual_confirmed&quot;:true,&quot;template_prior&quot;:false,&quot;feature_semantics&quot;:[&quot;flush&quot;],&quot;evidence_note&quot;:&quot;Reviewer confirmed left_joycon_shell; replace this note with the view/feature evidence used.&quot;}</code></td>
+        </tr>
+<tr>
+          <td><code>right_joycon_shell</code></td>
+          <td>right_joycon_shell: review template-derived candidate boxes before accepting dimensions.</td>
+          <td><code>{&quot;id&quot;:&quot;right_joycon_shell&quot;,&quot;action&quot;:&quot;update&quot;,&quot;evidence_status&quot;:&quot;manual_confirmed&quot;,&quot;manual_confirmed&quot;:true,&quot;template_prior&quot;:false,&quot;feature_semantics&quot;:[&quot;flush&quot;],&quot;evidence_note&quot;:&quot;Reviewer confirmed right_joycon_shell; replace this note with the view/feature evidence used.&quot;}</code></td>
+        </tr>
+<tr>
+          <td><code>rear_grip_pair</code></td>
+          <td>rear_grip_pair: review template-derived candidate boxes before accepting dimensions.</td>
+          <td><code>{&quot;id&quot;:&quot;rear_grip_pair&quot;,&quot;action&quot;:&quot;update&quot;,&quot;evidence_status&quot;:&quot;manual_confirmed&quot;,&quot;manual_confirmed&quot;:true,&quot;template_prior&quot;:false,&quot;feature_semantics&quot;:[&quot;convex&quot;],&quot;evidence_note&quot;:&quot;Reviewer confirmed rear_grip_pair; replace this note with the view/feature evidence used.&quot;}</code></td>
+        </tr>
+<tr>
+          <td><code>left_thumbstick</code></td>
+          <td>left_thumbstick: review template-derived candidate boxes before accepting dimensions.</td>
+          <td><code>{&quot;id&quot;:&quot;left_thumbstick&quot;,&quot;action&quot;:&quot;update&quot;,&quot;evidence_status&quot;:&quot;manual_confirmed&quot;,&quot;manual_confirmed&quot;:true,&quot;template_prior&quot;:false,&quot;feature_semantics&quot;:[&quot;convex&quot;,&quot;blind_recess&quot;],&quot;evidence_note&quot;:&quot;Reviewer confirmed left_thumbstick; replace this note with the view/feature evidence used.&quot;}</code></td>
+        </tr>
+<tr>
+          <td><code>right_thumbstick</code></td>
+          <td>right_thumbstick: review template-derived candidate boxes before accepting dimensions.</td>
+          <td><code>{&quot;id&quot;:&quot;right_thumbstick&quot;,&quot;action&quot;:&quot;update&quot;,&quot;evidence_status&quot;:&quot;manual_confirmed&quot;,&quot;manual_confirmed&quot;:true,&quot;template_prior&quot;:false,&quot;feature_semantics&quot;:[&quot;convex&quot;,&quot;blind_recess&quot;],&quot;evidence_note&quot;:&quot;Reviewer confirmed right_thumbstick; replace this note with the view/feature evidence used.&quot;}</code></td>
+        </tr>
+<tr>
+          <td><code>abxy_cluster</code></td>
+          <td>abxy_cluster: review template-derived candidate boxes before accepting dimensions.</td>
+          <td><code>{&quot;id&quot;:&quot;abxy_cluster&quot;,&quot;action&quot;:&quot;update&quot;,&quot;evidence_status&quot;:&quot;manual_confirmed&quot;,&quot;manual_confirmed&quot;:true,&quot;template_prior&quot;:false,&quot;feature_semantics&quot;:[&quot;convex&quot;],&quot;evidence_note&quot;:&quot;Reviewer confirmed abxy_cluster; replace this note with the view/feature evidence used.&quot;}</code></td>
+        </tr>
+<tr>
+          <td><code>left_button_cluster</code></td>
+          <td>left_button_cluster: review template-derived candidate boxes before accepting dimensions.</td>
+          <td><code>{&quot;id&quot;:&quot;left_button_cluster&quot;,&quot;action&quot;:&quot;update&quot;,&quot;evidence_status&quot;:&quot;manual_confirmed&quot;,&quot;manual_confirmed&quot;:true,&quot;template_prior&quot;:false,&quot;feature_semantics&quot;:[&quot;convex&quot;],&quot;evidence_note&quot;:&quot;Reviewer confirmed left_button_cluster; replace this note with the view/feature evidence used.&quot;}</code></td>
+        </tr>
+<tr>
+          <td><code>shoulder_rail_pair</code></td>
+          <td>shoulder_rail_pair: review profile-prior dimensions and feature semantics.</td>
+          <td><code>{&quot;id&quot;:&quot;shoulder_rail_pair&quot;,&quot;action&quot;:&quot;update&quot;,&quot;evidence_status&quot;:&quot;manual_confirmed&quot;,&quot;manual_confirmed&quot;:true,&quot;template_prior&quot;:false,&quot;feature_semantics&quot;:[&quot;convex&quot;],&quot;evidence_note&quot;:&quot;Reviewer confirmed shoulder_rail_pair; replace this note with the view/feature evidence used.&quot;}</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
     </section>
 
     <section class="section">
@@ -159,7 +590,6 @@
       <p class="subtle">edges 26836 · density 0.04417 · symmetry 0.324</p>
       <h3 style="margin-top:12px">Component Candidates</h3>
       <p><span class="tag ">rear_grip_left</span><span class="tag ">center_grip_body</span><span class="tag ">rear_grip_right</span></p>
-      
     </div>
   </article>
 <article class="image-block">
@@ -181,7 +611,6 @@
       <p class="subtle">edges 22123 · density 0.03642 · symmetry 0.65</p>
       <h3 style="margin-top:12px">Component Candidates</h3>
       <p><span class="tag ">left_joycon_shell</span><span class="tag ">center_grip_body</span><span class="tag ">right_joycon_shell</span><span class="tag ">abxy_cluster</span><span class="tag ">left_button_cluster</span></p>
-      
     </div>
   </article>
 <article class="image-block">
@@ -202,69 +631,78 @@
       <h2>Model Plan Parts</h2>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Part</th><th>Type</th><th>Material</th><th>Evidence</th><th>Uncertainty</th></tr></thead>
+          <thead><tr><th>Part</th><th>Type</th><th>Status</th><th>Evidence Sources</th><th>Semantics</th><th>Uncertainty</th></tr></thead>
           <tbody>
             <tr>
     <td><code>center_grip_body</code></td>
     <td>beveled_panel</td>
-    <td>Satin_Black_Plastic</td>
-    <td>rear_photo:silhouette, front_photo:silhouette</td>
+    <td><span class="tag good">observed</span><br><span class="tag warn">template prior</span></td>
+    <td>rear_photo:silhouette (0.6), front_photo:silhouette (0.62)</td>
+    <td>flush<br><span class="tag warn">feature op pending</span></td>
     <td></td>
   </tr>
 <tr>
     <td><code>left_joycon_shell</code></td>
     <td>lofted_shell</td>
-    <td>Warm_White_Plastic</td>
-    <td>front_photo:silhouette</td>
+    <td><span class="tag good">observed</span><br><span class="tag warn">template prior</span></td>
+    <td>front_photo:silhouette (0.62)</td>
+    <td>flush<br><span class="tag warn">feature op pending</span></td>
     <td></td>
   </tr>
 <tr>
     <td><code>right_joycon_shell</code></td>
     <td>lofted_shell</td>
-    <td>Warm_White_Plastic</td>
-    <td>front_photo:silhouette</td>
+    <td><span class="tag good">observed</span><br><span class="tag warn">template prior</span></td>
+    <td>front_photo:silhouette (0.62)</td>
+    <td>flush<br><span class="tag warn">feature op pending</span></td>
     <td></td>
   </tr>
 <tr>
     <td><code>rear_grip_pair</code></td>
     <td>grip_handle</td>
-    <td>Satin_Black_Plastic</td>
-    <td>side_photo:silhouette, rear_photo:silhouette, rear_photo:silhouette</td>
+    <td><span class="tag good">observed</span><br><span class="tag warn">template prior</span></td>
+    <td>side_photo:silhouette (0.58), rear_photo:silhouette (0.68), rear_photo:silhouette (0.68)</td>
+    <td>convex<br><span class="tag warn">feature op pending</span></td>
     <td></td>
   </tr>
 <tr>
     <td><code>left_thumbstick</code></td>
     <td>analog_stick</td>
-    <td>Rubber_Thumbstick</td>
-    <td>front_photo:center_point</td>
+    <td><span class="tag good">observed</span><br><span class="tag warn">template prior</span></td>
+    <td>front_photo:center_point (0.68)</td>
+    <td>convex, blind_recess<br><span class="tag warn">feature op pending</span></td>
     <td></td>
   </tr>
 <tr>
     <td><code>right_thumbstick</code></td>
     <td>analog_stick</td>
-    <td>Rubber_Thumbstick</td>
-    <td>front_photo:center_point</td>
+    <td><span class="tag warn">inferred</span><br><span class="tag warn">template prior</span></td>
+    <td>front_photo:center_point (0.55)</td>
+    <td>convex, blind_recess<br><span class="tag warn">feature op pending</span></td>
     <td>Inferred from Switch controller layout; current photos need semantic confirmation.</td>
   </tr>
 <tr>
     <td><code>abxy_cluster</code></td>
     <td>button_on_panel</td>
-    <td>Gloss_Black_Button</td>
-    <td>front_photo:silhouette</td>
+    <td><span class="tag good">observed</span><br><span class="tag warn">template prior</span></td>
+    <td>front_photo:silhouette (0.66)</td>
+    <td>convex<br><span class="tag warn">feature op pending</span></td>
     <td></td>
   </tr>
 <tr>
     <td><code>left_button_cluster</code></td>
     <td>button_on_panel</td>
-    <td>Gloss_Black_Button</td>
-    <td>front_photo:silhouette</td>
+    <td><span class="tag warn">inferred</span><br><span class="tag warn">template prior</span></td>
+    <td>front_photo:silhouette (0.55)</td>
+    <td>convex<br><span class="tag warn">feature op pending</span></td>
     <td>Button labels and exact positions need manual review.</td>
   </tr>
 <tr>
     <td><code>shoulder_rail_pair</code></td>
     <td>trigger</td>
-    <td>Satin_Black_Plastic</td>
-    <td>side_photo:silhouette</td>
+    <td><span class="tag good">observed</span><br><span class="tag warn">template prior</span></td>
+    <td>side_photo:silhouette (0.58)</td>
+    <td>convex<br><span class="tag warn">feature op pending</span></td>
     <td></td>
   </tr>
           </tbody>
@@ -288,5 +726,97 @@
       </div>
     </section>
   </main>
+  <script type="application/json" id="correction-suggestions-data">[{"part_id":"center_grip_body","reason":"center_grip_body: review template-derived candidate boxes before accepting dimensions.","fusion_status":"confirmed","fusion_decision":"cross_view_confirmed","patch":{"id":"center_grip_body","action":"update","evidence_status":"manual_confirmed","manual_confirmed":true,"template_prior":false,"feature_semantics":["flush"],"evidence_note":"Reviewer confirmed center_grip_body; replace this note with the view/feature evidence used."}},{"part_id":"left_joycon_shell","reason":"left_joycon_shell: review template-derived candidate boxes before accepting dimensions.","fusion_status":"partial","fusion_decision":"single_view_confirmed","patch":{"id":"left_joycon_shell","action":"update","evidence_status":"manual_confirmed","manual_confirmed":true,"template_prior":false,"feature_semantics":["flush"],"evidence_note":"Reviewer confirmed left_joycon_shell; replace this note with the view/feature evidence used."}},{"part_id":"right_joycon_shell","reason":"right_joycon_shell: review template-derived candidate boxes before accepting dimensions.","fusion_status":"partial","fusion_decision":"single_view_confirmed","patch":{"id":"right_joycon_shell","action":"update","evidence_status":"manual_confirmed","manual_confirmed":true,"template_prior":false,"feature_semantics":["flush"],"evidence_note":"Reviewer confirmed right_joycon_shell; replace this note with the view/feature evidence used."}},{"part_id":"rear_grip_pair","reason":"rear_grip_pair: review template-derived candidate boxes before accepting dimensions.","fusion_status":"confirmed","fusion_decision":"cross_view_confirmed","patch":{"id":"rear_grip_pair","action":"update","evidence_status":"manual_confirmed","manual_confirmed":true,"template_prior":false,"feature_semantics":["convex"],"evidence_note":"Reviewer confirmed rear_grip_pair; replace this note with the view/feature evidence used."}},{"part_id":"left_thumbstick","reason":"left_thumbstick: review template-derived candidate boxes before accepting dimensions.","fusion_status":"partial","fusion_decision":"single_view_confirmed","patch":{"id":"left_thumbstick","action":"update","evidence_status":"manual_confirmed","manual_confirmed":true,"template_prior":false,"feature_semantics":["convex","blind_recess"],"evidence_note":"Reviewer confirmed left_thumbstick; replace this note with the view/feature evidence used."}},{"part_id":"right_thumbstick","reason":"right_thumbstick: review template-derived candidate boxes before accepting dimensions.","fusion_status":"partial","fusion_decision":"single_view_confirmed","patch":{"id":"right_thumbstick","action":"update","evidence_status":"manual_confirmed","manual_confirmed":true,"template_prior":false,"feature_semantics":["convex","blind_recess"],"evidence_note":"Reviewer confirmed right_thumbstick; replace this note with the view/feature evidence used."}},{"part_id":"abxy_cluster","reason":"abxy_cluster: review template-derived candidate boxes before accepting dimensions.","fusion_status":"partial","fusion_decision":"single_view_confirmed","patch":{"id":"abxy_cluster","action":"update","evidence_status":"manual_confirmed","manual_confirmed":true,"template_prior":false,"feature_semantics":["convex"],"evidence_note":"Reviewer confirmed abxy_cluster; replace this note with the view/feature evidence used."}},{"part_id":"left_button_cluster","reason":"left_button_cluster: review template-derived candidate boxes before accepting dimensions.","fusion_status":"partial","fusion_decision":"single_view_confirmed","patch":{"id":"left_button_cluster","action":"update","evidence_status":"manual_confirmed","manual_confirmed":true,"template_prior":false,"feature_semantics":["convex"],"evidence_note":"Reviewer confirmed left_button_cluster; replace this note with the view/feature evidence used."}},{"part_id":"shoulder_rail_pair","reason":"shoulder_rail_pair: review profile-prior dimensions and feature semantics.","fusion_status":"partial","fusion_decision":"single_view_confirmed","patch":{"id":"shoulder_rail_pair","action":"update","evidence_status":"manual_confirmed","manual_confirmed":true,"template_prior":false,"feature_semantics":["convex"],"evidence_note":"Reviewer confirmed shoulder_rail_pair; replace this note with the view/feature evidence used."}}]</script>
+  <script>(() => {
+  const dataNode = document.getElementById('correction-suggestions-data');
+  const editor = document.getElementById('corrections-json');
+  const status = document.getElementById('corrections-status');
+  if (!dataNode || !editor || !status) return;
+
+  let suggestions = [];
+  try {
+    suggestions = JSON.parse(dataNode.textContent || '[]');
+  } catch {
+    suggestions = [];
+  }
+
+  const checkboxes = () => Array.from(document.querySelectorAll('.correction-checkbox'));
+  const selectedPatches = () => checkboxes()
+    .filter((checkbox) => checkbox.checked)
+    .map((checkbox) => suggestions[Number(checkbox.dataset.index)]?.patch)
+    .filter(Boolean);
+  const payloadFromSelection = () => ({
+    version: 1,
+    notes: ['Generated from review corrections workbench; merge reviewed patches into manual-corrections.json.'],
+    parts: selectedPatches()
+  });
+  const setStatus = (message, kind = '') => {
+    status.textContent = message;
+    status.className = kind ? 'tag ' + kind : 'subtle';
+  };
+  const syncFromSelection = () => {
+    const payload = payloadFromSelection();
+    editor.value = JSON.stringify(payload, null, 2);
+    setStatus(payload.parts.length + ' patch(es) selected');
+  };
+  const readEditorPayload = () => {
+    const payload = JSON.parse(editor.value);
+    if (payload.version !== 1) throw new Error('version must be 1');
+    if (!Array.isArray(payload.parts)) throw new Error('parts must be an array');
+    return payload;
+  };
+
+  document.getElementById('select-all-corrections')?.addEventListener('click', () => {
+    for (const checkbox of checkboxes()) checkbox.checked = true;
+    syncFromSelection();
+  });
+  document.getElementById('clear-corrections')?.addEventListener('click', () => {
+    for (const checkbox of checkboxes()) checkbox.checked = false;
+    syncFromSelection();
+  });
+  document.getElementById('validate-corrections')?.addEventListener('click', () => {
+    try {
+      const payload = readEditorPayload();
+      setStatus('valid JSON with ' + payload.parts.length + ' patch(es)', 'good');
+    } catch (error) {
+      setStatus(error.message || 'invalid JSON', 'bad');
+    }
+  });
+  document.getElementById('copy-corrections')?.addEventListener('click', async () => {
+    try {
+      readEditorPayload();
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(editor.value);
+      } else {
+        editor.select();
+        document.execCommand('copy');
+      }
+      setStatus('copied JSON', 'good');
+    } catch (error) {
+      setStatus(error.message || 'copy failed', 'bad');
+    }
+  });
+  document.getElementById('download-corrections')?.addEventListener('click', () => {
+    try {
+      readEditorPayload();
+      const blob = new Blob([editor.value + '\n'], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = 'manual-corrections.workbench.json';
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      URL.revokeObjectURL(url);
+      setStatus('downloaded JSON', 'good');
+    } catch (error) {
+      setStatus(error.message || 'download failed', 'bad');
+    }
+  });
+  for (const checkbox of checkboxes()) {
+    checkbox.addEventListener('change', syncFromSelection);
+  }
+  syncFromSelection();
+})();</script>
 </body>
 </html>

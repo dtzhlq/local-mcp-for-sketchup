@@ -4,6 +4,57 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { repoRoot, toRepoRelative } from './lib/image-analysis.mjs';
 
+const LEGACY_STATUS_TO_EVIDENCE_STATUS = {
+  visually_detected: 'observed',
+  inferred: 'inferred',
+  manually_confirmed: 'manual_confirmed'
+};
+
+const EVIDENCE_STATUS_TO_LEGACY_STATUS = {
+  observed: 'visually_detected',
+  inferred: 'inferred',
+  template_prior: 'inferred',
+  manual_confirmed: 'manually_confirmed'
+};
+
+const FEATURE_SEMANTICS_BY_TYPE = {
+  analog_stick: ['convex', 'blind_recess'],
+  beveled_panel: ['flush'],
+  button_on_panel: ['convex'],
+  grip_handle: ['convex'],
+  lofted_shell: ['flush'],
+  logo_emboss: ['convex'],
+  mesh_reference: ['flush'],
+  rounded_box: ['flush'],
+  screw_hole: ['through_hole'],
+  slot: ['blind_recess'],
+  text_engrave: ['decal_printed'],
+  trigger: ['convex']
+};
+
+const PART_VIEW_REQUIREMENTS = {
+  switch_controller: {
+    center_grip_body: ['front', 'rear'],
+    left_joycon_shell: ['front'],
+    right_joycon_shell: ['front'],
+    rear_grip_pair: ['rear', 'right'],
+    left_thumbstick: ['front'],
+    right_thumbstick: ['front'],
+    abxy_cluster: ['front'],
+    left_button_cluster: ['front'],
+    shoulder_rail_pair: ['right']
+  },
+  compact_remote: {
+    remote_body: ['front', 'right'],
+    remote_face_panel: ['front'],
+    navigation_pad: ['front'],
+    primary_button_cluster: ['front'],
+    volume_rocker: ['front'],
+    speaker_grille: ['front'],
+    brand_label: ['front']
+  }
+};
+
 async function main() {
   const options = parseArgs(process.argv.slice(2));
   const input = path.resolve(repoRoot, options.input || 'projects/image-structured-modeler/examples/switch-controller/observations.json');
@@ -46,7 +97,7 @@ export function generateModelPlan(observationSet, options = {}) {
       if (!preferredKinds.includes(image.detected_view.kind)) continue;
       for (const observation of image.observations || []) {
         if (!hints.includes(observation.component_hint)) continue;
-        matches.push(evidenceFromObservation(observation, viewIds.get(image.image.path)));
+        matches.push(evidenceFromObservation(observation, image, viewIds.get(image.image.path)));
       }
     }
     if (matches.length > 0) return matches.slice(0, 4);
@@ -167,7 +218,7 @@ export function generateModelPlan(observationSet, options = {}) {
     }
   };
 
-  return applyManualCorrections(modelPlan, manualCorrections);
+  return finalizeEvidenceAnnotations(applyManualCorrections(modelPlan, manualCorrections), observationSet);
 }
 
 export function applyManualCorrections(modelPlan, corrections) {
@@ -211,6 +262,7 @@ export function applyManualCorrections(modelPlan, corrections) {
         evidence: [manualEvidence(correction)],
         ...(correction.uncertainty ? { uncertainty: correction.uncertainty } : {})
       });
+      applyCorrectionMetadata(next.parts.at(-1), correction);
       applied.push(`add:${correction.id}`);
       continue;
     }
@@ -224,6 +276,7 @@ export function applyManualCorrections(modelPlan, corrections) {
       if (correction.parameters) target.parameters = deepMerge(target.parameters || {}, correction.parameters);
       if (correction.uncertainty) target.uncertainty = correction.uncertainty;
       target.evidence = [...(target.evidence || []), manualEvidence(correction)];
+      applyCorrectionMetadata(target, correction);
       applied.push(`update:${correction.id}`);
       continue;
     }
@@ -242,6 +295,546 @@ export function applyManualCorrections(modelPlan, corrections) {
   next.review.corrections_applied = applied;
   if (corrections.notes?.length) next.review.correction_notes = corrections.notes;
   return next;
+}
+
+function applyCorrectionMetadata(target, correction) {
+  if (correction.evidence_status) target.evidence_status = correction.evidence_status;
+  else if (correction.evidence_note || correction.manual_confirmed === true) target.evidence_status = 'manual_confirmed';
+  if (correction.evidence_sources) {
+    target.evidence_sources = [...(target.evidence_sources || []), ...correction.evidence_sources];
+  }
+  if (correction.template_prior !== undefined) target.template_prior = correction.template_prior;
+  if (correction.manual_confirmed !== undefined) target.manual_confirmed = correction.manual_confirmed;
+  else if (correction.evidence_note || target.evidence_status === 'manual_confirmed') target.manual_confirmed = true;
+  if (correction.feature_semantics) target.feature_semantics = correction.feature_semantics;
+  if (correction.feature_mapping) target.feature_mapping = correction.feature_mapping;
+}
+
+function finalizeEvidenceAnnotations(modelPlan, observationSet) {
+  const next = structuredClone(modelPlan);
+  const viewKindById = new Map((next.views || []).map((view) => [view.id, view.kind]));
+  const imageByViewId = new Map((next.views || []).map((view) => [view.id, view.source_image]));
+  const requirementsByPart = PART_VIEW_REQUIREMENTS[next.object?.profile] || {};
+  const statusCounts = { observed: 0, inferred: 0, template_prior: 0, manual_confirmed: 0 };
+  const templatePriorParts = [];
+  const manualConfirmedParts = [];
+
+  for (const part of next.parts || []) {
+    const generatedSources = (part.evidence || []).map((item) => evidenceSourceFromEvidence(item, viewKindById, imageByViewId));
+    part.evidence_sources = dedupeEvidenceSources([...(part.evidence_sources || []), ...generatedSources]);
+
+    const requiredViews = requirementsByPart[part.id] || [];
+    const observedViews = new Set(part.evidence_sources
+      .filter((source) => source.status === 'observed' || source.status === 'manual_confirmed')
+      .map((source) => viewKindById.get(source.view) || source.view));
+    const missingRequiredViews = requiredViews.filter((kind) => !observedViews.has(kind));
+    const hasManualEvidence = part.manual_confirmed === true
+      || part.status === 'manually_confirmed'
+      || part.evidence_sources.some((source) => source.status === 'manual_confirmed');
+
+    if (!part.evidence_status) {
+      part.evidence_status = deriveEvidenceStatus({
+        part,
+        hasManualEvidence,
+        missingRequiredViews,
+        requiredViews
+      });
+    }
+    part.status = part.status || EVIDENCE_STATUS_TO_LEGACY_STATUS[part.evidence_status];
+    part.manual_confirmed = hasManualEvidence || part.evidence_status === 'manual_confirmed';
+    part.template_prior = part.template_prior ?? usesTemplatePrior(part, next.object?.profile, missingRequiredViews);
+    part.feature_semantics = part.feature_semantics || FEATURE_SEMANTICS_BY_TYPE[part.type] || [];
+    if (!part.feature_mapping) {
+      part.feature_mapping = defaultFeatureMapping(part, next.object?.profile);
+    }
+    if (missingRequiredViews.length > 0) {
+      part.uncertainty = addUnique(
+        part.uncertainty || [],
+        `Missing required view evidence for ${missingRequiredViews.join(', ')}; current geometry uses profile assumptions.`
+      );
+    }
+
+    statusCounts[part.evidence_status] += 1;
+    if (part.template_prior) templatePriorParts.push(part.id);
+    if (part.manual_confirmed) manualConfirmedParts.push(part.id);
+  }
+
+  next.review = next.review || {};
+  next.review.evidence_summary = {
+    image_count: observationSet.images?.length || 0,
+    views_detected: observationSet.views_detected || [],
+    missing_views: observationSet.missing_views || [],
+    status_counts: statusCounts,
+    template_prior_parts: templatePriorParts,
+    manual_confirmed_parts: manualConfirmedParts
+  };
+  next.review.evidence_graph = createEvidenceGraph(next, observationSet, requirementsByPart);
+  next.review.semantic_fusion = createSemanticFusion(next, observationSet);
+  next.review.correction_suggestions = createCorrectionSuggestions(next);
+  for (const question of next.review.evidence_graph.open_questions) {
+    next.review.open_questions = addUnique(next.review.open_questions || [], question);
+  }
+  for (const question of next.review.semantic_fusion.open_questions) {
+    next.review.open_questions = addUnique(next.review.open_questions || [], question);
+  }
+  if ((observationSet.images?.length || 0) < 2) {
+    next.review.open_questions = addUnique(
+      next.review.open_questions || [],
+      'Single-image run: profile prior fills unobserved geometry; do not treat this as multi-view confirmed.'
+    );
+  }
+  if (templatePriorParts.length > 0) {
+    next.review.open_questions = addUnique(
+      next.review.open_questions || [],
+      `Review template-prior parts before treating them as image-confirmed: ${templatePriorParts.join(', ')}.`
+    );
+  }
+  return next;
+}
+
+function createEvidenceGraph(modelPlan, observationSet, requirementsByPart) {
+  const viewKindById = new Map((modelPlan.views || []).map((view) => [view.id, view.kind]));
+  const observationGraph = observationSet.evidence_graph?.image_count === (observationSet.images?.length || 0)
+    ? observationSet.evidence_graph
+    : null;
+  const observationGraphParts = new Map((observationGraph?.parts || []).map((part) => [part.part_id, part]));
+  const openQuestions = [];
+  const parts = (modelPlan.parts || []).map((part) => {
+    const observationGraphPart = observationGraphParts.get(part.id);
+    const requiredViews = requirementsByPart[part.id] || observationGraphPart?.required_views || [];
+    const sources = dedupeGraphSources([
+      ...(observationGraphPart?.sources || []).map((source) => normalizeGraphSource(source, viewKindById)),
+      ...(part.evidence_sources || []).map((source) => normalizeGraphSource(source, viewKindById))
+    ]);
+    const confirmedViews = uniqueArray(sources
+      .filter((source) => source.status === 'observed' || source.status === 'manual_confirmed')
+      .map((source) => source.view_kind || source.view));
+    const missingViews = requiredViews.filter((view) => !confirmedViews.includes(view));
+    const conflicts = [...(observationGraphPart?.conflicts || [])];
+    const partQuestions = [...(observationGraphPart?.open_questions || [])];
+
+    if (missingViews.length > 0) {
+      conflicts.push({
+        type: 'missing_required_view',
+        severity: 'warn',
+        views: missingViews,
+        note: `Missing required view evidence for ${missingViews.join(', ')}.`
+      });
+      partQuestions.push(`${part.id}: confirm ${missingViews.join(', ')} evidence before treating geometry as fully observed.`);
+    }
+
+    const lowConfidenceSources = sources.filter((source) => source.status === 'observed' && source.confidence !== undefined && source.confidence < 0.5);
+    if (lowConfidenceSources.length > 0) {
+      conflicts.push({
+        type: 'low_confidence_evidence',
+        severity: 'info',
+        views: uniqueArray(lowConfidenceSources.map((source) => source.view_kind || source.view)),
+        note: `${lowConfidenceSources.length} observed evidence source(s) are below 0.5 confidence.`
+      });
+    }
+
+    if (part.template_prior) {
+      conflicts.push({
+        type: 'template_prior_used',
+        severity: part.evidence_status === 'template_prior' ? 'warn' : 'info',
+        views: requiredViews,
+        note: 'Profile prior contributes to this part; review before considering it image-confirmed.'
+      });
+      partQuestions.push(`${part.id}: review profile-prior dimensions and feature semantics.`);
+    }
+    if (part.feature_mapping?.fallback && part.feature_mapping.fallback !== 'none') {
+      conflicts.push({
+        type: 'feature_mapping_fallback',
+        severity: 'warn',
+        note: `Feature maps to ${part.feature_mapping.operation || 'unknown'} with ${part.feature_mapping.fallback} fallback: ${part.feature_mapping.note || 'no detail'}`
+      });
+      partQuestions.push(`${part.id}: confirm whether ${part.feature_semantics?.join('/') || 'feature'} should stay as ${part.feature_mapping.fallback} or wait for real feature editing.`);
+    }
+
+    for (const question of partQuestions) openQuestions.push(question);
+    return {
+      part_id: part.id,
+      status: part.evidence_status,
+      template_prior: Boolean(part.template_prior),
+      manual_confirmed: Boolean(part.manual_confirmed),
+      required_views: requiredViews,
+      confirmed_views: confirmedViews,
+      missing_views: missingViews,
+      feature_semantics: part.feature_semantics || [],
+      sources,
+      conflicts: dedupeGraphConflicts(conflicts),
+      open_questions: uniqueArray(partQuestions)
+    };
+  });
+
+  return {
+    version: 1,
+    image_count: observationSet.images?.length || 0,
+    views_detected: observationSet.views_detected || [],
+    missing_views: observationSet.missing_views || [],
+    parts,
+    open_questions: uniqueArray(openQuestions)
+  };
+}
+
+function createSemanticFusion(modelPlan, observationSet) {
+  const graphParts = new Map((modelPlan.review?.evidence_graph?.parts || []).map((part) => [part.part_id, part]));
+  const imageCount = observationSet.images?.length || 0;
+  const parts = (modelPlan.parts || []).map((part) => {
+    const graphPart = graphParts.get(part.id) || {};
+    const requiredViews = graphPart.required_views || [];
+    const confirmedViews = graphPart.confirmed_views || [];
+    const missingViews = graphPart.missing_views || [];
+    const sources = graphPart.sources || part.evidence_sources || [];
+    const observedSources = sources.filter((source) => source.status === 'observed' || source.status === 'manual_confirmed');
+    const sourceViews = uniqueArray(sources.map((source) => source.view_kind || source.view));
+    const conflictTypes = uniqueArray((graphPart.conflicts || []).map((conflict) => conflict.type));
+    const fallback = part.feature_mapping?.fallback && part.feature_mapping.fallback !== 'none';
+    const evidenceConfidence = averageConfidence(observedSources.length ? observedSources : sources, part.evidence_status);
+    const requiredViewCoverage = requiredViews.length
+      ? (requiredViews.length - missingViews.length) / requiredViews.length
+      : (confirmedViews.length > 0 ? 1 : 0);
+    const featureMappingConfidence = featureMappingConfidenceForPart(part);
+    const confidence = fusionConfidence({
+      evidenceConfidence,
+      requiredViewCoverage,
+      featureMappingConfidence,
+      manualConfirmed: part.manual_confirmed,
+      templatePrior: part.template_prior,
+      fallback,
+      imageCount
+    });
+    const decision = fusionDecision({
+      part,
+      requiredViews,
+      missingViews,
+      fallback,
+      imageCount
+    });
+    const status = fusionStatus({ decision, confidence, missingViews, fallback, templatePrior: part.template_prior });
+    const reviewFlags = fusionReviewFlags({ part, graphPart, missingViews, fallback, imageCount, confidence });
+    const semanticEvidence = (part.feature_semantics || []).map((semantic) => ({
+      semantic,
+      confidence: semanticConfidenceForPart({ part, semantic, decision, fallback, evidenceConfidence }),
+      sources: observedSourcesForSemantic(sources, semantic)
+    }));
+
+    return {
+      part_id: part.id,
+      status,
+      decision,
+      confidence,
+      required_views: requiredViews,
+      confirmed_views: confirmedViews,
+      missing_views: missingViews,
+      source_views: sourceViews,
+      semantic_labels: part.feature_semantics || [],
+      semantic_evidence: semanticEvidence,
+      feature_mapping: part.feature_mapping || null,
+      signals: {
+        image_count: imageCount,
+        source_count: sources.length,
+        observed_source_count: observedSources.length,
+        required_view_coverage: round3(requiredViewCoverage),
+        evidence_confidence: evidenceConfidence,
+        feature_mapping_confidence: featureMappingConfidence,
+        conflict_types: conflictTypes
+      },
+      review_flags: reviewFlags
+    };
+  });
+
+  const openQuestions = [];
+  for (const part of parts) {
+    if (part.status === 'needs_review') {
+      openQuestions.push(`${part.part_id}: semantic fusion needs review (${part.review_flags.join(', ') || part.decision}).`);
+    } else if (part.status === 'partial') {
+      openQuestions.push(`${part.part_id}: semantic fusion is partial; confirm before treating as fully image-derived.`);
+    }
+  }
+
+  return {
+    version: 1,
+    strategy: 'graph_cross_view_semantic_fusion',
+    image_count: imageCount,
+    views_detected: observationSet.views_detected || [],
+    summary: semanticFusionSummary(parts),
+    parts,
+    open_questions: uniqueArray(openQuestions)
+  };
+}
+
+function semanticFusionSummary(parts) {
+  const summary = {
+    total_parts: parts.length,
+    confirmed: 0,
+    partial: 0,
+    needs_review: 0,
+    cross_view_confirmed_parts: [],
+    fallback_parts: [],
+    template_prior_parts: []
+  };
+  for (const part of parts) {
+    summary[part.status] += 1;
+    if (part.decision === 'cross_view_confirmed') summary.cross_view_confirmed_parts.push(part.part_id);
+    if (part.review_flags.includes('feature_mapping_fallback')) summary.fallback_parts.push(part.part_id);
+    if (part.review_flags.includes('template_prior')) summary.template_prior_parts.push(part.part_id);
+  }
+  return summary;
+}
+
+function fusionDecision({ part, requiredViews, missingViews, fallback, imageCount }) {
+  if (fallback) return 'feature_fallback';
+  if (part.manual_confirmed) return 'manual_confirmed';
+  if (missingViews.length > 0 && part.template_prior) return 'template_prior_assisted';
+  if (missingViews.length > 0) return 'missing_required_view';
+  if (requiredViews.length > 1 && imageCount > 1) return 'cross_view_confirmed';
+  if (requiredViews.length === 1 && imageCount > 0) return 'single_view_confirmed';
+  if (part.template_prior) return 'template_prior_assisted';
+  return 'observed';
+}
+
+function fusionStatus({ decision, confidence, missingViews, fallback, templatePrior }) {
+  if (fallback || missingViews.length > 0 || confidence < 0.55) return 'needs_review';
+  if (decision === 'manual_confirmed' || decision === 'cross_view_confirmed') return 'confirmed';
+  if (templatePrior || confidence < 0.78) return 'partial';
+  return 'confirmed';
+}
+
+function fusionReviewFlags({ part, graphPart, missingViews, fallback, imageCount, confidence }) {
+  const flags = [];
+  if (imageCount < 2) flags.push('single_image');
+  if (missingViews.length > 0) flags.push('missing_required_view');
+  if (part.template_prior) flags.push('template_prior');
+  if (fallback) flags.push('feature_mapping_fallback');
+  if ((graphPart.conflicts || []).some((conflict) => conflict.type === 'low_confidence_evidence')) flags.push('low_confidence_evidence');
+  if (confidence < 0.55) flags.push('low_fusion_confidence');
+  return uniqueArray(flags);
+}
+
+function fusionConfidence({ evidenceConfidence, requiredViewCoverage, featureMappingConfidence, manualConfirmed, templatePrior, fallback, imageCount }) {
+  let score = 0.42 * requiredViewCoverage + 0.34 * evidenceConfidence + 0.24 * featureMappingConfidence;
+  if (manualConfirmed) score += 0.12;
+  if (imageCount > 1 && requiredViewCoverage === 1) score += 0.06;
+  if (templatePrior) score -= 0.12;
+  if (fallback) score -= 0.16;
+  return clamp01(round3(score));
+}
+
+function averageConfidence(sources, fallbackStatus) {
+  const values = (sources || [])
+    .map((source) => source.confidence)
+    .filter((value) => Number.isFinite(value));
+  if (values.length > 0) return round3(values.reduce((sum, value) => sum + value, 0) / values.length);
+  if (fallbackStatus === 'manual_confirmed') return 0.95;
+  if (fallbackStatus === 'observed') return 0.72;
+  if (fallbackStatus === 'inferred') return 0.55;
+  return 0.38;
+}
+
+function featureMappingConfidenceForPart(part) {
+  if (!part.feature_mapping) return 0.5;
+  if (part.feature_mapping.fallback && part.feature_mapping.fallback !== 'none') return 0.42;
+  return 0.86;
+}
+
+function semanticConfidenceForPart({ part, decision, fallback, evidenceConfidence }) {
+  let score = evidenceConfidence;
+  if (part.manual_confirmed) score = Math.max(score, 0.9);
+  if (decision === 'cross_view_confirmed') score = Math.max(score, 0.82);
+  if (part.template_prior) score -= 0.12;
+  if (fallback) score -= 0.16;
+  return clamp01(round3(score));
+}
+
+function observedSourcesForSemantic(sources, semantic) {
+  const semanticKind = semanticSourceKind(semantic);
+  return (sources || [])
+    .filter((source) => source.status === 'observed' || source.status === 'manual_confirmed')
+    .filter((source) => !semanticKind || source.kind === semanticKind || source.kind === 'silhouette' || source.kind === 'manual_note')
+    .map((source) => ({
+      view: source.view,
+      view_kind: source.view_kind || source.view,
+      status: source.status,
+      kind: source.kind,
+      ...(source.confidence !== undefined ? { confidence: source.confidence } : {})
+    }))
+    .slice(0, 4);
+}
+
+function semanticSourceKind(semantic) {
+  if (semantic === 'decal_printed') return 'text_label';
+  if (semantic === 'through_hole' || semantic === 'blind_recess') return 'edge';
+  if (semantic === 'convex' || semantic === 'concave') return 'center_point';
+  return null;
+}
+
+function createCorrectionSuggestions(modelPlan) {
+  const suggestions = [];
+  const fusionParts = new Map((modelPlan.review?.semantic_fusion?.parts || []).map((part) => [part.part_id, part]));
+  for (const graphPart of modelPlan.review?.evidence_graph?.parts || []) {
+    const part = modelPlan.parts.find((item) => item.id === graphPart.part_id);
+    if (!part) continue;
+    const fusionPart = fusionParts.get(part.id);
+    const needsEvidencePatch = graphPart.missing_views.length > 0 || graphPart.template_prior;
+    const fallbackConflict = graphPart.conflicts.find((conflict) => conflict.type === 'feature_mapping_fallback');
+    if (!needsEvidencePatch && !fallbackConflict) continue;
+    suggestions.push({
+      part_id: part.id,
+      reason: fallbackConflict?.note || graphPart.open_questions[0] || `Semantic fusion status: ${fusionPart?.status || 'review'}.`,
+      fusion_status: fusionPart?.status || 'needs_review',
+      fusion_decision: fusionPart?.decision || 'unknown',
+      patch: {
+        id: part.id,
+        action: 'update',
+        evidence_status: 'manual_confirmed',
+        manual_confirmed: true,
+        template_prior: false,
+        ...(part.feature_semantics?.length ? { feature_semantics: part.feature_semantics } : {}),
+        ...(part.feature_mapping ? { feature_mapping: part.feature_mapping } : {}),
+        evidence_note: `Reviewer confirmed ${part.id}; replace this note with the view/feature evidence used.`
+      }
+    });
+  }
+  return suggestions;
+}
+
+function normalizeGraphSource(source, viewKindById) {
+  return {
+    view: source.view,
+    view_kind: source.view_kind || viewKindById.get(source.view) || source.view,
+    kind: source.kind,
+    status: source.status,
+    ...(source.source_image ? { source_image: source.source_image } : {}),
+    ...(source.observation_id ? { observation_id: source.observation_id } : {}),
+    ...(source.confidence !== undefined ? { confidence: source.confidence } : {}),
+    ...(source.note ? { note: source.note } : {})
+  };
+}
+
+function deriveEvidenceStatus({ part, hasManualEvidence, missingRequiredViews, requiredViews }) {
+  if (hasManualEvidence) return 'manual_confirmed';
+  if (part.status && LEGACY_STATUS_TO_EVIDENCE_STATUS[part.status]) {
+    const status = LEGACY_STATUS_TO_EVIDENCE_STATUS[part.status];
+    if (status !== 'observed' || missingRequiredViews.length === 0) return status;
+  }
+  if (requiredViews.length > 0 && missingRequiredViews.length === requiredViews.length) return 'template_prior';
+  if (missingRequiredViews.length > 0 || part.uncertainty?.length) return 'inferred';
+  if ((part.evidence_sources || []).some((source) => source.status === 'observed')) return 'observed';
+  return 'template_prior';
+}
+
+function usesTemplatePrior(part, profile, missingRequiredViews) {
+  if (part.evidence_status === 'template_prior' || missingRequiredViews.length > 0) return true;
+  if (profile === 'switch_controller') return true;
+  return part.status === 'inferred';
+}
+
+function defaultFeatureMapping(part, profile) {
+  const semantics = new Set(part.feature_semantics || []);
+  const faceFeatureCapable = ['slot', 'screw_hole', 'text_engrave', 'logo_emboss'].includes(part.type);
+  if (semantics.has('through_hole') && faceFeatureCapable) {
+    return {
+      operation: 'cut_hole',
+      fallback: 'none',
+      note: 'Mapped to controlled face cut_hole using target-local face coordinates.'
+    };
+  }
+  if (semantics.has('blind_recess') && faceFeatureCapable) {
+    return {
+      operation: 'cut_recess',
+      fallback: 'none',
+      note: 'Mapped to controlled face cut_recess using target-local face coordinates.'
+    };
+  }
+  if (profile === 'compact_remote' && semantics.has('convex') && part.type === 'button_on_panel') {
+    const operation = part.id === 'volume_rocker' ? 'add_raised_rib' : 'add_boss';
+    return {
+      operation,
+      fallback: 'none',
+      note: `Mapped to controlled face ${operation} on the remote face panel.`
+    };
+  }
+  if (part.type === 'text_engrave' || part.type === 'logo_emboss') {
+    return {
+      operation: part.type,
+      fallback: 'visual_marker',
+      note: 'Text/logo semantics are preserved for review; solid boolean text is deferred.'
+    };
+  }
+  return undefined;
+}
+
+function evidenceSourceFromEvidence(item, viewKindById, imageByViewId) {
+  const source = {
+    view: item.view,
+    kind: item.kind,
+    status: evidenceStatusForSource(item),
+    ...(item.source_image || imageByViewId.get(item.view) ? { source_image: item.source_image || imageByViewId.get(item.view) } : {}),
+    ...(item.observation_id ? { observation_id: item.observation_id } : {}),
+    ...(item.confidence !== undefined ? { confidence: item.confidence } : {}),
+    ...(item.note ? { note: item.note } : {})
+  };
+  if (viewKindById.has(item.view)) source.view_kind = viewKindById.get(item.view);
+  return source;
+}
+
+function evidenceStatusForSource(item) {
+  if (item.view === 'manual_correction') return 'manual_confirmed';
+  if (item.kind === 'manual_note') return 'template_prior';
+  return 'observed';
+}
+
+function dedupeEvidenceSources(sources) {
+  const seen = new Set();
+  const result = [];
+  for (const source of sources) {
+    const key = [source.view, source.kind, source.observation_id || '', source.note || ''].join('|');
+    if (seen.has(key)) continue;
+    seen.add(key);
+    result.push(source);
+  }
+  return result;
+}
+
+function dedupeGraphSources(sources) {
+  const seen = new Set();
+  const result = [];
+  for (const source of sources) {
+    const key = [source.view, source.kind, source.observation_id || '', source.note || ''].join('|');
+    if (seen.has(key)) continue;
+    seen.add(key);
+    result.push(source);
+  }
+  return result;
+}
+
+function dedupeGraphConflicts(conflicts) {
+  const seen = new Set();
+  const result = [];
+  for (const conflict of conflicts) {
+    const key = [conflict.type, conflict.severity, conflict.note].join('|');
+    if (seen.has(key)) continue;
+    seen.add(key);
+    result.push(conflict);
+  }
+  return result;
+}
+
+function addUnique(items, item) {
+  return items.includes(item) ? items : [...items, item];
+}
+
+function uniqueArray(items) {
+  return [...new Set(items.filter((item) => item !== undefined && item !== null && item !== ''))];
+}
+
+function clamp01(value) {
+  return Math.max(0, Math.min(1, value));
+}
+
+function round3(value) {
+  return Math.round(value * 1000) / 1000;
 }
 
 function compactRemoteParts(evidence) {
@@ -342,6 +935,7 @@ function manualEvidence(correction) {
   return {
     view: 'manual_correction',
     kind: 'manual_note',
+    status: 'manual_confirmed',
     confidence: 0.95,
     note: correction.evidence_note || `Manual correction applied to ${correction.id}.`
   };
@@ -372,10 +966,12 @@ function makeViewIds(images) {
   return viewIds;
 }
 
-function evidenceFromObservation(observation, view) {
+function evidenceFromObservation(observation, image, view) {
   return {
     view,
     kind: evidenceKind(observation.kind),
+    source_image: image.image.path,
+    observation_id: observation.id,
     points: observation.points || bboxToPolygon(observation.bbox),
     confidence: observation.confidence,
     note: observation.note || `Evidence from ${observation.id}.`

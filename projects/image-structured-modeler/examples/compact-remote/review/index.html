@@ -76,6 +76,7 @@
     }
     .tag.warn { color: var(--warn); border-color: #e2bd7d; background: #fff8e8; }
     .tag.good { color: var(--accent); border-color: #9dd9d1; background: #eefaf8; }
+    .tag.bad { color: var(--bad); border-color: #efb2ac; background: #fff1f0; }
     .table-wrap { overflow-x: auto; }
     table { width: 100%; border-collapse: collapse; font-size: 13px; }
     th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
@@ -83,10 +84,77 @@
     ul { margin: 0; padding-left: 18px; }
     li + li { margin-top: 4px; }
     .mono-list li { word-break: break-word; }
+    .workbench {
+      display: grid;
+      gap: 14px;
+    }
+    .workbench-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .workbench-grid {
+      display: grid;
+      grid-template-columns: minmax(280px, 0.95fr) minmax(320px, 1.05fr);
+      gap: 14px;
+      align-items: start;
+    }
+    .suggestion-list {
+      border: 1px solid var(--line);
+      max-height: 460px;
+      overflow: auto;
+      background: var(--soft);
+    }
+    .suggestion-item {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 10px;
+      padding: 10px;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+    }
+    .suggestion-item:last-child { border-bottom: 0; }
+    .suggestion-item input { margin-top: 3px; }
+    .suggestion-title {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+      margin-bottom: 5px;
+    }
+    button {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      padding: 7px 10px;
+      font: inherit;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    button.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    button:focus-visible, textarea:focus-visible {
+      outline: 2px solid #2563eb;
+      outline-offset: 2px;
+    }
+    textarea {
+      width: 100%;
+      min-height: 460px;
+      resize: vertical;
+      border: 1px solid var(--line);
+      padding: 10px;
+      font: 12px/1.45 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      color: var(--ink);
+      background: #fff;
+    }
     @media (max-width: 900px) {
       header { padding: 22px 18px 14px; }
       main { padding: 18px; }
-      .summary, .two, .image-grid { grid-template-columns: 1fr; }
+      .summary, .two, .image-grid, .workbench-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -100,7 +168,11 @@
       <div class="metric"><span class="subtle">Image Quality</span><strong>medium</strong></div>
       <div class="metric"><span class="subtle">Images</span><strong>2</strong></div>
       <div class="metric"><span class="subtle">Parts</span><strong>7</strong></div>
-      <div class="metric"><span class="subtle">DSL Ops</span><strong>21</strong></div>
+      <div class="metric"><span class="subtle">DSL Ops</span><strong>25</strong></div>
+      <div class="metric"><span class="subtle">Observed</span><strong>2</strong></div>
+      <div class="metric"><span class="subtle">Template Prior</span><strong>3</strong></div>
+      <div class="metric"><span class="subtle">Fusion Confirmed</span><strong>4</strong></div>
+      <div class="metric"><span class="subtle">Needs Review</span><strong>1</strong></div>
     </section>
 
     <section class="grid two">
@@ -117,13 +189,268 @@
         <p><span class="tag warn">3 part corrections</span><span class="tag good">9 applied</span></p>
   <h3 style="margin-top:14px">Scale</h3>
   <p class="subtle">width 44 · height 158 · depth 16 · confidence 0.78</p>
+  <h3 style="margin-top:14px">Part Patches</h3><ul><li>update:remote_body -&gt; manual_confirmed</li><li>update:primary_button_cluster -&gt; manual_confirmed</li><li>update:brand_label -&gt; manual_confirmed</li></ul>
   <h3 style="margin-top:14px">Notes</h3><ul><li>Second product sample for phase 6 generalization validation.</li><li>Manual corrections lock the physical size and button layout without changing generator code.</li></ul>
       </div>
     </section>
 
     <section class="section">
       <h2>Open Questions</h2>
-      <ul><li>Rear battery-door seam is intentionally deferred until a rear view is added.</li><li>Top emitter window is represented by the side thickness prior only.</li></ul>
+      <ul><li>Rear battery-door seam is intentionally deferred until a rear view is added.</li><li>Top emitter window is represented by the side thickness prior only.</li><li>remote_body: review template-derived candidate boxes before accepting dimensions.</li><li>remote_body: review profile-prior dimensions and feature semantics.</li><li>remote_face_panel: review profile-prior dimensions and feature semantics.</li><li>speaker_grille: review profile-prior dimensions and feature semantics.</li><li>brand_label: confirm whether decal_printed should stay as visual_marker or wait for real feature editing.</li><li>remote_face_panel: semantic fusion is partial; confirm before treating as fully image-derived.</li><li>speaker_grille: semantic fusion is partial; confirm before treating as fully image-derived.</li><li>brand_label: semantic fusion needs review (feature_mapping_fallback).</li><li>Review template-prior parts before treating them as image-confirmed: remote_body, remote_face_panel, speaker_grille.</li></ul>
+    </section>
+
+    <section class="section">
+      <h2>Evidence Status</h2>
+      <div class="grid two">
+    <div>
+      <h3>Status Counts</h3>
+      <p><span class="tag good">observed 2</span><span class="tag warn">inferred 2</span><span class="tag bad">template 0</span><span class="tag good">manual 3</span></p>
+      <h3 style="margin-top:14px">View Coverage</h3>
+      <p><span class="tag good">front</span><span class="tag good">right</span><span class="tag good">detail</span></p>
+    </div>
+    <div>
+      <h3>Template Prior Parts</h3>
+      <ul><li>remote_body</li><li>remote_face_panel</li><li>speaker_grille</li></ul>
+      <h3 style="margin-top:14px">Manual Confirmed Parts</h3>
+      <ul><li>remote_body</li><li>primary_button_cluster</li><li>brand_label</li></ul>
+    </div>
+  </div>
+    </section>
+
+    <section class="section">
+      <h2>Evidence Graph</h2>
+      <div class="table-wrap">
+    <table>
+      <thead><tr><th>Part</th><th>Required Views</th><th>Confirmed Views</th><th>Missing</th><th>Conflicts / Questions</th></tr></thead>
+      <tbody>
+        <tr>
+    <td><code>remote_body</code><br><span class="tag good">manual_confirmed</span><br><span class="tag warn">template prior</span><br><span class="tag good">manual confirmed</span></td>
+    <td>front, right</td>
+    <td>front, right, manual_correction</td>
+    <td>none</td>
+    <td>template_candidate_used: One or more candidate records came from a layout/template heuristic.; template_prior_used: Profile prior contributes to this part; review before considering it image-confirmed.; remote_body: review template-derived candidate boxes before accepting dimensions.; remote_body: review profile-prior dimensions and feature semantics.</td>
+  </tr>
+<tr>
+    <td><code>remote_face_panel</code><br><span class="tag warn">inferred</span><br><span class="tag warn">template prior</span></td>
+    <td>front</td>
+    <td>front</td>
+    <td>none</td>
+    <td>template_prior_used: Profile prior contributes to this part; review before considering it image-confirmed.; remote_face_panel: review profile-prior dimensions and feature semantics.</td>
+  </tr>
+<tr>
+    <td><code>navigation_pad</code><br><span class="tag good">observed</span></td>
+    <td>front</td>
+    <td>front</td>
+    <td>none</td>
+    <td>none</td>
+  </tr>
+<tr>
+    <td><code>primary_button_cluster</code><br><span class="tag good">manual_confirmed</span><br><span class="tag good">manual confirmed</span></td>
+    <td>front</td>
+    <td>front, manual_correction</td>
+    <td>none</td>
+    <td>none</td>
+  </tr>
+<tr>
+    <td><code>volume_rocker</code><br><span class="tag good">observed</span></td>
+    <td>front</td>
+    <td>front</td>
+    <td>none</td>
+    <td>none</td>
+  </tr>
+<tr>
+    <td><code>speaker_grille</code><br><span class="tag warn">inferred</span><br><span class="tag warn">template prior</span></td>
+    <td>front</td>
+    <td>front</td>
+    <td>none</td>
+    <td>template_prior_used: Profile prior contributes to this part; review before considering it image-confirmed.; speaker_grille: review profile-prior dimensions and feature semantics.</td>
+  </tr>
+<tr>
+    <td><code>brand_label</code><br><span class="tag good">manual_confirmed</span><br><span class="tag good">manual confirmed</span></td>
+    <td>front</td>
+    <td>front, manual_correction</td>
+    <td>none</td>
+    <td>feature_mapping_fallback: Feature maps to text_3d with visual_marker fallback: Brand label is review-confirmed text; solid engraving is deferred.; brand_label: confirm whether decal_printed should stay as visual_marker or wait for real feature editing.</td>
+  </tr>
+      </tbody>
+    </table>
+  </div>
+  <h3 style="margin-top:14px">Graph Open Questions</h3>
+  <ul><li>remote_body: review template-derived candidate boxes before accepting dimensions.</li><li>remote_body: review profile-prior dimensions and feature semantics.</li><li>remote_face_panel: review profile-prior dimensions and feature semantics.</li><li>speaker_grille: review profile-prior dimensions and feature semantics.</li><li>brand_label: confirm whether decal_printed should stay as visual_marker or wait for real feature editing.</li></ul>
+    </section>
+
+    <section class="section">
+      <h2>Semantic Fusion</h2>
+      <div class="grid two">
+    <div>
+      <h3>Fusion Summary</h3>
+      <p><span class="tag good">confirmed 4</span><span class="tag warn">partial 2</span><span class="tag bad">needs review 1</span><span class="tag ">strategy graph_cross_view_semantic_fusion</span></p>
+      <h3 style="margin-top:14px">Cross-View Confirmed</h3>
+      <ul><li>None</li></ul>
+    </div>
+    <div>
+      <h3>Review Drivers</h3>
+      <p><span class="tag warn">fallback 1</span><span class="tag warn">template prior 3</span></p>
+      <h3 style="margin-top:14px">Open Questions</h3>
+      <ul><li>remote_face_panel: semantic fusion is partial; confirm before treating as fully image-derived.</li><li>speaker_grille: semantic fusion is partial; confirm before treating as fully image-derived.</li><li>brand_label: semantic fusion needs review (feature_mapping_fallback).</li></ul>
+    </div>
+  </div>
+  <div class="table-wrap" style="margin-top:14px">
+    <table>
+      <thead><tr><th>Part</th><th>Status</th><th>Decision</th><th>Confidence</th><th>Signals</th><th>Review Flags</th></tr></thead>
+      <tbody>
+        <tr>
+    <td><code>remote_body</code><br>flush</td>
+    <td><span class="tag good">confirmed</span></td>
+    <td>manual_confirmed</td>
+    <td>0.882</td>
+    <td>coverage 1; sources 4/4; mapping 0.5</td>
+    <td><span class="tag ">template_prior</span></td>
+  </tr>
+<tr>
+    <td><code>remote_face_panel</code><br>flush</td>
+    <td><span class="tag warn">partial</span></td>
+    <td>single_view_confirmed</td>
+    <td>0.732</td>
+    <td>coverage 1; sources 1/1; mapping 0.5</td>
+    <td><span class="tag ">template_prior</span></td>
+  </tr>
+<tr>
+    <td><code>navigation_pad</code><br>convex</td>
+    <td><span class="tag good">confirmed</span></td>
+    <td>single_view_confirmed</td>
+    <td>0.952</td>
+    <td>coverage 1; sources 1/1; mapping 0.86</td>
+    <td><span class="subtle">None</span></td>
+  </tr>
+<tr>
+    <td><code>primary_button_cluster</code><br>convex</td>
+    <td><span class="tag good">confirmed</span></td>
+    <td>manual_confirmed</td>
+    <td>1</td>
+    <td>coverage 1; sources 2/2; mapping 0.86</td>
+    <td><span class="subtle">None</span></td>
+  </tr>
+<tr>
+    <td><code>volume_rocker</code><br>convex</td>
+    <td><span class="tag good">confirmed</span></td>
+    <td>single_view_confirmed</td>
+    <td>0.945</td>
+    <td>coverage 1; sources 1/1; mapping 0.86</td>
+    <td><span class="subtle">None</span></td>
+  </tr>
+<tr>
+    <td><code>speaker_grille</code><br>blind_recess</td>
+    <td><span class="tag warn">partial</span></td>
+    <td>single_view_confirmed</td>
+    <td>0.777</td>
+    <td>coverage 1; sources 1/1; mapping 0.86</td>
+    <td><span class="tag ">template_prior</span></td>
+  </tr>
+<tr>
+    <td><code>brand_label</code><br>decal_printed</td>
+    <td><span class="tag bad">needs_review</span></td>
+    <td>feature_fallback</td>
+    <td>0.816</td>
+    <td>coverage 1; sources 2/2; mapping 0.42</td>
+    <td><span class="tag warn">feature_mapping_fallback</span></td>
+  </tr>
+      </tbody>
+    </table>
+  </div>
+    </section>
+
+    <section class="section">
+      <h2>Corrections Workbench</h2>
+      <div class="workbench" id="corrections-workbench">
+    <p class="subtle">Select suggested patches, edit the JSON payload, then copy or download it for <code>projects/image-structured-modeler/examples/compact-remote/manual-corrections.json</code>.</p>
+    <div class="workbench-toolbar">
+      <button type="button" id="select-all-corrections">Select all</button>
+      <button type="button" id="clear-corrections">Clear</button>
+      <button type="button" id="validate-corrections">Validate JSON</button>
+      <button type="button" class="primary" id="copy-corrections">Copy JSON</button>
+      <button type="button" id="download-corrections">Download JSON</button>
+      <span class="subtle" id="corrections-status">4 suggested patch(es) selected</span>
+    </div>
+    <div class="workbench-grid">
+      <div class="suggestion-list" aria-label="Correction suggestions">
+        <label class="suggestion-item" data-correction-suggestion="remote_body">
+    <input type="checkbox" class="correction-checkbox" data-index="0" checked>
+    <span>
+      <span class="suggestion-title">
+        <code>remote_body</code>
+        <span class="tag warn">fusion confirmed</span><span class="tag ">decision manual_confirmed</span>
+      </span>
+      <span class="subtle">remote_body: review template-derived candidate boxes before accepting dimensions.</span>
+    </span>
+  </label>
+<label class="suggestion-item" data-correction-suggestion="remote_face_panel">
+    <input type="checkbox" class="correction-checkbox" data-index="1" checked>
+    <span>
+      <span class="suggestion-title">
+        <code>remote_face_panel</code>
+        <span class="tag warn">fusion partial</span><span class="tag ">decision single_view_confirmed</span>
+      </span>
+      <span class="subtle">remote_face_panel: review profile-prior dimensions and feature semantics.</span>
+    </span>
+  </label>
+<label class="suggestion-item" data-correction-suggestion="speaker_grille">
+    <input type="checkbox" class="correction-checkbox" data-index="2" checked>
+    <span>
+      <span class="suggestion-title">
+        <code>speaker_grille</code>
+        <span class="tag warn">fusion partial</span><span class="tag ">decision single_view_confirmed</span>
+      </span>
+      <span class="subtle">speaker_grille: review profile-prior dimensions and feature semantics.</span>
+    </span>
+  </label>
+<label class="suggestion-item" data-correction-suggestion="brand_label">
+    <input type="checkbox" class="correction-checkbox" data-index="3" checked>
+    <span>
+      <span class="suggestion-title">
+        <code>brand_label</code>
+        <span class="tag bad">fusion needs_review</span><span class="tag ">decision feature_fallback</span>
+      </span>
+      <span class="subtle">Feature maps to text_3d with visual_marker fallback: Brand label is review-confirmed text; solid engraving is deferred.</span>
+    </span>
+  </label>
+      </div>
+      <div>
+        <textarea id="corrections-json" spellcheck="false" aria-label="Manual corrections JSON"></textarea>
+      </div>
+    </div>
+  </div>
+    </section>
+
+    <section class="section">
+      <h2>Correction Patch Suggestions</h2>
+      <div class="table-wrap">
+    <table>
+      <thead><tr><th>Part</th><th>Reason</th><th>Patch</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><code>remote_body</code></td>
+          <td>remote_body: review template-derived candidate boxes before accepting dimensions.</td>
+          <td><code>{&quot;id&quot;:&quot;remote_body&quot;,&quot;action&quot;:&quot;update&quot;,&quot;evidence_status&quot;:&quot;manual_confirmed&quot;,&quot;manual_confirmed&quot;:true,&quot;template_prior&quot;:false,&quot;feature_semantics&quot;:[&quot;flush&quot;],&quot;evidence_note&quot;:&quot;Reviewer confirmed remote_body; replace this note with the view/feature evidence used.&quot;}</code></td>
+        </tr>
+<tr>
+          <td><code>remote_face_panel</code></td>
+          <td>remote_face_panel: review profile-prior dimensions and feature semantics.</td>
+          <td><code>{&quot;id&quot;:&quot;remote_face_panel&quot;,&quot;action&quot;:&quot;update&quot;,&quot;evidence_status&quot;:&quot;manual_confirmed&quot;,&quot;manual_confirmed&quot;:true,&quot;template_prior&quot;:false,&quot;feature_semantics&quot;:[&quot;flush&quot;],&quot;evidence_note&quot;:&quot;Reviewer confirmed remote_face_panel; replace this note with the view/feature evidence used.&quot;}</code></td>
+        </tr>
+<tr>
+          <td><code>speaker_grille</code></td>
+          <td>speaker_grille: review profile-prior dimensions and feature semantics.</td>
+          <td><code>{&quot;id&quot;:&quot;speaker_grille&quot;,&quot;action&quot;:&quot;update&quot;,&quot;evidence_status&quot;:&quot;manual_confirmed&quot;,&quot;manual_confirmed&quot;:true,&quot;template_prior&quot;:false,&quot;feature_semantics&quot;:[&quot;blind_recess&quot;],&quot;feature_mapping&quot;:{&quot;operation&quot;:&quot;cut_recess&quot;,&quot;fallback&quot;:&quot;none&quot;,&quot;note&quot;:&quot;Mapped to controlled face cut_recess using target-local face coordinates.&quot;},&quot;evidence_note&quot;:&quot;Reviewer confirmed speaker_grille; replace this note with the view/feature evidence used.&quot;}</code></td>
+        </tr>
+<tr>
+          <td><code>brand_label</code></td>
+          <td>Feature maps to text_3d with visual_marker fallback: Brand label is review-confirmed text; solid engraving is deferred.</td>
+          <td><code>{&quot;id&quot;:&quot;brand_label&quot;,&quot;action&quot;:&quot;update&quot;,&quot;evidence_status&quot;:&quot;manual_confirmed&quot;,&quot;manual_confirmed&quot;:true,&quot;template_prior&quot;:false,&quot;feature_semantics&quot;:[&quot;decal_printed&quot;],&quot;feature_mapping&quot;:{&quot;operation&quot;:&quot;text_3d&quot;,&quot;fallback&quot;:&quot;visual_marker&quot;,&quot;note&quot;:&quot;Brand label is review-confirmed text; solid engraving is deferred.&quot;},&quot;evidence_note&quot;:&quot;Reviewer confirmed brand_label; replace this note with the view/feature evidence used.&quot;}</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
     </section>
 
     <section class="section">
@@ -156,55 +483,62 @@
       <h2>Model Plan Parts</h2>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Part</th><th>Type</th><th>Material</th><th>Evidence</th><th>Uncertainty</th></tr></thead>
+          <thead><tr><th>Part</th><th>Type</th><th>Status</th><th>Evidence Sources</th><th>Semantics</th><th>Uncertainty</th></tr></thead>
           <tbody>
             <tr>
     <td><code>remote_body</code></td>
     <td>rounded_box</td>
-    <td>Remote_Graphite_Plastic</td>
-    <td>front_photo:silhouette, front_photo:silhouette, manual_correction:manual_note</td>
-    <td></td>
+    <td><span class="tag good">manual_confirmed</span><br><span class="tag warn">template prior</span><br><span class="tag good">manual confirmed</span></td>
+    <td>front_photo:silhouette (0.83), front_photo:silhouette (0.82), manual_correction:manual_note (0.95)</td>
+    <td>flush<br><span class="tag warn">feature op pending</span></td>
+    <td>Missing required view evidence for right; current geometry uses profile assumptions.</td>
   </tr>
 <tr>
     <td><code>remote_face_panel</code></td>
     <td>beveled_panel</td>
-    <td>Remote_Satin_Face</td>
-    <td>front_photo:silhouette</td>
+    <td><span class="tag warn">inferred</span><br><span class="tag warn">template prior</span></td>
+    <td>front_photo:silhouette (0.74)</td>
+    <td>flush<br><span class="tag warn">feature op pending</span></td>
     <td></td>
   </tr>
 <tr>
     <td><code>navigation_pad</code></td>
     <td>button_on_panel</td>
-    <td>Remote_Button_Rubber</td>
-    <td>front_photo:center_point</td>
+    <td><span class="tag good">observed</span></td>
+    <td>front_photo:center_point (0.78)</td>
+    <td>convex<br><span class="tag good">real feature op: add_boss</span></td>
     <td></td>
   </tr>
 <tr>
     <td><code>primary_button_cluster</code></td>
     <td>button_on_panel</td>
-    <td>Remote_Button_Rubber</td>
-    <td>front_photo:silhouette, manual_correction:manual_note</td>
+    <td><span class="tag good">manual_confirmed</span><br><span class="tag good">manual confirmed</span></td>
+    <td>front_photo:silhouette (0.7), manual_correction:manual_note (0.95)</td>
+    <td>convex<br><span class="tag good">real feature op: add_boss</span></td>
     <td></td>
   </tr>
 <tr>
     <td><code>volume_rocker</code></td>
     <td>button_on_panel</td>
-    <td>Remote_Button_Rubber</td>
-    <td>front_photo:silhouette</td>
+    <td><span class="tag good">observed</span></td>
+    <td>front_photo:silhouette (0.76)</td>
+    <td>convex<br><span class="tag good">real feature op: add_raised_rib</span></td>
     <td></td>
   </tr>
 <tr>
     <td><code>speaker_grille</code></td>
     <td>slot</td>
-    <td>Remote_Dark_Detail</td>
-    <td>front_photo:silhouette</td>
+    <td><span class="tag warn">inferred</span><br><span class="tag warn">template prior</span></td>
+    <td>front_photo:silhouette (0.62)</td>
+    <td>blind_recess<br><span class="tag good">real feature op: cut_recess</span></td>
     <td></td>
   </tr>
 <tr>
     <td><code>brand_label</code></td>
     <td>text_engrave</td>
-    <td>Remote_Dark_Detail</td>
-    <td>front_photo:text_label, manual_correction:manual_note</td>
+    <td><span class="tag good">manual_confirmed</span><br><span class="tag good">manual confirmed</span></td>
+    <td>front_photo:text_label (0.67), manual_correction:manual_note (0.95)</td>
+    <td>decal_printed<br><span class="tag warn">fallback: visual_marker</span><span class="tag ">visual op: text_3d</span></td>
     <td></td>
   </tr>
           </tbody>
@@ -218,7 +552,7 @@
         <div class="table-wrap">
           <table>
             <thead><tr><th>Operation</th><th>Count</th></tr></thead>
-            <tbody><tr><td><code>reset</code></td><td>1</td></tr><tr><td><code>material</code></td><td>4</td></tr><tr><td><code>rounded_box</code></td><td>2</td></tr><tr><td><code>button_on_panel</code></td><td>7</td></tr><tr><td><code>slot_array</code></td><td>1</td></tr><tr><td><code>text_3d</code></td><td>1</td></tr><tr><td><code>scene</code></td><td>2</td></tr><tr><td><code>style</code></td><td>1</td></tr><tr><td><code>shadow</code></td><td>1</td></tr><tr><td><code>rendering_options</code></td><td>1</td></tr></tbody>
+            <tbody><tr><td><code>reset</code></td><td>1</td></tr><tr><td><code>material</code></td><td>4</td></tr><tr><td><code>rounded_box</code></td><td>2</td></tr><tr><td><code>add_boss</code></td><td>6</td></tr><tr><td><code>add_raised_rib</code></td><td>1</td></tr><tr><td><code>cut_recess</code></td><td>5</td></tr><tr><td><code>text_3d</code></td><td>1</td></tr><tr><td><code>scene</code></td><td>2</td></tr><tr><td><code>style</code></td><td>1</td></tr><tr><td><code>shadow</code></td><td>1</td></tr><tr><td><code>rendering_options</code></td><td>1</td></tr></tbody>
           </table>
         </div>
       </div>
@@ -228,5 +562,97 @@
       </div>
     </section>
   </main>
+  <script type="application/json" id="correction-suggestions-data">[{"part_id":"remote_body","reason":"remote_body: review template-derived candidate boxes before accepting dimensions.","fusion_status":"confirmed","fusion_decision":"manual_confirmed","patch":{"id":"remote_body","action":"update","evidence_status":"manual_confirmed","manual_confirmed":true,"template_prior":false,"feature_semantics":["flush"],"evidence_note":"Reviewer confirmed remote_body; replace this note with the view/feature evidence used."}},{"part_id":"remote_face_panel","reason":"remote_face_panel: review profile-prior dimensions and feature semantics.","fusion_status":"partial","fusion_decision":"single_view_confirmed","patch":{"id":"remote_face_panel","action":"update","evidence_status":"manual_confirmed","manual_confirmed":true,"template_prior":false,"feature_semantics":["flush"],"evidence_note":"Reviewer confirmed remote_face_panel; replace this note with the view/feature evidence used."}},{"part_id":"speaker_grille","reason":"speaker_grille: review profile-prior dimensions and feature semantics.","fusion_status":"partial","fusion_decision":"single_view_confirmed","patch":{"id":"speaker_grille","action":"update","evidence_status":"manual_confirmed","manual_confirmed":true,"template_prior":false,"feature_semantics":["blind_recess"],"feature_mapping":{"operation":"cut_recess","fallback":"none","note":"Mapped to controlled face cut_recess using target-local face coordinates."},"evidence_note":"Reviewer confirmed speaker_grille; replace this note with the view/feature evidence used."}},{"part_id":"brand_label","reason":"Feature maps to text_3d with visual_marker fallback: Brand label is review-confirmed text; solid engraving is deferred.","fusion_status":"needs_review","fusion_decision":"feature_fallback","patch":{"id":"brand_label","action":"update","evidence_status":"manual_confirmed","manual_confirmed":true,"template_prior":false,"feature_semantics":["decal_printed"],"feature_mapping":{"operation":"text_3d","fallback":"visual_marker","note":"Brand label is review-confirmed text; solid engraving is deferred."},"evidence_note":"Reviewer confirmed brand_label; replace this note with the view/feature evidence used."}}]</script>
+  <script>(() => {
+  const dataNode = document.getElementById('correction-suggestions-data');
+  const editor = document.getElementById('corrections-json');
+  const status = document.getElementById('corrections-status');
+  if (!dataNode || !editor || !status) return;
+
+  let suggestions = [];
+  try {
+    suggestions = JSON.parse(dataNode.textContent || '[]');
+  } catch {
+    suggestions = [];
+  }
+
+  const checkboxes = () => Array.from(document.querySelectorAll('.correction-checkbox'));
+  const selectedPatches = () => checkboxes()
+    .filter((checkbox) => checkbox.checked)
+    .map((checkbox) => suggestions[Number(checkbox.dataset.index)]?.patch)
+    .filter(Boolean);
+  const payloadFromSelection = () => ({
+    version: 1,
+    notes: ['Generated from review corrections workbench; merge reviewed patches into manual-corrections.json.'],
+    parts: selectedPatches()
+  });
+  const setStatus = (message, kind = '') => {
+    status.textContent = message;
+    status.className = kind ? 'tag ' + kind : 'subtle';
+  };
+  const syncFromSelection = () => {
+    const payload = payloadFromSelection();
+    editor.value = JSON.stringify(payload, null, 2);
+    setStatus(payload.parts.length + ' patch(es) selected');
+  };
+  const readEditorPayload = () => {
+    const payload = JSON.parse(editor.value);
+    if (payload.version !== 1) throw new Error('version must be 1');
+    if (!Array.isArray(payload.parts)) throw new Error('parts must be an array');
+    return payload;
+  };
+
+  document.getElementById('select-all-corrections')?.addEventListener('click', () => {
+    for (const checkbox of checkboxes()) checkbox.checked = true;
+    syncFromSelection();
+  });
+  document.getElementById('clear-corrections')?.addEventListener('click', () => {
+    for (const checkbox of checkboxes()) checkbox.checked = false;
+    syncFromSelection();
+  });
+  document.getElementById('validate-corrections')?.addEventListener('click', () => {
+    try {
+      const payload = readEditorPayload();
+      setStatus('valid JSON with ' + payload.parts.length + ' patch(es)', 'good');
+    } catch (error) {
+      setStatus(error.message || 'invalid JSON', 'bad');
+    }
+  });
+  document.getElementById('copy-corrections')?.addEventListener('click', async () => {
+    try {
+      readEditorPayload();
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(editor.value);
+      } else {
+        editor.select();
+        document.execCommand('copy');
+      }
+      setStatus('copied JSON', 'good');
+    } catch (error) {
+      setStatus(error.message || 'copy failed', 'bad');
+    }
+  });
+  document.getElementById('download-corrections')?.addEventListener('click', () => {
+    try {
+      readEditorPayload();
+      const blob = new Blob([editor.value + '\n'], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = 'manual-corrections.workbench.json';
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      URL.revokeObjectURL(url);
+      setStatus('downloaded JSON', 'good');
+    } catch (error) {
+      setStatus(error.message || 'download failed', 'bad');
+    }
+  });
+  for (const checkbox of checkboxes()) {
+    checkbox.addEventListener('change', syncFromSelection);
+  }
+  syncFromSelection();
+})();</script>
 </body>
 </html>

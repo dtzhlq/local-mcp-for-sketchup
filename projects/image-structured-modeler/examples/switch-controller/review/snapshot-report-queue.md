@@ -1,10 +1,10 @@
 # Switch Controller Snapshot Report
 
-- Generated: `2026-05-20T14:16:45.120Z`
+- Generated: `2026-05-27T07:15:18.150Z`
 - Runtime: `queue`
 - Output DSL: `projects/image-structured-modeler/examples/switch-controller/output.json`
 - Saved SKP: `output/image-structured-switch-controller.skp`
-- File size: `253177 bytes`
+- File size: `254234 bytes`
 
 ## Snapshot Summary
 
@@ -58,4 +58,3 @@ Bounding box: `280 x 174 x 40 mm`
 - Move this report generation into the regular image-structured build/check loop.
 - Use expected warning buckets as the first warning budget allowlist.
 - Reduce expected overlap buckets with more accurate contact/recess primitives.
-

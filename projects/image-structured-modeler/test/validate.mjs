@@ -21,7 +21,7 @@ const SWITCH_BASELINE_GROUPS = 24;
 const SWITCH_BASELINE_INSTANCES = 4;
 const SWITCH_BASELINE_SCENES = 2;
 const SWITCH_BASELINE_GEOMETRY_WARNINGS = 0;
-const REMOTE_BASELINE_GROUPS = 11;
+const REMOTE_BASELINE_GROUPS = 3;
 const REMOTE_BASELINE_INSTANCES = 0;
 const REMOTE_BASELINE_SCENES = 2;
 
@@ -39,6 +39,9 @@ try {
   const observationSet = JSON.parse(await fs.readFile(observationPath, 'utf8'));
   assertValid(validateImageSetObservation, observationSet, 'switch controller observations.json');
   assert.ok(observationSet.images.length > 0, 'observations.json should contain image observations');
+  assert.ok(observationSet.evidence_graph, 'observations.json should contain native evidence graph');
+  assert.equal(observationSet.evidence_graph.parts.length >= 6, true, 'observations evidence graph should contain core part records');
+  assert.deepEqual(graphPartByIdFromGraph(observationSet.evidence_graph, 'center_grip_body').required_views, ['front', 'rear'], 'observations evidence graph should record center grip required views');
   for (const observation of observationSet.images) {
     assertValid(validateImageObservation, stripCollectionOnlyFields(observation), `${observation.image.path} image observation`);
   }
@@ -65,6 +68,14 @@ try {
   assertValid(validateModelPlan, generatedModelPlan, 'switch controller model-plan.json');
   assert.ok(generatedModelPlan.parts.length >= 6, 'generated model plan should contain core controller parts');
   assert.ok(generatedModelPlan.review.corrections_applied?.includes('scale.known_width'), 'generated model plan should record applied manual scale corrections');
+  assertEvidenceAnnotations(generatedModelPlan, 'switch controller model-plan.json');
+  assert.ok(generatedModelPlan.review.evidence_summary.template_prior_parts.length >= generatedModelPlan.parts.length, 'switch model plan should expose layout-prior involvement for every generated part');
+  assert.ok(generatedModelPlan.review.correction_suggestions.length >= generatedModelPlan.parts.length, 'switch model plan should suggest confirmation patches for prior-assisted parts');
+  assert.deepEqual(graphPartById(generatedModelPlan, 'center_grip_body').required_views, ['front', 'rear'], 'center grip evidence graph should record required front/rear views');
+  assert.deepEqual(graphPartById(generatedModelPlan, 'center_grip_body').missing_views, [], 'center grip evidence graph should have front/rear coverage');
+  assert.ok(graphPartById(generatedModelPlan, 'right_thumbstick').conflicts.some((conflict) => conflict.type === 'template_prior_used'), 'right thumbstick graph should expose template-prior usage');
+  assert.equal(fusionPartById(generatedModelPlan, 'center_grip_body').decision, 'cross_view_confirmed', 'center grip semantic fusion should merge front/rear evidence');
+  assert.ok(generatedModelPlan.review.semantic_fusion.summary.cross_view_confirmed_parts.includes('center_grip_body'), 'semantic fusion should summarize cross-view confirmed parts');
   generatedModelPlanChecked = true;
 } catch (error) {
   if (error.code !== 'ENOENT') throw error;
@@ -107,6 +118,14 @@ try {
   assert.ok(html.includes('Review Overlays'), 'review report should include overlay section');
   assert.ok(html.includes('Model Plan Parts'), 'review report should include model plan parts');
   assert.ok(html.includes('Manual Corrections'), 'review report should include manual corrections');
+  assert.ok(html.includes('Evidence Status'), 'review report should include evidence status summary');
+  assert.ok(html.includes('Evidence Graph'), 'review report should include evidence graph');
+  assert.ok(html.includes('Semantic Fusion'), 'review report should include semantic fusion');
+  assert.ok(html.includes('Corrections Workbench'), 'review report should include corrections workbench');
+  assert.ok(html.includes('correction-suggestions-data'), 'review report should embed correction suggestions for the workbench');
+  assert.ok(html.includes('download-corrections'), 'review report should expose correction JSON download');
+  assert.ok(html.includes('Correction Patch Suggestions'), 'review report should include correction patch suggestions');
+  assert.ok(html.includes('template prior'), 'review report should expose template-prior parts');
   reviewReportChecked = true;
 } catch (error) {
   if (error.code !== 'ENOENT') throw error;
@@ -181,6 +200,8 @@ try {
 }
 
 await assertSwitchCorrectionRegression();
+await assertFeatureMappingCorrectionRegression();
+await assertSingleImageEvidenceDowngrade();
 const remoteChecked = await assertCompactRemoteSample();
 
 process.stdout.write(`${JSON.stringify({
@@ -196,6 +217,7 @@ process.stdout.write(`${JSON.stringify({
     queue_snapshot_report: queueSnapshotReportChecked,
     queue_diff_report: queueDiffReportChecked,
     correction_regression: true,
+    feature_mapping_regression: true,
     compact_remote_sample: remoteChecked,
     warning_budget: true,
     scripts: true
@@ -257,6 +279,9 @@ async function assertSwitchCorrectionRegression() {
   const correctedStick = partById(correctedPlan, 'left_thumbstick');
   assert.notDeepEqual(correctedStick.parameters.center, baselineStick.parameters.center, 'manual correction should move left_thumbstick in model plan');
   assert.equal(correctedStick.parameters.outer_radius, 13, 'manual correction should update left_thumbstick radius');
+  assert.equal(correctedStick.evidence_status, 'manual_confirmed', 'manual correction should mark updated part as manually confirmed');
+  assert.equal(correctedStick.manual_confirmed, true, 'manual correction should expose manual confirmation flag');
+  assert.ok(correctedStick.evidence_sources.some((source) => source.status === 'manual_confirmed'), 'manual correction should add a manual evidence source');
   assert.equal(partById(correctedPlan, 'abxy_cluster').parameters.buttons.length, 5, 'manual correction should replace ABXY button list');
   assert.ok(correctedPlan.review.corrections_applied.includes('update:left_thumbstick'), 'model plan should record part update correction');
 
@@ -274,11 +299,71 @@ async function assertSwitchCorrectionRegression() {
   assert.equal(correctedDsl.operations.filter((operation) => operation.name?.startsWith('ABXY_') && operation.name?.endsWith('_Button_From_Image_Plan')).length, 5, 'compiled DSL should contain corrected ABXY button count');
 }
 
+async function assertFeatureMappingCorrectionRegression() {
+  const base = path.join(subprojectRoot, 'examples', 'compact-remote');
+  const observationSet = JSON.parse(await fs.readFile(path.join(base, 'observations.json'), 'utf8'));
+  const baselineCorrections = JSON.parse(await fs.readFile(path.join(base, 'manual-corrections.json'), 'utf8'));
+  const featureCorrections = JSON.parse(await fs.readFile(path.join(base, 'manual-corrections.feature-regression.json'), 'utf8'));
+  assertValid(validateManualCorrections, featureCorrections, 'compact remote manual-corrections.feature-regression.json');
+
+  const baselinePlan = generateModelPlan(observationSet, { manualCorrections: baselineCorrections });
+  const correctedPlan = generateModelPlan(observationSet, { manualCorrections: featureCorrections });
+  assert.equal(partById(baselinePlan, 'brand_label').feature_mapping.operation, 'text_3d', 'baseline brand label should stay a visual text marker');
+  assert.equal(partById(baselinePlan, 'brand_label').feature_mapping.fallback, 'visual_marker', 'baseline brand label should expose visual marker fallback');
+  assert.equal(partById(correctedPlan, 'brand_label').feature_mapping.operation, 'cut_recess', 'feature correction should map brand label to cut_recess');
+  assert.equal(partById(correctedPlan, 'brand_label').feature_mapping.fallback, 'none', 'feature correction should remove visual fallback');
+  assert.ok(partById(correctedPlan, 'brand_label').feature_semantics.includes('blind_recess'), 'feature correction should update feature semantics to blind_recess');
+
+  const baselineDsl = compilePlanToSketchUpDsl(baselinePlan);
+  const correctedDsl = compilePlanToSketchUpDsl(correctedPlan);
+  assert.ok(
+    baselineDsl.operations.some((operation) => operation.op === 'text_3d' && operation.name === 'Remote_Brand_Label_From_Image_Plan'),
+    'baseline DSL should compile brand label as visual text_3d marker'
+  );
+  assert.equal(
+    baselineDsl.operations.some((operation) => operation.op === 'cut_recess' && operation.feature_id === 'Remote_Brand_Label_Recess_From_Image_Plan'),
+    false,
+    'baseline DSL should not emit a real cut_recess for the brand label'
+  );
+  assert.ok(
+    correctedDsl.operations.some((operation) => operation.op === 'cut_recess' && operation.feature_id === 'Remote_Brand_Label_Recess_From_Image_Plan'),
+    'feature correction should compile brand label as a real cut_recess op'
+  );
+  assert.equal(
+    correctedDsl.operations.some((operation) => operation.op === 'text_3d' && operation.name === 'Remote_Brand_Label_From_Image_Plan'),
+    false,
+    'feature correction should remove visual text_3d fallback for the brand label'
+  );
+}
+
+async function assertSingleImageEvidenceDowngrade() {
+  const observationSet = JSON.parse(await fs.readFile(observationPath, 'utf8'));
+  const frontImage = observationSet.images.find((image) => image.detected_view.kind === 'front') || observationSet.images[0];
+  const singleImageSet = structuredClone(observationSet);
+  singleImageSet.images = [frontImage];
+  singleImageSet.object.source_images = [frontImage.image.path];
+  singleImageSet.views_detected = [frontImage.detected_view.kind];
+  singleImageSet.missing_views = ['rear', 'right', 'top'].filter((view) => view !== frontImage.detected_view.kind);
+  const plan = generateModelPlan(singleImageSet, { knownWidth: 280, knownHeight: 155, knownDepth: 42 });
+  assert.equal(plan.review.evidence_summary.image_count, 1, 'single-image model plan should record one source image');
+  assert.ok(plan.review.open_questions.some((question) => question.includes('Single-image run')), 'single-image model plan should add an explicit open question');
+  assert.equal(partById(plan, 'rear_grip_pair').evidence_status, 'template_prior', 'single front image should not confirm rear grip geometry');
+  assert.equal(partById(plan, 'rear_grip_pair').template_prior, true, 'single front image should mark rear grip as template prior');
+  assert.deepEqual(graphPartById(plan, 'rear_grip_pair').missing_views, ['rear', 'right'], 'single front image graph should record missing rear/right evidence for rear grip');
+  assert.equal(fusionPartById(plan, 'rear_grip_pair').status, 'needs_review', 'single front image semantic fusion should require review for rear grip');
+  assert.equal(fusionPartById(plan, 'rear_grip_pair').decision, 'template_prior_assisted', 'single front image semantic fusion should expose template-prior decision');
+  assert.ok(plan.review.evidence_graph.open_questions.some((question) => question.includes('rear_grip_pair')), 'single-image evidence graph should emit part-level open questions');
+  assert.ok(plan.review.correction_suggestions.some((suggestion) => suggestion.part_id === 'rear_grip_pair'), 'single-image model plan should suggest a correction patch for rear_grip_pair');
+  assert.ok(plan.review.evidence_summary.status_counts.template_prior >= 1, 'single-image model plan should count template-prior parts');
+}
+
 async function assertCompactRemoteSample() {
   const base = path.join(subprojectRoot, 'examples', 'compact-remote');
   const observations = JSON.parse(await fs.readFile(path.join(base, 'observations.json'), 'utf8'));
   assertValid(validateImageSetObservation, observations, 'compact remote observations.json');
   assert.equal(observations.object.profile, 'compact_remote', 'compact remote observations should declare object profile');
+  assert.ok(observations.evidence_graph, 'compact remote observations should contain native evidence graph');
+  assert.deepEqual(graphPartByIdFromGraph(observations.evidence_graph, 'remote_body').required_views, ['front', 'right'], 'compact remote observations graph should record body front/right requirements');
   for (const observation of observations.images) {
     assertValid(validateImageObservation, stripCollectionOnlyFields(observation), `${observation.image.path} image observation`);
   }
@@ -290,8 +375,19 @@ async function assertCompactRemoteSample() {
   const modelPlan = JSON.parse(await fs.readFile(path.join(base, 'model-plan.json'), 'utf8'));
   assertValid(validateModelPlan, modelPlan, 'compact remote model-plan.json');
   assert.equal(modelPlan.object.profile, 'compact_remote', 'compact remote model plan should not use switch_controller profile');
+  assertEvidenceAnnotations(modelPlan, 'compact remote model-plan.json');
   assert.ok(modelPlan.review.corrections_applied.includes('object.profile'), 'compact remote model plan should record profile correction');
   assert.ok(modelPlan.review.corrections_applied.includes('update:primary_button_cluster'), 'compact remote model plan should record button cluster correction');
+  assert.equal(partById(modelPlan, 'primary_button_cluster').evidence_status, 'manual_confirmed', 'compact remote corrected button cluster should be manually confirmed');
+  assert.equal(graphPartById(modelPlan, 'primary_button_cluster').manual_confirmed, true, 'compact remote evidence graph should carry manual confirmation');
+  assert.equal(partById(modelPlan, 'speaker_grille').feature_mapping.operation, 'cut_recess', 'compact remote grille should map blind_recess to cut_recess');
+  assert.equal(partById(modelPlan, 'speaker_grille').feature_mapping.fallback, 'none', 'compact remote grille should not fall back to a visual slot marker');
+  assert.equal(graphPartById(modelPlan, 'speaker_grille').conflicts.some((conflict) => conflict.type === 'feature_mapping_fallback'), false, 'compact remote graph should not mark grille as fallback after real cut_recess mapping');
+  assert.ok(graphPartById(modelPlan, 'brand_label').conflicts.some((conflict) => conflict.type === 'feature_mapping_fallback'), 'compact remote graph should still expose decal/text visual fallback');
+  assert.notEqual(fusionPartById(modelPlan, 'speaker_grille').status, 'needs_review', 'compact remote grille semantic fusion should pass review gate after real cut_recess mapping');
+  assert.equal(fusionPartById(modelPlan, 'speaker_grille').decision, 'single_view_confirmed', 'compact remote grille semantic fusion should rely on front-view grille evidence');
+  assert.equal(fusionPartById(modelPlan, 'brand_label').decision, 'feature_fallback', 'compact remote brand label semantic fusion should expose visual fallback');
+  assert.ok(modelPlan.review.correction_suggestions.some((suggestion) => suggestion.part_id === 'brand_label'), 'compact remote should suggest a correction patch for fallback brand label');
   assert.equal(partById(modelPlan, 'primary_button_cluster').parameters.buttons.length, 5, 'compact remote should keep corrected five-button cluster');
 
   const output = JSON.parse(await fs.readFile(path.join(base, 'output.json'), 'utf8'));
@@ -300,8 +396,10 @@ async function assertCompactRemoteSample() {
   assert.equal(output.operations.some((operation) => operation.op === 'box'), false, 'compact remote output should not regress to coarse box primitives');
   assert.equal(output.operations.some((operation) => operation.op === 'mesh'), false, 'compact remote output should not expose raw mesh primitives');
   assert.ok(output.operations.some((operation) => operation.op === 'rounded_box'), 'compact remote output should use rounded body primitives');
-  assert.ok(output.operations.some((operation) => operation.op === 'button_on_panel'), 'compact remote output should compile buttons');
-  assert.ok(output.operations.some((operation) => operation.op === 'slot_array'), 'compact remote output should compile grille slots');
+  assert.ok(output.operations.some((operation) => operation.op === 'add_boss'), 'compact remote output should compile convex buttons as real add_boss features');
+  assert.ok(output.operations.some((operation) => operation.op === 'add_raised_rib'), 'compact remote output should compile rocker as real add_raised_rib feature');
+  assert.ok(output.operations.some((operation) => operation.op === 'cut_recess'), 'compact remote output should compile grille slots as real cut_recess features');
+  assert.equal(output.operations.some((operation) => operation.op === 'slot_array'), false, 'compact remote output should not use visual slot_array fallback for the grille');
   assert.ok(output.operations.some((operation) => operation.op === 'text_3d'), 'compact remote output should compile brand label text');
 
   const mockSessionPath = path.join(repoRoot, 'output', 'image-structured-modeler', 'sessions', 'validate-remote-mock-session.json');
@@ -312,11 +410,18 @@ async function assertCompactRemoteSample() {
   assert.equal(result.snapshot.totals.instances, REMOTE_BASELINE_INSTANCES, 'compact remote mock snapshot should keep current instance count');
   assert.equal(result.snapshot.scenes.length, REMOTE_BASELINE_SCENES, 'compact remote mock snapshot should keep current scene count');
   assert.equal(result.snapshot.warning_summary.by_severity.error, 0, 'compact remote mock build should not create error warnings');
-  assertBoundingBoxSize(result.snapshot.bounding_box, { w: 44, d: 158, h: 15.85 }, 'compact remote mock bbox', 0.2);
+  assertBoundingBoxSize(result.snapshot.bounding_box, { w: 44, d: 158, h: 16.6 }, 'compact remote mock bbox', 0.2);
 
   const reviewHtml = await fs.readFile(path.join(base, 'review', 'index.html'), 'utf8');
   assert.ok(reviewHtml.includes('Compact Media Remote'), 'compact remote review report should use sample name');
   assert.ok(reviewHtml.includes('Manual Corrections'), 'compact remote review report should include corrections');
+  assert.ok(reviewHtml.includes('Evidence Status'), 'compact remote review report should include evidence status');
+  assert.ok(reviewHtml.includes('Evidence Graph'), 'compact remote review report should include evidence graph');
+  assert.ok(reviewHtml.includes('Semantic Fusion'), 'compact remote review report should include semantic fusion');
+  assert.ok(reviewHtml.includes('Corrections Workbench'), 'compact remote review report should include corrections workbench');
+  assert.ok(reviewHtml.includes('Correction Patch Suggestions'), 'compact remote review report should include correction patch suggestions');
+  assert.ok(reviewHtml.includes('real feature op: cut_recess'), 'compact remote review report should show real cut_recess mapping');
+  assert.ok(reviewHtml.includes('fallback: visual_marker'), 'compact remote review report should show visual fallback mappings');
 
   const snapshotReport = JSON.parse(await fs.readFile(path.join(base, 'review', 'snapshot-report.json'), 'utf8'));
   assert.equal(snapshotReport.runtime, 'mock', 'compact remote snapshot report should record mock runtime');
@@ -335,9 +440,66 @@ async function assertCompactRemoteSample() {
   return true;
 }
 
+function assertEvidenceAnnotations(modelPlan, label) {
+  assert.ok(modelPlan.review.evidence_summary, `${label} should contain an evidence summary`);
+  assert.ok(modelPlan.review.evidence_summary.status_counts, `${label} should contain evidence status counts`);
+  assert.ok(modelPlan.review.evidence_graph, `${label} should contain an evidence graph`);
+  assert.ok(modelPlan.review.semantic_fusion, `${label} should contain semantic fusion`);
+  assert.equal(modelPlan.review.evidence_graph.version, 1, `${label} evidence graph should be version 1`);
+  assert.equal(modelPlan.review.evidence_graph.parts.length, modelPlan.parts.length, `${label} evidence graph should have one node per part`);
+  assert.equal(modelPlan.review.semantic_fusion.version, 1, `${label} semantic fusion should be version 1`);
+  assert.equal(modelPlan.review.semantic_fusion.parts.length, modelPlan.parts.length, `${label} semantic fusion should have one node per part`);
+  assert.ok(Array.isArray(modelPlan.review.correction_suggestions), `${label} should contain correction suggestions array`);
+  assert.equal(
+    Object.values(modelPlan.review.evidence_summary.status_counts).reduce((sum, count) => sum + count, 0),
+    modelPlan.parts.length,
+    `${label} evidence status counts should match part count`
+  );
+  assert.equal(
+    modelPlan.review.semantic_fusion.summary.confirmed + modelPlan.review.semantic_fusion.summary.partial + modelPlan.review.semantic_fusion.summary.needs_review,
+    modelPlan.parts.length,
+    `${label} semantic fusion counts should match part count`
+  );
+  for (const part of modelPlan.parts) {
+    assert.ok(part.evidence_status, `${label} part ${part.id} should have evidence_status`);
+    assert.equal(typeof part.template_prior, 'boolean', `${label} part ${part.id} should have template_prior boolean`);
+    assert.equal(typeof part.manual_confirmed, 'boolean', `${label} part ${part.id} should have manual_confirmed boolean`);
+    assert.ok(Array.isArray(part.evidence_sources), `${label} part ${part.id} should have evidence_sources`);
+    assert.ok(part.evidence_sources.length > 0, `${label} part ${part.id} should have at least one evidence source`);
+    assert.ok(Array.isArray(part.feature_semantics), `${label} part ${part.id} should have feature_semantics`);
+    const graphPart = graphPartById(modelPlan, part.id);
+    assert.equal(graphPart.status, part.evidence_status, `${label} graph part ${part.id} should mirror evidence_status`);
+    assert.ok(Array.isArray(graphPart.sources), `${label} graph part ${part.id} should list evidence sources`);
+    assert.ok(Array.isArray(graphPart.open_questions), `${label} graph part ${part.id} should list open questions`);
+    const fusionPart = fusionPartById(modelPlan, part.id);
+    assert.equal(typeof fusionPart.confidence, 'number', `${label} fusion part ${part.id} should have confidence`);
+    assert.deepEqual(fusionPart.required_views, graphPart.required_views, `${label} fusion part ${part.id} should mirror required views`);
+    assert.deepEqual(fusionPart.missing_views, graphPart.missing_views, `${label} fusion part ${part.id} should mirror missing views`);
+    assert.ok(Array.isArray(fusionPart.semantic_evidence), `${label} fusion part ${part.id} should list semantic evidence`);
+  }
+}
+
 function partById(modelPlan, id) {
   const part = modelPlan.parts.find((item) => item.id === id);
   assert.ok(part, `expected model plan part ${id}`);
+  return part;
+}
+
+function graphPartById(modelPlan, id) {
+  const part = modelPlan.review.evidence_graph?.parts?.find((item) => item.part_id === id);
+  assert.ok(part, `expected evidence graph part ${id}`);
+  return part;
+}
+
+function fusionPartById(modelPlan, id) {
+  const part = modelPlan.review.semantic_fusion?.parts?.find((item) => item.part_id === id);
+  assert.ok(part, `expected semantic fusion part ${id}`);
+  return part;
+}
+
+function graphPartByIdFromGraph(graph, id) {
+  const part = graph.parts?.find((item) => item.part_id === id);
+  assert.ok(part, `expected evidence graph part ${id}`);
   return part;
 }
 

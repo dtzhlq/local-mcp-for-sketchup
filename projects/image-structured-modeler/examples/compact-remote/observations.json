@@ -10,8 +10,15 @@
     ]
   },
   "image_set_quality": "medium",
-  "views_detected": ["front", "right", "detail"],
-  "missing_views": ["rear", "top"],
+  "views_detected": [
+    "front",
+    "right",
+    "detail"
+  ],
+  "missing_views": [
+    "rear",
+    "top"
+  ],
   "images": [
     {
       "version": 1,
@@ -32,14 +39,25 @@
       "camera_hints": {
         "perspective_strength": "low",
         "symmetry_axis": {
-          "a": [300, 0],
-          "b": [300, 1200]
+          "a": [
+            300,
+            0
+          ],
+          "b": [
+            300,
+            1200
+          ]
         }
       },
       "metrics": {
         "edge_count": 8420,
         "edge_density": 0.0117,
-        "object_bbox": [178, 70, 244, 1048],
+        "object_bbox": [
+          178,
+          70,
+          244,
+          1048
+        ],
         "object_bbox_ratio": 0.233,
         "symmetry_score": 0.76
       },
@@ -48,7 +66,12 @@
           "id": "main_object_bbox",
           "kind": "component_bbox",
           "component_hint": "main_object",
-          "bbox": [178, 70, 244, 1048],
+          "bbox": [
+            178,
+            70,
+            244,
+            1048
+          ],
           "confidence": 0.83,
           "note": "Tall rounded handheld silhouette with low perspective distortion."
         },
@@ -56,7 +79,12 @@
           "id": "remote_body_bbox",
           "kind": "component_bbox",
           "component_hint": "remote_body",
-          "bbox": [178, 70, 244, 1048],
+          "bbox": [
+            178,
+            70,
+            244,
+            1048
+          ],
           "confidence": 0.82,
           "note": "Outer remote body boundary."
         },
@@ -64,7 +92,12 @@
           "id": "face_panel_bbox",
           "kind": "component_bbox",
           "component_hint": "remote_face_panel",
-          "bbox": [211, 135, 178, 928],
+          "bbox": [
+            211,
+            135,
+            178,
+            928
+          ],
           "confidence": 0.74,
           "note": "Inset face panel visible as a darker raised region."
         },
@@ -72,7 +105,12 @@
           "id": "navigation_pad_center",
           "kind": "center_point",
           "component_hint": "navigation_pad",
-          "points": [[300, 402]],
+          "points": [
+            [
+              300,
+              402
+            ]
+          ],
           "confidence": 0.78,
           "note": "Large central navigation pad."
         },
@@ -80,7 +118,12 @@
           "id": "primary_button_cluster_bbox",
           "kind": "component_bbox",
           "component_hint": "primary_button_cluster",
-          "bbox": [244, 242, 112, 306],
+          "bbox": [
+            244,
+            242,
+            112,
+            306
+          ],
           "confidence": 0.7,
           "note": "Small command buttons around the navigation pad."
         },
@@ -88,7 +131,12 @@
           "id": "volume_rocker_bbox",
           "kind": "component_bbox",
           "component_hint": "volume_rocker",
-          "bbox": [276, 654, 48, 194],
+          "bbox": [
+            276,
+            654,
+            48,
+            194
+          ],
           "confidence": 0.76,
           "note": "Vertical rocker on the lower half."
         },
@@ -96,7 +144,12 @@
           "id": "speaker_grille_bbox",
           "kind": "component_bbox",
           "component_hint": "speaker_grille",
-          "bbox": [265, 165, 70, 32],
+          "bbox": [
+            265,
+            165,
+            70,
+            32
+          ],
           "confidence": 0.62,
           "note": "Short horizontal slots near the top."
         },
@@ -104,7 +157,12 @@
           "id": "brand_label_bbox",
           "kind": "text_or_logo",
           "component_hint": "brand_label",
-          "bbox": [251, 898, 98, 44],
+          "bbox": [
+            251,
+            898,
+            98,
+            44
+          ],
           "confidence": 0.67,
           "note": "Brand label near the bottom of the face."
         }
@@ -115,7 +173,10 @@
           "Rear battery-door seam is not visible in the current reference.",
           "Top infrared window depth is inferred from the side profile."
         ],
-        "missing_views": ["rear", "top"]
+        "missing_views": [
+          "rear",
+          "top"
+        ]
       }
     },
     {
@@ -137,14 +198,25 @@
       "camera_hints": {
         "perspective_strength": "medium",
         "symmetry_axis": {
-          "a": [225, 0],
-          "b": [225, 1200]
+          "a": [
+            225,
+            0
+          ],
+          "b": [
+            225,
+            1200
+          ]
         }
       },
       "metrics": {
         "edge_count": 5160,
         "edge_density": 0.0096,
-        "object_bbox": [187, 86, 72, 1026],
+        "object_bbox": [
+          187,
+          86,
+          72,
+          1026
+        ],
         "object_bbox_ratio": 0.07,
         "symmetry_score": 0.48
       },
@@ -153,7 +225,12 @@
           "id": "side_thickness_profile",
           "kind": "component_bbox",
           "component_hint": "side_thickness_profile",
-          "bbox": [187, 86, 72, 1026],
+          "bbox": [
+            187,
+            86,
+            72,
+            1026
+          ],
           "confidence": 0.72,
           "note": "Side silhouette supports a slim 16mm thickness prior."
         }
@@ -163,7 +240,10 @@
         "risks": [
           "Small raised buttons are visible only as shallow side bumps."
         ],
-        "missing_views": ["rear", "top"]
+        "missing_views": [
+          "rear",
+          "top"
+        ]
       }
     }
   ],
@@ -182,6 +262,246 @@
     "open_questions": [
       "Confirm whether the lower brand label should be raised text or engraved text.",
       "Confirm whether the speaker grille is a real slot array or only printed artwork."
+    ]
+  },
+  "evidence_graph": {
+    "version": 1,
+    "image_count": 2,
+    "views_detected": [
+      "front",
+      "right",
+      "detail"
+    ],
+    "missing_views": [
+      "rear",
+      "top"
+    ],
+    "parts": [
+      {
+        "part_id": "remote_body",
+        "status": "observed",
+        "template_prior": true,
+        "manual_confirmed": false,
+        "required_views": [
+          "front",
+          "right"
+        ],
+        "confirmed_views": [
+          "front",
+          "right"
+        ],
+        "missing_views": [],
+        "sources": [
+          {
+            "view": "front_photo",
+            "view_kind": "front",
+            "kind": "silhouette",
+            "status": "observed",
+            "source_image": "projects/image-structured-modeler/examples/compact-remote/reference/front-reference.png",
+            "observation_id": "main_object_bbox",
+            "confidence": 0.83,
+            "note": "Tall rounded handheld silhouette with low perspective distortion."
+          },
+          {
+            "view": "front_photo",
+            "view_kind": "front",
+            "kind": "silhouette",
+            "status": "observed",
+            "source_image": "projects/image-structured-modeler/examples/compact-remote/reference/front-reference.png",
+            "observation_id": "remote_body_bbox",
+            "confidence": 0.82,
+            "note": "Outer remote body boundary."
+          },
+          {
+            "view": "side_photo",
+            "view_kind": "right",
+            "kind": "silhouette",
+            "status": "observed",
+            "source_image": "projects/image-structured-modeler/examples/compact-remote/reference/right-reference.png",
+            "observation_id": "side_thickness_profile",
+            "confidence": 0.72,
+            "note": "Side silhouette supports a slim 16mm thickness prior."
+          }
+        ],
+        "conflicts": [
+          {
+            "type": "template_candidate_used",
+            "severity": "info",
+            "views": [
+              "right"
+            ],
+            "note": "One or more candidate records came from a layout/template heuristic."
+          }
+        ],
+        "open_questions": [
+          "remote_body: review template-derived candidate boxes before accepting dimensions."
+        ]
+      },
+      {
+        "part_id": "remote_face_panel",
+        "status": "observed",
+        "template_prior": false,
+        "manual_confirmed": false,
+        "required_views": [
+          "front"
+        ],
+        "confirmed_views": [
+          "front"
+        ],
+        "missing_views": [],
+        "sources": [
+          {
+            "view": "front_photo",
+            "view_kind": "front",
+            "kind": "silhouette",
+            "status": "observed",
+            "source_image": "projects/image-structured-modeler/examples/compact-remote/reference/front-reference.png",
+            "observation_id": "face_panel_bbox",
+            "confidence": 0.74,
+            "note": "Inset face panel visible as a darker raised region."
+          }
+        ],
+        "conflicts": [],
+        "open_questions": []
+      },
+      {
+        "part_id": "navigation_pad",
+        "status": "observed",
+        "template_prior": false,
+        "manual_confirmed": false,
+        "required_views": [
+          "front"
+        ],
+        "confirmed_views": [
+          "front"
+        ],
+        "missing_views": [],
+        "sources": [
+          {
+            "view": "front_photo",
+            "view_kind": "front",
+            "kind": "center_point",
+            "status": "observed",
+            "source_image": "projects/image-structured-modeler/examples/compact-remote/reference/front-reference.png",
+            "observation_id": "navigation_pad_center",
+            "confidence": 0.78,
+            "note": "Large central navigation pad."
+          }
+        ],
+        "conflicts": [],
+        "open_questions": []
+      },
+      {
+        "part_id": "primary_button_cluster",
+        "status": "observed",
+        "template_prior": false,
+        "manual_confirmed": false,
+        "required_views": [
+          "front"
+        ],
+        "confirmed_views": [
+          "front"
+        ],
+        "missing_views": [],
+        "sources": [
+          {
+            "view": "front_photo",
+            "view_kind": "front",
+            "kind": "silhouette",
+            "status": "observed",
+            "source_image": "projects/image-structured-modeler/examples/compact-remote/reference/front-reference.png",
+            "observation_id": "primary_button_cluster_bbox",
+            "confidence": 0.7,
+            "note": "Small command buttons around the navigation pad."
+          }
+        ],
+        "conflicts": [],
+        "open_questions": []
+      },
+      {
+        "part_id": "volume_rocker",
+        "status": "observed",
+        "template_prior": false,
+        "manual_confirmed": false,
+        "required_views": [
+          "front"
+        ],
+        "confirmed_views": [
+          "front"
+        ],
+        "missing_views": [],
+        "sources": [
+          {
+            "view": "front_photo",
+            "view_kind": "front",
+            "kind": "silhouette",
+            "status": "observed",
+            "source_image": "projects/image-structured-modeler/examples/compact-remote/reference/front-reference.png",
+            "observation_id": "volume_rocker_bbox",
+            "confidence": 0.76,
+            "note": "Vertical rocker on the lower half."
+          }
+        ],
+        "conflicts": [],
+        "open_questions": []
+      },
+      {
+        "part_id": "speaker_grille",
+        "status": "observed",
+        "template_prior": false,
+        "manual_confirmed": false,
+        "required_views": [
+          "front"
+        ],
+        "confirmed_views": [
+          "front"
+        ],
+        "missing_views": [],
+        "sources": [
+          {
+            "view": "front_photo",
+            "view_kind": "front",
+            "kind": "silhouette",
+            "status": "observed",
+            "source_image": "projects/image-structured-modeler/examples/compact-remote/reference/front-reference.png",
+            "observation_id": "speaker_grille_bbox",
+            "confidence": 0.62,
+            "note": "Short horizontal slots near the top."
+          }
+        ],
+        "conflicts": [],
+        "open_questions": []
+      },
+      {
+        "part_id": "brand_label",
+        "status": "observed",
+        "template_prior": false,
+        "manual_confirmed": false,
+        "required_views": [
+          "front"
+        ],
+        "confirmed_views": [
+          "front"
+        ],
+        "missing_views": [],
+        "sources": [
+          {
+            "view": "front_photo",
+            "view_kind": "front",
+            "kind": "text_label",
+            "status": "observed",
+            "source_image": "projects/image-structured-modeler/examples/compact-remote/reference/front-reference.png",
+            "observation_id": "brand_label_bbox",
+            "confidence": 0.67,
+            "note": "Brand label near the bottom of the face."
+          }
+        ],
+        "conflicts": [],
+        "open_questions": []
+      }
+    ],
+    "open_questions": [
+      "remote_body: review template-derived candidate boxes before accepting dimensions."
     ]
   }
 }

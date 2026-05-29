@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-20T14:17:04.469Z",
+  "generated_at": "2026-05-27T07:15:29.802Z",
   "mode": "runtime_diff",
   "source": {
     "output_dsl": "projects/image-structured-modeler/examples/switch-controller/output.json"
@@ -25,8 +25,8 @@
   },
   "report": {
     "ok": true,
-    "level": "ok",
-    "verdict": "pass",
+    "level": "warn",
+    "verdict": "review",
     "tolerance_mm": 1,
     "topology_tolerance": {
       "faces": 0,
@@ -36,17 +36,363 @@
     },
     "budgets": {},
     "summary": {
-      "total": 0,
+      "total": 28,
       "by_severity": {
         "error": 0,
-        "warn": 0,
+        "warn": 28,
         "info": 0
       },
-      "by_type": {}
+      "by_type": {
+        "snapshot.field_mismatch": 28
+      }
     },
-    "top_issues": [],
+    "top_issues": [
+      {
+        "type": "snapshot.field_mismatch",
+        "severity": "warn",
+        "path": "groups.Left_Joycon_Shell_From_Image_Plan.features",
+        "message": "groups.Left_Joycon_Shell_From_Image_Plan.features differs",
+        "name": "Left_Joycon_Shell_From_Image_Plan",
+        "expected": "null",
+        "actual": "[]"
+      },
+      {
+        "type": "snapshot.field_mismatch",
+        "severity": "warn",
+        "path": "groups.Right_Joycon_Shell_From_Image_Plan.features",
+        "message": "groups.Right_Joycon_Shell_From_Image_Plan.features differs",
+        "name": "Right_Joycon_Shell_From_Image_Plan",
+        "expected": "null",
+        "actual": "[]"
+      },
+      {
+        "type": "snapshot.field_mismatch",
+        "severity": "warn",
+        "path": "groups.Center_Grip_Body_From_Image_Plan.features",
+        "message": "groups.Center_Grip_Body_From_Image_Plan.features differs",
+        "name": "Center_Grip_Body_From_Image_Plan",
+        "expected": "null",
+        "actual": "[]"
+      },
+      {
+        "type": "snapshot.field_mismatch",
+        "severity": "warn",
+        "path": "groups.Center_Front_Recess_From_Image_Plan.features",
+        "message": "groups.Center_Front_Recess_From_Image_Plan.features differs",
+        "name": "Center_Front_Recess_From_Image_Plan",
+        "expected": "null",
+        "actual": "[]"
+      },
+      {
+        "type": "snapshot.field_mismatch",
+        "severity": "warn",
+        "path": "groups.Left_Joycon_Face_Dome_From_Image_Plan.features",
+        "message": "groups.Left_Joycon_Face_Dome_From_Image_Plan.features differs",
+        "name": "Left_Joycon_Face_Dome_From_Image_Plan",
+        "expected": "null",
+        "actual": "[]"
+      },
+      {
+        "type": "snapshot.field_mismatch",
+        "severity": "warn",
+        "path": "groups.Right_Joycon_Face_Dome_From_Image_Plan.features",
+        "message": "groups.Right_Joycon_Face_Dome_From_Image_Plan.features differs",
+        "name": "Right_Joycon_Face_Dome_From_Image_Plan",
+        "expected": "null",
+        "actual": "[]"
+      },
+      {
+        "type": "snapshot.field_mismatch",
+        "severity": "warn",
+        "path": "groups.Left_Rear_Grip_From_Image_Plan.features",
+        "message": "groups.Left_Rear_Grip_From_Image_Plan.features differs",
+        "name": "Left_Rear_Grip_From_Image_Plan",
+        "expected": "null",
+        "actual": "[]"
+      },
+      {
+        "type": "snapshot.field_mismatch",
+        "severity": "warn",
+        "path": "groups.Right_Rear_Grip_From_Image_Plan.features",
+        "message": "groups.Right_Rear_Grip_From_Image_Plan.features differs",
+        "name": "Right_Rear_Grip_From_Image_Plan",
+        "expected": "null",
+        "actual": "[]"
+      },
+      {
+        "type": "snapshot.field_mismatch",
+        "severity": "warn",
+        "path": "groups.Top_Left_Shoulder_Rail_From_Image_Plan.features",
+        "message": "groups.Top_Left_Shoulder_Rail_From_Image_Plan.features differs",
+        "name": "Top_Left_Shoulder_Rail_From_Image_Plan",
+        "expected": "null",
+        "actual": "[]"
+      },
+      {
+        "type": "snapshot.field_mismatch",
+        "severity": "warn",
+        "path": "groups.Top_Right_Shoulder_Rail_From_Image_Plan.features",
+        "message": "groups.Top_Right_Shoulder_Rail_From_Image_Plan.features differs",
+        "name": "Top_Right_Shoulder_Rail_From_Image_Plan",
+        "expected": "null",
+        "actual": "[]"
+      }
+    ],
     "recommendations": [],
-    "diffs": []
+    "diffs": [
+      {
+        "type": "snapshot.field_mismatch",
+        "severity": "warn",
+        "path": "groups.Left_Joycon_Shell_From_Image_Plan.features",
+        "message": "groups.Left_Joycon_Shell_From_Image_Plan.features differs",
+        "expected": "null",
+        "actual": "[]",
+        "name": "Left_Joycon_Shell_From_Image_Plan"
+      },
+      {
+        "type": "snapshot.field_mismatch",
+        "severity": "warn",
+        "path": "groups.Right_Joycon_Shell_From_Image_Plan.features",
+        "message": "groups.Right_Joycon_Shell_From_Image_Plan.features differs",
+        "expected": "null",
+        "actual": "[]",
+        "name": "Right_Joycon_Shell_From_Image_Plan"
+      },
+      {
+        "type": "snapshot.field_mismatch",
+        "severity": "warn",
+        "path": "groups.Center_Grip_Body_From_Image_Plan.features",
+        "message": "groups.Center_Grip_Body_From_Image_Plan.features differs",
+        "expected": "null",
+        "actual": "[]",
+        "name": "Center_Grip_Body_From_Image_Plan"
+      },
+      {
+        "type": "snapshot.field_mismatch",
+        "severity": "warn",
+        "path": "groups.Center_Front_Recess_From_Image_Plan.features",
+        "message": "groups.Center_Front_Recess_From_Image_Plan.features differs",
+        "expected": "null",
+        "actual": "[]",
+        "name": "Center_Front_Recess_From_Image_Plan"
+      },
+      {
+        "type": "snapshot.field_mismatch",
+        "severity": "warn",
+        "path": "groups.Left_Joycon_Face_Dome_From_Image_Plan.features",
+        "message": "groups.Left_Joycon_Face_Dome_From_Image_Plan.features differs",
+        "expected": "null",
+        "actual": "[]",
+        "name": "Left_Joycon_Face_Dome_From_Image_Plan"
+      },
+      {
+        "type": "snapshot.field_mismatch",
+        "severity": "warn",
+        "path": "groups.Right_Joycon_Face_Dome_From_Image_Plan.features",
+        "message": "groups.Right_Joycon_Face_Dome_From_Image_Plan.features differs",
+        "expected": "null",
+        "actual": "[]",
+        "name": "Right_Joycon_Face_Dome_From_Image_Plan"
+      },
+      {
+        "type": "snapshot.field_mismatch",
+        "severity": "warn",
+        "path": "groups.Left_Rear_Grip_From_Image_Plan.features",
+        "message": "groups.Left_Rear_Grip_From_Image_Plan.features differs",
+        "expected": "null",
+        "actual": "[]",
+        "name": "Left_Rear_Grip_From_Image_Plan"
+      },
+      {
+        "type": "snapshot.field_mismatch",
+        "severity": "warn",
+        "path": "groups.Right_Rear_Grip_From_Image_Plan.features",
+        "message": "groups.Right_Rear_Grip_From_Image_Plan.features differs",
+        "expected": "null",
+        "actual": "[]",
+        "name": "Right_Rear_Grip_From_Image_Plan"
+      },
+      {
+        "type": "snapshot.field_mismatch",
+        "severity": "warn",
+        "path": "groups.Top_Left_Shoulder_Rail_From_Image_Plan.features",
+        "message": "groups.Top_Left_Shoulder_Rail_From_Image_Plan.features differs",
+        "expected": "null",
+        "actual": "[]",
+        "name": "Top_Left_Shoulder_Rail_From_Image_Plan"
+      },
+      {
+        "type": "snapshot.field_mismatch",
+        "severity": "warn",
+        "path": "groups.Top_Right_Shoulder_Rail_From_Image_Plan.features",
+        "message": "groups.Top_Right_Shoulder_Rail_From_Image_Plan.features differs",
+        "expected": "null",
+        "actual": "[]",
+        "name": "Top_Right_Shoulder_Rail_From_Image_Plan"
+      },
+      {
+        "type": "snapshot.field_mismatch",
+        "severity": "warn",
+        "path": "groups.Left_Thumbstick_From_Image_Plan.features",
+        "message": "groups.Left_Thumbstick_From_Image_Plan.features differs",
+        "expected": "null",
+        "actual": "[]",
+        "name": "Left_Thumbstick_From_Image_Plan"
+      },
+      {
+        "type": "snapshot.field_mismatch",
+        "severity": "warn",
+        "path": "groups.Right_Thumbstick_From_Image_Plan.features",
+        "message": "groups.Right_Thumbstick_From_Image_Plan.features differs",
+        "expected": "null",
+        "actual": "[]",
+        "name": "Right_Thumbstick_From_Image_Plan"
+      },
+      {
+        "type": "snapshot.field_mismatch",
+        "severity": "warn",
+        "path": "groups.ABXY_X_Button_From_Image_Plan.features",
+        "message": "groups.ABXY_X_Button_From_Image_Plan.features differs",
+        "expected": "null",
+        "actual": "[]",
+        "name": "ABXY_X_Button_From_Image_Plan"
+      },
+      {
+        "type": "snapshot.field_mismatch",
+        "severity": "warn",
+        "path": "groups.ABXY_Y_Button_From_Image_Plan.features",
+        "message": "groups.ABXY_Y_Button_From_Image_Plan.features differs",
+        "expected": "null",
+        "actual": "[]",
+        "name": "ABXY_Y_Button_From_Image_Plan"
+      },
+      {
+        "type": "snapshot.field_mismatch",
+        "severity": "warn",
+        "path": "groups.ABXY_A_Button_From_Image_Plan.features",
+        "message": "groups.ABXY_A_Button_From_Image_Plan.features differs",
+        "expected": "null",
+        "actual": "[]",
+        "name": "ABXY_A_Button_From_Image_Plan"
+      },
+      {
+        "type": "snapshot.field_mismatch",
+        "severity": "warn",
+        "path": "groups.ABXY_B_Button_From_Image_Plan.features",
+        "message": "groups.ABXY_B_Button_From_Image_Plan.features differs",
+        "expected": "null",
+        "actual": "[]",
+        "name": "ABXY_B_Button_From_Image_Plan"
+      },
+      {
+        "type": "snapshot.field_mismatch",
+        "severity": "warn",
+        "path": "groups.Left_L1_Button_From_Image_Plan.features",
+        "message": "groups.Left_L1_Button_From_Image_Plan.features differs",
+        "expected": "null",
+        "actual": "[]",
+        "name": "Left_L1_Button_From_Image_Plan"
+      },
+      {
+        "type": "snapshot.field_mismatch",
+        "severity": "warn",
+        "path": "groups.Left_L2_Button_From_Image_Plan.features",
+        "message": "groups.Left_L2_Button_From_Image_Plan.features differs",
+        "expected": "null",
+        "actual": "[]",
+        "name": "Left_L2_Button_From_Image_Plan"
+      },
+      {
+        "type": "snapshot.field_mismatch",
+        "severity": "warn",
+        "path": "groups.Left_L3_Button_From_Image_Plan.features",
+        "message": "groups.Left_L3_Button_From_Image_Plan.features differs",
+        "expected": "null",
+        "actual": "[]",
+        "name": "Left_L3_Button_From_Image_Plan"
+      },
+      {
+        "type": "snapshot.field_mismatch",
+        "severity": "warn",
+        "path": "groups.Left_L4_Button_From_Image_Plan.features",
+        "message": "groups.Left_L4_Button_From_Image_Plan.features differs",
+        "expected": "null",
+        "actual": "[]",
+        "name": "Left_L4_Button_From_Image_Plan"
+      },
+      {
+        "type": "snapshot.field_mismatch",
+        "severity": "warn",
+        "path": "groups.Screw_Top_Left_From_Image_Plan.features",
+        "message": "groups.Screw_Top_Left_From_Image_Plan.features differs",
+        "expected": "null",
+        "actual": "[]",
+        "name": "Screw_Top_Left_From_Image_Plan"
+      },
+      {
+        "type": "snapshot.field_mismatch",
+        "severity": "warn",
+        "path": "groups.Screw_Bottom_Left_From_Image_Plan.features",
+        "message": "groups.Screw_Bottom_Left_From_Image_Plan.features differs",
+        "expected": "null",
+        "actual": "[]",
+        "name": "Screw_Bottom_Left_From_Image_Plan"
+      },
+      {
+        "type": "snapshot.field_mismatch",
+        "severity": "warn",
+        "path": "groups.Screw_Top_Right_From_Image_Plan.features",
+        "message": "groups.Screw_Top_Right_From_Image_Plan.features differs",
+        "expected": "null",
+        "actual": "[]",
+        "name": "Screw_Top_Right_From_Image_Plan"
+      },
+      {
+        "type": "snapshot.field_mismatch",
+        "severity": "warn",
+        "path": "groups.Screw_Bottom_Right_From_Image_Plan.features",
+        "message": "groups.Screw_Bottom_Right_From_Image_Plan.features differs",
+        "expected": "null",
+        "actual": "[]",
+        "name": "Screw_Bottom_Right_From_Image_Plan"
+      },
+      {
+        "type": "snapshot.field_mismatch",
+        "severity": "warn",
+        "path": "instances.Center_LED_1_From_Image_Plan.features",
+        "message": "instances.Center_LED_1_From_Image_Plan.features differs",
+        "expected": "null",
+        "actual": "[]",
+        "name": "Center_LED_1_From_Image_Plan"
+      },
+      {
+        "type": "snapshot.field_mismatch",
+        "severity": "warn",
+        "path": "instances.Center_LED_2_From_Image_Plan.features",
+        "message": "instances.Center_LED_2_From_Image_Plan.features differs",
+        "expected": "null",
+        "actual": "[]",
+        "name": "Center_LED_2_From_Image_Plan"
+      },
+      {
+        "type": "snapshot.field_mismatch",
+        "severity": "warn",
+        "path": "instances.Center_LED_3_From_Image_Plan.features",
+        "message": "instances.Center_LED_3_From_Image_Plan.features differs",
+        "expected": "null",
+        "actual": "[]",
+        "name": "Center_LED_3_From_Image_Plan"
+      },
+      {
+        "type": "snapshot.field_mismatch",
+        "severity": "warn",
+        "path": "instances.Center_LED_4_From_Image_Plan.features",
+        "message": "instances.Center_LED_4_From_Image_Plan.features differs",
+        "expected": "null",
+        "actual": "[]",
+        "name": "Center_LED_4_From_Image_Plan"
+      }
+    ]
   },
   "warning_gate": {
     "ok": true,
@@ -229,7 +575,6 @@
     ]
   },
   "next_actions": [
-    "Promote this diff report into the regular image-structured test loop as the queue parity baseline.",
-    "Reload the SketchUp plugin after QA metadata changes, then verify queue-side warning classifications use runtime metadata."
+    "Review warning-level snapshot diffs and decide whether they need topology tolerance or real geometry fixes."
   ]
 }
