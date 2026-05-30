@@ -1,0 +1,488 @@
+{
+  "version": 1,
+  "title": "Fuji Camera Reference Visual QA",
+  "description": "R5 third product sample visual QA for the Fujifilm-style camera photo set. This first pass uses broad but structured front/top/rear anchors so the sample can join product-level fallback and visual-quality reporting without claiming photo-level reconstruction.",
+  "rules": {
+    "views": [
+      {
+        "name": "front",
+        "title": "Front Camera Reference Match",
+        "axes": ["x", "z"],
+        "depth_axis": "y",
+        "frame": {
+          "items": [
+            "fuji-body-black-lower",
+            "fuji-top-silver-plate",
+            "fuji-viewfinder-hump",
+            "fuji-front-grip",
+            "fuji-left-strap-lug",
+            "fuji-right-strap-lug",
+            "fuji-lens-mount-ring",
+            "fuji-lens-front-cap",
+            "fuji-left-top-dial",
+            "fuji-right-top-dial",
+            "fuji-shutter-button"
+          ]
+        }
+      },
+      {
+        "name": "top",
+        "title": "Top Camera Reference Match",
+        "axes": ["x", "y"],
+        "depth_axis": "z",
+        "frame": {
+          "items": [
+            "fuji-body-black-lower",
+            "fuji-top-silver-plate",
+            "fuji-front-grip",
+            "fuji-lens-mount-ring",
+            "fuji-lens-rear-barrel",
+            "fuji-lens-front-barrel",
+            "fuji-lens-front-cap",
+            "fuji-lens-inner-glass",
+            "fuji-left-strap-lug",
+            "fuji-right-strap-lug",
+            "fuji-viewfinder-hump"
+          ]
+        }
+      },
+      {
+        "name": "rear",
+        "title": "Rear Camera Reference Match",
+        "axes": ["x", "z"],
+        "depth_axis": "y",
+        "frame": {
+          "items": [
+            "fuji-body-black-lower",
+            "fuji-top-silver-plate",
+            "fuji-viewfinder-hump",
+            "fuji-rear-screen",
+            "fuji-rear-eyepiece",
+            "fuji-rear-button-stack",
+            "fuji-rear-command-dial"
+          ]
+        }
+      }
+    ],
+    "silhouettes": [
+      {
+        "id": "fuji-front-overall-silhouette",
+        "view": "front",
+        "items": ["fuji-body-black-lower", "fuji-top-silver-plate", "fuji-viewfinder-hump", "fuji-front-grip", "fuji-left-strap-lug", "fuji-right-strap-lug", "fuji-lens-mount-ring", "fuji-lens-front-cap", "fuji-left-top-dial", "fuji-right-top-dial", "fuji-shutter-button"],
+        "aspect_ratio": 1.585,
+        "tolerance": 0.08,
+        "correction_target": {
+          "part_id": "fuji-body-black-lower",
+          "path": "parts[fuji-body-black-lower].shape.parameters.size"
+        }
+      },
+      {
+        "id": "fuji-top-overall-silhouette",
+        "view": "top",
+        "items": ["fuji-body-black-lower", "fuji-top-silver-plate", "fuji-front-grip", "fuji-lens-mount-ring", "fuji-lens-rear-barrel", "fuji-lens-front-barrel", "fuji-lens-front-cap", "fuji-lens-inner-glass", "fuji-left-strap-lug", "fuji-right-strap-lug", "fuji-viewfinder-hump"],
+        "aspect_ratio": 1.273,
+        "tolerance": 0.08,
+        "correction_target": {
+          "part_id": "fuji-lens-front-cap",
+          "path": "parts[fuji-lens-front-cap].shape.parameters.depth"
+        }
+      },
+      {
+        "id": "fuji-rear-overall-silhouette",
+        "view": "rear",
+        "items": ["fuji-body-black-lower", "fuji-top-silver-plate", "fuji-viewfinder-hump", "fuji-rear-screen", "fuji-rear-eyepiece", "fuji-rear-button-stack", "fuji-rear-command-dial"],
+        "aspect_ratio": 1.358,
+        "tolerance": 0.08,
+        "correction_target": {
+          "part_id": "fuji-body-black-lower",
+          "path": "parts[fuji-body-black-lower].shape.parameters.size"
+        }
+      }
+    ],
+    "keypoints": [
+      {
+        "id": "fuji-body-front-center",
+        "view": "front",
+        "item": "fuji-body-black-lower",
+        "point": "center",
+        "expected": [0.5, 0.33],
+        "tolerance": 0.05,
+        "correction_target": {
+          "part_id": "fuji-body-black-lower",
+          "path": "parts[fuji-body-black-lower].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "fuji-lens-front-center",
+        "view": "front",
+        "item": "fuji-lens-front-cap",
+        "point": "center",
+        "expected": [0.5, 0.425],
+        "tolerance": 0.05,
+        "correction_target": {
+          "part_id": "fuji-lens-front-cap",
+          "path": "parts[fuji-lens-front-cap].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "fuji-viewfinder-front-center",
+        "view": "front",
+        "item": "fuji-viewfinder-hump",
+        "point": "center",
+        "expected": [0.5, 0.887],
+        "tolerance": 0.05,
+        "correction_target": {
+          "part_id": "fuji-viewfinder-hump",
+          "path": "parts[fuji-viewfinder-hump].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "fuji-grip-front-center",
+        "view": "front",
+        "item": "fuji-front-grip",
+        "point": "center",
+        "expected": [0.863, 0.349],
+        "tolerance": 0.055,
+        "correction_target": {
+          "part_id": "fuji-front-grip",
+          "path": "parts[fuji-front-grip].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "fuji-left-dial-top-center",
+        "view": "top",
+        "item": "fuji-left-top-dial",
+        "point": "center",
+        "expected": [0.179, 0.78],
+        "tolerance": 0.06,
+        "correction_target": {
+          "part_id": "fuji-left-top-dial",
+          "path": "parts[fuji-left-top-dial].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "fuji-right-dial-top-center",
+        "view": "top",
+        "item": "fuji-right-top-dial",
+        "point": "center",
+        "expected": [0.81, 0.78],
+        "tolerance": 0.06,
+        "correction_target": {
+          "part_id": "fuji-right-top-dial",
+          "path": "parts[fuji-right-top-dial].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "fuji-rear-screen-center",
+        "view": "rear",
+        "item": "fuji-rear-screen",
+        "point": "center",
+        "expected": [0.5, 0.396],
+        "tolerance": 0.055,
+        "correction_target": {
+          "part_id": "fuji-rear-screen",
+          "path": "parts[fuji-rear-screen].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "fuji-rear-eyepiece-center",
+        "view": "rear",
+        "item": "fuji-rear-eyepiece",
+        "point": "center",
+        "expected": [0.5, 0.689],
+        "tolerance": 0.055,
+        "correction_target": {
+          "part_id": "fuji-rear-eyepiece",
+          "path": "parts[fuji-rear-eyepiece].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "fuji-front-brand-text-center",
+        "view": "front",
+        "item": "fuji-front-fujifilm-text",
+        "point": "center",
+        "expected": [0.5, 0.731],
+        "tolerance": 0.04,
+        "correction_target": {
+          "part_id": "fuji-front-fujifilm-text",
+          "path": "parts[fuji-front-fujifilm-text].shape.parameters.center"
+        }
+      },
+      {
+        "id": "fuji-front-model-text-center",
+        "view": "front",
+        "item": "fuji-front-model-text",
+        "point": "center",
+        "expected": [0.827, 0.712],
+        "tolerance": 0.045,
+        "correction_target": {
+          "part_id": "fuji-front-model-text",
+          "path": "parts[fuji-front-model-text].shape.parameters.center"
+        }
+      },
+      {
+        "id": "fuji-lens-cap-left-pinch-center",
+        "view": "front",
+        "item": "fuji-lens-cap-left-pinch",
+        "point": "center",
+        "expected": [0.36, 0.425],
+        "tolerance": 0.035,
+        "correction_target": {
+          "part_id": "fuji-lens-cap-left-pinch",
+          "path": "parts[fuji-lens-cap-left-pinch].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "fuji-lens-cap-right-pinch-center",
+        "view": "front",
+        "item": "fuji-lens-cap-right-pinch",
+        "point": "center",
+        "expected": [0.64, 0.425],
+        "tolerance": 0.035,
+        "correction_target": {
+          "part_id": "fuji-lens-cap-right-pinch",
+          "path": "parts[fuji-lens-cap-right-pinch].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "fuji-left-dial-index-mark-center",
+        "view": "top",
+        "item": "fuji-left-dial-index-mark",
+        "point": "center",
+        "expected": [0.179, 0.712],
+        "tolerance": 0.04,
+        "correction_target": {
+          "part_id": "fuji-left-dial-index-mark",
+          "path": "parts[fuji-left-dial-index-mark].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "fuji-right-dial-index-mark-center",
+        "view": "top",
+        "item": "fuji-right-dial-index-mark",
+        "point": "center",
+        "expected": [0.81, 0.712],
+        "tolerance": 0.04,
+        "correction_target": {
+          "part_id": "fuji-right-dial-index-mark",
+          "path": "parts[fuji-right-dial-index-mark].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "fuji-rear-menu-button-center",
+        "view": "rear",
+        "item": "fuji-rear-menu-button",
+        "point": "center",
+        "expected": [0.903, 0.528],
+        "tolerance": 0.04,
+        "correction_target": {
+          "part_id": "fuji-rear-menu-button",
+          "path": "parts[fuji-rear-menu-button].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "fuji-rear-play-button-center",
+        "view": "rear",
+        "item": "fuji-rear-play-button",
+        "point": "center",
+        "expected": [0.903, 0.415],
+        "tolerance": 0.04,
+        "correction_target": {
+          "part_id": "fuji-rear-play-button",
+          "path": "parts[fuji-rear-play-button].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "fuji-rear-back-button-center",
+        "view": "rear",
+        "item": "fuji-rear-back-button",
+        "point": "center",
+        "expected": [0.903, 0.302],
+        "tolerance": 0.04,
+        "correction_target": {
+          "part_id": "fuji-rear-back-button",
+          "path": "parts[fuji-rear-back-button].shape.parameters.origin"
+        }
+      }
+    ],
+    "extent_ratios": [
+      {
+        "id": "fuji-body-front-extent",
+        "view": "front",
+        "item": "fuji-body-black-lower",
+        "expected": [0.833, 0.66],
+        "tolerance": [0.06, 0.06],
+        "correction_target": {
+          "part_id": "fuji-body-black-lower",
+          "path": "parts[fuji-body-black-lower].shape.parameters.size"
+        }
+      },
+      {
+        "id": "fuji-lens-front-extent",
+        "view": "front",
+        "item": "fuji-lens-front-cap",
+        "expected": [0.44, 0.698],
+        "tolerance": [0.05, 0.06],
+        "correction_target": {
+          "part_id": "fuji-lens-front-cap",
+          "path": "parts[fuji-lens-front-cap].shape.parameters.points"
+        }
+      },
+      {
+        "id": "fuji-viewfinder-front-extent",
+        "view": "front",
+        "item": "fuji-viewfinder-hump",
+        "expected": [0.286, 0.226],
+        "tolerance": [0.05, 0.045],
+        "correction_target": {
+          "part_id": "fuji-viewfinder-hump",
+          "path": "parts[fuji-viewfinder-hump].shape.parameters.size"
+        }
+      },
+      {
+        "id": "fuji-lens-top-extent",
+        "view": "top",
+        "items": ["fuji-lens-mount-ring", "fuji-lens-rear-barrel", "fuji-lens-front-barrel", "fuji-lens-front-cap", "fuji-lens-inner-glass"],
+        "expected": [0.536, 0.689],
+        "tolerance": [0.06, 0.06],
+        "correction_target": {
+          "part_id": "fuji-lens-front-barrel",
+          "path": "parts[fuji-lens-front-barrel].shape.parameters.depth"
+        }
+      },
+      {
+        "id": "fuji-screen-rear-extent",
+        "view": "rear",
+        "item": "fuji-rear-screen",
+        "expected": [0.583, 0.453],
+        "tolerance": [0.06, 0.055],
+        "correction_target": {
+          "part_id": "fuji-rear-screen",
+          "path": "parts[fuji-rear-screen].shape.parameters.size"
+        }
+      },
+      {
+        "id": "fuji-lens-cap-logo-bar-extent",
+        "view": "front",
+        "item": "fuji-lens-cap-logo-bar",
+        "expected": [0.262, 0.047],
+        "tolerance": [0.04, 0.03],
+        "correction_target": {
+          "part_id": "fuji-lens-cap-logo-bar",
+          "path": "parts[fuji-lens-cap-logo-bar].shape.parameters.size"
+        }
+      }
+    ],
+    "area_ratios": [
+      {
+        "id": "fuji-lens-front-area-share",
+        "view": "front",
+        "item": "fuji-lens-front-cap",
+        "expected": 0.308,
+        "tolerance": 0.05,
+        "correction_target": {
+          "part_id": "fuji-lens-front-cap",
+          "path": "parts[fuji-lens-front-cap].shape.parameters.points"
+        }
+      },
+      {
+        "id": "fuji-rear-screen-area-share",
+        "view": "rear",
+        "item": "fuji-rear-screen",
+        "expected": 0.264,
+        "tolerance": 0.045,
+        "correction_target": {
+          "part_id": "fuji-rear-screen",
+          "path": "parts[fuji-rear-screen].shape.parameters.size"
+        }
+      },
+      {
+        "id": "fuji-top-dial-area-share",
+        "view": "top",
+        "item": "fuji-left-top-dial",
+        "expected": 0.022,
+        "tolerance": 0.02,
+        "correction_target": {
+          "part_id": "fuji-left-top-dial",
+          "path": "parts[fuji-left-top-dial].shape.parameters.radius"
+        }
+      }
+    ],
+    "relative_positions": [
+      {
+        "id": "fuji-lens-above-body-center",
+        "view": "front",
+        "item": "fuji-lens-front-cap",
+        "anchor": "fuji-body-black-lower",
+        "expected": [0, 0.095],
+        "tolerance": 0.055,
+        "correction_target": {
+          "part_id": "fuji-lens-front-cap",
+          "path": "parts[fuji-lens-front-cap].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "fuji-viewfinder-above-body",
+        "view": "front",
+        "item": "fuji-viewfinder-hump",
+        "anchor": "fuji-body-black-lower",
+        "expected": [0, 0.557],
+        "tolerance": 0.06,
+        "correction_target": {
+          "part_id": "fuji-viewfinder-hump",
+          "path": "parts[fuji-viewfinder-hump].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "fuji-top-dial-spacing",
+        "view": "top",
+        "item": "fuji-right-top-dial",
+        "anchor": "fuji-left-top-dial",
+        "expected": [0.631, 0],
+        "tolerance": 0.06,
+        "correction_target": {
+          "part_id": "fuji-right-top-dial",
+          "path": "parts[fuji-right-top-dial].shape.parameters.origin"
+        }
+      }
+    ],
+    "orientation": [
+      {
+        "id": "fuji-right-dial-right-of-left-dial",
+        "view": "top",
+        "item": "fuji-right-top-dial",
+        "anchor": "fuji-left-top-dial",
+        "direction": "right_of",
+        "min_delta": 0.25,
+        "correction_target": {
+          "part_id": "fuji-right-top-dial",
+          "path": "parts[fuji-right-top-dial].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "fuji-front-grip-right-of-lens",
+        "view": "front",
+        "item": "fuji-front-grip",
+        "anchor": "fuji-lens-front-cap",
+        "direction": "right_of",
+        "min_delta": 0.12,
+        "correction_target": {
+          "part_id": "fuji-front-grip",
+          "path": "parts[fuji-front-grip].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "fuji-rear-controls-right-of-screen",
+        "view": "rear",
+        "item": "fuji-rear-command-dial",
+        "anchor": "fuji-rear-screen",
+        "direction": "right_of",
+        "min_delta": 0.12,
+        "correction_target": {
+          "part_id": "fuji-rear-command-dial",
+          "path": "parts[fuji-rear-command-dial].shape.parameters.origin"
+        }
+      }
+    ]
+  }
+}

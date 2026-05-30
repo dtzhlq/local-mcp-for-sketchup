@@ -2,34 +2,29 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { SketchUpBridge } from '../src/bridge.mjs';
-import { formatModelQaReportMarkdown } from '../src/model-qa.mjs';
+import { formatReferenceVisualQaReportMarkdown } from '../src/reference-visual-qa.mjs';
 
 const DEFAULT_EXAMPLES = [
   {
-    name: 'switch-controller-reference',
-    code: 'examples/acceptance-switch-controller.json',
-    spec: 'examples/model-qa/switch-controller-demo.json'
-  },
-  {
     name: 'ambulance-reference',
     code: 'examples/acceptance-ambulance-reference.json',
-    spec: 'examples/model-qa/ambulance-reference.json'
+    spec: 'examples/reference-visual-qa/ambulance-reference.json'
+  },
+  {
+    name: 'switch-controller-reference',
+    code: 'examples/acceptance-switch-controller.json',
+    spec: 'examples/reference-visual-qa/switch-controller-reference.json'
   },
   {
     name: 'fuji-camera-reference',
     code: 'examples/acceptance-fuji-camera.json',
-    spec: 'examples/model-qa/fuji-camera-reference.json'
-  },
-  {
-    name: 'ikea-childrens-room',
-    code: 'examples/acceptance-ikea-childrens-room.json',
-    spec: 'examples/model-qa/ikea-childrens-room.json'
+    spec: 'examples/reference-visual-qa/fuji-camera-reference.json'
   }
 ];
 
 const options = parseArgs(process.argv.slice(2));
 const bridge = new SketchUpBridge();
-const outputDir = options.outputDir || 'output/model-qa';
+const outputDir = options.outputDir || 'output/reference-visual-qa';
 const examples = options.examples.length ? options.examples : DEFAULT_EXAMPLES;
 const results = [];
 
@@ -37,14 +32,13 @@ await fs.mkdir(outputDir, { recursive: true });
 
 for (const example of examples) {
   const code = await fs.readFile(example.code, 'utf8');
-  const spec = example.spec ? JSON.parse(await fs.readFile(example.spec, 'utf8')) : undefined;
-  const report = await bridge.validate_model({
+  const spec = JSON.parse(await fs.readFile(example.spec, 'utf8'));
+  const report = await bridge.validate_reference_model({
     code,
     spec,
     runtime: options.runtime || 'mock',
     timeoutMs: options.timeoutMs,
-    strictCollisions: options.strictCollisions,
-    strictUnanchored: options.strictUnanchored
+    includePreview: options.includePreview !== false
   });
   const exampleDir = path.join(outputDir, example.name);
   await fs.mkdir(exampleDir, { recursive: true });
@@ -52,7 +46,7 @@ for (const example of examples) {
   const jsonPath = path.join(exampleDir, 'report.json');
   const markdownPath = path.join(exampleDir, 'report.md');
   await fs.writeFile(jsonPath, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
-  await fs.writeFile(markdownPath, formatModelQaReportMarkdown(report, { title: `SketchUp Model QA: ${example.name}` }), 'utf8');
+  await fs.writeFile(markdownPath, formatReferenceVisualQaReportMarkdown(report, { title: `SketchUp Reference Visual QA: ${example.name}` }), 'utf8');
   results.push({
     name: example.name,
     ok: report.ok,
@@ -77,9 +71,7 @@ function parseArgs(argv) {
     if (arg === '--output-dir') parsed.outputDir = argv[++index];
     else if (arg === '--runtime') parsed.runtime = argv[++index];
     else if (arg === '--timeout-ms') parsed.timeoutMs = Number(argv[++index]);
-    else if (arg === '--strict-collisions') parsed.strictCollisions = true;
-    else if (arg === '--loose-collisions') parsed.strictCollisions = false;
-    else if (arg === '--strict-unanchored') parsed.strictUnanchored = true;
+    else if (arg === '--no-preview') parsed.includePreview = false;
     else if (arg === '--example') parsed.examples.push(parseExample(argv[++index]));
     else throw new Error(`Unknown argument: ${arg}`);
   }
@@ -88,7 +80,7 @@ function parseArgs(argv) {
 
 function parseExample(value) {
   const [name, code, spec] = value.split(':');
-  if (!name || !code) throw new Error('--example must be name:code[:spec]');
+  if (!name || !code || !spec) throw new Error('--example must be name:code:spec');
   return { name, code, spec };
 }
 
@@ -108,7 +100,7 @@ async function writePreviewFiles(report, dir) {
 }
 
 function formatIndex(results) {
-  const lines = ['# SketchUp Model Layout QA', '', '| Example | Verdict | Level | Errors | Warnings | Report | Preview |', '|---|---|---|---:|---:|---|---|'];
+  const lines = ['# SketchUp Reference Visual QA', '', '| Example | Verdict | Level | Errors | Warnings | Report | Preview |', '|---|---|---|---:|---:|---|---|'];
   for (const result of results) {
     lines.push(`| ${result.name} | ${result.verdict} | ${result.level} | ${result.errors} | ${result.warnings} | [report](${path.relative(path.dirname(path.join(outputDir, 'index.md')), result.report)}) | [preview](${path.relative(path.dirname(path.join(outputDir, 'index.md')), result.preview)}) |`);
   }

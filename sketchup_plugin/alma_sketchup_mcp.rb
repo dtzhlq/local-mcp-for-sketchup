@@ -3,7 +3,17 @@
 require 'json'
 require 'fileutils'
 require 'time'
-require 'sketchup.rb'
+begin
+  require 'sketchup.rb'
+rescue LoadError
+  sketchup_rb = if defined?(Sketchup) && Sketchup.respond_to?(:find_support_file)
+                  Sketchup.find_support_file('sketchup.rb', 'Tools')
+                end
+  raise unless sketchup_rb && File.exist?(sketchup_rb)
+
+  $LOAD_PATH.unshift(File.dirname(sketchup_rb)) unless $LOAD_PATH.include?(File.dirname(sketchup_rb))
+  require sketchup_rb
+end
 require_relative 'alma_sketchup_mcp/operation_registry'
 require_relative 'alma_sketchup_mcp/materials'
 require_relative 'alma_sketchup_mcp/object_operations'

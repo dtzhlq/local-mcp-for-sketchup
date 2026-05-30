@@ -3,6 +3,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { SketchUpBridge } from './bridge.mjs';
 import { formatModelQaReportMarkdown } from './model-qa.mjs';
+import { formatReferenceVisualQaReportMarkdown } from './reference-visual-qa.mjs';
 import { compareSnapshots } from './snapshot-diff.mjs';
 import { formatSnapshotReportMarkdown } from './snapshot-report.mjs';
 
@@ -72,6 +73,23 @@ async function main() {
         await writePreviewFiles(result, options.previewDir);
       }
       return output(result, options, { markdownTitle: 'SketchUp Model QA Report' });
+    }
+    case 'validate_reference_model': {
+      const code = options.codeFile ? await fs.readFile(options.codeFile, 'utf8') : options.code;
+      const snapshot = options.snapshotFile ? await readSnapshotJson(options.snapshotFile, 'snapshot') : undefined;
+      const spec = options.specFile ? JSON.parse(await fs.readFile(options.specFile, 'utf8')) : undefined;
+      const result = await bridge.validate_reference_model({
+        code,
+        snapshot,
+        spec,
+        runtime: options.runtime || 'mock',
+        timeoutMs: options.timeoutMs,
+        includePreview: options.includePreview !== false
+      });
+      if (options.previewDir) {
+        await writePreviewFiles(result, options.previewDir);
+      }
+      return output(result, options, { markdownTitle: 'SketchUp Reference Visual QA Report' });
     }
     default:
       usage();
@@ -184,6 +202,9 @@ function renderOutput(value, options, { markdownTitle } = {}) {
     if (value?.kind === 'model_qa') {
       return formatModelQaReportMarkdown(value, { title: markdownTitle || 'SketchUp Model QA Report' });
     }
+    if (value?.kind === 'reference_visual_qa') {
+      return formatReferenceVisualQaReportMarkdown(value, { title: markdownTitle || 'SketchUp Reference Visual QA Report' });
+    }
     return formatSnapshotReportMarkdown(value, { title: markdownTitle || 'SketchUp QA Report' });
   }
   if (options.format === 'dsl') {
@@ -227,6 +248,7 @@ function usage() {
   node src/cli.mjs compare_snapshots --expected-file output/mock-a.json --actual-file output/mock-b.json [--tolerance-mm 1] [--face-tolerance 1] [--edge-tolerance 3] [--max-faces 5000] [--max-artifact-size-bytes 50000000] [--format markdown] [--output-file output/report.md]
   node src/cli.mjs compare_model --code-file examples/demo-room.json [--expected-runtime mock] [--actual-runtime queue] [--timeout-ms 60000] [--face-tolerance 1] [--edge-tolerance 3] [--format markdown] [--output-file output/report.md]
   node src/cli.mjs validate_model --code-file examples/demo-room.json [--runtime mock|queue] [--spec-file examples/model-qa/spec.json] [--preview-dir output/model-qa/demo] [--format markdown] [--output-file output/model-qa/demo.md]
+  node src/cli.mjs validate_reference_model --code-file examples/acceptance-ambulance-reference.json [--runtime mock|queue] [--spec-file examples/reference-visual-qa/ambulance-reference.json] [--preview-dir output/reference-visual-qa/ambulance-reference] [--format markdown] [--output-file output/reference-visual-qa/ambulance-reference/report.md]
 
 Runtime notes:
   mock  - deterministic offline runtime for tests and Alma iteration.

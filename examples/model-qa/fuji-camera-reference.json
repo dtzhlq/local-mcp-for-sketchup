@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "title": "Fuji Camera Layout QA",
+  "rules": {
+    "allowed_collisions": [
+      {
+        "item": "/^Fuji_.*/",
+        "with": "/^Fuji_.*/"
+      }
+    ],
+    "inside": [
+      { "match": "Fuji_Rear_Screen", "parent": "Fuji_Body_Black_Lower", "axes": ["x", "z"], "tolerance_mm": 8 },
+      { "match": "Fuji_Rear_(Button_Stack|Command_Dial|Eyepiece)", "parent": "Fuji_Body_Black_Lower", "axes": ["x", "z"], "tolerance_mm": 12 },
+      { "match": "Fuji_(Left|Right)_Top_Dial", "parent": "Fuji_Top_Silver_Plate", "axes": ["x", "y"], "tolerance_mm": 8 },
+      { "match": "Fuji_Lens_(Mount_Ring|Rear_Barrel|Front_Barrel|Front_Cap|Inner_Glass)", "parent": "Fuji_Body_Black_Lower", "axes": ["x", "z"], "tolerance_mm": 25 },
+      { "match": "Fuji_(Left|Right)_Strap_Lug", "parent": "Fuji_Body_Black_Lower", "axes": ["x", "z"], "tolerance_mm": 16 },
+      { "match": "Fuji_Red_Strap_Accent", "parent": "Fuji_Right_Strap_Lug", "axes": ["x", "z"], "tolerance_mm": 16 },
+      { "match": "Fuji_Front_Brand_Plate", "parent": "Fuji_Top_Silver_Plate", "axes": ["x", "z"], "tolerance_mm": 12 },
+      { "match": "Fuji_Hotshoe_Rail", "parent": "Fuji_Viewfinder_Hump", "axes": ["x", "y"], "tolerance_mm": 8 }
+    ],
+    "support": [
+      { "match": "Fuji_(Left|Right)_Top_Dial", "parent": "Fuji_Top_Silver_Plate", "max_gap_mm": 8, "allow_penetration_mm": 4 },
+      { "match": "Fuji_Shutter_Button", "parent": "Fuji_Top_Silver_Plate", "max_gap_mm": 8, "allow_penetration_mm": 8 }
+    ],
+    "separation": [
+      { "name": "top dial spacing", "items": ["Fuji_Left_Top_Dial", "Fuji_Right_Top_Dial"], "axes": ["x", "y"], "min_gap_mm": 60 },
+      { "name": "lens stack depth", "items": ["Fuji_Lens_Mount_Ring", "Fuji_Lens_Front_Cap"], "axes": ["y", "z"], "min_gap_mm": 50 },
+      { "name": "screen and eyepiece separation", "items": ["Fuji_Rear_Screen", "Fuji_Rear_Eyepiece"], "axes": ["x", "z"], "min_gap_mm": 0 }
+    ],
+    "views": ["front", "top", "right"]
+  }
+}

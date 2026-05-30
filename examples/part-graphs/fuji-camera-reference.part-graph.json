@@ -1,0 +1,2456 @@
+{
+  "version": 1,
+  "id": "fuji-camera-reference-part-graph",
+  "profile_id": "camera_fuji_x_t10",
+  "dsl_version": 1,
+  "units": "mm",
+  "product": {
+    "type": "mirrorless_camera",
+    "name": "Fuji Mirrorless Camera",
+    "source": "test/照相机 photo set"
+  },
+  "scale": {
+    "width": 168,
+    "depth": 135,
+    "height": 106,
+    "confidence": 0.58,
+    "calibration": {
+      "mode": "photo_set_prior_no_known_dimension",
+      "note": "No measured physical dimension was provided; scale is normalized to a plausible compact mirrorless camera envelope."
+    },
+    "evidence_sources": [
+      {
+        "kind": "manual_photo_interpretation",
+        "view": "front",
+        "status": "manual_confirmed",
+        "confidence": 0.62,
+        "note": "Seven photos show front, rear, top, side, and oblique camera views; exact physical scale remains unmeasured."
+      }
+    ]
+  },
+  "evidence_graph": {
+    "version": 1,
+    "source_images": [
+      "test/照相机/01B10617-D929-48B2-A32F-D28C455465AC_1_102_o.jpeg",
+      "test/照相机/1D17B1F6-6161-4300-ACC5-8CA25303AB06_1_102_o.jpeg",
+      "test/照相机/2BCC2A5E-943D-4F98-AD68-696910279C2B_1_102_o.jpeg",
+      "test/照相机/7A505B3F-B632-4ABD-83B7-44C481E12CCC_1_102_o.jpeg",
+      "test/照相机/87DFC7C5-51EA-4860-918C-CEF721CCA9DE_1_102_o.jpeg",
+      "test/照相机/94FAD3B8-10E3-48E1-BAB6-74526A23BBE1_1_102_o.jpeg",
+      "test/照相机/B8D0747F-9D4B-4191-8A49-35C9E80E6EC0_1_102_o.jpeg"
+    ],
+    "views_detected": [
+      "front",
+      "rear",
+      "top",
+      "side",
+      "oblique"
+    ],
+    "open_questions": [
+      "Lens barrel is approximated as stacked circular prisms along the camera depth axis; exact taper and bayonet details need review.",
+      "Top dials now have shallow feature seats, but engraved dial markings and knurling are still omitted.",
+      "No known physical dimension was provided, so scale confidence remains lower than ambulance and Switch."
+    ]
+  },
+  "parts": [
+    {
+      "id": "fuji-body-black-lower",
+      "name": "Fuji_Body_Black_Lower",
+      "type": "camera_shell",
+      "role": "camera_body",
+      "material": "Fuji_Black_Body",
+      "intent": "rounded_box",
+      "shape": {
+        "primitive": "rounded_box",
+        "parameters": {
+          "origin": [
+            -70,
+            -20,
+            0
+          ],
+          "size": [
+            140,
+            40,
+            70
+          ],
+          "radius": 8,
+          "segments": 6,
+          "smooth": "all"
+        }
+      },
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "front",
+          "status": "manual_confirmed",
+          "confidence": 0.7,
+          "note": "Main rectangular black body silhouette visible in front and rear photos."
+        }
+      ],
+      "fallback_state": "real_feature_op",
+      "qa": {},
+      "feature_intents": [
+        {
+          "id": "fuji-front-lens-mount-recess",
+          "operation": "cut_recess",
+          "face": "front",
+          "semantic": "front_lens_mount_recess",
+          "parameters": {
+            "center": [
+              70,
+              40
+            ],
+            "size": [
+              88,
+              58
+            ],
+            "depth": 2.8,
+            "radius": 28,
+            "segments": 16
+          },
+          "fallback_state": "real_feature_op",
+          "evidence_sources": [
+            {
+              "kind": "manual_photo_interpretation",
+              "view": "front",
+              "status": "manual_confirmed",
+              "confidence": 0.7,
+              "note": "Front photos show the lens mount sitting in a shallow body recess rather than on a flat box."
+            }
+          ]
+        },
+        {
+          "id": "fuji-rear-screen-body-recess",
+          "operation": "cut_recess",
+          "face": "back",
+          "semantic": "rear_screen_recess",
+          "parameters": {
+            "center": [
+              70,
+              42
+            ],
+            "size": [
+              90,
+              52
+            ],
+            "depth": 2,
+            "radius": 4,
+            "segments": 6
+          },
+          "fallback_state": "real_feature_op",
+          "evidence_sources": [
+            {
+              "kind": "manual_photo_interpretation",
+              "view": "rear",
+              "status": "manual_confirmed",
+              "confidence": 0.72,
+              "note": "Rear photo shows the LCD screen held inside a shallow back-panel recess."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fuji-top-silver-plate",
+      "name": "Fuji_Top_Silver_Plate",
+      "type": "camera_shell",
+      "role": "top_plate",
+      "material": "Fuji_Silver_Top",
+      "intent": "rounded_box",
+      "shape": {
+        "primitive": "rounded_box",
+        "parameters": {
+          "origin": [
+            -72,
+            -21,
+            66
+          ],
+          "size": [
+            144,
+            42,
+            18
+          ],
+          "radius": 6,
+          "segments": 6,
+          "smooth": "all"
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "fuji-body-black-lower"
+        }
+      ],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "front",
+          "status": "manual_confirmed",
+          "confidence": 0.72,
+          "note": "Silver top band is visible across front, top, and rear photos."
+        }
+      ],
+      "fallback_state": "real_feature_op",
+      "qa": {},
+      "feature_intents": [
+        {
+          "id": "fuji-left-dial-seat",
+          "operation": "cut_hole",
+          "face": "top",
+          "semantic": "left_top_dial_seat",
+          "parameters": {
+            "center": [
+              18,
+              13
+            ],
+            "radius": 12,
+            "depth": 1.5,
+            "through": false,
+            "segments": 32
+          },
+          "fallback_state": "real_feature_op",
+          "evidence_sources": [
+            {
+              "kind": "manual_photo_interpretation",
+              "view": "top",
+              "status": "manual_confirmed",
+              "confidence": 0.68,
+              "note": "Top view shows the left dial seated into the silver top plate."
+            }
+          ]
+        },
+        {
+          "id": "fuji-right-dial-seat",
+          "operation": "cut_hole",
+          "face": "top",
+          "semantic": "right_top_dial_seat",
+          "parameters": {
+            "center": [
+              124,
+              13
+            ],
+            "radius": 12,
+            "depth": 1.5,
+            "through": false,
+            "segments": 32
+          },
+          "fallback_state": "real_feature_op",
+          "evidence_sources": [
+            {
+              "kind": "manual_photo_interpretation",
+              "view": "top",
+              "status": "manual_confirmed",
+              "confidence": 0.68,
+              "note": "Top view shows the right dial seated into the silver top plate."
+            }
+          ]
+        },
+        {
+          "id": "fuji-shutter-button-seat",
+          "operation": "cut_hole",
+          "face": "top",
+          "semantic": "shutter_button_seat",
+          "parameters": {
+            "center": [
+              106,
+              11
+            ],
+            "radius": 6,
+            "depth": 1.2,
+            "through": false,
+            "segments": 24
+          },
+          "fallback_state": "real_feature_op",
+          "evidence_sources": [
+            {
+              "kind": "manual_photo_interpretation",
+              "view": "top",
+              "status": "inferred",
+              "confidence": 0.58,
+              "note": "The shutter button is represented as a small seated circular control on the top plate."
+            }
+          ]
+        },
+        {
+          "id": "fuji-hotshoe-slot",
+          "operation": "cut_slot",
+          "face": "top",
+          "semantic": "hotshoe_slot",
+          "parameters": {
+            "center": [
+              72,
+              21
+            ],
+            "length": 36,
+            "width": 8,
+            "depth": 2,
+            "through": false,
+            "segments": 8
+          },
+          "fallback_state": "real_feature_op",
+          "evidence_sources": [
+            {
+              "kind": "manual_photo_interpretation",
+              "view": "top",
+              "status": "manual_confirmed",
+              "confidence": 0.66,
+              "note": "The hot shoe is visible as a slot in the top plate, not only as a raised block."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fuji-viewfinder-hump",
+      "name": "Fuji_Viewfinder_Hump",
+      "type": "camera_shell",
+      "role": "viewfinder_hump",
+      "material": "Fuji_Silver_Top",
+      "intent": "rounded_box",
+      "shape": {
+        "primitive": "rounded_box",
+        "parameters": {
+          "origin": [
+            -24,
+            -20,
+            82
+          ],
+          "size": [
+            48,
+            38,
+            24
+          ],
+          "radius": 5,
+          "segments": 5,
+          "smooth": "all"
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "fuji-top-silver-plate"
+        }
+      ],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "front",
+          "status": "manual_confirmed",
+          "confidence": 0.72,
+          "note": "Central viewfinder prism is prominent in front, rear, and top photos."
+        }
+      ],
+      "fallback_state": "real_feature_op",
+      "qa": {},
+      "feature_intents": [
+        {
+          "id": "fuji-viewfinder-front-window-recess",
+          "operation": "cut_recess",
+          "face": "front",
+          "semantic": "viewfinder_front_window",
+          "parameters": {
+            "center": [
+              24,
+              12
+            ],
+            "size": [
+              26,
+              10
+            ],
+            "depth": 1.5,
+            "radius": 3,
+            "segments": 6
+          },
+          "fallback_state": "real_feature_op",
+          "evidence_sources": [
+            {
+              "kind": "manual_photo_interpretation",
+              "view": "front",
+              "status": "manual_confirmed",
+              "confidence": 0.62,
+              "note": "The central viewfinder housing has a visible front inset/window area."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fuji-front-grip",
+      "name": "Fuji_Front_Right_Grip",
+      "type": "camera_shell",
+      "role": "front_grip",
+      "material": "Fuji_Dark_Rubber",
+      "intent": "rounded_box",
+      "shape": {
+        "primitive": "rounded_box",
+        "parameters": {
+          "origin": [
+            48,
+            -30,
+            8
+          ],
+          "size": [
+            26,
+            13,
+            58
+          ],
+          "radius": 9,
+          "segments": 6,
+          "smooth": "all"
+        }
+      },
+      "relationships": [
+        {
+          "type": "attached_to",
+          "target": "fuji-body-black-lower"
+        }
+      ],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "front",
+          "status": "manual_confirmed",
+          "confidence": 0.7,
+          "note": "Right-hand textured grip is visible in front and oblique views."
+        }
+      ],
+      "fallback_state": "box_approximation",
+      "qa": {}
+    },
+    {
+      "id": "fuji-lens-mount-ring",
+      "name": "Fuji_Lens_Mount_Ring",
+      "type": "lens_part",
+      "role": "lens_mount",
+      "material": "Fuji_Lens_Black",
+      "intent": "prism",
+      "shape": {
+        "primitive": "prism",
+        "parameters": {
+          "origin": [
+            0,
+            -34,
+            45
+          ],
+          "plane": "xz",
+          "points": [
+            [
+              45,
+              0
+            ],
+            [
+              41.6,
+              17.2
+            ],
+            [
+              31.8,
+              31.8
+            ],
+            [
+              17.2,
+              41.6
+            ],
+            [
+              0,
+              45
+            ],
+            [
+              -17.2,
+              41.6
+            ],
+            [
+              -31.8,
+              31.8
+            ],
+            [
+              -41.6,
+              17.2
+            ],
+            [
+              -45,
+              0
+            ],
+            [
+              -41.6,
+              -17.2
+            ],
+            [
+              -31.8,
+              -31.8
+            ],
+            [
+              -17.2,
+              -41.6
+            ],
+            [
+              0,
+              -45
+            ],
+            [
+              17.2,
+              -41.6
+            ],
+            [
+              31.8,
+              -31.8
+            ],
+            [
+              41.6,
+              -17.2
+            ]
+          ],
+          "depth": 14,
+          "material": "Fuji_Lens_Black"
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "fuji-body-black-lower"
+        }
+      ],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "front",
+          "status": "manual_confirmed",
+          "confidence": 0.72,
+          "note": "Lens mount circle is the dominant front anchor."
+        }
+      ],
+      "fallback_state": "structured_primitive",
+      "qa": {}
+    },
+    {
+      "id": "fuji-lens-rear-barrel",
+      "name": "Fuji_Lens_Rear_Barrel",
+      "type": "lens_part",
+      "role": "lens_barrel",
+      "material": "Fuji_Lens_Black",
+      "intent": "prism",
+      "shape": {
+        "primitive": "prism",
+        "parameters": {
+          "origin": [
+            0,
+            -70,
+            45
+          ],
+          "plane": "xz",
+          "points": [
+            [
+              38,
+              0
+            ],
+            [
+              35.1,
+              14.5
+            ],
+            [
+              26.9,
+              26.9
+            ],
+            [
+              14.5,
+              35.1
+            ],
+            [
+              0,
+              38
+            ],
+            [
+              -14.5,
+              35.1
+            ],
+            [
+              -26.9,
+              26.9
+            ],
+            [
+              -35.1,
+              14.5
+            ],
+            [
+              -38,
+              0
+            ],
+            [
+              -35.1,
+              -14.5
+            ],
+            [
+              -26.9,
+              -26.9
+            ],
+            [
+              -14.5,
+              -35.1
+            ],
+            [
+              0,
+              -38
+            ],
+            [
+              14.5,
+              -35.1
+            ],
+            [
+              26.9,
+              -26.9
+            ],
+            [
+              35.1,
+              -14.5
+            ]
+          ],
+          "depth": 36,
+          "material": "Fuji_Lens_Black"
+        }
+      },
+      "relationships": [
+        {
+          "type": "attached_to",
+          "target": "fuji-lens-mount-ring"
+        }
+      ],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "side",
+          "status": "manual_confirmed",
+          "confidence": 0.68,
+          "note": "Rear barrel length and diameter are visible in side/top photos."
+        }
+      ],
+      "fallback_state": "structured_primitive",
+      "qa": {}
+    },
+    {
+      "id": "fuji-lens-front-barrel",
+      "name": "Fuji_Lens_Front_Barrel",
+      "type": "lens_part",
+      "role": "lens_barrel_front",
+      "material": "Fuji_Lens_Black",
+      "intent": "prism",
+      "shape": {
+        "primitive": "prism",
+        "parameters": {
+          "origin": [
+            0,
+            -96,
+            45
+          ],
+          "plane": "xz",
+          "points": [
+            [
+              35,
+              0
+            ],
+            [
+              32.3,
+              13.4
+            ],
+            [
+              24.7,
+              24.7
+            ],
+            [
+              13.4,
+              32.3
+            ],
+            [
+              0,
+              35
+            ],
+            [
+              -13.4,
+              32.3
+            ],
+            [
+              -24.7,
+              24.7
+            ],
+            [
+              -32.3,
+              13.4
+            ],
+            [
+              -35,
+              0
+            ],
+            [
+              -32.3,
+              -13.4
+            ],
+            [
+              -24.7,
+              -24.7
+            ],
+            [
+              -13.4,
+              -32.3
+            ],
+            [
+              0,
+              -35
+            ],
+            [
+              13.4,
+              -32.3
+            ],
+            [
+              24.7,
+              -24.7
+            ],
+            [
+              32.3,
+              -13.4
+            ]
+          ],
+          "depth": 26,
+          "material": "Fuji_Lens_Black"
+        }
+      },
+      "relationships": [
+        {
+          "type": "attached_to",
+          "target": "fuji-lens-rear-barrel"
+        }
+      ],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "side",
+          "status": "manual_confirmed",
+          "confidence": 0.66,
+          "note": "Front barrel is approximated as a constant-radius circular prism."
+        }
+      ],
+      "fallback_state": "structured_primitive",
+      "qa": {}
+    },
+    {
+      "id": "fuji-lens-front-cap",
+      "name": "Fuji_Lens_Front_Cap",
+      "type": "lens_part",
+      "role": "lens_cap",
+      "material": "Fuji_Lens_Black",
+      "intent": "prism",
+      "shape": {
+        "primitive": "prism",
+        "parameters": {
+          "origin": [
+            0,
+            -108,
+            45
+          ],
+          "plane": "xz",
+          "points": [
+            [
+              37,
+              0
+            ],
+            [
+              34.2,
+              14.2
+            ],
+            [
+              26.2,
+              26.2
+            ],
+            [
+              14.2,
+              34.2
+            ],
+            [
+              0,
+              37
+            ],
+            [
+              -14.2,
+              34.2
+            ],
+            [
+              -26.2,
+              26.2
+            ],
+            [
+              -34.2,
+              14.2
+            ],
+            [
+              -37,
+              0
+            ],
+            [
+              -34.2,
+              -14.2
+            ],
+            [
+              -26.2,
+              -26.2
+            ],
+            [
+              -14.2,
+              -34.2
+            ],
+            [
+              0,
+              -37
+            ],
+            [
+              14.2,
+              -34.2
+            ],
+            [
+              26.2,
+              -26.2
+            ],
+            [
+              34.2,
+              -14.2
+            ]
+          ],
+          "depth": 12,
+          "material": "Fuji_Lens_Black"
+        }
+      },
+      "relationships": [
+        {
+          "type": "attached_to",
+          "target": "fuji-lens-front-barrel"
+        }
+      ],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "front",
+          "status": "manual_confirmed",
+          "confidence": 0.68,
+          "note": "Lens cap dominates the frontal photo."
+        }
+      ],
+      "fallback_state": "structured_primitive",
+      "qa": {}
+    },
+    {
+      "id": "fuji-lens-inner-glass",
+      "name": "Fuji_Lens_Inner_Glass",
+      "type": "lens_part",
+      "role": "lens_glass",
+      "material": "Fuji_Lens_Glass",
+      "intent": "prism",
+      "shape": {
+        "primitive": "prism",
+        "parameters": {
+          "origin": [
+            0,
+            -111,
+            45
+          ],
+          "plane": "xz",
+          "points": [
+            [
+              24,
+              0
+            ],
+            [
+              22.2,
+              9.2
+            ],
+            [
+              17,
+              17
+            ],
+            [
+              9.2,
+              22.2
+            ],
+            [
+              0,
+              24
+            ],
+            [
+              -9.2,
+              22.2
+            ],
+            [
+              -17,
+              17
+            ],
+            [
+              -22.2,
+              9.2
+            ],
+            [
+              -24,
+              0
+            ],
+            [
+              -22.2,
+              -9.2
+            ],
+            [
+              -17,
+              -17
+            ],
+            [
+              -9.2,
+              -22.2
+            ],
+            [
+              0,
+              -24
+            ],
+            [
+              9.2,
+              -22.2
+            ],
+            [
+              17,
+              -17
+            ],
+            [
+              22.2,
+              -9.2
+            ]
+          ],
+          "depth": 3,
+          "material": "Fuji_Lens_Glass"
+        }
+      },
+      "relationships": [
+        {
+          "type": "inset_in",
+          "target": "fuji-lens-front-cap"
+        }
+      ],
+      "evidence_status": "inferred",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "front",
+          "status": "inferred",
+          "confidence": 0.54,
+          "note": "Inner glass is partially obscured by the cap and front reflections."
+        }
+      ],
+      "fallback_state": "structured_primitive",
+      "qa": {}
+    },
+    {
+      "id": "fuji-lens-zoom-ring-rear",
+      "name": "Fuji_Lens_Zoom_Ring_Rear",
+      "type": "lens_part",
+      "role": "lens_detail_ring",
+      "material": "Fuji_Lens_Ring",
+      "intent": "prism",
+      "shape": {
+        "primitive": "prism",
+        "parameters": {
+          "origin": [
+            0,
+            -70,
+            45
+          ],
+          "plane": "xz",
+          "points": [
+            [40, 0],
+            [37, 15.3],
+            [28.3, 28.3],
+            [15.3, 37],
+            [0, 40],
+            [-15.3, 37],
+            [-28.3, 28.3],
+            [-37, 15.3],
+            [-40, 0],
+            [-37, -15.3],
+            [-28.3, -28.3],
+            [-15.3, -37],
+            [0, -40],
+            [15.3, -37],
+            [28.3, -28.3],
+            [37, -15.3]
+          ],
+          "depth": 4,
+          "material": "Fuji_Lens_Ring"
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "fuji-lens-rear-barrel"
+        }
+      ],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "side",
+          "status": "manual_confirmed",
+          "confidence": 0.62,
+          "note": "Side and oblique photos show raised lens control rings instead of a smooth tube."
+        }
+      ],
+      "fallback_state": "structured_primitive",
+      "qa": {}
+    },
+    {
+      "id": "fuji-lens-focus-ring-front",
+      "name": "Fuji_Lens_Focus_Ring_Front",
+      "type": "lens_part",
+      "role": "lens_detail_ring",
+      "material": "Fuji_Lens_Ring",
+      "intent": "prism",
+      "shape": {
+        "primitive": "prism",
+        "parameters": {
+          "origin": [
+            0,
+            -96,
+            45
+          ],
+          "plane": "xz",
+          "points": [
+            [38, 0],
+            [35.1, 14.5],
+            [26.9, 26.9],
+            [14.5, 35.1],
+            [0, 38],
+            [-14.5, 35.1],
+            [-26.9, 26.9],
+            [-35.1, 14.5],
+            [-38, 0],
+            [-35.1, -14.5],
+            [-26.9, -26.9],
+            [-14.5, -35.1],
+            [0, -38],
+            [14.5, -35.1],
+            [26.9, -26.9],
+            [35.1, -14.5]
+          ],
+          "depth": 4,
+          "material": "Fuji_Lens_Ring"
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "fuji-lens-front-barrel"
+        }
+      ],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "side",
+          "status": "manual_confirmed",
+          "confidence": 0.62,
+          "note": "Front lens photos show a raised ring before the front cap."
+        }
+      ],
+      "fallback_state": "structured_primitive",
+      "qa": {}
+    },
+    {
+      "id": "fuji-lens-cap-left-pinch",
+      "name": "Fuji_Lens_Cap_Left_Pinch_Tab",
+      "type": "lens_part",
+      "role": "lens_cap_detail",
+      "material": "Fuji_Lens_Ring",
+      "intent": "rounded_box",
+      "shape": {
+        "primitive": "rounded_box",
+        "parameters": {
+          "origin": [
+            -31,
+            -112,
+            39
+          ],
+          "size": [
+            15,
+            4,
+            12
+          ],
+          "radius": 2,
+          "segments": 3,
+          "smooth": "all"
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "fuji-lens-front-cap"
+        }
+      ],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "front",
+          "status": "manual_confirmed",
+          "confidence": 0.6,
+          "note": "The lens cap has visible side pinch tabs in the front photo."
+        }
+      ],
+      "fallback_state": "structured_primitive",
+      "qa": {}
+    },
+    {
+      "id": "fuji-lens-cap-right-pinch",
+      "name": "Fuji_Lens_Cap_Right_Pinch_Tab",
+      "type": "lens_part",
+      "role": "lens_cap_detail",
+      "material": "Fuji_Lens_Ring",
+      "intent": "rounded_box",
+      "shape": {
+        "primitive": "rounded_box",
+        "parameters": {
+          "origin": [
+            16,
+            -112,
+            39
+          ],
+          "size": [
+            15,
+            4,
+            12
+          ],
+          "radius": 2,
+          "segments": 3,
+          "smooth": "all"
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "fuji-lens-front-cap"
+        }
+      ],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "front",
+          "status": "manual_confirmed",
+          "confidence": 0.6,
+          "note": "The lens cap has visible side pinch tabs in the front photo."
+        }
+      ],
+      "fallback_state": "structured_primitive",
+      "qa": {}
+    },
+    {
+      "id": "fuji-lens-cap-logo-bar",
+      "name": "Fuji_Lens_Cap_Logo_Bar",
+      "type": "lens_part",
+      "role": "lens_cap_detail",
+      "material": "Fuji_Lens_Ring",
+      "intent": "rounded_box",
+      "shape": {
+        "primitive": "rounded_box",
+        "parameters": {
+          "origin": [
+            -22,
+            -112,
+            51
+          ],
+          "size": [
+            44,
+            4,
+            5
+          ],
+          "radius": 2,
+          "segments": 3,
+          "smooth": "all"
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "fuji-lens-front-cap"
+        }
+      ],
+      "evidence_status": "inferred",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "front",
+          "status": "inferred",
+          "confidence": 0.52,
+          "note": "The cap face needs a visible center mark so it is not rendered as a plain black disk."
+        }
+      ],
+      "fallback_state": "visual_helper",
+      "qa": {}
+    },
+    {
+      "id": "fuji-rear-screen",
+      "name": "Fuji_Rear_Screen",
+      "type": "surface_detail",
+      "role": "rear_screen",
+      "material": "Fuji_Screen_Dark",
+      "intent": "rounded_box",
+      "shape": {
+        "primitive": "rounded_box",
+        "parameters": {
+          "origin": [
+            -42,
+            20,
+            18
+          ],
+          "size": [
+            84,
+            4,
+            48
+          ],
+          "radius": 3,
+          "segments": 4,
+          "smooth": "all"
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "fuji-body-black-lower"
+        }
+      ],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "rear",
+          "status": "manual_confirmed",
+          "confidence": 0.76,
+          "note": "Rear screen rectangle is clear in the back photo."
+        }
+      ],
+      "fallback_state": "structured_primitive",
+      "qa": {}
+    },
+    {
+      "id": "fuji-rear-eyepiece",
+      "name": "Fuji_Rear_Eyepiece",
+      "type": "surface_detail",
+      "role": "eyepiece",
+      "material": "Fuji_Dark_Rubber",
+      "intent": "rounded_box",
+      "shape": {
+        "primitive": "rounded_box",
+        "parameters": {
+          "origin": [
+            -16,
+            21,
+            66
+          ],
+          "size": [
+            32,
+            5,
+            14
+          ],
+          "radius": 4,
+          "segments": 4,
+          "smooth": "all"
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "fuji-top-silver-plate"
+        }
+      ],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "rear",
+          "status": "manual_confirmed",
+          "confidence": 0.68,
+          "note": "Rear eyepiece is visible above the screen."
+        }
+      ],
+      "fallback_state": "structured_primitive",
+      "qa": {}
+    },
+    {
+      "id": "fuji-left-top-dial",
+      "name": "Fuji_Left_Top_Dial",
+      "type": "control",
+      "role": "top_control",
+      "material": "Fuji_Silver_Top",
+      "intent": "cylinder",
+      "shape": {
+        "primitive": "cylinder",
+        "parameters": {
+          "origin": [
+            -54,
+            -8,
+            84
+          ],
+          "radius": 11,
+          "height": 7,
+          "segments": 36,
+          "smooth": "all"
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "fuji-top-silver-plate"
+        }
+      ],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "top",
+          "status": "manual_confirmed",
+          "confidence": 0.7,
+          "note": "Left top dial is clear in top and oblique photos."
+        }
+      ],
+      "fallback_state": "structured_primitive",
+      "qa": {}
+    },
+    {
+      "id": "fuji-right-top-dial",
+      "name": "Fuji_Right_Top_Dial",
+      "type": "control",
+      "role": "top_control",
+      "material": "Fuji_Silver_Top",
+      "intent": "cylinder",
+      "shape": {
+        "primitive": "cylinder",
+        "parameters": {
+          "origin": [
+            52,
+            -8,
+            84
+          ],
+          "radius": 11,
+          "height": 7,
+          "segments": 36,
+          "smooth": "all"
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "fuji-top-silver-plate"
+        }
+      ],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "top",
+          "status": "manual_confirmed",
+          "confidence": 0.7,
+          "note": "Right top dial is clear in top and oblique photos."
+        }
+      ],
+      "fallback_state": "structured_primitive",
+      "qa": {}
+    },
+    {
+      "id": "fuji-left-dial-index-mark",
+      "name": "Fuji_Left_Dial_Index_Mark",
+      "type": "control_detail",
+      "role": "dial_marker",
+      "material": "Fuji_Label_Text",
+      "intent": "box",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            -60,
+            -18,
+            91.2
+          ],
+          "size": [
+            12,
+            2,
+            1
+          ]
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "fuji-left-top-dial"
+        }
+      ],
+      "evidence_status": "inferred",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "top",
+          "status": "inferred",
+          "confidence": 0.55,
+          "note": "Top view shows dial markings; this marker prevents the dial from reading as a plain cylinder."
+        }
+      ],
+      "fallback_state": "visual_helper",
+      "qa": {}
+    },
+    {
+      "id": "fuji-right-dial-index-mark",
+      "name": "Fuji_Right_Dial_Index_Mark",
+      "type": "control_detail",
+      "role": "dial_marker",
+      "material": "Fuji_Label_Text",
+      "intent": "box",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            46,
+            -18,
+            91.2
+          ],
+          "size": [
+            12,
+            2,
+            1
+          ]
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "fuji-right-top-dial"
+        }
+      ],
+      "evidence_status": "inferred",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "top",
+          "status": "inferred",
+          "confidence": 0.55,
+          "note": "Top view shows dial markings; this marker prevents the dial from reading as a plain cylinder."
+        }
+      ],
+      "fallback_state": "visual_helper",
+      "qa": {}
+    },
+    {
+      "id": "fuji-shutter-button",
+      "name": "Fuji_Shutter_Button",
+      "type": "control",
+      "role": "top_control",
+      "material": "Fuji_Button_Dark",
+      "intent": "cylinder",
+      "shape": {
+        "primitive": "cylinder",
+        "parameters": {
+          "origin": [
+            34,
+            -10,
+            84
+          ],
+          "radius": 5,
+          "height": 4,
+          "segments": 24,
+          "smooth": "all"
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "fuji-top-silver-plate"
+        }
+      ],
+      "evidence_status": "inferred",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "top",
+          "status": "inferred",
+          "confidence": 0.58,
+          "note": "Small shutter button is approximated from top photo."
+        }
+      ],
+      "fallback_state": "structured_primitive",
+      "qa": {}
+    },
+    {
+      "id": "fuji-hotshoe",
+      "name": "Fuji_Hotshoe_Rail",
+      "type": "control",
+      "role": "hotshoe",
+      "material": "Fuji_Button_Dark",
+      "intent": "rounded_box",
+      "shape": {
+        "primitive": "rounded_box",
+        "parameters": {
+          "origin": [
+            -18,
+            -10,
+            86
+          ],
+          "size": [
+            36,
+            20,
+            5
+          ],
+          "radius": 2,
+          "segments": 3,
+          "smooth": "all"
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "fuji-viewfinder-hump"
+        }
+      ],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "top",
+          "status": "manual_confirmed",
+          "confidence": 0.66,
+          "note": "Hot shoe slot is visible on the top photo."
+        }
+      ],
+      "fallback_state": "structured_primitive",
+      "qa": {}
+    },
+    {
+      "id": "fuji-front-brand-plate",
+      "name": "Fuji_Front_Brand_Plate",
+      "type": "surface_detail",
+      "role": "label",
+      "material": "Fuji_Silver_Top",
+      "intent": "box",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            -20,
+            -23,
+            70
+          ],
+          "size": [
+            40,
+            3,
+            7
+          ]
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "fuji-top-silver-plate"
+        }
+      ],
+      "evidence_status": "inferred",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "front",
+          "status": "inferred",
+          "confidence": 0.52,
+          "note": "Brand text is represented as a label plate in first pass."
+        }
+      ],
+      "fallback_state": "visual_helper",
+      "qa": {}
+    },
+    {
+      "id": "fuji-front-fujifilm-text",
+      "name": "Fuji_Front_FUJIFILM_Text",
+      "type": "decal_or_label",
+      "role": "brand_text",
+      "material": "Fuji_Label_Text",
+      "intent": "decal_or_label",
+      "shape": {
+        "primitive": "text_3d",
+        "parameters": {
+          "text": "FUJIFILM",
+          "center": [
+            0,
+            -25,
+            77
+          ],
+          "height": 5.5,
+          "extrusion": 1,
+          "font": "Arial",
+          "align": "center",
+          "bold": true,
+          "filled": true
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "fuji-front-brand-plate"
+        }
+      ],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "front",
+          "status": "manual_confirmed",
+          "confidence": 0.62,
+          "note": "The front photo clearly shows FUJIFILM branding on the silver top band."
+        }
+      ],
+      "fallback_state": "visual_helper",
+      "qa": {}
+    },
+    {
+      "id": "fuji-front-model-text",
+      "name": "Fuji_Front_XT10_Text",
+      "type": "decal_or_label",
+      "role": "model_text",
+      "material": "Fuji_Label_Text",
+      "intent": "decal_or_label",
+      "shape": {
+        "primitive": "text_3d",
+        "parameters": {
+          "text": "X-T10",
+          "center": [
+            55,
+            -25,
+            75
+          ],
+          "height": 4,
+          "extrusion": 1,
+          "font": "Arial",
+          "align": "center",
+          "bold": true,
+          "filled": true
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "fuji-top-silver-plate"
+        }
+      ],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "front",
+          "status": "manual_confirmed",
+          "confidence": 0.58,
+          "note": "The front photo shows a small X-T10 model mark on the right of the silver top band."
+        }
+      ],
+      "fallback_state": "visual_helper",
+      "qa": {}
+    },
+    {
+      "id": "fuji-left-strap-lug",
+      "name": "Fuji_Left_Strap_Lug",
+      "type": "surface_detail",
+      "role": "strap_lug",
+      "material": "Fuji_Button_Dark",
+      "intent": "rounded_box",
+      "shape": {
+        "primitive": "rounded_box",
+        "parameters": {
+          "origin": [
+            -82,
+            -12,
+            40
+          ],
+          "size": [
+            12,
+            10,
+            20
+          ],
+          "radius": 3,
+          "segments": 4,
+          "smooth": "all"
+        }
+      },
+      "relationships": [
+        {
+          "type": "attached_to",
+          "target": "fuji-body-black-lower"
+        }
+      ],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "front",
+          "status": "manual_confirmed",
+          "confidence": 0.62,
+          "note": "Left strap lug is visible on the side/front photos."
+        }
+      ],
+      "fallback_state": "structured_primitive",
+      "qa": {}
+    },
+    {
+      "id": "fuji-right-strap-lug",
+      "name": "Fuji_Right_Strap_Lug",
+      "type": "surface_detail",
+      "role": "strap_lug",
+      "material": "Fuji_Button_Dark",
+      "intent": "rounded_box",
+      "shape": {
+        "primitive": "rounded_box",
+        "parameters": {
+          "origin": [
+            70,
+            -12,
+            40
+          ],
+          "size": [
+            12,
+            10,
+            20
+          ],
+          "radius": 3,
+          "segments": 4,
+          "smooth": "all"
+        }
+      },
+      "relationships": [
+        {
+          "type": "attached_to",
+          "target": "fuji-body-black-lower"
+        }
+      ],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "front",
+          "status": "manual_confirmed",
+          "confidence": 0.62,
+          "note": "Right strap lug and red accent ring are visible on the front/right side."
+        }
+      ],
+      "fallback_state": "structured_primitive",
+      "qa": {}
+    },
+    {
+      "id": "fuji-red-strap-accent",
+      "name": "Fuji_Red_Strap_Accent",
+      "type": "surface_detail",
+      "role": "strap_accent",
+      "material": "Fuji_Red_Accent",
+      "intent": "cylinder",
+      "shape": {
+        "primitive": "cylinder",
+        "parameters": {
+          "origin": [
+            85,
+            -12,
+            45
+          ],
+          "radius": 5,
+          "height": 4,
+          "segments": 20,
+          "smooth": "all"
+        }
+      },
+      "relationships": [
+        {
+          "type": "attached_to",
+          "target": "fuji-right-strap-lug"
+        }
+      ],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "front",
+          "status": "manual_confirmed",
+          "confidence": 0.58,
+          "note": "Red strap accent is visible on the right of the camera."
+        }
+      ],
+      "fallback_state": "structured_primitive",
+      "qa": {}
+    },
+    {
+      "id": "fuji-rear-button-stack",
+      "name": "Fuji_Rear_Button_Stack",
+      "type": "surface_detail",
+      "role": "rear_control",
+      "material": "Fuji_Button_Dark",
+      "intent": "rounded_box",
+      "shape": {
+        "primitive": "rounded_box",
+        "parameters": {
+          "origin": [
+            52,
+            20,
+            26
+          ],
+          "size": [
+            12,
+            4,
+            34
+          ],
+          "radius": 3,
+          "segments": 4,
+          "smooth": "all"
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "fuji-body-black-lower"
+        }
+      ],
+      "evidence_status": "inferred",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "rear",
+          "status": "inferred",
+          "confidence": 0.55,
+          "note": "Rear buttons are grouped as a first-pass stack rather than individually modeled."
+        }
+      ],
+      "fallback_state": "visual_helper",
+      "qa": {}
+    },
+    {
+      "id": "fuji-rear-command-dial",
+      "name": "Fuji_Rear_Command_Dial",
+      "type": "surface_detail",
+      "role": "rear_control",
+      "material": "Fuji_Button_Dark",
+      "intent": "rounded_box",
+      "shape": {
+        "primitive": "rounded_box",
+        "parameters": {
+          "origin": [
+            46,
+            20,
+            62
+          ],
+          "size": [
+            20,
+            4,
+            14
+          ],
+          "radius": 4,
+          "segments": 4,
+          "smooth": "all"
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "fuji-body-black-lower"
+        }
+      ],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "rear",
+          "status": "manual_confirmed",
+          "confidence": 0.62,
+          "note": "Rear command control is visible on the back photo."
+        }
+      ],
+      "fallback_state": "structured_primitive",
+      "qa": {}
+    },
+    {
+      "id": "fuji-rear-menu-button",
+      "name": "Fuji_Rear_Menu_Button",
+      "type": "surface_detail",
+      "role": "rear_control_button",
+      "material": "Fuji_Button_Dark",
+      "intent": "rounded_box",
+      "shape": {
+        "primitive": "rounded_box",
+        "parameters": {
+          "origin": [
+            54,
+            20,
+            52
+          ],
+          "size": [
+            8,
+            3,
+            8
+          ],
+          "radius": 3,
+          "segments": 4,
+          "smooth": "all"
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "fuji-body-black-lower"
+        }
+      ],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "rear",
+          "status": "manual_confirmed",
+          "confidence": 0.58,
+          "note": "Rear view shows individual buttons on the right control column."
+        }
+      ],
+      "fallback_state": "structured_primitive",
+      "qa": {}
+    },
+    {
+      "id": "fuji-rear-play-button",
+      "name": "Fuji_Rear_Play_Button",
+      "type": "surface_detail",
+      "role": "rear_control_button",
+      "material": "Fuji_Button_Dark",
+      "intent": "rounded_box",
+      "shape": {
+        "primitive": "rounded_box",
+        "parameters": {
+          "origin": [
+            54,
+            20,
+            40
+          ],
+          "size": [
+            8,
+            3,
+            8
+          ],
+          "radius": 3,
+          "segments": 4,
+          "smooth": "all"
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "fuji-body-black-lower"
+        }
+      ],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "rear",
+          "status": "manual_confirmed",
+          "confidence": 0.58,
+          "note": "Rear view shows individual buttons on the right control column."
+        }
+      ],
+      "fallback_state": "structured_primitive",
+      "qa": {}
+    },
+    {
+      "id": "fuji-rear-back-button",
+      "name": "Fuji_Rear_Back_Button",
+      "type": "surface_detail",
+      "role": "rear_control_button",
+      "material": "Fuji_Button_Dark",
+      "intent": "rounded_box",
+      "shape": {
+        "primitive": "rounded_box",
+        "parameters": {
+          "origin": [
+            54,
+            20,
+            28
+          ],
+          "size": [
+            8,
+            3,
+            8
+          ],
+          "radius": 3,
+          "segments": 4,
+          "smooth": "all"
+        }
+      },
+      "relationships": [
+        {
+          "type": "mounted_on",
+          "target": "fuji-body-black-lower"
+        }
+      ],
+      "evidence_status": "manual_confirmed",
+      "evidence_sources": [
+        {
+          "kind": "manual_photo_interpretation",
+          "view": "rear",
+          "status": "manual_confirmed",
+          "confidence": 0.58,
+          "note": "Rear view shows individual buttons on the right control column."
+        }
+      ],
+      "fallback_state": "structured_primitive",
+      "qa": {}
+    }
+  ],
+  "operations": [
+    {
+      "op": "transform_object",
+      "pivot": "center",
+      "rotateX": 90,
+      "target_part_id": "fuji-front-fujifilm-text",
+      "part_id": "fuji-front-fujifilm-text"
+    },
+    {
+      "op": "transform_object",
+      "pivot": "center",
+      "rotateX": 90,
+      "target_part_id": "fuji-front-model-text",
+      "part_id": "fuji-front-model-text"
+    }
+  ],
+  "physical_relations": [
+    {
+      "id": "fuji-top-plate-supported-by-body",
+      "type": "supported_by",
+      "subject": "fuji-top-silver-plate",
+      "target": "fuji-body-black-lower",
+      "subject_face": "bottom",
+      "target_face": "top",
+      "overlap_axes": [
+        "x",
+        "y"
+      ],
+      "min_overlap_ratio": 0.8,
+      "tolerance_mm": 5,
+      "note": "The silver top plate should sit on the black body shell."
+    },
+    {
+      "id": "fuji-viewfinder-supported-by-top-plate",
+      "type": "supported_by",
+      "subject": "fuji-viewfinder-hump",
+      "target": "fuji-top-silver-plate",
+      "subject_face": "bottom",
+      "target_face": "top",
+      "overlap_axes": [
+        "x",
+        "y"
+      ],
+      "min_overlap_ratio": 0.7,
+      "tolerance_mm": 3
+    },
+    {
+      "id": "fuji-left-dial-supported-by-top-plate",
+      "type": "supported_by",
+      "subject": "fuji-left-top-dial",
+      "target": "fuji-top-silver-plate",
+      "subject_face": "bottom",
+      "target_face": "top",
+      "overlap_axes": [
+        "x",
+        "y"
+      ],
+      "min_overlap_ratio": 0.95,
+      "tolerance_mm": 1
+    },
+    {
+      "id": "fuji-right-dial-supported-by-top-plate",
+      "type": "supported_by",
+      "subject": "fuji-right-top-dial",
+      "target": "fuji-top-silver-plate",
+      "subject_face": "bottom",
+      "target_face": "top",
+      "overlap_axes": [
+        "x",
+        "y"
+      ],
+      "min_overlap_ratio": 0.95,
+      "tolerance_mm": 1
+    },
+    {
+      "id": "fuji-hotshoe-supported-by-top-plate",
+      "type": "supported_by",
+      "subject": "fuji-hotshoe",
+      "target": "fuji-top-silver-plate",
+      "subject_face": "bottom",
+      "target_face": "top",
+      "overlap_axes": [
+        "x",
+        "y"
+      ],
+      "min_overlap_ratio": 0.9,
+      "tolerance_mm": 2
+    },
+    {
+      "id": "fuji-rear-eyepiece-attached-to-top-plate-back",
+      "type": "attached_to",
+      "subject": "fuji-rear-eyepiece",
+      "target": "fuji-top-silver-plate",
+      "subject_face": "front",
+      "target_face": "back",
+      "overlap_axes": [
+        "x",
+        "z"
+      ],
+      "min_overlap_ratio": 0.7,
+      "tolerance_mm": 1
+    },
+    {
+      "id": "fuji-left-dial-index-mark-supported-by-left-dial",
+      "type": "supported_by",
+      "subject": "fuji-left-dial-index-mark",
+      "target": "fuji-left-top-dial",
+      "subject_face": "bottom",
+      "target_face": "top",
+      "overlap_axes": [
+        "x",
+        "y"
+      ],
+      "min_overlap_ratio": 0.8,
+      "tolerance_mm": 0.5
+    },
+    {
+      "id": "fuji-right-dial-index-mark-supported-by-right-dial",
+      "type": "supported_by",
+      "subject": "fuji-right-dial-index-mark",
+      "target": "fuji-right-top-dial",
+      "subject_face": "bottom",
+      "target_face": "top",
+      "overlap_axes": [
+        "x",
+        "y"
+      ],
+      "min_overlap_ratio": 0.8,
+      "tolerance_mm": 0.5
+    },
+    {
+      "id": "fuji-shutter-button-supported-by-top-plate",
+      "type": "supported_by",
+      "subject": "fuji-shutter-button",
+      "target": "fuji-top-silver-plate",
+      "subject_face": "bottom",
+      "target_face": "top",
+      "overlap_axes": [
+        "x",
+        "y"
+      ],
+      "min_overlap_ratio": 0.8,
+      "tolerance_mm": 1
+    },
+    {
+      "id": "fuji-front-grip-attached-to-body-front",
+      "type": "attached_to",
+      "subject": "fuji-front-grip",
+      "target": "fuji-body-black-lower",
+      "subject_face": "back",
+      "target_face": "front",
+      "overlap_axes": [
+        "x",
+        "z"
+      ],
+      "min_overlap_ratio": 0.7,
+      "tolerance_mm": 4
+    },
+    {
+      "id": "fuji-front-brand-plate-attached-to-top-plate-front",
+      "type": "attached_to",
+      "subject": "fuji-front-brand-plate",
+      "target": "fuji-top-silver-plate",
+      "subject_face": "back",
+      "target_face": "front",
+      "overlap_axes": [
+        "x",
+        "z"
+      ],
+      "min_overlap_ratio": 0.7,
+      "tolerance_mm": 1
+    },
+    {
+      "id": "fuji-lens-mount-attached-to-body-front",
+      "type": "attached_to",
+      "subject": "fuji-lens-mount-ring",
+      "target": "fuji-body-black-lower",
+      "subject_face": "back",
+      "target_face": "front",
+      "overlap_axes": [
+        "x",
+        "z"
+      ],
+      "min_overlap_ratio": 0.7,
+      "tolerance_mm": 1
+    },
+    {
+      "id": "fuji-lens-rear-barrel-attached-to-mount",
+      "type": "attached_to",
+      "subject": "fuji-lens-rear-barrel",
+      "target": "fuji-lens-mount-ring",
+      "subject_face": "back",
+      "target_face": "front",
+      "overlap_axes": [
+        "x",
+        "z"
+      ],
+      "min_overlap_ratio": 0.9,
+      "tolerance_mm": 1
+    },
+    {
+      "id": "fuji-lens-front-barrel-attached-to-rear-barrel",
+      "type": "attached_to",
+      "subject": "fuji-lens-front-barrel",
+      "target": "fuji-lens-rear-barrel",
+      "subject_face": "back",
+      "target_face": "front",
+      "overlap_axes": [
+        "x",
+        "z"
+      ],
+      "min_overlap_ratio": 0.9,
+      "tolerance_mm": 1
+    },
+    {
+      "id": "fuji-lens-zoom-ring-mounted-on-rear-barrel",
+      "type": "contacts",
+      "subject": "fuji-lens-zoom-ring-rear",
+      "target": "fuji-lens-rear-barrel",
+      "tolerance_mm": 0.5
+    },
+    {
+      "id": "fuji-lens-focus-ring-mounted-on-front-barrel",
+      "type": "contacts",
+      "subject": "fuji-lens-focus-ring-front",
+      "target": "fuji-lens-front-barrel",
+      "tolerance_mm": 0.5
+    },
+    {
+      "id": "fuji-lens-cap-attached-to-front-barrel",
+      "type": "attached_to",
+      "subject": "fuji-lens-front-cap",
+      "target": "fuji-lens-front-barrel",
+      "subject_face": "back",
+      "target_face": "front",
+      "overlap_axes": [
+        "x",
+        "z"
+      ],
+      "min_overlap_ratio": 0.9,
+      "tolerance_mm": 1
+    },
+    {
+      "id": "fuji-lens-glass-attached-to-front-cap",
+      "type": "attached_to",
+      "subject": "fuji-lens-inner-glass",
+      "target": "fuji-lens-front-cap",
+      "subject_face": "back",
+      "target_face": "front",
+      "overlap_axes": [
+        "x",
+        "z"
+      ],
+      "min_overlap_ratio": 0.8,
+      "tolerance_mm": 1
+    },
+    {
+      "id": "fuji-lens-cap-left-pinch-attached-to-front-cap",
+      "type": "attached_to",
+      "subject": "fuji-lens-cap-left-pinch",
+      "target": "fuji-lens-front-cap",
+      "subject_face": "back",
+      "target_face": "front",
+      "overlap_axes": [
+        "x",
+        "z"
+      ],
+      "min_overlap_ratio": 0.8,
+      "tolerance_mm": 0.5
+    },
+    {
+      "id": "fuji-lens-cap-right-pinch-attached-to-front-cap",
+      "type": "attached_to",
+      "subject": "fuji-lens-cap-right-pinch",
+      "target": "fuji-lens-front-cap",
+      "subject_face": "back",
+      "target_face": "front",
+      "overlap_axes": [
+        "x",
+        "z"
+      ],
+      "min_overlap_ratio": 0.8,
+      "tolerance_mm": 0.5
+    },
+    {
+      "id": "fuji-lens-cap-logo-bar-attached-to-front-cap",
+      "type": "attached_to",
+      "subject": "fuji-lens-cap-logo-bar",
+      "target": "fuji-lens-front-cap",
+      "subject_face": "back",
+      "target_face": "front",
+      "overlap_axes": [
+        "x",
+        "z"
+      ],
+      "min_overlap_ratio": 0.8,
+      "tolerance_mm": 0.5
+    },
+    {
+      "id": "fuji-left-strap-lug-attached-to-body-side",
+      "type": "attached_to",
+      "subject": "fuji-left-strap-lug",
+      "target": "fuji-body-black-lower",
+      "subject_face": "right",
+      "target_face": "left",
+      "overlap_axes": [
+        "y",
+        "z"
+      ],
+      "min_overlap_ratio": 0.8,
+      "tolerance_mm": 1
+    },
+    {
+      "id": "fuji-right-strap-lug-attached-to-body-side",
+      "type": "attached_to",
+      "subject": "fuji-right-strap-lug",
+      "target": "fuji-body-black-lower",
+      "subject_face": "left",
+      "target_face": "right",
+      "overlap_axes": [
+        "y",
+        "z"
+      ],
+      "min_overlap_ratio": 0.8,
+      "tolerance_mm": 1
+    },
+    {
+      "id": "fuji-red-strap-accent-attached-to-right-lug",
+      "type": "contacts",
+      "subject": "fuji-red-strap-accent",
+      "target": "fuji-right-strap-lug",
+      "tolerance_mm": 0.5
+    },
+    {
+      "id": "fuji-rear-screen-attached-to-body-back",
+      "type": "attached_to",
+      "subject": "fuji-rear-screen",
+      "target": "fuji-body-black-lower",
+      "subject_face": "front",
+      "target_face": "back",
+      "overlap_axes": [
+        "x",
+        "z"
+      ],
+      "min_overlap_ratio": 0.85,
+      "tolerance_mm": 1
+    },
+    {
+      "id": "fuji-rear-button-stack-attached-to-body-back",
+      "type": "attached_to",
+      "subject": "fuji-rear-button-stack",
+      "target": "fuji-body-black-lower",
+      "subject_face": "front",
+      "target_face": "back",
+      "overlap_axes": [
+        "x",
+        "z"
+      ],
+      "min_overlap_ratio": 0.55,
+      "tolerance_mm": 1
+    },
+    {
+      "id": "fuji-rear-command-dial-attached-to-body-back",
+      "type": "attached_to",
+      "subject": "fuji-rear-command-dial",
+      "target": "fuji-body-black-lower",
+      "subject_face": "front",
+      "target_face": "back",
+      "overlap_axes": [
+        "x",
+        "z"
+      ],
+      "min_overlap_ratio": 0.55,
+      "tolerance_mm": 1
+    },
+    {
+      "id": "fuji-rear-menu-button-attached-to-body-back",
+      "type": "attached_to",
+      "subject": "fuji-rear-menu-button",
+      "target": "fuji-body-black-lower",
+      "subject_face": "front",
+      "target_face": "back",
+      "overlap_axes": [
+        "x",
+        "z"
+      ],
+      "min_overlap_ratio": 0.8,
+      "tolerance_mm": 1
+    },
+    {
+      "id": "fuji-rear-play-button-attached-to-body-back",
+      "type": "attached_to",
+      "subject": "fuji-rear-play-button",
+      "target": "fuji-body-black-lower",
+      "subject_face": "front",
+      "target_face": "back",
+      "overlap_axes": [
+        "x",
+        "z"
+      ],
+      "min_overlap_ratio": 0.8,
+      "tolerance_mm": 1
+    },
+    {
+      "id": "fuji-rear-back-button-attached-to-body-back",
+      "type": "attached_to",
+      "subject": "fuji-rear-back-button",
+      "target": "fuji-body-black-lower",
+      "subject_face": "front",
+      "target_face": "back",
+      "overlap_axes": [
+        "x",
+        "z"
+      ],
+      "min_overlap_ratio": 0.8,
+      "tolerance_mm": 1
+    }
+  ],
+  "review": {
+    "fallback_summary": {
+      "real_feature_op": 3,
+      "structured_primitive": 15,
+      "box_approximation": 1,
+      "visual_helper": 2
+    },
+    "open_questions": [
+      "Confirm a physical dimension to replace the current normalized scale.",
+      "Decide whether the lens barrel should become tapered mesh/profile instead of stacked circular prisms.",
+      "Split rear button stack into individual controls once rear-view detail precision matters."
+    ],
+    "correction_targets": [
+      {
+        "part_id": "fuji-lens-front-barrel",
+        "path": "parts[fuji-lens-front-barrel].shape.parameters.points",
+        "reason": "Lens taper is approximate in the R5 camera sample.",
+        "severity": "warn"
+      },
+      {
+        "part_id": "fuji-top-silver-plate",
+        "path": "parts[fuji-top-silver-plate].feature_intents",
+        "reason": "Top dial seats and hot shoe slot are now feature-backed but dial markings remain omitted.",
+        "severity": "info"
+      },
+      {
+        "part_id": "fuji-rear-button-stack",
+        "path": "parts[fuji-rear-button-stack].shape.parameters",
+        "reason": "Rear controls are grouped and should be split when detail precision matters.",
+        "severity": "info"
+      }
+    ]
+  }
+}

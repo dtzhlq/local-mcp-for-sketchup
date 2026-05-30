@@ -33,7 +33,7 @@
     ],
     "open_questions": [
       "Windshield slope and cab-front curvature still come from manual approximation.",
-      "Reference Visual QA is not active yet, so part graph corrections remain manually authored."
+      "Reference Visual QA now checks normalized silhouette/keypoint/area rules, but the initial target values are still manually seeded from the current ambulance reference model."
     ]
   },
   "parts": [
@@ -48,14 +48,14 @@
         "primitive": "rounded_box",
         "parameters": {
           "origin": [
-            360,
+            470,
             0,
-            230
+            280
           ],
           "size": [
-            1900,
+            1770,
             820,
-            640
+            660
           ],
           "radius": 70,
           "segments": 8,
@@ -84,12 +84,12 @@
           "fallback_state": "real_feature_op",
           "parameters": {
             "center": [
-              930,
-              447
+              860,
+              470
             ],
             "size": [
-              540,
-              260
+              500,
+              210
             ],
             "depth": 10,
             "radius": 18,
@@ -113,12 +113,12 @@
           "fallback_state": "real_feature_op",
           "parameters": {
             "center": [
-              930,
-              447
+              860,
+              470
             ],
             "size": [
-              540,
-              260
+              500,
+              210
             ],
             "depth": 10,
             "radius": 18,
@@ -229,12 +229,12 @@
           "fallback_state": "real_feature_op",
           "parameters": {
             "center": [
-              950,
-              215
+              905,
+              250
             ],
             "size": [
-              1650,
-              38
+              1580,
+              30
             ],
             "depth": 3,
             "radius": 2,
@@ -258,7 +258,7 @@
           "fallback_state": "real_feature_op",
           "parameters": {
             "center": [
-              350,
+              330,
               405
             ],
             "radius": 132,
@@ -368,12 +368,12 @@
           "origin": [
             60,
             60,
-            220
+            340
           ],
           "size": [
             560,
             700,
-            300
+            380
           ],
           "radius": 78,
           "segments": 8,
@@ -489,42 +489,42 @@
             [
               190,
               70,
-              500
+              620
             ],
             [
-              650,
+              680,
               70,
-              500
+              625
             ],
             [
-              720,
+              760,
               70,
-              820
+              940
             ],
             [
-              320,
+              330,
               70,
-              870
+              990
             ],
             [
               190,
               750,
-              500
+              620
             ],
             [
-              650,
+              680,
               750,
-              500
+              625
             ],
             [
-              720,
+              760,
               750,
-              820
+              940
             ],
             [
-              320,
+              330,
               750,
-              870
+              990
             ]
           ],
           "faces": [
@@ -594,44 +594,44 @@
         "parameters": {
           "vertices": [
             [
-              210,
+              260,
               58,
-              535
+              650
             ],
             [
-              605,
+              610,
               58,
-              548
+              660
             ],
             [
-              675,
+              680,
               58,
-              790
+              930
             ],
             [
-              305,
+              340,
               58,
-              838
+              965
             ],
             [
-              210,
+              260,
               44,
-              535
+              650
             ],
             [
-              605,
+              610,
               44,
-              548
+              660
             ],
             [
-              675,
+              680,
               44,
-              790
+              930
             ],
             [
-              305,
+              340,
               44,
-              838
+              965
             ]
           ],
           "faces": [
@@ -700,14 +700,14 @@
         "primitive": "box",
         "parameters": {
           "origin": [
-            610,
+            620,
             -26,
-            540
+            660
           ],
           "size": [
-            360,
+            300,
             26,
-            235
+            200
           ]
         }
       },
@@ -741,14 +741,14 @@
         "primitive": "box",
         "parameters": {
           "origin": [
-            1030,
+            960,
             -28,
-            552
+            650
           ],
           "size": [
-            520,
+            500,
             28,
-            250
+            200
           ]
         }
       },
@@ -782,14 +782,14 @@
         "primitive": "box",
         "parameters": {
           "origin": [
-            610,
+            620,
             820,
-            540
+            660
           ],
           "size": [
-            360,
+            300,
             26,
-            235
+            200
           ]
         }
       },
@@ -823,14 +823,14 @@
         "primitive": "box",
         "parameters": {
           "origin": [
-            1030,
+            960,
             820,
-            552
+            650
           ],
           "size": [
-            520,
+            500,
             28,
-            250
+            200
           ]
         }
       },
@@ -864,14 +864,14 @@
         "primitive": "box",
         "parameters": {
           "origin": [
-            2248,
+            2220,
             210,
-            530
+            620
           ],
           "size": [
             28,
             410,
-            230
+            220
           ]
         }
       },
@@ -905,14 +905,14 @@
         "primitive": "box",
         "parameters": {
           "origin": [
-            215,
+            300,
             -34,
-            430
+            520
           ],
           "size": [
-            2050,
+            1780,
             24,
-            34
+            28
           ]
         }
       },
@@ -946,14 +946,14 @@
         "primitive": "box",
         "parameters": {
           "origin": [
-            215,
+            300,
             830,
-            430
+            520
           ],
           "size": [
-            2050,
+            1780,
             24,
-            34
+            28
           ]
         }
       },
@@ -989,12 +989,12 @@
           "origin": [
             54,
             120,
-            430
+            520
           ],
           "size": [
             24,
             580,
-            34
+            28
           ]
         }
       },
@@ -1028,14 +1028,14 @@
         "primitive": "box",
         "parameters": {
           "origin": [
-            2256,
+            2248,
             120,
-            420
+            510
           ],
           "size": [
             24,
             580,
-            34
+            28
           ]
         }
       },
@@ -1069,12 +1069,12 @@
         "primitive": "box",
         "parameters": {
           "origin": [
-            360,
+            470,
             -30,
-            220
+            260
           ],
           "size": [
-            1740,
+            1600,
             28,
             58
           ]
@@ -1554,7 +1554,7 @@
           "origin": [
             620,
             155,
-            872
+            960
           ],
           "length": 1440,
           "height": 22,
@@ -1594,9 +1594,9 @@
           "origin": [
             620,
             405,
-            875
+            960
           ],
-          "length": 1440,
+          "length": 450,
           "height": 22,
           "thickness": 20,
           "direction": "x"
@@ -1634,7 +1634,7 @@
           "origin": [
             620,
             655,
-            872
+            960
           ],
           "length": 1440,
           "height": 22,
@@ -1672,14 +1672,14 @@
         "primitive": "rounded_box",
         "parameters": {
           "origin": [
-            520,
+            620,
             255,
-            910
+            1010
           ],
           "size": [
-            380,
-            300,
-            72
+            340,
+            280,
+            70
           ],
           "radius": 34,
           "segments": 6,
@@ -1718,12 +1718,12 @@
           "origin": [
             1120,
             300,
-            898
+            960
           ],
           "size": [
             360,
             220,
-            120
+            110
           ],
           "radius": 45,
           "segments": 6,
@@ -1762,7 +1762,7 @@
           "origin": [
             1580,
             250,
-            902
+            960
           ],
           "size": [
             420,
@@ -1803,7 +1803,7 @@
           "origin": [
             1685,
             465,
-            916
+            958
           ],
           "size": [
             210,
@@ -2466,7 +2466,7 @@
           "size": [
             16,
             14,
-            550
+            500
           ]
         }
       },
@@ -2814,9 +2814,9 @@
           "center": [
             1570,
             -62,
-            748
+            800
           ],
-          "height": 116,
+          "height": 70,
           "extrusion": 8,
           "font": "Arial",
           "align": "center",
@@ -2890,7 +2890,7 @@
           "center": [
             1395,
             410,
-            1028
+            1072
           ],
           "height": 260,
           "extrusion": 8,
@@ -3009,6 +3009,314 @@
       "op": "assign_tag",
       "target_id": "ambulance-side-reference",
       "tag": "Acceptance_Ambulance_References"
+    }
+  ],
+  "physical_relations": [
+    {
+      "id": "amb-left-driver-window-attached-to-body-side",
+      "type": "attached_to",
+      "subject": "amb-left-driver-window",
+      "target": "amb-main-body",
+      "subject_face": "back",
+      "target_face": "front",
+      "overlap_axes": [
+        "x",
+        "z"
+      ],
+      "min_overlap_ratio": 0.9,
+      "tolerance_mm": 1
+    },
+    {
+      "id": "amb-left-side-window-attached-to-body-side",
+      "type": "attached_to",
+      "subject": "amb-left-side-window",
+      "target": "amb-main-body",
+      "subject_face": "back",
+      "target_face": "front",
+      "overlap_axes": [
+        "x",
+        "z"
+      ],
+      "min_overlap_ratio": 0.9,
+      "tolerance_mm": 1
+    },
+    {
+      "id": "amb-right-driver-window-attached-to-body-side",
+      "type": "attached_to",
+      "subject": "amb-right-driver-window",
+      "target": "amb-main-body",
+      "subject_face": "front",
+      "target_face": "back",
+      "overlap_axes": [
+        "x",
+        "z"
+      ],
+      "min_overlap_ratio": 0.9,
+      "tolerance_mm": 1
+    },
+    {
+      "id": "amb-right-side-window-attached-to-body-side",
+      "type": "attached_to",
+      "subject": "amb-right-side-window",
+      "target": "amb-main-body",
+      "subject_face": "front",
+      "target_face": "back",
+      "overlap_axes": [
+        "x",
+        "z"
+      ],
+      "min_overlap_ratio": 0.9,
+      "tolerance_mm": 1
+    },
+    {
+      "id": "amb-left-red-stripe-attached-to-body-side",
+      "type": "attached_to",
+      "subject": "amb-left-red-stripe",
+      "target": "amb-main-body",
+      "subject_face": "back",
+      "target_face": "front",
+      "overlap_axes": [
+        "x",
+        "z"
+      ],
+      "min_overlap_ratio": 0.9,
+      "tolerance_mm": 12
+    },
+    {
+      "id": "amb-right-red-stripe-attached-to-body-side",
+      "type": "attached_to",
+      "subject": "amb-right-red-stripe",
+      "target": "amb-main-body",
+      "subject_face": "front",
+      "target_face": "back",
+      "overlap_axes": [
+        "x",
+        "z"
+      ],
+      "min_overlap_ratio": 0.9,
+      "tolerance_mm": 12
+    },
+    {
+      "id": "amb-rear-window-attached-to-body-rear",
+      "type": "attached_to",
+      "subject": "amb-rear-window",
+      "target": "amb-main-body",
+      "subject_face": "left",
+      "target_face": "right",
+      "overlap_axes": [
+        "y",
+        "z"
+      ],
+      "min_overlap_ratio": 0.8,
+      "tolerance_mm": 28
+    },
+    {
+      "id": "amb-front-grille-attached-to-cab-front",
+      "type": "attached_to",
+      "subject": "amb-front-grille",
+      "target": "amb-cab-lower",
+      "subject_face": "right",
+      "target_face": "left",
+      "overlap_axes": [
+        "y",
+        "z"
+      ],
+      "min_overlap_ratio": 0.8,
+      "tolerance_mm": 5
+    },
+    {
+      "id": "amb-left-headlight-attached-to-cab-front",
+      "type": "attached_to",
+      "subject": "amb-left-headlight",
+      "target": "amb-cab-lower",
+      "subject_face": "right",
+      "target_face": "left",
+      "overlap_axes": [
+        "y",
+        "z"
+      ],
+      "min_overlap_ratio": 0.8,
+      "tolerance_mm": 5
+    },
+    {
+      "id": "amb-right-headlight-attached-to-cab-front",
+      "type": "attached_to",
+      "subject": "amb-right-headlight",
+      "target": "amb-cab-lower",
+      "subject_face": "right",
+      "target_face": "left",
+      "overlap_axes": [
+        "y"
+      ],
+      "min_overlap_ratio": 0.8,
+      "tolerance_mm": 5
+    },
+    {
+      "id": "amb-rear-bumper-attached-to-body-rear",
+      "type": "attached_to",
+      "subject": "amb-rear-bumper",
+      "target": "amb-main-body",
+      "subject_face": "left",
+      "target_face": "right",
+      "overlap_axes": [
+        "y"
+      ],
+      "min_overlap_ratio": 0.8,
+      "tolerance_mm": 30
+    },
+    {
+      "id": "amb-lightbar-supported-by-roof",
+      "type": "supported_by",
+      "subject": "roof-red-lightbar",
+      "target": "amb-main-body",
+      "subject_face": "bottom",
+      "target_face": "top",
+      "overlap_axes": [
+        "x",
+        "y"
+      ],
+      "min_overlap_ratio": 0.9,
+      "tolerance_mm": 75
+    },
+    {
+      "id": "amb-roof-equipment-supported-by-roof",
+      "type": "supported_by",
+      "subject": "roof-white-equipment",
+      "target": "amb-main-body",
+      "subject_face": "bottom",
+      "target_face": "top",
+      "overlap_axes": [
+        "x",
+        "y"
+      ],
+      "min_overlap_ratio": 0.9,
+      "tolerance_mm": 25
+    },
+    {
+      "id": "amb-roof-service-panel-supported-by-roof",
+      "type": "supported_by",
+      "subject": "roof-service-panel-blank",
+      "target": "amb-main-body",
+      "subject_face": "bottom",
+      "target_face": "top",
+      "overlap_axes": [
+        "x",
+        "y"
+      ],
+      "min_overlap_ratio": 0.9,
+      "tolerance_mm": 25
+    },
+    {
+      "id": "amb-left-front-wheel-attached-to-body-side",
+      "type": "attached_to",
+      "subject": "wheel-left-front-tire",
+      "target": "amb-main-body",
+      "subject_face": "back",
+      "target_face": "front",
+      "overlap_axes": [
+        "x",
+        "z"
+      ],
+      "min_overlap_ratio": 0.25,
+      "tolerance_mm": 25
+    },
+    {
+      "id": "amb-left-rear-wheel-attached-to-body-side",
+      "type": "attached_to",
+      "subject": "wheel-left-rear-tire",
+      "target": "amb-main-body",
+      "subject_face": "back",
+      "target_face": "front",
+      "overlap_axes": [
+        "x",
+        "z"
+      ],
+      "min_overlap_ratio": 0.25,
+      "tolerance_mm": 25
+    },
+    {
+      "id": "amb-right-front-wheel-attached-to-body-side",
+      "type": "attached_to",
+      "subject": "wheel-right-front-tire",
+      "target": "amb-main-body",
+      "subject_face": "front",
+      "target_face": "back",
+      "overlap_axes": [
+        "x",
+        "z"
+      ],
+      "min_overlap_ratio": 0.25,
+      "tolerance_mm": 12
+    },
+    {
+      "id": "amb-right-rear-wheel-attached-to-body-side",
+      "type": "attached_to",
+      "subject": "wheel-right-rear-tire",
+      "target": "amb-main-body",
+      "subject_face": "front",
+      "target_face": "back",
+      "overlap_axes": [
+        "x",
+        "z"
+      ],
+      "min_overlap_ratio": 0.25,
+      "tolerance_mm": 12
+    },
+    {
+      "id": "amb-left-front-hub-contact-tire",
+      "type": "contacts",
+      "subject": "wheel-left-front-hub",
+      "target": "wheel-left-front-tire",
+      "tolerance_mm": 1
+    },
+    {
+      "id": "amb-left-rear-hub-contact-tire",
+      "type": "contacts",
+      "subject": "wheel-left-rear-hub",
+      "target": "wheel-left-rear-tire",
+      "tolerance_mm": 1
+    },
+    {
+      "id": "amb-right-front-hub-contact-tire",
+      "type": "contacts",
+      "subject": "wheel-right-front-hub",
+      "target": "wheel-right-front-tire",
+      "tolerance_mm": 1
+    },
+    {
+      "id": "amb-right-rear-hub-contact-tire",
+      "type": "contacts",
+      "subject": "wheel-right-rear-hub",
+      "target": "wheel-right-rear-tire",
+      "tolerance_mm": 1
+    },
+    {
+      "id": "amb-left-front-wheel-grounded",
+      "type": "grounded",
+      "subject": "wheel-left-front-tire",
+      "ground_z": 75,
+      "tolerance_mm": 1
+    },
+    {
+      "id": "amb-left-rear-wheel-grounded",
+      "type": "grounded",
+      "subject": "wheel-left-rear-tire",
+      "ground_z": 75,
+      "tolerance_mm": 1
+    },
+    {
+      "id": "amb-right-front-wheel-grounded",
+      "type": "grounded",
+      "subject": "wheel-right-front-tire",
+      "ground_z": 75,
+      "tolerance_mm": 1
+    },
+    {
+      "id": "amb-right-rear-wheel-grounded",
+      "type": "grounded",
+      "subject": "wheel-right-rear-tire",
+      "ground_z": 75,
+      "tolerance_mm": 1
     }
   ],
   "review": {

@@ -4,6 +4,7 @@ import { compileExpertScript } from './expert-compiler.mjs';
 import { MockRuntime } from './mock-runtime.mjs';
 import { QueueRuntime } from './queue-runtime.mjs';
 import { validateModelSnapshot } from './model-qa.mjs';
+import { validateReferenceVisualSnapshot } from './reference-visual-qa.mjs';
 import { compareSnapshots } from './snapshot-diff.mjs';
 
 export class SketchUpBridge {
@@ -129,6 +130,21 @@ export class SketchUpBridge {
       strictCollisions,
       strictUnanchored,
       floatingDetails
+    });
+  }
+
+  async validate_reference_model({
+    code,
+    snapshot,
+    runtime = 'mock',
+    timeoutMs,
+    spec,
+    includePreview = true
+  } = {}) {
+    const builtSnapshot = snapshot || (await this.build_model({ code, runtime, timeoutMs })).snapshot;
+    return validateReferenceVisualSnapshot(builtSnapshot, {
+      spec,
+      includePreview
     });
   }
 

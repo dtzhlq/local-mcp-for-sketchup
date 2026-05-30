@@ -1,0 +1,337 @@
+{
+  "version": 1,
+  "profile_id": "game_controller_switch",
+  "product_type": "game_controller",
+  "name": "Switch Joy-Con Grip Controller Product Profile",
+  "description": "R5 product profile for the Switch controller sample. It moves the previous direct DSL acceptance model behind ProductProfile and PartGraph artifacts so layout QA, Reference Visual QA, and fallback ratios can be compared with the ambulance sample.",
+  "dsl_version": 1,
+  "units": "mm",
+  "default_scale": {
+    "width": 328,
+    "depth": 176,
+    "height": 52
+  },
+  "expected_views": [
+    "front",
+    "rear",
+    "left",
+    "right",
+    "top",
+    "oblique"
+  ],
+  "required_parts": [
+    {
+      "id": "center_grip",
+      "role": "center_grip",
+      "required": true,
+      "expected_count": 1,
+      "evidence_required": [
+        "front",
+        "rear"
+      ],
+      "fallback_allowed": [
+        "box_approximation",
+        "visual_helper"
+      ]
+    },
+    {
+      "id": "joycon_shells",
+      "role": "joycon_shell",
+      "required": true,
+      "expected_count": 2,
+      "evidence_required": [
+        "front"
+      ],
+      "fallback_allowed": [
+        "box_approximation"
+      ]
+    },
+    {
+      "id": "rear_grips",
+      "role": "rear_grip",
+      "required": true,
+      "expected_count": 2,
+      "evidence_required": [
+        "rear",
+        "top"
+      ],
+      "fallback_allowed": [
+        "box_approximation",
+        "visual_helper"
+      ]
+    },
+    {
+      "id": "thumbsticks",
+      "role": "thumbstick",
+      "required": true,
+      "expected_count": 2,
+      "evidence_required": [
+        "front"
+      ],
+      "fallback_allowed": [
+        "visual_helper"
+      ]
+    },
+    {
+      "id": "abxy_buttons",
+      "role": "face_button",
+      "required": true,
+      "expected_count": 4,
+      "evidence_required": [
+        "front"
+      ],
+      "fallback_allowed": [
+        "visual_helper"
+      ]
+    },
+    {
+      "id": "dpad_buttons",
+      "role": "dpad_button",
+      "required": true,
+      "expected_count": 4,
+      "evidence_required": [
+        "front"
+      ],
+      "fallback_allowed": [
+        "visual_helper"
+      ]
+    },
+    {
+      "id": "shoulder_buttons",
+      "role": "shoulder_button",
+      "required": true,
+      "expected_count": 4,
+      "evidence_required": [
+        "top",
+        "rear"
+      ],
+      "fallback_allowed": [
+        "visual_helper"
+      ]
+    },
+    {
+      "id": "screws",
+      "role": "screw",
+      "required": true,
+      "expected_count": 4,
+      "evidence_required": [
+        "front"
+      ],
+      "fallback_allowed": [
+        "real_feature_op",
+        "visual_helper"
+      ]
+    },
+    {
+      "id": "labels_and_logo",
+      "role": "label",
+      "required": true,
+      "expected_count": 1,
+      "evidence_required": [
+        "front"
+      ],
+      "fallback_allowed": [
+        "visual_helper"
+      ]
+    },
+    {
+      "id": "status_leds",
+      "role": "status_led",
+      "required": true,
+      "expected_count": 8,
+      "evidence_required": [
+        "front"
+      ],
+      "fallback_allowed": [
+        "visual_helper"
+      ]
+    }
+  ],
+  "allowed_primitives": [
+    "rounded_box",
+    "box",
+    "cylinder",
+    "text_3d",
+    "image_plane"
+  ],
+  "materials": [
+    {
+      "name": "Warm_White_Plastic",
+      "color": "#e8ece8"
+    },
+    {
+      "name": "Satin_Black_Plastic",
+      "color": "#111214"
+    },
+    {
+      "name": "Gloss_Black_Button",
+      "color": "#050506"
+    },
+    {
+      "name": "Rubber_Thumbstick",
+      "color": "#171819"
+    },
+    {
+      "name": "Dark_Detail",
+      "color": "#27292c"
+    },
+    {
+      "name": "Label_White",
+      "color": "#f1f1f1"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Acceptance_Switch_Body",
+      "color": "#e8ece8"
+    },
+    {
+      "name": "Acceptance_Switch_Controls",
+      "color": "#111214"
+    },
+    {
+      "name": "Acceptance_Switch_Details",
+      "color": "#f1f1f1"
+    }
+  ],
+  "qa_rules": {
+    "layout_spec": "examples/model-qa/switch-controller-demo.json",
+    "reference_visual_qa": "examples/reference-visual-qa/switch-controller-reference.json"
+  },
+  "review": {
+    "scenes": [
+      {
+        "name": "Controller_Front_Reference_View",
+        "camera": {
+          "eye": [
+            0,
+            -420,
+            170
+          ],
+          "target": [
+            0,
+            0,
+            14
+          ],
+          "up": [
+            0,
+            0,
+            1
+          ],
+          "fov": 32
+        }
+      },
+      {
+        "name": "Controller_Top_Detail_View",
+        "camera": {
+          "eye": [
+            0,
+            0,
+            470
+          ],
+          "target": [
+            0,
+            0,
+            8
+          ],
+          "up": [
+            0,
+            1,
+            0
+          ],
+          "fov": 32
+        }
+      },
+      {
+        "name": "Controller_Back_Grip_View",
+        "camera": {
+          "eye": [
+            0,
+            330,
+            140
+          ],
+          "target": [
+            0,
+            0,
+            0
+          ],
+          "up": [
+            0,
+            0,
+            1
+          ],
+          "fov": 35
+        }
+      },
+      {
+        "name": "Controller_Right_Side_Profile",
+        "camera": {
+          "eye": [
+            430,
+            0,
+            90
+          ],
+          "target": [
+            70,
+            0,
+            8
+          ],
+          "up": [
+            0,
+            0,
+            1
+          ],
+          "fov": 30
+        }
+      },
+      {
+        "name": "Controller_Three_Quarter_Hero",
+        "camera": {
+          "eye": [
+            320,
+            -360,
+            190
+          ],
+          "target": [
+            0,
+            0,
+            12
+          ],
+          "up": [
+            0,
+            0,
+            1
+          ],
+          "fov": 35
+        }
+      }
+    ],
+    "style": {
+      "name": "Controller_Product_Model_Check",
+      "display_edges": true,
+      "profiles": true,
+      "profile_width": 1,
+      "face_style": "shaded_with_textures",
+      "background_color": "#f7f4ed",
+      "sky_color": "#cfe8ff",
+      "ground_color": "#d8d0bf"
+    },
+    "shadow": {
+      "display": true,
+      "time": "2026-05-11T14:35:00+08:00",
+      "light": 76,
+      "dark": 34,
+      "use_sun_for_shading": true
+    },
+    "rendering_options": {
+      "edge_display_mode": 1,
+      "draw_hidden_geometry": false,
+      "display_color_by_layer": false,
+      "transparency": false
+    }
+  },
+  "compiler": {
+    "name": "compile-part-graph-to-sketchup-dsl",
+    "version": "r5-switch-sample"
+  }
+}

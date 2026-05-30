@@ -1,0 +1,336 @@
+{
+  "version": 1,
+  "title": "Switch Controller Reference Visual QA",
+  "description": "R5 reference-facing visual QA for the Switch controller sample. Coordinates are normalized inside each orthographic view frame and correction targets point back to ProductProfile/PartGraph fields, not generated DSL coordinates.",
+  "rules": {
+    "views": [
+      {
+        "name": "top",
+        "title": "Top Reference Match",
+        "axes": ["x", "y"],
+        "depth_axis": "z",
+        "frame": {
+          "items": [
+            "left-back-grip-lobe",
+            "right-back-grip-lobe",
+            "back-lower-bridge",
+            "center-black-switch-grip",
+            "left-warm-white-joy-con-shell",
+            "right-warm-white-joy-con-shell",
+            "center-front-flat-panel"
+          ]
+        }
+      },
+      {
+        "name": "front",
+        "title": "Front Thickness Match",
+        "axes": ["x", "z"],
+        "depth_axis": "y",
+        "frame": {
+          "items": [
+            "left-back-grip-lobe",
+            "right-back-grip-lobe",
+            "back-lower-bridge",
+            "center-black-switch-grip",
+            "left-warm-white-joy-con-shell",
+            "right-warm-white-joy-con-shell",
+            "center-front-flat-panel"
+          ]
+        }
+      }
+    ],
+    "silhouettes": [
+      {
+        "id": "switch-top-overall-silhouette-aspect",
+        "view": "top",
+        "items": [
+          "left-back-grip-lobe",
+          "right-back-grip-lobe",
+          "back-lower-bridge",
+          "center-black-switch-grip",
+          "left-warm-white-joy-con-shell",
+          "right-warm-white-joy-con-shell",
+          "center-front-flat-panel"
+        ],
+        "aspect_ratio": 1.929,
+        "tolerance": 0.04,
+        "correction_target": {
+          "part_id": "center-black-switch-grip",
+          "path": "parts[center-black-switch-grip].shape.parameters.size"
+        }
+      },
+      {
+        "id": "switch-front-thickness-aspect",
+        "view": "front",
+        "items": [
+          "left-back-grip-lobe",
+          "right-back-grip-lobe",
+          "center-black-switch-grip",
+          "left-warm-white-joy-con-shell",
+          "right-warm-white-joy-con-shell",
+          "center-front-flat-panel"
+        ],
+        "aspect_ratio": 8.865,
+        "tolerance": 0.6,
+        "correction_target": {
+          "part_id": "center-black-switch-grip",
+          "path": "parts[center-black-switch-grip].shape.parameters.size"
+        }
+      }
+    ],
+    "keypoints": [
+      {
+        "id": "left-shell-center",
+        "view": "top",
+        "item": "left-warm-white-joy-con-shell",
+        "point": "center",
+        "expected": [0.18, 0.518],
+        "tolerance": 0.035,
+        "correction_target": {
+          "part_id": "left-warm-white-joy-con-shell",
+          "path": "parts[left-warm-white-joy-con-shell].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "right-shell-center",
+        "view": "top",
+        "item": "right-warm-white-joy-con-shell",
+        "point": "center",
+        "expected": [0.82, 0.518],
+        "tolerance": 0.035,
+        "correction_target": {
+          "part_id": "right-warm-white-joy-con-shell",
+          "path": "parts[right-warm-white-joy-con-shell].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "left-thumbstick-center",
+        "view": "top",
+        "item": "left-analog-stick-top-pad",
+        "point": "center",
+        "expected": [0.162, 0.665],
+        "tolerance": 0.04,
+        "correction_target": {
+          "part_id": "left-analog-stick-top-pad",
+          "path": "parts[left-analog-stick-top-pad].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "right-thumbstick-center",
+        "view": "top",
+        "item": "right-analog-stick-top-pad",
+        "point": "center",
+        "expected": [0.838, 0.294],
+        "tolerance": 0.04,
+        "correction_target": {
+          "part_id": "right-analog-stick-top-pad",
+          "path": "parts[right-analog-stick-top-pad].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "button-x-center",
+        "view": "top",
+        "item": "button-x-button",
+        "point": "center",
+        "expected": [0.838, 0.741],
+        "tolerance": 0.04,
+        "correction_target": {
+          "part_id": "button-x-button",
+          "path": "parts[button-x-button].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "dpad-up-center",
+        "view": "top",
+        "item": "dpad-up-button",
+        "point": "center",
+        "expected": [0.162, 0.435],
+        "tolerance": 0.04,
+        "correction_target": {
+          "part_id": "dpad-up-button",
+          "path": "parts[dpad-up-button].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "switch-logo-left-capsule-center",
+        "view": "top",
+        "item": "switch-logo-left-capsule",
+        "point": "center",
+        "expected": [0.463, 0.565],
+        "tolerance": 0.04,
+        "correction_target": {
+          "part_id": "switch-logo-left-capsule",
+          "path": "parts[switch-logo-left-capsule].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "left-shoulder-center",
+        "view": "top",
+        "item": "left-shoulder-button",
+        "point": "center",
+        "expected": [0.183, 0.938],
+        "tolerance": 0.035,
+        "correction_target": {
+          "part_id": "left-shoulder-button",
+          "path": "parts[left-shoulder-button].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "right-shoulder-center",
+        "view": "top",
+        "item": "right-shoulder-button",
+        "point": "center",
+        "expected": [0.817, 0.938],
+        "tolerance": 0.035,
+        "correction_target": {
+          "part_id": "right-shoulder-button",
+          "path": "parts[right-shoulder-button].shape.parameters.origin"
+        }
+      }
+    ],
+    "extent_ratios": [
+      {
+        "id": "center-grip-top-extent",
+        "view": "top",
+        "item": "center-black-switch-grip",
+        "expected": [0.451, 0.894],
+        "tolerance": [0.035, 0.035],
+        "correction_target": {
+          "part_id": "center-black-switch-grip",
+          "path": "parts[center-black-switch-grip].shape.parameters.size"
+        }
+      },
+      {
+        "id": "joycon-shell-top-extent",
+        "view": "top",
+        "items": ["left-warm-white-joy-con-shell", "right-warm-white-joy-con-shell"],
+        "expected": [0.829, 0.847],
+        "tolerance": [0.045, 0.04],
+        "correction_target": {
+          "part_id": "left-warm-white-joy-con-shell",
+          "path": "parts[left-warm-white-joy-con-shell].shape.parameters.size"
+        }
+      },
+      {
+        "id": "thumbstick-pad-extent",
+        "view": "top",
+        "item": "left-analog-stick-top-pad",
+        "expected": [0.088, 0.171],
+        "tolerance": [0.02, 0.025],
+        "correction_target": {
+          "part_id": "left-analog-stick-top-pad",
+          "path": "parts[left-analog-stick-top-pad].shape.parameters.radius"
+        }
+      },
+      {
+        "id": "abxy-cluster-extent",
+        "view": "top",
+        "items": ["button-x-button", "button-y-button", "button-a-button", "button-b-button"],
+        "expected": [0.14, 0.288],
+        "tolerance": [0.025, 0.035],
+        "correction_target": {
+          "part_id": "button-x-button",
+          "path": "parts[button-x-button].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "dpad-cluster-extent",
+        "view": "top",
+        "items": ["dpad-up-button", "dpad-left-button", "dpad-right-button", "dpad-down-button"],
+        "expected": [0.125, 0.324],
+        "tolerance": [0.025, 0.035],
+        "correction_target": {
+          "part_id": "dpad-up-button",
+          "path": "parts[dpad-up-button].shape.parameters.origin"
+        }
+      }
+    ],
+    "area_ratios": [
+      {
+        "id": "center-grip-area-share",
+        "view": "top",
+        "item": "center-black-switch-grip",
+        "expected": 0.403,
+        "tolerance": 0.04,
+        "correction_target": {
+          "part_id": "center-black-switch-grip",
+          "path": "parts[center-black-switch-grip].shape.parameters.size"
+        }
+      },
+      {
+        "id": "left-shell-area-share",
+        "view": "top",
+        "item": "left-warm-white-joy-con-shell",
+        "expected": 0.16,
+        "tolerance": 0.025,
+        "correction_target": {
+          "part_id": "left-warm-white-joy-con-shell",
+          "path": "parts[left-warm-white-joy-con-shell].shape.parameters.size"
+        }
+      },
+      {
+        "id": "button-x-area-share",
+        "view": "top",
+        "item": "button-x-button",
+        "expected": 0.004,
+        "tolerance": 0.002,
+        "correction_target": {
+          "part_id": "button-x-button",
+          "path": "parts[button-x-button].shape.parameters.radius"
+        }
+      }
+    ],
+    "relative_positions": [
+      {
+        "id": "thumbstick-diagonal-spacing",
+        "view": "top",
+        "item": "right-analog-stick-top-pad",
+        "anchor": "left-analog-stick-top-pad",
+        "expected": [0.676, -0.371],
+        "tolerance": 0.05,
+        "correction_target": {
+          "part_id": "right-analog-stick-top-pad",
+          "path": "parts[right-analog-stick-top-pad].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "face-controls-cross-balance",
+        "view": "top",
+        "item": "button-x-button",
+        "anchor": "dpad-up-button",
+        "expected": [0.676, 0.306],
+        "tolerance": 0.055,
+        "correction_target": {
+          "part_id": "button-x-button",
+          "path": "parts[button-x-button].shape.parameters.origin"
+        }
+      }
+    ],
+    "orientation": [
+      {
+        "id": "right-thumbstick-right-of-left-thumbstick",
+        "view": "top",
+        "item": "right-analog-stick-top-pad",
+        "anchor": "left-analog-stick-top-pad",
+        "direction": "right_of",
+        "min_delta": 0.25,
+        "correction_target": {
+          "part_id": "right-analog-stick-top-pad",
+          "path": "parts[right-analog-stick-top-pad].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "face-buttons-right-of-dpad",
+        "view": "top",
+        "item": "button-x-button",
+        "anchor": "dpad-up-button",
+        "direction": "right_of",
+        "min_delta": 0.25,
+        "correction_target": {
+          "part_id": "button-x-button",
+          "path": "parts[button-x-button].shape.parameters.origin"
+        }
+      }
+    ]
+  }
+}

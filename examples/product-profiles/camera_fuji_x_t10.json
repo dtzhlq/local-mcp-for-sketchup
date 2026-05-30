@@ -1,0 +1,112 @@
+{
+  "version": 1,
+  "profile_id": "camera_fuji_x_t10",
+  "product_type": "mirrorless_camera",
+  "name": "Fuji Mirrorless Camera Product Profile",
+  "description": "R5 third product sample profile for the Fujifilm-style mirrorless camera photo set. This profile is intentionally stricter than a scene sample but keeps first-pass camera details reviewable instead of claiming photo-level reconstruction.",
+  "dsl_version": 1,
+  "units": "mm",
+  "default_scale": {
+    "width": 145,
+    "depth": 112,
+    "height": 106
+  },
+  "expected_views": ["front", "rear", "left", "right", "top", "oblique"],
+  "required_parts": [
+    { "id": "body", "role": "camera_body", "required": true, "expected_count": 1, "evidence_required": ["front", "rear", "top"], "fallback_allowed": ["real_feature_op", "box_approximation"] },
+    { "id": "lens", "role": "lens_assembly", "required": true, "expected_count": 1, "evidence_required": ["front", "top", "side"], "fallback_allowed": ["structured_primitive", "box_approximation", "visual_helper"] },
+    { "id": "viewfinder", "role": "viewfinder_hump", "required": true, "expected_count": 1, "evidence_required": ["front", "top"], "fallback_allowed": ["real_feature_op", "box_approximation"] },
+    { "id": "rear_screen", "role": "rear_screen", "required": true, "expected_count": 1, "evidence_required": ["rear"], "fallback_allowed": ["structured_primitive", "visual_helper"] },
+    { "id": "top_controls", "role": "top_control", "required": true, "expected_count": 4, "evidence_required": ["top", "front"], "fallback_allowed": ["structured_primitive", "visual_helper"] },
+    { "id": "grip", "role": "front_grip", "required": true, "expected_count": 1, "evidence_required": ["front", "right"], "fallback_allowed": ["box_approximation"] },
+    { "id": "rear_controls", "role": "rear_control", "required": true, "expected_count": 5, "evidence_required": ["rear"], "fallback_allowed": ["structured_primitive", "visual_helper"] },
+    { "id": "strap_lugs", "role": "strap_lug", "required": true, "expected_count": 2, "evidence_required": ["front", "side"], "fallback_allowed": ["structured_primitive", "visual_helper"] }
+  ],
+  "allowed_primitives": [
+    "rounded_box",
+    "box",
+    "prism",
+    "cylinder",
+    "text_3d"
+  ],
+  "materials": [
+    { "name": "Fuji_Black_Body", "color": "#111214" },
+    { "name": "Fuji_Silver_Top", "color": "#bfc4c5" },
+    { "name": "Fuji_Dark_Rubber", "color": "#0b0c0d" },
+    { "name": "Fuji_Lens_Black", "color": "#08090a" },
+    { "name": "Fuji_Lens_Ring", "color": "#24272b" },
+    { "name": "Fuji_Lens_Glass", "color": "#1d2935", "alpha": 0.72 },
+    { "name": "Fuji_Screen_Dark", "color": "#101820", "alpha": 0.82 },
+    { "name": "Fuji_Button_Dark", "color": "#202327" },
+    { "name": "Fuji_Label_Text", "color": "#1b1d20" },
+    { "name": "Fuji_Red_Accent", "color": "#b3131d" }
+  ],
+  "tags": [
+    { "name": "Acceptance_Camera_Body", "color": "#bfc4c5" },
+    { "name": "Acceptance_Camera_Lens", "color": "#111214" },
+    { "name": "Acceptance_Camera_Details", "color": "#202327" }
+  ],
+  "qa_rules": {
+    "layout_spec": "examples/model-qa/fuji-camera-reference.json",
+    "reference_visual_qa": "examples/reference-visual-qa/fuji-camera-reference.json"
+  },
+  "review": {
+    "scenes": [
+      {
+        "name": "Fuji_Camera_Front_Reference",
+        "camera": {
+          "eye": [0, -420, 88],
+          "target": [0, -38, 48],
+          "up": [0, 0, 1],
+          "fov": 35
+        }
+      },
+      {
+        "name": "Fuji_Camera_Top_Reference",
+        "camera": {
+          "eye": [0, -40, 360],
+          "target": [0, -40, 45],
+          "up": [0, 1, 0],
+          "fov": 32
+        }
+      },
+      {
+        "name": "Fuji_Camera_Rear_Reference",
+        "camera": {
+          "eye": [0, 360, 86],
+          "target": [0, 20, 46],
+          "up": [0, 0, 1],
+          "fov": 35
+        }
+      }
+    ],
+    "style": {
+      "name": "Fuji_Camera_Product_Review",
+      "display_edges": true,
+      "profiles": true,
+      "profile_width": 2,
+      "face_style": "shaded_with_textures",
+      "background_color": "#f5f7f9",
+      "sky_color": "#d9eafa",
+      "ground_color": "#dad4c8"
+    },
+    "shadow": {
+      "display": true,
+      "time": "2026-05-29T14:30:00+08:00",
+      "light": 76,
+      "dark": 44,
+      "use_sun_for_shading": true
+    },
+    "rendering_options": {
+      "edge_display_mode": 1,
+      "draw_hidden_geometry": false,
+      "display_color_by_layer": false,
+      "transparency": true,
+      "draw_ground": true
+    }
+  },
+  "compiler": {
+    "name": "compile-part-graph-to-sketchup-dsl",
+    "version": "r5-fuji-camera-sample"
+  }
+}

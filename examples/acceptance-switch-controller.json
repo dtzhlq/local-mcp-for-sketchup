@@ -1,0 +1,2499 @@
+{
+  "version": 1,
+  "units": "mm",
+  "metadata": {
+    "kind": "product_modeling_dsl",
+    "profile_id": "game_controller_switch",
+    "product_type": "game_controller",
+    "product_name": "Switch Joy-Con Grip Controller",
+    "source": "part_graph_compiler",
+    "part_graph_id": "switch-controller-reference-part-graph",
+    "profile_version": 1,
+    "part_graph_version": 1
+  },
+  "operations": [
+    {
+      "op": "reset"
+    },
+    {
+      "op": "material",
+      "name": "Warm_White_Plastic",
+      "color": "#e8ece8"
+    },
+    {
+      "op": "material",
+      "name": "Satin_Black_Plastic",
+      "color": "#111214"
+    },
+    {
+      "op": "material",
+      "name": "Gloss_Black_Button",
+      "color": "#050506"
+    },
+    {
+      "op": "material",
+      "name": "Rubber_Thumbstick",
+      "color": "#171819"
+    },
+    {
+      "op": "material",
+      "name": "Dark_Detail",
+      "color": "#27292c"
+    },
+    {
+      "op": "material",
+      "name": "Label_White",
+      "color": "#f1f1f1"
+    },
+    {
+      "op": "tag",
+      "name": "Acceptance_Switch_Body",
+      "color": "#e8ece8"
+    },
+    {
+      "op": "tag",
+      "name": "Acceptance_Switch_Controls",
+      "color": "#111214"
+    },
+    {
+      "op": "tag",
+      "name": "Acceptance_Switch_Details",
+      "color": "#f1f1f1"
+    },
+    {
+      "op": "rounded_box",
+      "id": "left-back-grip-lobe",
+      "name": "Left_Back_Grip_Lobe",
+      "origin": [
+        -164,
+        -82,
+        -14
+      ],
+      "size": [
+        54,
+        164,
+        16
+      ],
+      "radius": 27,
+      "segments": 8,
+      "material": "Satin_Black_Plastic",
+      "smooth": "all",
+      "qa": {
+        "role": "rear_grip",
+        "part_id": "left-back-grip-lobe",
+        "intent": "rounded_box",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "box_approximation",
+        "evidence_sources": [
+          {
+            "kind": "image_observation_and_manual_baseline",
+            "view": "rear",
+            "status": "manual_confirmed",
+            "confidence": 0.74,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "rounded_box",
+      "id": "right-back-grip-lobe",
+      "name": "Right_Back_Grip_Lobe",
+      "origin": [
+        110,
+        -82,
+        -14
+      ],
+      "size": [
+        54,
+        164,
+        16
+      ],
+      "radius": 27,
+      "segments": 8,
+      "material": "Satin_Black_Plastic",
+      "smooth": "all",
+      "qa": {
+        "role": "rear_grip",
+        "part_id": "right-back-grip-lobe",
+        "intent": "rounded_box",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "box_approximation",
+        "evidence_sources": [
+          {
+            "kind": "image_observation_and_manual_baseline",
+            "view": "rear",
+            "status": "manual_confirmed",
+            "confidence": 0.74,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "rounded_box",
+      "id": "back-lower-bridge",
+      "name": "Back_Lower_Bridge",
+      "origin": [
+        -86,
+        -88,
+        -12
+      ],
+      "size": [
+        172,
+        24,
+        14
+      ],
+      "radius": 8,
+      "segments": 5,
+      "material": "Satin_Black_Plastic",
+      "smooth": "all",
+      "qa": {
+        "role": "rear_grip",
+        "part_id": "back-lower-bridge",
+        "intent": "rounded_box",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "box_approximation",
+        "evidence_sources": [
+          {
+            "kind": "image_observation_and_manual_baseline",
+            "view": "rear",
+            "status": "manual_confirmed",
+            "confidence": 0.74,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "rounded_box",
+      "id": "center-black-switch-grip",
+      "name": "Center_Black_Switch_Grip",
+      "origin": [
+        -74,
+        -76,
+        0
+      ],
+      "size": [
+        148,
+        152,
+        18
+      ],
+      "radius": 12,
+      "segments": 8,
+      "material": "Satin_Black_Plastic",
+      "smooth": "all",
+      "qa": {
+        "role": "center_grip",
+        "part_id": "center-black-switch-grip",
+        "intent": "rounded_box",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "box_approximation",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "manual_confirmed",
+            "confidence": 0.74,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "rounded_box",
+      "id": "left-warm-white-joy-con-shell",
+      "name": "Left_Warm_White_JoyCon_Shell",
+      "origin": [
+        -136,
+        -72,
+        0
+      ],
+      "size": [
+        62,
+        144,
+        20
+      ],
+      "radius": 25,
+      "segments": 8,
+      "material": "Warm_White_Plastic",
+      "smooth": "all",
+      "qa": {
+        "role": "joycon_shell",
+        "part_id": "left-warm-white-joy-con-shell",
+        "intent": "rounded_box",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "box_approximation",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "manual_confirmed",
+            "confidence": 0.74,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "rounded_box",
+      "id": "right-warm-white-joy-con-shell",
+      "name": "Right_Warm_White_JoyCon_Shell",
+      "origin": [
+        74,
+        -72,
+        0
+      ],
+      "size": [
+        62,
+        144,
+        20
+      ],
+      "radius": 25,
+      "segments": 8,
+      "material": "Warm_White_Plastic",
+      "smooth": "all",
+      "qa": {
+        "role": "joycon_shell",
+        "part_id": "right-warm-white-joy-con-shell",
+        "intent": "rounded_box",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "box_approximation",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "manual_confirmed",
+            "confidence": 0.74,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "rounded_box",
+      "id": "center-front-flat-panel",
+      "name": "Center_Front_Flat_Panel",
+      "origin": [
+        -58,
+        -62,
+        20
+      ],
+      "size": [
+        116,
+        124,
+        3
+      ],
+      "radius": 7,
+      "segments": 5,
+      "material": "Satin_Black_Plastic",
+      "smooth": "all",
+      "qa": {
+        "role": "front_panel",
+        "part_id": "center-front-flat-panel",
+        "intent": "rounded_box",
+        "evidence_status": "inferred",
+        "fallback_state": "box_approximation",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "inferred",
+            "confidence": 0.58,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "box",
+      "id": "left-inner-rail-seam",
+      "name": "Left_Inner_Rail_Seam",
+      "origin": [
+        -78,
+        -67,
+        20
+      ],
+      "size": [
+        5,
+        134,
+        4
+      ],
+      "material": "Satin_Black_Plastic",
+      "qa": {
+        "role": "rail_seam",
+        "part_id": "left-inner-rail-seam",
+        "intent": "box",
+        "evidence_status": "inferred",
+        "fallback_state": "box_approximation",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "inferred",
+            "confidence": 0.58,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "box",
+      "id": "right-inner-rail-seam",
+      "name": "Right_Inner_Rail_Seam",
+      "origin": [
+        73,
+        -67,
+        20
+      ],
+      "size": [
+        5,
+        134,
+        4
+      ],
+      "material": "Satin_Black_Plastic",
+      "qa": {
+        "role": "rail_seam",
+        "part_id": "right-inner-rail-seam",
+        "intent": "box",
+        "evidence_status": "inferred",
+        "fallback_state": "box_approximation",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "inferred",
+            "confidence": 0.58,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "box",
+      "id": "left-outer-black-rail",
+      "name": "Left_Outer_Black_Rail",
+      "origin": [
+        -142,
+        -55,
+        16
+      ],
+      "size": [
+        5,
+        110,
+        7
+      ],
+      "material": "Satin_Black_Plastic",
+      "qa": {
+        "role": "rail_seam",
+        "part_id": "left-outer-black-rail",
+        "intent": "box",
+        "evidence_status": "inferred",
+        "fallback_state": "box_approximation",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "inferred",
+            "confidence": 0.58,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "box",
+      "id": "right-outer-black-rail",
+      "name": "Right_Outer_Black_Rail",
+      "origin": [
+        137,
+        -55,
+        16
+      ],
+      "size": [
+        5,
+        110,
+        7
+      ],
+      "material": "Satin_Black_Plastic",
+      "qa": {
+        "role": "rail_seam",
+        "part_id": "right-outer-black-rail",
+        "intent": "box",
+        "evidence_status": "inferred",
+        "fallback_state": "box_approximation",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "inferred",
+            "confidence": 0.58,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "rounded_box",
+      "id": "left-shoulder-button",
+      "name": "Left_Shoulder_Button",
+      "origin": [
+        -128,
+        65,
+        21
+      ],
+      "size": [
+        48,
+        13,
+        7
+      ],
+      "radius": 6.5,
+      "segments": 5,
+      "material": "Gloss_Black_Button",
+      "smooth": "all",
+      "qa": {
+        "role": "shoulder_button",
+        "part_id": "left-shoulder-button",
+        "intent": "rounded_box",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "rear",
+            "status": "inferred",
+            "confidence": 0.58,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "rounded_box",
+      "id": "right-shoulder-button",
+      "name": "Right_Shoulder_Button",
+      "origin": [
+        80,
+        65,
+        21
+      ],
+      "size": [
+        48,
+        13,
+        7
+      ],
+      "radius": 6.5,
+      "segments": 5,
+      "material": "Gloss_Black_Button",
+      "smooth": "all",
+      "qa": {
+        "role": "shoulder_button",
+        "part_id": "right-shoulder-button",
+        "intent": "rounded_box",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "rear",
+            "status": "inferred",
+            "confidence": 0.58,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "rounded_box",
+      "id": "left-rear-trigger-tab",
+      "name": "Left_Rear_Trigger_Tab",
+      "origin": [
+        -128,
+        78,
+        13
+      ],
+      "size": [
+        48,
+        12,
+        8
+      ],
+      "radius": 6,
+      "segments": 5,
+      "material": "Gloss_Black_Button",
+      "smooth": "all",
+      "qa": {
+        "role": "shoulder_button",
+        "part_id": "left-rear-trigger-tab",
+        "intent": "rounded_box",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "rear",
+            "status": "inferred",
+            "confidence": 0.58,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "rounded_box",
+      "id": "right-rear-trigger-tab",
+      "name": "Right_Rear_Trigger_Tab",
+      "origin": [
+        80,
+        78,
+        13
+      ],
+      "size": [
+        48,
+        12,
+        8
+      ],
+      "radius": 6,
+      "segments": 5,
+      "material": "Gloss_Black_Button",
+      "smooth": "all",
+      "qa": {
+        "role": "shoulder_button",
+        "part_id": "right-rear-trigger-tab",
+        "intent": "rounded_box",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "rear",
+            "status": "inferred",
+            "confidence": 0.58,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "left-analog-stick-recess-ring",
+      "name": "Left_Analog_Stick_Recess_Ring",
+      "origin": [
+        -111,
+        25,
+        22
+      ],
+      "radius": 17,
+      "height": 2.8,
+      "segments": 48,
+      "material": "Gloss_Black_Button",
+      "smooth": "all",
+      "qa": {
+        "role": "thumbstick",
+        "part_id": "left-analog-stick-recess-ring",
+        "intent": "cylinder",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "manual_confirmed",
+            "confidence": 0.74,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "left-analog-stick-stem",
+      "name": "Left_Analog_Stick_Stem",
+      "origin": [
+        -111,
+        25,
+        25.2
+      ],
+      "radius": 10.5,
+      "height": 6.6,
+      "segments": 40,
+      "material": "Rubber_Thumbstick",
+      "smooth": "all",
+      "qa": {
+        "role": "thumbstick",
+        "part_id": "left-analog-stick-stem",
+        "intent": "cylinder",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "manual_confirmed",
+            "confidence": 0.74,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "left-analog-stick-top-pad",
+      "name": "Left_Analog_Stick_Top_Pad",
+      "origin": [
+        -111,
+        25,
+        31.8
+      ],
+      "radius": 14.5,
+      "height": 4.8,
+      "segments": 48,
+      "material": "Rubber_Thumbstick",
+      "smooth": "all",
+      "qa": {
+        "role": "thumbstick",
+        "part_id": "left-analog-stick-top-pad",
+        "intent": "cylinder",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "manual_confirmed",
+            "confidence": 0.74,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "left-analog-stick-groove-ring",
+      "name": "Left_Analog_Stick_Groove_Ring",
+      "origin": [
+        -111,
+        25,
+        36.9
+      ],
+      "radius": 12,
+      "height": 0.9,
+      "segments": 48,
+      "material": "Dark_Detail",
+      "smooth": "all",
+      "qa": {
+        "role": "thumbstick",
+        "part_id": "left-analog-stick-groove-ring",
+        "intent": "cylinder",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "manual_confirmed",
+            "confidence": 0.74,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "right-analog-stick-recess-ring",
+      "name": "Right_Analog_Stick_Recess_Ring",
+      "origin": [
+        111,
+        -38,
+        22
+      ],
+      "radius": 17,
+      "height": 2.8,
+      "segments": 48,
+      "material": "Gloss_Black_Button",
+      "smooth": "all",
+      "qa": {
+        "role": "thumbstick",
+        "part_id": "right-analog-stick-recess-ring",
+        "intent": "cylinder",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "manual_confirmed",
+            "confidence": 0.74,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "right-analog-stick-stem",
+      "name": "Right_Analog_Stick_Stem",
+      "origin": [
+        111,
+        -38,
+        25.2
+      ],
+      "radius": 10.5,
+      "height": 6.6,
+      "segments": 40,
+      "material": "Rubber_Thumbstick",
+      "smooth": "all",
+      "qa": {
+        "role": "thumbstick",
+        "part_id": "right-analog-stick-stem",
+        "intent": "cylinder",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "manual_confirmed",
+            "confidence": 0.74,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "right-analog-stick-top-pad",
+      "name": "Right_Analog_Stick_Top_Pad",
+      "origin": [
+        111,
+        -38,
+        31.8
+      ],
+      "radius": 14.5,
+      "height": 4.8,
+      "segments": 48,
+      "material": "Rubber_Thumbstick",
+      "smooth": "all",
+      "qa": {
+        "role": "thumbstick",
+        "part_id": "right-analog-stick-top-pad",
+        "intent": "cylinder",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "manual_confirmed",
+            "confidence": 0.74,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "right-analog-stick-groove-ring",
+      "name": "Right_Analog_Stick_Groove_Ring",
+      "origin": [
+        111,
+        -38,
+        36.9
+      ],
+      "radius": 12,
+      "height": 0.9,
+      "segments": 48,
+      "material": "Dark_Detail",
+      "smooth": "all",
+      "qa": {
+        "role": "thumbstick",
+        "part_id": "right-analog-stick-groove-ring",
+        "intent": "cylinder",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "manual_confirmed",
+            "confidence": 0.74,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "button-x-button",
+      "name": "Button_X_Button",
+      "origin": [
+        111,
+        38,
+        23.2
+      ],
+      "radius": 7.5,
+      "height": 4.2,
+      "segments": 36,
+      "material": "Gloss_Black_Button",
+      "smooth": "all",
+      "qa": {
+        "role": "face_button",
+        "part_id": "button-x-button",
+        "intent": "cylinder",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "manual_confirmed",
+            "confidence": 0.74,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "text_3d",
+      "id": "button-x-label-x",
+      "name": "Button_X_Label_X",
+      "text": "X",
+      "center": [
+        111,
+        35,
+        27.7
+      ],
+      "height": 7,
+      "extrusion": 0.7,
+      "font": "Arial",
+      "align": "center",
+      "bold": true,
+      "filled": true,
+      "material": "Label_White",
+      "qa": {
+        "role": "button_label",
+        "part_id": "button-x-label-x",
+        "intent": "text_3d",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "inferred",
+            "confidence": 0.58,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "button-y-button",
+      "name": "Button_Y_Button",
+      "origin": [
+        94,
+        21,
+        23.2
+      ],
+      "radius": 7.5,
+      "height": 4.2,
+      "segments": 36,
+      "material": "Gloss_Black_Button",
+      "smooth": "all",
+      "qa": {
+        "role": "face_button",
+        "part_id": "button-y-button",
+        "intent": "cylinder",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "manual_confirmed",
+            "confidence": 0.74,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "text_3d",
+      "id": "button-y-label-y",
+      "name": "Button_Y_Label_Y",
+      "text": "Y",
+      "center": [
+        94,
+        18,
+        27.7
+      ],
+      "height": 7,
+      "extrusion": 0.7,
+      "font": "Arial",
+      "align": "center",
+      "bold": true,
+      "filled": true,
+      "material": "Label_White",
+      "qa": {
+        "role": "button_label",
+        "part_id": "button-y-label-y",
+        "intent": "text_3d",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "inferred",
+            "confidence": 0.58,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "button-a-button",
+      "name": "Button_A_Button",
+      "origin": [
+        125,
+        21,
+        23.2
+      ],
+      "radius": 7.5,
+      "height": 4.2,
+      "segments": 36,
+      "material": "Gloss_Black_Button",
+      "smooth": "all",
+      "qa": {
+        "role": "face_button",
+        "part_id": "button-a-button",
+        "intent": "cylinder",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "manual_confirmed",
+            "confidence": 0.74,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "text_3d",
+      "id": "button-a-label-a",
+      "name": "Button_A_Label_A",
+      "text": "A",
+      "center": [
+        125,
+        18,
+        27.7
+      ],
+      "height": 7,
+      "extrusion": 0.7,
+      "font": "Arial",
+      "align": "center",
+      "bold": true,
+      "filled": true,
+      "material": "Label_White",
+      "qa": {
+        "role": "button_label",
+        "part_id": "button-a-label-a",
+        "intent": "text_3d",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "inferred",
+            "confidence": 0.58,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "button-b-button",
+      "name": "Button_B_Button",
+      "origin": [
+        111,
+        4,
+        23.2
+      ],
+      "radius": 7.5,
+      "height": 4.2,
+      "segments": 36,
+      "material": "Gloss_Black_Button",
+      "smooth": "all",
+      "qa": {
+        "role": "face_button",
+        "part_id": "button-b-button",
+        "intent": "cylinder",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "manual_confirmed",
+            "confidence": 0.74,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "text_3d",
+      "id": "button-b-label-b",
+      "name": "Button_B_Label_B",
+      "text": "B",
+      "center": [
+        111,
+        1,
+        27.7
+      ],
+      "height": 7,
+      "extrusion": 0.7,
+      "font": "Arial",
+      "align": "center",
+      "bold": true,
+      "filled": true,
+      "material": "Label_White",
+      "qa": {
+        "role": "button_label",
+        "part_id": "button-b-label-b",
+        "intent": "text_3d",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "inferred",
+            "confidence": 0.58,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "dpad-up-button",
+      "name": "Dpad_Up_Button",
+      "origin": [
+        -111,
+        -14,
+        23.2
+      ],
+      "radius": 7.5,
+      "height": 4.2,
+      "segments": 36,
+      "material": "Gloss_Black_Button",
+      "smooth": "all",
+      "qa": {
+        "role": "dpad_button",
+        "part_id": "dpad-up-button",
+        "intent": "cylinder",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "manual_confirmed",
+            "confidence": 0.74,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "dpad-left-button",
+      "name": "Dpad_Left_Button",
+      "origin": [
+        -124,
+        -34,
+        23.2
+      ],
+      "radius": 7.5,
+      "height": 4.2,
+      "segments": 36,
+      "material": "Gloss_Black_Button",
+      "smooth": "all",
+      "qa": {
+        "role": "dpad_button",
+        "part_id": "dpad-left-button",
+        "intent": "cylinder",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "manual_confirmed",
+            "confidence": 0.74,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "dpad-right-button",
+      "name": "Dpad_Right_Button",
+      "origin": [
+        -98,
+        -34,
+        23.2
+      ],
+      "radius": 7.5,
+      "height": 4.2,
+      "segments": 36,
+      "material": "Gloss_Black_Button",
+      "smooth": "all",
+      "qa": {
+        "role": "dpad_button",
+        "part_id": "dpad-right-button",
+        "intent": "cylinder",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "manual_confirmed",
+            "confidence": 0.74,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "dpad-down-button",
+      "name": "Dpad_Down_Button",
+      "origin": [
+        -111,
+        -54,
+        23.2
+      ],
+      "radius": 7.5,
+      "height": 4.2,
+      "segments": 36,
+      "material": "Gloss_Black_Button",
+      "smooth": "all",
+      "qa": {
+        "role": "dpad_button",
+        "part_id": "dpad-down-button",
+        "intent": "cylinder",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "manual_confirmed",
+            "confidence": 0.74,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "box",
+      "id": "minus-button",
+      "name": "Minus_Button",
+      "origin": [
+        -128,
+        53,
+        22.8
+      ],
+      "size": [
+        17,
+        4,
+        2.8
+      ],
+      "material": "Gloss_Black_Button",
+      "qa": {
+        "role": "system_button",
+        "part_id": "minus-button",
+        "intent": "box",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "inferred",
+            "confidence": 0.58,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "box",
+      "id": "plus-button-horizontal",
+      "name": "Plus_Button_Horizontal",
+      "origin": [
+        86,
+        53,
+        22.8
+      ],
+      "size": [
+        17,
+        4,
+        2.8
+      ],
+      "material": "Gloss_Black_Button",
+      "qa": {
+        "role": "system_button",
+        "part_id": "plus-button-horizontal",
+        "intent": "box",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "inferred",
+            "confidence": 0.58,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "box",
+      "id": "plus-button-vertical",
+      "name": "Plus_Button_Vertical",
+      "origin": [
+        92.5,
+        46.5,
+        22.9
+      ],
+      "size": [
+        4,
+        17,
+        2.8
+      ],
+      "material": "Gloss_Black_Button",
+      "qa": {
+        "role": "system_button",
+        "part_id": "plus-button-vertical",
+        "intent": "box",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "inferred",
+            "confidence": 0.58,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "rounded_box",
+      "id": "capture-button",
+      "name": "Capture_Button",
+      "origin": [
+        -101,
+        -68,
+        22.8
+      ],
+      "size": [
+        9,
+        9,
+        3
+      ],
+      "radius": 3,
+      "segments": 3,
+      "material": "Gloss_Black_Button",
+      "smooth": "all",
+      "qa": {
+        "role": "system_button",
+        "part_id": "capture-button",
+        "intent": "rounded_box",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "inferred",
+            "confidence": 0.58,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "home-button",
+      "name": "Home_Button",
+      "origin": [
+        111,
+        -64.5,
+        22.8
+      ],
+      "radius": 6.5,
+      "height": 3,
+      "segments": 28,
+      "material": "Gloss_Black_Button",
+      "smooth": "all",
+      "qa": {
+        "role": "system_button",
+        "part_id": "home-button",
+        "intent": "cylinder",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "inferred",
+            "confidence": 0.58,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "left-top-screw",
+      "name": "Left_Top_Screw",
+      "origin": [
+        -83,
+        53,
+        22.8
+      ],
+      "radius": 3,
+      "height": 1.8,
+      "segments": 20,
+      "material": "Dark_Detail",
+      "smooth": "all",
+      "qa": {
+        "role": "screw",
+        "part_id": "left-top-screw",
+        "intent": "cylinder",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "manual_confirmed",
+            "confidence": 0.74,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ],
+        "proposed_feature_intents": [
+          {
+            "operation": "cut_hole",
+            "semantic": "through_hole",
+            "status": "needs_review",
+            "note": "Current Switch sample keeps screws as visual markers; promote to a target-shell cut_hole only after parent face mapping is explicit."
+          }
+        ]
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "left-bottom-screw",
+      "name": "Left_Bottom_Screw",
+      "origin": [
+        -83,
+        -63,
+        22.8
+      ],
+      "radius": 3,
+      "height": 1.8,
+      "segments": 20,
+      "material": "Dark_Detail",
+      "smooth": "all",
+      "qa": {
+        "role": "screw",
+        "part_id": "left-bottom-screw",
+        "intent": "cylinder",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "manual_confirmed",
+            "confidence": 0.74,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ],
+        "proposed_feature_intents": [
+          {
+            "operation": "cut_hole",
+            "semantic": "through_hole",
+            "status": "needs_review",
+            "note": "Current Switch sample keeps screws as visual markers; promote to a target-shell cut_hole only after parent face mapping is explicit."
+          }
+        ]
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "right-top-screw",
+      "name": "Right_Top_Screw",
+      "origin": [
+        83,
+        53,
+        22.8
+      ],
+      "radius": 3,
+      "height": 1.8,
+      "segments": 20,
+      "material": "Dark_Detail",
+      "smooth": "all",
+      "qa": {
+        "role": "screw",
+        "part_id": "right-top-screw",
+        "intent": "cylinder",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "manual_confirmed",
+            "confidence": 0.74,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ],
+        "proposed_feature_intents": [
+          {
+            "operation": "cut_hole",
+            "semantic": "through_hole",
+            "status": "needs_review",
+            "note": "Current Switch sample keeps screws as visual markers; promote to a target-shell cut_hole only after parent face mapping is explicit."
+          }
+        ]
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "right-bottom-screw",
+      "name": "Right_Bottom_Screw",
+      "origin": [
+        83,
+        -63,
+        22.8
+      ],
+      "radius": 3,
+      "height": 1.8,
+      "segments": 20,
+      "material": "Dark_Detail",
+      "smooth": "all",
+      "qa": {
+        "role": "screw",
+        "part_id": "right-bottom-screw",
+        "intent": "cylinder",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "manual_confirmed",
+            "confidence": 0.74,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ],
+        "proposed_feature_intents": [
+          {
+            "operation": "cut_hole",
+            "semantic": "through_hole",
+            "status": "needs_review",
+            "note": "Current Switch sample keeps screws as visual markers; promote to a target-shell cut_hole only after parent face mapping is explicit."
+          }
+        ]
+      }
+    },
+    {
+      "op": "rounded_box",
+      "id": "switch-logo-left-capsule",
+      "name": "Switch_Logo_Left_Capsule",
+      "origin": [
+        -20,
+        -8,
+        24
+      ],
+      "size": [
+        16,
+        32,
+        1.8
+      ],
+      "radius": 8,
+      "segments": 5,
+      "material": "Dark_Detail",
+      "smooth": "all",
+      "qa": {
+        "role": "logo",
+        "part_id": "switch-logo-left-capsule",
+        "intent": "rounded_box",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "inferred",
+            "confidence": 0.58,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "rounded_box",
+      "id": "switch-logo-right-capsule",
+      "name": "Switch_Logo_Right_Capsule",
+      "origin": [
+        4,
+        -8,
+        24
+      ],
+      "size": [
+        16,
+        32,
+        1.8
+      ],
+      "radius": 8,
+      "segments": 5,
+      "material": "Dark_Detail",
+      "smooth": "all",
+      "qa": {
+        "role": "logo",
+        "part_id": "switch-logo-right-capsule",
+        "intent": "rounded_box",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "inferred",
+            "confidence": 0.58,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "switch-logo-left-dot",
+      "name": "Switch_Logo_Left_Dot",
+      "origin": [
+        -12,
+        9,
+        26
+      ],
+      "radius": 3.6,
+      "height": 0.8,
+      "segments": 20,
+      "material": "Satin_Black_Plastic",
+      "smooth": "all",
+      "qa": {
+        "role": "logo",
+        "part_id": "switch-logo-left-dot",
+        "intent": "cylinder",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "inferred",
+            "confidence": 0.58,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "switch-logo-right-dot",
+      "name": "Switch_Logo_Right_Dot",
+      "origin": [
+        12,
+        -1,
+        26
+      ],
+      "radius": 3.6,
+      "height": 0.8,
+      "segments": 20,
+      "material": "Satin_Black_Plastic",
+      "smooth": "all",
+      "qa": {
+        "role": "logo",
+        "part_id": "switch-logo-right-dot",
+        "intent": "cylinder",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "inferred",
+            "confidence": 0.58,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "box",
+      "id": "nintendo-text-block-1",
+      "name": "Nintendo_Text_Block_1",
+      "origin": [
+        -34,
+        -38,
+        24.3
+      ],
+      "size": [
+        5,
+        2,
+        1
+      ],
+      "material": "Dark_Detail",
+      "qa": {
+        "role": "label",
+        "part_id": "nintendo-text-block-1",
+        "intent": "box",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "inferred",
+            "confidence": 0.58,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "box",
+      "id": "nintendo-text-block-2",
+      "name": "Nintendo_Text_Block_2",
+      "origin": [
+        -25,
+        -38,
+        24.3
+      ],
+      "size": [
+        5,
+        2,
+        1
+      ],
+      "material": "Dark_Detail",
+      "qa": {
+        "role": "label",
+        "part_id": "nintendo-text-block-2",
+        "intent": "box",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "inferred",
+            "confidence": 0.58,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "box",
+      "id": "nintendo-text-block-3",
+      "name": "Nintendo_Text_Block_3",
+      "origin": [
+        -16,
+        -38,
+        24.3
+      ],
+      "size": [
+        5,
+        2,
+        1
+      ],
+      "material": "Dark_Detail",
+      "qa": {
+        "role": "label",
+        "part_id": "nintendo-text-block-3",
+        "intent": "box",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "inferred",
+            "confidence": 0.58,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "box",
+      "id": "nintendo-text-block-4",
+      "name": "Nintendo_Text_Block_4",
+      "origin": [
+        -7,
+        -38,
+        24.3
+      ],
+      "size": [
+        5,
+        2,
+        1
+      ],
+      "material": "Dark_Detail",
+      "qa": {
+        "role": "label",
+        "part_id": "nintendo-text-block-4",
+        "intent": "box",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "inferred",
+            "confidence": 0.58,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "box",
+      "id": "nintendo-text-block-5",
+      "name": "Nintendo_Text_Block_5",
+      "origin": [
+        2,
+        -38,
+        24.3
+      ],
+      "size": [
+        5,
+        2,
+        1
+      ],
+      "material": "Dark_Detail",
+      "qa": {
+        "role": "label",
+        "part_id": "nintendo-text-block-5",
+        "intent": "box",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "inferred",
+            "confidence": 0.58,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "box",
+      "id": "nintendo-text-block-6",
+      "name": "Nintendo_Text_Block_6",
+      "origin": [
+        11,
+        -38,
+        24.3
+      ],
+      "size": [
+        5,
+        2,
+        1
+      ],
+      "material": "Dark_Detail",
+      "qa": {
+        "role": "label",
+        "part_id": "nintendo-text-block-6",
+        "intent": "box",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "inferred",
+            "confidence": 0.58,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "box",
+      "id": "nintendo-text-block-7",
+      "name": "Nintendo_Text_Block_7",
+      "origin": [
+        20,
+        -38,
+        24.3
+      ],
+      "size": [
+        5,
+        2,
+        1
+      ],
+      "material": "Dark_Detail",
+      "qa": {
+        "role": "label",
+        "part_id": "nintendo-text-block-7",
+        "intent": "box",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "inferred",
+            "confidence": 0.58,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "box",
+      "id": "nintendo-text-block-8",
+      "name": "Nintendo_Text_Block_8",
+      "origin": [
+        29,
+        -38,
+        24.3
+      ],
+      "size": [
+        5,
+        2,
+        1
+      ],
+      "material": "Dark_Detail",
+      "qa": {
+        "role": "label",
+        "part_id": "nintendo-text-block-8",
+        "intent": "box",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "inferred",
+            "confidence": 0.58,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "box",
+      "id": "switch-text-block-1",
+      "name": "Switch_Text_Block_1",
+      "origin": [
+        -32,
+        -49,
+        24.3
+      ],
+      "size": [
+        7,
+        3,
+        1
+      ],
+      "material": "Dark_Detail",
+      "qa": {
+        "role": "label",
+        "part_id": "switch-text-block-1",
+        "intent": "box",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "inferred",
+            "confidence": 0.58,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "box",
+      "id": "switch-text-block-2",
+      "name": "Switch_Text_Block_2",
+      "origin": [
+        -21,
+        -49,
+        24.3
+      ],
+      "size": [
+        7,
+        3,
+        1
+      ],
+      "material": "Dark_Detail",
+      "qa": {
+        "role": "label",
+        "part_id": "switch-text-block-2",
+        "intent": "box",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "inferred",
+            "confidence": 0.58,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "box",
+      "id": "switch-text-block-3",
+      "name": "Switch_Text_Block_3",
+      "origin": [
+        -10,
+        -49,
+        24.3
+      ],
+      "size": [
+        7,
+        3,
+        1
+      ],
+      "material": "Dark_Detail",
+      "qa": {
+        "role": "label",
+        "part_id": "switch-text-block-3",
+        "intent": "box",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "inferred",
+            "confidence": 0.58,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "box",
+      "id": "switch-text-block-4",
+      "name": "Switch_Text_Block_4",
+      "origin": [
+        1,
+        -49,
+        24.3
+      ],
+      "size": [
+        7,
+        3,
+        1
+      ],
+      "material": "Dark_Detail",
+      "qa": {
+        "role": "label",
+        "part_id": "switch-text-block-4",
+        "intent": "box",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "inferred",
+            "confidence": 0.58,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "box",
+      "id": "switch-text-block-5",
+      "name": "Switch_Text_Block_5",
+      "origin": [
+        12,
+        -49,
+        24.3
+      ],
+      "size": [
+        7,
+        3,
+        1
+      ],
+      "material": "Dark_Detail",
+      "qa": {
+        "role": "label",
+        "part_id": "switch-text-block-5",
+        "intent": "box",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "inferred",
+            "confidence": 0.58,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "box",
+      "id": "switch-text-block-6",
+      "name": "Switch_Text_Block_6",
+      "origin": [
+        23,
+        -49,
+        24.3
+      ],
+      "size": [
+        7,
+        3,
+        1
+      ],
+      "material": "Dark_Detail",
+      "qa": {
+        "role": "label",
+        "part_id": "switch-text-block-6",
+        "intent": "box",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "inferred",
+            "confidence": 0.58,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "box",
+      "id": "left-status-led-1",
+      "name": "Left_Status_LED_1",
+      "origin": [
+        -67,
+        -18,
+        23.8
+      ],
+      "size": [
+        3,
+        3,
+        1
+      ],
+      "material": "Dark_Detail",
+      "qa": {
+        "role": "status_led",
+        "part_id": "left-status-led-1",
+        "intent": "box",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "inferred",
+            "confidence": 0.58,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "box",
+      "id": "right-status-led-1",
+      "name": "Right_Status_LED_1",
+      "origin": [
+        64,
+        -18,
+        23.8
+      ],
+      "size": [
+        3,
+        3,
+        1
+      ],
+      "material": "Dark_Detail",
+      "qa": {
+        "role": "status_led",
+        "part_id": "right-status-led-1",
+        "intent": "box",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "inferred",
+            "confidence": 0.58,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "box",
+      "id": "left-status-led-2",
+      "name": "Left_Status_LED_2",
+      "origin": [
+        -67,
+        -26,
+        23.8
+      ],
+      "size": [
+        3,
+        3,
+        1
+      ],
+      "material": "Dark_Detail",
+      "qa": {
+        "role": "status_led",
+        "part_id": "left-status-led-2",
+        "intent": "box",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "inferred",
+            "confidence": 0.58,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "box",
+      "id": "right-status-led-2",
+      "name": "Right_Status_LED_2",
+      "origin": [
+        64,
+        -26,
+        23.8
+      ],
+      "size": [
+        3,
+        3,
+        1
+      ],
+      "material": "Dark_Detail",
+      "qa": {
+        "role": "status_led",
+        "part_id": "right-status-led-2",
+        "intent": "box",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "inferred",
+            "confidence": 0.58,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "box",
+      "id": "left-status-led-3",
+      "name": "Left_Status_LED_3",
+      "origin": [
+        -67,
+        -34,
+        23.8
+      ],
+      "size": [
+        3,
+        3,
+        1
+      ],
+      "material": "Dark_Detail",
+      "qa": {
+        "role": "status_led",
+        "part_id": "left-status-led-3",
+        "intent": "box",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "inferred",
+            "confidence": 0.58,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "box",
+      "id": "right-status-led-3",
+      "name": "Right_Status_LED_3",
+      "origin": [
+        64,
+        -34,
+        23.8
+      ],
+      "size": [
+        3,
+        3,
+        1
+      ],
+      "material": "Dark_Detail",
+      "qa": {
+        "role": "status_led",
+        "part_id": "right-status-led-3",
+        "intent": "box",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "inferred",
+            "confidence": 0.58,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "box",
+      "id": "left-status-led-4",
+      "name": "Left_Status_LED_4",
+      "origin": [
+        -67,
+        -42,
+        23.8
+      ],
+      "size": [
+        3,
+        3,
+        1
+      ],
+      "material": "Dark_Detail",
+      "qa": {
+        "role": "status_led",
+        "part_id": "left-status-led-4",
+        "intent": "box",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "inferred",
+            "confidence": 0.58,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "box",
+      "id": "right-status-led-4",
+      "name": "Right_Status_LED_4",
+      "origin": [
+        64,
+        -42,
+        23.8
+      ],
+      "size": [
+        3,
+        3,
+        1
+      ],
+      "material": "Dark_Detail",
+      "qa": {
+        "role": "status_led",
+        "part_id": "right-status-led-4",
+        "intent": "box",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "manual_baseline_refactor",
+            "view": "front",
+            "status": "inferred",
+            "confidence": 0.58,
+            "note": "Converted from the accepted Switch baseline while keeping image evidence confidence explicitly below fully measured geometry."
+          }
+        ]
+      }
+    },
+    {
+      "op": "scene",
+      "name": "Controller_Front_Reference_View",
+      "camera": {
+        "eye": [
+          0,
+          -420,
+          170
+        ],
+        "target": [
+          0,
+          0,
+          14
+        ],
+        "up": [
+          0,
+          0,
+          1
+        ],
+        "fov": 32
+      }
+    },
+    {
+      "op": "scene",
+      "name": "Controller_Top_Detail_View",
+      "camera": {
+        "eye": [
+          0,
+          0,
+          470
+        ],
+        "target": [
+          0,
+          0,
+          8
+        ],
+        "up": [
+          0,
+          1,
+          0
+        ],
+        "fov": 32
+      }
+    },
+    {
+      "op": "scene",
+      "name": "Controller_Back_Grip_View",
+      "camera": {
+        "eye": [
+          0,
+          330,
+          140
+        ],
+        "target": [
+          0,
+          0,
+          0
+        ],
+        "up": [
+          0,
+          0,
+          1
+        ],
+        "fov": 35
+      }
+    },
+    {
+      "op": "scene",
+      "name": "Controller_Right_Side_Profile",
+      "camera": {
+        "eye": [
+          430,
+          0,
+          90
+        ],
+        "target": [
+          70,
+          0,
+          8
+        ],
+        "up": [
+          0,
+          0,
+          1
+        ],
+        "fov": 30
+      }
+    },
+    {
+      "op": "scene",
+      "name": "Controller_Three_Quarter_Hero",
+      "camera": {
+        "eye": [
+          320,
+          -360,
+          190
+        ],
+        "target": [
+          0,
+          0,
+          12
+        ],
+        "up": [
+          0,
+          0,
+          1
+        ],
+        "fov": 35
+      }
+    },
+    {
+      "op": "style",
+      "name": "Controller_Product_Model_Check",
+      "display_edges": true,
+      "profiles": true,
+      "profile_width": 1,
+      "face_style": "shaded_with_textures",
+      "background_color": "#f7f4ed",
+      "sky_color": "#cfe8ff",
+      "ground_color": "#d8d0bf"
+    },
+    {
+      "op": "shadow",
+      "display": true,
+      "time": "2026-05-11T14:35:00+08:00",
+      "light": 76,
+      "dark": 34,
+      "use_sun_for_shading": true
+    },
+    {
+      "op": "rendering_options",
+      "edge_display_mode": 1,
+      "draw_hidden_geometry": false,
+      "display_color_by_layer": false,
+      "transparency": false
+    }
+  ]
+}

@@ -140,6 +140,21 @@ const tools = [
         floatingDetails: { type: 'boolean', default: true }
       }
     }
+  },
+  {
+    name: 'validate_reference_model',
+    description: 'Build or inspect a model snapshot, run reference visual QA against orthographic silhouette/keypoint/area rules, and return PartGraph-targeted correction suggestions.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        code: { type: 'string', description: 'JSON DSL string. Required unless snapshot is provided.' },
+        snapshot: { type: 'object', description: 'Existing build_model snapshot. If provided, code is not required.' },
+        runtime: { type: 'string', enum: ['mock', 'queue'], default: 'mock' },
+        timeoutMs: { type: 'number' },
+        spec: { type: 'object', description: 'Reference visual QA spec with views, silhouettes, keypoints, area ratios, and relative-position rules.' },
+        includePreview: { type: 'boolean', default: true }
+      }
+    }
   }
 ];
 

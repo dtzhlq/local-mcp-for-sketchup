@@ -105,7 +105,7 @@
   ],
   "qa_rules": {
     "layout_spec": "examples/model-qa/ambulance-reference.json",
-    "reference_visual_qa": "planned"
+    "reference_visual_qa": "examples/reference-visual-qa/ambulance-reference.json"
   },
   "review": {
     "scenes": [

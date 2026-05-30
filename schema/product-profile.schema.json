@@ -120,7 +120,7 @@
       }
     },
     "fallback_state": {
-      "enum": ["real_feature_op", "visual_helper", "box_approximation", "profile_default", "reference_only", "needs_review"]
+      "enum": ["real_feature_op", "structured_primitive", "visual_helper", "box_approximation", "profile_default", "reference_only", "needs_review"]
     }
   }
 }

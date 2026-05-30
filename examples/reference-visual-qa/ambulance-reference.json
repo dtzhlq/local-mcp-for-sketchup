@@ -1,0 +1,460 @@
+{
+  "version": 1,
+  "title": "Ambulance Reference Visual QA",
+  "description": "Reference-facing visual QA for the ProductProfile + PartGraph ambulance sample. Coordinates are normalized inside each orthographic view frame and correction targets point back to PartGraph fields. This spec now uses the rescue-vehicle photo set as the visual anchor for side silhouette, cab height, windshield rake, side window, roof lightbar, stripe, and label size.",
+  "rules": {
+    "views": [
+      {
+        "name": "left",
+        "title": "Left Reference Match",
+        "axes": ["x", "z"],
+        "depth_axis": "y",
+        "frame": {
+          "items": [
+            "amb-cab-lower",
+            "amb-cab-upper-shell",
+            "amb-main-body",
+            "wheel-left-front-tire",
+            "wheel-left-rear-tire",
+            "roof-red-lightbar",
+            "roof-white-equipment",
+            "rear-left-tail-light"
+          ]
+        }
+      },
+      {
+        "name": "top",
+        "title": "Top Reference Match",
+        "axes": ["x", "y"],
+        "depth_axis": "z",
+        "frame": {
+          "items": [
+            "amb-main-body",
+            "amb-cab-lower",
+            "amb-cab-upper-shell",
+            "roof-red-lightbar",
+            "roof-white-equipment"
+          ]
+        }
+      },
+      {
+        "name": "front",
+        "title": "Front Reference Match",
+        "axes": ["y", "z"],
+        "depth_axis": "x",
+        "frame": {
+          "items": [
+            "amb-cab-lower",
+            "amb-cab-upper-shell",
+            "amb-windshield",
+            "amb-front-grille",
+            "amb-left-headlight",
+            "amb-right-headlight"
+          ]
+        }
+      }
+    ],
+    "silhouettes": [
+      {
+        "id": "left-overall-silhouette-aspect",
+        "view": "left",
+        "items": [
+          "amb-cab-lower",
+          "amb-cab-upper-shell",
+          "amb-main-body",
+          "wheel-left-front-tire",
+          "wheel-left-rear-tire",
+          "roof-red-lightbar",
+          "roof-white-equipment",
+          "rear-left-tail-light"
+        ],
+        "aspect_ratio": 2.2,
+        "tolerance": 0.06,
+        "correction_target": {
+          "part_id": "amb-main-body",
+          "path": "parts[amb-main-body].shape.parameters.size"
+        }
+      },
+      {
+        "id": "top-overall-silhouette-aspect",
+        "view": "top",
+        "items": [
+          "amb-main-body",
+          "amb-cab-lower",
+          "amb-cab-upper-shell",
+          "roof-red-lightbar",
+          "roof-white-equipment"
+        ],
+        "aspect_ratio": 2.67,
+        "tolerance": 0.04,
+        "correction_target": {
+          "part_id": "amb-main-body",
+          "path": "parts[amb-main-body].shape.parameters.size"
+        }
+      },
+      {
+        "id": "front-cab-silhouette-aspect",
+        "view": "front",
+        "items": [
+          "amb-cab-lower",
+          "amb-cab-upper-shell",
+          "amb-windshield",
+          "amb-front-grille",
+          "amb-left-headlight",
+          "amb-right-headlight"
+        ],
+        "aspect_ratio": 1.08,
+        "tolerance": 0.05,
+        "correction_target": {
+          "part_id": "amb-cab-upper-shell",
+          "path": "parts[amb-cab-upper-shell].shape.parameters"
+        }
+      }
+    ],
+    "keypoints": [
+      {
+        "id": "body-side-center",
+        "view": "left",
+        "item": "amb-main-body",
+        "point": "center",
+        "expected": [0.58, 0.54],
+        "tolerance": 0.045,
+        "correction_target": {
+          "part_id": "amb-main-body",
+          "path": "parts[amb-main-body].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "cab-lower-side-center",
+        "view": "left",
+        "item": "amb-cab-lower",
+        "point": "center",
+        "expected": [0.13, 0.45],
+        "tolerance": 0.045,
+        "correction_target": {
+          "part_id": "amb-cab-lower",
+          "path": "parts[amb-cab-lower].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "cab-upper-side-center",
+        "view": "left",
+        "item": "amb-cab-upper-shell",
+        "point": "center",
+        "expected": [0.19, 0.72],
+        "tolerance": 0.045,
+        "correction_target": {
+          "part_id": "amb-cab-upper-shell",
+          "path": "parts[amb-cab-upper-shell].shape.parameters"
+        }
+      },
+      {
+        "id": "windshield-side-top-right",
+        "view": "left",
+        "item": "amb-windshield",
+        "point": "top_right",
+        "expected": [0.28, 0.88],
+        "tolerance": 0.035,
+        "correction_target": {
+          "part_id": "amb-windshield",
+          "path": "parts[amb-windshield].shape.parameters.vertices"
+        }
+      },
+      {
+        "id": "side-window-center",
+        "view": "left",
+        "item": "amb-left-side-window",
+        "point": "center",
+        "expected": [0.52, 0.67],
+        "tolerance": 0.035,
+        "correction_target": {
+          "part_id": "amb-left-side-window",
+          "path": "parts[amb-left-side-window].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "driver-window-center",
+        "view": "left",
+        "item": "amb-left-driver-window",
+        "point": "center",
+        "expected": [0.32, 0.68],
+        "tolerance": 0.04,
+        "correction_target": {
+          "part_id": "amb-left-driver-window",
+          "path": "parts[amb-left-driver-window].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "front-wheel-center",
+        "view": "left",
+        "item": "wheel-left-front-tire",
+        "point": "center",
+        "expected": [0.226, 0.145],
+        "tolerance": 0.035,
+        "correction_target": {
+          "part_id": "wheel-left-front-tire",
+          "path": "parts[wheel-left-front-tire].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "rear-wheel-center",
+        "view": "left",
+        "item": "wheel-left-rear-tire",
+        "point": "center",
+        "expected": [0.782, 0.145],
+        "tolerance": 0.035,
+        "correction_target": {
+          "part_id": "wheel-left-rear-tire",
+          "path": "parts[wheel-left-rear-tire].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "left-lightbar-center",
+        "view": "left",
+        "item": "roof-red-lightbar",
+        "point": "center",
+        "expected": [0.33, 0.96],
+        "tolerance": 0.035,
+        "correction_target": {
+          "part_id": "roof-red-lightbar",
+          "path": "parts[roof-red-lightbar].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "top-lightbar-center",
+        "view": "top",
+        "item": "roof-red-lightbar",
+        "point": "center",
+        "expected": [0.34, 0.48],
+        "tolerance": 0.04,
+        "correction_target": {
+          "part_id": "roof-red-lightbar",
+          "path": "parts[roof-red-lightbar].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "stripe-side-center",
+        "view": "left",
+        "item": "amb-left-red-stripe",
+        "point": "center",
+        "expected": [0.51, 0.46],
+        "tolerance": 0.035,
+        "correction_target": {
+          "part_id": "amb-left-red-stripe",
+          "path": "parts[amb-left-red-stripe].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "ambulance-text-side-center",
+        "view": "left",
+        "item": "amb-left-ambulance-text",
+        "point": "center",
+        "expected": [0.675, 0.725],
+        "tolerance": 0.045,
+        "correction_target": {
+          "part_id": "amb-left-ambulance-text",
+          "path": "parts[amb-left-ambulance-text].shape.parameters.origin"
+        }
+      }
+    ],
+    "extent_ratios": [
+      {
+        "id": "main-body-side-extent",
+        "view": "left",
+        "item": "amb-main-body",
+        "expected": [0.79, 0.67],
+        "tolerance": [0.045, 0.045],
+        "correction_target": {
+          "part_id": "amb-main-body",
+          "path": "parts[amb-main-body].shape.parameters.size"
+        }
+      },
+      {
+        "id": "cab-lower-side-extent",
+        "view": "left",
+        "item": "amb-cab-lower",
+        "expected": [0.25, 0.38],
+        "tolerance": [0.035, 0.035],
+        "correction_target": {
+          "part_id": "amb-cab-lower",
+          "path": "parts[amb-cab-lower].shape.parameters.size"
+        }
+      },
+      {
+        "id": "cab-upper-side-extent",
+        "view": "left",
+        "item": "amb-cab-upper-shell",
+        "expected": [0.25, 0.37],
+        "tolerance": [0.035, 0.035],
+        "correction_target": {
+          "part_id": "amb-cab-upper-shell",
+          "path": "parts[amb-cab-upper-shell].shape.parameters.vertices"
+        }
+      },
+      {
+        "id": "windshield-side-extent",
+        "view": "left",
+        "item": "amb-windshield",
+        "expected": [0.19, 0.31],
+        "tolerance": [0.035, 0.04],
+        "correction_target": {
+          "part_id": "amb-windshield",
+          "path": "parts[amb-windshield].shape.parameters.vertices"
+        }
+      },
+      {
+        "id": "side-window-extent",
+        "view": "left",
+        "item": "amb-left-side-window",
+        "expected": [0.22, 0.2],
+        "tolerance": [0.025, 0.025],
+        "correction_target": {
+          "part_id": "amb-left-side-window",
+          "path": "parts[amb-left-side-window].shape.parameters.size"
+        }
+      },
+      {
+        "id": "driver-window-extent",
+        "view": "left",
+        "item": "amb-left-driver-window",
+        "expected": [0.13, 0.2],
+        "tolerance": [0.025, 0.025],
+        "correction_target": {
+          "part_id": "amb-left-driver-window",
+          "path": "parts[amb-left-driver-window].shape.parameters.size"
+        }
+      },
+      {
+        "id": "side-lightbar-extent",
+        "view": "left",
+        "item": "roof-red-lightbar",
+        "expected": [0.15, 0.07],
+        "tolerance": [0.025, 0.02],
+        "correction_target": {
+          "part_id": "roof-red-lightbar",
+          "path": "parts[roof-red-lightbar].shape.parameters.size"
+        }
+      },
+      {
+        "id": "stripe-side-extent",
+        "view": "left",
+        "item": "amb-left-red-stripe",
+        "expected": [0.79, 0.03],
+        "tolerance": [0.06, 0.015],
+        "correction_target": {
+          "part_id": "amb-left-red-stripe",
+          "path": "parts[amb-left-red-stripe].shape.parameters.size"
+        }
+      },
+      {
+        "id": "ambulance-text-side-extent",
+        "view": "left",
+        "item": "amb-left-ambulance-text",
+        "expected": [0.19, 0.07],
+        "tolerance": [0.035, 0.02],
+        "correction_target": {
+          "part_id": "amb-left-ambulance-text",
+          "path": "parts[amb-left-ambulance-text].shape.parameters.height"
+        }
+      }
+    ],
+    "area_ratios": [
+      {
+        "id": "side-window-area-share",
+        "view": "left",
+        "item": "amb-left-side-window",
+        "expected": 0.044,
+        "tolerance": 0.012,
+        "correction_target": {
+          "part_id": "amb-left-side-window",
+          "path": "parts[amb-left-side-window].shape.parameters.size"
+        }
+      },
+      {
+        "id": "windshield-area-share",
+        "view": "left",
+        "item": "amb-windshield",
+        "expected": 0.059,
+        "tolerance": 0.015,
+        "correction_target": {
+          "part_id": "amb-windshield",
+          "path": "parts[amb-windshield].shape.parameters.vertices"
+        }
+      },
+      {
+        "id": "wheel-area-share",
+        "view": "left",
+        "items": ["wheel-left-front-tire", "wheel-left-rear-tire"],
+        "expected": 0.198,
+        "tolerance": 0.035,
+        "correction_target": {
+          "part_id": "wheel-left-front-tire",
+          "path": "parts[wheel-left-front-tire].shape.parameters.radius"
+        }
+      },
+      {
+        "id": "top-lightbar-area-share",
+        "view": "top",
+        "item": "roof-red-lightbar",
+        "expected": 0.053,
+        "tolerance": 0.015,
+        "correction_target": {
+          "part_id": "roof-red-lightbar",
+          "path": "parts[roof-red-lightbar].shape.parameters.size"
+        }
+      }
+    ],
+    "relative_positions": [
+      {
+        "id": "ambulance-text-above-stripe",
+        "view": "left",
+        "item": "amb-left-ambulance-text",
+        "anchor": "amb-left-red-stripe",
+        "expected": [0.17, 0.27],
+        "tolerance": 0.04,
+        "correction_target": {
+          "part_id": "amb-left-ambulance-text",
+          "path": "parts[amb-left-ambulance-text].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "wheelbase-relative-spacing",
+        "view": "left",
+        "item": "wheel-left-rear-tire",
+        "anchor": "wheel-left-front-tire",
+        "expected": [0.556, 0],
+        "tolerance": 0.035,
+        "correction_target": {
+          "part_id": "wheel-left-rear-tire",
+          "path": "parts[wheel-left-rear-tire].shape.parameters.origin"
+        }
+      }
+    ],
+    "orientation": [
+      {
+        "id": "left-side-front-rear-wheel-orientation",
+        "view": "left",
+        "item": "wheel-left-rear-tire",
+        "anchor": "wheel-left-front-tire",
+        "direction": "right_of",
+        "min_delta": 0.2,
+        "correction_target": {
+          "part_id": "wheel-left-rear-tire",
+          "path": "parts[wheel-left-rear-tire].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "left-side-label-above-stripe-orientation",
+        "view": "left",
+        "item": "amb-left-ambulance-text",
+        "anchor": "amb-left-red-stripe",
+        "direction": "above",
+        "min_delta": 0.08,
+        "correction_target": {
+          "part_id": "amb-left-ambulance-text",
+          "path": "parts[amb-left-ambulance-text].shape.parameters.origin"
+        }
+      }
+    ]
+  }
+}

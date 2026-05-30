@@ -36,6 +36,7 @@ try {
   assert.ok(toolNames.includes('compile_expert'), 'MCP tools/list should expose compile_expert');
   assert.ok(toolNames.includes('build_expert_model'), 'MCP tools/list should expose build_expert_model');
   assert.ok(toolNames.includes('validate_model'), 'MCP tools/list should expose validate_model');
+  assert.ok(toolNames.includes('validate_reference_model'), 'MCP tools/list should expose validate_reference_model');
   const compileTool = list.result.tools.find((tool) => tool.name === 'compile_expert');
   assert.deepEqual(compileTool.inputSchema.required, ['code']);
   assert.ok(compileTool.inputSchema.properties.maxOperations);
@@ -79,9 +80,36 @@ try {
   assert.equal(qa.kind, 'model_qa');
   assert.equal(qa.ok, true);
 
+  const referenceQa = await callTool('validate_reference_model', {
+    code: JSON.stringify({
+      version: 1,
+      units: 'mm',
+      operations: [
+        { op: 'reset' },
+        { op: 'box', id: 'mcp-ref-panel', name: 'MCP_Ref_Panel', origin: [0, 0, 0], size: [100, 40, 20], qa: { part_id: 'mcp-ref-panel', role: 'panel' } }
+      ]
+    }),
+    runtime: 'mock',
+    includePreview: false,
+    spec: {
+      rules: {
+        views: [{ name: 'front', axes: ['x', 'z'], frame: { items: ['mcp-ref-panel'] } }],
+        keypoints: [{
+          id: 'panel-center',
+          view: 'front',
+          item: 'mcp-ref-panel',
+          expected: [0.5, 0.5],
+          correction_target: { part_id: 'mcp-ref-panel', path: 'parts[mcp-ref-panel].shape.parameters.origin' }
+        }]
+      }
+    }
+  });
+  assert.equal(referenceQa.kind, 'reference_visual_qa');
+  assert.equal(referenceQa.ok, true);
+
   console.log(JSON.stringify({
     ok: true,
-    tools: ['compile_expert', 'build_expert_model', 'validate_model'],
+    tools: ['compile_expert', 'build_expert_model', 'validate_model', 'validate_reference_model'],
     groups: built.snapshot.totals.groups
   }, null, 2));
 } finally {

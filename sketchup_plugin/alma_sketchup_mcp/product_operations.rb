@@ -388,7 +388,16 @@ module AlmaSketchupMCP
       group.set_attribute('Text3D', 'extrusion', model_units_to_mm(extrusion))
       group.set_attribute('Text3D', 'tolerance', tolerance)
     end
-    group.transform!(Geom::Transformation.translation(anchor))
+    bounds = group.bounds
+    anchor_x = case align
+               when 'center'
+                 anchor[0] - ((bounds.min.x + bounds.max.x) / 2.0)
+               when 'right'
+                 anchor[0] - bounds.max.x
+               else
+                 anchor[0] - bounds.min.x
+               end
+    group.transform!(Geom::Transformation.translation([anchor_x, anchor[1], anchor[2]]))
     apply_transform(group, operation)
     group
   end

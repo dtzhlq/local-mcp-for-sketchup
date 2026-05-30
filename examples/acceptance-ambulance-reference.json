@@ -267,14 +267,14 @@
       "id": "amb-main-body",
       "name": "Ambulance_High_Roof_Main_Body",
       "origin": [
-        360,
+        470,
         0,
-        230
+        280
       ],
       "size": [
-        1900,
+        1770,
         820,
-        640
+        660
       ],
       "radius": 70,
       "segments": 8,
@@ -355,12 +355,12 @@
       "feature_id": "left-side-window-recess",
       "face": "front",
       "center": [
-        930,
-        447
+        860,
+        470
       ],
       "size": [
-        540,
-        260
+        500,
+        210
       ],
       "depth": 10,
       "radius": 18,
@@ -372,12 +372,12 @@
       "feature_id": "right-side-window-recess",
       "face": "back",
       "center": [
-        930,
-        447
+        860,
+        470
       ],
       "size": [
-        540,
-        260
+        500,
+        210
       ],
       "depth": 10,
       "radius": 18,
@@ -440,12 +440,12 @@
       "feature_id": "left-side-stripe-raised-seat",
       "face": "front",
       "center": [
-        950,
-        215
+        905,
+        250
       ],
       "size": [
-        1650,
-        38
+        1580,
+        30
       ],
       "depth": 3,
       "radius": 2,
@@ -457,7 +457,7 @@
       "feature_id": "roof-lightbar-base-boss",
       "face": "top",
       "center": [
-        350,
+        330,
         405
       ],
       "radius": 132,
@@ -513,12 +513,12 @@
       "origin": [
         60,
         60,
-        220
+        340
       ],
       "size": [
         560,
         700,
-        300
+        380
       ],
       "radius": 78,
       "segments": 8,
@@ -609,42 +609,42 @@
         [
           190,
           70,
-          500
+          620
         ],
         [
-          650,
+          680,
           70,
-          500
+          625
         ],
         [
-          720,
+          760,
           70,
-          820
+          940
         ],
         [
-          320,
+          330,
           70,
-          870
+          990
         ],
         [
           190,
           750,
-          500
+          620
         ],
         [
-          650,
+          680,
           750,
-          500
+          625
         ],
         [
-          720,
+          760,
           750,
-          820
+          940
         ],
         [
-          320,
+          330,
           750,
-          870
+          990
         ]
       ],
       "faces": [
@@ -710,44 +710,44 @@
       "name": "Ambulance_Large_Raked_Windshield",
       "vertices": [
         [
-          210,
+          260,
           58,
-          535
+          650
         ],
         [
-          605,
+          610,
           58,
-          548
+          660
         ],
         [
-          675,
+          680,
           58,
-          790
+          930
         ],
         [
-          305,
+          340,
           58,
-          838
+          965
         ],
         [
-          210,
+          260,
           44,
-          535
+          650
         ],
         [
-          605,
+          610,
           44,
-          548
+          660
         ],
         [
-          675,
+          680,
           44,
-          790
+          930
         ],
         [
-          305,
+          340,
           44,
-          838
+          965
         ]
       ],
       "faces": [
@@ -812,14 +812,14 @@
       "id": "amb-left-driver-window",
       "name": "Ambulance_Left_Cab_Window",
       "origin": [
-        610,
+        620,
         -26,
-        540
+        660
       ],
       "size": [
-        360,
+        300,
         26,
-        235
+        200
       ],
       "material": "Ambulance_Glass_Dark",
       "qa": {
@@ -844,14 +844,14 @@
       "id": "amb-left-side-window",
       "name": "Ambulance_Left_Side_Dark_Window",
       "origin": [
-        1030,
+        960,
         -28,
-        552
+        650
       ],
       "size": [
-        520,
+        500,
         28,
-        250
+        200
       ],
       "material": "Ambulance_Glass_Dark",
       "qa": {
@@ -876,14 +876,14 @@
       "id": "amb-right-driver-window",
       "name": "Ambulance_Right_Cab_Window",
       "origin": [
-        610,
+        620,
         820,
-        540
+        660
       ],
       "size": [
-        360,
+        300,
         26,
-        235
+        200
       ],
       "material": "Ambulance_Glass_Dark",
       "qa": {
@@ -908,14 +908,14 @@
       "id": "amb-right-side-window",
       "name": "Ambulance_Right_Side_Dark_Window",
       "origin": [
-        1030,
+        960,
         820,
-        552
+        650
       ],
       "size": [
-        520,
+        500,
         28,
-        250
+        200
       ],
       "material": "Ambulance_Glass_Dark",
       "qa": {
@@ -940,14 +940,14 @@
       "id": "amb-rear-window",
       "name": "Ambulance_Rear_Dark_Window",
       "origin": [
-        2248,
+        2220,
         210,
-        530
+        620
       ],
       "size": [
         28,
         410,
-        230
+        220
       ],
       "material": "Ambulance_Glass_Dark",
       "qa": {
@@ -972,14 +972,14 @@
       "id": "amb-left-red-stripe",
       "name": "Ambulance_Left_Red_Side_Stripe",
       "origin": [
-        215,
+        300,
         -34,
-        430
+        520
       ],
       "size": [
-        2050,
+        1780,
         24,
-        34
+        28
       ],
       "material": "Ambulance_Red_Stripe",
       "qa": {
@@ -1004,14 +1004,14 @@
       "id": "amb-right-red-stripe",
       "name": "Ambulance_Right_Red_Side_Stripe",
       "origin": [
-        215,
+        300,
         830,
-        430
+        520
       ],
       "size": [
-        2050,
+        1780,
         24,
-        34
+        28
       ],
       "material": "Ambulance_Red_Stripe",
       "qa": {
@@ -1038,12 +1038,12 @@
       "origin": [
         54,
         120,
-        430
+        520
       ],
       "size": [
         24,
         580,
-        34
+        28
       ],
       "material": "Ambulance_Red_Stripe",
       "qa": {
@@ -1068,14 +1068,14 @@
       "id": "amb-rear-red-stripe",
       "name": "Ambulance_Rear_Red_Stripe",
       "origin": [
-        2256,
+        2248,
         120,
-        420
+        510
       ],
       "size": [
         24,
         580,
-        34
+        28
       ],
       "material": "Ambulance_Red_Stripe",
       "qa": {
@@ -1100,12 +1100,12 @@
       "id": "amb-left-black-skirt",
       "name": "Ambulance_Left_Black_Lower_Skirt",
       "origin": [
-        360,
+        470,
         -30,
-        220
+        260
       ],
       "size": [
-        1740,
+        1600,
         28,
         58
       ],
@@ -1492,7 +1492,7 @@
       "origin": [
         620,
         155,
-        872
+        960
       ],
       "length": 1440,
       "height": 22,
@@ -1523,9 +1523,9 @@
       "origin": [
         620,
         405,
-        875
+        960
       ],
-      "length": 1440,
+      "length": 450,
       "height": 22,
       "thickness": 20,
       "direction": "x",
@@ -1554,7 +1554,7 @@
       "origin": [
         620,
         655,
-        872
+        960
       ],
       "length": 1440,
       "height": 22,
@@ -1583,14 +1583,14 @@
       "id": "roof-red-lightbar",
       "name": "Roof_Red_Emergency_Lightbar",
       "origin": [
-        520,
+        620,
         255,
-        910
+        1010
       ],
       "size": [
-        380,
-        300,
-        72
+        340,
+        280,
+        70
       ],
       "radius": 34,
       "segments": 6,
@@ -1620,12 +1620,12 @@
       "origin": [
         1120,
         300,
-        898
+        960
       ],
       "size": [
         360,
         220,
-        120
+        110
       ],
       "radius": 45,
       "segments": 6,
@@ -1655,7 +1655,7 @@
       "origin": [
         1580,
         250,
-        902
+        960
       ],
       "size": [
         420,
@@ -1687,7 +1687,7 @@
       "origin": [
         1685,
         465,
-        916
+        958
       ],
       "size": [
         210,
@@ -2260,7 +2260,7 @@
       "size": [
         16,
         14,
-        550
+        500
       ],
       "material": "Ambulance_Black_Rubber",
       "qa": {
@@ -2547,9 +2547,9 @@
       "center": [
         1570,
         -62,
-        748
+        800
       ],
-      "height": 116,
+      "height": 70,
       "extrusion": 8,
       "font": "Arial",
       "align": "center",
@@ -2615,7 +2615,7 @@
       "center": [
         1395,
         410,
-        1028
+        1072
       ],
       "height": 260,
       "extrusion": 8,
