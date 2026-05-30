@@ -1,7 +1,7 @@
 # Product Modeling Architecture Refactor Plan
 
 > Date: 2026-05-29
-> Status: R1/R2 first implementation landed
+> Status: R5 product sample expansion complete; ambulance, Switch, and Fuji camera now run through ProductProfile -> PartGraph -> DSL -> Layout QA + Reference Visual QA in mock and live queue, with saved queue SKP artifacts; R6 physical consistency QA now covers all three product samples, and proposal review output now has a proposal-applied mock/queue QA chain
 > Scope: upstream modeling architecture, not a full runtime rewrite
 
 ## Decision
@@ -12,7 +12,7 @@ Do not rewrite the whole project. Keep the current local MCP stack:
 JSON DSL -> Node bridge -> mock runtime / queue runtime -> SketchUp Ruby plugin
 ```
 
-The weak boundary is above the DSL. Current examples can call newer feature and boolean operations, but they still often generate a box-based layout first and then decorate it. That is why the ambulance rerun used `cut_recess`, `add_boss`, `add_raised_rib`, and `boolean_difference`, but the windows, windshield, text placement, lightbar shape, thicknesses, and proportions still did not materially improve.
+The weak boundary is above the DSL. Current examples can call newer feature and boolean operations, but they still often generate a box-based layout first and then decorate it. The first ambulance visual-quality refit shows the intended correction loop: reference-image anchors now fail the old seed snapshot, PartGraph parameters are adjusted, and the regenerated DSL passes layout QA plus Reference Visual QA in mock and queue. R5 extends that same standard beyond one vehicle sample: Switch and Fuji camera now have ProductProfiles, PartGraph compiler paths, Reference Visual QA specs, product-sample reports with fallback ratios, and live queue SKP artifacts. R6 adds a physical relation gate on the PartGraph itself, so support/contact/grounding failures can be corrected before treating a visually plausible layout as acceptable.
 
 The next architecture slice should introduce an explicit modeling pipeline:
 
@@ -151,7 +151,7 @@ Acceptance:
 Implementation status:
 
 - Done in first slice: `schema/product-profile.schema.json`, `schema/part-graph.schema.json`, `examples/product-profiles/vehicle_ambulance.json`, and `examples/part-graphs/ambulance-reference.part-graph.json`.
-- The ambulance part graph is still seeded from the current manually accepted reference geometry; it is now the edit target for future corrections instead of the generated DSL.
+- The ambulance part graph started from the current manually accepted reference geometry, but is now the edit target for reference-image corrections instead of generated DSL coordinates.
 
 ### R2: PartGraph Compiler
 
@@ -186,6 +186,12 @@ Acceptance:
 - A model with valid layout but bad proportions fails reference QA.
 - QA suggestions point back to `PartGraph` fields.
 
+Implementation status:
+
+- First slice landed: `src/reference-visual-qa.mjs`, `schema/reference-visual-qa.schema.json`, `examples/reference-visual-qa/ambulance-reference.json`, `scripts/generate-reference-visual-qa-reports.mjs`, Bridge/CLI/MCP/HTTP `validate_reference_model`, and `npm run qa:reference-visual`.
+- The first gate reuses the existing orthographic preview renderer and checks normalized silhouette aspect, keypoints, extent ratios, area ratios, and relative placement against the ambulance sample. It deliberately points correction suggestions to `parts[...].shape.parameters...` instead of generated DSL coordinates.
+- Follow-up slice completed: the ambulance spec now uses reference-image anchors for body/cab silhouette, cab height, windshield rake, side/driver windows, roof lightbar, side stripe, and text size. The old seed snapshot fails the updated gate with 17 issues, while the refit PartGraph passes layout QA and Reference Visual QA in both mock and queue runtimes.
+
 ### R4: Image Evidence Upgrade
 
 Deliverables:
@@ -201,30 +207,51 @@ Acceptance:
 - Single-image Switch outputs are explicitly lower confidence.
 - Ambulance part graph can be partially generated from image evidence, with missing fields marked for review.
 
+Implementation status:
+
+- First slice landed in `projects/image-structured-modeler`: `analyze-image-set` now emits coarse contour/polyline, bbox keypoints, profile-aware ambulance view hints, scale calibration, and observation-level part matches.
+- Added `generate-part-graph-from-observations.mjs`, `npm run image-structured:build-ambulance-part-graph`, and `projects/image-structured-modeler/examples/ambulance/part-graph.generated.json`.
+- The generated ambulance PartGraph uses the accepted ambulance PartGraph as a seed for shape parameters, then replaces evidence status/provenance with image-derived `observed` / `inferred` / `needs_review` state. Current output has 53 parts: 10 observed, 41 inferred, 2 needs_review, and 0 profile-default evidence-status parts.
+- Added no-seed `part-graph.skeleton.json` generation for the 7 profile-required ambulance roles. It carries inferred image sources but keeps all inferred-only geometry review-gated.
+- Post-R5 / R6 first slice: no-seed skeleton parts now include review-gated `parameter_proposals`. These proposals combine profile role ratios, image scale calibration, and bbox/keypoint evidence into explicit candidate PartGraph paths without automatically applying them as trusted geometry. Current ambulance no-seed skeleton has 20 proposals across 7 profile-required roles; the seed generated PartGraph records 45 proposals across 17 proposal-capable parts.
+- Post-R5 / R6 second slice: accepted proposals can now be converted into a normal `part_graph_correction_patch` with `source: "parameter_proposal_review"`. The ambulance fixture accepts body and cab shape-parameter proposals, emits `correction-patch.parameter-proposals.json` with 2 set edits, and applies it to `part-graph.proposal-applied.json` while appending `parameter_proposal_review` evidence and `qa.parameter_proposal_applied`.
+- Post-R5 / R6 third slice: `image-structured:proposal-review-ambulance` generates a proposal review HTML for the no-seed ambulance skeleton. It lists the 20 review-gated proposals, preselects the accepted fixture subset, shows patch targets, and exports accepted proposal JSON for the proposal-to-patch builder.
+- Post-R5 / R6 fourth slice: `image-structured:proposal-review-chain-ambulance` and `image-structured:proposal-review-chain-ambulance:queue` close the review -> patch -> proposal-applied DSL -> QA loop. The current accepted subset only confirms body/cab shape parameters, so the chain intentionally reports `review_required: true`: layout and Reference Visual QA fail while physical consistency passes. The queue variant saves `output/image-structured-ambulance-proposal-applied.skp` as evidence that live runtime QA is connected without treating the partial no-seed skeleton as acceptance-ready.
+- Added Reference Visual QA correction patch generation/application and an explicit PartGraph quality gate. The current ambulance generated model passes Reference Visual QA with 0 issues, emits an empty patch, and passes quality with `profile_default_ratio=0`, `needs_review_ratio=0.038`, and scale confidence `0.86`.
+- `npm run test:image-structured` now validates this R4/R6 path, including contour/keypoint evidence, cross-view matching, scale calibration, seed and no-seed PartGraph schema validity, no-seed parameter proposal coverage, proposal-to-patch authoring, proposal-applied compile/QA review gating, compile-through to the normal PartGraph compiler, correction patch schema/application, and quality report.
+- Limitation: the seed generated PartGraph intentionally preserves shape parameters from `examples/part-graphs/ambulance-reference.part-graph.json`. After the ambulance refit this seed is better aligned with the reference QA gate, but R4 still proves the evidence/correction path rather than no-seed photo reconstruction.
+
 ### R5: Product Sample Expansion
 
 Deliverables:
 
-- Switch, ambulance, and one new product sample all run through ProductProfile -> PartGraph -> DSL -> QA.
+- Switch, ambulance, and one new product sample all run through ProductProfile -> PartGraph -> DSL -> Layout QA + Reference Visual QA.
 - Fallback ratio is reported per sample.
 
 Acceptance:
 
-- Reports distinguish `real_feature_op`, `visual_helper`, `box_approximation`, and `needs_review`.
+- Reports distinguish `real_feature_op`, `structured_primitive`, `visual_helper`, `box_approximation`, and `needs_review`.
 - Release status can be updated based on evidence-backed sample quality, not on runtime capability alone.
+
+Implementation status:
+
+- First slices landed: `examples/product-profiles/game_controller_switch.json`, `examples/part-graphs/switch-controller-reference.part-graph.json`, `examples/acceptance-switch-controller.json`, `examples/reference-visual-qa/switch-controller-reference.json`, plus `examples/product-profiles/camera_fuji_x_t10.json`, `examples/part-graphs/fuji-camera-reference.part-graph.json`, `examples/acceptance-fuji-camera.json`, `examples/model-qa/fuji-camera-reference.json`, and `examples/reference-visual-qa/fuji-camera-reference.json`.
+- `npm run part-graph:compile-switch` and `npm run part-graph:compile-fuji-camera` rebuild product acceptance DSL files from ProductProfile + PartGraph, and `npm run qa:model-layout` uses those compiled artifacts instead of direct hand-authored product DSL.
+- `npm run qa:reference-visual` now covers ambulance, Switch, and Fuji. The Switch gate checks normalized top/front silhouette, shell/stick/button/keypoint placement, extent ratios, area ratios, relative placement, and orientation/chirality; the Fuji gate checks front/top/rear silhouette, lens/screen/viewfinder/dial keypoints, extent ratios, area ratios, relative positions, and left/right controls orientation. The reference QA regressions verify both a right-thumbstick drift that still passes layout QA and a mirrored left/right thumbstick swap fail Reference Visual QA with `reference.orientation_order`.
+- `npm run qa:product-samples` reports per-sample compile freshness, layout QA, Reference Visual QA, physical consistency QA, evidence ratios, and fallback ratios. Current mock report passes for ambulance, Switch, and Fuji; fallback ratios are ambulance `real_feature_op 0.094`, `box_approximation 0.094`, `visual_helper 0.792`, `profile_default 0.019`; Switch `box_approximation 0.157`, `visual_helper 0.843`; Fuji `real_feature_op 0.091`, `structured_primitive 0.667`, `box_approximation 0.03`, `visual_helper 0.212`. The Fuji refit now adds lens rings/cap tabs, FUJIFILM/X-T10 text, dial markers, and separate rear buttons; Reference Visual QA checks these details so the older 21-part model no longer satisfies the current spec.
+- REST3D-inspired physical consistency now covers all three product samples: `physical_relations` record 26 ambulance support/contact/grounding relations, 25 Switch shell/control-stack relations, and 30 Fuji camera support/contact relations. The Fuji coverage now includes the visual refit details that previously bypassed the physical gate: lens rings, lens-cap pinch/logo pieces, dial markers, shutter button, strap lugs, rear eyepiece, rear screen, and individual rear buttons. `npm run qa:physical-consistency` emits standalone reports, and regressions intentionally separate an ambulance side window, a Switch thumbstick cap, the Fuji front lens barrel, and a Fuji rear detail button to verify failing `physical.face_contact_gap` reports plus `update_part_graph` origin correction targets.
+- `npm run qa:product-samples:queue` runs the same three-sample gate against live SketchUp and saves SKP artifacts under `output/product-sample-qa/queue/artifacts/`. Current queue totals are ambulance 57 groups / 1155 faces / 3044 edges / 5,245,446 bytes, Switch 70 groups / 2986 faces / 5598 edges / 396,753 bytes, and Fuji 33 groups / 1315 faces / 3244 edges / 303,868 bytes.
 
 ## Immediate Next Slice
 
-Start with R1 and R2:
+R5 is complete as a product-sample expansion gate. The current R6 hardening boundary is also complete for ambulance no-seed proposals, proposal-applied QA/queue review gating, and three-sample physical consistency. Next slice is R7 building-photo modeling, using this same evidence/proposal/QA discipline at scene scale:
 
-1. Add schemas for `ProductProfile` and `PartGraph`.
-2. Add `vehicle_ambulance` profile.
-3. Move the ambulance acceptance path from direct DSL generation to:
+1. Keep using the ambulance refit as the reference standard: old-looking seed models must fail the image-anchored gate; fixes should land in PartGraph fields and feature intents, not generated DSL coordinates.
+2. Start R7 with building-group photo inputs as scene evidence: identify building masses, facade planes, rooflines, openings, scale anchors, and occlusion/missing-view questions before emitting DSL.
+3. Reuse proposal review and correction patch semantics for scene/model decisions, but keep unconfirmed facade/roof/opening geometry review-gated until QA evidence exists.
+4. Expand the same product-sample gate beyond ambulance, Switch, and Fuji, including scene/product boundary cases such as children's room.
+5. Continue reducing template and visual-helper debt, especially in non-vehicle samples where the gate still passes by using structured primitives or helper geometry.
 
 ```text
-vehicle_ambulance profile + ambulance part graph -> compiler -> JSON DSL
+reference anchors -> PartGraph correction -> JSON DSL -> Layout QA + Reference Visual QA
 ```
-
-4. Keep current runtime and `validate_model` unchanged unless the compiler proves a repeated missing primitive.
-
-This is the smallest slice that changes model quality mechanics without destabilizing the working runtime.

@@ -24,17 +24,23 @@ observations.json -> model-plan.json -> output.json -> review/index.html -> mock
 - feature mapping 第一切片：`blind_recess -> cut_recess`、`through_hole -> cut_hole`、`convex -> add_boss/add_raised_rib` 已进入 model-plan 和 compiler；当语义仍只能降级成 marker/helper 时，model-plan graph 和 review 会显式记录 `feature_mapping_fallback` conflict。
 - semantic fusion：`model-plan.review.semantic_fusion` 会把 evidence graph 融合为 per-part `status`、`decision`、`confidence`、semantic evidence、feature mapping signals 和 review flags。
 - corrections workbench：review HTML 已新增交互式工作台，可选择建议 patch、编辑 JSON、校验、复制和下载 `manual-corrections.workbench.json`。
+- R4 image evidence -> PartGraph 闭环：ambulance 样例现在能从 `test/救护车` 生成 `observations.json`、seed `part-graph.generated.json`、no-seed `part-graph.skeleton.json`、compiled DSL、Reference Visual QA report、PartGraph correction patch、corrected PartGraph 和 quality report；contour/polyline、keypoint candidates、跨图 part matching、scale calibration、per-part confidence 和 PartGraph correction targets 都写入产物。
+- R6 no-seed 参数提案当前边界：no-seed skeleton 会输出 review-gated `parameter_proposals`，把 image scale calibration、bbox/keypoint measurement 和 profile role ratio 组合成候选 PartGraph 参数；当前 skeleton 覆盖 7 个 required roles、20 条 proposal，seed generated PartGraph 记录 45 条 proposal，质量报告会统计 proposal 覆盖。
+- R6 proposal-to-patch 当前边界：`image-structured:proposal-patch-ambulance` 会读取 `parameter-proposal-review.accepted.json`，把 accepted proposal 转成 `part_graph_correction_patch` 并输出 `part-graph.proposal-applied.json`；当前 fixture 接受 `main_body` 和 `cab` shape 参数，共 2 个 set edits。
+- R6 proposal review UI 当前边界：`image-structured:proposal-review-ambulance` 会生成 `examples/ambulance/proposal-review/index.html`，列出 20 条 no-seed proposal、预选 fixture 接受项、展示 patch target，并允许导出 accepted proposal JSON。
+- R6 proposal review 复验链当前边界：`image-structured:proposal-review-chain-ambulance` 会重建 accepted proposal patch、刷新 proposal review、编译 `output.proposal-applied.json` 并跑 mock QA；`:queue` 版本会保存 `output/image-structured-ambulance-proposal-applied.skp`。当前只接受 body/cab 两项时输出 `review_required: true`，layout/reference QA fail，physical consistency pass。
+- 镜像/手性风险已显式证据化：`observations.json` 的每张图会写入 `orientation_hints`，记录 `image_x_right_y_down` 坐标约定、mirror risk、semantic anchors 和 `review_required`；主线 Reference Visual QA 也新增 `orientation` 规则组，Switch 左右摇杆镜像负例会被 `reference.orientation_order` 打回。
 
 当前完成度判断：
 
-- Switch-only 技术预览闭环：约 92%。
-- 通用“图片 -> 结构化 SketchUp 模型”MVP：约 78%。
-- 当前优先级：semantic fusion、corrections workbench 和主线 CAD boolean/manifold 已补齐；R1/R2 已把救护车验收迁移到 `ProductProfile + PartGraph -> JSON DSL`。下一步按 `../../docs/product-modeling-architecture-refactor-plan.md` 做 Reference Visual QA 和图像证据升级。
+- Switch-only 技术预览闭环：约 95%。
+- 通用“图片 -> 结构化 SketchUp 模型”技术预览 MVP：约 88%。
+- 当前优先级：semantic fusion、corrections workbench 和主线 CAD boolean/manifold 已补齐；R1/R2 已把救护车验收迁移到 `ProductProfile + PartGraph -> JSON DSL`；R3 Reference Visual QA 已能对救护车做 silhouette/keypoint/area/relative-placement/orientation gate；R4 已完成 image evidence -> PartGraph -> DSL -> Reference Visual QA -> CorrectionPatch -> QualityGate 的 ambulance 闭环；R5 三产品样本 gate 已由主线完成；R6 已补 no-seed parameter proposals、proposal-to-patch authoring、proposal review UI、proposal-applied mock/queue QA 链路，并在主线把 physical consistency QA 扩到 ambulance/Switch/Fuji 三样例。后续重点进入 R7 建筑群照片建模。
 
 下一轮建议：
 
-- Reference Visual QA 反向给出 correction patch，目标是修改 part graph 字段，而不是直接改 DSL 坐标。
-- 子项目补 contour/keypoint、跨图 part matching、尺度校准和证据置信度，让 image evidence 能生成或修正 PartGraph。
+- Reference Visual QA 已能反向给出 `update_part_graph` correction suggestion，目标是修改 part graph 字段，而不是直接改 DSL 坐标；`part_graph_correction_patch` 已可生成和应用。
+- 下一步：进入 R7 建筑群照片建模，把建筑体块、立面、屋顶线、门窗洞口、尺度锚点和遮挡/缺视角问题纳入 scene-level evidence；继续保持 proposal -> patch -> QA/queue 的 review-gated 纪律。
 
 本轮验收暴露的关键事实：
 
@@ -42,6 +48,7 @@ observations.json -> model-plan.json -> output.json -> review/index.html -> mock
 - 救护车验收模型是人工综合多张图片后手写 DSL，不是子项目自动多视角融合能力。
 - 单图 per-image 测试中 6 张图片仍能生成完整 41-op / 24-group / 1776-face 模型，说明当前模板补全权重过高；当前已在 per-image `model-plan.json` / `summary.json` 中显式记录单图 open question 和 template-prior 状态，避免把完整输出误读为高可信多图结果。
 - 子项目已经有 observation/model-plan/review 贯通的 evidence graph、semantic fusion 和 corrections workbench，并能消费主线第一批真实 feature operations；图像侧语义仍主要来自确定性 CV、视角分类、profile prior 和 manual corrections，后续大样例验证不能把它误写成照片级自动重建。
+- R4 的 seed ambulance PartGraph 生成仍保留 seed PartGraph 的 shape 参数；no-seed skeleton 已能表达 profile-required part 和图像证据，但 inferred-only 几何默认保持 `needs_review`。这仍不是照片级无先验多视角重建，后续 R5/R6 要继续扩大样例和参数提案覆盖。
 
 ## 当前可用状态
 
@@ -128,6 +135,17 @@ observations.json -> model-plan.json -> output.json -> review/index.html -> mock
   - 当前 mock snapshot：`3 groups`、`364 faces`、`780 edges`、`128 vertices`、`2 scenes`，bbox `44 x 158 x 16.6 mm`，warnings 0。
   - 当前 queue snapshot：`3 groups`、`369 faces`、`1035 edges`、`690 vertices`、`2 scenes`，bbox `44 x 158 x 16.6 mm`，SKP `182920 bytes`，仅 3 个已分类 `queue_material_limitation` warning。
   - 当前 mock/queue diff：report `ok`，warning gate `pass`；拓扑计数和 brand label fallback 的 bbox 存在 mock 估算与 SketchUp 真实几何差异，level 为 `warn`。
+- Ambulance R4 PartGraph evidence 样例：
+  - `examples/ambulance/observations.json` 已从 `test/救护车` 5 张图片生成，profile 为 `vehicle_ambulance`，views 为 `rear / left / top / oblique / front`，missing views 为 0。
+  - observations 现在包含 `silhouette` contour/polyline、`keypoint` candidates、component bbox/center point、scale calibration 和 evidence graph part matches。
+  - `examples/ambulance/part-graph.generated.json` 以已验收的 ambulance PartGraph 作为 seed，输出 53 个 parts：10 个 `observed`、41 个 `inferred`、2 个 `needs_review`，证据状态中 `profile_default` 为 0，并记录 45 条 parameter proposal。
+  - `examples/ambulance/part-graph.skeleton.json` 不使用 seed，输出 7 个 profile-required parts；每个 part 都带 image-derived inferred sources，但由于缺少已确认视图，全部保持 `needs_review`，并输出 20 条 review-gated parameter proposal。
+  - `examples/ambulance/correction-patch.parameter-proposals.json` 当前由 `parameter-proposal-review.accepted.json` 生成，包含 `main_body` 和 `cab` 的 2 个 accepted proposal set edits；`part-graph.proposal-applied.json` 已回写这两个 shape 参数并追加 `parameter_proposal_review` evidence。
+  - `examples/ambulance/proposal-review/index.html` 由 `image-structured:proposal-review-ambulance` 生成，展示 no-seed proposal queue、accepted fixture 预选、patch targets，并可导出 accepted proposal JSON。
+  - `examples/ambulance/output.proposal-applied.json` 由 `part-graph.proposal-applied.json` 编译生成；`image-structured:proposal-review-chain-ambulance` 和 `:queue` 会对它做 QA 复验。当前报告保持 `review_required: true`，queue artifact 为 `output/image-structured-ambulance-proposal-applied.skp`。
+  - `examples/ambulance/output.generated.json` 可由 `part-graph-compiler` 编译为当前 104-op ambulance DSL；compiled QA metadata 会保留 `generated_from_image_evidence`、evidence confidence 和 missing views。
+  - `examples/ambulance/reference-visual-qa/ambulance-generated/report.json` 当前 pass / 0 issues；`correction-patch.reference-visual.json` 因 pass 为空 patch，`part-graph.corrected.json` 保持 part count 不变。
+  - `examples/ambulance/quality-report.json` 当前 pass：`profile_default_ratio=0`、`needs_review_ratio=0.038`、scale confidence `0.86`、`parameter_proposals=45`、`parameter_proposal_parts=17`。
 
 ## 已完成
 
@@ -150,6 +168,13 @@ observations.json -> model-plan.json -> output.json -> review/index.html -> mock
 - `scripts/generate-model-plan.mjs`：
   - 将 observations 转成半自动 `model-plan.json`。
   - 已按 `object_profile` 分流：`switch_controller` 保留 Switch layout prior，`compact_remote` 走遥控器样例 profile；仍不是完全自动语义识别。
+- `scripts/generate-part-graph-from-observations.mjs`：
+  - 完成 R4 闭环入口，将 image observations + ProductProfile + 可选 seed PartGraph 转成 seed generated PartGraph 或 no-seed skeleton PartGraph。
+  - 写入 scale calibration、cross-view part matches、per-part evidence confidence、fallback summary 和 PartGraph correction targets。
+- `scripts/apply-part-graph-correction-patch.mjs`：
+  - 将 Reference Visual QA 的 `update_part_graph` suggestions 转为 `part_graph_correction_patch`，并可回写 PartGraph。
+- `scripts/validate-part-graph-quality.mjs`：
+  - 输出 PartGraph 质量门禁，检查 profile-default ratio、needs-review ratio、observed/inferred parts 和 scale confidence。
 - `scripts/compile-plan-to-sketchup-dsl.mjs`：
   - 将 model plan 编译为 SketchUp JSON DSL。
   - 已使用 `rounded_box` 改善外壳、中心握把、前面板凹槽和肩键轨道。

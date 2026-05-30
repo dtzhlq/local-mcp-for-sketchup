@@ -22,8 +22,10 @@ ObservationSet -> EvidenceGraph -> ProductProfile -> PartGraph -> FeatureMapping
 
 1. R1/R2 第一版已完成：root `ProductProfile` / `PartGraph` schema、`vehicle_ambulance` profile、救护车 part graph 和 part graph compiler 已落地。
 2. 救护车验收 DSL 已从 part graph 编译生成，不再由脚本直接摆放 DSL object。
-3. 下一步优先做 R3 Reference Visual QA，并把 correction target 指向 PartGraph 字段。
-4. 子项目后续接 R4：从 contour/keypoint、跨图 part matching 和尺度校准生成/更新 PartGraph。
+3. R3 Reference Visual QA 第一刀已完成：救护车样例有独立 reference visual spec，correction target 指向 PartGraph 字段。
+4. R4 已完成到子项目技术预览闭环：ambulance image observations 会生成/更新 seed `part-graph.generated.json` 和 no-seed `part-graph.skeleton.json`，写入 contour/keypoint、跨图 part matching、尺度校准、证据置信度、PartGraph correction targets、Reference Visual QA correction patch 和质量门禁。
+5. R6 当前边界已完成：no-seed skeleton 现在会输出 review-gated `parameter_proposals`，把图像尺度校准、bbox/keypoint evidence 和 profile role ratio 转成可审查候选参数；已接受的 proposal 可转成标准 `part_graph_correction_patch` 并回写 PartGraph，proposal review UI 可导出 accepted proposal JSON，并且 `image-structured:proposal-review-chain-ambulance` / `:queue` 已把 proposal-applied DSL 接到 mock/queue QA。当前只接受 body/cab 两项时仍输出 `review_required: true`，不会自动替换全部 inferred-only 几何。主线产品样本 gate 也已把 physical consistency QA 扩到 ambulance、Switch、Fuji 三样例。
+6. 镜像/手性风险已进入当前门禁：Image observations 会写入 `orientation_hints` 和 mirror risk，Reference Visual QA 新增 `orientation` 规则组，当前三产品 reference spec 都有左右/上下方向锚点，Switch 镜像摇杆负例会被 `reference.orientation_order` 打回。
 
 ## 当前执行计划（2026-05-27）
 
@@ -69,6 +71,8 @@ ObservationSet -> EvidenceGraph -> ProductProfile -> PartGraph -> FeatureMapping
    - 提取 keypoints：外壳角点、按钮中心、摇杆中心、肩键边界。
    - 生成 component candidates：shell、center grip、thumbstick、button cluster、screw、rail。
    - 参考 Free2CAD 的约束思路增加对称轴、平行边、同心圆、等距按钮阵列检测。
+   - 2026-05-29 已完成 R4 image evidence -> PartGraph 闭环：`analyze-image-set` 输出 coarse contour/polyline 和 keypoint candidates；ambulance profile hints 会参与 view labeling；`generate-part-graph-from-observations.mjs` 会把 image evidence 写入 seed generated PartGraph 和 no-seed skeleton PartGraph；质量门禁会检查 `profile_default_ratio`、`needs_review_ratio`、observed/inferred 数量和 scale confidence。
+   - 2026-05-30 已补 orientation/mirror hints：`observations.json` 会记录 image-space 坐标约定、mirror risk、semantic anchors 和 review_required；当前 ambulance side view 会记录 front/rear wheel 与 cab/body 的手性线索，供 PartGraph 生成和 review 使用。
 
 7. **提升 SketchUp 几何质量**
    - 依赖主线 MCP 的 `cut_hole`、`cut_slot`、`cut_recess`、`add_boss`、`add_raised_rib`。
@@ -80,6 +84,23 @@ ObservationSet -> EvidenceGraph -> ProductProfile -> PartGraph -> FeatureMapping
    - 将 Switch-specific prior 收敛到可解释、可降级的 profile。
    - 抽象通用 part taxonomy。
    - 评估是否接入 VLM，只用于语义判断，不替代几何测量。
+
+R4.2 已完成：
+
+1. Reference Visual QA 的 `update_part_graph` suggestions 已可转成 `part_graph_correction_patch`，并可回写 generated PartGraph。
+2. correction patch 会对 observed part 的 shape parameters 做可应用 proposal；测试中通过人工侧窗漂移验证 patch 能降低 Reference Visual QA issue 数。
+3. `profile_default` / `needs_review` 比例已作为样例质量门禁输出，避免只看 runtime 成功。
+
+R5 已由主线完成：
+
+1. 增加第三产品样例，要求从 `ProductProfile -> PartGraph -> DSL -> Layout QA + Reference Visual QA` 跑通。
+2. 将 Switch-specific prior 收敛为正式 `ProductProfile`，减少 model-plan 路径和 PartGraph 路径的长期分叉。
+
+下一步：
+
+1. 进入 R7 建筑群照片建模：先把建筑体块、立面平面、屋顶线、开窗/门洞、尺度锚点和遮挡/缺视角问题写成 scene-level evidence。
+2. 继续沿用 no-seed proposal -> proposal review -> correction patch -> QA/queue 纪律；建筑立面、屋顶和开口 geometry 在证据不足时必须保持 review-gated。
+3. 之后再把 proposal/patch authoring 扩到 Switch/Fuji 或新的产品/场景边界样例。
 
 已完成/保留的原计划能力：
 

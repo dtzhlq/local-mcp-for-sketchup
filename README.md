@@ -8,7 +8,7 @@
 
 2026-05-27 验收复盘后，项目状态调整为：**技术预览闭环已验证，正式发布暂停**。主线 runtime、Expert Mode、mock/queue 回归和打包链路可继续作为基础能力使用；阶段 7 已补 `target_id + face` 的受控 feature operations、queue active model 防护，以及 `boolean_union` / `boolean_difference` / `boolean_intersect` / `manifold_check` / `manifold_repair` 组成的 CAD boolean/manifold 能力；Image Structured Modeler 已补齐 observation/model-plan/review evidence graph、`review.semantic_fusion` 跨图语义融合层、交互式 corrections workbench，以及 `blind_recess` / `convex` 到真实 feature operations 的第一版映射。正式发布仍需要用新 boolean/manifold 能力复跑更多产品类验收。
 
-2026-05-29 起，下一阶段计划不是重写 runtime，而是重构 runtime 之上的产品建模架构：`ObservationSet -> EvidenceGraph -> ProductProfile -> PartGraph -> FeatureMappingPlan -> JSON DSL -> QA`。R1/R2 第一版已落地：新增 root `ProductProfile` / `PartGraph` schema、`vehicle_ambulance` profile、救护车 part graph、part graph compiler，并让救护车验收 DSL 从 `profile + part graph` 生成。详细计划见 [Product Modeling Architecture Refactor Plan](docs/product-modeling-architecture-refactor-plan.md)。
+2026-05-29 起，下一阶段计划不是重写 runtime，而是重构 runtime 之上的产品建模架构：`ObservationSet -> EvidenceGraph -> ProductProfile -> PartGraph -> FeatureMappingPlan -> JSON DSL -> Layout QA + Reference Visual QA`。R1/R2 已落地 root `ProductProfile` / `PartGraph` schema、`vehicle_ambulance` profile、救护车 part graph、part graph compiler，并让救护车验收 DSL 从 `profile + part graph` 生成。R3 已加入 Reference Visual QA：救护车样例现在有独立的 silhouette/keypoint/extent/area/relative-placement/orientation 参考视觉规则，correction suggestions 指回 PartGraph 字段。R4 已完成子项目技术预览闭环：ambulance image evidence 可生成 seed/no-seed PartGraph、Reference Visual QA correction patch 和质量报告，并在 observations 中记录 mirror-risk orientation hints。R5 已完成三样本 mock + live queue 批量报告：ambulance、Switch 手柄、Fuji X-T10 相机都已进入 `ProductProfile -> PartGraph -> DSL -> Layout QA + Reference Visual QA` 和 fallback-ratio 产品样本报告，并保存 queue `.skp` artifacts。R6 已完成当前收口边界：no-seed 参数提案、proposal-to-patch authoring、参数提案 review UI、proposal-applied mock/queue 复验链，以及 REST3D 启发的 PartGraph physical consistency QA；ambulance、Switch、Fuji 三样例都记录支撑/贴合/接地等物理关系，并能在部件漂移时把 correction suggestion 指回 PartGraph target。正式发布仍暂停，因为还需要继续降低非救护车样例的模板/视觉辅助比例，并把同一标准扩到 R7 建筑群照片建模和更多产品/场景边界。详细计划见 [Product Modeling Architecture Refactor Plan](docs/product-modeling-architecture-refactor-plan.md)。
 
 ## 已知官方形态
 
@@ -41,6 +41,7 @@ build_model({ code, runtime, timeoutMs? }) -> { snapshot }
 reset_model({ runtime, timeoutMs? }) -> { snapshot }
 save_model({ path?, keep_session?, runtime, timeoutMs? }) -> { file_path, snapshot }
 validate_model({ code?|snapshot?, runtime?, spec?, includePreview? }) -> { report, preview }
+validate_reference_model({ code?|snapshot?, runtime?, spec?, includePreview? }) -> { report, preview }
 ```
 
 `runtime` 支持：
@@ -56,6 +57,7 @@ src/cli.mjs              # CLI 入口
 src/http-server.mjs      # HTTP bridge，可选
 src/mcp-server.mjs       # stdio MCP server，可接入支持 MCP 的客户端
 src/model-qa.mjs         # 无 GUI 的语义布局 QA、正交 SVG/HTML preview 和 correction suggestions
+src/reference-visual-qa.mjs # 参考视觉 QA：silhouette/keypoint/extent/area/relative placement + PartGraph correction targets
 src/mock-runtime.mjs     # 离线可验证 runtime
 src/queue-runtime.mjs    # SketchUp 插件队列 runtime
 src/geometry.mjs         # mock runtime operation modules 兼容聚合导出入口
@@ -106,6 +108,9 @@ examples/profile-edge-cases.json # 通用 profile 凹多边形/多洞 regression
 examples/appearance-texture-slice.json # texture transform / image plane appearance slice
 examples/text-3d-slice.json # true font-outline text_3d capability slice
 examples/boolean-manifold-slice.json # CAD boolean / manifold capability slice
+examples/reference-visual-qa/ambulance-reference.json # ambulance Reference Visual QA spec
+examples/reference-visual-qa/switch-controller-reference.json # Switch Reference Visual QA spec
+examples/reference-visual-qa/fuji-camera-reference.json # Fuji camera Reference Visual QA spec
 examples/expert-parametric-fixture.js # Expert Mode v1 参数化 fixture 示例
 test/mock-validation.mjs # 离线验证
 test/expert-compiler.mjs # Expert Mode compiler / mock build regression
@@ -142,11 +147,17 @@ node src/cli.mjs save_model --runtime mock --path output/mock-model.json
 node src/cli.mjs compare_snapshots --expected-file output/mock-a.json --actual-file output/mock-b.json --tolerance-mm 1 --max-faces 5000 --max-artifact-size-bytes 50000000
 node src/cli.mjs compare_model --code-file examples/demo-room.json --expected-runtime mock --actual-runtime mock --max-faces 5000
 node src/cli.mjs compare_model --code-file examples/demo-room.json --expected-runtime mock --actual-runtime mock --max-faces 5000 --format markdown --output-file output/mock-parity-report.md
-node src/cli.mjs validate_model --code-file examples/switch-controller-demo.json --spec-file examples/model-qa/switch-controller-demo.json --preview-dir output/model-qa/switch-controller-demo --format markdown --output-file output/model-qa/switch-controller-demo/report.md
+node src/cli.mjs validate_model --code-file examples/acceptance-switch-controller.json --spec-file examples/model-qa/switch-controller-demo.json --preview-dir output/model-qa/switch-controller-reference --format markdown --output-file output/model-qa/switch-controller-reference/report.md
+node src/cli.mjs validate_reference_model --code-file examples/acceptance-ambulance-reference.json --spec-file examples/reference-visual-qa/ambulance-reference.json --preview-dir output/reference-visual-qa/ambulance-reference --format markdown --output-file output/reference-visual-qa/ambulance-reference/report.md
+node src/cli.mjs validate_reference_model --code-file examples/acceptance-switch-controller.json --spec-file examples/reference-visual-qa/switch-controller-reference.json --preview-dir output/reference-visual-qa/switch-controller-reference --format markdown --output-file output/reference-visual-qa/switch-controller-reference/report.md
 node src/cli.mjs compile_expert --code-file examples/expert-parametric-fixture.js --format dsl --seed 7
 node src/cli.mjs build_expert_model --runtime mock --code-file examples/expert-parametric-fixture.js --seed 7
 npm run qa:mock
 npm run qa:model-layout
+npm run qa:reference-visual
+npm run qa:physical-consistency
+npm run qa:product-samples
+npm run qa:product-samples:queue
 npm run qa:expert:mock
 npm run qa:identity:mock
 # 打开 SketchUp 插件后，把 actual-runtime 改成 queue：
@@ -180,7 +191,7 @@ npm run qa:expert:mock
 
 ## MCP stdio 接入
 
-本项目自带一个最小 MCP stdio server，当前暴露 `get_docs`、`get_capabilities`、`build_model`、`compile_expert`、`build_expert_model`、`reset_model`、`save_model`、`compare_snapshots`、`compare_model` 和 `validate_model`：
+本项目自带一个最小 MCP stdio server，当前暴露 `get_docs`、`get_capabilities`、`build_model`、`compile_expert`、`build_expert_model`、`reset_model`、`save_model`、`compare_snapshots`、`compare_model`、`validate_model` 和 `validate_reference_model`：
 
 ```bash
 node src/mcp-server.mjs
@@ -387,7 +398,13 @@ mock snapshot 会额外给出零面组、bounding box 碰撞等结构化 warning
 
 `compare_model` 是更高层的一键对照：同一份 DSL 先用 `expected_runtime` 构建，再用 `actual_runtime` 构建，随后复用 `compare_snapshots` 产出 QA report。默认是 `mock -> queue`；纯离线可显式传 `--actual-runtime mock`，打开 SketchUp 插件后再改回 `queue`。CLI 默认输出 JSON；加 `--format markdown --output-file output/report.md` 可保存人类可读 Markdown 报告。`scripts/generate-qa-reports.mjs` 会批量跑默认 golden set（demo room、golden architecture、golden product），为每个样例输出 JSON/Markdown，并生成 `index.md` 总览；快捷命令是 `npm run qa:mock` 和 `npm run qa:queue`。Node 侧 queue runtime 会通过 `~/.sketchup-mcp-replica/queue-runtime.lock` 串行化 SketchUp file queue 访问；bridge 会在同一生命周期内缓存已验证 runtime descriptor，显式 `get_capabilities` 仍会强制 live handshake。如需调大等待时间，可设置 `ALMA_SKETCHUP_QUEUE_LOCK_TIMEOUT_MS=<毫秒>`。
 
-`validate_model` 是补充在 snapshot 之上的无 GUI 语义布局 QA：它可以直接构建 DSL，也可以校验已有 snapshot；`spec.rules` 支持 `contacts`、`allowed_collisions`、`inside`、`support` 和 `separation` 规则，规则目标可用精确名称或正则。报告会返回 `issues`、`correction_suggestions`，并生成 top/front/right 正交 SVG 与 HTML preview。`npm run qa:model-layout` 默认跑 Switch 手柄、救护车和儿童房三份验收样例，输出到 `output/model-qa/`。救护车验收 DSL 可用 `npm run acceptance:generate-ambulance` 从 `examples/product-profiles/vehicle_ambulance.json` + `examples/part-graphs/ambulance-reference.part-graph.json` 重建；也可用 `npm run part-graph:compile-ambulance` 直接调用通用 part graph compiler，避免基于旧 JSON 继续手改。
+`validate_model` 是补充在 snapshot 之上的无 GUI 语义布局 QA：它可以直接构建 DSL，也可以校验已有 snapshot；`spec.rules` 支持 `contacts`、`allowed_collisions`、`inside`、`support` 和 `separation` 规则，规则目标可用精确名称或正则。报告会返回 `issues`、`correction_suggestions`，并生成 top/front/right 正交 SVG 与 HTML preview。`npm run qa:model-layout` 默认跑 Switch 手柄、救护车、Fuji 相机和儿童房四份验收样例，输出到 `output/model-qa/`。救护车验收 DSL 可用 `npm run acceptance:generate-ambulance` 从 `examples/product-profiles/vehicle_ambulance.json` + `examples/part-graphs/ambulance-reference.part-graph.json` 重建；Switch 验收 DSL 可用 `npm run part-graph:compile-switch` 从 `examples/product-profiles/game_controller_switch.json` + `examples/part-graphs/switch-controller-reference.part-graph.json` 重建；Fuji 相机验收 DSL 可用 `npm run part-graph:compile-fuji-camera` 从 `examples/product-profiles/camera_fuji_x_t10.json` + `examples/part-graphs/fuji-camera-reference.part-graph.json` 重建。三个产品样例都应通过通用 part graph compiler，避免基于旧 JSON 继续手改。
+
+`validate_reference_model` 是 layout QA 之后的参考视觉 QA：它复用正交 preview renderer，忽略 `reference_image` 图板，只检查生成模型自身在参考视图里的 silhouette aspect、keypoint、extent ratio、area ratio、relative placement 和 orientation/chirality。报告结构与 `validate_model` 保持一致，但 correction suggestions 使用 `action: "update_part_graph"`，目标路径指向 `parts[...].shape.parameters...`。救护车规则在 `examples/reference-visual-qa/ambulance-reference.json`，Switch 规则在 `examples/reference-visual-qa/switch-controller-reference.json`，Fuji 相机规则在 `examples/reference-visual-qa/fuji-camera-reference.json`，`npm run qa:reference-visual` 会输出 JSON/Markdown/preview 到 `output/reference-visual-qa/`。当前 ambulance 规则已经从旧 seed geometry 切到参考图锚定门槛；旧快照会失败，新 PartGraph/DSL 通过 mock 和 queue 的 layout/reference QA。Switch 与 Fuji 规则验证了 layout QA 之外的关键点、占比、相对位置和左右手性门槛；新增回归会把 Switch 左右摇杆镜像对调，并要求 `reference.orientation_order` 失败。
+
+`npm run qa:product-samples` 是 R5/R6 产品样本质量入口：它会检查 ProductProfile + PartGraph 编译结果是否与 acceptance DSL 一致，再跑 layout QA、Reference Visual QA 与 PartGraph physical consistency QA，并按样本输出 `real_feature_op`、`structured_primitive`、`visual_helper`、`box_approximation`、`profile_default`、`needs_review` 等 fallback ratio。当前默认覆盖 ambulance、Switch 与 Fuji 相机，mock 报告输出到 `output/product-sample-qa/`；`npm run qa:physical-consistency` 会单独输出物理一致性报告到 `output/physical-consistency-qa/`；`npm run qa:product-samples:queue` 会跑同一组 live queue gate，并保存 `.skp` artifacts 到 `output/product-sample-qa/queue/artifacts/`。当前三样例 physical consistency gate 全部通过：ambulance 26 条物理关系、Switch 25 条、Fuji 30 条。Fuji 已补镜头分段/镜头盖夹片、前脸 FUJIFILM/X-T10 文字、顶部拨盘标记和后背独立按钮，Reference Visual QA 会检查这些 detail，physical consistency QA 也覆盖镜头环、镜头盖夹片、拨盘标记、快门按钮、肩带扣、后目镜、后背屏幕和独立按钮，防止这类小构件再次悬浮；当前 fallback ratios 为 `real_feature_op 0.091`、`structured_primitive 0.667`、`box_approximation 0.03`、`visual_helper 0.212`，属于 R5/R6 可回归的第三产品样例，但仍不是最终照片级相机建模质量。
+
+Image Structured Modeler 的 ambulance no-seed skeleton 现在会在 PartGraph 中输出 `parameter_proposals`：每条提案记录目标 PartGraph path、当前值、建议值、置信度、图像尺度/bbox/keypoint 依据和 `review_required` 状态。当前 no-seed skeleton 覆盖 7 个 profile-required parts、20 条提案，全部保持 review-gated；seed generated PartGraph 记录 45 条提案，质量报告会统计 `parameter_proposals`、`parameter_proposal_parts` 和 `review_required_parameter_proposals`。图像 observation 现在也会记录 `orientation_hints`，包括 `image_x_right_y_down` 坐标约定、mirror risk、semantic anchors 和 `review_required`，用于显式标出左右/前后镜像风险，避免把 CV 视角分类直接当成模型手性事实。`npm run image-structured:proposal-patch-ambulance` 会读取 `parameter-proposal-review.accepted.json`，把已接受 proposal 转成 `correction-patch.parameter-proposals.json`，并生成应用后的 `part-graph.proposal-applied.json`。`npm run image-structured:proposal-review-ambulance` 会生成 `projects/image-structured-modeler/examples/ambulance/proposal-review/index.html`，用于勾选 proposal 并导出 accepted proposal JSON。`npm run image-structured:proposal-review-chain-ambulance` 会把 review -> patch -> `output.proposal-applied.json` -> mock QA 串起来；`npm run image-structured:proposal-review-chain-ambulance:queue` 会用 live SketchUp queue 复验并保存 `output/image-structured-ambulance-proposal-applied.skp`。当前只接受 body/cab 两项 proposal 时，该链路应输出 `review_required: true`，layout/reference QA fail，physical consistency pass，防止把部分确认的 no-seed skeleton 误升格为完整产品 acceptance。
 
 ## Expert Mode v1
 
@@ -410,14 +427,14 @@ node src/cli.mjs build_expert_model --runtime mock --code-file examples/expert-p
 
 ## 当前 MVP 状态
 
-- 当前只能声明为技术预览：儿童房、救护车、Switch 手柄验收说明系统能表达和保存结构化展示模型；主线已补受控面级 feature operations、CAD boolean/manifold 和 active model 防护，子项目已补 graph-based semantic fusion 和 corrections workbench；照片/多图到可编辑产品模型仍需要更多产品类验收和图像侧自动化收口。
-- `get_docs`、`build_model`、`reset_model`、`save_model`、`validate_model` 已完成 Node bridge、CLI、HTTP bridge 和 stdio MCP server 入口。
+- 当前只能声明为技术预览：儿童房、救护车、Switch 手柄和 Fuji 相机验收说明系统能表达和保存结构化展示模型；主线已补受控面级 feature operations、CAD boolean/manifold 和 active model 防护，子项目已补 graph-based semantic fusion、corrections workbench 和 R4 evidence/correction loop。救护车已完成第一轮参考图锚定 PartGraph refit，Switch 和 Fuji 已进入 R5 ProductProfile/PartGraph/Reference Visual QA 样本报告，三样本 mock + live queue 批量报告已通过；R6 proposal review 链路已证明部分接受的 no-seed proposal 会被 mock/queue QA 留在 review-gated 状态。但照片/多图到可编辑模型仍需要 R7 建筑群照片建模、更多产品边界样例，以及继续降低模板/视觉辅助比例。
+- `get_docs`、`build_model`、`reset_model`、`save_model`、`validate_model`、`validate_reference_model` 已完成 Node bridge、CLI、HTTP bridge 和 stdio MCP server 入口。
 - `mock` runtime 已支持基础房间、墙洞面板、棱柱、mesh、通用 profile face/extrude（简单闭合多边形 outer + holes）、圆角盒/倒角面板、凹槽、长圆槽、刻线、text_3d bbox metadata、font-outline `text_emboss/text_engrave` metadata、面板按钮、摇杆、螺丝孔位、受控 `cut_hole` / `cut_slot` / `cut_recess` / `add_boss` / `add_raised_rib` feature metadata、`boolean_union` / `boolean_difference` / `boolean_intersect` 结果记录与 `manifold_check` / `manifold_repair`、屋顶 helper、圆柱、旋转体、扫掠管、domed/bowed 曲面、楼层/楼板/墙/门窗/楼梯/栏杆、Tags/attributes/classification 元数据、texture_transform/image_plane 表现层、组件定义/实例、基础 transform、对象任意模型轴旋转、本地轴旋转、模型空间 4x4 matrix、本地坐标系 local_matrix、matrix/local_matrix decomposition metadata（含 affine/non-affine 与 Euler 报告）、相机、scene、材质 texture/PBR 字段记录、style/shadow/rendering options 表现层状态和 snapshot 校验；bridge 会在 snapshot 中附加 runtime capability descriptor。
 - `queue` runtime 已能把请求交给 SketchUp Ruby 插件，插件侧实现同一套 DSL 的真实建模、基础 transform、对象任意模型轴旋转、本地轴旋转、4x4 matrix、本地坐标系 local_matrix、transform metadata 回传（含 affine/non-affine 与 Euler 报告）、通用 profile face/extrude、Tags/attributes/classification 元数据、texture_transform/image_plane 表现层、圆角盒/倒角面板、凹槽、长圆槽、刻线、真实字体轮廓 text_3d、font-outline `text_emboss/text_engrave`、面板按钮、摇杆、螺丝孔位、受控 face pushpull feature operations、SketchUp solid boolean operations、manifold 检查/修复 metadata、domed/bowed 曲面、楼层/楼板/墙/门窗/楼梯/栏杆、材质 color/alpha/texture/SketchUp 2025+ PBR、style/shadow/rendering options、scene 和 `.skp` 保存；`reset_model` / `build_model` / `save_model` / `snapshot` 已统一使用 active model 防护；snapshot 中的 queue runtime descriptor 来自已安装插件，并通过 `runtime.compatibility` 对照当前 manifest。
 - Expert Mode v1 已接入 CLI/bridge：受限脚本通过 AST 白名单解释器编译成 JSON DSL，再复用现有 mock/queue runtime；`examples/expert-parametric-fixture.js` 覆盖参数化组件阵列、`range().map(...)`、seeded random、`vec` helper 和 `text_3d`，新增扩展 helper 覆盖数组 `filter/flatMap/reduce`、`clamp/lerp/rad/deg` 与 `vec.cross/norm/distance`，并已通过 live queue 单例构建，warnings 0。
 - MCP stdio server 已暴露 Expert Mode 工具：`compile_expert` 和 `build_expert_model`，客户端可以直接请求受限脚本编译或编译后构建。
 - Expert Mode 发布回归已接入并通过 `npm run qa:expert:mock` / `npm run qa:expert:queue`，输出编译、runtime build、artifact 保存、warnings 和预算报告；queue SKP artifact 保存到 `output/qa-reports/expert-queue/artifacts/expert-parametric-fixture.skp`。
-- 离线测试 `npm test` 已覆盖核心 DSL、建筑 DSL、产品/工业设计 golden examples、snapshot totals/QA、材质、PBR 字段、表现层状态、组件、相机、保存流程、queue capability handshake 注入、descriptor 漂移检测、带 top issues / recommendations / budget 检查的 snapshot diff report、Markdown QA report、`compare_model` 一键对照骨架，以及 `validate_model` 语义布局 QA。
+- 离线测试 `npm test` 已覆盖核心 DSL、建筑 DSL、产品/工业设计 golden examples、snapshot totals/QA、材质、PBR 字段、表现层状态、组件、相机、保存流程、queue capability handshake 注入、descriptor 漂移检测、带 top issues / recommendations / budget 检查的 snapshot diff report、Markdown QA report、`compare_model` 一键对照骨架，以及 `validate_model` 语义布局 QA 和 `validate_reference_model` 参考视觉 QA。
 - `mock` runtime 的 session 写入使用文件锁和临时文件原子 rename；并行运行 `npm test` 与 `npm run qa:mock` 时会串行化同一 session 的读写，避免半写 JSON 污染。
 - JS mock runtime 已完成主边界模块拆分：session/model state 位于 `src/model-state.mjs`；通用归一化和 transform helper 位于 `src/operation-utils.mjs`；material/PBR/texture、primitive、profile、surface、product、architecture 和 demo helper 分别位于对应 `*-operations.mjs`；component_definition/instance 位于 `src/component-operations.mjs`；camera/scene/style/shadow/rendering 位于 `src/view-operations.mjs`；对象编辑和身份引用位于 `src/object-operations.mjs` / `src/object-identity.mjs`；snapshot、warning summary 和 bbox QA 位于 `src/snapshot.mjs`；`src/geometry.mjs` 仅保留兼容聚合导出。
 - Ruby queue runtime 已完成模块拆分：runtime contract 表由 `src/capabilities.mjs` 生成到 `sketchup_plugin/alma_sketchup_mcp/operation_registry.rb`；对象编辑、Tags、attributes、classification、texture transform 和 `transform_object` 位于 `object_operations.rb`；材质、PBR 和贴图 helper 位于 `materials.rb`；共享 geometry/entity helper 位于 `geometry_operations.rb`；mesh/prism/cylinder 位于 `primitive_operations.rb`；box/product helper 位于 `product_operations.rb`；panel/profile/roof helper 位于 `profile_operations.rb`；loft/shell/sweep/domed/bowed helper 位于 `surface_operations.rb`；受控面级特征位于 `feature_operations.rb`；solid boolean / manifold 位于 `boolean_operations.rb`；demo room 位于 `demo_operations.rb`；建筑、组件、view 和 snapshot 分别位于对应模块，均由主插件文件 `require_relative` 加载。
@@ -431,6 +448,11 @@ node src/cli.mjs build_expert_model --runtime mock --code-file examples/expert-p
 - [x] CAD boolean/manifold：新增 `boolean_union`、`boolean_difference`、`boolean_intersect`、`manifold_check`、`manifold_repair`，queue runtime 调 SketchUp solid operations，mock/runtime snapshot 记录 boolean history 与 manifold reports，样例为 `examples/boolean-manifold-slice.json`。
 - [x] Image Structured feature mapping 第一 slice：compact remote 已把 `blind_recess` / `convex` 编译为 `cut_recess` / `add_boss` / `add_raised_rib`，并通过 queue snapshot/diff 与 `feature_mapping_regression`。
 - [x] Image Structured Modeler 图像侧语义融合：`model-plan.review.semantic_fusion` 已按 part 汇总跨视图 evidence、semantic labels、feature mapping、confidence、decision/status 和 review flags；Switch/compact remote 样例已刷新。
+- [x] Image Structured Modeler R4 PartGraph 闭环：ambulance 图像证据已生成 seed/no-seed PartGraph、compiled DSL、Reference Visual QA report、CorrectionPatch 和 quality gate；`test:image-structured` 覆盖 contour/keypoint、跨图 matching、尺度校准、证据置信度和 correction patch 应用。
+- [x] Ambulance visual-quality refit 第一轮：Reference Visual QA 已新增 `extent_ratios`，参考图锚定规则会让旧 seed 快照失败 17 项，新 PartGraph/DSL 通过 mock/queue layout QA + Reference Visual QA。
+- [x] R5 Switch 样例扩展第一刀：新增 `game_controller_switch` ProductProfile、Switch PartGraph、compiled acceptance DSL、Reference Visual QA spec 和 `qa:product-samples` fallback-ratio 报告；Switch 已通过 ProductProfile -> PartGraph -> DSL -> Layout QA + Reference Visual QA。
+- [x] R5/R6 三样本产品报告收口：新增 `camera_fuji_x_t10` ProductProfile、Fuji PartGraph、compiled acceptance DSL、layout QA spec、Reference Visual QA spec 和 `qa:product-samples:queue`；ambulance / Switch / Fuji 已通过 mock + live queue 产品样本批量报告，Fuji 当前为 33 parts，并补上镜头/文字/拨盘/后背按钮 detail gate。
+- [x] R6 proposal review -> patch -> QA/queue 链：`image-structured:proposal-review-chain-ambulance` 和 `:queue` 会重建 accepted proposal patch、编译 proposal-applied DSL、运行 QA，并在 queue 版保存 `.skp`；当前 accepted subset 仍按预期输出 `review_required: true`。
 - [x] Review/corrections authoring 工作台：review HTML 已支持选择建议 patch、编辑 JSON、校验、复制和下载 `manual-corrections.workbench.json`；自动写盘/重跑仍留作 CLI polish。
 
 ### 已验证通过（done）

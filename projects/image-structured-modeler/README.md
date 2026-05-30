@@ -70,6 +70,7 @@ npm run image-structured:compile-remote
 npm run image-structured:review-remote
 npm run image-structured:snapshot-remote
 npm run image-structured:build-remote
+npm run image-structured:build-ambulance-part-graph
 npm run test:image-structured
 ```
 
@@ -102,6 +103,22 @@ npm run test:image-structured
 - `projects/image-structured-modeler/examples/compact-remote/review/snapshot-report.json`
 - `projects/image-structured-modeler/examples/compact-remote/review/snapshot-report.md`
 
+`build-ambulance-part-graph` 是 R4 图像证据升级的第一条 PartGraph 链路：它会读取 `test/救护车` 和 `vehicle_ambulance` ProductProfile 的 reference image hints，生成：
+
+- `projects/image-structured-modeler/examples/ambulance/observations.json`
+- `projects/image-structured-modeler/examples/ambulance/review-overlays/*.png`
+- `projects/image-structured-modeler/examples/ambulance/part-graph.generated.json`
+- `projects/image-structured-modeler/examples/ambulance/part-graph.skeleton.json`
+- `projects/image-structured-modeler/examples/ambulance/part-graph.proposal-applied.json`
+- `projects/image-structured-modeler/examples/ambulance/output.proposal-applied.json`
+- `projects/image-structured-modeler/examples/ambulance/output.generated.json`
+- `projects/image-structured-modeler/examples/ambulance/reference-visual-qa/ambulance-generated/report.json`
+- `projects/image-structured-modeler/examples/ambulance/correction-patch.reference-visual.json`
+- `projects/image-structured-modeler/examples/ambulance/part-graph.corrected.json`
+- `projects/image-structured-modeler/examples/ambulance/quality-report.json`
+
+该链路会把 coarse contour/polyline、bbox/keypoint candidates、跨图 part matching、profile-backed scale calibration、orientation/mirror hints 和 per-part confidence 写入 generated PartGraph。当前 seed 版本输出 53 个 parts：10 个 `observed`、41 个 `inferred`、2 个 `needs_review`，证据状态已经没有 `profile_default`；质量门禁会显式检查 `profile_default_ratio=0`、`needs_review_ratio<=0.12`、尺度置信度和 parameter proposal 覆盖。无 seed skeleton 版本会生成 7 个 profile-required parts，并把 inferred-only 的图像证据保留为 `needs_review`，用于表达“有部分证据但不能当作已确认几何”。R6 当前边界已让 no-seed skeleton 生成 20 条 review-gated `parameter_proposals`，每条记录 PartGraph path、当前值、候选值、置信度、图像尺度校准和 bbox/keypoint measurement；seed generated PartGraph 记录 45 条 proposal。`observations.json` 现在会为每张图写入 `orientation_hints`：包含 `image_x_right_y_down` 坐标约定、mirror risk、semantic anchors 和 `review_required`，例如 ambulance side view 会记录 front/rear wheel 与 cab/body 的手性锚点，避免把左右镜像误判静默传入模型布局。`image-structured:proposal-patch-ambulance` 会读取 `parameter-proposal-review.accepted.json`，把已接受 proposal 转成 `correction-patch.parameter-proposals.json` 并应用到 `part-graph.proposal-applied.json`。`image-structured:proposal-review-ambulance` 生成 `proposal-review/index.html`，用于勾选 proposal、预览 patch targets 并导出 accepted proposal JSON。`image-structured:proposal-review-chain-ambulance` 会继续编译 `output.proposal-applied.json` 并运行 mock QA；`:queue` 版本会保存 `output/image-structured-ambulance-proposal-applied.skp`。当前只接受 body/cab 两项时报告 `review_required: true`，layout/reference QA fail，physical consistency pass。Reference Visual QA 通过时 correction patch 为空；测试会人工制造侧窗漂移和镜像/手性负例，验证 `update_part_graph` suggestion 能生成并应用 PartGraph correction patch，再降低 reference visual QA issue 数。主线产品样本 gate 还会对 ambulance、Switch、Fuji 的 PartGraph physical relations 做一致性检查。
+
 `snapshot-switch` 会对当前 DSL 运行 mock snapshot，并把 warning 分成 expected contact / shallow overlap / needs review 等 bucket。当前 Switch DSL 会为 face dome、rear grip、thumbstick、buttons、screws 写入 `qa.expected_contacts`，warning 分类会优先使用这些元数据，而不是只靠对象命名启发式。当前 mounted detail 已改用 `analog_stick`、`button_on_panel`、`screw_hole`，rear grip attachment 已调整为接触不穿插，mock geometry warning 已收敛到 0。
 
 `snapshot-switch:queue` 会通过 SketchUp queue runtime 生成真实 `.skp` 和 queue snapshot report，运行前需要 SketchUp 已启动 Alma SketchUp MCP Bridge。更新 `sketchup_plugin/alma_sketchup_mcp.rb` 后，需要重载插件或重启 SketchUp，queue snapshot 才会带出最新的 `qa` 元数据。
@@ -127,7 +144,7 @@ npm run test:image-structured
 
 改完 `manual-corrections.json` 后重新运行 `npm run image-structured:build-switch`，修正会进入 `model-plan.json`，并显示在 review report 中。Review 里的 Corrections Workbench 会基于 Correction Patch Suggestions 生成可编辑 JSON，支持选择 patch、校验、复制和下载 `manual-corrections.workbench.json`；默认把待确认 part 标为 `manual_confirmed` 并保留当前 feature semantics / fallback 信息。
 
-当前实现是确定性的 CV baseline：缩放图片、Sobel 边缘检测、主 bbox、垂直对称轴候选、视角启发式分类。Switch 示例会额外读取 `model-plan.example.json` 里的 `views[]` 作为人工视角 hint；compact remote 示例使用固定 observation fixture 验证第二产品路径。通用 CLI 不传 `--view-hints-file` 时仍走纯 CV 模式。它只负责给人工 review 和后续 VLM/语义识别提供第一版证据，不直接生成最终 3D 模型。
+当前实现是确定性的 CV baseline：缩放图片、Sobel 边缘检测、主 bbox、coarse contour/polyline、bbox keypoints、垂直对称轴候选、视角启发式分类。Switch 示例会额外读取 `model-plan.example.json` 里的 `views[]` 作为人工视角 hint；ambulance 示例读取 `ProductProfile.reference_images` 作为 view hints；compact remote 示例使用固定 observation fixture 验证第二产品路径。通用 CLI 不传 `--view-hints-file` 时仍走纯 CV 模式。它只负责给人工 review、PartGraph 更新和后续 VLM/语义识别提供第一版证据，不直接声称完成照片级 3D 重建。
 
 ### 两者边界
 
