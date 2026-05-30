@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "kind": "parameter_proposal_review",
+  "target_part_graph_id": "ambulance-image-evidence-skeleton-part-graph",
+  "reviewer": "r6-proposal-patch-regression",
+  "verdict": "accepted_subset",
+  "accepted_proposals": [
+    {
+      "part_id": "main_body",
+      "path": "parts[main_body].shape.parameters",
+      "reason": "Accept the image-scale body candidate for correction patch regression."
+    },
+    {
+      "part_id": "cab",
+      "path": "parts[cab].shape.parameters",
+      "reason": "Accept the image-scale cab candidate for correction patch regression."
+    }
+  ],
+  "notes": [
+    "This fixture intentionally accepts only a small reviewed subset; inferred-only no-seed geometry remains review-gated by default."
+  ]
+}

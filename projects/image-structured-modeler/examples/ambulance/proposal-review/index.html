@@ -1,0 +1,957 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Parameter Proposal Review</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #18202b;
+      --muted: #5d6878;
+      --line: #d6dce5;
+      --panel: #ffffff;
+      --soft: #f4f7fa;
+      --accent: #0f766e;
+      --accent-soft: #e8f7f4;
+      --warn: #9a5a00;
+      --warn-soft: #fff6e6;
+      --bad: #b42318;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: #eef2f6;
+      line-height: 1.45;
+    }
+    header {
+      background: var(--panel);
+      border-bottom: 1px solid var(--line);
+      padding: 26px 32px 18px;
+    }
+    main {
+      max-width: 1480px;
+      margin: 0 auto;
+      padding: 24px 32px 44px;
+    }
+    h1 {
+      margin: 0 0 6px;
+      font-size: 28px;
+      line-height: 1.16;
+      font-weight: 760;
+      letter-spacing: 0;
+    }
+    h2 {
+      margin: 0 0 12px;
+      font-size: 18px;
+      line-height: 1.25;
+      font-weight: 720;
+      letter-spacing: 0;
+    }
+    h3 {
+      margin: 0 0 8px;
+      font-size: 14px;
+      line-height: 1.25;
+      font-weight: 720;
+      letter-spacing: 0;
+    }
+    p { margin: 0; }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.92em;
+    }
+    .subtle { color: var(--muted); }
+    .grid { display: grid; gap: 16px; }
+    .summary {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      margin-bottom: 18px;
+    }
+    .metric, .section {
+      background: var(--panel);
+      border: 1px solid var(--line);
+    }
+    .metric {
+      min-height: 86px;
+      padding: 13px;
+    }
+    .metric strong {
+      display: block;
+      margin-top: 6px;
+      font-size: 24px;
+      line-height: 1.1;
+    }
+    .section {
+      padding: 18px;
+      margin-bottom: 18px;
+    }
+    .two {
+      grid-template-columns: minmax(280px, 0.8fr) minmax(360px, 1.2fr);
+      align-items: start;
+    }
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    button {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      padding: 7px 10px;
+      font: inherit;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    button.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    button:focus-visible,
+    textarea:focus-visible,
+    input:focus-visible {
+      outline: 2px solid #2563eb;
+      outline-offset: 2px;
+    }
+    .tag {
+      display: inline-block;
+      max-width: 100%;
+      margin: 0 5px 5px 0;
+      padding: 2px 7px;
+      border: 1px solid var(--line);
+      background: #fff;
+      font-size: 12px;
+      overflow-wrap: anywhere;
+    }
+    .tag.good {
+      border-color: #9bd6ce;
+      background: var(--accent-soft);
+      color: #0f5f58;
+    }
+    .tag.warn {
+      border-color: #e8c57f;
+      background: var(--warn-soft);
+      color: var(--warn);
+    }
+    .tag.bad {
+      border-color: #efb2ac;
+      background: #fff1f0;
+      color: var(--bad);
+    }
+    .proposal-list {
+      border: 1px solid var(--line);
+      background: var(--soft);
+      max-height: 720px;
+      overflow: auto;
+    }
+    .proposal-item {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 10px;
+      padding: 12px;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+    }
+    .proposal-item:last-child { border-bottom: 0; }
+    .proposal-item input { margin-top: 3px; }
+    .proposal-title {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .proposal-grid {
+      display: grid;
+      grid-template-columns: minmax(120px, 0.7fr) minmax(180px, 1fr);
+      gap: 8px 12px;
+      font-size: 13px;
+    }
+    .proposal-grid div:nth-child(odd) {
+      color: var(--muted);
+    }
+    .value-box {
+      max-height: 120px;
+      overflow: auto;
+      padding: 8px;
+      background: var(--soft);
+      border: 1px solid var(--line);
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+    textarea {
+      width: 100%;
+      min-height: 620px;
+      resize: vertical;
+      border: 1px solid var(--line);
+      padding: 10px;
+      color: var(--ink);
+      background: #fff;
+      font: 12px/1.45 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+    ul {
+      margin: 0;
+      padding-left: 18px;
+    }
+    li + li { margin-top: 4px; }
+    .status-line {
+      min-height: 20px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .table-wrap { overflow-x: auto; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    th, td {
+      padding: 8px 10px;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+    }
+    th {
+      background: var(--soft);
+      font-weight: 700;
+    }
+    @media (max-width: 980px) {
+      header { padding: 22px 18px 14px; }
+      main { padding: 18px; }
+      .summary, .two, .proposal-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Parameter Proposal Review</h1>
+    <p class="subtle">ambulance-image-evidence-skeleton-part-graph - accepted proposals become a standard PartGraph correction patch.</p>
+  </header>
+  <main>
+    <section class="grid summary">
+      <div class="metric"><span class="subtle">Proposals</span><strong>20</strong></div>
+      <div class="metric"><span class="subtle">Parts Covered</span><strong>7</strong></div>
+      <div class="metric"><span class="subtle">Review Required</span><strong>20</strong></div>
+      <div class="metric"><span class="subtle">Accepted Fixture</span><strong>2</strong></div>
+      <div class="metric"><span class="subtle">Patch Edits</span><strong>2</strong></div>
+    </section>
+
+    <section class="grid two">
+      <div class="section">
+        <h2>Review Context</h2>
+        <p><span class="tag warn">needs_review: 20</span></p>
+        <h3 style="margin-top:14px">Sources</h3>
+        <ul><li><code>partGraphPath</code>: <code>projects/image-structured-modeler/examples/ambulance/part-graph.skeleton.json</code></li><li><code>acceptedReviewPath</code>: <code>projects/image-structured-modeler/examples/ambulance/parameter-proposal-review.accepted.json</code></li><li><code>patchPath</code>: <code>projects/image-structured-modeler/examples/ambulance/correction-patch.parameter-proposals.json</code></li></ul>
+        <h3 style="margin-top:14px">Patch Summary</h3>
+        <ul>
+    <li><code>source</code>: parameter_proposal_review</li>
+    <li><code>report_verdict</code>: accepted_subset</li>
+    <li><code>set_edits</code>: 2</li>
+    <li><code>targets</code>: main_body, cab</li>
+  </ul>
+      </div>
+      <div class="section">
+        <h2>Accepted Review JSON</h2>
+        <div class="toolbar">
+          <button type="button" id="select-all-proposals">Select All</button>
+          <button type="button" id="clear-proposals">Clear</button>
+          <button type="button" class="primary" id="validate-accepted-proposals">Validate JSON</button>
+          <button type="button" id="copy-accepted-proposals">Copy</button>
+          <button type="button" id="download-accepted-proposals">Download</button>
+        </div>
+        <textarea id="accepted-proposals-json" spellcheck="false">{
+  &quot;version&quot;: 1,
+  &quot;kind&quot;: &quot;parameter_proposal_review&quot;,
+  &quot;target_part_graph_id&quot;: &quot;ambulance-image-evidence-skeleton-part-graph&quot;,
+  &quot;reviewer&quot;: &quot;r6-proposal-patch-regression&quot;,
+  &quot;verdict&quot;: &quot;accepted_subset&quot;,
+  &quot;accepted_proposals&quot;: [
+    {
+      &quot;part_id&quot;: &quot;main_body&quot;,
+      &quot;path&quot;: &quot;parts[main_body].shape.parameters&quot;,
+      &quot;reason&quot;: &quot;Accept the image-scale body candidate for correction patch regression.&quot;
+    },
+    {
+      &quot;part_id&quot;: &quot;cab&quot;,
+      &quot;path&quot;: &quot;parts[cab].shape.parameters&quot;,
+      &quot;reason&quot;: &quot;Accept the image-scale cab candidate for correction patch regression.&quot;
+    }
+  ],
+  &quot;notes&quot;: [
+    &quot;This fixture intentionally accepts only a small reviewed subset; inferred-only no-seed geometry remains review-gated by default.&quot;
+  ]
+}</textarea>
+        <p class="status-line" id="proposal-review-status"></p>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Proposal Queue</h2>
+      <div class="proposal-list">
+        <article class="proposal-item">
+    <input type="checkbox" data-proposal-key="main_body|parts[main_body].shape.primitive">
+    <div>
+      <div class="proposal-title">
+        <strong>main_body</strong>
+        <span class="tag">shape.primitive</span>
+        <span class="tag warn">needs_review</span>
+        <span class="tag">0.423</span>
+      </div>
+      <div class="proposal-grid">
+        <div>Path</div><div><code>parts[main_body].shape.primitive</code></div>
+        <div>Basis</div><div><span class="tag good">profile_role_ratio</span><span class="tag good">image_scale_calibration</span><span class="tag good">image_bbox_measurement</span></div>
+        <div>Views</div><div><span class="tag warn">missing:left</span><span class="tag warn">missing:top</span><span class="tag warn">missing:rear</span><span class="tag ">source:rear</span><span class="tag ">source:left</span><span class="tag ">source:top</span><span class="tag ">source:oblique</span><span class="tag ">source:front</span></div>
+        <div>Measurements</div><div>6</div>
+        <div>Current Value</div><div class="value-box">&quot;rounded_box&quot;</div>
+        <div>Proposed Value</div><div class="value-box">&quot;rounded_box&quot;</div>
+      </div>
+    </div>
+  </article><article class="proposal-item">
+    <input type="checkbox" data-proposal-key="main_body|parts[main_body].shape.parameters" checked>
+    <div>
+      <div class="proposal-title">
+        <strong>main_body</strong>
+        <span class="tag">shape.parameters</span>
+        <span class="tag warn">needs_review</span>
+        <span class="tag">0.423</span>
+      </div>
+      <div class="proposal-grid">
+        <div>Path</div><div><code>parts[main_body].shape.parameters</code></div>
+        <div>Basis</div><div><span class="tag good">profile_role_ratio</span><span class="tag good">image_scale_calibration</span><span class="tag good">image_bbox_measurement</span></div>
+        <div>Views</div><div><span class="tag warn">missing:left</span><span class="tag warn">missing:top</span><span class="tag warn">missing:rear</span><span class="tag ">source:rear</span><span class="tag ">source:left</span><span class="tag ">source:top</span><span class="tag ">source:oblique</span><span class="tag ">source:front</span></div>
+        <div>Measurements</div><div>6</div>
+        <div>Current Value</div><div class="value-box">{
+  &quot;origin&quot;: [
+    0,
+    0,
+    525
+  ],
+  &quot;size&quot;: [
+    460,
+    180,
+    210
+  ],
+  &quot;radius&quot;: 4
+}</div>
+        <div>Proposed Value</div><div class="value-box">{
+  &quot;origin&quot;: [
+    469.2,
+    0,
+    280.4
+  ],
+  &quot;size&quot;: [
+    1771,
+    819,
+    661.5
+  ],
+  &quot;radius&quot;: 70.4,
+  &quot;segments&quot;: 8,
+  &quot;smooth&quot;: &quot;all&quot;
+}</div>
+      </div>
+    </div>
+  </article><article class="proposal-item">
+    <input type="checkbox" data-proposal-key="cab|parts[cab].shape.primitive">
+    <div>
+      <div class="proposal-title">
+        <strong>cab</strong>
+        <span class="tag">shape.primitive</span>
+        <span class="tag warn">needs_review</span>
+        <span class="tag">0.463</span>
+      </div>
+      <div class="proposal-grid">
+        <div>Path</div><div><code>parts[cab].shape.primitive</code></div>
+        <div>Basis</div><div><span class="tag good">profile_role_ratio</span><span class="tag good">image_scale_calibration</span><span class="tag good">image_bbox_measurement</span></div>
+        <div>Views</div><div><span class="tag warn">missing:front</span><span class="tag warn">missing:left</span><span class="tag ">source:left</span><span class="tag ">source:top</span><span class="tag ">source:front</span></div>
+        <div>Measurements</div><div>3</div>
+        <div>Current Value</div><div class="value-box">&quot;rounded_box&quot;</div>
+        <div>Proposed Value</div><div class="value-box">&quot;rounded_box&quot;</div>
+      </div>
+    </div>
+  </article><article class="proposal-item">
+    <input type="checkbox" data-proposal-key="cab|parts[cab].shape.parameters" checked>
+    <div>
+      <div class="proposal-title">
+        <strong>cab</strong>
+        <span class="tag">shape.parameters</span>
+        <span class="tag warn">needs_review</span>
+        <span class="tag">0.463</span>
+      </div>
+      <div class="proposal-grid">
+        <div>Path</div><div><code>parts[cab].shape.parameters</code></div>
+        <div>Basis</div><div><span class="tag good">profile_role_ratio</span><span class="tag good">image_scale_calibration</span><span class="tag good">image_bbox_measurement</span></div>
+        <div>Views</div><div><span class="tag warn">missing:front</span><span class="tag warn">missing:left</span><span class="tag ">source:left</span><span class="tag ">source:top</span><span class="tag ">source:front</span></div>
+        <div>Measurements</div><div>3</div>
+        <div>Current Value</div><div class="value-box">{
+  &quot;origin&quot;: [
+    20,
+    0,
+    525
+  ],
+  &quot;size&quot;: [
+    460,
+    180,
+    210
+  ],
+  &quot;radius&quot;: 4
+}</div>
+        <div>Proposed Value</div><div class="value-box">{
+  &quot;origin&quot;: [
+    59.8,
+    60.3,
+    340.2
+  ],
+  &quot;size&quot;: [
+    558.9,
+    700.2,
+    380.1
+  ],
+  &quot;radius&quot;: 77.7,
+  &quot;segments&quot;: 8,
+  &quot;smooth&quot;: &quot;all&quot;
+}</div>
+      </div>
+    </div>
+  </article><article class="proposal-item">
+    <input type="checkbox" data-proposal-key="windshield|parts[windshield].shape.primitive">
+    <div>
+      <div class="proposal-title">
+        <strong>windshield</strong>
+        <span class="tag">shape.primitive</span>
+        <span class="tag warn">needs_review</span>
+        <span class="tag">0.45</span>
+      </div>
+      <div class="proposal-grid">
+        <div>Path</div><div><code>parts[windshield].shape.primitive</code></div>
+        <div>Basis</div><div><span class="tag good">profile_role_ratio</span><span class="tag good">image_scale_calibration</span><span class="tag good">image_bbox_measurement</span></div>
+        <div>Views</div><div><span class="tag warn">missing:front</span><span class="tag warn">missing:left</span><span class="tag ">source:left</span><span class="tag ">source:front</span></div>
+        <div>Measurements</div><div>2</div>
+        <div>Current Value</div><div class="value-box">&quot;rounded_box&quot;</div>
+        <div>Proposed Value</div><div class="value-box">&quot;box&quot;</div>
+      </div>
+    </div>
+  </article><article class="proposal-item">
+    <input type="checkbox" data-proposal-key="windshield|parts[windshield].shape.parameters">
+    <div>
+      <div class="proposal-title">
+        <strong>windshield</strong>
+        <span class="tag">shape.parameters</span>
+        <span class="tag warn">needs_review</span>
+        <span class="tag">0.45</span>
+      </div>
+      <div class="proposal-grid">
+        <div>Path</div><div><code>parts[windshield].shape.parameters</code></div>
+        <div>Basis</div><div><span class="tag good">profile_role_ratio</span><span class="tag good">image_scale_calibration</span><span class="tag good">image_bbox_measurement</span></div>
+        <div>Views</div><div><span class="tag warn">missing:front</span><span class="tag warn">missing:left</span><span class="tag ">source:left</span><span class="tag ">source:front</span></div>
+        <div>Measurements</div><div>2</div>
+        <div>Current Value</div><div class="value-box">{
+  &quot;origin&quot;: [
+    40,
+    0,
+    525
+  ],
+  &quot;size&quot;: [
+    460,
+    180,
+    210
+  ],
+  &quot;radius&quot;: 4
+}</div>
+        <div>Proposed Value</div><div class="value-box">{
+  &quot;origin&quot;: [
+    259.9,
+    44.1,
+    650
+  ],
+  &quot;size&quot;: [
+    420.9,
+    14.4,
+    315
+  ]
+}</div>
+      </div>
+    </div>
+  </article><article class="proposal-item">
+    <input type="checkbox" data-proposal-key="windshield|parts[windshield].role_parameters">
+    <div>
+      <div class="proposal-title">
+        <strong>windshield</strong>
+        <span class="tag">role.parameters</span>
+        <span class="tag warn">needs_review</span>
+        <span class="tag">0.45</span>
+      </div>
+      <div class="proposal-grid">
+        <div>Path</div><div><code>parts[windshield].role_parameters</code></div>
+        <div>Basis</div><div><span class="tag good">profile_role_ratio</span><span class="tag good">image_scale_calibration</span><span class="tag good">image_bbox_measurement</span></div>
+        <div>Views</div><div><span class="tag warn">missing:front</span><span class="tag warn">missing:left</span><span class="tag ">source:left</span><span class="tag ">source:front</span></div>
+        <div>Measurements</div><div>2</div>
+        <div>Current Value</div><div class="value-box">undefined</div>
+        <div>Proposed Value</div><div class="value-box">{
+  &quot;face&quot;: &quot;front&quot;,
+  &quot;rake_hint&quot;: &quot;upper_edge_rearward&quot;,
+  &quot;expected_material&quot;: &quot;glass&quot;
+}</div>
+      </div>
+    </div>
+  </article><article class="proposal-item">
+    <input type="checkbox" data-proposal-key="side_windows|parts[side_windows].shape.primitive">
+    <div>
+      <div class="proposal-title">
+        <strong>side_windows</strong>
+        <span class="tag">shape.primitive</span>
+        <span class="tag warn">needs_review</span>
+        <span class="tag">0.423</span>
+      </div>
+      <div class="proposal-grid">
+        <div>Path</div><div><code>parts[side_windows].shape.primitive</code></div>
+        <div>Basis</div><div><span class="tag good">profile_role_ratio</span><span class="tag good">image_scale_calibration</span><span class="tag good">image_bbox_measurement</span></div>
+        <div>Views</div><div><span class="tag warn">missing:left</span><span class="tag warn">missing:right</span><span class="tag warn">missing:rear</span><span class="tag ">source:left</span></div>
+        <div>Measurements</div><div>1</div>
+        <div>Current Value</div><div class="value-box">&quot;rounded_box&quot;</div>
+        <div>Proposed Value</div><div class="value-box">&quot;box&quot;</div>
+      </div>
+    </div>
+  </article><article class="proposal-item">
+    <input type="checkbox" data-proposal-key="side_windows|parts[side_windows].shape.parameters">
+    <div>
+      <div class="proposal-title">
+        <strong>side_windows</strong>
+        <span class="tag">shape.parameters</span>
+        <span class="tag warn">needs_review</span>
+        <span class="tag">0.423</span>
+      </div>
+      <div class="proposal-grid">
+        <div>Path</div><div><code>parts[side_windows].shape.parameters</code></div>
+        <div>Basis</div><div><span class="tag good">profile_role_ratio</span><span class="tag good">image_scale_calibration</span><span class="tag good">image_bbox_measurement</span></div>
+        <div>Views</div><div><span class="tag warn">missing:left</span><span class="tag warn">missing:right</span><span class="tag warn">missing:rear</span><span class="tag ">source:left</span></div>
+        <div>Measurements</div><div>1</div>
+        <div>Current Value</div><div class="value-box">{
+  &quot;origin&quot;: [
+    60,
+    0,
+    525
+  ],
+  &quot;size&quot;: [
+    460,
+    180,
+    210
+  ],
+  &quot;radius&quot;: 4
+}</div>
+        <div>Proposed Value</div><div class="value-box">{
+  &quot;origin&quot;: [
+    959.1,
+    -27.9,
+    650
+  ],
+  &quot;size&quot;: [
+    499.1,
+    27.9,
+    199.5
+  ]
+}</div>
+      </div>
+    </div>
+  </article><article class="proposal-item">
+    <input type="checkbox" data-proposal-key="side_windows|parts[side_windows].role_parameters">
+    <div>
+      <div class="proposal-title">
+        <strong>side_windows</strong>
+        <span class="tag">role.parameters</span>
+        <span class="tag warn">needs_review</span>
+        <span class="tag">0.423</span>
+      </div>
+      <div class="proposal-grid">
+        <div>Path</div><div><code>parts[side_windows].role_parameters</code></div>
+        <div>Basis</div><div><span class="tag good">profile_role_ratio</span><span class="tag good">image_scale_calibration</span><span class="tag good">image_bbox_measurement</span></div>
+        <div>Views</div><div><span class="tag warn">missing:left</span><span class="tag warn">missing:right</span><span class="tag warn">missing:rear</span><span class="tag ">source:left</span></div>
+        <div>Measurements</div><div>1</div>
+        <div>Current Value</div><div class="value-box">undefined</div>
+        <div>Proposed Value</div><div class="value-box">{
+  &quot;expected_count&quot;: 4,
+  &quot;mirror&quot;: &quot;left_right&quot;,
+  &quot;expected_material&quot;: &quot;glass&quot;
+}</div>
+      </div>
+    </div>
+  </article><article class="proposal-item">
+    <input type="checkbox" data-proposal-key="side_windows|parts[side_windows].expected_count">
+    <div>
+      <div class="proposal-title">
+        <strong>side_windows</strong>
+        <span class="tag">expected_count</span>
+        <span class="tag warn">needs_review</span>
+        <span class="tag">0.423</span>
+      </div>
+      <div class="proposal-grid">
+        <div>Path</div><div><code>parts[side_windows].expected_count</code></div>
+        <div>Basis</div><div><span class="tag good">profile_role_ratio</span><span class="tag good">image_scale_calibration</span><span class="tag good">image_bbox_measurement</span></div>
+        <div>Views</div><div><span class="tag warn">missing:left</span><span class="tag warn">missing:right</span><span class="tag warn">missing:rear</span><span class="tag ">source:left</span></div>
+        <div>Measurements</div><div>1</div>
+        <div>Current Value</div><div class="value-box">undefined</div>
+        <div>Proposed Value</div><div class="value-box">4</div>
+      </div>
+    </div>
+  </article><article class="proposal-item">
+    <input type="checkbox" data-proposal-key="wheel_set|parts[wheel_set].shape.primitive">
+    <div>
+      <div class="proposal-title">
+        <strong>wheel_set</strong>
+        <span class="tag">shape.primitive</span>
+        <span class="tag warn">needs_review</span>
+        <span class="tag">0.49</span>
+      </div>
+      <div class="proposal-grid">
+        <div>Path</div><div><code>parts[wheel_set].shape.primitive</code></div>
+        <div>Basis</div><div><span class="tag good">profile_role_ratio</span><span class="tag good">image_scale_calibration</span><span class="tag good">image_bbox_measurement</span></div>
+        <div>Views</div><div><span class="tag warn">missing:left</span><span class="tag warn">missing:right</span><span class="tag ">source:left</span></div>
+        <div>Measurements</div><div>1</div>
+        <div>Current Value</div><div class="value-box">&quot;rounded_box&quot;</div>
+        <div>Proposed Value</div><div class="value-box">&quot;prism&quot;</div>
+      </div>
+    </div>
+  </article><article class="proposal-item">
+    <input type="checkbox" data-proposal-key="wheel_set|parts[wheel_set].shape.parameters">
+    <div>
+      <div class="proposal-title">
+        <strong>wheel_set</strong>
+        <span class="tag">shape.parameters</span>
+        <span class="tag warn">needs_review</span>
+        <span class="tag">0.49</span>
+      </div>
+      <div class="proposal-grid">
+        <div>Path</div><div><code>parts[wheel_set].shape.parameters</code></div>
+        <div>Basis</div><div><span class="tag good">profile_role_ratio</span><span class="tag good">image_scale_calibration</span><span class="tag good">image_bbox_measurement</span></div>
+        <div>Views</div><div><span class="tag warn">missing:left</span><span class="tag warn">missing:right</span><span class="tag ">source:left</span></div>
+        <div>Measurements</div><div>1</div>
+        <div>Current Value</div><div class="value-box">{
+  &quot;origin&quot;: [
+    80,
+    0,
+    525
+  ],
+  &quot;size&quot;: [
+    460,
+    180,
+    210
+  ],
+  &quot;radius&quot;: 4
+}</div>
+        <div>Proposed Value</div><div class="value-box">{
+  &quot;origin&quot;: [
+    558.9,
+    -52.2,
+    220.5
+  ],
+  &quot;plane&quot;: &quot;xz&quot;,
+  &quot;radius&quot;: 144.9,
+  &quot;depth&quot;: 73.8,
+  &quot;segments&quot;: 12
+}</div>
+      </div>
+    </div>
+  </article><article class="proposal-item">
+    <input type="checkbox" data-proposal-key="wheel_set|parts[wheel_set].role_parameters">
+    <div>
+      <div class="proposal-title">
+        <strong>wheel_set</strong>
+        <span class="tag">role.parameters</span>
+        <span class="tag warn">needs_review</span>
+        <span class="tag">0.49</span>
+      </div>
+      <div class="proposal-grid">
+        <div>Path</div><div><code>parts[wheel_set].role_parameters</code></div>
+        <div>Basis</div><div><span class="tag good">profile_role_ratio</span><span class="tag good">image_scale_calibration</span><span class="tag good">image_bbox_measurement</span></div>
+        <div>Views</div><div><span class="tag warn">missing:left</span><span class="tag warn">missing:right</span><span class="tag ">source:left</span></div>
+        <div>Measurements</div><div>1</div>
+        <div>Current Value</div><div class="value-box">undefined</div>
+        <div>Proposed Value</div><div class="value-box">{
+  &quot;expected_count&quot;: 4,
+  &quot;diameter&quot;: 289.8,
+  &quot;thickness&quot;: 73.8,
+  &quot;rear_center_x&quot;: 1738.8,
+  &quot;center_z&quot;: 220.5,
+  &quot;mirror&quot;: &quot;left_right&quot;
+}</div>
+      </div>
+    </div>
+  </article><article class="proposal-item">
+    <input type="checkbox" data-proposal-key="wheel_set|parts[wheel_set].expected_count">
+    <div>
+      <div class="proposal-title">
+        <strong>wheel_set</strong>
+        <span class="tag">expected_count</span>
+        <span class="tag warn">needs_review</span>
+        <span class="tag">0.49</span>
+      </div>
+      <div class="proposal-grid">
+        <div>Path</div><div><code>parts[wheel_set].expected_count</code></div>
+        <div>Basis</div><div><span class="tag good">profile_role_ratio</span><span class="tag good">image_scale_calibration</span><span class="tag good">image_bbox_measurement</span></div>
+        <div>Views</div><div><span class="tag warn">missing:left</span><span class="tag warn">missing:right</span><span class="tag ">source:left</span></div>
+        <div>Measurements</div><div>1</div>
+        <div>Current Value</div><div class="value-box">undefined</div>
+        <div>Proposed Value</div><div class="value-box">4</div>
+      </div>
+    </div>
+  </article><article class="proposal-item">
+    <input type="checkbox" data-proposal-key="roof_lights|parts[roof_lights].shape.primitive">
+    <div>
+      <div class="proposal-title">
+        <strong>roof_lights</strong>
+        <span class="tag">shape.primitive</span>
+        <span class="tag warn">needs_review</span>
+        <span class="tag">0.454</span>
+      </div>
+      <div class="proposal-grid">
+        <div>Path</div><div><code>parts[roof_lights].shape.primitive</code></div>
+        <div>Basis</div><div><span class="tag good">profile_role_ratio</span><span class="tag good">image_scale_calibration</span><span class="tag good">image_bbox_measurement</span></div>
+        <div>Views</div><div><span class="tag warn">missing:top</span><span class="tag warn">missing:front</span><span class="tag ">source:left</span><span class="tag ">source:top</span><span class="tag ">source:front</span></div>
+        <div>Measurements</div><div>3</div>
+        <div>Current Value</div><div class="value-box">&quot;rounded_box&quot;</div>
+        <div>Proposed Value</div><div class="value-box">&quot;rounded_box&quot;</div>
+      </div>
+    </div>
+  </article><article class="proposal-item">
+    <input type="checkbox" data-proposal-key="roof_lights|parts[roof_lights].shape.parameters">
+    <div>
+      <div class="proposal-title">
+        <strong>roof_lights</strong>
+        <span class="tag">shape.parameters</span>
+        <span class="tag warn">needs_review</span>
+        <span class="tag">0.454</span>
+      </div>
+      <div class="proposal-grid">
+        <div>Path</div><div><code>parts[roof_lights].shape.parameters</code></div>
+        <div>Basis</div><div><span class="tag good">profile_role_ratio</span><span class="tag good">image_scale_calibration</span><span class="tag good">image_bbox_measurement</span></div>
+        <div>Views</div><div><span class="tag warn">missing:top</span><span class="tag warn">missing:front</span><span class="tag ">source:left</span><span class="tag ">source:top</span><span class="tag ">source:front</span></div>
+        <div>Measurements</div><div>3</div>
+        <div>Current Value</div><div class="value-box">{
+  &quot;origin&quot;: [
+    100,
+    0,
+    525
+  ],
+  &quot;size&quot;: [
+    460,
+    180,
+    210
+  ],
+  &quot;radius&quot;: 4
+}</div>
+        <div>Proposed Value</div><div class="value-box">{
+  &quot;origin&quot;: [
+    621,
+    254.7,
+    1010.1
+  ],
+  &quot;size&quot;: [
+    340.4,
+    279.9,
+    70.4
+  ],
+  &quot;radius&quot;: 33.6,
+  &quot;segments&quot;: 6,
+  &quot;smooth&quot;: &quot;all&quot;
+}</div>
+      </div>
+    </div>
+  </article><article class="proposal-item">
+    <input type="checkbox" data-proposal-key="stripe_and_text|parts[stripe_and_text].shape.primitive">
+    <div>
+      <div class="proposal-title">
+        <strong>stripe_and_text</strong>
+        <span class="tag">shape.primitive</span>
+        <span class="tag warn">needs_review</span>
+        <span class="tag">0.416</span>
+      </div>
+      <div class="proposal-grid">
+        <div>Path</div><div><code>parts[stripe_and_text].shape.primitive</code></div>
+        <div>Basis</div><div><span class="tag good">profile_role_ratio</span><span class="tag good">image_scale_calibration</span><span class="tag good">image_bbox_measurement</span></div>
+        <div>Views</div><div><span class="tag warn">missing:left</span><span class="tag warn">missing:rear</span><span class="tag ">source:left</span></div>
+        <div>Measurements</div><div>1</div>
+        <div>Current Value</div><div class="value-box">&quot;rounded_box&quot;</div>
+        <div>Proposed Value</div><div class="value-box">&quot;box&quot;</div>
+      </div>
+    </div>
+  </article><article class="proposal-item">
+    <input type="checkbox" data-proposal-key="stripe_and_text|parts[stripe_and_text].shape.parameters">
+    <div>
+      <div class="proposal-title">
+        <strong>stripe_and_text</strong>
+        <span class="tag">shape.parameters</span>
+        <span class="tag warn">needs_review</span>
+        <span class="tag">0.416</span>
+      </div>
+      <div class="proposal-grid">
+        <div>Path</div><div><code>parts[stripe_and_text].shape.parameters</code></div>
+        <div>Basis</div><div><span class="tag good">profile_role_ratio</span><span class="tag good">image_scale_calibration</span><span class="tag good">image_bbox_measurement</span></div>
+        <div>Views</div><div><span class="tag warn">missing:left</span><span class="tag warn">missing:rear</span><span class="tag ">source:left</span></div>
+        <div>Measurements</div><div>1</div>
+        <div>Current Value</div><div class="value-box">{
+  &quot;origin&quot;: [
+    120,
+    0,
+    525
+  ],
+  &quot;size&quot;: [
+    460,
+    180,
+    210
+  ],
+  &quot;radius&quot;: 4
+}</div>
+        <div>Proposed Value</div><div class="value-box">{
+  &quot;origin&quot;: [
+    299,
+    -34.2,
+    519.8
+  ],
+  &quot;size&quot;: [
+    1780.2,
+    24.3,
+    28.4
+  ]
+}</div>
+      </div>
+    </div>
+  </article><article class="proposal-item">
+    <input type="checkbox" data-proposal-key="stripe_and_text|parts[stripe_and_text].role_parameters">
+    <div>
+      <div class="proposal-title">
+        <strong>stripe_and_text</strong>
+        <span class="tag">role.parameters</span>
+        <span class="tag warn">needs_review</span>
+        <span class="tag">0.416</span>
+      </div>
+      <div class="proposal-grid">
+        <div>Path</div><div><code>parts[stripe_and_text].role_parameters</code></div>
+        <div>Basis</div><div><span class="tag good">profile_role_ratio</span><span class="tag good">image_scale_calibration</span><span class="tag good">image_bbox_measurement</span></div>
+        <div>Views</div><div><span class="tag warn">missing:left</span><span class="tag warn">missing:rear</span><span class="tag ">source:left</span></div>
+        <div>Measurements</div><div>1</div>
+        <div>Current Value</div><div class="value-box">undefined</div>
+        <div>Proposed Value</div><div class="value-box">{
+  &quot;stripe_height&quot;: 28.4,
+  &quot;text&quot;: &quot;AMBULANCE&quot;,
+  &quot;text_center&quot;: [
+    1570.9,
+    -62.1,
+    800.1
+  ],
+  &quot;text_height&quot;: 70.4
+}</div>
+      </div>
+    </div>
+  </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Accepted Patch Targets</h2>
+      <div class="table-wrap"><table>
+    <thead><tr><th>Part</th><th>Path</th><th>Action</th><th>Reason</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code>main_body</code></td>
+        <td><code>parts[main_body].shape.parameters</code></td>
+        <td>set</td>
+        <td>Accept the image-scale body candidate for correction patch regression.</td>
+      </tr><tr>
+        <td><code>cab</code></td>
+        <td><code>parts[cab].shape.parameters</code></td>
+        <td>set</td>
+        <td>Accept the image-scale cab candidate for correction patch regression.</td>
+      </tr>
+    </tbody>
+  </table></div>
+    </section>
+
+    <script type="application/json" id="parameter-proposals-data">{"part_graph_id":"ambulance-image-evidence-skeleton-part-graph","part_graph_name":null,"proposals":[{"part_id":"main_body","unit":"mm","confidence":0.423,"status":"needs_review","review_required":true,"basis":["profile_role_ratio","image_scale_calibration","image_bbox_measurement"],"source_count":38,"source_views":["rear","left","top","oblique","front"],"required_views":["left","top","rear"],"confirmed_views":[],"missing_views":["left","top","rear"],"evidence_sources":[{"kind":"silhouette","view":"rear","source_image":"test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg","status":"inferred","confidence":0.418,"note":"Inferred from related image evidence for amb-main-body: Percentile edge bounds; includes visual clutter when background edges are strong.","observation_id":"main_object_bbox"},{"kind":"silhouette","view":"rear","source_image":"test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg","status":"inferred","confidence":0.446,"note":"Inferred from related image evidence for amb-main-body: Coarse contour polyline traced from Sobel edge occupancy slices; use as geometry evidence, not a final CAD profile.","observation_id":"main_object_contour"},{"kind":"keypoint","view":"rear","source_image":"test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg","status":"inferred","confidence":0.533,"note":"Inferred from related image evidence for amb-main-body: Object bbox top-left keypoint candidate.","observation_id":"main_object_top_left_keypoint"},{"kind":"keypoint","view":"rear","source_image":"test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg","status":"inferred","confidence":0.533,"note":"Inferred from related image evidence for amb-main-body: Object bbox top-right keypoint candidate.","observation_id":"main_object_top_right_keypoint"}],"image_measurements":[{"view":"rear","source_image":"test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg","observation_id":"main_object_bbox","kind":"component_bbox","confidence":0.58,"bbox_px":[8,8,827,555],"width_mm":900,"height_mm":1049.9,"calibration_view":"rear"},{"view":"rear","source_image":"test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg","observation_id":"main_object_contour","kind":"silhouette","confidence":0.62,"point_count":37,"calibration_view":"rear","note":"Point/contour evidence supports placement but is not converted to a final dimension."},{"view":"rear","source_image":"test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg","observation_id":"main_object_top_left_keypoint","kind":"keypoint","confidence":0.74,"point_count":1,"calibration_view":"rear","note":"Point/contour evidence supports placement but is not converted to a final dimension."},{"view":"rear","source_image":"test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg","observation_id":"main_object_top_right_keypoint","kind":"keypoint","confidence":0.74,"point_count":1,"calibration_view":"rear","note":"Point/contour evidence supports placement but is not converted to a final dimension."},{"view":"rear","source_image":"test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg","observation_id":"main_object_bottom_right_keypoint","kind":"keypoint","confidence":0.74,"point_count":1,"calibration_view":"rear","note":"Point/contour evidence supports placement but is not converted to a final dimension."},{"view":"rear","source_image":"test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg","observation_id":"main_object_bottom_left_keypoint","kind":"keypoint","confidence":0.74,"point_count":1,"calibration_view":"rear","note":"Point/contour evidence supports placement but is not converted to a final dimension."}],"reason":"No-seed image-derived dimensions must be reviewed before they replace shape parameters.","proposal_kind":"shape_primitive","parameter":"shape.primitive","path":"parts[main_body].shape.primitive","current_value":"rounded_box","proposed_value":"rounded_box"},{"part_id":"main_body","unit":"mm","confidence":0.423,"status":"needs_review","review_required":true,"basis":["profile_role_ratio","image_scale_calibration","image_bbox_measurement"],"source_count":38,"source_views":["rear","left","top","oblique","front"],"required_views":["left","top","rear"],"confirmed_views":[],"missing_views":["left","top","rear"],"evidence_sources":[{"kind":"silhouette","view":"rear","source_image":"test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg","status":"inferred","confidence":0.418,"note":"Inferred from related image evidence for amb-main-body: Percentile edge bounds; includes visual clutter when background edges are strong.","observation_id":"main_object_bbox"},{"kind":"silhouette","view":"rear","source_image":"test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg","status":"inferred","confidence":0.446,"note":"Inferred from related image evidence for amb-main-body: Coarse contour polyline traced from Sobel edge occupancy slices; use as geometry evidence, not a final CAD profile.","observation_id":"main_object_contour"},{"kind":"keypoint","view":"rear","source_image":"test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg","status":"inferred","confidence":0.533,"note":"Inferred from related image evidence for amb-main-body: Object bbox top-left keypoint candidate.","observation_id":"main_object_top_left_keypoint"},{"kind":"keypoint","view":"rear","source_image":"test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg","status":"inferred","confidence":0.533,"note":"Inferred from related image evidence for amb-main-body: Object bbox top-right keypoint candidate.","observation_id":"main_object_top_right_keypoint"}],"image_measurements":[{"view":"rear","source_image":"test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg","observation_id":"main_object_bbox","kind":"component_bbox","confidence":0.58,"bbox_px":[8,8,827,555],"width_mm":900,"height_mm":1049.9,"calibration_view":"rear"},{"view":"rear","source_image":"test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg","observation_id":"main_object_contour","kind":"silhouette","confidence":0.62,"point_count":37,"calibration_view":"rear","note":"Point/contour evidence supports placement but is not converted to a final dimension."},{"view":"rear","source_image":"test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg","observation_id":"main_object_top_left_keypoint","kind":"keypoint","confidence":0.74,"point_count":1,"calibration_view":"rear","note":"Point/contour evidence supports placement but is not converted to a final dimension."},{"view":"rear","source_image":"test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg","observation_id":"main_object_top_right_keypoint","kind":"keypoint","confidence":0.74,"point_count":1,"calibration_view":"rear","note":"Point/contour evidence supports placement but is not converted to a final dimension."},{"view":"rear","source_image":"test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg","observation_id":"main_object_bottom_right_keypoint","kind":"keypoint","confidence":0.74,"point_count":1,"calibration_view":"rear","note":"Point/contour evidence supports placement but is not converted to a final dimension."},{"view":"rear","source_image":"test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg","observation_id":"main_object_bottom_left_keypoint","kind":"keypoint","confidence":0.74,"point_count":1,"calibration_view":"rear","note":"Point/contour evidence supports placement but is not converted to a final dimension."}],"reason":"No-seed image-derived dimensions must be reviewed before they replace shape parameters.","proposal_kind":"shape_parameters","parameter":"shape.parameters","path":"parts[main_body].shape.parameters","current_value":{"origin":[0,0,525],"size":[460,180,210],"radius":4},"proposed_value":{"origin":[469.2,0,280.4],"size":[1771,819,661.5],"radius":70.4,"segments":8,"smooth":"all"}},{"part_id":"cab","unit":"mm","confidence":0.463,"status":"needs_review","review_required":true,"basis":["profile_role_ratio","image_scale_calibration","image_bbox_measurement"],"source_count":3,"source_views":["left","top","front"],"required_views":["front","left"],"confirmed_views":[],"missing_views":["front","left"],"evidence_sources":[{"kind":"silhouette","view":"left","source_image":"test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg","status":"inferred","confidence":0.49,"note":"Inferred from related image evidence for amb-cab-lower: Ambulance side cab lower candidate from vehicle profile anchors.","observation_id":"ambulance_side_cab_lower"},{"kind":"silhouette","view":"top","source_image":"test/救护车/C486F074-3B8E-4F1C-A048-0AF24B687035_1_102_o.jpeg","status":"inferred","confidence":0.403,"note":"Inferred from related image evidence for amb-cab-lower: Top-view cab footprint candidate.","observation_id":"ambulance_top_cab"},{"kind":"silhouette","view":"front","source_image":"test/救护车/IMG_0175.jpeg","status":"inferred","confidence":0.446,"note":"Inferred from related image evidence for amb-cab-lower: Front cab lower candidate.","observation_id":"ambulance_front_cab_lower"}],"image_measurements":[{"view":"left","source_image":"test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg","observation_id":"ambulance_side_cab_lower","kind":"component_bbox","confidence":0.68,"bbox_px":[84.55,143.36,185.04,149.48],"width_mm":552,"height_mm":388.5,"calibration_view":"left"},{"view":"top","source_image":"test/救护车/C486F074-3B8E-4F1C-A048-0AF24B687035_1_102_o.jpeg","observation_id":"ambulance_top_cab","kind":"component_bbox","confidence":0.56,"bbox_px":[35.9,150.96,153.12,334.08],"width_mm":552,"height_mm":522,"calibration_view":"top"},{"view":"front","source_image":"test/救护车/IMG_0175.jpeg","observation_id":"ambulance_front_cab_lower","kind":"component_bbox","confidence":0.62,"bbox_px":[93.96,163.55,538.08,194.85],"width_mm":684,"height_mm":472.5,"calibration_view":"front"}],"reason":"No-seed image-derived dimensions must be reviewed before they replace shape parameters.","proposal_kind":"shape_primitive","parameter":"shape.primitive","path":"parts[cab].shape.primitive","current_value":"rounded_box","proposed_value":"rounded_box"},{"part_id":"cab","unit":"mm","confidence":0.463,"status":"needs_review","review_required":true,"basis":["profile_role_ratio","image_scale_calibration","image_bbox_measurement"],"source_count":3,"source_views":["left","top","front"],"required_views":["front","left"],"confirmed_views":[],"missing_views":["front","left"],"evidence_sources":[{"kind":"silhouette","view":"left","source_image":"test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg","status":"inferred","confidence":0.49,"note":"Inferred from related image evidence for amb-cab-lower: Ambulance side cab lower candidate from vehicle profile anchors.","observation_id":"ambulance_side_cab_lower"},{"kind":"silhouette","view":"top","source_image":"test/救护车/C486F074-3B8E-4F1C-A048-0AF24B687035_1_102_o.jpeg","status":"inferred","confidence":0.403,"note":"Inferred from related image evidence for amb-cab-lower: Top-view cab footprint candidate.","observation_id":"ambulance_top_cab"},{"kind":"silhouette","view":"front","source_image":"test/救护车/IMG_0175.jpeg","status":"inferred","confidence":0.446,"note":"Inferred from related image evidence for amb-cab-lower: Front cab lower candidate.","observation_id":"ambulance_front_cab_lower"}],"image_measurements":[{"view":"left","source_image":"test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg","observation_id":"ambulance_side_cab_lower","kind":"component_bbox","confidence":0.68,"bbox_px":[84.55,143.36,185.04,149.48],"width_mm":552,"height_mm":388.5,"calibration_view":"left"},{"view":"top","source_image":"test/救护车/C486F074-3B8E-4F1C-A048-0AF24B687035_1_102_o.jpeg","observation_id":"ambulance_top_cab","kind":"component_bbox","confidence":0.56,"bbox_px":[35.9,150.96,153.12,334.08],"width_mm":552,"height_mm":522,"calibration_view":"top"},{"view":"front","source_image":"test/救护车/IMG_0175.jpeg","observation_id":"ambulance_front_cab_lower","kind":"component_bbox","confidence":0.62,"bbox_px":[93.96,163.55,538.08,194.85],"width_mm":684,"height_mm":472.5,"calibration_view":"front"}],"reason":"No-seed image-derived dimensions must be reviewed before they replace shape parameters.","proposal_kind":"shape_parameters","parameter":"shape.parameters","path":"parts[cab].shape.parameters","current_value":{"origin":[20,0,525],"size":[460,180,210],"radius":4},"proposed_value":{"origin":[59.8,60.3,340.2],"size":[558.9,700.2,380.1],"radius":77.7,"segments":8,"smooth":"all"}},{"part_id":"windshield","unit":"mm","confidence":0.45,"status":"needs_review","review_required":true,"basis":["profile_role_ratio","image_scale_calibration","image_bbox_measurement"],"source_count":2,"source_views":["left","front"],"required_views":["front","left"],"confirmed_views":[],"missing_views":["front","left"],"evidence_sources":[{"kind":"silhouette","view":"left","source_image":"test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg","status":"inferred","confidence":0.418,"note":"Inferred from related image evidence for amb-windshield: Ambulance windshield candidate from cab side profile.","observation_id":"ambulance_side_windshield"},{"kind":"silhouette","view":"front","source_image":"test/救护车/IMG_0175.jpeg","status":"inferred","confidence":0.418,"note":"Inferred from related image evidence for amb-windshield: Front windshield candidate.","observation_id":"ambulance_front_windshield"}],"image_measurements":[{"view":"left","source_image":"test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg","observation_id":"ambulance_side_windshield","kind":"component_bbox","confidence":0.58,"bbox_px":[177.07,66.6,100.23,88.88],"width_mm":299,"height_mm":231,"calibration_view":"left"},{"view":"front","source_image":"test/救护车/IMG_0175.jpeg","observation_id":"ambulance_front_windshield","kind":"component_bbox","confidence":0.58,"bbox_px":[171.84,89.94,382.32,108.25],"width_mm":486,"height_mm":262.5,"calibration_view":"front"}],"reason":"No-seed image-derived dimensions must be reviewed before they replace shape parameters.","proposal_kind":"shape_primitive","parameter":"shape.primitive","path":"parts[windshield].shape.primitive","current_value":"rounded_box","proposed_value":"box"},{"part_id":"windshield","unit":"mm","confidence":0.45,"status":"needs_review","review_required":true,"basis":["profile_role_ratio","image_scale_calibration","image_bbox_measurement"],"source_count":2,"source_views":["left","front"],"required_views":["front","left"],"confirmed_views":[],"missing_views":["front","left"],"evidence_sources":[{"kind":"silhouette","view":"left","source_image":"test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg","status":"inferred","confidence":0.418,"note":"Inferred from related image evidence for amb-windshield: Ambulance windshield candidate from cab side profile.","observation_id":"ambulance_side_windshield"},{"kind":"silhouette","view":"front","source_image":"test/救护车/IMG_0175.jpeg","status":"inferred","confidence":0.418,"note":"Inferred from related image evidence for amb-windshield: Front windshield candidate.","observation_id":"ambulance_front_windshield"}],"image_measurements":[{"view":"left","source_image":"test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg","observation_id":"ambulance_side_windshield","kind":"component_bbox","confidence":0.58,"bbox_px":[177.07,66.6,100.23,88.88],"width_mm":299,"height_mm":231,"calibration_view":"left"},{"view":"front","source_image":"test/救护车/IMG_0175.jpeg","observation_id":"ambulance_front_windshield","kind":"component_bbox","confidence":0.58,"bbox_px":[171.84,89.94,382.32,108.25],"width_mm":486,"height_mm":262.5,"calibration_view":"front"}],"reason":"No-seed image-derived dimensions must be reviewed before they replace shape parameters.","proposal_kind":"shape_parameters","parameter":"shape.parameters","path":"parts[windshield].shape.parameters","current_value":{"origin":[40,0,525],"size":[460,180,210],"radius":4},"proposed_value":{"origin":[259.9,44.1,650],"size":[420.9,14.4,315]}},{"part_id":"windshield","unit":"mm","confidence":0.45,"status":"needs_review","review_required":true,"basis":["profile_role_ratio","image_scale_calibration","image_bbox_measurement"],"source_count":2,"source_views":["left","front"],"required_views":["front","left"],"confirmed_views":[],"missing_views":["front","left"],"evidence_sources":[{"kind":"silhouette","view":"left","source_image":"test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg","status":"inferred","confidence":0.418,"note":"Inferred from related image evidence for amb-windshield: Ambulance windshield candidate from cab side profile.","observation_id":"ambulance_side_windshield"},{"kind":"silhouette","view":"front","source_image":"test/救护车/IMG_0175.jpeg","status":"inferred","confidence":0.418,"note":"Inferred from related image evidence for amb-windshield: Front windshield candidate.","observation_id":"ambulance_front_windshield"}],"image_measurements":[{"view":"left","source_image":"test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg","observation_id":"ambulance_side_windshield","kind":"component_bbox","confidence":0.58,"bbox_px":[177.07,66.6,100.23,88.88],"width_mm":299,"height_mm":231,"calibration_view":"left"},{"view":"front","source_image":"test/救护车/IMG_0175.jpeg","observation_id":"ambulance_front_windshield","kind":"component_bbox","confidence":0.58,"bbox_px":[171.84,89.94,382.32,108.25],"width_mm":486,"height_mm":262.5,"calibration_view":"front"}],"reason":"No-seed image-derived dimensions must be reviewed before they replace shape parameters.","proposal_kind":"role_parameters","parameter":"role.parameters","path":"parts[windshield].role_parameters","proposed_value":{"face":"front","rake_hint":"upper_edge_rearward","expected_material":"glass"}},{"part_id":"side_windows","unit":"mm","confidence":0.423,"status":"needs_review","review_required":true,"basis":["profile_role_ratio","image_scale_calibration","image_bbox_measurement"],"source_count":1,"source_views":["left"],"required_views":["left","right","rear"],"confirmed_views":[],"missing_views":["left","right","rear"],"evidence_sources":[{"kind":"silhouette","view":"left","source_image":"test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg","status":"inferred","confidence":0.446,"note":"Inferred from related image evidence for amb-left-side-window: Ambulance side window candidate from side profile.","observation_id":"ambulance_side_window"}],"image_measurements":[{"view":"left","source_image":"test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg","observation_id":"ambulance_side_window","kind":"component_bbox","confidence":0.62,"bbox_px":[369.82,102.96,169.62,84.84],"width_mm":506,"height_mm":220.5,"calibration_view":"left"}],"reason":"No-seed image-derived dimensions must be reviewed before they replace shape parameters.","proposal_kind":"shape_primitive","parameter":"shape.primitive","path":"parts[side_windows].shape.primitive","current_value":"rounded_box","proposed_value":"box"},{"part_id":"side_windows","unit":"mm","confidence":0.423,"status":"needs_review","review_required":true,"basis":["profile_role_ratio","image_scale_calibration","image_bbox_measurement"],"source_count":1,"source_views":["left"],"required_views":["left","right","rear"],"confirmed_views":[],"missing_views":["left","right","rear"],"evidence_sources":[{"kind":"silhouette","view":"left","source_image":"test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg","status":"inferred","confidence":0.446,"note":"Inferred from related image evidence for amb-left-side-window: Ambulance side window candidate from side profile.","observation_id":"ambulance_side_window"}],"image_measurements":[{"view":"left","source_image":"test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg","observation_id":"ambulance_side_window","kind":"component_bbox","confidence":0.62,"bbox_px":[369.82,102.96,169.62,84.84],"width_mm":506,"height_mm":220.5,"calibration_view":"left"}],"reason":"No-seed image-derived dimensions must be reviewed before they replace shape parameters.","proposal_kind":"shape_parameters","parameter":"shape.parameters","path":"parts[side_windows].shape.parameters","current_value":{"origin":[60,0,525],"size":[460,180,210],"radius":4},"proposed_value":{"origin":[959.1,-27.9,650],"size":[499.1,27.9,199.5]}},{"part_id":"side_windows","unit":"mm","confidence":0.423,"status":"needs_review","review_required":true,"basis":["profile_role_ratio","image_scale_calibration","image_bbox_measurement"],"source_count":1,"source_views":["left"],"required_views":["left","right","rear"],"confirmed_views":[],"missing_views":["left","right","rear"],"evidence_sources":[{"kind":"silhouette","view":"left","source_image":"test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg","status":"inferred","confidence":0.446,"note":"Inferred from related image evidence for amb-left-side-window: Ambulance side window candidate from side profile.","observation_id":"ambulance_side_window"}],"image_measurements":[{"view":"left","source_image":"test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg","observation_id":"ambulance_side_window","kind":"component_bbox","confidence":0.62,"bbox_px":[369.82,102.96,169.62,84.84],"width_mm":506,"height_mm":220.5,"calibration_view":"left"}],"reason":"No-seed image-derived dimensions must be reviewed before they replace shape parameters.","proposal_kind":"role_parameters","parameter":"role.parameters","path":"parts[side_windows].role_parameters","proposed_value":{"expected_count":4,"mirror":"left_right","expected_material":"glass"}},{"part_id":"side_windows","unit":"mm","confidence":0.423,"status":"needs_review","review_required":true,"basis":["profile_role_ratio","image_scale_calibration","image_bbox_measurement"],"source_count":1,"source_views":["left"],"required_views":["left","right","rear"],"confirmed_views":[],"missing_views":["left","right","rear"],"evidence_sources":[{"kind":"silhouette","view":"left","source_image":"test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg","status":"inferred","confidence":0.446,"note":"Inferred from related image evidence for amb-left-side-window: Ambulance side window candidate from side profile.","observation_id":"ambulance_side_window"}],"image_measurements":[{"view":"left","source_image":"test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg","observation_id":"ambulance_side_window","kind":"component_bbox","confidence":0.62,"bbox_px":[369.82,102.96,169.62,84.84],"width_mm":506,"height_mm":220.5,"calibration_view":"left"}],"reason":"No-seed image-derived dimensions must be reviewed before they replace shape parameters.","proposal_kind":"expected_count","parameter":"expected_count","path":"parts[side_windows].expected_count","proposed_value":4},{"part_id":"wheel_set","unit":"mm","confidence":0.49,"status":"needs_review","review_required":true,"basis":["profile_role_ratio","image_scale_calibration","image_bbox_measurement"],"source_count":1,"source_views":["left"],"required_views":["left","right"],"confirmed_views":[],"missing_views":["left","right"],"evidence_sources":[{"kind":"center_point","view":"left","source_image":"test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg","status":"inferred","confidence":0.504,"note":"Inferred from related image evidence for wheel-left-front-tire: Front wheel center keypoint candidate from side view.","observation_id":"ambulance_front_wheel_center"}],"image_measurements":[{"view":"left","source_image":"test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg","observation_id":"ambulance_front_wheel_center","kind":"center_point","confidence":0.7,"point_count":1,"calibration_view":"left","note":"Point/contour evidence supports placement but is not converted to a final dimension."}],"reason":"No-seed image-derived dimensions must be reviewed before they replace shape parameters.","proposal_kind":"shape_primitive","parameter":"shape.primitive","path":"parts[wheel_set].shape.primitive","current_value":"rounded_box","proposed_value":"prism"},{"part_id":"wheel_set","unit":"mm","confidence":0.49,"status":"needs_review","review_required":true,"basis":["profile_role_ratio","image_scale_calibration","image_bbox_measurement"],"source_count":1,"source_views":["left"],"required_views":["left","right"],"confirmed_views":[],"missing_views":["left","right"],"evidence_sources":[{"kind":"center_point","view":"left","source_image":"test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg","status":"inferred","confidence":0.504,"note":"Inferred from related image evidence for wheel-left-front-tire: Front wheel center keypoint candidate from side view.","observation_id":"ambulance_front_wheel_center"}],"image_measurements":[{"view":"left","source_image":"test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg","observation_id":"ambulance_front_wheel_center","kind":"center_point","confidence":0.7,"point_count":1,"calibration_view":"left","note":"Point/contour evidence supports placement but is not converted to a final dimension."}],"reason":"No-seed image-derived dimensions must be reviewed before they replace shape parameters.","proposal_kind":"shape_parameters","parameter":"shape.parameters","path":"parts[wheel_set].shape.parameters","current_value":{"origin":[80,0,525],"size":[460,180,210],"radius":4},"proposed_value":{"origin":[558.9,-52.2,220.5],"plane":"xz","radius":144.9,"depth":73.8,"segments":12}},{"part_id":"wheel_set","unit":"mm","confidence":0.49,"status":"needs_review","review_required":true,"basis":["profile_role_ratio","image_scale_calibration","image_bbox_measurement"],"source_count":1,"source_views":["left"],"required_views":["left","right"],"confirmed_views":[],"missing_views":["left","right"],"evidence_sources":[{"kind":"center_point","view":"left","source_image":"test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg","status":"inferred","confidence":0.504,"note":"Inferred from related image evidence for wheel-left-front-tire: Front wheel center keypoint candidate from side view.","observation_id":"ambulance_front_wheel_center"}],"image_measurements":[{"view":"left","source_image":"test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg","observation_id":"ambulance_front_wheel_center","kind":"center_point","confidence":0.7,"point_count":1,"calibration_view":"left","note":"Point/contour evidence supports placement but is not converted to a final dimension."}],"reason":"No-seed image-derived dimensions must be reviewed before they replace shape parameters.","proposal_kind":"role_parameters","parameter":"role.parameters","path":"parts[wheel_set].role_parameters","proposed_value":{"expected_count":4,"diameter":289.8,"thickness":73.8,"rear_center_x":1738.8,"center_z":220.5,"mirror":"left_right"}},{"part_id":"wheel_set","unit":"mm","confidence":0.49,"status":"needs_review","review_required":true,"basis":["profile_role_ratio","image_scale_calibration","image_bbox_measurement"],"source_count":1,"source_views":["left"],"required_views":["left","right"],"confirmed_views":[],"missing_views":["left","right"],"evidence_sources":[{"kind":"center_point","view":"left","source_image":"test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg","status":"inferred","confidence":0.504,"note":"Inferred from related image evidence for wheel-left-front-tire: Front wheel center keypoint candidate from side view.","observation_id":"ambulance_front_wheel_center"}],"image_measurements":[{"view":"left","source_image":"test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg","observation_id":"ambulance_front_wheel_center","kind":"center_point","confidence":0.7,"point_count":1,"calibration_view":"left","note":"Point/contour evidence supports placement but is not converted to a final dimension."}],"reason":"No-seed image-derived dimensions must be reviewed before they replace shape parameters.","proposal_kind":"expected_count","parameter":"expected_count","path":"parts[wheel_set].expected_count","proposed_value":4},{"part_id":"roof_lights","unit":"mm","confidence":0.454,"status":"needs_review","review_required":true,"basis":["profile_role_ratio","image_scale_calibration","image_bbox_measurement"],"source_count":3,"source_views":["left","top","front"],"required_views":["top","front"],"confirmed_views":[],"missing_views":["top","front"],"evidence_sources":[{"kind":"silhouette","view":"left","source_image":"test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg","status":"inferred","confidence":0.432,"note":"Inferred from related image evidence for roof-red-lightbar: Roof lightbar candidate from side roofline.","observation_id":"ambulance_side_lightbar"},{"kind":"silhouette","view":"top","source_image":"test/救护车/C486F074-3B8E-4F1C-A048-0AF24B687035_1_102_o.jpeg","status":"inferred","confidence":0.446,"note":"Inferred from related image evidence for roof-red-lightbar: Top-view roof lightbar candidate.","observation_id":"ambulance_top_lightbar"},{"kind":"silhouette","view":"front","source_image":"test/救护车/IMG_0175.jpeg","status":"inferred","confidence":0.403,"note":"Inferred from related image evidence for roof-red-lightbar: Front roof lightbar candidate.","observation_id":"ambulance_front_lightbar"}],"image_measurements":[{"view":"left","source_image":"test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg","observation_id":"ambulance_side_lightbar","kind":"component_bbox","confidence":0.6,"bbox_px":[246.46,18.12,107.94,28.28],"width_mm":322,"height_mm":73.5,"calibration_view":"left"},{"view":"top","source_image":"test/救护车/C486F074-3B8E-4F1C-A048-0AF24B687035_1_102_o.jpeg","observation_id":"ambulance_top_lightbar","kind":"component_bbox","confidence":0.62,"bbox_px":[150.74,283.44,82.94,69.12],"width_mm":299,"height_mm":108,"calibration_view":"top"},{"view":"front","source_image":"test/救护车/IMG_0175.jpeg","observation_id":"ambulance_front_lightbar","kind":"component_bbox","confidence":0.56,"bbox_px":[263.88,20.66,198.24,34.64],"width_mm":252,"height_mm":84,"calibration_view":"front"}],"reason":"No-seed image-derived dimensions must be reviewed before they replace shape parameters.","proposal_kind":"shape_primitive","parameter":"shape.primitive","path":"parts[roof_lights].shape.primitive","current_value":"rounded_box","proposed_value":"rounded_box"},{"part_id":"roof_lights","unit":"mm","confidence":0.454,"status":"needs_review","review_required":true,"basis":["profile_role_ratio","image_scale_calibration","image_bbox_measurement"],"source_count":3,"source_views":["left","top","front"],"required_views":["top","front"],"confirmed_views":[],"missing_views":["top","front"],"evidence_sources":[{"kind":"silhouette","view":"left","source_image":"test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg","status":"inferred","confidence":0.432,"note":"Inferred from related image evidence for roof-red-lightbar: Roof lightbar candidate from side roofline.","observation_id":"ambulance_side_lightbar"},{"kind":"silhouette","view":"top","source_image":"test/救护车/C486F074-3B8E-4F1C-A048-0AF24B687035_1_102_o.jpeg","status":"inferred","confidence":0.446,"note":"Inferred from related image evidence for roof-red-lightbar: Top-view roof lightbar candidate.","observation_id":"ambulance_top_lightbar"},{"kind":"silhouette","view":"front","source_image":"test/救护车/IMG_0175.jpeg","status":"inferred","confidence":0.403,"note":"Inferred from related image evidence for roof-red-lightbar: Front roof lightbar candidate.","observation_id":"ambulance_front_lightbar"}],"image_measurements":[{"view":"left","source_image":"test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg","observation_id":"ambulance_side_lightbar","kind":"component_bbox","confidence":0.6,"bbox_px":[246.46,18.12,107.94,28.28],"width_mm":322,"height_mm":73.5,"calibration_view":"left"},{"view":"top","source_image":"test/救护车/C486F074-3B8E-4F1C-A048-0AF24B687035_1_102_o.jpeg","observation_id":"ambulance_top_lightbar","kind":"component_bbox","confidence":0.62,"bbox_px":[150.74,283.44,82.94,69.12],"width_mm":299,"height_mm":108,"calibration_view":"top"},{"view":"front","source_image":"test/救护车/IMG_0175.jpeg","observation_id":"ambulance_front_lightbar","kind":"component_bbox","confidence":0.56,"bbox_px":[263.88,20.66,198.24,34.64],"width_mm":252,"height_mm":84,"calibration_view":"front"}],"reason":"No-seed image-derived dimensions must be reviewed before they replace shape parameters.","proposal_kind":"shape_parameters","parameter":"shape.parameters","path":"parts[roof_lights].shape.parameters","current_value":{"origin":[100,0,525],"size":[460,180,210],"radius":4},"proposed_value":{"origin":[621,254.7,1010.1],"size":[340.4,279.9,70.4],"radius":33.6,"segments":6,"smooth":"all"}},{"part_id":"stripe_and_text","unit":"mm","confidence":0.416,"status":"needs_review","review_required":true,"basis":["profile_role_ratio","image_scale_calibration","image_bbox_measurement"],"source_count":1,"source_views":["left"],"required_views":["left","rear"],"confirmed_views":[],"missing_views":["left","rear"],"evidence_sources":[{"kind":"silhouette","view":"left","source_image":"test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg","status":"inferred","confidence":0.346,"note":"Inferred from related image evidence for amb-left-red-stripe: Side stripe candidate from ambulance profile prior.","observation_id":"ambulance_side_stripe"}],"image_measurements":[{"view":"left","source_image":"test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg","observation_id":"ambulance_side_stripe","kind":"component_bbox","confidence":0.48,"bbox_px":[285.01,216.08,393.21,32.32],"width_mm":1173.1,"height_mm":84,"calibration_view":"left"}],"reason":"No-seed image-derived dimensions must be reviewed before they replace shape parameters.","proposal_kind":"shape_primitive","parameter":"shape.primitive","path":"parts[stripe_and_text].shape.primitive","current_value":"rounded_box","proposed_value":"box"},{"part_id":"stripe_and_text","unit":"mm","confidence":0.416,"status":"needs_review","review_required":true,"basis":["profile_role_ratio","image_scale_calibration","image_bbox_measurement"],"source_count":1,"source_views":["left"],"required_views":["left","rear"],"confirmed_views":[],"missing_views":["left","rear"],"evidence_sources":[{"kind":"silhouette","view":"left","source_image":"test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg","status":"inferred","confidence":0.346,"note":"Inferred from related image evidence for amb-left-red-stripe: Side stripe candidate from ambulance profile prior.","observation_id":"ambulance_side_stripe"}],"image_measurements":[{"view":"left","source_image":"test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg","observation_id":"ambulance_side_stripe","kind":"component_bbox","confidence":0.48,"bbox_px":[285.01,216.08,393.21,32.32],"width_mm":1173.1,"height_mm":84,"calibration_view":"left"}],"reason":"No-seed image-derived dimensions must be reviewed before they replace shape parameters.","proposal_kind":"shape_parameters","parameter":"shape.parameters","path":"parts[stripe_and_text].shape.parameters","current_value":{"origin":[120,0,525],"size":[460,180,210],"radius":4},"proposed_value":{"origin":[299,-34.2,519.8],"size":[1780.2,24.3,28.4]}},{"part_id":"stripe_and_text","unit":"mm","confidence":0.416,"status":"needs_review","review_required":true,"basis":["profile_role_ratio","image_scale_calibration","image_bbox_measurement"],"source_count":1,"source_views":["left"],"required_views":["left","rear"],"confirmed_views":[],"missing_views":["left","rear"],"evidence_sources":[{"kind":"silhouette","view":"left","source_image":"test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg","status":"inferred","confidence":0.346,"note":"Inferred from related image evidence for amb-left-red-stripe: Side stripe candidate from ambulance profile prior.","observation_id":"ambulance_side_stripe"}],"image_measurements":[{"view":"left","source_image":"test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg","observation_id":"ambulance_side_stripe","kind":"component_bbox","confidence":0.48,"bbox_px":[285.01,216.08,393.21,32.32],"width_mm":1173.1,"height_mm":84,"calibration_view":"left"}],"reason":"No-seed image-derived dimensions must be reviewed before they replace shape parameters.","proposal_kind":"role_parameters","parameter":"role.parameters","path":"parts[stripe_and_text].role_parameters","proposed_value":{"stripe_height":28.4,"text":"AMBULANCE","text_center":[1570.9,-62.1,800.1],"text_height":70.4}}]}</script>
+    <script type="application/json" id="accepted-review-meta">{"version":1,"kind":"parameter_proposal_review","target_part_graph_id":"ambulance-image-evidence-skeleton-part-graph","reviewer":"r6-proposal-patch-regression","verdict":"accepted_subset","accepted_proposals":[{"part_id":"main_body","path":"parts[main_body].shape.parameters","reason":"Accept the image-scale body candidate for correction patch regression."},{"part_id":"cab","path":"parts[cab].shape.parameters","reason":"Accept the image-scale cab candidate for correction patch regression."}],"notes":["This fixture intentionally accepts only a small reviewed subset; inferred-only no-seed geometry remains review-gated by default."]}</script>
+    <script>
+      const proposalPayload = JSON.parse(document.getElementById('parameter-proposals-data').textContent);
+      const reviewMeta = JSON.parse(document.getElementById('accepted-review-meta').textContent);
+      const textArea = document.getElementById('accepted-proposals-json');
+      const statusLine = document.getElementById('proposal-review-status');
+      const checkboxes = Array.from(document.querySelectorAll('[data-proposal-key]'));
+
+      function selectedProposals() {
+        const selectedKeys = new Set(checkboxes.filter((item) => item.checked).map((item) => item.dataset.proposalKey));
+        return proposalPayload.proposals
+          .filter((proposal) => selectedKeys.has(proposal.part_id + '|' + proposal.path))
+          .map((proposal) => ({
+            part_id: proposal.part_id,
+            path: proposal.path,
+            reason: 'Accepted in Parameter Proposal Review UI.'
+          }));
+      }
+
+      function currentReview() {
+        return {
+          version: 1,
+          kind: 'parameter_proposal_review',
+          target_part_graph_id: reviewMeta.target_part_graph_id || proposalPayload.part_graph_id,
+          reviewer: reviewMeta.reviewer || 'proposal-review-workbench',
+          verdict: selectedProposals().length ? 'accepted_subset' : 'needs_review',
+          accepted_proposals: selectedProposals(),
+          notes: reviewMeta.notes || []
+        };
+      }
+
+      function refreshJson() {
+        textArea.value = JSON.stringify(currentReview(), null, 2);
+        statusLine.textContent = selectedProposals().length + ' proposal(s) selected.';
+      }
+
+      function validateJson() {
+        try {
+          const parsed = JSON.parse(textArea.value);
+          if (parsed.kind !== 'parameter_proposal_review') throw new Error('kind must be parameter_proposal_review');
+          if (!Array.isArray(parsed.accepted_proposals)) throw new Error('accepted_proposals must be an array');
+          statusLine.textContent = 'Accepted review JSON is valid.';
+        } catch (error) {
+          statusLine.textContent = error.message;
+        }
+      }
+
+      document.getElementById('select-all-proposals').addEventListener('click', () => {
+        checkboxes.forEach((item) => { item.checked = true; });
+        refreshJson();
+      });
+      document.getElementById('clear-proposals').addEventListener('click', () => {
+        checkboxes.forEach((item) => { item.checked = false; });
+        refreshJson();
+      });
+      document.getElementById('validate-accepted-proposals').addEventListener('click', validateJson);
+      document.getElementById('copy-accepted-proposals').addEventListener('click', async () => {
+        try {
+          if (!navigator.clipboard || !navigator.clipboard.writeText) throw new Error('Clipboard API unavailable');
+          await navigator.clipboard.writeText(textArea.value);
+          statusLine.textContent = 'Accepted review JSON copied.';
+        } catch (_error) {
+          textArea.focus();
+          textArea.select();
+          document.execCommand('copy');
+          statusLine.textContent = 'Accepted review JSON selected and copied with browser fallback.';
+        }
+      });
+      document.getElementById('download-accepted-proposals').addEventListener('click', () => {
+        const blob = new Blob([textArea.value + '\n'], { type: 'application/json' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'parameter-proposal-review.accepted.json';
+        link.click();
+        URL.revokeObjectURL(link.href);
+      });
+      checkboxes.forEach((item) => item.addEventListener('change', refreshJson));
+      refreshJson();
+    </script>
+  </main>
+</body>
+</html>

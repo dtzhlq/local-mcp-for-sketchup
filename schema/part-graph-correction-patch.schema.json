@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/sketchup-mcp-replica/part-graph-correction-patch.schema.json",
+  "title": "PartGraphCorrectionPatch",
+  "type": "object",
+  "required": ["version", "kind", "source", "edits"],
+  "properties": {
+    "version": { "type": "integer", "minimum": 1 },
+    "kind": { "const": "part_graph_correction_patch" },
+    "source": { "type": "string", "minLength": 1 },
+    "target_part_graph_id": { "type": "string" },
+    "report_verdict": { "type": "string" },
+    "edits": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/edit" }
+    }
+  },
+  "$defs": {
+    "edit": {
+      "type": "object",
+      "required": ["action", "path", "reason"],
+      "properties": {
+        "action": { "enum": ["set", "review"] },
+        "path": { "type": "string", "minLength": 1 },
+        "part_id": { "type": "string" },
+        "reason": { "type": "string", "minLength": 1 },
+        "issue_type": { "type": "string" },
+        "rule_id": { "type": "string" },
+        "severity": { "enum": ["info", "warn", "error"] },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "previous_value": {},
+        "value": {},
+        "note": { "type": "string" },
+        "evidence": { "type": ["object", "null"] },
+        "mark_evidence_status": { "enum": ["observed", "inferred", "profile_default", "manual_confirmed", "needs_review"] }
+      }
+    }
+  }
+}

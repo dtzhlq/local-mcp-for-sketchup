@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="640" viewBox="0 0 960 640" role="img" aria-label="Top Reference Match preview">
+  <rect width="100%" height="100%" fill="#f7f5ef"/>
+  <text x="18" y="28" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#222">Ambulance Reference Visual QA - Top Reference Match</text>
+  <text x="18" y="48" font-family="Arial, sans-serif" font-size="12" fill="#555">axes x/y from snapshot bounding boxes</text>
+  <g font-family="Arial, sans-serif"><rect x="46.269" y="296.51" width="41.596" height="219.324" rx="3" fill="hsl(11 58% 52%)" fill-opacity="0.48" stroke="hsl(11 58% 52%)" stroke-width="1.4"/><text x="50.269" y="308.51" font-size="10" fill="#1b1b1b">Ambulance_Front_Black_Bumper</text>
+  <rect x="872.513" y="292.729" width="43.487" height="226.886" rx="3" fill="hsl(11 58% 52%)" fill-opacity="0.48" stroke="hsl(11 58% 52%)" stroke-width="1.4"/><text x="876.513" y="304.729" font-size="10" fill="#1b1b1b">Ambulance_Rear_Black_Bumper</text>
+  <rect x="191.854" y="552.892" width="109.662" height="27.983" rx="3" fill="hsl(11 58% 52%)" fill-opacity="0.48" stroke="hsl(11 58% 52%)" stroke-width="1.4"/><text x="195.854" y="564.892" font-size="10" fill="#1b1b1b">Left_Front_Black_Tire</text>
+  <rect x="223.24" y="552.135" width="46.89" height="31.008" rx="3" fill="hsl(134 58% 52%)" fill-opacity="0.48" stroke="hsl(134 58% 52%)" stroke-width="1.4"/><text x="227.24" y="564.135" font-size="10" fill="#1b1b1b">Left_Front_Silver_Hub</text>
+  <rect x="664.534" y="552.892" width="109.662" height="27.983" rx="3" fill="hsl(11 58% 52%)" fill-opacity="0.48" stroke="hsl(11 58% 52%)" stroke-width="1.4"/><text x="668.534" y="564.892" font-size="10" fill="#1b1b1b">Left_Rear_Black_Tire</text>
+  <rect x="695.92" y="552.135" width="46.89" height="31.008" rx="3" fill="hsl(134 58% 52%)" fill-opacity="0.48" stroke="hsl(134 58% 52%)" stroke-width="1.4"/><text x="699.92" y="564.135" font-size="10" fill="#1b1b1b">Left_Rear_Silver_Hub</text>
+  <rect x="191.854" y="219.369" width="109.662" height="27.983" rx="3" fill="hsl(11 58% 52%)" fill-opacity="0.48" stroke="hsl(11 58% 52%)" stroke-width="1.4"/><text x="195.854" y="231.369" font-size="10" fill="#1b1b1b">Right_Front_Black_Tire</text>
+  <rect x="223.24" y="218.612" width="46.89" height="31.008" rx="3" fill="hsl(134 58% 52%)" fill-opacity="0.48" stroke="hsl(134 58% 52%)" stroke-width="1.4"/><text x="227.24" y="230.612" font-size="10" fill="#1b1b1b">Right_Front_Silver_Hub</text>
+  <rect x="664.534" y="219.369" width="109.662" height="27.983" rx="3" fill="hsl(11 58% 52%)" fill-opacity="0.48" stroke="hsl(11 58% 52%)" stroke-width="1.4"/><text x="668.534" y="231.369" font-size="10" fill="#1b1b1b">Right_Rear_Black_Tire</text>
+  <rect x="695.92" y="218.612" width="46.89" height="31.008" rx="3" fill="hsl(134 58% 52%)" fill-opacity="0.48" stroke="hsl(134 58% 52%)" stroke-width="1.4"/><text x="699.92" y="230.612" font-size="10" fill="#1b1b1b">Right_Rear_Silver_Hub</text>
+  <rect x="322.692" y="580.118" width="354.699" height="6.05" rx="3" fill="hsl(134 58% 52%)" fill-opacity="0.48" stroke="hsl(134 58% 52%)" stroke-width="1.4"/>
+  <rect x="171.056" y="239.788" width="657.971" height="10.588" rx="3" fill="hsl(11 58% 52%)" fill-opacity="0.48" stroke="hsl(11 58% 52%)" stroke-width="1.4"/>
+  <rect x="212.652" y="561.967" width="605.03" height="10.588" rx="3" fill="hsl(11 58% 52%)" fill-opacity="0.48" stroke="hsl(11 58% 52%)" stroke-width="1.4"/>
+  <rect x="46.647" y="353.988" width="12.857" height="104.368" rx="3" fill="hsl(134 58% 52%)" fill-opacity="0.48" stroke="hsl(134 58% 52%)" stroke-width="1.4"/>
+  <rect x="700.196" y="557.051" width="68.59" height="3.025" rx="3" fill="hsl(175 58% 52%)" fill-opacity="0.48" stroke="hsl(175 58% 52%)" stroke-width="1.4"/>
+  <rect x="48.538" y="345.669" width="10.588" height="121.006" rx="3" fill="hsl(11 58% 52%)" fill-opacity="0.48" stroke="hsl(11 58% 52%)" stroke-width="1.4"/>
+  <rect x="46.647" y="353.988" width="12.857" height="104.368" rx="3" fill="hsl(134 58% 52%)" fill-opacity="0.48" stroke="hsl(134 58% 52%)" stroke-width="1.4"/>
+  <rect x="44" y="399.365" width="6.807" height="13.613" rx="3" fill="hsl(134 58% 52%)" fill-opacity="0.48" stroke="hsl(134 58% 52%)" stroke-width="1.4"/>
+  <rect x="47.025" y="471.969" width="10.588" height="44.621" rx="3" fill="hsl(7 58% 52%)" fill-opacity="0.48" stroke="hsl(7 58% 52%)" stroke-width="1.4"/>
+  <rect x="47.025" y="295.754" width="10.588" height="44.621" rx="3" fill="hsl(7 58% 52%)" fill-opacity="0.48" stroke="hsl(7 58% 52%)" stroke-width="1.4"/>
+  <rect x="893.311" y="496.926" width="11.344" height="21.932" rx="3" fill="hsl(317 58% 52%)" fill-opacity="0.48" stroke="hsl(317 58% 52%)" stroke-width="1.4"/>
+  <rect x="893.311" y="293.485" width="11.344" height="21.932" rx="3" fill="hsl(317 58% 52%)" fill-opacity="0.48" stroke="hsl(317 58% 52%)" stroke-width="1.4"/>
+  <rect x="894.068" y="459.868" width="9.832" height="21.932" rx="3" fill="hsl(289 58% 52%)" fill-opacity="0.48" stroke="hsl(289 58% 52%)" stroke-width="1.4"/>
+  <rect x="894.068" y="330.543" width="9.832" height="21.932" rx="3" fill="hsl(289 58% 52%)" fill-opacity="0.48" stroke="hsl(289 58% 52%)" stroke-width="1.4"/>
+  <rect x="511.386" y="573.311" width="37.058" height="6.05" rx="3" fill="hsl(11 58% 52%)" fill-opacity="0.48" stroke="hsl(11 58% 52%)" stroke-width="1.4"/>
+  <rect x="332.902" y="573.311" width="34.789" height="6.05" rx="3" fill="hsl(11 58% 52%)" fill-opacity="0.48" stroke="hsl(11 58% 52%)" stroke-width="1.4"/>
+  <rect x="671.719" y="571.799" width="6.05" height="5.294" rx="3" fill="hsl(11 58% 52%)" fill-opacity="0.48" stroke="hsl(11 58% 52%)" stroke-width="1.4"/>
+  <rect x="885.748" y="401.634" width="6.807" height="5.294" rx="3" fill="hsl(11 58% 52%)" fill-opacity="0.48" stroke="hsl(11 58% 52%)" stroke-width="1.4"/>
+  <rect x="884.992" y="296.51" width="9.075" height="219.324" rx="3" fill="hsl(154 58% 52%)" fill-opacity="0.48" stroke="hsl(154 58% 52%)" stroke-width="1.4"/>
+  <rect x="54.588" y="273.821" width="214.786" height="264.701" rx="3" fill="hsl(286 58% 52%)" fill-opacity="0.48" stroke="hsl(286 58% 52%)" stroke-width="1.4"/><text x="58.588" y="285.821" font-size="10" fill="#1b1b1b">Ambulance_Cab_Lower_Nose</text>
+  <rect x="397.943" y="571.799" width="6.05" height="5.294" rx="3" fill="hsl(11 58% 52%)" fill-opacity="0.48" stroke="hsl(11 58% 52%)" stroke-width="1.4"/>
+  <rect x="148.368" y="564.992" width="673.096" height="9.075" rx="3" fill="hsl(154 58% 52%)" fill-opacity="0.48" stroke="hsl(154 58% 52%)" stroke-width="1.4"/>
+  <rect x="148.368" y="238.276" width="673.096" height="9.075" rx="3" fill="hsl(154 58% 52%)" fill-opacity="0.48" stroke="hsl(154 58% 52%)" stroke-width="1.4"/>
+  <rect x="55.344" y="296.51" width="9.075" height="219.324" rx="3" fill="hsl(154 58% 52%)" fill-opacity="0.48" stroke="hsl(154 58% 52%)" stroke-width="1.4"/>
+  <rect x="212.652" y="251.133" width="669.315" height="310.078" rx="3" fill="hsl(286 58% 52%)" fill-opacity="0.48" stroke="hsl(286 58% 52%)" stroke-width="1.4"/><text x="216.652" y="263.133" font-size="10" fill="#1b1b1b">Ambulance_High_Roof_Main_Body</text>
+  <rect x="223.997" y="576.337" width="41.596" height="19.663" rx="3" fill="hsl(11 58% 52%)" fill-opacity="0.48" stroke="hsl(11 58% 52%)" stroke-width="1.4"/><text x="227.997" y="588.337" font-size="10" fill="#1b1b1b">Left_Black_Side_Mirror</text>
+  <rect x="223.997" y="215.587" width="41.596" height="19.663" rx="3" fill="hsl(11 58% 52%)" fill-opacity="0.48" stroke="hsl(11 58% 52%)" stroke-width="1.4"/><text x="227.997" y="227.587" font-size="10" fill="#1b1b1b">Right_Black_Side_Mirror</text>
+  <rect x="874.404" y="326.761" width="10.588" height="155.039" rx="3" fill="hsl(60 58% 52%)" fill-opacity="0.48" stroke="hsl(60 58% 52%)" stroke-width="1.4"/>
+  <rect x="397.943" y="561.211" width="189.072" height="10.588" rx="3" fill="hsl(60 58% 52%)" fill-opacity="0.48" stroke="hsl(60 58% 52%)" stroke-width="1.4"/>
+  <rect x="397.943" y="240.545" width="189.072" height="10.588" rx="3" fill="hsl(60 58% 52%)" fill-opacity="0.48" stroke="hsl(60 58% 52%)" stroke-width="1.4"/>
+  <rect x="269.374" y="561.211" width="113.443" height="9.832" rx="3" fill="hsl(60 58% 52%)" fill-opacity="0.48" stroke="hsl(60 58% 52%)" stroke-width="1.4"/>
+  <rect x="269.374" y="241.301" width="113.443" height="9.832" rx="3" fill="hsl(60 58% 52%)" fill-opacity="0.48" stroke="hsl(60 58% 52%)" stroke-width="1.4"/>
+  <rect x="547.101" y="569.908" width="163.019" height="3.025" rx="3" fill="hsl(124 58% 52%)" fill-opacity="0.48" stroke="hsl(124 58% 52%)" stroke-width="1.4"/>
+  <rect x="106.772" y="277.603" width="215.542" height="257.138" rx="3" fill="hsl(286 58% 52%)" fill-opacity="0.48" stroke="hsl(286 58% 52%)" stroke-width="1.4"/><text x="110.772" y="289.603" font-size="10" fill="#1b1b1b">Ambulance_Cab_Raked_Upper_S...</text>
+  <rect x="133.242" y="539.278" width="158.82" height="5.294" rx="3" fill="hsl(60 58% 52%)" fill-opacity="0.48" stroke="hsl(60 58% 52%)" stroke-width="1.4"/>
+  <rect x="269.374" y="495.036" width="544.527" height="7.563" rx="3" fill="hsl(286 58% 52%)" fill-opacity="0.48" stroke="hsl(286 58% 52%)" stroke-width="1.4"/>
+  <rect x="269.374" y="400.5" width="170.165" height="7.563" rx="3" fill="hsl(286 58% 52%)" fill-opacity="0.48" stroke="hsl(286 58% 52%)" stroke-width="1.4"/>
+  <rect x="269.374" y="305.964" width="544.527" height="7.563" rx="3" fill="hsl(286 58% 52%)" fill-opacity="0.48" stroke="hsl(286 58% 52%)" stroke-width="1.4"/>
+  <rect x="632.392" y="341.887" width="158.82" height="124.788" rx="3" fill="hsl(286 58% 52%)" fill-opacity="0.48" stroke="hsl(286 58% 52%)" stroke-width="1.4"/><text x="636.392" y="353.887" font-size="10" fill="#1b1b1b">Raised_Roof_Service_Panel_W...</text>
+  <rect x="458.446" y="364.576" width="136.132" height="83.192" rx="3" fill="hsl(286 58% 52%)" fill-opacity="0.48" stroke="hsl(286 58% 52%)" stroke-width="1.4"/><text x="462.446" y="376.576" font-size="10" fill="#1b1b1b">Roof_White_Medical_Equipmen...</text>
+  <rect x="269.374" y="358.904" width="128.569" height="105.88" rx="3" fill="hsl(195 58% 52%)" fill-opacity="0.48" stroke="hsl(195 58% 52%)" stroke-width="1.4"/><text x="273.374" y="370.904" font-size="10" fill="#1b1b1b">Roof_Red_Emergency_Lightbar</text>
+  <rect x="530.128" y="307.854" width="64.614" height="98.317" rx="3" fill="hsl(154 58% 52%)" fill-opacity="0.48" stroke="hsl(154 58% 52%)" stroke-width="1.4"/><text x="534.128" y="319.854" font-size="10" fill="#1b1b1b">Roof_Red_Cross_Label</text></g>
+</svg>

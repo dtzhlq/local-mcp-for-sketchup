@@ -979,7 +979,9 @@ function evidenceFromObservation(observation, image, view) {
 }
 
 function evidenceKind(kind) {
+  if (kind === 'silhouette') return 'silhouette';
   if (kind === 'center_point') return 'center_point';
+  if (kind === 'keypoint') return 'center_point';
   if (kind === 'edge' || kind === 'curve') return 'edge';
   if (kind === 'color_region') return 'color_region';
   if (kind === 'text_or_logo') return 'text_label';

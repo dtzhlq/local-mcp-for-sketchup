@@ -4,8 +4,11 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { SketchUpBridge } from '../../../src/bridge.mjs';
+import { compilePartGraphToSketchUpDsl } from '../../../src/product-modeling/part-graph-compiler.mjs';
+import { validatePartGraphPhysicalConsistency } from '../../../src/product-modeling/physical-consistency-qa.mjs';
 import { compilePlanToSketchUpDsl } from '../scripts/compile-plan-to-sketchup-dsl.mjs';
 import { generateModelPlan } from '../scripts/generate-model-plan.mjs';
+import { applyCorrectionPatch, buildCorrectionPatchFromParameterProposals, buildCorrectionPatchFromReferenceReport } from '../scripts/lib/part-graph-corrections.mjs';
 import { evaluateDiffWarningBudget, evaluateSnapshotWarningBudget } from '../scripts/lib/warning-budget.mjs';
 
 const repoRoot = path.resolve(fileURLToPath(new URL('../../..', import.meta.url)));
@@ -15,6 +18,8 @@ const modelPlanSchema = await readJson('schema/model-plan.schema.json');
 const imageObservationSchema = await readJson('schema/image-observation.schema.json');
 const imageSetObservationSchema = await readJson('schema/image-set-observation.schema.json');
 const manualCorrectionsSchema = await readJson('schema/manual-corrections.schema.json');
+const partGraphSchema = await readRepoJson('schema/part-graph.schema.json');
+const partGraphCorrectionPatchSchema = await readRepoJson('schema/part-graph-correction-patch.schema.json');
 const switchWarningBudget = await readJson('examples/switch-controller/warning-budget.json');
 const remoteWarningBudget = await readJson('examples/compact-remote/warning-budget.json');
 const SWITCH_BASELINE_GROUPS = 24;
@@ -29,6 +34,8 @@ const validateModelPlan = compileSchema(modelPlanSchema);
 const validateImageObservation = compileSchema(imageObservationSchema);
 const validateImageSetObservation = compileSchema(imageSetObservationSchema);
 const validateManualCorrections = compileSchema(manualCorrectionsSchema);
+const validatePartGraph = compileSchema(partGraphSchema);
+const validatePartGraphCorrectionPatch = compileSchema(partGraphCorrectionPatchSchema);
 
 const modelPlanExample = await readJson('examples/switch-controller/model-plan.example.json');
 assertValid(validateModelPlan, modelPlanExample, 'switch controller model-plan.example.json');
@@ -136,8 +143,14 @@ for (const relativePath of [
   'scripts/make-review-overlay.mjs',
   'scripts/make-review-report.mjs',
   'scripts/generate-model-plan.mjs',
+  'scripts/generate-part-graph-from-observations.mjs',
+  'scripts/apply-part-graph-correction-patch.mjs',
+  'scripts/build-part-graph-proposal-patch.mjs',
+  'scripts/make-part-graph-proposal-review.mjs',
+  'scripts/validate-part-graph-quality.mjs',
   'scripts/compile-plan-to-sketchup-dsl.mjs',
   'scripts/make-snapshot-report.mjs',
+  'scripts/lib/part-graph-corrections.mjs',
   'scripts/lib/warning-budget.mjs',
   'scripts/lib/image-analysis.mjs'
 ]) {
@@ -203,6 +216,7 @@ await assertSwitchCorrectionRegression();
 await assertFeatureMappingCorrectionRegression();
 await assertSingleImageEvidenceDowngrade();
 const remoteChecked = await assertCompactRemoteSample();
+const ambulanceEvidenceChecked = await assertAmbulancePartGraphEvidenceSample();
 
 process.stdout.write(`${JSON.stringify({
   ok: true,
@@ -219,6 +233,8 @@ process.stdout.write(`${JSON.stringify({
     correction_regression: true,
     feature_mapping_regression: true,
     compact_remote_sample: remoteChecked,
+    ambulance_part_graph_evidence: ambulanceEvidenceChecked,
+    ambulance_proposal_review_chain: true,
     warning_budget: true,
     scripts: true
   }
@@ -226,6 +242,10 @@ process.stdout.write(`${JSON.stringify({
 
 async function readJson(relativePath) {
   return JSON.parse(await fs.readFile(path.join(subprojectRoot, relativePath), 'utf8'));
+}
+
+async function readRepoJson(relativePath) {
+  return JSON.parse(await fs.readFile(path.join(repoRoot, relativePath), 'utf8'));
 }
 
 function assertValid(validate, value, label) {
@@ -440,6 +460,180 @@ async function assertCompactRemoteSample() {
   return true;
 }
 
+async function assertAmbulancePartGraphEvidenceSample() {
+  const base = path.join(subprojectRoot, 'examples', 'ambulance');
+  const observations = JSON.parse(await fs.readFile(path.join(base, 'observations.json'), 'utf8'));
+  assertValid(validateImageSetObservation, observations, 'ambulance observations.json');
+  assert.equal(observations.object.profile, 'vehicle_ambulance', 'ambulance observations should lock vehicle_ambulance profile');
+  assert.ok(observations.scale_calibration, 'ambulance observations should include scale calibration');
+  assert.ok(observations.scale_calibration.confidence >= 0.7, 'ambulance scale calibration should be high enough for profile-backed R4 evidence');
+  assert.ok(observations.scale_calibration.measurements.length >= 3, 'ambulance scale calibration should use multiple view measurements');
+  assert.ok(observations.evidence_graph.part_matches.length >= 8, 'ambulance observations should expose cross-view part matches');
+  assert.ok(observations.evidence_graph.scale_calibration, 'ambulance evidence graph should carry scale calibration');
+  assert.deepEqual(graphPartByIdFromGraph(observations.evidence_graph, 'amb-main-body').missing_views, [], 'ambulance body should have required left/top/rear evidence');
+  assert.ok(observations.images.every((image) => image.orientation_hints?.coordinate_convention === 'image_x_right_y_down'), 'ambulance observations should record image-space orientation convention');
+  const sideObservation = observations.images.find((image) => image.detected_view.kind === 'left' || image.detected_view.kind === 'right');
+  assert.ok(sideObservation, 'ambulance observations should include a side view for handedness review');
+  assert.ok(sideObservation.orientation_hints.semantic_anchors.some((anchor) => anchor.id === 'side-front-wheel-before-rear-wheel'), 'side observation should retain a front/rear wheel mirror cue');
+  assert.ok(sideObservation.orientation_hints.semantic_anchors.some((anchor) => anchor.id === 'side-cab-before-main-body'), 'side observation should retain a cab/body mirror cue');
+  assert.equal(sideObservation.orientation_hints.review_required, false, 'side observation should have enough semantic anchors to avoid automatic mirror-risk review');
+  assert.ok(observations.images.some((image) => image.orientation_hints.review_required), 'ambiguous non-side views should still be marked for mirror-risk review');
+  const observationKinds = observations.images.flatMap((image) => image.observations || []).map((item) => item.kind);
+  assert.ok(observationKinds.includes('silhouette'), 'ambulance observations should include contour/polyline silhouette evidence');
+  assert.ok(observationKinds.includes('keypoint'), 'ambulance observations should include keypoint candidates');
+
+  const partGraph = JSON.parse(await fs.readFile(path.join(base, 'part-graph.generated.json'), 'utf8'));
+  assertValid(validatePartGraph, partGraph, 'ambulance part-graph.generated.json');
+  assert.equal(partGraph.profile_id, 'vehicle_ambulance', 'generated ambulance PartGraph should keep profile id');
+  assert.equal(partGraph.evidence_graph.parts.length, partGraph.parts.length, 'generated PartGraph evidence graph should cover every part');
+  assert.ok(partGraph.evidence_graph.part_matches.length >= partGraph.parts.length, 'generated PartGraph should record part matching for every part');
+  assert.ok(partGraph.scale.calibration, 'generated PartGraph scale should retain calibration provenance');
+  assert.ok(partGraph.review.correction_targets.length > 0, 'generated PartGraph should produce review correction targets for incomplete evidence');
+
+  const mainBody = partGraphPartById(partGraph, 'amb-main-body');
+  assert.equal(mainBody.evidence_status, 'observed', 'generated ambulance body should be observed from image evidence');
+  assert.ok(mainBody.evidence_sources.some((source) => source.kind === 'silhouette'), 'generated ambulance body should carry contour evidence');
+  assert.ok(mainBody.evidence_sources.some((source) => source.kind === 'keypoint'), 'generated ambulance body should carry keypoint evidence');
+  assert.equal(partGraphPartById(partGraph, 'amb-left-driver-window').evidence_status, 'needs_review', 'low-confidence related evidence should stay review-gated');
+  const statusCounts = countBy(partGraph.parts, 'evidence_status');
+  assert.equal(statusCounts.profile_default || 0, 0, 'generated PartGraph should not leave unmatched parts as profile_default evidence');
+  assert.ok((statusCounts.inferred || 0) >= 30, 'generated PartGraph should propagate cross-view inferred evidence across seed parts');
+  assert.ok((statusCounts.needs_review || 0) <= 5, 'generated PartGraph should keep review-gated evidence below the R4 threshold');
+
+  const profile = JSON.parse(await fs.readFile(path.join(repoRoot, 'examples/product-profiles/vehicle_ambulance.json'), 'utf8'));
+  const document = compilePartGraphToSketchUpDsl(partGraph, profile, { repoRoot });
+  assert.equal(document.metadata.source, 'part_graph_compiler', 'generated PartGraph should compile through the normal PartGraph compiler');
+  assert.equal(document.operations.length, 104, 'generated PartGraph should preserve the current ambulance compiler operation count');
+  assert.ok(document.operations.some((operation) => operation.qa?.generated_from_image_evidence === true), 'compiled DSL should preserve image evidence QA metadata');
+
+  const generatedOutput = JSON.parse(await fs.readFile(path.join(base, 'output.generated.json'), 'utf8'));
+  assert.equal(generatedOutput.operations.length, document.operations.length, 'generated ambulance DSL artifact should match current compiler output');
+  const generatedQaReport = JSON.parse(await fs.readFile(path.join(base, 'reference-visual-qa', 'ambulance-generated', 'report.json'), 'utf8'));
+  assert.equal(generatedQaReport.ok, true, 'generated ambulance PartGraph should pass reference visual QA');
+  assert.equal(generatedQaReport.summary.total, 0, 'generated ambulance reference visual QA should have no issues');
+
+  const correctionPatch = JSON.parse(await fs.readFile(path.join(base, 'correction-patch.reference-visual.json'), 'utf8'));
+  assertValid(validatePartGraphCorrectionPatch, correctionPatch, 'ambulance correction-patch.reference-visual.json');
+  assert.equal(correctionPatch.edits.length, 0, 'passing reference visual QA should emit an empty correction patch');
+  const correctedPartGraph = JSON.parse(await fs.readFile(path.join(base, 'part-graph.corrected.json'), 'utf8'));
+  assertValid(validatePartGraph, correctedPartGraph, 'ambulance part-graph.corrected.json');
+  assert.equal(correctedPartGraph.parts.length, partGraph.parts.length, 'corrected PartGraph should preserve part count when no patch edits are needed');
+
+  const qualityReport = JSON.parse(await fs.readFile(path.join(base, 'quality-report.json'), 'utf8'));
+  assert.equal(qualityReport.ok, true, 'ambulance PartGraph quality gate should pass');
+  assert.equal(qualityReport.summary.profile_default_ratio, 0, 'quality gate should reject profile-default-only generated parts');
+  assert.ok(qualityReport.summary.needs_review_ratio <= 0.12, 'quality gate should keep review-gated part ratio below threshold');
+  assert.ok(qualityReport.summary.parameter_proposals >= 40, 'quality gate should report parameter proposal coverage for proposal-capable parts');
+  assert.ok(qualityReport.summary.parameter_proposal_parts >= 15, 'quality gate should count parts with parameter proposals');
+
+  const skeletonPartGraph = JSON.parse(await fs.readFile(path.join(base, 'part-graph.skeleton.json'), 'utf8'));
+  assertValid(validatePartGraph, skeletonPartGraph, 'ambulance part-graph.skeleton.json');
+  assert.equal(skeletonPartGraph.parts.length, profile.required_parts.length, 'no-seed skeleton PartGraph should contain profile-required parts only');
+  const skeletonStatuses = countBy(skeletonPartGraph.parts, 'evidence_status');
+  assert.equal(skeletonStatuses.profile_default || 0, 0, 'no-seed skeleton should still attach image-derived or inferred evidence to profile-required parts');
+  assert.ok((skeletonStatuses.needs_review || 0) >= 5, 'no-seed skeleton should keep inferred-only profile roles review-gated');
+  assert.ok(skeletonPartGraph.parts.filter((part) => part.evidence_sources?.some((source) => source.status === 'inferred')).length >= 5, 'no-seed skeleton should carry partial image evidence across required profile roles');
+  assert.ok(skeletonPartGraph.review.parameter_proposals.length >= skeletonPartGraph.parts.length * 2, 'no-seed skeleton should surface reviewable parameter proposals');
+  assert.equal(skeletonPartGraph.review.parameter_proposal_summary.parts_with_proposals, skeletonPartGraph.parts.length, 'no-seed skeleton should propose parameters for every required role');
+  assert.equal(skeletonPartGraph.review.parameter_proposal_summary.review_required, skeletonPartGraph.review.parameter_proposals.length, 'no-seed parameter proposals should stay review-gated');
+  assert.ok(skeletonPartGraph.review.correction_targets.some((target) => target.path === 'parts[main_body].parameter_proposals'), 'no-seed skeleton should expose parameter proposals as correction targets');
+  const skeletonBody = partGraphPartById(skeletonPartGraph, 'main_body');
+  assert.ok(skeletonBody.parameter_proposals.some((proposal) => proposal.parameter === 'shape.parameters'), 'no-seed body should propose shape parameters');
+  const bodyShapeProposal = skeletonBody.parameter_proposals.find((proposal) => proposal.parameter === 'shape.parameters');
+  assert.equal(bodyShapeProposal.status, 'needs_review', 'no-seed body shape proposal should require review');
+  assert.ok(bodyShapeProposal.basis.includes('image_scale_calibration'), 'no-seed body shape proposal should cite image scale calibration');
+  assert.ok(bodyShapeProposal.image_measurements.length > 0, 'no-seed body shape proposal should retain supporting image measurements');
+  assert.ok(bodyShapeProposal.proposed_value.size[0] > skeletonBody.shape.parameters.size[0], 'no-seed body proposal should be a usable scale-based candidate, not the tiny skeleton placeholder');
+
+  const proposalReview = JSON.parse(await fs.readFile(path.join(base, 'parameter-proposal-review.accepted.json'), 'utf8'));
+  const proposalPatch = JSON.parse(await fs.readFile(path.join(base, 'correction-patch.parameter-proposals.json'), 'utf8'));
+  assertValid(validatePartGraphCorrectionPatch, proposalPatch, 'ambulance correction-patch.parameter-proposals.json');
+  assert.equal(proposalPatch.source, 'parameter_proposal_review', 'proposal patch should record parameter proposal source');
+  assert.equal(proposalPatch.edits.length, proposalReview.accepted_proposals.length, 'proposal patch should include one edit per accepted proposal');
+  assert.ok(proposalPatch.edits.every((edit) => edit.action === 'set'), 'accepted proposal patch should contain set edits');
+  assert.ok(proposalPatch.edits.every((edit) => edit.mark_evidence_status === 'manual_confirmed'), 'accepted proposals should mark applied parts manually confirmed');
+  const builtProposalPatch = buildCorrectionPatchFromParameterProposals(skeletonPartGraph, proposalReview);
+  assert.deepEqual(builtProposalPatch.edits.map((edit) => [edit.part_id, edit.path]), proposalPatch.edits.map((edit) => [edit.part_id, edit.path]), 'proposal patch builder should match the artifact edit targets');
+  const proposalAppliedPartGraph = JSON.parse(await fs.readFile(path.join(base, 'part-graph.proposal-applied.json'), 'utf8'));
+  assertValid(validatePartGraph, proposalAppliedPartGraph, 'ambulance part-graph.proposal-applied.json');
+  assert.equal(partGraphPartById(proposalAppliedPartGraph, 'main_body').evidence_status, 'manual_confirmed', 'accepted proposal should mark main body as manually confirmed');
+  assert.equal(partGraphPartById(proposalAppliedPartGraph, 'cab').evidence_status, 'manual_confirmed', 'accepted proposal should mark cab as manually confirmed');
+  assert.equal(partGraphPartById(proposalAppliedPartGraph, 'main_body').shape.parameters.size[0], bodyShapeProposal.proposed_value.size[0], 'accepted proposal should apply body shape parameters');
+  assert.ok(partGraphPartById(proposalAppliedPartGraph, 'main_body').qa.parameter_proposal_applied, 'applied proposal should mark QA metadata');
+  assert.ok(partGraphPartById(proposalAppliedPartGraph, 'main_body').evidence_sources.some((source) => source.kind === 'parameter_proposal_review'), 'applied proposal should append proposal review evidence');
+  const proposalAppliedDocument = compilePartGraphToSketchUpDsl(proposalAppliedPartGraph, profile, { repoRoot });
+  const proposalAppliedOutput = JSON.parse(await fs.readFile(path.join(base, 'output.proposal-applied.json'), 'utf8'));
+  assert.deepEqual(proposalAppliedOutput, proposalAppliedDocument, 'proposal-applied ambulance DSL artifact should match current compiler output');
+  const proposalReviewHtml = await fs.readFile(path.join(base, 'proposal-review', 'index.html'), 'utf8');
+  assert.ok(proposalReviewHtml.includes('Parameter Proposal Review'), 'proposal review UI should declare parameter proposal review mode');
+  assert.ok(proposalReviewHtml.includes('parameter-proposals-data'), 'proposal review UI should embed proposal JSON');
+  assert.ok(proposalReviewHtml.includes('accepted-proposals-json'), 'proposal review UI should expose accepted proposal JSON');
+  assert.ok(proposalReviewHtml.includes('download-accepted-proposals'), 'proposal review UI should expose accepted JSON download');
+  assert.ok(proposalReviewHtml.includes('correction-patch.parameter-proposals.json'), 'proposal review UI should link generated proposal patch');
+  assert.ok(proposalReviewHtml.includes('main_body'), 'proposal review UI should list main body proposal');
+  assert.ok(proposalReviewHtml.includes('cab'), 'proposal review UI should list cab proposal');
+  assert.ok(proposalReviewHtml.includes('needs_review'), 'proposal review UI should show review-gated proposal status');
+
+  const proposalPhysicalReport = validatePartGraphPhysicalConsistency(proposalAppliedPartGraph);
+  assert.equal(proposalPhysicalReport.ok, true, 'proposal-applied PartGraph physical consistency should not introduce contact errors');
+  const proposalBridge = new SketchUpBridge();
+  const proposalLayoutReport = await proposalBridge.validate_model({
+    code: JSON.stringify(proposalAppliedDocument),
+    spec: JSON.parse(await fs.readFile(path.join(repoRoot, 'examples/model-qa/ambulance-reference.json'), 'utf8')),
+    runtime: 'mock',
+    includePreview: false
+  });
+  assert.equal(proposalLayoutReport.ok, false, 'partially accepted no-seed proposal graph should remain review-gated by layout QA');
+  assert.ok(proposalLayoutReport.summary.total > 0, 'proposal-applied layout QA should record review issues');
+  const proposalReferenceReport = await proposalBridge.validate_reference_model({
+    code: JSON.stringify(proposalAppliedDocument),
+    spec: JSON.parse(await fs.readFile(path.join(repoRoot, 'examples/reference-visual-qa/ambulance-reference.json'), 'utf8')),
+    runtime: 'mock',
+    includePreview: false
+  });
+  assert.equal(proposalReferenceReport.ok, false, 'partially accepted no-seed proposal graph should remain review-gated by reference visual QA');
+  assert.ok(proposalReferenceReport.summary.total > 0, 'proposal-applied reference visual QA should record review issues');
+
+  const badPartGraph = JSON.parse(JSON.stringify(partGraph));
+  const badSideWindow = partGraphPartById(badPartGraph, 'amb-left-side-window');
+  badSideWindow.shape.parameters.origin = [
+    badSideWindow.shape.parameters.origin[0],
+    badSideWindow.shape.parameters.origin[1],
+    badSideWindow.shape.parameters.origin[2] - 80
+  ];
+  const badDocument = compilePartGraphToSketchUpDsl(badPartGraph, profile, { repoRoot });
+  const spec = JSON.parse(await fs.readFile(path.join(repoRoot, 'examples/reference-visual-qa/ambulance-reference.json'), 'utf8'));
+  const bridge = new SketchUpBridge();
+  const badReport = await bridge.validate_reference_model({
+    code: JSON.stringify(badDocument),
+    spec,
+    runtime: 'mock',
+    includePreview: false
+  });
+  assert.equal(badReport.ok, false, 'synthetic PartGraph drift should fail reference visual QA');
+  const patchFromBadReport = buildCorrectionPatchFromReferenceReport(badPartGraph, badReport);
+  assertValid(validatePartGraphCorrectionPatch, patchFromBadReport, 'synthetic reference visual correction patch');
+  assert.ok(patchFromBadReport.edits.some((edit) => (
+    edit.action === 'set'
+    && edit.part_id === 'amb-left-side-window'
+    && edit.path === 'parts[amb-left-side-window].shape.parameters.origin'
+  )), 'reference visual QA should generate an applicable PartGraph origin correction');
+  const { partGraph: correctedBadPartGraph, applied } = applyCorrectionPatch(badPartGraph, patchFromBadReport);
+  assert.ok(applied.length > 0, 'synthetic correction patch should apply at least one edit');
+  const correctedSideWindow = partGraphPartById(correctedBadPartGraph, 'amb-left-side-window');
+  assert.ok(correctedSideWindow.shape.parameters.origin[2] > badSideWindow.shape.parameters.origin[2], 'applied correction should move the side window back toward the reference keypoint');
+  assert.ok(correctedSideWindow.evidence_sources.some((source) => source.kind === 'reference_visual_correction'), 'applied correction should append reference visual correction evidence');
+  const correctedBadDocument = compilePartGraphToSketchUpDsl(correctedBadPartGraph, profile, { repoRoot });
+  const correctedBadReport = await bridge.validate_reference_model({
+    code: JSON.stringify(correctedBadDocument),
+    spec,
+    runtime: 'mock',
+    includePreview: false
+  });
+  assert.ok(correctedBadReport.summary.total < badReport.summary.total, 'applied correction patch should reduce reference visual QA issues');
+  return true;
+}
+
 function assertEvidenceAnnotations(modelPlan, label) {
   assert.ok(modelPlan.review.evidence_summary, `${label} should contain an evidence summary`);
   assert.ok(modelPlan.review.evidence_summary.status_counts, `${label} should contain evidence status counts`);
@@ -501,6 +695,21 @@ function graphPartByIdFromGraph(graph, id) {
   const part = graph.parts?.find((item) => item.part_id === id);
   assert.ok(part, `expected evidence graph part ${id}`);
   return part;
+}
+
+function partGraphPartById(partGraph, id) {
+  const part = partGraph.parts?.find((item) => item.id === id);
+  assert.ok(part, `expected PartGraph part ${id}`);
+  return part;
+}
+
+function countBy(items, key) {
+  const result = {};
+  for (const item of items || []) {
+    const value = item[key];
+    result[value] = (result[value] || 0) + 1;
+  }
+  return result;
 }
 
 function operationByName(dsl, name) {

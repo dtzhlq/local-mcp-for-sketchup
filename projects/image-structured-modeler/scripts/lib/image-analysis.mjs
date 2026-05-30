@@ -27,7 +27,25 @@ const OBSERVATION_PART_REQUIREMENTS = {
     volume_rocker: { views: ['front'], hints: ['volume_rocker'] },
     speaker_grille: { views: ['front'], hints: ['speaker_grille'] },
     brand_label: { views: ['front'], hints: ['brand_label'] }
+  },
+  vehicle_ambulance: {
+    'amb-main-body': { views: ['left', 'top', 'rear'], hints: ['amb-main-body', 'main_object'] },
+    'amb-cab-lower': { views: ['left', 'front'], hints: ['amb-cab-lower'] },
+    'amb-cab-upper-shell': { views: ['left', 'front'], hints: ['amb-cab-upper-shell'] },
+    'amb-windshield': { views: ['left', 'front'], hints: ['amb-windshield'] },
+    'amb-left-side-window': { views: ['left'], hints: ['amb-left-side-window'] },
+    'wheel-left-front-tire': { views: ['left'], hints: ['wheel-left-front-tire'] },
+    'wheel-left-rear-tire': { views: ['left'], hints: ['wheel-left-rear-tire'] },
+    'roof-red-lightbar': { views: ['left', 'top', 'front'], hints: ['roof-red-lightbar'] },
+    'amb-left-red-stripe': { views: ['left'], hints: ['amb-left-red-stripe'] },
+    'amb-left-ambulance-text': { views: ['left'], hints: ['amb-left-ambulance-text'] }
   }
+};
+
+const PROFILE_DEFAULT_SCALE = {
+  switch_controller: { width: 280, depth: 42, height: 155 },
+  compact_remote: { width: 44, depth: 16, height: 158 },
+  vehicle_ambulance: { width: 2300, depth: 900, height: 1050 }
 };
 
 export async function listImageFiles(inputPath) {
@@ -66,6 +84,8 @@ export async function analyzeImage(imagePath, options = {}) {
   const threshold = options.edgeThreshold || autoEdgeThreshold(gray);
   const edges = sobelEdges(gray, info.width, info.height, threshold);
   const objectBounds = percentileBounds(edges, info.width, info.height);
+  const contour = traceObjectContour(edges, objectBounds, info.width, info.height);
+  const keypoints = keypointsFromBounds(objectBounds, info.width, info.height);
   const symmetry = detectVerticalSymmetry(edges, info.width, info.height, objectBounds);
   const bboxRatio = objectBounds ? objectBounds.width / Math.max(1, objectBounds.height) : 0;
   const edgeDensity = edges.length / Math.max(1, info.width * info.height);
@@ -79,6 +99,8 @@ export async function analyzeImage(imagePath, options = {}) {
     threshold,
     gray,
     edges,
+    contour,
+    keypoints,
     objectBounds,
     bboxRatio,
     edgeDensity,
@@ -169,10 +191,37 @@ export async function readViewHints(hintsPath) {
     hints.set(normalized, hint);
     hints.set(path.basename(normalized), hint);
   }
+  for (const reference of document.reference_images || []) {
+    if (!reference.source) continue;
+    const kind = referenceViewKind(reference);
+    if (!kind) continue;
+    const normalized = reference.source.split(path.sep).join('/');
+    const hint = {
+      kind,
+      confidence: reference.confidence || 0.86,
+      source: toRepoRelative(hintsPath)
+    };
+    hints.set(normalized, hint);
+    hints.set(path.basename(normalized), hint);
+  }
   return hints;
 }
 
-export function makeImageObservation(assignedView) {
+function referenceViewKind(reference) {
+  const label = `${reference.id || ''} ${reference.name || ''}`.toLowerCase();
+  if (label.includes('top')) return 'top';
+  if (label.includes('front')) return 'front';
+  if (label.includes('rear') || label.includes('back')) return 'rear';
+  if (label.includes('right')) return 'right';
+  if (label.includes('left') || label.includes('side')) return 'left';
+  if (label.includes('quarter') || label.includes('oblique')) return 'oblique';
+  if (reference.plane === 'xy') return 'top';
+  if (reference.plane === 'yz') return 'front';
+  if (reference.plane === 'xz') return 'left';
+  return null;
+}
+
+export function makeImageObservation(assignedView, objectProfile = 'switch_controller') {
   const { analysis, kind, confidence, notes } = assignedView;
   const bbox = analysis.objectBounds
     ? [analysis.objectBounds.x, analysis.objectBounds.y, analysis.objectBounds.width, analysis.objectBounds.height].map(round)
@@ -184,6 +233,8 @@ export function makeImageObservation(assignedView) {
   if (analysis.edgeDensity < 0.02) risks.push('low edge density; outline may be under-detected');
   if (analysis.symmetry.score < 0.2) risks.push('weak vertical symmetry signal');
   if (kind === 'unknown' || kind === 'oblique') risks.push('view kind needs manual confirmation');
+  const orientationHints = makeOrientationHints({ kind, analysis, objectProfile });
+  if (orientationHints.review_required) risks.push('left/right mirror orientation needs manual confirmation');
 
   const baseObservations = [
     {
@@ -193,6 +244,14 @@ export function makeImageObservation(assignedView) {
       bbox,
       confidence: round(clamp(0.45 + analysis.edgeDensity * 2, 0.45, 0.78)),
       note: 'Percentile edge bounds; includes visual clutter when background edges are strong.'
+    },
+    {
+      id: 'main_object_contour',
+      kind: 'silhouette',
+      component_hint: 'main_object',
+      points: analysis.contour,
+      confidence: round(clamp(0.42 + analysis.edgeDensity * 1.8 + (analysis.contour.length > 8 ? 0.08 : 0), 0.42, 0.82)),
+      note: 'Coarse contour polyline traced from Sobel edge occupancy slices; use as geometry evidence, not a final CAD profile.'
     },
     {
       id: 'edge_cloud_sample',
@@ -212,6 +271,17 @@ export function makeImageObservation(assignedView) {
     }
   ];
 
+  for (const keypoint of analysis.keypoints) {
+    baseObservations.push({
+      id: `main_object_${keypoint.id}`,
+      kind: 'keypoint',
+      component_hint: 'main_object',
+      points: [keypoint.point],
+      confidence: keypoint.confidence,
+      note: keypoint.note
+    });
+  }
+
   return {
     version: 1,
     image: {
@@ -230,6 +300,7 @@ export function makeImageObservation(assignedView) {
       perspective_strength: classifyPerspective(analysis),
       symmetry_axis: symmetryLine
     },
+    orientation_hints: orientationHints,
     metrics: {
       edge_count: analysis.edges.length,
       edge_density: round(analysis.edgeDensity, 5),
@@ -239,7 +310,7 @@ export function makeImageObservation(assignedView) {
     },
     observations: [
       ...baseObservations,
-      ...componentCandidatesForView(kind, bbox, confidence)
+      ...componentCandidatesForView(kind, bbox, confidence, objectProfile)
     ],
     quality_report: {
       usable_for_modeling: analysis.edgeDensity >= 0.02 && Boolean(analysis.objectBounds),
@@ -249,7 +320,71 @@ export function makeImageObservation(assignedView) {
   };
 }
 
-function componentCandidatesForView(viewKind, bbox, viewConfidence) {
+function makeOrientationHints({ kind, analysis, objectProfile }) {
+  const semanticAnchors = [];
+  if (objectProfile === 'vehicle_ambulance' && (kind === 'left' || kind === 'right')) {
+    semanticAnchors.push(
+      {
+        id: 'side-front-wheel-before-rear-wheel',
+        item: 'wheel-left-front-tire',
+        anchor: 'wheel-left-rear-tire',
+        direction: 'left_of',
+        confidence: 0.64,
+        note: 'Side-view profile prior: the front wheel should appear before the rear wheel in image coordinates; confirm before mapping image x to model left/right.'
+      },
+      {
+        id: 'side-cab-before-main-body',
+        item: 'amb-cab-lower',
+        anchor: 'amb-main-body',
+        direction: 'left_of',
+        confidence: 0.58,
+        note: 'Side-view profile prior: cab/front should precede the rear body; this is a handedness cue, not final geometry.'
+      }
+    );
+  } else if (objectProfile === 'switch_controller' && (kind === 'front' || kind === 'rear')) {
+    semanticAnchors.push(
+      {
+        id: 'right-thumbstick-after-left-thumbstick',
+        item: 'right_thumbstick',
+        anchor: 'left_thumbstick',
+        direction: 'right_of',
+        confidence: kind === 'front' ? 0.62 : 0.45,
+        note: 'Controller layout prior used only as a mirror-orientation cue; user review should confirm front/rear handedness.'
+      },
+      {
+        id: 'abxy-after-dpad',
+        item: 'abxy_cluster',
+        anchor: 'left_button_cluster',
+        direction: 'right_of',
+        confidence: kind === 'front' ? 0.64 : 0.42,
+        note: 'ABXY versus D-pad placement is a strong mirror cue on front-view controllers.'
+      }
+    );
+  }
+
+  const reasons = [];
+  if (kind === 'left' || kind === 'right') reasons.push('side view left/right labels are ambiguous without semantic handedness cues');
+  if (kind === 'front' || kind === 'rear') reasons.push('front/rear views can preserve silhouette under horizontal mirroring');
+  if ((analysis.symmetry?.score || 0) > 0.55) reasons.push('strong vertical symmetry makes mirror errors visually plausible');
+  if (!semanticAnchors.length) reasons.push('no semantic left/right anchors were detected by the deterministic CV pass');
+
+  const status = semanticAnchors.length > 0
+    ? ((analysis.symmetry?.score || 0) > 0.65 ? 'medium' : 'low')
+    : (kind === 'unknown' || kind === 'oblique' ? 'unknown' : 'high');
+  return {
+    coordinate_convention: 'image_x_right_y_down',
+    model_convention: 'Map image-space left/right to model-space axes only after checking semantic anchors; do not infer handedness from silhouette alone.',
+    mirror_risk: {
+      status,
+      confidence: round(clamp(0.35 + (analysis.symmetry?.score || 0) * 0.35 + (semanticAnchors.length ? 0.12 : 0.25), 0.25, 0.86)),
+      reasons
+    },
+    semantic_anchors: semanticAnchors,
+    review_required: status !== 'low'
+  };
+}
+
+function componentCandidatesForView(viewKind, bbox, viewConfidence, objectProfile = 'switch_controller') {
   const [x, y, width, height] = bbox;
   const componentConfidence = round(clamp(viewConfidence - 0.12, 0.35, 0.72));
   const candidates = [];
@@ -279,7 +414,9 @@ function componentCandidatesForView(viewKind, bbox, viewConfidence) {
     });
   };
 
-  if (viewKind === 'front') {
+  if (objectProfile === 'vehicle_ambulance') {
+    addAmbulanceCandidates(viewKind, { addBox, addPoint });
+  } else if (viewKind === 'front') {
     addBox('front_left_shell_candidate', 'left_joycon_shell', { x: 0.04, y: 0.08, width: 0.31, height: 0.84 }, 'Template candidate from known game-controller front layout.');
     addBox('front_center_grip_candidate', 'center_grip_body', { x: 0.34, y: 0.11, width: 0.32, height: 0.78 }, 'Template candidate from known game-controller front layout.');
     addBox('front_right_shell_candidate', 'right_joycon_shell', { x: 0.65, y: 0.08, width: 0.31, height: 0.84 }, 'Template candidate from known game-controller front layout.');
@@ -301,10 +438,38 @@ function componentCandidatesForView(viewKind, bbox, viewConfidence) {
   return candidates;
 }
 
+function addAmbulanceCandidates(viewKind, helpers) {
+  const { addBox, addPoint } = helpers;
+  if (viewKind === 'left' || viewKind === 'right') {
+    addBox('ambulance_side_main_body', 'amb-main-body', { x: 0.24, y: 0.25, width: 0.66, height: 0.48 }, 'Ambulance side body candidate from vehicle profile anchors.', 0.72);
+    addBox('ambulance_side_cab_lower', 'amb-cab-lower', { x: 0.05, y: 0.34, width: 0.24, height: 0.37 }, 'Ambulance side cab lower candidate from vehicle profile anchors.', 0.68);
+    addBox('ambulance_side_cab_upper', 'amb-cab-upper-shell', { x: 0.07, y: 0.12, width: 0.24, height: 0.28 }, 'Ambulance side cab upper candidate from roof/cab silhouette.', 0.64);
+    addBox('ambulance_side_windshield', 'amb-windshield', { x: 0.17, y: 0.15, width: 0.13, height: 0.22 }, 'Ambulance windshield candidate from cab side profile.', 0.58);
+    addBox('ambulance_side_window', 'amb-left-side-window', { x: 0.42, y: 0.24, width: 0.22, height: 0.21 }, 'Ambulance side window candidate from side profile.', 0.62);
+    addPoint('ambulance_front_wheel_center', 'wheel-left-front-tire', { x: 0.24, y: 0.83 }, 'Front wheel center keypoint candidate from side view.', 0.7);
+    addPoint('ambulance_rear_wheel_center', 'wheel-left-rear-tire', { x: 0.78, y: 0.83 }, 'Rear wheel center keypoint candidate from side view.', 0.7);
+    addBox('ambulance_side_lightbar', 'roof-red-lightbar', { x: 0.26, y: 0.03, width: 0.14, height: 0.07 }, 'Roof lightbar candidate from side roofline.', 0.6);
+    addBox('ambulance_side_stripe', 'amb-left-red-stripe', { x: 0.31, y: 0.52, width: 0.51, height: 0.08 }, 'Side stripe candidate from ambulance profile prior.', 0.48);
+    addBox('ambulance_side_text', 'amb-left-ambulance-text', { x: 0.58, y: 0.27, width: 0.24, height: 0.12 }, 'Side text candidate from ambulance profile prior.', 0.42);
+  } else if (viewKind === 'top') {
+    addBox('ambulance_top_main_body', 'amb-main-body', { x: 0.19, y: 0.18, width: 0.67, height: 0.64 }, 'Top-view body footprint candidate.', 0.68);
+    addBox('ambulance_top_cab', 'amb-cab-lower', { x: 0.05, y: 0.21, width: 0.24, height: 0.58 }, 'Top-view cab footprint candidate.', 0.56);
+    addBox('ambulance_top_lightbar', 'roof-red-lightbar', { x: 0.23, y: 0.44, width: 0.13, height: 0.12 }, 'Top-view roof lightbar candidate.', 0.62);
+  } else if (viewKind === 'front') {
+    addBox('ambulance_front_cab_lower', 'amb-cab-lower', { x: 0.12, y: 0.35, width: 0.76, height: 0.45 }, 'Front cab lower candidate.', 0.62);
+    addBox('ambulance_front_cab_upper', 'amb-cab-upper-shell', { x: 0.14, y: 0.12, width: 0.72, height: 0.35 }, 'Front cab upper candidate.', 0.6);
+    addBox('ambulance_front_windshield', 'amb-windshield', { x: 0.23, y: 0.18, width: 0.54, height: 0.25 }, 'Front windshield candidate.', 0.58);
+    addBox('ambulance_front_lightbar', 'roof-red-lightbar', { x: 0.36, y: 0.02, width: 0.28, height: 0.08 }, 'Front roof lightbar candidate.', 0.56);
+  } else if (viewKind === 'rear') {
+    addBox('ambulance_rear_body', 'amb-main-body', { x: 0.12, y: 0.18, width: 0.76, height: 0.64 }, 'Rear body candidate.', 0.56);
+  }
+}
+
 export function makeImageSetObservation({ objectType, objectName, analyses, assignedViews, overlayDir = null }) {
-  const images = assignedViews.map(makeImageObservation);
+  const objectProfile = inferObjectProfile(objectType);
+  const images = assignedViews.map((assigned) => makeImageObservation(assigned, objectProfile));
   const detected = unique(images.map((item) => item.detected_view.kind));
-  const requiredViews = ['front', 'rear', 'right', 'top'];
+  const requiredViews = requiredViewsForProfile(objectProfile);
   const missingViews = requiredViews.filter((view) => !detected.includes(view));
   const usableCount = images.filter((item) => item.quality_report.usable_for_modeling).length;
   const risks = [];
@@ -313,7 +478,7 @@ export function makeImageSetObservation({ objectType, objectName, analyses, assi
   if (!detected.includes('top')) risks.push('true top view is missing');
   if (usableCount < Math.ceil(images.length / 2)) risks.push('less than half of the images are usable by current CV heuristics');
 
-  const objectProfile = inferObjectProfile(objectType);
+  const scaleCalibration = makeScaleCalibration({ objectProfile, images, missingViews });
   return {
     version: 1,
     object: {
@@ -325,8 +490,9 @@ export function makeImageSetObservation({ objectType, objectName, analyses, assi
     image_set_quality: qualityLabel(images, missingViews),
     views_detected: detected,
     missing_views: missingViews,
+    scale_calibration: scaleCalibration,
     images,
-    evidence_graph: makeObservationEvidenceGraph({ objectProfile, images, detected, missingViews }),
+    evidence_graph: makeObservationEvidenceGraph({ objectProfile, images, detected, missingViews, scaleCalibration }),
     quality_report: {
       usable_for_modeling: usableCount > 0 && detected.includes('front'),
       risks,
@@ -346,7 +512,7 @@ export function makeImageSetObservation({ objectType, objectName, analyses, assi
   };
 }
 
-export function makeObservationEvidenceGraph({ objectProfile, images, detected, missingViews }) {
+export function makeObservationEvidenceGraph({ objectProfile, images, detected, missingViews, scaleCalibration = null }) {
   const requirements = OBSERVATION_PART_REQUIREMENTS[objectProfile] || {};
   const viewIds = makeViewIds(images);
   const openQuestions = [];
@@ -384,6 +550,7 @@ export function makeObservationEvidenceGraph({ objectProfile, images, detected, 
       questions.push(`${partId}: review template-derived candidate boxes before accepting dimensions.`);
     }
     for (const question of questions) openQuestions.push(question);
+    const confidence = averageConfidence(sources);
     return {
       part_id: partId,
       status: partMissingViews.length === requirement.views.length ? 'template_prior' : partMissingViews.length > 0 ? 'inferred' : 'observed',
@@ -392,6 +559,7 @@ export function makeObservationEvidenceGraph({ objectProfile, images, detected, 
       required_views: requirement.views,
       confirmed_views: confirmedViews,
       missing_views: partMissingViews,
+      confidence,
       sources,
       conflicts,
       open_questions: questions
@@ -403,6 +571,15 @@ export function makeObservationEvidenceGraph({ objectProfile, images, detected, 
     image_count: images.length,
     views_detected: detected,
     missing_views: missingViews,
+    ...(scaleCalibration ? { scale_calibration: scaleCalibration } : {}),
+    part_matches: parts.map((part) => ({
+      part_id: part.part_id,
+      strategy: 'component_hint_view_requirement',
+      matched_views: part.confirmed_views,
+      missing_views: part.missing_views,
+      source_count: part.sources.length,
+      confidence: part.confidence
+    })),
     parts,
     open_questions: unique(openQuestions)
   };
@@ -435,7 +612,9 @@ function observationSource(image, observation, view) {
 }
 
 function evidenceKind(kind) {
+  if (kind === 'silhouette') return 'silhouette';
   if (kind === 'center_point') return 'center_point';
+  if (kind === 'keypoint') return 'keypoint';
   if (kind === 'edge' || kind === 'curve') return 'edge';
   if (kind === 'color_region') return 'color_region';
   if (kind === 'text_or_logo') return 'text_label';
@@ -443,8 +622,60 @@ function evidenceKind(kind) {
   return 'manual_note';
 }
 
+function requiredViewsForProfile(objectProfile) {
+  if (objectProfile === 'vehicle_ambulance') return ['left', 'front', 'rear', 'top'];
+  if (objectProfile === 'compact_remote') return ['front', 'right', 'top'];
+  return ['front', 'rear', 'right', 'top'];
+}
+
+function makeScaleCalibration({ objectProfile, images, missingViews }) {
+  const defaults = PROFILE_DEFAULT_SCALE[objectProfile] || PROFILE_DEFAULT_SCALE.switch_controller;
+  const measurements = [];
+  for (const image of images) {
+    const bbox = image.metrics?.object_bbox;
+    if (!bbox) continue;
+    const [,, widthPx, heightPx] = bbox;
+    const view = image.detected_view.kind;
+    const dimensions = dimensionsForView(view, defaults);
+    if (!dimensions) continue;
+    measurements.push({
+      view,
+      source_image: image.image.path,
+      object_bbox: bbox,
+      physical_width_mm: dimensions.width,
+      physical_height_mm: dimensions.height,
+      pixels_per_mm_x: round(widthPx / dimensions.width, 4),
+      pixels_per_mm_y: round(heightPx / dimensions.height, 4),
+      confidence: round(clamp((image.detected_view.confidence || 0.4) - (view === 'oblique' ? 0.18 : 0), 0.25, 0.88))
+    });
+  }
+  const measuredViews = unique(measurements.map((item) => item.view));
+  const coverage = measuredViews.length / Math.max(1, requiredViewsForProfile(objectProfile).length);
+  const confidence = round(clamp(0.38 + coverage * 0.28 + averageConfidence(measurements) * 0.34 - missingViews.length * 0.03, 0.24, 0.86), 3);
+  return {
+    units: 'mm',
+    strategy: 'profile_default_dimension_with_view_bbox',
+    default_scale: defaults,
+    measurements,
+    confidence,
+    missing_views: missingViews,
+    notes: [
+      'Scale is calibrated against profile default dimensions and detected object bboxes.',
+      'Treat as provisional until a user-provided physical dimension or calibrated orthographic view is available.'
+    ]
+  };
+}
+
+function dimensionsForView(view, defaults) {
+  if (view === 'left' || view === 'right') return { width: defaults.width, height: defaults.height };
+  if (view === 'top' || view === 'bottom') return { width: defaults.width, height: defaults.depth };
+  if (view === 'front' || view === 'rear') return { width: defaults.depth, height: defaults.height };
+  return null;
+}
+
 function inferObjectProfile(objectType) {
   if (['remote_control', 'media_remote', 'compact_remote'].includes(objectType)) return 'compact_remote';
+  if (['vehicle_ambulance', 'ambulance', 'toy_ambulance'].includes(objectType)) return 'vehicle_ambulance';
   return 'switch_controller';
 }
 
@@ -490,7 +721,7 @@ export async function renderObservationOverlay(observation, outputPath, options 
     })
     .join('');
   const centerMarks = observation.observations
-    .filter((item) => item.kind === 'center_point' && item.points?.length)
+    .filter((item) => (item.kind === 'center_point' || item.kind === 'keypoint') && item.points?.length)
     .map((item) => {
       const [x, y] = item.points[0];
       return `<g>
@@ -579,6 +810,47 @@ function percentileBounds(edges, width, height) {
   };
 }
 
+function traceObjectContour(edges, bounds, width, height) {
+  if (!bounds || edges.length === 0) {
+    return [[0, 0], [width, 0], [width, height], [0, height], [0, 0]];
+  }
+  const slices = 18;
+  const left = [];
+  const right = [];
+  for (let index = 0; index < slices; index += 1) {
+    const y0 = bounds.y + (bounds.height * index) / slices;
+    const y1 = bounds.y + (bounds.height * (index + 1)) / slices;
+    const rowEdges = edges.filter((edge) => edge.y >= y0 && edge.y < y1 && edge.x >= bounds.x && edge.x <= bounds.x + bounds.width);
+    if (rowEdges.length === 0) continue;
+    const xs = rowEdges.map((edge) => edge.x).sort((a, b) => a - b);
+    const y = round((y0 + y1) / 2);
+    left.push([round(xs[Math.floor(xs.length * 0.08)]), y]);
+    right.push([round(xs[Math.floor(xs.length * 0.92)]), y]);
+  }
+  const contour = [...left, ...right.reverse()];
+  if (contour.length < 6) {
+    const { x, y } = bounds;
+    contour.push([x, y], [x + bounds.width, y], [x + bounds.width, y + bounds.height], [x, y + bounds.height]);
+  }
+  contour.push(contour[0]);
+  return contour.map(([x, y]) => [round(clamp(x, 0, width)), round(clamp(y, 0, height))]);
+}
+
+function keypointsFromBounds(bounds, width, height) {
+  if (!bounds) return [];
+  const { x, y } = bounds;
+  const x2 = x + bounds.width;
+  const y2 = y + bounds.height;
+  const confidence = round(clamp((bounds.width * bounds.height) / Math.max(1, width * height), 0.28, 0.74));
+  return [
+    { id: 'top_left_keypoint', point: [round(x), round(y)], confidence, note: 'Object bbox top-left keypoint candidate.' },
+    { id: 'top_right_keypoint', point: [round(x2), round(y)], confidence, note: 'Object bbox top-right keypoint candidate.' },
+    { id: 'bottom_right_keypoint', point: [round(x2), round(y2)], confidence, note: 'Object bbox bottom-right keypoint candidate.' },
+    { id: 'bottom_left_keypoint', point: [round(x), round(y2)], confidence, note: 'Object bbox bottom-left keypoint candidate.' },
+    { id: 'center_keypoint', point: [round(x + bounds.width / 2), round(y + bounds.height / 2)], confidence: round(clamp(confidence + 0.08, 0.32, 0.8)), note: 'Object bbox center keypoint candidate.' }
+  ];
+}
+
 function detectVerticalSymmetry(edges, width, height, bounds) {
   const x = bounds ? bounds.x + bounds.width / 2 : width / 2;
   const coarse = new Set();
@@ -621,6 +893,14 @@ function samplePoints(points, maxCount) {
     sampled.push({ x: round(point.x), y: round(point.y) });
   }
   return sampled;
+}
+
+function averageConfidence(items) {
+  const values = (items || [])
+    .map((item) => item.confidence)
+    .filter((value) => Number.isFinite(value));
+  if (!values.length) return 0;
+  return round(values.reduce((sum, value) => sum + value, 0) / values.length, 3);
 }
 
 function qualityLabel(images, missingViews) {

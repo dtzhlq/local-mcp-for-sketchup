@@ -1,0 +1,5667 @@
+{
+  "version": 1,
+  "id": "ambulance-image-evidence-skeleton-part-graph",
+  "profile_id": "vehicle_ambulance",
+  "dsl_version": 1,
+  "units": "mm",
+  "product": {
+    "type": "vehicle_ambulance",
+    "name": "Reference Toy Ambulance",
+    "source": "5 image evidence record(s)"
+  },
+  "scale": {
+    "width": 2300,
+    "depth": 900,
+    "height": 1050,
+    "confidence": 0.86,
+    "calibration": {
+      "units": "mm",
+      "strategy": "profile_default_dimension_with_view_bbox",
+      "default_scale": {
+        "width": 2300,
+        "depth": 900,
+        "height": 1050
+      },
+      "measurements": [
+        {
+          "view": "rear",
+          "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+          "object_bbox": [
+            8,
+            8,
+            827,
+            555
+          ],
+          "physical_width_mm": 900,
+          "physical_height_mm": 1050,
+          "pixels_per_mm_x": 0.9189,
+          "pixels_per_mm_y": 0.5286,
+          "confidence": 0.86
+        },
+        {
+          "view": "left",
+          "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+          "object_bbox": [
+            46,
+            6,
+            771,
+            404
+          ],
+          "physical_width_mm": 2300,
+          "physical_height_mm": 1050,
+          "pixels_per_mm_x": 0.3352,
+          "pixels_per_mm_y": 0.3848,
+          "confidence": 0.86
+        },
+        {
+          "view": "top",
+          "source_image": "test/救护车/C486F074-3B8E-4F1C-A048-0AF24B687035_1_102_o.jpeg",
+          "object_bbox": [
+            4,
+            30,
+            638,
+            576
+          ],
+          "physical_width_mm": 2300,
+          "physical_height_mm": 900,
+          "pixels_per_mm_x": 0.2774,
+          "pixels_per_mm_y": 0.64,
+          "confidence": 0.86
+        },
+        {
+          "view": "front",
+          "source_image": "test/救护车/IMG_0175.jpeg",
+          "object_bbox": [
+            9,
+            12,
+            708,
+            433
+          ],
+          "physical_width_mm": 900,
+          "physical_height_mm": 1050,
+          "pixels_per_mm_x": 0.7867,
+          "pixels_per_mm_y": 0.4124,
+          "confidence": 0.86
+        }
+      ],
+      "confidence": 0.86,
+      "missing_views": [],
+      "notes": [
+        "Scale is calibrated against profile default dimensions and detected object bboxes.",
+        "Treat as provisional until a user-provided physical dimension or calibrated orthographic view is available."
+      ]
+    },
+    "evidence_sources": [
+      {
+        "kind": "scale_calibration",
+        "view": "rear",
+        "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+        "status": "observed",
+        "confidence": 0.86,
+        "note": "bbox 8,8,827,555 -> 900x1050mm profile calibration"
+      },
+      {
+        "kind": "scale_calibration",
+        "view": "left",
+        "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+        "status": "observed",
+        "confidence": 0.86,
+        "note": "bbox 46,6,771,404 -> 2300x1050mm profile calibration"
+      },
+      {
+        "kind": "scale_calibration",
+        "view": "top",
+        "source_image": "test/救护车/C486F074-3B8E-4F1C-A048-0AF24B687035_1_102_o.jpeg",
+        "status": "observed",
+        "confidence": 0.86,
+        "note": "bbox 4,30,638,576 -> 2300x900mm profile calibration"
+      },
+      {
+        "kind": "scale_calibration",
+        "view": "front",
+        "source_image": "test/救护车/IMG_0175.jpeg",
+        "status": "observed",
+        "confidence": 0.86,
+        "note": "bbox 9,12,708,433 -> 900x1050mm profile calibration"
+      }
+    ]
+  },
+  "parts": [
+    {
+      "id": "main_body",
+      "name": "vehicle_ambulance_main_body",
+      "type": "body",
+      "role": "body",
+      "shape": {
+        "primitive": "rounded_box",
+        "parameters": {
+          "origin": [
+            469.2,
+            0,
+            280.4
+          ],
+          "size": [
+            1771,
+            819,
+            661.5
+          ],
+          "radius": 70.4,
+          "segments": 8,
+          "smooth": "all"
+        }
+      },
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "needs_review",
+      "evidence_sources": [
+        {
+          "kind": "silhouette",
+          "view": "rear",
+          "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+          "status": "inferred",
+          "confidence": 0.418,
+          "note": "Inferred from related image evidence for amb-main-body: Percentile edge bounds; includes visual clutter when background edges are strong.",
+          "observation_id": "main_object_bbox"
+        },
+        {
+          "kind": "silhouette",
+          "view": "rear",
+          "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+          "status": "inferred",
+          "confidence": 0.446,
+          "note": "Inferred from related image evidence for amb-main-body: Coarse contour polyline traced from Sobel edge occupancy slices; use as geometry evidence, not a final CAD profile.",
+          "observation_id": "main_object_contour"
+        },
+        {
+          "kind": "keypoint",
+          "view": "rear",
+          "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+          "status": "inferred",
+          "confidence": 0.533,
+          "note": "Inferred from related image evidence for amb-main-body: Object bbox top-left keypoint candidate.",
+          "observation_id": "main_object_top_left_keypoint"
+        },
+        {
+          "kind": "keypoint",
+          "view": "rear",
+          "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+          "status": "inferred",
+          "confidence": 0.533,
+          "note": "Inferred from related image evidence for amb-main-body: Object bbox top-right keypoint candidate.",
+          "observation_id": "main_object_top_right_keypoint"
+        },
+        {
+          "kind": "keypoint",
+          "view": "rear",
+          "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+          "status": "inferred",
+          "confidence": 0.533,
+          "note": "Inferred from related image evidence for amb-main-body: Object bbox bottom-right keypoint candidate.",
+          "observation_id": "main_object_bottom_right_keypoint"
+        },
+        {
+          "kind": "keypoint",
+          "view": "rear",
+          "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+          "status": "inferred",
+          "confidence": 0.533,
+          "note": "Inferred from related image evidence for amb-main-body: Object bbox bottom-left keypoint candidate.",
+          "observation_id": "main_object_bottom_left_keypoint"
+        },
+        {
+          "kind": "keypoint",
+          "view": "rear",
+          "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+          "status": "inferred",
+          "confidence": 0.576,
+          "note": "Inferred from related image evidence for amb-main-body: Object bbox center keypoint candidate.",
+          "observation_id": "main_object_center_keypoint"
+        },
+        {
+          "kind": "silhouette",
+          "view": "rear",
+          "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+          "status": "inferred",
+          "confidence": 0.403,
+          "note": "Inferred from related image evidence for amb-main-body: Rear body candidate.",
+          "observation_id": "ambulance_rear_body"
+        },
+        {
+          "kind": "silhouette",
+          "view": "left",
+          "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+          "status": "inferred",
+          "confidence": 0.418,
+          "note": "Inferred from related image evidence for amb-main-body: Percentile edge bounds; includes visual clutter when background edges are strong.",
+          "observation_id": "main_object_bbox"
+        },
+        {
+          "kind": "silhouette",
+          "view": "left",
+          "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+          "status": "inferred",
+          "confidence": 0.439,
+          "note": "Inferred from related image evidence for amb-main-body: Coarse contour polyline traced from Sobel edge occupancy slices; use as geometry evidence, not a final CAD profile.",
+          "observation_id": "main_object_contour"
+        },
+        {
+          "kind": "keypoint",
+          "view": "left",
+          "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+          "status": "inferred",
+          "confidence": 0.367,
+          "note": "Inferred from related image evidence for amb-main-body: Object bbox top-left keypoint candidate.",
+          "observation_id": "main_object_top_left_keypoint"
+        },
+        {
+          "kind": "keypoint",
+          "view": "left",
+          "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+          "status": "inferred",
+          "confidence": 0.367,
+          "note": "Inferred from related image evidence for amb-main-body: Object bbox top-right keypoint candidate.",
+          "observation_id": "main_object_top_right_keypoint"
+        },
+        {
+          "kind": "keypoint",
+          "view": "left",
+          "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+          "status": "inferred",
+          "confidence": 0.367,
+          "note": "Inferred from related image evidence for amb-main-body: Object bbox bottom-right keypoint candidate.",
+          "observation_id": "main_object_bottom_right_keypoint"
+        },
+        {
+          "kind": "keypoint",
+          "view": "left",
+          "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+          "status": "inferred",
+          "confidence": 0.367,
+          "note": "Inferred from related image evidence for amb-main-body: Object bbox bottom-left keypoint candidate.",
+          "observation_id": "main_object_bottom_left_keypoint"
+        },
+        {
+          "kind": "keypoint",
+          "view": "left",
+          "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+          "status": "inferred",
+          "confidence": 0.425,
+          "note": "Inferred from related image evidence for amb-main-body: Object bbox center keypoint candidate.",
+          "observation_id": "main_object_center_keypoint"
+        },
+        {
+          "kind": "silhouette",
+          "view": "left",
+          "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+          "status": "inferred",
+          "confidence": 0.518,
+          "note": "Inferred from related image evidence for amb-main-body: Ambulance side body candidate from vehicle profile anchors.",
+          "observation_id": "ambulance_side_main_body"
+        },
+        {
+          "kind": "silhouette",
+          "view": "top",
+          "source_image": "test/救护车/C486F074-3B8E-4F1C-A048-0AF24B687035_1_102_o.jpeg",
+          "status": "inferred",
+          "confidence": 0.454,
+          "note": "Inferred from related image evidence for amb-main-body: Percentile edge bounds; includes visual clutter when background edges are strong.",
+          "observation_id": "main_object_bbox"
+        },
+        {
+          "kind": "silhouette",
+          "view": "top",
+          "source_image": "test/救护车/C486F074-3B8E-4F1C-A048-0AF24B687035_1_102_o.jpeg",
+          "status": "inferred",
+          "confidence": 0.475,
+          "note": "Inferred from related image evidence for amb-main-body: Coarse contour polyline traced from Sobel edge occupancy slices; use as geometry evidence, not a final CAD profile.",
+          "observation_id": "main_object_contour"
+        },
+        {
+          "kind": "keypoint",
+          "view": "top",
+          "source_image": "test/救护车/C486F074-3B8E-4F1C-A048-0AF24B687035_1_102_o.jpeg",
+          "status": "inferred",
+          "confidence": 0.432,
+          "note": "Inferred from related image evidence for amb-main-body: Object bbox top-left keypoint candidate.",
+          "observation_id": "main_object_top_left_keypoint"
+        },
+        {
+          "kind": "keypoint",
+          "view": "top",
+          "source_image": "test/救护车/C486F074-3B8E-4F1C-A048-0AF24B687035_1_102_o.jpeg",
+          "status": "inferred",
+          "confidence": 0.432,
+          "note": "Inferred from related image evidence for amb-main-body: Object bbox top-right keypoint candidate.",
+          "observation_id": "main_object_top_right_keypoint"
+        },
+        {
+          "kind": "keypoint",
+          "view": "top",
+          "source_image": "test/救护车/C486F074-3B8E-4F1C-A048-0AF24B687035_1_102_o.jpeg",
+          "status": "inferred",
+          "confidence": 0.432,
+          "note": "Inferred from related image evidence for amb-main-body: Object bbox bottom-right keypoint candidate.",
+          "observation_id": "main_object_bottom_right_keypoint"
+        },
+        {
+          "kind": "keypoint",
+          "view": "top",
+          "source_image": "test/救护车/C486F074-3B8E-4F1C-A048-0AF24B687035_1_102_o.jpeg",
+          "status": "inferred",
+          "confidence": 0.432,
+          "note": "Inferred from related image evidence for amb-main-body: Object bbox bottom-left keypoint candidate.",
+          "observation_id": "main_object_bottom_left_keypoint"
+        },
+        {
+          "kind": "keypoint",
+          "view": "top",
+          "source_image": "test/救护车/C486F074-3B8E-4F1C-A048-0AF24B687035_1_102_o.jpeg",
+          "status": "inferred",
+          "confidence": 0.49,
+          "note": "Inferred from related image evidence for amb-main-body: Object bbox center keypoint candidate.",
+          "observation_id": "main_object_center_keypoint"
+        },
+        {
+          "kind": "silhouette",
+          "view": "top",
+          "source_image": "test/救护车/C486F074-3B8E-4F1C-A048-0AF24B687035_1_102_o.jpeg",
+          "status": "inferred",
+          "confidence": 0.49,
+          "note": "Inferred from related image evidence for amb-main-body: Top-view body footprint candidate.",
+          "observation_id": "ambulance_top_main_body"
+        },
+        {
+          "kind": "silhouette",
+          "view": "oblique",
+          "source_image": "test/救护车/DE9FDB12-2BD3-49D2-AD32-930CC4A33B14_1_102_o.jpeg",
+          "status": "inferred",
+          "confidence": 0.425,
+          "note": "Inferred from related image evidence for amb-main-body: Percentile edge bounds; includes visual clutter when background edges are strong.",
+          "observation_id": "main_object_bbox"
+        },
+        {
+          "kind": "silhouette",
+          "view": "oblique",
+          "source_image": "test/救护车/DE9FDB12-2BD3-49D2-AD32-930CC4A33B14_1_102_o.jpeg",
+          "status": "inferred",
+          "confidence": 0.446,
+          "note": "Inferred from related image evidence for amb-main-body: Coarse contour polyline traced from Sobel edge occupancy slices; use as geometry evidence, not a final CAD profile.",
+          "observation_id": "main_object_contour"
+        },
+        {
+          "kind": "keypoint",
+          "view": "oblique",
+          "source_image": "test/救护车/DE9FDB12-2BD3-49D2-AD32-930CC4A33B14_1_102_o.jpeg",
+          "status": "inferred",
+          "confidence": 0.533,
+          "note": "Inferred from related image evidence for amb-main-body: Object bbox top-left keypoint candidate.",
+          "observation_id": "main_object_top_left_keypoint"
+        },
+        {
+          "kind": "keypoint",
+          "view": "oblique",
+          "source_image": "test/救护车/DE9FDB12-2BD3-49D2-AD32-930CC4A33B14_1_102_o.jpeg",
+          "status": "inferred",
+          "confidence": 0.533,
+          "note": "Inferred from related image evidence for amb-main-body: Object bbox top-right keypoint candidate.",
+          "observation_id": "main_object_top_right_keypoint"
+        },
+        {
+          "kind": "keypoint",
+          "view": "oblique",
+          "source_image": "test/救护车/DE9FDB12-2BD3-49D2-AD32-930CC4A33B14_1_102_o.jpeg",
+          "status": "inferred",
+          "confidence": 0.533,
+          "note": "Inferred from related image evidence for amb-main-body: Object bbox bottom-right keypoint candidate.",
+          "observation_id": "main_object_bottom_right_keypoint"
+        },
+        {
+          "kind": "keypoint",
+          "view": "oblique",
+          "source_image": "test/救护车/DE9FDB12-2BD3-49D2-AD32-930CC4A33B14_1_102_o.jpeg",
+          "status": "inferred",
+          "confidence": 0.533,
+          "note": "Inferred from related image evidence for amb-main-body: Object bbox bottom-left keypoint candidate.",
+          "observation_id": "main_object_bottom_left_keypoint"
+        },
+        {
+          "kind": "keypoint",
+          "view": "oblique",
+          "source_image": "test/救护车/DE9FDB12-2BD3-49D2-AD32-930CC4A33B14_1_102_o.jpeg",
+          "status": "inferred",
+          "confidence": 0.576,
+          "note": "Inferred from related image evidence for amb-main-body: Object bbox center keypoint candidate.",
+          "observation_id": "main_object_center_keypoint"
+        },
+        {
+          "kind": "silhouette",
+          "view": "front",
+          "source_image": "test/救护车/IMG_0175.jpeg",
+          "status": "inferred",
+          "confidence": 0.468,
+          "note": "Inferred from related image evidence for amb-main-body: Percentile edge bounds; includes visual clutter when background edges are strong.",
+          "observation_id": "main_object_bbox"
+        },
+        {
+          "kind": "silhouette",
+          "view": "front",
+          "source_image": "test/救护车/IMG_0175.jpeg",
+          "status": "inferred",
+          "confidence": 0.49,
+          "note": "Inferred from related image evidence for amb-main-body: Coarse contour polyline traced from Sobel edge occupancy slices; use as geometry evidence, not a final CAD profile.",
+          "observation_id": "main_object_contour"
+        },
+        {
+          "kind": "keypoint",
+          "view": "front",
+          "source_image": "test/救护车/IMG_0175.jpeg",
+          "status": "inferred",
+          "confidence": 0.36,
+          "note": "Inferred from related image evidence for amb-main-body: Object bbox top-left keypoint candidate.",
+          "observation_id": "main_object_top_left_keypoint"
+        },
+        {
+          "kind": "keypoint",
+          "view": "front",
+          "source_image": "test/救护车/IMG_0175.jpeg",
+          "status": "inferred",
+          "confidence": 0.36,
+          "note": "Inferred from related image evidence for amb-main-body: Object bbox top-right keypoint candidate.",
+          "observation_id": "main_object_top_right_keypoint"
+        },
+        {
+          "kind": "keypoint",
+          "view": "front",
+          "source_image": "test/救护车/IMG_0175.jpeg",
+          "status": "inferred",
+          "confidence": 0.36,
+          "note": "Inferred from related image evidence for amb-main-body: Object bbox bottom-right keypoint candidate.",
+          "observation_id": "main_object_bottom_right_keypoint"
+        },
+        {
+          "kind": "keypoint",
+          "view": "front",
+          "source_image": "test/救护车/IMG_0175.jpeg",
+          "status": "inferred",
+          "confidence": 0.36,
+          "note": "Inferred from related image evidence for amb-main-body: Object bbox bottom-left keypoint candidate.",
+          "observation_id": "main_object_bottom_left_keypoint"
+        },
+        {
+          "kind": "keypoint",
+          "view": "front",
+          "source_image": "test/救护车/IMG_0175.jpeg",
+          "status": "inferred",
+          "confidence": 0.418,
+          "note": "Inferred from related image evidence for amb-main-body: Object bbox center keypoint candidate.",
+          "observation_id": "main_object_center_keypoint"
+        },
+        {
+          "kind": "parameter_proposal_review",
+          "status": "manual_confirmed",
+          "confidence": 0.423,
+          "note": "accepted_parameter_proposal: Accept the image-scale body candidate for correction patch regression."
+        }
+      ],
+      "qa": {
+        "generated_from_image_evidence": true,
+        "evidence_confidence": 0.382,
+        "missing_views": [
+          "left",
+          "top",
+          "rear"
+        ],
+        "parameter_proposal_applied": true,
+        "last_correction_rule": "accepted_parameter_proposal"
+      },
+      "parameter_proposals": [
+        {
+          "part_id": "main_body",
+          "unit": "mm",
+          "confidence": 0.423,
+          "status": "needs_review",
+          "review_required": true,
+          "basis": [
+            "profile_role_ratio",
+            "image_scale_calibration",
+            "image_bbox_measurement"
+          ],
+          "source_count": 38,
+          "source_views": [
+            "rear",
+            "left",
+            "top",
+            "oblique",
+            "front"
+          ],
+          "required_views": [
+            "left",
+            "top",
+            "rear"
+          ],
+          "confirmed_views": [],
+          "missing_views": [
+            "left",
+            "top",
+            "rear"
+          ],
+          "evidence_sources": [
+            {
+              "kind": "silhouette",
+              "view": "rear",
+              "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+              "status": "inferred",
+              "confidence": 0.418,
+              "note": "Inferred from related image evidence for amb-main-body: Percentile edge bounds; includes visual clutter when background edges are strong.",
+              "observation_id": "main_object_bbox"
+            },
+            {
+              "kind": "silhouette",
+              "view": "rear",
+              "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+              "status": "inferred",
+              "confidence": 0.446,
+              "note": "Inferred from related image evidence for amb-main-body: Coarse contour polyline traced from Sobel edge occupancy slices; use as geometry evidence, not a final CAD profile.",
+              "observation_id": "main_object_contour"
+            },
+            {
+              "kind": "keypoint",
+              "view": "rear",
+              "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+              "status": "inferred",
+              "confidence": 0.533,
+              "note": "Inferred from related image evidence for amb-main-body: Object bbox top-left keypoint candidate.",
+              "observation_id": "main_object_top_left_keypoint"
+            },
+            {
+              "kind": "keypoint",
+              "view": "rear",
+              "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+              "status": "inferred",
+              "confidence": 0.533,
+              "note": "Inferred from related image evidence for amb-main-body: Object bbox top-right keypoint candidate.",
+              "observation_id": "main_object_top_right_keypoint"
+            }
+          ],
+          "image_measurements": [
+            {
+              "view": "rear",
+              "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+              "observation_id": "main_object_bbox",
+              "kind": "component_bbox",
+              "confidence": 0.58,
+              "bbox_px": [
+                8,
+                8,
+                827,
+                555
+              ],
+              "width_mm": 900,
+              "height_mm": 1049.9,
+              "calibration_view": "rear"
+            },
+            {
+              "view": "rear",
+              "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+              "observation_id": "main_object_contour",
+              "kind": "silhouette",
+              "confidence": 0.62,
+              "point_count": 37,
+              "calibration_view": "rear",
+              "note": "Point/contour evidence supports placement but is not converted to a final dimension."
+            },
+            {
+              "view": "rear",
+              "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+              "observation_id": "main_object_top_left_keypoint",
+              "kind": "keypoint",
+              "confidence": 0.74,
+              "point_count": 1,
+              "calibration_view": "rear",
+              "note": "Point/contour evidence supports placement but is not converted to a final dimension."
+            },
+            {
+              "view": "rear",
+              "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+              "observation_id": "main_object_top_right_keypoint",
+              "kind": "keypoint",
+              "confidence": 0.74,
+              "point_count": 1,
+              "calibration_view": "rear",
+              "note": "Point/contour evidence supports placement but is not converted to a final dimension."
+            },
+            {
+              "view": "rear",
+              "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+              "observation_id": "main_object_bottom_right_keypoint",
+              "kind": "keypoint",
+              "confidence": 0.74,
+              "point_count": 1,
+              "calibration_view": "rear",
+              "note": "Point/contour evidence supports placement but is not converted to a final dimension."
+            },
+            {
+              "view": "rear",
+              "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+              "observation_id": "main_object_bottom_left_keypoint",
+              "kind": "keypoint",
+              "confidence": 0.74,
+              "point_count": 1,
+              "calibration_view": "rear",
+              "note": "Point/contour evidence supports placement but is not converted to a final dimension."
+            }
+          ],
+          "reason": "No-seed image-derived dimensions must be reviewed before they replace shape parameters.",
+          "proposal_kind": "shape_primitive",
+          "parameter": "shape.primitive",
+          "path": "parts[main_body].shape.primitive",
+          "current_value": "rounded_box",
+          "proposed_value": "rounded_box"
+        },
+        {
+          "part_id": "main_body",
+          "unit": "mm",
+          "confidence": 0.423,
+          "status": "needs_review",
+          "review_required": true,
+          "basis": [
+            "profile_role_ratio",
+            "image_scale_calibration",
+            "image_bbox_measurement"
+          ],
+          "source_count": 38,
+          "source_views": [
+            "rear",
+            "left",
+            "top",
+            "oblique",
+            "front"
+          ],
+          "required_views": [
+            "left",
+            "top",
+            "rear"
+          ],
+          "confirmed_views": [],
+          "missing_views": [
+            "left",
+            "top",
+            "rear"
+          ],
+          "evidence_sources": [
+            {
+              "kind": "silhouette",
+              "view": "rear",
+              "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+              "status": "inferred",
+              "confidence": 0.418,
+              "note": "Inferred from related image evidence for amb-main-body: Percentile edge bounds; includes visual clutter when background edges are strong.",
+              "observation_id": "main_object_bbox"
+            },
+            {
+              "kind": "silhouette",
+              "view": "rear",
+              "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+              "status": "inferred",
+              "confidence": 0.446,
+              "note": "Inferred from related image evidence for amb-main-body: Coarse contour polyline traced from Sobel edge occupancy slices; use as geometry evidence, not a final CAD profile.",
+              "observation_id": "main_object_contour"
+            },
+            {
+              "kind": "keypoint",
+              "view": "rear",
+              "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+              "status": "inferred",
+              "confidence": 0.533,
+              "note": "Inferred from related image evidence for amb-main-body: Object bbox top-left keypoint candidate.",
+              "observation_id": "main_object_top_left_keypoint"
+            },
+            {
+              "kind": "keypoint",
+              "view": "rear",
+              "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+              "status": "inferred",
+              "confidence": 0.533,
+              "note": "Inferred from related image evidence for amb-main-body: Object bbox top-right keypoint candidate.",
+              "observation_id": "main_object_top_right_keypoint"
+            }
+          ],
+          "image_measurements": [
+            {
+              "view": "rear",
+              "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+              "observation_id": "main_object_bbox",
+              "kind": "component_bbox",
+              "confidence": 0.58,
+              "bbox_px": [
+                8,
+                8,
+                827,
+                555
+              ],
+              "width_mm": 900,
+              "height_mm": 1049.9,
+              "calibration_view": "rear"
+            },
+            {
+              "view": "rear",
+              "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+              "observation_id": "main_object_contour",
+              "kind": "silhouette",
+              "confidence": 0.62,
+              "point_count": 37,
+              "calibration_view": "rear",
+              "note": "Point/contour evidence supports placement but is not converted to a final dimension."
+            },
+            {
+              "view": "rear",
+              "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+              "observation_id": "main_object_top_left_keypoint",
+              "kind": "keypoint",
+              "confidence": 0.74,
+              "point_count": 1,
+              "calibration_view": "rear",
+              "note": "Point/contour evidence supports placement but is not converted to a final dimension."
+            },
+            {
+              "view": "rear",
+              "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+              "observation_id": "main_object_top_right_keypoint",
+              "kind": "keypoint",
+              "confidence": 0.74,
+              "point_count": 1,
+              "calibration_view": "rear",
+              "note": "Point/contour evidence supports placement but is not converted to a final dimension."
+            },
+            {
+              "view": "rear",
+              "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+              "observation_id": "main_object_bottom_right_keypoint",
+              "kind": "keypoint",
+              "confidence": 0.74,
+              "point_count": 1,
+              "calibration_view": "rear",
+              "note": "Point/contour evidence supports placement but is not converted to a final dimension."
+            },
+            {
+              "view": "rear",
+              "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+              "observation_id": "main_object_bottom_left_keypoint",
+              "kind": "keypoint",
+              "confidence": 0.74,
+              "point_count": 1,
+              "calibration_view": "rear",
+              "note": "Point/contour evidence supports placement but is not converted to a final dimension."
+            }
+          ],
+          "reason": "No-seed image-derived dimensions must be reviewed before they replace shape parameters.",
+          "proposal_kind": "shape_parameters",
+          "parameter": "shape.parameters",
+          "path": "parts[main_body].shape.parameters",
+          "current_value": {
+            "origin": [
+              0,
+              0,
+              525
+            ],
+            "size": [
+              460,
+              180,
+              210
+            ],
+            "radius": 4
+          },
+          "proposed_value": {
+            "origin": [
+              469.2,
+              0,
+              280.4
+            ],
+            "size": [
+              1771,
+              819,
+              661.5
+            ],
+            "radius": 70.4,
+            "segments": 8,
+            "smooth": "all"
+          }
+        }
+      ]
+    },
+    {
+      "id": "cab",
+      "name": "vehicle_ambulance_cab",
+      "type": "cab",
+      "role": "cab",
+      "shape": {
+        "primitive": "rounded_box",
+        "parameters": {
+          "origin": [
+            59.8,
+            60.3,
+            340.2
+          ],
+          "size": [
+            558.9,
+            700.2,
+            380.1
+          ],
+          "radius": 77.7,
+          "segments": 8,
+          "smooth": "all"
+        }
+      },
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "needs_review",
+      "evidence_sources": [
+        {
+          "kind": "silhouette",
+          "view": "left",
+          "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+          "status": "inferred",
+          "confidence": 0.49,
+          "note": "Inferred from related image evidence for amb-cab-lower: Ambulance side cab lower candidate from vehicle profile anchors.",
+          "observation_id": "ambulance_side_cab_lower"
+        },
+        {
+          "kind": "silhouette",
+          "view": "top",
+          "source_image": "test/救护车/C486F074-3B8E-4F1C-A048-0AF24B687035_1_102_o.jpeg",
+          "status": "inferred",
+          "confidence": 0.403,
+          "note": "Inferred from related image evidence for amb-cab-lower: Top-view cab footprint candidate.",
+          "observation_id": "ambulance_top_cab"
+        },
+        {
+          "kind": "silhouette",
+          "view": "front",
+          "source_image": "test/救护车/IMG_0175.jpeg",
+          "status": "inferred",
+          "confidence": 0.446,
+          "note": "Inferred from related image evidence for amb-cab-lower: Front cab lower candidate.",
+          "observation_id": "ambulance_front_cab_lower"
+        },
+        {
+          "kind": "parameter_proposal_review",
+          "status": "manual_confirmed",
+          "confidence": 0.463,
+          "note": "accepted_parameter_proposal: Accept the image-scale cab candidate for correction patch regression."
+        }
+      ],
+      "qa": {
+        "generated_from_image_evidence": true,
+        "evidence_confidence": 0.378,
+        "missing_views": [
+          "front",
+          "left"
+        ],
+        "parameter_proposal_applied": true,
+        "last_correction_rule": "accepted_parameter_proposal"
+      },
+      "parameter_proposals": [
+        {
+          "part_id": "cab",
+          "unit": "mm",
+          "confidence": 0.463,
+          "status": "needs_review",
+          "review_required": true,
+          "basis": [
+            "profile_role_ratio",
+            "image_scale_calibration",
+            "image_bbox_measurement"
+          ],
+          "source_count": 3,
+          "source_views": [
+            "left",
+            "top",
+            "front"
+          ],
+          "required_views": [
+            "front",
+            "left"
+          ],
+          "confirmed_views": [],
+          "missing_views": [
+            "front",
+            "left"
+          ],
+          "evidence_sources": [
+            {
+              "kind": "silhouette",
+              "view": "left",
+              "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+              "status": "inferred",
+              "confidence": 0.49,
+              "note": "Inferred from related image evidence for amb-cab-lower: Ambulance side cab lower candidate from vehicle profile anchors.",
+              "observation_id": "ambulance_side_cab_lower"
+            },
+            {
+              "kind": "silhouette",
+              "view": "top",
+              "source_image": "test/救护车/C486F074-3B8E-4F1C-A048-0AF24B687035_1_102_o.jpeg",
+              "status": "inferred",
+              "confidence": 0.403,
+              "note": "Inferred from related image evidence for amb-cab-lower: Top-view cab footprint candidate.",
+              "observation_id": "ambulance_top_cab"
+            },
+            {
+              "kind": "silhouette",
+              "view": "front",
+              "source_image": "test/救护车/IMG_0175.jpeg",
+              "status": "inferred",
+              "confidence": 0.446,
+              "note": "Inferred from related image evidence for amb-cab-lower: Front cab lower candidate.",
+              "observation_id": "ambulance_front_cab_lower"
+            }
+          ],
+          "image_measurements": [
+            {
+              "view": "left",
+              "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+              "observation_id": "ambulance_side_cab_lower",
+              "kind": "component_bbox",
+              "confidence": 0.68,
+              "bbox_px": [
+                84.55,
+                143.36,
+                185.04,
+                149.48
+              ],
+              "width_mm": 552,
+              "height_mm": 388.5,
+              "calibration_view": "left"
+            },
+            {
+              "view": "top",
+              "source_image": "test/救护车/C486F074-3B8E-4F1C-A048-0AF24B687035_1_102_o.jpeg",
+              "observation_id": "ambulance_top_cab",
+              "kind": "component_bbox",
+              "confidence": 0.56,
+              "bbox_px": [
+                35.9,
+                150.96,
+                153.12,
+                334.08
+              ],
+              "width_mm": 552,
+              "height_mm": 522,
+              "calibration_view": "top"
+            },
+            {
+              "view": "front",
+              "source_image": "test/救护车/IMG_0175.jpeg",
+              "observation_id": "ambulance_front_cab_lower",
+              "kind": "component_bbox",
+              "confidence": 0.62,
+              "bbox_px": [
+                93.96,
+                163.55,
+                538.08,
+                194.85
+              ],
+              "width_mm": 684,
+              "height_mm": 472.5,
+              "calibration_view": "front"
+            }
+          ],
+          "reason": "No-seed image-derived dimensions must be reviewed before they replace shape parameters.",
+          "proposal_kind": "shape_primitive",
+          "parameter": "shape.primitive",
+          "path": "parts[cab].shape.primitive",
+          "current_value": "rounded_box",
+          "proposed_value": "rounded_box"
+        },
+        {
+          "part_id": "cab",
+          "unit": "mm",
+          "confidence": 0.463,
+          "status": "needs_review",
+          "review_required": true,
+          "basis": [
+            "profile_role_ratio",
+            "image_scale_calibration",
+            "image_bbox_measurement"
+          ],
+          "source_count": 3,
+          "source_views": [
+            "left",
+            "top",
+            "front"
+          ],
+          "required_views": [
+            "front",
+            "left"
+          ],
+          "confirmed_views": [],
+          "missing_views": [
+            "front",
+            "left"
+          ],
+          "evidence_sources": [
+            {
+              "kind": "silhouette",
+              "view": "left",
+              "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+              "status": "inferred",
+              "confidence": 0.49,
+              "note": "Inferred from related image evidence for amb-cab-lower: Ambulance side cab lower candidate from vehicle profile anchors.",
+              "observation_id": "ambulance_side_cab_lower"
+            },
+            {
+              "kind": "silhouette",
+              "view": "top",
+              "source_image": "test/救护车/C486F074-3B8E-4F1C-A048-0AF24B687035_1_102_o.jpeg",
+              "status": "inferred",
+              "confidence": 0.403,
+              "note": "Inferred from related image evidence for amb-cab-lower: Top-view cab footprint candidate.",
+              "observation_id": "ambulance_top_cab"
+            },
+            {
+              "kind": "silhouette",
+              "view": "front",
+              "source_image": "test/救护车/IMG_0175.jpeg",
+              "status": "inferred",
+              "confidence": 0.446,
+              "note": "Inferred from related image evidence for amb-cab-lower: Front cab lower candidate.",
+              "observation_id": "ambulance_front_cab_lower"
+            }
+          ],
+          "image_measurements": [
+            {
+              "view": "left",
+              "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+              "observation_id": "ambulance_side_cab_lower",
+              "kind": "component_bbox",
+              "confidence": 0.68,
+              "bbox_px": [
+                84.55,
+                143.36,
+                185.04,
+                149.48
+              ],
+              "width_mm": 552,
+              "height_mm": 388.5,
+              "calibration_view": "left"
+            },
+            {
+              "view": "top",
+              "source_image": "test/救护车/C486F074-3B8E-4F1C-A048-0AF24B687035_1_102_o.jpeg",
+              "observation_id": "ambulance_top_cab",
+              "kind": "component_bbox",
+              "confidence": 0.56,
+              "bbox_px": [
+                35.9,
+                150.96,
+                153.12,
+                334.08
+              ],
+              "width_mm": 552,
+              "height_mm": 522,
+              "calibration_view": "top"
+            },
+            {
+              "view": "front",
+              "source_image": "test/救护车/IMG_0175.jpeg",
+              "observation_id": "ambulance_front_cab_lower",
+              "kind": "component_bbox",
+              "confidence": 0.62,
+              "bbox_px": [
+                93.96,
+                163.55,
+                538.08,
+                194.85
+              ],
+              "width_mm": 684,
+              "height_mm": 472.5,
+              "calibration_view": "front"
+            }
+          ],
+          "reason": "No-seed image-derived dimensions must be reviewed before they replace shape parameters.",
+          "proposal_kind": "shape_parameters",
+          "parameter": "shape.parameters",
+          "path": "parts[cab].shape.parameters",
+          "current_value": {
+            "origin": [
+              20,
+              0,
+              525
+            ],
+            "size": [
+              460,
+              180,
+              210
+            ],
+            "radius": 4
+          },
+          "proposed_value": {
+            "origin": [
+              59.8,
+              60.3,
+              340.2
+            ],
+            "size": [
+              558.9,
+              700.2,
+              380.1
+            ],
+            "radius": 77.7,
+            "segments": 8,
+            "smooth": "all"
+          }
+        }
+      ]
+    },
+    {
+      "id": "windshield",
+      "name": "vehicle_ambulance_windshield",
+      "type": "windshield",
+      "role": "windshield",
+      "shape": {
+        "primitive": "rounded_box",
+        "parameters": {
+          "origin": [
+            40,
+            0,
+            525
+          ],
+          "size": [
+            460,
+            180,
+            210
+          ],
+          "radius": 4
+        }
+      },
+      "evidence_status": "needs_review",
+      "fallback_state": "needs_review",
+      "evidence_sources": [
+        {
+          "kind": "silhouette",
+          "view": "left",
+          "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+          "status": "inferred",
+          "confidence": 0.418,
+          "note": "Inferred from related image evidence for amb-windshield: Ambulance windshield candidate from cab side profile.",
+          "observation_id": "ambulance_side_windshield"
+        },
+        {
+          "kind": "silhouette",
+          "view": "front",
+          "source_image": "test/救护车/IMG_0175.jpeg",
+          "status": "inferred",
+          "confidence": 0.418,
+          "note": "Inferred from related image evidence for amb-windshield: Front windshield candidate.",
+          "observation_id": "ambulance_front_windshield"
+        }
+      ],
+      "qa": {
+        "generated_from_image_evidence": true,
+        "evidence_confidence": 0.364,
+        "missing_views": [
+          "front",
+          "left"
+        ]
+      },
+      "parameter_proposals": [
+        {
+          "part_id": "windshield",
+          "unit": "mm",
+          "confidence": 0.45,
+          "status": "needs_review",
+          "review_required": true,
+          "basis": [
+            "profile_role_ratio",
+            "image_scale_calibration",
+            "image_bbox_measurement"
+          ],
+          "source_count": 2,
+          "source_views": [
+            "left",
+            "front"
+          ],
+          "required_views": [
+            "front",
+            "left"
+          ],
+          "confirmed_views": [],
+          "missing_views": [
+            "front",
+            "left"
+          ],
+          "evidence_sources": [
+            {
+              "kind": "silhouette",
+              "view": "left",
+              "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+              "status": "inferred",
+              "confidence": 0.418,
+              "note": "Inferred from related image evidence for amb-windshield: Ambulance windshield candidate from cab side profile.",
+              "observation_id": "ambulance_side_windshield"
+            },
+            {
+              "kind": "silhouette",
+              "view": "front",
+              "source_image": "test/救护车/IMG_0175.jpeg",
+              "status": "inferred",
+              "confidence": 0.418,
+              "note": "Inferred from related image evidence for amb-windshield: Front windshield candidate.",
+              "observation_id": "ambulance_front_windshield"
+            }
+          ],
+          "image_measurements": [
+            {
+              "view": "left",
+              "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+              "observation_id": "ambulance_side_windshield",
+              "kind": "component_bbox",
+              "confidence": 0.58,
+              "bbox_px": [
+                177.07,
+                66.6,
+                100.23,
+                88.88
+              ],
+              "width_mm": 299,
+              "height_mm": 231,
+              "calibration_view": "left"
+            },
+            {
+              "view": "front",
+              "source_image": "test/救护车/IMG_0175.jpeg",
+              "observation_id": "ambulance_front_windshield",
+              "kind": "component_bbox",
+              "confidence": 0.58,
+              "bbox_px": [
+                171.84,
+                89.94,
+                382.32,
+                108.25
+              ],
+              "width_mm": 486,
+              "height_mm": 262.5,
+              "calibration_view": "front"
+            }
+          ],
+          "reason": "No-seed image-derived dimensions must be reviewed before they replace shape parameters.",
+          "proposal_kind": "shape_primitive",
+          "parameter": "shape.primitive",
+          "path": "parts[windshield].shape.primitive",
+          "current_value": "rounded_box",
+          "proposed_value": "box"
+        },
+        {
+          "part_id": "windshield",
+          "unit": "mm",
+          "confidence": 0.45,
+          "status": "needs_review",
+          "review_required": true,
+          "basis": [
+            "profile_role_ratio",
+            "image_scale_calibration",
+            "image_bbox_measurement"
+          ],
+          "source_count": 2,
+          "source_views": [
+            "left",
+            "front"
+          ],
+          "required_views": [
+            "front",
+            "left"
+          ],
+          "confirmed_views": [],
+          "missing_views": [
+            "front",
+            "left"
+          ],
+          "evidence_sources": [
+            {
+              "kind": "silhouette",
+              "view": "left",
+              "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+              "status": "inferred",
+              "confidence": 0.418,
+              "note": "Inferred from related image evidence for amb-windshield: Ambulance windshield candidate from cab side profile.",
+              "observation_id": "ambulance_side_windshield"
+            },
+            {
+              "kind": "silhouette",
+              "view": "front",
+              "source_image": "test/救护车/IMG_0175.jpeg",
+              "status": "inferred",
+              "confidence": 0.418,
+              "note": "Inferred from related image evidence for amb-windshield: Front windshield candidate.",
+              "observation_id": "ambulance_front_windshield"
+            }
+          ],
+          "image_measurements": [
+            {
+              "view": "left",
+              "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+              "observation_id": "ambulance_side_windshield",
+              "kind": "component_bbox",
+              "confidence": 0.58,
+              "bbox_px": [
+                177.07,
+                66.6,
+                100.23,
+                88.88
+              ],
+              "width_mm": 299,
+              "height_mm": 231,
+              "calibration_view": "left"
+            },
+            {
+              "view": "front",
+              "source_image": "test/救护车/IMG_0175.jpeg",
+              "observation_id": "ambulance_front_windshield",
+              "kind": "component_bbox",
+              "confidence": 0.58,
+              "bbox_px": [
+                171.84,
+                89.94,
+                382.32,
+                108.25
+              ],
+              "width_mm": 486,
+              "height_mm": 262.5,
+              "calibration_view": "front"
+            }
+          ],
+          "reason": "No-seed image-derived dimensions must be reviewed before they replace shape parameters.",
+          "proposal_kind": "shape_parameters",
+          "parameter": "shape.parameters",
+          "path": "parts[windshield].shape.parameters",
+          "current_value": {
+            "origin": [
+              40,
+              0,
+              525
+            ],
+            "size": [
+              460,
+              180,
+              210
+            ],
+            "radius": 4
+          },
+          "proposed_value": {
+            "origin": [
+              259.9,
+              44.1,
+              650
+            ],
+            "size": [
+              420.9,
+              14.4,
+              315
+            ]
+          }
+        },
+        {
+          "part_id": "windshield",
+          "unit": "mm",
+          "confidence": 0.45,
+          "status": "needs_review",
+          "review_required": true,
+          "basis": [
+            "profile_role_ratio",
+            "image_scale_calibration",
+            "image_bbox_measurement"
+          ],
+          "source_count": 2,
+          "source_views": [
+            "left",
+            "front"
+          ],
+          "required_views": [
+            "front",
+            "left"
+          ],
+          "confirmed_views": [],
+          "missing_views": [
+            "front",
+            "left"
+          ],
+          "evidence_sources": [
+            {
+              "kind": "silhouette",
+              "view": "left",
+              "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+              "status": "inferred",
+              "confidence": 0.418,
+              "note": "Inferred from related image evidence for amb-windshield: Ambulance windshield candidate from cab side profile.",
+              "observation_id": "ambulance_side_windshield"
+            },
+            {
+              "kind": "silhouette",
+              "view": "front",
+              "source_image": "test/救护车/IMG_0175.jpeg",
+              "status": "inferred",
+              "confidence": 0.418,
+              "note": "Inferred from related image evidence for amb-windshield: Front windshield candidate.",
+              "observation_id": "ambulance_front_windshield"
+            }
+          ],
+          "image_measurements": [
+            {
+              "view": "left",
+              "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+              "observation_id": "ambulance_side_windshield",
+              "kind": "component_bbox",
+              "confidence": 0.58,
+              "bbox_px": [
+                177.07,
+                66.6,
+                100.23,
+                88.88
+              ],
+              "width_mm": 299,
+              "height_mm": 231,
+              "calibration_view": "left"
+            },
+            {
+              "view": "front",
+              "source_image": "test/救护车/IMG_0175.jpeg",
+              "observation_id": "ambulance_front_windshield",
+              "kind": "component_bbox",
+              "confidence": 0.58,
+              "bbox_px": [
+                171.84,
+                89.94,
+                382.32,
+                108.25
+              ],
+              "width_mm": 486,
+              "height_mm": 262.5,
+              "calibration_view": "front"
+            }
+          ],
+          "reason": "No-seed image-derived dimensions must be reviewed before they replace shape parameters.",
+          "proposal_kind": "role_parameters",
+          "parameter": "role.parameters",
+          "path": "parts[windshield].role_parameters",
+          "proposed_value": {
+            "face": "front",
+            "rake_hint": "upper_edge_rearward",
+            "expected_material": "glass"
+          }
+        }
+      ]
+    },
+    {
+      "id": "side_windows",
+      "name": "vehicle_ambulance_side_windows",
+      "type": "side_window",
+      "role": "side_window",
+      "shape": {
+        "primitive": "rounded_box",
+        "parameters": {
+          "origin": [
+            60,
+            0,
+            525
+          ],
+          "size": [
+            460,
+            180,
+            210
+          ],
+          "radius": 4
+        }
+      },
+      "evidence_status": "needs_review",
+      "fallback_state": "needs_review",
+      "evidence_sources": [
+        {
+          "kind": "silhouette",
+          "view": "left",
+          "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+          "status": "inferred",
+          "confidence": 0.446,
+          "note": "Inferred from related image evidence for amb-left-side-window: Ambulance side window candidate from side profile.",
+          "observation_id": "ambulance_side_window"
+        }
+      ],
+      "qa": {
+        "generated_from_image_evidence": true,
+        "evidence_confidence": 0.378,
+        "missing_views": [
+          "left",
+          "right",
+          "rear"
+        ]
+      },
+      "parameter_proposals": [
+        {
+          "part_id": "side_windows",
+          "unit": "mm",
+          "confidence": 0.423,
+          "status": "needs_review",
+          "review_required": true,
+          "basis": [
+            "profile_role_ratio",
+            "image_scale_calibration",
+            "image_bbox_measurement"
+          ],
+          "source_count": 1,
+          "source_views": [
+            "left"
+          ],
+          "required_views": [
+            "left",
+            "right",
+            "rear"
+          ],
+          "confirmed_views": [],
+          "missing_views": [
+            "left",
+            "right",
+            "rear"
+          ],
+          "evidence_sources": [
+            {
+              "kind": "silhouette",
+              "view": "left",
+              "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+              "status": "inferred",
+              "confidence": 0.446,
+              "note": "Inferred from related image evidence for amb-left-side-window: Ambulance side window candidate from side profile.",
+              "observation_id": "ambulance_side_window"
+            }
+          ],
+          "image_measurements": [
+            {
+              "view": "left",
+              "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+              "observation_id": "ambulance_side_window",
+              "kind": "component_bbox",
+              "confidence": 0.62,
+              "bbox_px": [
+                369.82,
+                102.96,
+                169.62,
+                84.84
+              ],
+              "width_mm": 506,
+              "height_mm": 220.5,
+              "calibration_view": "left"
+            }
+          ],
+          "reason": "No-seed image-derived dimensions must be reviewed before they replace shape parameters.",
+          "proposal_kind": "shape_primitive",
+          "parameter": "shape.primitive",
+          "path": "parts[side_windows].shape.primitive",
+          "current_value": "rounded_box",
+          "proposed_value": "box"
+        },
+        {
+          "part_id": "side_windows",
+          "unit": "mm",
+          "confidence": 0.423,
+          "status": "needs_review",
+          "review_required": true,
+          "basis": [
+            "profile_role_ratio",
+            "image_scale_calibration",
+            "image_bbox_measurement"
+          ],
+          "source_count": 1,
+          "source_views": [
+            "left"
+          ],
+          "required_views": [
+            "left",
+            "right",
+            "rear"
+          ],
+          "confirmed_views": [],
+          "missing_views": [
+            "left",
+            "right",
+            "rear"
+          ],
+          "evidence_sources": [
+            {
+              "kind": "silhouette",
+              "view": "left",
+              "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+              "status": "inferred",
+              "confidence": 0.446,
+              "note": "Inferred from related image evidence for amb-left-side-window: Ambulance side window candidate from side profile.",
+              "observation_id": "ambulance_side_window"
+            }
+          ],
+          "image_measurements": [
+            {
+              "view": "left",
+              "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+              "observation_id": "ambulance_side_window",
+              "kind": "component_bbox",
+              "confidence": 0.62,
+              "bbox_px": [
+                369.82,
+                102.96,
+                169.62,
+                84.84
+              ],
+              "width_mm": 506,
+              "height_mm": 220.5,
+              "calibration_view": "left"
+            }
+          ],
+          "reason": "No-seed image-derived dimensions must be reviewed before they replace shape parameters.",
+          "proposal_kind": "shape_parameters",
+          "parameter": "shape.parameters",
+          "path": "parts[side_windows].shape.parameters",
+          "current_value": {
+            "origin": [
+              60,
+              0,
+              525
+            ],
+            "size": [
+              460,
+              180,
+              210
+            ],
+            "radius": 4
+          },
+          "proposed_value": {
+            "origin": [
+              959.1,
+              -27.9,
+              650
+            ],
+            "size": [
+              499.1,
+              27.9,
+              199.5
+            ]
+          }
+        },
+        {
+          "part_id": "side_windows",
+          "unit": "mm",
+          "confidence": 0.423,
+          "status": "needs_review",
+          "review_required": true,
+          "basis": [
+            "profile_role_ratio",
+            "image_scale_calibration",
+            "image_bbox_measurement"
+          ],
+          "source_count": 1,
+          "source_views": [
+            "left"
+          ],
+          "required_views": [
+            "left",
+            "right",
+            "rear"
+          ],
+          "confirmed_views": [],
+          "missing_views": [
+            "left",
+            "right",
+            "rear"
+          ],
+          "evidence_sources": [
+            {
+              "kind": "silhouette",
+              "view": "left",
+              "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+              "status": "inferred",
+              "confidence": 0.446,
+              "note": "Inferred from related image evidence for amb-left-side-window: Ambulance side window candidate from side profile.",
+              "observation_id": "ambulance_side_window"
+            }
+          ],
+          "image_measurements": [
+            {
+              "view": "left",
+              "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+              "observation_id": "ambulance_side_window",
+              "kind": "component_bbox",
+              "confidence": 0.62,
+              "bbox_px": [
+                369.82,
+                102.96,
+                169.62,
+                84.84
+              ],
+              "width_mm": 506,
+              "height_mm": 220.5,
+              "calibration_view": "left"
+            }
+          ],
+          "reason": "No-seed image-derived dimensions must be reviewed before they replace shape parameters.",
+          "proposal_kind": "role_parameters",
+          "parameter": "role.parameters",
+          "path": "parts[side_windows].role_parameters",
+          "proposed_value": {
+            "expected_count": 4,
+            "mirror": "left_right",
+            "expected_material": "glass"
+          }
+        },
+        {
+          "part_id": "side_windows",
+          "unit": "mm",
+          "confidence": 0.423,
+          "status": "needs_review",
+          "review_required": true,
+          "basis": [
+            "profile_role_ratio",
+            "image_scale_calibration",
+            "image_bbox_measurement"
+          ],
+          "source_count": 1,
+          "source_views": [
+            "left"
+          ],
+          "required_views": [
+            "left",
+            "right",
+            "rear"
+          ],
+          "confirmed_views": [],
+          "missing_views": [
+            "left",
+            "right",
+            "rear"
+          ],
+          "evidence_sources": [
+            {
+              "kind": "silhouette",
+              "view": "left",
+              "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+              "status": "inferred",
+              "confidence": 0.446,
+              "note": "Inferred from related image evidence for amb-left-side-window: Ambulance side window candidate from side profile.",
+              "observation_id": "ambulance_side_window"
+            }
+          ],
+          "image_measurements": [
+            {
+              "view": "left",
+              "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+              "observation_id": "ambulance_side_window",
+              "kind": "component_bbox",
+              "confidence": 0.62,
+              "bbox_px": [
+                369.82,
+                102.96,
+                169.62,
+                84.84
+              ],
+              "width_mm": 506,
+              "height_mm": 220.5,
+              "calibration_view": "left"
+            }
+          ],
+          "reason": "No-seed image-derived dimensions must be reviewed before they replace shape parameters.",
+          "proposal_kind": "expected_count",
+          "parameter": "expected_count",
+          "path": "parts[side_windows].expected_count",
+          "proposed_value": 4
+        }
+      ]
+    },
+    {
+      "id": "wheel_set",
+      "name": "vehicle_ambulance_wheel_set",
+      "type": "wheel",
+      "role": "wheel",
+      "shape": {
+        "primitive": "rounded_box",
+        "parameters": {
+          "origin": [
+            80,
+            0,
+            525
+          ],
+          "size": [
+            460,
+            180,
+            210
+          ],
+          "radius": 4
+        }
+      },
+      "evidence_status": "needs_review",
+      "fallback_state": "needs_review",
+      "evidence_sources": [
+        {
+          "kind": "center_point",
+          "view": "left",
+          "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+          "status": "inferred",
+          "confidence": 0.504,
+          "note": "Inferred from related image evidence for wheel-left-front-tire: Front wheel center keypoint candidate from side view.",
+          "observation_id": "ambulance_front_wheel_center"
+        }
+      ],
+      "qa": {
+        "generated_from_image_evidence": true,
+        "evidence_confidence": 0.407,
+        "missing_views": [
+          "left",
+          "right"
+        ]
+      },
+      "parameter_proposals": [
+        {
+          "part_id": "wheel_set",
+          "unit": "mm",
+          "confidence": 0.49,
+          "status": "needs_review",
+          "review_required": true,
+          "basis": [
+            "profile_role_ratio",
+            "image_scale_calibration",
+            "image_bbox_measurement"
+          ],
+          "source_count": 1,
+          "source_views": [
+            "left"
+          ],
+          "required_views": [
+            "left",
+            "right"
+          ],
+          "confirmed_views": [],
+          "missing_views": [
+            "left",
+            "right"
+          ],
+          "evidence_sources": [
+            {
+              "kind": "center_point",
+              "view": "left",
+              "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+              "status": "inferred",
+              "confidence": 0.504,
+              "note": "Inferred from related image evidence for wheel-left-front-tire: Front wheel center keypoint candidate from side view.",
+              "observation_id": "ambulance_front_wheel_center"
+            }
+          ],
+          "image_measurements": [
+            {
+              "view": "left",
+              "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+              "observation_id": "ambulance_front_wheel_center",
+              "kind": "center_point",
+              "confidence": 0.7,
+              "point_count": 1,
+              "calibration_view": "left",
+              "note": "Point/contour evidence supports placement but is not converted to a final dimension."
+            }
+          ],
+          "reason": "No-seed image-derived dimensions must be reviewed before they replace shape parameters.",
+          "proposal_kind": "shape_primitive",
+          "parameter": "shape.primitive",
+          "path": "parts[wheel_set].shape.primitive",
+          "current_value": "rounded_box",
+          "proposed_value": "prism"
+        },
+        {
+          "part_id": "wheel_set",
+          "unit": "mm",
+          "confidence": 0.49,
+          "status": "needs_review",
+          "review_required": true,
+          "basis": [
+            "profile_role_ratio",
+            "image_scale_calibration",
+            "image_bbox_measurement"
+          ],
+          "source_count": 1,
+          "source_views": [
+            "left"
+          ],
+          "required_views": [
+            "left",
+            "right"
+          ],
+          "confirmed_views": [],
+          "missing_views": [
+            "left",
+            "right"
+          ],
+          "evidence_sources": [
+            {
+              "kind": "center_point",
+              "view": "left",
+              "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+              "status": "inferred",
+              "confidence": 0.504,
+              "note": "Inferred from related image evidence for wheel-left-front-tire: Front wheel center keypoint candidate from side view.",
+              "observation_id": "ambulance_front_wheel_center"
+            }
+          ],
+          "image_measurements": [
+            {
+              "view": "left",
+              "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+              "observation_id": "ambulance_front_wheel_center",
+              "kind": "center_point",
+              "confidence": 0.7,
+              "point_count": 1,
+              "calibration_view": "left",
+              "note": "Point/contour evidence supports placement but is not converted to a final dimension."
+            }
+          ],
+          "reason": "No-seed image-derived dimensions must be reviewed before they replace shape parameters.",
+          "proposal_kind": "shape_parameters",
+          "parameter": "shape.parameters",
+          "path": "parts[wheel_set].shape.parameters",
+          "current_value": {
+            "origin": [
+              80,
+              0,
+              525
+            ],
+            "size": [
+              460,
+              180,
+              210
+            ],
+            "radius": 4
+          },
+          "proposed_value": {
+            "origin": [
+              558.9,
+              -52.2,
+              220.5
+            ],
+            "plane": "xz",
+            "radius": 144.9,
+            "depth": 73.8,
+            "segments": 12
+          }
+        },
+        {
+          "part_id": "wheel_set",
+          "unit": "mm",
+          "confidence": 0.49,
+          "status": "needs_review",
+          "review_required": true,
+          "basis": [
+            "profile_role_ratio",
+            "image_scale_calibration",
+            "image_bbox_measurement"
+          ],
+          "source_count": 1,
+          "source_views": [
+            "left"
+          ],
+          "required_views": [
+            "left",
+            "right"
+          ],
+          "confirmed_views": [],
+          "missing_views": [
+            "left",
+            "right"
+          ],
+          "evidence_sources": [
+            {
+              "kind": "center_point",
+              "view": "left",
+              "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+              "status": "inferred",
+              "confidence": 0.504,
+              "note": "Inferred from related image evidence for wheel-left-front-tire: Front wheel center keypoint candidate from side view.",
+              "observation_id": "ambulance_front_wheel_center"
+            }
+          ],
+          "image_measurements": [
+            {
+              "view": "left",
+              "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+              "observation_id": "ambulance_front_wheel_center",
+              "kind": "center_point",
+              "confidence": 0.7,
+              "point_count": 1,
+              "calibration_view": "left",
+              "note": "Point/contour evidence supports placement but is not converted to a final dimension."
+            }
+          ],
+          "reason": "No-seed image-derived dimensions must be reviewed before they replace shape parameters.",
+          "proposal_kind": "role_parameters",
+          "parameter": "role.parameters",
+          "path": "parts[wheel_set].role_parameters",
+          "proposed_value": {
+            "expected_count": 4,
+            "diameter": 289.8,
+            "thickness": 73.8,
+            "rear_center_x": 1738.8,
+            "center_z": 220.5,
+            "mirror": "left_right"
+          }
+        },
+        {
+          "part_id": "wheel_set",
+          "unit": "mm",
+          "confidence": 0.49,
+          "status": "needs_review",
+          "review_required": true,
+          "basis": [
+            "profile_role_ratio",
+            "image_scale_calibration",
+            "image_bbox_measurement"
+          ],
+          "source_count": 1,
+          "source_views": [
+            "left"
+          ],
+          "required_views": [
+            "left",
+            "right"
+          ],
+          "confirmed_views": [],
+          "missing_views": [
+            "left",
+            "right"
+          ],
+          "evidence_sources": [
+            {
+              "kind": "center_point",
+              "view": "left",
+              "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+              "status": "inferred",
+              "confidence": 0.504,
+              "note": "Inferred from related image evidence for wheel-left-front-tire: Front wheel center keypoint candidate from side view.",
+              "observation_id": "ambulance_front_wheel_center"
+            }
+          ],
+          "image_measurements": [
+            {
+              "view": "left",
+              "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+              "observation_id": "ambulance_front_wheel_center",
+              "kind": "center_point",
+              "confidence": 0.7,
+              "point_count": 1,
+              "calibration_view": "left",
+              "note": "Point/contour evidence supports placement but is not converted to a final dimension."
+            }
+          ],
+          "reason": "No-seed image-derived dimensions must be reviewed before they replace shape parameters.",
+          "proposal_kind": "expected_count",
+          "parameter": "expected_count",
+          "path": "parts[wheel_set].expected_count",
+          "proposed_value": 4
+        }
+      ]
+    },
+    {
+      "id": "roof_lights",
+      "name": "vehicle_ambulance_roof_lights",
+      "type": "lightbar",
+      "role": "lightbar",
+      "shape": {
+        "primitive": "rounded_box",
+        "parameters": {
+          "origin": [
+            100,
+            0,
+            525
+          ],
+          "size": [
+            460,
+            180,
+            210
+          ],
+          "radius": 4
+        }
+      },
+      "evidence_status": "needs_review",
+      "fallback_state": "needs_review",
+      "evidence_sources": [
+        {
+          "kind": "silhouette",
+          "view": "left",
+          "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+          "status": "inferred",
+          "confidence": 0.432,
+          "note": "Inferred from related image evidence for roof-red-lightbar: Roof lightbar candidate from side roofline.",
+          "observation_id": "ambulance_side_lightbar"
+        },
+        {
+          "kind": "silhouette",
+          "view": "top",
+          "source_image": "test/救护车/C486F074-3B8E-4F1C-A048-0AF24B687035_1_102_o.jpeg",
+          "status": "inferred",
+          "confidence": 0.446,
+          "note": "Inferred from related image evidence for roof-red-lightbar: Top-view roof lightbar candidate.",
+          "observation_id": "ambulance_top_lightbar"
+        },
+        {
+          "kind": "silhouette",
+          "view": "front",
+          "source_image": "test/救护车/IMG_0175.jpeg",
+          "status": "inferred",
+          "confidence": 0.403,
+          "note": "Inferred from related image evidence for roof-red-lightbar: Front roof lightbar candidate.",
+          "observation_id": "ambulance_front_lightbar"
+        }
+      ],
+      "qa": {
+        "generated_from_image_evidence": true,
+        "evidence_confidence": 0.368,
+        "missing_views": [
+          "top",
+          "front"
+        ]
+      },
+      "parameter_proposals": [
+        {
+          "part_id": "roof_lights",
+          "unit": "mm",
+          "confidence": 0.454,
+          "status": "needs_review",
+          "review_required": true,
+          "basis": [
+            "profile_role_ratio",
+            "image_scale_calibration",
+            "image_bbox_measurement"
+          ],
+          "source_count": 3,
+          "source_views": [
+            "left",
+            "top",
+            "front"
+          ],
+          "required_views": [
+            "top",
+            "front"
+          ],
+          "confirmed_views": [],
+          "missing_views": [
+            "top",
+            "front"
+          ],
+          "evidence_sources": [
+            {
+              "kind": "silhouette",
+              "view": "left",
+              "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+              "status": "inferred",
+              "confidence": 0.432,
+              "note": "Inferred from related image evidence for roof-red-lightbar: Roof lightbar candidate from side roofline.",
+              "observation_id": "ambulance_side_lightbar"
+            },
+            {
+              "kind": "silhouette",
+              "view": "top",
+              "source_image": "test/救护车/C486F074-3B8E-4F1C-A048-0AF24B687035_1_102_o.jpeg",
+              "status": "inferred",
+              "confidence": 0.446,
+              "note": "Inferred from related image evidence for roof-red-lightbar: Top-view roof lightbar candidate.",
+              "observation_id": "ambulance_top_lightbar"
+            },
+            {
+              "kind": "silhouette",
+              "view": "front",
+              "source_image": "test/救护车/IMG_0175.jpeg",
+              "status": "inferred",
+              "confidence": 0.403,
+              "note": "Inferred from related image evidence for roof-red-lightbar: Front roof lightbar candidate.",
+              "observation_id": "ambulance_front_lightbar"
+            }
+          ],
+          "image_measurements": [
+            {
+              "view": "left",
+              "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+              "observation_id": "ambulance_side_lightbar",
+              "kind": "component_bbox",
+              "confidence": 0.6,
+              "bbox_px": [
+                246.46,
+                18.12,
+                107.94,
+                28.28
+              ],
+              "width_mm": 322,
+              "height_mm": 73.5,
+              "calibration_view": "left"
+            },
+            {
+              "view": "top",
+              "source_image": "test/救护车/C486F074-3B8E-4F1C-A048-0AF24B687035_1_102_o.jpeg",
+              "observation_id": "ambulance_top_lightbar",
+              "kind": "component_bbox",
+              "confidence": 0.62,
+              "bbox_px": [
+                150.74,
+                283.44,
+                82.94,
+                69.12
+              ],
+              "width_mm": 299,
+              "height_mm": 108,
+              "calibration_view": "top"
+            },
+            {
+              "view": "front",
+              "source_image": "test/救护车/IMG_0175.jpeg",
+              "observation_id": "ambulance_front_lightbar",
+              "kind": "component_bbox",
+              "confidence": 0.56,
+              "bbox_px": [
+                263.88,
+                20.66,
+                198.24,
+                34.64
+              ],
+              "width_mm": 252,
+              "height_mm": 84,
+              "calibration_view": "front"
+            }
+          ],
+          "reason": "No-seed image-derived dimensions must be reviewed before they replace shape parameters.",
+          "proposal_kind": "shape_primitive",
+          "parameter": "shape.primitive",
+          "path": "parts[roof_lights].shape.primitive",
+          "current_value": "rounded_box",
+          "proposed_value": "rounded_box"
+        },
+        {
+          "part_id": "roof_lights",
+          "unit": "mm",
+          "confidence": 0.454,
+          "status": "needs_review",
+          "review_required": true,
+          "basis": [
+            "profile_role_ratio",
+            "image_scale_calibration",
+            "image_bbox_measurement"
+          ],
+          "source_count": 3,
+          "source_views": [
+            "left",
+            "top",
+            "front"
+          ],
+          "required_views": [
+            "top",
+            "front"
+          ],
+          "confirmed_views": [],
+          "missing_views": [
+            "top",
+            "front"
+          ],
+          "evidence_sources": [
+            {
+              "kind": "silhouette",
+              "view": "left",
+              "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+              "status": "inferred",
+              "confidence": 0.432,
+              "note": "Inferred from related image evidence for roof-red-lightbar: Roof lightbar candidate from side roofline.",
+              "observation_id": "ambulance_side_lightbar"
+            },
+            {
+              "kind": "silhouette",
+              "view": "top",
+              "source_image": "test/救护车/C486F074-3B8E-4F1C-A048-0AF24B687035_1_102_o.jpeg",
+              "status": "inferred",
+              "confidence": 0.446,
+              "note": "Inferred from related image evidence for roof-red-lightbar: Top-view roof lightbar candidate.",
+              "observation_id": "ambulance_top_lightbar"
+            },
+            {
+              "kind": "silhouette",
+              "view": "front",
+              "source_image": "test/救护车/IMG_0175.jpeg",
+              "status": "inferred",
+              "confidence": 0.403,
+              "note": "Inferred from related image evidence for roof-red-lightbar: Front roof lightbar candidate.",
+              "observation_id": "ambulance_front_lightbar"
+            }
+          ],
+          "image_measurements": [
+            {
+              "view": "left",
+              "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+              "observation_id": "ambulance_side_lightbar",
+              "kind": "component_bbox",
+              "confidence": 0.6,
+              "bbox_px": [
+                246.46,
+                18.12,
+                107.94,
+                28.28
+              ],
+              "width_mm": 322,
+              "height_mm": 73.5,
+              "calibration_view": "left"
+            },
+            {
+              "view": "top",
+              "source_image": "test/救护车/C486F074-3B8E-4F1C-A048-0AF24B687035_1_102_o.jpeg",
+              "observation_id": "ambulance_top_lightbar",
+              "kind": "component_bbox",
+              "confidence": 0.62,
+              "bbox_px": [
+                150.74,
+                283.44,
+                82.94,
+                69.12
+              ],
+              "width_mm": 299,
+              "height_mm": 108,
+              "calibration_view": "top"
+            },
+            {
+              "view": "front",
+              "source_image": "test/救护车/IMG_0175.jpeg",
+              "observation_id": "ambulance_front_lightbar",
+              "kind": "component_bbox",
+              "confidence": 0.56,
+              "bbox_px": [
+                263.88,
+                20.66,
+                198.24,
+                34.64
+              ],
+              "width_mm": 252,
+              "height_mm": 84,
+              "calibration_view": "front"
+            }
+          ],
+          "reason": "No-seed image-derived dimensions must be reviewed before they replace shape parameters.",
+          "proposal_kind": "shape_parameters",
+          "parameter": "shape.parameters",
+          "path": "parts[roof_lights].shape.parameters",
+          "current_value": {
+            "origin": [
+              100,
+              0,
+              525
+            ],
+            "size": [
+              460,
+              180,
+              210
+            ],
+            "radius": 4
+          },
+          "proposed_value": {
+            "origin": [
+              621,
+              254.7,
+              1010.1
+            ],
+            "size": [
+              340.4,
+              279.9,
+              70.4
+            ],
+            "radius": 33.6,
+            "segments": 6,
+            "smooth": "all"
+          }
+        }
+      ]
+    },
+    {
+      "id": "stripe_and_text",
+      "name": "vehicle_ambulance_stripe_and_text",
+      "type": "decal",
+      "role": "decal",
+      "shape": {
+        "primitive": "rounded_box",
+        "parameters": {
+          "origin": [
+            120,
+            0,
+            525
+          ],
+          "size": [
+            460,
+            180,
+            210
+          ],
+          "radius": 4
+        }
+      },
+      "evidence_status": "needs_review",
+      "fallback_state": "needs_review",
+      "evidence_sources": [
+        {
+          "kind": "silhouette",
+          "view": "left",
+          "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+          "status": "inferred",
+          "confidence": 0.346,
+          "note": "Inferred from related image evidence for amb-left-red-stripe: Side stripe candidate from ambulance profile prior.",
+          "observation_id": "ambulance_side_stripe"
+        }
+      ],
+      "qa": {
+        "generated_from_image_evidence": true,
+        "evidence_confidence": 0.328,
+        "missing_views": [
+          "left",
+          "rear"
+        ]
+      },
+      "parameter_proposals": [
+        {
+          "part_id": "stripe_and_text",
+          "unit": "mm",
+          "confidence": 0.416,
+          "status": "needs_review",
+          "review_required": true,
+          "basis": [
+            "profile_role_ratio",
+            "image_scale_calibration",
+            "image_bbox_measurement"
+          ],
+          "source_count": 1,
+          "source_views": [
+            "left"
+          ],
+          "required_views": [
+            "left",
+            "rear"
+          ],
+          "confirmed_views": [],
+          "missing_views": [
+            "left",
+            "rear"
+          ],
+          "evidence_sources": [
+            {
+              "kind": "silhouette",
+              "view": "left",
+              "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+              "status": "inferred",
+              "confidence": 0.346,
+              "note": "Inferred from related image evidence for amb-left-red-stripe: Side stripe candidate from ambulance profile prior.",
+              "observation_id": "ambulance_side_stripe"
+            }
+          ],
+          "image_measurements": [
+            {
+              "view": "left",
+              "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+              "observation_id": "ambulance_side_stripe",
+              "kind": "component_bbox",
+              "confidence": 0.48,
+              "bbox_px": [
+                285.01,
+                216.08,
+                393.21,
+                32.32
+              ],
+              "width_mm": 1173.1,
+              "height_mm": 84,
+              "calibration_view": "left"
+            }
+          ],
+          "reason": "No-seed image-derived dimensions must be reviewed before they replace shape parameters.",
+          "proposal_kind": "shape_primitive",
+          "parameter": "shape.primitive",
+          "path": "parts[stripe_and_text].shape.primitive",
+          "current_value": "rounded_box",
+          "proposed_value": "box"
+        },
+        {
+          "part_id": "stripe_and_text",
+          "unit": "mm",
+          "confidence": 0.416,
+          "status": "needs_review",
+          "review_required": true,
+          "basis": [
+            "profile_role_ratio",
+            "image_scale_calibration",
+            "image_bbox_measurement"
+          ],
+          "source_count": 1,
+          "source_views": [
+            "left"
+          ],
+          "required_views": [
+            "left",
+            "rear"
+          ],
+          "confirmed_views": [],
+          "missing_views": [
+            "left",
+            "rear"
+          ],
+          "evidence_sources": [
+            {
+              "kind": "silhouette",
+              "view": "left",
+              "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+              "status": "inferred",
+              "confidence": 0.346,
+              "note": "Inferred from related image evidence for amb-left-red-stripe: Side stripe candidate from ambulance profile prior.",
+              "observation_id": "ambulance_side_stripe"
+            }
+          ],
+          "image_measurements": [
+            {
+              "view": "left",
+              "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+              "observation_id": "ambulance_side_stripe",
+              "kind": "component_bbox",
+              "confidence": 0.48,
+              "bbox_px": [
+                285.01,
+                216.08,
+                393.21,
+                32.32
+              ],
+              "width_mm": 1173.1,
+              "height_mm": 84,
+              "calibration_view": "left"
+            }
+          ],
+          "reason": "No-seed image-derived dimensions must be reviewed before they replace shape parameters.",
+          "proposal_kind": "shape_parameters",
+          "parameter": "shape.parameters",
+          "path": "parts[stripe_and_text].shape.parameters",
+          "current_value": {
+            "origin": [
+              120,
+              0,
+              525
+            ],
+            "size": [
+              460,
+              180,
+              210
+            ],
+            "radius": 4
+          },
+          "proposed_value": {
+            "origin": [
+              299,
+              -34.2,
+              519.8
+            ],
+            "size": [
+              1780.2,
+              24.3,
+              28.4
+            ]
+          }
+        },
+        {
+          "part_id": "stripe_and_text",
+          "unit": "mm",
+          "confidence": 0.416,
+          "status": "needs_review",
+          "review_required": true,
+          "basis": [
+            "profile_role_ratio",
+            "image_scale_calibration",
+            "image_bbox_measurement"
+          ],
+          "source_count": 1,
+          "source_views": [
+            "left"
+          ],
+          "required_views": [
+            "left",
+            "rear"
+          ],
+          "confirmed_views": [],
+          "missing_views": [
+            "left",
+            "rear"
+          ],
+          "evidence_sources": [
+            {
+              "kind": "silhouette",
+              "view": "left",
+              "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+              "status": "inferred",
+              "confidence": 0.346,
+              "note": "Inferred from related image evidence for amb-left-red-stripe: Side stripe candidate from ambulance profile prior.",
+              "observation_id": "ambulance_side_stripe"
+            }
+          ],
+          "image_measurements": [
+            {
+              "view": "left",
+              "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+              "observation_id": "ambulance_side_stripe",
+              "kind": "component_bbox",
+              "confidence": 0.48,
+              "bbox_px": [
+                285.01,
+                216.08,
+                393.21,
+                32.32
+              ],
+              "width_mm": 1173.1,
+              "height_mm": 84,
+              "calibration_view": "left"
+            }
+          ],
+          "reason": "No-seed image-derived dimensions must be reviewed before they replace shape parameters.",
+          "proposal_kind": "role_parameters",
+          "parameter": "role.parameters",
+          "path": "parts[stripe_and_text].role_parameters",
+          "proposed_value": {
+            "stripe_height": 28.4,
+            "text": "AMBULANCE",
+            "text_center": [
+              1570.9,
+              -62.1,
+              800.1
+            ],
+            "text_height": 70.4
+          }
+        }
+      ]
+    }
+  ],
+  "evidence_graph": {
+    "version": 1,
+    "source_images": [
+      "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+      "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+      "test/救护车/C486F074-3B8E-4F1C-A048-0AF24B687035_1_102_o.jpeg",
+      "test/救护车/DE9FDB12-2BD3-49D2-AD32-930CC4A33B14_1_102_o.jpeg",
+      "test/救护车/IMG_0175.jpeg"
+    ],
+    "views_detected": [
+      "rear",
+      "left",
+      "top",
+      "oblique",
+      "front"
+    ],
+    "open_questions": [
+      "amb-left-red-stripe: review template-derived candidate boxes before accepting dimensions.",
+      "amb-left-ambulance-text: review template-derived candidate boxes before accepting dimensions.",
+      "main_body: confirm left, top, rear evidence before treating shape parameters as image-derived.",
+      "main_body: confidence 0.382 is below the R4 review threshold.",
+      "cab: confirm front, left evidence before treating shape parameters as image-derived.",
+      "cab: confidence 0.378 is below the R4 review threshold.",
+      "windshield: confirm front, left evidence before treating shape parameters as image-derived.",
+      "windshield: confidence 0.364 is below the R4 review threshold.",
+      "side_windows: confirm left, right, rear evidence before treating shape parameters as image-derived.",
+      "side_windows: confidence 0.378 is below the R4 review threshold.",
+      "wheel_set: confirm left, right evidence before treating shape parameters as image-derived.",
+      "wheel_set: confidence 0.407 is below the R4 review threshold.",
+      "roof_lights: confirm top, front evidence before treating shape parameters as image-derived.",
+      "roof_lights: confidence 0.368 is below the R4 review threshold.",
+      "stripe_and_text: confirm left, rear evidence before treating shape parameters as image-derived.",
+      "stripe_and_text: confidence 0.328 is below the R4 review threshold."
+    ],
+    "scale_calibration": {
+      "units": "mm",
+      "strategy": "profile_default_dimension_with_view_bbox",
+      "default_scale": {
+        "width": 2300,
+        "depth": 900,
+        "height": 1050
+      },
+      "measurements": [
+        {
+          "view": "rear",
+          "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+          "object_bbox": [
+            8,
+            8,
+            827,
+            555
+          ],
+          "physical_width_mm": 900,
+          "physical_height_mm": 1050,
+          "pixels_per_mm_x": 0.9189,
+          "pixels_per_mm_y": 0.5286,
+          "confidence": 0.86
+        },
+        {
+          "view": "left",
+          "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+          "object_bbox": [
+            46,
+            6,
+            771,
+            404
+          ],
+          "physical_width_mm": 2300,
+          "physical_height_mm": 1050,
+          "pixels_per_mm_x": 0.3352,
+          "pixels_per_mm_y": 0.3848,
+          "confidence": 0.86
+        },
+        {
+          "view": "top",
+          "source_image": "test/救护车/C486F074-3B8E-4F1C-A048-0AF24B687035_1_102_o.jpeg",
+          "object_bbox": [
+            4,
+            30,
+            638,
+            576
+          ],
+          "physical_width_mm": 2300,
+          "physical_height_mm": 900,
+          "pixels_per_mm_x": 0.2774,
+          "pixels_per_mm_y": 0.64,
+          "confidence": 0.86
+        },
+        {
+          "view": "front",
+          "source_image": "test/救护车/IMG_0175.jpeg",
+          "object_bbox": [
+            9,
+            12,
+            708,
+            433
+          ],
+          "physical_width_mm": 900,
+          "physical_height_mm": 1050,
+          "pixels_per_mm_x": 0.7867,
+          "pixels_per_mm_y": 0.4124,
+          "confidence": 0.86
+        }
+      ],
+      "confidence": 0.86,
+      "missing_views": [],
+      "notes": [
+        "Scale is calibrated against profile default dimensions and detected object bboxes.",
+        "Treat as provisional until a user-provided physical dimension or calibrated orthographic view is available."
+      ]
+    },
+    "part_matches": [
+      {
+        "part_id": "main_body",
+        "strategy": "component_hint_view_requirement",
+        "matched_views": [],
+        "missing_views": [
+          "left",
+          "top",
+          "rear"
+        ],
+        "source_count": 38,
+        "confidence": 0.382
+      },
+      {
+        "part_id": "cab",
+        "strategy": "component_hint_view_requirement",
+        "matched_views": [],
+        "missing_views": [
+          "front",
+          "left"
+        ],
+        "source_count": 3,
+        "confidence": 0.378
+      },
+      {
+        "part_id": "windshield",
+        "strategy": "component_hint_view_requirement",
+        "matched_views": [],
+        "missing_views": [
+          "front",
+          "left"
+        ],
+        "source_count": 2,
+        "confidence": 0.364
+      },
+      {
+        "part_id": "side_windows",
+        "strategy": "component_hint_view_requirement",
+        "matched_views": [],
+        "missing_views": [
+          "left",
+          "right",
+          "rear"
+        ],
+        "source_count": 1,
+        "confidence": 0.378
+      },
+      {
+        "part_id": "wheel_set",
+        "strategy": "component_hint_view_requirement",
+        "matched_views": [],
+        "missing_views": [
+          "left",
+          "right"
+        ],
+        "source_count": 1,
+        "confidence": 0.407
+      },
+      {
+        "part_id": "roof_lights",
+        "strategy": "component_hint_view_requirement",
+        "matched_views": [],
+        "missing_views": [
+          "top",
+          "front"
+        ],
+        "source_count": 3,
+        "confidence": 0.368
+      },
+      {
+        "part_id": "stripe_and_text",
+        "strategy": "component_hint_view_requirement",
+        "matched_views": [],
+        "missing_views": [
+          "left",
+          "rear"
+        ],
+        "source_count": 1,
+        "confidence": 0.328
+      }
+    ],
+    "parts": [
+      {
+        "part_id": "main_body",
+        "status": "needs_review",
+        "required_views": [
+          "left",
+          "top",
+          "rear"
+        ],
+        "confirmed_views": [],
+        "missing_views": [
+          "left",
+          "top",
+          "rear"
+        ],
+        "confidence": 0.382,
+        "sources": [
+          {
+            "kind": "silhouette",
+            "view": "rear",
+            "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.418,
+            "note": "Inferred from related image evidence for amb-main-body: Percentile edge bounds; includes visual clutter when background edges are strong.",
+            "observation_id": "main_object_bbox"
+          },
+          {
+            "kind": "silhouette",
+            "view": "rear",
+            "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.446,
+            "note": "Inferred from related image evidence for amb-main-body: Coarse contour polyline traced from Sobel edge occupancy slices; use as geometry evidence, not a final CAD profile.",
+            "observation_id": "main_object_contour"
+          },
+          {
+            "kind": "keypoint",
+            "view": "rear",
+            "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.533,
+            "note": "Inferred from related image evidence for amb-main-body: Object bbox top-left keypoint candidate.",
+            "observation_id": "main_object_top_left_keypoint"
+          },
+          {
+            "kind": "keypoint",
+            "view": "rear",
+            "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.533,
+            "note": "Inferred from related image evidence for amb-main-body: Object bbox top-right keypoint candidate.",
+            "observation_id": "main_object_top_right_keypoint"
+          },
+          {
+            "kind": "keypoint",
+            "view": "rear",
+            "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.533,
+            "note": "Inferred from related image evidence for amb-main-body: Object bbox bottom-right keypoint candidate.",
+            "observation_id": "main_object_bottom_right_keypoint"
+          },
+          {
+            "kind": "keypoint",
+            "view": "rear",
+            "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.533,
+            "note": "Inferred from related image evidence for amb-main-body: Object bbox bottom-left keypoint candidate.",
+            "observation_id": "main_object_bottom_left_keypoint"
+          },
+          {
+            "kind": "keypoint",
+            "view": "rear",
+            "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.576,
+            "note": "Inferred from related image evidence for amb-main-body: Object bbox center keypoint candidate.",
+            "observation_id": "main_object_center_keypoint"
+          },
+          {
+            "kind": "silhouette",
+            "view": "rear",
+            "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.403,
+            "note": "Inferred from related image evidence for amb-main-body: Rear body candidate.",
+            "observation_id": "ambulance_rear_body"
+          },
+          {
+            "kind": "silhouette",
+            "view": "left",
+            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.418,
+            "note": "Inferred from related image evidence for amb-main-body: Percentile edge bounds; includes visual clutter when background edges are strong.",
+            "observation_id": "main_object_bbox"
+          },
+          {
+            "kind": "silhouette",
+            "view": "left",
+            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.439,
+            "note": "Inferred from related image evidence for amb-main-body: Coarse contour polyline traced from Sobel edge occupancy slices; use as geometry evidence, not a final CAD profile.",
+            "observation_id": "main_object_contour"
+          },
+          {
+            "kind": "keypoint",
+            "view": "left",
+            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.367,
+            "note": "Inferred from related image evidence for amb-main-body: Object bbox top-left keypoint candidate.",
+            "observation_id": "main_object_top_left_keypoint"
+          },
+          {
+            "kind": "keypoint",
+            "view": "left",
+            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.367,
+            "note": "Inferred from related image evidence for amb-main-body: Object bbox top-right keypoint candidate.",
+            "observation_id": "main_object_top_right_keypoint"
+          },
+          {
+            "kind": "keypoint",
+            "view": "left",
+            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.367,
+            "note": "Inferred from related image evidence for amb-main-body: Object bbox bottom-right keypoint candidate.",
+            "observation_id": "main_object_bottom_right_keypoint"
+          },
+          {
+            "kind": "keypoint",
+            "view": "left",
+            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.367,
+            "note": "Inferred from related image evidence for amb-main-body: Object bbox bottom-left keypoint candidate.",
+            "observation_id": "main_object_bottom_left_keypoint"
+          },
+          {
+            "kind": "keypoint",
+            "view": "left",
+            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.425,
+            "note": "Inferred from related image evidence for amb-main-body: Object bbox center keypoint candidate.",
+            "observation_id": "main_object_center_keypoint"
+          },
+          {
+            "kind": "silhouette",
+            "view": "left",
+            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.518,
+            "note": "Inferred from related image evidence for amb-main-body: Ambulance side body candidate from vehicle profile anchors.",
+            "observation_id": "ambulance_side_main_body"
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/救护车/C486F074-3B8E-4F1C-A048-0AF24B687035_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.454,
+            "note": "Inferred from related image evidence for amb-main-body: Percentile edge bounds; includes visual clutter when background edges are strong.",
+            "observation_id": "main_object_bbox"
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/救护车/C486F074-3B8E-4F1C-A048-0AF24B687035_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.475,
+            "note": "Inferred from related image evidence for amb-main-body: Coarse contour polyline traced from Sobel edge occupancy slices; use as geometry evidence, not a final CAD profile.",
+            "observation_id": "main_object_contour"
+          },
+          {
+            "kind": "keypoint",
+            "view": "top",
+            "source_image": "test/救护车/C486F074-3B8E-4F1C-A048-0AF24B687035_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.432,
+            "note": "Inferred from related image evidence for amb-main-body: Object bbox top-left keypoint candidate.",
+            "observation_id": "main_object_top_left_keypoint"
+          },
+          {
+            "kind": "keypoint",
+            "view": "top",
+            "source_image": "test/救护车/C486F074-3B8E-4F1C-A048-0AF24B687035_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.432,
+            "note": "Inferred from related image evidence for amb-main-body: Object bbox top-right keypoint candidate.",
+            "observation_id": "main_object_top_right_keypoint"
+          },
+          {
+            "kind": "keypoint",
+            "view": "top",
+            "source_image": "test/救护车/C486F074-3B8E-4F1C-A048-0AF24B687035_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.432,
+            "note": "Inferred from related image evidence for amb-main-body: Object bbox bottom-right keypoint candidate.",
+            "observation_id": "main_object_bottom_right_keypoint"
+          },
+          {
+            "kind": "keypoint",
+            "view": "top",
+            "source_image": "test/救护车/C486F074-3B8E-4F1C-A048-0AF24B687035_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.432,
+            "note": "Inferred from related image evidence for amb-main-body: Object bbox bottom-left keypoint candidate.",
+            "observation_id": "main_object_bottom_left_keypoint"
+          },
+          {
+            "kind": "keypoint",
+            "view": "top",
+            "source_image": "test/救护车/C486F074-3B8E-4F1C-A048-0AF24B687035_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.49,
+            "note": "Inferred from related image evidence for amb-main-body: Object bbox center keypoint candidate.",
+            "observation_id": "main_object_center_keypoint"
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/救护车/C486F074-3B8E-4F1C-A048-0AF24B687035_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.49,
+            "note": "Inferred from related image evidence for amb-main-body: Top-view body footprint candidate.",
+            "observation_id": "ambulance_top_main_body"
+          },
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/救护车/DE9FDB12-2BD3-49D2-AD32-930CC4A33B14_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.425,
+            "note": "Inferred from related image evidence for amb-main-body: Percentile edge bounds; includes visual clutter when background edges are strong.",
+            "observation_id": "main_object_bbox"
+          },
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/救护车/DE9FDB12-2BD3-49D2-AD32-930CC4A33B14_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.446,
+            "note": "Inferred from related image evidence for amb-main-body: Coarse contour polyline traced from Sobel edge occupancy slices; use as geometry evidence, not a final CAD profile.",
+            "observation_id": "main_object_contour"
+          },
+          {
+            "kind": "keypoint",
+            "view": "oblique",
+            "source_image": "test/救护车/DE9FDB12-2BD3-49D2-AD32-930CC4A33B14_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.533,
+            "note": "Inferred from related image evidence for amb-main-body: Object bbox top-left keypoint candidate.",
+            "observation_id": "main_object_top_left_keypoint"
+          },
+          {
+            "kind": "keypoint",
+            "view": "oblique",
+            "source_image": "test/救护车/DE9FDB12-2BD3-49D2-AD32-930CC4A33B14_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.533,
+            "note": "Inferred from related image evidence for amb-main-body: Object bbox top-right keypoint candidate.",
+            "observation_id": "main_object_top_right_keypoint"
+          },
+          {
+            "kind": "keypoint",
+            "view": "oblique",
+            "source_image": "test/救护车/DE9FDB12-2BD3-49D2-AD32-930CC4A33B14_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.533,
+            "note": "Inferred from related image evidence for amb-main-body: Object bbox bottom-right keypoint candidate.",
+            "observation_id": "main_object_bottom_right_keypoint"
+          },
+          {
+            "kind": "keypoint",
+            "view": "oblique",
+            "source_image": "test/救护车/DE9FDB12-2BD3-49D2-AD32-930CC4A33B14_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.533,
+            "note": "Inferred from related image evidence for amb-main-body: Object bbox bottom-left keypoint candidate.",
+            "observation_id": "main_object_bottom_left_keypoint"
+          },
+          {
+            "kind": "keypoint",
+            "view": "oblique",
+            "source_image": "test/救护车/DE9FDB12-2BD3-49D2-AD32-930CC4A33B14_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.576,
+            "note": "Inferred from related image evidence for amb-main-body: Object bbox center keypoint candidate.",
+            "observation_id": "main_object_center_keypoint"
+          },
+          {
+            "kind": "silhouette",
+            "view": "front",
+            "source_image": "test/救护车/IMG_0175.jpeg",
+            "status": "inferred",
+            "confidence": 0.468,
+            "note": "Inferred from related image evidence for amb-main-body: Percentile edge bounds; includes visual clutter when background edges are strong.",
+            "observation_id": "main_object_bbox"
+          },
+          {
+            "kind": "silhouette",
+            "view": "front",
+            "source_image": "test/救护车/IMG_0175.jpeg",
+            "status": "inferred",
+            "confidence": 0.49,
+            "note": "Inferred from related image evidence for amb-main-body: Coarse contour polyline traced from Sobel edge occupancy slices; use as geometry evidence, not a final CAD profile.",
+            "observation_id": "main_object_contour"
+          },
+          {
+            "kind": "keypoint",
+            "view": "front",
+            "source_image": "test/救护车/IMG_0175.jpeg",
+            "status": "inferred",
+            "confidence": 0.36,
+            "note": "Inferred from related image evidence for amb-main-body: Object bbox top-left keypoint candidate.",
+            "observation_id": "main_object_top_left_keypoint"
+          },
+          {
+            "kind": "keypoint",
+            "view": "front",
+            "source_image": "test/救护车/IMG_0175.jpeg",
+            "status": "inferred",
+            "confidence": 0.36,
+            "note": "Inferred from related image evidence for amb-main-body: Object bbox top-right keypoint candidate.",
+            "observation_id": "main_object_top_right_keypoint"
+          },
+          {
+            "kind": "keypoint",
+            "view": "front",
+            "source_image": "test/救护车/IMG_0175.jpeg",
+            "status": "inferred",
+            "confidence": 0.36,
+            "note": "Inferred from related image evidence for amb-main-body: Object bbox bottom-right keypoint candidate.",
+            "observation_id": "main_object_bottom_right_keypoint"
+          },
+          {
+            "kind": "keypoint",
+            "view": "front",
+            "source_image": "test/救护车/IMG_0175.jpeg",
+            "status": "inferred",
+            "confidence": 0.36,
+            "note": "Inferred from related image evidence for amb-main-body: Object bbox bottom-left keypoint candidate.",
+            "observation_id": "main_object_bottom_left_keypoint"
+          },
+          {
+            "kind": "keypoint",
+            "view": "front",
+            "source_image": "test/救护车/IMG_0175.jpeg",
+            "status": "inferred",
+            "confidence": 0.418,
+            "note": "Inferred from related image evidence for amb-main-body: Object bbox center keypoint candidate.",
+            "observation_id": "main_object_center_keypoint"
+          }
+        ],
+        "parameter_proposals": [
+          {
+            "parameter": "shape.primitive",
+            "path": "parts[main_body].shape.primitive",
+            "confidence": 0.423,
+            "status": "needs_review",
+            "review_required": true
+          },
+          {
+            "parameter": "shape.parameters",
+            "path": "parts[main_body].shape.parameters",
+            "confidence": 0.423,
+            "status": "needs_review",
+            "review_required": true
+          }
+        ],
+        "conflicts": [
+          {
+            "type": "missing_required_view",
+            "severity": "warn",
+            "views": [
+              "left",
+              "top",
+              "rear"
+            ],
+            "note": "Missing required view evidence for left, top, rear."
+          },
+          {
+            "type": "low_part_confidence",
+            "severity": "info",
+            "note": "Part evidence confidence is 0.382."
+          }
+        ],
+        "open_questions": [
+          "main_body: confirm left, top, rear evidence before treating shape parameters as image-derived.",
+          "main_body: confidence 0.382 is below the R4 review threshold."
+        ]
+      },
+      {
+        "part_id": "cab",
+        "status": "needs_review",
+        "required_views": [
+          "front",
+          "left"
+        ],
+        "confirmed_views": [],
+        "missing_views": [
+          "front",
+          "left"
+        ],
+        "confidence": 0.378,
+        "sources": [
+          {
+            "kind": "silhouette",
+            "view": "left",
+            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.49,
+            "note": "Inferred from related image evidence for amb-cab-lower: Ambulance side cab lower candidate from vehicle profile anchors.",
+            "observation_id": "ambulance_side_cab_lower"
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/救护车/C486F074-3B8E-4F1C-A048-0AF24B687035_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.403,
+            "note": "Inferred from related image evidence for amb-cab-lower: Top-view cab footprint candidate.",
+            "observation_id": "ambulance_top_cab"
+          },
+          {
+            "kind": "silhouette",
+            "view": "front",
+            "source_image": "test/救护车/IMG_0175.jpeg",
+            "status": "inferred",
+            "confidence": 0.446,
+            "note": "Inferred from related image evidence for amb-cab-lower: Front cab lower candidate.",
+            "observation_id": "ambulance_front_cab_lower"
+          }
+        ],
+        "parameter_proposals": [
+          {
+            "parameter": "shape.primitive",
+            "path": "parts[cab].shape.primitive",
+            "confidence": 0.463,
+            "status": "needs_review",
+            "review_required": true
+          },
+          {
+            "parameter": "shape.parameters",
+            "path": "parts[cab].shape.parameters",
+            "confidence": 0.463,
+            "status": "needs_review",
+            "review_required": true
+          }
+        ],
+        "conflicts": [
+          {
+            "type": "missing_required_view",
+            "severity": "warn",
+            "views": [
+              "front",
+              "left"
+            ],
+            "note": "Missing required view evidence for front, left."
+          },
+          {
+            "type": "low_part_confidence",
+            "severity": "info",
+            "note": "Part evidence confidence is 0.378."
+          }
+        ],
+        "open_questions": [
+          "cab: confirm front, left evidence before treating shape parameters as image-derived.",
+          "cab: confidence 0.378 is below the R4 review threshold."
+        ]
+      },
+      {
+        "part_id": "windshield",
+        "status": "needs_review",
+        "required_views": [
+          "front",
+          "left"
+        ],
+        "confirmed_views": [],
+        "missing_views": [
+          "front",
+          "left"
+        ],
+        "confidence": 0.364,
+        "sources": [
+          {
+            "kind": "silhouette",
+            "view": "left",
+            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.418,
+            "note": "Inferred from related image evidence for amb-windshield: Ambulance windshield candidate from cab side profile.",
+            "observation_id": "ambulance_side_windshield"
+          },
+          {
+            "kind": "silhouette",
+            "view": "front",
+            "source_image": "test/救护车/IMG_0175.jpeg",
+            "status": "inferred",
+            "confidence": 0.418,
+            "note": "Inferred from related image evidence for amb-windshield: Front windshield candidate.",
+            "observation_id": "ambulance_front_windshield"
+          }
+        ],
+        "parameter_proposals": [
+          {
+            "parameter": "shape.primitive",
+            "path": "parts[windshield].shape.primitive",
+            "confidence": 0.45,
+            "status": "needs_review",
+            "review_required": true
+          },
+          {
+            "parameter": "shape.parameters",
+            "path": "parts[windshield].shape.parameters",
+            "confidence": 0.45,
+            "status": "needs_review",
+            "review_required": true
+          },
+          {
+            "parameter": "role.parameters",
+            "path": "parts[windshield].role_parameters",
+            "confidence": 0.45,
+            "status": "needs_review",
+            "review_required": true
+          }
+        ],
+        "conflicts": [
+          {
+            "type": "missing_required_view",
+            "severity": "warn",
+            "views": [
+              "front",
+              "left"
+            ],
+            "note": "Missing required view evidence for front, left."
+          },
+          {
+            "type": "low_part_confidence",
+            "severity": "info",
+            "note": "Part evidence confidence is 0.364."
+          }
+        ],
+        "open_questions": [
+          "windshield: confirm front, left evidence before treating shape parameters as image-derived.",
+          "windshield: confidence 0.364 is below the R4 review threshold."
+        ]
+      },
+      {
+        "part_id": "side_windows",
+        "status": "needs_review",
+        "required_views": [
+          "left",
+          "right",
+          "rear"
+        ],
+        "confirmed_views": [],
+        "missing_views": [
+          "left",
+          "right",
+          "rear"
+        ],
+        "confidence": 0.378,
+        "sources": [
+          {
+            "kind": "silhouette",
+            "view": "left",
+            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.446,
+            "note": "Inferred from related image evidence for amb-left-side-window: Ambulance side window candidate from side profile.",
+            "observation_id": "ambulance_side_window"
+          }
+        ],
+        "parameter_proposals": [
+          {
+            "parameter": "shape.primitive",
+            "path": "parts[side_windows].shape.primitive",
+            "confidence": 0.423,
+            "status": "needs_review",
+            "review_required": true
+          },
+          {
+            "parameter": "shape.parameters",
+            "path": "parts[side_windows].shape.parameters",
+            "confidence": 0.423,
+            "status": "needs_review",
+            "review_required": true
+          },
+          {
+            "parameter": "role.parameters",
+            "path": "parts[side_windows].role_parameters",
+            "confidence": 0.423,
+            "status": "needs_review",
+            "review_required": true
+          },
+          {
+            "parameter": "expected_count",
+            "path": "parts[side_windows].expected_count",
+            "confidence": 0.423,
+            "status": "needs_review",
+            "review_required": true
+          }
+        ],
+        "conflicts": [
+          {
+            "type": "missing_required_view",
+            "severity": "warn",
+            "views": [
+              "left",
+              "right",
+              "rear"
+            ],
+            "note": "Missing required view evidence for left, right, rear."
+          },
+          {
+            "type": "low_part_confidence",
+            "severity": "info",
+            "note": "Part evidence confidence is 0.378."
+          }
+        ],
+        "open_questions": [
+          "side_windows: confirm left, right, rear evidence before treating shape parameters as image-derived.",
+          "side_windows: confidence 0.378 is below the R4 review threshold."
+        ]
+      },
+      {
+        "part_id": "wheel_set",
+        "status": "needs_review",
+        "required_views": [
+          "left",
+          "right"
+        ],
+        "confirmed_views": [],
+        "missing_views": [
+          "left",
+          "right"
+        ],
+        "confidence": 0.407,
+        "sources": [
+          {
+            "kind": "center_point",
+            "view": "left",
+            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.504,
+            "note": "Inferred from related image evidence for wheel-left-front-tire: Front wheel center keypoint candidate from side view.",
+            "observation_id": "ambulance_front_wheel_center"
+          }
+        ],
+        "parameter_proposals": [
+          {
+            "parameter": "shape.primitive",
+            "path": "parts[wheel_set].shape.primitive",
+            "confidence": 0.49,
+            "status": "needs_review",
+            "review_required": true
+          },
+          {
+            "parameter": "shape.parameters",
+            "path": "parts[wheel_set].shape.parameters",
+            "confidence": 0.49,
+            "status": "needs_review",
+            "review_required": true
+          },
+          {
+            "parameter": "role.parameters",
+            "path": "parts[wheel_set].role_parameters",
+            "confidence": 0.49,
+            "status": "needs_review",
+            "review_required": true
+          },
+          {
+            "parameter": "expected_count",
+            "path": "parts[wheel_set].expected_count",
+            "confidence": 0.49,
+            "status": "needs_review",
+            "review_required": true
+          }
+        ],
+        "conflicts": [
+          {
+            "type": "missing_required_view",
+            "severity": "warn",
+            "views": [
+              "left",
+              "right"
+            ],
+            "note": "Missing required view evidence for left, right."
+          },
+          {
+            "type": "low_part_confidence",
+            "severity": "info",
+            "note": "Part evidence confidence is 0.407."
+          }
+        ],
+        "open_questions": [
+          "wheel_set: confirm left, right evidence before treating shape parameters as image-derived.",
+          "wheel_set: confidence 0.407 is below the R4 review threshold."
+        ]
+      },
+      {
+        "part_id": "roof_lights",
+        "status": "needs_review",
+        "required_views": [
+          "top",
+          "front"
+        ],
+        "confirmed_views": [],
+        "missing_views": [
+          "top",
+          "front"
+        ],
+        "confidence": 0.368,
+        "sources": [
+          {
+            "kind": "silhouette",
+            "view": "left",
+            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.432,
+            "note": "Inferred from related image evidence for roof-red-lightbar: Roof lightbar candidate from side roofline.",
+            "observation_id": "ambulance_side_lightbar"
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/救护车/C486F074-3B8E-4F1C-A048-0AF24B687035_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.446,
+            "note": "Inferred from related image evidence for roof-red-lightbar: Top-view roof lightbar candidate.",
+            "observation_id": "ambulance_top_lightbar"
+          },
+          {
+            "kind": "silhouette",
+            "view": "front",
+            "source_image": "test/救护车/IMG_0175.jpeg",
+            "status": "inferred",
+            "confidence": 0.403,
+            "note": "Inferred from related image evidence for roof-red-lightbar: Front roof lightbar candidate.",
+            "observation_id": "ambulance_front_lightbar"
+          }
+        ],
+        "parameter_proposals": [
+          {
+            "parameter": "shape.primitive",
+            "path": "parts[roof_lights].shape.primitive",
+            "confidence": 0.454,
+            "status": "needs_review",
+            "review_required": true
+          },
+          {
+            "parameter": "shape.parameters",
+            "path": "parts[roof_lights].shape.parameters",
+            "confidence": 0.454,
+            "status": "needs_review",
+            "review_required": true
+          }
+        ],
+        "conflicts": [
+          {
+            "type": "missing_required_view",
+            "severity": "warn",
+            "views": [
+              "top",
+              "front"
+            ],
+            "note": "Missing required view evidence for top, front."
+          },
+          {
+            "type": "low_part_confidence",
+            "severity": "info",
+            "note": "Part evidence confidence is 0.368."
+          }
+        ],
+        "open_questions": [
+          "roof_lights: confirm top, front evidence before treating shape parameters as image-derived.",
+          "roof_lights: confidence 0.368 is below the R4 review threshold."
+        ]
+      },
+      {
+        "part_id": "stripe_and_text",
+        "status": "needs_review",
+        "required_views": [
+          "left",
+          "rear"
+        ],
+        "confirmed_views": [],
+        "missing_views": [
+          "left",
+          "rear"
+        ],
+        "confidence": 0.328,
+        "sources": [
+          {
+            "kind": "silhouette",
+            "view": "left",
+            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.346,
+            "note": "Inferred from related image evidence for amb-left-red-stripe: Side stripe candidate from ambulance profile prior.",
+            "observation_id": "ambulance_side_stripe"
+          }
+        ],
+        "parameter_proposals": [
+          {
+            "parameter": "shape.primitive",
+            "path": "parts[stripe_and_text].shape.primitive",
+            "confidence": 0.416,
+            "status": "needs_review",
+            "review_required": true
+          },
+          {
+            "parameter": "shape.parameters",
+            "path": "parts[stripe_and_text].shape.parameters",
+            "confidence": 0.416,
+            "status": "needs_review",
+            "review_required": true
+          },
+          {
+            "parameter": "role.parameters",
+            "path": "parts[stripe_and_text].role_parameters",
+            "confidence": 0.416,
+            "status": "needs_review",
+            "review_required": true
+          }
+        ],
+        "conflicts": [
+          {
+            "type": "missing_required_view",
+            "severity": "warn",
+            "views": [
+              "left",
+              "rear"
+            ],
+            "note": "Missing required view evidence for left, rear."
+          },
+          {
+            "type": "low_part_confidence",
+            "severity": "info",
+            "note": "Part evidence confidence is 0.328."
+          }
+        ],
+        "open_questions": [
+          "stripe_and_text: confirm left, rear evidence before treating shape parameters as image-derived.",
+          "stripe_and_text: confidence 0.328 is below the R4 review threshold."
+        ]
+      }
+    ]
+  },
+  "review": {
+    "fallback_summary": {
+      "needs_review": 7
+    },
+    "parameter_proposal_summary": {
+      "total": 20,
+      "parts_with_proposals": 7,
+      "review_required": 20,
+      "by_status": {
+        "needs_review": 20
+      },
+      "average_confidence": 0.447
+    },
+    "parameter_proposals": [
+      {
+        "part_id": "main_body",
+        "unit": "mm",
+        "confidence": 0.423,
+        "status": "needs_review",
+        "review_required": true,
+        "basis": [
+          "profile_role_ratio",
+          "image_scale_calibration",
+          "image_bbox_measurement"
+        ],
+        "source_count": 38,
+        "source_views": [
+          "rear",
+          "left",
+          "top",
+          "oblique",
+          "front"
+        ],
+        "required_views": [
+          "left",
+          "top",
+          "rear"
+        ],
+        "confirmed_views": [],
+        "missing_views": [
+          "left",
+          "top",
+          "rear"
+        ],
+        "evidence_sources": [
+          {
+            "kind": "silhouette",
+            "view": "rear",
+            "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.418,
+            "note": "Inferred from related image evidence for amb-main-body: Percentile edge bounds; includes visual clutter when background edges are strong.",
+            "observation_id": "main_object_bbox"
+          },
+          {
+            "kind": "silhouette",
+            "view": "rear",
+            "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.446,
+            "note": "Inferred from related image evidence for amb-main-body: Coarse contour polyline traced from Sobel edge occupancy slices; use as geometry evidence, not a final CAD profile.",
+            "observation_id": "main_object_contour"
+          },
+          {
+            "kind": "keypoint",
+            "view": "rear",
+            "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.533,
+            "note": "Inferred from related image evidence for amb-main-body: Object bbox top-left keypoint candidate.",
+            "observation_id": "main_object_top_left_keypoint"
+          },
+          {
+            "kind": "keypoint",
+            "view": "rear",
+            "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.533,
+            "note": "Inferred from related image evidence for amb-main-body: Object bbox top-right keypoint candidate.",
+            "observation_id": "main_object_top_right_keypoint"
+          }
+        ],
+        "image_measurements": [
+          {
+            "view": "rear",
+            "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+            "observation_id": "main_object_bbox",
+            "kind": "component_bbox",
+            "confidence": 0.58,
+            "bbox_px": [
+              8,
+              8,
+              827,
+              555
+            ],
+            "width_mm": 900,
+            "height_mm": 1049.9,
+            "calibration_view": "rear"
+          },
+          {
+            "view": "rear",
+            "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+            "observation_id": "main_object_contour",
+            "kind": "silhouette",
+            "confidence": 0.62,
+            "point_count": 37,
+            "calibration_view": "rear",
+            "note": "Point/contour evidence supports placement but is not converted to a final dimension."
+          },
+          {
+            "view": "rear",
+            "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+            "observation_id": "main_object_top_left_keypoint",
+            "kind": "keypoint",
+            "confidence": 0.74,
+            "point_count": 1,
+            "calibration_view": "rear",
+            "note": "Point/contour evidence supports placement but is not converted to a final dimension."
+          },
+          {
+            "view": "rear",
+            "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+            "observation_id": "main_object_top_right_keypoint",
+            "kind": "keypoint",
+            "confidence": 0.74,
+            "point_count": 1,
+            "calibration_view": "rear",
+            "note": "Point/contour evidence supports placement but is not converted to a final dimension."
+          },
+          {
+            "view": "rear",
+            "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+            "observation_id": "main_object_bottom_right_keypoint",
+            "kind": "keypoint",
+            "confidence": 0.74,
+            "point_count": 1,
+            "calibration_view": "rear",
+            "note": "Point/contour evidence supports placement but is not converted to a final dimension."
+          },
+          {
+            "view": "rear",
+            "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+            "observation_id": "main_object_bottom_left_keypoint",
+            "kind": "keypoint",
+            "confidence": 0.74,
+            "point_count": 1,
+            "calibration_view": "rear",
+            "note": "Point/contour evidence supports placement but is not converted to a final dimension."
+          }
+        ],
+        "reason": "No-seed image-derived dimensions must be reviewed before they replace shape parameters.",
+        "proposal_kind": "shape_primitive",
+        "parameter": "shape.primitive",
+        "path": "parts[main_body].shape.primitive",
+        "current_value": "rounded_box",
+        "proposed_value": "rounded_box"
+      },
+      {
+        "part_id": "main_body",
+        "unit": "mm",
+        "confidence": 0.423,
+        "status": "needs_review",
+        "review_required": true,
+        "basis": [
+          "profile_role_ratio",
+          "image_scale_calibration",
+          "image_bbox_measurement"
+        ],
+        "source_count": 38,
+        "source_views": [
+          "rear",
+          "left",
+          "top",
+          "oblique",
+          "front"
+        ],
+        "required_views": [
+          "left",
+          "top",
+          "rear"
+        ],
+        "confirmed_views": [],
+        "missing_views": [
+          "left",
+          "top",
+          "rear"
+        ],
+        "evidence_sources": [
+          {
+            "kind": "silhouette",
+            "view": "rear",
+            "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.418,
+            "note": "Inferred from related image evidence for amb-main-body: Percentile edge bounds; includes visual clutter when background edges are strong.",
+            "observation_id": "main_object_bbox"
+          },
+          {
+            "kind": "silhouette",
+            "view": "rear",
+            "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.446,
+            "note": "Inferred from related image evidence for amb-main-body: Coarse contour polyline traced from Sobel edge occupancy slices; use as geometry evidence, not a final CAD profile.",
+            "observation_id": "main_object_contour"
+          },
+          {
+            "kind": "keypoint",
+            "view": "rear",
+            "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.533,
+            "note": "Inferred from related image evidence for amb-main-body: Object bbox top-left keypoint candidate.",
+            "observation_id": "main_object_top_left_keypoint"
+          },
+          {
+            "kind": "keypoint",
+            "view": "rear",
+            "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.533,
+            "note": "Inferred from related image evidence for amb-main-body: Object bbox top-right keypoint candidate.",
+            "observation_id": "main_object_top_right_keypoint"
+          }
+        ],
+        "image_measurements": [
+          {
+            "view": "rear",
+            "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+            "observation_id": "main_object_bbox",
+            "kind": "component_bbox",
+            "confidence": 0.58,
+            "bbox_px": [
+              8,
+              8,
+              827,
+              555
+            ],
+            "width_mm": 900,
+            "height_mm": 1049.9,
+            "calibration_view": "rear"
+          },
+          {
+            "view": "rear",
+            "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+            "observation_id": "main_object_contour",
+            "kind": "silhouette",
+            "confidence": 0.62,
+            "point_count": 37,
+            "calibration_view": "rear",
+            "note": "Point/contour evidence supports placement but is not converted to a final dimension."
+          },
+          {
+            "view": "rear",
+            "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+            "observation_id": "main_object_top_left_keypoint",
+            "kind": "keypoint",
+            "confidence": 0.74,
+            "point_count": 1,
+            "calibration_view": "rear",
+            "note": "Point/contour evidence supports placement but is not converted to a final dimension."
+          },
+          {
+            "view": "rear",
+            "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+            "observation_id": "main_object_top_right_keypoint",
+            "kind": "keypoint",
+            "confidence": 0.74,
+            "point_count": 1,
+            "calibration_view": "rear",
+            "note": "Point/contour evidence supports placement but is not converted to a final dimension."
+          },
+          {
+            "view": "rear",
+            "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+            "observation_id": "main_object_bottom_right_keypoint",
+            "kind": "keypoint",
+            "confidence": 0.74,
+            "point_count": 1,
+            "calibration_view": "rear",
+            "note": "Point/contour evidence supports placement but is not converted to a final dimension."
+          },
+          {
+            "view": "rear",
+            "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
+            "observation_id": "main_object_bottom_left_keypoint",
+            "kind": "keypoint",
+            "confidence": 0.74,
+            "point_count": 1,
+            "calibration_view": "rear",
+            "note": "Point/contour evidence supports placement but is not converted to a final dimension."
+          }
+        ],
+        "reason": "No-seed image-derived dimensions must be reviewed before they replace shape parameters.",
+        "proposal_kind": "shape_parameters",
+        "parameter": "shape.parameters",
+        "path": "parts[main_body].shape.parameters",
+        "current_value": {
+          "origin": [
+            0,
+            0,
+            525
+          ],
+          "size": [
+            460,
+            180,
+            210
+          ],
+          "radius": 4
+        },
+        "proposed_value": {
+          "origin": [
+            469.2,
+            0,
+            280.4
+          ],
+          "size": [
+            1771,
+            819,
+            661.5
+          ],
+          "radius": 70.4,
+          "segments": 8,
+          "smooth": "all"
+        }
+      },
+      {
+        "part_id": "cab",
+        "unit": "mm",
+        "confidence": 0.463,
+        "status": "needs_review",
+        "review_required": true,
+        "basis": [
+          "profile_role_ratio",
+          "image_scale_calibration",
+          "image_bbox_measurement"
+        ],
+        "source_count": 3,
+        "source_views": [
+          "left",
+          "top",
+          "front"
+        ],
+        "required_views": [
+          "front",
+          "left"
+        ],
+        "confirmed_views": [],
+        "missing_views": [
+          "front",
+          "left"
+        ],
+        "evidence_sources": [
+          {
+            "kind": "silhouette",
+            "view": "left",
+            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.49,
+            "note": "Inferred from related image evidence for amb-cab-lower: Ambulance side cab lower candidate from vehicle profile anchors.",
+            "observation_id": "ambulance_side_cab_lower"
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/救护车/C486F074-3B8E-4F1C-A048-0AF24B687035_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.403,
+            "note": "Inferred from related image evidence for amb-cab-lower: Top-view cab footprint candidate.",
+            "observation_id": "ambulance_top_cab"
+          },
+          {
+            "kind": "silhouette",
+            "view": "front",
+            "source_image": "test/救护车/IMG_0175.jpeg",
+            "status": "inferred",
+            "confidence": 0.446,
+            "note": "Inferred from related image evidence for amb-cab-lower: Front cab lower candidate.",
+            "observation_id": "ambulance_front_cab_lower"
+          }
+        ],
+        "image_measurements": [
+          {
+            "view": "left",
+            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+            "observation_id": "ambulance_side_cab_lower",
+            "kind": "component_bbox",
+            "confidence": 0.68,
+            "bbox_px": [
+              84.55,
+              143.36,
+              185.04,
+              149.48
+            ],
+            "width_mm": 552,
+            "height_mm": 388.5,
+            "calibration_view": "left"
+          },
+          {
+            "view": "top",
+            "source_image": "test/救护车/C486F074-3B8E-4F1C-A048-0AF24B687035_1_102_o.jpeg",
+            "observation_id": "ambulance_top_cab",
+            "kind": "component_bbox",
+            "confidence": 0.56,
+            "bbox_px": [
+              35.9,
+              150.96,
+              153.12,
+              334.08
+            ],
+            "width_mm": 552,
+            "height_mm": 522,
+            "calibration_view": "top"
+          },
+          {
+            "view": "front",
+            "source_image": "test/救护车/IMG_0175.jpeg",
+            "observation_id": "ambulance_front_cab_lower",
+            "kind": "component_bbox",
+            "confidence": 0.62,
+            "bbox_px": [
+              93.96,
+              163.55,
+              538.08,
+              194.85
+            ],
+            "width_mm": 684,
+            "height_mm": 472.5,
+            "calibration_view": "front"
+          }
+        ],
+        "reason": "No-seed image-derived dimensions must be reviewed before they replace shape parameters.",
+        "proposal_kind": "shape_primitive",
+        "parameter": "shape.primitive",
+        "path": "parts[cab].shape.primitive",
+        "current_value": "rounded_box",
+        "proposed_value": "rounded_box"
+      },
+      {
+        "part_id": "cab",
+        "unit": "mm",
+        "confidence": 0.463,
+        "status": "needs_review",
+        "review_required": true,
+        "basis": [
+          "profile_role_ratio",
+          "image_scale_calibration",
+          "image_bbox_measurement"
+        ],
+        "source_count": 3,
+        "source_views": [
+          "left",
+          "top",
+          "front"
+        ],
+        "required_views": [
+          "front",
+          "left"
+        ],
+        "confirmed_views": [],
+        "missing_views": [
+          "front",
+          "left"
+        ],
+        "evidence_sources": [
+          {
+            "kind": "silhouette",
+            "view": "left",
+            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.49,
+            "note": "Inferred from related image evidence for amb-cab-lower: Ambulance side cab lower candidate from vehicle profile anchors.",
+            "observation_id": "ambulance_side_cab_lower"
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/救护车/C486F074-3B8E-4F1C-A048-0AF24B687035_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.403,
+            "note": "Inferred from related image evidence for amb-cab-lower: Top-view cab footprint candidate.",
+            "observation_id": "ambulance_top_cab"
+          },
+          {
+            "kind": "silhouette",
+            "view": "front",
+            "source_image": "test/救护车/IMG_0175.jpeg",
+            "status": "inferred",
+            "confidence": 0.446,
+            "note": "Inferred from related image evidence for amb-cab-lower: Front cab lower candidate.",
+            "observation_id": "ambulance_front_cab_lower"
+          }
+        ],
+        "image_measurements": [
+          {
+            "view": "left",
+            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+            "observation_id": "ambulance_side_cab_lower",
+            "kind": "component_bbox",
+            "confidence": 0.68,
+            "bbox_px": [
+              84.55,
+              143.36,
+              185.04,
+              149.48
+            ],
+            "width_mm": 552,
+            "height_mm": 388.5,
+            "calibration_view": "left"
+          },
+          {
+            "view": "top",
+            "source_image": "test/救护车/C486F074-3B8E-4F1C-A048-0AF24B687035_1_102_o.jpeg",
+            "observation_id": "ambulance_top_cab",
+            "kind": "component_bbox",
+            "confidence": 0.56,
+            "bbox_px": [
+              35.9,
+              150.96,
+              153.12,
+              334.08
+            ],
+            "width_mm": 552,
+            "height_mm": 522,
+            "calibration_view": "top"
+          },
+          {
+            "view": "front",
+            "source_image": "test/救护车/IMG_0175.jpeg",
+            "observation_id": "ambulance_front_cab_lower",
+            "kind": "component_bbox",
+            "confidence": 0.62,
+            "bbox_px": [
+              93.96,
+              163.55,
+              538.08,
+              194.85
+            ],
+            "width_mm": 684,
+            "height_mm": 472.5,
+            "calibration_view": "front"
+          }
+        ],
+        "reason": "No-seed image-derived dimensions must be reviewed before they replace shape parameters.",
+        "proposal_kind": "shape_parameters",
+        "parameter": "shape.parameters",
+        "path": "parts[cab].shape.parameters",
+        "current_value": {
+          "origin": [
+            20,
+            0,
+            525
+          ],
+          "size": [
+            460,
+            180,
+            210
+          ],
+          "radius": 4
+        },
+        "proposed_value": {
+          "origin": [
+            59.8,
+            60.3,
+            340.2
+          ],
+          "size": [
+            558.9,
+            700.2,
+            380.1
+          ],
+          "radius": 77.7,
+          "segments": 8,
+          "smooth": "all"
+        }
+      },
+      {
+        "part_id": "windshield",
+        "unit": "mm",
+        "confidence": 0.45,
+        "status": "needs_review",
+        "review_required": true,
+        "basis": [
+          "profile_role_ratio",
+          "image_scale_calibration",
+          "image_bbox_measurement"
+        ],
+        "source_count": 2,
+        "source_views": [
+          "left",
+          "front"
+        ],
+        "required_views": [
+          "front",
+          "left"
+        ],
+        "confirmed_views": [],
+        "missing_views": [
+          "front",
+          "left"
+        ],
+        "evidence_sources": [
+          {
+            "kind": "silhouette",
+            "view": "left",
+            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.418,
+            "note": "Inferred from related image evidence for amb-windshield: Ambulance windshield candidate from cab side profile.",
+            "observation_id": "ambulance_side_windshield"
+          },
+          {
+            "kind": "silhouette",
+            "view": "front",
+            "source_image": "test/救护车/IMG_0175.jpeg",
+            "status": "inferred",
+            "confidence": 0.418,
+            "note": "Inferred from related image evidence for amb-windshield: Front windshield candidate.",
+            "observation_id": "ambulance_front_windshield"
+          }
+        ],
+        "image_measurements": [
+          {
+            "view": "left",
+            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+            "observation_id": "ambulance_side_windshield",
+            "kind": "component_bbox",
+            "confidence": 0.58,
+            "bbox_px": [
+              177.07,
+              66.6,
+              100.23,
+              88.88
+            ],
+            "width_mm": 299,
+            "height_mm": 231,
+            "calibration_view": "left"
+          },
+          {
+            "view": "front",
+            "source_image": "test/救护车/IMG_0175.jpeg",
+            "observation_id": "ambulance_front_windshield",
+            "kind": "component_bbox",
+            "confidence": 0.58,
+            "bbox_px": [
+              171.84,
+              89.94,
+              382.32,
+              108.25
+            ],
+            "width_mm": 486,
+            "height_mm": 262.5,
+            "calibration_view": "front"
+          }
+        ],
+        "reason": "No-seed image-derived dimensions must be reviewed before they replace shape parameters.",
+        "proposal_kind": "shape_primitive",
+        "parameter": "shape.primitive",
+        "path": "parts[windshield].shape.primitive",
+        "current_value": "rounded_box",
+        "proposed_value": "box"
+      },
+      {
+        "part_id": "windshield",
+        "unit": "mm",
+        "confidence": 0.45,
+        "status": "needs_review",
+        "review_required": true,
+        "basis": [
+          "profile_role_ratio",
+          "image_scale_calibration",
+          "image_bbox_measurement"
+        ],
+        "source_count": 2,
+        "source_views": [
+          "left",
+          "front"
+        ],
+        "required_views": [
+          "front",
+          "left"
+        ],
+        "confirmed_views": [],
+        "missing_views": [
+          "front",
+          "left"
+        ],
+        "evidence_sources": [
+          {
+            "kind": "silhouette",
+            "view": "left",
+            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.418,
+            "note": "Inferred from related image evidence for amb-windshield: Ambulance windshield candidate from cab side profile.",
+            "observation_id": "ambulance_side_windshield"
+          },
+          {
+            "kind": "silhouette",
+            "view": "front",
+            "source_image": "test/救护车/IMG_0175.jpeg",
+            "status": "inferred",
+            "confidence": 0.418,
+            "note": "Inferred from related image evidence for amb-windshield: Front windshield candidate.",
+            "observation_id": "ambulance_front_windshield"
+          }
+        ],
+        "image_measurements": [
+          {
+            "view": "left",
+            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+            "observation_id": "ambulance_side_windshield",
+            "kind": "component_bbox",
+            "confidence": 0.58,
+            "bbox_px": [
+              177.07,
+              66.6,
+              100.23,
+              88.88
+            ],
+            "width_mm": 299,
+            "height_mm": 231,
+            "calibration_view": "left"
+          },
+          {
+            "view": "front",
+            "source_image": "test/救护车/IMG_0175.jpeg",
+            "observation_id": "ambulance_front_windshield",
+            "kind": "component_bbox",
+            "confidence": 0.58,
+            "bbox_px": [
+              171.84,
+              89.94,
+              382.32,
+              108.25
+            ],
+            "width_mm": 486,
+            "height_mm": 262.5,
+            "calibration_view": "front"
+          }
+        ],
+        "reason": "No-seed image-derived dimensions must be reviewed before they replace shape parameters.",
+        "proposal_kind": "shape_parameters",
+        "parameter": "shape.parameters",
+        "path": "parts[windshield].shape.parameters",
+        "current_value": {
+          "origin": [
+            40,
+            0,
+            525
+          ],
+          "size": [
+            460,
+            180,
+            210
+          ],
+          "radius": 4
+        },
+        "proposed_value": {
+          "origin": [
+            259.9,
+            44.1,
+            650
+          ],
+          "size": [
+            420.9,
+            14.4,
+            315
+          ]
+        }
+      },
+      {
+        "part_id": "windshield",
+        "unit": "mm",
+        "confidence": 0.45,
+        "status": "needs_review",
+        "review_required": true,
+        "basis": [
+          "profile_role_ratio",
+          "image_scale_calibration",
+          "image_bbox_measurement"
+        ],
+        "source_count": 2,
+        "source_views": [
+          "left",
+          "front"
+        ],
+        "required_views": [
+          "front",
+          "left"
+        ],
+        "confirmed_views": [],
+        "missing_views": [
+          "front",
+          "left"
+        ],
+        "evidence_sources": [
+          {
+            "kind": "silhouette",
+            "view": "left",
+            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.418,
+            "note": "Inferred from related image evidence for amb-windshield: Ambulance windshield candidate from cab side profile.",
+            "observation_id": "ambulance_side_windshield"
+          },
+          {
+            "kind": "silhouette",
+            "view": "front",
+            "source_image": "test/救护车/IMG_0175.jpeg",
+            "status": "inferred",
+            "confidence": 0.418,
+            "note": "Inferred from related image evidence for amb-windshield: Front windshield candidate.",
+            "observation_id": "ambulance_front_windshield"
+          }
+        ],
+        "image_measurements": [
+          {
+            "view": "left",
+            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+            "observation_id": "ambulance_side_windshield",
+            "kind": "component_bbox",
+            "confidence": 0.58,
+            "bbox_px": [
+              177.07,
+              66.6,
+              100.23,
+              88.88
+            ],
+            "width_mm": 299,
+            "height_mm": 231,
+            "calibration_view": "left"
+          },
+          {
+            "view": "front",
+            "source_image": "test/救护车/IMG_0175.jpeg",
+            "observation_id": "ambulance_front_windshield",
+            "kind": "component_bbox",
+            "confidence": 0.58,
+            "bbox_px": [
+              171.84,
+              89.94,
+              382.32,
+              108.25
+            ],
+            "width_mm": 486,
+            "height_mm": 262.5,
+            "calibration_view": "front"
+          }
+        ],
+        "reason": "No-seed image-derived dimensions must be reviewed before they replace shape parameters.",
+        "proposal_kind": "role_parameters",
+        "parameter": "role.parameters",
+        "path": "parts[windshield].role_parameters",
+        "proposed_value": {
+          "face": "front",
+          "rake_hint": "upper_edge_rearward",
+          "expected_material": "glass"
+        }
+      },
+      {
+        "part_id": "side_windows",
+        "unit": "mm",
+        "confidence": 0.423,
+        "status": "needs_review",
+        "review_required": true,
+        "basis": [
+          "profile_role_ratio",
+          "image_scale_calibration",
+          "image_bbox_measurement"
+        ],
+        "source_count": 1,
+        "source_views": [
+          "left"
+        ],
+        "required_views": [
+          "left",
+          "right",
+          "rear"
+        ],
+        "confirmed_views": [],
+        "missing_views": [
+          "left",
+          "right",
+          "rear"
+        ],
+        "evidence_sources": [
+          {
+            "kind": "silhouette",
+            "view": "left",
+            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.446,
+            "note": "Inferred from related image evidence for amb-left-side-window: Ambulance side window candidate from side profile.",
+            "observation_id": "ambulance_side_window"
+          }
+        ],
+        "image_measurements": [
+          {
+            "view": "left",
+            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+            "observation_id": "ambulance_side_window",
+            "kind": "component_bbox",
+            "confidence": 0.62,
+            "bbox_px": [
+              369.82,
+              102.96,
+              169.62,
+              84.84
+            ],
+            "width_mm": 506,
+            "height_mm": 220.5,
+            "calibration_view": "left"
+          }
+        ],
+        "reason": "No-seed image-derived dimensions must be reviewed before they replace shape parameters.",
+        "proposal_kind": "shape_primitive",
+        "parameter": "shape.primitive",
+        "path": "parts[side_windows].shape.primitive",
+        "current_value": "rounded_box",
+        "proposed_value": "box"
+      },
+      {
+        "part_id": "side_windows",
+        "unit": "mm",
+        "confidence": 0.423,
+        "status": "needs_review",
+        "review_required": true,
+        "basis": [
+          "profile_role_ratio",
+          "image_scale_calibration",
+          "image_bbox_measurement"
+        ],
+        "source_count": 1,
+        "source_views": [
+          "left"
+        ],
+        "required_views": [
+          "left",
+          "right",
+          "rear"
+        ],
+        "confirmed_views": [],
+        "missing_views": [
+          "left",
+          "right",
+          "rear"
+        ],
+        "evidence_sources": [
+          {
+            "kind": "silhouette",
+            "view": "left",
+            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.446,
+            "note": "Inferred from related image evidence for amb-left-side-window: Ambulance side window candidate from side profile.",
+            "observation_id": "ambulance_side_window"
+          }
+        ],
+        "image_measurements": [
+          {
+            "view": "left",
+            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+            "observation_id": "ambulance_side_window",
+            "kind": "component_bbox",
+            "confidence": 0.62,
+            "bbox_px": [
+              369.82,
+              102.96,
+              169.62,
+              84.84
+            ],
+            "width_mm": 506,
+            "height_mm": 220.5,
+            "calibration_view": "left"
+          }
+        ],
+        "reason": "No-seed image-derived dimensions must be reviewed before they replace shape parameters.",
+        "proposal_kind": "shape_parameters",
+        "parameter": "shape.parameters",
+        "path": "parts[side_windows].shape.parameters",
+        "current_value": {
+          "origin": [
+            60,
+            0,
+            525
+          ],
+          "size": [
+            460,
+            180,
+            210
+          ],
+          "radius": 4
+        },
+        "proposed_value": {
+          "origin": [
+            959.1,
+            -27.9,
+            650
+          ],
+          "size": [
+            499.1,
+            27.9,
+            199.5
+          ]
+        }
+      },
+      {
+        "part_id": "side_windows",
+        "unit": "mm",
+        "confidence": 0.423,
+        "status": "needs_review",
+        "review_required": true,
+        "basis": [
+          "profile_role_ratio",
+          "image_scale_calibration",
+          "image_bbox_measurement"
+        ],
+        "source_count": 1,
+        "source_views": [
+          "left"
+        ],
+        "required_views": [
+          "left",
+          "right",
+          "rear"
+        ],
+        "confirmed_views": [],
+        "missing_views": [
+          "left",
+          "right",
+          "rear"
+        ],
+        "evidence_sources": [
+          {
+            "kind": "silhouette",
+            "view": "left",
+            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.446,
+            "note": "Inferred from related image evidence for amb-left-side-window: Ambulance side window candidate from side profile.",
+            "observation_id": "ambulance_side_window"
+          }
+        ],
+        "image_measurements": [
+          {
+            "view": "left",
+            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+            "observation_id": "ambulance_side_window",
+            "kind": "component_bbox",
+            "confidence": 0.62,
+            "bbox_px": [
+              369.82,
+              102.96,
+              169.62,
+              84.84
+            ],
+            "width_mm": 506,
+            "height_mm": 220.5,
+            "calibration_view": "left"
+          }
+        ],
+        "reason": "No-seed image-derived dimensions must be reviewed before they replace shape parameters.",
+        "proposal_kind": "role_parameters",
+        "parameter": "role.parameters",
+        "path": "parts[side_windows].role_parameters",
+        "proposed_value": {
+          "expected_count": 4,
+          "mirror": "left_right",
+          "expected_material": "glass"
+        }
+      },
+      {
+        "part_id": "side_windows",
+        "unit": "mm",
+        "confidence": 0.423,
+        "status": "needs_review",
+        "review_required": true,
+        "basis": [
+          "profile_role_ratio",
+          "image_scale_calibration",
+          "image_bbox_measurement"
+        ],
+        "source_count": 1,
+        "source_views": [
+          "left"
+        ],
+        "required_views": [
+          "left",
+          "right",
+          "rear"
+        ],
+        "confirmed_views": [],
+        "missing_views": [
+          "left",
+          "right",
+          "rear"
+        ],
+        "evidence_sources": [
+          {
+            "kind": "silhouette",
+            "view": "left",
+            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.446,
+            "note": "Inferred from related image evidence for amb-left-side-window: Ambulance side window candidate from side profile.",
+            "observation_id": "ambulance_side_window"
+          }
+        ],
+        "image_measurements": [
+          {
+            "view": "left",
+            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+            "observation_id": "ambulance_side_window",
+            "kind": "component_bbox",
+            "confidence": 0.62,
+            "bbox_px": [
+              369.82,
+              102.96,
+              169.62,
+              84.84
+            ],
+            "width_mm": 506,
+            "height_mm": 220.5,
+            "calibration_view": "left"
+          }
+        ],
+        "reason": "No-seed image-derived dimensions must be reviewed before they replace shape parameters.",
+        "proposal_kind": "expected_count",
+        "parameter": "expected_count",
+        "path": "parts[side_windows].expected_count",
+        "proposed_value": 4
+      },
+      {
+        "part_id": "wheel_set",
+        "unit": "mm",
+        "confidence": 0.49,
+        "status": "needs_review",
+        "review_required": true,
+        "basis": [
+          "profile_role_ratio",
+          "image_scale_calibration",
+          "image_bbox_measurement"
+        ],
+        "source_count": 1,
+        "source_views": [
+          "left"
+        ],
+        "required_views": [
+          "left",
+          "right"
+        ],
+        "confirmed_views": [],
+        "missing_views": [
+          "left",
+          "right"
+        ],
+        "evidence_sources": [
+          {
+            "kind": "center_point",
+            "view": "left",
+            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.504,
+            "note": "Inferred from related image evidence for wheel-left-front-tire: Front wheel center keypoint candidate from side view.",
+            "observation_id": "ambulance_front_wheel_center"
+          }
+        ],
+        "image_measurements": [
+          {
+            "view": "left",
+            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+            "observation_id": "ambulance_front_wheel_center",
+            "kind": "center_point",
+            "confidence": 0.7,
+            "point_count": 1,
+            "calibration_view": "left",
+            "note": "Point/contour evidence supports placement but is not converted to a final dimension."
+          }
+        ],
+        "reason": "No-seed image-derived dimensions must be reviewed before they replace shape parameters.",
+        "proposal_kind": "shape_primitive",
+        "parameter": "shape.primitive",
+        "path": "parts[wheel_set].shape.primitive",
+        "current_value": "rounded_box",
+        "proposed_value": "prism"
+      },
+      {
+        "part_id": "wheel_set",
+        "unit": "mm",
+        "confidence": 0.49,
+        "status": "needs_review",
+        "review_required": true,
+        "basis": [
+          "profile_role_ratio",
+          "image_scale_calibration",
+          "image_bbox_measurement"
+        ],
+        "source_count": 1,
+        "source_views": [
+          "left"
+        ],
+        "required_views": [
+          "left",
+          "right"
+        ],
+        "confirmed_views": [],
+        "missing_views": [
+          "left",
+          "right"
+        ],
+        "evidence_sources": [
+          {
+            "kind": "center_point",
+            "view": "left",
+            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.504,
+            "note": "Inferred from related image evidence for wheel-left-front-tire: Front wheel center keypoint candidate from side view.",
+            "observation_id": "ambulance_front_wheel_center"
+          }
+        ],
+        "image_measurements": [
+          {
+            "view": "left",
+            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+            "observation_id": "ambulance_front_wheel_center",
+            "kind": "center_point",
+            "confidence": 0.7,
+            "point_count": 1,
+            "calibration_view": "left",
+            "note": "Point/contour evidence supports placement but is not converted to a final dimension."
+          }
+        ],
+        "reason": "No-seed image-derived dimensions must be reviewed before they replace shape parameters.",
+        "proposal_kind": "shape_parameters",
+        "parameter": "shape.parameters",
+        "path": "parts[wheel_set].shape.parameters",
+        "current_value": {
+          "origin": [
+            80,
+            0,
+            525
+          ],
+          "size": [
+            460,
+            180,
+            210
+          ],
+          "radius": 4
+        },
+        "proposed_value": {
+          "origin": [
+            558.9,
+            -52.2,
+            220.5
+          ],
+          "plane": "xz",
+          "radius": 144.9,
+          "depth": 73.8,
+          "segments": 12
+        }
+      },
+      {
+        "part_id": "wheel_set",
+        "unit": "mm",
+        "confidence": 0.49,
+        "status": "needs_review",
+        "review_required": true,
+        "basis": [
+          "profile_role_ratio",
+          "image_scale_calibration",
+          "image_bbox_measurement"
+        ],
+        "source_count": 1,
+        "source_views": [
+          "left"
+        ],
+        "required_views": [
+          "left",
+          "right"
+        ],
+        "confirmed_views": [],
+        "missing_views": [
+          "left",
+          "right"
+        ],
+        "evidence_sources": [
+          {
+            "kind": "center_point",
+            "view": "left",
+            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.504,
+            "note": "Inferred from related image evidence for wheel-left-front-tire: Front wheel center keypoint candidate from side view.",
+            "observation_id": "ambulance_front_wheel_center"
+          }
+        ],
+        "image_measurements": [
+          {
+            "view": "left",
+            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+            "observation_id": "ambulance_front_wheel_center",
+            "kind": "center_point",
+            "confidence": 0.7,
+            "point_count": 1,
+            "calibration_view": "left",
+            "note": "Point/contour evidence supports placement but is not converted to a final dimension."
+          }
+        ],
+        "reason": "No-seed image-derived dimensions must be reviewed before they replace shape parameters.",
+        "proposal_kind": "role_parameters",
+        "parameter": "role.parameters",
+        "path": "parts[wheel_set].role_parameters",
+        "proposed_value": {
+          "expected_count": 4,
+          "diameter": 289.8,
+          "thickness": 73.8,
+          "rear_center_x": 1738.8,
+          "center_z": 220.5,
+          "mirror": "left_right"
+        }
+      },
+      {
+        "part_id": "wheel_set",
+        "unit": "mm",
+        "confidence": 0.49,
+        "status": "needs_review",
+        "review_required": true,
+        "basis": [
+          "profile_role_ratio",
+          "image_scale_calibration",
+          "image_bbox_measurement"
+        ],
+        "source_count": 1,
+        "source_views": [
+          "left"
+        ],
+        "required_views": [
+          "left",
+          "right"
+        ],
+        "confirmed_views": [],
+        "missing_views": [
+          "left",
+          "right"
+        ],
+        "evidence_sources": [
+          {
+            "kind": "center_point",
+            "view": "left",
+            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.504,
+            "note": "Inferred from related image evidence for wheel-left-front-tire: Front wheel center keypoint candidate from side view.",
+            "observation_id": "ambulance_front_wheel_center"
+          }
+        ],
+        "image_measurements": [
+          {
+            "view": "left",
+            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+            "observation_id": "ambulance_front_wheel_center",
+            "kind": "center_point",
+            "confidence": 0.7,
+            "point_count": 1,
+            "calibration_view": "left",
+            "note": "Point/contour evidence supports placement but is not converted to a final dimension."
+          }
+        ],
+        "reason": "No-seed image-derived dimensions must be reviewed before they replace shape parameters.",
+        "proposal_kind": "expected_count",
+        "parameter": "expected_count",
+        "path": "parts[wheel_set].expected_count",
+        "proposed_value": 4
+      },
+      {
+        "part_id": "roof_lights",
+        "unit": "mm",
+        "confidence": 0.454,
+        "status": "needs_review",
+        "review_required": true,
+        "basis": [
+          "profile_role_ratio",
+          "image_scale_calibration",
+          "image_bbox_measurement"
+        ],
+        "source_count": 3,
+        "source_views": [
+          "left",
+          "top",
+          "front"
+        ],
+        "required_views": [
+          "top",
+          "front"
+        ],
+        "confirmed_views": [],
+        "missing_views": [
+          "top",
+          "front"
+        ],
+        "evidence_sources": [
+          {
+            "kind": "silhouette",
+            "view": "left",
+            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.432,
+            "note": "Inferred from related image evidence for roof-red-lightbar: Roof lightbar candidate from side roofline.",
+            "observation_id": "ambulance_side_lightbar"
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/救护车/C486F074-3B8E-4F1C-A048-0AF24B687035_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.446,
+            "note": "Inferred from related image evidence for roof-red-lightbar: Top-view roof lightbar candidate.",
+            "observation_id": "ambulance_top_lightbar"
+          },
+          {
+            "kind": "silhouette",
+            "view": "front",
+            "source_image": "test/救护车/IMG_0175.jpeg",
+            "status": "inferred",
+            "confidence": 0.403,
+            "note": "Inferred from related image evidence for roof-red-lightbar: Front roof lightbar candidate.",
+            "observation_id": "ambulance_front_lightbar"
+          }
+        ],
+        "image_measurements": [
+          {
+            "view": "left",
+            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+            "observation_id": "ambulance_side_lightbar",
+            "kind": "component_bbox",
+            "confidence": 0.6,
+            "bbox_px": [
+              246.46,
+              18.12,
+              107.94,
+              28.28
+            ],
+            "width_mm": 322,
+            "height_mm": 73.5,
+            "calibration_view": "left"
+          },
+          {
+            "view": "top",
+            "source_image": "test/救护车/C486F074-3B8E-4F1C-A048-0AF24B687035_1_102_o.jpeg",
+            "observation_id": "ambulance_top_lightbar",
+            "kind": "component_bbox",
+            "confidence": 0.62,
+            "bbox_px": [
+              150.74,
+              283.44,
+              82.94,
+              69.12
+            ],
+            "width_mm": 299,
+            "height_mm": 108,
+            "calibration_view": "top"
+          },
+          {
+            "view": "front",
+            "source_image": "test/救护车/IMG_0175.jpeg",
+            "observation_id": "ambulance_front_lightbar",
+            "kind": "component_bbox",
+            "confidence": 0.56,
+            "bbox_px": [
+              263.88,
+              20.66,
+              198.24,
+              34.64
+            ],
+            "width_mm": 252,
+            "height_mm": 84,
+            "calibration_view": "front"
+          }
+        ],
+        "reason": "No-seed image-derived dimensions must be reviewed before they replace shape parameters.",
+        "proposal_kind": "shape_primitive",
+        "parameter": "shape.primitive",
+        "path": "parts[roof_lights].shape.primitive",
+        "current_value": "rounded_box",
+        "proposed_value": "rounded_box"
+      },
+      {
+        "part_id": "roof_lights",
+        "unit": "mm",
+        "confidence": 0.454,
+        "status": "needs_review",
+        "review_required": true,
+        "basis": [
+          "profile_role_ratio",
+          "image_scale_calibration",
+          "image_bbox_measurement"
+        ],
+        "source_count": 3,
+        "source_views": [
+          "left",
+          "top",
+          "front"
+        ],
+        "required_views": [
+          "top",
+          "front"
+        ],
+        "confirmed_views": [],
+        "missing_views": [
+          "top",
+          "front"
+        ],
+        "evidence_sources": [
+          {
+            "kind": "silhouette",
+            "view": "left",
+            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.432,
+            "note": "Inferred from related image evidence for roof-red-lightbar: Roof lightbar candidate from side roofline.",
+            "observation_id": "ambulance_side_lightbar"
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/救护车/C486F074-3B8E-4F1C-A048-0AF24B687035_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.446,
+            "note": "Inferred from related image evidence for roof-red-lightbar: Top-view roof lightbar candidate.",
+            "observation_id": "ambulance_top_lightbar"
+          },
+          {
+            "kind": "silhouette",
+            "view": "front",
+            "source_image": "test/救护车/IMG_0175.jpeg",
+            "status": "inferred",
+            "confidence": 0.403,
+            "note": "Inferred from related image evidence for roof-red-lightbar: Front roof lightbar candidate.",
+            "observation_id": "ambulance_front_lightbar"
+          }
+        ],
+        "image_measurements": [
+          {
+            "view": "left",
+            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+            "observation_id": "ambulance_side_lightbar",
+            "kind": "component_bbox",
+            "confidence": 0.6,
+            "bbox_px": [
+              246.46,
+              18.12,
+              107.94,
+              28.28
+            ],
+            "width_mm": 322,
+            "height_mm": 73.5,
+            "calibration_view": "left"
+          },
+          {
+            "view": "top",
+            "source_image": "test/救护车/C486F074-3B8E-4F1C-A048-0AF24B687035_1_102_o.jpeg",
+            "observation_id": "ambulance_top_lightbar",
+            "kind": "component_bbox",
+            "confidence": 0.62,
+            "bbox_px": [
+              150.74,
+              283.44,
+              82.94,
+              69.12
+            ],
+            "width_mm": 299,
+            "height_mm": 108,
+            "calibration_view": "top"
+          },
+          {
+            "view": "front",
+            "source_image": "test/救护车/IMG_0175.jpeg",
+            "observation_id": "ambulance_front_lightbar",
+            "kind": "component_bbox",
+            "confidence": 0.56,
+            "bbox_px": [
+              263.88,
+              20.66,
+              198.24,
+              34.64
+            ],
+            "width_mm": 252,
+            "height_mm": 84,
+            "calibration_view": "front"
+          }
+        ],
+        "reason": "No-seed image-derived dimensions must be reviewed before they replace shape parameters.",
+        "proposal_kind": "shape_parameters",
+        "parameter": "shape.parameters",
+        "path": "parts[roof_lights].shape.parameters",
+        "current_value": {
+          "origin": [
+            100,
+            0,
+            525
+          ],
+          "size": [
+            460,
+            180,
+            210
+          ],
+          "radius": 4
+        },
+        "proposed_value": {
+          "origin": [
+            621,
+            254.7,
+            1010.1
+          ],
+          "size": [
+            340.4,
+            279.9,
+            70.4
+          ],
+          "radius": 33.6,
+          "segments": 6,
+          "smooth": "all"
+        }
+      },
+      {
+        "part_id": "stripe_and_text",
+        "unit": "mm",
+        "confidence": 0.416,
+        "status": "needs_review",
+        "review_required": true,
+        "basis": [
+          "profile_role_ratio",
+          "image_scale_calibration",
+          "image_bbox_measurement"
+        ],
+        "source_count": 1,
+        "source_views": [
+          "left"
+        ],
+        "required_views": [
+          "left",
+          "rear"
+        ],
+        "confirmed_views": [],
+        "missing_views": [
+          "left",
+          "rear"
+        ],
+        "evidence_sources": [
+          {
+            "kind": "silhouette",
+            "view": "left",
+            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.346,
+            "note": "Inferred from related image evidence for amb-left-red-stripe: Side stripe candidate from ambulance profile prior.",
+            "observation_id": "ambulance_side_stripe"
+          }
+        ],
+        "image_measurements": [
+          {
+            "view": "left",
+            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+            "observation_id": "ambulance_side_stripe",
+            "kind": "component_bbox",
+            "confidence": 0.48,
+            "bbox_px": [
+              285.01,
+              216.08,
+              393.21,
+              32.32
+            ],
+            "width_mm": 1173.1,
+            "height_mm": 84,
+            "calibration_view": "left"
+          }
+        ],
+        "reason": "No-seed image-derived dimensions must be reviewed before they replace shape parameters.",
+        "proposal_kind": "shape_primitive",
+        "parameter": "shape.primitive",
+        "path": "parts[stripe_and_text].shape.primitive",
+        "current_value": "rounded_box",
+        "proposed_value": "box"
+      },
+      {
+        "part_id": "stripe_and_text",
+        "unit": "mm",
+        "confidence": 0.416,
+        "status": "needs_review",
+        "review_required": true,
+        "basis": [
+          "profile_role_ratio",
+          "image_scale_calibration",
+          "image_bbox_measurement"
+        ],
+        "source_count": 1,
+        "source_views": [
+          "left"
+        ],
+        "required_views": [
+          "left",
+          "rear"
+        ],
+        "confirmed_views": [],
+        "missing_views": [
+          "left",
+          "rear"
+        ],
+        "evidence_sources": [
+          {
+            "kind": "silhouette",
+            "view": "left",
+            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.346,
+            "note": "Inferred from related image evidence for amb-left-red-stripe: Side stripe candidate from ambulance profile prior.",
+            "observation_id": "ambulance_side_stripe"
+          }
+        ],
+        "image_measurements": [
+          {
+            "view": "left",
+            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+            "observation_id": "ambulance_side_stripe",
+            "kind": "component_bbox",
+            "confidence": 0.48,
+            "bbox_px": [
+              285.01,
+              216.08,
+              393.21,
+              32.32
+            ],
+            "width_mm": 1173.1,
+            "height_mm": 84,
+            "calibration_view": "left"
+          }
+        ],
+        "reason": "No-seed image-derived dimensions must be reviewed before they replace shape parameters.",
+        "proposal_kind": "shape_parameters",
+        "parameter": "shape.parameters",
+        "path": "parts[stripe_and_text].shape.parameters",
+        "current_value": {
+          "origin": [
+            120,
+            0,
+            525
+          ],
+          "size": [
+            460,
+            180,
+            210
+          ],
+          "radius": 4
+        },
+        "proposed_value": {
+          "origin": [
+            299,
+            -34.2,
+            519.8
+          ],
+          "size": [
+            1780.2,
+            24.3,
+            28.4
+          ]
+        }
+      },
+      {
+        "part_id": "stripe_and_text",
+        "unit": "mm",
+        "confidence": 0.416,
+        "status": "needs_review",
+        "review_required": true,
+        "basis": [
+          "profile_role_ratio",
+          "image_scale_calibration",
+          "image_bbox_measurement"
+        ],
+        "source_count": 1,
+        "source_views": [
+          "left"
+        ],
+        "required_views": [
+          "left",
+          "rear"
+        ],
+        "confirmed_views": [],
+        "missing_views": [
+          "left",
+          "rear"
+        ],
+        "evidence_sources": [
+          {
+            "kind": "silhouette",
+            "view": "left",
+            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+            "status": "inferred",
+            "confidence": 0.346,
+            "note": "Inferred from related image evidence for amb-left-red-stripe: Side stripe candidate from ambulance profile prior.",
+            "observation_id": "ambulance_side_stripe"
+          }
+        ],
+        "image_measurements": [
+          {
+            "view": "left",
+            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
+            "observation_id": "ambulance_side_stripe",
+            "kind": "component_bbox",
+            "confidence": 0.48,
+            "bbox_px": [
+              285.01,
+              216.08,
+              393.21,
+              32.32
+            ],
+            "width_mm": 1173.1,
+            "height_mm": 84,
+            "calibration_view": "left"
+          }
+        ],
+        "reason": "No-seed image-derived dimensions must be reviewed before they replace shape parameters.",
+        "proposal_kind": "role_parameters",
+        "parameter": "role.parameters",
+        "path": "parts[stripe_and_text].role_parameters",
+        "proposed_value": {
+          "stripe_height": 28.4,
+          "text": "AMBULANCE",
+          "text_center": [
+            1570.9,
+            -62.1,
+            800.1
+          ],
+          "text_height": 70.4
+        }
+      }
+    ],
+    "open_questions": [
+      "amb-left-red-stripe: review template-derived candidate boxes before accepting dimensions.",
+      "amb-left-ambulance-text: review template-derived candidate boxes before accepting dimensions.",
+      "main_body: confirm left, top, rear evidence before treating shape parameters as image-derived.",
+      "main_body: confidence 0.382 is below the R4 review threshold.",
+      "cab: confirm front, left evidence before treating shape parameters as image-derived.",
+      "cab: confidence 0.378 is below the R4 review threshold.",
+      "windshield: confirm front, left evidence before treating shape parameters as image-derived.",
+      "windshield: confidence 0.364 is below the R4 review threshold.",
+      "side_windows: confirm left, right, rear evidence before treating shape parameters as image-derived.",
+      "side_windows: confidence 0.378 is below the R4 review threshold.",
+      "wheel_set: confirm left, right evidence before treating shape parameters as image-derived.",
+      "wheel_set: confidence 0.407 is below the R4 review threshold.",
+      "roof_lights: confirm top, front evidence before treating shape parameters as image-derived.",
+      "roof_lights: confidence 0.368 is below the R4 review threshold.",
+      "stripe_and_text: confirm left, rear evidence before treating shape parameters as image-derived.",
+      "stripe_and_text: confidence 0.328 is below the R4 review threshold."
+    ],
+    "correction_targets": [
+      {
+        "part_id": "main_body",
+        "path": "parts[main_body].shape.parameters",
+        "reason": "main_body: confirm left, top, rear evidence before treating shape parameters as image-derived.",
+        "severity": "warn"
+      },
+      {
+        "part_id": "main_body",
+        "path": "parts[main_body].parameter_proposals",
+        "reason": "main_body: review 2 image-scale parameter proposal(s) before applying no-seed geometry.",
+        "severity": "warn"
+      },
+      {
+        "part_id": "cab",
+        "path": "parts[cab].shape.parameters",
+        "reason": "cab: confirm front, left evidence before treating shape parameters as image-derived.",
+        "severity": "warn"
+      },
+      {
+        "part_id": "cab",
+        "path": "parts[cab].parameter_proposals",
+        "reason": "cab: review 2 image-scale parameter proposal(s) before applying no-seed geometry.",
+        "severity": "warn"
+      },
+      {
+        "part_id": "windshield",
+        "path": "parts[windshield].shape.parameters",
+        "reason": "windshield: confirm front, left evidence before treating shape parameters as image-derived.",
+        "severity": "warn"
+      },
+      {
+        "part_id": "windshield",
+        "path": "parts[windshield].parameter_proposals",
+        "reason": "windshield: review 3 image-scale parameter proposal(s) before applying no-seed geometry.",
+        "severity": "warn"
+      },
+      {
+        "part_id": "side_windows",
+        "path": "parts[side_windows].shape.parameters",
+        "reason": "side_windows: confirm left, right, rear evidence before treating shape parameters as image-derived.",
+        "severity": "warn"
+      },
+      {
+        "part_id": "side_windows",
+        "path": "parts[side_windows].parameter_proposals",
+        "reason": "side_windows: review 4 image-scale parameter proposal(s) before applying no-seed geometry.",
+        "severity": "warn"
+      },
+      {
+        "part_id": "wheel_set",
+        "path": "parts[wheel_set].shape.parameters",
+        "reason": "wheel_set: confirm left, right evidence before treating shape parameters as image-derived.",
+        "severity": "warn"
+      },
+      {
+        "part_id": "wheel_set",
+        "path": "parts[wheel_set].parameter_proposals",
+        "reason": "wheel_set: review 4 image-scale parameter proposal(s) before applying no-seed geometry.",
+        "severity": "warn"
+      },
+      {
+        "part_id": "roof_lights",
+        "path": "parts[roof_lights].shape.parameters",
+        "reason": "roof_lights: confirm top, front evidence before treating shape parameters as image-derived.",
+        "severity": "warn"
+      },
+      {
+        "part_id": "roof_lights",
+        "path": "parts[roof_lights].parameter_proposals",
+        "reason": "roof_lights: review 2 image-scale parameter proposal(s) before applying no-seed geometry.",
+        "severity": "warn"
+      },
+      {
+        "part_id": "stripe_and_text",
+        "path": "parts[stripe_and_text].shape.parameters",
+        "reason": "stripe_and_text: confirm left, rear evidence before treating shape parameters as image-derived.",
+        "severity": "warn"
+      },
+      {
+        "part_id": "stripe_and_text",
+        "path": "parts[stripe_and_text].parameter_proposals",
+        "reason": "stripe_and_text: review 3 image-scale parameter proposal(s) before applying no-seed geometry.",
+        "severity": "warn"
+      }
+    ],
+    "correction_patches_applied": [
+      {
+        "source": "parameter_proposal_review",
+        "edits": 2,
+        "target_part_graph_id": "ambulance-image-evidence-skeleton-part-graph"
+      }
+    ]
+  }
+}

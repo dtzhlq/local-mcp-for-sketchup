@@ -1,0 +1,38 @@
+{
+  "kind": "part_graph_quality_gate",
+  "ok": true,
+  "thresholds": {
+    "maxProfileDefaultRatio": 0.05,
+    "maxNeedsReviewRatio": 0.12,
+    "minObservedParts": 8,
+    "minInferredParts": 20,
+    "minScaleConfidence": 0.7
+  },
+  "summary": {
+    "part_count": 53,
+    "evidence_status": {
+      "observed": 10,
+      "needs_review": 2,
+      "inferred": 41
+    },
+    "fallback_state": {
+      "real_feature_op": 3,
+      "box_approximation": 5,
+      "needs_review": 2,
+      "visual_helper": 42,
+      "profile_default": 1
+    },
+    "observed_parts": 10,
+    "inferred_parts": 41,
+    "profile_default_parts": 0,
+    "needs_review_parts": 2,
+    "profile_default_ratio": 0,
+    "needs_review_ratio": 0.038,
+    "correction_targets": 22,
+    "parameter_proposals": 45,
+    "parameter_proposal_parts": 17,
+    "review_required_parameter_proposals": 25,
+    "scale_confidence": 0.86
+  },
+  "issues": []
+}

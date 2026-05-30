@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "kind": "part_graph_correction_patch",
+  "source": "reference_visual_qa",
+  "target_part_graph_id": "ambulance-image-evidence-part-graph",
+  "report_verdict": "pass",
+  "edits": []
+}

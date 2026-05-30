@@ -32,6 +32,7 @@
         "vanishing_lines": { "type": "array", "items": { "$ref": "#/$defs/line2" } }
       }
     },
+    "orientation_hints": { "$ref": "#/$defs/orientation_hints" },
     "observations": {
       "type": "array",
       "items": {
@@ -39,7 +40,7 @@
         "required": ["id", "kind", "confidence"],
         "properties": {
           "id": { "type": "string" },
-          "kind": { "enum": ["silhouette", "component_bbox", "center_point", "edge", "curve", "color_region", "text_or_logo", "uncertain"] },
+          "kind": { "enum": ["silhouette", "component_bbox", "center_point", "keypoint", "edge", "curve", "color_region", "text_or_logo", "uncertain"] },
           "component_hint": { "type": "string" },
           "bbox": { "$ref": "#/$defs/bbox" },
           "points": { "$ref": "#/$defs/polyline2" },
@@ -81,6 +82,39 @@
       "prefixItems": [{ "type": "number" }, { "type": "number" }, { "type": "number" }, { "type": "number" }],
       "minItems": 4,
       "maxItems": 4
+    },
+    "orientation_hints": {
+      "type": "object",
+      "required": ["coordinate_convention", "mirror_risk", "semantic_anchors", "review_required"],
+      "properties": {
+        "coordinate_convention": { "const": "image_x_right_y_down" },
+        "model_convention": { "type": "string" },
+        "mirror_risk": {
+          "type": "object",
+          "required": ["status", "confidence", "reasons"],
+          "properties": {
+            "status": { "enum": ["low", "medium", "high", "unknown"] },
+            "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+            "reasons": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "semantic_anchors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "item", "anchor", "direction", "confidence"],
+            "properties": {
+              "id": { "type": "string" },
+              "item": { "type": "string" },
+              "anchor": { "type": "string" },
+              "direction": { "enum": ["left_of", "right_of", "above", "below"] },
+              "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+              "note": { "type": "string" }
+            }
+          }
+        },
+        "review_required": { "type": "boolean" }
+      }
     }
   }
 }
