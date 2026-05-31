@@ -1,0 +1,73 @@
+{
+  "version": 1,
+  "title": "Building Group R7 Photoreal Layout QA",
+  "description": "Layout gate for the R7 photoreal boundary probe. It keeps high-fidelity texture planes and visual site details inside the reviewed site envelope while allowing intentional overlay collisions with texture helpers.",
+  "rules": {
+    "allowed_collisions": [
+      { "item": "internal_roads", "with": "/^(primary_blue_roof_hall_body|warehouse_.*_body|utility_building|admin_office|parking_lot|tank_farm|tank_farm_silo_east|scale_anchor_.*|tree_.*|vehicle_.*|loading_truck_.*|fence_.*)$/" },
+      { "item": "site_orthophoto_texture", "with": "/.*/" },
+      { "item": "parking_lot_texture", "with": "/.*/" },
+      { "item": "tank_farm_texture", "with": "/.*/" },
+      { "item": "/^roof_texture_/", "with": "/.*/" },
+      { "item": "/^.*_gable_roof$/", "with": "/.*/" },
+      { "item": "/^.*_Gable_Roof$/", "with": "/.*/" },
+      { "item": "/^roof_vent_/", "with": "/.*/" },
+      { "item": "/^tree_/", "with": ["site_boundary", "site_orthophoto_texture", "internal_roads", "parking_lot", "utility_building", "admin_office"] },
+      { "item": "/^vehicle_/", "with": ["parking_lot", "parking_lot_texture", "site_orthophoto_texture"] },
+      { "item": "/^loading_truck_/", "with": ["internal_roads", "site_orthophoto_texture", "/^warehouse_.*_body$/", "/^tree_/"] },
+      { "item": "/^fence_/", "with": ["site_boundary", "site_orthophoto_texture", "/^fence_/"] },
+      { "item": "/^(utility_hvac_|admin_roof_unit_)/", "with": "/.*/" }
+    ],
+    "inside": [
+      {
+        "match": "^(primary_blue_roof_hall_body|primary_blue_hall_gable_roof|warehouse_.*_(body|gable_roof)|utility_building|admin_office|parking_lot|internal_roads|tank_farm|tank_farm_silo_east|scale_anchor_.*|site_orthophoto_texture|parking_lot_texture|tank_farm_texture|roof_texture_.*|tree_.*|vehicle_.*|loading_truck_.*|roof_vent_.*|fence_.*|utility_hvac_.*|admin_roof_unit_.*)$",
+        "parent": "site_boundary",
+        "axes": ["x", "y"],
+        "tolerance_mm": 1600
+      }
+    ],
+    "support": [
+      {
+        "match": "^(primary_blue_roof_hall_body|warehouse_.*_body|utility_building|admin_office|parking_lot|internal_roads|tank_farm|tank_farm_silo_east)$",
+        "parent": "site_boundary",
+        "max_gap_mm": 5,
+        "allow_penetration_mm": 1
+      }
+    ],
+    "separation": [
+      {
+        "name": "west warehouse north/south gap remains visible",
+        "items": ["warehouse_west_north_body", "warehouse_west_south_body"],
+        "axes": ["x", "y"],
+        "min_gap_mm": 1200
+      },
+      {
+        "name": "inner warehouse north/south gap remains visible",
+        "items": ["warehouse_inner_north_body", "warehouse_inner_south_body"],
+        "axes": ["x", "y"],
+        "min_gap_mm": 1200
+      },
+      {
+        "name": "blue hall stays distinct from utility building",
+        "items": ["primary_blue_roof_hall_body", "utility_building"],
+        "axes": ["x", "y"],
+        "min_gap_mm": 1000
+      },
+      {
+        "name": "parking lot stays distinct from admin office",
+        "items": ["parking_lot", "admin_office"],
+        "axes": ["x", "y"],
+        "min_gap_mm": 1000
+      }
+    ],
+    "views": [
+      "top",
+      {
+        "name": "height",
+        "title": "Height And Roof Massing",
+        "axes": ["x", "z"],
+        "depth_axis": "y"
+      }
+    ]
+  }
+}

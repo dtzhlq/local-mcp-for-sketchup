@@ -30,7 +30,9 @@ const SHAPE_OPERATIONS = new Set([
   'panel_with_openings',
   'boolean_cutout',
   'face_with_holes',
-  'profile_extrude'
+  'profile_extrude',
+  'gable_roof',
+  'shed_roof'
 ]);
 
 const FEATURE_OPERATIONS = new Set(['cut_hole', 'cut_slot', 'cut_recess', 'add_boss', 'add_raised_rib']);
@@ -191,6 +193,11 @@ function compileFeatureIntent(part, feature) {
 
 function compileGraphOperation(operation, context) {
   const compiled = cloneJson(operation);
+  if (compiled.op === 'image_plane') {
+    for (const field of ['image', 'texture']) {
+      if (typeof compiled[field] === 'string') compiled[field] = resolveAssetPath(compiled[field], context.repoRoot);
+    }
+  }
   if (compiled.target_part_id) {
     compiled.target_id = partObjectId(compiled.target_part_id, context);
     delete compiled.target_part_id;
