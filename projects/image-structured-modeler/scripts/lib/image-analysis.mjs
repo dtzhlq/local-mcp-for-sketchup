@@ -39,13 +39,25 @@ const OBSERVATION_PART_REQUIREMENTS = {
     'roof-red-lightbar': { views: ['left', 'top', 'front'], hints: ['roof-red-lightbar'] },
     'amb-left-red-stripe': { views: ['left'], hints: ['amb-left-red-stripe'] },
     'amb-left-ambulance-text': { views: ['left'], hints: ['amb-left-ambulance-text'] }
+  },
+  building_group: {
+    site_boundary: { views: ['top'], hints: ['site_boundary', 'campus_footprint'] },
+    primary_blue_roof_hall: { views: ['top', 'oblique'], hints: ['primary_blue_roof_hall'] },
+    warehouse_row_west: { views: ['top', 'oblique'], hints: ['warehouse_row_west'] },
+    warehouse_row_inner: { views: ['top', 'oblique'], hints: ['warehouse_row_inner'] },
+    tank_farm: { views: ['top', 'oblique'], hints: ['tank_farm'] },
+    utility_building: { views: ['top', 'oblique'], hints: ['utility_building'] },
+    admin_office: { views: ['top', 'oblique'], hints: ['admin_office'] },
+    parking_lot: { views: ['top'], hints: ['parking_lot'] },
+    internal_roads: { views: ['top'], hints: ['internal_roads'] }
   }
 };
 
 const PROFILE_DEFAULT_SCALE = {
   switch_controller: { width: 280, depth: 42, height: 155 },
   compact_remote: { width: 44, depth: 16, height: 158 },
-  vehicle_ambulance: { width: 2300, depth: 900, height: 1050 }
+  vehicle_ambulance: { width: 2300, depth: 900, height: 1050 },
+  building_group: { width: 520000, depth: 380000, height: 28000 }
 };
 
 export async function listImageFiles(inputPath) {
@@ -360,6 +372,33 @@ function makeOrientationHints({ kind, analysis, objectProfile }) {
         note: 'ABXY versus D-pad placement is a strong mirror cue on front-view controllers.'
       }
     );
+  } else if (objectProfile === 'building_group' && (kind === 'top' || kind === 'oblique')) {
+    semanticAnchors.push(
+      {
+        id: 'building-blue-hall-east-of-warehouses',
+        item: 'primary_blue_roof_hall',
+        anchor: 'warehouse_row_west',
+        direction: 'right_of',
+        confidence: kind === 'top' ? 0.78 : 0.64,
+        note: 'Campus-layout prior: the blue-roof production hall sits to the right/east of the long white warehouse rows.'
+      },
+      {
+        id: 'building-tank-farm-east-of-blue-hall',
+        item: 'tank_farm',
+        anchor: 'primary_blue_roof_hall',
+        direction: 'right_of',
+        confidence: kind === 'top' ? 0.72 : 0.62,
+        note: 'Campus-layout prior: the cylindrical tank farm sits beyond the blue-roof hall on the right side of the site.'
+      },
+      {
+        id: 'building-parking-south-of-blue-hall',
+        item: 'parking_lot',
+        anchor: 'primary_blue_roof_hall',
+        direction: 'below',
+        confidence: kind === 'top' ? 0.7 : 0.58,
+        note: 'Campus-layout prior: the parking field is below/south of the primary blue-roof hall in the supplied views.'
+      }
+    );
   }
 
   const reasons = [];
@@ -416,6 +455,8 @@ function componentCandidatesForView(viewKind, bbox, viewConfidence, objectProfil
 
   if (objectProfile === 'vehicle_ambulance') {
     addAmbulanceCandidates(viewKind, { addBox, addPoint });
+  } else if (objectProfile === 'building_group') {
+    addBuildingGroupCandidates(viewKind, { addBox, addPoint });
   } else if (viewKind === 'front') {
     addBox('front_left_shell_candidate', 'left_joycon_shell', { x: 0.04, y: 0.08, width: 0.31, height: 0.84 }, 'Template candidate from known game-controller front layout.');
     addBox('front_center_grip_candidate', 'center_grip_body', { x: 0.34, y: 0.11, width: 0.32, height: 0.78 }, 'Template candidate from known game-controller front layout.');
@@ -465,6 +506,40 @@ function addAmbulanceCandidates(viewKind, helpers) {
   }
 }
 
+function addBuildingGroupCandidates(viewKind, helpers) {
+  const { addBox, addPoint } = helpers;
+  const confidenceBoost = viewKind === 'top' ? 0.06 : 0;
+  const addCampusBox = (id, hint, rel, note, confidence) => {
+    addBox(id, hint, rel, note, Math.min(0.74, confidence + confidenceBoost));
+  };
+
+  if (viewKind === 'top') {
+    addCampusBox('building_top_site_boundary', 'site_boundary', { x: 0.02, y: 0.05, width: 0.92, height: 0.88 }, 'R7 campus-layout template candidate for the full industrial site boundary.', 0.66);
+    addCampusBox('building_top_warehouse_row_west', 'warehouse_row_west', { x: 0.06, y: 0.14, width: 0.21, height: 0.63 }, 'R7 campus-layout prior for the west long white warehouse row.', 0.7);
+    addCampusBox('building_top_warehouse_row_inner', 'warehouse_row_inner', { x: 0.28, y: 0.16, width: 0.13, height: 0.58 }, 'R7 campus-layout prior for the inner white warehouse row.', 0.66);
+    addCampusBox('building_top_primary_blue_hall', 'primary_blue_roof_hall', { x: 0.43, y: 0.14, width: 0.29, height: 0.52 }, 'R7 campus-layout prior for the primary blue-roof hall footprint.', 0.72);
+    addCampusBox('building_top_tank_farm', 'tank_farm', { x: 0.77, y: 0.1, width: 0.14, height: 0.18 }, 'R7 campus-layout prior for the cylindrical tank farm.', 0.64);
+    addCampusBox('building_top_utility_building', 'utility_building', { x: 0.73, y: 0.43, width: 0.15, height: 0.2 }, 'R7 campus-layout prior for the right-side utility/mechanical building.', 0.6);
+    addCampusBox('building_top_admin_office', 'admin_office', { x: 0.41, y: 0.69, width: 0.15, height: 0.13 }, 'R7 campus-layout prior for the low admin/office block near the lower center of the campus.', 0.58);
+    addCampusBox('building_top_parking_lot', 'parking_lot', { x: 0.58, y: 0.68, width: 0.32, height: 0.19 }, 'R7 campus-layout prior for the parking lot footprint.', 0.66);
+    addCampusBox('building_top_internal_roads', 'internal_roads', { x: 0.03, y: 0.08, width: 0.89, height: 0.8 }, 'R7 campus-layout prior for internal road loops and paved circulation.', 0.52);
+    addPoint('building_top_blue_hall_center', 'primary_blue_roof_hall', { x: 0.57, y: 0.4 }, 'Center keypoint for primary blue-roof hall massing review.', 0.66);
+    addPoint('building_top_tank_farm_center', 'tank_farm', { x: 0.84, y: 0.19 }, 'Center keypoint for tank farm massing review.', 0.58);
+  } else if (viewKind === 'oblique') {
+    addCampusBox('building_oblique_site_boundary', 'site_boundary', { x: 0.03, y: 0.08, width: 0.91, height: 0.82 }, 'R7 campus-layout template candidate for the oblique site extent.', 0.54);
+    addCampusBox('building_oblique_warehouse_row_west', 'warehouse_row_west', { x: 0.08, y: 0.18, width: 0.22, height: 0.51 }, 'R7 campus-layout prior for west warehouse rows in oblique view.', 0.58);
+    addCampusBox('building_oblique_warehouse_row_inner', 'warehouse_row_inner', { x: 0.29, y: 0.2, width: 0.15, height: 0.49 }, 'R7 campus-layout prior for inner warehouse rows in oblique view.', 0.54);
+    addCampusBox('building_oblique_primary_blue_hall', 'primary_blue_roof_hall', { x: 0.44, y: 0.17, width: 0.3, height: 0.44 }, 'R7 campus-layout prior for blue-roof hall massing in oblique view.', 0.6);
+    addCampusBox('building_oblique_tank_farm', 'tank_farm', { x: 0.78, y: 0.12, width: 0.14, height: 0.17 }, 'R7 campus-layout prior for cylindrical tanks in oblique view.', 0.54);
+    addCampusBox('building_oblique_utility_building', 'utility_building', { x: 0.72, y: 0.43, width: 0.16, height: 0.19 }, 'R7 campus-layout prior for right-side utility/mechanical building in oblique view.', 0.52);
+    addCampusBox('building_oblique_admin_office', 'admin_office', { x: 0.4, y: 0.68, width: 0.17, height: 0.13 }, 'R7 campus-layout prior for lower admin/office block in oblique view.', 0.5);
+    addCampusBox('building_oblique_parking_lot', 'parking_lot', { x: 0.58, y: 0.66, width: 0.31, height: 0.18 }, 'R7 campus-layout prior for parking lot in oblique view.', 0.52);
+    addCampusBox('building_oblique_internal_roads', 'internal_roads', { x: 0.04, y: 0.1, width: 0.88, height: 0.76 }, 'R7 campus-layout prior for paved circulation in oblique view.', 0.45);
+  } else {
+    addCampusBox('building_uncertain_site_boundary', 'site_boundary', { x: 0.03, y: 0.08, width: 0.9, height: 0.82 }, 'R7 campus-layout fallback candidate until this building-group view is classified.', 0.38);
+  }
+}
+
 export function makeImageSetObservation({ objectType, objectName, analyses, assignedViews, overlayDir = null }) {
   const objectProfile = inferObjectProfile(objectType);
   const images = assignedViews.map((assigned) => makeImageObservation(assigned, objectProfile));
@@ -473,12 +548,20 @@ export function makeImageSetObservation({ objectType, objectName, analyses, assi
   const missingViews = requiredViews.filter((view) => !detected.includes(view));
   const usableCount = images.filter((item) => item.quality_report.usable_for_modeling).length;
   const risks = [];
-  if (!detected.includes('front')) risks.push('front view not confidently detected');
-  if (!detedHasSide(detected)) risks.push('side/depth view not confidently detected');
-  if (!detected.includes('top')) risks.push('true top view is missing');
+  if (objectProfile === 'building_group') {
+    if (!detected.includes('top')) risks.push('true site-plan/top view is missing');
+    if (!detected.includes('oblique')) risks.push('oblique aerial view is missing');
+  } else {
+    if (!detected.includes('front')) risks.push('front view not confidently detected');
+    if (!detedHasSide(detected)) risks.push('side/depth view not confidently detected');
+    if (!detected.includes('top')) risks.push('true top view is missing');
+  }
   if (usableCount < Math.ceil(images.length / 2)) risks.push('less than half of the images are usable by current CV heuristics');
 
   const scaleCalibration = makeScaleCalibration({ objectProfile, images, missingViews });
+  const usableForModeling = objectProfile === 'building_group'
+    ? usableCount > 0 && detected.includes('top') && detected.includes('oblique')
+    : usableCount > 0 && detected.includes('front');
   return {
     version: 1,
     object: {
@@ -494,7 +577,7 @@ export function makeImageSetObservation({ objectType, objectName, analyses, assi
     images,
     evidence_graph: makeObservationEvidenceGraph({ objectProfile, images, detected, missingViews, scaleCalibration }),
     quality_report: {
-      usable_for_modeling: usableCount > 0 && detected.includes('front'),
+      usable_for_modeling: usableForModeling,
       risks,
       notes: [
         'This is a deterministic CV baseline. A later VLM pass should verify component semantics.',
@@ -503,11 +586,7 @@ export function makeImageSetObservation({ objectType, objectName, analyses, assi
     },
     review: {
       overlay_dir: overlayDir ? toRepoRelative(overlayDir) : null,
-      open_questions: [
-        'Confirm which photos are true front/rear/side views.',
-        'Provide one known physical dimension to lock scale.',
-        'Mark component labels for shells, buttons, sticks, screws, and grips.'
-      ]
+      open_questions: reviewQuestionsForProfile(objectProfile)
     }
   };
 }
@@ -625,6 +704,7 @@ function evidenceKind(kind) {
 function requiredViewsForProfile(objectProfile) {
   if (objectProfile === 'vehicle_ambulance') return ['left', 'front', 'rear', 'top'];
   if (objectProfile === 'compact_remote') return ['front', 'right', 'top'];
+  if (objectProfile === 'building_group') return ['top', 'oblique'];
   return ['front', 'rear', 'right', 'top'];
 }
 
@@ -676,7 +756,23 @@ function dimensionsForView(view, defaults) {
 function inferObjectProfile(objectType) {
   if (['remote_control', 'media_remote', 'compact_remote'].includes(objectType)) return 'compact_remote';
   if (['vehicle_ambulance', 'ambulance', 'toy_ambulance'].includes(objectType)) return 'vehicle_ambulance';
+  if (['building_group', 'building_campus', 'industrial_campus', 'factory_campus', 'industrial_park', 'factory_complex'].includes(objectType)) return 'building_group';
   return 'switch_controller';
+}
+
+function reviewQuestionsForProfile(objectProfile) {
+  if (objectProfile === 'building_group') {
+    return [
+      'Confirm the top/oblique view assignments and the campus north/up convention.',
+      'Provide one known site dimension, bay spacing, or road width to lock scale.',
+      'Mark building/tank/parking/road labels before generating a final massing PartGraph.'
+    ];
+  }
+  return [
+    'Confirm which photos are true front/rear/side views.',
+    'Provide one known physical dimension to lock scale.',
+    'Mark component labels for shells, buttons, sticks, screws, and grips.'
+  ];
 }
 
 export async function renderObservationOverlay(observation, outputPath, options = {}) {

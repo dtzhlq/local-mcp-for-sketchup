@@ -12,7 +12,7 @@
       "properties": {
         "type": { "type": "string" },
         "name": { "type": "string" },
-        "profile": { "enum": ["switch_controller", "compact_remote", "vehicle_ambulance"] },
+        "profile": { "enum": ["switch_controller", "compact_remote", "vehicle_ambulance", "building_group"] },
         "source_images": { "type": "array", "items": { "type": "string" } }
       }
     },

@@ -217,6 +217,7 @@ await assertFeatureMappingCorrectionRegression();
 await assertSingleImageEvidenceDowngrade();
 const remoteChecked = await assertCompactRemoteSample();
 const ambulanceEvidenceChecked = await assertAmbulancePartGraphEvidenceSample();
+const buildingGroupChecked = await assertBuildingGroupObservationSample();
 
 process.stdout.write(`${JSON.stringify({
   ok: true,
@@ -234,6 +235,7 @@ process.stdout.write(`${JSON.stringify({
     feature_mapping_regression: true,
     compact_remote_sample: remoteChecked,
     ambulance_part_graph_evidence: ambulanceEvidenceChecked,
+    building_group_observation_sample: buildingGroupChecked,
     ambulance_proposal_review_chain: true,
     warning_budget: true,
     scripts: true
@@ -631,6 +633,40 @@ async function assertAmbulancePartGraphEvidenceSample() {
     includePreview: false
   });
   assert.ok(correctedBadReport.summary.total < badReport.summary.total, 'applied correction patch should reduce reference visual QA issues');
+  return true;
+}
+
+async function assertBuildingGroupObservationSample() {
+  const base = path.join(subprojectRoot, 'examples', 'building-group');
+  const observations = JSON.parse(await fs.readFile(path.join(base, 'observations.json'), 'utf8'));
+  assertValid(validateImageSetObservation, observations, 'building group observations.json');
+  assert.equal(observations.object.profile, 'building_group', 'building group observations should declare building_group profile');
+  assert.equal(observations.images.length, 3, 'building group observations should keep the three supplied source images');
+  assert.ok(observations.views_detected.includes('top'), 'building group observations should include a top/site-plan view');
+  assert.ok(observations.views_detected.includes('oblique'), 'building group observations should include oblique aerial views');
+  assert.deepEqual(observations.missing_views, [], 'building group observation set should satisfy the R7.0 top/oblique view gate');
+  assert.equal(observations.quality_report.usable_for_modeling, true, 'building group observation set should be usable for R7 massing intake');
+  assert.ok(observations.scale_calibration.default_scale.width >= 500000, 'building group scale calibration should use campus-scale defaults in mm');
+  assert.ok(observations.scale_calibration.measurements.some((measurement) => measurement.view === 'top'), 'building group scale calibration should include a top-view measurement');
+  assert.ok(observations.evidence_graph.part_matches.length >= 8, 'building group evidence graph should expose campus component matches');
+  assert.deepEqual(graphPartByIdFromGraph(observations.evidence_graph, 'primary_blue_roof_hall').missing_views, [], 'primary blue-roof hall should have top and oblique evidence');
+  assert.deepEqual(graphPartByIdFromGraph(observations.evidence_graph, 'tank_farm').missing_views, [], 'tank farm should have top and oblique evidence');
+  assert.deepEqual(graphPartByIdFromGraph(observations.evidence_graph, 'parking_lot').missing_views, [], 'parking lot should have top evidence');
+
+  const topObservation = observations.images.find((image) => image.detected_view.kind === 'top');
+  assert.ok(topObservation, 'building group observations should contain the hinted top view');
+  assert.ok(topObservation.observations.some((item) => item.component_hint === 'primary_blue_roof_hall'), 'top view should include the blue-roof hall candidate');
+  assert.ok(topObservation.observations.some((item) => item.component_hint === 'warehouse_row_west'), 'top view should include the west warehouse row candidate');
+  assert.ok(topObservation.observations.some((item) => item.component_hint === 'internal_roads'), 'top view should include internal road candidates');
+  assert.ok(topObservation.orientation_hints.semantic_anchors.some((anchor) => anchor.id === 'building-blue-hall-east-of-warehouses'), 'top view should retain a campus orientation anchor');
+  assert.equal(topObservation.orientation_hints.review_required, true, 'top-view campus orientation should remain review-gated until north/up is confirmed');
+
+  for (const observation of observations.images) {
+    assertValid(validateImageObservation, stripCollectionOnlyFields(observation), `${observation.image.path} image observation`);
+  }
+
+  const overlays = await fs.readdir(path.join(base, 'review-overlays'));
+  assert.equal(overlays.filter((name) => name.endsWith('-overlay.png')).length, 3, 'building group review overlays should cover all source images');
   return true;
 }
 

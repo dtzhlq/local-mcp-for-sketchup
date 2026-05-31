@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "object_type": "building_group",
+  "object_name": "GPT Image Industrial Campus",
+  "views": [
+    {
+      "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+      "kind": "top",
+      "confidence": 0.9
+    },
+    {
+      "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png",
+      "kind": "oblique",
+      "confidence": 0.86
+    },
+    {
+      "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png",
+      "kind": "oblique",
+      "confidence": 0.86
+    }
+  ]
+}

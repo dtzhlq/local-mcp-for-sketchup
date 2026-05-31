@@ -1,6 +1,6 @@
 # Image Structured Modeler Memo
 
-更新时间：2026-05-29
+更新时间：2026-05-31
 
 ## 当前结论
 
@@ -30,17 +30,18 @@ observations.json -> model-plan.json -> output.json -> review/index.html -> mock
 - R6 proposal review UI 当前边界：`image-structured:proposal-review-ambulance` 会生成 `examples/ambulance/proposal-review/index.html`，列出 20 条 no-seed proposal、预选 fixture 接受项、展示 patch target，并允许导出 accepted proposal JSON。
 - R6 proposal review 复验链当前边界：`image-structured:proposal-review-chain-ambulance` 会重建 accepted proposal patch、刷新 proposal review、编译 `output.proposal-applied.json` 并跑 mock QA；`:queue` 版本会保存 `output/image-structured-ambulance-proposal-applied.skp`。当前只接受 body/cab 两项时输出 `review_required: true`，layout/reference QA fail，physical consistency pass。
 - 镜像/手性风险已显式证据化：`observations.json` 的每张图会写入 `orientation_hints`，记录 `image_x_right_y_down` 坐标约定、mirror risk、semantic anchors 和 `review_required`；主线 Reference Visual QA 也新增 `orientation` 规则组，Switch 左右摇杆镜像负例会被 `reference.orientation_order` 打回。
+- R7.0 建筑群输入基线当前边界：`image-structured:analyze-building-group` 会读取 `test/建筑群/` 的 3 张 GPT Image 合成航拍图，使用 `building_group` profile 生成 `examples/building-group/observations.json` 和 review overlays。当前只完成 ObservationSet -> EvidenceGraph -> overlay review；scale 仍是 profile default，top-view orientation/north-up 仍保持 review-gated，还没有生成建筑 massing PartGraph。
 
 当前完成度判断：
 
 - Switch-only 技术预览闭环：约 95%。
 - 通用“图片 -> 结构化 SketchUp 模型”技术预览 MVP：约 88%。
-- 当前优先级：semantic fusion、corrections workbench 和主线 CAD boolean/manifold 已补齐；R1/R2 已把救护车验收迁移到 `ProductProfile + PartGraph -> JSON DSL`；R3 Reference Visual QA 已能对救护车做 silhouette/keypoint/area/relative-placement/orientation gate；R4 已完成 image evidence -> PartGraph -> DSL -> Reference Visual QA -> CorrectionPatch -> QualityGate 的 ambulance 闭环；R5 三产品样本 gate 已由主线完成；R6 已补 no-seed parameter proposals、proposal-to-patch authoring、proposal review UI、proposal-applied mock/queue QA 链路，并在主线把 physical consistency QA 扩到 ambulance/Switch/Fuji 三样例。后续重点进入 R7 建筑群照片建模。
+- 当前优先级：semantic fusion、corrections workbench 和主线 CAD boolean/manifold 已补齐；R1/R2 已把救护车验收迁移到 `ProductProfile + PartGraph -> JSON DSL`；R3 Reference Visual QA 已能对救护车做 silhouette/keypoint/area/relative-placement/orientation gate；R4 已完成 image evidence -> PartGraph -> DSL -> Reference Visual QA -> CorrectionPatch -> QualityGate 的 ambulance 闭环；R5 三产品样本 gate 已由主线完成；R6 已补 no-seed parameter proposals、proposal-to-patch authoring、proposal review UI、proposal-applied mock/queue QA 链路，并在主线把 physical consistency QA 扩到 ambulance/Switch/Fuji 三样例。R7.0 已完成建筑群输入 evidence/overlay 基线，后续重点是把该 EvidenceGraph 推进到 review-gated massing PartGraph。
 
 下一轮建议：
 
 - Reference Visual QA 已能反向给出 `update_part_graph` correction suggestion，目标是修改 part graph 字段，而不是直接改 DSL 坐标；`part_graph_correction_patch` 已可生成和应用。
-- 下一步：进入 R7 建筑群照片建模，把建筑体块、立面、屋顶线、门窗洞口、尺度锚点和遮挡/缺视角问题纳入 scene-level evidence；继续保持 proposal -> patch -> QA/queue 的 review-gated 纪律。
+- 下一步：继续 R7 建筑群照片建模，把 `building_group` EvidenceGraph 转成建筑体块、立面、屋顶线、门窗洞口、尺度锚点和遮挡/缺视角的 review-gated massing PartGraph；继续保持 proposal -> patch -> QA/queue 的 review-gated 纪律。
 
 本轮验收暴露的关键事实：
 
@@ -146,6 +147,12 @@ observations.json -> model-plan.json -> output.json -> review/index.html -> mock
   - `examples/ambulance/output.generated.json` 可由 `part-graph-compiler` 编译为当前 104-op ambulance DSL；compiled QA metadata 会保留 `generated_from_image_evidence`、evidence confidence 和 missing views。
   - `examples/ambulance/reference-visual-qa/ambulance-generated/report.json` 当前 pass / 0 issues；`correction-patch.reference-visual.json` 因 pass 为空 patch，`part-graph.corrected.json` 保持 part count 不变。
   - `examples/ambulance/quality-report.json` 当前 pass：`profile_default_ratio=0`、`needs_review_ratio=0.038`、scale confidence `0.86`、`parameter_proposals=45`、`parameter_proposal_parts=17`。
+- Building group R7.0 input 样例：
+  - `test/建筑群/` 包含 3 张 GPT Image 合成厂区航拍图：1 张 top/site-plan、2 张 oblique。
+  - `examples/building-group/view-hints.json` 锁定 top/oblique 视角，避免 CV-only view classification 漂移。
+  - `examples/building-group/observations.json` profile 为 `building_group`，views 为 `oblique / top`，missing views 为 0，image set quality 为 `high`。
+  - evidence graph 覆盖 `site_boundary`、`primary_blue_roof_hall`、`warehouse_row_west`、`warehouse_row_inner`、`tank_farm`、`utility_building`、`admin_office`、`parking_lot` 和 `internal_roads`。
+  - `examples/building-group/review-overlays/*.png` 已生成 3 张 overlay；当前 top orientation 仍 review-gated，要求确认 north/up 和至少一个真实尺度锚点后再进入 PartGraph。
 
 ## 已完成
 
