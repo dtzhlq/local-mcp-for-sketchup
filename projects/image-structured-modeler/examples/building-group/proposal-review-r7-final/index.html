@@ -1,0 +1,2238 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Parameter Proposal Review</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #18202b;
+      --muted: #5d6878;
+      --line: #d6dce5;
+      --panel: #ffffff;
+      --soft: #f4f7fa;
+      --accent: #0f766e;
+      --accent-soft: #e8f7f4;
+      --warn: #9a5a00;
+      --warn-soft: #fff6e6;
+      --bad: #b42318;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: #eef2f6;
+      line-height: 1.45;
+    }
+    header {
+      background: var(--panel);
+      border-bottom: 1px solid var(--line);
+      padding: 26px 32px 18px;
+    }
+    main {
+      max-width: 1480px;
+      margin: 0 auto;
+      padding: 24px 32px 44px;
+    }
+    h1 {
+      margin: 0 0 6px;
+      font-size: 28px;
+      line-height: 1.16;
+      font-weight: 760;
+      letter-spacing: 0;
+    }
+    h2 {
+      margin: 0 0 12px;
+      font-size: 18px;
+      line-height: 1.25;
+      font-weight: 720;
+      letter-spacing: 0;
+    }
+    h3 {
+      margin: 0 0 8px;
+      font-size: 14px;
+      line-height: 1.25;
+      font-weight: 720;
+      letter-spacing: 0;
+    }
+    p { margin: 0; }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.92em;
+    }
+    .subtle { color: var(--muted); }
+    .grid { display: grid; gap: 16px; }
+    .summary {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      margin-bottom: 18px;
+    }
+    .metric, .section {
+      background: var(--panel);
+      border: 1px solid var(--line);
+    }
+    .metric {
+      min-height: 86px;
+      padding: 13px;
+    }
+    .metric strong {
+      display: block;
+      margin-top: 6px;
+      font-size: 24px;
+      line-height: 1.1;
+    }
+    .section {
+      padding: 18px;
+      margin-bottom: 18px;
+    }
+    .two {
+      grid-template-columns: minmax(280px, 0.8fr) minmax(360px, 1.2fr);
+      align-items: start;
+    }
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    button {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      padding: 7px 10px;
+      font: inherit;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    button.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    button:focus-visible,
+    textarea:focus-visible,
+    input:focus-visible {
+      outline: 2px solid #2563eb;
+      outline-offset: 2px;
+    }
+    .tag {
+      display: inline-block;
+      max-width: 100%;
+      margin: 0 5px 5px 0;
+      padding: 2px 7px;
+      border: 1px solid var(--line);
+      background: #fff;
+      font-size: 12px;
+      overflow-wrap: anywhere;
+    }
+    .tag.good {
+      border-color: #9bd6ce;
+      background: var(--accent-soft);
+      color: #0f5f58;
+    }
+    .tag.warn {
+      border-color: #e8c57f;
+      background: var(--warn-soft);
+      color: var(--warn);
+    }
+    .tag.bad {
+      border-color: #efb2ac;
+      background: #fff1f0;
+      color: var(--bad);
+    }
+    .proposal-list {
+      border: 1px solid var(--line);
+      background: var(--soft);
+      max-height: 720px;
+      overflow: auto;
+    }
+    .proposal-item {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 10px;
+      padding: 12px;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+    }
+    .proposal-item:last-child { border-bottom: 0; }
+    .proposal-item input { margin-top: 3px; }
+    .proposal-title {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .proposal-grid {
+      display: grid;
+      grid-template-columns: minmax(120px, 0.7fr) minmax(180px, 1fr);
+      gap: 8px 12px;
+      font-size: 13px;
+    }
+    .proposal-grid div:nth-child(odd) {
+      color: var(--muted);
+    }
+    .value-box {
+      max-height: 120px;
+      overflow: auto;
+      padding: 8px;
+      background: var(--soft);
+      border: 1px solid var(--line);
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+    textarea {
+      width: 100%;
+      min-height: 620px;
+      resize: vertical;
+      border: 1px solid var(--line);
+      padding: 10px;
+      color: var(--ink);
+      background: #fff;
+      font: 12px/1.45 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+    ul {
+      margin: 0;
+      padding-left: 18px;
+    }
+    li + li { margin-top: 4px; }
+    .status-line {
+      min-height: 20px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .table-wrap { overflow-x: auto; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    th, td {
+      padding: 8px 10px;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+    }
+    th {
+      background: var(--soft);
+      font-weight: 700;
+    }
+    @media (max-width: 980px) {
+      header { padding: 22px 18px 14px; }
+      main { padding: 18px; }
+      .summary, .two, .proposal-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Parameter Proposal Review</h1>
+    <p class="subtle">building-group-image-evidence-massing-part-graph - accepted proposals become a standard PartGraph correction patch.</p>
+  </header>
+  <main>
+    <section class="grid summary">
+      <div class="metric"><span class="subtle">Proposals</span><strong>19</strong></div>
+      <div class="metric"><span class="subtle">Parts Covered</span><strong>14</strong></div>
+      <div class="metric"><span class="subtle">Review Required</span><strong>19</strong></div>
+      <div class="metric"><span class="subtle">Accepted Fixture</span><strong>5</strong></div>
+      <div class="metric"><span class="subtle">Patch Edits</span><strong>5</strong></div>
+    </section>
+
+    <section class="grid two">
+      <div class="section">
+        <h2>Review Context</h2>
+        <p><span class="tag warn">needs_review: 19</span></p>
+        <h3 style="margin-top:14px">Sources</h3>
+        <ul><li><code>partGraphPath</code>: <code>projects/image-structured-modeler/examples/building-group/part-graph.massing.json</code></li><li><code>acceptedReviewPath</code>: <code>projects/image-structured-modeler/examples/building-group/parameter-proposal-review.accepted-all.json</code></li><li><code>patchPath</code>: <code>projects/image-structured-modeler/examples/building-group/correction-patch.detail-proposals-all.json</code></li></ul>
+        <h3 style="margin-top:14px">Patch Summary</h3>
+        <ul>
+    <li><code>source</code>: parameter_proposal_review</li>
+    <li><code>report_verdict</code>: accepted_all_current_detail_proposals</li>
+    <li><code>set_edits</code>: 5</li>
+    <li><code>targets</code>: primary_blue_roof_hall, warehouse_row_west, warehouse_row_inner, utility_building, admin_office</li>
+  </ul>
+      </div>
+      <div class="section">
+        <h2>Accepted Review JSON</h2>
+        <div class="toolbar">
+          <button type="button" id="select-all-proposals">Select All</button>
+          <button type="button" id="clear-proposals">Clear</button>
+          <button type="button" class="primary" id="validate-accepted-proposals">Validate JSON</button>
+          <button type="button" id="copy-accepted-proposals">Copy</button>
+          <button type="button" id="download-accepted-proposals">Download</button>
+        </div>
+        <textarea id="accepted-proposals-json" spellcheck="false">{
+  &quot;version&quot;: 1,
+  &quot;kind&quot;: &quot;parameter_proposal_review&quot;,
+  &quot;target_part_graph_id&quot;: &quot;building-group-image-evidence-massing-part-graph&quot;,
+  &quot;reviewer&quot;: &quot;r7-building-detail-final-acceptance&quot;,
+  &quot;verdict&quot;: &quot;accepted_all_current_detail_proposals&quot;,
+  &quot;accepted_proposals&quot;: [
+    {
+      &quot;part_id&quot;: &quot;primary_blue_roof_hall&quot;,
+      &quot;path&quot;: &quot;parts[primary_blue_roof_hall].feature_intents&quot;,
+      &quot;reason&quot;: &quot;Accept the reviewed primary hall roofline, facade, loading-door, and window-band feature intents for the R7 final building-group model.&quot;
+    },
+    {
+      &quot;part_id&quot;: &quot;warehouse_row_west&quot;,
+      &quot;path&quot;: &quot;parts[warehouse_row_west].feature_intents&quot;,
+      &quot;reason&quot;: &quot;Accept the reviewed west warehouse roof seams and loading-bay feature intents for the R7 final building-group model.&quot;
+    },
+    {
+      &quot;part_id&quot;: &quot;warehouse_row_inner&quot;,
+      &quot;path&quot;: &quot;parts[warehouse_row_inner].feature_intents&quot;,
+      &quot;reason&quot;: &quot;Accept the reviewed inner warehouse roof seams and loading-bay feature intents for the R7 final building-group model.&quot;
+    },
+    {
+      &quot;part_id&quot;: &quot;utility_building&quot;,
+      &quot;path&quot;: &quot;parts[utility_building].feature_intents&quot;,
+      &quot;reason&quot;: &quot;Accept the reviewed utility-building service-ridge, louver-slot, and service-door feature intents for the R7 final building-group model.&quot;
+    },
+    {
+      &quot;part_id&quot;: &quot;admin_office&quot;,
+      &quot;path&quot;: &quot;parts[admin_office].feature_intents&quot;,
+      &quot;reason&quot;: &quot;Accept the reviewed admin-office parapet, entry-door, and window feature intents for the R7 final building-group model.&quot;
+    }
+  ],
+  &quot;notes&quot;: [
+    &quot;This fixture accepts every current roofline, facade, and opening detail proposal from the R7 building-group massing PartGraph.&quot;,
+    &quot;Acceptance is scoped to the generated-image industrial campus sample and remains tied to the image-evidence review trail, not surveyed architectural reconstruction.&quot;
+  ]
+}</textarea>
+        <p class="status-line" id="proposal-review-status"></p>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Proposal Queue</h2>
+      <div class="proposal-list">
+        <article class="proposal-item">
+    <input type="checkbox" data-proposal-key="site_boundary|parts[site_boundary].shape.parameters">
+    <div>
+      <div class="proposal-title">
+        <strong>site_boundary</strong>
+        <span class="tag">shape.parameters</span>
+        <span class="tag warn">needs_review</span>
+        <span class="tag">0.62</span>
+      </div>
+      <div class="proposal-grid">
+        <div>Path</div><div><code>parts[site_boundary].shape.parameters</code></div>
+        <div>Basis</div><div><span class="tag good">building_group_evidence_bbox</span><span class="tag good">known_element_scale_calibration</span></div>
+        <div>Views</div><div><span class="tag ">source:oblique</span><span class="tag ">source:top</span></div>
+        <div>Measurements</div><div>0</div>
+        <div>Current Value</div><div class="value-box">{
+  &quot;origin&quot;: [
+    -65000,
+    -49000,
+    -80
+  ],
+  &quot;size&quot;: [
+    130000,
+    98000,
+    80
+  ]
+}</div>
+        <div>Proposed Value</div><div class="value-box">{
+  &quot;origin&quot;: [
+    -65000,
+    -49000,
+    -80
+  ],
+  &quot;size&quot;: [
+    130000,
+    98000,
+    80
+  ]
+}</div>
+      </div>
+    </div>
+  </article><article class="proposal-item">
+    <input type="checkbox" data-proposal-key="primary_blue_roof_hall|parts[primary_blue_roof_hall].shape.parameters">
+    <div>
+      <div class="proposal-title">
+        <strong>primary_blue_roof_hall</strong>
+        <span class="tag">shape.parameters</span>
+        <span class="tag warn">needs_review</span>
+        <span class="tag">0.58</span>
+      </div>
+      <div class="proposal-grid">
+        <div>Path</div><div><code>parts[primary_blue_roof_hall].shape.parameters</code></div>
+        <div>Basis</div><div><span class="tag good">building_group_evidence_bbox</span><span class="tag good">known_element_scale_calibration</span></div>
+        <div>Views</div><div><span class="tag ">source:oblique</span><span class="tag ">source:top</span></div>
+        <div>Measurements</div><div>0</div>
+        <div>Current Value</div><div class="value-box">{
+  &quot;origin&quot;: [
+    -7113.7,
+    -19170.2,
+    0
+  ],
+  &quot;size&quot;: [
+    40944,
+    58112.3,
+    16500
+  ]
+}</div>
+        <div>Proposed Value</div><div class="value-box">{
+  &quot;origin&quot;: [
+    -7113.7,
+    -19170.2,
+    0
+  ],
+  &quot;size&quot;: [
+    40944,
+    58112.3,
+    16500
+  ]
+}</div>
+      </div>
+    </div>
+  </article><article class="proposal-item">
+    <input type="checkbox" data-proposal-key="primary_blue_roof_hall|parts[primary_blue_roof_hall].feature_intents" checked>
+    <div>
+      <div class="proposal-title">
+        <strong>primary_blue_roof_hall</strong>
+        <span class="tag">feature_intents</span>
+        <span class="tag warn">needs_review</span>
+        <span class="tag">0.5</span>
+      </div>
+      <div class="proposal-grid">
+        <div>Path</div><div><code>parts[primary_blue_roof_hall].feature_intents</code></div>
+        <div>Basis</div><div><span class="tag good">building_group_oblique_roofline_hint</span><span class="tag good">building_group_facade_rhythm_prior</span><span class="tag good">building_group_known_element_scale</span></div>
+        <div>Views</div><div><span class="tag good">confirmed:oblique</span><span class="tag good">confirmed:top</span><span class="tag warn">missing:facade_orthographic</span><span class="tag warn">missing:opening_closeup</span><span class="tag ">source:oblique</span><span class="tag ">source:top</span></div>
+        <div>Measurements</div><div>0</div>
+        <div>Current Value</div><div class="value-box">[]</div>
+        <div>Proposed Value</div><div class="value-box">[
+  {
+    &quot;id&quot;: &quot;primary_blue_roof_hall_roof_center_ridge&quot;,
+    &quot;operation&quot;: &quot;add_raised_rib&quot;,
+    &quot;face&quot;: &quot;top&quot;,
+    &quot;parameters&quot;: {
+      &quot;center&quot;: [
+        20472,
+        29056.2
+      ],
+      &quot;length&quot;: 51138.8,
+      &quot;width&quot;: 737,
+      &quot;height&quot;: 260,
+      &quot;direction&quot;: &quot;v&quot;
+    },
+    &quot;semantic&quot;: &quot;roofline.center_ridge&quot;,
+    &quot;fallback_state&quot;: &quot;needs_review&quot;,
+    &quot;evidence_sources&quot;: [
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;oblique&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.6,
+        &quot;note&quot;: &quot;R7 campus-layout prior for blue-roof hall massing in oblique view.&quot;,
+        &quot;observation_id&quot;: &quot;building_oblique_primary_blue_hall&quot;
+      },
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;top&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.74,
+        &quot;note&quot;: &quot;R7 campus-layout prior for the primary blue-roof hall footprint.&quot;,
+        &quot;observation_id&quot;: &quot;building_top_primary_blue_hall&quot;
+      },
+      {
+        &quot;kind&quot;: &quot;center_point&quot;,
+        &quot;view&quot;: &quot;top&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.66,
+        &quot;note&quot;: &quot;Center keypoint for primary blue-roof hall massing review.&quot;,
+        &quot;observation_id&quot;: &quot;building_top_blue_hall_center&quot;
+      },
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;oblique&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.6,
+        &quot;note&quot;: &quot;R7 campus-layout prior for blue-roof hall massing in oblique view.&quot;,
+        &quot;observation_id&quot;: &quot;building_oblique_primary_blue_hall&quot;
+      }
+    ]
+  },
+  {
+    &quot;id&quot;: &quot;primary_blue_roof_hall_roof_west_eave_line&quot;,
+    &quot;operation&quot;: &quot;add_raised_rib&quot;,
+    &quot;face&quot;: &quot;top&quot;,
+    &quot;parameters&quot;: {
+      &quot;center&quot;: [
+        7369.9,
+        29056.2
+      ],
+      &quot;length&quot;: 47652.1,
+      &quot;width&quot;: 220,
+      &quot;height&quot;: 140,
+      &quot;direction&quot;: &quot;v&quot;
+    },
+    &quot;semantic&quot;: &quot;roofline.eave_line&quot;,
+    &quot;fallback_state&quot;: &quot;needs_review&quot;,
+    &quot;evidence_sources&quot;: [
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;oblique&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.6,
+        &quot;note&quot;: &quot;R7 campus-layout prior for blue-roof hall massing in oblique view.&quot;,
+        &quot;observation_id&quot;: &quot;building_oblique_primary_blue_hall&quot;
+      },
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;top&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.74,
+        &quot;note&quot;: &quot;R7 campus-layout prior for the primary blue-roof hall footprint.&quot;,
+        &quot;observation_id&quot;: &quot;building_top_primary_blue_hall&quot;
+      },
+      {
+        &quot;kind&quot;: &quot;center_point&quot;,
+        &quot;view&quot;: &quot;top&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.66,
+        &quot;note&quot;: &quot;Center keypoint for primary blue-roof hall massing review.&quot;,
+        &quot;observation_id&quot;: &quot;building_top_blue_hall_center&quot;
+      },
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;oblique&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.6,
+        &quot;note&quot;: &quot;R7 campus-layout prior for blue-roof hall massing in oblique view.&quot;,
+        &quot;observation_id&quot;: &quot;building_oblique_primary_blue_hall&quot;
+      }
+    ]
+  },
+  {
+    &quot;id&quot;: &quot;primary_blue_roof_hall_roof_east_eave_line&quot;,
+    &quot;operation&quot;: &quot;add_raised_rib&quot;,
+    &quot;face&quot;: &quot;top&quot;,
+    &quot;parameters&quot;: {
+      &quot;center&quot;: [
+        33574.1,
+        29056.2
+      ],
+      &quot;length&quot;: 47652.1,
+      &quot;width&quot;: 220,
+      &quot;height&quot;: 140,
+      &quot;direction&quot;: &quot;v&quot;
+    },
+    &quot;semantic&quot;: &quot;roofline.eave_line&quot;,
+    &quot;fallback_state&quot;: &quot;needs_review&quot;,
+    &quot;evidence_sources&quot;: [
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;oblique&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.6,
+        &quot;note&quot;: &quot;R7 campus-layout prior for blue-roof hall massing in oblique view.&quot;,
+        &quot;observation_id&quot;: &quot;building_oblique_primary_blue_hall&quot;
+      },
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;top&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.74,
+        &quot;note&quot;: &quot;R7 campus-layout prior for the primary blue-roof hall footprint.&quot;,
+        &quot;observation_id&quot;: &quot;building_top_primary_blue_hall&quot;
+      },
+      {
+        &quot;kind&quot;: &quot;center_point&quot;,
+        &quot;view&quot;: &quot;top&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.66,
+        &quot;note&quot;: &quot;Center keypoint for primary blue-roof hall massing review.&quot;,
+        &quot;observation_id&quot;: &quot;building_top_blue_hall_center&quot;
+      },
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;oblique&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.6,
+        &quot;note&quot;: &quot;R7 campus-layout prior for blue-roof hall massing in oblique view.&quot;,
+        &quot;observation_id&quot;: &quot;building_oblique_primary_blue_hall&quot;
+      }
+    ]
+  },
+  {
+    &quot;id&quot;: &quot;primary_blue_roof_hall_facade_loading_door&quot;,
+    &quot;operation&quot;: &quot;cut_recess&quot;,
+    &quot;face&quot;: &quot;front&quot;,
+    &quot;parameters&quot;: {
+      &quot;center&quot;: [
+        20472,
+        3300
+      ],
+      &quot;size&quot;: [
+        5322.7,
+        5610
+      ],
+      &quot;depth&quot;: 160,
+      &quot;radius&quot;: 60,
+      &quot;segments&quot;: 4
+    },
+    &quot;semantic&quot;: &quot;facade.opening.loading_door&quot;,
+    &quot;fallback_state&quot;: &quot;needs_review&quot;,
+    &quot;evidence_sources&quot;: [
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;oblique&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.6,
+        &quot;note&quot;: &quot;R7 campus-layout prior for blue-roof hall massing in oblique view.&quot;,
+        &quot;observation_id&quot;: &quot;building_oblique_primary_blue_hall&quot;
+      },
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;top&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.74,
+        &quot;note&quot;: &quot;R7 campus-layout prior for the primary blue-roof hall footprint.&quot;,
+        &quot;observation_id&quot;: &quot;building_top_primary_blue_hall&quot;
+      },
+      {
+        &quot;kind&quot;: &quot;center_point&quot;,
+        &quot;view&quot;: &quot;top&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.66,
+        &quot;note&quot;: &quot;Center keypoint for primary blue-roof hall massing review.&quot;,
+        &quot;observation_id&quot;: &quot;building_top_blue_hall_center&quot;
+      },
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;oblique&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.6,
+        &quot;note&quot;: &quot;R7 campus-layout prior for blue-roof hall massing in oblique view.&quot;,
+        &quot;observation_id&quot;: &quot;building_oblique_primary_blue_hall&quot;
+      }
+    ]
+  },
+  {
+    &quot;id&quot;: &quot;primary_blue_roof_hall_facade_window_band_left&quot;,
+    &quot;operation&quot;: &quot;cut_recess&quot;,
+    &quot;face&quot;: &quot;front&quot;,
+    &quot;parameters&quot;: {
+      &quot;center&quot;: [
+        12283.2,
+        9570
+      ],
+      &quot;size&quot;: [
+        6551,
+        1815
+      ],
+      &quot;depth&quot;: 90,
+      &quot;radius&quot;: 40,
+      &quot;segments&quot;: 4
+    },
+    &quot;semantic&quot;: &quot;facade.opening.window_band&quot;,
+    &quot;fallback_state&quot;: &quot;needs_review&quot;,
+    &quot;evidence_sources&quot;: [
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;oblique&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.6,
+        &quot;note&quot;: &quot;R7 campus-layout prior for blue-roof hall massing in oblique view.&quot;,
+        &quot;observation_id&quot;: &quot;building_oblique_primary_blue_hall&quot;
+      },
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;top&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.74,
+        &quot;note&quot;: &quot;R7 campus-layout prior for the primary blue-roof hall footprint.&quot;,
+        &quot;observation_id&quot;: &quot;building_top_primary_blue_hall&quot;
+      },
+      {
+        &quot;kind&quot;: &quot;center_point&quot;,
+        &quot;view&quot;: &quot;top&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.66,
+        &quot;note&quot;: &quot;Center keypoint for primary blue-roof hall massing review.&quot;,
+        &quot;observation_id&quot;: &quot;building_top_blue_hall_center&quot;
+      },
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;oblique&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.6,
+        &quot;note&quot;: &quot;R7 campus-layout prior for blue-roof hall massing in oblique view.&quot;,
+        &quot;observation_id&quot;: &quot;building_oblique_primary_blue_hall&quot;
+      }
+    ]
+  },
+  {
+    &quot;id&quot;: &quot;primary_blue_roof_hall_facade_window_band_right&quot;,
+    &quot;operation&quot;: &quot;cut_recess&quot;,
+    &quot;face&quot;: &quot;front&quot;,
+    &quot;parameters&quot;: {
+      &quot;center&quot;: [
+        28660.8,
+        9570
+      ],
+      &quot;size&quot;: [
+        6551,
+        1815
+      ],
+      &quot;depth&quot;: 90,
+      &quot;radius&quot;: 40,
+      &quot;segments&quot;: 4
+    },
+    &quot;semantic&quot;: &quot;facade.opening.window_band&quot;,
+    &quot;fallback_state&quot;: &quot;needs_review&quot;,
+    &quot;evidence_sources&quot;: [
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;oblique&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.6,
+        &quot;note&quot;: &quot;R7 campus-layout prior for blue-roof hall massing in oblique view.&quot;,
+        &quot;observation_id&quot;: &quot;building_oblique_primary_blue_hall&quot;
+      },
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;top&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.74,
+        &quot;note&quot;: &quot;R7 campus-layout prior for the primary blue-roof hall footprint.&quot;,
+        &quot;observation_id&quot;: &quot;building_top_primary_blue_hall&quot;
+      },
+      {
+        &quot;kind&quot;: &quot;center_point&quot;,
+        &quot;view&quot;: &quot;top&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.66,
+        &quot;note&quot;: &quot;Center keypoint for primary blue-roof hall massing review.&quot;,
+        &quot;observation_id&quot;: &quot;building_top_blue_hall_center&quot;
+      },
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;oblique&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.6,
+        &quot;note&quot;: &quot;R7 campus-layout prior for blue-roof hall massing in oblique view.&quot;,
+        &quot;observation_id&quot;: &quot;building_oblique_primary_blue_hall&quot;
+      }
+    ]
+  }
+]</div>
+      </div>
+    </div>
+  </article><article class="proposal-item">
+    <input type="checkbox" data-proposal-key="warehouse_row_west|parts[warehouse_row_west].shape.parameters">
+    <div>
+      <div class="proposal-title">
+        <strong>warehouse_row_west</strong>
+        <span class="tag">shape.parameters</span>
+        <span class="tag warn">needs_review</span>
+        <span class="tag">0.58</span>
+      </div>
+      <div class="proposal-grid">
+        <div>Path</div><div><code>parts[warehouse_row_west].shape.parameters</code></div>
+        <div>Basis</div><div><span class="tag good">building_group_evidence_bbox</span><span class="tag good">known_element_scale_calibration</span></div>
+        <div>Views</div><div><span class="tag ">source:oblique</span><span class="tag ">source:top</span></div>
+        <div>Measurements</div><div>0</div>
+        <div>Current Value</div><div class="value-box">{
+  &quot;origin&quot;: [
+    -59352.6,
+    -31463.2,
+    0
+  ],
+  &quot;size&quot;: [
+    29649.1,
+    70405.3,
+    9500
+  ]
+}</div>
+        <div>Proposed Value</div><div class="value-box">{
+  &quot;origin&quot;: [
+    -59352.6,
+    -31463.2,
+    0
+  ],
+  &quot;size&quot;: [
+    29649.1,
+    70405.3,
+    9500
+  ]
+}</div>
+      </div>
+    </div>
+  </article><article class="proposal-item">
+    <input type="checkbox" data-proposal-key="warehouse_row_west|parts[warehouse_row_west].feature_intents" checked>
+    <div>
+      <div class="proposal-title">
+        <strong>warehouse_row_west</strong>
+        <span class="tag">feature_intents</span>
+        <span class="tag warn">needs_review</span>
+        <span class="tag">0.5</span>
+      </div>
+      <div class="proposal-grid">
+        <div>Path</div><div><code>parts[warehouse_row_west].feature_intents</code></div>
+        <div>Basis</div><div><span class="tag good">building_group_oblique_roofline_hint</span><span class="tag good">building_group_facade_rhythm_prior</span><span class="tag good">building_group_known_element_scale</span></div>
+        <div>Views</div><div><span class="tag good">confirmed:oblique</span><span class="tag good">confirmed:top</span><span class="tag warn">missing:facade_orthographic</span><span class="tag warn">missing:opening_closeup</span><span class="tag ">source:oblique</span><span class="tag ">source:top</span></div>
+        <div>Measurements</div><div>0</div>
+        <div>Current Value</div><div class="value-box">[]</div>
+        <div>Proposed Value</div><div class="value-box">[
+  {
+    &quot;id&quot;: &quot;warehouse_row_west_roof_longitudinal_seam_left&quot;,
+    &quot;operation&quot;: &quot;add_raised_rib&quot;,
+    &quot;face&quot;: &quot;top&quot;,
+    &quot;parameters&quot;: {
+      &quot;center&quot;: [
+        9784.2,
+        35202.7
+      ],
+      &quot;length&quot;: 63364.8,
+      &quot;width&quot;: 160,
+      &quot;height&quot;: 110,
+      &quot;direction&quot;: &quot;v&quot;
+    },
+    &quot;semantic&quot;: &quot;roofline.longitudinal_seam&quot;,
+    &quot;fallback_state&quot;: &quot;needs_review&quot;,
+    &quot;evidence_sources&quot;: [
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;oblique&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.58,
+        &quot;note&quot;: &quot;R7 campus-layout prior for west warehouse rows in oblique view.&quot;,
+        &quot;observation_id&quot;: &quot;building_oblique_warehouse_row_west&quot;
+      },
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;top&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.74,
+        &quot;note&quot;: &quot;R7 campus-layout prior for the west long white warehouse row.&quot;,
+        &quot;observation_id&quot;: &quot;building_top_warehouse_row_west&quot;
+      },
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;oblique&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.58,
+        &quot;note&quot;: &quot;R7 campus-layout prior for west warehouse rows in oblique view.&quot;,
+        &quot;observation_id&quot;: &quot;building_oblique_warehouse_row_west&quot;
+      }
+    ]
+  },
+  {
+    &quot;id&quot;: &quot;warehouse_row_west_roof_longitudinal_seam_right&quot;,
+    &quot;operation&quot;: &quot;add_raised_rib&quot;,
+    &quot;face&quot;: &quot;top&quot;,
+    &quot;parameters&quot;: {
+      &quot;center&quot;: [
+        19864.9,
+        35202.7
+      ],
+      &quot;length&quot;: 63364.8,
+      &quot;width&quot;: 160,
+      &quot;height&quot;: 110,
+      &quot;direction&quot;: &quot;v&quot;
+    },
+    &quot;semantic&quot;: &quot;roofline.longitudinal_seam&quot;,
+    &quot;fallback_state&quot;: &quot;needs_review&quot;,
+    &quot;evidence_sources&quot;: [
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;oblique&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.58,
+        &quot;note&quot;: &quot;R7 campus-layout prior for west warehouse rows in oblique view.&quot;,
+        &quot;observation_id&quot;: &quot;building_oblique_warehouse_row_west&quot;
+      },
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;top&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.74,
+        &quot;note&quot;: &quot;R7 campus-layout prior for the west long white warehouse row.&quot;,
+        &quot;observation_id&quot;: &quot;building_top_warehouse_row_west&quot;
+      },
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;oblique&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.58,
+        &quot;note&quot;: &quot;R7 campus-layout prior for west warehouse rows in oblique view.&quot;,
+        &quot;observation_id&quot;: &quot;building_oblique_warehouse_row_west&quot;
+      }
+    ]
+  },
+  {
+    &quot;id&quot;: &quot;warehouse_row_west_facade_loading_bay_left&quot;,
+    &quot;operation&quot;: &quot;cut_recess&quot;,
+    &quot;face&quot;: &quot;front&quot;,
+    &quot;parameters&quot;: {
+      &quot;center&quot;: [
+        8301.7,
+        2565
+      ],
+      &quot;size&quot;: [
+        4743.9,
+        3420
+      ],
+      &quot;depth&quot;: 120,
+      &quot;radius&quot;: 40,
+      &quot;segments&quot;: 4
+    },
+    &quot;semantic&quot;: &quot;facade.opening.loading_bay&quot;,
+    &quot;fallback_state&quot;: &quot;needs_review&quot;,
+    &quot;evidence_sources&quot;: [
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;oblique&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.58,
+        &quot;note&quot;: &quot;R7 campus-layout prior for west warehouse rows in oblique view.&quot;,
+        &quot;observation_id&quot;: &quot;building_oblique_warehouse_row_west&quot;
+      },
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;top&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.74,
+        &quot;note&quot;: &quot;R7 campus-layout prior for the west long white warehouse row.&quot;,
+        &quot;observation_id&quot;: &quot;building_top_warehouse_row_west&quot;
+      },
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;oblique&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.58,
+        &quot;note&quot;: &quot;R7 campus-layout prior for west warehouse rows in oblique view.&quot;,
+        &quot;observation_id&quot;: &quot;building_oblique_warehouse_row_west&quot;
+      }
+    ]
+  },
+  {
+    &quot;id&quot;: &quot;warehouse_row_west_facade_loading_bay_center&quot;,
+    &quot;operation&quot;: &quot;cut_recess&quot;,
+    &quot;face&quot;: &quot;front&quot;,
+    &quot;parameters&quot;: {
+      &quot;center&quot;: [
+        14824.6,
+        2565
+      ],
+      &quot;size&quot;: [
+        4743.9,
+        3420
+      ],
+      &quot;depth&quot;: 120,
+      &quot;radius&quot;: 40,
+      &quot;segments&quot;: 4
+    },
+    &quot;semantic&quot;: &quot;facade.opening.loading_bay&quot;,
+    &quot;fallback_state&quot;: &quot;needs_review&quot;,
+    &quot;evidence_sources&quot;: [
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;oblique&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.58,
+        &quot;note&quot;: &quot;R7 campus-layout prior for west warehouse rows in oblique view.&quot;,
+        &quot;observation_id&quot;: &quot;building_oblique_warehouse_row_west&quot;
+      },
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;top&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.74,
+        &quot;note&quot;: &quot;R7 campus-layout prior for the west long white warehouse row.&quot;,
+        &quot;observation_id&quot;: &quot;building_top_warehouse_row_west&quot;
+      },
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;oblique&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.58,
+        &quot;note&quot;: &quot;R7 campus-layout prior for west warehouse rows in oblique view.&quot;,
+        &quot;observation_id&quot;: &quot;building_oblique_warehouse_row_west&quot;
+      }
+    ]
+  },
+  {
+    &quot;id&quot;: &quot;warehouse_row_west_facade_loading_bay_right&quot;,
+    &quot;operation&quot;: &quot;cut_recess&quot;,
+    &quot;face&quot;: &quot;front&quot;,
+    &quot;parameters&quot;: {
+      &quot;center&quot;: [
+        21347.4,
+        2565
+      ],
+      &quot;size&quot;: [
+        4743.9,
+        3420
+      ],
+      &quot;depth&quot;: 120,
+      &quot;radius&quot;: 40,
+      &quot;segments&quot;: 4
+    },
+    &quot;semantic&quot;: &quot;facade.opening.loading_bay&quot;,
+    &quot;fallback_state&quot;: &quot;needs_review&quot;,
+    &quot;evidence_sources&quot;: [
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;oblique&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.58,
+        &quot;note&quot;: &quot;R7 campus-layout prior for west warehouse rows in oblique view.&quot;,
+        &quot;observation_id&quot;: &quot;building_oblique_warehouse_row_west&quot;
+      },
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;top&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.74,
+        &quot;note&quot;: &quot;R7 campus-layout prior for the west long white warehouse row.&quot;,
+        &quot;observation_id&quot;: &quot;building_top_warehouse_row_west&quot;
+      },
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;oblique&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.58,
+        &quot;note&quot;: &quot;R7 campus-layout prior for west warehouse rows in oblique view.&quot;,
+        &quot;observation_id&quot;: &quot;building_oblique_warehouse_row_west&quot;
+      }
+    ]
+  }
+]</div>
+      </div>
+    </div>
+  </article><article class="proposal-item">
+    <input type="checkbox" data-proposal-key="warehouse_row_inner|parts[warehouse_row_inner].shape.parameters">
+    <div>
+      <div class="proposal-title">
+        <strong>warehouse_row_inner</strong>
+        <span class="tag">shape.parameters</span>
+        <span class="tag warn">needs_review</span>
+        <span class="tag">0.58</span>
+      </div>
+      <div class="proposal-grid">
+        <div>Path</div><div><code>parts[warehouse_row_inner].shape.parameters</code></div>
+        <div>Basis</div><div><span class="tag good">building_group_evidence_bbox</span><span class="tag good">known_element_scale_calibration</span></div>
+        <div>Views</div><div><span class="tag ">source:oblique</span><span class="tag ">source:top</span></div>
+        <div>Measurements</div><div>0</div>
+        <div>Current Value</div><div class="value-box">{
+  &quot;origin&quot;: [
+    -28291.6,
+    -28110.5,
+    0
+  ],
+  &quot;size&quot;: [
+    18354.2,
+    64817.5,
+    9500
+  ]
+}</div>
+        <div>Proposed Value</div><div class="value-box">{
+  &quot;origin&quot;: [
+    -28291.6,
+    -28110.5,
+    0
+  ],
+  &quot;size&quot;: [
+    18354.2,
+    64817.5,
+    9500
+  ]
+}</div>
+      </div>
+    </div>
+  </article><article class="proposal-item">
+    <input type="checkbox" data-proposal-key="warehouse_row_inner|parts[warehouse_row_inner].feature_intents" checked>
+    <div>
+      <div class="proposal-title">
+        <strong>warehouse_row_inner</strong>
+        <span class="tag">feature_intents</span>
+        <span class="tag warn">needs_review</span>
+        <span class="tag">0.5</span>
+      </div>
+      <div class="proposal-grid">
+        <div>Path</div><div><code>parts[warehouse_row_inner].feature_intents</code></div>
+        <div>Basis</div><div><span class="tag good">building_group_oblique_roofline_hint</span><span class="tag good">building_group_facade_rhythm_prior</span><span class="tag good">building_group_known_element_scale</span></div>
+        <div>Views</div><div><span class="tag good">confirmed:oblique</span><span class="tag good">confirmed:top</span><span class="tag warn">missing:facade_orthographic</span><span class="tag warn">missing:opening_closeup</span><span class="tag ">source:oblique</span><span class="tag ">source:top</span></div>
+        <div>Measurements</div><div>0</div>
+        <div>Current Value</div><div class="value-box">[]</div>
+        <div>Proposed Value</div><div class="value-box">[
+  {
+    &quot;id&quot;: &quot;warehouse_row_inner_roof_longitudinal_seam_left&quot;,
+    &quot;operation&quot;: &quot;add_raised_rib&quot;,
+    &quot;face&quot;: &quot;top&quot;,
+    &quot;parameters&quot;: {
+      &quot;center&quot;: [
+        6056.9,
+        32408.8
+      ],
+      &quot;length&quot;: 58335.8,
+      &quot;width&quot;: 160,
+      &quot;height&quot;: 110,
+      &quot;direction&quot;: &quot;v&quot;
+    },
+    &quot;semantic&quot;: &quot;roofline.longitudinal_seam&quot;,
+    &quot;fallback_state&quot;: &quot;needs_review&quot;,
+    &quot;evidence_sources&quot;: [
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;oblique&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.54,
+        &quot;note&quot;: &quot;R7 campus-layout prior for inner warehouse rows in oblique view.&quot;,
+        &quot;observation_id&quot;: &quot;building_oblique_warehouse_row_inner&quot;
+      },
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;top&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.72,
+        &quot;note&quot;: &quot;R7 campus-layout prior for the inner white warehouse row.&quot;,
+        &quot;observation_id&quot;: &quot;building_top_warehouse_row_inner&quot;
+      },
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;oblique&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.54,
+        &quot;note&quot;: &quot;R7 campus-layout prior for inner warehouse rows in oblique view.&quot;,
+        &quot;observation_id&quot;: &quot;building_oblique_warehouse_row_inner&quot;
+      }
+    ]
+  },
+  {
+    &quot;id&quot;: &quot;warehouse_row_inner_roof_longitudinal_seam_right&quot;,
+    &quot;operation&quot;: &quot;add_raised_rib&quot;,
+    &quot;face&quot;: &quot;top&quot;,
+    &quot;parameters&quot;: {
+      &quot;center&quot;: [
+        12297.3,
+        32408.8
+      ],
+      &quot;length&quot;: 58335.8,
+      &quot;width&quot;: 160,
+      &quot;height&quot;: 110,
+      &quot;direction&quot;: &quot;v&quot;
+    },
+    &quot;semantic&quot;: &quot;roofline.longitudinal_seam&quot;,
+    &quot;fallback_state&quot;: &quot;needs_review&quot;,
+    &quot;evidence_sources&quot;: [
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;oblique&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.54,
+        &quot;note&quot;: &quot;R7 campus-layout prior for inner warehouse rows in oblique view.&quot;,
+        &quot;observation_id&quot;: &quot;building_oblique_warehouse_row_inner&quot;
+      },
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;top&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.72,
+        &quot;note&quot;: &quot;R7 campus-layout prior for the inner white warehouse row.&quot;,
+        &quot;observation_id&quot;: &quot;building_top_warehouse_row_inner&quot;
+      },
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;oblique&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.54,
+        &quot;note&quot;: &quot;R7 campus-layout prior for inner warehouse rows in oblique view.&quot;,
+        &quot;observation_id&quot;: &quot;building_oblique_warehouse_row_inner&quot;
+      }
+    ]
+  },
+  {
+    &quot;id&quot;: &quot;warehouse_row_inner_facade_loading_bay_left&quot;,
+    &quot;operation&quot;: &quot;cut_recess&quot;,
+    &quot;face&quot;: &quot;front&quot;,
+    &quot;parameters&quot;: {
+      &quot;center&quot;: [
+        5139.2,
+        2565
+      ],
+      &quot;size&quot;: [
+        2936.7,
+        3420
+      ],
+      &quot;depth&quot;: 120,
+      &quot;radius&quot;: 40,
+      &quot;segments&quot;: 4
+    },
+    &quot;semantic&quot;: &quot;facade.opening.loading_bay&quot;,
+    &quot;fallback_state&quot;: &quot;needs_review&quot;,
+    &quot;evidence_sources&quot;: [
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;oblique&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.54,
+        &quot;note&quot;: &quot;R7 campus-layout prior for inner warehouse rows in oblique view.&quot;,
+        &quot;observation_id&quot;: &quot;building_oblique_warehouse_row_inner&quot;
+      },
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;top&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.72,
+        &quot;note&quot;: &quot;R7 campus-layout prior for the inner white warehouse row.&quot;,
+        &quot;observation_id&quot;: &quot;building_top_warehouse_row_inner&quot;
+      },
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;oblique&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.54,
+        &quot;note&quot;: &quot;R7 campus-layout prior for inner warehouse rows in oblique view.&quot;,
+        &quot;observation_id&quot;: &quot;building_oblique_warehouse_row_inner&quot;
+      }
+    ]
+  },
+  {
+    &quot;id&quot;: &quot;warehouse_row_inner_facade_loading_bay_center&quot;,
+    &quot;operation&quot;: &quot;cut_recess&quot;,
+    &quot;face&quot;: &quot;front&quot;,
+    &quot;parameters&quot;: {
+      &quot;center&quot;: [
+        9177.1,
+        2565
+      ],
+      &quot;size&quot;: [
+        2936.7,
+        3420
+      ],
+      &quot;depth&quot;: 120,
+      &quot;radius&quot;: 40,
+      &quot;segments&quot;: 4
+    },
+    &quot;semantic&quot;: &quot;facade.opening.loading_bay&quot;,
+    &quot;fallback_state&quot;: &quot;needs_review&quot;,
+    &quot;evidence_sources&quot;: [
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;oblique&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.54,
+        &quot;note&quot;: &quot;R7 campus-layout prior for inner warehouse rows in oblique view.&quot;,
+        &quot;observation_id&quot;: &quot;building_oblique_warehouse_row_inner&quot;
+      },
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;top&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.72,
+        &quot;note&quot;: &quot;R7 campus-layout prior for the inner white warehouse row.&quot;,
+        &quot;observation_id&quot;: &quot;building_top_warehouse_row_inner&quot;
+      },
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;oblique&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.54,
+        &quot;note&quot;: &quot;R7 campus-layout prior for inner warehouse rows in oblique view.&quot;,
+        &quot;observation_id&quot;: &quot;building_oblique_warehouse_row_inner&quot;
+      }
+    ]
+  },
+  {
+    &quot;id&quot;: &quot;warehouse_row_inner_facade_loading_bay_right&quot;,
+    &quot;operation&quot;: &quot;cut_recess&quot;,
+    &quot;face&quot;: &quot;front&quot;,
+    &quot;parameters&quot;: {
+      &quot;center&quot;: [
+        13215,
+        2565
+      ],
+      &quot;size&quot;: [
+        2936.7,
+        3420
+      ],
+      &quot;depth&quot;: 120,
+      &quot;radius&quot;: 40,
+      &quot;segments&quot;: 4
+    },
+    &quot;semantic&quot;: &quot;facade.opening.loading_bay&quot;,
+    &quot;fallback_state&quot;: &quot;needs_review&quot;,
+    &quot;evidence_sources&quot;: [
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;oblique&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.54,
+        &quot;note&quot;: &quot;R7 campus-layout prior for inner warehouse rows in oblique view.&quot;,
+        &quot;observation_id&quot;: &quot;building_oblique_warehouse_row_inner&quot;
+      },
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;top&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.72,
+        &quot;note&quot;: &quot;R7 campus-layout prior for the inner white warehouse row.&quot;,
+        &quot;observation_id&quot;: &quot;building_top_warehouse_row_inner&quot;
+      },
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;oblique&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.54,
+        &quot;note&quot;: &quot;R7 campus-layout prior for inner warehouse rows in oblique view.&quot;,
+        &quot;observation_id&quot;: &quot;building_oblique_warehouse_row_inner&quot;
+      }
+    ]
+  }
+]</div>
+      </div>
+    </div>
+  </article><article class="proposal-item">
+    <input type="checkbox" data-proposal-key="utility_building|parts[utility_building].shape.parameters">
+    <div>
+      <div class="proposal-title">
+        <strong>utility_building</strong>
+        <span class="tag">shape.parameters</span>
+        <span class="tag warn">needs_review</span>
+        <span class="tag">0.58</span>
+      </div>
+      <div class="proposal-grid">
+        <div>Path</div><div><code>parts[utility_building].shape.parameters</code></div>
+        <div>Basis</div><div><span class="tag good">building_group_evidence_bbox</span><span class="tag good">known_element_scale_calibration</span></div>
+        <div>Views</div><div><span class="tag ">source:oblique</span><span class="tag ">source:top</span></div>
+        <div>Measurements</div><div>0</div>
+        <div>Current Value</div><div class="value-box">{
+  &quot;origin&quot;: [
+    35242.2,
+    -15817.6,
+    0
+  ],
+  &quot;size&quot;: [
+    21177.9,
+    22350.9,
+    7600
+  ]
+}</div>
+        <div>Proposed Value</div><div class="value-box">{
+  &quot;origin&quot;: [
+    35242.2,
+    -15817.6,
+    0
+  ],
+  &quot;size&quot;: [
+    21177.9,
+    22350.9,
+    7600
+  ]
+}</div>
+      </div>
+    </div>
+  </article><article class="proposal-item">
+    <input type="checkbox" data-proposal-key="utility_building|parts[utility_building].feature_intents" checked>
+    <div>
+      <div class="proposal-title">
+        <strong>utility_building</strong>
+        <span class="tag">feature_intents</span>
+        <span class="tag warn">needs_review</span>
+        <span class="tag">0.5</span>
+      </div>
+      <div class="proposal-grid">
+        <div>Path</div><div><code>parts[utility_building].feature_intents</code></div>
+        <div>Basis</div><div><span class="tag good">building_group_oblique_roofline_hint</span><span class="tag good">building_group_facade_rhythm_prior</span><span class="tag good">building_group_known_element_scale</span></div>
+        <div>Views</div><div><span class="tag good">confirmed:oblique</span><span class="tag good">confirmed:top</span><span class="tag warn">missing:facade_orthographic</span><span class="tag warn">missing:opening_closeup</span><span class="tag ">source:oblique</span><span class="tag ">source:top</span></div>
+        <div>Measurements</div><div>0</div>
+        <div>Current Value</div><div class="value-box">[]</div>
+        <div>Proposed Value</div><div class="value-box">[
+  {
+    &quot;id&quot;: &quot;utility_building_roof_service_ridge&quot;,
+    &quot;operation&quot;: &quot;add_raised_rib&quot;,
+    &quot;face&quot;: &quot;top&quot;,
+    &quot;parameters&quot;: {
+      &quot;center&quot;: [
+        10589,
+        11175.5
+      ],
+      &quot;length&quot;: 16092.6,
+      &quot;width&quot;: 180,
+      &quot;height&quot;: 120,
+      &quot;direction&quot;: &quot;v&quot;
+    },
+    &quot;semantic&quot;: &quot;roofline.service_ridge&quot;,
+    &quot;fallback_state&quot;: &quot;needs_review&quot;,
+    &quot;evidence_sources&quot;: [
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;oblique&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.52,
+        &quot;note&quot;: &quot;R7 campus-layout prior for right-side utility/mechanical building in oblique view.&quot;,
+        &quot;observation_id&quot;: &quot;building_oblique_utility_building&quot;
+      },
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;top&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.6599999999999999,
+        &quot;note&quot;: &quot;R7 campus-layout prior for the right-side utility/mechanical building.&quot;,
+        &quot;observation_id&quot;: &quot;building_top_utility_building&quot;
+      },
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;oblique&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.52,
+        &quot;note&quot;: &quot;R7 campus-layout prior for right-side utility/mechanical building in oblique view.&quot;,
+        &quot;observation_id&quot;: &quot;building_oblique_utility_building&quot;
+      }
+    ]
+  },
+  {
+    &quot;id&quot;: &quot;utility_building_facade_louver_band&quot;,
+    &quot;operation&quot;: &quot;cut_slot&quot;,
+    &quot;face&quot;: &quot;front&quot;,
+    &quot;parameters&quot;: {
+      &quot;center&quot;: [
+        11012.5,
+        4712
+      ],
+      &quot;length&quot;: 9741.8,
+      &quot;width&quot;: 608,
+      &quot;depth&quot;: 80,
+      &quot;through&quot;: false,
+      &quot;segments&quot;: 8
+    },
+    &quot;semantic&quot;: &quot;facade.opening.louver_band&quot;,
+    &quot;fallback_state&quot;: &quot;needs_review&quot;,
+    &quot;evidence_sources&quot;: [
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;oblique&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.52,
+        &quot;note&quot;: &quot;R7 campus-layout prior for right-side utility/mechanical building in oblique view.&quot;,
+        &quot;observation_id&quot;: &quot;building_oblique_utility_building&quot;
+      },
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;top&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.6599999999999999,
+        &quot;note&quot;: &quot;R7 campus-layout prior for the right-side utility/mechanical building.&quot;,
+        &quot;observation_id&quot;: &quot;building_top_utility_building&quot;
+      },
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;oblique&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.52,
+        &quot;note&quot;: &quot;R7 campus-layout prior for right-side utility/mechanical building in oblique view.&quot;,
+        &quot;observation_id&quot;: &quot;building_oblique_utility_building&quot;
+      }
+    ]
+  },
+  {
+    &quot;id&quot;: &quot;utility_building_facade_service_door&quot;,
+    &quot;operation&quot;: &quot;cut_recess&quot;,
+    &quot;face&quot;: &quot;front&quot;,
+    &quot;parameters&quot;: {
+      &quot;center&quot;: [
+        4659.1,
+        1824
+      ],
+      &quot;size&quot;: [
+        2329.6,
+        2432
+      ],
+      &quot;depth&quot;: 120,
+      &quot;radius&quot;: 30,
+      &quot;segments&quot;: 4
+    },
+    &quot;semantic&quot;: &quot;facade.opening.service_door&quot;,
+    &quot;fallback_state&quot;: &quot;needs_review&quot;,
+    &quot;evidence_sources&quot;: [
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;oblique&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.52,
+        &quot;note&quot;: &quot;R7 campus-layout prior for right-side utility/mechanical building in oblique view.&quot;,
+        &quot;observation_id&quot;: &quot;building_oblique_utility_building&quot;
+      },
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;top&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.6599999999999999,
+        &quot;note&quot;: &quot;R7 campus-layout prior for the right-side utility/mechanical building.&quot;,
+        &quot;observation_id&quot;: &quot;building_top_utility_building&quot;
+      },
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;oblique&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.52,
+        &quot;note&quot;: &quot;R7 campus-layout prior for right-side utility/mechanical building in oblique view.&quot;,
+        &quot;observation_id&quot;: &quot;building_oblique_utility_building&quot;
+      }
+    ]
+  }
+]</div>
+      </div>
+    </div>
+  </article><article class="proposal-item">
+    <input type="checkbox" data-proposal-key="admin_office|parts[admin_office].shape.parameters">
+    <div>
+      <div class="proposal-title">
+        <strong>admin_office</strong>
+        <span class="tag">shape.parameters</span>
+        <span class="tag warn">needs_review</span>
+        <span class="tag">0.58</span>
+      </div>
+      <div class="proposal-grid">
+        <div>Path</div><div><code>parts[admin_office].shape.parameters</code></div>
+        <div>Basis</div><div><span class="tag good">building_group_evidence_bbox</span><span class="tag good">known_element_scale_calibration</span></div>
+        <div>Views</div><div><span class="tag ">source:oblique</span><span class="tag ">source:top</span></div>
+        <div>Measurements</div><div>0</div>
+        <div>Current Value</div><div class="value-box">{
+  &quot;origin&quot;: [
+    -9937.4,
+    -37050.9,
+    0
+  ],
+  &quot;size&quot;: [
+    21177.9,
+    14528.1,
+    6800
+  ]
+}</div>
+        <div>Proposed Value</div><div class="value-box">{
+  &quot;origin&quot;: [
+    -9937.4,
+    -37050.9,
+    0
+  ],
+  &quot;size&quot;: [
+    21177.9,
+    14528.1,
+    6800
+  ]
+}</div>
+      </div>
+    </div>
+  </article><article class="proposal-item">
+    <input type="checkbox" data-proposal-key="admin_office|parts[admin_office].feature_intents" checked>
+    <div>
+      <div class="proposal-title">
+        <strong>admin_office</strong>
+        <span class="tag">feature_intents</span>
+        <span class="tag warn">needs_review</span>
+        <span class="tag">0.5</span>
+      </div>
+      <div class="proposal-grid">
+        <div>Path</div><div><code>parts[admin_office].feature_intents</code></div>
+        <div>Basis</div><div><span class="tag good">building_group_oblique_roofline_hint</span><span class="tag good">building_group_facade_rhythm_prior</span><span class="tag good">building_group_known_element_scale</span></div>
+        <div>Views</div><div><span class="tag good">confirmed:oblique</span><span class="tag good">confirmed:top</span><span class="tag warn">missing:facade_orthographic</span><span class="tag warn">missing:opening_closeup</span><span class="tag ">source:oblique</span><span class="tag ">source:top</span></div>
+        <div>Measurements</div><div>0</div>
+        <div>Current Value</div><div class="value-box">[]</div>
+        <div>Proposed Value</div><div class="value-box">[
+  {
+    &quot;id&quot;: &quot;admin_office_roof_parapet_front&quot;,
+    &quot;operation&quot;: &quot;add_raised_rib&quot;,
+    &quot;face&quot;: &quot;top&quot;,
+    &quot;parameters&quot;: {
+      &quot;center&quot;: [
+        10589,
+        1162.2
+      ],
+      &quot;length&quot;: 18213,
+      &quot;width&quot;: 160,
+      &quot;height&quot;: 120,
+      &quot;direction&quot;: &quot;u&quot;
+    },
+    &quot;semantic&quot;: &quot;roofline.parapet_edge&quot;,
+    &quot;fallback_state&quot;: &quot;needs_review&quot;,
+    &quot;evidence_sources&quot;: [
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;oblique&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.5,
+        &quot;note&quot;: &quot;R7 campus-layout prior for lower admin/office block in oblique view.&quot;,
+        &quot;observation_id&quot;: &quot;building_oblique_admin_office&quot;
+      },
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;top&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.6399999999999999,
+        &quot;note&quot;: &quot;R7 campus-layout prior for the low admin/office block near the lower center of the campus.&quot;,
+        &quot;observation_id&quot;: &quot;building_top_admin_office&quot;
+      },
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;oblique&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.5,
+        &quot;note&quot;: &quot;R7 campus-layout prior for lower admin/office block in oblique view.&quot;,
+        &quot;observation_id&quot;: &quot;building_oblique_admin_office&quot;
+      }
+    ]
+  },
+  {
+    &quot;id&quot;: &quot;admin_office_facade_entry_door&quot;,
+    &quot;operation&quot;: &quot;cut_recess&quot;,
+    &quot;face&quot;: &quot;front&quot;,
+    &quot;parameters&quot;: {
+      &quot;center&quot;: [
+        10589,
+        1700
+      ],
+      &quot;size&quot;: [
+        2541.3,
+        2448
+      ],
+      &quot;depth&quot;: 120,
+      &quot;radius&quot;: 30,
+      &quot;segments&quot;: 4
+    },
+    &quot;semantic&quot;: &quot;facade.opening.entry_door&quot;,
+    &quot;fallback_state&quot;: &quot;needs_review&quot;,
+    &quot;evidence_sources&quot;: [
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;oblique&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.5,
+        &quot;note&quot;: &quot;R7 campus-layout prior for lower admin/office block in oblique view.&quot;,
+        &quot;observation_id&quot;: &quot;building_oblique_admin_office&quot;
+      },
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;top&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.6399999999999999,
+        &quot;note&quot;: &quot;R7 campus-layout prior for the low admin/office block near the lower center of the campus.&quot;,
+        &quot;observation_id&quot;: &quot;building_top_admin_office&quot;
+      },
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;oblique&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.5,
+        &quot;note&quot;: &quot;R7 campus-layout prior for lower admin/office block in oblique view.&quot;,
+        &quot;observation_id&quot;: &quot;building_oblique_admin_office&quot;
+      }
+    ]
+  },
+  {
+    &quot;id&quot;: &quot;admin_office_facade_window_left&quot;,
+    &quot;operation&quot;: &quot;cut_recess&quot;,
+    &quot;face&quot;: &quot;front&quot;,
+    &quot;parameters&quot;: {
+      &quot;center&quot;: [
+        5929.8,
+        4216
+      ],
+      &quot;size&quot;: [
+        2964.9,
+        1224
+      ],
+      &quot;depth&quot;: 80,
+      &quot;radius&quot;: 30,
+      &quot;segments&quot;: 4
+    },
+    &quot;semantic&quot;: &quot;facade.opening.window&quot;,
+    &quot;fallback_state&quot;: &quot;needs_review&quot;,
+    &quot;evidence_sources&quot;: [
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;oblique&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.5,
+        &quot;note&quot;: &quot;R7 campus-layout prior for lower admin/office block in oblique view.&quot;,
+        &quot;observation_id&quot;: &quot;building_oblique_admin_office&quot;
+      },
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;top&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.6399999999999999,
+        &quot;note&quot;: &quot;R7 campus-layout prior for the low admin/office block near the lower center of the campus.&quot;,
+        &quot;observation_id&quot;: &quot;building_top_admin_office&quot;
+      },
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;oblique&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.5,
+        &quot;note&quot;: &quot;R7 campus-layout prior for lower admin/office block in oblique view.&quot;,
+        &quot;observation_id&quot;: &quot;building_oblique_admin_office&quot;
+      }
+    ]
+  },
+  {
+    &quot;id&quot;: &quot;admin_office_facade_window_right&quot;,
+    &quot;operation&quot;: &quot;cut_recess&quot;,
+    &quot;face&quot;: &quot;front&quot;,
+    &quot;parameters&quot;: {
+      &quot;center&quot;: [
+        15248.1,
+        4216
+      ],
+      &quot;size&quot;: [
+        2964.9,
+        1224
+      ],
+      &quot;depth&quot;: 80,
+      &quot;radius&quot;: 30,
+      &quot;segments&quot;: 4
+    },
+    &quot;semantic&quot;: &quot;facade.opening.window&quot;,
+    &quot;fallback_state&quot;: &quot;needs_review&quot;,
+    &quot;evidence_sources&quot;: [
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;oblique&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.5,
+        &quot;note&quot;: &quot;R7 campus-layout prior for lower admin/office block in oblique view.&quot;,
+        &quot;observation_id&quot;: &quot;building_oblique_admin_office&quot;
+      },
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;top&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.6399999999999999,
+        &quot;note&quot;: &quot;R7 campus-layout prior for the low admin/office block near the lower center of the campus.&quot;,
+        &quot;observation_id&quot;: &quot;building_top_admin_office&quot;
+      },
+      {
+        &quot;kind&quot;: &quot;silhouette&quot;,
+        &quot;view&quot;: &quot;oblique&quot;,
+        &quot;source_image&quot;: &quot;test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png&quot;,
+        &quot;status&quot;: &quot;observed&quot;,
+        &quot;confidence&quot;: 0.5,
+        &quot;note&quot;: &quot;R7 campus-layout prior for lower admin/office block in oblique view.&quot;,
+        &quot;observation_id&quot;: &quot;building_oblique_admin_office&quot;
+      }
+    ]
+  }
+]</div>
+      </div>
+    </div>
+  </article><article class="proposal-item">
+    <input type="checkbox" data-proposal-key="parking_lot|parts[parking_lot].shape.parameters">
+    <div>
+      <div class="proposal-title">
+        <strong>parking_lot</strong>
+        <span class="tag">shape.parameters</span>
+        <span class="tag warn">needs_review</span>
+        <span class="tag">0.58</span>
+      </div>
+      <div class="proposal-grid">
+        <div>Path</div><div><code>parts[parking_lot].shape.parameters</code></div>
+        <div>Basis</div><div><span class="tag good">building_group_evidence_bbox</span><span class="tag good">known_element_scale_calibration</span></div>
+        <div>Views</div><div><span class="tag ">source:oblique</span><span class="tag ">source:top</span></div>
+        <div>Measurements</div><div>0</div>
+        <div>Current Value</div><div class="value-box">{
+  &quot;origin&quot;: [
+    14064.3,
+    -42638.6,
+    0
+  ],
+  &quot;size&quot;: [
+    45179.6,
+    21233.3,
+    80
+  ]
+}</div>
+        <div>Proposed Value</div><div class="value-box">{
+  &quot;origin&quot;: [
+    14064.3,
+    -42638.6,
+    0
+  ],
+  &quot;size&quot;: [
+    45179.6,
+    21233.3,
+    80
+  ]
+}</div>
+      </div>
+    </div>
+  </article><article class="proposal-item">
+    <input type="checkbox" data-proposal-key="internal_roads|parts[internal_roads].shape.parameters">
+    <div>
+      <div class="proposal-title">
+        <strong>internal_roads</strong>
+        <span class="tag">shape.parameters</span>
+        <span class="tag warn">needs_review</span>
+        <span class="tag">0.58</span>
+      </div>
+      <div class="proposal-grid">
+        <div>Path</div><div><code>parts[internal_roads].shape.parameters</code></div>
+        <div>Basis</div><div><span class="tag good">building_group_evidence_bbox</span><span class="tag good">known_element_scale_calibration</span></div>
+        <div>Views</div><div><span class="tag ">source:oblique</span><span class="tag ">source:top</span></div>
+        <div>Measurements</div><div>0</div>
+        <div>Current Value</div><div class="value-box">{
+  &quot;origin&quot;: [
+    -63588.1,
+    -43756.1,
+    0
+  ],
+  &quot;size&quot;: [
+    125655.7,
+    89403.5,
+    70
+  ]
+}</div>
+        <div>Proposed Value</div><div class="value-box">{
+  &quot;origin&quot;: [
+    -63588.1,
+    -43756.1,
+    0
+  ],
+  &quot;size&quot;: [
+    125655.7,
+    89403.5,
+    70
+  ]
+}</div>
+      </div>
+    </div>
+  </article><article class="proposal-item">
+    <input type="checkbox" data-proposal-key="tank_farm|parts[tank_farm].shape.parameters">
+    <div>
+      <div class="proposal-title">
+        <strong>tank_farm</strong>
+        <span class="tag">shape.parameters</span>
+        <span class="tag warn">needs_review</span>
+        <span class="tag">0.56</span>
+      </div>
+      <div class="proposal-grid">
+        <div>Path</div><div><code>parts[tank_farm].shape.parameters</code></div>
+        <div>Basis</div><div><span class="tag good">building_group_evidence_bbox</span><span class="tag good">known_element_scale_calibration</span></div>
+        <div>Views</div><div><span class="tag ">source:oblique</span><span class="tag ">source:top</span></div>
+        <div>Measurements</div><div>0</div>
+        <div>Current Value</div><div class="value-box">{
+  &quot;origin&quot;: [
+    47214.8,
+    33354.4,
+    0
+  ],
+  &quot;radius&quot;: 3162.6,
+  &quot;height&quot;: 14000,
+  &quot;segments&quot;: 32,
+  &quot;smooth&quot;: &quot;all&quot;
+}</div>
+        <div>Proposed Value</div><div class="value-box">{
+  &quot;origin&quot;: [
+    47214.8,
+    33354.4,
+    0
+  ],
+  &quot;radius&quot;: 3162.6,
+  &quot;height&quot;: 14000,
+  &quot;segments&quot;: 32,
+  &quot;smooth&quot;: &quot;all&quot;
+}</div>
+      </div>
+    </div>
+  </article><article class="proposal-item">
+    <input type="checkbox" data-proposal-key="tank_farm_silo_east|parts[tank_farm_silo_east].shape.parameters">
+    <div>
+      <div class="proposal-title">
+        <strong>tank_farm_silo_east</strong>
+        <span class="tag">shape.parameters</span>
+        <span class="tag warn">needs_review</span>
+        <span class="tag">0.56</span>
+      </div>
+      <div class="proposal-grid">
+        <div>Path</div><div><code>parts[tank_farm_silo_east].shape.parameters</code></div>
+        <div>Basis</div><div><span class="tag good">building_group_evidence_bbox</span><span class="tag good">known_element_scale_calibration</span></div>
+        <div>Views</div><div><span class="tag ">source:oblique</span><span class="tag ">source:top</span></div>
+        <div>Measurements</div><div>0</div>
+        <div>Current Value</div><div class="value-box">{
+  &quot;origin&quot;: [
+    54330.5,
+    33354.4,
+    0
+  ],
+  &quot;radius&quot;: 3162.6,
+  &quot;height&quot;: 14000,
+  &quot;segments&quot;: 32,
+  &quot;smooth&quot;: &quot;all&quot;
+}</div>
+        <div>Proposed Value</div><div class="value-box">{
+  &quot;origin&quot;: [
+    54330.5,
+    33354.4,
+    0
+  ],
+  &quot;radius&quot;: 3162.6,
+  &quot;height&quot;: 14000,
+  &quot;segments&quot;: 32,
+  &quot;smooth&quot;: &quot;all&quot;
+}</div>
+      </div>
+    </div>
+  </article><article class="proposal-item">
+    <input type="checkbox" data-proposal-key="scale_anchor_parking_bay_width_span|parts[scale_anchor_parking_bay_width_span].shape.parameters">
+    <div>
+      <div class="proposal-title">
+        <strong>scale_anchor_parking_bay_width_span</strong>
+        <span class="tag">shape.parameters</span>
+        <span class="tag warn">needs_review</span>
+        <span class="tag">0.68</span>
+      </div>
+      <div class="proposal-grid">
+        <div>Path</div><div><code>parts[scale_anchor_parking_bay_width_span].shape.parameters</code></div>
+        <div>Basis</div><div><span class="tag good">building_group_evidence_bbox</span><span class="tag good">known_element_scale_calibration</span></div>
+        <div>Views</div><div><span class="tag ">source:top</span></div>
+        <div>Measurements</div><div>0</div>
+        <div>Current Value</div><div class="value-box">{
+  &quot;origin&quot;: [
+    17169.7,
+    -30010.5,
+    120
+  ],
+  &quot;size&quot;: [
+    34449.8,
+    4693,
+    120
+  ]
+}</div>
+        <div>Proposed Value</div><div class="value-box">{
+  &quot;origin&quot;: [
+    17169.7,
+    -30010.5,
+    120
+  ],
+  &quot;size&quot;: [
+    34449.8,
+    4693,
+    120
+  ]
+}</div>
+      </div>
+    </div>
+  </article><article class="proposal-item">
+    <input type="checkbox" data-proposal-key="scale_anchor_parking_bay_single|parts[scale_anchor_parking_bay_single].shape.parameters">
+    <div>
+      <div class="proposal-title">
+        <strong>scale_anchor_parking_bay_single</strong>
+        <span class="tag">shape.parameters</span>
+        <span class="tag warn">needs_review</span>
+        <span class="tag">0.6</span>
+      </div>
+      <div class="proposal-grid">
+        <div>Path</div><div><code>parts[scale_anchor_parking_bay_single].shape.parameters</code></div>
+        <div>Basis</div><div><span class="tag good">building_group_evidence_bbox</span><span class="tag good">known_element_scale_calibration</span></div>
+        <div>Views</div><div><span class="tag ">source:top</span></div>
+        <div>Measurements</div><div>0</div>
+        <div>Current Value</div><div class="value-box">{
+  &quot;origin&quot;: [
+    17453,
+    -29228.1,
+    120
+  ],
+  &quot;size&quot;: [
+    2542,
+    5364.9,
+    120
+  ]
+}</div>
+        <div>Proposed Value</div><div class="value-box">{
+  &quot;origin&quot;: [
+    17453,
+    -29228.1,
+    120
+  ],
+  &quot;size&quot;: [
+    2542,
+    5364.9,
+    120
+  ]
+}</div>
+      </div>
+    </div>
+  </article><article class="proposal-item">
+    <input type="checkbox" data-proposal-key="scale_anchor_parking_drive_aisle_width|parts[scale_anchor_parking_drive_aisle_width].shape.parameters">
+    <div>
+      <div class="proposal-title">
+        <strong>scale_anchor_parking_drive_aisle_width</strong>
+        <span class="tag">shape.parameters</span>
+        <span class="tag warn">needs_review</span>
+        <span class="tag">0.54</span>
+      </div>
+      <div class="proposal-grid">
+        <div>Path</div><div><code>parts[scale_anchor_parking_drive_aisle_width].shape.parameters</code></div>
+        <div>Basis</div><div><span class="tag good">building_group_evidence_bbox</span><span class="tag good">known_element_scale_calibration</span></div>
+        <div>Views</div><div><span class="tag ">source:top</span></div>
+        <div>Measurements</div><div>0</div>
+        <div>Current Value</div><div class="value-box">{
+  &quot;origin&quot;: [
+    15476.1,
+    -35152.7,
+    120
+  ],
+  &quot;size&quot;: [
+    40944,
+    6482.5,
+    120
+  ]
+}</div>
+        <div>Proposed Value</div><div class="value-box">{
+  &quot;origin&quot;: [
+    15476.1,
+    -35152.7,
+    120
+  ],
+  &quot;size&quot;: [
+    40944,
+    6482.5,
+    120
+  ]
+}</div>
+      </div>
+    </div>
+  </article><article class="proposal-item">
+    <input type="checkbox" data-proposal-key="scale_anchor_crosswalk_width|parts[scale_anchor_crosswalk_width].shape.parameters">
+    <div>
+      <div class="proposal-title">
+        <strong>scale_anchor_crosswalk_width</strong>
+        <span class="tag">shape.parameters</span>
+        <span class="tag warn">needs_review</span>
+        <span class="tag">0.42</span>
+      </div>
+      <div class="proposal-grid">
+        <div>Path</div><div><code>parts[scale_anchor_crosswalk_width].shape.parameters</code></div>
+        <div>Basis</div><div><span class="tag good">building_group_evidence_bbox</span><span class="tag good">known_element_scale_calibration</span></div>
+        <div>Views</div><div><span class="tag ">source:top</span></div>
+        <div>Measurements</div><div>0</div>
+        <div>Current Value</div><div class="value-box">{
+  &quot;origin&quot;: [
+    55008.2,
+    -12464.9,
+    120
+  ],
+  &quot;size&quot;: [
+    6354.2,
+    3352.6,
+    120
+  ]
+}</div>
+        <div>Proposed Value</div><div class="value-box">{
+  &quot;origin&quot;: [
+    55008.2,
+    -12464.9,
+    120
+  ],
+  &quot;size&quot;: [
+    6354.2,
+    3352.6,
+    120
+  ]
+}</div>
+      </div>
+    </div>
+  </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Accepted Patch Targets</h2>
+      <div class="table-wrap"><table>
+    <thead><tr><th>Part</th><th>Path</th><th>Action</th><th>Reason</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code>primary_blue_roof_hall</code></td>
+        <td><code>parts[primary_blue_roof_hall].feature_intents</code></td>
+        <td>set</td>
+        <td>Accept the reviewed primary hall roofline, facade, loading-door, and window-band feature intents for the R7 final building-group model.</td>
+      </tr><tr>
+        <td><code>warehouse_row_west</code></td>
+        <td><code>parts[warehouse_row_west].feature_intents</code></td>
+        <td>set</td>
+        <td>Accept the reviewed west warehouse roof seams and loading-bay feature intents for the R7 final building-group model.</td>
+      </tr><tr>
+        <td><code>warehouse_row_inner</code></td>
+        <td><code>parts[warehouse_row_inner].feature_intents</code></td>
+        <td>set</td>
+        <td>Accept the reviewed inner warehouse roof seams and loading-bay feature intents for the R7 final building-group model.</td>
+      </tr><tr>
+        <td><code>utility_building</code></td>
+        <td><code>parts[utility_building].feature_intents</code></td>
+        <td>set</td>
+        <td>Accept the reviewed utility-building service-ridge, louver-slot, and service-door feature intents for the R7 final building-group model.</td>
+      </tr><tr>
+        <td><code>admin_office</code></td>
+        <td><code>parts[admin_office].feature_intents</code></td>
+        <td>set</td>
+        <td>Accept the reviewed admin-office parapet, entry-door, and window feature intents for the R7 final building-group model.</td>
+      </tr>
+    </tbody>
+  </table></div>
+    </section>
+
+    <script type="application/json" id="parameter-proposals-data">{"part_graph_id":"building-group-image-evidence-massing-part-graph","part_graph_name":null,"proposals":[{"part_id":"site_boundary","proposal_kind":"shape_parameters","parameter":"shape.parameters","path":"parts[site_boundary].shape.parameters","unit":"mm","current_value":{"origin":[-65000,-49000,-80],"size":[130000,98000,80]},"proposed_value":{"origin":[-65000,-49000,-80],"size":[130000,98000,80]},"confidence":0.62,"status":"needs_review","review_required":true,"basis":["building_group_evidence_bbox","known_element_scale_calibration"],"source_count":3,"source_views":["oblique","top"],"evidence_sources":[{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png","status":"observed","confidence":0.54,"note":"R7 campus-layout template candidate for the oblique site extent.","observation_id":"building_oblique_site_boundary"},{"kind":"silhouette","view":"top","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","status":"observed","confidence":0.72,"note":"R7 campus-layout template candidate for the full industrial site boundary.","observation_id":"building_top_site_boundary"},{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png","status":"observed","confidence":0.54,"note":"R7 campus-layout template candidate for the oblique site extent.","observation_id":"building_oblique_site_boundary"}],"reason":"R7 building-group massing is bbox-derived and must be reviewed before queue acceptance."},{"part_id":"primary_blue_roof_hall","proposal_kind":"shape_parameters","parameter":"shape.parameters","path":"parts[primary_blue_roof_hall].shape.parameters","unit":"mm","current_value":{"origin":[-7113.7,-19170.2,0],"size":[40944,58112.3,16500]},"proposed_value":{"origin":[-7113.7,-19170.2,0],"size":[40944,58112.3,16500]},"confidence":0.58,"status":"needs_review","review_required":true,"basis":["building_group_evidence_bbox","known_element_scale_calibration"],"source_count":4,"source_views":["oblique","top"],"evidence_sources":[{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png","status":"observed","confidence":0.6,"note":"R7 campus-layout prior for blue-roof hall massing in oblique view.","observation_id":"building_oblique_primary_blue_hall"},{"kind":"silhouette","view":"top","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","status":"observed","confidence":0.74,"note":"R7 campus-layout prior for the primary blue-roof hall footprint.","observation_id":"building_top_primary_blue_hall"},{"kind":"center_point","view":"top","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","status":"observed","confidence":0.66,"note":"Center keypoint for primary blue-roof hall massing review.","observation_id":"building_top_blue_hall_center"},{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png","status":"observed","confidence":0.6,"note":"R7 campus-layout prior for blue-roof hall massing in oblique view.","observation_id":"building_oblique_primary_blue_hall"}],"reason":"R7 building-group massing is bbox-derived and must be reviewed before queue acceptance."},{"part_id":"primary_blue_roof_hall","proposal_kind":"feature_intents","parameter":"feature_intents","path":"parts[primary_blue_roof_hall].feature_intents","unit":"target_face_local_mm","current_value":[],"proposed_value":[{"id":"primary_blue_roof_hall_roof_center_ridge","operation":"add_raised_rib","face":"top","parameters":{"center":[20472,29056.2],"length":51138.8,"width":737,"height":260,"direction":"v"},"semantic":"roofline.center_ridge","fallback_state":"needs_review","evidence_sources":[{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png","status":"observed","confidence":0.6,"note":"R7 campus-layout prior for blue-roof hall massing in oblique view.","observation_id":"building_oblique_primary_blue_hall"},{"kind":"silhouette","view":"top","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","status":"observed","confidence":0.74,"note":"R7 campus-layout prior for the primary blue-roof hall footprint.","observation_id":"building_top_primary_blue_hall"},{"kind":"center_point","view":"top","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","status":"observed","confidence":0.66,"note":"Center keypoint for primary blue-roof hall massing review.","observation_id":"building_top_blue_hall_center"},{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png","status":"observed","confidence":0.6,"note":"R7 campus-layout prior for blue-roof hall massing in oblique view.","observation_id":"building_oblique_primary_blue_hall"}]},{"id":"primary_blue_roof_hall_roof_west_eave_line","operation":"add_raised_rib","face":"top","parameters":{"center":[7369.9,29056.2],"length":47652.1,"width":220,"height":140,"direction":"v"},"semantic":"roofline.eave_line","fallback_state":"needs_review","evidence_sources":[{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png","status":"observed","confidence":0.6,"note":"R7 campus-layout prior for blue-roof hall massing in oblique view.","observation_id":"building_oblique_primary_blue_hall"},{"kind":"silhouette","view":"top","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","status":"observed","confidence":0.74,"note":"R7 campus-layout prior for the primary blue-roof hall footprint.","observation_id":"building_top_primary_blue_hall"},{"kind":"center_point","view":"top","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","status":"observed","confidence":0.66,"note":"Center keypoint for primary blue-roof hall massing review.","observation_id":"building_top_blue_hall_center"},{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png","status":"observed","confidence":0.6,"note":"R7 campus-layout prior for blue-roof hall massing in oblique view.","observation_id":"building_oblique_primary_blue_hall"}]},{"id":"primary_blue_roof_hall_roof_east_eave_line","operation":"add_raised_rib","face":"top","parameters":{"center":[33574.1,29056.2],"length":47652.1,"width":220,"height":140,"direction":"v"},"semantic":"roofline.eave_line","fallback_state":"needs_review","evidence_sources":[{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png","status":"observed","confidence":0.6,"note":"R7 campus-layout prior for blue-roof hall massing in oblique view.","observation_id":"building_oblique_primary_blue_hall"},{"kind":"silhouette","view":"top","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","status":"observed","confidence":0.74,"note":"R7 campus-layout prior for the primary blue-roof hall footprint.","observation_id":"building_top_primary_blue_hall"},{"kind":"center_point","view":"top","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","status":"observed","confidence":0.66,"note":"Center keypoint for primary blue-roof hall massing review.","observation_id":"building_top_blue_hall_center"},{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png","status":"observed","confidence":0.6,"note":"R7 campus-layout prior for blue-roof hall massing in oblique view.","observation_id":"building_oblique_primary_blue_hall"}]},{"id":"primary_blue_roof_hall_facade_loading_door","operation":"cut_recess","face":"front","parameters":{"center":[20472,3300],"size":[5322.7,5610],"depth":160,"radius":60,"segments":4},"semantic":"facade.opening.loading_door","fallback_state":"needs_review","evidence_sources":[{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png","status":"observed","confidence":0.6,"note":"R7 campus-layout prior for blue-roof hall massing in oblique view.","observation_id":"building_oblique_primary_blue_hall"},{"kind":"silhouette","view":"top","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","status":"observed","confidence":0.74,"note":"R7 campus-layout prior for the primary blue-roof hall footprint.","observation_id":"building_top_primary_blue_hall"},{"kind":"center_point","view":"top","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","status":"observed","confidence":0.66,"note":"Center keypoint for primary blue-roof hall massing review.","observation_id":"building_top_blue_hall_center"},{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png","status":"observed","confidence":0.6,"note":"R7 campus-layout prior for blue-roof hall massing in oblique view.","observation_id":"building_oblique_primary_blue_hall"}]},{"id":"primary_blue_roof_hall_facade_window_band_left","operation":"cut_recess","face":"front","parameters":{"center":[12283.2,9570],"size":[6551,1815],"depth":90,"radius":40,"segments":4},"semantic":"facade.opening.window_band","fallback_state":"needs_review","evidence_sources":[{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png","status":"observed","confidence":0.6,"note":"R7 campus-layout prior for blue-roof hall massing in oblique view.","observation_id":"building_oblique_primary_blue_hall"},{"kind":"silhouette","view":"top","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","status":"observed","confidence":0.74,"note":"R7 campus-layout prior for the primary blue-roof hall footprint.","observation_id":"building_top_primary_blue_hall"},{"kind":"center_point","view":"top","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","status":"observed","confidence":0.66,"note":"Center keypoint for primary blue-roof hall massing review.","observation_id":"building_top_blue_hall_center"},{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png","status":"observed","confidence":0.6,"note":"R7 campus-layout prior for blue-roof hall massing in oblique view.","observation_id":"building_oblique_primary_blue_hall"}]},{"id":"primary_blue_roof_hall_facade_window_band_right","operation":"cut_recess","face":"front","parameters":{"center":[28660.8,9570],"size":[6551,1815],"depth":90,"radius":40,"segments":4},"semantic":"facade.opening.window_band","fallback_state":"needs_review","evidence_sources":[{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png","status":"observed","confidence":0.6,"note":"R7 campus-layout prior for blue-roof hall massing in oblique view.","observation_id":"building_oblique_primary_blue_hall"},{"kind":"silhouette","view":"top","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","status":"observed","confidence":0.74,"note":"R7 campus-layout prior for the primary blue-roof hall footprint.","observation_id":"building_top_primary_blue_hall"},{"kind":"center_point","view":"top","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","status":"observed","confidence":0.66,"note":"Center keypoint for primary blue-roof hall massing review.","observation_id":"building_top_blue_hall_center"},{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png","status":"observed","confidence":0.6,"note":"R7 campus-layout prior for blue-roof hall massing in oblique view.","observation_id":"building_oblique_primary_blue_hall"}]}],"confidence":0.5,"status":"needs_review","review_required":true,"basis":["building_group_oblique_roofline_hint","building_group_facade_rhythm_prior","building_group_known_element_scale"],"source_count":4,"source_views":["oblique","top"],"required_views":["top","oblique"],"confirmed_views":["oblique","top"],"missing_views":["facade_orthographic","opening_closeup"],"evidence_sources":[{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png","status":"observed","confidence":0.6,"note":"R7 campus-layout prior for blue-roof hall massing in oblique view.","observation_id":"building_oblique_primary_blue_hall"},{"kind":"silhouette","view":"top","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","status":"observed","confidence":0.74,"note":"R7 campus-layout prior for the primary blue-roof hall footprint.","observation_id":"building_top_primary_blue_hall"},{"kind":"center_point","view":"top","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","status":"observed","confidence":0.66,"note":"Center keypoint for primary blue-roof hall massing review.","observation_id":"building_top_blue_hall_center"},{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png","status":"observed","confidence":0.6,"note":"R7 campus-layout prior for blue-roof hall massing in oblique view.","observation_id":"building_oblique_primary_blue_hall"}],"reason":"R7 building-group detail proposals are image-derived feature intents and require explicit review before patch application."},{"part_id":"warehouse_row_west","proposal_kind":"shape_parameters","parameter":"shape.parameters","path":"parts[warehouse_row_west].shape.parameters","unit":"mm","current_value":{"origin":[-59352.6,-31463.2,0],"size":[29649.1,70405.3,9500]},"proposed_value":{"origin":[-59352.6,-31463.2,0],"size":[29649.1,70405.3,9500]},"confidence":0.58,"status":"needs_review","review_required":true,"basis":["building_group_evidence_bbox","known_element_scale_calibration"],"source_count":3,"source_views":["oblique","top"],"evidence_sources":[{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png","status":"observed","confidence":0.58,"note":"R7 campus-layout prior for west warehouse rows in oblique view.","observation_id":"building_oblique_warehouse_row_west"},{"kind":"silhouette","view":"top","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","status":"observed","confidence":0.74,"note":"R7 campus-layout prior for the west long white warehouse row.","observation_id":"building_top_warehouse_row_west"},{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png","status":"observed","confidence":0.58,"note":"R7 campus-layout prior for west warehouse rows in oblique view.","observation_id":"building_oblique_warehouse_row_west"}],"reason":"R7 building-group massing is bbox-derived and must be reviewed before queue acceptance."},{"part_id":"warehouse_row_west","proposal_kind":"feature_intents","parameter":"feature_intents","path":"parts[warehouse_row_west].feature_intents","unit":"target_face_local_mm","current_value":[],"proposed_value":[{"id":"warehouse_row_west_roof_longitudinal_seam_left","operation":"add_raised_rib","face":"top","parameters":{"center":[9784.2,35202.7],"length":63364.8,"width":160,"height":110,"direction":"v"},"semantic":"roofline.longitudinal_seam","fallback_state":"needs_review","evidence_sources":[{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png","status":"observed","confidence":0.58,"note":"R7 campus-layout prior for west warehouse rows in oblique view.","observation_id":"building_oblique_warehouse_row_west"},{"kind":"silhouette","view":"top","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","status":"observed","confidence":0.74,"note":"R7 campus-layout prior for the west long white warehouse row.","observation_id":"building_top_warehouse_row_west"},{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png","status":"observed","confidence":0.58,"note":"R7 campus-layout prior for west warehouse rows in oblique view.","observation_id":"building_oblique_warehouse_row_west"}]},{"id":"warehouse_row_west_roof_longitudinal_seam_right","operation":"add_raised_rib","face":"top","parameters":{"center":[19864.9,35202.7],"length":63364.8,"width":160,"height":110,"direction":"v"},"semantic":"roofline.longitudinal_seam","fallback_state":"needs_review","evidence_sources":[{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png","status":"observed","confidence":0.58,"note":"R7 campus-layout prior for west warehouse rows in oblique view.","observation_id":"building_oblique_warehouse_row_west"},{"kind":"silhouette","view":"top","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","status":"observed","confidence":0.74,"note":"R7 campus-layout prior for the west long white warehouse row.","observation_id":"building_top_warehouse_row_west"},{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png","status":"observed","confidence":0.58,"note":"R7 campus-layout prior for west warehouse rows in oblique view.","observation_id":"building_oblique_warehouse_row_west"}]},{"id":"warehouse_row_west_facade_loading_bay_left","operation":"cut_recess","face":"front","parameters":{"center":[8301.7,2565],"size":[4743.9,3420],"depth":120,"radius":40,"segments":4},"semantic":"facade.opening.loading_bay","fallback_state":"needs_review","evidence_sources":[{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png","status":"observed","confidence":0.58,"note":"R7 campus-layout prior for west warehouse rows in oblique view.","observation_id":"building_oblique_warehouse_row_west"},{"kind":"silhouette","view":"top","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","status":"observed","confidence":0.74,"note":"R7 campus-layout prior for the west long white warehouse row.","observation_id":"building_top_warehouse_row_west"},{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png","status":"observed","confidence":0.58,"note":"R7 campus-layout prior for west warehouse rows in oblique view.","observation_id":"building_oblique_warehouse_row_west"}]},{"id":"warehouse_row_west_facade_loading_bay_center","operation":"cut_recess","face":"front","parameters":{"center":[14824.6,2565],"size":[4743.9,3420],"depth":120,"radius":40,"segments":4},"semantic":"facade.opening.loading_bay","fallback_state":"needs_review","evidence_sources":[{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png","status":"observed","confidence":0.58,"note":"R7 campus-layout prior for west warehouse rows in oblique view.","observation_id":"building_oblique_warehouse_row_west"},{"kind":"silhouette","view":"top","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","status":"observed","confidence":0.74,"note":"R7 campus-layout prior for the west long white warehouse row.","observation_id":"building_top_warehouse_row_west"},{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png","status":"observed","confidence":0.58,"note":"R7 campus-layout prior for west warehouse rows in oblique view.","observation_id":"building_oblique_warehouse_row_west"}]},{"id":"warehouse_row_west_facade_loading_bay_right","operation":"cut_recess","face":"front","parameters":{"center":[21347.4,2565],"size":[4743.9,3420],"depth":120,"radius":40,"segments":4},"semantic":"facade.opening.loading_bay","fallback_state":"needs_review","evidence_sources":[{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png","status":"observed","confidence":0.58,"note":"R7 campus-layout prior for west warehouse rows in oblique view.","observation_id":"building_oblique_warehouse_row_west"},{"kind":"silhouette","view":"top","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","status":"observed","confidence":0.74,"note":"R7 campus-layout prior for the west long white warehouse row.","observation_id":"building_top_warehouse_row_west"},{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png","status":"observed","confidence":0.58,"note":"R7 campus-layout prior for west warehouse rows in oblique view.","observation_id":"building_oblique_warehouse_row_west"}]}],"confidence":0.5,"status":"needs_review","review_required":true,"basis":["building_group_oblique_roofline_hint","building_group_facade_rhythm_prior","building_group_known_element_scale"],"source_count":3,"source_views":["oblique","top"],"required_views":["top","oblique"],"confirmed_views":["oblique","top"],"missing_views":["facade_orthographic","opening_closeup"],"evidence_sources":[{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png","status":"observed","confidence":0.58,"note":"R7 campus-layout prior for west warehouse rows in oblique view.","observation_id":"building_oblique_warehouse_row_west"},{"kind":"silhouette","view":"top","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","status":"observed","confidence":0.74,"note":"R7 campus-layout prior for the west long white warehouse row.","observation_id":"building_top_warehouse_row_west"},{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png","status":"observed","confidence":0.58,"note":"R7 campus-layout prior for west warehouse rows in oblique view.","observation_id":"building_oblique_warehouse_row_west"}],"reason":"R7 building-group detail proposals are image-derived feature intents and require explicit review before patch application."},{"part_id":"warehouse_row_inner","proposal_kind":"shape_parameters","parameter":"shape.parameters","path":"parts[warehouse_row_inner].shape.parameters","unit":"mm","current_value":{"origin":[-28291.6,-28110.5,0],"size":[18354.2,64817.5,9500]},"proposed_value":{"origin":[-28291.6,-28110.5,0],"size":[18354.2,64817.5,9500]},"confidence":0.58,"status":"needs_review","review_required":true,"basis":["building_group_evidence_bbox","known_element_scale_calibration"],"source_count":3,"source_views":["oblique","top"],"evidence_sources":[{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png","status":"observed","confidence":0.54,"note":"R7 campus-layout prior for inner warehouse rows in oblique view.","observation_id":"building_oblique_warehouse_row_inner"},{"kind":"silhouette","view":"top","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","status":"observed","confidence":0.72,"note":"R7 campus-layout prior for the inner white warehouse row.","observation_id":"building_top_warehouse_row_inner"},{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png","status":"observed","confidence":0.54,"note":"R7 campus-layout prior for inner warehouse rows in oblique view.","observation_id":"building_oblique_warehouse_row_inner"}],"reason":"R7 building-group massing is bbox-derived and must be reviewed before queue acceptance."},{"part_id":"warehouse_row_inner","proposal_kind":"feature_intents","parameter":"feature_intents","path":"parts[warehouse_row_inner].feature_intents","unit":"target_face_local_mm","current_value":[],"proposed_value":[{"id":"warehouse_row_inner_roof_longitudinal_seam_left","operation":"add_raised_rib","face":"top","parameters":{"center":[6056.9,32408.8],"length":58335.8,"width":160,"height":110,"direction":"v"},"semantic":"roofline.longitudinal_seam","fallback_state":"needs_review","evidence_sources":[{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png","status":"observed","confidence":0.54,"note":"R7 campus-layout prior for inner warehouse rows in oblique view.","observation_id":"building_oblique_warehouse_row_inner"},{"kind":"silhouette","view":"top","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","status":"observed","confidence":0.72,"note":"R7 campus-layout prior for the inner white warehouse row.","observation_id":"building_top_warehouse_row_inner"},{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png","status":"observed","confidence":0.54,"note":"R7 campus-layout prior for inner warehouse rows in oblique view.","observation_id":"building_oblique_warehouse_row_inner"}]},{"id":"warehouse_row_inner_roof_longitudinal_seam_right","operation":"add_raised_rib","face":"top","parameters":{"center":[12297.3,32408.8],"length":58335.8,"width":160,"height":110,"direction":"v"},"semantic":"roofline.longitudinal_seam","fallback_state":"needs_review","evidence_sources":[{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png","status":"observed","confidence":0.54,"note":"R7 campus-layout prior for inner warehouse rows in oblique view.","observation_id":"building_oblique_warehouse_row_inner"},{"kind":"silhouette","view":"top","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","status":"observed","confidence":0.72,"note":"R7 campus-layout prior for the inner white warehouse row.","observation_id":"building_top_warehouse_row_inner"},{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png","status":"observed","confidence":0.54,"note":"R7 campus-layout prior for inner warehouse rows in oblique view.","observation_id":"building_oblique_warehouse_row_inner"}]},{"id":"warehouse_row_inner_facade_loading_bay_left","operation":"cut_recess","face":"front","parameters":{"center":[5139.2,2565],"size":[2936.7,3420],"depth":120,"radius":40,"segments":4},"semantic":"facade.opening.loading_bay","fallback_state":"needs_review","evidence_sources":[{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png","status":"observed","confidence":0.54,"note":"R7 campus-layout prior for inner warehouse rows in oblique view.","observation_id":"building_oblique_warehouse_row_inner"},{"kind":"silhouette","view":"top","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","status":"observed","confidence":0.72,"note":"R7 campus-layout prior for the inner white warehouse row.","observation_id":"building_top_warehouse_row_inner"},{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png","status":"observed","confidence":0.54,"note":"R7 campus-layout prior for inner warehouse rows in oblique view.","observation_id":"building_oblique_warehouse_row_inner"}]},{"id":"warehouse_row_inner_facade_loading_bay_center","operation":"cut_recess","face":"front","parameters":{"center":[9177.1,2565],"size":[2936.7,3420],"depth":120,"radius":40,"segments":4},"semantic":"facade.opening.loading_bay","fallback_state":"needs_review","evidence_sources":[{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png","status":"observed","confidence":0.54,"note":"R7 campus-layout prior for inner warehouse rows in oblique view.","observation_id":"building_oblique_warehouse_row_inner"},{"kind":"silhouette","view":"top","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","status":"observed","confidence":0.72,"note":"R7 campus-layout prior for the inner white warehouse row.","observation_id":"building_top_warehouse_row_inner"},{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png","status":"observed","confidence":0.54,"note":"R7 campus-layout prior for inner warehouse rows in oblique view.","observation_id":"building_oblique_warehouse_row_inner"}]},{"id":"warehouse_row_inner_facade_loading_bay_right","operation":"cut_recess","face":"front","parameters":{"center":[13215,2565],"size":[2936.7,3420],"depth":120,"radius":40,"segments":4},"semantic":"facade.opening.loading_bay","fallback_state":"needs_review","evidence_sources":[{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png","status":"observed","confidence":0.54,"note":"R7 campus-layout prior for inner warehouse rows in oblique view.","observation_id":"building_oblique_warehouse_row_inner"},{"kind":"silhouette","view":"top","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","status":"observed","confidence":0.72,"note":"R7 campus-layout prior for the inner white warehouse row.","observation_id":"building_top_warehouse_row_inner"},{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png","status":"observed","confidence":0.54,"note":"R7 campus-layout prior for inner warehouse rows in oblique view.","observation_id":"building_oblique_warehouse_row_inner"}]}],"confidence":0.5,"status":"needs_review","review_required":true,"basis":["building_group_oblique_roofline_hint","building_group_facade_rhythm_prior","building_group_known_element_scale"],"source_count":3,"source_views":["oblique","top"],"required_views":["top","oblique"],"confirmed_views":["oblique","top"],"missing_views":["facade_orthographic","opening_closeup"],"evidence_sources":[{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png","status":"observed","confidence":0.54,"note":"R7 campus-layout prior for inner warehouse rows in oblique view.","observation_id":"building_oblique_warehouse_row_inner"},{"kind":"silhouette","view":"top","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","status":"observed","confidence":0.72,"note":"R7 campus-layout prior for the inner white warehouse row.","observation_id":"building_top_warehouse_row_inner"},{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png","status":"observed","confidence":0.54,"note":"R7 campus-layout prior for inner warehouse rows in oblique view.","observation_id":"building_oblique_warehouse_row_inner"}],"reason":"R7 building-group detail proposals are image-derived feature intents and require explicit review before patch application."},{"part_id":"utility_building","proposal_kind":"shape_parameters","parameter":"shape.parameters","path":"parts[utility_building].shape.parameters","unit":"mm","current_value":{"origin":[35242.2,-15817.6,0],"size":[21177.9,22350.9,7600]},"proposed_value":{"origin":[35242.2,-15817.6,0],"size":[21177.9,22350.9,7600]},"confidence":0.58,"status":"needs_review","review_required":true,"basis":["building_group_evidence_bbox","known_element_scale_calibration"],"source_count":3,"source_views":["oblique","top"],"evidence_sources":[{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png","status":"observed","confidence":0.52,"note":"R7 campus-layout prior for right-side utility/mechanical building in oblique view.","observation_id":"building_oblique_utility_building"},{"kind":"silhouette","view":"top","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","status":"observed","confidence":0.6599999999999999,"note":"R7 campus-layout prior for the right-side utility/mechanical building.","observation_id":"building_top_utility_building"},{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png","status":"observed","confidence":0.52,"note":"R7 campus-layout prior for right-side utility/mechanical building in oblique view.","observation_id":"building_oblique_utility_building"}],"reason":"R7 building-group massing is bbox-derived and must be reviewed before queue acceptance."},{"part_id":"utility_building","proposal_kind":"feature_intents","parameter":"feature_intents","path":"parts[utility_building].feature_intents","unit":"target_face_local_mm","current_value":[],"proposed_value":[{"id":"utility_building_roof_service_ridge","operation":"add_raised_rib","face":"top","parameters":{"center":[10589,11175.5],"length":16092.6,"width":180,"height":120,"direction":"v"},"semantic":"roofline.service_ridge","fallback_state":"needs_review","evidence_sources":[{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png","status":"observed","confidence":0.52,"note":"R7 campus-layout prior for right-side utility/mechanical building in oblique view.","observation_id":"building_oblique_utility_building"},{"kind":"silhouette","view":"top","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","status":"observed","confidence":0.6599999999999999,"note":"R7 campus-layout prior for the right-side utility/mechanical building.","observation_id":"building_top_utility_building"},{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png","status":"observed","confidence":0.52,"note":"R7 campus-layout prior for right-side utility/mechanical building in oblique view.","observation_id":"building_oblique_utility_building"}]},{"id":"utility_building_facade_louver_band","operation":"cut_slot","face":"front","parameters":{"center":[11012.5,4712],"length":9741.8,"width":608,"depth":80,"through":false,"segments":8},"semantic":"facade.opening.louver_band","fallback_state":"needs_review","evidence_sources":[{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png","status":"observed","confidence":0.52,"note":"R7 campus-layout prior for right-side utility/mechanical building in oblique view.","observation_id":"building_oblique_utility_building"},{"kind":"silhouette","view":"top","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","status":"observed","confidence":0.6599999999999999,"note":"R7 campus-layout prior for the right-side utility/mechanical building.","observation_id":"building_top_utility_building"},{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png","status":"observed","confidence":0.52,"note":"R7 campus-layout prior for right-side utility/mechanical building in oblique view.","observation_id":"building_oblique_utility_building"}]},{"id":"utility_building_facade_service_door","operation":"cut_recess","face":"front","parameters":{"center":[4659.1,1824],"size":[2329.6,2432],"depth":120,"radius":30,"segments":4},"semantic":"facade.opening.service_door","fallback_state":"needs_review","evidence_sources":[{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png","status":"observed","confidence":0.52,"note":"R7 campus-layout prior for right-side utility/mechanical building in oblique view.","observation_id":"building_oblique_utility_building"},{"kind":"silhouette","view":"top","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","status":"observed","confidence":0.6599999999999999,"note":"R7 campus-layout prior for the right-side utility/mechanical building.","observation_id":"building_top_utility_building"},{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png","status":"observed","confidence":0.52,"note":"R7 campus-layout prior for right-side utility/mechanical building in oblique view.","observation_id":"building_oblique_utility_building"}]}],"confidence":0.5,"status":"needs_review","review_required":true,"basis":["building_group_oblique_roofline_hint","building_group_facade_rhythm_prior","building_group_known_element_scale"],"source_count":3,"source_views":["oblique","top"],"required_views":["top","oblique"],"confirmed_views":["oblique","top"],"missing_views":["facade_orthographic","opening_closeup"],"evidence_sources":[{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png","status":"observed","confidence":0.52,"note":"R7 campus-layout prior for right-side utility/mechanical building in oblique view.","observation_id":"building_oblique_utility_building"},{"kind":"silhouette","view":"top","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","status":"observed","confidence":0.6599999999999999,"note":"R7 campus-layout prior for the right-side utility/mechanical building.","observation_id":"building_top_utility_building"},{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png","status":"observed","confidence":0.52,"note":"R7 campus-layout prior for right-side utility/mechanical building in oblique view.","observation_id":"building_oblique_utility_building"}],"reason":"R7 building-group detail proposals are image-derived feature intents and require explicit review before patch application."},{"part_id":"admin_office","proposal_kind":"shape_parameters","parameter":"shape.parameters","path":"parts[admin_office].shape.parameters","unit":"mm","current_value":{"origin":[-9937.4,-37050.9,0],"size":[21177.9,14528.1,6800]},"proposed_value":{"origin":[-9937.4,-37050.9,0],"size":[21177.9,14528.1,6800]},"confidence":0.58,"status":"needs_review","review_required":true,"basis":["building_group_evidence_bbox","known_element_scale_calibration"],"source_count":3,"source_views":["oblique","top"],"evidence_sources":[{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png","status":"observed","confidence":0.5,"note":"R7 campus-layout prior for lower admin/office block in oblique view.","observation_id":"building_oblique_admin_office"},{"kind":"silhouette","view":"top","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","status":"observed","confidence":0.6399999999999999,"note":"R7 campus-layout prior for the low admin/office block near the lower center of the campus.","observation_id":"building_top_admin_office"},{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png","status":"observed","confidence":0.5,"note":"R7 campus-layout prior for lower admin/office block in oblique view.","observation_id":"building_oblique_admin_office"}],"reason":"R7 building-group massing is bbox-derived and must be reviewed before queue acceptance."},{"part_id":"admin_office","proposal_kind":"feature_intents","parameter":"feature_intents","path":"parts[admin_office].feature_intents","unit":"target_face_local_mm","current_value":[],"proposed_value":[{"id":"admin_office_roof_parapet_front","operation":"add_raised_rib","face":"top","parameters":{"center":[10589,1162.2],"length":18213,"width":160,"height":120,"direction":"u"},"semantic":"roofline.parapet_edge","fallback_state":"needs_review","evidence_sources":[{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png","status":"observed","confidence":0.5,"note":"R7 campus-layout prior for lower admin/office block in oblique view.","observation_id":"building_oblique_admin_office"},{"kind":"silhouette","view":"top","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","status":"observed","confidence":0.6399999999999999,"note":"R7 campus-layout prior for the low admin/office block near the lower center of the campus.","observation_id":"building_top_admin_office"},{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png","status":"observed","confidence":0.5,"note":"R7 campus-layout prior for lower admin/office block in oblique view.","observation_id":"building_oblique_admin_office"}]},{"id":"admin_office_facade_entry_door","operation":"cut_recess","face":"front","parameters":{"center":[10589,1700],"size":[2541.3,2448],"depth":120,"radius":30,"segments":4},"semantic":"facade.opening.entry_door","fallback_state":"needs_review","evidence_sources":[{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png","status":"observed","confidence":0.5,"note":"R7 campus-layout prior for lower admin/office block in oblique view.","observation_id":"building_oblique_admin_office"},{"kind":"silhouette","view":"top","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","status":"observed","confidence":0.6399999999999999,"note":"R7 campus-layout prior for the low admin/office block near the lower center of the campus.","observation_id":"building_top_admin_office"},{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png","status":"observed","confidence":0.5,"note":"R7 campus-layout prior for lower admin/office block in oblique view.","observation_id":"building_oblique_admin_office"}]},{"id":"admin_office_facade_window_left","operation":"cut_recess","face":"front","parameters":{"center":[5929.8,4216],"size":[2964.9,1224],"depth":80,"radius":30,"segments":4},"semantic":"facade.opening.window","fallback_state":"needs_review","evidence_sources":[{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png","status":"observed","confidence":0.5,"note":"R7 campus-layout prior for lower admin/office block in oblique view.","observation_id":"building_oblique_admin_office"},{"kind":"silhouette","view":"top","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","status":"observed","confidence":0.6399999999999999,"note":"R7 campus-layout prior for the low admin/office block near the lower center of the campus.","observation_id":"building_top_admin_office"},{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png","status":"observed","confidence":0.5,"note":"R7 campus-layout prior for lower admin/office block in oblique view.","observation_id":"building_oblique_admin_office"}]},{"id":"admin_office_facade_window_right","operation":"cut_recess","face":"front","parameters":{"center":[15248.1,4216],"size":[2964.9,1224],"depth":80,"radius":30,"segments":4},"semantic":"facade.opening.window","fallback_state":"needs_review","evidence_sources":[{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png","status":"observed","confidence":0.5,"note":"R7 campus-layout prior for lower admin/office block in oblique view.","observation_id":"building_oblique_admin_office"},{"kind":"silhouette","view":"top","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","status":"observed","confidence":0.6399999999999999,"note":"R7 campus-layout prior for the low admin/office block near the lower center of the campus.","observation_id":"building_top_admin_office"},{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png","status":"observed","confidence":0.5,"note":"R7 campus-layout prior for lower admin/office block in oblique view.","observation_id":"building_oblique_admin_office"}]}],"confidence":0.5,"status":"needs_review","review_required":true,"basis":["building_group_oblique_roofline_hint","building_group_facade_rhythm_prior","building_group_known_element_scale"],"source_count":3,"source_views":["oblique","top"],"required_views":["top","oblique"],"confirmed_views":["oblique","top"],"missing_views":["facade_orthographic","opening_closeup"],"evidence_sources":[{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png","status":"observed","confidence":0.5,"note":"R7 campus-layout prior for lower admin/office block in oblique view.","observation_id":"building_oblique_admin_office"},{"kind":"silhouette","view":"top","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","status":"observed","confidence":0.6399999999999999,"note":"R7 campus-layout prior for the low admin/office block near the lower center of the campus.","observation_id":"building_top_admin_office"},{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png","status":"observed","confidence":0.5,"note":"R7 campus-layout prior for lower admin/office block in oblique view.","observation_id":"building_oblique_admin_office"}],"reason":"R7 building-group detail proposals are image-derived feature intents and require explicit review before patch application."},{"part_id":"parking_lot","proposal_kind":"shape_parameters","parameter":"shape.parameters","path":"parts[parking_lot].shape.parameters","unit":"mm","current_value":{"origin":[14064.3,-42638.6,0],"size":[45179.6,21233.3,80]},"proposed_value":{"origin":[14064.3,-42638.6,0],"size":[45179.6,21233.3,80]},"confidence":0.58,"status":"needs_review","review_required":true,"basis":["building_group_evidence_bbox","known_element_scale_calibration"],"source_count":3,"source_views":["oblique","top"],"evidence_sources":[{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png","status":"observed","confidence":0.52,"note":"R7 campus-layout prior for parking lot in oblique view.","observation_id":"building_oblique_parking_lot"},{"kind":"silhouette","view":"top","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","status":"observed","confidence":0.72,"note":"R7 campus-layout prior for the parking lot footprint.","observation_id":"building_top_parking_lot"},{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png","status":"observed","confidence":0.52,"note":"R7 campus-layout prior for parking lot in oblique view.","observation_id":"building_oblique_parking_lot"}],"reason":"R7 building-group massing is bbox-derived and must be reviewed before queue acceptance."},{"part_id":"internal_roads","proposal_kind":"shape_parameters","parameter":"shape.parameters","path":"parts[internal_roads].shape.parameters","unit":"mm","current_value":{"origin":[-63588.1,-43756.1,0],"size":[125655.7,89403.5,70]},"proposed_value":{"origin":[-63588.1,-43756.1,0],"size":[125655.7,89403.5,70]},"confidence":0.58,"status":"needs_review","review_required":true,"basis":["building_group_evidence_bbox","known_element_scale_calibration"],"source_count":3,"source_views":["oblique","top"],"evidence_sources":[{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png","status":"observed","confidence":0.45,"note":"R7 campus-layout prior for paved circulation in oblique view.","observation_id":"building_oblique_internal_roads"},{"kind":"silhouette","view":"top","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","status":"observed","confidence":0.5800000000000001,"note":"R7 campus-layout prior for internal road loops and paved circulation.","observation_id":"building_top_internal_roads"},{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png","status":"observed","confidence":0.45,"note":"R7 campus-layout prior for paved circulation in oblique view.","observation_id":"building_oblique_internal_roads"}],"reason":"R7 building-group massing is bbox-derived and must be reviewed before queue acceptance."},{"part_id":"tank_farm","proposal_kind":"shape_parameters","parameter":"shape.parameters","path":"parts[tank_farm].shape.parameters","unit":"mm","current_value":{"origin":[47214.8,33354.4,0],"radius":3162.6,"height":14000,"segments":32,"smooth":"all"},"proposed_value":{"origin":[47214.8,33354.4,0],"radius":3162.6,"height":14000,"segments":32,"smooth":"all"},"confidence":0.56,"status":"needs_review","review_required":true,"basis":["building_group_evidence_bbox","known_element_scale_calibration"],"source_count":4,"source_views":["oblique","top"],"evidence_sources":[{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png","status":"observed","confidence":0.54,"note":"R7 campus-layout prior for cylindrical tanks in oblique view.","observation_id":"building_oblique_tank_farm"},{"kind":"silhouette","view":"top","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","status":"observed","confidence":0.7,"note":"R7 campus-layout prior for the cylindrical tank farm.","observation_id":"building_top_tank_farm"},{"kind":"center_point","view":"top","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","status":"observed","confidence":0.58,"note":"Center keypoint for tank farm massing review.","observation_id":"building_top_tank_farm_center"},{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png","status":"observed","confidence":0.54,"note":"R7 campus-layout prior for cylindrical tanks in oblique view.","observation_id":"building_oblique_tank_farm"}],"reason":"R7 building-group massing is bbox-derived and must be reviewed before queue acceptance."},{"part_id":"tank_farm_silo_east","proposal_kind":"shape_parameters","parameter":"shape.parameters","path":"parts[tank_farm_silo_east].shape.parameters","unit":"mm","current_value":{"origin":[54330.5,33354.4,0],"radius":3162.6,"height":14000,"segments":32,"smooth":"all"},"proposed_value":{"origin":[54330.5,33354.4,0],"radius":3162.6,"height":14000,"segments":32,"smooth":"all"},"confidence":0.56,"status":"needs_review","review_required":true,"basis":["building_group_evidence_bbox","known_element_scale_calibration"],"source_count":4,"source_views":["oblique","top"],"evidence_sources":[{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png","status":"observed","confidence":0.54,"note":"R7 campus-layout prior for cylindrical tanks in oblique view.","observation_id":"building_oblique_tank_farm"},{"kind":"silhouette","view":"top","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","status":"observed","confidence":0.7,"note":"R7 campus-layout prior for the cylindrical tank farm.","observation_id":"building_top_tank_farm"},{"kind":"center_point","view":"top","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","status":"observed","confidence":0.58,"note":"Center keypoint for tank farm massing review.","observation_id":"building_top_tank_farm_center"},{"kind":"silhouette","view":"oblique","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png","status":"observed","confidence":0.54,"note":"R7 campus-layout prior for cylindrical tanks in oblique view.","observation_id":"building_oblique_tank_farm"}],"reason":"R7 building-group massing is bbox-derived and must be reviewed before queue acceptance."},{"part_id":"scale_anchor_parking_bay_width_span","proposal_kind":"shape_parameters","parameter":"shape.parameters","path":"parts[scale_anchor_parking_bay_width_span].shape.parameters","unit":"mm","current_value":{"origin":[17169.7,-30010.5,120],"size":[34449.8,4693,120]},"proposed_value":{"origin":[17169.7,-30010.5,120],"size":[34449.8,4693,120]},"confidence":0.68,"status":"needs_review","review_required":true,"basis":["building_group_evidence_bbox","known_element_scale_calibration"],"source_count":1,"source_views":["top"],"evidence_sources":[{"kind":"known_element_scale_anchor","view":"top","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","status":"observed","confidence":0.68,"note":"parking_bay_width_span scale anchor requires user review before final scale acceptance."}],"reason":"R7 building-group massing is bbox-derived and must be reviewed before queue acceptance."},{"part_id":"scale_anchor_parking_bay_single","proposal_kind":"shape_parameters","parameter":"shape.parameters","path":"parts[scale_anchor_parking_bay_single].shape.parameters","unit":"mm","current_value":{"origin":[17453,-29228.1,120],"size":[2542,5364.9,120]},"proposed_value":{"origin":[17453,-29228.1,120],"size":[2542,5364.9,120]},"confidence":0.6,"status":"needs_review","review_required":true,"basis":["building_group_evidence_bbox","known_element_scale_calibration"],"source_count":1,"source_views":["top"],"evidence_sources":[{"kind":"known_element_scale_anchor","view":"top","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","status":"observed","confidence":0.6,"note":"parking_bay_single scale anchor requires user review before final scale acceptance."}],"reason":"R7 building-group massing is bbox-derived and must be reviewed before queue acceptance."},{"part_id":"scale_anchor_parking_drive_aisle_width","proposal_kind":"shape_parameters","parameter":"shape.parameters","path":"parts[scale_anchor_parking_drive_aisle_width].shape.parameters","unit":"mm","current_value":{"origin":[15476.1,-35152.7,120],"size":[40944,6482.5,120]},"proposed_value":{"origin":[15476.1,-35152.7,120],"size":[40944,6482.5,120]},"confidence":0.54,"status":"needs_review","review_required":true,"basis":["building_group_evidence_bbox","known_element_scale_calibration"],"source_count":1,"source_views":["top"],"evidence_sources":[{"kind":"known_element_scale_anchor","view":"top","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","status":"observed","confidence":0.54,"note":"parking_drive_aisle_width scale anchor requires user review before final scale acceptance."}],"reason":"R7 building-group massing is bbox-derived and must be reviewed before queue acceptance."},{"part_id":"scale_anchor_crosswalk_width","proposal_kind":"shape_parameters","parameter":"shape.parameters","path":"parts[scale_anchor_crosswalk_width].shape.parameters","unit":"mm","current_value":{"origin":[55008.2,-12464.9,120],"size":[6354.2,3352.6,120]},"proposed_value":{"origin":[55008.2,-12464.9,120],"size":[6354.2,3352.6,120]},"confidence":0.42,"status":"needs_review","review_required":true,"basis":["building_group_evidence_bbox","known_element_scale_calibration"],"source_count":1,"source_views":["top"],"evidence_sources":[{"kind":"known_element_scale_anchor","view":"top","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","status":"observed","confidence":0.42,"note":"crosswalk_width scale anchor requires user review before final scale acceptance."}],"reason":"R7 building-group massing is bbox-derived and must be reviewed before queue acceptance."}]}</script>
+    <script type="application/json" id="accepted-review-meta">{"version":1,"kind":"parameter_proposal_review","target_part_graph_id":"building-group-image-evidence-massing-part-graph","reviewer":"r7-building-detail-final-acceptance","verdict":"accepted_all_current_detail_proposals","accepted_proposals":[{"part_id":"primary_blue_roof_hall","path":"parts[primary_blue_roof_hall].feature_intents","reason":"Accept the reviewed primary hall roofline, facade, loading-door, and window-band feature intents for the R7 final building-group model."},{"part_id":"warehouse_row_west","path":"parts[warehouse_row_west].feature_intents","reason":"Accept the reviewed west warehouse roof seams and loading-bay feature intents for the R7 final building-group model."},{"part_id":"warehouse_row_inner","path":"parts[warehouse_row_inner].feature_intents","reason":"Accept the reviewed inner warehouse roof seams and loading-bay feature intents for the R7 final building-group model."},{"part_id":"utility_building","path":"parts[utility_building].feature_intents","reason":"Accept the reviewed utility-building service-ridge, louver-slot, and service-door feature intents for the R7 final building-group model."},{"part_id":"admin_office","path":"parts[admin_office].feature_intents","reason":"Accept the reviewed admin-office parapet, entry-door, and window feature intents for the R7 final building-group model."}],"notes":["This fixture accepts every current roofline, facade, and opening detail proposal from the R7 building-group massing PartGraph.","Acceptance is scoped to the generated-image industrial campus sample and remains tied to the image-evidence review trail, not surveyed architectural reconstruction."]}</script>
+    <script>
+      const proposalPayload = JSON.parse(document.getElementById('parameter-proposals-data').textContent);
+      const reviewMeta = JSON.parse(document.getElementById('accepted-review-meta').textContent);
+      const textArea = document.getElementById('accepted-proposals-json');
+      const statusLine = document.getElementById('proposal-review-status');
+      const checkboxes = Array.from(document.querySelectorAll('[data-proposal-key]'));
+
+      function selectedProposals() {
+        const selectedKeys = new Set(checkboxes.filter((item) => item.checked).map((item) => item.dataset.proposalKey));
+        return proposalPayload.proposals
+          .filter((proposal) => selectedKeys.has(proposal.part_id + '|' + proposal.path))
+          .map((proposal) => ({
+            part_id: proposal.part_id,
+            path: proposal.path,
+            reason: 'Accepted in Parameter Proposal Review UI.'
+          }));
+      }
+
+      function currentReview() {
+        return {
+          version: 1,
+          kind: 'parameter_proposal_review',
+          target_part_graph_id: reviewMeta.target_part_graph_id || proposalPayload.part_graph_id,
+          reviewer: reviewMeta.reviewer || 'proposal-review-workbench',
+          verdict: selectedProposals().length ? 'accepted_subset' : 'needs_review',
+          accepted_proposals: selectedProposals(),
+          notes: reviewMeta.notes || []
+        };
+      }
+
+      function refreshJson() {
+        textArea.value = JSON.stringify(currentReview(), null, 2);
+        statusLine.textContent = selectedProposals().length + ' proposal(s) selected.';
+      }
+
+      function validateJson() {
+        try {
+          const parsed = JSON.parse(textArea.value);
+          if (parsed.kind !== 'parameter_proposal_review') throw new Error('kind must be parameter_proposal_review');
+          if (!Array.isArray(parsed.accepted_proposals)) throw new Error('accepted_proposals must be an array');
+          statusLine.textContent = 'Accepted review JSON is valid.';
+        } catch (error) {
+          statusLine.textContent = error.message;
+        }
+      }
+
+      document.getElementById('select-all-proposals').addEventListener('click', () => {
+        checkboxes.forEach((item) => { item.checked = true; });
+        refreshJson();
+      });
+      document.getElementById('clear-proposals').addEventListener('click', () => {
+        checkboxes.forEach((item) => { item.checked = false; });
+        refreshJson();
+      });
+      document.getElementById('validate-accepted-proposals').addEventListener('click', validateJson);
+      document.getElementById('copy-accepted-proposals').addEventListener('click', async () => {
+        try {
+          if (!navigator.clipboard || !navigator.clipboard.writeText) throw new Error('Clipboard API unavailable');
+          await navigator.clipboard.writeText(textArea.value);
+          statusLine.textContent = 'Accepted review JSON copied.';
+        } catch (_error) {
+          textArea.focus();
+          textArea.select();
+          document.execCommand('copy');
+          statusLine.textContent = 'Accepted review JSON selected and copied with browser fallback.';
+        }
+      });
+      document.getElementById('download-accepted-proposals').addEventListener('click', () => {
+        const blob = new Blob([textArea.value + '\n'], { type: 'application/json' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'parameter-proposal-review.accepted.json';
+        link.click();
+        URL.revokeObjectURL(link.href);
+      });
+      checkboxes.forEach((item) => item.addEventListener('change', refreshJson));
+      refreshJson();
+    </script>
+  </main>
+</body>
+</html>

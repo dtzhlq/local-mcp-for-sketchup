@@ -34,4 +34,36 @@ Queue snapshot summary:
 | Layout QA issues | 0 |
 | Reference Visual QA issues | 0 |
 
-Scope note: this verifies the current review-gated massing chain in live SketchUp. It is not final architectural acceptance; facade planes, rooflines, openings, and north/up confirmation remain R7 follow-up work.
+Scope note: this verifies the review-gated massing chain in live SketchUp. Detail proposal acceptance is recorded separately below.
+
+## R7 Final Detail Queue Verification
+
+Command:
+
+```bash
+npm run image-structured:proposal-review-chain-building-group-all:queue
+```
+
+Artifacts:
+
+- SKP: `output/image-structured-building-group-r7-final.skp`
+- SKP size: `253371` bytes
+- Proposal QA report: `proposal-qa-r7-final-queue/report.json`
+- Accepted review fixture: `parameter-proposal-review.accepted-all.json`
+- Applied PartGraph: `part-graph.r7-final.json`
+- Compiled DSL: `output.r7-final.json`
+
+Queue final snapshot summary:
+
+| Metric | Value |
+|---|---:|
+| Groups | 14 |
+| Instances | 0 |
+| Faces | 609 |
+| Edges | 1442 |
+| Vertices | 884 |
+| Layout QA issues | 0 |
+| Reference Visual QA issues | 0 |
+| Physical consistency issues | 0 |
+
+Scope note: this verifies the accepted-all roofline/facade/opening detail proposal chain for the generated-image R7 sample. It is the R7 technical baseline for the current test set, while real north/up and surveyed dimensions remain explicit review inputs.

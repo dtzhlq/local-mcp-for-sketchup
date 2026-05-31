@@ -788,6 +788,81 @@ async function assertBuildingGroupObservationSample() {
   assert.ok(proposalQueueQaReport.artifact.totals.faces >= detailResult.snapshot.totals.faces, 'building group detail proposal queue artifact should preserve feature-backed topology');
   assert.ok(proposalQueueQaReport.artifact.totals.faces > result.snapshot.totals.faces, 'building group detail proposal queue artifact should add topology beyond base massing');
   assert.ok(proposalQueueQaReport.artifact.path.endsWith('output/image-structured-building-group-detail-proposal-applied.skp'), 'building group detail proposal queue artifact should save the expected SKP');
+
+  const acceptedAllDetailReview = JSON.parse(await fs.readFile(path.join(base, 'parameter-proposal-review.accepted-all.json'), 'utf8'));
+  assert.equal(acceptedAllDetailReview.verdict, 'accepted_all_current_detail_proposals', 'building group R7 final review should accept all current detail proposals');
+  assert.deepEqual(
+    acceptedAllDetailReview.accepted_proposals.map((proposal) => proposal.part_id),
+    ['primary_blue_roof_hall', 'warehouse_row_west', 'warehouse_row_inner', 'utility_building', 'admin_office'],
+    'building group R7 final review should cover all current detail proposal targets'
+  );
+
+  const allDetailPatch = JSON.parse(await fs.readFile(path.join(base, 'correction-patch.detail-proposals-all.json'), 'utf8'));
+  assert.equal(allDetailPatch.source, 'parameter_proposal_review', 'building group R7 final patch should come from proposal review');
+  assert.equal(allDetailPatch.edits.length, 5, 'building group R7 final patch should apply all reviewed detail proposals');
+  assert.deepEqual(
+    allDetailPatch.edits.map((edit) => edit.part_id),
+    ['primary_blue_roof_hall', 'warehouse_row_west', 'warehouse_row_inner', 'utility_building', 'admin_office'],
+    'building group R7 final patch should preserve reviewed proposal target order'
+  );
+
+  const finalPartGraph = JSON.parse(await fs.readFile(path.join(base, 'part-graph.r7-final.json'), 'utf8'));
+  assertValid(validatePartGraph, finalPartGraph, 'building group part-graph.r7-final.json');
+  const finalFeatureCounts = Object.fromEntries(finalPartGraph.parts.filter((part) => part.feature_intents).map((part) => [part.id, part.feature_intents.length]));
+  assert.deepEqual(finalFeatureCounts, {
+    primary_blue_roof_hall: 6,
+    warehouse_row_west: 5,
+    warehouse_row_inner: 5,
+    utility_building: 3,
+    admin_office: 4
+  }, 'building group R7 final PartGraph should attach all current roofline/facade/opening feature intents');
+  assert.deepEqual(
+    finalPartGraph.parts.filter((part) => part.evidence_status === 'manual_confirmed').map((part) => part.id),
+    ['primary_blue_roof_hall', 'warehouse_row_west', 'warehouse_row_inner', 'utility_building', 'admin_office'],
+    'building group R7 final accepted detail parts should be manual_confirmed'
+  );
+
+  const finalOutput = JSON.parse(await fs.readFile(path.join(base, 'output.r7-final.json'), 'utf8'));
+  const finalCompiled = compilePartGraphToSketchUpDsl(finalPartGraph, profile, { repoRoot });
+  assert.deepEqual(finalOutput, finalCompiled, 'building group R7 final DSL should match current PartGraph compiler output');
+  assert.equal(finalOutput.operations.filter((operation) => operation.op === 'add_raised_rib').length, 9, 'R7 final DSL should include all accepted roofline ribs');
+  assert.equal(finalOutput.operations.filter((operation) => operation.op === 'cut_recess').length, 13, 'R7 final DSL should include all accepted facade/opening recesses');
+  assert.equal(finalOutput.operations.filter((operation) => operation.op === 'cut_slot').length, 1, 'R7 final DSL should include the accepted utility louver slot');
+  const finalDetailResult = await bridge.build_model({ runtime: 'mock', code: JSON.stringify(finalOutput) });
+  assert.equal(finalDetailResult.snapshot.totals.groups, partGraph.parts.length, 'R7 final mock snapshot should preserve one group per massing part');
+  assert.ok(finalDetailResult.snapshot.totals.faces > detailResult.snapshot.totals.faces, 'R7 final mock snapshot should add topology beyond the primary-hall subset');
+  for (const [partId, count] of Object.entries(finalFeatureCounts)) {
+    const snapshotItem = finalDetailResult.snapshot.groups.find((group) => group.id === partId);
+    assert.ok(snapshotItem, `R7 final mock snapshot should include ${partId}`);
+    assert.equal(snapshotItem.features.length, count, `R7 final mock snapshot should record all accepted features for ${partId}`);
+  }
+
+  const finalLayoutQaReport = JSON.parse(await fs.readFile(path.join(base, 'layout-qa-r7-final', 'building-group-r7-final', 'report.json'), 'utf8'));
+  assert.equal(finalLayoutQaReport.ok, true, 'building group R7 final layout QA artifact should pass');
+  assert.equal(finalLayoutQaReport.summary.total, 0, 'building group R7 final layout QA artifact should have no issues');
+  const finalReferenceQaReport = JSON.parse(await fs.readFile(path.join(base, 'reference-visual-qa-r7-final', 'building-group-r7-final', 'report.json'), 'utf8'));
+  assert.equal(finalReferenceQaReport.ok, true, 'building group R7 final reference visual QA artifact should pass');
+  assert.equal(finalReferenceQaReport.summary.total, 0, 'building group R7 final reference visual QA artifact should have no issues');
+  assert.equal(finalReferenceQaReport.summary.by_type['reference.feature_missing'] || 0, 0, 'R7 final reference QA should not report missing accepted feature intents');
+
+  const finalProposalQaReport = JSON.parse(await fs.readFile(path.join(base, 'proposal-qa-r7-final', 'report.json'), 'utf8'));
+  assert.equal(finalProposalQaReport.ok, true, 'building group R7 final proposal QA should pass in mock runtime');
+  assert.equal(finalProposalQaReport.review_required, false, 'building group R7 final proposal QA should not require additional review for current accepted proposals');
+  assert.equal(finalProposalQaReport.compiled_matches_output, true, 'building group R7 final proposal QA should verify compiled output freshness');
+  assert.equal(finalProposalQaReport.reference_visual.verdict, 'pass', 'building group R7 final feature reference visual QA should pass');
+  assert.equal(finalProposalQaReport.physical_consistency.verdict, 'pass', 'building group R7 final physical consistency should pass');
+
+  const finalProposalQueueQaReport = JSON.parse(await fs.readFile(path.join(base, 'proposal-qa-r7-final-queue', 'report.json'), 'utf8'));
+  assert.equal(finalProposalQueueQaReport.ok, true, 'building group R7 final queue QA should pass');
+  assert.equal(finalProposalQueueQaReport.runtime, 'queue', 'building group R7 final queue QA should record queue runtime');
+  assert.equal(finalProposalQueueQaReport.review_required, false, 'building group R7 final queue QA should not require additional review for current accepted proposals');
+  assert.equal(finalProposalQueueQaReport.compiled_matches_output, true, 'building group R7 final queue QA should verify compiled output freshness');
+  assert.equal(finalProposalQueueQaReport.layout.verdict, 'pass', 'building group R7 final queue layout QA should pass');
+  assert.equal(finalProposalQueueQaReport.reference_visual.verdict, 'pass', 'building group R7 final queue reference visual QA should pass');
+  assert.equal(finalProposalQueueQaReport.physical_consistency.verdict, 'pass', 'building group R7 final queue physical consistency should pass');
+  assert.equal(finalProposalQueueQaReport.artifact.totals.groups, partGraph.parts.length, 'building group R7 final queue artifact should preserve massing group count');
+  assert.ok(finalProposalQueueQaReport.artifact.totals.faces > proposalQueueQaReport.artifact.totals.faces, 'building group R7 final queue artifact should add topology beyond the primary-hall subset');
+  assert.ok(finalProposalQueueQaReport.artifact.path.endsWith('output/image-structured-building-group-r7-final.skp'), 'building group R7 final queue artifact should save the expected SKP');
   return true;
 }
 

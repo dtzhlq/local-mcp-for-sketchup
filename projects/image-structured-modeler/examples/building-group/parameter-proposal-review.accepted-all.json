@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "kind": "parameter_proposal_review",
+  "target_part_graph_id": "building-group-image-evidence-massing-part-graph",
+  "reviewer": "r7-building-detail-final-acceptance",
+  "verdict": "accepted_all_current_detail_proposals",
+  "accepted_proposals": [
+    {
+      "part_id": "primary_blue_roof_hall",
+      "path": "parts[primary_blue_roof_hall].feature_intents",
+      "reason": "Accept the reviewed primary hall roofline, facade, loading-door, and window-band feature intents for the R7 final building-group model."
+    },
+    {
+      "part_id": "warehouse_row_west",
+      "path": "parts[warehouse_row_west].feature_intents",
+      "reason": "Accept the reviewed west warehouse roof seams and loading-bay feature intents for the R7 final building-group model."
+    },
+    {
+      "part_id": "warehouse_row_inner",
+      "path": "parts[warehouse_row_inner].feature_intents",
+      "reason": "Accept the reviewed inner warehouse roof seams and loading-bay feature intents for the R7 final building-group model."
+    },
+    {
+      "part_id": "utility_building",
+      "path": "parts[utility_building].feature_intents",
+      "reason": "Accept the reviewed utility-building service-ridge, louver-slot, and service-door feature intents for the R7 final building-group model."
+    },
+    {
+      "part_id": "admin_office",
+      "path": "parts[admin_office].feature_intents",
+      "reason": "Accept the reviewed admin-office parapet, entry-door, and window feature intents for the R7 final building-group model."
+    }
+  ],
+  "notes": [
+    "This fixture accepts every current roofline, facade, and opening detail proposal from the R7 building-group massing PartGraph.",
+    "Acceptance is scoped to the generated-image industrial campus sample and remains tied to the image-evidence review trail, not surveyed architectural reconstruction."
+  ]
+}
