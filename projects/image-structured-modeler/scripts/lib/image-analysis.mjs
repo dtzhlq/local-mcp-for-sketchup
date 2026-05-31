@@ -57,7 +57,7 @@ const PROFILE_DEFAULT_SCALE = {
   switch_controller: { width: 280, depth: 42, height: 155 },
   compact_remote: { width: 44, depth: 16, height: 158 },
   vehicle_ambulance: { width: 2300, depth: 900, height: 1050 },
-  building_group: { width: 520000, depth: 380000, height: 28000 }
+  building_group: { width: 140000, depth: 105000, height: 18000 }
 };
 
 export async function listImageFiles(inputPath) {
@@ -523,6 +523,10 @@ function addBuildingGroupCandidates(viewKind, helpers) {
     addCampusBox('building_top_admin_office', 'admin_office', { x: 0.41, y: 0.69, width: 0.15, height: 0.13 }, 'R7 campus-layout prior for the low admin/office block near the lower center of the campus.', 0.58);
     addCampusBox('building_top_parking_lot', 'parking_lot', { x: 0.58, y: 0.68, width: 0.32, height: 0.19 }, 'R7 campus-layout prior for the parking lot footprint.', 0.66);
     addCampusBox('building_top_internal_roads', 'internal_roads', { x: 0.03, y: 0.08, width: 0.89, height: 0.8 }, 'R7 campus-layout prior for internal road loops and paved circulation.', 0.52);
+    addCampusBox('building_top_scale_parking_bay_span', 'scale_anchor_parking_bay_span', { x: 0.602, y: 0.715, width: 0.244, height: 0.042 }, 'Known-element scale anchor: visible row span of 13 standard parking bay widths at 2.6m each; review before locking site scale.', 0.64);
+    addCampusBox('building_top_scale_parking_bay_depth', 'scale_anchor_parking_bay_depth', { x: 0.604, y: 0.702, width: 0.018, height: 0.048 }, 'Known-element scale anchor: one standard parking bay footprint, using 2.6m width and 5.2m depth.', 0.58);
+    addCampusBox('building_top_scale_drive_aisle_width', 'scale_anchor_drive_aisle_width', { x: 0.59, y: 0.745, width: 0.29, height: 0.058 }, 'Known-element scale anchor: two-way parking drive aisle, provisionally treated as 6.5m wide.', 0.56);
+    addCampusBox('building_top_scale_crosswalk_width', 'scale_anchor_crosswalk_width', { x: 0.87, y: 0.57, width: 0.045, height: 0.03 }, 'Known-element scale anchor: pedestrian crossing/marked walkway, provisionally treated as 3.0m wide.', 0.48);
     addPoint('building_top_blue_hall_center', 'primary_blue_roof_hall', { x: 0.57, y: 0.4 }, 'Center keypoint for primary blue-roof hall massing review.', 0.66);
     addPoint('building_top_tank_farm_center', 'tank_farm', { x: 0.84, y: 0.19 }, 'Center keypoint for tank farm massing review.', 0.58);
   } else if (viewKind === 'oblique') {
@@ -709,6 +713,7 @@ function requiredViewsForProfile(objectProfile) {
 }
 
 function makeScaleCalibration({ objectProfile, images, missingViews }) {
+  if (objectProfile === 'building_group') return makeBuildingGroupScaleCalibration({ images, missingViews });
   const defaults = PROFILE_DEFAULT_SCALE[objectProfile] || PROFILE_DEFAULT_SCALE.switch_controller;
   const measurements = [];
   for (const image of images) {
@@ -744,6 +749,150 @@ function makeScaleCalibration({ objectProfile, images, missingViews }) {
       'Treat as provisional until a user-provided physical dimension or calibrated orthographic view is available.'
     ]
   };
+}
+
+function makeBuildingGroupScaleCalibration({ images, missingViews }) {
+  const defaults = PROFILE_DEFAULT_SCALE.building_group;
+  const topImage = images.find((image) => image.detected_view.kind === 'top') || images[0];
+  if (!topImage) {
+    return {
+      units: 'mm',
+      strategy: 'known_site_element_anchors',
+      default_scale: defaults,
+      measurements: [],
+      confidence: 0.18,
+      missing_views: missingViews,
+      notes: [
+        'No usable top-view image was available for known-element scale anchors.',
+        'Provide a calibrated plan dimension before generating a final massing PartGraph.'
+      ]
+    };
+  }
+
+  const anchors = [
+    {
+      observation_id: 'building_top_scale_parking_bay_span',
+      anchor_type: 'parking_bay_width_span',
+      physical_width_mm: 13 * 2600,
+      physical_height_mm: 5200,
+      confidence: 0.68,
+      basis: ['13 visible parking bay widths', 'standard parking bay width 2.6m', 'standard parking bay depth 5.2m']
+    },
+    {
+      observation_id: 'building_top_scale_parking_bay_depth',
+      anchor_type: 'parking_bay_single',
+      physical_width_mm: 2600,
+      physical_height_mm: 5200,
+      confidence: 0.6,
+      basis: ['single visible parking bay', 'standard parking bay width 2.6m', 'standard parking bay depth 5.2m']
+    },
+    {
+      observation_id: 'building_top_scale_drive_aisle_width',
+      anchor_type: 'parking_drive_aisle_width',
+      physical_height_mm: 6500,
+      confidence: 0.54,
+      basis: ['two-way parking drive aisle', 'typical aisle width 6.5m']
+    },
+    {
+      observation_id: 'building_top_scale_crosswalk_width',
+      anchor_type: 'crosswalk_width',
+      physical_height_mm: 3000,
+      confidence: 0.42,
+      basis: ['visible marked pedestrian crossing', 'typical marked walkway width 3.0m']
+    }
+  ];
+
+  const measurements = [];
+  for (const anchor of anchors) {
+    const observation = findObservationById(topImage, anchor.observation_id);
+    if (!observation?.bbox) continue;
+    const [, , widthPx, heightPx] = observation.bbox;
+    measurements.push({
+      view: topImage.detected_view.kind,
+      source_image: topImage.image.path,
+      observation_id: observation.id,
+      anchor_type: anchor.anchor_type,
+      object_bbox: observation.bbox,
+      ...(anchor.physical_width_mm ? {
+        physical_width_mm: anchor.physical_width_mm,
+        pixels_per_mm_x: round(widthPx / anchor.physical_width_mm, 5)
+      } : {}),
+      ...(anchor.physical_height_mm ? {
+        physical_height_mm: anchor.physical_height_mm,
+        pixels_per_mm_y: round(heightPx / anchor.physical_height_mm, 5)
+      } : {}),
+      confidence: anchor.confidence,
+      basis: anchor.basis,
+      review_required: true,
+      note: 'Known-element scale anchor from visible parking/crosswalk markings; keep review-gated until a real site dimension is confirmed.'
+    });
+  }
+
+  const pixelsPerMmX = weightedAverage(measurements
+    .filter((measurement) => measurement.pixels_per_mm_x)
+    .map((measurement) => ({ value: measurement.pixels_per_mm_x, weight: measurement.confidence || 0.5 })));
+  const pixelsPerMmY = weightedAverage(measurements
+    .filter((measurement) => measurement.pixels_per_mm_y)
+    .map((measurement) => ({ value: measurement.pixels_per_mm_y, weight: measurement.confidence || 0.5 })));
+  const siteObservation = findObservationById(topImage, 'building_top_site_boundary')
+    || findObservationByHint(topImage, 'site_boundary')
+    || { bbox: topImage.metrics?.object_bbox };
+  const siteBbox = siteObservation?.bbox || topImage.metrics?.object_bbox;
+  const derivedWidth = siteBbox && pixelsPerMmX ? roundTo(siteBbox[2] / pixelsPerMmX, 1000) : defaults.width;
+  const derivedDepth = siteBbox && pixelsPerMmY ? roundTo(siteBbox[3] / pixelsPerMmY, 1000) : defaults.depth;
+  const confidence = round(clamp(
+    0.34
+      + Math.min(0.22, measurements.length * 0.045)
+      + averageConfidence(measurements) * 0.28
+      + (pixelsPerMmX && pixelsPerMmY ? 0.12 : 0)
+      - missingViews.length * 0.04,
+    0.24,
+    0.78
+  ), 3);
+
+  if (siteBbox && pixelsPerMmX && pixelsPerMmY) {
+    measurements.push({
+      view: topImage.detected_view.kind,
+      source_image: topImage.image.path,
+      observation_id: siteObservation.id || 'site_boundary_from_object_bbox',
+      anchor_type: 'site_boundary_from_known_anchors',
+      object_bbox: siteBbox,
+      physical_width_mm: derivedWidth,
+      physical_height_mm: derivedDepth,
+      pixels_per_mm_x: round(pixelsPerMmX, 5),
+      pixels_per_mm_y: round(pixelsPerMmY, 5),
+      confidence,
+      basis: ['derived from reviewed known-element anchors'],
+      review_required: true,
+      note: 'Site boundary scale derived from parking/crosswalk anchors, not from an external survey dimension.'
+    });
+  }
+
+  return {
+    units: 'mm',
+    strategy: 'known_site_element_anchors',
+    default_scale: {
+      width: derivedWidth,
+      depth: derivedDepth,
+      height: defaults.height
+    },
+    measurements,
+    confidence,
+    missing_views: missingViews,
+    notes: [
+      'Building-group scale uses visible known elements: parking bay width/depth, parking drive aisle, and marked crossing/walkway width.',
+      'Treat as provisional until the user confirms one real site dimension, bay count, or road width.',
+      'Orientation/north-up remains a review gate even when the top-view scale estimate is usable.'
+    ]
+  };
+}
+
+function findObservationById(image, id) {
+  return (image.observations || []).find((observation) => observation.id === id);
+}
+
+function findObservationByHint(image, componentHint) {
+  return (image.observations || []).find((observation) => observation.component_hint === componentHint && observation.bbox);
 }
 
 function dimensionsForView(view, defaults) {
@@ -999,6 +1148,13 @@ function averageConfidence(items) {
   return round(values.reduce((sum, value) => sum + value, 0) / values.length, 3);
 }
 
+function weightedAverage(items) {
+  const valid = (items || []).filter((item) => Number.isFinite(item.value) && Number.isFinite(item.weight) && item.weight > 0);
+  if (!valid.length) return null;
+  const totalWeight = valid.reduce((sum, item) => sum + item.weight, 0);
+  return valid.reduce((sum, item) => sum + item.value * item.weight, 0) / totalWeight;
+}
+
 function qualityLabel(images, missingViews) {
   const usable = images.filter((image) => image.quality_report.usable_for_modeling).length;
   if (missingViews.length === 0 && usable >= Math.ceil(images.length * 0.75)) return 'high';
@@ -1032,6 +1188,11 @@ function escapeXml(value) {
 function round(value, digits = 2) {
   const factor = 10 ** digits;
   return Math.round(value * factor) / factor;
+}
+
+function roundTo(value, step) {
+  if (!Number.isFinite(value) || !Number.isFinite(step) || step <= 0) return value;
+  return Math.round(value / step) * step;
 }
 
 function clamp01(value) {

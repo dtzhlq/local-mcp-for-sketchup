@@ -16,6 +16,9 @@ const switchOutputPath = 'examples/acceptance-switch-controller.json';
 const cameraProfilePath = 'examples/product-profiles/camera_fuji_x_t10.json';
 const cameraPartGraphPath = 'examples/part-graphs/fuji-camera-reference.part-graph.json';
 const cameraOutputPath = 'examples/acceptance-fuji-camera.json';
+const buildingProfilePath = 'examples/product-profiles/building_group_industrial_campus.json';
+const buildingPartGraphPath = 'projects/image-structured-modeler/examples/building-group/part-graph.massing.json';
+const buildingOutputPath = 'projects/image-structured-modeler/examples/building-group/output.massing.json';
 
 const ajv = new Ajv2020({ allErrors: true, strict: false });
 const productProfileSchema = JSON.parse(await fs.readFile('schema/product-profile.schema.json', 'utf8'));
@@ -35,6 +38,10 @@ const cameraProfile = JSON.parse(await fs.readFile(cameraProfilePath, 'utf8'));
 const cameraPartGraph = JSON.parse(await fs.readFile(cameraPartGraphPath, 'utf8'));
 assertValid(validateProfile, cameraProfile, cameraProfilePath);
 assertValid(validatePartGraph, cameraPartGraph, cameraPartGraphPath);
+const buildingProfile = JSON.parse(await fs.readFile(buildingProfilePath, 'utf8'));
+const buildingPartGraph = JSON.parse(await fs.readFile(buildingPartGraphPath, 'utf8'));
+assertValid(validateProfile, buildingProfile, buildingProfilePath);
+assertValid(validatePartGraph, buildingPartGraph, buildingPartGraphPath);
 
 assertPhysicalGate(partGraph, 'ambulance', 24);
 assertPhysicalGate(switchPartGraph, 'Switch controller', 24);
@@ -231,6 +238,24 @@ const cameraLayoutReport = await bridge.validate_model({
 assert.equal(cameraLayoutReport.ok, true);
 assert.equal(cameraLayoutReport.verdict, 'pass');
 assert.equal(cameraLayoutReport.summary.total, 0);
+
+const buildingDocument = await compilePartGraphFiles({ profilePath: buildingProfilePath, partGraphPath: buildingPartGraphPath, repoRoot });
+assert.equal(buildingDocument.version, 1);
+assert.equal(buildingDocument.units, 'mm');
+assert.equal(buildingDocument.metadata.profile_id, 'building_group_industrial_campus');
+assert.equal(buildingDocument.operations.filter((operation) => operation.op === 'box').length, 12);
+assert.equal(buildingDocument.operations.filter((operation) => operation.op === 'cylinder').length, 2);
+const generatedBuilding = JSON.parse(await fs.readFile(buildingOutputPath, 'utf8'));
+assert.deepEqual(generatedBuilding, buildingDocument, 'building group massing DSL should be generated from the part graph compiler');
+
+const buildingBuild = await bridge.build_model({ runtime: 'mock', code: JSON.stringify(buildingDocument) });
+assert.equal(buildingBuild.snapshot.totals.groups, buildingPartGraph.parts.length, 'compiled building group massing should create one group per PartGraph part');
+assert.equal(buildingBuild.snapshot.scenes.length, 2, 'compiled building group massing should keep top/oblique review scenes');
+assert.equal(buildingBuild.snapshot.warning_summary.by_severity.error, 0);
+const blueHall = snapshotGroupById(buildingBuild.snapshot, 'primary_blue_roof_hall');
+assert.equal(blueHall.qa.review_required, true, 'building group massing should remain review-gated');
+const tankGroups = buildingBuild.snapshot.groups.filter((group) => group.kind === 'cylinder');
+assert.equal(tankGroups.length, 2, 'building group massing should compile tank farm as two cylinders');
 
 function assertValid(validate, value, label) {
   if (!validate(value)) {

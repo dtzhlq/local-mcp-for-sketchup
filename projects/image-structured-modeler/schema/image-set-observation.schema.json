@@ -253,12 +253,17 @@
             "properties": {
               "view": { "type": "string" },
               "source_image": { "type": "string" },
+              "observation_id": { "type": "string" },
+              "anchor_type": { "type": "string" },
               "object_bbox": { "$ref": "#/$defs/bbox" },
               "physical_width_mm": { "type": "number" },
               "physical_height_mm": { "type": "number" },
               "pixels_per_mm_x": { "type": "number" },
               "pixels_per_mm_y": { "type": "number" },
-              "confidence": { "type": "number", "minimum": 0, "maximum": 1 }
+              "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+              "basis": { "type": "array", "items": { "type": "string" } },
+              "review_required": { "type": "boolean" },
+              "note": { "type": "string" }
             }
           }
         },

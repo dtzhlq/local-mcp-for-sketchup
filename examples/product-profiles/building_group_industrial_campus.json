@@ -1,0 +1,93 @@
+{
+  "version": 1,
+  "profile_id": "building_group_industrial_campus",
+  "product_type": "building_group",
+  "name": "Industrial Campus Building Group Profile",
+  "description": "R7 scene-level profile for a generated industrial campus image set. The profile keeps building massing review-gated and uses known site elements such as parking bays, drive aisles, and marked crossings for provisional scale.",
+  "dsl_version": 1,
+  "units": "mm",
+  "default_scale": {
+    "width": 130000,
+    "depth": 98000,
+    "height": 18000
+  },
+  "expected_views": ["top", "oblique"],
+  "required_parts": [
+    { "id": "site_boundary", "role": "site_boundary", "required": true, "expected_count": 1, "evidence_required": ["top"], "fallback_allowed": ["reference_only", "visual_helper"] },
+    { "id": "primary_blue_roof_hall", "role": "production_hall", "required": true, "expected_count": 1, "evidence_required": ["top", "oblique"], "fallback_allowed": ["box_approximation", "needs_review"] },
+    { "id": "warehouse_row_west", "role": "warehouse_row", "required": true, "expected_count": 1, "evidence_required": ["top", "oblique"], "fallback_allowed": ["box_approximation", "needs_review"] },
+    { "id": "warehouse_row_inner", "role": "warehouse_row", "required": true, "expected_count": 1, "evidence_required": ["top", "oblique"], "fallback_allowed": ["box_approximation", "needs_review"] },
+    { "id": "tank_farm", "role": "tank_farm", "required": true, "expected_count": 2, "evidence_required": ["top", "oblique"], "fallback_allowed": ["structured_primitive", "needs_review"] },
+    { "id": "utility_building", "role": "utility_building", "required": true, "expected_count": 1, "evidence_required": ["top", "oblique"], "fallback_allowed": ["box_approximation", "needs_review"] },
+    { "id": "admin_office", "role": "admin_office", "required": true, "expected_count": 1, "evidence_required": ["top", "oblique"], "fallback_allowed": ["box_approximation", "needs_review"] },
+    { "id": "parking_lot", "role": "parking_lot", "required": true, "expected_count": 1, "evidence_required": ["top"], "fallback_allowed": ["visual_helper", "needs_review"] },
+    { "id": "internal_roads", "role": "internal_roads", "required": true, "expected_count": 1, "evidence_required": ["top"], "fallback_allowed": ["visual_helper", "needs_review"] }
+  ],
+  "allowed_primitives": ["box", "cylinder", "image_plane"],
+  "materials": [
+    { "name": "Campus_Site_Slab", "color": "#5e6a5f", "alpha": 0.28 },
+    { "name": "Campus_Road_Asphalt", "color": "#41464a" },
+    { "name": "Campus_Parking_Asphalt", "color": "#555b60" },
+    { "name": "Campus_Warehouse_Light", "color": "#d9ddd7" },
+    { "name": "Campus_Blue_Roof", "color": "#2f75a8" },
+    { "name": "Campus_Utility_Gray", "color": "#8b9092" },
+    { "name": "Campus_Office_Light", "color": "#c9c1b3" },
+    { "name": "Campus_Tank_Metal", "color": "#c6c8c2", "metallic": 0.15, "roughness": 0.58 },
+    { "name": "Campus_Scale_Anchor", "color": "#f2c94c" }
+  ],
+  "tags": [
+    { "name": "R7_Building_Group_Site", "color": "#5e6a5f" },
+    { "name": "R7_Building_Group_Massing", "color": "#2f75a8" },
+    { "name": "R7_Building_Group_Scale_Review", "color": "#f2c94c" }
+  ],
+  "review": {
+    "scenes": [
+      {
+        "name": "Building_Group_Top_Scale_Review",
+        "camera": {
+          "eye": [0, 0, 170000],
+          "target": [0, 0, 0],
+          "up": [0, 1, 0],
+          "fov": 35
+        }
+      },
+      {
+        "name": "Building_Group_Oblique_Massing_Review",
+        "camera": {
+          "eye": [105000, -118000, 72000],
+          "target": [0, 0, 6000],
+          "up": [0, 0, 1],
+          "fov": 38
+        }
+      }
+    ],
+    "style": {
+      "name": "R7_Building_Group_Review",
+      "display_edges": true,
+      "profiles": true,
+      "profile_width": 2,
+      "face_style": "shaded_with_textures",
+      "background_color": "#eef2f1",
+      "sky_color": "#d6e5ef",
+      "ground_color": "#ccd5cb"
+    },
+    "shadow": {
+      "display": true,
+      "time": "2026-05-31T10:54:00+08:00",
+      "light": 72,
+      "dark": 48,
+      "use_sun_for_shading": true
+    },
+    "rendering_options": {
+      "edge_display_mode": 1,
+      "draw_hidden_geometry": false,
+      "display_color_by_layer": false,
+      "transparency": true,
+      "draw_ground": true
+    }
+  },
+  "compiler": {
+    "name": "compile-part-graph-to-sketchup-dsl",
+    "version": "r7-building-group-input"
+  }
+}

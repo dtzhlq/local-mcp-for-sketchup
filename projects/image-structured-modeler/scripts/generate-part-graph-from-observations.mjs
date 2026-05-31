@@ -36,6 +36,9 @@ async function main() {
 }
 
 export function generatePartGraphFromObservations(observationSet, profile, options = {}) {
+  if (isBuildingGroupProfile(observationSet, profile)) {
+    return generateBuildingGroupPartGraphFromObservations(observationSet, profile, options);
+  }
   const seed = options.seedPartGraph ? cloneJson(options.seedPartGraph) : skeletonPartGraph(observationSet, profile, options);
   seed.version = seed.version || 1;
   seed.id = options.id || seed.id || `${profile.profile_id || observationSet.object?.profile || 'image'}-image-evidence-part-graph`;
@@ -184,7 +187,7 @@ export function generatePartGraphFromObservations(observationSet, profile, optio
 }
 
 function calibratedScale(seedScale = {}, profile = {}, scaleCalibration = null) {
-  const defaults = profile.default_scale || {};
+  const defaults = scaleCalibration?.default_scale || profile.default_scale || {};
   const confidence = scaleCalibration?.confidence ?? seedScale.confidence ?? 0.42;
   const evidenceSources = (scaleCalibration?.measurements || []).map((measurement) => ({
     kind: 'scale_calibration',
@@ -192,7 +195,7 @@ function calibratedScale(seedScale = {}, profile = {}, scaleCalibration = null) 
     source_image: measurement.source_image,
     status: 'observed',
     confidence: measurement.confidence,
-    note: `bbox ${measurement.object_bbox?.join(',')} -> ${measurement.physical_width_mm}x${measurement.physical_height_mm}mm profile calibration`
+    note: scaleMeasurementNote(measurement)
   }));
   return {
     width: seedScale.width || defaults.width,
@@ -202,6 +205,392 @@ function calibratedScale(seedScale = {}, profile = {}, scaleCalibration = null) 
     ...(scaleCalibration ? { calibration: scaleCalibration } : {}),
     ...(evidenceSources.length ? { evidence_sources: evidenceSources } : {})
   };
+}
+
+function scaleMeasurementNote(measurement) {
+  const dimensions = [];
+  if (measurement.physical_width_mm) dimensions.push(`width ${measurement.physical_width_mm}mm`);
+  if (measurement.physical_height_mm) dimensions.push(`height ${measurement.physical_height_mm}mm`);
+  const basis = dimensions.length ? dimensions.join(', ') : 'known-element scale';
+  return `bbox ${measurement.object_bbox?.join(',')} -> ${basis} calibration`;
+}
+
+function isBuildingGroupProfile(observationSet = {}, profile = {}) {
+  return profile.profile_id === 'building_group_industrial_campus'
+    || observationSet.object?.profile === 'building_group'
+    || observationSet.object?.type === 'building_group';
+}
+
+function generateBuildingGroupPartGraphFromObservations(observationSet, profile, options = {}) {
+  const scaleCalibration = observationSet.scale_calibration || observationSet.evidence_graph?.scale_calibration || null;
+  const scale = calibratedScale({}, profile, scaleCalibration);
+  const topImage = (observationSet.images || []).find((image) => image.detected_view.kind === 'top');
+  if (!topImage) throw new Error('building_group PartGraph generation requires a top-view observation');
+  const siteObservation = findObservation(topImage, 'building_top_site_boundary')
+    || findObservationByHint(topImage, 'site_boundary')
+    || { id: 'site_boundary_from_bbox', bbox: topImage.metrics?.object_bbox };
+  if (!siteObservation?.bbox) throw new Error('building_group PartGraph generation requires a site boundary bbox');
+  const siteMeasurement = (scaleCalibration?.measurements || []).find((item) => item.anchor_type === 'site_boundary_from_known_anchors');
+  const pixelsPerMmX = siteMeasurement?.pixels_per_mm_x || siteObservation.bbox[2] / scale.width;
+  const pixelsPerMmY = siteMeasurement?.pixels_per_mm_y || siteObservation.bbox[3] / scale.depth;
+  const context = { observationSet, profile, scale, scaleCalibration, topImage, siteObservation, pixelsPerMmX, pixelsPerMmY };
+
+  const massingParts = [
+    sitePart(context),
+    boxPartFromObservation(context, 'primary_blue_roof_hall', {
+      name: 'Primary_Blue_Roof_Hall_Massing',
+      type: 'building',
+      role: 'production_hall',
+      material: 'Campus_Blue_Roof',
+      height: 16500,
+      fallback_state: 'box_approximation'
+    }),
+    boxPartFromObservation(context, 'warehouse_row_west', {
+      name: 'West_Warehouse_Row_Massing',
+      type: 'building',
+      role: 'warehouse_row',
+      material: 'Campus_Warehouse_Light',
+      height: 9500,
+      fallback_state: 'box_approximation'
+    }),
+    boxPartFromObservation(context, 'warehouse_row_inner', {
+      name: 'Inner_Warehouse_Row_Massing',
+      type: 'building',
+      role: 'warehouse_row',
+      material: 'Campus_Warehouse_Light',
+      height: 9500,
+      fallback_state: 'box_approximation'
+    }),
+    boxPartFromObservation(context, 'utility_building', {
+      name: 'Utility_Building_Massing',
+      type: 'building',
+      role: 'utility_building',
+      material: 'Campus_Utility_Gray',
+      height: 7600,
+      fallback_state: 'box_approximation'
+    }),
+    boxPartFromObservation(context, 'admin_office', {
+      name: 'Admin_Office_Massing',
+      type: 'building',
+      role: 'admin_office',
+      material: 'Campus_Office_Light',
+      height: 6800,
+      fallback_state: 'box_approximation'
+    }),
+    boxPartFromObservation(context, 'parking_lot', {
+      name: 'Parking_Lot_Flat_Massing',
+      type: 'site_surface',
+      role: 'parking_lot',
+      material: 'Campus_Parking_Asphalt',
+      height: 80,
+      fallback_state: 'visual_helper'
+    }),
+    boxPartFromObservation(context, 'internal_roads', {
+      name: 'Internal_Roads_Flat_Massing',
+      type: 'site_surface',
+      role: 'internal_roads',
+      material: 'Campus_Road_Asphalt',
+      height: 70,
+      fallback_state: 'visual_helper'
+    }),
+    ...tankFarmParts(context),
+    ...scaleAnchorParts(context)
+  ].filter(Boolean);
+
+  const parameterProposals = massingParts.flatMap((part) => part.parameter_proposals || []);
+  const correctionTargets = [
+    {
+      path: 'scale.calibration.measurements',
+      reason: 'Confirm at least one parking, road, crosswalk, or surveyed site dimension before accepting building-group scale.',
+      severity: 'warn'
+    },
+    {
+      path: 'review.orientation.north_up',
+      reason: 'Confirm campus north/up convention before mapping image axes to model axes.',
+      severity: 'warn'
+    },
+    ...massingParts.map((part) => ({
+      part_id: part.id,
+      path: `parts[${part.id}].shape.parameters`,
+      reason: `${part.id}: review image-derived massing dimensions before applying to a final building PartGraph.`,
+      severity: part.role === 'scale_anchor' ? 'info' : 'warn'
+    }))
+  ];
+  const graphParts = massingParts.map((part) => evidenceGraphPartForBuildingPart(part));
+  return {
+    version: 1,
+    id: options.id || 'building-group-image-evidence-massing-part-graph',
+    profile_id: profile.profile_id,
+    dsl_version: profile.dsl_version || 1,
+    units: profile.units || 'mm',
+    product: {
+      type: observationSet.object?.type || profile.product_type,
+      name: options.productName || observationSet.object?.name || profile.name,
+      source: `${observationSet.object?.source_images?.length || 0} building-group image evidence record(s)`
+    },
+    scale,
+    evidence_graph: {
+      version: 1,
+      source_images: observationSet.object?.source_images || [],
+      views_detected: observationSet.views_detected || [],
+      open_questions: unique([
+        ...(observationSet.evidence_graph?.open_questions || []),
+        'Confirm known-element scale anchors against at least one real site dimension.',
+        'Confirm north/up and image-to-model axis convention before finalizing the massing PartGraph.'
+      ]),
+      ...(scaleCalibration ? { scale_calibration: scaleCalibration } : {}),
+      part_matches: graphParts.map((part) => ({
+        part_id: part.part_id,
+        strategy: 'building_group_top_bbox_to_massing',
+        matched_views: part.confirmed_views,
+        missing_views: part.missing_views,
+        source_count: part.sources.length,
+        confidence: part.confidence
+      })),
+      parts: graphParts
+    },
+    parts: massingParts,
+    physical_relations: massingParts
+      .filter((part) => !['site_boundary', 'scale_anchor'].includes(part.role))
+      .map((part) => ({
+        id: `${part.id}-grounded`,
+        type: 'grounded',
+        subject: part.id,
+        ground_z: 0,
+        severity: 'info',
+        note: 'R7 massing parts are grounded to the provisional site plane for review.'
+      })),
+    review: {
+      fallback_summary: fallbackSummary(massingParts),
+      parameter_proposal_summary: parameterProposalSummary(parameterProposals),
+      parameter_proposals: parameterProposals,
+      open_questions: [
+        'Confirm parking bay count, parking bay dimensions, and drive aisle width used for scale.',
+        'Confirm campus north/up before interpreting east/west or front/back labels.',
+        'Replace bbox-derived boxes with reviewed roofline, facade, and opening geometry before queue acceptance.'
+      ],
+      correction_targets: uniqueCorrectionTargets(correctionTargets)
+    }
+  };
+}
+
+function sitePart(context) {
+  const { scale, siteObservation } = context;
+  const parameters = {
+    origin: [round(-scale.width / 2, 1), round(-scale.depth / 2, 1), -80],
+    size: [round(scale.width, 1), round(scale.depth, 1), 80]
+  };
+  return buildingPart({
+    id: 'site_boundary',
+    name: 'Site_Boundary_Scale_Slab',
+    type: 'site_surface',
+    role: 'site_boundary',
+    material: 'Campus_Site_Slab',
+    shape: { primitive: 'box', parameters },
+    sources: buildingEvidenceSources(context, 'site_boundary', siteObservation),
+    fallback_state: 'reference_only',
+    confidence: 0.62
+  });
+}
+
+function boxPartFromObservation(context, partId, spec) {
+  const observation = findObservationByHint(context.topImage, partId);
+  if (!observation?.bbox) return null;
+  const rect = bboxToModelRect(context, observation.bbox);
+  return buildingPart({
+    id: partId,
+    name: spec.name,
+    type: spec.type,
+    role: spec.role,
+    material: spec.material,
+    shape: {
+      primitive: 'box',
+      parameters: {
+        origin: [rect.x, rect.y, 0],
+        size: [rect.width, rect.depth, spec.height]
+      }
+    },
+    sources: buildingEvidenceSources(context, partId, observation),
+    fallback_state: spec.fallback_state,
+    confidence: spec.confidence || 0.58
+  });
+}
+
+function tankFarmParts(context) {
+  const observation = findObservationByHint(context.topImage, 'tank_farm');
+  if (!observation?.bbox) return [];
+  const rect = bboxToModelRect(context, observation.bbox);
+  const radius = round(Math.min(rect.width * 0.16, rect.depth * 0.38), 1);
+  const centerY = round(rect.y + rect.depth * 0.5, 1);
+  const centers = [
+    { id: 'tank_farm', name: 'Tank_Farm_West_Silo', x: round(rect.x + rect.width * 0.32, 1) },
+    { id: 'tank_farm_silo_east', name: 'Tank_Farm_East_Silo', x: round(rect.x + rect.width * 0.68, 1) }
+  ];
+  return centers.map((center) => buildingPart({
+    id: center.id,
+    name: center.name,
+    type: 'tank',
+    role: center.id === 'tank_farm' ? 'tank_farm' : 'tank',
+    material: 'Campus_Tank_Metal',
+    shape: {
+      primitive: 'cylinder',
+      parameters: {
+        origin: [center.x, centerY, 0],
+        radius,
+        height: 14000,
+        segments: 32,
+        smooth: 'all'
+      }
+    },
+    sources: buildingEvidenceSources(context, 'tank_farm', observation),
+    fallback_state: 'structured_primitive',
+    confidence: 0.56
+  }));
+}
+
+function scaleAnchorParts(context) {
+  const measurements = (context.scaleCalibration?.measurements || [])
+    .filter((measurement) => measurement.anchor_type?.startsWith('parking_') || measurement.anchor_type === 'crosswalk_width');
+  return measurements
+    .filter((measurement) => measurement.object_bbox)
+    .map((measurement) => {
+      const rect = bboxToModelRect(context, measurement.object_bbox);
+      return buildingPart({
+        id: `scale_anchor_${measurement.anchor_type}`,
+        name: `Scale_Anchor_${measurement.anchor_type}`,
+        type: 'scale_anchor',
+        role: 'scale_anchor',
+        material: 'Campus_Scale_Anchor',
+        shape: {
+          primitive: 'box',
+          parameters: {
+            origin: [rect.x, rect.y, 120],
+            size: [Math.max(rect.width, 180), Math.max(rect.depth, 180), 120]
+          }
+        },
+        sources: [{
+          kind: 'known_element_scale_anchor',
+          view: measurement.view,
+          source_image: measurement.source_image,
+          status: 'observed',
+          confidence: measurement.confidence,
+          note: `${measurement.anchor_type} scale anchor requires user review before final scale acceptance.`
+        }],
+        fallback_state: 'visual_helper',
+        confidence: measurement.confidence || 0.48
+      });
+    });
+}
+
+function buildingPart({ id, name, type, role, material, shape, sources, fallback_state, confidence }) {
+  const parameters = cloneJson(shape.parameters);
+  const proposal = {
+    part_id: id,
+    proposal_kind: 'shape_parameters',
+    parameter: 'shape.parameters',
+    path: `parts[${id}].shape.parameters`,
+    unit: 'mm',
+    current_value: parameters,
+    proposed_value: parameters,
+    confidence: round(clamp(confidence, 0.24, 0.82), 3),
+    status: 'needs_review',
+    review_required: true,
+    basis: ['building_group_evidence_bbox', 'known_element_scale_calibration'],
+    source_count: sources.length,
+    source_views: unique(sources.map((source) => source.view).filter(Boolean)),
+    evidence_sources: sources.slice(0, 4),
+    reason: 'R7 building-group massing is bbox-derived and must be reviewed before queue acceptance.'
+  };
+  return {
+    id,
+    name,
+    type,
+    role,
+    material,
+    shape,
+    evidence_status: role === 'scale_anchor' ? 'observed' : 'inferred',
+    evidence_sources: sources,
+    fallback_state,
+    parameter_proposals: [proposal],
+    qa: {
+      generated_from_building_group_evidence: true,
+      evidence_confidence: proposal.confidence,
+      review_required: true,
+      scale_review_required: true,
+      orientation_review_required: true
+    }
+  };
+}
+
+function evidenceGraphPartForBuildingPart(part) {
+  return {
+    part_id: part.id,
+    status: part.evidence_status,
+    required_views: part.role === 'scale_anchor' ? ['top'] : unique(part.evidence_sources.map((source) => source.view).filter(Boolean)),
+    confirmed_views: unique(part.evidence_sources.map((source) => source.view).filter(Boolean)),
+    missing_views: [],
+    confidence: round(part.qa?.evidence_confidence || 0.5, 3),
+    sources: part.evidence_sources,
+    parameter_proposals: (part.parameter_proposals || []).map((proposal) => ({
+      parameter: proposal.parameter,
+      path: proposal.path,
+      confidence: proposal.confidence,
+      status: proposal.status,
+      review_required: proposal.review_required
+    })),
+    conflicts: [
+      {
+        type: 'review_gated_massing',
+        severity: part.role === 'scale_anchor' ? 'info' : 'warn',
+        note: 'Part geometry is derived from top-view bboxes and known-element scale anchors.'
+      }
+    ],
+    open_questions: [
+      `${part.id}: confirm massing footprint, height, and orientation before accepting this PartGraph.`
+    ]
+  };
+}
+
+function buildingEvidenceSources(context, evidencePartId, observation) {
+  const graphPart = context.observationSet.evidence_graph?.parts?.find((part) => part.part_id === evidencePartId);
+  const graphSources = (graphPart?.sources || []).map((source) => ({
+    kind: source.kind || 'building_group_image_evidence',
+    view: source.view_kind || source.view,
+    source_image: source.source_image,
+    status: source.status || 'observed',
+    confidence: source.confidence,
+    note: source.note,
+    observation_id: source.observation_id
+  }));
+  if (graphSources.length) return dedupeSources(graphSources);
+  return [{
+    kind: observation?.kind || 'component_bbox',
+    view: context.topImage.detected_view.kind,
+    source_image: context.topImage.image.path,
+    status: 'observed',
+    confidence: observation?.confidence || 0.5,
+    note: observation?.note || `Top-view bbox evidence for ${evidencePartId}.`,
+    observation_id: observation?.id
+  }];
+}
+
+function bboxToModelRect(context, bbox) {
+  const [siteX, siteY] = context.siteObservation.bbox;
+  const [x, y, width, height] = bbox;
+  const modelWidth = round(width / context.pixelsPerMmX, 1);
+  const modelDepth = round(height / context.pixelsPerMmY, 1);
+  const modelX = round((x - siteX) / context.pixelsPerMmX - context.scale.width / 2, 1);
+  const topOffset = (y - siteY) / context.pixelsPerMmY;
+  const modelY = round(context.scale.depth / 2 - topOffset - modelDepth, 1);
+  return { x: modelX, y: modelY, width: modelWidth, depth: modelDepth };
+}
+
+function findObservation(image, id) {
+  return (image.observations || []).find((observation) => observation.id === id);
+}
+
+function findObservationByHint(image, componentHint) {
+  return (image.observations || []).find((observation) => observation.component_hint === componentHint && observation.bbox);
 }
 
 function skeletonPartGraph(observationSet, profile, options) {

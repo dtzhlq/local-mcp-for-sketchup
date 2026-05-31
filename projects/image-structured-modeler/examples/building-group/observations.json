@@ -18,34 +18,132 @@
   "missing_views": [],
   "scale_calibration": {
     "units": "mm",
-    "strategy": "profile_default_dimension_with_view_bbox",
+    "strategy": "known_site_element_anchors",
     "default_scale": {
-      "width": 520000,
-      "depth": 380000,
-      "height": 28000
+      "width": 130000,
+      "depth": 98000,
+      "height": 18000
     },
     "measurements": [
       {
         "view": "top",
         "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+        "observation_id": "building_top_scale_parking_bay_span",
+        "anchor_type": "parking_bay_width_span",
         "object_bbox": [
-          18,
-          15,
-          857,
-          637
+          533.91,
+          470.46,
+          209.11,
+          26.75
         ],
-        "physical_width_mm": 520000,
-        "physical_height_mm": 380000,
-        "pixels_per_mm_x": 0.0016,
-        "pixels_per_mm_y": 0.0017,
-        "confidence": 0.88
+        "physical_width_mm": 33800,
+        "pixels_per_mm_x": 0.00619,
+        "physical_height_mm": 5200,
+        "pixels_per_mm_y": 0.00514,
+        "confidence": 0.68,
+        "basis": [
+          "13 visible parking bay widths",
+          "standard parking bay width 2.6m",
+          "standard parking bay depth 5.2m"
+        ],
+        "review_required": true,
+        "note": "Known-element scale anchor from visible parking/crosswalk markings; keep review-gated until a real site dimension is confirmed."
+      },
+      {
+        "view": "top",
+        "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+        "observation_id": "building_top_scale_parking_bay_depth",
+        "anchor_type": "parking_bay_single",
+        "object_bbox": [
+          535.63,
+          462.17,
+          15.43,
+          30.58
+        ],
+        "physical_width_mm": 2600,
+        "pixels_per_mm_x": 0.00593,
+        "physical_height_mm": 5200,
+        "pixels_per_mm_y": 0.00588,
+        "confidence": 0.6,
+        "basis": [
+          "single visible parking bay",
+          "standard parking bay width 2.6m",
+          "standard parking bay depth 5.2m"
+        ],
+        "review_required": true,
+        "note": "Known-element scale anchor from visible parking/crosswalk markings; keep review-gated until a real site dimension is confirmed."
+      },
+      {
+        "view": "top",
+        "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+        "observation_id": "building_top_scale_drive_aisle_width",
+        "anchor_type": "parking_drive_aisle_width",
+        "object_bbox": [
+          523.63,
+          489.57,
+          248.53,
+          36.95
+        ],
+        "physical_height_mm": 6500,
+        "pixels_per_mm_y": 0.00568,
+        "confidence": 0.54,
+        "basis": [
+          "two-way parking drive aisle",
+          "typical aisle width 6.5m"
+        ],
+        "review_required": true,
+        "note": "Known-element scale anchor from visible parking/crosswalk markings; keep review-gated until a real site dimension is confirmed."
+      },
+      {
+        "view": "top",
+        "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+        "observation_id": "building_top_scale_crosswalk_width",
+        "anchor_type": "crosswalk_width",
+        "object_bbox": [
+          763.59,
+          378.09,
+          38.57,
+          19.11
+        ],
+        "physical_height_mm": 3000,
+        "pixels_per_mm_y": 0.00637,
+        "confidence": 0.42,
+        "basis": [
+          "visible marked pedestrian crossing",
+          "typical marked walkway width 3.0m"
+        ],
+        "review_required": true,
+        "note": "Known-element scale anchor from visible parking/crosswalk markings; keep review-gated until a real site dimension is confirmed."
+      },
+      {
+        "view": "top",
+        "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+        "observation_id": "building_top_site_boundary",
+        "anchor_type": "site_boundary_from_known_anchors",
+        "object_bbox": [
+          35.14,
+          46.85,
+          788.44,
+          560.56
+        ],
+        "physical_width_mm": 130000,
+        "physical_height_mm": 98000,
+        "pixels_per_mm_x": 0.00607,
+        "pixels_per_mm_y": 0.0057,
+        "confidence": 0.78,
+        "basis": [
+          "derived from reviewed known-element anchors"
+        ],
+        "review_required": true,
+        "note": "Site boundary scale derived from parking/crosswalk anchors, not from an external survey dimension."
       }
     ],
-    "confidence": 0.819,
+    "confidence": 0.78,
     "missing_views": [],
     "notes": [
-      "Scale is calibrated against profile default dimensions and detected object bboxes.",
-      "Treat as provisional until a user-provided physical dimension or calibrated orthographic view is available."
+      "Building-group scale uses visible known elements: parking bay width/depth, parking drive aisle, and marked crossing/walkway width.",
+      "Treat as provisional until the user confirms one real site dimension, bay count, or road width.",
+      "Orientation/north-up remains a review gate even when the top-view scale estimate is usable."
     ]
   },
   "images": [
@@ -10580,6 +10678,58 @@
           "note": "R7 campus-layout prior for internal road loops and paved circulation."
         },
         {
+          "id": "building_top_scale_parking_bay_span",
+          "kind": "component_bbox",
+          "component_hint": "scale_anchor_parking_bay_span",
+          "bbox": [
+            533.91,
+            470.46,
+            209.11,
+            26.75
+          ],
+          "confidence": 0.7,
+          "note": "Known-element scale anchor: visible row span of 13 standard parking bay widths at 2.6m each; review before locking site scale."
+        },
+        {
+          "id": "building_top_scale_parking_bay_depth",
+          "kind": "component_bbox",
+          "component_hint": "scale_anchor_parking_bay_depth",
+          "bbox": [
+            535.63,
+            462.17,
+            15.43,
+            30.58
+          ],
+          "confidence": 0.6399999999999999,
+          "note": "Known-element scale anchor: one standard parking bay footprint, using 2.6m width and 5.2m depth."
+        },
+        {
+          "id": "building_top_scale_drive_aisle_width",
+          "kind": "component_bbox",
+          "component_hint": "scale_anchor_drive_aisle_width",
+          "bbox": [
+            523.63,
+            489.57,
+            248.53,
+            36.95
+          ],
+          "confidence": 0.6200000000000001,
+          "note": "Known-element scale anchor: two-way parking drive aisle, provisionally treated as 6.5m wide."
+        },
+        {
+          "id": "building_top_scale_crosswalk_width",
+          "kind": "component_bbox",
+          "component_hint": "scale_anchor_crosswalk_width",
+          "bbox": [
+            763.59,
+            378.09,
+            38.57,
+            19.11
+          ],
+          "confidence": 0.54,
+          "note": "Known-element scale anchor: pedestrian crossing/marked walkway, provisionally treated as 3.0m wide."
+        },
+        {
           "id": "building_top_blue_hall_center",
           "kind": "center_point",
           "component_hint": "primary_blue_roof_hall",
@@ -15895,34 +16045,132 @@
     "missing_views": [],
     "scale_calibration": {
       "units": "mm",
-      "strategy": "profile_default_dimension_with_view_bbox",
+      "strategy": "known_site_element_anchors",
       "default_scale": {
-        "width": 520000,
-        "depth": 380000,
-        "height": 28000
+        "width": 130000,
+        "depth": 98000,
+        "height": 18000
       },
       "measurements": [
         {
           "view": "top",
           "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+          "observation_id": "building_top_scale_parking_bay_span",
+          "anchor_type": "parking_bay_width_span",
           "object_bbox": [
-            18,
-            15,
-            857,
-            637
+            533.91,
+            470.46,
+            209.11,
+            26.75
           ],
-          "physical_width_mm": 520000,
-          "physical_height_mm": 380000,
-          "pixels_per_mm_x": 0.0016,
-          "pixels_per_mm_y": 0.0017,
-          "confidence": 0.88
+          "physical_width_mm": 33800,
+          "pixels_per_mm_x": 0.00619,
+          "physical_height_mm": 5200,
+          "pixels_per_mm_y": 0.00514,
+          "confidence": 0.68,
+          "basis": [
+            "13 visible parking bay widths",
+            "standard parking bay width 2.6m",
+            "standard parking bay depth 5.2m"
+          ],
+          "review_required": true,
+          "note": "Known-element scale anchor from visible parking/crosswalk markings; keep review-gated until a real site dimension is confirmed."
+        },
+        {
+          "view": "top",
+          "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+          "observation_id": "building_top_scale_parking_bay_depth",
+          "anchor_type": "parking_bay_single",
+          "object_bbox": [
+            535.63,
+            462.17,
+            15.43,
+            30.58
+          ],
+          "physical_width_mm": 2600,
+          "pixels_per_mm_x": 0.00593,
+          "physical_height_mm": 5200,
+          "pixels_per_mm_y": 0.00588,
+          "confidence": 0.6,
+          "basis": [
+            "single visible parking bay",
+            "standard parking bay width 2.6m",
+            "standard parking bay depth 5.2m"
+          ],
+          "review_required": true,
+          "note": "Known-element scale anchor from visible parking/crosswalk markings; keep review-gated until a real site dimension is confirmed."
+        },
+        {
+          "view": "top",
+          "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+          "observation_id": "building_top_scale_drive_aisle_width",
+          "anchor_type": "parking_drive_aisle_width",
+          "object_bbox": [
+            523.63,
+            489.57,
+            248.53,
+            36.95
+          ],
+          "physical_height_mm": 6500,
+          "pixels_per_mm_y": 0.00568,
+          "confidence": 0.54,
+          "basis": [
+            "two-way parking drive aisle",
+            "typical aisle width 6.5m"
+          ],
+          "review_required": true,
+          "note": "Known-element scale anchor from visible parking/crosswalk markings; keep review-gated until a real site dimension is confirmed."
+        },
+        {
+          "view": "top",
+          "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+          "observation_id": "building_top_scale_crosswalk_width",
+          "anchor_type": "crosswalk_width",
+          "object_bbox": [
+            763.59,
+            378.09,
+            38.57,
+            19.11
+          ],
+          "physical_height_mm": 3000,
+          "pixels_per_mm_y": 0.00637,
+          "confidence": 0.42,
+          "basis": [
+            "visible marked pedestrian crossing",
+            "typical marked walkway width 3.0m"
+          ],
+          "review_required": true,
+          "note": "Known-element scale anchor from visible parking/crosswalk markings; keep review-gated until a real site dimension is confirmed."
+        },
+        {
+          "view": "top",
+          "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+          "observation_id": "building_top_site_boundary",
+          "anchor_type": "site_boundary_from_known_anchors",
+          "object_bbox": [
+            35.14,
+            46.85,
+            788.44,
+            560.56
+          ],
+          "physical_width_mm": 130000,
+          "physical_height_mm": 98000,
+          "pixels_per_mm_x": 0.00607,
+          "pixels_per_mm_y": 0.0057,
+          "confidence": 0.78,
+          "basis": [
+            "derived from reviewed known-element anchors"
+          ],
+          "review_required": true,
+          "note": "Site boundary scale derived from parking/crosswalk anchors, not from an external survey dimension."
         }
       ],
-      "confidence": 0.819,
+      "confidence": 0.78,
       "missing_views": [],
       "notes": [
-        "Scale is calibrated against profile default dimensions and detected object bboxes.",
-        "Treat as provisional until a user-provided physical dimension or calibrated orthographic view is available."
+        "Building-group scale uses visible known elements: parking bay width/depth, parking drive aisle, and marked crossing/walkway width.",
+        "Treat as provisional until the user confirms one real site dimension, bay count, or road width.",
+        "Orientation/north-up remains a review gate even when the top-view scale estimate is usable."
       ]
     },
     "part_matches": [

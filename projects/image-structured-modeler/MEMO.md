@@ -30,18 +30,18 @@ observations.json -> model-plan.json -> output.json -> review/index.html -> mock
 - R6 proposal review UI 当前边界：`image-structured:proposal-review-ambulance` 会生成 `examples/ambulance/proposal-review/index.html`，列出 20 条 no-seed proposal、预选 fixture 接受项、展示 patch target，并允许导出 accepted proposal JSON。
 - R6 proposal review 复验链当前边界：`image-structured:proposal-review-chain-ambulance` 会重建 accepted proposal patch、刷新 proposal review、编译 `output.proposal-applied.json` 并跑 mock QA；`:queue` 版本会保存 `output/image-structured-ambulance-proposal-applied.skp`。当前只接受 body/cab 两项时输出 `review_required: true`，layout/reference QA fail，physical consistency pass。
 - 镜像/手性风险已显式证据化：`observations.json` 的每张图会写入 `orientation_hints`，记录 `image_x_right_y_down` 坐标约定、mirror risk、semantic anchors 和 `review_required`；主线 Reference Visual QA 也新增 `orientation` 规则组，Switch 左右摇杆镜像负例会被 `reference.orientation_order` 打回。
-- R7.0 建筑群输入基线当前边界：`image-structured:analyze-building-group` 会读取 `test/建筑群/` 的 3 张 GPT Image 合成航拍图，使用 `building_group` profile 生成 `examples/building-group/observations.json` 和 review overlays。当前只完成 ObservationSet -> EvidenceGraph -> overlay review；scale 仍是 profile default，top-view orientation/north-up 仍保持 review-gated，还没有生成建筑 massing PartGraph。
+- R7 建筑群当前边界：`image-structured:build-building-group` 会读取 `test/建筑群/` 的 3 张 GPT Image 合成航拍图，使用 `building_group` observation profile 和 `building_group_industrial_campus` ProductProfile，生成 `observations.json`、review overlays、`part-graph.massing.json` 和 `output.massing.json`。scale calibration 使用停车位、车道和人行横道 known-element anchors，估算厂区约 `130m x 98m`；所有 massing shape proposal 仍是 `review_required: true`，还没有进入建筑 acceptance/queue gate。
 
 当前完成度判断：
 
 - Switch-only 技术预览闭环：约 95%。
 - 通用“图片 -> 结构化 SketchUp 模型”技术预览 MVP：约 88%。
-- 当前优先级：semantic fusion、corrections workbench 和主线 CAD boolean/manifold 已补齐；R1/R2 已把救护车验收迁移到 `ProductProfile + PartGraph -> JSON DSL`；R3 Reference Visual QA 已能对救护车做 silhouette/keypoint/area/relative-placement/orientation gate；R4 已完成 image evidence -> PartGraph -> DSL -> Reference Visual QA -> CorrectionPatch -> QualityGate 的 ambulance 闭环；R5 三产品样本 gate 已由主线完成；R6 已补 no-seed parameter proposals、proposal-to-patch authoring、proposal review UI、proposal-applied mock/queue QA 链路，并在主线把 physical consistency QA 扩到 ambulance/Switch/Fuji 三样例。R7.0 已完成建筑群输入 evidence/overlay 基线，后续重点是把该 EvidenceGraph 推进到 review-gated massing PartGraph。
+- 当前优先级：semantic fusion、corrections workbench 和主线 CAD boolean/manifold 已补齐；R1/R2 已把救护车验收迁移到 `ProductProfile + PartGraph -> JSON DSL`；R3 Reference Visual QA 已能对救护车做 silhouette/keypoint/area/relative-placement/orientation gate；R4 已完成 image evidence -> PartGraph -> DSL -> Reference Visual QA -> CorrectionPatch -> QualityGate 的 ambulance 闭环；R5 三产品样本 gate 已由主线完成；R6 已补 no-seed parameter proposals、proposal-to-patch authoring、proposal review UI、proposal-applied mock/queue QA 链路，并在主线把 physical consistency QA 扩到 ambulance/Switch/Fuji 三样例。R7 已完成建筑群 evidence/known-scale/massing PartGraph 输入链，后续重点是补建筑群 layout/reference/queue QA 和更细建筑 correction targets。
 
 下一轮建议：
 
 - Reference Visual QA 已能反向给出 `update_part_graph` correction suggestion，目标是修改 part graph 字段，而不是直接改 DSL 坐标；`part_graph_correction_patch` 已可生成和应用。
-- 下一步：继续 R7 建筑群照片建模，把 `building_group` EvidenceGraph 转成建筑体块、立面、屋顶线、门窗洞口、尺度锚点和遮挡/缺视角的 review-gated massing PartGraph；继续保持 proposal -> patch -> QA/queue 的 review-gated 纪律。
+- 下一步：继续 R7 建筑群照片建模，基于 `part-graph.massing.json` 增加 layout/reference QA、queue `.skp` 复验，以及屋顶线、立面和门窗洞口的 review-gated correction targets；继续保持 proposal -> patch -> QA/queue 的纪律。
 
 本轮验收暴露的关键事实：
 
@@ -147,12 +147,14 @@ observations.json -> model-plan.json -> output.json -> review/index.html -> mock
   - `examples/ambulance/output.generated.json` 可由 `part-graph-compiler` 编译为当前 104-op ambulance DSL；compiled QA metadata 会保留 `generated_from_image_evidence`、evidence confidence 和 missing views。
   - `examples/ambulance/reference-visual-qa/ambulance-generated/report.json` 当前 pass / 0 issues；`correction-patch.reference-visual.json` 因 pass 为空 patch，`part-graph.corrected.json` 保持 part count 不变。
   - `examples/ambulance/quality-report.json` 当前 pass：`profile_default_ratio=0`、`needs_review_ratio=0.038`、scale confidence `0.86`、`parameter_proposals=45`、`parameter_proposal_parts=17`。
-- Building group R7.0 input 样例：
+- Building group R7 样例：
   - `test/建筑群/` 包含 3 张 GPT Image 合成厂区航拍图：1 张 top/site-plan、2 张 oblique。
   - `examples/building-group/view-hints.json` 锁定 top/oblique 视角，避免 CV-only view classification 漂移。
-  - `examples/building-group/observations.json` profile 为 `building_group`，views 为 `oblique / top`，missing views 为 0，image set quality 为 `high`。
+  - `examples/building-group/observations.json` profile 为 `building_group`，views 为 `oblique / top`，missing views 为 0，image set quality 为 `high`，scale strategy 为 `known_site_element_anchors`。
   - evidence graph 覆盖 `site_boundary`、`primary_blue_roof_hall`、`warehouse_row_west`、`warehouse_row_inner`、`tank_farm`、`utility_building`、`admin_office`、`parking_lot` 和 `internal_roads`。
-  - `examples/building-group/review-overlays/*.png` 已生成 3 张 overlay；当前 top orientation 仍 review-gated，要求确认 north/up 和至少一个真实尺度锚点后再进入 PartGraph。
+  - scale measurements 覆盖 `parking_bay_width_span`、`parking_bay_single`、`parking_drive_aisle_width`、`crosswalk_width` 和派生 site boundary；估算 site scale 为约 `130m x 98m`，所有 measurement 都 `review_required: true`。
+  - `examples/building-group/part-graph.massing.json` 生成 14 个 parts：site slab、蓝顶主厂房、两组仓库、utility building、admin office、parking lot、internal roads、两个 tank cylinder 和 4 个 scale anchor marker。
+  - `examples/building-group/output.massing.json` 由 PartGraph compiler 生成 32 个 DSL ops，当前 mock build 为 14 groups / 2 scenes / 0 error warning。
 
 ## 已完成
 

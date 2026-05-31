@@ -646,8 +646,15 @@ async function assertBuildingGroupObservationSample() {
   assert.ok(observations.views_detected.includes('oblique'), 'building group observations should include oblique aerial views');
   assert.deepEqual(observations.missing_views, [], 'building group observation set should satisfy the R7.0 top/oblique view gate');
   assert.equal(observations.quality_report.usable_for_modeling, true, 'building group observation set should be usable for R7 massing intake');
-  assert.ok(observations.scale_calibration.default_scale.width >= 500000, 'building group scale calibration should use campus-scale defaults in mm');
-  assert.ok(observations.scale_calibration.measurements.some((measurement) => measurement.view === 'top'), 'building group scale calibration should include a top-view measurement');
+  assert.equal(observations.scale_calibration.strategy, 'known_site_element_anchors', 'building group scale should use known site-element anchors');
+  assert.ok(observations.scale_calibration.default_scale.width >= 100000, 'building group known-element scale should estimate a site width above 100m');
+  assert.ok(observations.scale_calibration.default_scale.width <= 160000, 'building group known-element scale should stay in the observed industrial-campus range');
+  assert.ok(observations.scale_calibration.default_scale.depth >= 80000, 'building group known-element scale should estimate a site depth above 80m');
+  assert.ok(observations.scale_calibration.default_scale.depth <= 130000, 'building group known-element scale should stay in the observed industrial-campus range');
+  assert.ok(observations.scale_calibration.measurements.some((measurement) => measurement.anchor_type === 'parking_bay_width_span'), 'building group scale should include a parking bay span anchor');
+  assert.ok(observations.scale_calibration.measurements.some((measurement) => measurement.anchor_type === 'parking_bay_single'), 'building group scale should include a single parking bay anchor');
+  assert.ok(observations.scale_calibration.measurements.some((measurement) => measurement.anchor_type === 'parking_drive_aisle_width'), 'building group scale should include a drive aisle width anchor');
+  assert.ok(observations.scale_calibration.measurements.every((measurement) => measurement.review_required === true), 'building group known-element scale anchors should stay review-gated');
   assert.ok(observations.evidence_graph.part_matches.length >= 8, 'building group evidence graph should expose campus component matches');
   assert.deepEqual(graphPartByIdFromGraph(observations.evidence_graph, 'primary_blue_roof_hall').missing_views, [], 'primary blue-roof hall should have top and oblique evidence');
   assert.deepEqual(graphPartByIdFromGraph(observations.evidence_graph, 'tank_farm').missing_views, [], 'tank farm should have top and oblique evidence');
@@ -658,6 +665,8 @@ async function assertBuildingGroupObservationSample() {
   assert.ok(topObservation.observations.some((item) => item.component_hint === 'primary_blue_roof_hall'), 'top view should include the blue-roof hall candidate');
   assert.ok(topObservation.observations.some((item) => item.component_hint === 'warehouse_row_west'), 'top view should include the west warehouse row candidate');
   assert.ok(topObservation.observations.some((item) => item.component_hint === 'internal_roads'), 'top view should include internal road candidates');
+  assert.ok(topObservation.observations.some((item) => item.component_hint === 'scale_anchor_parking_bay_span'), 'top view should include a parking-bay scale anchor');
+  assert.ok(topObservation.observations.some((item) => item.component_hint === 'scale_anchor_drive_aisle_width'), 'top view should include a drive-aisle scale anchor');
   assert.ok(topObservation.orientation_hints.semantic_anchors.some((anchor) => anchor.id === 'building-blue-hall-east-of-warehouses'), 'top view should retain a campus orientation anchor');
   assert.equal(topObservation.orientation_hints.review_required, true, 'top-view campus orientation should remain review-gated until north/up is confirmed');
 
@@ -667,6 +676,33 @@ async function assertBuildingGroupObservationSample() {
 
   const overlays = await fs.readdir(path.join(base, 'review-overlays'));
   assert.equal(overlays.filter((name) => name.endsWith('-overlay.png')).length, 3, 'building group review overlays should cover all source images');
+
+  const partGraph = JSON.parse(await fs.readFile(path.join(base, 'part-graph.massing.json'), 'utf8'));
+  assertValid(validatePartGraph, partGraph, 'building group part-graph.massing.json');
+  assert.equal(partGraph.profile_id, 'building_group_industrial_campus', 'building group massing PartGraph should use the R7 building profile');
+  assert.equal(partGraph.scale.calibration.strategy, 'known_site_element_anchors', 'building group PartGraph should retain known-element scale calibration');
+  assert.ok(partGraph.parts.length >= 12, 'building group PartGraph should include buildings, tanks, roads, parking, site, and scale anchors');
+  assert.ok(partGraph.parts.every((part) => part.qa?.review_required === true), 'building group massing parts should remain review-gated');
+  assert.ok(partGraph.parts.every((part) => part.parameter_proposals?.every((proposal) => proposal.review_required === true)), 'building group massing parameter proposals should require review');
+  assert.equal(partGraph.review.parameter_proposal_summary.review_required, partGraph.review.parameter_proposal_summary.total, 'all building group massing proposals should remain review-gated');
+  assert.equal(partGraph.parts.filter((part) => part.shape.primitive === 'cylinder').length, 2, 'building group PartGraph should model the visible tank farm as two cylinder primitives');
+  assert.ok(partGraph.parts.some((part) => part.id === 'primary_blue_roof_hall' && part.shape.parameters.size[2] >= 16000), 'blue-roof hall massing should carry a provisional industrial-hall height');
+  assert.ok(partGraph.parts.some((part) => part.role === 'scale_anchor'), 'building group PartGraph should preserve visual scale-anchor parts');
+
+  const profile = JSON.parse(await fs.readFile(path.join(repoRoot, 'examples/product-profiles/building_group_industrial_campus.json'), 'utf8'));
+  const compiled = compilePartGraphToSketchUpDsl(partGraph, profile, { repoRoot });
+  const output = JSON.parse(await fs.readFile(path.join(base, 'output.massing.json'), 'utf8'));
+  assert.deepEqual(output, compiled, 'building group compiled DSL artifact should match current PartGraph compiler output');
+  assert.equal(output.operations.filter((operation) => operation.op === 'cylinder').length, 2, 'building group compiled DSL should include tank cylinders');
+  assert.ok(output.operations.filter((operation) => operation.op === 'box').length >= 10, 'building group compiled DSL should include massing and scale-anchor boxes');
+
+  const mockSessionPath = path.join(repoRoot, 'output', 'image-structured-modeler', 'sessions', 'validate-building-group-mock-session.json');
+  await fs.mkdir(path.dirname(mockSessionPath), { recursive: true });
+  const bridge = new SketchUpBridge({ mock: { sessionPath: mockSessionPath } });
+  const result = await bridge.build_model({ runtime: 'mock', code: JSON.stringify(output) });
+  assert.equal(result.snapshot.totals.groups, partGraph.parts.length, 'building group mock snapshot should create one group per massing part');
+  assert.equal(result.snapshot.scenes.length, 2, 'building group mock snapshot should include top and oblique review scenes');
+  assert.equal(result.snapshot.warning_summary.by_severity.error, 0, 'building group mock build should not create error warnings');
   return true;
 }
 
