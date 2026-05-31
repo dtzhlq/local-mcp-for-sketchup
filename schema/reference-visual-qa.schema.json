@@ -39,6 +39,10 @@
         "orientation": {
           "type": "array",
           "items": { "$ref": "#/$defs/orientation_rule" }
+        },
+        "features": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/feature_rule" }
         }
       },
       "additionalProperties": false
@@ -169,6 +173,32 @@
             "direction": { "enum": ["left_of", "right_of", "above", "below"] },
             "min_delta": { "type": "number", "minimum": 0 },
             "frame": { "$ref": "#/$defs/item_selector" }
+          }
+        }
+      ]
+    },
+    "feature_rule": {
+      "allOf": [
+        { "$ref": "#/$defs/base_rule" },
+        {
+          "type": "object",
+          "required": ["item"],
+          "properties": {
+            "item": { "type": "string", "minLength": 1 },
+            "op": { "type": "string", "minLength": 1 },
+            "operation": { "type": "string", "minLength": 1 },
+            "face": { "type": "string", "minLength": 1 },
+            "feature_id": { "type": "string", "minLength": 1 },
+            "feature_id_pattern": { "type": "string", "minLength": 1 },
+            "id_pattern": { "type": "string", "minLength": 1 },
+            "semantic": { "type": "string", "minLength": 1 },
+            "semantic_pattern": { "type": "string", "minLength": 1 },
+            "required_ids": { "$ref": "#/$defs/ref_array" },
+            "feature_ids": { "$ref": "#/$defs/ref_array" },
+            "count": { "type": "integer", "minimum": 0 },
+            "expected_count": { "type": "integer", "minimum": 0 },
+            "min_count": { "type": "integer", "minimum": 0 },
+            "max_count": { "type": "integer", "minimum": 0 }
           }
         }
       ]

@@ -15,6 +15,7 @@ export function validateReferenceVisualSnapshot(snapshot = {}, options = {}) {
   validateAreaRatioRules(issues, spec.areaRatios, spec, itemIndex);
   validateRelativePositionRules(issues, spec.relativePositions, spec, itemIndex);
   validateOrientationRules(issues, spec.orientationRules, spec, itemIndex);
+  validateFeatureRules(issues, spec.featureRules, itemIndex);
 
   const preview = options.includePreview === false
     ? null
@@ -89,7 +90,8 @@ function normalizeReferenceSpec(spec) {
     extentRatios: normalizeRuleArray(rules.extent_ratios || rules.extentRatios),
     areaRatios: normalizeRuleArray(rules.area_ratios || rules.areaRatios),
     relativePositions: normalizeRuleArray(rules.relative_positions || rules.relativePositions),
-    orientationRules: normalizeRuleArray(rules.orientation || rules.orientation_rules || rules.orientationRules)
+    orientationRules: normalizeRuleArray(rules.orientation || rules.orientation_rules || rules.orientationRules),
+    featureRules: normalizeRuleArray(rules.features || rules.feature_rules || rules.featureRules)
   };
 }
 
@@ -354,6 +356,71 @@ function validateOrientationRules(issues, rules, spec, itemIndex) {
   }
 }
 
+function validateFeatureRules(issues, rules, itemIndex) {
+  for (const rule of rules) {
+    const item = firstRuleItem(rule, itemIndex);
+    if (!item) {
+      addMissingRuleIssue(issues, 'reference.feature_missing_ref', rule, 'Feature rule references a missing item.');
+      continue;
+    }
+    const features = Array.isArray(item.features) ? item.features : [];
+    const matches = features.filter((feature) => featureMatchesRule(feature, rule));
+    const requiredIds = requiredFeatureIds(rule);
+    const missingIds = requiredIds.filter((id) => !features.some((feature) => featureIdForMatch(feature) === id));
+    if (missingIds.length) {
+      addIssue(issues, {
+        type: 'reference.feature_missing',
+        rule,
+        item: item.name || item.id,
+        message: `${ruleLabel(rule)} is missing required feature(s): ${missingIds.join(', ')}.`,
+        evidence: {
+          required_ids: requiredIds,
+          missing_ids: missingIds,
+          actual_ids: features.map((feature) => featureIdForMatch(feature)).filter(Boolean)
+        },
+        correction: correctionForRule(rule, item, {
+          metric: 'feature_presence',
+          missing_ids: missingIds
+        })
+      });
+    }
+    const exactCount = numberOption(rule.count ?? rule.expected_count ?? rule.expectedCount, null);
+    const minCount = numberOption(rule.min_count ?? rule.minCount, exactCount);
+    const maxCount = numberOption(rule.max_count ?? rule.maxCount, exactCount);
+    if (minCount !== null && matches.length < minCount) {
+      addFeatureCountIssue(issues, rule, item, matches, features, 'min_count', minCount);
+    }
+    if (maxCount !== null && matches.length > maxCount) {
+      addFeatureCountIssue(issues, rule, item, matches, features, 'max_count', maxCount);
+    }
+  }
+}
+
+function addFeatureCountIssue(issues, rule, item, matches, features, countKind, expected) {
+  addIssue(issues, {
+    type: 'reference.feature_count',
+    rule,
+    item: item.name || item.id,
+    message: `${ruleLabel(rule)} matched ${matches.length} feature(s), expected ${countKind === 'min_count' ? 'at least' : 'at most'} ${expected}.`,
+    evidence: {
+      expected,
+      actual: matches.length,
+      count_kind: countKind,
+      op: rule.op || rule.operation || null,
+      face: rule.face || null,
+      feature_id_pattern: rule.feature_id_pattern || rule.featureIdPattern || rule.id_pattern || rule.idPattern || null,
+      matched_ids: matches.map((feature) => featureIdForMatch(feature)).filter(Boolean),
+      actual_ids: features.map((feature) => featureIdForMatch(feature)).filter(Boolean)
+    },
+    correction: correctionForRule(rule, item, {
+      metric: 'feature_count',
+      expected,
+      actual: matches.length,
+      count_kind: countKind
+    })
+  });
+}
+
 function renderReferencePreview(snapshot, spec, items) {
   const previewSnapshot = {
     ...snapshot,
@@ -415,6 +482,34 @@ function refsFromRule(rule) {
   const value = rule.item ?? rule.items ?? rule.part_id ?? rule.partId;
   if (value === undefined || value === null) return [];
   return Array.isArray(value) ? value : [value];
+}
+
+function requiredFeatureIds(rule) {
+  const value = rule.required_ids ?? rule.requiredIds ?? rule.feature_ids ?? rule.featureIds ?? [];
+  return (Array.isArray(value) ? value : [value]).filter(Boolean).map((item) => String(item));
+}
+
+function featureMatchesRule(feature, rule) {
+  if (rule.op && String(feature.op || feature.operation || '') !== String(rule.op)) return false;
+  if (rule.operation && String(feature.op || feature.operation || '') !== String(rule.operation)) return false;
+  if (rule.face && String(feature.face || '') !== String(rule.face)) return false;
+  if (rule.semantic && String(feature.semantic || '') !== String(rule.semantic)) return false;
+  const semanticPattern = rule.semantic_pattern ?? rule.semanticPattern;
+  if (semanticPattern && !matchesPattern(feature.semantic || '', semanticPattern)) return false;
+  const featureId = featureIdForMatch(feature);
+  const explicitId = rule.feature_id ?? rule.featureId;
+  if (explicitId && featureId !== String(explicitId)) return false;
+  const pattern = rule.feature_id_pattern ?? rule.featureIdPattern ?? rule.id_pattern ?? rule.idPattern;
+  if (pattern && !matchesPattern(featureId, pattern)) return false;
+  return true;
+}
+
+function featureIdForMatch(feature) {
+  return String(feature?.id ?? feature?.feature_id ?? feature?.featureId ?? '');
+}
+
+function matchesPattern(value, pattern) {
+  return new RegExp(String(pattern)).test(String(value || ''));
 }
 
 function frameBoxForRule(rule, view, itemIndex) {

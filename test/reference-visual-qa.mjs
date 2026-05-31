@@ -14,16 +14,19 @@ const switchLayoutSpecPath = 'examples/model-qa/switch-controller-demo.json';
 const cameraCodePath = 'examples/acceptance-fuji-camera.json';
 const cameraSpecPath = 'examples/reference-visual-qa/fuji-camera-reference.json';
 const cameraLayoutSpecPath = 'examples/model-qa/fuji-camera-reference.json';
+const buildingFinalSpecPath = 'examples/reference-visual-qa/building-group-r7-final.json';
 
 const ajv = new Ajv2020({ allErrors: true, strict: false });
 const schema = JSON.parse(await fs.readFile('schema/reference-visual-qa.schema.json', 'utf8'));
 const spec = JSON.parse(await fs.readFile(specPath, 'utf8'));
 const switchSpec = JSON.parse(await fs.readFile(switchSpecPath, 'utf8'));
 const cameraSpec = JSON.parse(await fs.readFile(cameraSpecPath, 'utf8'));
+const buildingFinalSpec = JSON.parse(await fs.readFile(buildingFinalSpecPath, 'utf8'));
 const validateSpec = ajv.compile(schema);
 assertValid(validateSpec, spec, specPath);
 assertValid(validateSpec, switchSpec, switchSpecPath);
 assertValid(validateSpec, cameraSpec, cameraSpecPath);
+assertValid(validateSpec, buildingFinalSpec, buildingFinalSpecPath);
 
 const code = await fs.readFile(codePath, 'utf8');
 const report = await bridge.validate_reference_model({
@@ -172,6 +175,84 @@ assert.equal(badCameraReferenceReport.verdict, 'fail');
 const lensIssue = badCameraReferenceReport.issues.find((issue) => issue.rule_id === 'fuji-lens-front-center');
 assert.ok(lensIssue, 'reference QA should catch Fuji lens center drift');
 assert.equal(lensIssue.correction.target, 'parts[fuji-lens-front-cap].shape.parameters.origin');
+
+const featureDocument = {
+  version: 1,
+  units: 'mm',
+  operations: [
+    { op: 'reset' },
+    {
+      op: 'box',
+      id: 'feature-panel',
+      name: 'Feature Panel',
+      origin: [0, 0, 0],
+      size: [120, 40, 60]
+    },
+    {
+      op: 'cut_recess',
+      target_id: 'feature-panel',
+      feature_id: 'feature-panel-facade-window',
+      face: 'front',
+      center: [60, 30],
+      size: [32, 16],
+      depth: 3
+    }
+  ]
+};
+const featureSpec = {
+  version: 1,
+  title: 'Feature Presence Reference QA',
+  rules: {
+    views: [
+      {
+        name: 'front',
+        axes: ['x', 'z'],
+        depth_axis: 'y',
+        frame: { item: 'feature-panel' }
+      }
+    ],
+    features: [
+      {
+        id: 'panel-window-feature',
+        view: 'front',
+        item: 'feature-panel',
+        op: 'cut_recess',
+        face: 'front',
+        required_ids: ['feature-panel-facade-window'],
+        count: 1,
+        correction_target: {
+          part_id: 'feature-panel',
+          path: 'parts[feature-panel].feature_intents'
+        }
+      }
+    ]
+  }
+};
+const featureReport = await bridge.validate_reference_model({
+  code: JSON.stringify(featureDocument),
+  spec: featureSpec,
+  runtime: 'mock',
+  includePreview: false
+});
+assert.equal(featureReport.ok, true, 'feature presence reference QA should pass when the reviewed feature exists');
+assert.equal(featureReport.summary.total, 0);
+
+const missingFeatureDocument = {
+  ...featureDocument,
+  operations: featureDocument.operations.filter((operation) => operation.op !== 'cut_recess')
+};
+const missingFeatureReport = await bridge.validate_reference_model({
+  code: JSON.stringify(missingFeatureDocument),
+  spec: featureSpec,
+  runtime: 'mock',
+  includePreview: false
+});
+assert.equal(missingFeatureReport.ok, false, 'feature presence reference QA should fail when a reviewed feature is missing');
+assert.equal(missingFeatureReport.verdict, 'fail');
+const missingFeatureIssue = missingFeatureReport.issues.find((issue) => issue.rule_id === 'panel-window-feature');
+assert.ok(missingFeatureIssue, 'feature reference QA should report the missing feature rule');
+assert.equal(missingFeatureIssue.type, 'reference.feature_missing');
+assert.equal(missingFeatureIssue.correction.target, 'parts[feature-panel].feature_intents');
 
 function assertValid(validate, value, label) {
   if (!validate(value)) {

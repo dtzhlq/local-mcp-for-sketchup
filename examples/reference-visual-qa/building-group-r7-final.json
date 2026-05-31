@@ -1,0 +1,235 @@
+{
+  "version": 1,
+  "title": "Building Group R7 Final Detail Reference Visual QA",
+  "description": "Supplemental R7 reference QA for accepted building-group roofline, facade, and opening feature intents. These rules verify that the reviewed image-derived detail proposals are present in the generated model snapshot; massing placement and scale remain covered by building-group-massing.json.",
+  "rules": {
+    "views": [
+      {
+        "name": "site_top",
+        "title": "Site Plan Detail Reference",
+        "axes": ["x", "y"],
+        "depth_axis": "z",
+        "frame": {
+          "items": ["internal_roads"]
+        }
+      },
+      {
+        "name": "facade_front",
+        "title": "Facade Detail Reference",
+        "axes": ["x", "z"],
+        "depth_axis": "y",
+        "frame": {
+          "items": [
+            "primary_blue_roof_hall",
+            "warehouse_row_west",
+            "warehouse_row_inner",
+            "utility_building",
+            "admin_office"
+          ]
+        }
+      }
+    ],
+    "features": [
+      {
+        "id": "primary-hall-all-details",
+        "view": "facade_front",
+        "item": "primary_blue_roof_hall",
+        "min_count": 6,
+        "required_ids": [
+          "primary_blue_roof_hall_roof_center_ridge",
+          "primary_blue_roof_hall_roof_west_eave_line",
+          "primary_blue_roof_hall_roof_east_eave_line",
+          "primary_blue_roof_hall_facade_loading_door",
+          "primary_blue_roof_hall_facade_window_band_left",
+          "primary_blue_roof_hall_facade_window_band_right"
+        ],
+        "correction_target": {
+          "part_id": "primary_blue_roof_hall",
+          "path": "parts[primary_blue_roof_hall].feature_intents"
+        }
+      },
+      {
+        "id": "primary-hall-rooflines",
+        "view": "site_top",
+        "item": "primary_blue_roof_hall",
+        "op": "add_raised_rib",
+        "face": "top",
+        "feature_id_pattern": "_roof_",
+        "count": 3,
+        "correction_target": {
+          "part_id": "primary_blue_roof_hall",
+          "path": "parts[primary_blue_roof_hall].feature_intents"
+        }
+      },
+      {
+        "id": "primary-hall-facade-openings",
+        "view": "facade_front",
+        "item": "primary_blue_roof_hall",
+        "op": "cut_recess",
+        "face": "front",
+        "feature_id_pattern": "_facade_",
+        "count": 3,
+        "correction_target": {
+          "part_id": "primary_blue_roof_hall",
+          "path": "parts[primary_blue_roof_hall].feature_intents"
+        }
+      },
+      {
+        "id": "west-warehouse-all-details",
+        "view": "facade_front",
+        "item": "warehouse_row_west",
+        "min_count": 5,
+        "required_ids": [
+          "warehouse_row_west_roof_longitudinal_seam_left",
+          "warehouse_row_west_roof_longitudinal_seam_right",
+          "warehouse_row_west_facade_loading_bay_left",
+          "warehouse_row_west_facade_loading_bay_center",
+          "warehouse_row_west_facade_loading_bay_right"
+        ],
+        "correction_target": {
+          "part_id": "warehouse_row_west",
+          "path": "parts[warehouse_row_west].feature_intents"
+        }
+      },
+      {
+        "id": "west-warehouse-rooflines",
+        "view": "site_top",
+        "item": "warehouse_row_west",
+        "op": "add_raised_rib",
+        "face": "top",
+        "feature_id_pattern": "_roof_",
+        "count": 2,
+        "correction_target": {
+          "part_id": "warehouse_row_west",
+          "path": "parts[warehouse_row_west].feature_intents"
+        }
+      },
+      {
+        "id": "west-warehouse-loading-bays",
+        "view": "facade_front",
+        "item": "warehouse_row_west",
+        "op": "cut_recess",
+        "face": "front",
+        "feature_id_pattern": "_facade_loading_bay_",
+        "count": 3,
+        "correction_target": {
+          "part_id": "warehouse_row_west",
+          "path": "parts[warehouse_row_west].feature_intents"
+        }
+      },
+      {
+        "id": "inner-warehouse-all-details",
+        "view": "facade_front",
+        "item": "warehouse_row_inner",
+        "min_count": 5,
+        "required_ids": [
+          "warehouse_row_inner_roof_longitudinal_seam_left",
+          "warehouse_row_inner_roof_longitudinal_seam_right",
+          "warehouse_row_inner_facade_loading_bay_left",
+          "warehouse_row_inner_facade_loading_bay_center",
+          "warehouse_row_inner_facade_loading_bay_right"
+        ],
+        "correction_target": {
+          "part_id": "warehouse_row_inner",
+          "path": "parts[warehouse_row_inner].feature_intents"
+        }
+      },
+      {
+        "id": "inner-warehouse-rooflines",
+        "view": "site_top",
+        "item": "warehouse_row_inner",
+        "op": "add_raised_rib",
+        "face": "top",
+        "feature_id_pattern": "_roof_",
+        "count": 2,
+        "correction_target": {
+          "part_id": "warehouse_row_inner",
+          "path": "parts[warehouse_row_inner].feature_intents"
+        }
+      },
+      {
+        "id": "inner-warehouse-loading-bays",
+        "view": "facade_front",
+        "item": "warehouse_row_inner",
+        "op": "cut_recess",
+        "face": "front",
+        "feature_id_pattern": "_facade_loading_bay_",
+        "count": 3,
+        "correction_target": {
+          "part_id": "warehouse_row_inner",
+          "path": "parts[warehouse_row_inner].feature_intents"
+        }
+      },
+      {
+        "id": "utility-building-all-details",
+        "view": "facade_front",
+        "item": "utility_building",
+        "min_count": 3,
+        "required_ids": [
+          "utility_building_roof_service_ridge",
+          "utility_building_facade_louver_band",
+          "utility_building_facade_service_door"
+        ],
+        "correction_target": {
+          "part_id": "utility_building",
+          "path": "parts[utility_building].feature_intents"
+        }
+      },
+      {
+        "id": "utility-building-roofline",
+        "view": "site_top",
+        "item": "utility_building",
+        "op": "add_raised_rib",
+        "face": "top",
+        "feature_id_pattern": "_roof_",
+        "count": 1,
+        "correction_target": {
+          "part_id": "utility_building",
+          "path": "parts[utility_building].feature_intents"
+        }
+      },
+      {
+        "id": "utility-building-louver-slot",
+        "view": "facade_front",
+        "item": "utility_building",
+        "op": "cut_slot",
+        "face": "front",
+        "feature_id_pattern": "_facade_louver_",
+        "count": 1,
+        "correction_target": {
+          "part_id": "utility_building",
+          "path": "parts[utility_building].feature_intents"
+        }
+      },
+      {
+        "id": "admin-office-all-details",
+        "view": "facade_front",
+        "item": "admin_office",
+        "min_count": 4,
+        "required_ids": [
+          "admin_office_roof_parapet_front",
+          "admin_office_facade_entry_door",
+          "admin_office_facade_window_left",
+          "admin_office_facade_window_right"
+        ],
+        "correction_target": {
+          "part_id": "admin_office",
+          "path": "parts[admin_office].feature_intents"
+        }
+      },
+      {
+        "id": "admin-office-facade-openings",
+        "view": "facade_front",
+        "item": "admin_office",
+        "op": "cut_recess",
+        "face": "front",
+        "feature_id_pattern": "_facade_",
+        "count": 3,
+        "correction_target": {
+          "part_id": "admin_office",
+          "path": "parts[admin_office].feature_intents"
+        }
+      }
+    ]
+  }
+}
