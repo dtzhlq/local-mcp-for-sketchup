@@ -863,6 +863,52 @@ async function assertBuildingGroupObservationSample() {
   assert.equal(finalProposalQueueQaReport.artifact.totals.groups, partGraph.parts.length, 'building group R7 final queue artifact should preserve massing group count');
   assert.ok(finalProposalQueueQaReport.artifact.totals.faces > proposalQueueQaReport.artifact.totals.faces, 'building group R7 final queue artifact should add topology beyond the primary-hall subset');
   assert.ok(finalProposalQueueQaReport.artifact.path.endsWith('output/image-structured-building-group-r7-final.skp'), 'building group R7 final queue artifact should save the expected SKP');
+
+  const photorealPartGraph = JSON.parse(await fs.readFile(path.join(base, 'part-graph.r7-photoreal.json'), 'utf8'));
+  assertValid(validatePartGraph, photorealPartGraph, 'building group part-graph.r7-photoreal.json');
+  assert.equal(photorealPartGraph.parts.filter((part) => part.shape?.primitive === 'gable_roof').length, 5, 'photoreal PartGraph should use gable roof primitives for the blue hall and split warehouses');
+  assert.equal(photorealPartGraph.parts.filter((part) => /^warehouse_.*_body$/.test(part.id)).length, 4, 'photoreal PartGraph should split the two warehouse rows into four visible buildings');
+  assert.equal(photorealPartGraph.operations.filter((operation) => operation.op === 'image_plane').length, 10, 'photoreal PartGraph should carry texture image planes for site, roofs, tanks, and parking');
+  assert.ok(photorealPartGraph.parts.filter((part) => part.role === 'scale_anchor').every((part) => part.compile?.emit === false), 'photoreal PartGraph should keep scale anchors as evidence without rendering yellow helper boxes');
+
+  const photorealOutput = JSON.parse(await fs.readFile(path.join(base, 'output.r7-photoreal.json'), 'utf8'));
+  const photorealCompiled = compilePartGraphToSketchUpDsl(photorealPartGraph, profile, { repoRoot });
+  assert.deepEqual(photorealOutput, photorealCompiled, 'building group R7 photoreal DSL should match current PartGraph compiler output');
+  assert.equal(photorealOutput.operations.filter((operation) => operation.op === 'image_plane').length, 10, 'photoreal DSL should include texture image planes');
+  assert.equal(photorealOutput.operations.filter((operation) => operation.op === 'gable_roof').length, 5, 'photoreal DSL should compile PartGraph gable roof primitives');
+  assert.ok(photorealOutput.operations.filter((operation) => operation.op === 'cylinder').length >= 70, 'photoreal DSL should include dense tree and roof-vent cylinder detail');
+  assert.ok(photorealOutput.operations.every((operation) => operation.op !== 'image_plane' || path.isAbsolute(operation.image)), 'compiled graph operation image planes should resolve texture paths for live SketchUp');
+  const photorealMockResult = await bridge.build_model({ runtime: 'mock', code: JSON.stringify(photorealOutput) });
+  assert.ok(photorealMockResult.snapshot.totals.groups > finalDetailResult.snapshot.totals.groups, 'photoreal mock snapshot should be denser than R7 final');
+  assert.ok(photorealMockResult.snapshot.totals.faces > finalDetailResult.snapshot.totals.faces, 'photoreal mock snapshot should add substantial geometry beyond R7 final');
+
+  const photorealLayoutQaReport = JSON.parse(await fs.readFile(path.join(base, 'layout-qa-r7-photoreal', 'building-group-r7-photoreal', 'report.json'), 'utf8'));
+  assert.equal(photorealLayoutQaReport.ok, true, 'building group R7 photoreal layout QA artifact should pass');
+  assert.equal(photorealLayoutQaReport.summary.total, 0, 'building group R7 photoreal layout QA artifact should have no issues');
+  const photorealReferenceQaReport = JSON.parse(await fs.readFile(path.join(base, 'reference-visual-qa-r7-photoreal', 'building-group-r7-photoreal', 'report.json'), 'utf8'));
+  assert.equal(photorealReferenceQaReport.ok, true, 'building group R7 photoreal reference visual QA artifact should pass');
+  assert.equal(photorealReferenceQaReport.summary.total, 0, 'building group R7 photoreal reference visual QA artifact should have no issues');
+  const photorealProposalQaReport = JSON.parse(await fs.readFile(path.join(base, 'proposal-qa-r7-photoreal', 'report.json'), 'utf8'));
+  assert.equal(photorealProposalQaReport.ok, true, 'building group R7 photoreal proposal QA should pass in mock runtime');
+  assert.equal(photorealProposalQaReport.compiled_matches_output, true, 'building group R7 photoreal proposal QA should verify compiled output freshness');
+  assert.equal(photorealProposalQaReport.physical_consistency.verdict, 'pass', 'building group R7 photoreal physical consistency should pass');
+
+  const photorealQueueLayoutQaReport = JSON.parse(await fs.readFile(path.join(base, 'layout-qa-r7-photoreal-queue', 'building-group-r7-photoreal', 'report.json'), 'utf8'));
+  assert.equal(photorealQueueLayoutQaReport.ok, true, 'building group R7 photoreal queue layout QA artifact should pass');
+  assert.equal(photorealQueueLayoutQaReport.summary.total, 0, 'building group R7 photoreal queue layout QA artifact should have no issues');
+  const photorealQueueReferenceQaReport = JSON.parse(await fs.readFile(path.join(base, 'reference-visual-qa-r7-photoreal-queue', 'building-group-r7-photoreal', 'report.json'), 'utf8'));
+  assert.equal(photorealQueueReferenceQaReport.ok, true, 'building group R7 photoreal queue reference visual QA artifact should pass');
+  assert.equal(photorealQueueReferenceQaReport.summary.total, 0, 'building group R7 photoreal queue reference visual QA artifact should have no issues');
+  const photorealQueueProposalQaReport = JSON.parse(await fs.readFile(path.join(base, 'proposal-qa-r7-photoreal-queue', 'report.json'), 'utf8'));
+  assert.equal(photorealQueueProposalQaReport.ok, true, 'building group R7 photoreal queue QA should pass');
+  assert.equal(photorealQueueProposalQaReport.runtime, 'queue', 'building group R7 photoreal queue QA should record queue runtime');
+  assert.equal(photorealQueueProposalQaReport.compiled_matches_output, true, 'building group R7 photoreal queue QA should verify compiled output freshness');
+  assert.equal(photorealQueueProposalQaReport.layout.verdict, 'pass', 'building group R7 photoreal queue layout QA should pass');
+  assert.equal(photorealQueueProposalQaReport.reference_visual.verdict, 'pass', 'building group R7 photoreal queue reference visual QA should pass');
+  assert.equal(photorealQueueProposalQaReport.physical_consistency.verdict, 'pass', 'building group R7 photoreal queue physical consistency should pass');
+  assert.ok(photorealQueueProposalQaReport.artifact.totals.groups > finalProposalQueueQaReport.artifact.totals.groups, 'building group R7 photoreal queue artifact should be denser than R7 final');
+  assert.ok(photorealQueueProposalQaReport.artifact.totals.faces > finalProposalQueueQaReport.artifact.totals.faces, 'building group R7 photoreal queue artifact should add faces beyond R7 final');
+  assert.ok(photorealQueueProposalQaReport.artifact.path.endsWith('output/image-structured-building-group-r7-photoreal.skp'), 'building group R7 photoreal queue artifact should save the expected SKP');
   return true;
 }
 

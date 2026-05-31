@@ -1,0 +1,50 @@
+{
+  "kind": "proposal_review_qa",
+  "name": "building-group-r7-photoreal",
+  "runtime": "mock",
+  "timeout_ms": null,
+  "ok": true,
+  "review_required": false,
+  "compiled_matches_output": true,
+  "source_paths": {
+    "profile": "examples/product-profiles/building_group_industrial_campus.json",
+    "partGraph": "projects/image-structured-modeler/examples/building-group/part-graph.r7-photoreal.json",
+    "code": "projects/image-structured-modeler/examples/building-group/output.r7-photoreal.json",
+    "layoutSpec": "examples/model-qa/building-group-r7-photoreal.json",
+    "referenceSpec": "examples/reference-visual-qa/building-group-r7-photoreal.json"
+  },
+  "part_graph": {
+    "id": "building-group-r7-photoreal-reconstruction-part-graph",
+    "parts": 21,
+    "evidence_summary": {
+      "observed": 5,
+      "manual_confirmed": 16
+    }
+  },
+  "layout": {
+    "ok": true,
+    "verdict": "pass",
+    "level": "ok",
+    "issues": 0,
+    "errors": 0,
+    "warnings": 0
+  },
+  "reference_visual": {
+    "ok": true,
+    "verdict": "pass",
+    "level": "ok",
+    "issues": 0,
+    "errors": 0,
+    "warnings": 0
+  },
+  "physical_consistency": {
+    "ok": true,
+    "verdict": "pass",
+    "level": "ok",
+    "issues": 0,
+    "errors": 0,
+    "warnings": 0,
+    "checked_relations": 11
+  },
+  "artifact": null
+}

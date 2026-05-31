@@ -1,0 +1,4931 @@
+{
+  "version": 1,
+  "units": "mm",
+  "metadata": {
+    "kind": "product_modeling_dsl",
+    "profile_id": "building_group_industrial_campus",
+    "product_type": "building_group",
+    "product_name": "GPT Image Industrial Campus R7 Photoreal Boundary Probe",
+    "source": "part_graph_compiler",
+    "part_graph_id": "building-group-r7-photoreal-reconstruction-part-graph",
+    "profile_version": 1,
+    "part_graph_version": 1
+  },
+  "operations": [
+    {
+      "op": "reset"
+    },
+    {
+      "op": "material",
+      "name": "Campus_Site_Slab",
+      "color": "#5e6a5f",
+      "alpha": 0.28
+    },
+    {
+      "op": "material",
+      "name": "Campus_Road_Asphalt",
+      "color": "#41464a"
+    },
+    {
+      "op": "material",
+      "name": "Campus_Parking_Asphalt",
+      "color": "#555b60"
+    },
+    {
+      "op": "material",
+      "name": "Campus_Warehouse_Light",
+      "color": "#d9ddd7"
+    },
+    {
+      "op": "material",
+      "name": "Campus_Blue_Roof",
+      "color": "#2f75a8"
+    },
+    {
+      "op": "material",
+      "name": "Campus_Utility_Gray",
+      "color": "#8b9092"
+    },
+    {
+      "op": "material",
+      "name": "Campus_Office_Light",
+      "color": "#c9c1b3"
+    },
+    {
+      "op": "material",
+      "name": "Campus_Tank_Metal",
+      "color": "#c6c8c2",
+      "metallic": 0.15,
+      "roughness": 0.58
+    },
+    {
+      "op": "material",
+      "name": "Campus_Scale_Anchor",
+      "color": "#f2c94c"
+    },
+    {
+      "op": "tag",
+      "name": "R7_Building_Group_Site",
+      "color": "#5e6a5f"
+    },
+    {
+      "op": "tag",
+      "name": "R7_Building_Group_Massing",
+      "color": "#2f75a8"
+    },
+    {
+      "op": "tag",
+      "name": "R7_Building_Group_Scale_Review",
+      "color": "#f2c94c"
+    },
+    {
+      "op": "box",
+      "id": "site_boundary",
+      "name": "Site_Boundary_Scale_Slab",
+      "origin": [
+        -65000,
+        -49000,
+        -80
+      ],
+      "size": [
+        130000,
+        98000,
+        80
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "site_boundary",
+        "part_id": "site_boundary",
+        "intent": "site_surface",
+        "evidence_status": "observed",
+        "fallback_state": "reference_only",
+        "evidence_sources": [
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png",
+            "status": "observed",
+            "confidence": 0.54,
+            "note": "R7 campus-layout template candidate for the oblique site extent.",
+            "observation_id": "building_oblique_site_boundary"
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.72,
+            "note": "R7 campus-layout template candidate for the full industrial site boundary.",
+            "observation_id": "building_top_site_boundary"
+          },
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png",
+            "status": "observed",
+            "confidence": 0.54,
+            "note": "R7 campus-layout template candidate for the oblique site extent.",
+            "observation_id": "building_oblique_site_boundary"
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.76,
+        "review_required": false,
+        "scale_review_required": false,
+        "orientation_review_required": false,
+        "detail_review_required": false,
+        "photoreal_reconstruction": true,
+        "reconstruction_role": "site_scale_boundary"
+      }
+    },
+    {
+      "op": "box",
+      "id": "primary_blue_roof_hall_body",
+      "name": "Primary_Blue_Roof_Hall_Body",
+      "origin": [
+        -7113.7,
+        -19170.2,
+        0
+      ],
+      "size": [
+        40944,
+        58112.3,
+        13800
+      ],
+      "material": "Campus_Blue_Roof",
+      "qa": {
+        "role": "production_hall",
+        "part_id": "primary_blue_roof_hall_body",
+        "intent": "building",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "structured_primitive",
+        "evidence_sources": [
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png",
+            "status": "observed",
+            "confidence": 0.6,
+            "note": "R7 campus-layout prior for blue-roof hall massing in oblique view.",
+            "observation_id": "building_oblique_primary_blue_hall"
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.74,
+            "note": "R7 campus-layout prior for the primary blue-roof hall footprint.",
+            "observation_id": "building_top_primary_blue_hall"
+          },
+          {
+            "kind": "center_point",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.66,
+            "note": "Center keypoint for primary blue-roof hall massing review.",
+            "observation_id": "building_top_blue_hall_center"
+          },
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png",
+            "status": "observed",
+            "confidence": 0.6,
+            "note": "R7 campus-layout prior for blue-roof hall massing in oblique view.",
+            "observation_id": "building_oblique_primary_blue_hall"
+          },
+          {
+            "kind": "parameter_proposal_review",
+            "status": "manual_confirmed",
+            "confidence": 0.5,
+            "note": "accepted_parameter_proposal: Accept the reviewed primary hall roofline, facade, loading-door, and window-band feature intents for the R7 final building-group model."
+          }
+        ],
+        "feature_intents": [
+          {
+            "id": "primary_blue_roof_hall_body_roof_center_ridge",
+            "operation": "add_raised_rib",
+            "fallback_state": "structured_primitive"
+          },
+          {
+            "id": "primary_blue_roof_hall_body_roof_west_eave_line",
+            "operation": "add_raised_rib",
+            "fallback_state": "structured_primitive"
+          },
+          {
+            "id": "primary_blue_roof_hall_body_roof_east_eave_line",
+            "operation": "add_raised_rib",
+            "fallback_state": "structured_primitive"
+          },
+          {
+            "id": "primary_blue_roof_hall_body_facade_loading_door",
+            "operation": "cut_recess",
+            "fallback_state": "structured_primitive"
+          },
+          {
+            "id": "primary_blue_roof_hall_body_facade_window_band_left",
+            "operation": "cut_recess",
+            "fallback_state": "structured_primitive"
+          },
+          {
+            "id": "primary_blue_roof_hall_body_facade_window_band_right",
+            "operation": "cut_recess",
+            "fallback_state": "structured_primitive"
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.76,
+        "review_required": false,
+        "scale_review_required": false,
+        "orientation_review_required": false,
+        "detail_review_required": false,
+        "roofline_review_required": true,
+        "facade_review_required": true,
+        "opening_review_required": true,
+        "parameter_proposal_applied": true,
+        "last_correction_rule": "accepted_parameter_proposal",
+        "photoreal_reconstruction": true
+      }
+    },
+    {
+      "op": "add_raised_rib",
+      "target_id": "primary_blue_roof_hall_body",
+      "feature_id": "primary_blue_roof_hall_body_roof_center_ridge",
+      "face": "top",
+      "center": [
+        20472,
+        29056.2
+      ],
+      "length": 51138.8,
+      "width": 737,
+      "height": 260,
+      "direction": "v"
+    },
+    {
+      "op": "add_raised_rib",
+      "target_id": "primary_blue_roof_hall_body",
+      "feature_id": "primary_blue_roof_hall_body_roof_west_eave_line",
+      "face": "top",
+      "center": [
+        7369.9,
+        29056.2
+      ],
+      "length": 47652.1,
+      "width": 220,
+      "height": 140,
+      "direction": "v"
+    },
+    {
+      "op": "add_raised_rib",
+      "target_id": "primary_blue_roof_hall_body",
+      "feature_id": "primary_blue_roof_hall_body_roof_east_eave_line",
+      "face": "top",
+      "center": [
+        33574.1,
+        29056.2
+      ],
+      "length": 47652.1,
+      "width": 220,
+      "height": 140,
+      "direction": "v"
+    },
+    {
+      "op": "cut_recess",
+      "target_id": "primary_blue_roof_hall_body",
+      "feature_id": "primary_blue_roof_hall_body_facade_loading_door",
+      "face": "front",
+      "center": [
+        20472,
+        3300
+      ],
+      "size": [
+        5322.7,
+        5610
+      ],
+      "depth": 160,
+      "radius": 60,
+      "segments": 4
+    },
+    {
+      "op": "cut_recess",
+      "target_id": "primary_blue_roof_hall_body",
+      "feature_id": "primary_blue_roof_hall_body_facade_window_band_left",
+      "face": "front",
+      "center": [
+        12283.2,
+        9570
+      ],
+      "size": [
+        6551,
+        1815
+      ],
+      "depth": 90,
+      "radius": 40,
+      "segments": 4
+    },
+    {
+      "op": "cut_recess",
+      "target_id": "primary_blue_roof_hall_body",
+      "feature_id": "primary_blue_roof_hall_body_facade_window_band_right",
+      "face": "front",
+      "center": [
+        28660.8,
+        9570
+      ],
+      "size": [
+        6551,
+        1815
+      ],
+      "depth": 90,
+      "radius": 40,
+      "segments": 4
+    },
+    {
+      "op": "gable_roof",
+      "id": "primary_blue_hall_gable_roof",
+      "name": "Primary_Blue_Hall_Gable_Roof",
+      "origin": [
+        -7113.7,
+        -19170.2,
+        13800
+      ],
+      "width": 40944,
+      "depth": 58112.3,
+      "rise": 2800,
+      "overhang": 700,
+      "material": "Campus_Blue_Roof",
+      "qa": {
+        "role": "roof",
+        "part_id": "primary_blue_hall_gable_roof",
+        "intent": "roof",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "structured_primitive",
+        "parent_part_id": "primary_blue_roof_hall_body",
+        "evidence_sources": [
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png",
+            "status": "observed",
+            "confidence": 0.6,
+            "note": "R7 campus-layout prior for blue-roof hall massing in oblique view.",
+            "observation_id": "building_oblique_primary_blue_hall"
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.74,
+            "note": "R7 campus-layout prior for the primary blue-roof hall footprint.",
+            "observation_id": "building_top_primary_blue_hall"
+          },
+          {
+            "kind": "center_point",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.66,
+            "note": "Center keypoint for primary blue-roof hall massing review.",
+            "observation_id": "building_top_blue_hall_center"
+          },
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png",
+            "status": "observed",
+            "confidence": 0.6,
+            "note": "R7 campus-layout prior for blue-roof hall massing in oblique view.",
+            "observation_id": "building_oblique_primary_blue_hall"
+          },
+          {
+            "kind": "parameter_proposal_review",
+            "status": "manual_confirmed",
+            "confidence": 0.5,
+            "note": "accepted_parameter_proposal: Accept the reviewed primary hall roofline, facade, loading-door, and window-band feature intents for the R7 final building-group model."
+          }
+        ],
+        "review_required": false,
+        "photoreal_reconstruction": true,
+        "evidence_confidence": 0.72
+      }
+    },
+    {
+      "op": "box",
+      "id": "warehouse_west_north_body",
+      "name": "Warehouse_West_North_Body",
+      "origin": [
+        -59352.6,
+        7611.8,
+        0
+      ],
+      "size": [
+        29649.1,
+        31330.4,
+        8200
+      ],
+      "material": "Campus_Warehouse_Light",
+      "qa": {
+        "role": "warehouse_row",
+        "part_id": "warehouse_west_north_body",
+        "intent": "building",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "structured_primitive",
+        "evidence_sources": [
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png",
+            "status": "observed",
+            "confidence": 0.58,
+            "note": "R7 campus-layout prior for west warehouse rows in oblique view.",
+            "observation_id": "building_oblique_warehouse_row_west"
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.74,
+            "note": "R7 campus-layout prior for the west long white warehouse row.",
+            "observation_id": "building_top_warehouse_row_west"
+          },
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png",
+            "status": "observed",
+            "confidence": 0.58,
+            "note": "R7 campus-layout prior for west warehouse rows in oblique view.",
+            "observation_id": "building_oblique_warehouse_row_west"
+          },
+          {
+            "kind": "parameter_proposal_review",
+            "status": "manual_confirmed",
+            "confidence": 0.5,
+            "note": "accepted_parameter_proposal: Accept the reviewed west warehouse roof seams and loading-bay feature intents for the R7 final building-group model."
+          }
+        ],
+        "feature_intents": [
+          {
+            "id": "warehouse_west_north_body_roof_center_seam",
+            "operation": "add_raised_rib",
+            "fallback_state": "structured_primitive"
+          },
+          {
+            "id": "warehouse_west_north_body_roof_left_longitudinal_seam",
+            "operation": "add_raised_rib",
+            "fallback_state": "structured_primitive"
+          },
+          {
+            "id": "warehouse_west_north_body_roof_right_longitudinal_seam",
+            "operation": "add_raised_rib",
+            "fallback_state": "structured_primitive"
+          },
+          {
+            "id": "warehouse_west_north_body_facade_loading_bay_north",
+            "operation": "cut_recess",
+            "fallback_state": "structured_primitive"
+          },
+          {
+            "id": "warehouse_west_north_body_facade_loading_bay_center",
+            "operation": "cut_recess",
+            "fallback_state": "structured_primitive"
+          },
+          {
+            "id": "warehouse_west_north_body_facade_loading_bay_south",
+            "operation": "cut_recess",
+            "fallback_state": "structured_primitive"
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.76,
+        "review_required": false,
+        "scale_review_required": false,
+        "orientation_review_required": false,
+        "detail_review_required": false,
+        "roofline_review_required": true,
+        "facade_review_required": true,
+        "opening_review_required": true,
+        "parameter_proposal_applied": true,
+        "last_correction_rule": "accepted_parameter_proposal",
+        "photoreal_reconstruction": true
+      }
+    },
+    {
+      "op": "add_raised_rib",
+      "target_id": "warehouse_west_north_body",
+      "feature_id": "warehouse_west_north_body_roof_center_seam",
+      "face": "top",
+      "center": [
+        14824.6,
+        15665.2
+      ],
+      "length": 26317.5,
+      "width": 150,
+      "height": 110,
+      "direction": "v"
+    },
+    {
+      "op": "add_raised_rib",
+      "target_id": "warehouse_west_north_body",
+      "feature_id": "warehouse_west_north_body_roof_left_longitudinal_seam",
+      "face": "top",
+      "center": [
+        10080.7,
+        15665.2
+      ],
+      "length": 25690.9,
+      "width": 120,
+      "height": 90,
+      "direction": "v"
+    },
+    {
+      "op": "add_raised_rib",
+      "target_id": "warehouse_west_north_body",
+      "feature_id": "warehouse_west_north_body_roof_right_longitudinal_seam",
+      "face": "top",
+      "center": [
+        19568.4,
+        15665.2
+      ],
+      "length": 25690.9,
+      "width": 120,
+      "height": 90,
+      "direction": "v"
+    },
+    {
+      "op": "cut_recess",
+      "target_id": "warehouse_west_north_body",
+      "feature_id": "warehouse_west_north_body_facade_loading_bay_north",
+      "face": "front",
+      "center": [
+        9487.7,
+        2132
+      ],
+      "size": [
+        4743.9,
+        2788
+      ],
+      "depth": 110,
+      "radius": 30,
+      "segments": 4
+    },
+    {
+      "op": "cut_recess",
+      "target_id": "warehouse_west_north_body",
+      "feature_id": "warehouse_west_north_body_facade_loading_bay_center",
+      "face": "front",
+      "center": [
+        15417.5,
+        2132
+      ],
+      "size": [
+        4743.9,
+        2788
+      ],
+      "depth": 110,
+      "radius": 30,
+      "segments": 4
+    },
+    {
+      "op": "cut_recess",
+      "target_id": "warehouse_west_north_body",
+      "feature_id": "warehouse_west_north_body_facade_loading_bay_south",
+      "face": "front",
+      "center": [
+        21347.4,
+        2132
+      ],
+      "size": [
+        4743.9,
+        2788
+      ],
+      "depth": 110,
+      "radius": 30,
+      "segments": 4
+    },
+    {
+      "op": "gable_roof",
+      "id": "warehouse_west_north_gable_roof",
+      "name": "Warehouse_West_North_Gable_Roof",
+      "origin": [
+        -59352.6,
+        7611.8,
+        8200
+      ],
+      "width": 29649.1,
+      "depth": 31330.4,
+      "rise": 900,
+      "overhang": 420,
+      "material": "Campus_Warehouse_Light",
+      "qa": {
+        "role": "roof",
+        "part_id": "warehouse_west_north_gable_roof",
+        "intent": "roof",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "structured_primitive",
+        "parent_part_id": "warehouse_west_north_body",
+        "evidence_sources": [
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png",
+            "status": "observed",
+            "confidence": 0.58,
+            "note": "R7 campus-layout prior for west warehouse rows in oblique view.",
+            "observation_id": "building_oblique_warehouse_row_west"
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.74,
+            "note": "R7 campus-layout prior for the west long white warehouse row.",
+            "observation_id": "building_top_warehouse_row_west"
+          },
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png",
+            "status": "observed",
+            "confidence": 0.58,
+            "note": "R7 campus-layout prior for west warehouse rows in oblique view.",
+            "observation_id": "building_oblique_warehouse_row_west"
+          },
+          {
+            "kind": "parameter_proposal_review",
+            "status": "manual_confirmed",
+            "confidence": 0.5,
+            "note": "accepted_parameter_proposal: Accept the reviewed west warehouse roof seams and loading-bay feature intents for the R7 final building-group model."
+          }
+        ],
+        "review_required": false,
+        "photoreal_reconstruction": true,
+        "evidence_confidence": 0.72
+      }
+    },
+    {
+      "op": "box",
+      "id": "warehouse_west_south_body",
+      "name": "Warehouse_West_South_Body",
+      "origin": [
+        -59352.6,
+        -31463.2,
+        0
+      ],
+      "size": [
+        29649.1,
+        31330.4,
+        8200
+      ],
+      "material": "Campus_Warehouse_Light",
+      "qa": {
+        "role": "warehouse_row",
+        "part_id": "warehouse_west_south_body",
+        "intent": "building",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "structured_primitive",
+        "evidence_sources": [
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png",
+            "status": "observed",
+            "confidence": 0.58,
+            "note": "R7 campus-layout prior for west warehouse rows in oblique view.",
+            "observation_id": "building_oblique_warehouse_row_west"
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.74,
+            "note": "R7 campus-layout prior for the west long white warehouse row.",
+            "observation_id": "building_top_warehouse_row_west"
+          },
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png",
+            "status": "observed",
+            "confidence": 0.58,
+            "note": "R7 campus-layout prior for west warehouse rows in oblique view.",
+            "observation_id": "building_oblique_warehouse_row_west"
+          },
+          {
+            "kind": "parameter_proposal_review",
+            "status": "manual_confirmed",
+            "confidence": 0.5,
+            "note": "accepted_parameter_proposal: Accept the reviewed west warehouse roof seams and loading-bay feature intents for the R7 final building-group model."
+          }
+        ],
+        "feature_intents": [
+          {
+            "id": "warehouse_west_south_body_roof_center_seam",
+            "operation": "add_raised_rib",
+            "fallback_state": "structured_primitive"
+          },
+          {
+            "id": "warehouse_west_south_body_roof_left_longitudinal_seam",
+            "operation": "add_raised_rib",
+            "fallback_state": "structured_primitive"
+          },
+          {
+            "id": "warehouse_west_south_body_roof_right_longitudinal_seam",
+            "operation": "add_raised_rib",
+            "fallback_state": "structured_primitive"
+          },
+          {
+            "id": "warehouse_west_south_body_facade_loading_bay_north",
+            "operation": "cut_recess",
+            "fallback_state": "structured_primitive"
+          },
+          {
+            "id": "warehouse_west_south_body_facade_loading_bay_center",
+            "operation": "cut_recess",
+            "fallback_state": "structured_primitive"
+          },
+          {
+            "id": "warehouse_west_south_body_facade_loading_bay_south",
+            "operation": "cut_recess",
+            "fallback_state": "structured_primitive"
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.76,
+        "review_required": false,
+        "scale_review_required": false,
+        "orientation_review_required": false,
+        "detail_review_required": false,
+        "roofline_review_required": true,
+        "facade_review_required": true,
+        "opening_review_required": true,
+        "parameter_proposal_applied": true,
+        "last_correction_rule": "accepted_parameter_proposal",
+        "photoreal_reconstruction": true
+      }
+    },
+    {
+      "op": "add_raised_rib",
+      "target_id": "warehouse_west_south_body",
+      "feature_id": "warehouse_west_south_body_roof_center_seam",
+      "face": "top",
+      "center": [
+        14824.6,
+        15665.2
+      ],
+      "length": 26317.5,
+      "width": 150,
+      "height": 110,
+      "direction": "v"
+    },
+    {
+      "op": "add_raised_rib",
+      "target_id": "warehouse_west_south_body",
+      "feature_id": "warehouse_west_south_body_roof_left_longitudinal_seam",
+      "face": "top",
+      "center": [
+        10080.7,
+        15665.2
+      ],
+      "length": 25690.9,
+      "width": 120,
+      "height": 90,
+      "direction": "v"
+    },
+    {
+      "op": "add_raised_rib",
+      "target_id": "warehouse_west_south_body",
+      "feature_id": "warehouse_west_south_body_roof_right_longitudinal_seam",
+      "face": "top",
+      "center": [
+        19568.4,
+        15665.2
+      ],
+      "length": 25690.9,
+      "width": 120,
+      "height": 90,
+      "direction": "v"
+    },
+    {
+      "op": "cut_recess",
+      "target_id": "warehouse_west_south_body",
+      "feature_id": "warehouse_west_south_body_facade_loading_bay_north",
+      "face": "front",
+      "center": [
+        9487.7,
+        2132
+      ],
+      "size": [
+        4743.9,
+        2788
+      ],
+      "depth": 110,
+      "radius": 30,
+      "segments": 4
+    },
+    {
+      "op": "cut_recess",
+      "target_id": "warehouse_west_south_body",
+      "feature_id": "warehouse_west_south_body_facade_loading_bay_center",
+      "face": "front",
+      "center": [
+        15417.5,
+        2132
+      ],
+      "size": [
+        4743.9,
+        2788
+      ],
+      "depth": 110,
+      "radius": 30,
+      "segments": 4
+    },
+    {
+      "op": "cut_recess",
+      "target_id": "warehouse_west_south_body",
+      "feature_id": "warehouse_west_south_body_facade_loading_bay_south",
+      "face": "front",
+      "center": [
+        21347.4,
+        2132
+      ],
+      "size": [
+        4743.9,
+        2788
+      ],
+      "depth": 110,
+      "radius": 30,
+      "segments": 4
+    },
+    {
+      "op": "gable_roof",
+      "id": "warehouse_west_south_gable_roof",
+      "name": "Warehouse_West_South_Gable_Roof",
+      "origin": [
+        -59352.6,
+        -31463.2,
+        8200
+      ],
+      "width": 29649.1,
+      "depth": 31330.4,
+      "rise": 900,
+      "overhang": 420,
+      "material": "Campus_Warehouse_Light",
+      "qa": {
+        "role": "roof",
+        "part_id": "warehouse_west_south_gable_roof",
+        "intent": "roof",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "structured_primitive",
+        "parent_part_id": "warehouse_west_south_body",
+        "evidence_sources": [
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png",
+            "status": "observed",
+            "confidence": 0.58,
+            "note": "R7 campus-layout prior for west warehouse rows in oblique view.",
+            "observation_id": "building_oblique_warehouse_row_west"
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.74,
+            "note": "R7 campus-layout prior for the west long white warehouse row.",
+            "observation_id": "building_top_warehouse_row_west"
+          },
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png",
+            "status": "observed",
+            "confidence": 0.58,
+            "note": "R7 campus-layout prior for west warehouse rows in oblique view.",
+            "observation_id": "building_oblique_warehouse_row_west"
+          },
+          {
+            "kind": "parameter_proposal_review",
+            "status": "manual_confirmed",
+            "confidence": 0.5,
+            "note": "accepted_parameter_proposal: Accept the reviewed west warehouse roof seams and loading-bay feature intents for the R7 final building-group model."
+          }
+        ],
+        "review_required": false,
+        "photoreal_reconstruction": true,
+        "evidence_confidence": 0.72
+      }
+    },
+    {
+      "op": "box",
+      "id": "warehouse_inner_north_body",
+      "name": "Warehouse_Inner_North_Body",
+      "origin": [
+        -28291.6,
+        7863.2,
+        0
+      ],
+      "size": [
+        18354.2,
+        28843.8,
+        8200
+      ],
+      "material": "Campus_Warehouse_Light",
+      "qa": {
+        "role": "warehouse_row",
+        "part_id": "warehouse_inner_north_body",
+        "intent": "building",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "structured_primitive",
+        "evidence_sources": [
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png",
+            "status": "observed",
+            "confidence": 0.54,
+            "note": "R7 campus-layout prior for inner warehouse rows in oblique view.",
+            "observation_id": "building_oblique_warehouse_row_inner"
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.72,
+            "note": "R7 campus-layout prior for the inner white warehouse row.",
+            "observation_id": "building_top_warehouse_row_inner"
+          },
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png",
+            "status": "observed",
+            "confidence": 0.54,
+            "note": "R7 campus-layout prior for inner warehouse rows in oblique view.",
+            "observation_id": "building_oblique_warehouse_row_inner"
+          },
+          {
+            "kind": "parameter_proposal_review",
+            "status": "manual_confirmed",
+            "confidence": 0.5,
+            "note": "accepted_parameter_proposal: Accept the reviewed inner warehouse roof seams and loading-bay feature intents for the R7 final building-group model."
+          }
+        ],
+        "feature_intents": [
+          {
+            "id": "warehouse_inner_north_body_roof_center_seam",
+            "operation": "add_raised_rib",
+            "fallback_state": "structured_primitive"
+          },
+          {
+            "id": "warehouse_inner_north_body_roof_left_longitudinal_seam",
+            "operation": "add_raised_rib",
+            "fallback_state": "structured_primitive"
+          },
+          {
+            "id": "warehouse_inner_north_body_roof_right_longitudinal_seam",
+            "operation": "add_raised_rib",
+            "fallback_state": "structured_primitive"
+          },
+          {
+            "id": "warehouse_inner_north_body_facade_loading_bay_north",
+            "operation": "cut_recess",
+            "fallback_state": "structured_primitive"
+          },
+          {
+            "id": "warehouse_inner_north_body_facade_loading_bay_center",
+            "operation": "cut_recess",
+            "fallback_state": "structured_primitive"
+          },
+          {
+            "id": "warehouse_inner_north_body_facade_loading_bay_south",
+            "operation": "cut_recess",
+            "fallback_state": "structured_primitive"
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.76,
+        "review_required": false,
+        "scale_review_required": false,
+        "orientation_review_required": false,
+        "detail_review_required": false,
+        "roofline_review_required": true,
+        "facade_review_required": true,
+        "opening_review_required": true,
+        "parameter_proposal_applied": true,
+        "last_correction_rule": "accepted_parameter_proposal",
+        "photoreal_reconstruction": true
+      }
+    },
+    {
+      "op": "add_raised_rib",
+      "target_id": "warehouse_inner_north_body",
+      "feature_id": "warehouse_inner_north_body_roof_center_seam",
+      "face": "top",
+      "center": [
+        9177.1,
+        14421.9
+      ],
+      "length": 24228.8,
+      "width": 150,
+      "height": 110,
+      "direction": "v"
+    },
+    {
+      "op": "add_raised_rib",
+      "target_id": "warehouse_inner_north_body",
+      "feature_id": "warehouse_inner_north_body_roof_left_longitudinal_seam",
+      "face": "top",
+      "center": [
+        6240.4,
+        14421.9
+      ],
+      "length": 23651.9,
+      "width": 120,
+      "height": 90,
+      "direction": "v"
+    },
+    {
+      "op": "add_raised_rib",
+      "target_id": "warehouse_inner_north_body",
+      "feature_id": "warehouse_inner_north_body_roof_right_longitudinal_seam",
+      "face": "top",
+      "center": [
+        12113.8,
+        14421.9
+      ],
+      "length": 23651.9,
+      "width": 120,
+      "height": 90,
+      "direction": "v"
+    },
+    {
+      "op": "cut_recess",
+      "target_id": "warehouse_inner_north_body",
+      "feature_id": "warehouse_inner_north_body_facade_loading_bay_north",
+      "face": "front",
+      "center": [
+        5873.3,
+        2132
+      ],
+      "size": [
+        2936.7,
+        2788
+      ],
+      "depth": 110,
+      "radius": 30,
+      "segments": 4
+    },
+    {
+      "op": "cut_recess",
+      "target_id": "warehouse_inner_north_body",
+      "feature_id": "warehouse_inner_north_body_facade_loading_bay_center",
+      "face": "front",
+      "center": [
+        9544.2,
+        2132
+      ],
+      "size": [
+        2936.7,
+        2788
+      ],
+      "depth": 110,
+      "radius": 30,
+      "segments": 4
+    },
+    {
+      "op": "cut_recess",
+      "target_id": "warehouse_inner_north_body",
+      "feature_id": "warehouse_inner_north_body_facade_loading_bay_south",
+      "face": "front",
+      "center": [
+        13215,
+        2132
+      ],
+      "size": [
+        2936.7,
+        2788
+      ],
+      "depth": 110,
+      "radius": 30,
+      "segments": 4
+    },
+    {
+      "op": "gable_roof",
+      "id": "warehouse_inner_north_gable_roof",
+      "name": "Warehouse_Inner_North_Gable_Roof",
+      "origin": [
+        -28291.6,
+        7863.2,
+        8200
+      ],
+      "width": 18354.2,
+      "depth": 28843.8,
+      "rise": 900,
+      "overhang": 420,
+      "material": "Campus_Warehouse_Light",
+      "qa": {
+        "role": "roof",
+        "part_id": "warehouse_inner_north_gable_roof",
+        "intent": "roof",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "structured_primitive",
+        "parent_part_id": "warehouse_inner_north_body",
+        "evidence_sources": [
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png",
+            "status": "observed",
+            "confidence": 0.54,
+            "note": "R7 campus-layout prior for inner warehouse rows in oblique view.",
+            "observation_id": "building_oblique_warehouse_row_inner"
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.72,
+            "note": "R7 campus-layout prior for the inner white warehouse row.",
+            "observation_id": "building_top_warehouse_row_inner"
+          },
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png",
+            "status": "observed",
+            "confidence": 0.54,
+            "note": "R7 campus-layout prior for inner warehouse rows in oblique view.",
+            "observation_id": "building_oblique_warehouse_row_inner"
+          },
+          {
+            "kind": "parameter_proposal_review",
+            "status": "manual_confirmed",
+            "confidence": 0.5,
+            "note": "accepted_parameter_proposal: Accept the reviewed inner warehouse roof seams and loading-bay feature intents for the R7 final building-group model."
+          }
+        ],
+        "review_required": false,
+        "photoreal_reconstruction": true,
+        "evidence_confidence": 0.72
+      }
+    },
+    {
+      "op": "box",
+      "id": "warehouse_inner_south_body",
+      "name": "Warehouse_Inner_South_Body",
+      "origin": [
+        -28291.6,
+        -28110.5,
+        0
+      ],
+      "size": [
+        18354.2,
+        28843.8,
+        8200
+      ],
+      "material": "Campus_Warehouse_Light",
+      "qa": {
+        "role": "warehouse_row",
+        "part_id": "warehouse_inner_south_body",
+        "intent": "building",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "structured_primitive",
+        "evidence_sources": [
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png",
+            "status": "observed",
+            "confidence": 0.54,
+            "note": "R7 campus-layout prior for inner warehouse rows in oblique view.",
+            "observation_id": "building_oblique_warehouse_row_inner"
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.72,
+            "note": "R7 campus-layout prior for the inner white warehouse row.",
+            "observation_id": "building_top_warehouse_row_inner"
+          },
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png",
+            "status": "observed",
+            "confidence": 0.54,
+            "note": "R7 campus-layout prior for inner warehouse rows in oblique view.",
+            "observation_id": "building_oblique_warehouse_row_inner"
+          },
+          {
+            "kind": "parameter_proposal_review",
+            "status": "manual_confirmed",
+            "confidence": 0.5,
+            "note": "accepted_parameter_proposal: Accept the reviewed inner warehouse roof seams and loading-bay feature intents for the R7 final building-group model."
+          }
+        ],
+        "feature_intents": [
+          {
+            "id": "warehouse_inner_south_body_roof_center_seam",
+            "operation": "add_raised_rib",
+            "fallback_state": "structured_primitive"
+          },
+          {
+            "id": "warehouse_inner_south_body_roof_left_longitudinal_seam",
+            "operation": "add_raised_rib",
+            "fallback_state": "structured_primitive"
+          },
+          {
+            "id": "warehouse_inner_south_body_roof_right_longitudinal_seam",
+            "operation": "add_raised_rib",
+            "fallback_state": "structured_primitive"
+          },
+          {
+            "id": "warehouse_inner_south_body_facade_loading_bay_north",
+            "operation": "cut_recess",
+            "fallback_state": "structured_primitive"
+          },
+          {
+            "id": "warehouse_inner_south_body_facade_loading_bay_center",
+            "operation": "cut_recess",
+            "fallback_state": "structured_primitive"
+          },
+          {
+            "id": "warehouse_inner_south_body_facade_loading_bay_south",
+            "operation": "cut_recess",
+            "fallback_state": "structured_primitive"
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.76,
+        "review_required": false,
+        "scale_review_required": false,
+        "orientation_review_required": false,
+        "detail_review_required": false,
+        "roofline_review_required": true,
+        "facade_review_required": true,
+        "opening_review_required": true,
+        "parameter_proposal_applied": true,
+        "last_correction_rule": "accepted_parameter_proposal",
+        "photoreal_reconstruction": true
+      }
+    },
+    {
+      "op": "add_raised_rib",
+      "target_id": "warehouse_inner_south_body",
+      "feature_id": "warehouse_inner_south_body_roof_center_seam",
+      "face": "top",
+      "center": [
+        9177.1,
+        14421.9
+      ],
+      "length": 24228.8,
+      "width": 150,
+      "height": 110,
+      "direction": "v"
+    },
+    {
+      "op": "add_raised_rib",
+      "target_id": "warehouse_inner_south_body",
+      "feature_id": "warehouse_inner_south_body_roof_left_longitudinal_seam",
+      "face": "top",
+      "center": [
+        6240.4,
+        14421.9
+      ],
+      "length": 23651.9,
+      "width": 120,
+      "height": 90,
+      "direction": "v"
+    },
+    {
+      "op": "add_raised_rib",
+      "target_id": "warehouse_inner_south_body",
+      "feature_id": "warehouse_inner_south_body_roof_right_longitudinal_seam",
+      "face": "top",
+      "center": [
+        12113.8,
+        14421.9
+      ],
+      "length": 23651.9,
+      "width": 120,
+      "height": 90,
+      "direction": "v"
+    },
+    {
+      "op": "cut_recess",
+      "target_id": "warehouse_inner_south_body",
+      "feature_id": "warehouse_inner_south_body_facade_loading_bay_north",
+      "face": "front",
+      "center": [
+        5873.3,
+        2132
+      ],
+      "size": [
+        2936.7,
+        2788
+      ],
+      "depth": 110,
+      "radius": 30,
+      "segments": 4
+    },
+    {
+      "op": "cut_recess",
+      "target_id": "warehouse_inner_south_body",
+      "feature_id": "warehouse_inner_south_body_facade_loading_bay_center",
+      "face": "front",
+      "center": [
+        9544.2,
+        2132
+      ],
+      "size": [
+        2936.7,
+        2788
+      ],
+      "depth": 110,
+      "radius": 30,
+      "segments": 4
+    },
+    {
+      "op": "cut_recess",
+      "target_id": "warehouse_inner_south_body",
+      "feature_id": "warehouse_inner_south_body_facade_loading_bay_south",
+      "face": "front",
+      "center": [
+        13215,
+        2132
+      ],
+      "size": [
+        2936.7,
+        2788
+      ],
+      "depth": 110,
+      "radius": 30,
+      "segments": 4
+    },
+    {
+      "op": "gable_roof",
+      "id": "warehouse_inner_south_gable_roof",
+      "name": "Warehouse_Inner_South_Gable_Roof",
+      "origin": [
+        -28291.6,
+        -28110.5,
+        8200
+      ],
+      "width": 18354.2,
+      "depth": 28843.8,
+      "rise": 900,
+      "overhang": 420,
+      "material": "Campus_Warehouse_Light",
+      "qa": {
+        "role": "roof",
+        "part_id": "warehouse_inner_south_gable_roof",
+        "intent": "roof",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "structured_primitive",
+        "parent_part_id": "warehouse_inner_south_body",
+        "evidence_sources": [
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png",
+            "status": "observed",
+            "confidence": 0.54,
+            "note": "R7 campus-layout prior for inner warehouse rows in oblique view.",
+            "observation_id": "building_oblique_warehouse_row_inner"
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.72,
+            "note": "R7 campus-layout prior for the inner white warehouse row.",
+            "observation_id": "building_top_warehouse_row_inner"
+          },
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png",
+            "status": "observed",
+            "confidence": 0.54,
+            "note": "R7 campus-layout prior for inner warehouse rows in oblique view.",
+            "observation_id": "building_oblique_warehouse_row_inner"
+          },
+          {
+            "kind": "parameter_proposal_review",
+            "status": "manual_confirmed",
+            "confidence": 0.5,
+            "note": "accepted_parameter_proposal: Accept the reviewed inner warehouse roof seams and loading-bay feature intents for the R7 final building-group model."
+          }
+        ],
+        "review_required": false,
+        "photoreal_reconstruction": true,
+        "evidence_confidence": 0.72
+      }
+    },
+    {
+      "op": "box",
+      "id": "utility_building",
+      "name": "Utility_Building_Massing",
+      "origin": [
+        35242.2,
+        -15817.6,
+        0
+      ],
+      "size": [
+        21177.9,
+        22350.9,
+        7600
+      ],
+      "material": "Campus_Utility_Gray",
+      "qa": {
+        "role": "utility_building",
+        "part_id": "utility_building",
+        "intent": "building",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "structured_primitive",
+        "evidence_sources": [
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png",
+            "status": "observed",
+            "confidence": 0.52,
+            "note": "R7 campus-layout prior for right-side utility/mechanical building in oblique view.",
+            "observation_id": "building_oblique_utility_building"
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.6599999999999999,
+            "note": "R7 campus-layout prior for the right-side utility/mechanical building.",
+            "observation_id": "building_top_utility_building"
+          },
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png",
+            "status": "observed",
+            "confidence": 0.52,
+            "note": "R7 campus-layout prior for right-side utility/mechanical building in oblique view.",
+            "observation_id": "building_oblique_utility_building"
+          },
+          {
+            "kind": "parameter_proposal_review",
+            "status": "manual_confirmed",
+            "confidence": 0.5,
+            "note": "accepted_parameter_proposal: Accept the reviewed utility-building service-ridge, louver-slot, and service-door feature intents for the R7 final building-group model."
+          }
+        ],
+        "feature_intents": [
+          {
+            "id": "utility_building_roof_service_ridge",
+            "operation": "add_raised_rib",
+            "fallback_state": "needs_review"
+          },
+          {
+            "id": "utility_building_facade_louver_band",
+            "operation": "cut_slot",
+            "fallback_state": "needs_review"
+          },
+          {
+            "id": "utility_building_facade_service_door",
+            "operation": "cut_recess",
+            "fallback_state": "needs_review"
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.76,
+        "review_required": false,
+        "scale_review_required": false,
+        "orientation_review_required": false,
+        "detail_review_required": false,
+        "roofline_review_required": true,
+        "facade_review_required": true,
+        "opening_review_required": true,
+        "parameter_proposal_applied": true,
+        "last_correction_rule": "accepted_parameter_proposal",
+        "photoreal_reconstruction": true
+      }
+    },
+    {
+      "op": "add_raised_rib",
+      "target_id": "utility_building",
+      "feature_id": "utility_building_roof_service_ridge",
+      "face": "top",
+      "center": [
+        10589,
+        11175.5
+      ],
+      "length": 16092.6,
+      "width": 180,
+      "height": 120,
+      "direction": "v"
+    },
+    {
+      "op": "cut_slot",
+      "target_id": "utility_building",
+      "feature_id": "utility_building_facade_louver_band",
+      "face": "front",
+      "center": [
+        11012.5,
+        4712
+      ],
+      "length": 9741.8,
+      "width": 608,
+      "depth": 80,
+      "through": false,
+      "segments": 8
+    },
+    {
+      "op": "cut_recess",
+      "target_id": "utility_building",
+      "feature_id": "utility_building_facade_service_door",
+      "face": "front",
+      "center": [
+        4659.1,
+        1824
+      ],
+      "size": [
+        2329.6,
+        2432
+      ],
+      "depth": 120,
+      "radius": 30,
+      "segments": 4
+    },
+    {
+      "op": "box",
+      "id": "admin_office",
+      "name": "Admin_Office_Massing",
+      "origin": [
+        -9937.4,
+        -37050.9,
+        0
+      ],
+      "size": [
+        21177.9,
+        14528.1,
+        6800
+      ],
+      "material": "Campus_Office_Light",
+      "qa": {
+        "role": "admin_office",
+        "part_id": "admin_office",
+        "intent": "building",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "structured_primitive",
+        "evidence_sources": [
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png",
+            "status": "observed",
+            "confidence": 0.5,
+            "note": "R7 campus-layout prior for lower admin/office block in oblique view.",
+            "observation_id": "building_oblique_admin_office"
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.6399999999999999,
+            "note": "R7 campus-layout prior for the low admin/office block near the lower center of the campus.",
+            "observation_id": "building_top_admin_office"
+          },
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png",
+            "status": "observed",
+            "confidence": 0.5,
+            "note": "R7 campus-layout prior for lower admin/office block in oblique view.",
+            "observation_id": "building_oblique_admin_office"
+          },
+          {
+            "kind": "parameter_proposal_review",
+            "status": "manual_confirmed",
+            "confidence": 0.5,
+            "note": "accepted_parameter_proposal: Accept the reviewed admin-office parapet, entry-door, and window feature intents for the R7 final building-group model."
+          }
+        ],
+        "feature_intents": [
+          {
+            "id": "admin_office_roof_parapet_front",
+            "operation": "add_raised_rib",
+            "fallback_state": "needs_review"
+          },
+          {
+            "id": "admin_office_facade_entry_door",
+            "operation": "cut_recess",
+            "fallback_state": "needs_review"
+          },
+          {
+            "id": "admin_office_facade_window_left",
+            "operation": "cut_recess",
+            "fallback_state": "needs_review"
+          },
+          {
+            "id": "admin_office_facade_window_right",
+            "operation": "cut_recess",
+            "fallback_state": "needs_review"
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.76,
+        "review_required": false,
+        "scale_review_required": false,
+        "orientation_review_required": false,
+        "detail_review_required": false,
+        "roofline_review_required": true,
+        "facade_review_required": true,
+        "opening_review_required": true,
+        "parameter_proposal_applied": true,
+        "last_correction_rule": "accepted_parameter_proposal",
+        "photoreal_reconstruction": true
+      }
+    },
+    {
+      "op": "add_raised_rib",
+      "target_id": "admin_office",
+      "feature_id": "admin_office_roof_parapet_front",
+      "face": "top",
+      "center": [
+        10589,
+        1162.2
+      ],
+      "length": 18213,
+      "width": 160,
+      "height": 120,
+      "direction": "u"
+    },
+    {
+      "op": "cut_recess",
+      "target_id": "admin_office",
+      "feature_id": "admin_office_facade_entry_door",
+      "face": "front",
+      "center": [
+        10589,
+        1700
+      ],
+      "size": [
+        2541.3,
+        2448
+      ],
+      "depth": 120,
+      "radius": 30,
+      "segments": 4
+    },
+    {
+      "op": "cut_recess",
+      "target_id": "admin_office",
+      "feature_id": "admin_office_facade_window_left",
+      "face": "front",
+      "center": [
+        5929.8,
+        4216
+      ],
+      "size": [
+        2964.9,
+        1224
+      ],
+      "depth": 80,
+      "radius": 30,
+      "segments": 4
+    },
+    {
+      "op": "cut_recess",
+      "target_id": "admin_office",
+      "feature_id": "admin_office_facade_window_right",
+      "face": "front",
+      "center": [
+        15248.1,
+        4216
+      ],
+      "size": [
+        2964.9,
+        1224
+      ],
+      "depth": 80,
+      "radius": 30,
+      "segments": 4
+    },
+    {
+      "op": "box",
+      "id": "parking_lot",
+      "name": "Parking_Lot_Flat_Massing",
+      "origin": [
+        14064.3,
+        -42638.6,
+        0
+      ],
+      "size": [
+        45179.6,
+        21233.3,
+        80
+      ],
+      "material": "Campus_Parking_Asphalt",
+      "qa": {
+        "role": "parking_lot",
+        "part_id": "parking_lot",
+        "intent": "site_surface",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png",
+            "status": "observed",
+            "confidence": 0.52,
+            "note": "R7 campus-layout prior for parking lot in oblique view.",
+            "observation_id": "building_oblique_parking_lot"
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.72,
+            "note": "R7 campus-layout prior for the parking lot footprint.",
+            "observation_id": "building_top_parking_lot"
+          },
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png",
+            "status": "observed",
+            "confidence": 0.52,
+            "note": "R7 campus-layout prior for parking lot in oblique view.",
+            "observation_id": "building_oblique_parking_lot"
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.76,
+        "review_required": false,
+        "scale_review_required": false,
+        "orientation_review_required": false,
+        "detail_review_required": false,
+        "photoreal_reconstruction": true
+      }
+    },
+    {
+      "op": "box",
+      "id": "internal_roads",
+      "name": "Internal_Roads_Flat_Massing",
+      "origin": [
+        -63588.1,
+        -43756.1,
+        0
+      ],
+      "size": [
+        125655.7,
+        89403.5,
+        70
+      ],
+      "material": "Campus_Road_Asphalt",
+      "qa": {
+        "role": "internal_roads",
+        "part_id": "internal_roads",
+        "intent": "site_surface",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png",
+            "status": "observed",
+            "confidence": 0.45,
+            "note": "R7 campus-layout prior for paved circulation in oblique view.",
+            "observation_id": "building_oblique_internal_roads"
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.5800000000000001,
+            "note": "R7 campus-layout prior for internal road loops and paved circulation.",
+            "observation_id": "building_top_internal_roads"
+          },
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png",
+            "status": "observed",
+            "confidence": 0.45,
+            "note": "R7 campus-layout prior for paved circulation in oblique view.",
+            "observation_id": "building_oblique_internal_roads"
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.76,
+        "review_required": false,
+        "scale_review_required": false,
+        "orientation_review_required": false,
+        "detail_review_required": false,
+        "photoreal_reconstruction": true
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tank_farm",
+      "name": "Tank_Farm_West_Silo",
+      "origin": [
+        47214.8,
+        33354.4,
+        0
+      ],
+      "radius": 3162.6,
+      "height": 14000,
+      "segments": 32,
+      "smooth": "all",
+      "material": "Campus_Tank_Metal",
+      "qa": {
+        "role": "tank_farm",
+        "part_id": "tank_farm",
+        "intent": "tank",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "structured_primitive",
+        "evidence_sources": [
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png",
+            "status": "observed",
+            "confidence": 0.54,
+            "note": "R7 campus-layout prior for cylindrical tanks in oblique view.",
+            "observation_id": "building_oblique_tank_farm"
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.7,
+            "note": "R7 campus-layout prior for the cylindrical tank farm.",
+            "observation_id": "building_top_tank_farm"
+          },
+          {
+            "kind": "center_point",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.58,
+            "note": "Center keypoint for tank farm massing review.",
+            "observation_id": "building_top_tank_farm_center"
+          },
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png",
+            "status": "observed",
+            "confidence": 0.54,
+            "note": "R7 campus-layout prior for cylindrical tanks in oblique view.",
+            "observation_id": "building_oblique_tank_farm"
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.76,
+        "review_required": false,
+        "scale_review_required": false,
+        "orientation_review_required": false,
+        "detail_review_required": false,
+        "photoreal_reconstruction": true
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tank_farm_silo_east",
+      "name": "Tank_Farm_East_Silo",
+      "origin": [
+        54330.5,
+        33354.4,
+        0
+      ],
+      "radius": 3162.6,
+      "height": 14000,
+      "segments": 32,
+      "smooth": "all",
+      "material": "Campus_Tank_Metal",
+      "qa": {
+        "role": "tank",
+        "part_id": "tank_farm_silo_east",
+        "intent": "tank",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "structured_primitive",
+        "evidence_sources": [
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png",
+            "status": "observed",
+            "confidence": 0.54,
+            "note": "R7 campus-layout prior for cylindrical tanks in oblique view.",
+            "observation_id": "building_oblique_tank_farm"
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.7,
+            "note": "R7 campus-layout prior for the cylindrical tank farm.",
+            "observation_id": "building_top_tank_farm"
+          },
+          {
+            "kind": "center_point",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.58,
+            "note": "Center keypoint for tank farm massing review.",
+            "observation_id": "building_top_tank_farm_center"
+          },
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png",
+            "status": "observed",
+            "confidence": 0.54,
+            "note": "R7 campus-layout prior for cylindrical tanks in oblique view.",
+            "observation_id": "building_oblique_tank_farm"
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.76,
+        "review_required": false,
+        "scale_review_required": false,
+        "orientation_review_required": false,
+        "detail_review_required": false,
+        "photoreal_reconstruction": true
+      }
+    },
+    {
+      "op": "image_plane",
+      "id": "site_orthophoto_texture",
+      "name": "Site_Orthophoto_Texture_Top_View",
+      "origin": [
+        -65000,
+        -49000,
+        160
+      ],
+      "plane": "xy",
+      "size": [
+        130000,
+        98000
+      ],
+      "image": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/projects/image-structured-modeler/examples/building-group/textures/site_top_orthophoto.png",
+      "alpha": 0.96,
+      "texture_transform": {
+        "projection": "planar",
+        "scale": [
+          1,
+          1
+        ],
+        "rotation": 0
+      },
+      "qa": {
+        "role": "orthophoto_texture",
+        "part_id": "site_orthophoto_texture",
+        "intent": "photoreal_texture_alignment",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "image_plane",
+      "id": "roof_texture_primary_blue_hall",
+      "name": "Roof_Texture_Primary_Blue_Hall",
+      "origin": [
+        -7113.7,
+        -19170.2,
+        16690
+      ],
+      "plane": "xy",
+      "size": [
+        40944,
+        58112.3
+      ],
+      "image": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/projects/image-structured-modeler/examples/building-group/textures/roof_primary_blue_hall.png",
+      "alpha": 0.98,
+      "texture_transform": {
+        "projection": "planar",
+        "scale": [
+          1,
+          1
+        ],
+        "rotation": 0
+      },
+      "qa": {
+        "role": "roof_texture",
+        "part_id": "roof_texture_primary_blue_hall",
+        "intent": "photoreal_texture_alignment",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "image_plane",
+      "id": "roof_texture_warehouse_west_north",
+      "name": "Roof_Texture_Warehouse_West_North",
+      "origin": [
+        -59352.6,
+        7611.8,
+        9170
+      ],
+      "plane": "xy",
+      "size": [
+        29649.1,
+        31330.4
+      ],
+      "image": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/projects/image-structured-modeler/examples/building-group/textures/roof_warehouse_west_north.png",
+      "alpha": 0.97,
+      "texture_transform": {
+        "projection": "planar",
+        "scale": [
+          1,
+          1
+        ],
+        "rotation": 0
+      },
+      "qa": {
+        "role": "roof_texture",
+        "part_id": "roof_texture_warehouse_west_north",
+        "intent": "photoreal_texture_alignment",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "image_plane",
+      "id": "roof_texture_warehouse_west_south",
+      "name": "Roof_Texture_Warehouse_West_South",
+      "origin": [
+        -59352.6,
+        -31463.2,
+        9170
+      ],
+      "plane": "xy",
+      "size": [
+        29649.1,
+        31330.4
+      ],
+      "image": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/projects/image-structured-modeler/examples/building-group/textures/roof_warehouse_west_south.png",
+      "alpha": 0.97,
+      "texture_transform": {
+        "projection": "planar",
+        "scale": [
+          1,
+          1
+        ],
+        "rotation": 0
+      },
+      "qa": {
+        "role": "roof_texture",
+        "part_id": "roof_texture_warehouse_west_south",
+        "intent": "photoreal_texture_alignment",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "image_plane",
+      "id": "roof_texture_warehouse_inner_north",
+      "name": "Roof_Texture_Warehouse_Inner_North",
+      "origin": [
+        -28291.6,
+        7863.2,
+        9170
+      ],
+      "plane": "xy",
+      "size": [
+        18354.2,
+        28843.8
+      ],
+      "image": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/projects/image-structured-modeler/examples/building-group/textures/roof_warehouse_inner_north.png",
+      "alpha": 0.97,
+      "texture_transform": {
+        "projection": "planar",
+        "scale": [
+          1,
+          1
+        ],
+        "rotation": 0
+      },
+      "qa": {
+        "role": "roof_texture",
+        "part_id": "roof_texture_warehouse_inner_north",
+        "intent": "photoreal_texture_alignment",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "image_plane",
+      "id": "roof_texture_warehouse_inner_south",
+      "name": "Roof_Texture_Warehouse_Inner_South",
+      "origin": [
+        -28291.6,
+        -28110.5,
+        9170
+      ],
+      "plane": "xy",
+      "size": [
+        18354.2,
+        28843.8
+      ],
+      "image": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/projects/image-structured-modeler/examples/building-group/textures/roof_warehouse_inner_south.png",
+      "alpha": 0.97,
+      "texture_transform": {
+        "projection": "planar",
+        "scale": [
+          1,
+          1
+        ],
+        "rotation": 0
+      },
+      "qa": {
+        "role": "roof_texture",
+        "part_id": "roof_texture_warehouse_inner_south",
+        "intent": "photoreal_texture_alignment",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "image_plane",
+      "id": "roof_texture_utility_building",
+      "name": "Roof_Texture_Utility_Building",
+      "origin": [
+        35242.2,
+        -15817.6,
+        7690
+      ],
+      "plane": "xy",
+      "size": [
+        21177.9,
+        22350.9
+      ],
+      "image": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/projects/image-structured-modeler/examples/building-group/textures/roof_utility_building.png",
+      "alpha": 0.96,
+      "texture_transform": {
+        "projection": "planar",
+        "scale": [
+          1,
+          1
+        ],
+        "rotation": 0
+      },
+      "qa": {
+        "role": "roof_texture",
+        "part_id": "roof_texture_utility_building",
+        "intent": "photoreal_texture_alignment",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "image_plane",
+      "id": "roof_texture_admin_office",
+      "name": "Roof_Texture_Admin_Office",
+      "origin": [
+        -9937.4,
+        -37050.9,
+        6890
+      ],
+      "plane": "xy",
+      "size": [
+        21177.9,
+        14528.1
+      ],
+      "image": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/projects/image-structured-modeler/examples/building-group/textures/roof_admin_office.png",
+      "alpha": 0.96,
+      "texture_transform": {
+        "projection": "planar",
+        "scale": [
+          1,
+          1
+        ],
+        "rotation": 0
+      },
+      "qa": {
+        "role": "roof_texture",
+        "part_id": "roof_texture_admin_office",
+        "intent": "photoreal_texture_alignment",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "image_plane",
+      "id": "parking_lot_texture",
+      "name": "Parking_Lot_Texture_From_Top_View",
+      "origin": [
+        14064.3,
+        -42638.6,
+        200
+      ],
+      "plane": "xy",
+      "size": [
+        45179.6,
+        21233.3
+      ],
+      "image": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/projects/image-structured-modeler/examples/building-group/textures/parking_lot_detail.png",
+      "alpha": 0.97,
+      "texture_transform": {
+        "projection": "planar",
+        "scale": [
+          1,
+          1
+        ],
+        "rotation": 0
+      },
+      "qa": {
+        "role": "ground_texture",
+        "part_id": "parking_lot_texture",
+        "intent": "photoreal_texture_alignment",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "image_plane",
+      "id": "tank_farm_texture",
+      "name": "Tank_Farm_Texture_From_Top_View",
+      "origin": [
+        44052.2,
+        30191.8,
+        14120
+      ],
+      "plane": "xy",
+      "size": [
+        13440.9,
+        6325.2
+      ],
+      "image": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/projects/image-structured-modeler/examples/building-group/textures/tank_farm_detail.png",
+      "alpha": 0.94,
+      "texture_transform": {
+        "projection": "planar",
+        "scale": [
+          1,
+          1
+        ],
+        "rotation": 0
+      },
+      "qa": {
+        "role": "roof_texture",
+        "part_id": "tank_farm_texture",
+        "intent": "photoreal_texture_alignment",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "box",
+      "id": "fence_north",
+      "name": "Fence_North",
+      "origin": [
+        -65000,
+        48780,
+        0
+      ],
+      "size": [
+        130000,
+        220,
+        900
+      ],
+      "material": {
+        "name": "Campus_Fence_Blue",
+        "color": "#6aa6c8",
+        "alpha": 0.9
+      },
+      "qa": {
+        "role": "perimeter_fence",
+        "part_id": "fence_north",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "box",
+      "id": "fence_south",
+      "name": "Fence_South",
+      "origin": [
+        -65000,
+        -49000,
+        0
+      ],
+      "size": [
+        130000,
+        220,
+        900
+      ],
+      "material": {
+        "name": "Campus_Fence_Blue",
+        "color": "#6aa6c8",
+        "alpha": 0.9
+      },
+      "qa": {
+        "role": "perimeter_fence",
+        "part_id": "fence_south",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "box",
+      "id": "fence_west",
+      "name": "Fence_West",
+      "origin": [
+        -65000,
+        -49000,
+        0
+      ],
+      "size": [
+        220,
+        98000,
+        900
+      ],
+      "material": {
+        "name": "Campus_Fence_Blue",
+        "color": "#6aa6c8",
+        "alpha": 0.9
+      },
+      "qa": {
+        "role": "perimeter_fence",
+        "part_id": "fence_west",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "box",
+      "id": "fence_east",
+      "name": "Fence_East",
+      "origin": [
+        64780,
+        -49000,
+        0
+      ],
+      "size": [
+        220,
+        98000,
+        900
+      ],
+      "material": {
+        "name": "Campus_Fence_Blue",
+        "color": "#6aa6c8",
+        "alpha": 0.9
+      },
+      "qa": {
+        "role": "perimeter_fence",
+        "part_id": "fence_east",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tree_01",
+      "name": "Tree_1",
+      "origin": [
+        -56000,
+        -45200,
+        0
+      ],
+      "radius": 560,
+      "height": 2300,
+      "segments": 10,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Tree_Canopy",
+        "color": "#2f6b3f"
+      },
+      "qa": {
+        "role": "landscape_tree",
+        "part_id": "tree_01",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tree_02",
+      "name": "Tree_2",
+      "origin": [
+        -56000,
+        44800,
+        0
+      ],
+      "radius": 560,
+      "height": 2300,
+      "segments": 10,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Tree_Canopy",
+        "color": "#2f6b3f"
+      },
+      "qa": {
+        "role": "landscape_tree",
+        "part_id": "tree_02",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tree_03",
+      "name": "Tree_3",
+      "origin": [
+        -44500,
+        -45200,
+        0
+      ],
+      "radius": 560,
+      "height": 2300,
+      "segments": 10,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Tree_Canopy",
+        "color": "#2f6b3f"
+      },
+      "qa": {
+        "role": "landscape_tree",
+        "part_id": "tree_03",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tree_04",
+      "name": "Tree_4",
+      "origin": [
+        -44500,
+        44800,
+        0
+      ],
+      "radius": 560,
+      "height": 2300,
+      "segments": 10,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Tree_Canopy",
+        "color": "#2f6b3f"
+      },
+      "qa": {
+        "role": "landscape_tree",
+        "part_id": "tree_04",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tree_05",
+      "name": "Tree_5",
+      "origin": [
+        -33000,
+        -45200,
+        0
+      ],
+      "radius": 560,
+      "height": 2300,
+      "segments": 10,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Tree_Canopy",
+        "color": "#2f6b3f"
+      },
+      "qa": {
+        "role": "landscape_tree",
+        "part_id": "tree_05",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tree_06",
+      "name": "Tree_6",
+      "origin": [
+        -33000,
+        44800,
+        0
+      ],
+      "radius": 560,
+      "height": 2300,
+      "segments": 10,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Tree_Canopy",
+        "color": "#2f6b3f"
+      },
+      "qa": {
+        "role": "landscape_tree",
+        "part_id": "tree_06",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tree_07",
+      "name": "Tree_7",
+      "origin": [
+        -21500,
+        -45200,
+        0
+      ],
+      "radius": 560,
+      "height": 2300,
+      "segments": 10,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Tree_Canopy",
+        "color": "#2f6b3f"
+      },
+      "qa": {
+        "role": "landscape_tree",
+        "part_id": "tree_07",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tree_08",
+      "name": "Tree_8",
+      "origin": [
+        -21500,
+        44800,
+        0
+      ],
+      "radius": 560,
+      "height": 2300,
+      "segments": 10,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Tree_Canopy",
+        "color": "#2f6b3f"
+      },
+      "qa": {
+        "role": "landscape_tree",
+        "part_id": "tree_08",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tree_09",
+      "name": "Tree_9",
+      "origin": [
+        -10000,
+        -45200,
+        0
+      ],
+      "radius": 560,
+      "height": 2300,
+      "segments": 10,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Tree_Canopy",
+        "color": "#2f6b3f"
+      },
+      "qa": {
+        "role": "landscape_tree",
+        "part_id": "tree_09",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tree_10",
+      "name": "Tree_10",
+      "origin": [
+        -10000,
+        44800,
+        0
+      ],
+      "radius": 560,
+      "height": 2300,
+      "segments": 10,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Tree_Canopy",
+        "color": "#2f6b3f"
+      },
+      "qa": {
+        "role": "landscape_tree",
+        "part_id": "tree_10",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tree_11",
+      "name": "Tree_11",
+      "origin": [
+        1500,
+        -45200,
+        0
+      ],
+      "radius": 560,
+      "height": 2300,
+      "segments": 10,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Tree_Canopy",
+        "color": "#2f6b3f"
+      },
+      "qa": {
+        "role": "landscape_tree",
+        "part_id": "tree_11",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tree_12",
+      "name": "Tree_12",
+      "origin": [
+        1500,
+        44800,
+        0
+      ],
+      "radius": 560,
+      "height": 2300,
+      "segments": 10,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Tree_Canopy",
+        "color": "#2f6b3f"
+      },
+      "qa": {
+        "role": "landscape_tree",
+        "part_id": "tree_12",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tree_13",
+      "name": "Tree_13",
+      "origin": [
+        13000,
+        -45200,
+        0
+      ],
+      "radius": 560,
+      "height": 2300,
+      "segments": 10,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Tree_Canopy",
+        "color": "#2f6b3f"
+      },
+      "qa": {
+        "role": "landscape_tree",
+        "part_id": "tree_13",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tree_14",
+      "name": "Tree_14",
+      "origin": [
+        13000,
+        44800,
+        0
+      ],
+      "radius": 560,
+      "height": 2300,
+      "segments": 10,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Tree_Canopy",
+        "color": "#2f6b3f"
+      },
+      "qa": {
+        "role": "landscape_tree",
+        "part_id": "tree_14",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tree_15",
+      "name": "Tree_15",
+      "origin": [
+        24500,
+        -45200,
+        0
+      ],
+      "radius": 560,
+      "height": 2300,
+      "segments": 10,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Tree_Canopy",
+        "color": "#2f6b3f"
+      },
+      "qa": {
+        "role": "landscape_tree",
+        "part_id": "tree_15",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tree_16",
+      "name": "Tree_16",
+      "origin": [
+        24500,
+        44800,
+        0
+      ],
+      "radius": 560,
+      "height": 2300,
+      "segments": 10,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Tree_Canopy",
+        "color": "#2f6b3f"
+      },
+      "qa": {
+        "role": "landscape_tree",
+        "part_id": "tree_16",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tree_17",
+      "name": "Tree_17",
+      "origin": [
+        36000,
+        -45200,
+        0
+      ],
+      "radius": 560,
+      "height": 2300,
+      "segments": 10,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Tree_Canopy",
+        "color": "#2f6b3f"
+      },
+      "qa": {
+        "role": "landscape_tree",
+        "part_id": "tree_17",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tree_18",
+      "name": "Tree_18",
+      "origin": [
+        36000,
+        44800,
+        0
+      ],
+      "radius": 560,
+      "height": 2300,
+      "segments": 10,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Tree_Canopy",
+        "color": "#2f6b3f"
+      },
+      "qa": {
+        "role": "landscape_tree",
+        "part_id": "tree_18",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tree_19",
+      "name": "Tree_19",
+      "origin": [
+        47500,
+        -45200,
+        0
+      ],
+      "radius": 560,
+      "height": 2300,
+      "segments": 10,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Tree_Canopy",
+        "color": "#2f6b3f"
+      },
+      "qa": {
+        "role": "landscape_tree",
+        "part_id": "tree_19",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tree_20",
+      "name": "Tree_20",
+      "origin": [
+        47500,
+        44800,
+        0
+      ],
+      "radius": 560,
+      "height": 2300,
+      "segments": 10,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Tree_Canopy",
+        "color": "#2f6b3f"
+      },
+      "qa": {
+        "role": "landscape_tree",
+        "part_id": "tree_20",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tree_21",
+      "name": "Tree_21",
+      "origin": [
+        -61100,
+        -38000,
+        0
+      ],
+      "radius": 620,
+      "height": 2600,
+      "segments": 10,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Tree_Canopy",
+        "color": "#2f6b3f"
+      },
+      "qa": {
+        "role": "landscape_tree",
+        "part_id": "tree_21",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tree_22",
+      "name": "Tree_22",
+      "origin": [
+        60900,
+        -38000,
+        0
+      ],
+      "radius": 620,
+      "height": 2600,
+      "segments": 10,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Tree_Canopy",
+        "color": "#2f6b3f"
+      },
+      "qa": {
+        "role": "landscape_tree",
+        "part_id": "tree_22",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tree_23",
+      "name": "Tree_23",
+      "origin": [
+        -61100,
+        -27500,
+        0
+      ],
+      "radius": 620,
+      "height": 2600,
+      "segments": 10,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Tree_Canopy",
+        "color": "#2f6b3f"
+      },
+      "qa": {
+        "role": "landscape_tree",
+        "part_id": "tree_23",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tree_24",
+      "name": "Tree_24",
+      "origin": [
+        60900,
+        -27500,
+        0
+      ],
+      "radius": 620,
+      "height": 2600,
+      "segments": 10,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Tree_Canopy",
+        "color": "#2f6b3f"
+      },
+      "qa": {
+        "role": "landscape_tree",
+        "part_id": "tree_24",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tree_25",
+      "name": "Tree_25",
+      "origin": [
+        -61100,
+        -17000,
+        0
+      ],
+      "radius": 620,
+      "height": 2600,
+      "segments": 10,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Tree_Canopy",
+        "color": "#2f6b3f"
+      },
+      "qa": {
+        "role": "landscape_tree",
+        "part_id": "tree_25",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tree_26",
+      "name": "Tree_26",
+      "origin": [
+        60900,
+        -17000,
+        0
+      ],
+      "radius": 620,
+      "height": 2600,
+      "segments": 10,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Tree_Canopy",
+        "color": "#2f6b3f"
+      },
+      "qa": {
+        "role": "landscape_tree",
+        "part_id": "tree_26",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tree_27",
+      "name": "Tree_27",
+      "origin": [
+        -61100,
+        -6500,
+        0
+      ],
+      "radius": 620,
+      "height": 2600,
+      "segments": 10,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Tree_Canopy",
+        "color": "#2f6b3f"
+      },
+      "qa": {
+        "role": "landscape_tree",
+        "part_id": "tree_27",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tree_28",
+      "name": "Tree_28",
+      "origin": [
+        60900,
+        -6500,
+        0
+      ],
+      "radius": 620,
+      "height": 2600,
+      "segments": 10,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Tree_Canopy",
+        "color": "#2f6b3f"
+      },
+      "qa": {
+        "role": "landscape_tree",
+        "part_id": "tree_28",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tree_29",
+      "name": "Tree_29",
+      "origin": [
+        -61100,
+        4000,
+        0
+      ],
+      "radius": 620,
+      "height": 2600,
+      "segments": 10,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Tree_Canopy",
+        "color": "#2f6b3f"
+      },
+      "qa": {
+        "role": "landscape_tree",
+        "part_id": "tree_29",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tree_30",
+      "name": "Tree_30",
+      "origin": [
+        60900,
+        4000,
+        0
+      ],
+      "radius": 620,
+      "height": 2600,
+      "segments": 10,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Tree_Canopy",
+        "color": "#2f6b3f"
+      },
+      "qa": {
+        "role": "landscape_tree",
+        "part_id": "tree_30",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tree_31",
+      "name": "Tree_31",
+      "origin": [
+        -61100,
+        14500,
+        0
+      ],
+      "radius": 620,
+      "height": 2600,
+      "segments": 10,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Tree_Canopy",
+        "color": "#2f6b3f"
+      },
+      "qa": {
+        "role": "landscape_tree",
+        "part_id": "tree_31",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tree_32",
+      "name": "Tree_32",
+      "origin": [
+        60900,
+        14500,
+        0
+      ],
+      "radius": 620,
+      "height": 2600,
+      "segments": 10,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Tree_Canopy",
+        "color": "#2f6b3f"
+      },
+      "qa": {
+        "role": "landscape_tree",
+        "part_id": "tree_32",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tree_33",
+      "name": "Tree_33",
+      "origin": [
+        -61100,
+        25000,
+        0
+      ],
+      "radius": 620,
+      "height": 2600,
+      "segments": 10,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Tree_Canopy",
+        "color": "#2f6b3f"
+      },
+      "qa": {
+        "role": "landscape_tree",
+        "part_id": "tree_33",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tree_34",
+      "name": "Tree_34",
+      "origin": [
+        60900,
+        25000,
+        0
+      ],
+      "radius": 620,
+      "height": 2600,
+      "segments": 10,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Tree_Canopy",
+        "color": "#2f6b3f"
+      },
+      "qa": {
+        "role": "landscape_tree",
+        "part_id": "tree_34",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tree_35",
+      "name": "Tree_35",
+      "origin": [
+        -61100,
+        35500,
+        0
+      ],
+      "radius": 620,
+      "height": 2600,
+      "segments": 10,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Tree_Canopy",
+        "color": "#2f6b3f"
+      },
+      "qa": {
+        "role": "landscape_tree",
+        "part_id": "tree_35",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tree_36",
+      "name": "Tree_36",
+      "origin": [
+        60900,
+        35500,
+        0
+      ],
+      "radius": 620,
+      "height": 2600,
+      "segments": 10,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Tree_Canopy",
+        "color": "#2f6b3f"
+      },
+      "qa": {
+        "role": "landscape_tree",
+        "part_id": "tree_36",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tree_37",
+      "name": "Tree_37",
+      "origin": [
+        -8213.7,
+        -11670.2,
+        0
+      ],
+      "radius": 320,
+      "height": 1900,
+      "segments": 10,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Tree_Canopy",
+        "color": "#2f6b3f"
+      },
+      "qa": {
+        "role": "landscape_tree",
+        "part_id": "tree_37",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tree_38",
+      "name": "Tree_38",
+      "origin": [
+        34930.3,
+        -11670.2,
+        0
+      ],
+      "radius": 320,
+      "height": 1900,
+      "segments": 10,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Tree_Canopy",
+        "color": "#2f6b3f"
+      },
+      "qa": {
+        "role": "landscape_tree",
+        "part_id": "tree_38",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tree_39",
+      "name": "Tree_39",
+      "origin": [
+        -8213.7,
+        -4070.2,
+        0
+      ],
+      "radius": 320,
+      "height": 1900,
+      "segments": 10,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Tree_Canopy",
+        "color": "#2f6b3f"
+      },
+      "qa": {
+        "role": "landscape_tree",
+        "part_id": "tree_39",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tree_40",
+      "name": "Tree_40",
+      "origin": [
+        34930.3,
+        -4070.2,
+        0
+      ],
+      "radius": 320,
+      "height": 1900,
+      "segments": 10,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Tree_Canopy",
+        "color": "#2f6b3f"
+      },
+      "qa": {
+        "role": "landscape_tree",
+        "part_id": "tree_40",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tree_41",
+      "name": "Tree_41",
+      "origin": [
+        -8213.7,
+        3529.8,
+        0
+      ],
+      "radius": 320,
+      "height": 1900,
+      "segments": 10,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Tree_Canopy",
+        "color": "#2f6b3f"
+      },
+      "qa": {
+        "role": "landscape_tree",
+        "part_id": "tree_41",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tree_42",
+      "name": "Tree_42",
+      "origin": [
+        34930.3,
+        3529.8,
+        0
+      ],
+      "radius": 320,
+      "height": 1900,
+      "segments": 10,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Tree_Canopy",
+        "color": "#2f6b3f"
+      },
+      "qa": {
+        "role": "landscape_tree",
+        "part_id": "tree_42",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tree_43",
+      "name": "Tree_43",
+      "origin": [
+        -8213.7,
+        11129.8,
+        0
+      ],
+      "radius": 320,
+      "height": 1900,
+      "segments": 10,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Tree_Canopy",
+        "color": "#2f6b3f"
+      },
+      "qa": {
+        "role": "landscape_tree",
+        "part_id": "tree_43",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tree_44",
+      "name": "Tree_44",
+      "origin": [
+        34930.3,
+        11129.8,
+        0
+      ],
+      "radius": 320,
+      "height": 1900,
+      "segments": 10,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Tree_Canopy",
+        "color": "#2f6b3f"
+      },
+      "qa": {
+        "role": "landscape_tree",
+        "part_id": "tree_44",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tree_45",
+      "name": "Tree_45",
+      "origin": [
+        -8213.7,
+        18729.8,
+        0
+      ],
+      "radius": 320,
+      "height": 1900,
+      "segments": 10,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Tree_Canopy",
+        "color": "#2f6b3f"
+      },
+      "qa": {
+        "role": "landscape_tree",
+        "part_id": "tree_45",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tree_46",
+      "name": "Tree_46",
+      "origin": [
+        34930.3,
+        18729.8,
+        0
+      ],
+      "radius": 320,
+      "height": 1900,
+      "segments": 10,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Tree_Canopy",
+        "color": "#2f6b3f"
+      },
+      "qa": {
+        "role": "landscape_tree",
+        "part_id": "tree_46",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tree_47",
+      "name": "Tree_47",
+      "origin": [
+        -8213.7,
+        26329.8,
+        0
+      ],
+      "radius": 320,
+      "height": 1900,
+      "segments": 10,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Tree_Canopy",
+        "color": "#2f6b3f"
+      },
+      "qa": {
+        "role": "landscape_tree",
+        "part_id": "tree_47",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tree_48",
+      "name": "Tree_48",
+      "origin": [
+        34930.3,
+        26329.8,
+        0
+      ],
+      "radius": 320,
+      "height": 1900,
+      "segments": 10,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Tree_Canopy",
+        "color": "#2f6b3f"
+      },
+      "qa": {
+        "role": "landscape_tree",
+        "part_id": "tree_48",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tree_49",
+      "name": "Tree_49",
+      "origin": [
+        20564.3,
+        -31597.3,
+        0
+      ],
+      "radius": 460,
+      "height": 1900,
+      "segments": 10,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Tree_Canopy",
+        "color": "#2f6b3f"
+      },
+      "qa": {
+        "role": "landscape_tree",
+        "part_id": "tree_49",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tree_50",
+      "name": "Tree_50",
+      "origin": [
+        29564.3,
+        -31597.3,
+        0
+      ],
+      "radius": 460,
+      "height": 1900,
+      "segments": 10,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Tree_Canopy",
+        "color": "#2f6b3f"
+      },
+      "qa": {
+        "role": "landscape_tree",
+        "part_id": "tree_50",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tree_51",
+      "name": "Tree_51",
+      "origin": [
+        38564.3,
+        -31597.3,
+        0
+      ],
+      "radius": 460,
+      "height": 1900,
+      "segments": 10,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Tree_Canopy",
+        "color": "#2f6b3f"
+      },
+      "qa": {
+        "role": "landscape_tree",
+        "part_id": "tree_51",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "tree_52",
+      "name": "Tree_52",
+      "origin": [
+        47564.3,
+        -31597.3,
+        0
+      ],
+      "radius": 460,
+      "height": 1900,
+      "segments": 10,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Tree_Canopy",
+        "color": "#2f6b3f"
+      },
+      "qa": {
+        "role": "landscape_tree",
+        "part_id": "tree_52",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "box",
+      "id": "vehicle_01",
+      "name": "Vehicle_1",
+      "origin": [
+        19264.3,
+        -36268.6,
+        230
+      ],
+      "size": [
+        1850,
+        4200,
+        1250
+      ],
+      "material": {
+        "name": "Campus_Vehicle_Dark",
+        "color": "#2f3740"
+      },
+      "qa": {
+        "role": "parked_vehicle",
+        "part_id": "vehicle_01",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "box",
+      "id": "vehicle_02",
+      "name": "Vehicle_2",
+      "origin": [
+        24864.3,
+        -36268.6,
+        230
+      ],
+      "size": [
+        4200,
+        1850,
+        1250
+      ],
+      "material": {
+        "name": "Campus_Vehicle_Blue",
+        "color": "#3e6f9f"
+      },
+      "qa": {
+        "role": "parked_vehicle",
+        "part_id": "vehicle_02",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "box",
+      "id": "vehicle_03",
+      "name": "Vehicle_3",
+      "origin": [
+        30464.3,
+        -36268.6,
+        230
+      ],
+      "size": [
+        1850,
+        4200,
+        1250
+      ],
+      "material": {
+        "name": "Campus_Vehicle_Red",
+        "color": "#8d3333"
+      },
+      "qa": {
+        "role": "parked_vehicle",
+        "part_id": "vehicle_03",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "box",
+      "id": "vehicle_04",
+      "name": "Vehicle_4",
+      "origin": [
+        36064.3,
+        -36268.6,
+        230
+      ],
+      "size": [
+        4200,
+        1850,
+        1250
+      ],
+      "material": {
+        "name": "Campus_Vehicle_White",
+        "color": "#f1f4f2"
+      },
+      "qa": {
+        "role": "parked_vehicle",
+        "part_id": "vehicle_04",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "box",
+      "id": "vehicle_05",
+      "name": "Vehicle_5",
+      "origin": [
+        41664.3,
+        -36268.6,
+        230
+      ],
+      "size": [
+        1850,
+        4200,
+        1250
+      ],
+      "material": {
+        "name": "Campus_Vehicle_Dark",
+        "color": "#2f3740"
+      },
+      "qa": {
+        "role": "parked_vehicle",
+        "part_id": "vehicle_05",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "box",
+      "id": "vehicle_06",
+      "name": "Vehicle_6",
+      "origin": [
+        47264.3,
+        -36268.6,
+        230
+      ],
+      "size": [
+        4200,
+        1850,
+        1250
+      ],
+      "material": {
+        "name": "Campus_Vehicle_Blue",
+        "color": "#3e6f9f"
+      },
+      "qa": {
+        "role": "parked_vehicle",
+        "part_id": "vehicle_06",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "box",
+      "id": "vehicle_07",
+      "name": "Vehicle_7",
+      "origin": [
+        52864.3,
+        -36268.6,
+        230
+      ],
+      "size": [
+        1850,
+        4200,
+        1250
+      ],
+      "material": {
+        "name": "Campus_Vehicle_Red",
+        "color": "#8d3333"
+      },
+      "qa": {
+        "role": "parked_vehicle",
+        "part_id": "vehicle_07",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "box",
+      "id": "vehicle_08",
+      "name": "Vehicle_8",
+      "origin": [
+        19264.3,
+        -29474,
+        230
+      ],
+      "size": [
+        1850,
+        4200,
+        1250
+      ],
+      "material": {
+        "name": "Campus_Vehicle_White",
+        "color": "#f1f4f2"
+      },
+      "qa": {
+        "role": "parked_vehicle",
+        "part_id": "vehicle_08",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "box",
+      "id": "vehicle_09",
+      "name": "Vehicle_9",
+      "origin": [
+        24864.3,
+        -29474,
+        230
+      ],
+      "size": [
+        4200,
+        1850,
+        1250
+      ],
+      "material": {
+        "name": "Campus_Vehicle_Dark",
+        "color": "#2f3740"
+      },
+      "qa": {
+        "role": "parked_vehicle",
+        "part_id": "vehicle_09",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "box",
+      "id": "vehicle_10",
+      "name": "Vehicle_10",
+      "origin": [
+        30464.3,
+        -29474,
+        230
+      ],
+      "size": [
+        1850,
+        4200,
+        1250
+      ],
+      "material": {
+        "name": "Campus_Vehicle_Blue",
+        "color": "#3e6f9f"
+      },
+      "qa": {
+        "role": "parked_vehicle",
+        "part_id": "vehicle_10",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "box",
+      "id": "vehicle_11",
+      "name": "Vehicle_11",
+      "origin": [
+        36064.3,
+        -29474,
+        230
+      ],
+      "size": [
+        4200,
+        1850,
+        1250
+      ],
+      "material": {
+        "name": "Campus_Vehicle_Red",
+        "color": "#8d3333"
+      },
+      "qa": {
+        "role": "parked_vehicle",
+        "part_id": "vehicle_11",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "box",
+      "id": "vehicle_12",
+      "name": "Vehicle_12",
+      "origin": [
+        41664.3,
+        -29474,
+        230
+      ],
+      "size": [
+        1850,
+        4200,
+        1250
+      ],
+      "material": {
+        "name": "Campus_Vehicle_White",
+        "color": "#f1f4f2"
+      },
+      "qa": {
+        "role": "parked_vehicle",
+        "part_id": "vehicle_12",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "box",
+      "id": "vehicle_13",
+      "name": "Vehicle_13",
+      "origin": [
+        47264.3,
+        -29474,
+        230
+      ],
+      "size": [
+        4200,
+        1850,
+        1250
+      ],
+      "material": {
+        "name": "Campus_Vehicle_Dark",
+        "color": "#2f3740"
+      },
+      "qa": {
+        "role": "parked_vehicle",
+        "part_id": "vehicle_13",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "box",
+      "id": "vehicle_14",
+      "name": "Vehicle_14",
+      "origin": [
+        52864.3,
+        -29474,
+        230
+      ],
+      "size": [
+        1850,
+        4200,
+        1250
+      ],
+      "material": {
+        "name": "Campus_Vehicle_Blue",
+        "color": "#3e6f9f"
+      },
+      "qa": {
+        "role": "parked_vehicle",
+        "part_id": "vehicle_14",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "box",
+      "id": "loading_truck_01",
+      "name": "Loading_Truck_1",
+      "origin": [
+        -29453.5,
+        16384.3,
+        0
+      ],
+      "size": [
+        1600,
+        6500,
+        2900
+      ],
+      "material": {
+        "name": "Campus_Service_Truck",
+        "color": "#ece9df"
+      },
+      "qa": {
+        "role": "loading_truck",
+        "part_id": "loading_truck_01",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "box",
+      "id": "loading_truck_02",
+      "name": "Loading_Truck_2",
+      "origin": [
+        -29453.5,
+        28916.5,
+        0
+      ],
+      "size": [
+        1600,
+        6500,
+        2900
+      ],
+      "material": {
+        "name": "Campus_Service_Truck",
+        "color": "#ece9df"
+      },
+      "qa": {
+        "role": "loading_truck",
+        "part_id": "loading_truck_02",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "box",
+      "id": "loading_truck_03",
+      "name": "Loading_Truck_3",
+      "origin": [
+        -29453.5,
+        -22690.7,
+        0
+      ],
+      "size": [
+        1600,
+        6500,
+        2900
+      ],
+      "material": {
+        "name": "Campus_Service_Truck",
+        "color": "#ece9df"
+      },
+      "qa": {
+        "role": "loading_truck",
+        "part_id": "loading_truck_03",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "box",
+      "id": "loading_truck_04",
+      "name": "Loading_Truck_4",
+      "origin": [
+        -29453.5,
+        -10158.5,
+        0
+      ],
+      "size": [
+        1600,
+        6500,
+        2900
+      ],
+      "material": {
+        "name": "Campus_Service_Truck",
+        "color": "#ece9df"
+      },
+      "qa": {
+        "role": "loading_truck",
+        "part_id": "loading_truck_04",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "box",
+      "id": "loading_truck_05",
+      "name": "Loading_Truck_5",
+      "origin": [
+        -9687.4,
+        15939.5,
+        0
+      ],
+      "size": [
+        1600,
+        6500,
+        2900
+      ],
+      "material": {
+        "name": "Campus_Service_Truck",
+        "color": "#ece9df"
+      },
+      "qa": {
+        "role": "loading_truck",
+        "part_id": "loading_truck_05",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "box",
+      "id": "loading_truck_06",
+      "name": "Loading_Truck_6",
+      "origin": [
+        -9687.4,
+        27477,
+        0
+      ],
+      "size": [
+        1600,
+        6500,
+        2900
+      ],
+      "material": {
+        "name": "Campus_Service_Truck",
+        "color": "#ece9df"
+      },
+      "qa": {
+        "role": "loading_truck",
+        "part_id": "loading_truck_06",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "box",
+      "id": "loading_truck_07",
+      "name": "Loading_Truck_7",
+      "origin": [
+        -9687.4,
+        -20034.2,
+        0
+      ],
+      "size": [
+        1600,
+        6500,
+        2900
+      ],
+      "material": {
+        "name": "Campus_Service_Truck",
+        "color": "#ece9df"
+      },
+      "qa": {
+        "role": "loading_truck",
+        "part_id": "loading_truck_07",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "box",
+      "id": "loading_truck_08",
+      "name": "Loading_Truck_8",
+      "origin": [
+        -9687.4,
+        -8496.7,
+        0
+      ],
+      "size": [
+        1600,
+        6500,
+        2900
+      ],
+      "material": {
+        "name": "Campus_Service_Truck",
+        "color": "#ece9df"
+      },
+      "qa": {
+        "role": "loading_truck",
+        "part_id": "loading_truck_08",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "roof_vent_01",
+      "name": "Roof_Vent_1",
+      "origin": [
+        -44528,
+        14504.5,
+        9220
+      ],
+      "radius": 190,
+      "height": 420,
+      "segments": 12,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Roof_Vent_Dark",
+        "color": "#384047"
+      },
+      "qa": {
+        "role": "roof_vent",
+        "part_id": "roof_vent_01",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "roof_vent_02",
+      "name": "Roof_Vent_2",
+      "origin": [
+        -44528,
+        18890.7,
+        9220
+      ],
+      "radius": 190,
+      "height": 420,
+      "segments": 12,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Roof_Vent_Dark",
+        "color": "#384047"
+      },
+      "qa": {
+        "role": "roof_vent",
+        "part_id": "roof_vent_02",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "roof_vent_03",
+      "name": "Roof_Vent_3",
+      "origin": [
+        -44528,
+        23277,
+        9220
+      ],
+      "radius": 190,
+      "height": 420,
+      "segments": 12,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Roof_Vent_Dark",
+        "color": "#384047"
+      },
+      "qa": {
+        "role": "roof_vent",
+        "part_id": "roof_vent_03",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "roof_vent_04",
+      "name": "Roof_Vent_4",
+      "origin": [
+        -44528,
+        27663.3,
+        9220
+      ],
+      "radius": 190,
+      "height": 420,
+      "segments": 12,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Roof_Vent_Dark",
+        "color": "#384047"
+      },
+      "qa": {
+        "role": "roof_vent",
+        "part_id": "roof_vent_04",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "roof_vent_05",
+      "name": "Roof_Vent_5",
+      "origin": [
+        -44528,
+        32049.5,
+        9220
+      ],
+      "radius": 190,
+      "height": 420,
+      "segments": 12,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Roof_Vent_Dark",
+        "color": "#384047"
+      },
+      "qa": {
+        "role": "roof_vent",
+        "part_id": "roof_vent_05",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "roof_vent_06",
+      "name": "Roof_Vent_6",
+      "origin": [
+        -44528,
+        -24570.5,
+        9220
+      ],
+      "radius": 190,
+      "height": 420,
+      "segments": 12,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Roof_Vent_Dark",
+        "color": "#384047"
+      },
+      "qa": {
+        "role": "roof_vent",
+        "part_id": "roof_vent_06",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "roof_vent_07",
+      "name": "Roof_Vent_7",
+      "origin": [
+        -44528,
+        -20184.3,
+        9220
+      ],
+      "radius": 190,
+      "height": 420,
+      "segments": 12,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Roof_Vent_Dark",
+        "color": "#384047"
+      },
+      "qa": {
+        "role": "roof_vent",
+        "part_id": "roof_vent_07",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "roof_vent_08",
+      "name": "Roof_Vent_8",
+      "origin": [
+        -44528,
+        -15798,
+        9220
+      ],
+      "radius": 190,
+      "height": 420,
+      "segments": 12,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Roof_Vent_Dark",
+        "color": "#384047"
+      },
+      "qa": {
+        "role": "roof_vent",
+        "part_id": "roof_vent_08",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "roof_vent_09",
+      "name": "Roof_Vent_9",
+      "origin": [
+        -44528,
+        -11411.7,
+        9220
+      ],
+      "radius": 190,
+      "height": 420,
+      "segments": 12,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Roof_Vent_Dark",
+        "color": "#384047"
+      },
+      "qa": {
+        "role": "roof_vent",
+        "part_id": "roof_vent_09",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "roof_vent_10",
+      "name": "Roof_Vent_10",
+      "origin": [
+        -44528,
+        -7025.5,
+        9220
+      ],
+      "radius": 190,
+      "height": 420,
+      "segments": 12,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Roof_Vent_Dark",
+        "color": "#384047"
+      },
+      "qa": {
+        "role": "roof_vent",
+        "part_id": "roof_vent_10",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "roof_vent_11",
+      "name": "Roof_Vent_11",
+      "origin": [
+        -19114.5,
+        14208.8,
+        9220
+      ],
+      "radius": 190,
+      "height": 420,
+      "segments": 12,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Roof_Vent_Dark",
+        "color": "#384047"
+      },
+      "qa": {
+        "role": "roof_vent",
+        "part_id": "roof_vent_11",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "roof_vent_12",
+      "name": "Roof_Vent_12",
+      "origin": [
+        -19114.5,
+        18247,
+        9220
+      ],
+      "radius": 190,
+      "height": 420,
+      "segments": 12,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Roof_Vent_Dark",
+        "color": "#384047"
+      },
+      "qa": {
+        "role": "roof_vent",
+        "part_id": "roof_vent_12",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "roof_vent_13",
+      "name": "Roof_Vent_13",
+      "origin": [
+        -19114.5,
+        22285.1,
+        9220
+      ],
+      "radius": 190,
+      "height": 420,
+      "segments": 12,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Roof_Vent_Dark",
+        "color": "#384047"
+      },
+      "qa": {
+        "role": "roof_vent",
+        "part_id": "roof_vent_13",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "roof_vent_14",
+      "name": "Roof_Vent_14",
+      "origin": [
+        -19114.5,
+        26323.2,
+        9220
+      ],
+      "radius": 190,
+      "height": 420,
+      "segments": 12,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Roof_Vent_Dark",
+        "color": "#384047"
+      },
+      "qa": {
+        "role": "roof_vent",
+        "part_id": "roof_vent_14",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "roof_vent_15",
+      "name": "Roof_Vent_15",
+      "origin": [
+        -19114.5,
+        30361.4,
+        9220
+      ],
+      "radius": 190,
+      "height": 420,
+      "segments": 12,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Roof_Vent_Dark",
+        "color": "#384047"
+      },
+      "qa": {
+        "role": "roof_vent",
+        "part_id": "roof_vent_15",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "roof_vent_16",
+      "name": "Roof_Vent_16",
+      "origin": [
+        -19114.5,
+        -21764.9,
+        9220
+      ],
+      "radius": 190,
+      "height": 420,
+      "segments": 12,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Roof_Vent_Dark",
+        "color": "#384047"
+      },
+      "qa": {
+        "role": "roof_vent",
+        "part_id": "roof_vent_16",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "roof_vent_17",
+      "name": "Roof_Vent_17",
+      "origin": [
+        -19114.5,
+        -17726.7,
+        9220
+      ],
+      "radius": 190,
+      "height": 420,
+      "segments": 12,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Roof_Vent_Dark",
+        "color": "#384047"
+      },
+      "qa": {
+        "role": "roof_vent",
+        "part_id": "roof_vent_17",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "roof_vent_18",
+      "name": "Roof_Vent_18",
+      "origin": [
+        -19114.5,
+        -13688.6,
+        9220
+      ],
+      "radius": 190,
+      "height": 420,
+      "segments": 12,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Roof_Vent_Dark",
+        "color": "#384047"
+      },
+      "qa": {
+        "role": "roof_vent",
+        "part_id": "roof_vent_18",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "roof_vent_19",
+      "name": "Roof_Vent_19",
+      "origin": [
+        -19114.5,
+        -9650.5,
+        9220
+      ],
+      "radius": 190,
+      "height": 420,
+      "segments": 12,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Roof_Vent_Dark",
+        "color": "#384047"
+      },
+      "qa": {
+        "role": "roof_vent",
+        "part_id": "roof_vent_19",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "cylinder",
+      "id": "roof_vent_20",
+      "name": "Roof_Vent_20",
+      "origin": [
+        -19114.5,
+        -5612.3,
+        9220
+      ],
+      "radius": 190,
+      "height": 420,
+      "segments": 12,
+      "smooth": "all",
+      "material": {
+        "name": "Campus_Roof_Vent_Dark",
+        "color": "#384047"
+      },
+      "qa": {
+        "role": "roof_vent",
+        "part_id": "roof_vent_20",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "box",
+      "id": "utility_hvac_01",
+      "name": "Utility_HVAC_01",
+      "origin": [
+        39901.3,
+        -3301.1,
+        7680
+      ],
+      "size": [
+        1900,
+        1600,
+        650
+      ],
+      "material": {
+        "name": "Campus_HVAC_Light",
+        "color": "#d6d9d2"
+      },
+      "qa": {
+        "role": "roof_hvac",
+        "part_id": "utility_hvac_01",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "box",
+      "id": "utility_hvac_02",
+      "name": "Utility_HVAC_02",
+      "origin": [
+        47101.8,
+        -4195.1,
+        7680
+      ],
+      "size": [
+        2300,
+        1800,
+        650
+      ],
+      "material": {
+        "name": "Campus_HVAC_Light",
+        "color": "#d6d9d2"
+      },
+      "qa": {
+        "role": "roof_hvac",
+        "part_id": "utility_hvac_02",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "box",
+      "id": "admin_roof_unit_01",
+      "name": "Admin_Roof_Unit_01",
+      "origin": [
+        2345.8,
+        -28624.6,
+        6880
+      ],
+      "size": [
+        2100,
+        1700,
+        600
+      ],
+      "material": {
+        "name": "Campus_HVAC_Light",
+        "color": "#d6d9d2"
+      },
+      "qa": {
+        "role": "roof_hvac",
+        "part_id": "admin_roof_unit_01",
+        "intent": "photoreal_site_detail",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper"
+      }
+    },
+    {
+      "op": "scene",
+      "name": "Building_Group_Top_Scale_Review",
+      "camera": {
+        "eye": [
+          0,
+          0,
+          170000
+        ],
+        "target": [
+          0,
+          0,
+          0
+        ],
+        "up": [
+          0,
+          1,
+          0
+        ],
+        "fov": 35
+      }
+    },
+    {
+      "op": "scene",
+      "name": "Building_Group_Oblique_Massing_Review",
+      "camera": {
+        "eye": [
+          105000,
+          -118000,
+          72000
+        ],
+        "target": [
+          0,
+          0,
+          6000
+        ],
+        "up": [
+          0,
+          0,
+          1
+        ],
+        "fov": 38
+      }
+    },
+    {
+      "op": "style",
+      "name": "R7_Building_Group_Review",
+      "display_edges": true,
+      "profiles": true,
+      "profile_width": 2,
+      "face_style": "shaded_with_textures",
+      "background_color": "#eef2f1",
+      "sky_color": "#d6e5ef",
+      "ground_color": "#ccd5cb"
+    },
+    {
+      "op": "shadow",
+      "display": true,
+      "time": "2026-05-31T10:54:00+08:00",
+      "light": 72,
+      "dark": 48,
+      "use_sun_for_shading": true
+    },
+    {
+      "op": "rendering_options",
+      "edge_display_mode": 1,
+      "draw_hidden_geometry": false,
+      "display_color_by_layer": false,
+      "transparency": true,
+      "draw_ground": true
+    }
+  ]
+}
