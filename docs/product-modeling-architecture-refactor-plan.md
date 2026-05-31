@@ -1,7 +1,7 @@
 # Product Modeling Architecture Refactor Plan
 
 > Date: 2026-05-29
-> Status: R5 product sample expansion complete; ambulance, Switch, and Fuji camera now run through ProductProfile -> PartGraph -> DSL -> Layout QA + Reference Visual QA in mock and live queue, with saved queue SKP artifacts; R6 physical consistency QA now covers all three product samples, proposal review output has a proposal-applied mock/queue QA chain, and R7 building-group massing now has mock layout/reference QA reports
+> Status: R5 product sample expansion complete; ambulance, Switch, and Fuji camera now run through ProductProfile -> PartGraph -> DSL -> Layout QA + Reference Visual QA in mock and live queue, with saved queue SKP artifacts; R6 physical consistency QA now covers all three product samples, proposal review output has a proposal-applied mock/queue QA chain, and R7 building-group massing now has mock/live queue layout/reference QA reports
 > Scope: upstream modeling architecture, not a full runtime rewrite
 
 ## Decision
@@ -244,7 +244,7 @@ Implementation status:
 
 ## Immediate Next Slice
 
-R5 is complete as a product-sample expansion gate. The current R6 hardening boundary is also complete for ambulance no-seed proposals, proposal-applied QA/queue review gating, and three-sample physical consistency. R7 has started with building-group evidence, known-element scale, review-gated massing, and mock layout/reference QA. Next slice is building-photo modeling at scene scale:
+R5 is complete as a product-sample expansion gate. The current R6 hardening boundary is also complete for ambulance no-seed proposals, proposal-applied QA/queue review gating, and three-sample physical consistency. R7 has started with building-group evidence, known-element scale, review-gated massing, mock/live queue layout/reference QA, and a saved massing SKP. Next slice is building-photo modeling at scene scale:
 
 1. Keep using the ambulance refit as the reference standard: old-looking seed models must fail the image-anchored gate; fixes should land in PartGraph fields and feature intents, not generated DSL coordinates.
 2. Extend the R7 building-group sample beyond current massing QA: identify facade planes, rooflines, openings, scale anchors, and occlusion/missing-view questions before accepting finer DSL geometry.

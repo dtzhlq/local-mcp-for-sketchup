@@ -717,6 +717,18 @@ async function assertBuildingGroupObservationSample() {
   assert.equal(referenceQaReport.summary.total, 0, 'building group reference visual QA artifact should have no issues');
   assert.equal(referenceQaReport.summary.checked_items, partGraph.parts.length - 1, 'reference visual QA should ignore the reference-only site slab and check generated massing items');
   assert.equal(referenceQaReport.summary.preview_views, 2, 'building group reference visual QA should include site/height previews');
+
+  const queueLayoutQaReport = JSON.parse(await fs.readFile(path.join(base, 'layout-qa-queue', 'building-group-massing', 'report.json'), 'utf8'));
+  assert.equal(queueLayoutQaReport.ok, true, 'building group queue layout QA artifact should pass');
+  assert.equal(queueLayoutQaReport.verdict, 'pass', 'building group queue layout QA artifact should record pass verdict');
+  assert.equal(queueLayoutQaReport.summary.total, 0, 'building group queue layout QA artifact should have no issues');
+  assert.equal(queueLayoutQaReport.summary.visible_items, partGraph.parts.length, 'building group queue layout QA should check all massing parts');
+
+  const queueReferenceQaReport = JSON.parse(await fs.readFile(path.join(base, 'reference-visual-qa-queue', 'building-group-massing', 'report.json'), 'utf8'));
+  assert.equal(queueReferenceQaReport.ok, true, 'building group queue reference visual QA artifact should pass');
+  assert.equal(queueReferenceQaReport.verdict, 'pass', 'building group queue reference visual QA artifact should record pass verdict');
+  assert.equal(queueReferenceQaReport.summary.total, 0, 'building group queue reference visual QA artifact should have no issues');
+  assert.equal(queueReferenceQaReport.summary.checked_items, partGraph.parts.length - 1, 'building group queue reference visual QA should ignore the reference-only site slab');
   return true;
 }
 
