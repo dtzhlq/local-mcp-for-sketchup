@@ -154,7 +154,7 @@
         "role": "production_hall",
         "part_id": "primary_blue_roof_hall",
         "intent": "building",
-        "evidence_status": "inferred",
+        "evidence_status": "manual_confirmed",
         "fallback_state": "box_approximation",
         "evidence_sources": [
           {
@@ -192,6 +192,44 @@
             "confidence": 0.6,
             "note": "R7 campus-layout prior for blue-roof hall massing in oblique view.",
             "observation_id": "building_oblique_primary_blue_hall"
+          },
+          {
+            "kind": "parameter_proposal_review",
+            "status": "manual_confirmed",
+            "confidence": 0.5,
+            "note": "accepted_parameter_proposal: Accept only the primary hall roofline/facade/opening feature-intent subset for R7 proposal-to-patch regression."
+          }
+        ],
+        "feature_intents": [
+          {
+            "id": "primary_blue_roof_hall_roof_center_ridge",
+            "operation": "add_raised_rib",
+            "fallback_state": "needs_review"
+          },
+          {
+            "id": "primary_blue_roof_hall_roof_west_eave_line",
+            "operation": "add_raised_rib",
+            "fallback_state": "needs_review"
+          },
+          {
+            "id": "primary_blue_roof_hall_roof_east_eave_line",
+            "operation": "add_raised_rib",
+            "fallback_state": "needs_review"
+          },
+          {
+            "id": "primary_blue_roof_hall_facade_loading_door",
+            "operation": "cut_recess",
+            "fallback_state": "needs_review"
+          },
+          {
+            "id": "primary_blue_roof_hall_facade_window_band_left",
+            "operation": "cut_recess",
+            "fallback_state": "needs_review"
+          },
+          {
+            "id": "primary_blue_roof_hall_facade_window_band_right",
+            "operation": "cut_recess",
+            "fallback_state": "needs_review"
           }
         ],
         "generated_from_building_group_evidence": true,
@@ -202,8 +240,103 @@
         "detail_review_required": true,
         "roofline_review_required": true,
         "facade_review_required": true,
-        "opening_review_required": true
+        "opening_review_required": true,
+        "parameter_proposal_applied": true,
+        "last_correction_rule": "accepted_parameter_proposal"
       }
+    },
+    {
+      "op": "add_raised_rib",
+      "target_id": "primary_blue_roof_hall",
+      "feature_id": "primary_blue_roof_hall_roof_center_ridge",
+      "face": "top",
+      "center": [
+        20472,
+        29056.2
+      ],
+      "length": 51138.8,
+      "width": 737,
+      "height": 260,
+      "direction": "v"
+    },
+    {
+      "op": "add_raised_rib",
+      "target_id": "primary_blue_roof_hall",
+      "feature_id": "primary_blue_roof_hall_roof_west_eave_line",
+      "face": "top",
+      "center": [
+        7369.9,
+        29056.2
+      ],
+      "length": 47652.1,
+      "width": 220,
+      "height": 140,
+      "direction": "v"
+    },
+    {
+      "op": "add_raised_rib",
+      "target_id": "primary_blue_roof_hall",
+      "feature_id": "primary_blue_roof_hall_roof_east_eave_line",
+      "face": "top",
+      "center": [
+        33574.1,
+        29056.2
+      ],
+      "length": 47652.1,
+      "width": 220,
+      "height": 140,
+      "direction": "v"
+    },
+    {
+      "op": "cut_recess",
+      "target_id": "primary_blue_roof_hall",
+      "feature_id": "primary_blue_roof_hall_facade_loading_door",
+      "face": "front",
+      "center": [
+        20472,
+        3300
+      ],
+      "size": [
+        5322.7,
+        5610
+      ],
+      "depth": 160,
+      "radius": 60,
+      "segments": 4
+    },
+    {
+      "op": "cut_recess",
+      "target_id": "primary_blue_roof_hall",
+      "feature_id": "primary_blue_roof_hall_facade_window_band_left",
+      "face": "front",
+      "center": [
+        12283.2,
+        9570
+      ],
+      "size": [
+        6551,
+        1815
+      ],
+      "depth": 90,
+      "radius": 40,
+      "segments": 4
+    },
+    {
+      "op": "cut_recess",
+      "target_id": "primary_blue_roof_hall",
+      "feature_id": "primary_blue_roof_hall_facade_window_band_right",
+      "face": "front",
+      "center": [
+        28660.8,
+        9570
+      ],
+      "size": [
+        6551,
+        1815
+      ],
+      "depth": 90,
+      "radius": 40,
+      "segments": 4
     },
     {
       "op": "box",

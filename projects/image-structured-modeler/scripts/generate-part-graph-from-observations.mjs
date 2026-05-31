@@ -295,7 +295,7 @@ function generateBuildingGroupPartGraphFromObservations(observationSet, profile,
     }),
     ...tankFarmParts(context),
     ...scaleAnchorParts(context)
-  ].filter(Boolean);
+  ].filter(Boolean).map((part) => withBuildingDetailProposals(part));
 
   const parameterProposals = massingParts.flatMap((part) => part.parameter_proposals || []);
   const correctionTargets = [
@@ -314,7 +314,8 @@ function generateBuildingGroupPartGraphFromObservations(observationSet, profile,
       path: `parts[${part.id}].shape.parameters`,
       reason: `${part.id}: review image-derived massing dimensions before applying to a final building PartGraph.`,
       severity: part.role === 'scale_anchor' ? 'info' : 'warn'
-    }))
+    })),
+    ...buildingDetailCorrectionTargets(massingParts)
   ];
   const graphParts = massingParts.map((part) => evidenceGraphPartForBuildingPart(part));
   return {
@@ -480,6 +481,164 @@ function scaleAnchorParts(context) {
         confidence: measurement.confidence || 0.48
       });
     });
+}
+
+function withBuildingDetailProposals(part) {
+  const featureIntents = buildingDetailFeatureIntents(part);
+  if (!featureIntents.length) return part;
+  const proposal = featureIntentProposalForPart(part, featureIntents);
+  return {
+    ...part,
+    parameter_proposals: [...(part.parameter_proposals || []), proposal],
+    qa: {
+      ...(part.qa || {}),
+      detail_review_required: true,
+      roofline_review_required: featureIntents.some((feature) => feature.semantic?.includes('roofline')),
+      facade_review_required: featureIntents.some((feature) => feature.semantic?.includes('facade')),
+      opening_review_required: featureIntents.some((feature) => feature.semantic?.includes('opening'))
+    }
+  };
+}
+
+function buildingDetailCorrectionTargets(parts) {
+  return parts
+    .filter((part) => (part.parameter_proposals || []).some((proposal) => proposal.proposal_kind === 'feature_intents'))
+    .map((part) => ({
+      part_id: part.id,
+      path: `parts[${part.id}].feature_intents`,
+      reason: `${part.id}: review roofline, facade rhythm, and opening feature-intent proposals before applying architectural detail.`,
+      severity: 'warn'
+    }));
+}
+
+function featureIntentProposalForPart(part, featureIntents) {
+  const confidence = round(clamp((part.qa?.evidence_confidence || 0.5) - 0.08, 0.24, 0.74), 3);
+  const sourceViews = unique((part.evidence_sources || []).map((source) => source.view).filter(Boolean));
+  return {
+    part_id: part.id,
+    proposal_kind: 'feature_intents',
+    parameter: 'feature_intents',
+    path: `parts[${part.id}].feature_intents`,
+    unit: 'target_face_local_mm',
+    current_value: part.feature_intents || [],
+    proposed_value: featureIntents,
+    confidence,
+    status: 'needs_review',
+    review_required: true,
+    basis: [
+      'building_group_oblique_roofline_hint',
+      'building_group_facade_rhythm_prior',
+      'building_group_known_element_scale'
+    ],
+    source_count: part.evidence_sources?.length || 0,
+    source_views: sourceViews,
+    required_views: ['top', 'oblique'],
+    confirmed_views: sourceViews,
+    missing_views: ['facade_orthographic', 'opening_closeup'],
+    evidence_sources: featureEvidenceSources(part),
+    reason: 'R7 building-group detail proposals are image-derived feature intents and require explicit review before patch application.'
+  };
+}
+
+function buildingDetailFeatureIntents(part) {
+  if (!['production_hall', 'warehouse_row', 'utility_building', 'admin_office'].includes(part.role)) return [];
+  const size = part.shape?.parameters?.size || [];
+  const [width, depth, height] = size.map(Number);
+  if (![width, depth, height].every((value) => Number.isFinite(value) && value > 0)) return [];
+  if (part.id === 'primary_blue_roof_hall') return primaryHallFeatureIntents(part, width, depth, height);
+  if (part.role === 'warehouse_row') return warehouseRowFeatureIntents(part, width, depth, height);
+  if (part.role === 'utility_building') return utilityBuildingFeatureIntents(part, width, depth, height);
+  if (part.role === 'admin_office') return adminOfficeFeatureIntents(part, width, depth, height);
+  return [];
+}
+
+function primaryHallFeatureIntents(part, width, depth, height) {
+  return [
+    raisedRib(part, 'roof_center_ridge', 'roofline.center_ridge', 'top', [width * 0.5, depth * 0.5], depth * 0.88, Math.max(width * 0.018, 420), 260, 'v'),
+    raisedRib(part, 'roof_west_eave_line', 'roofline.eave_line', 'top', [width * 0.18, depth * 0.5], depth * 0.82, 220, 140, 'v'),
+    raisedRib(part, 'roof_east_eave_line', 'roofline.eave_line', 'top', [width * 0.82, depth * 0.5], depth * 0.82, 220, 140, 'v'),
+    recess(part, 'facade_loading_door', 'facade.opening.loading_door', 'front', [width * 0.5, height * 0.2], [width * 0.13, height * 0.34], 160, 60),
+    recess(part, 'facade_window_band_left', 'facade.opening.window_band', 'front', [width * 0.3, height * 0.58], [width * 0.16, height * 0.11], 90, 40),
+    recess(part, 'facade_window_band_right', 'facade.opening.window_band', 'front', [width * 0.7, height * 0.58], [width * 0.16, height * 0.11], 90, 40)
+  ];
+}
+
+function warehouseRowFeatureIntents(part, width, depth, height) {
+  return [
+    raisedRib(part, 'roof_longitudinal_seam_left', 'roofline.longitudinal_seam', 'top', [width * 0.33, depth * 0.5], depth * 0.9, 160, 110, 'v'),
+    raisedRib(part, 'roof_longitudinal_seam_right', 'roofline.longitudinal_seam', 'top', [width * 0.67, depth * 0.5], depth * 0.9, 160, 110, 'v'),
+    recess(part, 'facade_loading_bay_left', 'facade.opening.loading_bay', 'front', [width * 0.28, height * 0.27], [width * 0.16, height * 0.36], 120, 40),
+    recess(part, 'facade_loading_bay_center', 'facade.opening.loading_bay', 'front', [width * 0.5, height * 0.27], [width * 0.16, height * 0.36], 120, 40),
+    recess(part, 'facade_loading_bay_right', 'facade.opening.loading_bay', 'front', [width * 0.72, height * 0.27], [width * 0.16, height * 0.36], 120, 40)
+  ];
+}
+
+function utilityBuildingFeatureIntents(part, width, depth, height) {
+  return [
+    raisedRib(part, 'roof_service_ridge', 'roofline.service_ridge', 'top', [width * 0.5, depth * 0.5], depth * 0.72, 180, 120, 'v'),
+    slot(part, 'facade_louver_band', 'facade.opening.louver_band', 'front', [width * 0.52, height * 0.62], width * 0.46, height * 0.08, 80),
+    recess(part, 'facade_service_door', 'facade.opening.service_door', 'front', [width * 0.22, height * 0.24], [width * 0.11, height * 0.32], 120, 30)
+  ];
+}
+
+function adminOfficeFeatureIntents(part, width, depth, height) {
+  return [
+    raisedRib(part, 'roof_parapet_front', 'roofline.parapet_edge', 'top', [width * 0.5, depth * 0.08], width * 0.86, 160, 120, 'u'),
+    recess(part, 'facade_entry_door', 'facade.opening.entry_door', 'front', [width * 0.5, height * 0.25], [width * 0.12, height * 0.36], 120, 30),
+    recess(part, 'facade_window_left', 'facade.opening.window', 'front', [width * 0.28, height * 0.62], [width * 0.14, height * 0.18], 80, 30),
+    recess(part, 'facade_window_right', 'facade.opening.window', 'front', [width * 0.72, height * 0.62], [width * 0.14, height * 0.18], 80, 30)
+  ];
+}
+
+function raisedRib(part, suffix, semantic, face, center, length, width, height, direction) {
+  return featureIntent(part, suffix, 'add_raised_rib', semantic, face, {
+    center: roundVector(center),
+    length: round(Math.max(length, 1), 1),
+    width: round(Math.max(width, 1), 1),
+    height: round(Math.max(height, 1), 1),
+    direction
+  });
+}
+
+function recess(part, suffix, semantic, face, center, size, depth, radius) {
+  return featureIntent(part, suffix, 'cut_recess', semantic, face, {
+    center: roundVector(center),
+    size: roundVector(size),
+    depth: round(Math.max(depth, 1), 1),
+    radius: round(Math.max(radius, 0), 1),
+    segments: 4
+  });
+}
+
+function slot(part, suffix, semantic, face, center, length, width, depth) {
+  return featureIntent(part, suffix, 'cut_slot', semantic, face, {
+    center: roundVector(center),
+    length: round(Math.max(length, width), 1),
+    width: round(Math.max(width, 1), 1),
+    depth: round(Math.max(depth, 1), 1),
+    through: false,
+    segments: 8
+  });
+}
+
+function featureIntent(part, suffix, operation, semantic, face, parameters) {
+  return {
+    id: `${part.id}_${suffix}`,
+    operation,
+    face,
+    parameters,
+    semantic,
+    fallback_state: 'needs_review',
+    evidence_sources: featureEvidenceSources(part)
+  };
+}
+
+function featureEvidenceSources(part) {
+  return (part.evidence_sources || []).filter((source) => ['top', 'oblique'].includes(source.view)).slice(0, 4);
+}
+
+function roundVector(values) {
+  return values.map((value) => round(Math.max(value, 0), 1));
 }
 
 function buildingPart({ id, name, type, role, material, shape, sources, fallback_state, confidence }) {

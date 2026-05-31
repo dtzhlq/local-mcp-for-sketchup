@@ -30,18 +30,18 @@ observations.json -> model-plan.json -> output.json -> review/index.html -> mock
 - R6 proposal review UI 当前边界：`image-structured:proposal-review-ambulance` 会生成 `examples/ambulance/proposal-review/index.html`，列出 20 条 no-seed proposal、预选 fixture 接受项、展示 patch target，并允许导出 accepted proposal JSON。
 - R6 proposal review 复验链当前边界：`image-structured:proposal-review-chain-ambulance` 会重建 accepted proposal patch、刷新 proposal review、编译 `output.proposal-applied.json` 并跑 mock QA；`:queue` 版本会保存 `output/image-structured-ambulance-proposal-applied.skp`。当前只接受 body/cab 两项时输出 `review_required: true`，layout/reference QA fail，physical consistency pass。
 - 镜像/手性风险已显式证据化：`observations.json` 的每张图会写入 `orientation_hints`，记录 `image_x_right_y_down` 坐标约定、mirror risk、semantic anchors 和 `review_required`；主线 Reference Visual QA 也新增 `orientation` 规则组，Switch 左右摇杆镜像负例会被 `reference.orientation_order` 打回。
-- R7 建筑群当前边界：`image-structured:build-building-group` 会读取 `test/建筑群/` 的 3 张 GPT Image 合成航拍图，使用 `building_group` observation profile 和 `building_group_industrial_campus` ProductProfile，生成 `observations.json`、review overlays、`part-graph.massing.json` 和 `output.massing.json`。scale calibration 使用停车位、车道和人行横道 known-element anchors，估算厂区约 `130m x 98m`；所有 massing shape proposal 仍是 `review_required: true`。`image-structured:qa-building-group` 和 `image-structured:qa-building-group:queue` 已分别生成 mock/live layout/reference QA 报告并通过，queue 版保存 `output/image-structured-building-group-massing.skp`；这仍是 review-gated massing，不是建筑 acceptance。
+- R7 建筑群当前边界：`image-structured:build-building-group` 会读取 `test/建筑群/` 的 3 张 GPT Image 合成航拍图，使用 `building_group` observation profile 和 `building_group_industrial_campus` ProductProfile，生成 `observations.json`、review overlays、`part-graph.massing.json` 和 `output.massing.json`。scale calibration 使用停车位、车道和人行横道 known-element anchors，估算厂区约 `130m x 98m`；所有 massing shape proposal 仍是 `review_required: true`。`image-structured:qa-building-group` 和 `image-structured:qa-building-group:queue` 已分别生成 mock/live layout/reference QA 报告并通过，queue 版保存 `output/image-structured-building-group-massing.skp`。建筑细节第一刀已新增 roofline/facade/opening `feature_intents` proposals；`image-structured:proposal-review-chain-building-group` 当前只接受主厂房 detail subset，并通过 mock compile/layout/reference/physical QA。这仍是 review-gated massing/detail proposal，不是建筑 acceptance。
 
 当前完成度判断：
 
 - Switch-only 技术预览闭环：约 95%。
 - 通用“图片 -> 结构化 SketchUp 模型”技术预览 MVP：约 88%。
-- 当前优先级：semantic fusion、corrections workbench 和主线 CAD boolean/manifold 已补齐；R1/R2 已把救护车验收迁移到 `ProductProfile + PartGraph -> JSON DSL`；R3 Reference Visual QA 已能对救护车做 silhouette/keypoint/area/relative-placement/orientation gate；R4 已完成 image evidence -> PartGraph -> DSL -> Reference Visual QA -> CorrectionPatch -> QualityGate 的 ambulance 闭环；R5 三产品样本 gate 已由主线完成；R6 已补 no-seed parameter proposals、proposal-to-patch authoring、proposal review UI、proposal-applied mock/queue QA 链路，并在主线把 physical consistency QA 扩到 ambulance/Switch/Fuji 三样例。R7 已完成建筑群 evidence/known-scale/massing PartGraph 输入链和 mock/live queue layout/reference QA，后续重点是补更细建筑 correction targets。
+- 当前优先级：semantic fusion、corrections workbench 和主线 CAD boolean/manifold 已补齐；R1/R2 已把救护车验收迁移到 `ProductProfile + PartGraph -> JSON DSL`；R3 Reference Visual QA 已能对救护车做 silhouette/keypoint/area/relative-placement/orientation gate；R4 已完成 image evidence -> PartGraph -> DSL -> Reference Visual QA -> CorrectionPatch -> QualityGate 的 ambulance 闭环；R5 三产品样本 gate 已由主线完成；R6 已补 no-seed parameter proposals、proposal-to-patch authoring、proposal review UI、proposal-applied mock/queue QA 链路，并在主线把 physical consistency QA 扩到 ambulance/Switch/Fuji 三样例。R7 已完成建筑群 evidence/known-scale/massing PartGraph 输入链、mock/live queue layout/reference QA，以及 roofline/facade/opening detail proposal -> patch -> mock QA 第一刀；后续重点是补 detail proposal live queue 复验和更强图像证据。
 
 下一轮建议：
 
 - Reference Visual QA 已能反向给出 `update_part_graph` correction suggestion，目标是修改 part graph 字段，而不是直接改 DSL 坐标；`part_graph_correction_patch` 已可生成和应用。
-- 下一步：继续 R7 建筑群照片建模，基于 `part-graph.massing.json` 与已通过的 mock/live queue layout/reference QA，增加屋顶线、立面和门窗洞口的 review-gated correction targets；继续保持 proposal -> patch -> QA/queue 的纪律。
+- 下一步：继续 R7 建筑群照片建模，基于已生成的 roofline/facade/opening proposals，补 detail proposal live queue 复验，再把 facade/roof/opening 规则接入更强的 Reference Visual QA；继续保持 proposal -> patch -> QA/queue 的纪律。
 
 本轮验收暴露的关键事实：
 
@@ -157,6 +157,8 @@ observations.json -> model-plan.json -> output.json -> review/index.html -> mock
   - `examples/building-group/output.massing.json` 由 PartGraph compiler 生成 32 个 DSL ops，当前 mock build 为 14 groups / 2 scenes / 0 error warning。
   - `examples/building-group/layout-qa/building-group-massing/report.json` 和 `examples/building-group/reference-visual-qa/building-group-massing/report.json` 当前均为 mock `pass` / 0 issues；layout QA 覆盖 site containment、support、road/scale-anchor intentional overlap 和 massing separation，Reference Visual QA 覆盖 site plan placement/extent/area、scale-anchor ratio、height tier 和 orientation。
   - `examples/building-group/layout-qa-queue/building-group-massing/report.json` 和 `examples/building-group/reference-visual-qa-queue/building-group-massing/report.json` 当前均为 queue `pass` / 0 issues；SKP 保存到 `output/image-structured-building-group-massing.skp`，208737 bytes，queue snapshot 为 14 groups / 256 faces / 452 edges / 224 vertices / 2 scenes。
+  - `examples/building-group/part-graph.massing.json` 当前还有 5 条 roofline/facade/opening `feature_intents` proposals，全部 `review_required: true`；`examples/building-group/parameter-proposal-review.accepted.json` 只接受 `primary_blue_roof_hall` detail subset。
+  - `examples/building-group/proposal-qa/report.json` 当前 mock `pass`：accepted subset 编译为 3 个 `add_raised_rib` 和 3 个 `cut_recess`，layout/reference/physical consistency 均为 0 issues；detail proposal queue 复验待 SketchUp Bridge 在线后跑 `image-structured:proposal-review-chain-building-group:queue`。
 
 ## 已完成
 

@@ -688,6 +688,15 @@ async function assertBuildingGroupObservationSample() {
   assert.equal(partGraph.parts.filter((part) => part.shape.primitive === 'cylinder').length, 2, 'building group PartGraph should model the visible tank farm as two cylinder primitives');
   assert.ok(partGraph.parts.some((part) => part.id === 'primary_blue_roof_hall' && part.shape.parameters.size[2] >= 16000), 'blue-roof hall massing should carry a provisional industrial-hall height');
   assert.ok(partGraph.parts.some((part) => part.role === 'scale_anchor'), 'building group PartGraph should preserve visual scale-anchor parts');
+  const detailProposals = partGraph.review.parameter_proposals.filter((proposal) => proposal.proposal_kind === 'feature_intents');
+  assert.equal(detailProposals.length, 5, 'building group PartGraph should propose roofline/facade/opening feature-intent targets for core buildings');
+  assert.ok(detailProposals.every((proposal) => proposal.review_required === true && proposal.status === 'needs_review'), 'building detail proposals should remain review-gated');
+  assert.ok(detailProposals.some((proposal) => proposal.proposed_value.some((feature) => feature.semantic?.startsWith('roofline.'))), 'building detail proposals should include roofline feature intents');
+  assert.ok(detailProposals.some((proposal) => proposal.proposed_value.some((feature) => feature.semantic?.startsWith('facade.opening.'))), 'building detail proposals should include facade/opening feature intents');
+  assert.ok(detailProposals.some((proposal) => proposal.proposed_value.some((feature) => feature.operation === 'cut_slot')), 'building detail proposals should include louver/slot opening candidates');
+  assert.ok(partGraph.review.correction_targets.some((target) => target.path === 'parts[primary_blue_roof_hall].feature_intents'), 'building group correction targets should point at primary hall feature intents');
+  const primaryDetailProposal = detailProposals.find((proposal) => proposal.part_id === 'primary_blue_roof_hall');
+  assert.equal(primaryDetailProposal.proposed_value.length, 6, 'primary hall detail proposal should include a small roofline/facade/opening subset');
 
   const profile = JSON.parse(await fs.readFile(path.join(repoRoot, 'examples/product-profiles/building_group_industrial_campus.json'), 'utf8'));
   const compiled = compilePartGraphToSketchUpDsl(partGraph, profile, { repoRoot });
@@ -729,6 +738,44 @@ async function assertBuildingGroupObservationSample() {
   assert.equal(queueReferenceQaReport.verdict, 'pass', 'building group queue reference visual QA artifact should record pass verdict');
   assert.equal(queueReferenceQaReport.summary.total, 0, 'building group queue reference visual QA artifact should have no issues');
   assert.equal(queueReferenceQaReport.summary.checked_items, partGraph.parts.length - 1, 'building group queue reference visual QA should ignore the reference-only site slab');
+
+  const acceptedDetailReview = JSON.parse(await fs.readFile(path.join(base, 'parameter-proposal-review.accepted.json'), 'utf8'));
+  assert.equal(acceptedDetailReview.verdict, 'accepted_subset', 'building group detail accepted review should stay subset-only');
+  assert.deepEqual(acceptedDetailReview.accepted_proposals.map((proposal) => proposal.part_id), ['primary_blue_roof_hall'], 'building group detail fixture should accept only primary hall detail proposals');
+
+  const detailPatch = JSON.parse(await fs.readFile(path.join(base, 'correction-patch.detail-proposals.json'), 'utf8'));
+  assert.equal(detailPatch.source, 'parameter_proposal_review', 'building group detail patch should come from proposal review');
+  assert.equal(detailPatch.edits.length, 1, 'building group detail patch should apply one reviewed proposal');
+  assert.equal(detailPatch.edits[0].path, 'parts[primary_blue_roof_hall].feature_intents', 'building group detail patch should target primary hall feature intents');
+
+  const detailAppliedPartGraph = JSON.parse(await fs.readFile(path.join(base, 'part-graph.detail-proposal-applied.json'), 'utf8'));
+  assertValid(validatePartGraph, detailAppliedPartGraph, 'building group part-graph.detail-proposal-applied.json');
+  const detailAppliedPrimary = partGraphPartById(detailAppliedPartGraph, 'primary_blue_roof_hall');
+  assert.equal(detailAppliedPrimary.evidence_status, 'manual_confirmed', 'accepted building detail proposal should mark the reviewed part as manual_confirmed');
+  assert.equal(detailAppliedPrimary.feature_intents.length, 6, 'accepted building detail proposal should attach primary hall feature intents');
+  assert.equal(partGraphPartById(detailAppliedPartGraph, 'warehouse_row_west').feature_intents, undefined, 'unaccepted building detail proposals should not be applied');
+
+  const detailOutput = JSON.parse(await fs.readFile(path.join(base, 'output.detail-proposal-applied.json'), 'utf8'));
+  const detailCompiled = compilePartGraphToSketchUpDsl(detailAppliedPartGraph, profile, { repoRoot });
+  assert.deepEqual(detailOutput, detailCompiled, 'building group detail-applied DSL should match current PartGraph compiler output');
+  assert.equal(detailOutput.operations.filter((operation) => operation.op === 'add_raised_rib').length, 3, 'detail-applied DSL should include accepted roofline ribs');
+  assert.equal(detailOutput.operations.filter((operation) => operation.op === 'cut_recess').length, 3, 'detail-applied DSL should include accepted facade/opening recesses');
+  const detailResult = await bridge.build_model({ runtime: 'mock', code: JSON.stringify(detailOutput) });
+  assert.equal(detailResult.snapshot.totals.groups, partGraph.parts.length, 'detail-applied mock snapshot should preserve one group per massing part');
+  assert.ok(detailResult.snapshot.totals.faces > result.snapshot.totals.faces, 'detail-applied mock snapshot should add feature-backed topology');
+  const primarySnapshotItem = detailResult.snapshot.groups.find((group) => group.id === 'primary_blue_roof_hall');
+  assert.ok(primarySnapshotItem, 'detail-applied mock snapshot should include primary hall item');
+  assert.equal(primarySnapshotItem.features.length, 6, 'detail-applied mock snapshot should record accepted primary hall features');
+
+  const proposalReviewHtml = await fs.readFile(path.join(base, 'proposal-review', 'index.html'), 'utf8');
+  assert.ok(proposalReviewHtml.includes('roofline'), 'building group proposal review should expose roofline proposals');
+  assert.ok(proposalReviewHtml.includes('facade.opening'), 'building group proposal review should expose facade/opening proposals');
+  const proposalQaReport = JSON.parse(await fs.readFile(path.join(base, 'proposal-qa', 'report.json'), 'utf8'));
+  assert.equal(proposalQaReport.ok, true, 'building group detail proposal QA should pass in mock runtime');
+  assert.equal(proposalQaReport.compiled_matches_output, true, 'building group detail proposal QA should verify compiled output freshness');
+  assert.equal(proposalQaReport.layout.verdict, 'pass', 'building group detail proposal layout QA should pass');
+  assert.equal(proposalQaReport.reference_visual.verdict, 'pass', 'building group detail proposal reference visual QA should pass');
+  assert.equal(proposalQaReport.physical_consistency.verdict, 'pass', 'building group detail proposal physical consistency should pass');
   return true;
 }
 

@@ -1499,7 +1499,7 @@
           ]
         }
       },
-      "evidence_status": "inferred",
+      "evidence_status": "manual_confirmed",
       "evidence_sources": [
         {
           "kind": "silhouette",
@@ -1536,6 +1536,12 @@
           "confidence": 0.6,
           "note": "R7 campus-layout prior for blue-roof hall massing in oblique view.",
           "observation_id": "building_oblique_primary_blue_hall"
+        },
+        {
+          "kind": "parameter_proposal_review",
+          "status": "manual_confirmed",
+          "confidence": 0.5,
+          "note": "accepted_parameter_proposal: Accept only the primary hall roofline/facade/opening feature-intent subset for R7 proposal-to-patch regression."
         }
       ],
       "fallback_state": "box_approximation",
@@ -2045,8 +2051,351 @@
         "detail_review_required": true,
         "roofline_review_required": true,
         "facade_review_required": true,
-        "opening_review_required": true
-      }
+        "opening_review_required": true,
+        "parameter_proposal_applied": true,
+        "last_correction_rule": "accepted_parameter_proposal"
+      },
+      "feature_intents": [
+        {
+          "id": "primary_blue_roof_hall_roof_center_ridge",
+          "operation": "add_raised_rib",
+          "face": "top",
+          "parameters": {
+            "center": [
+              20472,
+              29056.2
+            ],
+            "length": 51138.8,
+            "width": 737,
+            "height": 260,
+            "direction": "v"
+          },
+          "semantic": "roofline.center_ridge",
+          "fallback_state": "needs_review",
+          "evidence_sources": [
+            {
+              "kind": "silhouette",
+              "view": "oblique",
+              "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png",
+              "status": "observed",
+              "confidence": 0.6,
+              "note": "R7 campus-layout prior for blue-roof hall massing in oblique view.",
+              "observation_id": "building_oblique_primary_blue_hall"
+            },
+            {
+              "kind": "silhouette",
+              "view": "top",
+              "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+              "status": "observed",
+              "confidence": 0.74,
+              "note": "R7 campus-layout prior for the primary blue-roof hall footprint.",
+              "observation_id": "building_top_primary_blue_hall"
+            },
+            {
+              "kind": "center_point",
+              "view": "top",
+              "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+              "status": "observed",
+              "confidence": 0.66,
+              "note": "Center keypoint for primary blue-roof hall massing review.",
+              "observation_id": "building_top_blue_hall_center"
+            },
+            {
+              "kind": "silhouette",
+              "view": "oblique",
+              "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png",
+              "status": "observed",
+              "confidence": 0.6,
+              "note": "R7 campus-layout prior for blue-roof hall massing in oblique view.",
+              "observation_id": "building_oblique_primary_blue_hall"
+            }
+          ]
+        },
+        {
+          "id": "primary_blue_roof_hall_roof_west_eave_line",
+          "operation": "add_raised_rib",
+          "face": "top",
+          "parameters": {
+            "center": [
+              7369.9,
+              29056.2
+            ],
+            "length": 47652.1,
+            "width": 220,
+            "height": 140,
+            "direction": "v"
+          },
+          "semantic": "roofline.eave_line",
+          "fallback_state": "needs_review",
+          "evidence_sources": [
+            {
+              "kind": "silhouette",
+              "view": "oblique",
+              "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png",
+              "status": "observed",
+              "confidence": 0.6,
+              "note": "R7 campus-layout prior for blue-roof hall massing in oblique view.",
+              "observation_id": "building_oblique_primary_blue_hall"
+            },
+            {
+              "kind": "silhouette",
+              "view": "top",
+              "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+              "status": "observed",
+              "confidence": 0.74,
+              "note": "R7 campus-layout prior for the primary blue-roof hall footprint.",
+              "observation_id": "building_top_primary_blue_hall"
+            },
+            {
+              "kind": "center_point",
+              "view": "top",
+              "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+              "status": "observed",
+              "confidence": 0.66,
+              "note": "Center keypoint for primary blue-roof hall massing review.",
+              "observation_id": "building_top_blue_hall_center"
+            },
+            {
+              "kind": "silhouette",
+              "view": "oblique",
+              "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png",
+              "status": "observed",
+              "confidence": 0.6,
+              "note": "R7 campus-layout prior for blue-roof hall massing in oblique view.",
+              "observation_id": "building_oblique_primary_blue_hall"
+            }
+          ]
+        },
+        {
+          "id": "primary_blue_roof_hall_roof_east_eave_line",
+          "operation": "add_raised_rib",
+          "face": "top",
+          "parameters": {
+            "center": [
+              33574.1,
+              29056.2
+            ],
+            "length": 47652.1,
+            "width": 220,
+            "height": 140,
+            "direction": "v"
+          },
+          "semantic": "roofline.eave_line",
+          "fallback_state": "needs_review",
+          "evidence_sources": [
+            {
+              "kind": "silhouette",
+              "view": "oblique",
+              "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png",
+              "status": "observed",
+              "confidence": 0.6,
+              "note": "R7 campus-layout prior for blue-roof hall massing in oblique view.",
+              "observation_id": "building_oblique_primary_blue_hall"
+            },
+            {
+              "kind": "silhouette",
+              "view": "top",
+              "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+              "status": "observed",
+              "confidence": 0.74,
+              "note": "R7 campus-layout prior for the primary blue-roof hall footprint.",
+              "observation_id": "building_top_primary_blue_hall"
+            },
+            {
+              "kind": "center_point",
+              "view": "top",
+              "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+              "status": "observed",
+              "confidence": 0.66,
+              "note": "Center keypoint for primary blue-roof hall massing review.",
+              "observation_id": "building_top_blue_hall_center"
+            },
+            {
+              "kind": "silhouette",
+              "view": "oblique",
+              "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png",
+              "status": "observed",
+              "confidence": 0.6,
+              "note": "R7 campus-layout prior for blue-roof hall massing in oblique view.",
+              "observation_id": "building_oblique_primary_blue_hall"
+            }
+          ]
+        },
+        {
+          "id": "primary_blue_roof_hall_facade_loading_door",
+          "operation": "cut_recess",
+          "face": "front",
+          "parameters": {
+            "center": [
+              20472,
+              3300
+            ],
+            "size": [
+              5322.7,
+              5610
+            ],
+            "depth": 160,
+            "radius": 60,
+            "segments": 4
+          },
+          "semantic": "facade.opening.loading_door",
+          "fallback_state": "needs_review",
+          "evidence_sources": [
+            {
+              "kind": "silhouette",
+              "view": "oblique",
+              "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png",
+              "status": "observed",
+              "confidence": 0.6,
+              "note": "R7 campus-layout prior for blue-roof hall massing in oblique view.",
+              "observation_id": "building_oblique_primary_blue_hall"
+            },
+            {
+              "kind": "silhouette",
+              "view": "top",
+              "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+              "status": "observed",
+              "confidence": 0.74,
+              "note": "R7 campus-layout prior for the primary blue-roof hall footprint.",
+              "observation_id": "building_top_primary_blue_hall"
+            },
+            {
+              "kind": "center_point",
+              "view": "top",
+              "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+              "status": "observed",
+              "confidence": 0.66,
+              "note": "Center keypoint for primary blue-roof hall massing review.",
+              "observation_id": "building_top_blue_hall_center"
+            },
+            {
+              "kind": "silhouette",
+              "view": "oblique",
+              "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png",
+              "status": "observed",
+              "confidence": 0.6,
+              "note": "R7 campus-layout prior for blue-roof hall massing in oblique view.",
+              "observation_id": "building_oblique_primary_blue_hall"
+            }
+          ]
+        },
+        {
+          "id": "primary_blue_roof_hall_facade_window_band_left",
+          "operation": "cut_recess",
+          "face": "front",
+          "parameters": {
+            "center": [
+              12283.2,
+              9570
+            ],
+            "size": [
+              6551,
+              1815
+            ],
+            "depth": 90,
+            "radius": 40,
+            "segments": 4
+          },
+          "semantic": "facade.opening.window_band",
+          "fallback_state": "needs_review",
+          "evidence_sources": [
+            {
+              "kind": "silhouette",
+              "view": "oblique",
+              "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png",
+              "status": "observed",
+              "confidence": 0.6,
+              "note": "R7 campus-layout prior for blue-roof hall massing in oblique view.",
+              "observation_id": "building_oblique_primary_blue_hall"
+            },
+            {
+              "kind": "silhouette",
+              "view": "top",
+              "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+              "status": "observed",
+              "confidence": 0.74,
+              "note": "R7 campus-layout prior for the primary blue-roof hall footprint.",
+              "observation_id": "building_top_primary_blue_hall"
+            },
+            {
+              "kind": "center_point",
+              "view": "top",
+              "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+              "status": "observed",
+              "confidence": 0.66,
+              "note": "Center keypoint for primary blue-roof hall massing review.",
+              "observation_id": "building_top_blue_hall_center"
+            },
+            {
+              "kind": "silhouette",
+              "view": "oblique",
+              "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png",
+              "status": "observed",
+              "confidence": 0.6,
+              "note": "R7 campus-layout prior for blue-roof hall massing in oblique view.",
+              "observation_id": "building_oblique_primary_blue_hall"
+            }
+          ]
+        },
+        {
+          "id": "primary_blue_roof_hall_facade_window_band_right",
+          "operation": "cut_recess",
+          "face": "front",
+          "parameters": {
+            "center": [
+              28660.8,
+              9570
+            ],
+            "size": [
+              6551,
+              1815
+            ],
+            "depth": 90,
+            "radius": 40,
+            "segments": 4
+          },
+          "semantic": "facade.opening.window_band",
+          "fallback_state": "needs_review",
+          "evidence_sources": [
+            {
+              "kind": "silhouette",
+              "view": "oblique",
+              "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png",
+              "status": "observed",
+              "confidence": 0.6,
+              "note": "R7 campus-layout prior for blue-roof hall massing in oblique view.",
+              "observation_id": "building_oblique_primary_blue_hall"
+            },
+            {
+              "kind": "silhouette",
+              "view": "top",
+              "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+              "status": "observed",
+              "confidence": 0.74,
+              "note": "R7 campus-layout prior for the primary blue-roof hall footprint.",
+              "observation_id": "building_top_primary_blue_hall"
+            },
+            {
+              "kind": "center_point",
+              "view": "top",
+              "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+              "status": "observed",
+              "confidence": 0.66,
+              "note": "Center keypoint for primary blue-roof hall massing review.",
+              "observation_id": "building_top_blue_hall_center"
+            },
+            {
+              "kind": "silhouette",
+              "view": "oblique",
+              "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png",
+              "status": "observed",
+              "confidence": 0.6,
+              "note": "R7 campus-layout prior for blue-roof hall massing in oblique view.",
+              "observation_id": "building_oblique_primary_blue_hall"
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "warehouse_row_west",
@@ -7304,6 +7653,13 @@
         "path": "parts[admin_office].feature_intents",
         "reason": "admin_office: review roofline, facade rhythm, and opening feature-intent proposals before applying architectural detail.",
         "severity": "warn"
+      }
+    ],
+    "correction_patches_applied": [
+      {
+        "source": "parameter_proposal_review",
+        "edits": 1,
+        "target_part_graph_id": "building-group-image-evidence-massing-part-graph"
       }
     ]
   }

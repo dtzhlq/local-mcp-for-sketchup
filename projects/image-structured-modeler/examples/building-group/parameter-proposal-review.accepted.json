@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "kind": "parameter_proposal_review",
+  "target_part_graph_id": "building-group-image-evidence-massing-part-graph",
+  "reviewer": "r7-building-detail-proposal-regression",
+  "verdict": "accepted_subset",
+  "accepted_proposals": [
+    {
+      "part_id": "primary_blue_roof_hall",
+      "path": "parts[primary_blue_roof_hall].feature_intents",
+      "reason": "Accept only the primary hall roofline/facade/opening feature-intent subset for R7 proposal-to-patch regression."
+    }
+  ],
+  "notes": [
+    "This fixture intentionally accepts one building detail subset; all other building-group roofline, facade, and opening proposals remain review-gated."
+  ]
+}
