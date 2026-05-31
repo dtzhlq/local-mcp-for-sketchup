@@ -1,0 +1,61 @@
+{
+  "kind": "proposal_review_qa",
+  "name": "building-group-detail-proposal-applied",
+  "runtime": "queue",
+  "timeout_ms": 180000,
+  "ok": true,
+  "review_required": false,
+  "compiled_matches_output": true,
+  "source_paths": {
+    "profile": "examples/product-profiles/building_group_industrial_campus.json",
+    "partGraph": "projects/image-structured-modeler/examples/building-group/part-graph.detail-proposal-applied.json",
+    "code": "projects/image-structured-modeler/examples/building-group/output.detail-proposal-applied.json",
+    "layoutSpec": "examples/model-qa/building-group-massing.json",
+    "referenceSpec": "examples/reference-visual-qa/building-group-massing.json"
+  },
+  "part_graph": {
+    "id": "building-group-image-evidence-massing-part-graph",
+    "parts": 14,
+    "evidence_summary": {
+      "inferred": 9,
+      "manual_confirmed": 1,
+      "observed": 4
+    }
+  },
+  "layout": {
+    "ok": true,
+    "verdict": "pass",
+    "level": "ok",
+    "issues": 0,
+    "errors": 0,
+    "warnings": 0
+  },
+  "reference_visual": {
+    "ok": true,
+    "verdict": "pass",
+    "level": "ok",
+    "issues": 0,
+    "errors": 0,
+    "warnings": 0
+  },
+  "physical_consistency": {
+    "ok": true,
+    "verdict": "pass",
+    "level": "ok",
+    "issues": 0,
+    "errors": 0,
+    "warnings": 0,
+    "checked_relations": 9
+  },
+  "artifact": {
+    "path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/image-structured-building-group-detail-proposal-applied.skp",
+    "size_bytes": 221357,
+    "totals": {
+      "faces": 334,
+      "edges": 668,
+      "vertices": 368,
+      "groups": 14,
+      "instances": 0
+    }
+  }
+}

@@ -1,7 +1,7 @@
 # Product Modeling Architecture Refactor Plan
 
 > Date: 2026-05-29
-> Status: R5 product sample expansion complete; ambulance, Switch, and Fuji camera now run through ProductProfile -> PartGraph -> DSL -> Layout QA + Reference Visual QA in mock and live queue, with saved queue SKP artifacts; R6 physical consistency QA now covers all three product samples, proposal review output has a proposal-applied mock/queue QA chain, and R7 building-group massing now has mock/live queue layout/reference QA plus roofline/facade/opening detail proposals with accepted subset mock QA
+> Status: R5 product sample expansion complete; ambulance, Switch, and Fuji camera now run through ProductProfile -> PartGraph -> DSL -> Layout QA + Reference Visual QA in mock and live queue, with saved queue SKP artifacts; R6 physical consistency QA now covers all three product samples, proposal review output has a proposal-applied mock/queue QA chain, and R7 building-group massing now has mock/live queue layout/reference QA plus roofline/facade/opening detail proposals with accepted subset mock/live queue QA
 > Scope: upstream modeling architecture, not a full runtime rewrite
 
 ## Decision
@@ -244,11 +244,11 @@ Implementation status:
 
 ## Immediate Next Slice
 
-R5 is complete as a product-sample expansion gate. The current R6 hardening boundary is also complete for ambulance no-seed proposals, proposal-applied QA/queue review gating, and three-sample physical consistency. R7 has started with building-group evidence, known-element scale, review-gated massing, mock/live queue layout/reference QA, a saved massing SKP, and detail proposals for roofline/facade/opening feature intents. Next slice is building-photo modeling at scene scale:
+R5 is complete as a product-sample expansion gate. The current R6 hardening boundary is also complete for ambulance no-seed proposals, proposal-applied QA/queue review gating, and three-sample physical consistency. R7 has started with building-group evidence, known-element scale, review-gated massing, mock/live queue layout/reference QA, a saved massing SKP, and detail proposals for roofline/facade/opening feature intents with accepted subset mock/live queue QA. Next slice is building-photo modeling at scene scale:
 
 1. Keep using the ambulance refit as the reference standard: old-looking seed models must fail the image-anchored gate; fixes should land in PartGraph fields and feature intents, not generated DSL coordinates.
 2. Extend the R7 building-group sample beyond current massing QA: promote facade planes, rooflines, and openings from review-gated proposal targets into image-anchored QA rules.
-3. Reuse proposal review and correction patch semantics for scene/model decisions, and run the building detail proposal-applied chain through live queue once SketchUp Bridge is online.
+3. Reuse proposal review and correction patch semantics for scene/model decisions, and keep accepted subsets tied to mock/live QA evidence before broadening the applied detail set.
 4. Expand the same product-sample gate beyond ambulance, Switch, and Fuji, including scene/product boundary cases such as children's room.
 5. Continue reducing template and visual-helper debt, especially in non-vehicle samples where the gate still passes by using structured primitives or helper geometry.
 

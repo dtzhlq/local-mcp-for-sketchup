@@ -776,6 +776,18 @@ async function assertBuildingGroupObservationSample() {
   assert.equal(proposalQaReport.layout.verdict, 'pass', 'building group detail proposal layout QA should pass');
   assert.equal(proposalQaReport.reference_visual.verdict, 'pass', 'building group detail proposal reference visual QA should pass');
   assert.equal(proposalQaReport.physical_consistency.verdict, 'pass', 'building group detail proposal physical consistency should pass');
+
+  const proposalQueueQaReport = JSON.parse(await fs.readFile(path.join(base, 'proposal-qa-queue', 'report.json'), 'utf8'));
+  assert.equal(proposalQueueQaReport.ok, true, 'building group detail proposal queue QA should pass');
+  assert.equal(proposalQueueQaReport.runtime, 'queue', 'building group detail proposal queue QA should record queue runtime');
+  assert.equal(proposalQueueQaReport.compiled_matches_output, true, 'building group detail proposal queue QA should verify compiled output freshness');
+  assert.equal(proposalQueueQaReport.layout.verdict, 'pass', 'building group detail proposal queue layout QA should pass');
+  assert.equal(proposalQueueQaReport.reference_visual.verdict, 'pass', 'building group detail proposal queue reference visual QA should pass');
+  assert.equal(proposalQueueQaReport.physical_consistency.verdict, 'pass', 'building group detail proposal queue physical consistency should pass');
+  assert.equal(proposalQueueQaReport.artifact.totals.groups, partGraph.parts.length, 'building group detail proposal queue artifact should preserve massing group count');
+  assert.ok(proposalQueueQaReport.artifact.totals.faces >= detailResult.snapshot.totals.faces, 'building group detail proposal queue artifact should preserve feature-backed topology');
+  assert.ok(proposalQueueQaReport.artifact.totals.faces > result.snapshot.totals.faces, 'building group detail proposal queue artifact should add topology beyond base massing');
+  assert.ok(proposalQueueQaReport.artifact.path.endsWith('output/image-structured-building-group-detail-proposal-applied.skp'), 'building group detail proposal queue artifact should save the expected SKP');
   return true;
 }
 
