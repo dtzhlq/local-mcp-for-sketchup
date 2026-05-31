@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="640" viewBox="0 0 960 640" role="img" aria-label="Height Massing preview">
+  <rect width="100%" height="100%" fill="#f7f5ef"/>
+  <text x="18" y="28" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#222">Building Group R7 Massing Layout QA - Height Massing</text>
+  <text x="18" y="48" font-family="Arial, sans-serif" font-size="12" fill="#555">axes x/z from snapshot bounding boxes</text>
+  <g font-family="Arial, sans-serif"><rect x="574.339" y="594.927" width="303.051" height="1" rx="3" fill="hsl(328 58% 52%)" fill-opacity="0.48" stroke="hsl(328 58% 52%)" stroke-width="1.4"/>
+  <rect x="583.809" y="593.854" width="274.64" height="1" rx="3" fill="hsl(30 58% 52%)" fill-opacity="0.48" stroke="hsl(30 58% 52%)" stroke-width="1.4"/>
+  <rect x="413.343" y="549.851" width="142.055" height="45.612" rx="3" fill="hsl(37 58% 52%)" fill-opacity="0.48" stroke="hsl(37 58% 52%)" stroke-width="1.4"/><text x="417.343" y="561.851" font-size="10" fill="#1b1b1b">Admin_Office_Massing</text>
+  <rect x="595.169" y="593.854" width="231.079" height="1" rx="3" fill="hsl(30 58% 52%)" fill-opacity="0.48" stroke="hsl(30 58% 52%)" stroke-width="1.4"/>
+  <rect x="597.069" y="593.854" width="17.051" height="1" rx="3" fill="hsl(30 58% 52%)" fill-opacity="0.48" stroke="hsl(30 58% 52%)" stroke-width="1.4"/>
+  <rect x="848.978" y="593.854" width="42.622" height="1" rx="3" fill="hsl(30 58% 52%)" fill-opacity="0.48" stroke="hsl(30 58% 52%)" stroke-width="1.4"/>
+  <rect x="716.394" y="544.485" width="142.055" height="50.978" rx="3" fill="hsl(42 58% 52%)" fill-opacity="0.48" stroke="hsl(42 58% 52%)" stroke-width="1.4"/><text x="720.394" y="556.485" font-size="10" fill="#1b1b1b">Utility_Building_Massing</text>
+  <rect x="44" y="595.463" width="872" height="1" rx="3" fill="hsl(62 58% 52%)" fill-opacity="0.48" stroke="hsl(62 58% 52%)" stroke-width="1.4"/>
+  <rect x="53.471" y="594.994" width="842.86" height="1" rx="3" fill="hsl(184 58% 52%)" fill-opacity="0.48" stroke="hsl(184 58% 52%)" stroke-width="1.4"/>
+  <rect x="81.881" y="531.74" width="198.877" height="63.723" rx="3" fill="hsl(234 58% 52%)" fill-opacity="0.48" stroke="hsl(234 58% 52%)" stroke-width="1.4"/><text x="85.881" y="543.74" font-size="10" fill="#1b1b1b">West_Warehouse_Row_Massing</text>
+  <rect x="290.229" y="531.74" width="123.114" height="63.723" rx="3" fill="hsl(234 58% 52%)" fill-opacity="0.48" stroke="hsl(234 58% 52%)" stroke-width="1.4"/><text x="294.229" y="543.74" font-size="10" fill="#1b1b1b">Inner_Warehouse_Row_Massing</text>
+  <rect x="432.283" y="484.786" width="274.64" height="110.677" rx="3" fill="hsl(119 58% 52%)" fill-opacity="0.48" stroke="hsl(119 58% 52%)" stroke-width="1.4"/><text x="436.283" y="496.786" font-size="10" fill="#1b1b1b">Primary_Blue_Roof_Hall_Massing</text>
+  <rect x="775.489" y="501.556" width="42.427" height="93.908" rx="3" fill="hsl(314 58% 52%)" fill-opacity="0.48" stroke="hsl(314 58% 52%)" stroke-width="1.4"/><text x="779.489" y="513.556" font-size="10" fill="#1b1b1b">Tank_Farm_West_Silo</text>
+  <rect x="823.219" y="501.556" width="42.427" height="93.908" rx="3" fill="hsl(314 58% 52%)" fill-opacity="0.48" stroke="hsl(314 58% 52%)" stroke-width="1.4"/><text x="827.219" y="513.556" font-size="10" fill="#1b1b1b">Tank_Farm_East_Silo</text></g>
+</svg>

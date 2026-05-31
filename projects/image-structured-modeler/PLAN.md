@@ -26,7 +26,7 @@ ObservationSet -> EvidenceGraph -> ProductProfile -> PartGraph -> FeatureMapping
 4. R4 已完成到子项目技术预览闭环：ambulance image observations 会生成/更新 seed `part-graph.generated.json` 和 no-seed `part-graph.skeleton.json`，写入 contour/keypoint、跨图 part matching、尺度校准、证据置信度、PartGraph correction targets、Reference Visual QA correction patch 和质量门禁。
 5. R6 当前边界已完成：no-seed skeleton 现在会输出 review-gated `parameter_proposals`，把图像尺度校准、bbox/keypoint evidence 和 profile role ratio 转成可审查候选参数；已接受的 proposal 可转成标准 `part_graph_correction_patch` 并回写 PartGraph，proposal review UI 可导出 accepted proposal JSON，并且 `image-structured:proposal-review-chain-ambulance` / `:queue` 已把 proposal-applied DSL 接到 mock/queue QA。当前只接受 body/cab 两项时仍输出 `review_required: true`，不会自动替换全部 inferred-only 几何。主线产品样本 gate 也已把 physical consistency QA 扩到 ambulance、Switch、Fuji 三样例。
 6. 镜像/手性风险已进入当前门禁：Image observations 会写入 `orientation_hints` 和 mirror risk，Reference Visual QA 新增 `orientation` 规则组，当前三产品 reference spec 都有左右/上下方向锚点，Switch 镜像摇杆负例会被 `reference.orientation_order` 打回。
-7. R7 输入基线已推进到 review-gated massing：`test/建筑群/` 的三张 GPT Image 合成航拍图已接入 `building_group` profile，`image-structured:build-building-group` 会生成 `examples/building-group/observations.json`、review overlays、`part-graph.massing.json` 和 `output.massing.json`。尺度来自停车位、车道和人行横道等 known-element anchors，约 `130m x 98m`，但所有 shape proposals 仍保持 review-gated。
+7. R7 输入基线已推进到 review-gated massing + mock QA：`test/建筑群/` 的三张 GPT Image 合成航拍图已接入 `building_group` profile，`image-structured:build-building-group` 会生成 `examples/building-group/observations.json`、review overlays、`part-graph.massing.json` 和 `output.massing.json`。尺度来自停车位、车道和人行横道等 known-element anchors，约 `130m x 98m`，但所有 shape proposals 仍保持 review-gated。`image-structured:qa-building-group` 已补 mock layout QA 和 Reference Visual QA 报告；live queue `.skp` 仍待 SketchUp 打开后复验。
 
 ## 当前执行计划（2026-05-27）
 
@@ -99,7 +99,7 @@ R5 已由主线完成：
 
 下一步：
 
-1. 继续 R7 建筑群照片建模：基于已生成的 `building_group` massing PartGraph，补 layout/reference QA、queue `.skp` 复验和更细的屋顶线/立面/开窗门洞 correction targets。
+1. 继续 R7 建筑群照片建模：基于已生成的 `building_group` massing PartGraph 和 mock layout/reference QA，补 queue `.skp` 复验和更细的屋顶线/立面/开窗门洞 correction targets。
 2. 继续沿用 no-seed proposal -> proposal review -> correction patch -> QA/queue 纪律；建筑立面、屋顶和开口 geometry 在证据不足时必须保持 review-gated。
 3. 之后再把 proposal/patch authoring 扩到 Switch/Fuji 或新的产品/场景边界样例。
 

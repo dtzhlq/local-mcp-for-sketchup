@@ -257,6 +257,28 @@ assert.equal(blueHall.qa.review_required, true, 'building group massing should r
 const tankGroups = buildingBuild.snapshot.groups.filter((group) => group.kind === 'cylinder');
 assert.equal(tankGroups.length, 2, 'building group massing should compile tank farm as two cylinders');
 
+const buildingLayoutSpec = JSON.parse(await fs.readFile('examples/model-qa/building-group-massing.json', 'utf8'));
+const buildingLayoutReport = await bridge.validate_model({
+  code: JSON.stringify(buildingDocument),
+  runtime: 'mock',
+  spec: buildingLayoutSpec,
+  includePreview: false
+});
+assert.equal(buildingLayoutReport.ok, true, 'building group layout QA should pass for the current massing DSL');
+assert.equal(buildingLayoutReport.verdict, 'pass');
+assert.equal(buildingLayoutReport.summary.total, 0);
+
+const buildingReferenceSpec = JSON.parse(await fs.readFile('examples/reference-visual-qa/building-group-massing.json', 'utf8'));
+const buildingReferenceReport = await bridge.validate_reference_model({
+  code: JSON.stringify(buildingDocument),
+  runtime: 'mock',
+  spec: buildingReferenceSpec,
+  includePreview: false
+});
+assert.equal(buildingReferenceReport.ok, true, 'building group reference visual QA should pass for the current massing DSL');
+assert.equal(buildingReferenceReport.verdict, 'pass');
+assert.equal(buildingReferenceReport.summary.total, 0);
+
 function assertValid(validate, value, label) {
   if (!validate(value)) {
     const errors = validate.errors?.map((error) => `${error.instancePath || '/'} ${error.message}`).join('\n') || 'unknown schema error';

@@ -1,0 +1,380 @@
+{
+  "version": 1,
+  "title": "Building Group R7 Massing Reference Visual QA",
+  "description": "Reference-facing QA for the review-gated industrial-campus massing sample. The top-view ratios are normalized against the site boundary estimated from parking, drive-aisle, and crosswalk anchors; height-view rules keep the coarse massing tiers stable without claiming final facade or roof reconstruction.",
+  "rules": {
+    "views": [
+      {
+        "name": "site_top",
+        "title": "Site Plan Reference",
+        "axes": ["x", "y"],
+        "depth_axis": "z",
+        "frame": {
+          "items": ["internal_roads"]
+        }
+      },
+      {
+        "name": "height_front",
+        "title": "Height Tier Reference",
+        "axes": ["x", "z"],
+        "depth_axis": "y",
+        "frame": {
+          "items": [
+            "primary_blue_roof_hall",
+            "warehouse_row_west",
+            "warehouse_row_inner",
+            "utility_building",
+            "admin_office",
+            "tank_farm",
+            "tank_farm_silo_east"
+          ]
+        }
+      }
+    ],
+    "silhouettes": [
+      {
+        "id": "road-network-top-aspect",
+        "view": "site_top",
+        "item": "internal_roads",
+        "aspect_ratio": 1.405,
+        "tolerance": 0.02,
+        "correction_target": {
+          "part_id": "internal_roads",
+          "path": "parts[internal_roads].shape.parameters.size"
+        }
+      }
+    ],
+    "keypoints": [
+      {
+        "id": "primary-blue-hall-site-center",
+        "view": "site_top",
+        "item": "primary_blue_roof_hall",
+        "point": "center",
+        "expected": [0.612, 0.6],
+        "tolerance": 0.025,
+        "correction_target": {
+          "part_id": "primary_blue_roof_hall",
+          "path": "parts[primary_blue_roof_hall].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "west-warehouse-site-center",
+        "view": "site_top",
+        "item": "warehouse_row_west",
+        "point": "center",
+        "expected": [0.152, 0.531],
+        "tolerance": 0.025,
+        "correction_target": {
+          "part_id": "warehouse_row_west",
+          "path": "parts[warehouse_row_west].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "inner-warehouse-site-center",
+        "view": "site_top",
+        "item": "warehouse_row_inner",
+        "point": "center",
+        "expected": [0.354, 0.537],
+        "tolerance": 0.025,
+        "correction_target": {
+          "part_id": "warehouse_row_inner",
+          "path": "parts[warehouse_row_inner].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "parking-lot-site-center",
+        "view": "site_top",
+        "item": "parking_lot",
+        "point": "center",
+        "expected": [0.798, 0.131],
+        "tolerance": 0.03,
+        "correction_target": {
+          "part_id": "parking_lot",
+          "path": "parts[parking_lot].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "tank-farm-site-center",
+        "view": "site_top",
+        "items": ["tank_farm", "tank_farm_silo_east"],
+        "point": "center",
+        "expected": [0.91, 0.862],
+        "tolerance": 0.03,
+        "correction_target": {
+          "part_id": "tank_farm",
+          "path": "parts[tank_farm].shape.parameters.origin"
+        }
+      }
+    ],
+    "extent_ratios": [
+      {
+        "id": "primary-blue-hall-top-extent",
+        "view": "site_top",
+        "item": "primary_blue_roof_hall",
+        "expected": [0.326, 0.65],
+        "tolerance": [0.035, 0.045],
+        "correction_target": {
+          "part_id": "primary_blue_roof_hall",
+          "path": "parts[primary_blue_roof_hall].shape.parameters.size"
+        }
+      },
+      {
+        "id": "west-warehouse-top-extent",
+        "view": "site_top",
+        "item": "warehouse_row_west",
+        "expected": [0.236, 0.788],
+        "tolerance": [0.035, 0.05],
+        "correction_target": {
+          "part_id": "warehouse_row_west",
+          "path": "parts[warehouse_row_west].shape.parameters.size"
+        }
+      },
+      {
+        "id": "inner-warehouse-top-extent",
+        "view": "site_top",
+        "item": "warehouse_row_inner",
+        "expected": [0.146, 0.725],
+        "tolerance": [0.03, 0.05],
+        "correction_target": {
+          "part_id": "warehouse_row_inner",
+          "path": "parts[warehouse_row_inner].shape.parameters.size"
+        }
+      },
+      {
+        "id": "parking-lot-top-extent",
+        "view": "site_top",
+        "item": "parking_lot",
+        "expected": [0.36, 0.237],
+        "tolerance": [0.04, 0.035],
+        "correction_target": {
+          "part_id": "parking_lot",
+          "path": "parts[parking_lot].shape.parameters.size"
+        }
+      },
+      {
+        "id": "road-network-top-extent",
+        "view": "site_top",
+        "item": "internal_roads",
+        "expected": [1, 1],
+        "tolerance": [0.045, 0.045],
+        "correction_target": {
+          "part_id": "internal_roads",
+          "path": "parts[internal_roads].shape.parameters.size"
+        }
+      },
+      {
+        "id": "tank-pair-top-extent",
+        "view": "site_top",
+        "items": ["tank_farm", "tank_farm_silo_east"],
+        "expected": [0.107, 0.071],
+        "tolerance": [0.025, 0.02],
+        "correction_target": {
+          "part_id": "tank_farm",
+          "path": "parts[tank_farm].shape.parameters.radius"
+        }
+      },
+      {
+        "id": "parking-bay-single-scale-anchor",
+        "view": "site_top",
+        "item": "scale_anchor_parking_bay_single",
+        "expected": [0.02, 0.06],
+        "tolerance": [0.015, 0.02],
+        "correction_target": {
+          "part_id": "scale_anchor_parking_bay_single",
+          "path": "parts[scale_anchor_parking_bay_single].shape.parameters.size"
+        }
+      },
+      {
+        "id": "drive-aisle-scale-anchor",
+        "view": "site_top",
+        "item": "scale_anchor_parking_drive_aisle_width",
+        "expected": [0.326, 0.073],
+        "tolerance": [0.04, 0.02],
+        "correction_target": {
+          "part_id": "scale_anchor_parking_drive_aisle_width",
+          "path": "parts[scale_anchor_parking_drive_aisle_width].shape.parameters.size"
+        }
+      },
+      {
+        "id": "primary-blue-hall-height-tier",
+        "view": "height_front",
+        "item": "primary_blue_roof_hall",
+        "expected": [0.326, 1],
+        "tolerance": [0.04, 0.04],
+        "correction_target": {
+          "part_id": "primary_blue_roof_hall",
+          "path": "parts[primary_blue_roof_hall].shape.parameters.size"
+        }
+      },
+      {
+        "id": "warehouse-height-tier",
+        "view": "height_front",
+        "item": "warehouse_row_west",
+        "expected": [0.236, 0.576],
+        "tolerance": [0.04, 0.04],
+        "correction_target": {
+          "part_id": "warehouse_row_west",
+          "path": "parts[warehouse_row_west].shape.parameters.size"
+        }
+      },
+      {
+        "id": "tank-height-tier",
+        "view": "height_front",
+        "items": ["tank_farm", "tank_farm_silo_east"],
+        "expected": [0.107, 0.848],
+        "tolerance": [0.03, 0.045],
+        "correction_target": {
+          "part_id": "tank_farm",
+          "path": "parts[tank_farm].shape.parameters.height"
+        }
+      }
+    ],
+    "area_ratios": [
+      {
+        "id": "primary-blue-hall-area-share",
+        "view": "site_top",
+        "item": "primary_blue_roof_hall",
+        "expected": 0.212,
+        "tolerance": 0.035,
+        "correction_target": {
+          "part_id": "primary_blue_roof_hall",
+          "path": "parts[primary_blue_roof_hall].shape.parameters.size"
+        }
+      },
+      {
+        "id": "parking-lot-area-share",
+        "view": "site_top",
+        "item": "parking_lot",
+        "expected": 0.085,
+        "tolerance": 0.02,
+        "correction_target": {
+          "part_id": "parking_lot",
+          "path": "parts[parking_lot].shape.parameters.size"
+        }
+      },
+      {
+        "id": "road-network-area-share",
+        "view": "site_top",
+        "item": "internal_roads",
+        "expected": 1,
+        "tolerance": 0.06,
+        "correction_target": {
+          "part_id": "internal_roads",
+          "path": "parts[internal_roads].shape.parameters.size"
+        }
+      }
+    ],
+    "relative_positions": [
+      {
+        "id": "blue-hall-relative-to-inner-warehouse",
+        "view": "site_top",
+        "item": "primary_blue_roof_hall",
+        "anchor": "warehouse_row_inner",
+        "expected": [0.258, 0.063],
+        "tolerance": 0.045,
+        "correction_target": {
+          "part_id": "primary_blue_roof_hall",
+          "path": "parts[primary_blue_roof_hall].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "tank-farm-relative-to-blue-hall",
+        "view": "site_top",
+        "item": "tank_farm",
+        "anchor": "primary_blue_roof_hall",
+        "expected": [0.27, 0.262],
+        "tolerance": 0.055,
+        "correction_target": {
+          "part_id": "tank_farm",
+          "path": "parts[tank_farm].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "parking-relative-to-blue-hall",
+        "view": "site_top",
+        "item": "parking_lot",
+        "anchor": "primary_blue_roof_hall",
+        "expected": [0.186, -0.469],
+        "tolerance": 0.055,
+        "correction_target": {
+          "part_id": "parking_lot",
+          "path": "parts[parking_lot].shape.parameters.origin"
+        }
+      }
+    ],
+    "orientation": [
+      {
+        "id": "blue-hall-east-of-inner-warehouse",
+        "view": "site_top",
+        "item": "primary_blue_roof_hall",
+        "anchor": "warehouse_row_inner",
+        "direction": "right_of",
+        "min_delta": 0.15,
+        "correction_target": {
+          "part_id": "primary_blue_roof_hall",
+          "path": "parts[primary_blue_roof_hall].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "tank-farm-east-of-blue-hall",
+        "view": "site_top",
+        "item": "tank_farm",
+        "anchor": "primary_blue_roof_hall",
+        "direction": "right_of",
+        "min_delta": 0.2,
+        "correction_target": {
+          "part_id": "tank_farm",
+          "path": "parts[tank_farm].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "tank-farm-north-of-blue-hall",
+        "view": "site_top",
+        "item": "tank_farm",
+        "anchor": "primary_blue_roof_hall",
+        "direction": "above",
+        "min_delta": 0.15,
+        "correction_target": {
+          "part_id": "tank_farm",
+          "path": "parts[tank_farm].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "parking-south-of-blue-hall",
+        "view": "site_top",
+        "item": "parking_lot",
+        "anchor": "primary_blue_roof_hall",
+        "direction": "below",
+        "min_delta": 0.25,
+        "correction_target": {
+          "part_id": "parking_lot",
+          "path": "parts[parking_lot].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "primary-hall-taller-than-west-warehouse",
+        "view": "height_front",
+        "item": "primary_blue_roof_hall",
+        "anchor": "warehouse_row_west",
+        "direction": "above",
+        "min_delta": 0.15,
+        "correction_target": {
+          "part_id": "primary_blue_roof_hall",
+          "path": "parts[primary_blue_roof_hall].shape.parameters.size"
+        }
+      },
+      {
+        "id": "tank-farm-taller-than-west-warehouse",
+        "view": "height_front",
+        "item": "tank_farm",
+        "anchor": "warehouse_row_west",
+        "direction": "above",
+        "min_delta": 0.1,
+        "correction_target": {
+          "part_id": "tank_farm",
+          "path": "parts[tank_farm].shape.parameters.height"
+        }
+      }
+    ]
+  }
+}
