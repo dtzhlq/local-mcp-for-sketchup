@@ -1,6 +1,6 @@
 # Image Structured Modeler Memo
 
-更新时间：2026-05-31
+更新时间：2026-06-01
 
 ## 当前结论
 
@@ -20,6 +20,7 @@ observations.json -> model-plan.json -> output.json -> review/index.html -> mock
 - 第二产品样例：`examples/compact-remote` 通过 `object_profile: "compact_remote"` 走独立生成/编译路径，生成 `model-plan.json`、`output.json`、`review/index.html` 和 mock snapshot。
 - evidence status 边界切片：`model-plan.json`、`manual-corrections.json`、review report 和 `npm run test:image-structured` 已接入 `observed` / `inferred` / `template_prior` / `manual_confirmed`，单图输出会记录 open question 和 template-prior 状态。
 - evidence graph：`observations.json` 已有原生 `evidence_graph`，`model-plan.review.evidence_graph` 会优先合并该图，并按 part 汇总 required/confirmed/missing views、source records、template-prior / feature fallback conflicts 和 part-level open questions；review report 已新增 Evidence Graph 表格。
+- VisualRelationGraph 第一切片：`observations.json` 现在会写入 image-space `visual_relation_graph`，覆盖 `left_of` / `right_of` / `above` / `below` / `inside` / `aligned_with` / `touching` / `same_row` / `mirrored_pair` / `centered_on`，每条 relation 都带 source image、bbox/keypoint/semantic-anchor basis、confidence 和 `review_required`；该 relation graph 会同步进入 `evidence_graph.visual_relations`，PartGraph 生成器会把匹配到 part id 的关系回灌到 `evidence_graph.visual_relations`、part `relationships` 和可检查的 spatial `physical_relations`。
 - correction patch suggestions：`model-plan.review.correction_suggestions` 和 review report 会给出可复制到 `manual-corrections.json` 的 patch 骨架，用于把待确认 part 显式标成 `manual_confirmed`，并保留当前 feature semantics / fallback 信息。
 - feature mapping 第一切片：`blind_recess -> cut_recess`、`through_hole -> cut_hole`、`convex -> add_boss/add_raised_rib` 已进入 model-plan 和 compiler；当语义仍只能降级成 marker/helper 时，model-plan graph 和 review 会显式记录 `feature_mapping_fallback` conflict。
 - semantic fusion：`model-plan.review.semantic_fusion` 会把 evidence graph 融合为 per-part `status`、`decision`、`confidence`、semantic evidence、feature mapping signals 和 review flags。
@@ -30,18 +31,20 @@ observations.json -> model-plan.json -> output.json -> review/index.html -> mock
 - R6 proposal review UI 当前边界：`image-structured:proposal-review-ambulance` 会生成 `examples/ambulance/proposal-review/index.html`，列出 20 条 no-seed proposal、预选 fixture 接受项、展示 patch target，并允许导出 accepted proposal JSON。
 - R6 proposal review 复验链当前边界：`image-structured:proposal-review-chain-ambulance` 会重建 accepted proposal patch、刷新 proposal review、编译 `output.proposal-applied.json` 并跑 mock QA；`:queue` 版本会保存 `output/image-structured-ambulance-proposal-applied.skp`。当前只接受 body/cab 两项时输出 `review_required: true`，layout/reference QA fail，physical consistency pass。
 - 镜像/手性风险已显式证据化：`observations.json` 的每张图会写入 `orientation_hints`，记录 `image_x_right_y_down` 坐标约定、mirror risk、semantic anchors 和 `review_required`；主线 Reference Visual QA 也新增 `orientation` 规则组，Switch 左右摇杆镜像负例会被 `reference.orientation_order` 打回。
+- Switch 人工视觉检查已内化成 VisualRelationGraph fixture：`image-structured:visual-relation-switch` 会用 `examples/switch-controller/visual-relations.fixture.json` 对比 observation relation candidates 与 accepted Switch PartGraph 投影，当前检查 6 条关系和 8 个 contour/keypoint footprint（左右手柄、摇杆手性、ABXY vs D-pad、中心屏/面板包含与居中、左右手柄镜像对），0 issues，并用 `mirror_x` 负例确认左右镜像会失败；`image-structured:geometry-fit-switch` 会输出 Switch contour/keypoint projection residual。
+- 建筑群关系检查已补第一版 VisualRelationGraph fixture：`image-structured:visual-relation-building-group` 会用 `examples/building-group/visual-relations.fixture.json` 检查 12 条关系 / 0 issues；其中 6 条蓝顶厂房、仓库 row、停车场、site boundary、罐区关系会对比 massing PartGraph 投影，6 条四栋仓库、停车线/车道、树列关系保留 image-only QA，同时进入 PartGraph 的 review-gated `part_candidates` proposal queue。`image-structured:proposal-review-chain-building-group-candidates` 已接受全部 8 个关系候选，把两条 warehouse row 转为不编译 reference container，并新增 4 个 warehouse unit、2 条 parking stall row、1 条 parking drive aisle 和 1 条 tree row 真实 `manual_confirmed` parts；candidate fixture 当前检查 12 条模型关系和 9 个 pixel footprint。Perception-to-Geometry Grounding v2 第一刀已把这些 pixel candidates 升级为 mask/contour evidence，并新增 `image-structured:geometry-fit-building-group-candidates` / `geometry-fit-report.json`，输出 top-view affine projection calibration、center/extent/relation/scale/handedness residual；右下角停车线、negative-space drive aisle 和 tree row 已改为 mask/gap/contour-grounded evidence，mock/live queue GeometryFit 当前通过。
 - R7 建筑群当前边界：`image-structured:build-building-group` 会读取 `test/建筑群/` 的 3 张 GPT Image 合成航拍图，使用 `building_group` observation profile 和 `building_group_industrial_campus` ProductProfile，生成 `observations.json`、review overlays、`part-graph.massing.json` 和 `output.massing.json`。scale calibration 使用停车位、车道和人行横道 known-element anchors，估算厂区约 `130m x 98m`；所有 massing shape proposal 仍是 `review_required: true`。`image-structured:qa-building-group` 和 `image-structured:qa-building-group:queue` 已分别生成 mock/live layout/reference QA 报告并通过，queue 版保存 `output/image-structured-building-group-massing.skp`。建筑细节已保留主厂房 accepted subset 回归，并新增 R7 final accepted-all fixture：`image-structured:proposal-review-chain-building-group-all` / `:queue` 会接受 5 个当前 roofline/facade/opening detail proposal target，生成 `part-graph.r7-final.json`、`output.r7-final.json`、`proposal-qa-r7-final/*` 和 `proposal-qa-r7-final-queue/*`，通过 mock/live queue compile/layout/feature Reference Visual QA/physical QA，并保存 `output/image-structured-building-group-r7-final.skp`。这是当前 GPT Image 建筑群样例的 R7 technical baseline，不是测绘级建筑重建。
 
 当前完成度判断：
 
 - Switch-only 技术预览闭环：约 95%。
 - 通用“图片 -> 结构化 SketchUp 模型”技术预览 MVP：约 88%。
-- 当前优先级：semantic fusion、corrections workbench 和主线 CAD boolean/manifold 已补齐；R1/R2 已把救护车验收迁移到 `ProductProfile + PartGraph -> JSON DSL`；R3 Reference Visual QA 已能对救护车做 silhouette/keypoint/area/relative-placement/orientation gate；R4 已完成 image evidence -> PartGraph -> DSL -> Reference Visual QA -> CorrectionPatch -> QualityGate 的 ambulance 闭环；R5 三产品样本 gate 已由主线完成；R6 已补 no-seed parameter proposals、proposal-to-patch authoring、proposal review UI、proposal-applied mock/queue QA 链路，并在主线把 physical consistency QA 扩到 ambulance/Switch/Fuji 三样例。R7 已完成当前建筑群 evidence/known-scale/massing PartGraph 输入链、mock/live queue layout/reference QA、accepted-all roofline/facade/opening detail proposal -> patch -> feature Reference Visual QA -> mock/live queue QA；下一阶段应进入第二建筑/真实照片边界，而不是继续扩当前样例功能。
+- 当前优先级：semantic fusion、corrections workbench 和主线 CAD boolean/manifold 已补齐；R1/R2 已把救护车验收迁移到 `ProductProfile + PartGraph -> JSON DSL`；R3 Reference Visual QA 已能对救护车做 silhouette/keypoint/area/relative-placement/orientation gate；R4 已完成 image evidence -> PartGraph -> DSL -> Reference Visual QA -> CorrectionPatch -> QualityGate 的 ambulance 闭环；R5 三产品样本 gate 已由主线完成；R6 已补 no-seed parameter proposals、proposal-to-patch authoring、proposal review UI、proposal-applied mock/queue QA 链路，并在主线把 physical consistency QA 扩到 ambulance/Switch/Fuji 三样例。R7 已完成当前建筑群 evidence/known-scale/massing PartGraph 输入链、mock/live queue layout/reference QA、accepted-all roofline/facade/opening detail proposal -> patch -> feature Reference Visual QA -> mock/live queue QA。2026-06-01 的 Visual Grounding / VisualRelationGraph 第一刀已把 Switch 人工视觉检查变成代码闭环，并把建筑群四栋仓库、停车线/车道、树列候选从 image-only evidence 推进到 accepted promotion、pixel footprint QA、mock/live queue artifact；Grounding v2 现在把 observation/evidence/PartGraph provenance、GeometryFit v2 residual、R8 dense helper exclusion 和第二建筑群 mock gate 都纳入测试。R8 证明 no-texture editable geometry boundary：dense details helper ratio `1`、photo-grade eligible ratio `0`。R9 第一版把 ScaleAnchorGraph、GroundPlan subdivision、line/grid residual、TopViewOverlay QA 和 promotion decision 接入 observation/evidence/PartGraph/report/test，但当前两个建筑样本仍保持 `photo_grade_candidate=false`。
 
 下一轮建议：
 
 - Reference Visual QA 已能反向给出 `update_part_graph` correction suggestion，目标是修改 part graph 字段，而不是直接改 DSL 坐标；`part_graph_correction_patch` 已可生成和应用。
-- 下一步：进入 R8/下一建筑边界，复用 R7 的 proposal -> patch -> feature Reference Visual QA -> QA/queue 纪律，验证它不会只适配当前 GPT Image 建筑群样例。
+- 下一步：把第二生成样本 gate 继续推进到真实照片/oblique facade height cues；在 ScaleAnchorGraph、GroundPlan、line/grid residual 和 TopViewOverlay QA 先成立前，cars、trees、roof vents、facade openings 等 dense helper classes 不能晋级为看似完整的真实几何。
 
 本轮验收暴露的关键事实：
 
@@ -58,6 +61,8 @@ observations.json -> model-plan.json -> output.json -> review/index.html -> mock
 - 缺失视角：`top`。
 - 图片集质量：`medium`。
 - `observations.json`：已生成，可作为 review 和后续 model-plan 的第一版证据。
+- `visual_relation_graph`：当前 Switch observations 生成 270 条 image-space relation candidates，并同步到 `evidence_graph.visual_relations`；每条 relation 带 source image、bbox/keypoint/semantic-anchor basis、confidence 和 `review_required`。
+- `visual-relation-qa/report.json`：当前 Switch VisualRelationGraph fixture 为 `pass`，6 条关系、8 个 contour/keypoint footprint / 0 issues；`mirror_x` 负例会打回左右手柄、摇杆手性、ABXY vs D-pad 三类关系。`visual-relation-qa/geometry-fit-report.json` 当前 `pass`，8 个 footprint、6 条 projected relation、1 个 handedness negative，grounding issues 0。
 - `review-overlays/*.png`：已生成 6 张 overlay，包含 edge sample、bbox、symmetry axis、view label 和 metrics。
 - `manual-corrections.json`：已接入，当前锁定 `280mm x 155mm x 42mm` baseline 尺寸。
 - `model-plan.json`：当前 9 个 parts：
@@ -72,6 +77,7 @@ observations.json -> model-plan.json -> output.json -> review/index.html -> mock
   - `shoulder_rail_pair`
   - evidence summary：7 个 `observed`、2 个 `inferred`、0 个 `manual_confirmed`；9 个 part 均带 `template_prior: true`，用于提示 Switch layout prior 仍参与参数补全。
   - evidence graph：`observations.json` 和 `model-plan.review.evidence_graph` 都会记录 `required_views` / `confirmed_views` / `missing_views`；当前多图 Switch 所有 required views 均有 confirmed evidence，但 9 个 part 均记录 `template_prior_used` conflict。
+  - visual relation graph：当前 fixture 覆盖手柄左右关系、摇杆/按钮/d-pad 手性、中心屏/面板相对中心握把的包含与居中，以及左右手柄镜像对。
 - `output.json`：当前 41 个 DSL operations：
   - `reset`: 1
   - `material`: 6
@@ -152,6 +158,10 @@ observations.json -> model-plan.json -> output.json -> review/index.html -> mock
   - `examples/building-group/view-hints.json` 锁定 top/oblique 视角，避免 CV-only view classification 漂移。
   - `examples/building-group/observations.json` profile 为 `building_group`，views 为 `oblique / top`，missing views 为 0，image set quality 为 `high`，scale strategy 为 `known_site_element_anchors`。
   - evidence graph 覆盖 `site_boundary`、`primary_blue_roof_hall`、`warehouse_row_west`、`warehouse_row_inner`、`tank_farm`、`utility_building`、`admin_office`、`parking_lot` 和 `internal_roads`。
+  - visual relation graph 当前生成 image-space relation candidates，其中 `part-graph.massing.json` 接收 coarse + fine relation evidence；蓝顶主厂房相对仓库、停车场、道路、site boundary 等粗关系会回灌到 part `relationships` 和 spatial `physical_relations`。`examples/building-group/visual-relation-qa/report.json` 当前为 `pass`，12 条关系 / 0 issues：6 条粗 massing 关系对比模型投影，6 条四栋仓库、停车线/车道、树列关系保留 image-only QA，但已作为 4 条 review-gated `part_candidates` proposal 进入 PartGraph review queue，共覆盖 8 个 candidate parts。
+  - `examples/building-group/part-graph.part-candidates-applied.json` 当前接受 4 条 candidate proposal，把两条 warehouse row 转为 `compile.emit=false` reference container，并新增 8 个 `manual_confirmed` parts；`output.part-candidates-applied.json` 编译为 20 个实际 groups。`proposal-qa-candidates/report.json` 与 queue 报告现在为 `ok=true` / `review_required=false`：layout/reference/visual relation/GeometryFit/physical consistency 均通过。`proposal-qa-candidates/geometry-fit-report.json` 记录 top-view affine calibration，检查 9 个 mask/contour footprint、12 条 projected relation、4 个 known-element scale anchor 和 1 个 handedness negative，grounding issues 0，max center residual `0.003`，max relation residual `0.002`。live queue artifact 为 `output/image-structured-building-group-candidate-warehouses.skp`，226653 bytes，20 groups / 292 faces / 524 edges / 272 vertices。
+  - R9 `proposal-qa-candidates/grounding-v3-report.json` 当前检查 5 个 scale anchor / 3 个 anchor family、14 个互斥 ground regions、2 条 parking line fit、2 条 road axis、top-view overlay mean IoU `0.954`，promotion decisions 为 10 个 `promoted_geometry`、1 个 `review_candidate`、3 个 `helper_only`；第二建筑样本同一 runner 检查 4 个 anchor / 2 个 family、13 个 regions、2 条 line fit，两个样本都保持 `photo_grade_candidate=false`。
+  - `examples/building-group/part-graph.massing.json` 当前 `review.part_candidate_proposals` 覆盖 `warehouse_row_west`、`warehouse_row_inner`、`parking_lot` 和 `site_boundary` 四个 parent review target；候选包括 4 个 warehouse unit、2 条停车线、1 条停车车道和 1 条树列，全部 `review_required: true`。
   - scale measurements 覆盖 `parking_bay_width_span`、`parking_bay_single`、`parking_drive_aisle_width`、`crosswalk_width` 和派生 site boundary；估算 site scale 为约 `130m x 98m`，所有 measurement 都 `review_required: true`。
   - `examples/building-group/part-graph.massing.json` 生成 14 个 parts：site slab、蓝顶主厂房、两组仓库、utility building、admin office、parking lot、internal roads、两个 tank cylinder 和 4 个 scale anchor marker。
   - `examples/building-group/output.massing.json` 由 PartGraph compiler 生成 32 个 DSL ops，当前 mock build 为 14 groups / 2 scenes / 0 error warning。

@@ -1,7 +1,7 @@
 # Product Modeling Architecture Refactor Plan
 
-> Date: 2026-05-29
-> Status: R5 product sample expansion complete; ambulance, Switch, and Fuji camera now run through ProductProfile -> PartGraph -> DSL -> Layout QA + Reference Visual QA in mock and live queue, with saved queue SKP artifacts; R6 physical consistency QA now covers all three product samples, proposal review output has a proposal-applied mock/queue QA chain, and R7 building-group now has massing mock/live queue QA plus accepted-all roofline/facade/opening detail proposals with feature Reference Visual QA and saved final queue SKP
+> Date: 2026-06-01
+> Status: R5 product sample expansion complete; ambulance, Switch, and Fuji camera now run through ProductProfile -> PartGraph -> DSL -> Layout QA + Reference Visual QA in mock and live queue, with saved queue SKP artifacts; R6 physical consistency QA now covers all three product samples, proposal review output has a proposal-applied mock/queue QA chain; R7 building-group now has massing mock/live queue QA plus accepted-all roofline/facade/opening detail proposals with feature Reference Visual QA and saved final queue SKP; VisualRelationGraph writes image-space relation candidates into ObservationSet/EvidenceGraph, validates Switch and building-group relation fixtures with mirror negatives, feeds building-group relation evidence into massing PartGraph relationships and spatial physical_relations, surfaces fine building candidates as review-gated PartGraph proposals, and can promote eight warehouse/parking/tree candidates into real parts after accepted review; Grounding v2 now adds provenance schema, mask/contour evidence, camera/site calibration records, GeometryFit v2 residual QA, R8 helper-heavy dense-detail reporting, and a second building-group mock generalization gate
 > Scope: upstream modeling architecture, not a full runtime rewrite
 
 ## Decision
@@ -12,7 +12,7 @@ Do not rewrite the whole project. Keep the current local MCP stack:
 JSON DSL -> Node bridge -> mock runtime / queue runtime -> SketchUp Ruby plugin
 ```
 
-The weak boundary is above the DSL. Current examples can call newer feature and boolean operations, but they still often generate a box-based layout first and then decorate it. The first ambulance visual-quality refit shows the intended correction loop: reference-image anchors now fail the old seed snapshot, PartGraph parameters are adjusted, and the regenerated DSL passes layout QA plus Reference Visual QA in mock and queue. R5 extends that same standard beyond one vehicle sample: Switch and Fuji camera now have ProductProfiles, PartGraph compiler paths, Reference Visual QA specs, product-sample reports with fallback ratios, and live queue SKP artifacts. R6 adds a physical relation gate on the PartGraph itself, so support/contact/grounding failures can be corrected before treating a visually plausible layout as acceptable.
+The weak boundary is above the DSL. Current examples can call newer feature and boolean operations, but they still often generate a box-based layout first and then decorate it. The first ambulance visual-quality refit shows the intended correction loop: reference-image anchors now fail the old seed snapshot, PartGraph parameters are adjusted, and the regenerated DSL passes layout QA plus Reference Visual QA in mock and queue. R5 extends that same standard beyond one vehicle sample: Switch and Fuji camera now have ProductProfiles, PartGraph compiler paths, Reference Visual QA specs, product-sample reports with fallback ratios, and live queue SKP artifacts. R6 adds a physical relation gate on the PartGraph itself, so support/contact/grounding failures can be corrected before treating a visually plausible layout as acceptable. The new VisualRelationGraph slice starts closing the remaining visual grounding gap by recording image-space relations with explicit basis/confidence/review state and comparing them with model projections.
 
 The next architecture slice should introduce an explicit modeling pipeline:
 
@@ -80,13 +80,15 @@ Required upgrades:
 - Contour/polyline extraction instead of coarse bbox-only evidence.
 - Part candidates with source pixels, confidence, and view id.
 - Cross-view part matching, including conflicts and missing evidence.
+- VisualRelationGraph candidates for left/right/up/down order, containment, alignment, same-row, touching, mirrored pairs, and centered-on relationships, each with source image, bbox/keypoint/semantic-anchor basis, confidence, and review state.
 - Explicit distinction between geometry evidence and semantic labels.
 - Optional VLM use only for semantics and ambiguity checks, not as the source of exact geometry.
 
 For current samples:
 
-- Switch: reduce Switch layout prior weight and prevent single-view inputs from producing the same confidence as multi-view inputs.
+- Switch: reduce Switch layout prior weight and prevent single-view inputs from producing the same confidence as multi-view inputs; current first VisualRelationGraph fixture covers joystick/button/D-pad/screen/handle relationships and a mirror negative.
 - Ambulance: add `vehicle_ambulance` profile and produce an evidence-backed part graph before any DSL generation.
+- Building group: first relation fixture is in place; coarse blue-roof hall / warehouse row / parking / site / tank relationships are checked against the massing projection, while four warehouse units, parking rows/aisle, and tree-row relationships are surfaced as review-gated `part_candidates` proposals. The accepted promotion fixture now accepts all eight candidates, turns the two row boxes into reference containers, preserves the parking/site base context, and validates the resulting 22-part graph with relation and pixel-footprint checks. GeometryFit v2 adds top-view affine projection calibration plus center, extent, relation, scale, handedness, grounding-isolation, and dense-detail helper/review residuals. Current mock/live queue proof passes for the candidate chain after isolating the lower-right parking rows, negative-space drive aisle, and tree row as mask/gap/contour-grounded evidence; R8 remains a no-texture editable geometry boundary with helper-heavy dense details excluded from photo-grade coverage. A second generated building-group sample now runs the same ObservationSet/EvidenceGraph/PartGraph/GeometryFit v2 primary gate. It remains generated-image technical proof, not photo/survey-grade reconstruction.
 - Children's room: keep as scene/layout acceptance, but do not use it as proof of product-detail reconstruction.
 
 ### 4. QA Layer
@@ -244,10 +246,10 @@ Implementation status:
 
 ## Immediate Next Slice
 
-R5 is complete as a product-sample expansion gate. The current R6 hardening boundary is also complete for ambulance no-seed proposals, proposal-applied QA/queue review gating, and three-sample physical consistency. R7 has completed the current generated-image building-group technical baseline: evidence, known-element scale, review-gated massing, mock/live queue layout/reference QA, saved massing SKP, accepted-all roofline/facade/opening feature intents, feature Reference Visual QA, physical consistency, and saved final queue SKP. Next slice is the next building-photo boundary at scene scale:
+R5 is complete as a product-sample expansion gate. The current R6 hardening boundary is also complete for ambulance no-seed proposals, proposal-applied QA/queue review gating, and three-sample physical consistency. R7 has completed the current generated-image building-group technical baseline: evidence, known-element scale, review-gated massing, mock/live queue layout/reference QA, saved massing SKP, accepted-all roofline/facade/opening feature intents, feature Reference Visual QA, physical consistency, saved final queue SKP, first VisualRelationGraph fixture coverage for Switch plus building-group relation-derived part candidates, and eight-candidate promotion into real warehouse/parking/tree PartGraph parts with pixel footprint QA. Grounding v2 now runs as a coded gate: candidate chain GeometryFit passes, R8 no-texture geometry is forced into `review` because dense details are helper-heavy, and the second generated building-group sample passes the primary footprint/relation/scale/handedness mock gate without sample-specific site constants. Next slice is the real-photo/oblique building boundary at scene scale:
 
 1. Keep using the ambulance refit as the reference standard: old-looking seed models must fail the image-anchored gate; fixes should land in PartGraph fields and feature intents, not generated DSL coordinates.
-2. Add a second building group or real-photo building sample and run it through the same accepted proposal -> correction patch -> feature Reference Visual QA -> mock/live queue discipline.
+2. Move the second generated building gate to real-photo or stronger oblique input, and require facade/height photo-grade claims to pass oblique cues instead of helper/review status.
 3. Reuse proposal review and correction patch semantics for scene/model decisions, and keep accepted subsets tied to mock/live QA evidence before broadening any new applied detail set.
 4. Expand the same product-sample gate beyond ambulance, Switch, and Fuji, including scene/product boundary cases such as children's room.
 5. Continue reducing template and visual-helper debt, especially in non-vehicle samples where the gate still passes by using structured primitives or helper geometry.

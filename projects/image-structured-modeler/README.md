@@ -61,6 +61,10 @@ npm run image-structured:analyze-switch
 npm run image-structured:generate-switch
 npm run image-structured:compile-switch
 npm run image-structured:review-switch
+npm run image-structured:visual-relation-switch
+npm run image-structured:visual-relation-building-group
+npm run image-structured:geometry-fit-building-group-candidates
+npm run image-structured:proposal-review-chain-building-group-candidates
 npm run image-structured:snapshot-switch
 npm run image-structured:snapshot-switch:queue
 npm run image-structured:diff-switch:queue
@@ -84,10 +88,23 @@ npm run test:image-structured
 - `projects/image-structured-modeler/examples/switch-controller/model-plan.json`
 - `projects/image-structured-modeler/examples/switch-controller/output.json`
 - `projects/image-structured-modeler/examples/switch-controller/review/index.html`
+- `projects/image-structured-modeler/examples/switch-controller/visual-relation-qa/report.json`
 - `projects/image-structured-modeler/examples/switch-controller/review/snapshot-report.json`
 - `projects/image-structured-modeler/examples/switch-controller/review/snapshot-report.md`
 
-当前 `observations.json` 和 `model-plan.json` 都会记录 evidence graph：每个 part 有 `required_views`、`confirmed_views`、`missing_views`、`sources`、`conflicts` 和 open questions。`model-plan.review.semantic_fusion` 会进一步把跨视图 evidence 融合为 per-part `status`、`decision`、`confidence`、semantic evidence、feature mapping signals 和 review flags。Review 页面会显示 Evidence Graph、Semantic Fusion、Correction Patch Suggestions 和 Corrections Workbench，方便把人工确认直接转成可编辑/可下载的 `manual-corrections.json` patch。
+当前 `observations.json` 和 `model-plan.json` 都会记录 evidence graph：每个 part 有 `required_views`、`confirmed_views`、`missing_views`、`sources`、`conflicts` 和 open questions。`observations.json` 还会记录 `visual_relation_graph`，把 image-space 的 `left_of` / `right_of` / `above` / `below` / `inside` / `aligned_with` / `touching` / `same_row` / `mirrored_pair` / `centered_on` 候选关系写成带 source image、bbox/keypoint/semantic-anchor basis、confidence 和 `review_required` 的结构化证据，并同步到 `evidence_graph.visual_relations`。`model-plan.review.semantic_fusion` 会进一步把跨视图 evidence 融合为 per-part `status`、`decision`、`confidence`、semantic evidence、feature mapping signals 和 review flags。Review 页面会显示 Evidence Graph、Semantic Fusion、Correction Patch Suggestions 和 Corrections Workbench，方便把人工确认直接转成可编辑/可下载的 `manual-corrections.json` patch。
+
+`image-structured:visual-relation-switch` 会把 Switch 之前的人工视觉检查变成代码 fixture：`visual-relations.fixture.json` 读取 observation relation candidates，并对比 accepted Switch PartGraph 投影里的左右顺序、间距比例、手性、父子包含和镜像对。当前 fixture 检查 6 条关系和 8 个 contour/keypoint footprint，报告在 `examples/switch-controller/visual-relation-qa/report.json`，并包含 `mirror_x` 负例来确认左右镜像会被打回。`image-structured:geometry-fit-switch` 会输出 Switch 控件投影 residual。
+
+`image-structured:visual-relation-building-group` 使用同一套 VisualRelationGraph QA 跑建筑群 fixture：当前检查 12 条关系，报告在 `examples/building-group/visual-relation-qa/report.json`。其中 6 条蓝顶厂房、仓库 row、停车场、site boundary、罐区关系会对比 massing PartGraph 投影，6 条四栋仓库、停车线/车道、树列关系保留为 image-only QA；同时 `part-graph.massing.json` 会把这些细粒度对象写成 review-gated `part_candidates` proposals，防止把未确认的视觉识别误报成已可编辑几何。可判定的方向/包含关系还会同步进入 PartGraph `physical_relations`，由 physical consistency QA 检查模型投影后的空间关系。
+
+`image-structured:geometry-fit-building-group-candidates` 是 Perception-to-Geometry Grounding v2 的第一刀：它使用同一份 candidate fixture，对 top-view image frame 和 site boundary 做 affine projection calibration，并输出 `proposal-qa-candidates/geometry-fit-report.json`。当前 mock/live queue 报告检查 9 个 mask/contour footprint、12 条 projected relation、4 个 known-element scale anchor 和 1 个 `mirror_x` handedness negative；max center residual `0.003`，max relation residual `0.002`，max scale residual `0.118`，grounding issues 0。右下角两条停车线、negative-space drive aisle 和 tree row 已由 bbox proxy / mixed grounding 改为 mask/gap/contour-grounded evidence。
+
+`image-structured:grounding-v3-building-group` 是 R9 GroundingGraph v3 门：`ObservationSet.grounding_v3` 和 `PartGraph.evidence_graph.ground_plan` 会记录多候选 `ScaleAnchorGraph`、互斥 `GroundPlan` regions、parking/road line-grid residual、TopViewOverlay QA 和 `promoted_geometry` / `review_candidate` / `helper_only` / `rejected` promotion decisions。当前报告为 `proposal-qa-candidates/grounding-v3-report.json`，检查 5 个 scale anchor、3 个 anchor family、14 个 ground regions、2 条 parking line fit、top-view overlay mean IoU `0.954`，并保持 `photo_grade_candidate=false`。
+
+`image-structured:grounding-v2-second-sample` / `image-structured:grounding-v3-second-sample` 是当前泛化门：它生成第二个可分发建筑群样本 fixture，跑通 ObservationSet、EvidenceGraph、PartGraph candidate promotion、mock compile、GeometryFit v2 和 Grounding v3。当前第二样本 Grounding v3 检查 4 个 scale anchor、2 个 anchor family、13 个 ground regions、2 条 parking line fit，并同样保持 `photo_grade_candidate=false`，用于证明证据链和失败门槛可复用，而不是声明照片级重建。
+
+`image-structured:proposal-review-chain-building-group-candidates` 会接受 `part-candidate-review.accepted-warehouses.json` 中的 8 个关系候选，生成 `correction-patch.part-candidates.json`、`part-graph.part-candidates-applied.json`、`output.part-candidates-applied.json`、`proposal-review-candidates/index.html` 和 `proposal-qa-candidates/report.json`。当前结果把两条 warehouse row 退成不编译 reference container，并新增 4 个 `manual_confirmed` warehouse unit parts、2 条 parking stall row、1 条 parking drive aisle 和 1 条 tree row；mock proposal QA 会同时跑 layout/reference/visual relation/GeometryFit/physical gates。live queue 版会保存 `output/image-structured-building-group-candidate-warehouses.skp`，当前 proposal QA 为 `ok=true`，但这仍只是当前生成图样例的技术基线，不是照片级/测绘级完成。
 
 `feature_semantics` 的第一批真实 feature op 映射已经接入：`blind_recess` 会编译为 `cut_recess`，`through_hole` 会编译为 `cut_hole`，`convex` 会按部件形态编译为 `add_boss` 或 `add_raised_rib`。Review 的 parts 表会显示当前是 `real feature op` 还是 `fallback: visual_marker`。
 
