@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "kind": "parameter_proposal_review",
+  "target_part_graph_id": "building-group-image-evidence-massing-part-graph",
+  "reviewer": "r7-building-relation-candidate-promotion",
+  "verdict": "accepted_relation_candidate_set",
+  "accepted_proposals": [
+    {
+      "part_id": "warehouse_row_west",
+      "path": "parts[warehouse_row_west].candidate_parts",
+      "reason": "Accept the reviewed VisualRelationGraph split of the west warehouse row into two editable warehouse-unit candidates."
+    },
+    {
+      "part_id": "warehouse_row_inner",
+      "path": "parts[warehouse_row_inner].candidate_parts",
+      "reason": "Accept the reviewed VisualRelationGraph split of the inner warehouse row into two editable warehouse-unit candidates."
+    },
+    {
+      "part_id": "parking_lot",
+      "path": "parts[parking_lot].candidate_parts",
+      "reason": "Accept the reviewed VisualRelationGraph parking-stall row and drive-aisle candidates as editable surface-marking parts while preserving the parking-lot base surface."
+    },
+    {
+      "part_id": "site_boundary",
+      "path": "parts[site_boundary].candidate_parts",
+      "reason": "Accept the reviewed VisualRelationGraph tree-row candidate as an editable landscape marker while preserving the site boundary."
+    }
+  ],
+  "notes": [
+    "This fixture promotes the full VisualRelationGraph candidate set: four warehouse units, two parking stall rows, one parking drive aisle, and one tree row.",
+    "Warehouse row parents become non-emitted reference containers; parking lot and site boundary remain emitted base/context parts."
+  ]
+}

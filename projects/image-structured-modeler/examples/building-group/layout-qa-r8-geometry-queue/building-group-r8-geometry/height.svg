@@ -1,0 +1,273 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="640" viewBox="0 0 960 640" role="img" aria-label="Height And Editable Detail preview">
+  <rect width="100%" height="100%" fill="#f7f5ef"/>
+  <text x="18" y="28" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#222">Building Group R8 Editable Geometry Layout QA - Height And Editable Detail</text>
+  <text x="18" y="48" font-family="Arial, sans-serif" font-size="12" fill="#555">axes x/z from snapshot bounding boxes</text>
+  <g font-family="Arial, sans-serif"><rect x="44" y="589.426" width="872" height="6.037" rx="3" fill="hsl(16 58% 52%)" fill-opacity="0.48" stroke="hsl(16 58% 52%)" stroke-width="1.4"/>
+  <rect x="431.705" y="578.023" width="3.488" height="17.44" rx="3" fill="hsl(229 58% 52%)" fill-opacity="0.48" stroke="hsl(229 58% 52%)" stroke-width="1.4"/>
+  <rect x="526.283" y="578.023" width="3.488" height="17.44" rx="3" fill="hsl(229 58% 52%)" fill-opacity="0.48" stroke="hsl(229 58% 52%)" stroke-width="1.4"/>
+  <rect x="435.058" y="586.006" width="43.6" height="1.073" rx="3" fill="hsl(229 58% 52%)" fill-opacity="0.48" stroke="hsl(229 58% 52%)" stroke-width="1.4"/>
+  <rect x="481.476" y="586.006" width="43.6" height="1.073" rx="3" fill="hsl(229 58% 52%)" fill-opacity="0.48" stroke="hsl(229 58% 52%)" stroke-width="1.4"/>
+  <rect x="445.12" y="576.682" width="24.148" height="18.782" rx="3" fill="hsl(354 58% 52%)" fill-opacity="0.48" stroke="hsl(354 58% 52%)" stroke-width="1.4"/>
+  <rect x="438.412" y="574.535" width="37.563" height="2.146" rx="3" fill="hsl(229 58% 52%)" fill-opacity="0.48" stroke="hsl(229 58% 52%)" stroke-width="1.4"/>
+  <rect x="454.511" y="594.491" width="50.978" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="454.511" y="594.491" width="50.978" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="103.618" y="588.984" width="1.503" height="6.48" rx="3" fill="hsl(227 58% 52%)" fill-opacity="0.48" stroke="hsl(227 58% 52%)" stroke-width="1.4"/>
+  <rect x="100.613" y="580.036" width="7.513" height="8.948" rx="3" fill="hsl(199 58% 52%)" fill-opacity="0.48" stroke="hsl(199 58% 52%)" stroke-width="1.4"/>
+  <rect x="180.756" y="588.984" width="1.503" height="6.48" rx="3" fill="hsl(227 58% 52%)" fill-opacity="0.48" stroke="hsl(227 58% 52%)" stroke-width="1.4"/>
+  <rect x="177.751" y="580.036" width="7.513" height="8.948" rx="3" fill="hsl(199 58% 52%)" fill-opacity="0.48" stroke="hsl(199 58% 52%)" stroke-width="1.4"/>
+  <rect x="257.895" y="588.984" width="1.503" height="6.48" rx="3" fill="hsl(227 58% 52%)" fill-opacity="0.48" stroke="hsl(227 58% 52%)" stroke-width="1.4"/>
+  <rect x="254.89" y="580.036" width="7.513" height="8.948" rx="3" fill="hsl(199 58% 52%)" fill-opacity="0.48" stroke="hsl(199 58% 52%)" stroke-width="1.4"/>
+  <rect x="335.033" y="588.984" width="1.503" height="6.48" rx="3" fill="hsl(227 58% 52%)" fill-opacity="0.48" stroke="hsl(227 58% 52%)" stroke-width="1.4"/>
+  <rect x="332.028" y="580.036" width="7.513" height="8.948" rx="3" fill="hsl(199 58% 52%)" fill-opacity="0.48" stroke="hsl(199 58% 52%)" stroke-width="1.4"/>
+  <rect x="412.172" y="588.984" width="1.503" height="6.48" rx="3" fill="hsl(227 58% 52%)" fill-opacity="0.48" stroke="hsl(227 58% 52%)" stroke-width="1.4"/>
+  <rect x="409.167" y="580.036" width="7.513" height="8.948" rx="3" fill="hsl(199 58% 52%)" fill-opacity="0.48" stroke="hsl(199 58% 52%)" stroke-width="1.4"/>
+  <rect x="489.31" y="588.984" width="1.503" height="6.48" rx="3" fill="hsl(227 58% 52%)" fill-opacity="0.48" stroke="hsl(227 58% 52%)" stroke-width="1.4"/>
+  <rect x="486.305" y="580.036" width="7.513" height="8.948" rx="3" fill="hsl(199 58% 52%)" fill-opacity="0.48" stroke="hsl(199 58% 52%)" stroke-width="1.4"/>
+  <rect x="566.449" y="588.984" width="1.503" height="6.48" rx="3" fill="hsl(227 58% 52%)" fill-opacity="0.48" stroke="hsl(227 58% 52%)" stroke-width="1.4"/>
+  <rect x="563.444" y="580.036" width="7.513" height="8.948" rx="3" fill="hsl(199 58% 52%)" fill-opacity="0.48" stroke="hsl(199 58% 52%)" stroke-width="1.4"/>
+  <rect x="643.587" y="588.984" width="1.503" height="6.48" rx="3" fill="hsl(227 58% 52%)" fill-opacity="0.48" stroke="hsl(227 58% 52%)" stroke-width="1.4"/>
+  <rect x="640.582" y="580.036" width="7.513" height="8.948" rx="3" fill="hsl(199 58% 52%)" fill-opacity="0.48" stroke="hsl(199 58% 52%)" stroke-width="1.4"/>
+  <rect x="720.726" y="588.984" width="1.503" height="6.48" rx="3" fill="hsl(227 58% 52%)" fill-opacity="0.48" stroke="hsl(227 58% 52%)" stroke-width="1.4"/>
+  <rect x="717.721" y="580.036" width="7.513" height="8.948" rx="3" fill="hsl(199 58% 52%)" fill-opacity="0.48" stroke="hsl(199 58% 52%)" stroke-width="1.4"/>
+  <rect x="797.864" y="588.984" width="1.503" height="6.48" rx="3" fill="hsl(227 58% 52%)" fill-opacity="0.48" stroke="hsl(227 58% 52%)" stroke-width="1.4"/>
+  <rect x="794.859" y="580.036" width="7.513" height="8.948" rx="3" fill="hsl(199 58% 52%)" fill-opacity="0.48" stroke="hsl(199 58% 52%)" stroke-width="1.4"/>
+  <rect x="454.511" y="594.491" width="50.978" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="454.511" y="594.491" width="50.978" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="454.511" y="594.491" width="50.978" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="454.511" y="594.491" width="50.978" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="454.511" y="594.491" width="50.978" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="603.129" y="594.43" width="245.471" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="69.328" y="588.139" width="1.664" height="7.325" rx="3" fill="hsl(227 58% 52%)" fill-opacity="0.48" stroke="hsl(227 58% 52%)" stroke-width="1.4"/>
+  <rect x="66.001" y="578.023" width="8.318" height="10.115" rx="3" fill="hsl(199 58% 52%)" fill-opacity="0.48" stroke="hsl(199 58% 52%)" stroke-width="1.4"/>
+  <rect x="887.667" y="588.139" width="1.664" height="7.325" rx="3" fill="hsl(227 58% 52%)" fill-opacity="0.48" stroke="hsl(227 58% 52%)" stroke-width="1.4"/>
+  <rect x="884.34" y="578.023" width="8.318" height="10.115" rx="3" fill="hsl(199 58% 52%)" fill-opacity="0.48" stroke="hsl(199 58% 52%)" stroke-width="1.4"/>
+  <rect x="847.582" y="594.491" width="30.855" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="603.129" y="594.43" width="1" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="623.585" y="594.43" width="1" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="644.041" y="594.43" width="1" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="664.496" y="594.43" width="1" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="684.952" y="594.43" width="1" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="705.408" y="594.43" width="1" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="725.864" y="594.43" width="1" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="746.32" y="594.43" width="1" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="766.775" y="594.43" width="1" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="787.231" y="594.43" width="1" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="807.687" y="594.43" width="1" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="828.143" y="594.43" width="1" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="848.598" y="594.43" width="1" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="457.395" y="594.672" width="1" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="847.582" y="594.491" width="30.855" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="847.582" y="594.491" width="30.855" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="847.582" y="594.491" width="30.855" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="847.582" y="594.491" width="30.855" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="603.129" y="594.43" width="245.471" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="847.582" y="594.491" width="30.855" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="847.582" y="594.491" width="30.855" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="452.498" y="594.524" width="55.003" height="1" rx="3" fill="hsl(354 58% 52%)" fill-opacity="0.48" stroke="hsl(354 58% 52%)" stroke-width="1.4"/>
+  <rect x="574.339" y="594.927" width="303.051" height="1" rx="3" fill="hsl(328 58% 52%)" fill-opacity="0.48" stroke="hsl(328 58% 52%)" stroke-width="1.4"/>
+  <rect x="574.339" y="595.343" width="303.051" height="1" rx="3" fill="hsl(97 58% 52%)" fill-opacity="0.48" stroke="hsl(97 58% 52%)" stroke-width="1.4"/>
+  <rect x="601.614" y="594.672" width="248.501" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="617.201" y="589.426" width="1.476" height="6.037" rx="3" fill="hsl(227 58% 52%)" fill-opacity="0.48" stroke="hsl(227 58% 52%)" stroke-width="1.4"/>
+  <rect x="614.853" y="582.719" width="6.171" height="6.708" rx="3" fill="hsl(199 58% 52%)" fill-opacity="0.48" stroke="hsl(199 58% 52%)" stroke-width="1.4"/>
+  <rect x="677.57" y="589.426" width="1.476" height="6.037" rx="3" fill="hsl(227 58% 52%)" fill-opacity="0.48" stroke="hsl(227 58% 52%)" stroke-width="1.4"/>
+  <rect x="675.223" y="582.719" width="6.171" height="6.708" rx="3" fill="hsl(199 58% 52%)" fill-opacity="0.48" stroke="hsl(199 58% 52%)" stroke-width="1.4"/>
+  <rect x="737.94" y="589.426" width="1.476" height="6.037" rx="3" fill="hsl(227 58% 52%)" fill-opacity="0.48" stroke="hsl(227 58% 52%)" stroke-width="1.4"/>
+  <rect x="735.592" y="582.719" width="6.171" height="6.708" rx="3" fill="hsl(199 58% 52%)" fill-opacity="0.48" stroke="hsl(199 58% 52%)" stroke-width="1.4"/>
+  <rect x="798.309" y="589.426" width="1.476" height="6.037" rx="3" fill="hsl(227 58% 52%)" fill-opacity="0.48" stroke="hsl(227 58% 52%)" stroke-width="1.4"/>
+  <rect x="795.961" y="582.719" width="6.171" height="6.708" rx="3" fill="hsl(199 58% 52%)" fill-opacity="0.48" stroke="hsl(199 58% 52%)" stroke-width="1.4"/>
+  <rect x="638.009" y="594.055" width="6.037" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="687.103" y="594.055" width="6.037" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="736.197" y="594.055" width="6.037" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="785.291" y="594.055" width="6.037" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="603.129" y="594.43" width="245.471" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="413.343" y="549.046" width="142.055" height="46.417" rx="3" fill="hsl(37 58% 52%)" fill-opacity="0.48" stroke="hsl(37 58% 52%)" stroke-width="1.4"/><text x="417.343" y="561.046" font-size="10" fill="#1b1b1b">Admin_Office_Massing</text>
+  <rect x="603.129" y="594.43" width="1" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="623.585" y="594.43" width="1" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="644.041" y="594.43" width="1" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="664.496" y="594.43" width="1" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="684.952" y="594.43" width="1" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="705.408" y="594.43" width="1" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="725.864" y="594.43" width="1" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="746.32" y="594.43" width="1" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="766.775" y="594.43" width="1" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="787.231" y="594.43" width="1" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="807.687" y="594.43" width="1" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="828.143" y="594.43" width="1" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="848.598" y="594.43" width="1" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="495.735" y="545.29" width="14.086" height="4.025" rx="3" fill="hsl(57 58% 52%)" fill-opacity="0.48" stroke="hsl(57 58% 52%)" stroke-width="1.4"/>
+  <rect x="69.328" y="588.139" width="1.664" height="7.325" rx="3" fill="hsl(227 58% 52%)" fill-opacity="0.48" stroke="hsl(227 58% 52%)" stroke-width="1.4"/>
+  <rect x="66.001" y="578.023" width="8.318" height="10.115" rx="3" fill="hsl(199 58% 52%)" fill-opacity="0.48" stroke="hsl(199 58% 52%)" stroke-width="1.4"/>
+  <rect x="887.667" y="588.139" width="1.664" height="7.325" rx="3" fill="hsl(227 58% 52%)" fill-opacity="0.48" stroke="hsl(227 58% 52%)" stroke-width="1.4"/>
+  <rect x="884.34" y="578.023" width="8.318" height="10.115" rx="3" fill="hsl(199 58% 52%)" fill-opacity="0.48" stroke="hsl(199 58% 52%)" stroke-width="1.4"/>
+  <rect x="196.174" y="531.445" width="2.549" height="2.817" rx="3" fill="hsl(83 58% 52%)" fill-opacity="0.48" stroke="hsl(83 58% 52%)" stroke-width="1.4"/>
+  <rect x="323.255" y="531.445" width="2.549" height="2.817" rx="3" fill="hsl(83 58% 52%)" fill-opacity="0.48" stroke="hsl(83 58% 52%)" stroke-width="1.4"/>
+  <rect x="603.129" y="594.43" width="245.471" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="240.578" y="591.17" width="2.415" height="3.488" rx="3" fill="hsl(354 58% 52%)" fill-opacity="0.48" stroke="hsl(354 58% 52%)" stroke-width="1.4"/>
+  <rect x="369.869" y="591.17" width="2.415" height="3.488" rx="3" fill="hsl(354 58% 52%)" fill-opacity="0.48" stroke="hsl(354 58% 52%)" stroke-width="1.4"/>
+  <rect x="196.174" y="531.445" width="2.549" height="2.817" rx="3" fill="hsl(83 58% 52%)" fill-opacity="0.48" stroke="hsl(83 58% 52%)" stroke-width="1.4"/>
+  <rect x="323.255" y="531.445" width="2.549" height="2.817" rx="3" fill="hsl(83 58% 52%)" fill-opacity="0.48" stroke="hsl(83 58% 52%)" stroke-width="1.4"/>
+  <rect x="243.328" y="576.011" width="10.732" height="19.452" rx="3" fill="hsl(67 58% 52%)" fill-opacity="0.48" stroke="hsl(67 58% 52%)" stroke-width="1.4"/>
+  <rect x="372.619" y="576.011" width="10.732" height="19.452" rx="3" fill="hsl(67 58% 52%)" fill-opacity="0.48" stroke="hsl(67 58% 52%)" stroke-width="1.4"/>
+  <rect x="560.901" y="594.491" width="41.588" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="560.901" y="594.491" width="41.588" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="560.901" y="594.491" width="41.588" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="69.328" y="588.139" width="1.664" height="7.325" rx="3" fill="hsl(227 58% 52%)" fill-opacity="0.48" stroke="hsl(227 58% 52%)" stroke-width="1.4"/>
+  <rect x="66.001" y="578.023" width="8.318" height="10.115" rx="3" fill="hsl(199 58% 52%)" fill-opacity="0.48" stroke="hsl(199 58% 52%)" stroke-width="1.4"/>
+  <rect x="887.667" y="588.139" width="1.664" height="7.325" rx="3" fill="hsl(227 58% 52%)" fill-opacity="0.48" stroke="hsl(227 58% 52%)" stroke-width="1.4"/>
+  <rect x="884.34" y="578.023" width="8.318" height="10.115" rx="3" fill="hsl(199 58% 52%)" fill-opacity="0.48" stroke="hsl(199 58% 52%)" stroke-width="1.4"/>
+  <rect x="560.901" y="594.491" width="41.588" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="560.901" y="594.491" width="41.588" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="244.334" y="579.365" width="8.72" height="16.098" rx="3" fill="hsl(67 58% 52%)" fill-opacity="0.48" stroke="hsl(67 58% 52%)" stroke-width="1.4"/>
+  <rect x="373.625" y="579.365" width="8.72" height="16.098" rx="3" fill="hsl(67 58% 52%)" fill-opacity="0.48" stroke="hsl(67 58% 52%)" stroke-width="1.4"/>
+  <rect x="153.246" y="539.722" width="88.405" height="55.741" rx="3" fill="hsl(234 58% 52%)" fill-opacity="0.48" stroke="hsl(234 58% 52%)" stroke-width="1.4"/><text x="157.246" y="551.722" font-size="10" fill="#1b1b1b">Warehouse_West_South_Body</text>
+  <rect x="150.429" y="534.423" width="94.039" height="6.037" rx="3" fill="hsl(234 58% 52%)" fill-opacity="0.48" stroke="hsl(234 58% 52%)" stroke-width="1.4"/>
+  <rect x="278.117" y="539.722" width="92.825" height="55.741" rx="3" fill="hsl(234 58% 52%)" fill-opacity="0.48" stroke="hsl(234 58% 52%)" stroke-width="1.4"/><text x="282.117" y="551.722" font-size="10" fill="#1b1b1b">Warehouse_Inner_South_Body</text>
+  <rect x="275.3" y="534.423" width="98.46" height="6.037" rx="3" fill="hsl(234 58% 52%)" fill-opacity="0.48" stroke="hsl(234 58% 52%)" stroke-width="1.4"/>
+  <rect x="196.174" y="531.445" width="2.549" height="2.817" rx="3" fill="hsl(83 58% 52%)" fill-opacity="0.48" stroke="hsl(83 58% 52%)" stroke-width="1.4"/>
+  <rect x="323.255" y="531.445" width="2.549" height="2.817" rx="3" fill="hsl(83 58% 52%)" fill-opacity="0.48" stroke="hsl(83 58% 52%)" stroke-width="1.4"/>
+  <rect x="560.901" y="594.491" width="41.588" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="470.287" y="595.249" width="131.392" height="1" rx="3" fill="hsl(141 58% 52%)" fill-opacity="0.48" stroke="hsl(141 58% 52%)" stroke-width="1.4"/>
+  <rect x="483.878" y="594.524" width="117.799" height="1" rx="3" fill="hsl(354 58% 52%)" fill-opacity="0.48" stroke="hsl(354 58% 52%)" stroke-width="1.4"/>
+  <rect x="560.901" y="594.491" width="41.588" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="196.174" y="531.445" width="2.549" height="2.817" rx="3" fill="hsl(83 58% 52%)" fill-opacity="0.48" stroke="hsl(83 58% 52%)" stroke-width="1.4"/>
+  <rect x="323.255" y="531.445" width="2.549" height="2.817" rx="3" fill="hsl(83 58% 52%)" fill-opacity="0.48" stroke="hsl(83 58% 52%)" stroke-width="1.4"/>
+  <rect x="240.578" y="591.17" width="2.415" height="3.488" rx="3" fill="hsl(354 58% 52%)" fill-opacity="0.48" stroke="hsl(354 58% 52%)" stroke-width="1.4"/>
+  <rect x="369.869" y="591.17" width="2.415" height="3.488" rx="3" fill="hsl(354 58% 52%)" fill-opacity="0.48" stroke="hsl(354 58% 52%)" stroke-width="1.4"/>
+  <rect x="243.328" y="576.011" width="10.732" height="19.452" rx="3" fill="hsl(67 58% 52%)" fill-opacity="0.48" stroke="hsl(67 58% 52%)" stroke-width="1.4"/>
+  <rect x="372.619" y="576.011" width="10.732" height="19.452" rx="3" fill="hsl(67 58% 52%)" fill-opacity="0.48" stroke="hsl(67 58% 52%)" stroke-width="1.4"/>
+  <rect x="69.328" y="588.139" width="1.664" height="7.325" rx="3" fill="hsl(227 58% 52%)" fill-opacity="0.48" stroke="hsl(227 58% 52%)" stroke-width="1.4"/>
+  <rect x="66.001" y="578.023" width="8.318" height="10.115" rx="3" fill="hsl(199 58% 52%)" fill-opacity="0.48" stroke="hsl(199 58% 52%)" stroke-width="1.4"/>
+  <rect x="887.667" y="588.139" width="1.664" height="7.325" rx="3" fill="hsl(227 58% 52%)" fill-opacity="0.48" stroke="hsl(227 58% 52%)" stroke-width="1.4"/>
+  <rect x="884.34" y="578.023" width="8.318" height="10.115" rx="3" fill="hsl(199 58% 52%)" fill-opacity="0.48" stroke="hsl(199 58% 52%)" stroke-width="1.4"/>
+  <rect x="196.174" y="531.445" width="2.549" height="2.817" rx="3" fill="hsl(83 58% 52%)" fill-opacity="0.48" stroke="hsl(83 58% 52%)" stroke-width="1.4"/>
+  <rect x="323.255" y="531.445" width="2.549" height="2.817" rx="3" fill="hsl(83 58% 52%)" fill-opacity="0.48" stroke="hsl(83 58% 52%)" stroke-width="1.4"/>
+  <rect x="421.394" y="589.426" width="1.476" height="6.037" rx="3" fill="hsl(227 58% 52%)" fill-opacity="0.48" stroke="hsl(227 58% 52%)" stroke-width="1.4"/>
+  <rect x="419.985" y="582.719" width="4.293" height="6.708" rx="3" fill="hsl(199 58% 52%)" fill-opacity="0.48" stroke="hsl(199 58% 52%)" stroke-width="1.4"/>
+  <rect x="662.687" y="589.426" width="1.476" height="6.037" rx="3" fill="hsl(227 58% 52%)" fill-opacity="0.48" stroke="hsl(227 58% 52%)" stroke-width="1.4"/>
+  <rect x="661.279" y="582.719" width="4.293" height="6.708" rx="3" fill="hsl(199 58% 52%)" fill-opacity="0.48" stroke="hsl(199 58% 52%)" stroke-width="1.4"/>
+  <rect x="437.559" y="484.257" width="103.072" height="17.091" rx="3" fill="hsl(302 58% 52%)" fill-opacity="0.48" stroke="hsl(302 58% 52%)" stroke-width="1.4"/><text x="441.559" y="496.257" font-size="10" fill="#1b1b1b">Blue_Hall_Roof_Panel_Seam_1...</text>
+  <rect x="544.924" y="484.257" width="103.073" height="17.091" rx="3" fill="hsl(302 58% 52%)" fill-opacity="0.48" stroke="hsl(302 58% 52%)" stroke-width="1.4"/><text x="548.924" y="496.257" font-size="10" fill="#1b1b1b">Blue_Hall_Roof_Panel_Seam_1...</text>
+  <rect x="716.394" y="543.68" width="142.055" height="51.783" rx="3" fill="hsl(42 58% 52%)" fill-opacity="0.48" stroke="hsl(42 58% 52%)" stroke-width="1.4"/><text x="720.394" y="555.68" font-size="10" fill="#1b1b1b">Utility_Building_Massing</text>
+  <rect x="795.944" y="539.588" width="15.428" height="4.36" rx="3" fill="hsl(57 58% 52%)" fill-opacity="0.48" stroke="hsl(57 58% 52%)" stroke-width="1.4"/>
+  <rect x="747.646" y="539.588" width="12.745" height="4.36" rx="3" fill="hsl(57 58% 52%)" fill-opacity="0.48" stroke="hsl(57 58% 52%)" stroke-width="1.4"/>
+  <rect x="382.556" y="595.45" width="333.189" height="1" rx="3" fill="hsl(198 58% 52%)" fill-opacity="0.48" stroke="hsl(198 58% 52%)" stroke-width="1.4"/>
+  <rect x="244.334" y="579.365" width="8.72" height="16.098" rx="3" fill="hsl(67 58% 52%)" fill-opacity="0.48" stroke="hsl(67 58% 52%)" stroke-width="1.4"/>
+  <rect x="373.625" y="579.365" width="8.72" height="16.098" rx="3" fill="hsl(67 58% 52%)" fill-opacity="0.48" stroke="hsl(67 58% 52%)" stroke-width="1.4"/>
+  <rect x="437.559" y="484.257" width="103.072" height="17.091" rx="3" fill="hsl(302 58% 52%)" fill-opacity="0.48" stroke="hsl(302 58% 52%)" stroke-width="1.4"/><text x="441.559" y="496.257" font-size="10" fill="#1b1b1b">Blue_Hall_Roof_Panel_Seam_2...</text>
+  <rect x="544.924" y="484.257" width="103.073" height="17.091" rx="3" fill="hsl(302 58% 52%)" fill-opacity="0.48" stroke="hsl(302 58% 52%)" stroke-width="1.4"/><text x="548.924" y="496.257" font-size="10" fill="#1b1b1b">Blue_Hall_Roof_Panel_Seam_2...</text>
+  <rect x="52.72" y="595.356" width="854.56" height="1" rx="3" fill="hsl(4 58% 52%)" fill-opacity="0.48" stroke="hsl(4 58% 52%)" stroke-width="1.4"/>
+  <rect x="44" y="595.463" width="872" height="1" rx="3" fill="hsl(62 58% 52%)" fill-opacity="0.48" stroke="hsl(62 58% 52%)" stroke-width="1.4"/>
+  <rect x="44" y="589.426" width="1.476" height="6.037" rx="3" fill="hsl(16 58% 52%)" fill-opacity="0.48" stroke="hsl(16 58% 52%)" stroke-width="1.4"/>
+  <rect x="914.524" y="589.426" width="1.476" height="6.037" rx="3" fill="hsl(16 58% 52%)" fill-opacity="0.48" stroke="hsl(16 58% 52%)" stroke-width="1.4"/>
+  <rect x="421.394" y="589.426" width="1.476" height="6.037" rx="3" fill="hsl(227 58% 52%)" fill-opacity="0.48" stroke="hsl(227 58% 52%)" stroke-width="1.4"/>
+  <rect x="419.985" y="582.719" width="4.293" height="6.708" rx="3" fill="hsl(199 58% 52%)" fill-opacity="0.48" stroke="hsl(199 58% 52%)" stroke-width="1.4"/>
+  <rect x="662.687" y="589.426" width="1.476" height="6.037" rx="3" fill="hsl(227 58% 52%)" fill-opacity="0.48" stroke="hsl(227 58% 52%)" stroke-width="1.4"/>
+  <rect x="661.279" y="582.719" width="4.293" height="6.708" rx="3" fill="hsl(199 58% 52%)" fill-opacity="0.48" stroke="hsl(199 58% 52%)" stroke-width="1.4"/>
+  <rect x="69.328" y="588.139" width="1.664" height="7.325" rx="3" fill="hsl(227 58% 52%)" fill-opacity="0.48" stroke="hsl(227 58% 52%)" stroke-width="1.4"/>
+  <rect x="66.001" y="578.023" width="8.318" height="10.115" rx="3" fill="hsl(199 58% 52%)" fill-opacity="0.48" stroke="hsl(199 58% 52%)" stroke-width="1.4"/>
+  <rect x="887.667" y="588.139" width="1.664" height="7.325" rx="3" fill="hsl(227 58% 52%)" fill-opacity="0.48" stroke="hsl(227 58% 52%)" stroke-width="1.4"/>
+  <rect x="884.34" y="578.023" width="8.318" height="10.115" rx="3" fill="hsl(199 58% 52%)" fill-opacity="0.48" stroke="hsl(199 58% 52%)" stroke-width="1.4"/>
+  <rect x="437.559" y="484.257" width="103.072" height="17.091" rx="3" fill="hsl(302 58% 52%)" fill-opacity="0.48" stroke="hsl(302 58% 52%)" stroke-width="1.4"/><text x="441.559" y="496.257" font-size="10" fill="#1b1b1b">Blue_Hall_Roof_Panel_Seam_3...</text>
+  <rect x="544.924" y="484.257" width="103.073" height="17.091" rx="3" fill="hsl(302 58% 52%)" fill-opacity="0.48" stroke="hsl(302 58% 52%)" stroke-width="1.4"/><text x="548.924" y="496.257" font-size="10" fill="#1b1b1b">Blue_Hall_Roof_Panel_Seam_3...</text>
+  <rect x="421.394" y="589.426" width="1.476" height="6.037" rx="3" fill="hsl(227 58% 52%)" fill-opacity="0.48" stroke="hsl(227 58% 52%)" stroke-width="1.4"/>
+  <rect x="419.985" y="582.719" width="4.293" height="6.708" rx="3" fill="hsl(199 58% 52%)" fill-opacity="0.48" stroke="hsl(199 58% 52%)" stroke-width="1.4"/>
+  <rect x="662.687" y="589.426" width="1.476" height="6.037" rx="3" fill="hsl(227 58% 52%)" fill-opacity="0.48" stroke="hsl(227 58% 52%)" stroke-width="1.4"/>
+  <rect x="661.279" y="582.719" width="4.293" height="6.708" rx="3" fill="hsl(199 58% 52%)" fill-opacity="0.48" stroke="hsl(199 58% 52%)" stroke-width="1.4"/>
+  <rect x="437.559" y="484.257" width="103.072" height="17.091" rx="3" fill="hsl(302 58% 52%)" fill-opacity="0.48" stroke="hsl(302 58% 52%)" stroke-width="1.4"/><text x="441.559" y="496.257" font-size="10" fill="#1b1b1b">Blue_Hall_Roof_Panel_Seam_4...</text>
+  <rect x="544.924" y="484.257" width="103.073" height="17.091" rx="3" fill="hsl(302 58% 52%)" fill-opacity="0.48" stroke="hsl(302 58% 52%)" stroke-width="1.4"/><text x="548.924" y="496.257" font-size="10" fill="#1b1b1b">Blue_Hall_Roof_Panel_Seam_4...</text>
+  <rect x="531.451" y="480.44" width="22.654" height="3.488" rx="3" fill="hsl(229 58% 52%)" fill-opacity="0.48" stroke="hsl(229 58% 52%)" stroke-width="1.4"/>
+  <rect x="69.328" y="588.139" width="1.664" height="7.325" rx="3" fill="hsl(227 58% 52%)" fill-opacity="0.48" stroke="hsl(227 58% 52%)" stroke-width="1.4"/>
+  <rect x="66.001" y="578.023" width="8.318" height="10.115" rx="3" fill="hsl(199 58% 52%)" fill-opacity="0.48" stroke="hsl(199 58% 52%)" stroke-width="1.4"/>
+  <rect x="887.667" y="588.139" width="1.664" height="7.325" rx="3" fill="hsl(227 58% 52%)" fill-opacity="0.48" stroke="hsl(227 58% 52%)" stroke-width="1.4"/>
+  <rect x="884.34" y="578.023" width="8.318" height="10.115" rx="3" fill="hsl(199 58% 52%)" fill-opacity="0.48" stroke="hsl(199 58% 52%)" stroke-width="1.4"/>
+  <rect x="429.51" y="501.153" width="226.537" height="94.31" rx="3" fill="hsl(119 58% 52%)" fill-opacity="0.48" stroke="hsl(119 58% 52%)" stroke-width="1.4"/><text x="433.51" y="513.153" font-size="10" fill="#1b1b1b">Primary_Blue_Roof_Hall_Body</text>
+  <rect x="424.814" y="484.116" width="235.928" height="18.782" rx="3" fill="hsl(119 58% 52%)" fill-opacity="0.48" stroke="hsl(119 58% 52%)" stroke-width="1.4"/><text x="428.814" y="496.116" font-size="10" fill="#1b1b1b">Primary_Blue_Hall_Gable_Roof</text>
+  <rect x="437.559" y="484.257" width="103.072" height="17.091" rx="3" fill="hsl(302 58% 52%)" fill-opacity="0.48" stroke="hsl(302 58% 52%)" stroke-width="1.4"/><text x="441.559" y="496.257" font-size="10" fill="#1b1b1b">Blue_Hall_Roof_Panel_Seam_5...</text>
+  <rect x="544.924" y="484.257" width="103.073" height="17.091" rx="3" fill="hsl(302 58% 52%)" fill-opacity="0.48" stroke="hsl(302 58% 52%)" stroke-width="1.4"/><text x="548.924" y="496.257" font-size="10" fill="#1b1b1b">Blue_Hall_Roof_Panel_Seam_5...</text>
+  <rect x="421.394" y="589.426" width="1.476" height="6.037" rx="3" fill="hsl(227 58% 52%)" fill-opacity="0.48" stroke="hsl(227 58% 52%)" stroke-width="1.4"/>
+  <rect x="419.985" y="582.719" width="4.293" height="6.708" rx="3" fill="hsl(199 58% 52%)" fill-opacity="0.48" stroke="hsl(199 58% 52%)" stroke-width="1.4"/>
+  <rect x="662.687" y="589.426" width="1.476" height="6.037" rx="3" fill="hsl(227 58% 52%)" fill-opacity="0.48" stroke="hsl(227 58% 52%)" stroke-width="1.4"/>
+  <rect x="661.279" y="582.719" width="4.293" height="6.708" rx="3" fill="hsl(199 58% 52%)" fill-opacity="0.48" stroke="hsl(199 58% 52%)" stroke-width="1.4"/>
+  <rect x="196.174" y="531.445" width="2.549" height="2.817" rx="3" fill="hsl(83 58% 52%)" fill-opacity="0.48" stroke="hsl(83 58% 52%)" stroke-width="1.4"/>
+  <rect x="323.255" y="531.445" width="2.549" height="2.817" rx="3" fill="hsl(83 58% 52%)" fill-opacity="0.48" stroke="hsl(83 58% 52%)" stroke-width="1.4"/>
+  <rect x="240.578" y="591.17" width="2.415" height="3.488" rx="3" fill="hsl(354 58% 52%)" fill-opacity="0.48" stroke="hsl(354 58% 52%)" stroke-width="1.4"/>
+  <rect x="369.869" y="591.17" width="2.415" height="3.488" rx="3" fill="hsl(354 58% 52%)" fill-opacity="0.48" stroke="hsl(354 58% 52%)" stroke-width="1.4"/>
+  <rect x="437.559" y="484.257" width="103.072" height="17.091" rx="3" fill="hsl(302 58% 52%)" fill-opacity="0.48" stroke="hsl(302 58% 52%)" stroke-width="1.4"/><text x="441.559" y="496.257" font-size="10" fill="#1b1b1b">Blue_Hall_Roof_Panel_Seam_6...</text>
+  <rect x="544.924" y="484.257" width="103.073" height="17.091" rx="3" fill="hsl(302 58% 52%)" fill-opacity="0.48" stroke="hsl(302 58% 52%)" stroke-width="1.4"/><text x="548.924" y="496.257" font-size="10" fill="#1b1b1b">Blue_Hall_Roof_Panel_Seam_6...</text>
+  <rect x="196.174" y="531.445" width="2.549" height="2.817" rx="3" fill="hsl(83 58% 52%)" fill-opacity="0.48" stroke="hsl(83 58% 52%)" stroke-width="1.4"/>
+  <rect x="323.255" y="531.445" width="2.549" height="2.817" rx="3" fill="hsl(83 58% 52%)" fill-opacity="0.48" stroke="hsl(83 58% 52%)" stroke-width="1.4"/>
+  <rect x="243.328" y="576.011" width="10.732" height="19.452" rx="3" fill="hsl(67 58% 52%)" fill-opacity="0.48" stroke="hsl(67 58% 52%)" stroke-width="1.4"/>
+  <rect x="372.619" y="576.011" width="10.732" height="19.452" rx="3" fill="hsl(67 58% 52%)" fill-opacity="0.48" stroke="hsl(67 58% 52%)" stroke-width="1.4"/>
+  <rect x="421.394" y="589.426" width="1.476" height="6.037" rx="3" fill="hsl(227 58% 52%)" fill-opacity="0.48" stroke="hsl(227 58% 52%)" stroke-width="1.4"/>
+  <rect x="419.985" y="582.719" width="4.293" height="6.708" rx="3" fill="hsl(199 58% 52%)" fill-opacity="0.48" stroke="hsl(199 58% 52%)" stroke-width="1.4"/>
+  <rect x="662.687" y="589.426" width="1.476" height="6.037" rx="3" fill="hsl(227 58% 52%)" fill-opacity="0.48" stroke="hsl(227 58% 52%)" stroke-width="1.4"/>
+  <rect x="661.279" y="582.719" width="4.293" height="6.708" rx="3" fill="hsl(199 58% 52%)" fill-opacity="0.48" stroke="hsl(199 58% 52%)" stroke-width="1.4"/>
+  <rect x="69.328" y="588.139" width="1.664" height="7.325" rx="3" fill="hsl(227 58% 52%)" fill-opacity="0.48" stroke="hsl(227 58% 52%)" stroke-width="1.4"/>
+  <rect x="66.001" y="578.023" width="8.318" height="10.115" rx="3" fill="hsl(199 58% 52%)" fill-opacity="0.48" stroke="hsl(199 58% 52%)" stroke-width="1.4"/>
+  <rect x="887.667" y="588.139" width="1.664" height="7.325" rx="3" fill="hsl(227 58% 52%)" fill-opacity="0.48" stroke="hsl(227 58% 52%)" stroke-width="1.4"/>
+  <rect x="884.34" y="578.023" width="8.318" height="10.115" rx="3" fill="hsl(199 58% 52%)" fill-opacity="0.48" stroke="hsl(199 58% 52%)" stroke-width="1.4"/>
+  <rect x="437.559" y="484.257" width="103.072" height="17.091" rx="3" fill="hsl(302 58% 52%)" fill-opacity="0.48" stroke="hsl(302 58% 52%)" stroke-width="1.4"/><text x="441.559" y="496.257" font-size="10" fill="#1b1b1b">Blue_Hall_Roof_Panel_Seam_7...</text>
+  <rect x="544.924" y="484.257" width="103.073" height="17.091" rx="3" fill="hsl(302 58% 52%)" fill-opacity="0.48" stroke="hsl(302 58% 52%)" stroke-width="1.4"/><text x="548.924" y="496.257" font-size="10" fill="#1b1b1b">Blue_Hall_Roof_Panel_Seam_7...</text>
+  <rect x="244.334" y="579.365" width="8.72" height="16.098" rx="3" fill="hsl(67 58% 52%)" fill-opacity="0.48" stroke="hsl(67 58% 52%)" stroke-width="1.4"/>
+  <rect x="373.625" y="579.365" width="8.72" height="16.098" rx="3" fill="hsl(67 58% 52%)" fill-opacity="0.48" stroke="hsl(67 58% 52%)" stroke-width="1.4"/>
+  <rect x="153.246" y="539.722" width="88.405" height="55.741" rx="3" fill="hsl(234 58% 52%)" fill-opacity="0.48" stroke="hsl(234 58% 52%)" stroke-width="1.4"/><text x="157.246" y="551.722" font-size="10" fill="#1b1b1b">Warehouse_West_North_Body</text>
+  <rect x="150.429" y="534.423" width="94.039" height="6.037" rx="3" fill="hsl(234 58% 52%)" fill-opacity="0.48" stroke="hsl(234 58% 52%)" stroke-width="1.4"/>
+  <rect x="278.117" y="539.722" width="92.825" height="55.741" rx="3" fill="hsl(234 58% 52%)" fill-opacity="0.48" stroke="hsl(234 58% 52%)" stroke-width="1.4"/><text x="282.117" y="551.722" font-size="10" fill="#1b1b1b">Warehouse_Inner_North_Body</text>
+  <rect x="275.3" y="534.423" width="98.46" height="6.037" rx="3" fill="hsl(234 58% 52%)" fill-opacity="0.48" stroke="hsl(234 58% 52%)" stroke-width="1.4"/>
+  <rect x="196.174" y="531.445" width="2.549" height="2.817" rx="3" fill="hsl(83 58% 52%)" fill-opacity="0.48" stroke="hsl(83 58% 52%)" stroke-width="1.4"/>
+  <rect x="323.255" y="531.445" width="2.549" height="2.817" rx="3" fill="hsl(83 58% 52%)" fill-opacity="0.48" stroke="hsl(83 58% 52%)" stroke-width="1.4"/>
+  <rect x="788.641" y="591.305" width="16.123" height="1.744" rx="3" fill="hsl(40 58% 52%)" fill-opacity="0.48" stroke="hsl(40 58% 52%)" stroke-width="1.4"/>
+  <rect x="836.371" y="591.305" width="16.123" height="1.744" rx="3" fill="hsl(40 58% 52%)" fill-opacity="0.48" stroke="hsl(40 58% 52%)" stroke-width="1.4"/>
+  <rect x="196.174" y="531.445" width="2.549" height="2.817" rx="3" fill="hsl(83 58% 52%)" fill-opacity="0.48" stroke="hsl(83 58% 52%)" stroke-width="1.4"/>
+  <rect x="323.255" y="531.445" width="2.549" height="2.817" rx="3" fill="hsl(83 58% 52%)" fill-opacity="0.48" stroke="hsl(83 58% 52%)" stroke-width="1.4"/>
+  <rect x="421.394" y="589.426" width="1.476" height="6.037" rx="3" fill="hsl(227 58% 52%)" fill-opacity="0.48" stroke="hsl(227 58% 52%)" stroke-width="1.4"/>
+  <rect x="419.985" y="582.719" width="4.293" height="6.708" rx="3" fill="hsl(199 58% 52%)" fill-opacity="0.48" stroke="hsl(199 58% 52%)" stroke-width="1.4"/>
+  <rect x="662.687" y="589.426" width="1.476" height="6.037" rx="3" fill="hsl(227 58% 52%)" fill-opacity="0.48" stroke="hsl(227 58% 52%)" stroke-width="1.4"/>
+  <rect x="661.279" y="582.719" width="4.293" height="6.708" rx="3" fill="hsl(199 58% 52%)" fill-opacity="0.48" stroke="hsl(199 58% 52%)" stroke-width="1.4"/>
+  <rect x="437.559" y="484.257" width="103.072" height="17.091" rx="3" fill="hsl(302 58% 52%)" fill-opacity="0.48" stroke="hsl(302 58% 52%)" stroke-width="1.4"/><text x="441.559" y="496.257" font-size="10" fill="#1b1b1b">Blue_Hall_Roof_Panel_Seam_8...</text>
+  <rect x="544.924" y="484.257" width="103.073" height="17.091" rx="3" fill="hsl(302 58% 52%)" fill-opacity="0.48" stroke="hsl(302 58% 52%)" stroke-width="1.4"/><text x="548.924" y="496.257" font-size="10" fill="#1b1b1b">Blue_Hall_Roof_Panel_Seam_8...</text>
+  <rect x="796.702" y="585.938" width="47.73" height="1.744" rx="3" fill="hsl(40 58% 52%)" fill-opacity="0.48" stroke="hsl(40 58% 52%)" stroke-width="1.4"/>
+  <rect x="775.489" y="501.556" width="42.427" height="93.908" rx="3" fill="hsl(314 58% 52%)" fill-opacity="0.48" stroke="hsl(314 58% 52%)" stroke-width="1.4"/><text x="779.489" y="513.556" font-size="10" fill="#1b1b1b">Tank_Farm_West_Silo</text>
+  <rect x="823.219" y="501.556" width="42.427" height="93.908" rx="3" fill="hsl(314 58% 52%)" fill-opacity="0.48" stroke="hsl(314 58% 52%)" stroke-width="1.4"/><text x="827.219" y="513.556" font-size="10" fill="#1b1b1b">Tank_Farm_East_Silo</text>
+  <rect x="758.049" y="595.329" width="125.037" height="1" rx="3" fill="hsl(335 58% 52%)" fill-opacity="0.48" stroke="hsl(335 58% 52%)" stroke-width="1.4"/>
+  <rect x="777.186" y="499.409" width="39.033" height="1.61" rx="3" fill="hsl(62 58% 52%)" fill-opacity="0.48" stroke="hsl(62 58% 52%)" stroke-width="1.4"/>
+  <rect x="793.885" y="496.525" width="5.634" height="2.817" rx="3" fill="hsl(83 58% 52%)" fill-opacity="0.48" stroke="hsl(83 58% 52%)" stroke-width="1.4"/>
+  <rect x="773.792" y="593.585" width="45.822" height="1.878" rx="3" fill="hsl(354 58% 52%)" fill-opacity="0.48" stroke="hsl(354 58% 52%)" stroke-width="1.4"/>
+  <rect x="824.916" y="499.409" width="39.033" height="1.61" rx="3" fill="hsl(62 58% 52%)" fill-opacity="0.48" stroke="hsl(62 58% 52%)" stroke-width="1.4"/>
+  <rect x="841.615" y="496.525" width="5.634" height="2.817" rx="3" fill="hsl(83 58% 52%)" fill-opacity="0.48" stroke="hsl(83 58% 52%)" stroke-width="1.4"/>
+  <rect x="821.521" y="593.585" width="45.822" height="1.878" rx="3" fill="hsl(354 58% 52%)" fill-opacity="0.48" stroke="hsl(354 58% 52%)" stroke-width="1.4"/>
+  <rect x="457.395" y="594.672" width="1" height="1" rx="3" fill="hsl(200 58% 52%)" fill-opacity="0.48" stroke="hsl(200 58% 52%)" stroke-width="1.4"/>
+  <rect x="240.578" y="591.17" width="2.415" height="3.488" rx="3" fill="hsl(354 58% 52%)" fill-opacity="0.48" stroke="hsl(354 58% 52%)" stroke-width="1.4"/>
+  <rect x="369.869" y="591.17" width="2.415" height="3.488" rx="3" fill="hsl(354 58% 52%)" fill-opacity="0.48" stroke="hsl(354 58% 52%)" stroke-width="1.4"/>
+  <rect x="69.328" y="588.139" width="1.664" height="7.325" rx="3" fill="hsl(227 58% 52%)" fill-opacity="0.48" stroke="hsl(227 58% 52%)" stroke-width="1.4"/>
+  <rect x="66.001" y="578.023" width="8.318" height="10.115" rx="3" fill="hsl(199 58% 52%)" fill-opacity="0.48" stroke="hsl(199 58% 52%)" stroke-width="1.4"/>
+  <rect x="887.667" y="588.139" width="1.664" height="7.325" rx="3" fill="hsl(227 58% 52%)" fill-opacity="0.48" stroke="hsl(227 58% 52%)" stroke-width="1.4"/>
+  <rect x="884.34" y="578.023" width="8.318" height="10.115" rx="3" fill="hsl(199 58% 52%)" fill-opacity="0.48" stroke="hsl(199 58% 52%)" stroke-width="1.4"/>
+  <rect x="243.328" y="576.011" width="10.732" height="19.452" rx="3" fill="hsl(67 58% 52%)" fill-opacity="0.48" stroke="hsl(67 58% 52%)" stroke-width="1.4"/>
+  <rect x="372.619" y="576.011" width="10.732" height="19.452" rx="3" fill="hsl(67 58% 52%)" fill-opacity="0.48" stroke="hsl(67 58% 52%)" stroke-width="1.4"/>
+  <rect x="196.174" y="531.445" width="2.549" height="2.817" rx="3" fill="hsl(83 58% 52%)" fill-opacity="0.48" stroke="hsl(83 58% 52%)" stroke-width="1.4"/>
+  <rect x="323.255" y="531.445" width="2.549" height="2.817" rx="3" fill="hsl(83 58% 52%)" fill-opacity="0.48" stroke="hsl(83 58% 52%)" stroke-width="1.4"/>
+  <rect x="244.334" y="579.365" width="8.72" height="16.098" rx="3" fill="hsl(67 58% 52%)" fill-opacity="0.48" stroke="hsl(67 58% 52%)" stroke-width="1.4"/>
+  <rect x="373.625" y="579.365" width="8.72" height="16.098" rx="3" fill="hsl(67 58% 52%)" fill-opacity="0.48" stroke="hsl(67 58% 52%)" stroke-width="1.4"/>
+  <rect x="103.618" y="588.984" width="1.503" height="6.48" rx="3" fill="hsl(227 58% 52%)" fill-opacity="0.48" stroke="hsl(227 58% 52%)" stroke-width="1.4"/>
+  <rect x="100.613" y="580.036" width="7.513" height="8.948" rx="3" fill="hsl(199 58% 52%)" fill-opacity="0.48" stroke="hsl(199 58% 52%)" stroke-width="1.4"/>
+  <rect x="180.756" y="588.984" width="1.503" height="6.48" rx="3" fill="hsl(227 58% 52%)" fill-opacity="0.48" stroke="hsl(227 58% 52%)" stroke-width="1.4"/>
+  <rect x="177.751" y="580.036" width="7.513" height="8.948" rx="3" fill="hsl(199 58% 52%)" fill-opacity="0.48" stroke="hsl(199 58% 52%)" stroke-width="1.4"/>
+  <rect x="257.895" y="588.984" width="1.503" height="6.48" rx="3" fill="hsl(227 58% 52%)" fill-opacity="0.48" stroke="hsl(227 58% 52%)" stroke-width="1.4"/>
+  <rect x="254.89" y="580.036" width="7.513" height="8.948" rx="3" fill="hsl(199 58% 52%)" fill-opacity="0.48" stroke="hsl(199 58% 52%)" stroke-width="1.4"/>
+  <rect x="335.033" y="588.984" width="1.503" height="6.48" rx="3" fill="hsl(227 58% 52%)" fill-opacity="0.48" stroke="hsl(227 58% 52%)" stroke-width="1.4"/>
+  <rect x="332.028" y="580.036" width="7.513" height="8.948" rx="3" fill="hsl(199 58% 52%)" fill-opacity="0.48" stroke="hsl(199 58% 52%)" stroke-width="1.4"/>
+  <rect x="412.172" y="588.984" width="1.503" height="6.48" rx="3" fill="hsl(227 58% 52%)" fill-opacity="0.48" stroke="hsl(227 58% 52%)" stroke-width="1.4"/>
+  <rect x="409.167" y="580.036" width="7.513" height="8.948" rx="3" fill="hsl(199 58% 52%)" fill-opacity="0.48" stroke="hsl(199 58% 52%)" stroke-width="1.4"/>
+  <rect x="489.31" y="588.984" width="1.503" height="6.48" rx="3" fill="hsl(227 58% 52%)" fill-opacity="0.48" stroke="hsl(227 58% 52%)" stroke-width="1.4"/>
+  <rect x="486.305" y="580.036" width="7.513" height="8.948" rx="3" fill="hsl(199 58% 52%)" fill-opacity="0.48" stroke="hsl(199 58% 52%)" stroke-width="1.4"/>
+  <rect x="566.449" y="588.984" width="1.503" height="6.48" rx="3" fill="hsl(227 58% 52%)" fill-opacity="0.48" stroke="hsl(227 58% 52%)" stroke-width="1.4"/>
+  <rect x="563.444" y="580.036" width="7.513" height="8.948" rx="3" fill="hsl(199 58% 52%)" fill-opacity="0.48" stroke="hsl(199 58% 52%)" stroke-width="1.4"/>
+  <rect x="643.587" y="588.984" width="1.503" height="6.48" rx="3" fill="hsl(227 58% 52%)" fill-opacity="0.48" stroke="hsl(227 58% 52%)" stroke-width="1.4"/>
+  <rect x="640.582" y="580.036" width="7.513" height="8.948" rx="3" fill="hsl(199 58% 52%)" fill-opacity="0.48" stroke="hsl(199 58% 52%)" stroke-width="1.4"/>
+  <rect x="720.726" y="588.984" width="1.503" height="6.48" rx="3" fill="hsl(227 58% 52%)" fill-opacity="0.48" stroke="hsl(227 58% 52%)" stroke-width="1.4"/>
+  <rect x="717.721" y="580.036" width="7.513" height="8.948" rx="3" fill="hsl(199 58% 52%)" fill-opacity="0.48" stroke="hsl(199 58% 52%)" stroke-width="1.4"/>
+  <rect x="797.864" y="588.984" width="1.503" height="6.48" rx="3" fill="hsl(227 58% 52%)" fill-opacity="0.48" stroke="hsl(227 58% 52%)" stroke-width="1.4"/>
+  <rect x="794.859" y="580.036" width="7.513" height="8.948" rx="3" fill="hsl(199 58% 52%)" fill-opacity="0.48" stroke="hsl(199 58% 52%)" stroke-width="1.4"/>
+  <rect x="44" y="589.426" width="872" height="6.037" rx="3" fill="hsl(16 58% 52%)" fill-opacity="0.48" stroke="hsl(16 58% 52%)" stroke-width="1.4"/></g>
+</svg>

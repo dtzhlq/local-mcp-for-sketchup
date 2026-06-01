@@ -5,13 +5,17 @@
   "timeout_ms": null,
   "ok": true,
   "review_required": false,
+  "grounding_review_required": false,
   "compiled_matches_output": true,
   "source_paths": {
     "profile": "examples/product-profiles/building_group_industrial_campus.json",
     "partGraph": "projects/image-structured-modeler/examples/building-group/part-graph.r7-final.json",
     "code": "projects/image-structured-modeler/examples/building-group/output.r7-final.json",
     "layoutSpec": "examples/model-qa/building-group-massing.json",
-    "referenceSpec": "examples/reference-visual-qa/building-group-r7-final.json"
+    "referenceSpec": "examples/reference-visual-qa/building-group-r7-final.json",
+    "observations": null,
+    "visualRelationsFixture": null,
+    "geometryFitFixture": null
   },
   "part_graph": {
     "id": "building-group-image-evidence-massing-part-graph",
@@ -45,7 +49,7 @@
     "issues": 0,
     "errors": 0,
     "warnings": 0,
-    "checked_relations": 9
+    "checked_relations": 94
   },
   "artifact": null
 }

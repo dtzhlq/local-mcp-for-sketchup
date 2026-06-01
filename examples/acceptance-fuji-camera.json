@@ -144,7 +144,22 @@
       ],
       "depth": 2.8,
       "radius": 28,
-      "segments": 16
+      "segments": 16,
+      "qa": {
+        "role": "front_lens_mount_recess",
+        "part_id": "fuji-body-black-lower",
+        "feature_id": "fuji-front-lens-mount-recess",
+        "intent": "front_lens_mount_recess",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "real_feature_op",
+        "grounding_status": "profile_prior",
+        "grounding_method": null,
+        "source_observation_ids": [],
+        "projection_residuals": null,
+        "review_required": false,
+        "helper_allowed": false,
+        "photo_grade_eligible": false
+      }
     },
     {
       "op": "cut_recess",
@@ -161,7 +176,22 @@
       ],
       "depth": 2,
       "radius": 4,
-      "segments": 6
+      "segments": 6,
+      "qa": {
+        "role": "rear_screen_recess",
+        "part_id": "fuji-body-black-lower",
+        "feature_id": "fuji-rear-screen-body-recess",
+        "intent": "rear_screen_recess",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "real_feature_op",
+        "grounding_status": "profile_prior",
+        "grounding_method": null,
+        "source_observation_ids": [],
+        "projection_residuals": null,
+        "review_required": false,
+        "helper_allowed": false,
+        "photo_grade_eligible": false
+      }
     },
     {
       "op": "rounded_box",
@@ -232,7 +262,22 @@
       "radius": 12,
       "depth": 1.5,
       "through": false,
-      "segments": 32
+      "segments": 32,
+      "qa": {
+        "role": "left_top_dial_seat",
+        "part_id": "fuji-top-silver-plate",
+        "feature_id": "fuji-left-dial-seat",
+        "intent": "left_top_dial_seat",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "real_feature_op",
+        "grounding_status": "profile_prior",
+        "grounding_method": null,
+        "source_observation_ids": [],
+        "projection_residuals": null,
+        "review_required": false,
+        "helper_allowed": false,
+        "photo_grade_eligible": false
+      }
     },
     {
       "op": "cut_hole",
@@ -246,7 +291,22 @@
       "radius": 12,
       "depth": 1.5,
       "through": false,
-      "segments": 32
+      "segments": 32,
+      "qa": {
+        "role": "right_top_dial_seat",
+        "part_id": "fuji-top-silver-plate",
+        "feature_id": "fuji-right-dial-seat",
+        "intent": "right_top_dial_seat",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "real_feature_op",
+        "grounding_status": "profile_prior",
+        "grounding_method": null,
+        "source_observation_ids": [],
+        "projection_residuals": null,
+        "review_required": false,
+        "helper_allowed": false,
+        "photo_grade_eligible": false
+      }
     },
     {
       "op": "cut_hole",
@@ -260,7 +320,22 @@
       "radius": 6,
       "depth": 1.2,
       "through": false,
-      "segments": 24
+      "segments": 24,
+      "qa": {
+        "role": "shutter_button_seat",
+        "part_id": "fuji-top-silver-plate",
+        "feature_id": "fuji-shutter-button-seat",
+        "intent": "shutter_button_seat",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "real_feature_op",
+        "grounding_status": "profile_prior",
+        "grounding_method": null,
+        "source_observation_ids": [],
+        "projection_residuals": null,
+        "review_required": false,
+        "helper_allowed": false,
+        "photo_grade_eligible": false
+      }
     },
     {
       "op": "cut_slot",
@@ -275,7 +350,22 @@
       "width": 8,
       "depth": 2,
       "through": false,
-      "segments": 8
+      "segments": 8,
+      "qa": {
+        "role": "hotshoe_slot",
+        "part_id": "fuji-top-silver-plate",
+        "feature_id": "fuji-hotshoe-slot",
+        "intent": "hotshoe_slot",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "real_feature_op",
+        "grounding_status": "profile_prior",
+        "grounding_method": null,
+        "source_observation_ids": [],
+        "projection_residuals": null,
+        "review_required": false,
+        "helper_allowed": false,
+        "photo_grade_eligible": false
+      }
     },
     {
       "op": "rounded_box",
@@ -334,7 +424,22 @@
       ],
       "depth": 1.5,
       "radius": 3,
-      "segments": 6
+      "segments": 6,
+      "qa": {
+        "role": "viewfinder_front_window",
+        "part_id": "fuji-viewfinder-hump",
+        "feature_id": "fuji-viewfinder-front-window-recess",
+        "intent": "viewfinder_front_window",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "real_feature_op",
+        "grounding_status": "profile_prior",
+        "grounding_method": null,
+        "source_observation_ids": [],
+        "projection_residuals": null,
+        "review_required": false,
+        "helper_allowed": false,
+        "photo_grade_eligible": false
+      }
     },
     {
       "op": "rounded_box",

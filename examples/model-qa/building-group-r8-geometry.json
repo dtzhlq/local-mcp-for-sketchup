@@ -1,0 +1,88 @@
+{
+  "version": 1,
+  "title": "Building Group R8 Editable Geometry Layout QA",
+  "description": "Layout gate for the no-texture editable geometry boundary probe. It keeps all manually reviewed geometry details inside the site envelope and treats road markings, parking stripes, trees, vehicles, tanks, roof equipment, and gate elements as editable helpers rather than image planes.",
+  "rules": {
+    "allowed_collisions": [
+      { "item": "internal_roads", "with": "/^(primary_blue_roof_hall_body|warehouse_.*_body|utility_building|admin_office|parking_lot|tank_farm|tank_farm_silo_east|tree_.*|vehicle_.*|loading_truck_.*|loading_dock_.*|fence_.*|south_entry_.*|parking_line_.*|.*crosswalk.*|.*walkway.*|.*center_line.*|blue_hall_roof_.*|tank_.*|tank_farm_pipe_bridge)$/" },
+      { "item": "/^Site_Region_/", "with": "/.*/" },
+      { "item": "parking_lot", "with": "/^(parking_line_.*|vehicle_.*|parking_drive_center_line|.*crosswalk.*|tree_.*)$/" },
+      { "item": "site_boundary", "with": "/^(fence_.*|south_entry_.*|tree_.*|parking_line_.*|.*crosswalk.*|.*walkway.*|.*center_line.*)$/" },
+      { "item": "/^.*_gable_roof$/", "with": "/.*/" },
+      { "item": "/^.*_Gable_Roof$/", "with": "/.*/" },
+      { "item": "/^roof_vent_/", "with": "/.*/" },
+      { "item": "/^blue_hall_roof_/", "with": "/.*/" },
+      { "item": "/^tree_/", "with": ["site_boundary", "internal_roads", "parking_lot", "utility_building", "admin_office", "/^tree_/"] },
+      { "item": "/^vehicle_/", "with": ["parking_lot", "internal_roads", "/^vehicle_/"] },
+      { "item": "/^loading_truck_/", "with": ["internal_roads", "/^warehouse_.*_body$/", "/^loading_dock_/", "/^tree_/"] },
+      { "item": "/^loading_dock_/", "with": ["/^warehouse_.*_body$/", "internal_roads", "/^loading_truck_/"] },
+      { "item": "/^fence_/", "with": ["site_boundary", "/^fence_/", "/^south_entry_/"] },
+      { "item": "/^south_entry_/", "with": ["site_boundary", "internal_roads", "/^fence_/", "/^.*crosswalk.*$/"] },
+      { "item": "/^parking_line_/", "with": ["parking_lot", "internal_roads", "/^vehicle_/", "/^parking_line_/", "/^tree_/"] },
+      { "item": "/^.*crosswalk.*$/", "with": ["internal_roads", "parking_lot", "site_boundary", "/^south_entry_/", "/^parking_line_/", "/^.*walkway.*$/"] },
+      { "item": "/^(front_walkway_|admin_entry_walkway)/", "with": ["internal_roads", "site_boundary", "parking_lot", "admin_office", "primary_blue_roof_hall_body", "/^.*crosswalk.*$/", "/^.*center_line.*$/"] },
+      { "item": "/^.*center_line.*$/", "with": ["internal_roads", "site_boundary", "parking_lot", "primary_blue_roof_hall_body", "admin_office", "/^.*crosswalk.*$/", "/^.*walkway.*$/", "/^fence_/"] },
+      { "item": "south_entry_guardhouse", "with": ["/^south_entry_gate_/"] },
+      { "item": "/^(utility_hvac_|admin_roof_unit_)/", "with": "/.*/" },
+      { "item": "/^tank_/", "with": ["tank_farm", "tank_farm_silo_east", "internal_roads", "/^tank_/", "tank_farm_pipe_bridge"] },
+      { "item": "tank_farm_pipe_bridge", "with": ["tank_farm", "tank_farm_silo_east", "/^tank_/"] }
+    ],
+    "inside": [
+      {
+        "match": "^(primary_blue_roof_hall_body|primary_blue_hall_gable_roof|warehouse_.*_(body|gable_roof)|utility_building|admin_office|parking_lot|internal_roads|tank_farm|tank_farm_silo_east|tree_.*|vehicle_.*|loading_truck_.*|loading_dock_.*|roof_vent_.*|fence_.*|utility_hvac_.*|admin_roof_unit_.*|parking_line_.*|.*crosswalk.*|.*walkway.*|.*center_line.*|south_entry_.*|tank_.*|tank_farm_pipe_bridge|blue_hall_roof_.*)$",
+        "parent": "site_boundary",
+        "axes": ["x", "y"],
+        "tolerance_mm": 2200
+      }
+    ],
+    "support": [
+      {
+        "match": "^(primary_blue_roof_hall_body|warehouse_.*_body|utility_building|admin_office|parking_lot|internal_roads|tank_farm|tank_farm_silo_east)$",
+        "parent": "site_boundary",
+        "max_gap_mm": 5,
+        "allow_penetration_mm": 1
+      },
+      {
+        "match": "^(parking_line_.*|.*crosswalk.*|.*walkway.*|.*center_line.*|vehicle_.*)$",
+        "parent": "/^(parking_lot|internal_roads|site_boundary)$/",
+        "max_gap_mm": 260,
+        "allow_penetration_mm": 10
+      }
+    ],
+    "separation": [
+      {
+        "name": "west warehouse north/south gap remains visible",
+        "items": ["warehouse_west_north_body", "warehouse_west_south_body"],
+        "axes": ["x", "y"],
+        "min_gap_mm": 1200
+      },
+      {
+        "name": "inner warehouse north/south gap remains visible",
+        "items": ["warehouse_inner_north_body", "warehouse_inner_south_body"],
+        "axes": ["x", "y"],
+        "min_gap_mm": 1200
+      },
+      {
+        "name": "blue hall stays distinct from utility building",
+        "items": ["primary_blue_roof_hall_body", "utility_building"],
+        "axes": ["x", "y"],
+        "min_gap_mm": 1000
+      },
+      {
+        "name": "parking lot stays distinct from admin office",
+        "items": ["parking_lot", "admin_office"],
+        "axes": ["x", "y"],
+        "min_gap_mm": 1000
+      }
+    ],
+    "views": [
+      "top",
+      {
+        "name": "height",
+        "title": "Height And Editable Detail",
+        "axes": ["x", "z"],
+        "depth_axis": "y"
+      }
+    ]
+  }
+}

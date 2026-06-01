@@ -1,0 +1,128 @@
+{
+  "version": 1,
+  "title": "Building Group R7 Relation Candidate Layout QA",
+  "description": "Layout QA for the aggressive VisualRelationGraph candidate-promotion slice. Warehouse row massing boxes are kept as non-emitted reference containers while four warehouse units, two parking stall rows, one parking drive aisle, and one tree row become real PartGraph parts.",
+  "rules": {
+    "allowed_collisions": [
+      {
+        "item": "internal_roads",
+        "with": [
+          "primary_blue_roof_hall",
+          "warehouse_west_north",
+          "warehouse_west_south",
+          "warehouse_inner_north",
+          "warehouse_inner_south",
+          "utility_building",
+          "admin_office",
+          "parking_lot",
+          "parking_stall_row_north",
+          "parking_stall_row_south",
+          "parking_drive_aisle_center",
+          "tree_row_south",
+          "tank_farm",
+          "tank_farm_silo_east"
+        ]
+      },
+      {
+        "item": "parking_lot",
+        "with": [
+          "parking_stall_row_north",
+          "parking_stall_row_south",
+          "parking_drive_aisle_center",
+          "tree_row_south"
+        ]
+      },
+      {
+        "item": "parking_drive_aisle_center",
+        "with": [
+          "parking_stall_row_north",
+          "parking_stall_row_south"
+        ]
+      },
+      {
+        "item": "utility_building",
+        "with": "scale_anchor_crosswalk_width"
+      },
+      {
+        "item": "scale_anchor_parking_bay_width_span",
+        "with": [
+          "scale_anchor_parking_bay_single",
+          "scale_anchor_parking_drive_aisle_width"
+        ]
+      },
+      {
+        "item": "scale_anchor_parking_bay_single",
+        "with": "scale_anchor_parking_drive_aisle_width"
+      }
+    ],
+    "inside": [
+      {
+        "match": "^(primary_blue_roof_hall|warehouse_west_north|warehouse_west_south|warehouse_inner_north|warehouse_inner_south|utility_building|admin_office|parking_lot|parking_stall_row_north|parking_stall_row_south|parking_drive_aisle_center|internal_roads|tank_farm|tank_farm_silo_east|scale_anchor_.*)$",
+        "parent": "site_boundary",
+        "axes": ["x", "y"],
+        "tolerance_mm": 10
+      },
+      {
+        "match": "^tree_row_south$",
+        "parent": "site_boundary",
+        "axes": ["x", "y"],
+        "tolerance_mm": 5000
+      }
+    ],
+    "support": [
+      {
+        "match": "^(primary_blue_roof_hall|warehouse_west_north|warehouse_west_south|warehouse_inner_north|warehouse_inner_south|utility_building|admin_office|parking_lot|parking_stall_row_north|parking_stall_row_south|parking_drive_aisle_center|tree_row_south|internal_roads|tank_farm|tank_farm_silo_east)$",
+        "parent": "site_boundary",
+        "max_gap_mm": 5,
+        "allow_penetration_mm": 1
+      }
+    ],
+    "separation": [
+      {
+        "name": "blue hall separated from inner warehouse units",
+        "items": ["primary_blue_roof_hall", "warehouse_inner_north"],
+        "axes": ["x", "y"],
+        "min_gap_mm": 1000
+      },
+      {
+        "name": "western warehouse columns stay distinct",
+        "items": ["warehouse_west_north", "warehouse_inner_north"],
+        "axes": ["x", "y"],
+        "min_gap_mm": 900
+      },
+      {
+        "name": "west warehouse units stay split",
+        "items": ["warehouse_west_north", "warehouse_west_south"],
+        "axes": ["x", "y"],
+        "min_gap_mm": 1000
+      },
+      {
+        "name": "inner warehouse units stay split",
+        "items": ["warehouse_inner_north", "warehouse_inner_south"],
+        "axes": ["x", "y"],
+        "min_gap_mm": 1000
+      },
+      {
+        "name": "tank silos stay individually readable",
+        "items": ["tank_farm", "tank_farm_silo_east"],
+        "axes": ["x", "y"],
+        "min_gap_mm": 500
+      },
+      {
+        "name": "parking lot separated from admin office",
+        "items": ["parking_lot", "admin_office"],
+        "axes": ["x", "y"],
+        "min_gap_mm": 1000
+      }
+    ],
+    "views": [
+      "top",
+      {
+        "name": "height",
+        "title": "Height Massing",
+        "axes": ["x", "z"],
+        "depth_axis": "y"
+      }
+    ]
+  }
+}

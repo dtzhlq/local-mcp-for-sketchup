@@ -1,0 +1,126 @@
+{
+  "kind": "proposal_review_qa",
+  "name": "building-group-warehouse-candidate-applied",
+  "runtime": "queue",
+  "timeout_ms": 180000,
+  "ok": true,
+  "review_required": false,
+  "grounding_review_required": false,
+  "compiled_matches_output": true,
+  "source_paths": {
+    "profile": "examples/product-profiles/building_group_industrial_campus.json",
+    "partGraph": "projects/image-structured-modeler/examples/building-group/part-graph.part-candidates-applied.json",
+    "code": "projects/image-structured-modeler/examples/building-group/output.part-candidates-applied.json",
+    "layoutSpec": "examples/model-qa/building-group-candidate-warehouses.json",
+    "referenceSpec": "examples/reference-visual-qa/building-group-candidate-warehouses.json",
+    "observations": "projects/image-structured-modeler/examples/building-group/observations.json",
+    "visualRelationsFixture": "projects/image-structured-modeler/examples/building-group/visual-relations.candidates.fixture.json",
+    "geometryFitFixture": "projects/image-structured-modeler/examples/building-group/visual-relations.candidates.fixture.json"
+  },
+  "part_graph": {
+    "id": "building-group-image-evidence-massing-part-graph",
+    "parts": 22,
+    "evidence_summary": {
+      "inferred": 10,
+      "observed": 4,
+      "manual_confirmed": 8
+    }
+  },
+  "layout": {
+    "ok": true,
+    "verdict": "pass",
+    "level": "ok",
+    "issues": 0,
+    "errors": 0,
+    "warnings": 0
+  },
+  "reference_visual": {
+    "ok": true,
+    "verdict": "pass",
+    "level": "ok",
+    "issues": 0,
+    "errors": 0,
+    "warnings": 0
+  },
+  "visual_relations": {
+    "ok": true,
+    "verdict": "pass",
+    "level": "ok",
+    "issues": 0,
+    "errors": 0,
+    "warnings": 0,
+    "checked_relations": 12,
+    "checked_footprints": 9,
+    "matched_footprints": 9
+  },
+  "geometry_fit": {
+    "ok": true,
+    "verdict": "pass",
+    "level": "ok",
+    "issues": 0,
+    "errors": 0,
+    "warnings": 0,
+    "checked_footprints": 9,
+    "grounding_issues": 0,
+    "checked_relations": 12,
+    "checked_scale_anchors": 4,
+    "checked_handedness_cases": 1,
+    "max_center_error": 0.003,
+    "max_extent_error": 0.002,
+    "max_relation_error": 0.002,
+    "max_scale_error": 0.118,
+    "primary_structures_grounding_coverage": 0.55,
+    "dense_detail_helper_ratio": 0,
+    "dense_detail_review_required": 0,
+    "photo_grade_eligible_ratio": 0,
+    "structural_grounding_issues": 0,
+    "site_region_unclassified_ratio": 0,
+    "site_region_overlap_ratio": 0,
+    "internal_road_area_ratio": 0,
+    "parking_grid_spacing_error_ratio": 0,
+    "floating_roof_features": 0,
+    "tank_ellipse_instances": 0
+  },
+  "grounding_v3": {
+    "ok": true,
+    "verdict": "pass",
+    "level": "ok",
+    "issues": 0,
+    "errors": 0,
+    "warnings": 0,
+    "checked_scale_anchors": 5,
+    "distinct_scale_anchor_families": 3,
+    "checked_ground_regions": 14,
+    "subdivision_overlap_ratio": 0,
+    "subdivision_gap_ratio": 0.562,
+    "checked_line_fits": 2,
+    "checked_road_axes": 2,
+    "parking_grid_count_residual": 0,
+    "top_view_overlay_mean_iou": 0.954,
+    "top_view_overlay_max_chamfer_error": 0,
+    "promoted_geometry": 10,
+    "review_candidate": 1,
+    "helper_only": 3,
+    "photo_grade_candidate": false
+  },
+  "physical_consistency": {
+    "ok": true,
+    "verdict": "pass",
+    "level": "ok",
+    "issues": 0,
+    "errors": 0,
+    "warnings": 0,
+    "checked_relations": 256
+  },
+  "artifact": {
+    "path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/image-structured-building-group-candidate-warehouses.skp",
+    "size_bytes": 226715,
+    "totals": {
+      "faces": 292,
+      "edges": 524,
+      "vertices": 272,
+      "groups": 20,
+      "instances": 0
+    }
+  }
+}

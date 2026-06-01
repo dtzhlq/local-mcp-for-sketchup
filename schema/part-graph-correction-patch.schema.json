@@ -20,7 +20,7 @@
       "type": "object",
       "required": ["action", "path", "reason"],
       "properties": {
-        "action": { "enum": ["set", "review"] },
+        "action": { "enum": ["set", "review", "promote_part_candidates"] },
         "path": { "type": "string", "minLength": 1 },
         "part_id": { "type": "string" },
         "reason": { "type": "string", "minLength": 1 },

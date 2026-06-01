@@ -1,0 +1,1593 @@
+{
+  "kind": "grounding_v3_qa",
+  "version": 3,
+  "ok": true,
+  "verdict": "pass",
+  "graph": {
+    "kind": "grounding_graph_v3",
+    "version": 3,
+    "coordinate_convention": "image_x_right_y_down_to_model_xy_y_up",
+    "scale_anchor_graph": {
+      "version": 3,
+      "strategy": "multi_candidate_scale_anchor_consensus",
+      "required_distinct_anchor_families": 2,
+      "consensus_scale_px_per_mm": 0.005,
+      "candidate_count": 4,
+      "distinct_anchor_families": [
+        "parking",
+        "road"
+      ],
+      "winner": {
+        "id": "scale_anchor_parking_bay_span_top",
+        "anchor_type": "parking_bay_width_span",
+        "family": "parking",
+        "scale_px_per_mm": 0.005135,
+        "residual": 0.055,
+        "confidence": 0.78,
+        "review_required": true
+      },
+      "alternates": [
+        {
+          "id": "building_top_site_boundary",
+          "anchor_type": "site_boundary_from_known_anchors",
+          "family": "site",
+          "scale_px_per_mm": 0.005135,
+          "residual": 0,
+          "confidence": 0.82,
+          "review_required": true
+        },
+        {
+          "id": "scale_anchor_parking_bay_depth_top",
+          "anchor_type": "parking_bay_single",
+          "family": "parking",
+          "scale_px_per_mm": 0.005135,
+          "residual": 0.055,
+          "confidence": 0.74,
+          "review_required": true
+        },
+        {
+          "id": "parking_drive_aisle_center_top_gap",
+          "anchor_type": "parking_drive_aisle_width",
+          "family": "road",
+          "scale_px_per_mm": 0.006087,
+          "residual": 0.12,
+          "confidence": 0.7,
+          "review_required": true
+        }
+      ],
+      "candidates": [
+        {
+          "id": "building_top_site_boundary",
+          "anchor_type": "site_boundary_from_known_anchors",
+          "family": "site",
+          "source_image": "test/建筑群-v2-generated/site-top.png",
+          "observation_id": "building_top_site_boundary",
+          "measured_axis": "x",
+          "object_bbox": [
+            120,
+            80,
+            760,
+            560
+          ],
+          "scale_px_per_mm": 0.005135,
+          "physical_width_mm": 148000,
+          "physical_height_mm": 92000,
+          "expected_count": null,
+          "confidence": 0.82,
+          "basis": [
+            "parking_bay_width_span",
+            "drive_aisle_width",
+            "campus_generated_scale"
+          ],
+          "review_required": true,
+          "note": "Generated second sample site extent calibrated from visible parking/road anchors.",
+          "residual": 0,
+          "tolerance": 0.18,
+          "in_consensus": false,
+          "conflict_reason": null
+        },
+        {
+          "id": "scale_anchor_parking_bay_span_top",
+          "anchor_type": "parking_bay_width_span",
+          "family": "parking",
+          "source_image": "test/建筑群-v2-generated/site-top.png",
+          "observation_id": "scale_anchor_parking_bay_span_top",
+          "measured_axis": "x",
+          "object_bbox": [
+            525,
+            517,
+            116,
+            12
+          ],
+          "scale_px_per_mm": 0.005135,
+          "physical_width_mm": null,
+          "physical_height_mm": null,
+          "expected_count": null,
+          "confidence": 0.78,
+          "basis": [],
+          "review_required": true,
+          "note": "Second sample parking-span anchor follows the site projection scale.",
+          "residual": 0.055,
+          "tolerance": 0.18,
+          "in_consensus": true,
+          "conflict_reason": null
+        },
+        {
+          "id": "scale_anchor_parking_bay_depth_top",
+          "anchor_type": "parking_bay_single",
+          "family": "parking",
+          "source_image": "test/建筑群-v2-generated/site-top.png",
+          "observation_id": "scale_anchor_parking_bay_depth_top",
+          "measured_axis": "x",
+          "object_bbox": [
+            525,
+            569,
+            24,
+            16
+          ],
+          "scale_px_per_mm": 0.005135,
+          "physical_width_mm": null,
+          "physical_height_mm": null,
+          "expected_count": null,
+          "confidence": 0.74,
+          "basis": [],
+          "review_required": true,
+          "note": "Second sample single parking-bay anchor follows the site projection scale.",
+          "residual": 0.055,
+          "tolerance": 0.18,
+          "in_consensus": true,
+          "conflict_reason": null
+        },
+        {
+          "id": "parking_drive_aisle_center_top_gap",
+          "anchor_type": "parking_drive_aisle_width",
+          "family": "road",
+          "source_image": "test/建筑群-v2-generated/site-top.png",
+          "observation_id": "parking_drive_aisle_center_top_gap",
+          "measured_axis": "y",
+          "object_bbox": [
+            500,
+            535,
+            235,
+            38
+          ],
+          "scale_px_per_mm": 0.006087,
+          "physical_width_mm": null,
+          "physical_height_mm": null,
+          "expected_count": null,
+          "confidence": 0.7,
+          "basis": [
+            "visible parking drive aisle",
+            "typical aisle width 6.5m"
+          ],
+          "review_required": true,
+          "note": "Second sample road/aisle anchor is an independent non-parking-family scale candidate for Grounding v3.",
+          "residual": 0.12,
+          "tolerance": 0.18,
+          "in_consensus": true,
+          "conflict_reason": null
+        }
+      ],
+      "gate": {
+        "ok": true,
+        "verdict": "pass",
+        "review_required": true,
+        "reasons": []
+      }
+    },
+    "ground_plan": {
+      "version": 3,
+      "region_classes": [
+        "building_footprint",
+        "road",
+        "parking",
+        "green",
+        "walkway",
+        "service_yard",
+        "gap"
+      ],
+      "site_surface": {
+        "id": "site_surface",
+        "observation_id": "building_top_site_boundary",
+        "source_image": "test/建筑群-v2-generated/site-top.png",
+        "bbox_px": [
+          120,
+          80,
+          760,
+          560
+        ],
+        "polygon_px": [
+          [
+            120,
+            80
+          ],
+          [
+            880,
+            80
+          ],
+          [
+            880,
+            640
+          ],
+          [
+            120,
+            640
+          ],
+          [
+            120,
+            80
+          ]
+        ],
+        "grounding_method": "pixel_color_segmentation",
+        "review_required": false
+      },
+      "regions": [
+        {
+          "id": "primary_blue_roof_hall",
+          "class": "building_footprint",
+          "source": "top_view_region_evidence",
+          "source_observation_ids": [
+            "building_top_primary_blue_hall"
+          ],
+          "source_image": null,
+          "bbox_px": [
+            555,
+            165,
+            240,
+            170
+          ],
+          "polygon_px": [
+            [
+              555,
+              165
+            ],
+            [
+              795,
+              165
+            ],
+            [
+              795,
+              335
+            ],
+            [
+              555,
+              335
+            ],
+            [
+              555,
+              165
+            ]
+          ],
+          "area_px": 40800,
+          "area_ratio": 0.096,
+          "grounding_method": "pixel_color_segmentation",
+          "confidence": 0.9,
+          "review_required": false,
+          "note": "Grounding v2 second sample pixel_color_segmentation evidence for primary_blue_roof_hall."
+        },
+        {
+          "id": "utility_building",
+          "class": "building_footprint",
+          "source": "top_view_region_evidence",
+          "source_observation_ids": [
+            "building_top_utility_building"
+          ],
+          "source_image": null,
+          "bbox_px": [
+            610,
+            378,
+            90,
+            72
+          ],
+          "polygon_px": [
+            [
+              610,
+              378
+            ],
+            [
+              700,
+              378
+            ],
+            [
+              700,
+              450
+            ],
+            [
+              610,
+              450
+            ],
+            [
+              610,
+              378
+            ]
+          ],
+          "area_px": 6480,
+          "area_ratio": 0.015,
+          "grounding_method": "pixel_color_segmentation",
+          "confidence": 0.78,
+          "review_required": false,
+          "note": "Grounding v2 second sample pixel_color_segmentation evidence for utility_building."
+        },
+        {
+          "id": "admin_office",
+          "class": "building_footprint",
+          "source": "top_view_region_evidence",
+          "source_observation_ids": [
+            "building_top_admin_office"
+          ],
+          "source_image": null,
+          "bbox_px": [
+            435,
+            470,
+            140,
+            70
+          ],
+          "polygon_px": [
+            [
+              435,
+              470
+            ],
+            [
+              575,
+              470
+            ],
+            [
+              575,
+              540
+            ],
+            [
+              435,
+              540
+            ],
+            [
+              435,
+              470
+            ]
+          ],
+          "area_px": 9800,
+          "area_ratio": 0.023,
+          "grounding_method": "pixel_color_segmentation",
+          "confidence": 0.76,
+          "review_required": false,
+          "note": "Grounding v2 second sample pixel_color_segmentation evidence for admin_office."
+        },
+        {
+          "id": "tank_farm",
+          "class": "service_yard",
+          "source": "top_view_region_evidence",
+          "source_observation_ids": [
+            "building_top_tank_farm"
+          ],
+          "source_image": null,
+          "bbox_px": [
+            760,
+            360,
+            70,
+            120
+          ],
+          "polygon_px": [
+            [
+              760,
+              360
+            ],
+            [
+              830,
+              360
+            ],
+            [
+              830,
+              480
+            ],
+            [
+              760,
+              480
+            ],
+            [
+              760,
+              360
+            ]
+          ],
+          "area_px": 8400,
+          "area_ratio": 0.02,
+          "grounding_method": "pixel_color_segmentation",
+          "confidence": 0.8,
+          "review_required": false,
+          "note": "Grounding v2 second sample pixel_color_segmentation evidence for tank_farm."
+        },
+        {
+          "id": "warehouse_west_north",
+          "class": "building_footprint",
+          "source": "top_view_region_evidence",
+          "source_observation_ids": [
+            "warehouse_west_north_top_mask"
+          ],
+          "source_image": null,
+          "bbox_px": [
+            205,
+            165,
+            150,
+            126
+          ],
+          "polygon_px": [
+            [
+              205,
+              165
+            ],
+            [
+              355,
+              165
+            ],
+            [
+              355,
+              291
+            ],
+            [
+              205,
+              291
+            ],
+            [
+              205,
+              165
+            ]
+          ],
+          "area_px": 18900,
+          "area_ratio": 0.044,
+          "grounding_method": "pixel_color_segmentation",
+          "confidence": 0.84,
+          "review_required": false,
+          "note": "Grounding v2 second sample pixel_color_segmentation evidence for warehouse_west_north."
+        },
+        {
+          "id": "warehouse_west_south",
+          "class": "building_footprint",
+          "source": "top_view_region_evidence",
+          "source_observation_ids": [
+            "warehouse_west_south_top_mask"
+          ],
+          "source_image": null,
+          "bbox_px": [
+            205,
+            324,
+            150,
+            126
+          ],
+          "polygon_px": [
+            [
+              205,
+              324
+            ],
+            [
+              355,
+              324
+            ],
+            [
+              355,
+              450
+            ],
+            [
+              205,
+              450
+            ],
+            [
+              205,
+              324
+            ]
+          ],
+          "area_px": 18900,
+          "area_ratio": 0.044,
+          "grounding_method": "pixel_color_segmentation",
+          "confidence": 0.84,
+          "review_required": false,
+          "note": "Grounding v2 second sample pixel_color_segmentation evidence for warehouse_west_south."
+        },
+        {
+          "id": "warehouse_inner_north",
+          "class": "building_footprint",
+          "source": "top_view_region_evidence",
+          "source_observation_ids": [
+            "warehouse_inner_north_top_mask"
+          ],
+          "source_image": null,
+          "bbox_px": [
+            385,
+            160,
+            130,
+            128
+          ],
+          "polygon_px": [
+            [
+              385,
+              160
+            ],
+            [
+              515,
+              160
+            ],
+            [
+              515,
+              288
+            ],
+            [
+              385,
+              288
+            ],
+            [
+              385,
+              160
+            ]
+          ],
+          "area_px": 16640,
+          "area_ratio": 0.039,
+          "grounding_method": "pixel_color_segmentation",
+          "confidence": 0.83,
+          "review_required": false,
+          "note": "Grounding v2 second sample pixel_color_segmentation evidence for warehouse_inner_north."
+        },
+        {
+          "id": "warehouse_inner_south",
+          "class": "building_footprint",
+          "source": "top_view_region_evidence",
+          "source_observation_ids": [
+            "warehouse_inner_south_top_mask"
+          ],
+          "source_image": null,
+          "bbox_px": [
+            385,
+            322,
+            130,
+            128
+          ],
+          "polygon_px": [
+            [
+              385,
+              322
+            ],
+            [
+              515,
+              322
+            ],
+            [
+              515,
+              450
+            ],
+            [
+              385,
+              450
+            ],
+            [
+              385,
+              322
+            ]
+          ],
+          "area_px": 16640,
+          "area_ratio": 0.039,
+          "grounding_method": "pixel_color_segmentation",
+          "confidence": 0.83,
+          "review_required": false,
+          "note": "Grounding v2 second sample pixel_color_segmentation evidence for warehouse_inner_south."
+        },
+        {
+          "id": "parking_stall_row_north",
+          "class": "parking",
+          "source": "top_view_region_evidence",
+          "source_observation_ids": [
+            "parking_stall_row_north_top_line"
+          ],
+          "source_image": null,
+          "bbox_px": [
+            510,
+            515,
+            210,
+            18
+          ],
+          "polygon_px": [
+            [
+              510,
+              515
+            ],
+            [
+              720,
+              515
+            ],
+            [
+              720,
+              533
+            ],
+            [
+              510,
+              533
+            ],
+            [
+              510,
+              515
+            ]
+          ],
+          "area_px": 3780,
+          "area_ratio": 0.009,
+          "grounding_method": "pixel_line_segmentation",
+          "confidence": 0.82,
+          "review_required": false,
+          "note": "Grounding v2 second sample pixel_line_segmentation evidence for parking_stall_row_north."
+        },
+        {
+          "id": "parking_stall_row_south",
+          "class": "parking",
+          "source": "top_view_region_evidence",
+          "source_observation_ids": [
+            "parking_stall_row_south_top_line"
+          ],
+          "source_image": null,
+          "bbox_px": [
+            510,
+            570,
+            210,
+            18
+          ],
+          "polygon_px": [
+            [
+              510,
+              570
+            ],
+            [
+              720,
+              570
+            ],
+            [
+              720,
+              588
+            ],
+            [
+              510,
+              588
+            ],
+            [
+              510,
+              570
+            ]
+          ],
+          "area_px": 3780,
+          "area_ratio": 0.009,
+          "grounding_method": "pixel_line_segmentation",
+          "confidence": 0.82,
+          "review_required": false,
+          "note": "Grounding v2 second sample pixel_line_segmentation evidence for parking_stall_row_south."
+        },
+        {
+          "id": "parking_drive_aisle_center",
+          "class": "road",
+          "source": "top_view_region_evidence",
+          "source_observation_ids": [
+            "parking_drive_aisle_center_top_gap"
+          ],
+          "source_image": null,
+          "bbox_px": [
+            500,
+            535,
+            235,
+            38
+          ],
+          "polygon_px": [
+            [
+              500,
+              535
+            ],
+            [
+              735,
+              535
+            ],
+            [
+              735,
+              573
+            ],
+            [
+              500,
+              573
+            ],
+            [
+              500,
+              535
+            ]
+          ],
+          "area_px": 8930,
+          "area_ratio": 0.021,
+          "grounding_method": "pixel_gap_segmentation",
+          "confidence": 0.8,
+          "review_required": false,
+          "note": "Grounding v2 second sample pixel_gap_segmentation evidence for parking_drive_aisle_center."
+        },
+        {
+          "id": "tree_row_south",
+          "class": "green",
+          "source": "top_view_region_evidence",
+          "source_observation_ids": [
+            "tree_row_south_top_vegetation"
+          ],
+          "source_image": null,
+          "bbox_px": [
+            465,
+            625,
+            260,
+            25
+          ],
+          "polygon_px": [
+            [
+              465,
+              625
+            ],
+            [
+              725,
+              625
+            ],
+            [
+              725,
+              650
+            ],
+            [
+              465,
+              650
+            ],
+            [
+              465,
+              625
+            ]
+          ],
+          "area_px": 6500,
+          "area_ratio": 0.015,
+          "grounding_method": "pixel_vegetation_segmentation",
+          "confidence": 0.78,
+          "review_required": false,
+          "note": "Grounding v2 second sample pixel_vegetation_segmentation evidence for tree_row_south."
+        },
+        {
+          "id": "site_unexplained_gap",
+          "class": "gap",
+          "source": "derived_planar_subdivision_residual",
+          "bbox_px": [
+            120,
+            80,
+            760,
+            560
+          ],
+          "polygon_px": [
+            [
+              120,
+              80
+            ],
+            [
+              880,
+              80
+            ],
+            [
+              880,
+              640
+            ],
+            [
+              120,
+              640
+            ],
+            [
+              120,
+              80
+            ]
+          ],
+          "area_px": 270825,
+          "area_ratio": 0.636,
+          "source_observation_ids": [],
+          "confidence": 0.42,
+          "review_required": true,
+          "note": "Residual site area not yet explained by mutually exclusive GroundPlan regions."
+        }
+      ],
+      "qa": {
+        "ok": true,
+        "coverage_ratio": 0.364,
+        "overlap_ratio": 0.005,
+        "max_overlap_ratio": 0.005,
+        "gap_ratio": 0.636,
+        "class_coverage": {
+          "building_footprint": 0.301,
+          "road": 0.021,
+          "parking": 0.018,
+          "green": 0.015,
+          "walkway": 0,
+          "service_yard": 0.02,
+          "gap": 0.636
+        },
+        "checked_regions": 13,
+        "review_required": true,
+        "reasons": []
+      },
+      "evidence_graph_projection": {
+        "version": 3,
+        "region_count": 13,
+        "source_image": "test/建筑群-v2-generated/site-top.png",
+        "region_classes": {
+          "building_footprint": 0.301,
+          "road": 0.021,
+          "parking": 0.018,
+          "green": 0.015,
+          "walkway": 0,
+          "service_yard": 0.02,
+          "gap": 0.636
+        }
+      },
+      "open_questions": [
+        "Confirm the residual gap class before treating this as a survey-grade planar subdivision."
+      ]
+    },
+    "line_grid_fit": {
+      "version": 3,
+      "parking_grid_fits": [
+        {
+          "id": "parking_grid_main",
+          "row_count": 2,
+          "estimated_stall_count": 9,
+          "basis_stall_count": 9,
+          "row_spacing_px": 55,
+          "drive_aisle_observation_id": "parking_drive_aisle_center_top_gap",
+          "line_fits": [
+            {
+              "id": "parking_stall_row_north_line_fit",
+              "observation_id": "parking_stall_row_north_top_line",
+              "component_hint": "parking_stall_row_north",
+              "axis": "x",
+              "bbox_px": [
+                510,
+                515,
+                210,
+                18
+              ],
+              "center_px": [
+                615,
+                524
+              ],
+              "length_px": 210,
+              "thickness_px": 18,
+              "axis_error_deg": 0,
+              "grounding_method": "pixel_line_segmentation",
+              "confidence": 0.82,
+              "review_required": false
+            },
+            {
+              "id": "parking_stall_row_south_line_fit",
+              "observation_id": "parking_stall_row_south_top_line",
+              "component_hint": "parking_stall_row_south",
+              "axis": "x",
+              "bbox_px": [
+                510,
+                570,
+                210,
+                18
+              ],
+              "center_px": [
+                615,
+                579
+              ],
+              "length_px": 210,
+              "thickness_px": 18,
+              "axis_error_deg": 0,
+              "grounding_method": "pixel_line_segmentation",
+              "confidence": 0.82,
+              "review_required": false
+            }
+          ],
+          "residuals": {
+            "axis_residual": 0,
+            "row_spacing_residual": 0.018,
+            "parking_grid_count_residual": 0,
+            "drive_aisle_gap_residual": 0
+          },
+          "review_required": false,
+          "confidence": 0.82
+        }
+      ],
+      "road_axis_fits": [
+        {
+          "id": "parking_drive_aisle_center_axis",
+          "observation_id": "parking_drive_aisle_center_top_gap",
+          "source_component": "parking_drive_aisle_center",
+          "axis": "x",
+          "bbox_px": [
+            500,
+            535,
+            235,
+            38
+          ],
+          "center_px": [
+            617.5,
+            554
+          ],
+          "grounding_method": "pixel_gap_segmentation",
+          "confidence": 0.8,
+          "review_required": false
+        },
+        {
+          "id": "internal_roads_axis",
+          "observation_id": "building_top_internal_roads",
+          "source_component": "internal_roads",
+          "axis": "x",
+          "bbox_px": [
+            380,
+            430,
+            360,
+            60
+          ],
+          "center_px": [
+            560,
+            460
+          ],
+          "grounding_method": "pixel_gap_segmentation",
+          "confidence": 0.78,
+          "review_required": false
+        }
+      ],
+      "qa": {
+        "ok": true,
+        "checked_parking_lines": 2,
+        "checked_road_axes": 2,
+        "max_line_axis_residual": 0,
+        "parking_grid_count_residual": 0,
+        "max_drive_aisle_gap_residual": 0,
+        "review_required": false,
+        "reasons": []
+      }
+    },
+    "top_view_overlay": {
+      "version": 3,
+      "source_image": "test/建筑群-v2-generated/site-top.png",
+      "projection_basis": "geometry_fit_v2_model_projection",
+      "region_overlays": [
+        {
+          "region_id": "primary_blue_roof_hall",
+          "class": "building_footprint",
+          "source_observation_ids": [
+            "building_top_primary_blue_hall"
+          ],
+          "mask_iou": 1,
+          "centroid_delta_norm": [
+            0,
+            0
+          ],
+          "centroid_error_norm": 0,
+          "review_required": false
+        },
+        {
+          "region_id": "utility_building",
+          "class": "building_footprint",
+          "source_observation_ids": [
+            "building_top_utility_building"
+          ],
+          "mask_iou": 1,
+          "centroid_delta_norm": [
+            0,
+            0
+          ],
+          "centroid_error_norm": 0,
+          "review_required": false
+        },
+        {
+          "region_id": "admin_office",
+          "class": "building_footprint",
+          "source_observation_ids": [
+            "building_top_admin_office"
+          ],
+          "mask_iou": 1,
+          "centroid_delta_norm": [
+            0,
+            0
+          ],
+          "centroid_error_norm": 0,
+          "review_required": false
+        },
+        {
+          "region_id": "tank_farm",
+          "class": "service_yard",
+          "source_observation_ids": [
+            "building_top_tank_farm"
+          ],
+          "mask_iou": 1,
+          "centroid_delta_norm": [
+            0,
+            0
+          ],
+          "centroid_error_norm": 0,
+          "review_required": false
+        },
+        {
+          "region_id": "warehouse_west_north",
+          "class": "building_footprint",
+          "source_observation_ids": [
+            "warehouse_west_north_top_mask"
+          ],
+          "mask_iou": 1,
+          "centroid_delta_norm": [
+            0,
+            0
+          ],
+          "centroid_error_norm": 0,
+          "review_required": false
+        },
+        {
+          "region_id": "warehouse_west_south",
+          "class": "building_footprint",
+          "source_observation_ids": [
+            "warehouse_west_south_top_mask"
+          ],
+          "mask_iou": 1,
+          "centroid_delta_norm": [
+            0,
+            0
+          ],
+          "centroid_error_norm": 0,
+          "review_required": false
+        },
+        {
+          "region_id": "warehouse_inner_north",
+          "class": "building_footprint",
+          "source_observation_ids": [
+            "warehouse_inner_north_top_mask"
+          ],
+          "mask_iou": 1,
+          "centroid_delta_norm": [
+            0,
+            0
+          ],
+          "centroid_error_norm": 0,
+          "review_required": false
+        },
+        {
+          "region_id": "warehouse_inner_south",
+          "class": "building_footprint",
+          "source_observation_ids": [
+            "warehouse_inner_south_top_mask"
+          ],
+          "mask_iou": 1,
+          "centroid_delta_norm": [
+            0,
+            0
+          ],
+          "centroid_error_norm": 0,
+          "review_required": false
+        },
+        {
+          "region_id": "parking_stall_row_north",
+          "class": "parking",
+          "source_observation_ids": [
+            "parking_stall_row_north_top_line"
+          ],
+          "mask_iou": 1,
+          "centroid_delta_norm": [
+            0,
+            0
+          ],
+          "centroid_error_norm": 0,
+          "review_required": false
+        },
+        {
+          "region_id": "parking_stall_row_south",
+          "class": "parking",
+          "source_observation_ids": [
+            "parking_stall_row_south_top_line"
+          ],
+          "mask_iou": 1,
+          "centroid_delta_norm": [
+            0,
+            0
+          ],
+          "centroid_error_norm": 0,
+          "review_required": false
+        },
+        {
+          "region_id": "parking_drive_aisle_center",
+          "class": "road",
+          "source_observation_ids": [
+            "parking_drive_aisle_center_top_gap"
+          ],
+          "mask_iou": 1,
+          "centroid_delta_norm": [
+            0,
+            0
+          ],
+          "centroid_error_norm": 0,
+          "review_required": false
+        },
+        {
+          "region_id": "tree_row_south",
+          "class": "green",
+          "source_observation_ids": [
+            "tree_row_south_top_vegetation"
+          ],
+          "mask_iou": 1,
+          "centroid_delta_norm": [
+            0,
+            0
+          ],
+          "centroid_error_norm": 0,
+          "review_required": false
+        },
+        {
+          "region_id": "site_unexplained_gap",
+          "class": "gap",
+          "source_observation_ids": [],
+          "mask_iou": 1,
+          "centroid_delta_norm": [
+            0,
+            0
+          ],
+          "centroid_error_norm": 0,
+          "review_required": true
+        }
+      ],
+      "line_overlays": [
+        {
+          "id": "parking_stall_row_north_line_fit",
+          "observation_id": "parking_stall_row_north_top_line",
+          "class": "parking",
+          "chamfer_error_norm": 0,
+          "axis_error_deg": 0,
+          "review_required": false
+        },
+        {
+          "id": "parking_stall_row_south_line_fit",
+          "observation_id": "parking_stall_row_south_top_line",
+          "class": "parking",
+          "chamfer_error_norm": 0,
+          "axis_error_deg": 0,
+          "review_required": false
+        }
+      ],
+      "class_confusion": {
+        "unmatched_model_footprints": [
+          "warehouse-west-second-sample-footprint",
+          "warehouse-inner-second-sample-footprint",
+          "parking-second-sample-footprint"
+        ],
+        "unmatched_region_overlays": [
+          "site_unexplained_gap"
+        ]
+      },
+      "qa": {
+        "ok": true,
+        "mean_mask_iou": 1,
+        "min_mask_iou": 1,
+        "max_centroid_error_norm": 0,
+        "max_line_chamfer_error_norm": 0,
+        "checked_regions": 13,
+        "checked_lines": 2,
+        "review_required": true,
+        "reasons": []
+      }
+    },
+    "promotion_decisions": [
+      {
+        "part_id": "primary_blue_roof_hall",
+        "region_id": "primary_blue_roof_hall",
+        "region_class": "building_footprint",
+        "decision": "promoted_geometry",
+        "confidence": 0.9,
+        "source_observation_ids": [
+          "building_top_primary_blue_hall"
+        ],
+        "overlay_residual": {
+          "mask_iou": 1,
+          "centroid_error_norm": 0
+        },
+        "reasons": []
+      },
+      {
+        "part_id": "utility_building",
+        "region_id": "utility_building",
+        "region_class": "building_footprint",
+        "decision": "promoted_geometry",
+        "confidence": 0.89,
+        "source_observation_ids": [
+          "building_top_utility_building"
+        ],
+        "overlay_residual": {
+          "mask_iou": 1,
+          "centroid_error_norm": 0
+        },
+        "reasons": []
+      },
+      {
+        "part_id": "admin_office",
+        "region_id": "admin_office",
+        "region_class": "building_footprint",
+        "decision": "promoted_geometry",
+        "confidence": 0.88,
+        "source_observation_ids": [
+          "building_top_admin_office"
+        ],
+        "overlay_residual": {
+          "mask_iou": 1,
+          "centroid_error_norm": 0
+        },
+        "reasons": []
+      },
+      {
+        "part_id": "tank_farm",
+        "region_id": "tank_farm",
+        "region_class": "service_yard",
+        "decision": "helper_only",
+        "confidence": 0.56,
+        "source_observation_ids": [
+          "building_top_tank_farm"
+        ],
+        "overlay_residual": {
+          "mask_iou": 1,
+          "centroid_error_norm": 0
+        },
+        "reasons": [
+          "non-structural site detail remains helper/review geometry in R9"
+        ]
+      },
+      {
+        "part_id": "warehouse_west_north",
+        "region_id": "warehouse_west_north",
+        "region_class": "building_footprint",
+        "decision": "promoted_geometry",
+        "confidence": 0.9,
+        "source_observation_ids": [
+          "warehouse_west_north_top_mask"
+        ],
+        "overlay_residual": {
+          "mask_iou": 1,
+          "centroid_error_norm": 0
+        },
+        "reasons": []
+      },
+      {
+        "part_id": "warehouse_west_south",
+        "region_id": "warehouse_west_south",
+        "region_class": "building_footprint",
+        "decision": "promoted_geometry",
+        "confidence": 0.9,
+        "source_observation_ids": [
+          "warehouse_west_south_top_mask"
+        ],
+        "overlay_residual": {
+          "mask_iou": 1,
+          "centroid_error_norm": 0
+        },
+        "reasons": []
+      },
+      {
+        "part_id": "warehouse_inner_north",
+        "region_id": "warehouse_inner_north",
+        "region_class": "building_footprint",
+        "decision": "promoted_geometry",
+        "confidence": 0.9,
+        "source_observation_ids": [
+          "warehouse_inner_north_top_mask"
+        ],
+        "overlay_residual": {
+          "mask_iou": 1,
+          "centroid_error_norm": 0
+        },
+        "reasons": []
+      },
+      {
+        "part_id": "warehouse_inner_south",
+        "region_id": "warehouse_inner_south",
+        "region_class": "building_footprint",
+        "decision": "promoted_geometry",
+        "confidence": 0.9,
+        "source_observation_ids": [
+          "warehouse_inner_south_top_mask"
+        ],
+        "overlay_residual": {
+          "mask_iou": 1,
+          "centroid_error_norm": 0
+        },
+        "reasons": []
+      },
+      {
+        "part_id": "parking_stall_row_north",
+        "region_id": "parking_stall_row_north",
+        "region_class": "parking",
+        "decision": "promoted_geometry",
+        "confidence": 0.9,
+        "source_observation_ids": [
+          "parking_stall_row_north_top_line"
+        ],
+        "overlay_residual": {
+          "mask_iou": 1,
+          "centroid_error_norm": 0
+        },
+        "reasons": []
+      },
+      {
+        "part_id": "parking_stall_row_south",
+        "region_id": "parking_stall_row_south",
+        "region_class": "parking",
+        "decision": "promoted_geometry",
+        "confidence": 0.9,
+        "source_observation_ids": [
+          "parking_stall_row_south_top_line"
+        ],
+        "overlay_residual": {
+          "mask_iou": 1,
+          "centroid_error_norm": 0
+        },
+        "reasons": []
+      },
+      {
+        "part_id": "parking_drive_aisle_center",
+        "region_id": "parking_drive_aisle_center",
+        "region_class": "road",
+        "decision": "promoted_geometry",
+        "confidence": 0.9,
+        "source_observation_ids": [
+          "parking_drive_aisle_center_top_gap"
+        ],
+        "overlay_residual": {
+          "mask_iou": 1,
+          "centroid_error_norm": 0
+        },
+        "reasons": []
+      },
+      {
+        "part_id": "tree_row_south",
+        "region_id": "tree_row_south",
+        "region_class": "green",
+        "decision": "helper_only",
+        "confidence": 0.546,
+        "source_observation_ids": [
+          "tree_row_south_top_vegetation"
+        ],
+        "overlay_residual": {
+          "mask_iou": 1,
+          "centroid_error_norm": 0
+        },
+        "reasons": [
+          "non-structural site detail remains helper/review geometry in R9"
+        ]
+      },
+      {
+        "part_id": "site_unexplained_gap",
+        "region_id": "site_unexplained_gap",
+        "region_class": "gap",
+        "decision": "review_candidate",
+        "confidence": 0.344,
+        "source_observation_ids": [],
+        "overlay_residual": {
+          "mask_iou": 1,
+          "centroid_error_norm": 0
+        },
+        "reasons": [
+          "derived gap must be reviewed before geometry promotion"
+        ]
+      }
+    ],
+    "gates": [
+      {
+        "id": "scale_anchor_graph",
+        "ok": true,
+        "verdict": "pass",
+        "issues": []
+      },
+      {
+        "id": "planar_subdivision",
+        "ok": true,
+        "verdict": "pass",
+        "issues": []
+      },
+      {
+        "id": "line_grid_fit",
+        "ok": true,
+        "verdict": "pass",
+        "issues": []
+      },
+      {
+        "id": "top_view_overlay",
+        "ok": true,
+        "verdict": "pass",
+        "issues": []
+      },
+      {
+        "id": "candidate_promotion",
+        "ok": true,
+        "verdict": "pass",
+        "issues": []
+      }
+    ],
+    "summary": {
+      "checked_scale_anchors": 4,
+      "distinct_scale_anchor_families": 2,
+      "scale_anchor_winner_type": "parking_bay_width_span",
+      "scale_anchor_review_required": true,
+      "checked_ground_regions": 13,
+      "subdivision_coverage_ratio": 0.364,
+      "subdivision_overlap_ratio": 0.005,
+      "subdivision_gap_ratio": 0.636,
+      "checked_line_fits": 2,
+      "checked_road_axes": 2,
+      "parking_grid_count_residual": 0,
+      "max_line_axis_residual": 0,
+      "top_view_overlay_regions": 13,
+      "top_view_overlay_lines": 2,
+      "top_view_overlay_mean_iou": 1,
+      "top_view_overlay_min_iou": 1,
+      "top_view_overlay_max_centroid_error": 0,
+      "top_view_overlay_max_chamfer_error": 0,
+      "promotion_decisions": 13,
+      "promoted_geometry": 10,
+      "review_candidate": 1,
+      "helper_only": 2,
+      "rejected": 0,
+      "photo_grade_candidate": false,
+      "total_issues": 0,
+      "by_severity": {
+        "error": 0,
+        "warn": 0,
+        "info": 0
+      }
+    },
+    "issues": [],
+    "correction_suggestions": [
+      {
+        "action": "keep_candidate_out_of_promoted_geometry",
+        "target": "tank_farm",
+        "reason": "non-structural site detail remains helper/review geometry in R9",
+        "evidence": {
+          "part_id": "tank_farm",
+          "region_id": "tank_farm",
+          "region_class": "service_yard",
+          "decision": "helper_only",
+          "confidence": 0.56,
+          "source_observation_ids": [
+            "building_top_tank_farm"
+          ],
+          "overlay_residual": {
+            "mask_iou": 1,
+            "centroid_error_norm": 0
+          },
+          "reasons": [
+            "non-structural site detail remains helper/review geometry in R9"
+          ]
+        }
+      },
+      {
+        "action": "keep_candidate_out_of_promoted_geometry",
+        "target": "tree_row_south",
+        "reason": "non-structural site detail remains helper/review geometry in R9",
+        "evidence": {
+          "part_id": "tree_row_south",
+          "region_id": "tree_row_south",
+          "region_class": "green",
+          "decision": "helper_only",
+          "confidence": 0.546,
+          "source_observation_ids": [
+            "tree_row_south_top_vegetation"
+          ],
+          "overlay_residual": {
+            "mask_iou": 1,
+            "centroid_error_norm": 0
+          },
+          "reasons": [
+            "non-structural site detail remains helper/review geometry in R9"
+          ]
+        }
+      },
+      {
+        "action": "keep_candidate_out_of_promoted_geometry",
+        "target": "site_unexplained_gap",
+        "reason": "derived gap must be reviewed before geometry promotion",
+        "evidence": {
+          "part_id": "site_unexplained_gap",
+          "region_id": "site_unexplained_gap",
+          "region_class": "gap",
+          "decision": "review_candidate",
+          "confidence": 0.344,
+          "source_observation_ids": [],
+          "overlay_residual": {
+            "mask_iou": 1,
+            "centroid_error_norm": 0
+          },
+          "reasons": [
+            "derived gap must be reviewed before geometry promotion"
+          ]
+        }
+      }
+    ]
+  },
+  "summary": {
+    "checked_scale_anchors": 4,
+    "distinct_scale_anchor_families": 2,
+    "scale_anchor_winner_type": "parking_bay_width_span",
+    "scale_anchor_review_required": true,
+    "checked_ground_regions": 13,
+    "subdivision_coverage_ratio": 0.364,
+    "subdivision_overlap_ratio": 0.005,
+    "subdivision_gap_ratio": 0.636,
+    "checked_line_fits": 2,
+    "checked_road_axes": 2,
+    "parking_grid_count_residual": 0,
+    "max_line_axis_residual": 0,
+    "top_view_overlay_regions": 13,
+    "top_view_overlay_lines": 2,
+    "top_view_overlay_mean_iou": 1,
+    "top_view_overlay_min_iou": 1,
+    "top_view_overlay_max_centroid_error": 0,
+    "top_view_overlay_max_chamfer_error": 0,
+    "promotion_decisions": 13,
+    "promoted_geometry": 10,
+    "review_candidate": 1,
+    "helper_only": 2,
+    "rejected": 0,
+    "photo_grade_candidate": false,
+    "total_issues": 0,
+    "by_severity": {
+      "error": 0,
+      "warn": 0,
+      "info": 0
+    }
+  },
+  "issues": [],
+  "correction_suggestions": [
+    {
+      "action": "keep_candidate_out_of_promoted_geometry",
+      "target": "tank_farm",
+      "reason": "non-structural site detail remains helper/review geometry in R9",
+      "evidence": {
+        "part_id": "tank_farm",
+        "region_id": "tank_farm",
+        "region_class": "service_yard",
+        "decision": "helper_only",
+        "confidence": 0.56,
+        "source_observation_ids": [
+          "building_top_tank_farm"
+        ],
+        "overlay_residual": {
+          "mask_iou": 1,
+          "centroid_error_norm": 0
+        },
+        "reasons": [
+          "non-structural site detail remains helper/review geometry in R9"
+        ]
+      }
+    },
+    {
+      "action": "keep_candidate_out_of_promoted_geometry",
+      "target": "tree_row_south",
+      "reason": "non-structural site detail remains helper/review geometry in R9",
+      "evidence": {
+        "part_id": "tree_row_south",
+        "region_id": "tree_row_south",
+        "region_class": "green",
+        "decision": "helper_only",
+        "confidence": 0.546,
+        "source_observation_ids": [
+          "tree_row_south_top_vegetation"
+        ],
+        "overlay_residual": {
+          "mask_iou": 1,
+          "centroid_error_norm": 0
+        },
+        "reasons": [
+          "non-structural site detail remains helper/review geometry in R9"
+        ]
+      }
+    },
+    {
+      "action": "keep_candidate_out_of_promoted_geometry",
+      "target": "site_unexplained_gap",
+      "reason": "derived gap must be reviewed before geometry promotion",
+      "evidence": {
+        "part_id": "site_unexplained_gap",
+        "region_id": "site_unexplained_gap",
+        "region_class": "gap",
+        "decision": "review_candidate",
+        "confidence": 0.344,
+        "source_observation_ids": [],
+        "overlay_residual": {
+          "mask_iou": 1,
+          "centroid_error_norm": 0
+        },
+        "reasons": [
+          "derived gap must be reviewed before geometry promotion"
+        ]
+      }
+    }
+  ]
+}

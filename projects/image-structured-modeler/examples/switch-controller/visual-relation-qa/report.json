@@ -1,0 +1,1694 @@
+{
+  "kind": "visual_relation_qa",
+  "version": 1,
+  "ok": true,
+  "verdict": "pass",
+  "fixture": "switch-controller-visual-relations",
+  "summary": {
+    "checked_relations": 6,
+    "checked_footprints": 8,
+    "matched_image_relations": 6,
+    "matched_model_relations": 6,
+    "matched_footprints": 8,
+    "image_only_relations": 0,
+    "negative_cases_checked": 1,
+    "negative_cases_detected": 1,
+    "total_issues": 0,
+    "by_severity": {
+      "error": 0,
+      "warn": 0,
+      "info": 0
+    }
+  },
+  "issues": [],
+  "relation_results": [
+    {
+      "id": "handles-left-right-order",
+      "ok": true,
+      "image_relation": {
+        "id": "test/手柄/IMG_0156.jpeg|front|left_joycon_shell|left_of|right_joycon_shell|front_left_shell_candidate|front_right_shell_candidate",
+        "type": "left_of",
+        "item": "left_joycon_shell",
+        "anchor": "right_joycon_shell",
+        "source_image": "test/手柄/IMG_0156.jpeg",
+        "view": "front",
+        "confidence": 0.67,
+        "review_required": true,
+        "basis": {
+          "kind": "bbox",
+          "item_observation_id": "front_left_shell_candidate",
+          "anchor_observation_id": "front_right_shell_candidate",
+          "item_bbox": [
+            193.72,
+            193.52,
+            168.33,
+            351.96
+          ],
+          "anchor_bbox": [
+            524.95,
+            193.52,
+            168.33,
+            351.96
+          ],
+          "item_keypoint": [
+            277.885,
+            369.5
+          ],
+          "anchor_keypoint": [
+            609.115,
+            369.5
+          ],
+          "item_grounding": {
+            "method": "edge_contour_segmentation",
+            "mask": "front_left_shell_candidate_edge_mask",
+            "pixel_bbox": [
+              194,
+              194,
+              164,
+              352
+            ],
+            "pixel_count": 6994,
+            "prior_bbox": [
+              193.72,
+              193.52,
+              168.33,
+              351.96
+            ],
+            "fill": 0.12,
+            "contour_basis": "sampled_edge_contour",
+            "grounding_quality": {
+              "version": 1,
+              "status": "accepted",
+              "raw_to_evidence_bbox_ratio": 1.03,
+              "prior_to_evidence_bbox_ratio": 1,
+              "bbox_proxy": false,
+              "review_required": false,
+              "reasons": []
+            },
+            "review_required": false
+          },
+          "anchor_grounding": {
+            "method": "edge_contour_segmentation",
+            "mask": "front_right_shell_candidate_edge_mask",
+            "pixel_bbox": [
+              526,
+              194,
+              168,
+              352
+            ],
+            "pixel_count": 7254,
+            "prior_bbox": [
+              524.95,
+              193.52,
+              168.33,
+              351.96
+            ],
+            "fill": 0.12,
+            "contour_basis": "sampled_edge_contour",
+            "grounding_quality": {
+              "version": 1,
+              "status": "accepted",
+              "raw_to_evidence_bbox_ratio": 1,
+              "prior_to_evidence_bbox_ratio": 1,
+              "bbox_proxy": false,
+              "review_required": false,
+              "reasons": []
+            },
+            "review_required": false
+          },
+          "item_note": "Template candidate from known game-controller front layout.",
+          "anchor_note": "Template candidate from known game-controller front layout.",
+          "delta_norm": [
+            -0.368,
+            0
+          ],
+          "spacing_ratio": 0.368,
+          "axis": "x"
+        }
+      },
+      "model_relation": {
+        "ok": true,
+        "type": "left_of",
+        "item": "left-warm-white-joy-con-shell",
+        "anchor": "right-warm-white-joy-con-shell",
+        "delta_norm": [
+          -0.64,
+          0
+        ],
+        "min_delta": 0.25,
+        "tolerance": 0.055,
+        "message": "left_handle left_of right_handle is satisfied in model projection.",
+        "evidence": {
+          "item": "left-warm-white-joy-con-shell",
+          "anchor": "right-warm-white-joy-con-shell",
+          "model_axes": [
+            "x",
+            "y"
+          ],
+          "item_center": [
+            0.18,
+            0.518
+          ],
+          "anchor_center": [
+            0.82,
+            0.518
+          ],
+          "delta_norm": [
+            -0.64,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "id": "thumbsticks-handedness",
+      "ok": true,
+      "image_relation": {
+        "id": "test/手柄/IMG_0156.jpeg|front|right_thumbstick|right_of|left_thumbstick|front_right_thumbstick_candidate|front_left_thumbstick_candidate",
+        "type": "right_of",
+        "item": "right_thumbstick",
+        "anchor": "left_thumbstick",
+        "source_image": "test/手柄/IMG_0156.jpeg",
+        "view": "front",
+        "confidence": 0.665,
+        "review_required": true,
+        "basis": {
+          "kind": "bbox",
+          "item_observation_id": "front_right_thumbstick_candidate",
+          "anchor_observation_id": "front_left_thumbstick_candidate",
+          "item_bbox": [
+            543.96,
+            400.92,
+            59.73,
+            54.47
+          ],
+          "anchor_bbox": [
+            283.32,
+            287.8,
+            59.73,
+            54.47
+          ],
+          "item_keypoint": [
+            573.825,
+            428.155
+          ],
+          "anchor_keypoint": [
+            313.185,
+            315.035
+          ],
+          "item_grounding": {
+            "method": "edge_keypoint_segmentation",
+            "mask": "front_right_thumbstick_candidate_edge_mask",
+            "pixel_bbox": [
+              556,
+              401,
+              48,
+              55
+            ],
+            "pixel_count": 476,
+            "prior_bbox": [
+              543.96,
+              400.92,
+              59.73,
+              54.47
+            ],
+            "fill": 0.15,
+            "contour_basis": "sampled_edge_contour",
+            "grounding_quality": {
+              "version": 1,
+              "status": "accepted",
+              "raw_to_evidence_bbox_ratio": 1.24,
+              "prior_to_evidence_bbox_ratio": 1,
+              "bbox_proxy": false,
+              "review_required": false,
+              "reasons": []
+            },
+            "review_required": false
+          },
+          "anchor_grounding": {
+            "method": "edge_keypoint_segmentation",
+            "mask": "front_left_thumbstick_candidate_edge_mask",
+            "pixel_bbox": [
+              284,
+              317,
+              42,
+              26
+            ],
+            "pixel_count": 158,
+            "prior_bbox": [
+              283.32,
+              287.8,
+              59.73,
+              54.47
+            ],
+            "fill": 0.05,
+            "contour_basis": "sampled_edge_contour",
+            "grounding_quality": {
+              "version": 1,
+              "status": "accepted",
+              "raw_to_evidence_bbox_ratio": 2.09,
+              "prior_to_evidence_bbox_ratio": 1,
+              "bbox_proxy": false,
+              "review_required": false,
+              "reasons": []
+            },
+            "review_required": false
+          },
+          "item_note": "Likely right thumbstick contour region inferred from front layout and grounded by local edges.",
+          "anchor_note": "Likely left thumbstick contour region inferred from front layout and grounded by local edges.",
+          "delta_norm": [
+            0.29,
+            0.168
+          ],
+          "spacing_ratio": 0.335,
+          "axis": "x"
+        }
+      },
+      "model_relation": {
+        "ok": true,
+        "type": "right_of",
+        "item": "right-analog-stick-top-pad",
+        "anchor": "left-analog-stick-top-pad",
+        "delta_norm": [
+          0.676,
+          -0.371
+        ],
+        "min_delta": 0.25,
+        "tolerance": 0.055,
+        "message": "right_thumbstick right_of left_thumbstick is satisfied in model projection.",
+        "evidence": {
+          "item": "right-analog-stick-top-pad",
+          "anchor": "left-analog-stick-top-pad",
+          "model_axes": [
+            "x",
+            "y"
+          ],
+          "item_center": [
+            0.838,
+            0.294
+          ],
+          "anchor_center": [
+            0.162,
+            0.665
+          ],
+          "delta_norm": [
+            0.676,
+            -0.371
+          ]
+        }
+      }
+    },
+    {
+      "id": "face-buttons-right-of-dpad",
+      "ok": true,
+      "image_relation": {
+        "id": "test/手柄/IMG_0156.jpeg|front|abxy_cluster|right_of|dpad_cluster|front_abxy_cluster_candidate|front_dpad_cluster_candidate",
+        "type": "right_of",
+        "item": "abxy_cluster",
+        "anchor": "dpad_cluster",
+        "source_image": "test/手柄/IMG_0156.jpeg",
+        "view": "front",
+        "confidence": 0.67,
+        "review_required": true,
+        "basis": {
+          "kind": "bbox",
+          "item_observation_id": "front_abxy_cluster_candidate",
+          "anchor_observation_id": "front_dpad_cluster_candidate",
+          "item_bbox": [
+            562.96,
+            260.56,
+            103.17,
+            104.75
+          ],
+          "anchor_bbox": [
+            220.87,
+            377.88,
+            97.74,
+            100.56
+          ],
+          "item_keypoint": [
+            614.545,
+            312.935
+          ],
+          "anchor_keypoint": [
+            269.74,
+            428.16
+          ],
+          "item_grounding": {
+            "method": "edge_contour_segmentation",
+            "mask": "front_abxy_cluster_candidate_edge_mask",
+            "pixel_bbox": [
+              563,
+              261,
+              104,
+              105
+            ],
+            "pixel_count": 1461,
+            "prior_bbox": [
+              562.96,
+              260.56,
+              103.17,
+              104.75
+            ],
+            "fill": 0.14,
+            "contour_basis": "sampled_edge_contour",
+            "grounding_quality": {
+              "version": 1,
+              "status": "accepted",
+              "raw_to_evidence_bbox_ratio": 1.01,
+              "prior_to_evidence_bbox_ratio": 1,
+              "bbox_proxy": false,
+              "review_required": false,
+              "reasons": []
+            },
+            "review_required": false
+          },
+          "anchor_grounding": {
+            "method": "edge_contour_segmentation",
+            "mask": "front_dpad_cluster_candidate_edge_mask",
+            "pixel_bbox": [
+              236,
+              378,
+              83,
+              87
+            ],
+            "pixel_count": 988,
+            "prior_bbox": [
+              220.87,
+              377.88,
+              97.74,
+              100.56
+            ],
+            "fill": 0.1,
+            "contour_basis": "sampled_edge_contour",
+            "grounding_quality": {
+              "version": 1,
+              "status": "accepted",
+              "raw_to_evidence_bbox_ratio": 1.18,
+              "prior_to_evidence_bbox_ratio": 1,
+              "bbox_proxy": false,
+              "review_required": false,
+              "reasons": []
+            },
+            "review_required": false
+          },
+          "item_note": "Likely ABXY cluster region inferred from front layout.",
+          "anchor_note": "Likely D-pad cluster region inferred from front layout.",
+          "delta_norm": [
+            0.383,
+            -0.171
+          ],
+          "spacing_ratio": 0.419,
+          "axis": "x"
+        }
+      },
+      "model_relation": {
+        "ok": true,
+        "type": "right_of",
+        "item": "button-x-button",
+        "anchor": "dpad-up-button",
+        "delta_norm": [
+          0.676,
+          0.306
+        ],
+        "min_delta": 0.25,
+        "tolerance": 0.055,
+        "message": "abxy right_of dpad is satisfied in model projection.",
+        "evidence": {
+          "item": "button-x-button",
+          "anchor": "dpad-up-button",
+          "model_axes": [
+            "x",
+            "y"
+          ],
+          "item_center": [
+            0.838,
+            0.741
+          ],
+          "anchor_center": [
+            0.162,
+            0.435
+          ],
+          "delta_norm": [
+            0.676,
+            0.306
+          ]
+        }
+      }
+    },
+    {
+      "id": "screen-inside-center-grip",
+      "ok": true,
+      "image_relation": {
+        "id": "test/手柄/IMG_0156.jpeg|front|center_front_panel|inside|center_grip_body|front_center_panel_candidate|front_center_grip_candidate",
+        "type": "inside",
+        "item": "center_front_panel",
+        "anchor": "center_grip_body",
+        "source_image": "test/手柄/IMG_0156.jpeg",
+        "view": "front",
+        "confidence": 0.68,
+        "review_required": true,
+        "basis": {
+          "kind": "bbox",
+          "item_observation_id": "front_center_panel_candidate",
+          "anchor_observation_id": "front_center_grip_candidate",
+          "item_bbox": [
+            394.63,
+            264.75,
+            97.74,
+            209.5
+          ],
+          "anchor_bbox": [
+            356.62,
+            206.09,
+            173.76,
+            326.82
+          ],
+          "item_keypoint": [
+            443.5,
+            369.5
+          ],
+          "anchor_keypoint": [
+            443.5,
+            369.5
+          ],
+          "item_grounding": {
+            "method": "edge_contour_segmentation",
+            "mask": "front_center_panel_candidate_edge_mask",
+            "pixel_bbox": [
+              395,
+              285,
+              97,
+              104
+            ],
+            "pixel_count": 1307,
+            "prior_bbox": [
+              394.63,
+              264.75,
+              97.74,
+              209.5
+            ],
+            "fill": 0.06,
+            "contour_basis": "sampled_edge_contour",
+            "grounding_quality": {
+              "version": 1,
+              "status": "accepted",
+              "raw_to_evidence_bbox_ratio": 2.01,
+              "prior_to_evidence_bbox_ratio": 1,
+              "bbox_proxy": false,
+              "review_required": false,
+              "reasons": []
+            },
+            "review_required": false
+          },
+          "anchor_grounding": {
+            "method": "edge_contour_segmentation",
+            "mask": "front_center_grip_candidate_edge_mask",
+            "pixel_bbox": [
+              357,
+              207,
+              174,
+              260
+            ],
+            "pixel_count": 2101,
+            "prior_bbox": [
+              356.62,
+              206.09,
+              173.76,
+              326.82
+            ],
+            "fill": 0.04,
+            "contour_basis": "sampled_edge_contour",
+            "grounding_quality": {
+              "version": 1,
+              "status": "accepted",
+              "raw_to_evidence_bbox_ratio": 1.26,
+              "prior_to_evidence_bbox_ratio": 1,
+              "bbox_proxy": false,
+              "review_required": false,
+              "reasons": []
+            },
+            "review_required": false
+          },
+          "item_note": "Template candidate for the central front screen/flat panel inside the grip body.",
+          "anchor_note": "Template candidate from known game-controller front layout.",
+          "delta_norm": [
+            0,
+            0
+          ],
+          "spacing_ratio": 0,
+          "containment_ratio": 1
+        }
+      },
+      "model_relation": {
+        "ok": true,
+        "type": "inside",
+        "item": "center-front-flat-panel",
+        "anchor": "center-black-switch-grip",
+        "delta_norm": [
+          0,
+          0
+        ],
+        "min_delta": 0.02,
+        "tolerance": 0.02,
+        "message": "screen inside center_grip is satisfied in model projection.",
+        "evidence": {
+          "item": "center-front-flat-panel",
+          "anchor": "center-black-switch-grip",
+          "model_axes": [
+            "x",
+            "y"
+          ],
+          "item_center": [
+            0.5,
+            0.518
+          ],
+          "anchor_center": [
+            0.5,
+            0.518
+          ],
+          "delta_norm": [
+            0,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "id": "screen-centered-on-center-grip",
+      "ok": true,
+      "image_relation": {
+        "id": "test/手柄/IMG_0156.jpeg|front|center_front_panel|centered_on|center_grip_body|front_center_panel_candidate|front_center_grip_candidate",
+        "type": "centered_on",
+        "item": "center_front_panel",
+        "anchor": "center_grip_body",
+        "source_image": "test/手柄/IMG_0156.jpeg",
+        "view": "front",
+        "confidence": 0.62,
+        "review_required": true,
+        "basis": {
+          "kind": "bbox",
+          "item_observation_id": "front_center_panel_candidate",
+          "anchor_observation_id": "front_center_grip_candidate",
+          "item_bbox": [
+            394.63,
+            264.75,
+            97.74,
+            209.5
+          ],
+          "anchor_bbox": [
+            356.62,
+            206.09,
+            173.76,
+            326.82
+          ],
+          "item_keypoint": [
+            443.5,
+            369.5
+          ],
+          "anchor_keypoint": [
+            443.5,
+            369.5
+          ],
+          "item_grounding": {
+            "method": "edge_contour_segmentation",
+            "mask": "front_center_panel_candidate_edge_mask",
+            "pixel_bbox": [
+              395,
+              285,
+              97,
+              104
+            ],
+            "pixel_count": 1307,
+            "prior_bbox": [
+              394.63,
+              264.75,
+              97.74,
+              209.5
+            ],
+            "fill": 0.06,
+            "contour_basis": "sampled_edge_contour",
+            "grounding_quality": {
+              "version": 1,
+              "status": "accepted",
+              "raw_to_evidence_bbox_ratio": 2.01,
+              "prior_to_evidence_bbox_ratio": 1,
+              "bbox_proxy": false,
+              "review_required": false,
+              "reasons": []
+            },
+            "review_required": false
+          },
+          "anchor_grounding": {
+            "method": "edge_contour_segmentation",
+            "mask": "front_center_grip_candidate_edge_mask",
+            "pixel_bbox": [
+              357,
+              207,
+              174,
+              260
+            ],
+            "pixel_count": 2101,
+            "prior_bbox": [
+              356.62,
+              206.09,
+              173.76,
+              326.82
+            ],
+            "fill": 0.04,
+            "contour_basis": "sampled_edge_contour",
+            "grounding_quality": {
+              "version": 1,
+              "status": "accepted",
+              "raw_to_evidence_bbox_ratio": 1.26,
+              "prior_to_evidence_bbox_ratio": 1,
+              "bbox_proxy": false,
+              "review_required": false,
+              "reasons": []
+            },
+            "review_required": false
+          },
+          "item_note": "Template candidate for the central front screen/flat panel inside the grip body.",
+          "anchor_note": "Template candidate from known game-controller front layout.",
+          "delta_norm": [
+            0,
+            0
+          ],
+          "spacing_ratio": 0,
+          "axis": "xy"
+        }
+      },
+      "model_relation": {
+        "ok": true,
+        "type": "centered_on",
+        "item": "center-front-flat-panel",
+        "anchor": "center-black-switch-grip",
+        "delta_norm": [
+          0,
+          0
+        ],
+        "min_delta": 0.02,
+        "tolerance": 0.08,
+        "message": "screen centered_on center_grip is satisfied in model projection.",
+        "evidence": {
+          "item": "center-front-flat-panel",
+          "anchor": "center-black-switch-grip",
+          "model_axes": [
+            "x",
+            "y"
+          ],
+          "item_center": [
+            0.5,
+            0.518
+          ],
+          "anchor_center": [
+            0.5,
+            0.518
+          ],
+          "delta_norm": [
+            0,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "id": "handle-shells-mirrored-pair",
+      "ok": true,
+      "image_relation": {
+        "id": "test/手柄/IMG_0156.jpeg|front|left_joycon_shell|mirrored_pair|right_joycon_shell|front_left_shell_candidate|front_right_shell_candidate",
+        "type": "mirrored_pair",
+        "item": "left_joycon_shell",
+        "anchor": "right_joycon_shell",
+        "source_image": "test/手柄/IMG_0156.jpeg",
+        "view": "front",
+        "confidence": 0.71,
+        "review_required": true,
+        "basis": {
+          "kind": "bbox",
+          "item_observation_id": "front_left_shell_candidate",
+          "anchor_observation_id": "front_right_shell_candidate",
+          "item_bbox": [
+            193.72,
+            193.52,
+            168.33,
+            351.96
+          ],
+          "anchor_bbox": [
+            524.95,
+            193.52,
+            168.33,
+            351.96
+          ],
+          "item_keypoint": [
+            277.885,
+            369.5
+          ],
+          "anchor_keypoint": [
+            609.115,
+            369.5
+          ],
+          "item_grounding": {
+            "method": "edge_contour_segmentation",
+            "mask": "front_left_shell_candidate_edge_mask",
+            "pixel_bbox": [
+              194,
+              194,
+              164,
+              352
+            ],
+            "pixel_count": 6994,
+            "prior_bbox": [
+              193.72,
+              193.52,
+              168.33,
+              351.96
+            ],
+            "fill": 0.12,
+            "contour_basis": "sampled_edge_contour",
+            "grounding_quality": {
+              "version": 1,
+              "status": "accepted",
+              "raw_to_evidence_bbox_ratio": 1.03,
+              "prior_to_evidence_bbox_ratio": 1,
+              "bbox_proxy": false,
+              "review_required": false,
+              "reasons": []
+            },
+            "review_required": false
+          },
+          "anchor_grounding": {
+            "method": "edge_contour_segmentation",
+            "mask": "front_right_shell_candidate_edge_mask",
+            "pixel_bbox": [
+              526,
+              194,
+              168,
+              352
+            ],
+            "pixel_count": 7254,
+            "prior_bbox": [
+              524.95,
+              193.52,
+              168.33,
+              351.96
+            ],
+            "fill": 0.12,
+            "contour_basis": "sampled_edge_contour",
+            "grounding_quality": {
+              "version": 1,
+              "status": "accepted",
+              "raw_to_evidence_bbox_ratio": 1,
+              "prior_to_evidence_bbox_ratio": 1,
+              "bbox_proxy": false,
+              "review_required": false,
+              "reasons": []
+            },
+            "review_required": false
+          },
+          "item_note": "Template candidate from known game-controller front layout.",
+          "anchor_note": "Template candidate from known game-controller front layout.",
+          "delta_norm": [
+            -0.368,
+            0
+          ],
+          "spacing_ratio": 0.368,
+          "symmetry_axis_x": 443.5
+        }
+      },
+      "model_relation": {
+        "ok": true,
+        "type": "mirrored_pair",
+        "item": "left-warm-white-joy-con-shell",
+        "anchor": "right-warm-white-joy-con-shell",
+        "delta_norm": [
+          -0.64,
+          0
+        ],
+        "min_delta": 0.02,
+        "tolerance": 0.08,
+        "message": "left_handle mirrored_pair right_handle is satisfied in model projection.",
+        "evidence": {
+          "item": "left-warm-white-joy-con-shell",
+          "anchor": "right-warm-white-joy-con-shell",
+          "model_axes": [
+            "x",
+            "y"
+          ],
+          "item_center": [
+            0.18,
+            0.518
+          ],
+          "anchor_center": [
+            0.82,
+            0.518
+          ],
+          "delta_norm": [
+            -0.64,
+            0
+          ]
+        }
+      }
+    }
+  ],
+  "footprint_results": [
+    {
+      "id": "left-handle-footprint",
+      "ok": true,
+      "item": "left-warm-white-joy-con-shell",
+      "observation_id": "front_left_shell_candidate",
+      "grounding_method": "edge_contour_segmentation",
+      "image_view": "front",
+      "message": "left_handle model footprint matches image footprint.",
+      "evidence": {
+        "model_box": {
+          "min": [
+            0.085,
+            0.094
+          ],
+          "max": [
+            0.274,
+            0.941
+          ],
+          "center": [
+            0.18,
+            0.517
+          ],
+          "extent": [
+            0.189,
+            0.847
+          ]
+        },
+        "image_box": {
+          "min": [
+            0.04,
+            0.08
+          ],
+          "max": [
+            0.35,
+            0.92
+          ],
+          "center": [
+            0.195,
+            0.5
+          ],
+          "extent": [
+            0.31,
+            0.84
+          ]
+        },
+        "center_delta": [
+          0.015,
+          0.017
+        ],
+        "extent_delta": [
+          0.121,
+          0.007
+        ],
+        "center_tolerance": 0.04,
+        "extent_tolerance": [
+          0.13,
+          0.03
+        ],
+        "observation_id": "front_left_shell_candidate",
+        "grounding": {
+          "method": "edge_contour_segmentation",
+          "mask": "front_left_shell_candidate_edge_mask",
+          "pixel_bbox": [
+            194,
+            194,
+            164,
+            352
+          ],
+          "pixel_count": 6994,
+          "prior_bbox": [
+            193.72,
+            193.52,
+            168.33,
+            351.96
+          ],
+          "fill": 0.12,
+          "contour_basis": "sampled_edge_contour",
+          "grounding_quality": {
+            "version": 1,
+            "status": "accepted",
+            "raw_to_evidence_bbox_ratio": 1.03,
+            "prior_to_evidence_bbox_ratio": 1,
+            "bbox_proxy": false,
+            "review_required": false,
+            "reasons": []
+          },
+          "review_required": false
+        }
+      }
+    },
+    {
+      "id": "right-handle-footprint",
+      "ok": true,
+      "item": "right-warm-white-joy-con-shell",
+      "observation_id": "front_right_shell_candidate",
+      "grounding_method": "edge_contour_segmentation",
+      "image_view": "front",
+      "message": "right_handle model footprint matches image footprint.",
+      "evidence": {
+        "model_box": {
+          "min": [
+            0.726,
+            0.094
+          ],
+          "max": [
+            0.915,
+            0.941
+          ],
+          "center": [
+            0.821,
+            0.517
+          ],
+          "extent": [
+            0.189,
+            0.847
+          ]
+        },
+        "image_box": {
+          "min": [
+            0.65,
+            0.08
+          ],
+          "max": [
+            0.96,
+            0.92
+          ],
+          "center": [
+            0.805,
+            0.5
+          ],
+          "extent": [
+            0.31,
+            0.84
+          ]
+        },
+        "center_delta": [
+          0.016,
+          0.017
+        ],
+        "extent_delta": [
+          0.121,
+          0.007
+        ],
+        "center_tolerance": 0.04,
+        "extent_tolerance": [
+          0.13,
+          0.03
+        ],
+        "observation_id": "front_right_shell_candidate",
+        "grounding": {
+          "method": "edge_contour_segmentation",
+          "mask": "front_right_shell_candidate_edge_mask",
+          "pixel_bbox": [
+            526,
+            194,
+            168,
+            352
+          ],
+          "pixel_count": 7254,
+          "prior_bbox": [
+            524.95,
+            193.52,
+            168.33,
+            351.96
+          ],
+          "fill": 0.12,
+          "contour_basis": "sampled_edge_contour",
+          "grounding_quality": {
+            "version": 1,
+            "status": "accepted",
+            "raw_to_evidence_bbox_ratio": 1,
+            "prior_to_evidence_bbox_ratio": 1,
+            "bbox_proxy": false,
+            "review_required": false,
+            "reasons": []
+          },
+          "review_required": false
+        }
+      }
+    },
+    {
+      "id": "center-grip-footprint",
+      "ok": true,
+      "item": "center-black-switch-grip",
+      "observation_id": "front_center_grip_candidate",
+      "grounding_method": "edge_contour_segmentation",
+      "image_view": "front",
+      "message": "center_grip model footprint matches image footprint.",
+      "evidence": {
+        "model_box": {
+          "min": [
+            0.274,
+            0.071
+          ],
+          "max": [
+            0.726,
+            0.965
+          ],
+          "center": [
+            0.5,
+            0.518
+          ],
+          "extent": [
+            0.452,
+            0.894
+          ]
+        },
+        "image_box": {
+          "min": [
+            0.34,
+            0.11
+          ],
+          "max": [
+            0.66,
+            0.89
+          ],
+          "center": [
+            0.5,
+            0.5
+          ],
+          "extent": [
+            0.32,
+            0.78
+          ]
+        },
+        "center_delta": [
+          0,
+          0.018
+        ],
+        "extent_delta": [
+          0.132,
+          0.114
+        ],
+        "center_tolerance": 0.08,
+        "extent_tolerance": [
+          0.14,
+          0.28
+        ],
+        "observation_id": "front_center_grip_candidate",
+        "grounding": {
+          "method": "edge_contour_segmentation",
+          "mask": "front_center_grip_candidate_edge_mask",
+          "pixel_bbox": [
+            357,
+            207,
+            174,
+            260
+          ],
+          "pixel_count": 2101,
+          "prior_bbox": [
+            356.62,
+            206.09,
+            173.76,
+            326.82
+          ],
+          "fill": 0.04,
+          "contour_basis": "sampled_edge_contour",
+          "grounding_quality": {
+            "version": 1,
+            "status": "accepted",
+            "raw_to_evidence_bbox_ratio": 1.26,
+            "prior_to_evidence_bbox_ratio": 1,
+            "bbox_proxy": false,
+            "review_required": false,
+            "reasons": []
+          },
+          "review_required": false
+        }
+      }
+    },
+    {
+      "id": "screen-footprint",
+      "ok": true,
+      "item": "center-front-flat-panel",
+      "observation_id": "front_center_panel_candidate",
+      "grounding_method": "edge_contour_segmentation",
+      "image_view": "front",
+      "message": "screen model footprint matches image footprint.",
+      "evidence": {
+        "model_box": {
+          "min": [
+            0.323,
+            0.153
+          ],
+          "max": [
+            0.677,
+            0.882
+          ],
+          "center": [
+            0.5,
+            0.517
+          ],
+          "extent": [
+            0.354,
+            0.729
+          ]
+        },
+        "image_box": {
+          "min": [
+            0.41,
+            0.25
+          ],
+          "max": [
+            0.59,
+            0.75
+          ],
+          "center": [
+            0.5,
+            0.5
+          ],
+          "extent": [
+            0.18,
+            0.5
+          ]
+        },
+        "center_delta": [
+          0,
+          0.017
+        ],
+        "extent_delta": [
+          0.174,
+          0.229
+        ],
+        "center_tolerance": 0.08,
+        "extent_tolerance": [
+          0.18,
+          0.49
+        ],
+        "observation_id": "front_center_panel_candidate",
+        "grounding": {
+          "method": "edge_contour_segmentation",
+          "mask": "front_center_panel_candidate_edge_mask",
+          "pixel_bbox": [
+            395,
+            285,
+            97,
+            104
+          ],
+          "pixel_count": 1307,
+          "prior_bbox": [
+            394.63,
+            264.75,
+            97.74,
+            209.5
+          ],
+          "fill": 0.06,
+          "contour_basis": "sampled_edge_contour",
+          "grounding_quality": {
+            "version": 1,
+            "status": "accepted",
+            "raw_to_evidence_bbox_ratio": 2.01,
+            "prior_to_evidence_bbox_ratio": 1,
+            "bbox_proxy": false,
+            "review_required": false,
+            "reasons": []
+          },
+          "review_required": false
+        }
+      }
+    },
+    {
+      "id": "left-thumbstick-footprint",
+      "ok": true,
+      "item": "left-analog-stick-top-pad",
+      "observation_id": "front_left_thumbstick_candidate",
+      "grounding_method": "edge_keypoint_segmentation",
+      "image_view": "front",
+      "message": "left_thumbstick model footprint matches image footprint.",
+      "evidence": {
+        "model_box": {
+          "min": [
+            0.117,
+            0.579
+          ],
+          "max": [
+            0.206,
+            0.75
+          ],
+          "center": [
+            0.162,
+            0.664
+          ],
+          "extent": [
+            0.089,
+            0.171
+          ]
+        },
+        "image_box": {
+          "min": [
+            0.205,
+            0.565
+          ],
+          "max": [
+            0.315,
+            0.695
+          ],
+          "center": [
+            0.26,
+            0.63
+          ],
+          "extent": [
+            0.11,
+            0.13
+          ]
+        },
+        "center_delta": [
+          0.098,
+          0.034
+        ],
+        "extent_delta": [
+          0.021,
+          0.041
+        ],
+        "center_tolerance": 0.12,
+        "extent_tolerance": [
+          0.04,
+          0.12
+        ],
+        "observation_id": "front_left_thumbstick_candidate",
+        "grounding": {
+          "method": "edge_keypoint_segmentation",
+          "mask": "front_left_thumbstick_candidate_edge_mask",
+          "pixel_bbox": [
+            284,
+            317,
+            42,
+            26
+          ],
+          "pixel_count": 158,
+          "prior_bbox": [
+            283.32,
+            287.8,
+            59.73,
+            54.47
+          ],
+          "fill": 0.05,
+          "contour_basis": "sampled_edge_contour",
+          "grounding_quality": {
+            "version": 1,
+            "status": "accepted",
+            "raw_to_evidence_bbox_ratio": 2.09,
+            "prior_to_evidence_bbox_ratio": 1,
+            "bbox_proxy": false,
+            "review_required": false,
+            "reasons": []
+          },
+          "review_required": false
+        }
+      }
+    },
+    {
+      "id": "right-thumbstick-footprint",
+      "ok": true,
+      "item": "right-analog-stick-top-pad",
+      "observation_id": "front_right_thumbstick_candidate",
+      "grounding_method": "edge_keypoint_segmentation",
+      "image_view": "front",
+      "message": "right_thumbstick model footprint matches image footprint.",
+      "evidence": {
+        "model_box": {
+          "min": [
+            0.794,
+            0.209
+          ],
+          "max": [
+            0.883,
+            0.379
+          ],
+          "center": [
+            0.839,
+            0.294
+          ],
+          "extent": [
+            0.089,
+            0.17
+          ]
+        },
+        "image_box": {
+          "min": [
+            0.685,
+            0.295
+          ],
+          "max": [
+            0.795,
+            0.425
+          ],
+          "center": [
+            0.74,
+            0.36
+          ],
+          "extent": [
+            0.11,
+            0.13
+          ]
+        },
+        "center_delta": [
+          0.099,
+          0.066
+        ],
+        "extent_delta": [
+          0.021,
+          0.04
+        ],
+        "center_tolerance": 0.12,
+        "extent_tolerance": [
+          0.04,
+          0.05
+        ],
+        "observation_id": "front_right_thumbstick_candidate",
+        "grounding": {
+          "method": "edge_keypoint_segmentation",
+          "mask": "front_right_thumbstick_candidate_edge_mask",
+          "pixel_bbox": [
+            556,
+            401,
+            48,
+            55
+          ],
+          "pixel_count": 476,
+          "prior_bbox": [
+            543.96,
+            400.92,
+            59.73,
+            54.47
+          ],
+          "fill": 0.15,
+          "contour_basis": "sampled_edge_contour",
+          "grounding_quality": {
+            "version": 1,
+            "status": "accepted",
+            "raw_to_evidence_bbox_ratio": 1.24,
+            "prior_to_evidence_bbox_ratio": 1,
+            "bbox_proxy": false,
+            "review_required": false,
+            "reasons": []
+          },
+          "review_required": false
+        }
+      }
+    },
+    {
+      "id": "abxy-footprint",
+      "ok": true,
+      "item": "button-x-button",
+      "observation_id": "front_abxy_cluster_candidate",
+      "grounding_method": "edge_contour_segmentation",
+      "image_view": "front",
+      "message": "abxy model footprint matches image footprint.",
+      "evidence": {
+        "model_box": {
+          "min": [
+            0.816,
+            0.697
+          ],
+          "max": [
+            0.861,
+            0.785
+          ],
+          "center": [
+            0.839,
+            0.741
+          ],
+          "extent": [
+            0.045,
+            0.088
+          ]
+        },
+        "image_box": {
+          "min": [
+            0.72,
+            0.51
+          ],
+          "max": [
+            0.91,
+            0.76
+          ],
+          "center": [
+            0.815,
+            0.635
+          ],
+          "extent": [
+            0.19,
+            0.25
+          ]
+        },
+        "center_delta": [
+          0.024,
+          0.106
+        ],
+        "extent_delta": [
+          0.145,
+          0.162
+        ],
+        "center_tolerance": 0.12,
+        "extent_tolerance": [
+          0.16,
+          0.17
+        ],
+        "observation_id": "front_abxy_cluster_candidate",
+        "grounding": {
+          "method": "edge_contour_segmentation",
+          "mask": "front_abxy_cluster_candidate_edge_mask",
+          "pixel_bbox": [
+            563,
+            261,
+            104,
+            105
+          ],
+          "pixel_count": 1461,
+          "prior_bbox": [
+            562.96,
+            260.56,
+            103.17,
+            104.75
+          ],
+          "fill": 0.14,
+          "contour_basis": "sampled_edge_contour",
+          "grounding_quality": {
+            "version": 1,
+            "status": "accepted",
+            "raw_to_evidence_bbox_ratio": 1.01,
+            "prior_to_evidence_bbox_ratio": 1,
+            "bbox_proxy": false,
+            "review_required": false,
+            "reasons": []
+          },
+          "review_required": false
+        }
+      }
+    },
+    {
+      "id": "dpad-footprint",
+      "ok": true,
+      "item": "dpad-up-button",
+      "observation_id": "front_dpad_cluster_candidate",
+      "grounding_method": "edge_contour_segmentation",
+      "image_view": "front",
+      "message": "dpad model footprint matches image footprint.",
+      "evidence": {
+        "model_box": {
+          "min": [
+            0.139,
+            0.391
+          ],
+          "max": [
+            0.184,
+            0.479
+          ],
+          "center": [
+            0.162,
+            0.435
+          ],
+          "extent": [
+            0.045,
+            0.088
+          ]
+        },
+        "image_box": {
+          "min": [
+            0.09,
+            0.24
+          ],
+          "max": [
+            0.27,
+            0.48
+          ],
+          "center": [
+            0.18,
+            0.36
+          ],
+          "extent": [
+            0.18,
+            0.24
+          ]
+        },
+        "center_delta": [
+          0.018,
+          0.075
+        ],
+        "extent_delta": [
+          0.135,
+          0.152
+        ],
+        "center_tolerance": 0.08,
+        "extent_tolerance": [
+          0.14,
+          0.16
+        ],
+        "observation_id": "front_dpad_cluster_candidate",
+        "grounding": {
+          "method": "edge_contour_segmentation",
+          "mask": "front_dpad_cluster_candidate_edge_mask",
+          "pixel_bbox": [
+            236,
+            378,
+            83,
+            87
+          ],
+          "pixel_count": 988,
+          "prior_bbox": [
+            220.87,
+            377.88,
+            97.74,
+            100.56
+          ],
+          "fill": 0.1,
+          "contour_basis": "sampled_edge_contour",
+          "grounding_quality": {
+            "version": 1,
+            "status": "accepted",
+            "raw_to_evidence_bbox_ratio": 1.18,
+            "prior_to_evidence_bbox_ratio": 1,
+            "bbox_proxy": false,
+            "review_required": false,
+            "reasons": []
+          },
+          "review_required": false
+        }
+      }
+    }
+  ],
+  "negative_results": [
+    {
+      "id": "mirror-x-handedness-negative",
+      "transform": "mirror_x",
+      "checked_rules": [
+        "handles-left-right-order",
+        "thumbsticks-handedness",
+        "face-buttons-right-of-dpad"
+      ],
+      "failed_rules": [
+        "handles-left-right-order",
+        "thumbsticks-handedness",
+        "face-buttons-right-of-dpad"
+      ],
+      "ok": true,
+      "evaluations": [
+        {
+          "ok": false,
+          "type": "left_of",
+          "item": "left-warm-white-joy-con-shell",
+          "anchor": "right-warm-white-joy-con-shell",
+          "delta_norm": [
+            0.64,
+            0
+          ],
+          "min_delta": 0.25,
+          "tolerance": 0.055,
+          "message": "left_handle is not left_of right_handle in model projection.",
+          "evidence": {
+            "item": "left-warm-white-joy-con-shell",
+            "anchor": "right-warm-white-joy-con-shell",
+            "model_axes": [
+              "x",
+              "y"
+            ],
+            "item_center": [
+              0.82,
+              0.518
+            ],
+            "anchor_center": [
+              0.18,
+              0.518
+            ],
+            "delta_norm": [
+              0.64,
+              0
+            ]
+          }
+        },
+        {
+          "ok": false,
+          "type": "right_of",
+          "item": "right-analog-stick-top-pad",
+          "anchor": "left-analog-stick-top-pad",
+          "delta_norm": [
+            -0.676,
+            -0.371
+          ],
+          "min_delta": 0.25,
+          "tolerance": 0.055,
+          "message": "right_thumbstick is not right_of left_thumbstick in model projection.",
+          "evidence": {
+            "item": "right-analog-stick-top-pad",
+            "anchor": "left-analog-stick-top-pad",
+            "model_axes": [
+              "x",
+              "y"
+            ],
+            "item_center": [
+              0.162,
+              0.294
+            ],
+            "anchor_center": [
+              0.838,
+              0.665
+            ],
+            "delta_norm": [
+              -0.676,
+              -0.371
+            ]
+          }
+        },
+        {
+          "ok": false,
+          "type": "right_of",
+          "item": "button-x-button",
+          "anchor": "dpad-up-button",
+          "delta_norm": [
+            -0.676,
+            0.306
+          ],
+          "min_delta": 0.25,
+          "tolerance": 0.055,
+          "message": "abxy is not right_of dpad in model projection.",
+          "evidence": {
+            "item": "button-x-button",
+            "anchor": "dpad-up-button",
+            "model_axes": [
+              "x",
+              "y"
+            ],
+            "item_center": [
+              0.162,
+              0.741
+            ],
+            "anchor_center": [
+              0.838,
+              0.435
+            ],
+            "delta_norm": [
+              -0.676,
+              0.306
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

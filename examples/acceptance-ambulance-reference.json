@@ -364,7 +364,22 @@
       ],
       "depth": 10,
       "radius": 18,
-      "segments": 5
+      "segments": 5,
+      "qa": {
+        "role": "blind_recess",
+        "part_id": "amb-main-body",
+        "feature_id": "left-side-window-recess",
+        "intent": "blind_recess",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "real_feature_op",
+        "grounding_status": "profile_prior",
+        "grounding_method": null,
+        "source_observation_ids": [],
+        "projection_residuals": null,
+        "review_required": false,
+        "helper_allowed": false,
+        "photo_grade_eligible": false
+      }
     },
     {
       "op": "cut_recess",
@@ -381,7 +396,22 @@
       ],
       "depth": 10,
       "radius": 18,
-      "segments": 5
+      "segments": 5,
+      "qa": {
+        "role": "blind_recess",
+        "part_id": "amb-main-body",
+        "feature_id": "right-side-window-recess",
+        "intent": "blind_recess",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "real_feature_op",
+        "grounding_status": "profile_prior",
+        "grounding_method": null,
+        "source_observation_ids": [],
+        "projection_residuals": null,
+        "review_required": false,
+        "helper_allowed": false,
+        "photo_grade_eligible": false
+      }
     },
     {
       "op": "cut_recess",
@@ -398,7 +428,22 @@
       ],
       "depth": 10,
       "radius": 16,
-      "segments": 5
+      "segments": 5,
+      "qa": {
+        "role": "blind_recess",
+        "part_id": "amb-main-body",
+        "feature_id": "rear-window-recess",
+        "intent": "blind_recess",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "real_feature_op",
+        "grounding_status": "profile_prior",
+        "grounding_method": null,
+        "source_observation_ids": [],
+        "projection_residuals": null,
+        "review_required": false,
+        "helper_allowed": false,
+        "photo_grade_eligible": false
+      }
     },
     {
       "op": "cut_recess",
@@ -415,7 +460,22 @@
       ],
       "depth": 5,
       "radius": 2,
-      "segments": 5
+      "segments": 5,
+      "qa": {
+        "role": "blind_recess",
+        "part_id": "amb-main-body",
+        "feature_id": "left-sliding-door-seam-recess",
+        "intent": "blind_recess",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "real_feature_op",
+        "grounding_status": "profile_prior",
+        "grounding_method": null,
+        "source_observation_ids": [],
+        "projection_residuals": null,
+        "review_required": false,
+        "helper_allowed": false,
+        "photo_grade_eligible": false
+      }
     },
     {
       "op": "cut_recess",
@@ -432,7 +492,22 @@
       ],
       "depth": 5,
       "radius": 2,
-      "segments": 5
+      "segments": 5,
+      "qa": {
+        "role": "blind_recess",
+        "part_id": "amb-main-body",
+        "feature_id": "left-rear-door-seam-recess",
+        "intent": "blind_recess",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "real_feature_op",
+        "grounding_status": "profile_prior",
+        "grounding_method": null,
+        "source_observation_ids": [],
+        "projection_residuals": null,
+        "review_required": false,
+        "helper_allowed": false,
+        "photo_grade_eligible": false
+      }
     },
     {
       "op": "cut_recess",
@@ -449,7 +524,22 @@
       ],
       "depth": 3,
       "radius": 2,
-      "segments": 5
+      "segments": 5,
+      "qa": {
+        "role": "blind_recess",
+        "part_id": "amb-main-body",
+        "feature_id": "left-side-stripe-raised-seat",
+        "intent": "blind_recess",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "real_feature_op",
+        "grounding_status": "profile_prior",
+        "grounding_method": null,
+        "source_observation_ids": [],
+        "projection_residuals": null,
+        "review_required": false,
+        "helper_allowed": false,
+        "photo_grade_eligible": false
+      }
     },
     {
       "op": "add_boss",
@@ -462,7 +552,22 @@
       ],
       "radius": 132,
       "height": 18,
-      "segments": 20
+      "segments": 20,
+      "qa": {
+        "role": "convex",
+        "part_id": "amb-main-body",
+        "feature_id": "roof-lightbar-base-boss",
+        "intent": "convex",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "real_feature_op",
+        "grounding_status": "profile_prior",
+        "grounding_method": null,
+        "source_observation_ids": [],
+        "projection_residuals": null,
+        "review_required": false,
+        "helper_allowed": false,
+        "photo_grade_eligible": false
+      }
     },
     {
       "op": "add_raised_rib",
@@ -476,7 +581,22 @@
       "length": 1060,
       "width": 18,
       "height": 16,
-      "direction": "u"
+      "direction": "u",
+      "qa": {
+        "role": "raised_rib",
+        "part_id": "amb-main-body",
+        "feature_id": "roof-left-feature-rib",
+        "intent": "raised_rib",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "real_feature_op",
+        "grounding_status": "profile_prior",
+        "grounding_method": null,
+        "source_observation_ids": [],
+        "projection_residuals": null,
+        "review_required": false,
+        "helper_allowed": false,
+        "photo_grade_eligible": false
+      }
     },
     {
       "op": "add_raised_rib",
@@ -490,7 +610,22 @@
       "length": 1140,
       "width": 18,
       "height": 12,
-      "direction": "u"
+      "direction": "u",
+      "qa": {
+        "role": "raised_rib",
+        "part_id": "amb-main-body",
+        "feature_id": "roof-middle-feature-rib",
+        "intent": "raised_rib",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "real_feature_op",
+        "grounding_status": "profile_prior",
+        "grounding_method": null,
+        "source_observation_ids": [],
+        "projection_residuals": null,
+        "review_required": false,
+        "helper_allowed": false,
+        "photo_grade_eligible": false
+      }
     },
     {
       "op": "add_raised_rib",
@@ -504,7 +639,22 @@
       "length": 1060,
       "width": 18,
       "height": 16,
-      "direction": "u"
+      "direction": "u",
+      "qa": {
+        "role": "raised_rib",
+        "part_id": "amb-main-body",
+        "feature_id": "roof-right-feature-rib",
+        "intent": "raised_rib",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "real_feature_op",
+        "grounding_status": "profile_prior",
+        "grounding_method": null,
+        "source_observation_ids": [],
+        "projection_residuals": null,
+        "review_required": false,
+        "helper_allowed": false,
+        "photo_grade_eligible": false
+      }
     },
     {
       "op": "rounded_box",
@@ -573,7 +723,22 @@
       ],
       "depth": 8,
       "radius": 6,
-      "segments": 5
+      "segments": 5,
+      "qa": {
+        "role": "blind_recess",
+        "part_id": "amb-cab-lower",
+        "feature_id": "front-grille-recess",
+        "intent": "blind_recess",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "real_feature_op",
+        "grounding_status": "profile_prior",
+        "grounding_method": null,
+        "source_observation_ids": [],
+        "projection_residuals": null,
+        "review_required": false,
+        "helper_allowed": false,
+        "photo_grade_eligible": false
+      }
     },
     {
       "op": "add_boss",
@@ -586,7 +751,22 @@
       ],
       "radius": 44,
       "height": 8,
-      "segments": 20
+      "segments": 20,
+      "qa": {
+        "role": "convex",
+        "part_id": "amb-cab-lower",
+        "feature_id": "front-left-headlight-boss",
+        "intent": "convex",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "real_feature_op",
+        "grounding_status": "profile_prior",
+        "grounding_method": null,
+        "source_observation_ids": [],
+        "projection_residuals": null,
+        "review_required": false,
+        "helper_allowed": false,
+        "photo_grade_eligible": false
+      }
     },
     {
       "op": "add_boss",
@@ -599,7 +779,22 @@
       ],
       "radius": 44,
       "height": 8,
-      "segments": 20
+      "segments": 20,
+      "qa": {
+        "role": "convex",
+        "part_id": "amb-cab-lower",
+        "feature_id": "front-right-headlight-boss",
+        "intent": "convex",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "real_feature_op",
+        "grounding_status": "profile_prior",
+        "grounding_method": null,
+        "source_observation_ids": [],
+        "projection_residuals": null,
+        "review_required": false,
+        "helper_allowed": false,
+        "photo_grade_eligible": false
+      }
     },
     {
       "op": "mesh",

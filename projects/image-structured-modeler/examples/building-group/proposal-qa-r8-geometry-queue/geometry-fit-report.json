@@ -1,0 +1,4079 @@
+{
+  "kind": "geometry_fit_qa",
+  "version": 2,
+  "ok": true,
+  "verdict": "review",
+  "fixture": "building-group-r8-geometry-grounding-v2",
+  "runtime": "queue",
+  "camera_calibration": {
+    "version": 2,
+    "projection_type": "top_view_affine_bbox_to_site_xy",
+    "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+    "image_view": "top",
+    "image_frame": {
+      "key": "site",
+      "observation_id": "building_top_site_boundary",
+      "bbox": [
+        35.14,
+        46.85,
+        788.44,
+        560.56
+      ],
+      "grounding": {
+        "method": "layout_prior",
+        "review_required": true
+      }
+    },
+    "model_frame": {
+      "axes": [
+        "x",
+        "y"
+      ],
+      "item_ids": [
+        "site_boundary"
+      ],
+      "bbox": {
+        "min": [
+          -65000,
+          -49000,
+          -80
+        ],
+        "max": [
+          65000,
+          49000,
+          0
+        ],
+        "w": 130000,
+        "d": 98000,
+        "h": 80
+      }
+    },
+    "image_to_site_transform": {
+      "coordinate_convention": "image_x_right_y_down_to_model_xy_y_up",
+      "image_origin_px": [
+        35.14,
+        46.85
+      ],
+      "image_extent_px": [
+        788.44,
+        560.56
+      ],
+      "model_origin_mm": [
+        -65000,
+        -49000
+      ],
+      "model_extent_mm": [
+        130000,
+        98000
+      ],
+      "mm_per_px_x": 164.883,
+      "mm_per_px_y": 174.825,
+      "normalized_x": "u=(x-image_min_x)/image_width",
+      "normalized_y": "v=1-(y-image_min_y)/image_height"
+    },
+    "confidence": 0.702,
+    "review_required": true,
+    "residual_summary": {
+      "mean_center_error": 0.015,
+      "max_center_error": 0.033,
+      "mean_extent_error": 0.03,
+      "max_extent_error": 0.06,
+      "mean_relation_error": 0.022,
+      "max_relation_error": 0.032,
+      "mean_scale_error": 0.063,
+      "max_scale_error": 0.118,
+      "handedness_error": 0,
+      "dense_detail_helper_ratio": 0.653,
+      "photo_grade_eligible_ratio": 0,
+      "structural_grounding_issues": 0,
+      "floating_roof_features": 0
+    },
+    "site_projection": {
+      "version": 2,
+      "projection_type": "top_view_affine_bbox_to_site_xy",
+      "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+      "image_view": "top",
+      "image_frame": {
+        "key": "site",
+        "observation_id": "building_top_site_boundary",
+        "bbox": [
+          35.14,
+          46.85,
+          788.44,
+          560.56
+        ],
+        "grounding": {
+          "method": "layout_prior",
+          "review_required": true
+        }
+      },
+      "model_frame": {
+        "axes": [
+          "x",
+          "y"
+        ],
+        "item_ids": [
+          "site_boundary"
+        ],
+        "bbox": {
+          "min": [
+            -65000,
+            -49000,
+            -80
+          ],
+          "max": [
+            65000,
+            49000,
+            0
+          ],
+          "w": 130000,
+          "d": 98000,
+          "h": 80
+        }
+      },
+      "image_to_site_transform": {
+        "coordinate_convention": "image_x_right_y_down_to_model_xy_y_up",
+        "image_origin_px": [
+          35.14,
+          46.85
+        ],
+        "image_extent_px": [
+          788.44,
+          560.56
+        ],
+        "model_origin_mm": [
+          -65000,
+          -49000
+        ],
+        "model_extent_mm": [
+          130000,
+          98000
+        ],
+        "mm_per_px_x": 164.883,
+        "mm_per_px_y": 174.825,
+        "normalized_x": "u=(x-image_min_x)/image_width",
+        "normalized_y": "v=1-(y-image_min_y)/image_height"
+      },
+      "confidence": 0.702,
+      "review_required": true,
+      "residual_summary": {
+        "mean_center_error": 0.015,
+        "max_center_error": 0.033,
+        "mean_extent_error": 0.03,
+        "max_extent_error": 0.06,
+        "mean_relation_error": 0.022,
+        "max_relation_error": 0.032,
+        "mean_scale_error": 0.063,
+        "max_scale_error": 0.118,
+        "handedness_error": 0,
+        "dense_detail_helper_ratio": 0.653,
+        "photo_grade_eligible_ratio": 0,
+        "structural_grounding_issues": 0,
+        "floating_roof_features": 0
+      }
+    },
+    "camera_calibrations": [
+      {
+        "version": 2,
+        "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png",
+        "view": "oblique",
+        "projection_model": "weak_oblique_affine_review_only",
+        "frame_observation_id": "building_oblique_site_boundary",
+        "frame_bbox": [
+          42.01,
+          68.36,
+          788.97,
+          526.44
+        ],
+        "scale_basis": null,
+        "vanishing_lines": [],
+        "vanishing_points": [
+          [
+            -540,
+            189
+          ],
+          [
+            1440,
+            189
+          ]
+        ],
+        "horizon_line": {
+          "a": [
+            0,
+            189
+          ],
+          "b": [
+            900,
+            189
+          ]
+        },
+        "review_required": true,
+        "residual_summary": null
+      },
+      {
+        "version": 2,
+        "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+        "view": "top",
+        "projection_model": "site_affine",
+        "frame_observation_id": "building_top_site_boundary",
+        "frame_bbox": [
+          35.14,
+          46.85,
+          788.44,
+          560.56
+        ],
+        "scale_basis": {
+          "coordinate_convention": "image_x_right_y_down_to_model_xy_y_up",
+          "image_origin_px": [
+            35.14,
+            46.85
+          ],
+          "image_extent_px": [
+            788.44,
+            560.56
+          ],
+          "model_origin_mm": [
+            -65000,
+            -49000
+          ],
+          "model_extent_mm": [
+            130000,
+            98000
+          ],
+          "mm_per_px_x": 164.883,
+          "mm_per_px_y": 174.825,
+          "normalized_x": "u=(x-image_min_x)/image_width",
+          "normalized_y": "v=1-(y-image_min_y)/image_height"
+        },
+        "vanishing_lines": [],
+        "vanishing_points": [],
+        "horizon_line": null,
+        "review_required": true,
+        "residual_summary": {
+          "mean_center_error": 0.015,
+          "max_center_error": 0.033,
+          "mean_extent_error": 0.03,
+          "max_extent_error": 0.06,
+          "mean_relation_error": 0.022,
+          "max_relation_error": 0.032,
+          "mean_scale_error": 0.063,
+          "max_scale_error": 0.118,
+          "handedness_error": 0,
+          "dense_detail_helper_ratio": 0.653,
+          "photo_grade_eligible_ratio": 0,
+          "structural_grounding_issues": 0,
+          "floating_roof_features": 0
+        }
+      },
+      {
+        "version": 2,
+        "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png",
+        "view": "oblique",
+        "projection_model": "weak_oblique_affine_review_only",
+        "frame_observation_id": "building_oblique_site_boundary",
+        "frame_bbox": [
+          43.98,
+          74.88,
+          788.06,
+          521.52
+        ],
+        "scale_basis": null,
+        "vanishing_lines": [],
+        "vanishing_points": [
+          [
+            -540,
+            189
+          ],
+          [
+            1440,
+            189
+          ]
+        ],
+        "horizon_line": {
+          "a": [
+            0,
+            189
+          ],
+          "b": [
+            900,
+            189
+          ]
+        },
+        "review_required": true,
+        "residual_summary": null
+      }
+    ],
+    "multi_view_consistency": {
+      "version": 2,
+      "checked_items": 6,
+      "review_required": false,
+      "checks": [
+        {
+          "item": "blue_hall",
+          "top_observation_id": "building_top_primary_blue_hall_pixel",
+          "oblique_observation_id": "building_oblique_primary_blue_hall",
+          "top_view_grounding": "pixel_color_segmentation",
+          "oblique_view_grounding": "layout_prior",
+          "residual": null,
+          "review_required": true,
+          "note": "Grounding v2 records cross-view evidence presence; true pose/depth residual remains a review gate."
+        },
+        {
+          "item": "west_warehouse_north",
+          "top_observation_id": "building_top_warehouse_west_north_pixel",
+          "oblique_observation_id": "building_oblique_warehouse_west_north",
+          "top_view_grounding": "pixel_color_segmentation",
+          "oblique_view_grounding": "layout_prior",
+          "residual": null,
+          "review_required": true,
+          "note": "Grounding v2 records cross-view evidence presence; true pose/depth residual remains a review gate."
+        },
+        {
+          "item": "west_warehouse_south",
+          "top_observation_id": "building_top_warehouse_west_south_pixel",
+          "oblique_observation_id": "building_oblique_warehouse_west_south",
+          "top_view_grounding": "pixel_color_segmentation",
+          "oblique_view_grounding": "layout_prior",
+          "residual": null,
+          "review_required": true,
+          "note": "Grounding v2 records cross-view evidence presence; true pose/depth residual remains a review gate."
+        },
+        {
+          "item": "inner_warehouse_north",
+          "top_observation_id": "building_top_warehouse_inner_north_pixel",
+          "oblique_observation_id": "building_oblique_warehouse_inner_north",
+          "top_view_grounding": "pixel_color_segmentation",
+          "oblique_view_grounding": "layout_prior",
+          "residual": null,
+          "review_required": true,
+          "note": "Grounding v2 records cross-view evidence presence; true pose/depth residual remains a review gate."
+        },
+        {
+          "item": "inner_warehouse_south",
+          "top_observation_id": "building_top_warehouse_inner_south_pixel",
+          "oblique_observation_id": "building_oblique_warehouse_inner_south",
+          "top_view_grounding": "pixel_color_segmentation",
+          "oblique_view_grounding": "layout_prior",
+          "residual": null,
+          "review_required": true,
+          "note": "Grounding v2 records cross-view evidence presence; true pose/depth residual remains a review gate."
+        },
+        {
+          "item": "parking_lot",
+          "top_observation_id": "building_top_parking_lot",
+          "oblique_observation_id": "building_oblique_parking_lot",
+          "top_view_grounding": "layout_prior",
+          "oblique_view_grounding": "layout_prior",
+          "residual": null,
+          "review_required": true,
+          "note": "Grounding v2 records cross-view evidence presence; true pose/depth residual remains a review gate."
+        }
+      ],
+      "note": "Top/oblique evidence exists for these items; exact pose/depth calibration is not yet solved."
+    }
+  },
+  "grounding_v2": {
+    "version": 2,
+    "total_items": 305,
+    "primary_structures": {
+      "total": 57,
+      "by_status": {
+        "helper_only": 2,
+        "review_confirmed": 53,
+        "profile_prior": 2
+      },
+      "by_role": {
+        "site_boundary": 1,
+        "production_hall": 1,
+        "roofline.center_ridge": 1,
+        "roofline.eave_line": 2,
+        "facade.opening.loading_door": 1,
+        "facade.opening.window_band": 2,
+        "roof": 5,
+        "warehouse_row": 4,
+        "roofline.center_seam": 4,
+        "roofline.longitudinal_seam": 8,
+        "facade.opening.loading_bay": 12,
+        "utility_building": 1,
+        "roofline.service_ridge": 1,
+        "facade.opening.louver_band": 1,
+        "facade.opening.service_door": 1,
+        "admin_office": 1,
+        "roofline.parapet_edge": 1,
+        "facade.opening.entry_door": 1,
+        "facade.opening.window": 2,
+        "parking_lot": 1,
+        "tank_farm": 1,
+        "tank": 1,
+        "road_pavement": 1,
+        "site_region": 3
+      },
+      "grounded": 53,
+      "image_grounded": 0,
+      "review_required": 23,
+      "rejected": 0,
+      "photo_grade_eligible": 0,
+      "grounded_ratio": 0.93,
+      "image_grounded_ratio": 0,
+      "photo_grade_eligible_ratio": 0
+    },
+    "dense_details": {
+      "total": 248,
+      "by_status": {
+        "review_confirmed": 86,
+        "helper_only": 162
+      },
+      "by_role": {
+        "pedestrian_walkway": 3,
+        "perimeter_fence": 4,
+        "entry_guardhouse": 1,
+        "entry_canopy": 1,
+        "entry_gate": 4,
+        "road_marking": 3,
+        "crosswalk_stripe": 21,
+        "parking_stall_line": 30,
+        "parking_tree_island_curb": 4,
+        "landscape_tree_trunk": 52,
+        "landscape_tree_canopy": 52,
+        "loading_truck_trailer": 8,
+        "loading_truck_cab": 8,
+        "loading_dock_apron": 8,
+        "roof_monitor": 1,
+        "roof_panel_seam": 16,
+        "roof_vent": 20,
+        "tank_roof_cap": 2,
+        "tank_roof_hatch": 2,
+        "tank_base_plinth": 2,
+        "tank_service_platform": 2,
+        "tank_pipe_bridge": 1,
+        "roof_hvac": 3
+      },
+      "grounded": 86,
+      "image_grounded": 0,
+      "review_required": 189,
+      "rejected": 0,
+      "photo_grade_eligible": 0,
+      "grounded_ratio": 0.347,
+      "image_grounded_ratio": 0,
+      "photo_grade_eligible_ratio": 0,
+      "helper_ratio": 0.653,
+      "helper_roles": [
+        "perimeter_fence",
+        "entry_guardhouse",
+        "entry_canopy",
+        "entry_gate",
+        "pedestrian_walkway",
+        "landscape_tree_trunk",
+        "landscape_tree_canopy",
+        "loading_truck_trailer",
+        "loading_truck_cab",
+        "loading_dock_apron",
+        "roof_vent",
+        "roof_hvac"
+      ]
+    },
+    "image_grounded_claims_without_observation": [],
+    "sample_items": [
+      {
+        "id": "site_boundary",
+        "op": "box",
+        "role": "site_boundary",
+        "grounding_status": "helper_only",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_site_boundary",
+          "building_top_site_boundary"
+        ],
+        "review_required": false,
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "fallback_state": "visual_helper",
+        "evidence_status": "observed"
+      },
+      {
+        "id": "primary_blue_roof_hall_body",
+        "op": "box",
+        "role": "production_hall",
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_primary_blue_hall",
+          "building_top_primary_blue_hall_pixel",
+          "building_top_primary_blue_hall",
+          "building_top_blue_hall_center"
+        ],
+        "review_required": false,
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "fallback_state": "structured_primitive",
+        "evidence_status": "manual_confirmed"
+      },
+      {
+        "id": "primary_blue_roof_hall_body_roof_center_ridge",
+        "op": "add_raised_rib",
+        "role": "roofline.center_ridge",
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_primary_blue_hall",
+          "building_top_primary_blue_hall_pixel",
+          "building_top_primary_blue_hall",
+          "building_top_blue_hall_center"
+        ],
+        "review_required": false,
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "fallback_state": "structured_primitive",
+        "evidence_status": "manual_confirmed"
+      },
+      {
+        "id": "primary_blue_roof_hall_body_roof_west_eave_line",
+        "op": "add_raised_rib",
+        "role": "roofline.eave_line",
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_primary_blue_hall",
+          "building_top_primary_blue_hall_pixel",
+          "building_top_primary_blue_hall",
+          "building_top_blue_hall_center"
+        ],
+        "review_required": false,
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "fallback_state": "structured_primitive",
+        "evidence_status": "manual_confirmed"
+      },
+      {
+        "id": "primary_blue_roof_hall_body_roof_east_eave_line",
+        "op": "add_raised_rib",
+        "role": "roofline.eave_line",
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_primary_blue_hall",
+          "building_top_primary_blue_hall_pixel",
+          "building_top_primary_blue_hall",
+          "building_top_blue_hall_center"
+        ],
+        "review_required": false,
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "fallback_state": "structured_primitive",
+        "evidence_status": "manual_confirmed"
+      },
+      {
+        "id": "primary_blue_roof_hall_body_facade_loading_door",
+        "op": "cut_recess",
+        "role": "facade.opening.loading_door",
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_primary_blue_hall",
+          "building_top_primary_blue_hall_pixel",
+          "building_top_primary_blue_hall",
+          "building_top_blue_hall_center"
+        ],
+        "review_required": true,
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "fallback_state": "structured_primitive",
+        "evidence_status": "manual_confirmed"
+      },
+      {
+        "id": "primary_blue_roof_hall_body_facade_window_band_left",
+        "op": "cut_recess",
+        "role": "facade.opening.window_band",
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_primary_blue_hall",
+          "building_top_primary_blue_hall_pixel",
+          "building_top_primary_blue_hall",
+          "building_top_blue_hall_center"
+        ],
+        "review_required": true,
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "fallback_state": "structured_primitive",
+        "evidence_status": "manual_confirmed"
+      },
+      {
+        "id": "primary_blue_roof_hall_body_facade_window_band_right",
+        "op": "cut_recess",
+        "role": "facade.opening.window_band",
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_primary_blue_hall",
+          "building_top_primary_blue_hall_pixel",
+          "building_top_primary_blue_hall",
+          "building_top_blue_hall_center"
+        ],
+        "review_required": true,
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "fallback_state": "structured_primitive",
+        "evidence_status": "manual_confirmed"
+      },
+      {
+        "id": "primary_blue_hall_gable_roof",
+        "op": "gable_roof",
+        "role": "roof",
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_primary_blue_hall",
+          "building_top_primary_blue_hall_pixel",
+          "building_top_primary_blue_hall",
+          "building_top_blue_hall_center"
+        ],
+        "review_required": false,
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "fallback_state": "structured_primitive",
+        "evidence_status": "manual_confirmed"
+      },
+      {
+        "id": "warehouse_west_north_body",
+        "op": "box",
+        "role": "warehouse_row",
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_warehouse_row_west",
+          "building_top_warehouse_row_west_pixel",
+          "building_top_warehouse_row_west"
+        ],
+        "review_required": false,
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "fallback_state": "structured_primitive",
+        "evidence_status": "manual_confirmed"
+      },
+      {
+        "id": "warehouse_west_north_body_roof_center_seam",
+        "op": "add_raised_rib",
+        "role": "roofline.center_seam",
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_warehouse_row_west",
+          "building_top_warehouse_row_west_pixel",
+          "building_top_warehouse_row_west"
+        ],
+        "review_required": false,
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "fallback_state": "structured_primitive",
+        "evidence_status": "manual_confirmed"
+      },
+      {
+        "id": "warehouse_west_north_body_roof_left_longitudinal_seam",
+        "op": "add_raised_rib",
+        "role": "roofline.longitudinal_seam",
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_warehouse_row_west",
+          "building_top_warehouse_row_west_pixel",
+          "building_top_warehouse_row_west"
+        ],
+        "review_required": false,
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "fallback_state": "structured_primitive",
+        "evidence_status": "manual_confirmed"
+      },
+      {
+        "id": "warehouse_west_north_body_roof_right_longitudinal_seam",
+        "op": "add_raised_rib",
+        "role": "roofline.longitudinal_seam",
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_warehouse_row_west",
+          "building_top_warehouse_row_west_pixel",
+          "building_top_warehouse_row_west"
+        ],
+        "review_required": false,
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "fallback_state": "structured_primitive",
+        "evidence_status": "manual_confirmed"
+      },
+      {
+        "id": "warehouse_west_north_body_facade_loading_bay_north",
+        "op": "cut_recess",
+        "role": "facade.opening.loading_bay",
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_warehouse_row_west",
+          "building_top_warehouse_row_west_pixel",
+          "building_top_warehouse_row_west"
+        ],
+        "review_required": true,
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "fallback_state": "structured_primitive",
+        "evidence_status": "manual_confirmed"
+      },
+      {
+        "id": "warehouse_west_north_body_facade_loading_bay_center",
+        "op": "cut_recess",
+        "role": "facade.opening.loading_bay",
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_warehouse_row_west",
+          "building_top_warehouse_row_west_pixel",
+          "building_top_warehouse_row_west"
+        ],
+        "review_required": true,
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "fallback_state": "structured_primitive",
+        "evidence_status": "manual_confirmed"
+      },
+      {
+        "id": "warehouse_west_north_body_facade_loading_bay_south",
+        "op": "cut_recess",
+        "role": "facade.opening.loading_bay",
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_warehouse_row_west",
+          "building_top_warehouse_row_west_pixel",
+          "building_top_warehouse_row_west"
+        ],
+        "review_required": true,
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "fallback_state": "structured_primitive",
+        "evidence_status": "manual_confirmed"
+      },
+      {
+        "id": "warehouse_west_north_gable_roof",
+        "op": "gable_roof",
+        "role": "roof",
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_warehouse_row_west",
+          "building_top_warehouse_row_west_pixel",
+          "building_top_warehouse_row_west"
+        ],
+        "review_required": false,
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "fallback_state": "structured_primitive",
+        "evidence_status": "manual_confirmed"
+      },
+      {
+        "id": "warehouse_west_south_body",
+        "op": "box",
+        "role": "warehouse_row",
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_warehouse_row_west",
+          "building_top_warehouse_row_west_pixel",
+          "building_top_warehouse_row_west"
+        ],
+        "review_required": false,
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "fallback_state": "structured_primitive",
+        "evidence_status": "manual_confirmed"
+      },
+      {
+        "id": "warehouse_west_south_body_roof_center_seam",
+        "op": "add_raised_rib",
+        "role": "roofline.center_seam",
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_warehouse_row_west",
+          "building_top_warehouse_row_west_pixel",
+          "building_top_warehouse_row_west"
+        ],
+        "review_required": false,
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "fallback_state": "structured_primitive",
+        "evidence_status": "manual_confirmed"
+      },
+      {
+        "id": "warehouse_west_south_body_roof_left_longitudinal_seam",
+        "op": "add_raised_rib",
+        "role": "roofline.longitudinal_seam",
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_warehouse_row_west",
+          "building_top_warehouse_row_west_pixel",
+          "building_top_warehouse_row_west"
+        ],
+        "review_required": false,
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "fallback_state": "structured_primitive",
+        "evidence_status": "manual_confirmed"
+      },
+      {
+        "id": "warehouse_west_south_body_roof_right_longitudinal_seam",
+        "op": "add_raised_rib",
+        "role": "roofline.longitudinal_seam",
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_warehouse_row_west",
+          "building_top_warehouse_row_west_pixel",
+          "building_top_warehouse_row_west"
+        ],
+        "review_required": false,
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "fallback_state": "structured_primitive",
+        "evidence_status": "manual_confirmed"
+      },
+      {
+        "id": "warehouse_west_south_body_facade_loading_bay_north",
+        "op": "cut_recess",
+        "role": "facade.opening.loading_bay",
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_warehouse_row_west",
+          "building_top_warehouse_row_west_pixel",
+          "building_top_warehouse_row_west"
+        ],
+        "review_required": true,
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "fallback_state": "structured_primitive",
+        "evidence_status": "manual_confirmed"
+      },
+      {
+        "id": "warehouse_west_south_body_facade_loading_bay_center",
+        "op": "cut_recess",
+        "role": "facade.opening.loading_bay",
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_warehouse_row_west",
+          "building_top_warehouse_row_west_pixel",
+          "building_top_warehouse_row_west"
+        ],
+        "review_required": true,
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "fallback_state": "structured_primitive",
+        "evidence_status": "manual_confirmed"
+      },
+      {
+        "id": "warehouse_west_south_body_facade_loading_bay_south",
+        "op": "cut_recess",
+        "role": "facade.opening.loading_bay",
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_warehouse_row_west",
+          "building_top_warehouse_row_west_pixel",
+          "building_top_warehouse_row_west"
+        ],
+        "review_required": true,
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "fallback_state": "structured_primitive",
+        "evidence_status": "manual_confirmed"
+      },
+      {
+        "id": "warehouse_west_south_gable_roof",
+        "op": "gable_roof",
+        "role": "roof",
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_warehouse_row_west",
+          "building_top_warehouse_row_west_pixel",
+          "building_top_warehouse_row_west"
+        ],
+        "review_required": false,
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "fallback_state": "structured_primitive",
+        "evidence_status": "manual_confirmed"
+      },
+      {
+        "id": "warehouse_inner_north_body",
+        "op": "box",
+        "role": "warehouse_row",
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_warehouse_row_inner",
+          "building_top_warehouse_row_inner_pixel",
+          "building_top_warehouse_row_inner"
+        ],
+        "review_required": false,
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "fallback_state": "structured_primitive",
+        "evidence_status": "manual_confirmed"
+      },
+      {
+        "id": "warehouse_inner_north_body_roof_center_seam",
+        "op": "add_raised_rib",
+        "role": "roofline.center_seam",
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_warehouse_row_inner",
+          "building_top_warehouse_row_inner_pixel",
+          "building_top_warehouse_row_inner"
+        ],
+        "review_required": false,
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "fallback_state": "structured_primitive",
+        "evidence_status": "manual_confirmed"
+      },
+      {
+        "id": "warehouse_inner_north_body_roof_left_longitudinal_seam",
+        "op": "add_raised_rib",
+        "role": "roofline.longitudinal_seam",
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_warehouse_row_inner",
+          "building_top_warehouse_row_inner_pixel",
+          "building_top_warehouse_row_inner"
+        ],
+        "review_required": false,
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "fallback_state": "structured_primitive",
+        "evidence_status": "manual_confirmed"
+      },
+      {
+        "id": "warehouse_inner_north_body_roof_right_longitudinal_seam",
+        "op": "add_raised_rib",
+        "role": "roofline.longitudinal_seam",
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_warehouse_row_inner",
+          "building_top_warehouse_row_inner_pixel",
+          "building_top_warehouse_row_inner"
+        ],
+        "review_required": false,
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "fallback_state": "structured_primitive",
+        "evidence_status": "manual_confirmed"
+      },
+      {
+        "id": "warehouse_inner_north_body_facade_loading_bay_north",
+        "op": "cut_recess",
+        "role": "facade.opening.loading_bay",
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_warehouse_row_inner",
+          "building_top_warehouse_row_inner_pixel",
+          "building_top_warehouse_row_inner"
+        ],
+        "review_required": true,
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "fallback_state": "structured_primitive",
+        "evidence_status": "manual_confirmed"
+      },
+      {
+        "id": "warehouse_inner_north_body_facade_loading_bay_center",
+        "op": "cut_recess",
+        "role": "facade.opening.loading_bay",
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_warehouse_row_inner",
+          "building_top_warehouse_row_inner_pixel",
+          "building_top_warehouse_row_inner"
+        ],
+        "review_required": true,
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "fallback_state": "structured_primitive",
+        "evidence_status": "manual_confirmed"
+      },
+      {
+        "id": "warehouse_inner_north_body_facade_loading_bay_south",
+        "op": "cut_recess",
+        "role": "facade.opening.loading_bay",
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_warehouse_row_inner",
+          "building_top_warehouse_row_inner_pixel",
+          "building_top_warehouse_row_inner"
+        ],
+        "review_required": true,
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "fallback_state": "structured_primitive",
+        "evidence_status": "manual_confirmed"
+      },
+      {
+        "id": "warehouse_inner_north_gable_roof",
+        "op": "gable_roof",
+        "role": "roof",
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_warehouse_row_inner",
+          "building_top_warehouse_row_inner_pixel",
+          "building_top_warehouse_row_inner"
+        ],
+        "review_required": false,
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "fallback_state": "structured_primitive",
+        "evidence_status": "manual_confirmed"
+      },
+      {
+        "id": "warehouse_inner_south_body",
+        "op": "box",
+        "role": "warehouse_row",
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_warehouse_row_inner",
+          "building_top_warehouse_row_inner_pixel",
+          "building_top_warehouse_row_inner"
+        ],
+        "review_required": false,
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "fallback_state": "structured_primitive",
+        "evidence_status": "manual_confirmed"
+      },
+      {
+        "id": "warehouse_inner_south_body_roof_center_seam",
+        "op": "add_raised_rib",
+        "role": "roofline.center_seam",
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_warehouse_row_inner",
+          "building_top_warehouse_row_inner_pixel",
+          "building_top_warehouse_row_inner"
+        ],
+        "review_required": false,
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "fallback_state": "structured_primitive",
+        "evidence_status": "manual_confirmed"
+      },
+      {
+        "id": "warehouse_inner_south_body_roof_left_longitudinal_seam",
+        "op": "add_raised_rib",
+        "role": "roofline.longitudinal_seam",
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_warehouse_row_inner",
+          "building_top_warehouse_row_inner_pixel",
+          "building_top_warehouse_row_inner"
+        ],
+        "review_required": false,
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "fallback_state": "structured_primitive",
+        "evidence_status": "manual_confirmed"
+      }
+    ]
+  },
+  "structural_grounding": {
+    "version": 1,
+    "site_region_fit": {
+      "checked": 5,
+      "region_kinds": {
+        "road_pavement": 1,
+        "parking_area": 1,
+        "green_area": 1,
+        "walkway": 1,
+        "service_yard": 1
+      },
+      "area_ratios": {
+        "road_pavement": 0.0604,
+        "parking_area": 0.0753,
+        "green_area": 0.0989,
+        "walkway": 0.0014,
+        "service_yard": 0.0169
+      },
+      "max_overlap_ratio": 0.001,
+      "max_allowed_overlap_ratio": 0.02,
+      "unclassified_ratio": 0.388,
+      "max_allowed_unclassified_ratio": 0.45,
+      "internal_road_area_ratio": 0.06,
+      "max_allowed_internal_road_area_ratio": 0.22,
+      "internal_roads_are_polygonal": true,
+      "review_required": false
+    },
+    "parking_layout_fit": {
+      "checked": 34,
+      "stall_line_operations": 30,
+      "helper_only_operations": 0,
+      "missing_line_evidence": 0,
+      "max_spacing_error_ratio": 0.017,
+      "max_aisle_width_error_ratio": 0.071,
+      "max_allowed_spacing_error_ratio": 0.12,
+      "max_allowed_aisle_width_error_ratio": 0.16,
+      "row_count": 2,
+      "column_count": 12
+    },
+    "roof_surface_fit": {
+      "checked": 40,
+      "by_role": {
+        "roof_monitor": 1,
+        "roof_panel_seam": 16,
+        "roof_vent": 20,
+        "roof_hvac": 3
+      },
+      "missing_host_count": 0,
+      "missing_host_ids": [],
+      "floating_count": 0,
+      "floating_ids": [],
+      "max_surface_distance_mm": 80,
+      "max_allowed_surface_distance_mm": 80,
+      "direction_review_count": 0,
+      "max_direction_error_degrees": 0.8,
+      "max_allowed_direction_error_degrees": 5
+    },
+    "tank_ellipse_fit": {
+      "checked": 9,
+      "detail_operations": 9,
+      "instances": 2,
+      "instance_ids": [
+        "tank_farm_west_ellipse",
+        "tank_farm_east_ellipse"
+      ],
+      "helper_only_operations": 0,
+      "max_radius_error_ratio": 0.08,
+      "max_allowed_radius_error_ratio": 0.12,
+      "missing_parent_evidence": 0
+    },
+    "issues": [],
+    "summary": {
+      "total_issues": 0,
+      "by_severity": {}
+    }
+  },
+  "summary": {
+    "checked_footprints": 6,
+    "matched_footprints": 3,
+    "grounding_issues": 0,
+    "checked_relations": 3,
+    "matched_relations": 3,
+    "checked_scale_anchors": 4,
+    "scale_anchors_in_tolerance": 4,
+    "checked_handedness_cases": 1,
+    "handedness_cases_detected": 1,
+    "grounding_methods": {
+      "pixel_color_segmentation": 5,
+      "unknown": 1
+    },
+    "primary_structures_grounding_coverage": 0.93,
+    "dense_detail_helper_ratio": 0.653,
+    "dense_detail_review_required": 189,
+    "dense_detail_rejected": 0,
+    "photo_grade_eligible_ratio": 0,
+    "dense_detail_items": 248,
+    "structural_grounding_issues": 0,
+    "site_region_unclassified_ratio": 0.388,
+    "site_region_overlap_ratio": 0.001,
+    "internal_road_area_ratio": 0.06,
+    "parking_grid_spacing_error_ratio": 0.017,
+    "floating_roof_features": 0,
+    "roof_surface_features_checked": 40,
+    "tank_ellipse_instances": 2,
+    "tank_ellipse_max_radius_error_ratio": 0.08,
+    "mean_center_error": 0.015,
+    "max_center_error": 0.033,
+    "mean_extent_error": 0.03,
+    "max_extent_error": 0.06,
+    "mean_relation_error": 0.022,
+    "max_relation_error": 0.032,
+    "mean_scale_error": 0.063,
+    "max_scale_error": 0.118,
+    "handedness_error": 0,
+    "total_issues": 4,
+    "by_severity": {
+      "error": 0,
+      "warn": 4,
+      "info": 0
+    }
+  },
+  "issues": [
+    {
+      "severity": "warn",
+      "type": "geometry_fit.footprint_residual",
+      "rule_id": "r8-west-warehouse-south-pixel-footprint",
+      "message": "west_warehouse_south model projection diverges from mask/contour footprint evidence.",
+      "evidence": {
+        "model_box": {
+          "min": [
+            0.125,
+            0.162
+          ],
+          "max": [
+            0.227,
+            0.512
+          ],
+          "center": [
+            0.176,
+            0.337
+          ],
+          "extent": [
+            0.102,
+            0.35
+          ]
+        },
+        "image_box": {
+          "min": [
+            0.125,
+            0.165
+          ],
+          "max": [
+            0.223,
+            0.575
+          ],
+          "center": [
+            0.174,
+            0.37
+          ],
+          "extent": [
+            0.098,
+            0.41
+          ]
+        },
+        "bbox_image_box": {
+          "min": [
+            0.125,
+            0.165
+          ],
+          "max": [
+            0.223,
+            0.575
+          ],
+          "center": [
+            0.174,
+            0.37
+          ],
+          "extent": [
+            0.098,
+            0.41
+          ]
+        },
+        "model_polygon": [
+          [
+            0.125,
+            0.162
+          ],
+          [
+            0.227,
+            0.162
+          ],
+          [
+            0.227,
+            0.512
+          ],
+          [
+            0.125,
+            0.512
+          ],
+          [
+            0.125,
+            0.162
+          ]
+        ],
+        "contour_polygon_sample": [
+          [
+            0.125,
+            0.575
+          ],
+          [
+            0.223,
+            0.575
+          ],
+          [
+            0.223,
+            0.165
+          ],
+          [
+            0.125,
+            0.165
+          ],
+          [
+            0.125,
+            0.575
+          ]
+        ],
+        "contour_polygon_bounds": {
+          "min": [
+            0.125,
+            0.165
+          ],
+          "max": [
+            0.223,
+            0.575
+          ],
+          "center": [
+            0.174,
+            0.37
+          ],
+          "extent": [
+            0.098,
+            0.41
+          ]
+        },
+        "center_tolerance": 0.035,
+        "extent_tolerance": [
+          0.045,
+          0.045
+        ],
+        "area_tolerance": 0.28,
+        "observation_id": "building_top_warehouse_west_south_pixel",
+        "grounding": {
+          "method": "pixel_color_segmentation",
+          "mask": "white_roof_component",
+          "contour_basis": "sampled_mask_contour",
+          "grounding_quality": {
+            "version": 1,
+            "status": "accepted",
+            "raw_to_evidence_bbox_ratio": null,
+            "prior_to_evidence_bbox_ratio": null,
+            "bbox_proxy": true,
+            "review_required": false,
+            "reasons": []
+          },
+          "review_required": false
+        },
+        "mask": {
+          "id": "white_roof_component",
+          "method": "pixel_color_segmentation",
+          "bbox": [
+            134,
+            285,
+            77,
+            230
+          ],
+          "polygon": [
+            [
+              134,
+              285
+            ],
+            [
+              211,
+              285
+            ],
+            [
+              211,
+              515
+            ],
+            [
+              134,
+              515
+            ],
+            [
+              134,
+              285
+            ]
+          ],
+          "sampled_contour": [
+            [
+              134,
+              285
+            ],
+            [
+              211,
+              285
+            ],
+            [
+              211,
+              515
+            ],
+            [
+              134,
+              515
+            ],
+            [
+              134,
+              285
+            ]
+          ],
+          "quality": {
+            "version": 1,
+            "status": "accepted",
+            "raw_to_evidence_bbox_ratio": null,
+            "prior_to_evidence_bbox_ratio": null,
+            "bbox_proxy": true,
+            "review_required": false,
+            "reasons": []
+          },
+          "review_required": false
+        },
+        "contour": {
+          "kind": "sampled_mask_contour",
+          "sample_count": 5,
+          "source": "pixel_color_segmentation"
+        },
+        "grounding_quality": {
+          "ok": true,
+          "severity": "error",
+          "method": "pixel_color_segmentation",
+          "max_bbox_dimension_ratio": 2.6,
+          "raw_to_evidence_bbox_ratio": null,
+          "prior_to_evidence_bbox_ratio": null,
+          "contour_sample_count": 5,
+          "bbox_proxy": true,
+          "review_required": false,
+          "reasons": [],
+          "boxes": {
+            "raw_pixel_box": null,
+            "prior_box": null,
+            "evidence_box": {
+              "min": [
+                0.125,
+                0.165
+              ],
+              "max": [
+                0.223,
+                0.575
+              ],
+              "center": [
+                0.174,
+                0.37
+              ],
+              "extent": [
+                0.098,
+                0.41
+              ]
+            },
+            "bbox_image_box": {
+              "min": [
+                0.125,
+                0.165
+              ],
+              "max": [
+                0.223,
+                0.575
+              ],
+              "center": [
+                0.174,
+                0.37
+              ],
+              "extent": [
+                0.098,
+                0.41
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "severity": "warn",
+      "type": "geometry_fit.footprint_residual",
+      "rule_id": "r8-inner-warehouse-south-pixel-footprint",
+      "message": "inner_warehouse_south model projection diverges from mask/contour footprint evidence.",
+      "evidence": {
+        "model_box": {
+          "min": [
+            0.268,
+            0.162
+          ],
+          "max": [
+            0.375,
+            0.512
+          ],
+          "center": [
+            0.322,
+            0.337
+          ],
+          "extent": [
+            0.107,
+            0.35
+          ]
+        },
+        "image_box": {
+          "min": [
+            0.269,
+            0.165
+          ],
+          "max": [
+            0.375,
+            0.575
+          ],
+          "center": [
+            0.322,
+            0.37
+          ],
+          "extent": [
+            0.106,
+            0.41
+          ]
+        },
+        "bbox_image_box": {
+          "min": [
+            0.269,
+            0.165
+          ],
+          "max": [
+            0.375,
+            0.575
+          ],
+          "center": [
+            0.322,
+            0.37
+          ],
+          "extent": [
+            0.106,
+            0.41
+          ]
+        },
+        "model_polygon": [
+          [
+            0.268,
+            0.162
+          ],
+          [
+            0.375,
+            0.162
+          ],
+          [
+            0.375,
+            0.512
+          ],
+          [
+            0.268,
+            0.512
+          ],
+          [
+            0.268,
+            0.162
+          ]
+        ],
+        "contour_polygon_sample": [
+          [
+            0.269,
+            0.575
+          ],
+          [
+            0.375,
+            0.575
+          ],
+          [
+            0.375,
+            0.165
+          ],
+          [
+            0.269,
+            0.165
+          ],
+          [
+            0.269,
+            0.575
+          ]
+        ],
+        "contour_polygon_bounds": {
+          "min": [
+            0.269,
+            0.165
+          ],
+          "max": [
+            0.375,
+            0.575
+          ],
+          "center": [
+            0.322,
+            0.37
+          ],
+          "extent": [
+            0.106,
+            0.41
+          ]
+        },
+        "center_tolerance": 0.035,
+        "extent_tolerance": [
+          0.045,
+          0.045
+        ],
+        "area_tolerance": 0.28,
+        "observation_id": "building_top_warehouse_inner_south_pixel",
+        "grounding": {
+          "method": "pixel_color_segmentation",
+          "mask": "white_roof_component",
+          "contour_basis": "sampled_mask_contour",
+          "grounding_quality": {
+            "version": 1,
+            "status": "accepted",
+            "raw_to_evidence_bbox_ratio": null,
+            "prior_to_evidence_bbox_ratio": null,
+            "bbox_proxy": true,
+            "review_required": false,
+            "reasons": []
+          },
+          "review_required": false
+        },
+        "mask": {
+          "id": "white_roof_component",
+          "method": "pixel_color_segmentation",
+          "bbox": [
+            247,
+            285,
+            84,
+            230
+          ],
+          "polygon": [
+            [
+              247,
+              285
+            ],
+            [
+              331,
+              285
+            ],
+            [
+              331,
+              515
+            ],
+            [
+              247,
+              515
+            ],
+            [
+              247,
+              285
+            ]
+          ],
+          "sampled_contour": [
+            [
+              247,
+              285
+            ],
+            [
+              331,
+              285
+            ],
+            [
+              331,
+              515
+            ],
+            [
+              247,
+              515
+            ],
+            [
+              247,
+              285
+            ]
+          ],
+          "quality": {
+            "version": 1,
+            "status": "accepted",
+            "raw_to_evidence_bbox_ratio": null,
+            "prior_to_evidence_bbox_ratio": null,
+            "bbox_proxy": true,
+            "review_required": false,
+            "reasons": []
+          },
+          "review_required": false
+        },
+        "contour": {
+          "kind": "sampled_mask_contour",
+          "sample_count": 5,
+          "source": "pixel_color_segmentation"
+        },
+        "grounding_quality": {
+          "ok": true,
+          "severity": "error",
+          "method": "pixel_color_segmentation",
+          "max_bbox_dimension_ratio": 2.6,
+          "raw_to_evidence_bbox_ratio": null,
+          "prior_to_evidence_bbox_ratio": null,
+          "contour_sample_count": 5,
+          "bbox_proxy": true,
+          "review_required": false,
+          "reasons": [],
+          "boxes": {
+            "raw_pixel_box": null,
+            "prior_box": null,
+            "evidence_box": {
+              "min": [
+                0.269,
+                0.165
+              ],
+              "max": [
+                0.375,
+                0.575
+              ],
+              "center": [
+                0.322,
+                0.37
+              ],
+              "extent": [
+                0.106,
+                0.41
+              ]
+            },
+            "bbox_image_box": {
+              "min": [
+                0.269,
+                0.165
+              ],
+              "max": [
+                0.375,
+                0.575
+              ],
+              "center": [
+                0.322,
+                0.37
+              ],
+              "extent": [
+                0.106,
+                0.41
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "severity": "warn",
+      "type": "geometry_fit.footprint_residual",
+      "rule_id": "r8-parking-lot-pixel-footprint",
+      "message": "r8-parking-lot-pixel-footprint uses layout_prior evidence instead of pixel_gap_segmentation.",
+      "evidence": {
+        "observation_id": "building_top_parking_lot",
+        "grounding_method": "layout_prior",
+        "required_grounding": "pixel_gap_segmentation"
+      }
+    },
+    {
+      "severity": "warn",
+      "type": "geometry_fit.helper_heavy_dense_detail",
+      "rule_id": "dense_detail_grounding",
+      "message": "Dense detail layer is helper-heavy (0.653); do not treat this model as photo-grade grounded.",
+      "evidence": {
+        "helper_ratio": 0.653,
+        "max_helper_ratio": 0.35,
+        "helper_roles": [
+          "perimeter_fence",
+          "entry_guardhouse",
+          "entry_canopy",
+          "entry_gate",
+          "pedestrian_walkway",
+          "landscape_tree_trunk",
+          "landscape_tree_canopy",
+          "loading_truck_trailer",
+          "loading_truck_cab",
+          "loading_dock_apron",
+          "roof_vent",
+          "roof_hvac"
+        ]
+      }
+    }
+  ],
+  "footprint_results": [
+    {
+      "id": "r8-blue-hall-pixel-footprint",
+      "ok": true,
+      "item": "primary_blue_roof_hall_body",
+      "observation_id": "building_top_primary_blue_hall_pixel",
+      "grounding_method": "pixel_color_segmentation",
+      "image_view": "top",
+      "residuals": {
+        "center_delta": [
+          0,
+          -0.001
+        ],
+        "center_error": 0.001,
+        "extent_delta": [
+          0,
+          0.002
+        ],
+        "extent_error": 0.002,
+        "area_ratio_error": 0,
+        "bbox_area_ratio_error": 0.003,
+        "polygon_area_ratio_error": 0,
+        "iou": 0.997,
+        "polygon_iou": 0.997,
+        "edge_direction_error_deg": 0
+      },
+      "message": "blue_hall model projection fits mask/contour footprint evidence.",
+      "grounding_quality": {
+        "ok": true,
+        "severity": "error",
+        "method": "pixel_color_segmentation",
+        "max_bbox_dimension_ratio": 2.6,
+        "raw_to_evidence_bbox_ratio": null,
+        "prior_to_evidence_bbox_ratio": null,
+        "contour_sample_count": 5,
+        "bbox_proxy": true,
+        "review_required": false,
+        "reasons": [],
+        "boxes": {
+          "raw_pixel_box": null,
+          "prior_box": null,
+          "evidence_box": {
+            "min": [
+              0.442,
+              0.363
+            ],
+            "max": [
+              0.702,
+              0.939
+            ],
+            "center": [
+              0.572,
+              0.651
+            ],
+            "extent": [
+              0.26,
+              0.576
+            ]
+          },
+          "bbox_image_box": {
+            "min": [
+              0.442,
+              0.363
+            ],
+            "max": [
+              0.702,
+              0.939
+            ],
+            "center": [
+              0.572,
+              0.651
+            ],
+            "extent": [
+              0.26,
+              0.576
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "model_box": {
+          "min": [
+            0.442,
+            0.361
+          ],
+          "max": [
+            0.702,
+            0.939
+          ],
+          "center": [
+            0.572,
+            0.65
+          ],
+          "extent": [
+            0.26,
+            0.578
+          ]
+        },
+        "image_box": {
+          "min": [
+            0.442,
+            0.363
+          ],
+          "max": [
+            0.702,
+            0.939
+          ],
+          "center": [
+            0.572,
+            0.651
+          ],
+          "extent": [
+            0.26,
+            0.576
+          ]
+        },
+        "bbox_image_box": {
+          "min": [
+            0.442,
+            0.363
+          ],
+          "max": [
+            0.702,
+            0.939
+          ],
+          "center": [
+            0.572,
+            0.651
+          ],
+          "extent": [
+            0.26,
+            0.576
+          ]
+        },
+        "model_polygon": [
+          [
+            0.442,
+            0.361
+          ],
+          [
+            0.702,
+            0.361
+          ],
+          [
+            0.702,
+            0.939
+          ],
+          [
+            0.442,
+            0.939
+          ],
+          [
+            0.442,
+            0.361
+          ]
+        ],
+        "contour_polygon_sample": [
+          [
+            0.442,
+            0.939
+          ],
+          [
+            0.702,
+            0.939
+          ],
+          [
+            0.702,
+            0.363
+          ],
+          [
+            0.442,
+            0.363
+          ],
+          [
+            0.442,
+            0.939
+          ]
+        ],
+        "contour_polygon_bounds": {
+          "min": [
+            0.442,
+            0.363
+          ],
+          "max": [
+            0.702,
+            0.939
+          ],
+          "center": [
+            0.572,
+            0.651
+          ],
+          "extent": [
+            0.26,
+            0.576
+          ]
+        },
+        "center_tolerance": 0.03,
+        "extent_tolerance": [
+          0.04,
+          0.04
+        ],
+        "area_tolerance": 0.28,
+        "observation_id": "building_top_primary_blue_hall_pixel",
+        "grounding": {
+          "method": "pixel_color_segmentation",
+          "mask": "blue_roof_largest_component",
+          "contour_basis": "sampled_mask_contour",
+          "grounding_quality": {
+            "version": 1,
+            "status": "accepted",
+            "raw_to_evidence_bbox_ratio": null,
+            "prior_to_evidence_bbox_ratio": null,
+            "bbox_proxy": true,
+            "review_required": false,
+            "reasons": []
+          },
+          "review_required": false
+        },
+        "mask": {
+          "id": "blue_roof_largest_component",
+          "method": "pixel_color_segmentation",
+          "bbox": [
+            384,
+            81,
+            205,
+            323
+          ],
+          "polygon": [
+            [
+              384,
+              81
+            ],
+            [
+              589,
+              81
+            ],
+            [
+              589,
+              404
+            ],
+            [
+              384,
+              404
+            ],
+            [
+              384,
+              81
+            ]
+          ],
+          "sampled_contour": [
+            [
+              384,
+              81
+            ],
+            [
+              589,
+              81
+            ],
+            [
+              589,
+              404
+            ],
+            [
+              384,
+              404
+            ],
+            [
+              384,
+              81
+            ]
+          ],
+          "quality": {
+            "version": 1,
+            "status": "accepted",
+            "raw_to_evidence_bbox_ratio": null,
+            "prior_to_evidence_bbox_ratio": null,
+            "bbox_proxy": true,
+            "review_required": false,
+            "reasons": []
+          },
+          "review_required": false
+        },
+        "contour": {
+          "kind": "sampled_mask_contour",
+          "sample_count": 5,
+          "source": "pixel_color_segmentation"
+        },
+        "grounding_quality": {
+          "ok": true,
+          "severity": "error",
+          "method": "pixel_color_segmentation",
+          "max_bbox_dimension_ratio": 2.6,
+          "raw_to_evidence_bbox_ratio": null,
+          "prior_to_evidence_bbox_ratio": null,
+          "contour_sample_count": 5,
+          "bbox_proxy": true,
+          "review_required": false,
+          "reasons": [],
+          "boxes": {
+            "raw_pixel_box": null,
+            "prior_box": null,
+            "evidence_box": {
+              "min": [
+                0.442,
+                0.363
+              ],
+              "max": [
+                0.702,
+                0.939
+              ],
+              "center": [
+                0.572,
+                0.651
+              ],
+              "extent": [
+                0.26,
+                0.576
+              ]
+            },
+            "bbox_image_box": {
+              "min": [
+                0.442,
+                0.363
+              ],
+              "max": [
+                0.702,
+                0.939
+              ],
+              "center": [
+                0.572,
+                0.651
+              ],
+              "extent": [
+                0.26,
+                0.576
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "r8-west-warehouse-north-pixel-footprint",
+      "ok": true,
+      "item": "warehouse_west_north_body",
+      "observation_id": "building_top_warehouse_west_north_pixel",
+      "grounding_method": "pixel_color_segmentation",
+      "image_view": "top",
+      "residuals": {
+        "center_delta": [
+          -0.004,
+          -0.002
+        ],
+        "center_error": 0.004,
+        "extent_delta": [
+          0.009,
+          0.003
+        ],
+        "extent_error": 0.009,
+        "area_ratio_error": 0.106,
+        "bbox_area_ratio_error": 0.106,
+        "polygon_area_ratio_error": 0.125,
+        "iou": 0.904,
+        "polygon_iou": 0.904,
+        "edge_direction_error_deg": 0
+      },
+      "message": "west_warehouse_north model projection fits mask/contour footprint evidence.",
+      "grounding_quality": {
+        "ok": true,
+        "severity": "error",
+        "method": "pixel_color_segmentation",
+        "max_bbox_dimension_ratio": 2.6,
+        "raw_to_evidence_bbox_ratio": null,
+        "prior_to_evidence_bbox_ratio": null,
+        "contour_sample_count": 5,
+        "bbox_proxy": true,
+        "review_required": false,
+        "reasons": [],
+        "boxes": {
+          "raw_pixel_box": null,
+          "prior_box": null,
+          "evidence_box": {
+            "min": [
+              0.134,
+              0.602
+            ],
+            "max": [
+              0.227,
+              0.95
+            ],
+            "center": [
+              0.18,
+              0.776
+            ],
+            "extent": [
+              0.093,
+              0.348
+            ]
+          },
+          "bbox_image_box": {
+            "min": [
+              0.134,
+              0.602
+            ],
+            "max": [
+              0.227,
+              0.95
+            ],
+            "center": [
+              0.18,
+              0.776
+            ],
+            "extent": [
+              0.093,
+              0.348
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "model_box": {
+          "min": [
+            0.125,
+            0.599
+          ],
+          "max": [
+            0.227,
+            0.95
+          ],
+          "center": [
+            0.176,
+            0.774
+          ],
+          "extent": [
+            0.102,
+            0.351
+          ]
+        },
+        "image_box": {
+          "min": [
+            0.134,
+            0.602
+          ],
+          "max": [
+            0.227,
+            0.95
+          ],
+          "center": [
+            0.18,
+            0.776
+          ],
+          "extent": [
+            0.093,
+            0.348
+          ]
+        },
+        "bbox_image_box": {
+          "min": [
+            0.134,
+            0.602
+          ],
+          "max": [
+            0.227,
+            0.95
+          ],
+          "center": [
+            0.18,
+            0.776
+          ],
+          "extent": [
+            0.093,
+            0.348
+          ]
+        },
+        "model_polygon": [
+          [
+            0.125,
+            0.599
+          ],
+          [
+            0.227,
+            0.599
+          ],
+          [
+            0.227,
+            0.95
+          ],
+          [
+            0.125,
+            0.95
+          ],
+          [
+            0.125,
+            0.599
+          ]
+        ],
+        "contour_polygon_sample": [
+          [
+            0.134,
+            0.95
+          ],
+          [
+            0.227,
+            0.95
+          ],
+          [
+            0.227,
+            0.602
+          ],
+          [
+            0.134,
+            0.602
+          ],
+          [
+            0.134,
+            0.95
+          ]
+        ],
+        "contour_polygon_bounds": {
+          "min": [
+            0.134,
+            0.602
+          ],
+          "max": [
+            0.227,
+            0.95
+          ],
+          "center": [
+            0.18,
+            0.776
+          ],
+          "extent": [
+            0.093,
+            0.348
+          ]
+        },
+        "center_tolerance": 0.035,
+        "extent_tolerance": [
+          0.045,
+          0.045
+        ],
+        "area_tolerance": 0.28,
+        "observation_id": "building_top_warehouse_west_north_pixel",
+        "grounding": {
+          "method": "pixel_color_segmentation",
+          "mask": "white_roof_component",
+          "contour_basis": "sampled_mask_contour",
+          "grounding_quality": {
+            "version": 1,
+            "status": "accepted",
+            "raw_to_evidence_bbox_ratio": null,
+            "prior_to_evidence_bbox_ratio": null,
+            "bbox_proxy": true,
+            "review_required": false,
+            "reasons": []
+          },
+          "review_required": false
+        },
+        "mask": {
+          "id": "white_roof_component",
+          "method": "pixel_color_segmentation",
+          "bbox": [
+            141,
+            75,
+            73,
+            195
+          ],
+          "polygon": [
+            [
+              141,
+              75
+            ],
+            [
+              214,
+              75
+            ],
+            [
+              214,
+              270
+            ],
+            [
+              141,
+              270
+            ],
+            [
+              141,
+              75
+            ]
+          ],
+          "sampled_contour": [
+            [
+              141,
+              75
+            ],
+            [
+              214,
+              75
+            ],
+            [
+              214,
+              270
+            ],
+            [
+              141,
+              270
+            ],
+            [
+              141,
+              75
+            ]
+          ],
+          "quality": {
+            "version": 1,
+            "status": "accepted",
+            "raw_to_evidence_bbox_ratio": null,
+            "prior_to_evidence_bbox_ratio": null,
+            "bbox_proxy": true,
+            "review_required": false,
+            "reasons": []
+          },
+          "review_required": false
+        },
+        "contour": {
+          "kind": "sampled_mask_contour",
+          "sample_count": 5,
+          "source": "pixel_color_segmentation"
+        },
+        "grounding_quality": {
+          "ok": true,
+          "severity": "error",
+          "method": "pixel_color_segmentation",
+          "max_bbox_dimension_ratio": 2.6,
+          "raw_to_evidence_bbox_ratio": null,
+          "prior_to_evidence_bbox_ratio": null,
+          "contour_sample_count": 5,
+          "bbox_proxy": true,
+          "review_required": false,
+          "reasons": [],
+          "boxes": {
+            "raw_pixel_box": null,
+            "prior_box": null,
+            "evidence_box": {
+              "min": [
+                0.134,
+                0.602
+              ],
+              "max": [
+                0.227,
+                0.95
+              ],
+              "center": [
+                0.18,
+                0.776
+              ],
+              "extent": [
+                0.093,
+                0.348
+              ]
+            },
+            "bbox_image_box": {
+              "min": [
+                0.134,
+                0.602
+              ],
+              "max": [
+                0.227,
+                0.95
+              ],
+              "center": [
+                0.18,
+                0.776
+              ],
+              "extent": [
+                0.093,
+                0.348
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "r8-west-warehouse-south-pixel-footprint",
+      "ok": false,
+      "severity": "error",
+      "item": "warehouse_west_south_body",
+      "observation_id": "building_top_warehouse_west_south_pixel",
+      "grounding_method": "pixel_color_segmentation",
+      "image_view": "top",
+      "residuals": {
+        "center_delta": [
+          0.002,
+          -0.033
+        ],
+        "center_error": 0.033,
+        "extent_delta": [
+          0.004,
+          -0.06
+        ],
+        "extent_error": 0.06,
+        "area_ratio_error": 0.1,
+        "bbox_area_ratio_error": 0.111,
+        "polygon_area_ratio_error": 0.1,
+        "iou": 0.812,
+        "polygon_iou": 0.812,
+        "edge_direction_error_deg": 0
+      },
+      "message": "west_warehouse_south model projection diverges from mask/contour footprint evidence.",
+      "grounding_quality": {
+        "ok": true,
+        "severity": "error",
+        "method": "pixel_color_segmentation",
+        "max_bbox_dimension_ratio": 2.6,
+        "raw_to_evidence_bbox_ratio": null,
+        "prior_to_evidence_bbox_ratio": null,
+        "contour_sample_count": 5,
+        "bbox_proxy": true,
+        "review_required": false,
+        "reasons": [],
+        "boxes": {
+          "raw_pixel_box": null,
+          "prior_box": null,
+          "evidence_box": {
+            "min": [
+              0.125,
+              0.165
+            ],
+            "max": [
+              0.223,
+              0.575
+            ],
+            "center": [
+              0.174,
+              0.37
+            ],
+            "extent": [
+              0.098,
+              0.41
+            ]
+          },
+          "bbox_image_box": {
+            "min": [
+              0.125,
+              0.165
+            ],
+            "max": [
+              0.223,
+              0.575
+            ],
+            "center": [
+              0.174,
+              0.37
+            ],
+            "extent": [
+              0.098,
+              0.41
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "model_box": {
+          "min": [
+            0.125,
+            0.162
+          ],
+          "max": [
+            0.227,
+            0.512
+          ],
+          "center": [
+            0.176,
+            0.337
+          ],
+          "extent": [
+            0.102,
+            0.35
+          ]
+        },
+        "image_box": {
+          "min": [
+            0.125,
+            0.165
+          ],
+          "max": [
+            0.223,
+            0.575
+          ],
+          "center": [
+            0.174,
+            0.37
+          ],
+          "extent": [
+            0.098,
+            0.41
+          ]
+        },
+        "bbox_image_box": {
+          "min": [
+            0.125,
+            0.165
+          ],
+          "max": [
+            0.223,
+            0.575
+          ],
+          "center": [
+            0.174,
+            0.37
+          ],
+          "extent": [
+            0.098,
+            0.41
+          ]
+        },
+        "model_polygon": [
+          [
+            0.125,
+            0.162
+          ],
+          [
+            0.227,
+            0.162
+          ],
+          [
+            0.227,
+            0.512
+          ],
+          [
+            0.125,
+            0.512
+          ],
+          [
+            0.125,
+            0.162
+          ]
+        ],
+        "contour_polygon_sample": [
+          [
+            0.125,
+            0.575
+          ],
+          [
+            0.223,
+            0.575
+          ],
+          [
+            0.223,
+            0.165
+          ],
+          [
+            0.125,
+            0.165
+          ],
+          [
+            0.125,
+            0.575
+          ]
+        ],
+        "contour_polygon_bounds": {
+          "min": [
+            0.125,
+            0.165
+          ],
+          "max": [
+            0.223,
+            0.575
+          ],
+          "center": [
+            0.174,
+            0.37
+          ],
+          "extent": [
+            0.098,
+            0.41
+          ]
+        },
+        "center_tolerance": 0.035,
+        "extent_tolerance": [
+          0.045,
+          0.045
+        ],
+        "area_tolerance": 0.28,
+        "observation_id": "building_top_warehouse_west_south_pixel",
+        "grounding": {
+          "method": "pixel_color_segmentation",
+          "mask": "white_roof_component",
+          "contour_basis": "sampled_mask_contour",
+          "grounding_quality": {
+            "version": 1,
+            "status": "accepted",
+            "raw_to_evidence_bbox_ratio": null,
+            "prior_to_evidence_bbox_ratio": null,
+            "bbox_proxy": true,
+            "review_required": false,
+            "reasons": []
+          },
+          "review_required": false
+        },
+        "mask": {
+          "id": "white_roof_component",
+          "method": "pixel_color_segmentation",
+          "bbox": [
+            134,
+            285,
+            77,
+            230
+          ],
+          "polygon": [
+            [
+              134,
+              285
+            ],
+            [
+              211,
+              285
+            ],
+            [
+              211,
+              515
+            ],
+            [
+              134,
+              515
+            ],
+            [
+              134,
+              285
+            ]
+          ],
+          "sampled_contour": [
+            [
+              134,
+              285
+            ],
+            [
+              211,
+              285
+            ],
+            [
+              211,
+              515
+            ],
+            [
+              134,
+              515
+            ],
+            [
+              134,
+              285
+            ]
+          ],
+          "quality": {
+            "version": 1,
+            "status": "accepted",
+            "raw_to_evidence_bbox_ratio": null,
+            "prior_to_evidence_bbox_ratio": null,
+            "bbox_proxy": true,
+            "review_required": false,
+            "reasons": []
+          },
+          "review_required": false
+        },
+        "contour": {
+          "kind": "sampled_mask_contour",
+          "sample_count": 5,
+          "source": "pixel_color_segmentation"
+        },
+        "grounding_quality": {
+          "ok": true,
+          "severity": "error",
+          "method": "pixel_color_segmentation",
+          "max_bbox_dimension_ratio": 2.6,
+          "raw_to_evidence_bbox_ratio": null,
+          "prior_to_evidence_bbox_ratio": null,
+          "contour_sample_count": 5,
+          "bbox_proxy": true,
+          "review_required": false,
+          "reasons": [],
+          "boxes": {
+            "raw_pixel_box": null,
+            "prior_box": null,
+            "evidence_box": {
+              "min": [
+                0.125,
+                0.165
+              ],
+              "max": [
+                0.223,
+                0.575
+              ],
+              "center": [
+                0.174,
+                0.37
+              ],
+              "extent": [
+                0.098,
+                0.41
+              ]
+            },
+            "bbox_image_box": {
+              "min": [
+                0.125,
+                0.165
+              ],
+              "max": [
+                0.223,
+                0.575
+              ],
+              "center": [
+                0.174,
+                0.37
+              ],
+              "extent": [
+                0.098,
+                0.41
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "r8-inner-warehouse-north-pixel-footprint",
+      "ok": true,
+      "item": "warehouse_inner_north_body",
+      "observation_id": "building_top_warehouse_inner_north_pixel",
+      "grounding_method": "pixel_color_segmentation",
+      "image_view": "top",
+      "residuals": {
+        "center_delta": [
+          0.003,
+          -0.002
+        ],
+        "center_error": 0.004,
+        "extent_delta": [
+          0.017,
+          0.003
+        ],
+        "extent_error": 0.017,
+        "area_ratio_error": 0.199,
+        "bbox_area_ratio_error": 0.199,
+        "polygon_area_ratio_error": 0.226,
+        "iou": 0.834,
+        "polygon_iou": 0.834,
+        "edge_direction_error_deg": 0
+      },
+      "message": "inner_warehouse_north model projection fits mask/contour footprint evidence.",
+      "grounding_quality": {
+        "ok": true,
+        "severity": "error",
+        "method": "pixel_color_segmentation",
+        "max_bbox_dimension_ratio": 2.6,
+        "raw_to_evidence_bbox_ratio": null,
+        "prior_to_evidence_bbox_ratio": null,
+        "contour_sample_count": 5,
+        "bbox_proxy": true,
+        "review_required": false,
+        "reasons": [],
+        "boxes": {
+          "raw_pixel_box": null,
+          "prior_box": null,
+          "evidence_box": {
+            "min": [
+              0.274,
+              0.602
+            ],
+            "max": [
+              0.364,
+              0.95
+            ],
+            "center": [
+              0.319,
+              0.776
+            ],
+            "extent": [
+              0.09,
+              0.348
+            ]
+          },
+          "bbox_image_box": {
+            "min": [
+              0.274,
+              0.602
+            ],
+            "max": [
+              0.364,
+              0.95
+            ],
+            "center": [
+              0.319,
+              0.776
+            ],
+            "extent": [
+              0.09,
+              0.348
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "model_box": {
+          "min": [
+            0.268,
+            0.599
+          ],
+          "max": [
+            0.375,
+            0.95
+          ],
+          "center": [
+            0.322,
+            0.774
+          ],
+          "extent": [
+            0.107,
+            0.351
+          ]
+        },
+        "image_box": {
+          "min": [
+            0.274,
+            0.602
+          ],
+          "max": [
+            0.364,
+            0.95
+          ],
+          "center": [
+            0.319,
+            0.776
+          ],
+          "extent": [
+            0.09,
+            0.348
+          ]
+        },
+        "bbox_image_box": {
+          "min": [
+            0.274,
+            0.602
+          ],
+          "max": [
+            0.364,
+            0.95
+          ],
+          "center": [
+            0.319,
+            0.776
+          ],
+          "extent": [
+            0.09,
+            0.348
+          ]
+        },
+        "model_polygon": [
+          [
+            0.268,
+            0.599
+          ],
+          [
+            0.375,
+            0.599
+          ],
+          [
+            0.375,
+            0.95
+          ],
+          [
+            0.268,
+            0.95
+          ],
+          [
+            0.268,
+            0.599
+          ]
+        ],
+        "contour_polygon_sample": [
+          [
+            0.274,
+            0.95
+          ],
+          [
+            0.364,
+            0.95
+          ],
+          [
+            0.364,
+            0.602
+          ],
+          [
+            0.274,
+            0.602
+          ],
+          [
+            0.274,
+            0.95
+          ]
+        ],
+        "contour_polygon_bounds": {
+          "min": [
+            0.274,
+            0.602
+          ],
+          "max": [
+            0.364,
+            0.95
+          ],
+          "center": [
+            0.319,
+            0.776
+          ],
+          "extent": [
+            0.09,
+            0.348
+          ]
+        },
+        "center_tolerance": 0.035,
+        "extent_tolerance": [
+          0.045,
+          0.045
+        ],
+        "area_tolerance": 0.28,
+        "observation_id": "building_top_warehouse_inner_north_pixel",
+        "grounding": {
+          "method": "pixel_color_segmentation",
+          "mask": "white_roof_component",
+          "contour_basis": "sampled_mask_contour",
+          "grounding_quality": {
+            "version": 1,
+            "status": "accepted",
+            "raw_to_evidence_bbox_ratio": null,
+            "prior_to_evidence_bbox_ratio": null,
+            "bbox_proxy": true,
+            "review_required": false,
+            "reasons": []
+          },
+          "review_required": false
+        },
+        "mask": {
+          "id": "white_roof_component",
+          "method": "pixel_color_segmentation",
+          "bbox": [
+            251,
+            75,
+            71,
+            195
+          ],
+          "polygon": [
+            [
+              251,
+              75
+            ],
+            [
+              322,
+              75
+            ],
+            [
+              322,
+              270
+            ],
+            [
+              251,
+              270
+            ],
+            [
+              251,
+              75
+            ]
+          ],
+          "sampled_contour": [
+            [
+              251,
+              75
+            ],
+            [
+              322,
+              75
+            ],
+            [
+              322,
+              270
+            ],
+            [
+              251,
+              270
+            ],
+            [
+              251,
+              75
+            ]
+          ],
+          "quality": {
+            "version": 1,
+            "status": "accepted",
+            "raw_to_evidence_bbox_ratio": null,
+            "prior_to_evidence_bbox_ratio": null,
+            "bbox_proxy": true,
+            "review_required": false,
+            "reasons": []
+          },
+          "review_required": false
+        },
+        "contour": {
+          "kind": "sampled_mask_contour",
+          "sample_count": 5,
+          "source": "pixel_color_segmentation"
+        },
+        "grounding_quality": {
+          "ok": true,
+          "severity": "error",
+          "method": "pixel_color_segmentation",
+          "max_bbox_dimension_ratio": 2.6,
+          "raw_to_evidence_bbox_ratio": null,
+          "prior_to_evidence_bbox_ratio": null,
+          "contour_sample_count": 5,
+          "bbox_proxy": true,
+          "review_required": false,
+          "reasons": [],
+          "boxes": {
+            "raw_pixel_box": null,
+            "prior_box": null,
+            "evidence_box": {
+              "min": [
+                0.274,
+                0.602
+              ],
+              "max": [
+                0.364,
+                0.95
+              ],
+              "center": [
+                0.319,
+                0.776
+              ],
+              "extent": [
+                0.09,
+                0.348
+              ]
+            },
+            "bbox_image_box": {
+              "min": [
+                0.274,
+                0.602
+              ],
+              "max": [
+                0.364,
+                0.95
+              ],
+              "center": [
+                0.319,
+                0.776
+              ],
+              "extent": [
+                0.09,
+                0.348
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "r8-inner-warehouse-south-pixel-footprint",
+      "ok": false,
+      "severity": "error",
+      "item": "warehouse_inner_south_body",
+      "observation_id": "building_top_warehouse_inner_south_pixel",
+      "grounding_method": "pixel_color_segmentation",
+      "image_view": "top",
+      "residuals": {
+        "center_delta": [
+          0,
+          -0.033
+        ],
+        "center_error": 0.033,
+        "extent_delta": [
+          0.001,
+          -0.06
+        ],
+        "extent_error": 0.06,
+        "area_ratio_error": 0.138,
+        "bbox_area_ratio_error": 0.138,
+        "polygon_area_ratio_error": 0.14,
+        "iou": 0.834,
+        "polygon_iou": 0.834,
+        "edge_direction_error_deg": 0
+      },
+      "message": "inner_warehouse_south model projection diverges from mask/contour footprint evidence.",
+      "grounding_quality": {
+        "ok": true,
+        "severity": "error",
+        "method": "pixel_color_segmentation",
+        "max_bbox_dimension_ratio": 2.6,
+        "raw_to_evidence_bbox_ratio": null,
+        "prior_to_evidence_bbox_ratio": null,
+        "contour_sample_count": 5,
+        "bbox_proxy": true,
+        "review_required": false,
+        "reasons": [],
+        "boxes": {
+          "raw_pixel_box": null,
+          "prior_box": null,
+          "evidence_box": {
+            "min": [
+              0.269,
+              0.165
+            ],
+            "max": [
+              0.375,
+              0.575
+            ],
+            "center": [
+              0.322,
+              0.37
+            ],
+            "extent": [
+              0.106,
+              0.41
+            ]
+          },
+          "bbox_image_box": {
+            "min": [
+              0.269,
+              0.165
+            ],
+            "max": [
+              0.375,
+              0.575
+            ],
+            "center": [
+              0.322,
+              0.37
+            ],
+            "extent": [
+              0.106,
+              0.41
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "model_box": {
+          "min": [
+            0.268,
+            0.162
+          ],
+          "max": [
+            0.375,
+            0.512
+          ],
+          "center": [
+            0.322,
+            0.337
+          ],
+          "extent": [
+            0.107,
+            0.35
+          ]
+        },
+        "image_box": {
+          "min": [
+            0.269,
+            0.165
+          ],
+          "max": [
+            0.375,
+            0.575
+          ],
+          "center": [
+            0.322,
+            0.37
+          ],
+          "extent": [
+            0.106,
+            0.41
+          ]
+        },
+        "bbox_image_box": {
+          "min": [
+            0.269,
+            0.165
+          ],
+          "max": [
+            0.375,
+            0.575
+          ],
+          "center": [
+            0.322,
+            0.37
+          ],
+          "extent": [
+            0.106,
+            0.41
+          ]
+        },
+        "model_polygon": [
+          [
+            0.268,
+            0.162
+          ],
+          [
+            0.375,
+            0.162
+          ],
+          [
+            0.375,
+            0.512
+          ],
+          [
+            0.268,
+            0.512
+          ],
+          [
+            0.268,
+            0.162
+          ]
+        ],
+        "contour_polygon_sample": [
+          [
+            0.269,
+            0.575
+          ],
+          [
+            0.375,
+            0.575
+          ],
+          [
+            0.375,
+            0.165
+          ],
+          [
+            0.269,
+            0.165
+          ],
+          [
+            0.269,
+            0.575
+          ]
+        ],
+        "contour_polygon_bounds": {
+          "min": [
+            0.269,
+            0.165
+          ],
+          "max": [
+            0.375,
+            0.575
+          ],
+          "center": [
+            0.322,
+            0.37
+          ],
+          "extent": [
+            0.106,
+            0.41
+          ]
+        },
+        "center_tolerance": 0.035,
+        "extent_tolerance": [
+          0.045,
+          0.045
+        ],
+        "area_tolerance": 0.28,
+        "observation_id": "building_top_warehouse_inner_south_pixel",
+        "grounding": {
+          "method": "pixel_color_segmentation",
+          "mask": "white_roof_component",
+          "contour_basis": "sampled_mask_contour",
+          "grounding_quality": {
+            "version": 1,
+            "status": "accepted",
+            "raw_to_evidence_bbox_ratio": null,
+            "prior_to_evidence_bbox_ratio": null,
+            "bbox_proxy": true,
+            "review_required": false,
+            "reasons": []
+          },
+          "review_required": false
+        },
+        "mask": {
+          "id": "white_roof_component",
+          "method": "pixel_color_segmentation",
+          "bbox": [
+            247,
+            285,
+            84,
+            230
+          ],
+          "polygon": [
+            [
+              247,
+              285
+            ],
+            [
+              331,
+              285
+            ],
+            [
+              331,
+              515
+            ],
+            [
+              247,
+              515
+            ],
+            [
+              247,
+              285
+            ]
+          ],
+          "sampled_contour": [
+            [
+              247,
+              285
+            ],
+            [
+              331,
+              285
+            ],
+            [
+              331,
+              515
+            ],
+            [
+              247,
+              515
+            ],
+            [
+              247,
+              285
+            ]
+          ],
+          "quality": {
+            "version": 1,
+            "status": "accepted",
+            "raw_to_evidence_bbox_ratio": null,
+            "prior_to_evidence_bbox_ratio": null,
+            "bbox_proxy": true,
+            "review_required": false,
+            "reasons": []
+          },
+          "review_required": false
+        },
+        "contour": {
+          "kind": "sampled_mask_contour",
+          "sample_count": 5,
+          "source": "pixel_color_segmentation"
+        },
+        "grounding_quality": {
+          "ok": true,
+          "severity": "error",
+          "method": "pixel_color_segmentation",
+          "max_bbox_dimension_ratio": 2.6,
+          "raw_to_evidence_bbox_ratio": null,
+          "prior_to_evidence_bbox_ratio": null,
+          "contour_sample_count": 5,
+          "bbox_proxy": true,
+          "review_required": false,
+          "reasons": [],
+          "boxes": {
+            "raw_pixel_box": null,
+            "prior_box": null,
+            "evidence_box": {
+              "min": [
+                0.269,
+                0.165
+              ],
+              "max": [
+                0.375,
+                0.575
+              ],
+              "center": [
+                0.322,
+                0.37
+              ],
+              "extent": [
+                0.106,
+                0.41
+              ]
+            },
+            "bbox_image_box": {
+              "min": [
+                0.269,
+                0.165
+              ],
+              "max": [
+                0.375,
+                0.575
+              ],
+              "center": [
+                0.322,
+                0.37
+              ],
+              "extent": [
+                0.106,
+                0.41
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "r8-parking-lot-pixel-footprint",
+      "ok": false,
+      "message": "r8-parking-lot-pixel-footprint uses layout_prior evidence instead of pixel_gap_segmentation.",
+      "evidence": {
+        "observation_id": "building_top_parking_lot",
+        "grounding_method": "layout_prior",
+        "required_grounding": "pixel_gap_segmentation"
+      },
+      "severity": "error"
+    }
+  ],
+  "relation_results": [
+    {
+      "id": "r8-blue-hall-right-of-inner-warehouse",
+      "ok": true,
+      "type": "right_of",
+      "image_relation": {
+        "id": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png|top|primary_blue_roof_hall|right_of|warehouse_inner_north|building_top_primary_blue_hall_pixel|building_top_warehouse_inner_north_pixel",
+        "confidence": 0.89,
+        "review_required": true
+      },
+      "residuals": {
+        "image_delta_norm": [
+          0.253,
+          -0.125
+        ],
+        "model_delta_norm": [
+          0.25,
+          -0.124
+        ],
+        "image_spacing_norm": 0.282,
+        "model_spacing_norm": 0.279,
+        "spacing_ratio_error": 0.011,
+        "relation_error": 0.003,
+        "tolerance": 0.1,
+        "spacing_ratio_tolerance": null
+      },
+      "message": "r8-blue-hall-right-of-inner-warehouse model relation residual is within image-space projection tolerance.",
+      "evidence": {
+        "image_pair": {
+          "item_observation_id": "building_top_primary_blue_hall_pixel",
+          "anchor_observation_id": "building_top_warehouse_inner_north_pixel",
+          "frame_observation_id": "building_top_site_boundary",
+          "item_center": [
+            0.572,
+            0.651
+          ],
+          "anchor_center": [
+            0.319,
+            0.776
+          ],
+          "delta_norm": [
+            0.253,
+            -0.125
+          ]
+        },
+        "model_relation": {
+          "ok": true,
+          "type": "right_of",
+          "item": "primary_blue_roof_hall_body",
+          "anchor": "warehouse_inner_north_body",
+          "delta_norm": [
+            0.25,
+            -0.124
+          ],
+          "min_delta": 0.15,
+          "tolerance": 0.055,
+          "evidence": {
+            "item_center": [
+              0.572,
+              0.65
+            ],
+            "anchor_center": [
+              0.322,
+              0.774
+            ],
+            "model_axes": [
+              "x",
+              "y"
+            ]
+          }
+        },
+        "image_relation_basis": {
+          "kind": "bbox",
+          "item_observation_id": "building_top_primary_blue_hall_pixel",
+          "anchor_observation_id": "building_top_warehouse_inner_north_pixel",
+          "item_bbox": [
+            384,
+            81,
+            205,
+            323
+          ],
+          "anchor_bbox": [
+            251,
+            75,
+            71,
+            195
+          ],
+          "item_keypoint": [
+            486.5,
+            242.5
+          ],
+          "anchor_keypoint": [
+            286.5,
+            172.5
+          ],
+          "item_grounding": {
+            "method": "pixel_color_segmentation",
+            "mask": "blue_roof_largest_component",
+            "contour_basis": "sampled_mask_contour",
+            "grounding_quality": {
+              "version": 1,
+              "status": "accepted",
+              "raw_to_evidence_bbox_ratio": null,
+              "prior_to_evidence_bbox_ratio": null,
+              "bbox_proxy": true,
+              "review_required": false,
+              "reasons": []
+            },
+            "review_required": false
+          },
+          "anchor_grounding": {
+            "method": "pixel_color_segmentation",
+            "mask": "white_roof_component",
+            "contour_basis": "sampled_mask_contour",
+            "grounding_quality": {
+              "version": 1,
+              "status": "accepted",
+              "raw_to_evidence_bbox_ratio": null,
+              "prior_to_evidence_bbox_ratio": null,
+              "bbox_proxy": true,
+              "review_required": false,
+              "reasons": []
+            },
+            "review_required": false
+          },
+          "item_note": "Pixel-grounded top-view footprint from blue_roof_largest_component; used for position/proportion grounding before layout priors.",
+          "anchor_note": "Pixel-grounded top-view footprint from white_roof_component; used for position/proportion grounding before layout priors.",
+          "delta_norm": [
+            0.222,
+            0.104
+          ],
+          "spacing_ratio": 0.245,
+          "axis": "x"
+        }
+      }
+    },
+    {
+      "id": "r8-west-warehouse-north-above-south",
+      "ok": true,
+      "type": "above",
+      "image_relation": {
+        "id": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png|top|warehouse_west_north|above|warehouse_west_south|building_top_warehouse_west_north_pixel|building_top_warehouse_west_south_pixel",
+        "confidence": 0.87,
+        "review_required": true
+      },
+      "residuals": {
+        "image_delta_norm": [
+          0.006,
+          0.406
+        ],
+        "model_delta_norm": [
+          0,
+          0.437
+        ],
+        "image_spacing_norm": 0.406,
+        "model_spacing_norm": 0.437,
+        "spacing_ratio_error": 0.076,
+        "relation_error": 0.032,
+        "tolerance": 0.1,
+        "spacing_ratio_tolerance": null
+      },
+      "message": "r8-west-warehouse-north-above-south model relation residual is within image-space projection tolerance.",
+      "evidence": {
+        "image_pair": {
+          "item_observation_id": "building_top_warehouse_west_north_pixel",
+          "anchor_observation_id": "building_top_warehouse_west_south_pixel",
+          "frame_observation_id": "building_top_site_boundary",
+          "item_center": [
+            0.18,
+            0.776
+          ],
+          "anchor_center": [
+            0.174,
+            0.37
+          ],
+          "delta_norm": [
+            0.006,
+            0.406
+          ]
+        },
+        "model_relation": {
+          "ok": true,
+          "type": "above",
+          "item": "warehouse_west_north_body",
+          "anchor": "warehouse_west_south_body",
+          "delta_norm": [
+            0,
+            0.437
+          ],
+          "min_delta": 0.18,
+          "tolerance": 0.055,
+          "evidence": {
+            "item_center": [
+              0.176,
+              0.774
+            ],
+            "anchor_center": [
+              0.176,
+              0.337
+            ],
+            "model_axes": [
+              "x",
+              "y"
+            ]
+          }
+        },
+        "image_relation_basis": {
+          "kind": "bbox",
+          "item_observation_id": "building_top_warehouse_west_north_pixel",
+          "anchor_observation_id": "building_top_warehouse_west_south_pixel",
+          "item_bbox": [
+            141,
+            75,
+            73,
+            195
+          ],
+          "anchor_bbox": [
+            134,
+            285,
+            77,
+            230
+          ],
+          "item_keypoint": [
+            177.5,
+            172.5
+          ],
+          "anchor_keypoint": [
+            172.5,
+            400
+          ],
+          "item_grounding": {
+            "method": "pixel_color_segmentation",
+            "mask": "white_roof_component",
+            "contour_basis": "sampled_mask_contour",
+            "grounding_quality": {
+              "version": 1,
+              "status": "accepted",
+              "raw_to_evidence_bbox_ratio": null,
+              "prior_to_evidence_bbox_ratio": null,
+              "bbox_proxy": true,
+              "review_required": false,
+              "reasons": []
+            },
+            "review_required": false
+          },
+          "anchor_grounding": {
+            "method": "pixel_color_segmentation",
+            "mask": "white_roof_component",
+            "contour_basis": "sampled_mask_contour",
+            "grounding_quality": {
+              "version": 1,
+              "status": "accepted",
+              "raw_to_evidence_bbox_ratio": null,
+              "prior_to_evidence_bbox_ratio": null,
+              "bbox_proxy": true,
+              "review_required": false,
+              "reasons": []
+            },
+            "review_required": false
+          },
+          "item_note": "Pixel-grounded top-view footprint from white_roof_component; used for position/proportion grounding before layout priors.",
+          "anchor_note": "Pixel-grounded top-view footprint from white_roof_component; used for position/proportion grounding before layout priors.",
+          "delta_norm": [
+            0.006,
+            -0.337
+          ],
+          "spacing_ratio": 0.337,
+          "axis": "y"
+        }
+      }
+    },
+    {
+      "id": "r8-inner-warehouse-north-above-south",
+      "ok": true,
+      "type": "above",
+      "image_relation": {
+        "id": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png|top|warehouse_inner_north|above|warehouse_inner_south|building_top_warehouse_inner_north_pixel|building_top_warehouse_inner_south_pixel",
+        "confidence": 0.87,
+        "review_required": true
+      },
+      "residuals": {
+        "image_delta_norm": [
+          -0.003,
+          0.406
+        ],
+        "model_delta_norm": [
+          0,
+          0.437
+        ],
+        "image_spacing_norm": 0.406,
+        "model_spacing_norm": 0.437,
+        "spacing_ratio_error": 0.076,
+        "relation_error": 0.031,
+        "tolerance": 0.1,
+        "spacing_ratio_tolerance": null
+      },
+      "message": "r8-inner-warehouse-north-above-south model relation residual is within image-space projection tolerance.",
+      "evidence": {
+        "image_pair": {
+          "item_observation_id": "building_top_warehouse_inner_north_pixel",
+          "anchor_observation_id": "building_top_warehouse_inner_south_pixel",
+          "frame_observation_id": "building_top_site_boundary",
+          "item_center": [
+            0.319,
+            0.776
+          ],
+          "anchor_center": [
+            0.322,
+            0.37
+          ],
+          "delta_norm": [
+            -0.003,
+            0.406
+          ]
+        },
+        "model_relation": {
+          "ok": true,
+          "type": "above",
+          "item": "warehouse_inner_north_body",
+          "anchor": "warehouse_inner_south_body",
+          "delta_norm": [
+            0,
+            0.437
+          ],
+          "min_delta": 0.16,
+          "tolerance": 0.055,
+          "evidence": {
+            "item_center": [
+              0.322,
+              0.774
+            ],
+            "anchor_center": [
+              0.322,
+              0.337
+            ],
+            "model_axes": [
+              "x",
+              "y"
+            ]
+          }
+        },
+        "image_relation_basis": {
+          "kind": "bbox",
+          "item_observation_id": "building_top_warehouse_inner_north_pixel",
+          "anchor_observation_id": "building_top_warehouse_inner_south_pixel",
+          "item_bbox": [
+            251,
+            75,
+            71,
+            195
+          ],
+          "anchor_bbox": [
+            247,
+            285,
+            84,
+            230
+          ],
+          "item_keypoint": [
+            286.5,
+            172.5
+          ],
+          "anchor_keypoint": [
+            289,
+            400
+          ],
+          "item_grounding": {
+            "method": "pixel_color_segmentation",
+            "mask": "white_roof_component",
+            "contour_basis": "sampled_mask_contour",
+            "grounding_quality": {
+              "version": 1,
+              "status": "accepted",
+              "raw_to_evidence_bbox_ratio": null,
+              "prior_to_evidence_bbox_ratio": null,
+              "bbox_proxy": true,
+              "review_required": false,
+              "reasons": []
+            },
+            "review_required": false
+          },
+          "anchor_grounding": {
+            "method": "pixel_color_segmentation",
+            "mask": "white_roof_component",
+            "contour_basis": "sampled_mask_contour",
+            "grounding_quality": {
+              "version": 1,
+              "status": "accepted",
+              "raw_to_evidence_bbox_ratio": null,
+              "prior_to_evidence_bbox_ratio": null,
+              "bbox_proxy": true,
+              "review_required": false,
+              "reasons": []
+            },
+            "review_required": false
+          },
+          "item_note": "Pixel-grounded top-view footprint from white_roof_component; used for position/proportion grounding before layout priors.",
+          "anchor_note": "Pixel-grounded top-view footprint from white_roof_component; used for position/proportion grounding before layout priors.",
+          "delta_norm": [
+            -0.003,
+            -0.337
+          ],
+          "spacing_ratio": 0.337,
+          "axis": "y"
+        }
+      }
+    }
+  ],
+  "scale_results": [
+    {
+      "id": "building_top_scale_parking_bay_span",
+      "anchor_type": "parking_bay_width_span",
+      "ok": true,
+      "severity": "warn",
+      "residuals": {
+        "pixels_per_mm_x": 0.00619,
+        "pixels_per_mm_y": 0.00514,
+        "site_pixels_per_mm_x": 0.00607,
+        "site_pixels_per_mm_y": 0.0057,
+        "scale_error": 0.098,
+        "tolerance": 0.25
+      },
+      "message": "parking_bay_width_span scale residual is 0.098.",
+      "evidence": {
+        "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+        "observation_id": "building_top_scale_parking_bay_span",
+        "review_required": true
+      }
+    },
+    {
+      "id": "building_top_scale_parking_bay_depth",
+      "anchor_type": "parking_bay_single",
+      "ok": true,
+      "severity": "warn",
+      "residuals": {
+        "pixels_per_mm_x": 0.00593,
+        "pixels_per_mm_y": 0.00588,
+        "site_pixels_per_mm_x": 0.00607,
+        "site_pixels_per_mm_y": 0.0057,
+        "scale_error": 0.032,
+        "tolerance": 0.25
+      },
+      "message": "parking_bay_single scale residual is 0.032.",
+      "evidence": {
+        "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+        "observation_id": "building_top_scale_parking_bay_depth",
+        "review_required": true
+      }
+    },
+    {
+      "id": "building_top_scale_drive_aisle_width",
+      "anchor_type": "parking_drive_aisle_width",
+      "ok": true,
+      "severity": "warn",
+      "residuals": {
+        "pixels_per_mm_x": null,
+        "pixels_per_mm_y": 0.00568,
+        "site_pixels_per_mm_x": 0.00607,
+        "site_pixels_per_mm_y": 0.0057,
+        "scale_error": 0.004,
+        "tolerance": 0.25
+      },
+      "message": "parking_drive_aisle_width scale residual is 0.004.",
+      "evidence": {
+        "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+        "observation_id": "building_top_scale_drive_aisle_width",
+        "review_required": true
+      }
+    },
+    {
+      "id": "building_top_scale_crosswalk_width",
+      "anchor_type": "crosswalk_width",
+      "ok": true,
+      "severity": "warn",
+      "residuals": {
+        "pixels_per_mm_x": null,
+        "pixels_per_mm_y": 0.00637,
+        "site_pixels_per_mm_x": 0.00607,
+        "site_pixels_per_mm_y": 0.0057,
+        "scale_error": 0.118,
+        "tolerance": 0.25
+      },
+      "message": "crosswalk_width scale residual is 0.118.",
+      "evidence": {
+        "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+        "observation_id": "building_top_scale_crosswalk_width",
+        "review_required": true
+      }
+    }
+  ],
+  "handedness_results": [
+    {
+      "id": "r8-mirror-x-primary-negative",
+      "transform": "mirror_x",
+      "checked_rules": [
+        "r8-blue-hall-right-of-inner-warehouse"
+      ],
+      "failed_rules": [
+        "r8-blue-hall-right-of-inner-warehouse"
+      ],
+      "handedness_error": 0,
+      "ok": true,
+      "evaluations": [
+        {
+          "ok": false,
+          "type": "right_of",
+          "item": "primary_blue_roof_hall_body",
+          "anchor": "warehouse_inner_north_body",
+          "delta_norm": [
+            -0.25,
+            -0.124
+          ],
+          "min_delta": 0.15,
+          "tolerance": 0.055,
+          "evidence": {
+            "item_center": [
+              0.428,
+              0.65
+            ],
+            "anchor_center": [
+              0.678,
+              0.774
+            ],
+            "model_axes": [
+              "x",
+              "y"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "correction_suggestions": [
+    {
+      "action": "update_part_graph",
+      "target": "parts[r8-west-warehouse-south-pixel-footprint].shape.parameters",
+      "reason": "west_warehouse_south model projection diverges from mask/contour footprint evidence.",
+      "evidence": "building_top_warehouse_west_south_pixel"
+    },
+    {
+      "action": "update_part_graph",
+      "target": "parts[r8-inner-warehouse-south-pixel-footprint].shape.parameters",
+      "reason": "inner_warehouse_south model projection diverges from mask/contour footprint evidence.",
+      "evidence": "building_top_warehouse_inner_south_pixel"
+    },
+    {
+      "action": "update_part_graph",
+      "target": "parts[r8-parking-lot-pixel-footprint].shape.parameters",
+      "reason": "r8-parking-lot-pixel-footprint uses layout_prior evidence instead of pixel_gap_segmentation.",
+      "evidence": "building_top_parking_lot"
+    },
+    {
+      "action": "add_image_evidence_or_exclude_from_photo_grade",
+      "target": "dense_detail_grounding",
+      "reason": "Dense detail layer is helper-heavy (0.653); do not treat this model as photo-grade grounded.",
+      "evidence": {
+        "helper_ratio": 0.653,
+        "max_helper_ratio": 0.35,
+        "helper_roles": [
+          "perimeter_fence",
+          "entry_guardhouse",
+          "entry_canopy",
+          "entry_gate",
+          "pedestrian_walkway",
+          "landscape_tree_trunk",
+          "landscape_tree_canopy",
+          "loading_truck_trailer",
+          "loading_truck_cab",
+          "loading_dock_apron",
+          "roof_vent",
+          "roof_hvac"
+        ]
+      }
+    }
+  ]
+}

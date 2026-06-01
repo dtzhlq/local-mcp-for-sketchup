@@ -1,3 +1,5 @@
+import { withGroundingMetadata } from './grounding-v2.mjs';
+
 const AXIS_INDEX = { x: 0, y: 1, z: 2 };
 
 export function buildCorrectionPatchFromReferenceReport(partGraph, report, options = {}) {
@@ -44,17 +46,20 @@ export function buildCorrectionPatchFromParameterProposals(partGraph, review = {
     const acceptedReview = accepted.get(key) || accepted.get(proposal.path);
     const autoAccepted = !accepted.size && proposal.status === 'ready_for_correction_patch' && proposal.review_required !== true;
     if (!acceptedReview && !autoAccepted) continue;
-    const current = getPathValue(partGraph, proposal.path);
+    const isPartCandidatePromotion = proposal.proposal_kind === 'part_candidates';
+    const current = isPartCandidatePromotion
+      ? []
+      : getPathValue(partGraph, proposal.path);
     const reason = acceptedReview?.reason
       || acceptedReview?.note
       || `Accepted image-derived parameter proposal for ${proposal.path}`;
     edits.push({
-      action: 'set',
+      action: isPartCandidatePromotion ? 'promote_part_candidates' : 'set',
       path: proposal.path,
       part_id: proposal.part_id,
       reason,
       issue_type: 'parameter_proposal',
-      rule_id: 'accepted_parameter_proposal',
+      rule_id: isPartCandidatePromotion ? 'accepted_part_candidate_proposal' : 'accepted_parameter_proposal',
       severity: proposal.review_required ? 'warn' : 'info',
       confidence: proposal.confidence,
       previous_value: current === undefined ? proposal.current_value : current,
@@ -91,23 +96,17 @@ export function applyCorrectionPatch(partGraph, patch) {
   const next = cloneJson(partGraph);
   const applied = [];
   for (const edit of patch?.edits || []) {
+    if (edit.action === 'promote_part_candidates') {
+      promotePartCandidates(next, edit, patch);
+      applied.push(edit);
+      continue;
+    }
     if (edit.action !== 'set') continue;
     setPathValue(next, edit.path, edit.value);
     const part = partById(next, edit.part_id || partIdFromPath(edit.path));
     if (part) {
       part.evidence_status = edit.mark_evidence_status || part.evidence_status || 'inferred';
-      const evidenceKind = patch.source === 'parameter_proposal_review'
-        ? 'parameter_proposal_review'
-        : 'reference_visual_correction';
-      part.evidence_sources = [
-        ...(part.evidence_sources || []),
-        {
-          kind: evidenceKind,
-          status: edit.mark_evidence_status || 'manual_confirmed',
-          confidence: edit.confidence,
-          note: `${edit.rule_id || edit.issue_type || 'reference_visual_qa'}: ${edit.reason}`
-        }
-      ];
+      appendCorrectionEvidence(part, edit, patch);
       part.qa = {
         ...(part.qa || {}),
         ...(patch.source === 'parameter_proposal_review'
@@ -137,9 +136,106 @@ export function summarizeCorrectionPatch(patch) {
   return {
     total_edits: edits.length,
     set_edits: edits.filter((edit) => edit.action === 'set').length,
+    promote_part_candidate_edits: edits.filter((edit) => edit.action === 'promote_part_candidates').length,
     review_edits: edits.filter((edit) => edit.action === 'review').length,
     targets: Array.from(new Set(edits.map((edit) => edit.part_id).filter(Boolean)))
   };
+}
+
+function promotePartCandidates(partGraph, edit, patch) {
+  const parent = partById(partGraph, edit.part_id || partIdFromPath(edit.path));
+  const candidateParts = Array.isArray(edit.value) ? edit.value : [];
+  const promotedIds = candidateParts.map((part) => part.id).filter(Boolean);
+  if (parent) {
+    if (candidateParentBecomesReferenceOnly(parent, candidateParts)) {
+      parent.compile = { ...(parent.compile || {}), emit: false };
+      parent.fallback_state = parent.fallback_state === 'profile_default' ? parent.fallback_state : 'reference_only';
+    }
+    parent.qa = {
+      ...(parent.qa || {}),
+      parameter_proposal_applied: true,
+      part_candidate_parent: true,
+      promoted_candidate_part_ids: promotedIds,
+      review_required: false,
+      last_correction_rule: edit.rule_id || null
+    };
+    appendCorrectionEvidence(parent, edit, patch);
+  }
+
+  for (const candidate of candidateParts) {
+    if (!candidate?.id) continue;
+    const promoted = promotedCandidatePart(candidate, edit, patch);
+    const existingIndex = (partGraph.parts || []).findIndex((part) => part.id === promoted.id);
+    if (existingIndex >= 0) partGraph.parts[existingIndex] = promoted;
+    else {
+      partGraph.parts = [...(partGraph.parts || []), promoted];
+    }
+    updateEvidenceGraphForPromotedCandidate(partGraph, promoted, edit);
+  }
+}
+
+function candidateParentBecomesReferenceOnly(parent, candidateParts) {
+  if (parent.role === 'warehouse_row') return true;
+  return candidateParts.some((part) => part.role === parent.role && part.type === parent.type);
+}
+
+function promotedCandidatePart(candidate, edit, patch) {
+  const promoted = cloneJson(candidate);
+  promoted.evidence_status = edit.mark_evidence_status || 'manual_confirmed';
+  promoted.fallback_state = promotedFallbackState(promoted);
+  promoted.compile = { ...(promoted.compile || {}), emit: true };
+  delete promoted.review;
+  promoted.qa = {
+    ...(promoted.qa || {}),
+    candidate_only: false,
+    not_compiled: false,
+    part_candidate_applied: true,
+    review_required: false,
+    parent_candidate_source: edit.part_id || promoted.parent || null,
+    last_correction_rule: edit.rule_id || null
+  };
+  appendCorrectionEvidence(promoted, edit, patch);
+  return withGroundingMetadata(promoted, {
+    reviewRequired: false,
+    helperAllowed: promoted.fallback_state === 'visual_helper'
+  });
+}
+
+function promotedFallbackState(part) {
+  if (part.role === 'warehouse_unit') return 'box_approximation';
+  if (['parking_stall_row', 'parking_drive_aisle', 'tree_row'].includes(part.role)) return 'visual_helper';
+  return part.fallback_state === 'needs_review' ? 'box_approximation' : part.fallback_state || 'box_approximation';
+}
+
+function appendCorrectionEvidence(part, edit, patch) {
+  const evidenceKind = patch.source === 'parameter_proposal_review'
+    ? 'parameter_proposal_review'
+    : 'reference_visual_correction';
+  part.evidence_sources = [
+    ...(part.evidence_sources || []),
+    {
+      kind: evidenceKind,
+      status: edit.mark_evidence_status || 'manual_confirmed',
+      confidence: edit.confidence,
+      note: `${edit.rule_id || edit.issue_type || 'reference_visual_qa'}: ${edit.reason}`
+    }
+  ];
+}
+
+function updateEvidenceGraphForPromotedCandidate(partGraph, promoted, edit) {
+  const graphParts = partGraph.evidence_graph?.parts;
+  if (!Array.isArray(graphParts)) return;
+  const graphPart = graphParts.find((part) => part.part_id === promoted.id);
+  if (!graphPart) return;
+  graphPart.status = promoted.evidence_status;
+  graphPart.confidence = Math.max(Number(graphPart.confidence) || 0, Number(edit.confidence) || 0);
+  graphPart.grounding_status = promoted.grounding_status;
+  graphPart.grounding_method = promoted.grounding_method;
+  graphPart.source_observation_ids = promoted.source_observation_ids || [];
+  graphPart.review_required = promoted.review_required ?? false;
+  graphPart.photo_grade_eligible = promoted.photo_grade_eligible ?? false;
+  graphPart.conflicts = (graphPart.conflicts || []).filter((conflict) => conflict.type !== 'review_gated_part_candidate');
+  graphPart.open_questions = [`${promoted.id}: promoted from relation-derived candidate after explicit proposal review.`];
 }
 
 function collectParameterProposals(partGraph) {

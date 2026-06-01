@@ -3,13 +3,14 @@
 Runtime: mock
 Acceptance ready: yes
 Review required: no
+Grounding review required: no
 
 | Gate | Verdict | Issues | Errors | Warnings |
 |---|---|---:|---:|---:|
 | Compile freshness | pass | 0 | 0 | 0 |
 | Layout QA | pass | 0 | 0 | 0 |
 | Reference Visual QA | pass | 0 | 0 | 0 |
-| Physical Consistency | pass | 0 | 0 | 0 |
+| Physical Consistency | pass | 79 | 0 | 0 |
 
 ## PartGraph
 

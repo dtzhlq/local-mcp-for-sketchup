@@ -1,0 +1,9044 @@
+{
+  "kind": "geometry_fit_qa",
+  "version": 1,
+  "ok": true,
+  "verdict": "pass",
+  "fixture": "switch-controller-visual-relations",
+  "runtime": "mock",
+  "camera_calibration": {
+    "version": 1,
+    "projection_type": "weak_view_affine_bbox_to_model_projection",
+    "source_image": "test/手柄/IMG_0156.jpeg",
+    "image_view": "front",
+    "image_frame": {
+      "key": "controller_frame",
+      "observation_id": "main_object_bbox",
+      "bbox": [
+        172,
+        160,
+        543,
+        419
+      ],
+      "grounding": null
+    },
+    "model_frame": {
+      "axes": [
+        "x",
+        "y"
+      ],
+      "item_ids": [
+        "left-back-grip-lobe",
+        "right-back-grip-lobe",
+        "back-lower-bridge",
+        "center-black-switch-grip",
+        "left-warm-white-joy-con-shell",
+        "right-warm-white-joy-con-shell",
+        "center-front-flat-panel"
+      ],
+      "bbox": {
+        "min": [
+          -164,
+          -88,
+          -14
+        ],
+        "max": [
+          164,
+          82,
+          23
+        ],
+        "w": 328,
+        "d": 170,
+        "h": 37
+      }
+    },
+    "image_to_site_transform": {
+      "coordinate_convention": "image_x_right_y_down_to_model_xy_y_up",
+      "image_origin_px": [
+        172,
+        160
+      ],
+      "image_extent_px": [
+        543,
+        419
+      ],
+      "model_origin_mm": [
+        -164,
+        -88
+      ],
+      "model_extent_mm": [
+        328,
+        170
+      ],
+      "mm_per_px_x": 0.604,
+      "mm_per_px_y": 0.406,
+      "normalized_x": "u=(x-image_min_x)/image_width",
+      "normalized_y": "v=1-(y-image_min_y)/image_height"
+    },
+    "confidence": 0.599,
+    "review_required": true,
+    "residual_summary": {
+      "mean_center_error": 0.07,
+      "max_center_error": 0.11,
+      "mean_extent_error": 0.197,
+      "max_extent_error": 0.511,
+      "mean_relation_error": 0.055,
+      "max_relation_error": 0.22,
+      "mean_scale_error": 0,
+      "max_scale_error": 0,
+      "handedness_error": 0
+    }
+  },
+  "summary": {
+    "checked_footprints": 8,
+    "matched_footprints": 8,
+    "grounding_issues": 0,
+    "checked_relations": 6,
+    "matched_relations": 6,
+    "checked_scale_anchors": 0,
+    "scale_anchors_in_tolerance": 0,
+    "checked_handedness_cases": 1,
+    "handedness_cases_detected": 1,
+    "grounding_methods": {
+      "edge_contour_segmentation": 6,
+      "edge_keypoint_segmentation": 2
+    },
+    "mean_center_error": 0.07,
+    "max_center_error": 0.11,
+    "mean_extent_error": 0.197,
+    "max_extent_error": 0.511,
+    "mean_relation_error": 0.055,
+    "max_relation_error": 0.22,
+    "mean_scale_error": 0,
+    "max_scale_error": 0,
+    "handedness_error": 0,
+    "total_issues": 0,
+    "by_severity": {
+      "error": 0,
+      "warn": 0,
+      "info": 0
+    }
+  },
+  "issues": [],
+  "footprint_results": [
+    {
+      "id": "left-handle-footprint",
+      "ok": true,
+      "item": "left-warm-white-joy-con-shell",
+      "observation_id": "front_left_shell_candidate",
+      "grounding_method": "edge_contour_segmentation",
+      "image_view": "front",
+      "residuals": {
+        "center_delta": [
+          -0.012,
+          0.018
+        ],
+        "center_error": 0.022,
+        "extent_delta": [
+          -0.113,
+          0.007
+        ],
+        "extent_error": 0.113,
+        "area_ratio_error": 0.369,
+        "bbox_area_ratio_error": 0.369,
+        "polygon_area_ratio_error": 0.37,
+        "iou": 0.605,
+        "polygon_iou": 0.605,
+        "edge_direction_error_deg": 0
+      },
+      "message": "left_handle model projection fits mask/contour footprint evidence.",
+      "grounding_quality": {
+        "ok": true,
+        "severity": "error",
+        "method": "edge_contour_segmentation",
+        "max_bbox_dimension_ratio": 2.6,
+        "raw_to_evidence_bbox_ratio": 1.03,
+        "prior_to_evidence_bbox_ratio": 1,
+        "contour_sample_count": 61,
+        "bbox_proxy": false,
+        "review_required": false,
+        "reasons": [],
+        "boxes": {
+          "raw_pixel_box": {
+            "min": [
+              0.041,
+              0.079
+            ],
+            "max": [
+              0.343,
+              0.919
+            ],
+            "center": [
+              0.192,
+              0.499
+            ],
+            "extent": [
+              0.302,
+              0.84
+            ]
+          },
+          "prior_box": {
+            "min": [
+              0.04,
+              0.08
+            ],
+            "max": [
+              0.35,
+              0.92
+            ],
+            "center": [
+              0.195,
+              0.5
+            ],
+            "extent": [
+              0.31,
+              0.84
+            ]
+          },
+          "evidence_box": {
+            "min": [
+              0.041,
+              0.079
+            ],
+            "max": [
+              0.343,
+              0.919
+            ],
+            "center": [
+              0.192,
+              0.499
+            ],
+            "extent": [
+              0.302,
+              0.84
+            ]
+          },
+          "bbox_image_box": {
+            "min": [
+              0.04,
+              0.08
+            ],
+            "max": [
+              0.35,
+              0.92
+            ],
+            "center": [
+              0.195,
+              0.5
+            ],
+            "extent": [
+              0.31,
+              0.84
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "model_box": {
+          "min": [
+            0.085,
+            0.094
+          ],
+          "max": [
+            0.274,
+            0.941
+          ],
+          "center": [
+            0.18,
+            0.517
+          ],
+          "extent": [
+            0.189,
+            0.847
+          ]
+        },
+        "image_box": {
+          "min": [
+            0.041,
+            0.079
+          ],
+          "max": [
+            0.343,
+            0.919
+          ],
+          "center": [
+            0.192,
+            0.499
+          ],
+          "extent": [
+            0.302,
+            0.84
+          ]
+        },
+        "bbox_image_box": {
+          "min": [
+            0.04,
+            0.08
+          ],
+          "max": [
+            0.35,
+            0.92
+          ],
+          "center": [
+            0.195,
+            0.5
+          ],
+          "extent": [
+            0.31,
+            0.84
+          ]
+        },
+        "model_polygon": [
+          [
+            0.085,
+            0.094
+          ],
+          [
+            0.274,
+            0.094
+          ],
+          [
+            0.274,
+            0.941
+          ],
+          [
+            0.085,
+            0.941
+          ],
+          [
+            0.085,
+            0.094
+          ]
+        ],
+        "contour_polygon_sample": [
+          [
+            0.041,
+            0.919
+          ],
+          [
+            0.343,
+            0.919
+          ],
+          [
+            0.343,
+            0.079
+          ],
+          [
+            0.041,
+            0.079
+          ],
+          [
+            0.041,
+            0.649
+          ],
+          [
+            0.052,
+            0.69
+          ],
+          [
+            0.063,
+            0.721
+          ],
+          [
+            0.074,
+            0.749
+          ],
+          [
+            0.085,
+            0.773
+          ],
+          [
+            0.096,
+            0.845
+          ],
+          [
+            0.107,
+            0.883
+          ],
+          [
+            0.118,
+            0.919
+          ],
+          [
+            0.129,
+            0.539
+          ],
+          [
+            0.14,
+            0.547
+          ],
+          [
+            0.151,
+            0.811
+          ],
+          [
+            0.162,
+            0.838
+          ],
+          [
+            0.173,
+            0.852
+          ],
+          [
+            0.184,
+            0.862
+          ],
+          [
+            0.197,
+            0.866
+          ],
+          [
+            0.208,
+            0.869
+          ],
+          [
+            0.219,
+            0.869
+          ],
+          [
+            0.23,
+            0.866
+          ],
+          [
+            0.241,
+            0.862
+          ],
+          [
+            0.252,
+            0.852
+          ],
+          [
+            0.263,
+            0.838
+          ],
+          [
+            0.274,
+            0.819
+          ],
+          [
+            0.285,
+            0.916
+          ],
+          [
+            0.297,
+            0.916
+          ],
+          [
+            0.308,
+            0.916
+          ],
+          [
+            0.319,
+            0.919
+          ],
+          [
+            0.33,
+            0.919
+          ],
+          [
+            0.341,
+            0.919
+          ]
+        ],
+        "contour_polygon_bounds": {
+          "min": [
+            0.041,
+            0.079
+          ],
+          "max": [
+            0.343,
+            0.919
+          ],
+          "center": [
+            0.192,
+            0.499
+          ],
+          "extent": [
+            0.302,
+            0.84
+          ]
+        },
+        "center_tolerance": 0.04,
+        "extent_tolerance": [
+          0.13,
+          0.03
+        ],
+        "area_tolerance": 0.45,
+        "observation_id": "front_left_shell_candidate",
+        "grounding": {
+          "method": "edge_contour_segmentation",
+          "mask": "front_left_shell_candidate_edge_mask",
+          "pixel_bbox": [
+            194,
+            194,
+            164,
+            352
+          ],
+          "pixel_count": 6994,
+          "prior_bbox": [
+            193.72,
+            193.52,
+            168.33,
+            351.96
+          ],
+          "fill": 0.12,
+          "contour_basis": "sampled_edge_contour",
+          "grounding_quality": {
+            "version": 1,
+            "status": "accepted",
+            "raw_to_evidence_bbox_ratio": 1.03,
+            "prior_to_evidence_bbox_ratio": 1,
+            "bbox_proxy": false,
+            "review_required": false,
+            "reasons": []
+          },
+          "review_required": false
+        },
+        "mask": {
+          "id": "front_left_shell_candidate_edge_mask",
+          "method": "edge_contour_segmentation",
+          "bbox": [
+            193.72,
+            193.52,
+            168.33,
+            351.96
+          ],
+          "polygon": [
+            [
+              194,
+              194
+            ],
+            [
+              358,
+              194
+            ],
+            [
+              358,
+              546
+            ],
+            [
+              194,
+              546
+            ],
+            [
+              194,
+              307
+            ],
+            [
+              200,
+              290
+            ],
+            [
+              206,
+              277
+            ],
+            [
+              212,
+              265
+            ],
+            [
+              218,
+              255
+            ],
+            [
+              224,
+              225
+            ],
+            [
+              230,
+              209
+            ],
+            [
+              236,
+              194
+            ],
+            [
+              242,
+              353
+            ],
+            [
+              248,
+              350
+            ],
+            [
+              254,
+              239
+            ],
+            [
+              260,
+              228
+            ],
+            [
+              266,
+              222
+            ],
+            [
+              272,
+              218
+            ],
+            [
+              279,
+              216
+            ],
+            [
+              285,
+              215
+            ],
+            [
+              291,
+              215
+            ],
+            [
+              297,
+              216
+            ],
+            [
+              303,
+              218
+            ],
+            [
+              309,
+              222
+            ],
+            [
+              315,
+              228
+            ],
+            [
+              321,
+              236
+            ],
+            [
+              327,
+              195
+            ],
+            [
+              333,
+              195
+            ],
+            [
+              339,
+              195
+            ],
+            [
+              345,
+              194
+            ],
+            [
+              351,
+              194
+            ],
+            [
+              357,
+              194
+            ],
+            [
+              357,
+              211
+            ],
+            [
+              351,
+              448
+            ],
+            [
+              345,
+              545
+            ],
+            [
+              339,
+              198
+            ],
+            [
+              333,
+              379
+            ],
+            [
+              327,
+              396
+            ],
+            [
+              321,
+              384
+            ],
+            [
+              315,
+              464
+            ],
+            [
+              309,
+              464
+            ],
+            [
+              303,
+              464
+            ],
+            [
+              297,
+              464
+            ],
+            [
+              291,
+              464
+            ],
+            [
+              285,
+              416
+            ],
+            [
+              279,
+              416
+            ],
+            [
+              272,
+              414
+            ],
+            [
+              266,
+              407
+            ],
+            [
+              260,
+              381
+            ],
+            [
+              254,
+              384
+            ],
+            [
+              248,
+              384
+            ],
+            [
+              242,
+              383
+            ],
+            [
+              236,
+              378
+            ],
+            [
+              230,
+              211
+            ],
+            [
+              224,
+              545
+            ],
+            [
+              218,
+              539
+            ],
+            [
+              212,
+              529
+            ],
+            [
+              206,
+              513
+            ],
+            [
+              200,
+              298
+            ],
+            [
+              194,
+              505
+            ],
+            [
+              194,
+              194
+            ]
+          ],
+          "sampled_contour": [
+            [
+              194,
+              194
+            ],
+            [
+              358,
+              194
+            ],
+            [
+              358,
+              546
+            ],
+            [
+              194,
+              546
+            ],
+            [
+              194,
+              307
+            ],
+            [
+              200,
+              290
+            ],
+            [
+              206,
+              277
+            ],
+            [
+              212,
+              265
+            ],
+            [
+              218,
+              255
+            ],
+            [
+              224,
+              225
+            ],
+            [
+              230,
+              209
+            ],
+            [
+              236,
+              194
+            ],
+            [
+              242,
+              353
+            ],
+            [
+              248,
+              350
+            ],
+            [
+              254,
+              239
+            ],
+            [
+              260,
+              228
+            ],
+            [
+              266,
+              222
+            ],
+            [
+              272,
+              218
+            ],
+            [
+              279,
+              216
+            ],
+            [
+              285,
+              215
+            ],
+            [
+              291,
+              215
+            ],
+            [
+              297,
+              216
+            ],
+            [
+              303,
+              218
+            ],
+            [
+              309,
+              222
+            ],
+            [
+              315,
+              228
+            ],
+            [
+              321,
+              236
+            ],
+            [
+              327,
+              195
+            ],
+            [
+              333,
+              195
+            ],
+            [
+              339,
+              195
+            ],
+            [
+              345,
+              194
+            ],
+            [
+              351,
+              194
+            ],
+            [
+              357,
+              194
+            ],
+            [
+              357,
+              211
+            ],
+            [
+              351,
+              448
+            ],
+            [
+              345,
+              545
+            ],
+            [
+              339,
+              198
+            ],
+            [
+              333,
+              379
+            ],
+            [
+              327,
+              396
+            ],
+            [
+              321,
+              384
+            ],
+            [
+              315,
+              464
+            ],
+            [
+              309,
+              464
+            ],
+            [
+              303,
+              464
+            ],
+            [
+              297,
+              464
+            ],
+            [
+              291,
+              464
+            ],
+            [
+              285,
+              416
+            ],
+            [
+              279,
+              416
+            ],
+            [
+              272,
+              414
+            ],
+            [
+              266,
+              407
+            ],
+            [
+              260,
+              381
+            ],
+            [
+              254,
+              384
+            ],
+            [
+              248,
+              384
+            ],
+            [
+              242,
+              383
+            ],
+            [
+              236,
+              378
+            ],
+            [
+              230,
+              211
+            ],
+            [
+              224,
+              545
+            ],
+            [
+              218,
+              539
+            ],
+            [
+              212,
+              529
+            ],
+            [
+              206,
+              513
+            ],
+            [
+              200,
+              298
+            ],
+            [
+              194,
+              505
+            ],
+            [
+              194,
+              194
+            ]
+          ],
+          "pixel_count": 6994,
+          "fill": 0.12,
+          "quality": {
+            "version": 1,
+            "status": "accepted",
+            "raw_to_evidence_bbox_ratio": 1.03,
+            "prior_to_evidence_bbox_ratio": 1,
+            "bbox_proxy": false,
+            "review_required": false,
+            "reasons": []
+          },
+          "review_required": false
+        },
+        "contour": {
+          "kind": "sampled_edge_contour",
+          "sample_count": 61,
+          "source": "edge_contour_segmentation"
+        },
+        "grounding_quality": {
+          "ok": true,
+          "severity": "error",
+          "method": "edge_contour_segmentation",
+          "max_bbox_dimension_ratio": 2.6,
+          "raw_to_evidence_bbox_ratio": 1.03,
+          "prior_to_evidence_bbox_ratio": 1,
+          "contour_sample_count": 61,
+          "bbox_proxy": false,
+          "review_required": false,
+          "reasons": [],
+          "boxes": {
+            "raw_pixel_box": {
+              "min": [
+                0.041,
+                0.079
+              ],
+              "max": [
+                0.343,
+                0.919
+              ],
+              "center": [
+                0.192,
+                0.499
+              ],
+              "extent": [
+                0.302,
+                0.84
+              ]
+            },
+            "prior_box": {
+              "min": [
+                0.04,
+                0.08
+              ],
+              "max": [
+                0.35,
+                0.92
+              ],
+              "center": [
+                0.195,
+                0.5
+              ],
+              "extent": [
+                0.31,
+                0.84
+              ]
+            },
+            "evidence_box": {
+              "min": [
+                0.041,
+                0.079
+              ],
+              "max": [
+                0.343,
+                0.919
+              ],
+              "center": [
+                0.192,
+                0.499
+              ],
+              "extent": [
+                0.302,
+                0.84
+              ]
+            },
+            "bbox_image_box": {
+              "min": [
+                0.04,
+                0.08
+              ],
+              "max": [
+                0.35,
+                0.92
+              ],
+              "center": [
+                0.195,
+                0.5
+              ],
+              "extent": [
+                0.31,
+                0.84
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "right-handle-footprint",
+      "ok": true,
+      "item": "right-warm-white-joy-con-shell",
+      "observation_id": "front_right_shell_candidate",
+      "grounding_method": "edge_contour_segmentation",
+      "image_view": "front",
+      "residuals": {
+        "center_delta": [
+          0.015,
+          0.018
+        ],
+        "center_error": 0.023,
+        "extent_delta": [
+          -0.12,
+          0.007
+        ],
+        "extent_error": 0.12,
+        "area_ratio_error": 0.383,
+        "bbox_area_ratio_error": 0.383,
+        "polygon_area_ratio_error": 0.385,
+        "iou": 0.591,
+        "polygon_iou": 0.591,
+        "edge_direction_error_deg": 0
+      },
+      "message": "right_handle model projection fits mask/contour footprint evidence.",
+      "grounding_quality": {
+        "ok": true,
+        "severity": "error",
+        "method": "edge_contour_segmentation",
+        "max_bbox_dimension_ratio": 2.6,
+        "raw_to_evidence_bbox_ratio": 1,
+        "prior_to_evidence_bbox_ratio": 1,
+        "contour_sample_count": 61,
+        "bbox_proxy": false,
+        "review_required": false,
+        "reasons": [],
+        "boxes": {
+          "raw_pixel_box": {
+            "min": [
+              0.652,
+              0.079
+            ],
+            "max": [
+              0.961,
+              0.919
+            ],
+            "center": [
+              0.806,
+              0.499
+            ],
+            "extent": [
+              0.309,
+              0.84
+            ]
+          },
+          "prior_box": {
+            "min": [
+              0.65,
+              0.08
+            ],
+            "max": [
+              0.96,
+              0.92
+            ],
+            "center": [
+              0.805,
+              0.5
+            ],
+            "extent": [
+              0.31,
+              0.84
+            ]
+          },
+          "evidence_box": {
+            "min": [
+              0.652,
+              0.079
+            ],
+            "max": [
+              0.961,
+              0.919
+            ],
+            "center": [
+              0.806,
+              0.499
+            ],
+            "extent": [
+              0.309,
+              0.84
+            ]
+          },
+          "bbox_image_box": {
+            "min": [
+              0.65,
+              0.08
+            ],
+            "max": [
+              0.96,
+              0.92
+            ],
+            "center": [
+              0.805,
+              0.5
+            ],
+            "extent": [
+              0.31,
+              0.84
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "model_box": {
+          "min": [
+            0.726,
+            0.094
+          ],
+          "max": [
+            0.915,
+            0.941
+          ],
+          "center": [
+            0.821,
+            0.517
+          ],
+          "extent": [
+            0.189,
+            0.847
+          ]
+        },
+        "image_box": {
+          "min": [
+            0.652,
+            0.079
+          ],
+          "max": [
+            0.961,
+            0.919
+          ],
+          "center": [
+            0.806,
+            0.499
+          ],
+          "extent": [
+            0.309,
+            0.84
+          ]
+        },
+        "bbox_image_box": {
+          "min": [
+            0.65,
+            0.08
+          ],
+          "max": [
+            0.96,
+            0.92
+          ],
+          "center": [
+            0.805,
+            0.5
+          ],
+          "extent": [
+            0.31,
+            0.84
+          ]
+        },
+        "model_polygon": [
+          [
+            0.726,
+            0.094
+          ],
+          [
+            0.915,
+            0.094
+          ],
+          [
+            0.915,
+            0.941
+          ],
+          [
+            0.726,
+            0.941
+          ],
+          [
+            0.726,
+            0.094
+          ]
+        ],
+        "contour_polygon_sample": [
+          [
+            0.652,
+            0.919
+          ],
+          [
+            0.961,
+            0.919
+          ],
+          [
+            0.961,
+            0.079
+          ],
+          [
+            0.652,
+            0.079
+          ],
+          [
+            0.652,
+            0.919
+          ],
+          [
+            0.663,
+            0.611
+          ],
+          [
+            0.674,
+            0.919
+          ],
+          [
+            0.685,
+            0.914
+          ],
+          [
+            0.698,
+            0.897
+          ],
+          [
+            0.709,
+            0.914
+          ],
+          [
+            0.72,
+            0.919
+          ],
+          [
+            0.731,
+            0.816
+          ],
+          [
+            0.742,
+            0.859
+          ],
+          [
+            0.753,
+            0.876
+          ],
+          [
+            0.764,
+            0.883
+          ],
+          [
+            0.777,
+            0.885
+          ],
+          [
+            0.788,
+            0.888
+          ],
+          [
+            0.799,
+            0.866
+          ],
+          [
+            0.81,
+            0.833
+          ],
+          [
+            0.821,
+            0.809
+          ],
+          [
+            0.832,
+            0.814
+          ],
+          [
+            0.845,
+            0.816
+          ],
+          [
+            0.856,
+            0.804
+          ],
+          [
+            0.867,
+            0.919
+          ],
+          [
+            0.878,
+            0.916
+          ],
+          [
+            0.891,
+            0.702
+          ],
+          [
+            0.902,
+            0.78
+          ],
+          [
+            0.913,
+            0.764
+          ],
+          [
+            0.926,
+            0.733
+          ],
+          [
+            0.937,
+            0.702
+          ],
+          [
+            0.948,
+            0.663
+          ],
+          [
+            0.959,
+            0.618
+          ]
+        ],
+        "contour_polygon_bounds": {
+          "min": [
+            0.652,
+            0.079
+          ],
+          "max": [
+            0.961,
+            0.919
+          ],
+          "center": [
+            0.806,
+            0.499
+          ],
+          "extent": [
+            0.309,
+            0.84
+          ]
+        },
+        "center_tolerance": 0.04,
+        "extent_tolerance": [
+          0.13,
+          0.03
+        ],
+        "area_tolerance": 0.45,
+        "observation_id": "front_right_shell_candidate",
+        "grounding": {
+          "method": "edge_contour_segmentation",
+          "mask": "front_right_shell_candidate_edge_mask",
+          "pixel_bbox": [
+            526,
+            194,
+            168,
+            352
+          ],
+          "pixel_count": 7254,
+          "prior_bbox": [
+            524.95,
+            193.52,
+            168.33,
+            351.96
+          ],
+          "fill": 0.12,
+          "contour_basis": "sampled_edge_contour",
+          "grounding_quality": {
+            "version": 1,
+            "status": "accepted",
+            "raw_to_evidence_bbox_ratio": 1,
+            "prior_to_evidence_bbox_ratio": 1,
+            "bbox_proxy": false,
+            "review_required": false,
+            "reasons": []
+          },
+          "review_required": false
+        },
+        "mask": {
+          "id": "front_right_shell_candidate_edge_mask",
+          "method": "edge_contour_segmentation",
+          "bbox": [
+            524.95,
+            193.52,
+            168.33,
+            351.96
+          ],
+          "polygon": [
+            [
+              526,
+              194
+            ],
+            [
+              694,
+              194
+            ],
+            [
+              694,
+              546
+            ],
+            [
+              526,
+              546
+            ],
+            [
+              526,
+              194
+            ],
+            [
+              532,
+              323
+            ],
+            [
+              538,
+              194
+            ],
+            [
+              544,
+              196
+            ],
+            [
+              551,
+              203
+            ],
+            [
+              557,
+              196
+            ],
+            [
+              563,
+              194
+            ],
+            [
+              569,
+              237
+            ],
+            [
+              575,
+              219
+            ],
+            [
+              581,
+              212
+            ],
+            [
+              587,
+              209
+            ],
+            [
+              594,
+              208
+            ],
+            [
+              600,
+              207
+            ],
+            [
+              606,
+              216
+            ],
+            [
+              612,
+              230
+            ],
+            [
+              618,
+              240
+            ],
+            [
+              624,
+              238
+            ],
+            [
+              631,
+              237
+            ],
+            [
+              637,
+              242
+            ],
+            [
+              643,
+              194
+            ],
+            [
+              649,
+              195
+            ],
+            [
+              656,
+              285
+            ],
+            [
+              662,
+              252
+            ],
+            [
+              668,
+              259
+            ],
+            [
+              675,
+              272
+            ],
+            [
+              681,
+              285
+            ],
+            [
+              687,
+              301
+            ],
+            [
+              693,
+              320
+            ],
+            [
+              693,
+              330
+            ],
+            [
+              687,
+              309
+            ],
+            [
+              681,
+              292
+            ],
+            [
+              675,
+              510
+            ],
+            [
+              668,
+              530
+            ],
+            [
+              662,
+              541
+            ],
+            [
+              656,
+              545
+            ],
+            [
+              649,
+              258
+            ],
+            [
+              643,
+              264
+            ],
+            [
+              637,
+              267
+            ],
+            [
+              631,
+              382
+            ],
+            [
+              624,
+              391
+            ],
+            [
+              618,
+              398
+            ],
+            [
+              612,
+              402
+            ],
+            [
+              606,
+              404
+            ],
+            [
+              600,
+              405
+            ],
+            [
+              594,
+              462
+            ],
+            [
+              587,
+              467
+            ],
+            [
+              581,
+              470
+            ],
+            [
+              575,
+              471
+            ],
+            [
+              569,
+              469
+            ],
+            [
+              563,
+              466
+            ],
+            [
+              557,
+              459
+            ],
+            [
+              551,
+              268
+            ],
+            [
+              544,
+              262
+            ],
+            [
+              538,
+              198
+            ],
+            [
+              532,
+              545
+            ],
+            [
+              526,
+              281
+            ],
+            [
+              526,
+              194
+            ]
+          ],
+          "sampled_contour": [
+            [
+              526,
+              194
+            ],
+            [
+              694,
+              194
+            ],
+            [
+              694,
+              546
+            ],
+            [
+              526,
+              546
+            ],
+            [
+              526,
+              194
+            ],
+            [
+              532,
+              323
+            ],
+            [
+              538,
+              194
+            ],
+            [
+              544,
+              196
+            ],
+            [
+              551,
+              203
+            ],
+            [
+              557,
+              196
+            ],
+            [
+              563,
+              194
+            ],
+            [
+              569,
+              237
+            ],
+            [
+              575,
+              219
+            ],
+            [
+              581,
+              212
+            ],
+            [
+              587,
+              209
+            ],
+            [
+              594,
+              208
+            ],
+            [
+              600,
+              207
+            ],
+            [
+              606,
+              216
+            ],
+            [
+              612,
+              230
+            ],
+            [
+              618,
+              240
+            ],
+            [
+              624,
+              238
+            ],
+            [
+              631,
+              237
+            ],
+            [
+              637,
+              242
+            ],
+            [
+              643,
+              194
+            ],
+            [
+              649,
+              195
+            ],
+            [
+              656,
+              285
+            ],
+            [
+              662,
+              252
+            ],
+            [
+              668,
+              259
+            ],
+            [
+              675,
+              272
+            ],
+            [
+              681,
+              285
+            ],
+            [
+              687,
+              301
+            ],
+            [
+              693,
+              320
+            ],
+            [
+              693,
+              330
+            ],
+            [
+              687,
+              309
+            ],
+            [
+              681,
+              292
+            ],
+            [
+              675,
+              510
+            ],
+            [
+              668,
+              530
+            ],
+            [
+              662,
+              541
+            ],
+            [
+              656,
+              545
+            ],
+            [
+              649,
+              258
+            ],
+            [
+              643,
+              264
+            ],
+            [
+              637,
+              267
+            ],
+            [
+              631,
+              382
+            ],
+            [
+              624,
+              391
+            ],
+            [
+              618,
+              398
+            ],
+            [
+              612,
+              402
+            ],
+            [
+              606,
+              404
+            ],
+            [
+              600,
+              405
+            ],
+            [
+              594,
+              462
+            ],
+            [
+              587,
+              467
+            ],
+            [
+              581,
+              470
+            ],
+            [
+              575,
+              471
+            ],
+            [
+              569,
+              469
+            ],
+            [
+              563,
+              466
+            ],
+            [
+              557,
+              459
+            ],
+            [
+              551,
+              268
+            ],
+            [
+              544,
+              262
+            ],
+            [
+              538,
+              198
+            ],
+            [
+              532,
+              545
+            ],
+            [
+              526,
+              281
+            ],
+            [
+              526,
+              194
+            ]
+          ],
+          "pixel_count": 7254,
+          "fill": 0.12,
+          "quality": {
+            "version": 1,
+            "status": "accepted",
+            "raw_to_evidence_bbox_ratio": 1,
+            "prior_to_evidence_bbox_ratio": 1,
+            "bbox_proxy": false,
+            "review_required": false,
+            "reasons": []
+          },
+          "review_required": false
+        },
+        "contour": {
+          "kind": "sampled_edge_contour",
+          "sample_count": 61,
+          "source": "edge_contour_segmentation"
+        },
+        "grounding_quality": {
+          "ok": true,
+          "severity": "error",
+          "method": "edge_contour_segmentation",
+          "max_bbox_dimension_ratio": 2.6,
+          "raw_to_evidence_bbox_ratio": 1,
+          "prior_to_evidence_bbox_ratio": 1,
+          "contour_sample_count": 61,
+          "bbox_proxy": false,
+          "review_required": false,
+          "reasons": [],
+          "boxes": {
+            "raw_pixel_box": {
+              "min": [
+                0.652,
+                0.079
+              ],
+              "max": [
+                0.961,
+                0.919
+              ],
+              "center": [
+                0.806,
+                0.499
+              ],
+              "extent": [
+                0.309,
+                0.84
+              ]
+            },
+            "prior_box": {
+              "min": [
+                0.65,
+                0.08
+              ],
+              "max": [
+                0.96,
+                0.92
+              ],
+              "center": [
+                0.805,
+                0.5
+              ],
+              "extent": [
+                0.31,
+                0.84
+              ]
+            },
+            "evidence_box": {
+              "min": [
+                0.652,
+                0.079
+              ],
+              "max": [
+                0.961,
+                0.919
+              ],
+              "center": [
+                0.806,
+                0.499
+              ],
+              "extent": [
+                0.309,
+                0.84
+              ]
+            },
+            "bbox_image_box": {
+              "min": [
+                0.65,
+                0.08
+              ],
+              "max": [
+                0.96,
+                0.92
+              ],
+              "center": [
+                0.805,
+                0.5
+              ],
+              "extent": [
+                0.31,
+                0.84
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "center-grip-footprint",
+      "ok": true,
+      "item": "center-black-switch-grip",
+      "observation_id": "front_center_grip_candidate",
+      "grounding_method": "edge_contour_segmentation",
+      "image_view": "front",
+      "residuals": {
+        "center_delta": [
+          -0.001,
+          -0.06
+        ],
+        "center_error": 0.06,
+        "extent_delta": [
+          0.132,
+          0.273
+        ],
+        "extent_error": 0.303,
+        "area_ratio_error": 1.03,
+        "bbox_area_ratio_error": 1.033,
+        "polygon_area_ratio_error": 1.03,
+        "iou": 0.492,
+        "polygon_iou": 0.492,
+        "edge_direction_error_deg": 0
+      },
+      "message": "center_grip model projection fits mask/contour footprint evidence.",
+      "grounding_quality": {
+        "ok": true,
+        "severity": "error",
+        "method": "edge_contour_segmentation",
+        "max_bbox_dimension_ratio": 2.6,
+        "raw_to_evidence_bbox_ratio": 1.26,
+        "prior_to_evidence_bbox_ratio": 1,
+        "contour_sample_count": 61,
+        "bbox_proxy": false,
+        "review_required": false,
+        "reasons": [],
+        "boxes": {
+          "raw_pixel_box": {
+            "min": [
+              0.341,
+              0.267
+            ],
+            "max": [
+              0.661,
+              0.888
+            ],
+            "center": [
+              0.501,
+              0.578
+            ],
+            "extent": [
+              0.32,
+              0.621
+            ]
+          },
+          "prior_box": {
+            "min": [
+              0.34,
+              0.11
+            ],
+            "max": [
+              0.66,
+              0.89
+            ],
+            "center": [
+              0.5,
+              0.5
+            ],
+            "extent": [
+              0.32,
+              0.78
+            ]
+          },
+          "evidence_box": {
+            "min": [
+              0.341,
+              0.267
+            ],
+            "max": [
+              0.661,
+              0.888
+            ],
+            "center": [
+              0.501,
+              0.578
+            ],
+            "extent": [
+              0.32,
+              0.621
+            ]
+          },
+          "bbox_image_box": {
+            "min": [
+              0.34,
+              0.11
+            ],
+            "max": [
+              0.66,
+              0.89
+            ],
+            "center": [
+              0.5,
+              0.5
+            ],
+            "extent": [
+              0.32,
+              0.78
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "model_box": {
+          "min": [
+            0.274,
+            0.071
+          ],
+          "max": [
+            0.726,
+            0.965
+          ],
+          "center": [
+            0.5,
+            0.518
+          ],
+          "extent": [
+            0.452,
+            0.894
+          ]
+        },
+        "image_box": {
+          "min": [
+            0.341,
+            0.267
+          ],
+          "max": [
+            0.661,
+            0.888
+          ],
+          "center": [
+            0.501,
+            0.578
+          ],
+          "extent": [
+            0.32,
+            0.621
+          ]
+        },
+        "bbox_image_box": {
+          "min": [
+            0.34,
+            0.11
+          ],
+          "max": [
+            0.66,
+            0.89
+          ],
+          "center": [
+            0.5,
+            0.5
+          ],
+          "extent": [
+            0.32,
+            0.78
+          ]
+        },
+        "model_polygon": [
+          [
+            0.274,
+            0.071
+          ],
+          [
+            0.726,
+            0.071
+          ],
+          [
+            0.726,
+            0.965
+          ],
+          [
+            0.274,
+            0.965
+          ],
+          [
+            0.274,
+            0.071
+          ]
+        ],
+        "contour_polygon_sample": [
+          [
+            0.341,
+            0.888
+          ],
+          [
+            0.661,
+            0.888
+          ],
+          [
+            0.661,
+            0.267
+          ],
+          [
+            0.341,
+            0.267
+          ],
+          [
+            0.341,
+            0.888
+          ],
+          [
+            0.368,
+            0.647
+          ],
+          [
+            0.407,
+            0.525
+          ],
+          [
+            0.414,
+            0.506
+          ],
+          [
+            0.424,
+            0.484
+          ],
+          [
+            0.431,
+            0.523
+          ],
+          [
+            0.44,
+            0.683
+          ],
+          [
+            0.448,
+            0.692
+          ],
+          [
+            0.457,
+            0.697
+          ],
+          [
+            0.464,
+            0.69
+          ],
+          [
+            0.473,
+            0.702
+          ],
+          [
+            0.481,
+            0.69
+          ],
+          [
+            0.49,
+            0.702
+          ],
+          [
+            0.497,
+            0.523
+          ],
+          [
+            0.506,
+            0.702
+          ],
+          [
+            0.514,
+            0.549
+          ],
+          [
+            0.523,
+            0.699
+          ],
+          [
+            0.53,
+            0.632
+          ],
+          [
+            0.54,
+            0.697
+          ],
+          [
+            0.547,
+            0.692
+          ],
+          [
+            0.556,
+            0.675
+          ],
+          [
+            0.564,
+            0.494
+          ],
+          [
+            0.573,
+            0.523
+          ],
+          [
+            0.58,
+            0.525
+          ],
+          [
+            0.604,
+            0.444
+          ],
+          [
+            0.615,
+            0.647
+          ],
+          [
+            0.652,
+            0.888
+          ],
+          [
+            0.659,
+            0.888
+          ]
+        ],
+        "contour_polygon_bounds": {
+          "min": [
+            0.341,
+            0.267
+          ],
+          "max": [
+            0.661,
+            0.888
+          ],
+          "center": [
+            0.501,
+            0.578
+          ],
+          "extent": [
+            0.32,
+            0.621
+          ]
+        },
+        "center_tolerance": 0.08,
+        "extent_tolerance": [
+          0.14,
+          0.28
+        ],
+        "area_tolerance": 1.1,
+        "observation_id": "front_center_grip_candidate",
+        "grounding": {
+          "method": "edge_contour_segmentation",
+          "mask": "front_center_grip_candidate_edge_mask",
+          "pixel_bbox": [
+            357,
+            207,
+            174,
+            260
+          ],
+          "pixel_count": 2101,
+          "prior_bbox": [
+            356.62,
+            206.09,
+            173.76,
+            326.82
+          ],
+          "fill": 0.04,
+          "contour_basis": "sampled_edge_contour",
+          "grounding_quality": {
+            "version": 1,
+            "status": "accepted",
+            "raw_to_evidence_bbox_ratio": 1.26,
+            "prior_to_evidence_bbox_ratio": 1,
+            "bbox_proxy": false,
+            "review_required": false,
+            "reasons": []
+          },
+          "review_required": false
+        },
+        "mask": {
+          "id": "front_center_grip_candidate_edge_mask",
+          "method": "edge_contour_segmentation",
+          "bbox": [
+            356.62,
+            206.09,
+            173.76,
+            326.82
+          ],
+          "polygon": [
+            [
+              357,
+              207
+            ],
+            [
+              531,
+              207
+            ],
+            [
+              531,
+              467
+            ],
+            [
+              357,
+              467
+            ],
+            [
+              357,
+              207
+            ],
+            [
+              372,
+              308
+            ],
+            [
+              393,
+              359
+            ],
+            [
+              397,
+              367
+            ],
+            [
+              402,
+              376
+            ],
+            [
+              406,
+              360
+            ],
+            [
+              411,
+              293
+            ],
+            [
+              415,
+              289
+            ],
+            [
+              420,
+              287
+            ],
+            [
+              424,
+              290
+            ],
+            [
+              429,
+              285
+            ],
+            [
+              433,
+              290
+            ],
+            [
+              438,
+              285
+            ],
+            [
+              442,
+              360
+            ],
+            [
+              447,
+              285
+            ],
+            [
+              451,
+              349
+            ],
+            [
+              456,
+              286
+            ],
+            [
+              460,
+              314
+            ],
+            [
+              465,
+              287
+            ],
+            [
+              469,
+              289
+            ],
+            [
+              474,
+              296
+            ],
+            [
+              478,
+              372
+            ],
+            [
+              483,
+              360
+            ],
+            [
+              487,
+              359
+            ],
+            [
+              500,
+              393
+            ],
+            [
+              506,
+              308
+            ],
+            [
+              526,
+              207
+            ],
+            [
+              530,
+              207
+            ],
+            [
+              530,
+              466
+            ],
+            [
+              526,
+              281
+            ],
+            [
+              506,
+              326
+            ],
+            [
+              500,
+              393
+            ],
+            [
+              487,
+              388
+            ],
+            [
+              483,
+              382
+            ],
+            [
+              478,
+              388
+            ],
+            [
+              474,
+              367
+            ],
+            [
+              469,
+              384
+            ],
+            [
+              465,
+              388
+            ],
+            [
+              460,
+              387
+            ],
+            [
+              456,
+              382
+            ],
+            [
+              451,
+              376
+            ],
+            [
+              447,
+              388
+            ],
+            [
+              442,
+              376
+            ],
+            [
+              438,
+              387
+            ],
+            [
+              433,
+              386
+            ],
+            [
+              429,
+              372
+            ],
+            [
+              424,
+              380
+            ],
+            [
+              420,
+              385
+            ],
+            [
+              415,
+              380
+            ],
+            [
+              411,
+              377
+            ],
+            [
+              406,
+              384
+            ],
+            [
+              402,
+              376
+            ],
+            [
+              397,
+              388
+            ],
+            [
+              393,
+              380
+            ],
+            [
+              372,
+              308
+            ],
+            [
+              357,
+              211
+            ],
+            [
+              357,
+              207
+            ]
+          ],
+          "sampled_contour": [
+            [
+              357,
+              207
+            ],
+            [
+              531,
+              207
+            ],
+            [
+              531,
+              467
+            ],
+            [
+              357,
+              467
+            ],
+            [
+              357,
+              207
+            ],
+            [
+              372,
+              308
+            ],
+            [
+              393,
+              359
+            ],
+            [
+              397,
+              367
+            ],
+            [
+              402,
+              376
+            ],
+            [
+              406,
+              360
+            ],
+            [
+              411,
+              293
+            ],
+            [
+              415,
+              289
+            ],
+            [
+              420,
+              287
+            ],
+            [
+              424,
+              290
+            ],
+            [
+              429,
+              285
+            ],
+            [
+              433,
+              290
+            ],
+            [
+              438,
+              285
+            ],
+            [
+              442,
+              360
+            ],
+            [
+              447,
+              285
+            ],
+            [
+              451,
+              349
+            ],
+            [
+              456,
+              286
+            ],
+            [
+              460,
+              314
+            ],
+            [
+              465,
+              287
+            ],
+            [
+              469,
+              289
+            ],
+            [
+              474,
+              296
+            ],
+            [
+              478,
+              372
+            ],
+            [
+              483,
+              360
+            ],
+            [
+              487,
+              359
+            ],
+            [
+              500,
+              393
+            ],
+            [
+              506,
+              308
+            ],
+            [
+              526,
+              207
+            ],
+            [
+              530,
+              207
+            ],
+            [
+              530,
+              466
+            ],
+            [
+              526,
+              281
+            ],
+            [
+              506,
+              326
+            ],
+            [
+              500,
+              393
+            ],
+            [
+              487,
+              388
+            ],
+            [
+              483,
+              382
+            ],
+            [
+              478,
+              388
+            ],
+            [
+              474,
+              367
+            ],
+            [
+              469,
+              384
+            ],
+            [
+              465,
+              388
+            ],
+            [
+              460,
+              387
+            ],
+            [
+              456,
+              382
+            ],
+            [
+              451,
+              376
+            ],
+            [
+              447,
+              388
+            ],
+            [
+              442,
+              376
+            ],
+            [
+              438,
+              387
+            ],
+            [
+              433,
+              386
+            ],
+            [
+              429,
+              372
+            ],
+            [
+              424,
+              380
+            ],
+            [
+              420,
+              385
+            ],
+            [
+              415,
+              380
+            ],
+            [
+              411,
+              377
+            ],
+            [
+              406,
+              384
+            ],
+            [
+              402,
+              376
+            ],
+            [
+              397,
+              388
+            ],
+            [
+              393,
+              380
+            ],
+            [
+              372,
+              308
+            ],
+            [
+              357,
+              211
+            ],
+            [
+              357,
+              207
+            ]
+          ],
+          "pixel_count": 2101,
+          "fill": 0.04,
+          "quality": {
+            "version": 1,
+            "status": "accepted",
+            "raw_to_evidence_bbox_ratio": 1.26,
+            "prior_to_evidence_bbox_ratio": 1,
+            "bbox_proxy": false,
+            "review_required": false,
+            "reasons": []
+          },
+          "review_required": false
+        },
+        "contour": {
+          "kind": "sampled_edge_contour",
+          "sample_count": 61,
+          "source": "edge_contour_segmentation"
+        },
+        "grounding_quality": {
+          "ok": true,
+          "severity": "error",
+          "method": "edge_contour_segmentation",
+          "max_bbox_dimension_ratio": 2.6,
+          "raw_to_evidence_bbox_ratio": 1.26,
+          "prior_to_evidence_bbox_ratio": 1,
+          "contour_sample_count": 61,
+          "bbox_proxy": false,
+          "review_required": false,
+          "reasons": [],
+          "boxes": {
+            "raw_pixel_box": {
+              "min": [
+                0.341,
+                0.267
+              ],
+              "max": [
+                0.661,
+                0.888
+              ],
+              "center": [
+                0.501,
+                0.578
+              ],
+              "extent": [
+                0.32,
+                0.621
+              ]
+            },
+            "prior_box": {
+              "min": [
+                0.34,
+                0.11
+              ],
+              "max": [
+                0.66,
+                0.89
+              ],
+              "center": [
+                0.5,
+                0.5
+              ],
+              "extent": [
+                0.32,
+                0.78
+              ]
+            },
+            "evidence_box": {
+              "min": [
+                0.341,
+                0.267
+              ],
+              "max": [
+                0.661,
+                0.888
+              ],
+              "center": [
+                0.501,
+                0.578
+              ],
+              "extent": [
+                0.32,
+                0.621
+              ]
+            },
+            "bbox_image_box": {
+              "min": [
+                0.34,
+                0.11
+              ],
+              "max": [
+                0.66,
+                0.89
+              ],
+              "center": [
+                0.5,
+                0.5
+              ],
+              "extent": [
+                0.32,
+                0.78
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "screen-footprint",
+      "ok": true,
+      "item": "center-front-flat-panel",
+      "observation_id": "front_center_panel_candidate",
+      "grounding_method": "edge_contour_segmentation",
+      "image_view": "front",
+      "residuals": {
+        "center_delta": [
+          0,
+          -0.061
+        ],
+        "center_error": 0.061,
+        "extent_delta": [
+          0.176,
+          0.48
+        ],
+        "extent_error": 0.511,
+        "area_ratio_error": 4.823,
+        "bbox_area_ratio_error": 4.823,
+        "polygon_area_ratio_error": 4.864,
+        "iou": 0.172,
+        "polygon_iou": 0.172,
+        "edge_direction_error_deg": 0
+      },
+      "message": "screen model projection fits mask/contour footprint evidence.",
+      "grounding_quality": {
+        "ok": true,
+        "severity": "error",
+        "method": "edge_contour_segmentation",
+        "max_bbox_dimension_ratio": 2.6,
+        "raw_to_evidence_bbox_ratio": 2.01,
+        "prior_to_evidence_bbox_ratio": 1,
+        "contour_sample_count": 61,
+        "bbox_proxy": false,
+        "review_required": false,
+        "reasons": [],
+        "boxes": {
+          "raw_pixel_box": {
+            "min": [
+              0.411,
+              0.453
+            ],
+            "max": [
+              0.589,
+              0.702
+            ],
+            "center": [
+              0.5,
+              0.578
+            ],
+            "extent": [
+              0.178,
+              0.249
+            ]
+          },
+          "prior_box": {
+            "min": [
+              0.41,
+              0.25
+            ],
+            "max": [
+              0.59,
+              0.75
+            ],
+            "center": [
+              0.5,
+              0.5
+            ],
+            "extent": [
+              0.18,
+              0.5
+            ]
+          },
+          "evidence_box": {
+            "min": [
+              0.411,
+              0.453
+            ],
+            "max": [
+              0.589,
+              0.702
+            ],
+            "center": [
+              0.5,
+              0.578
+            ],
+            "extent": [
+              0.178,
+              0.249
+            ]
+          },
+          "bbox_image_box": {
+            "min": [
+              0.41,
+              0.25
+            ],
+            "max": [
+              0.59,
+              0.75
+            ],
+            "center": [
+              0.5,
+              0.5
+            ],
+            "extent": [
+              0.18,
+              0.5
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "model_box": {
+          "min": [
+            0.323,
+            0.153
+          ],
+          "max": [
+            0.677,
+            0.882
+          ],
+          "center": [
+            0.5,
+            0.517
+          ],
+          "extent": [
+            0.354,
+            0.729
+          ]
+        },
+        "image_box": {
+          "min": [
+            0.411,
+            0.453
+          ],
+          "max": [
+            0.589,
+            0.702
+          ],
+          "center": [
+            0.5,
+            0.578
+          ],
+          "extent": [
+            0.178,
+            0.249
+          ]
+        },
+        "bbox_image_box": {
+          "min": [
+            0.41,
+            0.25
+          ],
+          "max": [
+            0.59,
+            0.75
+          ],
+          "center": [
+            0.5,
+            0.5
+          ],
+          "extent": [
+            0.18,
+            0.5
+          ]
+        },
+        "model_polygon": [
+          [
+            0.323,
+            0.153
+          ],
+          [
+            0.677,
+            0.153
+          ],
+          [
+            0.677,
+            0.882
+          ],
+          [
+            0.323,
+            0.882
+          ],
+          [
+            0.323,
+            0.153
+          ]
+        ],
+        "contour_polygon_sample": [
+          [
+            0.411,
+            0.702
+          ],
+          [
+            0.589,
+            0.702
+          ],
+          [
+            0.589,
+            0.453
+          ],
+          [
+            0.411,
+            0.453
+          ],
+          [
+            0.411,
+            0.523
+          ],
+          [
+            0.418,
+            0.504
+          ],
+          [
+            0.424,
+            0.484
+          ],
+          [
+            0.431,
+            0.523
+          ],
+          [
+            0.436,
+            0.675
+          ],
+          [
+            0.444,
+            0.687
+          ],
+          [
+            0.449,
+            0.695
+          ],
+          [
+            0.457,
+            0.697
+          ],
+          [
+            0.462,
+            0.69
+          ],
+          [
+            0.47,
+            0.69
+          ],
+          [
+            0.477,
+            0.702
+          ],
+          [
+            0.483,
+            0.69
+          ],
+          [
+            0.49,
+            0.702
+          ],
+          [
+            0.495,
+            0.699
+          ],
+          [
+            0.503,
+            0.699
+          ],
+          [
+            0.508,
+            0.702
+          ],
+          [
+            0.516,
+            0.613
+          ],
+          [
+            0.521,
+            0.699
+          ],
+          [
+            0.529,
+            0.699
+          ],
+          [
+            0.536,
+            0.699
+          ],
+          [
+            0.541,
+            0.697
+          ],
+          [
+            0.549,
+            0.69
+          ],
+          [
+            0.554,
+            0.68
+          ],
+          [
+            0.562,
+            0.492
+          ],
+          [
+            0.567,
+            0.492
+          ],
+          [
+            0.575,
+            0.523
+          ],
+          [
+            0.58,
+            0.525
+          ],
+          [
+            0.587,
+            0.516
+          ]
+        ],
+        "contour_polygon_bounds": {
+          "min": [
+            0.411,
+            0.453
+          ],
+          "max": [
+            0.589,
+            0.702
+          ],
+          "center": [
+            0.5,
+            0.578
+          ],
+          "extent": [
+            0.178,
+            0.249
+          ]
+        },
+        "center_tolerance": 0.08,
+        "extent_tolerance": [
+          0.18,
+          0.49
+        ],
+        "area_tolerance": 5,
+        "observation_id": "front_center_panel_candidate",
+        "grounding": {
+          "method": "edge_contour_segmentation",
+          "mask": "front_center_panel_candidate_edge_mask",
+          "pixel_bbox": [
+            395,
+            285,
+            97,
+            104
+          ],
+          "pixel_count": 1307,
+          "prior_bbox": [
+            394.63,
+            264.75,
+            97.74,
+            209.5
+          ],
+          "fill": 0.06,
+          "contour_basis": "sampled_edge_contour",
+          "grounding_quality": {
+            "version": 1,
+            "status": "accepted",
+            "raw_to_evidence_bbox_ratio": 2.01,
+            "prior_to_evidence_bbox_ratio": 1,
+            "bbox_proxy": false,
+            "review_required": false,
+            "reasons": []
+          },
+          "review_required": false
+        },
+        "mask": {
+          "id": "front_center_panel_candidate_edge_mask",
+          "method": "edge_contour_segmentation",
+          "bbox": [
+            394.63,
+            264.75,
+            97.74,
+            209.5
+          ],
+          "polygon": [
+            [
+              395,
+              285
+            ],
+            [
+              492,
+              285
+            ],
+            [
+              492,
+              389
+            ],
+            [
+              395,
+              389
+            ],
+            [
+              395,
+              360
+            ],
+            [
+              399,
+              368
+            ],
+            [
+              402,
+              376
+            ],
+            [
+              406,
+              360
+            ],
+            [
+              409,
+              296
+            ],
+            [
+              413,
+              291
+            ],
+            [
+              416,
+              288
+            ],
+            [
+              420,
+              287
+            ],
+            [
+              423,
+              290
+            ],
+            [
+              427,
+              290
+            ],
+            [
+              431,
+              285
+            ],
+            [
+              434,
+              290
+            ],
+            [
+              438,
+              285
+            ],
+            [
+              441,
+              286
+            ],
+            [
+              445,
+              286
+            ],
+            [
+              448,
+              285
+            ],
+            [
+              452,
+              322
+            ],
+            [
+              455,
+              286
+            ],
+            [
+              459,
+              286
+            ],
+            [
+              463,
+              286
+            ],
+            [
+              466,
+              287
+            ],
+            [
+              470,
+              290
+            ],
+            [
+              473,
+              294
+            ],
+            [
+              477,
+              373
+            ],
+            [
+              480,
+              373
+            ],
+            [
+              484,
+              360
+            ],
+            [
+              487,
+              359
+            ],
+            [
+              491,
+              363
+            ],
+            [
+              491,
+              363
+            ],
+            [
+              487,
+              388
+            ],
+            [
+              484,
+              382
+            ],
+            [
+              480,
+              387
+            ],
+            [
+              477,
+              388
+            ],
+            [
+              473,
+              385
+            ],
+            [
+              470,
+              382
+            ],
+            [
+              466,
+              388
+            ],
+            [
+              463,
+              388
+            ],
+            [
+              459,
+              386
+            ],
+            [
+              455,
+              376
+            ],
+            [
+              452,
+              376
+            ],
+            [
+              448,
+              388
+            ],
+            [
+              445,
+              376
+            ],
+            [
+              441,
+              375
+            ],
+            [
+              438,
+              387
+            ],
+            [
+              434,
+              388
+            ],
+            [
+              431,
+              368
+            ],
+            [
+              427,
+              310
+            ],
+            [
+              423,
+              388
+            ],
+            [
+              420,
+              385
+            ],
+            [
+              416,
+              377
+            ],
+            [
+              413,
+              380
+            ],
+            [
+              409,
+              380
+            ],
+            [
+              406,
+              384
+            ],
+            [
+              402,
+              376
+            ],
+            [
+              399,
+              388
+            ],
+            [
+              395,
+              388
+            ],
+            [
+              395,
+              285
+            ]
+          ],
+          "sampled_contour": [
+            [
+              395,
+              285
+            ],
+            [
+              492,
+              285
+            ],
+            [
+              492,
+              389
+            ],
+            [
+              395,
+              389
+            ],
+            [
+              395,
+              360
+            ],
+            [
+              399,
+              368
+            ],
+            [
+              402,
+              376
+            ],
+            [
+              406,
+              360
+            ],
+            [
+              409,
+              296
+            ],
+            [
+              413,
+              291
+            ],
+            [
+              416,
+              288
+            ],
+            [
+              420,
+              287
+            ],
+            [
+              423,
+              290
+            ],
+            [
+              427,
+              290
+            ],
+            [
+              431,
+              285
+            ],
+            [
+              434,
+              290
+            ],
+            [
+              438,
+              285
+            ],
+            [
+              441,
+              286
+            ],
+            [
+              445,
+              286
+            ],
+            [
+              448,
+              285
+            ],
+            [
+              452,
+              322
+            ],
+            [
+              455,
+              286
+            ],
+            [
+              459,
+              286
+            ],
+            [
+              463,
+              286
+            ],
+            [
+              466,
+              287
+            ],
+            [
+              470,
+              290
+            ],
+            [
+              473,
+              294
+            ],
+            [
+              477,
+              373
+            ],
+            [
+              480,
+              373
+            ],
+            [
+              484,
+              360
+            ],
+            [
+              487,
+              359
+            ],
+            [
+              491,
+              363
+            ],
+            [
+              491,
+              363
+            ],
+            [
+              487,
+              388
+            ],
+            [
+              484,
+              382
+            ],
+            [
+              480,
+              387
+            ],
+            [
+              477,
+              388
+            ],
+            [
+              473,
+              385
+            ],
+            [
+              470,
+              382
+            ],
+            [
+              466,
+              388
+            ],
+            [
+              463,
+              388
+            ],
+            [
+              459,
+              386
+            ],
+            [
+              455,
+              376
+            ],
+            [
+              452,
+              376
+            ],
+            [
+              448,
+              388
+            ],
+            [
+              445,
+              376
+            ],
+            [
+              441,
+              375
+            ],
+            [
+              438,
+              387
+            ],
+            [
+              434,
+              388
+            ],
+            [
+              431,
+              368
+            ],
+            [
+              427,
+              310
+            ],
+            [
+              423,
+              388
+            ],
+            [
+              420,
+              385
+            ],
+            [
+              416,
+              377
+            ],
+            [
+              413,
+              380
+            ],
+            [
+              409,
+              380
+            ],
+            [
+              406,
+              384
+            ],
+            [
+              402,
+              376
+            ],
+            [
+              399,
+              388
+            ],
+            [
+              395,
+              388
+            ],
+            [
+              395,
+              285
+            ]
+          ],
+          "pixel_count": 1307,
+          "fill": 0.06,
+          "quality": {
+            "version": 1,
+            "status": "accepted",
+            "raw_to_evidence_bbox_ratio": 2.01,
+            "prior_to_evidence_bbox_ratio": 1,
+            "bbox_proxy": false,
+            "review_required": false,
+            "reasons": []
+          },
+          "review_required": false
+        },
+        "contour": {
+          "kind": "sampled_edge_contour",
+          "sample_count": 61,
+          "source": "edge_contour_segmentation"
+        },
+        "grounding_quality": {
+          "ok": true,
+          "severity": "error",
+          "method": "edge_contour_segmentation",
+          "max_bbox_dimension_ratio": 2.6,
+          "raw_to_evidence_bbox_ratio": 2.01,
+          "prior_to_evidence_bbox_ratio": 1,
+          "contour_sample_count": 61,
+          "bbox_proxy": false,
+          "review_required": false,
+          "reasons": [],
+          "boxes": {
+            "raw_pixel_box": {
+              "min": [
+                0.411,
+                0.453
+              ],
+              "max": [
+                0.589,
+                0.702
+              ],
+              "center": [
+                0.5,
+                0.578
+              ],
+              "extent": [
+                0.178,
+                0.249
+              ]
+            },
+            "prior_box": {
+              "min": [
+                0.41,
+                0.25
+              ],
+              "max": [
+                0.59,
+                0.75
+              ],
+              "center": [
+                0.5,
+                0.5
+              ],
+              "extent": [
+                0.18,
+                0.5
+              ]
+            },
+            "evidence_box": {
+              "min": [
+                0.411,
+                0.453
+              ],
+              "max": [
+                0.589,
+                0.702
+              ],
+              "center": [
+                0.5,
+                0.578
+              ],
+              "extent": [
+                0.178,
+                0.249
+              ]
+            },
+            "bbox_image_box": {
+              "min": [
+                0.41,
+                0.25
+              ],
+              "max": [
+                0.59,
+                0.75
+              ],
+              "center": [
+                0.5,
+                0.5
+              ],
+              "extent": [
+                0.18,
+                0.5
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "left-thumbstick-footprint",
+      "ok": true,
+      "item": "left-analog-stick-top-pad",
+      "observation_id": "front_left_thumbstick_candidate",
+      "grounding_method": "edge_keypoint_segmentation",
+      "image_view": "front",
+      "residuals": {
+        "center_delta": [
+          -0.083,
+          0.07
+        ],
+        "center_error": 0.109,
+        "extent_delta": [
+          0.011,
+          0.109
+        ],
+        "extent_error": 0.11,
+        "area_ratio_error": 2,
+        "bbox_area_ratio_error": 2.147,
+        "polygon_area_ratio_error": 2,
+        "iou": 0,
+        "polygon_iou": 0,
+        "edge_direction_error_deg": 90
+      },
+      "message": "left_thumbstick model projection fits mask/contour footprint evidence.",
+      "grounding_quality": {
+        "ok": true,
+        "severity": "error",
+        "method": "edge_keypoint_segmentation",
+        "max_bbox_dimension_ratio": 2.6,
+        "raw_to_evidence_bbox_ratio": 2.09,
+        "prior_to_evidence_bbox_ratio": 1,
+        "contour_sample_count": 61,
+        "bbox_proxy": false,
+        "review_required": false,
+        "reasons": [],
+        "boxes": {
+          "raw_pixel_box": {
+            "min": [
+              0.206,
+              0.563
+            ],
+            "max": [
+              0.284,
+              0.625
+            ],
+            "center": [
+              0.245,
+              0.594
+            ],
+            "extent": [
+              0.078,
+              0.062
+            ]
+          },
+          "prior_box": {
+            "min": [
+              0.205,
+              0.565
+            ],
+            "max": [
+              0.315,
+              0.695
+            ],
+            "center": [
+              0.26,
+              0.63
+            ],
+            "extent": [
+              0.11,
+              0.13
+            ]
+          },
+          "evidence_box": {
+            "min": [
+              0.206,
+              0.563
+            ],
+            "max": [
+              0.284,
+              0.625
+            ],
+            "center": [
+              0.245,
+              0.594
+            ],
+            "extent": [
+              0.078,
+              0.062
+            ]
+          },
+          "bbox_image_box": {
+            "min": [
+              0.205,
+              0.565
+            ],
+            "max": [
+              0.315,
+              0.695
+            ],
+            "center": [
+              0.26,
+              0.63
+            ],
+            "extent": [
+              0.11,
+              0.13
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "model_box": {
+          "min": [
+            0.117,
+            0.579
+          ],
+          "max": [
+            0.206,
+            0.75
+          ],
+          "center": [
+            0.162,
+            0.664
+          ],
+          "extent": [
+            0.089,
+            0.171
+          ]
+        },
+        "image_box": {
+          "min": [
+            0.206,
+            0.563
+          ],
+          "max": [
+            0.284,
+            0.625
+          ],
+          "center": [
+            0.245,
+            0.594
+          ],
+          "extent": [
+            0.078,
+            0.062
+          ]
+        },
+        "bbox_image_box": {
+          "min": [
+            0.205,
+            0.565
+          ],
+          "max": [
+            0.315,
+            0.695
+          ],
+          "center": [
+            0.26,
+            0.63
+          ],
+          "extent": [
+            0.11,
+            0.13
+          ]
+        },
+        "model_polygon": [
+          [
+            0.117,
+            0.579
+          ],
+          [
+            0.206,
+            0.579
+          ],
+          [
+            0.206,
+            0.75
+          ],
+          [
+            0.117,
+            0.75
+          ],
+          [
+            0.117,
+            0.579
+          ]
+        ],
+        "contour_polygon_sample": [
+          [
+            0.206,
+            0.625
+          ],
+          [
+            0.284,
+            0.625
+          ],
+          [
+            0.284,
+            0.563
+          ],
+          [
+            0.206,
+            0.563
+          ],
+          [
+            0.206,
+            0.621
+          ],
+          [
+            0.208,
+            0.621
+          ],
+          [
+            0.21,
+            0.621
+          ],
+          [
+            0.214,
+            0.623
+          ],
+          [
+            0.215,
+            0.623
+          ],
+          [
+            0.217,
+            0.623
+          ],
+          [
+            0.219,
+            0.625
+          ],
+          [
+            0.221,
+            0.625
+          ],
+          [
+            0.223,
+            0.623
+          ],
+          [
+            0.227,
+            0.625
+          ],
+          [
+            0.228,
+            0.625
+          ],
+          [
+            0.23,
+            0.625
+          ],
+          [
+            0.232,
+            0.611
+          ],
+          [
+            0.234,
+            0.609
+          ],
+          [
+            0.238,
+            0.601
+          ],
+          [
+            0.239,
+            0.597
+          ],
+          [
+            0.241,
+            0.592
+          ],
+          [
+            0.243,
+            0.566
+          ],
+          [
+            0.245,
+            0.568
+          ],
+          [
+            0.252,
+            0.575
+          ],
+          [
+            0.254,
+            0.578
+          ],
+          [
+            0.256,
+            0.582
+          ],
+          [
+            0.258,
+            0.585
+          ],
+          [
+            0.267,
+            0.611
+          ],
+          [
+            0.269,
+            0.613
+          ],
+          [
+            0.273,
+            0.611
+          ],
+          [
+            0.28,
+            0.611
+          ],
+          [
+            0.282,
+            0.609
+          ]
+        ],
+        "contour_polygon_bounds": {
+          "min": [
+            0.206,
+            0.563
+          ],
+          "max": [
+            0.284,
+            0.625
+          ],
+          "center": [
+            0.245,
+            0.594
+          ],
+          "extent": [
+            0.078,
+            0.062
+          ]
+        },
+        "center_tolerance": 0.12,
+        "extent_tolerance": [
+          0.04,
+          0.12
+        ],
+        "area_tolerance": 2.2,
+        "observation_id": "front_left_thumbstick_candidate",
+        "grounding": {
+          "method": "edge_keypoint_segmentation",
+          "mask": "front_left_thumbstick_candidate_edge_mask",
+          "pixel_bbox": [
+            284,
+            317,
+            42,
+            26
+          ],
+          "pixel_count": 158,
+          "prior_bbox": [
+            283.32,
+            287.8,
+            59.73,
+            54.47
+          ],
+          "fill": 0.05,
+          "contour_basis": "sampled_edge_contour",
+          "grounding_quality": {
+            "version": 1,
+            "status": "accepted",
+            "raw_to_evidence_bbox_ratio": 2.09,
+            "prior_to_evidence_bbox_ratio": 1,
+            "bbox_proxy": false,
+            "review_required": false,
+            "reasons": []
+          },
+          "review_required": false
+        },
+        "mask": {
+          "id": "front_left_thumbstick_candidate_edge_mask",
+          "method": "edge_keypoint_segmentation",
+          "bbox": [
+            283.32,
+            287.8,
+            59.73,
+            54.47
+          ],
+          "polygon": [
+            [
+              284,
+              317
+            ],
+            [
+              326,
+              317
+            ],
+            [
+              326,
+              343
+            ],
+            [
+              284,
+              343
+            ],
+            [
+              284,
+              319
+            ],
+            [
+              285,
+              319
+            ],
+            [
+              286,
+              319
+            ],
+            [
+              288,
+              318
+            ],
+            [
+              289,
+              318
+            ],
+            [
+              290,
+              318
+            ],
+            [
+              291,
+              317
+            ],
+            [
+              292,
+              317
+            ],
+            [
+              293,
+              318
+            ],
+            [
+              295,
+              317
+            ],
+            [
+              296,
+              317
+            ],
+            [
+              297,
+              317
+            ],
+            [
+              298,
+              323
+            ],
+            [
+              299,
+              324
+            ],
+            [
+              301,
+              327
+            ],
+            [
+              302,
+              329
+            ],
+            [
+              303,
+              331
+            ],
+            [
+              304,
+              342
+            ],
+            [
+              305,
+              341
+            ],
+            [
+              309,
+              338
+            ],
+            [
+              310,
+              337
+            ],
+            [
+              311,
+              335
+            ],
+            [
+              312,
+              334
+            ],
+            [
+              317,
+              323
+            ],
+            [
+              318,
+              322
+            ],
+            [
+              320,
+              323
+            ],
+            [
+              324,
+              323
+            ],
+            [
+              325,
+              324
+            ],
+            [
+              325,
+              325
+            ],
+            [
+              324,
+              325
+            ],
+            [
+              320,
+              323
+            ],
+            [
+              318,
+              324
+            ],
+            [
+              317,
+              323
+            ],
+            [
+              312,
+              336
+            ],
+            [
+              311,
+              337
+            ],
+            [
+              310,
+              338
+            ],
+            [
+              309,
+              339
+            ],
+            [
+              305,
+              342
+            ],
+            [
+              304,
+              342
+            ],
+            [
+              303,
+              339
+            ],
+            [
+              302,
+              342
+            ],
+            [
+              301,
+              342
+            ],
+            [
+              299,
+              342
+            ],
+            [
+              298,
+              329
+            ],
+            [
+              297,
+              326
+            ],
+            [
+              296,
+              325
+            ],
+            [
+              295,
+              340
+            ],
+            [
+              293,
+              342
+            ],
+            [
+              292,
+              322
+            ],
+            [
+              291,
+              322
+            ],
+            [
+              290,
+              323
+            ],
+            [
+              289,
+              323
+            ],
+            [
+              288,
+              321
+            ],
+            [
+              286,
+              322
+            ],
+            [
+              285,
+              322
+            ],
+            [
+              284,
+              321
+            ],
+            [
+              284,
+              317
+            ]
+          ],
+          "sampled_contour": [
+            [
+              284,
+              317
+            ],
+            [
+              326,
+              317
+            ],
+            [
+              326,
+              343
+            ],
+            [
+              284,
+              343
+            ],
+            [
+              284,
+              319
+            ],
+            [
+              285,
+              319
+            ],
+            [
+              286,
+              319
+            ],
+            [
+              288,
+              318
+            ],
+            [
+              289,
+              318
+            ],
+            [
+              290,
+              318
+            ],
+            [
+              291,
+              317
+            ],
+            [
+              292,
+              317
+            ],
+            [
+              293,
+              318
+            ],
+            [
+              295,
+              317
+            ],
+            [
+              296,
+              317
+            ],
+            [
+              297,
+              317
+            ],
+            [
+              298,
+              323
+            ],
+            [
+              299,
+              324
+            ],
+            [
+              301,
+              327
+            ],
+            [
+              302,
+              329
+            ],
+            [
+              303,
+              331
+            ],
+            [
+              304,
+              342
+            ],
+            [
+              305,
+              341
+            ],
+            [
+              309,
+              338
+            ],
+            [
+              310,
+              337
+            ],
+            [
+              311,
+              335
+            ],
+            [
+              312,
+              334
+            ],
+            [
+              317,
+              323
+            ],
+            [
+              318,
+              322
+            ],
+            [
+              320,
+              323
+            ],
+            [
+              324,
+              323
+            ],
+            [
+              325,
+              324
+            ],
+            [
+              325,
+              325
+            ],
+            [
+              324,
+              325
+            ],
+            [
+              320,
+              323
+            ],
+            [
+              318,
+              324
+            ],
+            [
+              317,
+              323
+            ],
+            [
+              312,
+              336
+            ],
+            [
+              311,
+              337
+            ],
+            [
+              310,
+              338
+            ],
+            [
+              309,
+              339
+            ],
+            [
+              305,
+              342
+            ],
+            [
+              304,
+              342
+            ],
+            [
+              303,
+              339
+            ],
+            [
+              302,
+              342
+            ],
+            [
+              301,
+              342
+            ],
+            [
+              299,
+              342
+            ],
+            [
+              298,
+              329
+            ],
+            [
+              297,
+              326
+            ],
+            [
+              296,
+              325
+            ],
+            [
+              295,
+              340
+            ],
+            [
+              293,
+              342
+            ],
+            [
+              292,
+              322
+            ],
+            [
+              291,
+              322
+            ],
+            [
+              290,
+              323
+            ],
+            [
+              289,
+              323
+            ],
+            [
+              288,
+              321
+            ],
+            [
+              286,
+              322
+            ],
+            [
+              285,
+              322
+            ],
+            [
+              284,
+              321
+            ],
+            [
+              284,
+              317
+            ]
+          ],
+          "pixel_count": 158,
+          "fill": 0.05,
+          "quality": {
+            "version": 1,
+            "status": "accepted",
+            "raw_to_evidence_bbox_ratio": 2.09,
+            "prior_to_evidence_bbox_ratio": 1,
+            "bbox_proxy": false,
+            "review_required": false,
+            "reasons": []
+          },
+          "review_required": false
+        },
+        "contour": {
+          "kind": "sampled_edge_contour",
+          "sample_count": 61,
+          "source": "edge_keypoint_segmentation"
+        },
+        "grounding_quality": {
+          "ok": true,
+          "severity": "error",
+          "method": "edge_keypoint_segmentation",
+          "max_bbox_dimension_ratio": 2.6,
+          "raw_to_evidence_bbox_ratio": 2.09,
+          "prior_to_evidence_bbox_ratio": 1,
+          "contour_sample_count": 61,
+          "bbox_proxy": false,
+          "review_required": false,
+          "reasons": [],
+          "boxes": {
+            "raw_pixel_box": {
+              "min": [
+                0.206,
+                0.563
+              ],
+              "max": [
+                0.284,
+                0.625
+              ],
+              "center": [
+                0.245,
+                0.594
+              ],
+              "extent": [
+                0.078,
+                0.062
+              ]
+            },
+            "prior_box": {
+              "min": [
+                0.205,
+                0.565
+              ],
+              "max": [
+                0.315,
+                0.695
+              ],
+              "center": [
+                0.26,
+                0.63
+              ],
+              "extent": [
+                0.11,
+                0.13
+              ]
+            },
+            "evidence_box": {
+              "min": [
+                0.206,
+                0.563
+              ],
+              "max": [
+                0.284,
+                0.625
+              ],
+              "center": [
+                0.245,
+                0.594
+              ],
+              "extent": [
+                0.078,
+                0.062
+              ]
+            },
+            "bbox_image_box": {
+              "min": [
+                0.205,
+                0.565
+              ],
+              "max": [
+                0.315,
+                0.695
+              ],
+              "center": [
+                0.26,
+                0.63
+              ],
+              "extent": [
+                0.11,
+                0.13
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "right-thumbstick-footprint",
+      "ok": true,
+      "item": "right-analog-stick-top-pad",
+      "observation_id": "front_right_thumbstick_candidate",
+      "grounding_method": "edge_keypoint_segmentation",
+      "image_view": "front",
+      "residuals": {
+        "center_delta": [
+          0.087,
+          -0.065
+        ],
+        "center_error": 0.109,
+        "extent_delta": [
+          0,
+          0.039
+        ],
+        "extent_error": 0.039,
+        "area_ratio_error": 0.25,
+        "bbox_area_ratio_error": 0.298,
+        "polygon_area_ratio_error": 0.25,
+        "iou": 0.006,
+        "polygon_iou": 0.006,
+        "edge_direction_error_deg": 0
+      },
+      "message": "right_thumbstick model projection fits mask/contour footprint evidence.",
+      "grounding_quality": {
+        "ok": true,
+        "severity": "error",
+        "method": "edge_keypoint_segmentation",
+        "max_bbox_dimension_ratio": 2.6,
+        "raw_to_evidence_bbox_ratio": 1.24,
+        "prior_to_evidence_bbox_ratio": 1,
+        "contour_sample_count": 61,
+        "bbox_proxy": false,
+        "review_required": false,
+        "reasons": [],
+        "boxes": {
+          "raw_pixel_box": {
+            "min": [
+              0.707,
+              0.294
+            ],
+            "max": [
+              0.796,
+              0.425
+            ],
+            "center": [
+              0.752,
+              0.359
+            ],
+            "extent": [
+              0.089,
+              0.131
+            ]
+          },
+          "prior_box": {
+            "min": [
+              0.685,
+              0.295
+            ],
+            "max": [
+              0.795,
+              0.425
+            ],
+            "center": [
+              0.74,
+              0.36
+            ],
+            "extent": [
+              0.11,
+              0.13
+            ]
+          },
+          "evidence_box": {
+            "min": [
+              0.707,
+              0.294
+            ],
+            "max": [
+              0.796,
+              0.425
+            ],
+            "center": [
+              0.752,
+              0.359
+            ],
+            "extent": [
+              0.089,
+              0.131
+            ]
+          },
+          "bbox_image_box": {
+            "min": [
+              0.685,
+              0.295
+            ],
+            "max": [
+              0.795,
+              0.425
+            ],
+            "center": [
+              0.74,
+              0.36
+            ],
+            "extent": [
+              0.11,
+              0.13
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "model_box": {
+          "min": [
+            0.794,
+            0.209
+          ],
+          "max": [
+            0.883,
+            0.379
+          ],
+          "center": [
+            0.839,
+            0.294
+          ],
+          "extent": [
+            0.089,
+            0.17
+          ]
+        },
+        "image_box": {
+          "min": [
+            0.707,
+            0.294
+          ],
+          "max": [
+            0.796,
+            0.425
+          ],
+          "center": [
+            0.752,
+            0.359
+          ],
+          "extent": [
+            0.089,
+            0.131
+          ]
+        },
+        "bbox_image_box": {
+          "min": [
+            0.685,
+            0.295
+          ],
+          "max": [
+            0.795,
+            0.425
+          ],
+          "center": [
+            0.74,
+            0.36
+          ],
+          "extent": [
+            0.11,
+            0.13
+          ]
+        },
+        "model_polygon": [
+          [
+            0.794,
+            0.209
+          ],
+          [
+            0.883,
+            0.209
+          ],
+          [
+            0.883,
+            0.379
+          ],
+          [
+            0.794,
+            0.379
+          ],
+          [
+            0.794,
+            0.209
+          ]
+        ],
+        "contour_polygon_sample": [
+          [
+            0.707,
+            0.425
+          ],
+          [
+            0.796,
+            0.425
+          ],
+          [
+            0.796,
+            0.294
+          ],
+          [
+            0.707,
+            0.294
+          ],
+          [
+            0.707,
+            0.32
+          ],
+          [
+            0.711,
+            0.332
+          ],
+          [
+            0.713,
+            0.334
+          ],
+          [
+            0.716,
+            0.339
+          ],
+          [
+            0.72,
+            0.344
+          ],
+          [
+            0.724,
+            0.346
+          ],
+          [
+            0.726,
+            0.348
+          ],
+          [
+            0.729,
+            0.351
+          ],
+          [
+            0.733,
+            0.351
+          ],
+          [
+            0.737,
+            0.351
+          ],
+          [
+            0.738,
+            0.353
+          ],
+          [
+            0.742,
+            0.353
+          ],
+          [
+            0.746,
+            0.353
+          ],
+          [
+            0.75,
+            0.425
+          ],
+          [
+            0.751,
+            0.425
+          ],
+          [
+            0.755,
+            0.425
+          ],
+          [
+            0.759,
+            0.425
+          ],
+          [
+            0.762,
+            0.425
+          ],
+          [
+            0.764,
+            0.425
+          ],
+          [
+            0.768,
+            0.425
+          ],
+          [
+            0.772,
+            0.425
+          ],
+          [
+            0.775,
+            0.422
+          ],
+          [
+            0.777,
+            0.422
+          ],
+          [
+            0.781,
+            0.422
+          ],
+          [
+            0.785,
+            0.422
+          ],
+          [
+            0.788,
+            0.422
+          ],
+          [
+            0.79,
+            0.422
+          ],
+          [
+            0.794,
+            0.425
+          ]
+        ],
+        "contour_polygon_bounds": {
+          "min": [
+            0.707,
+            0.294
+          ],
+          "max": [
+            0.796,
+            0.425
+          ],
+          "center": [
+            0.752,
+            0.359
+          ],
+          "extent": [
+            0.089,
+            0.131
+          ]
+        },
+        "center_tolerance": 0.12,
+        "extent_tolerance": [
+          0.04,
+          0.05
+        ],
+        "area_tolerance": 0.35,
+        "observation_id": "front_right_thumbstick_candidate",
+        "grounding": {
+          "method": "edge_keypoint_segmentation",
+          "mask": "front_right_thumbstick_candidate_edge_mask",
+          "pixel_bbox": [
+            556,
+            401,
+            48,
+            55
+          ],
+          "pixel_count": 476,
+          "prior_bbox": [
+            543.96,
+            400.92,
+            59.73,
+            54.47
+          ],
+          "fill": 0.15,
+          "contour_basis": "sampled_edge_contour",
+          "grounding_quality": {
+            "version": 1,
+            "status": "accepted",
+            "raw_to_evidence_bbox_ratio": 1.24,
+            "prior_to_evidence_bbox_ratio": 1,
+            "bbox_proxy": false,
+            "review_required": false,
+            "reasons": []
+          },
+          "review_required": false
+        },
+        "mask": {
+          "id": "front_right_thumbstick_candidate_edge_mask",
+          "method": "edge_keypoint_segmentation",
+          "bbox": [
+            543.96,
+            400.92,
+            59.73,
+            54.47
+          ],
+          "polygon": [
+            [
+              556,
+              401
+            ],
+            [
+              604,
+              401
+            ],
+            [
+              604,
+              456
+            ],
+            [
+              556,
+              456
+            ],
+            [
+              556,
+              445
+            ],
+            [
+              558,
+              440
+            ],
+            [
+              559,
+              439
+            ],
+            [
+              561,
+              437
+            ],
+            [
+              563,
+              435
+            ],
+            [
+              565,
+              434
+            ],
+            [
+              566,
+              433
+            ],
+            [
+              568,
+              432
+            ],
+            [
+              570,
+              432
+            ],
+            [
+              572,
+              432
+            ],
+            [
+              573,
+              431
+            ],
+            [
+              575,
+              431
+            ],
+            [
+              577,
+              431
+            ],
+            [
+              579,
+              401
+            ],
+            [
+              580,
+              401
+            ],
+            [
+              582,
+              401
+            ],
+            [
+              584,
+              401
+            ],
+            [
+              586,
+              401
+            ],
+            [
+              587,
+              401
+            ],
+            [
+              589,
+              401
+            ],
+            [
+              591,
+              401
+            ],
+            [
+              593,
+              402
+            ],
+            [
+              594,
+              402
+            ],
+            [
+              596,
+              402
+            ],
+            [
+              598,
+              402
+            ],
+            [
+              600,
+              402
+            ],
+            [
+              601,
+              402
+            ],
+            [
+              603,
+              401
+            ],
+            [
+              603,
+              405
+            ],
+            [
+              601,
+              405
+            ],
+            [
+              600,
+              405
+            ],
+            [
+              598,
+              455
+            ],
+            [
+              596,
+              405
+            ],
+            [
+              594,
+              455
+            ],
+            [
+              593,
+              455
+            ],
+            [
+              591,
+              445
+            ],
+            [
+              589,
+              455
+            ],
+            [
+              587,
+              445
+            ],
+            [
+              586,
+              443
+            ],
+            [
+              584,
+              450
+            ],
+            [
+              582,
+              455
+            ],
+            [
+              580,
+              447
+            ],
+            [
+              579,
+              451
+            ],
+            [
+              577,
+              444
+            ],
+            [
+              575,
+              437
+            ],
+            [
+              573,
+              455
+            ],
+            [
+              572,
+              455
+            ],
+            [
+              570,
+              439
+            ],
+            [
+              568,
+              439
+            ],
+            [
+              566,
+              441
+            ],
+            [
+              565,
+              443
+            ],
+            [
+              563,
+              455
+            ],
+            [
+              561,
+              454
+            ],
+            [
+              559,
+              454
+            ],
+            [
+              558,
+              455
+            ],
+            [
+              556,
+              455
+            ],
+            [
+              556,
+              401
+            ]
+          ],
+          "sampled_contour": [
+            [
+              556,
+              401
+            ],
+            [
+              604,
+              401
+            ],
+            [
+              604,
+              456
+            ],
+            [
+              556,
+              456
+            ],
+            [
+              556,
+              445
+            ],
+            [
+              558,
+              440
+            ],
+            [
+              559,
+              439
+            ],
+            [
+              561,
+              437
+            ],
+            [
+              563,
+              435
+            ],
+            [
+              565,
+              434
+            ],
+            [
+              566,
+              433
+            ],
+            [
+              568,
+              432
+            ],
+            [
+              570,
+              432
+            ],
+            [
+              572,
+              432
+            ],
+            [
+              573,
+              431
+            ],
+            [
+              575,
+              431
+            ],
+            [
+              577,
+              431
+            ],
+            [
+              579,
+              401
+            ],
+            [
+              580,
+              401
+            ],
+            [
+              582,
+              401
+            ],
+            [
+              584,
+              401
+            ],
+            [
+              586,
+              401
+            ],
+            [
+              587,
+              401
+            ],
+            [
+              589,
+              401
+            ],
+            [
+              591,
+              401
+            ],
+            [
+              593,
+              402
+            ],
+            [
+              594,
+              402
+            ],
+            [
+              596,
+              402
+            ],
+            [
+              598,
+              402
+            ],
+            [
+              600,
+              402
+            ],
+            [
+              601,
+              402
+            ],
+            [
+              603,
+              401
+            ],
+            [
+              603,
+              405
+            ],
+            [
+              601,
+              405
+            ],
+            [
+              600,
+              405
+            ],
+            [
+              598,
+              455
+            ],
+            [
+              596,
+              405
+            ],
+            [
+              594,
+              455
+            ],
+            [
+              593,
+              455
+            ],
+            [
+              591,
+              445
+            ],
+            [
+              589,
+              455
+            ],
+            [
+              587,
+              445
+            ],
+            [
+              586,
+              443
+            ],
+            [
+              584,
+              450
+            ],
+            [
+              582,
+              455
+            ],
+            [
+              580,
+              447
+            ],
+            [
+              579,
+              451
+            ],
+            [
+              577,
+              444
+            ],
+            [
+              575,
+              437
+            ],
+            [
+              573,
+              455
+            ],
+            [
+              572,
+              455
+            ],
+            [
+              570,
+              439
+            ],
+            [
+              568,
+              439
+            ],
+            [
+              566,
+              441
+            ],
+            [
+              565,
+              443
+            ],
+            [
+              563,
+              455
+            ],
+            [
+              561,
+              454
+            ],
+            [
+              559,
+              454
+            ],
+            [
+              558,
+              455
+            ],
+            [
+              556,
+              455
+            ],
+            [
+              556,
+              401
+            ]
+          ],
+          "pixel_count": 476,
+          "fill": 0.15,
+          "quality": {
+            "version": 1,
+            "status": "accepted",
+            "raw_to_evidence_bbox_ratio": 1.24,
+            "prior_to_evidence_bbox_ratio": 1,
+            "bbox_proxy": false,
+            "review_required": false,
+            "reasons": []
+          },
+          "review_required": false
+        },
+        "contour": {
+          "kind": "sampled_edge_contour",
+          "sample_count": 61,
+          "source": "edge_keypoint_segmentation"
+        },
+        "grounding_quality": {
+          "ok": true,
+          "severity": "error",
+          "method": "edge_keypoint_segmentation",
+          "max_bbox_dimension_ratio": 2.6,
+          "raw_to_evidence_bbox_ratio": 1.24,
+          "prior_to_evidence_bbox_ratio": 1,
+          "contour_sample_count": 61,
+          "bbox_proxy": false,
+          "review_required": false,
+          "reasons": [],
+          "boxes": {
+            "raw_pixel_box": {
+              "min": [
+                0.707,
+                0.294
+              ],
+              "max": [
+                0.796,
+                0.425
+              ],
+              "center": [
+                0.752,
+                0.359
+              ],
+              "extent": [
+                0.089,
+                0.131
+              ]
+            },
+            "prior_box": {
+              "min": [
+                0.685,
+                0.295
+              ],
+              "max": [
+                0.795,
+                0.425
+              ],
+              "center": [
+                0.74,
+                0.36
+              ],
+              "extent": [
+                0.11,
+                0.13
+              ]
+            },
+            "evidence_box": {
+              "min": [
+                0.707,
+                0.294
+              ],
+              "max": [
+                0.796,
+                0.425
+              ],
+              "center": [
+                0.752,
+                0.359
+              ],
+              "extent": [
+                0.089,
+                0.131
+              ]
+            },
+            "bbox_image_box": {
+              "min": [
+                0.685,
+                0.295
+              ],
+              "max": [
+                0.795,
+                0.425
+              ],
+              "center": [
+                0.74,
+                0.36
+              ],
+              "extent": [
+                0.11,
+                0.13
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "abxy-footprint",
+      "ok": true,
+      "item": "button-x-button",
+      "observation_id": "front_abxy_cluster_candidate",
+      "grounding_method": "edge_contour_segmentation",
+      "image_view": "front",
+      "residuals": {
+        "center_delta": [
+          0.023,
+          0.108
+        ],
+        "center_error": 0.11,
+        "extent_delta": [
+          -0.147,
+          -0.163
+        ],
+        "extent_error": 0.219,
+        "area_ratio_error": 0.917,
+        "bbox_area_ratio_error": 0.918,
+        "polygon_area_ratio_error": 0.917,
+        "iou": 0.057,
+        "polygon_iou": 0.057,
+        "edge_direction_error_deg": 0
+      },
+      "message": "abxy model projection fits mask/contour footprint evidence.",
+      "grounding_quality": {
+        "ok": true,
+        "severity": "error",
+        "method": "edge_contour_segmentation",
+        "max_bbox_dimension_ratio": 2.6,
+        "raw_to_evidence_bbox_ratio": 1.01,
+        "prior_to_evidence_bbox_ratio": 1,
+        "contour_sample_count": 61,
+        "bbox_proxy": false,
+        "review_required": false,
+        "reasons": [],
+        "boxes": {
+          "raw_pixel_box": {
+            "min": [
+              0.72,
+              0.508
+            ],
+            "max": [
+              0.912,
+              0.759
+            ],
+            "center": [
+              0.816,
+              0.633
+            ],
+            "extent": [
+              0.192,
+              0.251
+            ]
+          },
+          "prior_box": {
+            "min": [
+              0.72,
+              0.51
+            ],
+            "max": [
+              0.91,
+              0.76
+            ],
+            "center": [
+              0.815,
+              0.635
+            ],
+            "extent": [
+              0.19,
+              0.25
+            ]
+          },
+          "evidence_box": {
+            "min": [
+              0.72,
+              0.508
+            ],
+            "max": [
+              0.912,
+              0.759
+            ],
+            "center": [
+              0.816,
+              0.633
+            ],
+            "extent": [
+              0.192,
+              0.251
+            ]
+          },
+          "bbox_image_box": {
+            "min": [
+              0.72,
+              0.51
+            ],
+            "max": [
+              0.91,
+              0.76
+            ],
+            "center": [
+              0.815,
+              0.635
+            ],
+            "extent": [
+              0.19,
+              0.25
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "model_box": {
+          "min": [
+            0.816,
+            0.697
+          ],
+          "max": [
+            0.861,
+            0.785
+          ],
+          "center": [
+            0.839,
+            0.741
+          ],
+          "extent": [
+            0.045,
+            0.088
+          ]
+        },
+        "image_box": {
+          "min": [
+            0.72,
+            0.508
+          ],
+          "max": [
+            0.912,
+            0.759
+          ],
+          "center": [
+            0.816,
+            0.633
+          ],
+          "extent": [
+            0.192,
+            0.251
+          ]
+        },
+        "bbox_image_box": {
+          "min": [
+            0.72,
+            0.51
+          ],
+          "max": [
+            0.91,
+            0.76
+          ],
+          "center": [
+            0.815,
+            0.635
+          ],
+          "extent": [
+            0.19,
+            0.25
+          ]
+        },
+        "model_polygon": [
+          [
+            0.816,
+            0.697
+          ],
+          [
+            0.861,
+            0.697
+          ],
+          [
+            0.861,
+            0.785
+          ],
+          [
+            0.816,
+            0.785
+          ],
+          [
+            0.816,
+            0.697
+          ]
+        ],
+        "contour_polygon_sample": [
+          [
+            0.72,
+            0.759
+          ],
+          [
+            0.912,
+            0.759
+          ],
+          [
+            0.912,
+            0.508
+          ],
+          [
+            0.72,
+            0.508
+          ],
+          [
+            0.72,
+            0.745
+          ],
+          [
+            0.726,
+            0.747
+          ],
+          [
+            0.733,
+            0.752
+          ],
+          [
+            0.738,
+            0.759
+          ],
+          [
+            0.744,
+            0.757
+          ],
+          [
+            0.75,
+            0.728
+          ],
+          [
+            0.757,
+            0.735
+          ],
+          [
+            0.762,
+            0.74
+          ],
+          [
+            0.768,
+            0.742
+          ],
+          [
+            0.775,
+            0.759
+          ],
+          [
+            0.781,
+            0.745
+          ],
+          [
+            0.786,
+            0.747
+          ],
+          [
+            0.794,
+            0.747
+          ],
+          [
+            0.799,
+            0.747
+          ],
+          [
+            0.805,
+            0.718
+          ],
+          [
+            0.81,
+            0.759
+          ],
+          [
+            0.818,
+            0.757
+          ],
+          [
+            0.823,
+            0.757
+          ],
+          [
+            0.829,
+            0.742
+          ],
+          [
+            0.836,
+            0.742
+          ],
+          [
+            0.842,
+            0.745
+          ],
+          [
+            0.847,
+            0.747
+          ],
+          [
+            0.855,
+            0.752
+          ],
+          [
+            0.86,
+            0.759
+          ],
+          [
+            0.866,
+            0.757
+          ],
+          [
+            0.871,
+            0.759
+          ],
+          [
+            0.904,
+            0.759
+          ],
+          [
+            0.91,
+            0.742
+          ]
+        ],
+        "contour_polygon_bounds": {
+          "min": [
+            0.72,
+            0.508
+          ],
+          "max": [
+            0.912,
+            0.759
+          ],
+          "center": [
+            0.816,
+            0.633
+          ],
+          "extent": [
+            0.192,
+            0.251
+          ]
+        },
+        "center_tolerance": 0.12,
+        "extent_tolerance": [
+          0.16,
+          0.17
+        ],
+        "area_tolerance": 1,
+        "observation_id": "front_abxy_cluster_candidate",
+        "grounding": {
+          "method": "edge_contour_segmentation",
+          "mask": "front_abxy_cluster_candidate_edge_mask",
+          "pixel_bbox": [
+            563,
+            261,
+            104,
+            105
+          ],
+          "pixel_count": 1461,
+          "prior_bbox": [
+            562.96,
+            260.56,
+            103.17,
+            104.75
+          ],
+          "fill": 0.14,
+          "contour_basis": "sampled_edge_contour",
+          "grounding_quality": {
+            "version": 1,
+            "status": "accepted",
+            "raw_to_evidence_bbox_ratio": 1.01,
+            "prior_to_evidence_bbox_ratio": 1,
+            "bbox_proxy": false,
+            "review_required": false,
+            "reasons": []
+          },
+          "review_required": false
+        },
+        "mask": {
+          "id": "front_abxy_cluster_candidate_edge_mask",
+          "method": "edge_contour_segmentation",
+          "bbox": [
+            562.96,
+            260.56,
+            103.17,
+            104.75
+          ],
+          "polygon": [
+            [
+              563,
+              261
+            ],
+            [
+              667,
+              261
+            ],
+            [
+              667,
+              366
+            ],
+            [
+              563,
+              366
+            ],
+            [
+              563,
+              267
+            ],
+            [
+              566,
+              266
+            ],
+            [
+              570,
+              264
+            ],
+            [
+              573,
+              261
+            ],
+            [
+              576,
+              262
+            ],
+            [
+              579,
+              274
+            ],
+            [
+              583,
+              271
+            ],
+            [
+              586,
+              269
+            ],
+            [
+              589,
+              268
+            ],
+            [
+              593,
+              261
+            ],
+            [
+              596,
+              267
+            ],
+            [
+              599,
+              266
+            ],
+            [
+              603,
+              266
+            ],
+            [
+              606,
+              266
+            ],
+            [
+              609,
+              278
+            ],
+            [
+              612,
+              261
+            ],
+            [
+              616,
+              262
+            ],
+            [
+              619,
+              262
+            ],
+            [
+              622,
+              268
+            ],
+            [
+              626,
+              268
+            ],
+            [
+              629,
+              267
+            ],
+            [
+              632,
+              266
+            ],
+            [
+              636,
+              264
+            ],
+            [
+              639,
+              261
+            ],
+            [
+              642,
+              262
+            ],
+            [
+              645,
+              261
+            ],
+            [
+              663,
+              261
+            ],
+            [
+              666,
+              268
+            ],
+            [
+              666,
+              346
+            ],
+            [
+              663,
+              292
+            ],
+            [
+              645,
+              262
+            ],
+            [
+              642,
+              264
+            ],
+            [
+              639,
+              266
+            ],
+            [
+              636,
+              267
+            ],
+            [
+              632,
+              365
+            ],
+            [
+              629,
+              363
+            ],
+            [
+              626,
+              360
+            ],
+            [
+              622,
+              351
+            ],
+            [
+              619,
+              347
+            ],
+            [
+              616,
+              342
+            ],
+            [
+              612,
+              342
+            ],
+            [
+              609,
+              335
+            ],
+            [
+              606,
+              334
+            ],
+            [
+              603,
+              334
+            ],
+            [
+              599,
+              333
+            ],
+            [
+              596,
+              333
+            ],
+            [
+              593,
+              334
+            ],
+            [
+              589,
+              335
+            ],
+            [
+              586,
+              336
+            ],
+            [
+              583,
+              337
+            ],
+            [
+              579,
+              340
+            ],
+            [
+              576,
+              365
+            ],
+            [
+              573,
+              362
+            ],
+            [
+              570,
+              365
+            ],
+            [
+              566,
+              365
+            ],
+            [
+              563,
+              365
+            ],
+            [
+              563,
+              261
+            ]
+          ],
+          "sampled_contour": [
+            [
+              563,
+              261
+            ],
+            [
+              667,
+              261
+            ],
+            [
+              667,
+              366
+            ],
+            [
+              563,
+              366
+            ],
+            [
+              563,
+              267
+            ],
+            [
+              566,
+              266
+            ],
+            [
+              570,
+              264
+            ],
+            [
+              573,
+              261
+            ],
+            [
+              576,
+              262
+            ],
+            [
+              579,
+              274
+            ],
+            [
+              583,
+              271
+            ],
+            [
+              586,
+              269
+            ],
+            [
+              589,
+              268
+            ],
+            [
+              593,
+              261
+            ],
+            [
+              596,
+              267
+            ],
+            [
+              599,
+              266
+            ],
+            [
+              603,
+              266
+            ],
+            [
+              606,
+              266
+            ],
+            [
+              609,
+              278
+            ],
+            [
+              612,
+              261
+            ],
+            [
+              616,
+              262
+            ],
+            [
+              619,
+              262
+            ],
+            [
+              622,
+              268
+            ],
+            [
+              626,
+              268
+            ],
+            [
+              629,
+              267
+            ],
+            [
+              632,
+              266
+            ],
+            [
+              636,
+              264
+            ],
+            [
+              639,
+              261
+            ],
+            [
+              642,
+              262
+            ],
+            [
+              645,
+              261
+            ],
+            [
+              663,
+              261
+            ],
+            [
+              666,
+              268
+            ],
+            [
+              666,
+              346
+            ],
+            [
+              663,
+              292
+            ],
+            [
+              645,
+              262
+            ],
+            [
+              642,
+              264
+            ],
+            [
+              639,
+              266
+            ],
+            [
+              636,
+              267
+            ],
+            [
+              632,
+              365
+            ],
+            [
+              629,
+              363
+            ],
+            [
+              626,
+              360
+            ],
+            [
+              622,
+              351
+            ],
+            [
+              619,
+              347
+            ],
+            [
+              616,
+              342
+            ],
+            [
+              612,
+              342
+            ],
+            [
+              609,
+              335
+            ],
+            [
+              606,
+              334
+            ],
+            [
+              603,
+              334
+            ],
+            [
+              599,
+              333
+            ],
+            [
+              596,
+              333
+            ],
+            [
+              593,
+              334
+            ],
+            [
+              589,
+              335
+            ],
+            [
+              586,
+              336
+            ],
+            [
+              583,
+              337
+            ],
+            [
+              579,
+              340
+            ],
+            [
+              576,
+              365
+            ],
+            [
+              573,
+              362
+            ],
+            [
+              570,
+              365
+            ],
+            [
+              566,
+              365
+            ],
+            [
+              563,
+              365
+            ],
+            [
+              563,
+              261
+            ]
+          ],
+          "pixel_count": 1461,
+          "fill": 0.14,
+          "quality": {
+            "version": 1,
+            "status": "accepted",
+            "raw_to_evidence_bbox_ratio": 1.01,
+            "prior_to_evidence_bbox_ratio": 1,
+            "bbox_proxy": false,
+            "review_required": false,
+            "reasons": []
+          },
+          "review_required": false
+        },
+        "contour": {
+          "kind": "sampled_edge_contour",
+          "sample_count": 61,
+          "source": "edge_contour_segmentation"
+        },
+        "grounding_quality": {
+          "ok": true,
+          "severity": "error",
+          "method": "edge_contour_segmentation",
+          "max_bbox_dimension_ratio": 2.6,
+          "raw_to_evidence_bbox_ratio": 1.01,
+          "prior_to_evidence_bbox_ratio": 1,
+          "contour_sample_count": 61,
+          "bbox_proxy": false,
+          "review_required": false,
+          "reasons": [],
+          "boxes": {
+            "raw_pixel_box": {
+              "min": [
+                0.72,
+                0.508
+              ],
+              "max": [
+                0.912,
+                0.759
+              ],
+              "center": [
+                0.816,
+                0.633
+              ],
+              "extent": [
+                0.192,
+                0.251
+              ]
+            },
+            "prior_box": {
+              "min": [
+                0.72,
+                0.51
+              ],
+              "max": [
+                0.91,
+                0.76
+              ],
+              "center": [
+                0.815,
+                0.635
+              ],
+              "extent": [
+                0.19,
+                0.25
+              ]
+            },
+            "evidence_box": {
+              "min": [
+                0.72,
+                0.508
+              ],
+              "max": [
+                0.912,
+                0.759
+              ],
+              "center": [
+                0.816,
+                0.633
+              ],
+              "extent": [
+                0.192,
+                0.251
+              ]
+            },
+            "bbox_image_box": {
+              "min": [
+                0.72,
+                0.51
+              ],
+              "max": [
+                0.91,
+                0.76
+              ],
+              "center": [
+                0.815,
+                0.635
+              ],
+              "extent": [
+                0.19,
+                0.25
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "dpad-footprint",
+      "ok": true,
+      "item": "dpad-up-button",
+      "observation_id": "front_dpad_cluster_candidate",
+      "grounding_method": "edge_contour_segmentation",
+      "image_view": "front",
+      "residuals": {
+        "center_delta": [
+          -0.033,
+          0.059
+        ],
+        "center_error": 0.068,
+        "extent_delta": [
+          -0.108,
+          -0.12
+        ],
+        "extent_error": 0.161,
+        "area_ratio_error": 0.875,
+        "bbox_area_ratio_error": 0.876,
+        "polygon_area_ratio_error": 0.875,
+        "iou": 0.124,
+        "polygon_iou": 0.124,
+        "edge_direction_error_deg": 0
+      },
+      "message": "dpad model projection fits mask/contour footprint evidence.",
+      "grounding_quality": {
+        "ok": true,
+        "severity": "error",
+        "method": "edge_contour_segmentation",
+        "max_bbox_dimension_ratio": 2.6,
+        "raw_to_evidence_bbox_ratio": 1.18,
+        "prior_to_evidence_bbox_ratio": 1,
+        "contour_sample_count": 61,
+        "bbox_proxy": false,
+        "review_required": false,
+        "reasons": [],
+        "boxes": {
+          "raw_pixel_box": {
+            "min": [
+              0.118,
+              0.272
+            ],
+            "max": [
+              0.271,
+              0.48
+            ],
+            "center": [
+              0.195,
+              0.376
+            ],
+            "extent": [
+              0.153,
+              0.208
+            ]
+          },
+          "prior_box": {
+            "min": [
+              0.09,
+              0.24
+            ],
+            "max": [
+              0.27,
+              0.48
+            ],
+            "center": [
+              0.18,
+              0.36
+            ],
+            "extent": [
+              0.18,
+              0.24
+            ]
+          },
+          "evidence_box": {
+            "min": [
+              0.118,
+              0.272
+            ],
+            "max": [
+              0.271,
+              0.48
+            ],
+            "center": [
+              0.195,
+              0.376
+            ],
+            "extent": [
+              0.153,
+              0.208
+            ]
+          },
+          "bbox_image_box": {
+            "min": [
+              0.09,
+              0.24
+            ],
+            "max": [
+              0.27,
+              0.48
+            ],
+            "center": [
+              0.18,
+              0.36
+            ],
+            "extent": [
+              0.18,
+              0.24
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "model_box": {
+          "min": [
+            0.139,
+            0.391
+          ],
+          "max": [
+            0.184,
+            0.479
+          ],
+          "center": [
+            0.162,
+            0.435
+          ],
+          "extent": [
+            0.045,
+            0.088
+          ]
+        },
+        "image_box": {
+          "min": [
+            0.118,
+            0.272
+          ],
+          "max": [
+            0.271,
+            0.48
+          ],
+          "center": [
+            0.195,
+            0.376
+          ],
+          "extent": [
+            0.153,
+            0.208
+          ]
+        },
+        "bbox_image_box": {
+          "min": [
+            0.09,
+            0.24
+          ],
+          "max": [
+            0.27,
+            0.48
+          ],
+          "center": [
+            0.18,
+            0.36
+          ],
+          "extent": [
+            0.18,
+            0.24
+          ]
+        },
+        "model_polygon": [
+          [
+            0.139,
+            0.391
+          ],
+          [
+            0.184,
+            0.391
+          ],
+          [
+            0.184,
+            0.479
+          ],
+          [
+            0.139,
+            0.479
+          ],
+          [
+            0.139,
+            0.391
+          ]
+        ],
+        "contour_polygon_sample": [
+          [
+            0.118,
+            0.48
+          ],
+          [
+            0.271,
+            0.48
+          ],
+          [
+            0.271,
+            0.272
+          ],
+          [
+            0.118,
+            0.272
+          ],
+          [
+            0.118,
+            0.48
+          ],
+          [
+            0.123,
+            0.477
+          ],
+          [
+            0.129,
+            0.48
+          ],
+          [
+            0.134,
+            0.473
+          ],
+          [
+            0.14,
+            0.47
+          ],
+          [
+            0.145,
+            0.477
+          ],
+          [
+            0.151,
+            0.48
+          ],
+          [
+            0.157,
+            0.477
+          ],
+          [
+            0.162,
+            0.48
+          ],
+          [
+            0.168,
+            0.48
+          ],
+          [
+            0.173,
+            0.48
+          ],
+          [
+            0.179,
+            0.456
+          ],
+          [
+            0.184,
+            0.461
+          ],
+          [
+            0.19,
+            0.465
+          ],
+          [
+            0.197,
+            0.47
+          ],
+          [
+            0.203,
+            0.47
+          ],
+          [
+            0.208,
+            0.473
+          ],
+          [
+            0.214,
+            0.473
+          ],
+          [
+            0.219,
+            0.475
+          ],
+          [
+            0.225,
+            0.475
+          ],
+          [
+            0.23,
+            0.475
+          ],
+          [
+            0.236,
+            0.439
+          ],
+          [
+            0.241,
+            0.413
+          ],
+          [
+            0.247,
+            0.48
+          ],
+          [
+            0.252,
+            0.48
+          ],
+          [
+            0.258,
+            0.48
+          ],
+          [
+            0.263,
+            0.47
+          ],
+          [
+            0.269,
+            0.473
+          ]
+        ],
+        "contour_polygon_bounds": {
+          "min": [
+            0.118,
+            0.272
+          ],
+          "max": [
+            0.271,
+            0.48
+          ],
+          "center": [
+            0.195,
+            0.376
+          ],
+          "extent": [
+            0.153,
+            0.208
+          ]
+        },
+        "center_tolerance": 0.08,
+        "extent_tolerance": [
+          0.14,
+          0.16
+        ],
+        "area_tolerance": 0.95,
+        "observation_id": "front_dpad_cluster_candidate",
+        "grounding": {
+          "method": "edge_contour_segmentation",
+          "mask": "front_dpad_cluster_candidate_edge_mask",
+          "pixel_bbox": [
+            236,
+            378,
+            83,
+            87
+          ],
+          "pixel_count": 988,
+          "prior_bbox": [
+            220.87,
+            377.88,
+            97.74,
+            100.56
+          ],
+          "fill": 0.1,
+          "contour_basis": "sampled_edge_contour",
+          "grounding_quality": {
+            "version": 1,
+            "status": "accepted",
+            "raw_to_evidence_bbox_ratio": 1.18,
+            "prior_to_evidence_bbox_ratio": 1,
+            "bbox_proxy": false,
+            "review_required": false,
+            "reasons": []
+          },
+          "review_required": false
+        },
+        "mask": {
+          "id": "front_dpad_cluster_candidate_edge_mask",
+          "method": "edge_contour_segmentation",
+          "bbox": [
+            220.87,
+            377.88,
+            97.74,
+            100.56
+          ],
+          "polygon": [
+            [
+              236,
+              378
+            ],
+            [
+              319,
+              378
+            ],
+            [
+              319,
+              465
+            ],
+            [
+              236,
+              465
+            ],
+            [
+              236,
+              378
+            ],
+            [
+              239,
+              379
+            ],
+            [
+              242,
+              378
+            ],
+            [
+              245,
+              381
+            ],
+            [
+              248,
+              382
+            ],
+            [
+              251,
+              379
+            ],
+            [
+              254,
+              378
+            ],
+            [
+              257,
+              379
+            ],
+            [
+              260,
+              378
+            ],
+            [
+              263,
+              378
+            ],
+            [
+              266,
+              378
+            ],
+            [
+              269,
+              388
+            ],
+            [
+              272,
+              386
+            ],
+            [
+              275,
+              384
+            ],
+            [
+              279,
+              382
+            ],
+            [
+              282,
+              382
+            ],
+            [
+              285,
+              381
+            ],
+            [
+              288,
+              381
+            ],
+            [
+              291,
+              380
+            ],
+            [
+              294,
+              380
+            ],
+            [
+              297,
+              380
+            ],
+            [
+              300,
+              395
+            ],
+            [
+              303,
+              406
+            ],
+            [
+              306,
+              378
+            ],
+            [
+              309,
+              378
+            ],
+            [
+              312,
+              378
+            ],
+            [
+              315,
+              382
+            ],
+            [
+              318,
+              381
+            ],
+            [
+              318,
+              462
+            ],
+            [
+              315,
+              464
+            ],
+            [
+              312,
+              464
+            ],
+            [
+              309,
+              464
+            ],
+            [
+              306,
+              464
+            ],
+            [
+              303,
+              464
+            ],
+            [
+              300,
+              464
+            ],
+            [
+              297,
+              464
+            ],
+            [
+              294,
+              464
+            ],
+            [
+              291,
+              464
+            ],
+            [
+              288,
+              461
+            ],
+            [
+              285,
+              416
+            ],
+            [
+              282,
+              416
+            ],
+            [
+              279,
+              416
+            ],
+            [
+              275,
+              415
+            ],
+            [
+              272,
+              414
+            ],
+            [
+              269,
+              411
+            ],
+            [
+              266,
+              407
+            ],
+            [
+              263,
+              379
+            ],
+            [
+              260,
+              381
+            ],
+            [
+              257,
+              382
+            ],
+            [
+              254,
+              384
+            ],
+            [
+              251,
+              384
+            ],
+            [
+              248,
+              384
+            ],
+            [
+              245,
+              384
+            ],
+            [
+              242,
+              383
+            ],
+            [
+              239,
+              381
+            ],
+            [
+              236,
+              378
+            ],
+            [
+              236,
+              378
+            ]
+          ],
+          "sampled_contour": [
+            [
+              236,
+              378
+            ],
+            [
+              319,
+              378
+            ],
+            [
+              319,
+              465
+            ],
+            [
+              236,
+              465
+            ],
+            [
+              236,
+              378
+            ],
+            [
+              239,
+              379
+            ],
+            [
+              242,
+              378
+            ],
+            [
+              245,
+              381
+            ],
+            [
+              248,
+              382
+            ],
+            [
+              251,
+              379
+            ],
+            [
+              254,
+              378
+            ],
+            [
+              257,
+              379
+            ],
+            [
+              260,
+              378
+            ],
+            [
+              263,
+              378
+            ],
+            [
+              266,
+              378
+            ],
+            [
+              269,
+              388
+            ],
+            [
+              272,
+              386
+            ],
+            [
+              275,
+              384
+            ],
+            [
+              279,
+              382
+            ],
+            [
+              282,
+              382
+            ],
+            [
+              285,
+              381
+            ],
+            [
+              288,
+              381
+            ],
+            [
+              291,
+              380
+            ],
+            [
+              294,
+              380
+            ],
+            [
+              297,
+              380
+            ],
+            [
+              300,
+              395
+            ],
+            [
+              303,
+              406
+            ],
+            [
+              306,
+              378
+            ],
+            [
+              309,
+              378
+            ],
+            [
+              312,
+              378
+            ],
+            [
+              315,
+              382
+            ],
+            [
+              318,
+              381
+            ],
+            [
+              318,
+              462
+            ],
+            [
+              315,
+              464
+            ],
+            [
+              312,
+              464
+            ],
+            [
+              309,
+              464
+            ],
+            [
+              306,
+              464
+            ],
+            [
+              303,
+              464
+            ],
+            [
+              300,
+              464
+            ],
+            [
+              297,
+              464
+            ],
+            [
+              294,
+              464
+            ],
+            [
+              291,
+              464
+            ],
+            [
+              288,
+              461
+            ],
+            [
+              285,
+              416
+            ],
+            [
+              282,
+              416
+            ],
+            [
+              279,
+              416
+            ],
+            [
+              275,
+              415
+            ],
+            [
+              272,
+              414
+            ],
+            [
+              269,
+              411
+            ],
+            [
+              266,
+              407
+            ],
+            [
+              263,
+              379
+            ],
+            [
+              260,
+              381
+            ],
+            [
+              257,
+              382
+            ],
+            [
+              254,
+              384
+            ],
+            [
+              251,
+              384
+            ],
+            [
+              248,
+              384
+            ],
+            [
+              245,
+              384
+            ],
+            [
+              242,
+              383
+            ],
+            [
+              239,
+              381
+            ],
+            [
+              236,
+              378
+            ],
+            [
+              236,
+              378
+            ]
+          ],
+          "pixel_count": 988,
+          "fill": 0.1,
+          "quality": {
+            "version": 1,
+            "status": "accepted",
+            "raw_to_evidence_bbox_ratio": 1.18,
+            "prior_to_evidence_bbox_ratio": 1,
+            "bbox_proxy": false,
+            "review_required": false,
+            "reasons": []
+          },
+          "review_required": false
+        },
+        "contour": {
+          "kind": "sampled_edge_contour",
+          "sample_count": 61,
+          "source": "edge_contour_segmentation"
+        },
+        "grounding_quality": {
+          "ok": true,
+          "severity": "error",
+          "method": "edge_contour_segmentation",
+          "max_bbox_dimension_ratio": 2.6,
+          "raw_to_evidence_bbox_ratio": 1.18,
+          "prior_to_evidence_bbox_ratio": 1,
+          "contour_sample_count": 61,
+          "bbox_proxy": false,
+          "review_required": false,
+          "reasons": [],
+          "boxes": {
+            "raw_pixel_box": {
+              "min": [
+                0.118,
+                0.272
+              ],
+              "max": [
+                0.271,
+                0.48
+              ],
+              "center": [
+                0.195,
+                0.376
+              ],
+              "extent": [
+                0.153,
+                0.208
+              ]
+            },
+            "prior_box": {
+              "min": [
+                0.09,
+                0.24
+              ],
+              "max": [
+                0.27,
+                0.48
+              ],
+              "center": [
+                0.18,
+                0.36
+              ],
+              "extent": [
+                0.18,
+                0.24
+              ]
+            },
+            "evidence_box": {
+              "min": [
+                0.118,
+                0.272
+              ],
+              "max": [
+                0.271,
+                0.48
+              ],
+              "center": [
+                0.195,
+                0.376
+              ],
+              "extent": [
+                0.153,
+                0.208
+              ]
+            },
+            "bbox_image_box": {
+              "min": [
+                0.09,
+                0.24
+              ],
+              "max": [
+                0.27,
+                0.48
+              ],
+              "center": [
+                0.18,
+                0.36
+              ],
+              "extent": [
+                0.18,
+                0.24
+              ]
+            }
+          }
+        }
+      }
+    }
+  ],
+  "relation_results": [
+    {
+      "id": "handles-left-right-order",
+      "ok": true,
+      "type": "left_of",
+      "image_relation": {
+        "id": "test/手柄/IMG_0156.jpeg|front|left_joycon_shell|left_of|right_joycon_shell|front_left_shell_candidate|front_right_shell_candidate",
+        "confidence": 0.67,
+        "review_required": true
+      },
+      "residuals": {
+        "image_delta_norm": [
+          -0.61,
+          0
+        ],
+        "model_delta_norm": [
+          -0.64,
+          0
+        ],
+        "image_spacing_norm": 0.61,
+        "model_spacing_norm": 0.64,
+        "spacing_ratio_error": 0.049,
+        "relation_error": 0.03,
+        "tolerance": 0.18,
+        "spacing_ratio_tolerance": 0.2
+      },
+      "message": "handles-left-right-order model relation residual is within image-space projection tolerance.",
+      "evidence": {
+        "image_pair": {
+          "item_observation_id": "front_left_shell_candidate",
+          "anchor_observation_id": "front_right_shell_candidate",
+          "frame_observation_id": "main_object_bbox",
+          "item_center": [
+            0.195,
+            0.5
+          ],
+          "anchor_center": [
+            0.805,
+            0.5
+          ],
+          "delta_norm": [
+            -0.61,
+            0
+          ]
+        },
+        "model_relation": {
+          "ok": true,
+          "type": "left_of",
+          "item": "left-warm-white-joy-con-shell",
+          "anchor": "right-warm-white-joy-con-shell",
+          "delta_norm": [
+            -0.64,
+            0
+          ],
+          "min_delta": 0.25,
+          "tolerance": 0.055,
+          "evidence": {
+            "item_center": [
+              0.18,
+              0.518
+            ],
+            "anchor_center": [
+              0.82,
+              0.518
+            ],
+            "model_axes": [
+              "x",
+              "y"
+            ]
+          }
+        },
+        "image_relation_basis": {
+          "kind": "bbox",
+          "item_observation_id": "front_left_shell_candidate",
+          "anchor_observation_id": "front_right_shell_candidate",
+          "item_bbox": [
+            193.72,
+            193.52,
+            168.33,
+            351.96
+          ],
+          "anchor_bbox": [
+            524.95,
+            193.52,
+            168.33,
+            351.96
+          ],
+          "item_keypoint": [
+            277.885,
+            369.5
+          ],
+          "anchor_keypoint": [
+            609.115,
+            369.5
+          ],
+          "item_grounding": {
+            "method": "edge_contour_segmentation",
+            "mask": "front_left_shell_candidate_edge_mask",
+            "pixel_bbox": [
+              194,
+              194,
+              164,
+              352
+            ],
+            "pixel_count": 6994,
+            "prior_bbox": [
+              193.72,
+              193.52,
+              168.33,
+              351.96
+            ],
+            "fill": 0.12,
+            "contour_basis": "sampled_edge_contour",
+            "grounding_quality": {
+              "version": 1,
+              "status": "accepted",
+              "raw_to_evidence_bbox_ratio": 1.03,
+              "prior_to_evidence_bbox_ratio": 1,
+              "bbox_proxy": false,
+              "review_required": false,
+              "reasons": []
+            },
+            "review_required": false
+          },
+          "anchor_grounding": {
+            "method": "edge_contour_segmentation",
+            "mask": "front_right_shell_candidate_edge_mask",
+            "pixel_bbox": [
+              526,
+              194,
+              168,
+              352
+            ],
+            "pixel_count": 7254,
+            "prior_bbox": [
+              524.95,
+              193.52,
+              168.33,
+              351.96
+            ],
+            "fill": 0.12,
+            "contour_basis": "sampled_edge_contour",
+            "grounding_quality": {
+              "version": 1,
+              "status": "accepted",
+              "raw_to_evidence_bbox_ratio": 1,
+              "prior_to_evidence_bbox_ratio": 1,
+              "bbox_proxy": false,
+              "review_required": false,
+              "reasons": []
+            },
+            "review_required": false
+          },
+          "item_note": "Template candidate from known game-controller front layout.",
+          "anchor_note": "Template candidate from known game-controller front layout.",
+          "delta_norm": [
+            -0.368,
+            0
+          ],
+          "spacing_ratio": 0.368,
+          "axis": "x"
+        }
+      }
+    },
+    {
+      "id": "thumbsticks-handedness",
+      "ok": true,
+      "type": "right_of",
+      "image_relation": {
+        "id": "test/手柄/IMG_0156.jpeg|front|right_thumbstick|right_of|left_thumbstick|front_right_thumbstick_candidate|front_left_thumbstick_candidate",
+        "confidence": 0.665,
+        "review_required": true
+      },
+      "residuals": {
+        "image_delta_norm": [
+          0.48,
+          -0.27
+        ],
+        "model_delta_norm": [
+          0.676,
+          -0.371
+        ],
+        "image_spacing_norm": 0.551,
+        "model_spacing_norm": 0.771,
+        "spacing_ratio_error": 0.4,
+        "relation_error": 0.22,
+        "tolerance": 0.23,
+        "spacing_ratio_tolerance": 0.45
+      },
+      "message": "thumbsticks-handedness model relation residual is within image-space projection tolerance.",
+      "evidence": {
+        "image_pair": {
+          "item_observation_id": "front_right_thumbstick_candidate",
+          "anchor_observation_id": "front_left_thumbstick_candidate",
+          "frame_observation_id": "main_object_bbox",
+          "item_center": [
+            0.74,
+            0.36
+          ],
+          "anchor_center": [
+            0.26,
+            0.63
+          ],
+          "delta_norm": [
+            0.48,
+            -0.27
+          ]
+        },
+        "model_relation": {
+          "ok": true,
+          "type": "right_of",
+          "item": "right-analog-stick-top-pad",
+          "anchor": "left-analog-stick-top-pad",
+          "delta_norm": [
+            0.676,
+            -0.371
+          ],
+          "min_delta": 0.25,
+          "tolerance": 0.055,
+          "evidence": {
+            "item_center": [
+              0.838,
+              0.294
+            ],
+            "anchor_center": [
+              0.162,
+              0.665
+            ],
+            "model_axes": [
+              "x",
+              "y"
+            ]
+          }
+        },
+        "image_relation_basis": {
+          "kind": "bbox",
+          "item_observation_id": "front_right_thumbstick_candidate",
+          "anchor_observation_id": "front_left_thumbstick_candidate",
+          "item_bbox": [
+            543.96,
+            400.92,
+            59.73,
+            54.47
+          ],
+          "anchor_bbox": [
+            283.32,
+            287.8,
+            59.73,
+            54.47
+          ],
+          "item_keypoint": [
+            573.825,
+            428.155
+          ],
+          "anchor_keypoint": [
+            313.185,
+            315.035
+          ],
+          "item_grounding": {
+            "method": "edge_keypoint_segmentation",
+            "mask": "front_right_thumbstick_candidate_edge_mask",
+            "pixel_bbox": [
+              556,
+              401,
+              48,
+              55
+            ],
+            "pixel_count": 476,
+            "prior_bbox": [
+              543.96,
+              400.92,
+              59.73,
+              54.47
+            ],
+            "fill": 0.15,
+            "contour_basis": "sampled_edge_contour",
+            "grounding_quality": {
+              "version": 1,
+              "status": "accepted",
+              "raw_to_evidence_bbox_ratio": 1.24,
+              "prior_to_evidence_bbox_ratio": 1,
+              "bbox_proxy": false,
+              "review_required": false,
+              "reasons": []
+            },
+            "review_required": false
+          },
+          "anchor_grounding": {
+            "method": "edge_keypoint_segmentation",
+            "mask": "front_left_thumbstick_candidate_edge_mask",
+            "pixel_bbox": [
+              284,
+              317,
+              42,
+              26
+            ],
+            "pixel_count": 158,
+            "prior_bbox": [
+              283.32,
+              287.8,
+              59.73,
+              54.47
+            ],
+            "fill": 0.05,
+            "contour_basis": "sampled_edge_contour",
+            "grounding_quality": {
+              "version": 1,
+              "status": "accepted",
+              "raw_to_evidence_bbox_ratio": 2.09,
+              "prior_to_evidence_bbox_ratio": 1,
+              "bbox_proxy": false,
+              "review_required": false,
+              "reasons": []
+            },
+            "review_required": false
+          },
+          "item_note": "Likely right thumbstick contour region inferred from front layout and grounded by local edges.",
+          "anchor_note": "Likely left thumbstick contour region inferred from front layout and grounded by local edges.",
+          "delta_norm": [
+            0.29,
+            0.168
+          ],
+          "spacing_ratio": 0.335,
+          "axis": "x"
+        }
+      }
+    },
+    {
+      "id": "face-buttons-right-of-dpad",
+      "ok": true,
+      "type": "right_of",
+      "image_relation": {
+        "id": "test/手柄/IMG_0156.jpeg|front|abxy_cluster|right_of|dpad_cluster|front_abxy_cluster_candidate|front_dpad_cluster_candidate",
+        "confidence": 0.67,
+        "review_required": true
+      },
+      "residuals": {
+        "image_delta_norm": [
+          0.635,
+          0.275
+        ],
+        "model_delta_norm": [
+          0.676,
+          0.306
+        ],
+        "image_spacing_norm": 0.692,
+        "model_spacing_norm": 0.742,
+        "spacing_ratio_error": 0.072,
+        "relation_error": 0.051,
+        "tolerance": 0.2,
+        "spacing_ratio_tolerance": 0.2
+      },
+      "message": "face-buttons-right-of-dpad model relation residual is within image-space projection tolerance.",
+      "evidence": {
+        "image_pair": {
+          "item_observation_id": "front_abxy_cluster_candidate",
+          "anchor_observation_id": "front_dpad_cluster_candidate",
+          "frame_observation_id": "main_object_bbox",
+          "item_center": [
+            0.815,
+            0.635
+          ],
+          "anchor_center": [
+            0.18,
+            0.36
+          ],
+          "delta_norm": [
+            0.635,
+            0.275
+          ]
+        },
+        "model_relation": {
+          "ok": true,
+          "type": "right_of",
+          "item": "button-x-button",
+          "anchor": "dpad-up-button",
+          "delta_norm": [
+            0.676,
+            0.306
+          ],
+          "min_delta": 0.25,
+          "tolerance": 0.055,
+          "evidence": {
+            "item_center": [
+              0.838,
+              0.741
+            ],
+            "anchor_center": [
+              0.162,
+              0.435
+            ],
+            "model_axes": [
+              "x",
+              "y"
+            ]
+          }
+        },
+        "image_relation_basis": {
+          "kind": "bbox",
+          "item_observation_id": "front_abxy_cluster_candidate",
+          "anchor_observation_id": "front_dpad_cluster_candidate",
+          "item_bbox": [
+            562.96,
+            260.56,
+            103.17,
+            104.75
+          ],
+          "anchor_bbox": [
+            220.87,
+            377.88,
+            97.74,
+            100.56
+          ],
+          "item_keypoint": [
+            614.545,
+            312.935
+          ],
+          "anchor_keypoint": [
+            269.74,
+            428.16
+          ],
+          "item_grounding": {
+            "method": "edge_contour_segmentation",
+            "mask": "front_abxy_cluster_candidate_edge_mask",
+            "pixel_bbox": [
+              563,
+              261,
+              104,
+              105
+            ],
+            "pixel_count": 1461,
+            "prior_bbox": [
+              562.96,
+              260.56,
+              103.17,
+              104.75
+            ],
+            "fill": 0.14,
+            "contour_basis": "sampled_edge_contour",
+            "grounding_quality": {
+              "version": 1,
+              "status": "accepted",
+              "raw_to_evidence_bbox_ratio": 1.01,
+              "prior_to_evidence_bbox_ratio": 1,
+              "bbox_proxy": false,
+              "review_required": false,
+              "reasons": []
+            },
+            "review_required": false
+          },
+          "anchor_grounding": {
+            "method": "edge_contour_segmentation",
+            "mask": "front_dpad_cluster_candidate_edge_mask",
+            "pixel_bbox": [
+              236,
+              378,
+              83,
+              87
+            ],
+            "pixel_count": 988,
+            "prior_bbox": [
+              220.87,
+              377.88,
+              97.74,
+              100.56
+            ],
+            "fill": 0.1,
+            "contour_basis": "sampled_edge_contour",
+            "grounding_quality": {
+              "version": 1,
+              "status": "accepted",
+              "raw_to_evidence_bbox_ratio": 1.18,
+              "prior_to_evidence_bbox_ratio": 1,
+              "bbox_proxy": false,
+              "review_required": false,
+              "reasons": []
+            },
+            "review_required": false
+          },
+          "item_note": "Likely ABXY cluster region inferred from front layout.",
+          "anchor_note": "Likely D-pad cluster region inferred from front layout.",
+          "delta_norm": [
+            0.383,
+            -0.171
+          ],
+          "spacing_ratio": 0.419,
+          "axis": "x"
+        }
+      }
+    },
+    {
+      "id": "screen-inside-center-grip",
+      "ok": true,
+      "type": "inside",
+      "image_relation": {
+        "id": "test/手柄/IMG_0156.jpeg|front|center_front_panel|inside|center_grip_body|front_center_panel_candidate|front_center_grip_candidate",
+        "confidence": 0.68,
+        "review_required": true
+      },
+      "residuals": {
+        "image_delta_norm": [
+          0,
+          0
+        ],
+        "model_delta_norm": [
+          0,
+          0
+        ],
+        "image_spacing_norm": 0,
+        "model_spacing_norm": 0,
+        "spacing_ratio_error": 0,
+        "relation_error": 0,
+        "tolerance": 0.09,
+        "spacing_ratio_tolerance": 0.2
+      },
+      "message": "screen-inside-center-grip model relation residual is within image-space projection tolerance.",
+      "evidence": {
+        "image_pair": {
+          "item_observation_id": "front_center_panel_candidate",
+          "anchor_observation_id": "front_center_grip_candidate",
+          "frame_observation_id": "main_object_bbox",
+          "item_center": [
+            0.5,
+            0.5
+          ],
+          "anchor_center": [
+            0.5,
+            0.5
+          ],
+          "delta_norm": [
+            0,
+            0
+          ]
+        },
+        "model_relation": {
+          "ok": true,
+          "type": "inside",
+          "item": "center-front-flat-panel",
+          "anchor": "center-black-switch-grip",
+          "delta_norm": [
+            0,
+            0
+          ],
+          "min_delta": 0.02,
+          "tolerance": 0.02,
+          "evidence": {
+            "item_center": [
+              0.5,
+              0.518
+            ],
+            "anchor_center": [
+              0.5,
+              0.518
+            ],
+            "model_axes": [
+              "x",
+              "y"
+            ]
+          }
+        },
+        "image_relation_basis": {
+          "kind": "bbox",
+          "item_observation_id": "front_center_panel_candidate",
+          "anchor_observation_id": "front_center_grip_candidate",
+          "item_bbox": [
+            394.63,
+            264.75,
+            97.74,
+            209.5
+          ],
+          "anchor_bbox": [
+            356.62,
+            206.09,
+            173.76,
+            326.82
+          ],
+          "item_keypoint": [
+            443.5,
+            369.5
+          ],
+          "anchor_keypoint": [
+            443.5,
+            369.5
+          ],
+          "item_grounding": {
+            "method": "edge_contour_segmentation",
+            "mask": "front_center_panel_candidate_edge_mask",
+            "pixel_bbox": [
+              395,
+              285,
+              97,
+              104
+            ],
+            "pixel_count": 1307,
+            "prior_bbox": [
+              394.63,
+              264.75,
+              97.74,
+              209.5
+            ],
+            "fill": 0.06,
+            "contour_basis": "sampled_edge_contour",
+            "grounding_quality": {
+              "version": 1,
+              "status": "accepted",
+              "raw_to_evidence_bbox_ratio": 2.01,
+              "prior_to_evidence_bbox_ratio": 1,
+              "bbox_proxy": false,
+              "review_required": false,
+              "reasons": []
+            },
+            "review_required": false
+          },
+          "anchor_grounding": {
+            "method": "edge_contour_segmentation",
+            "mask": "front_center_grip_candidate_edge_mask",
+            "pixel_bbox": [
+              357,
+              207,
+              174,
+              260
+            ],
+            "pixel_count": 2101,
+            "prior_bbox": [
+              356.62,
+              206.09,
+              173.76,
+              326.82
+            ],
+            "fill": 0.04,
+            "contour_basis": "sampled_edge_contour",
+            "grounding_quality": {
+              "version": 1,
+              "status": "accepted",
+              "raw_to_evidence_bbox_ratio": 1.26,
+              "prior_to_evidence_bbox_ratio": 1,
+              "bbox_proxy": false,
+              "review_required": false,
+              "reasons": []
+            },
+            "review_required": false
+          },
+          "item_note": "Template candidate for the central front screen/flat panel inside the grip body.",
+          "anchor_note": "Template candidate from known game-controller front layout.",
+          "delta_norm": [
+            0,
+            0
+          ],
+          "spacing_ratio": 0,
+          "containment_ratio": 1
+        }
+      }
+    },
+    {
+      "id": "screen-centered-on-center-grip",
+      "ok": true,
+      "type": "centered_on",
+      "image_relation": {
+        "id": "test/手柄/IMG_0156.jpeg|front|center_front_panel|centered_on|center_grip_body|front_center_panel_candidate|front_center_grip_candidate",
+        "confidence": 0.62,
+        "review_required": true
+      },
+      "residuals": {
+        "image_delta_norm": [
+          0,
+          0
+        ],
+        "model_delta_norm": [
+          0,
+          0
+        ],
+        "image_spacing_norm": 0,
+        "model_spacing_norm": 0,
+        "spacing_ratio_error": 0,
+        "relation_error": 0,
+        "tolerance": 0.09,
+        "spacing_ratio_tolerance": 0.2
+      },
+      "message": "screen-centered-on-center-grip model relation residual is within image-space projection tolerance.",
+      "evidence": {
+        "image_pair": {
+          "item_observation_id": "front_center_panel_candidate",
+          "anchor_observation_id": "front_center_grip_candidate",
+          "frame_observation_id": "main_object_bbox",
+          "item_center": [
+            0.5,
+            0.5
+          ],
+          "anchor_center": [
+            0.5,
+            0.5
+          ],
+          "delta_norm": [
+            0,
+            0
+          ]
+        },
+        "model_relation": {
+          "ok": true,
+          "type": "centered_on",
+          "item": "center-front-flat-panel",
+          "anchor": "center-black-switch-grip",
+          "delta_norm": [
+            0,
+            0
+          ],
+          "min_delta": 0.02,
+          "tolerance": 0.08,
+          "evidence": {
+            "item_center": [
+              0.5,
+              0.518
+            ],
+            "anchor_center": [
+              0.5,
+              0.518
+            ],
+            "model_axes": [
+              "x",
+              "y"
+            ]
+          }
+        },
+        "image_relation_basis": {
+          "kind": "bbox",
+          "item_observation_id": "front_center_panel_candidate",
+          "anchor_observation_id": "front_center_grip_candidate",
+          "item_bbox": [
+            394.63,
+            264.75,
+            97.74,
+            209.5
+          ],
+          "anchor_bbox": [
+            356.62,
+            206.09,
+            173.76,
+            326.82
+          ],
+          "item_keypoint": [
+            443.5,
+            369.5
+          ],
+          "anchor_keypoint": [
+            443.5,
+            369.5
+          ],
+          "item_grounding": {
+            "method": "edge_contour_segmentation",
+            "mask": "front_center_panel_candidate_edge_mask",
+            "pixel_bbox": [
+              395,
+              285,
+              97,
+              104
+            ],
+            "pixel_count": 1307,
+            "prior_bbox": [
+              394.63,
+              264.75,
+              97.74,
+              209.5
+            ],
+            "fill": 0.06,
+            "contour_basis": "sampled_edge_contour",
+            "grounding_quality": {
+              "version": 1,
+              "status": "accepted",
+              "raw_to_evidence_bbox_ratio": 2.01,
+              "prior_to_evidence_bbox_ratio": 1,
+              "bbox_proxy": false,
+              "review_required": false,
+              "reasons": []
+            },
+            "review_required": false
+          },
+          "anchor_grounding": {
+            "method": "edge_contour_segmentation",
+            "mask": "front_center_grip_candidate_edge_mask",
+            "pixel_bbox": [
+              357,
+              207,
+              174,
+              260
+            ],
+            "pixel_count": 2101,
+            "prior_bbox": [
+              356.62,
+              206.09,
+              173.76,
+              326.82
+            ],
+            "fill": 0.04,
+            "contour_basis": "sampled_edge_contour",
+            "grounding_quality": {
+              "version": 1,
+              "status": "accepted",
+              "raw_to_evidence_bbox_ratio": 1.26,
+              "prior_to_evidence_bbox_ratio": 1,
+              "bbox_proxy": false,
+              "review_required": false,
+              "reasons": []
+            },
+            "review_required": false
+          },
+          "item_note": "Template candidate for the central front screen/flat panel inside the grip body.",
+          "anchor_note": "Template candidate from known game-controller front layout.",
+          "delta_norm": [
+            0,
+            0
+          ],
+          "spacing_ratio": 0,
+          "axis": "xy"
+        }
+      }
+    },
+    {
+      "id": "handle-shells-mirrored-pair",
+      "ok": true,
+      "type": "mirrored_pair",
+      "image_relation": {
+        "id": "test/手柄/IMG_0156.jpeg|front|left_joycon_shell|mirrored_pair|right_joycon_shell|front_left_shell_candidate|front_right_shell_candidate",
+        "confidence": 0.71,
+        "review_required": true
+      },
+      "residuals": {
+        "image_delta_norm": [
+          -0.61,
+          0
+        ],
+        "model_delta_norm": [
+          -0.64,
+          0
+        ],
+        "image_spacing_norm": 0.61,
+        "model_spacing_norm": 0.64,
+        "spacing_ratio_error": 0.049,
+        "relation_error": 0.03,
+        "tolerance": 0.09,
+        "spacing_ratio_tolerance": 0.2
+      },
+      "message": "handle-shells-mirrored-pair model relation residual is within image-space projection tolerance.",
+      "evidence": {
+        "image_pair": {
+          "item_observation_id": "front_left_shell_candidate",
+          "anchor_observation_id": "front_right_shell_candidate",
+          "frame_observation_id": "main_object_bbox",
+          "item_center": [
+            0.195,
+            0.5
+          ],
+          "anchor_center": [
+            0.805,
+            0.5
+          ],
+          "delta_norm": [
+            -0.61,
+            0
+          ]
+        },
+        "model_relation": {
+          "ok": true,
+          "type": "mirrored_pair",
+          "item": "left-warm-white-joy-con-shell",
+          "anchor": "right-warm-white-joy-con-shell",
+          "delta_norm": [
+            -0.64,
+            0
+          ],
+          "min_delta": 0.02,
+          "tolerance": 0.08,
+          "evidence": {
+            "item_center": [
+              0.18,
+              0.518
+            ],
+            "anchor_center": [
+              0.82,
+              0.518
+            ],
+            "model_axes": [
+              "x",
+              "y"
+            ]
+          }
+        },
+        "image_relation_basis": {
+          "kind": "bbox",
+          "item_observation_id": "front_left_shell_candidate",
+          "anchor_observation_id": "front_right_shell_candidate",
+          "item_bbox": [
+            193.72,
+            193.52,
+            168.33,
+            351.96
+          ],
+          "anchor_bbox": [
+            524.95,
+            193.52,
+            168.33,
+            351.96
+          ],
+          "item_keypoint": [
+            277.885,
+            369.5
+          ],
+          "anchor_keypoint": [
+            609.115,
+            369.5
+          ],
+          "item_grounding": {
+            "method": "edge_contour_segmentation",
+            "mask": "front_left_shell_candidate_edge_mask",
+            "pixel_bbox": [
+              194,
+              194,
+              164,
+              352
+            ],
+            "pixel_count": 6994,
+            "prior_bbox": [
+              193.72,
+              193.52,
+              168.33,
+              351.96
+            ],
+            "fill": 0.12,
+            "contour_basis": "sampled_edge_contour",
+            "grounding_quality": {
+              "version": 1,
+              "status": "accepted",
+              "raw_to_evidence_bbox_ratio": 1.03,
+              "prior_to_evidence_bbox_ratio": 1,
+              "bbox_proxy": false,
+              "review_required": false,
+              "reasons": []
+            },
+            "review_required": false
+          },
+          "anchor_grounding": {
+            "method": "edge_contour_segmentation",
+            "mask": "front_right_shell_candidate_edge_mask",
+            "pixel_bbox": [
+              526,
+              194,
+              168,
+              352
+            ],
+            "pixel_count": 7254,
+            "prior_bbox": [
+              524.95,
+              193.52,
+              168.33,
+              351.96
+            ],
+            "fill": 0.12,
+            "contour_basis": "sampled_edge_contour",
+            "grounding_quality": {
+              "version": 1,
+              "status": "accepted",
+              "raw_to_evidence_bbox_ratio": 1,
+              "prior_to_evidence_bbox_ratio": 1,
+              "bbox_proxy": false,
+              "review_required": false,
+              "reasons": []
+            },
+            "review_required": false
+          },
+          "item_note": "Template candidate from known game-controller front layout.",
+          "anchor_note": "Template candidate from known game-controller front layout.",
+          "delta_norm": [
+            -0.368,
+            0
+          ],
+          "spacing_ratio": 0.368,
+          "symmetry_axis_x": 443.5
+        }
+      }
+    }
+  ],
+  "scale_results": [],
+  "handedness_results": [
+    {
+      "id": "mirror-x-handedness-negative",
+      "transform": "mirror_x",
+      "checked_rules": [
+        "handles-left-right-order",
+        "thumbsticks-handedness",
+        "face-buttons-right-of-dpad"
+      ],
+      "failed_rules": [
+        "handles-left-right-order",
+        "thumbsticks-handedness",
+        "face-buttons-right-of-dpad"
+      ],
+      "handedness_error": 0,
+      "ok": true,
+      "evaluations": [
+        {
+          "ok": false,
+          "type": "left_of",
+          "item": "left-warm-white-joy-con-shell",
+          "anchor": "right-warm-white-joy-con-shell",
+          "delta_norm": [
+            0.64,
+            0
+          ],
+          "min_delta": 0.25,
+          "tolerance": 0.055,
+          "evidence": {
+            "item_center": [
+              0.82,
+              0.518
+            ],
+            "anchor_center": [
+              0.18,
+              0.518
+            ],
+            "model_axes": [
+              "x",
+              "y"
+            ]
+          }
+        },
+        {
+          "ok": false,
+          "type": "right_of",
+          "item": "right-analog-stick-top-pad",
+          "anchor": "left-analog-stick-top-pad",
+          "delta_norm": [
+            -0.676,
+            -0.371
+          ],
+          "min_delta": 0.25,
+          "tolerance": 0.055,
+          "evidence": {
+            "item_center": [
+              0.162,
+              0.294
+            ],
+            "anchor_center": [
+              0.838,
+              0.665
+            ],
+            "model_axes": [
+              "x",
+              "y"
+            ]
+          }
+        },
+        {
+          "ok": false,
+          "type": "right_of",
+          "item": "button-x-button",
+          "anchor": "dpad-up-button",
+          "delta_norm": [
+            -0.676,
+            0.306
+          ],
+          "min_delta": 0.25,
+          "tolerance": 0.055,
+          "evidence": {
+            "item_center": [
+              0.162,
+              0.741
+            ],
+            "anchor_center": [
+              0.838,
+              0.435
+            ],
+            "model_axes": [
+              "x",
+              "y"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "correction_suggestions": []
+}

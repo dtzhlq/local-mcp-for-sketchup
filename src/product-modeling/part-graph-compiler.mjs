@@ -187,7 +187,8 @@ function compileFeatureIntent(part, feature) {
     target_id: feature.target_id || part.id,
     feature_id: feature.id || feature.feature_id,
     face: feature.face,
-    ...parameters
+    ...parameters,
+    qa: qaForFeatureIntent(part, feature)
   };
 }
 
@@ -260,6 +261,24 @@ function qaForPart(part) {
     }));
   }
   return { ...qa, ...cloneJson(part.qa || {}) };
+}
+
+function qaForFeatureIntent(part, feature) {
+  return {
+    role: feature.semantic || feature.operation || 'feature_intent',
+    part_id: part.id,
+    feature_id: feature.id || feature.feature_id,
+    intent: feature.semantic || feature.operation || 'feature_intent',
+    evidence_status: part.evidence_status || 'needs_review',
+    fallback_state: feature.fallback_state || feature.feature_mapping?.fallback || 'needs_review',
+    grounding_status: feature.grounding_status || part.grounding_status || part.qa?.grounding_status || 'profile_prior',
+    grounding_method: feature.grounding_method || part.grounding_method || part.qa?.grounding_method || null,
+    source_observation_ids: cloneJson(feature.source_observation_ids || part.source_observation_ids || part.qa?.source_observation_ids || []),
+    projection_residuals: cloneJson(feature.projection_residuals || null),
+    review_required: feature.review_required ?? part.review_required ?? part.qa?.review_required ?? false,
+    helper_allowed: feature.helper_allowed ?? part.helper_allowed ?? part.qa?.helper_allowed ?? false,
+    photo_grade_eligible: feature.photo_grade_eligible ?? false
+  };
 }
 
 function partObjectId(partId, context) {

@@ -29,10 +29,18 @@
       "properties": {
         "perspective_strength": { "enum": ["low", "medium", "high", "unknown"] },
         "symmetry_axis": { "$ref": "#/$defs/line2" },
-        "vanishing_lines": { "type": "array", "items": { "$ref": "#/$defs/line2" } }
+        "vanishing_lines": { "type": "array", "items": { "$ref": "#/$defs/line2" } },
+        "vanishing_points": { "type": "array", "items": { "$ref": "#/$defs/point2" } },
+        "horizon_line": { "$ref": "#/$defs/line2" },
+        "projection_model": { "type": "string" },
+        "review_required": { "type": "boolean" }
       }
     },
     "orientation_hints": { "$ref": "#/$defs/orientation_hints" },
+    "relation_candidates": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/visual_relation_candidate" }
+    },
     "observations": {
       "type": "array",
       "items": {
@@ -40,10 +48,19 @@
         "required": ["id", "kind", "confidence"],
         "properties": {
           "id": { "type": "string" },
-          "kind": { "enum": ["silhouette", "component_bbox", "center_point", "keypoint", "edge", "curve", "color_region", "text_or_logo", "uncertain"] },
+          "kind": { "enum": ["silhouette", "component_bbox", "center_point", "keypoint", "edge", "curve", "color_region", "text_or_logo", "uncertain", "mask_polygon", "sampled_contour", "line_segment", "gap_region", "vegetation_region", "scale_anchor", "camera_hint", "manual_review", "profile_prior", "helper_generated"] },
+          "source_view": { "enum": ["front", "rear", "left", "right", "top", "bottom", "oblique", "detail", "derived_site", "unknown"] },
           "component_hint": { "type": "string" },
           "bbox": { "$ref": "#/$defs/bbox" },
           "points": { "$ref": "#/$defs/polyline2" },
+          "contour": { "$ref": "#/$defs/contour_evidence" },
+          "mask": { "$ref": "#/$defs/mask_evidence" },
+          "edge_map": { "$ref": "#/$defs/edge_map_evidence" },
+          "keypoints": { "type": "array", "items": { "$ref": "#/$defs/keypoint_evidence" } },
+          "grounding": { "$ref": "#/$defs/grounding_evidence" },
+          "grounding_status": { "$ref": "#/$defs/grounding_status" },
+          "isolation": { "$ref": "#/$defs/grounding_quality" },
+          "occlusion_hints": { "type": "array", "items": { "$ref": "#/$defs/occlusion_hint" } },
           "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
           "note": { "type": "string" }
         }
@@ -83,6 +100,94 @@
       "minItems": 4,
       "maxItems": 4
     },
+    "grounding_evidence": {
+      "type": "object",
+      "properties": {
+        "method": { "type": "string" },
+        "mask": { "type": "string" },
+        "pixel_bbox": { "$ref": "#/$defs/bbox" },
+        "pixel_count": { "type": "integer" },
+        "prior_bbox": { "$ref": "#/$defs/bbox" },
+        "derived_from": { "type": "array", "items": { "type": "string" } },
+        "derived_from_kind": { "type": "string" },
+        "fill": { "type": "number" },
+        "contour_basis": { "type": "string" },
+        "grounding_quality": { "$ref": "#/$defs/grounding_quality" },
+        "review_required": { "type": "boolean" }
+      }
+    },
+    "mask_evidence": {
+      "type": "object",
+      "required": ["id", "method"],
+      "properties": {
+        "id": { "type": "string" },
+        "method": { "type": "string" },
+        "bbox": { "$ref": "#/$defs/bbox" },
+        "polygon": { "$ref": "#/$defs/polyline2" },
+        "sampled_contour": { "$ref": "#/$defs/polyline2" },
+        "pixel_count": { "type": "integer" },
+        "fill": { "type": "number" },
+        "quality": { "$ref": "#/$defs/grounding_quality" },
+        "review_required": { "type": "boolean" }
+      }
+    },
+    "grounding_quality": {
+      "type": "object",
+      "properties": {
+        "version": { "type": "integer" },
+        "status": { "type": "string" },
+        "raw_to_evidence_bbox_ratio": { "type": ["number", "null"] },
+        "prior_to_evidence_bbox_ratio": { "type": ["number", "null"] },
+        "bbox_proxy": { "type": "boolean" },
+        "review_required": { "type": "boolean" },
+        "reasons": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "grounding_status": {
+      "enum": ["image_grounded", "review_confirmed", "helper_only", "profile_prior", "rejected"]
+    },
+    "contour_evidence": {
+      "type": "object",
+      "required": ["kind", "polygon"],
+      "properties": {
+        "kind": { "type": "string" },
+        "polygon": { "$ref": "#/$defs/polyline2" },
+        "sample_count": { "type": "integer" },
+        "source": { "type": "string" },
+        "review_required": { "type": "boolean" }
+      }
+    },
+    "edge_map_evidence": {
+      "type": "object",
+      "required": ["method", "sample_count"],
+      "properties": {
+        "method": { "type": "string" },
+        "sample_count": { "type": "integer" },
+        "threshold": { "type": "number" },
+        "width": { "type": "integer" },
+        "height": { "type": "integer" },
+        "review_required": { "type": "boolean" }
+      }
+    },
+    "keypoint_evidence": {
+      "type": "object",
+      "required": ["id", "point"],
+      "properties": {
+        "id": { "type": "string" },
+        "point": { "$ref": "#/$defs/point2" },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "source": { "type": "string" }
+      }
+    },
+    "occlusion_hint": {
+      "type": "object",
+      "required": ["status", "confidence"],
+      "properties": {
+        "status": { "enum": ["visible", "partially_occluded", "occluded", "unknown"] },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "reason": { "type": "string" }
+      }
+    },
     "orientation_hints": {
       "type": "object",
       "required": ["coordinate_convention", "mirror_risk", "semantic_anchors", "review_required"],
@@ -114,6 +219,41 @@
           }
         },
         "review_required": { "type": "boolean" }
+      }
+    },
+    "visual_relation_candidate": {
+      "type": "object",
+      "required": ["id", "type", "item", "anchor", "source_image", "view", "basis", "confidence", "review_required"],
+      "properties": {
+        "id": { "type": "string" },
+        "type": { "enum": ["left_of", "right_of", "above", "below", "inside", "aligned_with", "touching", "same_row", "mirrored_pair", "centered_on"] },
+        "item": { "type": "string" },
+        "anchor": { "type": "string" },
+        "source_image": { "type": "string" },
+        "view": { "type": "string" },
+        "basis": {
+          "type": "object",
+          "required": ["kind"],
+          "properties": {
+            "kind": { "type": "string" },
+            "item_observation_id": { "type": "string" },
+            "anchor_observation_id": { "type": "string" },
+            "item_bbox": { "type": ["array", "null"] },
+            "anchor_bbox": { "type": ["array", "null"] },
+            "item_keypoint": { "type": ["array", "null"] },
+            "anchor_keypoint": { "type": ["array", "null"] },
+            "delta_norm": { "type": "array", "items": { "type": "number" } },
+            "spacing_ratio": { "type": "number" },
+            "axis": { "type": "string" },
+            "semantic_anchor_id": { "type": "string" },
+            "coordinate_convention": { "type": "string" },
+            "containment_ratio": { "type": "number" },
+            "symmetry_axis_x": { "type": "number" }
+          }
+        },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "review_required": { "type": "boolean" },
+        "note": { "type": "string" }
       }
     }
   }

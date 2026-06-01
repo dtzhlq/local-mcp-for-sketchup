@@ -17,6 +17,18 @@ const FACE_SIDE = {
 const AXES = ['x', 'y', 'z'];
 const AXIS_INDEX = { x: 0, y: 1, z: 2 };
 const CONTACT_RELATION_TYPES = new Set(['contact', 'contacts', 'attached_to', 'mounted_on', 'supported_by', 'rests_on']);
+const SPATIAL_RELATION_TYPES = new Set([
+  'left_of',
+  'right_of',
+  'above',
+  'below',
+  'inside',
+  'aligned_with',
+  'touching',
+  'same_row',
+  'mirrored_pair',
+  'centered_on'
+]);
 
 export function validatePartGraphPhysicalConsistency(partGraph = {}, options = {}) {
   const parts = partGraph.parts || [];
@@ -31,6 +43,8 @@ export function validatePartGraphPhysicalConsistency(partGraph = {}, options = {
       validateNonIntersectionRelation(issues, relation, boxes, options);
     } else if (relation.type === 'grounded') {
       validateGroundedRelation(issues, relation, boxes, options);
+    } else if (SPATIAL_RELATION_TYPES.has(relation.type)) {
+      validateSpatialRelation(issues, relation, boxes, options);
     } else {
       addIssue(issues, {
         type: 'physical.unsupported_relation_type',
@@ -265,6 +279,95 @@ function validateGroundedRelation(issues, relation, boxes, options) {
   }
 }
 
+function validateSpatialRelation(issues, relation, boxes, options) {
+  const resolved = resolveRelationBoxes(issues, relation, boxes);
+  if (!resolved) return;
+  const { subject, target } = resolved;
+  const tolerance = numberOption(relation.tolerance_mm ?? relation.toleranceMm, options.spatialToleranceMm ?? 500);
+  const minDelta = numberOption(relation.min_delta_mm ?? relation.minDeltaMm, 0);
+  const result = spatialRelationSatisfied(relation, subject.box, target.box, tolerance, minDelta);
+  if (result.ok) return;
+  addIssue(issues, {
+    type: `physical.spatial_${relation.type}_mismatch`,
+    severity: relation.severity || 'warn',
+    relation,
+    item: relation.subject,
+    message: `${subject.id} does not satisfy spatial relation ${relation.type} ${target.id}.`,
+    evidence: {
+      subject: subject.id,
+      target: target.id,
+      tolerance_mm: tolerance,
+      min_delta_mm: minDelta,
+      ...result.evidence
+    },
+    correction: relation.severity === 'error'
+      ? correctionForBoxGap(relation, subject.part, subject.box, target.box)
+      : null
+  });
+}
+
+function spatialRelationSatisfied(relation, subjectBox, targetBox, tolerance, minDelta) {
+  const subjectCenter = boxCenter(subjectBox);
+  const targetCenter = boxCenter(targetBox);
+  const delta = AXES.map((axis, index) => subjectCenter[index] - targetCenter[index]);
+  const evidence = {
+    subject_center: subjectCenter.map((value) => round(value)),
+    target_center: targetCenter.map((value) => round(value)),
+    center_delta_mm: delta.map((value) => round(value))
+  };
+  if (relation.type === 'left_of') return { ok: delta[0] < -minDelta, evidence };
+  if (relation.type === 'right_of') return { ok: delta[0] > minDelta, evidence };
+  if (relation.type === 'above') return { ok: delta[1] > minDelta, evidence };
+  if (relation.type === 'below') return { ok: delta[1] < -minDelta, evidence };
+  if (relation.type === 'inside') {
+    return {
+      ok: footprintInside(subjectBox, targetBox, tolerance),
+      evidence: {
+        ...evidence,
+        subject_xy: xyExtents(subjectBox),
+        target_xy: xyExtents(targetBox)
+      }
+    };
+  }
+  if (relation.type === 'touching') {
+    const distance = boxDistance2d(subjectBox, targetBox);
+    return { ok: distance <= tolerance, evidence: { ...evidence, distance_mm: round(distance) } };
+  }
+  if (relation.type === 'same_row') {
+    return { ok: Math.abs(delta[1]) <= tolerance && Math.abs(delta[0]) >= minDelta, evidence };
+  }
+  if (relation.type === 'aligned_with') {
+    const axis = relation.visual_axis || relation.evidence?.basis?.axis;
+    const axisIndex = axis === 'x' ? 0 : axis === 'y' ? 1 : null;
+    const ok = axisIndex === null
+      ? Math.abs(delta[0]) <= tolerance || Math.abs(delta[1]) <= tolerance
+      : Math.abs(delta[axisIndex]) <= tolerance;
+    return { ok, evidence: { ...evidence, visual_axis: axis || null } };
+  }
+  if (relation.type === 'centered_on') {
+    const axis = relation.visual_axis || relation.evidence?.basis?.axis || 'xy';
+    const ok = axis === 'x'
+      ? Math.abs(delta[0]) <= tolerance
+      : axis === 'y'
+        ? Math.abs(delta[1]) <= tolerance
+        : Math.abs(delta[0]) <= tolerance && Math.abs(delta[1]) <= tolerance * 1.6;
+    return { ok, evidence: { ...evidence, visual_axis: axis } };
+  }
+  if (relation.type === 'mirrored_pair') {
+    const widthRatio = extentRatio(subjectBox, targetBox, 'x');
+    const depthRatio = extentRatio(subjectBox, targetBox, 'y');
+    return {
+      ok: widthRatio >= 0.72 && depthRatio >= 0.72 && Math.abs(delta[1]) <= tolerance * 1.8,
+      evidence: {
+        ...evidence,
+        width_ratio: round(widthRatio),
+        depth_ratio: round(depthRatio)
+      }
+    };
+  }
+  return { ok: true, evidence };
+}
+
 function buildPartBoxIndex(parts) {
   const boxes = new Map();
   for (const part of parts) {
@@ -368,6 +471,14 @@ function boxDistance(left, right) {
   return Math.sqrt(squared);
 }
 
+function boxDistance2d(left, right) {
+  const squared = ['x', 'y'].reduce((sum, axis) => {
+    const delta = axisGapDelta(left, right, axis);
+    return sum + delta * delta;
+  }, 0);
+  return Math.sqrt(squared);
+}
+
 function boxOverlap(left, right) {
   return AXES.map((axis) => Math.max(0, axisOverlap(left, right, axis)));
 }
@@ -380,6 +491,30 @@ function axisOverlap(left, right, axis) {
 function axisExtent(box, axis) {
   const index = AXIS_INDEX[axis];
   return box.max[index] - box.min[index];
+}
+
+function boxCenter(box) {
+  return AXES.map((axis, index) => (box.min[index] + box.max[index]) / 2);
+}
+
+function footprintInside(inner, outer, tolerance) {
+  return inner.min[0] >= outer.min[0] - tolerance
+    && inner.max[0] <= outer.max[0] + tolerance
+    && inner.min[1] >= outer.min[1] - tolerance
+    && inner.max[1] <= outer.max[1] + tolerance;
+}
+
+function xyExtents(box) {
+  return {
+    min: [round(box.min[0]), round(box.min[1])],
+    max: [round(box.max[0]), round(box.max[1])]
+  };
+}
+
+function extentRatio(left, right, axis) {
+  const leftExtent = axisExtent(left, axis);
+  const rightExtent = axisExtent(right, axis);
+  return Math.min(leftExtent, rightExtent) / Math.max(1, Math.max(leftExtent, rightExtent));
 }
 
 function boxFromMinSize(origin, size) {

@@ -1,0 +1,238 @@
+{
+  "version": 1,
+  "title": "Building Group R8 Editable Geometry Reference Visual QA",
+  "description": "Reference-facing QA for the no-texture building-group boundary probe. It verifies visible site placement, four separated warehouse buildings, editable gable roofs, and accepted roof/facade feature detail without relying on image planes.",
+  "rules": {
+    "views": [
+      {
+        "name": "site_top",
+        "title": "Editable Geometry Site Top Reference",
+        "axes": ["x", "y"],
+        "depth_axis": "z",
+        "frame": {
+          "items": ["site_boundary"]
+        }
+      },
+      {
+        "name": "height_front",
+        "title": "Editable Geometry Height And Feature Reference",
+        "axes": ["x", "z"],
+        "depth_axis": "y",
+        "frame": {
+          "items": [
+            "primary_blue_roof_hall_body",
+            "primary_blue_hall_gable_roof",
+            "warehouse_west_north_body",
+            "warehouse_west_south_body",
+            "warehouse_inner_north_body",
+            "warehouse_inner_south_body",
+            "utility_building",
+            "admin_office",
+            "tank_farm",
+            "tank_farm_silo_east"
+          ]
+        }
+      }
+    ],
+    "keypoints": [
+      {
+        "id": "blue-hall-geometry-center",
+        "view": "site_top",
+        "item": "primary_blue_roof_hall_body",
+        "point": "center",
+        "expected": [0.572, 0.65],
+        "tolerance": 0.035,
+        "correction_target": {
+          "part_id": "primary_blue_roof_hall_body",
+          "path": "parts[primary_blue_roof_hall_body].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "parking-geometry-center",
+        "view": "site_top",
+        "item": "parking_lot",
+        "point": "center",
+        "expected": [0.782, 0.173],
+        "tolerance": 0.04,
+        "correction_target": {
+          "part_id": "parking_lot",
+          "path": "parts[parking_lot].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "west-north-warehouse-center",
+        "view": "site_top",
+        "item": "warehouse_west_north_body",
+        "point": "center",
+        "expected": [0.152, 0.75],
+        "tolerance": 0.07,
+        "correction_target": {
+          "part_id": "warehouse_west_north_body",
+          "path": "parts[warehouse_west_north_body].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "west-south-warehouse-center",
+        "view": "site_top",
+        "item": "warehouse_west_south_body",
+        "point": "center",
+        "expected": [0.152, 0.31],
+        "tolerance": 0.07,
+        "correction_target": {
+          "part_id": "warehouse_west_south_body",
+          "path": "parts[warehouse_west_south_body].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "inner-north-warehouse-center",
+        "view": "site_top",
+        "item": "warehouse_inner_north_body",
+        "point": "center",
+        "expected": [0.354, 0.75],
+        "tolerance": 0.07,
+        "correction_target": {
+          "part_id": "warehouse_inner_north_body",
+          "path": "parts[warehouse_inner_north_body].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "inner-south-warehouse-center",
+        "view": "site_top",
+        "item": "warehouse_inner_south_body",
+        "point": "center",
+        "expected": [0.354, 0.32],
+        "tolerance": 0.07,
+        "correction_target": {
+          "part_id": "warehouse_inner_south_body",
+          "path": "parts[warehouse_inner_south_body].shape.parameters.origin"
+        }
+      }
+    ],
+    "extent_ratios": [
+      {
+        "id": "site-boundary-frame",
+        "view": "site_top",
+        "item": "site_boundary",
+        "expected": [1, 1],
+        "tolerance": [0.01, 0.01],
+        "correction_target": {
+          "part_id": "site_boundary",
+          "path": "parts[site_boundary].shape.parameters.size"
+        }
+      },
+      {
+        "id": "blue-hall-body-extent",
+        "view": "site_top",
+        "item": "primary_blue_roof_hall_body",
+        "expected": [0.26, 0.578],
+        "tolerance": [0.04, 0.05],
+        "correction_target": {
+          "part_id": "primary_blue_roof_hall_body",
+          "path": "parts[primary_blue_roof_hall_body].shape.parameters.size"
+        }
+      },
+      {
+        "id": "warehouse-single-building-extent",
+        "view": "site_top",
+        "item": "warehouse_west_north_body",
+        "expected": [0.101, 0.351],
+        "tolerance": [0.05, 0.07],
+        "correction_target": {
+          "part_id": "warehouse_west_north_body",
+          "path": "parts[warehouse_west_north_body].shape.parameters.size"
+        }
+      },
+      {
+        "id": "parking-lot-geometry-extent",
+        "view": "site_top",
+        "item": "parking_lot",
+        "expected": [0.348, 0.216],
+        "tolerance": [0.05, 0.04],
+        "correction_target": {
+          "part_id": "parking_lot",
+          "path": "parts[parking_lot].shape.parameters.size"
+        }
+      }
+    ],
+    "features": [
+      {
+        "id": "primary-body-retained-detail",
+        "view": "height_front",
+        "item": "primary_blue_roof_hall_body",
+        "min_count": 6,
+        "required_ids": [
+          "primary_blue_roof_hall_body_roof_center_ridge",
+          "primary_blue_roof_hall_body_roof_west_eave_line",
+          "primary_blue_roof_hall_body_roof_east_eave_line",
+          "primary_blue_roof_hall_body_facade_loading_door",
+          "primary_blue_roof_hall_body_facade_window_band_left",
+          "primary_blue_roof_hall_body_facade_window_band_right"
+        ],
+        "correction_target": {
+          "part_id": "primary_blue_roof_hall_body",
+          "path": "parts[primary_blue_roof_hall_body].feature_intents"
+        }
+      },
+      {
+        "id": "west-north-warehouse-roof-and-bays",
+        "view": "height_front",
+        "item": "warehouse_west_north_body",
+        "min_count": 6,
+        "correction_target": {
+          "part_id": "warehouse_west_north_body",
+          "path": "parts[warehouse_west_north_body].feature_intents"
+        }
+      },
+      {
+        "id": "west-south-warehouse-roof-and-bays",
+        "view": "height_front",
+        "item": "warehouse_west_south_body",
+        "min_count": 6,
+        "correction_target": {
+          "part_id": "warehouse_west_south_body",
+          "path": "parts[warehouse_west_south_body].feature_intents"
+        }
+      },
+      {
+        "id": "inner-north-warehouse-roof-and-bays",
+        "view": "height_front",
+        "item": "warehouse_inner_north_body",
+        "min_count": 6,
+        "correction_target": {
+          "part_id": "warehouse_inner_north_body",
+          "path": "parts[warehouse_inner_north_body].feature_intents"
+        }
+      },
+      {
+        "id": "inner-south-warehouse-roof-and-bays",
+        "view": "height_front",
+        "item": "warehouse_inner_south_body",
+        "min_count": 6,
+        "correction_target": {
+          "part_id": "warehouse_inner_south_body",
+          "path": "parts[warehouse_inner_south_body].feature_intents"
+        }
+      },
+      {
+        "id": "utility-building-retained-detail",
+        "view": "height_front",
+        "item": "utility_building",
+        "min_count": 3,
+        "correction_target": {
+          "part_id": "utility_building",
+          "path": "parts[utility_building].feature_intents"
+        }
+      },
+      {
+        "id": "admin-office-retained-detail",
+        "view": "height_front",
+        "item": "admin_office",
+        "min_count": 4,
+        "correction_target": {
+          "part_id": "admin_office",
+          "path": "parts[admin_office].feature_intents"
+        }
+      }
+    ]
+  }
+}

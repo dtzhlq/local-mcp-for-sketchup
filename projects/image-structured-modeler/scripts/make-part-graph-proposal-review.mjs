@@ -445,11 +445,12 @@ function proposalBlock(proposal, acceptedKeys) {
 function patchSummaryBlock(patch, patchSummary) {
   if (!patch || !patchSummary) return '<p class="subtle">No generated proposal patch found yet.</p>';
   return `<ul>
-    <li><code>source</code>: ${escapeHtml(patch.source || 'unknown')}</li>
-    <li><code>report_verdict</code>: ${escapeHtml(patch.report_verdict || 'unknown')}</li>
-    <li><code>set_edits</code>: ${escapeHtml(String(patchSummary.set_edits))}</li>
-    <li><code>targets</code>: ${escapeHtml(patchSummary.targets.join(', ') || 'none')}</li>
-  </ul>`;
+	    <li><code>source</code>: ${escapeHtml(patch.source || 'unknown')}</li>
+	    <li><code>report_verdict</code>: ${escapeHtml(patch.report_verdict || 'unknown')}</li>
+	    <li><code>set_edits</code>: ${escapeHtml(String(patchSummary.set_edits))}</li>
+	    <li><code>promote_part_candidate_edits</code>: ${escapeHtml(String(patchSummary.promote_part_candidate_edits || 0))}</li>
+	    <li><code>targets</code>: ${escapeHtml(patchSummary.targets.join(', ') || 'none')}</li>
+	  </ul>`;
 }
 
 function acceptedPatchTargets(patch) {

@@ -107,7 +107,11 @@
             "status": "observed",
             "confidence": 0.54,
             "note": "R7 campus-layout template candidate for the oblique site extent.",
-            "observation_id": "building_oblique_site_boundary"
+            "observation_id": "building_oblique_site_boundary",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
           },
           {
             "kind": "silhouette",
@@ -116,7 +120,11 @@
             "status": "observed",
             "confidence": 0.72,
             "note": "R7 campus-layout template candidate for the full industrial site boundary.",
-            "observation_id": "building_top_site_boundary"
+            "observation_id": "building_top_site_boundary",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
           },
           {
             "kind": "silhouette",
@@ -125,14 +133,27 @@
             "status": "observed",
             "confidence": 0.54,
             "note": "R7 campus-layout template candidate for the oblique site extent.",
-            "observation_id": "building_oblique_site_boundary"
+            "observation_id": "building_oblique_site_boundary",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
           }
         ],
         "generated_from_building_group_evidence": true,
         "evidence_confidence": 0.62,
         "review_required": true,
         "scale_review_required": true,
-        "orientation_review_required": true
+        "orientation_review_required": true,
+        "grounding_status": "profile_prior",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_site_boundary",
+          "building_top_site_boundary"
+        ],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null
       }
     },
     {
@@ -140,13 +161,13 @@
       "id": "primary_blue_roof_hall",
       "name": "Primary_Blue_Roof_Hall_Massing",
       "origin": [
-        -7113.7,
-        -19170.2,
+        -7527.2,
+        -13657.9,
         0
       ],
       "size": [
-        40944,
-        58112.3,
+        33772.7,
+        56666.7,
         16500
       ],
       "material": "Campus_Blue_Roof",
@@ -164,7 +185,35 @@
             "status": "observed",
             "confidence": 0.6,
             "note": "R7 campus-layout prior for blue-roof hall massing in oblique view.",
-            "observation_id": "building_oblique_primary_blue_hall"
+            "observation_id": "building_oblique_primary_blue_hall",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.86,
+            "note": "Pixel-grounded top-view footprint from blue_roof_largest_component; used for position/proportion grounding before layout priors.",
+            "observation_id": "building_top_primary_blue_hall_pixel",
+            "grounding": {
+              "method": "pixel_color_segmentation",
+              "mask": "blue_roof_largest_component",
+              "contour_basis": "sampled_mask_contour",
+              "grounding_quality": {
+                "version": 1,
+                "status": "accepted",
+                "raw_to_evidence_bbox_ratio": null,
+                "prior_to_evidence_bbox_ratio": null,
+                "bbox_proxy": true,
+                "review_required": false,
+                "reasons": []
+              },
+              "review_required": false
+            }
           },
           {
             "kind": "silhouette",
@@ -173,7 +222,11 @@
             "status": "observed",
             "confidence": 0.74,
             "note": "R7 campus-layout prior for the primary blue-roof hall footprint.",
-            "observation_id": "building_top_primary_blue_hall"
+            "observation_id": "building_top_primary_blue_hall",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
           },
           {
             "kind": "center_point",
@@ -191,7 +244,11 @@
             "status": "observed",
             "confidence": 0.6,
             "note": "R7 campus-layout prior for blue-roof hall massing in oblique view.",
-            "observation_id": "building_oblique_primary_blue_hall"
+            "observation_id": "building_oblique_primary_blue_hall",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
           },
           {
             "kind": "parameter_proposal_review",
@@ -237,6 +294,17 @@
         "review_required": true,
         "scale_review_required": true,
         "orientation_review_required": true,
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_primary_blue_hall",
+          "building_top_primary_blue_hall_pixel",
+          "building_top_primary_blue_hall",
+          "building_top_blue_hall_center"
+        ],
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
         "detail_review_required": true,
         "roofline_review_required": true,
         "facade_review_required": true,
@@ -251,13 +319,33 @@
       "feature_id": "primary_blue_roof_hall_roof_center_ridge",
       "face": "top",
       "center": [
-        20472,
-        29056.2
+        16886.4,
+        28333.4
       ],
-      "length": 51138.8,
-      "width": 737,
+      "length": 49866.7,
+      "width": 607.9,
       "height": 260,
-      "direction": "v"
+      "direction": "v",
+      "qa": {
+        "role": "roofline.center_ridge",
+        "part_id": "primary_blue_roof_hall",
+        "feature_id": "primary_blue_roof_hall_roof_center_ridge",
+        "intent": "roofline.center_ridge",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "needs_review",
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_primary_blue_hall",
+          "building_top_primary_blue_hall_pixel",
+          "building_top_primary_blue_hall",
+          "building_top_blue_hall_center"
+        ],
+        "projection_residuals": null,
+        "review_required": true,
+        "helper_allowed": false,
+        "photo_grade_eligible": false
+      }
     },
     {
       "op": "add_raised_rib",
@@ -265,13 +353,33 @@
       "feature_id": "primary_blue_roof_hall_roof_west_eave_line",
       "face": "top",
       "center": [
-        7369.9,
-        29056.2
+        6079.1,
+        28333.4
       ],
-      "length": 47652.1,
+      "length": 46466.7,
       "width": 220,
       "height": 140,
-      "direction": "v"
+      "direction": "v",
+      "qa": {
+        "role": "roofline.eave_line",
+        "part_id": "primary_blue_roof_hall",
+        "feature_id": "primary_blue_roof_hall_roof_west_eave_line",
+        "intent": "roofline.eave_line",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "needs_review",
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_primary_blue_hall",
+          "building_top_primary_blue_hall_pixel",
+          "building_top_primary_blue_hall",
+          "building_top_blue_hall_center"
+        ],
+        "projection_residuals": null,
+        "review_required": true,
+        "helper_allowed": false,
+        "photo_grade_eligible": false
+      }
     },
     {
       "op": "add_raised_rib",
@@ -279,13 +387,33 @@
       "feature_id": "primary_blue_roof_hall_roof_east_eave_line",
       "face": "top",
       "center": [
-        33574.1,
-        29056.2
+        27693.6,
+        28333.4
       ],
-      "length": 47652.1,
+      "length": 46466.7,
       "width": 220,
       "height": 140,
-      "direction": "v"
+      "direction": "v",
+      "qa": {
+        "role": "roofline.eave_line",
+        "part_id": "primary_blue_roof_hall",
+        "feature_id": "primary_blue_roof_hall_roof_east_eave_line",
+        "intent": "roofline.eave_line",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "needs_review",
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_primary_blue_hall",
+          "building_top_primary_blue_hall_pixel",
+          "building_top_primary_blue_hall",
+          "building_top_blue_hall_center"
+        ],
+        "projection_residuals": null,
+        "review_required": true,
+        "helper_allowed": false,
+        "photo_grade_eligible": false
+      }
     },
     {
       "op": "cut_recess",
@@ -293,16 +421,36 @@
       "feature_id": "primary_blue_roof_hall_facade_loading_door",
       "face": "front",
       "center": [
-        20472,
+        16886.4,
         3300
       ],
       "size": [
-        5322.7,
+        4390.5,
         5610
       ],
       "depth": 160,
       "radius": 60,
-      "segments": 4
+      "segments": 4,
+      "qa": {
+        "role": "facade.opening.loading_door",
+        "part_id": "primary_blue_roof_hall",
+        "feature_id": "primary_blue_roof_hall_facade_loading_door",
+        "intent": "facade.opening.loading_door",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "needs_review",
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_primary_blue_hall",
+          "building_top_primary_blue_hall_pixel",
+          "building_top_primary_blue_hall",
+          "building_top_blue_hall_center"
+        ],
+        "projection_residuals": null,
+        "review_required": true,
+        "helper_allowed": false,
+        "photo_grade_eligible": false
+      }
     },
     {
       "op": "cut_recess",
@@ -310,16 +458,36 @@
       "feature_id": "primary_blue_roof_hall_facade_window_band_left",
       "face": "front",
       "center": [
-        12283.2,
+        10131.8,
         9570
       ],
       "size": [
-        6551,
+        5403.6,
         1815
       ],
       "depth": 90,
       "radius": 40,
-      "segments": 4
+      "segments": 4,
+      "qa": {
+        "role": "facade.opening.window_band",
+        "part_id": "primary_blue_roof_hall",
+        "feature_id": "primary_blue_roof_hall_facade_window_band_left",
+        "intent": "facade.opening.window_band",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "needs_review",
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_primary_blue_hall",
+          "building_top_primary_blue_hall_pixel",
+          "building_top_primary_blue_hall",
+          "building_top_blue_hall_center"
+        ],
+        "projection_residuals": null,
+        "review_required": true,
+        "helper_allowed": false,
+        "photo_grade_eligible": false
+      }
     },
     {
       "op": "cut_recess",
@@ -327,29 +495,49 @@
       "feature_id": "primary_blue_roof_hall_facade_window_band_right",
       "face": "front",
       "center": [
-        28660.8,
+        23640.9,
         9570
       ],
       "size": [
-        6551,
+        5403.6,
         1815
       ],
       "depth": 90,
       "radius": 40,
-      "segments": 4
+      "segments": 4,
+      "qa": {
+        "role": "facade.opening.window_band",
+        "part_id": "primary_blue_roof_hall",
+        "feature_id": "primary_blue_roof_hall_facade_window_band_right",
+        "intent": "facade.opening.window_band",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "needs_review",
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_primary_blue_hall",
+          "building_top_primary_blue_hall_pixel",
+          "building_top_primary_blue_hall",
+          "building_top_blue_hall_center"
+        ],
+        "projection_residuals": null,
+        "review_required": true,
+        "helper_allowed": false,
+        "photo_grade_eligible": false
+      }
     },
     {
       "op": "box",
       "id": "warehouse_row_west",
       "name": "West_Warehouse_Row_Massing",
       "origin": [
-        -59352.6,
-        -31463.2,
+        -48713.3,
+        -33131.6,
         0
       ],
       "size": [
-        29649.1,
-        70405.3,
+        13179.6,
+        77193,
         9500
       ],
       "material": "Campus_Warehouse_Light",
@@ -367,7 +555,35 @@
             "status": "observed",
             "confidence": 0.58,
             "note": "R7 campus-layout prior for west warehouse rows in oblique view.",
-            "observation_id": "building_oblique_warehouse_row_west"
+            "observation_id": "building_oblique_warehouse_row_west",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.8,
+            "note": "Pixel-grounded top-view footprint from white_roof_component_union; used for position/proportion grounding before layout priors.",
+            "observation_id": "building_top_warehouse_row_west_pixel",
+            "grounding": {
+              "method": "pixel_color_segmentation",
+              "mask": "white_roof_component_union",
+              "contour_basis": "sampled_mask_contour",
+              "grounding_quality": {
+                "version": 1,
+                "status": "accepted",
+                "raw_to_evidence_bbox_ratio": null,
+                "prior_to_evidence_bbox_ratio": null,
+                "bbox_proxy": true,
+                "review_required": false,
+                "reasons": []
+              },
+              "review_required": false
+            }
           },
           {
             "kind": "silhouette",
@@ -376,7 +592,11 @@
             "status": "observed",
             "confidence": 0.74,
             "note": "R7 campus-layout prior for the west long white warehouse row.",
-            "observation_id": "building_top_warehouse_row_west"
+            "observation_id": "building_top_warehouse_row_west",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
           },
           {
             "kind": "silhouette",
@@ -385,7 +605,11 @@
             "status": "observed",
             "confidence": 0.58,
             "note": "R7 campus-layout prior for west warehouse rows in oblique view.",
-            "observation_id": "building_oblique_warehouse_row_west"
+            "observation_id": "building_oblique_warehouse_row_west",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
           }
         ],
         "generated_from_building_group_evidence": true,
@@ -393,6 +617,16 @@
         "review_required": true,
         "scale_review_required": true,
         "orientation_review_required": true,
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_warehouse_row_west",
+          "building_top_warehouse_row_west_pixel",
+          "building_top_warehouse_row_west"
+        ],
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
         "detail_review_required": true,
         "roofline_review_required": true,
         "facade_review_required": true,
@@ -404,13 +638,13 @@
       "id": "warehouse_row_inner",
       "name": "Inner_Warehouse_Row_Massing",
       "origin": [
-        -28291.6,
-        -28110.5,
+        -30097.2,
+        -33131.6,
         0
       ],
       "size": [
-        18354.2,
-        64817.5,
+        13838.6,
+        77193,
         9500
       ],
       "material": "Campus_Warehouse_Light",
@@ -428,7 +662,35 @@
             "status": "observed",
             "confidence": 0.54,
             "note": "R7 campus-layout prior for inner warehouse rows in oblique view.",
-            "observation_id": "building_oblique_warehouse_row_inner"
+            "observation_id": "building_oblique_warehouse_row_inner",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.8,
+            "note": "Pixel-grounded top-view footprint from white_roof_component_union; used for position/proportion grounding before layout priors.",
+            "observation_id": "building_top_warehouse_row_inner_pixel",
+            "grounding": {
+              "method": "pixel_color_segmentation",
+              "mask": "white_roof_component_union",
+              "contour_basis": "sampled_mask_contour",
+              "grounding_quality": {
+                "version": 1,
+                "status": "accepted",
+                "raw_to_evidence_bbox_ratio": null,
+                "prior_to_evidence_bbox_ratio": null,
+                "bbox_proxy": true,
+                "review_required": false,
+                "reasons": []
+              },
+              "review_required": false
+            }
           },
           {
             "kind": "silhouette",
@@ -437,7 +699,11 @@
             "status": "observed",
             "confidence": 0.72,
             "note": "R7 campus-layout prior for the inner white warehouse row.",
-            "observation_id": "building_top_warehouse_row_inner"
+            "observation_id": "building_top_warehouse_row_inner",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
           },
           {
             "kind": "silhouette",
@@ -446,7 +712,11 @@
             "status": "observed",
             "confidence": 0.54,
             "note": "R7 campus-layout prior for inner warehouse rows in oblique view.",
-            "observation_id": "building_oblique_warehouse_row_inner"
+            "observation_id": "building_oblique_warehouse_row_inner",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
           }
         ],
         "generated_from_building_group_evidence": true,
@@ -454,6 +724,16 @@
         "review_required": true,
         "scale_review_required": true,
         "orientation_review_required": true,
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_warehouse_row_inner",
+          "building_top_warehouse_row_inner_pixel",
+          "building_top_warehouse_row_inner"
+        ],
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
         "detail_review_required": true,
         "roofline_review_required": true,
         "facade_review_required": true,
@@ -489,7 +769,11 @@
             "status": "observed",
             "confidence": 0.52,
             "note": "R7 campus-layout prior for right-side utility/mechanical building in oblique view.",
-            "observation_id": "building_oblique_utility_building"
+            "observation_id": "building_oblique_utility_building",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
           },
           {
             "kind": "silhouette",
@@ -498,7 +782,11 @@
             "status": "observed",
             "confidence": 0.6599999999999999,
             "note": "R7 campus-layout prior for the right-side utility/mechanical building.",
-            "observation_id": "building_top_utility_building"
+            "observation_id": "building_top_utility_building",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
           },
           {
             "kind": "silhouette",
@@ -507,7 +795,11 @@
             "status": "observed",
             "confidence": 0.52,
             "note": "R7 campus-layout prior for right-side utility/mechanical building in oblique view.",
-            "observation_id": "building_oblique_utility_building"
+            "observation_id": "building_oblique_utility_building",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
           }
         ],
         "generated_from_building_group_evidence": true,
@@ -515,6 +807,15 @@
         "review_required": true,
         "scale_review_required": true,
         "orientation_review_required": true,
+        "grounding_status": "profile_prior",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_utility_building",
+          "building_top_utility_building"
+        ],
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
         "detail_review_required": true,
         "roofline_review_required": true,
         "facade_review_required": true,
@@ -550,7 +851,11 @@
             "status": "observed",
             "confidence": 0.5,
             "note": "R7 campus-layout prior for lower admin/office block in oblique view.",
-            "observation_id": "building_oblique_admin_office"
+            "observation_id": "building_oblique_admin_office",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
           },
           {
             "kind": "silhouette",
@@ -559,7 +864,11 @@
             "status": "observed",
             "confidence": 0.6399999999999999,
             "note": "R7 campus-layout prior for the low admin/office block near the lower center of the campus.",
-            "observation_id": "building_top_admin_office"
+            "observation_id": "building_top_admin_office",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
           },
           {
             "kind": "silhouette",
@@ -568,7 +877,11 @@
             "status": "observed",
             "confidence": 0.5,
             "note": "R7 campus-layout prior for lower admin/office block in oblique view.",
-            "observation_id": "building_oblique_admin_office"
+            "observation_id": "building_oblique_admin_office",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
           }
         ],
         "generated_from_building_group_evidence": true,
@@ -576,6 +889,15 @@
         "review_required": true,
         "scale_review_required": true,
         "orientation_review_required": true,
+        "grounding_status": "profile_prior",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_admin_office",
+          "building_top_admin_office"
+        ],
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
         "detail_review_required": true,
         "roofline_review_required": true,
         "facade_review_required": true,
@@ -611,7 +933,11 @@
             "status": "observed",
             "confidence": 0.52,
             "note": "R7 campus-layout prior for parking lot in oblique view.",
-            "observation_id": "building_oblique_parking_lot"
+            "observation_id": "building_oblique_parking_lot",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
           },
           {
             "kind": "silhouette",
@@ -620,7 +946,11 @@
             "status": "observed",
             "confidence": 0.72,
             "note": "R7 campus-layout prior for the parking lot footprint.",
-            "observation_id": "building_top_parking_lot"
+            "observation_id": "building_top_parking_lot",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
           },
           {
             "kind": "silhouette",
@@ -629,14 +959,27 @@
             "status": "observed",
             "confidence": 0.52,
             "note": "R7 campus-layout prior for parking lot in oblique view.",
-            "observation_id": "building_oblique_parking_lot"
+            "observation_id": "building_oblique_parking_lot",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
           }
         ],
         "generated_from_building_group_evidence": true,
         "evidence_confidence": 0.58,
         "review_required": true,
         "scale_review_required": true,
-        "orientation_review_required": true
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_parking_lot",
+          "building_top_parking_lot"
+        ],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null
       }
     },
     {
@@ -668,7 +1011,11 @@
             "status": "observed",
             "confidence": 0.45,
             "note": "R7 campus-layout prior for paved circulation in oblique view.",
-            "observation_id": "building_oblique_internal_roads"
+            "observation_id": "building_oblique_internal_roads",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
           },
           {
             "kind": "silhouette",
@@ -677,7 +1024,11 @@
             "status": "observed",
             "confidence": 0.5800000000000001,
             "note": "R7 campus-layout prior for internal road loops and paved circulation.",
-            "observation_id": "building_top_internal_roads"
+            "observation_id": "building_top_internal_roads",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
           },
           {
             "kind": "silhouette",
@@ -686,14 +1037,27 @@
             "status": "observed",
             "confidence": 0.45,
             "note": "R7 campus-layout prior for paved circulation in oblique view.",
-            "observation_id": "building_oblique_internal_roads"
+            "observation_id": "building_oblique_internal_roads",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
           }
         ],
         "generated_from_building_group_evidence": true,
         "evidence_confidence": 0.58,
         "review_required": true,
         "scale_review_required": true,
-        "orientation_review_required": true
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_internal_roads",
+          "building_top_internal_roads"
+        ],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null
       }
     },
     {
@@ -724,7 +1088,11 @@
             "status": "observed",
             "confidence": 0.54,
             "note": "R7 campus-layout prior for cylindrical tanks in oblique view.",
-            "observation_id": "building_oblique_tank_farm"
+            "observation_id": "building_oblique_tank_farm",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
           },
           {
             "kind": "silhouette",
@@ -733,7 +1101,11 @@
             "status": "observed",
             "confidence": 0.7,
             "note": "R7 campus-layout prior for the cylindrical tank farm.",
-            "observation_id": "building_top_tank_farm"
+            "observation_id": "building_top_tank_farm",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
           },
           {
             "kind": "center_point",
@@ -751,14 +1123,28 @@
             "status": "observed",
             "confidence": 0.54,
             "note": "R7 campus-layout prior for cylindrical tanks in oblique view.",
-            "observation_id": "building_oblique_tank_farm"
+            "observation_id": "building_oblique_tank_farm",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
           }
         ],
         "generated_from_building_group_evidence": true,
         "evidence_confidence": 0.56,
         "review_required": true,
         "scale_review_required": true,
-        "orientation_review_required": true
+        "orientation_review_required": true,
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_tank_farm",
+          "building_top_tank_farm",
+          "building_top_tank_farm_center"
+        ],
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "projection_residuals": null
       }
     },
     {
@@ -789,7 +1175,11 @@
             "status": "observed",
             "confidence": 0.54,
             "note": "R7 campus-layout prior for cylindrical tanks in oblique view.",
-            "observation_id": "building_oblique_tank_farm"
+            "observation_id": "building_oblique_tank_farm",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
           },
           {
             "kind": "silhouette",
@@ -798,7 +1188,11 @@
             "status": "observed",
             "confidence": 0.7,
             "note": "R7 campus-layout prior for the cylindrical tank farm.",
-            "observation_id": "building_top_tank_farm"
+            "observation_id": "building_top_tank_farm",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
           },
           {
             "kind": "center_point",
@@ -816,14 +1210,28 @@
             "status": "observed",
             "confidence": 0.54,
             "note": "R7 campus-layout prior for cylindrical tanks in oblique view.",
-            "observation_id": "building_oblique_tank_farm"
+            "observation_id": "building_oblique_tank_farm",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
           }
         ],
         "generated_from_building_group_evidence": true,
         "evidence_confidence": 0.56,
         "review_required": true,
         "scale_review_required": true,
-        "orientation_review_required": true
+        "orientation_review_required": true,
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_tank_farm",
+          "building_top_tank_farm",
+          "building_top_tank_farm_center"
+        ],
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "projection_residuals": null
       }
     },
     {
@@ -861,7 +1269,13 @@
         "evidence_confidence": 0.68,
         "review_required": true,
         "scale_review_required": true,
-        "orientation_review_required": true
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "scale_anchor",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null
       }
     },
     {
@@ -899,7 +1313,13 @@
         "evidence_confidence": 0.6,
         "review_required": true,
         "scale_review_required": true,
-        "orientation_review_required": true
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "scale_anchor",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null
       }
     },
     {
@@ -937,7 +1357,13 @@
         "evidence_confidence": 0.54,
         "review_required": true,
         "scale_review_required": true,
-        "orientation_review_required": true
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "scale_anchor",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null
       }
     },
     {
@@ -975,7 +1401,13 @@
         "evidence_confidence": 0.42,
         "review_required": true,
         "scale_review_required": true,
-        "orientation_review_required": true
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "scale_anchor",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null
       }
     },
     {

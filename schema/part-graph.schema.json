@@ -109,10 +109,22 @@
         "scale_calibration": {
           "type": "object"
         },
+        "ground_plan": {
+          "type": "object"
+        },
+        "grounding_v3": {
+          "type": "object"
+        },
         "part_matches": {
           "type": "array",
           "items": {
             "$ref": "#/$defs/part_match"
+          }
+        },
+        "visual_relations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/visual_relation"
           }
         },
         "parts": {
@@ -152,6 +164,15 @@
           "type": "object"
         },
         "parameter_proposals": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/parameter_proposal"
+          }
+        },
+        "part_candidate_proposal_summary": {
+          "type": "object"
+        },
+        "part_candidate_proposals": {
           "type": "array",
           "items": {
             "$ref": "#/$defs/parameter_proposal"
@@ -247,6 +268,36 @@
             "$ref": "#/$defs/evidence_source"
           }
         },
+        "grounding_status": {
+          "$ref": "#/$defs/grounding_status"
+        },
+        "grounding_method": {
+          "type": ["string", "null"]
+        },
+        "source_observation_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "grounding_decision": {
+          "$ref": "#/$defs/grounding_decision"
+        },
+        "grounding_region_id": {
+          "type": "string"
+        },
+        "projection_residuals": {
+          "type": ["object", "null"]
+        },
+        "review_required": {
+          "type": "boolean"
+        },
+        "helper_allowed": {
+          "type": "boolean"
+        },
+        "photo_grade_eligible": {
+          "type": "boolean"
+        },
         "fallback_state": {
           "$ref": "#/$defs/fallback_state"
         },
@@ -287,6 +338,17 @@
         },
         "note": {
           "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "review_required": {
+          "type": "boolean"
         }
       }
     },
@@ -310,7 +372,17 @@
             "supported_by",
             "rests_on",
             "must_not_intersect",
-            "grounded"
+            "grounded",
+            "left_of",
+            "right_of",
+            "above",
+            "below",
+            "inside",
+            "aligned_with",
+            "touching",
+            "same_row",
+            "mirrored_pair",
+            "centered_on"
           ]
         },
         "subject": {
@@ -346,8 +418,32 @@
           "type": "number",
           "minimum": 0
         },
+        "min_delta_mm": {
+          "type": "number",
+          "minimum": 0
+        },
         "ground_z": {
           "type": "number"
+        },
+        "source": {
+          "type": "string"
+        },
+        "coordinate_space": {
+          "type": "string"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "review_required": {
+          "type": "boolean"
+        },
+        "visual_axis": {
+          "type": ["string", "null"]
+        },
+        "evidence": {
+          "type": ["object", "null"]
         },
         "severity": {
           "enum": [
@@ -355,6 +451,60 @@
             "warn",
             "error"
           ]
+        },
+        "note": {
+          "type": "string"
+        }
+      }
+    },
+    "visual_relation": {
+      "type": "object",
+      "required": [
+        "id",
+        "type",
+        "subject",
+        "target"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "type": {
+          "enum": [
+            "left_of",
+            "right_of",
+            "above",
+            "below",
+            "inside",
+            "aligned_with",
+            "touching",
+            "same_row",
+            "mirrored_pair",
+            "centered_on"
+          ]
+        },
+        "subject": {
+          "type": "string",
+          "minLength": 1
+        },
+        "target": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source": {
+          "type": "string"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "review_required": {
+          "type": "boolean"
+        },
+        "evidence": {
+          "type": "object"
         },
         "note": {
           "type": "string"
@@ -425,6 +575,30 @@
           "items": {
             "$ref": "#/$defs/evidence_source"
           }
+        },
+        "grounding_status": {
+          "$ref": "#/$defs/grounding_status"
+        },
+        "grounding_method": {
+          "type": ["string", "null"]
+        },
+        "source_observation_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "projection_residuals": {
+          "type": ["object", "null"]
+        },
+        "review_required": {
+          "type": "boolean"
+        },
+        "helper_allowed": {
+          "type": "boolean"
+        },
+        "photo_grade_eligible": {
+          "type": "boolean"
         }
       }
     },
@@ -472,6 +646,18 @@
         },
         "source_image": {
           "type": "string"
+        },
+        "observation_id": {
+          "type": "string"
+        },
+        "source_observation_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "grounding": {
+          "type": "object"
         },
         "status": {
           "$ref": "#/$defs/evidence_status"
@@ -538,6 +724,24 @@
           "items": {
             "$ref": "#/$defs/parameter_proposal_ref"
           }
+        },
+        "grounding_status": {
+          "$ref": "#/$defs/grounding_status"
+        },
+        "grounding_method": {
+          "type": ["string", "null"]
+        },
+        "source_observation_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "review_required": {
+          "type": "boolean"
+        },
+        "photo_grade_eligible": {
+          "type": "boolean"
         },
         "conflicts": {
           "type": "array",
@@ -805,6 +1009,23 @@
         "profile_default",
         "manual_confirmed",
         "needs_review"
+      ]
+    },
+    "grounding_status": {
+      "enum": [
+        "image_grounded",
+        "review_confirmed",
+        "helper_only",
+        "profile_prior",
+        "rejected"
+      ]
+    },
+    "grounding_decision": {
+      "enum": [
+        "promoted_geometry",
+        "review_candidate",
+        "helper_only",
+        "rejected"
       ]
     },
     "fallback_state": {

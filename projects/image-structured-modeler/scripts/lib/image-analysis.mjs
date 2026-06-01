@@ -2,6 +2,8 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
+import { annotateObservationSetWithGroundingV3 } from './grounding-v3.mjs';
+import { makeImageRelationCandidates, makeVisualRelationGraph } from './visual-relations.mjs';
 
 export const repoRoot = path.resolve(fileURLToPath(new URL('../../../..', import.meta.url)));
 export const subprojectRoot = path.join(repoRoot, 'projects', 'image-structured-modeler');
@@ -45,10 +47,18 @@ const OBSERVATION_PART_REQUIREMENTS = {
     primary_blue_roof_hall: { views: ['top', 'oblique'], hints: ['primary_blue_roof_hall'] },
     warehouse_row_west: { views: ['top', 'oblique'], hints: ['warehouse_row_west'] },
     warehouse_row_inner: { views: ['top', 'oblique'], hints: ['warehouse_row_inner'] },
+    warehouse_west_north: { views: ['top', 'oblique'], hints: ['warehouse_west_north'] },
+    warehouse_west_south: { views: ['top', 'oblique'], hints: ['warehouse_west_south'] },
+    warehouse_inner_north: { views: ['top', 'oblique'], hints: ['warehouse_inner_north'] },
+    warehouse_inner_south: { views: ['top', 'oblique'], hints: ['warehouse_inner_south'] },
     tank_farm: { views: ['top', 'oblique'], hints: ['tank_farm'] },
     utility_building: { views: ['top', 'oblique'], hints: ['utility_building'] },
     admin_office: { views: ['top', 'oblique'], hints: ['admin_office'] },
     parking_lot: { views: ['top'], hints: ['parking_lot'] },
+    parking_stall_row_north: { views: ['top'], hints: ['parking_stall_row_north'] },
+    parking_stall_row_south: { views: ['top'], hints: ['parking_stall_row_south'] },
+    parking_drive_aisle_center: { views: ['top'], hints: ['parking_drive_aisle_center'] },
+    tree_row_south: { views: ['top'], hints: ['tree_row_south'] },
     internal_roads: { views: ['top'], hints: ['internal_roads'] }
   }
 };
@@ -108,6 +118,8 @@ export async function analyzeImage(imagePath, options = {}) {
     sourceHeight: original.height,
     width: info.width,
     height: info.height,
+    rgba: data,
+    channels: info.channels,
     threshold,
     gray,
     edges,
@@ -262,6 +274,13 @@ export function makeImageObservation(assignedView, objectProfile = 'switch_contr
       kind: 'silhouette',
       component_hint: 'main_object',
       points: analysis.contour,
+      contour: {
+        kind: 'sampled_edge_contour',
+        polygon: analysis.contour,
+        sample_count: analysis.contour.length,
+        source: 'sobel_edge_occupancy',
+        review_required: true
+      },
       confidence: round(clamp(0.42 + analysis.edgeDensity * 1.8 + (analysis.contour.length > 8 ? 0.08 : 0), 0.42, 0.82)),
       note: 'Coarse contour polyline traced from Sobel edge occupancy slices; use as geometry evidence, not a final CAD profile.'
     },
@@ -270,6 +289,14 @@ export function makeImageObservation(assignedView, objectProfile = 'switch_contr
       kind: 'edge',
       component_hint: 'main_outline',
       points: sampledEdges,
+      edge_map: {
+        method: 'sobel',
+        sample_count: sampledEdges.length,
+        threshold: analysis.threshold,
+        width: analysis.width,
+        height: analysis.height,
+        review_required: true
+      },
       confidence: round(clamp(0.35 + analysis.edgeDensity * 2, 0.35, 0.7)),
       note: `Sobel edge sample at analysis resolution ${analysis.width}x${analysis.height}.`
     },
@@ -289,12 +316,23 @@ export function makeImageObservation(assignedView, objectProfile = 'switch_contr
       kind: 'keypoint',
       component_hint: 'main_object',
       points: [keypoint.point],
+      keypoints: [{
+        id: keypoint.id,
+        point: keypoint.point,
+        confidence: keypoint.confidence,
+        source: 'object_bbox'
+      }],
       confidence: keypoint.confidence,
       note: keypoint.note
     });
   }
 
-  return {
+  const observations = [
+    ...baseObservations,
+    ...pixelGroundedCandidatesForView(kind, analysis, objectProfile),
+    ...componentCandidatesForView(kind, bbox, confidence, objectProfile, analysis)
+  ];
+  const imageObservation = {
     version: 1,
     image: {
       path: toRepoRelative(analysis.path),
@@ -310,7 +348,8 @@ export function makeImageObservation(assignedView, objectProfile = 'switch_contr
     },
     camera_hints: {
       perspective_strength: classifyPerspective(analysis),
-      symmetry_axis: symmetryLine
+      symmetry_axis: symmetryLine,
+      ...cameraProjectionHints(kind, analysis)
     },
     orientation_hints: orientationHints,
     metrics: {
@@ -320,16 +359,15 @@ export function makeImageObservation(assignedView, objectProfile = 'switch_contr
       object_bbox_ratio: round(analysis.bboxRatio, 3),
       symmetry_score: round(analysis.symmetry.score, 3)
     },
-    observations: [
-      ...baseObservations,
-      ...componentCandidatesForView(kind, bbox, confidence, objectProfile)
-    ],
+    observations,
     quality_report: {
       usable_for_modeling: analysis.edgeDensity >= 0.02 && Boolean(analysis.objectBounds),
       risks,
       missing_views: []
     }
   };
+  imageObservation.relation_candidates = makeImageRelationCandidates(imageObservation);
+  return imageObservation;
 }
 
 function makeOrientationHints({ kind, analysis, objectProfile }) {
@@ -423,33 +461,38 @@ function makeOrientationHints({ kind, analysis, objectProfile }) {
   };
 }
 
-function componentCandidatesForView(viewKind, bbox, viewConfidence, objectProfile = 'switch_controller') {
+function componentCandidatesForView(viewKind, bbox, viewConfidence, objectProfile = 'switch_controller', analysis = null) {
   const [x, y, width, height] = bbox;
   const componentConfidence = round(clamp(viewConfidence - 0.12, 0.35, 0.72));
   const candidates = [];
-  const addBox = (id, componentHint, rel, note, confidence = componentConfidence) => {
+  const addBox = (id, componentHint, rel, note, confidence = componentConfidence, extra = {}) => {
+    const componentBbox = [
+      round(x + rel.x * width),
+      round(y + rel.y * height),
+      round(rel.width * width),
+      round(rel.height * height)
+    ];
+    const grounding = switchComponentGroundingEvidence(analysis, objectProfile, viewKind, componentBbox, componentHint, id);
     candidates.push({
       id,
       kind: 'component_bbox',
       component_hint: componentHint,
-      bbox: [
-        round(x + rel.x * width),
-        round(y + rel.y * height),
-        round(rel.width * width),
-        round(rel.height * height)
-      ],
+      bbox: componentBbox,
       confidence,
-      note
+      note,
+      ...grounding,
+      ...extra
     });
   };
-  const addPoint = (id, componentHint, rel, note, confidence = componentConfidence) => {
+  const addPoint = (id, componentHint, rel, note, confidence = componentConfidence, extra = {}) => {
     candidates.push({
       id,
       kind: 'center_point',
       component_hint: componentHint,
       points: [[round(x + rel.x * width), round(y + rel.y * height)]],
       confidence,
-      note
+      note,
+      ...extra
     });
   };
 
@@ -460,10 +503,12 @@ function componentCandidatesForView(viewKind, bbox, viewConfidence, objectProfil
   } else if (viewKind === 'front') {
     addBox('front_left_shell_candidate', 'left_joycon_shell', { x: 0.04, y: 0.08, width: 0.31, height: 0.84 }, 'Template candidate from known game-controller front layout.');
     addBox('front_center_grip_candidate', 'center_grip_body', { x: 0.34, y: 0.11, width: 0.32, height: 0.78 }, 'Template candidate from known game-controller front layout.');
+    addBox('front_center_panel_candidate', 'center_front_panel', { x: 0.41, y: 0.25, width: 0.18, height: 0.50 }, 'Template candidate for the central front screen/flat panel inside the grip body.', 0.58);
     addBox('front_right_shell_candidate', 'right_joycon_shell', { x: 0.65, y: 0.08, width: 0.31, height: 0.84 }, 'Template candidate from known game-controller front layout.');
-    addPoint('front_left_thumbstick_center', 'left_thumbstick', { x: 0.26, y: 0.37 }, 'Likely left thumbstick center inferred from front layout.', 0.68);
-    addPoint('front_right_thumbstick_center', 'right_thumbstick', { x: 0.74, y: 0.64 }, 'Likely right thumbstick center inferred from front layout.', 0.55);
+    addBox('front_left_thumbstick_candidate', 'left_thumbstick', { x: 0.205, y: 0.305, width: 0.11, height: 0.13 }, 'Likely left thumbstick contour region inferred from front layout and grounded by local edges.', 0.68);
+    addBox('front_right_thumbstick_candidate', 'right_thumbstick', { x: 0.685, y: 0.575, width: 0.11, height: 0.13 }, 'Likely right thumbstick contour region inferred from front layout and grounded by local edges.', 0.55);
     addBox('front_abxy_cluster_candidate', 'abxy_cluster', { x: 0.72, y: 0.24, width: 0.19, height: 0.25 }, 'Likely ABXY cluster region inferred from front layout.', 0.66);
+    addBox('front_dpad_cluster_candidate', 'dpad_cluster', { x: 0.09, y: 0.52, width: 0.18, height: 0.24 }, 'Likely D-pad cluster region inferred from front layout.', 0.58);
     addBox('front_left_button_cluster_candidate', 'left_button_cluster', { x: 0.09, y: 0.52, width: 0.18, height: 0.24 }, 'Likely left button cluster region inferred from front layout.', 0.55);
   } else if (viewKind === 'rear') {
     addBox('rear_left_grip_candidate', 'rear_grip_left', { x: 0.08, y: 0.08, width: 0.31, height: 0.84 }, 'Likely left rear grip silhouette from rear layout.', 0.68);
@@ -477,6 +522,127 @@ function componentCandidatesForView(viewKind, bbox, viewConfidence, objectProfil
   }
 
   return candidates;
+}
+
+function switchComponentGroundingEvidence(analysis, objectProfile, viewKind, bbox, componentHint, observationId) {
+  if (objectProfile !== 'switch_controller' || !analysis || !['front', 'rear', 'left', 'right'].includes(viewKind)) return {};
+  if (![
+    'left_joycon_shell',
+    'right_joycon_shell',
+    'center_grip_body',
+    'center_front_panel',
+    'left_thumbstick',
+    'right_thumbstick',
+    'abxy_cluster',
+    'dpad_cluster',
+    'left_button_cluster',
+    'rear_grip_left',
+    'rear_grip_right',
+    'side_thickness_profile'
+  ].includes(componentHint)) return {};
+
+  const method = componentHint.includes('thumbstick') ? 'edge_keypoint_segmentation' : 'edge_contour_segmentation';
+  const evidence = edgeEvidenceForBbox(analysis, bbox);
+  const accepted = evidence.edge_count >= 8 && evidence.contour.length > 5;
+  const quality = {
+    version: 1,
+    status: accepted ? 'accepted' : 'needs_review',
+    raw_to_evidence_bbox_ratio: evidence.edge_bbox ? maxBboxDimensionRatio(evidence.edge_bbox, evidence.bbox) : null,
+    prior_to_evidence_bbox_ratio: 1,
+    bbox_proxy: !accepted,
+    review_required: !accepted,
+    reasons: accepted ? [] : ['local_edge_contour_too_sparse']
+  };
+  const keypoints = keypointsFromBbox(evidence.bbox, `${componentHint}_`);
+  return {
+    contour: {
+      kind: 'sampled_edge_contour',
+      polygon: evidence.contour,
+      sample_count: evidence.contour.length,
+      source: method,
+      review_required: quality.review_required
+    },
+    mask: {
+      id: `${observationId}_edge_mask`,
+      method,
+      bbox: evidence.bbox,
+      polygon: evidence.contour,
+      sampled_contour: evidence.contour,
+      pixel_count: evidence.edge_count,
+      fill: evidence.fill,
+      quality,
+      review_required: quality.review_required
+    },
+    keypoints,
+    grounding: {
+      method,
+      mask: `${observationId}_edge_mask`,
+      pixel_bbox: evidence.edge_bbox || evidence.bbox,
+      pixel_count: evidence.edge_count,
+      prior_bbox: evidence.bbox,
+      fill: evidence.fill,
+      contour_basis: 'sampled_edge_contour',
+      grounding_quality: quality,
+      review_required: quality.review_required
+    },
+    occlusion_hints: [{
+      status: 'visible',
+      confidence: accepted ? 0.72 : 0.42,
+      reason: 'Local Sobel edge occupancy found inside the component proposal region.'
+    }],
+    review_required: quality.review_required
+  };
+}
+
+function edgeEvidenceForBbox(analysis, bbox) {
+  const clipped = clipBboxToFrame(bbox, [0, 0, analysis.width, analysis.height]).map((value) => round(value));
+  const [x, y, width, height] = clipped;
+  const edges = (analysis.edges || []).filter((edge) => edge.x >= x && edge.x <= x + width && edge.y >= y && edge.y <= y + height);
+  const edgeBbox = edges.length ? pointsBbox(edges.map((edge) => [edge.x, edge.y])) : null;
+  const contour = edges.length >= 3
+    ? contourFromPointColumns(edges.map((edge) => [edge.x, edge.y]), edgeBbox || clipped)
+    : bboxPolygon(clipped);
+  return {
+    bbox: clipped,
+    edge_bbox: edgeBbox,
+    edge_count: edges.length,
+    fill: round(edges.length / Math.max(1, width * height)),
+    contour: normalizePolygon(contour)
+  };
+}
+
+function contourFromPointColumns(points, bbox) {
+  const columns = new Map();
+  for (const [x, y] of points) {
+    const column = columns.get(x) || { minY: y, maxY: y, count: 0 };
+    column.minY = Math.min(column.minY, y);
+    column.maxY = Math.max(column.maxY, y);
+    column.count += 1;
+    columns.set(x, column);
+  }
+  return contourFromColumnMask(columns, bbox);
+}
+
+function pointsBbox(points) {
+  const xs = points.map((point) => point[0]);
+  const ys = points.map((point) => point[1]);
+  const minX = Math.min(...xs);
+  const minY = Math.min(...ys);
+  const maxX = Math.max(...xs);
+  const maxY = Math.max(...ys);
+  return [round(minX), round(minY), round(maxX - minX + 1), round(maxY - minY + 1)];
+}
+
+function keypointsFromBbox(bbox, prefix = '') {
+  const [x, y, width, height] = bbox;
+  const center = [round(x + width / 2), round(y + height / 2)];
+  return [
+    { id: `${prefix}center`, point: center, confidence: 0.68, source: 'edge_contour_bbox' },
+    { id: `${prefix}top_left`, point: [round(x), round(y)], confidence: 0.54, source: 'edge_contour_bbox' },
+    { id: `${prefix}top_right`, point: [round(x + width), round(y)], confidence: 0.54, source: 'edge_contour_bbox' },
+    { id: `${prefix}bottom_right`, point: [round(x + width), round(y + height)], confidence: 0.54, source: 'edge_contour_bbox' },
+    { id: `${prefix}bottom_left`, point: [round(x), round(y + height)], confidence: 0.54, source: 'edge_contour_bbox' }
+  ];
 }
 
 function addAmbulanceCandidates(viewKind, helpers) {
@@ -510,18 +676,32 @@ function addBuildingGroupCandidates(viewKind, helpers) {
   const { addBox, addPoint } = helpers;
   const confidenceBoost = viewKind === 'top' ? 0.06 : 0;
   const addCampusBox = (id, hint, rel, note, confidence) => {
-    addBox(id, hint, rel, note, Math.min(0.74, confidence + confidenceBoost));
+    addBox(id, hint, rel, note, Math.min(0.74, confidence + confidenceBoost), {
+      grounding: {
+        method: 'layout_prior',
+        review_required: true
+      },
+      review_required: true
+    });
   };
 
   if (viewKind === 'top') {
     addCampusBox('building_top_site_boundary', 'site_boundary', { x: 0.02, y: 0.05, width: 0.92, height: 0.88 }, 'R7 campus-layout template candidate for the full industrial site boundary.', 0.66);
     addCampusBox('building_top_warehouse_row_west', 'warehouse_row_west', { x: 0.06, y: 0.14, width: 0.21, height: 0.63 }, 'R7 campus-layout prior for the west long white warehouse row.', 0.7);
     addCampusBox('building_top_warehouse_row_inner', 'warehouse_row_inner', { x: 0.28, y: 0.16, width: 0.13, height: 0.58 }, 'R7 campus-layout prior for the inner white warehouse row.', 0.66);
+    addCampusBox('building_top_warehouse_west_north', 'warehouse_west_north', { x: 0.06, y: 0.14, width: 0.21, height: 0.29 }, 'VisualRelationGraph candidate for the north unit in the west warehouse row; kept image-only until reviewed as a separate PartGraph building.', 0.62);
+    addCampusBox('building_top_warehouse_west_south', 'warehouse_west_south', { x: 0.06, y: 0.48, width: 0.21, height: 0.29 }, 'VisualRelationGraph candidate for the south unit in the west warehouse row; kept image-only until reviewed as a separate PartGraph building.', 0.62);
+    addCampusBox('building_top_warehouse_inner_north', 'warehouse_inner_north', { x: 0.28, y: 0.16, width: 0.13, height: 0.26 }, 'VisualRelationGraph candidate for the north unit in the inner warehouse row; kept image-only until reviewed as a separate PartGraph building.', 0.58);
+    addCampusBox('building_top_warehouse_inner_south', 'warehouse_inner_south', { x: 0.28, y: 0.48, width: 0.13, height: 0.26 }, 'VisualRelationGraph candidate for the south unit in the inner warehouse row; kept image-only until reviewed as a separate PartGraph building.', 0.58);
     addCampusBox('building_top_primary_blue_hall', 'primary_blue_roof_hall', { x: 0.43, y: 0.14, width: 0.29, height: 0.52 }, 'R7 campus-layout prior for the primary blue-roof hall footprint.', 0.72);
     addCampusBox('building_top_tank_farm', 'tank_farm', { x: 0.77, y: 0.1, width: 0.14, height: 0.18 }, 'R7 campus-layout prior for the cylindrical tank farm.', 0.64);
     addCampusBox('building_top_utility_building', 'utility_building', { x: 0.73, y: 0.43, width: 0.15, height: 0.2 }, 'R7 campus-layout prior for the right-side utility/mechanical building.', 0.6);
     addCampusBox('building_top_admin_office', 'admin_office', { x: 0.41, y: 0.69, width: 0.15, height: 0.13 }, 'R7 campus-layout prior for the low admin/office block near the lower center of the campus.', 0.58);
     addCampusBox('building_top_parking_lot', 'parking_lot', { x: 0.58, y: 0.68, width: 0.32, height: 0.19 }, 'R7 campus-layout prior for the parking lot footprint.', 0.66);
+    addCampusBox('building_top_parking_stall_row_north', 'parking_stall_row_north', { x: 0.602, y: 0.704, width: 0.244, height: 0.03 }, 'VisualRelationGraph candidate for the northern visible parking-stall marker row inside the parking lot.', 0.54);
+    addCampusBox('building_top_parking_stall_row_south', 'parking_stall_row_south', { x: 0.602, y: 0.772, width: 0.244, height: 0.03 }, 'VisualRelationGraph candidate for the southern visible parking-stall marker row inside the parking lot.', 0.52);
+    addCampusBox('building_top_parking_drive_aisle_center', 'parking_drive_aisle_center', { x: 0.59, y: 0.738, width: 0.29, height: 0.054 }, 'VisualRelationGraph candidate for the parking drive aisle between stall rows.', 0.54);
+    addCampusBox('building_top_tree_row_south', 'tree_row_south', { x: 0.57, y: 0.865, width: 0.35, height: 0.035 }, 'VisualRelationGraph candidate for the tree/landscape row south of the parking field.', 0.48);
     addCampusBox('building_top_internal_roads', 'internal_roads', { x: 0.03, y: 0.08, width: 0.89, height: 0.8 }, 'R7 campus-layout prior for internal road loops and paved circulation.', 0.52);
     addCampusBox('building_top_scale_parking_bay_span', 'scale_anchor_parking_bay_span', { x: 0.602, y: 0.715, width: 0.244, height: 0.042 }, 'Known-element scale anchor: visible row span of 13 standard parking bay widths at 2.6m each; review before locking site scale.', 0.64);
     addCampusBox('building_top_scale_parking_bay_depth', 'scale_anchor_parking_bay_depth', { x: 0.604, y: 0.702, width: 0.018, height: 0.048 }, 'Known-element scale anchor: one standard parking bay footprint, using 2.6m width and 5.2m depth.', 0.58);
@@ -533,6 +713,10 @@ function addBuildingGroupCandidates(viewKind, helpers) {
     addCampusBox('building_oblique_site_boundary', 'site_boundary', { x: 0.03, y: 0.08, width: 0.91, height: 0.82 }, 'R7 campus-layout template candidate for the oblique site extent.', 0.54);
     addCampusBox('building_oblique_warehouse_row_west', 'warehouse_row_west', { x: 0.08, y: 0.18, width: 0.22, height: 0.51 }, 'R7 campus-layout prior for west warehouse rows in oblique view.', 0.58);
     addCampusBox('building_oblique_warehouse_row_inner', 'warehouse_row_inner', { x: 0.29, y: 0.2, width: 0.15, height: 0.49 }, 'R7 campus-layout prior for inner warehouse rows in oblique view.', 0.54);
+    addCampusBox('building_oblique_warehouse_west_north', 'warehouse_west_north', { x: 0.08, y: 0.18, width: 0.22, height: 0.23 }, 'VisualRelationGraph oblique candidate for the north west-warehouse unit.', 0.5);
+    addCampusBox('building_oblique_warehouse_west_south', 'warehouse_west_south', { x: 0.08, y: 0.46, width: 0.22, height: 0.23 }, 'VisualRelationGraph oblique candidate for the south west-warehouse unit.', 0.5);
+    addCampusBox('building_oblique_warehouse_inner_north', 'warehouse_inner_north', { x: 0.29, y: 0.2, width: 0.15, height: 0.22 }, 'VisualRelationGraph oblique candidate for the north inner-warehouse unit.', 0.48);
+    addCampusBox('building_oblique_warehouse_inner_south', 'warehouse_inner_south', { x: 0.29, y: 0.47, width: 0.15, height: 0.22 }, 'VisualRelationGraph oblique candidate for the south inner-warehouse unit.', 0.48);
     addCampusBox('building_oblique_primary_blue_hall', 'primary_blue_roof_hall', { x: 0.44, y: 0.17, width: 0.3, height: 0.44 }, 'R7 campus-layout prior for blue-roof hall massing in oblique view.', 0.6);
     addCampusBox('building_oblique_tank_farm', 'tank_farm', { x: 0.78, y: 0.12, width: 0.14, height: 0.17 }, 'R7 campus-layout prior for cylindrical tanks in oblique view.', 0.54);
     addCampusBox('building_oblique_utility_building', 'utility_building', { x: 0.72, y: 0.43, width: 0.16, height: 0.19 }, 'R7 campus-layout prior for right-side utility/mechanical building in oblique view.', 0.52);
@@ -542,6 +726,503 @@ function addBuildingGroupCandidates(viewKind, helpers) {
   } else {
     addCampusBox('building_uncertain_site_boundary', 'site_boundary', { x: 0.03, y: 0.08, width: 0.9, height: 0.82 }, 'R7 campus-layout fallback candidate until this building-group view is classified.', 0.38);
   }
+}
+
+function pixelGroundedCandidatesForView(viewKind, analysis, objectProfile) {
+  if (objectProfile !== 'building_group' || viewKind !== 'top') return [];
+  if (!analysis?.rgba || !analysis.width || !analysis.height) return [];
+  const blue = connectedColorComponents(analysis, isBlueRoofPixel)
+    .filter((component) => component.count >= 450 && component.fill >= 0.45)
+    .sort((a, b) => b.count - a.count);
+  const white = connectedColorComponents(analysis, isWhiteRoofPixel)
+    .filter((component) => component.count >= 8000 && component.bbox[2] >= 45 && component.bbox[3] >= 120 && component.fill >= 0.75)
+    .sort((a, b) => centerY(a.bbox) - centerY(b.bbox) || centerX(a.bbox) - centerX(b.bbox));
+
+  const candidates = [];
+  const mainBlue = blue[0];
+  if (mainBlue) {
+    candidates.push(pixelGroundedBox('building_top_primary_blue_hall_pixel', 'primary_blue_roof_hall', mainBlue.bbox, 0.86, 'blue_roof_largest_component'));
+  }
+
+  if (white.length >= 4) {
+    const north = white.slice(0, 2).sort((a, b) => centerX(a.bbox) - centerX(b.bbox));
+    const south = white.slice(2, 4).sort((a, b) => centerX(a.bbox) - centerX(b.bbox));
+    const mapped = [
+      ['building_top_warehouse_west_north_pixel', 'warehouse_west_north', north[0]],
+      ['building_top_warehouse_inner_north_pixel', 'warehouse_inner_north', north[1]],
+      ['building_top_warehouse_west_south_pixel', 'warehouse_west_south', south[0]],
+      ['building_top_warehouse_inner_south_pixel', 'warehouse_inner_south', south[1]]
+    ];
+    for (const [id, hint, component] of mapped) {
+      if (component) candidates.push(pixelGroundedBox(id, hint, component.bbox, 0.82, 'white_roof_component'));
+    }
+    if (north[0] && south[0]) {
+      candidates.push(pixelGroundedBox('building_top_warehouse_row_west_pixel', 'warehouse_row_west', unionBboxes([north[0].bbox, south[0].bbox]), 0.8, 'white_roof_component_union'));
+    }
+    if (north[1] && south[1]) {
+      candidates.push(pixelGroundedBox('building_top_warehouse_row_inner_pixel', 'warehouse_row_inner', unionBboxes([north[1].bbox, south[1].bbox]), 0.8, 'white_roof_component_union'));
+    }
+  }
+
+  candidates.push(...parkingPixelGroundedCandidates(analysis));
+  const treeRow = maskGroundedBoxFromPrior(analysis, {
+    id: 'building_top_tree_row_south_pixel',
+    hint: 'tree_row_south',
+    rel: { x: 0.57, y: 0.865, width: 0.35, height: 0.035 },
+    predicate: isVegetationPixel,
+    confidence: 0.7,
+    mask: 'tree_vegetation_row_cluster',
+    method: 'pixel_vegetation_segmentation',
+    minCount: 700
+  });
+  if (treeRow) candidates.push(treeRow);
+
+  return candidates;
+}
+
+function parkingPixelGroundedCandidates(analysis) {
+  const north = maskGroundedBoxFromPrior(analysis, {
+    id: 'building_top_parking_stall_row_north_pixel',
+    hint: 'parking_stall_row_north',
+    rel: { x: 0.602, y: 0.704, width: 0.244, height: 0.03 },
+    predicate: isParkingStripePixel,
+    confidence: 0.68,
+    mask: 'parking_stall_marking_cluster_north',
+    method: 'pixel_line_segmentation',
+    minCount: 120
+  });
+  const south = maskGroundedBoxFromPrior(analysis, {
+    id: 'building_top_parking_stall_row_south_pixel',
+    hint: 'parking_stall_row_south',
+    rel: { x: 0.602, y: 0.772, width: 0.244, height: 0.03 },
+    predicate: isParkingStripePixel,
+    confidence: 0.68,
+    mask: 'parking_stall_marking_cluster_south',
+    method: 'pixel_line_segmentation',
+    minCount: 120
+  });
+  const result = [north, south].filter(Boolean);
+  if (north && south) {
+    const minX = Math.min(north.bbox[0], south.bbox[0]);
+    const maxX = Math.max(north.bbox[0] + north.bbox[2], south.bbox[0] + south.bbox[2]);
+    const gapTop = north.bbox[1] + north.bbox[3] + 2;
+    const gapBottom = south.bbox[1] - 2;
+    const aisleBox = [
+      minX,
+      gapTop,
+      maxX - minX,
+      Math.max(1, gapBottom - gapTop)
+    ];
+    result.push(pixelGroundedBox(
+      'building_top_parking_drive_aisle_center_pixel',
+      'parking_drive_aisle_center',
+      aisleBox,
+      0.66,
+      'parking_drive_aisle_between_pixel_marking_rows',
+      {
+        method: 'pixel_gap_segmentation',
+        derived_from: [north.id, south.id],
+        derived_from_kind: 'negative_space_between_isolated_masks',
+        prior_bbox: relBboxToAbs(analysis, { x: 0.59, y: 0.738, width: 0.29, height: 0.054 }).map((value) => round(value)),
+        bbox_proxy: false
+      }
+    ));
+  }
+  return result;
+}
+
+function maskGroundedBoxFromPrior(analysis, options) {
+  const prior = relBboxToAbs(analysis, options.rel);
+  const mask = predicateMaskEvidence(analysis, options.predicate, prior);
+  if (!mask || mask.count < (options.minCount || 1)) return null;
+  return pixelGroundedBox(options.id, options.hint, mask.bbox, options.confidence, options.mask, {
+    method: options.method,
+    pixel_bbox: mask.bbox.map((value) => round(value)),
+    pixel_count: mask.count,
+    prior_bbox: prior.map((value) => round(value)),
+    polygon: mask.contour,
+    sampled_contour: mask.contour,
+    fill: mask.fill,
+    bbox_proxy: false
+  });
+}
+
+function pixelGuidedBoxFromPrior(analysis, options) {
+  const prior = relBboxToAbs(analysis, options.rel);
+  const search = paddedBbox(prior, analysis, options.pad || { x: 0.02, y: 0.02 });
+  const mask = predicateBbox(analysis, options.predicate, search);
+  if (!mask || mask.count < (options.minCount || 1)) return null;
+  let bbox = [
+    options.lockX ? prior[0] : clamp(mask.bbox[0], search[0], search[0] + search[2]),
+    options.lockY ? prior[1] : clamp(mask.bbox[1], search[1], search[1] + search[3]),
+    options.lockWidth ? prior[2] : Math.max(1, mask.bbox[2]),
+    options.lockHeight ? prior[3] : Math.max(1, mask.bbox[3])
+  ];
+  if (options.clipRel) bbox = clipBboxToFrame(bbox, relBboxToAbs(analysis, options.clipRel));
+  return pixelGroundedBox(options.id, options.hint, bbox, options.confidence, options.mask, {
+    method: options.method,
+    pixel_bbox: mask.bbox.map((value) => round(value)),
+    pixel_count: mask.count,
+    prior_bbox: prior.map((value) => round(value))
+  });
+}
+
+function clipBboxToFrame(bbox, frame) {
+  const minX = Math.max(bbox[0], frame[0]);
+  const minY = Math.max(bbox[1], frame[1]);
+  const maxX = Math.min(bbox[0] + bbox[2], frame[0] + frame[2]);
+  const maxY = Math.min(bbox[1] + bbox[3], frame[1] + frame[3]);
+  return [minX, minY, Math.max(1, maxX - minX), Math.max(1, maxY - minY)];
+}
+
+function pixelGroundedBox(id, componentHint, bbox, confidence, mask, grounding = {}) {
+  const normalizedBbox = bbox.map((value) => round(value));
+  const polygon = normalizePolygon(grounding.sampled_contour || grounding.polygon || bboxPolygon(normalizedBbox));
+  const method = grounding.method || 'pixel_color_segmentation';
+  const groundingQuality = groundingQualityForBox(normalizedBbox, grounding, method);
+  return {
+    id,
+    kind: 'component_bbox',
+    component_hint: componentHint,
+    bbox: normalizedBbox,
+    contour: {
+      kind: 'sampled_mask_contour',
+      polygon,
+      sample_count: polygon.length,
+      source: method,
+      review_required: groundingQuality.review_required
+    },
+    mask: {
+      id: mask,
+      method,
+      bbox: normalizedBbox,
+      polygon,
+      sampled_contour: polygon,
+      ...(grounding.pixel_count ? { pixel_count: grounding.pixel_count } : {}),
+      ...(Number.isFinite(grounding.fill) ? { fill: round(grounding.fill) } : {}),
+      quality: groundingQuality,
+      review_required: groundingQuality.review_required
+    },
+    confidence,
+    note: `Pixel-grounded top-view footprint from ${mask}; used for position/proportion grounding before layout priors.`,
+    grounding: {
+      method,
+      mask,
+      ...(grounding.pixel_bbox ? { pixel_bbox: grounding.pixel_bbox } : {}),
+      ...(grounding.pixel_count ? { pixel_count: grounding.pixel_count } : {}),
+      ...(grounding.prior_bbox ? { prior_bbox: grounding.prior_bbox } : {}),
+      ...(grounding.derived_from ? { derived_from: grounding.derived_from } : {}),
+      ...(grounding.derived_from_kind ? { derived_from_kind: grounding.derived_from_kind } : {}),
+      ...(Number.isFinite(grounding.fill) ? { fill: round(grounding.fill) } : {}),
+      contour_basis: 'sampled_mask_contour',
+      grounding_quality: groundingQuality,
+      review_required: groundingQuality.review_required
+    },
+    occlusion_hints: [{
+      status: 'visible',
+      confidence,
+      reason: 'Pixel-guided top-view candidate is treated as visible in the deterministic first-pass mask.'
+    }],
+    review_required: groundingQuality.review_required
+  };
+}
+
+function groundingQualityForBox(bbox, grounding, method) {
+  const rawToEvidenceRatio = grounding.pixel_bbox ? maxBboxDimensionRatio(grounding.pixel_bbox, bbox) : null;
+  const priorToEvidenceRatio = grounding.prior_bbox ? maxBboxDimensionRatio(grounding.prior_bbox, bbox) : null;
+  const bboxProxy = grounding.bbox_proxy ?? true;
+  const bboxProxyRequiresReview = bboxProxy && (
+    method === 'pixel_line_segmentation'
+    || method === 'pixel_vegetation_segmentation'
+    || Boolean(grounding.derived_from?.length)
+  );
+  const reasons = [];
+  if (rawToEvidenceRatio !== null && rawToEvidenceRatio > 2.2) {
+    reasons.push('raw_pixel_bbox_not_isolated_from_candidate_bbox');
+  }
+  if (priorToEvidenceRatio !== null && priorToEvidenceRatio > 2.2) {
+    reasons.push('candidate_bbox_diverges_from_layout_prior');
+  }
+  if (bboxProxyRequiresReview) {
+    reasons.push('bbox_proxy_not_instance_mask');
+  }
+  return {
+    version: 1,
+    status: reasons.length ? 'needs_review' : 'accepted',
+    raw_to_evidence_bbox_ratio: rawToEvidenceRatio,
+    prior_to_evidence_bbox_ratio: priorToEvidenceRatio,
+    bbox_proxy: bboxProxy,
+    review_required: reasons.length > 0,
+    reasons
+  };
+}
+
+function maxBboxDimensionRatio(a, b) {
+  const widthRatio = dimensionRatio(a[2], b[2]);
+  const heightRatio = dimensionRatio(a[3], b[3]);
+  return round(Math.max(widthRatio, heightRatio));
+}
+
+function dimensionRatio(a, b) {
+  const first = Math.max(1, Math.abs(Number(a) || 0));
+  const second = Math.max(1, Math.abs(Number(b) || 0));
+  return Math.max(first / second, second / first);
+}
+
+function cameraProjectionHints(viewKind, analysis) {
+  const width = analysis.width || 1;
+  const height = analysis.height || 1;
+  if (viewKind === 'top') {
+    return {
+      projection_model: 'top_view_affine_bbox_to_site_xy',
+      vanishing_points: [],
+      review_required: true
+    };
+  }
+  if (viewKind === 'oblique') {
+    const horizonY = round(height * 0.28);
+    return {
+      projection_model: 'weak_oblique_affine_review_only',
+      horizon_line: { a: [0, horizonY], b: [width, horizonY] },
+      vanishing_points: [[round(width * -0.6), horizonY], [round(width * 1.6), horizonY]],
+      review_required: true
+    };
+  }
+  return {
+    projection_model: 'uncalibrated_view_bbox',
+    review_required: true
+  };
+}
+
+function bboxPolygon(bbox) {
+  const [x, y, width, height] = bbox;
+  return [
+    [round(x), round(y)],
+    [round(x + width), round(y)],
+    [round(x + width), round(y + height)],
+    [round(x), round(y + height)],
+    [round(x), round(y)]
+  ];
+}
+
+function normalizePolygon(polygon) {
+  return (polygon || []).map((point) => [round(point[0]), round(point[1])]);
+}
+
+function relBboxToAbs(analysis, rel) {
+  return [
+    rel.x * analysis.width,
+    rel.y * analysis.height,
+    rel.width * analysis.width,
+    rel.height * analysis.height
+  ];
+}
+
+function paddedBbox(bbox, analysis, pad) {
+  const padX = (pad.x || 0) * analysis.width;
+  const padY = (pad.y || 0) * analysis.height;
+  const x = Math.max(0, bbox[0] - padX);
+  const y = Math.max(0, bbox[1] - padY);
+  const maxX = Math.min(analysis.width, bbox[0] + bbox[2] + padX);
+  const maxY = Math.min(analysis.height, bbox[1] + bbox[3] + padY);
+  return [x, y, Math.max(1, maxX - x), Math.max(1, maxY - y)];
+}
+
+function predicateBbox(analysis, predicate, bbox) {
+  const width = analysis.width;
+  const height = analysis.height;
+  const channels = analysis.channels || 4;
+  const data = analysis.rgba;
+  const minX0 = Math.max(0, Math.floor(bbox[0]));
+  const minY0 = Math.max(0, Math.floor(bbox[1]));
+  const maxX0 = Math.min(width, Math.ceil(bbox[0] + bbox[2]));
+  const maxY0 = Math.min(height, Math.ceil(bbox[1] + bbox[3]));
+  let minX = Infinity;
+  let minY = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+  let count = 0;
+  for (let y = minY0; y < maxY0; y += 1) {
+    for (let x = minX0; x < maxX0; x += 1) {
+      const index = (y * width + x) * channels;
+      if (!predicate(data, index, channels)) continue;
+      count += 1;
+      minX = Math.min(minX, x);
+      minY = Math.min(minY, y);
+      maxX = Math.max(maxX, x);
+      maxY = Math.max(maxY, y);
+    }
+  }
+  if (!count) return null;
+  return {
+    bbox: [minX, minY, maxX - minX + 1, maxY - minY + 1],
+    count
+  };
+}
+
+function predicateMaskEvidence(analysis, predicate, bbox) {
+  const width = analysis.width;
+  const height = analysis.height;
+  const channels = analysis.channels || 4;
+  const data = analysis.rgba;
+  const minX0 = Math.max(0, Math.floor(bbox[0]));
+  const minY0 = Math.max(0, Math.floor(bbox[1]));
+  const maxX0 = Math.min(width, Math.ceil(bbox[0] + bbox[2]));
+  const maxY0 = Math.min(height, Math.ceil(bbox[1] + bbox[3]));
+  const columns = new Map();
+  let minX = Infinity;
+  let minY = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+  let count = 0;
+  for (let y = minY0; y < maxY0; y += 1) {
+    for (let x = minX0; x < maxX0; x += 1) {
+      const index = (y * width + x) * channels;
+      if (!predicate(data, index, channels)) continue;
+      count += 1;
+      minX = Math.min(minX, x);
+      minY = Math.min(minY, y);
+      maxX = Math.max(maxX, x);
+      maxY = Math.max(maxY, y);
+      const column = columns.get(x) || { minY: y, maxY: y, count: 0 };
+      column.minY = Math.min(column.minY, y);
+      column.maxY = Math.max(column.maxY, y);
+      column.count += 1;
+      columns.set(x, column);
+    }
+  }
+  if (!count) return null;
+  const maskBbox = [minX, minY, maxX - minX + 1, maxY - minY + 1];
+  return {
+    bbox: maskBbox,
+    count,
+    fill: count / Math.max(1, maskBbox[2] * maskBbox[3]),
+    contour: contourFromColumnMask(columns, maskBbox)
+  };
+}
+
+function contourFromColumnMask(columns, bbox) {
+  const xs = [...columns.keys()].sort((a, b) => a - b);
+  if (xs.length < 3) return bboxPolygon(bbox.map((value) => round(value)));
+  const [x, y, width, height] = bbox.map((value) => round(value));
+  const envelope = [
+    [x, y],
+    [round(x + width), y],
+    [round(x + width), round(y + height)],
+    [x, round(y + height)]
+  ];
+  const sampleTarget = Math.min(28, Math.max(8, xs.length));
+  const sampledXs = [];
+  for (let index = 0; index < sampleTarget; index += 1) {
+    const sourceIndex = Math.round(index * (xs.length - 1) / Math.max(1, sampleTarget - 1));
+    const x = xs[sourceIndex];
+    if (sampledXs[sampledXs.length - 1] !== x) sampledXs.push(x);
+  }
+  const top = sampledXs.map((x) => [round(x), round(columns.get(x).minY)]);
+  const bottom = sampledXs.map((x) => [round(x), round(columns.get(x).maxY)]).reverse();
+  const contour = [...envelope, ...top, ...bottom];
+  if (contour.length < 6) return bboxPolygon(bbox.map((value) => round(value)));
+  contour.push(contour[0]);
+  return contour;
+}
+
+function connectedColorComponents(analysis, predicate) {
+  const width = analysis.width;
+  const height = analysis.height;
+  const channels = analysis.channels || 4;
+  const data = analysis.rgba;
+  const seen = new Uint8Array(width * height);
+  const queue = new Int32Array(width * height);
+  const components = [];
+  for (let y = 0; y < height; y += 1) {
+    for (let x = 0; x < width; x += 1) {
+      const start = y * width + x;
+      if (seen[start]) continue;
+      seen[start] = 1;
+      if (!predicate(data, start * channels, channels)) continue;
+      let read = 0;
+      let write = 0;
+      queue[write++] = start;
+      let minX = x;
+      let maxX = x;
+      let minY = y;
+      let maxY = y;
+      let count = 0;
+      while (read < write) {
+        const current = queue[read++];
+        const cx = current % width;
+        const cy = Math.floor(current / width);
+        count += 1;
+        minX = Math.min(minX, cx);
+        maxX = Math.max(maxX, cx);
+        minY = Math.min(minY, cy);
+        maxY = Math.max(maxY, cy);
+        for (const next of [current - 1, current + 1, current - width, current + width]) {
+          if (next < 0 || next >= width * height || seen[next]) continue;
+          const nx = next % width;
+          if ((next === current - 1 && nx === width - 1) || (next === current + 1 && nx === 0)) continue;
+          seen[next] = 1;
+          if (!predicate(data, next * channels, channels)) continue;
+          queue[write++] = next;
+        }
+      }
+      const bbox = [minX, minY, maxX - minX + 1, maxY - minY + 1];
+      components.push({
+        bbox,
+        count,
+        fill: count / Math.max(1, bbox[2] * bbox[3])
+      });
+    }
+  }
+  return components;
+}
+
+function isBlueRoofPixel(data, index) {
+  const r = data[index];
+  const g = data[index + 1];
+  const b = data[index + 2];
+  return b > 110 && b > r * 1.25 && b > g * 1.08 && g > 70 && r < 135;
+}
+
+function isWhiteRoofPixel(data, index) {
+  const r = data[index];
+  const g = data[index + 1];
+  const b = data[index + 2];
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  return max > 165 && max - min < 48 && r > 150 && g > 150 && b > 145;
+}
+
+function isParkingStripePixel(data, index) {
+  const r = data[index];
+  const g = data[index + 1];
+  const b = data[index + 2];
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  return max > 145 && max - min < 75 && r > 130 && g > 130 && b > 130;
+}
+
+function isVegetationPixel(data, index) {
+  const r = data[index];
+  const g = data[index + 1];
+  const b = data[index + 2];
+  return g > 55 && g > r * 1.12 && g > b * 0.9 && r < 135 && b < 130;
+}
+
+function centerX(bbox) {
+  return bbox[0] + bbox[2] / 2;
+}
+
+function centerY(bbox) {
+  return bbox[1] + bbox[3] / 2;
+}
+
+function unionBboxes(bboxes) {
+  const minX = Math.min(...bboxes.map((bbox) => bbox[0]));
+  const minY = Math.min(...bboxes.map((bbox) => bbox[1]));
+  const maxX = Math.max(...bboxes.map((bbox) => bbox[0] + bbox[2]));
+  const maxY = Math.max(...bboxes.map((bbox) => bbox[1] + bbox[3]));
+  return [minX, minY, maxX - minX, maxY - minY];
 }
 
 export function makeImageSetObservation({ objectType, objectName, analyses, assignedViews, overlayDir = null }) {
@@ -563,10 +1244,11 @@ export function makeImageSetObservation({ objectType, objectName, analyses, assi
   if (usableCount < Math.ceil(images.length / 2)) risks.push('less than half of the images are usable by current CV heuristics');
 
   const scaleCalibration = makeScaleCalibration({ objectProfile, images, missingViews });
+  const visualRelationGraph = makeVisualRelationGraph({ objectProfile, images });
   const usableForModeling = objectProfile === 'building_group'
     ? usableCount > 0 && detected.includes('top') && detected.includes('oblique')
     : usableCount > 0 && detected.includes('front');
-  return {
+  const observationSet = {
     version: 1,
     object: {
       type: objectType,
@@ -579,7 +1261,8 @@ export function makeImageSetObservation({ objectType, objectName, analyses, assi
     missing_views: missingViews,
     scale_calibration: scaleCalibration,
     images,
-    evidence_graph: makeObservationEvidenceGraph({ objectProfile, images, detected, missingViews, scaleCalibration }),
+    visual_relation_graph: visualRelationGraph,
+    evidence_graph: makeObservationEvidenceGraph({ objectProfile, images, detected, missingViews, scaleCalibration, visualRelationGraph }),
     quality_report: {
       usable_for_modeling: usableForModeling,
       risks,
@@ -593,9 +1276,10 @@ export function makeImageSetObservation({ objectType, objectName, analyses, assi
       open_questions: reviewQuestionsForProfile(objectProfile)
     }
   };
+  return annotateObservationSetWithGroundingV3(observationSet);
 }
 
-export function makeObservationEvidenceGraph({ objectProfile, images, detected, missingViews, scaleCalibration = null }) {
+export function makeObservationEvidenceGraph({ objectProfile, images, detected, missingViews, scaleCalibration = null, visualRelationGraph = null }) {
   const requirements = OBSERVATION_PART_REQUIREMENTS[objectProfile] || {};
   const viewIds = makeViewIds(images);
   const openQuestions = [];
@@ -663,8 +1347,12 @@ export function makeObservationEvidenceGraph({ objectProfile, images, detected, 
       source_count: part.sources.length,
       confidence: part.confidence
     })),
+    visual_relations: visualRelationGraph?.relations || [],
     parts,
-    open_questions: unique(openQuestions)
+    open_questions: unique([
+      ...openQuestions,
+      ...(visualRelationGraph?.open_questions || [])
+    ])
   };
 }
 
@@ -690,7 +1378,8 @@ function observationSource(image, observation, view) {
     source_image: image.image.path,
     observation_id: observation.id,
     confidence: observation.confidence,
-    note: observation.note || `Evidence from ${observation.id}.`
+    note: observation.note || `Evidence from ${observation.id}.`,
+    ...(observation.grounding ? { grounding: observation.grounding } : {})
   };
 }
 

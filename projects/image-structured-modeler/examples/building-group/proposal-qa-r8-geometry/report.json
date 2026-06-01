@@ -1,0 +1,82 @@
+{
+  "kind": "proposal_review_qa",
+  "name": "building-group-r8-geometry",
+  "runtime": "mock",
+  "timeout_ms": null,
+  "ok": true,
+  "review_required": true,
+  "grounding_review_required": true,
+  "compiled_matches_output": true,
+  "source_paths": {
+    "profile": "examples/product-profiles/building_group_industrial_campus.json",
+    "partGraph": "projects/image-structured-modeler/examples/building-group/part-graph.r8-geometry.json",
+    "code": "projects/image-structured-modeler/examples/building-group/output.r8-geometry.json",
+    "layoutSpec": "examples/model-qa/building-group-r8-geometry.json",
+    "referenceSpec": "examples/reference-visual-qa/building-group-r8-geometry.json",
+    "observations": "projects/image-structured-modeler/examples/building-group/observations.json",
+    "visualRelationsFixture": null,
+    "geometryFitFixture": "projects/image-structured-modeler/examples/building-group/visual-relations.r8-geometry.fixture.json"
+  },
+  "part_graph": {
+    "id": "building-group-r8-editable-geometry-boundary-part-graph",
+    "parts": 21,
+    "evidence_summary": {
+      "observed": 5,
+      "manual_confirmed": 16
+    }
+  },
+  "layout": {
+    "ok": true,
+    "verdict": "pass",
+    "level": "ok",
+    "issues": 0,
+    "errors": 0,
+    "warnings": 0
+  },
+  "reference_visual": {
+    "ok": true,
+    "verdict": "pass",
+    "level": "ok",
+    "issues": 0,
+    "errors": 0,
+    "warnings": 0
+  },
+  "geometry_fit": {
+    "ok": true,
+    "verdict": "review",
+    "level": "warn",
+    "issues": 4,
+    "errors": 0,
+    "warnings": 4,
+    "checked_footprints": 6,
+    "grounding_issues": 0,
+    "checked_relations": 3,
+    "checked_scale_anchors": 4,
+    "checked_handedness_cases": 1,
+    "max_center_error": 0.033,
+    "max_extent_error": 0.06,
+    "max_relation_error": 0.032,
+    "max_scale_error": 0.118,
+    "primary_structures_grounding_coverage": 0.93,
+    "dense_detail_helper_ratio": 0.653,
+    "dense_detail_review_required": 189,
+    "photo_grade_eligible_ratio": 0,
+    "structural_grounding_issues": 0,
+    "site_region_unclassified_ratio": 0.388,
+    "site_region_overlap_ratio": 0.001,
+    "internal_road_area_ratio": 0.06,
+    "parking_grid_spacing_error_ratio": 0.017,
+    "floating_roof_features": 0,
+    "tank_ellipse_instances": 2
+  },
+  "physical_consistency": {
+    "ok": true,
+    "verdict": "pass",
+    "level": "ok",
+    "issues": 79,
+    "errors": 0,
+    "warnings": 0,
+    "checked_relations": 115
+  },
+  "artifact": null
+}

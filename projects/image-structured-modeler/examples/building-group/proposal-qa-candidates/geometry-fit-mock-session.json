@@ -1,0 +1,5047 @@
+{
+  "version": 1,
+  "units": "mm",
+  "groups": [
+    {
+      "id": "site_boundary",
+      "name": "Site_Boundary_Scale_Slab",
+      "kind": "box",
+      "faces": 6,
+      "edges": 12,
+      "material": "Campus_Site_Slab",
+      "transform": {
+        "translate": [
+          0,
+          0,
+          0
+        ],
+        "rotateZ": 0
+      },
+      "bounding_box": {
+        "min": [
+          -65000,
+          -49000,
+          -80
+        ],
+        "max": [
+          65000,
+          49000,
+          0
+        ],
+        "w": 130000,
+        "d": 98000,
+        "h": 80
+      },
+      "_vertices": [
+        [
+          -65000,
+          -49000,
+          -80
+        ],
+        [
+          65000,
+          -49000,
+          -80
+        ],
+        [
+          65000,
+          49000,
+          -80
+        ],
+        [
+          -65000,
+          49000,
+          -80
+        ],
+        [
+          -65000,
+          -49000,
+          0
+        ],
+        [
+          65000,
+          -49000,
+          0
+        ],
+        [
+          65000,
+          49000,
+          0
+        ],
+        [
+          -65000,
+          49000,
+          0
+        ]
+      ],
+      "_orientation": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "qa": {
+        "role": "site_boundary",
+        "part_id": "site_boundary",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "reference_only",
+        "evidence_sources": [
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png",
+            "status": "observed",
+            "confidence": 0.54,
+            "note": "R7 campus-layout template candidate for the oblique site extent.",
+            "observation_id": "building_oblique_site_boundary",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.72,
+            "note": "R7 campus-layout template candidate for the full industrial site boundary.",
+            "observation_id": "building_top_site_boundary",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
+          },
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png",
+            "status": "observed",
+            "confidence": 0.54,
+            "note": "R7 campus-layout template candidate for the oblique site extent.",
+            "observation_id": "building_oblique_site_boundary",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
+          },
+          {
+            "kind": "parameter_proposal_review",
+            "status": "manual_confirmed",
+            "confidence": 0.54,
+            "note": "accepted_part_candidate_proposal: Accept the reviewed VisualRelationGraph tree-row candidate as an editable landscape marker while preserving the site boundary."
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.62,
+        "review_required": false,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "profile_prior",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_site_boundary",
+          "building_top_site_boundary"
+        ],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "grounding_v3_decision": "review_candidate",
+        "grounding_region_id": "site_boundary",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "no matching GroundPlan region was found"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.35,
+        "parameter_proposal_applied": true,
+        "part_candidate_parent": true,
+        "promoted_candidate_part_ids": [
+          "tree_row_south"
+        ],
+        "last_correction_rule": "accepted_part_candidate_proposal"
+      }
+    },
+    {
+      "id": "primary_blue_roof_hall",
+      "name": "Primary_Blue_Roof_Hall_Massing",
+      "kind": "box",
+      "faces": 6,
+      "edges": 12,
+      "material": "Campus_Blue_Roof",
+      "transform": {
+        "translate": [
+          0,
+          0,
+          0
+        ],
+        "rotateZ": 0
+      },
+      "bounding_box": {
+        "min": [
+          -7527.2,
+          -13657.9,
+          0
+        ],
+        "max": [
+          26245.499999999996,
+          43008.799999999996,
+          16500
+        ],
+        "w": 33772.7,
+        "d": 56666.7,
+        "h": 16500
+      },
+      "_vertices": [
+        [
+          -7527.2,
+          -13657.9,
+          0
+        ],
+        [
+          26245.499999999996,
+          -13657.9,
+          0
+        ],
+        [
+          26245.499999999996,
+          43008.799999999996,
+          0
+        ],
+        [
+          -7527.2,
+          43008.799999999996,
+          0
+        ],
+        [
+          -7527.2,
+          -13657.9,
+          16500
+        ],
+        [
+          26245.499999999996,
+          -13657.9,
+          16500
+        ],
+        [
+          26245.499999999996,
+          43008.799999999996,
+          16500
+        ],
+        [
+          -7527.2,
+          43008.799999999996,
+          16500
+        ]
+      ],
+      "_orientation": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "qa": {
+        "role": "production_hall",
+        "part_id": "primary_blue_roof_hall",
+        "intent": "building",
+        "evidence_status": "inferred",
+        "fallback_state": "box_approximation",
+        "evidence_sources": [
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png",
+            "status": "observed",
+            "confidence": 0.6,
+            "note": "R7 campus-layout prior for blue-roof hall massing in oblique view.",
+            "observation_id": "building_oblique_primary_blue_hall",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.86,
+            "note": "Pixel-grounded top-view footprint from blue_roof_largest_component; used for position/proportion grounding before layout priors.",
+            "observation_id": "building_top_primary_blue_hall_pixel",
+            "grounding": {
+              "method": "pixel_color_segmentation",
+              "mask": "blue_roof_largest_component",
+              "contour_basis": "sampled_mask_contour",
+              "grounding_quality": {
+                "version": 1,
+                "status": "accepted",
+                "raw_to_evidence_bbox_ratio": null,
+                "prior_to_evidence_bbox_ratio": null,
+                "bbox_proxy": true,
+                "review_required": false,
+                "reasons": []
+              },
+              "review_required": false
+            }
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.74,
+            "note": "R7 campus-layout prior for the primary blue-roof hall footprint.",
+            "observation_id": "building_top_primary_blue_hall",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
+          },
+          {
+            "kind": "center_point",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.66,
+            "note": "Center keypoint for primary blue-roof hall massing review.",
+            "observation_id": "building_top_blue_hall_center"
+          },
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png",
+            "status": "observed",
+            "confidence": 0.6,
+            "note": "R7 campus-layout prior for blue-roof hall massing in oblique view.",
+            "observation_id": "building_oblique_primary_blue_hall",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.58,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_primary_blue_hall",
+          "building_top_primary_blue_hall_pixel",
+          "building_top_primary_blue_hall",
+          "building_top_blue_hall_center"
+        ],
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "detail_review_required": true,
+        "roofline_review_required": true,
+        "facade_review_required": true,
+        "opening_review_required": true,
+        "grounding_v3_decision": "promoted_geometry",
+        "grounding_region_id": "primary_blue_roof_hall",
+        "grounding_region_class": "building_footprint",
+        "grounding_v3_reasons": [],
+        "top_view_overlay_residual": {
+          "mask_iou": 1,
+          "centroid_error_norm": 0
+        },
+        "promotion_confidence": 0.9
+      }
+    },
+    {
+      "id": "utility_building",
+      "name": "Utility_Building_Massing",
+      "kind": "box",
+      "faces": 6,
+      "edges": 12,
+      "material": "Campus_Utility_Gray",
+      "transform": {
+        "translate": [
+          0,
+          0,
+          0
+        ],
+        "rotateZ": 0
+      },
+      "bounding_box": {
+        "min": [
+          35242.2,
+          -15817.6,
+          0
+        ],
+        "max": [
+          56420.1,
+          6533.300000000001,
+          7600
+        ],
+        "w": 21177.9,
+        "d": 22350.9,
+        "h": 7600
+      },
+      "_vertices": [
+        [
+          35242.2,
+          -15817.6,
+          0
+        ],
+        [
+          56420.1,
+          -15817.6,
+          0
+        ],
+        [
+          56420.1,
+          6533.300000000001,
+          0
+        ],
+        [
+          35242.2,
+          6533.300000000001,
+          0
+        ],
+        [
+          35242.2,
+          -15817.6,
+          7600
+        ],
+        [
+          56420.1,
+          -15817.6,
+          7600
+        ],
+        [
+          56420.1,
+          6533.300000000001,
+          7600
+        ],
+        [
+          35242.2,
+          6533.300000000001,
+          7600
+        ]
+      ],
+      "_orientation": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "qa": {
+        "role": "utility_building",
+        "part_id": "utility_building",
+        "intent": "building",
+        "evidence_status": "inferred",
+        "fallback_state": "box_approximation",
+        "evidence_sources": [
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png",
+            "status": "observed",
+            "confidence": 0.52,
+            "note": "R7 campus-layout prior for right-side utility/mechanical building in oblique view.",
+            "observation_id": "building_oblique_utility_building",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.6599999999999999,
+            "note": "R7 campus-layout prior for the right-side utility/mechanical building.",
+            "observation_id": "building_top_utility_building",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
+          },
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png",
+            "status": "observed",
+            "confidence": 0.52,
+            "note": "R7 campus-layout prior for right-side utility/mechanical building in oblique view.",
+            "observation_id": "building_oblique_utility_building",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.58,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "profile_prior",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_utility_building",
+          "building_top_utility_building"
+        ],
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "detail_review_required": true,
+        "roofline_review_required": true,
+        "facade_review_required": true,
+        "opening_review_required": true,
+        "grounding_v3_decision": "promoted_geometry",
+        "grounding_region_id": "utility_building",
+        "grounding_region_class": "building_footprint",
+        "grounding_v3_reasons": [
+          "source_observation_still_review_required"
+        ],
+        "top_view_overlay_residual": {
+          "mask_iou": 1,
+          "centroid_error_norm": 0
+        },
+        "promotion_confidence": 0.83
+      }
+    },
+    {
+      "id": "admin_office",
+      "name": "Admin_Office_Massing",
+      "kind": "box",
+      "faces": 6,
+      "edges": 12,
+      "material": "Campus_Office_Light",
+      "transform": {
+        "translate": [
+          0,
+          0,
+          0
+        ],
+        "rotateZ": 0
+      },
+      "bounding_box": {
+        "min": [
+          -9937.4,
+          -37050.9,
+          0
+        ],
+        "max": [
+          11240.500000000002,
+          -22522.800000000003,
+          6800
+        ],
+        "w": 21177.9,
+        "d": 14528.099999999999,
+        "h": 6800
+      },
+      "_vertices": [
+        [
+          -9937.4,
+          -37050.9,
+          0
+        ],
+        [
+          11240.500000000002,
+          -37050.9,
+          0
+        ],
+        [
+          11240.500000000002,
+          -22522.800000000003,
+          0
+        ],
+        [
+          -9937.4,
+          -22522.800000000003,
+          0
+        ],
+        [
+          -9937.4,
+          -37050.9,
+          6800
+        ],
+        [
+          11240.500000000002,
+          -37050.9,
+          6800
+        ],
+        [
+          11240.500000000002,
+          -22522.800000000003,
+          6800
+        ],
+        [
+          -9937.4,
+          -22522.800000000003,
+          6800
+        ]
+      ],
+      "_orientation": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "qa": {
+        "role": "admin_office",
+        "part_id": "admin_office",
+        "intent": "building",
+        "evidence_status": "inferred",
+        "fallback_state": "box_approximation",
+        "evidence_sources": [
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png",
+            "status": "observed",
+            "confidence": 0.5,
+            "note": "R7 campus-layout prior for lower admin/office block in oblique view.",
+            "observation_id": "building_oblique_admin_office",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.6399999999999999,
+            "note": "R7 campus-layout prior for the low admin/office block near the lower center of the campus.",
+            "observation_id": "building_top_admin_office",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
+          },
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png",
+            "status": "observed",
+            "confidence": 0.5,
+            "note": "R7 campus-layout prior for lower admin/office block in oblique view.",
+            "observation_id": "building_oblique_admin_office",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.58,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "profile_prior",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_admin_office",
+          "building_top_admin_office"
+        ],
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "detail_review_required": true,
+        "roofline_review_required": true,
+        "facade_review_required": true,
+        "opening_review_required": true,
+        "grounding_v3_decision": "promoted_geometry",
+        "grounding_region_id": "admin_office",
+        "grounding_region_class": "building_footprint",
+        "grounding_v3_reasons": [
+          "source_observation_still_review_required"
+        ],
+        "top_view_overlay_residual": {
+          "mask_iou": 1,
+          "centroid_error_norm": 0
+        },
+        "promotion_confidence": 0.82
+      }
+    },
+    {
+      "id": "parking_lot",
+      "name": "Parking_Lot_Flat_Massing",
+      "kind": "box",
+      "faces": 6,
+      "edges": 12,
+      "material": "Campus_Parking_Asphalt",
+      "transform": {
+        "translate": [
+          0,
+          0,
+          0
+        ],
+        "rotateZ": 0
+      },
+      "bounding_box": {
+        "min": [
+          14064.3,
+          -42638.6,
+          0
+        ],
+        "max": [
+          59243.899999999994,
+          -21405.3,
+          80
+        ],
+        "w": 45179.59999999999,
+        "d": 21233.3,
+        "h": 80
+      },
+      "_vertices": [
+        [
+          14064.3,
+          -42638.6,
+          0
+        ],
+        [
+          59243.899999999994,
+          -42638.6,
+          0
+        ],
+        [
+          59243.899999999994,
+          -21405.3,
+          0
+        ],
+        [
+          14064.3,
+          -21405.3,
+          0
+        ],
+        [
+          14064.3,
+          -42638.6,
+          80
+        ],
+        [
+          59243.899999999994,
+          -42638.6,
+          80
+        ],
+        [
+          59243.899999999994,
+          -21405.3,
+          80
+        ],
+        [
+          14064.3,
+          -21405.3,
+          80
+        ]
+      ],
+      "_orientation": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "qa": {
+        "role": "parking_lot",
+        "part_id": "parking_lot",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png",
+            "status": "observed",
+            "confidence": 0.52,
+            "note": "R7 campus-layout prior for parking lot in oblique view.",
+            "observation_id": "building_oblique_parking_lot",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.72,
+            "note": "R7 campus-layout prior for the parking lot footprint.",
+            "observation_id": "building_top_parking_lot",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
+          },
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png",
+            "status": "observed",
+            "confidence": 0.52,
+            "note": "R7 campus-layout prior for parking lot in oblique view.",
+            "observation_id": "building_oblique_parking_lot",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
+          },
+          {
+            "kind": "parameter_proposal_review",
+            "status": "manual_confirmed",
+            "confidence": 0.553,
+            "note": "accepted_part_candidate_proposal: Accept the reviewed VisualRelationGraph parking-stall row and drive-aisle candidates as editable surface-marking parts while preserving the parking-lot base surface."
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.58,
+        "review_required": false,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_parking_lot",
+          "building_top_parking_lot"
+        ],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "grounding_v3_decision": "review_candidate",
+        "grounding_region_id": "parking_lot",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "no matching GroundPlan region was found"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.35,
+        "parameter_proposal_applied": true,
+        "part_candidate_parent": true,
+        "promoted_candidate_part_ids": [
+          "parking_stall_row_north",
+          "parking_stall_row_south",
+          "parking_drive_aisle_center"
+        ],
+        "last_correction_rule": "accepted_part_candidate_proposal"
+      }
+    },
+    {
+      "id": "internal_roads",
+      "name": "Internal_Roads_Flat_Massing",
+      "kind": "box",
+      "faces": 6,
+      "edges": 12,
+      "material": "Campus_Road_Asphalt",
+      "transform": {
+        "translate": [
+          0,
+          0,
+          0
+        ],
+        "rotateZ": 0
+      },
+      "bounding_box": {
+        "min": [
+          -63588.1,
+          -43756.1,
+          0
+        ],
+        "max": [
+          62067.6,
+          45647.4,
+          70
+        ],
+        "w": 125655.7,
+        "d": 89403.5,
+        "h": 70
+      },
+      "_vertices": [
+        [
+          -63588.1,
+          -43756.1,
+          0
+        ],
+        [
+          62067.6,
+          -43756.1,
+          0
+        ],
+        [
+          62067.6,
+          45647.4,
+          0
+        ],
+        [
+          -63588.1,
+          45647.4,
+          0
+        ],
+        [
+          -63588.1,
+          -43756.1,
+          70
+        ],
+        [
+          62067.6,
+          -43756.1,
+          70
+        ],
+        [
+          62067.6,
+          45647.4,
+          70
+        ],
+        [
+          -63588.1,
+          45647.4,
+          70
+        ]
+      ],
+      "_orientation": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "qa": {
+        "role": "internal_roads",
+        "part_id": "internal_roads",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png",
+            "status": "observed",
+            "confidence": 0.45,
+            "note": "R7 campus-layout prior for paved circulation in oblique view.",
+            "observation_id": "building_oblique_internal_roads",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.5800000000000001,
+            "note": "R7 campus-layout prior for internal road loops and paved circulation.",
+            "observation_id": "building_top_internal_roads",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
+          },
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png",
+            "status": "observed",
+            "confidence": 0.45,
+            "note": "R7 campus-layout prior for paved circulation in oblique view.",
+            "observation_id": "building_oblique_internal_roads",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.58,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_internal_roads",
+          "building_top_internal_roads"
+        ],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "grounding_v3_decision": "review_candidate",
+        "grounding_region_id": "internal_roads",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "no matching GroundPlan region was found"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.35
+      }
+    },
+    {
+      "id": "tank_farm",
+      "name": "Tank_Farm_West_Silo",
+      "kind": "cylinder",
+      "faces": 92,
+      "edges": 154,
+      "material": "Campus_Tank_Metal",
+      "vertices": [
+        [
+          50377.4,
+          33354.4,
+          0
+        ],
+        [
+          50316.631527803256,
+          33971.392652408205,
+          0
+        ],
+        [
+          50136.661409520195,
+          34564.67462319783,
+          0
+        ],
+        [
+          49844.405795868035,
+          35111.446418947795,
+          0
+        ],
+        [
+          49451.09590618058,
+          35590.695906180576,
+          0
+        ],
+        [
+          48971.846418947796,
+          35984.00579586803,
+          0
+        ],
+        [
+          48425.074623197834,
+          36276.26140952019,
+          0
+        ],
+        [
+          47831.79265240821,
+          36456.231527803255,
+          0
+        ],
+        [
+          47214.8,
+          36517,
+          0
+        ],
+        [
+          46597.8073475918,
+          36456.231527803255,
+          0
+        ],
+        [
+          46004.52537680217,
+          36276.26140952019,
+          0
+        ],
+        [
+          45457.75358105221,
+          35984.00579586803,
+          0
+        ],
+        [
+          44978.50409381943,
+          35590.695906180576,
+          0
+        ],
+        [
+          44585.19420413197,
+          35111.446418947795,
+          0
+        ],
+        [
+          44292.93859047981,
+          34564.67462319783,
+          0
+        ],
+        [
+          44112.96847219675,
+          33971.39265240821,
+          0
+        ],
+        [
+          44052.200000000004,
+          33354.4,
+          0
+        ],
+        [
+          44112.96847219675,
+          32737.407347591794,
+          0
+        ],
+        [
+          44292.93859047981,
+          32144.12537680217,
+          0
+        ],
+        [
+          44585.19420413197,
+          31597.353581052208,
+          0
+        ],
+        [
+          44978.50409381943,
+          31118.104093819427,
+          0
+        ],
+        [
+          45457.75358105221,
+          30724.794204131973,
+          0
+        ],
+        [
+          46004.525376802165,
+          30432.538590479806,
+          0
+        ],
+        [
+          46597.80734759179,
+          30252.568472196745,
+          0
+        ],
+        [
+          47214.8,
+          30191.800000000003,
+          0
+        ],
+        [
+          47831.79265240821,
+          30252.568472196745,
+          0
+        ],
+        [
+          48425.074623197834,
+          30432.538590479806,
+          0
+        ],
+        [
+          48971.846418947796,
+          30724.79420413197,
+          0
+        ],
+        [
+          49451.09590618058,
+          31118.104093819427,
+          0
+        ],
+        [
+          49844.405795868035,
+          31597.353581052208,
+          0
+        ],
+        [
+          50136.661409520195,
+          32144.125376802167,
+          0
+        ],
+        [
+          50316.631527803256,
+          32737.407347591794,
+          0
+        ],
+        [
+          50377.4,
+          33354.4,
+          14000
+        ],
+        [
+          50316.631527803256,
+          33971.392652408205,
+          14000
+        ],
+        [
+          50136.661409520195,
+          34564.67462319783,
+          14000
+        ],
+        [
+          49844.405795868035,
+          35111.446418947795,
+          14000
+        ],
+        [
+          49451.09590618058,
+          35590.695906180576,
+          14000
+        ],
+        [
+          48971.846418947796,
+          35984.00579586803,
+          14000
+        ],
+        [
+          48425.074623197834,
+          36276.26140952019,
+          14000
+        ],
+        [
+          47831.79265240821,
+          36456.231527803255,
+          14000
+        ],
+        [
+          47214.8,
+          36517,
+          14000
+        ],
+        [
+          46597.8073475918,
+          36456.231527803255,
+          14000
+        ],
+        [
+          46004.52537680217,
+          36276.26140952019,
+          14000
+        ],
+        [
+          45457.75358105221,
+          35984.00579586803,
+          14000
+        ],
+        [
+          44978.50409381943,
+          35590.695906180576,
+          14000
+        ],
+        [
+          44585.19420413197,
+          35111.446418947795,
+          14000
+        ],
+        [
+          44292.93859047981,
+          34564.67462319783,
+          14000
+        ],
+        [
+          44112.96847219675,
+          33971.39265240821,
+          14000
+        ],
+        [
+          44052.200000000004,
+          33354.4,
+          14000
+        ],
+        [
+          44112.96847219675,
+          32737.407347591794,
+          14000
+        ],
+        [
+          44292.93859047981,
+          32144.12537680217,
+          14000
+        ],
+        [
+          44585.19420413197,
+          31597.353581052208,
+          14000
+        ],
+        [
+          44978.50409381943,
+          31118.104093819427,
+          14000
+        ],
+        [
+          45457.75358105221,
+          30724.794204131973,
+          14000
+        ],
+        [
+          46004.525376802165,
+          30432.538590479806,
+          14000
+        ],
+        [
+          46597.80734759179,
+          30252.568472196745,
+          14000
+        ],
+        [
+          47214.8,
+          30191.800000000003,
+          14000
+        ],
+        [
+          47831.79265240821,
+          30252.568472196745,
+          14000
+        ],
+        [
+          48425.074623197834,
+          30432.538590479806,
+          14000
+        ],
+        [
+          48971.846418947796,
+          30724.79420413197,
+          14000
+        ],
+        [
+          49451.09590618058,
+          31118.104093819427,
+          14000
+        ],
+        [
+          49844.405795868035,
+          31597.353581052208,
+          14000
+        ],
+        [
+          50136.661409520195,
+          32144.125376802167,
+          14000
+        ],
+        [
+          50316.631527803256,
+          32737.407347591794,
+          14000
+        ]
+      ],
+      "mesh_faces": [
+        [
+          0,
+          2,
+          1
+        ],
+        [
+          0,
+          3,
+          2
+        ],
+        [
+          0,
+          4,
+          3
+        ],
+        [
+          0,
+          5,
+          4
+        ],
+        [
+          0,
+          6,
+          5
+        ],
+        [
+          0,
+          7,
+          6
+        ],
+        [
+          0,
+          8,
+          7
+        ],
+        [
+          0,
+          9,
+          8
+        ],
+        [
+          0,
+          10,
+          9
+        ],
+        [
+          0,
+          11,
+          10
+        ],
+        [
+          0,
+          12,
+          11
+        ],
+        [
+          0,
+          13,
+          12
+        ],
+        [
+          0,
+          14,
+          13
+        ],
+        [
+          0,
+          15,
+          14
+        ],
+        [
+          0,
+          16,
+          15
+        ],
+        [
+          0,
+          17,
+          16
+        ],
+        [
+          0,
+          18,
+          17
+        ],
+        [
+          0,
+          19,
+          18
+        ],
+        [
+          0,
+          20,
+          19
+        ],
+        [
+          0,
+          21,
+          20
+        ],
+        [
+          0,
+          22,
+          21
+        ],
+        [
+          0,
+          23,
+          22
+        ],
+        [
+          0,
+          24,
+          23
+        ],
+        [
+          0,
+          25,
+          24
+        ],
+        [
+          0,
+          26,
+          25
+        ],
+        [
+          0,
+          27,
+          26
+        ],
+        [
+          0,
+          28,
+          27
+        ],
+        [
+          0,
+          29,
+          28
+        ],
+        [
+          0,
+          30,
+          29
+        ],
+        [
+          0,
+          31,
+          30
+        ],
+        [
+          32,
+          33,
+          34
+        ],
+        [
+          32,
+          34,
+          35
+        ],
+        [
+          32,
+          35,
+          36
+        ],
+        [
+          32,
+          36,
+          37
+        ],
+        [
+          32,
+          37,
+          38
+        ],
+        [
+          32,
+          38,
+          39
+        ],
+        [
+          32,
+          39,
+          40
+        ],
+        [
+          32,
+          40,
+          41
+        ],
+        [
+          32,
+          41,
+          42
+        ],
+        [
+          32,
+          42,
+          43
+        ],
+        [
+          32,
+          43,
+          44
+        ],
+        [
+          32,
+          44,
+          45
+        ],
+        [
+          32,
+          45,
+          46
+        ],
+        [
+          32,
+          46,
+          47
+        ],
+        [
+          32,
+          47,
+          48
+        ],
+        [
+          32,
+          48,
+          49
+        ],
+        [
+          32,
+          49,
+          50
+        ],
+        [
+          32,
+          50,
+          51
+        ],
+        [
+          32,
+          51,
+          52
+        ],
+        [
+          32,
+          52,
+          53
+        ],
+        [
+          32,
+          53,
+          54
+        ],
+        [
+          32,
+          54,
+          55
+        ],
+        [
+          32,
+          55,
+          56
+        ],
+        [
+          32,
+          56,
+          57
+        ],
+        [
+          32,
+          57,
+          58
+        ],
+        [
+          32,
+          58,
+          59
+        ],
+        [
+          32,
+          59,
+          60
+        ],
+        [
+          32,
+          60,
+          61
+        ],
+        [
+          32,
+          61,
+          62
+        ],
+        [
+          32,
+          62,
+          63
+        ],
+        [
+          0,
+          1,
+          33,
+          32
+        ],
+        [
+          1,
+          2,
+          34,
+          33
+        ],
+        [
+          2,
+          3,
+          35,
+          34
+        ],
+        [
+          3,
+          4,
+          36,
+          35
+        ],
+        [
+          4,
+          5,
+          37,
+          36
+        ],
+        [
+          5,
+          6,
+          38,
+          37
+        ],
+        [
+          6,
+          7,
+          39,
+          38
+        ],
+        [
+          7,
+          8,
+          40,
+          39
+        ],
+        [
+          8,
+          9,
+          41,
+          40
+        ],
+        [
+          9,
+          10,
+          42,
+          41
+        ],
+        [
+          10,
+          11,
+          43,
+          42
+        ],
+        [
+          11,
+          12,
+          44,
+          43
+        ],
+        [
+          12,
+          13,
+          45,
+          44
+        ],
+        [
+          13,
+          14,
+          46,
+          45
+        ],
+        [
+          14,
+          15,
+          47,
+          46
+        ],
+        [
+          15,
+          16,
+          48,
+          47
+        ],
+        [
+          16,
+          17,
+          49,
+          48
+        ],
+        [
+          17,
+          18,
+          50,
+          49
+        ],
+        [
+          18,
+          19,
+          51,
+          50
+        ],
+        [
+          19,
+          20,
+          52,
+          51
+        ],
+        [
+          20,
+          21,
+          53,
+          52
+        ],
+        [
+          21,
+          22,
+          54,
+          53
+        ],
+        [
+          22,
+          23,
+          55,
+          54
+        ],
+        [
+          23,
+          24,
+          56,
+          55
+        ],
+        [
+          24,
+          25,
+          57,
+          56
+        ],
+        [
+          25,
+          26,
+          58,
+          57
+        ],
+        [
+          26,
+          27,
+          59,
+          58
+        ],
+        [
+          27,
+          28,
+          60,
+          59
+        ],
+        [
+          28,
+          29,
+          61,
+          60
+        ],
+        [
+          29,
+          30,
+          62,
+          61
+        ],
+        [
+          30,
+          31,
+          63,
+          62
+        ],
+        [
+          31,
+          0,
+          32,
+          63
+        ]
+      ],
+      "transform": {
+        "translate": [
+          0,
+          0,
+          0
+        ],
+        "rotateZ": 0
+      },
+      "smooth": "all",
+      "bounding_box": {
+        "min": [
+          44052.200000000004,
+          30191.800000000003,
+          0
+        ],
+        "max": [
+          50377.4,
+          36517,
+          14000
+        ],
+        "w": 6325.199999999997,
+        "d": 6325.199999999997,
+        "h": 14000
+      },
+      "qa": {
+        "role": "tank_farm",
+        "part_id": "tank_farm",
+        "intent": "tank",
+        "evidence_status": "inferred",
+        "fallback_state": "structured_primitive",
+        "evidence_sources": [
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png",
+            "status": "observed",
+            "confidence": 0.54,
+            "note": "R7 campus-layout prior for cylindrical tanks in oblique view.",
+            "observation_id": "building_oblique_tank_farm",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.7,
+            "note": "R7 campus-layout prior for the cylindrical tank farm.",
+            "observation_id": "building_top_tank_farm",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
+          },
+          {
+            "kind": "center_point",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.58,
+            "note": "Center keypoint for tank farm massing review.",
+            "observation_id": "building_top_tank_farm_center"
+          },
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png",
+            "status": "observed",
+            "confidence": 0.54,
+            "note": "R7 campus-layout prior for cylindrical tanks in oblique view.",
+            "observation_id": "building_oblique_tank_farm",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.56,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_tank_farm",
+          "building_top_tank_farm",
+          "building_top_tank_farm_center"
+        ],
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "grounding_v3_decision": "helper_only",
+        "grounding_region_id": "tank_farm",
+        "grounding_region_class": "service_yard",
+        "grounding_v3_reasons": [
+          "non-structural site detail remains helper/review geometry in R9"
+        ],
+        "top_view_overlay_residual": {
+          "mask_iou": 1,
+          "centroid_error_norm": 0
+        },
+        "promotion_confidence": 0.49
+      },
+      "segments": 32
+    },
+    {
+      "id": "tank_farm_silo_east",
+      "name": "Tank_Farm_East_Silo",
+      "kind": "cylinder",
+      "faces": 92,
+      "edges": 154,
+      "material": "Campus_Tank_Metal",
+      "vertices": [
+        [
+          57493.1,
+          33354.4,
+          0
+        ],
+        [
+          57432.33152780325,
+          33971.392652408205,
+          0
+        ],
+        [
+          57252.36140952019,
+          34564.67462319783,
+          0
+        ],
+        [
+          56960.10579586803,
+          35111.446418947795,
+          0
+        ],
+        [
+          56566.795906180574,
+          35590.695906180576,
+          0
+        ],
+        [
+          56087.54641894779,
+          35984.00579586803,
+          0
+        ],
+        [
+          55540.77462319783,
+          36276.26140952019,
+          0
+        ],
+        [
+          54947.492652408204,
+          36456.231527803255,
+          0
+        ],
+        [
+          54330.5,
+          36517,
+          0
+        ],
+        [
+          53713.507347591796,
+          36456.231527803255,
+          0
+        ],
+        [
+          53120.22537680217,
+          36276.26140952019,
+          0
+        ],
+        [
+          52573.45358105221,
+          35984.00579586803,
+          0
+        ],
+        [
+          52094.204093819426,
+          35590.695906180576,
+          0
+        ],
+        [
+          51700.89420413197,
+          35111.446418947795,
+          0
+        ],
+        [
+          51408.63859047981,
+          34564.67462319783,
+          0
+        ],
+        [
+          51228.66847219675,
+          33971.39265240821,
+          0
+        ],
+        [
+          51167.9,
+          33354.4,
+          0
+        ],
+        [
+          51228.66847219675,
+          32737.407347591794,
+          0
+        ],
+        [
+          51408.63859047981,
+          32144.12537680217,
+          0
+        ],
+        [
+          51700.89420413197,
+          31597.353581052208,
+          0
+        ],
+        [
+          52094.204093819426,
+          31118.104093819427,
+          0
+        ],
+        [
+          52573.45358105221,
+          30724.794204131973,
+          0
+        ],
+        [
+          53120.22537680216,
+          30432.538590479806,
+          0
+        ],
+        [
+          53713.50734759179,
+          30252.568472196745,
+          0
+        ],
+        [
+          54330.5,
+          30191.800000000003,
+          0
+        ],
+        [
+          54947.492652408204,
+          30252.568472196745,
+          0
+        ],
+        [
+          55540.77462319783,
+          30432.538590479806,
+          0
+        ],
+        [
+          56087.54641894779,
+          30724.79420413197,
+          0
+        ],
+        [
+          56566.795906180574,
+          31118.104093819427,
+          0
+        ],
+        [
+          56960.10579586803,
+          31597.353581052208,
+          0
+        ],
+        [
+          57252.36140952019,
+          32144.125376802167,
+          0
+        ],
+        [
+          57432.33152780325,
+          32737.407347591794,
+          0
+        ],
+        [
+          57493.1,
+          33354.4,
+          14000
+        ],
+        [
+          57432.33152780325,
+          33971.392652408205,
+          14000
+        ],
+        [
+          57252.36140952019,
+          34564.67462319783,
+          14000
+        ],
+        [
+          56960.10579586803,
+          35111.446418947795,
+          14000
+        ],
+        [
+          56566.795906180574,
+          35590.695906180576,
+          14000
+        ],
+        [
+          56087.54641894779,
+          35984.00579586803,
+          14000
+        ],
+        [
+          55540.77462319783,
+          36276.26140952019,
+          14000
+        ],
+        [
+          54947.492652408204,
+          36456.231527803255,
+          14000
+        ],
+        [
+          54330.5,
+          36517,
+          14000
+        ],
+        [
+          53713.507347591796,
+          36456.231527803255,
+          14000
+        ],
+        [
+          53120.22537680217,
+          36276.26140952019,
+          14000
+        ],
+        [
+          52573.45358105221,
+          35984.00579586803,
+          14000
+        ],
+        [
+          52094.204093819426,
+          35590.695906180576,
+          14000
+        ],
+        [
+          51700.89420413197,
+          35111.446418947795,
+          14000
+        ],
+        [
+          51408.63859047981,
+          34564.67462319783,
+          14000
+        ],
+        [
+          51228.66847219675,
+          33971.39265240821,
+          14000
+        ],
+        [
+          51167.9,
+          33354.4,
+          14000
+        ],
+        [
+          51228.66847219675,
+          32737.407347591794,
+          14000
+        ],
+        [
+          51408.63859047981,
+          32144.12537680217,
+          14000
+        ],
+        [
+          51700.89420413197,
+          31597.353581052208,
+          14000
+        ],
+        [
+          52094.204093819426,
+          31118.104093819427,
+          14000
+        ],
+        [
+          52573.45358105221,
+          30724.794204131973,
+          14000
+        ],
+        [
+          53120.22537680216,
+          30432.538590479806,
+          14000
+        ],
+        [
+          53713.50734759179,
+          30252.568472196745,
+          14000
+        ],
+        [
+          54330.5,
+          30191.800000000003,
+          14000
+        ],
+        [
+          54947.492652408204,
+          30252.568472196745,
+          14000
+        ],
+        [
+          55540.77462319783,
+          30432.538590479806,
+          14000
+        ],
+        [
+          56087.54641894779,
+          30724.79420413197,
+          14000
+        ],
+        [
+          56566.795906180574,
+          31118.104093819427,
+          14000
+        ],
+        [
+          56960.10579586803,
+          31597.353581052208,
+          14000
+        ],
+        [
+          57252.36140952019,
+          32144.125376802167,
+          14000
+        ],
+        [
+          57432.33152780325,
+          32737.407347591794,
+          14000
+        ]
+      ],
+      "mesh_faces": [
+        [
+          0,
+          2,
+          1
+        ],
+        [
+          0,
+          3,
+          2
+        ],
+        [
+          0,
+          4,
+          3
+        ],
+        [
+          0,
+          5,
+          4
+        ],
+        [
+          0,
+          6,
+          5
+        ],
+        [
+          0,
+          7,
+          6
+        ],
+        [
+          0,
+          8,
+          7
+        ],
+        [
+          0,
+          9,
+          8
+        ],
+        [
+          0,
+          10,
+          9
+        ],
+        [
+          0,
+          11,
+          10
+        ],
+        [
+          0,
+          12,
+          11
+        ],
+        [
+          0,
+          13,
+          12
+        ],
+        [
+          0,
+          14,
+          13
+        ],
+        [
+          0,
+          15,
+          14
+        ],
+        [
+          0,
+          16,
+          15
+        ],
+        [
+          0,
+          17,
+          16
+        ],
+        [
+          0,
+          18,
+          17
+        ],
+        [
+          0,
+          19,
+          18
+        ],
+        [
+          0,
+          20,
+          19
+        ],
+        [
+          0,
+          21,
+          20
+        ],
+        [
+          0,
+          22,
+          21
+        ],
+        [
+          0,
+          23,
+          22
+        ],
+        [
+          0,
+          24,
+          23
+        ],
+        [
+          0,
+          25,
+          24
+        ],
+        [
+          0,
+          26,
+          25
+        ],
+        [
+          0,
+          27,
+          26
+        ],
+        [
+          0,
+          28,
+          27
+        ],
+        [
+          0,
+          29,
+          28
+        ],
+        [
+          0,
+          30,
+          29
+        ],
+        [
+          0,
+          31,
+          30
+        ],
+        [
+          32,
+          33,
+          34
+        ],
+        [
+          32,
+          34,
+          35
+        ],
+        [
+          32,
+          35,
+          36
+        ],
+        [
+          32,
+          36,
+          37
+        ],
+        [
+          32,
+          37,
+          38
+        ],
+        [
+          32,
+          38,
+          39
+        ],
+        [
+          32,
+          39,
+          40
+        ],
+        [
+          32,
+          40,
+          41
+        ],
+        [
+          32,
+          41,
+          42
+        ],
+        [
+          32,
+          42,
+          43
+        ],
+        [
+          32,
+          43,
+          44
+        ],
+        [
+          32,
+          44,
+          45
+        ],
+        [
+          32,
+          45,
+          46
+        ],
+        [
+          32,
+          46,
+          47
+        ],
+        [
+          32,
+          47,
+          48
+        ],
+        [
+          32,
+          48,
+          49
+        ],
+        [
+          32,
+          49,
+          50
+        ],
+        [
+          32,
+          50,
+          51
+        ],
+        [
+          32,
+          51,
+          52
+        ],
+        [
+          32,
+          52,
+          53
+        ],
+        [
+          32,
+          53,
+          54
+        ],
+        [
+          32,
+          54,
+          55
+        ],
+        [
+          32,
+          55,
+          56
+        ],
+        [
+          32,
+          56,
+          57
+        ],
+        [
+          32,
+          57,
+          58
+        ],
+        [
+          32,
+          58,
+          59
+        ],
+        [
+          32,
+          59,
+          60
+        ],
+        [
+          32,
+          60,
+          61
+        ],
+        [
+          32,
+          61,
+          62
+        ],
+        [
+          32,
+          62,
+          63
+        ],
+        [
+          0,
+          1,
+          33,
+          32
+        ],
+        [
+          1,
+          2,
+          34,
+          33
+        ],
+        [
+          2,
+          3,
+          35,
+          34
+        ],
+        [
+          3,
+          4,
+          36,
+          35
+        ],
+        [
+          4,
+          5,
+          37,
+          36
+        ],
+        [
+          5,
+          6,
+          38,
+          37
+        ],
+        [
+          6,
+          7,
+          39,
+          38
+        ],
+        [
+          7,
+          8,
+          40,
+          39
+        ],
+        [
+          8,
+          9,
+          41,
+          40
+        ],
+        [
+          9,
+          10,
+          42,
+          41
+        ],
+        [
+          10,
+          11,
+          43,
+          42
+        ],
+        [
+          11,
+          12,
+          44,
+          43
+        ],
+        [
+          12,
+          13,
+          45,
+          44
+        ],
+        [
+          13,
+          14,
+          46,
+          45
+        ],
+        [
+          14,
+          15,
+          47,
+          46
+        ],
+        [
+          15,
+          16,
+          48,
+          47
+        ],
+        [
+          16,
+          17,
+          49,
+          48
+        ],
+        [
+          17,
+          18,
+          50,
+          49
+        ],
+        [
+          18,
+          19,
+          51,
+          50
+        ],
+        [
+          19,
+          20,
+          52,
+          51
+        ],
+        [
+          20,
+          21,
+          53,
+          52
+        ],
+        [
+          21,
+          22,
+          54,
+          53
+        ],
+        [
+          22,
+          23,
+          55,
+          54
+        ],
+        [
+          23,
+          24,
+          56,
+          55
+        ],
+        [
+          24,
+          25,
+          57,
+          56
+        ],
+        [
+          25,
+          26,
+          58,
+          57
+        ],
+        [
+          26,
+          27,
+          59,
+          58
+        ],
+        [
+          27,
+          28,
+          60,
+          59
+        ],
+        [
+          28,
+          29,
+          61,
+          60
+        ],
+        [
+          29,
+          30,
+          62,
+          61
+        ],
+        [
+          30,
+          31,
+          63,
+          62
+        ],
+        [
+          31,
+          0,
+          32,
+          63
+        ]
+      ],
+      "transform": {
+        "translate": [
+          0,
+          0,
+          0
+        ],
+        "rotateZ": 0
+      },
+      "smooth": "all",
+      "bounding_box": {
+        "min": [
+          51167.9,
+          30191.800000000003,
+          0
+        ],
+        "max": [
+          57493.1,
+          36517,
+          14000
+        ],
+        "w": 6325.199999999997,
+        "d": 6325.199999999997,
+        "h": 14000
+      },
+      "qa": {
+        "role": "tank",
+        "part_id": "tank_farm_silo_east",
+        "intent": "tank",
+        "evidence_status": "inferred",
+        "fallback_state": "structured_primitive",
+        "evidence_sources": [
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png",
+            "status": "observed",
+            "confidence": 0.54,
+            "note": "R7 campus-layout prior for cylindrical tanks in oblique view.",
+            "observation_id": "building_oblique_tank_farm",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.7,
+            "note": "R7 campus-layout prior for the cylindrical tank farm.",
+            "observation_id": "building_top_tank_farm",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
+          },
+          {
+            "kind": "center_point",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.58,
+            "note": "Center keypoint for tank farm massing review.",
+            "observation_id": "building_top_tank_farm_center"
+          },
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png",
+            "status": "observed",
+            "confidence": 0.54,
+            "note": "R7 campus-layout prior for cylindrical tanks in oblique view.",
+            "observation_id": "building_oblique_tank_farm",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.56,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_tank_farm",
+          "building_top_tank_farm",
+          "building_top_tank_farm_center"
+        ],
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "grounding_v3_decision": "review_candidate",
+        "grounding_region_id": "tank_farm_silo_east",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "no matching GroundPlan region was found"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.35
+      },
+      "segments": 32
+    },
+    {
+      "id": "scale_anchor_parking_bay_width_span",
+      "name": "Scale_Anchor_parking_bay_width_span",
+      "kind": "box",
+      "faces": 6,
+      "edges": 12,
+      "material": "Campus_Scale_Anchor",
+      "transform": {
+        "translate": [
+          0,
+          0,
+          0
+        ],
+        "rotateZ": 0
+      },
+      "bounding_box": {
+        "min": [
+          17169.7,
+          -30010.5,
+          120
+        ],
+        "max": [
+          51619.5,
+          -25317.5,
+          240
+        ],
+        "w": 34449.8,
+        "d": 4693,
+        "h": 120
+      },
+      "_vertices": [
+        [
+          17169.7,
+          -30010.5,
+          120
+        ],
+        [
+          51619.5,
+          -30010.5,
+          120
+        ],
+        [
+          51619.5,
+          -25317.5,
+          120
+        ],
+        [
+          17169.7,
+          -25317.5,
+          120
+        ],
+        [
+          17169.7,
+          -30010.5,
+          240
+        ],
+        [
+          51619.5,
+          -30010.5,
+          240
+        ],
+        [
+          51619.5,
+          -25317.5,
+          240
+        ],
+        [
+          17169.7,
+          -25317.5,
+          240
+        ]
+      ],
+      "_orientation": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "qa": {
+        "role": "scale_anchor",
+        "part_id": "scale_anchor_parking_bay_width_span",
+        "intent": "scale_anchor",
+        "evidence_status": "observed",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "known_element_scale_anchor",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.68,
+            "note": "parking_bay_width_span scale anchor requires user review before final scale acceptance."
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.68,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "scale_anchor",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "grounding_v3_decision": "helper_only",
+        "grounding_region_id": "scale_anchor_parking_bay_width_span",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "scale anchors are visual review helpers, not site geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.4
+      }
+    },
+    {
+      "id": "scale_anchor_parking_bay_single",
+      "name": "Scale_Anchor_parking_bay_single",
+      "kind": "box",
+      "faces": 6,
+      "edges": 12,
+      "material": "Campus_Scale_Anchor",
+      "transform": {
+        "translate": [
+          0,
+          0,
+          0
+        ],
+        "rotateZ": 0
+      },
+      "bounding_box": {
+        "min": [
+          17453,
+          -29228.1,
+          120
+        ],
+        "max": [
+          19995,
+          -23863.199999999997,
+          240
+        ],
+        "w": 2542,
+        "d": 5364.9000000000015,
+        "h": 120
+      },
+      "_vertices": [
+        [
+          17453,
+          -29228.1,
+          120
+        ],
+        [
+          19995,
+          -29228.1,
+          120
+        ],
+        [
+          19995,
+          -23863.199999999997,
+          120
+        ],
+        [
+          17453,
+          -23863.199999999997,
+          120
+        ],
+        [
+          17453,
+          -29228.1,
+          240
+        ],
+        [
+          19995,
+          -29228.1,
+          240
+        ],
+        [
+          19995,
+          -23863.199999999997,
+          240
+        ],
+        [
+          17453,
+          -23863.199999999997,
+          240
+        ]
+      ],
+      "_orientation": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "qa": {
+        "role": "scale_anchor",
+        "part_id": "scale_anchor_parking_bay_single",
+        "intent": "scale_anchor",
+        "evidence_status": "observed",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "known_element_scale_anchor",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.6,
+            "note": "parking_bay_single scale anchor requires user review before final scale acceptance."
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.6,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "scale_anchor",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "grounding_v3_decision": "helper_only",
+        "grounding_region_id": "scale_anchor_parking_bay_single",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "scale anchors are visual review helpers, not site geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.4
+      }
+    },
+    {
+      "id": "scale_anchor_parking_drive_aisle_width",
+      "name": "Scale_Anchor_parking_drive_aisle_width",
+      "kind": "box",
+      "faces": 6,
+      "edges": 12,
+      "material": "Campus_Scale_Anchor",
+      "transform": {
+        "translate": [
+          0,
+          0,
+          0
+        ],
+        "rotateZ": 0
+      },
+      "bounding_box": {
+        "min": [
+          15476.1,
+          -35152.7,
+          120
+        ],
+        "max": [
+          56420.1,
+          -28670.199999999997,
+          240
+        ],
+        "w": 40944,
+        "d": 6482.5,
+        "h": 120
+      },
+      "_vertices": [
+        [
+          15476.1,
+          -35152.7,
+          120
+        ],
+        [
+          56420.1,
+          -35152.7,
+          120
+        ],
+        [
+          56420.1,
+          -28670.199999999997,
+          120
+        ],
+        [
+          15476.1,
+          -28670.199999999997,
+          120
+        ],
+        [
+          15476.1,
+          -35152.7,
+          240
+        ],
+        [
+          56420.1,
+          -35152.7,
+          240
+        ],
+        [
+          56420.1,
+          -28670.199999999997,
+          240
+        ],
+        [
+          15476.1,
+          -28670.199999999997,
+          240
+        ]
+      ],
+      "_orientation": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "qa": {
+        "role": "scale_anchor",
+        "part_id": "scale_anchor_parking_drive_aisle_width",
+        "intent": "scale_anchor",
+        "evidence_status": "observed",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "known_element_scale_anchor",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.54,
+            "note": "parking_drive_aisle_width scale anchor requires user review before final scale acceptance."
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.54,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "scale_anchor",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "grounding_v3_decision": "helper_only",
+        "grounding_region_id": "scale_anchor_parking_drive_aisle_width",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "scale anchors are visual review helpers, not site geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.4
+      }
+    },
+    {
+      "id": "scale_anchor_crosswalk_width",
+      "name": "Scale_Anchor_crosswalk_width",
+      "kind": "box",
+      "faces": 6,
+      "edges": 12,
+      "material": "Campus_Scale_Anchor",
+      "transform": {
+        "translate": [
+          0,
+          0,
+          0
+        ],
+        "rotateZ": 0
+      },
+      "bounding_box": {
+        "min": [
+          55008.2,
+          -12464.9,
+          120
+        ],
+        "max": [
+          61362.399999999994,
+          -9112.3,
+          240
+        ],
+        "w": 6354.199999999997,
+        "d": 3352.6000000000004,
+        "h": 120
+      },
+      "_vertices": [
+        [
+          55008.2,
+          -12464.9,
+          120
+        ],
+        [
+          61362.399999999994,
+          -12464.9,
+          120
+        ],
+        [
+          61362.399999999994,
+          -9112.3,
+          120
+        ],
+        [
+          55008.2,
+          -9112.3,
+          120
+        ],
+        [
+          55008.2,
+          -12464.9,
+          240
+        ],
+        [
+          61362.399999999994,
+          -12464.9,
+          240
+        ],
+        [
+          61362.399999999994,
+          -9112.3,
+          240
+        ],
+        [
+          55008.2,
+          -9112.3,
+          240
+        ]
+      ],
+      "_orientation": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "qa": {
+        "role": "scale_anchor",
+        "part_id": "scale_anchor_crosswalk_width",
+        "intent": "scale_anchor",
+        "evidence_status": "observed",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "known_element_scale_anchor",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.42,
+            "note": "crosswalk_width scale anchor requires user review before final scale acceptance."
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.42,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "scale_anchor",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "grounding_v3_decision": "helper_only",
+        "grounding_region_id": "scale_anchor_crosswalk_width",
+        "grounding_region_class": "walkway",
+        "grounding_v3_reasons": [
+          "non-structural site detail remains helper/review geometry in R9"
+        ],
+        "top_view_overlay_residual": {
+          "mask_iou": 1,
+          "centroid_error_norm": 0
+        },
+        "promotion_confidence": 0.378
+      }
+    },
+    {
+      "id": "warehouse_west_north",
+      "name": "West_Warehouse_North_Candidate",
+      "kind": "box",
+      "faces": 6,
+      "edges": 12,
+      "material": "Campus_Warehouse_Light",
+      "transform": {
+        "translate": [
+          0,
+          0,
+          0
+        ],
+        "rotateZ": 0
+      },
+      "bounding_box": {
+        "min": [
+          -47560.1,
+          9850.9,
+          0
+        ],
+        "max": [
+          -35533.7,
+          44061.4,
+          9500
+        ],
+        "w": 12026.400000000001,
+        "d": 34210.5,
+        "h": 9500
+      },
+      "_vertices": [
+        [
+          -47560.1,
+          9850.9,
+          0
+        ],
+        [
+          -35533.7,
+          9850.9,
+          0
+        ],
+        [
+          -35533.7,
+          44061.4,
+          0
+        ],
+        [
+          -47560.1,
+          44061.4,
+          0
+        ],
+        [
+          -47560.1,
+          9850.9,
+          9500
+        ],
+        [
+          -35533.7,
+          9850.9,
+          9500
+        ],
+        [
+          -35533.7,
+          44061.4,
+          9500
+        ],
+        [
+          -47560.1,
+          44061.4,
+          9500
+        ]
+      ],
+      "_orientation": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "qa": {
+        "role": "warehouse_unit",
+        "part_id": "warehouse_west_north",
+        "intent": "building",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "box_approximation",
+        "parent_part_id": "warehouse_row_west",
+        "evidence_sources": [
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png",
+            "status": "observed",
+            "confidence": 0.5,
+            "note": "VisualRelationGraph oblique candidate for the north west-warehouse unit.",
+            "observation_id": "building_oblique_warehouse_west_north",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.82,
+            "note": "Pixel-grounded top-view footprint from white_roof_component; used for position/proportion grounding before layout priors.",
+            "observation_id": "building_top_warehouse_west_north_pixel",
+            "grounding": {
+              "method": "pixel_color_segmentation",
+              "mask": "white_roof_component",
+              "contour_basis": "sampled_mask_contour",
+              "grounding_quality": {
+                "version": 1,
+                "status": "accepted",
+                "raw_to_evidence_bbox_ratio": null,
+                "prior_to_evidence_bbox_ratio": null,
+                "bbox_proxy": true,
+                "review_required": false,
+                "reasons": []
+              },
+              "review_required": false
+            }
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.6799999999999999,
+            "note": "VisualRelationGraph candidate for the north unit in the west warehouse row; kept image-only until reviewed as a separate PartGraph building.",
+            "observation_id": "building_top_warehouse_west_north",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
+          },
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png",
+            "status": "observed",
+            "confidence": 0.5,
+            "note": "VisualRelationGraph oblique candidate for the north west-warehouse unit.",
+            "observation_id": "building_oblique_warehouse_west_north",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
+          },
+          {
+            "kind": "parameter_proposal_review",
+            "status": "manual_confirmed",
+            "confidence": 0.545,
+            "note": "accepted_part_candidate_proposal: Accept the reviewed VisualRelationGraph split of the west warehouse row into two editable warehouse-unit candidates."
+          }
+        ],
+        "generated_from_visual_relation_graph": true,
+        "evidence_confidence": 0.545,
+        "review_required": false,
+        "candidate_only": false,
+        "not_compiled": false,
+        "grounding_v3_decision": "promoted_geometry",
+        "grounding_region_id": "warehouse_west_north",
+        "grounding_region_class": "building_footprint",
+        "grounding_v3_reasons": [],
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_warehouse_west_north",
+          "building_top_warehouse_west_north_pixel",
+          "building_top_warehouse_west_north"
+        ],
+        "projection_residuals": null,
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "part_candidate_applied": true,
+        "parent_candidate_source": "warehouse_row_west",
+        "last_correction_rule": "accepted_part_candidate_proposal"
+      }
+    },
+    {
+      "id": "warehouse_west_south",
+      "name": "West_Warehouse_South_Candidate",
+      "kind": "box",
+      "faces": 6,
+      "edges": 12,
+      "material": "Campus_Warehouse_Light",
+      "transform": {
+        "translate": [
+          0,
+          0,
+          0
+        ],
+        "rotateZ": 0
+      },
+      "bounding_box": {
+        "min": [
+          -48713.3,
+          -33131.6,
+          0
+        ],
+        "max": [
+          -36028,
+          7219.300000000003,
+          9500
+        ],
+        "w": 12685.300000000003,
+        "d": 40350.9,
+        "h": 9500
+      },
+      "_vertices": [
+        [
+          -48713.3,
+          -33131.6,
+          0
+        ],
+        [
+          -36028,
+          -33131.6,
+          0
+        ],
+        [
+          -36028,
+          7219.300000000003,
+          0
+        ],
+        [
+          -48713.3,
+          7219.300000000003,
+          0
+        ],
+        [
+          -48713.3,
+          -33131.6,
+          9500
+        ],
+        [
+          -36028,
+          -33131.6,
+          9500
+        ],
+        [
+          -36028,
+          7219.300000000003,
+          9500
+        ],
+        [
+          -48713.3,
+          7219.300000000003,
+          9500
+        ]
+      ],
+      "_orientation": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "qa": {
+        "role": "warehouse_unit",
+        "part_id": "warehouse_west_south",
+        "intent": "building",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "box_approximation",
+        "parent_part_id": "warehouse_row_west",
+        "evidence_sources": [
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png",
+            "status": "observed",
+            "confidence": 0.5,
+            "note": "VisualRelationGraph oblique candidate for the south west-warehouse unit.",
+            "observation_id": "building_oblique_warehouse_west_south",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.82,
+            "note": "Pixel-grounded top-view footprint from white_roof_component; used for position/proportion grounding before layout priors.",
+            "observation_id": "building_top_warehouse_west_south_pixel",
+            "grounding": {
+              "method": "pixel_color_segmentation",
+              "mask": "white_roof_component",
+              "contour_basis": "sampled_mask_contour",
+              "grounding_quality": {
+                "version": 1,
+                "status": "accepted",
+                "raw_to_evidence_bbox_ratio": null,
+                "prior_to_evidence_bbox_ratio": null,
+                "bbox_proxy": true,
+                "review_required": false,
+                "reasons": []
+              },
+              "review_required": false
+            }
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.6799999999999999,
+            "note": "VisualRelationGraph candidate for the south unit in the west warehouse row; kept image-only until reviewed as a separate PartGraph building.",
+            "observation_id": "building_top_warehouse_west_south",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
+          },
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png",
+            "status": "observed",
+            "confidence": 0.5,
+            "note": "VisualRelationGraph oblique candidate for the south west-warehouse unit.",
+            "observation_id": "building_oblique_warehouse_west_south",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
+          },
+          {
+            "kind": "parameter_proposal_review",
+            "status": "manual_confirmed",
+            "confidence": 0.545,
+            "note": "accepted_part_candidate_proposal: Accept the reviewed VisualRelationGraph split of the west warehouse row into two editable warehouse-unit candidates."
+          }
+        ],
+        "generated_from_visual_relation_graph": true,
+        "evidence_confidence": 0.545,
+        "review_required": false,
+        "candidate_only": false,
+        "not_compiled": false,
+        "grounding_v3_decision": "promoted_geometry",
+        "grounding_region_id": "warehouse_west_south",
+        "grounding_region_class": "building_footprint",
+        "grounding_v3_reasons": [],
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_warehouse_west_south",
+          "building_top_warehouse_west_south_pixel",
+          "building_top_warehouse_west_south"
+        ],
+        "projection_residuals": null,
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "part_candidate_applied": true,
+        "parent_candidate_source": "warehouse_row_west",
+        "last_correction_rule": "accepted_part_candidate_proposal"
+      }
+    },
+    {
+      "id": "warehouse_inner_north",
+      "name": "Inner_Warehouse_North_Candidate",
+      "kind": "box",
+      "faces": 6,
+      "edges": 12,
+      "material": "Campus_Warehouse_Light",
+      "transform": {
+        "translate": [
+          0,
+          0,
+          0
+        ],
+        "rotateZ": 0
+      },
+      "bounding_box": {
+        "min": [
+          -29438.2,
+          9850.9,
+          0
+        ],
+        "max": [
+          -17741.300000000003,
+          44061.4,
+          9500
+        ],
+        "w": 11696.899999999998,
+        "d": 34210.5,
+        "h": 9500
+      },
+      "_vertices": [
+        [
+          -29438.2,
+          9850.9,
+          0
+        ],
+        [
+          -17741.300000000003,
+          9850.9,
+          0
+        ],
+        [
+          -17741.300000000003,
+          44061.4,
+          0
+        ],
+        [
+          -29438.2,
+          44061.4,
+          0
+        ],
+        [
+          -29438.2,
+          9850.9,
+          9500
+        ],
+        [
+          -17741.300000000003,
+          9850.9,
+          9500
+        ],
+        [
+          -17741.300000000003,
+          44061.4,
+          9500
+        ],
+        [
+          -29438.2,
+          44061.4,
+          9500
+        ]
+      ],
+      "_orientation": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "qa": {
+        "role": "warehouse_unit",
+        "part_id": "warehouse_inner_north",
+        "intent": "building",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "box_approximation",
+        "parent_part_id": "warehouse_row_inner",
+        "evidence_sources": [
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png",
+            "status": "observed",
+            "confidence": 0.48,
+            "note": "VisualRelationGraph oblique candidate for the north inner-warehouse unit.",
+            "observation_id": "building_oblique_warehouse_inner_north",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.82,
+            "note": "Pixel-grounded top-view footprint from white_roof_component; used for position/proportion grounding before layout priors.",
+            "observation_id": "building_top_warehouse_inner_north_pixel",
+            "grounding": {
+              "method": "pixel_color_segmentation",
+              "mask": "white_roof_component",
+              "contour_basis": "sampled_mask_contour",
+              "grounding_quality": {
+                "version": 1,
+                "status": "accepted",
+                "raw_to_evidence_bbox_ratio": null,
+                "prior_to_evidence_bbox_ratio": null,
+                "bbox_proxy": true,
+                "review_required": false,
+                "reasons": []
+              },
+              "review_required": false
+            }
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.6399999999999999,
+            "note": "VisualRelationGraph candidate for the north unit in the inner warehouse row; kept image-only until reviewed as a separate PartGraph building.",
+            "observation_id": "building_top_warehouse_inner_north",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
+          },
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png",
+            "status": "observed",
+            "confidence": 0.48,
+            "note": "VisualRelationGraph oblique candidate for the north inner-warehouse unit.",
+            "observation_id": "building_oblique_warehouse_inner_north",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
+          },
+          {
+            "kind": "parameter_proposal_review",
+            "status": "manual_confirmed",
+            "confidence": 0.525,
+            "note": "accepted_part_candidate_proposal: Accept the reviewed VisualRelationGraph split of the inner warehouse row into two editable warehouse-unit candidates."
+          }
+        ],
+        "generated_from_visual_relation_graph": true,
+        "evidence_confidence": 0.525,
+        "review_required": false,
+        "candidate_only": false,
+        "not_compiled": false,
+        "grounding_v3_decision": "promoted_geometry",
+        "grounding_region_id": "warehouse_inner_north",
+        "grounding_region_class": "building_footprint",
+        "grounding_v3_reasons": [],
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_warehouse_inner_north",
+          "building_top_warehouse_inner_north_pixel",
+          "building_top_warehouse_inner_north"
+        ],
+        "projection_residuals": null,
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "part_candidate_applied": true,
+        "parent_candidate_source": "warehouse_row_inner",
+        "last_correction_rule": "accepted_part_candidate_proposal"
+      }
+    },
+    {
+      "id": "warehouse_inner_south",
+      "name": "Inner_Warehouse_South_Candidate",
+      "kind": "box",
+      "faces": 6,
+      "edges": 12,
+      "material": "Campus_Warehouse_Light",
+      "transform": {
+        "translate": [
+          0,
+          0,
+          0
+        ],
+        "rotateZ": 0
+      },
+      "bounding_box": {
+        "min": [
+          -30097.2,
+          -33131.6,
+          0
+        ],
+        "max": [
+          -16258.6,
+          7219.300000000003,
+          9500
+        ],
+        "w": 13838.6,
+        "d": 40350.9,
+        "h": 9500
+      },
+      "_vertices": [
+        [
+          -30097.2,
+          -33131.6,
+          0
+        ],
+        [
+          -16258.6,
+          -33131.6,
+          0
+        ],
+        [
+          -16258.6,
+          7219.300000000003,
+          0
+        ],
+        [
+          -30097.2,
+          7219.300000000003,
+          0
+        ],
+        [
+          -30097.2,
+          -33131.6,
+          9500
+        ],
+        [
+          -16258.6,
+          -33131.6,
+          9500
+        ],
+        [
+          -16258.6,
+          7219.300000000003,
+          9500
+        ],
+        [
+          -30097.2,
+          7219.300000000003,
+          9500
+        ]
+      ],
+      "_orientation": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "qa": {
+        "role": "warehouse_unit",
+        "part_id": "warehouse_inner_south",
+        "intent": "building",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "box_approximation",
+        "parent_part_id": "warehouse_row_inner",
+        "evidence_sources": [
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png",
+            "status": "observed",
+            "confidence": 0.48,
+            "note": "VisualRelationGraph oblique candidate for the south inner-warehouse unit.",
+            "observation_id": "building_oblique_warehouse_inner_south",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.82,
+            "note": "Pixel-grounded top-view footprint from white_roof_component; used for position/proportion grounding before layout priors.",
+            "observation_id": "building_top_warehouse_inner_south_pixel",
+            "grounding": {
+              "method": "pixel_color_segmentation",
+              "mask": "white_roof_component",
+              "contour_basis": "sampled_mask_contour",
+              "grounding_quality": {
+                "version": 1,
+                "status": "accepted",
+                "raw_to_evidence_bbox_ratio": null,
+                "prior_to_evidence_bbox_ratio": null,
+                "bbox_proxy": true,
+                "review_required": false,
+                "reasons": []
+              },
+              "review_required": false
+            }
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.6399999999999999,
+            "note": "VisualRelationGraph candidate for the south unit in the inner warehouse row; kept image-only until reviewed as a separate PartGraph building.",
+            "observation_id": "building_top_warehouse_inner_south",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
+          },
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png",
+            "status": "observed",
+            "confidence": 0.48,
+            "note": "VisualRelationGraph oblique candidate for the south inner-warehouse unit.",
+            "observation_id": "building_oblique_warehouse_inner_south",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
+          },
+          {
+            "kind": "parameter_proposal_review",
+            "status": "manual_confirmed",
+            "confidence": 0.525,
+            "note": "accepted_part_candidate_proposal: Accept the reviewed VisualRelationGraph split of the inner warehouse row into two editable warehouse-unit candidates."
+          }
+        ],
+        "generated_from_visual_relation_graph": true,
+        "evidence_confidence": 0.525,
+        "review_required": false,
+        "candidate_only": false,
+        "not_compiled": false,
+        "grounding_v3_decision": "promoted_geometry",
+        "grounding_region_id": "warehouse_inner_south",
+        "grounding_region_class": "building_footprint",
+        "grounding_v3_reasons": [],
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_warehouse_inner_south",
+          "building_top_warehouse_inner_south_pixel",
+          "building_top_warehouse_inner_south"
+        ],
+        "projection_residuals": null,
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "part_candidate_applied": true,
+        "parent_candidate_source": "warehouse_row_inner",
+        "last_correction_rule": "accepted_part_candidate_proposal"
+      }
+    },
+    {
+      "id": "parking_stall_row_north",
+      "name": "Parking_Stall_Row_North_Candidate",
+      "kind": "box",
+      "faces": 6,
+      "edges": 12,
+      "material": "Campus_Parking_Stripe",
+      "transform": {
+        "translate": [
+          0,
+          0,
+          0
+        ],
+        "rotateZ": 0
+      },
+      "bounding_box": {
+        "min": [
+          18337.7,
+          -29798.2,
+          0
+        ],
+        "max": [
+          54581.5,
+          -26114,
+          35
+        ],
+        "w": 36243.8,
+        "d": 3684.2000000000007,
+        "h": 35
+      },
+      "_vertices": [
+        [
+          18337.7,
+          -29798.2,
+          0
+        ],
+        [
+          54581.5,
+          -29798.2,
+          0
+        ],
+        [
+          54581.5,
+          -26114,
+          0
+        ],
+        [
+          18337.7,
+          -26114,
+          0
+        ],
+        [
+          18337.7,
+          -29798.2,
+          35
+        ],
+        [
+          54581.5,
+          -29798.2,
+          35
+        ],
+        [
+          54581.5,
+          -26114,
+          35
+        ],
+        [
+          18337.7,
+          -26114,
+          35
+        ]
+      ],
+      "_orientation": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "qa": {
+        "role": "parking_stall_row",
+        "part_id": "parking_stall_row_north",
+        "intent": "parking_marking",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper",
+        "parent_part_id": "parking_lot",
+        "evidence_sources": [
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.68,
+            "note": "Pixel-grounded top-view footprint from parking_stall_marking_cluster_north; used for position/proportion grounding before layout priors.",
+            "observation_id": "building_top_parking_stall_row_north_pixel",
+            "grounding": {
+              "method": "pixel_line_segmentation",
+              "mask": "parking_stall_marking_cluster_north",
+              "pixel_bbox": [
+                541,
+                475,
+                220,
+                21
+              ],
+              "pixel_count": 209,
+              "prior_bbox": [
+                541.8,
+                475.2,
+                219.6,
+                20.25
+              ],
+              "fill": 0.05,
+              "contour_basis": "sampled_mask_contour",
+              "grounding_quality": {
+                "version": 1,
+                "status": "accepted",
+                "raw_to_evidence_bbox_ratio": 1,
+                "prior_to_evidence_bbox_ratio": 1.04,
+                "bbox_proxy": false,
+                "review_required": false,
+                "reasons": []
+              },
+              "review_required": false
+            }
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.6000000000000001,
+            "note": "VisualRelationGraph candidate for the northern visible parking-stall marker row inside the parking lot.",
+            "observation_id": "building_top_parking_stall_row_north",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
+          },
+          {
+            "kind": "parameter_proposal_review",
+            "status": "manual_confirmed",
+            "confidence": 0.553,
+            "note": "accepted_part_candidate_proposal: Accept the reviewed VisualRelationGraph parking-stall row and drive-aisle candidates as editable surface-marking parts while preserving the parking-lot base surface."
+          }
+        ],
+        "generated_from_visual_relation_graph": true,
+        "evidence_confidence": 0.56,
+        "review_required": false,
+        "candidate_only": false,
+        "not_compiled": false,
+        "grounding_v3_decision": "promoted_geometry",
+        "grounding_region_id": "parking_stall_row_north",
+        "grounding_region_class": "parking",
+        "grounding_v3_reasons": [],
+        "grounding_status": "review_confirmed",
+        "grounding_method": "pixel_line_segmentation",
+        "source_observation_ids": [
+          "building_top_parking_stall_row_north_pixel",
+          "building_top_parking_stall_row_north"
+        ],
+        "projection_residuals": null,
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "part_candidate_applied": true,
+        "parent_candidate_source": "parking_lot",
+        "last_correction_rule": "accepted_part_candidate_proposal"
+      }
+    },
+    {
+      "id": "parking_stall_row_south",
+      "name": "Parking_Stall_Row_South_Candidate",
+      "kind": "box",
+      "faces": 6,
+      "edges": 12,
+      "material": "Campus_Parking_Stripe",
+      "transform": {
+        "translate": [
+          0,
+          0,
+          0
+        ],
+        "rotateZ": 0
+      },
+      "bounding_box": {
+        "min": [
+          19326.2,
+          -37868.4,
+          0
+        ],
+        "max": [
+          54746.3,
+          -34184.200000000004,
+          35
+        ],
+        "w": 35420.100000000006,
+        "d": 3684.199999999997,
+        "h": 35
+      },
+      "_vertices": [
+        [
+          19326.2,
+          -37868.4,
+          0
+        ],
+        [
+          54746.3,
+          -37868.4,
+          0
+        ],
+        [
+          54746.3,
+          -34184.200000000004,
+          0
+        ],
+        [
+          19326.2,
+          -34184.200000000004,
+          0
+        ],
+        [
+          19326.2,
+          -37868.4,
+          35
+        ],
+        [
+          54746.3,
+          -37868.4,
+          35
+        ],
+        [
+          54746.3,
+          -34184.200000000004,
+          35
+        ],
+        [
+          19326.2,
+          -34184.200000000004,
+          35
+        ]
+      ],
+      "_orientation": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "qa": {
+        "role": "parking_stall_row",
+        "part_id": "parking_stall_row_south",
+        "intent": "parking_marking",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper",
+        "parent_part_id": "parking_lot",
+        "evidence_sources": [
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.68,
+            "note": "Pixel-grounded top-view footprint from parking_stall_marking_cluster_south; used for position/proportion grounding before layout priors.",
+            "observation_id": "building_top_parking_stall_row_south_pixel",
+            "grounding": {
+              "method": "pixel_line_segmentation",
+              "mask": "parking_stall_marking_cluster_south",
+              "pixel_bbox": [
+                547,
+                521,
+                215,
+                21
+              ],
+              "pixel_count": 167,
+              "prior_bbox": [
+                541.8,
+                521.1,
+                219.6,
+                20.25
+              ],
+              "fill": 0.04,
+              "contour_basis": "sampled_mask_contour",
+              "grounding_quality": {
+                "version": 1,
+                "status": "accepted",
+                "raw_to_evidence_bbox_ratio": 1,
+                "prior_to_evidence_bbox_ratio": 1.04,
+                "bbox_proxy": false,
+                "review_required": false,
+                "reasons": []
+              },
+              "review_required": false
+            }
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.5800000000000001,
+            "note": "VisualRelationGraph candidate for the southern visible parking-stall marker row inside the parking lot.",
+            "observation_id": "building_top_parking_stall_row_south",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
+          },
+          {
+            "kind": "parameter_proposal_review",
+            "status": "manual_confirmed",
+            "confidence": 0.553,
+            "note": "accepted_part_candidate_proposal: Accept the reviewed VisualRelationGraph parking-stall row and drive-aisle candidates as editable surface-marking parts while preserving the parking-lot base surface."
+          }
+        ],
+        "generated_from_visual_relation_graph": true,
+        "evidence_confidence": 0.55,
+        "review_required": false,
+        "candidate_only": false,
+        "not_compiled": false,
+        "grounding_v3_decision": "promoted_geometry",
+        "grounding_region_id": "parking_stall_row_south",
+        "grounding_region_class": "parking",
+        "grounding_v3_reasons": [],
+        "grounding_status": "review_confirmed",
+        "grounding_method": "pixel_line_segmentation",
+        "source_observation_ids": [
+          "building_top_parking_stall_row_south_pixel",
+          "building_top_parking_stall_row_south"
+        ],
+        "projection_residuals": null,
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "part_candidate_applied": true,
+        "parent_candidate_source": "parking_lot",
+        "last_correction_rule": "accepted_part_candidate_proposal"
+      }
+    },
+    {
+      "id": "parking_drive_aisle_center",
+      "name": "Parking_Drive_Aisle_Center_Candidate",
+      "kind": "box",
+      "faces": 6,
+      "edges": 12,
+      "material": "Campus_Road_Asphalt",
+      "transform": {
+        "translate": [
+          0,
+          0,
+          0
+        ],
+        "rotateZ": 0
+      },
+      "bounding_box": {
+        "min": [
+          18337.7,
+          -33833.3,
+          0
+        ],
+        "max": [
+          54746.3,
+          -30149.100000000002,
+          45
+        ],
+        "w": 36408.600000000006,
+        "d": 3684.2000000000007,
+        "h": 45
+      },
+      "_vertices": [
+        [
+          18337.7,
+          -33833.3,
+          0
+        ],
+        [
+          54746.3,
+          -33833.3,
+          0
+        ],
+        [
+          54746.3,
+          -30149.100000000002,
+          0
+        ],
+        [
+          18337.7,
+          -30149.100000000002,
+          0
+        ],
+        [
+          18337.7,
+          -33833.3,
+          45
+        ],
+        [
+          54746.3,
+          -33833.3,
+          45
+        ],
+        [
+          54746.3,
+          -30149.100000000002,
+          45
+        ],
+        [
+          18337.7,
+          -30149.100000000002,
+          45
+        ]
+      ],
+      "_orientation": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "qa": {
+        "role": "parking_drive_aisle",
+        "part_id": "parking_drive_aisle_center",
+        "intent": "site_surface",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper",
+        "parent_part_id": "parking_lot",
+        "evidence_sources": [
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.66,
+            "note": "Pixel-grounded top-view footprint from parking_drive_aisle_between_pixel_marking_rows; used for position/proportion grounding before layout priors.",
+            "observation_id": "building_top_parking_drive_aisle_center_pixel",
+            "grounding": {
+              "method": "pixel_gap_segmentation",
+              "mask": "parking_drive_aisle_between_pixel_marking_rows",
+              "prior_bbox": [
+                531,
+                498.15,
+                261,
+                36.45
+              ],
+              "derived_from": [
+                "building_top_parking_stall_row_north_pixel",
+                "building_top_parking_stall_row_south_pixel"
+              ],
+              "derived_from_kind": "negative_space_between_isolated_masks",
+              "contour_basis": "sampled_mask_contour",
+              "grounding_quality": {
+                "version": 1,
+                "status": "accepted",
+                "raw_to_evidence_bbox_ratio": null,
+                "prior_to_evidence_bbox_ratio": 1.74,
+                "bbox_proxy": false,
+                "review_required": false,
+                "reasons": []
+              },
+              "review_required": false
+            }
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.6000000000000001,
+            "note": "VisualRelationGraph candidate for the parking drive aisle between stall rows.",
+            "observation_id": "building_top_parking_drive_aisle_center",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
+          },
+          {
+            "kind": "parameter_proposal_review",
+            "status": "manual_confirmed",
+            "confidence": 0.553,
+            "note": "accepted_part_candidate_proposal: Accept the reviewed VisualRelationGraph parking-stall row and drive-aisle candidates as editable surface-marking parts while preserving the parking-lot base surface."
+          }
+        ],
+        "generated_from_visual_relation_graph": true,
+        "evidence_confidence": 0.55,
+        "review_required": false,
+        "candidate_only": false,
+        "not_compiled": false,
+        "grounding_v3_decision": "promoted_geometry",
+        "grounding_region_id": "parking_drive_aisle_center",
+        "grounding_region_class": "road",
+        "grounding_v3_reasons": [],
+        "grounding_status": "review_confirmed",
+        "grounding_method": "pixel_gap_segmentation",
+        "source_observation_ids": [
+          "building_top_parking_drive_aisle_center_pixel",
+          "building_top_parking_drive_aisle_center"
+        ],
+        "projection_residuals": null,
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "part_candidate_applied": true,
+        "parent_candidate_source": "parking_lot",
+        "last_correction_rule": "accepted_part_candidate_proposal"
+      }
+    },
+    {
+      "id": "tree_row_south",
+      "name": "Tree_Row_South_Candidate",
+      "kind": "box",
+      "faces": 6,
+      "edges": 12,
+      "material": "Campus_Tree_Line",
+      "transform": {
+        "translate": [
+          0,
+          0,
+          0
+        ],
+        "rotateZ": 0
+      },
+      "bounding_box": {
+        "min": [
+          18173,
+          -49447.4,
+          0
+        ],
+        "max": [
+          65619.5,
+          -45061.4,
+          1800
+        ],
+        "w": 47446.5,
+        "d": 4386,
+        "h": 1800
+      },
+      "_vertices": [
+        [
+          18173,
+          -49447.4,
+          0
+        ],
+        [
+          65619.5,
+          -49447.4,
+          0
+        ],
+        [
+          65619.5,
+          -45061.4,
+          0
+        ],
+        [
+          18173,
+          -45061.4,
+          0
+        ],
+        [
+          18173,
+          -49447.4,
+          1800
+        ],
+        [
+          65619.5,
+          -49447.4,
+          1800
+        ],
+        [
+          65619.5,
+          -45061.4,
+          1800
+        ],
+        [
+          18173,
+          -45061.4,
+          1800
+        ]
+      ],
+      "_orientation": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "qa": {
+        "role": "tree_row",
+        "part_id": "tree_row_south",
+        "intent": "landscape",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "visual_helper",
+        "parent_part_id": "site_boundary",
+        "evidence_sources": [
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.7,
+            "note": "Pixel-grounded top-view footprint from tree_vegetation_row_cluster; used for position/proportion grounding before layout priors.",
+            "observation_id": "building_top_tree_row_south_pixel",
+            "grounding": {
+              "method": "pixel_vegetation_segmentation",
+              "mask": "tree_vegetation_row_cluster",
+              "pixel_bbox": [
+                540,
+                583,
+                288,
+                25
+              ],
+              "pixel_count": 1840,
+              "prior_bbox": [
+                513,
+                583.88,
+                315,
+                23.63
+              ],
+              "fill": 0.26,
+              "contour_basis": "sampled_mask_contour",
+              "grounding_quality": {
+                "version": 1,
+                "status": "accepted",
+                "raw_to_evidence_bbox_ratio": 1,
+                "prior_to_evidence_bbox_ratio": 1.09,
+                "bbox_proxy": false,
+                "review_required": false,
+                "reasons": []
+              },
+              "review_required": false
+            }
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.54,
+            "note": "VisualRelationGraph candidate for the tree/landscape row south of the parking field.",
+            "observation_id": "building_top_tree_row_south",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
+          },
+          {
+            "kind": "parameter_proposal_review",
+            "status": "manual_confirmed",
+            "confidence": 0.54,
+            "note": "accepted_part_candidate_proposal: Accept the reviewed VisualRelationGraph tree-row candidate as an editable landscape marker while preserving the site boundary."
+          }
+        ],
+        "generated_from_visual_relation_graph": true,
+        "evidence_confidence": 0.54,
+        "review_required": false,
+        "candidate_only": false,
+        "not_compiled": false,
+        "grounding_v3_decision": "helper_only",
+        "grounding_region_id": "tree_row_south",
+        "grounding_region_class": "green",
+        "grounding_v3_reasons": [
+          "non-structural site detail remains helper/review geometry in R9"
+        ],
+        "grounding_status": "review_confirmed",
+        "grounding_method": "pixel_vegetation_segmentation",
+        "source_observation_ids": [
+          "building_top_tree_row_south_pixel",
+          "building_top_tree_row_south"
+        ],
+        "projection_residuals": null,
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "part_candidate_applied": true,
+        "parent_candidate_source": "site_boundary",
+        "last_correction_rule": "accepted_part_candidate_proposal"
+      }
+    }
+  ],
+  "component_definitions": {},
+  "instances": [],
+  "scenes": [
+    {
+      "name": "Building_Group_Top_Scale_Review",
+      "camera": {
+        "eye": [
+          0,
+          0,
+          170000
+        ],
+        "target": [
+          0,
+          0,
+          0
+        ],
+        "up": [
+          0,
+          1,
+          0
+        ],
+        "fov": 35
+      }
+    },
+    {
+      "name": "Building_Group_Oblique_Massing_Review",
+      "camera": {
+        "eye": [
+          105000,
+          -118000,
+          72000
+        ],
+        "target": [
+          0,
+          0,
+          6000
+        ],
+        "up": [
+          0,
+          0,
+          1
+        ],
+        "fov": 38
+      }
+    }
+  ],
+  "levels": [],
+  "manifold_checks": [],
+  "tags": {
+    "R7_Building_Group_Site": {
+      "name": "R7_Building_Group_Site",
+      "color": "#5e6a5f",
+      "visible": true
+    },
+    "R7_Building_Group_Massing": {
+      "name": "R7_Building_Group_Massing",
+      "color": "#2f75a8",
+      "visible": true
+    },
+    "R7_Building_Group_Scale_Review": {
+      "name": "R7_Building_Group_Scale_Review",
+      "color": "#f2c94c",
+      "visible": true
+    }
+  },
+  "materials": {
+    "Campus_Site_Slab": {
+      "name": "Campus_Site_Slab",
+      "color": "#5e6a5f",
+      "alpha": 0.28
+    },
+    "Campus_Road_Asphalt": {
+      "name": "Campus_Road_Asphalt",
+      "color": "#41464a"
+    },
+    "Campus_Parking_Asphalt": {
+      "name": "Campus_Parking_Asphalt",
+      "color": "#555b60"
+    },
+    "Campus_Warehouse_Light": {
+      "name": "Campus_Warehouse_Light",
+      "color": "#d9ddd7"
+    },
+    "Campus_Blue_Roof": {
+      "name": "Campus_Blue_Roof",
+      "color": "#2f75a8"
+    },
+    "Campus_Utility_Gray": {
+      "name": "Campus_Utility_Gray",
+      "color": "#8b9092"
+    },
+    "Campus_Office_Light": {
+      "name": "Campus_Office_Light",
+      "color": "#c9c1b3"
+    },
+    "Campus_Tank_Metal": {
+      "name": "Campus_Tank_Metal",
+      "color": "#c6c8c2"
+    },
+    "Campus_Scale_Anchor": {
+      "name": "Campus_Scale_Anchor",
+      "color": "#f2c94c"
+    },
+    "Campus_Parking_Stripe": {
+      "name": "Campus_Parking_Stripe",
+      "color": "#cccccc"
+    },
+    "Campus_Tree_Line": {
+      "name": "Campus_Tree_Line",
+      "color": "#cccccc"
+    }
+  },
+  "warnings": [],
+  "view_state": {
+    "camera": {
+      "eye": [
+        105000,
+        -118000,
+        72000
+      ],
+      "target": [
+        0,
+        0,
+        6000
+      ],
+      "up": [
+        0,
+        0,
+        1
+      ],
+      "fov": 38
+    },
+    "scene": "Building_Group_Oblique_Massing_Review"
+  },
+  "style_state": {
+    "name": "R7_Building_Group_Review",
+    "display_edges": true,
+    "profiles": true,
+    "profile_width": 2,
+    "face_style": "shaded_with_textures",
+    "background_color": "#eef2f1",
+    "sky_color": "#d6e5ef",
+    "ground_color": "#ccd5cb"
+  },
+  "shadow_state": {
+    "display": true,
+    "time": "2026-05-31T02:54:00.000Z",
+    "light": 72,
+    "dark": 48,
+    "use_sun_for_shading": true
+  },
+  "rendering_options": {
+    "draw_hidden_geometry": false,
+    "display_color_by_layer": false,
+    "transparency": true,
+    "draw_ground": true,
+    "edge_display_mode": 1
+  }
+}

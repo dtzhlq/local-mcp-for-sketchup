@@ -1,0 +1,150 @@
+{
+  "version": 1,
+  "id": "building-group-r8-geometry-grounding-v2",
+  "description": "Grounding v2 fixture for the R8 no-texture editable geometry boundary. Primary footprints can pass, but dense helper details must be reported as helper-only rather than photo-grade grounded.",
+  "model": {
+    "axes": ["x", "y"],
+    "frame_items": ["site_boundary"]
+  },
+  "aliases": {
+    "image": {
+      "site": ["site_boundary"],
+      "blue_hall": ["primary_blue_roof_hall"],
+      "west_warehouse_north": ["warehouse_west_north"],
+      "west_warehouse_south": ["warehouse_west_south"],
+      "inner_warehouse_north": ["warehouse_inner_north"],
+      "inner_warehouse_south": ["warehouse_inner_south"],
+      "parking_lot": ["parking_lot"]
+    },
+    "model": {
+      "site": ["site_boundary"],
+      "blue_hall": ["primary_blue_roof_hall_body"],
+      "west_warehouse_north": ["warehouse_west_north_body"],
+      "west_warehouse_south": ["warehouse_west_south_body"],
+      "inner_warehouse_north": ["warehouse_inner_north_body"],
+      "inner_warehouse_south": ["warehouse_inner_south_body"],
+      "parking_lot": ["parking_lot"]
+    }
+  },
+  "geometry_fit": {
+    "image_view": "top",
+    "image_frame": "site",
+    "oblique_frame": "site"
+  },
+  "grounding_v2": {
+    "max_dense_helper_ratio": 0.35,
+    "max_site_region_overlap_ratio": 0.02,
+    "max_unclassified_ratio": 0.45,
+    "max_internal_road_area_ratio": 0.22,
+    "max_parking_spacing_error_ratio": 0.12,
+    "max_parking_aisle_width_error_ratio": 0.16,
+    "max_roof_surface_distance_mm": 80,
+    "max_roof_direction_error_degrees": 5,
+    "max_tank_radius_error_ratio": 0.12,
+    "require_photo_grade": false
+  },
+  "footprint_rules": [
+    {
+      "id": "r8-blue-hall-pixel-footprint",
+      "item": "blue_hall",
+      "image_view": "top",
+      "image_frame": "site",
+      "require_grounding": "pixel_color_segmentation",
+      "severity": "warn",
+      "center_tolerance": 0.03,
+      "extent_tolerance": [0.04, 0.04]
+    },
+    {
+      "id": "r8-west-warehouse-north-pixel-footprint",
+      "item": "west_warehouse_north",
+      "image_view": "top",
+      "image_frame": "site",
+      "require_grounding": "pixel_color_segmentation",
+      "severity": "warn",
+      "center_tolerance": 0.035,
+      "extent_tolerance": [0.045, 0.045]
+    },
+    {
+      "id": "r8-west-warehouse-south-pixel-footprint",
+      "item": "west_warehouse_south",
+      "image_view": "top",
+      "image_frame": "site",
+      "require_grounding": "pixel_color_segmentation",
+      "severity": "warn",
+      "center_tolerance": 0.035,
+      "extent_tolerance": [0.045, 0.045]
+    },
+    {
+      "id": "r8-inner-warehouse-north-pixel-footprint",
+      "item": "inner_warehouse_north",
+      "image_view": "top",
+      "image_frame": "site",
+      "require_grounding": "pixel_color_segmentation",
+      "severity": "warn",
+      "center_tolerance": 0.035,
+      "extent_tolerance": [0.045, 0.045]
+    },
+    {
+      "id": "r8-inner-warehouse-south-pixel-footprint",
+      "item": "inner_warehouse_south",
+      "image_view": "top",
+      "image_frame": "site",
+      "require_grounding": "pixel_color_segmentation",
+      "severity": "warn",
+      "center_tolerance": 0.035,
+      "extent_tolerance": [0.045, 0.045]
+    },
+    {
+      "id": "r8-parking-lot-pixel-footprint",
+      "item": "parking_lot",
+      "image_view": "top",
+      "image_frame": "site",
+      "require_grounding": "pixel_gap_segmentation",
+      "severity": "warn",
+      "center_tolerance": 0.055,
+      "extent_tolerance": [0.07, 0.07],
+      "grounding_severity": "warn"
+    }
+  ],
+  "required_relations": [
+    {
+      "id": "r8-blue-hall-right-of-inner-warehouse",
+      "type": "right_of",
+      "item": "blue_hall",
+      "anchor": "inner_warehouse_north",
+      "image_view": "top",
+      "min_confidence": 0.55,
+      "min_model_delta": 0.15,
+      "spacing_tolerance": 0.1,
+      "mirror_negative": true
+    },
+    {
+      "id": "r8-west-warehouse-north-above-south",
+      "type": "above",
+      "item": "west_warehouse_north",
+      "anchor": "west_warehouse_south",
+      "image_view": "top",
+      "min_confidence": 0.48,
+      "min_model_delta": 0.18,
+      "spacing_tolerance": 0.1
+    },
+    {
+      "id": "r8-inner-warehouse-north-above-south",
+      "type": "above",
+      "item": "inner_warehouse_north",
+      "anchor": "inner_warehouse_south",
+      "image_view": "top",
+      "min_confidence": 0.48,
+      "min_model_delta": 0.16,
+      "spacing_tolerance": 0.1
+    }
+  ],
+  "negative_cases": [
+    {
+      "id": "r8-mirror-x-primary-negative",
+      "transform": "mirror_x",
+      "rule_ids": ["r8-blue-hall-right-of-inner-warehouse"],
+      "min_failed_rules": 1
+    }
+  ]
+}

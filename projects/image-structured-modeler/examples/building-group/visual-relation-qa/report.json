@@ -1,0 +1,1239 @@
+{
+  "kind": "visual_relation_qa",
+  "version": 1,
+  "ok": true,
+  "verdict": "pass",
+  "fixture": "building-group-visual-relations",
+  "summary": {
+    "checked_relations": 12,
+    "checked_footprints": 0,
+    "matched_image_relations": 12,
+    "matched_model_relations": 6,
+    "matched_footprints": 0,
+    "image_only_relations": 6,
+    "negative_cases_checked": 1,
+    "negative_cases_detected": 1,
+    "total_issues": 0,
+    "by_severity": {
+      "error": 0,
+      "warn": 0,
+      "info": 0
+    }
+  },
+  "issues": [],
+  "relation_results": [
+    {
+      "id": "blue-hall-right-of-west-warehouse",
+      "ok": true,
+      "image_relation": {
+        "id": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png|top|primary_blue_roof_hall|right_of|warehouse_row_west|building_top_primary_blue_hall_pixel|building_top_warehouse_row_west_pixel",
+        "type": "right_of",
+        "item": "primary_blue_roof_hall",
+        "anchor": "warehouse_row_west",
+        "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+        "view": "top",
+        "confidence": 0.88,
+        "review_required": true,
+        "basis": {
+          "kind": "bbox",
+          "item_observation_id": "building_top_primary_blue_hall_pixel",
+          "anchor_observation_id": "building_top_warehouse_row_west_pixel",
+          "item_bbox": [
+            384,
+            81,
+            205,
+            323
+          ],
+          "anchor_bbox": [
+            134,
+            75,
+            80,
+            440
+          ],
+          "item_keypoint": [
+            486.5,
+            242.5
+          ],
+          "anchor_keypoint": [
+            174,
+            295
+          ],
+          "item_grounding": {
+            "method": "pixel_color_segmentation",
+            "mask": "blue_roof_largest_component",
+            "contour_basis": "sampled_mask_contour",
+            "grounding_quality": {
+              "version": 1,
+              "status": "accepted",
+              "raw_to_evidence_bbox_ratio": null,
+              "prior_to_evidence_bbox_ratio": null,
+              "bbox_proxy": true,
+              "review_required": false,
+              "reasons": []
+            },
+            "review_required": false
+          },
+          "anchor_grounding": {
+            "method": "pixel_color_segmentation",
+            "mask": "white_roof_component_union",
+            "contour_basis": "sampled_mask_contour",
+            "grounding_quality": {
+              "version": 1,
+              "status": "accepted",
+              "raw_to_evidence_bbox_ratio": null,
+              "prior_to_evidence_bbox_ratio": null,
+              "bbox_proxy": true,
+              "review_required": false,
+              "reasons": []
+            },
+            "review_required": false
+          },
+          "item_note": "Pixel-grounded top-view footprint from blue_roof_largest_component; used for position/proportion grounding before layout priors.",
+          "anchor_note": "Pixel-grounded top-view footprint from white_roof_component_union; used for position/proportion grounding before layout priors.",
+          "delta_norm": [
+            0.347,
+            -0.078
+          ],
+          "spacing_ratio": 0.356,
+          "axis": "x"
+        }
+      },
+      "model_relation": {
+        "ok": true,
+        "type": "right_of",
+        "item": "primary_blue_roof_hall",
+        "anchor": "warehouse_row_west",
+        "delta_norm": [
+          0.41,
+          0.103
+        ],
+        "min_delta": 0.25,
+        "tolerance": 0.055,
+        "message": "blue_hall right_of warehouse_west is satisfied in model projection.",
+        "evidence": {
+          "item": "primary_blue_roof_hall",
+          "anchor": "warehouse_row_west",
+          "model_axes": [
+            "x",
+            "y"
+          ],
+          "item_center": [
+            0.581,
+            0.654
+          ],
+          "anchor_center": [
+            0.171,
+            0.551
+          ],
+          "delta_norm": [
+            0.41,
+            0.103
+          ]
+        }
+      }
+    },
+    {
+      "id": "blue-hall-right-of-inner-warehouse",
+      "ok": true,
+      "image_relation": {
+        "id": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png|top|primary_blue_roof_hall|right_of|warehouse_row_inner|building_top_primary_blue_hall_pixel|building_top_warehouse_row_inner_pixel",
+        "type": "right_of",
+        "item": "primary_blue_roof_hall",
+        "anchor": "warehouse_row_inner",
+        "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+        "view": "top",
+        "confidence": 0.88,
+        "review_required": true,
+        "basis": {
+          "kind": "bbox",
+          "item_observation_id": "building_top_primary_blue_hall_pixel",
+          "anchor_observation_id": "building_top_warehouse_row_inner_pixel",
+          "item_bbox": [
+            384,
+            81,
+            205,
+            323
+          ],
+          "anchor_bbox": [
+            247,
+            75,
+            84,
+            440
+          ],
+          "item_keypoint": [
+            486.5,
+            242.5
+          ],
+          "anchor_keypoint": [
+            289,
+            295
+          ],
+          "item_grounding": {
+            "method": "pixel_color_segmentation",
+            "mask": "blue_roof_largest_component",
+            "contour_basis": "sampled_mask_contour",
+            "grounding_quality": {
+              "version": 1,
+              "status": "accepted",
+              "raw_to_evidence_bbox_ratio": null,
+              "prior_to_evidence_bbox_ratio": null,
+              "bbox_proxy": true,
+              "review_required": false,
+              "reasons": []
+            },
+            "review_required": false
+          },
+          "anchor_grounding": {
+            "method": "pixel_color_segmentation",
+            "mask": "white_roof_component_union",
+            "contour_basis": "sampled_mask_contour",
+            "grounding_quality": {
+              "version": 1,
+              "status": "accepted",
+              "raw_to_evidence_bbox_ratio": null,
+              "prior_to_evidence_bbox_ratio": null,
+              "bbox_proxy": true,
+              "review_required": false,
+              "reasons": []
+            },
+            "review_required": false
+          },
+          "item_note": "Pixel-grounded top-view footprint from blue_roof_largest_component; used for position/proportion grounding before layout priors.",
+          "anchor_note": "Pixel-grounded top-view footprint from white_roof_component_union; used for position/proportion grounding before layout priors.",
+          "delta_norm": [
+            0.219,
+            -0.078
+          ],
+          "spacing_ratio": 0.233,
+          "axis": "x"
+        }
+      },
+      "model_relation": {
+        "ok": true,
+        "type": "right_of",
+        "item": "primary_blue_roof_hall",
+        "anchor": "warehouse_row_inner",
+        "delta_norm": [
+          0.259,
+          0.103
+        ],
+        "min_delta": 0.15,
+        "tolerance": 0.055,
+        "message": "blue_hall right_of warehouse_inner is satisfied in model projection.",
+        "evidence": {
+          "item": "primary_blue_roof_hall",
+          "anchor": "warehouse_row_inner",
+          "model_axes": [
+            "x",
+            "y"
+          ],
+          "item_center": [
+            0.581,
+            0.654
+          ],
+          "anchor_center": [
+            0.322,
+            0.551
+          ],
+          "delta_norm": [
+            0.259,
+            0.103
+          ]
+        }
+      }
+    },
+    {
+      "id": "tank-farm-right-of-blue-hall",
+      "ok": true,
+      "image_relation": {
+        "id": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png|top|tank_farm|right_of|primary_blue_roof_hall|building_top_tank_farm_center|building_top_primary_blue_hall_pixel",
+        "type": "right_of",
+        "item": "tank_farm",
+        "anchor": "primary_blue_roof_hall",
+        "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+        "view": "top",
+        "confidence": 0.77,
+        "review_required": true,
+        "basis": {
+          "kind": "bbox",
+          "item_observation_id": "building_top_tank_farm_center",
+          "anchor_observation_id": "building_top_primary_blue_hall_pixel",
+          "item_bbox": [
+            737.88,
+            136.03,
+            1,
+            1
+          ],
+          "anchor_bbox": [
+            384,
+            81,
+            205,
+            323
+          ],
+          "item_keypoint": [
+            737.88,
+            136.03
+          ],
+          "anchor_keypoint": [
+            486.5,
+            242.5
+          ],
+          "item_grounding": null,
+          "anchor_grounding": {
+            "method": "pixel_color_segmentation",
+            "mask": "blue_roof_largest_component",
+            "contour_basis": "sampled_mask_contour",
+            "grounding_quality": {
+              "version": 1,
+              "status": "accepted",
+              "raw_to_evidence_bbox_ratio": null,
+              "prior_to_evidence_bbox_ratio": null,
+              "bbox_proxy": true,
+              "review_required": false,
+              "reasons": []
+            },
+            "review_required": false
+          },
+          "item_note": "Center keypoint for tank farm massing review.",
+          "anchor_note": "Pixel-grounded top-view footprint from blue_roof_largest_component; used for position/proportion grounding before layout priors.",
+          "delta_norm": [
+            0.279,
+            -0.158
+          ],
+          "spacing_ratio": 0.321,
+          "axis": "x"
+        }
+      },
+      "model_relation": {
+        "ok": true,
+        "type": "right_of",
+        "item": "tank_farm",
+        "anchor": "primary_blue_roof_hall",
+        "delta_norm": [
+          0.301,
+          0.208
+        ],
+        "min_delta": 0.18,
+        "tolerance": 0.055,
+        "message": "tank_farm right_of blue_hall is satisfied in model projection.",
+        "evidence": {
+          "item": "tank_farm",
+          "anchor": "primary_blue_roof_hall",
+          "model_axes": [
+            "x",
+            "y"
+          ],
+          "item_center": [
+            0.882,
+            0.862
+          ],
+          "anchor_center": [
+            0.581,
+            0.654
+          ],
+          "delta_norm": [
+            0.301,
+            0.208
+          ]
+        }
+      }
+    },
+    {
+      "id": "parking-below-blue-hall",
+      "ok": true,
+      "image_relation": {
+        "id": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png|top|parking_lot|below|primary_blue_roof_hall|building_top_parking_lot|building_top_primary_blue_hall_pixel",
+        "type": "below",
+        "item": "parking_lot",
+        "anchor": "primary_blue_roof_hall",
+        "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+        "view": "top",
+        "confidence": 0.84,
+        "review_required": true,
+        "basis": {
+          "kind": "bbox",
+          "item_observation_id": "building_top_parking_lot",
+          "anchor_observation_id": "building_top_primary_blue_hall_pixel",
+          "item_bbox": [
+            515.06,
+            448.16,
+            274.24,
+            121.03
+          ],
+          "anchor_bbox": [
+            384,
+            81,
+            205,
+            323
+          ],
+          "item_keypoint": [
+            652.18,
+            508.675
+          ],
+          "anchor_keypoint": [
+            486.5,
+            242.5
+          ],
+          "item_grounding": {
+            "method": "layout_prior",
+            "review_required": true
+          },
+          "anchor_grounding": {
+            "method": "pixel_color_segmentation",
+            "mask": "blue_roof_largest_component",
+            "contour_basis": "sampled_mask_contour",
+            "grounding_quality": {
+              "version": 1,
+              "status": "accepted",
+              "raw_to_evidence_bbox_ratio": null,
+              "prior_to_evidence_bbox_ratio": null,
+              "bbox_proxy": true,
+              "review_required": false,
+              "reasons": []
+            },
+            "review_required": false
+          },
+          "item_note": "R7 campus-layout prior for the parking lot footprint.",
+          "anchor_note": "Pixel-grounded top-view footprint from blue_roof_largest_component; used for position/proportion grounding before layout priors.",
+          "delta_norm": [
+            0.184,
+            0.394
+          ],
+          "spacing_ratio": 0.435,
+          "axis": "y"
+        }
+      },
+      "model_relation": {
+        "ok": true,
+        "type": "below",
+        "item": "parking_lot",
+        "anchor": "primary_blue_roof_hall",
+        "delta_norm": [
+          0.217,
+          -0.523
+        ],
+        "min_delta": 0.25,
+        "tolerance": 0.055,
+        "message": "parking_lot below blue_hall is satisfied in model projection.",
+        "evidence": {
+          "item": "parking_lot",
+          "anchor": "primary_blue_roof_hall",
+          "model_axes": [
+            "x",
+            "y"
+          ],
+          "item_center": [
+            0.798,
+            0.131
+          ],
+          "anchor_center": [
+            0.581,
+            0.654
+          ],
+          "delta_norm": [
+            0.217,
+            -0.523
+          ]
+        }
+      }
+    },
+    {
+      "id": "blue-hall-inside-site",
+      "ok": true,
+      "image_relation": {
+        "id": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png|top|primary_blue_roof_hall|inside|site_boundary|building_top_primary_blue_hall_pixel|building_top_site_boundary",
+        "type": "inside",
+        "item": "primary_blue_roof_hall",
+        "anchor": "site_boundary",
+        "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+        "view": "top",
+        "confidence": 0.87,
+        "review_required": true,
+        "basis": {
+          "kind": "bbox",
+          "item_observation_id": "building_top_primary_blue_hall_pixel",
+          "anchor_observation_id": "building_top_site_boundary",
+          "item_bbox": [
+            384,
+            81,
+            205,
+            323
+          ],
+          "anchor_bbox": [
+            35.14,
+            46.85,
+            788.44,
+            560.56
+          ],
+          "item_keypoint": [
+            486.5,
+            242.5
+          ],
+          "anchor_keypoint": [
+            429.36,
+            327.13
+          ],
+          "item_grounding": {
+            "method": "pixel_color_segmentation",
+            "mask": "blue_roof_largest_component",
+            "contour_basis": "sampled_mask_contour",
+            "grounding_quality": {
+              "version": 1,
+              "status": "accepted",
+              "raw_to_evidence_bbox_ratio": null,
+              "prior_to_evidence_bbox_ratio": null,
+              "bbox_proxy": true,
+              "review_required": false,
+              "reasons": []
+            },
+            "review_required": false
+          },
+          "anchor_grounding": {
+            "method": "layout_prior",
+            "review_required": true
+          },
+          "item_note": "Pixel-grounded top-view footprint from blue_roof_largest_component; used for position/proportion grounding before layout priors.",
+          "anchor_note": "R7 campus-layout template candidate for the full industrial site boundary.",
+          "delta_norm": [
+            0.063,
+            -0.125
+          ],
+          "spacing_ratio": 0.141,
+          "containment_ratio": 1
+        }
+      },
+      "model_relation": {
+        "ok": true,
+        "type": "inside",
+        "item": "primary_blue_roof_hall",
+        "anchor": "site_boundary",
+        "delta_norm": [
+          0.075,
+          0.165
+        ],
+        "min_delta": 0.02,
+        "tolerance": 0.03,
+        "message": "blue_hall inside site is satisfied in model projection.",
+        "evidence": {
+          "item": "primary_blue_roof_hall",
+          "anchor": "site_boundary",
+          "model_axes": [
+            "x",
+            "y"
+          ],
+          "item_center": [
+            0.581,
+            0.654
+          ],
+          "anchor_center": [
+            0.506,
+            0.489
+          ],
+          "delta_norm": [
+            0.075,
+            0.165
+          ]
+        }
+      }
+    },
+    {
+      "id": "parking-inside-site",
+      "ok": true,
+      "image_relation": {
+        "id": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png|top|parking_lot|inside|site_boundary|building_top_parking_lot|building_top_site_boundary",
+        "type": "inside",
+        "item": "parking_lot",
+        "anchor": "site_boundary",
+        "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+        "view": "top",
+        "confidence": 0.8,
+        "review_required": true,
+        "basis": {
+          "kind": "bbox",
+          "item_observation_id": "building_top_parking_lot",
+          "anchor_observation_id": "building_top_site_boundary",
+          "item_bbox": [
+            515.06,
+            448.16,
+            274.24,
+            121.03
+          ],
+          "anchor_bbox": [
+            35.14,
+            46.85,
+            788.44,
+            560.56
+          ],
+          "item_keypoint": [
+            652.18,
+            508.675
+          ],
+          "anchor_keypoint": [
+            429.36,
+            327.13
+          ],
+          "item_grounding": {
+            "method": "layout_prior",
+            "review_required": true
+          },
+          "anchor_grounding": {
+            "method": "layout_prior",
+            "review_required": true
+          },
+          "item_note": "R7 campus-layout prior for the parking lot footprint.",
+          "anchor_note": "R7 campus-layout template candidate for the full industrial site boundary.",
+          "delta_norm": [
+            0.248,
+            0.269
+          ],
+          "spacing_ratio": 0.366,
+          "containment_ratio": 1
+        }
+      },
+      "model_relation": {
+        "ok": true,
+        "type": "inside",
+        "item": "parking_lot",
+        "anchor": "site_boundary",
+        "delta_norm": [
+          0.292,
+          -0.358
+        ],
+        "min_delta": 0.02,
+        "tolerance": 0.03,
+        "message": "parking_lot inside site is satisfied in model projection.",
+        "evidence": {
+          "item": "parking_lot",
+          "anchor": "site_boundary",
+          "model_axes": [
+            "x",
+            "y"
+          ],
+          "item_center": [
+            0.798,
+            0.131
+          ],
+          "anchor_center": [
+            0.506,
+            0.489
+          ],
+          "delta_norm": [
+            0.292,
+            -0.358
+          ]
+        }
+      }
+    },
+    {
+      "id": "west-warehouse-north-above-south",
+      "ok": true,
+      "image_relation": {
+        "id": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png|top|warehouse_west_north|above|warehouse_west_south|building_top_warehouse_west_north_pixel|building_top_warehouse_west_south_pixel",
+        "type": "above",
+        "item": "warehouse_west_north",
+        "anchor": "warehouse_west_south",
+        "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+        "view": "top",
+        "confidence": 0.87,
+        "review_required": true,
+        "basis": {
+          "kind": "bbox",
+          "item_observation_id": "building_top_warehouse_west_north_pixel",
+          "anchor_observation_id": "building_top_warehouse_west_south_pixel",
+          "item_bbox": [
+            141,
+            75,
+            73,
+            195
+          ],
+          "anchor_bbox": [
+            134,
+            285,
+            77,
+            230
+          ],
+          "item_keypoint": [
+            177.5,
+            172.5
+          ],
+          "anchor_keypoint": [
+            172.5,
+            400
+          ],
+          "item_grounding": {
+            "method": "pixel_color_segmentation",
+            "mask": "white_roof_component",
+            "contour_basis": "sampled_mask_contour",
+            "grounding_quality": {
+              "version": 1,
+              "status": "accepted",
+              "raw_to_evidence_bbox_ratio": null,
+              "prior_to_evidence_bbox_ratio": null,
+              "bbox_proxy": true,
+              "review_required": false,
+              "reasons": []
+            },
+            "review_required": false
+          },
+          "anchor_grounding": {
+            "method": "pixel_color_segmentation",
+            "mask": "white_roof_component",
+            "contour_basis": "sampled_mask_contour",
+            "grounding_quality": {
+              "version": 1,
+              "status": "accepted",
+              "raw_to_evidence_bbox_ratio": null,
+              "prior_to_evidence_bbox_ratio": null,
+              "bbox_proxy": true,
+              "review_required": false,
+              "reasons": []
+            },
+            "review_required": false
+          },
+          "item_note": "Pixel-grounded top-view footprint from white_roof_component; used for position/proportion grounding before layout priors.",
+          "anchor_note": "Pixel-grounded top-view footprint from white_roof_component; used for position/proportion grounding before layout priors.",
+          "delta_norm": [
+            0.006,
+            -0.337
+          ],
+          "spacing_ratio": 0.337,
+          "axis": "y"
+        }
+      },
+      "model_relation": {
+        "skipped": true,
+        "reason": "image_only relation candidate; no model projection item is expected in this slice."
+      }
+    },
+    {
+      "id": "inner-warehouse-north-above-south",
+      "ok": true,
+      "image_relation": {
+        "id": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png|top|warehouse_inner_north|above|warehouse_inner_south|building_top_warehouse_inner_north_pixel|building_top_warehouse_inner_south_pixel",
+        "type": "above",
+        "item": "warehouse_inner_north",
+        "anchor": "warehouse_inner_south",
+        "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+        "view": "top",
+        "confidence": 0.87,
+        "review_required": true,
+        "basis": {
+          "kind": "bbox",
+          "item_observation_id": "building_top_warehouse_inner_north_pixel",
+          "anchor_observation_id": "building_top_warehouse_inner_south_pixel",
+          "item_bbox": [
+            251,
+            75,
+            71,
+            195
+          ],
+          "anchor_bbox": [
+            247,
+            285,
+            84,
+            230
+          ],
+          "item_keypoint": [
+            286.5,
+            172.5
+          ],
+          "anchor_keypoint": [
+            289,
+            400
+          ],
+          "item_grounding": {
+            "method": "pixel_color_segmentation",
+            "mask": "white_roof_component",
+            "contour_basis": "sampled_mask_contour",
+            "grounding_quality": {
+              "version": 1,
+              "status": "accepted",
+              "raw_to_evidence_bbox_ratio": null,
+              "prior_to_evidence_bbox_ratio": null,
+              "bbox_proxy": true,
+              "review_required": false,
+              "reasons": []
+            },
+            "review_required": false
+          },
+          "anchor_grounding": {
+            "method": "pixel_color_segmentation",
+            "mask": "white_roof_component",
+            "contour_basis": "sampled_mask_contour",
+            "grounding_quality": {
+              "version": 1,
+              "status": "accepted",
+              "raw_to_evidence_bbox_ratio": null,
+              "prior_to_evidence_bbox_ratio": null,
+              "bbox_proxy": true,
+              "review_required": false,
+              "reasons": []
+            },
+            "review_required": false
+          },
+          "item_note": "Pixel-grounded top-view footprint from white_roof_component; used for position/proportion grounding before layout priors.",
+          "anchor_note": "Pixel-grounded top-view footprint from white_roof_component; used for position/proportion grounding before layout priors.",
+          "delta_norm": [
+            -0.003,
+            -0.337
+          ],
+          "spacing_ratio": 0.337,
+          "axis": "y"
+        }
+      },
+      "model_relation": {
+        "skipped": true,
+        "reason": "image_only relation candidate; no model projection item is expected in this slice."
+      }
+    },
+    {
+      "id": "inner-north-warehouse-right-of-west-north",
+      "ok": true,
+      "image_relation": {
+        "id": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png|top|warehouse_inner_north|right_of|warehouse_west_north|building_top_warehouse_inner_north_pixel|building_top_warehouse_west_north_pixel",
+        "type": "right_of",
+        "item": "warehouse_inner_north",
+        "anchor": "warehouse_west_north",
+        "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+        "view": "top",
+        "confidence": 0.87,
+        "review_required": true,
+        "basis": {
+          "kind": "bbox",
+          "item_observation_id": "building_top_warehouse_inner_north_pixel",
+          "anchor_observation_id": "building_top_warehouse_west_north_pixel",
+          "item_bbox": [
+            251,
+            75,
+            71,
+            195
+          ],
+          "anchor_bbox": [
+            141,
+            75,
+            73,
+            195
+          ],
+          "item_keypoint": [
+            286.5,
+            172.5
+          ],
+          "anchor_keypoint": [
+            177.5,
+            172.5
+          ],
+          "item_grounding": {
+            "method": "pixel_color_segmentation",
+            "mask": "white_roof_component",
+            "contour_basis": "sampled_mask_contour",
+            "grounding_quality": {
+              "version": 1,
+              "status": "accepted",
+              "raw_to_evidence_bbox_ratio": null,
+              "prior_to_evidence_bbox_ratio": null,
+              "bbox_proxy": true,
+              "review_required": false,
+              "reasons": []
+            },
+            "review_required": false
+          },
+          "anchor_grounding": {
+            "method": "pixel_color_segmentation",
+            "mask": "white_roof_component",
+            "contour_basis": "sampled_mask_contour",
+            "grounding_quality": {
+              "version": 1,
+              "status": "accepted",
+              "raw_to_evidence_bbox_ratio": null,
+              "prior_to_evidence_bbox_ratio": null,
+              "bbox_proxy": true,
+              "review_required": false,
+              "reasons": []
+            },
+            "review_required": false
+          },
+          "item_note": "Pixel-grounded top-view footprint from white_roof_component; used for position/proportion grounding before layout priors.",
+          "anchor_note": "Pixel-grounded top-view footprint from white_roof_component; used for position/proportion grounding before layout priors.",
+          "delta_norm": [
+            0.121,
+            0
+          ],
+          "spacing_ratio": 0.121,
+          "axis": "x"
+        }
+      },
+      "model_relation": {
+        "skipped": true,
+        "reason": "image_only relation candidate; no model projection item is expected in this slice."
+      }
+    },
+    {
+      "id": "parking-stall-row-north-inside-parking",
+      "ok": true,
+      "image_relation": {
+        "id": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png|top|parking_stall_row_north|inside|parking_lot|building_top_parking_stall_row_north_pixel|building_top_parking_lot",
+        "type": "inside",
+        "item": "parking_stall_row_north",
+        "anchor": "parking_lot",
+        "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+        "view": "top",
+        "confidence": 0.78,
+        "review_required": true,
+        "basis": {
+          "kind": "bbox",
+          "item_observation_id": "building_top_parking_stall_row_north_pixel",
+          "anchor_observation_id": "building_top_parking_lot",
+          "item_bbox": [
+            541,
+            475,
+            220,
+            21
+          ],
+          "anchor_bbox": [
+            515.06,
+            448.16,
+            274.24,
+            121.03
+          ],
+          "item_keypoint": [
+            651,
+            485.5
+          ],
+          "anchor_keypoint": [
+            652.18,
+            508.675
+          ],
+          "item_grounding": {
+            "method": "pixel_line_segmentation",
+            "mask": "parking_stall_marking_cluster_north",
+            "pixel_bbox": [
+              541,
+              475,
+              220,
+              21
+            ],
+            "pixel_count": 209,
+            "prior_bbox": [
+              541.8,
+              475.2,
+              219.6,
+              20.25
+            ],
+            "fill": 0.05,
+            "contour_basis": "sampled_mask_contour",
+            "grounding_quality": {
+              "version": 1,
+              "status": "accepted",
+              "raw_to_evidence_bbox_ratio": 1,
+              "prior_to_evidence_bbox_ratio": 1.04,
+              "bbox_proxy": false,
+              "review_required": false,
+              "reasons": []
+            },
+            "review_required": false
+          },
+          "anchor_grounding": {
+            "method": "layout_prior",
+            "review_required": true
+          },
+          "item_note": "Pixel-grounded top-view footprint from parking_stall_marking_cluster_north; used for position/proportion grounding before layout priors.",
+          "anchor_note": "R7 campus-layout prior for the parking lot footprint.",
+          "delta_norm": [
+            -0.001,
+            -0.034
+          ],
+          "spacing_ratio": 0.034,
+          "containment_ratio": 1
+        }
+      },
+      "model_relation": {
+        "skipped": true,
+        "reason": "image_only relation candidate; no model projection item is expected in this slice."
+      }
+    },
+    {
+      "id": "parking-drive-aisle-inside-parking",
+      "ok": true,
+      "image_relation": {
+        "id": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png|top|parking_drive_aisle_center|inside|parking_lot|building_top_parking_drive_aisle_center_pixel|building_top_parking_lot",
+        "type": "inside",
+        "item": "parking_drive_aisle_center",
+        "anchor": "parking_lot",
+        "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+        "view": "top",
+        "confidence": 0.77,
+        "review_required": true,
+        "basis": {
+          "kind": "bbox",
+          "item_observation_id": "building_top_parking_drive_aisle_center_pixel",
+          "anchor_observation_id": "building_top_parking_lot",
+          "item_bbox": [
+            541,
+            498,
+            221,
+            21
+          ],
+          "anchor_bbox": [
+            515.06,
+            448.16,
+            274.24,
+            121.03
+          ],
+          "item_keypoint": [
+            651.5,
+            508.5
+          ],
+          "anchor_keypoint": [
+            652.18,
+            508.675
+          ],
+          "item_grounding": {
+            "method": "pixel_gap_segmentation",
+            "mask": "parking_drive_aisle_between_pixel_marking_rows",
+            "prior_bbox": [
+              531,
+              498.15,
+              261,
+              36.45
+            ],
+            "derived_from": [
+              "building_top_parking_stall_row_north_pixel",
+              "building_top_parking_stall_row_south_pixel"
+            ],
+            "derived_from_kind": "negative_space_between_isolated_masks",
+            "contour_basis": "sampled_mask_contour",
+            "grounding_quality": {
+              "version": 1,
+              "status": "accepted",
+              "raw_to_evidence_bbox_ratio": null,
+              "prior_to_evidence_bbox_ratio": 1.74,
+              "bbox_proxy": false,
+              "review_required": false,
+              "reasons": []
+            },
+            "review_required": false
+          },
+          "anchor_grounding": {
+            "method": "layout_prior",
+            "review_required": true
+          },
+          "item_note": "Pixel-grounded top-view footprint from parking_drive_aisle_between_pixel_marking_rows; used for position/proportion grounding before layout priors.",
+          "anchor_note": "R7 campus-layout prior for the parking lot footprint.",
+          "delta_norm": [
+            -0.001,
+            0
+          ],
+          "spacing_ratio": 0.001,
+          "containment_ratio": 1
+        }
+      },
+      "model_relation": {
+        "skipped": true,
+        "reason": "image_only relation candidate; no model projection item is expected in this slice."
+      }
+    },
+    {
+      "id": "tree-row-south-below-parking",
+      "ok": true,
+      "image_relation": {
+        "id": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png|top|tree_row_south|below|parking_lot|building_top_tree_row_south_pixel|building_top_parking_lot",
+        "type": "below",
+        "item": "tree_row_south",
+        "anchor": "parking_lot",
+        "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+        "view": "top",
+        "confidence": 0.76,
+        "review_required": true,
+        "basis": {
+          "kind": "bbox",
+          "item_observation_id": "building_top_tree_row_south_pixel",
+          "anchor_observation_id": "building_top_parking_lot",
+          "item_bbox": [
+            540,
+            583,
+            288,
+            25
+          ],
+          "anchor_bbox": [
+            515.06,
+            448.16,
+            274.24,
+            121.03
+          ],
+          "item_keypoint": [
+            684,
+            595.5
+          ],
+          "anchor_keypoint": [
+            652.18,
+            508.675
+          ],
+          "item_grounding": {
+            "method": "pixel_vegetation_segmentation",
+            "mask": "tree_vegetation_row_cluster",
+            "pixel_bbox": [
+              540,
+              583,
+              288,
+              25
+            ],
+            "pixel_count": 1840,
+            "prior_bbox": [
+              513,
+              583.88,
+              315,
+              23.63
+            ],
+            "fill": 0.26,
+            "contour_basis": "sampled_mask_contour",
+            "grounding_quality": {
+              "version": 1,
+              "status": "accepted",
+              "raw_to_evidence_bbox_ratio": 1,
+              "prior_to_evidence_bbox_ratio": 1.09,
+              "bbox_proxy": false,
+              "review_required": false,
+              "reasons": []
+            },
+            "review_required": false
+          },
+          "anchor_grounding": {
+            "method": "layout_prior",
+            "review_required": true
+          },
+          "item_note": "Pixel-grounded top-view footprint from tree_vegetation_row_cluster; used for position/proportion grounding before layout priors.",
+          "anchor_note": "R7 campus-layout prior for the parking lot footprint.",
+          "delta_norm": [
+            0.035,
+            0.129
+          ],
+          "spacing_ratio": 0.133,
+          "axis": "y"
+        }
+      },
+      "model_relation": {
+        "skipped": true,
+        "reason": "image_only relation candidate; no model projection item is expected in this slice."
+      }
+    }
+  ],
+  "footprint_results": [],
+  "negative_results": [
+    {
+      "id": "mirror-x-campus-negative",
+      "transform": "mirror_x",
+      "checked_rules": [
+        "blue-hall-right-of-west-warehouse",
+        "blue-hall-right-of-inner-warehouse",
+        "tank-farm-right-of-blue-hall"
+      ],
+      "failed_rules": [
+        "blue-hall-right-of-west-warehouse",
+        "blue-hall-right-of-inner-warehouse",
+        "tank-farm-right-of-blue-hall"
+      ],
+      "ok": true,
+      "evaluations": [
+        {
+          "ok": false,
+          "type": "right_of",
+          "item": "primary_blue_roof_hall",
+          "anchor": "warehouse_row_west",
+          "delta_norm": [
+            -0.41,
+            0.103
+          ],
+          "min_delta": 0.25,
+          "tolerance": 0.055,
+          "message": "blue_hall is not right_of warehouse_west in model projection.",
+          "evidence": {
+            "item": "primary_blue_roof_hall",
+            "anchor": "warehouse_row_west",
+            "model_axes": [
+              "x",
+              "y"
+            ],
+            "item_center": [
+              0.419,
+              0.654
+            ],
+            "anchor_center": [
+              0.829,
+              0.551
+            ],
+            "delta_norm": [
+              -0.41,
+              0.103
+            ]
+          }
+        },
+        {
+          "ok": false,
+          "type": "right_of",
+          "item": "primary_blue_roof_hall",
+          "anchor": "warehouse_row_inner",
+          "delta_norm": [
+            -0.259,
+            0.103
+          ],
+          "min_delta": 0.15,
+          "tolerance": 0.055,
+          "message": "blue_hall is not right_of warehouse_inner in model projection.",
+          "evidence": {
+            "item": "primary_blue_roof_hall",
+            "anchor": "warehouse_row_inner",
+            "model_axes": [
+              "x",
+              "y"
+            ],
+            "item_center": [
+              0.419,
+              0.654
+            ],
+            "anchor_center": [
+              0.678,
+              0.551
+            ],
+            "delta_norm": [
+              -0.259,
+              0.103
+            ]
+          }
+        },
+        {
+          "ok": false,
+          "type": "right_of",
+          "item": "tank_farm",
+          "anchor": "primary_blue_roof_hall",
+          "delta_norm": [
+            -0.301,
+            0.208
+          ],
+          "min_delta": 0.18,
+          "tolerance": 0.055,
+          "message": "tank_farm is not right_of blue_hall in model projection.",
+          "evidence": {
+            "item": "tank_farm",
+            "anchor": "primary_blue_roof_hall",
+            "model_axes": [
+              "x",
+              "y"
+            ],
+            "item_center": [
+              0.118,
+              0.862
+            ],
+            "anchor_center": [
+              0.419,
+              0.654
+            ],
+            "delta_norm": [
+              -0.301,
+              0.208
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

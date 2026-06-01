@@ -3,6 +3,7 @@
 Runtime: mock
 Acceptance ready: yes
 Review required: no
+Grounding review required: no
 
 | Gate | Verdict | Issues | Errors | Warnings |
 |---|---|---:|---:|---:|

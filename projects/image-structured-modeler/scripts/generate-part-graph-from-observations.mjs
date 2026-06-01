@@ -1,7 +1,24 @@
 #!/usr/bin/env node
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { repoRoot } from './lib/image-analysis.mjs';
+import {
+  addVisualPhysicalRelationsToParts,
+  addVisualRelationshipsToParts,
+  visualRelationsForPartGraph
+} from './lib/visual-relations.mjs';
+import {
+  featureIntentWithGroundingMetadata,
+  groundingMetadataForEvidenceSources,
+  summarizePartGraphGrounding,
+  withGroundingMetadata
+} from './lib/grounding-v2.mjs';
+import {
+  applyGroundingV3DecisionsToParts,
+  buildGroundingV3Graph,
+  groundingV3DecisionForPart
+} from './lib/grounding-v3.mjs';
 
 async function main() {
   const options = parseArgs(process.argv.slice(2));
@@ -159,6 +176,10 @@ export function generatePartGraphFromObservations(observationSet, profile, optio
     return next;
   });
 
+  const visualRelations = visualRelationsForPartGraph(observationSet, seed.parts);
+  seed.parts = addVisualRelationshipsToParts(seed.parts, visualRelations);
+  seed.parts = addVisualPhysicalRelationsToParts(seed.parts, visualRelations);
+
   const reviewParameterProposals = uniqueParameterProposals([
     ...(seed.review?.parameter_proposals || []),
     ...allParameterProposals
@@ -173,6 +194,7 @@ export function generatePartGraphFromObservations(observationSet, profile, optio
     ]),
     ...(scaleCalibration ? { scale_calibration: scaleCalibration } : {}),
     part_matches: partMatches,
+    visual_relations: visualRelations,
     parts: graphParts
   };
   seed.review = {
@@ -233,7 +255,8 @@ function generateBuildingGroupPartGraphFromObservations(observationSet, profile,
   const siteMeasurement = (scaleCalibration?.measurements || []).find((item) => item.anchor_type === 'site_boundary_from_known_anchors');
   const pixelsPerMmX = siteMeasurement?.pixels_per_mm_x || siteObservation.bbox[2] / scale.width;
   const pixelsPerMmY = siteMeasurement?.pixels_per_mm_y || siteObservation.bbox[3] / scale.depth;
-  const context = { observationSet, profile, scale, scaleCalibration, topImage, siteObservation, pixelsPerMmX, pixelsPerMmY };
+  const groundingV3 = observationSet.grounding_v3 || buildGroundingV3Graph({ observations: observationSet });
+  const context = { observationSet, profile, scale, scaleCalibration, topImage, siteObservation, pixelsPerMmX, pixelsPerMmY, groundingV3 };
 
   const massingParts = [
     sitePart(context),
@@ -297,7 +320,19 @@ function generateBuildingGroupPartGraphFromObservations(observationSet, profile,
     ...scaleAnchorParts(context)
   ].filter(Boolean).map((part) => withBuildingDetailProposals(part));
 
-  const parameterProposals = massingParts.flatMap((part) => part.parameter_proposals || []);
+  const partCandidateProposals = buildingRelationPartCandidateProposals(context, massingParts);
+  const partCandidateParts = partCandidateProposals.flatMap((proposal) => proposal.proposed_value || []);
+  const visualRelations = visualRelationsForPartGraph(observationSet, [...massingParts, ...partCandidateParts]);
+  const massingVisualRelations = visualRelationsForPartGraph(observationSet, massingParts);
+  const massingPartsWithRelationships = addVisualRelationshipsToParts(massingParts, massingVisualRelations);
+  const massingPartsWithRelations = applyGroundingV3DecisionsToParts(
+    addVisualPhysicalRelationsToParts(massingPartsWithRelationships, massingVisualRelations),
+    groundingV3
+  );
+  const parameterProposals = [
+    ...massingPartsWithRelations.flatMap((part) => part.parameter_proposals || []),
+    ...partCandidateProposals
+  ];
   const correctionTargets = [
     {
       path: 'scale.calibration.measurements',
@@ -309,15 +344,24 @@ function generateBuildingGroupPartGraphFromObservations(observationSet, profile,
       reason: 'Confirm campus north/up convention before mapping image axes to model axes.',
       severity: 'warn'
     },
-    ...massingParts.map((part) => ({
+    ...massingPartsWithRelations.map((part) => ({
       part_id: part.id,
       path: `parts[${part.id}].shape.parameters`,
       reason: `${part.id}: review image-derived massing dimensions before applying to a final building PartGraph.`,
       severity: part.role === 'scale_anchor' ? 'info' : 'warn'
     })),
-    ...buildingDetailCorrectionTargets(massingParts)
+    ...buildingDetailCorrectionTargets(massingPartsWithRelations),
+    ...partCandidateProposals.map((proposal) => ({
+      part_id: proposal.part_id,
+      path: proposal.path,
+      reason: proposal.reason,
+      severity: 'warn'
+    }))
   ];
-  const graphParts = massingParts.map((part) => evidenceGraphPartForBuildingPart(part));
+  const graphParts = [
+    ...massingPartsWithRelations.map((part) => evidenceGraphPartForBuildingPart(part)),
+    ...partCandidateParts.map((part) => evidenceGraphPartForReviewCandidatePart(part))
+  ];
   return {
     version: 1,
     id: options.id || 'building-group-image-evidence-massing-part-graph',
@@ -340,6 +384,15 @@ function generateBuildingGroupPartGraphFromObservations(observationSet, profile,
         'Confirm north/up and image-to-model axis convention before finalizing the massing PartGraph.'
       ]),
       ...(scaleCalibration ? { scale_calibration: scaleCalibration } : {}),
+      ground_plan: groundingV3.ground_plan,
+      grounding_v3: {
+        version: groundingV3.version,
+        summary: groundingV3.summary,
+        scale_anchor_graph: groundingV3.scale_anchor_graph,
+        line_grid_fit: groundingV3.line_grid_fit,
+        top_view_overlay: groundingV3.top_view_overlay,
+        promotion_decisions: groundingV3.promotion_decisions
+      },
       part_matches: graphParts.map((part) => ({
         part_id: part.part_id,
         strategy: 'building_group_top_bbox_to_massing',
@@ -348,10 +401,12 @@ function generateBuildingGroupPartGraphFromObservations(observationSet, profile,
         source_count: part.sources.length,
         confidence: part.confidence
       })),
-      parts: graphParts
+      visual_relations: visualRelations,
+      parts: graphParts,
+      grounding_summary: summarizePartGraphGrounding({ parts: [...massingPartsWithRelations, ...partCandidateParts] })
     },
-    parts: massingParts,
-    physical_relations: massingParts
+    parts: massingPartsWithRelations,
+    physical_relations: massingPartsWithRelations
       .filter((part) => !['site_boundary', 'scale_anchor'].includes(part.role))
       .map((part) => ({
         id: `${part.id}-grounded`,
@@ -365,13 +420,255 @@ function generateBuildingGroupPartGraphFromObservations(observationSet, profile,
       fallback_summary: fallbackSummary(massingParts),
       parameter_proposal_summary: parameterProposalSummary(parameterProposals),
       parameter_proposals: parameterProposals,
+      part_candidate_proposal_summary: partCandidateProposalSummary(partCandidateProposals),
+      part_candidate_proposals: partCandidateProposals,
       open_questions: [
         'Confirm parking bay count, parking bay dimensions, and drive aisle width used for scale.',
         'Confirm campus north/up before interpreting east/west or front/back labels.',
+        'Promote relation-derived warehouse, parking, and tree-row part candidates only after visual review.',
         'Replace bbox-derived boxes with reviewed roofline, facade, and opening geometry before queue acceptance.'
       ],
-      correction_targets: uniqueCorrectionTargets(correctionTargets)
+      correction_targets: uniqueCorrectionTargets(correctionTargets),
+      grounding_summary: summarizePartGraphGrounding({ parts: massingPartsWithRelations }),
+      grounding_v3: {
+        version: groundingV3.version,
+        summary: groundingV3.summary,
+        gates: groundingV3.gates,
+        correction_suggestions: groundingV3.correction_suggestions
+      }
     }
+  };
+}
+
+const BUILDING_GROUP_REVIEW_CANDIDATE_SPECS = [
+  {
+    id: 'warehouse_west_north',
+    parent_id: 'warehouse_row_west',
+    name: 'West_Warehouse_North_Candidate',
+    type: 'building',
+    role: 'warehouse_unit',
+    material: 'Campus_Warehouse_Light',
+    height: 9500,
+    basis: ['visual_relation_graph', 'warehouse_row_split_candidate', 'known_element_scale_calibration']
+  },
+  {
+    id: 'warehouse_west_south',
+    parent_id: 'warehouse_row_west',
+    name: 'West_Warehouse_South_Candidate',
+    type: 'building',
+    role: 'warehouse_unit',
+    material: 'Campus_Warehouse_Light',
+    height: 9500,
+    basis: ['visual_relation_graph', 'warehouse_row_split_candidate', 'known_element_scale_calibration']
+  },
+  {
+    id: 'warehouse_inner_north',
+    parent_id: 'warehouse_row_inner',
+    name: 'Inner_Warehouse_North_Candidate',
+    type: 'building',
+    role: 'warehouse_unit',
+    material: 'Campus_Warehouse_Light',
+    height: 9500,
+    basis: ['visual_relation_graph', 'warehouse_row_split_candidate', 'known_element_scale_calibration']
+  },
+  {
+    id: 'warehouse_inner_south',
+    parent_id: 'warehouse_row_inner',
+    name: 'Inner_Warehouse_South_Candidate',
+    type: 'building',
+    role: 'warehouse_unit',
+    material: 'Campus_Warehouse_Light',
+    height: 9500,
+    basis: ['visual_relation_graph', 'warehouse_row_split_candidate', 'known_element_scale_calibration']
+  },
+  {
+    id: 'parking_stall_row_north',
+    parent_id: 'parking_lot',
+    name: 'Parking_Stall_Row_North_Candidate',
+    type: 'parking_marking',
+    role: 'parking_stall_row',
+    material: 'Campus_Parking_Stripe',
+    height: 35,
+    basis: ['visual_relation_graph', 'parking_marking_candidate', 'known_element_scale_calibration']
+  },
+  {
+    id: 'parking_stall_row_south',
+    parent_id: 'parking_lot',
+    name: 'Parking_Stall_Row_South_Candidate',
+    type: 'parking_marking',
+    role: 'parking_stall_row',
+    material: 'Campus_Parking_Stripe',
+    height: 35,
+    basis: ['visual_relation_graph', 'parking_marking_candidate', 'known_element_scale_calibration']
+  },
+  {
+    id: 'parking_drive_aisle_center',
+    parent_id: 'parking_lot',
+    name: 'Parking_Drive_Aisle_Center_Candidate',
+    type: 'site_surface',
+    role: 'parking_drive_aisle',
+    material: 'Campus_Road_Asphalt',
+    height: 45,
+    basis: ['visual_relation_graph', 'parking_aisle_candidate', 'known_element_scale_calibration']
+  },
+  {
+    id: 'tree_row_south',
+    parent_id: 'site_boundary',
+    name: 'Tree_Row_South_Candidate',
+    type: 'landscape',
+    role: 'tree_row',
+    material: 'Campus_Tree_Line',
+    height: 1800,
+    basis: ['visual_relation_graph', 'landscape_row_candidate', 'known_element_scale_calibration']
+  }
+];
+
+function buildingRelationPartCandidateProposals(context, massingParts) {
+  const existingPartIds = new Set(massingParts.map((part) => part.id));
+  let candidates = BUILDING_GROUP_REVIEW_CANDIDATE_SPECS
+    .filter((spec) => !existingPartIds.has(spec.id))
+    .map((spec) => buildingReviewCandidatePart(context, spec))
+    .filter(Boolean);
+  const candidateVisualRelations = visualRelationsForPartGraph(context.observationSet, [...massingParts, ...candidates]);
+  candidates = addVisualRelationshipsToParts(candidates, candidateVisualRelations);
+  candidates = addVisualPhysicalRelationsToParts(candidates, candidateVisualRelations, { minConfidence: 0.44 });
+  const candidatesByParent = new Map();
+  for (const candidate of candidates) {
+    const list = candidatesByParent.get(candidate.parent) || [];
+    list.push(candidate);
+    candidatesByParent.set(candidate.parent, list);
+  }
+  return Array.from(candidatesByParent.entries()).map(([parentId, parts]) => partCandidateProposal(parentId, parts));
+}
+
+function buildingReviewCandidatePart(context, spec) {
+  const observation = findObservationByHint(context.topImage, spec.id);
+  if (!observation?.bbox) return null;
+  const rect = bboxToModelRect(context, observation.bbox);
+  const sources = buildingEvidenceSources(context, spec.id, observation);
+  const confidence = round(clamp(Math.min(observation.confidence || 0.48, averageConfidence(sources) || 0.48) - 0.08, 0.28, 0.68), 3);
+  const groundingDecision = groundingV3DecisionForPart(context.groundingV3, { id: spec.id, role: spec.role, type: spec.type });
+  return withGroundingMetadata({
+    id: spec.id,
+    parent: spec.parent_id,
+    name: spec.name,
+    type: spec.type,
+    role: spec.role,
+    material: spec.material,
+    shape: {
+      primitive: 'box',
+      parameters: {
+        origin: [rect.x, rect.y, 0],
+        size: [rect.width, rect.depth, spec.height]
+      }
+    },
+    evidence_status: 'needs_review',
+    evidence_sources: sources,
+    fallback_state: 'needs_review',
+    grounding_decision: groundingDecision.decision,
+    grounding_region_id: groundingDecision.region_id,
+    relationships: candidateRelationshipsForSpec(spec),
+    physical_relations: [{
+      id: `${spec.id}-candidate-grounded`,
+      type: 'grounded',
+      subject: spec.id,
+      ground_z: 0,
+      severity: 'info',
+      review_required: true,
+      note: 'Relation-derived candidate part is provisionally grounded; it is not compiled until accepted.'
+    }],
+    qa: {
+      generated_from_visual_relation_graph: true,
+      evidence_confidence: confidence,
+      review_required: true,
+      candidate_only: true,
+      not_compiled: true,
+      grounding_v3_decision: groundingDecision.decision,
+      grounding_region_id: groundingDecision.region_id,
+      grounding_region_class: groundingDecision.region_class,
+      grounding_v3_reasons: groundingDecision.reasons
+    },
+    review: {
+      basis: spec.basis,
+      reason: `${spec.id}: relation-derived candidate should be reviewed before it becomes a real PartGraph part.`
+    }
+  }, { reviewRequired: true });
+}
+
+function candidateRelationshipsForSpec(spec) {
+  const relationships = [];
+  if (spec.parent_id) {
+    relationships.push({
+      type: 'inside',
+      target: spec.parent_id,
+      source: 'visual_relation_graph',
+      confidence: 0.52,
+      review_required: true,
+      note: `${spec.id} is proposed as a review-only child candidate of ${spec.parent_id}.`
+    });
+  }
+  return relationships;
+}
+
+function partCandidateProposal(parentId, parts) {
+  const confidence = round(clamp(averageConfidence(parts.map((part) => ({ confidence: part.qa?.evidence_confidence }))), 0.28, 0.68), 3);
+  const sourceViews = unique(parts.flatMap((part) => part.evidence_sources || []).map((source) => source.view).filter(Boolean));
+  return {
+    part_id: parentId,
+    proposal_kind: 'part_candidates',
+    parameter: 'candidate_parts',
+    path: `parts[${parentId}].candidate_parts`,
+    unit: 'mm',
+    current_value: [],
+    proposed_value: parts,
+    confidence,
+    status: 'needs_review',
+    review_required: true,
+    basis: unique(parts.flatMap((part) => part.review?.basis || [])),
+    source_count: parts.reduce((sum, part) => sum + (part.evidence_sources?.length || 0), 0),
+    source_views: sourceViews,
+    required_views: ['top', 'oblique'],
+    confirmed_views: sourceViews,
+    missing_views: sourceViews.includes('oblique') ? [] : ['oblique'],
+    evidence_sources: parts.flatMap((part) => part.evidence_sources || []).slice(0, 8),
+    reason: `${parentId}: review ${parts.length} relation-derived part candidate(s) before promoting them into editable PartGraph geometry.`
+  };
+}
+
+function evidenceGraphPartForReviewCandidatePart(part) {
+  const sourceViews = unique((part.evidence_sources || []).map((source) => source.view).filter(Boolean));
+  return {
+    part_id: part.id,
+    status: 'needs_review',
+    required_views: ['top', 'oblique'],
+    confirmed_views: sourceViews,
+    missing_views: sourceViews.includes('oblique') ? [] : ['oblique'],
+    confidence: round(part.qa?.evidence_confidence || 0.45, 3),
+    sources: part.evidence_sources || [],
+    parameter_proposals: [],
+    grounding_decision: part.grounding_decision || part.qa?.grounding_v3_decision || 'review_candidate',
+    grounding_region_id: part.grounding_region_id || part.qa?.grounding_region_id || part.id,
+    conflicts: [
+      {
+        type: 'review_gated_part_candidate',
+        severity: 'warn',
+        note: 'Part is a relation-derived candidate, not compiled geometry.'
+      }
+    ],
+    open_questions: [
+      `${part.id}: confirm candidate identity, footprint, and parent relation before promoting it into PartGraph parts.`
+    ]
+  };
+}
+
+function partCandidateProposalSummary(proposals = []) {
+  const candidateParts = proposals.flatMap((proposal) => proposal.proposed_value || []);
+  return {
+    total: proposals.length,
+    candidate_parts: candidateParts.length,
+    review_required: proposals.filter((proposal) => proposal.review_required).length,
+    by_parent: countBy(proposals, 'part_id'),
+    by_role: countBy(candidateParts, 'role')
   };
 }
 
@@ -622,7 +919,7 @@ function slot(part, suffix, semantic, face, center, length, width, depth) {
 }
 
 function featureIntent(part, suffix, operation, semantic, face, parameters) {
-  return {
+  return featureIntentWithGroundingMetadata({
     id: `${part.id}_${suffix}`,
     operation,
     face,
@@ -630,7 +927,7 @@ function featureIntent(part, suffix, operation, semantic, face, parameters) {
     semantic,
     fallback_state: 'needs_review',
     evidence_sources: featureEvidenceSources(part)
-  };
+  }, part, { reviewRequired: true });
 }
 
 function featureEvidenceSources(part) {
@@ -643,6 +940,11 @@ function roundVector(values) {
 
 function buildingPart({ id, name, type, role, material, shape, sources, fallback_state, confidence }) {
   const parameters = cloneJson(shape.parameters);
+  const groundingMetadata = groundingMetadataForEvidenceSources(sources, {
+    fallbackState: fallback_state,
+    reviewRequired: true,
+    helperAllowed: fallback_state === 'visual_helper' || fallback_state === 'reference_only'
+  });
   const proposal = {
     part_id: id,
     proposal_kind: 'shape_parameters',
@@ -660,7 +962,7 @@ function buildingPart({ id, name, type, role, material, shape, sources, fallback
     evidence_sources: sources.slice(0, 4),
     reason: 'R7 building-group massing is bbox-derived and must be reviewed before queue acceptance.'
   };
-  return {
+  return withGroundingMetadata({
     id,
     name,
     type,
@@ -676,12 +978,25 @@ function buildingPart({ id, name, type, role, material, shape, sources, fallback
       evidence_confidence: proposal.confidence,
       review_required: true,
       scale_review_required: true,
-      orientation_review_required: true
+      orientation_review_required: true,
+      grounding_status: groundingMetadata.grounding_status,
+      grounding_method: groundingMetadata.grounding_method,
+      source_observation_ids: groundingMetadata.source_observation_ids,
+      helper_allowed: groundingMetadata.helper_allowed,
+      photo_grade_eligible: groundingMetadata.photo_grade_eligible
     }
-  };
+  }, {
+    reviewRequired: true,
+    helperAllowed: fallback_state === 'visual_helper' || fallback_state === 'reference_only'
+  });
 }
 
 function evidenceGraphPartForBuildingPart(part) {
+  const groundingMetadata = groundingMetadataForEvidenceSources(part.evidence_sources || [], {
+    fallbackState: part.fallback_state,
+    reviewRequired: part.qa?.review_required,
+    helperAllowed: part.helper_allowed
+  });
   return {
     part_id: part.id,
     status: part.evidence_status,
@@ -697,6 +1012,13 @@ function evidenceGraphPartForBuildingPart(part) {
       status: proposal.status,
       review_required: proposal.review_required
     })),
+    grounding_status: part.grounding_status || groundingMetadata.grounding_status,
+    grounding_method: part.grounding_method || groundingMetadata.grounding_method,
+    source_observation_ids: part.source_observation_ids || groundingMetadata.source_observation_ids,
+    grounding_decision: part.grounding_decision || part.qa?.grounding_v3_decision || 'review_candidate',
+    grounding_region_id: part.grounding_region_id || part.qa?.grounding_region_id || part.id,
+    review_required: part.review_required ?? groundingMetadata.review_required,
+    photo_grade_eligible: part.photo_grade_eligible ?? groundingMetadata.photo_grade_eligible,
     conflicts: [
       {
         type: 'review_gated_massing',
@@ -719,7 +1041,8 @@ function buildingEvidenceSources(context, evidencePartId, observation) {
     status: source.status || 'observed',
     confidence: source.confidence,
     note: source.note,
-    observation_id: source.observation_id
+    observation_id: source.observation_id,
+    ...(source.grounding ? { grounding: source.grounding } : {})
   }));
   if (graphSources.length) return dedupeSources(graphSources);
   return [{
@@ -729,7 +1052,9 @@ function buildingEvidenceSources(context, evidencePartId, observation) {
     status: 'observed',
     confidence: observation?.confidence || 0.5,
     note: observation?.note || `Top-view bbox evidence for ${evidencePartId}.`,
-    observation_id: observation?.id
+    observation_id: observation?.id,
+    ...(observation?.grounding ? { grounding: observation.grounding } : {}),
+    ...(observation?.mask ? { mask: observation.mask } : {})
   }];
 }
 
@@ -749,7 +1074,17 @@ function findObservation(image, id) {
 }
 
 function findObservationByHint(image, componentHint) {
-  return (image.observations || []).find((observation) => observation.component_hint === componentHint && observation.bbox);
+  return (image.observations || [])
+    .filter((observation) => observation.component_hint === componentHint && observation.bbox)
+    .sort((a, b) => observationGroundingScore(b) - observationGroundingScore(a))[0];
+}
+
+function observationGroundingScore(observation) {
+  let score = Number(observation.confidence) || 0;
+  const method = observation.grounding?.method || '';
+  if (/^pixel_/i.test(method)) score += 10;
+  if (/template|layout|prior/i.test(observation.note || '') || method === 'layout_prior') score -= 5;
+  return score;
 }
 
 function skeletonPartGraph(observationSet, profile, options) {
@@ -1301,6 +1636,14 @@ function unique(values) {
   return Array.from(new Set((values || []).filter((value) => value !== undefined && value !== null)));
 }
 
+function countBy(items = [], key) {
+  return items.reduce((counts, item) => {
+    const value = item?.[key] || 'unknown';
+    counts[value] = (counts[value] || 0) + 1;
+    return counts;
+  }, {});
+}
+
 function cloneJson(value) {
   return JSON.parse(JSON.stringify(value));
 }
@@ -1348,7 +1691,9 @@ function usage() {
 `);
 }
 
-main().catch((error) => {
-  process.stderr.write(`${error.stack || error.message}\n`);
-  process.exit(1);
-});
+if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
+  main().catch((error) => {
+    process.stderr.write(`${error.stack || error.message}\n`);
+    process.exit(1);
+  });
+}

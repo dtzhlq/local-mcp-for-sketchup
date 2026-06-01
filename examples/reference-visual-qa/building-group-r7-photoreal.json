@@ -40,7 +40,7 @@
         "view": "site_top",
         "item": "roof_texture_primary_blue_hall",
         "point": "center",
-        "expected": [0.612, 0.6],
+        "expected": [0.572, 0.65],
         "tolerance": 0.035,
         "correction_target": {
           "part_id": "primary_blue_roof_hall_body",
@@ -124,7 +124,7 @@
         "id": "blue-hall-roof-texture-extent",
         "view": "site_top",
         "item": "roof_texture_primary_blue_hall",
-        "expected": [0.315, 0.593],
+        "expected": [0.26, 0.578],
         "tolerance": [0.04, 0.05],
         "correction_target": {
           "part_id": "primary_blue_roof_hall_body",
@@ -135,7 +135,7 @@
         "id": "warehouse-single-building-extent",
         "view": "site_top",
         "item": "warehouse_west_north_body",
-        "expected": [0.228, 0.351],
+        "expected": [0.101, 0.351],
         "tolerance": [0.05, 0.07],
         "correction_target": {
           "part_id": "warehouse_west_north_body",

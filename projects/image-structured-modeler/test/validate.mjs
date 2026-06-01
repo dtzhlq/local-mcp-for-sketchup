@@ -8,8 +8,13 @@ import { compilePartGraphToSketchUpDsl } from '../../../src/product-modeling/par
 import { validatePartGraphPhysicalConsistency } from '../../../src/product-modeling/physical-consistency-qa.mjs';
 import { compilePlanToSketchUpDsl } from '../scripts/compile-plan-to-sketchup-dsl.mjs';
 import { generateModelPlan } from '../scripts/generate-model-plan.mjs';
+import { generatePartGraphFromObservations } from '../scripts/generate-part-graph-from-observations.mjs';
 import { applyCorrectionPatch, buildCorrectionPatchFromParameterProposals, buildCorrectionPatchFromReferenceReport } from '../scripts/lib/part-graph-corrections.mjs';
 import { evaluateDiffWarningBudget, evaluateSnapshotWarningBudget } from '../scripts/lib/warning-budget.mjs';
+import { makeGroundingV2SecondBuildingGroupSample } from '../scripts/lib/grounding-v2-second-sample.mjs';
+import { validateGroundingV3 } from '../scripts/lib/grounding-v3.mjs';
+import { validateGeometryFit } from '../scripts/validate-geometry-fit.mjs';
+import { validateVisualRelations } from '../scripts/validate-visual-relations.mjs';
 
 const repoRoot = path.resolve(fileURLToPath(new URL('../../..', import.meta.url)));
 const subprojectRoot = path.join(repoRoot, 'projects', 'image-structured-modeler');
@@ -49,6 +54,26 @@ try {
   assert.ok(observationSet.evidence_graph, 'observations.json should contain native evidence graph');
   assert.equal(observationSet.evidence_graph.parts.length >= 6, true, 'observations evidence graph should contain core part records');
   assert.deepEqual(graphPartByIdFromGraph(observationSet.evidence_graph, 'center_grip_body').required_views, ['front', 'rear'], 'observations evidence graph should record center grip required views');
+  assertVisualRelationGraph(observationSet, 'switch controller observations.json');
+  assertRelationCandidate(observationSet, { type: 'right_of', item: 'right_thumbstick', anchor: 'left_thumbstick', view: 'front' }, 'switch thumbstick handedness candidate');
+  assertRelationCandidate(observationSet, { type: 'right_of', item: 'abxy_cluster', anchor: 'dpad_cluster', view: 'front' }, 'switch ABXY versus D-pad candidate');
+  assertRelationCandidate(observationSet, { type: 'inside', item: 'center_front_panel', anchor: 'center_grip_body', view: 'front' }, 'switch screen/panel containment candidate');
+  const switchFront = observationSet.images.find((image) => image.detected_view.kind === 'front');
+  const contourGroundedControls = switchFront.observations.filter((item) => [
+    'left_joycon_shell',
+    'right_joycon_shell',
+    'center_grip_body',
+    'center_front_panel',
+    'abxy_cluster',
+    'dpad_cluster'
+  ].includes(item.component_hint));
+  assert.equal(contourGroundedControls.length >= 6, true, 'Switch front controls should expose contour-grounded component observations');
+  assert.ok(contourGroundedControls.every((item) => item.grounding?.method === 'edge_contour_segmentation'), 'Switch shell/screen/button candidates should carry edge contour grounding');
+  assert.ok(contourGroundedControls.every((item) => item.contour?.sample_count > 5 && item.keypoints?.length >= 5), 'Switch contour-grounded controls should carry sampled contours and keypoints');
+  const thumbstickControls = switchFront.observations.filter((item) => ['left_thumbstick', 'right_thumbstick'].includes(item.component_hint));
+  assert.equal(thumbstickControls.length, 2, 'Switch front should expose two thumbstick contour/keypoint boxes');
+  assert.ok(thumbstickControls.every((item) => item.grounding?.method === 'edge_keypoint_segmentation'), 'Switch thumbsticks should carry edge keypoint grounding');
+  assert.ok(thumbstickControls.every((item) => item.grounding?.grounding_quality?.bbox_proxy === false), 'Switch grounded controls should not be bbox proxies');
   for (const observation of observationSet.images) {
     assertValid(validateImageObservation, stripCollectionOnlyFields(observation), `${observation.image.path} image observation`);
   }
@@ -147,6 +172,8 @@ for (const relativePath of [
   'scripts/apply-part-graph-correction-patch.mjs',
   'scripts/build-part-graph-proposal-patch.mjs',
   'scripts/make-part-graph-proposal-review.mjs',
+  'scripts/validate-geometry-fit.mjs',
+  'scripts/validate-visual-relations.mjs',
   'scripts/validate-part-graph-quality.mjs',
   'scripts/compile-plan-to-sketchup-dsl.mjs',
   'scripts/make-snapshot-report.mjs',
@@ -213,11 +240,14 @@ try {
 }
 
 await assertSwitchCorrectionRegression();
+await assertSwitchVisualRelationFixture();
 await assertFeatureMappingCorrectionRegression();
 await assertSingleImageEvidenceDowngrade();
 const remoteChecked = await assertCompactRemoteSample();
 const ambulanceEvidenceChecked = await assertAmbulancePartGraphEvidenceSample();
 const buildingGroupChecked = await assertBuildingGroupObservationSample();
+const r8StructuralGroundingChecked = await assertR8StructuralGroundingRepair();
+const groundingV2SecondSampleChecked = await assertGroundingV2SecondBuildingSample();
 
 process.stdout.write(`${JSON.stringify({
   ok: true,
@@ -232,10 +262,15 @@ process.stdout.write(`${JSON.stringify({
     queue_snapshot_report: queueSnapshotReportChecked,
     queue_diff_report: queueDiffReportChecked,
     correction_regression: true,
+    visual_relation_switch_fixture: true,
     feature_mapping_regression: true,
     compact_remote_sample: remoteChecked,
     ambulance_part_graph_evidence: ambulanceEvidenceChecked,
     building_group_observation_sample: buildingGroupChecked,
+    r8_structural_grounding_repair: r8StructuralGroundingChecked,
+    grounding_v2_second_building_sample: groundingV2SecondSampleChecked,
+    visual_relation_building_group_fixture: true,
+    geometry_fit_building_group_fixture: true,
     ambulance_proposal_review_chain: true,
     warning_budget: true,
     scripts: true
@@ -248,6 +283,74 @@ async function readJson(relativePath) {
 
 async function readRepoJson(relativePath) {
   return JSON.parse(await fs.readFile(path.join(repoRoot, relativePath), 'utf8'));
+}
+
+async function assertGroundingV2SecondBuildingSample() {
+  const { observations, fixture } = makeGroundingV2SecondBuildingGroupSample();
+  assertValid(validateImageSetObservation, observations, 'grounding v2 second building observations');
+  assertVisualRelationGraph(observations, 'grounding v2 second building observations');
+  assertGroundingV3ObservationGraph(observations, 'grounding v2 second building observations');
+  assertRelationCandidate(observations, {
+    type: 'right_of',
+    item: 'primary_blue_roof_hall',
+    anchor: 'warehouse_row_inner',
+    view: 'top',
+    min_confidence: 0.55
+  }, 'second sample blue hall to inner warehouse relation');
+  assertRelationCandidate(observations, {
+    type: 'right_of',
+    item: 'warehouse_row_inner',
+    anchor: 'warehouse_row_west',
+    view: 'top',
+    min_confidence: 0.52
+  }, 'second sample inner warehouse to west warehouse relation');
+  const top = observations.images.find((image) => image.detected_view.kind === 'top');
+  assert.ok(top.observations.filter((item) => item.grounding_status === 'image_grounded').length >= 12, 'second sample should expose image-grounded top-view observations');
+  assert.ok(top.observations.every((item) => item.grounding?.grounding_quality?.bbox_proxy === false), 'second sample should not use bbox-proxy grounding');
+
+  const profile = await readRepoJson('examples/product-profiles/building_group_industrial_campus.json');
+  const partGraph = generatePartGraphFromObservations(observations, profile, {
+    id: 'building-group-grounding-v2-second-sample-part-graph',
+    productName: observations.object.name
+  });
+  assertValid(validatePartGraph, partGraph, 'grounding v2 second sample PartGraph');
+  assert.equal(partGraph.review.part_candidate_proposal_summary.candidate_parts, 8, 'second sample should reuse the candidate promotion queue');
+  assert.ok(partGraph.parts.every((part) => part.grounding_status), 'second sample PartGraph parts should carry grounding_status');
+  assert.ok(partGraph.parts.every((part) => part.grounding_decision), 'second sample PartGraph parts should carry Grounding v3 promotion decisions');
+  assert.ok(partGraph.parts.some((part) => part.grounding_status === 'image_grounded' || part.grounding_status === 'review_confirmed'), 'second sample should contain image/review grounded parts');
+  assert.ok(partGraph.evidence_graph.grounding_summary, 'second sample evidence graph should summarize Grounding v2 provenance');
+  assert.ok(partGraph.evidence_graph.ground_plan, 'second sample evidence graph should carry Grounding v3 GroundPlan');
+
+  const output = compilePartGraphToSketchUpDsl(partGraph, profile, { repoRoot });
+  const report = await validateGeometryFit({
+    observations,
+    fixture,
+    code: JSON.stringify(output),
+    mockSessionPath: path.join(repoRoot, 'output', 'image-structured-modeler', 'sessions', 'validate-grounding-v2-second-sample-session.json')
+  });
+  assert.equal(report.version, 2, 'second sample GeometryFit should emit v2 reports');
+  assert.equal(report.ok, true, 'second sample GeometryFit should pass primary grounding gates');
+  assert.equal(report.summary.checked_footprints, fixture.footprint_rules.length, 'second sample GeometryFit should check every primary footprint');
+  assert.equal(report.summary.checked_relations, fixture.required_relations.length, 'second sample GeometryFit should check every primary relation');
+  assert.equal(report.summary.checked_scale_anchors >= 2, true, 'second sample GeometryFit should keep scale anchors in the gate');
+  assert.equal(report.summary.checked_handedness_cases, fixture.negative_cases.length, 'second sample GeometryFit should retain mirror negative coverage');
+  assert.ok(report.camera_calibration.site_projection, 'second sample GeometryFit should expose site projection calibration');
+  assert.ok(report.camera_calibration.camera_calibrations.length >= 2, 'second sample GeometryFit should record top and oblique camera calibration entries');
+  assert.equal(report.camera_calibration.multi_view_consistency.checked_items > 0, true, 'second sample GeometryFit should record top/oblique consistency presence');
+  assert.equal(report.summary.primary_structures_grounding_coverage > 0, true, 'second sample should report primary grounding coverage');
+  assert.equal(report.summary.photo_grade_eligible_ratio < 1, true, 'second sample should not claim full photo-grade eligibility');
+  const groundingV3Report = validateGroundingV3({
+    observations,
+    fixture,
+    geometryFit: report,
+    codeDocument: output
+  });
+  assert.equal(groundingV3Report.version, 3, 'second sample Grounding v3 should emit v3 reports');
+  assert.equal(groundingV3Report.summary.distinct_scale_anchor_families >= 2, true, 'second sample Grounding v3 should use more than parking as the scale family');
+  assert.equal(groundingV3Report.summary.checked_ground_regions > 0, true, 'second sample Grounding v3 should evaluate GroundPlan regions');
+  assert.equal(groundingV3Report.summary.checked_line_fits >= 2, true, 'second sample Grounding v3 should evaluate parking line fits');
+  assert.equal(groundingV3Report.summary.photo_grade_candidate, false, 'second sample should remain a generalization gate, not a photo-grade claim');
+  return true;
 }
 
 function assertValid(validate, value, label) {
@@ -287,6 +390,75 @@ function stripCollectionOnlyFields(observation) {
   const clone = structuredClone(observation);
   delete clone.metrics;
   return clone;
+}
+
+function assertVisualRelationGraph(observationSet, label) {
+  assert.ok(observationSet.visual_relation_graph, `${label} should contain a VisualRelationGraph`);
+  assert.equal(observationSet.visual_relation_graph.version, 1, `${label} VisualRelationGraph should be version 1`);
+  for (const type of ['left_of', 'right_of', 'above', 'below', 'inside', 'aligned_with', 'touching', 'same_row', 'mirrored_pair', 'centered_on']) {
+    assert.ok(observationSet.visual_relation_graph.relation_types.includes(type), `${label} VisualRelationGraph should support ${type}`);
+  }
+  assert.ok(observationSet.visual_relation_graph.relations.length > 0, `${label} VisualRelationGraph should contain relation candidates`);
+  assert.equal(
+    observationSet.evidence_graph.visual_relations.length,
+    observationSet.visual_relation_graph.relations.length,
+    `${label} evidence graph should carry VisualRelationGraph candidates`
+  );
+  const candidate = observationSet.visual_relation_graph.relations[0];
+  assert.ok(candidate.source_image, `${label} relation candidate should record source image`);
+  assert.ok(candidate.basis?.kind, `${label} relation candidate should record bbox/keypoint basis kind`);
+  assert.equal(typeof candidate.confidence, 'number', `${label} relation candidate should record confidence`);
+  assert.equal(typeof candidate.review_required, 'boolean', `${label} relation candidate should record review_required`);
+}
+
+function assertGroundingV3ObservationGraph(observationSet, label) {
+  assert.ok(observationSet.grounding_v3, `${label} should contain Grounding v3 metadata`);
+  assert.equal(observationSet.grounding_v3.version, 3, `${label} Grounding v3 graph should be version 3`);
+  assert.ok(observationSet.grounding_v3.scale_anchor_graph.candidates.length >= 2, `${label} should expose multiple scale-anchor candidates`);
+  assert.equal(observationSet.grounding_v3.scale_anchor_graph.distinct_anchor_families.length >= 2, true, `${label} scale anchor graph should not be parking-only`);
+  assert.ok(observationSet.grounding_v3.ground_plan.regions.some((region) => region.class === 'gap'), `${label} GroundPlan should include explicit gap regions`);
+  assert.ok(observationSet.grounding_v3.line_grid_fit.parking_grid_fits[0].line_fits.length >= 2, `${label} should fit parking lines before geometry generation`);
+  assert.ok(observationSet.grounding_v3.top_view_overlay.region_overlays.length > 0, `${label} should expose top-view overlay regions`);
+  assert.ok(observationSet.grounding_v3.promotion_decisions.every((decision) => ['promoted_geometry', 'review_candidate', 'helper_only', 'rejected'].includes(decision.decision)), `${label} promotion decisions should use the R9 decision enum`);
+  assert.ok(observationSet.evidence_graph.ground_plan, `${label} evidence graph should carry GroundPlan metadata`);
+}
+
+function assertRelationCandidate(observationSet, expected, label) {
+  const relation = (observationSet.visual_relation_graph?.relations || []).find((candidate) => (
+    candidate.type === expected.type
+    && candidate.item === expected.item
+    && candidate.anchor === expected.anchor
+    && (!expected.view || candidate.view === expected.view)
+  ));
+  assert.ok(relation, `${label} should exist`);
+  assert.ok(relation.basis.kind === 'bbox' || relation.basis.kind === 'keypoint' || relation.basis.kind === 'mixed_bbox_keypoint' || relation.basis.kind === 'semantic_anchor', `${label} should carry bbox/keypoint/semantic basis`);
+  assert.ok(relation.confidence >= (expected.min_confidence || 0.35), `${label} should meet confidence floor`);
+  return relation;
+}
+
+async function assertSwitchVisualRelationFixture() {
+  const observations = JSON.parse(await fs.readFile(observationPath, 'utf8'));
+  const fixture = JSON.parse(await fs.readFile(path.join(subprojectRoot, 'examples', 'switch-controller', 'visual-relations.fixture.json'), 'utf8'));
+  const code = await fs.readFile(path.join(repoRoot, 'examples', 'acceptance-switch-controller.json'), 'utf8');
+  const report = await validateVisualRelations({ observations, fixture, code });
+  assert.equal(report.ok, true, 'Switch VisualRelationGraph fixture should pass against accepted Switch PartGraph output');
+  assert.equal(report.verdict, 'pass', 'Switch VisualRelationGraph fixture should produce pass verdict');
+  assert.equal(report.summary.checked_relations, fixture.required_relations.length, 'Switch VisualRelationGraph fixture should check every required relation');
+  assert.equal(report.summary.checked_footprints, fixture.footprint_rules.length, 'Switch VisualRelationGraph fixture should check every contour-grounded footprint rule');
+  assert.equal(report.summary.matched_image_relations, fixture.required_relations.length, 'Switch VisualRelationGraph fixture should match every image-space relation');
+  assert.equal(report.summary.negative_cases_detected, fixture.negative_cases.length, 'Switch VisualRelationGraph fixture should detect mirror negative cases');
+  assert.ok(report.negative_results[0].failed_rules.includes('thumbsticks-handedness'), 'mirror negative should fail thumbstick handedness');
+  const geometryFitReport = await validateGeometryFit({
+    observations,
+    fixture,
+    code,
+    mockSessionPath: path.join(repoRoot, 'output', 'image-structured-modeler', 'sessions', 'validate-switch-geometry-fit-session.json')
+  });
+  assert.equal(geometryFitReport.ok, true, 'Switch GeometryFit QA should pass against accepted Switch PartGraph output');
+  assert.equal(geometryFitReport.summary.checked_footprints, fixture.footprint_rules.length, 'Switch GeometryFit should evaluate contour/keypoint-grounded controls');
+  assert.equal(geometryFitReport.summary.grounding_issues, 0, 'Switch GeometryFit should not treat contour/keypoint controls as bbox proxies');
+  assert.equal(geometryFitReport.summary.checked_handedness_cases, fixture.negative_cases.length, 'Switch GeometryFit should retain handedness negative checks');
+  assert.equal(geometryFitReport.summary.max_relation_error <= 0.23, true, 'Switch GeometryFit should keep relation projection residuals within fixture tolerance');
 }
 
 async function assertSwitchCorrectionRegression() {
@@ -655,8 +827,19 @@ async function assertBuildingGroupObservationSample() {
   assert.ok(observations.scale_calibration.measurements.some((measurement) => measurement.anchor_type === 'parking_bay_single'), 'building group scale should include a single parking bay anchor');
   assert.ok(observations.scale_calibration.measurements.some((measurement) => measurement.anchor_type === 'parking_drive_aisle_width'), 'building group scale should include a drive aisle width anchor');
   assert.ok(observations.scale_calibration.measurements.every((measurement) => measurement.review_required === true), 'building group known-element scale anchors should stay review-gated');
+  assertGroundingV3ObservationGraph(observations, 'building group observations.json');
   assert.ok(observations.evidence_graph.part_matches.length >= 8, 'building group evidence graph should expose campus component matches');
+  assertVisualRelationGraph(observations, 'building group observations.json');
+  assertRelationCandidate(observations, { type: 'right_of', item: 'primary_blue_roof_hall', anchor: 'warehouse_row_west', view: 'top', min_confidence: 0.55 }, 'building group blue hall relative to west warehouses');
+  assertRelationCandidate(observations, { type: 'below', item: 'parking_lot', anchor: 'primary_blue_roof_hall', view: 'top', min_confidence: 0.52 }, 'building group parking relative to blue hall');
+  assertRelationCandidate(observations, { type: 'inside', item: 'primary_blue_roof_hall', anchor: 'site_boundary', view: 'top', min_confidence: 0.5 }, 'building group blue hall inside site boundary');
+  assertRelationCandidate(observations, { type: 'above', item: 'warehouse_west_north', anchor: 'warehouse_west_south', view: 'top', min_confidence: 0.5 }, 'building group west warehouse split candidate');
+  assertRelationCandidate(observations, { type: 'right_of', item: 'warehouse_inner_north', anchor: 'warehouse_west_north', view: 'top', min_confidence: 0.48 }, 'building group four-warehouse relative candidate');
+  assertRelationCandidate(observations, { type: 'inside', item: 'parking_stall_row_north', anchor: 'parking_lot', view: 'top', min_confidence: 0.48 }, 'building group parking stall row containment candidate');
+  assertRelationCandidate(observations, { type: 'below', item: 'tree_row_south', anchor: 'parking_lot', view: 'top', min_confidence: 0.44 }, 'building group tree row relative candidate');
   assert.deepEqual(graphPartByIdFromGraph(observations.evidence_graph, 'primary_blue_roof_hall').missing_views, [], 'primary blue-roof hall should have top and oblique evidence');
+  assert.deepEqual(graphPartByIdFromGraph(observations.evidence_graph, 'warehouse_west_north').missing_views, [], 'west north warehouse unit should have top and oblique relation evidence');
+  assert.deepEqual(graphPartByIdFromGraph(observations.evidence_graph, 'warehouse_inner_south').missing_views, [], 'inner south warehouse unit should have top and oblique relation evidence');
   assert.deepEqual(graphPartByIdFromGraph(observations.evidence_graph, 'tank_farm').missing_views, [], 'tank farm should have top and oblique evidence');
   assert.deepEqual(graphPartByIdFromGraph(observations.evidence_graph, 'parking_lot').missing_views, [], 'parking lot should have top evidence');
 
@@ -664,11 +847,39 @@ async function assertBuildingGroupObservationSample() {
   assert.ok(topObservation, 'building group observations should contain the hinted top view');
   assert.ok(topObservation.observations.some((item) => item.component_hint === 'primary_blue_roof_hall'), 'top view should include the blue-roof hall candidate');
   assert.ok(topObservation.observations.some((item) => item.component_hint === 'warehouse_row_west'), 'top view should include the west warehouse row candidate');
+  const topWarehouseUnits = topObservation.observations.filter((item) => /^warehouse_(west|inner)_(north|south)$/.test(item.component_hint));
+  assert.ok(topWarehouseUnits.length >= 4, 'top view should split warehouse evidence into four image-space units');
+  assert.equal(topWarehouseUnits.filter((item) => item.grounding?.method === 'pixel_color_segmentation').length, 4, 'top view should include four pixel-grounded warehouse roof footprints');
+  assert.ok(topObservation.observations.some((item) => item.component_hint === 'primary_blue_roof_hall' && item.grounding?.method === 'pixel_color_segmentation'), 'top view should include a pixel-grounded blue roof footprint');
+  assert.ok(topObservation.observations.some((item) => item.component_hint === 'parking_stall_row_north'), 'top view should include parking stall row candidates');
+  assert.ok(topObservation.observations.some((item) => item.component_hint === 'tree_row_south'), 'top view should include a tree/landscape row candidate');
+  assert.equal(topObservation.observations.filter((item) => /^parking_stall_row/.test(item.component_hint) && item.grounding?.method === 'pixel_line_segmentation').length, 2, 'top view should include two pixel-line-grounded parking row candidates');
+  assert.ok(topObservation.observations.some((item) => item.component_hint === 'parking_drive_aisle_center' && item.grounding?.method === 'pixel_gap_segmentation'), 'top view should include a gap-grounded drive aisle candidate');
+  assert.ok(topObservation.observations.some((item) => item.component_hint === 'tree_row_south' && item.grounding?.method === 'pixel_vegetation_segmentation'), 'top view should include a pixel-grounded vegetation row candidate');
+  const pixelGroundedTopObservations = topObservation.observations.filter((item) => /^pixel_/i.test(item.grounding?.method || ''));
+  assert.ok(pixelGroundedTopObservations.length >= 9, 'top view should expose pixel-grounded mask/contour candidates for buildings, parking, and tree row');
+  assert.ok(pixelGroundedTopObservations.every((item) => item.mask?.polygon?.length >= 5), 'pixel-grounded observations should carry sampled mask polygons');
+  assert.ok(pixelGroundedTopObservations.every((item) => item.contour?.kind === 'sampled_mask_contour'), 'pixel-grounded observations should carry sampled contour evidence');
+  assert.ok(pixelGroundedTopObservations.every((item) => item.grounding?.contour_basis === 'sampled_mask_contour'), 'pixel-grounded observations should link grounding to contour basis');
+  const lowerRightGroundedObservations = topObservation.observations.filter((item) => [
+    'parking_stall_row_north',
+    'parking_stall_row_south',
+    'parking_drive_aisle_center',
+    'tree_row_south'
+  ].includes(item.component_hint) && /^pixel_/i.test(item.grounding?.method || ''));
+  assert.equal(lowerRightGroundedObservations.length, 4, 'top view should expose lower-right parking/tree pixel observations');
+  assert.ok(lowerRightGroundedObservations.every((item) => item.grounding?.grounding_quality?.review_required === false), 'lower-right parking/tree observations should pass once mask/gap contours are isolated');
+  assert.ok(lowerRightGroundedObservations.every((item) => item.grounding?.grounding_quality?.bbox_proxy === false), 'lower-right parking/tree observations should not be bbox proxies after contour isolation');
+  const roofPixelObservations = topObservation.observations.filter((item) => ['primary_blue_roof_hall', 'warehouse_west_north', 'warehouse_west_south', 'warehouse_inner_north', 'warehouse_inner_south'].includes(item.component_hint) && item.grounding?.method === 'pixel_color_segmentation');
+  assert.ok(roofPixelObservations.every((item) => item.grounding?.grounding_quality?.review_required === false), 'roof color-segmented observations should remain accepted by the first-pass grounding quality gate');
   assert.ok(topObservation.observations.some((item) => item.component_hint === 'internal_roads'), 'top view should include internal road candidates');
   assert.ok(topObservation.observations.some((item) => item.component_hint === 'scale_anchor_parking_bay_span'), 'top view should include a parking-bay scale anchor');
   assert.ok(topObservation.observations.some((item) => item.component_hint === 'scale_anchor_drive_aisle_width'), 'top view should include a drive-aisle scale anchor');
   assert.ok(topObservation.orientation_hints.semantic_anchors.some((anchor) => anchor.id === 'building-blue-hall-east-of-warehouses'), 'top view should retain a campus orientation anchor');
   assert.equal(topObservation.orientation_hints.review_required, true, 'top-view campus orientation should remain review-gated until north/up is confirmed');
+  assert.equal(topObservation.camera_hints.projection_model, 'top_view_affine_bbox_to_site_xy', 'top view should expose an affine image-to-site projection hint');
+  const obliqueObservation = observations.images.find((image) => image.detected_view.kind === 'oblique');
+  assert.ok(obliqueObservation?.camera_hints?.horizon_line, 'oblique view should expose a review-gated horizon estimate');
 
   for (const observation of observations.images) {
     assertValid(validateImageObservation, stripCollectionOnlyFields(observation), `${observation.image.path} image observation`);
@@ -688,6 +899,34 @@ async function assertBuildingGroupObservationSample() {
   assert.equal(partGraph.parts.filter((part) => part.shape.primitive === 'cylinder').length, 2, 'building group PartGraph should model the visible tank farm as two cylinder primitives');
   assert.ok(partGraph.parts.some((part) => part.id === 'primary_blue_roof_hall' && part.shape.parameters.size[2] >= 16000), 'blue-roof hall massing should carry a provisional industrial-hall height');
   assert.ok(partGraph.parts.some((part) => part.role === 'scale_anchor'), 'building group PartGraph should preserve visual scale-anchor parts');
+  assert.ok(partGraph.evidence_graph.visual_relations.length >= 1000, 'building group PartGraph evidence graph should carry coarse and relation-derived fine visual candidates');
+  assert.ok(partGraph.evidence_graph.ground_plan, 'building group PartGraph should carry Grounding v3 GroundPlan metadata');
+  assert.ok(partGraph.evidence_graph.grounding_v3, 'building group PartGraph evidence graph should carry Grounding v3 summary metadata');
+  assert.ok(partGraph.parts.every((part) => ['promoted_geometry', 'review_candidate', 'helper_only', 'rejected'].includes(part.grounding_decision)), 'building group PartGraph parts should carry Grounding v3 promotion decisions');
+  assert.ok(partGraph.parts.some((part) => part.grounding_decision === 'promoted_geometry'), 'Grounding v3 should promote at least one evidence-backed building region');
+  assert.ok(partGraphPartById(partGraph, 'primary_blue_roof_hall').relationships.some((relationship) => relationship.type === 'right_of' && relationship.target === 'warehouse_row_west'), 'building group PartGraph should map visual right-of relation into part relationships');
+  assert.ok(partGraphPartById(partGraph, 'primary_blue_roof_hall').relationships.some((relationship) => relationship.type === 'inside' && relationship.target === 'site_boundary'), 'building group PartGraph should map site containment into part relationships');
+  assert.ok(partGraphPartById(partGraph, 'primary_blue_roof_hall').physical_relations.some((relation) => relation.source === 'visual_relation_graph' && relation.type === 'right_of' && relation.target === 'warehouse_row_west'), 'building group PartGraph should map visual right-of relation into physical_relations');
+  assert.ok(partGraphPartById(partGraph, 'parking_lot').physical_relations.some((relation) => relation.source === 'visual_relation_graph' && relation.type === 'below' && relation.target === 'primary_blue_roof_hall'), 'building group PartGraph should map parking visual relation into physical_relations');
+  assertVisualRelationEvidence(partGraph, { type: 'above', subject: 'warehouse_west_north', target: 'warehouse_west_south' }, 'building group PartGraph should carry four-warehouse split relation evidence');
+  assertVisualRelationEvidence(partGraph, { type: 'inside', subject: 'parking_stall_row_north', target: 'parking_lot' }, 'building group PartGraph should carry parking-stall relation evidence');
+  assertVisualRelationEvidence(partGraph, { type: 'below', subject: 'tree_row_south', target: 'parking_lot' }, 'building group PartGraph should carry tree-row relation evidence');
+  assert.equal(partGraph.review.part_candidate_proposal_summary.candidate_parts, 8, 'building group should surface eight relation-derived candidate parts');
+  assert.equal(partGraph.review.part_candidate_proposal_summary.review_required, partGraph.review.part_candidate_proposal_summary.total, 'building group candidate-part proposals should stay review-gated');
+  assert.equal(partGraph.review.part_candidate_proposals.length, 4, 'building group should group relation-derived candidate parts by parent review target');
+  assert.ok(partGraph.review.parameter_proposals.filter((proposal) => proposal.proposal_kind === 'part_candidates').length === 4, 'building group candidate parts should enter the standard proposal queue');
+  assert.deepEqual(graphPartByIdFromGraph(partGraph.evidence_graph, 'warehouse_west_north').status, 'needs_review', 'west north warehouse candidate should remain review-gated in the PartGraph evidence graph');
+  assert.deepEqual(graphPartByIdFromGraph(partGraph.evidence_graph, 'parking_stall_row_north').missing_views, ['oblique'], 'parking stall row candidate should record missing oblique confirmation');
+  const westWarehouseCandidateProposal = partGraph.review.part_candidate_proposals.find((proposal) => proposal.part_id === 'warehouse_row_west');
+  assert.deepEqual(westWarehouseCandidateProposal.proposed_value.map((part) => part.id), ['warehouse_west_north', 'warehouse_west_south'], 'west warehouse row proposal should contain two reviewed candidate buildings');
+  assert.ok(westWarehouseCandidateProposal.proposed_value.every((part) => part.evidence_sources.some((source) => source.grounding?.method === 'pixel_color_segmentation')), 'warehouse candidate proposals should carry pixel-grounded roof evidence');
+  assert.ok(westWarehouseCandidateProposal.proposed_value.every((part) => part.shape.parameters.size[0] < 15000), 'pixel-grounded warehouse candidates should use narrow roof footprints instead of the old row-width prior');
+  const parkingCandidateProposal = partGraph.review.part_candidate_proposals.find((proposal) => proposal.part_id === 'parking_lot');
+  assert.deepEqual(parkingCandidateProposal.proposed_value.map((part) => part.id), ['parking_stall_row_north', 'parking_stall_row_south', 'parking_drive_aisle_center'], 'parking lot proposal should contain two stall rows and one drive aisle candidate');
+  assert.ok(parkingCandidateProposal.proposed_value.every((part) => part.evidence_sources.some((source) => ['pixel_line_segmentation', 'pixel_gap_segmentation'].includes(source.grounding?.method))), 'parking candidate proposals should carry pixel-line or pixel-gap grounding evidence');
+  const treeCandidateProposal = partGraph.review.part_candidate_proposals.find((proposal) => proposal.part_id === 'site_boundary');
+  assert.deepEqual(treeCandidateProposal.proposed_value.map((part) => part.id), ['tree_row_south'], 'site boundary proposal should contain the reviewed tree-row candidate');
+  assert.ok(treeCandidateProposal.proposed_value[0].evidence_sources.some((source) => source.grounding?.method === 'pixel_vegetation_segmentation'), 'tree-row candidate proposal should carry pixel vegetation grounding evidence');
   const detailProposals = partGraph.review.parameter_proposals.filter((proposal) => proposal.proposal_kind === 'feature_intents');
   assert.equal(detailProposals.length, 5, 'building group PartGraph should propose roofline/facade/opening feature-intent targets for core buildings');
   assert.ok(detailProposals.every((proposal) => proposal.review_required === true && proposal.status === 'needs_review'), 'building detail proposals should remain review-gated');
@@ -705,6 +944,16 @@ async function assertBuildingGroupObservationSample() {
   assert.equal(output.operations.filter((operation) => operation.op === 'cylinder').length, 2, 'building group compiled DSL should include tank cylinders');
   assert.ok(output.operations.filter((operation) => operation.op === 'box').length >= 10, 'building group compiled DSL should include massing and scale-anchor boxes');
 
+  const visualRelationFixture = JSON.parse(await fs.readFile(path.join(base, 'visual-relations.fixture.json'), 'utf8'));
+  const visualRelationReport = await validateVisualRelations({ observations, fixture: visualRelationFixture, code: JSON.stringify(output) });
+  assert.equal(visualRelationReport.ok, true, 'building group VisualRelationGraph fixture should pass against massing output');
+  assert.equal(visualRelationReport.summary.checked_relations, visualRelationFixture.required_relations.length, 'building group VisualRelationGraph fixture should check every relation');
+  assert.equal(visualRelationReport.summary.image_only_relations, 6, 'building group VisualRelationGraph fixture should keep fine-grained warehouse/parking/tree checks image-only');
+  assert.equal(visualRelationReport.summary.negative_cases_detected, visualRelationFixture.negative_cases.length, 'building group VisualRelationGraph fixture should detect campus mirror negative cases');
+  const savedVisualRelationReport = JSON.parse(await fs.readFile(path.join(base, 'visual-relation-qa', 'report.json'), 'utf8'));
+  assert.equal(savedVisualRelationReport.ok, true, 'building group saved VisualRelationGraph report should pass');
+  assert.equal(savedVisualRelationReport.summary.checked_relations, visualRelationFixture.required_relations.length, 'building group saved VisualRelationGraph report should stay fresh');
+
   const mockSessionPath = path.join(repoRoot, 'output', 'image-structured-modeler', 'sessions', 'validate-building-group-mock-session.json');
   await fs.mkdir(path.dirname(mockSessionPath), { recursive: true });
   const bridge = new SketchUpBridge({ mock: { sessionPath: mockSessionPath } });
@@ -712,6 +961,113 @@ async function assertBuildingGroupObservationSample() {
   assert.equal(result.snapshot.totals.groups, partGraph.parts.length, 'building group mock snapshot should create one group per massing part');
   assert.equal(result.snapshot.scenes.length, 2, 'building group mock snapshot should include top and oblique review scenes');
   assert.equal(result.snapshot.warning_summary.by_severity.error, 0, 'building group mock build should not create error warnings');
+
+  const acceptedCandidateReview = JSON.parse(await fs.readFile(path.join(base, 'part-candidate-review.accepted-warehouses.json'), 'utf8'));
+  assert.equal(acceptedCandidateReview.verdict, 'accepted_relation_candidate_set', 'building group candidate fixture should accept the reviewed relation candidate set');
+  assert.deepEqual(
+    acceptedCandidateReview.accepted_proposals.map((proposal) => proposal.part_id),
+    ['warehouse_row_west', 'warehouse_row_inner', 'parking_lot', 'site_boundary'],
+    'building group candidate fixture should promote warehouse, parking, and tree-row candidate groups'
+  );
+  const candidatePatch = JSON.parse(await fs.readFile(path.join(base, 'correction-patch.part-candidates.json'), 'utf8'));
+  assertValid(validatePartGraphCorrectionPatch, candidatePatch, 'building group correction-patch.part-candidates.json');
+  assert.equal(candidatePatch.edits.length, 4, 'building group candidate patch should apply four reviewed parent candidate groups');
+  assert.ok(candidatePatch.edits.every((edit) => edit.action === 'promote_part_candidates'), 'building group candidate patch should promote candidate parts instead of setting scalar parameters');
+  const builtCandidatePatch = buildCorrectionPatchFromParameterProposals(partGraph, acceptedCandidateReview);
+  assert.deepEqual(
+    builtCandidatePatch.edits.map((edit) => [edit.action, edit.part_id, edit.path]),
+    candidatePatch.edits.map((edit) => [edit.action, edit.part_id, edit.path]),
+    'candidate proposal patch builder should match the artifact edit targets'
+  );
+  const candidatePartGraph = JSON.parse(await fs.readFile(path.join(base, 'part-graph.part-candidates-applied.json'), 'utf8'));
+  assertValid(validatePartGraph, candidatePartGraph, 'building group part-graph.part-candidates-applied.json');
+  assert.equal(candidatePartGraph.parts.length, partGraph.parts.length + 8, 'candidate-applied PartGraph should add eight reviewed relation-derived parts');
+  assert.equal(partGraphPartById(candidatePartGraph, 'warehouse_row_west').compile.emit, false, 'west warehouse row should become a non-emitted reference container after candidate promotion');
+  assert.equal(partGraphPartById(candidatePartGraph, 'warehouse_row_inner').compile.emit, false, 'inner warehouse row should become a non-emitted reference container after candidate promotion');
+  assert.notEqual(partGraphPartById(candidatePartGraph, 'parking_lot').compile?.emit, false, 'parking lot should remain emitted when parking markings are promoted');
+  assert.notEqual(partGraphPartById(candidatePartGraph, 'site_boundary').compile?.emit, false, 'site boundary should remain emitted when tree row is promoted');
+  for (const partId of ['warehouse_west_north', 'warehouse_west_south', 'warehouse_inner_north', 'warehouse_inner_south']) {
+    const candidate = partGraphPartById(candidatePartGraph, partId);
+    assert.equal(candidate.evidence_status, 'manual_confirmed', `${partId} should be manual_confirmed after candidate promotion`);
+    assert.equal(candidate.fallback_state, 'box_approximation', `${partId} should remain an explicit box approximation`);
+    assert.equal(candidate.qa?.part_candidate_applied, true, `${partId} should record candidate-promotion QA metadata`);
+    assert.equal(candidate.qa?.review_required, false, `${partId} accepted candidate should not remain review-required`);
+  }
+  for (const partId of ['parking_stall_row_north', 'parking_stall_row_south', 'parking_drive_aisle_center', 'tree_row_south']) {
+    const candidate = partGraphPartById(candidatePartGraph, partId);
+    assert.equal(candidate.evidence_status, 'manual_confirmed', `${partId} should be manual_confirmed after candidate promotion`);
+    assert.equal(candidate.fallback_state, 'visual_helper', `${partId} should remain an explicit visual helper`);
+    assert.equal(candidate.qa?.part_candidate_applied, true, `${partId} should record candidate-promotion QA metadata`);
+    assert.equal(candidate.qa?.review_required, false, `${partId} accepted candidate should not remain review-required`);
+    assert.ok(candidate.physical_relations.some((relation) => relation.source === 'visual_relation_graph'), `${partId} should carry VisualRelationGraph physical_relations after promotion`);
+  }
+  const candidateOutput = JSON.parse(await fs.readFile(path.join(base, 'output.part-candidates-applied.json'), 'utf8'));
+  const candidateCompiled = compilePartGraphToSketchUpDsl(candidatePartGraph, profile, { repoRoot });
+  assert.deepEqual(candidateOutput, candidateCompiled, 'candidate-applied building group DSL should match current PartGraph compiler output');
+  const emittedCandidateIds = candidateOutput.operations.map((operation) => operation.id).filter(Boolean);
+  assert.ok(!emittedCandidateIds.includes('warehouse_row_west'), 'candidate-applied DSL should not emit the original west warehouse row box');
+  assert.ok(!emittedCandidateIds.includes('warehouse_row_inner'), 'candidate-applied DSL should not emit the original inner warehouse row box');
+  for (const partId of ['warehouse_west_north', 'warehouse_west_south', 'warehouse_inner_north', 'warehouse_inner_south']) {
+    assert.ok(emittedCandidateIds.includes(partId), `candidate-applied DSL should emit ${partId}`);
+  }
+  for (const partId of ['parking_stall_row_north', 'parking_stall_row_south', 'parking_drive_aisle_center', 'tree_row_south']) {
+    assert.ok(emittedCandidateIds.includes(partId), `candidate-applied DSL should emit ${partId}`);
+  }
+  const candidateResult = await bridge.build_model({ runtime: 'mock', code: JSON.stringify(candidateOutput) });
+  assert.equal(candidateResult.snapshot.totals.groups, partGraph.parts.length + 6, 'candidate-applied mock snapshot should replace two warehouse rows and add parking/tree candidate groups');
+  const candidateVisualRelationFixture = JSON.parse(await fs.readFile(path.join(base, 'visual-relations.candidates.fixture.json'), 'utf8'));
+  const candidateProposalQaReport = JSON.parse(await fs.readFile(path.join(base, 'proposal-qa-candidates', 'report.json'), 'utf8'));
+  assert.equal(candidateProposalQaReport.ok, true, 'building group warehouse candidate proposal QA should pass once lower-right mask/gap grounding is isolated');
+  assert.equal(candidateProposalQaReport.review_required, false, 'candidate proposal QA should not require grounding review after lower-right segmentation is isolated');
+  assert.equal(candidateProposalQaReport.compiled_matches_output, true, 'building group warehouse candidate proposal QA should verify compiled output freshness');
+  assert.equal(candidateProposalQaReport.layout.verdict, 'pass', 'building group warehouse candidate layout QA should pass');
+  assert.equal(candidateProposalQaReport.reference_visual.verdict, 'pass', 'building group warehouse candidate reference visual QA should pass');
+  assert.equal(candidateProposalQaReport.visual_relations.verdict, 'pass', 'building group warehouse candidate visual relation QA should pass');
+  assert.equal(candidateProposalQaReport.visual_relations.checked_relations, candidateVisualRelationFixture.required_relations.length, 'building group candidate visual relation QA should check every relation in the candidate fixture');
+  assert.equal(candidateProposalQaReport.visual_relations.checked_footprints, candidateVisualRelationFixture.footprint_rules.length, 'building group candidate visual relation QA should check every pixel-grounded footprint rule');
+  assert.equal(candidateProposalQaReport.visual_relations.matched_footprints, candidateVisualRelationFixture.footprint_rules.length, 'building group candidate visual relation QA should match every pixel-grounded footprint');
+  assert.equal(candidateProposalQaReport.geometry_fit.verdict, 'pass', 'building group warehouse candidate GeometryFit QA should pass isolated lower-right grounding');
+  assert.equal(candidateProposalQaReport.geometry_fit.grounding_issues, 0, 'building group GeometryFit QA should not flag isolated parking/tree contours as grounding proxies');
+  assert.equal(candidateProposalQaReport.geometry_fit.checked_footprints, candidateVisualRelationFixture.footprint_rules.length, 'building group GeometryFit QA should check every pixel-grounded footprint rule');
+  assert.equal(candidateProposalQaReport.geometry_fit.checked_relations, candidateVisualRelationFixture.required_relations.length, 'building group GeometryFit QA should check every projected relation rule');
+  assert.equal(candidateProposalQaReport.geometry_fit.checked_scale_anchors >= 4, true, 'building group GeometryFit QA should evaluate known-element scale anchors');
+  assert.equal(candidateProposalQaReport.geometry_fit.max_center_error <= 0.01, true, 'building group GeometryFit center residual should stay tight for the accepted candidate fixture');
+  assert.equal(candidateProposalQaReport.geometry_fit.max_relation_error <= 0.02, true, 'building group GeometryFit relation residual should stay tight for the accepted candidate fixture');
+  assert.equal(candidateProposalQaReport.physical_consistency.verdict, 'pass', 'building group warehouse candidate physical consistency should pass');
+  assert.equal(candidateProposalQaReport.part_graph.parts, partGraph.parts.length + 8, 'candidate proposal QA should record eight promoted candidate parts');
+  assert.equal(candidateProposalQaReport.part_graph.evidence_summary.manual_confirmed, 8, 'candidate proposal QA should record eight manual-confirmed relation candidates');
+  const candidateGeometryFitReport = JSON.parse(await fs.readFile(path.join(base, 'proposal-qa-candidates', 'geometry-fit-report.json'), 'utf8'));
+  assert.equal(candidateGeometryFitReport.ok, true, 'building group candidate GeometryFit report should pass after lower-right grounding is isolated');
+  assert.equal(candidateGeometryFitReport.camera_calibration.projection_type, 'top_view_affine_bbox_to_site_xy', 'GeometryFit should calibrate top-view image space to site XY');
+  assert.equal(candidateGeometryFitReport.summary.checked_footprints, candidateVisualRelationFixture.footprint_rules.length, 'saved GeometryFit report should cover every candidate footprint');
+  assert.equal(candidateGeometryFitReport.summary.grounding_issues, 0, 'saved GeometryFit report should not count isolated lower-right contours as grounding proxies');
+  assert.equal(candidateGeometryFitReport.summary.checked_handedness_cases, candidateVisualRelationFixture.negative_cases.length, 'saved GeometryFit report should retain handedness negative checks');
+  const liveGeometryFitReport = await validateGeometryFit({
+    observations,
+    fixture: candidateVisualRelationFixture,
+    code: JSON.stringify(candidateOutput),
+    mockSessionPath: path.join(repoRoot, 'output', 'image-structured-modeler', 'sessions', 'validate-building-group-geometry-fit-session.json')
+  });
+  assert.equal(liveGeometryFitReport.ok, true, 'GeometryFit validator should accept the isolated lower-right grounding directly against the candidate-applied DSL');
+  assert.equal(liveGeometryFitReport.issues.filter((issue) => issue.type === 'geometry_fit.grounding_ambiguity').length, 0, 'GeometryFit validator should not emit grounding ambiguity issues for isolated lower-right masks');
+  assert.equal(liveGeometryFitReport.summary.max_scale_error <= 0.12, true, 'GeometryFit scale residual should preserve the known-element anchor tolerance');
+  const candidateGroundingV3Report = JSON.parse(await fs.readFile(path.join(base, 'proposal-qa-candidates', 'grounding-v3-report.json'), 'utf8'));
+  assert.equal(candidateGroundingV3Report.version, 3, 'building group candidate Grounding v3 report should use v3 report version');
+  assert.equal(candidateGroundingV3Report.summary.checked_scale_anchors >= 4, true, 'Grounding v3 should evaluate multiple scale-anchor candidates');
+  assert.equal(candidateGroundingV3Report.summary.distinct_scale_anchor_families >= 2, true, 'Grounding v3 scale anchors should not be parking-only');
+  assert.ok(candidateGroundingV3Report.graph.ground_plan.regions.some((region) => region.class === 'gap'), 'Grounding v3 GroundPlan should explicitly represent residual gap regions');
+  assert.equal(candidateGroundingV3Report.summary.checked_line_fits >= 2, true, 'Grounding v3 should evaluate parking line fits before geometry promotion');
+  assert.equal(candidateGroundingV3Report.summary.top_view_overlay_regions > 0, true, 'Grounding v3 should run top-view overlay region checks');
+  assert.equal(candidateGroundingV3Report.summary.photo_grade_candidate, false, 'Grounding v3 should not claim photo-grade readiness for the current technical baseline');
+  const liveGroundingV3Report = validateGroundingV3({
+    observations,
+    fixture: candidateVisualRelationFixture,
+    geometryFit: liveGeometryFitReport,
+    codeDocument: candidateOutput
+  });
+  assert.equal(liveGroundingV3Report.version, 3, 'Grounding v3 validator should emit v3 reports');
+  assert.equal(liveGroundingV3Report.summary.distinct_scale_anchor_families >= 2, true, 'Grounding v3 live validation should preserve multi-family anchor voting');
+  assert.equal(liveGroundingV3Report.summary.promoted_geometry > 0, true, 'Grounding v3 live validation should promote only evidence-backed regions');
 
   const layoutQaReport = JSON.parse(await fs.readFile(path.join(base, 'layout-qa', 'building-group-massing', 'report.json'), 'utf8'));
   assert.equal(layoutQaReport.ok, true, 'building group layout QA artifact should pass');
@@ -912,6 +1268,66 @@ async function assertBuildingGroupObservationSample() {
   return true;
 }
 
+async function assertR8StructuralGroundingRepair() {
+  const base = path.join(subprojectRoot, 'examples', 'building-group');
+  const partGraph = JSON.parse(await fs.readFile(path.join(base, 'part-graph.r8-geometry.json'), 'utf8'));
+  assertValid(validatePartGraph, partGraph, 'building group part-graph.r8-geometry.json');
+  assert.equal(partGraph.id, 'building-group-r8-editable-geometry-boundary-part-graph', 'R8 PartGraph should keep the editable geometry boundary identity');
+  assert.equal(partGraph.review.structural_grounding.version, 1, 'R8 PartGraph should expose structural grounding metadata');
+  assert.equal(partGraph.review.structural_grounding.site_region_graph.qa.max_overlap_ratio < 0.02, true, 'R8 site regions should not materially overlap');
+  assert.equal(partGraph.review.structural_grounding.site_region_graph.qa.unclassified_ratio < 0.45, true, 'R8 site regions should keep unclassified gaps below review threshold');
+  assert.equal(partGraph.review.structural_grounding.site_region_graph.area_ratios.road_pavement < 0.22, true, 'R8 internal road regions should not cover the entire site');
+  assert.equal(partGraphPartById(partGraph, 'internal_roads').compile.emit, false, 'R8 should suppress the old internal_roads bbox proxy part');
+  assert.equal(partGraph.review.structural_grounding.parking_layout_graph.vehicle_instances.length, 0, 'R8 should not invent vehicle instances without per-instance evidence');
+
+  const output = JSON.parse(await fs.readFile(path.join(base, 'output.r8-geometry.json'), 'utf8'));
+  assert.equal(output.operations.filter((operation) => operation.op === 'image_plane').length, 0, 'R8 geometry output should remain no-texture');
+  const internalRoad = output.operations.find((operation) => operation.id === 'internal_roads');
+  assert.equal(internalRoad?.op, 'mesh', 'R8 internal roads should compile as polygon mesh regions instead of a site-scale box');
+  assert.equal(Boolean(internalRoad.qa?.site_region_graph), true, 'R8 internal road mesh should carry SiteRegionGraph QA metadata');
+  assert.equal(output.operations.filter((operation) => /^parked_vehicle/.test(operation.qa?.role || '')).length, 0, 'R8 geometry should not batch-generate vehicles without instance evidence');
+
+  const parkingLines = output.operations.filter((operation) => operation.qa?.parking_layout_graph);
+  assert.ok(parkingLines.length >= 30, 'R8 should emit reviewed parking line geometry from ParkingLayoutGraph');
+  assert.ok(parkingLines.every((operation) => operation.qa.parking_layout_graph.line_evidence === true), 'R8 parking lines should carry line evidence metadata');
+  assert.ok(parkingLines.every((operation) => operation.qa.source_observation_ids.length > 0), 'R8 parking lines should trace back to parking line/gap observations');
+  assert.equal(Math.max(...parkingLines.map((operation) => operation.qa.parking_layout_graph.projection_residuals.spacing_error_ratio)) < 0.12, true, 'R8 parking grid spacing residual should stay inside review threshold');
+
+  const roofSurfaceFeatures = output.operations.filter((operation) => ['roof_panel_seam', 'roof_monitor', 'roof_vent', 'roof_hvac'].includes(operation.qa?.role));
+  assert.ok(roofSurfaceFeatures.length >= 35, 'R8 should check roof seam/monitor/vent surface binding');
+  assert.ok(roofSurfaceFeatures.every((operation) => operation.qa.roof_surface_fit?.host_part_id), 'R8 roof features should be bound to a host roof surface');
+  assert.ok(roofSurfaceFeatures.every((operation) => operation.qa.roof_surface_fit.surface_distance_mm <= 80), 'R8 roof features should not float above their roof-surface threshold');
+  assert.ok(output.operations.filter((operation) => operation.qa?.role === 'roof_panel_seam').every((operation) => operation.op === 'mesh'), 'R8 blue-hall roof seams should be sloped roof-plane meshes');
+
+  const tankDetails = output.operations.filter((operation) => operation.qa?.tank_ellipse_fit);
+  assert.equal(tankDetails.length >= 8, true, 'R8 tank details should inherit TankEllipseFit metadata');
+  assert.equal(new Set(tankDetails.flatMap((operation) => [operation.qa.tank_ellipse_fit.tank_instance_id, ...(operation.qa.tank_ellipse_fit.tank_instance_ids || [])].filter(Boolean))).size, 2, 'R8 tank details should reference two ellipse instances');
+  assert.ok(tankDetails.every((operation) => operation.qa.grounding_status !== 'image_grounded'), 'R8 tank details should not claim image-grounded status from bbox-only evidence');
+
+  const report = JSON.parse(await fs.readFile(path.join(base, 'proposal-qa-r8-geometry', 'geometry-fit-report.json'), 'utf8'));
+  assert.equal(report.verdict, 'review', 'R8 GeometryFit should remain review-gated rather than photo-grade pass');
+  assert.equal(report.summary.structural_grounding_issues, 0, 'R8 structural grounding gates should pass on the repaired model');
+  assert.equal(report.summary.floating_roof_features, 0, 'R8 GeometryFit should report no floating roof features after roof-surface binding');
+  assert.equal(report.structural_grounding.site_region_fit.internal_roads_are_polygonal, true, 'R8 GeometryFit should confirm internal roads are polygonal');
+  assert.equal(report.structural_grounding.parking_layout_fit.missing_line_evidence, 0, 'R8 GeometryFit should confirm parking lines have evidence metadata');
+  assert.equal(report.structural_grounding.tank_ellipse_fit.instances, 2, 'R8 GeometryFit should confirm two tank ellipse instances');
+  assert.equal(report.summary.dense_detail_helper_ratio < 0.75, true, 'R8 helper ratio should drop after disabling vehicle fillers and grounding structural details');
+  assert.ok(report.correction_suggestions.some((suggestion) => suggestion.action === 'add_image_evidence_or_exclude_from_photo_grade'), 'R8 report should still warn against photo-grade claims for helper-heavy dense detail');
+
+  const badOutput = JSON.parse(JSON.stringify(output));
+  const badSeam = badOutput.operations.find((operation) => operation.qa?.role === 'roof_panel_seam');
+  badSeam.qa.roof_surface_fit.surface_distance_mm = 320;
+  badSeam.qa.projection_residuals.surface_distance_mm = 320;
+  const badReport = await validateGeometryFit({
+    observations: JSON.parse(await fs.readFile(path.join(base, 'observations.json'), 'utf8')),
+    fixture: JSON.parse(await fs.readFile(path.join(base, 'visual-relations.r8-geometry.fixture.json'), 'utf8')),
+    code: JSON.stringify(badOutput),
+    mockSessionPath: path.join(repoRoot, 'output', 'image-structured-modeler', 'sessions', 'validate-r8-floating-roof-feature-session.json')
+  });
+  assert.equal(badReport.issues.some((issue) => issue.type === 'geometry_fit.floating_roof_feature'), true, 'GeometryFit should fail a deliberately floating R8 roof seam');
+  return true;
+}
+
 function assertEvidenceAnnotations(modelPlan, label) {
   assert.ok(modelPlan.review.evidence_summary, `${label} should contain an evidence summary`);
   assert.ok(modelPlan.review.evidence_summary.status_counts, `${label} should contain evidence status counts`);
@@ -979,6 +1395,17 @@ function partGraphPartById(partGraph, id) {
   const part = partGraph.parts?.find((item) => item.id === id);
   assert.ok(part, `expected PartGraph part ${id}`);
   return part;
+}
+
+function assertVisualRelationEvidence(partGraph, expected, label) {
+  const relation = (partGraph.evidence_graph?.visual_relations || []).find((candidate) => (
+    candidate.type === expected.type
+    && candidate.subject === expected.subject
+    && candidate.target === expected.target
+  ));
+  assert.ok(relation, label);
+  assert.ok(relation.confidence >= (expected.min_confidence || 0.35), `${label} should meet confidence floor`);
+  return relation;
 }
 
 function countBy(items, key) {

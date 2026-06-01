@@ -9,7 +9,7 @@
 
 | Metric | Count |
 |---|---:|
-| Visible items | 128 |
+| Visible items | 302 |
 | Total issues | 0 |
 | Errors | 0 |
 | Warnings | 0 |
