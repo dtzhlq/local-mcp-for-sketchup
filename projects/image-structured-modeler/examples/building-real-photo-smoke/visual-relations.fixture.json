@@ -1,0 +1,211 @@
+{
+  "version": 1,
+  "id": "building-real-photo-smoke",
+  "description": "Real/historical building-photo smoke scaffold for PhotoGradeReadiness contract coverage.",
+  "model": {
+    "axes": [
+      "x",
+      "y"
+    ],
+    "frame_items": [
+      "site_boundary"
+    ]
+  },
+  "aliases": {
+    "image": {
+      "site": [
+        "site_boundary"
+      ],
+      "blue_hall": [
+        "primary_blue_roof_hall"
+      ],
+      "west_warehouse_north": [
+        "warehouse_west_north"
+      ],
+      "west_warehouse_south": [
+        "warehouse_west_south"
+      ],
+      "inner_warehouse_north": [
+        "warehouse_inner_north"
+      ],
+      "inner_warehouse_south": [
+        "warehouse_inner_south"
+      ],
+      "tank_farm": [
+        "tank_farm"
+      ]
+    },
+    "model": {
+      "site": [
+        "site_boundary"
+      ],
+      "blue_hall": [
+        "primary_blue_roof_hall"
+      ],
+      "west_warehouse_north": [
+        "warehouse_west_north"
+      ],
+      "west_warehouse_south": [
+        "warehouse_west_south"
+      ],
+      "inner_warehouse_north": [
+        "warehouse_inner_north"
+      ],
+      "inner_warehouse_south": [
+        "warehouse_inner_south"
+      ],
+      "tank_farm": [
+        "tank_farm"
+      ]
+    }
+  },
+  "geometry_fit": {
+    "image_view": "top",
+    "image_frame": "site",
+    "oblique_frame": "site"
+  },
+  "grounding_v2": {
+    "max_dense_helper_ratio": 0.35,
+    "require_photo_grade": false
+  },
+  "footprint_rules": [
+    {
+      "id": "blue-hall-second-sample-footprint",
+      "item": "blue_hall",
+      "image_view": "top",
+      "image_frame": "site",
+      "require_grounding": "pixel_color_segmentation",
+      "center_tolerance": 0.035,
+      "extent_tolerance": [
+        0.035,
+        0.04
+      ],
+      "area_tolerance": 0.32
+    },
+    {
+      "id": "west-warehouse-north-second-sample-footprint",
+      "item": "west_warehouse_north",
+      "image_view": "top",
+      "image_frame": "site",
+      "require_grounding": "pixel_color_segmentation",
+      "center_tolerance": 0.035,
+      "extent_tolerance": [
+        0.035,
+        0.04
+      ],
+      "area_tolerance": 0.32
+    },
+    {
+      "id": "west-warehouse-south-second-sample-footprint",
+      "item": "west_warehouse_south",
+      "image_view": "top",
+      "image_frame": "site",
+      "require_grounding": "pixel_color_segmentation",
+      "center_tolerance": 0.035,
+      "extent_tolerance": [
+        0.035,
+        0.04
+      ],
+      "area_tolerance": 0.32
+    },
+    {
+      "id": "inner-warehouse-north-second-sample-footprint",
+      "item": "inner_warehouse_north",
+      "image_view": "top",
+      "image_frame": "site",
+      "require_grounding": "pixel_color_segmentation",
+      "center_tolerance": 0.035,
+      "extent_tolerance": [
+        0.035,
+        0.04
+      ],
+      "area_tolerance": 0.32
+    },
+    {
+      "id": "inner-warehouse-south-second-sample-footprint",
+      "item": "inner_warehouse_south",
+      "image_view": "top",
+      "image_frame": "site",
+      "require_grounding": "pixel_color_segmentation",
+      "center_tolerance": 0.035,
+      "extent_tolerance": [
+        0.035,
+        0.04
+      ],
+      "area_tolerance": 0.32
+    },
+    {
+      "id": "tank-farm-second-sample-footprint",
+      "item": "tank_farm",
+      "image_view": "top",
+      "image_frame": "site",
+      "require_grounding": "pixel_color_segmentation",
+      "center_tolerance": 0.035,
+      "extent_tolerance": [
+        0.06,
+        0.08
+      ],
+      "area_tolerance": 0.32
+    }
+  ],
+  "required_relations": [
+    {
+      "id": "second-blue-hall-right-of-inner-warehouse-north",
+      "type": "right_of",
+      "item": "blue_hall",
+      "anchor": "inner_warehouse_north",
+      "image_view": "top",
+      "min_confidence": 0.88,
+      "min_model_delta": 0.08,
+      "spacing_tolerance": 0.1,
+      "mirror_negative": true
+    },
+    {
+      "id": "second-inner-warehouse-north-right-of-west-warehouse-north",
+      "type": "right_of",
+      "item": "inner_warehouse_north",
+      "anchor": "west_warehouse_north",
+      "image_view": "top",
+      "min_confidence": 0.86,
+      "min_model_delta": 0.06,
+      "spacing_tolerance": 0.1,
+      "mirror_negative": true
+    },
+    {
+      "id": "second-west-warehouse-north-above-south",
+      "type": "above",
+      "item": "west_warehouse_north",
+      "anchor": "west_warehouse_south",
+      "image_view": "top",
+      "min_confidence": 0.88,
+      "min_model_delta": 0.08,
+      "spacing_tolerance": 0.12
+    },
+    {
+      "id": "second-inner-warehouse-north-above-south",
+      "type": "above",
+      "item": "inner_warehouse_north",
+      "anchor": "inner_warehouse_south",
+      "image_view": "top",
+      "min_confidence": 0.86,
+      "min_model_delta": 0.08,
+      "spacing_tolerance": 0.12
+    }
+  ],
+  "negative_cases": [
+    {
+      "id": "second-sample-mirror-x-negative",
+      "transform": "mirror_x",
+      "rule_ids": [
+        "second-blue-hall-right-of-inner-warehouse-north",
+        "second-inner-warehouse-north-right-of-west-warehouse-north"
+      ],
+      "min_failed_rules": 1
+    }
+  ],
+  "photo_grade_readiness": {
+    "input_asset_status": "scaffold_no_real_building_photo_asset",
+    "expected_readiness": "review_required",
+    "expected_photo_grade_candidate": false
+  }
+}

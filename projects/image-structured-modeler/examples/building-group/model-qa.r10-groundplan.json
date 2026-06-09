@@ -1,0 +1,73 @@
+{
+  "version": 1,
+  "title": "Building Group R10 GroundPlan Layout QA",
+  "description": "Layout QA for the R10 default AutoGroundPlan path. It checks canonical child footprints and helper surfaces, not legacy warehouse-row or raw parking-lot parents.",
+  "rules": {
+    "allowed_collisions": [
+      {
+        "item": "utility_building",
+        "with": "scale_anchor_crosswalk_width"
+      },
+      {
+        "item": "scale_anchor_parking_bay_width_span",
+        "with": [
+          "scale_anchor_parking_bay_single",
+          "scale_anchor_parking_drive_aisle_width"
+        ]
+      },
+      {
+        "item": "scale_anchor_parking_bay_single",
+        "with": "scale_anchor_parking_drive_aisle_width"
+      },
+      {
+        "item": "/^Gap_Completion_Open_Paved_Area_Cell_.*$/",
+        "with": "/^Gap_Completion_Open_Paved_Area_Cell_.*$/"
+      }
+    ],
+    "inside": [
+      {
+        "match": "^(primary_blue_roof_hall|warehouse_.*|utility_building|admin_office|tank_farm|parking_.*|gap_completion_open_paved_area_cell_.*|scale_anchor_.*)$",
+        "parent": "site_boundary",
+        "axes": ["x", "y"],
+        "tolerance_mm": 10
+      }
+    ],
+    "support": [
+      {
+        "match": "^(primary_blue_roof_hall|warehouse_.*|utility_building|admin_office|tank_farm|parking_.*|tree_row_south|gap_completion_open_paved_area_cell_.*)$",
+        "parent": "site_boundary",
+        "max_gap_mm": 5,
+        "allow_penetration_mm": 1
+      }
+    ],
+    "separation": [
+      {
+        "name": "blue hall separated from inner north warehouse",
+        "items": ["primary_blue_roof_hall", "warehouse_inner_north"],
+        "axes": ["x", "y"],
+        "min_gap_mm": 900
+      },
+      {
+        "name": "west and inner north warehouses stay distinct",
+        "items": ["warehouse_west_north", "warehouse_inner_north"],
+        "axes": ["x", "y"],
+        "min_gap_mm": 800
+      },
+      {
+        "name": "parking row separated from admin office",
+        "items": ["parking_stall_row_south", "admin_office"],
+        "axes": ["x", "y"],
+        "min_gap_mm": 800
+      }
+    ],
+    "views": [
+      "top",
+      {
+        "name": "height",
+        "title": "Height GroundPlan",
+        "axes": ["x", "z"],
+        "depth_axis": "y"
+      }
+    ]
+  }
+}

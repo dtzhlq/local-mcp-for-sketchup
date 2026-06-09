@@ -7,15 +7,15 @@ Photo-grade candidate: no
 |---|---:|
 | Scale anchors | 5 |
 | Anchor families | 3 |
-| Ground regions | 14 |
+| Ground regions | 13 |
 | Subdivision overlap | 0 |
-| Subdivision gap | 0.562 |
+| Subdivision gap | 0.543 |
 | Line fits | 2 |
 | Parking count residual | 0 |
-| Overlay mean IoU | 0.954 |
-| Promoted geometry | 10 |
-| Review candidates | 1 |
-| Helper only | 3 |
+| Overlay mean IoU | 0.951 |
+| Promoted geometry | 8 |
+| Review candidates | 4 |
+| Helper only | 1 |
 
 ## Issues
 

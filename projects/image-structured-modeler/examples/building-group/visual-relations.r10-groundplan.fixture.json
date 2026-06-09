@@ -1,0 +1,162 @@
+{
+  "version": 1,
+  "id": "building-group-r10-groundplan-visual-relations",
+  "description": "VisualRelationGraph fixture for the R10 default GroundPlan path. It checks canonical child footprints and parking strips instead of legacy warehouse-row or raw parking-lot parents.",
+  "model": {
+    "axes": ["x", "y"],
+    "frame_items": []
+  },
+  "aliases": {
+    "image": {
+      "site": ["site_boundary"],
+      "blue_hall": ["primary_blue_roof_hall"],
+      "west_warehouse_north": ["warehouse_west_north"],
+      "west_warehouse_south": ["warehouse_west_south"],
+      "inner_warehouse_north": ["warehouse_inner_north"],
+      "inner_warehouse_south": ["warehouse_inner_south"],
+      "tank_farm": ["tank_farm"],
+      "parking_stall_row_north": ["parking_stall_row_north"],
+      "parking_stall_row_south": ["parking_stall_row_south"],
+      "parking_drive_aisle": ["parking_drive_aisle_center"],
+      "tree_row_south": ["tree_row_south"]
+    },
+    "model": {
+      "site": ["site_boundary"],
+      "blue_hall": ["primary_blue_roof_hall"],
+      "west_warehouse_north": ["warehouse_west_north"],
+      "west_warehouse_south": ["warehouse_west_south"],
+      "inner_warehouse_north": ["warehouse_inner_north"],
+      "inner_warehouse_south": ["warehouse_inner_south"],
+      "tank_farm": ["tank_farm"],
+      "parking_stall_row_north": ["parking_stall_row_north"],
+      "parking_stall_row_south": ["parking_stall_row_south"],
+      "parking_drive_aisle": ["parking_drive_aisle_center"],
+      "tree_row_south": ["tree_row_south"]
+    }
+  },
+  "required_relations": [
+    {
+      "id": "blue-hall-right-of-west-warehouse-north",
+      "type": "right_of",
+      "item": "blue_hall",
+      "anchor": "west_warehouse_north",
+      "image_view": "oblique",
+      "min_confidence": 0.58,
+      "min_model_delta": 0.18,
+      "mirror_negative": true
+    },
+    {
+      "id": "blue-hall-right-of-inner-warehouse-north",
+      "type": "right_of",
+      "item": "blue_hall",
+      "anchor": "inner_warehouse_north",
+      "image_view": "oblique",
+      "min_confidence": 0.58,
+      "min_model_delta": 0.12,
+      "mirror_negative": true
+    },
+    {
+      "id": "tank-farm-right-of-blue-hall",
+      "type": "right_of",
+      "item": "tank_farm",
+      "anchor": "blue_hall",
+      "image_view": "oblique",
+      "min_confidence": 0.6,
+      "min_model_delta": 0.15,
+      "mirror_negative": true
+    },
+    {
+      "id": "west-warehouse-north-above-south",
+      "type": "above",
+      "item": "west_warehouse_north",
+      "anchor": "west_warehouse_south",
+      "image_view": "oblique",
+      "min_confidence": 0.54,
+      "min_model_delta": 0.08
+    },
+    {
+      "id": "inner-warehouse-north-above-south",
+      "type": "above",
+      "item": "inner_warehouse_north",
+      "anchor": "inner_warehouse_south",
+      "image_view": "oblique",
+      "min_confidence": 0.52,
+      "min_model_delta": 0.08
+    },
+    {
+      "id": "parking-row-north-below-blue-hall",
+      "type": "below",
+      "item": "parking_stall_row_north",
+      "anchor": "blue_hall",
+      "image_view": "top",
+      "min_confidence": 0.8,
+      "min_model_delta": 0.2
+    },
+    {
+      "id": "parking-drive-aisle-below-north-row",
+      "type": "below",
+      "item": "parking_drive_aisle",
+      "anchor": "parking_stall_row_north",
+      "image_view": "top",
+      "min_confidence": 0.7,
+      "min_model_delta": 0.04
+    },
+    {
+      "id": "parking-row-south-below-drive-aisle",
+      "type": "below",
+      "item": "parking_stall_row_south",
+      "anchor": "parking_drive_aisle",
+      "image_view": "top",
+      "min_confidence": 0.7,
+      "min_model_delta": 0.04
+    },
+    {
+      "id": "blue-hall-inside-site",
+      "type": "inside",
+      "item": "blue_hall",
+      "anchor": "site",
+      "image_view": "top",
+      "min_confidence": 0.52,
+      "model_tolerance": 0.03
+    },
+    {
+      "id": "parking-row-north-inside-site",
+      "type": "inside",
+      "item": "parking_stall_row_north",
+      "anchor": "site",
+      "image_view": "top",
+      "min_confidence": 0.5,
+      "model_tolerance": 0.03
+    },
+    {
+      "id": "parking-row-south-inside-site",
+      "type": "inside",
+      "item": "parking_stall_row_south",
+      "anchor": "site",
+      "image_view": "top",
+      "min_confidence": 0.5,
+      "model_tolerance": 0.03
+    },
+    {
+      "id": "tree-row-south-below-parking-row-south",
+      "type": "below",
+      "item": "tree_row_south",
+      "anchor": "parking_stall_row_south",
+      "image_view": "top",
+      "min_confidence": 0.72,
+      "min_model_delta": 0.04
+    }
+  ],
+  "negative_cases": [
+    {
+      "id": "mirror-x-r10-groundplan-negative",
+      "transform": "mirror_x",
+      "rule_ids": [
+        "blue-hall-right-of-west-warehouse-north",
+        "blue-hall-right-of-inner-warehouse-north",
+        "tank-farm-right-of-blue-hall"
+      ],
+      "min_failed_rules": 2
+    }
+  ]
+}

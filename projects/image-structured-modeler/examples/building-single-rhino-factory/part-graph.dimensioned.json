@@ -1,0 +1,304 @@
+{
+  "version": 1,
+  "id": "building-single-rhino-factory-dimensioned-part-graph",
+  "product_type": "building_single",
+  "product_name": "Dimensioned Production Workshop",
+  "source": "manual_dimensioned_drawing_grounding",
+  "units": "mm",
+  "review": {
+    "status": "technical_baseline",
+    "review_required": true,
+    "reasons": [
+      "Source sheets are drawings/screenshots, not calibrated survey data.",
+      "Facade details are dimensioned from elevation proportions where explicit dimensions are absent."
+    ]
+  },
+  "evidence_sources": [
+    {
+      "id": "elevation_sheet",
+      "path": "test/建筑群/建筑单体/AI解放生产力之Rhino 建模_4_九思摸鱼第一名_来自小红书网页版.jpg",
+      "width_px": 1571,
+      "height_px": 1080,
+      "view_kind": "dimensioned_front_and_side_elevations"
+    },
+    {
+      "id": "plan_sheet",
+      "path": "test/建筑群/建筑单体/AI解放生产力之Rhino 建模_5_九思摸鱼第一名_来自小红书网页版.jpg",
+      "width_px": 2123,
+      "height_px": 1080,
+      "view_kind": "dimensioned_roof_plan"
+    }
+  ],
+  "scale": {
+    "method": "drawing_dimension_chain",
+    "length_mm": 136200,
+    "depth_mm": 40200,
+    "main_height_mm": 13000,
+    "max_height_mm": 15100,
+    "plan_segment_edges_mm": [
+      -68100,
+      -51000,
+      -45000,
+      -3000,
+      3000,
+      45000,
+      51000,
+      68100
+    ]
+  },
+  "parts": [
+    {
+      "id": "site_slab",
+      "role": "site_reference",
+      "shape": {
+        "kind": "box_extent",
+        "origin": [
+          -70000,
+          -22000,
+          -180
+        ],
+        "size": [
+          140000,
+          44000,
+          180
+        ]
+      },
+      "evidence_status": "hard_dimension_context",
+      "source_images": [
+        "test/建筑群/建筑单体/AI解放生产力之Rhino 建模_4_九思摸鱼第一名_来自小红书网页版.jpg",
+        "test/建筑群/建筑单体/AI解放生产力之Rhino 建模_5_九思摸鱼第一名_来自小红书网页版.jpg"
+      ],
+      "review_required": true
+    },
+    {
+      "id": "main_shell",
+      "role": "industrial_workshop_shell",
+      "shape": {
+        "kind": "box_extent",
+        "origin": [
+          -68100,
+          -20100,
+          0
+        ],
+        "size": [
+          136200,
+          40200,
+          13000
+        ]
+      },
+      "evidence_status": "hard_dimension",
+      "source_images": [
+        "test/建筑群/建筑单体/AI解放生产力之Rhino 建模_4_九思摸鱼第一名_来自小红书网页版.jpg",
+        "test/建筑群/建筑单体/AI解放生产力之Rhino 建模_5_九思摸鱼第一名_来自小红书网页版.jpg"
+      ],
+      "review_required": false
+    },
+    {
+      "id": "front_facade",
+      "role": "front_elevation",
+      "shape": {
+        "kind": "box_extent",
+        "origin": [
+          -68100,
+          -20100,
+          0
+        ],
+        "size": [
+          136200,
+          350,
+          13000
+        ]
+      },
+      "evidence_status": "elevation_observed",
+      "source_images": [
+        "test/建筑群/建筑单体/AI解放生产力之Rhino 建模_4_九思摸鱼第一名_来自小红书网页版.jpg",
+        "test/建筑群/建筑单体/AI解放生产力之Rhino 建模_5_九思摸鱼第一名_来自小红书网页版.jpg"
+      ],
+      "review_required": true
+    },
+    {
+      "id": "rear_facade",
+      "role": "rear_elevation_inferred",
+      "shape": {
+        "kind": "box_extent",
+        "origin": [
+          -68100,
+          19750,
+          0
+        ],
+        "size": [
+          136200,
+          350,
+          13000
+        ]
+      },
+      "evidence_status": "inferred_no_reference_elevation",
+      "source_images": [
+        "test/建筑群/建筑单体/AI解放生产力之Rhino 建模_4_九思摸鱼第一名_来自小红书网页版.jpg",
+        "test/建筑群/建筑单体/AI解放生产力之Rhino 建模_5_九思摸鱼第一名_来自小红书网页版.jpg"
+      ],
+      "review_required": true
+    },
+    {
+      "id": "side_facades",
+      "role": "side_elevation_observed",
+      "shape": {
+        "kind": "box_extent",
+        "origin": [
+          -68100,
+          -20100,
+          0
+        ],
+        "size": [
+          136200,
+          40200,
+          13000
+        ]
+      },
+      "evidence_status": "elevation_observed",
+      "source_images": [
+        "test/建筑群/建筑单体/AI解放生产力之Rhino 建模_4_九思摸鱼第一名_来自小红书网页版.jpg",
+        "test/建筑群/建筑单体/AI解放生产力之Rhino 建模_5_九思摸鱼第一名_来自小红书网页版.jpg"
+      ],
+      "review_required": true
+    },
+    {
+      "id": "orange_cladding_system",
+      "role": "facade_color_steel_plate",
+      "shape": {
+        "kind": "box_extent",
+        "origin": [
+          -68100,
+          -20180,
+          0
+        ],
+        "size": [
+          136200,
+          160,
+          13000
+        ]
+      },
+      "evidence_status": "elevation_observed",
+      "source_images": [
+        "test/建筑群/建筑单体/AI解放生产力之Rhino 建模_4_九思摸鱼第一名_来自小红书网页版.jpg",
+        "test/建筑群/建筑单体/AI解放生产力之Rhino 建模_5_九思摸鱼第一名_来自小红书网页版.jpg"
+      ],
+      "review_required": true
+    },
+    {
+      "id": "glass_window_system",
+      "role": "curtain_and_ribbon_windows",
+      "shape": {
+        "kind": "box_extent",
+        "origin": [
+          -68100,
+          -20190,
+          1000
+        ],
+        "size": [
+          136200,
+          180,
+          8200
+        ]
+      },
+      "evidence_status": "elevation_observed",
+      "source_images": [
+        "test/建筑群/建筑单体/AI解放生产力之Rhino 建模_4_九思摸鱼第一名_来自小红书网页版.jpg",
+        "test/建筑群/建筑单体/AI解放生产力之Rhino 建模_5_九思摸鱼第一名_来自小红书网页版.jpg"
+      ],
+      "review_required": true
+    },
+    {
+      "id": "roof_slab",
+      "role": "flat_roof",
+      "shape": {
+        "kind": "box_extent",
+        "origin": [
+          -68100,
+          -20100,
+          13000
+        ],
+        "size": [
+          136200,
+          40200,
+          500
+        ]
+      },
+      "evidence_status": "height_datum",
+      "source_images": [
+        "test/建筑群/建筑单体/AI解放生产力之Rhino 建模_4_九思摸鱼第一名_来自小红书网页版.jpg",
+        "test/建筑群/建筑单体/AI解放生产力之Rhino 建模_5_九思摸鱼第一名_来自小红书网页版.jpg"
+      ],
+      "review_required": true
+    },
+    {
+      "id": "roof_monitor",
+      "role": "raised_roof_monitor_or_parapet",
+      "shape": {
+        "kind": "box_extent",
+        "origin": [
+          -47500,
+          -2400,
+          13500
+        ],
+        "size": [
+          95000,
+          4800,
+          1600
+        ]
+      },
+      "evidence_status": "height_datum",
+      "source_images": [
+        "test/建筑群/建筑单体/AI解放生产力之Rhino 建模_4_九思摸鱼第一名_来自小红书网页版.jpg",
+        "test/建筑群/建筑单体/AI解放生产力之Rhino 建模_5_九思摸鱼第一名_来自小红书网页版.jpg"
+      ],
+      "review_required": true
+    },
+    {
+      "id": "solar_pv_array",
+      "role": "rooftop_photovoltaic",
+      "shape": {
+        "kind": "box_extent",
+        "origin": [
+          -52000,
+          -16000,
+          13500
+        ],
+        "size": [
+          104000,
+          12000,
+          120
+        ]
+      },
+      "evidence_status": "plan_label",
+      "source_images": [
+        "test/建筑群/建筑单体/AI解放生产力之Rhino 建模_4_九思摸鱼第一名_来自小红书网页版.jpg",
+        "test/建筑群/建筑单体/AI解放生产力之Rhino 建模_5_九思摸鱼第一名_来自小红书网页版.jpg"
+      ],
+      "review_required": true
+    },
+    {
+      "id": "structural_bay_grid",
+      "role": "dimension_chain_grid",
+      "shape": {
+        "kind": "box_extent",
+        "origin": [
+          -68100,
+          -20100,
+          0
+        ],
+        "size": [
+          136200,
+          40200,
+          15100
+        ]
+      },
+      "evidence_status": "hard_dimension",
+      "source_images": [
+        "test/建筑群/建筑单体/AI解放生产力之Rhino 建模_4_九思摸鱼第一名_来自小红书网页版.jpg",
+        "test/建筑群/建筑单体/AI解放生产力之Rhino 建模_5_九思摸鱼第一名_来自小红书网页版.jpg"
+      ],
+      "review_required": false
+    }
+  ]
+}

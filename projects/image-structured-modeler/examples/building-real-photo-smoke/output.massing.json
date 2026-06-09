@@ -1,0 +1,1692 @@
+{
+  "version": 1,
+  "units": "mm",
+  "metadata": {
+    "kind": "product_modeling_dsl",
+    "profile_id": "building_group_industrial_campus",
+    "product_type": "building_group",
+    "product_name": "Real Building Photo Smoke Scaffold",
+    "source": "part_graph_compiler",
+    "part_graph_id": "building-real-photo-smoke-part-graph",
+    "profile_version": 1,
+    "part_graph_version": 1
+  },
+  "operations": [
+    {
+      "op": "reset"
+    },
+    {
+      "op": "material",
+      "name": "Campus_Site_Slab",
+      "color": "#5e6a5f",
+      "alpha": 0.28
+    },
+    {
+      "op": "material",
+      "name": "Campus_Road_Asphalt",
+      "color": "#41464a"
+    },
+    {
+      "op": "material",
+      "name": "Campus_Parking_Asphalt",
+      "color": "#555b60"
+    },
+    {
+      "op": "material",
+      "name": "Campus_Warehouse_Light",
+      "color": "#d9ddd7"
+    },
+    {
+      "op": "material",
+      "name": "Campus_Blue_Roof",
+      "color": "#2f75a8"
+    },
+    {
+      "op": "material",
+      "name": "Campus_Utility_Gray",
+      "color": "#8b9092"
+    },
+    {
+      "op": "material",
+      "name": "Campus_Office_Light",
+      "color": "#c9c1b3"
+    },
+    {
+      "op": "material",
+      "name": "Campus_Tank_Metal",
+      "color": "#c6c8c2",
+      "metallic": 0.15,
+      "roughness": 0.58
+    },
+    {
+      "op": "material",
+      "name": "Campus_Scale_Anchor",
+      "color": "#f2c94c"
+    },
+    {
+      "op": "tag",
+      "name": "R7_Building_Group_Site",
+      "color": "#5e6a5f"
+    },
+    {
+      "op": "tag",
+      "name": "R7_Building_Group_Massing",
+      "color": "#2f75a8"
+    },
+    {
+      "op": "tag",
+      "name": "R7_Building_Group_Scale_Review",
+      "color": "#f2c94c"
+    },
+    {
+      "op": "box",
+      "id": "site_boundary",
+      "name": "Site_Boundary_Scale_Slab",
+      "origin": [
+        -74000,
+        -46000,
+        -80
+      ],
+      "size": [
+        148000,
+        92000,
+        80
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "site_boundary",
+        "part_id": "site_boundary",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "reference_only",
+        "evidence_sources": [
+          {
+            "kind": "mask_polygon",
+            "view": "top",
+            "source_image": "test/building-real-photo-smoke/manual-top-reference.png",
+            "status": "observed",
+            "confidence": 0.92,
+            "note": "Grounding v2 second sample pixel_color_segmentation evidence for site_boundary.",
+            "observation_id": "building_top_site_boundary",
+            "grounding": {
+              "method": "pixel_color_segmentation",
+              "pixel_bbox": [
+                120,
+                80,
+                760,
+                560
+              ],
+              "pixel_count": 331968,
+              "fill": 0.78,
+              "contour_basis": "sampled_contour",
+              "grounding_quality": {
+                "version": 2,
+                "status": "pass",
+                "raw_to_evidence_bbox_ratio": 1,
+                "prior_to_evidence_bbox_ratio": 1,
+                "bbox_proxy": false,
+                "review_required": false,
+                "reasons": []
+              },
+              "review_required": false
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.62,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "review_confirmed",
+        "grounding_method": "pixel_color_segmentation",
+        "source_observation_ids": [
+          "building_top_site_boundary"
+        ],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "grounding_v3_decision": "review_candidate",
+        "grounding_region_id": "site_boundary",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "no matching GroundPlan region was found"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.35
+      }
+    },
+    {
+      "op": "box",
+      "id": "admin_office",
+      "name": "Admin_Office_R10_Footprint",
+      "origin": [
+        -12657.9,
+        -29571.4,
+        0
+      ],
+      "size": [
+        27263.2,
+        11500,
+        6800
+      ],
+      "material": "Campus_Office_Light",
+      "qa": {
+        "role": "admin_office",
+        "part_id": "admin_office",
+        "intent": "building",
+        "evidence_status": "inferred",
+        "fallback_state": "box_approximation",
+        "evidence_sources": [
+          {
+            "kind": "mask_polygon",
+            "view": "top",
+            "source_image": "test/building-real-photo-smoke/manual-top-reference.png",
+            "status": "observed",
+            "confidence": 0.76,
+            "note": "Grounding v2 second sample pixel_color_segmentation evidence for admin_office.",
+            "observation_id": "building_top_admin_office",
+            "grounding": {
+              "method": "pixel_color_segmentation",
+              "pixel_bbox": [
+                435,
+                470,
+                140,
+                70
+              ],
+              "pixel_count": 7644,
+              "fill": 0.78,
+              "contour_basis": "sampled_contour",
+              "grounding_quality": {
+                "version": 2,
+                "status": "pass",
+                "raw_to_evidence_bbox_ratio": 1,
+                "prior_to_evidence_bbox_ratio": 1,
+                "bbox_proxy": false,
+                "review_required": false,
+                "reasons": []
+              },
+              "review_required": false
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.76,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "review_confirmed",
+        "grounding_method": "pixel_color_segmentation",
+        "source_observation_ids": [
+          "building_top_admin_office"
+        ],
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "inference_level": "observed",
+        "boundary_graph_edge_ids": [],
+        "completion_hypothesis_id": null,
+        "boundary_graph_risk_flags": [],
+        "boundary_graph_residuals": null,
+        "detail_review_required": true,
+        "roofline_review_required": true,
+        "facade_review_required": true,
+        "opening_review_required": true,
+        "grounding_v3_decision": "promoted_geometry",
+        "grounding_region_id": "admin_office",
+        "grounding_region_class": "building_footprint",
+        "grounding_v3_reasons": [],
+        "top_view_overlay_residual": {
+          "mask_iou": 1,
+          "centroid_error_norm": 0
+        },
+        "promotion_confidence": 0.88
+      }
+    },
+    {
+      "op": "box",
+      "id": "primary_blue_roof_hall",
+      "name": "Primary_Blue_Roof_Hall_R10_Footprint",
+      "origin": [
+        10710.5,
+        4107.1,
+        0
+      ],
+      "size": [
+        46736.8,
+        27928.6,
+        16500
+      ],
+      "material": "Campus_Blue_Roof",
+      "qa": {
+        "role": "production_hall",
+        "part_id": "primary_blue_roof_hall",
+        "intent": "building",
+        "evidence_status": "inferred",
+        "fallback_state": "box_approximation",
+        "evidence_sources": [
+          {
+            "kind": "mask_polygon",
+            "view": "top",
+            "source_image": "test/building-real-photo-smoke/manual-top-reference.png",
+            "status": "observed",
+            "confidence": 0.9,
+            "note": "Grounding v2 second sample pixel_color_segmentation evidence for primary_blue_roof_hall.",
+            "observation_id": "building_top_primary_blue_hall",
+            "grounding": {
+              "method": "pixel_color_segmentation",
+              "pixel_bbox": [
+                555,
+                165,
+                240,
+                170
+              ],
+              "pixel_count": 31824,
+              "fill": 0.78,
+              "contour_basis": "sampled_contour",
+              "grounding_quality": {
+                "version": 2,
+                "status": "pass",
+                "raw_to_evidence_bbox_ratio": 1,
+                "prior_to_evidence_bbox_ratio": 1,
+                "bbox_proxy": false,
+                "review_required": false,
+                "reasons": []
+              },
+              "review_required": false
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.82,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "review_confirmed",
+        "grounding_method": "pixel_color_segmentation",
+        "source_observation_ids": [
+          "building_top_primary_blue_hall"
+        ],
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "inference_level": "observed",
+        "boundary_graph_edge_ids": [],
+        "completion_hypothesis_id": null,
+        "boundary_graph_risk_flags": [],
+        "boundary_graph_residuals": null,
+        "detail_review_required": true,
+        "roofline_review_required": true,
+        "facade_review_required": true,
+        "opening_review_required": true,
+        "grounding_v3_decision": "promoted_geometry",
+        "grounding_region_id": "primary_blue_roof_hall",
+        "grounding_region_class": "building_footprint",
+        "grounding_v3_reasons": [],
+        "top_view_overlay_residual": {
+          "mask_iou": 1,
+          "centroid_error_norm": 0
+        },
+        "promotion_confidence": 0.9
+      }
+    },
+    {
+      "op": "box",
+      "id": "utility_building",
+      "name": "Utility_Building_R10_Footprint",
+      "origin": [
+        21421.1,
+        -14785.7,
+        0
+      ],
+      "size": [
+        17526.3,
+        11828.6,
+        7600
+      ],
+      "material": "Campus_Utility_Gray",
+      "qa": {
+        "role": "utility_building",
+        "part_id": "utility_building",
+        "intent": "building",
+        "evidence_status": "inferred",
+        "fallback_state": "box_approximation",
+        "evidence_sources": [
+          {
+            "kind": "mask_polygon",
+            "view": "top",
+            "source_image": "test/building-real-photo-smoke/manual-top-reference.png",
+            "status": "observed",
+            "confidence": 0.78,
+            "note": "Grounding v2 second sample pixel_color_segmentation evidence for utility_building.",
+            "observation_id": "building_top_utility_building",
+            "grounding": {
+              "method": "pixel_color_segmentation",
+              "pixel_bbox": [
+                610,
+                378,
+                90,
+                72
+              ],
+              "pixel_count": 5054,
+              "fill": 0.78,
+              "contour_basis": "sampled_contour",
+              "grounding_quality": {
+                "version": 2,
+                "status": "pass",
+                "raw_to_evidence_bbox_ratio": 1,
+                "prior_to_evidence_bbox_ratio": 1,
+                "bbox_proxy": false,
+                "review_required": false,
+                "reasons": []
+              },
+              "review_required": false
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.78,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "review_confirmed",
+        "grounding_method": "pixel_color_segmentation",
+        "source_observation_ids": [
+          "building_top_utility_building"
+        ],
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "inference_level": "observed",
+        "boundary_graph_edge_ids": [],
+        "completion_hypothesis_id": null,
+        "boundary_graph_risk_flags": [],
+        "boundary_graph_residuals": null,
+        "detail_review_required": true,
+        "roofline_review_required": true,
+        "facade_review_required": true,
+        "opening_review_required": true,
+        "grounding_v3_decision": "promoted_geometry",
+        "grounding_region_id": "utility_building",
+        "grounding_region_class": "building_footprint",
+        "grounding_v3_reasons": [],
+        "top_view_overlay_residual": {
+          "mask_iou": 1,
+          "centroid_error_norm": 0
+        },
+        "promotion_confidence": 0.89
+      }
+    },
+    {
+      "op": "box",
+      "id": "warehouse_inner_north",
+      "name": "Warehouse_Inner_North_R10_Footprint",
+      "origin": [
+        -22394.7,
+        11828.5,
+        0
+      ],
+      "size": [
+        25315.8,
+        21028.6,
+        9500
+      ],
+      "material": "Campus_Warehouse_Light",
+      "qa": {
+        "role": "warehouse_unit",
+        "part_id": "warehouse_inner_north",
+        "intent": "building",
+        "evidence_status": "inferred",
+        "fallback_state": "box_approximation",
+        "evidence_sources": [
+          {
+            "kind": "mask_polygon",
+            "view": "top",
+            "source_image": "test/building-real-photo-smoke/manual-top-reference.png",
+            "status": "observed",
+            "confidence": 0.83,
+            "note": "Grounding v2 second sample pixel_color_segmentation evidence for warehouse_inner_north.",
+            "observation_id": "warehouse_inner_north_top_mask",
+            "grounding": {
+              "method": "pixel_color_segmentation",
+              "pixel_bbox": [
+                385,
+                160,
+                130,
+                128
+              ],
+              "pixel_count": 12979,
+              "fill": 0.78,
+              "contour_basis": "sampled_contour",
+              "grounding_quality": {
+                "version": 2,
+                "status": "pass",
+                "raw_to_evidence_bbox_ratio": 1,
+                "prior_to_evidence_bbox_ratio": 1,
+                "bbox_proxy": false,
+                "review_required": false,
+                "reasons": []
+              },
+              "review_required": false
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.82,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "review_confirmed",
+        "grounding_method": "pixel_color_segmentation",
+        "source_observation_ids": [
+          "warehouse_inner_north_top_mask"
+        ],
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "inference_level": "observed",
+        "boundary_graph_edge_ids": [],
+        "completion_hypothesis_id": null,
+        "boundary_graph_risk_flags": [],
+        "boundary_graph_residuals": null,
+        "grounding_v3_decision": "promoted_geometry",
+        "grounding_region_id": "warehouse_inner_north",
+        "grounding_region_class": "building_footprint",
+        "grounding_v3_reasons": [],
+        "top_view_overlay_residual": {
+          "mask_iou": 1,
+          "centroid_error_norm": 0
+        },
+        "promotion_confidence": 0.9
+      }
+    },
+    {
+      "op": "box",
+      "id": "warehouse_inner_south",
+      "name": "Warehouse_Inner_South_R10_Footprint",
+      "origin": [
+        -22394.7,
+        -14785.7,
+        0
+      ],
+      "size": [
+        25315.8,
+        21028.6,
+        9500
+      ],
+      "material": "Campus_Warehouse_Light",
+      "qa": {
+        "role": "warehouse_unit",
+        "part_id": "warehouse_inner_south",
+        "intent": "building",
+        "evidence_status": "inferred",
+        "fallback_state": "box_approximation",
+        "evidence_sources": [
+          {
+            "kind": "mask_polygon",
+            "view": "top",
+            "source_image": "test/building-real-photo-smoke/manual-top-reference.png",
+            "status": "observed",
+            "confidence": 0.83,
+            "note": "Grounding v2 second sample pixel_color_segmentation evidence for warehouse_inner_south.",
+            "observation_id": "warehouse_inner_south_top_mask",
+            "grounding": {
+              "method": "pixel_color_segmentation",
+              "pixel_bbox": [
+                385,
+                322,
+                130,
+                128
+              ],
+              "pixel_count": 12979,
+              "fill": 0.78,
+              "contour_basis": "sampled_contour",
+              "grounding_quality": {
+                "version": 2,
+                "status": "pass",
+                "raw_to_evidence_bbox_ratio": 1,
+                "prior_to_evidence_bbox_ratio": 1,
+                "bbox_proxy": false,
+                "review_required": false,
+                "reasons": []
+              },
+              "review_required": false
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.82,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "review_confirmed",
+        "grounding_method": "pixel_color_segmentation",
+        "source_observation_ids": [
+          "warehouse_inner_south_top_mask"
+        ],
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "inference_level": "observed",
+        "boundary_graph_edge_ids": [],
+        "completion_hypothesis_id": null,
+        "boundary_graph_risk_flags": [],
+        "boundary_graph_residuals": null,
+        "grounding_v3_decision": "promoted_geometry",
+        "grounding_region_id": "warehouse_inner_south",
+        "grounding_region_class": "building_footprint",
+        "grounding_v3_reasons": [],
+        "top_view_overlay_residual": {
+          "mask_iou": 1,
+          "centroid_error_norm": 0
+        },
+        "promotion_confidence": 0.9
+      }
+    },
+    {
+      "op": "box",
+      "id": "warehouse_west_north",
+      "name": "Warehouse_West_North_R10_Footprint",
+      "origin": [
+        -57447.4,
+        11335.7,
+        0
+      ],
+      "size": [
+        29210.5,
+        20700,
+        9500
+      ],
+      "material": "Campus_Warehouse_Light",
+      "qa": {
+        "role": "warehouse_unit",
+        "part_id": "warehouse_west_north",
+        "intent": "building",
+        "evidence_status": "inferred",
+        "fallback_state": "box_approximation",
+        "evidence_sources": [
+          {
+            "kind": "mask_polygon",
+            "view": "top",
+            "source_image": "test/building-real-photo-smoke/manual-top-reference.png",
+            "status": "observed",
+            "confidence": 0.84,
+            "note": "Grounding v2 second sample pixel_color_segmentation evidence for warehouse_west_north.",
+            "observation_id": "warehouse_west_north_top_mask",
+            "grounding": {
+              "method": "pixel_color_segmentation",
+              "pixel_bbox": [
+                205,
+                165,
+                150,
+                126
+              ],
+              "pixel_count": 14742,
+              "fill": 0.78,
+              "contour_basis": "sampled_contour",
+              "grounding_quality": {
+                "version": 2,
+                "status": "pass",
+                "raw_to_evidence_bbox_ratio": 1,
+                "prior_to_evidence_bbox_ratio": 1,
+                "bbox_proxy": false,
+                "review_required": false,
+                "reasons": []
+              },
+              "review_required": false
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.82,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "review_confirmed",
+        "grounding_method": "pixel_color_segmentation",
+        "source_observation_ids": [
+          "warehouse_west_north_top_mask"
+        ],
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "inference_level": "observed",
+        "boundary_graph_edge_ids": [],
+        "completion_hypothesis_id": null,
+        "boundary_graph_risk_flags": [],
+        "boundary_graph_residuals": null,
+        "grounding_v3_decision": "promoted_geometry",
+        "grounding_region_id": "warehouse_west_north",
+        "grounding_region_class": "building_footprint",
+        "grounding_v3_reasons": [],
+        "top_view_overlay_residual": {
+          "mask_iou": 1,
+          "centroid_error_norm": 0
+        },
+        "promotion_confidence": 0.9
+      }
+    },
+    {
+      "op": "box",
+      "id": "warehouse_west_south",
+      "name": "Warehouse_West_South_R10_Footprint",
+      "origin": [
+        -57447.4,
+        -14785.7,
+        0
+      ],
+      "size": [
+        29210.5,
+        20700,
+        9500
+      ],
+      "material": "Campus_Warehouse_Light",
+      "qa": {
+        "role": "warehouse_unit",
+        "part_id": "warehouse_west_south",
+        "intent": "building",
+        "evidence_status": "inferred",
+        "fallback_state": "box_approximation",
+        "evidence_sources": [
+          {
+            "kind": "mask_polygon",
+            "view": "top",
+            "source_image": "test/building-real-photo-smoke/manual-top-reference.png",
+            "status": "observed",
+            "confidence": 0.84,
+            "note": "Grounding v2 second sample pixel_color_segmentation evidence for warehouse_west_south.",
+            "observation_id": "warehouse_west_south_top_mask",
+            "grounding": {
+              "method": "pixel_color_segmentation",
+              "pixel_bbox": [
+                205,
+                324,
+                150,
+                126
+              ],
+              "pixel_count": 14742,
+              "fill": 0.78,
+              "contour_basis": "sampled_contour",
+              "grounding_quality": {
+                "version": 2,
+                "status": "pass",
+                "raw_to_evidence_bbox_ratio": 1,
+                "prior_to_evidence_bbox_ratio": 1,
+                "bbox_proxy": false,
+                "review_required": false,
+                "reasons": []
+              },
+              "review_required": false
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.82,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "review_confirmed",
+        "grounding_method": "pixel_color_segmentation",
+        "source_observation_ids": [
+          "warehouse_west_south_top_mask"
+        ],
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "inference_level": "observed",
+        "boundary_graph_edge_ids": [],
+        "completion_hypothesis_id": null,
+        "boundary_graph_risk_flags": [],
+        "boundary_graph_residuals": null,
+        "grounding_v3_decision": "promoted_geometry",
+        "grounding_region_id": "warehouse_west_south",
+        "grounding_region_class": "building_footprint",
+        "grounding_v3_reasons": [],
+        "top_view_overlay_residual": {
+          "mask_iou": 1,
+          "centroid_error_norm": 0
+        },
+        "promotion_confidence": 0.9
+      }
+    },
+    {
+      "op": "box",
+      "id": "tree_row_south",
+      "name": "Tree_Row_South_R10_Green",
+      "origin": [
+        -6815.8,
+        -46000,
+        0
+      ],
+      "size": [
+        50631.6,
+        2464.3,
+        120
+      ],
+      "material": "Campus_Tree_Line",
+      "qa": {
+        "role": "green_helper",
+        "part_id": "tree_row_south",
+        "intent": "landscape",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "vegetation_region",
+            "view": "top",
+            "source_image": "test/building-real-photo-smoke/manual-top-reference.png",
+            "status": "observed",
+            "confidence": 0.78,
+            "note": "Grounding v2 second sample pixel_vegetation_segmentation evidence for tree_row_south.",
+            "observation_id": "tree_row_south_top_vegetation",
+            "grounding": {
+              "method": "pixel_vegetation_segmentation",
+              "pixel_bbox": [
+                465,
+                625,
+                260,
+                25
+              ],
+              "pixel_count": 5070,
+              "fill": 0.78,
+              "contour_basis": "sampled_contour",
+              "grounding_quality": {
+                "version": 2,
+                "status": "pass",
+                "raw_to_evidence_bbox_ratio": 1,
+                "prior_to_evidence_bbox_ratio": 1,
+                "bbox_proxy": false,
+                "review_required": false,
+                "reasons": []
+              },
+              "review_required": false
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.78,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "review_confirmed",
+        "grounding_method": "pixel_vegetation_segmentation",
+        "source_observation_ids": [
+          "tree_row_south_top_vegetation"
+        ],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "inference_level": "observed",
+        "boundary_graph_edge_ids": [],
+        "completion_hypothesis_id": null,
+        "boundary_graph_risk_flags": [],
+        "boundary_graph_residuals": null,
+        "grounding_v3_decision": "helper_only",
+        "grounding_region_id": "tree_row_south",
+        "grounding_region_class": "green",
+        "grounding_v3_reasons": [
+          "AutoGroundPlan R10 kept this region out of promoted geometry"
+        ],
+        "top_view_overlay_residual": {
+          "mask_iou": 1,
+          "centroid_error_norm": 0
+        },
+        "promotion_confidence": 0.546
+      }
+    },
+    {
+      "op": "box",
+      "id": "tank_farm",
+      "name": "Tank_Farm_R10_Helper",
+      "origin": [
+        50631.6,
+        -19714.3,
+        0
+      ],
+      "size": [
+        13631.6,
+        19714.3,
+        60
+      ],
+      "material": "Campus_Tank_Metal",
+      "qa": {
+        "role": "service_yard",
+        "part_id": "tank_farm",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "mask_polygon",
+            "view": "top",
+            "source_image": "test/building-real-photo-smoke/manual-top-reference.png",
+            "status": "observed",
+            "confidence": 0.8,
+            "note": "Grounding v2 second sample pixel_color_segmentation evidence for tank_farm.",
+            "observation_id": "building_top_tank_farm",
+            "grounding": {
+              "method": "pixel_color_segmentation",
+              "pixel_bbox": [
+                760,
+                360,
+                70,
+                120
+              ],
+              "pixel_count": 6552,
+              "fill": 0.78,
+              "contour_basis": "sampled_contour",
+              "grounding_quality": {
+                "version": 2,
+                "status": "pass",
+                "raw_to_evidence_bbox_ratio": 1,
+                "prior_to_evidence_bbox_ratio": 1,
+                "bbox_proxy": false,
+                "review_required": false,
+                "reasons": []
+              },
+              "review_required": false
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.8,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "review_confirmed",
+        "grounding_method": "pixel_color_segmentation",
+        "source_observation_ids": [
+          "building_top_tank_farm"
+        ],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "inference_level": "observed",
+        "boundary_graph_edge_ids": [],
+        "completion_hypothesis_id": null,
+        "boundary_graph_risk_flags": [],
+        "boundary_graph_residuals": null,
+        "grounding_v3_decision": "helper_only",
+        "grounding_region_id": "tank_farm",
+        "grounding_region_class": "service_yard",
+        "grounding_v3_reasons": [
+          "AutoGroundPlan R10 kept this region out of promoted geometry"
+        ],
+        "top_view_overlay_residual": {
+          "mask_iou": 1,
+          "centroid_error_norm": 0
+        },
+        "promotion_confidence": 0.56
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_1",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_1_R10_Helper",
+      "origin": [
+        10710.5,
+        -14785.7,
+        0
+      ],
+      "size": [
+        3894.7,
+        11828.6,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_1",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/building-real-photo-smoke/manual-top-reference.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_1: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_142"
+              ],
+              "source_evidence_ids": [
+                "building_top_internal_roads"
+              ],
+              "connectivity_reasons": [
+                "adjacent_to_hardscape_or_pixel_gap_evidence"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_1",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_2",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_2_R10_Helper",
+      "origin": [
+        -28236.8,
+        -19714.3,
+        0
+      ],
+      "size": [
+        5842.1,
+        1642.9,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_2",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/building-real-photo-smoke/manual-top-reference.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_2: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_167"
+              ],
+              "source_evidence_ids": [
+                "building_top_internal_roads"
+              ],
+              "connectivity_reasons": [
+                "adjacent_to_hardscape_or_pixel_gap_evidence"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_2",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_3",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_3_R10_Helper",
+      "origin": [
+        21421.1,
+        -19714.3,
+        0
+      ],
+      "size": [
+        17526.3,
+        1642.9,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_3",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/building-real-photo-smoke/manual-top-reference.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_3: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_174"
+              ],
+              "source_evidence_ids": [
+                "building_top_internal_roads"
+              ],
+              "connectivity_reasons": [
+                "adjacent_to_hardscape_or_pixel_gap_evidence"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_3",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_4",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_4_R10_Helper",
+      "origin": [
+        38947.4,
+        -19714.3,
+        0
+      ],
+      "size": [
+        4868.4,
+        1642.9,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_4",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/building-real-photo-smoke/manual-top-reference.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_4: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_175"
+              ],
+              "source_evidence_ids": [
+                "building_top_internal_roads"
+              ],
+              "connectivity_reasons": [
+                "adjacent_to_hardscape_or_pixel_gap_evidence"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_4",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_5",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_5_R10_Helper",
+      "origin": [
+        -28236.8,
+        -29571.4,
+        0
+      ],
+      "size": [
+        5842.1,
+        9857.1,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_5",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/building-real-photo-smoke/manual-top-reference.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_5: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_182"
+              ],
+              "source_evidence_ids": [
+                "building_top_internal_roads"
+              ],
+              "connectivity_reasons": [
+                "adjacent_to_hardscape_or_pixel_gap_evidence"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_5",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_6",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_6_R10_Helper",
+      "origin": [
+        21421.1,
+        -29571.4,
+        0
+      ],
+      "size": [
+        17526.3,
+        9857.1,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_6",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/building-real-photo-smoke/manual-top-reference.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_6: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_189"
+              ],
+              "source_evidence_ids": [
+                "parking_stall_row_north_top_line",
+                "building_top_parking_lot",
+                "parking_drive_aisle_center_top_gap",
+                "building_top_internal_roads"
+              ],
+              "connectivity_reasons": [
+                "adjacent_to_hardscape_or_pixel_gap_evidence"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_6",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_7",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_7_R10_Helper",
+      "origin": [
+        38947.4,
+        -29571.4,
+        0
+      ],
+      "size": [
+        4868.4,
+        9857.1,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_7",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/building-real-photo-smoke/manual-top-reference.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_7: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_190"
+              ],
+              "source_evidence_ids": [
+                "parking_stall_row_north_top_line",
+                "building_top_parking_lot",
+                "parking_drive_aisle_center_top_gap",
+                "building_top_internal_roads"
+              ],
+              "connectivity_reasons": [
+                "connected_to_parking_drive_aisle",
+                "pixel_gap_evidence"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_7",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_8",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_8_R10_Helper",
+      "origin": [
+        50631.6,
+        -43535.7,
+        0
+      ],
+      "size": [
+        6815.8,
+        13964.3,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_8",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/building-real-photo-smoke/manual-top-reference.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_8: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_207"
+              ],
+              "source_evidence_ids": [
+                "building_top_parking_lot"
+              ],
+              "connectivity_reasons": [
+                "adjacent_to_hardscape_or_pixel_gap_evidence"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_8",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "scale_anchor_parking_bay_width_span",
+      "name": "Scale_Anchor_parking_bay_width_span",
+      "origin": [
+        4868.4,
+        -27764.3,
+        120
+      ],
+      "size": [
+        22589.5,
+        1971.4,
+        120
+      ],
+      "material": "Campus_Scale_Anchor",
+      "qa": {
+        "role": "scale_anchor",
+        "part_id": "scale_anchor_parking_bay_width_span",
+        "intent": "scale_anchor",
+        "evidence_status": "observed",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "known_element_scale_anchor",
+            "view": "top",
+            "source_image": "test/building-real-photo-smoke/manual-top-reference.png",
+            "status": "observed",
+            "confidence": 0.78,
+            "note": "parking_bay_width_span scale anchor requires user review before final scale acceptance."
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.78,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "scale_anchor",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "grounding_v3_decision": "helper_only",
+        "grounding_region_id": "scale_anchor_parking_bay_width_span",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "scale anchors are visual review helpers, not site geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.4
+      }
+    },
+    {
+      "op": "box",
+      "id": "scale_anchor_parking_bay_single",
+      "name": "Scale_Anchor_parking_bay_single",
+      "origin": [
+        4868.4,
+        -36964.3,
+        120
+      ],
+      "size": [
+        4673.7,
+        2628.6,
+        120
+      ],
+      "material": "Campus_Scale_Anchor",
+      "qa": {
+        "role": "scale_anchor",
+        "part_id": "scale_anchor_parking_bay_single",
+        "intent": "scale_anchor",
+        "evidence_status": "observed",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "known_element_scale_anchor",
+            "view": "top",
+            "source_image": "test/building-real-photo-smoke/manual-top-reference.png",
+            "status": "observed",
+            "confidence": 0.74,
+            "note": "parking_bay_single scale anchor requires user review before final scale acceptance."
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.74,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "scale_anchor",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "grounding_v3_decision": "helper_only",
+        "grounding_region_id": "scale_anchor_parking_bay_single",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "scale anchors are visual review helpers, not site geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.4
+      }
+    },
+    {
+      "op": "box",
+      "id": "scale_anchor_parking_drive_aisle_width",
+      "name": "Scale_Anchor_parking_drive_aisle_width",
+      "origin": [
+        0,
+        -34992.9,
+        120
+      ],
+      "size": [
+        45763.2,
+        6242.9,
+        120
+      ],
+      "material": "Campus_Scale_Anchor",
+      "qa": {
+        "role": "scale_anchor",
+        "part_id": "scale_anchor_parking_drive_aisle_width",
+        "intent": "scale_anchor",
+        "evidence_status": "observed",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "known_element_scale_anchor",
+            "view": "top",
+            "source_image": "test/building-real-photo-smoke/manual-top-reference.png",
+            "status": "observed",
+            "confidence": 0.7,
+            "note": "parking_drive_aisle_width scale anchor requires user review before final scale acceptance."
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.7,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "scale_anchor",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "grounding_v3_decision": "helper_only",
+        "grounding_region_id": "scale_anchor_parking_drive_aisle_width",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "scale anchors are visual review helpers, not site geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.4
+      }
+    },
+    {
+      "op": "scene",
+      "name": "Building_Group_Top_Scale_Review",
+      "camera": {
+        "eye": [
+          0,
+          0,
+          170000
+        ],
+        "target": [
+          0,
+          0,
+          0
+        ],
+        "up": [
+          0,
+          1,
+          0
+        ],
+        "fov": 35
+      }
+    },
+    {
+      "op": "scene",
+      "name": "Building_Group_Oblique_Massing_Review",
+      "camera": {
+        "eye": [
+          105000,
+          -118000,
+          72000
+        ],
+        "target": [
+          0,
+          0,
+          6000
+        ],
+        "up": [
+          0,
+          0,
+          1
+        ],
+        "fov": 38
+      }
+    },
+    {
+      "op": "style",
+      "name": "R7_Building_Group_Review",
+      "display_edges": true,
+      "profiles": true,
+      "profile_width": 2,
+      "face_style": "shaded_with_textures",
+      "background_color": "#eef2f1",
+      "sky_color": "#d6e5ef",
+      "ground_color": "#ccd5cb"
+    },
+    {
+      "op": "shadow",
+      "display": true,
+      "time": "2026-05-31T10:54:00+08:00",
+      "light": 72,
+      "dark": 48,
+      "use_sun_for_shading": true
+    },
+    {
+      "op": "rendering_options",
+      "edge_display_mode": 1,
+      "draw_hidden_geometry": false,
+      "display_color_by_layer": false,
+      "transparency": true,
+      "draw_ground": true
+    }
+  ]
+}

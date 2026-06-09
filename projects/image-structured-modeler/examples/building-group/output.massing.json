@@ -7,7 +7,7 @@
     "product_type": "building_group",
     "product_name": "GPT Image Industrial Campus",
     "source": "part_graph_compiler",
-    "part_graph_id": "building-group-image-evidence-massing-part-graph",
+    "part_graph_id": "building-group-r10-auto-groundplan-default-part-graph",
     "profile_version": 1,
     "part_graph_version": 1
   },
@@ -167,7 +167,7 @@
     {
       "op": "box",
       "id": "primary_blue_roof_hall",
-      "name": "Primary_Blue_Roof_Hall_Massing",
+      "name": "Primary_Blue_Roof_Hall_R10_Footprint",
       "origin": [
         -7527.2,
         -13657.9,
@@ -260,7 +260,7 @@
           }
         ],
         "generated_from_building_group_evidence": true,
-        "evidence_confidence": 0.58,
+        "evidence_confidence": 0.82,
         "review_required": true,
         "scale_review_required": true,
         "orientation_review_required": true,
@@ -275,6 +275,11 @@
         "helper_allowed": false,
         "photo_grade_eligible": false,
         "projection_residuals": null,
+        "inference_level": "observed",
+        "boundary_graph_edge_ids": [],
+        "completion_hypothesis_id": null,
+        "boundary_graph_risk_flags": [],
+        "boundary_graph_residuals": null,
         "detail_review_required": true,
         "roofline_review_required": true,
         "facade_review_required": true,
@@ -292,22 +297,22 @@
     },
     {
       "op": "box",
-      "id": "warehouse_row_west",
-      "name": "West_Warehouse_Row_Massing",
+      "id": "warehouse_inner_north",
+      "name": "Warehouse_Inner_North_R10_Footprint",
       "origin": [
-        -48713.3,
-        -33131.6,
+        -29438.2,
+        9850.9,
         0
       ],
       "size": [
-        13179.6,
-        77193,
+        11696.9,
+        34210.5,
         9500
       ],
       "material": "Campus_Warehouse_Light",
       "qa": {
-        "role": "warehouse_row",
-        "part_id": "warehouse_row_west",
+        "role": "warehouse_unit",
+        "part_id": "warehouse_inner_north",
         "intent": "building",
         "evidence_status": "inferred",
         "fallback_state": "box_approximation",
@@ -317,9 +322,9 @@
             "view": "oblique",
             "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png",
             "status": "observed",
-            "confidence": 0.58,
-            "note": "R7 campus-layout prior for west warehouse rows in oblique view.",
-            "observation_id": "building_oblique_warehouse_row_west",
+            "confidence": 0.48,
+            "note": "VisualRelationGraph oblique candidate for the north inner-warehouse unit.",
+            "observation_id": "building_oblique_warehouse_inner_north",
             "grounding": {
               "method": "layout_prior",
               "review_required": true
@@ -330,12 +335,12 @@
             "view": "top",
             "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
             "status": "observed",
-            "confidence": 0.8,
-            "note": "Pixel-grounded top-view footprint from white_roof_component_union; used for position/proportion grounding before layout priors.",
-            "observation_id": "building_top_warehouse_row_west_pixel",
+            "confidence": 0.82,
+            "note": "Pixel-grounded top-view footprint from white_roof_component; used for position/proportion grounding before layout priors.",
+            "observation_id": "building_top_warehouse_inner_north_pixel",
             "grounding": {
               "method": "pixel_color_segmentation",
-              "mask": "white_roof_component_union",
+              "mask": "white_roof_component",
               "contour_basis": "sampled_mask_contour",
               "grounding_quality": {
                 "version": 1,
@@ -354,9 +359,9 @@
             "view": "top",
             "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
             "status": "observed",
-            "confidence": 0.74,
-            "note": "R7 campus-layout prior for the west long white warehouse row.",
-            "observation_id": "building_top_warehouse_row_west",
+            "confidence": 0.6399999999999999,
+            "note": "VisualRelationGraph candidate for the north unit in the inner warehouse row; kept image-only until reviewed as a separate PartGraph building.",
+            "observation_id": "building_top_warehouse_inner_north",
             "grounding": {
               "method": "layout_prior",
               "review_required": true
@@ -367,9 +372,9 @@
             "view": "oblique",
             "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png",
             "status": "observed",
-            "confidence": 0.58,
-            "note": "R7 campus-layout prior for west warehouse rows in oblique view.",
-            "observation_id": "building_oblique_warehouse_row_west",
+            "confidence": 0.48,
+            "note": "VisualRelationGraph oblique candidate for the north inner-warehouse unit.",
+            "observation_id": "building_oblique_warehouse_inner_north",
             "grounding": {
               "method": "layout_prior",
               "review_required": true
@@ -377,38 +382,40 @@
           }
         ],
         "generated_from_building_group_evidence": true,
-        "evidence_confidence": 0.58,
+        "evidence_confidence": 0.82,
         "review_required": true,
         "scale_review_required": true,
         "orientation_review_required": true,
         "grounding_status": "review_confirmed",
         "grounding_method": "layout_prior",
         "source_observation_ids": [
-          "building_oblique_warehouse_row_west",
-          "building_top_warehouse_row_west_pixel",
-          "building_top_warehouse_row_west"
+          "building_oblique_warehouse_inner_north",
+          "building_top_warehouse_inner_north_pixel",
+          "building_top_warehouse_inner_north"
         ],
         "helper_allowed": false,
         "photo_grade_eligible": false,
         "projection_residuals": null,
-        "detail_review_required": true,
-        "roofline_review_required": true,
-        "facade_review_required": true,
-        "opening_review_required": true,
-        "grounding_v3_decision": "review_candidate",
-        "grounding_region_id": "warehouse_row_west",
-        "grounding_region_class": "gap",
-        "grounding_v3_reasons": [
-          "no matching GroundPlan region was found"
-        ],
-        "top_view_overlay_residual": null,
-        "promotion_confidence": 0.35
+        "inference_level": "observed",
+        "boundary_graph_edge_ids": [],
+        "completion_hypothesis_id": null,
+        "boundary_graph_risk_flags": [],
+        "boundary_graph_residuals": null,
+        "grounding_v3_decision": "promoted_geometry",
+        "grounding_region_id": "warehouse_inner_north",
+        "grounding_region_class": "building_footprint",
+        "grounding_v3_reasons": [],
+        "top_view_overlay_residual": {
+          "mask_iou": 1,
+          "centroid_error_norm": 0
+        },
+        "promotion_confidence": 0.9
       }
     },
     {
       "op": "box",
-      "id": "warehouse_row_inner",
-      "name": "Inner_Warehouse_Row_Massing",
+      "id": "warehouse_inner_south",
+      "name": "Warehouse_Inner_South_R10_Footprint",
       "origin": [
         -30097.2,
         -33131.6,
@@ -416,13 +423,13 @@
       ],
       "size": [
         13838.6,
-        77193,
+        40350.9,
         9500
       ],
       "material": "Campus_Warehouse_Light",
       "qa": {
-        "role": "warehouse_row",
-        "part_id": "warehouse_row_inner",
+        "role": "warehouse_unit",
+        "part_id": "warehouse_inner_south",
         "intent": "building",
         "evidence_status": "inferred",
         "fallback_state": "box_approximation",
@@ -432,9 +439,9 @@
             "view": "oblique",
             "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png",
             "status": "observed",
-            "confidence": 0.54,
-            "note": "R7 campus-layout prior for inner warehouse rows in oblique view.",
-            "observation_id": "building_oblique_warehouse_row_inner",
+            "confidence": 0.48,
+            "note": "VisualRelationGraph oblique candidate for the south inner-warehouse unit.",
+            "observation_id": "building_oblique_warehouse_inner_south",
             "grounding": {
               "method": "layout_prior",
               "review_required": true
@@ -445,12 +452,12 @@
             "view": "top",
             "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
             "status": "observed",
-            "confidence": 0.8,
-            "note": "Pixel-grounded top-view footprint from white_roof_component_union; used for position/proportion grounding before layout priors.",
-            "observation_id": "building_top_warehouse_row_inner_pixel",
+            "confidence": 0.82,
+            "note": "Pixel-grounded top-view footprint from white_roof_component; used for position/proportion grounding before layout priors.",
+            "observation_id": "building_top_warehouse_inner_south_pixel",
             "grounding": {
               "method": "pixel_color_segmentation",
-              "mask": "white_roof_component_union",
+              "mask": "white_roof_component",
               "contour_basis": "sampled_mask_contour",
               "grounding_quality": {
                 "version": 1,
@@ -469,9 +476,9 @@
             "view": "top",
             "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
             "status": "observed",
-            "confidence": 0.72,
-            "note": "R7 campus-layout prior for the inner white warehouse row.",
-            "observation_id": "building_top_warehouse_row_inner",
+            "confidence": 0.6399999999999999,
+            "note": "VisualRelationGraph candidate for the south unit in the inner warehouse row; kept image-only until reviewed as a separate PartGraph building.",
+            "observation_id": "building_top_warehouse_inner_south",
             "grounding": {
               "method": "layout_prior",
               "review_required": true
@@ -482,9 +489,9 @@
             "view": "oblique",
             "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png",
             "status": "observed",
-            "confidence": 0.54,
-            "note": "R7 campus-layout prior for inner warehouse rows in oblique view.",
-            "observation_id": "building_oblique_warehouse_row_inner",
+            "confidence": 0.48,
+            "note": "VisualRelationGraph oblique candidate for the south inner-warehouse unit.",
+            "observation_id": "building_oblique_warehouse_inner_south",
             "grounding": {
               "method": "layout_prior",
               "review_required": true
@@ -492,52 +499,54 @@
           }
         ],
         "generated_from_building_group_evidence": true,
-        "evidence_confidence": 0.58,
+        "evidence_confidence": 0.82,
         "review_required": true,
         "scale_review_required": true,
         "orientation_review_required": true,
         "grounding_status": "review_confirmed",
         "grounding_method": "layout_prior",
         "source_observation_ids": [
-          "building_oblique_warehouse_row_inner",
-          "building_top_warehouse_row_inner_pixel",
-          "building_top_warehouse_row_inner"
+          "building_oblique_warehouse_inner_south",
+          "building_top_warehouse_inner_south_pixel",
+          "building_top_warehouse_inner_south"
         ],
         "helper_allowed": false,
         "photo_grade_eligible": false,
         "projection_residuals": null,
-        "detail_review_required": true,
-        "roofline_review_required": true,
-        "facade_review_required": true,
-        "opening_review_required": true,
-        "grounding_v3_decision": "review_candidate",
-        "grounding_region_id": "warehouse_row_inner",
-        "grounding_region_class": "gap",
-        "grounding_v3_reasons": [
-          "no matching GroundPlan region was found"
-        ],
-        "top_view_overlay_residual": null,
-        "promotion_confidence": 0.35
+        "inference_level": "observed",
+        "boundary_graph_edge_ids": [],
+        "completion_hypothesis_id": null,
+        "boundary_graph_risk_flags": [],
+        "boundary_graph_residuals": null,
+        "grounding_v3_decision": "promoted_geometry",
+        "grounding_region_id": "warehouse_inner_south",
+        "grounding_region_class": "building_footprint",
+        "grounding_v3_reasons": [],
+        "top_view_overlay_residual": {
+          "mask_iou": 1,
+          "centroid_error_norm": 0
+        },
+        "promotion_confidence": 0.9
       }
     },
     {
       "op": "box",
-      "id": "utility_building",
-      "name": "Utility_Building_Massing",
+      "id": "warehouse_west_north",
+      "name": "Warehouse_West_North_R10_Footprint",
       "origin": [
-        35242.2,
-        -15817.6,
+        -47560.1,
+        9850.9,
         0
       ],
       "size": [
-        21177.9,
-        22350.9,
-        7600
+        12026.4,
+        34210.5,
+        9500
       ],
-      "material": "Campus_Utility_Gray",
+      "material": "Campus_Warehouse_Light",
       "qa": {
-        "role": "utility_building",
-        "part_id": "utility_building",
+        "role": "warehouse_unit",
+        "part_id": "warehouse_west_north",
         "intent": "building",
         "evidence_status": "inferred",
         "fallback_state": "box_approximation",
@@ -547,9 +556,9 @@
             "view": "oblique",
             "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png",
             "status": "observed",
-            "confidence": 0.52,
-            "note": "R7 campus-layout prior for right-side utility/mechanical building in oblique view.",
-            "observation_id": "building_oblique_utility_building",
+            "confidence": 0.5,
+            "note": "VisualRelationGraph oblique candidate for the north west-warehouse unit.",
+            "observation_id": "building_oblique_warehouse_west_north",
             "grounding": {
               "method": "layout_prior",
               "review_required": true
@@ -560,9 +569,33 @@
             "view": "top",
             "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
             "status": "observed",
-            "confidence": 0.6599999999999999,
-            "note": "R7 campus-layout prior for the right-side utility/mechanical building.",
-            "observation_id": "building_top_utility_building",
+            "confidence": 0.82,
+            "note": "Pixel-grounded top-view footprint from white_roof_component; used for position/proportion grounding before layout priors.",
+            "observation_id": "building_top_warehouse_west_north_pixel",
+            "grounding": {
+              "method": "pixel_color_segmentation",
+              "mask": "white_roof_component",
+              "contour_basis": "sampled_mask_contour",
+              "grounding_quality": {
+                "version": 1,
+                "status": "accepted",
+                "raw_to_evidence_bbox_ratio": null,
+                "prior_to_evidence_bbox_ratio": null,
+                "bbox_proxy": true,
+                "review_required": false,
+                "reasons": []
+              },
+              "review_required": false
+            }
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.6799999999999999,
+            "note": "VisualRelationGraph candidate for the north unit in the west warehouse row; kept image-only until reviewed as a separate PartGraph building.",
+            "observation_id": "building_top_warehouse_west_north",
             "grounding": {
               "method": "layout_prior",
               "review_required": true
@@ -573,9 +606,9 @@
             "view": "oblique",
             "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png",
             "status": "observed",
-            "confidence": 0.52,
-            "note": "R7 campus-layout prior for right-side utility/mechanical building in oblique view.",
-            "observation_id": "building_oblique_utility_building",
+            "confidence": 0.5,
+            "note": "VisualRelationGraph oblique candidate for the north west-warehouse unit.",
+            "observation_id": "building_oblique_warehouse_west_north",
             "grounding": {
               "method": "layout_prior",
               "review_required": true
@@ -583,40 +616,157 @@
           }
         ],
         "generated_from_building_group_evidence": true,
-        "evidence_confidence": 0.58,
+        "evidence_confidence": 0.82,
         "review_required": true,
         "scale_review_required": true,
         "orientation_review_required": true,
-        "grounding_status": "profile_prior",
+        "grounding_status": "review_confirmed",
         "grounding_method": "layout_prior",
         "source_observation_ids": [
-          "building_oblique_utility_building",
-          "building_top_utility_building"
+          "building_oblique_warehouse_west_north",
+          "building_top_warehouse_west_north_pixel",
+          "building_top_warehouse_west_north"
         ],
         "helper_allowed": false,
         "photo_grade_eligible": false,
         "projection_residuals": null,
-        "detail_review_required": true,
-        "roofline_review_required": true,
-        "facade_review_required": true,
-        "opening_review_required": true,
+        "inference_level": "observed",
+        "boundary_graph_edge_ids": [],
+        "completion_hypothesis_id": null,
+        "boundary_graph_risk_flags": [],
+        "boundary_graph_residuals": null,
         "grounding_v3_decision": "promoted_geometry",
-        "grounding_region_id": "utility_building",
+        "grounding_region_id": "warehouse_west_north",
         "grounding_region_class": "building_footprint",
-        "grounding_v3_reasons": [
-          "source_observation_still_review_required"
-        ],
+        "grounding_v3_reasons": [],
         "top_view_overlay_residual": {
           "mask_iou": 1,
           "centroid_error_norm": 0
         },
-        "promotion_confidence": 0.83
+        "promotion_confidence": 0.9
+      }
+    },
+    {
+      "op": "box",
+      "id": "warehouse_west_south",
+      "name": "Warehouse_West_South_R10_Footprint",
+      "origin": [
+        -48713.3,
+        -33131.6,
+        0
+      ],
+      "size": [
+        12685.3,
+        40350.9,
+        9500
+      ],
+      "material": "Campus_Warehouse_Light",
+      "qa": {
+        "role": "warehouse_unit",
+        "part_id": "warehouse_west_south",
+        "intent": "building",
+        "evidence_status": "inferred",
+        "fallback_state": "box_approximation",
+        "evidence_sources": [
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png",
+            "status": "observed",
+            "confidence": 0.5,
+            "note": "VisualRelationGraph oblique candidate for the south west-warehouse unit.",
+            "observation_id": "building_oblique_warehouse_west_south",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.82,
+            "note": "Pixel-grounded top-view footprint from white_roof_component; used for position/proportion grounding before layout priors.",
+            "observation_id": "building_top_warehouse_west_south_pixel",
+            "grounding": {
+              "method": "pixel_color_segmentation",
+              "mask": "white_roof_component",
+              "contour_basis": "sampled_mask_contour",
+              "grounding_quality": {
+                "version": 1,
+                "status": "accepted",
+                "raw_to_evidence_bbox_ratio": null,
+                "prior_to_evidence_bbox_ratio": null,
+                "bbox_proxy": true,
+                "review_required": false,
+                "reasons": []
+              },
+              "review_required": false
+            }
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.6799999999999999,
+            "note": "VisualRelationGraph candidate for the south unit in the west warehouse row; kept image-only until reviewed as a separate PartGraph building.",
+            "observation_id": "building_top_warehouse_west_south",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
+          },
+          {
+            "kind": "silhouette",
+            "view": "oblique",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png",
+            "status": "observed",
+            "confidence": 0.5,
+            "note": "VisualRelationGraph oblique candidate for the south west-warehouse unit.",
+            "observation_id": "building_oblique_warehouse_west_south",
+            "grounding": {
+              "method": "layout_prior",
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.82,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "review_confirmed",
+        "grounding_method": "layout_prior",
+        "source_observation_ids": [
+          "building_oblique_warehouse_west_south",
+          "building_top_warehouse_west_south_pixel",
+          "building_top_warehouse_west_south"
+        ],
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "inference_level": "observed",
+        "boundary_graph_edge_ids": [],
+        "completion_hypothesis_id": null,
+        "boundary_graph_risk_flags": [],
+        "boundary_graph_residuals": null,
+        "grounding_v3_decision": "promoted_geometry",
+        "grounding_region_id": "warehouse_west_south",
+        "grounding_region_class": "building_footprint",
+        "grounding_v3_reasons": [],
+        "top_view_overlay_residual": {
+          "mask_iou": 1,
+          "centroid_error_norm": 0
+        },
+        "promotion_confidence": 0.9
       }
     },
     {
       "op": "box",
       "id": "admin_office",
-      "name": "Admin_Office_Massing",
+      "name": "Admin_Office_R10_Footprint",
       "origin": [
         -9937.4,
         -37050.9,
@@ -633,7 +783,7 @@
         "part_id": "admin_office",
         "intent": "building",
         "evidence_status": "inferred",
-        "fallback_state": "box_approximation",
+        "fallback_state": "needs_review",
         "evidence_sources": [
           {
             "kind": "silhouette",
@@ -676,7 +826,7 @@
           }
         ],
         "generated_from_building_group_evidence": true,
-        "evidence_confidence": 0.58,
+        "evidence_confidence": 0.64,
         "review_required": true,
         "scale_review_required": true,
         "orientation_review_required": true,
@@ -689,44 +839,49 @@
         "helper_allowed": false,
         "photo_grade_eligible": false,
         "projection_residuals": null,
+        "inference_level": "observed",
+        "boundary_graph_edge_ids": [],
+        "completion_hypothesis_id": null,
+        "boundary_graph_risk_flags": [],
+        "boundary_graph_residuals": null,
         "detail_review_required": true,
         "roofline_review_required": true,
         "facade_review_required": true,
         "opening_review_required": true,
-        "grounding_v3_decision": "promoted_geometry",
+        "grounding_v3_decision": "review_candidate",
         "grounding_region_id": "admin_office",
         "grounding_region_class": "building_footprint",
         "grounding_v3_reasons": [
-          "source_observation_still_review_required"
+          "AutoGroundPlan R10 kept this region out of promoted geometry"
         ],
         "top_view_overlay_residual": {
           "mask_iou": 1,
           "centroid_error_norm": 0
         },
-        "promotion_confidence": 0.82
+        "promotion_confidence": 0.525
       }
     },
     {
       "op": "box",
-      "id": "parking_lot",
-      "name": "Parking_Lot_Flat_Massing",
+      "id": "utility_building",
+      "name": "Utility_Building_R10_Footprint",
       "origin": [
-        14064.3,
-        -42638.6,
+        35242.2,
+        -15817.6,
         0
       ],
       "size": [
-        45179.6,
-        21233.3,
-        80
+        21177.9,
+        22350.9,
+        7600
       ],
-      "material": "Campus_Parking_Asphalt",
+      "material": "Campus_Utility_Gray",
       "qa": {
-        "role": "parking_lot",
-        "part_id": "parking_lot",
-        "intent": "site_surface",
+        "role": "utility_building",
+        "part_id": "utility_building",
+        "intent": "building",
         "evidence_status": "inferred",
-        "fallback_state": "visual_helper",
+        "fallback_state": "needs_review",
         "evidence_sources": [
           {
             "kind": "silhouette",
@@ -734,8 +889,8 @@
             "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png",
             "status": "observed",
             "confidence": 0.52,
-            "note": "R7 campus-layout prior for parking lot in oblique view.",
-            "observation_id": "building_oblique_parking_lot",
+            "note": "R7 campus-layout prior for right-side utility/mechanical building in oblique view.",
+            "observation_id": "building_oblique_utility_building",
             "grounding": {
               "method": "layout_prior",
               "review_required": true
@@ -746,9 +901,9 @@
             "view": "top",
             "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
             "status": "observed",
-            "confidence": 0.72,
-            "note": "R7 campus-layout prior for the parking lot footprint.",
-            "observation_id": "building_top_parking_lot",
+            "confidence": 0.6599999999999999,
+            "note": "R7 campus-layout prior for the right-side utility/mechanical building.",
+            "observation_id": "building_top_utility_building",
             "grounding": {
               "method": "layout_prior",
               "review_required": true
@@ -760,8 +915,8 @@
             "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png",
             "status": "observed",
             "confidence": 0.52,
-            "note": "R7 campus-layout prior for parking lot in oblique view.",
-            "observation_id": "building_oblique_parking_lot",
+            "note": "R7 campus-layout prior for right-side utility/mechanical building in oblique view.",
+            "observation_id": "building_oblique_utility_building",
             "grounding": {
               "method": "layout_prior",
               "review_required": true
@@ -769,62 +924,203 @@
           }
         ],
         "generated_from_building_group_evidence": true,
-        "evidence_confidence": 0.58,
+        "evidence_confidence": 0.66,
         "review_required": true,
         "scale_review_required": true,
         "orientation_review_required": true,
-        "grounding_status": "helper_only",
+        "grounding_status": "profile_prior",
         "grounding_method": "layout_prior",
         "source_observation_ids": [
-          "building_oblique_parking_lot",
-          "building_top_parking_lot"
+          "building_oblique_utility_building",
+          "building_top_utility_building"
         ],
-        "helper_allowed": true,
+        "helper_allowed": false,
         "photo_grade_eligible": false,
         "projection_residuals": null,
+        "inference_level": "observed",
+        "boundary_graph_edge_ids": [],
+        "completion_hypothesis_id": null,
+        "boundary_graph_risk_flags": [],
+        "boundary_graph_residuals": null,
+        "detail_review_required": true,
+        "roofline_review_required": true,
+        "facade_review_required": true,
+        "opening_review_required": true,
         "grounding_v3_decision": "review_candidate",
-        "grounding_region_id": "parking_lot",
-        "grounding_region_class": "gap",
+        "grounding_region_id": "utility_building",
+        "grounding_region_class": "building_footprint",
         "grounding_v3_reasons": [
-          "no matching GroundPlan region was found"
+          "AutoGroundPlan R10 kept this region out of promoted geometry"
         ],
-        "top_view_overlay_residual": null,
-        "promotion_confidence": 0.35
+        "top_view_overlay_residual": {
+          "mask_iou": 1,
+          "centroid_error_norm": 0
+        },
+        "promotion_confidence": 0.541
       }
     },
     {
       "op": "box",
-      "id": "internal_roads",
-      "name": "Internal_Roads_Flat_Massing",
+      "id": "parking_stall_row_north",
+      "name": "Parking_Stall_Row_North_R10_Parking_Strip",
       "origin": [
-        -63588.1,
-        -43756.1,
+        18337.7,
+        -29798.2,
         0
       ],
       "size": [
-        125655.7,
-        89403.5,
-        70
+        36243.8,
+        3684.2,
+        35
       ],
-      "material": "Campus_Road_Asphalt",
+      "material": "Campus_Parking_Stripe",
       "qa": {
-        "role": "internal_roads",
-        "part_id": "internal_roads",
+        "role": "parking_strip",
+        "part_id": "parking_stall_row_north",
         "intent": "site_surface",
         "evidence_status": "inferred",
         "fallback_state": "visual_helper",
         "evidence_sources": [
           {
             "kind": "silhouette",
-            "view": "oblique",
-            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
             "status": "observed",
-            "confidence": 0.45,
-            "note": "R7 campus-layout prior for paved circulation in oblique view.",
-            "observation_id": "building_oblique_internal_roads",
+            "confidence": 0.68,
+            "note": "Pixel-grounded top-view footprint from parking_stall_marking_cluster_north; used for position/proportion grounding before layout priors.",
+            "observation_id": "building_top_parking_stall_row_north_pixel",
+            "grounding": {
+              "method": "pixel_line_segmentation",
+              "mask": "parking_stall_marking_cluster_north",
+              "pixel_bbox": [
+                541,
+                475,
+                220,
+                21
+              ],
+              "pixel_count": 209,
+              "prior_bbox": [
+                541.8,
+                475.2,
+                219.6,
+                20.25
+              ],
+              "fill": 0.05,
+              "contour_basis": "sampled_mask_contour",
+              "grounding_quality": {
+                "version": 1,
+                "status": "accepted",
+                "raw_to_evidence_bbox_ratio": 1,
+                "prior_to_evidence_bbox_ratio": 1.04,
+                "bbox_proxy": false,
+                "review_required": false,
+                "reasons": []
+              },
+              "review_required": false
+            }
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.6000000000000001,
+            "note": "VisualRelationGraph candidate for the northern visible parking-stall marker row inside the parking lot.",
+            "observation_id": "building_top_parking_stall_row_north",
             "grounding": {
               "method": "layout_prior",
               "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.68,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "review_confirmed",
+        "grounding_method": "pixel_line_segmentation",
+        "source_observation_ids": [
+          "building_top_parking_stall_row_north_pixel",
+          "building_top_parking_stall_row_north"
+        ],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "inference_level": "observed",
+        "boundary_graph_edge_ids": [],
+        "completion_hypothesis_id": null,
+        "boundary_graph_risk_flags": [],
+        "boundary_graph_residuals": null,
+        "grounding_v3_decision": "promoted_geometry",
+        "grounding_region_id": "parking_stall_row_north",
+        "grounding_region_class": "parking",
+        "grounding_v3_reasons": [],
+        "top_view_overlay_residual": {
+          "mask_iou": 1,
+          "centroid_error_norm": 0
+        },
+        "promotion_confidence": 0.84
+      }
+    },
+    {
+      "op": "box",
+      "id": "parking_stall_row_south",
+      "name": "Parking_Stall_Row_South_R10_Parking_Strip",
+      "origin": [
+        19326.2,
+        -37868.4,
+        0
+      ],
+      "size": [
+        35420.1,
+        3684.2,
+        35
+      ],
+      "material": "Campus_Parking_Stripe",
+      "qa": {
+        "role": "parking_strip",
+        "part_id": "parking_stall_row_south",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.68,
+            "note": "Pixel-grounded top-view footprint from parking_stall_marking_cluster_south; used for position/proportion grounding before layout priors.",
+            "observation_id": "building_top_parking_stall_row_south_pixel",
+            "grounding": {
+              "method": "pixel_line_segmentation",
+              "mask": "parking_stall_marking_cluster_south",
+              "pixel_bbox": [
+                547,
+                521,
+                215,
+                21
+              ],
+              "pixel_count": 167,
+              "prior_bbox": [
+                541.8,
+                521.1,
+                219.6,
+                20.25
+              ],
+              "fill": 0.04,
+              "contour_basis": "sampled_mask_contour",
+              "grounding_quality": {
+                "version": 1,
+                "status": "accepted",
+                "raw_to_evidence_bbox_ratio": 1,
+                "prior_to_evidence_bbox_ratio": 1.04,
+                "bbox_proxy": false,
+                "review_required": false,
+                "reasons": []
+              },
+              "review_required": false
             }
           },
           {
@@ -833,21 +1129,8 @@
             "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
             "status": "observed",
             "confidence": 0.5800000000000001,
-            "note": "R7 campus-layout prior for internal road loops and paved circulation.",
-            "observation_id": "building_top_internal_roads",
-            "grounding": {
-              "method": "layout_prior",
-              "review_required": true
-            }
-          },
-          {
-            "kind": "silhouette",
-            "view": "oblique",
-            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png",
-            "status": "observed",
-            "confidence": 0.45,
-            "note": "R7 campus-layout prior for paved circulation in oblique view.",
-            "observation_id": "building_oblique_internal_roads",
+            "note": "VisualRelationGraph candidate for the southern visible parking-stall marker row inside the parking lot.",
+            "observation_id": "building_top_parking_stall_row_south",
             "grounding": {
               "method": "layout_prior",
               "review_required": true
@@ -855,93 +1138,204 @@
           }
         ],
         "generated_from_building_group_evidence": true,
-        "evidence_confidence": 0.58,
+        "evidence_confidence": 0.68,
         "review_required": true,
         "scale_review_required": true,
         "orientation_review_required": true,
-        "grounding_status": "helper_only",
-        "grounding_method": "layout_prior",
+        "grounding_status": "review_confirmed",
+        "grounding_method": "pixel_line_segmentation",
         "source_observation_ids": [
-          "building_oblique_internal_roads",
-          "building_top_internal_roads"
+          "building_top_parking_stall_row_south_pixel",
+          "building_top_parking_stall_row_south"
         ],
         "helper_allowed": true,
         "photo_grade_eligible": false,
         "projection_residuals": null,
-        "grounding_v3_decision": "review_candidate",
-        "grounding_region_id": "internal_roads",
-        "grounding_region_class": "gap",
-        "grounding_v3_reasons": [
-          "no matching GroundPlan region was found"
-        ],
-        "top_view_overlay_residual": null,
-        "promotion_confidence": 0.35
+        "inference_level": "observed",
+        "boundary_graph_edge_ids": [],
+        "completion_hypothesis_id": null,
+        "boundary_graph_risk_flags": [],
+        "boundary_graph_residuals": null,
+        "grounding_v3_decision": "promoted_geometry",
+        "grounding_region_id": "parking_stall_row_south",
+        "grounding_region_class": "parking",
+        "grounding_v3_reasons": [],
+        "top_view_overlay_residual": {
+          "mask_iou": 1,
+          "centroid_error_norm": 0
+        },
+        "promotion_confidence": 0.84
       }
     },
     {
-      "op": "cylinder",
-      "id": "tank_farm",
-      "name": "Tank_Farm_West_Silo",
+      "op": "box",
+      "id": "parking_drive_aisle_center",
+      "name": "Parking_Drive_Aisle_Center_R10_Corridor",
       "origin": [
-        47214.8,
-        33354.4,
+        18337.7,
+        -33833.3,
         0
       ],
-      "radius": 3162.6,
-      "height": 14000,
-      "segments": 32,
-      "smooth": "all",
-      "material": "Campus_Tank_Metal",
+      "size": [
+        36408.6,
+        3684.2,
+        45
+      ],
+      "material": "Campus_Road_Asphalt",
       "qa": {
-        "role": "tank_farm",
-        "part_id": "tank_farm",
-        "intent": "tank",
+        "role": "road_corridor",
+        "part_id": "parking_drive_aisle_center",
+        "intent": "site_surface",
         "evidence_status": "inferred",
-        "fallback_state": "structured_primitive",
+        "fallback_state": "visual_helper",
         "evidence_sources": [
           {
             "kind": "silhouette",
-            "view": "oblique",
-            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
             "status": "observed",
-            "confidence": 0.54,
-            "note": "R7 campus-layout prior for cylindrical tanks in oblique view.",
-            "observation_id": "building_oblique_tank_farm",
+            "confidence": 0.66,
+            "note": "Pixel-grounded top-view footprint from parking_drive_aisle_between_pixel_marking_rows; used for position/proportion grounding before layout priors.",
+            "observation_id": "building_top_parking_drive_aisle_center_pixel",
+            "grounding": {
+              "method": "pixel_gap_segmentation",
+              "mask": "parking_drive_aisle_between_pixel_marking_rows",
+              "prior_bbox": [
+                531,
+                498.15,
+                261,
+                36.45
+              ],
+              "derived_from": [
+                "building_top_parking_stall_row_north_pixel",
+                "building_top_parking_stall_row_south_pixel"
+              ],
+              "derived_from_kind": "negative_space_between_isolated_masks",
+              "contour_basis": "sampled_mask_contour",
+              "grounding_quality": {
+                "version": 1,
+                "status": "accepted",
+                "raw_to_evidence_bbox_ratio": null,
+                "prior_to_evidence_bbox_ratio": 1.74,
+                "bbox_proxy": false,
+                "review_required": false,
+                "reasons": []
+              },
+              "review_required": false
+            }
+          },
+          {
+            "kind": "silhouette",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "observed",
+            "confidence": 0.6000000000000001,
+            "note": "VisualRelationGraph candidate for the parking drive aisle between stall rows.",
+            "observation_id": "building_top_parking_drive_aisle_center",
             "grounding": {
               "method": "layout_prior",
               "review_required": true
             }
-          },
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.66,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "review_confirmed",
+        "grounding_method": "pixel_gap_segmentation",
+        "source_observation_ids": [
+          "building_top_parking_drive_aisle_center_pixel",
+          "building_top_parking_drive_aisle_center"
+        ],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "inference_level": "observed",
+        "boundary_graph_edge_ids": [],
+        "completion_hypothesis_id": null,
+        "boundary_graph_risk_flags": [],
+        "boundary_graph_residuals": null,
+        "grounding_v3_decision": "promoted_geometry",
+        "grounding_region_id": "parking_drive_aisle_center",
+        "grounding_region_class": "road",
+        "grounding_v3_reasons": [],
+        "top_view_overlay_residual": {
+          "mask_iou": 1,
+          "centroid_error_norm": 0
+        },
+        "promotion_confidence": 0.83
+      }
+    },
+    {
+      "op": "box",
+      "id": "tree_row_south",
+      "name": "Tree_Row_South_R10_Green",
+      "origin": [
+        18173,
+        -49343.9,
+        0
+      ],
+      "size": [
+        46718.3,
+        4282.5,
+        120
+      ],
+      "material": "Campus_Tree_Line",
+      "qa": {
+        "role": "green_helper",
+        "part_id": "tree_row_south",
+        "intent": "landscape",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
           {
             "kind": "silhouette",
             "view": "top",
             "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
             "status": "observed",
             "confidence": 0.7,
-            "note": "R7 campus-layout prior for the cylindrical tank farm.",
-            "observation_id": "building_top_tank_farm",
+            "note": "Pixel-grounded top-view footprint from tree_vegetation_row_cluster; used for position/proportion grounding before layout priors.",
+            "observation_id": "building_top_tree_row_south_pixel",
             "grounding": {
-              "method": "layout_prior",
-              "review_required": true
+              "method": "pixel_vegetation_segmentation",
+              "mask": "tree_vegetation_row_cluster",
+              "pixel_bbox": [
+                540,
+                583,
+                288,
+                25
+              ],
+              "pixel_count": 1840,
+              "prior_bbox": [
+                513,
+                583.88,
+                315,
+                23.63
+              ],
+              "fill": 0.26,
+              "contour_basis": "sampled_mask_contour",
+              "grounding_quality": {
+                "version": 1,
+                "status": "accepted",
+                "raw_to_evidence_bbox_ratio": 1,
+                "prior_to_evidence_bbox_ratio": 1.09,
+                "bbox_proxy": false,
+                "review_required": false,
+                "reasons": []
+              },
+              "review_required": false
             }
           },
           {
-            "kind": "center_point",
+            "kind": "silhouette",
             "view": "top",
             "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
             "status": "observed",
-            "confidence": 0.58,
-            "note": "Center keypoint for tank farm massing review.",
-            "observation_id": "building_top_tank_farm_center"
-          },
-          {
-            "kind": "silhouette",
-            "view": "oblique",
-            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png",
-            "status": "observed",
             "confidence": 0.54,
-            "note": "R7 campus-layout prior for cylindrical tanks in oblique view.",
-            "observation_id": "building_oblique_tank_farm",
+            "note": "VisualRelationGraph candidate for the tree/landscape row south of the parking field.",
+            "observation_id": "building_top_tree_row_south",
             "grounding": {
               "method": "layout_prior",
               "review_required": true
@@ -949,25 +1343,29 @@
           }
         ],
         "generated_from_building_group_evidence": true,
-        "evidence_confidence": 0.56,
+        "evidence_confidence": 0.7,
         "review_required": true,
         "scale_review_required": true,
         "orientation_review_required": true,
         "grounding_status": "review_confirmed",
-        "grounding_method": "layout_prior",
+        "grounding_method": "pixel_vegetation_segmentation",
         "source_observation_ids": [
-          "building_oblique_tank_farm",
-          "building_top_tank_farm",
-          "building_top_tank_farm_center"
+          "building_top_tree_row_south_pixel",
+          "building_top_tree_row_south"
         ],
-        "helper_allowed": false,
+        "helper_allowed": true,
         "photo_grade_eligible": false,
         "projection_residuals": null,
+        "inference_level": "observed",
+        "boundary_graph_edge_ids": [],
+        "completion_hypothesis_id": null,
+        "boundary_graph_risk_flags": [],
+        "boundary_graph_residuals": null,
         "grounding_v3_decision": "helper_only",
-        "grounding_region_id": "tank_farm",
-        "grounding_region_class": "service_yard",
+        "grounding_region_id": "tree_row_south",
+        "grounding_region_class": "green",
         "grounding_v3_reasons": [
-          "non-structural site detail remains helper/review geometry in R9"
+          "AutoGroundPlan R10 kept this region out of promoted geometry"
         ],
         "top_view_overlay_residual": {
           "mask_iou": 1,
@@ -977,25 +1375,26 @@
       }
     },
     {
-      "op": "cylinder",
-      "id": "tank_farm_silo_east",
-      "name": "Tank_Farm_East_Silo",
+      "op": "box",
+      "id": "tank_farm",
+      "name": "Tank_Farm_R10_Helper",
       "origin": [
-        54330.5,
-        33354.4,
+        40889.6,
+        23296.5,
         0
       ],
-      "radius": 3162.6,
-      "height": 14000,
-      "segments": 32,
-      "smooth": "all",
+      "size": [
+        19766.1,
+        20115.8,
+        60
+      ],
       "material": "Campus_Tank_Metal",
       "qa": {
-        "role": "tank",
-        "part_id": "tank_farm_silo_east",
-        "intent": "tank",
+        "role": "service_yard",
+        "part_id": "tank_farm",
+        "intent": "site_surface",
         "evidence_status": "inferred",
-        "fallback_state": "structured_primitive",
+        "fallback_state": "visual_helper",
         "evidence_sources": [
           {
             "kind": "silhouette",
@@ -1047,28 +1446,2761 @@
           }
         ],
         "generated_from_building_group_evidence": true,
-        "evidence_confidence": 0.56,
+        "evidence_confidence": 0.7,
         "review_required": true,
         "scale_review_required": true,
         "orientation_review_required": true,
-        "grounding_status": "review_confirmed",
+        "grounding_status": "helper_only",
         "grounding_method": "layout_prior",
         "source_observation_ids": [
           "building_oblique_tank_farm",
           "building_top_tank_farm",
           "building_top_tank_farm_center"
         ],
-        "helper_allowed": false,
+        "helper_allowed": true,
         "photo_grade_eligible": false,
         "projection_residuals": null,
+        "inference_level": "observed",
+        "boundary_graph_edge_ids": [],
+        "completion_hypothesis_id": null,
+        "boundary_graph_risk_flags": [],
+        "boundary_graph_residuals": null,
         "grounding_v3_decision": "review_candidate",
-        "grounding_region_id": "tank_farm_silo_east",
+        "grounding_region_id": "tank_farm",
+        "grounding_region_class": "service_yard",
+        "grounding_v3_reasons": [
+          "AutoGroundPlan R10 kept this region out of promoted geometry"
+        ],
+        "top_view_overlay_residual": {
+          "mask_iou": 1,
+          "centroid_error_norm": 0
+        },
+        "promotion_confidence": 0.574
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_1",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_1_R10_Helper",
+      "origin": [
+        18173,
+        -26114,
+        0
+      ],
+      "size": [
+        164.7,
+        3591.2,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_1",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_1: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_232"
+              ],
+              "source_evidence_ids": [
+                "building_top_parking_lot",
+                "building_top_parking_stall_row_north",
+                "building_top_internal_roads"
+              ],
+              "connectivity_reasons": [
+                "adjacent_to_hardscape_or_pixel_gap_evidence"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_1",
         "grounding_region_class": "gap",
         "grounding_v3_reasons": [
-          "no matching GroundPlan region was found"
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
         ],
         "top_view_overlay_residual": null,
-        "promotion_confidence": 0.35
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_2",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_2_R10_Helper",
+      "origin": [
+        18337.7,
+        -26114,
+        0
+      ],
+      "size": [
+        988.5,
+        3591.2,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_2",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_2: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_233"
+              ],
+              "source_evidence_ids": [
+                "building_top_parking_lot",
+                "building_top_parking_stall_row_north",
+                "building_top_internal_roads"
+              ],
+              "connectivity_reasons": [
+                "adjacent_to_hardscape_or_pixel_gap_evidence"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_2",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_3",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_3_R10_Helper",
+      "origin": [
+        19326.2,
+        -26114,
+        0
+      ],
+      "size": [
+        6919.3,
+        3591.2,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_3",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_3: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_234"
+              ],
+              "source_evidence_ids": [
+                "building_top_parking_lot",
+                "building_top_parking_stall_row_north",
+                "building_top_internal_roads"
+              ],
+              "connectivity_reasons": [
+                "adjacent_to_hardscape_or_pixel_gap_evidence"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_3",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_4",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_4_R10_Helper",
+      "origin": [
+        26245.5,
+        -26114,
+        0
+      ],
+      "size": [
+        8996.7,
+        3591.2,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_4",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_4: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_235"
+              ],
+              "source_evidence_ids": [
+                "building_top_parking_lot",
+                "building_top_parking_stall_row_north",
+                "building_top_internal_roads"
+              ],
+              "connectivity_reasons": [
+                "adjacent_to_hardscape_or_pixel_gap_evidence"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_4",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_5",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_5_R10_Helper",
+      "origin": [
+        35242.2,
+        -26114,
+        0
+      ],
+      "size": [
+        5647.4,
+        3591.2,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_5",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_5: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_236"
+              ],
+              "source_evidence_ids": [
+                "building_top_parking_lot",
+                "building_top_parking_stall_row_north",
+                "building_top_internal_roads"
+              ],
+              "connectivity_reasons": [
+                "adjacent_to_hardscape_or_pixel_gap_evidence"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_5",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_6",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_6_R10_Helper",
+      "origin": [
+        40889.6,
+        -26114,
+        0
+      ],
+      "size": [
+        13691.9,
+        3591.2,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_6",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_6: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_237"
+              ],
+              "source_evidence_ids": [
+                "building_top_parking_lot",
+                "building_top_parking_stall_row_north",
+                "building_top_internal_roads"
+              ],
+              "connectivity_reasons": [
+                "adjacent_to_hardscape_or_pixel_gap_evidence"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_6",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_7",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_7_R10_Helper",
+      "origin": [
+        54581.5,
+        -26114,
+        0
+      ],
+      "size": [
+        164.7,
+        3591.2,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_7",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_7: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_238"
+              ],
+              "source_evidence_ids": [
+                "building_top_parking_lot",
+                "building_top_internal_roads",
+                "building_top_parking_stall_row_north_pixel"
+              ],
+              "connectivity_reasons": [
+                "adjacent_to_hardscape_or_pixel_gap_evidence"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_7",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_8",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_8_R10_Helper",
+      "origin": [
+        54746.3,
+        -26114,
+        0
+      ],
+      "size": [
+        1673.8,
+        3591.2,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_8",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_8: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_239"
+              ],
+              "source_evidence_ids": [
+                "building_top_parking_lot",
+                "building_top_internal_roads",
+                "building_top_parking_stall_row_north_pixel"
+              ],
+              "connectivity_reasons": [
+                "adjacent_to_hardscape_or_pixel_gap_evidence"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_8",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_9",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_9_R10_Helper",
+      "origin": [
+        18173,
+        -29798.2,
+        0
+      ],
+      "size": [
+        164.7,
+        3684.2,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_9",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_9: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_254"
+              ],
+              "source_evidence_ids": [
+                "building_top_parking_lot",
+                "building_top_parking_drive_aisle_center",
+                "building_top_parking_stall_row_north",
+                "building_top_internal_roads"
+              ],
+              "connectivity_reasons": [
+                "connected_to_hardscape_corridor"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_9",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_10",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_10_R10_Helper",
+      "origin": [
+        54581.5,
+        -29798.2,
+        0
+      ],
+      "size": [
+        164.7,
+        3684.2,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_10",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_10: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_260"
+              ],
+              "source_evidence_ids": [
+                "building_top_parking_lot",
+                "building_top_parking_drive_aisle_center",
+                "building_top_internal_roads",
+                "building_top_parking_stall_row_north_pixel"
+              ],
+              "connectivity_reasons": [
+                "connected_to_hardscape_corridor"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_10",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_11",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_11_R10_Helper",
+      "origin": [
+        54746.3,
+        -29798.2,
+        0
+      ],
+      "size": [
+        1673.8,
+        3684.2,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_11",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_11: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_261"
+              ],
+              "source_evidence_ids": [
+                "building_top_parking_lot",
+                "building_top_parking_drive_aisle_center",
+                "building_top_internal_roads",
+                "building_top_parking_stall_row_north_pixel"
+              ],
+              "connectivity_reasons": [
+                "adjacent_to_hardscape_or_pixel_gap_evidence"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_11",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_12",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_12_R10_Helper",
+      "origin": [
+        18173,
+        -30149.1,
+        0
+      ],
+      "size": [
+        164.7,
+        350.9,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_12",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_12: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_276"
+              ],
+              "source_evidence_ids": [
+                "building_top_parking_lot",
+                "building_top_parking_drive_aisle_center",
+                "building_top_internal_roads",
+                "building_top_parking_stall_row_north_pixel"
+              ],
+              "connectivity_reasons": [
+                "adjacent_to_hardscape_or_pixel_gap_evidence"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_12",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_13",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_13_R10_Helper",
+      "origin": [
+        18337.7,
+        -30149.1,
+        0
+      ],
+      "size": [
+        988.5,
+        350.9,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_13",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_13: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_277"
+              ],
+              "source_evidence_ids": [
+                "building_top_parking_lot",
+                "building_top_parking_drive_aisle_center",
+                "building_top_internal_roads",
+                "building_top_parking_stall_row_north_pixel"
+              ],
+              "connectivity_reasons": [
+                "connected_to_hardscape_corridor"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_13",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_14",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_14_R10_Helper",
+      "origin": [
+        19326.2,
+        -30149.1,
+        0
+      ],
+      "size": [
+        6919.3,
+        350.9,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_14",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_14: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_278"
+              ],
+              "source_evidence_ids": [
+                "building_top_parking_lot",
+                "building_top_parking_drive_aisle_center",
+                "building_top_internal_roads",
+                "building_top_parking_stall_row_north_pixel"
+              ],
+              "connectivity_reasons": [
+                "connected_to_hardscape_corridor"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_14",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_15",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_15_R10_Helper",
+      "origin": [
+        26245.5,
+        -30149.1,
+        0
+      ],
+      "size": [
+        8996.7,
+        350.9,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_15",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_15: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_279"
+              ],
+              "source_evidence_ids": [
+                "building_top_parking_lot",
+                "building_top_parking_drive_aisle_center",
+                "building_top_internal_roads",
+                "building_top_parking_stall_row_north_pixel"
+              ],
+              "connectivity_reasons": [
+                "connected_to_hardscape_corridor"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_15",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_16",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_16_R10_Helper",
+      "origin": [
+        35242.2,
+        -30149.1,
+        0
+      ],
+      "size": [
+        5647.4,
+        350.9,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_16",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_16: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_280"
+              ],
+              "source_evidence_ids": [
+                "building_top_parking_lot",
+                "building_top_parking_drive_aisle_center",
+                "building_top_internal_roads",
+                "building_top_parking_stall_row_north_pixel"
+              ],
+              "connectivity_reasons": [
+                "connected_to_hardscape_corridor"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_16",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_17",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_17_R10_Helper",
+      "origin": [
+        40889.6,
+        -30149.1,
+        0
+      ],
+      "size": [
+        13691.9,
+        350.9,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_17",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_17: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_281"
+              ],
+              "source_evidence_ids": [
+                "building_top_parking_lot",
+                "building_top_parking_drive_aisle_center",
+                "building_top_internal_roads",
+                "building_top_parking_stall_row_north_pixel"
+              ],
+              "connectivity_reasons": [
+                "connected_to_hardscape_corridor"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_17",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_18",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_18_R10_Helper",
+      "origin": [
+        54581.5,
+        -30149.1,
+        0
+      ],
+      "size": [
+        164.7,
+        350.9,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_18",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_18: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_282"
+              ],
+              "source_evidence_ids": [
+                "building_top_parking_lot",
+                "building_top_parking_drive_aisle_center",
+                "building_top_internal_roads",
+                "building_top_parking_stall_row_north_pixel"
+              ],
+              "connectivity_reasons": [
+                "adjacent_to_hardscape_or_pixel_gap_evidence"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_18",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_19",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_19_R10_Helper",
+      "origin": [
+        54746.3,
+        -30149.1,
+        0
+      ],
+      "size": [
+        1673.8,
+        350.9,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_19",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_19: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_283"
+              ],
+              "source_evidence_ids": [
+                "building_top_parking_lot",
+                "building_top_parking_drive_aisle_center",
+                "building_top_internal_roads",
+                "building_top_parking_stall_row_north_pixel"
+              ],
+              "connectivity_reasons": [
+                "connected_to_hardscape_corridor"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_19",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_20",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_20_R10_Helper",
+      "origin": [
+        11240.5,
+        -33131.6,
+        0
+      ],
+      "size": [
+        6932.5,
+        2982.5,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_20",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_20: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_297"
+              ],
+              "source_evidence_ids": [
+                "building_top_parking_lot",
+                "building_top_parking_drive_aisle_center",
+                "building_top_internal_roads",
+                "building_top_parking_stall_row_north_pixel",
+                "building_top_admin_office",
+                "building_top_parking_stall_row_south"
+              ],
+              "connectivity_reasons": [
+                "connected_to_parking_drive_aisle"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_20",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_21",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_21_R10_Helper",
+      "origin": [
+        18173,
+        -33131.6,
+        0
+      ],
+      "size": [
+        164.7,
+        2982.5,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_21",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_21: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_298"
+              ],
+              "source_evidence_ids": [
+                "building_top_parking_lot",
+                "building_top_parking_drive_aisle_center",
+                "building_top_internal_roads",
+                "building_top_parking_stall_row_south",
+                "building_top_parking_stall_row_north_pixel"
+              ],
+              "connectivity_reasons": [
+                "connected_to_hardscape_corridor"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_21",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_22",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_22_R10_Helper",
+      "origin": [
+        54746.3,
+        -33131.6,
+        0
+      ],
+      "size": [
+        1673.8,
+        2982.5,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_22",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_22: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_305"
+              ],
+              "source_evidence_ids": [
+                "building_top_parking_lot",
+                "building_top_parking_drive_aisle_center",
+                "building_top_internal_roads",
+                "building_top_parking_stall_row_north_pixel"
+              ],
+              "connectivity_reasons": [
+                "adjacent_to_hardscape_or_pixel_gap_evidence"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_22",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_23",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_23_R10_Helper",
+      "origin": [
+        18173,
+        -33833.4,
+        0
+      ],
+      "size": [
+        164.7,
+        701.8,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_23",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_23: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_320"
+              ],
+              "source_evidence_ids": [
+                "building_top_parking_lot",
+                "building_top_parking_drive_aisle_center",
+                "building_top_internal_roads",
+                "building_top_parking_stall_row_south"
+              ],
+              "connectivity_reasons": [
+                "connected_to_hardscape_corridor"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_23",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_24",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_24_R10_Helper",
+      "origin": [
+        54746.3,
+        -33833.4,
+        0
+      ],
+      "size": [
+        1673.8,
+        701.8,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_24",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_24: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_327"
+              ],
+              "source_evidence_ids": [
+                "building_top_parking_lot",
+                "building_top_parking_drive_aisle_center",
+                "building_top_internal_roads",
+                "building_top_parking_stall_row_south_pixel"
+              ],
+              "connectivity_reasons": [
+                "connected_to_hardscape_corridor"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_24",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_25",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_25_R10_Helper",
+      "origin": [
+        18173,
+        -34184.2,
+        0
+      ],
+      "size": [
+        164.7,
+        350.9,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_25",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_25: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_342"
+              ],
+              "source_evidence_ids": [
+                "building_top_parking_lot",
+                "building_top_parking_drive_aisle_center",
+                "building_top_internal_roads",
+                "building_top_parking_stall_row_south"
+              ],
+              "connectivity_reasons": [
+                "adjacent_to_hardscape_or_pixel_gap_evidence"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_25",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_26",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_26_R10_Helper",
+      "origin": [
+        18337.7,
+        -34184.2,
+        0
+      ],
+      "size": [
+        988.5,
+        350.9,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_26",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_26: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_343"
+              ],
+              "source_evidence_ids": [
+                "building_top_parking_lot",
+                "building_top_parking_drive_aisle_center",
+                "building_top_internal_roads",
+                "building_top_parking_stall_row_south"
+              ],
+              "connectivity_reasons": [
+                "connected_to_hardscape_corridor"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_26",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_27",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_27_R10_Helper",
+      "origin": [
+        19326.2,
+        -34184.2,
+        0
+      ],
+      "size": [
+        6919.3,
+        350.9,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_27",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_27: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_344"
+              ],
+              "source_evidence_ids": [
+                "building_top_parking_lot",
+                "building_top_parking_drive_aisle_center",
+                "building_top_internal_roads",
+                "building_top_parking_stall_row_south"
+              ],
+              "connectivity_reasons": [
+                "connected_to_hardscape_corridor"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_27",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_28",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_28_R10_Helper",
+      "origin": [
+        26245.5,
+        -34184.2,
+        0
+      ],
+      "size": [
+        8996.7,
+        350.9,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_28",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_28: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_345"
+              ],
+              "source_evidence_ids": [
+                "building_top_parking_lot",
+                "building_top_parking_drive_aisle_center",
+                "building_top_internal_roads",
+                "building_top_parking_stall_row_south"
+              ],
+              "connectivity_reasons": [
+                "connected_to_hardscape_corridor"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_28",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_29",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_29_R10_Helper",
+      "origin": [
+        35242.2,
+        -34184.2,
+        0
+      ],
+      "size": [
+        5647.4,
+        350.9,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_29",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_29: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_346"
+              ],
+              "source_evidence_ids": [
+                "building_top_parking_lot",
+                "building_top_parking_drive_aisle_center",
+                "building_top_internal_roads",
+                "building_top_parking_stall_row_south"
+              ],
+              "connectivity_reasons": [
+                "connected_to_hardscape_corridor"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_29",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_30",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_30_R10_Helper",
+      "origin": [
+        40889.6,
+        -34184.2,
+        0
+      ],
+      "size": [
+        13691.9,
+        350.9,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_30",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_30: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_347"
+              ],
+              "source_evidence_ids": [
+                "building_top_parking_lot",
+                "building_top_parking_drive_aisle_center",
+                "building_top_internal_roads",
+                "building_top_parking_stall_row_south"
+              ],
+              "connectivity_reasons": [
+                "connected_to_hardscape_corridor"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_30",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_31",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_31_R10_Helper",
+      "origin": [
+        54581.5,
+        -34184.2,
+        0
+      ],
+      "size": [
+        164.7,
+        350.9,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_31",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_31: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_348"
+              ],
+              "source_evidence_ids": [
+                "building_top_parking_lot",
+                "building_top_parking_drive_aisle_center",
+                "building_top_internal_roads",
+                "building_top_parking_stall_row_south_pixel"
+              ],
+              "connectivity_reasons": [
+                "adjacent_to_hardscape_or_pixel_gap_evidence"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_31",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_32",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_32_R10_Helper",
+      "origin": [
+        54746.3,
+        -34184.2,
+        0
+      ],
+      "size": [
+        1673.8,
+        350.9,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_32",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_32: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_349"
+              ],
+              "source_evidence_ids": [
+                "building_top_parking_lot",
+                "building_top_parking_drive_aisle_center",
+                "building_top_internal_roads",
+                "building_top_parking_stall_row_south_pixel"
+              ],
+              "connectivity_reasons": [
+                "connected_to_hardscape_corridor"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_32",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_33",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_33_R10_Helper",
+      "origin": [
+        11240.5,
+        -37050.9,
+        0
+      ],
+      "size": [
+        6932.5,
+        2866.7,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_33",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_33: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_363"
+              ],
+              "source_evidence_ids": [
+                "building_top_parking_lot",
+                "building_top_internal_roads",
+                "building_top_parking_drive_aisle_center_pixel",
+                "building_top_admin_office",
+                "building_top_parking_stall_row_south"
+              ],
+              "connectivity_reasons": [
+                "connected_to_parking_drive_aisle",
+                "pixel_gap_evidence"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_33",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_34",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_34_R10_Helper",
+      "origin": [
+        18173,
+        -37050.9,
+        0
+      ],
+      "size": [
+        164.7,
+        2866.7,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_34",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_34: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_364"
+              ],
+              "source_evidence_ids": [
+                "building_top_parking_lot",
+                "building_top_internal_roads",
+                "building_top_parking_stall_row_south",
+                "building_top_parking_drive_aisle_center_pixel"
+              ],
+              "connectivity_reasons": [
+                "connected_to_hardscape_corridor",
+                "pixel_gap_evidence"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_34",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_35",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_35_R10_Helper",
+      "origin": [
+        18337.7,
+        -37050.9,
+        0
+      ],
+      "size": [
+        988.5,
+        2866.7,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_35",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_35: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_365"
+              ],
+              "source_evidence_ids": [
+                "building_top_parking_lot",
+                "building_top_internal_roads",
+                "building_top_parking_stall_row_south",
+                "building_top_parking_drive_aisle_center_pixel"
+              ],
+              "connectivity_reasons": [
+                "connected_to_hardscape_corridor",
+                "pixel_gap_evidence"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_35",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_36",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_36_R10_Helper",
+      "origin": [
+        54746.3,
+        -37050.9,
+        0
+      ],
+      "size": [
+        1673.8,
+        2866.7,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_36",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_36: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_371"
+              ],
+              "source_evidence_ids": [
+                "building_top_parking_lot",
+                "building_top_internal_roads",
+                "building_top_parking_stall_row_south_pixel",
+                "building_top_parking_drive_aisle_center_pixel"
+              ],
+              "connectivity_reasons": [
+                "adjacent_to_hardscape_or_pixel_gap_evidence"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_36",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_37",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_37_R10_Helper",
+      "origin": [
+        18173,
+        -37868.4,
+        0
+      ],
+      "size": [
+        164.7,
+        817.5,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_37",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_37: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_386"
+              ],
+              "source_evidence_ids": [
+                "building_top_parking_lot",
+                "building_top_internal_roads"
+              ],
+              "connectivity_reasons": [
+                "adjacent_to_hardscape_or_pixel_gap_evidence"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_37",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_38",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_38_R10_Helper",
+      "origin": [
+        18337.7,
+        -37868.4,
+        0
+      ],
+      "size": [
+        988.5,
+        817.5,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_38",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_38: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_387"
+              ],
+              "source_evidence_ids": [
+                "building_top_parking_lot",
+                "building_top_internal_roads",
+                "building_top_parking_stall_row_south_pixel"
+              ],
+              "connectivity_reasons": [
+                "adjacent_to_hardscape_or_pixel_gap_evidence"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_38",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_39",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_39_R10_Helper",
+      "origin": [
+        54746.3,
+        -37868.4,
+        0
+      ],
+      "size": [
+        1673.8,
+        817.5,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_39",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_39: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_393"
+              ],
+              "source_evidence_ids": [
+                "building_top_parking_lot",
+                "building_top_internal_roads",
+                "building_top_parking_stall_row_south_pixel"
+              ],
+              "connectivity_reasons": [
+                "adjacent_to_hardscape_or_pixel_gap_evidence"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_39",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
       }
     },
     {
@@ -1271,15 +4403,12 @@
         "projection_residuals": null,
         "grounding_v3_decision": "helper_only",
         "grounding_region_id": "scale_anchor_crosswalk_width",
-        "grounding_region_class": "walkway",
+        "grounding_region_class": "gap",
         "grounding_v3_reasons": [
-          "non-structural site detail remains helper/review geometry in R9"
+          "scale anchors are visual review helpers, not site geometry"
         ],
-        "top_view_overlay_residual": {
-          "mask_iou": 1,
-          "centroid_error_norm": 0
-        },
-        "promotion_confidence": 0.378
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.4
       }
     },
     {

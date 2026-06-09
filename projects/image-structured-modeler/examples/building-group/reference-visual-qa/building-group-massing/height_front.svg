@@ -1,18 +1,60 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="960" height="640" viewBox="0 0 960 640" role="img" aria-label="Height Tier Reference preview">
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="640" viewBox="0 0 960 640" role="img" aria-label="R10 Height Tier Reference preview">
   <rect width="100%" height="100%" fill="#f7f5ef"/>
-  <text x="18" y="28" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#222">Building Group R7 Massing Reference Visual QA - Height Tier Reference</text>
+  <text x="18" y="28" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#222">Building Group R10 GroundPlan Reference Visual QA - R10 Height Tier Reference</text>
   <text x="18" y="48" font-family="Arial, sans-serif" font-size="12" fill="#555">axes x/z from snapshot bounding boxes</text>
-  <g font-family="Arial, sans-serif"><rect x="582.876" y="595.445" width="313.528" height="1" rx="3" fill="hsl(328 58% 52%)" fill-opacity="0.48" stroke="hsl(328 58% 52%)" stroke-width="1.4"/>
-  <rect x="592.674" y="594.334" width="284.135" height="1" rx="3" fill="hsl(30 58% 52%)" fill-opacity="0.48" stroke="hsl(30 58% 52%)" stroke-width="1.4"/>
-  <rect x="416.314" y="548.811" width="146.966" height="47.189" rx="3" fill="hsl(37 58% 52%)" fill-opacity="0.48" stroke="hsl(37 58% 52%)" stroke-width="1.4"/><text x="420.314" y="560.811" font-size="10" fill="#1b1b1b">Admin_Office_Massing</text>
-  <rect x="604.427" y="594.334" width="239.068" height="1" rx="3" fill="hsl(30 58% 52%)" fill-opacity="0.48" stroke="hsl(30 58% 52%)" stroke-width="1.4"/>
-  <rect x="606.393" y="594.334" width="17.64" height="1" rx="3" fill="hsl(30 58% 52%)" fill-opacity="0.48" stroke="hsl(30 58% 52%)" stroke-width="1.4"/>
-  <rect x="867.011" y="594.334" width="44.096" height="1" rx="3" fill="hsl(30 58% 52%)" fill-opacity="0.48" stroke="hsl(30 58% 52%)" stroke-width="1.4"/>
-  <rect x="729.843" y="543.259" width="146.966" height="52.741" rx="3" fill="hsl(42 58% 52%)" fill-opacity="0.48" stroke="hsl(42 58% 52%)" stroke-width="1.4"/><text x="733.843" y="555.259" font-size="10" fill="#1b1b1b">Utility_Building_Massing</text>
-  <rect x="44" y="595.514" width="872" height="1" rx="3" fill="hsl(184 58% 52%)" fill-opacity="0.48" stroke="hsl(184 58% 52%)" stroke-width="1.4"/>
-  <rect x="147.225" y="530.074" width="91.461" height="65.926" rx="3" fill="hsl(234 58% 52%)" fill-opacity="0.48" stroke="hsl(234 58% 52%)" stroke-width="1.4"/><text x="151.225" y="542.074" font-size="10" fill="#1b1b1b">West_Warehouse_Row_Massing</text>
-  <rect x="276.413" y="530.074" width="96.034" height="65.926" rx="3" fill="hsl(234 58% 52%)" fill-opacity="0.48" stroke="hsl(234 58% 52%)" stroke-width="1.4"/><text x="280.413" y="542.074" font-size="10" fill="#1b1b1b">Inner_Warehouse_Row_Massing</text>
-  <rect x="433.04" y="481.497" width="234.369" height="114.503" rx="3" fill="hsl(119 58% 52%)" fill-opacity="0.48" stroke="hsl(119 58% 52%)" stroke-width="1.4"/><text x="437.04" y="493.497" font-size="10" fill="#1b1b1b">Primary_Blue_Roof_Hall_Massing</text>
-  <rect x="790.98" y="498.846" width="43.894" height="97.154" rx="3" fill="hsl(314 58% 52%)" fill-opacity="0.48" stroke="hsl(314 58% 52%)" stroke-width="1.4"/><text x="794.98" y="510.846" font-size="10" fill="#1b1b1b">Tank_Farm_West_Silo</text>
-  <rect x="840.36" y="498.846" width="43.894" height="97.154" rx="3" fill="hsl(314 58% 52%)" fill-opacity="0.48" stroke="hsl(314 58% 52%)" stroke-width="1.4"/><text x="844.36" y="510.846" font-size="10" fill="#1b1b1b">Tank_Farm_East_Silo</text></g>
+  <g font-family="Arial, sans-serif"><rect x="557.402" y="595.079" width="358.598" height="1" rx="3" fill="hsl(61 58% 52%)" fill-opacity="0.48" stroke="hsl(61 58% 52%)" stroke-width="1.4"/>
+  <rect x="557.402" y="595.77" width="1.264" height="1" rx="3" fill="hsl(62 58% 52%)" fill-opacity="0.48" stroke="hsl(62 58% 52%)" stroke-width="1.4"/>
+  <rect x="558.666" y="595.77" width="7.587" height="1" rx="3" fill="hsl(62 58% 52%)" fill-opacity="0.48" stroke="hsl(62 58% 52%)" stroke-width="1.4"/>
+  <rect x="838.13" y="595.77" width="12.848" height="1" rx="3" fill="hsl(62 58% 52%)" fill-opacity="0.48" stroke="hsl(62 58% 52%)" stroke-width="1.4"/>
+  <rect x="566.254" y="595.731" width="271.876" height="1" rx="3" fill="hsl(292 58% 52%)" fill-opacity="0.48" stroke="hsl(292 58% 52%)" stroke-width="1.4"/>
+  <rect x="504.19" y="595.77" width="53.212" height="1" rx="3" fill="hsl(62 58% 52%)" fill-opacity="0.48" stroke="hsl(62 58% 52%)" stroke-width="1.4"/>
+  <rect x="557.402" y="595.77" width="1.264" height="1" rx="3" fill="hsl(62 58% 52%)" fill-opacity="0.48" stroke="hsl(62 58% 52%)" stroke-width="1.4"/>
+  <rect x="558.666" y="595.77" width="7.587" height="1" rx="3" fill="hsl(62 58% 52%)" fill-opacity="0.48" stroke="hsl(62 58% 52%)" stroke-width="1.4"/>
+  <rect x="838.13" y="595.77" width="12.848" height="1" rx="3" fill="hsl(62 58% 52%)" fill-opacity="0.48" stroke="hsl(62 58% 52%)" stroke-width="1.4"/>
+  <rect x="557.402" y="595.77" width="1.264" height="1" rx="3" fill="hsl(62 58% 52%)" fill-opacity="0.48" stroke="hsl(62 58% 52%)" stroke-width="1.4"/>
+  <rect x="558.666" y="595.77" width="7.587" height="1" rx="3" fill="hsl(62 58% 52%)" fill-opacity="0.48" stroke="hsl(62 58% 52%)" stroke-width="1.4"/>
+  <rect x="566.254" y="595.77" width="53.111" height="1" rx="3" fill="hsl(62 58% 52%)" fill-opacity="0.48" stroke="hsl(62 58% 52%)" stroke-width="1.4"/>
+  <rect x="619.365" y="595.77" width="69.056" height="1" rx="3" fill="hsl(62 58% 52%)" fill-opacity="0.48" stroke="hsl(62 58% 52%)" stroke-width="1.4"/>
+  <rect x="688.421" y="595.77" width="43.348" height="1" rx="3" fill="hsl(62 58% 52%)" fill-opacity="0.48" stroke="hsl(62 58% 52%)" stroke-width="1.4"/>
+  <rect x="731.769" y="595.77" width="105.096" height="1" rx="3" fill="hsl(62 58% 52%)" fill-opacity="0.48" stroke="hsl(62 58% 52%)" stroke-width="1.4"/>
+  <rect x="836.865" y="595.77" width="1.264" height="1" rx="3" fill="hsl(62 58% 52%)" fill-opacity="0.48" stroke="hsl(62 58% 52%)" stroke-width="1.4"/>
+  <rect x="838.13" y="595.77" width="12.848" height="1" rx="3" fill="hsl(62 58% 52%)" fill-opacity="0.48" stroke="hsl(62 58% 52%)" stroke-width="1.4"/>
+  <rect x="557.402" y="595.77" width="1.264" height="1" rx="3" fill="hsl(62 58% 52%)" fill-opacity="0.48" stroke="hsl(62 58% 52%)" stroke-width="1.4"/>
+  <rect x="838.13" y="595.77" width="12.848" height="1" rx="3" fill="hsl(62 58% 52%)" fill-opacity="0.48" stroke="hsl(62 58% 52%)" stroke-width="1.4"/>
+  <rect x="558.666" y="595.655" width="279.463" height="1" rx="3" fill="hsl(184 58% 52%)" fill-opacity="0.48" stroke="hsl(184 58% 52%)" stroke-width="1.4"/>
+  <rect x="536.701" y="594.158" width="314.276" height="1" rx="3" fill="hsl(30 58% 52%)" fill-opacity="0.48" stroke="hsl(30 58% 52%)" stroke-width="1.4"/>
+  <rect x="504.19" y="595.77" width="53.212" height="1" rx="3" fill="hsl(62 58% 52%)" fill-opacity="0.48" stroke="hsl(62 58% 52%)" stroke-width="1.4"/>
+  <rect x="557.402" y="595.77" width="1.264" height="1" rx="3" fill="hsl(62 58% 52%)" fill-opacity="0.48" stroke="hsl(62 58% 52%)" stroke-width="1.4"/>
+  <rect x="838.13" y="595.77" width="12.848" height="1" rx="3" fill="hsl(62 58% 52%)" fill-opacity="0.48" stroke="hsl(62 58% 52%)" stroke-width="1.4"/>
+  <rect x="557.402" y="595.77" width="1.264" height="1" rx="3" fill="hsl(62 58% 52%)" fill-opacity="0.48" stroke="hsl(62 58% 52%)" stroke-width="1.4"/>
+  <rect x="558.666" y="595.77" width="7.587" height="1" rx="3" fill="hsl(62 58% 52%)" fill-opacity="0.48" stroke="hsl(62 58% 52%)" stroke-width="1.4"/>
+  <rect x="566.254" y="595.77" width="53.111" height="1" rx="3" fill="hsl(62 58% 52%)" fill-opacity="0.48" stroke="hsl(62 58% 52%)" stroke-width="1.4"/>
+  <rect x="619.365" y="595.77" width="69.056" height="1" rx="3" fill="hsl(62 58% 52%)" fill-opacity="0.48" stroke="hsl(62 58% 52%)" stroke-width="1.4"/>
+  <rect x="688.421" y="595.77" width="43.348" height="1" rx="3" fill="hsl(62 58% 52%)" fill-opacity="0.48" stroke="hsl(62 58% 52%)" stroke-width="1.4"/>
+  <rect x="731.769" y="595.77" width="105.096" height="1" rx="3" fill="hsl(62 58% 52%)" fill-opacity="0.48" stroke="hsl(62 58% 52%)" stroke-width="1.4"/>
+  <rect x="836.865" y="595.77" width="1.264" height="1" rx="3" fill="hsl(62 58% 52%)" fill-opacity="0.48" stroke="hsl(62 58% 52%)" stroke-width="1.4"/>
+  <rect x="838.13" y="595.77" width="12.848" height="1" rx="3" fill="hsl(62 58% 52%)" fill-opacity="0.48" stroke="hsl(62 58% 52%)" stroke-width="1.4"/>
+  <rect x="341.634" y="543.805" width="162.556" height="52.195" rx="3" fill="hsl(37 58% 52%)" fill-opacity="0.48" stroke="hsl(37 58% 52%)" stroke-width="1.4"/><text x="345.634" y="555.805" font-size="10" fill="#1b1b1b">Admin_Office_R10_Footprint</text>
+  <rect x="558.666" y="595.731" width="278.198" height="1" rx="3" fill="hsl(292 58% 52%)" fill-opacity="0.48" stroke="hsl(292 58% 52%)" stroke-width="1.4"/>
+  <rect x="557.402" y="595.77" width="1.264" height="1" rx="3" fill="hsl(62 58% 52%)" fill-opacity="0.48" stroke="hsl(62 58% 52%)" stroke-width="1.4"/>
+  <rect x="836.865" y="595.77" width="1.264" height="1" rx="3" fill="hsl(62 58% 52%)" fill-opacity="0.48" stroke="hsl(62 58% 52%)" stroke-width="1.4"/>
+  <rect x="838.13" y="595.77" width="12.848" height="1" rx="3" fill="hsl(62 58% 52%)" fill-opacity="0.48" stroke="hsl(62 58% 52%)" stroke-width="1.4"/>
+  <rect x="549.701" y="594.158" width="264.428" height="1" rx="3" fill="hsl(30 58% 52%)" fill-opacity="0.48" stroke="hsl(30 58% 52%)" stroke-width="1.4"/>
+  <rect x="551.876" y="594.158" width="19.512" height="1" rx="3" fill="hsl(30 58% 52%)" fill-opacity="0.48" stroke="hsl(30 58% 52%)" stroke-width="1.4"/>
+  <rect x="557.402" y="595.77" width="1.264" height="1" rx="3" fill="hsl(62 58% 52%)" fill-opacity="0.48" stroke="hsl(62 58% 52%)" stroke-width="1.4"/>
+  <rect x="558.666" y="595.77" width="7.587" height="1" rx="3" fill="hsl(62 58% 52%)" fill-opacity="0.48" stroke="hsl(62 58% 52%)" stroke-width="1.4"/>
+  <rect x="566.254" y="595.77" width="53.111" height="1" rx="3" fill="hsl(62 58% 52%)" fill-opacity="0.48" stroke="hsl(62 58% 52%)" stroke-width="1.4"/>
+  <rect x="619.365" y="595.77" width="69.056" height="1" rx="3" fill="hsl(62 58% 52%)" fill-opacity="0.48" stroke="hsl(62 58% 52%)" stroke-width="1.4"/>
+  <rect x="688.421" y="595.77" width="43.348" height="1" rx="3" fill="hsl(62 58% 52%)" fill-opacity="0.48" stroke="hsl(62 58% 52%)" stroke-width="1.4"/>
+  <rect x="731.769" y="595.77" width="105.096" height="1" rx="3" fill="hsl(62 58% 52%)" fill-opacity="0.48" stroke="hsl(62 58% 52%)" stroke-width="1.4"/>
+  <rect x="836.865" y="595.77" width="1.264" height="1" rx="3" fill="hsl(62 58% 52%)" fill-opacity="0.48" stroke="hsl(62 58% 52%)" stroke-width="1.4"/>
+  <rect x="838.13" y="595.77" width="12.848" height="1" rx="3" fill="hsl(62 58% 52%)" fill-opacity="0.48" stroke="hsl(62 58% 52%)" stroke-width="1.4"/>
+  <rect x="186.892" y="523.08" width="106.222" height="72.92" rx="3" fill="hsl(234 58% 52%)" fill-opacity="0.48" stroke="hsl(234 58% 52%)" stroke-width="1.4"/><text x="190.892" y="535.08" font-size="10" fill="#1b1b1b">Warehouse_Inner_South_R10_F...</text>
+  <rect x="44" y="523.08" width="97.369" height="72.92" rx="3" fill="hsl(234 58% 52%)" fill-opacity="0.48" stroke="hsl(234 58% 52%)" stroke-width="1.4"/><text x="48" y="535.08" font-size="10" fill="#1b1b1b">Warehouse_West_South_R10_Fo...</text>
+  <rect x="840.14" y="594.158" width="48.773" height="1" rx="3" fill="hsl(30 58% 52%)" fill-opacity="0.48" stroke="hsl(30 58% 52%)" stroke-width="1.4"/>
+  <rect x="688.421" y="537.664" width="162.556" height="58.336" rx="3" fill="hsl(42 58% 52%)" fill-opacity="0.48" stroke="hsl(42 58% 52%)" stroke-width="1.4"/><text x="692.421" y="549.664" font-size="10" fill="#1b1b1b">Utility_Building_R10_Footprint</text>
+  <rect x="360.134" y="469.35" width="259.231" height="126.65" rx="3" fill="hsl(119 58% 52%)" fill-opacity="0.48" stroke="hsl(119 58% 52%)" stroke-width="1.4"/><text x="364.134" y="481.35" font-size="10" fill="#1b1b1b">Primary_Blue_Roof_Hall_R10_...</text>
+  <rect x="191.951" y="523.08" width="89.782" height="72.92" rx="3" fill="hsl(234 58% 52%)" fill-opacity="0.48" stroke="hsl(234 58% 52%)" stroke-width="1.4"/><text x="195.951" y="535.08" font-size="10" fill="#1b1b1b">Warehouse_Inner_North_R10_F...</text>
+  <rect x="52.852" y="523.08" width="92.312" height="72.92" rx="3" fill="hsl(234 58% 52%)" fill-opacity="0.48" stroke="hsl(234 58% 52%)" stroke-width="1.4"/><text x="56.852" y="535.08" font-size="10" fill="#1b1b1b">Warehouse_West_North_R10_Fo...</text>
+  <rect x="731.769" y="595.539" width="151.72" height="1" rx="3" fill="hsl(314 58% 52%)" fill-opacity="0.48" stroke="hsl(314 58% 52%)" stroke-width="1.4"/></g>
 </svg>

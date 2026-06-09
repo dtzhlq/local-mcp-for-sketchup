@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="968" viewBox="81 31 738 558" role="img" aria-label="Auto GroundPlan R10 diagnostic evidence">
+  <rect x="81" y="31" width="738" height="558" fill="#fbfcfd"/>
+  <polygon points="384,81 589,81 589,404 384,404 384,81" fill="#7bb6e8" fill-opacity="0.18" stroke="#1f6ea9" stroke-width="2"/>
+  <polygon points="251,75 322,75 322,270 251,270 251,75" fill="#7bb6e8" fill-opacity="0.18" stroke="#1f6ea9" stroke-width="2"/>
+  <polygon points="247,285 331,285 331,515 247,515 247,285" fill="#7bb6e8" fill-opacity="0.18" stroke="#1f6ea9" stroke-width="2"/>
+  <polygon points="141,75 214,75 214,270 141,270 141,75" fill="#7bb6e8" fill-opacity="0.18" stroke="#1f6ea9" stroke-width="2"/>
+  <polygon points="134,285 211,285 211,515 134,515 134,285" fill="#7bb6e8" fill-opacity="0.18" stroke="#1f6ea9" stroke-width="2"/>
+  <polygon points="247,75 331,75 331,515 247,515 247,75" fill="#7bb6e8" fill-opacity="0.18" stroke="#1f6ea9" stroke-width="2"/>
+  <polygon points="134,75 214,75 214,515 134,515 134,75" fill="#7bb6e8" fill-opacity="0.18" stroke="#1f6ea9" stroke-width="2"/>
+  <polygon points="541,475 761,475 761,496 541,496 541,491 544,485 546,485 549,492 553,488 558,488 564,492 578,492 582,492 585,492 593,492 598,493 608,492 614,492 636,491 648,492 663,492 679,492 686,492 690,493 697,493 699,493 702,492 705,493 708,494 713,493 747,485 760,493 760,495 747,485 713,493 708,495 705,495 702,493 699,495 697,495 690,494 686,495 679,495 663,495 648,492 636,495 614,494 608,494 598,494 593,495 585,495 582,494 578,494 564,495 558,488 553,488 549,495 546,488 544,488 541,495 541,475" fill="#f2d47c" fill-opacity="0.18" stroke="#9b6b00" stroke-width="2"/>
+  <polygon points="547,521 762,521 762,542 547,542 547,527 551,537 558,534 562,532 573,532 593,521 596,522 600,522 603,522 614,522 618,522 621,522 625,522 628,522 632,522 635,522 650,522 653,522 657,522 661,522 664,521 668,522 687,522 695,521 702,521 732,541 757,538 761,525 761,527 757,540 732,541 702,522 695,522 687,522 668,522 664,522 661,522 657,522 653,522 650,522 635,533 632,540 628,522 625,533 621,533 618,522 614,522 603,537 600,536 596,536 593,522 573,532 562,533 558,534 551,539 547,527 547,521" fill="#f2d47c" fill-opacity="0.18" stroke="#9b6b00" stroke-width="2"/>
+  <polygon points="541,498 762,498 762,519 541,519 541,498" fill="#c7ccd2" fill-opacity="0.18" stroke="#59616a" stroke-width="2"/>
+  <polygon points="540,583 828,583 828,608 540,608 540,584 568,594 577,584 588,596 604,598 615,586 625,600 635,586 644,597 655,583 664,592 674,586 683,586 693,586 702,587 712,590 721,592 731,587 740,592 750,591 759,587 769,594 778,594 788,592 798,596 808,583 817,583 827,586 827,605 817,606 808,596 798,606 788,606 778,607 769,597 759,598 750,602 740,601 731,606 721,605 712,606 702,593 693,600 683,604 674,605 664,597 655,606 644,607 635,607 625,600 615,605 604,607 588,607 577,607 568,601 540,584 540,583" fill="#8fcf92" fill-opacity="0.18" stroke="#2f7d35" stroke-width="2"/>
+  <polygon points="386.51,104.18 635.04,104.18 635.04,435.42 386.51,435.42 386.51,104.18" fill="#7bb6e8" fill-opacity="0.18" stroke="#1f6ea9" stroke-width="2" stroke-dasharray="8 5"/>
+  <polygon points="81,104.18 249.39,104.18 249.39,505.49 81,505.49 81,104.18" fill="#7bb6e8" fill-opacity="0.18" stroke="#1f6ea9" stroke-width="2" stroke-dasharray="8 5"/>
+  <polygon points="515.06,448.16 789.3,448.16 789.3,569.19 515.06,569.19 515.06,448.16" fill="#f2d47c" fill-opacity="0.18" stroke="#9b6b00" stroke-width="2" stroke-dasharray="8 5"/>
+  <polygon points="257.96,116.92 369.37,116.92 369.37,486.38 257.96,486.38 257.96,116.92" fill="#7bb6e8" fill-opacity="0.18" stroke="#1f6ea9" stroke-width="2" stroke-dasharray="8 5"/>
+  <polygon points="677.89,78.7 797.87,78.7 797.87,193.36 677.89,193.36 677.89,78.7" fill="#d6a983" fill-opacity="0.18" stroke="#8a4f23" stroke-width="2" stroke-dasharray="8 5"/>
+  <polygon points="81,104.18 249.39,104.18 249.39,288.91 81,288.91 81,104.18" fill="#7bb6e8" fill-opacity="0.18" stroke="#1f6ea9" stroke-width="2" stroke-dasharray="8 5"/>
+  <polygon points="81,320.76 249.39,320.76 249.39,505.49 81,505.49 81,320.76" fill="#7bb6e8" fill-opacity="0.18" stroke="#1f6ea9" stroke-width="2" stroke-dasharray="8 5"/>
+  <polygon points="643.61,288.91 772.16,288.91 772.16,416.31 643.61,416.31 643.61,288.91" fill="#7bb6e8" fill-opacity="0.18" stroke="#1f6ea9" stroke-width="2" stroke-dasharray="8 5"/>
+  <polygon points="369.37,454.53 497.92,454.53 497.92,537.34 369.37,537.34 369.37,454.53" fill="#7bb6e8" fill-opacity="0.18" stroke="#1f6ea9" stroke-width="2" stroke-dasharray="8 5"/>
+  <polygon points="257.96,116.92 369.37,116.92 369.37,282.54 257.96,282.54 257.96,116.92" fill="#7bb6e8" fill-opacity="0.18" stroke="#1f6ea9" stroke-width="2" stroke-dasharray="8 5"/>
+  <polygon points="257.96,320.76 369.37,320.76 369.37,486.38 257.96,486.38 257.96,320.76" fill="#7bb6e8" fill-opacity="0.18" stroke="#1f6ea9" stroke-width="2" stroke-dasharray="8 5"/>
+  <polygon points="523.63,485.11 772.16,485.11 772.16,519.51 523.63,519.51 523.63,485.11" fill="#c7ccd2" fill-opacity="0.18" stroke="#59616a" stroke-width="2" stroke-dasharray="8 5"/>
+  <polygon points="533.91,463.45 743.02,463.45 743.02,482.56 533.91,482.56 533.91,463.45" fill="#f2d47c" fill-opacity="0.18" stroke="#9b6b00" stroke-width="2" stroke-dasharray="8 5"/>
+  <polygon points="81,65.96 806.44,65.96 806.44,575.56 81,575.56 81,65.96" fill="#c7ccd2" fill-opacity="0.18" stroke="#59616a" stroke-width="2" stroke-dasharray="8 5"/>
+  <polygon points="533.91,506.76 743.02,506.76 743.02,525.87 533.91,525.87 533.91,506.76" fill="#f2d47c" fill-opacity="0.18" stroke="#9b6b00" stroke-width="2" stroke-dasharray="8 5"/>
+  <polygon points="506.49,566.01 806.44,566.01 806.44,588.31 506.49,588.31 506.49,566.01" fill="#8fcf92" fill-opacity="0.18" stroke="#2f7d35" stroke-width="2" stroke-dasharray="8 5"/>
+  <rect x="386.51" y="104.18" width="248.53" height="331.24" fill="none" stroke="#c82121" stroke-width="4" stroke-dasharray="10 7"/>
+  <rect x="81" y="104.18" width="168.39" height="401.31" fill="none" stroke="#c82121" stroke-width="4" stroke-dasharray="10 7"/>
+  <rect x="515.06" y="448.16" width="274.24" height="121.03" fill="none" stroke="#c82121" stroke-width="4" stroke-dasharray="10 7"/>
+  <rect x="257.96" y="116.92" width="111.41" height="369.46" fill="none" stroke="#c82121" stroke-width="4" stroke-dasharray="10 7"/>
+  <rect x="81" y="104.18" width="168.39" height="184.73" fill="none" stroke="#c82121" stroke-width="4" stroke-dasharray="10 7"/>
+  <rect x="81" y="320.76" width="168.39" height="184.73" fill="none" stroke="#c82121" stroke-width="4" stroke-dasharray="10 7"/>
+  <rect x="257.96" y="116.92" width="111.41" height="165.62" fill="none" stroke="#c82121" stroke-width="4" stroke-dasharray="10 7"/>
+  <rect x="257.96" y="320.76" width="111.41" height="165.62" fill="none" stroke="#c82121" stroke-width="4" stroke-dasharray="10 7"/>
+  <rect x="523.63" y="485.11" width="248.53" height="34.4" fill="none" stroke="#c82121" stroke-width="4" stroke-dasharray="10 7"/>
+  <rect x="533.91" y="463.45" width="209.11" height="19.11" fill="none" stroke="#c82121" stroke-width="4" stroke-dasharray="10 7"/>
+  <rect x="81" y="65.96" width="725.44" height="509.6" fill="none" stroke="#c82121" stroke-width="4" stroke-dasharray="10 7"/>
+  <rect x="533.91" y="506.76" width="209.11" height="19.11" fill="none" stroke="#c82121" stroke-width="4" stroke-dasharray="10 7"/>
+  <rect x="506.49" y="566.01" width="299.95" height="22.3" fill="none" stroke="#c82121" stroke-width="4" stroke-dasharray="10 7"/>
+  <rect x="247" y="75" width="84" height="440" fill="none" stroke="#c82121" stroke-width="4" stroke-dasharray="10 7"/>
+  <rect x="134" y="75" width="80" height="440" fill="none" stroke="#c82121" stroke-width="4" stroke-dasharray="10 7"/>
+  <rect x="81" y="31" width="738" height="558" fill="none" stroke="#111827" stroke-width="3"/>
+  <text x="388" y="95" font-family="Inter, Arial, sans-serif" font-size="12" fill="#17202a">primary_blue_roof_hall</text>
+  <text x="255" y="89" font-family="Inter, Arial, sans-serif" font-size="12" fill="#17202a">warehouse_inner_north</text>
+  <text x="251" y="299" font-family="Inter, Arial, sans-serif" font-size="12" fill="#17202a">warehouse_inner_south</text>
+  <text x="145" y="89" font-family="Inter, Arial, sans-serif" font-size="12" fill="#17202a">warehouse_west_north</text>
+  <text x="138" y="299" font-family="Inter, Arial, sans-serif" font-size="12" fill="#17202a">warehouse_west_south</text>
+  <text x="251" y="89" font-family="Inter, Arial, sans-serif" font-size="12" fill="#17202a">warehouse_row_inner</text>
+  <text x="138" y="89" font-family="Inter, Arial, sans-serif" font-size="12" fill="#17202a">warehouse_row_west</text>
+  <text x="545" y="489" font-family="Inter, Arial, sans-serif" font-size="12" fill="#17202a">parking_stall_row_north</text>
+  <text x="551" y="535" font-family="Inter, Arial, sans-serif" font-size="12" fill="#17202a">parking_stall_row_south</text>
+  <text x="545" y="512" font-family="Inter, Arial, sans-serif" font-size="12" fill="#17202a">parking_drive_aisle_center</text>
+  <text x="544" y="597" font-family="Inter, Arial, sans-serif" font-size="12" fill="#17202a">tree_row_south</text>
+  <text x="390.51" y="118.18" font-family="Inter, Arial, sans-serif" font-size="12" fill="#17202a">primary_blue_roof_hall</text>
+  <text x="85" y="118.18" font-family="Inter, Arial, sans-serif" font-size="12" fill="#17202a">warehouse_row_west</text>
+  <text x="519.06" y="462.16" font-family="Inter, Arial, sans-serif" font-size="12" fill="#17202a">parking_lot</text>
+  <text x="261.96" y="130.92000000000002" font-family="Inter, Arial, sans-serif" font-size="12" fill="#17202a">warehouse_row_inner</text>
+  <text x="681.89" y="92.7" font-family="Inter, Arial, sans-serif" font-size="12" fill="#17202a">tank_farm</text>
+  <text x="85" y="118.18" font-family="Inter, Arial, sans-serif" font-size="12" fill="#17202a">warehouse_west_north</text>
+  <text x="85" y="334.76" font-family="Inter, Arial, sans-serif" font-size="12" fill="#17202a">warehouse_west_south</text>
+  <text x="647.61" y="302.91" font-family="Inter, Arial, sans-serif" font-size="12" fill="#17202a">utility_building</text>
+  <text x="373.37" y="468.53" font-family="Inter, Arial, sans-serif" font-size="12" fill="#17202a">admin_office</text>
+  <text x="261.96" y="130.92000000000002" font-family="Inter, Arial, sans-serif" font-size="12" fill="#17202a">warehouse_inner_north</text>
+  <text x="261.96" y="334.76" font-family="Inter, Arial, sans-serif" font-size="12" fill="#17202a">warehouse_inner_south</text>
+  <text x="527.63" y="499.11" font-family="Inter, Arial, sans-serif" font-size="12" fill="#17202a">parking_drive_aisle_center</text>
+  <text x="537.91" y="477.45" font-family="Inter, Arial, sans-serif" font-size="12" fill="#17202a">parking_stall_row_north</text>
+  <text x="85" y="79.96" font-family="Inter, Arial, sans-serif" font-size="12" fill="#17202a">internal_roads</text>
+  <text x="537.91" y="520.76" font-family="Inter, Arial, sans-serif" font-size="12" fill="#17202a">parking_stall_row_south</text>
+  <text x="510.49" y="580.01" font-family="Inter, Arial, sans-serif" font-size="12" fill="#17202a">tree_row_south</text>
+</svg>

@@ -157,334 +157,8 @@
     },
     {
       "op": "box",
-      "id": "primary_blue_roof_hall",
-      "name": "Primary_Blue_Roof_Hall_Massing",
-      "origin": [
-        10710.5,
-        4107.1,
-        0
-      ],
-      "size": [
-        46736.8,
-        27928.6,
-        16500
-      ],
-      "material": "Campus_Blue_Roof",
-      "qa": {
-        "role": "production_hall",
-        "part_id": "primary_blue_roof_hall",
-        "intent": "building",
-        "evidence_status": "inferred",
-        "fallback_state": "box_approximation",
-        "evidence_sources": [
-          {
-            "kind": "mask_polygon",
-            "view": "top",
-            "source_image": "test/建筑群-v2-generated/site-top.png",
-            "status": "observed",
-            "confidence": 0.9,
-            "note": "Grounding v2 second sample pixel_color_segmentation evidence for primary_blue_roof_hall.",
-            "observation_id": "building_top_primary_blue_hall",
-            "grounding": {
-              "method": "pixel_color_segmentation",
-              "pixel_bbox": [
-                555,
-                165,
-                240,
-                170
-              ],
-              "pixel_count": 31824,
-              "fill": 0.78,
-              "contour_basis": "sampled_contour",
-              "grounding_quality": {
-                "version": 2,
-                "status": "pass",
-                "raw_to_evidence_bbox_ratio": 1,
-                "prior_to_evidence_bbox_ratio": 1,
-                "bbox_proxy": false,
-                "review_required": false,
-                "reasons": []
-              },
-              "review_required": false
-            }
-          }
-        ],
-        "generated_from_building_group_evidence": true,
-        "evidence_confidence": 0.58,
-        "review_required": true,
-        "scale_review_required": true,
-        "orientation_review_required": true,
-        "grounding_status": "review_confirmed",
-        "grounding_method": "pixel_color_segmentation",
-        "source_observation_ids": [
-          "building_top_primary_blue_hall"
-        ],
-        "helper_allowed": false,
-        "photo_grade_eligible": false,
-        "projection_residuals": null,
-        "detail_review_required": true,
-        "roofline_review_required": true,
-        "facade_review_required": true,
-        "opening_review_required": true,
-        "grounding_v3_decision": "promoted_geometry",
-        "grounding_region_id": "primary_blue_roof_hall",
-        "grounding_region_class": "building_footprint",
-        "grounding_v3_reasons": [],
-        "top_view_overlay_residual": {
-          "mask_iou": 1,
-          "centroid_error_norm": 0
-        },
-        "promotion_confidence": 0.9
-      }
-    },
-    {
-      "op": "box",
-      "id": "warehouse_row_west",
-      "name": "West_Warehouse_Row_Massing",
-      "origin": [
-        -57447.4,
-        -14785.7,
-        0
-      ],
-      "size": [
-        29210.5,
-        46821.4,
-        9500
-      ],
-      "material": "Campus_Warehouse_Light",
-      "qa": {
-        "role": "warehouse_row",
-        "part_id": "warehouse_row_west",
-        "intent": "building",
-        "evidence_status": "inferred",
-        "fallback_state": "box_approximation",
-        "evidence_sources": [
-          {
-            "kind": "mask_polygon",
-            "view": "top",
-            "source_image": "test/建筑群-v2-generated/site-top.png",
-            "status": "observed",
-            "confidence": 0.86,
-            "note": "Grounding v2 second sample pixel_color_segmentation evidence for warehouse_row_west.",
-            "observation_id": "building_top_warehouse_row_west",
-            "grounding": {
-              "method": "pixel_color_segmentation",
-              "pixel_bbox": [
-                205,
-                165,
-                150,
-                285
-              ],
-              "pixel_count": 33345,
-              "fill": 0.78,
-              "contour_basis": "sampled_contour",
-              "grounding_quality": {
-                "version": 2,
-                "status": "pass",
-                "raw_to_evidence_bbox_ratio": 1,
-                "prior_to_evidence_bbox_ratio": 1,
-                "bbox_proxy": false,
-                "review_required": false,
-                "reasons": []
-              },
-              "review_required": false
-            }
-          }
-        ],
-        "generated_from_building_group_evidence": true,
-        "evidence_confidence": 0.58,
-        "review_required": true,
-        "scale_review_required": true,
-        "orientation_review_required": true,
-        "grounding_status": "review_confirmed",
-        "grounding_method": "pixel_color_segmentation",
-        "source_observation_ids": [
-          "building_top_warehouse_row_west"
-        ],
-        "helper_allowed": false,
-        "photo_grade_eligible": false,
-        "projection_residuals": null,
-        "detail_review_required": true,
-        "roofline_review_required": true,
-        "facade_review_required": true,
-        "opening_review_required": true,
-        "grounding_v3_decision": "review_candidate",
-        "grounding_region_id": "warehouse_row_west",
-        "grounding_region_class": "gap",
-        "grounding_v3_reasons": [
-          "no matching GroundPlan region was found"
-        ],
-        "top_view_overlay_residual": null,
-        "promotion_confidence": 0.35
-      }
-    },
-    {
-      "op": "box",
-      "id": "warehouse_row_inner",
-      "name": "Inner_Warehouse_Row_Massing",
-      "origin": [
-        -22394.7,
-        -14785.8,
-        0
-      ],
-      "size": [
-        25315.8,
-        47642.9,
-        9500
-      ],
-      "material": "Campus_Warehouse_Light",
-      "qa": {
-        "role": "warehouse_row",
-        "part_id": "warehouse_row_inner",
-        "intent": "building",
-        "evidence_status": "inferred",
-        "fallback_state": "box_approximation",
-        "evidence_sources": [
-          {
-            "kind": "mask_polygon",
-            "view": "top",
-            "source_image": "test/建筑群-v2-generated/site-top.png",
-            "status": "observed",
-            "confidence": 0.86,
-            "note": "Grounding v2 second sample pixel_color_segmentation evidence for warehouse_row_inner.",
-            "observation_id": "building_top_warehouse_row_inner",
-            "grounding": {
-              "method": "pixel_color_segmentation",
-              "pixel_bbox": [
-                385,
-                160,
-                130,
-                290
-              ],
-              "pixel_count": 29406,
-              "fill": 0.78,
-              "contour_basis": "sampled_contour",
-              "grounding_quality": {
-                "version": 2,
-                "status": "pass",
-                "raw_to_evidence_bbox_ratio": 1,
-                "prior_to_evidence_bbox_ratio": 1,
-                "bbox_proxy": false,
-                "review_required": false,
-                "reasons": []
-              },
-              "review_required": false
-            }
-          }
-        ],
-        "generated_from_building_group_evidence": true,
-        "evidence_confidence": 0.58,
-        "review_required": true,
-        "scale_review_required": true,
-        "orientation_review_required": true,
-        "grounding_status": "review_confirmed",
-        "grounding_method": "pixel_color_segmentation",
-        "source_observation_ids": [
-          "building_top_warehouse_row_inner"
-        ],
-        "helper_allowed": false,
-        "photo_grade_eligible": false,
-        "projection_residuals": null,
-        "detail_review_required": true,
-        "roofline_review_required": true,
-        "facade_review_required": true,
-        "opening_review_required": true,
-        "grounding_v3_decision": "review_candidate",
-        "grounding_region_id": "warehouse_row_inner",
-        "grounding_region_class": "gap",
-        "grounding_v3_reasons": [
-          "no matching GroundPlan region was found"
-        ],
-        "top_view_overlay_residual": null,
-        "promotion_confidence": 0.35
-      }
-    },
-    {
-      "op": "box",
-      "id": "utility_building",
-      "name": "Utility_Building_Massing",
-      "origin": [
-        21421.1,
-        -14785.7,
-        0
-      ],
-      "size": [
-        17526.3,
-        11828.6,
-        7600
-      ],
-      "material": "Campus_Utility_Gray",
-      "qa": {
-        "role": "utility_building",
-        "part_id": "utility_building",
-        "intent": "building",
-        "evidence_status": "inferred",
-        "fallback_state": "box_approximation",
-        "evidence_sources": [
-          {
-            "kind": "mask_polygon",
-            "view": "top",
-            "source_image": "test/建筑群-v2-generated/site-top.png",
-            "status": "observed",
-            "confidence": 0.78,
-            "note": "Grounding v2 second sample pixel_color_segmentation evidence for utility_building.",
-            "observation_id": "building_top_utility_building",
-            "grounding": {
-              "method": "pixel_color_segmentation",
-              "pixel_bbox": [
-                610,
-                378,
-                90,
-                72
-              ],
-              "pixel_count": 5054,
-              "fill": 0.78,
-              "contour_basis": "sampled_contour",
-              "grounding_quality": {
-                "version": 2,
-                "status": "pass",
-                "raw_to_evidence_bbox_ratio": 1,
-                "prior_to_evidence_bbox_ratio": 1,
-                "bbox_proxy": false,
-                "review_required": false,
-                "reasons": []
-              },
-              "review_required": false
-            }
-          }
-        ],
-        "generated_from_building_group_evidence": true,
-        "evidence_confidence": 0.58,
-        "review_required": true,
-        "scale_review_required": true,
-        "orientation_review_required": true,
-        "grounding_status": "review_confirmed",
-        "grounding_method": "pixel_color_segmentation",
-        "source_observation_ids": [
-          "building_top_utility_building"
-        ],
-        "helper_allowed": false,
-        "photo_grade_eligible": false,
-        "projection_residuals": null,
-        "detail_review_required": true,
-        "roofline_review_required": true,
-        "facade_review_required": true,
-        "opening_review_required": true,
-        "grounding_v3_decision": "promoted_geometry",
-        "grounding_region_id": "utility_building",
-        "grounding_region_class": "building_footprint",
-        "grounding_v3_reasons": [],
-        "top_view_overlay_residual": {
-          "mask_iou": 1,
-          "centroid_error_norm": 0
-        },
-        "promotion_confidence": 0.89
-      }
-    },
-    {
-      "op": "box",
       "id": "admin_office",
-      "name": "Admin_Office_Massing",
+      "name": "Admin_Office_R10_Footprint",
       "origin": [
         -12657.9,
         -29571.4,
@@ -536,7 +210,7 @@
           }
         ],
         "generated_from_building_group_evidence": true,
-        "evidence_confidence": 0.58,
+        "evidence_confidence": 0.76,
         "review_required": true,
         "scale_review_required": true,
         "orientation_review_required": true,
@@ -548,6 +222,11 @@
         "helper_allowed": false,
         "photo_grade_eligible": false,
         "projection_residuals": null,
+        "inference_level": "observed",
+        "boundary_graph_edge_ids": [],
+        "completion_hypothesis_id": null,
+        "boundary_graph_risk_flags": [],
+        "boundary_graph_residuals": null,
         "detail_review_required": true,
         "roofline_review_required": true,
         "facade_review_required": true,
@@ -565,43 +244,43 @@
     },
     {
       "op": "box",
-      "id": "parking_lot",
-      "name": "Parking_Lot_Flat_Massing",
+      "id": "primary_blue_roof_hall",
+      "name": "Primary_Blue_Roof_Hall_R10_Footprint",
       "origin": [
-        -2921.1,
-        -41892.9,
+        10710.5,
+        4107.1,
         0
       ],
       "size": [
-        53552.6,
-        18892.9,
-        80
+        46736.8,
+        27928.6,
+        16500
       ],
-      "material": "Campus_Parking_Asphalt",
+      "material": "Campus_Blue_Roof",
       "qa": {
-        "role": "parking_lot",
-        "part_id": "parking_lot",
-        "intent": "site_surface",
+        "role": "production_hall",
+        "part_id": "primary_blue_roof_hall",
+        "intent": "building",
         "evidence_status": "inferred",
-        "fallback_state": "visual_helper",
+        "fallback_state": "box_approximation",
         "evidence_sources": [
           {
-            "kind": "gap_region",
+            "kind": "mask_polygon",
             "view": "top",
             "source_image": "test/建筑群-v2-generated/site-top.png",
             "status": "observed",
-            "confidence": 0.84,
-            "note": "Grounding v2 second sample pixel_gap_segmentation evidence for parking_lot.",
-            "observation_id": "building_top_parking_lot",
+            "confidence": 0.9,
+            "note": "Grounding v2 second sample pixel_color_segmentation evidence for primary_blue_roof_hall.",
+            "observation_id": "building_top_primary_blue_hall",
             "grounding": {
-              "method": "pixel_gap_segmentation",
+              "method": "pixel_color_segmentation",
               "pixel_bbox": [
-                485,
-                500,
-                275,
-                115
+                555,
+                165,
+                240,
+                170
               ],
-              "pixel_count": 24668,
+              "pixel_count": 31824,
               "fill": 0.78,
               "contour_basis": "sampled_contour",
               "grounding_quality": {
@@ -618,67 +297,77 @@
           }
         ],
         "generated_from_building_group_evidence": true,
-        "evidence_confidence": 0.58,
+        "evidence_confidence": 0.82,
         "review_required": true,
         "scale_review_required": true,
         "orientation_review_required": true,
         "grounding_status": "review_confirmed",
-        "grounding_method": "pixel_gap_segmentation",
+        "grounding_method": "pixel_color_segmentation",
         "source_observation_ids": [
-          "building_top_parking_lot"
+          "building_top_primary_blue_hall"
         ],
-        "helper_allowed": true,
+        "helper_allowed": false,
         "photo_grade_eligible": false,
         "projection_residuals": null,
-        "grounding_v3_decision": "review_candidate",
-        "grounding_region_id": "parking_lot",
-        "grounding_region_class": "gap",
-        "grounding_v3_reasons": [
-          "no matching GroundPlan region was found"
-        ],
-        "top_view_overlay_residual": null,
-        "promotion_confidence": 0.35
+        "inference_level": "observed",
+        "boundary_graph_edge_ids": [],
+        "completion_hypothesis_id": null,
+        "boundary_graph_risk_flags": [],
+        "boundary_graph_residuals": null,
+        "detail_review_required": true,
+        "roofline_review_required": true,
+        "facade_review_required": true,
+        "opening_review_required": true,
+        "grounding_v3_decision": "promoted_geometry",
+        "grounding_region_id": "primary_blue_roof_hall",
+        "grounding_region_class": "building_footprint",
+        "grounding_v3_reasons": [],
+        "top_view_overlay_residual": {
+          "mask_iou": 1,
+          "centroid_error_norm": 0
+        },
+        "promotion_confidence": 0.9
       }
     },
     {
       "op": "box",
-      "id": "internal_roads",
-      "name": "Internal_Roads_Flat_Massing",
+      "id": "utility_building",
+      "name": "Utility_Building_R10_Footprint",
       "origin": [
-        -23368.4,
-        -21357.1,
+        21421.1,
+        -14785.7,
         0
       ],
       "size": [
-        70105.3,
-        9857.1,
-        70
+        17526.3,
+        11828.6,
+        7600
       ],
-      "material": "Campus_Road_Asphalt",
+      "material": "Campus_Utility_Gray",
       "qa": {
-        "role": "internal_roads",
-        "part_id": "internal_roads",
-        "intent": "site_surface",
+        "role": "utility_building",
+        "part_id": "utility_building",
+        "intent": "building",
         "evidence_status": "inferred",
-        "fallback_state": "visual_helper",
+        "fallback_state": "box_approximation",
         "evidence_sources": [
           {
-            "kind": "gap_region",
+            "kind": "mask_polygon",
             "view": "top",
             "source_image": "test/建筑群-v2-generated/site-top.png",
             "status": "observed",
             "confidence": 0.78,
-            "note": "Grounding v2 second sample pixel_gap_segmentation evidence for internal_roads.",
-            "observation_id": "building_top_internal_roads",
+            "note": "Grounding v2 second sample pixel_color_segmentation evidence for utility_building.",
+            "observation_id": "building_top_utility_building",
             "grounding": {
-              "method": "pixel_gap_segmentation",
+              "method": "pixel_color_segmentation",
               "pixel_bbox": [
-                380,
-                430,
-                360,
-                60
+                610,
+                378,
+                90,
+                72
               ],
-              "pixel_count": 16848,
+              "pixel_count": 5054,
               "fill": 0.78,
               "contour_basis": "sampled_contour",
               "grounding_quality": {
@@ -695,48 +384,476 @@
           }
         ],
         "generated_from_building_group_evidence": true,
-        "evidence_confidence": 0.58,
+        "evidence_confidence": 0.78,
         "review_required": true,
         "scale_review_required": true,
         "orientation_review_required": true,
         "grounding_status": "review_confirmed",
-        "grounding_method": "pixel_gap_segmentation",
+        "grounding_method": "pixel_color_segmentation",
         "source_observation_ids": [
-          "building_top_internal_roads"
+          "building_top_utility_building"
+        ],
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "inference_level": "observed",
+        "boundary_graph_edge_ids": [],
+        "completion_hypothesis_id": null,
+        "boundary_graph_risk_flags": [],
+        "boundary_graph_residuals": null,
+        "detail_review_required": true,
+        "roofline_review_required": true,
+        "facade_review_required": true,
+        "opening_review_required": true,
+        "grounding_v3_decision": "promoted_geometry",
+        "grounding_region_id": "utility_building",
+        "grounding_region_class": "building_footprint",
+        "grounding_v3_reasons": [],
+        "top_view_overlay_residual": {
+          "mask_iou": 1,
+          "centroid_error_norm": 0
+        },
+        "promotion_confidence": 0.89
+      }
+    },
+    {
+      "op": "box",
+      "id": "warehouse_inner_north",
+      "name": "Warehouse_Inner_North_R10_Footprint",
+      "origin": [
+        -22394.7,
+        11828.5,
+        0
+      ],
+      "size": [
+        25315.8,
+        21028.6,
+        9500
+      ],
+      "material": "Campus_Warehouse_Light",
+      "qa": {
+        "role": "warehouse_unit",
+        "part_id": "warehouse_inner_north",
+        "intent": "building",
+        "evidence_status": "inferred",
+        "fallback_state": "box_approximation",
+        "evidence_sources": [
+          {
+            "kind": "mask_polygon",
+            "view": "top",
+            "source_image": "test/建筑群-v2-generated/site-top.png",
+            "status": "observed",
+            "confidence": 0.83,
+            "note": "Grounding v2 second sample pixel_color_segmentation evidence for warehouse_inner_north.",
+            "observation_id": "warehouse_inner_north_top_mask",
+            "grounding": {
+              "method": "pixel_color_segmentation",
+              "pixel_bbox": [
+                385,
+                160,
+                130,
+                128
+              ],
+              "pixel_count": 12979,
+              "fill": 0.78,
+              "contour_basis": "sampled_contour",
+              "grounding_quality": {
+                "version": 2,
+                "status": "pass",
+                "raw_to_evidence_bbox_ratio": 1,
+                "prior_to_evidence_bbox_ratio": 1,
+                "bbox_proxy": false,
+                "review_required": false,
+                "reasons": []
+              },
+              "review_required": false
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.82,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "review_confirmed",
+        "grounding_method": "pixel_color_segmentation",
+        "source_observation_ids": [
+          "warehouse_inner_north_top_mask"
+        ],
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "inference_level": "observed",
+        "boundary_graph_edge_ids": [],
+        "completion_hypothesis_id": null,
+        "boundary_graph_risk_flags": [],
+        "boundary_graph_residuals": null,
+        "grounding_v3_decision": "promoted_geometry",
+        "grounding_region_id": "warehouse_inner_north",
+        "grounding_region_class": "building_footprint",
+        "grounding_v3_reasons": [],
+        "top_view_overlay_residual": {
+          "mask_iou": 1,
+          "centroid_error_norm": 0
+        },
+        "promotion_confidence": 0.9
+      }
+    },
+    {
+      "op": "box",
+      "id": "warehouse_inner_south",
+      "name": "Warehouse_Inner_South_R10_Footprint",
+      "origin": [
+        -22394.7,
+        -14785.7,
+        0
+      ],
+      "size": [
+        25315.8,
+        21028.6,
+        9500
+      ],
+      "material": "Campus_Warehouse_Light",
+      "qa": {
+        "role": "warehouse_unit",
+        "part_id": "warehouse_inner_south",
+        "intent": "building",
+        "evidence_status": "inferred",
+        "fallback_state": "box_approximation",
+        "evidence_sources": [
+          {
+            "kind": "mask_polygon",
+            "view": "top",
+            "source_image": "test/建筑群-v2-generated/site-top.png",
+            "status": "observed",
+            "confidence": 0.83,
+            "note": "Grounding v2 second sample pixel_color_segmentation evidence for warehouse_inner_south.",
+            "observation_id": "warehouse_inner_south_top_mask",
+            "grounding": {
+              "method": "pixel_color_segmentation",
+              "pixel_bbox": [
+                385,
+                322,
+                130,
+                128
+              ],
+              "pixel_count": 12979,
+              "fill": 0.78,
+              "contour_basis": "sampled_contour",
+              "grounding_quality": {
+                "version": 2,
+                "status": "pass",
+                "raw_to_evidence_bbox_ratio": 1,
+                "prior_to_evidence_bbox_ratio": 1,
+                "bbox_proxy": false,
+                "review_required": false,
+                "reasons": []
+              },
+              "review_required": false
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.82,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "review_confirmed",
+        "grounding_method": "pixel_color_segmentation",
+        "source_observation_ids": [
+          "warehouse_inner_south_top_mask"
+        ],
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "inference_level": "observed",
+        "boundary_graph_edge_ids": [],
+        "completion_hypothesis_id": null,
+        "boundary_graph_risk_flags": [],
+        "boundary_graph_residuals": null,
+        "grounding_v3_decision": "promoted_geometry",
+        "grounding_region_id": "warehouse_inner_south",
+        "grounding_region_class": "building_footprint",
+        "grounding_v3_reasons": [],
+        "top_view_overlay_residual": {
+          "mask_iou": 1,
+          "centroid_error_norm": 0
+        },
+        "promotion_confidence": 0.9
+      }
+    },
+    {
+      "op": "box",
+      "id": "warehouse_west_north",
+      "name": "Warehouse_West_North_R10_Footprint",
+      "origin": [
+        -57447.4,
+        11335.7,
+        0
+      ],
+      "size": [
+        29210.5,
+        20700,
+        9500
+      ],
+      "material": "Campus_Warehouse_Light",
+      "qa": {
+        "role": "warehouse_unit",
+        "part_id": "warehouse_west_north",
+        "intent": "building",
+        "evidence_status": "inferred",
+        "fallback_state": "box_approximation",
+        "evidence_sources": [
+          {
+            "kind": "mask_polygon",
+            "view": "top",
+            "source_image": "test/建筑群-v2-generated/site-top.png",
+            "status": "observed",
+            "confidence": 0.84,
+            "note": "Grounding v2 second sample pixel_color_segmentation evidence for warehouse_west_north.",
+            "observation_id": "warehouse_west_north_top_mask",
+            "grounding": {
+              "method": "pixel_color_segmentation",
+              "pixel_bbox": [
+                205,
+                165,
+                150,
+                126
+              ],
+              "pixel_count": 14742,
+              "fill": 0.78,
+              "contour_basis": "sampled_contour",
+              "grounding_quality": {
+                "version": 2,
+                "status": "pass",
+                "raw_to_evidence_bbox_ratio": 1,
+                "prior_to_evidence_bbox_ratio": 1,
+                "bbox_proxy": false,
+                "review_required": false,
+                "reasons": []
+              },
+              "review_required": false
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.82,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "review_confirmed",
+        "grounding_method": "pixel_color_segmentation",
+        "source_observation_ids": [
+          "warehouse_west_north_top_mask"
+        ],
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "inference_level": "observed",
+        "boundary_graph_edge_ids": [],
+        "completion_hypothesis_id": null,
+        "boundary_graph_risk_flags": [],
+        "boundary_graph_residuals": null,
+        "grounding_v3_decision": "promoted_geometry",
+        "grounding_region_id": "warehouse_west_north",
+        "grounding_region_class": "building_footprint",
+        "grounding_v3_reasons": [],
+        "top_view_overlay_residual": {
+          "mask_iou": 1,
+          "centroid_error_norm": 0
+        },
+        "promotion_confidence": 0.9
+      }
+    },
+    {
+      "op": "box",
+      "id": "warehouse_west_south",
+      "name": "Warehouse_West_South_R10_Footprint",
+      "origin": [
+        -57447.4,
+        -14785.7,
+        0
+      ],
+      "size": [
+        29210.5,
+        20700,
+        9500
+      ],
+      "material": "Campus_Warehouse_Light",
+      "qa": {
+        "role": "warehouse_unit",
+        "part_id": "warehouse_west_south",
+        "intent": "building",
+        "evidence_status": "inferred",
+        "fallback_state": "box_approximation",
+        "evidence_sources": [
+          {
+            "kind": "mask_polygon",
+            "view": "top",
+            "source_image": "test/建筑群-v2-generated/site-top.png",
+            "status": "observed",
+            "confidence": 0.84,
+            "note": "Grounding v2 second sample pixel_color_segmentation evidence for warehouse_west_south.",
+            "observation_id": "warehouse_west_south_top_mask",
+            "grounding": {
+              "method": "pixel_color_segmentation",
+              "pixel_bbox": [
+                205,
+                324,
+                150,
+                126
+              ],
+              "pixel_count": 14742,
+              "fill": 0.78,
+              "contour_basis": "sampled_contour",
+              "grounding_quality": {
+                "version": 2,
+                "status": "pass",
+                "raw_to_evidence_bbox_ratio": 1,
+                "prior_to_evidence_bbox_ratio": 1,
+                "bbox_proxy": false,
+                "review_required": false,
+                "reasons": []
+              },
+              "review_required": false
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.82,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "review_confirmed",
+        "grounding_method": "pixel_color_segmentation",
+        "source_observation_ids": [
+          "warehouse_west_south_top_mask"
+        ],
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "inference_level": "observed",
+        "boundary_graph_edge_ids": [],
+        "completion_hypothesis_id": null,
+        "boundary_graph_risk_flags": [],
+        "boundary_graph_residuals": null,
+        "grounding_v3_decision": "promoted_geometry",
+        "grounding_region_id": "warehouse_west_south",
+        "grounding_region_class": "building_footprint",
+        "grounding_v3_reasons": [],
+        "top_view_overlay_residual": {
+          "mask_iou": 1,
+          "centroid_error_norm": 0
+        },
+        "promotion_confidence": 0.9
+      }
+    },
+    {
+      "op": "box",
+      "id": "tree_row_south",
+      "name": "Tree_Row_South_R10_Green",
+      "origin": [
+        -6815.8,
+        -46000,
+        0
+      ],
+      "size": [
+        50631.6,
+        2464.3,
+        120
+      ],
+      "material": "Campus_Tree_Line",
+      "qa": {
+        "role": "green_helper",
+        "part_id": "tree_row_south",
+        "intent": "landscape",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "vegetation_region",
+            "view": "top",
+            "source_image": "test/建筑群-v2-generated/site-top.png",
+            "status": "observed",
+            "confidence": 0.78,
+            "note": "Grounding v2 second sample pixel_vegetation_segmentation evidence for tree_row_south.",
+            "observation_id": "tree_row_south_top_vegetation",
+            "grounding": {
+              "method": "pixel_vegetation_segmentation",
+              "pixel_bbox": [
+                465,
+                625,
+                260,
+                25
+              ],
+              "pixel_count": 5070,
+              "fill": 0.78,
+              "contour_basis": "sampled_contour",
+              "grounding_quality": {
+                "version": 2,
+                "status": "pass",
+                "raw_to_evidence_bbox_ratio": 1,
+                "prior_to_evidence_bbox_ratio": 1,
+                "bbox_proxy": false,
+                "review_required": false,
+                "reasons": []
+              },
+              "review_required": false
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.78,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "review_confirmed",
+        "grounding_method": "pixel_vegetation_segmentation",
+        "source_observation_ids": [
+          "tree_row_south_top_vegetation"
         ],
         "helper_allowed": true,
         "photo_grade_eligible": false,
         "projection_residuals": null,
-        "grounding_v3_decision": "review_candidate",
-        "grounding_region_id": "internal_roads",
-        "grounding_region_class": "gap",
+        "inference_level": "observed",
+        "boundary_graph_edge_ids": [],
+        "completion_hypothesis_id": null,
+        "boundary_graph_risk_flags": [],
+        "boundary_graph_residuals": null,
+        "grounding_v3_decision": "helper_only",
+        "grounding_region_id": "tree_row_south",
+        "grounding_region_class": "green",
         "grounding_v3_reasons": [
-          "no matching GroundPlan region was found"
+          "AutoGroundPlan R10 kept this region out of promoted geometry"
         ],
-        "top_view_overlay_residual": null,
-        "promotion_confidence": 0.35
+        "top_view_overlay_residual": {
+          "mask_iou": 1,
+          "centroid_error_norm": 0
+        },
+        "promotion_confidence": 0.546
       }
     },
     {
-      "op": "cylinder",
+      "op": "box",
       "id": "tank_farm",
-      "name": "Tank_Farm_West_Silo",
+      "name": "Tank_Farm_R10_Helper",
       "origin": [
-        54993.7,
-        -9857.1,
+        50631.6,
+        -19714.3,
         0
       ],
-      "radius": 2181.1,
-      "height": 14000,
-      "segments": 32,
-      "smooth": "all",
+      "size": [
+        13631.6,
+        19714.3,
+        60
+      ],
       "material": "Campus_Tank_Metal",
       "qa": {
-        "role": "tank_farm",
+        "role": "service_yard",
         "part_id": "tank_farm",
-        "intent": "tank",
+        "intent": "site_surface",
         "evidence_status": "inferred",
-        "fallback_state": "structured_primitive",
+        "fallback_state": "visual_helper",
         "evidence_sources": [
           {
             "kind": "mask_polygon",
@@ -771,7 +888,7 @@
           }
         ],
         "generated_from_building_group_evidence": true,
-        "evidence_confidence": 0.56,
+        "evidence_confidence": 0.8,
         "review_required": true,
         "scale_review_required": true,
         "orientation_review_required": true,
@@ -780,14 +897,19 @@
         "source_observation_ids": [
           "building_top_tank_farm"
         ],
-        "helper_allowed": false,
+        "helper_allowed": true,
         "photo_grade_eligible": false,
         "projection_residuals": null,
+        "inference_level": "observed",
+        "boundary_graph_edge_ids": [],
+        "completion_hypothesis_id": null,
+        "boundary_graph_risk_flags": [],
+        "boundary_graph_residuals": null,
         "grounding_v3_decision": "helper_only",
         "grounding_region_id": "tank_farm",
         "grounding_region_class": "service_yard",
         "grounding_v3_reasons": [
-          "non-structural site detail remains helper/review geometry in R9"
+          "AutoGroundPlan R10 kept this region out of promoted geometry"
         ],
         "top_view_overlay_residual": {
           "mask_iou": 1,
@@ -797,79 +919,546 @@
       }
     },
     {
-      "op": "cylinder",
-      "id": "tank_farm_silo_east",
-      "name": "Tank_Farm_East_Silo",
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_1",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_1_R10_Helper",
       "origin": [
-        59901.1,
-        -9857.1,
+        10710.5,
+        -14785.7,
         0
       ],
-      "radius": 2181.1,
-      "height": 14000,
-      "segments": 32,
-      "smooth": "all",
-      "material": "Campus_Tank_Metal",
+      "size": [
+        3894.7,
+        11828.6,
+        30
+      ],
+      "material": "Campus_Site_Slab",
       "qa": {
-        "role": "tank",
-        "part_id": "tank_farm_silo_east",
-        "intent": "tank",
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_1",
+        "intent": "site_surface",
         "evidence_status": "inferred",
-        "fallback_state": "structured_primitive",
+        "fallback_state": "visual_helper",
         "evidence_sources": [
           {
-            "kind": "mask_polygon",
+            "kind": "gap_completion_solver",
             "view": "top",
             "source_image": "test/建筑群-v2-generated/site-top.png",
-            "status": "observed",
-            "confidence": 0.8,
-            "note": "Grounding v2 second sample pixel_color_segmentation evidence for tank_farm.",
-            "observation_id": "building_top_tank_farm",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_1: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
             "grounding": {
-              "method": "pixel_color_segmentation",
-              "pixel_bbox": [
-                760,
-                360,
-                70,
-                120
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_142"
               ],
-              "pixel_count": 6552,
-              "fill": 0.78,
-              "contour_basis": "sampled_contour",
-              "grounding_quality": {
-                "version": 2,
-                "status": "pass",
-                "raw_to_evidence_bbox_ratio": 1,
-                "prior_to_evidence_bbox_ratio": 1,
-                "bbox_proxy": false,
-                "review_required": false,
-                "reasons": []
-              },
-              "review_required": false
+              "source_evidence_ids": [
+                "building_top_internal_roads"
+              ],
+              "connectivity_reasons": [
+                "adjacent_to_hardscape_or_pixel_gap_evidence"
+              ],
+              "review_required": true
             }
           }
         ],
         "generated_from_building_group_evidence": true,
-        "evidence_confidence": 0.56,
+        "evidence_confidence": 0.3,
         "review_required": true,
         "scale_review_required": true,
         "orientation_review_required": true,
-        "grounding_status": "review_confirmed",
-        "grounding_method": "pixel_color_segmentation",
-        "source_observation_ids": [
-          "building_top_tank_farm"
-        ],
-        "helper_allowed": false,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
         "photo_grade_eligible": false,
         "projection_residuals": null,
-        "grounding_v3_decision": "review_candidate",
-        "grounding_region_id": "tank_farm_silo_east",
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_1",
         "grounding_region_class": "gap",
         "grounding_v3_reasons": [
-          "no matching GroundPlan region was found"
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
         ],
         "top_view_overlay_residual": null,
-        "promotion_confidence": 0.35
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_2",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_2_R10_Helper",
+      "origin": [
+        -28236.8,
+        -19714.3,
+        0
+      ],
+      "size": [
+        5842.1,
+        1642.9,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_2",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/建筑群-v2-generated/site-top.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_2: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_167"
+              ],
+              "source_evidence_ids": [
+                "building_top_internal_roads"
+              ],
+              "connectivity_reasons": [
+                "adjacent_to_hardscape_or_pixel_gap_evidence"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_2",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_3",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_3_R10_Helper",
+      "origin": [
+        21421.1,
+        -19714.3,
+        0
+      ],
+      "size": [
+        17526.3,
+        1642.9,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_3",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/建筑群-v2-generated/site-top.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_3: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_174"
+              ],
+              "source_evidence_ids": [
+                "building_top_internal_roads"
+              ],
+              "connectivity_reasons": [
+                "adjacent_to_hardscape_or_pixel_gap_evidence"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_3",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_4",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_4_R10_Helper",
+      "origin": [
+        38947.4,
+        -19714.3,
+        0
+      ],
+      "size": [
+        4868.4,
+        1642.9,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_4",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/建筑群-v2-generated/site-top.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_4: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_175"
+              ],
+              "source_evidence_ids": [
+                "building_top_internal_roads"
+              ],
+              "connectivity_reasons": [
+                "adjacent_to_hardscape_or_pixel_gap_evidence"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_4",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_5",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_5_R10_Helper",
+      "origin": [
+        -28236.8,
+        -29571.4,
+        0
+      ],
+      "size": [
+        5842.1,
+        9857.1,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_5",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/建筑群-v2-generated/site-top.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_5: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_182"
+              ],
+              "source_evidence_ids": [
+                "building_top_internal_roads"
+              ],
+              "connectivity_reasons": [
+                "adjacent_to_hardscape_or_pixel_gap_evidence"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_5",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_6",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_6_R10_Helper",
+      "origin": [
+        21421.1,
+        -29571.4,
+        0
+      ],
+      "size": [
+        17526.3,
+        9857.1,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_6",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/建筑群-v2-generated/site-top.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_6: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_189"
+              ],
+              "source_evidence_ids": [
+                "parking_stall_row_north_top_line",
+                "building_top_parking_lot",
+                "parking_drive_aisle_center_top_gap",
+                "building_top_internal_roads"
+              ],
+              "connectivity_reasons": [
+                "adjacent_to_hardscape_or_pixel_gap_evidence"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_6",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_7",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_7_R10_Helper",
+      "origin": [
+        38947.4,
+        -29571.4,
+        0
+      ],
+      "size": [
+        4868.4,
+        9857.1,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_7",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/建筑群-v2-generated/site-top.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_7: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_190"
+              ],
+              "source_evidence_ids": [
+                "parking_stall_row_north_top_line",
+                "building_top_parking_lot",
+                "parking_drive_aisle_center_top_gap",
+                "building_top_internal_roads"
+              ],
+              "connectivity_reasons": [
+                "connected_to_parking_drive_aisle",
+                "pixel_gap_evidence"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_7",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
+      }
+    },
+    {
+      "op": "box",
+      "id": "gap_completion_open_paved_area_cell_8",
+      "name": "Gap_Completion_Open_Paved_Area_Cell_8_R10_Helper",
+      "origin": [
+        50631.6,
+        -43535.7,
+        0
+      ],
+      "size": [
+        6815.8,
+        13964.3,
+        30
+      ],
+      "material": "Campus_Site_Slab",
+      "qa": {
+        "role": "open_paved_area",
+        "part_id": "gap_completion_open_paved_area_cell_8",
+        "intent": "site_surface",
+        "evidence_status": "inferred",
+        "fallback_state": "visual_helper",
+        "evidence_sources": [
+          {
+            "kind": "gap_completion_solver",
+            "view": "top",
+            "source_image": "test/建筑群-v2-generated/site-top.png",
+            "status": "inferred",
+            "confidence": 0.3,
+            "note": "gap_completion_open_paved_area_cell_8: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.",
+            "grounding": {
+              "method": "gap_completion_solver",
+              "source_cell_ids": [
+                "r10_gap_cell_207"
+              ],
+              "source_evidence_ids": [
+                "building_top_parking_lot"
+              ],
+              "connectivity_reasons": [
+                "adjacent_to_hardscape_or_pixel_gap_evidence"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "generated_from_building_group_evidence": true,
+        "evidence_confidence": 0.3,
+        "review_required": true,
+        "scale_review_required": true,
+        "orientation_review_required": true,
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "projection_residuals": null,
+        "gap_completion_solver": true,
+        "grounding_v3_decision": "helper_only",
+        "promoted_geometry": false,
+        "grounding_region_id": "gap_completion_open_paved_area_cell_8",
+        "grounding_region_class": "gap",
+        "grounding_v3_reasons": [
+          "R10.5 open paved gap completion is a helper surface, not promoted road geometry"
+        ],
+        "top_view_overlay_residual": null,
+        "promotion_confidence": 0.42
       }
     },
     {

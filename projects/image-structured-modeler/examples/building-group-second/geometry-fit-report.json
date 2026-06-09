@@ -306,7 +306,7 @@
     ],
     "multi_view_consistency": {
       "version": 2,
-      "checked_items": 5,
+      "checked_items": 2,
       "review_required": false,
       "checks": [
         {
@@ -314,36 +314,6 @@
           "top_observation_id": "building_top_primary_blue_hall",
           "oblique_observation_id": "building_oblique_primary_blue_hall",
           "top_view_grounding": "pixel_color_segmentation",
-          "oblique_view_grounding": "edge_contour_segmentation",
-          "residual": null,
-          "review_required": true,
-          "note": "Grounding v2 records cross-view evidence presence; true pose/depth residual remains a review gate."
-        },
-        {
-          "item": "warehouse_west",
-          "top_observation_id": "building_top_warehouse_row_west",
-          "oblique_observation_id": "building_oblique_warehouse_row_west",
-          "top_view_grounding": "pixel_color_segmentation",
-          "oblique_view_grounding": "edge_contour_segmentation",
-          "residual": null,
-          "review_required": true,
-          "note": "Grounding v2 records cross-view evidence presence; true pose/depth residual remains a review gate."
-        },
-        {
-          "item": "warehouse_inner",
-          "top_observation_id": "building_top_warehouse_row_inner",
-          "oblique_observation_id": "building_oblique_warehouse_row_inner",
-          "top_view_grounding": "pixel_color_segmentation",
-          "oblique_view_grounding": "edge_contour_segmentation",
-          "residual": null,
-          "review_required": true,
-          "note": "Grounding v2 records cross-view evidence presence; true pose/depth residual remains a review gate."
-        },
-        {
-          "item": "parking_lot",
-          "top_observation_id": "building_top_parking_lot",
-          "oblique_observation_id": "building_oblique_parking_lot",
-          "top_view_grounding": "pixel_gap_segmentation",
           "oblique_view_grounding": "edge_contour_segmentation",
           "residual": null,
           "review_required": true,
@@ -365,44 +335,46 @@
   },
   "grounding_v2": {
     "version": 2,
-    "total_items": 13,
+    "total_items": 21,
     "primary_structures": {
-      "total": 13,
+      "total": 20,
       "by_status": {
-        "review_confirmed": 10,
-        "helper_only": 3
+        "review_confirmed": 9,
+        "helper_only": 11
       },
       "by_role": {
         "site_boundary": 1,
-        "production_hall": 1,
-        "warehouse_row": 2,
-        "utility_building": 1,
         "admin_office": 1,
-        "parking_lot": 1,
-        "internal_roads": 1,
-        "tank_farm": 1,
-        "tank": 1,
+        "production_hall": 1,
+        "utility_building": 1,
+        "warehouse_unit": 4,
+        "service_yard": 1,
+        "open_paved_area": 8,
         "scale_anchor": 3
       },
-      "grounded": 10,
+      "grounded": 9,
       "image_grounded": 0,
-      "review_required": 13,
+      "review_required": 20,
       "rejected": 0,
       "photo_grade_eligible": 0,
-      "grounded_ratio": 0.769,
+      "grounded_ratio": 0.45,
       "image_grounded_ratio": 0,
       "photo_grade_eligible_ratio": 0
     },
     "dense_details": {
-      "total": 0,
-      "by_status": {},
-      "by_role": {},
-      "grounded": 0,
+      "total": 1,
+      "by_status": {
+        "review_confirmed": 1
+      },
+      "by_role": {
+        "green_helper": 1
+      },
+      "grounded": 1,
       "image_grounded": 0,
-      "review_required": 0,
+      "review_required": 1,
       "rejected": 0,
       "photo_grade_eligible": 0,
-      "grounded_ratio": 0,
+      "grounded_ratio": 1,
       "image_grounded_ratio": 0,
       "photo_grade_eligible_ratio": 0,
       "helper_ratio": 0,
@@ -426,6 +398,21 @@
         "evidence_status": "inferred"
       },
       {
+        "id": "admin_office",
+        "op": "box",
+        "role": "admin_office",
+        "grounding_status": "review_confirmed",
+        "grounding_method": "pixel_color_segmentation",
+        "source_observation_ids": [
+          "building_top_admin_office"
+        ],
+        "review_required": true,
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "fallback_state": "box_approximation",
+        "evidence_status": "inferred"
+      },
+      {
         "id": "primary_blue_roof_hall",
         "op": "box",
         "role": "production_hall",
@@ -433,36 +420,6 @@
         "grounding_method": "pixel_color_segmentation",
         "source_observation_ids": [
           "building_top_primary_blue_hall"
-        ],
-        "review_required": true,
-        "helper_allowed": false,
-        "photo_grade_eligible": false,
-        "fallback_state": "box_approximation",
-        "evidence_status": "inferred"
-      },
-      {
-        "id": "warehouse_row_west",
-        "op": "box",
-        "role": "warehouse_row",
-        "grounding_status": "review_confirmed",
-        "grounding_method": "pixel_color_segmentation",
-        "source_observation_ids": [
-          "building_top_warehouse_row_west"
-        ],
-        "review_required": true,
-        "helper_allowed": false,
-        "photo_grade_eligible": false,
-        "fallback_state": "box_approximation",
-        "evidence_status": "inferred"
-      },
-      {
-        "id": "warehouse_row_inner",
-        "op": "box",
-        "role": "warehouse_row",
-        "grounding_status": "review_confirmed",
-        "grounding_method": "pixel_color_segmentation",
-        "source_observation_ids": [
-          "building_top_warehouse_row_inner"
         ],
         "review_required": true,
         "helper_allowed": false,
@@ -486,13 +443,13 @@
         "evidence_status": "inferred"
       },
       {
-        "id": "admin_office",
+        "id": "warehouse_inner_north",
         "op": "box",
-        "role": "admin_office",
+        "role": "warehouse_unit",
         "grounding_status": "review_confirmed",
         "grounding_method": "pixel_color_segmentation",
         "source_observation_ids": [
-          "building_top_admin_office"
+          "warehouse_inner_north_top_mask"
         ],
         "review_required": true,
         "helper_allowed": false,
@@ -501,28 +458,58 @@
         "evidence_status": "inferred"
       },
       {
-        "id": "parking_lot",
+        "id": "warehouse_inner_south",
         "op": "box",
-        "role": "parking_lot",
+        "role": "warehouse_unit",
         "grounding_status": "review_confirmed",
-        "grounding_method": "pixel_gap_segmentation",
+        "grounding_method": "pixel_color_segmentation",
         "source_observation_ids": [
-          "building_top_parking_lot"
+          "warehouse_inner_south_top_mask"
         ],
         "review_required": true,
-        "helper_allowed": true,
+        "helper_allowed": false,
         "photo_grade_eligible": false,
-        "fallback_state": "visual_helper",
+        "fallback_state": "box_approximation",
         "evidence_status": "inferred"
       },
       {
-        "id": "internal_roads",
+        "id": "warehouse_west_north",
         "op": "box",
-        "role": "internal_roads",
+        "role": "warehouse_unit",
         "grounding_status": "review_confirmed",
-        "grounding_method": "pixel_gap_segmentation",
+        "grounding_method": "pixel_color_segmentation",
         "source_observation_ids": [
-          "building_top_internal_roads"
+          "warehouse_west_north_top_mask"
+        ],
+        "review_required": true,
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "fallback_state": "box_approximation",
+        "evidence_status": "inferred"
+      },
+      {
+        "id": "warehouse_west_south",
+        "op": "box",
+        "role": "warehouse_unit",
+        "grounding_status": "review_confirmed",
+        "grounding_method": "pixel_color_segmentation",
+        "source_observation_ids": [
+          "warehouse_west_south_top_mask"
+        ],
+        "review_required": true,
+        "helper_allowed": false,
+        "photo_grade_eligible": false,
+        "fallback_state": "box_approximation",
+        "evidence_status": "inferred"
+      },
+      {
+        "id": "tree_row_south",
+        "op": "box",
+        "role": "green_helper",
+        "grounding_status": "review_confirmed",
+        "grounding_method": "pixel_vegetation_segmentation",
+        "source_observation_ids": [
+          "tree_row_south_top_vegetation"
         ],
         "review_required": true,
         "helper_allowed": true,
@@ -532,32 +519,121 @@
       },
       {
         "id": "tank_farm",
-        "op": "cylinder",
-        "role": "tank_farm",
+        "op": "box",
+        "role": "service_yard",
         "grounding_status": "review_confirmed",
         "grounding_method": "pixel_color_segmentation",
         "source_observation_ids": [
           "building_top_tank_farm"
         ],
         "review_required": true,
-        "helper_allowed": false,
+        "helper_allowed": true,
         "photo_grade_eligible": false,
-        "fallback_state": "structured_primitive",
+        "fallback_state": "visual_helper",
         "evidence_status": "inferred"
       },
       {
-        "id": "tank_farm_silo_east",
-        "op": "cylinder",
-        "role": "tank",
-        "grounding_status": "review_confirmed",
-        "grounding_method": "pixel_color_segmentation",
-        "source_observation_ids": [
-          "building_top_tank_farm"
-        ],
+        "id": "gap_completion_open_paved_area_cell_1",
+        "op": "box",
+        "role": "open_paved_area",
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
         "review_required": true,
-        "helper_allowed": false,
+        "helper_allowed": true,
         "photo_grade_eligible": false,
-        "fallback_state": "structured_primitive",
+        "fallback_state": "visual_helper",
+        "evidence_status": "inferred"
+      },
+      {
+        "id": "gap_completion_open_paved_area_cell_2",
+        "op": "box",
+        "role": "open_paved_area",
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "review_required": true,
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "fallback_state": "visual_helper",
+        "evidence_status": "inferred"
+      },
+      {
+        "id": "gap_completion_open_paved_area_cell_3",
+        "op": "box",
+        "role": "open_paved_area",
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "review_required": true,
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "fallback_state": "visual_helper",
+        "evidence_status": "inferred"
+      },
+      {
+        "id": "gap_completion_open_paved_area_cell_4",
+        "op": "box",
+        "role": "open_paved_area",
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "review_required": true,
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "fallback_state": "visual_helper",
+        "evidence_status": "inferred"
+      },
+      {
+        "id": "gap_completion_open_paved_area_cell_5",
+        "op": "box",
+        "role": "open_paved_area",
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "review_required": true,
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "fallback_state": "visual_helper",
+        "evidence_status": "inferred"
+      },
+      {
+        "id": "gap_completion_open_paved_area_cell_6",
+        "op": "box",
+        "role": "open_paved_area",
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "review_required": true,
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "fallback_state": "visual_helper",
+        "evidence_status": "inferred"
+      },
+      {
+        "id": "gap_completion_open_paved_area_cell_7",
+        "op": "box",
+        "role": "open_paved_area",
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "review_required": true,
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "fallback_state": "visual_helper",
+        "evidence_status": "inferred"
+      },
+      {
+        "id": "gap_completion_open_paved_area_cell_8",
+        "op": "box",
+        "role": "open_paved_area",
+        "grounding_status": "helper_only",
+        "grounding_method": "gap_completion_solver",
+        "source_observation_ids": [],
+        "review_required": true,
+        "helper_allowed": true,
+        "photo_grade_eligible": false,
+        "fallback_state": "visual_helper",
         "evidence_status": "inferred"
       },
       {
@@ -658,25 +734,24 @@
     }
   },
   "summary": {
-    "checked_footprints": 4,
-    "matched_footprints": 4,
+    "checked_footprints": 6,
+    "matched_footprints": 6,
     "grounding_issues": 0,
-    "checked_relations": 3,
-    "matched_relations": 3,
+    "checked_relations": 4,
+    "matched_relations": 4,
     "checked_scale_anchors": 3,
     "scale_anchors_in_tolerance": 3,
     "checked_handedness_cases": 1,
     "handedness_cases_detected": 1,
     "grounding_methods": {
-      "pixel_color_segmentation": 3,
-      "pixel_gap_segmentation": 1
+      "pixel_color_segmentation": 6
     },
-    "primary_structures_grounding_coverage": 0.769,
+    "primary_structures_grounding_coverage": 0.45,
     "dense_detail_helper_ratio": 0,
-    "dense_detail_review_required": 0,
+    "dense_detail_review_required": 1,
     "dense_detail_rejected": 0,
     "photo_grade_eligible_ratio": 0,
-    "dense_detail_items": 0,
+    "dense_detail_items": 1,
     "structural_grounding_issues": 0,
     "site_region_unclassified_ratio": 0,
     "site_region_overlap_ratio": 0,
@@ -1088,10 +1163,10 @@
       }
     },
     {
-      "id": "warehouse-west-second-sample-footprint",
+      "id": "west-warehouse-north-second-sample-footprint",
       "ok": true,
-      "item": "warehouse_row_west",
-      "observation_id": "building_top_warehouse_row_west",
+      "item": "warehouse_west_north",
+      "observation_id": "warehouse_west_north_top_mask",
       "grounding_method": "pixel_color_segmentation",
       "image_view": "top",
       "residuals": {
@@ -1112,7 +1187,390 @@
         "polygon_iou": 1,
         "edge_direction_error_deg": 0
       },
-      "message": "warehouse_west model projection fits mask/contour footprint evidence.",
+      "message": "west_warehouse_north model projection fits mask/contour footprint evidence.",
+      "grounding_quality": {
+        "ok": true,
+        "severity": "error",
+        "method": "pixel_color_segmentation",
+        "max_bbox_dimension_ratio": 2.6,
+        "raw_to_evidence_bbox_ratio": 1,
+        "prior_to_evidence_bbox_ratio": 1,
+        "contour_sample_count": 5,
+        "bbox_proxy": false,
+        "review_required": false,
+        "reasons": [],
+        "boxes": {
+          "raw_pixel_box": {
+            "min": [
+              0.112,
+              0.623
+            ],
+            "max": [
+              0.309,
+              0.848
+            ],
+            "center": [
+              0.21,
+              0.736
+            ],
+            "extent": [
+              0.197,
+              0.225
+            ]
+          },
+          "prior_box": null,
+          "evidence_box": {
+            "min": [
+              0.112,
+              0.623
+            ],
+            "max": [
+              0.309,
+              0.848
+            ],
+            "center": [
+              0.21,
+              0.736
+            ],
+            "extent": [
+              0.197,
+              0.225
+            ]
+          },
+          "bbox_image_box": {
+            "min": [
+              0.112,
+              0.623
+            ],
+            "max": [
+              0.309,
+              0.848
+            ],
+            "center": [
+              0.21,
+              0.736
+            ],
+            "extent": [
+              0.197,
+              0.225
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "model_box": {
+          "min": [
+            0.112,
+            0.623
+          ],
+          "max": [
+            0.309,
+            0.848
+          ],
+          "center": [
+            0.21,
+            0.736
+          ],
+          "extent": [
+            0.197,
+            0.225
+          ]
+        },
+        "image_box": {
+          "min": [
+            0.112,
+            0.623
+          ],
+          "max": [
+            0.309,
+            0.848
+          ],
+          "center": [
+            0.21,
+            0.736
+          ],
+          "extent": [
+            0.197,
+            0.225
+          ]
+        },
+        "bbox_image_box": {
+          "min": [
+            0.112,
+            0.623
+          ],
+          "max": [
+            0.309,
+            0.848
+          ],
+          "center": [
+            0.21,
+            0.736
+          ],
+          "extent": [
+            0.197,
+            0.225
+          ]
+        },
+        "model_polygon": [
+          [
+            0.112,
+            0.623
+          ],
+          [
+            0.309,
+            0.623
+          ],
+          [
+            0.309,
+            0.848
+          ],
+          [
+            0.112,
+            0.848
+          ],
+          [
+            0.112,
+            0.623
+          ]
+        ],
+        "contour_polygon_sample": [
+          [
+            0.112,
+            0.848
+          ],
+          [
+            0.309,
+            0.848
+          ],
+          [
+            0.309,
+            0.623
+          ],
+          [
+            0.112,
+            0.623
+          ],
+          [
+            0.112,
+            0.848
+          ]
+        ],
+        "contour_polygon_bounds": {
+          "min": [
+            0.112,
+            0.623
+          ],
+          "max": [
+            0.309,
+            0.848
+          ],
+          "center": [
+            0.21,
+            0.736
+          ],
+          "extent": [
+            0.197,
+            0.225
+          ]
+        },
+        "center_tolerance": 0.035,
+        "extent_tolerance": [
+          0.035,
+          0.04
+        ],
+        "area_tolerance": 0.32,
+        "observation_id": "warehouse_west_north_top_mask",
+        "grounding": {
+          "method": "pixel_color_segmentation",
+          "pixel_bbox": [
+            205,
+            165,
+            150,
+            126
+          ],
+          "pixel_count": 14742,
+          "fill": 0.78,
+          "contour_basis": "sampled_contour",
+          "grounding_quality": {
+            "version": 2,
+            "status": "pass",
+            "raw_to_evidence_bbox_ratio": 1,
+            "prior_to_evidence_bbox_ratio": 1,
+            "bbox_proxy": false,
+            "review_required": false,
+            "reasons": []
+          },
+          "review_required": false
+        },
+        "mask": {
+          "id": "warehouse_west_north_top_mask_mask",
+          "method": "pixel_color_segmentation",
+          "bbox": [
+            205,
+            165,
+            150,
+            126
+          ],
+          "polygon": [
+            [
+              205,
+              165
+            ],
+            [
+              355,
+              165
+            ],
+            [
+              355,
+              291
+            ],
+            [
+              205,
+              291
+            ],
+            [
+              205,
+              165
+            ]
+          ],
+          "sampled_contour": [
+            [
+              205,
+              165
+            ],
+            [
+              355,
+              165
+            ],
+            [
+              355,
+              291
+            ],
+            [
+              205,
+              291
+            ],
+            [
+              205,
+              165
+            ]
+          ],
+          "pixel_count": 14742,
+          "fill": 0.78,
+          "quality": {
+            "version": 2,
+            "status": "pass",
+            "raw_to_evidence_bbox_ratio": 1,
+            "prior_to_evidence_bbox_ratio": 1,
+            "bbox_proxy": false,
+            "review_required": false,
+            "reasons": []
+          },
+          "review_required": false
+        },
+        "contour": {
+          "kind": "sampled_polygon",
+          "sample_count": 5,
+          "source": "pixel_color_segmentation"
+        },
+        "grounding_quality": {
+          "ok": true,
+          "severity": "error",
+          "method": "pixel_color_segmentation",
+          "max_bbox_dimension_ratio": 2.6,
+          "raw_to_evidence_bbox_ratio": 1,
+          "prior_to_evidence_bbox_ratio": 1,
+          "contour_sample_count": 5,
+          "bbox_proxy": false,
+          "review_required": false,
+          "reasons": [],
+          "boxes": {
+            "raw_pixel_box": {
+              "min": [
+                0.112,
+                0.623
+              ],
+              "max": [
+                0.309,
+                0.848
+              ],
+              "center": [
+                0.21,
+                0.736
+              ],
+              "extent": [
+                0.197,
+                0.225
+              ]
+            },
+            "prior_box": null,
+            "evidence_box": {
+              "min": [
+                0.112,
+                0.623
+              ],
+              "max": [
+                0.309,
+                0.848
+              ],
+              "center": [
+                0.21,
+                0.736
+              ],
+              "extent": [
+                0.197,
+                0.225
+              ]
+            },
+            "bbox_image_box": {
+              "min": [
+                0.112,
+                0.623
+              ],
+              "max": [
+                0.309,
+                0.848
+              ],
+              "center": [
+                0.21,
+                0.736
+              ],
+              "extent": [
+                0.197,
+                0.225
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "west-warehouse-south-second-sample-footprint",
+      "ok": true,
+      "item": "warehouse_west_south",
+      "observation_id": "warehouse_west_south_top_mask",
+      "grounding_method": "pixel_color_segmentation",
+      "image_view": "top",
+      "residuals": {
+        "center_delta": [
+          0,
+          0
+        ],
+        "center_error": 0,
+        "extent_delta": [
+          0,
+          0
+        ],
+        "extent_error": 0,
+        "area_ratio_error": 0,
+        "bbox_area_ratio_error": 0,
+        "polygon_area_ratio_error": 0,
+        "iou": 1,
+        "polygon_iou": 1,
+        "edge_direction_error_deg": 0
+      },
+      "message": "west_warehouse_south model projection fits mask/contour footprint evidence.",
       "grounding_quality": {
         "ok": true,
         "severity": "error",
@@ -1132,15 +1590,15 @@
             ],
             "max": [
               0.309,
-              0.848
+              0.564
             ],
             "center": [
               0.21,
-              0.594
+              0.452
             ],
             "extent": [
               0.197,
-              0.509
+              0.225
             ]
           },
           "prior_box": null,
@@ -1151,15 +1609,15 @@
             ],
             "max": [
               0.309,
-              0.848
+              0.564
             ],
             "center": [
               0.21,
-              0.594
+              0.452
             ],
             "extent": [
               0.197,
-              0.509
+              0.225
             ]
           },
           "bbox_image_box": {
@@ -1169,15 +1627,15 @@
             ],
             "max": [
               0.309,
-              0.848
+              0.564
             ],
             "center": [
               0.21,
-              0.594
+              0.452
             ],
             "extent": [
               0.197,
-              0.509
+              0.225
             ]
           }
         }
@@ -1190,15 +1648,15 @@
           ],
           "max": [
             0.309,
-            0.848
+            0.564
           ],
           "center": [
             0.21,
-            0.594
+            0.452
           ],
           "extent": [
             0.197,
-            0.509
+            0.225
           ]
         },
         "image_box": {
@@ -1208,15 +1666,15 @@
           ],
           "max": [
             0.309,
-            0.848
+            0.564
           ],
           "center": [
             0.21,
-            0.594
+            0.452
           ],
           "extent": [
             0.197,
-            0.509
+            0.225
           ]
         },
         "bbox_image_box": {
@@ -1226,15 +1684,15 @@
           ],
           "max": [
             0.309,
-            0.848
+            0.564
           ],
           "center": [
             0.21,
-            0.594
+            0.452
           ],
           "extent": [
             0.197,
-            0.509
+            0.225
           ]
         },
         "model_polygon": [
@@ -1248,11 +1706,11 @@
           ],
           [
             0.309,
-            0.848
+            0.564
           ],
           [
             0.112,
-            0.848
+            0.564
           ],
           [
             0.112,
@@ -1262,11 +1720,11 @@
         "contour_polygon_sample": [
           [
             0.112,
-            0.848
+            0.564
           ],
           [
             0.309,
-            0.848
+            0.564
           ],
           [
             0.309,
@@ -1278,7 +1736,7 @@
           ],
           [
             0.112,
-            0.848
+            0.564
           ]
         ],
         "contour_polygon_bounds": {
@@ -1288,15 +1746,15 @@
           ],
           "max": [
             0.309,
-            0.848
+            0.564
           ],
           "center": [
             0.21,
-            0.594
+            0.452
           ],
           "extent": [
             0.197,
-            0.509
+            0.225
           ]
         },
         "center_tolerance": 0.035,
@@ -1305,16 +1763,16 @@
           0.04
         ],
         "area_tolerance": 0.32,
-        "observation_id": "building_top_warehouse_row_west",
+        "observation_id": "warehouse_west_south_top_mask",
         "grounding": {
           "method": "pixel_color_segmentation",
           "pixel_bbox": [
             205,
-            165,
+            324,
             150,
-            285
+            126
           ],
-          "pixel_count": 33345,
+          "pixel_count": 14742,
           "fill": 0.78,
           "contour_basis": "sampled_contour",
           "grounding_quality": {
@@ -1329,22 +1787,22 @@
           "review_required": false
         },
         "mask": {
-          "id": "building_top_warehouse_row_west_mask",
+          "id": "warehouse_west_south_top_mask_mask",
           "method": "pixel_color_segmentation",
           "bbox": [
             205,
-            165,
+            324,
             150,
-            285
+            126
           ],
           "polygon": [
             [
               205,
-              165
+              324
             ],
             [
               355,
-              165
+              324
             ],
             [
               355,
@@ -1356,17 +1814,17 @@
             ],
             [
               205,
-              165
+              324
             ]
           ],
           "sampled_contour": [
             [
               205,
-              165
+              324
             ],
             [
               355,
-              165
+              324
             ],
             [
               355,
@@ -1378,10 +1836,10 @@
             ],
             [
               205,
-              165
+              324
             ]
           ],
-          "pixel_count": 33345,
+          "pixel_count": 14742,
           "fill": 0.78,
           "quality": {
             "version": 2,
@@ -1418,15 +1876,15 @@
               ],
               "max": [
                 0.309,
-                0.848
+                0.564
               ],
               "center": [
                 0.21,
-                0.594
+                0.452
               ],
               "extent": [
                 0.197,
-                0.509
+                0.225
               ]
             },
             "prior_box": null,
@@ -1437,15 +1895,15 @@
               ],
               "max": [
                 0.309,
-                0.848
+                0.564
               ],
               "center": [
                 0.21,
-                0.594
+                0.452
               ],
               "extent": [
                 0.197,
-                0.509
+                0.225
               ]
             },
             "bbox_image_box": {
@@ -1455,15 +1913,15 @@
               ],
               "max": [
                 0.309,
-                0.848
+                0.564
               ],
               "center": [
                 0.21,
-                0.594
+                0.452
               ],
               "extent": [
                 0.197,
-                0.509
+                0.225
               ]
             }
           }
@@ -1471,10 +1929,10 @@
       }
     },
     {
-      "id": "warehouse-inner-second-sample-footprint",
+      "id": "inner-warehouse-north-second-sample-footprint",
       "ok": true,
-      "item": "warehouse_row_inner",
-      "observation_id": "building_top_warehouse_row_inner",
+      "item": "warehouse_inner_north",
+      "observation_id": "warehouse_inner_north_top_mask",
       "grounding_method": "pixel_color_segmentation",
       "image_view": "top",
       "residuals": {
@@ -1495,7 +1953,390 @@
         "polygon_iou": 1,
         "edge_direction_error_deg": 0
       },
-      "message": "warehouse_inner model projection fits mask/contour footprint evidence.",
+      "message": "inner_warehouse_north model projection fits mask/contour footprint evidence.",
+      "grounding_quality": {
+        "ok": true,
+        "severity": "error",
+        "method": "pixel_color_segmentation",
+        "max_bbox_dimension_ratio": 2.6,
+        "raw_to_evidence_bbox_ratio": 1,
+        "prior_to_evidence_bbox_ratio": 1,
+        "contour_sample_count": 5,
+        "bbox_proxy": false,
+        "review_required": false,
+        "reasons": [],
+        "boxes": {
+          "raw_pixel_box": {
+            "min": [
+              0.349,
+              0.629
+            ],
+            "max": [
+              0.52,
+              0.857
+            ],
+            "center": [
+              0.434,
+              0.743
+            ],
+            "extent": [
+              0.171,
+              0.228
+            ]
+          },
+          "prior_box": null,
+          "evidence_box": {
+            "min": [
+              0.349,
+              0.629
+            ],
+            "max": [
+              0.52,
+              0.857
+            ],
+            "center": [
+              0.434,
+              0.743
+            ],
+            "extent": [
+              0.171,
+              0.228
+            ]
+          },
+          "bbox_image_box": {
+            "min": [
+              0.349,
+              0.629
+            ],
+            "max": [
+              0.52,
+              0.857
+            ],
+            "center": [
+              0.434,
+              0.743
+            ],
+            "extent": [
+              0.171,
+              0.228
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "model_box": {
+          "min": [
+            0.349,
+            0.629
+          ],
+          "max": [
+            0.52,
+            0.857
+          ],
+          "center": [
+            0.434,
+            0.743
+          ],
+          "extent": [
+            0.171,
+            0.228
+          ]
+        },
+        "image_box": {
+          "min": [
+            0.349,
+            0.629
+          ],
+          "max": [
+            0.52,
+            0.857
+          ],
+          "center": [
+            0.434,
+            0.743
+          ],
+          "extent": [
+            0.171,
+            0.228
+          ]
+        },
+        "bbox_image_box": {
+          "min": [
+            0.349,
+            0.629
+          ],
+          "max": [
+            0.52,
+            0.857
+          ],
+          "center": [
+            0.434,
+            0.743
+          ],
+          "extent": [
+            0.171,
+            0.228
+          ]
+        },
+        "model_polygon": [
+          [
+            0.349,
+            0.629
+          ],
+          [
+            0.52,
+            0.629
+          ],
+          [
+            0.52,
+            0.857
+          ],
+          [
+            0.349,
+            0.857
+          ],
+          [
+            0.349,
+            0.629
+          ]
+        ],
+        "contour_polygon_sample": [
+          [
+            0.349,
+            0.857
+          ],
+          [
+            0.52,
+            0.857
+          ],
+          [
+            0.52,
+            0.629
+          ],
+          [
+            0.349,
+            0.629
+          ],
+          [
+            0.349,
+            0.857
+          ]
+        ],
+        "contour_polygon_bounds": {
+          "min": [
+            0.349,
+            0.629
+          ],
+          "max": [
+            0.52,
+            0.857
+          ],
+          "center": [
+            0.434,
+            0.743
+          ],
+          "extent": [
+            0.171,
+            0.228
+          ]
+        },
+        "center_tolerance": 0.035,
+        "extent_tolerance": [
+          0.035,
+          0.04
+        ],
+        "area_tolerance": 0.32,
+        "observation_id": "warehouse_inner_north_top_mask",
+        "grounding": {
+          "method": "pixel_color_segmentation",
+          "pixel_bbox": [
+            385,
+            160,
+            130,
+            128
+          ],
+          "pixel_count": 12979,
+          "fill": 0.78,
+          "contour_basis": "sampled_contour",
+          "grounding_quality": {
+            "version": 2,
+            "status": "pass",
+            "raw_to_evidence_bbox_ratio": 1,
+            "prior_to_evidence_bbox_ratio": 1,
+            "bbox_proxy": false,
+            "review_required": false,
+            "reasons": []
+          },
+          "review_required": false
+        },
+        "mask": {
+          "id": "warehouse_inner_north_top_mask_mask",
+          "method": "pixel_color_segmentation",
+          "bbox": [
+            385,
+            160,
+            130,
+            128
+          ],
+          "polygon": [
+            [
+              385,
+              160
+            ],
+            [
+              515,
+              160
+            ],
+            [
+              515,
+              288
+            ],
+            [
+              385,
+              288
+            ],
+            [
+              385,
+              160
+            ]
+          ],
+          "sampled_contour": [
+            [
+              385,
+              160
+            ],
+            [
+              515,
+              160
+            ],
+            [
+              515,
+              288
+            ],
+            [
+              385,
+              288
+            ],
+            [
+              385,
+              160
+            ]
+          ],
+          "pixel_count": 12979,
+          "fill": 0.78,
+          "quality": {
+            "version": 2,
+            "status": "pass",
+            "raw_to_evidence_bbox_ratio": 1,
+            "prior_to_evidence_bbox_ratio": 1,
+            "bbox_proxy": false,
+            "review_required": false,
+            "reasons": []
+          },
+          "review_required": false
+        },
+        "contour": {
+          "kind": "sampled_polygon",
+          "sample_count": 5,
+          "source": "pixel_color_segmentation"
+        },
+        "grounding_quality": {
+          "ok": true,
+          "severity": "error",
+          "method": "pixel_color_segmentation",
+          "max_bbox_dimension_ratio": 2.6,
+          "raw_to_evidence_bbox_ratio": 1,
+          "prior_to_evidence_bbox_ratio": 1,
+          "contour_sample_count": 5,
+          "bbox_proxy": false,
+          "review_required": false,
+          "reasons": [],
+          "boxes": {
+            "raw_pixel_box": {
+              "min": [
+                0.349,
+                0.629
+              ],
+              "max": [
+                0.52,
+                0.857
+              ],
+              "center": [
+                0.434,
+                0.743
+              ],
+              "extent": [
+                0.171,
+                0.228
+              ]
+            },
+            "prior_box": null,
+            "evidence_box": {
+              "min": [
+                0.349,
+                0.629
+              ],
+              "max": [
+                0.52,
+                0.857
+              ],
+              "center": [
+                0.434,
+                0.743
+              ],
+              "extent": [
+                0.171,
+                0.228
+              ]
+            },
+            "bbox_image_box": {
+              "min": [
+                0.349,
+                0.629
+              ],
+              "max": [
+                0.52,
+                0.857
+              ],
+              "center": [
+                0.434,
+                0.743
+              ],
+              "extent": [
+                0.171,
+                0.228
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "inner-warehouse-south-second-sample-footprint",
+      "ok": true,
+      "item": "warehouse_inner_south",
+      "observation_id": "warehouse_inner_south_top_mask",
+      "grounding_method": "pixel_color_segmentation",
+      "image_view": "top",
+      "residuals": {
+        "center_delta": [
+          0,
+          0
+        ],
+        "center_error": 0,
+        "extent_delta": [
+          0,
+          0
+        ],
+        "extent_error": 0,
+        "area_ratio_error": 0,
+        "bbox_area_ratio_error": 0,
+        "polygon_area_ratio_error": 0,
+        "iou": 1,
+        "polygon_iou": 1,
+        "edge_direction_error_deg": 0
+      },
+      "message": "inner_warehouse_south model projection fits mask/contour footprint evidence.",
       "grounding_quality": {
         "ok": true,
         "severity": "error",
@@ -1515,15 +2356,15 @@
             ],
             "max": [
               0.52,
-              0.857
+              0.568
             ],
             "center": [
               0.434,
-              0.598
+              0.454
             ],
             "extent": [
               0.171,
-              0.518
+              0.229
             ]
           },
           "prior_box": null,
@@ -1534,15 +2375,15 @@
             ],
             "max": [
               0.52,
-              0.857
+              0.568
             ],
             "center": [
               0.434,
-              0.598
+              0.454
             ],
             "extent": [
               0.171,
-              0.518
+              0.229
             ]
           },
           "bbox_image_box": {
@@ -1552,15 +2393,15 @@
             ],
             "max": [
               0.52,
-              0.857
+              0.568
             ],
             "center": [
               0.434,
-              0.598
+              0.454
             ],
             "extent": [
               0.171,
-              0.518
+              0.229
             ]
           }
         }
@@ -1573,15 +2414,15 @@
           ],
           "max": [
             0.52,
-            0.857
+            0.568
           ],
           "center": [
             0.434,
-            0.598
+            0.454
           ],
           "extent": [
             0.171,
-            0.518
+            0.229
           ]
         },
         "image_box": {
@@ -1591,15 +2432,15 @@
           ],
           "max": [
             0.52,
-            0.857
+            0.568
           ],
           "center": [
             0.434,
-            0.598
+            0.454
           ],
           "extent": [
             0.171,
-            0.518
+            0.229
           ]
         },
         "bbox_image_box": {
@@ -1609,15 +2450,15 @@
           ],
           "max": [
             0.52,
-            0.857
+            0.568
           ],
           "center": [
             0.434,
-            0.598
+            0.454
           ],
           "extent": [
             0.171,
-            0.518
+            0.229
           ]
         },
         "model_polygon": [
@@ -1631,11 +2472,11 @@
           ],
           [
             0.52,
-            0.857
+            0.568
           ],
           [
             0.349,
-            0.857
+            0.568
           ],
           [
             0.349,
@@ -1645,11 +2486,11 @@
         "contour_polygon_sample": [
           [
             0.349,
-            0.857
+            0.568
           ],
           [
             0.52,
-            0.857
+            0.568
           ],
           [
             0.52,
@@ -1661,7 +2502,7 @@
           ],
           [
             0.349,
-            0.857
+            0.568
           ]
         ],
         "contour_polygon_bounds": {
@@ -1671,15 +2512,15 @@
           ],
           "max": [
             0.52,
-            0.857
+            0.568
           ],
           "center": [
             0.434,
-            0.598
+            0.454
           ],
           "extent": [
             0.171,
-            0.518
+            0.229
           ]
         },
         "center_tolerance": 0.035,
@@ -1688,16 +2529,16 @@
           0.04
         ],
         "area_tolerance": 0.32,
-        "observation_id": "building_top_warehouse_row_inner",
+        "observation_id": "warehouse_inner_south_top_mask",
         "grounding": {
           "method": "pixel_color_segmentation",
           "pixel_bbox": [
             385,
-            160,
+            322,
             130,
-            290
+            128
           ],
-          "pixel_count": 29406,
+          "pixel_count": 12979,
           "fill": 0.78,
           "contour_basis": "sampled_contour",
           "grounding_quality": {
@@ -1712,22 +2553,22 @@
           "review_required": false
         },
         "mask": {
-          "id": "building_top_warehouse_row_inner_mask",
+          "id": "warehouse_inner_south_top_mask_mask",
           "method": "pixel_color_segmentation",
           "bbox": [
             385,
-            160,
+            322,
             130,
-            290
+            128
           ],
           "polygon": [
             [
               385,
-              160
+              322
             ],
             [
               515,
-              160
+              322
             ],
             [
               515,
@@ -1739,17 +2580,17 @@
             ],
             [
               385,
-              160
+              322
             ]
           ],
           "sampled_contour": [
             [
               385,
-              160
+              322
             ],
             [
               515,
-              160
+              322
             ],
             [
               515,
@@ -1761,10 +2602,10 @@
             ],
             [
               385,
-              160
+              322
             ]
           ],
-          "pixel_count": 29406,
+          "pixel_count": 12979,
           "fill": 0.78,
           "quality": {
             "version": 2,
@@ -1801,15 +2642,15 @@
               ],
               "max": [
                 0.52,
-                0.857
+                0.568
               ],
               "center": [
                 0.434,
-                0.598
+                0.454
               ],
               "extent": [
                 0.171,
-                0.518
+                0.229
               ]
             },
             "prior_box": null,
@@ -1820,15 +2661,15 @@
               ],
               "max": [
                 0.52,
-                0.857
+                0.568
               ],
               "center": [
                 0.434,
-                0.598
+                0.454
               ],
               "extent": [
                 0.171,
-                0.518
+                0.229
               ]
             },
             "bbox_image_box": {
@@ -1838,15 +2679,15 @@
               ],
               "max": [
                 0.52,
-                0.857
+                0.568
               ],
               "center": [
                 0.434,
-                0.598
+                0.454
               ],
               "extent": [
                 0.171,
-                0.518
+                0.229
               ]
             }
           }
@@ -1854,11 +2695,11 @@
       }
     },
     {
-      "id": "parking-second-sample-footprint",
+      "id": "tank-farm-second-sample-footprint",
       "ok": true,
-      "item": "parking_lot",
-      "observation_id": "building_top_parking_lot",
-      "grounding_method": "pixel_gap_segmentation",
+      "item": "tank_farm",
+      "observation_id": "building_top_tank_farm",
+      "grounding_method": "pixel_color_segmentation",
       "image_view": "top",
       "residuals": {
         "center_delta": [
@@ -1878,11 +2719,11 @@
         "polygon_iou": 1,
         "edge_direction_error_deg": 0
       },
-      "message": "parking_lot model projection fits mask/contour footprint evidence.",
+      "message": "tank_farm model projection fits mask/contour footprint evidence.",
       "grounding_quality": {
         "ok": true,
         "severity": "error",
-        "method": "pixel_gap_segmentation",
+        "method": "pixel_color_segmentation",
         "max_bbox_dimension_ratio": 2.6,
         "raw_to_evidence_bbox_ratio": 1,
         "prior_to_evidence_bbox_ratio": 1,
@@ -1893,57 +2734,57 @@
         "boxes": {
           "raw_pixel_box": {
             "min": [
-              0.48,
-              0.045
+              0.842,
+              0.286
             ],
             "max": [
-              0.842,
-              0.25
+              0.934,
+              0.5
             ],
             "center": [
-              0.661,
-              0.147
+              0.888,
+              0.393
             ],
             "extent": [
-              0.362,
-              0.205
+              0.092,
+              0.214
             ]
           },
           "prior_box": null,
           "evidence_box": {
             "min": [
-              0.48,
-              0.045
+              0.842,
+              0.286
             ],
             "max": [
-              0.842,
-              0.25
+              0.934,
+              0.5
             ],
             "center": [
-              0.661,
-              0.147
+              0.888,
+              0.393
             ],
             "extent": [
-              0.362,
-              0.205
+              0.092,
+              0.214
             ]
           },
           "bbox_image_box": {
             "min": [
-              0.48,
-              0.045
+              0.842,
+              0.286
             ],
             "max": [
-              0.842,
-              0.25
+              0.934,
+              0.5
             ],
             "center": [
-              0.661,
-              0.147
+              0.888,
+              0.393
             ],
             "extent": [
-              0.362,
-              0.205
+              0.092,
+              0.214
             ]
           }
         }
@@ -1951,136 +2792,136 @@
       "evidence": {
         "model_box": {
           "min": [
-            0.48,
-            0.045
+            0.842,
+            0.286
           ],
           "max": [
-            0.842,
-            0.25
+            0.934,
+            0.5
           ],
           "center": [
-            0.661,
-            0.147
+            0.888,
+            0.393
           ],
           "extent": [
-            0.362,
-            0.205
+            0.092,
+            0.214
           ]
         },
         "image_box": {
           "min": [
-            0.48,
-            0.045
+            0.842,
+            0.286
           ],
           "max": [
-            0.842,
-            0.25
+            0.934,
+            0.5
           ],
           "center": [
-            0.661,
-            0.147
+            0.888,
+            0.393
           ],
           "extent": [
-            0.362,
-            0.205
+            0.092,
+            0.214
           ]
         },
         "bbox_image_box": {
           "min": [
-            0.48,
-            0.045
+            0.842,
+            0.286
           ],
           "max": [
-            0.842,
-            0.25
+            0.934,
+            0.5
           ],
           "center": [
-            0.661,
-            0.147
+            0.888,
+            0.393
           ],
           "extent": [
-            0.362,
-            0.205
+            0.092,
+            0.214
           ]
         },
         "model_polygon": [
           [
-            0.48,
-            0.045
+            0.842,
+            0.286
+          ],
+          [
+            0.934,
+            0.286
+          ],
+          [
+            0.934,
+            0.5
           ],
           [
             0.842,
-            0.045
+            0.5
           ],
           [
             0.842,
-            0.25
-          ],
-          [
-            0.48,
-            0.25
-          ],
-          [
-            0.48,
-            0.045
+            0.286
           ]
         ],
         "contour_polygon_sample": [
           [
-            0.48,
-            0.25
+            0.842,
+            0.5
+          ],
+          [
+            0.934,
+            0.5
+          ],
+          [
+            0.934,
+            0.286
           ],
           [
             0.842,
-            0.25
+            0.286
           ],
           [
             0.842,
-            0.045
-          ],
-          [
-            0.48,
-            0.045
-          ],
-          [
-            0.48,
-            0.25
+            0.5
           ]
         ],
         "contour_polygon_bounds": {
           "min": [
-            0.48,
-            0.045
+            0.842,
+            0.286
           ],
           "max": [
-            0.842,
-            0.25
+            0.934,
+            0.5
           ],
           "center": [
-            0.661,
-            0.147
+            0.888,
+            0.393
           ],
           "extent": [
-            0.362,
-            0.205
+            0.092,
+            0.214
           ]
         },
         "center_tolerance": 0.035,
         "extent_tolerance": [
-          0.05,
-          0.05
+          0.06,
+          0.08
         ],
         "area_tolerance": 0.32,
-        "observation_id": "building_top_parking_lot",
+        "observation_id": "building_top_tank_farm",
         "grounding": {
-          "method": "pixel_gap_segmentation",
+          "method": "pixel_color_segmentation",
           "pixel_bbox": [
-            485,
-            500,
-            275,
-            115
+            760,
+            360,
+            70,
+            120
           ],
-          "pixel_count": 24668,
+          "pixel_count": 6552,
           "fill": 0.78,
           "contour_basis": "sampled_contour",
           "grounding_quality": {
@@ -2095,59 +2936,59 @@
           "review_required": false
         },
         "mask": {
-          "id": "building_top_parking_lot_mask",
-          "method": "pixel_gap_segmentation",
+          "id": "building_top_tank_farm_mask",
+          "method": "pixel_color_segmentation",
           "bbox": [
-            485,
-            500,
-            275,
-            115
+            760,
+            360,
+            70,
+            120
           ],
           "polygon": [
             [
-              485,
-              500
+              760,
+              360
+            ],
+            [
+              830,
+              360
+            ],
+            [
+              830,
+              480
             ],
             [
               760,
-              500
+              480
             ],
             [
               760,
-              615
-            ],
-            [
-              485,
-              615
-            ],
-            [
-              485,
-              500
+              360
             ]
           ],
           "sampled_contour": [
             [
-              485,
-              500
+              760,
+              360
+            ],
+            [
+              830,
+              360
+            ],
+            [
+              830,
+              480
             ],
             [
               760,
-              500
+              480
             ],
             [
               760,
-              615
-            ],
-            [
-              485,
-              615
-            ],
-            [
-              485,
-              500
+              360
             ]
           ],
-          "pixel_count": 24668,
+          "pixel_count": 6552,
           "fill": 0.78,
           "quality": {
             "version": 2,
@@ -2163,12 +3004,12 @@
         "contour": {
           "kind": "sampled_polygon",
           "sample_count": 5,
-          "source": "pixel_gap_segmentation"
+          "source": "pixel_color_segmentation"
         },
         "grounding_quality": {
           "ok": true,
           "severity": "error",
-          "method": "pixel_gap_segmentation",
+          "method": "pixel_color_segmentation",
           "max_bbox_dimension_ratio": 2.6,
           "raw_to_evidence_bbox_ratio": 1,
           "prior_to_evidence_bbox_ratio": 1,
@@ -2179,57 +3020,57 @@
           "boxes": {
             "raw_pixel_box": {
               "min": [
-                0.48,
-                0.045
+                0.842,
+                0.286
               ],
               "max": [
-                0.842,
-                0.25
+                0.934,
+                0.5
               ],
               "center": [
-                0.661,
-                0.147
+                0.888,
+                0.393
               ],
               "extent": [
-                0.362,
-                0.205
+                0.092,
+                0.214
               ]
             },
             "prior_box": null,
             "evidence_box": {
               "min": [
-                0.48,
-                0.045
+                0.842,
+                0.286
               ],
               "max": [
-                0.842,
-                0.25
+                0.934,
+                0.5
               ],
               "center": [
-                0.661,
-                0.147
+                0.888,
+                0.393
               ],
               "extent": [
-                0.362,
-                0.205
+                0.092,
+                0.214
               ]
             },
             "bbox_image_box": {
               "min": [
-                0.48,
-                0.045
+                0.842,
+                0.286
               ],
               "max": [
-                0.842,
-                0.25
+                0.934,
+                0.5
               ],
               "center": [
-                0.661,
-                0.147
+                0.888,
+                0.393
               ],
               "extent": [
-                0.362,
-                0.205
+                0.092,
+                0.214
               ]
             }
           }
@@ -2239,35 +3080,35 @@
   ],
   "relation_results": [
     {
-      "id": "second-blue-hall-right-of-inner-warehouse",
+      "id": "second-blue-hall-right-of-inner-warehouse-north",
       "ok": true,
       "type": "right_of",
       "image_relation": {
-        "id": "test/建筑群-v2-generated/site-top.png|top|primary_blue_roof_hall|right_of|warehouse_row_inner|building_top_primary_blue_hall|building_top_warehouse_row_inner",
+        "id": "test/建筑群-v2-generated/site-top.png|top|primary_blue_roof_hall|right_of|warehouse_inner_north|building_top_primary_blue_hall|warehouse_inner_north_top_mask",
         "confidence": 0.9,
         "review_required": false
       },
       "residuals": {
         "image_delta_norm": [
           0.296,
-          0.099
+          -0.046
         ],
         "model_delta_norm": [
           0.296,
-          0.098
+          -0.047
         ],
-        "image_spacing_norm": 0.312,
-        "model_spacing_norm": 0.312,
+        "image_spacing_norm": 0.3,
+        "model_spacing_norm": 0.3,
         "spacing_ratio_error": 0.001,
         "relation_error": 0.001,
         "tolerance": 0.1,
         "spacing_ratio_tolerance": null
       },
-      "message": "second-blue-hall-right-of-inner-warehouse model relation residual is within image-space projection tolerance.",
+      "message": "second-blue-hall-right-of-inner-warehouse-north model relation residual is within image-space projection tolerance.",
       "evidence": {
         "image_pair": {
           "item_observation_id": "building_top_primary_blue_hall",
-          "anchor_observation_id": "building_top_warehouse_row_inner",
+          "anchor_observation_id": "warehouse_inner_north_top_mask",
           "frame_observation_id": "building_top_site_boundary",
           "item_center": [
             0.73,
@@ -2275,21 +3116,21 @@
           ],
           "anchor_center": [
             0.434,
-            0.598
+            0.743
           ],
           "delta_norm": [
             0.296,
-            0.099
+            -0.046
           ]
         },
         "model_relation": {
           "ok": true,
           "type": "right_of",
           "item": "primary_blue_roof_hall",
-          "anchor": "warehouse_row_inner",
+          "anchor": "warehouse_inner_north",
           "delta_norm": [
             0.296,
-            0.098
+            -0.047
           ],
           "min_delta": 0.08,
           "tolerance": 0.055,
@@ -2300,7 +3141,7 @@
             ],
             "anchor_center": [
               0.434,
-              0.598
+              0.743
             ],
             "model_axes": [
               "x",
@@ -2311,7 +3152,7 @@
         "image_relation_basis": {
           "kind": "bbox",
           "item_observation_id": "building_top_primary_blue_hall",
-          "anchor_observation_id": "building_top_warehouse_row_inner",
+          "anchor_observation_id": "warehouse_inner_north_top_mask",
           "item_bbox": [
             555,
             165,
@@ -2322,7 +3163,7 @@
             385,
             160,
             130,
-            290
+            128
           ],
           "item_keypoint": [
             675,
@@ -2330,7 +3171,7 @@
           ],
           "anchor_keypoint": [
             450,
-            305
+            224
           ],
           "item_grounding": {
             "method": "pixel_color_segmentation",
@@ -2360,9 +3201,9 @@
               385,
               160,
               130,
-              290
+              128
             ],
-            "pixel_count": 29406,
+            "pixel_count": 12979,
             "fill": 0.78,
             "contour_basis": "sampled_contour",
             "grounding_quality": {
@@ -2377,33 +3218,33 @@
             "review_required": false
           },
           "item_note": "Grounding v2 second sample pixel_color_segmentation evidence for primary_blue_roof_hall.",
-          "anchor_note": "Grounding v2 second sample pixel_color_segmentation evidence for warehouse_row_inner.",
+          "anchor_note": "Grounding v2 second sample pixel_color_segmentation evidence for warehouse_inner_north.",
           "delta_norm": [
             0.22,
-            -0.072
+            0.034
           ],
-          "spacing_ratio": 0.231,
+          "spacing_ratio": 0.222,
           "axis": "x"
         }
       }
     },
     {
-      "id": "second-inner-warehouse-right-of-west-warehouse",
+      "id": "second-inner-warehouse-north-right-of-west-warehouse-north",
       "ok": true,
       "type": "right_of",
       "image_relation": {
-        "id": "test/建筑群-v2-generated/site-top.png|top|warehouse_row_inner|right_of|warehouse_row_west|building_top_warehouse_row_inner|building_top_warehouse_row_west",
-        "confidence": 0.9,
+        "id": "test/建筑群-v2-generated/site-top.png|top|warehouse_inner_north|right_of|warehouse_west_north|warehouse_inner_north_top_mask|warehouse_west_north_top_mask",
+        "confidence": 0.885,
         "review_required": false
       },
       "residuals": {
         "image_delta_norm": [
           0.224,
-          0.004
+          0.007
         ],
         "model_delta_norm": [
           0.223,
-          0.004
+          0.007
         ],
         "image_spacing_norm": 0.224,
         "model_spacing_norm": 0.223,
@@ -2412,44 +3253,44 @@
         "tolerance": 0.1,
         "spacing_ratio_tolerance": null
       },
-      "message": "second-inner-warehouse-right-of-west-warehouse model relation residual is within image-space projection tolerance.",
+      "message": "second-inner-warehouse-north-right-of-west-warehouse-north model relation residual is within image-space projection tolerance.",
       "evidence": {
         "image_pair": {
-          "item_observation_id": "building_top_warehouse_row_inner",
-          "anchor_observation_id": "building_top_warehouse_row_west",
+          "item_observation_id": "warehouse_inner_north_top_mask",
+          "anchor_observation_id": "warehouse_west_north_top_mask",
           "frame_observation_id": "building_top_site_boundary",
           "item_center": [
             0.434,
-            0.598
+            0.743
           ],
           "anchor_center": [
             0.21,
-            0.594
+            0.736
           ],
           "delta_norm": [
             0.224,
-            0.004
+            0.007
           ]
         },
         "model_relation": {
           "ok": true,
           "type": "right_of",
-          "item": "warehouse_row_inner",
-          "anchor": "warehouse_row_west",
+          "item": "warehouse_inner_north",
+          "anchor": "warehouse_west_north",
           "delta_norm": [
             0.223,
-            0.004
+            0.007
           ],
           "min_delta": 0.06,
           "tolerance": 0.055,
           "evidence": {
             "item_center": [
               0.434,
-              0.598
+              0.743
             ],
             "anchor_center": [
               0.211,
-              0.594
+              0.736
             ],
             "model_axes": [
               "x",
@@ -2459,27 +3300,27 @@
         },
         "image_relation_basis": {
           "kind": "bbox",
-          "item_observation_id": "building_top_warehouse_row_inner",
-          "anchor_observation_id": "building_top_warehouse_row_west",
+          "item_observation_id": "warehouse_inner_north_top_mask",
+          "anchor_observation_id": "warehouse_west_north_top_mask",
           "item_bbox": [
             385,
             160,
             130,
-            290
+            128
           ],
           "anchor_bbox": [
             205,
             165,
             150,
-            285
+            126
           ],
           "item_keypoint": [
             450,
-            305
+            224
           ],
           "anchor_keypoint": [
             280,
-            307.5
+            228
           ],
           "item_grounding": {
             "method": "pixel_color_segmentation",
@@ -2487,9 +3328,9 @@
               385,
               160,
               130,
-              290
+              128
             ],
-            "pixel_count": 29406,
+            "pixel_count": 12979,
             "fill": 0.78,
             "contour_basis": "sampled_contour",
             "grounding_quality": {
@@ -2509,9 +3350,9 @@
               205,
               165,
               150,
-              285
+              126
             ],
-            "pixel_count": 33345,
+            "pixel_count": 14742,
             "fill": 0.78,
             "contour_basis": "sampled_contour",
             "grounding_quality": {
@@ -2525,11 +3366,11 @@
             },
             "review_required": false
           },
-          "item_note": "Grounding v2 second sample pixel_color_segmentation evidence for warehouse_row_inner.",
-          "anchor_note": "Grounding v2 second sample pixel_color_segmentation evidence for warehouse_row_west.",
+          "item_note": "Grounding v2 second sample pixel_color_segmentation evidence for warehouse_inner_north.",
+          "anchor_note": "Grounding v2 second sample pixel_color_segmentation evidence for warehouse_west_north.",
           "delta_norm": [
             0.166,
-            -0.003
+            -0.005
           ],
           "spacing_ratio": 0.166,
           "axis": "x"
@@ -2537,68 +3378,68 @@
       }
     },
     {
-      "id": "second-parking-below-blue-hall",
+      "id": "second-west-warehouse-north-above-south",
       "ok": true,
-      "type": "below",
+      "type": "above",
       "image_relation": {
-        "id": "test/建筑群-v2-generated/site-top.png|top|parking_lot|below|primary_blue_roof_hall|building_top_parking_lot|building_top_primary_blue_hall",
-        "confidence": 0.9,
+        "id": "test/建筑群-v2-generated/site-top.png|top|warehouse_west_north|above|warehouse_west_south|warehouse_west_north_top_mask|warehouse_west_south_top_mask",
+        "confidence": 0.89,
         "review_required": false
       },
       "residuals": {
         "image_delta_norm": [
-          -0.069,
-          -0.55
+          0,
+          0.284
         ],
         "model_delta_norm": [
-          -0.069,
-          -0.549
+          0,
+          0.284
         ],
-        "image_spacing_norm": 0.554,
-        "model_spacing_norm": 0.553,
-        "spacing_ratio_error": 0.002,
-        "relation_error": 0.001,
+        "image_spacing_norm": 0.284,
+        "model_spacing_norm": 0.284,
+        "spacing_ratio_error": 0,
+        "relation_error": 0,
         "tolerance": 0.12,
         "spacing_ratio_tolerance": null
       },
-      "message": "second-parking-below-blue-hall model relation residual is within image-space projection tolerance.",
+      "message": "second-west-warehouse-north-above-south model relation residual is within image-space projection tolerance.",
       "evidence": {
         "image_pair": {
-          "item_observation_id": "building_top_parking_lot",
-          "anchor_observation_id": "building_top_primary_blue_hall",
+          "item_observation_id": "warehouse_west_north_top_mask",
+          "anchor_observation_id": "warehouse_west_south_top_mask",
           "frame_observation_id": "building_top_site_boundary",
           "item_center": [
-            0.661,
-            0.147
+            0.21,
+            0.736
           ],
           "anchor_center": [
-            0.73,
-            0.697
+            0.21,
+            0.452
           ],
           "delta_norm": [
-            -0.069,
-            -0.55
+            0,
+            0.284
           ]
         },
         "model_relation": {
           "ok": true,
-          "type": "below",
-          "item": "parking_lot",
-          "anchor": "primary_blue_roof_hall",
+          "type": "above",
+          "item": "warehouse_west_north",
+          "anchor": "warehouse_west_south",
           "delta_norm": [
-            -0.069,
-            -0.549
+            0,
+            0.284
           ],
           "min_delta": 0.08,
           "tolerance": 0.055,
           "evidence": {
             "item_center": [
-              0.661,
-              0.147
+              0.211,
+              0.736
             ],
             "anchor_center": [
-              0.73,
-              0.696
+              0.211,
+              0.452
             ],
             "model_axes": [
               "x",
@@ -2608,37 +3449,37 @@
         },
         "image_relation_basis": {
           "kind": "bbox",
-          "item_observation_id": "building_top_parking_lot",
-          "anchor_observation_id": "building_top_primary_blue_hall",
+          "item_observation_id": "warehouse_west_north_top_mask",
+          "anchor_observation_id": "warehouse_west_south_top_mask",
           "item_bbox": [
-            485,
-            500,
-            275,
-            115
+            205,
+            165,
+            150,
+            126
           ],
           "anchor_bbox": [
-            555,
-            165,
-            240,
-            170
+            205,
+            324,
+            150,
+            126
           ],
           "item_keypoint": [
-            622.5,
-            557.5
+            280,
+            228
           ],
           "anchor_keypoint": [
-            675,
-            250
+            280,
+            387
           ],
           "item_grounding": {
-            "method": "pixel_gap_segmentation",
+            "method": "pixel_color_segmentation",
             "pixel_bbox": [
-              485,
-              500,
-              275,
-              115
+              205,
+              165,
+              150,
+              126
             ],
-            "pixel_count": 24668,
+            "pixel_count": 14742,
             "fill": 0.78,
             "contour_basis": "sampled_contour",
             "grounding_quality": {
@@ -2655,12 +3496,12 @@
           "anchor_grounding": {
             "method": "pixel_color_segmentation",
             "pixel_bbox": [
-              555,
-              165,
-              240,
-              170
+              205,
+              324,
+              150,
+              126
             ],
-            "pixel_count": 31824,
+            "pixel_count": 14742,
             "fill": 0.78,
             "contour_basis": "sampled_contour",
             "grounding_quality": {
@@ -2674,13 +3515,162 @@
             },
             "review_required": false
           },
-          "item_note": "Grounding v2 second sample pixel_gap_segmentation evidence for parking_lot.",
-          "anchor_note": "Grounding v2 second sample pixel_color_segmentation evidence for primary_blue_roof_hall.",
+          "item_note": "Grounding v2 second sample pixel_color_segmentation evidence for warehouse_west_north.",
+          "anchor_note": "Grounding v2 second sample pixel_color_segmentation evidence for warehouse_west_south.",
           "delta_norm": [
-            -0.051,
-            0.4
+            0,
+            -0.207
           ],
-          "spacing_ratio": 0.404,
+          "spacing_ratio": 0.207,
+          "axis": "y"
+        }
+      }
+    },
+    {
+      "id": "second-inner-warehouse-north-above-south",
+      "ok": true,
+      "type": "above",
+      "image_relation": {
+        "id": "test/建筑群-v2-generated/site-top.png|top|warehouse_inner_north|above|warehouse_inner_south|warehouse_inner_north_top_mask|warehouse_inner_south_top_mask",
+        "confidence": 0.88,
+        "review_required": false
+      },
+      "residuals": {
+        "image_delta_norm": [
+          0,
+          0.289
+        ],
+        "model_delta_norm": [
+          0,
+          0.289
+        ],
+        "image_spacing_norm": 0.289,
+        "model_spacing_norm": 0.289,
+        "spacing_ratio_error": 0,
+        "relation_error": 0,
+        "tolerance": 0.12,
+        "spacing_ratio_tolerance": null
+      },
+      "message": "second-inner-warehouse-north-above-south model relation residual is within image-space projection tolerance.",
+      "evidence": {
+        "image_pair": {
+          "item_observation_id": "warehouse_inner_north_top_mask",
+          "anchor_observation_id": "warehouse_inner_south_top_mask",
+          "frame_observation_id": "building_top_site_boundary",
+          "item_center": [
+            0.434,
+            0.743
+          ],
+          "anchor_center": [
+            0.434,
+            0.454
+          ],
+          "delta_norm": [
+            0,
+            0.289
+          ]
+        },
+        "model_relation": {
+          "ok": true,
+          "type": "above",
+          "item": "warehouse_inner_north",
+          "anchor": "warehouse_inner_south",
+          "delta_norm": [
+            0,
+            0.289
+          ],
+          "min_delta": 0.08,
+          "tolerance": 0.055,
+          "evidence": {
+            "item_center": [
+              0.434,
+              0.743
+            ],
+            "anchor_center": [
+              0.434,
+              0.454
+            ],
+            "model_axes": [
+              "x",
+              "y"
+            ]
+          }
+        },
+        "image_relation_basis": {
+          "kind": "bbox",
+          "item_observation_id": "warehouse_inner_north_top_mask",
+          "anchor_observation_id": "warehouse_inner_south_top_mask",
+          "item_bbox": [
+            385,
+            160,
+            130,
+            128
+          ],
+          "anchor_bbox": [
+            385,
+            322,
+            130,
+            128
+          ],
+          "item_keypoint": [
+            450,
+            224
+          ],
+          "anchor_keypoint": [
+            450,
+            386
+          ],
+          "item_grounding": {
+            "method": "pixel_color_segmentation",
+            "pixel_bbox": [
+              385,
+              160,
+              130,
+              128
+            ],
+            "pixel_count": 12979,
+            "fill": 0.78,
+            "contour_basis": "sampled_contour",
+            "grounding_quality": {
+              "version": 2,
+              "status": "pass",
+              "raw_to_evidence_bbox_ratio": 1,
+              "prior_to_evidence_bbox_ratio": 1,
+              "bbox_proxy": false,
+              "review_required": false,
+              "reasons": []
+            },
+            "review_required": false
+          },
+          "anchor_grounding": {
+            "method": "pixel_color_segmentation",
+            "pixel_bbox": [
+              385,
+              322,
+              130,
+              128
+            ],
+            "pixel_count": 12979,
+            "fill": 0.78,
+            "contour_basis": "sampled_contour",
+            "grounding_quality": {
+              "version": 2,
+              "status": "pass",
+              "raw_to_evidence_bbox_ratio": 1,
+              "prior_to_evidence_bbox_ratio": 1,
+              "bbox_proxy": false,
+              "review_required": false,
+              "reasons": []
+            },
+            "review_required": false
+          },
+          "item_note": "Grounding v2 second sample pixel_color_segmentation evidence for warehouse_inner_north.",
+          "anchor_note": "Grounding v2 second sample pixel_color_segmentation evidence for warehouse_inner_south.",
+          "delta_norm": [
+            0,
+            -0.211
+          ],
+          "spacing_ratio": 0.211,
           "axis": "y"
         }
       }
@@ -2753,12 +3743,12 @@
       "id": "second-sample-mirror-x-negative",
       "transform": "mirror_x",
       "checked_rules": [
-        "second-blue-hall-right-of-inner-warehouse",
-        "second-inner-warehouse-right-of-west-warehouse"
+        "second-blue-hall-right-of-inner-warehouse-north",
+        "second-inner-warehouse-north-right-of-west-warehouse-north"
       ],
       "failed_rules": [
-        "second-blue-hall-right-of-inner-warehouse",
-        "second-inner-warehouse-right-of-west-warehouse"
+        "second-blue-hall-right-of-inner-warehouse-north",
+        "second-inner-warehouse-north-right-of-west-warehouse-north"
       ],
       "handedness_error": 0,
       "ok": true,
@@ -2767,10 +3757,10 @@
           "ok": false,
           "type": "right_of",
           "item": "primary_blue_roof_hall",
-          "anchor": "warehouse_row_inner",
+          "anchor": "warehouse_inner_north",
           "delta_norm": [
             -0.296,
-            0.098
+            -0.047
           ],
           "min_delta": 0.08,
           "tolerance": 0.055,
@@ -2781,7 +3771,7 @@
             ],
             "anchor_center": [
               0.566,
-              0.598
+              0.743
             ],
             "model_axes": [
               "x",
@@ -2792,22 +3782,22 @@
         {
           "ok": false,
           "type": "right_of",
-          "item": "warehouse_row_inner",
-          "anchor": "warehouse_row_west",
+          "item": "warehouse_inner_north",
+          "anchor": "warehouse_west_north",
           "delta_norm": [
             -0.223,
-            0.004
+            0.007
           ],
           "min_delta": 0.06,
           "tolerance": 0.055,
           "evidence": {
             "item_center": [
               0.566,
-              0.598
+              0.743
             ],
             "anchor_center": [
               0.789,
-              0.594
+              0.736
             ],
             "model_axes": [
               "x",

@@ -1,0 +1,215 @@
+{
+  "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+  "report": "projects/image-structured-modeler/examples/building-group/structured-plan/structured-plan-qa-report.json",
+  "qa": {
+    "ok": true,
+    "verdict": "review",
+    "hard_fail": false,
+    "review_required": true,
+    "road_building_overlap_ratio": 0,
+    "parent_child_double_occupancy": 0,
+    "parent_child_reference_rejected_count": 2,
+    "raw_contour_leakage": 0,
+    "layout_prior_conflict_count": 13,
+    "canonical_region_overlap_ratio": 0,
+    "gap_ratio": 0.543,
+    "gap_completion_ratio": 0.191,
+    "remaining_unknown_gap_ratio": 0.414,
+    "gap_derived_road_overlap_ratio": 0,
+    "gap_derived_region_without_connectivity": 0,
+    "open_paved_area_ratio": 0.012,
+    "road_candidate_review_count": 2,
+    "region_without_evidence": 0,
+    "checked_canonical_regions": 12,
+    "checked_subdivision_cells": 440,
+    "checked_gap_completed_regions": 12,
+    "remaining_gap_cells": 216,
+    "checked_road_corridors": 1,
+    "rejected_priors": 13,
+    "rejected_evidence": 2,
+    "reasons": [
+      "gap_above_candidate_threshold",
+      "remaining_unknown_gap_above_candidate_threshold",
+      "gap_road_candidates_require_review",
+      "layout_prior_conflicts_rejected",
+      "canonical_regions_include_review_candidates"
+    ],
+    "issues": [
+      {
+        "severity": "warn",
+        "type": "structured_plan.gap_above_candidate_threshold",
+        "rule_id": "structured_plan.gap_above_candidate_threshold",
+        "message": "gap_above_candidate_threshold",
+        "evidence": {}
+      },
+      {
+        "severity": "warn",
+        "type": "structured_plan.remaining_unknown_gap_above_candidate_threshold",
+        "rule_id": "structured_plan.remaining_unknown_gap_above_candidate_threshold",
+        "message": "remaining_unknown_gap_above_candidate_threshold",
+        "evidence": {}
+      },
+      {
+        "severity": "warn",
+        "type": "structured_plan.gap_road_candidates_require_review",
+        "rule_id": "structured_plan.gap_road_candidates_require_review",
+        "message": "gap_road_candidates_require_review",
+        "evidence": {}
+      },
+      {
+        "severity": "warn",
+        "type": "structured_plan.layout_prior_conflicts_rejected",
+        "rule_id": "structured_plan.layout_prior_conflicts_rejected",
+        "message": "layout_prior_conflicts_rejected",
+        "evidence": {}
+      },
+      {
+        "severity": "warn",
+        "type": "structured_plan.canonical_regions_include_review_candidates",
+        "rule_id": "structured_plan.canonical_regions_include_review_candidates",
+        "message": "canonical_regions_include_review_candidates",
+        "evidence": {}
+      }
+    ]
+  },
+  "canonical_regions": [
+    {
+      "id": "primary_blue_roof_hall",
+      "class": "building_footprint",
+      "source_kind": "pixel_building_mask",
+      "confidence": 0.86,
+      "review_required": false,
+      "grounding_decision": "promoted_geometry"
+    },
+    {
+      "id": "warehouse_inner_north",
+      "class": "building_footprint",
+      "source_kind": "pixel_building_mask",
+      "confidence": 0.82,
+      "review_required": false,
+      "grounding_decision": "promoted_geometry"
+    },
+    {
+      "id": "warehouse_inner_south",
+      "class": "building_footprint",
+      "source_kind": "pixel_building_mask",
+      "confidence": 0.82,
+      "review_required": false,
+      "grounding_decision": "promoted_geometry"
+    },
+    {
+      "id": "warehouse_west_north",
+      "class": "building_footprint",
+      "source_kind": "pixel_building_mask",
+      "confidence": 0.82,
+      "review_required": false,
+      "grounding_decision": "promoted_geometry"
+    },
+    {
+      "id": "warehouse_west_south",
+      "class": "building_footprint",
+      "source_kind": "pixel_building_mask",
+      "confidence": 0.82,
+      "review_required": false,
+      "grounding_decision": "promoted_geometry"
+    },
+    {
+      "id": "admin_office",
+      "class": "building_footprint",
+      "source_kind": "layout_prior",
+      "confidence": 0.64,
+      "review_required": true,
+      "grounding_decision": "review_candidate"
+    },
+    {
+      "id": "utility_building",
+      "class": "building_footprint",
+      "source_kind": "layout_prior",
+      "confidence": 0.66,
+      "review_required": true,
+      "grounding_decision": "review_candidate"
+    },
+    {
+      "id": "parking_stall_row_north",
+      "class": "parking",
+      "source_kind": "canonical_parking_grid",
+      "confidence": 0.68,
+      "review_required": false,
+      "grounding_decision": "promoted_geometry"
+    },
+    {
+      "id": "parking_stall_row_south",
+      "class": "parking",
+      "source_kind": "canonical_parking_grid",
+      "confidence": 0.68,
+      "review_required": false,
+      "grounding_decision": "promoted_geometry"
+    },
+    {
+      "id": "parking_drive_aisle_center",
+      "class": "road",
+      "source_kind": "pixel_gap",
+      "confidence": 0.66,
+      "review_required": false,
+      "grounding_decision": "promoted_geometry"
+    },
+    {
+      "id": "tree_row_south",
+      "class": "green",
+      "source_kind": "pixel_vegetation",
+      "confidence": 0.7,
+      "review_required": true,
+      "grounding_decision": "helper_only"
+    },
+    {
+      "id": "tank_farm",
+      "class": "service_yard",
+      "source_kind": "layout_prior",
+      "confidence": 0.7,
+      "review_required": true,
+      "grounding_decision": "review_candidate"
+    }
+  ],
+  "gap_classification_summary": {
+    "total_gap_cells": 289,
+    "total_gap_area_px": 239994.063,
+    "total_gap_area_ratio": 0.543,
+    "by_class": {
+      "open_paved_area": {
+        "cells": 18,
+        "area_px": 5392.376,
+        "area_ratio": 0.012
+      },
+      "road_candidate": {
+        "cells": 21,
+        "area_px": 2541.607,
+        "area_ratio": 0.006
+      },
+      "walkway_candidate": {
+        "cells": 6,
+        "area_px": 2277.791,
+        "area_ratio": 0.005
+      },
+      "service_yard_candidate": {
+        "cells": 16,
+        "area_px": 21337.242,
+        "area_ratio": 0.048
+      },
+      "vegetation_gap": {
+        "cells": 12,
+        "area_px": 14379.233,
+        "area_ratio": 0.033
+      },
+      "true_gap": {
+        "cells": 11,
+        "area_px": 11296.46,
+        "area_ratio": 0.026
+      },
+      "unknown_gap": {
+        "cells": 205,
+        "area_px": 182769.354,
+        "area_ratio": 0.414
+      }
+    }
+  }
+}

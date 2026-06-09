@@ -1,0 +1,49 @@
+{
+  "kind": "reference_mask_bank_v1",
+  "version": 1,
+  "default_backend": "insid3_optional",
+  "classes": [
+    "building_roof_or_footprint",
+    "paved_surface",
+    "vegetation",
+    "parking_marking",
+    "road_surface_or_drive_aisle"
+  ],
+  "entries": [
+    {
+      "class": "building_roof_or_footprint",
+      "reference_image": "projects/image-structured-modeler/examples/reference-mask-bank/building_roof_or_footprint/reference.png",
+      "binary_mask": "projects/image-structured-modeler/examples/reference-mask-bank/building_roof_or_footprint/mask.png",
+      "source": "programmatic_scaffold",
+      "note": "Minimal concept reference for optional INSID3 smoke testing; not a per-image annotation library."
+    },
+    {
+      "class": "paved_surface",
+      "reference_image": "projects/image-structured-modeler/examples/reference-mask-bank/paved_surface/reference.png",
+      "binary_mask": "projects/image-structured-modeler/examples/reference-mask-bank/paved_surface/mask.png",
+      "source": "programmatic_scaffold",
+      "note": "Minimal concept reference for optional INSID3 smoke testing; not a per-image annotation library."
+    },
+    {
+      "class": "vegetation",
+      "reference_image": "projects/image-structured-modeler/examples/reference-mask-bank/vegetation/reference.png",
+      "binary_mask": "projects/image-structured-modeler/examples/reference-mask-bank/vegetation/mask.png",
+      "source": "programmatic_scaffold",
+      "note": "Minimal concept reference for optional INSID3 smoke testing; not a per-image annotation library."
+    },
+    {
+      "class": "parking_marking",
+      "reference_image": "projects/image-structured-modeler/examples/reference-mask-bank/parking_marking/reference.png",
+      "binary_mask": "projects/image-structured-modeler/examples/reference-mask-bank/parking_marking/mask.png",
+      "source": "programmatic_scaffold",
+      "note": "Minimal concept reference for optional INSID3 smoke testing; not a per-image annotation library."
+    },
+    {
+      "class": "road_surface_or_drive_aisle",
+      "reference_image": "projects/image-structured-modeler/examples/reference-mask-bank/road_surface_or_drive_aisle/reference.png",
+      "binary_mask": "projects/image-structured-modeler/examples/reference-mask-bank/road_surface_or_drive_aisle/mask.png",
+      "source": "programmatic_scaffold",
+      "note": "Minimal concept reference for optional INSID3 smoke testing; not a per-image annotation library."
+    }
+  ]
+}

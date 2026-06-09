@@ -1,0 +1,441 @@
+{
+  "kind": "photo_grade_readiness_qa",
+  "version": 1,
+  "ok": true,
+  "verdict": "review",
+  "photo_grade_readiness": "technical_baseline",
+  "photo_grade_candidate": false,
+  "thresholds": {
+    "scale": {
+      "minAnchors": 3,
+      "minFamilies": 2,
+      "winnerResidual": 0.12,
+      "alternateResidual": 0.18
+    },
+    "subdivision": {
+      "maxOverlapRatio": 0.02,
+      "maxGapRatio": 0.25
+    },
+    "lineGrid": {
+      "maxParkingSpacingResidual": 0.12,
+      "maxParkingCountResidual": 1,
+      "maxDriveAisleResidual": 0.15,
+      "maxRoadAxisResidual": 0.04
+    },
+    "topViewOverlay": {
+      "minMeanIou": 0.85,
+      "minIou": 0.65,
+      "maxCentroidError": 0.03,
+      "maxChamferError": 0.025
+    },
+    "obliqueFacade": {
+      "maxPrimaryHeightTierResidual": 0.18,
+      "minVisibleFacadeItems": 3,
+      "minOpeningEdgeEvidence": 1
+    }
+  },
+  "sample": {
+    "id": "building-group-candidates",
+    "kind": "generated_building_group",
+    "input_asset_status": "available"
+  },
+  "gates": [
+    {
+      "id": "scale",
+      "candidate_ready": false,
+      "verdict": "review",
+      "metrics": {
+        "checked_scale_anchors": 5,
+        "distinct_non_site_families": 3,
+        "winner_anchor_type": "parking_bay_width_span",
+        "winner_residual": 0.026,
+        "alternate_residual": 0.058,
+        "independent_non_parking_consensus": true,
+        "scale_anchor_review_required": true
+      },
+      "blockers": [
+        {
+          "gate": "scale",
+          "reason": "scale_anchor_review_required",
+          "severity": "warn",
+          "message": "scale anchor review required",
+          "evidence": {
+            "reasons": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "subdivision",
+      "candidate_ready": false,
+      "verdict": "review",
+      "metrics": {
+        "source": "auto_ground_plan_r10",
+        "checked_ground_regions": 17,
+        "checked_subdivision_cells": 899,
+        "coverage_ratio": 0.526,
+        "overlap_ratio": 0,
+        "gap_ratio": 0.474,
+        "gap_completion_ratio": 0.557,
+        "remaining_unknown_gap_ratio": 0.198,
+        "open_paved_area_ratio": 0.115,
+        "road_candidate_review_count": 0,
+        "gap_derived_road_overlap_ratio": 0,
+        "gap_derived_region_without_connectivity": 0,
+        "road_building_overlap_ratio": 0,
+        "raw_contour_leakage": 0,
+        "parent_child_double_occupancy": 0,
+        "layout_prior_conflict_count": 13,
+        "region_without_evidence": 0
+      },
+      "blockers": [
+        {
+          "gate": "subdivision",
+          "reason": "r10_gap_above_candidate_threshold",
+          "severity": "warn",
+          "message": "r10 gap above candidate threshold",
+          "evidence": {
+            "gap_ratio": 0.474
+          }
+        },
+        {
+          "gate": "subdivision",
+          "reason": "r10_layout_prior_conflicts_rejected",
+          "severity": "warn",
+          "message": "r10 layout prior conflicts rejected",
+          "evidence": {
+            "layout_prior_conflict_count": 13
+          }
+        }
+      ]
+    },
+    {
+      "id": "line_grid",
+      "candidate_ready": true,
+      "verdict": "pass",
+      "metrics": {
+        "checked_parking_lines": 2,
+        "checked_road_axes": 1,
+        "row_spacing_residual": 0.095,
+        "parking_grid_count_residual": 0,
+        "drive_aisle_gap_residual": 0,
+        "max_line_axis_residual": 0,
+        "bbox_only_parking_lines": 0
+      },
+      "blockers": []
+    },
+    {
+      "id": "top_view_overlay",
+      "candidate_ready": true,
+      "verdict": "pass",
+      "metrics": {
+        "checked_regions": 18,
+        "checked_lines": 2,
+        "mean_mask_iou": 0.964,
+        "min_mask_iou": 0.835,
+        "max_centroid_error_norm": 0.003,
+        "max_line_chamfer_error_norm": 0
+      },
+      "blockers": []
+    },
+    {
+      "id": "oblique_facade",
+      "candidate_ready": false,
+      "verdict": "review",
+      "metrics": {
+        "oblique_images": 2,
+        "visible_facade_items": 15,
+        "primary_height_tier_residual": 0.251,
+        "roof_ridge_evidence": false,
+        "opening_edge_evidence": 0,
+        "geometry_fit_multi_view_items": 10
+      },
+      "blockers": [
+        {
+          "gate": "oblique_facade",
+          "reason": "primary_height_tier_residual_above_candidate_threshold",
+          "severity": "warn",
+          "message": "primary height tier residual above candidate threshold",
+          "evidence": {
+            "primary_height_tier_residual": 0.251
+          }
+        },
+        {
+          "gate": "oblique_facade",
+          "reason": "missing_roof_ridge_or_vanishing_line_evidence",
+          "severity": "warn",
+          "message": "missing roof ridge or vanishing line evidence",
+          "evidence": {}
+        },
+        {
+          "gate": "oblique_facade",
+          "reason": "facade_openings_lack_per_instance_edge_evidence",
+          "severity": "warn",
+          "message": "facade openings lack per instance edge evidence",
+          "evidence": {
+            "opening_edge_evidence": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "promotion",
+      "candidate_ready": false,
+      "verdict": "review",
+      "metrics": {
+        "promoted_geometry": 12,
+        "review_candidate": 5,
+        "helper_only": 1,
+        "rejected": 0,
+        "dense_detail_without_photo_grade_evidence": 1
+      },
+      "blockers": [
+        {
+          "gate": "promotion",
+          "reason": "review_candidates_still_present",
+          "severity": "warn",
+          "message": "review candidates still present",
+          "evidence": {
+            "review_candidate": 5
+          }
+        },
+        {
+          "gate": "promotion",
+          "reason": "helper_only_candidates_still_present",
+          "severity": "warn",
+          "message": "helper only candidates still present",
+          "evidence": {
+            "helper_only": 1
+          }
+        },
+        {
+          "gate": "promotion",
+          "reason": "dense_detail_lacks_per_instance_photo_grade_evidence",
+          "severity": "warn",
+          "message": "dense detail lacks per instance photo grade evidence",
+          "evidence": {
+            "dense_detail_count": 1
+          }
+        }
+      ]
+    }
+  ],
+  "grounding_v3": {
+    "ok": true,
+    "verdict": "pass",
+    "summary": {
+      "checked_scale_anchors": 5,
+      "distinct_scale_anchor_families": 3,
+      "scale_anchor_winner_type": "parking_bay_width_span",
+      "scale_anchor_review_required": true,
+      "checked_ground_regions": 18,
+      "subdivision_coverage_ratio": 0.526,
+      "subdivision_overlap_ratio": 0,
+      "subdivision_gap_ratio": 0.474,
+      "checked_line_fits": 2,
+      "checked_road_axes": 1,
+      "parking_grid_count_residual": 0,
+      "max_line_axis_residual": 0,
+      "top_view_overlay_regions": 18,
+      "top_view_overlay_lines": 2,
+      "top_view_overlay_mean_iou": 0.964,
+      "top_view_overlay_min_iou": 0.835,
+      "top_view_overlay_max_centroid_error": 0.003,
+      "top_view_overlay_max_chamfer_error": 0,
+      "promotion_decisions": 18,
+      "promoted_geometry": 12,
+      "review_candidate": 5,
+      "helper_only": 1,
+      "rejected": 0,
+      "photo_grade_candidate": false,
+      "total_issues": 0,
+      "by_severity": {
+        "error": 0,
+        "warn": 0,
+        "info": 0
+      }
+    },
+    "auto_ground_plan_r10": {
+      "verdict": "review",
+      "road_building_overlap_ratio": 0,
+      "raw_contour_leakage": 0,
+      "parent_child_double_occupancy": 0,
+      "canonical_region_overlap_ratio": 0,
+      "gap_ratio": 0.474,
+      "gap_completion_ratio": 0.557,
+      "remaining_unknown_gap_ratio": 0.198
+    }
+  },
+  "summary": {
+    "photo_grade_readiness": "technical_baseline",
+    "photo_grade_candidate": false,
+    "sample_id": "building-group-candidates",
+    "sample_kind": "generated_building_group",
+    "input_asset_status": "available",
+    "gate_count": 6,
+    "candidate_ready_gates": 2,
+    "review_required_gates": 4,
+    "failed_gates": 0,
+    "blockers": 9,
+    "by_severity": {
+      "error": 0,
+      "warn": 9,
+      "info": 0
+    },
+    "grounding_v3_verdict": "pass",
+    "grounding_v3_photo_grade_candidate": false
+  },
+  "blockers": [
+    {
+      "gate": "scale",
+      "reason": "scale_anchor_review_required",
+      "severity": "warn",
+      "message": "scale anchor review required",
+      "evidence": {
+        "reasons": []
+      }
+    },
+    {
+      "gate": "subdivision",
+      "reason": "r10_gap_above_candidate_threshold",
+      "severity": "warn",
+      "message": "r10 gap above candidate threshold",
+      "evidence": {
+        "gap_ratio": 0.474
+      }
+    },
+    {
+      "gate": "subdivision",
+      "reason": "r10_layout_prior_conflicts_rejected",
+      "severity": "warn",
+      "message": "r10 layout prior conflicts rejected",
+      "evidence": {
+        "layout_prior_conflict_count": 13
+      }
+    },
+    {
+      "gate": "oblique_facade",
+      "reason": "primary_height_tier_residual_above_candidate_threshold",
+      "severity": "warn",
+      "message": "primary height tier residual above candidate threshold",
+      "evidence": {
+        "primary_height_tier_residual": 0.251
+      }
+    },
+    {
+      "gate": "oblique_facade",
+      "reason": "missing_roof_ridge_or_vanishing_line_evidence",
+      "severity": "warn",
+      "message": "missing roof ridge or vanishing line evidence",
+      "evidence": {}
+    },
+    {
+      "gate": "oblique_facade",
+      "reason": "facade_openings_lack_per_instance_edge_evidence",
+      "severity": "warn",
+      "message": "facade openings lack per instance edge evidence",
+      "evidence": {
+        "opening_edge_evidence": 0
+      }
+    },
+    {
+      "gate": "promotion",
+      "reason": "review_candidates_still_present",
+      "severity": "warn",
+      "message": "review candidates still present",
+      "evidence": {
+        "review_candidate": 5
+      }
+    },
+    {
+      "gate": "promotion",
+      "reason": "helper_only_candidates_still_present",
+      "severity": "warn",
+      "message": "helper only candidates still present",
+      "evidence": {
+        "helper_only": 1
+      }
+    },
+    {
+      "gate": "promotion",
+      "reason": "dense_detail_lacks_per_instance_photo_grade_evidence",
+      "severity": "warn",
+      "message": "dense detail lacks per instance photo grade evidence",
+      "evidence": {
+        "dense_detail_count": 1
+      }
+    }
+  ],
+  "correction_suggestions": [
+    {
+      "action": "add_or_confirm_independent_scale_anchor",
+      "target": "scale",
+      "reason": "scale_anchor_review_required",
+      "evidence": {
+        "reasons": []
+      }
+    },
+    {
+      "action": "refine_ground_plan_region_masks",
+      "target": "subdivision",
+      "reason": "r10_gap_above_candidate_threshold",
+      "evidence": {
+        "gap_ratio": 0.474
+      }
+    },
+    {
+      "action": "refine_ground_plan_region_masks",
+      "target": "subdivision",
+      "reason": "r10_layout_prior_conflicts_rejected",
+      "evidence": {
+        "layout_prior_conflict_count": 13
+      }
+    },
+    {
+      "action": "add_oblique_facade_edge_or_height_evidence",
+      "target": "oblique_facade",
+      "reason": "primary_height_tier_residual_above_candidate_threshold",
+      "evidence": {
+        "primary_height_tier_residual": 0.251
+      }
+    },
+    {
+      "action": "add_oblique_facade_edge_or_height_evidence",
+      "target": "oblique_facade",
+      "reason": "missing_roof_ridge_or_vanishing_line_evidence",
+      "evidence": {}
+    },
+    {
+      "action": "add_oblique_facade_edge_or_height_evidence",
+      "target": "oblique_facade",
+      "reason": "facade_openings_lack_per_instance_edge_evidence",
+      "evidence": {
+        "opening_edge_evidence": 0
+      }
+    },
+    {
+      "action": "downgrade_candidate_or_add_per_instance_evidence",
+      "target": "promotion",
+      "reason": "review_candidates_still_present",
+      "evidence": {
+        "review_candidate": 5
+      }
+    },
+    {
+      "action": "downgrade_candidate_or_add_per_instance_evidence",
+      "target": "promotion",
+      "reason": "helper_only_candidates_still_present",
+      "evidence": {
+        "helper_only": 1
+      }
+    },
+    {
+      "action": "downgrade_candidate_or_add_per_instance_evidence",
+      "target": "promotion",
+      "reason": "dense_detail_lacks_per_instance_photo_grade_evidence",
+      "evidence": {
+        "dense_detail_count": 1
+      }
+    }
+  ]
+}

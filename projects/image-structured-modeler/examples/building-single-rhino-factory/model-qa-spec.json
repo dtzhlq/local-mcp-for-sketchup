@@ -1,0 +1,69 @@
+{
+  "title": "Dimensioned production workshop layout QA",
+  "views": [
+    {
+      "name": "top",
+      "title": "Roof plan",
+      "axes": [
+        "x",
+        "y"
+      ],
+      "depthAxis": "z"
+    },
+    {
+      "name": "front",
+      "title": "Front elevation",
+      "axes": [
+        "x",
+        "z"
+      ],
+      "depthAxis": "y"
+    },
+    {
+      "name": "rear",
+      "title": "Rear elevation",
+      "axes": [
+        "x",
+        "z"
+      ],
+      "depthAxis": "y"
+    },
+    {
+      "name": "east",
+      "title": "End elevation",
+      "axes": [
+        "y",
+        "z"
+      ],
+      "depthAxis": "x"
+    }
+  ],
+  "allowed_collisions": [
+    {
+      "item": "/(Site|Datum|Facade|Wall|Platform|Roof|Glass|Frame|Mullion|Orange|Door|Canopy|PV|Cladding|Joint|Plinth|Rib|Rail|Slat|Cap|Monitor|Seam|Band|Brace)/",
+      "with": "/(Site|Datum|Facade|Wall|Platform|Roof|Glass|Frame|Mullion|Orange|Door|Canopy|PV|Cladding|Joint|Plinth|Rib|Rail|Slat|Cap|Monitor|Seam|Band|Brace|Ground)/"
+    }
+  ],
+  "inside": [
+    {
+      "item": "/(Roof_Photovoltaic|PV_Module)/",
+      "parent": "Main_Roof_Slab_13m_Datum",
+      "axes": [
+        "x",
+        "y"
+      ],
+      "margin_mm": 0,
+      "tolerance_mm": 1,
+      "severity": "error"
+    }
+  ],
+  "support": [
+    {
+      "item": "Main_Roof_Slab_13m_Datum",
+      "parent": "/(Front_Facade_Wall|Rear_Facade_Wall|West_End_Wall|East_End_Wall)/",
+      "max_gap_mm": 2,
+      "allow_penetration_mm": 400,
+      "severity": "warn"
+    }
+  ]
+}

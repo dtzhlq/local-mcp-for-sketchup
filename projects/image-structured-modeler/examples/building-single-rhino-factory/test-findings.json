@@ -1,0 +1,81 @@
+{
+  "version": 1,
+  "date": "2026-06-09",
+  "sample_id": "building-single-rhino-factory",
+  "source_images": [
+    "test/建筑群/建筑单体/AI解放生产力之Rhino 建模_4_九思摸鱼第一名_来自小红书网页版.jpg",
+    "test/建筑群/建筑单体/AI解放生产力之Rhino 建模_5_九思摸鱼第一名_来自小红书网页版.jpg"
+  ],
+  "artifact": "output/building-single-rhino-factory.skp",
+  "acceptance": {
+    "queue_layout_qa": "pass",
+    "manual_visual_review": "fail",
+    "accepted_as_precise_reconstruction": false
+  },
+  "classification_keys": {
+    "SUBPROJECT": "projects/image-structured-modeler visual grounding, structured graph, and PartGraph extraction",
+    "MAINLINE": "main sketchup-mcp-replica DSL/runtime/modeling primitive capability",
+    "QA": "acceptance/reporting gap"
+  },
+  "findings": [
+    {
+      "id": "F-001",
+      "classifications": ["SUBPROJECT", "MAINLINE"],
+      "title": "Facade layers are additive overlays instead of clipped construction layers",
+      "manual_review_signal": "Lower grey decorative/plinth face can cover or interfere with corrected door area.",
+      "subproject_gap": "Facade layer, opening ownership, and clipping relationships are not represented in the PartGraph.",
+      "mainline_gap": "No high-level trim-aware facade cladding operation is used for decorative panels.",
+      "next_fixture": "Assert lower grey/plinth panels are interrupted around personnel and loading doors."
+    },
+    {
+      "id": "F-002",
+      "classifications": ["SUBPROJECT"],
+      "title": "Door correction changed dimensions but not surrounding facade hierarchy",
+      "manual_review_signal": "Doors moved/resized, but base treatment and local facade details remained inconsistent.",
+      "subproject_gap": "Door relations should include canopy alignment, plinth interruption, sill/base clearance, and adjacent material layer boundaries.",
+      "next_fixture": "PartGraph correction should update opening and related facade-layer relations together."
+    },
+    {
+      "id": "F-003",
+      "classifications": ["SUBPROJECT"],
+      "title": "Side-elevation windows are still wrong",
+      "manual_review_signal": "Manual review rejected the side elevation after approximate recentering and resizing.",
+      "subproject_gap": "Side elevation needs crop-calibrated window landmarks and a dedicated side-facade coordinate frame.",
+      "next_fixture": "Encode upper ribbon extent, lower window count/spacing, and orange-panel adjacency from the side-elevation crop."
+    },
+    {
+      "id": "F-004",
+      "classifications": ["SUBPROJECT", "MAINLINE"],
+      "title": "Roof skylight should be arched/curved, not rectangular",
+      "manual_review_signal": "Reference drawing shows an arched roof-light cap; generated model uses a rectangular roof monitor box.",
+      "subproject_gap": "Need semantic detection of arched_roof_light or barrel_vault_skylight.",
+      "mainline_gap": "Need a stable curved skylight/barrel-vault helper or standardized arc loft workflow.",
+      "next_fixture": "Fail rectangular roof monitor when source evidence requires curved skylight."
+    },
+    {
+      "id": "F-005",
+      "classifications": ["MAINLINE"],
+      "title": "Missing high-level architectural facade clipping primitive",
+      "manual_review_signal": "Generic wall openings do not cut separately modeled cladding/decorative layers.",
+      "mainline_gap": "Generic booleans exist, but a facade_panel_with_openings or clip_panel_to_openings abstraction is needed for reliable building workflows.",
+      "next_fixture": "Mock/queue parity test for cladding panel cut by multiple rectangular openings and boundary trims."
+    },
+    {
+      "id": "F-006",
+      "classifications": ["QA"],
+      "title": "Layout QA passed while visual fidelity failed",
+      "manual_review_signal": "Queue QA reported pass with 0 issues despite rejected windows, roof shape, and facade occlusion.",
+      "qa_gap": "Need reference-visual QA against front/side drawings and occlusion/depth-order checks.",
+      "next_fixture": "Reference QA should fail side-window mismatch, rectangular skylight, and door-plinth occlusion."
+    },
+    {
+      "id": "F-007",
+      "classifications": ["QA", "SUBPROJECT"],
+      "title": "Manual coordinate nudging does not prove structured image understanding",
+      "manual_review_signal": "Corrections were made by iterating generated DSL parameters from visual feedback.",
+      "subproject_gap": "Failed observations need source evidence, expected relations, and PartGraph fields.",
+      "qa_gap": "Acceptance should require fixtures that reject current wrong relationships.",
+      "next_fixture": "Convert this sample into a regression with expected elevation relationships and negative cases."
+    }
+  ]
+}

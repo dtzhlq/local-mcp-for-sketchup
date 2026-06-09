@@ -1,0 +1,4939 @@
+{
+  "kind": "segmentation_backend_compare_report",
+  "version": 1,
+  "ok": true,
+  "verdict": "pass",
+  "segmentation_backend_compare": {
+    "kind": "segmentation_backend_compare_v1",
+    "version": 1,
+    "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+    "coordinate_convention": "image_x_right_y_down",
+    "backends": {
+      "default": "classical_cv_v1",
+      "optional": "insid3_optional"
+    },
+    "reference_mask_bank": {
+      "path": "projects/image-structured-modeler/examples/reference-mask-bank",
+      "manifest_path": "projects/image-structured-modeler/examples/reference-mask-bank/manifest.json",
+      "classes": [
+        "building_roof_or_footprint",
+        "paved_surface",
+        "vegetation",
+        "parking_marking",
+        "road_surface_or_drive_aisle"
+      ],
+      "entry_count": 5,
+      "entries": [
+        {
+          "class": "building_roof_or_footprint",
+          "reference_image": "projects/image-structured-modeler/examples/reference-mask-bank/building_roof_or_footprint/reference.png",
+          "binary_mask": "projects/image-structured-modeler/examples/reference-mask-bank/building_roof_or_footprint/mask.png",
+          "source": "programmatic_scaffold",
+          "note": "Minimal concept reference for optional INSID3 smoke testing; not a per-image annotation library."
+        },
+        {
+          "class": "paved_surface",
+          "reference_image": "projects/image-structured-modeler/examples/reference-mask-bank/paved_surface/reference.png",
+          "binary_mask": "projects/image-structured-modeler/examples/reference-mask-bank/paved_surface/mask.png",
+          "source": "programmatic_scaffold",
+          "note": "Minimal concept reference for optional INSID3 smoke testing; not a per-image annotation library."
+        },
+        {
+          "class": "vegetation",
+          "reference_image": "projects/image-structured-modeler/examples/reference-mask-bank/vegetation/reference.png",
+          "binary_mask": "projects/image-structured-modeler/examples/reference-mask-bank/vegetation/mask.png",
+          "source": "programmatic_scaffold",
+          "note": "Minimal concept reference for optional INSID3 smoke testing; not a per-image annotation library."
+        },
+        {
+          "class": "parking_marking",
+          "reference_image": "projects/image-structured-modeler/examples/reference-mask-bank/parking_marking/reference.png",
+          "binary_mask": "projects/image-structured-modeler/examples/reference-mask-bank/parking_marking/mask.png",
+          "source": "programmatic_scaffold",
+          "note": "Minimal concept reference for optional INSID3 smoke testing; not a per-image annotation library."
+        },
+        {
+          "class": "road_surface_or_drive_aisle",
+          "reference_image": "projects/image-structured-modeler/examples/reference-mask-bank/road_surface_or_drive_aisle/reference.png",
+          "binary_mask": "projects/image-structured-modeler/examples/reference-mask-bank/road_surface_or_drive_aisle/mask.png",
+          "source": "programmatic_scaffold",
+          "note": "Minimal concept reference for optional INSID3 smoke testing; not a per-image annotation library."
+        }
+      ]
+    },
+    "insid3": {
+      "backend": "insid3_optional",
+      "available": false,
+      "status": "skipped_unavailable",
+      "blockers": [
+        "INSID3_ENABLE is not set to 1",
+        "INSID3_ROOT is not configured",
+        "DINOV3_WEIGHTS / INSID3_DINOV3_WEIGHTS is not configured"
+      ],
+      "expected_inputs": [
+        "reference image",
+        "reference mask",
+        "target image",
+        "DINOv3 weights"
+      ],
+      "note": "Optional backend skipped; default classical/high-contrast pipeline remains authoritative."
+    },
+    "observed_mask_candidates": [
+      {
+        "id": "classical_cv_v1_building_roof_or_footprint_1",
+        "concept": "building_roof_or_footprint",
+        "land_cover_class": "building_footprint",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_building_footprint_1",
+        "bbox_px": [
+          71.14,
+          70.85,
+          432,
+          468
+        ],
+        "polygon_px": [
+          [
+            71.14,
+            70.85
+          ],
+          [
+            503.14,
+            70.85
+          ],
+          [
+            503.14,
+            538.85
+          ],
+          [
+            71.14,
+            538.85
+          ],
+          [
+            71.14,
+            70.85
+          ]
+        ],
+        "area_px": 131616,
+        "confidence": 0.866,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_building_roof_or_footprint_2",
+        "concept": "building_roof_or_footprint",
+        "land_cover_class": "building_footprint",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_building_footprint_2",
+        "bbox_px": [
+          383.14,
+          82.85,
+          396,
+          360
+        ],
+        "polygon_px": [
+          [
+            383.14,
+            82.85
+          ],
+          [
+            779.14,
+            82.85
+          ],
+          [
+            779.14,
+            442.85
+          ],
+          [
+            383.14,
+            442.85
+          ],
+          [
+            383.14,
+            82.85
+          ]
+        ],
+        "area_px": 103968,
+        "confidence": 0.857,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_building_roof_or_footprint_3",
+        "concept": "building_roof_or_footprint",
+        "land_cover_class": "building_footprint",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_building_footprint_3",
+        "bbox_px": [
+          671.14,
+          82.85,
+          132,
+          108
+        ],
+        "polygon_px": [
+          [
+            671.14,
+            82.85
+          ],
+          [
+            803.14,
+            82.85
+          ],
+          [
+            803.14,
+            190.85
+          ],
+          [
+            671.14,
+            190.85
+          ],
+          [
+            671.14,
+            82.85
+          ]
+        ],
+        "area_px": 13824,
+        "confidence": 0.868,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_paved_surface_1",
+        "concept": "paved_surface",
+        "land_cover_class": "paved_surface",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_paved_surface_2",
+        "bbox_px": [
+          119.14,
+          46.85,
+          636,
+          24
+        ],
+        "polygon_px": [
+          [
+            119.14,
+            46.85
+          ],
+          [
+            755.14,
+            46.85
+          ],
+          [
+            755.14,
+            70.85
+          ],
+          [
+            119.14,
+            70.85
+          ],
+          [
+            119.14,
+            46.85
+          ]
+        ],
+        "area_px": 9936,
+        "confidence": 0.832,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_paved_surface_2",
+        "concept": "paved_surface",
+        "land_cover_class": "paved_surface",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_paved_surface_5",
+        "bbox_px": [
+          479.14,
+          574.85,
+          72,
+          32.56
+        ],
+        "polygon_px": [
+          [
+            479.14,
+            574.85
+          ],
+          [
+            551.14,
+            574.85
+          ],
+          [
+            551.14,
+            607.41
+          ],
+          [
+            479.14,
+            607.41
+          ],
+          [
+            479.14,
+            574.85
+          ]
+        ],
+        "area_px": 1809.6,
+        "confidence": 0.831,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_paved_surface_3",
+        "concept": "paved_surface",
+        "land_cover_class": "paved_surface",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_paved_surface_6",
+        "bbox_px": [
+          683.14,
+          574.85,
+          36,
+          12
+        ],
+        "polygon_px": [
+          [
+            683.14,
+            574.85
+          ],
+          [
+            719.14,
+            574.85
+          ],
+          [
+            719.14,
+            586.85
+          ],
+          [
+            683.14,
+            586.85
+          ],
+          [
+            683.14,
+            574.85
+          ]
+        ],
+        "area_px": 432,
+        "confidence": 0.687,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_paved_surface_4",
+        "concept": "paved_surface",
+        "land_cover_class": "paved_surface",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_paved_surface_1",
+        "bbox_px": [
+          95.14,
+          46.85,
+          12,
+          24
+        ],
+        "polygon_px": [
+          [
+            95.14,
+            46.85
+          ],
+          [
+            107.14,
+            46.85
+          ],
+          [
+            107.14,
+            70.85
+          ],
+          [
+            95.14,
+            70.85
+          ],
+          [
+            95.14,
+            46.85
+          ]
+        ],
+        "area_px": 288,
+        "confidence": 0.72,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_paved_surface_5",
+        "concept": "paved_surface",
+        "land_cover_class": "paved_surface",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_paved_surface_3",
+        "bbox_px": [
+          779.14,
+          46.85,
+          12,
+          24
+        ],
+        "polygon_px": [
+          [
+            779.14,
+            46.85
+          ],
+          [
+            791.14,
+            46.85
+          ],
+          [
+            791.14,
+            70.85
+          ],
+          [
+            779.14,
+            70.85
+          ],
+          [
+            779.14,
+            46.85
+          ]
+        ],
+        "area_px": 288,
+        "confidence": 0.75,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_paved_surface_6",
+        "concept": "paved_surface",
+        "land_cover_class": "paved_surface",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_paved_surface_4",
+        "bbox_px": [
+          35.14,
+          346.85,
+          12,
+          24
+        ],
+        "polygon_px": [
+          [
+            35.14,
+            346.85
+          ],
+          [
+            47.14,
+            346.85
+          ],
+          [
+            47.14,
+            370.85
+          ],
+          [
+            35.14,
+            370.85
+          ],
+          [
+            35.14,
+            346.85
+          ]
+        ],
+        "area_px": 288,
+        "confidence": 0.718,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_paved_surface_7",
+        "concept": "paved_surface",
+        "land_cover_class": "paved_surface",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_paved_surface_8",
+        "bbox_px": [
+          383.14,
+          586.85,
+          24,
+          12
+        ],
+        "polygon_px": [
+          [
+            383.14,
+            586.85
+          ],
+          [
+            407.14,
+            586.85
+          ],
+          [
+            407.14,
+            598.85
+          ],
+          [
+            383.14,
+            598.85
+          ],
+          [
+            383.14,
+            586.85
+          ]
+        ],
+        "area_px": 288,
+        "confidence": 0.711,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_paved_surface_8",
+        "concept": "paved_surface",
+        "land_cover_class": "paved_surface",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_paved_surface_7",
+        "bbox_px": [
+          743.14,
+          574.85,
+          12,
+          12
+        ],
+        "polygon_px": [
+          [
+            743.14,
+            574.85
+          ],
+          [
+            755.14,
+            574.85
+          ],
+          [
+            755.14,
+            586.85
+          ],
+          [
+            743.14,
+            586.85
+          ],
+          [
+            743.14,
+            574.85
+          ]
+        ],
+        "area_px": 144,
+        "confidence": 0.648,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_paved_surface_9",
+        "concept": "paved_surface",
+        "land_cover_class": "paved_surface",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_paved_surface_9",
+        "bbox_px": [
+          455.14,
+          598.85,
+          12,
+          8.56
+        ],
+        "polygon_px": [
+          [
+            455.14,
+            598.85
+          ],
+          [
+            467.14,
+            598.85
+          ],
+          [
+            467.14,
+            607.41
+          ],
+          [
+            455.14,
+            607.41
+          ],
+          [
+            455.14,
+            598.85
+          ]
+        ],
+        "area_px": 102.72,
+        "confidence": 0.711,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_vegetation_1",
+        "concept": "vegetation",
+        "land_cover_class": "vegetation_low",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_vegetation_low_3",
+        "bbox_px": [
+          539.14,
+          46.85,
+          284.44,
+          560.56
+        ],
+        "polygon_px": [
+          [
+            539.14,
+            46.85
+          ],
+          [
+            823.58,
+            46.85
+          ],
+          [
+            823.58,
+            607.41
+          ],
+          [
+            539.14,
+            607.41
+          ],
+          [
+            539.14,
+            46.85
+          ]
+        ],
+        "area_px": 28989.846,
+        "confidence": 0.804,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_vegetation_2",
+        "concept": "vegetation",
+        "land_cover_class": "vegetation_low",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_vegetation_low_18",
+        "bbox_px": [
+          35.14,
+          406.85,
+          456,
+          200.56
+        ],
+        "polygon_px": [
+          [
+            35.14,
+            406.85
+          ],
+          [
+            491.14,
+            406.85
+          ],
+          [
+            491.14,
+            607.41
+          ],
+          [
+            35.14,
+            607.41
+          ],
+          [
+            35.14,
+            406.85
+          ]
+        ],
+        "area_px": 19064.64,
+        "confidence": 0.82,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_vegetation_3",
+        "concept": "vegetation",
+        "land_cover_class": "vegetation_low",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_vegetation_low_1",
+        "bbox_px": [
+          35.14,
+          46.85,
+          72,
+          300
+        ],
+        "polygon_px": [
+          [
+            35.14,
+            46.85
+          ],
+          [
+            107.14,
+            46.85
+          ],
+          [
+            107.14,
+            346.85
+          ],
+          [
+            35.14,
+            346.85
+          ],
+          [
+            35.14,
+            46.85
+          ]
+        ],
+        "area_px": 12528,
+        "confidence": 0.812,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_vegetation_4",
+        "concept": "vegetation",
+        "land_cover_class": "vegetation_low",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_vegetation_low_26",
+        "bbox_px": [
+          119.14,
+          502.85,
+          228,
+          48
+        ],
+        "polygon_px": [
+          [
+            119.14,
+            502.85
+          ],
+          [
+            347.14,
+            502.85
+          ],
+          [
+            347.14,
+            550.85
+          ],
+          [
+            119.14,
+            550.85
+          ],
+          [
+            119.14,
+            502.85
+          ]
+        ],
+        "area_px": 7056,
+        "confidence": 0.837,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_vegetation_5",
+        "concept": "vegetation",
+        "land_cover_class": "vegetation_low",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_vegetation_low_4",
+        "bbox_px": [
+          131.14,
+          58.85,
+          216,
+          48
+        ],
+        "polygon_px": [
+          [
+            131.14,
+            58.85
+          ],
+          [
+            347.14,
+            58.85
+          ],
+          [
+            347.14,
+            106.85
+          ],
+          [
+            131.14,
+            106.85
+          ],
+          [
+            131.14,
+            58.85
+          ]
+        ],
+        "area_px": 3744,
+        "confidence": 0.798,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_vegetation_6",
+        "concept": "vegetation",
+        "land_cover_class": "vegetation_low",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_vegetation_low_5",
+        "bbox_px": [
+          371.14,
+          58.85,
+          132,
+          84
+        ],
+        "polygon_px": [
+          [
+            371.14,
+            58.85
+          ],
+          [
+            503.14,
+            58.85
+          ],
+          [
+            503.14,
+            142.85
+          ],
+          [
+            371.14,
+            142.85
+          ],
+          [
+            371.14,
+            58.85
+          ]
+        ],
+        "area_px": 3312,
+        "confidence": 0.796,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_vegetation_7",
+        "concept": "vegetation",
+        "land_cover_class": "vegetation_low",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_vegetation_low_10",
+        "bbox_px": [
+          635.14,
+          178.85,
+          120,
+          84
+        ],
+        "polygon_px": [
+          [
+            635.14,
+            178.85
+          ],
+          [
+            755.14,
+            178.85
+          ],
+          [
+            755.14,
+            262.85
+          ],
+          [
+            635.14,
+            262.85
+          ],
+          [
+            635.14,
+            178.85
+          ]
+        ],
+        "area_px": 3024,
+        "confidence": 0.79,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_vegetation_8",
+        "concept": "vegetation",
+        "land_cover_class": "vegetation_low",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_vegetation_low_25",
+        "bbox_px": [
+          671.14,
+          442.85,
+          84,
+          108
+        ],
+        "polygon_px": [
+          [
+            671.14,
+            442.85
+          ],
+          [
+            755.14,
+            442.85
+          ],
+          [
+            755.14,
+            550.85
+          ],
+          [
+            671.14,
+            550.85
+          ],
+          [
+            671.14,
+            442.85
+          ]
+        ],
+        "area_px": 3024,
+        "confidence": 0.769,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_vegetation_9",
+        "concept": "vegetation",
+        "land_cover_class": "vegetation_low",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_vegetation_low_11",
+        "bbox_px": [
+          371.14,
+          202.85,
+          12,
+          192
+        ],
+        "polygon_px": [
+          [
+            371.14,
+            202.85
+          ],
+          [
+            383.14,
+            202.85
+          ],
+          [
+            383.14,
+            394.85
+          ],
+          [
+            371.14,
+            394.85
+          ],
+          [
+            371.14,
+            202.85
+          ]
+        ],
+        "area_px": 2304,
+        "confidence": 0.838,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_vegetation_10",
+        "concept": "vegetation",
+        "land_cover_class": "vegetation_low",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_vegetation_low_14",
+        "bbox_px": [
+          215.14,
+          286.85,
+          36,
+          36
+        ],
+        "polygon_px": [
+          [
+            215.14,
+            286.85
+          ],
+          [
+            251.14,
+            286.85
+          ],
+          [
+            251.14,
+            322.85
+          ],
+          [
+            215.14,
+            322.85
+          ],
+          [
+            215.14,
+            286.85
+          ]
+        ],
+        "area_px": 1008,
+        "confidence": 0.768,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_vegetation_11",
+        "concept": "vegetation",
+        "land_cover_class": "vegetation_low",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_vegetation_low_6",
+        "bbox_px": [
+          527.14,
+          58.85,
+          60,
+          24
+        ],
+        "polygon_px": [
+          [
+            527.14,
+            58.85
+          ],
+          [
+            587.14,
+            58.85
+          ],
+          [
+            587.14,
+            82.85
+          ],
+          [
+            527.14,
+            82.85
+          ],
+          [
+            527.14,
+            58.85
+          ]
+        ],
+        "area_px": 864,
+        "confidence": 0.745,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_vegetation_12",
+        "concept": "vegetation",
+        "land_cover_class": "vegetation_low",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_vegetation_low_7",
+        "bbox_px": [
+          683.14,
+          58.85,
+          60,
+          24
+        ],
+        "polygon_px": [
+          [
+            683.14,
+            58.85
+          ],
+          [
+            743.14,
+            58.85
+          ],
+          [
+            743.14,
+            82.85
+          ],
+          [
+            683.14,
+            82.85
+          ],
+          [
+            683.14,
+            58.85
+          ]
+        ],
+        "area_px": 864,
+        "confidence": 0.757,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_vegetation_13",
+        "concept": "vegetation",
+        "land_cover_class": "vegetation_low",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_vegetation_low_8",
+        "bbox_px": [
+          611.14,
+          70.85,
+          36,
+          36
+        ],
+        "polygon_px": [
+          [
+            611.14,
+            70.85
+          ],
+          [
+            647.14,
+            70.85
+          ],
+          [
+            647.14,
+            106.85
+          ],
+          [
+            611.14,
+            106.85
+          ],
+          [
+            611.14,
+            70.85
+          ]
+        ],
+        "area_px": 864,
+        "confidence": 0.778,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_vegetation_14",
+        "concept": "vegetation",
+        "land_cover_class": "vegetation_low",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_vegetation_low_28",
+        "bbox_px": [
+          455.14,
+          538.85,
+          48,
+          12
+        ],
+        "polygon_px": [
+          [
+            455.14,
+            538.85
+          ],
+          [
+            503.14,
+            538.85
+          ],
+          [
+            503.14,
+            550.85
+          ],
+          [
+            455.14,
+            550.85
+          ],
+          [
+            455.14,
+            538.85
+          ]
+        ],
+        "area_px": 576,
+        "confidence": 0.812,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_vegetation_15",
+        "concept": "vegetation",
+        "land_cover_class": "vegetation_low",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_vegetation_low_2",
+        "bbox_px": [
+          107.14,
+          46.85,
+          24,
+          24
+        ],
+        "polygon_px": [
+          [
+            107.14,
+            46.85
+          ],
+          [
+            131.14,
+            46.85
+          ],
+          [
+            131.14,
+            70.85
+          ],
+          [
+            107.14,
+            70.85
+          ],
+          [
+            107.14,
+            46.85
+          ]
+        ],
+        "area_px": 432,
+        "confidence": 0.752,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_vegetation_16",
+        "concept": "vegetation",
+        "land_cover_class": "vegetation_low",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_vegetation_low_17",
+        "bbox_px": [
+          635.14,
+          394.85,
+          12,
+          36
+        ],
+        "polygon_px": [
+          [
+            635.14,
+            394.85
+          ],
+          [
+            647.14,
+            394.85
+          ],
+          [
+            647.14,
+            430.85
+          ],
+          [
+            635.14,
+            430.85
+          ],
+          [
+            635.14,
+            394.85
+          ]
+        ],
+        "area_px": 432,
+        "confidence": 0.748,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_vegetation_17",
+        "concept": "vegetation",
+        "land_cover_class": "vegetation_low",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_vegetation_low_23",
+        "bbox_px": [
+          587.14,
+          442.85,
+          36,
+          12
+        ],
+        "polygon_px": [
+          [
+            587.14,
+            442.85
+          ],
+          [
+            623.14,
+            442.85
+          ],
+          [
+            623.14,
+            454.85
+          ],
+          [
+            587.14,
+            454.85
+          ],
+          [
+            587.14,
+            442.85
+          ]
+        ],
+        "area_px": 432,
+        "confidence": 0.73,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_vegetation_18",
+        "concept": "vegetation",
+        "land_cover_class": "vegetation_low",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_vegetation_low_24",
+        "bbox_px": [
+          647.14,
+          442.85,
+          36,
+          12
+        ],
+        "polygon_px": [
+          [
+            647.14,
+            442.85
+          ],
+          [
+            683.14,
+            442.85
+          ],
+          [
+            683.14,
+            454.85
+          ],
+          [
+            647.14,
+            454.85
+          ],
+          [
+            647.14,
+            442.85
+          ]
+        ],
+        "area_px": 432,
+        "confidence": 0.752,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_vegetation_19",
+        "concept": "vegetation",
+        "land_cover_class": "vegetation_low",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_vegetation_low_16",
+        "bbox_px": [
+          119.14,
+          298.85,
+          12,
+          24
+        ],
+        "polygon_px": [
+          [
+            119.14,
+            298.85
+          ],
+          [
+            131.14,
+            298.85
+          ],
+          [
+            131.14,
+            322.85
+          ],
+          [
+            119.14,
+            322.85
+          ],
+          [
+            119.14,
+            298.85
+          ]
+        ],
+        "area_px": 288,
+        "confidence": 0.771,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_vegetation_20",
+        "concept": "vegetation",
+        "land_cover_class": "vegetation_low",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_vegetation_low_20",
+        "bbox_px": [
+          383.14,
+          442.85,
+          24,
+          12
+        ],
+        "polygon_px": [
+          [
+            383.14,
+            442.85
+          ],
+          [
+            407.14,
+            442.85
+          ],
+          [
+            407.14,
+            454.85
+          ],
+          [
+            383.14,
+            454.85
+          ],
+          [
+            383.14,
+            442.85
+          ]
+        ],
+        "area_px": 288,
+        "confidence": 0.77,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_vegetation_21",
+        "concept": "vegetation",
+        "land_cover_class": "vegetation_low",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_vegetation_low_27",
+        "bbox_px": [
+          371.14,
+          538.85,
+          24,
+          12
+        ],
+        "polygon_px": [
+          [
+            371.14,
+            538.85
+          ],
+          [
+            395.14,
+            538.85
+          ],
+          [
+            395.14,
+            550.85
+          ],
+          [
+            371.14,
+            550.85
+          ],
+          [
+            371.14,
+            538.85
+          ]
+        ],
+        "area_px": 288,
+        "confidence": 0.786,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_vegetation_22",
+        "concept": "vegetation",
+        "land_cover_class": "vegetation_low",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_vegetation_low_29",
+        "bbox_px": [
+          551.14,
+          538.85,
+          24,
+          12
+        ],
+        "polygon_px": [
+          [
+            551.14,
+            538.85
+          ],
+          [
+            575.14,
+            538.85
+          ],
+          [
+            575.14,
+            550.85
+          ],
+          [
+            551.14,
+            550.85
+          ],
+          [
+            551.14,
+            538.85
+          ]
+        ],
+        "area_px": 288,
+        "confidence": 0.775,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_vegetation_23",
+        "concept": "vegetation",
+        "land_cover_class": "vegetation_low",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_vegetation_low_30",
+        "bbox_px": [
+          599.14,
+          538.85,
+          24,
+          12
+        ],
+        "polygon_px": [
+          [
+            599.14,
+            538.85
+          ],
+          [
+            623.14,
+            538.85
+          ],
+          [
+            623.14,
+            550.85
+          ],
+          [
+            599.14,
+            550.85
+          ],
+          [
+            599.14,
+            538.85
+          ]
+        ],
+        "area_px": 288,
+        "confidence": 0.739,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_vegetation_24",
+        "concept": "vegetation",
+        "land_cover_class": "vegetation_low",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_vegetation_low_9",
+        "bbox_px": [
+          635.14,
+          142.85,
+          12,
+          12
+        ],
+        "polygon_px": [
+          [
+            635.14,
+            142.85
+          ],
+          [
+            647.14,
+            142.85
+          ],
+          [
+            647.14,
+            154.85
+          ],
+          [
+            635.14,
+            154.85
+          ],
+          [
+            635.14,
+            142.85
+          ]
+        ],
+        "area_px": 144,
+        "confidence": 0.737,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_vegetation_25",
+        "concept": "vegetation",
+        "land_cover_class": "vegetation_low",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_vegetation_low_12",
+        "bbox_px": [
+          635.14,
+          262.85,
+          12,
+          12
+        ],
+        "polygon_px": [
+          [
+            635.14,
+            262.85
+          ],
+          [
+            647.14,
+            262.85
+          ],
+          [
+            647.14,
+            274.85
+          ],
+          [
+            635.14,
+            274.85
+          ],
+          [
+            635.14,
+            262.85
+          ]
+        ],
+        "area_px": 144,
+        "confidence": 0.728,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_vegetation_26",
+        "concept": "vegetation",
+        "land_cover_class": "vegetation_low",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_vegetation_low_13",
+        "bbox_px": [
+          743.14,
+          274.85,
+          12,
+          12
+        ],
+        "polygon_px": [
+          [
+            743.14,
+            274.85
+          ],
+          [
+            755.14,
+            274.85
+          ],
+          [
+            755.14,
+            286.85
+          ],
+          [
+            743.14,
+            286.85
+          ],
+          [
+            743.14,
+            274.85
+          ]
+        ],
+        "area_px": 144,
+        "confidence": 0.733,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_vegetation_27",
+        "concept": "vegetation",
+        "land_cover_class": "vegetation_low",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_vegetation_low_15",
+        "bbox_px": [
+          335.14,
+          286.85,
+          12,
+          12
+        ],
+        "polygon_px": [
+          [
+            335.14,
+            286.85
+          ],
+          [
+            347.14,
+            286.85
+          ],
+          [
+            347.14,
+            298.85
+          ],
+          [
+            335.14,
+            298.85
+          ],
+          [
+            335.14,
+            286.85
+          ]
+        ],
+        "area_px": 144,
+        "confidence": 0.776,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_vegetation_28",
+        "concept": "vegetation",
+        "land_cover_class": "vegetation_low",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_vegetation_low_19",
+        "bbox_px": [
+          371.14,
+          406.85,
+          12,
+          12
+        ],
+        "polygon_px": [
+          [
+            371.14,
+            406.85
+          ],
+          [
+            383.14,
+            406.85
+          ],
+          [
+            383.14,
+            418.85
+          ],
+          [
+            371.14,
+            418.85
+          ],
+          [
+            371.14,
+            406.85
+          ]
+        ],
+        "area_px": 144,
+        "confidence": 0.817,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_vegetation_29",
+        "concept": "vegetation",
+        "land_cover_class": "vegetation_low",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_vegetation_low_21",
+        "bbox_px": [
+          467.14,
+          442.85,
+          12,
+          12
+        ],
+        "polygon_px": [
+          [
+            467.14,
+            442.85
+          ],
+          [
+            479.14,
+            442.85
+          ],
+          [
+            479.14,
+            454.85
+          ],
+          [
+            467.14,
+            454.85
+          ],
+          [
+            467.14,
+            442.85
+          ]
+        ],
+        "area_px": 144,
+        "confidence": 0.753,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_vegetation_30",
+        "concept": "vegetation",
+        "land_cover_class": "vegetation_low",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_vegetation_low_22",
+        "bbox_px": [
+          563.14,
+          442.85,
+          12,
+          12
+        ],
+        "polygon_px": [
+          [
+            563.14,
+            442.85
+          ],
+          [
+            575.14,
+            442.85
+          ],
+          [
+            575.14,
+            454.85
+          ],
+          [
+            563.14,
+            454.85
+          ],
+          [
+            563.14,
+            442.85
+          ]
+        ],
+        "area_px": 144,
+        "confidence": 0.753,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_vegetation_31",
+        "concept": "vegetation",
+        "land_cover_class": "vegetation_low",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_vegetation_low_31",
+        "bbox_px": [
+          647.14,
+          538.85,
+          12,
+          12
+        ],
+        "polygon_px": [
+          [
+            647.14,
+            538.85
+          ],
+          [
+            659.14,
+            538.85
+          ],
+          [
+            659.14,
+            550.85
+          ],
+          [
+            647.14,
+            550.85
+          ],
+          [
+            647.14,
+            538.85
+          ]
+        ],
+        "area_px": 144,
+        "confidence": 0.772,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_road_surface_or_drive_aisle_1",
+        "concept": "road_surface_or_drive_aisle",
+        "land_cover_class": "road_surface_candidate",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_road_surface_candidate_16",
+        "bbox_px": [
+          95.14,
+          418.85,
+          684,
+          156
+        ],
+        "polygon_px": [
+          [
+            95.14,
+            418.85
+          ],
+          [
+            779.14,
+            418.85
+          ],
+          [
+            779.14,
+            574.85
+          ],
+          [
+            95.14,
+            574.85
+          ],
+          [
+            95.14,
+            418.85
+          ]
+        ],
+        "area_px": 23040,
+        "confidence": 0.821,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_road_surface_or_drive_aisle_2",
+        "concept": "road_surface_or_drive_aisle",
+        "land_cover_class": "road_surface_candidate",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_road_surface_candidate_11",
+        "bbox_px": [
+          635.14,
+          190.85,
+          132,
+          108
+        ],
+        "polygon_px": [
+          [
+            635.14,
+            190.85
+          ],
+          [
+            767.14,
+            190.85
+          ],
+          [
+            767.14,
+            298.85
+          ],
+          [
+            635.14,
+            298.85
+          ],
+          [
+            635.14,
+            190.85
+          ]
+        ],
+        "area_px": 9504,
+        "confidence": 0.819,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_road_surface_or_drive_aisle_3",
+        "concept": "road_surface_or_drive_aisle",
+        "land_cover_class": "road_surface_candidate",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_road_surface_candidate_9",
+        "bbox_px": [
+          635.14,
+          94.85,
+          48,
+          96
+        ],
+        "polygon_px": [
+          [
+            635.14,
+            94.85
+          ],
+          [
+            683.14,
+            94.85
+          ],
+          [
+            683.14,
+            190.85
+          ],
+          [
+            635.14,
+            190.85
+          ],
+          [
+            635.14,
+            94.85
+          ]
+        ],
+        "area_px": 2880,
+        "confidence": 0.794,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_road_surface_or_drive_aisle_4",
+        "concept": "road_surface_or_drive_aisle",
+        "land_cover_class": "road_surface_candidate",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_road_surface_candidate_3",
+        "bbox_px": [
+          323.14,
+          70.85,
+          48,
+          48
+        ],
+        "polygon_px": [
+          [
+            323.14,
+            70.85
+          ],
+          [
+            371.14,
+            70.85
+          ],
+          [
+            371.14,
+            118.85
+          ],
+          [
+            323.14,
+            118.85
+          ],
+          [
+            323.14,
+            70.85
+          ]
+        ],
+        "area_px": 2016,
+        "confidence": 0.816,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_road_surface_or_drive_aisle_5",
+        "concept": "road_surface_or_drive_aisle",
+        "land_cover_class": "road_surface_candidate",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_road_surface_candidate_13",
+        "bbox_px": [
+          335.14,
+          286.85,
+          36,
+          36
+        ],
+        "polygon_px": [
+          [
+            335.14,
+            286.85
+          ],
+          [
+            371.14,
+            286.85
+          ],
+          [
+            371.14,
+            322.85
+          ],
+          [
+            335.14,
+            322.85
+          ],
+          [
+            335.14,
+            286.85
+          ]
+        ],
+        "area_px": 1152,
+        "confidence": 0.832,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_road_surface_or_drive_aisle_6",
+        "concept": "road_surface_or_drive_aisle",
+        "land_cover_class": "road_surface_candidate",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_road_surface_candidate_1",
+        "bbox_px": [
+          95.14,
+          70.85,
+          36,
+          36
+        ],
+        "polygon_px": [
+          [
+            95.14,
+            70.85
+          ],
+          [
+            131.14,
+            70.85
+          ],
+          [
+            131.14,
+            106.85
+          ],
+          [
+            95.14,
+            106.85
+          ],
+          [
+            95.14,
+            70.85
+          ]
+        ],
+        "area_px": 1008,
+        "confidence": 0.811,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_road_surface_or_drive_aisle_7",
+        "concept": "road_surface_or_drive_aisle",
+        "land_cover_class": "road_surface_candidate",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_road_surface_candidate_5",
+        "bbox_px": [
+          587.14,
+          70.85,
+          36,
+          36
+        ],
+        "polygon_px": [
+          [
+            587.14,
+            70.85
+          ],
+          [
+            623.14,
+            70.85
+          ],
+          [
+            623.14,
+            106.85
+          ],
+          [
+            587.14,
+            106.85
+          ],
+          [
+            587.14,
+            70.85
+          ]
+        ],
+        "area_px": 1008,
+        "confidence": 0.808,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_road_surface_or_drive_aisle_8",
+        "concept": "road_surface_or_drive_aisle",
+        "land_cover_class": "road_surface_candidate",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_road_surface_candidate_12",
+        "bbox_px": [
+          95.14,
+          286.85,
+          36,
+          36
+        ],
+        "polygon_px": [
+          [
+            95.14,
+            286.85
+          ],
+          [
+            131.14,
+            286.85
+          ],
+          [
+            131.14,
+            322.85
+          ],
+          [
+            95.14,
+            322.85
+          ],
+          [
+            95.14,
+            286.85
+          ]
+        ],
+        "area_px": 864,
+        "confidence": 0.771,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_road_surface_or_drive_aisle_9",
+        "concept": "road_surface_or_drive_aisle",
+        "land_cover_class": "road_surface_candidate",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_road_surface_candidate_10",
+        "bbox_px": [
+          371.14,
+          142.85,
+          12,
+          60
+        ],
+        "polygon_px": [
+          [
+            371.14,
+            142.85
+          ],
+          [
+            383.14,
+            142.85
+          ],
+          [
+            383.14,
+            202.85
+          ],
+          [
+            371.14,
+            202.85
+          ],
+          [
+            371.14,
+            142.85
+          ]
+        ],
+        "area_px": 720,
+        "confidence": 0.774,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_road_surface_or_drive_aisle_10",
+        "concept": "road_surface_or_drive_aisle",
+        "land_cover_class": "road_surface_candidate",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_road_surface_candidate_2",
+        "bbox_px": [
+          239.14,
+          70.85,
+          12,
+          24
+        ],
+        "polygon_px": [
+          [
+            239.14,
+            70.85
+          ],
+          [
+            251.14,
+            70.85
+          ],
+          [
+            251.14,
+            94.85
+          ],
+          [
+            239.14,
+            94.85
+          ],
+          [
+            239.14,
+            70.85
+          ]
+        ],
+        "area_px": 288,
+        "confidence": 0.782,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_road_surface_or_drive_aisle_11",
+        "concept": "road_surface_or_drive_aisle",
+        "land_cover_class": "road_surface_candidate",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_road_surface_candidate_6",
+        "bbox_px": [
+          659.14,
+          70.85,
+          24,
+          12
+        ],
+        "polygon_px": [
+          [
+            659.14,
+            70.85
+          ],
+          [
+            683.14,
+            70.85
+          ],
+          [
+            683.14,
+            82.85
+          ],
+          [
+            659.14,
+            82.85
+          ],
+          [
+            659.14,
+            70.85
+          ]
+        ],
+        "area_px": 288,
+        "confidence": 0.722,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_road_surface_or_drive_aisle_12",
+        "concept": "road_surface_or_drive_aisle",
+        "land_cover_class": "road_surface_candidate",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_road_surface_candidate_8",
+        "bbox_px": [
+          215.14,
+          82.85,
+          12,
+          24
+        ],
+        "polygon_px": [
+          [
+            215.14,
+            82.85
+          ],
+          [
+            227.14,
+            82.85
+          ],
+          [
+            227.14,
+            106.85
+          ],
+          [
+            215.14,
+            106.85
+          ],
+          [
+            215.14,
+            82.85
+          ]
+        ],
+        "area_px": 288,
+        "confidence": 0.828,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_road_surface_or_drive_aisle_13",
+        "concept": "road_surface_or_drive_aisle",
+        "land_cover_class": "road_surface_candidate",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_road_surface_candidate_4",
+        "bbox_px": [
+          503.14,
+          70.85,
+          12,
+          12
+        ],
+        "polygon_px": [
+          [
+            503.14,
+            70.85
+          ],
+          [
+            515.14,
+            70.85
+          ],
+          [
+            515.14,
+            82.85
+          ],
+          [
+            503.14,
+            82.85
+          ],
+          [
+            503.14,
+            70.85
+          ]
+        ],
+        "area_px": 144,
+        "confidence": 0.731,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_road_surface_or_drive_aisle_14",
+        "concept": "road_surface_or_drive_aisle",
+        "land_cover_class": "road_surface_candidate",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_road_surface_candidate_7",
+        "bbox_px": [
+          743.14,
+          70.85,
+          12,
+          12
+        ],
+        "polygon_px": [
+          [
+            743.14,
+            70.85
+          ],
+          [
+            755.14,
+            70.85
+          ],
+          [
+            755.14,
+            82.85
+          ],
+          [
+            743.14,
+            82.85
+          ],
+          [
+            743.14,
+            70.85
+          ]
+        ],
+        "area_px": 144,
+        "confidence": 0.783,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_road_surface_or_drive_aisle_15",
+        "concept": "road_surface_or_drive_aisle",
+        "land_cover_class": "road_surface_candidate",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_road_surface_candidate_14",
+        "bbox_px": [
+          215.14,
+          310.85,
+          12,
+          12
+        ],
+        "polygon_px": [
+          [
+            215.14,
+            310.85
+          ],
+          [
+            227.14,
+            310.85
+          ],
+          [
+            227.14,
+            322.85
+          ],
+          [
+            215.14,
+            322.85
+          ],
+          [
+            215.14,
+            310.85
+          ]
+        ],
+        "area_px": 144,
+        "confidence": 0.73,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      },
+      {
+        "id": "classical_cv_v1_road_surface_or_drive_aisle_16",
+        "concept": "road_surface_or_drive_aisle",
+        "land_cover_class": "road_surface_candidate",
+        "source_backend": "classical_cv_v1",
+        "source_mask_id": "land_cover_road_surface_candidate_15",
+        "bbox_px": [
+          371.14,
+          394.85,
+          12,
+          12
+        ],
+        "polygon_px": [
+          [
+            371.14,
+            394.85
+          ],
+          [
+            383.14,
+            394.85
+          ],
+          [
+            383.14,
+            406.85
+          ],
+          [
+            371.14,
+            406.85
+          ],
+          [
+            371.14,
+            394.85
+          ]
+        ],
+        "area_px": 144,
+        "confidence": 0.702,
+        "review_required": true,
+        "grounding_decision": "observed_mask_candidate",
+        "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA.",
+        "fusion_method": "classical_only_insid3_skipped"
+      }
+    ],
+    "backend_candidates": {
+      "classical_cv_v1": [
+        {
+          "id": "classical_cv_v1_building_roof_or_footprint_1",
+          "concept": "building_roof_or_footprint",
+          "land_cover_class": "building_footprint",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_building_footprint_1",
+          "bbox_px": [
+            71.14,
+            70.85,
+            432,
+            468
+          ],
+          "polygon_px": [
+            [
+              71.14,
+              70.85
+            ],
+            [
+              503.14,
+              70.85
+            ],
+            [
+              503.14,
+              538.85
+            ],
+            [
+              71.14,
+              538.85
+            ],
+            [
+              71.14,
+              70.85
+            ]
+          ],
+          "area_px": 131616,
+          "confidence": 0.866,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_building_roof_or_footprint_2",
+          "concept": "building_roof_or_footprint",
+          "land_cover_class": "building_footprint",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_building_footprint_2",
+          "bbox_px": [
+            383.14,
+            82.85,
+            396,
+            360
+          ],
+          "polygon_px": [
+            [
+              383.14,
+              82.85
+            ],
+            [
+              779.14,
+              82.85
+            ],
+            [
+              779.14,
+              442.85
+            ],
+            [
+              383.14,
+              442.85
+            ],
+            [
+              383.14,
+              82.85
+            ]
+          ],
+          "area_px": 103968,
+          "confidence": 0.857,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_building_roof_or_footprint_3",
+          "concept": "building_roof_or_footprint",
+          "land_cover_class": "building_footprint",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_building_footprint_3",
+          "bbox_px": [
+            671.14,
+            82.85,
+            132,
+            108
+          ],
+          "polygon_px": [
+            [
+              671.14,
+              82.85
+            ],
+            [
+              803.14,
+              82.85
+            ],
+            [
+              803.14,
+              190.85
+            ],
+            [
+              671.14,
+              190.85
+            ],
+            [
+              671.14,
+              82.85
+            ]
+          ],
+          "area_px": 13824,
+          "confidence": 0.868,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_paved_surface_1",
+          "concept": "paved_surface",
+          "land_cover_class": "paved_surface",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_paved_surface_2",
+          "bbox_px": [
+            119.14,
+            46.85,
+            636,
+            24
+          ],
+          "polygon_px": [
+            [
+              119.14,
+              46.85
+            ],
+            [
+              755.14,
+              46.85
+            ],
+            [
+              755.14,
+              70.85
+            ],
+            [
+              119.14,
+              70.85
+            ],
+            [
+              119.14,
+              46.85
+            ]
+          ],
+          "area_px": 9936,
+          "confidence": 0.832,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_paved_surface_2",
+          "concept": "paved_surface",
+          "land_cover_class": "paved_surface",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_paved_surface_5",
+          "bbox_px": [
+            479.14,
+            574.85,
+            72,
+            32.56
+          ],
+          "polygon_px": [
+            [
+              479.14,
+              574.85
+            ],
+            [
+              551.14,
+              574.85
+            ],
+            [
+              551.14,
+              607.41
+            ],
+            [
+              479.14,
+              607.41
+            ],
+            [
+              479.14,
+              574.85
+            ]
+          ],
+          "area_px": 1809.6,
+          "confidence": 0.831,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_paved_surface_3",
+          "concept": "paved_surface",
+          "land_cover_class": "paved_surface",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_paved_surface_6",
+          "bbox_px": [
+            683.14,
+            574.85,
+            36,
+            12
+          ],
+          "polygon_px": [
+            [
+              683.14,
+              574.85
+            ],
+            [
+              719.14,
+              574.85
+            ],
+            [
+              719.14,
+              586.85
+            ],
+            [
+              683.14,
+              586.85
+            ],
+            [
+              683.14,
+              574.85
+            ]
+          ],
+          "area_px": 432,
+          "confidence": 0.687,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_paved_surface_4",
+          "concept": "paved_surface",
+          "land_cover_class": "paved_surface",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_paved_surface_1",
+          "bbox_px": [
+            95.14,
+            46.85,
+            12,
+            24
+          ],
+          "polygon_px": [
+            [
+              95.14,
+              46.85
+            ],
+            [
+              107.14,
+              46.85
+            ],
+            [
+              107.14,
+              70.85
+            ],
+            [
+              95.14,
+              70.85
+            ],
+            [
+              95.14,
+              46.85
+            ]
+          ],
+          "area_px": 288,
+          "confidence": 0.72,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_paved_surface_5",
+          "concept": "paved_surface",
+          "land_cover_class": "paved_surface",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_paved_surface_3",
+          "bbox_px": [
+            779.14,
+            46.85,
+            12,
+            24
+          ],
+          "polygon_px": [
+            [
+              779.14,
+              46.85
+            ],
+            [
+              791.14,
+              46.85
+            ],
+            [
+              791.14,
+              70.85
+            ],
+            [
+              779.14,
+              70.85
+            ],
+            [
+              779.14,
+              46.85
+            ]
+          ],
+          "area_px": 288,
+          "confidence": 0.75,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_paved_surface_6",
+          "concept": "paved_surface",
+          "land_cover_class": "paved_surface",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_paved_surface_4",
+          "bbox_px": [
+            35.14,
+            346.85,
+            12,
+            24
+          ],
+          "polygon_px": [
+            [
+              35.14,
+              346.85
+            ],
+            [
+              47.14,
+              346.85
+            ],
+            [
+              47.14,
+              370.85
+            ],
+            [
+              35.14,
+              370.85
+            ],
+            [
+              35.14,
+              346.85
+            ]
+          ],
+          "area_px": 288,
+          "confidence": 0.718,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_paved_surface_7",
+          "concept": "paved_surface",
+          "land_cover_class": "paved_surface",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_paved_surface_8",
+          "bbox_px": [
+            383.14,
+            586.85,
+            24,
+            12
+          ],
+          "polygon_px": [
+            [
+              383.14,
+              586.85
+            ],
+            [
+              407.14,
+              586.85
+            ],
+            [
+              407.14,
+              598.85
+            ],
+            [
+              383.14,
+              598.85
+            ],
+            [
+              383.14,
+              586.85
+            ]
+          ],
+          "area_px": 288,
+          "confidence": 0.711,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_paved_surface_8",
+          "concept": "paved_surface",
+          "land_cover_class": "paved_surface",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_paved_surface_7",
+          "bbox_px": [
+            743.14,
+            574.85,
+            12,
+            12
+          ],
+          "polygon_px": [
+            [
+              743.14,
+              574.85
+            ],
+            [
+              755.14,
+              574.85
+            ],
+            [
+              755.14,
+              586.85
+            ],
+            [
+              743.14,
+              586.85
+            ],
+            [
+              743.14,
+              574.85
+            ]
+          ],
+          "area_px": 144,
+          "confidence": 0.648,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_paved_surface_9",
+          "concept": "paved_surface",
+          "land_cover_class": "paved_surface",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_paved_surface_9",
+          "bbox_px": [
+            455.14,
+            598.85,
+            12,
+            8.56
+          ],
+          "polygon_px": [
+            [
+              455.14,
+              598.85
+            ],
+            [
+              467.14,
+              598.85
+            ],
+            [
+              467.14,
+              607.41
+            ],
+            [
+              455.14,
+              607.41
+            ],
+            [
+              455.14,
+              598.85
+            ]
+          ],
+          "area_px": 102.72,
+          "confidence": 0.711,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_vegetation_1",
+          "concept": "vegetation",
+          "land_cover_class": "vegetation_low",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_vegetation_low_3",
+          "bbox_px": [
+            539.14,
+            46.85,
+            284.44,
+            560.56
+          ],
+          "polygon_px": [
+            [
+              539.14,
+              46.85
+            ],
+            [
+              823.58,
+              46.85
+            ],
+            [
+              823.58,
+              607.41
+            ],
+            [
+              539.14,
+              607.41
+            ],
+            [
+              539.14,
+              46.85
+            ]
+          ],
+          "area_px": 28989.846,
+          "confidence": 0.804,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_vegetation_2",
+          "concept": "vegetation",
+          "land_cover_class": "vegetation_low",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_vegetation_low_18",
+          "bbox_px": [
+            35.14,
+            406.85,
+            456,
+            200.56
+          ],
+          "polygon_px": [
+            [
+              35.14,
+              406.85
+            ],
+            [
+              491.14,
+              406.85
+            ],
+            [
+              491.14,
+              607.41
+            ],
+            [
+              35.14,
+              607.41
+            ],
+            [
+              35.14,
+              406.85
+            ]
+          ],
+          "area_px": 19064.64,
+          "confidence": 0.82,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_vegetation_3",
+          "concept": "vegetation",
+          "land_cover_class": "vegetation_low",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_vegetation_low_1",
+          "bbox_px": [
+            35.14,
+            46.85,
+            72,
+            300
+          ],
+          "polygon_px": [
+            [
+              35.14,
+              46.85
+            ],
+            [
+              107.14,
+              46.85
+            ],
+            [
+              107.14,
+              346.85
+            ],
+            [
+              35.14,
+              346.85
+            ],
+            [
+              35.14,
+              46.85
+            ]
+          ],
+          "area_px": 12528,
+          "confidence": 0.812,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_vegetation_4",
+          "concept": "vegetation",
+          "land_cover_class": "vegetation_low",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_vegetation_low_26",
+          "bbox_px": [
+            119.14,
+            502.85,
+            228,
+            48
+          ],
+          "polygon_px": [
+            [
+              119.14,
+              502.85
+            ],
+            [
+              347.14,
+              502.85
+            ],
+            [
+              347.14,
+              550.85
+            ],
+            [
+              119.14,
+              550.85
+            ],
+            [
+              119.14,
+              502.85
+            ]
+          ],
+          "area_px": 7056,
+          "confidence": 0.837,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_vegetation_5",
+          "concept": "vegetation",
+          "land_cover_class": "vegetation_low",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_vegetation_low_4",
+          "bbox_px": [
+            131.14,
+            58.85,
+            216,
+            48
+          ],
+          "polygon_px": [
+            [
+              131.14,
+              58.85
+            ],
+            [
+              347.14,
+              58.85
+            ],
+            [
+              347.14,
+              106.85
+            ],
+            [
+              131.14,
+              106.85
+            ],
+            [
+              131.14,
+              58.85
+            ]
+          ],
+          "area_px": 3744,
+          "confidence": 0.798,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_vegetation_6",
+          "concept": "vegetation",
+          "land_cover_class": "vegetation_low",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_vegetation_low_5",
+          "bbox_px": [
+            371.14,
+            58.85,
+            132,
+            84
+          ],
+          "polygon_px": [
+            [
+              371.14,
+              58.85
+            ],
+            [
+              503.14,
+              58.85
+            ],
+            [
+              503.14,
+              142.85
+            ],
+            [
+              371.14,
+              142.85
+            ],
+            [
+              371.14,
+              58.85
+            ]
+          ],
+          "area_px": 3312,
+          "confidence": 0.796,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_vegetation_7",
+          "concept": "vegetation",
+          "land_cover_class": "vegetation_low",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_vegetation_low_10",
+          "bbox_px": [
+            635.14,
+            178.85,
+            120,
+            84
+          ],
+          "polygon_px": [
+            [
+              635.14,
+              178.85
+            ],
+            [
+              755.14,
+              178.85
+            ],
+            [
+              755.14,
+              262.85
+            ],
+            [
+              635.14,
+              262.85
+            ],
+            [
+              635.14,
+              178.85
+            ]
+          ],
+          "area_px": 3024,
+          "confidence": 0.79,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_vegetation_8",
+          "concept": "vegetation",
+          "land_cover_class": "vegetation_low",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_vegetation_low_25",
+          "bbox_px": [
+            671.14,
+            442.85,
+            84,
+            108
+          ],
+          "polygon_px": [
+            [
+              671.14,
+              442.85
+            ],
+            [
+              755.14,
+              442.85
+            ],
+            [
+              755.14,
+              550.85
+            ],
+            [
+              671.14,
+              550.85
+            ],
+            [
+              671.14,
+              442.85
+            ]
+          ],
+          "area_px": 3024,
+          "confidence": 0.769,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_vegetation_9",
+          "concept": "vegetation",
+          "land_cover_class": "vegetation_low",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_vegetation_low_11",
+          "bbox_px": [
+            371.14,
+            202.85,
+            12,
+            192
+          ],
+          "polygon_px": [
+            [
+              371.14,
+              202.85
+            ],
+            [
+              383.14,
+              202.85
+            ],
+            [
+              383.14,
+              394.85
+            ],
+            [
+              371.14,
+              394.85
+            ],
+            [
+              371.14,
+              202.85
+            ]
+          ],
+          "area_px": 2304,
+          "confidence": 0.838,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_vegetation_10",
+          "concept": "vegetation",
+          "land_cover_class": "vegetation_low",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_vegetation_low_14",
+          "bbox_px": [
+            215.14,
+            286.85,
+            36,
+            36
+          ],
+          "polygon_px": [
+            [
+              215.14,
+              286.85
+            ],
+            [
+              251.14,
+              286.85
+            ],
+            [
+              251.14,
+              322.85
+            ],
+            [
+              215.14,
+              322.85
+            ],
+            [
+              215.14,
+              286.85
+            ]
+          ],
+          "area_px": 1008,
+          "confidence": 0.768,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_vegetation_11",
+          "concept": "vegetation",
+          "land_cover_class": "vegetation_low",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_vegetation_low_6",
+          "bbox_px": [
+            527.14,
+            58.85,
+            60,
+            24
+          ],
+          "polygon_px": [
+            [
+              527.14,
+              58.85
+            ],
+            [
+              587.14,
+              58.85
+            ],
+            [
+              587.14,
+              82.85
+            ],
+            [
+              527.14,
+              82.85
+            ],
+            [
+              527.14,
+              58.85
+            ]
+          ],
+          "area_px": 864,
+          "confidence": 0.745,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_vegetation_12",
+          "concept": "vegetation",
+          "land_cover_class": "vegetation_low",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_vegetation_low_7",
+          "bbox_px": [
+            683.14,
+            58.85,
+            60,
+            24
+          ],
+          "polygon_px": [
+            [
+              683.14,
+              58.85
+            ],
+            [
+              743.14,
+              58.85
+            ],
+            [
+              743.14,
+              82.85
+            ],
+            [
+              683.14,
+              82.85
+            ],
+            [
+              683.14,
+              58.85
+            ]
+          ],
+          "area_px": 864,
+          "confidence": 0.757,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_vegetation_13",
+          "concept": "vegetation",
+          "land_cover_class": "vegetation_low",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_vegetation_low_8",
+          "bbox_px": [
+            611.14,
+            70.85,
+            36,
+            36
+          ],
+          "polygon_px": [
+            [
+              611.14,
+              70.85
+            ],
+            [
+              647.14,
+              70.85
+            ],
+            [
+              647.14,
+              106.85
+            ],
+            [
+              611.14,
+              106.85
+            ],
+            [
+              611.14,
+              70.85
+            ]
+          ],
+          "area_px": 864,
+          "confidence": 0.778,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_vegetation_14",
+          "concept": "vegetation",
+          "land_cover_class": "vegetation_low",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_vegetation_low_28",
+          "bbox_px": [
+            455.14,
+            538.85,
+            48,
+            12
+          ],
+          "polygon_px": [
+            [
+              455.14,
+              538.85
+            ],
+            [
+              503.14,
+              538.85
+            ],
+            [
+              503.14,
+              550.85
+            ],
+            [
+              455.14,
+              550.85
+            ],
+            [
+              455.14,
+              538.85
+            ]
+          ],
+          "area_px": 576,
+          "confidence": 0.812,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_vegetation_15",
+          "concept": "vegetation",
+          "land_cover_class": "vegetation_low",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_vegetation_low_2",
+          "bbox_px": [
+            107.14,
+            46.85,
+            24,
+            24
+          ],
+          "polygon_px": [
+            [
+              107.14,
+              46.85
+            ],
+            [
+              131.14,
+              46.85
+            ],
+            [
+              131.14,
+              70.85
+            ],
+            [
+              107.14,
+              70.85
+            ],
+            [
+              107.14,
+              46.85
+            ]
+          ],
+          "area_px": 432,
+          "confidence": 0.752,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_vegetation_16",
+          "concept": "vegetation",
+          "land_cover_class": "vegetation_low",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_vegetation_low_17",
+          "bbox_px": [
+            635.14,
+            394.85,
+            12,
+            36
+          ],
+          "polygon_px": [
+            [
+              635.14,
+              394.85
+            ],
+            [
+              647.14,
+              394.85
+            ],
+            [
+              647.14,
+              430.85
+            ],
+            [
+              635.14,
+              430.85
+            ],
+            [
+              635.14,
+              394.85
+            ]
+          ],
+          "area_px": 432,
+          "confidence": 0.748,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_vegetation_17",
+          "concept": "vegetation",
+          "land_cover_class": "vegetation_low",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_vegetation_low_23",
+          "bbox_px": [
+            587.14,
+            442.85,
+            36,
+            12
+          ],
+          "polygon_px": [
+            [
+              587.14,
+              442.85
+            ],
+            [
+              623.14,
+              442.85
+            ],
+            [
+              623.14,
+              454.85
+            ],
+            [
+              587.14,
+              454.85
+            ],
+            [
+              587.14,
+              442.85
+            ]
+          ],
+          "area_px": 432,
+          "confidence": 0.73,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_vegetation_18",
+          "concept": "vegetation",
+          "land_cover_class": "vegetation_low",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_vegetation_low_24",
+          "bbox_px": [
+            647.14,
+            442.85,
+            36,
+            12
+          ],
+          "polygon_px": [
+            [
+              647.14,
+              442.85
+            ],
+            [
+              683.14,
+              442.85
+            ],
+            [
+              683.14,
+              454.85
+            ],
+            [
+              647.14,
+              454.85
+            ],
+            [
+              647.14,
+              442.85
+            ]
+          ],
+          "area_px": 432,
+          "confidence": 0.752,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_vegetation_19",
+          "concept": "vegetation",
+          "land_cover_class": "vegetation_low",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_vegetation_low_16",
+          "bbox_px": [
+            119.14,
+            298.85,
+            12,
+            24
+          ],
+          "polygon_px": [
+            [
+              119.14,
+              298.85
+            ],
+            [
+              131.14,
+              298.85
+            ],
+            [
+              131.14,
+              322.85
+            ],
+            [
+              119.14,
+              322.85
+            ],
+            [
+              119.14,
+              298.85
+            ]
+          ],
+          "area_px": 288,
+          "confidence": 0.771,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_vegetation_20",
+          "concept": "vegetation",
+          "land_cover_class": "vegetation_low",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_vegetation_low_20",
+          "bbox_px": [
+            383.14,
+            442.85,
+            24,
+            12
+          ],
+          "polygon_px": [
+            [
+              383.14,
+              442.85
+            ],
+            [
+              407.14,
+              442.85
+            ],
+            [
+              407.14,
+              454.85
+            ],
+            [
+              383.14,
+              454.85
+            ],
+            [
+              383.14,
+              442.85
+            ]
+          ],
+          "area_px": 288,
+          "confidence": 0.77,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_vegetation_21",
+          "concept": "vegetation",
+          "land_cover_class": "vegetation_low",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_vegetation_low_27",
+          "bbox_px": [
+            371.14,
+            538.85,
+            24,
+            12
+          ],
+          "polygon_px": [
+            [
+              371.14,
+              538.85
+            ],
+            [
+              395.14,
+              538.85
+            ],
+            [
+              395.14,
+              550.85
+            ],
+            [
+              371.14,
+              550.85
+            ],
+            [
+              371.14,
+              538.85
+            ]
+          ],
+          "area_px": 288,
+          "confidence": 0.786,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_vegetation_22",
+          "concept": "vegetation",
+          "land_cover_class": "vegetation_low",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_vegetation_low_29",
+          "bbox_px": [
+            551.14,
+            538.85,
+            24,
+            12
+          ],
+          "polygon_px": [
+            [
+              551.14,
+              538.85
+            ],
+            [
+              575.14,
+              538.85
+            ],
+            [
+              575.14,
+              550.85
+            ],
+            [
+              551.14,
+              550.85
+            ],
+            [
+              551.14,
+              538.85
+            ]
+          ],
+          "area_px": 288,
+          "confidence": 0.775,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_vegetation_23",
+          "concept": "vegetation",
+          "land_cover_class": "vegetation_low",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_vegetation_low_30",
+          "bbox_px": [
+            599.14,
+            538.85,
+            24,
+            12
+          ],
+          "polygon_px": [
+            [
+              599.14,
+              538.85
+            ],
+            [
+              623.14,
+              538.85
+            ],
+            [
+              623.14,
+              550.85
+            ],
+            [
+              599.14,
+              550.85
+            ],
+            [
+              599.14,
+              538.85
+            ]
+          ],
+          "area_px": 288,
+          "confidence": 0.739,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_vegetation_24",
+          "concept": "vegetation",
+          "land_cover_class": "vegetation_low",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_vegetation_low_9",
+          "bbox_px": [
+            635.14,
+            142.85,
+            12,
+            12
+          ],
+          "polygon_px": [
+            [
+              635.14,
+              142.85
+            ],
+            [
+              647.14,
+              142.85
+            ],
+            [
+              647.14,
+              154.85
+            ],
+            [
+              635.14,
+              154.85
+            ],
+            [
+              635.14,
+              142.85
+            ]
+          ],
+          "area_px": 144,
+          "confidence": 0.737,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_vegetation_25",
+          "concept": "vegetation",
+          "land_cover_class": "vegetation_low",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_vegetation_low_12",
+          "bbox_px": [
+            635.14,
+            262.85,
+            12,
+            12
+          ],
+          "polygon_px": [
+            [
+              635.14,
+              262.85
+            ],
+            [
+              647.14,
+              262.85
+            ],
+            [
+              647.14,
+              274.85
+            ],
+            [
+              635.14,
+              274.85
+            ],
+            [
+              635.14,
+              262.85
+            ]
+          ],
+          "area_px": 144,
+          "confidence": 0.728,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_vegetation_26",
+          "concept": "vegetation",
+          "land_cover_class": "vegetation_low",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_vegetation_low_13",
+          "bbox_px": [
+            743.14,
+            274.85,
+            12,
+            12
+          ],
+          "polygon_px": [
+            [
+              743.14,
+              274.85
+            ],
+            [
+              755.14,
+              274.85
+            ],
+            [
+              755.14,
+              286.85
+            ],
+            [
+              743.14,
+              286.85
+            ],
+            [
+              743.14,
+              274.85
+            ]
+          ],
+          "area_px": 144,
+          "confidence": 0.733,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_vegetation_27",
+          "concept": "vegetation",
+          "land_cover_class": "vegetation_low",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_vegetation_low_15",
+          "bbox_px": [
+            335.14,
+            286.85,
+            12,
+            12
+          ],
+          "polygon_px": [
+            [
+              335.14,
+              286.85
+            ],
+            [
+              347.14,
+              286.85
+            ],
+            [
+              347.14,
+              298.85
+            ],
+            [
+              335.14,
+              298.85
+            ],
+            [
+              335.14,
+              286.85
+            ]
+          ],
+          "area_px": 144,
+          "confidence": 0.776,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_vegetation_28",
+          "concept": "vegetation",
+          "land_cover_class": "vegetation_low",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_vegetation_low_19",
+          "bbox_px": [
+            371.14,
+            406.85,
+            12,
+            12
+          ],
+          "polygon_px": [
+            [
+              371.14,
+              406.85
+            ],
+            [
+              383.14,
+              406.85
+            ],
+            [
+              383.14,
+              418.85
+            ],
+            [
+              371.14,
+              418.85
+            ],
+            [
+              371.14,
+              406.85
+            ]
+          ],
+          "area_px": 144,
+          "confidence": 0.817,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_vegetation_29",
+          "concept": "vegetation",
+          "land_cover_class": "vegetation_low",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_vegetation_low_21",
+          "bbox_px": [
+            467.14,
+            442.85,
+            12,
+            12
+          ],
+          "polygon_px": [
+            [
+              467.14,
+              442.85
+            ],
+            [
+              479.14,
+              442.85
+            ],
+            [
+              479.14,
+              454.85
+            ],
+            [
+              467.14,
+              454.85
+            ],
+            [
+              467.14,
+              442.85
+            ]
+          ],
+          "area_px": 144,
+          "confidence": 0.753,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_vegetation_30",
+          "concept": "vegetation",
+          "land_cover_class": "vegetation_low",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_vegetation_low_22",
+          "bbox_px": [
+            563.14,
+            442.85,
+            12,
+            12
+          ],
+          "polygon_px": [
+            [
+              563.14,
+              442.85
+            ],
+            [
+              575.14,
+              442.85
+            ],
+            [
+              575.14,
+              454.85
+            ],
+            [
+              563.14,
+              454.85
+            ],
+            [
+              563.14,
+              442.85
+            ]
+          ],
+          "area_px": 144,
+          "confidence": 0.753,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_vegetation_31",
+          "concept": "vegetation",
+          "land_cover_class": "vegetation_low",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_vegetation_low_31",
+          "bbox_px": [
+            647.14,
+            538.85,
+            12,
+            12
+          ],
+          "polygon_px": [
+            [
+              647.14,
+              538.85
+            ],
+            [
+              659.14,
+              538.85
+            ],
+            [
+              659.14,
+              550.85
+            ],
+            [
+              647.14,
+              550.85
+            ],
+            [
+              647.14,
+              538.85
+            ]
+          ],
+          "area_px": 144,
+          "confidence": 0.772,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_road_surface_or_drive_aisle_1",
+          "concept": "road_surface_or_drive_aisle",
+          "land_cover_class": "road_surface_candidate",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_road_surface_candidate_16",
+          "bbox_px": [
+            95.14,
+            418.85,
+            684,
+            156
+          ],
+          "polygon_px": [
+            [
+              95.14,
+              418.85
+            ],
+            [
+              779.14,
+              418.85
+            ],
+            [
+              779.14,
+              574.85
+            ],
+            [
+              95.14,
+              574.85
+            ],
+            [
+              95.14,
+              418.85
+            ]
+          ],
+          "area_px": 23040,
+          "confidence": 0.821,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_road_surface_or_drive_aisle_2",
+          "concept": "road_surface_or_drive_aisle",
+          "land_cover_class": "road_surface_candidate",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_road_surface_candidate_11",
+          "bbox_px": [
+            635.14,
+            190.85,
+            132,
+            108
+          ],
+          "polygon_px": [
+            [
+              635.14,
+              190.85
+            ],
+            [
+              767.14,
+              190.85
+            ],
+            [
+              767.14,
+              298.85
+            ],
+            [
+              635.14,
+              298.85
+            ],
+            [
+              635.14,
+              190.85
+            ]
+          ],
+          "area_px": 9504,
+          "confidence": 0.819,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_road_surface_or_drive_aisle_3",
+          "concept": "road_surface_or_drive_aisle",
+          "land_cover_class": "road_surface_candidate",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_road_surface_candidate_9",
+          "bbox_px": [
+            635.14,
+            94.85,
+            48,
+            96
+          ],
+          "polygon_px": [
+            [
+              635.14,
+              94.85
+            ],
+            [
+              683.14,
+              94.85
+            ],
+            [
+              683.14,
+              190.85
+            ],
+            [
+              635.14,
+              190.85
+            ],
+            [
+              635.14,
+              94.85
+            ]
+          ],
+          "area_px": 2880,
+          "confidence": 0.794,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_road_surface_or_drive_aisle_4",
+          "concept": "road_surface_or_drive_aisle",
+          "land_cover_class": "road_surface_candidate",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_road_surface_candidate_3",
+          "bbox_px": [
+            323.14,
+            70.85,
+            48,
+            48
+          ],
+          "polygon_px": [
+            [
+              323.14,
+              70.85
+            ],
+            [
+              371.14,
+              70.85
+            ],
+            [
+              371.14,
+              118.85
+            ],
+            [
+              323.14,
+              118.85
+            ],
+            [
+              323.14,
+              70.85
+            ]
+          ],
+          "area_px": 2016,
+          "confidence": 0.816,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_road_surface_or_drive_aisle_5",
+          "concept": "road_surface_or_drive_aisle",
+          "land_cover_class": "road_surface_candidate",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_road_surface_candidate_13",
+          "bbox_px": [
+            335.14,
+            286.85,
+            36,
+            36
+          ],
+          "polygon_px": [
+            [
+              335.14,
+              286.85
+            ],
+            [
+              371.14,
+              286.85
+            ],
+            [
+              371.14,
+              322.85
+            ],
+            [
+              335.14,
+              322.85
+            ],
+            [
+              335.14,
+              286.85
+            ]
+          ],
+          "area_px": 1152,
+          "confidence": 0.832,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_road_surface_or_drive_aisle_6",
+          "concept": "road_surface_or_drive_aisle",
+          "land_cover_class": "road_surface_candidate",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_road_surface_candidate_1",
+          "bbox_px": [
+            95.14,
+            70.85,
+            36,
+            36
+          ],
+          "polygon_px": [
+            [
+              95.14,
+              70.85
+            ],
+            [
+              131.14,
+              70.85
+            ],
+            [
+              131.14,
+              106.85
+            ],
+            [
+              95.14,
+              106.85
+            ],
+            [
+              95.14,
+              70.85
+            ]
+          ],
+          "area_px": 1008,
+          "confidence": 0.811,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_road_surface_or_drive_aisle_7",
+          "concept": "road_surface_or_drive_aisle",
+          "land_cover_class": "road_surface_candidate",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_road_surface_candidate_5",
+          "bbox_px": [
+            587.14,
+            70.85,
+            36,
+            36
+          ],
+          "polygon_px": [
+            [
+              587.14,
+              70.85
+            ],
+            [
+              623.14,
+              70.85
+            ],
+            [
+              623.14,
+              106.85
+            ],
+            [
+              587.14,
+              106.85
+            ],
+            [
+              587.14,
+              70.85
+            ]
+          ],
+          "area_px": 1008,
+          "confidence": 0.808,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_road_surface_or_drive_aisle_8",
+          "concept": "road_surface_or_drive_aisle",
+          "land_cover_class": "road_surface_candidate",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_road_surface_candidate_12",
+          "bbox_px": [
+            95.14,
+            286.85,
+            36,
+            36
+          ],
+          "polygon_px": [
+            [
+              95.14,
+              286.85
+            ],
+            [
+              131.14,
+              286.85
+            ],
+            [
+              131.14,
+              322.85
+            ],
+            [
+              95.14,
+              322.85
+            ],
+            [
+              95.14,
+              286.85
+            ]
+          ],
+          "area_px": 864,
+          "confidence": 0.771,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_road_surface_or_drive_aisle_9",
+          "concept": "road_surface_or_drive_aisle",
+          "land_cover_class": "road_surface_candidate",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_road_surface_candidate_10",
+          "bbox_px": [
+            371.14,
+            142.85,
+            12,
+            60
+          ],
+          "polygon_px": [
+            [
+              371.14,
+              142.85
+            ],
+            [
+              383.14,
+              142.85
+            ],
+            [
+              383.14,
+              202.85
+            ],
+            [
+              371.14,
+              202.85
+            ],
+            [
+              371.14,
+              142.85
+            ]
+          ],
+          "area_px": 720,
+          "confidence": 0.774,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_road_surface_or_drive_aisle_10",
+          "concept": "road_surface_or_drive_aisle",
+          "land_cover_class": "road_surface_candidate",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_road_surface_candidate_2",
+          "bbox_px": [
+            239.14,
+            70.85,
+            12,
+            24
+          ],
+          "polygon_px": [
+            [
+              239.14,
+              70.85
+            ],
+            [
+              251.14,
+              70.85
+            ],
+            [
+              251.14,
+              94.85
+            ],
+            [
+              239.14,
+              94.85
+            ],
+            [
+              239.14,
+              70.85
+            ]
+          ],
+          "area_px": 288,
+          "confidence": 0.782,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_road_surface_or_drive_aisle_11",
+          "concept": "road_surface_or_drive_aisle",
+          "land_cover_class": "road_surface_candidate",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_road_surface_candidate_6",
+          "bbox_px": [
+            659.14,
+            70.85,
+            24,
+            12
+          ],
+          "polygon_px": [
+            [
+              659.14,
+              70.85
+            ],
+            [
+              683.14,
+              70.85
+            ],
+            [
+              683.14,
+              82.85
+            ],
+            [
+              659.14,
+              82.85
+            ],
+            [
+              659.14,
+              70.85
+            ]
+          ],
+          "area_px": 288,
+          "confidence": 0.722,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_road_surface_or_drive_aisle_12",
+          "concept": "road_surface_or_drive_aisle",
+          "land_cover_class": "road_surface_candidate",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_road_surface_candidate_8",
+          "bbox_px": [
+            215.14,
+            82.85,
+            12,
+            24
+          ],
+          "polygon_px": [
+            [
+              215.14,
+              82.85
+            ],
+            [
+              227.14,
+              82.85
+            ],
+            [
+              227.14,
+              106.85
+            ],
+            [
+              215.14,
+              106.85
+            ],
+            [
+              215.14,
+              82.85
+            ]
+          ],
+          "area_px": 288,
+          "confidence": 0.828,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_road_surface_or_drive_aisle_13",
+          "concept": "road_surface_or_drive_aisle",
+          "land_cover_class": "road_surface_candidate",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_road_surface_candidate_4",
+          "bbox_px": [
+            503.14,
+            70.85,
+            12,
+            12
+          ],
+          "polygon_px": [
+            [
+              503.14,
+              70.85
+            ],
+            [
+              515.14,
+              70.85
+            ],
+            [
+              515.14,
+              82.85
+            ],
+            [
+              503.14,
+              82.85
+            ],
+            [
+              503.14,
+              70.85
+            ]
+          ],
+          "area_px": 144,
+          "confidence": 0.731,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_road_surface_or_drive_aisle_14",
+          "concept": "road_surface_or_drive_aisle",
+          "land_cover_class": "road_surface_candidate",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_road_surface_candidate_7",
+          "bbox_px": [
+            743.14,
+            70.85,
+            12,
+            12
+          ],
+          "polygon_px": [
+            [
+              743.14,
+              70.85
+            ],
+            [
+              755.14,
+              70.85
+            ],
+            [
+              755.14,
+              82.85
+            ],
+            [
+              743.14,
+              82.85
+            ],
+            [
+              743.14,
+              70.85
+            ]
+          ],
+          "area_px": 144,
+          "confidence": 0.783,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_road_surface_or_drive_aisle_15",
+          "concept": "road_surface_or_drive_aisle",
+          "land_cover_class": "road_surface_candidate",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_road_surface_candidate_14",
+          "bbox_px": [
+            215.14,
+            310.85,
+            12,
+            12
+          ],
+          "polygon_px": [
+            [
+              215.14,
+              310.85
+            ],
+            [
+              227.14,
+              310.85
+            ],
+            [
+              227.14,
+              322.85
+            ],
+            [
+              215.14,
+              322.85
+            ],
+            [
+              215.14,
+              310.85
+            ]
+          ],
+          "area_px": 144,
+          "confidence": 0.73,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        },
+        {
+          "id": "classical_cv_v1_road_surface_or_drive_aisle_16",
+          "concept": "road_surface_or_drive_aisle",
+          "land_cover_class": "road_surface_candidate",
+          "source_backend": "classical_cv_v1",
+          "source_mask_id": "land_cover_road_surface_candidate_15",
+          "bbox_px": [
+            371.14,
+            394.85,
+            12,
+            12
+          ],
+          "polygon_px": [
+            [
+              371.14,
+              394.85
+            ],
+            [
+              383.14,
+              394.85
+            ],
+            [
+              383.14,
+              406.85
+            ],
+            [
+              371.14,
+              406.85
+            ],
+            [
+              371.14,
+              394.85
+            ]
+          ],
+          "area_px": 144,
+          "confidence": 0.702,
+          "review_required": true,
+          "grounding_decision": "observed_mask_candidate",
+          "note": "Segmentation backend output is observed evidence only; GroundPlan promotion is decided by boundary/residual QA."
+        }
+      ],
+      "insid3_optional": []
+    },
+    "overlap": {
+      "available": false,
+      "mean_overlap": null,
+      "per_class": {
+        "building_roof_or_footprint": null,
+        "paved_surface": null,
+        "vegetation": null,
+        "parking_marking": null,
+        "road_surface_or_drive_aisle": null
+      },
+      "note": "INSID3 optional backend skipped; overlap cannot be computed."
+    },
+    "fusion_decision": {
+      "decision": "classical_only_with_insid3_skip_report",
+      "fused_count": 59,
+      "reason": "INSID3 optional backend unavailable; fused masks come from classical land-cover only."
+    },
+    "qa": {
+      "ok": true,
+      "verdict": "pass",
+      "classical_candidate_count": 59,
+      "insid3_candidate_count": 0,
+      "fused_observed_mask_count": 59,
+      "insid3_status": "skipped_unavailable",
+      "promoted_geometry_count": 0,
+      "issues": [
+        {
+          "severity": "info",
+          "rule_id": "insid3_optional_skipped",
+          "message": "INSID3 optional backend skipped: INSID3_ENABLE is not set to 1; INSID3_ROOT is not configured; DINOV3_WEIGHTS / INSID3_DINOV3_WEIGHTS is not configured"
+        }
+      ]
+    },
+    "correction_targets": [
+      {
+        "target": "segmentation_backend_compare.insid3_optional",
+        "action": "configure_optional_backend_or_accept_skip",
+        "reason": "INSID3 is optional and currently unavailable; default path still runs."
+      }
+    ]
+  },
+  "summary": {
+    "default_backend": "classical_cv_v1",
+    "optional_backend": "insid3_optional",
+    "insid3_status": "skipped_unavailable",
+    "insid3_available": false,
+    "insid3_blockers": [
+      "INSID3_ENABLE is not set to 1",
+      "INSID3_ROOT is not configured",
+      "DINOV3_WEIGHTS / INSID3_DINOV3_WEIGHTS is not configured"
+    ],
+    "classical_candidate_count": 59,
+    "insid3_candidate_count": 0,
+    "fused_observed_mask_count": 59,
+    "promoted_geometry_count": 0,
+    "mean_backend_overlap": null,
+    "fusion_decision": "classical_only_with_insid3_skip_report"
+  },
+  "issues": [
+    {
+      "severity": "info",
+      "rule_id": "insid3_optional_skipped",
+      "message": "INSID3 optional backend skipped: INSID3_ENABLE is not set to 1; INSID3_ROOT is not configured; DINOV3_WEIGHTS / INSID3_DINOV3_WEIGHTS is not configured"
+    }
+  ],
+  "correction_targets": [
+    {
+      "target": "segmentation_backend_compare.insid3_optional",
+      "action": "configure_optional_backend_or_accept_skip",
+      "reason": "INSID3 is optional and currently unavailable; default path still runs."
+    }
+  ]
+}

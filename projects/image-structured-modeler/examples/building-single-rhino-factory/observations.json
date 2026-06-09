@@ -1,0 +1,106 @@
+{
+  "version": 1,
+  "object": {
+    "type": "building_single",
+    "name": "Dimensioned production workshop from RhinoMCP reference sheets",
+    "scope": "single_industrial_workshop",
+    "reconstruction_status": "dimensioned_drawing_grounded",
+    "review_required": true
+  },
+  "images": [
+    {
+      "id": "elevation_sheet",
+      "image": {
+        "path": "test/建筑群/建筑单体/AI解放生产力之Rhino 建模_4_九思摸鱼第一名_来自小红书网页版.jpg",
+        "width_px": 1571,
+        "height_px": 1080
+      },
+      "assigned_view": "dimensioned_front_and_side_elevations",
+      "quality": {
+        "status": "usable",
+        "note": "Elevation sheet contains front/side facade proportions, material labels, and height datum marks."
+      }
+    },
+    {
+      "id": "plan_sheet",
+      "image": {
+        "path": "test/建筑群/建筑单体/AI解放生产力之Rhino 建模_5_九思摸鱼第一名_来自小红书网页版.jpg",
+        "width_px": 2123,
+        "height_px": 1080
+      },
+      "assigned_view": "dimensioned_roof_plan",
+      "quality": {
+        "status": "usable",
+        "note": "Plan sheet contains hard footprint dimensions and rooftop photovoltaic label."
+      }
+    }
+  ],
+  "dimensions": {
+    "source": "drawing_annotation",
+    "status": "hard_scale",
+    "values": {
+      "unit": "mm",
+      "length": 136200,
+      "depth": 40200,
+      "main_height": 13000,
+      "max_height": 15100,
+      "below_grade_marker": -150,
+      "plan_segments": [
+        17100,
+        6000,
+        42000,
+        6000,
+        42000,
+        6000,
+        17100
+      ],
+      "story_count": 1,
+      "story_height_label": 13000
+    }
+  },
+  "evidence": [
+    {
+      "id": "overall_plan_length",
+      "kind": "dimension_chain",
+      "source_image": "test/建筑群/建筑单体/AI解放生产力之Rhino 建模_5_九思摸鱼第一名_来自小红书网页版.jpg",
+      "value_mm": 136200,
+      "basis": "top dimension reads 136200"
+    },
+    {
+      "id": "overall_plan_depth",
+      "kind": "dimension_chain",
+      "source_image": "test/建筑群/建筑单体/AI解放生产力之Rhino 建模_5_九思摸鱼第一名_来自小红书网页版.jpg",
+      "value_mm": 40200,
+      "basis": "left dimension reads 40200"
+    },
+    {
+      "id": "height_main_wall",
+      "kind": "height_datum",
+      "source_image": "test/建筑群/建筑单体/AI解放生产力之Rhino 建模_4_九思摸鱼第一名_来自小红书网页版.jpg",
+      "value_mm": 13000,
+      "basis": "elevation datum shows +13.000 and plan text marks H=13M"
+    },
+    {
+      "id": "height_roof_monitor_or_parapet",
+      "kind": "height_datum",
+      "source_image": "test/建筑群/建筑单体/AI解放生产力之Rhino 建模_4_九思摸鱼第一名_来自小红书网页版.jpg",
+      "value_mm": 15100,
+      "basis": "elevation marker reaches about +15.100"
+    },
+    {
+      "id": "facade_materials",
+      "kind": "material_label",
+      "source_image": "test/建筑群/建筑单体/AI解放生产力之Rhino 建模_4_九思摸鱼第一名_来自小红书网页版.jpg",
+      "values": [
+        "orange color steel plate",
+        "light grey color steel plate"
+      ]
+    },
+    {
+      "id": "roof_photovoltaic",
+      "kind": "program_label",
+      "source_image": "test/建筑群/建筑单体/AI解放生产力之Rhino 建模_5_九思摸鱼第一名_来自小红书网页版.jpg",
+      "value": "roof solar photovoltaic"
+    }
+  ]
+}

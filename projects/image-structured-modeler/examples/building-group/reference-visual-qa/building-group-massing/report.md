@@ -9,7 +9,7 @@
 
 | Metric | Count |
 |---|---:|
-| Checked items | 13 |
+| Checked items | 55 |
 | Total issues | 0 |
 | Errors | 0 |
 | Warnings | 0 |

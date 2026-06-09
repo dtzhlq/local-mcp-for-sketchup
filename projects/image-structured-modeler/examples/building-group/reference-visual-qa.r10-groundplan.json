@@ -1,0 +1,100 @@
+{
+  "version": 1,
+  "title": "Building Group R10 GroundPlan Reference Visual QA",
+  "description": "Reference-facing QA for the R10 default AutoGroundPlan path. This fixture checks stable canonical footprint positions without depending on legacy row parents or raw parking-lot surfaces.",
+  "rules": {
+    "views": [
+      {
+        "name": "site_top",
+        "title": "R10 Site Plan Reference",
+        "axes": ["x", "y"],
+        "depth_axis": "z",
+        "frame": {
+          "items": ["site_boundary"]
+        }
+      },
+      {
+        "name": "height_front",
+        "title": "R10 Height Tier Reference",
+        "axes": ["x", "z"],
+        "depth_axis": "y",
+        "frame": {
+          "items": [
+            "primary_blue_roof_hall",
+            "warehouse_west_north",
+            "warehouse_west_south",
+            "warehouse_inner_north",
+            "warehouse_inner_south",
+            "utility_building",
+            "admin_office",
+            "tank_farm"
+          ]
+        }
+      }
+    ],
+    "keypoints": [
+      {
+        "id": "primary-blue-hall-r10-site-center",
+        "view": "site_top",
+        "item": "primary_blue_roof_hall",
+        "point": "center",
+        "expected": [0.511, 0.685],
+        "tolerance": 0.025,
+        "correction_target": {
+          "part_id": "primary_blue_roof_hall",
+          "path": "parts[primary_blue_roof_hall].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "west-warehouse-north-r10-site-center",
+        "view": "site_top",
+        "item": "warehouse_west_north",
+        "point": "center",
+        "expected": [0.063, 0.817],
+        "tolerance": 0.03,
+        "correction_target": {
+          "part_id": "warehouse_west_north",
+          "path": "parts[warehouse_west_north].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "parking-drive-aisle-r10-site-center",
+        "view": "site_top",
+        "item": "parking_drive_aisle_center",
+        "point": "center",
+        "expected": [0.75, 0.186],
+        "tolerance": 0.035,
+        "correction_target": {
+          "part_id": "parking_drive_aisle_center",
+          "path": "parts[parking_drive_aisle_center].shape.parameters.origin"
+        }
+      }
+    ],
+    "orientation": [
+      {
+        "id": "primary-hall-east-of-inner-warehouse-north",
+        "view": "site_top",
+        "item": "primary_blue_roof_hall",
+        "anchor": "warehouse_inner_north",
+        "direction": "right_of",
+        "min_delta": 0.15,
+        "correction_target": {
+          "part_id": "primary_blue_roof_hall",
+          "path": "parts[primary_blue_roof_hall].shape.parameters.origin"
+        }
+      },
+      {
+        "id": "parking-drive-aisle-south-of-primary-hall",
+        "view": "site_top",
+        "item": "parking_drive_aisle_center",
+        "anchor": "primary_blue_roof_hall",
+        "direction": "below",
+        "min_delta": 0.25,
+        "correction_target": {
+          "part_id": "parking_drive_aisle_center",
+          "path": "parts[parking_drive_aisle_center].shape.parameters.origin"
+        }
+      }
+    ]
+  }
+}
