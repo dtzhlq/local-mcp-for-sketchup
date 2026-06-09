@@ -124,6 +124,20 @@ const tools = [
     }
   },
   {
+    name: 'run_ruby_expert',
+    description: 'Debug-only queue tool for running arbitrary SketchUp Ruby. Disabled unless ALMA_SKETCHUP_ENABLE_RUBY_EXPERT=1 is set in both Node and SketchUp plugin environments.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        code: { type: 'string', description: 'Ruby code to evaluate inside SketchUp. This is destructive and must not be used as an acceptance path.' },
+        audit_path: { type: 'string', description: 'Optional audit artifact path. Defaults to the queue state audit directory.' },
+        runtime: { type: 'string', enum: ['queue'], default: 'queue' },
+        timeoutMs: { type: 'number' }
+      },
+      required: ['code']
+    }
+  },
+  {
     name: 'compare_snapshots',
     description: 'Compare two structured snapshots and return a diff report.',
     inputSchema: {

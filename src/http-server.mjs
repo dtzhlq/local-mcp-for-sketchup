@@ -13,7 +13,7 @@ const server = http.createServer(async (request, response) => {
     }
 
     if (request.method === 'GET' && request.url === '/tools') {
-      return sendJson(response, 200, { tools: ['get_docs', 'get_workflow_bundle', 'get_capabilities', 'queue_diagnostics', 'build_model', 'reset_model', 'save_model', 'capture_view', 'compare_snapshots', 'compare_model', 'validate_model', 'validate_reference_model'] });
+      return sendJson(response, 200, { tools: ['get_docs', 'get_workflow_bundle', 'get_capabilities', 'queue_diagnostics', 'build_model', 'compile_expert', 'build_expert_model', 'reset_model', 'save_model', 'capture_view', 'run_ruby_expert', 'compare_snapshots', 'compare_model', 'validate_model', 'validate_reference_model'] });
     }
 
     if (request.method === 'POST' && request.url?.startsWith('/tools/')) {

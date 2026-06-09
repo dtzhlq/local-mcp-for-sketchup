@@ -77,6 +77,21 @@ export class QueueRuntime {
     return result;
   }
 
+  async runRubyExpert({ code, auditPath, audit_path } = {}) {
+    const requestedAuditPath = auditPath || audit_path;
+    const resolvedAuditPath = requestedAuditPath ? path.resolve(requestedAuditPath) : requestedAuditPath;
+    const result = await this.call('run_ruby_expert', { code, audit_path: resolvedAuditPath });
+    if (result && result.audit_path) {
+      try {
+        const stats = await fs.stat(result.audit_path);
+        result.audit_size_bytes = stats.size;
+      } catch (_) {
+        // File may not be accessible; skip.
+      }
+    }
+    return result;
+  }
+
   async diagnostics({ includeFiles = false } = {}) {
     const stateDir = path.dirname(this.queueDir);
     const [queue, responses, lock] = await Promise.all([

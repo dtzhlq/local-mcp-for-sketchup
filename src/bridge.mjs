@@ -109,6 +109,29 @@ export class SketchUpBridge {
     });
   }
 
+  async run_ruby_expert({ code, audit_path, auditPath, runtime = 'queue', timeoutMs } = {}) {
+    if (process.env.ALMA_SKETCHUP_ENABLE_RUBY_EXPERT !== '1') {
+      return {
+        kind: 'run_ruby_expert',
+        runtime,
+        enabled: false,
+        blocked: true,
+        reason: 'Set ALMA_SKETCHUP_ENABLE_RUBY_EXPERT=1 in both Node and SketchUp plugin environments to enable this destructive debug-only tool.'
+      };
+    }
+    if (runtime !== 'queue') {
+      throw new Error('run_ruby_expert is supported only for queue runtime');
+    }
+    if (typeof code !== 'string' || code.trim().length === 0) {
+      throw new Error('run_ruby_expert requires non-empty Ruby code');
+    }
+    const selectedRuntime = this.selectRuntime(runtime, { timeoutMs });
+    if (typeof selectedRuntime.runRubyExpert !== 'function') {
+      throw new Error('Selected queue runtime does not support run_ruby_expert');
+    }
+    return selectedRuntime.runRubyExpert({ code, audit_path: audit_path ?? auditPath });
+  }
+
   async compare_model({
     code,
     expected_runtime = 'mock',

@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const server = spawn(process.execPath, [path.join(repoRoot, 'src/mcp-server.mjs')], {
   cwd: repoRoot,
+  env: { ...process.env, ALMA_SKETCHUP_ENABLE_RUBY_EXPERT: '' },
   stdio: ['pipe', 'pipe', 'pipe']
 });
 
@@ -40,14 +41,23 @@ try {
   assert.ok(toolNames.includes('validate_reference_model'), 'MCP tools/list should expose validate_reference_model');
   assert.ok(toolNames.includes('queue_diagnostics'), 'MCP tools/list should expose queue_diagnostics');
   assert.ok(toolNames.includes('capture_view'), 'MCP tools/list should expose capture_view');
+  assert.ok(toolNames.includes('run_ruby_expert'), 'MCP tools/list should expose run_ruby_expert');
   const compileTool = list.result.tools.find((tool) => tool.name === 'compile_expert');
   assert.deepEqual(compileTool.inputSchema.required, ['code']);
   assert.ok(compileTool.inputSchema.properties.maxOperations);
+  const rubyExpertTool = list.result.tools.find((tool) => tool.name === 'run_ruby_expert');
+  assert.deepEqual(rubyExpertTool.inputSchema.required, ['code']);
+  assert.equal(rubyExpertTool.inputSchema.properties.runtime.enum[0], 'queue');
 
   const workflowBundle = await callTool('get_workflow_bundle', {});
   assert.equal(workflowBundle.kind, 'sketchup_mcp_workflow_bundle');
   assert.ok(workflowBundle.workflows.inspector.steps.some((step) => step.tool === 'queue_diagnostics'));
   assert.ok(workflowBundle.workflows.modeler.steps.some((step) => step.tool === 'capture_view'));
+
+  const blockedRubyExpert = await callTool('run_ruby_expert', { code: 'Sketchup.active_model.title' });
+  assert.equal(blockedRubyExpert.kind, 'run_ruby_expert');
+  assert.equal(blockedRubyExpert.enabled, false);
+  assert.equal(blockedRubyExpert.blocked, true);
 
   const expertSource = [
     'const ops = [];',
@@ -117,7 +127,7 @@ try {
 
   console.log(JSON.stringify({
     ok: true,
-    tools: ['get_workflow_bundle', 'compile_expert', 'build_expert_model', 'validate_model', 'validate_reference_model', 'queue_diagnostics', 'capture_view'],
+    tools: ['get_workflow_bundle', 'compile_expert', 'build_expert_model', 'validate_model', 'validate_reference_model', 'queue_diagnostics', 'capture_view', 'run_ruby_expert'],
     groups: built.snapshot.totals.groups
   }, null, 2));
 } finally {

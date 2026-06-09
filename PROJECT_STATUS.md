@@ -1,7 +1,9 @@
 # SketchUp MCP Replica — 项目状态与计划
 
-> 更新日期：2026-06-04
+> 更新日期：2026-06-09
 > 当前状态：技术预览闭环已验证；阶段 7 主线 feature slice、CAD boolean/manifold、子项目 semantic fusion / corrections workbench 与 feature mapping 第一刀已完成；ProductProfile / PartGraph / Reference Visual QA 管线已闭环，ambulance 第一轮参考图锚定 visual-quality refit 已完成并通过 mock/queue；R5 已完成 ambulance + Switch + Fuji 三样本 mock + live queue 产品报告并保存 queue `.skp` artifacts；R6 已给 ambulance no-seed skeleton 增加 review-gated 参数提案，打通 accepted proposal -> `part_graph_correction_patch` -> PartGraph 回写，补上参数提案 review UI，并把 proposal-applied mock/queue QA 复验链接上；REST3D 启发的 physical consistency QA 已扩到 ambulance、Switch、Fuji 三样例并进入产品样本 gate；Reference Visual QA 已新增 orientation/chirality 与 accepted feature presence/count 门禁，Image Structured observations 已记录 mirror-risk hints；R7 已纳入 GPT Image 生成的建筑群测试图，跑通 `building_group` ObservationSet -> EvidenceGraph -> known-element scale anchors -> review-gated massing PartGraph -> DSL -> mock/live queue Layout QA + Reference Visual QA，并完成 accepted-all roofline/facade/opening detail proposal -> patch -> feature Reference Visual QA -> mock/live queue QA 链；Visual Grounding / Grounding v2/R9 已把 Switch 人工视觉检查沉淀为 relation fixture + 镜像负例，建筑群 massing PartGraph 已接收 image-space relation evidence，并把四栋仓库、停车线/车道和树列写入 review-gated PartGraph candidate proposal queue；R9.5 PhotoGradeReadiness 已在当前 building-group、第二生成样本和 real-photo smoke scaffold 三个样本上输出 readiness report，当前 verdict 为 `technical_baseline` / `technical_baseline` / `review_required`，没有样本被声明为 photo-grade candidate；正式发布继续暂停，下一步进入真实照片/oblique facade 边界
+
+> 2026-06-09 主线补充：建筑几何 R2/R3 已把本地 JSON DSL 推到 85 个 operation / 53 个 component scope，新增非正交/带洞 footprint、路径/弧墙、场地/道路/停车/柱网/幕墙/hip/footprint roof 等 mock-first 建筑能力；R3 进一步把 curtain wall 从占位带升级为 panel/mullion/rail 网格。MCP/CLI/HTTP 侧新增 `queue_diagnostics`、`capture_view`、`get_workflow_bundle` 和默认关闭的 `run_ruby_expert` 调试入口；这些是本地 queue 可用性和证据工具，不改变官方 Cloud/OAuth 不做的边界。
 
 ---
 
@@ -56,8 +58,8 @@
 
 | 文件 | 职责 |
 |---|---|
-| `src/mcp-server.mjs` | stdio MCP server，暴露 9 个工具 |
-| `src/bridge.mjs` | 工具路由层，mock/queue 分发、runtime descriptor 附加、compatibility check 和 bridge 生命周期内 descriptor cache |
+| `src/mcp-server.mjs` | stdio MCP server，暴露 15 个工具 |
+| `src/bridge.mjs` | 工具路由层，mock/queue 分发、runtime descriptor 附加、compatibility check、queue 诊断/视口截图/工作流包和 bridge 生命周期内 descriptor cache |
 | `src/mock-runtime.mjs` | 离线 runtime，解析 DSL operation → 调用 material / primitive / profile / surface / product / architecture / component / view / object operation modules |
 | `src/queue-runtime.mjs` | 队列 runtime，写 JSON 请求到 `~/.sketchup-mcp-replica/queue/` |
 | `src/geometry.mjs` | mock runtime operation modules 的兼容聚合导出入口 |
@@ -124,6 +126,10 @@
 - Queue capability handshake：插件回传版本、op 列表、compatibility
 - `compare_model`：一键 mock-vs-queue 对照
 - `validate_model`：无 GUI 的语义布局 QA，可生成正交 SVG/HTML preview 和 correction suggestions
+- `queue_diagnostics`：不向 SketchUp 发请求即可检查 queue/response 目录、stale lock 和残留文件
+- `capture_view`：queue 侧保存当前/标准视角截图，返回相机和模型摘要，作为人工 review 可见证据
+- `get_workflow_bundle`：给 MCP 客户端返回 inspector/modeler/QA reviewer 工作流 guardrails
+- `run_ruby_expert`：默认关闭的本地 Ruby 调试入口，需 Node + SketchUp 双 env opt-in，并写 audit artifact；不属于验收通道
 - QA 报告生成（JSON + Markdown）
 - 批量 golden regression：`npm run qa:mock` / `npm run qa:queue`
 

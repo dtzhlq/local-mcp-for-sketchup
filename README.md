@@ -39,10 +39,13 @@
 get_docs() -> { docs }
 get_workflow_bundle() -> { workflows: { inspector, modeler, qa_reviewer } }
 build_model({ code, runtime, timeoutMs? }) -> { snapshot }
+compile_expert({ code, seed?, ...limits }) -> { document, expert, code }
+build_expert_model({ code, runtime, seed?, ...limits }) -> { compiled, snapshot }
 reset_model({ runtime, timeoutMs? }) -> { snapshot }
 save_model({ path?, keep_session?, runtime, timeoutMs? }) -> { file_path, snapshot }
 queue_diagnostics({ includeFiles?, timeoutMs? }) -> { queue, responses, lock, recommendations }
 capture_view({ path?, view?, width?, height?, runtime:"queue", timeoutMs? }) -> { file_path, camera, model_summary }
+run_ruby_expert({ code, audit_path?, runtime:"queue", timeoutMs? }) -> { enabled, blocked, ok?, audit_path? }
 validate_model({ code?|snapshot?, runtime?, spec?, includePreview? }) -> { report, preview }
 validate_reference_model({ code?|snapshot?, runtime?, spec?, includePreview? }) -> { report, preview }
 ```
@@ -152,6 +155,7 @@ node src/cli.mjs reset_model --runtime mock
 node src/cli.mjs build_model --runtime mock --code-file examples/demo-room.json
 node src/cli.mjs save_model --runtime mock --path output/mock-model.json
 node src/cli.mjs capture_view --runtime queue --path output/current-view.png --view iso --width 1280 --height 720 --timeout-ms 60000
+ALMA_SKETCHUP_ENABLE_RUBY_EXPERT=1 node src/cli.mjs run_ruby_expert --runtime queue --code 'Sketchup.active_model.title' --audit-path output/ruby-expert-audit.json --timeout-ms 60000
 node src/cli.mjs compare_snapshots --expected-file output/mock-a.json --actual-file output/mock-b.json --tolerance-mm 1 --max-faces 5000 --max-artifact-size-bytes 50000000
 node src/cli.mjs compare_model --code-file examples/demo-room.json --expected-runtime mock --actual-runtime mock --max-faces 5000
 node src/cli.mjs compare_model --code-file examples/demo-room.json --expected-runtime mock --actual-runtime mock --max-faces 5000 --format markdown --output-file output/mock-parity-report.md
@@ -200,7 +204,7 @@ npm run qa:expert:mock
 
 ## MCP stdio 接入
 
-本项目自带一个最小 MCP stdio server，当前暴露 `get_docs`、`get_workflow_bundle`、`get_capabilities`、`queue_diagnostics`、`build_model`、`compile_expert`、`build_expert_model`、`reset_model`、`save_model`、`capture_view`、`compare_snapshots`、`compare_model`、`validate_model` 和 `validate_reference_model`：
+本项目自带一个最小 MCP stdio server，当前暴露 `get_docs`、`get_workflow_bundle`、`get_capabilities`、`queue_diagnostics`、`build_model`、`compile_expert`、`build_expert_model`、`reset_model`、`save_model`、`capture_view`、`run_ruby_expert`、`compare_snapshots`、`compare_model`、`validate_model` 和 `validate_reference_model`：
 
 ```bash
 node src/mcp-server.mjs
@@ -220,6 +224,8 @@ node src/mcp-server.mjs
   }
 }
 ```
+
+`run_ruby_expert` 是本地 SketchUp Ruby 调试入口，不属于安全 DSL 验收路径。默认返回 `blocked:true`；只有 Node 进程和 SketchUp 插件进程都设置 `ALMA_SKETCHUP_ENABLE_RUBY_EXPERT=1` 时才会执行，并会写入 audit artifact。
 
 ## HTTP bridge（可选）
 

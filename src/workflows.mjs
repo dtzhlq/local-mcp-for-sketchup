@@ -8,6 +8,7 @@ export function getWorkflowBundle() {
       'Use safe JSON DSL build_model for modeling; do not bypass the operation registry.',
       'After substantial queue edits, save a snapshot or SKP artifact and run QA.',
       'Use capture_view as visible evidence, not as a replacement for snapshot/layout/reference gates.',
+      'Use run_ruby_expert only for explicitly enabled local debugging; it is destructive, audited, and outside acceptance gates.',
       'Run queue commands serially against one SketchUp Bridge session.'
     ],
     workflows: {

@@ -50,6 +50,15 @@ async function main() {
         runtime: options.runtime || 'queue',
         timeoutMs: options.timeoutMs
       }), options);
+    case 'run_ruby_expert': {
+      const code = options.codeFile ? await fs.readFile(options.codeFile, 'utf8') : options.code;
+      return output(await bridge.run_ruby_expert({
+        code,
+        audit_path: options.auditPath,
+        runtime: options.runtime || 'queue',
+        timeoutMs: options.timeoutMs
+      }), options);
+    }
     case 'compare_snapshots': {
       const expected = await readSnapshotJson(options.expectedFile, 'expected');
       const actual = await readSnapshotJson(options.actualFile, 'actual');
@@ -123,6 +132,7 @@ function parseArgs(argv) {
     else if (arg === '--code') options.code = argv[++index];
     else if (arg === '--code-file') options.codeFile = argv[++index];
     else if (arg === '--path') options.path = argv[++index];
+    else if (arg === '--audit-path') options.auditPath = argv[++index];
     else if (arg === '--view') options.view = argv[++index];
     else if (arg === '--width') options.width = Number(argv[++index]);
     else if (arg === '--height') options.height = Number(argv[++index]);
@@ -273,6 +283,7 @@ function usage() {
   node src/cli.mjs build_expert_model --code-file examples/expert-parametric-fixture.js [--runtime mock|queue]
   node src/cli.mjs save_model --path output/model.json [--runtime mock|queue] [--no-keep-session]
   node src/cli.mjs capture_view --path output/capture.png [--view current|top|front|right|iso] [--width 1280] [--height 720] [--runtime queue]
+  ALMA_SKETCHUP_ENABLE_RUBY_EXPERT=1 node src/cli.mjs run_ruby_expert --code 'Sketchup.active_model.title' [--audit-path output/ruby-expert-audit.json] [--runtime queue]
   node src/cli.mjs compare_snapshots --expected-file output/mock-a.json --actual-file output/mock-b.json [--tolerance-mm 1] [--face-tolerance 1] [--edge-tolerance 3] [--max-faces 5000] [--max-artifact-size-bytes 50000000] [--format markdown] [--output-file output/report.md]
   node src/cli.mjs compare_model --code-file examples/demo-room.json [--expected-runtime mock] [--actual-runtime queue] [--timeout-ms 60000] [--face-tolerance 1] [--edge-tolerance 3] [--format markdown] [--output-file output/report.md]
   node src/cli.mjs validate_model --code-file examples/demo-room.json [--runtime mock|queue] [--spec-file examples/model-qa/spec.json] [--preview-dir output/model-qa/demo] [--format markdown] [--output-file output/model-qa/demo.md]

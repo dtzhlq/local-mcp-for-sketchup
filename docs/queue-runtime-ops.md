@@ -81,6 +81,22 @@ node src/cli.mjs capture_view --runtime queue --view iso --width 1280 --height 7
 
 `capture_view` 会返回图片路径、文件大小、相机参数和模型摘要。它是 live queue 证据辅助工具，不替代 snapshot、layout QA 或 reference visual QA。
 
+## Gated Ruby Expert 调试入口
+
+`run_ruby_expert` 只用于本地调试和 SketchUp Ruby API 能力探测，不是建模验收路径，也不能替代 JSON DSL、operation registry、snapshot compare 或 QA gates。默认调用会返回 `blocked:true`，不会向 SketchUp 发送执行请求。
+
+要启用它，Node 命令和 SketchUp 插件进程都必须设置同一个环境变量。macOS 上通常需要从带 env 的终端启动 SketchUp，不能只在 CLI 命令前加 env：
+
+```bash
+ALMA_SKETCHUP_ENABLE_RUBY_EXPERT=1 node src/cli.mjs run_ruby_expert --runtime queue --code 'Sketchup.active_model.title' --audit-path output/ruby-expert-audit.json --timeout-ms 60000
+```
+
+通过标准：
+
+- 未设置 env 时返回 `enabled=false`、`blocked=true`。
+- 真正执行时返回 `ok`、`stdout`、`stderr`、`result` 或 `error`。
+- 每次插件侧调用都会写入 `audit_path`，默认在 `~/.sketchup-mcp-replica/audit/`。
+
 ## 手动视觉检查项
 
 | 能力组 | 样例 | 检查点 |

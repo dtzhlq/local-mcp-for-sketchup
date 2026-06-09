@@ -3,6 +3,8 @@
 require 'json'
 require 'fileutils'
 require 'time'
+require 'digest'
+require 'stringio'
 begin
   require 'sketchup.rb'
 rescue LoadError
@@ -38,7 +40,7 @@ module AlmaSketchupMCP
   RESPONSE_DIR = File.join(STATE_DIR, 'responses')
   MM_PER_INCH = 25.4
   DEFAULT_OPERATION_LIMIT = 2000
-  PLUGIN_VERSION = 'queue-plugin-0.1.0-building-geometry-r3.1'
+  PLUGIN_VERSION = 'queue-plugin-0.1.0-ruby-expert-gated.1'
   CAPABILITY_MANIFEST_VERSION = '2026-06-building-geometry-r3-quality'
   RUNTIME_CAPABILITY_VERSION = '0.1.0-capabilities.8'
   DSL_VERSION = 1
@@ -133,6 +135,8 @@ module AlmaSketchupMCP
       save_model(params['path'], params.fetch('keep_session', true))
     when 'capture_view'
       capture_view(params)
+    when 'run_ruby_expert'
+      run_ruby_expert(params)
     else
       raise "Unknown method: #{method}"
     end
@@ -261,6 +265,71 @@ module AlmaSketchupMCP
     }
   end
 
+  def run_ruby_expert(params)
+    audit_path = ruby_expert_audit_path(params['audit_path'])
+    unless ENV['ALMA_SKETCHUP_ENABLE_RUBY_EXPERT'] == '1'
+      payload = {
+        'kind' => 'run_ruby_expert',
+        'runtime' => 'queue',
+        'enabled' => false,
+        'blocked' => true,
+        'audit_path' => audit_path,
+        'reason' => 'Set ALMA_SKETCHUP_ENABLE_RUBY_EXPERT=1 before launching SketchUp to enable this destructive debug-only tool.'
+      }
+      write_ruby_expert_audit(audit_path, payload)
+      return payload
+    end
+
+    code = params['code'].to_s
+    raise 'run_ruby_expert requires non-empty Ruby code' if code.strip.empty?
+
+    started_at = Time.now
+    stdout_buffer = StringIO.new
+    stderr_buffer = StringIO.new
+    old_stdout = $stdout
+    old_stderr = $stderr
+    ok = true
+    result_value = nil
+    error_payload = nil
+
+    begin
+      $stdout = stdout_buffer
+      $stderr = stderr_buffer
+      result_value = TOPLEVEL_BINDING.eval(code)
+    rescue Exception => error # rubocop:disable Lint/RescueException
+      ok = false
+      error_payload = {
+        'class' => error.class.name,
+        'message' => error.message,
+        'backtrace' => (error.backtrace || [])[0, 20]
+      }
+    ensure
+      $stdout = old_stdout
+      $stderr = old_stderr
+    end
+
+    finished_at = Time.now
+    payload = {
+      'kind' => 'run_ruby_expert',
+      'runtime' => 'queue',
+      'enabled' => true,
+      'blocked' => false,
+      'ok' => ok,
+      'audit_path' => audit_path,
+      'started_at' => started_at.utc.iso8601,
+      'finished_at' => finished_at.utc.iso8601,
+      'elapsed_ms' => ((finished_at - started_at) * 1000).round,
+      'code_sha256' => Digest::SHA256.hexdigest(code),
+      'code' => code,
+      'stdout' => stdout_buffer.string,
+      'stderr' => stderr_buffer.string,
+      'result' => ok ? ruby_expert_json_value(result_value) : nil,
+      'error' => error_payload
+    }
+    write_ruby_expert_audit(audit_path, payload)
+    payload
+  end
+
   def active_model_or_new(method_name = 'queue runtime')
     model = Sketchup.active_model
     return model if editable_model?(model)
@@ -315,6 +384,36 @@ module AlmaSketchupMCP
 
   def point_snapshot(point)
     [model_units_to_mm(point.x), model_units_to_mm(point.y), model_units_to_mm(point.z)]
+  end
+
+  def ruby_expert_audit_path(requested_path)
+    target = requested_path.to_s.strip
+    if target.empty?
+      stamp = Time.now.utc.strftime('%Y%m%dT%H%M%SZ')
+      target = File.join(STATE_DIR, 'audit', "run-ruby-expert-#{stamp}-#{rand(1_000_000)}.json")
+    end
+    File.expand_path(target)
+  end
+
+  def write_ruby_expert_audit(audit_path, payload)
+    FileUtils.mkdir_p(File.dirname(audit_path))
+    File.write(audit_path, JSON.pretty_generate(payload))
+  end
+
+  def ruby_expert_json_value(value, depth = 0)
+    return value if value.nil? || value.is_a?(String) || value.is_a?(Numeric) || value == true || value == false
+    return value.inspect if depth >= 4
+
+    if value.is_a?(Array)
+      return value.map { |item| ruby_expert_json_value(item, depth + 1) }
+    end
+    if value.is_a?(Hash)
+      return value.each_with_object({}) do |(key, entry), result|
+        result[key.to_s] = ruby_expert_json_value(entry, depth + 1)
+      end
+    end
+
+    value.inspect
   end
 
   def positive_integer(value, field_name)
