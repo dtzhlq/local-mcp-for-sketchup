@@ -37,7 +37,9 @@ async function main() {
   const partGraph = generatePartGraphFromObservations(observations, profile, {
     seedPartGraph,
     id: options.id,
-    productName: options.productName
+    productName: options.productName,
+    useAutoGroundPlanR10: options.useAutoGroundPlanR10,
+    useLegacyMassing: options.useLegacyMassing
   });
 
   await fs.mkdir(path.dirname(output), { recursive: true });
@@ -246,6 +248,7 @@ function isBuildingGroupProfile(observationSet = {}, profile = {}) {
 function generateBuildingGroupPartGraphFromObservations(observationSet, profile, options = {}) {
   const scaleCalibration = observationSet.scale_calibration || observationSet.evidence_graph?.scale_calibration || null;
   const scale = calibratedScale({}, profile, scaleCalibration);
+  const useAutoGroundPlanR10 = !options.useLegacyMassing && options.useAutoGroundPlanR10 !== false;
   const topImage = (observationSet.images || []).find((image) => image.detected_view.kind === 'top');
   if (!topImage) throw new Error('building_group PartGraph generation requires a top-view observation');
   const siteObservation = findObservation(topImage, 'building_top_site_boundary')
@@ -255,10 +258,18 @@ function generateBuildingGroupPartGraphFromObservations(observationSet, profile,
   const siteMeasurement = (scaleCalibration?.measurements || []).find((item) => item.anchor_type === 'site_boundary_from_known_anchors');
   const pixelsPerMmX = siteMeasurement?.pixels_per_mm_x || siteObservation.bbox[2] / scale.width;
   const pixelsPerMmY = siteMeasurement?.pixels_per_mm_y || siteObservation.bbox[3] / scale.depth;
-  const groundingV3 = observationSet.grounding_v3 || buildGroundingV3Graph({ observations: observationSet });
+  const cachedGroundingV3 = observationSet.grounding_v3 || null;
+  const groundingV3 = useAutoGroundPlanR10 && !cachedGroundingV3?.auto_ground_plan?.gap_completion
+    ? buildGroundingV3Graph({ observations: observationSet })
+    : cachedGroundingV3 || buildGroundingV3Graph({ observations: observationSet });
   const context = { observationSet, profile, scale, scaleCalibration, topImage, siteObservation, pixelsPerMmX, pixelsPerMmY, groundingV3 };
 
-  const massingParts = [
+  const massingSourceParts = useAutoGroundPlanR10 ? [
+    sitePart(context),
+    ...r10CanonicalGroundPlanParts(context),
+    ...r10GapCompletionHelperParts(context),
+    ...scaleAnchorParts(context)
+  ] : [
     sitePart(context),
     boxPartFromObservation(context, 'primary_blue_roof_hall', {
       name: 'Primary_Blue_Roof_Hall_Massing',
@@ -318,7 +329,8 @@ function generateBuildingGroupPartGraphFromObservations(observationSet, profile,
     }),
     ...tankFarmParts(context),
     ...scaleAnchorParts(context)
-  ].filter(Boolean).map((part) => withBuildingDetailProposals(part));
+  ];
+  const massingParts = massingSourceParts.filter(Boolean).map((part) => withBuildingDetailProposals(part));
 
   const partCandidateProposals = buildingRelationPartCandidateProposals(context, massingParts);
   const partCandidateParts = partCandidateProposals.flatMap((proposal) => proposal.proposed_value || []);
@@ -385,9 +397,17 @@ function generateBuildingGroupPartGraphFromObservations(observationSet, profile,
       ]),
       ...(scaleCalibration ? { scale_calibration: scaleCalibration } : {}),
       ground_plan: groundingV3.ground_plan,
+      auto_ground_plan: groundingV3.auto_ground_plan,
       grounding_v3: {
         version: groundingV3.version,
         summary: groundingV3.summary,
+        auto_ground_plan_r10: groundingV3.auto_ground_plan ? {
+          verdict: groundingV3.auto_ground_plan.qa?.verdict,
+          gap_ratio: groundingV3.auto_ground_plan.qa?.gap_ratio,
+          road_building_overlap_ratio: groundingV3.auto_ground_plan.qa?.road_building_overlap_ratio,
+          raw_contour_leakage: groundingV3.auto_ground_plan.qa?.raw_contour_leakage,
+          parent_child_double_occupancy: groundingV3.auto_ground_plan.qa?.parent_child_double_occupancy
+        } : null,
         scale_anchor_graph: groundingV3.scale_anchor_graph,
         line_grid_fit: groundingV3.line_grid_fit,
         top_view_overlay: groundingV3.top_view_overlay,
@@ -438,6 +458,192 @@ function generateBuildingGroupPartGraphFromObservations(observationSet, profile,
       }
     }
   };
+}
+
+function r10CanonicalGroundPlanParts(context) {
+  const autoGroundPlan = context.groundingV3?.auto_ground_plan || context.observationSet.grounding_r10?.auto_ground_plan;
+  const regions = (autoGroundPlan?.canonical_regions || [])
+    .filter((region) => region.class !== 'gap')
+    .filter((region) => region.structured_output !== false)
+    .filter((region) => region.grounding_decision !== 'rejected');
+  return regions.map((region) => {
+    const rect = bboxToModelRect(context, region.bbox_px);
+    const spec = r10RegionPartSpec(region);
+    const observation = findObservationByHint(context.topImage, region.id);
+    const part = buildingPart({
+      id: region.id,
+      name: spec.name,
+      type: spec.type,
+      role: spec.role,
+      material: spec.material,
+      shape: {
+        primitive: 'box',
+        parameters: {
+          origin: [rect.x, rect.y, 0],
+          size: [rect.width, rect.depth, spec.height]
+        }
+      },
+      sources: buildingEvidenceSources(context, region.id, observation),
+      fallback_state: spec.fallback_state,
+      confidence: region.confidence || spec.confidence
+    });
+    return {
+      ...part,
+      qa: {
+        ...(part.qa || {}),
+        inference_level: region.inference_level || 'observed',
+        boundary_graph_edge_ids: region.boundary_graph_edge_ids || [],
+        completion_hypothesis_id: region.completion_hypothesis_id || null,
+        boundary_graph_risk_flags: region.risk_flags || [],
+        boundary_graph_residuals: region.residuals || null
+      }
+    };
+  });
+}
+
+function r10GapCompletionHelperParts(context) {
+  const autoGroundPlan = context.groundingV3?.auto_ground_plan || context.observationSet.grounding_r10?.auto_ground_plan;
+  return (autoGroundPlan?.subdivision_cells || [])
+    .filter((cell) => cell.class === 'gap' && cell.gap_class === 'open_paved_area' && bboxArea(cell.bbox_px) > 0)
+    .map((cell, index) => {
+      const rect = bboxToModelRect(context, cell.bbox_px);
+      const id = `gap_completion_open_paved_area_cell_${index + 1}`;
+      return buildingPart({
+        id,
+        name: `${titleCase(id)}_R10_Helper`,
+        type: 'site_surface',
+        role: 'open_paved_area',
+        material: 'Campus_Site_Slab',
+        shape: {
+          primitive: 'box',
+          parameters: {
+            origin: [rect.x, rect.y, 0],
+            size: [rect.width, rect.depth, 30]
+          }
+        },
+        sources: gapCompletionEvidenceSources(context, cell, id),
+        fallback_state: 'visual_helper',
+        confidence: cell.confidence || 0.42
+      });
+    })
+    .map((part) => ({
+      ...part,
+      grounding_decision: 'helper_only',
+      grounding_region_id: part.id,
+      qa: {
+        ...(part.qa || {}),
+        gap_completion_solver: true,
+        grounding_v3_decision: 'helper_only',
+        photo_grade_eligible: false,
+        promoted_geometry: false
+      }
+    }));
+}
+
+function gapCompletionEvidenceSources(context, cell, helperId) {
+  return [{
+    kind: 'gap_completion_solver',
+    view: context.topImage.detected_view.kind,
+    source_image: context.topImage.image.path,
+    status: 'inferred',
+    confidence: cell.confidence || 0.42,
+    note: `${helperId}: open paved helper derived from one R10.5 gap cell. It is not promoted road geometry.`,
+    grounding: {
+      method: 'gap_completion_solver',
+      source_cell_ids: [cell.id],
+      source_evidence_ids: cell.gap_source_evidence_ids || [],
+      connectivity_reasons: cell.gap_connectivity_reasons || [],
+      review_required: true
+    }
+  }];
+}
+
+function r10RegionPartSpec(region) {
+  if (region.class === 'building_footprint') {
+    return {
+      name: `${titleCase(region.id)}_R10_Footprint`,
+      type: 'building',
+      role: buildingRoleForRegion(region.id),
+      material: buildingMaterialForRegion(region.id),
+      height: buildingHeightForRegion(region.id),
+      fallback_state: region.source_kind === 'layout_prior' ? 'needs_review' : 'box_approximation',
+      confidence: 0.58
+    };
+  }
+  if (region.class === 'road') {
+    return {
+      name: `${titleCase(region.id)}_R10_Corridor`,
+      type: 'site_surface',
+      role: 'road_corridor',
+      material: 'Campus_Road_Asphalt',
+      height: 45,
+      fallback_state: 'visual_helper',
+      confidence: 0.52
+    };
+  }
+  if (region.class === 'parking') {
+    return {
+      name: `${titleCase(region.id)}_R10_Parking_Strip`,
+      type: 'site_surface',
+      role: 'parking_strip',
+      material: 'Campus_Parking_Stripe',
+      height: 35,
+      fallback_state: 'visual_helper',
+      confidence: 0.52
+    };
+  }
+  if (region.class === 'green') {
+    return {
+      name: `${titleCase(region.id)}_R10_Green`,
+      type: 'landscape',
+      role: 'green_helper',
+      material: 'Campus_Tree_Line',
+      height: 120,
+      fallback_state: 'visual_helper',
+      confidence: 0.48
+    };
+  }
+  return {
+    name: `${titleCase(region.id)}_R10_Helper`,
+    type: 'site_surface',
+    role: region.class,
+    material: region.class === 'service_yard' ? 'Campus_Tank_Metal' : 'Campus_Site_Slab',
+    height: 60,
+    fallback_state: 'visual_helper',
+    confidence: 0.44
+  };
+}
+
+function buildingRoleForRegion(id) {
+  if (id === 'primary_blue_roof_hall') return 'production_hall';
+  if (/warehouse/.test(id)) return 'warehouse_unit';
+  if (id === 'utility_building') return 'utility_building';
+  if (id === 'admin_office') return 'admin_office';
+  return 'building_footprint';
+}
+
+function buildingMaterialForRegion(id) {
+  if (id === 'primary_blue_roof_hall') return 'Campus_Blue_Roof';
+  if (/warehouse/.test(id)) return 'Campus_Warehouse_Light';
+  if (id === 'utility_building') return 'Campus_Utility_Gray';
+  if (id === 'admin_office') return 'Campus_Office_Light';
+  return 'Campus_Warehouse_Light';
+}
+
+function buildingHeightForRegion(id) {
+  if (id === 'primary_blue_roof_hall') return 16500;
+  if (/warehouse/.test(id)) return 9500;
+  if (id === 'utility_building') return 7600;
+  if (id === 'admin_office') return 6800;
+  return 5000;
+}
+
+function titleCase(value) {
+  return String(value || '')
+    .split('_')
+    .filter(Boolean)
+    .map((word) => `${word.slice(0, 1).toUpperCase()}${word.slice(1)}`)
+    .join('_');
 }
 
 const BUILDING_GROUP_REVIEW_CANDIDATE_SPECS = [
@@ -1069,6 +1275,11 @@ function bboxToModelRect(context, bbox) {
   return { x: modelX, y: modelY, width: modelWidth, depth: modelDepth };
 }
 
+function bboxArea(bbox) {
+  if (!bbox) return 0;
+  return Math.max(0, bbox[2] || 0) * Math.max(0, bbox[3] || 0);
+}
+
 function findObservation(image, id) {
   return (image.observations || []).find((observation) => observation.id === id);
 }
@@ -1671,6 +1882,8 @@ function parseArgs(argv) {
     else if (arg === '--output') options.output = argv[++index];
     else if (arg === '--id') options.id = argv[++index];
     else if (arg === '--product-name') options.productName = argv[++index];
+    else if (arg === '--use-auto-ground-plan-r10') options.useAutoGroundPlanR10 = true;
+    else if (arg === '--legacy-massing') options.useLegacyMassing = true;
     else if (arg === '--help' || arg === '-h') {
       usage();
       process.exit(0);
@@ -1687,7 +1900,8 @@ function usage() {
     --observations projects/image-structured-modeler/examples/ambulance/observations.json \\
     --profile examples/product-profiles/vehicle_ambulance.json \\
     --seed-part-graph examples/part-graphs/ambulance-reference.part-graph.json \\
-    --output projects/image-structured-modeler/examples/ambulance/part-graph.generated.json
+    --output projects/image-structured-modeler/examples/ambulance/part-graph.generated.json \\
+    [--use-auto-ground-plan-r10] [--legacy-massing]
 `);
 }
 

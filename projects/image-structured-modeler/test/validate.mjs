@@ -13,6 +13,25 @@ import { applyCorrectionPatch, buildCorrectionPatchFromParameterProposals, build
 import { evaluateDiffWarningBudget, evaluateSnapshotWarningBudget } from '../scripts/lib/warning-budget.mjs';
 import { makeGroundingV2SecondBuildingGroupSample } from '../scripts/lib/grounding-v2-second-sample.mjs';
 import { validateGroundingV3 } from '../scripts/lib/grounding-v3.mjs';
+import { validateAutoGroundPlanR10 } from '../scripts/lib/auto-ground-plan-r10.mjs';
+import {
+  landCoverReport,
+  makeBirdEyeLandCoverV1FromObservationFixture,
+  makeSyntheticBirdEyeLandCoverFixture
+} from '../scripts/lib/bird-eye-land-cover.mjs';
+import {
+  boundaryGraphReport,
+  buildBoundaryGraphV1,
+  makeSyntheticBoundaryGraphFixture
+} from '../scripts/lib/boundary-graph-v1.mjs';
+import {
+  highContrastEdgeReport,
+  makeSyntheticHighContrastEdgeFixture
+} from '../scripts/lib/high-contrast-edge-v1.mjs';
+import { openCvEdgeReport } from '../scripts/lib/opencv-edge-v1.mjs';
+import { segmentationBackendCompareReport } from '../scripts/lib/segmentation-backend-compare.mjs';
+import { makePhotoGradeRealSmokeSample } from '../scripts/lib/photo-grade-real-smoke.mjs';
+import { validatePhotoGradeReadiness } from '../scripts/lib/photo-grade-readiness.mjs';
 import { validateGeometryFit } from '../scripts/validate-geometry-fit.mjs';
 import { validateVisualRelations } from '../scripts/validate-visual-relations.mjs';
 
@@ -22,6 +41,7 @@ const subprojectRoot = path.join(repoRoot, 'projects', 'image-structured-modeler
 const modelPlanSchema = await readJson('schema/model-plan.schema.json');
 const imageObservationSchema = await readJson('schema/image-observation.schema.json');
 const imageSetObservationSchema = await readJson('schema/image-set-observation.schema.json');
+const autoGroundPlanR10Schema = await readJson('schema/auto-ground-plan-r10.schema.json');
 const manualCorrectionsSchema = await readJson('schema/manual-corrections.schema.json');
 const partGraphSchema = await readRepoJson('schema/part-graph.schema.json');
 const partGraphCorrectionPatchSchema = await readRepoJson('schema/part-graph-correction-patch.schema.json');
@@ -38,6 +58,7 @@ const REMOTE_BASELINE_SCENES = 2;
 const validateModelPlan = compileSchema(modelPlanSchema);
 const validateImageObservation = compileSchema(imageObservationSchema);
 const validateImageSetObservation = compileSchema(imageSetObservationSchema);
+const validateAutoGroundPlanR10Schema = compileSchema(autoGroundPlanR10Schema);
 const validateManualCorrections = compileSchema(manualCorrectionsSchema);
 const validatePartGraph = compileSchema(partGraphSchema);
 const validatePartGraphCorrectionPatch = compileSchema(partGraphCorrectionPatchSchema);
@@ -175,11 +196,27 @@ for (const relativePath of [
   'scripts/validate-geometry-fit.mjs',
   'scripts/validate-visual-relations.mjs',
   'scripts/validate-part-graph-quality.mjs',
+  'scripts/validate-auto-ground-plan-r10.mjs',
+  'scripts/validate-photo-grade-readiness.mjs',
+  'scripts/make-structured-plan-r10.mjs',
+  'scripts/build-high-contrast-edge-v1.mjs',
+  'scripts/build-opencv-edge-v1.mjs',
+  'scripts/build-boundary-graph-v1.mjs',
+  'scripts/build-segmentation-backend-compare.mjs',
+  'scripts/build-boundary-groundplan-ablation.mjs',
+  'scripts/build-photo-grade-real-smoke.mjs',
   'scripts/compile-plan-to-sketchup-dsl.mjs',
   'scripts/make-snapshot-report.mjs',
   'scripts/lib/part-graph-corrections.mjs',
   'scripts/lib/warning-budget.mjs',
-  'scripts/lib/image-analysis.mjs'
+  'scripts/lib/image-analysis.mjs',
+  'scripts/lib/auto-ground-plan-r10.mjs',
+  'scripts/lib/high-contrast-edge-v1.mjs',
+  'scripts/lib/opencv-edge-v1.mjs',
+  'scripts/lib/boundary-graph-v1.mjs',
+  'scripts/lib/segmentation-backend-compare.mjs',
+  'scripts/lib/photo-grade-readiness.mjs',
+  'scripts/lib/photo-grade-real-smoke.mjs'
 ]) {
   await fs.access(path.join(subprojectRoot, relativePath));
 }
@@ -248,6 +285,9 @@ const ambulanceEvidenceChecked = await assertAmbulancePartGraphEvidenceSample();
 const buildingGroupChecked = await assertBuildingGroupObservationSample();
 const r8StructuralGroundingChecked = await assertR8StructuralGroundingRepair();
 const groundingV2SecondSampleChecked = await assertGroundingV2SecondBuildingSample();
+const photoGradeRealSmokeChecked = await assertPhotoGradeRealSmokeSample();
+const birdEyeLandCoverChecked = await assertBirdEyeLandCoverR11();
+const autoGroundPlanR10Checked = await assertAutoGroundPlanR10Samples();
 
 process.stdout.write(`${JSON.stringify({
   ok: true,
@@ -269,6 +309,10 @@ process.stdout.write(`${JSON.stringify({
     building_group_observation_sample: buildingGroupChecked,
     r8_structural_grounding_repair: r8StructuralGroundingChecked,
     grounding_v2_second_building_sample: groundingV2SecondSampleChecked,
+    photo_grade_real_smoke_sample: photoGradeRealSmokeChecked,
+    bird_eye_land_cover_r11: birdEyeLandCoverChecked,
+    auto_ground_plan_r10: autoGroundPlanR10Checked,
+    photo_grade_readiness: true,
     visual_relation_building_group_fixture: true,
     geometry_fit_building_group_fixture: true,
     ambulance_proposal_review_chain: true,
@@ -314,7 +358,9 @@ async function assertGroundingV2SecondBuildingSample() {
     productName: observations.object.name
   });
   assertValid(validatePartGraph, partGraph, 'grounding v2 second sample PartGraph');
-  assert.equal(partGraph.review.part_candidate_proposal_summary.candidate_parts, 8, 'second sample should reuse the candidate promotion queue');
+  assert.equal(partGraph.review.part_candidate_proposal_summary.candidate_parts, 3, 'second sample should keep unstable parking grid as review candidates instead of forcing the full legacy candidate queue');
+  assert.equal(partGraph.parts.some((part) => ['internal_roads', 'warehouse_row_west', 'warehouse_row_inner', 'parking_lot'].includes(part.id)), false, 'second sample default PartGraph should use R10 canonical regions instead of legacy occupancy parents');
+  assert.equal(partGraph.evidence_graph.auto_ground_plan?.qa?.remaining_unknown_gap_ratio > 0.25, true, 'second sample should keep remaining unknown gap visible for review');
   assert.ok(partGraph.parts.every((part) => part.grounding_status), 'second sample PartGraph parts should carry grounding_status');
   assert.ok(partGraph.parts.every((part) => part.grounding_decision), 'second sample PartGraph parts should carry Grounding v3 promotion decisions');
   assert.ok(partGraph.parts.some((part) => part.grounding_status === 'image_grounded' || part.grounding_status === 'review_confirmed'), 'second sample should contain image/review grounded parts');
@@ -350,7 +396,304 @@ async function assertGroundingV2SecondBuildingSample() {
   assert.equal(groundingV3Report.summary.checked_ground_regions > 0, true, 'second sample Grounding v3 should evaluate GroundPlan regions');
   assert.equal(groundingV3Report.summary.checked_line_fits >= 2, true, 'second sample Grounding v3 should evaluate parking line fits');
   assert.equal(groundingV3Report.summary.photo_grade_candidate, false, 'second sample should remain a generalization gate, not a photo-grade claim');
+  const photoGradeReadiness = validatePhotoGradeReadiness({
+    observations,
+    fixture,
+    geometryFit: report,
+    groundingV3: groundingV3Report,
+    codeDocument: output,
+    sampleId: 'building-group-second',
+    sampleKind: 'generated_second_sample',
+    inputAssetStatus: 'available'
+  });
+  assertPhotoGradeReadinessReport(photoGradeReadiness, {
+    expectedReadiness: 'technical_baseline',
+    label: 'second sample PhotoGradeReadiness'
+  });
+  assertPhotoGradeReadinessNegativeCases({
+    observations,
+    fixture,
+    geometryFit: report,
+    groundingV3: groundingV3Report,
+    codeDocument: output
+  });
+  const savedReadiness = JSON.parse(await fs.readFile(path.join(subprojectRoot, 'examples', 'building-group-second', 'photo-grade-readiness-report.json'), 'utf8'));
+  assertPhotoGradeReadinessReport(savedReadiness, {
+    expectedReadiness: 'technical_baseline',
+    label: 'saved second sample PhotoGradeReadiness'
+  });
   return true;
+}
+
+async function assertPhotoGradeRealSmokeSample() {
+  const {
+    observations,
+    fixture,
+    sampleKind,
+    inputAssetStatus
+  } = makePhotoGradeRealSmokeSample();
+  assertValid(validateImageSetObservation, observations, 'photo-grade real smoke observations');
+  assertVisualRelationGraph(observations, 'photo-grade real smoke observations');
+  assertGroundingV3ObservationGraph(observations, 'photo-grade real smoke observations');
+  assert.equal(observations.object.name, 'Real Building Photo Smoke Scaffold', 'real smoke scaffold should keep a distinct object identity');
+  assert.ok(observations.quality_report.risks.includes('real_building_photo_asset_not_available'), 'real smoke scaffold should record missing real-photo assets');
+
+  const profile = await readRepoJson('examples/product-profiles/building_group_industrial_campus.json');
+  const partGraph = generatePartGraphFromObservations(observations, profile, {
+    id: 'building-real-photo-smoke-part-graph',
+    productName: observations.object.name
+  });
+  assertValid(validatePartGraph, partGraph, 'photo-grade real smoke PartGraph');
+  assert.ok(partGraph.parts.some((part) => part.grounding_decision === 'promoted_geometry'), 'real smoke scaffold should still exercise promoted GroundPlan geometry');
+
+  const output = compilePartGraphToSketchUpDsl(partGraph, profile, { repoRoot });
+  const report = await validateGeometryFit({
+    observations,
+    fixture,
+    code: JSON.stringify(output),
+    mockSessionPath: path.join(repoRoot, 'output', 'image-structured-modeler', 'sessions', 'validate-photo-grade-real-smoke-session.json')
+  });
+  assert.equal(report.ok, true, 'real smoke scaffold GeometryFit should run the full geometry gate');
+  const groundingV3Report = validateGroundingV3({
+    observations,
+    fixture,
+    geometryFit: report,
+    codeDocument: output
+  });
+  assert.equal(groundingV3Report.version, 3, 'real smoke scaffold Grounding v3 should emit v3 reports');
+  const readiness = validatePhotoGradeReadiness({
+    observations,
+    fixture,
+    geometryFit: report,
+    groundingV3: groundingV3Report,
+    codeDocument: output,
+    sampleId: 'building-real-photo-smoke',
+    sampleKind,
+    inputAssetStatus
+  });
+  assertPhotoGradeReadinessReport(readiness, {
+    expectedReadiness: 'review_required',
+    label: 'real smoke PhotoGradeReadiness'
+  });
+  assert.equal(readiness.ok, true, 'real smoke scaffold should be review-gated rather than rejected');
+  assert.ok(readiness.blockers.some((item) => item.gate === 'input_asset'), 'real smoke readiness should point at missing input assets');
+
+  const savedReadiness = JSON.parse(await fs.readFile(path.join(subprojectRoot, 'examples', 'building-real-photo-smoke', 'photo-grade-readiness-report.json'), 'utf8'));
+  assertPhotoGradeReadinessReport(savedReadiness, {
+    expectedReadiness: 'review_required',
+    label: 'saved real smoke PhotoGradeReadiness'
+  });
+  assert.equal(savedReadiness.sample.input_asset_status, inputAssetStatus, 'saved real smoke readiness should preserve scaffold asset status');
+  return true;
+}
+
+async function assertBirdEyeLandCoverR11() {
+  const base = path.join(subprojectRoot, 'examples', 'building-group');
+  const observations = JSON.parse(await fs.readFile(path.join(base, 'observations.json'), 'utf8'));
+  assert.ok(observations.land_cover_v1, 'building group observations should carry BirdEyeLandCover v1');
+  assert.ok(observations.high_contrast_edge_v1, 'building group observations should carry HighContrastEdge v1');
+  assert.ok(observations.boundary_graph_v1, 'building group observations should carry BoundaryGraph v1');
+  const report = landCoverReport(observations.land_cover_v1);
+  assert.equal(report.kind, 'bird_eye_land_cover_v1_report', 'BirdEyeLandCover should emit a v1 report');
+  assert.equal(report.ok, true, 'BirdEyeLandCover current building-group report should be usable');
+  assert.ok(report.summary.masks > 0, 'BirdEyeLandCover should produce polygonized masks');
+  assert.ok(report.summary.tiles > 0, 'BirdEyeLandCover should produce tile evidence');
+  assert.ok(report.summary.vegetation_ratio > 0.03, 'BirdEyeLandCover should extract vegetation independently from object names');
+  assert.ok(report.summary.paved_surface_ratio > 0.08, 'BirdEyeLandCover should extract paved/hardscape surface evidence');
+  assert.ok(report.summary.unknown_land_cover_ratio < 0.45, 'BirdEyeLandCover should reduce raw unknown land-cover area for current top view');
+  const edgeReport = highContrastEdgeReport(observations.high_contrast_edge_v1);
+  assert.equal(edgeReport.kind, 'high_contrast_edge_v1_report', 'HighContrastEdge should emit a v1 report');
+  assert.equal(edgeReport.ok, true, 'HighContrastEdge current building-group report should be usable');
+  assert.ok(edgeReport.summary.accepted_edge_count >= 4, 'HighContrastEdge should accept visible vector edges');
+  assert.ok(edgeReport.summary.rejected_edge_count >= 1, 'HighContrastEdge should expose rejected strong edges');
+  assert.ok(edgeReport.summary.site_perimeter_confidence > 0.45, 'HighContrastEdge should rank site perimeter candidates');
+  assert.ok(edgeReport.summary.site_perimeter_sides_with_rejected_alternatives >= 1, 'HighContrastEdge should show lower-rank site perimeter alternatives');
+  assert.ok(edgeReport.summary.roof_seam_rejection_count >= 1, 'HighContrastEdge should reject roof/internal seam edges');
+  for (const side of ['right', 'bottom']) {
+    const sideCandidates = observations.high_contrast_edge_v1.site_perimeter_candidates?.[side];
+    assert.ok(sideCandidates?.winner_id, `HighContrastEdge should pick a ${side} site perimeter winner`);
+    assert.ok(sideCandidates.rejected_alternatives.length >= 1, `HighContrastEdge should keep rejected ${side} site perimeter alternatives`);
+  }
+  assert.ok(observations.opencv_edge_v1, 'building group observations should carry real OpenCV edge v1');
+  const cvReport = openCvEdgeReport(observations.opencv_edge_v1);
+  assert.equal(cvReport.kind, 'opencv_edge_v1_report', 'OpenCV edge backend should emit a v1 report');
+  assert.equal(cvReport.summary.backend, 'opencv_clahe_canny_hough_lsd_v1', 'OpenCV edge backend should use real cv2 operations for current building-group');
+  assert.ok(cvReport.summary.opencv_version, 'OpenCV edge backend should report cv2 version');
+  assert.equal(cvReport.ok, true, 'OpenCV edge backend current building-group report should be usable');
+  assert.ok(cvReport.summary.accepted_edge_count >= 4, 'OpenCV edge backend should accept visible vector edges');
+  assert.ok(cvReport.summary.rejected_edge_count >= 1, 'OpenCV edge backend should expose rejected strong edges');
+  assert.ok(cvReport.summary.site_perimeter_confidence > 0.35, 'OpenCV edge backend should rank site perimeter candidates');
+  assert.ok(cvReport.summary.roof_seam_rejection_count >= 1, 'OpenCV edge backend should reject roof/internal seam edges');
+  const boundaryReport = boundaryGraphReport(observations.boundary_graph_v1);
+  assert.equal(boundaryReport.kind, 'boundary_graph_v1_report', 'BoundaryGraph should emit a v1 report');
+  assert.equal(boundaryReport.ok, true, 'BoundaryGraph current building-group report should be usable');
+  assert.equal(boundaryReport.summary.source_image_backend, 'source_image_edge_detector_v1', 'BoundaryGraph should use source-image raster edges for the current building-group');
+  assert.equal(boundaryReport.summary.high_contrast_edge_available, true, 'BoundaryGraph should consume HighContrastEdge evidence when present');
+  assert.ok(boundaryReport.summary.high_contrast_boundary_edge_count >= 4, 'BoundaryGraph should include accepted HighContrastEdge boundary edges');
+  assert.equal(boundaryReport.summary.opencv_edge_available, true, 'BoundaryGraph should consume real OpenCV edge evidence when present');
+  assert.ok(boundaryReport.summary.opencv_boundary_edge_count >= 4, 'BoundaryGraph should include accepted OpenCV boundary edges');
+  assert.equal(boundaryReport.summary.bbox_fallback_edge_ratio, 0, 'source-image BoundaryGraph must not use bbox/prior edges as observed edges');
+  assert.ok(boundaryReport.summary.source_edge_alignment_ratio >= 0.24, 'source-image BoundaryGraph should report edge pixel alignment support');
+  assert.ok(observations.boundary_graph_v1.observed_edges.some((edge) => edge.method === 'source_image_gradient_line_segment'), 'BoundaryGraph should include source-image line segments');
+  assert.ok(boundaryReport.summary.site_boundary_closure_ratio >= 0.8, 'BoundaryGraph should close the current site boundary');
+  assert.ok(boundaryReport.summary.observed_edge_coverage_ratio >= 0.45, 'BoundaryGraph should expose visible site/road/ground-surface edges');
+  assert.ok(boundaryReport.summary.road_corridor_count >= 1, 'BoundaryGraph should generate at least one road corridor hypothesis');
+  assert.ok(observations.boundary_graph_v1.completed_edges.some((edge) => edge.state !== 'observed'), 'BoundaryGraph should expose completed/inferred edges under aggressive completion');
+
+  const autoGroundPlan = validateAutoGroundPlanR10({ observations, groundingV3: observations.grounding_v3 });
+  assert.equal(autoGroundPlan.summary.land_cover_v1_available, true, 'R10/R11 AutoGroundPlan should consume land_cover_v1 when present');
+  assert.equal(autoGroundPlan.summary.boundary_graph_v1_available, true, 'R11.1 AutoGroundPlan should consume boundary_graph_v1 when present');
+  assert.equal(autoGroundPlan.auto_ground_plan.site_surface.grounding_method, 'source_image_boundary_graph_site_fit', 'AutoGroundPlan should prefer source-image BoundaryGraph site surface over old bbox prior');
+  assert.ok(autoGroundPlan.summary.remaining_unknown_gap_ratio <= 0.25, 'source-edge GroundPlan should keep unresolved gap visible instead of filling with bbox/prior corridors');
+  assert.ok(autoGroundPlan.summary.road_candidate_review_count <= 1, 'R11.1 should resolve most road candidates through boundary completion');
+  assert.ok(autoGroundPlan.auto_ground_plan.canonical_regions.some((region) => region.source_kind === 'boundary_graph_completion' && region.class === 'road'), 'R11.1 should add road regions from boundary/completion evidence');
+  assert.equal(autoGroundPlan.auto_ground_plan.canonical_regions.some((region) => region.id === 'internal_roads'), false, 'R11.1 road output must not revive the rejected internal_roads prior');
+  assert.ok(autoGroundPlan.auto_ground_plan.subdivision_cells.some((cell) => cell.gap_class === 'open_paved_area'), 'R11 should classify paved residual cells as open paved helper');
+  assert.ok(autoGroundPlan.auto_ground_plan.subdivision_cells.some((cell) => cell.gap_class === 'vegetation_gap'), 'R11 should classify vegetation residual cells as vegetation helper/review');
+  assert.equal(autoGroundPlan.auto_ground_plan.subdivision_cells
+    .some((cell) => cell.gap_class === 'road_candidate'
+      && cell.gap_grounding_decision === 'promoted_geometry'
+      && !(cell.gap_residuals?.boundary_graph_corridor_support > 0.45)), false, 'gap-derived roads must not be promoted without BoundaryGraph residual gates');
+
+  await fs.access(path.join(base, 'structured-plan', 'bird-eye-segmentation.png'));
+  await fs.access(path.join(base, 'structured-plan', 'land-cover-v1-report.json'));
+  await fs.access(path.join(base, 'structured-plan', 'edge-v1-report.json'));
+  await fs.access(path.join(base, 'structured-plan', 'edge-preprocess-debug.png'));
+  await fs.access(path.join(base, 'structured-plan', 'edge-candidate-classification.png'));
+  await fs.access(path.join(base, 'structured-plan', 'opencv-edge-v1-report.json'));
+  await fs.access(path.join(base, 'structured-plan', 'opencv-edge-preprocess-debug.png'));
+  await fs.access(path.join(base, 'structured-plan', 'opencv-edge-candidate-classification.png'));
+  await fs.access(path.join(base, 'structured-plan', 'boundary-graph-v1-report.json'));
+  await fs.access(path.join(base, 'structured-plan', 'segmentation-backend-compare.png'));
+  await fs.access(path.join(base, 'structured-plan', 'segmentation-backend-compare-report.json'));
+  await fs.access(path.join(base, 'structured-plan', 'boundary-groundplan-ablation.png'));
+  await fs.access(path.join(base, 'structured-plan', 'boundary-groundplan-ablation-report.json'));
+
+  const segmentationCompare = segmentationBackendCompareReport(JSON.parse(await fs.readFile(path.join(base, 'structured-plan', 'segmentation-backend-compare-report.json'), 'utf8')).segmentation_backend_compare);
+  assert.equal(segmentationCompare.ok, true, 'Segmentation backend compare should pass default optional-backend skip mode');
+  assert.equal(segmentationCompare.summary.insid3_available, false, 'INSID3 should not be required for default tests');
+  assert.ok(['skipped_unavailable', 'configured_but_not_executed'].includes(segmentationCompare.summary.insid3_status), 'INSID3 optional backend should report an explicit skipped/configured status');
+  assert.ok(segmentationCompare.summary.fused_observed_mask_count > 0, 'Segmentation backend compare should produce fused observed mask candidates');
+  assert.equal(segmentationCompare.summary.promoted_geometry_count, 0, 'Segmentation backend masks must not directly promote geometry');
+
+  const ablationReport = JSON.parse(await fs.readFile(path.join(base, 'structured-plan', 'boundary-groundplan-ablation-report.json'), 'utf8'));
+  assert.equal(ablationReport.kind, 'boundary_groundplan_ablation_report', 'Boundary/GroundPlan ablation should emit a report');
+  assert.equal(ablationReport.ok, true, 'Boundary/GroundPlan ablation should keep hard gates ok');
+  assert.equal(ablationReport.variants.length, 4, 'Boundary/GroundPlan ablation should compare source-edge, JS fallback, OpenCV, and fused variants');
+  assert.ok(ablationReport.summary.fused_opencv_boundary_edges >= 4, 'Boundary/GroundPlan ablation should expose fused OpenCV edge contribution');
+  assert.ok(ablationReport.summary.fused_high_contrast_boundary_edges >= 4, 'Boundary/GroundPlan ablation should expose fused high-contrast edge contribution');
+
+  for (const kind of ['industrial_campus', 'commercial_parking', 'courtyard_campus']) {
+    const fixture = makeSyntheticBirdEyeLandCoverFixture(kind);
+    const fixtureReport = landCoverReport(fixture.land_cover_v1);
+    assert.equal(fixtureReport.ok, true, `${kind} synthetic BirdEyeLandCover fixture should report ok`);
+    assert.ok(fixture.land_cover_v1.masks.some((mask) => mask.class === 'building_footprint'), `${kind} synthetic fixture should include buildings`);
+    assert.ok(fixture.land_cover_v1.tiles.every((tile) => tile.class), `${kind} synthetic fixture tiles should be classified`);
+  }
+  for (const kind of ['occluded_industrial_campus', 'partial_off_frame_road', 'single_edge_parking']) {
+    const fixture = makeSyntheticBoundaryGraphFixture(kind);
+    const fixtureReport = boundaryGraphReport(fixture.boundary_graph_v1);
+    assert.equal(fixtureReport.ok, true, `${kind} synthetic BoundaryGraph fixture should report ok`);
+    assert.ok(fixture.boundary_graph_v1.corridor_hypotheses.length >= 1, `${kind} synthetic BoundaryGraph fixture should produce corridor hypotheses`);
+    assert.ok(fixture.boundary_graph_v1.completed_edges.some((edge) => ['completed_occluded', 'completed_gap', 'extrapolated_off_frame', 'weak_inferred'].includes(edge.state)), `${kind} synthetic BoundaryGraph fixture should expose completion states`);
+  }
+  const roofSeamNegative = makeSyntheticBoundaryGraphFixture('roof_seam_negative');
+  assert.equal(roofSeamNegative.boundary_graph_v1.corridor_hypotheses.some((hypothesis) => intersects(hypothesis.bbox_px, [72, 46, 170, 120])), false, 'roof seam negative should not create road corridors through building footprint');
+  const syntheticRoofSeamEdge = makeSyntheticHighContrastEdgeFixture('roof_seam_negative');
+  assert.ok(syntheticRoofSeamEdge.candidate_edges.some((edge) => edge.class === 'roof_internal_seam' && edge.accepted === false), 'HighContrastEdge synthetic roof seam should be rejected');
+  const syntheticSiteAlternative = makeSyntheticHighContrastEdgeFixture('site_alternative');
+  assert.ok(Object.values(syntheticSiteAlternative.site_perimeter_candidates).some((side) => side.rejected_alternatives.length > 0), 'HighContrastEdge should keep site perimeter alternatives as rejected evidence');
+
+  const greenRoof = makeBirdEyeLandCoverV1FromObservationFixture(minimalBirdEyeObservation([
+    ['site_boundary_obs', 'site_boundary', [0, 0, 240, 180], 'mask_polygon', 'pixel_color_segmentation'],
+    ['green_roof_building_obs', 'primary_blue_roof_hall', [50, 40, 90, 80], 'mask_polygon', 'pixel_color_segmentation'],
+    ['green_roof_false_vegetation_obs', 'tree_row_south', [50, 40, 90, 80], 'vegetation_region', 'pixel_vegetation_segmentation']
+  ]));
+  assert.ok(greenRoof.tiles.some((tile) => tile.class === 'building_footprint'), 'green-roof negative should preserve building exclusion');
+  assert.equal(greenRoof.tiles.some((tile) => tile.class === 'vegetation_tree' && intersects(tile.bbox_px, [50, 40, 90, 80])), false, 'green roof inside building exclusion must not become vegetation');
+
+  const hardscapeOnly = makeBirdEyeLandCoverV1FromObservationFixture(minimalBirdEyeObservation([
+    ['site_boundary_obs', 'site_boundary', [0, 0, 240, 180], 'mask_polygon', 'pixel_color_segmentation'],
+    ['paved_drive_obs', 'parking_drive_aisle_center', [20, 70, 200, 40], 'gap_region', 'pixel_gap_segmentation']
+  ]));
+  const hardscapeObservations = minimalBirdEyeObservation([
+    ['site_boundary_obs', 'site_boundary', [0, 0, 240, 180], 'mask_polygon', 'pixel_color_segmentation'],
+    ['paved_drive_obs', 'parking_drive_aisle_center', [20, 70, 200, 40], 'gap_region', 'pixel_gap_segmentation']
+  ]);
+  hardscapeObservations.land_cover_v1 = hardscapeOnly;
+  const hardscapeGroundPlan = validateAutoGroundPlanR10({ observations: hardscapeObservations });
+  assert.equal(hardscapeGroundPlan.auto_ground_plan.canonical_regions.some((region) => region.class === 'road' && region.grounding_decision === 'promoted_geometry'), false, 'hardscape-only evidence must not promote road geometry');
+
+  return true;
+}
+
+async function assertAutoGroundPlanR10Samples() {
+  const base = path.join(subprojectRoot, 'examples', 'building-group');
+  const observations = JSON.parse(await fs.readFile(path.join(base, 'observations.json'), 'utf8'));
+  const current = validateAutoGroundPlanR10({ observations, groundingV3: observations.grounding_v3 });
+  assertAutoGroundPlanR10Report(current, 'building group AutoGroundPlan R10');
+  assert.equal(current.auto_ground_plan.rejected_priors.some((item) => item.id === 'internal_roads'), true, 'R10 should reject internal_roads when the prior crosses buildings');
+  assert.equal(current.auto_ground_plan.canonical_regions.some((region) => region.id === 'internal_roads'), false, 'R10 should keep rejected road priors out of canonical regions');
+  assert.equal(current.auto_ground_plan.canonical_regions.some((region) => ['warehouse_row_west', 'warehouse_row_inner'].includes(region.id)), false, 'R10 should keep warehouse row parents out of canonical occupancy');
+  assert.equal(current.auto_ground_plan.canonical_regions.filter((region) => /^parking_stall_row/.test(region.id)).length, 2, 'R10 should canonicalize the two parking row strips');
+  assert.ok(current.auto_ground_plan.canonical_regions
+    .filter((region) => /^parking_stall_row/.test(region.id))
+    .every((region) => region.polygon_source === 'canonical_bbox' && region.polygon_px.length === 5), 'R10 parking strips should be canonical rectangles, not raw contours');
+  assert.equal(current.auto_ground_plan.evidence_candidates
+    .some((candidate) => /^parking_stall_row/.test(candidate.id) && candidate.polygon_px.length > 5), true, 'R10 should retain raw parking contour evidence for diagnostics');
+
+  const saved = JSON.parse(await fs.readFile(path.join(base, 'structured-plan', 'structured-plan-qa-report.json'), 'utf8'));
+  assertAutoGroundPlanR10Report(saved, 'saved building group AutoGroundPlan R10');
+  const r10PartGraph = JSON.parse(await fs.readFile(path.join(base, 'part-graph.r10-groundplan.json'), 'utf8'));
+  assertValid(validatePartGraph, r10PartGraph, 'building group R10 GroundPlan PartGraph');
+  assert.equal(r10PartGraph.parts.some((part) => ['internal_roads', 'warehouse_row_west', 'warehouse_row_inner', 'parking_lot'].includes(part.id)), false, 'R10 GroundPlan PartGraph should not emit rejected roads, raw parking lots, or warehouse row parents');
+  assert.ok(r10PartGraph.evidence_graph.auto_ground_plan, 'R10 GroundPlan PartGraph should carry AutoGroundPlan metadata');
+
+  const roadThroughBuilding = deepClone(observations);
+  const roadTop = roadThroughBuilding.images.find((image) => image.detected_view.kind === 'top');
+  const roadPrior = roadTop.observations.find((item) => item.component_hint === 'internal_roads');
+  const blueHall = roadTop.observations.find((item) => item.component_hint === 'primary_blue_roof_hall');
+  roadPrior.bbox = blueHall.bbox.slice();
+  roadPrior.grounding.method = 'layout_prior';
+  roadPrior.note = 'negative test road prior crossing blue hall';
+  const roadNegative = validateAutoGroundPlanR10({ observations: roadThroughBuilding });
+  assert.equal(roadNegative.auto_ground_plan.rejected_priors.some((item) => item.id === 'internal_roads'), true, 'road prior through blue hall should be rejected');
+  assert.equal(roadNegative.auto_ground_plan.qa.road_building_overlap_ratio, 0, 'rejected road prior should not leak into canonical road/building overlap');
+
+  const bboxOnlyParking = deepClone(observations);
+  const bboxTop = bboxOnlyParking.images.find((image) => image.detected_view.kind === 'top');
+  for (const hint of ['parking_stall_row_north', 'parking_stall_row_south']) {
+    const row = bboxTop.observations.find((item) => item.component_hint === hint);
+    row.grounding.method = 'bbox_proxy';
+    row.mask.method = 'bbox_proxy';
+  }
+  const bboxParkingReport = validateAutoGroundPlanR10({ observations: bboxOnlyParking });
+  assert.notEqual(bboxParkingReport.auto_ground_plan.parking_grid.status, 'canonicalized', 'bbox-only parking evidence should not produce a canonical parking grid');
+  assert.equal(bboxParkingReport.auto_ground_plan.canonical_regions.some((region) => /^parking_stall_row/.test(region.id)), false, 'bbox-only parking rows should not enter canonical structured output');
+
+  const { observations: secondObservations } = makeGroundingV2SecondBuildingGroupSample();
+  const second = validateAutoGroundPlanR10({ observations: secondObservations, groundingV3: secondObservations.grounding_v3 });
+  assertAutoGroundPlanR10Report(second, 'second sample AutoGroundPlan R10');
+  assert.equal(second.auto_ground_plan.canonical_regions.some((region) => ['warehouse_row_west', 'warehouse_row_inner'].includes(region.id)), false, 'second sample should remove warehouse row parents from canonical occupancy');
+  return true;
+}
+
+function assertAutoGroundPlanR10Report(report, label) {
+  assert.equal(report.kind, 'auto_ground_plan_r10_qa', `${label} should emit R10 QA`);
+  assert.equal(report.version, 10, `${label} should use version 10`);
+  assertValid(validateAutoGroundPlanR10Schema, report.auto_ground_plan, `${label} auto_ground_plan schema`);
+  assert.equal(report.ok, true, `${label} should pass hard R10 gates`);
+  assert.ok(['pass', 'review'].includes(report.verdict), `${label} verdict should be pass or review`);
+  assert.equal(report.summary.road_building_overlap_ratio, 0, `${label} should have no canonical road/building overlap`);
+  assert.equal(report.summary.raw_contour_leakage, 0, `${label} should have no structured raw contour leakage`);
+  assert.equal(report.summary.parent_child_double_occupancy, 0, `${label} should have no parent/child double occupancy`);
+  assert.equal(report.summary.region_without_evidence, 0, `${label} should have no canonical region without evidence`);
+  assert.ok(report.summary.canonical_regions > 0, `${label} should produce canonical regions`);
+  assert.ok(report.summary.subdivision_cells > 0, `${label} should produce subdivision cells`);
+  assert.ok(Number.isFinite(report.summary.gap_completion_ratio), `${label} should report gap completion ratio`);
+  assert.ok(Number.isFinite(report.summary.remaining_unknown_gap_ratio), `${label} should report remaining unknown gap ratio`);
+  assert.ok(report.auto_ground_plan.gap_completion?.completed_regions, `${label} should carry gap completion regions`);
+  assert.ok(report.auto_ground_plan.subdivision_cells.every((cell) => cell.class), `${label} cells should have mutually exclusive classes`);
 }
 
 function assertValid(validate, value, label) {
@@ -384,6 +727,108 @@ function assertGeometryWarningsUseQaMetadata(report, label) {
 function snapshotItemsWithExpectedContacts(snapshot) {
   return [...(snapshot.groups || []), ...(snapshot.instances || [])]
     .filter((item) => item.qa?.expected_contacts?.length > 0 || item.qa?.expectedContacts?.length > 0);
+}
+
+function minimalBirdEyeObservation(entries) {
+  const top = {
+    version: 1,
+    image: {
+      path: 'synthetic://bird-eye-negative',
+      width: 240,
+      height: 180,
+      analysis_width: 240,
+      analysis_height: 180
+    },
+    detected_view: {
+      kind: 'top',
+      confidence: 0.9,
+      notes: ['Synthetic bird-eye negative fixture.']
+    },
+    camera_hints: {
+      perspective_strength: 'low',
+      projection_model: 'site_affine',
+      review_required: false
+    },
+    orientation_hints: {
+      coordinate_convention: 'image_x_right_y_down',
+      model_convention: 'model_x_right_y_up_z_height',
+      mirror_risk: { status: 'low', confidence: 0.4, reasons: [] },
+      semantic_anchors: [],
+      review_required: false
+    },
+    metrics: {
+      object_bbox: entries.find((entry) => entry[1] === 'site_boundary')?.[2] || [0, 0, 240, 180]
+    },
+    observations: entries.map(([id, componentHint, bbox, kind, method]) => ({
+      id,
+      kind,
+      component_hint: componentHint,
+      bbox,
+      contour: {
+        kind: 'sampled_polygon',
+        polygon: testBboxPolygon(bbox),
+        sample_count: 5,
+        source: method,
+        review_required: false
+      },
+      mask: {
+        id: `${id}_mask`,
+        method,
+        bbox,
+        polygon: testBboxPolygon(bbox),
+        sampled_contour: testBboxPolygon(bbox),
+        pixel_count: Math.round(bbox[2] * bbox[3]),
+        review_required: false
+      },
+      grounding: {
+        method,
+        mask: `${id}_mask`,
+        pixel_bbox: bbox,
+        pixel_count: Math.round(bbox[2] * bbox[3]),
+        contour_basis: 'sampled_polygon',
+        grounding_quality: {
+          version: 1,
+          status: 'accepted',
+          bbox_proxy: false,
+          review_required: false,
+          reasons: []
+        },
+        review_required: false
+      },
+      confidence: 0.8
+    })),
+    quality_report: {
+      usable_for_modeling: true,
+      risks: [],
+      missing_views: []
+    }
+  };
+  return {
+    version: 1,
+    object: {
+      type: 'building_group',
+      profile: 'building_group',
+      name: 'Synthetic BirdEye Negative',
+      source_images: ['synthetic://bird-eye-negative']
+    },
+    image_set_quality: 'high',
+    views_detected: ['top'],
+    missing_views: ['oblique'],
+    images: [top],
+    quality_report: {
+      usable_for_modeling: true,
+      risks: []
+    }
+  };
+}
+
+function testBboxPolygon([x, y, width, height]) {
+  return [[x, y], [x + width, y], [x + width, y + height], [x, y + height], [x, y]];
+}
+
+function intersects(a, b) {
+  return Math.max(a[0], b[0]) < Math.min(a[0] + a[2], b[0] + b[2])
+    && Math.max(a[1], b[1]) < Math.min(a[1] + a[3], b[1] + b[3]);
 }
 
 function stripCollectionOnlyFields(observation) {
@@ -420,7 +865,98 @@ function assertGroundingV3ObservationGraph(observationSet, label) {
   assert.ok(observationSet.grounding_v3.line_grid_fit.parking_grid_fits[0].line_fits.length >= 2, `${label} should fit parking lines before geometry generation`);
   assert.ok(observationSet.grounding_v3.top_view_overlay.region_overlays.length > 0, `${label} should expose top-view overlay regions`);
   assert.ok(observationSet.grounding_v3.promotion_decisions.every((decision) => ['promoted_geometry', 'review_candidate', 'helper_only', 'rejected'].includes(decision.decision)), `${label} promotion decisions should use the R9 decision enum`);
+  assert.ok(observationSet.grounding_r10?.auto_ground_plan, `${label} should carry AutoGroundPlan R10 metadata`);
+  assert.equal(observationSet.grounding_r10.auto_ground_plan.qa.raw_contour_leakage, 0, `${label} R10 structured plan should keep raw contours diagnostic-only`);
   assert.ok(observationSet.evidence_graph.ground_plan, `${label} evidence graph should carry GroundPlan metadata`);
+}
+
+function assertPhotoGradeReadinessReport(report, { expectedReadiness, label }) {
+  assert.equal(report.kind, 'photo_grade_readiness_qa', `${label} should emit PhotoGradeReadiness reports`);
+  assert.equal(report.version, 1, `${label} should use report version 1`);
+  assert.equal(report.photo_grade_readiness, expectedReadiness, `${label} should report the expected readiness verdict`);
+  assert.equal(report.photo_grade_candidate, expectedReadiness === 'candidate', `${label} candidate flag should match readiness`);
+  assert.equal(report.gates.length, 6, `${label} should evaluate the six R9.5 gates`);
+  for (const id of ['scale', 'subdivision', 'line_grid', 'top_view_overlay', 'oblique_facade', 'promotion']) {
+    assert.ok(gateById(report, id), `${label} should include ${id} gate`);
+  }
+  assert.ok(report.thresholds.scale.minAnchors >= 3, `${label} should expose stricter scale thresholds`);
+  assert.ok(report.thresholds.topViewOverlay.minMeanIou >= 0.85, `${label} should expose top-view overlay thresholds`);
+  assert.equal(typeof report.summary.blockers, 'number', `${label} should summarize blockers`);
+  assert.ok(report.correction_suggestions.length >= report.blockers.length, `${label} should turn blockers into correction targets`);
+}
+
+function assertPhotoGradeReadinessNegativeCases({
+  observations,
+  fixture,
+  geometryFit,
+  groundingV3,
+  codeDocument
+}) {
+  const overlayBroken = deepClone(groundingV3);
+  overlayBroken.graph.top_view_overlay.qa.mean_mask_iou = 0.42;
+  overlayBroken.graph.top_view_overlay.qa.min_mask_iou = 0.38;
+  const overlayReport = validatePhotoGradeReadiness({
+    observations,
+    fixture,
+    geometryFit,
+    groundingV3: overlayBroken,
+    codeDocument,
+    sampleId: 'negative-top-overlay',
+    sampleKind: 'negative_test'
+  });
+  assert.equal(overlayReport.photo_grade_candidate, false, 'mirrored/rotated top overlay must not become a photo-grade candidate');
+  assert.ok(overlayReport.blockers.some((item) => item.gate === 'top_view_overlay'), 'top overlay negative should point at top_view_overlay blockers');
+
+  const parkingOnly = deepClone(groundingV3);
+  parkingOnly.graph.scale_anchor_graph.candidates = parkingOnly.graph.scale_anchor_graph.candidates
+    .filter((candidate) => candidate.family === 'parking');
+  parkingOnly.graph.scale_anchor_graph.distinct_anchor_families = ['parking'];
+  const parkingOnlyReport = validatePhotoGradeReadiness({
+    observations,
+    fixture,
+    geometryFit,
+    groundingV3: parkingOnly,
+    codeDocument,
+    sampleId: 'negative-parking-only-scale',
+    sampleKind: 'negative_test'
+  });
+  assert.equal(parkingOnlyReport.photo_grade_candidate, false, 'parking-only scale anchors must not become a photo-grade candidate');
+  assert.ok(parkingOnlyReport.blockers.some((item) => item.reason === 'scale_anchor_family_count_below_candidate_threshold'), 'parking-only scale negative should keep family-count blocker');
+
+  const bboxOnlyParking = deepClone(groundingV3);
+  bboxOnlyParking.graph.line_grid_fit.parking_grid_fits[0].line_fits[0].grounding_method = 'bbox_proxy';
+  const bboxOnlyReport = validatePhotoGradeReadiness({
+    observations,
+    fixture,
+    geometryFit,
+    groundingV3: bboxOnlyParking,
+    codeDocument,
+    sampleId: 'negative-bbox-only-parking',
+    sampleKind: 'negative_test'
+  });
+  assert.equal(bboxOnlyReport.ok, false, 'bbox-only parking lines should hard-fail readiness');
+  assert.equal(bboxOnlyReport.photo_grade_readiness, 'rejected', 'bbox-only parking evidence should reject photo-grade readiness');
+  assert.ok(bboxOnlyReport.blockers.some((item) => item.reason === 'bbox_only_parking_line_evidence'), 'bbox-only parking negative should explain line/grid evidence failure');
+
+  const baseline = validatePhotoGradeReadiness({
+    observations,
+    fixture,
+    geometryFit,
+    groundingV3,
+    codeDocument,
+    sampleId: 'negative-baseline-detail-review',
+    sampleKind: 'negative_test'
+  });
+  assert.ok(baseline.blockers.some((item) => item.gate === 'oblique_facade'), 'facade/opening evidence gaps should remain explicit blockers');
+  assert.ok(baseline.blockers.some((item) => item.gate === 'promotion'), 'review/helper promotion states should remain explicit blockers');
+}
+
+function gateById(report, id) {
+  return report.gates.find((gate) => gate.id === id);
+}
+
+function deepClone(value) {
+  return JSON.parse(JSON.stringify(value));
 }
 
 function assertRelationCandidate(observationSet, expected, label) {
@@ -888,11 +1424,21 @@ async function assertBuildingGroupObservationSample() {
   const overlays = await fs.readdir(path.join(base, 'review-overlays'));
   assert.equal(overlays.filter((name) => name.endsWith('-overlay.png')).length, 3, 'building group review overlays should cover all source images');
 
-  const partGraph = JSON.parse(await fs.readFile(path.join(base, 'part-graph.massing.json'), 'utf8'));
-  assertValid(validatePartGraph, partGraph, 'building group part-graph.massing.json');
-  assert.equal(partGraph.profile_id, 'building_group_industrial_campus', 'building group massing PartGraph should use the R7 building profile');
-  assert.equal(partGraph.scale.calibration.strategy, 'known_site_element_anchors', 'building group PartGraph should retain known-element scale calibration');
-  assert.ok(partGraph.parts.length >= 12, 'building group PartGraph should include buildings, tanks, roads, parking, site, and scale anchors');
+  const defaultPartGraph = JSON.parse(await fs.readFile(path.join(base, 'part-graph.massing.json'), 'utf8'));
+  assertValid(validatePartGraph, defaultPartGraph, 'building group default R10 part-graph.massing.json');
+  assert.equal(defaultPartGraph.id, 'building-group-r10-auto-groundplan-default-part-graph', 'building group default PartGraph should use the R10 auto GroundPlan identity');
+  assert.equal(defaultPartGraph.profile_id, 'building_group_industrial_campus', 'building group default PartGraph should use the building profile');
+  assert.equal(defaultPartGraph.scale.calibration.strategy, 'known_site_element_anchors', 'building group default PartGraph should retain known-element scale calibration');
+  assert.equal(defaultPartGraph.parts.some((part) => ['internal_roads', 'warehouse_row_west', 'warehouse_row_inner', 'parking_lot'].includes(part.id)), false, 'building group default PartGraph should not emit legacy road, raw parking, or warehouse parent occupancy');
+  assert.ok(defaultPartGraph.evidence_graph.auto_ground_plan?.gap_completion, 'building group default PartGraph should carry R10.5 gap completion metadata');
+  assert.ok(defaultPartGraph.parts.some((part) => part.role === 'open_paved_area' && part.grounding_decision === 'helper_only'), 'building group default PartGraph should expose open paved gap helper surfaces');
+  assert.ok(defaultPartGraph.parts.filter((part) => /^(road|walkway|service_yard)_candidate$/.test(part.role)).every((part) => part.grounding_decision !== 'promoted_geometry'), 'gap-derived road/walkway/service candidates should not be promoted by default');
+
+  const partGraph = JSON.parse(await fs.readFile(path.join(base, 'part-graph.legacy-massing.json'), 'utf8'));
+  assertValid(validatePartGraph, partGraph, 'building group part-graph.legacy-massing.json');
+  assert.equal(partGraph.profile_id, 'building_group_industrial_campus', 'building group legacy massing PartGraph should use the R7 building profile');
+  assert.equal(partGraph.scale.calibration.strategy, 'known_site_element_anchors', 'building group legacy PartGraph should retain known-element scale calibration');
+  assert.ok(partGraph.parts.length >= 12, 'building group legacy PartGraph should include buildings, tanks, roads, parking, site, and scale anchors');
   assert.ok(partGraph.parts.every((part) => part.qa?.review_required === true), 'building group massing parts should remain review-gated');
   assert.ok(partGraph.parts.every((part) => part.parameter_proposals?.every((proposal) => proposal.review_required === true)), 'building group massing parameter proposals should require review');
   assert.equal(partGraph.review.parameter_proposal_summary.review_required, partGraph.review.parameter_proposal_summary.total, 'all building group massing proposals should remain review-gated');
@@ -938,17 +1484,20 @@ async function assertBuildingGroupObservationSample() {
   assert.equal(primaryDetailProposal.proposed_value.length, 6, 'primary hall detail proposal should include a small roofline/facade/opening subset');
 
   const profile = JSON.parse(await fs.readFile(path.join(repoRoot, 'examples/product-profiles/building_group_industrial_campus.json'), 'utf8'));
-  const compiled = compilePartGraphToSketchUpDsl(partGraph, profile, { repoRoot });
+  const defaultCompiled = compilePartGraphToSketchUpDsl(defaultPartGraph, profile, { repoRoot });
   const output = JSON.parse(await fs.readFile(path.join(base, 'output.massing.json'), 'utf8'));
-  assert.deepEqual(output, compiled, 'building group compiled DSL artifact should match current PartGraph compiler output');
-  assert.equal(output.operations.filter((operation) => operation.op === 'cylinder').length, 2, 'building group compiled DSL should include tank cylinders');
-  assert.ok(output.operations.filter((operation) => operation.op === 'box').length >= 10, 'building group compiled DSL should include massing and scale-anchor boxes');
+  assert.deepEqual(output, defaultCompiled, 'building group default DSL artifact should match current R10 PartGraph compiler output');
+  assert.equal(output.operations.some((operation) => ['internal_roads', 'warehouse_row_west', 'warehouse_row_inner', 'parking_lot'].includes(operation.id)), false, 'building group default DSL should not emit rejected legacy occupancy');
+  assert.ok(output.operations.some((operation) => /^gap_completion_open_paved_area/.test(operation.id) && operation.qa?.grounding_v3_decision === 'helper_only'), 'building group default DSL should include open paved helper surfaces only as helper geometry');
+  const legacyOutput = compilePartGraphToSketchUpDsl(partGraph, profile, { repoRoot });
+  assert.equal(legacyOutput.operations.filter((operation) => operation.op === 'cylinder').length, 2, 'building group legacy DSL should include tank cylinders');
+  assert.ok(legacyOutput.operations.filter((operation) => operation.op === 'box').length >= 10, 'building group legacy DSL should include massing and scale-anchor boxes');
 
-  const visualRelationFixture = JSON.parse(await fs.readFile(path.join(base, 'visual-relations.fixture.json'), 'utf8'));
+  const visualRelationFixture = JSON.parse(await fs.readFile(path.join(base, 'visual-relations.r10-groundplan.fixture.json'), 'utf8'));
   const visualRelationReport = await validateVisualRelations({ observations, fixture: visualRelationFixture, code: JSON.stringify(output) });
   assert.equal(visualRelationReport.ok, true, 'building group VisualRelationGraph fixture should pass against massing output');
   assert.equal(visualRelationReport.summary.checked_relations, visualRelationFixture.required_relations.length, 'building group VisualRelationGraph fixture should check every relation');
-  assert.equal(visualRelationReport.summary.image_only_relations, 6, 'building group VisualRelationGraph fixture should keep fine-grained warehouse/parking/tree checks image-only');
+  assert.equal(visualRelationReport.summary.image_only_relations, 0, 'R10 default VisualRelationGraph fixture should check canonical child regions in model output');
   assert.equal(visualRelationReport.summary.negative_cases_detected, visualRelationFixture.negative_cases.length, 'building group VisualRelationGraph fixture should detect campus mirror negative cases');
   const savedVisualRelationReport = JSON.parse(await fs.readFile(path.join(base, 'visual-relation-qa', 'report.json'), 'utf8'));
   assert.equal(savedVisualRelationReport.ok, true, 'building group saved VisualRelationGraph report should pass');
@@ -957,10 +1506,13 @@ async function assertBuildingGroupObservationSample() {
   const mockSessionPath = path.join(repoRoot, 'output', 'image-structured-modeler', 'sessions', 'validate-building-group-mock-session.json');
   await fs.mkdir(path.dirname(mockSessionPath), { recursive: true });
   const bridge = new SketchUpBridge({ mock: { sessionPath: mockSessionPath } });
-  const result = await bridge.build_model({ runtime: 'mock', code: JSON.stringify(output) });
-  assert.equal(result.snapshot.totals.groups, partGraph.parts.length, 'building group mock snapshot should create one group per massing part');
-  assert.equal(result.snapshot.scenes.length, 2, 'building group mock snapshot should include top and oblique review scenes');
-  assert.equal(result.snapshot.warning_summary.by_severity.error, 0, 'building group mock build should not create error warnings');
+  const defaultResult = await bridge.build_model({ runtime: 'mock', code: JSON.stringify(output) });
+  assert.equal(defaultResult.snapshot.totals.groups, defaultPartGraph.parts.length, 'building group default mock snapshot should create one group per R10 part');
+  assert.equal(defaultResult.snapshot.scenes.length, 2, 'building group default mock snapshot should include top and oblique review scenes');
+  assert.equal(defaultResult.snapshot.warning_summary.by_severity.error, 0, 'building group default mock build should not create error warnings');
+  const result = await bridge.build_model({ runtime: 'mock', code: JSON.stringify(legacyOutput) });
+  assert.equal(result.snapshot.totals.groups, partGraph.parts.length, 'building group legacy mock snapshot should create one group per massing part');
+  assert.equal(result.snapshot.warning_summary.by_severity.error, 0, 'building group legacy mock build should not create error warnings');
 
   const acceptedCandidateReview = JSON.parse(await fs.readFile(path.join(base, 'part-candidate-review.accepted-warehouses.json'), 'utf8'));
   assert.equal(acceptedCandidateReview.verdict, 'accepted_relation_candidate_set', 'building group candidate fixture should accept the reviewed relation candidate set');
@@ -1068,19 +1620,43 @@ async function assertBuildingGroupObservationSample() {
   assert.equal(liveGroundingV3Report.version, 3, 'Grounding v3 validator should emit v3 reports');
   assert.equal(liveGroundingV3Report.summary.distinct_scale_anchor_families >= 2, true, 'Grounding v3 live validation should preserve multi-family anchor voting');
   assert.equal(liveGroundingV3Report.summary.promoted_geometry > 0, true, 'Grounding v3 live validation should promote only evidence-backed regions');
+  const candidatePhotoGradeReadiness = JSON.parse(await fs.readFile(path.join(base, 'proposal-qa-candidates', 'photo-grade-readiness-report.json'), 'utf8'));
+  assertPhotoGradeReadinessReport(candidatePhotoGradeReadiness, {
+    expectedReadiness: 'technical_baseline',
+    label: 'building group candidate PhotoGradeReadiness'
+  });
+  assert.equal(gateById(candidatePhotoGradeReadiness, 'line_grid').candidate_ready, true, 'building group line/grid gate should be candidate-ready');
+  assert.equal(gateById(candidatePhotoGradeReadiness, 'top_view_overlay').candidate_ready, true, 'building group top-view overlay gate should be candidate-ready');
+  assert.ok(candidatePhotoGradeReadiness.blockers.some((blocker) => blocker.gate === 'scale'), 'building group readiness should explain scale review blockers');
+  assert.ok(candidatePhotoGradeReadiness.blockers.some((blocker) => blocker.gate === 'subdivision'), 'building group readiness should explain subdivision gap blockers');
+  assert.ok(candidatePhotoGradeReadiness.blockers.some((blocker) => blocker.gate === 'oblique_facade'), 'building group readiness should explain oblique/facade blockers');
+  const livePhotoGradeReadiness = validatePhotoGradeReadiness({
+    observations,
+    fixture: candidateVisualRelationFixture,
+    geometryFit: liveGeometryFitReport,
+    groundingV3: liveGroundingV3Report,
+    codeDocument: candidateOutput,
+    sampleId: 'building-group-candidates',
+    sampleKind: 'generated_building_group',
+    inputAssetStatus: 'available'
+  });
+  assertPhotoGradeReadinessReport(livePhotoGradeReadiness, {
+    expectedReadiness: 'technical_baseline',
+    label: 'live building group candidate PhotoGradeReadiness'
+  });
 
   const layoutQaReport = JSON.parse(await fs.readFile(path.join(base, 'layout-qa', 'building-group-massing', 'report.json'), 'utf8'));
   assert.equal(layoutQaReport.ok, true, 'building group layout QA artifact should pass');
   assert.equal(layoutQaReport.verdict, 'pass', 'building group layout QA artifact should record pass verdict');
   assert.equal(layoutQaReport.summary.total, 0, 'building group layout QA artifact should have no issues');
-  assert.equal(layoutQaReport.summary.visible_items, partGraph.parts.length, 'building group layout QA should check all massing parts');
+  assert.equal(layoutQaReport.summary.visible_items, defaultPartGraph.parts.length, 'building group layout QA should check all default R10 parts');
   assert.equal(layoutQaReport.summary.preview_views, 2, 'building group layout QA should include top/height previews');
 
   const referenceQaReport = JSON.parse(await fs.readFile(path.join(base, 'reference-visual-qa', 'building-group-massing', 'report.json'), 'utf8'));
   assert.equal(referenceQaReport.ok, true, 'building group reference visual QA artifact should pass');
   assert.equal(referenceQaReport.verdict, 'pass', 'building group reference visual QA artifact should record pass verdict');
   assert.equal(referenceQaReport.summary.total, 0, 'building group reference visual QA artifact should have no issues');
-  assert.equal(referenceQaReport.summary.checked_items, partGraph.parts.length - 1, 'reference visual QA should ignore the reference-only site slab and check generated massing items');
+  assert.equal(referenceQaReport.summary.checked_items, defaultPartGraph.parts.length - 1, 'reference visual QA should ignore the reference-only site slab and check generated R10 items');
   assert.equal(referenceQaReport.summary.preview_views, 2, 'building group reference visual QA should include site/height previews');
 
   const queueLayoutQaReport = JSON.parse(await fs.readFile(path.join(base, 'layout-qa-queue', 'building-group-massing', 'report.json'), 'utf8'));

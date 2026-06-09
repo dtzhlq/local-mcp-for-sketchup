@@ -4,14 +4,14 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { compilePartGraphToSketchUpDsl } from '../../../src/product-modeling/part-graph-compiler.mjs';
 import { generatePartGraphFromObservations } from './generate-part-graph-from-observations.mjs';
-import { makeGroundingV2SecondBuildingGroupSample } from './lib/grounding-v2-second-sample.mjs';
 import { validateGroundingV3 } from './lib/grounding-v3.mjs';
 import { repoRoot } from './lib/image-analysis.mjs';
+import { makePhotoGradeRealSmokeSample } from './lib/photo-grade-real-smoke.mjs';
 import { validatePhotoGradeReadiness } from './lib/photo-grade-readiness.mjs';
 import { validateAutoGroundPlanR10 } from './lib/auto-ground-plan-r10.mjs';
 import { validateGeometryFit } from './validate-geometry-fit.mjs';
 
-const defaultOutputDir = 'projects/image-structured-modeler/examples/building-group-second';
+const defaultOutputDir = 'projects/image-structured-modeler/examples/building-real-photo-smoke';
 const scriptRoot = path.resolve(fileURLToPath(new URL('../../..', import.meta.url)));
 
 async function main() {
@@ -20,9 +20,14 @@ async function main() {
   await fs.mkdir(outputDir, { recursive: true });
 
   const profile = await readJson(options.profile || 'examples/product-profiles/building_group_industrial_campus.json');
-  const { observations, fixture } = makeGroundingV2SecondBuildingGroupSample();
+  const {
+    observations,
+    fixture,
+    sampleKind,
+    inputAssetStatus
+  } = makePhotoGradeRealSmokeSample();
   const partGraph = generatePartGraphFromObservations(observations, profile, {
-    id: 'building-group-grounding-v2-second-sample-part-graph',
+    id: 'building-real-photo-smoke-part-graph',
     productName: observations.object.name
   });
   const outputDsl = compilePartGraphToSketchUpDsl(partGraph, profile, { repoRoot });
@@ -44,9 +49,9 @@ async function main() {
     geometryFit,
     groundingV3,
     codeDocument: outputDsl,
-    sampleId: 'building-group-second',
-    sampleKind: 'generated_second_sample',
-    inputAssetStatus: 'available'
+    sampleId: 'building-real-photo-smoke',
+    sampleKind,
+    inputAssetStatus
   });
   const autoGroundPlanR10 = validateAutoGroundPlanR10({ observations, groundingV3 });
 
@@ -60,23 +65,20 @@ async function main() {
   await writeJson(path.join(outputDir, 'photo-grade-readiness-report.json'), photoGradeReadiness);
 
   process.stdout.write(`${JSON.stringify({
-    ok: geometryFit.ok,
-    verdict: geometryFit.verdict,
+    ok: photoGradeReadiness.ok,
+    verdict: photoGradeReadiness.verdict,
+    photo_grade_readiness: photoGradeReadiness.photo_grade_readiness,
+    photo_grade_candidate: photoGradeReadiness.photo_grade_candidate,
     output_dir: path.relative(repoRoot, outputDir),
+    input_asset_status: inputAssetStatus,
     parts: partGraph.parts.length,
-    part_candidate_proposals: partGraph.review?.part_candidate_proposals?.length || 0,
-    checked_footprints: geometryFit.summary.checked_footprints,
-    checked_relations: geometryFit.summary.checked_relations,
-    checked_scale_anchors: geometryFit.summary.checked_scale_anchors,
     grounding_v3: groundingV3.verdict,
     auto_ground_plan_r10: autoGroundPlanR10.verdict,
     auto_ground_plan_gap_ratio: autoGroundPlanR10.summary.gap_ratio,
-    grounding_v3_regions: groundingV3.summary.checked_ground_regions,
-    photo_grade_readiness: photoGradeReadiness.photo_grade_readiness,
-    photo_grade_candidate: photoGradeReadiness.photo_grade_candidate,
-    dense_detail_helper_ratio: geometryFit.summary.dense_detail_helper_ratio
+    blockers: photoGradeReadiness.summary.blockers
   }, null, 2)}\n`);
-  if (options.requirePass && !geometryFit.ok) process.exit(1);
+  if (options.requireOk && !photoGradeReadiness.ok) process.exit(1);
+  if (options.requireCandidate && !photoGradeReadiness.photo_grade_candidate) process.exit(1);
 }
 
 async function readJson(relativePath) {
@@ -98,7 +100,8 @@ function parseArgs(argv) {
     const arg = argv[index];
     if (arg === '--output-dir') parsed.outputDir = argv[++index];
     else if (arg === '--profile') parsed.profile = argv[++index];
-    else if (arg === '--require-pass') parsed.requirePass = true;
+    else if (arg === '--require-ok') parsed.requireOk = true;
+    else if (arg === '--require-candidate') parsed.requireCandidate = true;
     else if (arg === '--help' || arg === '-h') usage();
     else throw new Error(`Unknown argument: ${arg}`);
   }
@@ -107,8 +110,8 @@ function parseArgs(argv) {
 
 function usage() {
   process.stdout.write(`Usage:
-  node projects/image-structured-modeler/scripts/build-grounding-v2-second-sample.mjs \\
-    --output-dir projects/image-structured-modeler/examples/building-group-second
+  node projects/image-structured-modeler/scripts/build-photo-grade-real-smoke.mjs \\
+    --output-dir projects/image-structured-modeler/examples/building-real-photo-smoke
 `);
   process.exit(0);
 }

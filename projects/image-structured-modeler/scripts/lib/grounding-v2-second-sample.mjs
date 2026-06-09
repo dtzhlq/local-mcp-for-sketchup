@@ -1,5 +1,7 @@
 import { makeImageRelationCandidates, makeVisualRelationGraph } from './visual-relations.mjs';
 import { annotateObservationSetWithGroundingV3 } from './grounding-v3.mjs';
+import { makeBirdEyeLandCoverV1FromObservationFixture } from './bird-eye-land-cover.mjs';
+import { buildBoundaryGraphV1 } from './boundary-graph-v1.mjs';
 
 const TOP_SOURCE = 'test/建筑群-v2-generated/site-top.png';
 const OBLIQUE_SOURCE = 'test/建筑群-v2-generated/site-oblique.png';
@@ -86,6 +88,11 @@ export function makeGroundingV2SecondBuildingGroupSample() {
       notes: ['Second building-group sample uses different image bboxes and the same pipeline fixture IDs.']
     }
   });
+  observations.land_cover_v1 = makeBirdEyeLandCoverV1FromObservationFixture(observations);
+  observations.boundary_graph_v1 = buildBoundaryGraphV1({
+    observations,
+    landCover: observations.land_cover_v1
+  });
   return { observations, fixture: makeGroundingV2SecondSampleFixture() };
 }
 
@@ -102,17 +109,19 @@ export function makeGroundingV2SecondSampleFixture() {
       image: {
         site: ['site_boundary'],
         blue_hall: ['primary_blue_roof_hall'],
-        warehouse_west: ['warehouse_row_west'],
-        warehouse_inner: ['warehouse_row_inner'],
-        parking_lot: ['parking_lot'],
+        west_warehouse_north: ['warehouse_west_north'],
+        west_warehouse_south: ['warehouse_west_south'],
+        inner_warehouse_north: ['warehouse_inner_north'],
+        inner_warehouse_south: ['warehouse_inner_south'],
         tank_farm: ['tank_farm']
       },
       model: {
         site: ['site_boundary'],
         blue_hall: ['primary_blue_roof_hall'],
-        warehouse_west: ['warehouse_row_west'],
-        warehouse_inner: ['warehouse_row_inner'],
-        parking_lot: ['parking_lot'],
+        west_warehouse_north: ['warehouse_west_north'],
+        west_warehouse_south: ['warehouse_west_south'],
+        inner_warehouse_north: ['warehouse_inner_north'],
+        inner_warehouse_south: ['warehouse_inner_south'],
         tank_farm: ['tank_farm']
       }
     },
@@ -127,40 +136,52 @@ export function makeGroundingV2SecondSampleFixture() {
     },
     footprint_rules: [
       footprintRule('blue-hall-second-sample-footprint', 'blue_hall', 'pixel_color_segmentation'),
-      footprintRule('warehouse-west-second-sample-footprint', 'warehouse_west', 'pixel_color_segmentation'),
-      footprintRule('warehouse-inner-second-sample-footprint', 'warehouse_inner', 'pixel_color_segmentation'),
-      footprintRule('parking-second-sample-footprint', 'parking_lot', 'pixel_gap_segmentation', [0.05, 0.05])
+      footprintRule('west-warehouse-north-second-sample-footprint', 'west_warehouse_north', 'pixel_color_segmentation'),
+      footprintRule('west-warehouse-south-second-sample-footprint', 'west_warehouse_south', 'pixel_color_segmentation'),
+      footprintRule('inner-warehouse-north-second-sample-footprint', 'inner_warehouse_north', 'pixel_color_segmentation'),
+      footprintRule('inner-warehouse-south-second-sample-footprint', 'inner_warehouse_south', 'pixel_color_segmentation'),
+      footprintRule('tank-farm-second-sample-footprint', 'tank_farm', 'pixel_color_segmentation', [0.06, 0.08])
     ],
     required_relations: [
       {
-        id: 'second-blue-hall-right-of-inner-warehouse',
+        id: 'second-blue-hall-right-of-inner-warehouse-north',
         type: 'right_of',
         item: 'blue_hall',
-        anchor: 'warehouse_inner',
+        anchor: 'inner_warehouse_north',
         image_view: 'top',
-        min_confidence: 0.55,
+        min_confidence: 0.88,
         min_model_delta: 0.08,
         spacing_tolerance: 0.1,
         mirror_negative: true
       },
       {
-        id: 'second-inner-warehouse-right-of-west-warehouse',
+        id: 'second-inner-warehouse-north-right-of-west-warehouse-north',
         type: 'right_of',
-        item: 'warehouse_inner',
-        anchor: 'warehouse_west',
+        item: 'inner_warehouse_north',
+        anchor: 'west_warehouse_north',
         image_view: 'top',
-        min_confidence: 0.52,
+        min_confidence: 0.86,
         min_model_delta: 0.06,
         spacing_tolerance: 0.1,
         mirror_negative: true
       },
       {
-        id: 'second-parking-below-blue-hall',
-        type: 'below',
-        item: 'parking_lot',
-        anchor: 'blue_hall',
+        id: 'second-west-warehouse-north-above-south',
+        type: 'above',
+        item: 'west_warehouse_north',
+        anchor: 'west_warehouse_south',
         image_view: 'top',
-        min_confidence: 0.52,
+        min_confidence: 0.88,
+        min_model_delta: 0.08,
+        spacing_tolerance: 0.12
+      },
+      {
+        id: 'second-inner-warehouse-north-above-south',
+        type: 'above',
+        item: 'inner_warehouse_north',
+        anchor: 'inner_warehouse_south',
+        image_view: 'top',
+        min_confidence: 0.86,
         min_model_delta: 0.08,
         spacing_tolerance: 0.12
       }
@@ -169,8 +190,8 @@ export function makeGroundingV2SecondSampleFixture() {
       id: 'second-sample-mirror-x-negative',
       transform: 'mirror_x',
       rule_ids: [
-        'second-blue-hall-right-of-inner-warehouse',
-        'second-inner-warehouse-right-of-west-warehouse'
+        'second-blue-hall-right-of-inner-warehouse-north',
+        'second-inner-warehouse-north-right-of-west-warehouse-north'
       ],
       min_failed_rules: 1
     }]

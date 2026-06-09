@@ -12,6 +12,8 @@ import {
   repoRoot,
   subprojectRoot
 } from './lib/image-analysis.mjs';
+import { annotateObservationSetWithBirdEyeLandCoverV1 } from './lib/bird-eye-land-cover.mjs';
+import { annotateObservationSetWithBoundaryGraphV1 } from './lib/boundary-graph-v1.mjs';
 
 async function main() {
   const options = parseArgs(process.argv.slice(2));
@@ -34,13 +36,15 @@ async function main() {
     ? await readViewHints(path.resolve(repoRoot, options.viewHintsFile))
     : null;
   const assignedViews = applyViewHints(assignViewKinds(analyses), viewHints);
-  const observationSet = makeImageSetObservation({
+  let observationSet = makeImageSetObservation({
     objectType: options.objectType || 'game_controller',
     objectName: options.objectName || 'Switch Joy-Con Grip Controller',
     analyses,
     assignedViews,
     overlayDir
   });
+  observationSet = await annotateObservationSetWithBirdEyeLandCoverV1(observationSet);
+  observationSet = await annotateObservationSetWithBoundaryGraphV1(observationSet);
 
   await fs.mkdir(path.dirname(output), { recursive: true });
   await fs.writeFile(output, `${JSON.stringify(observationSet, null, 2)}\n`, 'utf8');

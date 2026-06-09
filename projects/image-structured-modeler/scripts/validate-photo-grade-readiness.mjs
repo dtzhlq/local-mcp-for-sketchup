@@ -4,6 +4,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { repoRoot } from './lib/image-analysis.mjs';
 import { validateGroundingV3 } from './lib/grounding-v3.mjs';
+import { validatePhotoGradeReadiness } from './lib/photo-grade-readiness.mjs';
 import { validateGeometryFit } from './validate-geometry-fit.mjs';
 
 const scriptRoot = path.resolve(fileURLToPath(new URL('../../..', import.meta.url)));
@@ -13,7 +14,7 @@ async function main() {
   const observationsPath = options.observations || 'projects/image-structured-modeler/examples/building-group/observations.json';
   const fixturePath = options.fixture || 'projects/image-structured-modeler/examples/building-group/visual-relations.candidates.fixture.json';
   const codePath = options.code || 'projects/image-structured-modeler/examples/building-group/output.part-candidates-applied.json';
-  const outputPath = options.output || 'projects/image-structured-modeler/examples/building-group/proposal-qa-candidates/grounding-v3-report.json';
+  const outputPath = options.output || 'projects/image-structured-modeler/examples/building-group/proposal-qa-candidates/photo-grade-readiness-report.json';
   const observations = await readJson(observationsPath);
   const fixture = await readJson(fixturePath);
   const codeDocument = await readJson(codePath);
@@ -26,13 +27,23 @@ async function main() {
       code: JSON.stringify(codeDocument),
       runtime: options.runtime || 'mock',
       timeoutMs: options.timeoutMs,
-      mockSessionPath: options.mockSessionPath || path.join(path.dirname(resolveRepo(outputPath)), 'grounding-v3-geometry-fit-session.json')
+      mockSessionPath: options.mockSessionPath || path.join(path.dirname(resolveRepo(outputPath)), 'photo-grade-readiness-geometry-fit-session.json')
     });
-  const report = validateGroundingV3({
+  const groundingV3 = validateGroundingV3({
     observations,
     fixture,
     geometryFit,
     codeDocument
+  });
+  const report = validatePhotoGradeReadiness({
+    observations,
+    fixture,
+    geometryFit,
+    groundingV3,
+    codeDocument,
+    sampleId: options.sampleId || path.basename(path.dirname(resolveRepo(outputPath))),
+    sampleKind: options.sampleKind || 'building_group',
+    inputAssetStatus: options.inputAssetStatus || 'available'
   });
 
   if (outputPath) {
@@ -42,84 +53,65 @@ async function main() {
     await fs.writeFile(output.replace(/\.json$/i, '.md'), formatMarkdown(report), 'utf8');
   }
 
-  if (options.updateObservations) {
-    const nextObservations = {
-      ...observations,
-      grounding_v3: report.graph,
-      grounding_r10: {
-        version: 10,
-        auto_ground_plan: report.graph.auto_ground_plan
-      },
-      evidence_graph: {
-        ...(observations.evidence_graph || {}),
-        ground_plan: report.graph.ground_plan,
-        auto_ground_plan: report.graph.auto_ground_plan
-      }
-    };
-    await writeJson(resolveRepo(observationsPath), nextObservations);
-  }
-
   process.stdout.write(`${JSON.stringify({
     ok: report.ok,
     verdict: report.verdict,
-    checked_scale_anchors: report.summary.checked_scale_anchors,
-    distinct_scale_anchor_families: report.summary.distinct_scale_anchor_families,
-    checked_ground_regions: report.summary.checked_ground_regions,
-    checked_line_fits: report.summary.checked_line_fits,
-    top_view_overlay_regions: report.summary.top_view_overlay_regions,
-    promoted_geometry: report.summary.promoted_geometry,
-    review_candidate: report.summary.review_candidate,
-    helper_only: report.summary.helper_only,
-    photo_grade_candidate: report.summary.photo_grade_candidate,
-    issues: report.summary.total_issues,
+    photo_grade_readiness: report.photo_grade_readiness,
+    photo_grade_candidate: report.photo_grade_candidate,
+    candidate_ready_gates: report.summary.candidate_ready_gates,
+    review_required_gates: report.summary.review_required_gates,
+    failed_gates: report.summary.failed_gates,
+    blockers: report.summary.blockers,
     output: outputPath
   }, null, 2)}\n`);
 
-  if (options.requirePass && !report.ok) process.exit(1);
+  if (options.requireCandidate && report.photo_grade_readiness !== 'candidate') process.exit(1);
+  if (options.requireOk && !report.ok) process.exit(1);
 }
 
 function formatMarkdown(report) {
   const lines = [
-    '# Grounding v3 QA',
+    '# Photo-Grade Readiness QA',
     '',
-    `Verdict: ${report.verdict}`,
-    `Photo-grade candidate: ${report.summary.photo_grade_candidate ? 'yes' : 'no'}`,
+    `Readiness: ${report.photo_grade_readiness}`,
+    `Photo-grade candidate: ${report.photo_grade_candidate ? 'yes' : 'no'}`,
+    `Input asset status: ${report.sample.input_asset_status}`,
     '',
-    '| Gate | Value |',
-    '|---|---:|',
-    `| Scale anchors | ${report.summary.checked_scale_anchors} |`,
-    `| Anchor families | ${report.summary.distinct_scale_anchor_families} |`,
-    `| Ground regions | ${report.summary.checked_ground_regions} |`,
-    `| Subdivision overlap | ${report.summary.subdivision_overlap_ratio} |`,
-    `| Subdivision gap | ${report.summary.subdivision_gap_ratio} |`,
-    `| Line fits | ${report.summary.checked_line_fits} |`,
-    `| Parking count residual | ${report.summary.parking_grid_count_residual} |`,
-    `| Overlay mean IoU | ${report.summary.top_view_overlay_mean_iou} |`,
-    `| Promoted geometry | ${report.summary.promoted_geometry} |`,
-    `| Review candidates | ${report.summary.review_candidate} |`,
-    `| Helper only | ${report.summary.helper_only} |`,
-    '',
-    '## Issues',
-    ''
+    '| Gate | Verdict | Candidate-ready | Key metrics |',
+    '|---|---|---:|---|'
   ];
-  if (report.issues.length === 0) {
+  for (const gate of report.gates) {
+    lines.push(`| ${gate.id} | ${gate.verdict} | ${gate.candidate_ready ? 'yes' : 'no'} | ${formatMetrics(gate.metrics)} |`);
+  }
+  lines.push('', '## Blockers', '');
+  if (report.blockers.length === 0) {
     lines.push('- none');
   } else {
-    for (const issue of report.issues) {
-      lines.push(`- ${issue.severity}: ${issue.type} - ${issue.message}`);
+    for (const blocker of report.blockers) {
+      lines.push(`- ${blocker.severity}: ${blocker.gate} - ${blocker.reason}`);
+    }
+  }
+  lines.push('', '## Correction Targets', '');
+  if (report.correction_suggestions.length === 0) {
+    lines.push('- none');
+  } else {
+    for (const suggestion of report.correction_suggestions) {
+      lines.push(`- ${suggestion.target}: ${suggestion.action} (${suggestion.reason})`);
     }
   }
   lines.push('');
   return `${lines.join('\n')}\n`;
 }
 
-async function readJson(relativePath) {
-  return JSON.parse(await fs.readFile(resolveRepo(relativePath), 'utf8'));
+function formatMetrics(metrics = {}) {
+  return Object.entries(metrics)
+    .slice(0, 4)
+    .map(([key, value]) => `${key}=${Array.isArray(value) ? value.length : value}`)
+    .join(', ');
 }
 
-async function writeJson(filePath, value) {
-  await fs.mkdir(path.dirname(filePath), { recursive: true });
-  await fs.writeFile(filePath, `${JSON.stringify(value, null, 2)}\n`, 'utf8');
+async function readJson(relativePath) {
+  return JSON.parse(await fs.readFile(resolveRepo(relativePath), 'utf8'));
 }
 
 function resolveRepo(relativePath) {
@@ -137,9 +129,12 @@ function parseArgs(argv) {
     else if (arg === '--runtime') options.runtime = argv[++index];
     else if (arg === '--timeout-ms') options.timeoutMs = Number(argv[++index]);
     else if (arg === '--mock-session-path') options.mockSessionPath = argv[++index];
-    else if (arg === '--update-observations') options.updateObservations = true;
+    else if (arg === '--sample-id') options.sampleId = argv[++index];
+    else if (arg === '--sample-kind') options.sampleKind = argv[++index];
+    else if (arg === '--input-asset-status') options.inputAssetStatus = argv[++index];
     else if (arg === '--skip-geometry-fit') options.skipGeometryFit = true;
-    else if (arg === '--require-pass') options.requirePass = true;
+    else if (arg === '--require-candidate') options.requireCandidate = true;
+    else if (arg === '--require-ok') options.requireOk = true;
     else if (arg === '--help' || arg === '-h') usage();
     else throw new Error(`Unknown argument: ${arg}`);
   }
@@ -148,11 +143,11 @@ function parseArgs(argv) {
 
 function usage() {
   process.stdout.write(`Usage:
-  node projects/image-structured-modeler/scripts/validate-grounding-v3.mjs \\
+  node projects/image-structured-modeler/scripts/validate-photo-grade-readiness.mjs \\
     --observations projects/image-structured-modeler/examples/building-group/observations.json \\
     --fixture projects/image-structured-modeler/examples/building-group/visual-relations.candidates.fixture.json \\
     --code projects/image-structured-modeler/examples/building-group/output.part-candidates-applied.json \\
-    --output projects/image-structured-modeler/examples/building-group/proposal-qa-candidates/grounding-v3-report.json
+    --output projects/image-structured-modeler/examples/building-group/proposal-qa-candidates/photo-grade-readiness-report.json
 `);
   process.exit(0);
 }

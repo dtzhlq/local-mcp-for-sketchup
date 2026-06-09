@@ -243,21 +243,23 @@ const buildingDocument = await compilePartGraphFiles({ profilePath: buildingProf
 assert.equal(buildingDocument.version, 1);
 assert.equal(buildingDocument.units, 'mm');
 assert.equal(buildingDocument.metadata.profile_id, 'building_group_industrial_campus');
-assert.equal(buildingDocument.operations.filter((operation) => operation.op === 'box').length, 12);
-assert.equal(buildingDocument.operations.filter((operation) => operation.op === 'cylinder').length, 2);
+assert.equal(buildingDocument.operations.some((operation) => ['internal_roads', 'warehouse_row_west', 'warehouse_row_inner', 'parking_lot'].includes(operation.id)), false);
+assert.ok(buildingDocument.operations.filter((operation) => operation.op === 'box').length >= 18);
+assert.equal(buildingDocument.operations.filter((operation) => operation.op === 'cylinder').length, 0);
+assert.ok(buildingDocument.operations.some((operation) => /^gap_completion_open_paved_area/.test(operation.id) && operation.qa?.grounding_v3_decision === 'helper_only'));
 const generatedBuilding = JSON.parse(await fs.readFile(buildingOutputPath, 'utf8'));
-assert.deepEqual(generatedBuilding, buildingDocument, 'building group massing DSL should be generated from the part graph compiler');
+assert.deepEqual(generatedBuilding, buildingDocument, 'building group default R10 DSL should be generated from the part graph compiler');
 
 const buildingBuild = await bridge.build_model({ runtime: 'mock', code: JSON.stringify(buildingDocument) });
-assert.equal(buildingBuild.snapshot.totals.groups, buildingPartGraph.parts.length, 'compiled building group massing should create one group per PartGraph part');
-assert.equal(buildingBuild.snapshot.scenes.length, 2, 'compiled building group massing should keep top/oblique review scenes');
+assert.equal(buildingBuild.snapshot.totals.groups, buildingPartGraph.parts.length, 'compiled building group default R10 model should create one group per PartGraph part');
+assert.equal(buildingBuild.snapshot.scenes.length, 2, 'compiled building group default R10 model should keep top/oblique review scenes');
 assert.equal(buildingBuild.snapshot.warning_summary.by_severity.error, 0);
 const blueHall = snapshotGroupById(buildingBuild.snapshot, 'primary_blue_roof_hall');
-assert.equal(blueHall.qa.review_required, true, 'building group massing should remain review-gated');
-const tankGroups = buildingBuild.snapshot.groups.filter((group) => group.kind === 'cylinder');
-assert.equal(tankGroups.length, 2, 'building group massing should compile tank farm as two cylinders');
+assert.equal(blueHall.qa.review_required, true, 'building group default R10 output should remain review-gated');
+const legacyIds = new Set(['internal_roads', 'warehouse_row_west', 'warehouse_row_inner', 'parking_lot']);
+assert.equal(buildingBuild.snapshot.groups.some((group) => legacyIds.has(group.id)), false, 'building group default R10 snapshot should not emit legacy occupancy parents');
 
-const buildingLayoutSpec = JSON.parse(await fs.readFile('examples/model-qa/building-group-massing.json', 'utf8'));
+const buildingLayoutSpec = JSON.parse(await fs.readFile('projects/image-structured-modeler/examples/building-group/model-qa.r10-groundplan.json', 'utf8'));
 const buildingLayoutReport = await bridge.validate_model({
   code: JSON.stringify(buildingDocument),
   runtime: 'mock',
@@ -268,7 +270,7 @@ assert.equal(buildingLayoutReport.ok, true, 'building group layout QA should pas
 assert.equal(buildingLayoutReport.verdict, 'pass');
 assert.equal(buildingLayoutReport.summary.total, 0);
 
-const buildingReferenceSpec = JSON.parse(await fs.readFile('examples/reference-visual-qa/building-group-massing.json', 'utf8'));
+const buildingReferenceSpec = JSON.parse(await fs.readFile('projects/image-structured-modeler/examples/building-group/reference-visual-qa.r10-groundplan.json', 'utf8'));
 const buildingReferenceReport = await bridge.validate_reference_model({
   code: JSON.stringify(buildingDocument),
   runtime: 'mock',

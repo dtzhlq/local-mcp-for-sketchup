@@ -1,3 +1,8 @@
+import {
+  buildAutoGroundPlanR10,
+  groundPlanV3FromAutoGroundPlanR10
+} from './auto-ground-plan-r10.mjs';
+
 export const GROUNDING_V3_REGION_CLASSES = [
   'building_footprint',
   'road',
@@ -78,9 +83,14 @@ export function annotateObservationSetWithGroundingV3(observationSet = {}, optio
   if (!isBuildingGroupObservationSet(observationSet)) return observationSet;
   const grounding = buildGroundingV3Graph({ observations: observationSet, ...options });
   observationSet.grounding_v3 = grounding;
+  observationSet.grounding_r10 = {
+    version: 10,
+    auto_ground_plan: grounding.auto_ground_plan
+  };
   observationSet.evidence_graph = {
     ...(observationSet.evidence_graph || {}),
-    ground_plan: grounding.ground_plan
+    ground_plan: grounding.ground_plan,
+    auto_ground_plan: grounding.auto_ground_plan
   };
   return observationSet;
 }
@@ -90,8 +100,11 @@ export function buildGroundingV3Graph({ observations = {}, fixture = {}, geometr
   const siteObservation = findBestObservation(topImage, 'site_boundary');
   const siteBbox = siteObservation?.bbox || topImage?.metrics?.object_bbox || null;
   const scaleAnchorGraph = buildScaleAnchorGraph(observations);
-  const groundPlan = buildGroundPlan({ observations, topImage, siteObservation, siteBbox });
-  const lineGridFit = buildLineGridFit({ observations, topImage, scaleAnchorGraph });
+  const autoGroundPlan = buildAutoGroundPlanR10({ observations });
+  const groundPlan = autoGroundPlan?.site_surface
+    ? groundPlanV3FromAutoGroundPlanR10(autoGroundPlan)
+    : buildGroundPlan({ observations, topImage, siteObservation, siteBbox });
+  const lineGridFit = buildLineGridFit({ observations, topImage, scaleAnchorGraph, autoGroundPlan });
   const topViewOverlay = buildTopViewOverlay({ observations, geometryFit, groundPlan, lineGridFit });
   const promotionDecisions = buildPromotionDecisions({
     observations,
@@ -122,6 +135,7 @@ export function buildGroundingV3Graph({ observations = {}, fixture = {}, geometr
     kind: 'grounding_graph_v3',
     version: 3,
     coordinate_convention: 'image_x_right_y_down_to_model_xy_y_up',
+    auto_ground_plan: autoGroundPlan,
     scale_anchor_graph: scaleAnchorGraph,
     ground_plan: groundPlan,
     line_grid_fit: lineGridFit,
@@ -161,6 +175,16 @@ export function groundingV3DecisionForPart(groundingV3, part = {}) {
       decision: 'helper_only',
       confidence: 0.4,
       reasons: ['scale anchors are visual review helpers, not site geometry']
+    });
+  }
+  if (role === 'open_paved_area' || /^gap_completion_open_paved_area/.test(part.id || '')) {
+    return promotionDecision({
+      part_id: part.id,
+      region_id: part.grounding_region_id || part.id,
+      region_class: 'gap',
+      decision: 'helper_only',
+      confidence: 0.42,
+      reasons: ['R10.5 open paved gap completion is a helper surface, not promoted road geometry']
     });
   }
   if (/roof_|parked_vehicle|tree|vent|hvac|texture|detail/i.test(role)) {
@@ -436,14 +460,20 @@ function groundRegionFromObservation({ observation, regionClass }, siteBbox) {
   };
 }
 
-function buildLineGridFit({ observations, topImage, scaleAnchorGraph }) {
+function buildLineGridFit({ observations, topImage, scaleAnchorGraph, autoGroundPlan = null }) {
   const top = topImage || findTopImage(observations);
   const parkingLines = (top?.observations || [])
     .filter((observation) => /^parking_stall_row/.test(observation.component_hint || '') && observation.bbox)
     .sort((a, b) => observationGroundingScore(b) - observationGroundingScore(a))
     .filter(uniqueByHint());
   const driveAisle = findBestObservation(top, 'parking_drive_aisle_center');
-  const internalRoad = findBestObservation(top, 'internal_roads');
+  const rejectedRoadIds = new Set((autoGroundPlan?.rejected_priors || [])
+    .filter((item) => item.class === 'road')
+    .flatMap((item) => [item.id, item.observation_id].filter(Boolean)));
+  const internalRoadCandidate = findBestObservation(top, 'internal_roads');
+  const internalRoad = rejectedRoadIds.has('internal_roads') || rejectedRoadIds.has(internalRoadCandidate?.id)
+    ? null
+    : internalRoadCandidate;
   const lineFits = parkingLines.map((observation) => lineFitFromObservation(observation));
   const rowCenters = lineFits.map((line) => line.center_px?.[1]).filter(Number.isFinite).sort((a, b) => a - b);
   const rowSpacingPx = rowCenters.length >= 2 ? Math.abs(rowCenters[1] - rowCenters[0]) : null;
@@ -596,7 +626,10 @@ function buildPromotionDecisions({ groundPlan, lineGridFit, topViewOverlay, code
     const overlay = overlayByRegion.get(region.id);
     let decision = 'review_candidate';
     const reasons = [];
-    if (region.class === 'gap') {
+    if (region.r10_decision && region.r10_decision !== 'promoted_geometry') {
+      decision = region.r10_decision;
+      reasons.push('AutoGroundPlan R10 kept this region out of promoted geometry');
+    } else if (region.class === 'gap') {
       decision = 'review_candidate';
       reasons.push('derived gap must be reviewed before geometry promotion');
     } else if (!region.source_observation_ids?.length) {
