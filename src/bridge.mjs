@@ -23,6 +23,14 @@ export class SketchUpBridge {
     return { runtime: await this.resolveRuntimeCapabilities(selectedRuntime, runtime, { force: true }) };
   }
 
+  async queue_diagnostics({ includeFiles = false, timeoutMs } = {}) {
+    const selectedRuntime = this.selectRuntime('queue', { timeoutMs });
+    if (typeof selectedRuntime.diagnostics !== 'function') {
+      throw new Error('Selected queue runtime does not support diagnostics');
+    }
+    return selectedRuntime.diagnostics({ includeFiles });
+  }
+
   async build_model({ code, runtime = 'mock', timeoutMs } = {}) {
     const selectedRuntime = this.selectRuntime(runtime, { timeoutMs });
     const runtimeCapabilities = await this.resolveRuntimeCapabilities(selectedRuntime, runtime);
@@ -64,6 +72,36 @@ export class SketchUpBridge {
       result.snapshot.artifact_size_bytes = result.file_size_bytes;
     }
     return result;
+  }
+
+  async capture_view({
+    path,
+    view,
+    width,
+    height,
+    antialias,
+    compression,
+    zoom_extents,
+    zoomExtents,
+    runtime = 'queue',
+    timeoutMs
+  } = {}) {
+    if (runtime !== 'queue') {
+      throw new Error('capture_view is currently supported only for queue runtime');
+    }
+    const selectedRuntime = this.selectRuntime(runtime, { timeoutMs });
+    if (typeof selectedRuntime.captureView !== 'function') {
+      throw new Error('Selected queue runtime does not support capture_view');
+    }
+    return selectedRuntime.captureView({
+      path,
+      view,
+      width,
+      height,
+      antialias,
+      compression,
+      zoom_extents: zoom_extents ?? zoomExtents
+    });
   }
 
   async compare_model({

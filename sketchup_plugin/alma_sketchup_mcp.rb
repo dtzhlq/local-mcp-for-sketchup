@@ -38,7 +38,7 @@ module AlmaSketchupMCP
   RESPONSE_DIR = File.join(STATE_DIR, 'responses')
   MM_PER_INCH = 25.4
   DEFAULT_OPERATION_LIMIT = 2000
-  PLUGIN_VERSION = 'queue-plugin-0.1.0-building-geometry-r2.1'
+  PLUGIN_VERSION = 'queue-plugin-0.1.0-queue-diagnostics.1'
   CAPABILITY_MANIFEST_VERSION = '2026-06-building-geometry-r2-aggressive'
   RUNTIME_CAPABILITY_VERSION = '0.1.0-capabilities.7'
   DSL_VERSION = 1
@@ -131,6 +131,8 @@ module AlmaSketchupMCP
       build_model(params.fetch('code'))
     when 'save_model'
       save_model(params['path'], params.fetch('keep_session', true))
+    when 'capture_view'
+      capture_view(params)
     else
       raise "Unknown method: #{method}"
     end
@@ -215,6 +217,50 @@ module AlmaSketchupMCP
     result
   end
 
+  def capture_view(params)
+    model = active_model_or_new('capture_view')
+    view_name = (params['view'] || 'current').to_s
+    width = positive_integer(params['width'] || 1280, 'capture_view.width')
+    height = positive_integer(params['height'] || 720, 'capture_view.height')
+    antialias = params.key?('antialias') ? !!params['antialias'] : true
+    compression = params.key?('compression') ? params['compression'].to_f : 1.0
+    raise 'capture_view.compression must be between 0 and 1' if compression.negative? || compression > 1
+
+    target = params['path'].to_s.strip
+    if target.empty?
+      stamp = Time.now.utc.strftime('%Y%m%dT%H%M%SZ')
+      target = File.join(STATE_DIR, 'captures', "capture-#{stamp}.png")
+    end
+    target = File.expand_path(target)
+    FileUtils.mkdir_p(File.dirname(target))
+
+    apply_capture_camera(model, view_name, params.fetch('zoom_extents', true))
+    view = model.active_view
+    view.refresh if view.respond_to?(:refresh)
+    ok = view.write_image(target, width, height, antialias, compression)
+    raise "Failed to capture SketchUp view to #{target}" unless ok && File.exist?(target)
+
+    model_snapshot = snapshot
+    {
+      'kind' => 'capture_view',
+      'runtime' => 'queue',
+      'file_path' => target,
+      'view' => view_name,
+      'width' => width,
+      'height' => height,
+      'antialias' => antialias,
+      'compression' => compression,
+      'camera' => camera_snapshot(view.camera),
+      'model_summary' => {
+        'totals' => model_snapshot['totals'],
+        'bounding_box' => model_snapshot['bounding_box'],
+        'warning_summary' => model_snapshot['warning_summary'],
+        'visible_object_count' => model_snapshot['totals']['groups'] + model_snapshot['totals']['instances'],
+        'total_object_count' => model_snapshot['groups'].length + model_snapshot['instances'].length
+      }
+    }
+  end
+
   def active_model_or_new(method_name = 'queue runtime')
     model = Sketchup.active_model
     return model if editable_model?(model)
@@ -228,6 +274,56 @@ module AlmaSketchupMCP
 
   def editable_model?(model)
     model && model.respond_to?(:entities) && model.respond_to?(:start_operation)
+  end
+
+  def apply_capture_camera(model, view_name, zoom_extents)
+    view = model.active_view
+    normalized = view_name.downcase
+    return if normalized == 'current'
+
+    bounds = model.bounds
+    valid_bounds = bounds.respond_to?(:valid?) ? bounds.valid? : !model.entities.empty?
+    return unless valid_bounds
+
+    center = bounds.center
+    distance = [bounds.diagonal * 1.8, mm_to_model_units(1000)].max
+    camera_vectors = {
+      'top' => [[0, 0, distance], [0, 1, 0]],
+      'front' => [[0, -distance, 0], [0, 0, 1]],
+      'back' => [[0, distance, 0], [0, 0, 1]],
+      'right' => [[distance, 0, 0], [0, 0, 1]],
+      'left' => [[-distance, 0, 0], [0, 0, 1]],
+      'iso' => [[distance, -distance, distance], [0, 0, 1]]
+    }
+    vector_pair = camera_vectors[normalized]
+    raise 'capture_view.view must be current, top, front, back, right, left, or iso' unless vector_pair
+
+    eye_offset, up_vector = vector_pair
+    eye = Geom::Point3d.new(center.x + eye_offset[0], center.y + eye_offset[1], center.z + eye_offset[2])
+    view.camera = Sketchup::Camera.new(eye, center, Geom::Vector3d.new(*up_vector), true)
+    view.zoom_extents if zoom_extents && view.respond_to?(:zoom_extents)
+  end
+
+  def camera_snapshot(camera)
+    {
+      'eye' => point_snapshot(camera.eye),
+      'target' => point_snapshot(camera.target),
+      'up' => [camera.up.x, camera.up.y, camera.up.z],
+      'fov' => camera.respond_to?(:fov) ? camera.fov : nil
+    }
+  end
+
+  def point_snapshot(point)
+    [model_units_to_mm(point.x), model_units_to_mm(point.y), model_units_to_mm(point.z)]
+  end
+
+  def positive_integer(value, field_name)
+    number = Integer(value)
+    raise "#{field_name} must be positive" unless number.positive?
+
+    number
+  rescue ArgumentError, TypeError
+    raise "#{field_name} must be a positive integer"
   end
 
 

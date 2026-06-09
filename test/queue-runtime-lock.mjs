@@ -9,9 +9,42 @@ try {
   await testExclusiveLockSerializesIndependentInstances();
   await testExclusiveLockIsReentrantForOneInstance();
   await testTimeoutRemovesPendingRequest();
-  process.stdout.write(`${JSON.stringify({ ok: true, tests: 3 }, null, 2)}\n`);
+  await testDiagnosticsReportsQueueState();
+  process.stdout.write(`${JSON.stringify({ ok: true, tests: 4 }, null, 2)}\n`);
 } finally {
   await fs.rm(tempRoot, { recursive: true, force: true });
+}
+
+async function testDiagnosticsReportsQueueState() {
+  const root = path.join(tempRoot, 'diagnostics');
+  const queueDir = path.join(root, 'queue');
+  const responseDir = path.join(root, 'responses');
+  const lockPath = path.join(root, 'queue-runtime.lock');
+  await fs.mkdir(queueDir, { recursive: true });
+  await fs.mkdir(responseDir, { recursive: true });
+  await fs.writeFile(path.join(queueDir, 'request.json'), '{"id":"request"}\n', 'utf8');
+  await fs.writeFile(path.join(responseDir, 'response.json'), '{"result":{}}\n', 'utf8');
+  await fs.writeFile(lockPath, '{"pid":123,"method":"build_model"}\n', 'utf8');
+  const staleDate = new Date(Date.now() - 5000);
+  await fs.utimes(lockPath, staleDate, staleDate);
+
+  const runtime = new QueueRuntime({
+    queueDir,
+    responseDir,
+    lockPath,
+    staleLockMs: 1000,
+    lockTimeoutMs: 100,
+    pollIntervalMs: 5
+  });
+  const diagnostics = await runtime.diagnostics({ includeFiles: true });
+  assert.equal(diagnostics.kind, 'queue_diagnostics');
+  assert.equal(diagnostics.queue.count, 1);
+  assert.equal(diagnostics.responses.count, 1);
+  assert.equal(diagnostics.lock.exists, true);
+  assert.equal(diagnostics.lock.stale, true);
+  assert.equal(diagnostics.lock.owner.method, 'build_model');
+  assert.ok(diagnostics.recommendations.some((item) => item.includes('stale')));
+  assert.equal(diagnostics.queue.files[0].name, 'request.json');
 }
 
 async function testExclusiveLockSerializesIndependentInstances() {

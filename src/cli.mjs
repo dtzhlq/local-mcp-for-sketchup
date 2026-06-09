@@ -18,6 +18,8 @@ async function main() {
       return output(await bridge.get_docs(), options);
     case 'get_capabilities':
       return output(await bridge.get_capabilities({ runtime: options.runtime || 'mock', timeoutMs: options.timeoutMs }), options);
+    case 'queue_diagnostics':
+      return output(await bridge.queue_diagnostics({ includeFiles: options.includeFiles === true, timeoutMs: options.timeoutMs }), options);
     case 'reset_model':
       return output(await bridge.reset_model({ runtime: options.runtime || 'mock', timeoutMs: options.timeoutMs }), options);
     case 'build_model': {
@@ -34,6 +36,18 @@ async function main() {
     }
     case 'save_model':
       return output(await bridge.save_model({ path: options.path, keep_session: options.keepSession !== false, runtime: options.runtime || 'mock', timeoutMs: options.timeoutMs }), options);
+    case 'capture_view':
+      return output(await bridge.capture_view({
+        path: options.path,
+        view: options.view,
+        width: options.width,
+        height: options.height,
+        antialias: options.antialias,
+        compression: options.compression,
+        zoom_extents: options.zoomExtents,
+        runtime: options.runtime || 'queue',
+        timeoutMs: options.timeoutMs
+      }), options);
     case 'compare_snapshots': {
       const expected = await readSnapshotJson(options.expectedFile, 'expected');
       const actual = await readSnapshotJson(options.actualFile, 'actual');
@@ -107,6 +121,10 @@ function parseArgs(argv) {
     else if (arg === '--code') options.code = argv[++index];
     else if (arg === '--code-file') options.codeFile = argv[++index];
     else if (arg === '--path') options.path = argv[++index];
+    else if (arg === '--view') options.view = argv[++index];
+    else if (arg === '--width') options.width = Number(argv[++index]);
+    else if (arg === '--height') options.height = Number(argv[++index]);
+    else if (arg === '--compression') options.compression = Number(argv[++index]);
     else if (arg === '--output-file') options.outputFile = argv[++index];
     else if (arg === '--format') options.format = argv[++index];
     else if (arg === '--expected-file') options.expectedFile = argv[++index];
@@ -136,6 +154,11 @@ function parseArgs(argv) {
     else if (arg === '--no-keep-session') options.keepSession = false;
     else if (arg === '--no-reset-first') options.resetFirst = false;
     else if (arg === '--include-snapshots') options.includeSnapshots = true;
+    else if (arg === '--include-files') options.includeFiles = true;
+    else if (arg === '--antialias') options.antialias = true;
+    else if (arg === '--no-antialias') options.antialias = false;
+    else if (arg === '--zoom-extents') options.zoomExtents = true;
+    else if (arg === '--no-zoom-extents') options.zoomExtents = false;
     else if (arg === '--no-preview') options.includePreview = false;
     else if (arg === '--strict-collisions') options.strictCollisions = true;
     else if (arg === '--loose-collisions') options.strictCollisions = false;
@@ -240,11 +263,13 @@ function usage() {
   process.stdout.write(`Usage:
   node src/cli.mjs get_docs
   node src/cli.mjs get_capabilities [--runtime mock|queue]
+  node src/cli.mjs queue_diagnostics [--include-files]
   node src/cli.mjs reset_model [--runtime mock|queue]
   node src/cli.mjs build_model --code-file examples/demo-room.json [--runtime mock|queue]
   node src/cli.mjs compile_expert --code-file examples/expert-parametric-fixture.js [--format dsl]
   node src/cli.mjs build_expert_model --code-file examples/expert-parametric-fixture.js [--runtime mock|queue]
   node src/cli.mjs save_model --path output/model.json [--runtime mock|queue] [--no-keep-session]
+  node src/cli.mjs capture_view --path output/capture.png [--view current|top|front|right|iso] [--width 1280] [--height 720] [--runtime queue]
   node src/cli.mjs compare_snapshots --expected-file output/mock-a.json --actual-file output/mock-b.json [--tolerance-mm 1] [--face-tolerance 1] [--edge-tolerance 3] [--max-faces 5000] [--max-artifact-size-bytes 50000000] [--format markdown] [--output-file output/report.md]
   node src/cli.mjs compare_model --code-file examples/demo-room.json [--expected-runtime mock] [--actual-runtime queue] [--timeout-ms 60000] [--face-tolerance 1] [--edge-tolerance 3] [--format markdown] [--output-file output/report.md]
   node src/cli.mjs validate_model --code-file examples/demo-room.json [--runtime mock|queue] [--spec-file examples/model-qa/spec.json] [--preview-dir output/model-qa/demo] [--format markdown] [--output-file output/model-qa/demo.md]

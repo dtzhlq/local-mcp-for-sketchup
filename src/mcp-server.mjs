@@ -30,6 +30,17 @@ const tools = [
     }
   },
   {
+    name: 'queue_diagnostics',
+    description: 'Inspect local queue directories, pending requests, orphan responses, and queue lock state without sending a SketchUp request.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        includeFiles: { type: 'boolean', default: false },
+        timeoutMs: { type: 'number' }
+      }
+    }
+  },
+  {
     name: 'build_model',
     description: 'Build model geometry from a safe JSON DSL string and return a structured snapshot.',
     inputSchema: {
@@ -85,6 +96,24 @@ const tools = [
         path: { type: 'string' },
         keep_session: { type: 'boolean', default: true },
         runtime: { type: 'string', enum: ['mock', 'queue'], default: 'mock' },
+        timeoutMs: { type: 'number' }
+      }
+    }
+  },
+  {
+    name: 'capture_view',
+    description: 'Capture the current live SketchUp viewport to an image artifact and return camera/model metadata.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        path: { type: 'string', description: 'Output image path. Defaults to the queue state captures directory.' },
+        view: { type: 'string', enum: ['current', 'top', 'front', 'right', 'left', 'back', 'iso'], default: 'current' },
+        width: { type: 'number', default: 1280 },
+        height: { type: 'number', default: 720 },
+        antialias: { type: 'boolean', default: true },
+        compression: { type: 'number', default: 1.0 },
+        zoom_extents: { type: 'boolean', default: true },
+        runtime: { type: 'string', enum: ['queue'], default: 'queue' },
         timeoutMs: { type: 'number' }
       }
     }

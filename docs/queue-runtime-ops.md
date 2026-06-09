@@ -59,6 +59,28 @@ node src/cli.mjs build_model --runtime queue --timeout-ms 60000 --code-file exam
 - Total diffs 为 `0`，或仅存在明确记录过的 topology tolerance 差异。
 - Warnings 只包含预期 warning，例如旧 SketchUp 版本的 `material.pbr_unsupported` 或缺失贴图路径的 `material.missing_texture`。
 
+## Queue 诊断与视口捕获
+
+不确定 Bridge 是否在处理请求时，先跑本地诊断。它不会向 SketchUp 写请求，只检查 queue/response 目录和 lock 文件：
+
+```bash
+node src/cli.mjs queue_diagnostics --include-files
+```
+
+通过标准：
+
+- `lock.exists=false`，或 lock 未 stale 且确实有另一个 queue 命令在运行。
+- `queue.count=0`，否则说明有未处理请求。
+- `responses.count=0`，否则说明有中断命令留下的孤儿 response。
+
+SketchUp Bridge 可用后，可以保存当前或标准视角截图作为可见证据：
+
+```bash
+node src/cli.mjs capture_view --runtime queue --view iso --width 1280 --height 720 --path output/queue-capture.png --timeout-ms 60000
+```
+
+`capture_view` 会返回图片路径、文件大小、相机参数和模型摘要。它是 live queue 证据辅助工具，不替代 snapshot、layout QA 或 reference visual QA。
+
 ## 手动视觉检查项
 
 | 能力组 | 样例 | 检查点 |

@@ -54,6 +54,72 @@ export class QueueRuntime {
     return result;
   }
 
+  async captureView({ outputPath, path: requestedPath, view, width, height, antialias, compression, zoomExtents, zoom_extents } = {}) {
+    const outputPathValue = outputPath || requestedPath;
+    const resolvedPath = outputPathValue ? path.resolve(outputPathValue) : outputPathValue;
+    const result = await this.call('capture_view', {
+      path: resolvedPath,
+      view,
+      width,
+      height,
+      antialias,
+      compression,
+      zoom_extents: zoom_extents ?? zoomExtents
+    });
+    if (result && result.file_path) {
+      try {
+        const stats = await fs.stat(result.file_path);
+        result.file_size_bytes = stats.size;
+      } catch (_) {
+        // File may not be accessible; skip.
+      }
+    }
+    return result;
+  }
+
+  async diagnostics({ includeFiles = false } = {}) {
+    const stateDir = path.dirname(this.queueDir);
+    const [queue, responses, lock] = await Promise.all([
+      directoryDiagnostics(this.queueDir, { includeFiles }),
+      directoryDiagnostics(this.responseDir, { includeFiles }),
+      lockDiagnostics(this.lockPath, this.staleLockMs)
+    ]);
+    const recommendations = [];
+    if (!queue.exists) {
+      recommendations.push('Queue directory does not exist yet; start the SketchUp Bridge or run a queue command to initialize it.');
+    }
+    if (!responses.exists) {
+      recommendations.push('Response directory does not exist yet; start the SketchUp Bridge or run a queue command to initialize it.');
+    }
+    if (lock.exists && lock.stale) {
+      recommendations.push(`Queue lock appears stale; if no queue command is running, remove ${this.lockPath}.`);
+    } else if (lock.exists) {
+      recommendations.push('Queue lock is active; run queue commands serially and wait for the current command to finish.');
+    }
+    if (queue.count > 0) {
+      recommendations.push('Pending queue request files are present; the SketchUp Bridge may not be running or may be busy.');
+    }
+    if (responses.count > 0) {
+      recommendations.push('Response files are present without a waiting client; this can happen after interrupted queue commands.');
+    }
+
+    return {
+      kind: 'queue_diagnostics',
+      runtime: 'queue',
+      state_dir: stateDir,
+      queue_dir: this.queueDir,
+      response_dir: this.responseDir,
+      lock_path: this.lockPath,
+      timeout_ms: this.timeoutMs,
+      lock_timeout_ms: this.lockTimeoutMs,
+      stale_lock_ms: this.staleLockMs,
+      queue,
+      responses,
+      lock,
+      recommendations
+    };
+  }
+
   async call(method, params) {
     return this.withExclusiveAccess(() => this.callUnlocked(method, params), { method });
   }
@@ -142,6 +208,83 @@ export class QueueRuntime {
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function directoryDiagnostics(dir, { includeFiles = false } = {}) {
+  try {
+    const entries = await fs.readdir(dir);
+    const files = [];
+    let oldestMtimeMs = null;
+    let newestMtimeMs = null;
+    for (const entry of entries.filter((item) => item.endsWith('.json')).sort()) {
+      const filePath = path.join(dir, entry);
+      const stats = await fs.stat(filePath);
+      oldestMtimeMs = oldestMtimeMs === null ? stats.mtimeMs : Math.min(oldestMtimeMs, stats.mtimeMs);
+      newestMtimeMs = newestMtimeMs === null ? stats.mtimeMs : Math.max(newestMtimeMs, stats.mtimeMs);
+      if (includeFiles) {
+        files.push({
+          name: entry,
+          path: filePath,
+          size_bytes: stats.size,
+          age_ms: Math.max(0, Date.now() - stats.mtimeMs)
+        });
+      }
+    }
+    return {
+      exists: true,
+      count: entries.filter((item) => item.endsWith('.json')).length,
+      oldest_age_ms: oldestMtimeMs === null ? null : Math.max(0, Date.now() - oldestMtimeMs),
+      newest_age_ms: newestMtimeMs === null ? null : Math.max(0, Date.now() - newestMtimeMs),
+      ...(includeFiles ? { files } : {})
+    };
+  } catch (error) {
+    if (error.code === 'ENOENT') {
+      return {
+        exists: false,
+        count: 0,
+        oldest_age_ms: null,
+        newest_age_ms: null,
+        ...(includeFiles ? { files: [] } : {})
+      };
+    }
+    throw error;
+  }
+}
+
+async function lockDiagnostics(lockPath, staleLockMs) {
+  try {
+    const [raw, stats] = await Promise.all([
+      fs.readFile(lockPath, 'utf8').catch(() => null),
+      fs.stat(lockPath)
+    ]);
+    let parsed = null;
+    if (raw) {
+      try {
+        parsed = JSON.parse(raw);
+      } catch (_) {
+        parsed = null;
+      }
+    }
+    const ageMs = Math.max(0, Date.now() - stats.mtimeMs);
+    return {
+      exists: true,
+      stale: ageMs > staleLockMs,
+      age_ms: ageMs,
+      path: lockPath,
+      owner: parsed
+    };
+  } catch (error) {
+    if (error.code === 'ENOENT') {
+      return {
+        exists: false,
+        stale: false,
+        age_ms: null,
+        path: lockPath,
+        owner: null
+      };
+    }
+    throw error;
+  }
 }
 
 function numberFromEnv(name, fallback) {

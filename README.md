@@ -40,6 +40,8 @@ get_docs() -> { docs }
 build_model({ code, runtime, timeoutMs? }) -> { snapshot }
 reset_model({ runtime, timeoutMs? }) -> { snapshot }
 save_model({ path?, keep_session?, runtime, timeoutMs? }) -> { file_path, snapshot }
+queue_diagnostics({ includeFiles?, timeoutMs? }) -> { queue, responses, lock, recommendations }
+capture_view({ path?, view?, width?, height?, runtime:"queue", timeoutMs? }) -> { file_path, camera, model_summary }
 validate_model({ code?|snapshot?, runtime?, spec?, includePreview? }) -> { report, preview }
 validate_reference_model({ code?|snapshot?, runtime?, spec?, includePreview? }) -> { report, preview }
 ```
@@ -143,9 +145,11 @@ npm run plugin:check
 node src/cli.mjs get_docs
 node src/cli.mjs get_capabilities --runtime mock
 node src/cli.mjs get_capabilities --runtime queue --timeout-ms 60000
+node src/cli.mjs queue_diagnostics --include-files
 node src/cli.mjs reset_model --runtime mock
 node src/cli.mjs build_model --runtime mock --code-file examples/demo-room.json
 node src/cli.mjs save_model --runtime mock --path output/mock-model.json
+node src/cli.mjs capture_view --runtime queue --path output/current-view.png --view iso --width 1280 --height 720 --timeout-ms 60000
 node src/cli.mjs compare_snapshots --expected-file output/mock-a.json --actual-file output/mock-b.json --tolerance-mm 1 --max-faces 5000 --max-artifact-size-bytes 50000000
 node src/cli.mjs compare_model --code-file examples/demo-room.json --expected-runtime mock --actual-runtime mock --max-faces 5000
 node src/cli.mjs compare_model --code-file examples/demo-room.json --expected-runtime mock --actual-runtime mock --max-faces 5000 --format markdown --output-file output/mock-parity-report.md
@@ -194,7 +198,7 @@ npm run qa:expert:mock
 
 ## MCP stdio 接入
 
-本项目自带一个最小 MCP stdio server，当前暴露 `get_docs`、`get_capabilities`、`build_model`、`compile_expert`、`build_expert_model`、`reset_model`、`save_model`、`compare_snapshots`、`compare_model`、`validate_model` 和 `validate_reference_model`：
+本项目自带一个最小 MCP stdio server，当前暴露 `get_docs`、`get_capabilities`、`queue_diagnostics`、`build_model`、`compile_expert`、`build_expert_model`、`reset_model`、`save_model`、`capture_view`、`compare_snapshots`、`compare_model`、`validate_model` 和 `validate_reference_model`：
 
 ```bash
 node src/mcp-server.mjs

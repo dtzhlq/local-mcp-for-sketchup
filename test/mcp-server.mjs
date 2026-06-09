@@ -37,6 +37,8 @@ try {
   assert.ok(toolNames.includes('build_expert_model'), 'MCP tools/list should expose build_expert_model');
   assert.ok(toolNames.includes('validate_model'), 'MCP tools/list should expose validate_model');
   assert.ok(toolNames.includes('validate_reference_model'), 'MCP tools/list should expose validate_reference_model');
+  assert.ok(toolNames.includes('queue_diagnostics'), 'MCP tools/list should expose queue_diagnostics');
+  assert.ok(toolNames.includes('capture_view'), 'MCP tools/list should expose capture_view');
   const compileTool = list.result.tools.find((tool) => tool.name === 'compile_expert');
   assert.deepEqual(compileTool.inputSchema.required, ['code']);
   assert.ok(compileTool.inputSchema.properties.maxOperations);
@@ -109,7 +111,7 @@ try {
 
   console.log(JSON.stringify({
     ok: true,
-    tools: ['compile_expert', 'build_expert_model', 'validate_model', 'validate_reference_model'],
+    tools: ['compile_expert', 'build_expert_model', 'validate_model', 'validate_reference_model', 'queue_diagnostics', 'capture_view'],
     groups: built.snapshot.totals.groups
   }, null, 2));
 } finally {
