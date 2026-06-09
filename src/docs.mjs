@@ -62,7 +62,7 @@ build_model accepts a JSON string, not executable Ruby or shell code. The suppor
     {"op": "wall", "name": "Diagonal_Wall", "start": [500,600,160], "end": [2500,1600,160], "height": 2400, "thickness": 120, "openings": [{"offset": 700, "width": 500, "height": 650, "sill_height": 900}], "material": "Wall_Paint"},
     {"op": "wall_path", "name": "L_Shaped_Wall", "path": [[2600,600,160],[3600,600,160],[3600,1800,160]], "height": 2200, "thickness": 120, "openings": [{"segment_index": 1, "offset": 400, "width": 450, "height": 700, "sill_height": 850}], "material": "Wall_Paint"},
     {"op": "curved_wall", "name": "Curved_Entry", "center": [900,2200,160], "radius": 500, "start_angle": 210, "end_angle": 330, "height": 1500, "segments": 8, "material": "Wall_Paint"},
-    {"op": "curtain_wall", "name": "Glass_Line", "start": [200,3000,160], "end": [1800,3000,160], "height": 1600, "frame_material": "Wall_Paint", "panel_material": "Glass"},
+    {"op": "curtain_wall", "name": "Glass_Line", "start": [200,3000,160], "end": [1800,3000,160], "height": 1600, "module_width": 700, "mullion_width": 70, "row_count": 2, "frame_material": "Wall_Paint", "panel_material": "Glass"},
     {"op": "door", "name": "Entry_Door", "origin": [425,-45,160], "plane": "xz", "width": 850, "height": 2050, "thickness": 40, "material": "Post"},
     {"op": "window", "name": "Front_Window", "origin": [1925,-35,1080], "plane": "xz", "width": 850, "height": 720, "thickness": 24, "material": "Glass"},
     {"op": "stairs", "name": "Entry_Stairs", "origin": [0,-900,0], "steps": 4, "width": 1400, "tread_depth": 300, "riser_height": 160, "direction": "y", "material": "Concrete"},
@@ -127,7 +127,7 @@ build_model accepts a JSON string, not executable Ruby or shell code. The suppor
 - \`footprint_slab\` creates a horizontal slab from a simple XY polygon footprint and optional courtyard/light-well \`holes\`.
 - \`wall\` creates a wall segment from \`start/end/height/thickness\`; axis-aligned walls support rectangular \`openings\`, and non-axis-aligned walls support segment-local \`offset/width/height/sill_height\` openings.
 - \`wall_path\` creates a single polyline wall mesh from \`path/height/thickness\`; openings use \`segment_index\`, and joins remain simple butt joins.
-- \`curved_wall\`, \`roof_footprint\`, \`hip_roof\`, \`parapet_path\`, \`curtain_wall\`, \`column_grid\`, \`path_surface\`, \`terrain_mesh\`, and \`parking_stall_array\` cover R2 building/site massing helpers for faster architecture examples.
+- \`curved_wall\`, \`roof_footprint\`, \`hip_roof\`, \`parapet_path\`, \`curtain_wall\`, \`column_grid\`, \`path_surface\`, \`terrain_mesh\`, and \`parking_stall_array\` cover building/site massing helpers for faster architecture examples. \`curtain_wall\` supports module-based mullions, horizontal rails, panel cells, \`row_count\`, and \`panel_thickness\`.
 - \`door\` and \`window\` create simple vertical infill markers in \`xz\` or \`yz\` planes.
 - \`stairs\` creates stepped box geometry from \`steps/width/tread_depth/riser_height\` along the \`x\` or \`y\` direction.
 - \`railing\` creates a swept top rail plus evenly spaced cylindrical posts along a polyline \`path\`.

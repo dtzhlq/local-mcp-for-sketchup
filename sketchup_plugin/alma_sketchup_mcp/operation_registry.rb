@@ -753,11 +753,11 @@ module AlmaSketchupMCP
       }
     },
     'curtain_wall' => {
-      'status' => 'partial',
+      'status' => 'supported',
       'stability' => 'beta',
       'schema' => {
         'required' => ['op', 'name', 'height'],
-        'optional' => ['path', 'start', 'end', 'module_width', 'mullion_width', 'thickness', 'frame_material', 'panel_material', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'optional' => ['path', 'start', 'end', 'module_width', 'mullion_width', 'row_count', 'thickness', 'panel_thickness', 'frame_material', 'panel_material', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
       },
       'component_scope' => {
         'status' => 'supported'

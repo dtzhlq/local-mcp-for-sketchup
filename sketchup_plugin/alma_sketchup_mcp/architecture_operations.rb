@@ -175,7 +175,21 @@ module AlmaSketchupMCP
     name = operation.fetch('name')
     path = operation['path'] || (operation['start'] && operation['end'] ? [operation['start'], operation['end']] : nil)
     raise "#{name}.path must contain at least 2 [x, y, z] points or start/end" unless path.is_a?(Array) && path.length >= 2
-    add_wall_path(parent_entities, operation.merge('path' => path, 'height' => positive_number(operation['height'], nil, "#{name}.height"), 'thickness' => positive_number(operation['thickness'], 50, "#{name}.thickness"), 'material' => operation['frame_material'] || operation['frameMaterial'] || operation['material'], 'kind' => 'curtain_wall'))
+
+    points = path.each_with_index.map { |point, index| vector(point, "#{name}.path[#{index}]") }
+    height = positive_number(operation['height'], nil, "#{name}.height")
+    module_width = positive_number(operation['module_width'] || operation['moduleWidth'], 1200, "#{name}.module_width")
+    mullion_width = positive_number(operation['mullion_width'] || operation['mullionWidth'], 80, "#{name}.mullion_width")
+    thickness = positive_number(operation['thickness'], 50, "#{name}.thickness")
+    panel_thickness = positive_number(operation['panel_thickness'] || operation['panelThickness'], [thickness / 2.0, 30].min, "#{name}.panel_thickness")
+    rows = integer_range(operation['row_count'] || operation['rowCount'] || 1, 1, 20, "#{name}.row_count")
+    mesh = curtain_wall_grid_mesh(points, height, module_width, mullion_width, thickness, panel_thickness, rows, name)
+    add_mesh(parent_entities, operation.merge(
+      'vertices' => mesh['vertices'],
+      'faces' => mesh['faces'],
+      'material' => operation['frame_material'] || operation['frameMaterial'] || operation['material'],
+      'kind' => 'curtain_wall'
+    ))
   end
 
   def add_column_grid(parent_entities, operation)
@@ -337,6 +351,71 @@ module AlmaSketchupMCP
 
   def interpolate_point(a, b, t)
     [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t]
+  end
+
+  def curtain_wall_grid_mesh(path, height, module_width, mullion_width, frame_thickness, panel_thickness, rows, name)
+    vertices = []
+    faces = []
+    path.each_cons(2).with_index do |(start_point, end_point), index|
+      length = distance_between(start_point, end_point)
+      raise "#{name}.path[#{index}] segment length must be positive" if length <= GEOMETRY_EPSILON
+
+      modules = [(length / module_width).ceil, 1].max
+      actual_module_width = length / modules
+      row_height = height / rows
+      modules.times do |module_index|
+        left = module_index * actual_module_width + mullion_width / 2.0
+        right = (module_index + 1) * actual_module_width - mullion_width / 2.0
+        next if right - left <= GEOMETRY_EPSILON
+
+        rows.times do |row_index|
+          bottom = row_index * row_height + mullion_width / 2.0
+          panel_height = row_height - mullion_width
+          next if panel_height <= GEOMETRY_EPSILON
+
+          add_curtain_wall_cuboid(vertices, faces, start_point, end_point, length, left, right, bottom, panel_height, panel_thickness, "#{name}.panels[#{module_index},#{row_index}]")
+        end
+      end
+
+      (modules + 1).times do |module_index|
+        center = module_index * actual_module_width
+        left = [0, center - mullion_width / 2.0].max
+        right = [length, center + mullion_width / 2.0].min
+        next if right - left <= GEOMETRY_EPSILON
+
+        add_curtain_wall_cuboid(vertices, faces, start_point, end_point, length, left, right, 0, height, frame_thickness, "#{name}.mullions[#{module_index}]")
+      end
+
+      (rows + 1).times do |row_index|
+        center = row_index * row_height
+        bottom = if row_index.zero?
+                   0
+                 elsif row_index == rows
+                   height - mullion_width
+                 else
+                   center - mullion_width / 2.0
+                 end
+        rail_height = [mullion_width, height - bottom].min
+        next if rail_height <= GEOMETRY_EPSILON
+
+        add_curtain_wall_cuboid(vertices, faces, start_point, end_point, length, 0, length, bottom, rail_height, frame_thickness, "#{name}.rails[#{row_index}]")
+      end
+    end
+    { 'vertices' => vertices, 'faces' => faces }
+  end
+
+  def add_curtain_wall_cuboid(vertices, faces, path_start, path_end, path_length, offset_start, offset_end, z_offset, height, thickness, field_name)
+    start_point = point_along_segment(path_start, path_end, path_length, offset_start)
+    end_point = point_along_segment(path_start, path_end, path_length, offset_end)
+    base_start = [start_point[0], start_point[1], start_point[2] + z_offset]
+    base_end = [end_point[0], end_point[1], end_point[2] + z_offset]
+    offset = vertices.length
+    vertices.concat(wall_segment_vertices(base_start, base_end, height, thickness, field_name))
+    faces.concat(cuboid_faces(offset))
+  end
+
+  def point_along_segment(start_point, end_point, length, offset)
+    interpolate_point(start_point, end_point, offset / length)
   end
 
   def column_grid_points(operation)

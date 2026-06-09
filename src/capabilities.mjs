@@ -1,6 +1,6 @@
 export const DSL_VERSION = 1;
-export const CAPABILITY_MANIFEST_VERSION = '2026-06-building-geometry-r2-aggressive';
-export const RUNTIME_CAPABILITY_VERSION = '0.1.0-capabilities.7';
+export const CAPABILITY_MANIFEST_VERSION = '2026-06-building-geometry-r3-quality';
+export const RUNTIME_CAPABILITY_VERSION = '0.1.0-capabilities.8';
 
 export const SUPPORT_STATUS = Object.freeze({
   supported: 'supported',
@@ -611,11 +611,11 @@ const OPERATION_REGISTRY_ENTRIES = [
   {
     op: 'curtain_wall',
     description: 'Create a lightweight curtain-wall strip along a line or polyline.',
-    schema: { required: ['op', 'name', 'height'], optional: ['path', 'start', 'end', 'module_width', 'mullion_width', 'thickness', 'frame_material', 'panel_material', ...commonPlacement] },
-    runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.partial },
+    schema: { required: ['op', 'name', 'height'], optional: ['path', 'start', 'end', 'module_width', 'mullion_width', 'row_count', 'thickness', 'panel_thickness', 'frame_material', 'panel_material', ...commonPlacement] },
+    runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
     component_definition: true,
-    notes: 'Mock records module/panel metadata and approximate strip geometry. Queue exposes the contract with a minimal strip body in this aggressive slice.'
+    notes: 'R3 quality slice generates module-based vertical mullions, horizontal rails, and panel cells as one top-level curtain wall group. Complex mullion profiles and true glass/frame material separation remain out of scope.'
   },
   {
     op: 'column_grid',

@@ -206,7 +206,7 @@ export function addParapetPath(model, operation = {}) {
 }
 
 export function addCurtainWall(model, operation = {}) {
-  const { name, path, start, end, height, module_width, moduleWidth: moduleWidthInput, mullion_width, mullionWidth: mullionWidthInput, thickness = 50, material, frame_material, frameMaterial, panel_material, panelMaterial, transform } = operation;
+  const { name, path, start, end, height, module_width, moduleWidth: moduleWidthInput, mullion_width, mullionWidth: mullionWidthInput, row_count, rowCount, panel_thickness, panelThickness, thickness = 50, material, frame_material, frameMaterial, panel_material, panelMaterial, transform } = operation;
   if (!name || typeof name !== 'string') throw new Error('curtain_wall operation requires a string name');
   const wallPath = path ?? (start && end ? [start, end] : undefined);
   if (!Array.isArray(wallPath) || wallPath.length < 2) throw new Error(`${name}.path must contain at least 2 [x, y, z] points or start/end`);
@@ -214,25 +214,21 @@ export function addCurtainWall(model, operation = {}) {
   const wallHeight = positiveNumber(height, undefined, `${name}.height`);
   const moduleWidthValue = positiveNumber(module_width ?? moduleWidthInput, 1200, `${name}.module_width`);
   const mullionWidthValue = positiveNumber(mullion_width ?? mullionWidthInput, 80, `${name}.mullion_width`);
-  const panelThickness = positiveNumber(thickness, undefined, `${name}.thickness`);
-  const vertices = [];
-  const faces = [];
-  let panelCount = 0;
-  normalizedPath.slice(0, -1).forEach((point, index) => {
-    const next = normalizedPath[index + 1];
-    const length = distanceBetween(point, next);
-    panelCount += Math.max(1, Math.ceil(length / moduleWidthValue));
-    const offset = vertices.length;
-    vertices.push(...wallSegmentVertices(point, next, wallHeight, panelThickness, `${name}.path[${index}]`));
-    faces.push(...cuboidFaces(offset));
-  });
+  const frameThickness = positiveNumber(thickness, undefined, `${name}.thickness`);
+  const rows = integerInRange(row_count ?? rowCount ?? 1, 1, 20, `${name}.row_count`);
+  const glassThickness = positiveNumber(panel_thickness ?? panelThickness, Math.max(1, Math.min(frameThickness / 2, 30)), `${name}.panel_thickness`);
+  const { vertices, faces, metadata } = curtainWallGridMesh(normalizedPath, wallHeight, moduleWidthValue, mullionWidthValue, frameThickness, glassThickness, rows, name);
   addMesh(model, { ...objectIdentityFields(operation), name, vertices, faces, material: frame_material ?? frameMaterial ?? material, transform, smooth: 'coplanar' });
   const group = model.groups[model.groups.length - 1];
   group.kind = 'curtain_wall';
   group.curtain_wall = {
-    panels: panelCount,
+    panels: metadata.panels,
+    mullions: metadata.mullions,
+    rails: metadata.rails,
+    rows,
     module_width: moduleWidthValue,
     mullion_width: mullionWidthValue,
+    panel_thickness: glassThickness,
     frame_material: frame_material ?? frameMaterial ?? material ?? null,
     panel_material: panel_material ?? panelMaterial ?? null
   };
@@ -398,6 +394,67 @@ function distanceBetween(a, b) {
 
 function interpolatePoint(a, b, t) {
   return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
+}
+
+function curtainWallGridMesh(path, height, moduleWidth, mullionWidth, frameThickness, panelThickness, rows, name) {
+  const vertices = [];
+  const faces = [];
+  const metadata = { panels: 0, mullions: 0, rails: 0 };
+  path.slice(0, -1).forEach((start, index) => {
+    const end = path[index + 1];
+    const length = distanceBetween(start, end);
+    if (length <= GEOMETRY_EPSILON) throw new Error(`${name}.path[${index}] segment length must be positive`);
+    const modules = Math.max(1, Math.ceil(length / moduleWidth));
+    const actualModuleWidth = length / modules;
+    const rowHeight = height / rows;
+
+    for (let moduleIndex = 0; moduleIndex < modules; moduleIndex += 1) {
+      const left = moduleIndex * actualModuleWidth + mullionWidth / 2;
+      const right = (moduleIndex + 1) * actualModuleWidth - mullionWidth / 2;
+      if (right - left <= GEOMETRY_EPSILON) continue;
+      for (let rowIndex = 0; rowIndex < rows; rowIndex += 1) {
+        const bottom = rowIndex * rowHeight + mullionWidth / 2;
+        const panelHeight = rowHeight - mullionWidth;
+        if (panelHeight <= GEOMETRY_EPSILON) continue;
+        addCurtainWallCuboid(vertices, faces, start, end, length, left, right, bottom, panelHeight, panelThickness, `${name}.panels[${moduleIndex},${rowIndex}]`);
+        metadata.panels += 1;
+      }
+    }
+
+    for (let moduleIndex = 0; moduleIndex <= modules; moduleIndex += 1) {
+      const center = moduleIndex * actualModuleWidth;
+      const left = Math.max(0, center - mullionWidth / 2);
+      const right = Math.min(length, center + mullionWidth / 2);
+      if (right - left <= GEOMETRY_EPSILON) continue;
+      addCurtainWallCuboid(vertices, faces, start, end, length, left, right, 0, height, frameThickness, `${name}.mullions[${moduleIndex}]`);
+      metadata.mullions += 1;
+    }
+
+    for (let rowIndex = 0; rowIndex <= rows; rowIndex += 1) {
+      const center = rowIndex * rowHeight;
+      const bottom = rowIndex === 0 ? 0 : rowIndex === rows ? height - mullionWidth : center - mullionWidth / 2;
+      const railHeight = Math.min(mullionWidth, height - bottom);
+      if (railHeight <= GEOMETRY_EPSILON) continue;
+      addCurtainWallCuboid(vertices, faces, start, end, length, 0, length, bottom, railHeight, frameThickness, `${name}.rails[${rowIndex}]`);
+      metadata.rails += 1;
+    }
+  });
+  return { vertices, faces, metadata };
+}
+
+function addCurtainWallCuboid(vertices, faces, pathStart, pathEnd, pathLength, offsetStart, offsetEnd, zOffset, height, thickness, fieldName) {
+  const start = pointAlongSegment(pathStart, pathEnd, pathLength, offsetStart);
+  const end = pointAlongSegment(pathStart, pathEnd, pathLength, offsetEnd);
+  const baseStart = [start[0], start[1], start[2] + zOffset];
+  const baseEnd = [end[0], end[1], end[2] + zOffset];
+  const offset = vertices.length;
+  vertices.push(...wallSegmentVertices(baseStart, baseEnd, height, thickness, fieldName));
+  faces.push(...cuboidFaces(offset));
+}
+
+function pointAlongSegment(start, end, length, offset) {
+  const t = length <= GEOMETRY_EPSILON ? 0 : offset / length;
+  return interpolatePoint(start, end, t);
 }
 
 function addExtrudedProfileGroup(model, { name, origin, outer, holes = [], depth, material, transform, kind, qa, ...operation }) {

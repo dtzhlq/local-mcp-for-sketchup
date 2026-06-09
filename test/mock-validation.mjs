@@ -1149,6 +1149,31 @@ assert.equal(buildingGeometryR2.snapshot.groups.find((group) => group.name === '
 assert.equal(buildingGeometryR2.snapshot.groups.find((group) => group.name === 'North_Parking_Stalls').kind, 'parking_stall_array');
 assert.equal(buildingGeometryR2.snapshot.scenes[0].name, 'Building_Geometry_R2_Aggressive_View');
 
+const curtainWallGrid = await bridge.build_model({ runtime: 'mock', code: JSON.stringify({
+  version: 1,
+  units: 'mm',
+  operations: [
+    { op: 'reset' },
+    { op: 'curtain_wall', name: 'R3_Curtain_Wall_Grid', start: [0, 0, 0], end: [1000, 0, 0], height: 600, module_width: 500, mullion_width: 50, row_count: 2, thickness: 60, panel_thickness: 20, frame_material: 'Frame', panel_material: 'Glass' }
+  ]
+}) });
+const curtainWall = curtainWallGrid.snapshot.groups.find((group) => group.name === 'R3_Curtain_Wall_Grid');
+assert.equal(curtainWall.kind, 'curtain_wall');
+assert.equal(curtainWall.faces, 60);
+assert.equal(curtainWall.edges, 120);
+assert.equal(curtainWall.vertices, 80);
+assert.deepEqual(curtainWall.curtain_wall, {
+  panels: 4,
+  mullions: 3,
+  rails: 3,
+  rows: 2,
+  module_width: 500,
+  mullion_width: 50,
+  panel_thickness: 20,
+  frame_material: 'Frame',
+  panel_material: 'Glass'
+});
+
 await assert.rejects(
   () => bridge.build_model({ runtime: 'mock', code: JSON.stringify({
     version: 1,

@@ -50,6 +50,7 @@ export function createSnapshot(model) {
       image: group.image || null,
       attributes: cloneAttributes(group.attributes),
       features: cloneJson(group.features),
+      curtain_wall: cloneJson(group.curtain_wall),
       boolean_operations: cloneJson(group.boolean_operations),
       manifold: cloneJson(group.manifold),
       transform: group.transform || null,
