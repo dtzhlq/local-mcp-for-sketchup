@@ -33,6 +33,7 @@ server.stderr.on('data', (chunk) => {
 try {
   const list = await request({ id: 1, method: 'tools/list' });
   const toolNames = list.result.tools.map((tool) => tool.name);
+  assert.ok(toolNames.includes('get_workflow_bundle'), 'MCP tools/list should expose get_workflow_bundle');
   assert.ok(toolNames.includes('compile_expert'), 'MCP tools/list should expose compile_expert');
   assert.ok(toolNames.includes('build_expert_model'), 'MCP tools/list should expose build_expert_model');
   assert.ok(toolNames.includes('validate_model'), 'MCP tools/list should expose validate_model');
@@ -42,6 +43,11 @@ try {
   const compileTool = list.result.tools.find((tool) => tool.name === 'compile_expert');
   assert.deepEqual(compileTool.inputSchema.required, ['code']);
   assert.ok(compileTool.inputSchema.properties.maxOperations);
+
+  const workflowBundle = await callTool('get_workflow_bundle', {});
+  assert.equal(workflowBundle.kind, 'sketchup_mcp_workflow_bundle');
+  assert.ok(workflowBundle.workflows.inspector.steps.some((step) => step.tool === 'queue_diagnostics'));
+  assert.ok(workflowBundle.workflows.modeler.steps.some((step) => step.tool === 'capture_view'));
 
   const expertSource = [
     'const ops = [];',
@@ -111,7 +117,7 @@ try {
 
   console.log(JSON.stringify({
     ok: true,
-    tools: ['compile_expert', 'build_expert_model', 'validate_model', 'validate_reference_model', 'queue_diagnostics', 'capture_view'],
+    tools: ['get_workflow_bundle', 'compile_expert', 'build_expert_model', 'validate_model', 'validate_reference_model', 'queue_diagnostics', 'capture_view'],
     groups: built.snapshot.totals.groups
   }, null, 2));
 } finally {

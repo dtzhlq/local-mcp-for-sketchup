@@ -37,6 +37,7 @@
 
 ```text
 get_docs() -> { docs }
+get_workflow_bundle() -> { workflows: { inspector, modeler, qa_reviewer } }
 build_model({ code, runtime, timeoutMs? }) -> { snapshot }
 reset_model({ runtime, timeoutMs? }) -> { snapshot }
 save_model({ path?, keep_session?, runtime, timeoutMs? }) -> { file_path, snapshot }
@@ -143,6 +144,7 @@ npm run plugin:check
 
 ```bash
 node src/cli.mjs get_docs
+node src/cli.mjs get_workflow_bundle
 node src/cli.mjs get_capabilities --runtime mock
 node src/cli.mjs get_capabilities --runtime queue --timeout-ms 60000
 node src/cli.mjs queue_diagnostics --include-files
@@ -198,7 +200,7 @@ npm run qa:expert:mock
 
 ## MCP stdio 接入
 
-本项目自带一个最小 MCP stdio server，当前暴露 `get_docs`、`get_capabilities`、`queue_diagnostics`、`build_model`、`compile_expert`、`build_expert_model`、`reset_model`、`save_model`、`capture_view`、`compare_snapshots`、`compare_model`、`validate_model` 和 `validate_reference_model`：
+本项目自带一个最小 MCP stdio server，当前暴露 `get_docs`、`get_workflow_bundle`、`get_capabilities`、`queue_diagnostics`、`build_model`、`compile_expert`、`build_expert_model`、`reset_model`、`save_model`、`capture_view`、`compare_snapshots`、`compare_model`、`validate_model` 和 `validate_reference_model`：
 
 ```bash
 node src/mcp-server.mjs

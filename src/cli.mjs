@@ -16,6 +16,8 @@ async function main() {
   switch (command) {
     case 'get_docs':
       return output(await bridge.get_docs(), options);
+    case 'get_workflow_bundle':
+      return output(await bridge.get_workflow_bundle(), options);
     case 'get_capabilities':
       return output(await bridge.get_capabilities({ runtime: options.runtime || 'mock', timeoutMs: options.timeoutMs }), options);
     case 'queue_diagnostics':
@@ -262,6 +264,7 @@ function safeFileName(value) {
 function usage() {
   process.stdout.write(`Usage:
   node src/cli.mjs get_docs
+  node src/cli.mjs get_workflow_bundle
   node src/cli.mjs get_capabilities [--runtime mock|queue]
   node src/cli.mjs queue_diagnostics [--include-files]
   node src/cli.mjs reset_model [--runtime mock|queue]

@@ -22,6 +22,11 @@ const tools = [
     inputSchema: { type: 'object', properties: {}, additionalProperties: false }
   },
   {
+    name: 'get_workflow_bundle',
+    description: 'Return recommended inspector, modeler, and QA reviewer workflows for safe SketchUp MCP use.',
+    inputSchema: { type: 'object', properties: {}, additionalProperties: false }
+  },
+  {
     name: 'get_capabilities',
     description: 'Return runtime capability descriptors, using a live SketchUp plugin handshake for queue runtime.',
     inputSchema: {

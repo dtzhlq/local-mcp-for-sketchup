@@ -6,6 +6,7 @@ import { QueueRuntime } from './queue-runtime.mjs';
 import { validateModelSnapshot } from './model-qa.mjs';
 import { validateReferenceVisualSnapshot } from './reference-visual-qa.mjs';
 import { compareSnapshots } from './snapshot-diff.mjs';
+import { getWorkflowBundle } from './workflows.mjs';
 
 export class SketchUpBridge {
   constructor(options = {}) {
@@ -16,6 +17,10 @@ export class SketchUpBridge {
 
   async get_docs() {
     return { docs: getDocs() };
+  }
+
+  async get_workflow_bundle() {
+    return getWorkflowBundle();
   }
 
   async get_capabilities({ runtime = 'mock', timeoutMs } = {}) {
