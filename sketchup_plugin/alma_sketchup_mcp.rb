@@ -38,9 +38,9 @@ module AlmaSketchupMCP
   RESPONSE_DIR = File.join(STATE_DIR, 'responses')
   MM_PER_INCH = 25.4
   DEFAULT_OPERATION_LIMIT = 2000
-  PLUGIN_VERSION = 'queue-plugin-0.1.0-phase7-boolean-manifold.3'
-  CAPABILITY_MANIFEST_VERSION = '2026-05-phase7-boolean-manifold'
-  RUNTIME_CAPABILITY_VERSION = '0.1.0-capabilities.5'
+  PLUGIN_VERSION = 'queue-plugin-0.1.0-building-geometry-r2.1'
+  CAPABILITY_MANIFEST_VERSION = '2026-06-building-geometry-r2-aggressive'
+  RUNTIME_CAPABILITY_VERSION = '0.1.0-capabilities.7'
   DSL_VERSION = 1
 
   def start
@@ -366,8 +366,30 @@ module AlmaSketchupMCP
       add_image_plane(model.entities, operation)
     when 'floor_slab'
       add_floor_slab(model.entities, operation)
+    when 'footprint_slab'
+      add_footprint_slab(model.entities, operation)
     when 'wall'
       add_wall(model.entities, operation)
+    when 'wall_path'
+      add_wall_path(model.entities, operation)
+    when 'curved_wall'
+      add_curved_wall(model.entities, operation)
+    when 'roof_footprint'
+      add_roof_footprint(model.entities, operation)
+    when 'hip_roof'
+      add_hip_roof(model.entities, operation)
+    when 'parapet_path'
+      add_parapet_path(model.entities, operation)
+    when 'curtain_wall'
+      add_curtain_wall(model.entities, operation)
+    when 'column_grid'
+      add_column_grid(model.entities, operation)
+    when 'path_surface'
+      add_path_surface(model.entities, operation)
+    when 'terrain_mesh'
+      add_terrain_mesh(model.entities, operation)
+    when 'parking_stall_array'
+      add_parking_stall_array(model.entities, operation)
     when 'door'
       add_door(model.entities, operation)
     when 'window'

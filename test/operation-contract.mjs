@@ -24,11 +24,13 @@ const identityOperations = new Set([
   'box', 'rounded_box', 'beveled_panel', 'fillet', 'chamfer', 'recess', 'engraved_line',
   'text_emboss', 'text_engrave', 'text_3d', 'slot', 'slot_array', 'rib', 'standoff_boss',
   'button_on_panel', 'image_plane', 'prism', 'panel_with_openings', 'boolean_cutout', 'face_with_holes',
-  'profile_extrude', 'mesh', 'gable_roof', 'shed_roof', 'cylinder', 'loft_between_profiles',
-  'shell_from_front_side_profiles', 'lofted_solid', 'face_on_cylinder', 'analog_stick',
-  'screw_hole', 'pipe_between_points', 'swept_path', 'domed_surface', 'bowed_panel',
-  'floor_slab', 'wall', 'door', 'window', 'component_instance'
-]);
+	  'profile_extrude', 'mesh', 'gable_roof', 'shed_roof', 'cylinder', 'loft_between_profiles',
+	  'shell_from_front_side_profiles', 'lofted_solid', 'face_on_cylinder', 'analog_stick',
+	  'screw_hole', 'pipe_between_points', 'swept_path', 'domed_surface', 'bowed_panel',
+	  'floor_slab', 'footprint_slab', 'wall', 'wall_path', 'curved_wall', 'roof_footprint',
+	  'hip_roof', 'parapet_path', 'curtain_wall', 'column_grid', 'path_surface', 'terrain_mesh',
+	  'parking_stall_array', 'door', 'window', 'component_instance'
+	]);
 
 const mockRuntimeSource = await fs.readFile(path.join(repoRoot, 'src/mock-runtime.mjs'), 'utf8');
 const componentOperationsSource = await fs.readFile(path.join(repoRoot, 'src/component-operations.mjs'), 'utf8');

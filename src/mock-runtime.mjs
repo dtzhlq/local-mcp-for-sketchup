@@ -8,7 +8,7 @@ import { addAnalogStick, addBowedPanel, addDomedSurface, addFaceOnCylinder, addL
 import { addBeveledPanel, addBox, addButtonOnPanel, addChamfer, addEngravedLine, addFillet, addImagePlane, addRecess, addRib, addRoundedBox, addSlot, addSlotArray, addStandoffBoss, addText3d, addTextEmboss, addTextEngrave } from './product-operations.mjs';
 import { addBoss, addRaisedRib, cutHole, cutRecess, cutSlot } from './feature-operations.mjs';
 import { booleanDifference, booleanIntersect, booleanUnion, manifoldCheck, manifoldRepair } from './boolean-operations.mjs';
-import { addDoor, addFloorSlab, addLevel, addRailing, addStairs, addWall, addWindow } from './architecture-operations.mjs';
+import { addColumnGrid, addCurvedWall, addCurtainWall, addDoor, addFloorSlab, addFootprintSlab, addHipRoof, addLevel, addParapetPath, addParkingStallArray, addPathSurface, addRailing, addRoofFootprint, addStairs, addTerrainMesh, addWall, addWallPath, addWindow } from './architecture-operations.mjs';
 import { addComponentDefinition, addComponentInstance } from './component-operations.mjs';
 import { addDemoRoom } from './demo-operations.mjs';
 import { addTag, assignTag, deleteObject, renameObject, setObjectAttribute, setObjectClassification, setObjectMaterial, setObjectTextureTransform, setObjectVisibility, transformObject } from './object-operations.mjs';
@@ -175,11 +175,44 @@ export class MockRuntime {
         case 'image_plane':
           addImagePlane(model, operation);
           break;
-        case 'floor_slab':
-          addFloorSlab(model, operation);
+	        case 'floor_slab':
+	          addFloorSlab(model, operation);
+	          break;
+	        case 'footprint_slab':
+	          addFootprintSlab(model, operation);
+	          break;
+	        case 'wall':
+	          addWall(model, operation);
+	          break;
+	        case 'wall_path':
+	          addWallPath(model, operation);
+	          break;
+        case 'curved_wall':
+          addCurvedWall(model, operation);
           break;
-        case 'wall':
-          addWall(model, operation);
+        case 'roof_footprint':
+          addRoofFootprint(model, operation);
+          break;
+        case 'hip_roof':
+          addHipRoof(model, operation);
+          break;
+        case 'parapet_path':
+          addParapetPath(model, operation);
+          break;
+        case 'curtain_wall':
+          addCurtainWall(model, operation);
+          break;
+        case 'column_grid':
+          addColumnGrid(model, operation);
+          break;
+        case 'path_surface':
+          addPathSurface(model, operation);
+          break;
+        case 'terrain_mesh':
+          addTerrainMesh(model, operation);
+          break;
+        case 'parking_stall_array':
+          addParkingStallArray(model, operation);
           break;
         case 'door':
           addDoor(model, operation);

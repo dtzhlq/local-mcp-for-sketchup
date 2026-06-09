@@ -21,7 +21,7 @@ git diff --check
 通过标准：
 
 - Ruby 插件主文件和所有子模块 `ruby -c` 通过。
-- Operation contract 输出 manifest / mock / Ruby dispatch 为 `74 / 74 / 74`，component registry / dispatch 为 `42 / 42`。
+- Operation contract 输出 manifest / mock / Ruby dispatch 为 `85 / 85 / 85`，component registry / dispatch 为 `53 / 53`。
 - Expert Mode fixture 编译和 mock build 通过，且安全拒绝场景由 `test/expert-compiler.mjs` 覆盖。
 - MCP stdio server 的 `tools/list` 和 `tools/call compile_expert/build_expert_model/validate_model` 由 `test/mcp-server.mjs` 覆盖。
 - mock QA、model layout QA、Expert mock QA 与 mock budget 均 Verdict `pass`；`qa:model-layout` 必须生成 Switch、救护车和儿童房的正交 preview/report，且 issues 为 `0`。
@@ -49,7 +49,7 @@ node src/cli.mjs get_capabilities --runtime queue --timeout-ms 10000
 - `runtime.version` 等于当前 `PLUGIN_VERSION`。
 - `runtime.compatibility.ok` 为 `true`。
 - `runtime.compatibility.issues` 为空。
-- supported operations 数量为 `74`。
+- supported operations 数量为 `85`。
 
 ## 3. Queue 回归
 

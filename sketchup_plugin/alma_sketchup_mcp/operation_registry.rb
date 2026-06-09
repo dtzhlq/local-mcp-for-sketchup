@@ -675,12 +675,133 @@ module AlmaSketchupMCP
         'status' => 'supported'
       }
     },
+    'footprint_slab' => {
+      'status' => 'supported',
+      'stability' => 'beta',
+      'schema' => {
+        'required' => ['op', 'name', 'points', 'thickness'],
+        'optional' => ['origin', 'holes', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+      },
+      'component_scope' => {
+        'status' => 'supported'
+      }
+    },
     'wall' => {
       'status' => 'supported',
       'stability' => 'stable',
       'schema' => {
         'required' => ['op', 'name', 'start', 'end', 'height'],
         'optional' => ['thickness', 'openings', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+      },
+      'component_scope' => {
+        'status' => 'supported'
+      }
+    },
+    'wall_path' => {
+      'status' => 'supported',
+      'stability' => 'beta',
+      'schema' => {
+        'required' => ['op', 'name', 'path', 'height'],
+        'optional' => ['thickness', 'openings', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+      },
+      'component_scope' => {
+        'status' => 'supported'
+      }
+    },
+    'curved_wall' => {
+      'status' => 'supported',
+      'stability' => 'beta',
+      'schema' => {
+        'required' => ['op', 'name', 'center', 'radius', 'start_angle', 'end_angle', 'height'],
+        'optional' => ['thickness', 'segments', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+      },
+      'component_scope' => {
+        'status' => 'supported'
+      }
+    },
+    'roof_footprint' => {
+      'status' => 'supported',
+      'stability' => 'beta',
+      'schema' => {
+        'required' => ['op', 'name', 'points'],
+        'optional' => ['origin', 'holes', 'elevation', 'thickness', 'rise', 'slope_direction', 'overhang', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+      },
+      'component_scope' => {
+        'status' => 'supported'
+      }
+    },
+    'hip_roof' => {
+      'status' => 'supported',
+      'stability' => 'beta',
+      'schema' => {
+        'required' => ['op', 'name', 'origin', 'width', 'depth', 'rise'],
+        'optional' => ['thickness', 'overhang', 'ridge_ratio', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+      },
+      'component_scope' => {
+        'status' => 'supported'
+      }
+    },
+    'parapet_path' => {
+      'status' => 'supported',
+      'stability' => 'beta',
+      'schema' => {
+        'required' => ['op', 'name'],
+        'optional' => ['path', 'points', 'origin', 'closed', 'height', 'thickness', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+      },
+      'component_scope' => {
+        'status' => 'supported'
+      }
+    },
+    'curtain_wall' => {
+      'status' => 'partial',
+      'stability' => 'beta',
+      'schema' => {
+        'required' => ['op', 'name', 'height'],
+        'optional' => ['path', 'start', 'end', 'module_width', 'mullion_width', 'thickness', 'frame_material', 'panel_material', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+      },
+      'component_scope' => {
+        'status' => 'supported'
+      }
+    },
+    'column_grid' => {
+      'status' => 'supported',
+      'stability' => 'beta',
+      'schema' => {
+        'required' => ['op', 'name', 'height'],
+        'optional' => ['origin', 'points', 'x_count', 'y_count', 'spacing', 'shape', 'column_size', 'radius', 'segments', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+      },
+      'component_scope' => {
+        'status' => 'supported'
+      }
+    },
+    'path_surface' => {
+      'status' => 'supported',
+      'stability' => 'beta',
+      'schema' => {
+        'required' => ['op', 'name', 'path', 'width'],
+        'optional' => ['thickness', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+      },
+      'component_scope' => {
+        'status' => 'supported'
+      }
+    },
+    'terrain_mesh' => {
+      'status' => 'partial',
+      'stability' => 'beta',
+      'schema' => {
+        'required' => ['op', 'name', 'vertices', 'faces'],
+        'optional' => ['smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+      },
+      'component_scope' => {
+        'status' => 'supported'
+      }
+    },
+    'parking_stall_array' => {
+      'status' => 'partial',
+      'stability' => 'beta',
+      'schema' => {
+        'required' => ['op', 'name', 'origin', 'count', 'stall_width', 'stall_depth'],
+        'optional' => ['line_width', 'line_height', 'direction', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
       },
       'component_scope' => {
         'status' => 'supported'

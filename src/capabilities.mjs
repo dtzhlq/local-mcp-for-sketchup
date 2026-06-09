@@ -1,6 +1,6 @@
 export const DSL_VERSION = 1;
-export const CAPABILITY_MANIFEST_VERSION = '2026-05-phase7-boolean-manifold';
-export const RUNTIME_CAPABILITY_VERSION = '0.1.0-capabilities.5';
+export const CAPABILITY_MANIFEST_VERSION = '2026-06-building-geometry-r2-aggressive';
+export const RUNTIME_CAPABILITY_VERSION = '0.1.0-capabilities.7';
 
 export const SUPPORT_STATUS = Object.freeze({
   supported: 'supported',
@@ -546,13 +546,112 @@ const OPERATION_REGISTRY_ENTRIES = [
     notes: 'Architectural helper equivalent to a named slab box.'
   },
   {
+    op: 'footprint_slab',
+    description: 'Create a horizontal slab from a simple XY polygon footprint with optional courtyard/light-well holes.',
+    schema: { required: ['op', 'name', 'points', 'thickness'], optional: ['origin', 'holes', ...commonPlacement] },
+    runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
+    stability: STABILITY.beta,
+    component_definition: true,
+    notes: 'R2 building geometry slice. Points are relative to origin and implicitly closed. Holes are simple polygons inside the outer footprint; nested, crossing, duplicate-point, zero-area, and self-intersecting loops are rejected.'
+  },
+  {
     op: 'wall',
-    description: 'Create an axis-aligned wall segment with optional rectangular openings.',
+    description: 'Create a wall segment from a centerline, including axis-aligned openings and segment-local openings on non-axis-aligned walls.',
     schema: { required: ['op', 'name', 'start', 'end', 'height'], optional: ['thickness', 'openings', ...commonPlacement] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.stable,
     component_definition: true,
-    notes: 'Current MVP supports axis-aligned walls only.'
+    notes: 'Axis-aligned walls keep rectangular panel openings. Non-axis-aligned openings use offset/width/height/sill_height along the centerline; complex sloped/arched opening families remain out of scope.'
+  },
+  {
+    op: 'wall_path',
+    description: 'Create a single polyline wall mesh from multiple centerline points.',
+    schema: { required: ['op', 'name', 'path', 'height'], optional: ['thickness', 'openings', ...commonPlacement] },
+    runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
+    stability: STABILITY.beta,
+    component_definition: true,
+    notes: 'Each path segment is expanded into a simple butt-joined wall body. Openings specify segment_index, offset, width, height, and sill_height. Mitering and boolean merge remain out of scope.'
+  },
+  {
+    op: 'curved_wall',
+    description: 'Create an arc wall by tessellating a circular centerline into wall segments.',
+    schema: { required: ['op', 'name', 'center', 'radius', 'start_angle', 'end_angle', 'height'], optional: ['thickness', 'segments', ...commonPlacement] },
+    runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
+    stability: STABILITY.beta,
+    component_definition: true,
+    notes: 'Approximation helper for curved building walls. Uses straight butt-joined wall segments and intentionally rejects openings in this R2 slice.'
+  },
+  {
+    op: 'roof_footprint',
+    description: 'Create a flat or shed-style roof from an arbitrary simple footprint.',
+    schema: { required: ['op', 'name', 'points'], optional: ['origin', 'holes', 'elevation', 'thickness', 'rise', 'slope_direction', 'overhang', ...commonPlacement] },
+    runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
+    stability: STABILITY.beta,
+    component_definition: true,
+    notes: 'Building roof helper for non-rectangular plans. Mock records footprint/hole topology and slope metadata; queue uses a minimal footprint extrusion path.'
+  },
+  {
+    op: 'hip_roof',
+    description: 'Create a simple rectangular hip roof.',
+    schema: { required: ['op', 'name', 'origin', 'width', 'depth', 'rise'], optional: ['thickness', 'overhang', 'ridge_ratio', ...commonPlacement] },
+    runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
+    stability: STABILITY.beta,
+    component_definition: true,
+    notes: 'Complements gable_roof and shed_roof for fast building massing. Rectangular footprint only in R2.'
+  },
+  {
+    op: 'parapet_path',
+    description: 'Create a low parapet wall along a path or footprint outline.',
+    schema: { required: ['op', 'name'], optional: ['path', 'points', 'origin', 'closed', 'height', 'thickness', ...commonPlacement] },
+    runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
+    stability: STABILITY.beta,
+    component_definition: true,
+    notes: 'Uses the same centerline expansion as wall_path, with explicit closed path support for roof edges and site perimeters.'
+  },
+  {
+    op: 'curtain_wall',
+    description: 'Create a lightweight curtain-wall strip along a line or polyline.',
+    schema: { required: ['op', 'name', 'height'], optional: ['path', 'start', 'end', 'module_width', 'mullion_width', 'thickness', 'frame_material', 'panel_material', ...commonPlacement] },
+    runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.partial },
+    stability: STABILITY.beta,
+    component_definition: true,
+    notes: 'Mock records module/panel metadata and approximate strip geometry. Queue exposes the contract with a minimal strip body in this aggressive slice.'
+  },
+  {
+    op: 'column_grid',
+    description: 'Create a group of rectangular or round columns from explicit points or a grid definition.',
+    schema: { required: ['op', 'name', 'height'], optional: ['origin', 'points', 'x_count', 'y_count', 'spacing', 'shape', 'column_size', 'radius', 'segments', ...commonPlacement] },
+    runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
+    stability: STABILITY.beta,
+    component_definition: true,
+    notes: 'Fast structural/grid massing helper. Explicit points override origin/x_count/y_count/spacing grid generation.'
+  },
+  {
+    op: 'path_surface',
+    description: 'Create a horizontal ribbon surface for roads, sidewalks, and paved paths.',
+    schema: { required: ['op', 'name', 'path', 'width'], optional: ['thickness', ...commonPlacement] },
+    runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
+    stability: STABILITY.beta,
+    component_definition: true,
+    notes: 'Each path segment is expanded into a simple butt-joined horizontal ribbon. It does not drape onto terrain in R2.'
+  },
+  {
+    op: 'terrain_mesh',
+    description: 'Create a semantic terrain mesh wrapper from vertices and faces.',
+    schema: { required: ['op', 'name', 'vertices', 'faces'], optional: ['smooth', ...commonPlacement] },
+    runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.partial },
+    stability: STABILITY.beta,
+    component_definition: true,
+    notes: 'Reuses mesh geometry but returns kind=terrain_mesh for scene/QA semantics. Queue support is partial because terrain smoothing/material behavior is minimal.'
+  },
+  {
+    op: 'parking_stall_array',
+    description: 'Create repeated parking stall line markings for site scale anchors.',
+    schema: { required: ['op', 'name', 'origin', 'count', 'stall_width', 'stall_depth'], optional: ['line_width', 'line_height', 'direction', ...commonPlacement] },
+    runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.partial },
+    stability: STABILITY.beta,
+    component_definition: true,
+    notes: 'Purpose-built scale/context helper for building-photo and site examples. Queue uses simple thin solids for markings in this slice.'
   },
   {
     op: 'door',

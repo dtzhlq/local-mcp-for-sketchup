@@ -1029,6 +1029,171 @@ assert.equal(expandedSnapshot.instances.length, 3);
 assert.equal(expandedSnapshot.view_state.camera.fov, 35);
 assert.ok(expandedSnapshot.warnings.some((warning) => warning.type === 'geometry.bbox_collision' && warning.relation === 'collision'));
 
+const architectureGeometryCode = JSON.stringify({
+  version: 1,
+  units: 'mm',
+  operations: [
+    { op: 'reset' },
+    { op: 'material', name: 'Architecture_Geometry_Test', color: '#ccd0c8' },
+    { op: 'footprint_slab', name: 'L_Footprint_Slab', origin: [-100, 50, 0], points: [[0, 0], [400, 0], [400, 200], [240, 200], [240, 360], [0, 360]], thickness: 30, material: 'Architecture_Geometry_Test' },
+    { op: 'wall', name: 'Diagonal_Test_Wall', start: [0, 0, 0], end: [300, 400, 0], height: 250, thickness: 100, material: 'Architecture_Geometry_Test' },
+    { op: 'wall', name: 'Axis_Test_Wall_With_Opening', start: [0, 600, 0], end: [500, 600, 0], height: 260, thickness: 80, openings: [{ name: 'Axis_Window', x: 120, y: 100, width: 140, height: 90 }], material: 'Architecture_Geometry_Test' },
+    { op: 'wall_path', name: 'L_Wall_Path', path: [[0, 900, 0], [300, 900, 0], [300, 1300, 0]], height: 200, thickness: 80, material: 'Architecture_Geometry_Test' }
+  ]
+});
+const architectureGeometryBuilt = await bridge.build_model({ runtime: 'mock', code: architectureGeometryCode });
+const architectureGeometrySnapshot = architectureGeometryBuilt.snapshot;
+const footprintSlab = architectureGeometrySnapshot.groups.find((group) => group.name === 'L_Footprint_Slab');
+const diagonalWall = architectureGeometrySnapshot.groups.find((group) => group.name === 'Diagonal_Test_Wall');
+const axisWall = architectureGeometrySnapshot.groups.find((group) => group.name === 'Axis_Test_Wall_With_Opening');
+const wallPath = architectureGeometrySnapshot.groups.find((group) => group.name === 'L_Wall_Path');
+assert.equal(footprintSlab.kind, 'footprint_slab');
+assert.equal(footprintSlab.faces, 8);
+assert.equal(footprintSlab.edges, 18);
+assert.equal(footprintSlab.vertices, 12);
+assert.deepEqual(footprintSlab.bounding_box.min, [-100, 50, 0]);
+assert.equal(footprintSlab.bounding_box.w, 400);
+assert.equal(footprintSlab.bounding_box.d, 360);
+assert.equal(footprintSlab.bounding_box.h, 30);
+assert.equal(diagonalWall.kind, 'wall');
+assert.equal(diagonalWall.faces, 6);
+assert.equal(diagonalWall.edges, 12);
+assert.equal(diagonalWall.vertices, 8);
+assert.deepEqual(diagonalWall.bounding_box.min, [-40, -30, 0]);
+assert.equal(diagonalWall.bounding_box.w, 380);
+assert.equal(diagonalWall.bounding_box.d, 460);
+assert.equal(diagonalWall.bounding_box.h, 250);
+assert.equal(axisWall.kind, 'wall');
+assert.ok(axisWall.faces >= 1, 'axis-aligned wall with openings should keep existing panel path');
+assert.equal(wallPath.kind, 'wall_path');
+assert.equal(wallPath.faces, 12);
+assert.equal(wallPath.edges, 24);
+assert.equal(wallPath.vertices, 16);
+assert.deepEqual(wallPath.bounding_box.min, [0, 860, 0]);
+assert.equal(wallPath.bounding_box.w, 340);
+assert.equal(wallPath.bounding_box.d, 440);
+assert.equal(wallPath.bounding_box.h, 200);
+
+const buildingGeometrySlice = await buildExample('examples/building-geometry-slice.json');
+assert.ok(buildingGeometrySlice.snapshot.groups.some((group) => group.kind === 'footprint_slab'));
+assert.ok(buildingGeometrySlice.snapshot.groups.some((group) => group.kind === 'wall_path'));
+assert.equal(buildingGeometrySlice.snapshot.scenes[0].name, 'Architecture_Geometry_Slice_View');
+
+await assert.rejects(
+  () => bridge.build_model({ runtime: 'mock', code: JSON.stringify({
+    version: 1,
+    units: 'mm',
+    operations: [
+      { op: 'reset' },
+      { op: 'footprint_slab', name: 'Duplicate_Point_Slab', points: [[0, 0], [100, 0], [100, 0], [0, 100]], thickness: 20 }
+    ]
+  }) }),
+  /Duplicate_Point_Slab\.points\[2\] must not duplicate another point/
+);
+await assert.rejects(
+  () => bridge.build_model({ runtime: 'mock', code: JSON.stringify({
+    version: 1,
+    units: 'mm',
+    operations: [
+      { op: 'reset' },
+      { op: 'footprint_slab', name: 'Self_Intersecting_Slab', points: [[0, 0], [100, 100], [0, 100], [100, 0]], thickness: 20 }
+    ]
+  }) }),
+  /Self_Intersecting_Slab\.points must not self-intersect/
+);
+const diagonalWallOpeningBuilt = await bridge.build_model({ runtime: 'mock', code: JSON.stringify({
+  version: 1,
+  units: 'mm',
+  operations: [
+    { op: 'reset' },
+    { op: 'wall', name: 'Diagonal_Wall_With_Opening', start: [0, 0, 0], end: [300, 400, 0], height: 200, openings: [{ name: 'Diagonal_Window', offset: 80, width: 120, height: 60, sill_height: 80 }] }
+  ]
+}) });
+const diagonalWallWithOpening = diagonalWallOpeningBuilt.snapshot.groups.find((group) => group.name === 'Diagonal_Wall_With_Opening');
+assert.equal(diagonalWallWithOpening.kind, 'wall');
+assert.equal(diagonalWallWithOpening.faces, 10);
+assert.equal(diagonalWallWithOpening.edges, 24);
+assert.equal(diagonalWallWithOpening.vertices, 16);
+await assert.rejects(
+  () => bridge.build_model({ runtime: 'mock', code: JSON.stringify({
+    version: 1,
+    units: 'mm',
+    operations: [
+      { op: 'reset' },
+      { op: 'wall_path', name: 'Single_Point_Path', path: [[0, 0, 0]], height: 200 }
+    ]
+  }) }),
+  /Single_Point_Path\.path must contain at least 2 \[x, y, z\] points/
+);
+await assert.rejects(
+  () => bridge.build_model({ runtime: 'mock', code: JSON.stringify({
+    version: 1,
+    units: 'mm',
+    operations: [
+      { op: 'reset' },
+      { op: 'wall_path', name: 'Duplicate_Path_Point', path: [[0, 0, 0], [100, 0, 0], [0, 0, 0]], height: 200 }
+    ]
+  }) }),
+  /Duplicate_Path_Point\.path\[2\] must not duplicate another point/
+);
+
+const buildingGeometryR2 = await buildExample('examples/building-geometry-r2-aggressive.json');
+assert.equal(buildingGeometryR2.snapshot.warnings.length, 0);
+for (const kind of ['terrain_mesh', 'footprint_slab', 'path_surface', 'parking_stall_array', 'wall', 'wall_path', 'curved_wall', 'curtain_wall', 'column_grid', 'roof_footprint', 'parapet_path', 'hip_roof']) {
+  assert.ok(buildingGeometryR2.snapshot.groups.some((group) => group.kind === kind), `R2 aggressive sample should include ${kind}`);
+}
+assert.equal(buildingGeometryR2.snapshot.groups.find((group) => group.name === 'Courtyard_Site_Slab').faces, 12);
+assert.equal(buildingGeometryR2.snapshot.groups.find((group) => group.name === 'East_L_Wall_With_Openings').faces, 20);
+assert.equal(buildingGeometryR2.snapshot.groups.find((group) => group.name === 'Curved_Entry_Wall').vertices, 64);
+assert.equal(buildingGeometryR2.snapshot.groups.find((group) => group.name === 'Gallery_Footprint_Roof').kind, 'roof_footprint');
+assert.equal(buildingGeometryR2.snapshot.groups.find((group) => group.name === 'North_Parking_Stalls').kind, 'parking_stall_array');
+assert.equal(buildingGeometryR2.snapshot.scenes[0].name, 'Building_Geometry_R2_Aggressive_View');
+
+await assert.rejects(
+  () => bridge.build_model({ runtime: 'mock', code: JSON.stringify({
+    version: 1,
+    units: 'mm',
+    operations: [
+      { op: 'reset' },
+      { op: 'footprint_slab', name: 'Bad_Hole_Slab', points: [[0, 0], [500, 0], [500, 500], [0, 500]], holes: [[[400, 400], [600, 400], [600, 600], [400, 600]]], thickness: 20 }
+    ]
+  }) }),
+  /Bad_Hole_Slab\.holes\[0\] must fit inside outer profile without touching boundary/
+);
+await assert.rejects(
+  () => bridge.build_model({ runtime: 'mock', code: JSON.stringify({
+    version: 1,
+    units: 'mm',
+    operations: [
+      { op: 'reset' },
+      { op: 'wall', name: 'Bad_Diagonal_Opening', start: [0, 0, 0], end: [100, 100, 0], height: 200, openings: [{ offset: 120, width: 40, height: 40, sill_height: 40 }] }
+    ]
+  }) }),
+  /Bad_Diagonal_Opening\.openings\[0\] must fit inside wall segment length/
+);
+await assert.rejects(
+  () => bridge.build_model({ runtime: 'mock', code: JSON.stringify({
+    version: 1,
+    units: 'mm',
+    operations: [
+      { op: 'reset' },
+      { op: 'wall_path', name: 'Bad_Path_Opening', path: [[0, 0, 0], [300, 0, 0], [300, 300, 0]], height: 200, openings: [{ segment_index: 2, offset: 0, width: 50, height: 50, sill_height: 20 }] }
+    ]
+  }) }),
+  /Bad_Path_Opening\.openings\[0\]\.segment_index must be an integer from 0 to 1/
+);
+await assert.rejects(
+  () => bridge.build_model({ runtime: 'mock', code: JSON.stringify({
+    version: 1,
+    units: 'mm',
+    operations: [
+      { op: 'reset' },
+      { op: 'curved_wall', name: 'Bad_Curved_Wall', center: [0, 0, 0], radius: 0, start_angle: 0, end_angle: 90, height: 200 }
+    ]
+  }) }),
+  /Bad_Curved_Wall\.radius must be a positive number/
+);
+
 const advancedCode = JSON.stringify({
   version: 1,
   units: 'mm',

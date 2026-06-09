@@ -1,0 +1,158 @@
+{
+  "version": 1,
+  "units": "mm",
+  "operations": [
+    { "op": "reset" },
+    { "op": "material", "name": "Terrain_Green", "color": "#7f9b78" },
+    { "op": "material", "name": "Site_Concrete", "color": "#b9b8ad" },
+    { "op": "material", "name": "Wall_Light", "color": "#ece8dc" },
+    { "op": "material", "name": "Roof_Dark", "color": "#3d4650" },
+    { "op": "material", "name": "Glass_Blue", "color": "#75a7c7", "alpha": 0.45 },
+    { "op": "material", "name": "Stripe_White", "color": "#f5f3e8" },
+    {
+      "op": "terrain_mesh",
+      "name": "Site_Terrain",
+      "vertices": [[-1200, -900, -40], [8800, -900, -20], [8800, 5400, -30], [-1200, 5400, -35]],
+      "faces": [[0, 1, 2, 3]],
+      "material": "Terrain_Green"
+    },
+    {
+      "op": "footprint_slab",
+      "name": "Courtyard_Site_Slab",
+      "origin": [0, 0, 0],
+      "points": [[0, 0], [5600, 0], [6200, 1700], [5200, 3600], [1200, 3800], [-500, 1800]],
+      "holes": [
+        [[2300, 1200], [3400, 1200], [3400, 2200], [2300, 2200]]
+      ],
+      "thickness": 80,
+      "material": "Site_Concrete"
+    },
+    {
+      "op": "path_surface",
+      "name": "Service_Road",
+      "path": [[-900, 4300, -20], [6100, 4300, -20], [7600, 3600, -20]],
+      "width": 520,
+      "thickness": 20,
+      "material": "Site_Concrete"
+    },
+    {
+      "op": "parking_stall_array",
+      "name": "North_Parking_Stalls",
+      "origin": [8000, 300, -20],
+      "count": 6,
+      "stall_width": 2600,
+      "stall_depth": 5200,
+      "line_width": 90,
+      "line_height": 5,
+      "direction": "y",
+      "material": "Stripe_White"
+    },
+    {
+      "op": "wall",
+      "name": "Diagonal_Gallery_Wall",
+      "start": [700, 650, 80],
+      "end": [2300, 1050, 80],
+      "height": 2200,
+      "thickness": 160,
+      "openings": [
+        { "name": "Gallery_Long_Window", "offset": 620, "width": 520, "height": 760, "sill_height": 900 }
+      ],
+      "material": "Wall_Light"
+    },
+    {
+      "op": "wall_path",
+      "name": "East_L_Wall_With_Openings",
+      "path": [[3900, 650, 80], [5100, 650, 80], [5100, 1850, 80]],
+      "height": 2200,
+      "thickness": 160,
+      "openings": [
+        { "name": "East_Door", "segment_index": 0, "offset": 360, "width": 420, "height": 1850, "sill_height": 0 },
+        { "name": "North_Window", "segment_index": 1, "offset": 420, "width": 380, "height": 620, "sill_height": 980 }
+      ],
+      "material": "Wall_Light"
+    },
+    {
+      "op": "curved_wall",
+      "name": "Curved_Entry_Wall",
+      "center": [1650, 2850, 80],
+      "radius": 650,
+      "start_angle": 200,
+      "end_angle": 330,
+      "height": 1800,
+      "thickness": 140,
+      "segments": 8,
+      "material": "Wall_Light"
+    },
+    {
+      "op": "curtain_wall",
+      "name": "South_Curtain_Wall",
+      "start": [600, 4050, 80],
+      "end": [2800, 4050, 80],
+      "height": 1800,
+      "module_width": 700,
+      "mullion_width": 70,
+      "thickness": 60,
+      "frame_material": "Wall_Light",
+      "panel_material": "Glass_Blue"
+    },
+    {
+      "op": "column_grid",
+      "name": "Courtyard_Column_Grid",
+      "origin": [3100, 2400, 80],
+      "x_count": 3,
+      "y_count": 2,
+      "spacing": [700, 700],
+      "shape": "round",
+      "radius": 90,
+      "height": 2100,
+      "segments": 12,
+      "material": "Wall_Light"
+    },
+    {
+      "op": "roof_footprint",
+      "name": "Gallery_Footprint_Roof",
+      "origin": [450, 450, 0],
+      "points": [[0, 0], [2100, 0], [2400, 950], [1500, 1650], [0, 1450]],
+      "holes": [
+        [[900, 520], [1250, 520], [1250, 900], [900, 900]]
+      ],
+      "elevation": 2400,
+      "thickness": 120,
+      "rise": 180,
+      "slope_direction": "x",
+      "overhang": 100,
+      "material": "Roof_Dark"
+    },
+    {
+      "op": "parapet_path",
+      "name": "Gallery_Roof_Parapet",
+      "origin": [450, 450, 2580],
+      "points": [[0, 0], [2100, 0], [2400, 950], [1500, 1650], [0, 1450]],
+      "closed": true,
+      "height": 320,
+      "thickness": 120,
+      "material": "Wall_Light"
+    },
+    {
+      "op": "hip_roof",
+      "name": "East_Hip_Roof",
+      "origin": [3800, 550, 2400],
+      "width": 1600,
+      "depth": 1300,
+      "rise": 480,
+      "thickness": 100,
+      "overhang": 120,
+      "material": "Roof_Dark"
+    },
+    {
+      "op": "scene",
+      "name": "Building_Geometry_R2_Aggressive_View",
+      "camera": {
+        "eye": [8400, -8200, 5200],
+        "target": [3300, 1900, 900],
+        "up": [0, 0, 1],
+        "fov": 38
+      }
+    }
+  ]
+}

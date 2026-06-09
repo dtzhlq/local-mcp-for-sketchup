@@ -3,6 +3,8 @@
 module AlmaSketchupMCP
   extend self
 
+  GEOMETRY_EPSILON = 1e-6 unless const_defined?(:GEOMETRY_EPSILON)
+
   def add_level(operation)
     name = operation.fetch('name')
     @levels ||= []
@@ -24,6 +26,18 @@ module AlmaSketchupMCP
     add_box(parent_entities, operation.merge('origin' => origin, 'size' => [width, depth, thickness]))
   end
 
+  def add_footprint_slab(parent_entities, operation)
+    name = operation.fetch('name')
+    thickness = positive_number(operation['thickness'], nil, "#{name}.thickness")
+    add_profile_extrude(parent_entities, operation.merge(
+      'outer' => operation.fetch('points'),
+      'holes' => operation['holes'] || [],
+      'depth' => thickness,
+      'plane' => 'xy',
+      'kind' => 'footprint_slab'
+    ))
+  end
+
   def add_wall(parent_entities, operation)
     name = operation.fetch('name')
     start_point = vector(operation.fetch('start'), "#{name}.start")
@@ -32,8 +46,14 @@ module AlmaSketchupMCP
     thickness = positive_number(operation['thickness'], 120, "#{name}.thickness")
     dx = end_point[0] - start_point[0]
     dy = end_point[1] - start_point[1]
-    raise "#{name}.start and end must not be identical" if dx.zero? && dy.zero?
-    raise "#{name} supports axis-aligned walls only in the MVP" if !dx.zero? && !dy.zero?
+    length = Math.sqrt(dx**2 + dy**2)
+    raise "#{name}.start and end must not be identical" if length <= GEOMETRY_EPSILON
+
+    axis_aligned = dx.abs <= GEOMETRY_EPSILON || dy.abs <= GEOMETRY_EPSILON
+    unless axis_aligned
+      add_wall_segment_mesh(parent_entities, operation.merge('start' => start_point, 'end' => end_point, 'height' => height, 'thickness' => thickness, 'kind' => 'wall'))
+      return
+    end
 
     if dx.abs >= dy.abs
       origin = [start_point[0], start_point[1], start_point[2]]
@@ -44,6 +64,191 @@ module AlmaSketchupMCP
       origin[1] = [start_point[1], end_point[1]].min
       add_panel_with_openings(parent_entities, operation.merge('origin' => origin, 'plane' => 'yz', 'size' => [dy.abs, height], 'thickness' => thickness))
     end
+  end
+
+  def add_wall_path(parent_entities, operation)
+    name = operation.fetch('name')
+    path = operation.fetch('path')
+    raise "#{name}.path must contain at least 2 [x, y, z] points" unless path.is_a?(Array) && path.length >= 2
+
+    points = path.each_with_index.map { |point, index| vector(point, "#{name}.path[#{index}]") }
+    assert_unique_3d_points(points, "#{name}.path")
+    height = positive_number(operation['height'], nil, "#{name}.height")
+    thickness = positive_number(operation['thickness'], 120, "#{name}.thickness")
+    vertices = []
+    faces = []
+    points.each_cons(2).with_index do |(start_point, end_point), index|
+      offset = vertices.length
+      vertices.concat(wall_segment_vertices(start_point, end_point, height, thickness, "#{name}.path[#{index}]"))
+      faces.concat(cuboid_faces(offset))
+    end
+    add_mesh(parent_entities, operation.merge('vertices' => vertices, 'faces' => faces, 'kind' => operation['kind'] || 'wall_path'))
+  end
+
+  def add_curved_wall(parent_entities, operation)
+    name = operation.fetch('name')
+    center = vector(operation.fetch('center'), "#{name}.center")
+    radius = positive_number(operation['radius'], nil, "#{name}.radius")
+    height = positive_number(operation['height'], nil, "#{name}.height")
+    thickness = positive_number(operation['thickness'], 120, "#{name}.thickness")
+    segments = integer_range(operation['segments'] || 12, 2, 96, "#{name}.segments")
+    start_angle = finite_number(operation['start_angle'] || operation['startAngle'], "#{name}.start_angle")
+    end_angle = finite_number(operation['end_angle'] || operation['endAngle'], "#{name}.end_angle")
+    raise "#{name}.end_angle must differ from start_angle" if (end_angle - start_angle).abs <= GEOMETRY_EPSILON
+
+    points = []
+    (segments + 1).times do |index|
+      t = index.to_f / segments
+      angle = (start_angle + (end_angle - start_angle) * t) * Math::PI / 180.0
+      points << [center[0] + radius * Math.cos(angle), center[1] + radius * Math.sin(angle), center[2]]
+    end
+    add_wall_path(parent_entities, operation.merge('path' => points, 'height' => height, 'thickness' => thickness, 'kind' => 'curved_wall'))
+  end
+
+  def add_roof_footprint(parent_entities, operation)
+    name = operation.fetch('name')
+    origin = vector(operation['origin'] || [0, 0, 0], "#{name}.origin")
+    elevation = finite_number(operation['elevation'] || origin[2], "#{name}.elevation")
+    thickness = positive_number(operation['thickness'], 100, "#{name}.thickness")
+    add_profile_extrude(parent_entities, operation.merge(
+      'origin' => [origin[0], origin[1], elevation - thickness],
+      'outer' => operation.fetch('points'),
+      'holes' => operation['holes'] || [],
+      'depth' => thickness,
+      'plane' => 'xy',
+      'kind' => 'roof_footprint'
+    ))
+  end
+
+  def add_hip_roof(parent_entities, operation)
+    name = operation.fetch('name')
+    origin = vector(operation['origin'] || [0, 0, 0], "#{name}.origin")
+    width = positive_number(operation['width'], nil, "#{name}.width")
+    depth = positive_number(operation['depth'], nil, "#{name}.depth")
+    rise = positive_number(operation['rise'], nil, "#{name}.rise")
+    thickness = positive_number(operation['thickness'], 80, "#{name}.thickness")
+    overhang = non_negative_number(operation['overhang'], 0, "#{name}.overhang")
+    ridge_ratio = finite_number(operation['ridge_ratio'] || operation['ridgeRatio'] || 0.35, "#{name}.ridge_ratio")
+    raise "#{name}.ridge_ratio must be greater than 0 and less than 1" if ridge_ratio <= 0 || ridge_ratio >= 1
+
+    x, y, z = origin
+    min_x = x - overhang
+    min_y = y - overhang
+    w = width + overhang * 2
+    d = depth + overhang * 2
+    ridge_length = w * ridge_ratio
+    ridge_start = min_x + (w - ridge_length) / 2.0
+    ridge_end = ridge_start + ridge_length
+    top = [[min_x, min_y, z], [min_x + w, min_y, z], [min_x + w, min_y + d, z], [min_x, min_y + d, z], [ridge_start, min_y + d / 2.0, z + rise], [ridge_end, min_y + d / 2.0, z + rise]]
+    bottom = top.map { |px, py, pz| [px, py, pz - thickness] }
+    faces = [[0, 1, 5, 4], [3, 4, 5, 2], [0, 4, 3], [1, 2, 5], [6, 10, 11, 7], [9, 8, 11, 10], [6, 9, 10], [7, 11, 8], [0, 6, 7, 1], [1, 7, 8, 2], [2, 8, 9, 3], [3, 9, 6, 0]]
+    add_mesh(parent_entities, operation.merge('vertices' => top + bottom, 'faces' => faces, 'kind' => 'hip_roof', 'smooth' => operation['smooth'] || 'coplanar'))
+  end
+
+  def add_parapet_path(parent_entities, operation)
+    name = operation.fetch('name')
+    path = operation['path']
+    if path.nil?
+      origin = vector(operation['origin'] || [0, 0, 0], "#{name}.origin")
+      points = operation.fetch('points')
+      raise "#{name}.points must contain at least 2 [x, y] points" unless points.is_a?(Array) && points.length >= 2
+      path = points.each_with_index.map do |point, index|
+        raise "#{name}.points[#{index}] must be [x, y]" unless point.is_a?(Array) && point.length == 2
+        [origin[0] + finite_number(point[0], "#{name}.points[#{index}][0]"), origin[1] + finite_number(point[1], "#{name}.points[#{index}][1]"), origin[2]]
+      end
+    end
+    normalized = path.each_with_index.map { |point, index| vector(point, "#{name}.path[#{index}]") }
+    normalized << normalized.first if operation['closed'] && distance_between(normalized.first, normalized.last) > GEOMETRY_EPSILON
+    height = positive_number(operation['height'], 600, "#{name}.height")
+    thickness = positive_number(operation['thickness'], 180, "#{name}.thickness")
+    vertices = []
+    faces = []
+    normalized.each_cons(2).with_index do |(start_point, end_point), index|
+      offset = vertices.length
+      vertices.concat(wall_segment_vertices(start_point, end_point, height, thickness, "#{name}.path[#{index}]"))
+      faces.concat(cuboid_faces(offset))
+    end
+    add_mesh(parent_entities, operation.merge('vertices' => vertices, 'faces' => faces, 'kind' => 'parapet_path'))
+  end
+
+  def add_curtain_wall(parent_entities, operation)
+    name = operation.fetch('name')
+    path = operation['path'] || (operation['start'] && operation['end'] ? [operation['start'], operation['end']] : nil)
+    raise "#{name}.path must contain at least 2 [x, y, z] points or start/end" unless path.is_a?(Array) && path.length >= 2
+    add_wall_path(parent_entities, operation.merge('path' => path, 'height' => positive_number(operation['height'], nil, "#{name}.height"), 'thickness' => positive_number(operation['thickness'], 50, "#{name}.thickness"), 'material' => operation['frame_material'] || operation['frameMaterial'] || operation['material'], 'kind' => 'curtain_wall'))
+  end
+
+  def add_column_grid(parent_entities, operation)
+    name = operation.fetch('name')
+    height = positive_number(operation['height'], nil, "#{name}.height")
+    shape = operation['shape'] || 'rect'
+    points = column_grid_points(operation)
+    group = parent_entities.add_group
+    group.name = name
+    annotate_group(group, operation.merge('kind' => 'column_grid'), 'column_grid')
+    points.each_with_index do |point, index|
+      column_name = "#{name}_Column_#{index + 1}"
+      if shape == 'round'
+        add_cylinder(group.entities, 'name' => column_name, 'origin' => point, 'radius' => positive_number(operation['radius'], nil, "#{name}.radius"), 'height' => height, 'segments' => operation['segments'] || 12, 'material' => operation['material'], 'kind' => 'column')
+      else
+        size = operation['column_size'] || operation['columnSize'] || [300, 300]
+        raise "#{name}.column_size must be [width, depth]" unless size.is_a?(Array) && size.length == 2
+        width = positive_number(size[0], nil, "#{name}.column_size[0]")
+        depth = positive_number(size[1], nil, "#{name}.column_size[1]")
+        add_box(group.entities, 'name' => column_name, 'origin' => [point[0] - width / 2.0, point[1] - depth / 2.0, point[2]], 'size' => [width, depth, height], 'material' => operation['material'], 'kind' => 'column')
+      end
+    end
+    apply_transform(group, operation)
+    group
+  end
+
+  def add_path_surface(parent_entities, operation)
+    name = operation.fetch('name')
+    path = operation.fetch('path')
+    raise "#{name}.path must contain at least 2 [x, y, z] points" unless path.is_a?(Array) && path.length >= 2
+    points = path.each_with_index.map { |point, index| vector(point, "#{name}.path[#{index}]") }
+    width = positive_number(operation['width'], nil, "#{name}.width")
+    thickness = positive_number(operation['thickness'], 20, "#{name}.thickness")
+    vertices = []
+    faces = []
+    points.each_cons(2).with_index do |(start_point, end_point), index|
+      offset = vertices.length
+      vertices.concat(ribbon_segment_vertices(start_point, end_point, width, thickness, "#{name}.path[#{index}]"))
+      faces.concat(cuboid_faces(offset))
+    end
+    add_mesh(parent_entities, operation.merge('vertices' => vertices, 'faces' => faces, 'kind' => 'path_surface'))
+  end
+
+  def add_terrain_mesh(parent_entities, operation)
+    faces = operation.fetch('faces').each_with_object([]) do |face, triangulated|
+      raise "#{operation.fetch('name')}.faces must contain face index loops" unless face.is_a?(Array) && face.length >= 3
+
+      if face.length == 3
+        triangulated << face
+      else
+        (1...(face.length - 1)).each { |index| triangulated << [face[0], face[index], face[index + 1]] }
+      end
+    end
+    add_mesh(parent_entities, operation.merge('faces' => faces, 'kind' => 'terrain_mesh'))
+  end
+
+  def add_parking_stall_array(parent_entities, operation)
+    name = operation.fetch('name')
+    origin = vector(operation['origin'] || [0, 0, 0], "#{name}.origin")
+    count = integer_range(operation['count'], 1, 500, "#{name}.count")
+    stall_width = positive_number(operation['stall_width'] || operation['stallWidth'], nil, "#{name}.stall_width")
+    stall_depth = positive_number(operation['stall_depth'] || operation['stallDepth'], nil, "#{name}.stall_depth")
+    line_width = positive_number(operation['line_width'] || operation['lineWidth'], 100, "#{name}.line_width")
+    line_height = positive_number(operation['line_height'] || operation['lineHeight'], 5, "#{name}.line_height")
+    direction = operation['direction'] || 'x'
+    vertices = []
+    faces = []
+    parking_line_rectangles(origin, count, stall_width, stall_depth, line_width, line_height, direction).each do |rect|
+      offset = vertices.length
+      vertices.concat(box_vertices(rect['origin'], rect['size']))
+      faces.concat(cuboid_faces(offset))
+    end
+    add_mesh(parent_entities, operation.merge('vertices' => vertices, 'faces' => faces, 'kind' => 'parking_stall_array'))
   end
 
   def add_door(parent_entities, operation)
@@ -132,5 +337,206 @@ module AlmaSketchupMCP
 
   def interpolate_point(a, b, t)
     [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t]
+  end
+
+  def column_grid_points(operation)
+    name = operation.fetch('name')
+    if operation['points']
+      points = operation['points']
+      raise "#{name}.points must contain at least one [x, y, z] point" unless points.is_a?(Array) && points.any?
+      return points.each_with_index.map { |point, index| vector(point, "#{name}.points[#{index}]") }
+    end
+
+    origin = vector(operation['origin'] || [0, 0, 0], "#{name}.origin")
+    x_count = integer_range(operation['x_count'] || operation['xCount'], 1, 100, "#{name}.x_count")
+    y_count = integer_range(operation['y_count'] || operation['yCount'], 1, 100, "#{name}.y_count")
+    spacing = operation['spacing'] || [1000, 1000]
+    raise "#{name}.spacing must be [x, y]" unless spacing.is_a?(Array) && spacing.length == 2
+    spacing_x = positive_number(spacing[0], nil, "#{name}.spacing[0]")
+    spacing_y = positive_number(spacing[1], nil, "#{name}.spacing[1]")
+    points = []
+    x_count.times do |ix|
+      y_count.times do |iy|
+        points << [origin[0] + ix * spacing_x, origin[1] + iy * spacing_y, origin[2]]
+      end
+    end
+    points
+  end
+
+  def ribbon_segment_vertices(start_point, end_point, width, thickness, field_name)
+    dx = end_point[0] - start_point[0]
+    dy = end_point[1] - start_point[1]
+    planar_length = Math.sqrt(dx**2 + dy**2)
+    raise "#{field_name} must have horizontal length" if planar_length <= GEOMETRY_EPSILON
+
+    nx = -dy / planar_length
+    ny = dx / planar_length
+    half = width / 2.0
+    bottom = [
+      [start_point[0] + nx * half, start_point[1] + ny * half, start_point[2]],
+      [start_point[0] - nx * half, start_point[1] - ny * half, start_point[2]],
+      [end_point[0] - nx * half, end_point[1] - ny * half, end_point[2]],
+      [end_point[0] + nx * half, end_point[1] + ny * half, end_point[2]]
+    ]
+    bottom + bottom.map { |x, y, z| [x, y, z + thickness] }
+  end
+
+  def box_vertices(origin, size)
+    x, y, z = origin
+    w, d, h = size
+    [[x, y, z], [x + w, y, z], [x + w, y + d, z], [x, y + d, z],
+     [x, y, z + h], [x + w, y, z + h], [x + w, y + d, z + h], [x, y + d, z + h]]
+  end
+
+  def parking_line_rectangles(origin, count, stall_width, stall_depth, line_width, line_height, direction)
+    x, y, z = origin
+    rectangles = []
+    if direction == 'x'
+      rectangles << { 'origin' => [x, y, z], 'size' => [count * stall_width, line_width, line_height] }
+      rectangles << { 'origin' => [x, y + stall_depth - line_width, z], 'size' => [count * stall_width, line_width, line_height] }
+      (count + 1).times do |index|
+        rectangles << { 'origin' => [x + index * stall_width - line_width / 2.0, y, z], 'size' => [line_width, stall_depth, line_height] }
+      end
+    elsif direction == 'y'
+      rectangles << { 'origin' => [x, y, z], 'size' => [line_width, count * stall_width, line_height] }
+      rectangles << { 'origin' => [x + stall_depth - line_width, y, z], 'size' => [line_width, count * stall_width, line_height] }
+      (count + 1).times do |index|
+        rectangles << { 'origin' => [x, y + index * stall_width - line_width / 2.0, z], 'size' => [stall_depth, line_width, line_height] }
+      end
+    else
+      raise 'parking_stall_array.direction must be x or y'
+    end
+    rectangles
+  end
+
+  def add_wall_segment_mesh(parent_entities, operation)
+    name = operation.fetch('name')
+    add_mesh(parent_entities, operation.merge(
+      'vertices' => wall_segment_vertices(operation.fetch('start'), operation.fetch('end'), operation.fetch('height'), operation.fetch('thickness'), name),
+      'faces' => cuboid_faces(0)
+    ))
+  end
+
+  def wall_segment_vertices(start_point, end_point, height, thickness, field_name)
+    dx = end_point[0] - start_point[0]
+    dy = end_point[1] - start_point[1]
+    length = Math.sqrt(dx**2 + dy**2)
+    raise "#{field_name} segment length must be positive" if length <= GEOMETRY_EPSILON
+
+    nx = -dy / length
+    ny = dx / length
+    half = thickness / 2.0
+    bottom = [
+      [start_point[0] + nx * half, start_point[1] + ny * half, start_point[2]],
+      [start_point[0] - nx * half, start_point[1] - ny * half, start_point[2]],
+      [end_point[0] - nx * half, end_point[1] - ny * half, end_point[2]],
+      [end_point[0] + nx * half, end_point[1] + ny * half, end_point[2]]
+    ]
+    bottom + bottom.map { |x, y, z| [x, y, z + height] }
+  end
+
+  def cuboid_faces(offset)
+    [
+      [offset, offset + 1, offset + 2, offset + 3],
+      [offset + 4, offset + 7, offset + 6, offset + 5],
+      [offset, offset + 4, offset + 5, offset + 1],
+      [offset + 1, offset + 5, offset + 6, offset + 2],
+      [offset + 2, offset + 6, offset + 7, offset + 3],
+      [offset + 3, offset + 7, offset + 4, offset]
+    ]
+  end
+
+  def normalize_simple_polygon(points, field_name)
+    raise "#{field_name} must contain at least 3 [x, y] points" unless points.is_a?(Array) && points.length >= 3
+
+    normalized = points.each_with_index.map do |point, index|
+      raise "#{field_name}[#{index}] must be [x, y]" unless point.is_a?(Array) && point.length == 2
+
+      [finite_number(point[0], "#{field_name}[#{index}][0]"), finite_number(point[1], "#{field_name}[#{index}][1]")]
+    end
+    assert_unique_2d_points(normalized, field_name)
+    assert_simple_polygon(normalized, field_name)
+    area = polygon_signed_area(normalized)
+    raise "#{field_name} must enclose non-zero area" if area.abs <= GEOMETRY_EPSILON
+    area.positive? ? normalized : normalized.reverse
+  end
+
+  def extrusion_faces(count)
+    bottom = (0...count).map { |index| count - 1 - index }
+    top = (0...count).map { |index| count + index }
+    faces = [bottom, top]
+    count.times do |index|
+      faces << [index, (index + 1) % count, count + ((index + 1) % count), count + index]
+    end
+    faces
+  end
+
+  def assert_unique_2d_points(points, field_name)
+    seen = {}
+    points.each_with_index do |point, index|
+      key = point_key(point)
+      raise "#{field_name}[#{index}] must not duplicate another point" if seen[key]
+
+      seen[key] = true
+    end
+  end
+
+  def assert_unique_3d_points(points, field_name)
+    seen = {}
+    points.each_with_index do |point, index|
+      key = point_key(point)
+      raise "#{field_name}[#{index}] must not duplicate another point" if seen[key]
+
+      seen[key] = true
+    end
+  end
+
+  def assert_simple_polygon(points, field_name)
+    points.length.times do |a|
+      b = (a + 1) % points.length
+      ((a + 1)...points.length).each do |c|
+        d = (c + 1) % points.length
+        next if a == c || b == c || a == d
+
+        raise "#{field_name} must not self-intersect" if segments_intersect?(points[a], points[b], points[c], points[d])
+      end
+    end
+  end
+
+  def segments_intersect?(a, b, c, d)
+    o1 = orientation(a, b, c)
+    o2 = orientation(a, b, d)
+    o3 = orientation(c, d, a)
+    o4 = orientation(c, d, b)
+    return true if o1.abs <= GEOMETRY_EPSILON && on_segment?(a, c, b)
+    return true if o2.abs <= GEOMETRY_EPSILON && on_segment?(a, d, b)
+    return true if o3.abs <= GEOMETRY_EPSILON && on_segment?(c, a, d)
+    return true if o4.abs <= GEOMETRY_EPSILON && on_segment?(c, b, d)
+
+    (o1.positive? != o2.positive?) && (o3.positive? != o4.positive?)
+  end
+
+  def orientation(a, b, c)
+    (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])
+  end
+
+  def on_segment?(a, b, c)
+    b[0] >= [a[0], c[0]].min - GEOMETRY_EPSILON &&
+      b[0] <= [a[0], c[0]].max + GEOMETRY_EPSILON &&
+      b[1] >= [a[1], c[1]].min - GEOMETRY_EPSILON &&
+      b[1] <= [a[1], c[1]].max + GEOMETRY_EPSILON
+  end
+
+  def polygon_signed_area(points)
+    area = 0.0
+    points.each_with_index do |point, index|
+      following = points[(index + 1) % points.length]
+      area += point[0] * following[1] - following[0] * point[1]
+    end
+    area / 2.0
+  end
+
+  def point_key(point)
+    point.map { |value| format('%.6f', value) }.join(':')
   end
 end

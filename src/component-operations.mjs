@@ -4,7 +4,7 @@ import { addMesh, addPrism, addCylinder } from './primitive-operations.mjs';
 import { addBooleanCutout, addFaceWithHoles, addGableRoof, addPanelWithOpenings, addProfileExtrude, addShedRoof } from './profile-operations.mjs';
 import { addAnalogStick, addBowedPanel, addDomedSurface, addFaceOnCylinder, addLoftBetweenProfiles, addLoftedSolid, addPipeBetweenPoints, addScrewHole, addShellFromFrontSideProfiles, addSweptPath } from './surface-operations.mjs';
 import { addBeveledPanel, addBox, addButtonOnPanel, addChamfer, addEngravedLine, addFillet, addImagePlane, addRecess, addRib, addRoundedBox, addSlot, addSlotArray, addStandoffBoss, addText3d, addTextEmboss, addTextEngrave } from './product-operations.mjs';
-import { addDoor, addFloorSlab, addRailing, addStairs, addWall, addWindow } from './architecture-operations.mjs';
+import { addColumnGrid, addCurvedWall, addCurtainWall, addDoor, addFloorSlab, addFootprintSlab, addHipRoof, addParapetPath, addParkingStallArray, addPathSurface, addRailing, addRoofFootprint, addStairs, addTerrainMesh, addWall, addWallPath, addWindow } from './architecture-operations.mjs';
 import { assertObjectIdentityAvailable, boxVertices, objectId, rotationZMatrix } from './object-identity.mjs';
 import { applyTransform, normalizeQaMetadata, normalizeTransform, normalizeVector } from './operation-utils.mjs';
 import { boundingBoxForVertices, mergeBoundingBoxes } from './snapshot.mjs';
@@ -104,8 +104,41 @@ function applyComponentDefinitionOperation(model, operation, componentName) {
     case 'floor_slab':
       addFloorSlab(model, operation);
       break;
+    case 'footprint_slab':
+      addFootprintSlab(model, operation);
+      break;
     case 'wall':
       addWall(model, operation);
+      break;
+    case 'wall_path':
+      addWallPath(model, operation);
+      break;
+    case 'curved_wall':
+      addCurvedWall(model, operation);
+      break;
+    case 'roof_footprint':
+      addRoofFootprint(model, operation);
+      break;
+    case 'hip_roof':
+      addHipRoof(model, operation);
+      break;
+    case 'parapet_path':
+      addParapetPath(model, operation);
+      break;
+    case 'curtain_wall':
+      addCurtainWall(model, operation);
+      break;
+    case 'column_grid':
+      addColumnGrid(model, operation);
+      break;
+    case 'path_surface':
+      addPathSurface(model, operation);
+      break;
+    case 'terrain_mesh':
+      addTerrainMesh(model, operation);
+      break;
+    case 'parking_stall_array':
+      addParkingStallArray(model, operation);
       break;
     case 'door':
       addDoor(model, operation);

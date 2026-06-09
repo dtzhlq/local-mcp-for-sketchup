@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "units": "mm",
+  "operations": [
+    { "op": "reset" },
+    { "op": "material", "name": "Site_Concrete", "color": "#aeb7af" },
+    { "op": "material", "name": "Wall_White", "color": "#ece7dc" },
+    { "op": "material", "name": "Roof_Charcoal", "color": "#30343b" },
+    { "op": "material", "name": "Glass_Blue", "color": "#83b7d8", "alpha": 0.55 },
+    {
+      "op": "footprint_slab",
+      "name": "Angled_Site_Slab",
+      "origin": [0, 0, 0],
+      "points": [[0, 0], [7200, 0], [8200, 2800], [5600, 5200], [1200, 4600], [-600, 2000]],
+      "thickness": 180,
+      "material": "Site_Concrete"
+    },
+    {
+      "op": "wall",
+      "name": "Diagonal_Entry_Wall",
+      "start": [900, 900, 180],
+      "end": [4200, 2550, 180],
+      "height": 2800,
+      "thickness": 180,
+      "material": "Wall_White"
+    },
+    {
+      "op": "wall_path",
+      "name": "Gallery_L_Wall",
+      "path": [[5000, 700, 180], [6900, 700, 180], [6900, 3200, 180]],
+      "height": 2400,
+      "thickness": 160,
+      "material": "Wall_White"
+    },
+    {
+      "op": "wall",
+      "name": "Axis_Wall_With_Openings",
+      "start": [1100, 4200, 180],
+      "end": [5000, 4200, 180],
+      "height": 2500,
+      "thickness": 160,
+      "openings": [
+        { "name": "Ribbon_Window_Opening", "x": 900, "y": 1050, "width": 1900, "height": 700 }
+      ],
+      "material": "Wall_White"
+    },
+    { "op": "window", "name": "Ribbon_Window", "origin": [2020, 4120, 1230], "plane": "xz", "width": 1700, "height": 620, "thickness": 40, "material": "Glass_Blue" },
+    { "op": "gable_roof", "name": "Entry_Gable_Roof", "origin": [700, 650, 2980], "width": 3800, "depth": 2450, "rise": 850, "overhang": 220, "material": "Roof_Charcoal" },
+    { "op": "shed_roof", "name": "Gallery_Shed_Roof", "origin": [4860, 560, 2580], "width": 2200, "depth": 2820, "rise": 540, "overhang": 180, "material": "Roof_Charcoal" },
+    { "op": "scene", "name": "Architecture_Geometry_Slice_View", "camera": { "eye": [9200, -6800, 5200], "target": [3600, 2500, 1200], "up": [0, 0, 1], "fov": 35 } }
+  ]
+}

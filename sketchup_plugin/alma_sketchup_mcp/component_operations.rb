@@ -59,8 +59,30 @@ module AlmaSketchupMCP
       add_image_plane(entities, operation)
     when 'floor_slab'
       add_floor_slab(entities, operation)
+    when 'footprint_slab'
+      add_footprint_slab(entities, operation)
     when 'wall'
       add_wall(entities, operation)
+    when 'wall_path'
+      add_wall_path(entities, operation)
+    when 'curved_wall'
+      add_curved_wall(entities, operation)
+    when 'roof_footprint'
+      add_roof_footprint(entities, operation)
+    when 'hip_roof'
+      add_hip_roof(entities, operation)
+    when 'parapet_path'
+      add_parapet_path(entities, operation)
+    when 'curtain_wall'
+      add_curtain_wall(entities, operation)
+    when 'column_grid'
+      add_column_grid(entities, operation)
+    when 'path_surface'
+      add_path_surface(entities, operation)
+    when 'terrain_mesh'
+      add_terrain_mesh(entities, operation)
+    when 'parking_stall_array'
+      add_parking_stall_array(entities, operation)
     when 'door'
       add_door(entities, operation)
     when 'window'

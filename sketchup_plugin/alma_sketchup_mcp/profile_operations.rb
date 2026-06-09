@@ -72,7 +72,7 @@ module AlmaSketchupMCP
 
     group = parent_entities.add_group
     group.name = name
-    annotate_group(group, operation.merge('kind' => 'profile_extrude'), 'profile_extrude')
+    annotate_group(group, operation.merge('kind' => operation['kind'] || 'profile_extrude'), 'profile_extrude')
     front = add_profile_face_with_holes(group.entities, origin, plane, outer, holes, false)
     back = add_profile_face_with_holes(group.entities, offset_origin(origin, plane, model_depth), plane, outer.reverse, holes, true)
     raise "Failed to create profile extrusion faces for #{name}" unless front && back
