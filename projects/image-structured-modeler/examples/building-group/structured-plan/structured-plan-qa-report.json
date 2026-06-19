@@ -5106,7 +5106,7 @@
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
           "source_image_edge_18",
-          "high_contrast_boundary_edge_18_high_contrast_x_573_38_508"
+          "vision_evidence_boundary_edge_130_high_contrast_edge:high_contrast_x_573_38_508"
         ],
         "bbox_px": [
           81,
@@ -5168,8 +5168,8 @@
         "source": "boundary_graph_completion",
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
-          "opencv_boundary_edge_21_opencv_hough_73",
-          "opencv_boundary_edge_27_opencv_lsd_22"
+          "vision_evidence_boundary_edge_21_opencv_edge:opencv_hough_73",
+          "vision_evidence_boundary_edge_27_opencv_edge:opencv_lsd_22"
         ],
         "bbox_px": [
           444.374,
@@ -5232,7 +5232,7 @@
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
           "source_image_edge_44",
-          "high_contrast_boundary_edge_60_high_contrast_y_671_111_257"
+          "vision_evidence_boundary_edge_172_high_contrast_edge:high_contrast_y_671_111_257"
         ],
         "bbox_px": [
           655,
@@ -5294,8 +5294,8 @@
         "source": "boundary_graph_completion",
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
-          "opencv_boundary_edge_77_opencv_lsd_37",
-          "high_contrast_boundary_edge_7_high_contrast_x_62_38_592"
+          "vision_evidence_boundary_edge_77_opencv_edge:opencv_lsd_37",
+          "vision_evidence_boundary_edge_119_high_contrast_edge:high_contrast_x_62_38_592"
         ],
         "bbox_px": [
           183.124,
@@ -5357,8 +5357,8 @@
         "source": "boundary_graph_completion",
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
-          "opencv_boundary_edge_28_opencv_hough_270",
-          "high_contrast_boundary_edge_11_high_contrast_y_774_49_605"
+          "vision_evidence_boundary_edge_28_opencv_edge:opencv_hough_270",
+          "vision_evidence_boundary_edge_123_high_contrast_edge:high_contrast_y_774_49_605"
         ],
         "bbox_px": [
           774,
@@ -7971,8 +7971,8 @@
         "source": "boundary_graph_completion",
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
-          "opencv_boundary_edge_77_opencv_lsd_37",
-          "high_contrast_boundary_edge_7_high_contrast_x_62_38_592"
+          "vision_evidence_boundary_edge_77_opencv_edge:opencv_lsd_37",
+          "vision_evidence_boundary_edge_119_high_contrast_edge:high_contrast_x_62_38_592"
         ],
         "bbox_px": [
           183.124,
@@ -8028,8 +8028,8 @@
         "source": "boundary_graph_completion",
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
-          "opencv_boundary_edge_77_opencv_lsd_37",
-          "high_contrast_boundary_edge_7_high_contrast_x_62_38_592"
+          "vision_evidence_boundary_edge_77_opencv_edge:opencv_lsd_37",
+          "vision_evidence_boundary_edge_119_high_contrast_edge:high_contrast_x_62_38_592"
         ],
         "bbox_px": [
           211,
@@ -8085,8 +8085,8 @@
         "source": "boundary_graph_completion",
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
-          "opencv_boundary_edge_77_opencv_lsd_37",
-          "high_contrast_boundary_edge_7_high_contrast_x_62_38_592"
+          "vision_evidence_boundary_edge_77_opencv_edge:opencv_lsd_37",
+          "vision_evidence_boundary_edge_119_high_contrast_edge:high_contrast_x_62_38_592"
         ],
         "bbox_px": [
           214,
@@ -8142,8 +8142,8 @@
         "source": "boundary_graph_completion",
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
-          "opencv_boundary_edge_77_opencv_lsd_37",
-          "high_contrast_boundary_edge_7_high_contrast_x_62_38_592"
+          "vision_evidence_boundary_edge_77_opencv_edge:opencv_lsd_37",
+          "vision_evidence_boundary_edge_119_high_contrast_edge:high_contrast_x_62_38_592"
         ],
         "bbox_px": [
           247,
@@ -8199,8 +8199,8 @@
         "source": "boundary_graph_completion",
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
-          "opencv_boundary_edge_77_opencv_lsd_37",
-          "high_contrast_boundary_edge_7_high_contrast_x_62_38_592"
+          "vision_evidence_boundary_edge_77_opencv_edge:opencv_lsd_37",
+          "vision_evidence_boundary_edge_119_high_contrast_edge:high_contrast_x_62_38_592"
         ],
         "bbox_px": [
           251,
@@ -8612,8 +8612,8 @@
         "source": "boundary_graph_completion",
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
-          "opencv_boundary_edge_21_opencv_hough_73",
-          "opencv_boundary_edge_27_opencv_lsd_22"
+          "vision_evidence_boundary_edge_21_opencv_edge:opencv_hough_73",
+          "vision_evidence_boundary_edge_27_opencv_edge:opencv_lsd_22"
         ],
         "bbox_px": [
           444.374,
@@ -8669,8 +8669,8 @@
         "source": "boundary_graph_completion",
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
-          "opencv_boundary_edge_21_opencv_hough_73",
-          "opencv_boundary_edge_27_opencv_lsd_22"
+          "vision_evidence_boundary_edge_21_opencv_edge:opencv_hough_73",
+          "vision_evidence_boundary_edge_27_opencv_edge:opencv_lsd_22"
         ],
         "bbox_px": [
           497.92,
@@ -8726,8 +8726,8 @@
         "source": "boundary_graph_completion",
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
-          "opencv_boundary_edge_21_opencv_hough_73",
-          "opencv_boundary_edge_27_opencv_lsd_22"
+          "vision_evidence_boundary_edge_21_opencv_edge:opencv_hough_73",
+          "vision_evidence_boundary_edge_27_opencv_edge:opencv_lsd_22"
         ],
         "bbox_px": [
           514,
@@ -8783,8 +8783,8 @@
         "source": "boundary_graph_completion",
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
-          "opencv_boundary_edge_21_opencv_hough_73",
-          "opencv_boundary_edge_27_opencv_lsd_22"
+          "vision_evidence_boundary_edge_21_opencv_edge:opencv_hough_73",
+          "vision_evidence_boundary_edge_27_opencv_edge:opencv_lsd_22"
         ],
         "bbox_px": [
           540,
@@ -8840,8 +8840,8 @@
         "source": "boundary_graph_completion",
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
-          "opencv_boundary_edge_21_opencv_hough_73",
-          "opencv_boundary_edge_27_opencv_lsd_22"
+          "vision_evidence_boundary_edge_21_opencv_edge:opencv_hough_73",
+          "vision_evidence_boundary_edge_27_opencv_edge:opencv_lsd_22"
         ],
         "bbox_px": [
           541,
@@ -8897,8 +8897,8 @@
         "source": "boundary_graph_completion",
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
-          "opencv_boundary_edge_21_opencv_hough_73",
-          "opencv_boundary_edge_27_opencv_lsd_22"
+          "vision_evidence_boundary_edge_21_opencv_edge:opencv_hough_73",
+          "vision_evidence_boundary_edge_27_opencv_edge:opencv_lsd_22"
         ],
         "bbox_px": [
           547,
@@ -8954,8 +8954,8 @@
         "source": "boundary_graph_completion",
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
-          "opencv_boundary_edge_21_opencv_hough_73",
-          "opencv_boundary_edge_27_opencv_lsd_22"
+          "vision_evidence_boundary_edge_21_opencv_edge:opencv_hough_73",
+          "vision_evidence_boundary_edge_27_opencv_edge:opencv_lsd_22"
         ],
         "bbox_px": [
           589,
@@ -9973,8 +9973,8 @@
         "source": "boundary_graph_completion",
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
-          "opencv_boundary_edge_77_opencv_lsd_37",
-          "high_contrast_boundary_edge_7_high_contrast_x_62_38_592"
+          "vision_evidence_boundary_edge_77_opencv_edge:opencv_lsd_37",
+          "vision_evidence_boundary_edge_119_high_contrast_edge:high_contrast_x_62_38_592"
         ],
         "bbox_px": [
           183.124,
@@ -10030,8 +10030,8 @@
         "source": "boundary_graph_completion",
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
-          "opencv_boundary_edge_77_opencv_lsd_37",
-          "high_contrast_boundary_edge_7_high_contrast_x_62_38_592"
+          "vision_evidence_boundary_edge_77_opencv_edge:opencv_lsd_37",
+          "vision_evidence_boundary_edge_119_high_contrast_edge:high_contrast_x_62_38_592"
         ],
         "bbox_px": [
           211,
@@ -10087,8 +10087,8 @@
         "source": "boundary_graph_completion",
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
-          "opencv_boundary_edge_77_opencv_lsd_37",
-          "high_contrast_boundary_edge_7_high_contrast_x_62_38_592"
+          "vision_evidence_boundary_edge_77_opencv_edge:opencv_lsd_37",
+          "vision_evidence_boundary_edge_119_high_contrast_edge:high_contrast_x_62_38_592"
         ],
         "bbox_px": [
           214,
@@ -10144,8 +10144,8 @@
         "source": "boundary_graph_completion",
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
-          "opencv_boundary_edge_77_opencv_lsd_37",
-          "high_contrast_boundary_edge_7_high_contrast_x_62_38_592"
+          "vision_evidence_boundary_edge_77_opencv_edge:opencv_lsd_37",
+          "vision_evidence_boundary_edge_119_high_contrast_edge:high_contrast_x_62_38_592"
         ],
         "bbox_px": [
           247,
@@ -10201,8 +10201,8 @@
         "source": "boundary_graph_completion",
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
-          "opencv_boundary_edge_77_opencv_lsd_37",
-          "high_contrast_boundary_edge_7_high_contrast_x_62_38_592"
+          "vision_evidence_boundary_edge_77_opencv_edge:opencv_lsd_37",
+          "vision_evidence_boundary_edge_119_high_contrast_edge:high_contrast_x_62_38_592"
         ],
         "bbox_px": [
           251,
@@ -21362,7 +21362,7 @@
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
           "source_image_edge_44",
-          "high_contrast_boundary_edge_60_high_contrast_y_671_111_257"
+          "vision_evidence_boundary_edge_172_high_contrast_edge:high_contrast_y_671_111_257"
         ],
         "bbox_px": [
           655,
@@ -23185,7 +23185,7 @@
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
           "source_image_edge_44",
-          "high_contrast_boundary_edge_60_high_contrast_y_671_111_257"
+          "vision_evidence_boundary_edge_172_high_contrast_edge:high_contrast_y_671_111_257"
         ],
         "bbox_px": [
           655,
@@ -25254,7 +25254,7 @@
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
           "source_image_edge_44",
-          "high_contrast_boundary_edge_60_high_contrast_y_671_111_257"
+          "vision_evidence_boundary_edge_172_high_contrast_edge:high_contrast_y_671_111_257"
         ],
         "bbox_px": [
           655,
@@ -25722,8 +25722,8 @@
         "source": "boundary_graph_completion",
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
-          "opencv_boundary_edge_28_opencv_hough_270",
-          "high_contrast_boundary_edge_11_high_contrast_y_774_49_605"
+          "vision_evidence_boundary_edge_28_opencv_edge:opencv_hough_270",
+          "vision_evidence_boundary_edge_123_high_contrast_edge:high_contrast_y_774_49_605"
         ],
         "bbox_px": [
           774,
@@ -27359,7 +27359,7 @@
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
           "source_image_edge_44",
-          "high_contrast_boundary_edge_60_high_contrast_y_671_111_257"
+          "vision_evidence_boundary_edge_172_high_contrast_edge:high_contrast_y_671_111_257"
         ],
         "bbox_px": [
           655,
@@ -27769,8 +27769,8 @@
         "source": "boundary_graph_completion",
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
-          "opencv_boundary_edge_28_opencv_hough_270",
-          "high_contrast_boundary_edge_11_high_contrast_y_774_49_605"
+          "vision_evidence_boundary_edge_28_opencv_edge:opencv_hough_270",
+          "vision_evidence_boundary_edge_123_high_contrast_edge:high_contrast_y_774_49_605"
         ],
         "bbox_px": [
           774,
@@ -29758,8 +29758,8 @@
         "source": "boundary_graph_completion",
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
-          "opencv_boundary_edge_28_opencv_hough_270",
-          "high_contrast_boundary_edge_11_high_contrast_y_774_49_605"
+          "vision_evidence_boundary_edge_28_opencv_edge:opencv_hough_270",
+          "vision_evidence_boundary_edge_123_high_contrast_edge:high_contrast_y_774_49_605"
         ],
         "bbox_px": [
           774,
@@ -31635,8 +31635,8 @@
         "source": "boundary_graph_completion",
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
-          "opencv_boundary_edge_28_opencv_hough_270",
-          "high_contrast_boundary_edge_11_high_contrast_y_774_49_605"
+          "vision_evidence_boundary_edge_28_opencv_edge:opencv_hough_270",
+          "vision_evidence_boundary_edge_123_high_contrast_edge:high_contrast_y_774_49_605"
         ],
         "bbox_px": [
           774,
@@ -33540,8 +33540,8 @@
         "source": "boundary_graph_completion",
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
-          "opencv_boundary_edge_28_opencv_hough_270",
-          "high_contrast_boundary_edge_11_high_contrast_y_774_49_605"
+          "vision_evidence_boundary_edge_28_opencv_edge:opencv_hough_270",
+          "vision_evidence_boundary_edge_123_high_contrast_edge:high_contrast_y_774_49_605"
         ],
         "bbox_px": [
           774,
@@ -55185,7 +55185,7 @@
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
           "source_image_edge_18",
-          "high_contrast_boundary_edge_18_high_contrast_x_573_38_508"
+          "vision_evidence_boundary_edge_130_high_contrast_edge:high_contrast_x_573_38_508"
         ],
         "bbox_px": [
           81,
@@ -55242,7 +55242,7 @@
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
           "source_image_edge_18",
-          "high_contrast_boundary_edge_18_high_contrast_x_573_38_508"
+          "vision_evidence_boundary_edge_130_high_contrast_edge:high_contrast_x_573_38_508"
         ],
         "bbox_px": [
           134,
@@ -55299,7 +55299,7 @@
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
           "source_image_edge_18",
-          "high_contrast_boundary_edge_18_high_contrast_x_573_38_508"
+          "vision_evidence_boundary_edge_130_high_contrast_edge:high_contrast_x_573_38_508"
         ],
         "bbox_px": [
           141,
@@ -55356,7 +55356,7 @@
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
           "source_image_edge_18",
-          "high_contrast_boundary_edge_18_high_contrast_x_573_38_508"
+          "vision_evidence_boundary_edge_130_high_contrast_edge:high_contrast_x_573_38_508"
         ],
         "bbox_px": [
           183.124,
@@ -55413,7 +55413,7 @@
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
           "source_image_edge_18",
-          "high_contrast_boundary_edge_18_high_contrast_x_573_38_508"
+          "vision_evidence_boundary_edge_130_high_contrast_edge:high_contrast_x_573_38_508"
         ],
         "bbox_px": [
           211,
@@ -55470,7 +55470,7 @@
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
           "source_image_edge_18",
-          "high_contrast_boundary_edge_18_high_contrast_x_573_38_508"
+          "vision_evidence_boundary_edge_130_high_contrast_edge:high_contrast_x_573_38_508"
         ],
         "bbox_px": [
           214,
@@ -55527,7 +55527,7 @@
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
           "source_image_edge_18",
-          "high_contrast_boundary_edge_18_high_contrast_x_573_38_508"
+          "vision_evidence_boundary_edge_130_high_contrast_edge:high_contrast_x_573_38_508"
         ],
         "bbox_px": [
           247,
@@ -55584,7 +55584,7 @@
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
           "source_image_edge_18",
-          "high_contrast_boundary_edge_18_high_contrast_x_573_38_508"
+          "vision_evidence_boundary_edge_130_high_contrast_edge:high_contrast_x_573_38_508"
         ],
         "bbox_px": [
           251,
@@ -55641,7 +55641,7 @@
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
           "source_image_edge_18",
-          "high_contrast_boundary_edge_18_high_contrast_x_573_38_508"
+          "vision_evidence_boundary_edge_130_high_contrast_edge:high_contrast_x_573_38_508"
         ],
         "bbox_px": [
           290.626,
@@ -55698,7 +55698,7 @@
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
           "source_image_edge_18",
-          "high_contrast_boundary_edge_18_high_contrast_x_573_38_508"
+          "vision_evidence_boundary_edge_130_high_contrast_edge:high_contrast_x_573_38_508"
         ],
         "bbox_px": [
           322,
@@ -55755,7 +55755,7 @@
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
           "source_image_edge_18",
-          "high_contrast_boundary_edge_18_high_contrast_x_573_38_508"
+          "vision_evidence_boundary_edge_130_high_contrast_edge:high_contrast_x_573_38_508"
         ],
         "bbox_px": [
           331,
@@ -55812,7 +55812,7 @@
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
           "source_image_edge_18",
-          "high_contrast_boundary_edge_18_high_contrast_x_573_38_508"
+          "vision_evidence_boundary_edge_130_high_contrast_edge:high_contrast_x_573_38_508"
         ],
         "bbox_px": [
           369.37,
@@ -55869,7 +55869,7 @@
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
           "source_image_edge_18",
-          "high_contrast_boundary_edge_18_high_contrast_x_573_38_508"
+          "vision_evidence_boundary_edge_130_high_contrast_edge:high_contrast_x_573_38_508"
         ],
         "bbox_px": [
           384,
@@ -55926,7 +55926,7 @@
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
           "source_image_edge_18",
-          "high_contrast_boundary_edge_18_high_contrast_x_573_38_508"
+          "vision_evidence_boundary_edge_130_high_contrast_edge:high_contrast_x_573_38_508"
         ],
         "bbox_px": [
           444.374,
@@ -55983,7 +55983,7 @@
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
           "source_image_edge_18",
-          "high_contrast_boundary_edge_18_high_contrast_x_573_38_508"
+          "vision_evidence_boundary_edge_130_high_contrast_edge:high_contrast_x_573_38_508"
         ],
         "bbox_px": [
           497.92,
@@ -56979,7 +56979,7 @@
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
           "source_image_edge_18",
-          "high_contrast_boundary_edge_18_high_contrast_x_573_38_508"
+          "vision_evidence_boundary_edge_130_high_contrast_edge:high_contrast_x_573_38_508"
         ],
         "bbox_px": [
           81,
@@ -57036,7 +57036,7 @@
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
           "source_image_edge_18",
-          "high_contrast_boundary_edge_18_high_contrast_x_573_38_508"
+          "vision_evidence_boundary_edge_130_high_contrast_edge:high_contrast_x_573_38_508"
         ],
         "bbox_px": [
           134,
@@ -57093,7 +57093,7 @@
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
           "source_image_edge_18",
-          "high_contrast_boundary_edge_18_high_contrast_x_573_38_508"
+          "vision_evidence_boundary_edge_130_high_contrast_edge:high_contrast_x_573_38_508"
         ],
         "bbox_px": [
           141,
@@ -57150,7 +57150,7 @@
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
           "source_image_edge_18",
-          "high_contrast_boundary_edge_18_high_contrast_x_573_38_508"
+          "vision_evidence_boundary_edge_130_high_contrast_edge:high_contrast_x_573_38_508"
         ],
         "bbox_px": [
           183.124,
@@ -57207,7 +57207,7 @@
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
           "source_image_edge_18",
-          "high_contrast_boundary_edge_18_high_contrast_x_573_38_508"
+          "vision_evidence_boundary_edge_130_high_contrast_edge:high_contrast_x_573_38_508"
         ],
         "bbox_px": [
           211,
@@ -57264,7 +57264,7 @@
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
           "source_image_edge_18",
-          "high_contrast_boundary_edge_18_high_contrast_x_573_38_508"
+          "vision_evidence_boundary_edge_130_high_contrast_edge:high_contrast_x_573_38_508"
         ],
         "bbox_px": [
           214,
@@ -57321,7 +57321,7 @@
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
           "source_image_edge_18",
-          "high_contrast_boundary_edge_18_high_contrast_x_573_38_508"
+          "vision_evidence_boundary_edge_130_high_contrast_edge:high_contrast_x_573_38_508"
         ],
         "bbox_px": [
           247,
@@ -57378,7 +57378,7 @@
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
           "source_image_edge_18",
-          "high_contrast_boundary_edge_18_high_contrast_x_573_38_508"
+          "vision_evidence_boundary_edge_130_high_contrast_edge:high_contrast_x_573_38_508"
         ],
         "bbox_px": [
           251,
@@ -57435,7 +57435,7 @@
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
           "source_image_edge_18",
-          "high_contrast_boundary_edge_18_high_contrast_x_573_38_508"
+          "vision_evidence_boundary_edge_130_high_contrast_edge:high_contrast_x_573_38_508"
         ],
         "bbox_px": [
           290.626,
@@ -57492,7 +57492,7 @@
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
           "source_image_edge_18",
-          "high_contrast_boundary_edge_18_high_contrast_x_573_38_508"
+          "vision_evidence_boundary_edge_130_high_contrast_edge:high_contrast_x_573_38_508"
         ],
         "bbox_px": [
           322,
@@ -57549,7 +57549,7 @@
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
           "source_image_edge_18",
-          "high_contrast_boundary_edge_18_high_contrast_x_573_38_508"
+          "vision_evidence_boundary_edge_130_high_contrast_edge:high_contrast_x_573_38_508"
         ],
         "bbox_px": [
           331,
@@ -57606,7 +57606,7 @@
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
           "source_image_edge_18",
-          "high_contrast_boundary_edge_18_high_contrast_x_573_38_508"
+          "vision_evidence_boundary_edge_130_high_contrast_edge:high_contrast_x_573_38_508"
         ],
         "bbox_px": [
           369.37,
@@ -57663,7 +57663,7 @@
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
           "source_image_edge_18",
-          "high_contrast_boundary_edge_18_high_contrast_x_573_38_508"
+          "vision_evidence_boundary_edge_130_high_contrast_edge:high_contrast_x_573_38_508"
         ],
         "bbox_px": [
           384,
@@ -57720,7 +57720,7 @@
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
           "source_image_edge_18",
-          "high_contrast_boundary_edge_18_high_contrast_x_573_38_508"
+          "vision_evidence_boundary_edge_130_high_contrast_edge:high_contrast_x_573_38_508"
         ],
         "bbox_px": [
           444.374,
@@ -57777,7 +57777,7 @@
         "source_kind": "boundary_graph_completion",
         "source_observation_ids": [
           "source_image_edge_18",
-          "high_contrast_boundary_edge_18_high_contrast_x_573_38_508"
+          "vision_evidence_boundary_edge_130_high_contrast_edge:high_contrast_x_573_38_508"
         ],
         "bbox_px": [
           497.92,
@@ -91636,7 +91636,7 @@
         "region_id": "boundary_graph_boundary_completion_1",
         "source_observation_ids": [
           "source_image_edge_18",
-          "high_contrast_boundary_edge_18_high_contrast_x_573_38_508"
+          "vision_evidence_boundary_edge_130_high_contrast_edge:high_contrast_x_573_38_508"
         ],
         "bbox_px": [
           81,
@@ -91683,8 +91683,8 @@
         "id": "boundary_graph_boundary_completion_2_corridor",
         "region_id": "boundary_graph_boundary_completion_2",
         "source_observation_ids": [
-          "opencv_boundary_edge_21_opencv_hough_73",
-          "opencv_boundary_edge_27_opencv_lsd_22"
+          "vision_evidence_boundary_edge_21_opencv_edge:opencv_hough_73",
+          "vision_evidence_boundary_edge_27_opencv_edge:opencv_lsd_22"
         ],
         "bbox_px": [
           444.374,
@@ -91732,7 +91732,7 @@
         "region_id": "boundary_graph_boundary_completion_3",
         "source_observation_ids": [
           "source_image_edge_44",
-          "high_contrast_boundary_edge_60_high_contrast_y_671_111_257"
+          "vision_evidence_boundary_edge_172_high_contrast_edge:high_contrast_y_671_111_257"
         ],
         "bbox_px": [
           655,
@@ -91779,8 +91779,8 @@
         "id": "boundary_graph_boundary_completion_4_corridor",
         "region_id": "boundary_graph_boundary_completion_4",
         "source_observation_ids": [
-          "opencv_boundary_edge_77_opencv_lsd_37",
-          "high_contrast_boundary_edge_7_high_contrast_x_62_38_592"
+          "vision_evidence_boundary_edge_77_opencv_edge:opencv_lsd_37",
+          "vision_evidence_boundary_edge_119_high_contrast_edge:high_contrast_x_62_38_592"
         ],
         "bbox_px": [
           183.124,
@@ -91827,8 +91827,8 @@
         "id": "boundary_graph_boundary_completion_7_corridor",
         "region_id": "boundary_graph_boundary_completion_7",
         "source_observation_ids": [
-          "opencv_boundary_edge_28_opencv_hough_270",
-          "high_contrast_boundary_edge_11_high_contrast_y_774_49_605"
+          "vision_evidence_boundary_edge_28_opencv_edge:opencv_hough_270",
+          "vision_evidence_boundary_edge_123_high_contrast_edge:high_contrast_y_774_49_605"
         ],
         "bbox_px": [
           774,
@@ -92077,6 +92077,16 @@
       "completed_edge_count": 27,
       "corridor_hypothesis_count": 7
     },
+    "vision_evidence_set_v1": {
+      "available": true,
+      "masks": 91,
+      "edges": 810,
+      "accepted_edges": 528,
+      "rejected_edges": 309,
+      "top_view_ground_plane_confidence": 0.94,
+      "planar_groundplan_allowed": true,
+      "default_heavy_model_required": false
+    },
     "qa": {
       "ok": true,
       "verdict": "review",
@@ -92199,7 +92209,15 @@
     "max_boundary_snap_delta": 0.043,
     "conflicting_hypothesis_count": 0,
     "inferred_geometry_area_ratio": 0.067,
-    "extrapolated_geometry_area_ratio": 0.002
+    "extrapolated_geometry_area_ratio": 0.002,
+    "vision_evidence_set_v1_available": true,
+    "vision_evidence_masks": 91,
+    "vision_evidence_edges": 810,
+    "vision_evidence_accepted_edges": 528,
+    "vision_evidence_rejected_edges": 309,
+    "vision_evidence_top_view_ground_plane_confidence": 0.94,
+    "vision_evidence_planar_groundplan_allowed": true,
+    "vision_evidence_default_heavy_model_required": false
   },
   "issues": [
     {

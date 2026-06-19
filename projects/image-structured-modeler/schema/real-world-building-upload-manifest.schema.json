@@ -1,0 +1,139 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/real-world-building-upload-manifest.schema.json",
+  "title": "RealWorldBuildingUploadManifest",
+  "type": "object",
+  "required": ["version", "kind"],
+  "properties": {
+    "version": { "const": 1 },
+    "kind": { "const": "real_world_building_upload_manifest" },
+    "template_only": { "type": "boolean" },
+    "generated_at": { "type": "string" },
+    "object_type": { "enum": ["building_single", "building_group"] },
+    "units": { "enum": ["mm", "cm", "m", "in"] },
+    "source_request_status": {
+      "enum": [
+        "needs_source_replacement",
+        "needs_views_or_scale",
+        "needs_semantic_confirmation",
+        "input_ready_for_release_work",
+        "release_ready"
+      ]
+    },
+    "required_scale_confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+    "view_source_requirements": {
+      "type": "object",
+      "properties": {
+        "distinct_source_images_required": { "type": "boolean" },
+        "required_views": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/view_kind" }
+        },
+        "source_image_field": { "const": "views[].source_image" },
+        "blocker": { "const": "view_sources_not_distinct" },
+        "rules": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "scale_evidence_options": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "views": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["source_image", "kind"],
+        "properties": {
+          "source_image": { "type": "string", "minLength": 1 },
+          "kind": { "$ref": "#/$defs/view_kind" },
+          "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+          "note": { "type": "string" }
+        }
+      }
+    },
+    "dimensions": { "$ref": "#/$defs/known_dimensions" },
+    "known_dimensions": { "$ref": "#/$defs/known_dimensions" },
+    "known_scale": { "$ref": "#/$defs/known_dimensions" },
+    "scale": { "$ref": "#/$defs/known_dimensions" },
+    "scale_hints": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/scale_hint" }
+    },
+    "scale_anchors": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/scale_anchor" }
+    },
+    "notes": { "type": "string" }
+  },
+  "$defs": {
+    "view_kind": {
+      "enum": ["front", "rear", "left", "right", "top", "bottom", "oblique", "detail", "unknown"]
+    },
+    "known_dimensions": {
+      "type": "object",
+      "properties": {
+        "target": { "type": "string" },
+        "units": { "enum": ["mm", "cm", "m", "in"] },
+        "width": { "type": "number", "exclusiveMinimum": 0 },
+        "depth": { "type": "number", "exclusiveMinimum": 0 },
+        "height": { "type": "number", "exclusiveMinimum": 0 },
+        "length": { "type": "number", "exclusiveMinimum": 0 },
+        "width_mm": { "type": "number", "exclusiveMinimum": 0 },
+        "depth_mm": { "type": "number", "exclusiveMinimum": 0 },
+        "height_mm": { "type": "number", "exclusiveMinimum": 0 },
+        "length_mm": { "type": "number", "exclusiveMinimum": 0 },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "basis": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "note": { "type": "string" }
+      }
+    },
+    "scale_hint": {
+      "type": "object",
+      "properties": {
+        "target": { "type": "string" },
+        "kind": { "type": "string" },
+        "dimension": { "enum": ["width", "depth", "height"] },
+        "axis": { "enum": ["width", "depth", "height"] },
+        "units": { "enum": ["mm", "cm", "m", "in"] },
+        "value": { "type": "number", "exclusiveMinimum": 0 },
+        "value_mm": { "type": "number", "exclusiveMinimum": 0 },
+        "physical_mm": { "type": "number", "exclusiveMinimum": 0 },
+        "known_value": { "type": "number", "exclusiveMinimum": 0 },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "basis": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "note": { "type": "string" }
+      }
+    },
+    "scale_anchor": {
+      "type": "object",
+      "properties": {
+        "anchor_type": { "type": "string" },
+        "kind": { "type": "string" },
+        "source_image": { "type": "string" },
+        "units": { "enum": ["mm", "cm", "m", "in"] },
+        "width": { "type": "number", "exclusiveMinimum": 0 },
+        "height": { "type": "number", "exclusiveMinimum": 0 },
+        "width_mm": { "type": "number", "exclusiveMinimum": 0 },
+        "height_mm": { "type": "number", "exclusiveMinimum": 0 },
+        "physical_width_mm": { "type": "number", "exclusiveMinimum": 0 },
+        "physical_height_mm": { "type": "number", "exclusiveMinimum": 0 },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "basis": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "note": { "type": "string" }
+      }
+    }
+  }
+}

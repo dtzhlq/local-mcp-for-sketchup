@@ -1,0 +1,151 @@
+{
+  "version": 1,
+  "profile_id": "building_single_urban_oblique",
+  "product_type": "building_single",
+  "name": "Urban Single Building Oblique Profile",
+  "description": "Review-gated profile for a single urban building from one or more oblique street images. It records facade planes, recessed/return walls, storefronts, windows, HVAC units, rectangular ducts, roof parapets, and shadow/recess ambiguity before any SketchUp DSL compilation.",
+  "dsl_version": 1,
+  "units": "mm",
+  "default_scale": {
+    "width": 9000,
+    "depth": 12000,
+    "height": 10500
+  },
+  "expected_views": ["oblique", "front", "left", "right", "top"],
+  "required_parts": [
+    {
+      "id": "building_main_mass",
+      "role": "building_main_mass",
+      "required": true,
+      "expected_count": 1,
+      "evidence_required": ["oblique", "front"],
+      "fallback_allowed": ["box_approximation", "needs_review"]
+    },
+    {
+      "id": "front_facade_plane",
+      "role": "front_facade_plane",
+      "required": true,
+      "expected_count": 1,
+      "evidence_required": ["oblique", "front"],
+      "fallback_allowed": ["visual_helper", "needs_review"]
+    },
+    {
+      "id": "recessed_side_facade_plane",
+      "role": "recessed_side_facade_plane",
+      "required": true,
+      "expected_count": 1,
+      "evidence_required": ["oblique", "left"],
+      "fallback_allowed": ["visual_helper", "needs_review"]
+    },
+    {
+      "id": "roof_parapet_and_rail",
+      "role": "roof_parapet_and_rail",
+      "required": true,
+      "expected_count": 1,
+      "evidence_required": ["oblique", "top"],
+      "fallback_allowed": ["structured_primitive", "needs_review"]
+    },
+    {
+      "id": "ground_floor_storefront",
+      "role": "ground_floor_storefront",
+      "required": true,
+      "expected_count": 1,
+      "evidence_required": ["oblique", "front"],
+      "fallback_allowed": ["visual_helper", "needs_review"]
+    },
+    {
+      "id": "upper_window_bands",
+      "role": "upper_window_bands",
+      "required": true,
+      "expected_count": 2,
+      "evidence_required": ["oblique", "front"],
+      "fallback_allowed": ["visual_helper", "needs_review"]
+    },
+    {
+      "id": "exterior_hvac_units",
+      "role": "exterior_hvac_units",
+      "required": true,
+      "expected_count": 5,
+      "evidence_required": ["oblique", "front"],
+      "fallback_allowed": ["visual_helper", "needs_review"]
+    },
+    {
+      "id": "rectangular_utility_ducts",
+      "role": "rectangular_utility_ducts",
+      "required": true,
+      "expected_count": 1,
+      "evidence_required": ["oblique", "left"],
+      "fallback_allowed": ["structured_primitive", "needs_review"]
+    },
+    {
+      "id": "shadow_or_recess_boundary",
+      "role": "shadow_or_recess_boundary",
+      "required": true,
+      "expected_count": 1,
+      "evidence_required": ["oblique"],
+      "fallback_allowed": ["reference_only", "needs_review"]
+    }
+  ],
+  "allowed_primitives": [
+    "box",
+    "panel_with_openings",
+    "window",
+    "door",
+    "curtain_wall",
+    "parapet_path",
+    "pipe_between_points",
+    "prism",
+    "mesh",
+    "image_plane"
+  ],
+  "materials": [
+    { "name": "Urban_Stucco_Yellow", "color": "#c9c092" },
+    { "name": "Urban_Stucco_Shadow", "color": "#817b60", "alpha": 0.78 },
+    { "name": "Urban_Glass_Blue", "color": "#446878", "alpha": 0.62 },
+    { "name": "Urban_Dark_Frame", "color": "#293033" },
+    { "name": "Urban_Awning_Red", "color": "#9b3448" },
+    { "name": "Urban_Utility_Metal", "color": "#8d9086" },
+    { "name": "Urban_Review_Marker", "color": "#f2c94c", "alpha": 0.45 }
+  ],
+  "tags": [
+    { "name": "Building_Single_Evidence", "color": "#f2c94c" },
+    { "name": "Building_Single_Review_Required", "color": "#c0392b" }
+  ],
+  "review": {
+    "scenes": [
+      {
+        "name": "Building_Single_Oblique_Evidence_Review",
+        "camera": {
+          "eye": [11000, -14500, 8500],
+          "target": [0, 0, 4500],
+          "up": [0, 0, 1],
+          "fov": 42
+        }
+      }
+    ],
+    "style": {
+      "name": "Building_Single_Review",
+      "display_edges": true,
+      "profiles": true,
+      "profile_width": 2,
+      "face_style": "shaded_with_textures",
+      "background_color": "#eef2f1",
+      "sky_color": "#d6e5ef",
+      "ground_color": "#ccd5cb"
+    }
+  },
+  "compiler": {
+    "name": "compile-part-graph-to-sketchup-dsl",
+    "version": "building-single-review-gated-v1",
+    "geometry_gate": {
+      "enabled": true,
+      "max_needs_review_ratio": 0.12,
+      "max_profile_default_ratio": 0.05,
+      "min_observed_parts": 8,
+      "min_inferred_parts": 20,
+      "min_scale_confidence": 0.7,
+      "require_promoted_geometry": true,
+      "block_reference_only_output": true
+    }
+  }
+}

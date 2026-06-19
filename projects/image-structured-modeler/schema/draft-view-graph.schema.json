@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/draft-view-graph.schema.json",
+  "title": "DraftViewGraph v1",
+  "type": "object",
+  "required": ["kind", "version", "profile_id", "coordinate_convention", "source_structure_evidence_graph", "view_slots", "review_overlay", "review_policy", "summary"],
+  "properties": {
+    "kind": { "const": "draft_view_graph_v1" },
+    "version": { "const": 1 },
+    "profile_id": { "type": "string" },
+    "coordinate_convention": { "const": "image_x_right_y_down" },
+    "source_structure_evidence_graph": { "type": "string" },
+    "view_slots": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": { "$ref": "#/$defs/view_slot" }
+    },
+    "review_overlay": { "$ref": "#/$defs/review_overlay" },
+    "review_policy": {
+      "type": "object",
+      "required": ["status", "accepted_draft_view_review_required", "review_required", "promotion_allowed", "compile_allowed", "blockers"],
+      "properties": {
+        "status": { "enum": ["needs_draft_view_review", "blocked_no_observed_views"] },
+        "accepted_draft_view_review_required": { "const": true },
+        "review_required": { "const": true },
+        "promotion_allowed": { "const": false },
+        "compile_allowed": { "const": false },
+        "blockers": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": ["slot_count", "observed_slots", "inferred_slots", "partial_slots", "unknown_slots", "review_required_slots", "promotion_allowed", "compile_allowed"],
+      "properties": {
+        "slot_count": { "const": 4 },
+        "observed_slots": { "type": "integer", "minimum": 0 },
+        "inferred_slots": { "type": "integer", "minimum": 0 },
+        "partial_slots": { "type": "integer", "minimum": 0 },
+        "unknown_slots": { "type": "integer", "minimum": 0 },
+        "review_required_slots": { "type": "integer", "minimum": 0 },
+        "promotion_allowed": { "const": false },
+        "compile_allowed": { "const": false }
+      }
+    }
+  },
+  "$defs": {
+    "point": {
+      "type": "array",
+      "prefixItems": [{ "type": "number" }, { "type": "number" }],
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "quad": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": { "$ref": "#/$defs/point" }
+    },
+    "view_slot": {
+      "type": "object",
+      "required": ["slot_id", "status", "projection_basis", "source_image_ids", "source_evidence_ids", "visible_regions", "unknown_regions", "confidence", "review_required", "promotion_allowed"],
+      "properties": {
+        "slot_id": { "enum": ["front", "left_or_right_side", "top", "oblique_context"] },
+        "status": { "enum": ["observed", "inferred", "partial", "unknown"] },
+        "projection_basis": { "type": "object" },
+        "source_image_ids": { "type": "array", "items": { "type": "string" } },
+        "source_evidence_ids": { "type": "array", "items": { "type": "string" } },
+        "visible_regions": { "type": "array", "items": { "$ref": "#/$defs/visible_region" } },
+        "unknown_regions": { "type": "array", "items": { "type": "object" } },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "review_required": { "const": true },
+        "promotion_allowed": { "const": false }
+      }
+    },
+    "visible_region": {
+      "type": "object",
+      "required": ["id", "source_image", "visible_quad_px", "confidence", "review_required"],
+      "properties": {
+        "id": { "type": "string" },
+        "role": { "type": "string" },
+        "source_image": { "type": "string" },
+        "source_evidence_id": { "type": "string" },
+        "visible_quad_px": { "$ref": "#/$defs/quad" },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "review_required": { "const": true }
+      }
+    },
+    "review_overlay": {
+      "type": "object",
+      "required": ["kind", "version", "model_status", "compile_allowed", "geometry_promotion_allowed", "promotion_allowed", "operations", "qa"],
+      "properties": {
+        "kind": { "const": "draft_view_review_overlay_v1" },
+        "version": { "const": 1 },
+        "model_status": { "const": "review_only" },
+        "compile_allowed": { "const": false },
+        "geometry_promotion_allowed": { "const": false },
+        "promotion_allowed": { "const": false },
+        "operations": { "type": "array", "items": { "type": "object" } },
+        "qa": {
+          "type": "object",
+          "required": ["no_promoted_geometry", "forbidden_geometry_ops_absent"],
+          "properties": {
+            "no_promoted_geometry": { "const": true },
+            "forbidden_geometry_ops_absent": { "type": "boolean" }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "kind": "real_world_building_positive_release_sample_manifest",
+  "sample_id": "replace-with-real-building-sample-id",
+  "sample_scope": "real_world_building_positive",
+  "input_asset_status": "available",
+  "source_authenticity": "real_user_provided",
+  "source_asset_kind": "real_building_photo_or_scan",
+  "source_images": [
+    "test/real-building-demo/top-view.jpg",
+    "test/real-building-demo/oblique-view.jpg"
+  ],
+  "profile_path": "examples/product-profiles/building_group_industrial_campus.json",
+  "artifacts": {
+    "part_graph": "projects/image-structured-modeler/examples/real-world-building-positive/part-graph.json",
+    "output": "projects/image-structured-modeler/examples/real-world-building-positive/output.json",
+    "photo_grade_readiness_report": "projects/image-structured-modeler/examples/real-world-building-positive/photo-grade-readiness-report.json",
+    "vision_evidence_report": "projects/image-structured-modeler/examples/real-world-building-positive/vision-evidence-v1-report.json",
+    "vision_evidence_review_patch": "projects/image-structured-modeler/examples/real-world-building-positive/vision-evidence-review-patch.json",
+    "vision_evidence_review_decision": "projects/image-structured-modeler/examples/real-world-building-positive/vision-evidence-review.accepted.json",
+    "vision_evidence_policy_correction_patch": "projects/image-structured-modeler/examples/real-world-building-positive/vision-evidence-policy-correction-patch.json",
+    "geometry_fit_report": "projects/image-structured-modeler/examples/real-world-building-positive/geometry-fit-report.json",
+    "grounding_v3_report": "projects/image-structured-modeler/examples/real-world-building-positive/grounding-v3-report.json"
+  },
+  "review": {
+    "reviewer": "replace-with-reviewer",
+    "accepted_at": "2026-06-16",
+    "notes": "Replace this template with real source assets and current QA artifacts before using it as manifest.json."
+  }
+}

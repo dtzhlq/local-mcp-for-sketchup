@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/document-asset-parse-report.schema.json",
+  "title": "DocumentAssetParseReport",
+  "type": "object",
+  "required": [
+    "version",
+    "kind",
+    "parser",
+    "ok",
+    "status",
+    "assets",
+    "summary",
+    "blockers"
+  ],
+  "properties": {
+    "version": { "const": 1 },
+    "kind": { "const": "document_asset_parse_report" },
+    "parser": { "type": "string" },
+    "ok": { "type": "boolean" },
+    "status": { "enum": ["parsed_review_required", "blocked"] },
+    "assets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "media_type", "extension", "parser", "status", "blockers"],
+        "properties": {
+          "path": { "type": "string" },
+          "media_type": { "enum": ["pdf", "cad"] },
+          "extension": { "type": "string" },
+          "parser": { "type": "string" },
+          "status": { "enum": ["parsed", "blocked"] },
+          "blockers": { "type": "array", "items": { "type": "string" } },
+          "page_count": { "type": "integer" },
+          "cad_units": { "type": "string" },
+          "unit_scale_to_mm": { "type": "number" },
+          "selected_layer": { "type": ["string", "null"] },
+          "candidate_outlines": { "type": "integer" }
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": ["parsed_assets", "pdf_assets", "cad_assets", "cad_outlines", "missing_views", "risks"],
+      "properties": {
+        "parsed_assets": { "type": "integer" },
+        "pdf_assets": { "type": "integer" },
+        "cad_assets": { "type": "integer" },
+        "cad_outlines": { "type": "integer" },
+        "cad_candidate_outlines": { "type": "integer" },
+        "pdf_pages": { "type": "integer" },
+        "missing_views": { "type": "array", "items": { "type": "string" } },
+        "risks": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "extracted_geometry": {
+      "type": ["object", "null"],
+      "properties": {
+        "source_asset": { "type": "string" },
+        "kind": { "type": "string" },
+        "point_count": { "type": "integer" },
+        "width_mm": { "type": "number" },
+        "depth_mm": { "type": "number" },
+        "units": { "type": "string" },
+        "unit_scale_to_mm": { "type": "number" },
+        "layer": { "type": "string" },
+        "candidate_outlines": { "type": "integer" },
+        "selection_basis": { "type": "object" }
+      }
+    },
+    "blockers": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

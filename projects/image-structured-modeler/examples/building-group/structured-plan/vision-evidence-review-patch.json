@@ -1,0 +1,239 @@
+{
+  "kind": "vision_evidence_review_patch",
+  "version": 1,
+  "source_vision_evidence_set": "projects/image-structured-modeler/examples/building-group/observations.json#vision_evidence_set_v1",
+  "status": "needs_review",
+  "apply_allowed": false,
+  "compile_allowed": false,
+  "blockers": [
+    "human_vision_evidence_review_required"
+  ],
+  "review_items": [
+    {
+      "id": "ground_plane:1:oblique",
+      "evidence_type": "view_ground_plane",
+      "action": "confirm_ground_plane_usage_policy",
+      "target_path": "vision_evidence_set_v1.view_ground_plane.images[0].usage_policy",
+      "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png",
+      "current_value": {
+        "detected_view": "oblique",
+        "usage_policy": "review_only_oblique_context",
+        "planar_groundplan_allowed": false,
+        "ground_plane_confidence": 0.357,
+        "confidence_band": "low",
+        "evidence_summary": {
+          "source_view_confidence": 0.86,
+          "site_edges": 0,
+          "road_edges": 0,
+          "accepted_boundary_edges": 0,
+          "boundary_support": 0,
+          "dominant_direction_count": 0,
+          "scale_anchor_count": 0,
+          "building_footprint_masks": 0,
+          "road_surface_regions": 2,
+          "camera_hint_projection_model": "weak_oblique_affine_review_only",
+          "camera_hint_review_required": true
+        }
+      },
+      "suggested_value": {
+        "usage_policy": "review_only_oblique_context",
+        "planar_groundplan_allowed": false,
+        "reviewer_confirmation_required": true
+      },
+      "required_decision": "confirm_review_only_context_or_provide_better_view",
+      "risk_flags": [
+        "oblique_view_not_planar_groundplan",
+        "camera_hint_review_required"
+      ],
+      "reason": "Non-top imagery is useful context but must not be used as promoted planar GroundPlan evidence.",
+      "downstream_effect": {
+        "allowed_outputs": [
+          "visual_context_only"
+        ],
+        "blocked_outputs": [
+          "direct_sketchup_dsl",
+          "photo_grade_candidate_without_review"
+        ],
+        "next_action": "keep_oblique_image_review_only_or_upload_top_view"
+      }
+    },
+    {
+      "id": "ground_plane:2:top",
+      "evidence_type": "view_ground_plane",
+      "action": "confirm_ground_plane_usage_policy",
+      "target_path": "vision_evidence_set_v1.view_ground_plane.images[1].usage_policy",
+      "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+      "current_value": {
+        "detected_view": "top",
+        "usage_policy": "planar_groundplan_candidate",
+        "planar_groundplan_allowed": true,
+        "ground_plane_confidence": 0.94,
+        "confidence_band": "high",
+        "evidence_summary": {
+          "source_view_confidence": 0.9,
+          "site_edges": 27,
+          "road_edges": 233,
+          "accepted_boundary_edges": 260,
+          "boundary_support": 1,
+          "dominant_direction_count": 2,
+          "scale_anchor_count": 5,
+          "building_footprint_masks": 3,
+          "road_surface_regions": 147,
+          "camera_hint_projection_model": "top_view_affine_bbox_to_site_xy",
+          "camera_hint_review_required": true
+        }
+      },
+      "suggested_value": {
+        "usage_policy": "planar_groundplan_candidate",
+        "planar_groundplan_allowed": true,
+        "reviewer_confirmation_required": true
+      },
+      "required_decision": "confirm_top_view_planar_groundplan_candidate_or_downgrade",
+      "risk_flags": [
+        "camera_hint_review_required"
+      ],
+      "reason": "Top/near-orthographic view can seed planar GroundPlan, but camera and scale evidence still need review before promotion.",
+      "downstream_effect": {
+        "allowed_outputs": [
+          "reviewed_ground_plan_candidate"
+        ],
+        "blocked_outputs": [
+          "direct_sketchup_dsl",
+          "photo_grade_candidate_without_review"
+        ],
+        "next_action": "review_top_view_ground_plane_and_scale_anchor_support"
+      }
+    },
+    {
+      "id": "ground_plane:3:oblique",
+      "evidence_type": "view_ground_plane",
+      "action": "confirm_ground_plane_usage_policy",
+      "target_path": "vision_evidence_set_v1.view_ground_plane.images[2].usage_policy",
+      "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png",
+      "current_value": {
+        "detected_view": "oblique",
+        "usage_policy": "review_only_oblique_context",
+        "planar_groundplan_allowed": false,
+        "ground_plane_confidence": 0.357,
+        "confidence_band": "low",
+        "evidence_summary": {
+          "source_view_confidence": 0.86,
+          "site_edges": 0,
+          "road_edges": 0,
+          "accepted_boundary_edges": 0,
+          "boundary_support": 0,
+          "dominant_direction_count": 0,
+          "scale_anchor_count": 0,
+          "building_footprint_masks": 0,
+          "road_surface_regions": 2,
+          "camera_hint_projection_model": "weak_oblique_affine_review_only",
+          "camera_hint_review_required": true
+        }
+      },
+      "suggested_value": {
+        "usage_policy": "review_only_oblique_context",
+        "planar_groundplan_allowed": false,
+        "reviewer_confirmation_required": true
+      },
+      "required_decision": "confirm_review_only_context_or_provide_better_view",
+      "risk_flags": [
+        "oblique_view_not_planar_groundplan",
+        "camera_hint_review_required"
+      ],
+      "reason": "Non-top imagery is useful context but must not be used as promoted planar GroundPlan evidence.",
+      "downstream_effect": {
+        "allowed_outputs": [
+          "visual_context_only"
+        ],
+        "blocked_outputs": [
+          "direct_sketchup_dsl",
+          "photo_grade_candidate_without_review"
+        ],
+        "next_action": "keep_oblique_image_review_only_or_upload_top_view"
+      }
+    },
+    {
+      "id": "edge_class:roof_internal_seam",
+      "evidence_type": "edge_class_policy",
+      "action": "confirm_edge_class_review_policy",
+      "target_path": "vision_evidence_set_v1.edges[class=roof_internal_seam]",
+      "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+      "current_value": {
+        "class": "roof_internal_seam",
+        "total_edges": 170,
+        "accepted_edges": 0,
+        "rejected_or_review_edges": 170,
+        "review_required_edges": 170,
+        "source_images": [
+          "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png"
+        ]
+      },
+      "suggested_value": {
+        "policy": "keep_rejected_as_roof_internal_seam_not_boundary",
+        "promote_to_boundary": false
+      },
+      "required_decision": "confirm_roof_seams_are_not_site_or_road_boundaries",
+      "risk_flags": [
+        "inside_building"
+      ],
+      "reason": "Roof/internal seams create strong image edges but must not become site perimeter or road boundary geometry.",
+      "downstream_effect": {
+        "allowed_outputs": [
+          "reviewed_edge_evidence"
+        ],
+        "blocked_outputs": [
+          "promoted_boundary_from_unreviewed_edge"
+        ],
+        "next_action": "keep_roof_seam_rejected_or_mark_as_roof_detail"
+      }
+    },
+    {
+      "id": "edge_class:unknown",
+      "evidence_type": "edge_class_policy",
+      "action": "confirm_edge_class_review_policy",
+      "target_path": "vision_evidence_set_v1.edges[class=unknown]",
+      "source_image": "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png",
+      "current_value": {
+        "class": "unknown",
+        "total_edges": 103,
+        "accepted_edges": 25,
+        "rejected_or_review_edges": 78,
+        "review_required_edges": 78,
+        "source_images": [
+          "test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png"
+        ]
+      },
+      "suggested_value": {
+        "policy": "keep_unknown_review_only_until_reclassified",
+        "promote_to_boundary": false
+      },
+      "required_decision": "confirm_unknown_edges_remain_review_only_or_reclassify",
+      "risk_flags": [
+        "unknown_source_context",
+        "weak_source_context"
+      ],
+      "reason": "Unknown edge evidence needs human classification before any downstream geometry use.",
+      "downstream_effect": {
+        "allowed_outputs": [
+          "reviewed_edge_evidence"
+        ],
+        "blocked_outputs": [
+          "promoted_boundary_from_unreviewed_edge"
+        ],
+        "next_action": "classify_unknown_edges_before_boundary_promotion"
+      }
+    }
+  ],
+  "summary": {
+    "total_items": 5,
+    "ground_plane_items": 3,
+    "edge_class_items": 2,
+    "semantic_candidate_items": 0,
+    "blocking_items": 5,
+    "review_required": true
+  },
+  "notes": [
+    "This patch is an authoring/review contract, not an applyable geometry patch.",
+    "Confirming review items may update evidence policy in a later patch, but must not directly promote geometry or emit SketchUp DSL."
+  ]
+}

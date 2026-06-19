@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/release-gate-artifact-integrity-report.schema.json",
+  "title": "ReleaseGateArtifactIntegrityReport",
+  "type": "object",
+  "required": [
+    "version",
+    "kind",
+    "checked_artifacts",
+    "required_artifacts",
+    "expected_missing_artifacts",
+    "missing_required_artifacts",
+    "unexpected_present_artifacts",
+    "contract_checks",
+    "failed_contract_checks",
+    "artifacts"
+  ],
+  "properties": {
+    "version": { "const": 1 },
+    "kind": { "const": "release_gate_artifact_integrity_report" },
+    "checked_artifacts": { "type": "integer", "minimum": 0 },
+    "required_artifacts": { "type": "integer", "minimum": 0 },
+    "expected_missing_artifacts": { "type": "integer", "minimum": 0 },
+    "missing_required_artifacts": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/artifact_entry" }
+    },
+    "unexpected_present_artifacts": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/artifact_entry" }
+    },
+    "contract_checks": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/contract_check" }
+    },
+    "failed_contract_checks": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/contract_check" }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/artifact_entry" }
+    }
+  },
+  "$defs": {
+    "artifact_entry": {
+      "type": "object",
+      "required": [
+        "case_id",
+        "key",
+        "path",
+        "required",
+        "expected_missing",
+        "exists"
+      ],
+      "properties": {
+        "case_id": { "type": "string", "minLength": 1 },
+        "key": { "type": "string", "minLength": 1 },
+        "path": { "type": "string", "minLength": 1 },
+        "required": { "type": "boolean" },
+        "expected_missing": { "type": "boolean" },
+        "exists": { "type": "boolean" }
+      }
+    },
+    "contract_check": {
+      "type": "object",
+      "required": [
+        "id",
+        "kind",
+        "status"
+      ],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "kind": {
+          "enum": [
+            "path_exists",
+            "file_contains",
+            "package_script_contains",
+            "json_schema_defs",
+            "json_schema_refs_resolvable"
+          ]
+        },
+        "status": {
+          "enum": [
+            "pass",
+            "fail"
+          ]
+        },
+        "path": { "type": "string", "minLength": 1 },
+        "script": { "type": "string", "minLength": 1 },
+        "token": { "type": "string", "minLength": 1 },
+        "defs": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "missing_defs": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "unresolved_refs": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "checked_schemas": { "type": "integer", "minimum": 0 },
+        "error": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

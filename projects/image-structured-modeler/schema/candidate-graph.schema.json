@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/candidate-graph.schema.json",
+  "title": "CandidateGraph",
+  "type": "object",
+  "required": ["version", "kind", "asset_set_id", "profile_id", "candidates", "summary"],
+  "properties": {
+    "version": { "const": 1 },
+    "kind": { "const": "candidate_graph" },
+    "asset_set_id": { "type": "string" },
+    "profile_id": { "type": "string" },
+    "candidates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "role", "source_image", "view", "confidence", "promotion"],
+        "properties": {
+          "id": { "type": "string" },
+          "role": { "type": "string" },
+          "source_image": { "type": "string" },
+          "source_observation_id": { "type": "string" },
+          "view": { "type": "string" },
+          "bbox": { "type": "array", "items": { "type": "number" } },
+          "polygon_px": { "type": "array", "items": { "$ref": "#/$defs/point" } },
+          "projection_model": { "type": "string" },
+          "perspective_strength": { "enum": ["low", "medium", "high", "unknown"] },
+          "image_space_geometry": { "type": "string" },
+          "polygon_derivation": { "type": "string" },
+          "orthographic_projection_allowed": { "type": "boolean" },
+          "semantic_evidence_id": { "type": "string" },
+          "semantic_source": { "enum": ["user_annotation", "vlm_candidate", "local_cv_proposal", "profile_prior"] },
+          "semantic_source_priority": { "type": "integer" },
+          "blocked_interpretations": { "type": "array", "items": { "type": "string" } },
+          "allowed_semantics": { "type": "array", "items": { "type": "string" } },
+          "geometry_promotion_allowed": { "type": "boolean" },
+          "confidence": { "type": "number" },
+          "promotion": {
+            "type": "object",
+            "required": ["status", "blockers"],
+            "properties": {
+              "status": { "enum": ["blocked", "review_required", "eligible"] },
+              "blockers": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": ["candidate_count", "eligible_count", "blocked_count"],
+      "properties": {
+        "candidate_count": { "type": "integer" },
+        "eligible_count": { "type": "integer" },
+        "blocked_count": { "type": "integer" }
+      }
+    }
+  },
+  "$defs": {
+    "point": {
+      "type": "array",
+      "prefixItems": [
+        { "type": "number" },
+        { "type": "number" }
+      ],
+      "minItems": 2,
+      "maxItems": 2
+    }
+  }
+}

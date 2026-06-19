@@ -1,0 +1,312 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/structured-asset-intake-summary.schema.json",
+  "title": "StructuredAssetIntakeSummary",
+  "type": "object",
+  "required": [
+    "version",
+    "kind",
+    "generated_at",
+    "ok",
+    "profile",
+    "status",
+    "compile_allowed",
+    "asset_set_id",
+    "assets",
+    "candidates",
+    "missing_inputs",
+    "gates",
+    "artifacts"
+  ],
+  "properties": {
+    "version": { "const": 1 },
+    "kind": { "const": "structured_asset_intake_summary" },
+    "generated_at": { "type": "string", "minLength": 1 },
+    "ok": { "type": "boolean" },
+    "profile": { "type": "string", "minLength": 1 },
+    "status": { "type": "string", "minLength": 1 },
+    "compile_allowed": { "type": "boolean" },
+    "asset_set_id": { "type": "string", "minLength": 1 },
+    "assets": { "type": "integer", "minimum": 0 },
+    "candidates": { "type": "integer", "minimum": 0 },
+    "missing_inputs": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "gates": {
+      "type": "object",
+      "required": [
+        "asset_gate_can_compile_geometry",
+        "mcp_can_generate_sketchup_dsl",
+        "source_package"
+      ],
+      "properties": {
+        "asset_gate_can_compile_geometry": { "type": "boolean" },
+        "mcp_can_generate_sketchup_dsl": { "type": "boolean" },
+        "source_package": {
+          "type": ["object", "null"],
+          "required": [
+            "ok",
+            "status",
+            "input_ready_for_release_work",
+            "release_ready",
+            "required_gates",
+            "failed_requirements",
+            "blockers"
+          ],
+          "properties": {
+            "ok": { "type": "boolean" },
+            "status": { "type": "string", "minLength": 1 },
+            "input_ready_for_release_work": { "type": "boolean" },
+            "release_ready": { "type": "boolean" },
+            "required_gates": {
+              "type": "object",
+              "required": ["input_ready_for_release_work", "release_ready"],
+              "properties": {
+                "input_ready_for_release_work": { "type": "boolean" },
+                "release_ready": { "type": "boolean" }
+              }
+            },
+            "failed_requirements": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "blockers": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "artifacts": {
+      "type": "object",
+      "required": [
+        "intake_summary",
+        "asset_set",
+        "observation_set",
+        "candidate_graph",
+        "modeling_brief",
+        "candidate_promotion_review",
+        "candidate_promotion_patch"
+      ],
+      "properties": {
+        "intake_summary": { "type": ["string", "null"] },
+        "asset_set": { "type": ["string", "null"] },
+        "observation_set": { "type": ["string", "null"] },
+        "candidate_graph": { "type": ["string", "null"] },
+        "modeling_brief": { "type": ["string", "null"] },
+        "candidate_promotion_review": { "type": ["string", "null"] },
+        "candidate_promotion_patch": { "type": ["string", "null"] },
+        "mcp_modeling_brief": { "type": ["string", "null"] },
+        "mcp_modeling_brief_markdown": { "type": ["string", "null"] },
+        "review_workbench": { "type": ["string", "null"] },
+        "structure_evidence_graph": { "type": ["string", "null"] },
+        "structure_evidence_graph_markdown": { "type": ["string", "null"] },
+        "draft_view_graph": { "type": ["string", "null"] },
+        "draft_view_graph_markdown": { "type": ["string", "null"] },
+        "draft_view_graph_svg": { "type": ["string", "null"] },
+        "draft_view_review_overlay": { "type": ["string", "null"] },
+        "object_surface_graph": { "type": ["string", "null"] },
+        "object_surface_graph_markdown": { "type": ["string", "null"] },
+        "vision_evidence_report": { "type": ["string", "null"] },
+        "vision_evidence_review_patch": { "type": ["string", "null"] },
+        "vision_evidence_review_patch_markdown": { "type": ["string", "null"] },
+        "vision_evidence_review_workbench": { "type": ["string", "null"] },
+        "building_single_semantic_evidence": { "type": ["string", "null"] },
+        "building_single_semantic_evidence_markdown": { "type": ["string", "null"] },
+        "building_single_vlm_candidates_cache": { "type": ["string", "null"] },
+        "facade_plane_graph": { "type": ["string", "null"] },
+        "facade_plane_graph_markdown": { "type": ["string", "null"] },
+        "facade_plane_review_overlay": { "type": ["string", "null"] },
+        "review_helper_output": { "type": ["string", "null"] },
+        "source_package": { "type": ["string", "null"] },
+        "source_package_markdown": { "type": ["string", "null"] },
+        "source_request": { "type": ["string", "null"] },
+        "source_request_markdown": { "type": ["string", "null"] },
+        "upload_manifest_template": { "type": ["string", "null"] },
+        "source_package_gate_result": { "type": ["string", "null"] },
+        "document_parse_report": { "type": ["string", "null"] },
+        "real_world_building_release_manifest_draft": { "type": ["string", "null"] },
+        "real_world_building_release_contract_summary": { "type": ["string", "null"] },
+        "real_world_building_release_checklist": { "type": ["string", "null"] },
+        "real_world_building_release_checklist_markdown": { "type": ["string", "null"] },
+        "real_world_building_release_work_order": { "type": ["string", "null"] },
+        "real_world_building_release_work_order_markdown": { "type": ["string", "null"] }
+      }
+    },
+    "real_world_building_source_package": {
+      "type": ["object", "null"],
+      "required": ["status", "input_ready_for_release_work", "release_ready"],
+      "properties": {
+        "status": { "type": "string", "minLength": 1 },
+        "input_ready_for_release_work": { "type": "boolean" },
+        "release_ready": { "type": "boolean" }
+      }
+    },
+    "structure_evidence_graph": {
+      "type": ["object", "null"],
+      "required": ["kind", "status", "edge_evidence_count", "corner_evidence_count", "plane_hypothesis_count", "silhouette_profile_count", "review_required", "promotion_allowed", "blockers"],
+      "properties": {
+        "kind": { "const": "structure_evidence_graph_v1" },
+        "status": { "type": "string" },
+        "edge_evidence_count": { "type": "integer", "minimum": 0 },
+        "corner_evidence_count": { "type": "integer", "minimum": 0 },
+        "plane_hypothesis_count": { "type": "integer", "minimum": 0 },
+        "silhouette_profile_count": { "type": "integer", "minimum": 0 },
+        "review_required": { "type": "boolean" },
+        "promotion_allowed": { "type": "boolean" },
+        "blockers": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "draft_view_graph": {
+      "type": ["object", "null"],
+      "required": ["kind", "status", "observed_slots", "inferred_slots", "partial_slots", "unknown_slots", "review_required", "promotion_allowed", "blockers", "slots"],
+      "properties": {
+        "kind": { "const": "draft_view_graph_v1" },
+        "status": { "type": "string" },
+        "observed_slots": { "type": "integer", "minimum": 0 },
+        "inferred_slots": { "type": "integer", "minimum": 0 },
+        "partial_slots": { "type": "integer", "minimum": 0 },
+        "unknown_slots": { "type": "integer", "minimum": 0 },
+        "review_required": { "type": "boolean" },
+        "promotion_allowed": { "type": "boolean" },
+        "blockers": { "type": "array", "items": { "type": "string" } },
+        "slots": { "type": "array", "items": { "type": "object" } }
+      }
+    },
+    "object_surface_graph": {
+      "type": ["object", "null"],
+      "required": ["kind", "domain", "status", "surface_count", "feature_candidate_count", "review_required", "promotion_allowed", "blockers"],
+      "properties": {
+        "kind": { "const": "object_surface_graph_v1" },
+        "domain": { "type": "string" },
+        "status": { "type": "string" },
+        "surface_count": { "type": "integer", "minimum": 0 },
+        "feature_candidate_count": { "type": "integer", "minimum": 0 },
+        "review_required": { "type": "boolean" },
+        "promotion_allowed": { "type": "boolean" },
+        "blockers": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "facade_plane_graph": {
+      "type": ["object", "null"],
+      "required": [
+        "kind",
+        "status",
+        "plane_count",
+        "detail_candidate_count",
+        "visible_plane_ids",
+        "accepted_plane_review_required",
+        "promotion_allowed",
+        "review_required",
+        "blockers"
+      ],
+      "properties": {
+        "kind": { "const": "facade_plane_graph_v1" },
+        "status": { "type": "string", "minLength": 1 },
+        "plane_count": { "type": "integer", "minimum": 0 },
+        "detail_candidate_count": { "type": "integer", "minimum": 0 },
+        "visible_plane_ids": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "accepted_plane_review_required": { "type": "boolean" },
+        "promotion_allowed": { "type": "boolean" },
+        "review_required": { "type": "boolean" },
+        "blockers": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "vision_evidence": {
+      "type": ["object", "null"],
+      "required": [
+        "ok",
+        "verdict",
+        "masks",
+        "edges",
+        "regions",
+        "relations",
+        "default_heavy_model_required",
+        "review_patch_status",
+        "review_items",
+        "ground_plane_review_items",
+        "edge_class_review_items",
+        "semantic_candidate_review_items"
+      ],
+      "properties": {
+        "ok": { "type": "boolean" },
+        "verdict": { "type": "string", "minLength": 1 },
+        "masks": { "type": "integer", "minimum": 0 },
+        "edges": { "type": "integer", "minimum": 0 },
+        "regions": { "type": "integer", "minimum": 0 },
+        "relations": { "type": "integer", "minimum": 0 },
+        "default_heavy_model_required": { "type": "boolean" },
+        "review_patch_status": { "type": ["string", "null"] },
+        "review_items": { "type": "integer", "minimum": 0 },
+        "ground_plane_review_items": { "type": "integer", "minimum": 0 },
+        "edge_class_review_items": { "type": "integer", "minimum": 0 },
+        "semantic_candidate_review_items": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "real_world_building_release_draft": {
+      "type": ["object", "null"],
+      "required": [
+        "validation_status",
+        "validation_ok",
+        "release_ready",
+        "can_promote_to_release_manifest",
+        "blockers",
+        "work_order_status",
+        "work_order_blocked_required_tasks",
+        "work_order_next_actions",
+        "checklist_required_check_ids",
+        "checklist_failed_required_check_ids",
+        "checklist_review_required_check_ids",
+        "checklist_checks",
+        "next_actions"
+      ],
+      "properties": {
+        "validation_status": { "type": ["string", "null"] },
+        "validation_ok": { "type": "boolean" },
+        "release_ready": { "type": "boolean" },
+        "can_promote_to_release_manifest": { "type": "boolean" },
+        "blockers": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "work_order_status": { "type": ["string", "null"] },
+        "work_order_blocked_required_tasks": { "type": ["integer", "null"], "minimum": 0 },
+        "work_order_next_actions": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "checklist_required_check_ids": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "checklist_failed_required_check_ids": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "checklist_review_required_check_ids": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "checklist_checks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "status", "required"],
+            "properties": {
+              "id": { "type": "string", "minLength": 1 },
+              "status": { "type": "string", "minLength": 1 },
+              "required": { "type": "boolean" }
+            }
+          }
+        },
+        "next_actions": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "document_parse_status": { "type": ["string", "null"] }
+  }
+}

@@ -1,0 +1,114 @@
+{
+  "kind": "vision_evidence_review_decision",
+  "version": 1,
+  "source_review_patch": "projects/image-structured-modeler/examples/building-group/structured-plan/vision-evidence-review-patch.json",
+  "reviewer": "agent_first_review_fixture",
+  "accepted_at": "2026-06-17",
+  "status": "accepted_policy_review",
+  "compile_allowed": false,
+  "geometry_promotion_allowed": false,
+  "accepted_items": [
+    {
+      "review_item_id": "ground_plane:1:oblique",
+      "evidence_type": "view_ground_plane",
+      "decision": "confirmed_review_only_context",
+      "accepted_value": {
+        "usage_policy": "review_only_oblique_context",
+        "planar_groundplan_allowed": false,
+        "reviewer_confirmation_required": false,
+        "review_status": "manual_confirmed"
+      },
+      "risk_disposition": "kept_as_context_not_planar_groundplan",
+      "resolved_blockers": [
+        "oblique_ground_plane_policy_review_required"
+      ],
+      "reviewer_note": "Oblique image remains visual context and must not seed planar GroundPlan geometry.",
+      "geometry_promotion_allowed": false,
+      "compile_allowed": false
+    },
+    {
+      "review_item_id": "ground_plane:2:top",
+      "evidence_type": "view_ground_plane",
+      "decision": "confirmed_planar_groundplan_candidate",
+      "accepted_value": {
+        "usage_policy": "planar_groundplan_candidate",
+        "planar_groundplan_allowed": true,
+        "reviewer_confirmation_required": false,
+        "review_status": "manual_confirmed"
+      },
+      "risk_disposition": "accepted_as_reviewed_planar_candidate",
+      "resolved_blockers": [
+        "top_view_ground_plane_policy_review_required"
+      ],
+      "reviewer_note": "Top view may remain a reviewed planar GroundPlan candidate; downstream GroundPlan/QA gates still decide promotion.",
+      "geometry_promotion_allowed": false,
+      "compile_allowed": false
+    },
+    {
+      "review_item_id": "ground_plane:3:oblique",
+      "evidence_type": "view_ground_plane",
+      "decision": "confirmed_review_only_context",
+      "accepted_value": {
+        "usage_policy": "review_only_oblique_context",
+        "planar_groundplan_allowed": false,
+        "reviewer_confirmation_required": false,
+        "review_status": "manual_confirmed"
+      },
+      "risk_disposition": "kept_as_context_not_planar_groundplan",
+      "resolved_blockers": [
+        "oblique_ground_plane_policy_review_required"
+      ],
+      "reviewer_note": "Oblique image remains visual context and must not seed planar GroundPlan geometry.",
+      "geometry_promotion_allowed": false,
+      "compile_allowed": false
+    },
+    {
+      "review_item_id": "edge_class:roof_internal_seam",
+      "evidence_type": "edge_class_policy",
+      "decision": "confirmed_keep_roof_seam_rejected",
+      "accepted_value": {
+        "policy": "keep_rejected_as_roof_internal_seam_not_boundary",
+        "promote_to_boundary": false,
+        "review_status": "manual_confirmed"
+      },
+      "risk_disposition": "kept_rejected_not_boundary",
+      "resolved_blockers": [
+        "roof_seam_boundary_policy_review_required"
+      ],
+      "reviewer_note": "Roof/internal seam edges stay rejected for site and road boundary promotion.",
+      "geometry_promotion_allowed": false,
+      "compile_allowed": false
+    },
+    {
+      "review_item_id": "edge_class:unknown",
+      "evidence_type": "edge_class_policy",
+      "decision": "confirmed_keep_unknown_review_only",
+      "accepted_value": {
+        "policy": "keep_unknown_review_only_until_reclassified",
+        "promote_to_boundary": false,
+        "review_status": "manual_confirmed"
+      },
+      "risk_disposition": "kept_review_only_until_reclassified",
+      "resolved_blockers": [
+        "unknown_edge_policy_review_required"
+      ],
+      "reviewer_note": "Unknown edges remain review-only until explicitly reclassified.",
+      "geometry_promotion_allowed": false,
+      "compile_allowed": false
+    }
+  ],
+  "held_items": [],
+  "blockers": [],
+  "summary": {
+    "accepted_items": 5,
+    "held_items": 0,
+    "blockers": 0,
+    "ground_plane_items": 3,
+    "edge_class_items": 2,
+    "semantic_candidate_items": 0
+  },
+  "notes": [
+    "This decision confirms evidence policy only.",
+    "It must not directly promote geometry, generate PartGraph parts, or emit SketchUp DSL."
+  ]
+}

@@ -67,6 +67,9 @@ export function buildAutoGroundPlanR10({ observations = {}, groundingV3 = null }
   const boundaryGraphV1 = observations.boundary_graph_v1?.kind === 'boundary_graph_v1'
     ? observations.boundary_graph_v1
     : null;
+  const visionEvidenceSetV1 = observations.vision_evidence_set_v1?.kind === 'vision_evidence_set_v1'
+    ? observations.vision_evidence_set_v1
+    : null;
   const siteSurface = siteSurfaceFromBoundaryGraph(boundaryGraphV1, topImage)
     || siteSurfaceFromObservation(topImage, siteObservation, siteBbox);
   const evidenceCandidates = buildEvidenceCandidates(topImage, siteSurface);
@@ -148,6 +151,19 @@ export function buildAutoGroundPlanR10({ observations = {}, groundingV3 = null }
     } : {
       available: false,
       reason: 'ObservationSet.boundary_graph_v1 missing; AutoGroundPlan used R11 land-cover fallback.'
+    },
+    vision_evidence_set_v1: visionEvidenceSetV1 ? {
+      available: true,
+      masks: visionEvidenceSetV1.masks?.length || 0,
+      edges: visionEvidenceSetV1.edges?.length || 0,
+      accepted_edges: visionEvidenceSetV1.qa?.accepted_edges || 0,
+      rejected_edges: visionEvidenceSetV1.qa?.rejected_edges || 0,
+      top_view_ground_plane_confidence: visionEvidenceSetV1.view_ground_plane?.summary?.top_view_ground_plane_confidence ?? 0,
+      planar_groundplan_allowed: visionEvidenceSetV1.view_ground_plane?.summary?.planar_groundplan_allowed === true,
+      default_heavy_model_required: visionEvidenceSetV1.qa?.default_heavy_model_required === true
+    } : {
+      available: false,
+      reason: 'ObservationSet.vision_evidence_set_v1 missing; AutoGroundPlan used legacy R10/R11 evidence fields.'
     },
     qa,
     compatibility: {
@@ -1574,7 +1590,15 @@ function summarizeAutoGroundPlan(autoGroundPlan) {
     max_boundary_snap_delta: qa.max_boundary_snap_delta,
     conflicting_hypothesis_count: qa.conflicting_hypothesis_count,
     inferred_geometry_area_ratio: qa.inferred_geometry_area_ratio,
-    extrapolated_geometry_area_ratio: qa.extrapolated_geometry_area_ratio
+    extrapolated_geometry_area_ratio: qa.extrapolated_geometry_area_ratio,
+    vision_evidence_set_v1_available: autoGroundPlan.vision_evidence_set_v1?.available === true,
+    vision_evidence_masks: autoGroundPlan.vision_evidence_set_v1?.masks || 0,
+    vision_evidence_edges: autoGroundPlan.vision_evidence_set_v1?.edges || 0,
+    vision_evidence_accepted_edges: autoGroundPlan.vision_evidence_set_v1?.accepted_edges || 0,
+    vision_evidence_rejected_edges: autoGroundPlan.vision_evidence_set_v1?.rejected_edges || 0,
+    vision_evidence_top_view_ground_plane_confidence: autoGroundPlan.vision_evidence_set_v1?.top_view_ground_plane_confidence ?? 0,
+    vision_evidence_planar_groundplan_allowed: autoGroundPlan.vision_evidence_set_v1?.planar_groundplan_allowed === true,
+    vision_evidence_default_heavy_model_required: autoGroundPlan.vision_evidence_set_v1?.default_heavy_model_required === true
   };
 }
 

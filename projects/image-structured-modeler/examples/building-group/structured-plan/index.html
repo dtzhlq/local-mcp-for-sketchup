@@ -137,6 +137,7 @@
   <header>
     <h1>Auto GroundPlan R10</h1>
     <div class="muted"><code>projects/image-structured-modeler/examples/building-group/observations.json</code></div>
+    <div class="muted">R12 path: original image -> VisionEvidenceSet v1 -> BoundaryGraph/GroundPlan -> PartGraph/DSL/QA. Heavy vision backends are optional and not required.</div>
   </header>
   <main>
     <section class="grid" aria-label="QA metrics">
@@ -159,6 +160,15 @@
       <div class="metric"><span>Observed edge coverage</span><strong>1</strong></div>
       <div class="metric"><span>Boundary road corridors</span><strong>7</strong></div>
       <div class="metric"><span>Inferred geometry area</span><strong>0.067</strong></div>
+      <div class="metric"><span>Vision evidence verdict</span><strong>pass</strong></div>
+      <div class="metric"><span>Vision evidence masks</span><strong>91</strong></div>
+      <div class="metric"><span>Vision evidence edges</span><strong>810</strong></div>
+      <div class="metric"><span>Accepted evidence edges</span><strong>528</strong></div>
+      <div class="metric"><span>Planar ground-plane allowed</span><strong>true</strong></div>
+      <div class="metric"><span>Ground-plane review images</span><strong>2</strong></div>
+      <div class="metric"><span>Top-view usage policy</span><strong>planar_groundplan_candidate</strong></div>
+      <div class="metric"><span>Vision review items</span><strong>5</strong></div>
+      <div class="metric"><span>Heavy model required</span><strong>false</strong></div>
     </section>
     <section class="panel">
       <div class="tabs" role="tablist" aria-label="Plan views">
@@ -1176,7 +1186,10 @@
         </tbody>
       </table>
     </section>
-    <div class="muted"><code>projects/image-structured-modeler/examples/building-group/structured-plan/structured-plan-qa-report.json</code></div>
+    <div class="muted">
+      <code>projects/image-structured-modeler/examples/building-group/structured-plan/vision-evidence-v1-report.json</code>
+      <code>projects/image-structured-modeler/examples/building-group/structured-plan/structured-plan-qa-report.json</code>
+    </div>
   </main>
   <script>
     const buttons = Array.from(document.querySelectorAll('[role="tab"]'));

@@ -1,0 +1,64 @@
+{
+  "version": 1,
+  "kind": "real_world_building_upload_manifest",
+  "object_type": "building_single",
+  "view_source_requirements": {
+    "distinct_source_images_required": true,
+    "required_views": [
+      "front",
+      "left",
+      "oblique",
+      "top"
+    ],
+    "source_image_field": "views[].source_image",
+    "blocker": "view_sources_not_distinct",
+    "rules": [
+      "Each required view must reference a different uploaded source_image path.",
+      "Do not satisfy front, side, oblique, and top requirements by relabeling the same image file."
+    ]
+  },
+  "dimensions": {
+    "units": "mm",
+    "width": 9000,
+    "depth": 12000,
+    "height": 10500,
+    "confidence": 0.84,
+    "basis": [
+      "Example only: replace with user-provided measured building dimensions."
+    ]
+  },
+  "views": [
+    {
+      "source_image": "front-photo.jpg",
+      "kind": "front",
+      "confidence": 0.9
+    },
+    {
+      "source_image": "left-photo.jpg",
+      "kind": "left",
+      "confidence": 0.9
+    },
+    {
+      "source_image": "oblique-photo.jpg",
+      "kind": "oblique",
+      "confidence": 0.86
+    },
+    {
+      "source_image": "top-or-plan.jpg",
+      "kind": "top",
+      "confidence": 0.86
+    }
+  ],
+  "scale_anchors": [
+    {
+      "anchor_type": "door_width",
+      "source_image": "front-photo.jpg",
+      "physical_width_mm": 900,
+      "confidence": 0.72,
+      "basis": [
+        "Example only: replace with a measured or confirmed element."
+      ]
+    }
+  ],
+  "notes": "Upload manifest metadata is intake evidence. It does not by itself grant release readiness or SketchUp compile permission."
+}

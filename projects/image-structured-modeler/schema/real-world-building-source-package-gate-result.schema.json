@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/real-world-building-source-package-gate-result.schema.json",
+  "title": "RealWorldBuildingSourcePackageGateResult",
+  "type": "object",
+  "required": [
+    "version",
+    "kind",
+    "generated_at",
+    "ok",
+    "required_gates",
+    "failed_requirements",
+    "status",
+    "input_ready_for_release_work",
+    "release_ready",
+    "blockers",
+    "source_package",
+    "source_package_markdown"
+  ],
+  "properties": {
+    "version": { "const": 1 },
+    "kind": { "const": "real_world_building_source_package_gate_result" },
+    "generated_at": { "type": "string", "minLength": 1 },
+    "ok": { "type": "boolean" },
+    "required_gates": {
+      "type": "object",
+      "required": ["input_ready_for_release_work", "release_ready"],
+      "properties": {
+        "input_ready_for_release_work": { "type": "boolean" },
+        "release_ready": { "type": "boolean" }
+      }
+    },
+    "failed_requirements": {
+      "type": "array",
+      "items": {
+        "enum": ["input_ready_for_release_work", "release_ready"]
+      }
+    },
+    "status": {
+      "enum": [
+        "input_ready_for_release_work",
+        "needs_views_or_scale",
+        "needs_semantic_review",
+        "blocked_source_assets",
+        "blocked_profile",
+        "not_assessed"
+      ]
+    },
+    "input_ready_for_release_work": { "type": "boolean" },
+    "release_ready": { "type": "boolean" },
+    "blockers": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "source_package": {
+      "type": ["string", "null"],
+      "minLength": 1
+    },
+    "source_package_markdown": {
+      "type": ["string", "null"],
+      "minLength": 1
+    }
+  }
+}

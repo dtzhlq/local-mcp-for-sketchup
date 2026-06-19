@@ -4,12 +4,18 @@ import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
 import { annotateObservationSetWithGroundingV3 } from './grounding-v3.mjs';
 import { makeImageRelationCandidates, makeVisualRelationGraph } from './visual-relations.mjs';
+import {
+  knownScaleFromSourceMetadata,
+  readViewHints as readSourceMetadataViewHints
+} from './real-world-building-source-metadata.mjs';
 
 export const repoRoot = path.resolve(fileURLToPath(new URL('../../../..', import.meta.url)));
 export const subprojectRoot = path.join(repoRoot, 'projects', 'image-structured-modeler');
 export const IMAGE_EXTENSIONS = new Set(['.jpg', '.jpeg', '.png', '.webp', '.tif', '.tiff']);
+const CONTENT_FRAME_METHOD = 'auto_screenshot_chrome_v1';
 
 const OBSERVATION_PART_REQUIREMENTS = {
+  unknown_object: {},
   switch_controller: {
     center_grip_body: { views: ['front', 'rear'], hints: ['center_grip_body'] },
     left_joycon_shell: { views: ['front'], hints: ['left_joycon_shell'] },
@@ -60,14 +66,27 @@ const OBSERVATION_PART_REQUIREMENTS = {
     parking_drive_aisle_center: { views: ['top'], hints: ['parking_drive_aisle_center'] },
     tree_row_south: { views: ['top'], hints: ['tree_row_south'] },
     internal_roads: { views: ['top'], hints: ['internal_roads'] }
+  },
+  building_single: {
+    building_main_mass: { views: ['oblique', 'front'], hints: ['building_main_mass', 'main_object'] },
+    visible_plane_primary: { views: ['oblique', 'front'], hints: ['visible_plane_primary'] },
+    visible_plane_recessed_left: { views: ['oblique', 'left', 'right'], hints: ['visible_plane_recessed_left'] },
+    roof_parapet_and_rail: { views: ['oblique', 'top'], hints: ['roof_parapet_and_rail'] },
+    ground_floor_storefront: { views: ['oblique', 'front'], hints: ['ground_floor_storefront'] },
+    upper_window_bands: { views: ['oblique', 'front'], hints: ['upper_window_bands'] },
+    exterior_hvac_units: { views: ['oblique', 'front'], hints: ['exterior_hvac_units'] },
+    rectangular_utility_ducts: { views: ['oblique', 'left', 'right'], hints: ['rectangular_utility_ducts'] },
+    shadow_or_recess_boundary: { views: ['oblique'], hints: ['shadow_or_recess_boundary'] }
   }
 };
 
 const PROFILE_DEFAULT_SCALE = {
+  unknown_object: null,
   switch_controller: { width: 280, depth: 42, height: 155 },
   compact_remote: { width: 44, depth: 16, height: 158 },
   vehicle_ambulance: { width: 2300, depth: 900, height: 1050 },
-  building_group: { width: 140000, depth: 105000, height: 18000 }
+  building_group: { width: 140000, depth: 105000, height: 18000 },
+  building_single: { width: 9000, depth: 12000, height: 10500 }
 };
 
 export async function listImageFiles(inputPath) {
@@ -104,13 +123,22 @@ export async function analyzeImage(imagePath, options = {}) {
 
   const gray = grayscale(data, info.width, info.height);
   const threshold = options.edgeThreshold || autoEdgeThreshold(gray);
-  const edges = sobelEdges(gray, info.width, info.height, threshold);
+  const rawEdges = sobelEdges(gray, info.width, info.height, threshold);
+  const contentFrame = detectContentFrame(data, info.width, info.height, info.channels, {
+    sourceWidth: original.width,
+    sourceHeight: original.height
+  });
+  const edges = contentFrame.applied
+    ? rawEdges.filter((edge) => pointInBbox(edge.x, edge.y, contentFrame.bbox))
+    : rawEdges;
   const objectBounds = percentileBounds(edges, info.width, info.height);
   const contour = traceObjectContour(edges, objectBounds, info.width, info.height);
   const keypoints = keypointsFromBounds(objectBounds, info.width, info.height);
   const symmetry = detectVerticalSymmetry(edges, info.width, info.height, objectBounds);
   const bboxRatio = objectBounds ? objectBounds.width / Math.max(1, objectBounds.height) : 0;
-  const edgeDensity = edges.length / Math.max(1, info.width * info.height);
+  const edgeFrame = contentFrame.applied ? contentFrame.bbox : [0, 0, info.width, info.height];
+  const edgeDensity = edges.length / Math.max(1, edgeFrame[2] * edgeFrame[3]);
+  const rawEdgeDensity = rawEdges.length / Math.max(1, info.width * info.height);
 
   return {
     path: imagePath,
@@ -123,6 +151,9 @@ export async function analyzeImage(imagePath, options = {}) {
     threshold,
     gray,
     edges,
+    rawEdgeCount: rawEdges.length,
+    rawEdgeDensity,
+    contentFrame,
     contour,
     keypoints,
     objectBounds,
@@ -201,48 +232,7 @@ export function applyViewHints(assignedViews, viewHints) {
 }
 
 export async function readViewHints(hintsPath) {
-  const raw = await fs.readFile(hintsPath, 'utf8');
-  const document = JSON.parse(raw);
-  const hints = new Map();
-  for (const view of document.views || []) {
-    if (!view.source_image || !view.kind) continue;
-    const normalized = view.source_image.split(path.sep).join('/');
-    const hint = {
-      kind: view.kind,
-      confidence: view.confidence,
-      source: toRepoRelative(hintsPath)
-    };
-    hints.set(normalized, hint);
-    hints.set(path.basename(normalized), hint);
-  }
-  for (const reference of document.reference_images || []) {
-    if (!reference.source) continue;
-    const kind = referenceViewKind(reference);
-    if (!kind) continue;
-    const normalized = reference.source.split(path.sep).join('/');
-    const hint = {
-      kind,
-      confidence: reference.confidence || 0.86,
-      source: toRepoRelative(hintsPath)
-    };
-    hints.set(normalized, hint);
-    hints.set(path.basename(normalized), hint);
-  }
-  return hints;
-}
-
-function referenceViewKind(reference) {
-  const label = `${reference.id || ''} ${reference.name || ''}`.toLowerCase();
-  if (label.includes('top')) return 'top';
-  if (label.includes('front')) return 'front';
-  if (label.includes('rear') || label.includes('back')) return 'rear';
-  if (label.includes('right')) return 'right';
-  if (label.includes('left') || label.includes('side')) return 'left';
-  if (label.includes('quarter') || label.includes('oblique')) return 'oblique';
-  if (reference.plane === 'xy') return 'top';
-  if (reference.plane === 'yz') return 'front';
-  if (reference.plane === 'xz') return 'left';
-  return null;
+  return readSourceMetadataViewHints(hintsPath);
 }
 
 export function makeImageObservation(assignedView, objectProfile = 'switch_controller') {
@@ -259,15 +249,26 @@ export function makeImageObservation(assignedView, objectProfile = 'switch_contr
   if (kind === 'unknown' || kind === 'oblique') risks.push('view kind needs manual confirmation');
   const orientationHints = makeOrientationHints({ kind, analysis, objectProfile });
   if (orientationHints.review_required) risks.push('left/right mirror orientation needs manual confirmation');
+  if (analysis.contentFrame?.applied) risks.push('automatic content frame removed screenshot chrome; review crop boundary');
 
   const baseObservations = [
+    ...(analysis.contentFrame?.applied ? [{
+      id: 'auto_content_frame',
+      kind: 'helper_generated',
+      component_hint: 'content_frame',
+      bbox: analysis.contentFrame.bbox,
+      confidence: analysis.contentFrame.confidence,
+      note: `Detected effective image content before object bboxing using ${analysis.contentFrame.method}; removed screenshot chrome is excluded from geometry evidence.`
+    }] : []),
     {
       id: 'main_object_bbox',
       kind: 'component_bbox',
       component_hint: 'main_object',
       bbox,
       confidence: round(clamp(0.45 + analysis.edgeDensity * 2, 0.45, 0.78)),
-      note: 'Percentile edge bounds; includes visual clutter when background edges are strong.'
+      note: analysis.contentFrame?.applied
+        ? 'Percentile edge bounds inside the automatic content frame; screenshot chrome is excluded but background clutter can still remain.'
+        : 'Percentile edge bounds; includes visual clutter when background edges are strong.'
     },
     {
       id: 'main_object_contour',
@@ -339,7 +340,8 @@ export function makeImageObservation(assignedView, objectProfile = 'switch_contr
       width: analysis.sourceWidth,
       height: analysis.sourceHeight,
       analysis_width: analysis.width,
-      analysis_height: analysis.height
+      analysis_height: analysis.height,
+      content_frame: analysis.contentFrame
     },
     detected_view: {
       kind,
@@ -355,9 +357,12 @@ export function makeImageObservation(assignedView, objectProfile = 'switch_contr
     metrics: {
       edge_count: analysis.edges.length,
       edge_density: round(analysis.edgeDensity, 5),
+      raw_edge_count: analysis.rawEdgeCount,
+      raw_edge_density: round(analysis.rawEdgeDensity, 5),
       object_bbox: bbox,
       object_bbox_ratio: round(analysis.bboxRatio, 3),
-      symmetry_score: round(analysis.symmetry.score, 3)
+      symmetry_score: round(analysis.symmetry.score, 3),
+      content_frame_bbox: analysis.contentFrame?.bbox
     },
     observations,
     quality_report: {
@@ -496,11 +501,24 @@ function componentCandidatesForView(viewKind, bbox, viewConfidence, objectProfil
     });
   };
 
-  if (objectProfile === 'vehicle_ambulance') {
+  if (objectProfile === 'unknown_object') {
+    if (viewKind !== 'unknown') {
+      addBox('unknown_visible_object_candidate', 'unknown_visible_object', { x: 0.06, y: 0.08, width: 0.88, height: 0.84 }, 'Unknown object candidate for review only; profile routing is required before geometry promotion.', 0.24, {
+        review_required: true,
+        grounding: {
+          method: 'unknown_profile_review_only',
+          review_required: true,
+          promotion_blockers: ['unknown_profile', 'missing_product_profile']
+        }
+      });
+    }
+  } else if (objectProfile === 'vehicle_ambulance') {
     addAmbulanceCandidates(viewKind, { addBox, addPoint });
   } else if (objectProfile === 'building_group') {
     addBuildingGroupCandidates(viewKind, { addBox, addPoint });
-  } else if (viewKind === 'front') {
+  } else if (objectProfile === 'building_single') {
+    addBuildingSingleCandidates(viewKind, { addBox, addPoint });
+  } else if (objectProfile === 'switch_controller' && viewKind === 'front') {
     addBox('front_left_shell_candidate', 'left_joycon_shell', { x: 0.04, y: 0.08, width: 0.31, height: 0.84 }, 'Template candidate from known game-controller front layout.');
     addBox('front_center_grip_candidate', 'center_grip_body', { x: 0.34, y: 0.11, width: 0.32, height: 0.78 }, 'Template candidate from known game-controller front layout.');
     addBox('front_center_panel_candidate', 'center_front_panel', { x: 0.41, y: 0.25, width: 0.18, height: 0.50 }, 'Template candidate for the central front screen/flat panel inside the grip body.', 0.58);
@@ -510,11 +528,11 @@ function componentCandidatesForView(viewKind, bbox, viewConfidence, objectProfil
     addBox('front_abxy_cluster_candidate', 'abxy_cluster', { x: 0.72, y: 0.24, width: 0.19, height: 0.25 }, 'Likely ABXY cluster region inferred from front layout.', 0.66);
     addBox('front_dpad_cluster_candidate', 'dpad_cluster', { x: 0.09, y: 0.52, width: 0.18, height: 0.24 }, 'Likely D-pad cluster region inferred from front layout.', 0.58);
     addBox('front_left_button_cluster_candidate', 'left_button_cluster', { x: 0.09, y: 0.52, width: 0.18, height: 0.24 }, 'Likely left button cluster region inferred from front layout.', 0.55);
-  } else if (viewKind === 'rear') {
+  } else if (objectProfile === 'switch_controller' && viewKind === 'rear') {
     addBox('rear_left_grip_candidate', 'rear_grip_left', { x: 0.08, y: 0.08, width: 0.31, height: 0.84 }, 'Likely left rear grip silhouette from rear layout.', 0.68);
     addBox('rear_center_plate_candidate', 'center_grip_body', { x: 0.36, y: 0.12, width: 0.28, height: 0.76 }, 'Likely central rear plate from rear layout.', 0.6);
     addBox('rear_right_grip_candidate', 'rear_grip_right', { x: 0.61, y: 0.08, width: 0.31, height: 0.84 }, 'Likely right rear grip silhouette from rear layout.', 0.68);
-  } else if (viewKind === 'right' || viewKind === 'left') {
+  } else if (objectProfile === 'switch_controller' && (viewKind === 'right' || viewKind === 'left')) {
     addBox('side_depth_profile_candidate', 'side_thickness_profile', { x: 0.18, y: 0.10, width: 0.64, height: 0.80 }, 'Side-view depth/thickness profile candidate.', 0.58);
     addPoint('side_max_thickness_point', 'max_thickness', { x: 0.55, y: 0.58 }, 'Approximate maximum thickness point from side view.', 0.48);
   } else if (viewKind === 'oblique') {
@@ -522,6 +540,48 @@ function componentCandidatesForView(viewKind, bbox, viewConfidence, objectProfil
   }
 
   return candidates;
+}
+
+function addBuildingSingleCandidates(viewKind, helpers) {
+  const { addBox } = helpers;
+  const addSingleBox = (id, hint, rel, note, confidence = 0.42) => {
+    addBox(id, hint, rel, note, confidence, {
+      grounding: {
+        method: 'single_oblique_building_prior',
+        review_required: true,
+        promotion_blockers: ['single_view_depth_ambiguity', 'facade_plane_not_confirmed']
+      },
+      review_required: true
+    });
+  };
+
+  if (viewKind === 'oblique') {
+    addSingleBox('single_oblique_main_mass_candidate', 'building_main_mass', { x: 0.08, y: 0.03, width: 0.72, height: 0.84 }, 'Single-building oblique candidate for the visible main mass; includes background clutter and must not be promoted directly.', 0.5);
+    addSingleBox('single_oblique_visible_plane_primary_candidate', 'visible_plane_primary', { x: 0.48, y: 0.12, width: 0.31, height: 0.66 }, 'Primary visible plane evidence; review before naming it as buildable facade geometry.', 0.46);
+    addSingleBox('single_oblique_visible_plane_recessed_left_candidate', 'visible_plane_recessed_left', { x: 0.25, y: 0.13, width: 0.28, height: 0.68 }, 'Recessed/side visible plane evidence; review occlusion and shadow before treating it as geometry.', 0.44);
+    addSingleBox('single_oblique_roof_parapet_candidate', 'roof_parapet_and_rail', { x: 0.32, y: 0.02, width: 0.43, height: 0.12 }, 'Candidate roof parapet/guardrail band from the upper skyline.', 0.42);
+    addSingleBox('single_oblique_ground_storefront_candidate', 'ground_floor_storefront', { x: 0.50, y: 0.58, width: 0.30, height: 0.22 }, 'Candidate ground-floor storefront / roll-up shutter zone.', 0.42);
+    addSingleBox('single_oblique_upper_window_bands_candidate', 'upper_window_bands', { x: 0.47, y: 0.22, width: 0.32, height: 0.35 }, 'Candidate upper window-band region; individual windows and AC units still need segmentation.', 0.4);
+    addSingleBox('single_oblique_hvac_units_candidate', 'exterior_hvac_units', { x: 0.47, y: 0.30, width: 0.31, height: 0.25 }, 'Candidate facade HVAC unit band; individual units require object-level evidence.', 0.36);
+    addSingleBox('single_oblique_rectangular_ducts_candidate', 'rectangular_utility_ducts', { x: 0.16, y: 0.08, width: 0.22, height: 0.53 }, 'Candidate rectangular duct/utility riser zone; do not model as round pipes without review.', 0.38);
+    addSingleBox('single_oblique_shadow_recess_boundary_candidate', 'shadow_or_recess_boundary', { x: 0.24, y: 0.16, width: 0.08, height: 0.52 }, 'Ambiguous dark vertical boundary: may be a real recess/return wall or cast shadow; requires shadow-aware review.', 0.32);
+  } else if (viewKind === 'front') {
+    addSingleBox('single_front_visible_plane_primary_candidate', 'visible_plane_primary', { x: 0.08, y: 0.08, width: 0.84, height: 0.82 }, 'Primary visible plane evidence from single-building profile.', 0.48);
+    addSingleBox('single_front_visible_plane_recessed_left_candidate', 'visible_plane_recessed_left', { x: 0.08, y: 0.12, width: 0.24, height: 0.66 }, 'Review-only side/recess visible plane evidence within the front image; separate real return walls from cast shadows before modeling.', 0.36);
+    addSingleBox('single_front_upper_window_bands_candidate', 'upper_window_bands', { x: 0.18, y: 0.18, width: 0.68, height: 0.36 }, 'Review-only upper window-band region; individual window rhythm and AC units require segmentation before promotion.', 0.36);
+    addSingleBox('single_front_hvac_units_candidate', 'exterior_hvac_units', { x: 0.18, y: 0.24, width: 0.68, height: 0.30 }, 'Review-only exterior HVAC unit band candidate; do not merge into the main facade plane without object-level confirmation.', 0.32);
+    addSingleBox('single_front_rectangular_ducts_candidate', 'rectangular_utility_ducts', { x: 0.08, y: 0.14, width: 0.20, height: 0.58 }, 'Review-only rectangular duct / utility riser zone; treat as square-section utility geometry, not round pipes, only after confirmation.', 0.32);
+    addSingleBox('single_front_shadow_recess_boundary_candidate', 'shadow_or_recess_boundary', { x: 0.10, y: 0.16, width: 0.08, height: 0.56 }, 'Ambiguous vertical dark boundary: could be real facade recess or cast shadow; requires shadow-aware review.', 0.3);
+    addSingleBox('single_front_storefront_candidate', 'ground_floor_storefront', { x: 0.12, y: 0.62, width: 0.76, height: 0.24 }, 'Ground floor storefront candidate from single-building profile.', 0.42);
+  } else if (viewKind === 'rear') {
+    addSingleBox('single_rear_visible_plane_primary_candidate', 'visible_plane_primary', { x: 0.08, y: 0.08, width: 0.84, height: 0.82 }, 'Review-only visible plane evidence from rear/alternate facade view; confirm orientation before modeling.', 0.38);
+    addSingleBox('single_rear_visible_plane_recessed_left_candidate', 'visible_plane_recessed_left', { x: 0.12, y: 0.10, width: 0.28, height: 0.72 }, 'Review-only recessed/side visible plane evidence from rear/alternate facade view.', 0.34);
+    addSingleBox('single_rear_rectangular_ducts_candidate', 'rectangular_utility_ducts', { x: 0.12, y: 0.12, width: 0.22, height: 0.62 }, 'Review-only rectangular duct / utility riser candidate from rear/alternate facade view.', 0.32);
+    addSingleBox('single_rear_shadow_recess_boundary_candidate', 'shadow_or_recess_boundary', { x: 0.16, y: 0.14, width: 0.08, height: 0.58 }, 'Ambiguous vertical boundary in rear/alternate facade view: review as shadow versus recess before geometry promotion.', 0.3);
+  } else if (viewKind === 'left' || viewKind === 'right') {
+    addSingleBox('single_side_visible_plane_recessed_left_candidate', 'visible_plane_recessed_left', { x: 0.12, y: 0.10, width: 0.76, height: 0.78 }, 'Side/recess visible plane evidence from single-building profile.', 0.44);
+    addSingleBox('single_side_ducts_candidate', 'rectangular_utility_ducts', { x: 0.16, y: 0.12, width: 0.24, height: 0.62 }, 'Side utility duct zone candidate from single-building profile.', 0.36);
+  }
 }
 
 function switchComponentGroundingEvidence(analysis, objectProfile, viewKind, bbox, componentHint, observationId) {
@@ -1225,7 +1285,7 @@ function unionBboxes(bboxes) {
   return [minX, minY, maxX - minX, maxY - minY];
 }
 
-export function makeImageSetObservation({ objectType, objectName, analyses, assignedViews, overlayDir = null }) {
+export function makeImageSetObservation({ objectType, objectName, analyses, assignedViews, overlayDir = null, sourceMetadata = null }) {
   const objectProfile = inferObjectProfile(objectType);
   const images = assignedViews.map((assigned) => makeImageObservation(assigned, objectProfile));
   const detected = unique(images.map((item) => item.detected_view.kind));
@@ -1233,7 +1293,9 @@ export function makeImageSetObservation({ objectType, objectName, analyses, assi
   const missingViews = requiredViews.filter((view) => !detected.includes(view));
   const usableCount = images.filter((item) => item.quality_report.usable_for_modeling).length;
   const risks = [];
-  if (objectProfile === 'building_group') {
+  if (objectProfile === 'unknown_object') {
+    risks.push('object profile is unknown; geometry compilation is disabled until routing or manual profile confirmation');
+  } else if (objectProfile === 'building_group') {
     if (!detected.includes('top')) risks.push('true site-plan/top view is missing');
     if (!detected.includes('oblique')) risks.push('oblique aerial view is missing');
   } else {
@@ -1243,10 +1305,14 @@ export function makeImageSetObservation({ objectType, objectName, analyses, assi
   }
   if (usableCount < Math.ceil(images.length / 2)) risks.push('less than half of the images are usable by current CV heuristics');
 
-  const scaleCalibration = makeScaleCalibration({ objectProfile, images, missingViews });
+  const scaleCalibration = makeScaleCalibration({ objectProfile, images, missingViews, sourceMetadata });
   const visualRelationGraph = makeVisualRelationGraph({ objectProfile, images });
-  const usableForModeling = objectProfile === 'building_group'
+  const usableForModeling = objectProfile === 'unknown_object'
+    ? false
+    : objectProfile === 'building_group'
     ? usableCount > 0 && detected.includes('top') && detected.includes('oblique')
+    : objectProfile === 'building_single'
+      ? usableCount > 0 && (detected.includes('oblique') || detected.includes('front'))
     : usableCount > 0 && detected.includes('front');
   const observationSet = {
     version: 1,
@@ -1268,7 +1334,9 @@ export function makeImageSetObservation({ objectType, objectName, analyses, assi
       risks,
       notes: [
         'This is a deterministic CV baseline. A later VLM pass should verify component semantics.',
-        'Overlay review is required before generating a final model plan.'
+        objectProfile === 'unknown_object'
+          ? 'Unknown profiles are review-only and must not be promoted to geometry.'
+          : 'Overlay review is required before generating a final model plan.'
       ]
     },
     review: {
@@ -1395,14 +1463,35 @@ function evidenceKind(kind) {
 }
 
 function requiredViewsForProfile(objectProfile) {
+  if (objectProfile === 'unknown_object') return [];
   if (objectProfile === 'vehicle_ambulance') return ['left', 'front', 'rear', 'top'];
   if (objectProfile === 'compact_remote') return ['front', 'right', 'top'];
   if (objectProfile === 'building_group') return ['top', 'oblique'];
+  if (objectProfile === 'building_single') return ['oblique', 'front', 'left', 'top'];
   return ['front', 'rear', 'right', 'top'];
 }
 
-function makeScaleCalibration({ objectProfile, images, missingViews }) {
+function makeScaleCalibration({ objectProfile, images, missingViews, sourceMetadata = null }) {
+  const knownScale = knownScaleFromSourceMetadata(sourceMetadata);
+  if (knownScale && objectProfile !== 'unknown_object') {
+    return makeSourceMetadataScaleCalibration({ objectProfile, images, missingViews, knownScale });
+  }
   if (objectProfile === 'building_group') return makeBuildingGroupScaleCalibration({ images, missingViews });
+  if (objectProfile === 'unknown_object') {
+    return {
+      units: 'mm',
+      strategy: 'unscaled_unknown_object',
+      default_scale: { width: 0, depth: 0, height: 0 },
+      measurements: [],
+      confidence: 0,
+      missing_views: missingViews,
+      review_required: true,
+      notes: [
+        'No product profile was selected; scale cannot be inferred from profile defaults.',
+        'Provide a profile, known dimension, dimensioned drawing, CAD/PDF evidence, or manual scale confirmation before geometry promotion.'
+      ]
+    };
+  }
   const defaults = PROFILE_DEFAULT_SCALE[objectProfile] || PROFILE_DEFAULT_SCALE.switch_controller;
   const measurements = [];
   for (const image of images) {
@@ -1436,6 +1525,66 @@ function makeScaleCalibration({ objectProfile, images, missingViews }) {
     notes: [
       'Scale is calibrated against profile default dimensions and detected object bboxes.',
       'Treat as provisional until a user-provided physical dimension or calibrated orthographic view is available.'
+    ]
+  };
+}
+
+function makeSourceMetadataScaleCalibration({ objectProfile, images, missingViews, knownScale }) {
+  const defaults = {
+    ...(PROFILE_DEFAULT_SCALE[objectProfile] || PROFILE_DEFAULT_SCALE.switch_controller),
+    ...(knownScale.dimensions.width ? { width: knownScale.dimensions.width } : {}),
+    ...(knownScale.dimensions.depth ? { depth: knownScale.dimensions.depth } : {}),
+    ...(knownScale.dimensions.height ? { height: knownScale.dimensions.height } : {})
+  };
+  const measurements = [];
+  for (const image of images) {
+    const bbox = image.metrics?.object_bbox;
+    if (!bbox) continue;
+    const [,, widthPx, heightPx] = bbox;
+    const view = image.detected_view.kind;
+    const dimensions = dimensionsForView(view, defaults);
+    if (!dimensions) continue;
+    measurements.push({
+      view,
+      source_image: image.image.path,
+      object_bbox: bbox,
+      physical_width_mm: dimensions.width,
+      physical_height_mm: dimensions.height,
+      pixels_per_mm_x: round(widthPx / dimensions.width, 4),
+      pixels_per_mm_y: round(heightPx / dimensions.height, 4),
+      confidence: round(clamp((image.detected_view.confidence || 0.55) - (view === 'oblique' ? 0.12 : 0), 0.42, 0.9)),
+      basis: knownScale.basis.length ? knownScale.basis : ['Known dimensions from source metadata.'],
+      scale_source: 'source_metadata',
+      source_metadata_sources: knownScale.sources,
+      review_required: true,
+      note: 'Scale uses user/source-package metadata; review image bbox alignment before geometry promotion.'
+    });
+  }
+  const measuredViews = unique(measurements.map((item) => item.view));
+  const coverage = measuredViews.length / Math.max(1, requiredViewsForProfile(objectProfile).length);
+  const metadataConfidence = Number(knownScale.confidence || 0.72);
+  const confidence = measurements.length > 0
+    ? round(clamp(
+      0.48
+        + coverage * 0.18
+        + averageConfidence(measurements) * 0.18
+        + metadataConfidence * 0.16
+        - missingViews.length * 0.03,
+      0.7,
+      0.9
+    ), 3)
+    : round(clamp(0.52 + metadataConfidence * 0.14 - missingViews.length * 0.03, 0.52, 0.69), 3);
+  return {
+    units: 'mm',
+    strategy: 'source_metadata_known_dimensions_with_view_bbox',
+    default_scale: defaults,
+    measurements,
+    confidence,
+    missing_views: missingViews,
+    source_metadata_hints: knownScale.hints,
+    notes: [
+      'Scale uses known dimensions supplied in source metadata and detected object bboxes.',
+      'Treat source metadata dimensions as review-gated until a reviewer or CAD/PDF evidence confirms the intended target extents.'
     ]
   };
 }
@@ -1591,14 +1740,31 @@ function dimensionsForView(view, defaults) {
   return null;
 }
 
-function inferObjectProfile(objectType) {
+export function inferObjectProfile(objectType) {
   if (['remote_control', 'media_remote', 'compact_remote'].includes(objectType)) return 'compact_remote';
   if (['vehicle_ambulance', 'ambulance', 'toy_ambulance'].includes(objectType)) return 'vehicle_ambulance';
   if (['building_group', 'building_campus', 'industrial_campus', 'factory_campus', 'industrial_park', 'factory_complex'].includes(objectType)) return 'building_group';
-  return 'switch_controller';
+  if (['building_single', 'single_building', 'building_single_oblique', 'urban_building', 'street_building'].includes(objectType)) return 'building_single';
+  if (['game_controller', 'switch_controller', 'switch_joycon', 'controller'].includes(objectType)) return 'switch_controller';
+  return 'unknown_object';
 }
 
 function reviewQuestionsForProfile(objectProfile) {
+  if (objectProfile === 'unknown_object') {
+    return [
+      'Select or create a ProductProfile before geometry promotion.',
+      'Provide at least one known dimension or calibrated reference.',
+      'Confirm the intended modeling target and required views.'
+    ];
+  }
+  if (objectProfile === 'building_single') {
+    return [
+      'Confirm facade plane segmentation: front facade versus recessed/side facade.',
+      'Mark which dark regions are cast shadows versus real recess/return wall geometry.',
+      'Confirm rectangular duct / HVAC / pipe semantics before compiling utility geometry.',
+      'Provide one known dimension or an orthographic/top view before trusting scale.'
+    ];
+  }
   if (objectProfile === 'building_group') {
     return [
       'Confirm the top/oblique view assignments and the campus north/up convention.',
@@ -1640,6 +1806,11 @@ export async function renderObservationOverlay(observation, outputPath, options 
     // Bbox is percentile edge bounds, not a semantic component box.
   }
 
+  const contentFrame = observation.image?.content_frame;
+  const contentFrameMark = contentFrame?.applied && contentFrame.bbox
+    ? `<rect x="${contentFrame.bbox[0]}" y="${contentFrame.bbox[1]}" width="${contentFrame.bbox[2]}" height="${contentFrame.bbox[3]}" fill="none" stroke="#2fffd0" stroke-width="2" stroke-dasharray="12 6"/>`
+    : '';
+
   const axis = observation.camera_hints?.symmetry_axis;
   const axisMark = axis
     ? `<line x1="${axis.a[0]}" y1="${axis.a[1]}" x2="${axis.b[0]}" y2="${axis.b[1]}" stroke="#ff4d4d" stroke-width="2" stroke-dasharray="10 8"/>`
@@ -1669,12 +1840,14 @@ export async function renderObservationOverlay(observation, outputPath, options 
 
   const labelLines = [
     `${path.basename(observation.image.path)}  view=${observation.detected_view.kind} (${observation.detected_view.confidence.toFixed(2)})`,
-    `edges=${observation.metrics.edge_count} density=${observation.metrics.edge_density} symmetry=${observation.metrics.symmetry_score}`,
+    `edges=${observation.metrics.edge_count}/${observation.metrics.raw_edge_count || observation.metrics.edge_count} density=${observation.metrics.edge_density} symmetry=${observation.metrics.symmetry_score}`,
+    contentFrame?.applied ? `content_frame=${contentFrame.bbox.map((value) => Math.round(value)).join(',')}` : 'content_frame=full_image',
     `bbox=${observation.metrics.object_bbox.map((value) => Math.round(value)).join(',')}`
   ];
   const label = svgLabel(labelLines, 12, 12);
   const overlay = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${base.info.width}" height="${base.info.height}" viewBox="0 0 ${base.info.width} ${base.info.height}">
     <rect x="0" y="0" width="100%" height="100%" fill="rgba(0,0,0,0.32)"/>
+    ${contentFrameMark}
     ${edgeMarks}
     ${bboxMark}
     ${componentMarks}
@@ -1689,6 +1862,189 @@ export async function renderObservationOverlay(observation, outputPath, options 
     .png()
     .toFile(outputPath);
   return outputPath;
+}
+
+function detectContentFrame(data, width, height, channels, sourceSize = {}) {
+  const rowSelection = selectContentAxis(scanContentAxis(data, width, height, channels, 'row'), height);
+  const colSelection = selectContentAxis(scanContentAxis(data, width, height, channels, 'col'), width);
+  const applied = rowSelection.applied || colSelection.applied;
+  const bbox = applied
+    ? [
+        colSelection.start,
+        rowSelection.start,
+        colSelection.end - colSelection.start + 1,
+        rowSelection.end - rowSelection.start + 1
+      ]
+    : [0, 0, width, height];
+  const removedRegions = applied ? contentFrameRemovedRegions(bbox, width, height) : [];
+  const removedAreaRatio = applied ? 1 - ((bbox[2] * bbox[3]) / Math.max(1, width * height)) : 0;
+  const confidence = applied
+    ? round(clamp(0.58 + removedAreaRatio * 0.72 + Math.max(rowSelection.chromeRatio, colSelection.chromeRatio) * 0.18, 0.62, 0.96), 3)
+    : 0.24;
+  return {
+    method: CONTENT_FRAME_METHOD,
+    applied,
+    bbox: bbox.map((value) => round(value)),
+    source_bbox: mapAnalysisBboxToSource(bbox, width, height, sourceSize).map((value) => round(value)),
+    confidence,
+    removed_area_ratio: round(removedAreaRatio, 4),
+    removed_regions: removedRegions.map((region) => ({
+      ...region,
+      bbox: region.bbox.map((value) => round(value)),
+      source_bbox: mapAnalysisBboxToSource(region.bbox, width, height, sourceSize).map((value) => round(value))
+    })),
+    review_required: applied,
+    notes: applied
+      ? ['Large near-black screenshot chrome was excluded before object bbox and component candidate generation.']
+      : ['No large screenshot chrome frame was detected; full image was used for analysis.']
+  };
+}
+
+function scanContentAxis(data, width, height, channels, axis) {
+  const outer = axis === 'row' ? height : width;
+  const inner = axis === 'row' ? width : height;
+  const stats = [];
+  for (let outerIndex = 0; outerIndex < outer; outerIndex += 1) {
+    let nearBlack = 0;
+    let dark = 0;
+    let active = 0;
+    let color = 0;
+    let mean = 0;
+    for (let innerIndex = 0; innerIndex < inner; innerIndex += 1) {
+      const x = axis === 'row' ? innerIndex : outerIndex;
+      const y = axis === 'row' ? outerIndex : innerIndex;
+      const index = (y * width + x) * channels;
+      const r = data[index];
+      const g = data[index + 1];
+      const b = data[index + 2];
+      const lum = 0.299 * r + 0.587 * g + 0.114 * b;
+      const max = Math.max(r, g, b);
+      const min = Math.min(r, g, b);
+      const saturation = max === 0 ? 0 : (max - min) / max;
+      mean += lum;
+      if (lum < 35) nearBlack += 1;
+      if (lum < 60) dark += 1;
+      if (lum > 45) active += 1;
+      if (lum > 55 && saturation > 0.08) color += 1;
+    }
+    stats.push({
+      index: outerIndex,
+      nearBlackRatio: nearBlack / Math.max(1, inner),
+      darkRatio: dark / Math.max(1, inner),
+      activeRatio: active / Math.max(1, inner),
+      colorRatio: color / Math.max(1, inner),
+      mean: mean / Math.max(1, inner)
+    });
+  }
+  return stats;
+}
+
+function selectContentAxis(stats, total) {
+  const chromeFlags = stats.map((item) => isScreenshotChromeLine(item));
+  const chromeSegments = contiguousSegments(chromeFlags);
+  const contentSegments = contiguousSegments(chromeFlags.map((flag) => !flag))
+    .map((segment) => segmentStats(segment, stats))
+    .filter((segment) => (
+      segment.length >= Math.max(4, Math.floor(total * 0.01))
+      && (segment.activeMean > 0.16 || segment.colorMean > 0.06 || segment.mean > 42)
+    ));
+  const fallback = {
+    start: 0,
+    end: total - 1,
+    applied: false,
+    chromeRatio: 0,
+    reason: 'full_axis'
+  };
+  if (contentSegments.length === 0) return fallback;
+  const largest = contentSegments
+    .sort((a, b) => segmentScore(b) - segmentScore(a))[0];
+  const nonSelectedContentLength = contentSegments
+    .filter((segment) => segment !== largest)
+    .reduce((sum, segment) => sum + segment.length, 0);
+  const chromeLength = chromeSegments.reduce((sum, segment) => sum + segment.length, 0);
+  const longestChrome = chromeSegments.reduce((max, segment) => Math.max(max, segment.length), 0);
+  const chromeRatio = chromeLength / Math.max(1, total);
+  const removedRatio = 1 - (largest.length / Math.max(1, total));
+  const smallTrailingOrLeadingContent = nonSelectedContentLength <= Math.max(12, Math.floor(total * 0.03));
+  const majorChrome = longestChrome / Math.max(1, total) >= 0.08 || chromeRatio >= 0.14;
+  const selectedIsUsefulFrame = largest.length >= Math.max(24, Math.floor(total * 0.22));
+  const selectedLeavesMeaningfulRemoval = removedRatio >= 0.08;
+  const applied = majorChrome && selectedIsUsefulFrame && selectedLeavesMeaningfulRemoval && (
+    smallTrailingOrLeadingContent
+    || largest.start === 0
+    || largest.end === total - 1
+    || chromeSegments.some((segment) => segment.start === 0 || segment.end === total - 1)
+  );
+  return {
+    start: applied ? largest.start : 0,
+    end: applied ? largest.end : total - 1,
+    applied,
+    chromeRatio,
+    reason: applied ? 'largest_content_segment_after_screenshot_chrome' : 'full_axis'
+  };
+}
+
+function isScreenshotChromeLine(stat) {
+  return stat.nearBlackRatio > 0.88 || (stat.darkRatio > 0.94 && stat.colorRatio < 0.04 && stat.mean < 72);
+}
+
+function contiguousSegments(flags) {
+  const segments = [];
+  let start = null;
+  for (let index = 0; index < flags.length; index += 1) {
+    if (flags[index]) {
+      if (start === null) start = index;
+    } else if (start !== null) {
+      segments.push({ start, end: index - 1, length: index - start });
+      start = null;
+    }
+  }
+  if (start !== null) segments.push({ start, end: flags.length - 1, length: flags.length - start });
+  return segments;
+}
+
+function segmentStats(segment, stats) {
+  const slice = stats.slice(segment.start, segment.end + 1);
+  const activeMean = average(slice.map((item) => item.activeRatio));
+  const colorMean = average(slice.map((item) => item.colorRatio));
+  const mean = average(slice.map((item) => item.mean));
+  return {
+    ...segment,
+    activeMean,
+    colorMean,
+    mean
+  };
+}
+
+function segmentScore(segment) {
+  return segment.length * (0.7 + segment.activeMean * 0.2 + segment.colorMean * 0.1);
+}
+
+function contentFrameRemovedRegions(bbox, width, height) {
+  const [x, y, frameWidth, frameHeight] = bbox;
+  const regions = [];
+  if (y > 0) regions.push({ side: 'top', reason: 'near_black_screenshot_chrome', bbox: [0, 0, width, y] });
+  if (y + frameHeight < height) regions.push({ side: 'bottom', reason: 'near_black_screenshot_chrome', bbox: [0, y + frameHeight, width, height - (y + frameHeight)] });
+  if (x > 0) regions.push({ side: 'left', reason: 'near_black_screenshot_chrome', bbox: [0, y, x, frameHeight] });
+  if (x + frameWidth < width) regions.push({ side: 'right', reason: 'near_black_screenshot_chrome', bbox: [x + frameWidth, y, width - (x + frameWidth), frameHeight] });
+  return regions;
+}
+
+function mapAnalysisBboxToSource(bbox, analysisWidth, analysisHeight, sourceSize = {}) {
+  const sourceWidth = sourceSize.sourceWidth || analysisWidth;
+  const sourceHeight = sourceSize.sourceHeight || analysisHeight;
+  const scaleX = sourceWidth / Math.max(1, analysisWidth);
+  const scaleY = sourceHeight / Math.max(1, analysisHeight);
+  return [
+    bbox[0] * scaleX,
+    bbox[1] * scaleY,
+    bbox[2] * scaleX,
+    bbox[3] * scaleY
+  ];
+}
+
+function pointInBbox(x, y, bbox) {
+  return x >= bbox[0] && y >= bbox[1] && x <= bbox[0] + bbox[2] && y <= bbox[1] + bbox[3];
 }
 
 function grayscale(data, width, height) {
@@ -1835,6 +2191,12 @@ function averageConfidence(items) {
     .filter((value) => Number.isFinite(value));
   if (!values.length) return 0;
   return round(values.reduce((sum, value) => sum + value, 0) / values.length, 3);
+}
+
+function average(values) {
+  const valid = (values || []).filter((value) => Number.isFinite(value));
+  if (!valid.length) return 0;
+  return valid.reduce((sum, value) => sum + value, 0) / valid.length;
 }
 
 function weightedAverage(items) {

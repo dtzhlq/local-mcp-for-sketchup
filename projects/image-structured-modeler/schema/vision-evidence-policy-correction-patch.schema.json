@@ -1,0 +1,144 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/vision-evidence-policy-correction-patch.schema.json",
+  "title": "VisionEvidencePolicyCorrectionPatch",
+  "type": "object",
+  "required": [
+    "kind",
+    "version",
+    "source_review_patch",
+    "source_review_decision",
+    "status",
+    "apply_scope",
+    "apply_allowed",
+    "compile_allowed",
+    "geometry_promotion_allowed",
+    "blockers",
+    "actions",
+    "summary",
+    "notes"
+  ],
+  "properties": {
+    "kind": { "const": "vision_evidence_policy_correction_patch" },
+    "version": { "const": 1 },
+    "source_review_patch": { "type": "string", "minLength": 1 },
+    "source_review_decision": { "type": "string", "minLength": 1 },
+    "status": {
+      "enum": [
+        "ready_for_vision_evidence_policy_update",
+        "blocked",
+        "no_policy_updates"
+      ]
+    },
+    "apply_scope": { "const": "vision_evidence_set_policy_only" },
+    "apply_allowed": { "type": "boolean" },
+    "compile_allowed": { "type": "boolean" },
+    "geometry_promotion_allowed": { "type": "boolean" },
+    "blockers": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "actions": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/action" }
+    },
+    "summary": {
+      "type": "object",
+      "required": [
+        "total_actions",
+        "ground_plane_actions",
+        "edge_class_actions",
+        "semantic_candidate_actions",
+        "geometry_promotions",
+        "compile_outputs"
+      ],
+      "properties": {
+        "total_actions": { "type": "integer", "minimum": 0 },
+        "ground_plane_actions": { "type": "integer", "minimum": 0 },
+        "edge_class_actions": { "type": "integer", "minimum": 0 },
+        "semantic_candidate_actions": { "type": "integer", "minimum": 0 },
+        "geometry_promotions": { "type": "integer", "minimum": 0 },
+        "compile_outputs": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "notes": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    }
+  },
+  "$defs": {
+    "action": {
+      "type": "object",
+      "required": [
+        "action",
+        "review_item_id",
+        "evidence_type",
+        "target_path",
+        "source_image",
+        "decision",
+        "previous_value",
+        "value",
+        "risk_flags",
+        "risk_disposition",
+        "resolved_blockers",
+        "downstream_effect",
+        "geometry_promotion_allowed",
+        "compile_allowed",
+        "reviewer_note"
+      ],
+      "properties": {
+        "action": {
+          "enum": [
+            "annotate_ground_plane_policy_review",
+            "annotate_edge_class_policy_review",
+            "annotate_semantic_candidate_policy_review"
+          ]
+        },
+        "review_item_id": { "type": "string", "minLength": 1 },
+        "evidence_type": {
+          "enum": [
+            "view_ground_plane",
+            "edge_class_policy",
+            "semantic_candidate_policy"
+          ]
+        },
+        "target_path": { "type": "string", "minLength": 1 },
+        "source_image": { "type": "string" },
+        "decision": { "type": "string", "minLength": 1 },
+        "previous_value": { "type": "object" },
+        "value": { "type": "object" },
+        "risk_flags": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "risk_disposition": { "type": "string", "minLength": 1 },
+        "resolved_blockers": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "downstream_effect": {
+          "type": "object",
+          "required": [
+            "allowed_outputs",
+            "blocked_outputs",
+            "next_action"
+          ],
+          "properties": {
+            "allowed_outputs": {
+              "type": "array",
+              "items": { "type": "string", "minLength": 1 }
+            },
+            "blocked_outputs": {
+              "type": "array",
+              "items": { "type": "string", "minLength": 1 }
+            },
+            "next_action": { "type": "string", "minLength": 1 }
+          }
+        },
+        "geometry_promotion_allowed": { "type": "boolean" },
+        "compile_allowed": { "type": "boolean" },
+        "reviewer_note": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

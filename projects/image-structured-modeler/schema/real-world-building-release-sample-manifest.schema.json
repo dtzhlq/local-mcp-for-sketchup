@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/real-world-building-release-sample-manifest.schema.json",
+  "title": "RealWorldBuildingReleaseSampleManifest",
+  "type": "object",
+  "required": [
+    "version",
+    "kind",
+    "sample_id",
+    "sample_scope",
+    "input_asset_status",
+    "source_authenticity",
+    "source_asset_kind",
+    "source_images",
+    "artifacts"
+  ],
+  "properties": {
+    "version": { "const": 1 },
+    "kind": { "const": "real_world_building_positive_release_sample_manifest" },
+    "sample_id": { "type": "string", "minLength": 1 },
+    "sample_scope": { "const": "real_world_building_positive" },
+    "input_asset_status": { "const": "available" },
+    "source_authenticity": { "const": "real_user_provided" },
+    "source_asset_kind": {
+      "enum": [
+        "real_building_photo",
+        "real_building_scan",
+        "real_building_photo_or_scan",
+        "user_uploaded_real_building_asset"
+      ]
+    },
+    "source_images": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "profile_path": { "type": "string" },
+    "artifacts": {
+      "type": "object",
+      "required": [
+        "part_graph",
+        "output",
+        "photo_grade_readiness_report",
+        "vision_evidence_report",
+        "vision_evidence_review_patch",
+        "vision_evidence_review_decision",
+        "vision_evidence_policy_correction_patch"
+      ],
+      "properties": {
+        "part_graph": { "type": "string", "minLength": 1 },
+        "output": { "type": "string", "minLength": 1 },
+        "photo_grade_readiness_report": { "type": "string", "minLength": 1 },
+        "vision_evidence_report": { "type": "string", "minLength": 1 },
+        "vision_evidence_review_patch": { "type": "string", "minLength": 1 },
+        "vision_evidence_review_decision": { "type": "string", "minLength": 1 },
+        "vision_evidence_policy_correction_patch": { "type": "string", "minLength": 1 },
+        "geometry_fit_report": { "type": "string" },
+        "grounding_v3_report": { "type": "string" },
+        "layout_qa_report": { "type": "string" },
+        "reference_qa_report": { "type": "string" },
+        "proposal_qa_report": { "type": "string" },
+        "queue_proposal_qa_report": { "type": "string" }
+      }
+    },
+    "review": {
+      "type": "object",
+      "properties": {
+        "reviewer": { "type": "string" },
+        "accepted_at": { "type": "string" },
+        "notes": { "type": "string" }
+      }
+    }
+  }
+}

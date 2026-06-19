@@ -1,0 +1,223 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/real-world-building-source-refill-package-guide.schema.json",
+  "title": "RealWorldBuildingSourceRefillPackageGuide",
+  "type": "object",
+  "required": [
+    "version",
+    "kind",
+    "generated_at",
+    "object_type",
+    "source_request",
+    "output_package",
+    "package_policy",
+    "required_views",
+    "missing_required_views",
+    "source_slots",
+    "scale_evidence",
+    "semantic_evidence_quality",
+    "upload_manifest_template",
+    "commands",
+    "next_actions"
+  ],
+  "properties": {
+    "version": { "const": 1 },
+    "kind": { "const": "real_world_building_source_refill_package_guide" },
+    "generated_at": { "type": "string", "minLength": 1 },
+    "object_type": { "enum": ["building_single", "building_group"] },
+    "source_request": {
+      "type": "object",
+      "required": ["path", "status", "accepted_asset_types", "blocked_until_satisfied"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1 },
+        "status": {
+          "enum": [
+            "needs_source_replacement",
+            "needs_views_or_scale",
+            "needs_semantic_confirmation",
+            "input_ready_for_release_work",
+            "release_ready"
+          ]
+        },
+        "accepted_asset_types": {
+          "type": "array",
+          "items": { "enum": ["image", "pdf", "cad"] }
+        },
+        "blocked_until_satisfied": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "direct_sketchup_dsl",
+              "promoted_part_graph_geometry",
+              "formal_release_manifest"
+            ]
+          }
+        }
+      }
+    },
+    "output_package": {
+      "type": "object",
+      "required": [
+        "directory",
+        "upload_package_directory",
+        "manifest_template",
+        "guide",
+        "guide_markdown",
+        "readme",
+        "source_slots_readme",
+        "sources_directory",
+        "upload_session_output_dir"
+      ],
+      "properties": {
+        "directory": { "type": "string", "minLength": 1 },
+        "upload_package_directory": { "type": "string", "minLength": 1 },
+        "manifest_template": { "type": "string", "minLength": 1 },
+        "guide": { "type": "string", "minLength": 1 },
+        "guide_markdown": { "type": "string", "minLength": 1 },
+        "readme": { "type": "string", "minLength": 1 },
+        "source_slots_readme": { "type": "string", "minLength": 1 },
+        "sources_directory": { "type": "string", "minLength": 1 },
+        "upload_session_output_dir": { "type": "string", "minLength": 1 }
+      }
+    },
+    "package_policy": {
+      "type": "object",
+      "required": [
+        "direct_upload_ready",
+        "manifest_template_only",
+        "real_manifest_file_names",
+        "replacement_required",
+        "distinct_source_images_required",
+        "source_image_field",
+        "forbidden_source_kinds",
+        "forbidden_shortcuts"
+      ],
+      "properties": {
+        "direct_upload_ready": { "const": false },
+        "manifest_template_only": { "const": true },
+        "real_manifest_file_names": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "replacement_required": { "type": "boolean" },
+        "distinct_source_images_required": { "type": "boolean" },
+        "source_image_field": { "const": "views[].source_image" },
+        "forbidden_source_kinds": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "forbidden_shortcuts": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "required_views": {
+      "type": "array",
+      "items": { "enum": ["front", "rear", "left", "right", "top", "oblique"] }
+    },
+    "missing_required_views": {
+      "type": "array",
+      "items": { "enum": ["front", "rear", "left", "right", "top", "oblique"] }
+    },
+    "source_slots": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "view",
+          "required",
+          "current_status",
+          "suggested_source_image",
+          "source_image_field",
+          "distinct_source_image_required",
+          "request",
+          "acceptable_sources"
+        ],
+        "properties": {
+          "view": { "enum": ["front", "rear", "left", "right", "top", "oblique"] },
+          "required": { "type": "boolean" },
+          "current_status": { "enum": ["present", "missing"] },
+          "suggested_source_image": { "type": "string", "minLength": 1 },
+          "source_image_field": { "const": "views[].source_image" },
+          "distinct_source_image_required": { "type": "boolean" },
+          "request": { "type": "string" },
+          "acceptable_sources": {
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 }
+          }
+        }
+      }
+    },
+    "scale_evidence": {
+      "type": "object",
+      "required": [
+        "required",
+        "status",
+        "current_confidence",
+        "minimum_confidence",
+        "manifest_fields",
+        "acceptable_evidence"
+      ],
+      "properties": {
+        "required": { "type": "boolean" },
+        "status": { "enum": ["pass", "fail"] },
+        "current_confidence": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+        "minimum_confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "manifest_fields": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "acceptable_evidence": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "semantic_evidence_quality": { "type": ["object", "null"] },
+    "upload_manifest_template": {
+      "type": "object",
+      "required": ["version", "kind", "template_only", "views"],
+      "properties": {
+        "version": { "const": 1 },
+        "kind": { "const": "real_world_building_upload_manifest" },
+        "template_only": { "const": true },
+        "views": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["source_image", "kind"],
+            "properties": {
+              "source_image": { "type": "string", "minLength": 1 },
+              "kind": { "enum": ["front", "rear", "left", "right", "top", "oblique"] }
+            }
+          }
+        }
+      }
+    },
+    "commands": {
+      "type": "object",
+      "required": [
+        "build_manifest_from_sources",
+        "run_source_refill_workflow",
+        "validate_refill_package",
+        "require_upload_ready",
+        "validate_upload_session",
+        "require_input_ready"
+      ],
+      "properties": {
+        "build_manifest_from_sources": { "type": "string", "minLength": 1 },
+        "run_source_refill_workflow": { "type": "string", "minLength": 1 },
+        "validate_refill_package": { "type": "string", "minLength": 1 },
+        "require_upload_ready": { "type": "string", "minLength": 1 },
+        "validate_upload_session": { "type": "string", "minLength": 1 },
+        "require_input_ready": { "type": "string", "minLength": 1 }
+      }
+    },
+    "next_actions": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    }
+  }
+}

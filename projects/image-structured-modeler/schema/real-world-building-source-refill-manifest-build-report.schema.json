@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/real-world-building-source-refill-manifest-build-report.schema.json",
+  "title": "RealWorldBuildingSourceRefillManifestBuildReport",
+  "type": "object",
+  "required": [
+    "version",
+    "kind",
+    "generated_at",
+    "package_dir",
+    "guide",
+    "upload_package_dir",
+    "sources_dir",
+    "manifest_output",
+    "ok",
+    "status",
+    "object_type",
+    "source_files",
+    "assignments",
+    "missing_required_views",
+    "duplicate_source_images",
+    "commands",
+    "next_actions"
+  ],
+  "properties": {
+    "version": { "const": 1 },
+    "kind": { "const": "real_world_building_source_refill_manifest_build_report" },
+    "generated_at": { "type": "string", "minLength": 1 },
+    "package_dir": { "type": "string", "minLength": 1 },
+    "guide": { "type": "string", "minLength": 1 },
+    "upload_package_dir": { "type": "string", "minLength": 1 },
+    "sources_dir": { "type": "string", "minLength": 1 },
+    "manifest_output": { "type": "string", "minLength": 1 },
+    "ok": { "type": "boolean" },
+    "status": {
+      "enum": [
+        "manifest_draft_needs_sources",
+        "manifest_ready_for_package_validation"
+      ]
+    },
+    "object_type": { "enum": ["building_single", "building_group"] },
+    "source_files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "absolute_path", "extension"],
+        "properties": {
+          "path": { "type": "string", "minLength": 1 },
+          "absolute_path": { "type": "string", "minLength": 1 },
+          "extension": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "assignments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "view",
+          "required",
+          "suggested_source_image",
+          "source_image",
+          "matched_file",
+          "confidence",
+          "match_reason"
+        ],
+        "properties": {
+          "view": { "$ref": "#/$defs/view" },
+          "required": { "type": "boolean" },
+          "suggested_source_image": { "type": ["string", "null"] },
+          "source_image": { "type": ["string", "null"] },
+          "matched_file": { "type": ["string", "null"] },
+          "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+          "match_reason": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "missing_required_views": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/view" }
+    },
+    "duplicate_source_images": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "commands": {
+      "type": "object",
+      "required": ["validate_refill_package", "require_upload_ready", "require_input_ready"],
+      "properties": {
+        "validate_refill_package": { "type": ["string", "null"] },
+        "require_upload_ready": { "type": ["string", "null"] },
+        "require_input_ready": { "type": ["string", "null"] }
+      }
+    },
+    "next_actions": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    }
+  },
+  "$defs": {
+    "view": {
+      "enum": ["front", "rear", "left", "right", "top", "oblique"]
+    }
+  }
+}

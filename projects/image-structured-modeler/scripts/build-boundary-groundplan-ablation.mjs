@@ -10,6 +10,7 @@ import { annotateObservationSetWithBoundaryGraphV1, boundaryGraphReport, buildBo
 import { annotateObservationSetWithHighContrastEdgeV1 } from './lib/high-contrast-edge-v1.mjs';
 import { annotateObservationSetWithOpenCvEdgeV1 } from './lib/opencv-edge-v1.mjs';
 import { buildSegmentationBackendCompare, segmentationBackendCompareReport } from './lib/segmentation-backend-compare.mjs';
+import { annotateObservationSetWithVisionEvidenceSetV1 } from './lib/vision-evidence-set-v1.mjs';
 
 const scriptRoot = path.resolve(fileURLToPath(new URL('../../..', import.meta.url)));
 
@@ -26,6 +27,7 @@ async function main() {
     output: path.join(outputDir, 'opencv-edge-v1-report.json'),
     outputDir
   });
+  observations = annotateObservationSetWithVisionEvidenceSetV1(observations, { force: true });
   const compare = await buildSegmentationBackendCompare({ observations });
 
   const baseline = await runVariant({
@@ -33,6 +35,7 @@ async function main() {
     observations: {
       ...observations,
       high_contrast_edge_v1: undefined,
+      vision_evidence_set_v1: undefined,
       boundary_graph_v1: undefined
     },
     useLandCover: true,
@@ -45,6 +48,7 @@ async function main() {
     observations: {
       ...observations,
       land_cover_v1: undefined,
+      vision_evidence_set_v1: undefined,
       boundary_graph_v1: undefined
     },
     useLandCover: false,
@@ -58,6 +62,7 @@ async function main() {
       ...observations,
       land_cover_v1: undefined,
       high_contrast_edge_v1: undefined,
+      vision_evidence_set_v1: undefined,
       boundary_graph_v1: undefined
     },
     useLandCover: false,
@@ -71,6 +76,7 @@ async function main() {
       ...observations,
       segmentation_backend_compare_v1: compare,
       observed_mask_candidates: compare.observed_mask_candidates,
+      vision_evidence_set_v1: undefined,
       boundary_graph_v1: undefined
     },
     useLandCover: true,
@@ -107,6 +113,14 @@ async function main() {
       ...observations,
       segmentation_backend_compare_v1: compare,
       observed_mask_candidates: compare.observed_mask_candidates,
+      vision_evidence_set_v1: fused.boundary_graph.boundary_graph_v1.vision_evidence_set_v1?.available
+        ? annotateObservationSetWithVisionEvidenceSetV1({
+          ...observations,
+          segmentation_backend_compare_v1: compare,
+          observed_mask_candidates: compare.observed_mask_candidates,
+          boundary_graph_v1: fused.boundary_graph.boundary_graph_v1
+        }, { force: true }).vision_evidence_set_v1
+        : observations.vision_evidence_set_v1,
       boundary_graph_v1: fused.boundary_graph.boundary_graph_v1,
       grounding_r11_2: {
         high_contrast_edge_v1: observations.high_contrast_edge_v1,
@@ -139,22 +153,25 @@ async function runVariant({ id, observations, useLandCover, useHighContrast, use
     land_cover_v1: useLandCover ? observations.land_cover_v1 : undefined,
     high_contrast_edge_v1: useHighContrast ? observations.high_contrast_edge_v1 : undefined,
     opencv_edge_v1: useOpenCv ? observations.opencv_edge_v1 : undefined,
-    boundary_graph_v1: undefined
+    boundary_graph_v1: undefined,
+    vision_evidence_set_v1: undefined
   };
-  const variantObservations = useSourceImageBoundary
-    ? await annotateObservationSetWithBoundaryGraphV1(prepared, { force: true })
+  const evidencePrepared = annotateObservationSetWithVisionEvidenceSetV1(prepared, { force: true });
+  const initialVariantObservations = useSourceImageBoundary
+    ? await annotateObservationSetWithBoundaryGraphV1(evidencePrepared, { force: true })
     : {
-      ...prepared,
+      ...evidencePrepared,
       boundary_graph_v1: buildBoundaryGraphV1({
-        observations: prepared,
-        landCover: useLandCover ? prepared.land_cover_v1 : null,
+        observations: evidencePrepared,
+        landCover: useLandCover ? evidencePrepared.land_cover_v1 : null,
         options: {
           sourceImageBoundary: null,
-          highContrastEdge: useHighContrast ? prepared.high_contrast_edge_v1 : null,
-          openCvEdge: useOpenCv ? prepared.opencv_edge_v1 : null
+          highContrastEdge: useHighContrast ? evidencePrepared.high_contrast_edge_v1 : null,
+          openCvEdge: useOpenCv ? evidencePrepared.opencv_edge_v1 : null
         }
       })
     };
+  const variantObservations = annotateObservationSetWithVisionEvidenceSetV1(initialVariantObservations, { force: true });
   const boundaryGraph = variantObservations.boundary_graph_v1;
   const autoGroundPlan = validateAutoGroundPlanR10({ observations: variantObservations });
   const boundaryReport = boundaryGraphReport(boundaryGraph);

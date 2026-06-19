@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/real-world-building-release-checklist.schema.json",
+  "title": "RealWorldBuildingReleaseChecklist",
+  "type": "object",
+  "required": [
+    "version",
+    "kind",
+    "manifest",
+    "sample_id",
+    "release_ready",
+    "can_promote_to_release_manifest",
+    "checks",
+    "blockers",
+    "commands",
+    "next_actions"
+  ],
+  "properties": {
+    "version": { "const": 1 },
+    "kind": { "const": "real_world_building_positive_release_checklist" },
+    "manifest": { "type": "string", "minLength": 1 },
+    "release_manifest": { "type": "string" },
+    "sample_id": { "type": "string", "minLength": 1 },
+    "release_ready": { "type": "boolean" },
+    "can_promote_to_release_manifest": { "type": "boolean" },
+    "checks": {
+      "type": "array",
+      "minItems": 6,
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "required", "status"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "label": { "type": "string", "minLength": 1 },
+          "required": { "type": "boolean" },
+          "status": { "enum": ["pass", "fail", "review"] },
+          "message": { "type": "string" },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "path": { "type": "string" },
+                "role": { "type": "string" },
+                "status": { "enum": ["pass", "fail", "review"] },
+                "exists": { "type": "boolean" },
+                "content_sha256": { "type": ["string", "null"] },
+                "generated_path_blocker": { "type": "boolean" },
+                "duplicate_content_blocker": { "type": "boolean" },
+                "blockers": {
+                  "type": "array",
+                  "items": { "type": "string", "minLength": 1 }
+                }
+              }
+            }
+          },
+          "duplicate_content_groups": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["content_sha256", "paths"],
+              "properties": {
+                "content_sha256": { "type": "string", "minLength": 1 },
+                "paths": {
+                  "type": "array",
+                  "items": { "type": "string", "minLength": 1 }
+                }
+              }
+            }
+          }
+        }
+      },
+      "allOf": [
+        { "contains": { "required": ["id", "required"], "properties": { "id": { "const": "source_assets" }, "required": { "const": true } } } },
+        { "contains": { "required": ["id", "required"], "properties": { "id": { "const": "source_authenticity" }, "required": { "const": true } } } },
+        { "contains": { "required": ["id", "required"], "properties": { "id": { "const": "artifacts" }, "required": { "const": true } } } },
+        { "contains": { "required": ["id", "required"], "properties": { "id": { "const": "photo_grade_readiness" }, "required": { "const": true } } } },
+        { "contains": { "required": ["id", "required"], "properties": { "id": { "const": "vision_evidence_review" }, "required": { "const": true } } } },
+        { "contains": { "required": ["id", "required"], "properties": { "id": { "const": "human_review" }, "required": { "const": true } } } }
+      ]
+    },
+    "blockers": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "commands": {
+      "type": "object",
+      "required": ["validate_draft", "validate_release_manifest", "run_release_gate"],
+      "properties": {
+        "validate_draft": { "type": "string", "minLength": 1 },
+        "validate_release_manifest": { "type": "string", "minLength": 1 },
+        "run_release_gate": { "type": "string", "minLength": 1 }
+      }
+    },
+    "next_actions": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    }
+  }
+}

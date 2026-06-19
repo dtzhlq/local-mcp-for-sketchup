@@ -12,7 +12,10 @@
       "properties": {
         "path": { "type": "string" },
         "width": { "type": "integer" },
-        "height": { "type": "integer" }
+        "height": { "type": "integer" },
+        "analysis_width": { "type": "integer" },
+        "analysis_height": { "type": "integer" },
+        "content_frame": { "$ref": "#/$defs/content_frame" }
       }
     },
     "detected_view": {
@@ -99,6 +102,33 @@
       "prefixItems": [{ "type": "number" }, { "type": "number" }, { "type": "number" }, { "type": "number" }],
       "minItems": 4,
       "maxItems": 4
+    },
+    "content_frame": {
+      "type": "object",
+      "required": ["method", "applied", "bbox", "source_bbox", "confidence", "removed_area_ratio", "removed_regions", "review_required"],
+      "properties": {
+        "method": { "const": "auto_screenshot_chrome_v1" },
+        "applied": { "type": "boolean" },
+        "bbox": { "$ref": "#/$defs/bbox" },
+        "source_bbox": { "$ref": "#/$defs/bbox" },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "removed_area_ratio": { "type": "number", "minimum": 0, "maximum": 1 },
+        "removed_regions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["side", "reason", "bbox", "source_bbox"],
+            "properties": {
+              "side": { "enum": ["top", "bottom", "left", "right"] },
+              "reason": { "type": "string" },
+              "bbox": { "$ref": "#/$defs/bbox" },
+              "source_bbox": { "$ref": "#/$defs/bbox" }
+            }
+          }
+        },
+        "review_required": { "type": "boolean" },
+        "notes": { "type": "array", "items": { "type": "string" } }
+      }
     },
     "grounding_evidence": {
       "type": "object",

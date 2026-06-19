@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/candidate-promotion-patch.schema.json",
+  "title": "CandidatePromotionPatch",
+  "type": "object",
+  "required": [
+    "version",
+    "kind",
+    "asset_set_id",
+    "profile_id",
+    "source_review",
+    "status",
+    "apply_allowed",
+    "compile_allowed",
+    "blockers",
+    "actions",
+    "review_summary"
+  ],
+  "properties": {
+    "version": { "const": 1 },
+    "kind": { "const": "candidate_promotion_patch" },
+    "asset_set_id": { "type": "string" },
+    "profile_id": { "type": "string" },
+    "source_review": { "type": "string" },
+    "status": { "enum": ["blocked", "needs_review", "ready_for_part_graph_patch"] },
+    "apply_allowed": { "type": "boolean" },
+    "compile_allowed": { "type": "boolean" },
+    "blockers": { "type": "array", "items": { "type": "string" } },
+    "resolved_blockers": { "type": "array", "items": { "type": "string" } },
+    "draft_view_review": {
+      "type": ["object", "null"],
+      "required": [
+        "source_draft_view_graph",
+        "status",
+        "accepted_view_slot_ids",
+        "promotion_allowed",
+        "blockers"
+      ],
+      "properties": {
+        "source_draft_view_graph": { "type": "string" },
+        "status": { "enum": ["not_accepted", "accepted", "partial", "rejected"] },
+        "accepted_view_slot_ids": { "type": "array", "items": { "type": "string" } },
+        "accepted_plane_hypothesis_ids": { "type": "array", "items": { "type": "string" } },
+        "promotion_allowed": { "type": "boolean" },
+        "blockers": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "local_detail_review": {
+      "type": ["object", "null"],
+      "required": [
+        "status",
+        "accepted_surface_ids",
+        "accepted_detail_ids",
+        "promotion_allowed",
+        "blockers"
+      ],
+      "properties": {
+        "source_object_surface_graph": { "type": ["string", "null"] },
+        "source_facade_plane_graph": { "type": ["string", "null"] },
+        "status": { "enum": ["not_accepted", "accepted", "partial", "rejected"] },
+        "accepted_surface_ids": { "type": "array", "items": { "type": "string" } },
+        "accepted_detail_ids": { "type": "array", "items": { "type": "string" } },
+        "promotion_allowed": { "type": "boolean" },
+        "blockers": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "plane_review": {
+      "type": ["object", "null"],
+      "required": [
+        "source_facade_plane_graph",
+        "status",
+        "accepted_plane_ids",
+        "promotion_allowed",
+        "blockers"
+      ],
+      "properties": {
+        "source_facade_plane_graph": { "type": "string" },
+        "status": { "enum": ["not_accepted", "accepted", "rejected"] },
+        "accepted_plane_ids": { "type": "array", "items": { "type": "string" } },
+        "promotion_allowed": { "type": "boolean" },
+        "blockers": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "actions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["action", "candidate_id", "role", "view", "requires_part_graph_review"],
+        "properties": {
+          "action": { "const": "promote_candidate" },
+          "candidate_id": { "type": "string" },
+          "role": { "type": "string" },
+          "view": { "type": "string" },
+          "source_image": { "type": "string" },
+          "source_observation_id": { "type": "string" },
+          "accepted_draft_view_slot_id": { "type": "string" },
+          "accepted_surface_id": { "type": "string" },
+          "accepted_detail_id": { "type": "string" },
+          "confidence": { "type": "number" },
+          "requires_part_graph_review": { "type": "boolean" },
+          "reviewer_note": { "type": "string" }
+        }
+      }
+    },
+    "review_summary": {
+      "type": "object",
+      "required": ["accepted_candidates", "held_candidates", "missing_inputs"],
+      "properties": {
+        "accepted_candidates": { "type": "integer" },
+        "held_candidates": { "type": "integer" },
+        "missing_inputs": { "type": "integer" }
+      }
+    },
+    "notes": { "type": "string" }
+  }
+}

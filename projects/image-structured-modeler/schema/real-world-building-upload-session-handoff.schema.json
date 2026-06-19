@@ -1,0 +1,319 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/real-world-building-upload-session-handoff.schema.json",
+  "title": "RealWorldBuildingUploadSessionHandoff",
+  "type": "object",
+  "required": [
+    "version",
+    "kind",
+    "generated_at",
+    "upload_session",
+    "status",
+    "workflow_stage",
+    "ok",
+    "release_ready",
+    "can_generate_sketchup_dsl",
+    "can_continue_without_new_upload",
+    "primary_action",
+    "source_request_status",
+    "source_request_response_status",
+    "release_work_order_status",
+    "semantic_evidence_quality",
+    "vision_evidence",
+    "release_checklist_required_check_ids",
+    "release_checklist_failed_required_check_ids",
+    "release_checklist_review_required_check_ids",
+    "blocked_outputs",
+    "required_user_inputs",
+    "blockers",
+    "next_actions",
+    "authoritative_artifacts",
+    "commands"
+  ],
+  "properties": {
+    "version": { "const": 1 },
+    "kind": { "const": "real_world_building_upload_session_handoff" },
+    "generated_at": { "type": "string", "minLength": 1 },
+    "upload_session": { "type": "string", "minLength": 1 },
+    "status": {
+      "enum": [
+        "preflight_blocked",
+        "needs_source_refill",
+        "needs_source_request_response_refill",
+        "ready_for_release_artifact_work",
+        "ready_for_formal_release_validation",
+        "review_required"
+      ]
+    },
+    "workflow_stage": {
+      "enum": [
+        "preflight_blocked",
+        "source_refill_required",
+        "source_response_refill_required",
+        "source_input_ready_needs_release_artifacts",
+        "release_manifest_ready"
+      ]
+    },
+    "ok": { "type": "boolean" },
+    "release_ready": { "type": "boolean" },
+    "can_generate_sketchup_dsl": { "type": "boolean" },
+    "can_continue_without_new_upload": { "type": "boolean" },
+    "primary_action": {
+      "type": "object",
+      "required": ["kind", "label", "command", "artifact", "artifact_exists"],
+      "properties": {
+        "kind": { "type": "string", "minLength": 1 },
+        "label": { "type": "string", "minLength": 1 },
+        "command": { "type": ["string", "null"] },
+        "artifact": { "type": ["string", "null"] },
+        "artifact_exists": { "type": "boolean" }
+      }
+    },
+    "source_request_status": { "type": ["string", "null"] },
+    "source_request_response_status": { "type": ["string", "null"] },
+    "release_work_order_status": { "type": ["string", "null"] },
+    "semantic_evidence_quality": {
+      "$ref": "#/$defs/semanticEvidenceQuality",
+      "description": "Handoff semantic evidence quality gate inherited from the current source package or source-request response."
+    },
+    "vision_evidence": {
+      "$ref": "#/$defs/visionEvidenceHandoff",
+      "description": "Handoff VisionEvidence semantic instances and modeling decisions inherited from the MCP brief."
+    },
+    "release_checklist_required_check_ids": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "release_checklist_failed_required_check_ids": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "release_checklist_review_required_check_ids": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "blocked_outputs": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "required_user_inputs": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "blockers": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "next_actions": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "authoritative_artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["role", "path", "required", "exists"],
+        "properties": {
+          "role": { "type": "string", "minLength": 1 },
+          "path": { "type": "string", "minLength": 1 },
+          "required": { "type": "boolean" },
+          "exists": { "type": "boolean" }
+        }
+      }
+    },
+    "commands": {
+      "type": "object",
+      "required": [
+        "prepare_source_refill_package",
+        "validate_source_refill_package",
+        "validate_source_refill_package_require_upload_ready",
+        "run_refill_upload_session",
+        "run_refill_upload_session_require_input_ready",
+        "assess_source_package_input_ready",
+        "prepare_release_sample_from_intake",
+        "prepare_vision_evidence_review_workbench",
+        "build_vision_evidence_policy_correction_patch",
+        "prepare_release_artifact_workspace",
+        "validate_release_artifact_workspace",
+        "validate_release_draft",
+        "validate_release_manifest",
+        "run_release_gate"
+      ],
+      "properties": {
+        "prepare_source_refill_package": { "type": ["string", "null"] },
+        "validate_source_refill_package": { "type": ["string", "null"] },
+        "validate_source_refill_package_require_upload_ready": { "type": ["string", "null"] },
+        "run_refill_upload_session": { "type": ["string", "null"] },
+        "run_refill_upload_session_require_input_ready": { "type": ["string", "null"] },
+        "assess_source_package_input_ready": { "type": ["string", "null"] },
+        "prepare_release_sample_from_intake": { "type": ["string", "null"] },
+        "prepare_vision_evidence_review_workbench": { "type": ["string", "null"] },
+        "build_vision_evidence_policy_correction_patch": { "type": ["string", "null"] },
+        "prepare_release_artifact_workspace": { "type": "string", "minLength": 1 },
+        "validate_release_artifact_workspace": { "type": "string", "minLength": 1 },
+        "validate_release_draft": { "type": ["string", "null"] },
+        "validate_release_manifest": { "type": "string", "minLength": 1 },
+        "run_release_gate": { "type": "string", "minLength": 1 }
+      }
+    }
+  },
+  "$defs": {
+    "checkIdList": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "semanticEvidenceQuality": {
+      "type": "object",
+      "required": [
+        "status",
+        "required_role_count",
+        "covered_role_count",
+        "missing_role_count",
+        "weak_role_count",
+        "review_required_role_count",
+        "geometry_promotion_allowed",
+        "weak_roles",
+        "review_required_roles",
+        "flags"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "not_applicable",
+            "missing",
+            "weak_review_required",
+            "review_required"
+          ]
+        },
+        "required_role_count": { "type": "integer", "minimum": 0 },
+        "covered_role_count": { "type": "integer", "minimum": 0 },
+        "missing_role_count": { "type": "integer", "minimum": 0 },
+        "weak_role_count": { "type": "integer", "minimum": 0 },
+        "review_required_role_count": { "type": "integer", "minimum": 0 },
+        "geometry_promotion_allowed": { "const": false },
+        "weak_roles": { "$ref": "#/$defs/checkIdList" },
+        "review_required_roles": { "$ref": "#/$defs/checkIdList" },
+        "flags": { "$ref": "#/$defs/checkIdList" }
+      }
+    },
+    "visionEvidenceHandoff": {
+      "type": "object",
+      "required": [
+        "available",
+        "review_required",
+        "verdict",
+        "semantic_review_roles",
+        "default_heavy_model_required",
+        "review_patch_artifact",
+        "semantic_evidence_instances",
+        "modeling_handoff"
+      ],
+      "properties": {
+        "available": { "type": "boolean" },
+        "review_required": { "type": "boolean" },
+        "verdict": { "type": ["string", "null"] },
+        "semantic_review_roles": { "$ref": "#/$defs/checkIdList" },
+        "default_heavy_model_required": { "type": "boolean" },
+        "review_patch_artifact": { "type": ["string", "null"] },
+        "semantic_evidence_instances": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/semanticEvidenceInstance" }
+        },
+        "modeling_handoff": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/visionEvidenceModelingHandoff" }
+        }
+      }
+    },
+    "semanticEvidenceInstance": {
+      "type": "object",
+      "required": [
+        "role",
+        "evidence_id",
+        "source_id",
+        "source_image",
+        "view",
+        "class",
+        "kind",
+        "bbox_px",
+        "confidence",
+        "backend",
+        "source_stage",
+        "review_required"
+      ],
+      "properties": {
+        "role": { "type": "string", "minLength": 1 },
+        "evidence_id": { "type": "string", "minLength": 1 },
+        "source_id": { "type": "string" },
+        "source_image": { "type": "string" },
+        "view": { "type": "string", "minLength": 1 },
+        "class": { "type": "string", "minLength": 1 },
+        "kind": { "type": "string", "minLength": 1 },
+        "bbox_px": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": { "type": "number" }
+        },
+        "confidence": { "type": "number", "minimum": 0 },
+        "backend": { "type": "string" },
+        "source_stage": { "type": "string" },
+        "review_required": { "type": "boolean" }
+      }
+    },
+    "visionEvidenceModelingHandoff": {
+      "type": "object",
+      "required": [
+        "role",
+        "instance_count",
+        "primary_instance",
+        "evidence_tokens",
+        "geometry_interpretation",
+        "modeling_decision",
+        "allowed_semantics",
+        "blocked_interpretations",
+        "required_confirmations",
+        "handoff_text",
+        "review_required",
+        "geometry_promotion_allowed"
+      ],
+      "properties": {
+        "role": { "type": "string", "minLength": 1 },
+        "instance_count": { "type": "integer", "minimum": 0 },
+        "primary_instance": {
+          "type": ["object", "null"],
+          "required": [
+            "evidence_id",
+            "source_id",
+            "source_image",
+            "view",
+            "bbox_px",
+            "confidence"
+          ],
+          "properties": {
+            "evidence_id": { "type": "string", "minLength": 1 },
+            "source_id": { "type": "string" },
+            "source_image": { "type": "string" },
+            "view": { "type": "string", "minLength": 1 },
+            "bbox_px": {
+              "type": "array",
+              "minItems": 4,
+              "maxItems": 4,
+              "items": { "type": "number" }
+            },
+            "confidence": { "type": "number", "minimum": 0 }
+          }
+        },
+        "evidence_tokens": { "$ref": "#/$defs/checkIdList" },
+        "geometry_interpretation": { "type": "string", "minLength": 1 },
+        "modeling_decision": { "type": "string", "minLength": 1 },
+        "allowed_semantics": { "$ref": "#/$defs/checkIdList" },
+        "blocked_interpretations": { "$ref": "#/$defs/checkIdList" },
+        "required_confirmations": { "$ref": "#/$defs/checkIdList" },
+        "handoff_text": { "type": "string", "minLength": 1 },
+        "review_required": { "const": true },
+        "geometry_promotion_allowed": { "const": false }
+      }
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "views": [
+    {
+      "source_image": "test/建筑单体/不得不承认，建模真是项技术活啊！！！_1_不得不建模_来自小红书网页版.png",
+      "kind": "oblique",
+      "confidence": 0.9,
+      "note": "Single anime street-building screenshot; oblique facade view with visible front and recessed side wall."
+    },
+    {
+      "source_image": "projects/image-structured-modeler/examples/building-single-anime-yellow/input-visible-crop.png",
+      "kind": "oblique",
+      "confidence": 0.92,
+      "note": "Cropped visible street-scene region after removing the unrelated black lower screenshot panel."
+    }
+  ]
+}

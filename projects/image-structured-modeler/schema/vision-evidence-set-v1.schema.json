@@ -1,0 +1,294 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/vision-evidence-set-v1.schema.json",
+  "title": "VisionEvidenceSet v1",
+  "type": "object",
+  "required": [
+    "kind",
+    "version",
+    "coordinate_convention",
+    "source_images",
+    "backend_statuses",
+    "masks",
+    "edges",
+    "lines",
+    "keypoints",
+    "regions",
+    "scale_anchors",
+    "relations",
+    "view_ground_plane",
+    "qa"
+  ],
+  "properties": {
+    "kind": { "const": "vision_evidence_set_v1" },
+    "version": { "const": 1 },
+    "coordinate_convention": { "const": "image_x_right_y_down" },
+    "policy": { "type": "string" },
+    "source_images": { "type": "array", "items": { "type": "string" } },
+    "default_backends": { "type": "array", "items": { "type": "string" } },
+    "optional_backends": { "type": "object" },
+    "backend_statuses": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/backend_status" }
+    },
+    "masks": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/evidence_item" }
+    },
+    "edges": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/evidence_item" }
+    },
+    "lines": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/evidence_item" }
+    },
+    "keypoints": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/evidence_item" }
+    },
+    "regions": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/evidence_item" }
+    },
+    "scale_anchors": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/evidence_item" }
+    },
+    "relations": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/relation_item" }
+    },
+    "view_ground_plane": { "$ref": "#/$defs/view_ground_plane" },
+    "qa": { "$ref": "#/$defs/qa" },
+    "correction_targets": { "type": "array", "items": { "type": "object" } },
+    "notes": { "type": "array", "items": { "type": "string" } }
+  },
+  "$defs": {
+    "backend_status": {
+      "type": "object",
+      "required": ["backend", "available", "required", "status"],
+      "properties": {
+        "backend": { "type": "string" },
+        "implementation": { "type": ["string", "null"] },
+        "available": { "type": "boolean" },
+        "required": { "type": "boolean" },
+        "status": { "type": "string" },
+        "reason": { "type": "string" }
+      }
+    },
+    "evidence_item": {
+      "type": "object",
+      "required": [
+        "id",
+        "kind",
+        "class",
+        "source_image",
+        "backend",
+        "source_stage",
+        "confidence",
+        "review_required",
+        "provenance"
+      ],
+      "properties": {
+        "id": { "type": "string" },
+        "kind": { "enum": ["mask", "edge", "line", "keypoint", "region", "scale_anchor"] },
+        "class": { "type": "string" },
+        "original_class": { "type": "string" },
+        "source_image": { "type": "string" },
+        "backend": { "type": "string" },
+        "source_stage": { "type": "string" },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "review_required": { "type": "boolean" },
+        "accepted": { "type": ["boolean", "null"] },
+        "bbox_px": { "$ref": "#/$defs/bbox" },
+        "polygon_px": { "type": "array", "items": { "$ref": "#/$defs/point" } },
+        "a": { "$ref": "#/$defs/point" },
+        "b": { "$ref": "#/$defs/point" },
+        "point": { "$ref": "#/$defs/point" },
+        "residuals": { "type": "object" },
+        "provenance": { "type": "object" },
+        "risk_flags": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "relation_item": {
+      "type": "object",
+      "required": [
+        "id",
+        "kind",
+        "relation_type",
+        "item",
+        "anchor",
+        "source_image",
+        "backend",
+        "confidence",
+        "review_required",
+        "provenance"
+      ],
+      "properties": {
+        "id": { "type": "string" },
+        "kind": { "const": "relation" },
+        "relation_type": { "type": "string" },
+        "item": { "type": "string" },
+        "anchor": { "type": "string" },
+        "source_image": { "type": "string" },
+        "backend": { "type": "string" },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "review_required": { "type": "boolean" },
+        "basis": { "type": ["object", "null"] },
+        "provenance": { "type": "object" }
+      }
+    },
+    "view_ground_plane": {
+      "type": "object",
+      "required": ["kind", "version", "images", "summary"],
+      "properties": {
+        "kind": { "const": "view_ground_plane_estimate_v1" },
+        "version": { "const": 1 },
+        "images": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "source_image",
+              "detected_view",
+              "view_class",
+              "evidence_summary",
+              "confidence_components",
+              "ground_plane_confidence",
+              "confidence_band",
+              "planar_groundplan_allowed",
+              "review_required",
+              "usage_policy",
+              "risks"
+            ],
+            "properties": {
+              "source_image": { "type": "string" },
+              "detected_view": { "type": "string" },
+              "view_class": { "type": "string" },
+              "dominant_directions": { "type": "array", "items": { "type": "object" } },
+              "rectification_hint": { "type": "string" },
+              "vanishing_or_parallel_line_evidence": { "type": "integer" },
+              "evidence_summary": {
+                "type": "object",
+                "required": [
+                  "source_view_confidence",
+                  "site_edges",
+                  "road_edges",
+                  "accepted_boundary_edges",
+                  "boundary_support",
+                  "dominant_direction_count",
+                  "scale_anchor_count",
+                  "building_footprint_masks",
+                  "road_surface_regions",
+                  "camera_hint_review_required"
+                ],
+                "properties": {
+                  "source_view_confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+                  "site_edges": { "type": "integer", "minimum": 0 },
+                  "road_edges": { "type": "integer", "minimum": 0 },
+                  "accepted_boundary_edges": { "type": "integer", "minimum": 0 },
+                  "boundary_support": { "type": "number", "minimum": 0, "maximum": 1 },
+                  "dominant_direction_count": { "type": "integer", "minimum": 0 },
+                  "scale_anchor_count": { "type": "integer", "minimum": 0 },
+                  "building_footprint_masks": { "type": "integer", "minimum": 0 },
+                  "road_surface_regions": { "type": "integer", "minimum": 0 },
+                  "camera_hint_projection_model": { "type": ["string", "null"] },
+                  "camera_hint_review_required": { "type": "boolean" }
+                }
+              },
+              "confidence_components": {
+                "type": "object",
+                "required": [
+                  "view_label",
+                  "boundary_support",
+                  "orthogonal_direction_support",
+                  "scale_anchor_support",
+                  "camera_hint_support"
+                ],
+                "properties": {
+                  "view_label": { "type": "number", "minimum": 0, "maximum": 1 },
+                  "boundary_support": { "type": "number", "minimum": 0, "maximum": 1 },
+                  "orthogonal_direction_support": { "type": "number", "minimum": 0, "maximum": 1 },
+                  "scale_anchor_support": { "type": "number", "minimum": 0, "maximum": 1 },
+                  "camera_hint_support": { "type": "number", "minimum": 0, "maximum": 1 }
+                }
+              },
+              "ground_plane_confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+              "confidence_band": { "enum": ["high", "medium", "low"] },
+              "planar_groundplan_allowed": { "type": "boolean" },
+              "review_required": { "type": "boolean" },
+              "usage_policy": {
+                "enum": [
+                  "planar_groundplan_candidate",
+                  "review_only_oblique_context",
+                  "blocked_unknown_view"
+                ]
+              },
+              "risks": { "type": "array", "items": { "type": "string" } },
+              "downgrade_reason": { "type": ["string", "null"] }
+            }
+          }
+        },
+        "summary": {
+          "type": "object",
+          "required": [
+            "top_view_ground_plane_confidence",
+            "planar_groundplan_allowed",
+            "review_required",
+            "images_analyzed",
+            "top_view_candidates",
+            "oblique_review_images",
+            "images_requiring_review"
+          ],
+          "properties": {
+            "preferred_top_view_source_image": { "type": ["string", "null"] },
+            "top_view_ground_plane_confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+            "planar_groundplan_allowed": { "type": "boolean" },
+            "review_required": { "type": "boolean" },
+            "images_analyzed": { "type": "integer", "minimum": 0 },
+            "top_view_candidates": { "type": "integer", "minimum": 0 },
+            "oblique_review_images": { "type": "integer", "minimum": 0 },
+            "images_requiring_review": { "type": "integer", "minimum": 0 },
+            "preferred_top_view_usage_policy": { "type": ["string", "null"] },
+            "preferred_top_view_evidence_summary": { "type": ["object", "null"] },
+            "downgrade_reason": { "type": ["string", "null"] }
+          }
+        }
+      }
+    },
+    "qa": {
+      "type": "object",
+      "required": ["ok", "verdict", "review_required", "default_heavy_model_required", "issues"],
+      "properties": {
+        "ok": { "type": "boolean" },
+        "verdict": { "enum": ["pass", "review", "fail"] },
+        "review_required": { "type": "boolean" },
+        "masks": { "type": "integer" },
+        "edges": { "type": "integer" },
+        "accepted_edges": { "type": "integer" },
+        "rejected_edges": { "type": "integer" },
+        "lines": { "type": "integer" },
+        "keypoints": { "type": "integer" },
+        "regions": { "type": "integer" },
+        "scale_anchors": { "type": "integer" },
+        "relations": { "type": "integer" },
+        "default_heavy_model_required": { "type": "boolean" },
+        "review_reasons": { "type": "array", "items": { "type": "string" } },
+        "issues": { "type": "array", "items": { "type": "object" } }
+      }
+    },
+    "point": {
+      "type": "array",
+      "prefixItems": [{ "type": "number" }, { "type": "number" }],
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "bbox": {
+      "type": "array",
+      "prefixItems": [{ "type": "number" }, { "type": "number" }, { "type": "number" }, { "type": "number" }],
+      "minItems": 4,
+      "maxItems": 4
+    }
+  }
+}

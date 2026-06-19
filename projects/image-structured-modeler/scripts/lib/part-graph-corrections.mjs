@@ -47,6 +47,9 @@ export function buildCorrectionPatchFromParameterProposals(partGraph, review = {
     const autoAccepted = !accepted.size && proposal.status === 'ready_for_correction_patch' && proposal.review_required !== true;
     if (!acceptedReview && !autoAccepted) continue;
     const isPartCandidatePromotion = proposal.proposal_kind === 'part_candidates';
+    const siblingShapePrimitive = proposal.parameter === 'shape.parameters'
+      ? proposals.find((item) => item.part_id === proposal.part_id && item.parameter === 'shape.primitive')
+      : null;
     const current = isPartCandidatePromotion
       ? []
       : getPathValue(partGraph, proposal.path);
@@ -77,7 +80,8 @@ export function buildCorrectionPatchFromParameterProposals(partGraph, review = {
         confirmed_views: proposal.confirmed_views || [],
         missing_views: proposal.missing_views || [],
         image_measurements: proposal.image_measurements || [],
-        evidence_sources: proposal.evidence_sources || []
+        evidence_sources: proposal.evidence_sources || [],
+        ...(siblingShapePrimitive ? { shape_primitive: siblingShapePrimitive.proposed_value } : {})
       },
       mark_evidence_status: options.markEvidenceStatus || 'manual_confirmed'
     });
@@ -107,11 +111,29 @@ export function applyCorrectionPatch(partGraph, patch) {
     if (part) {
       part.evidence_status = edit.mark_evidence_status || part.evidence_status || 'inferred';
       appendCorrectionEvidence(part, edit, patch);
+      if (patch.source === 'parameter_proposal_review' && edit.path?.includes('.shape.')) {
+        if (edit.path.endsWith('.shape.parameters') && !part.shape?.primitive) {
+          part.shape = {
+            primitive: edit.evidence?.shape_primitive || part.candidate_shape?.primitive || 'rounded_box',
+            parameters: part.shape?.parameters || edit.value
+          };
+        }
+        part.compile = {
+          ...(part.compile || {}),
+          emit: true,
+          promoted_by: 'parameter_proposal_review'
+        };
+        part.promoted_geometry = true;
+        delete part.candidate_shape;
+      }
       part.qa = {
         ...(part.qa || {}),
         ...(patch.source === 'parameter_proposal_review'
           ? { parameter_proposal_applied: true }
           : { reference_visual_corrected: true }),
+        ...(patch.source === 'parameter_proposal_review' && edit.path?.includes('.shape.')
+          ? { candidate_only: false, not_compiled: false, promoted_geometry: true }
+          : {}),
         last_correction_rule: edit.rule_id || null
       };
     }

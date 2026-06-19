@@ -12,6 +12,10 @@ import {
 import { annotateObservationSetWithHighContrastEdgeV1 } from './lib/high-contrast-edge-v1.mjs';
 import { annotateObservationSetWithOpenCvEdgeV1 } from './lib/opencv-edge-v1.mjs';
 import {
+  annotateObservationSetWithVisionEvidenceSetV1,
+  visionEvidenceSetReport
+} from './lib/vision-evidence-set-v1.mjs';
+import {
   annotateObservationSetWithBoundaryGraphV1,
   boundaryGraphReport
 } from './lib/boundary-graph-v1.mjs';
@@ -29,7 +33,9 @@ async function main() {
     output: path.join(outputDir, 'opencv-edge-v1-report.json'),
     outputDir
   });
+  observations = annotateObservationSetWithVisionEvidenceSetV1(observations, { force: true });
   observations = await annotateObservationSetWithBoundaryGraphV1(observations, { force: options.force });
+  observations = annotateObservationSetWithVisionEvidenceSetV1(observations, { force: true });
   const groundPlan = validateAutoGroundPlanR10({ observations });
   const artifact = await renderBirdEyeSegmentationArtifact({
     observations,
@@ -41,14 +47,17 @@ async function main() {
   });
   const report = landCoverReport(observations.land_cover_v1);
   const boundaryReport = boundaryGraphReport(observations.boundary_graph_v1);
+  const visionReport = visionEvidenceSetReport(observations.vision_evidence_set_v1);
   await writeJson(path.join(outputDir, 'land-cover-v1-report.json'), report);
   await writeJson(path.join(outputDir, 'boundary-graph-v1-report.json'), boundaryReport);
+  await writeJson(path.join(outputDir, 'vision-evidence-v1-report.json'), visionReport);
 
   process.stdout.write(`${JSON.stringify({
     ok: groundPlan.ok && report.ok,
     verdict: groundPlan.verdict,
     land_cover_verdict: report.verdict,
     boundary_graph_verdict: boundaryReport.verdict,
+    vision_evidence_verdict: visionReport.verdict,
     png: path.relative(repoRoot, artifact.pngPath),
     svg: path.relative(repoRoot, artifact.svgPath),
     remaining_unknown_gap_ratio: groundPlan.summary.remaining_unknown_gap_ratio,

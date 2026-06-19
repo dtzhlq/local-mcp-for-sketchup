@@ -1,0 +1,184 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/structure-evidence-graph.schema.json",
+  "title": "StructureEvidenceGraph v1",
+  "type": "object",
+  "required": [
+    "kind",
+    "version",
+    "coordinate_convention",
+    "edge_evidence",
+    "corner_evidence",
+    "plane_hypotheses",
+    "silhouette_profiles",
+    "view_axis_hypotheses",
+    "source_provenance",
+    "qa",
+    "review_policy"
+  ],
+  "properties": {
+    "kind": { "const": "structure_evidence_graph_v1" },
+    "version": { "const": 1 },
+    "coordinate_convention": { "const": "image_x_right_y_down" },
+    "default_backends": { "type": "array", "items": { "type": "string" } },
+    "optional_backends": { "type": "object" },
+    "edge_evidence": { "type": "array", "items": { "$ref": "#/$defs/edge" } },
+    "corner_evidence": { "type": "array", "items": { "$ref": "#/$defs/corner" } },
+    "plane_hypotheses": { "type": "array", "items": { "$ref": "#/$defs/plane" } },
+    "silhouette_profiles": { "type": "array", "items": { "$ref": "#/$defs/silhouette" } },
+    "view_axis_hypotheses": { "type": "array", "items": { "$ref": "#/$defs/view_axis" } },
+    "source_provenance": { "type": "array", "items": { "$ref": "#/$defs/source" } },
+    "qa": {
+      "type": "object",
+      "required": [
+        "ok",
+        "verdict",
+        "edge_evidence_count",
+        "corner_evidence_count",
+        "plane_hypothesis_count",
+        "silhouette_profile_count",
+        "view_axis_hypothesis_count",
+        "default_heavy_model_required"
+      ],
+      "properties": {
+        "ok": { "type": "boolean" },
+        "verdict": { "enum": ["pass", "review", "fail"] },
+        "edge_evidence_count": { "type": "integer", "minimum": 0 },
+        "corner_evidence_count": { "type": "integer", "minimum": 0 },
+        "plane_hypothesis_count": { "type": "integer", "minimum": 0 },
+        "silhouette_profile_count": { "type": "integer", "minimum": 0 },
+        "view_axis_hypothesis_count": { "type": "integer", "minimum": 0 },
+        "accepted_or_review_edge_count": { "type": "integer", "minimum": 0 },
+        "rejected_edge_count": { "type": "integer", "minimum": 0 },
+        "default_heavy_model_required": { "const": false },
+        "issues": { "type": "array", "items": { "type": "object" } }
+      }
+    },
+    "review_policy": {
+      "type": "object",
+      "required": ["status", "review_required", "promotion_allowed", "compile_allowed", "blockers"],
+      "properties": {
+        "status": { "enum": ["needs_review", "blocked_no_structure_evidence"] },
+        "review_required": { "const": true },
+        "promotion_allowed": { "const": false },
+        "compile_allowed": { "const": false },
+        "blockers": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  },
+  "$defs": {
+    "point": {
+      "type": "array",
+      "prefixItems": [{ "type": "number" }, { "type": "number" }],
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "bbox": {
+      "type": "array",
+      "prefixItems": [{ "type": "number" }, { "type": "number" }, { "type": "number" }, { "type": "number" }],
+      "minItems": 4,
+      "maxItems": 4
+    },
+    "quad": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": { "$ref": "#/$defs/point" }
+    },
+    "edge": {
+      "type": "object",
+      "required": ["id", "source_image", "line_px", "support_score", "rejection_reason", "review_status"],
+      "properties": {
+        "id": { "type": "string" },
+        "source_image": { "type": "string" },
+        "line_px": {
+          "type": "object",
+          "required": ["a", "b"],
+          "properties": {
+            "a": { "$ref": "#/$defs/point" },
+            "b": { "$ref": "#/$defs/point" }
+          }
+        },
+        "class": { "type": "string" },
+        "source_stage": { "type": "string" },
+        "support_score": { "type": "number", "minimum": 0, "maximum": 1 },
+        "rejection_reason": { "type": ["string", "null"] },
+        "review_status": { "enum": ["accepted_for_draft", "needs_review", "rejected"] }
+      }
+    },
+    "corner": {
+      "type": "object",
+      "required": ["id", "source_image", "point_px", "support_score", "rejection_reason", "review_status"],
+      "properties": {
+        "id": { "type": "string" },
+        "source_image": { "type": "string" },
+        "point_px": { "$ref": "#/$defs/point" },
+        "source_evidence_ids": { "type": "array", "items": { "type": "string" } },
+        "support_score": { "type": "number", "minimum": 0, "maximum": 1 },
+        "rejection_reason": { "type": ["string", "null"] },
+        "review_status": { "enum": ["accepted_for_draft", "needs_review", "rejected"] }
+      }
+    },
+    "plane": {
+      "type": "object",
+      "required": ["id", "role", "source_image", "visible_quad_px", "support_score", "rejection_reason", "review_status", "promotion_allowed"],
+      "properties": {
+        "id": { "type": "string" },
+        "role": { "type": "string" },
+        "source_image": { "type": "string" },
+        "source_evidence_id": { "type": "string" },
+        "visible_quad_px": { "$ref": "#/$defs/quad" },
+        "bbox_px": { "$ref": "#/$defs/bbox" },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "support_score": { "type": "number", "minimum": 0, "maximum": 1 },
+        "source_stage": { "type": "string" },
+        "rejection_reason": { "type": ["string", "null"] },
+        "review_status": { "enum": ["accepted_for_draft", "needs_review", "rejected"] },
+        "promotion_allowed": { "const": false }
+      }
+    },
+    "silhouette": {
+      "type": "object",
+      "required": ["id", "source_image", "visible_quad_px", "support_score", "rejection_reason", "review_status"],
+      "properties": {
+        "id": { "type": "string" },
+        "source_image": { "type": "string" },
+        "view": { "type": "string" },
+        "visible_quad_px": { "$ref": "#/$defs/quad" },
+        "bbox_px": { "$ref": "#/$defs/bbox" },
+        "support_score": { "type": "number", "minimum": 0, "maximum": 1 },
+        "rejection_reason": { "type": ["string", "null"] },
+        "review_status": { "enum": ["accepted_for_draft", "needs_review", "rejected"] }
+      }
+    },
+    "view_axis": {
+      "type": "object",
+      "required": ["id", "source_image", "detected_view", "support_score", "rejection_reason", "review_status"],
+      "properties": {
+        "id": { "type": "string" },
+        "source_image": { "type": "string" },
+        "detected_view": { "type": "string" },
+        "primary_axis_hint": { "type": "string" },
+        "secondary_axis_hint": { "type": "string" },
+        "vanishing_point_px": { "type": ["array", "null"] },
+        "horizon_line_px": { "type": ["object", "array", "null"] },
+        "support_score": { "type": "number", "minimum": 0, "maximum": 1 },
+        "rejection_reason": { "type": ["string", "null"] },
+        "review_status": { "enum": ["accepted_for_draft", "needs_review", "rejected"] }
+      }
+    },
+    "source": {
+      "type": "object",
+      "required": ["id", "source_image", "detected_view", "deterministic_backends", "optional_evidence_sources"],
+      "properties": {
+        "id": { "type": "string" },
+        "source_image": { "type": "string" },
+        "width": { "type": "number" },
+        "height": { "type": "number" },
+        "detected_view": { "type": "string" },
+        "deterministic_backends": { "type": "array", "items": { "type": "string" } },
+        "optional_evidence_sources": { "type": "object" }
+      }
+    }
+  }
+}

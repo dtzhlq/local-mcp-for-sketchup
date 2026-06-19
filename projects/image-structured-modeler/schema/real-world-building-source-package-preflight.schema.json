@@ -1,0 +1,312 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/real-world-building-source-package-preflight.schema.json",
+  "title": "RealWorldBuildingSourcePackagePreflight",
+  "type": "object",
+  "required": [
+    "version",
+    "kind",
+    "generated_at",
+    "input",
+    "profile_id",
+    "status",
+    "can_start_structured_intake",
+    "release_source_candidate",
+    "asset_count",
+    "supported_asset_count",
+    "media_types",
+    "source_assets",
+    "source_content",
+    "metadata_files",
+    "view_package",
+    "scale_package",
+    "checks",
+    "blockers",
+    "warnings",
+    "next_actions",
+    "commands"
+  ],
+  "properties": {
+    "version": { "const": 1 },
+    "kind": { "const": "real_world_building_source_package_preflight" },
+    "generated_at": { "type": "string", "minLength": 1 },
+    "input": { "type": "string", "minLength": 1 },
+    "profile_id": { "type": "string", "minLength": 1 },
+    "status": {
+      "enum": [
+        "release_source_candidate",
+        "ready_for_intake",
+        "needs_view_hints",
+        "blocked_source_metadata",
+        "blocked_source_assets",
+        "blocked_profile"
+      ]
+    },
+    "can_start_structured_intake": { "type": "boolean" },
+    "release_source_candidate": { "type": "boolean" },
+    "asset_count": { "type": "integer", "minimum": 0 },
+    "supported_asset_count": { "type": "integer", "minimum": 0 },
+    "media_types": {
+      "type": "array",
+      "items": { "enum": ["image", "pdf", "cad", "unknown"] }
+    },
+    "source_assets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "path",
+          "media_type",
+          "extension",
+          "size_bytes",
+          "content_sha256",
+          "status",
+          "generated_path_markers",
+          "view_hints"
+        ],
+        "properties": {
+          "path": { "type": "string", "minLength": 1 },
+          "media_type": { "enum": ["image", "pdf", "cad", "unknown"] },
+          "extension": { "type": "string" },
+          "size_bytes": { "type": "integer", "minimum": 0 },
+          "content_sha256": { "type": "string", "minLength": 1 },
+          "status": { "enum": ["pass", "fail", "review"] },
+          "generated_path_markers": {
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "view_hints": {
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 }
+          }
+        }
+      }
+    },
+    "source_content": {
+      "type": "object",
+      "required": ["status", "duplicate_groups"],
+      "properties": {
+        "status": { "enum": ["pass", "fail"] },
+        "duplicate_groups": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["content_sha256", "paths", "media_types", "view_hints"],
+            "properties": {
+              "content_sha256": { "type": "string", "minLength": 1 },
+              "paths": {
+                "type": "array",
+                "items": { "type": "string", "minLength": 1 }
+              },
+              "media_types": {
+                "type": "array",
+                "items": { "enum": ["image", "pdf", "cad", "unknown"] }
+              },
+              "view_hints": {
+                "type": "array",
+                "items": { "type": "string", "minLength": 1 }
+              }
+            }
+          }
+        }
+      }
+    },
+    "metadata_files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "source", "status"],
+        "properties": {
+          "path": { "type": "string", "minLength": 1 },
+          "source": { "enum": ["view_hints_file", "upload_manifest"] },
+          "status": { "enum": ["parsed", "invalid_json", "invalid_contract"] },
+          "kind": { "type": "string" },
+          "error": { "type": "string" },
+          "errors": {
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 }
+          }
+        }
+      }
+    },
+    "view_package": {
+      "type": "object",
+      "required": [
+        "status",
+        "required_views",
+        "hinted_views",
+        "missing_hinted_views",
+        "view_source_diversity",
+        "sources"
+      ],
+      "properties": {
+        "status": { "enum": ["pass", "fail", "review"] },
+        "required_views": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "hinted_views": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "missing_hinted_views": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "view_source_diversity": {
+          "type": "object",
+          "required": [
+            "status",
+            "distinct_source_paths_for_required_views",
+            "source_groups",
+            "reused_source_paths"
+          ],
+          "properties": {
+            "status": { "enum": ["pass", "fail", "review"] },
+            "distinct_source_paths_for_required_views": { "type": "integer", "minimum": 0 },
+            "source_groups": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["path", "views", "sources", "metadata_paths"],
+                "properties": {
+                  "path": { "type": "string", "minLength": 1 },
+                  "views": {
+                    "type": "array",
+                    "items": { "type": "string", "minLength": 1 }
+                  },
+                  "sources": {
+                    "type": "array",
+                    "items": { "enum": ["view_hints_file", "upload_manifest", "filename", "cad_plan_default"] }
+                  },
+                  "metadata_paths": {
+                    "type": "array",
+                    "items": { "type": "string", "minLength": 1 }
+                  }
+                }
+              }
+            },
+            "reused_source_paths": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["path", "views", "sources", "metadata_paths"],
+                "properties": {
+                  "path": { "type": "string", "minLength": 1 },
+                  "views": {
+                    "type": "array",
+                    "items": { "type": "string", "minLength": 1 }
+                  },
+                  "sources": {
+                    "type": "array",
+                    "items": { "enum": ["view_hints_file", "upload_manifest", "filename", "cad_plan_default"] }
+                  },
+                  "metadata_paths": {
+                    "type": "array",
+                    "items": { "type": "string", "minLength": 1 }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["view", "path", "source"],
+            "properties": {
+              "view": { "type": "string", "minLength": 1 },
+              "path": { "type": "string", "minLength": 1 },
+              "source": { "enum": ["view_hints_file", "upload_manifest", "filename", "cad_plan_default"] }
+            }
+          }
+        }
+      }
+    },
+    "scale_package": {
+      "type": "object",
+      "required": [
+        "status",
+        "has_known_dimensions",
+        "has_scale_anchors",
+        "hints",
+        "sources",
+        "next_actions"
+      ],
+      "properties": {
+        "status": { "enum": ["missing", "review", "pass"] },
+        "has_known_dimensions": { "type": "boolean" },
+        "has_scale_anchors": { "type": "boolean" },
+        "hints": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["kind", "confidence", "source", "metadata_path"],
+            "properties": {
+              "kind": { "enum": ["known_dimensions", "scale_anchor"] },
+              "target": { "type": "string" },
+              "units": { "type": "string" },
+              "width_mm": { "type": "number" },
+              "depth_mm": { "type": "number" },
+              "height_mm": { "type": "number" },
+              "anchor_type": { "type": "string" },
+              "source_image": { "type": "string" },
+              "physical_width_mm": { "type": "number" },
+              "physical_height_mm": { "type": "number" },
+              "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+              "source": { "enum": ["view_hints_file", "upload_manifest"] },
+              "metadata_path": { "type": "string", "minLength": 1 },
+              "basis": {
+                "type": "array",
+                "items": { "type": "string", "minLength": 1 }
+              }
+            }
+          }
+        },
+        "sources": {
+          "type": "array",
+          "items": { "enum": ["view_hints_file", "upload_manifest"] }
+        },
+        "next_actions": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "status", "required", "message"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "status": { "enum": ["pass", "fail", "review"] },
+          "required": { "type": "boolean" },
+          "message": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "blockers": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "warnings": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "next_actions": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "commands": {
+      "type": "object",
+      "required": ["run_intake", "run_intake_source_gate", "run_release_gate"],
+      "properties": {
+        "run_intake": { "type": "string", "minLength": 1 },
+        "run_intake_source_gate": { "type": "string", "minLength": 1 },
+        "run_release_gate": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

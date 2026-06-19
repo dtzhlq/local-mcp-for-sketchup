@@ -635,6 +635,9 @@
             "note": "accepted_parameter_proposal: Accept the image-scale body candidate for correction patch regression."
           }
         ],
+        "candidate_only": false,
+        "not_compiled": false,
+        "promotion_required": true,
         "generated_from_image_evidence": true,
         "evidence_confidence": 0.382,
         "missing_views": [
@@ -643,6 +646,7 @@
           "rear"
         ],
         "parameter_proposal_applied": true,
+        "promoted_geometry": true,
         "last_correction_rule": "accepted_parameter_proposal"
       }
     },
@@ -704,6 +708,9 @@
             "note": "accepted_parameter_proposal: Accept the image-scale cab candidate for correction patch regression."
           }
         ],
+        "candidate_only": false,
+        "not_compiled": false,
+        "promotion_required": true,
         "generated_from_image_evidence": true,
         "evidence_confidence": 0.378,
         "missing_views": [
@@ -711,235 +718,8 @@
           "left"
         ],
         "parameter_proposal_applied": true,
+        "promoted_geometry": true,
         "last_correction_rule": "accepted_parameter_proposal"
-      }
-    },
-    {
-      "op": "rounded_box",
-      "id": "windshield",
-      "name": "vehicle_ambulance_windshield",
-      "origin": [
-        40,
-        0,
-        525
-      ],
-      "size": [
-        460,
-        180,
-        210
-      ],
-      "radius": 4,
-      "qa": {
-        "role": "windshield",
-        "part_id": "windshield",
-        "intent": "windshield",
-        "evidence_status": "needs_review",
-        "fallback_state": "needs_review",
-        "evidence_sources": [
-          {
-            "kind": "silhouette",
-            "view": "left",
-            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
-            "status": "inferred",
-            "confidence": 0.418,
-            "note": "Inferred from related image evidence for amb-windshield: Ambulance windshield candidate from cab side profile.",
-            "observation_id": "ambulance_side_windshield"
-          },
-          {
-            "kind": "silhouette",
-            "view": "front",
-            "source_image": "test/救护车/IMG_0175.jpeg",
-            "status": "inferred",
-            "confidence": 0.418,
-            "note": "Inferred from related image evidence for amb-windshield: Front windshield candidate.",
-            "observation_id": "ambulance_front_windshield"
-          }
-        ],
-        "generated_from_image_evidence": true,
-        "evidence_confidence": 0.364,
-        "missing_views": [
-          "front",
-          "left"
-        ]
-      }
-    },
-    {
-      "op": "rounded_box",
-      "id": "side_windows",
-      "name": "vehicle_ambulance_side_windows",
-      "origin": [
-        60,
-        0,
-        525
-      ],
-      "size": [
-        460,
-        180,
-        210
-      ],
-      "radius": 4,
-      "qa": {
-        "role": "side_window",
-        "part_id": "side_windows",
-        "intent": "side_window",
-        "evidence_status": "needs_review",
-        "fallback_state": "needs_review",
-        "evidence_sources": [
-          {
-            "kind": "silhouette",
-            "view": "left",
-            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
-            "status": "inferred",
-            "confidence": 0.446,
-            "note": "Inferred from related image evidence for amb-left-side-window: Ambulance side window candidate from side profile.",
-            "observation_id": "ambulance_side_window"
-          }
-        ],
-        "generated_from_image_evidence": true,
-        "evidence_confidence": 0.378,
-        "missing_views": [
-          "left",
-          "right",
-          "rear"
-        ]
-      }
-    },
-    {
-      "op": "rounded_box",
-      "id": "wheel_set",
-      "name": "vehicle_ambulance_wheel_set",
-      "origin": [
-        80,
-        0,
-        525
-      ],
-      "size": [
-        460,
-        180,
-        210
-      ],
-      "radius": 4,
-      "qa": {
-        "role": "wheel",
-        "part_id": "wheel_set",
-        "intent": "wheel",
-        "evidence_status": "needs_review",
-        "fallback_state": "needs_review",
-        "evidence_sources": [
-          {
-            "kind": "center_point",
-            "view": "left",
-            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
-            "status": "inferred",
-            "confidence": 0.504,
-            "note": "Inferred from related image evidence for wheel-left-front-tire: Front wheel center keypoint candidate from side view.",
-            "observation_id": "ambulance_front_wheel_center"
-          }
-        ],
-        "generated_from_image_evidence": true,
-        "evidence_confidence": 0.407,
-        "missing_views": [
-          "left",
-          "right"
-        ]
-      }
-    },
-    {
-      "op": "rounded_box",
-      "id": "roof_lights",
-      "name": "vehicle_ambulance_roof_lights",
-      "origin": [
-        100,
-        0,
-        525
-      ],
-      "size": [
-        460,
-        180,
-        210
-      ],
-      "radius": 4,
-      "qa": {
-        "role": "lightbar",
-        "part_id": "roof_lights",
-        "intent": "lightbar",
-        "evidence_status": "needs_review",
-        "fallback_state": "needs_review",
-        "evidence_sources": [
-          {
-            "kind": "silhouette",
-            "view": "left",
-            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
-            "status": "inferred",
-            "confidence": 0.432,
-            "note": "Inferred from related image evidence for roof-red-lightbar: Roof lightbar candidate from side roofline.",
-            "observation_id": "ambulance_side_lightbar"
-          },
-          {
-            "kind": "silhouette",
-            "view": "top",
-            "source_image": "test/救护车/C486F074-3B8E-4F1C-A048-0AF24B687035_1_102_o.jpeg",
-            "status": "inferred",
-            "confidence": 0.446,
-            "note": "Inferred from related image evidence for roof-red-lightbar: Top-view roof lightbar candidate.",
-            "observation_id": "ambulance_top_lightbar"
-          },
-          {
-            "kind": "silhouette",
-            "view": "front",
-            "source_image": "test/救护车/IMG_0175.jpeg",
-            "status": "inferred",
-            "confidence": 0.403,
-            "note": "Inferred from related image evidence for roof-red-lightbar: Front roof lightbar candidate.",
-            "observation_id": "ambulance_front_lightbar"
-          }
-        ],
-        "generated_from_image_evidence": true,
-        "evidence_confidence": 0.368,
-        "missing_views": [
-          "top",
-          "front"
-        ]
-      }
-    },
-    {
-      "op": "rounded_box",
-      "id": "stripe_and_text",
-      "name": "vehicle_ambulance_stripe_and_text",
-      "origin": [
-        120,
-        0,
-        525
-      ],
-      "size": [
-        460,
-        180,
-        210
-      ],
-      "radius": 4,
-      "qa": {
-        "role": "decal",
-        "part_id": "stripe_and_text",
-        "intent": "decal",
-        "evidence_status": "needs_review",
-        "fallback_state": "needs_review",
-        "evidence_sources": [
-          {
-            "kind": "silhouette",
-            "view": "left",
-            "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
-            "status": "inferred",
-            "confidence": 0.346,
-            "note": "Inferred from related image evidence for amb-left-red-stripe: Side stripe candidate from ambulance profile prior.",
-            "observation_id": "ambulance_side_stripe"
-          }
-        ],
-        "generated_from_image_evidence": true,
-        "evidence_confidence": 0.328,
-        "missing_views": [
-          "left",
-          "rear"
-        ]
       }
     },
     {

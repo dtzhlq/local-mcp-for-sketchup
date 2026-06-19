@@ -1,0 +1,192 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/real-world-building-release-work-order.schema.json",
+  "title": "RealWorldBuildingReleaseWorkOrder",
+  "type": "object",
+  "required": [
+    "version",
+    "kind",
+    "manifest",
+    "release_manifest",
+    "sample_id",
+    "status",
+    "release_ready",
+    "can_promote_to_release_manifest",
+    "blockers",
+    "artifact_authoring_policy",
+    "required_task_count",
+    "blocked_required_task_count",
+    "tasks",
+    "commands",
+    "next_actions"
+  ],
+  "properties": {
+    "version": { "const": 1 },
+    "kind": { "const": "real_world_building_release_work_order" },
+    "manifest": { "type": "string", "minLength": 1 },
+    "release_manifest": { "type": "string", "minLength": 1 },
+    "sample_id": { "type": "string", "minLength": 1 },
+    "status": {
+      "enum": [
+        "blocked_needs_source_assets",
+        "needs_release_artifacts",
+        "needs_human_review",
+        "blocked_release_validation",
+        "ready_for_formal_manifest"
+      ]
+    },
+    "release_ready": { "type": "boolean" },
+    "can_promote_to_release_manifest": { "type": "boolean" },
+    "blockers": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "artifact_authoring_policy": {
+      "type": "object",
+      "required": [
+        "direct_sketchup_dsl_allowed",
+        "promoted_geometry_requires_review",
+        "vision_evidence_policy_review_required",
+        "semantic_evidence_quality_source",
+        "required_contract_artifacts",
+        "blocked_outputs_until_policy_satisfied",
+        "instructions"
+      ],
+      "properties": {
+        "direct_sketchup_dsl_allowed": { "const": false },
+        "promoted_geometry_requires_review": { "const": true },
+        "vision_evidence_policy_review_required": { "const": true },
+        "semantic_evidence_quality_source": {
+          "const": "source_request_or_mcp_brief_or_release_artifact_workspace"
+        },
+        "required_contract_artifacts": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "blocked_outputs_until_policy_satisfied": {
+          "type": "array",
+          "contains": { "const": "direct_sketchup_dsl" },
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "instructions": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "required_task_count": { "type": "integer", "minimum": 0 },
+    "blocked_required_task_count": { "type": "integer", "minimum": 0 },
+    "tasks": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "label",
+          "status",
+          "instructions"
+        ],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "label": { "type": "string", "minLength": 1 },
+          "required": { "type": "boolean" },
+          "status": { "enum": ["pass", "blocked", "review"] },
+          "blockers": {
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "artifact_role": { "type": "string" },
+          "artifact_path": { "type": ["string", "null"] },
+          "artifact_exists": { "type": "boolean" },
+          "command": { "type": ["string", "null"] },
+          "instructions": {
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "artifacts": {
+            "type": "array",
+            "items": { "$ref": "#/$defs/visionEvidenceReviewArtifact" }
+          },
+          "metrics": {
+            "type": ["object", "null"]
+          },
+          "items": {
+            "type": "array",
+            "items": { "type": "object" }
+          },
+          "review": { "type": "object" }
+        },
+        "allOf": [
+          {
+            "if": {
+              "required": ["id"],
+              "properties": {
+                "id": { "const": "vision_evidence_review" }
+              }
+            },
+            "then": {
+              "required": ["command", "artifacts"],
+              "properties": {
+                "command": { "type": "string", "minLength": 1 },
+                "artifacts": {
+                  "type": "array",
+                  "minItems": 4,
+                  "allOf": [
+                    { "contains": { "required": ["role"], "properties": { "role": { "const": "vision_evidence_report" } } } },
+                    { "contains": { "required": ["role"], "properties": { "role": { "const": "vision_evidence_review_patch" } } } },
+                    { "contains": { "required": ["role"], "properties": { "role": { "const": "vision_evidence_review_decision" } } } },
+                    { "contains": { "required": ["role"], "properties": { "role": { "const": "vision_evidence_policy_correction_patch" } } } }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "commands": {
+      "type": "object",
+      "required": [
+        "validate_draft",
+        "validate_release_manifest",
+        "run_release_gate"
+      ],
+      "properties": {
+        "validate_draft": { "type": ["string", "null"] },
+        "validate_release_manifest": { "type": "string", "minLength": 1 },
+        "run_release_gate": { "type": "string", "minLength": 1 }
+      }
+    },
+    "next_actions": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    }
+  },
+  "$defs": {
+    "visionEvidenceReviewArtifact": {
+      "type": "object",
+      "required": [
+        "role",
+        "path",
+        "exists",
+        "status"
+      ],
+      "properties": {
+        "role": {
+          "enum": [
+            "vision_evidence_report",
+            "vision_evidence_review_patch",
+            "vision_evidence_review_decision",
+            "vision_evidence_policy_correction_patch"
+          ]
+        },
+        "path": { "type": "string", "minLength": 1 },
+        "exists": { "type": "boolean" },
+        "status": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

@@ -201,7 +201,6 @@
         "name",
         "type",
         "role",
-        "shape",
         "evidence_status",
         "fallback_state"
       ],
@@ -232,20 +231,10 @@
           "type": "string"
         },
         "shape": {
-          "type": "object",
-          "required": [
-            "primitive",
-            "parameters"
-          ],
-          "properties": {
-            "primitive": {
-              "type": "string",
-              "minLength": 1
-            },
-            "parameters": {
-              "type": "object"
-            }
-          }
+          "$ref": "#/$defs/shape"
+        },
+        "candidate_shape": {
+          "$ref": "#/$defs/shape"
         },
         "relationships": {
           "type": "array",
@@ -317,6 +306,22 @@
           "type": "object"
         },
         "compile": {
+          "type": "object"
+        }
+      }
+    },
+    "shape": {
+      "type": "object",
+      "required": [
+        "primitive",
+        "parameters"
+      ],
+      "properties": {
+        "primitive": {
+          "type": "string",
+          "minLength": 1
+        },
+        "parameters": {
           "type": "object"
         }
       }

@@ -1,0 +1,185 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/vision-evidence-review-patch.schema.json",
+  "title": "VisionEvidenceReviewPatch",
+  "type": "object",
+  "required": [
+    "kind",
+    "version",
+    "source_vision_evidence_set",
+    "status",
+    "apply_allowed",
+    "compile_allowed",
+    "blockers",
+    "review_items",
+    "summary",
+    "notes"
+  ],
+  "properties": {
+    "kind": { "const": "vision_evidence_review_patch" },
+    "version": { "const": 1 },
+    "source_vision_evidence_set": { "type": "string", "minLength": 1 },
+    "status": {
+      "enum": [
+        "needs_review",
+        "no_review_required"
+      ]
+    },
+    "apply_allowed": { "type": "boolean" },
+    "compile_allowed": { "type": "boolean" },
+    "blockers": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "review_items": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/review_item" }
+    },
+    "summary": {
+      "type": "object",
+      "required": [
+        "total_items",
+        "ground_plane_items",
+        "edge_class_items",
+        "semantic_candidate_items",
+        "blocking_items",
+        "review_required"
+      ],
+      "properties": {
+        "total_items": { "type": "integer", "minimum": 0 },
+        "ground_plane_items": { "type": "integer", "minimum": 0 },
+        "edge_class_items": { "type": "integer", "minimum": 0 },
+        "semantic_candidate_items": { "type": "integer", "minimum": 0 },
+        "blocking_items": { "type": "integer", "minimum": 0 },
+        "review_required": { "type": "boolean" }
+      }
+    },
+    "notes": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    }
+  },
+  "$defs": {
+    "review_item": {
+      "type": "object",
+      "required": [
+        "id",
+        "evidence_type",
+        "action",
+        "target_path",
+        "source_image",
+        "current_value",
+        "suggested_value",
+        "required_decision",
+        "risk_flags",
+        "reason",
+        "downstream_effect"
+      ],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "evidence_type": {
+          "enum": [
+            "view_ground_plane",
+            "edge_class_policy",
+            "semantic_candidate_policy"
+          ]
+        },
+        "action": {
+          "enum": [
+            "confirm_ground_plane_usage_policy",
+            "confirm_edge_class_review_policy",
+            "confirm_semantic_candidate_review_policy"
+          ]
+        },
+        "target_path": { "type": "string", "minLength": 1 },
+        "source_image": { "type": "string" },
+        "current_value": { "type": "object" },
+        "suggested_value": { "type": "object" },
+        "required_decision": { "type": "string", "minLength": 1 },
+        "risk_flags": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "reason": { "type": "string", "minLength": 1 },
+        "downstream_effect": {
+          "type": "object",
+          "required": [
+            "allowed_outputs",
+            "blocked_outputs",
+            "next_action"
+          ],
+          "properties": {
+            "allowed_outputs": {
+              "type": "array",
+              "items": { "type": "string", "minLength": 1 }
+            },
+            "blocked_outputs": {
+              "type": "array",
+              "items": { "type": "string", "minLength": 1 }
+            },
+            "next_action": { "type": "string", "minLength": 1 }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "evidence_type": { "const": "semantic_candidate_policy" }
+            }
+          },
+          "then": {
+            "properties": {
+              "current_value": {
+                "required": [
+                  "evidence_instances"
+                ],
+                "properties": {
+                  "evidence_instances": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": { "$ref": "#/$defs/semantic_evidence_instance" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "semantic_evidence_instance": {
+      "type": "object",
+      "required": [
+        "evidence_id",
+        "source_id",
+        "source_image",
+        "view",
+        "class",
+        "kind",
+        "bbox_px",
+        "confidence",
+        "backend",
+        "source_stage",
+        "review_required"
+      ],
+      "properties": {
+        "evidence_id": { "type": "string", "minLength": 1 },
+        "source_id": { "type": "string" },
+        "source_image": { "type": "string" },
+        "view": { "type": "string", "minLength": 1 },
+        "class": { "type": "string", "minLength": 1 },
+        "kind": { "type": "string", "minLength": 1 },
+        "bbox_px": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": { "type": "number" }
+        },
+        "confidence": { "type": "number", "minimum": 0 },
+        "backend": { "type": "string" },
+        "source_stage": { "type": "string" },
+        "review_required": { "type": "boolean" }
+      }
+    }
+  }
+}

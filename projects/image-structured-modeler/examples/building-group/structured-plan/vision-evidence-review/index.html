@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vision Evidence Review Workbench</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7f8fa;
+      --panel: #ffffff;
+      --ink: #17202a;
+      --muted: #5b6472;
+      --line: #d8dee8;
+      --good: #087f5b;
+      --warn: #9a6700;
+      --bad: #b42318;
+      --accent: #1f6feb;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+    }
+    header, main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    header {
+      border-bottom: 1px solid var(--line);
+    }
+    h1 { margin: 0 0 8px; font-size: 28px; letter-spacing: 0; }
+    h2 { margin: 0 0 12px; font-size: 18px; letter-spacing: 0; }
+    .subtle { color: var(--muted); }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .metric, .section {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+    }
+    .metric span { display: block; font-size: 12px; color: var(--muted); }
+    .metric strong { display: block; margin-top: 4px; font-size: 22px; }
+    .section { margin: 16px 0; }
+    .scroll { overflow: auto; border: 1px solid var(--line); border-radius: 6px; }
+    table { width: 100%; border-collapse: collapse; min-width: 920px; }
+    th, td { padding: 10px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { background: #eef2f7; font-size: 12px; text-transform: uppercase; color: var(--muted); }
+    code { font-family: "SFMono-Regular", Consolas, monospace; font-size: 12px; }
+    .tag {
+      display: inline-block;
+      margin: 2px 4px 2px 0;
+      padding: 2px 7px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+    .tag.good { color: var(--good); border-color: rgba(8,127,91,.25); background: rgba(8,127,91,.08); }
+    .tag.warn { color: var(--warn); border-color: rgba(154,103,0,.25); background: rgba(154,103,0,.08); }
+    .tag.bad { color: var(--bad); border-color: rgba(180,35,24,.25); background: rgba(180,35,24,.08); }
+    .toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin: 12px 0; }
+    button {
+      appearance: none;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      color: var(--ink);
+      padding: 8px 12px;
+      cursor: pointer;
+      font: inherit;
+    }
+    button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+    input, textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 8px 10px;
+      font: inherit;
+      background: #fff;
+      color: var(--ink);
+    }
+    textarea { font-family: "SFMono-Regular", Consolas, monospace; font-size: 12px; }
+    .review-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+    @media (max-width: 760px) {
+      header, main { padding: 16px; }
+      .grid, .review-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Vision Evidence Review Workbench</h1>
+    <p class="subtle">Review evidence policy only. Exported decisions cannot promote geometry or emit SketchUp DSL.</p>
+  </header>
+  <main>
+    <section class="grid">
+      <div class="metric"><span>Status</span><strong>needs_review</strong></div>
+      <div class="metric"><span>Review Items</span><strong>5</strong></div>
+      <div class="metric"><span>Apply Allowed</span><strong>false</strong></div>
+      <div class="metric"><span>Compile Allowed</span><strong>false</strong></div>
+    </section>
+    <section class="section">
+      <h2>Review Items</h2>
+      <div class="toolbar">
+        <button type="button" id="select-all-vision-evidence">Select All</button>
+        <button type="button" id="clear-vision-evidence-selection">Clear</button>
+      </div>
+      <div class="scroll">
+        <table>
+          <thead><tr><th>Accept</th><th>ID</th><th>Type</th><th>Decision</th><th>Source</th><th>Risks</th><th>Blocked Outputs</th></tr></thead>
+          <tbody><tr>
+      <td><input class="vision-review-item-select" type="checkbox" data-review-item-id="ground_plane:1:oblique" checked aria-label="Accept ground_plane:1:oblique"></td>
+      <td><code>ground_plane:1:oblique</code></td>
+      <td>view_ground_plane</td>
+      <td><code>confirm_review_only_context_or_provide_better_view</code></td>
+      <td>test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png</td>
+      <td><span class="tag warn">oblique_view_not_planar_groundplan</span><span class="tag warn">camera_hint_review_required</span></td>
+      <td><span class="tag bad">direct_sketchup_dsl</span><span class="tag bad">photo_grade_candidate_without_review</span></td>
+    </tr>
+<tr>
+      <td><input class="vision-review-item-select" type="checkbox" data-review-item-id="ground_plane:2:top" checked aria-label="Accept ground_plane:2:top"></td>
+      <td><code>ground_plane:2:top</code></td>
+      <td>view_ground_plane</td>
+      <td><code>confirm_top_view_planar_groundplan_candidate_or_downgrade</code></td>
+      <td>test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png</td>
+      <td><span class="tag warn">camera_hint_review_required</span></td>
+      <td><span class="tag bad">direct_sketchup_dsl</span><span class="tag bad">photo_grade_candidate_without_review</span></td>
+    </tr>
+<tr>
+      <td><input class="vision-review-item-select" type="checkbox" data-review-item-id="ground_plane:3:oblique" checked aria-label="Accept ground_plane:3:oblique"></td>
+      <td><code>ground_plane:3:oblique</code></td>
+      <td>view_ground_plane</td>
+      <td><code>confirm_review_only_context_or_provide_better_view</code></td>
+      <td>test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png</td>
+      <td><span class="tag warn">oblique_view_not_planar_groundplan</span><span class="tag warn">camera_hint_review_required</span></td>
+      <td><span class="tag bad">direct_sketchup_dsl</span><span class="tag bad">photo_grade_candidate_without_review</span></td>
+    </tr>
+<tr>
+      <td><input class="vision-review-item-select" type="checkbox" data-review-item-id="edge_class:roof_internal_seam" checked aria-label="Accept edge_class:roof_internal_seam"></td>
+      <td><code>edge_class:roof_internal_seam</code></td>
+      <td>edge_class_policy</td>
+      <td><code>confirm_roof_seams_are_not_site_or_road_boundaries</code></td>
+      <td>test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png</td>
+      <td><span class="tag warn">inside_building</span></td>
+      <td><span class="tag bad">promoted_boundary_from_unreviewed_edge</span></td>
+    </tr>
+<tr>
+      <td><input class="vision-review-item-select" type="checkbox" data-review-item-id="edge_class:unknown" checked aria-label="Accept edge_class:unknown"></td>
+      <td><code>edge_class:unknown</code></td>
+      <td>edge_class_policy</td>
+      <td><code>confirm_unknown_edges_remain_review_only_or_reclassify</code></td>
+      <td>test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png</td>
+      <td><span class="tag warn">unknown_source_context</span><span class="tag warn">weak_source_context</span></td>
+      <td><span class="tag bad">promoted_boundary_from_unreviewed_edge</span></td>
+    </tr></tbody>
+        </table>
+      </div>
+    </section>
+    <section class="section">
+      <h2>Review Decision</h2>
+      <div class="review-grid">
+        <label>Reviewer<br><input id="vision-reviewer-name" value="vision-evidence-workbench"></label>
+        <label>Accepted at<br><input id="vision-accepted-at" value="2026-06-17"></label>
+        <label>Source patch<br><input id="vision-source-review-patch" value="projects/image-structured-modeler/examples/building-group/structured-plan/vision-evidence-review-patch.json"></label>
+      </div>
+      <label>Notes<br><textarea id="vision-review-notes" rows="3" placeholder="Ground-plane, oblique, roof seam, unknown edge policy notes"></textarea></label>
+      <div class="toolbar">
+        <button type="button" class="primary" id="refresh-vision-evidence-review">Refresh Decision JSON</button>
+        <button type="button" id="copy-vision-evidence-review">Copy JSON</button>
+        <button type="button" id="download-vision-evidence-review">Download JSON</button>
+      </div>
+      <textarea id="vision-evidence-review-decision-json" rows="18" spellcheck="false"></textarea>
+    </section>
+  </main>
+  <script id="vision-evidence-review-patch-data" type="application/json">{"kind":"vision_evidence_review_patch","version":1,"source_vision_evidence_set":"projects/image-structured-modeler/examples/building-group/observations.json#vision_evidence_set_v1","status":"needs_review","apply_allowed":false,"compile_allowed":false,"blockers":["human_vision_evidence_review_required"],"review_items":[{"id":"ground_plane:1:oblique","evidence_type":"view_ground_plane","action":"confirm_ground_plane_usage_policy","target_path":"vision_evidence_set_v1.view_ground_plane.images[0].usage_policy","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_02.png","current_value":{"detected_view":"oblique","usage_policy":"review_only_oblique_context","planar_groundplan_allowed":false,"ground_plane_confidence":0.357,"confidence_band":"low","evidence_summary":{"source_view_confidence":0.86,"site_edges":0,"road_edges":0,"accepted_boundary_edges":0,"boundary_support":0,"dominant_direction_count":0,"scale_anchor_count":0,"building_footprint_masks":0,"road_surface_regions":2,"camera_hint_projection_model":"weak_oblique_affine_review_only","camera_hint_review_required":true}},"suggested_value":{"usage_policy":"review_only_oblique_context","planar_groundplan_allowed":false,"reviewer_confirmation_required":true},"required_decision":"confirm_review_only_context_or_provide_better_view","risk_flags":["oblique_view_not_planar_groundplan","camera_hint_review_required"],"reason":"Non-top imagery is useful context but must not be used as promoted planar GroundPlan evidence.","downstream_effect":{"allowed_outputs":["visual_context_only"],"blocked_outputs":["direct_sketchup_dsl","photo_grade_candidate_without_review"],"next_action":"keep_oblique_image_review_only_or_upload_top_view"}},{"id":"ground_plane:2:top","evidence_type":"view_ground_plane","action":"confirm_ground_plane_usage_policy","target_path":"vision_evidence_set_v1.view_ground_plane.images[1].usage_policy","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","current_value":{"detected_view":"top","usage_policy":"planar_groundplan_candidate","planar_groundplan_allowed":true,"ground_plane_confidence":0.94,"confidence_band":"high","evidence_summary":{"source_view_confidence":0.9,"site_edges":27,"road_edges":233,"accepted_boundary_edges":260,"boundary_support":1,"dominant_direction_count":2,"scale_anchor_count":5,"building_footprint_masks":3,"road_surface_regions":147,"camera_hint_projection_model":"top_view_affine_bbox_to_site_xy","camera_hint_review_required":true}},"suggested_value":{"usage_policy":"planar_groundplan_candidate","planar_groundplan_allowed":true,"reviewer_confirmation_required":true},"required_decision":"confirm_top_view_planar_groundplan_candidate_or_downgrade","risk_flags":["camera_hint_review_required"],"reason":"Top/near-orthographic view can seed planar GroundPlan, but camera and scale evidence still need review before promotion.","downstream_effect":{"allowed_outputs":["reviewed_ground_plan_candidate"],"blocked_outputs":["direct_sketchup_dsl","photo_grade_candidate_without_review"],"next_action":"review_top_view_ground_plane_and_scale_anchor_support"}},{"id":"ground_plane:3:oblique","evidence_type":"view_ground_plane","action":"confirm_ground_plane_usage_policy","target_path":"vision_evidence_set_v1.view_ground_plane.images[2].usage_policy","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_52.png","current_value":{"detected_view":"oblique","usage_policy":"review_only_oblique_context","planar_groundplan_allowed":false,"ground_plane_confidence":0.357,"confidence_band":"low","evidence_summary":{"source_view_confidence":0.86,"site_edges":0,"road_edges":0,"accepted_boundary_edges":0,"boundary_support":0,"dominant_direction_count":0,"scale_anchor_count":0,"building_footprint_masks":0,"road_surface_regions":2,"camera_hint_projection_model":"weak_oblique_affine_review_only","camera_hint_review_required":true}},"suggested_value":{"usage_policy":"review_only_oblique_context","planar_groundplan_allowed":false,"reviewer_confirmation_required":true},"required_decision":"confirm_review_only_context_or_provide_better_view","risk_flags":["oblique_view_not_planar_groundplan","camera_hint_review_required"],"reason":"Non-top imagery is useful context but must not be used as promoted planar GroundPlan evidence.","downstream_effect":{"allowed_outputs":["visual_context_only"],"blocked_outputs":["direct_sketchup_dsl","photo_grade_candidate_without_review"],"next_action":"keep_oblique_image_review_only_or_upload_top_view"}},{"id":"edge_class:roof_internal_seam","evidence_type":"edge_class_policy","action":"confirm_edge_class_review_policy","target_path":"vision_evidence_set_v1.edges[class=roof_internal_seam]","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","current_value":{"class":"roof_internal_seam","total_edges":170,"accepted_edges":0,"rejected_or_review_edges":170,"review_required_edges":170,"source_images":["test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png"]},"suggested_value":{"policy":"keep_rejected_as_roof_internal_seam_not_boundary","promote_to_boundary":false},"required_decision":"confirm_roof_seams_are_not_site_or_road_boundaries","risk_flags":["inside_building"],"reason":"Roof/internal seams create strong image edges but must not become site perimeter or road boundary geometry.","downstream_effect":{"allowed_outputs":["reviewed_edge_evidence"],"blocked_outputs":["promoted_boundary_from_unreviewed_edge"],"next_action":"keep_roof_seam_rejected_or_mark_as_roof_detail"}},{"id":"edge_class:unknown","evidence_type":"edge_class_policy","action":"confirm_edge_class_review_policy","target_path":"vision_evidence_set_v1.edges[class=unknown]","source_image":"test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png","current_value":{"class":"unknown","total_edges":103,"accepted_edges":25,"rejected_or_review_edges":78,"review_required_edges":78,"source_images":["test/建筑群/ChatGPT Image 2026年5月31日 10_54_37.png"]},"suggested_value":{"policy":"keep_unknown_review_only_until_reclassified","promote_to_boundary":false},"required_decision":"confirm_unknown_edges_remain_review_only_or_reclassify","risk_flags":["unknown_source_context","weak_source_context"],"reason":"Unknown edge evidence needs human classification before any downstream geometry use.","downstream_effect":{"allowed_outputs":["reviewed_edge_evidence"],"blocked_outputs":["promoted_boundary_from_unreviewed_edge"],"next_action":"classify_unknown_edges_before_boundary_promotion"}}],"summary":{"total_items":5,"ground_plane_items":3,"edge_class_items":2,"semantic_candidate_items":0,"blocking_items":5,"review_required":true},"notes":["This patch is an authoring/review contract, not an applyable geometry patch.","Confirming review items may update evidence policy in a later patch, but must not directly promote geometry or emit SketchUp DSL."]}</script>
+  <script id="vision-evidence-review-decision-data" type="application/json">{"kind":"vision_evidence_review_decision","version":1,"source_review_patch":"projects/image-structured-modeler/examples/building-group/structured-plan/vision-evidence-review-patch.json","reviewer":"vision-evidence-workbench","accepted_at":"2026-06-17","status":"accepted_policy_review","compile_allowed":false,"geometry_promotion_allowed":false,"accepted_items":[{"review_item_id":"ground_plane:1:oblique","evidence_type":"view_ground_plane","decision":"confirmed_review_only_context","accepted_value":{"usage_policy":"review_only_oblique_context","planar_groundplan_allowed":false,"reviewer_confirmation_required":false,"review_status":"manual_confirmed"},"risk_disposition":"kept_as_context_not_planar_groundplan","resolved_blockers":["oblique_ground_plane_policy_review_required"],"reviewer_note":"Oblique image remains visual context and must not seed planar GroundPlan geometry.","geometry_promotion_allowed":false,"compile_allowed":false},{"review_item_id":"ground_plane:2:top","evidence_type":"view_ground_plane","decision":"confirmed_planar_groundplan_candidate","accepted_value":{"usage_policy":"planar_groundplan_candidate","planar_groundplan_allowed":true,"reviewer_confirmation_required":false,"review_status":"manual_confirmed"},"risk_disposition":"accepted_as_reviewed_planar_candidate","resolved_blockers":["top_view_ground_plane_policy_review_required"],"reviewer_note":"Top view may remain a reviewed planar GroundPlan candidate; downstream GroundPlan/QA gates still decide promotion.","geometry_promotion_allowed":false,"compile_allowed":false},{"review_item_id":"ground_plane:3:oblique","evidence_type":"view_ground_plane","decision":"confirmed_review_only_context","accepted_value":{"usage_policy":"review_only_oblique_context","planar_groundplan_allowed":false,"reviewer_confirmation_required":false,"review_status":"manual_confirmed"},"risk_disposition":"kept_as_context_not_planar_groundplan","resolved_blockers":["oblique_ground_plane_policy_review_required"],"reviewer_note":"Oblique image remains visual context and must not seed planar GroundPlan geometry.","geometry_promotion_allowed":false,"compile_allowed":false},{"review_item_id":"edge_class:roof_internal_seam","evidence_type":"edge_class_policy","decision":"confirmed_keep_roof_seam_rejected","accepted_value":{"policy":"keep_rejected_as_roof_internal_seam_not_boundary","promote_to_boundary":false,"review_status":"manual_confirmed"},"risk_disposition":"kept_rejected_not_boundary","resolved_blockers":["roof_seam_boundary_policy_review_required"],"reviewer_note":"Roof/internal seam edges stay rejected for site and road boundary promotion.","geometry_promotion_allowed":false,"compile_allowed":false},{"review_item_id":"edge_class:unknown","evidence_type":"edge_class_policy","decision":"confirmed_keep_unknown_review_only","accepted_value":{"policy":"keep_unknown_review_only_until_reclassified","promote_to_boundary":false,"review_status":"manual_confirmed"},"risk_disposition":"kept_review_only_until_reclassified","resolved_blockers":["unknown_edge_policy_review_required"],"reviewer_note":"Unknown edges remain review-only until explicitly reclassified.","geometry_promotion_allowed":false,"compile_allowed":false}],"held_items":[],"blockers":[],"summary":{"accepted_items":5,"held_items":0,"blockers":0,"ground_plane_items":3,"edge_class_items":2,"semantic_candidate_items":0},"notes":["This decision confirms evidence policy only.","It must not directly promote geometry, generate PartGraph parts, or emit SketchUp DSL."]}</script>
+  <script>
+    const reviewPatch = JSON.parse(document.getElementById('vision-evidence-review-patch-data').textContent);
+    const initialDecision = JSON.parse(document.getElementById('vision-evidence-review-decision-data').textContent);
+    const reviewItemById = new Map((reviewPatch.review_items || []).map((item) => [item.id, item]));
+    const selectedReviewItems = () => Array.from(document.querySelectorAll('.vision-review-item-select:checked'))
+      .map((input) => reviewItemById.get(input.dataset.reviewItemId))
+      .filter(Boolean);
+    function decisionForReviewItem(item) {
+      if (item.required_decision === 'confirm_top_view_planar_groundplan_candidate_or_downgrade') return 'confirmed_planar_groundplan_candidate';
+      if (item.required_decision === 'confirm_review_only_context_or_provide_better_view') return 'confirmed_review_only_context';
+      if (item.required_decision === 'confirm_roof_seams_are_not_site_or_road_boundaries') return 'confirmed_keep_roof_seam_rejected';
+      if (item.required_decision === 'confirm_unknown_edges_remain_review_only_or_reclassify') return 'confirmed_keep_unknown_review_only';
+      if (item.evidence_type === 'semantic_candidate_policy') return item.suggested_value?.decision || 'confirmed_semantic_candidate_policy';
+      return 'confirmed_review_policy';
+    }
+    function acceptedValue(item, decision) {
+      if (item.evidence_type === 'view_ground_plane') {
+        return {
+          usage_policy: item.suggested_value?.usage_policy || item.current_value?.usage_policy || 'review_only',
+          planar_groundplan_allowed: item.suggested_value?.planar_groundplan_allowed === true,
+          reviewer_confirmation_required: false,
+          review_status: 'manual_confirmed'
+        };
+      }
+      if (item.evidence_type === 'edge_class_policy') {
+        return {
+          policy: item.suggested_value?.policy || decision,
+          promote_to_boundary: false,
+          review_status: 'manual_confirmed'
+        };
+      }
+      if (item.evidence_type === 'semantic_candidate_policy') {
+        return {
+          policy: item.suggested_value?.policy || decision,
+          role: item.current_value?.role || item.current_value?.class || 'semantic_candidate',
+          review_status: 'manual_confirmed',
+          promote_to_geometry: false
+        };
+      }
+      return { review_status: 'manual_confirmed' };
+    }
+    function riskDisposition(item, decision) {
+      if (decision === 'confirmed_planar_groundplan_candidate') return 'accepted_as_reviewed_planar_candidate';
+      if (decision === 'confirmed_review_only_context') return 'kept_as_context_not_planar_groundplan';
+      if (decision === 'confirmed_keep_roof_seam_rejected') return 'kept_rejected_not_boundary';
+      if (decision === 'confirmed_keep_unknown_review_only') return 'kept_review_only_until_reclassified';
+      if (item.evidence_type === 'semantic_candidate_policy') return item.suggested_value?.risk_disposition || 'reviewed_semantic_candidate_with_geometry_blocked';
+      return item.risk_flags?.length ? 'reviewed_with_risks_retained' : 'reviewed';
+    }
+    function resolvedBlockers(item) {
+      if (item.evidence_type === 'view_ground_plane') {
+        return item.current_value?.usage_policy === 'planar_groundplan_candidate'
+          ? ['top_view_ground_plane_policy_review_required']
+          : ['oblique_ground_plane_policy_review_required'];
+      }
+      if (item.evidence_type === 'edge_class_policy') {
+        return item.required_decision === 'confirm_roof_seams_are_not_site_or_road_boundaries'
+          ? ['roof_seam_boundary_policy_review_required']
+          : ['unknown_edge_policy_review_required'];
+      }
+      if (item.evidence_type === 'semantic_candidate_policy') {
+        return item.suggested_value?.resolved_blockers || ['semantic_candidate_policy_review_required'];
+      }
+      return ['vision_evidence_policy_review_required'];
+    }
+    function buildAcceptedItem(item) {
+      const decision = decisionForReviewItem(item);
+      return {
+        review_item_id: item.id,
+        evidence_type: item.evidence_type,
+        decision,
+        accepted_value: acceptedValue(item, decision),
+        risk_disposition: riskDisposition(item, decision),
+        resolved_blockers: resolvedBlockers(item),
+        reviewer_note: document.getElementById('vision-review-notes').value || item.reason || 'Vision evidence policy reviewed.',
+        geometry_promotion_allowed: false,
+        compile_allowed: false
+      };
+    }
+    function buildVisionEvidenceReviewDecision() {
+      const acceptedItems = selectedReviewItems().map(buildAcceptedItem);
+      const heldItems = (reviewPatch.review_items || [])
+        .filter((item) => !acceptedItems.some((accepted) => accepted.review_item_id === item.id))
+        .map((item) => ({
+          review_item_id: item.id,
+          evidence_type: item.evidence_type,
+          decision: 'held_for_review',
+          accepted_value: {},
+          risk_disposition: 'unresolved',
+          resolved_blockers: [],
+          reviewer_note: 'Held in VisionEvidence review workbench.',
+          geometry_promotion_allowed: false,
+          compile_allowed: false
+        }));
+      return {
+        ...initialDecision,
+        source_review_patch: document.getElementById('vision-source-review-patch').value || initialDecision.source_review_patch,
+        reviewer: document.getElementById('vision-reviewer-name').value || 'vision-evidence-workbench',
+        accepted_at: document.getElementById('vision-accepted-at').value || '2026-06-17',
+        status: heldItems.length ? 'partial_policy_review' : acceptedItems.length ? 'accepted_policy_review' : 'no_review_items',
+        compile_allowed: false,
+        geometry_promotion_allowed: false,
+        accepted_items: acceptedItems,
+        held_items: heldItems,
+        blockers: [],
+        summary: {
+          accepted_items: acceptedItems.length,
+          held_items: heldItems.length,
+          blockers: 0,
+          ground_plane_items: acceptedItems.filter((item) => item.evidence_type === 'view_ground_plane').length,
+          edge_class_items: acceptedItems.filter((item) => item.evidence_type === 'edge_class_policy').length,
+          semantic_candidate_items: acceptedItems.filter((item) => item.evidence_type === 'semantic_candidate_policy').length
+        },
+        notes: [
+          'Exported from VisionEvidence review workbench.',
+          'This decision confirms evidence policy only.',
+          'It must not directly promote geometry, generate PartGraph parts, or emit SketchUp DSL.'
+        ]
+      };
+    }
+    function refreshDecision() {
+      document.getElementById('vision-evidence-review-decision-json').value = JSON.stringify(buildVisionEvidenceReviewDecision(), null, 2);
+    }
+    document.getElementById('select-all-vision-evidence').addEventListener('click', () => {
+      for (const input of document.querySelectorAll('.vision-review-item-select')) input.checked = true;
+      refreshDecision();
+    });
+    document.getElementById('clear-vision-evidence-selection').addEventListener('click', () => {
+      for (const input of document.querySelectorAll('.vision-review-item-select')) input.checked = false;
+      refreshDecision();
+    });
+    document.getElementById('refresh-vision-evidence-review').addEventListener('click', refreshDecision);
+    document.getElementById('copy-vision-evidence-review').addEventListener('click', async () => {
+      refreshDecision();
+      await navigator.clipboard.writeText(document.getElementById('vision-evidence-review-decision-json').value);
+    });
+    document.getElementById('download-vision-evidence-review').addEventListener('click', () => {
+      refreshDecision();
+      const blob = new Blob([document.getElementById('vision-evidence-review-decision-json').value + '\n'], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = 'vision-evidence-review-decision.json';
+      anchor.click();
+      URL.revokeObjectURL(url);
+    });
+    refreshDecision();
+  </script>
+</body>
+</html>

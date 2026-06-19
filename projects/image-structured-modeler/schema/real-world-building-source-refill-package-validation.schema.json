@@ -1,0 +1,182 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/real-world-building-source-refill-package-validation.schema.json",
+  "title": "RealWorldBuildingSourceRefillPackageValidation",
+  "type": "object",
+  "required": [
+    "version",
+    "kind",
+    "generated_at",
+    "package_dir",
+    "upload_package_dir",
+    "ok",
+    "status",
+    "require_upload_ready",
+    "can_run_upload_session",
+    "source_request",
+    "guide",
+    "manifest",
+    "summary",
+    "checks",
+    "commands",
+    "next_actions"
+  ],
+  "properties": {
+    "version": { "const": 1 },
+    "kind": { "const": "real_world_building_source_refill_package_validation" },
+    "generated_at": { "type": "string", "minLength": 1 },
+    "package_dir": { "type": "string", "minLength": 1 },
+    "upload_package_dir": { "type": "string", "minLength": 1 },
+    "ok": { "type": "boolean" },
+    "status": {
+      "enum": [
+        "missing_package_guide",
+        "template_package_pending",
+        "ready_for_upload_session",
+        "invalid_refill_package"
+      ]
+    },
+    "require_upload_ready": { "type": "boolean" },
+    "can_run_upload_session": { "type": "boolean" },
+    "source_request": {
+      "type": "object",
+      "required": ["path", "exists", "status"],
+      "properties": {
+        "path": { "type": ["string", "null"] },
+        "exists": { "type": "boolean" },
+        "status": {
+          "type": ["string", "null"],
+          "enum": [
+            "needs_source_replacement",
+            "needs_views_or_scale",
+            "needs_semantic_confirmation",
+            "input_ready_for_release_work",
+            "release_ready",
+            null
+          ]
+        }
+      }
+    },
+    "guide": {
+      "type": "object",
+      "required": ["path", "exists", "valid_kind"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1 },
+        "exists": { "type": "boolean" },
+        "valid_kind": { "type": "boolean" }
+      }
+    },
+    "manifest": {
+      "type": "object",
+      "required": [
+        "path",
+        "exists",
+        "parse_error",
+        "kind",
+        "object_type",
+        "expected_object_type",
+        "template_only",
+        "view_count",
+        "required_views",
+        "present_required_views",
+        "missing_required_views",
+        "referenced_sources",
+        "missing_source_references",
+        "outside_upload_package_references",
+        "duplicate_source_paths",
+        "duplicate_source_content_groups",
+        "helper_artifacts_inside_upload_package"
+      ],
+      "properties": {
+        "path": { "type": ["string", "null"] },
+        "exists": { "type": "boolean" },
+        "parse_error": { "type": ["string", "null"] },
+        "kind": { "type": ["string", "null"] },
+        "object_type": { "type": ["string", "null"] },
+        "expected_object_type": { "type": ["string", "null"] },
+        "template_only": { "type": "boolean" },
+        "view_count": { "type": "integer", "minimum": 0 },
+        "required_views": { "$ref": "#/$defs/viewList" },
+        "present_required_views": { "$ref": "#/$defs/viewList" },
+        "missing_required_views": { "$ref": "#/$defs/viewList" },
+        "referenced_sources": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["view", "source_image", "path", "exists"],
+            "properties": {
+              "view": { "enum": ["front", "rear", "left", "right", "top", "oblique"] },
+              "source_image": { "type": "string" },
+              "path": { "type": "string" },
+              "exists": { "type": "boolean" },
+              "inside_upload_package": { "type": "boolean" },
+              "content_sha256": { "type": "string" }
+            }
+          }
+        },
+        "missing_source_references": { "type": "array" },
+        "outside_upload_package_references": { "type": "array" },
+        "duplicate_source_paths": { "type": "array" },
+        "duplicate_source_content_groups": { "type": "array" },
+        "helper_artifacts_inside_upload_package": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": ["checks", "passed_checks", "failed_required_checks", "review_checks"],
+      "properties": {
+        "checks": { "type": "integer", "minimum": 0 },
+        "passed_checks": { "type": "integer", "minimum": 0 },
+        "failed_required_checks": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "review_checks": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "checks": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/check" }
+    },
+    "commands": {
+      "type": "object",
+      "required": ["build_manifest_from_sources", "run_source_refill_workflow", "validate_package", "require_upload_ready", "validate_upload_session", "require_input_ready"],
+      "properties": {
+        "build_manifest_from_sources": { "type": ["string", "null"] },
+        "run_source_refill_workflow": { "type": ["string", "null"] },
+        "validate_package": { "type": "string", "minLength": 1 },
+        "require_upload_ready": { "type": "string", "minLength": 1 },
+        "validate_upload_session": { "type": ["string", "null"] },
+        "require_input_ready": { "type": ["string", "null"] }
+      }
+    },
+    "next_actions": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    }
+  },
+  "$defs": {
+    "viewList": {
+      "type": "array",
+      "items": { "enum": ["front", "rear", "left", "right", "top", "oblique"] }
+    },
+    "check": {
+      "type": "object",
+      "required": ["id", "label", "required", "status", "message", "evidence"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "label": { "type": "string", "minLength": 1 },
+        "required": { "type": "boolean" },
+        "status": { "enum": ["pass", "fail", "review"] },
+        "message": { "type": "string", "minLength": 1 },
+        "evidence": { "type": "object" }
+      }
+    }
+  }
+}

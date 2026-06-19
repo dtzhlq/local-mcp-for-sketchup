@@ -14,19 +14,7 @@
       "rule_id": "accepted_parameter_proposal",
       "severity": "warn",
       "confidence": 0.423,
-      "previous_value": {
-        "origin": [
-          0,
-          0,
-          525
-        ],
-        "size": [
-          460,
-          180,
-          210
-        ],
-        "radius": 4
-      },
+      "previous_value": {},
       "value": {
         "origin": [
           469.2,
@@ -175,7 +163,8 @@
             "note": "Inferred from related image evidence for amb-main-body: Object bbox top-right keypoint candidate.",
             "observation_id": "main_object_top_right_keypoint"
           }
-        ]
+        ],
+        "shape_primitive": "rounded_box"
       },
       "mark_evidence_status": "manual_confirmed"
     },
@@ -188,19 +177,7 @@
       "rule_id": "accepted_parameter_proposal",
       "severity": "warn",
       "confidence": 0.463,
-      "previous_value": {
-        "origin": [
-          20,
-          0,
-          525
-        ],
-        "size": [
-          460,
-          180,
-          210
-        ],
-        "radius": 4
-      },
+      "previous_value": {},
       "value": {
         "origin": [
           59.8,
@@ -318,7 +295,8 @@
             "note": "Inferred from related image evidence for amb-cab-lower: Front cab lower candidate.",
             "observation_id": "ambulance_front_cab_lower"
           }
-        ]
+        ],
+        "shape_primitive": "rounded_box"
       },
       "mark_evidence_status": "manual_confirmed"
     }

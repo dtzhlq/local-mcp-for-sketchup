@@ -4,18 +4,23 @@ import path from 'node:path';
 import { compilePartGraphFiles } from '../src/product-modeling/part-graph-compiler.mjs';
 
 const options = parseArgs(process.argv.slice(2));
-const document = await compilePartGraphFiles({
-  profilePath: options.profile,
-  partGraphPath: options.partGraph,
-  repoRoot: options.repoRoot || process.cwd()
-});
-const rendered = `${JSON.stringify(document, null, 2)}\n`;
+try {
+  const document = await compilePartGraphFiles({
+    profilePath: options.profile,
+    partGraphPath: options.partGraph,
+    repoRoot: options.repoRoot || process.cwd()
+  });
+  const rendered = `${JSON.stringify(document, null, 2)}\n`;
 
-if (options.output) {
-  await fs.mkdir(path.dirname(options.output), { recursive: true });
-  await fs.writeFile(options.output, rendered, 'utf8');
-} else {
-  process.stdout.write(rendered);
+  if (options.output) {
+    await fs.mkdir(path.dirname(options.output), { recursive: true });
+    await fs.writeFile(options.output, rendered, 'utf8');
+  } else {
+    process.stdout.write(rendered);
+  }
+} catch (error) {
+  if (options.output) await fs.rm(options.output, { force: true });
+  throw error;
 }
 
 function parseArgs(argv) {

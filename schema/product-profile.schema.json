@@ -68,7 +68,8 @@
       "type": "object",
       "properties": {
         "name": { "type": "string" },
-        "version": { "type": "string" }
+        "version": { "type": "string" },
+        "geometry_gate": { "$ref": "#/$defs/geometry_gate" }
       }
     }
   },
@@ -117,6 +118,19 @@
         "size": { "$ref": "#/$defs/size2" },
         "alpha": { "type": "number", "minimum": 0, "maximum": 1 },
         "texture_transform": { "type": "object" }
+      }
+    },
+    "geometry_gate": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "max_needs_review_ratio": { "type": "number", "minimum": 0, "maximum": 1 },
+        "max_profile_default_ratio": { "type": "number", "minimum": 0, "maximum": 1 },
+        "min_observed_parts": { "type": "integer", "minimum": 0 },
+        "min_inferred_parts": { "type": "integer", "minimum": 0 },
+        "min_scale_confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "require_promoted_geometry": { "type": "boolean" },
+        "block_reference_only_output": { "type": "boolean" }
       }
     },
     "fallback_state": {

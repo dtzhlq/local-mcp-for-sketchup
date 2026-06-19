@@ -3,7 +3,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import Ajv2020 from 'ajv/dist/2020.js';
 import { SketchUpBridge } from '../src/bridge.mjs';
-import { compilePartGraphFiles } from '../src/product-modeling/part-graph-compiler.mjs';
+import { compilePartGraphFiles, compilePartGraphToSketchUpDsl } from '../src/product-modeling/part-graph-compiler.mjs';
 import { validatePartGraphPhysicalConsistency } from '../src/product-modeling/physical-consistency-qa.mjs';
 
 const repoRoot = process.cwd();
@@ -19,6 +19,8 @@ const cameraOutputPath = 'examples/acceptance-fuji-camera.json';
 const buildingProfilePath = 'examples/product-profiles/building_group_industrial_campus.json';
 const buildingPartGraphPath = 'projects/image-structured-modeler/examples/building-group/part-graph.massing.json';
 const buildingOutputPath = 'projects/image-structured-modeler/examples/building-group/output.massing.json';
+const buildingSingleProfilePath = 'examples/product-profiles/building_single_urban_oblique.json';
+const buildingSinglePartGraphPath = 'projects/image-structured-modeler/examples/building-single-anime-yellow/part-graph.cropped.json';
 
 const ajv = new Ajv2020({ allErrors: true, strict: false });
 const productProfileSchema = JSON.parse(await fs.readFile('schema/product-profile.schema.json', 'utf8'));
@@ -42,6 +44,10 @@ const buildingProfile = JSON.parse(await fs.readFile(buildingProfilePath, 'utf8'
 const buildingPartGraph = JSON.parse(await fs.readFile(buildingPartGraphPath, 'utf8'));
 assertValid(validateProfile, buildingProfile, buildingProfilePath);
 assertValid(validatePartGraph, buildingPartGraph, buildingPartGraphPath);
+const buildingSingleProfile = JSON.parse(await fs.readFile(buildingSingleProfilePath, 'utf8'));
+const buildingSinglePartGraph = JSON.parse(await fs.readFile(buildingSinglePartGraphPath, 'utf8'));
+assertValid(validateProfile, buildingSingleProfile, buildingSingleProfilePath);
+assertValid(validatePartGraph, buildingSinglePartGraph, buildingSinglePartGraphPath);
 
 assertPhysicalGate(partGraph, 'ambulance', 24);
 assertPhysicalGate(switchPartGraph, 'Switch controller', 24);
@@ -280,6 +286,20 @@ const buildingReferenceReport = await bridge.validate_reference_model({
 assert.equal(buildingReferenceReport.ok, true, 'building group reference visual QA should pass for the current massing DSL');
 assert.equal(buildingReferenceReport.verdict, 'pass');
 assert.equal(buildingReferenceReport.summary.total, 0);
+
+await assert.rejects(
+  () => compilePartGraphFiles({ profilePath: buildingSingleProfilePath, partGraphPath: buildingSinglePartGraphPath, repoRoot }),
+  /PartGraph compile blocked by geometry gate.*promoted_geometry_parts 0 is below 1/,
+  'single-building oblique low-evidence PartGraph must be blocked before DSL output'
+);
+const promotedButUnscaledBuildingSingle = deepClone(buildingSinglePartGraph);
+partById(promotedButUnscaledBuildingSingle, 'building_main_mass').promoted_geometry = true;
+partById(promotedButUnscaledBuildingSingle, 'building_main_mass').qa.promoted_geometry = true;
+assert.throws(
+  () => compilePartGraphToSketchUpDsl(promotedButUnscaledBuildingSingle, buildingSingleProfile, { repoRoot }),
+  /PartGraph compile blocked by geometry gate.*scale_confidence 0\.29 is below 0\.7/,
+  'PartGraph compile policy must merge with profile scale gates instead of overriding them'
+);
 
 function assertValid(validate, value, label) {
   if (!validate(value)) {

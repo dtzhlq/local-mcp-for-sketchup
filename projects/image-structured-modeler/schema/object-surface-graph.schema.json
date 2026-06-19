@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/object-surface-graph.schema.json",
+  "title": "ObjectSurfaceGraph v1",
+  "type": "object",
+  "required": ["kind", "version", "profile_id", "domain", "source_draft_view_graph", "source_structure_evidence_graph", "surfaces", "surface_local_feature_candidates", "review_policy", "summary"],
+  "properties": {
+    "kind": { "const": "object_surface_graph_v1" },
+    "version": { "const": 1 },
+    "profile_id": { "type": "string" },
+    "domain": { "enum": ["building_domain_projection", "generic_object_surface_projection"] },
+    "source_draft_view_graph": { "type": "string" },
+    "source_structure_evidence_graph": { "type": "string" },
+    "surfaces": { "type": "array", "items": { "$ref": "#/$defs/surface" } },
+    "surface_local_feature_candidates": { "type": "array", "items": { "$ref": "#/$defs/detail" } },
+    "review_policy": {
+      "type": "object",
+      "required": ["status", "accepted_surface_review_required", "review_required", "promotion_allowed", "compile_allowed", "blockers"],
+      "properties": {
+        "status": { "enum": ["needs_surface_review", "blocked_no_visible_surfaces"] },
+        "accepted_surface_review_required": { "const": true },
+        "review_required": { "const": true },
+        "promotion_allowed": { "const": false },
+        "compile_allowed": { "const": false },
+        "blockers": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": ["surface_count", "feature_candidate_count", "review_required", "promotion_allowed", "compile_allowed"],
+      "properties": {
+        "surface_count": { "type": "integer", "minimum": 0 },
+        "feature_candidate_count": { "type": "integer", "minimum": 0 },
+        "review_required": { "const": true },
+        "promotion_allowed": { "const": false },
+        "compile_allowed": { "const": false }
+      }
+    }
+  },
+  "$defs": {
+    "surface": {
+      "type": "object",
+      "required": ["id", "role", "draft_view_slot_id", "status", "source_image_ids", "source_evidence_ids", "visible_regions", "unknown_regions", "review_required", "promotion_allowed", "blockers"],
+      "properties": {
+        "id": { "type": "string" },
+        "role": { "type": "string" },
+        "draft_view_slot_id": { "type": "string" },
+        "status": { "enum": ["observed", "inferred", "partial"] },
+        "source_image_ids": { "type": "array", "items": { "type": "string" } },
+        "source_evidence_ids": { "type": "array", "items": { "type": "string" } },
+        "visible_regions": { "type": "array", "items": { "type": "object" } },
+        "unknown_regions": { "type": "array", "items": { "type": "object" } },
+        "orientation_hint": { "type": "string" },
+        "review_required": { "const": true },
+        "promotion_allowed": { "const": false },
+        "blockers": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "detail": {
+      "type": "object",
+      "required": ["id", "role", "source_image", "candidate_surface_ids", "review_required", "promotion_allowed", "blockers"],
+      "properties": {
+        "id": { "type": "string" },
+        "role": { "type": "string" },
+        "source_image": { "type": "string" },
+        "view": { "type": "string" },
+        "source_observation_id": { "type": "string" },
+        "candidate_surface_ids": { "type": "array", "items": { "type": "string" } },
+        "bbox_px": { "type": "array" },
+        "visible_quad_px": { "type": "array" },
+        "source": { "type": "object" },
+        "review_required": { "const": true },
+        "promotion_allowed": { "const": false },
+        "blockers": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

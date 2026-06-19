@@ -1,0 +1,522 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/real-world-building-demo-candidate-audit.schema.json",
+  "title": "RealWorldBuildingDemoCandidateAudit",
+  "type": "object",
+  "required": [
+    "version",
+    "kind",
+    "generated_at",
+    "ok",
+    "release_ready",
+    "release_gap",
+    "summary",
+    "candidates"
+  ],
+  "properties": {
+    "version": { "const": 1 },
+    "kind": { "const": "real_world_building_demo_candidate_audit" },
+    "generated_at": { "type": "string", "minLength": 1 },
+    "ok": { "type": "boolean" },
+    "release_ready": { "type": "boolean" },
+    "release_gap": { "const": "real_world_building_positive_release_sample_missing" },
+    "summary": {
+      "type": "object",
+      "required": [
+        "candidates",
+        "release_ready_candidates",
+        "input_ready_source_packages",
+        "release_selectable_candidates",
+        "formal_manifest_selectable_candidates",
+        "useful_structure_review_demos",
+        "blocked_candidates",
+        "best_candidate",
+        "best_structure_review_candidate",
+        "best_release_work_candidate",
+        "best_formal_manifest_candidate",
+        "recommended_next_action"
+      ],
+      "properties": {
+        "candidates": { "type": "integer", "minimum": 0 },
+        "release_ready_candidates": { "type": "integer", "minimum": 0 },
+        "input_ready_source_packages": { "type": "integer", "minimum": 0 },
+        "release_selectable_candidates": { "type": "integer", "minimum": 0 },
+        "formal_manifest_selectable_candidates": { "type": "integer", "minimum": 0 },
+        "useful_structure_review_demos": { "type": "integer", "minimum": 0 },
+        "blocked_candidates": { "type": "integer", "minimum": 0 },
+        "best_candidate": { "type": ["string", "null"] },
+        "best_structure_review_candidate": { "type": ["string", "null"] },
+        "best_release_work_candidate": { "type": ["string", "null"] },
+        "best_formal_manifest_candidate": { "type": ["string", "null"] },
+        "recommended_next_action": {
+          "type": ["string", "null"],
+          "enum": [
+            "run_refill_upload_session_with_real_sources",
+            "prepare_release_artifact_workspace",
+            "run_guarded_formal_manifest_write",
+            null
+          ]
+        }
+      }
+    },
+    "candidates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "input",
+          "output_dir",
+          "profile",
+          "asset_count",
+          "media_types",
+          "views_detected",
+          "candidate_count",
+          "role_counts",
+          "semantic_role_coverage",
+          "semantic_role_missing",
+          "compile_allowed",
+          "modeling_status",
+          "missing_inputs",
+          "input_ready_for_release_work",
+          "source_package_status",
+          "source_package",
+          "source_request",
+          "release_ready",
+          "can_promote_to_release_manifest",
+          "release_blockers",
+          "release_checks",
+          "next_actions",
+          "release_stage",
+          "refill_workflow",
+          "release_preparation_workflow",
+          "release_candidate_assessment",
+          "classification",
+          "score",
+          "artifacts"
+        ],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "input": { "type": "string", "minLength": 1 },
+          "output_dir": { "type": "string", "minLength": 1 },
+          "profile": { "type": "string", "minLength": 1 },
+          "asset_count": { "type": "integer", "minimum": 0 },
+          "media_types": {
+            "type": "array",
+            "items": { "enum": ["image", "pdf", "cad", "unknown"] }
+          },
+          "views_detected": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "candidate_count": { "type": "integer", "minimum": 0 },
+          "role_counts": {
+            "type": "object",
+            "additionalProperties": { "type": "integer", "minimum": 0 }
+          },
+          "semantic_role_coverage": {
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "semantic_role_missing": {
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "compile_allowed": { "type": "boolean" },
+          "modeling_status": { "type": "string", "minLength": 1 },
+          "missing_inputs": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "input_ready_for_release_work": { "type": "boolean" },
+          "source_package_status": { "type": "string", "minLength": 1 },
+          "source_package": {
+            "type": ["object", "null"],
+            "required": [
+              "status",
+              "input_ready_for_release_work",
+              "source_status",
+              "view_status",
+              "scale_status",
+              "semantic_status",
+              "blockers",
+              "next_actions"
+            ],
+            "properties": {
+              "status": { "type": "string", "minLength": 1 },
+              "input_ready_for_release_work": { "type": "boolean" },
+              "source_status": { "enum": ["pass", "fail"] },
+              "view_status": { "enum": ["pass", "fail"] },
+              "scale_status": { "enum": ["pass", "fail"] },
+              "semantic_status": { "enum": ["pass", "fail", "review"] },
+              "blockers": {
+                "type": "array",
+                "items": { "type": "string", "minLength": 1 }
+              },
+              "next_actions": {
+                "type": "array",
+                "items": { "type": "string", "minLength": 1 }
+              }
+            }
+          },
+          "source_request": {
+            "type": ["object", "null"],
+            "required": [
+              "status",
+              "request_file",
+              "request_markdown",
+              "upload_manifest_template",
+              "accepted_asset_types",
+              "blocked_until_satisfied",
+              "source_asset_status",
+              "source_asset_requests",
+              "needs_replacement_assets",
+              "needs_supported_assets",
+              "needs_distinct_assets",
+              "required_views",
+              "present_views",
+              "missing_views",
+              "view_source_diversity_required",
+              "view_source_image_field",
+              "scale_status",
+              "scale_confidence",
+              "minimum_scale_confidence",
+              "scale_evidence_needed",
+              "acceptable_scale_evidence",
+              "semantic_status",
+              "missing_semantic_roles"
+            ],
+            "properties": {
+              "status": {
+                "enum": [
+                  "needs_source_replacement",
+                  "needs_views_or_scale",
+                  "needs_semantic_confirmation",
+                  "input_ready_for_release_work",
+                  "release_ready"
+                ]
+              },
+              "request_file": { "type": "string", "minLength": 1 },
+              "request_markdown": { "type": "string", "minLength": 1 },
+              "upload_manifest_template": { "type": "string", "minLength": 1 },
+              "accepted_asset_types": {
+                "type": "array",
+                "items": { "enum": ["image", "pdf", "cad"] }
+              },
+              "blocked_until_satisfied": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "direct_sketchup_dsl",
+                    "promoted_part_graph_geometry",
+                    "formal_release_manifest"
+                  ]
+                }
+              },
+              "source_asset_status": { "enum": ["pass", "fail"] },
+              "source_asset_requests": {
+                "type": "array",
+                "items": { "type": "string", "minLength": 1 }
+              },
+              "needs_replacement_assets": { "type": "boolean" },
+              "needs_supported_assets": { "type": "boolean" },
+              "needs_distinct_assets": { "type": "boolean" },
+              "required_views": {
+                "type": "array",
+                "items": { "enum": ["front", "rear", "left", "right", "top", "oblique"] }
+              },
+              "present_views": {
+                "type": "array",
+                "items": { "enum": ["front", "rear", "left", "right", "top", "oblique"] }
+              },
+              "missing_views": {
+                "type": "array",
+                "items": { "enum": ["front", "rear", "left", "right", "top", "oblique"] }
+              },
+              "view_source_diversity_required": { "type": "boolean" },
+              "view_source_image_field": { "const": "views[].source_image" },
+              "scale_status": { "enum": ["pass", "fail"] },
+              "scale_confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+              "minimum_scale_confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+              "scale_evidence_needed": { "type": "boolean" },
+              "acceptable_scale_evidence": {
+                "type": "array",
+                "items": { "type": "string", "minLength": 1 }
+              },
+              "semantic_status": { "enum": ["pass", "fail", "review"] },
+              "missing_semantic_roles": {
+                "type": "array",
+                "items": { "type": "string", "minLength": 1 }
+              }
+            }
+          },
+          "release_ready": { "type": "boolean" },
+          "can_promote_to_release_manifest": { "type": "boolean" },
+          "release_blockers": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "release_checks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id", "status", "required"],
+              "properties": {
+                "id": { "type": "string", "minLength": 1 },
+                "status": { "enum": ["pass", "fail", "review"] },
+                "required": { "type": "boolean" }
+              }
+            }
+          },
+          "next_actions": {
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "release_stage": {
+            "enum": [
+              "needs_structured_intake",
+              "needs_real_source_assets",
+              "needs_views_or_scale",
+              "needs_semantic_confirmation",
+              "source_input_ready_needs_review_artifacts",
+              "review_blocked",
+              "release_positive_ready"
+            ]
+          },
+          "refill_workflow": {
+            "type": ["object", "null"],
+            "required": [
+              "purpose",
+              "upload_package_placeholder",
+              "source_refill_package_directory",
+              "upload_package_directory",
+              "source_request_file",
+              "source_request_markdown",
+              "upload_manifest_template",
+              "expected_upload_contract",
+              "commands"
+            ],
+            "properties": {
+              "purpose": { "type": "string", "minLength": 1 },
+              "upload_package_placeholder": { "type": "string", "minLength": 1 },
+              "source_refill_package_directory": { "type": "string", "minLength": 1 },
+              "upload_package_directory": { "type": "string", "minLength": 1 },
+              "source_request_file": { "type": "string", "minLength": 1 },
+              "source_request_markdown": { "type": "string", "minLength": 1 },
+              "upload_manifest_template": { "type": "string", "minLength": 1 },
+              "expected_upload_contract": {
+                "type": "object",
+                "required": [
+                  "accepted_asset_types",
+                  "required_views",
+                  "distinct_source_images_required",
+                  "source_image_field",
+                  "minimum_scale_confidence"
+                ],
+                "properties": {
+                  "accepted_asset_types": {
+                    "type": "array",
+                    "items": { "enum": ["image", "pdf", "cad"] }
+                  },
+                  "required_views": {
+                    "type": "array",
+                    "items": { "enum": ["front", "rear", "left", "right", "top", "oblique"] }
+                  },
+                  "distinct_source_images_required": { "type": "boolean" },
+                  "source_image_field": { "const": "views[].source_image" },
+                  "minimum_scale_confidence": { "type": "number", "minimum": 0, "maximum": 1 }
+                }
+              },
+              "commands": {
+                "type": "object",
+                "required": [
+                  "prepare_source_refill_package",
+                  "validate_source_refill_package",
+                  "validate_source_refill_package_require_upload_ready",
+                  "run_refill_upload_session",
+                  "require_input_ready"
+                ],
+                "properties": {
+                  "prepare_source_refill_package": { "type": "string", "minLength": 1 },
+                  "validate_source_refill_package": { "type": "string", "minLength": 1 },
+                  "validate_source_refill_package_require_upload_ready": { "type": "string", "minLength": 1 },
+                  "run_refill_upload_session": { "type": "string", "minLength": 1 },
+                  "require_input_ready": { "type": "string", "minLength": 1 }
+                }
+              }
+            }
+          },
+          "release_preparation_workflow": {
+            "type": "object",
+            "required": [
+              "purpose",
+              "status",
+              "next_action",
+              "blocked",
+              "blockers",
+              "expected_release_artifacts",
+              "upload_session_summary",
+              "release_artifact_workspace",
+              "release_artifact_workspace_validation",
+              "manifest_draft",
+              "formal_manifest",
+              "commands"
+            ],
+            "properties": {
+              "purpose": { "type": "string", "minLength": 1 },
+              "status": {
+                "enum": [
+                  "blocked_until_source_request_satisfied",
+                  "ready_for_release_artifact_authoring",
+                  "ready_for_formal_manifest_guard"
+                ]
+              },
+              "next_action": {
+                "enum": [
+                  "run_refill_upload_session_with_real_sources",
+                  "prepare_release_artifact_workspace",
+                  "run_guarded_formal_manifest_write"
+                ]
+              },
+              "blocked": { "type": "boolean" },
+              "blockers": {
+                "type": "array",
+                "items": { "type": "string", "minLength": 1 }
+              },
+              "expected_release_artifacts": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "part_graph",
+                    "compiled_output",
+                    "photo_grade_readiness_report",
+                    "vision_evidence_review_decision",
+                    "vision_evidence_policy_correction_patch",
+                    "human_review"
+                  ]
+                }
+              },
+              "upload_session_summary": { "type": "string", "minLength": 1 },
+              "release_artifact_workspace": { "type": "string", "minLength": 1 },
+              "release_artifact_workspace_validation": { "type": "string", "minLength": 1 },
+              "manifest_draft": { "type": "string", "minLength": 1 },
+              "formal_manifest": { "const": "projects/image-structured-modeler/examples/real-world-building-positive/manifest.json" },
+              "commands": {
+                "type": "object",
+                "required": [
+                  "run_upload_session_from_candidate_input",
+                  "prepare_source_refill_package",
+                  "validate_source_refill_package_require_upload_ready",
+                  "run_refill_upload_session_with_real_sources",
+                  "prepare_release_artifact_workspace",
+                  "validate_release_artifact_workspace",
+                  "prepare_manifest_draft_from_intake",
+                  "validate_manifest_draft",
+                  "guarded_write_formal_manifest"
+                ],
+                "properties": {
+                  "run_upload_session_from_candidate_input": { "type": "string", "minLength": 1 },
+                  "prepare_source_refill_package": { "type": "string", "minLength": 1 },
+                  "validate_source_refill_package_require_upload_ready": { "type": "string", "minLength": 1 },
+                  "run_refill_upload_session_with_real_sources": { "type": "string", "minLength": 1 },
+                  "prepare_release_artifact_workspace": { "type": "string", "minLength": 1 },
+                  "validate_release_artifact_workspace": { "type": "string", "minLength": 1 },
+                  "prepare_manifest_draft_from_intake": { "type": "string", "minLength": 1 },
+                  "validate_manifest_draft": { "type": "string", "minLength": 1 },
+                  "guarded_write_formal_manifest": { "type": "string", "minLength": 1 }
+                }
+              }
+            }
+          },
+          "release_candidate_assessment": {
+            "type": "object",
+            "required": [
+              "selectable_for_release_work",
+              "selectable_for_formal_manifest",
+              "tier",
+              "primary_blocker",
+              "blocked_reasons",
+              "next_action",
+              "message"
+            ],
+            "properties": {
+              "selectable_for_release_work": { "type": "boolean" },
+              "selectable_for_formal_manifest": { "type": "boolean" },
+              "tier": {
+                "enum": [
+                  "release_positive_ready",
+                  "source_input_ready",
+                  "needs_real_sources",
+                  "needs_views_or_scale",
+                  "needs_semantic_confirmation",
+                  "not_selectable"
+                ]
+              },
+              "primary_blocker": { "type": ["string", "null"] },
+              "blocked_reasons": {
+                "type": "array",
+                "items": { "type": "string", "minLength": 1 }
+              },
+              "next_action": {
+                "type": ["string", "null"],
+                "enum": [
+                  "run_refill_upload_session_with_real_sources",
+                  "prepare_release_artifact_workspace",
+                  "run_guarded_formal_manifest_write",
+                  null
+                ]
+              },
+              "message": { "type": "string", "minLength": 1 }
+            }
+          },
+          "classification": {
+            "enum": [
+              "release_positive_ready",
+              "unsafe_compile_allowed_candidate",
+              "input_ready_release_work_candidate",
+              "useful_structure_review_demo",
+              "partial_structure_review_demo",
+              "low_signal_candidate"
+            ]
+          },
+          "score": { "type": "integer" },
+          "artifacts": {
+            "type": "object",
+            "required": [
+              "asset_set",
+              "observations",
+              "candidate_graph",
+              "modeling_brief",
+              "mcp_modeling_brief",
+              "source_package",
+              "source_request",
+              "source_request_markdown",
+              "upload_manifest_template",
+              "review_workbench",
+              "manifest_draft",
+              "release_checklist",
+              "release_checklist_markdown",
+              "contract_summary"
+            ],
+            "properties": {
+              "asset_set": { "type": "string", "minLength": 1 },
+              "observations": { "type": "string", "minLength": 1 },
+              "candidate_graph": { "type": "string", "minLength": 1 },
+              "modeling_brief": { "type": "string", "minLength": 1 },
+              "mcp_modeling_brief": { "type": "string", "minLength": 1 },
+              "source_package": { "type": ["string", "null"] },
+              "source_request": { "type": ["string", "null"] },
+              "source_request_markdown": { "type": ["string", "null"] },
+              "upload_manifest_template": { "type": ["string", "null"] },
+              "review_workbench": { "type": ["string", "null"] },
+              "manifest_draft": { "type": ["string", "null"] },
+              "release_checklist": { "type": ["string", "null"] },
+              "release_checklist_markdown": { "type": ["string", "null"] },
+              "contract_summary": { "type": ["string", "null"] }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,243 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/facade-plane-graph.schema.json",
+  "title": "FacadePlaneGraph v1",
+  "type": "object",
+  "required": [
+    "kind",
+    "version",
+    "profile",
+    "coordinate_convention",
+    "source_images",
+    "planes",
+    "plane_local_detail_candidates",
+    "review_policy",
+    "summary"
+  ],
+  "properties": {
+    "kind": { "const": "facade_plane_graph_v1" },
+    "version": { "const": 1 },
+    "profile": { "const": "building_single" },
+    "coordinate_convention": { "const": "image_x_right_y_down" },
+    "source_images": { "type": "array", "items": { "type": "string" } },
+    "source_semantic_evidence": { "type": "string" },
+    "planes": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/plane" }
+    },
+    "plane_local_detail_candidates": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/detail_candidate" }
+    },
+    "review_policy": {
+      "type": "object",
+      "required": [
+        "status",
+        "accepted_plane_review_required",
+        "promotion_allowed",
+        "compile_allowed",
+        "review_required",
+        "blockers"
+      ],
+      "properties": {
+        "status": { "enum": ["needs_plane_review", "blocked_no_visible_planes", "accepted"] },
+        "accepted_plane_review_required": { "const": true },
+        "promotion_allowed": { "const": false },
+        "compile_allowed": { "const": false },
+        "review_required": { "const": true },
+        "blockers": { "type": "array", "items": { "type": "string" } },
+        "notes": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": [
+        "plane_count",
+        "detail_candidate_count",
+        "visible_plane_ids",
+        "review_required",
+        "promotion_allowed",
+        "compile_allowed",
+        "must_not_merge_pairs"
+      ],
+      "properties": {
+        "plane_count": { "type": "integer", "minimum": 0 },
+        "detail_candidate_count": { "type": "integer", "minimum": 0 },
+        "visible_plane_ids": { "type": "array", "items": { "type": "string" } },
+        "review_required": { "const": true },
+        "promotion_allowed": { "const": false },
+        "compile_allowed": { "const": false },
+        "must_not_merge_pairs": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": { "type": "string" }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "plane": {
+      "type": "object",
+      "required": [
+        "id",
+        "source_image",
+        "visible_quad_px",
+        "orientation_hint",
+        "adjacency",
+        "occlusion_order",
+        "must_not_merge_with",
+        "source",
+        "review_required",
+        "promotion_allowed"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^visible_plane_[a-z0-9_]+$"
+        },
+        "role": {
+          "type": "string",
+          "pattern": "^visible_plane_[a-z0-9_]+$"
+        },
+        "source_image": { "type": "string" },
+        "view": { "type": "string" },
+        "visible_quad_px": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": { "$ref": "#/$defs/point" }
+        },
+        "visible_bbox_px": { "$ref": "#/$defs/bbox" },
+        "orientation_hint": {
+          "type": "object",
+          "required": [
+            "kind",
+            "view",
+            "projection_model",
+            "perspective_strength",
+            "normal_hint",
+            "confidence",
+            "review_required"
+          ],
+          "properties": {
+            "kind": { "type": "string", "minLength": 1 },
+            "view": { "type": "string" },
+            "projection_model": { "type": "string" },
+            "perspective_strength": { "enum": ["low", "medium", "high", "unknown"] },
+            "normal_hint": { "type": "string" },
+            "camera_hints": { "type": "object" },
+            "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+            "review_required": { "const": true }
+          }
+        },
+        "adjacency": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["plane_id", "relation", "review_required"],
+            "properties": {
+              "plane_id": { "type": "string" },
+              "relation": { "type": "string" },
+              "evidence": { "type": "string" },
+              "target_center_px": { "$ref": "#/$defs/point" },
+              "review_required": { "const": true }
+            }
+          }
+        },
+        "occlusion_order": {
+          "type": "object",
+          "required": ["rank", "relation_to_camera", "review_required"],
+          "properties": {
+            "rank": { "type": "integer", "minimum": 1 },
+            "relation_to_camera": { "type": "string" },
+            "evidence": { "type": "string" },
+            "review_required": { "const": true }
+          }
+        },
+        "must_not_merge_with": { "type": "array", "items": { "type": "string" } },
+        "source": {
+          "type": "object",
+          "required": ["kind", "semantic_evidence_id", "confidence"],
+          "properties": {
+            "kind": { "enum": ["user_annotation", "vlm_candidate", "local_cv_proposal", "profile_prior", "unknown"] },
+            "semantic_evidence_id": { "type": "string" },
+            "source_priority": { "type": ["integer", "null"] },
+            "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+            "derived_from": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "review_required": { "const": true },
+        "promotion_allowed": { "const": false }
+      }
+    },
+    "detail_candidate": {
+      "type": "object",
+      "required": [
+        "id",
+        "role",
+        "source_image",
+        "candidate_plane_ids",
+        "attachment_hint",
+        "visible_quad_px",
+        "source",
+        "review_required",
+        "promotion_allowed",
+        "blockers"
+      ],
+      "properties": {
+        "id": { "type": "string" },
+        "role": { "type": "string" },
+        "source_image": { "type": "string" },
+        "view": { "type": "string" },
+        "candidate_plane_ids": { "type": "array", "items": { "type": "string" } },
+        "attachment_hint": { "type": "string" },
+        "visible_quad_px": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": { "$ref": "#/$defs/point" }
+        },
+        "bbox_px": { "$ref": "#/$defs/bbox" },
+        "source": { "$ref": "#/$defs/source" },
+        "review_required": { "const": true },
+        "promotion_allowed": { "const": false },
+        "blockers": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "source": {
+      "type": "object",
+      "required": ["kind", "semantic_evidence_id", "confidence"],
+      "properties": {
+        "kind": { "enum": ["user_annotation", "vlm_candidate", "local_cv_proposal", "profile_prior", "unknown"] },
+        "semantic_evidence_id": { "type": "string" },
+        "source_priority": { "type": ["integer", "null"] },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "derived_from": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "bbox": {
+      "type": "array",
+      "prefixItems": [
+        { "type": "number" },
+        { "type": "number" },
+        { "type": "number" },
+        { "type": "number" }
+      ],
+      "minItems": 4,
+      "maxItems": 4
+    },
+    "point": {
+      "type": "array",
+      "prefixItems": [
+        { "type": "number" },
+        { "type": "number" }
+      ],
+      "minItems": 2,
+      "maxItems": 2
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "kind": "image_structured_external_benchmark_manifest",
+  "version": 1,
+  "policy": "adapter_only_no_dataset_download",
+  "samples": [
+    {
+      "id": "objectnet3d_car_pose_subset",
+      "dataset": "ObjectNet3D",
+      "domain": "vehicle",
+      "adapter": "objectnet3d_pose_cad_adapter",
+      "dataset_url": "https://cvgl.stanford.edu/projects/objectnet3d/",
+      "local_path": "external-datasets/objectnet3d/subset/car_pose_sample",
+      "license_note": "External dataset license and download terms must be reviewed before local preparation.",
+      "expected_view_slots": ["front", "left_or_right_side", "top", "oblique_context"]
+    },
+    {
+      "id": "pix3d_chair_surface_subset",
+      "dataset": "Pix3D",
+      "domain": "product",
+      "adapter": "pix3d_image_cad_adapter",
+      "dataset_url": "https://github.com/xingyuansun/pix3d",
+      "local_path": "external-datasets/pix3d/subset/chair_surface_sample",
+      "license_note": "External dataset license and download terms must be reviewed before local preparation.",
+      "expected_view_slots": ["front", "left_or_right_side", "top", "oblique_context"]
+    },
+    {
+      "id": "cmp_facade_visible_plane_subset",
+      "dataset": "CMP Facade Database",
+      "domain": "building_single",
+      "adapter": "cmp_facade_segmentation_adapter",
+      "dataset_url": "https://cmp.felk.cvut.cz/~tylecr1/facade/",
+      "local_path": "external-datasets/cmp-facade/subset/visible_plane_sample",
+      "license_note": "External dataset license and download terms must be reviewed before local preparation.",
+      "expected_view_slots": ["front", "left_or_right_side", "top", "oblique_context"]
+    }
+  ]
+}

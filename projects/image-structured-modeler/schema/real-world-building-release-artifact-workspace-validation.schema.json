@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/real-world-building-release-artifact-workspace-validation.schema.json",
+  "title": "RealWorldBuildingReleaseArtifactWorkspaceValidation",
+  "type": "object",
+  "required": [
+    "version",
+    "kind",
+    "generated_at",
+    "workspace",
+    "ok",
+    "status",
+    "workspace_status",
+    "require_ready_to_author",
+    "require_artifacts_present",
+    "summary",
+    "checks",
+    "next_actions"
+  ],
+  "properties": {
+    "version": { "const": 1 },
+    "kind": { "const": "real_world_building_release_artifact_workspace_validation" },
+    "generated_at": { "type": "string", "minLength": 1 },
+    "workspace": { "type": "string", "minLength": 1 },
+    "ok": { "type": "boolean" },
+    "status": {
+      "enum": [
+        "invalid_workspace",
+        "blocked",
+        "artifacts_present_validated",
+        "ready_to_author_validated",
+        "ready_for_artifact_authoring_validated",
+        "blocked_needs_source_refill_validated",
+        "ready_for_formal_validation_validated",
+        "workspace_validated"
+      ]
+    },
+    "workspace_status": { "type": ["string", "null"] },
+    "require_ready_to_author": { "type": "boolean" },
+    "require_artifacts_present": { "type": "boolean" },
+    "summary": {
+      "type": "object",
+      "required": [
+        "checks",
+        "passed_checks",
+        "failed_required_checks",
+        "review_checks"
+      ],
+      "properties": {
+        "checks": { "type": "integer", "minimum": 0 },
+        "passed_checks": { "type": "integer", "minimum": 0 },
+        "failed_required_checks": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "review_checks": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "checks": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/check" }
+    },
+    "next_actions": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    }
+  },
+  "$defs": {
+    "check": {
+      "type": "object",
+      "required": [
+        "id",
+        "label",
+        "required",
+        "status",
+        "message",
+        "evidence"
+      ],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "label": { "type": "string", "minLength": 1 },
+        "required": { "type": "boolean" },
+        "status": {
+          "enum": [
+            "pass",
+            "fail",
+            "review"
+          ]
+        },
+        "message": { "type": "string", "minLength": 1 },
+        "evidence": { "type": "object" }
+      }
+    }
+  }
+}

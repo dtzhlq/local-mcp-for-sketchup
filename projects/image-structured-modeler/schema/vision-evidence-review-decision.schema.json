@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/vision-evidence-review-decision.schema.json",
+  "title": "VisionEvidenceReviewDecision",
+  "type": "object",
+  "required": [
+    "kind",
+    "version",
+    "source_review_patch",
+    "reviewer",
+    "accepted_at",
+    "status",
+    "compile_allowed",
+    "geometry_promotion_allowed",
+    "accepted_items",
+    "held_items",
+    "blockers",
+    "summary",
+    "notes"
+  ],
+  "properties": {
+    "kind": { "const": "vision_evidence_review_decision" },
+    "version": { "const": 1 },
+    "source_review_patch": { "type": "string", "minLength": 1 },
+    "reviewer": { "type": "string", "minLength": 1 },
+    "accepted_at": { "type": "string", "minLength": 1 },
+    "status": {
+      "enum": [
+        "accepted_policy_review",
+        "partial_policy_review",
+        "blocked",
+        "no_review_items"
+      ]
+    },
+    "compile_allowed": { "type": "boolean" },
+    "geometry_promotion_allowed": { "type": "boolean" },
+    "accepted_items": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/review_decision_item" }
+    },
+    "held_items": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/review_decision_item" }
+    },
+    "blockers": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "summary": {
+      "type": "object",
+      "required": [
+        "accepted_items",
+        "held_items",
+        "blockers",
+        "ground_plane_items",
+        "edge_class_items",
+        "semantic_candidate_items"
+      ],
+      "properties": {
+        "accepted_items": { "type": "integer", "minimum": 0 },
+        "held_items": { "type": "integer", "minimum": 0 },
+        "blockers": { "type": "integer", "minimum": 0 },
+        "ground_plane_items": { "type": "integer", "minimum": 0 },
+        "edge_class_items": { "type": "integer", "minimum": 0 },
+        "semantic_candidate_items": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "notes": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    }
+  },
+  "$defs": {
+    "review_decision_item": {
+      "type": "object",
+      "required": [
+        "review_item_id",
+        "evidence_type",
+        "decision",
+        "accepted_value",
+        "risk_disposition",
+        "resolved_blockers",
+        "reviewer_note",
+        "geometry_promotion_allowed",
+        "compile_allowed"
+      ],
+      "properties": {
+        "review_item_id": { "type": "string", "minLength": 1 },
+        "evidence_type": {
+          "enum": [
+            "view_ground_plane",
+            "edge_class_policy",
+            "semantic_candidate_policy"
+          ]
+        },
+        "decision": { "type": "string", "minLength": 1 },
+        "accepted_value": { "type": "object" },
+        "risk_disposition": { "type": "string", "minLength": 1 },
+        "resolved_blockers": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "reviewer_note": { "type": "string", "minLength": 1 },
+        "geometry_promotion_allowed": { "type": "boolean" },
+        "compile_allowed": { "type": "boolean" }
+      }
+    }
+  }
+}

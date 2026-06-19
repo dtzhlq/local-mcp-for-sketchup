@@ -2,6 +2,11 @@
   "version": 1,
   "id": "ambulance-image-evidence-skeleton-part-graph",
   "profile_id": "vehicle_ambulance",
+  "compile_policy": {
+    "source": "image_no_seed_skeleton",
+    "require_promoted_geometry": true,
+    "block_candidate_only_parts": true
+  },
   "dsl_version": 1,
   "units": "mm",
   "product": {
@@ -98,7 +103,7 @@
         "source_image": "test/救护车/17096147-0A69-48BB-8730-1C112BE2BDDD_1_102_o.jpeg",
         "status": "observed",
         "confidence": 0.86,
-        "note": "bbox 8,8,827,555 -> 900x1050mm profile calibration"
+        "note": "bbox 8,8,827,555 -> width 900mm, height 1050mm calibration"
       },
       {
         "kind": "scale_calibration",
@@ -106,7 +111,7 @@
         "source_image": "test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg",
         "status": "observed",
         "confidence": 0.86,
-        "note": "bbox 46,6,771,404 -> 2300x1050mm profile calibration"
+        "note": "bbox 46,6,771,404 -> width 2300mm, height 1050mm calibration"
       },
       {
         "kind": "scale_calibration",
@@ -114,7 +119,7 @@
         "source_image": "test/救护车/C486F074-3B8E-4F1C-A048-0AF24B687035_1_102_o.jpeg",
         "status": "observed",
         "confidence": 0.86,
-        "note": "bbox 4,30,638,576 -> 2300x900mm profile calibration"
+        "note": "bbox 4,30,638,576 -> width 2300mm, height 900mm calibration"
       },
       {
         "kind": "scale_calibration",
@@ -122,7 +127,7 @@
         "source_image": "test/救护车/IMG_0175.jpeg",
         "status": "observed",
         "confidence": 0.86,
-        "note": "bbox 9,12,708,433 -> 900x1050mm profile calibration"
+        "note": "bbox 9,12,708,433 -> width 900mm, height 1050mm calibration"
       }
     ]
   },
@@ -132,7 +137,7 @@
       "name": "vehicle_ambulance_main_body",
       "type": "body",
       "role": "body",
-      "shape": {
+      "candidate_shape": {
         "primitive": "rounded_box",
         "parameters": {
           "origin": [
@@ -148,8 +153,24 @@
           "radius": 4
         }
       },
+      "compile": {
+        "emit": false,
+        "reason": "candidate_only_no_seed_skeleton"
+      },
       "evidence_status": "needs_review",
       "fallback_state": "needs_review",
+      "qa": {
+        "candidate_only": true,
+        "not_compiled": true,
+        "promotion_required": true,
+        "generated_from_image_evidence": true,
+        "evidence_confidence": 0.382,
+        "missing_views": [
+          "left",
+          "top",
+          "rear"
+        ]
+      },
       "evidence_sources": [
         {
           "kind": "silhouette",
@@ -494,15 +515,6 @@
           "observation_id": "main_object_center_keypoint"
         }
       ],
-      "qa": {
-        "generated_from_image_evidence": true,
-        "evidence_confidence": 0.382,
-        "missing_views": [
-          "left",
-          "top",
-          "rear"
-        ]
-      },
       "parameter_proposals": [
         {
           "part_id": "main_body",
@@ -644,7 +656,6 @@
           "proposal_kind": "shape_primitive",
           "parameter": "shape.primitive",
           "path": "parts[main_body].shape.primitive",
-          "current_value": "rounded_box",
           "proposed_value": "rounded_box"
         },
         {
@@ -787,19 +798,7 @@
           "proposal_kind": "shape_parameters",
           "parameter": "shape.parameters",
           "path": "parts[main_body].shape.parameters",
-          "current_value": {
-            "origin": [
-              0,
-              0,
-              525
-            ],
-            "size": [
-              460,
-              180,
-              210
-            ],
-            "radius": 4
-          },
+          "current_value": {},
           "proposed_value": {
             "origin": [
               469.2,
@@ -823,7 +822,7 @@
       "name": "vehicle_ambulance_cab",
       "type": "cab",
       "role": "cab",
-      "shape": {
+      "candidate_shape": {
         "primitive": "rounded_box",
         "parameters": {
           "origin": [
@@ -839,8 +838,23 @@
           "radius": 4
         }
       },
+      "compile": {
+        "emit": false,
+        "reason": "candidate_only_no_seed_skeleton"
+      },
       "evidence_status": "needs_review",
       "fallback_state": "needs_review",
+      "qa": {
+        "candidate_only": true,
+        "not_compiled": true,
+        "promotion_required": true,
+        "generated_from_image_evidence": true,
+        "evidence_confidence": 0.378,
+        "missing_views": [
+          "front",
+          "left"
+        ]
+      },
       "evidence_sources": [
         {
           "kind": "silhouette",
@@ -870,14 +884,6 @@
           "observation_id": "ambulance_front_cab_lower"
         }
       ],
-      "qa": {
-        "generated_from_image_evidence": true,
-        "evidence_confidence": 0.378,
-        "missing_views": [
-          "front",
-          "left"
-        ]
-      },
       "parameter_proposals": [
         {
           "part_id": "cab",
@@ -988,7 +994,6 @@
           "proposal_kind": "shape_primitive",
           "parameter": "shape.primitive",
           "path": "parts[cab].shape.primitive",
-          "current_value": "rounded_box",
           "proposed_value": "rounded_box"
         },
         {
@@ -1100,19 +1105,7 @@
           "proposal_kind": "shape_parameters",
           "parameter": "shape.parameters",
           "path": "parts[cab].shape.parameters",
-          "current_value": {
-            "origin": [
-              20,
-              0,
-              525
-            ],
-            "size": [
-              460,
-              180,
-              210
-            ],
-            "radius": 4
-          },
+          "current_value": {},
           "proposed_value": {
             "origin": [
               59.8,
@@ -1136,7 +1129,7 @@
       "name": "vehicle_ambulance_windshield",
       "type": "windshield",
       "role": "windshield",
-      "shape": {
+      "candidate_shape": {
         "primitive": "rounded_box",
         "parameters": {
           "origin": [
@@ -1152,8 +1145,23 @@
           "radius": 4
         }
       },
+      "compile": {
+        "emit": false,
+        "reason": "candidate_only_no_seed_skeleton"
+      },
       "evidence_status": "needs_review",
       "fallback_state": "needs_review",
+      "qa": {
+        "candidate_only": true,
+        "not_compiled": true,
+        "promotion_required": true,
+        "generated_from_image_evidence": true,
+        "evidence_confidence": 0.364,
+        "missing_views": [
+          "front",
+          "left"
+        ]
+      },
       "evidence_sources": [
         {
           "kind": "silhouette",
@@ -1174,14 +1182,6 @@
           "observation_id": "ambulance_front_windshield"
         }
       ],
-      "qa": {
-        "generated_from_image_evidence": true,
-        "evidence_confidence": 0.364,
-        "missing_views": [
-          "front",
-          "left"
-        ]
-      },
       "parameter_proposals": [
         {
           "part_id": "windshield",
@@ -1266,7 +1266,6 @@
           "proposal_kind": "shape_primitive",
           "parameter": "shape.primitive",
           "path": "parts[windshield].shape.primitive",
-          "current_value": "rounded_box",
           "proposed_value": "box"
         },
         {
@@ -1352,19 +1351,7 @@
           "proposal_kind": "shape_parameters",
           "parameter": "shape.parameters",
           "path": "parts[windshield].shape.parameters",
-          "current_value": {
-            "origin": [
-              40,
-              0,
-              525
-            ],
-            "size": [
-              460,
-              180,
-              210
-            ],
-            "radius": 4
-          },
+          "current_value": {},
           "proposed_value": {
             "origin": [
               259.9,
@@ -1474,7 +1461,7 @@
       "name": "vehicle_ambulance_side_windows",
       "type": "side_window",
       "role": "side_window",
-      "shape": {
+      "candidate_shape": {
         "primitive": "rounded_box",
         "parameters": {
           "origin": [
@@ -1490,8 +1477,24 @@
           "radius": 4
         }
       },
+      "compile": {
+        "emit": false,
+        "reason": "candidate_only_no_seed_skeleton"
+      },
       "evidence_status": "needs_review",
       "fallback_state": "needs_review",
+      "qa": {
+        "candidate_only": true,
+        "not_compiled": true,
+        "promotion_required": true,
+        "generated_from_image_evidence": true,
+        "evidence_confidence": 0.378,
+        "missing_views": [
+          "left",
+          "right",
+          "rear"
+        ]
+      },
       "evidence_sources": [
         {
           "kind": "silhouette",
@@ -1503,15 +1506,6 @@
           "observation_id": "ambulance_side_window"
         }
       ],
-      "qa": {
-        "generated_from_image_evidence": true,
-        "evidence_confidence": 0.378,
-        "missing_views": [
-          "left",
-          "right",
-          "rear"
-        ]
-      },
       "parameter_proposals": [
         {
           "part_id": "side_windows",
@@ -1572,7 +1566,6 @@
           "proposal_kind": "shape_primitive",
           "parameter": "shape.primitive",
           "path": "parts[side_windows].shape.primitive",
-          "current_value": "rounded_box",
           "proposed_value": "box"
         },
         {
@@ -1634,19 +1627,7 @@
           "proposal_kind": "shape_parameters",
           "parameter": "shape.parameters",
           "path": "parts[side_windows].shape.parameters",
-          "current_value": {
-            "origin": [
-              60,
-              0,
-              525
-            ],
-            "size": [
-              460,
-              180,
-              210
-            ],
-            "radius": 4
-          },
+          "current_value": {},
           "proposed_value": {
             "origin": [
               959.1,
@@ -1793,7 +1774,7 @@
       "name": "vehicle_ambulance_wheel_set",
       "type": "wheel",
       "role": "wheel",
-      "shape": {
+      "candidate_shape": {
         "primitive": "rounded_box",
         "parameters": {
           "origin": [
@@ -1809,8 +1790,23 @@
           "radius": 4
         }
       },
+      "compile": {
+        "emit": false,
+        "reason": "candidate_only_no_seed_skeleton"
+      },
       "evidence_status": "needs_review",
       "fallback_state": "needs_review",
+      "qa": {
+        "candidate_only": true,
+        "not_compiled": true,
+        "promotion_required": true,
+        "generated_from_image_evidence": true,
+        "evidence_confidence": 0.407,
+        "missing_views": [
+          "left",
+          "right"
+        ]
+      },
       "evidence_sources": [
         {
           "kind": "center_point",
@@ -1822,14 +1818,6 @@
           "observation_id": "ambulance_front_wheel_center"
         }
       ],
-      "qa": {
-        "generated_from_image_evidence": true,
-        "evidence_confidence": 0.407,
-        "missing_views": [
-          "left",
-          "right"
-        ]
-      },
       "parameter_proposals": [
         {
           "part_id": "wheel_set",
@@ -1882,7 +1870,6 @@
           "proposal_kind": "shape_primitive",
           "parameter": "shape.primitive",
           "path": "parts[wheel_set].shape.primitive",
-          "current_value": "rounded_box",
           "proposed_value": "prism"
         },
         {
@@ -1936,19 +1923,7 @@
           "proposal_kind": "shape_parameters",
           "parameter": "shape.parameters",
           "path": "parts[wheel_set].shape.parameters",
-          "current_value": {
-            "origin": [
-              80,
-              0,
-              525
-            ],
-            "size": [
-              460,
-              180,
-              210
-            ],
-            "radius": 4
-          },
+          "current_value": {},
           "proposed_value": {
             "origin": [
               558.9,
@@ -2081,7 +2056,7 @@
       "name": "vehicle_ambulance_roof_lights",
       "type": "lightbar",
       "role": "lightbar",
-      "shape": {
+      "candidate_shape": {
         "primitive": "rounded_box",
         "parameters": {
           "origin": [
@@ -2097,8 +2072,23 @@
           "radius": 4
         }
       },
+      "compile": {
+        "emit": false,
+        "reason": "candidate_only_no_seed_skeleton"
+      },
       "evidence_status": "needs_review",
       "fallback_state": "needs_review",
+      "qa": {
+        "candidate_only": true,
+        "not_compiled": true,
+        "promotion_required": true,
+        "generated_from_image_evidence": true,
+        "evidence_confidence": 0.368,
+        "missing_views": [
+          "top",
+          "front"
+        ]
+      },
       "evidence_sources": [
         {
           "kind": "silhouette",
@@ -2128,14 +2118,6 @@
           "observation_id": "ambulance_front_lightbar"
         }
       ],
-      "qa": {
-        "generated_from_image_evidence": true,
-        "evidence_confidence": 0.368,
-        "missing_views": [
-          "top",
-          "front"
-        ]
-      },
       "parameter_proposals": [
         {
           "part_id": "roof_lights",
@@ -2246,7 +2228,6 @@
           "proposal_kind": "shape_primitive",
           "parameter": "shape.primitive",
           "path": "parts[roof_lights].shape.primitive",
-          "current_value": "rounded_box",
           "proposed_value": "rounded_box"
         },
         {
@@ -2358,19 +2339,7 @@
           "proposal_kind": "shape_parameters",
           "parameter": "shape.parameters",
           "path": "parts[roof_lights].shape.parameters",
-          "current_value": {
-            "origin": [
-              100,
-              0,
-              525
-            ],
-            "size": [
-              460,
-              180,
-              210
-            ],
-            "radius": 4
-          },
+          "current_value": {},
           "proposed_value": {
             "origin": [
               621,
@@ -2394,7 +2363,7 @@
       "name": "vehicle_ambulance_stripe_and_text",
       "type": "decal",
       "role": "decal",
-      "shape": {
+      "candidate_shape": {
         "primitive": "rounded_box",
         "parameters": {
           "origin": [
@@ -2410,8 +2379,23 @@
           "radius": 4
         }
       },
+      "compile": {
+        "emit": false,
+        "reason": "candidate_only_no_seed_skeleton"
+      },
       "evidence_status": "needs_review",
       "fallback_state": "needs_review",
+      "qa": {
+        "candidate_only": true,
+        "not_compiled": true,
+        "promotion_required": true,
+        "generated_from_image_evidence": true,
+        "evidence_confidence": 0.328,
+        "missing_views": [
+          "left",
+          "rear"
+        ]
+      },
       "evidence_sources": [
         {
           "kind": "silhouette",
@@ -2423,14 +2407,6 @@
           "observation_id": "ambulance_side_stripe"
         }
       ],
-      "qa": {
-        "generated_from_image_evidence": true,
-        "evidence_confidence": 0.328,
-        "missing_views": [
-          "left",
-          "rear"
-        ]
-      },
       "parameter_proposals": [
         {
           "part_id": "stripe_and_text",
@@ -2489,7 +2465,6 @@
           "proposal_kind": "shape_primitive",
           "parameter": "shape.primitive",
           "path": "parts[stripe_and_text].shape.primitive",
-          "current_value": "rounded_box",
           "proposed_value": "box"
         },
         {
@@ -2549,19 +2524,7 @@
           "proposal_kind": "shape_parameters",
           "parameter": "shape.parameters",
           "path": "parts[stripe_and_text].shape.parameters",
-          "current_value": {
-            "origin": [
-              120,
-              0,
-              525
-            ],
-            "size": [
-              460,
-              180,
-              210
-            ],
-            "radius": 4
-          },
+          "current_value": {},
           "proposed_value": {
             "origin": [
               299,
@@ -2838,6 +2801,7 @@
         "confidence": 0.328
       }
     ],
+    "visual_relations": [],
     "parts": [
       {
         "part_id": "main_body",
@@ -3848,7 +3812,6 @@
         "proposal_kind": "shape_primitive",
         "parameter": "shape.primitive",
         "path": "parts[main_body].shape.primitive",
-        "current_value": "rounded_box",
         "proposed_value": "rounded_box"
       },
       {
@@ -3991,19 +3954,7 @@
         "proposal_kind": "shape_parameters",
         "parameter": "shape.parameters",
         "path": "parts[main_body].shape.parameters",
-        "current_value": {
-          "origin": [
-            0,
-            0,
-            525
-          ],
-          "size": [
-            460,
-            180,
-            210
-          ],
-          "radius": 4
-        },
+        "current_value": {},
         "proposed_value": {
           "origin": [
             469.2,
@@ -4129,7 +4080,6 @@
         "proposal_kind": "shape_primitive",
         "parameter": "shape.primitive",
         "path": "parts[cab].shape.primitive",
-        "current_value": "rounded_box",
         "proposed_value": "rounded_box"
       },
       {
@@ -4241,19 +4191,7 @@
         "proposal_kind": "shape_parameters",
         "parameter": "shape.parameters",
         "path": "parts[cab].shape.parameters",
-        "current_value": {
-          "origin": [
-            20,
-            0,
-            525
-          ],
-          "size": [
-            460,
-            180,
-            210
-          ],
-          "radius": 4
-        },
+        "current_value": {},
         "proposed_value": {
           "origin": [
             59.8,
@@ -4353,7 +4291,6 @@
         "proposal_kind": "shape_primitive",
         "parameter": "shape.primitive",
         "path": "parts[windshield].shape.primitive",
-        "current_value": "rounded_box",
         "proposed_value": "box"
       },
       {
@@ -4439,19 +4376,7 @@
         "proposal_kind": "shape_parameters",
         "parameter": "shape.parameters",
         "path": "parts[windshield].shape.parameters",
-        "current_value": {
-          "origin": [
-            40,
-            0,
-            525
-          ],
-          "size": [
-            460,
-            180,
-            210
-          ],
-          "radius": 4
-        },
+        "current_value": {},
         "proposed_value": {
           "origin": [
             259.9,
@@ -4613,7 +4538,6 @@
         "proposal_kind": "shape_primitive",
         "parameter": "shape.primitive",
         "path": "parts[side_windows].shape.primitive",
-        "current_value": "rounded_box",
         "proposed_value": "box"
       },
       {
@@ -4675,19 +4599,7 @@
         "proposal_kind": "shape_parameters",
         "parameter": "shape.parameters",
         "path": "parts[side_windows].shape.parameters",
-        "current_value": {
-          "origin": [
-            60,
-            0,
-            525
-          ],
-          "size": [
-            460,
-            180,
-            210
-          ],
-          "radius": 4
-        },
+        "current_value": {},
         "proposed_value": {
           "origin": [
             959.1,
@@ -4878,7 +4790,6 @@
         "proposal_kind": "shape_primitive",
         "parameter": "shape.primitive",
         "path": "parts[wheel_set].shape.primitive",
-        "current_value": "rounded_box",
         "proposed_value": "prism"
       },
       {
@@ -4932,19 +4843,7 @@
         "proposal_kind": "shape_parameters",
         "parameter": "shape.parameters",
         "path": "parts[wheel_set].shape.parameters",
-        "current_value": {
-          "origin": [
-            80,
-            0,
-            525
-          ],
-          "size": [
-            460,
-            180,
-            210
-          ],
-          "radius": 4
-        },
+        "current_value": {},
         "proposed_value": {
           "origin": [
             558.9,
@@ -5179,7 +5078,6 @@
         "proposal_kind": "shape_primitive",
         "parameter": "shape.primitive",
         "path": "parts[roof_lights].shape.primitive",
-        "current_value": "rounded_box",
         "proposed_value": "rounded_box"
       },
       {
@@ -5291,19 +5189,7 @@
         "proposal_kind": "shape_parameters",
         "parameter": "shape.parameters",
         "path": "parts[roof_lights].shape.parameters",
-        "current_value": {
-          "origin": [
-            100,
-            0,
-            525
-          ],
-          "size": [
-            460,
-            180,
-            210
-          ],
-          "radius": 4
-        },
+        "current_value": {},
         "proposed_value": {
           "origin": [
             621,
@@ -5377,7 +5263,6 @@
         "proposal_kind": "shape_primitive",
         "parameter": "shape.primitive",
         "path": "parts[stripe_and_text].shape.primitive",
-        "current_value": "rounded_box",
         "proposed_value": "box"
       },
       {
@@ -5437,19 +5322,7 @@
         "proposal_kind": "shape_parameters",
         "parameter": "shape.parameters",
         "path": "parts[stripe_and_text].shape.parameters",
-        "current_value": {
-          "origin": [
-            120,
-            0,
-            525
-          ],
-          "size": [
-            460,
-            180,
-            210
-          ],
-          "radius": 4
-        },
+        "current_value": {},
         "proposed_value": {
           "origin": [
             299,

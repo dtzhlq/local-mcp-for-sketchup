@@ -10,6 +10,14 @@ import {
   landCoverReport,
   renderBirdEyeSegmentationArtifact
 } from './lib/bird-eye-land-cover.mjs';
+import { annotateObservationSetWithHighContrastEdgeV1 } from './lib/high-contrast-edge-v1.mjs';
+import { annotateObservationSetWithOpenCvEdgeV1 } from './lib/opencv-edge-v1.mjs';
+import {
+  annotateObservationSetWithVisionEvidenceSetV1,
+  buildVisionEvidenceReviewPatch,
+  renderVisionEvidenceReviewPatchMarkdown,
+  visionEvidenceSetReport
+} from './lib/vision-evidence-set-v1.mjs';
 import {
   annotateObservationSetWithBoundaryGraphV1,
   boundaryGraphReport
@@ -39,7 +47,14 @@ async function main() {
   const observationsPath = options.observations || 'projects/image-structured-modeler/examples/building-group/observations.json';
   const outputDir = resolveRepo(options.outputDir || 'projects/image-structured-modeler/examples/building-group/structured-plan');
   let observations = await annotateObservationSetWithBirdEyeLandCoverV1(await readJson(observationsPath));
+  observations = await annotateObservationSetWithHighContrastEdgeV1(observations);
+  observations = await annotateObservationSetWithOpenCvEdgeV1(observations, {
+    output: path.join(outputDir, 'opencv-edge-v1-report.json'),
+    outputDir
+  });
+  observations = annotateObservationSetWithVisionEvidenceSetV1(observations, { force: true });
   observations = await annotateObservationSetWithBoundaryGraphV1(observations);
+  observations = annotateObservationSetWithVisionEvidenceSetV1(observations, { force: true });
   const report = validateAutoGroundPlanR10({ observations });
   const plan = report.auto_ground_plan;
   const birdEyeArtifact = await renderBirdEyeSegmentationArtifact({
@@ -52,6 +67,11 @@ async function main() {
   });
   const birdEyeReport = landCoverReport(observations.land_cover_v1);
   const boundaryReport = boundaryGraphReport(observations.boundary_graph_v1);
+  const visionReport = visionEvidenceSetReport(observations.vision_evidence_set_v1);
+  const visionReviewPatch = buildVisionEvidenceReviewPatch({
+    visionEvidenceSet: observations.vision_evidence_set_v1,
+    source: `${observationsPath}#vision_evidence_set_v1`
+  });
   const structuredSvg = renderStructuredSvg(plan);
   const diagnosticSvg = renderDiagnosticSvg(plan);
   const html = renderHtml({
@@ -61,6 +81,8 @@ async function main() {
     birdEyeArtifact,
     birdEyeReport,
     boundaryReport,
+    visionReport,
+    visionReviewPatch,
     observationsPath,
     outputDir
   });
@@ -69,6 +91,9 @@ async function main() {
   await fs.writeFile(path.join(outputDir, 'structured-plan-qa-report.json'), `${JSON.stringify(report, null, 2)}\n`, 'utf8');
   await fs.writeFile(path.join(outputDir, 'land-cover-v1-report.json'), `${JSON.stringify(birdEyeReport, null, 2)}\n`, 'utf8');
   await fs.writeFile(path.join(outputDir, 'boundary-graph-v1-report.json'), `${JSON.stringify(boundaryReport, null, 2)}\n`, 'utf8');
+  await fs.writeFile(path.join(outputDir, 'vision-evidence-v1-report.json'), `${JSON.stringify(visionReport, null, 2)}\n`, 'utf8');
+  await fs.writeFile(path.join(outputDir, 'vision-evidence-review-patch.json'), `${JSON.stringify(visionReviewPatch, null, 2)}\n`, 'utf8');
+  await fs.writeFile(path.join(outputDir, 'vision-evidence-review-patch.md'), renderVisionEvidenceReviewPatchMarkdown(visionReviewPatch), 'utf8');
   await fs.writeFile(path.join(outputDir, 'structured-plan.svg'), structuredSvg, 'utf8');
   await fs.writeFile(path.join(outputDir, 'diagnostic-plan.svg'), diagnosticSvg, 'utf8');
   await fs.writeFile(path.join(outputDir, 'index.html'), html, 'utf8');
@@ -85,7 +110,10 @@ async function main() {
     parent_child_double_occupancy: report.summary.parent_child_double_occupancy,
     gap_ratio: report.summary.gap_ratio,
     gap_completion_ratio: report.summary.gap_completion_ratio,
-    remaining_unknown_gap_ratio: report.summary.remaining_unknown_gap_ratio
+    remaining_unknown_gap_ratio: report.summary.remaining_unknown_gap_ratio,
+    vision_evidence_verdict: visionReport.verdict,
+    vision_evidence_edges: visionReport.summary.edges,
+    vision_evidence_review_items: visionReviewPatch.summary.total_items
   }, null, 2)}\n`);
 
   if (options.requireOk && !report.ok) process.exit(1);
@@ -129,7 +157,7 @@ function renderDiagnosticSvg(plan) {
 `;
 }
 
-function renderHtml({ report, structuredSvg, diagnosticSvg, birdEyeArtifact, birdEyeReport, boundaryReport, observationsPath, outputDir }) {
+function renderHtml({ report, structuredSvg, diagnosticSvg, birdEyeArtifact, birdEyeReport, boundaryReport, visionReport, visionReviewPatch, observationsPath, outputDir }) {
   const plan = report.auto_ground_plan;
   const qa = plan.qa || {};
   const metrics = [
@@ -151,7 +179,16 @@ function renderHtml({ report, structuredSvg, diagnosticSvg, birdEyeArtifact, bir
     ['Boundary closure', boundaryReport.summary.site_boundary_closure_ratio],
     ['Observed edge coverage', boundaryReport.summary.observed_edge_coverage_ratio],
     ['Boundary road corridors', boundaryReport.summary.road_corridor_count],
-    ['Inferred geometry area', boundaryReport.summary.inferred_geometry_area_ratio]
+    ['Inferred geometry area', boundaryReport.summary.inferred_geometry_area_ratio],
+    ['Vision evidence verdict', visionReport.verdict],
+    ['Vision evidence masks', visionReport.summary.masks],
+    ['Vision evidence edges', visionReport.summary.edges],
+    ['Accepted evidence edges', visionReport.summary.accepted_edges],
+    ['Planar ground-plane allowed', visionReport.summary.planar_groundplan_allowed],
+    ['Ground-plane review images', visionReport.summary.ground_plane_review_images],
+    ['Top-view usage policy', visionReport.summary.preferred_top_view_usage_policy],
+    ['Vision review items', visionReviewPatch.summary.total_items],
+    ['Heavy model required', visionReport.summary.default_heavy_model_required]
   ];
   return `<!doctype html>
 <html lang="en">
@@ -292,6 +329,7 @@ function renderHtml({ report, structuredSvg, diagnosticSvg, birdEyeArtifact, bir
   <header>
     <h1>Auto GroundPlan R10</h1>
     <div class="muted"><code>${escapeHtml(path.relative(repoRoot, resolveRepo(observationsPath)))}</code></div>
+    <div class="muted">R12 path: original image -> VisionEvidenceSet v1 -> BoundaryGraph/GroundPlan -> PartGraph/DSL/QA. Heavy vision backends are optional and not required.</div>
   </header>
   <main>
     <section class="grid" aria-label="QA metrics">
@@ -333,7 +371,10 @@ function renderHtml({ report, structuredSvg, diagnosticSvg, birdEyeArtifact, bir
         </tbody>
       </table>
     </section>
-    <div class="muted"><code>${escapeHtml(path.relative(repoRoot, path.join(outputDir, 'structured-plan-qa-report.json')))}</code></div>
+    <div class="muted">
+      <code>${escapeHtml(path.relative(repoRoot, path.join(outputDir, 'vision-evidence-v1-report.json')))}</code>
+      <code>${escapeHtml(path.relative(repoRoot, path.join(outputDir, 'structured-plan-qa-report.json')))}</code>
+    </div>
   </main>
   <script>
     const buttons = Array.from(document.querySelectorAll('[role="tab"]'));

@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/asset-set.schema.json",
+  "title": "AssetSet",
+  "type": "object",
+  "required": ["version", "kind", "id", "source_input", "assets", "profile_routing", "gates"],
+  "properties": {
+    "version": { "const": 1 },
+    "kind": { "const": "asset_set" },
+    "id": { "type": "string" },
+    "source_input": { "type": "string" },
+    "assets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "path", "media_type"],
+        "properties": {
+          "id": { "type": "string" },
+          "path": { "type": "string" },
+          "media_type": { "enum": ["image", "pdf", "cad", "unknown"] },
+          "width": { "type": "integer" },
+          "height": { "type": "integer" },
+          "detected_view": { "type": "string" },
+          "quality": { "type": "string" },
+          "content_sha256": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "profile_routing": {
+      "type": "object",
+      "required": ["selected_profile", "status"],
+      "properties": {
+        "object_type": { "type": "string" },
+        "object_name": { "type": "string" },
+        "selected_profile": { "type": "string" },
+        "status": { "enum": ["routed", "needs_profile"] },
+        "risks": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "gates": {
+      "type": "object",
+      "required": ["can_compile_geometry", "reasons"],
+      "properties": {
+        "can_compile_geometry": { "type": "boolean" },
+        "reasons": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

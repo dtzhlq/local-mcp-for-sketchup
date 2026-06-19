@@ -1304,6 +1304,11 @@ function skeletonPartGraph(observationSet, profile, options) {
     version: 1,
     id: options.id || `${profile.profile_id || 'product'}-image-evidence-part-graph`,
     profile_id: profile.profile_id,
+    compile_policy: {
+      source: 'image_no_seed_skeleton',
+      require_promoted_geometry: true,
+      block_candidate_only_parts: true
+    },
     dsl_version: profile.dsl_version || 1,
     units: profile.units || 'mm',
     product: {
@@ -1317,7 +1322,7 @@ function skeletonPartGraph(observationSet, profile, options) {
       name: `${profile.profile_id || 'Product'}_${required.id}`,
       type: required.role,
       role: required.role,
-      shape: {
+      candidate_shape: {
         primitive: 'rounded_box',
         parameters: {
           origin: [index * 20, 0, scale.height / 2],
@@ -1325,8 +1330,17 @@ function skeletonPartGraph(observationSet, profile, options) {
           radius: 4
         }
       },
+      compile: {
+        emit: false,
+        reason: 'candidate_only_no_seed_skeleton'
+      },
       evidence_status: 'needs_review',
-      fallback_state: 'needs_review'
+      fallback_state: 'needs_review',
+      qa: {
+        candidate_only: true,
+        not_compiled: true,
+        promotion_required: true
+      }
     }))
   };
 }

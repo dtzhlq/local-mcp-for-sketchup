@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/release-gate-report.schema.json",
+  "title": "ImageStructuredReleaseGateReport",
+  "type": "object",
+  "required": [
+    "version",
+    "kind",
+    "generated_at",
+    "ok",
+    "release_ready",
+    "verdict",
+    "summary",
+    "cases",
+    "remaining_release_gaps"
+  ],
+  "properties": {
+    "version": { "const": 1 },
+    "kind": { "const": "image_structured_release_gate_report" },
+    "generated_at": { "type": "string" },
+    "ok": { "type": "boolean" },
+    "release_ready": { "type": "boolean" },
+    "verdict": { "enum": ["blocked", "technical_baseline", "release_candidate"] },
+    "summary": {
+      "type": "object",
+      "required": ["hard_cases", "passed_cases", "failed_cases", "release_gaps"],
+      "properties": {
+        "hard_cases": { "type": "integer" },
+        "passed_cases": { "type": "integer" },
+        "failed_cases": { "type": "integer" },
+        "release_gaps": { "type": "integer" }
+      }
+    },
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "ok", "status", "artifacts", "metrics"],
+        "properties": {
+          "id": { "type": "string" },
+          "ok": { "type": "boolean" },
+          "status": { "type": "string" },
+          "artifacts": { "type": "object" },
+          "metrics": { "type": "object" },
+          "error": { "type": "string" }
+        }
+      }
+    },
+    "remaining_release_gaps": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/building-single-semantic-evidence.schema.json",
+  "title": "BuildingSingleSemanticEvidence v1",
+  "type": "object",
+  "required": ["kind", "version", "profile", "source_images", "images", "summary", "review_policy"],
+  "properties": {
+    "kind": { "const": "building_single_semantic_evidence_v1" },
+    "version": { "const": 1 },
+    "profile": { "const": "building_single" },
+    "source_images": { "type": "array", "items": { "type": "string" } },
+    "annotation_source": { "type": ["string", "null"] },
+    "vlm_cache": {
+      "type": "object",
+      "required": ["status", "source", "candidate_count"],
+      "properties": {
+        "status": { "enum": ["not_provided", "loaded_fixture", "invalid_fixture"] },
+        "source": { "type": ["string", "null"] },
+        "candidate_count": { "type": "integer" },
+        "artifact": { "type": ["string", "null"] }
+      }
+    },
+    "images": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["source_image", "view", "projection_model", "perspective_strength", "content_frame_bbox", "regions"],
+        "properties": {
+          "source_image": { "type": "string" },
+          "view": { "type": "string" },
+          "projection_model": { "type": ["string", "null"] },
+          "perspective_strength": { "enum": ["low", "medium", "high", "unknown"] },
+          "camera_hints": { "type": "object" },
+          "content_frame_bbox": { "$ref": "#/$defs/bbox" },
+          "regions": {
+            "type": "array",
+            "items": { "$ref": "#/$defs/region" }
+          }
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": ["region_count", "selected_region_count", "roles", "sources", "critical_roles_present", "compile_allowed", "geometry_promotion_allowed"],
+      "properties": {
+        "region_count": { "type": "integer" },
+        "selected_region_count": { "type": "integer" },
+        "roles": { "type": "array", "items": { "type": "string" } },
+        "sources": { "type": "array", "items": { "type": "string" } },
+        "critical_roles_present": { "type": "array", "items": { "type": "string" } },
+        "missing_critical_roles": { "type": "array", "items": { "type": "string" } },
+        "compile_allowed": { "const": false },
+        "geometry_promotion_allowed": { "const": false }
+      }
+    },
+    "review_policy": {
+      "type": "object",
+      "required": ["model_status", "compile_allowed", "geometry_promotion_allowed", "default_review_required"],
+      "properties": {
+        "model_status": { "const": "review_only" },
+        "compile_allowed": { "const": false },
+        "geometry_promotion_allowed": { "const": false },
+        "default_review_required": { "const": true },
+        "notes": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  },
+  "$defs": {
+    "bbox": {
+      "type": "array",
+      "prefixItems": [
+        { "type": "number" },
+        { "type": "number" },
+        { "type": "number" },
+        { "type": "number" }
+      ],
+      "minItems": 4,
+      "maxItems": 4
+    },
+    "region": {
+      "type": "object",
+      "required": ["id", "role", "bbox_px", "polygon_px", "image_space_geometry", "polygon_derivation", "projection_model", "orthographic_projection_allowed", "perspective_review_required", "confidence", "source", "source_priority", "review_required", "blocked_interpretations", "geometry_promotion_allowed", "selected_for_candidate_graph"],
+      "properties": {
+        "id": { "type": "string" },
+        "role": {
+          "enum": [
+            "visible_plane_primary",
+            "visible_plane_recessed_left",
+            "rectangular_utility_ducts",
+            "shadow_or_recess_boundary",
+            "exterior_hvac_units",
+            "upper_window_bands",
+            "ground_floor_storefront",
+            "roof_parapet_and_rail"
+          ]
+        },
+        "bbox_px": { "$ref": "#/$defs/bbox" },
+        "polygon_px": { "type": "array", "minItems": 3, "items": { "$ref": "#/$defs/point" } },
+        "image_space_geometry": { "enum": ["polygon_px", "bbox_polygon_fallback"] },
+        "polygon_derivation": { "type": "string" },
+        "polygon_confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "projection_model": { "type": "string" },
+        "perspective_strength": { "enum": ["low", "medium", "high", "unknown"] },
+        "orthographic_projection_allowed": { "const": false },
+        "perspective_review_required": { "const": true },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "source": { "enum": ["user_annotation", "vlm_candidate", "local_cv_proposal", "profile_prior"] },
+        "source_priority": { "type": "integer" },
+        "review_required": { "type": "boolean" },
+        "blocked_interpretations": { "type": "array", "items": { "type": "string" } },
+        "what_it_is": { "type": "string" },
+        "what_it_is_not": { "type": "string" },
+        "ambiguity": { "type": "string" },
+        "rough_position": { "type": "string" },
+        "geometry_promotion_allowed": { "const": false },
+        "selected_for_candidate_graph": { "type": "boolean" },
+        "derived_from": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "point": {
+      "type": "array",
+      "prefixItems": [
+        { "type": "number" },
+        { "type": "number" }
+      ],
+      "minItems": 2,
+      "maxItems": 2
+    }
+  }
+}

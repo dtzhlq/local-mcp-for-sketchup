@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/image-structured-benchmark-report.schema.json",
+  "title": "ImageStructuredBenchmarkReport",
+  "type": "object",
+  "required": ["kind", "version", "tier", "status", "generated_at", "cases", "summary", "false_promotion_count"],
+  "properties": {
+    "kind": { "const": "image_structured_benchmark_report" },
+    "version": { "const": 1 },
+    "tier": { "enum": ["tier0", "tier1", "tier2"] },
+    "status": { "enum": ["pass", "review", "blocked_external_dataset_unavailable", "fail"] },
+    "generated_at": { "type": "string" },
+    "dataset_manifest": { "type": ["string", "null"] },
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "domain", "status", "artifacts", "metrics"],
+        "properties": {
+          "id": { "type": "string" },
+          "domain": { "type": "string" },
+          "source": { "type": "string" },
+          "status": { "enum": ["pass", "review", "blocked_external_dataset_unavailable", "fail"] },
+          "artifacts": { "type": "object" },
+          "metrics": { "type": "object" }
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": ["case_count", "pass_count", "review_count", "blocked_count", "fail_count"],
+      "properties": {
+        "case_count": { "type": "integer", "minimum": 0 },
+        "pass_count": { "type": "integer", "minimum": 0 },
+        "review_count": { "type": "integer", "minimum": 0 },
+        "blocked_count": { "type": "integer", "minimum": 0 },
+        "fail_count": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "false_promotion_count": { "const": 0 },
+    "notes": { "type": "array", "items": { "type": "string" } }
+  }
+}

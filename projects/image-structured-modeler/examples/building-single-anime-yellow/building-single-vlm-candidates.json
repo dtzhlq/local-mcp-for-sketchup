@@ -1,0 +1,49 @@
+{
+  "kind": "building_single_vlm_candidates",
+  "version": 1,
+  "source_image": "projects/image-structured-modeler/examples/building-single-anime-yellow/input-visible-crop.png",
+  "regions": [
+    {
+      "id": "vlm_visible_plane_primary",
+      "role": "visible_plane_primary",
+      "rough_position": "right visible yellow facade",
+      "what_it_is": "main visible front facade plane candidate",
+      "what_it_is_not": "recessed side facade or shadow-only area",
+      "ambiguity": "single oblique screenshot requires facade plane review",
+      "bbox_rel": [0.49, 0.12, 0.30, 0.66],
+      "confidence": 0.67
+    },
+    {
+      "id": "vlm_visible_plane_recessed_left",
+      "role": "visible_plane_recessed_left",
+      "rough_position": "left recessed facade face",
+      "what_it_is": "separate recessed or return facade plane candidate",
+      "what_it_is_not": "front facade content to be pasted into main facade",
+      "ambiguity": "depth offset must be confirmed before geometry promotion",
+      "bbox_rel": [0.25, 0.13, 0.27, 0.68],
+      "confidence": 0.64
+    },
+    {
+      "id": "vlm_rectangular_utility_ducts",
+      "role": "rectangular_utility_ducts",
+      "rough_position": "left facade vertical box/riser",
+      "what_it_is": "rectangular external duct or utility riser candidate",
+      "what_it_is_not": "round pipe geometry or decorative facade trim",
+      "ambiguity": "section shape and attachment face require review",
+      "bbox_rel": [0.16, 0.08, 0.21, 0.53],
+      "confidence": 0.62,
+      "blocked_interpretations": ["round_pipe_geometry", "decorative_facade_trim"]
+    },
+    {
+      "id": "vlm_shadow_or_recess_boundary",
+      "role": "shadow_or_recess_boundary",
+      "rough_position": "dark vertical boundary near recessed plane",
+      "what_it_is": "shadow or recess boundary marker",
+      "what_it_is_not": "confirmed cut recess geometry",
+      "ambiguity": "lighting helps separate forms but may be shadow-only",
+      "bbox_rel": [0.24, 0.16, 0.08, 0.52],
+      "confidence": 0.58,
+      "blocked_interpretations": ["cut_recess", "cut_recess_from_shadow_only"]
+    }
+  ]
+}

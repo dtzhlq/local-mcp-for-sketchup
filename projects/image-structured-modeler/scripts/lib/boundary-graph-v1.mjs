@@ -3,6 +3,7 @@ import sharp from 'sharp';
 import { repoRoot } from './image-analysis.mjs';
 import { boundaryEdgesFromHighContrastEdgeV1 } from './high-contrast-edge-v1.mjs';
 import { boundaryEdgesFromOpenCvEdgeV1 } from './opencv-edge-v1.mjs';
+import { boundaryEdgesFromVisionEvidenceSetV1 } from './vision-evidence-set-v1.mjs';
 
 export const BOUNDARY_GRAPH_EDGE_TYPES = [
   'site_boundary_edge',
@@ -81,18 +82,25 @@ export function buildBoundaryGraphV1({ observations = {}, landCover = null, opti
   const sourceImageBoundary = options.sourceImageBoundary || null;
   const highContrastEdge = options.highContrastEdge || observations.high_contrast_edge_v1 || null;
   const openCvEdge = options.openCvEdge || observations.opencv_edge_v1 || null;
-  const highContrastBoundaryEdges = boundaryEdgesFromHighContrastEdgeV1(highContrastEdge);
-  const openCvBoundaryEdges = boundaryEdgesFromOpenCvEdgeV1(openCvEdge);
+  const visionEvidenceSet = observations.vision_evidence_set_v1?.kind === 'vision_evidence_set_v1'
+    ? observations.vision_evidence_set_v1
+    : null;
+  const visionBoundaryEdges = boundaryEdgesFromVisionEvidenceSetV1(visionEvidenceSet);
+  const highContrastBoundaryEdges = visionBoundaryEdges.length ? [] : boundaryEdgesFromHighContrastEdgeV1(highContrastEdge);
+  const openCvBoundaryEdges = visionBoundaryEdges.length ? [] : boundaryEdgesFromOpenCvEdgeV1(openCvEdge);
+  const lightweightBoundaryEdges = visionBoundaryEdges.length
+    ? visionBoundaryEdges
+    : [...openCvBoundaryEdges, ...highContrastBoundaryEdges];
   const hasSourceImageEdges = (sourceImageBoundary?.observed_edges || []).length >= 4;
   const observedEdges = hasSourceImageEdges
-    ? mergeCollinearEdges([...sourceImageBoundary.observed_edges, ...openCvBoundaryEdges, ...highContrastBoundaryEdges])
+    ? mergeCollinearEdges([...sourceImageBoundary.observed_edges, ...lightweightBoundaryEdges])
     : mergeCollinearEdges([...observedEdgesFromEvidence({
       site,
       topImage,
       landCover: activeLandCover,
       buildingExclusions,
       parkingBoxes
-    }), ...openCvBoundaryEdges, ...highContrastBoundaryEdges]);
+    }), ...lightweightBoundaryEdges]);
   const dominantDirections = dominantDirectionsForEdges(observedEdges);
   const completion = completeBoundaryGraph({
     site,
@@ -140,7 +148,9 @@ export function buildBoundaryGraphV1({ observations = {}, landCover = null, opti
       rejected_edge_count: highContrastEdge.qa?.rejected_edge_count || 0,
       site_perimeter_confidence: highContrastEdge.qa?.site_perimeter_confidence ?? 0,
       road_boundary_confidence: highContrastEdge.qa?.road_boundary_confidence ?? 0,
-      boundary_edge_count: highContrastBoundaryEdges.length
+      boundary_edge_count: visionEvidenceSet
+        ? visionBoundaryEdges.filter((edge) => edge.method === 'high_contrast_edge_v1_segment').length
+        : highContrastBoundaryEdges.length
     } : {
       available: false,
       reason: 'ObservationSet.high_contrast_edge_v1 missing; BoundaryGraph used source-image gradient detector only.'
@@ -153,10 +163,24 @@ export function buildBoundaryGraphV1({ observations = {}, landCover = null, opti
       rejected_edge_count: openCvEdge.qa?.rejected_edge_count || 0,
       site_perimeter_confidence: openCvEdge.qa?.site_perimeter_confidence ?? 0,
       road_boundary_confidence: openCvEdge.qa?.road_boundary_confidence ?? 0,
-      boundary_edge_count: openCvBoundaryEdges.length
+      boundary_edge_count: visionEvidenceSet
+        ? visionBoundaryEdges.filter((edge) => edge.method === 'opencv_edge_v1_segment').length
+        : openCvBoundaryEdges.length
     } : {
       available: false,
       reason: 'ObservationSet.opencv_edge_v1 missing; BoundaryGraph used source-image gradient detector and JS fallback only.'
+    },
+    vision_evidence_set_v1: visionEvidenceSet ? {
+      available: true,
+      masks: visionEvidenceSet.masks?.length || 0,
+      edges: visionEvidenceSet.edges?.length || 0,
+      boundary_edge_count: visionBoundaryEdges.length,
+      top_view_ground_plane_confidence: visionEvidenceSet.view_ground_plane?.summary?.top_view_ground_plane_confidence ?? 0,
+      planar_groundplan_allowed: visionEvidenceSet.view_ground_plane?.summary?.planar_groundplan_allowed === true,
+      default_heavy_model_required: visionEvidenceSet.qa?.default_heavy_model_required === true
+    } : {
+      available: false,
+      reason: 'ObservationSet.vision_evidence_set_v1 missing; BoundaryGraph consumed legacy backend fields.'
     },
     dominant_directions: dominantDirections,
     observed_edges: observedEdges,
@@ -200,6 +224,12 @@ export function boundaryGraphReport(boundaryGraph = {}) {
       opencv_version: boundaryGraph.opencv_edge_v1?.opencv_version || null,
       opencv_site_perimeter_confidence: boundaryGraph.opencv_edge_v1?.site_perimeter_confidence ?? 0,
       opencv_road_boundary_confidence: boundaryGraph.opencv_edge_v1?.road_boundary_confidence ?? 0,
+      vision_evidence_set_available: boundaryGraph.vision_evidence_set_v1?.available === true,
+      vision_evidence_boundary_edge_count: boundaryGraph.vision_evidence_set_v1?.boundary_edge_count || 0,
+      vision_evidence_masks: boundaryGraph.vision_evidence_set_v1?.masks || 0,
+      vision_evidence_edges: boundaryGraph.vision_evidence_set_v1?.edges || 0,
+      vision_evidence_top_view_ground_plane_confidence: boundaryGraph.vision_evidence_set_v1?.top_view_ground_plane_confidence ?? 0,
+      vision_evidence_default_heavy_model_required: boundaryGraph.vision_evidence_set_v1?.default_heavy_model_required === true,
       road_corridor_count: boundaryGraph.qa?.road_corridor_count || 0,
       site_boundary_closure_ratio: boundaryGraph.qa?.site_boundary_closure_ratio ?? 0,
       observed_edge_coverage_ratio: boundaryGraph.qa?.observed_edge_coverage_ratio ?? 0,

@@ -57,6 +57,7 @@ export async function compilePartGraphFiles({ profilePath, partGraphPath, repoRo
 
 export function compilePartGraphToSketchUpDsl(partGraph = {}, profile = {}, options = {}) {
   validateProfileMatch(partGraph, profile);
+  enforceCompileGate(partGraph, profile);
   const repoRoot = path.resolve(options.repoRoot || DEFAULT_REPO_ROOT);
   const context = buildContext(partGraph, profile, { ...options, repoRoot });
   const operations = [];
@@ -90,6 +91,120 @@ function validateProfileMatch(partGraph, profile) {
   if (partGraph.profile_id && profile.profile_id && partGraph.profile_id !== profile.profile_id) {
     throw new Error(`Part graph profile_id ${partGraph.profile_id} does not match profile ${profile.profile_id}`);
   }
+}
+
+function enforceCompileGate(partGraph, profile) {
+  const gate = resolveCompileGate([
+    profile.compile_gate,
+    profile.compiler?.geometry_gate,
+    partGraph.compile_gate,
+    partGraph.compile_policy
+  ]);
+  if (!gate || gate.enabled === false) return;
+
+  const summary = compileGateSummary(partGraph);
+  const issues = [];
+  if (gate.max_needs_review_ratio !== undefined && summary.needs_review_ratio > gate.max_needs_review_ratio) {
+    issues.push(`needs_review_ratio ${summary.needs_review_ratio} exceeds ${gate.max_needs_review_ratio}`);
+  }
+  if (gate.max_profile_default_ratio !== undefined && summary.profile_default_ratio > gate.max_profile_default_ratio) {
+    issues.push(`profile_default_ratio ${summary.profile_default_ratio} exceeds ${gate.max_profile_default_ratio}`);
+  }
+  if (gate.min_observed_parts !== undefined && summary.observed_parts < gate.min_observed_parts) {
+    issues.push(`observed_parts ${summary.observed_parts} is below ${gate.min_observed_parts}`);
+  }
+  if (gate.min_inferred_parts !== undefined && summary.inferred_parts < gate.min_inferred_parts) {
+    issues.push(`inferred_parts ${summary.inferred_parts} is below ${gate.min_inferred_parts}`);
+  }
+  if (gate.min_scale_confidence !== undefined && summary.scale_confidence < gate.min_scale_confidence) {
+    issues.push(`scale_confidence ${summary.scale_confidence} is below ${gate.min_scale_confidence}`);
+  }
+  if (gate.require_promoted_geometry === true && summary.promoted_geometry_parts < 1) {
+    issues.push('promoted_geometry_parts 0 is below 1');
+  }
+  if (gate.block_reference_only_output === true && summary.compilable_shape_parts < 1) {
+    issues.push('compilable_shape_parts 0 is below 1');
+  }
+
+  if (issues.length > 0) {
+    const profileId = partGraph.profile_id || profile.profile_id || 'unknown_profile';
+    throw new Error(`PartGraph compile blocked by geometry gate for ${profileId}: ${issues.join('; ')}`);
+  }
+}
+
+function resolveCompileGate(gates = []) {
+  const resolved = {};
+  let hasGate = false;
+  for (const gate of gates) {
+    if (!gate || gate.enabled === false) continue;
+    hasGate = true;
+    resolved.enabled = true;
+    if (gate.max_needs_review_ratio !== undefined) {
+      resolved.max_needs_review_ratio = resolved.max_needs_review_ratio === undefined
+        ? gate.max_needs_review_ratio
+        : Math.min(resolved.max_needs_review_ratio, gate.max_needs_review_ratio);
+    }
+    if (gate.max_profile_default_ratio !== undefined) {
+      resolved.max_profile_default_ratio = resolved.max_profile_default_ratio === undefined
+        ? gate.max_profile_default_ratio
+        : Math.min(resolved.max_profile_default_ratio, gate.max_profile_default_ratio);
+    }
+    if (gate.min_observed_parts !== undefined) {
+      resolved.min_observed_parts = Math.max(resolved.min_observed_parts || 0, gate.min_observed_parts);
+    }
+    if (gate.min_inferred_parts !== undefined) {
+      resolved.min_inferred_parts = Math.max(resolved.min_inferred_parts || 0, gate.min_inferred_parts);
+    }
+    if (gate.min_scale_confidence !== undefined) {
+      resolved.min_scale_confidence = Math.max(resolved.min_scale_confidence || 0, gate.min_scale_confidence);
+    }
+    if (gate.require_promoted_geometry === true) resolved.require_promoted_geometry = true;
+    if (gate.block_reference_only_output === true) resolved.block_reference_only_output = true;
+  }
+  return hasGate ? resolved : null;
+}
+
+function compileGateSummary(partGraph) {
+  const parts = partGraph.parts || [];
+  const total = Math.max(1, parts.length);
+  const evidenceCounts = countBy(parts, 'evidence_status');
+  const fallbackCounts = countBy(parts, 'fallback_state');
+  const promoted = parts.filter((part) => partPromotedForGeometry(part)).length;
+  const compilableShapeParts = parts.filter((part) => part.compile?.emit !== false && part.shape).length;
+  return {
+    part_count: parts.length,
+    observed_parts: evidenceCounts.observed || 0,
+    inferred_parts: evidenceCounts.inferred || 0,
+    profile_default_parts: evidenceCounts.profile_default || 0,
+    needs_review_parts: evidenceCounts.needs_review || 0,
+    profile_default_ratio: round((evidenceCounts.profile_default || 0) / total, 3),
+    needs_review_ratio: round((evidenceCounts.needs_review || 0) / total, 3),
+    fallback_needs_review_parts: fallbackCounts.needs_review || 0,
+    scale_confidence: partGraph.scale?.confidence ?? 0,
+    promoted_geometry_parts: promoted,
+    compilable_shape_parts: compilableShapeParts
+  };
+}
+
+function partPromotedForGeometry(part) {
+  if (part.promoted_geometry === true || part.qa?.promoted_geometry === true) return true;
+  if (part.grounding_decision === 'promoted_geometry') return true;
+  if (part.evidence_status === 'manual_confirmed' && part.fallback_state !== 'needs_review') return true;
+  return false;
+}
+
+function countBy(items, key) {
+  const result = {};
+  for (const item of items || []) {
+    const value = item[key];
+    result[value] = (result[value] || 0) + 1;
+  }
+  return result;
+}
+
+function round(value, digits = 2) {
+  const factor = 10 ** digits;
+  return Math.round(value * factor) / factor;
 }
 
 function buildContext(partGraph, profile, options) {

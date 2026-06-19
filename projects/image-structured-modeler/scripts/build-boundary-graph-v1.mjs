@@ -6,6 +6,7 @@ import { repoRoot } from './lib/image-analysis.mjs';
 import { annotateObservationSetWithBirdEyeLandCoverV1 } from './lib/bird-eye-land-cover.mjs';
 import { annotateObservationSetWithHighContrastEdgeV1 } from './lib/high-contrast-edge-v1.mjs';
 import { annotateObservationSetWithOpenCvEdgeV1 } from './lib/opencv-edge-v1.mjs';
+import { annotateObservationSetWithVisionEvidenceSetV1 } from './lib/vision-evidence-set-v1.mjs';
 import {
   annotateObservationSetWithBoundaryGraphV1,
   boundaryGraphReport,
@@ -28,7 +29,9 @@ async function main() {
     outputDir,
     requireOpenCv: options.requireOpenCv
   });
+  nextObservations = annotateObservationSetWithVisionEvidenceSetV1(nextObservations, { force: true });
   nextObservations = await annotateObservationSetWithBoundaryGraphV1(nextObservations, { force: options.force });
+  nextObservations = annotateObservationSetWithVisionEvidenceSetV1(nextObservations, { force: true });
   const boundaryGraph = nextObservations.boundary_graph_v1 || buildBoundaryGraphV1({
     observations: nextObservations,
     landCover: nextObservations.land_cover_v1
@@ -48,6 +51,7 @@ async function main() {
     observed_edge_coverage_ratio: report.summary.observed_edge_coverage_ratio,
     opencv_boundary_edge_count: report.summary.opencv_boundary_edge_count,
     high_contrast_boundary_edge_count: report.summary.high_contrast_boundary_edge_count,
+    vision_evidence_boundary_edge_count: report.summary.vision_evidence_boundary_edge_count,
     inferred_geometry_area_ratio: report.summary.inferred_geometry_area_ratio,
     output: outputPath
   }, null, 2)}\n`);

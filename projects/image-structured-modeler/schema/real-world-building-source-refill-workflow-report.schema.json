@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/real-world-building-source-refill-workflow-report.schema.json",
+  "title": "RealWorldBuildingSourceRefillWorkflowReport",
+  "type": "object",
+  "required": [
+    "version",
+    "kind",
+    "generated_at",
+    "package_dir",
+    "status",
+    "ok",
+    "guide",
+    "upload_package_dir",
+    "manifest",
+    "artifacts",
+    "steps",
+    "commands",
+    "next_actions"
+  ],
+  "properties": {
+    "version": { "const": 1 },
+    "kind": { "const": "real_world_building_source_refill_workflow_report" },
+    "generated_at": { "type": "string", "minLength": 1 },
+    "package_dir": { "type": "string", "minLength": 1 },
+    "status": {
+      "enum": [
+        "manifest_draft_needs_sources",
+        "refill_package_invalid",
+        "ready_for_upload_session",
+        "upload_session_completed",
+        "upload_session_blocked"
+      ]
+    },
+    "ok": { "type": "boolean" },
+    "guide": { "type": "string", "minLength": 1 },
+    "upload_package_dir": { "type": "string", "minLength": 1 },
+    "manifest": { "type": "string", "minLength": 1 },
+    "artifacts": {
+      "type": "object",
+      "required": [
+        "manifest_build_report",
+        "manifest_build_markdown",
+        "refill_package_validation",
+        "refill_package_validation_markdown",
+        "upload_session_summary",
+        "upload_session_handoff"
+      ],
+      "properties": {
+        "manifest_build_report": { "type": "string", "minLength": 1 },
+        "manifest_build_markdown": { "type": "string", "minLength": 1 },
+        "refill_package_validation": { "type": "string", "minLength": 1 },
+        "refill_package_validation_markdown": { "type": ["string", "null"] },
+        "upload_session_summary": { "type": ["string", "null"] },
+        "upload_session_handoff": { "type": ["string", "null"] }
+      }
+    },
+    "steps": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "type": "object",
+        "required": ["id", "status", "message", "evidence"],
+        "properties": {
+          "id": {
+            "enum": [
+              "build_manifest_from_sources",
+              "validate_refill_package_require_upload_ready",
+              "run_refill_upload_session"
+            ]
+          },
+          "status": { "enum": ["pass", "blocked", "skipped"] },
+          "message": { "type": "string", "minLength": 1 },
+          "evidence": { "type": "object" }
+        }
+      }
+    },
+    "commands": {
+      "type": "object",
+      "required": [
+        "build_manifest_from_sources",
+        "validate_refill_package_require_upload_ready",
+        "run_refill_upload_session_require_input_ready"
+      ],
+      "properties": {
+        "build_manifest_from_sources": { "type": ["string", "null"] },
+        "validate_refill_package_require_upload_ready": { "type": ["string", "null"] },
+        "run_refill_upload_session_require_input_ready": { "type": ["string", "null"] }
+      }
+    },
+    "next_actions": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    }
+  }
+}
