@@ -46,6 +46,8 @@ export function buildMcpModelingBrief({
   const candidateDisambiguation = buildCandidateDisambiguation(candidateCatalog);
   const roles = new Set(candidates.map((candidate) => candidate.role).filter(Boolean));
   const structureEvidenceGraph = summarizeStructureEvidenceGraph(observationSet.structure_evidence_graph_v1);
+  const calibratedViewGraph = summarizeCalibratedViewGraph(observationSet.calibrated_view_graph_v1);
+  const cornerChainTopology = summarizeCornerChainTopology(observationSet.corner_chain_topology_v1);
   const draftViewGraph = summarizeDraftViewGraph(observationSet.draft_view_graph_v1);
   const objectSurfaceGraph = summarizeObjectSurfaceGraph(observationSet.object_surface_graph_v1);
   const visionEvidence = summarizeVisionEvidence(observationSet.vision_evidence_set_v1);
@@ -113,12 +115,16 @@ export function buildMcpModelingBrief({
       risks: observationSet.quality_report?.risks || [],
       visual_relations: Number(observationSet.visual_relation_graph?.relations?.length || observationSet.visual_relation_graph?.summary?.relations || 0),
       structure_evidence_graph: structureEvidenceGraph,
+      calibrated_view_graph: calibratedViewGraph,
+      corner_chain_topology: cornerChainTopology,
       draft_view_graph: draftViewGraph,
       object_surface_graph: objectSurfaceGraph,
       vision_evidence: visionEvidence,
       facade_plane_graph: facadePlaneGraph
     },
     structure_evidence_graph: structureEvidenceGraph,
+    calibrated_view_graph: calibratedViewGraph,
+    corner_chain_topology: cornerChainTopology,
     draft_view_graph: draftViewGraph,
     object_surface_graph: objectSurfaceGraph,
     facade_plane_graph: facadePlaneGraph,
@@ -175,6 +181,84 @@ function summarizeStructureEvidenceGraph(graph = null) {
       confidence: Number(plane.confidence || 0),
       review_status: plane.review_status || 'unknown',
       promotion_allowed: plane.promotion_allowed === true
+    }))
+  };
+}
+
+function summarizeCalibratedViewGraph(graph = null) {
+  if (graph?.kind !== 'calibrated_view_graph_v1') {
+    return {
+      available: false,
+      status: 'not_available',
+      projection_model: 'unknown',
+      promotion_allowed: false,
+      axis_families: [],
+      blockers: []
+    };
+  }
+  return {
+    available: true,
+    status: graph.review_policy?.status || 'unknown',
+    projection_model: graph.projection_model || 'unknown',
+    accepted_calibrated_view_review_required: graph.review_policy?.accepted_calibrated_view_review_required === true,
+    review_required: graph.review_policy?.review_required === true,
+    promotion_allowed: graph.review_policy?.promotion_allowed === true,
+    blockers: graph.review_policy?.blockers || [],
+    finite_vanishing_point_count: graph.summary?.finite_vanishing_point_count || 0,
+    infinite_axis_count: graph.summary?.infinite_axis_count || 0,
+    projection_warnings: graph.projection_warnings || [],
+    axis_families: (graph.axis_families || []).map((axis) => ({
+      id: axis.id,
+      axis: axis.axis,
+      label: axis.label || '',
+      image_line_ids: axis.image_line_ids || [],
+      vanishing_type: axis.vanishing_type || 'unknown',
+      vanishing_point_px: axis.vanishing_point_px || null,
+      confidence: Number(axis.confidence || 0),
+      promotion_allowed: axis.promotion_allowed === true
+    }))
+  };
+}
+
+function summarizeCornerChainTopology(graph = null) {
+  if (graph?.kind !== 'corner_chain_topology_v1') {
+    return {
+      available: false,
+      status: 'not_available',
+      promotion_allowed: false,
+      topology_hypotheses: [],
+      blockers: []
+    };
+  }
+  return {
+    available: true,
+    status: graph.review_policy?.status || 'unknown',
+    accepted_topology_review_required: graph.review_policy?.accepted_topology_review_required === true,
+    review_required: graph.review_policy?.review_required === true,
+    promotion_allowed: graph.review_policy?.promotion_allowed === true,
+    blockers: graph.review_policy?.blockers || [],
+    corner_count: graph.summary?.corner_count || 0,
+    edge_chain_count: graph.summary?.edge_chain_count || 0,
+    accepted_topology_id: graph.summary?.accepted_topology_id || null,
+    edge_chains: (graph.edge_chains || []).map((chain) => ({
+      id: chain.id,
+      ordered_corner_ids: chain.ordered_corner_ids || [],
+      edges: (chain.edges || []).map((edge) => ({
+        id: edge.id,
+        axis: edge.axis,
+        role: edge.role,
+        depth_role: edge.depth_role
+      })),
+      promotion_allowed: chain.promotion_allowed === true
+    })),
+    topology_hypotheses: (graph.topology_hypotheses || []).map((hypothesis) => ({
+      id: hypothesis.id,
+      topology: hypothesis.topology,
+      status: hypothesis.status,
+      edge_axis_sequence: hypothesis.edge_axis_sequence || [],
+      depth_order: hypothesis.depth_order || [],
+      footprint_point_count: hypothesis.footprint_local?.length || 0,
+      promotion_allowed: hypothesis.promotion_allowed === true
     }))
   };
 }
@@ -618,6 +702,47 @@ export function renderMcpModelingBriefMarkdown(brief) {
     }
   }
   lines.push('');
+  if (brief.calibrated_view_graph?.available || brief.evidence_summary.calibrated_view_graph?.available) {
+    const calibratedViewGraph = brief.calibrated_view_graph || brief.evidence_summary.calibrated_view_graph;
+    lines.push('## Calibrated View Graph');
+    lines.push(`- status: \`${calibratedViewGraph.status || 'unknown'}\``);
+    lines.push(`- projection_model: \`${calibratedViewGraph.projection_model || 'unknown'}\``);
+    lines.push(`- promotion_allowed: \`${String(calibratedViewGraph.promotion_allowed === true)}\``);
+    lines.push(`- blockers: ${joinOrNone(calibratedViewGraph.blockers || [])}`);
+    lines.push(`- projection_warnings: ${joinOrNone(calibratedViewGraph.projection_warnings || [])}`);
+    lines.push('');
+    lines.push('| axis | vanishing | confidence | lines | promotion allowed |');
+    lines.push('| --- | --- | ---: | --- | --- |');
+    for (const axis of calibratedViewGraph.axis_families || []) {
+      lines.push(`| ${axis.axis} | ${axis.vanishing_type || 'unknown'} | ${axis.confidence || 0} | ${joinOrNone(axis.image_line_ids || [])} | ${String(axis.promotion_allowed === true)} |`);
+    }
+    lines.push('');
+  }
+  if (brief.corner_chain_topology?.available || brief.evidence_summary.corner_chain_topology?.available) {
+    const cornerChainTopology = brief.corner_chain_topology || brief.evidence_summary.corner_chain_topology;
+    lines.push('## Corner Chain Topology');
+    lines.push(`- status: \`${cornerChainTopology.status || 'unknown'}\``);
+    lines.push(`- accepted_topology_id: \`${cornerChainTopology.accepted_topology_id || 'none'}\``);
+    lines.push(`- promotion_allowed: \`${String(cornerChainTopology.promotion_allowed === true)}\``);
+    lines.push(`- blockers: ${joinOrNone(cornerChainTopology.blockers || [])}`);
+    lines.push('');
+    lines.push('### Edge Chains');
+    lines.push('| chain | corners | edges | promotion allowed |');
+    lines.push('| --- | --- | --- | --- |');
+    for (const chain of cornerChainTopology.edge_chains || []) {
+      const edges = (chain.edges || []).map((edge) => `${edge.id}:${edge.axis}:${edge.depth_role}`).join('; ');
+      lines.push(`| ${chain.id} | ${joinOrNone(chain.ordered_corner_ids || [])} | ${escapeMarkdownTable(edges)} | ${String(chain.promotion_allowed === true)} |`);
+    }
+    lines.push('');
+    lines.push('### Topology Hypotheses');
+    lines.push('| id | topology | status | axes | depth order | footprint points | promotion allowed |');
+    lines.push('| --- | --- | --- | --- | --- | ---: | --- |');
+    for (const hypothesis of cornerChainTopology.topology_hypotheses || []) {
+      const depthOrder = (hypothesis.depth_order || []).map((order) => `${order.behind} behind ${order.in_front}`).join('; ');
+      lines.push(`| ${hypothesis.id} | ${hypothesis.topology} | ${hypothesis.status} | ${(hypothesis.edge_axis_sequence || []).join(' -> ')} | ${escapeMarkdownTable(depthOrder)} | ${hypothesis.footprint_point_count || 0} | ${String(hypothesis.promotion_allowed === true)} |`);
+    }
+    lines.push('');
+  }
   if (brief.draft_view_graph?.available || brief.evidence_summary.draft_view_graph?.available) {
     const draftViewGraph = brief.draft_view_graph || brief.evidence_summary.draft_view_graph;
     lines.push('## Draft View Graph');
@@ -1453,6 +1578,8 @@ function buildAgentContract({
       : [
         'review_notes',
         'structure_evidence_graph',
+        'calibrated_view_graph',
+        'corner_chain_topology',
         'draft_view_graph',
         'object_surface_graph_or_domain_graph',
         'candidate_selection_draft',
@@ -1474,10 +1601,10 @@ function buildAgentContract({
   };
   const evidenceRules = [
     'Treat source_assets, observations, candidate_graph, modeling_brief, source_package_gate, and promotion_review as the only authoritative inputs.',
-    'Treat StructureEvidenceGraph and DraftViewGraph as drafting evidence; they do not grant PartGraph or SketchUp promotion.',
+    'Treat StructureEvidenceGraph, CalibratedViewGraph, CornerChainTopology, and DraftViewGraph as drafting evidence; they do not grant PartGraph or SketchUp promotion.',
     'Treat candidate_catalog entries as review candidates, not confirmed geometry.',
     'Do not use profile priors or visual guesses to fill missing views, hidden depth, hidden facades, or unobserved roof/side geometry.',
-    'Only accepted draft_view_review, local_detail_review, and candidate_promotion_review contracts can promote candidates into PartGraph geometry.',
+    'Only accepted calibrated_view_review, corner_chain_topology_review, draft_view_review, local_detail_review, and candidate_promotion_review contracts can promote candidates into PartGraph geometry.',
     'Only compiler output from a promoted PartGraph can become SketchUp DSL.',
     'Source metadata scale hints are evidence for review; they do not bypass scale, source, view, semantic, compiler, or QA gates.'
   ];

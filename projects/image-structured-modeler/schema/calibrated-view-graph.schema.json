@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/calibrated-view-graph.schema.json",
+  "title": "CalibratedViewGraph v1",
+  "type": "object",
+  "required": [
+    "kind",
+    "version",
+    "profile_id",
+    "coordinate_convention",
+    "source_structure_evidence_graph",
+    "projection_model",
+    "source_images",
+    "axis_families",
+    "origin_candidates",
+    "scale_anchors",
+    "projection_warnings",
+    "review_policy",
+    "summary"
+  ],
+  "properties": {
+    "kind": { "const": "calibrated_view_graph_v1" },
+    "version": { "const": 1 },
+    "profile_id": { "type": "string" },
+    "coordinate_convention": { "const": "image_x_right_y_down_world_z_up" },
+    "source_structure_evidence_graph": { "type": "string" },
+    "projection_model": {
+      "enum": [
+        "perspective_3vp",
+        "two_point_vertical_parallel",
+        "shifted_lens_off_axis",
+        "post_rectified_unknown",
+        "orthographic_or_near_orthographic",
+        "bird_eye_site"
+      ]
+    },
+    "source_images": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/source_image" } },
+    "axis_families": { "type": "array", "minItems": 3, "items": { "$ref": "#/$defs/axis_family" } },
+    "horizon_line_px": { "type": ["object", "null"] },
+    "origin_candidates": { "type": "array", "items": { "$ref": "#/$defs/origin_candidate" } },
+    "scale_anchors": { "type": "array", "items": { "type": "object" } },
+    "projection_warnings": { "type": "array", "items": { "type": "string" } },
+    "review_policy": {
+      "type": "object",
+      "required": ["status", "accepted_calibrated_view_review_required", "review_required", "promotion_allowed", "compile_allowed", "blockers"],
+      "properties": {
+        "status": { "enum": ["needs_calibrated_view_review", "accepted_for_derived_drafting", "blocked_no_axis_evidence"] },
+        "accepted_calibrated_view_review_required": { "const": true },
+        "review_required": { "const": true },
+        "promotion_allowed": { "const": false },
+        "compile_allowed": { "const": false },
+        "blockers": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": ["axis_family_count", "finite_vanishing_point_count", "infinite_axis_count", "review_required", "promotion_allowed", "compile_allowed"],
+      "properties": {
+        "axis_family_count": { "type": "integer", "minimum": 0 },
+        "finite_vanishing_point_count": { "type": "integer", "minimum": 0 },
+        "infinite_axis_count": { "type": "integer", "minimum": 0 },
+        "projection_model": { "type": "string" },
+        "review_required": { "const": true },
+        "promotion_allowed": { "const": false },
+        "compile_allowed": { "const": false }
+      }
+    }
+  },
+  "$defs": {
+    "point": {
+      "type": "array",
+      "prefixItems": [{ "type": "number" }, { "type": "number" }],
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "line": {
+      "type": "object",
+      "required": ["a", "b"],
+      "properties": {
+        "a": { "$ref": "#/$defs/point" },
+        "b": { "$ref": "#/$defs/point" }
+      }
+    },
+    "source_image": {
+      "type": "object",
+      "required": ["id", "source_image", "width", "height"],
+      "properties": {
+        "id": { "type": "string" },
+        "source_image": { "type": "string" },
+        "width": { "type": "number" },
+        "height": { "type": "number" }
+      }
+    },
+    "axis_family": {
+      "type": "object",
+      "required": ["id", "axis", "label", "image_line_ids", "source_evidence_ids", "vanishing_type", "vanishing_point_px", "confidence", "review_required", "promotion_allowed"],
+      "properties": {
+        "id": { "type": "string" },
+        "axis": { "enum": ["x_red", "y_green", "z_blue"] },
+        "label": { "type": "string" },
+        "image_line_ids": { "type": "array", "items": { "type": "string" } },
+        "source_evidence_ids": { "type": "array", "items": { "type": "string" } },
+        "image_lines_px": { "type": "array", "items": { "$ref": "#/$defs/line" } },
+        "vanishing_type": { "enum": ["finite", "infinite", "unknown"] },
+        "vanishing_point_px": { "type": ["array", "null"] },
+        "image_direction_px": { "type": ["object", "null"] },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "review_required": { "const": true },
+        "promotion_allowed": { "const": false },
+        "notes": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "origin_candidate": {
+      "type": "object",
+      "required": ["id", "source_image", "point_px", "confidence", "review_required"],
+      "properties": {
+        "id": { "type": "string" },
+        "source_image": { "type": "string" },
+        "point_px": { "$ref": "#/$defs/point" },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "review_required": { "const": true }
+      }
+    }
+  }
+}

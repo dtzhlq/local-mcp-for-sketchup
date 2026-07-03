@@ -647,17 +647,26 @@ function viewAxisHypothesesFromImages(images = [], edges = []) {
     const sourceImage = image.image?.path || '';
     const sourceEdges = edges.filter((edge) => edge.source_image === sourceImage);
     const axis = dominantAxis(sourceEdges);
+    const cameraHints = image.camera_hints || {};
+    const heuristicProjection = cameraHints.projection_model === 'weak_oblique_affine_review_only';
+    const hasLineFit = Array.isArray(cameraHints.vanishing_lines) && cameraHints.vanishing_lines.length > 0;
+    const rejectionReason = heuristicProjection && !hasLineFit
+      ? 'heuristic_vanishing_point_not_line_fit'
+      : axis.support < 0.2
+        ? 'few_structural_lines_for_axis_fit'
+        : null;
     return {
       id: `view_axis_${index + 1}`,
       source_image: sourceImage,
       detected_view: image.detected_view?.kind || 'unknown',
       primary_axis_hint: axis.primary,
       secondary_axis_hint: axis.secondary,
-      vanishing_point_px: image.camera_hints?.vanishing_points?.[0] || null,
-      horizon_line_px: image.camera_hints?.horizon_line || null,
+      vanishing_point_px: cameraHints.vanishing_points?.[0] || null,
+      horizon_line_px: cameraHints.horizon_line || null,
       support_score: axis.support,
-      rejection_reason: axis.support < 0.2 ? 'few_structural_lines_for_axis_fit' : null,
-      review_status: axis.support < 0.45 ? 'needs_review' : 'accepted_for_draft'
+      rejection_reason: rejectionReason,
+      review_status: rejectionReason || axis.support < 0.45 ? 'needs_review' : 'accepted_for_draft',
+      axis_fit_source: hasLineFit ? 'camera_hints_vanishing_lines' : heuristicProjection ? 'heuristic_projection_placeholder' : 'edge_orientation_histogram'
     };
   });
 }

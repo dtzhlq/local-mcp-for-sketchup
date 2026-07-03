@@ -3305,7 +3305,7 @@
         130000,
         98000
       ],
-      "image": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/projects/image-structured-modeler/examples/building-group/textures/site_top_orthophoto.png",
+      "image": "projects/image-structured-modeler/examples/building-group/textures/site_top_orthophoto.png",
       "alpha": 0.96,
       "texture_transform": {
         "projection": "planar",
@@ -3344,7 +3344,7 @@
         33772.7,
         56666.7
       ],
-      "image": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/projects/image-structured-modeler/examples/building-group/textures/roof_primary_blue_hall.png",
+      "image": "projects/image-structured-modeler/examples/building-group/textures/roof_primary_blue_hall.png",
       "alpha": 0.98,
       "texture_transform": {
         "projection": "planar",
@@ -3383,7 +3383,7 @@
         13179.6,
         34350.9
       ],
-      "image": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/projects/image-structured-modeler/examples/building-group/textures/roof_warehouse_west_north.png",
+      "image": "projects/image-structured-modeler/examples/building-group/textures/roof_warehouse_west_north.png",
       "alpha": 0.97,
       "texture_transform": {
         "projection": "planar",
@@ -3422,7 +3422,7 @@
         13179.6,
         34350.9
       ],
-      "image": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/projects/image-structured-modeler/examples/building-group/textures/roof_warehouse_west_south.png",
+      "image": "projects/image-structured-modeler/examples/building-group/textures/roof_warehouse_west_south.png",
       "alpha": 0.97,
       "texture_transform": {
         "projection": "planar",
@@ -3461,7 +3461,7 @@
         13838.6,
         34350.9
       ],
-      "image": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/projects/image-structured-modeler/examples/building-group/textures/roof_warehouse_inner_north.png",
+      "image": "projects/image-structured-modeler/examples/building-group/textures/roof_warehouse_inner_north.png",
       "alpha": 0.97,
       "texture_transform": {
         "projection": "planar",
@@ -3500,7 +3500,7 @@
         13838.6,
         34350.9
       ],
-      "image": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/projects/image-structured-modeler/examples/building-group/textures/roof_warehouse_inner_south.png",
+      "image": "projects/image-structured-modeler/examples/building-group/textures/roof_warehouse_inner_south.png",
       "alpha": 0.97,
       "texture_transform": {
         "projection": "planar",
@@ -3539,7 +3539,7 @@
         21177.9,
         22350.9
       ],
-      "image": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/projects/image-structured-modeler/examples/building-group/textures/roof_utility_building.png",
+      "image": "projects/image-structured-modeler/examples/building-group/textures/roof_utility_building.png",
       "alpha": 0.96,
       "texture_transform": {
         "projection": "planar",
@@ -3578,7 +3578,7 @@
         21177.9,
         14528.1
       ],
-      "image": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/projects/image-structured-modeler/examples/building-group/textures/roof_admin_office.png",
+      "image": "projects/image-structured-modeler/examples/building-group/textures/roof_admin_office.png",
       "alpha": 0.96,
       "texture_transform": {
         "projection": "planar",
@@ -3617,7 +3617,7 @@
         45179.6,
         21233.3
       ],
-      "image": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/projects/image-structured-modeler/examples/building-group/textures/parking_lot_detail.png",
+      "image": "projects/image-structured-modeler/examples/building-group/textures/parking_lot_detail.png",
       "alpha": 0.97,
       "texture_transform": {
         "projection": "planar",
@@ -3656,7 +3656,7 @@
         13440.9,
         6325.2
       ],
-      "image": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/projects/image-structured-modeler/examples/building-group/textures/tank_farm_detail.png",
+      "image": "projects/image-structured-modeler/examples/building-group/textures/tank_farm_detail.png",
       "alpha": 0.94,
       "texture_transform": {
         "projection": "planar",

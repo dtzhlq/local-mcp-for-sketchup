@@ -5,6 +5,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
 import { SketchUpBridge } from '../../../src/bridge.mjs';
+import { materializeDslAssetPaths } from '../../../src/dsl-asset-paths.mjs';
 import { compilePartGraphToSketchUpDsl } from '../../../src/product-modeling/part-graph-compiler.mjs';
 import { validatePartGraphPhysicalConsistency } from '../../../src/product-modeling/physical-consistency-qa.mjs';
 import { compilePlanToSketchUpDsl } from '../scripts/compile-plan-to-sketchup-dsl.mjs';
@@ -12,6 +13,12 @@ import { generateModelPlan } from '../scripts/generate-model-plan.mjs';
 import { generatePartGraphFromObservations } from '../scripts/generate-part-graph-from-observations.mjs';
 import { applyCandidatePromotionPatch } from '../scripts/apply-candidate-promotion-patch.mjs';
 import { buildCandidatePromotionPatch } from '../scripts/build-candidate-promotion-patch.mjs';
+import { generateYellowVisibleEffect } from '../scripts/generate-yellow-visible-effect.mjs';
+import {
+  BUILDING_SINGLE_STRUCTURAL_PROJECTION_KIND,
+  YELLOW_BUILDING_STRUCTURAL_PROJECTION_CONFIG,
+  buildBuildingSingleStructuralProjection
+} from '../scripts/lib/yellow-building-structural-projection.mjs';
 import { applyCorrectionPatch, buildCorrectionPatchFromParameterProposals, buildCorrectionPatchFromReferenceReport } from '../scripts/lib/part-graph-corrections.mjs';
 import { buildStructuredAssetIntake } from '../scripts/intake-assets.mjs';
 import { exportMcpModelingBriefCli } from '../scripts/export-mcp-modeling-brief.mjs';
@@ -101,8 +108,12 @@ const imageSetObservationSchema = await readJson('schema/image-set-observation.s
 const buildingSingleSemanticEvidenceSchema = await readJson('schema/building-single-semantic-evidence.schema.json');
 const facadePlaneGraphSchema = await readJson('schema/facade-plane-graph.schema.json');
 const structureEvidenceGraphSchema = await readJson('schema/structure-evidence-graph.schema.json');
+const calibratedViewGraphSchema = await readJson('schema/calibrated-view-graph.schema.json');
+const cornerChainTopologySchema = await readJson('schema/corner-chain-topology.schema.json');
 const draftViewGraphSchema = await readJson('schema/draft-view-graph.schema.json');
 const objectSurfaceGraphSchema = await readJson('schema/object-surface-graph.schema.json');
+const calibratedViewReviewDecisionSchema = await readJson('schema/calibrated-view-review-decision.schema.json');
+const cornerChainTopologyReviewDecisionSchema = await readJson('schema/corner-chain-topology-review-decision.schema.json');
 const draftViewReviewDecisionSchema = await readJson('schema/draft-view-review-decision.schema.json');
 const localDetailReviewDecisionSchema = await readJson('schema/local-detail-review-decision.schema.json');
 const imageStructuredBenchmarkReportSchema = await readJson('schema/image-structured-benchmark-report.schema.json');
@@ -158,8 +169,12 @@ const validateImageSetObservation = compileSchema(imageSetObservationSchema);
 const validateBuildingSingleSemanticEvidence = compileSchema(buildingSingleSemanticEvidenceSchema);
 const validateFacadePlaneGraph = compileSchema(facadePlaneGraphSchema);
 const validateStructureEvidenceGraph = compileSchema(structureEvidenceGraphSchema);
+const validateCalibratedViewGraph = compileSchema(calibratedViewGraphSchema);
+const validateCornerChainTopology = compileSchema(cornerChainTopologySchema);
 const validateDraftViewGraph = compileSchema(draftViewGraphSchema);
 const validateObjectSurfaceGraph = compileSchema(objectSurfaceGraphSchema);
+const validateCalibratedViewReviewDecision = compileSchema(calibratedViewReviewDecisionSchema);
+const validateCornerChainTopologyReviewDecision = compileSchema(cornerChainTopologyReviewDecisionSchema);
 const validateDraftViewReviewDecision = compileSchema(draftViewReviewDecisionSchema);
 const validateLocalDetailReviewDecision = compileSchema(localDetailReviewDecisionSchema);
 const validateImageStructuredBenchmarkReport = compileSchema(imageStructuredBenchmarkReportSchema);
@@ -1547,6 +1562,7 @@ await assertStructuredAssetIntakeFailClosed();
 const draftingFirstBenchmarkChecked = await assertDraftingFirstBenchmarkReports();
 await assertImageStructuredReleaseGate();
 await assertBuildingSingleCompileGateRegression();
+await assertYellowVisibleEffectJudgment();
 const remoteChecked = await assertCompactRemoteSample();
 const ambulanceEvidenceChecked = await assertAmbulancePartGraphEvidenceSample();
 const buildingGroupChecked = await assertBuildingGroupObservationSample();
@@ -1579,6 +1595,7 @@ process.stdout.write(`${JSON.stringify({
     real_world_building_manifest_builder: true,
     mcp_modeling_brief_builder: true,
     building_single_compile_gate: true,
+    yellow_visible_effect_judgment: true,
     compact_remote_sample: remoteChecked,
     ambulance_part_graph_evidence: ambulanceEvidenceChecked,
     building_group_observation_sample: buildingGroupChecked,
@@ -5364,6 +5381,197 @@ async function assertBuildingSingleCompileGateRegression() {
   );
 }
 
+async function assertYellowVisibleEffectJudgment() {
+  const outputDir = 'output/image-structured-modeler/yellow-visible-effect-test';
+  const result = await generateYellowVisibleEffect({ outputDir });
+  const absoluteOutputDir = path.join(repoRoot, outputDir);
+  const report = result.report;
+
+  assert.equal(report.kind, 'yellow_visible_effect_judgment', 'yellow visible effect should write a judgment report');
+  assert.equal(report.no_review_lane.patch_status, 'blocked', 'yellow no-review lane must stay blocked');
+  assert.equal(report.no_review_lane.actions, 0, 'yellow no-review lane must not create promotion actions');
+  assert.equal(report.no_review_lane.false_promotion_count, 0, 'yellow no-review lane must have zero false promotions');
+  assert.equal(report.no_review_lane.apply_allowed, false, 'yellow no-review lane must not be applyable');
+  assert.equal(report.fail_closed_checks.no_review_patch_blocked, true, 'yellow no-review fail-closed check should pass');
+  assert.equal(report.fail_closed_checks.forged_ready_without_accepted_review, true, 'yellow forged ready patch must fail closed');
+  assert.match(report.fail_closed_checks.forged_ready_error, /not applyable/, 'yellow forged ready failure should fail closed before PartGraph promotion');
+
+  assertValid(validateCandidatePromotionReview, result.acceptedReview, 'yellow accepted visible effect review');
+  assertValid(validateCandidatePromotionPatch, result.acceptedPatch, 'yellow accepted visible effect patch');
+  assert.equal(result.acceptedPatch.status, 'blocked', 'yellow structural projection review should keep accepted-review patch blocked');
+  assert.equal(result.acceptedPatch.apply_allowed, false, 'yellow structural projection review should prevent patch application');
+  assert.equal(result.acceptedPatch.actions.length, 0, 'yellow structural projection review should not promote candidates');
+  assert.equal(result.acceptedReview.facade_plane_review.accepted_plane_ids.length, 0, 'yellow structural projection review should reject facade plane ids for promotion');
+  assert.equal(
+    result.acceptedReview.accepted_candidates.some((item) => item.role === 'shadow_or_recess_boundary'),
+    false,
+    'yellow accepted fixture must not promote shadow/recess boundary geometry'
+  );
+
+  assert.equal(report.perspective_critique.status, 'calibration_topology_review_accepted_promotion_blocked', 'yellow perspective critique should record accepted calibration/topology with promotion still blocked');
+  assert.ok(report.perspective_critique.blockers.includes('accepted_partgraph_promotion_review_required'), 'yellow projection should require accepted PartGraph promotion review');
+  assert.ok(report.perspective_critique.blockers.includes('accepted_local_detail_review_required'), 'yellow projection should require accepted local-detail review');
+  assert.equal(report.perspective_critique.blockers.includes('perspective_line_fit_required'), false, 'yellow projection should no longer require missing line-fit evidence');
+  assert.equal(report.perspective_critique.blockers.includes('facade_plane_perspective_unverified'), false, 'yellow projection should no longer mark facade planes as perspective-unverified');
+  assert.ok(report.perspective_critique.line_fit.horizon_line_px.a[1] > 450, 'yellow line-fit horizon should not use the old high bbox placeholder');
+  assert.equal(report.accepted_review_lane.ok, false, 'yellow accepted-review lane should not generate geometry without accepted structural review');
+  assert.equal(report.accepted_review_lane.visible_delta, 'not_obvious', 'yellow accepted-review lane should not claim visible improvement');
+  assert.equal(report.judgment.visible_delta, 'partial', 'overall yellow judgment should record review-gated drafting improvement only');
+  assert.equal(report.accepted_review_lane.release_profile_compile_status.status, 'not_run', 'yellow release-grade compile should not run before accepted structural review');
+  assert.equal(report.accepted_review_lane.release_profile_compile_status.reason, 'calibration_topology_review_accepted_promotion_blocked', 'yellow blocked compile reason should reflect calibration/topology promotion gate');
+  assert.ok(report.artifact_links.sketchup_mock_preview_png.endsWith('07-sketchup-mock-preview.png'), 'yellow report should link mock preview image');
+  assert.equal(report.artifact_links.review_decision.endsWith('candidate-promotion-review.calibration-topology-promotion-blocked.yellow.json'), true, 'yellow blocked review file should name calibration/topology gate');
+  assert.equal(report.artifact_links.promotion_patch.endsWith('candidate-promotion-patch.calibration-topology-promotion-blocked.yellow.json'), true, 'yellow blocked patch file should name calibration/topology gate');
+  assert.equal(report.structural_projection.status, 'projection_review_ready', 'yellow structural projection should be review-ready');
+  assert.ok(report.structural_projection.support_score > 0.6, 'yellow structural projection should carry meaningful line support');
+  assert.ok(Math.abs(report.structural_projection.primary_plane_quad_px[0][0] - 444) < 8, 'yellow primary facade left roof corner should align with corrected structural line');
+  assert.ok(Math.abs(report.structural_projection.primary_plane_quad_px[1][0] - 757) < 10, 'yellow primary facade right roof corner should align with corrected structural line');
+  assert.ok(Math.abs(report.structural_projection.side_plane_quad_px[0][0] - 289) < 10, 'yellow side plane left roof corner should align with corrected structural line');
+  assert.ok(Math.abs(report.structural_projection.plan_projection.depth_to_width_ratio - 0.487) < 0.02, 'yellow plan projection should preserve the visible depth-to-width ratio');
+  assert.equal(report.structural_projection.plan_projection.footprint_topology, 'left_front_recess_notch', 'yellow plan projection should preserve the accepted left-front recess notch topology');
+  assert.equal(report.structural_projection.plan_projection.front_edge_policy, 'main_front_edge_CD_with_left_recess_AB_behind', 'yellow plan projection must keep A-B behind the C-D main front edge');
+  assert.equal(report.structural_projection.plan_projection.footprint_local.length >= 6, true, 'yellow stepped plan should use more than four footprint points');
+  assert.ok(report.structural_projection.plan_projection.depth_order.some((order) => order.behind === 'AB' && order.in_front === 'CD'), 'yellow plan projection should record A-B behind C-D');
+  const footprintById = new Map(report.structural_projection.plan_projection.footprint_local.map((point) => [point.id, point]));
+  assert.ok(footprintById.get('A_recessed_left_front')?.xy?.[1] > 0, 'yellow A corner should be set back from the main front edge');
+  assert.equal(footprintById.get('C_main_front_return_corner')?.xy?.[1], 0, 'yellow C corner should sit on the main front edge');
+  assert.equal(footprintById.get('D_main_front_right_corner')?.xy?.[1], 0, 'yellow D corner should sit on the main front edge');
+  const yellowFrontRecess = report.structural_projection.plan_projection.recesses?.find((recess) => recess.id === 'yellow_left_front_recess_notch');
+  assert.ok(yellowFrontRecess, 'yellow plan projection should include the accepted left-front recess notch');
+  assert.equal(yellowFrontRecess.recessed_edge_id, 'AB', 'yellow recess should bind A-B as the recessed edge');
+  assert.equal(yellowFrontRecess.return_edge_id, 'BC', 'yellow recess should bind B-C as the return/depth edge');
+  assert.equal(yellowFrontRecess.main_front_edge_id, 'CD', 'yellow recess should bind C-D as the main front edge');
+  assert.ok(yellowFrontRecess.depth_to_width_ratio > 0.05, 'yellow front recess should carry a non-zero relative depth');
+  assert.equal(yellowFrontRecess.promotion_allowed, false, 'yellow front recess must remain promotion-blocked until accepted promotion review');
+  assert.equal(result.mockSummary.ok, false, 'yellow mock SketchUp summary should be blocked');
+  assert.equal(result.mockSummary.status, 'blocked_calibration_topology_review_accepted_promotion_blocked', 'yellow mock SketchUp summary should name the calibration/topology promotion gate');
+  assert.equal(result.mockSummary.operation_counts.box || 0, 0, 'yellow blocked preview should not contain box primitives');
+  assert.equal(result.mockSummary.snapshot_summary.totals.groups, 0, 'yellow blocked mock snapshot should contain no groups');
+
+  const genericProjection = await buildBuildingSingleStructuralProjection({
+    sourceImagePath: path.join(repoRoot, 'projects/image-structured-modeler/examples/building-single-anime-yellow/input-visible-crop.png'),
+    sourceImage: 'projects/image-structured-modeler/examples/building-single-anime-yellow/input-visible-crop.png',
+    targetWidth: 900,
+    targetHeight: 589,
+    config: {
+      ...YELLOW_BUILDING_STRUCTURAL_PROJECTION_CONFIG,
+      kind: BUILDING_SINGLE_STRUCTURAL_PROJECTION_KIND,
+      graph_attachment_key: 'building_single_structural_projection_v1',
+      graph_attachment_source: 'building-single-structural-projection.json',
+      line_evidence_source_stage: 'building_single_structural_projection_line_fit',
+      plane_evidence_source_stage: 'building_single_structural_projection_line_intersections'
+    }
+  });
+  assert.equal(genericProjection.kind, BUILDING_SINGLE_STRUCTURAL_PROJECTION_KIND, 'building_single structural projection should be available through a generic builder');
+  assert.equal(genericProjection.line_evidence_source_stage, 'building_single_structural_projection_line_fit', 'generic builder should not be locked to yellow source stage');
+  assert.ok(Math.abs(genericProjection.planes[0].visible_quad_px[0][0] - report.structural_projection.primary_plane_quad_px[0][0]) < 0.01, 'generic builder should reproduce the yellow structural projection when given the yellow config');
+  assert.equal(genericProjection.plan_projection.footprint_topology, 'left_front_recess_notch', 'generic builder should preserve accepted left-front recess topology when configured');
+
+  const dsl = JSON.parse(await fs.readFile(path.join(absoluteOutputDir, '06-sketchup-dsl.preview.json'), 'utf8'));
+  assert.equal((dsl.operations || []).length, 0, 'yellow blocked preview DSL should contain no SketchUp operations');
+  const structureGraph = JSON.parse(await fs.readFile(path.join(absoluteOutputDir, 'intake', 'structure-evidence-graph.json'), 'utf8'));
+  assertValid(validateStructureEvidenceGraph, structureGraph, 'yellow structure evidence graph with structural projection');
+  assert.ok(structureGraph.edge_evidence.some((edge) => edge.source_stage === 'yellow_structural_projection_line_fit'), 'yellow structure graph should include line-fit structural edges');
+  assert.ok(structureGraph.view_axis_hypotheses.some((axis) => axis.axis_fit_source === 'yellow_structural_projection_line_fit'), 'yellow view axis should use line-fit structural projection');
+  const facadeGraph = JSON.parse(await fs.readFile(path.join(absoluteOutputDir, 'intake', 'facade-plane-graph.json'), 'utf8'));
+  assert.equal(facadeGraph.planes.every((plane) => plane.orientation_hint.projection_model === 'line_fit_perspective_projection'), true, 'yellow facade graph should use corrected line-fit plane projections');
+
+  const calibratedGraph = JSON.parse(await fs.readFile(path.join(absoluteOutputDir, 'yellow-calibrated-view-graph.json'), 'utf8'));
+  assertValid(validateCalibratedViewGraph, calibratedGraph, 'yellow calibrated view graph');
+  assert.equal(calibratedGraph.projection_model, 'two_point_vertical_parallel', 'yellow calibrated graph should record two-point perspective with verticals treated as parallel');
+  assert.ok(calibratedGraph.axis_families.some((axis) => axis.axis === 'x_red' && axis.image_line_ids.includes('AB') && axis.image_line_ids.includes('CD')), 'yellow red axis should bind A-B and C-D');
+  assert.ok(calibratedGraph.axis_families.some((axis) => axis.axis === 'y_green' && axis.image_line_ids.includes('BC')), 'yellow green axis should bind B-C');
+  assert.ok(calibratedGraph.axis_families.some((axis) => axis.axis === 'z_blue' && axis.vanishing_type === 'infinite'), 'yellow blue axis should allow vertical-parallel shift/rectified imagery');
+  const calibratedReview = JSON.parse(await fs.readFile(path.join(absoluteOutputDir, 'yellow-calibrated-view-review.accepted.json'), 'utf8'));
+  assertValid(validateCalibratedViewReviewDecision, calibratedReview, 'yellow accepted calibrated-view review decision');
+  assert.equal(calibratedReview.status, 'accepted_for_derived_drafting', 'yellow calibrated-view review should be accepted only for derived drafting');
+  assert.equal(calibratedReview.promotion_allowed, false, 'yellow calibrated-view review must not allow geometry promotion');
+  const topologyGraph = JSON.parse(await fs.readFile(path.join(absoluteOutputDir, 'yellow-corner-chain-topology.json'), 'utf8'));
+  assertValid(validateCornerChainTopology, topologyGraph, 'yellow corner-chain topology graph');
+  assert.equal(topologyGraph.summary.accepted_topology_id, 'yellow_left_front_recess_notch_topology', 'yellow topology graph should expose the accepted left-front notch hypothesis');
+  const acceptedTopology = topologyGraph.topology_hypotheses.find((hypothesis) => hypothesis.id === topologyGraph.summary.accepted_topology_id);
+  assert.equal(acceptedTopology.topology, 'left_front_recess_notch', 'yellow accepted topology should be a left-front recess notch');
+  assert.ok(acceptedTopology.depth_order.some((order) => order.behind === 'AB' && order.in_front === 'CD'), 'yellow accepted topology should record A-B behind C-D');
+  const topologyReview = JSON.parse(await fs.readFile(path.join(absoluteOutputDir, 'yellow-corner-chain-topology-review.accepted.json'), 'utf8'));
+  assertValid(validateCornerChainTopologyReviewDecision, topologyReview, 'yellow accepted corner-chain topology review decision');
+  assert.equal(topologyReview.status, 'accepted_for_derived_drafting', 'yellow topology review should be accepted only for derived drafting');
+  assert.equal(topologyReview.promotion_allowed, false, 'yellow topology review must not allow geometry promotion');
+  const mcpBriefMarkdown = await fs.readFile(path.join(absoluteOutputDir, 'intake', 'mcp-modeling-brief.md'), 'utf8');
+  const calibratedIndex = mcpBriefMarkdown.indexOf('## Calibrated View Graph');
+  const topologyIndex = mcpBriefMarkdown.indexOf('## Corner Chain Topology');
+  const draftIndex = mcpBriefMarkdown.indexOf('## Draft View Graph');
+  assert.ok(calibratedIndex !== -1 && topologyIndex > calibratedIndex && draftIndex > topologyIndex, 'yellow MCP brief should describe calibrated view, corner topology, then draft view');
+
+  const structureSvg = await fs.readFile(path.join(absoluteOutputDir, '02-structure-overlay.svg'), 'utf8');
+  const calibratedSvg = await fs.readFile(path.join(absoluteOutputDir, '02c-calibrated-view-overlay.svg'), 'utf8');
+  const topologySvg = await fs.readFile(path.join(absoluteOutputDir, '02d-corner-chain-topology-overlay.svg'), 'utf8');
+  const draftSvg = await fs.readFile(path.join(absoluteOutputDir, '03-draft-view-graph.svg'), 'utf8');
+  const planeSvg = await fs.readFile(path.join(absoluteOutputDir, '04-plane-review-overlay.svg'), 'utf8');
+  assert.ok(structureSvg.includes('data-layer="edge-evidence"'), 'yellow structure overlay should expose edge evidence layer');
+  assert.ok(structureSvg.includes('data-layer="corner-evidence"'), 'yellow structure overlay should expose corner evidence layer');
+  assert.ok(structureSvg.includes('data-layer="plane-hypothesis"'), 'yellow structure overlay should expose plane hypothesis layer');
+  assert.ok(calibratedSvg.includes('data-layer="calibrated-axis-line"'), 'yellow calibrated overlay should expose calibrated axis lines');
+  assert.ok(calibratedSvg.includes('two_point_vertical_parallel'), 'yellow calibrated overlay should name the calibrated projection model');
+  assert.ok(topologySvg.includes('data-layer="calibrated-axis-line"'), 'yellow topology overlay should expose calibrated corner-chain edges');
+  assert.ok(topologySvg.includes('data-layer="corner-chain-point"'), 'yellow topology overlay should expose corner-chain points');
+  assert.ok(topologySvg.includes('left_front_recess_notch'), 'yellow topology overlay should name the accepted notch topology');
+  assert.ok(draftSvg.includes('data-layer="draft-view-front"'), 'yellow draft overlay should expose front draft-view layer');
+  assert.ok(planeSvg.includes('data-layer="facade-plane"'), 'yellow plane overlay should expose facade plane layer');
+  assert.ok(planeSvg.includes('data-layer="plane-local-detail"'), 'yellow plane overlay should expose plane-local detail layer');
+  for (const relative of [
+    '01-original.png',
+    '02-structure-overlay.png',
+    '02b-structural-projection-overlay.png',
+    '02c-calibrated-view-overlay.png',
+    '02c-calibrated-view-overlay.svg',
+    '02d-corner-chain-topology-overlay.png',
+    '02d-corner-chain-topology-overlay.svg',
+    '03-draft-view-graph.png',
+    '03b-facade-projection.png',
+    '03c-plan-projection.png',
+    '04-plane-review-overlay.png',
+    '05-partgraph-preview.json',
+    '06-sketchup-dsl.preview.json',
+    '07-sketchup-mock-preview.png',
+    '07-sketchup-mock-preview.svg',
+    '07-sketchup-mock-summary.json',
+    'yellow-calibrated-view-graph.json',
+    'yellow-calibrated-view-graph.md',
+    'yellow-calibrated-view-review.accepted.json',
+    'yellow-corner-chain-topology.json',
+    'yellow-corner-chain-topology.md',
+    'yellow-corner-chain-topology-review.accepted.json',
+    'yellow-structural-projection.json',
+    'yellow-structural-methodology.md',
+    'perspective-critique-report.json',
+    'perspective-critique-report.md',
+    'intake/calibrated-view-graph.json',
+    'intake/calibrated-view-graph.md',
+    'intake/calibrated-view-review.accepted.json',
+    'intake/corner-chain-topology.json',
+    'intake/corner-chain-topology.md',
+    'intake/corner-chain-topology-review.accepted.json',
+    'comparison/index.html',
+    'judgment-report.json'
+  ]) {
+    const stat = await fs.stat(path.join(absoluteOutputDir, relative));
+    assert.equal(stat.size > 0, true, `yellow visible effect artifact ${relative} should be non-empty`);
+  }
+  const comparisonHtml = await fs.readFile(path.join(absoluteOutputDir, 'comparison', 'index.html'), 'utf8');
+  assert.ok(comparisonHtml.includes('Original + Structure Evidence'), 'yellow comparison should show original/evidence panel');
+  assert.ok(comparisonHtml.includes('Line-fit Projection'), 'yellow comparison should show structural projection panel');
+  assert.ok(comparisonHtml.includes('Calibration + Corner Chain'), 'yellow comparison should show calibration/topology panel');
+  assert.ok(comparisonHtml.includes('yellow-calibrated-view-graph.json'), 'yellow comparison should link calibrated view graph');
+  assert.ok(comparisonHtml.includes('yellow-corner-chain-topology.json'), 'yellow comparison should link corner-chain topology');
+  assert.ok(comparisonHtml.includes('left_front_recess_notch'), 'yellow comparison should surface the accepted topology');
+  assert.ok(comparisonHtml.includes('Facade + Plan Projection'), 'yellow comparison should show facade and plan projection panel');
+  assert.ok(comparisonHtml.includes('partial'), 'yellow comparison should surface the partial drafting-visible delta');
+  assert.ok(comparisonHtml.includes('Drafting-first Review Layer'), 'yellow comparison should show Drafting-first review panel');
+  assert.ok(comparisonHtml.includes('Accepted Review SketchUp Preview'), 'yellow comparison should keep the SketchUp preview slot');
+  assert.ok(comparisonHtml.includes('07-sketchup-mock-preview.png'), 'yellow comparison should render the mock SketchUp preview image');
+  assert.ok(comparisonHtml.includes('SketchUp preview blocked'), 'yellow comparison should show blocked preview state');
+}
+
 async function assertCompactRemoteSample() {
   const base = path.join(subprojectRoot, 'examples', 'compact-remote');
   const observations = JSON.parse(await fs.readFile(path.join(base, 'observations.json'), 'utf8'));
@@ -6098,7 +6306,9 @@ async function assertBuildingGroupObservationSample() {
   assert.equal(photorealOutput.operations.filter((operation) => operation.op === 'image_plane').length, 10, 'photoreal DSL should include texture image planes');
   assert.equal(photorealOutput.operations.filter((operation) => operation.op === 'gable_roof').length, 5, 'photoreal DSL should compile PartGraph gable roof primitives');
   assert.ok(photorealOutput.operations.filter((operation) => operation.op === 'cylinder').length >= 70, 'photoreal DSL should include dense tree and roof-vent cylinder detail');
-  assert.ok(photorealOutput.operations.every((operation) => operation.op !== 'image_plane' || path.isAbsolute(operation.image)), 'compiled graph operation image planes should resolve texture paths for live SketchUp');
+  assert.ok(photorealOutput.operations.every((operation) => operation.op !== 'image_plane' || !path.isAbsolute(operation.image)), 'compiled graph operation image planes should stay portable inside committed artifacts');
+  const queueReadyPhotorealOutput = materializeDslAssetPaths(photorealOutput, { repoRoot });
+  assert.ok(queueReadyPhotorealOutput.operations.every((operation) => operation.op !== 'image_plane' || path.isAbsolute(operation.image)), 'queue runtime should materialize photoreal image planes before live SketchUp execution');
   const photorealMockResult = await bridge.build_model({ runtime: 'mock', code: JSON.stringify(photorealOutput) });
   assert.ok(photorealMockResult.snapshot.totals.groups > finalDetailResult.snapshot.totals.groups, 'photoreal mock snapshot should be denser than R7 final');
   assert.ok(photorealMockResult.snapshot.totals.faces > finalDetailResult.snapshot.totals.faces, 'photoreal mock snapshot should add substantial geometry beyond R7 final');

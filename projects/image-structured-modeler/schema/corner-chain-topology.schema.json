@@ -1,0 +1,143 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/corner-chain-topology.schema.json",
+  "title": "CornerChainTopology v1",
+  "type": "object",
+  "required": [
+    "kind",
+    "version",
+    "profile_id",
+    "coordinate_convention",
+    "source_calibrated_view_graph",
+    "source_structure_evidence_graph",
+    "corner_points",
+    "edge_chains",
+    "topology_hypotheses",
+    "review_policy",
+    "summary"
+  ],
+  "properties": {
+    "kind": { "const": "corner_chain_topology_v1" },
+    "version": { "const": 1 },
+    "profile_id": { "type": "string" },
+    "coordinate_convention": { "const": "axis_calibrated_local_plan_y_positive_back" },
+    "source_calibrated_view_graph": { "type": "string" },
+    "source_structure_evidence_graph": { "type": "string" },
+    "corner_points": { "type": "array", "minItems": 2, "items": { "$ref": "#/$defs/corner" } },
+    "edge_chains": { "type": "array", "items": { "$ref": "#/$defs/edge_chain" } },
+    "topology_hypotheses": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/topology_hypothesis" } },
+    "review_policy": {
+      "type": "object",
+      "required": ["status", "accepted_topology_review_required", "review_required", "promotion_allowed", "compile_allowed", "blockers"],
+      "properties": {
+        "status": { "enum": ["needs_topology_review", "accepted_for_derived_drafting", "blocked_no_corner_chain"] },
+        "accepted_topology_review_required": { "const": true },
+        "review_required": { "const": true },
+        "promotion_allowed": { "const": false },
+        "compile_allowed": { "const": false },
+        "blockers": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": ["corner_count", "edge_chain_count", "topology_hypothesis_count", "accepted_topology_id", "review_required", "promotion_allowed", "compile_allowed"],
+      "properties": {
+        "corner_count": { "type": "integer", "minimum": 0 },
+        "edge_chain_count": { "type": "integer", "minimum": 0 },
+        "topology_hypothesis_count": { "type": "integer", "minimum": 0 },
+        "accepted_topology_id": { "type": ["string", "null"] },
+        "review_required": { "const": true },
+        "promotion_allowed": { "const": false },
+        "compile_allowed": { "const": false }
+      }
+    }
+  },
+  "$defs": {
+    "point": {
+      "type": "array",
+      "prefixItems": [{ "type": "number" }, { "type": "number" }],
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "corner": {
+      "type": "object",
+      "required": ["id", "source_image", "point_px", "local_xy", "confidence", "review_required", "promotion_allowed"],
+      "properties": {
+        "id": { "type": "string" },
+        "source_image": { "type": "string" },
+        "point_px": { "$ref": "#/$defs/point" },
+        "local_xy": { "$ref": "#/$defs/point" },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "review_required": { "const": true },
+        "promotion_allowed": { "const": false },
+        "notes": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "edge": {
+      "type": "object",
+      "required": ["id", "from", "to", "axis", "role", "depth_role", "review_required", "promotion_allowed"],
+      "properties": {
+        "id": { "type": "string" },
+        "from": { "type": "string" },
+        "to": { "type": "string" },
+        "axis": { "enum": ["x_red", "y_green", "z_blue", "unknown"] },
+        "role": { "type": "string" },
+        "depth_role": { "type": "string" },
+        "source_line_ids": { "type": "array", "items": { "type": "string" } },
+        "review_required": { "const": true },
+        "promotion_allowed": { "const": false }
+      }
+    },
+    "edge_chain": {
+      "type": "object",
+      "required": ["id", "source_image", "ordered_corner_ids", "edges", "review_required", "promotion_allowed"],
+      "properties": {
+        "id": { "type": "string" },
+        "source_image": { "type": "string" },
+        "ordered_corner_ids": { "type": "array", "items": { "type": "string" } },
+        "edges": { "type": "array", "items": { "$ref": "#/$defs/edge" } },
+        "review_required": { "const": true },
+        "promotion_allowed": { "const": false }
+      }
+    },
+    "topology_hypothesis": {
+      "type": "object",
+      "required": ["id", "topology", "source_edge_chain_ids", "footprint_local", "edge_axis_sequence", "depth_order", "status", "review_required", "promotion_allowed"],
+      "properties": {
+        "id": { "type": "string" },
+        "topology": { "type": "string" },
+        "source_edge_chain_ids": { "type": "array", "items": { "type": "string" } },
+        "footprint_local": {
+          "type": "array",
+          "minItems": 4,
+          "items": {
+            "type": "object",
+            "required": ["id", "xy", "source"],
+            "properties": {
+              "id": { "type": "string" },
+              "xy": { "$ref": "#/$defs/point" },
+              "source": { "type": "string" }
+            }
+          }
+        },
+        "edge_axis_sequence": { "type": "array", "items": { "type": "string" } },
+        "depth_order": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["behind", "in_front", "evidence"],
+            "properties": {
+              "behind": { "type": "string" },
+              "in_front": { "type": "string" },
+              "evidence": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        },
+        "status": { "enum": ["hypothesis", "accepted_for_derived_drafting", "rejected"] },
+        "review_required": { "const": true },
+        "promotion_allowed": { "const": false },
+        "notes": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

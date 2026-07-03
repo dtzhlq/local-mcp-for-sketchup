@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/corner-chain-topology-review-decision.schema.json",
+  "title": "CornerChainTopologyReviewDecision v1",
+  "type": "object",
+  "required": [
+    "kind",
+    "version",
+    "source_corner_chain_topology",
+    "source_calibrated_view_graph",
+    "reviewer",
+    "status",
+    "accepted_corner_ids",
+    "accepted_edge_chain_ids",
+    "accepted_topology_ids",
+    "rejected_topology_ids",
+    "depth_order_overrides",
+    "promotion_allowed",
+    "compile_allowed",
+    "blockers",
+    "notes"
+  ],
+  "properties": {
+    "kind": { "const": "corner_chain_topology_review_decision_v1" },
+    "version": { "const": 1 },
+    "source_corner_chain_topology": { "type": "string" },
+    "source_calibrated_view_graph": { "type": "string" },
+    "reviewer": { "type": "string" },
+    "status": { "enum": ["not_accepted", "accepted_for_derived_drafting"] },
+    "accepted_corner_ids": { "type": "array", "items": { "type": "string" } },
+    "accepted_edge_chain_ids": { "type": "array", "items": { "type": "string" } },
+    "accepted_topology_ids": { "type": "array", "items": { "type": "string" } },
+    "rejected_topology_ids": { "type": "array", "items": { "type": "string" } },
+    "depth_order_overrides": { "type": "array", "items": { "type": "object" } },
+    "promotion_allowed": { "const": false },
+    "compile_allowed": { "const": false },
+    "blockers": { "type": "array", "items": { "type": "string" } },
+    "notes": { "type": "array", "items": { "type": "string" } }
+  }
+}
