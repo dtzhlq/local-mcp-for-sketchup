@@ -13,8 +13,9 @@ export function validateModelSnapshot(snapshot = {}, options = {}) {
   const itemIndex = buildItemIndex(items);
   const expectedPairs = expectedContactPairs(items, spec, itemIndex);
   const issues = [];
+  const acceptedWarnings = [];
 
-  validateSnapshotWarnings(issues, snapshot, expectedPairs, options);
+  validateSnapshotWarnings(issues, snapshot, expectedPairs, options, acceptedWarnings);
   validateContactRules(issues, spec.contacts, itemIndex);
   validateInsideRules(issues, spec.inside, itemIndex);
   validateSupportRules(issues, spec.support, itemIndex);
@@ -26,6 +27,7 @@ export function validateModelSnapshot(snapshot = {}, options = {}) {
     : renderOrthographicPreview(snapshot, { views: spec.views, title: spec.title || options.title });
   const correctionSuggestions = correctionSuggestionsForIssues(issues);
   const summary = summarizeIssues(issues, items, preview);
+  summary.accepted_warnings = summarizeAcceptedWarnings(acceptedWarnings);
 
   return {
     kind: 'model_qa',
@@ -34,6 +36,7 @@ export function validateModelSnapshot(snapshot = {}, options = {}) {
     verdict: summary.by_severity.error > 0 ? 'fail' : summary.by_severity.warn > 0 ? 'review' : 'pass',
     summary,
     issues,
+    accepted_warnings: acceptedWarnings,
     correction_suggestions: correctionSuggestions,
     preview
   };
@@ -76,6 +79,7 @@ export function formatModelQaReportMarkdown(report = {}, options = {}) {
   lines.push(`| Errors | ${report.summary?.by_severity?.error || 0} |`);
   lines.push(`| Warnings | ${report.summary?.by_severity?.warn || 0} |`);
   lines.push(`| Info | ${report.summary?.by_severity?.info || 0} |`);
+  lines.push(`| Accepted raw warnings | ${report.summary?.accepted_warnings?.total || 0} |`);
   lines.push('');
 
   lines.push('## Issues');
@@ -88,6 +92,17 @@ export function formatModelQaReportMarkdown(report = {}, options = {}) {
     lines.push('|---|---|---|---|---|');
     for (const issue of report.issues.slice(0, options.issueLimit || 50)) {
       lines.push(`| ${escapeMarkdown(issue.severity)} | \`${escapeMarkdown(issue.type)}\` | ${escapeMarkdown(issue.item || '')} | ${escapeMarkdown(issue.message || '')} | ${escapeMarkdown(issue.suggestion || '')} |`);
+    }
+    lines.push('');
+  }
+
+  if (report.accepted_warnings?.length) {
+    lines.push('## Accepted Raw Warnings');
+    lines.push('');
+    lines.push('| Type | Pair | Reason |');
+    lines.push('|---|---|---|');
+    for (const warning of report.accepted_warnings.slice(0, options.acceptedWarningLimit || 50)) {
+      lines.push(`| \`${escapeMarkdown(warning.type)}\` | ${escapeMarkdown(warning.pair?.join(' / ') || '')} | ${escapeMarkdown(warning.reason || '')} |`);
     }
     lines.push('');
   }
@@ -187,12 +202,21 @@ function addResolvedPairs(pairs, rule, itemIndex) {
   }
 }
 
-function validateSnapshotWarnings(issues, snapshot, expectedPairs, options) {
+function validateSnapshotWarnings(issues, snapshot, expectedPairs, options, acceptedWarnings = []) {
   for (const warning of snapshot.warnings || []) {
     if (warning.severity === 'info') continue;
     if (warning.type === 'geometry.bbox_collision' || warning.type === 'geometry.bbox_overlap') {
       const [left, right] = warningPairRefs(warning);
-      if (left && right && expectedPairs.has(pairKey(left, right))) continue;
+      if (left && right && expectedPairs.has(pairKey(left, right))) {
+        acceptedWarnings.push({
+          type: warning.type,
+          severity: warning.severity,
+          pair: [left, right],
+          reason: 'matched expected_contacts or allowed_collisions',
+          warning
+        });
+        continue;
+      }
       addIssue(issues, {
         type: 'layout.unexpected_collision',
         severity: options.strictCollisions === false ? 'warn' : 'error',
@@ -654,6 +678,17 @@ function summarizeIssues(issues, items, preview) {
     by_type: byType,
     visible_items: items.length,
     preview_views: preview?.views?.length || 0
+  };
+}
+
+function summarizeAcceptedWarnings(acceptedWarnings) {
+  const byType = {};
+  for (const warning of acceptedWarnings) {
+    byType[warning.type] = (byType[warning.type] || 0) + 1;
+  }
+  return {
+    total: acceptedWarnings.length,
+    by_type: byType
   };
 }
 

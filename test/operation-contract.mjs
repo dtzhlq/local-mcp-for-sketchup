@@ -17,6 +17,7 @@ const componentDefinitionOperations = new Set(getComponentDefinitionOperationNam
 const capabilityByOperation = new Map(manifest.map((capability) => [capability.op, capability]));
 const targetOperations = new Set([
   'delete', 'rename', 'set_material', 'set_visibility', 'transform_object', 'assign_tag', 'attribute', 'classification', 'texture_transform', 'uv_project_planar', 'uv_project_box',
+  'face_uv',
   'cut_hole', 'cut_slot', 'cut_recess', 'add_boss', 'add_raised_rib',
   'boolean_union', 'boolean_difference', 'boolean_intersect', 'manifold_check', 'manifold_repair'
 ]);
@@ -24,18 +25,19 @@ const identityOperations = new Set([
   'box', 'rounded_box', 'beveled_panel', 'fillet', 'chamfer', 'recess', 'engraved_line',
   'text_emboss', 'text_engrave', 'text_3d', 'slot', 'slot_array', 'rib', 'standoff_boss',
   'button_on_panel', 'image_plane', 'prism', 'panel_with_openings', 'boolean_cutout', 'face_with_holes',
-	  'profile_extrude', 'mesh', 'gable_roof', 'shed_roof', 'cylinder', 'loft_between_profiles',
-	  'shell_from_front_side_profiles', 'lofted_solid', 'face_on_cylinder', 'analog_stick',
-	  'screw_hole', 'pipe_between_points', 'swept_path', 'domed_surface', 'bowed_panel',
-	  'floor_slab', 'footprint_slab', 'wall', 'wall_path', 'curved_wall', 'roof_footprint',
-	  'hip_roof', 'parapet_path', 'curtain_wall', 'column_grid', 'path_surface', 'terrain_mesh',
-	  'parking_stall_array', 'door', 'window', 'component_instance'
-	]);
+  'profile_extrude', 'mesh', 'geometry_input', 'curve', 'arc_curve', 'gable_roof', 'shed_roof',
+  'cylinder', 'loft_between_profiles', 'shell_from_front_side_profiles', 'lofted_solid',
+  'face_on_cylinder', 'analog_stick', 'screw_hole', 'pipe_between_points', 'swept_path',
+  'domed_surface', 'bowed_panel', 'floor_slab', 'footprint_slab', 'wall', 'wall_path',
+  'curved_wall', 'roof_footprint', 'hip_roof', 'parapet_path', 'curtain_wall', 'column_grid',
+  'path_surface', 'terrain_mesh', 'parking_stall_array', 'door', 'window', 'component_instance'
+]);
 
 const mockRuntimeSource = await fs.readFile(path.join(repoRoot, 'src/mock-runtime.mjs'), 'utf8');
 const componentOperationsSource = await fs.readFile(path.join(repoRoot, 'src/component-operations.mjs'), 'utf8');
 const rubyPluginSource = await fs.readFile(path.join(repoRoot, 'sketchup_plugin/alma_sketchup_mcp.rb'), 'utf8');
 const rubyComponentSource = await fs.readFile(path.join(repoRoot, 'sketchup_plugin/alma_sketchup_mcp/component_operations.rb'), 'utf8');
+const packagePluginSource = await fs.readFile(path.join(repoRoot, 'scripts/package-sketchup-plugin.mjs'), 'utf8');
 
 assert.deepEqual(
   sorted(new Set(Object.keys(OPERATION_REGISTRY))),
@@ -106,6 +108,14 @@ for (const operation of identityOperations) {
   assertOptionalFields(operation, ['id', 'object_id', 'objectId', 'guid']);
 }
 
+for (const requirePath of extractRequireRelativePaths(rubyPluginSource)) {
+  const sourcePath = `sketchup_plugin/${requirePath}.rb`;
+  assert.ok(
+    packagePluginSource.includes(sourcePath),
+    `package script should include required Ruby module: ${sourcePath}`
+  );
+}
+
 for (const runtime of ['mock', 'queue']) {
   const runtimeCapabilities = getRuntimeCapabilities(runtime);
   const expectedRuntimeOperations = new Set(
@@ -155,6 +165,10 @@ function extractOperationNames(source, startMarker, endMarker, pattern) {
   const names = new Set();
   for (const match of slice.matchAll(pattern)) names.add(match[1]);
   return names;
+}
+
+function extractRequireRelativePaths(source) {
+  return [...source.matchAll(/require_relative '([^']+)'/g)].map((match) => match[1]);
 }
 
 function assertSetEquals(actual, expected, label) {

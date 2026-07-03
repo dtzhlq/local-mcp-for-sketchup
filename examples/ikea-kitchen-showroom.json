@@ -1,0 +1,3748 @@
+{
+  "version": 1,
+  "units": "mm",
+  "metadata": {
+    "name": "IKEA-inspired realistic kitchen showroom",
+    "room_size_mm": {
+      "width": 5400,
+      "depth": 4200,
+      "height": 2550
+    },
+    "design_notes": [
+      "Full-scale showroom room with 600 mm cabinet modules and realistic 900-946 mm worktop heights.",
+      "Includes tall appliance run, sink run, induction cooking zone, wall cabinets, tiled backsplash, island, lighting, stools, accessories, samples, and saved camera scenes.",
+      "Uses safe JSON DSL geometry only; no external texture files are required."
+    ]
+  },
+  "operations": [
+    {
+      "op": "reset"
+    },
+    {
+      "op": "material",
+      "name": "Wall_Warm_White",
+      "color": "#eee9df"
+    },
+    {
+      "op": "material",
+      "name": "Ceiling_Matte_White",
+      "color": "#f5f3ee"
+    },
+    {
+      "op": "material",
+      "name": "Floor_Light_Oak_Plank",
+      "color": "#b99062"
+    },
+    {
+      "op": "material",
+      "name": "Cabinet_Carcass_White",
+      "color": "#f4f2ec"
+    },
+    {
+      "op": "material",
+      "name": "Cabinet_Front_Matte_White",
+      "color": "#e8e5dc"
+    },
+    {
+      "op": "material",
+      "name": "Cabinet_Front_Oak_Veneer",
+      "color": "#b88452"
+    },
+    {
+      "op": "material",
+      "name": "Cabinet_Front_Anthracite",
+      "color": "#2d3032"
+    },
+    {
+      "op": "material",
+      "name": "Countertop_Light_Stone",
+      "color": "#d4d0c8"
+    },
+    {
+      "op": "material",
+      "name": "Countertop_Oak_Butcher_Block",
+      "color": "#bc8856"
+    },
+    {
+      "op": "material",
+      "name": "Toe_Kick_Shadow",
+      "color": "#1f2021"
+    },
+    {
+      "op": "material",
+      "name": "Backsplash_Gloss_White_Tile",
+      "color": "#f8f8f5",
+      "alpha": 0.96
+    },
+    {
+      "op": "material",
+      "name": "Grout_Warm_Grey",
+      "color": "#bdb7ae"
+    },
+    {
+      "op": "material",
+      "name": "Handle_Blackened_Steel",
+      "color": "#101214"
+    },
+    {
+      "op": "material",
+      "name": "Stainless_Steel",
+      "color": "#9fa4a8"
+    },
+    {
+      "op": "material",
+      "name": "Appliance_Black_Glass",
+      "color": "#111417",
+      "alpha": 0.82
+    },
+    {
+      "op": "material",
+      "name": "Cooktop_Glass_Black",
+      "color": "#050607",
+      "alpha": 0.88
+    },
+    {
+      "op": "material",
+      "name": "Sink_Dark_Interior",
+      "color": "#1a1d1f"
+    },
+    {
+      "op": "material",
+      "name": "Warm_Light",
+      "color": "#ffd37a"
+    },
+    {
+      "op": "material",
+      "name": "Pendant_Black_Metal",
+      "color": "#111111"
+    },
+    {
+      "op": "material",
+      "name": "Stool_Oak",
+      "color": "#b27b45"
+    },
+    {
+      "op": "material",
+      "name": "Stool_Black_Steel",
+      "color": "#151719"
+    },
+    {
+      "op": "material",
+      "name": "Ceramic_Off_White",
+      "color": "#f7f2e9"
+    },
+    {
+      "op": "material",
+      "name": "Planter_Terracotta",
+      "color": "#b76844"
+    },
+    {
+      "op": "material",
+      "name": "Planter_Soil",
+      "color": "#3f2e23"
+    },
+    {
+      "op": "material",
+      "name": "Plant_Green",
+      "color": "#5b8d4a"
+    },
+    {
+      "op": "material",
+      "name": "Sample_Tag_White",
+      "color": "#fbfbf7"
+    },
+    {
+      "op": "material",
+      "name": "Sample_Tag_Black_Text",
+      "color": "#111111"
+    },
+    {
+      "op": "level",
+      "name": "Showroom_Level_1",
+      "elevation": 0,
+      "height": 2550
+    },
+    {
+      "op": "box",
+      "id": "room-floor",
+      "name": "Room_Floor_Slab_5400x4200",
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "size": [
+        5400,
+        4200,
+        80
+      ],
+      "material": "Floor_Light_Oak_Plank"
+    },
+    {
+      "op": "box",
+      "id": "back-wall",
+      "name": "Back_Wall_Warm_White",
+      "origin": [
+        120,
+        0,
+        80
+      ],
+      "size": [
+        5160,
+        120,
+        2450
+      ],
+      "material": "Wall_Warm_White"
+    },
+    {
+      "op": "box",
+      "id": "left-wall",
+      "name": "Left_Wall_Warm_White",
+      "origin": [
+        0,
+        0,
+        80
+      ],
+      "size": [
+        120,
+        4200,
+        2450
+      ],
+      "material": "Wall_Warm_White"
+    },
+    {
+      "op": "box",
+      "id": "right-wall",
+      "name": "Right_Return_Wall_Warm_White",
+      "origin": [
+        5280,
+        0,
+        80
+      ],
+      "size": [
+        120,
+        3200,
+        2450
+      ],
+      "material": "Wall_Warm_White"
+    },
+    {
+      "op": "box",
+      "id": "ceiling",
+      "name": "Ceiling_Plane_Matte_White",
+      "origin": [
+        0,
+        0,
+        2530
+      ],
+      "size": [
+        5400,
+        4200,
+        20
+      ],
+      "material": "Ceiling_Matte_White"
+    },
+    {
+      "op": "box",
+      "id": "integrated-fridge-body",
+      "name": "Integrated_Fridge_Freezer_Tall_Unit_Carcass",
+      "origin": [
+        240,
+        140,
+        80
+      ],
+      "size": [
+        600,
+        650,
+        2200
+      ],
+      "material": "Cabinet_Carcass_White"
+    },
+    {
+      "op": "box",
+      "id": "integrated-fridge-lower-front",
+      "name": "Integrated_Fridge_Freezer_Tall_Unit_Lower_Front",
+      "origin": [
+        244,
+        794,
+        100
+      ],
+      "size": [
+        592,
+        18,
+        1000
+      ],
+      "material": "Cabinet_Front_Matte_White"
+    },
+    {
+      "op": "box",
+      "id": "integrated-fridge-upper-front",
+      "name": "Integrated_Fridge_Freezer_Tall_Unit_Upper_Front",
+      "origin": [
+        244,
+        794,
+        1110
+      ],
+      "size": [
+        592,
+        18,
+        1160
+      ],
+      "material": "Cabinet_Front_Matte_White"
+    },
+    {
+      "op": "box",
+      "id": "integrated-fridge-long-handle",
+      "name": "Integrated_Fridge_Freezer_Tall_Unit_Long_Handle",
+      "origin": [
+        792,
+        814,
+        560
+      ],
+      "size": [
+        18,
+        18,
+        720
+      ],
+      "material": "Handle_Blackened_Steel"
+    },
+    {
+      "op": "box",
+      "id": "oven-tower-body",
+      "name": "Oven_Microwave_Tall_Unit_Carcass",
+      "origin": [
+        860,
+        140,
+        80
+      ],
+      "size": [
+        600,
+        650,
+        2200
+      ],
+      "material": "Cabinet_Carcass_White"
+    },
+    {
+      "op": "box",
+      "id": "oven-tower-bottom-drawer-front",
+      "name": "Oven_Microwave_Tall_Unit_Bottom_Drawer_Front",
+      "origin": [
+        864,
+        794,
+        100
+      ],
+      "size": [
+        592,
+        18,
+        540
+      ],
+      "material": "Cabinet_Front_Matte_White"
+    },
+    {
+      "op": "box",
+      "id": "oven-tower-mid-filler-front",
+      "name": "Oven_Microwave_Tall_Unit_Mid_Filler_Panel",
+      "origin": [
+        864,
+        794,
+        1144
+      ],
+      "size": [
+        592,
+        18,
+        54
+      ],
+      "material": "Cabinet_Front_Matte_White"
+    },
+    {
+      "op": "box",
+      "id": "oven-tower-upper-door-front",
+      "name": "Oven_Microwave_Tall_Unit_Upper_Door_Front",
+      "origin": [
+        864,
+        794,
+        1570
+      ],
+      "size": [
+        592,
+        18,
+        700
+      ],
+      "material": "Cabinet_Front_Matte_White"
+    },
+    {
+      "op": "box",
+      "id": "oven-tower-bottom-handle",
+      "name": "Oven_Microwave_Tall_Unit_Bottom_Drawer_Handle",
+      "origin": [
+        950,
+        814,
+        470
+      ],
+      "size": [
+        420,
+        18,
+        18
+      ],
+      "material": "Handle_Blackened_Steel"
+    },
+    {
+      "op": "box",
+      "id": "oven-tower-upper-handle",
+      "name": "Oven_Microwave_Tall_Unit_Upper_Door_Handle",
+      "origin": [
+        1412,
+        814,
+        1780
+      ],
+      "size": [
+        18,
+        18,
+        380
+      ],
+      "material": "Handle_Blackened_Steel"
+    },
+    {
+      "op": "box",
+      "id": "microwave-glass",
+      "name": "Oven_Tower_Microwave_Black_Glass",
+      "origin": [
+        910,
+        816,
+        1220
+      ],
+      "size": [
+        500,
+        16,
+        330
+      ],
+      "material": "Appliance_Black_Glass"
+    },
+    {
+      "op": "box",
+      "id": "oven-glass",
+      "name": "Oven_Tower_Main_Oven_Black_Glass",
+      "origin": [
+        910,
+        816,
+        720
+      ],
+      "size": [
+        500,
+        16,
+        420
+      ],
+      "material": "Appliance_Black_Glass"
+    },
+    {
+      "op": "box",
+      "id": "oven-trim-upper",
+      "name": "Oven_Tower_Stainless_Trim_Upper",
+      "origin": [
+        905,
+        814,
+        1170
+      ],
+      "size": [
+        510,
+        14,
+        36
+      ],
+      "material": "Stainless_Steel"
+    },
+    {
+      "op": "box",
+      "id": "oven-trim-lower",
+      "name": "Oven_Tower_Stainless_Trim_Lower",
+      "origin": [
+        905,
+        814,
+        680
+      ],
+      "size": [
+        510,
+        14,
+        36
+      ],
+      "material": "Stainless_Steel"
+    },
+    {
+      "op": "box",
+      "id": "base-prep-drawers-toe",
+      "name": "Prep_Drawer_Base_600_Toe_Kick",
+      "origin": [
+        1585,
+        210,
+        80
+      ],
+      "size": [
+        510,
+        480,
+        100
+      ],
+      "material": "Toe_Kick_Shadow"
+    },
+    {
+      "op": "box",
+      "id": "base-prep-drawers-body",
+      "name": "Prep_Drawer_Base_600_Carcass",
+      "origin": [
+        1540,
+        140,
+        180
+      ],
+      "size": [
+        600,
+        600,
+        720
+      ],
+      "material": "Cabinet_Carcass_White"
+    },
+    {
+      "op": "box",
+      "id": "base-prep-drawers-drawer-1",
+      "name": "Prep_Drawer_Base_600_Drawer_1_Front",
+      "origin": [
+        1544,
+        744,
+        184
+      ],
+      "size": [
+        592,
+        18,
+        234.667
+      ],
+      "material": "Cabinet_Front_Matte_White"
+    },
+    {
+      "op": "box",
+      "id": "base-prep-drawers-pull-1",
+      "name": "Prep_Drawer_Base_600_Drawer_1_Pull",
+      "origin": [
+        1630,
+        764,
+        348.667
+      ],
+      "size": [
+        420,
+        18,
+        18
+      ],
+      "material": "Handle_Blackened_Steel"
+    },
+    {
+      "op": "box",
+      "id": "base-prep-drawers-drawer-2",
+      "name": "Prep_Drawer_Base_600_Drawer_2_Front",
+      "origin": [
+        1544,
+        744,
+        422.667
+      ],
+      "size": [
+        592,
+        18,
+        234.667
+      ],
+      "material": "Cabinet_Front_Matte_White"
+    },
+    {
+      "op": "box",
+      "id": "base-prep-drawers-pull-2",
+      "name": "Prep_Drawer_Base_600_Drawer_2_Pull",
+      "origin": [
+        1630,
+        764,
+        587.333
+      ],
+      "size": [
+        420,
+        18,
+        18
+      ],
+      "material": "Handle_Blackened_Steel"
+    },
+    {
+      "op": "box",
+      "id": "base-prep-drawers-drawer-3",
+      "name": "Prep_Drawer_Base_600_Drawer_3_Front",
+      "origin": [
+        1544,
+        744,
+        661.333
+      ],
+      "size": [
+        592,
+        18,
+        234.667
+      ],
+      "material": "Cabinet_Front_Matte_White"
+    },
+    {
+      "op": "box",
+      "id": "base-prep-drawers-pull-3",
+      "name": "Prep_Drawer_Base_600_Drawer_3_Pull",
+      "origin": [
+        1630,
+        764,
+        826
+      ],
+      "size": [
+        420,
+        18,
+        18
+      ],
+      "material": "Handle_Blackened_Steel"
+    },
+    {
+      "op": "box",
+      "id": "sink-base-toe",
+      "name": "Sink_Base_800_Toe_Kick",
+      "origin": [
+        2185,
+        210,
+        80
+      ],
+      "size": [
+        710,
+        480,
+        100
+      ],
+      "material": "Toe_Kick_Shadow"
+    },
+    {
+      "op": "box",
+      "id": "sink-base-body",
+      "name": "Sink_Base_800_Carcass",
+      "origin": [
+        2140,
+        140,
+        180
+      ],
+      "size": [
+        800,
+        600,
+        720
+      ],
+      "material": "Cabinet_Carcass_White"
+    },
+    {
+      "op": "box",
+      "id": "sink-base-front",
+      "name": "Sink_Base_800_Tall_Door_Front",
+      "origin": [
+        2144,
+        744,
+        184
+      ],
+      "size": [
+        792,
+        18,
+        712
+      ],
+      "material": "Cabinet_Front_Matte_White"
+    },
+    {
+      "op": "box",
+      "id": "sink-base-handle",
+      "name": "Sink_Base_800_Door_Handle",
+      "origin": [
+        2896,
+        764,
+        360
+      ],
+      "size": [
+        18,
+        20,
+        360
+      ],
+      "material": "Handle_Blackened_Steel"
+    },
+    {
+      "op": "box",
+      "id": "dishwasher-toe",
+      "name": "Integrated_Dishwasher_600_Toe_Kick",
+      "origin": [
+        2985,
+        210,
+        80
+      ],
+      "size": [
+        510,
+        480,
+        100
+      ],
+      "material": "Toe_Kick_Shadow"
+    },
+    {
+      "op": "box",
+      "id": "dishwasher-body",
+      "name": "Integrated_Dishwasher_600_Carcass",
+      "origin": [
+        2940,
+        140,
+        180
+      ],
+      "size": [
+        600,
+        600,
+        720
+      ],
+      "material": "Cabinet_Carcass_White"
+    },
+    {
+      "op": "box",
+      "id": "dishwasher-front",
+      "name": "Integrated_Dishwasher_600_Tall_Door_Front",
+      "origin": [
+        2944,
+        744,
+        184
+      ],
+      "size": [
+        592,
+        18,
+        712
+      ],
+      "material": "Cabinet_Front_Matte_White"
+    },
+    {
+      "op": "box",
+      "id": "dishwasher-handle",
+      "name": "Integrated_Dishwasher_600_Door_Handle",
+      "origin": [
+        3496,
+        764,
+        360
+      ],
+      "size": [
+        18,
+        20,
+        360
+      ],
+      "material": "Handle_Blackened_Steel"
+    },
+    {
+      "op": "box",
+      "id": "cooktop-drawers-toe",
+      "name": "Induction_Cooktop_Drawer_Base_800_Toe_Kick",
+      "origin": [
+        3585,
+        210,
+        80
+      ],
+      "size": [
+        710,
+        480,
+        100
+      ],
+      "material": "Toe_Kick_Shadow"
+    },
+    {
+      "op": "box",
+      "id": "cooktop-drawers-body",
+      "name": "Induction_Cooktop_Drawer_Base_800_Carcass",
+      "origin": [
+        3540,
+        140,
+        180
+      ],
+      "size": [
+        800,
+        600,
+        720
+      ],
+      "material": "Cabinet_Carcass_White"
+    },
+    {
+      "op": "box",
+      "id": "cooktop-drawers-drawer-1",
+      "name": "Induction_Cooktop_Drawer_Base_800_Drawer_1_Front",
+      "origin": [
+        3544,
+        744,
+        184
+      ],
+      "size": [
+        792,
+        18,
+        354
+      ],
+      "material": "Cabinet_Front_Matte_White"
+    },
+    {
+      "op": "box",
+      "id": "cooktop-drawers-pull-1",
+      "name": "Induction_Cooktop_Drawer_Base_800_Drawer_1_Pull",
+      "origin": [
+        3630,
+        764,
+        468
+      ],
+      "size": [
+        620,
+        18,
+        18
+      ],
+      "material": "Handle_Blackened_Steel"
+    },
+    {
+      "op": "box",
+      "id": "cooktop-drawers-drawer-2",
+      "name": "Induction_Cooktop_Drawer_Base_800_Drawer_2_Front",
+      "origin": [
+        3544,
+        744,
+        542
+      ],
+      "size": [
+        792,
+        18,
+        354
+      ],
+      "material": "Cabinet_Front_Matte_White"
+    },
+    {
+      "op": "box",
+      "id": "cooktop-drawers-pull-2",
+      "name": "Induction_Cooktop_Drawer_Base_800_Drawer_2_Pull",
+      "origin": [
+        3630,
+        764,
+        826
+      ],
+      "size": [
+        620,
+        18,
+        18
+      ],
+      "material": "Handle_Blackened_Steel"
+    },
+    {
+      "op": "box",
+      "id": "pullout-base-toe",
+      "name": "Recycling_Pullout_Base_600_Toe_Kick",
+      "origin": [
+        4385,
+        210,
+        80
+      ],
+      "size": [
+        510,
+        480,
+        100
+      ],
+      "material": "Toe_Kick_Shadow"
+    },
+    {
+      "op": "box",
+      "id": "pullout-base-body",
+      "name": "Recycling_Pullout_Base_600_Carcass",
+      "origin": [
+        4340,
+        140,
+        180
+      ],
+      "size": [
+        600,
+        600,
+        720
+      ],
+      "material": "Cabinet_Carcass_White"
+    },
+    {
+      "op": "box",
+      "id": "pullout-base-drawer-1",
+      "name": "Recycling_Pullout_Base_600_Drawer_1_Front",
+      "origin": [
+        4344,
+        744,
+        184
+      ],
+      "size": [
+        592,
+        18,
+        354
+      ],
+      "material": "Cabinet_Front_Matte_White"
+    },
+    {
+      "op": "box",
+      "id": "pullout-base-pull-1",
+      "name": "Recycling_Pullout_Base_600_Drawer_1_Pull",
+      "origin": [
+        4430,
+        764,
+        468
+      ],
+      "size": [
+        420,
+        18,
+        18
+      ],
+      "material": "Handle_Blackened_Steel"
+    },
+    {
+      "op": "box",
+      "id": "pullout-base-drawer-2",
+      "name": "Recycling_Pullout_Base_600_Drawer_2_Front",
+      "origin": [
+        4344,
+        744,
+        542
+      ],
+      "size": [
+        592,
+        18,
+        354
+      ],
+      "material": "Cabinet_Front_Matte_White"
+    },
+    {
+      "op": "box",
+      "id": "pullout-base-pull-2",
+      "name": "Recycling_Pullout_Base_600_Drawer_2_Pull",
+      "origin": [
+        4430,
+        764,
+        826
+      ],
+      "size": [
+        420,
+        18,
+        18
+      ],
+      "material": "Handle_Blackened_Steel"
+    },
+    {
+      "op": "box",
+      "id": "back-countertop",
+      "name": "Continuous_Back_Run_Light_Stone_Countertop",
+      "origin": [
+        1540,
+        120,
+        900
+      ],
+      "size": [
+        3400,
+        650,
+        38
+      ],
+      "material": "Countertop_Light_Stone"
+    },
+    {
+      "op": "box",
+      "id": "counter-waterfall-right",
+      "name": "Countertop_Waterfall_Right_Return",
+      "origin": [
+        4940,
+        120,
+        80
+      ],
+      "size": [
+        38,
+        650,
+        820
+      ],
+      "material": "Countertop_Light_Stone"
+    },
+    {
+      "op": "box",
+      "id": "sink-rim",
+      "name": "Sink_Stainless_Rim",
+      "origin": [
+        2340,
+        360,
+        938
+      ],
+      "size": [
+        420,
+        260,
+        16
+      ],
+      "material": "Stainless_Steel"
+    },
+    {
+      "op": "box",
+      "id": "sink-basin",
+      "name": "Sink_Dark_Basin",
+      "origin": [
+        2370,
+        390,
+        954
+      ],
+      "size": [
+        360,
+        200,
+        80
+      ],
+      "material": "Sink_Dark_Interior"
+    },
+    {
+      "op": "cylinder",
+      "id": "faucet-base",
+      "name": "Faucet_Round_Base",
+      "origin": [
+        2520,
+        286,
+        938
+      ],
+      "radius": 42,
+      "height": 46,
+      "segments": 24,
+      "smooth": "all",
+      "material": "Stainless_Steel"
+    },
+    {
+      "op": "pipe_between_points",
+      "id": "faucet-spout",
+      "name": "Faucet_High_Arc_Spout",
+      "points": [
+        [
+          2540,
+          300,
+          980
+        ],
+        [
+          2540,
+          300,
+          1230
+        ],
+        [
+          2670,
+          370,
+          1230
+        ],
+        [
+          2670,
+          430,
+          1080
+        ]
+      ],
+      "radius": 18,
+      "segments": 14,
+      "smooth": "all",
+      "material": "Stainless_Steel"
+    },
+    {
+      "op": "box",
+      "id": "faucet-lever",
+      "name": "Faucet_Single_Lever",
+      "origin": [
+        2478,
+        284,
+        1048
+      ],
+      "size": [
+        18,
+        90,
+        22
+      ],
+      "material": "Stainless_Steel"
+    },
+    {
+      "op": "box",
+      "id": "induction-cooktop",
+      "name": "Induction_Cooktop_Black_Glass",
+      "origin": [
+        3700,
+        360,
+        942
+      ],
+      "size": [
+        500,
+        360,
+        12
+      ],
+      "material": "Cooktop_Glass_Black"
+    },
+    {
+      "op": "cylinder",
+      "id": "induction-zone-1",
+      "name": "Induction_Cooking_Zone_1",
+      "origin": [
+        3810,
+        455,
+        956
+      ],
+      "radius": 72,
+      "height": 4,
+      "segments": 32,
+      "smooth": "all",
+      "material": "Appliance_Black_Glass"
+    },
+    {
+      "op": "cylinder",
+      "id": "induction-zone-2",
+      "name": "Induction_Cooking_Zone_2",
+      "origin": [
+        4070,
+        455,
+        956
+      ],
+      "radius": 86,
+      "height": 4,
+      "segments": 32,
+      "smooth": "all",
+      "material": "Appliance_Black_Glass"
+    },
+    {
+      "op": "cylinder",
+      "id": "induction-zone-3",
+      "name": "Induction_Cooking_Zone_3",
+      "origin": [
+        3825,
+        620,
+        956
+      ],
+      "radius": 62,
+      "height": 4,
+      "segments": 32,
+      "smooth": "all",
+      "material": "Appliance_Black_Glass"
+    },
+    {
+      "op": "cylinder",
+      "id": "induction-zone-4",
+      "name": "Induction_Cooking_Zone_4",
+      "origin": [
+        4070,
+        625,
+        956
+      ],
+      "radius": 72,
+      "height": 4,
+      "segments": 32,
+      "smooth": "all",
+      "material": "Appliance_Black_Glass"
+    },
+    {
+      "op": "box",
+      "id": "range-hood-canopy",
+      "name": "Slim_Range_Hood_Canopy",
+      "origin": [
+        3650,
+        250,
+        1420
+      ],
+      "size": [
+        620,
+        360,
+        95
+      ],
+      "material": "Stainless_Steel"
+    },
+    {
+      "op": "box",
+      "id": "range-hood-chimney",
+      "name": "Range_Hood_Vertical_Chimney",
+      "origin": [
+        3870,
+        280,
+        1515
+      ],
+      "size": [
+        180,
+        240,
+        540
+      ],
+      "material": "Stainless_Steel"
+    },
+    {
+      "op": "box",
+      "id": "upper-left-body",
+      "name": "Upper_Cabinet_Left_900_Carcass",
+      "origin": [
+        1540,
+        150,
+        1520
+      ],
+      "size": [
+        900,
+        360,
+        720
+      ],
+      "material": "Cabinet_Carcass_White"
+    },
+    {
+      "op": "box",
+      "id": "upper-left-door-left",
+      "name": "Upper_Cabinet_Left_900_Door_Left",
+      "origin": [
+        1544,
+        514,
+        1524
+      ],
+      "size": [
+        443,
+        18,
+        712
+      ],
+      "material": "Cabinet_Front_Matte_White"
+    },
+    {
+      "op": "box",
+      "id": "upper-left-door-right",
+      "name": "Upper_Cabinet_Left_900_Door_Right",
+      "origin": [
+        1993,
+        514,
+        1524
+      ],
+      "size": [
+        443,
+        18,
+        712
+      ],
+      "material": "Cabinet_Front_Matte_White"
+    },
+    {
+      "op": "box",
+      "id": "upper-left-handle-left",
+      "name": "Upper_Cabinet_Left_900_Handle_Left",
+      "origin": [
+        1948,
+        534,
+        1720
+      ],
+      "size": [
+        16,
+        18,
+        320
+      ],
+      "material": "Handle_Blackened_Steel"
+    },
+    {
+      "op": "box",
+      "id": "upper-left-handle-right",
+      "name": "Upper_Cabinet_Left_900_Handle_Right",
+      "origin": [
+        2016,
+        534,
+        1720
+      ],
+      "size": [
+        16,
+        18,
+        320
+      ],
+      "material": "Handle_Blackened_Steel"
+    },
+    {
+      "op": "box",
+      "id": "upper-center-body",
+      "name": "Upper_Cabinet_Sink_900_Carcass",
+      "origin": [
+        2440,
+        150,
+        1520
+      ],
+      "size": [
+        900,
+        360,
+        720
+      ],
+      "material": "Cabinet_Carcass_White"
+    },
+    {
+      "op": "box",
+      "id": "upper-center-door-left",
+      "name": "Upper_Cabinet_Sink_900_Door_Left",
+      "origin": [
+        2444,
+        514,
+        1524
+      ],
+      "size": [
+        443,
+        18,
+        712
+      ],
+      "material": "Cabinet_Front_Matte_White"
+    },
+    {
+      "op": "box",
+      "id": "upper-center-door-right",
+      "name": "Upper_Cabinet_Sink_900_Door_Right",
+      "origin": [
+        2893,
+        514,
+        1524
+      ],
+      "size": [
+        443,
+        18,
+        712
+      ],
+      "material": "Cabinet_Front_Matte_White"
+    },
+    {
+      "op": "box",
+      "id": "upper-center-handle-left",
+      "name": "Upper_Cabinet_Sink_900_Handle_Left",
+      "origin": [
+        2848,
+        534,
+        1720
+      ],
+      "size": [
+        16,
+        18,
+        320
+      ],
+      "material": "Handle_Blackened_Steel"
+    },
+    {
+      "op": "box",
+      "id": "upper-center-handle-right",
+      "name": "Upper_Cabinet_Sink_900_Handle_Right",
+      "origin": [
+        2916,
+        534,
+        1720
+      ],
+      "size": [
+        16,
+        18,
+        320
+      ],
+      "material": "Handle_Blackened_Steel"
+    },
+    {
+      "op": "box",
+      "id": "upper-right-body",
+      "name": "Upper_Cabinet_Right_760_Carcass",
+      "origin": [
+        4280,
+        150,
+        1520
+      ],
+      "size": [
+        660,
+        360,
+        720
+      ],
+      "material": "Cabinet_Carcass_White"
+    },
+    {
+      "op": "box",
+      "id": "upper-right-door-left",
+      "name": "Upper_Cabinet_Right_760_Door_Left",
+      "origin": [
+        4284,
+        514,
+        1524
+      ],
+      "size": [
+        323,
+        18,
+        712
+      ],
+      "material": "Cabinet_Front_Matte_White"
+    },
+    {
+      "op": "box",
+      "id": "upper-right-door-right",
+      "name": "Upper_Cabinet_Right_760_Door_Right",
+      "origin": [
+        4613,
+        514,
+        1524
+      ],
+      "size": [
+        323,
+        18,
+        712
+      ],
+      "material": "Cabinet_Front_Matte_White"
+    },
+    {
+      "op": "box",
+      "id": "upper-right-handle-left",
+      "name": "Upper_Cabinet_Right_760_Handle_Left",
+      "origin": [
+        4568,
+        534,
+        1720
+      ],
+      "size": [
+        16,
+        18,
+        320
+      ],
+      "material": "Handle_Blackened_Steel"
+    },
+    {
+      "op": "box",
+      "id": "upper-right-handle-right",
+      "name": "Upper_Cabinet_Right_760_Handle_Right",
+      "origin": [
+        4636,
+        534,
+        1720
+      ],
+      "size": [
+        16,
+        18,
+        320
+      ],
+      "material": "Handle_Blackened_Steel"
+    },
+    {
+      "op": "box",
+      "id": "open-shelf-left-1",
+      "name": "Open_Oak_Shelf_Left",
+      "origin": [
+        3340,
+        160,
+        1540
+      ],
+      "size": [
+        260,
+        330,
+        36
+      ],
+      "material": "Cabinet_Front_Oak_Veneer"
+    },
+    {
+      "op": "box",
+      "id": "open-shelf-left-2",
+      "name": "Open_Oak_Shelf_Left_Upper",
+      "origin": [
+        3340,
+        160,
+        1790
+      ],
+      "size": [
+        260,
+        330,
+        36
+      ],
+      "material": "Cabinet_Front_Oak_Veneer"
+    },
+    {
+      "op": "box",
+      "id": "open-shelf-right-1",
+      "name": "Open_Oak_Shelf_Right",
+      "origin": [
+        4280,
+        160,
+        1410
+      ],
+      "size": [
+        660,
+        330,
+        36
+      ],
+      "material": "Cabinet_Front_Oak_Veneer"
+    },
+    {
+      "op": "box",
+      "id": "under-cabinet-light-left",
+      "name": "Under_Cabinet_LED_Strip_Left",
+      "origin": [
+        1540,
+        510,
+        1468
+      ],
+      "size": [
+        1800,
+        24,
+        18
+      ],
+      "material": "Warm_Light"
+    },
+    {
+      "op": "box",
+      "id": "under-cabinet-light-right",
+      "name": "Under_Cabinet_LED_Strip_Right",
+      "origin": [
+        4280,
+        510,
+        1468
+      ],
+      "size": [
+        660,
+        24,
+        18
+      ],
+      "material": "Warm_Light"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-1",
+      "name": "White_Subway_Tile_1",
+      "origin": [
+        1540,
+        122,
+        980
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-2",
+      "name": "White_Subway_Tile_2",
+      "origin": [
+        1788,
+        122,
+        980
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-3",
+      "name": "White_Subway_Tile_3",
+      "origin": [
+        2036,
+        122,
+        980
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-4",
+      "name": "White_Subway_Tile_4",
+      "origin": [
+        2284,
+        122,
+        980
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-5",
+      "name": "White_Subway_Tile_5",
+      "origin": [
+        2532,
+        122,
+        980
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-6",
+      "name": "White_Subway_Tile_6",
+      "origin": [
+        2780,
+        122,
+        980
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-7",
+      "name": "White_Subway_Tile_7",
+      "origin": [
+        3028,
+        122,
+        980
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-8",
+      "name": "White_Subway_Tile_8",
+      "origin": [
+        3276,
+        122,
+        980
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-9",
+      "name": "White_Subway_Tile_9",
+      "origin": [
+        3524,
+        122,
+        980
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-10",
+      "name": "White_Subway_Tile_10",
+      "origin": [
+        3772,
+        122,
+        980
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-11",
+      "name": "White_Subway_Tile_11",
+      "origin": [
+        4020,
+        122,
+        980
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-12",
+      "name": "White_Subway_Tile_12",
+      "origin": [
+        4268,
+        122,
+        980
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-13",
+      "name": "White_Subway_Tile_13",
+      "origin": [
+        4516,
+        122,
+        980
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-14",
+      "name": "White_Subway_Tile_14",
+      "origin": [
+        4764,
+        122,
+        980
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-15",
+      "name": "White_Subway_Tile_15",
+      "origin": [
+        1662,
+        122,
+        1090
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-16",
+      "name": "White_Subway_Tile_16",
+      "origin": [
+        1910,
+        122,
+        1090
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-17",
+      "name": "White_Subway_Tile_17",
+      "origin": [
+        2158,
+        122,
+        1090
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-18",
+      "name": "White_Subway_Tile_18",
+      "origin": [
+        2406,
+        122,
+        1090
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-19",
+      "name": "White_Subway_Tile_19",
+      "origin": [
+        2654,
+        122,
+        1090
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-20",
+      "name": "White_Subway_Tile_20",
+      "origin": [
+        2902,
+        122,
+        1090
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-21",
+      "name": "White_Subway_Tile_21",
+      "origin": [
+        3150,
+        122,
+        1090
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-22",
+      "name": "White_Subway_Tile_22",
+      "origin": [
+        3398,
+        122,
+        1090
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-23",
+      "name": "White_Subway_Tile_23",
+      "origin": [
+        3646,
+        122,
+        1090
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-24",
+      "name": "White_Subway_Tile_24",
+      "origin": [
+        3894,
+        122,
+        1090
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-25",
+      "name": "White_Subway_Tile_25",
+      "origin": [
+        4142,
+        122,
+        1090
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-26",
+      "name": "White_Subway_Tile_26",
+      "origin": [
+        4390,
+        122,
+        1090
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-27",
+      "name": "White_Subway_Tile_27",
+      "origin": [
+        4638,
+        122,
+        1090
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-29",
+      "name": "White_Subway_Tile_29",
+      "origin": [
+        1540,
+        122,
+        1200
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-30",
+      "name": "White_Subway_Tile_30",
+      "origin": [
+        1788,
+        122,
+        1200
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-31",
+      "name": "White_Subway_Tile_31",
+      "origin": [
+        2036,
+        122,
+        1200
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-32",
+      "name": "White_Subway_Tile_32",
+      "origin": [
+        2284,
+        122,
+        1200
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-33",
+      "name": "White_Subway_Tile_33",
+      "origin": [
+        2532,
+        122,
+        1200
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-34",
+      "name": "White_Subway_Tile_34",
+      "origin": [
+        2780,
+        122,
+        1200
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-35",
+      "name": "White_Subway_Tile_35",
+      "origin": [
+        3028,
+        122,
+        1200
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-36",
+      "name": "White_Subway_Tile_36",
+      "origin": [
+        3276,
+        122,
+        1200
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-37",
+      "name": "White_Subway_Tile_37",
+      "origin": [
+        3524,
+        122,
+        1200
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-38",
+      "name": "White_Subway_Tile_38",
+      "origin": [
+        3772,
+        122,
+        1200
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-39",
+      "name": "White_Subway_Tile_39",
+      "origin": [
+        4020,
+        122,
+        1200
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-40",
+      "name": "White_Subway_Tile_40",
+      "origin": [
+        4268,
+        122,
+        1200
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-41",
+      "name": "White_Subway_Tile_41",
+      "origin": [
+        4516,
+        122,
+        1200
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-42",
+      "name": "White_Subway_Tile_42",
+      "origin": [
+        4764,
+        122,
+        1200
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-43",
+      "name": "White_Subway_Tile_43",
+      "origin": [
+        1662,
+        122,
+        1310
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-44",
+      "name": "White_Subway_Tile_44",
+      "origin": [
+        1910,
+        122,
+        1310
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-45",
+      "name": "White_Subway_Tile_45",
+      "origin": [
+        2158,
+        122,
+        1310
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-46",
+      "name": "White_Subway_Tile_46",
+      "origin": [
+        2406,
+        122,
+        1310
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-47",
+      "name": "White_Subway_Tile_47",
+      "origin": [
+        2654,
+        122,
+        1310
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-48",
+      "name": "White_Subway_Tile_48",
+      "origin": [
+        2902,
+        122,
+        1310
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-49",
+      "name": "White_Subway_Tile_49",
+      "origin": [
+        3150,
+        122,
+        1310
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-50",
+      "name": "White_Subway_Tile_50",
+      "origin": [
+        3398,
+        122,
+        1310
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-51",
+      "name": "White_Subway_Tile_51",
+      "origin": [
+        3646,
+        122,
+        1310
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-52",
+      "name": "White_Subway_Tile_52",
+      "origin": [
+        3894,
+        122,
+        1310
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-53",
+      "name": "White_Subway_Tile_53",
+      "origin": [
+        4142,
+        122,
+        1310
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-54",
+      "name": "White_Subway_Tile_54",
+      "origin": [
+        4390,
+        122,
+        1310
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "backsplash-tile-55",
+      "name": "White_Subway_Tile_55",
+      "origin": [
+        4638,
+        122,
+        1310
+      ],
+      "size": [
+        244,
+        10,
+        106
+      ],
+      "material": "Backsplash_Gloss_White_Tile"
+    },
+    {
+      "op": "box",
+      "id": "grout-h1",
+      "name": "Backsplash_Grout_Horizontal_1",
+      "origin": [
+        1540,
+        133,
+        1086
+      ],
+      "size": [
+        3400,
+        4,
+        4
+      ],
+      "material": "Grout_Warm_Grey"
+    },
+    {
+      "op": "box",
+      "id": "grout-h2",
+      "name": "Backsplash_Grout_Horizontal_2",
+      "origin": [
+        1540,
+        133,
+        1196
+      ],
+      "size": [
+        3400,
+        4,
+        4
+      ],
+      "material": "Grout_Warm_Grey"
+    },
+    {
+      "op": "box",
+      "id": "grout-h3",
+      "name": "Backsplash_Grout_Horizontal_3",
+      "origin": [
+        1540,
+        133,
+        1306
+      ],
+      "size": [
+        3400,
+        4,
+        4
+      ],
+      "material": "Grout_Warm_Grey"
+    },
+    {
+      "op": "box",
+      "id": "island-toe-kick-platform",
+      "name": "Island_Recessed_Toe_Kick_Platform",
+      "origin": [
+        1930,
+        1960,
+        80
+      ],
+      "size": [
+        1740,
+        740,
+        100
+      ],
+      "material": "Toe_Kick_Shadow"
+    },
+    {
+      "op": "box",
+      "id": "island-base-carcass",
+      "name": "Island_Base_Carcass",
+      "origin": [
+        1850,
+        1880,
+        180
+      ],
+      "size": [
+        1900,
+        900,
+        720
+      ],
+      "material": "Cabinet_Carcass_White"
+    },
+    {
+      "op": "box",
+      "id": "island-waterfall-left",
+      "name": "Island_Oak_Waterfall_Left",
+      "origin": [
+        1810,
+        1880,
+        80
+      ],
+      "size": [
+        40,
+        900,
+        820
+      ],
+      "material": "Countertop_Oak_Butcher_Block"
+    },
+    {
+      "op": "box",
+      "id": "island-waterfall-right",
+      "name": "Island_Oak_Waterfall_Right",
+      "origin": [
+        3750,
+        1880,
+        80
+      ],
+      "size": [
+        40,
+        900,
+        820
+      ],
+      "material": "Countertop_Oak_Butcher_Block"
+    },
+    {
+      "op": "box",
+      "id": "island-countertop",
+      "name": "Island_Oak_Butcher_Block_Countertop",
+      "origin": [
+        1810,
+        1840,
+        900
+      ],
+      "size": [
+        1980,
+        980,
+        46
+      ],
+      "material": "Countertop_Oak_Butcher_Block"
+    },
+    {
+      "op": "box",
+      "id": "island-bank-a-front-drawer-1",
+      "name": "Island_Work_Side_900_front_Drawer_1",
+      "origin": [
+        1886,
+        2784,
+        186
+      ],
+      "size": [
+        888,
+        18,
+        226
+      ],
+      "material": "Cabinet_Front_Oak_Veneer"
+    },
+    {
+      "op": "box",
+      "id": "island-bank-a-front-pull-1",
+      "name": "Island_Work_Side_900_front_Pull_1",
+      "origin": [
+        1960,
+        2804,
+        344
+      ],
+      "size": [
+        740,
+        16,
+        18
+      ],
+      "material": "Handle_Blackened_Steel"
+    },
+    {
+      "op": "box",
+      "id": "island-bank-a-front-drawer-2",
+      "name": "Island_Work_Side_900_front_Drawer_2",
+      "origin": [
+        1886,
+        2784,
+        418
+      ],
+      "size": [
+        888,
+        18,
+        226
+      ],
+      "material": "Cabinet_Front_Oak_Veneer"
+    },
+    {
+      "op": "box",
+      "id": "island-bank-a-front-pull-2",
+      "name": "Island_Work_Side_900_front_Pull_2",
+      "origin": [
+        1960,
+        2804,
+        576
+      ],
+      "size": [
+        740,
+        16,
+        18
+      ],
+      "material": "Handle_Blackened_Steel"
+    },
+    {
+      "op": "box",
+      "id": "island-bank-a-front-drawer-3",
+      "name": "Island_Work_Side_900_front_Drawer_3",
+      "origin": [
+        1886,
+        2784,
+        650
+      ],
+      "size": [
+        888,
+        18,
+        226
+      ],
+      "material": "Cabinet_Front_Oak_Veneer"
+    },
+    {
+      "op": "box",
+      "id": "island-bank-a-front-pull-3",
+      "name": "Island_Work_Side_900_front_Pull_3",
+      "origin": [
+        1960,
+        2804,
+        808
+      ],
+      "size": [
+        740,
+        16,
+        18
+      ],
+      "material": "Handle_Blackened_Steel"
+    },
+    {
+      "op": "box",
+      "id": "island-bank-b-front-drawer-1",
+      "name": "Island_Work_Side_900_Right_front_Drawer_1",
+      "origin": [
+        2786,
+        2784,
+        186
+      ],
+      "size": [
+        888,
+        18,
+        226
+      ],
+      "material": "Cabinet_Front_Oak_Veneer"
+    },
+    {
+      "op": "box",
+      "id": "island-bank-b-front-pull-1",
+      "name": "Island_Work_Side_900_Right_front_Pull_1",
+      "origin": [
+        2860,
+        2804,
+        344
+      ],
+      "size": [
+        740,
+        16,
+        18
+      ],
+      "material": "Handle_Blackened_Steel"
+    },
+    {
+      "op": "box",
+      "id": "island-bank-b-front-drawer-2",
+      "name": "Island_Work_Side_900_Right_front_Drawer_2",
+      "origin": [
+        2786,
+        2784,
+        418
+      ],
+      "size": [
+        888,
+        18,
+        226
+      ],
+      "material": "Cabinet_Front_Oak_Veneer"
+    },
+    {
+      "op": "box",
+      "id": "island-bank-b-front-pull-2",
+      "name": "Island_Work_Side_900_Right_front_Pull_2",
+      "origin": [
+        2860,
+        2804,
+        576
+      ],
+      "size": [
+        740,
+        16,
+        18
+      ],
+      "material": "Handle_Blackened_Steel"
+    },
+    {
+      "op": "box",
+      "id": "island-bank-b-front-drawer-3",
+      "name": "Island_Work_Side_900_Right_front_Drawer_3",
+      "origin": [
+        2786,
+        2784,
+        650
+      ],
+      "size": [
+        888,
+        18,
+        226
+      ],
+      "material": "Cabinet_Front_Oak_Veneer"
+    },
+    {
+      "op": "box",
+      "id": "island-bank-b-front-pull-3",
+      "name": "Island_Work_Side_900_Right_front_Pull_3",
+      "origin": [
+        2860,
+        2804,
+        808
+      ],
+      "size": [
+        740,
+        16,
+        18
+      ],
+      "material": "Handle_Blackened_Steel"
+    },
+    {
+      "op": "box",
+      "id": "island-back-left",
+      "name": "Island_Back_Display_Panel_Left",
+      "origin": [
+        1880,
+        1858,
+        220
+      ],
+      "size": [
+        900,
+        18,
+        620
+      ],
+      "material": "Cabinet_Front_Anthracite"
+    },
+    {
+      "op": "box",
+      "id": "island-back-right",
+      "name": "Island_Back_Display_Panel_Right",
+      "origin": [
+        2780,
+        1858,
+        220
+      ],
+      "size": [
+        900,
+        18,
+        620
+      ],
+      "material": "Cabinet_Front_Anthracite"
+    },
+    {
+      "op": "box",
+      "id": "island-outlet",
+      "name": "Island_Power_Outlet_Double",
+      "origin": [
+        3560,
+        1834,
+        520
+      ],
+      "size": [
+        110,
+        18,
+        72
+      ],
+      "material": "Sample_Tag_White"
+    },
+    {
+      "op": "box",
+      "id": "island-outlet-a",
+      "name": "Island_Power_Outlet_Socket_A",
+      "origin": [
+        3580,
+        1814,
+        540
+      ],
+      "size": [
+        28,
+        18,
+        28
+      ],
+      "material": "Toe_Kick_Shadow"
+    },
+    {
+      "op": "box",
+      "id": "island-outlet-b",
+      "name": "Island_Power_Outlet_Socket_B",
+      "origin": [
+        3628,
+        1814,
+        540
+      ],
+      "size": [
+        28,
+        18,
+        28
+      ],
+      "material": "Toe_Kick_Shadow"
+    },
+    {
+      "op": "cylinder",
+      "id": "oak-bar-stool-left-seat",
+      "name": "Oak_Bar_Stool_Left_Seat",
+      "origin": [
+        2250,
+        3240,
+        642
+      ],
+      "radius": 185,
+      "height": 52,
+      "segments": 32,
+      "smooth": "all",
+      "material": "Stool_Oak"
+    },
+    {
+      "op": "cylinder",
+      "id": "oak-bar-stool-left-pedestal",
+      "name": "Oak_Bar_Stool_Left_Pedestal",
+      "origin": [
+        2250,
+        3240,
+        98
+      ],
+      "radius": 28,
+      "height": 544,
+      "segments": 18,
+      "smooth": "all",
+      "material": "Stool_Black_Steel"
+    },
+    {
+      "op": "cylinder",
+      "id": "oak-bar-stool-left-foot",
+      "name": "Oak_Bar_Stool_Left_Foot",
+      "origin": [
+        2250,
+        3240,
+        80
+      ],
+      "radius": 175,
+      "height": 18,
+      "segments": 32,
+      "smooth": "all",
+      "material": "Stool_Black_Steel"
+    },
+    {
+      "op": "pipe_between_points",
+      "id": "oak-bar-stool-left-foot-rest",
+      "name": "Oak_Bar_Stool_Left_Foot_Rest",
+      "points": [
+        [
+          2110,
+          3240,
+          310
+        ],
+        [
+          2390,
+          3240,
+          310
+        ]
+      ],
+      "radius": 12,
+      "segments": 10,
+      "smooth": "all",
+      "material": "Stool_Black_Steel"
+    },
+    {
+      "op": "cylinder",
+      "id": "oak-bar-stool-right-seat",
+      "name": "Oak_Bar_Stool_Right_Seat",
+      "origin": [
+        3180,
+        3240,
+        642
+      ],
+      "radius": 185,
+      "height": 52,
+      "segments": 32,
+      "smooth": "all",
+      "material": "Stool_Oak"
+    },
+    {
+      "op": "cylinder",
+      "id": "oak-bar-stool-right-pedestal",
+      "name": "Oak_Bar_Stool_Right_Pedestal",
+      "origin": [
+        3180,
+        3240,
+        98
+      ],
+      "radius": 28,
+      "height": 544,
+      "segments": 18,
+      "smooth": "all",
+      "material": "Stool_Black_Steel"
+    },
+    {
+      "op": "cylinder",
+      "id": "oak-bar-stool-right-foot",
+      "name": "Oak_Bar_Stool_Right_Foot",
+      "origin": [
+        3180,
+        3240,
+        80
+      ],
+      "radius": 175,
+      "height": 18,
+      "segments": 32,
+      "smooth": "all",
+      "material": "Stool_Black_Steel"
+    },
+    {
+      "op": "pipe_between_points",
+      "id": "oak-bar-stool-right-foot-rest",
+      "name": "Oak_Bar_Stool_Right_Foot_Rest",
+      "points": [
+        [
+          3040,
+          3240,
+          310
+        ],
+        [
+          3320,
+          3240,
+          310
+        ]
+      ],
+      "radius": 12,
+      "segments": 10,
+      "smooth": "all",
+      "material": "Stool_Black_Steel"
+    },
+    {
+      "op": "cylinder",
+      "id": "pendant-over-island-left-canopy",
+      "name": "Pendant_Over_Island_Left_Ceiling_Canopy",
+      "origin": [
+        2350,
+        2300,
+        2488
+      ],
+      "radius": 36,
+      "height": 24,
+      "segments": 20,
+      "smooth": "all",
+      "material": "Pendant_Black_Metal"
+    },
+    {
+      "op": "cylinder",
+      "id": "pendant-over-island-left-cable",
+      "name": "Pendant_Over_Island_Left_Cable",
+      "origin": [
+        2350,
+        2300,
+        1845
+      ],
+      "radius": 5,
+      "height": 640,
+      "segments": 8,
+      "smooth": "all",
+      "material": "Pendant_Black_Metal"
+    },
+    {
+      "op": "cylinder",
+      "id": "pendant-over-island-left-shade",
+      "name": "Pendant_Over_Island_Left_Shade",
+      "origin": [
+        2350,
+        2300,
+        1700
+      ],
+      "radius": 155,
+      "height": 145,
+      "segments": 32,
+      "smooth": "all",
+      "material": "Pendant_Black_Metal"
+    },
+    {
+      "op": "cylinder",
+      "id": "pendant-over-island-left-bulb",
+      "name": "Pendant_Over_Island_Left_Warm_Bulb",
+      "origin": [
+        2350,
+        2300,
+        1658
+      ],
+      "radius": 42,
+      "height": 50,
+      "segments": 20,
+      "smooth": "all",
+      "material": "Warm_Light"
+    },
+    {
+      "op": "cylinder",
+      "id": "pendant-over-island-right-canopy",
+      "name": "Pendant_Over_Island_Right_Ceiling_Canopy",
+      "origin": [
+        3230,
+        2300,
+        2488
+      ],
+      "radius": 36,
+      "height": 24,
+      "segments": 20,
+      "smooth": "all",
+      "material": "Pendant_Black_Metal"
+    },
+    {
+      "op": "cylinder",
+      "id": "pendant-over-island-right-cable",
+      "name": "Pendant_Over_Island_Right_Cable",
+      "origin": [
+        3230,
+        2300,
+        1845
+      ],
+      "radius": 5,
+      "height": 640,
+      "segments": 8,
+      "smooth": "all",
+      "material": "Pendant_Black_Metal"
+    },
+    {
+      "op": "cylinder",
+      "id": "pendant-over-island-right-shade",
+      "name": "Pendant_Over_Island_Right_Shade",
+      "origin": [
+        3230,
+        2300,
+        1700
+      ],
+      "radius": 155,
+      "height": 145,
+      "segments": 32,
+      "smooth": "all",
+      "material": "Pendant_Black_Metal"
+    },
+    {
+      "op": "cylinder",
+      "id": "pendant-over-island-right-bulb",
+      "name": "Pendant_Over_Island_Right_Warm_Bulb",
+      "origin": [
+        3230,
+        2300,
+        1658
+      ],
+      "radius": 42,
+      "height": 50,
+      "segments": 20,
+      "smooth": "all",
+      "material": "Warm_Light"
+    },
+    {
+      "op": "box",
+      "id": "wall-rail",
+      "name": "Wall_Rail_Blackened_Steel",
+      "origin": [
+        1650,
+        532,
+        1220
+      ],
+      "size": [
+        700,
+        18,
+        22
+      ],
+      "material": "Handle_Blackened_Steel"
+    },
+    {
+      "op": "pipe_between_points",
+      "id": "rail-hook-1",
+      "name": "Rail_Hook_1",
+      "points": [
+        [
+          1740,
+          552,
+          1220
+        ],
+        [
+          1740,
+          572,
+          1168
+        ],
+        [
+          1764,
+          572,
+          1168
+        ]
+      ],
+      "radius": 8,
+      "segments": 8,
+      "smooth": "all",
+      "material": "Handle_Blackened_Steel"
+    },
+    {
+      "op": "box",
+      "id": "hanging-utensil-1",
+      "name": "Hanging_Utensil_1",
+      "origin": [
+        1750,
+        580,
+        1050
+      ],
+      "size": [
+        18,
+        12,
+        118
+      ],
+      "material": "Stainless_Steel"
+    },
+    {
+      "op": "pipe_between_points",
+      "id": "rail-hook-2",
+      "name": "Rail_Hook_2",
+      "points": [
+        [
+          1890,
+          552,
+          1220
+        ],
+        [
+          1890,
+          572,
+          1168
+        ],
+        [
+          1914,
+          572,
+          1168
+        ]
+      ],
+      "radius": 8,
+      "segments": 8,
+      "smooth": "all",
+      "material": "Handle_Blackened_Steel"
+    },
+    {
+      "op": "box",
+      "id": "hanging-utensil-2",
+      "name": "Hanging_Utensil_2",
+      "origin": [
+        1900,
+        580,
+        1050
+      ],
+      "size": [
+        18,
+        12,
+        118
+      ],
+      "material": "Stainless_Steel"
+    },
+    {
+      "op": "pipe_between_points",
+      "id": "rail-hook-3",
+      "name": "Rail_Hook_3",
+      "points": [
+        [
+          2040,
+          552,
+          1220
+        ],
+        [
+          2040,
+          572,
+          1168
+        ],
+        [
+          2064,
+          572,
+          1168
+        ]
+      ],
+      "radius": 8,
+      "segments": 8,
+      "smooth": "all",
+      "material": "Handle_Blackened_Steel"
+    },
+    {
+      "op": "box",
+      "id": "hanging-utensil-3",
+      "name": "Hanging_Utensil_3",
+      "origin": [
+        2050,
+        580,
+        1050
+      ],
+      "size": [
+        18,
+        12,
+        118
+      ],
+      "material": "Stainless_Steel"
+    },
+    {
+      "op": "pipe_between_points",
+      "id": "rail-hook-4",
+      "name": "Rail_Hook_4",
+      "points": [
+        [
+          2190,
+          552,
+          1220
+        ],
+        [
+          2190,
+          572,
+          1168
+        ],
+        [
+          2214,
+          572,
+          1168
+        ]
+      ],
+      "radius": 8,
+      "segments": 8,
+      "smooth": "all",
+      "material": "Handle_Blackened_Steel"
+    },
+    {
+      "op": "box",
+      "id": "hanging-utensil-4",
+      "name": "Hanging_Utensil_4",
+      "origin": [
+        2200,
+        580,
+        1050
+      ],
+      "size": [
+        18,
+        12,
+        118
+      ],
+      "material": "Stainless_Steel"
+    },
+    {
+      "op": "cylinder",
+      "id": "open-shelf-plate-stack-plate-1",
+      "name": "Open_Shelf_Plate_Stack_Plate_1",
+      "origin": [
+        3470,
+        316,
+        1578
+      ],
+      "radius": 120,
+      "height": 8,
+      "segments": 32,
+      "smooth": "all",
+      "material": "Ceramic_Off_White"
+    },
+    {
+      "op": "cylinder",
+      "id": "open-shelf-plate-stack-plate-2",
+      "name": "Open_Shelf_Plate_Stack_Plate_2",
+      "origin": [
+        3470,
+        316,
+        1590
+      ],
+      "radius": 120,
+      "height": 8,
+      "segments": 32,
+      "smooth": "all",
+      "material": "Ceramic_Off_White"
+    },
+    {
+      "op": "cylinder",
+      "id": "open-shelf-plate-stack-plate-3",
+      "name": "Open_Shelf_Plate_Stack_Plate_3",
+      "origin": [
+        3470,
+        316,
+        1602
+      ],
+      "radius": 120,
+      "height": 8,
+      "segments": 32,
+      "smooth": "all",
+      "material": "Ceramic_Off_White"
+    },
+    {
+      "op": "cylinder",
+      "id": "open-shelf-plate-stack-plate-4",
+      "name": "Open_Shelf_Plate_Stack_Plate_4",
+      "origin": [
+        3470,
+        316,
+        1614
+      ],
+      "radius": 120,
+      "height": 8,
+      "segments": 32,
+      "smooth": "all",
+      "material": "Ceramic_Off_White"
+    },
+    {
+      "op": "cylinder",
+      "id": "open-shelf-plate-stack-bowl",
+      "name": "Open_Shelf_Plate_Stack_Bowl",
+      "origin": [
+        3470,
+        316,
+        1636
+      ],
+      "radius": 95,
+      "height": 52,
+      "segments": 32,
+      "smooth": "all",
+      "material": "Ceramic_Off_White"
+    },
+    {
+      "op": "cylinder",
+      "id": "island-display-plates-plate-1",
+      "name": "Island_Display_Plates_Plate_1",
+      "origin": [
+        2230,
+        2140,
+        948
+      ],
+      "radius": 120,
+      "height": 8,
+      "segments": 32,
+      "smooth": "all",
+      "material": "Ceramic_Off_White"
+    },
+    {
+      "op": "cylinder",
+      "id": "island-display-plates-plate-2",
+      "name": "Island_Display_Plates_Plate_2",
+      "origin": [
+        2230,
+        2140,
+        960
+      ],
+      "radius": 120,
+      "height": 8,
+      "segments": 32,
+      "smooth": "all",
+      "material": "Ceramic_Off_White"
+    },
+    {
+      "op": "cylinder",
+      "id": "island-display-plates-plate-3",
+      "name": "Island_Display_Plates_Plate_3",
+      "origin": [
+        2230,
+        2140,
+        972
+      ],
+      "radius": 120,
+      "height": 8,
+      "segments": 32,
+      "smooth": "all",
+      "material": "Ceramic_Off_White"
+    },
+    {
+      "op": "cylinder",
+      "id": "island-display-plates-plate-4",
+      "name": "Island_Display_Plates_Plate_4",
+      "origin": [
+        2230,
+        2140,
+        984
+      ],
+      "radius": 120,
+      "height": 8,
+      "segments": 32,
+      "smooth": "all",
+      "material": "Ceramic_Off_White"
+    },
+    {
+      "op": "cylinder",
+      "id": "island-display-plates-bowl",
+      "name": "Island_Display_Plates_Bowl",
+      "origin": [
+        2230,
+        2140,
+        1006
+      ],
+      "radius": 95,
+      "height": 52,
+      "segments": 32,
+      "smooth": "all",
+      "material": "Ceramic_Off_White"
+    },
+    {
+      "op": "cylinder",
+      "id": "countertop-basil-plant-pot",
+      "name": "Countertop_Basil_Plant_Pot",
+      "origin": [
+        4620,
+        360,
+        938
+      ],
+      "radius": 72,
+      "height": 92,
+      "segments": 24,
+      "smooth": "all",
+      "material": "Planter_Terracotta"
+    },
+    {
+      "op": "cylinder",
+      "id": "countertop-basil-plant-soil",
+      "name": "Countertop_Basil_Plant_Soil",
+      "origin": [
+        4620,
+        360,
+        1030
+      ],
+      "radius": 62,
+      "height": 8,
+      "segments": 24,
+      "smooth": "all",
+      "material": "Planter_Soil"
+    },
+    {
+      "op": "pipe_between_points",
+      "id": "countertop-basil-plant-leaf-1",
+      "name": "Countertop_Basil_Plant_Leaf_Stem_1",
+      "points": [
+        [
+          4638,
+          360,
+          1042
+        ],
+        [
+          4725,
+          360,
+          1168
+        ]
+      ],
+      "radius": 8,
+      "segments": 8,
+      "smooth": "all",
+      "material": "Plant_Green"
+    },
+    {
+      "op": "pipe_between_points",
+      "id": "countertop-basil-plant-leaf-2",
+      "name": "Countertop_Basil_Plant_Leaf_Stem_2",
+      "points": [
+        [
+          4631.223,
+          369.382,
+          1042
+        ],
+        [
+          4685.466,
+          414.728,
+          1196
+        ]
+      ],
+      "radius": 8,
+      "segments": 8,
+      "smooth": "all",
+      "material": "Plant_Green"
+    },
+    {
+      "op": "pipe_between_points",
+      "id": "countertop-basil-plant-leaf-3",
+      "name": "Countertop_Basil_Plant_Leaf_Stem_3",
+      "points": [
+        [
+          4615.995,
+          371.699,
+          1042
+        ],
+        [
+          4596.635,
+          428.245,
+          1224
+        ]
+      ],
+      "radius": 8,
+      "segments": 8,
+      "smooth": "all",
+      "material": "Plant_Green"
+    },
+    {
+      "op": "pipe_between_points",
+      "id": "countertop-basil-plant-leaf-4",
+      "name": "Countertop_Basil_Plant_Leaf_Stem_4",
+      "points": [
+        [
+          4603.783,
+          365.207,
+          1042
+        ],
+        [
+          4525.398,
+          390.372,
+          1168
+        ]
+      ],
+      "radius": 8,
+      "segments": 8,
+      "smooth": "all",
+      "material": "Plant_Green"
+    },
+    {
+      "op": "pipe_between_points",
+      "id": "countertop-basil-plant-leaf-5",
+      "name": "Countertop_Basil_Plant_Leaf_Stem_5",
+      "points": [
+        [
+          4603.783,
+          354.793,
+          1042
+        ],
+        [
+          4525.398,
+          329.628,
+          1196
+        ]
+      ],
+      "radius": 8,
+      "segments": 8,
+      "smooth": "all",
+      "material": "Plant_Green"
+    },
+    {
+      "op": "pipe_between_points",
+      "id": "countertop-basil-plant-leaf-6",
+      "name": "Countertop_Basil_Plant_Leaf_Stem_6",
+      "points": [
+        [
+          4615.995,
+          348.301,
+          1042
+        ],
+        [
+          4596.635,
+          291.755,
+          1224
+        ]
+      ],
+      "radius": 8,
+      "segments": 8,
+      "smooth": "all",
+      "material": "Plant_Green"
+    },
+    {
+      "op": "pipe_between_points",
+      "id": "countertop-basil-plant-leaf-7",
+      "name": "Countertop_Basil_Plant_Leaf_Stem_7",
+      "points": [
+        [
+          4631.223,
+          350.618,
+          1042
+        ],
+        [
+          4685.466,
+          305.272,
+          1168
+        ]
+      ],
+      "radius": 8,
+      "segments": 8,
+      "smooth": "all",
+      "material": "Plant_Green"
+    },
+    {
+      "op": "box",
+      "id": "showroom-price-card",
+      "name": "Showroom_Price_Tag_Card",
+      "origin": [
+        3920,
+        2090,
+        946
+      ],
+      "size": [
+        360,
+        210,
+        8
+      ],
+      "material": "Sample_Tag_White"
+    },
+    {
+      "op": "text_3d",
+      "id": "showroom-price-text",
+      "name": "Showroom_Price_Tag_Text",
+      "center": [
+        4100,
+        2195,
+        956
+      ],
+      "text": "METOD kitchen",
+      "height": 42,
+      "extrusion": 1,
+      "font": "Arial",
+      "align": "center",
+      "filled": true,
+      "bold": true,
+      "material": "Sample_Tag_Black_Text"
+    },
+    {
+      "op": "box",
+      "id": "worktop-swatch-oak",
+      "name": "Worktop_Sample_Swatch_Oak",
+      "origin": [
+        4400,
+        2080,
+        946
+      ],
+      "size": [
+        180,
+        160,
+        14
+      ],
+      "material": "Countertop_Oak_Butcher_Block"
+    },
+    {
+      "op": "box",
+      "id": "worktop-swatch-stone",
+      "name": "Worktop_Sample_Swatch_Stone",
+      "origin": [
+        4610,
+        2080,
+        946
+      ],
+      "size": [
+        180,
+        160,
+        14
+      ],
+      "material": "Countertop_Light_Stone"
+    },
+    {
+      "op": "box",
+      "id": "sample-front-white",
+      "name": "Cabinet_Front_Sample_White",
+      "origin": [
+        4420,
+        2360,
+        946
+      ],
+      "size": [
+        120,
+        18,
+        180
+      ],
+      "material": "Cabinet_Front_Matte_White"
+    },
+    {
+      "op": "box",
+      "id": "sample-front-anthracite",
+      "name": "Cabinet_Front_Sample_Anthracite",
+      "origin": [
+        4580,
+        2360,
+        946
+      ],
+      "size": [
+        120,
+        18,
+        180
+      ],
+      "material": "Cabinet_Front_Anthracite"
+    },
+    {
+      "op": "box",
+      "id": "sample-front-oak",
+      "name": "Cabinet_Front_Sample_Oak",
+      "origin": [
+        4740,
+        2360,
+        946
+      ],
+      "size": [
+        120,
+        18,
+        180
+      ],
+      "material": "Cabinet_Front_Oak_Veneer"
+    },
+    {
+      "op": "camera",
+      "eye": [
+        6200,
+        5200,
+        2200
+      ],
+      "target": [
+        2820,
+        1420,
+        1120
+      ],
+      "up": [
+        0,
+        0,
+        1
+      ],
+      "fov": 42
+    },
+    {
+      "op": "scene",
+      "name": "Kitchen_Showroom_Open_Front_Hero",
+      "camera": {
+        "eye": [
+          6200,
+          5200,
+          2200
+        ],
+        "target": [
+          2820,
+          1420,
+          1120
+        ],
+        "up": [
+          0,
+          0,
+          1
+        ],
+        "fov": 42
+      },
+      "transition_time": 1.5
+    },
+    {
+      "op": "scene",
+      "name": "Kitchen_Worktop_Eye_Level",
+      "camera": {
+        "eye": [
+          2860,
+          -2100,
+          1680
+        ],
+        "target": [
+          2860,
+          520,
+          1220
+        ],
+        "up": [
+          0,
+          0,
+          1
+        ],
+        "fov": 44
+      },
+      "transition_time": 1.2
+    },
+    {
+      "op": "scene",
+      "name": "Kitchen_Top_Plan_Check",
+      "camera": {
+        "eye": [
+          2700,
+          2100,
+          7600
+        ],
+        "target": [
+          2700,
+          2100,
+          700
+        ],
+        "up": [
+          0,
+          1,
+          0
+        ],
+        "fov": 32
+      },
+      "transition_time": 1
+    },
+    {
+      "op": "style",
+      "name": "IKEA_Showroom_Presentation",
+      "display_edges": true,
+      "profiles": true,
+      "profile_width": 1.5,
+      "display_watermarks": false,
+      "face_style": "shaded_with_textures",
+      "background_color": "#f5f3ef",
+      "sky_color": "#edf5ff",
+      "ground_color": "#d8d2c8"
+    },
+    {
+      "op": "shadow",
+      "display": true,
+      "time": "2026-07-02T15:00:00+08:00",
+      "light": 78,
+      "dark": 38,
+      "use_sun_for_shading": true
+    },
+    {
+      "op": "rendering_options",
+      "edge_display_mode": 1,
+      "draw_hidden_geometry": false,
+      "display_color_by_layer": false,
+      "transparency": false,
+      "draw_ground": true
+    },
+    {
+      "op": "camera",
+      "eye": [
+        6200,
+        5200,
+        2200
+      ],
+      "target": [
+        2820,
+        1420,
+        1120
+      ],
+      "up": [
+        0,
+        0,
+        1
+      ],
+      "fov": 42
+    }
+  ]
+}

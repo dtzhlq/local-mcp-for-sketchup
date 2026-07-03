@@ -1,12 +1,17 @@
 import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
 import { spawn } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const pythonSdkSource = await fs.readFile(path.join(repoRoot, 'examples/python-sdk-facade-fixture.py'), 'utf8');
+const mcpMockSessionPath = path.join(repoRoot, 'output', 'test-mcp-server-session.json');
+await fs.rm(mcpMockSessionPath, { force: true });
+await fs.rm(`${mcpMockSessionPath}.lock`, { force: true });
 const server = spawn(process.execPath, [path.join(repoRoot, 'src/mcp-server.mjs')], {
   cwd: repoRoot,
-  env: { ...process.env, ALMA_SKETCHUP_ENABLE_RUBY_EXPERT: '' },
+  env: { ...process.env, ALMA_SKETCHUP_ENABLE_RUBY_EXPERT: '', ALMA_SKETCHUP_MOCK_SESSION_PATH: mcpMockSessionPath },
   stdio: ['pipe', 'pipe', 'pipe']
 });
 
@@ -36,15 +41,41 @@ try {
   const toolNames = list.result.tools.map((tool) => tool.name);
   assert.ok(toolNames.includes('get_workflow_bundle'), 'MCP tools/list should expose get_workflow_bundle');
   assert.ok(toolNames.includes('compile_expert'), 'MCP tools/list should expose compile_expert');
+  assert.ok(toolNames.includes('compile_python_sdk'), 'MCP tools/list should expose compile_python_sdk');
   assert.ok(toolNames.includes('build_expert_model'), 'MCP tools/list should expose build_expert_model');
   assert.ok(toolNames.includes('validate_model'), 'MCP tools/list should expose validate_model');
   assert.ok(toolNames.includes('validate_reference_model'), 'MCP tools/list should expose validate_reference_model');
   assert.ok(toolNames.includes('queue_diagnostics'), 'MCP tools/list should expose queue_diagnostics');
   assert.ok(toolNames.includes('capture_view'), 'MCP tools/list should expose capture_view');
   assert.ok(toolNames.includes('run_ruby_expert'), 'MCP tools/list should expose run_ruby_expert');
+  for (const toolName of ['inspect_model', 'list_entities', 'get_model_info', 'adopt_open_model', 'resolve_model_targets', 'get_selection', 'analyze_selection_geometry', 'plan_modification_intent', 'set_selection', 'open_model', 'import_model', 'export_model', 'save_model_version', 'evaluate_py', 'build_report', 'iterate_model']) {
+    assert.ok(toolNames.includes(toolName), `MCP tools/list should expose ${toolName}`);
+  }
   const compileTool = list.result.tools.find((tool) => tool.name === 'compile_expert');
   assert.deepEqual(compileTool.inputSchema.required, ['code']);
   assert.ok(compileTool.inputSchema.properties.maxOperations);
+  const compilePythonTool = list.result.tools.find((tool) => tool.name === 'compile_python_sdk');
+  assert.deepEqual(compilePythonTool.inputSchema.required, ['code']);
+  assert.ok(compilePythonTool.inputSchema.properties.pythonTimeoutMs);
+  const evaluatePyTool = list.result.tools.find((tool) => tool.name === 'evaluate_py');
+  assert.ok(evaluatePyTool.inputSchema.properties.input_format.enum.includes('python_sdk'));
+  const iterateTool = list.result.tools.find((tool) => tool.name === 'iterate_model');
+  assert.equal(iterateTool.inputSchema.required, undefined);
+  assert.ok(iterateTool.inputSchema.properties.targets);
+  assert.ok(iterateTool.inputSchema.properties.target_query);
+  assert.ok(iterateTool.inputSchema.properties.preview_only);
+  assert.ok(iterateTool.inputSchema.properties.intent);
+  assert.ok(iterateTool.inputSchema.properties.intent_file);
+  assert.ok(iterateTool.inputSchema.properties.input_format.enum.includes('python_sdk'));
+  const adoptTool = list.result.tools.find((tool) => tool.name === 'adopt_open_model');
+  assert.ok(adoptTool.inputSchema.properties.recursive);
+  const resolveTool = list.result.tools.find((tool) => tool.name === 'resolve_model_targets');
+  assert.ok(resolveTool.inputSchema.properties.query);
+  const analyzeSelectionTool = list.result.tools.find((tool) => tool.name === 'analyze_selection_geometry');
+  assert.ok(analyzeSelectionTool.inputSchema.properties.assume);
+  const planIntentTool = list.result.tools.find((tool) => tool.name === 'plan_modification_intent');
+  assert.ok(planIntentTool.inputSchema.properties.action.enum.includes('set_attribute'));
+  assert.ok(planIntentTool.inputSchema.properties.output_dir);
   const rubyExpertTool = list.result.tools.find((tool) => tool.name === 'run_ruby_expert');
   assert.deepEqual(rubyExpertTool.inputSchema.required, ['code']);
   assert.equal(rubyExpertTool.inputSchema.properties.runtime.enum[0], 'queue');
@@ -53,6 +84,7 @@ try {
   assert.equal(workflowBundle.kind, 'sketchup_mcp_workflow_bundle');
   assert.ok(workflowBundle.workflows.inspector.steps.some((step) => step.tool === 'queue_diagnostics'));
   assert.ok(workflowBundle.workflows.modeler.steps.some((step) => step.tool === 'capture_view'));
+  assert.ok(workflowBundle.workflows.iterator.steps.some((step) => step.tool === 'iterate_model'));
 
   const blockedRubyExpert = await callTool('run_ruby_expert', { code: 'Sketchup.active_model.title' });
   assert.equal(blockedRubyExpert.kind, 'run_ruby_expert');
@@ -75,6 +107,165 @@ try {
   assert.equal(built.snapshot.totals.groups, 1);
   assert.equal(built.snapshot.warnings.length, 0);
   assert.ok(built.snapshot.groups.some((group) => group.name === 'MCP_Expert_Box'));
+
+  const pythonCompiled = await callTool('compile_python_sdk', { code: pythonSdkSource });
+  assert.equal(pythonCompiled.python_sdk.compiler_version, 'python-sdk-facade-compiler-0.1.0');
+  assert.equal(pythonCompiled.python_sdk.operations, 7);
+  assert.equal(pythonCompiled.result.panel, 'sdk-panel');
+
+  const pythonEvaluated = await callTool('evaluate_py', { code: pythonSdkSource, input_format: 'python_sdk', runtime: 'mock', pythonTimeoutMs: 20000 });
+  assert.equal(pythonEvaluated.compatibility_mode, 'python_sdk_facade_compiler');
+  assert.equal(pythonEvaluated.executed, true);
+  assert.equal(pythonEvaluated.blocked, false);
+  assert.equal(pythonEvaluated.snapshot.totals.groups, 4);
+  assert.equal(pythonEvaluated.snapshot.warning_summary.total, 0);
+
+  const apiDsl = JSON.stringify({
+    version: 1,
+    units: 'mm',
+    operations: [
+      { op: 'reset' },
+      { op: 'image_reference', name: 'MCP_Ref_Image', path: '/tmp/mcp-ref.png', width: 100, height: 60 },
+      { op: 'geometry_input', id: 'mcp-api-panel', name: 'MCP_API_Panel', vertices: [[0, 0, 0], [80, 0, 0], [80, 40, 0], [0, 40, 0]], faces: [[0, 1, 2, 3]] },
+      { op: 'curve', id: 'mcp-api-curve', name: 'MCP_API_Curve', points: [[0, 0, 10], [30, 10, 10], [80, 0, 10]] },
+      { op: 'arc_curve', id: 'mcp-api-arc', name: 'MCP_API_Arc', center: [0, 0, 20], radius: 25, start_angle: 0, end_angle: 90, segments: 4 },
+      { op: 'face_uv', target_id: 'mcp-api-panel', uv_id: 'front', uv: [[0, 0], [1, 0], [1, 1], [0, 1]], image_reference: 'MCP_Ref_Image' }
+    ]
+  });
+  const evaluated = await callTool('evaluate_py', { code: apiDsl, input_format: 'json_dsl', runtime: 'mock' });
+  assert.equal(evaluated.kind, 'evaluate_py');
+  assert.equal(evaluated.compatibility_mode, 'safe_json_dsl');
+  assert.equal(evaluated.blocked, false);
+  assert.equal(evaluated.snapshot.totals.groups, 3);
+  assert.equal(evaluated.snapshot.warning_summary.total, 0);
+  assert.equal(evaluated.snapshot.image_references[0].name, 'MCP_Ref_Image');
+  assert.equal(evaluated.snapshot.groups.find((group) => group.id === 'mcp-api-panel').face_uvs[0].id, 'front');
+
+  const inspected = await callTool('inspect_model', { runtime: 'mock', includeSnapshot: false });
+  assert.equal(inspected.kind, 'inspect_model');
+  assert.equal(inspected.entities.length, 3);
+  const listedCurves = await callTool('list_entities', { runtime: 'mock', kind: 'curve' });
+  assert.equal(listedCurves.entities.length, 1);
+  const modelInfo = await callTool('get_model_info', { runtime: 'mock' });
+  assert.equal(modelInfo.kind, 'model_info');
+  assert.equal(modelInfo.counts.image_references, 1);
+  const selected = await callTool('set_selection', { runtime: 'mock', targets: ['mcp-api-panel'] });
+  assert.equal(selected.selection.length, 1);
+  const currentSelection = await callTool('get_selection', { runtime: 'mock' });
+  assert.equal(currentSelection.selection[0].id, 'mcp-api-panel');
+  const selectionGeometry = await callTool('analyze_selection_geometry', { runtime: 'mock', assume: 'road', includeDetails: false });
+  assert.equal(selectionGeometry.kind, 'selection_geometry_analysis');
+  assert.equal(selectionGeometry.entities.length, 1);
+  assert.equal(selectionGeometry.entities[0].geometry.source, 'bounding_box_approximation');
+  assert.ok(selectionGeometry.uncertainties.some((item) => item.type === 'geometry.bbox_only'));
+  const intentDir = path.join(repoRoot, 'output', 'test-mcp-intent');
+  await fs.rm(intentDir, { recursive: true, force: true });
+  const plannedIntent = await callTool('plan_modification_intent', {
+    runtime: 'mock',
+    instruction: 'mark selected panel as reviewed',
+    action: 'set_attribute',
+    parameters: { dictionary: 'IntentTest', key: 'reviewed', value: true },
+    output_dir: intentDir
+  });
+  assert.equal(plannedIntent.kind, 'modification_intent');
+  assert.equal(plannedIntent.safe_to_execute, true);
+  assert.equal(plannedIntent.requires_confirmation, false);
+  assert.equal(plannedIntent.patch.operations[0].op, 'attribute');
+  assert.ok(plannedIntent.artifacts.modification_intent.endsWith('modification-intent.json'));
+  await fs.access(plannedIntent.artifacts.selection_geometry);
+  await fs.access(plannedIntent.artifacts.intent_manifest);
+  const adopted = await callTool('adopt_open_model', { runtime: 'mock', recursive: true });
+  assert.equal(adopted.kind, 'adopt_open_model');
+  assert.equal(adopted.existing_count, 3);
+  const resolvedPanel = await callTool('resolve_model_targets', { runtime: 'mock', query: 'largest panel' });
+  assert.equal(resolvedPanel.kind, 'target_resolution');
+  assert.equal(resolvedPanel.ok, true);
+  assert.equal(resolvedPanel.selected_targets[0].id, 'mcp-api-panel');
+
+  const iterationDir = path.join(repoRoot, 'output', 'test-mcp-iteration');
+  await fs.rm(iterationDir, { recursive: true, force: true });
+  const iterationPatch = JSON.stringify({
+    version: 1,
+    units: 'mm',
+    operations: [
+      { op: 'attribute', target_id: '$target', dictionary: 'MCP', key: 'iteration', value: 'target-query' },
+      { op: 'material', name: 'MCP_Iteration_Accent', color: '#dd8844' },
+      { op: 'box', id: 'mcp-iteration-addon', name: 'MCP_Iteration_Addon', origin: [90, 0, 0], size: [20, 20, 10], material: 'MCP_Iteration_Accent' }
+    ]
+  });
+  const iteration = await callTool('iterate_model', {
+    code: iterationPatch,
+    input_format: 'json_dsl',
+    runtime: 'mock',
+    output_dir: iterationDir,
+    label: 'mcp-iteration',
+    target_query: 'largest panel',
+    validate_model: false,
+    includePreview: false
+  });
+  assert.equal(iteration.kind, 'model_iteration');
+  assert.equal(iteration.before.model_info.totals.groups, 3);
+  assert.equal(iteration.after.model_info.totals.groups, 4);
+  assert.equal(iteration.change_summary.totals_delta.groups, 1);
+  assert.ok(iteration.change_summary.added.some((item) => item.id === 'mcp-iteration-addon'));
+  assert.equal(iteration.target_resolution.selected_targets[0].id, 'mcp-api-panel');
+  assert.equal(iteration.target_selection[0].id, 'mcp-api-panel');
+  assert.ok(iteration.saved_model.file_path.endsWith('model-mcp-iteration.json'));
+  await fs.access(iteration.artifacts.manifest);
+  await fs.access(iteration.artifacts.target_resolution);
+  await fs.access(iteration.artifacts.resolved_input);
+  await fs.access(iteration.artifacts.before_snapshot);
+  await fs.access(iteration.artifacts.after_snapshot);
+  await fs.access(iteration.artifacts.snapshot_diff);
+
+  const intentIterationDir = path.join(repoRoot, 'output', 'test-mcp-iteration-from-intent');
+  await fs.rm(intentIterationDir, { recursive: true, force: true });
+  const intentIteration = await callTool('iterate_model', {
+    intent: plannedIntent,
+    runtime: 'mock',
+    output_dir: intentIterationDir,
+    validate_model: false,
+    save_model: false
+  });
+  assert.equal(intentIteration.kind, 'model_iteration');
+  assert.equal(intentIteration.modification_intent.intent_id, plannedIntent.intent_id);
+  assert.equal(intentIteration.evaluation.compatibility_mode, 'safe_json_dsl');
+  await fs.access(intentIteration.artifacts.modification_intent);
+  await fs.access(intentIteration.artifacts.intent_patch);
+
+  const blockedIntent = await callTool('plan_modification_intent', {
+    runtime: 'mock',
+    instruction: 'delete selected panel',
+    action: 'delete_targets'
+  });
+  assert.equal(blockedIntent.requires_confirmation, true);
+  const blockedIntentIteration = await callTool('iterate_model', {
+    intent: blockedIntent,
+    runtime: 'mock',
+    output_dir: path.join(repoRoot, 'output', 'test-mcp-blocked-intent-iteration'),
+    validate_model: false,
+    save_model: false
+  });
+  assert.equal(blockedIntentIteration.kind, 'model_iteration_preview');
+  assert.equal(blockedIntentIteration.blocked, true);
+
+  const blockedPython = await callTool('evaluate_py', { code: 'print("hello")', input_format: 'auto', runtime: 'mock' });
+  assert.equal(blockedPython.blocked, true);
+  assert.equal(blockedPython.executed, false);
+
+  const reportDir = path.join(repoRoot, 'output', 'test-mcp-build-report');
+  await fs.rm(reportDir, { recursive: true, force: true });
+  const buildReport = await callTool('build_report', {
+    code: apiDsl,
+    runtime: 'mock',
+    output_dir: reportDir,
+    validate_model: false,
+    includePreview: false
+  });
+  assert.equal(buildReport.kind, 'build_report');
+  assert.equal(buildReport.summary.totals.groups, 3);
+  assert.ok(buildReport.artifacts.snapshot.endsWith('snapshot.json'));
+  await fs.access(buildReport.artifacts.manifest);
 
   const qa = await callTool('validate_model', {
     code: JSON.stringify({
@@ -127,7 +318,7 @@ try {
 
   console.log(JSON.stringify({
     ok: true,
-    tools: ['get_workflow_bundle', 'compile_expert', 'build_expert_model', 'validate_model', 'validate_reference_model', 'queue_diagnostics', 'capture_view', 'run_ruby_expert'],
+    tools: ['get_workflow_bundle', 'compile_expert', 'compile_python_sdk', 'build_expert_model', 'validate_model', 'validate_reference_model', 'queue_diagnostics', 'capture_view', 'run_ruby_expert', 'inspect_model', 'adopt_open_model', 'resolve_model_targets', 'analyze_selection_geometry', 'plan_modification_intent', 'evaluate_py', 'build_report', 'iterate_model'],
     groups: built.snapshot.totals.groups
   }, null, 2));
 } finally {
@@ -154,7 +345,7 @@ function request(message) {
   return new Promise((resolve, reject) => {
     const timeout = setTimeout(() => {
       reject(new Error(`Timed out waiting for MCP response ${id}. stderr: ${stderr}`));
-    }, 5000);
+    }, 10000);
     resolvers.set(id, {
       resolve: (value) => {
         clearTimeout(timeout);

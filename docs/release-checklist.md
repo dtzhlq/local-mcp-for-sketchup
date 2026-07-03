@@ -1,10 +1,10 @@
 # Release Checklist
 
-更新时间：2026-05-27
+更新时间：2026-07-03
 
 本清单用于把当前本地 replica 收成可安装、可回归、可打包的技术预览 slice。
 
-发布边界调整：2026-05-25 验收复盘后，当前版本不再按正式发布版本提交。下面的检查仍用于验证基础 runtime、Expert Mode、queue 回归和 RBZ 打包是否健康；阶段 7 主线已补受控真实特征编辑、queue active model 防护和 CAD boolean/manifold，子项目已补 semantic fusion、corrections workbench 和 compact remote 的 feature mapping 第一刀。正式发布前还必须用新能力复跑更多产品类验收。
+发布边界调整：2026-05-25 验收复盘后，当前版本不再把 `projects/image-structured-modeler` 的照片级/多图产品建模能力与主线 MCP runtime 发布 gate 混写。下面的检查用于验证主线 MCP 的基础 runtime、Expert Mode、queue 回归、official API expression R3 和 RBZ 打包是否健康；子项目正式发布仍需独立的产品样本/照片级验收。
 
 ## 1. 本地静态检查
 
@@ -21,7 +21,7 @@ git diff --check
 通过标准：
 
 - Ruby 插件主文件和所有子模块 `ruby -c` 通过。
-- Operation contract 输出 manifest / mock / Ruby dispatch 为 `85 / 85 / 85`，component registry / dispatch 为 `53 / 53`。
+- Operation contract 输出 manifest / mock / Ruby dispatch 为 `91 / 91 / 91`，component registry / dispatch 为 `56 / 56`。
 - Expert Mode fixture 编译和 mock build 通过，且安全拒绝场景由 `test/expert-compiler.mjs` 覆盖。
 - MCP stdio server 的 `tools/list` 和 `tools/call compile_expert/build_expert_model/validate_model` 由 `test/mcp-server.mjs` 覆盖。
 - mock QA、model layout QA、Expert mock QA 与 mock budget 均 Verdict `pass`；`qa:model-layout` 必须生成 Switch、救护车和儿童房的正交 preview/report，且 issues 为 `0`。
@@ -49,7 +49,7 @@ node src/cli.mjs get_capabilities --runtime queue --timeout-ms 10000
 - `runtime.version` 等于当前 `PLUGIN_VERSION`。
 - `runtime.compatibility.ok` 为 `true`。
 - `runtime.compatibility.issues` 为空。
-- supported operations 数量为 `85`。
+- supported operations 数量为 `91`。
 
 ## 3. Queue 回归
 
@@ -57,6 +57,7 @@ node src/cli.mjs get_capabilities --runtime queue --timeout-ms 10000
 npm run qa:queue
 npm run qa:expert:queue
 npm run qa:budget:queue
+npm run qa:official-api-r3:queue
 ```
 
 `queue` runtime 绑定当前 SketchUp 进程和 file queue，发布验证必须串行执行这些命令。Node 侧会用 `~/.sketchup-mcp-replica/queue-runtime.lock` 防止多个 queue 命令互相插入。
@@ -68,6 +69,7 @@ npm run qa:budget:queue
 - `output/model-qa/ambulance-reference-rerun-queue/report.md` Verdict `pass` / Level `ok` / issues `0`；救护车样例必须由 `npm run acceptance:generate-ambulance` 重新生成后再跑 queue。
 - `output/qa-reports/expert-queue/index.md` Verdict `pass`，Expert fixture 编译、queue 构建、SKP artifact 保存、runtime compatibility、warnings 和基础预算均通过。
 - `output/performance-budgets/queue/index.md` Verdict `pass`，四个发布样例低于默认 face / edge / vertex / group / instance / SKP size budget。
+- `output/python-sdk-official-api-expression-r3-queue.json` 断言全部通过，并保存 `output/python-sdk-official-api-expression-r3.skp`；当前基线为 `12 operations / 5 groups / 10 faces / 29 edges / 25 vertices / selection 1 / scene 1 / warnings 0`。
 
 ## 4. 打包 RBZ
 

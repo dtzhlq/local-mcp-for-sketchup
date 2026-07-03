@@ -1,0 +1,119 @@
+{
+  "version": 1,
+  "title": "IKEA Kitchen Showroom Layout QA",
+  "description": "Layout gate for a full-scale IKEA-inspired kitchen showroom. Expected collisions describe real mounted, welded, inset, or layered kitchen construction rather than arbitrary overlap.",
+  "rules": {
+    "allowed_collisions": [
+      {
+        "item": "/^(Integrated_Fridge_Freezer_Tall_Unit|Oven_Microwave_Tall_Unit|Prep_Drawer_Base_600|Sink_Base_800|Integrated_Dishwasher_600|Induction_Cooktop_Drawer_Base_800|Recycling_Pullout_Base_600|Upper_Cabinet_Left_900|Upper_Cabinet_Sink_900|Upper_Cabinet_Right_760|Island_Work_Side_900|Island_Work_Side_900_Right)_.*(Front|Door|Drawer|Pull|Handle|Panel)$/",
+        "with": "/^(Integrated_Fridge_Freezer_Tall_Unit|Oven_Microwave_Tall_Unit|Prep_Drawer_Base_600|Sink_Base_800|Integrated_Dishwasher_600|Induction_Cooktop_Drawer_Base_800|Recycling_Pullout_Base_600|Upper_Cabinet_Left_900|Upper_Cabinet_Sink_900|Upper_Cabinet_Right_760|Island_Base_Carcass|Island_Work_Side_900|Island_Work_Side_900_Right)_.*(Carcass|Front|Door|Drawer|Panel)$/"
+      },
+      {
+        "item": "/^Oven_Tower_/",
+        "with": "/^Oven_Microwave_Tall_Unit_/"
+      },
+      {
+        "item": "/^(Sink_|Faucet_)/",
+        "with": "/^(Continuous_Back_Run_Light_Stone_Countertop|Sink_|Faucet_)/"
+      },
+      {
+        "item": "/^Induction_/",
+        "with": "/^(Continuous_Back_Run_Light_Stone_Countertop|Induction_)/"
+      },
+      {
+        "item": "/^(Slim_Range_Hood|Range_Hood_)/",
+        "with": "/^(Back_Wall_Warm_White|Ceiling_Plane_Matte_White|Slim_Range_Hood|Range_Hood_)/"
+      },
+      {
+        "item": "/^(Open_Oak_Shelf|Under_Cabinet_LED)/",
+        "with": "/^(Back_Wall_Warm_White|Upper_Cabinet_.*|Open_Oak_Shelf)/"
+      },
+      {
+        "item": "/^Open_Shelf_Plate_Stack_/",
+        "with": "/^(Open_Oak_Shelf_Left|Open_Oak_Shelf_Left_Upper|Open_Shelf_Plate_Stack_)/"
+      },
+      {
+        "item": "/^Island_Display_Plates_/",
+        "with": "/^(Island_Oak_Butcher_Block_Countertop|Island_Display_Plates_)/"
+      },
+      {
+        "item": "/^(Island_Back_Display_Panel|Island_Power_Outlet|Worktop_Sample|Cabinet_Front_Sample|Showroom_Price_Tag)/",
+        "with": "/^(Island_Base_Carcass|Island_Oak_Butcher_Block_Countertop|Island_Back_Display_Panel|Island_Power_Outlet|Showroom_Price_Tag)/"
+      },
+      {
+        "item": "/^Oak_Bar_Stool_/",
+        "with": "/^Oak_Bar_Stool_/"
+      },
+      {
+        "item": "/^Pendant_Over_Island_/",
+        "with": "/^(Ceiling_Plane_Matte_White|Pendant_Over_Island_)/"
+      },
+      {
+        "item": "/^(Wall_Rail|Rail_Hook|Hanging_Utensil)/",
+        "with": "/^(Back_Wall_Warm_White|Wall_Rail|Rail_Hook|Hanging_Utensil)/"
+      },
+      {
+        "item": "/^Countertop_Basil_Plant_/",
+        "with": "/^(Continuous_Back_Run_Light_Stone_Countertop|Countertop_Basil_Plant_)/"
+      },
+      {
+        "item": "/^White_Subway_Tile_/",
+        "with": "/^(Back_Wall_Warm_White|Backsplash_Grout_)/"
+      },
+      {
+        "item": "/^Backsplash_Grout_/",
+        "with": "/^(Back_Wall_Warm_White|White_Subway_Tile_)/"
+      }
+    ],
+    "inside": [
+      {
+        "match": "^(Integrated_Fridge_Freezer_Tall_Unit|Oven_Microwave_Tall_Unit|Prep_Drawer_Base_600|Sink_Base_800|Integrated_Dishwasher_600|Induction_Cooktop_Drawer_Base_800|Recycling_Pullout_Base_600|Island_|Oak_Bar_Stool_|Pendant_Over_Island_|Worktop_Sample_|Cabinet_Front_Sample_|Showroom_Price_Tag_|Countertop_Basil_Plant_).*",
+        "parent": "Room_Floor_Slab_5400x4200",
+        "axes": [
+          "x",
+          "y"
+        ],
+        "tolerance_mm": 0
+      }
+    ],
+    "support": [
+      {
+        "match": "^(Integrated_Fridge_Freezer_Tall_Unit_Carcass|Oven_Microwave_Tall_Unit_Carcass|.*_Toe_Kick|Island_Recessed_Toe_Kick_Platform|Island_Oak_Waterfall_.*|Oak_Bar_Stool_.*_Foot)$",
+        "parent": "Room_Floor_Slab_5400x4200",
+        "max_gap_mm": 5,
+        "allow_penetration_mm": 1
+      },
+      {
+        "match": "^Island_Base_Carcass$",
+        "parent": "Island_Recessed_Toe_Kick_Platform",
+        "max_gap_mm": 2,
+        "allow_penetration_mm": 1
+      },
+      {
+        "match": "^Countertop_Basil_Plant_Pot$",
+        "parent": "Continuous_Back_Run_Light_Stone_Countertop",
+        "max_gap_mm": 2,
+        "allow_penetration_mm": 1
+      }
+    ],
+    "separation": [
+      {
+        "name": "clear working aisle between back run and island",
+        "items": [
+          "Continuous_Back_Run_Light_Stone_Countertop",
+          "Island_Oak_Butcher_Block_Countertop"
+        ],
+        "axes": [
+          "y",
+          "z"
+        ],
+        "min_gap_mm": 900
+      }
+    ],
+    "views": [
+      "top",
+      "front",
+      "right"
+    ]
+  }
+}

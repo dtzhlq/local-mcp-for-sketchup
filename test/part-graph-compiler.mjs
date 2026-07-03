@@ -3,7 +3,9 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import Ajv2020 from 'ajv/dist/2020.js';
 import { SketchUpBridge } from '../src/bridge.mjs';
+import { materializeDslAssetPaths } from '../src/dsl-asset-paths.mjs';
 import { compilePartGraphFiles, compilePartGraphToSketchUpDsl } from '../src/product-modeling/part-graph-compiler.mjs';
+import { compileParametricRecipe } from '../src/product-modeling/parametric-recipe.mjs';
 import { validatePartGraphPhysicalConsistency } from '../src/product-modeling/physical-consistency-qa.mjs';
 
 const repoRoot = process.cwd();
@@ -16,6 +18,8 @@ const switchOutputPath = 'examples/acceptance-switch-controller.json';
 const cameraProfilePath = 'examples/product-profiles/camera_fuji_x_t10.json';
 const cameraPartGraphPath = 'examples/part-graphs/fuji-camera-reference.part-graph.json';
 const cameraOutputPath = 'examples/acceptance-fuji-camera.json';
+const parametricRecipePath = 'examples/parametric-recipes/switch-thumbstick-variants.parametric-recipe.json';
+const featureMappingPlanPath = 'examples/feature-mapping-plans/switch-thumbstick-variants.feature-mapping-plan.json';
 const buildingProfilePath = 'examples/product-profiles/building_group_industrial_campus.json';
 const buildingPartGraphPath = 'projects/image-structured-modeler/examples/building-group/part-graph.massing.json';
 const buildingOutputPath = 'projects/image-structured-modeler/examples/building-group/output.massing.json';
@@ -25,8 +29,10 @@ const buildingSinglePartGraphPath = 'projects/image-structured-modeler/examples/
 const ajv = new Ajv2020({ allErrors: true, strict: false });
 const productProfileSchema = JSON.parse(await fs.readFile('schema/product-profile.schema.json', 'utf8'));
 const partGraphSchema = JSON.parse(await fs.readFile('schema/part-graph.schema.json', 'utf8'));
+const parametricRecipeSchema = JSON.parse(await fs.readFile('schema/parametric-recipe.schema.json', 'utf8'));
 const validateProfile = ajv.compile(productProfileSchema);
 const validatePartGraph = ajv.compile(partGraphSchema);
+const validateParametricRecipe = ajv.compile(parametricRecipeSchema);
 
 const profile = JSON.parse(await fs.readFile(profilePath, 'utf8'));
 const partGraph = JSON.parse(await fs.readFile(partGraphPath, 'utf8'));
@@ -36,6 +42,9 @@ const switchProfile = JSON.parse(await fs.readFile(switchProfilePath, 'utf8'));
 const switchPartGraph = JSON.parse(await fs.readFile(switchPartGraphPath, 'utf8'));
 assertValid(validateProfile, switchProfile, switchProfilePath);
 assertValid(validatePartGraph, switchPartGraph, switchPartGraphPath);
+const parametricRecipe = JSON.parse(await fs.readFile(parametricRecipePath, 'utf8'));
+const expectedFeatureMappingPlan = JSON.parse(await fs.readFile(featureMappingPlanPath, 'utf8'));
+assertValid(validateParametricRecipe, parametricRecipe, parametricRecipePath);
 const cameraProfile = JSON.parse(await fs.readFile(cameraProfilePath, 'utf8'));
 const cameraPartGraph = JSON.parse(await fs.readFile(cameraPartGraphPath, 'utf8'));
 assertValid(validateProfile, cameraProfile, cameraProfilePath);
@@ -100,6 +109,30 @@ assert.equal(driftedCameraDetailPhysicalReport.ok, false, 'physical consistency 
 assert.ok(driftedCameraDetailPhysicalReport.issues.some((issue) => issue.type === 'physical.face_contact_gap' && issue.item === 'fuji-rear-menu-button'), 'physical consistency should report the small Fuji detail button contact gap');
 assert.ok(driftedCameraDetailPhysicalReport.correction_suggestions.some((suggestion) => suggestion.action === 'update_part_graph' && suggestion.target === 'parts[fuji-rear-menu-button].shape.parameters.origin'), 'physical consistency should suggest a Fuji detail PartGraph origin correction');
 
+const { featureMappingPlan, report: parametricRecipeReport } = compileParametricRecipe(parametricRecipe, { partGraph: switchPartGraph });
+assert.deepEqual(featureMappingPlan, expectedFeatureMappingPlan, 'parametric recipe should compile into the reviewed static FeatureMappingPlan artifact');
+assert.equal(parametricRecipeReport.ok, true, 'parametric recipe compile report should pass');
+assert.equal(parametricRecipeReport.downstream_target_kind, 'part_graph', 'parametric recipe report should preserve the declared downstream target');
+assert.equal(parametricRecipeReport.summary.first_output_candidate, 'baseline', 'batch fanout should require a reviewed first output candidate');
+assert.deepEqual(
+  parametricRecipeReport.summary.execution_order,
+  [
+    'left_thumbstick_recess',
+    'right_thumbstick_recess',
+    'left_thumbstick_stack_alignment',
+    'right_thumbstick_stack_alignment'
+  ],
+  'parametric recipe graph should topologically order dependencies'
+);
+
+const missingFirstOutputRecipe = deepClone(parametricRecipe);
+delete missingFirstOutputRecipe.compile.batch.first_output;
+assert.throws(
+  () => compileParametricRecipe(missingFirstOutputRecipe, { partGraph: switchPartGraph }),
+  /batch\.first_output is required/,
+  'batch fanout must fail closed when first-output discipline is missing'
+);
+
 const document = await compilePartGraphFiles({ profilePath, partGraphPath, repoRoot });
 assert.equal(document.version, 1);
 assert.equal(document.units, 'mm');
@@ -126,7 +159,12 @@ assert.equal(stripeOp.qa.fallback_state, 'visual_helper');
 
 const referenceOp = operationById(document, 'ambulance-side-reference');
 assert.equal(referenceOp.qa.role, 'reference_image');
-assert.equal(path.isAbsolute(referenceOp.image), true, 'reference image paths should resolve to absolute paths for queue runtime');
+assert.equal(path.isAbsolute(referenceOp.image), false, 'compiled reference image paths should stay portable inside repo artifacts');
+assert.equal(referenceOp.image, 'test/救护车/AD967E86-6C30-4740-BB2F-0650387D4936_1_102_o.jpeg');
+const queueReadyDocument = materializeDslAssetPaths(document, { repoRoot });
+const queueReadyReferenceOp = operationById(queueReadyDocument, 'ambulance-side-reference');
+assert.equal(path.isAbsolute(queueReadyReferenceOp.image), true, 'queue runtime should materialize repo-relative reference paths before SketchUp execution');
+await fs.access(queueReadyReferenceOp.image);
 
 const mockSessionPath = path.join(repoRoot, 'output', 'product-modeling', 'sessions', 'part-graph-compiler-mock.json');
 await fs.mkdir(path.dirname(mockSessionPath), { recursive: true });

@@ -9,6 +9,7 @@ const PLUGIN_FILES = [
   { source: 'sketchup_plugin/alma_sketchup_mcp/operation_registry.rb', target: 'alma_sketchup_mcp/operation_registry.rb' },
   { source: 'sketchup_plugin/alma_sketchup_mcp/object_operations.rb', target: 'alma_sketchup_mcp/object_operations.rb' },
   { source: 'sketchup_plugin/alma_sketchup_mcp/materials.rb', target: 'alma_sketchup_mcp/materials.rb' },
+  { source: 'sketchup_plugin/alma_sketchup_mcp/appearance_operations.rb', target: 'alma_sketchup_mcp/appearance_operations.rb' },
   { source: 'sketchup_plugin/alma_sketchup_mcp/geometry_operations.rb', target: 'alma_sketchup_mcp/geometry_operations.rb' },
   { source: 'sketchup_plugin/alma_sketchup_mcp/primitive_operations.rb', target: 'alma_sketchup_mcp/primitive_operations.rb' },
   { source: 'sketchup_plugin/alma_sketchup_mcp/product_operations.rb', target: 'alma_sketchup_mcp/product_operations.rb' },

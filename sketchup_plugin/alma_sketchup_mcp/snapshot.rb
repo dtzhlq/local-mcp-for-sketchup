@@ -20,6 +20,8 @@ module AlmaSketchupMCP
         'tag' => entity_tag_name(group),
         'classification' => entity_classification(group),
         'texture_transform' => entity_texture_transform(group),
+        'face_uvs' => entity_face_uvs(group),
+        'geometry_input' => entity_geometry_input(group),
         'image' => group.respond_to?(:get_attribute) ? group.get_attribute('AlmaSketchupMCP', 'image') : nil,
         'attributes' => entity_attributes(group),
         'features' => entity_features(group),
@@ -44,6 +46,7 @@ module AlmaSketchupMCP
         'tag' => entity_tag_name(instance),
         'classification' => entity_classification(instance),
         'texture_transform' => entity_texture_transform(instance),
+        'face_uvs' => entity_face_uvs(instance),
         'attributes' => entity_attributes(instance),
         'features' => entity_features(instance),
         'boolean_operations' => entity_boolean_operations(instance),
@@ -73,15 +76,23 @@ module AlmaSketchupMCP
       'tags' => model.layers.reject { |layer| layer.name.to_s.empty? || %w[Untagged Layer0].include?(layer.name) }.map { |layer| tag_snapshot(layer) }.sort_by { |tag| tag['name'] },
       'materials' => model.materials.map { |material| material_snapshot(material) }.sort_by { |material| material['name'] },
       'material_names' => model.materials.map(&:name).reject(&:empty?).sort,
+      'image_references' => image_references_snapshot(model),
       'style_state' => @style_state,
       'shadow_state' => @shadow_state,
       'rendering_options' => @rendering_options_state,
       'bounding_box' => merge_bounds_hashes(visible_items.map { |item| item['bounding_box'] }),
+      'selection' => selection_snapshot(model),
       'warnings' => all_warnings,
       'warning_messages' => all_warnings.map { |w| w['message'] },
       'warning_summary' => warning_summary(all_warnings),
       'view_state' => @view_state
     }
+  end
+
+  def selection_snapshot(model)
+    model.selection.to_a.select { |entity| selectable_entity?(entity) }.map { |entity| selection_entity_summary(entity) }
+  rescue StandardError
+    []
   end
 
 
@@ -96,7 +107,7 @@ module AlmaSketchupMCP
   def snapshot_warnings(groups)
     warnings = (@warnings || []).dup
     groups.each do |group|
-      if group['faces'].zero?
+      if group['faces'].zero? && !zero_face_allowed?(group)
         warnings << {
           'type' => 'geometry.degenerate',
           'severity' => 'error',
@@ -120,6 +131,10 @@ module AlmaSketchupMCP
       end
     end
     warnings
+  end
+
+  def zero_face_allowed?(group)
+    %w[curve arc_curve].include?(group['kind'])
   end
 
   def warning_summary(warnings)
@@ -231,6 +246,17 @@ module AlmaSketchupMCP
       snapshot['pbr'] = pbr unless pbr.empty?
     end
     snapshot
+  end
+
+  def entity_geometry_input(entity)
+    return nil unless entity.respond_to?(:get_attribute)
+
+    raw = entity.get_attribute('GeometryInput', 'geometry_input_json')
+    return nil if raw.nil? || raw.to_s.empty?
+
+    JSON.parse(raw.to_s)
+  rescue JSON::ParserError
+    nil
   end
 
   def tag_snapshot(layer)

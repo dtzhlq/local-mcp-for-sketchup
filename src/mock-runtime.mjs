@@ -1,8 +1,9 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { emptyModel } from './model-state.mjs';
+import { addImageReference, setFaceUv } from './appearance-operations.mjs';
 import { ensureMaterial } from './material-operations.mjs';
-import { addMesh, addPrism, addCylinder } from './primitive-operations.mjs';
+import { addArcCurve, addCurve, addGeometryInput, addMesh, addPrism, addCylinder } from './primitive-operations.mjs';
 import { addBooleanCutout, addFaceWithHoles, addGableRoof, addPanelWithOpenings, addProfileExtrude, addShedRoof } from './profile-operations.mjs';
 import { addAnalogStick, addBowedPanel, addDomedSurface, addFaceOnCylinder, addLoftBetweenProfiles, addLoftedSolid, addPipeBetweenPoints, addScrewHole, addShellFromFrontSideProfiles, addSweptPath } from './surface-operations.mjs';
 import { addBeveledPanel, addBox, addButtonOnPanel, addChamfer, addEngravedLine, addFillet, addImagePlane, addRecess, addRib, addRoundedBox, addSlot, addSlotArray, addStandoffBoss, addText3d, addTextEmboss, addTextEngrave } from './product-operations.mjs';
@@ -13,8 +14,10 @@ import { addComponentDefinition, addComponentInstance } from './component-operat
 import { addDemoRoom } from './demo-operations.mjs';
 import { addTag, assignTag, deleteObject, renameObject, setObjectAttribute, setObjectClassification, setObjectMaterial, setObjectTextureTransform, setObjectVisibility, transformObject } from './object-operations.mjs';
 import { mockSessionPath } from './paths.mjs';
+import { entityListFromSnapshot, inspectSnapshot, modelInfoFromSnapshot, selectionFromModel, setModelSelection, versionedPath } from './model-inspection.mjs';
 import { createSnapshot } from './snapshot.mjs';
 import { addScene, setCamera, setRenderingOptions, setShadow, setStyle } from './view-operations.mjs';
+import { adoptMockModel } from './model-adoption.mjs';
 
 const DEFAULT_OPERATION_LIMIT = 2000;
 const DEFAULT_LOCK_TIMEOUT_MS = 30000;
@@ -72,6 +75,12 @@ export class MockRuntime {
           break;
         case 'texture_transform':
           setObjectTextureTransform(model, operation);
+          break;
+        case 'face_uv':
+          setFaceUv(model, operation);
+          break;
+        case 'image_reference':
+          addImageReference(model, operation);
           break;
         case 'uv_project_planar':
           setObjectTextureTransform(model, { ...operation, projection: 'planar' });
@@ -235,6 +244,15 @@ export class MockRuntime {
         case 'mesh':
           addMesh(model, operation);
           break;
+        case 'geometry_input':
+          addGeometryInput(model, operation);
+          break;
+        case 'curve':
+          addCurve(model, operation);
+          break;
+        case 'arc_curve':
+          addArcCurve(model, operation);
+          break;
         case 'prism':
           addPrism(model, operation);
           break;
@@ -289,6 +307,9 @@ export class MockRuntime {
         case 'component_instance':
           addComponentInstance(model, operation);
           break;
+        case 'selection':
+          setModelSelection(model, { targets: operation.targets || [], mode: operation.mode || 'replace' });
+          break;
         case 'camera':
           setCamera(model, operation);
           break;
@@ -330,6 +351,139 @@ export class MockRuntime {
       return {
         file_path: targetPath,
         file_size_bytes: stats.size,
+        snapshot: createSnapshot(model)
+      };
+    });
+  }
+
+  async saveModelVersion({ outputPath, basePath, label, keepSession = true } = {}) {
+    const targetPath = versionedPath(outputPath || basePath, {
+      defaultBase: path.join('output', 'mock-model.json'),
+      label,
+      extension: '.json'
+    });
+    return this.saveModel({ outputPath: targetPath, keepSession });
+  }
+
+  async openModel({ inputPath, path: requestedPath } = {}) {
+    if (!inputPath && !requestedPath) throw new Error('open_model requires path');
+    const targetPath = path.resolve(inputPath || requestedPath);
+    return this.withSessionLock(async () => {
+      const model = await readMockModelArtifact(targetPath, 'open_model');
+      await this.writeModel(model);
+      return {
+        kind: 'open_model',
+        runtime: 'mock',
+        file_path: targetPath,
+        snapshot: createSnapshot(model)
+      };
+    });
+  }
+
+  async importModel({ inputPath, path: requestedPath, mode = 'append', prefix } = {}) {
+    if (!inputPath && !requestedPath) throw new Error('import_model requires path');
+    const targetPath = path.resolve(inputPath || requestedPath);
+    return this.withSessionLock(async () => {
+      const imported = await readMockModelArtifact(targetPath, 'import_model');
+      let model = await this.readModel();
+      const normalizedMode = String(mode || 'append').toLowerCase();
+      if (normalizedMode === 'replace') {
+        model = imported;
+      } else if (normalizedMode === 'append') {
+        model = appendImportedModel(model, imported, { prefix: prefix || path.basename(targetPath, path.extname(targetPath)) });
+      } else {
+        throw new Error('import_model.mode must be append or replace');
+      }
+      await this.writeModel(model);
+      return {
+        kind: 'import_model',
+        runtime: 'mock',
+        file_path: targetPath,
+        mode: normalizedMode,
+        snapshot: createSnapshot(model)
+      };
+    });
+  }
+
+  async exportModel({ outputPath, path: requestedPath, format = 'mock_json' } = {}) {
+    const normalizedFormat = String(format || 'mock_json').toLowerCase();
+    if (!['mock_json', 'json'].includes(normalizedFormat)) {
+      throw new Error('mock export_model supports format mock_json/json only');
+    }
+    return this.withSessionLock(async () => {
+      const model = await this.readModel();
+      const targetPath = path.resolve(outputPath || requestedPath || path.join('output', 'mock-export.json'));
+      await fs.mkdir(path.dirname(targetPath), { recursive: true });
+      await fs.writeFile(targetPath, `${JSON.stringify({ model, snapshot: createSnapshot(model), format: normalizedFormat }, null, 2)}\n`, 'utf8');
+      const stats = await fs.stat(targetPath);
+      return {
+        kind: 'export_model',
+        runtime: 'mock',
+        format: normalizedFormat,
+        file_path: targetPath,
+        file_size_bytes: stats.size,
+        snapshot: createSnapshot(model)
+      };
+    });
+  }
+
+  async inspectModel(options = {}) {
+    return this.withSessionLock(async () => {
+      const model = await this.readModel();
+      return inspectSnapshot(createSnapshot(model), {
+        ...options,
+        runtime: 'mock',
+        selection: selectionFromModel(model)
+      });
+    });
+  }
+
+  async listEntities(options = {}) {
+    return this.withSessionLock(async () => {
+      const snapshot = createSnapshot(await this.readModel());
+      return {
+        kind: 'list_entities',
+        runtime: 'mock',
+        entities: entityListFromSnapshot(snapshot, options)
+      };
+    });
+  }
+
+  async getModelInfo() {
+    return this.withSessionLock(async () => {
+      return modelInfoFromSnapshot(createSnapshot(await this.readModel()), { runtime: 'mock' });
+    });
+  }
+
+  async adoptOpenModel(options = {}) {
+    return this.withSessionLock(async () => {
+      const model = await this.readModel();
+      const report = adoptMockModel(model, options);
+      await this.writeModel(model);
+      return report;
+    });
+  }
+
+  async getSelection() {
+    return this.withSessionLock(async () => {
+      return {
+        kind: 'get_selection',
+        runtime: 'mock',
+        selection: selectionFromModel(await this.readModel())
+      };
+    });
+  }
+
+  async setSelection({ targets = [], mode = 'replace' } = {}) {
+    return this.withSessionLock(async () => {
+      const model = await this.readModel();
+      const selection = setModelSelection(model, { targets, mode });
+      await this.writeModel(model);
+      return {
+        kind: 'set_selection',
+        runtime: 'mock',
+        mode,
+        selection,
         snapshot: createSnapshot(model)
       };
     });
@@ -390,6 +544,74 @@ export class MockRuntime {
       if (error.code !== 'ENOENT') throw error;
     }
   }
+}
+
+async function readMockModelArtifact(filePath, operationName) {
+  if (!filePath) throw new Error(`${operationName} requires path`);
+  const document = JSON.parse(await fs.readFile(filePath, 'utf8'));
+  const model = document.model || document;
+  if (!model || typeof model !== 'object' || !Array.isArray(model.groups)) {
+    throw new Error(`${operationName} mock runtime can open/import only mock model JSON artifacts with a model.groups array`);
+  }
+  return normalizeImportedModel(structuredClone(model));
+}
+
+function normalizeImportedModel(model) {
+  return {
+    ...emptyModel(),
+    ...model,
+    groups: model.groups || [],
+    instances: model.instances || [],
+    component_definitions: model.component_definitions || {},
+    materials: model.materials || {},
+    tags: model.tags || {},
+    image_references: model.image_references || {},
+    selection: []
+  };
+}
+
+function appendImportedModel(model, imported, { prefix }) {
+  const result = normalizeImportedModel(structuredClone(model));
+  const importedModel = normalizeImportedModel(structuredClone(imported));
+  Object.assign(result.materials, importedModel.materials);
+  Object.assign(result.tags, importedModel.tags);
+  Object.assign(result.image_references, importedModel.image_references);
+  for (const [definitionName, definition] of Object.entries(importedModel.component_definitions || {})) {
+    const nextName = uniqueName(definitionName, new Set(Object.keys(result.component_definitions || {})), prefix);
+    result.component_definitions[nextName] = { ...definition, name: nextName };
+  }
+  const usedIds = new Set([...result.groups, ...(result.instances || [])].map((item) => item.id || item.name));
+  const usedNames = new Set([...result.groups, ...(result.instances || [])].map((item) => item.name));
+  for (const group of importedModel.groups || []) {
+    result.groups.push(renameImportedObject(group, usedIds, usedNames, prefix));
+  }
+  for (const instance of importedModel.instances || []) {
+    result.instances ||= [];
+    result.instances.push(renameImportedObject(instance, usedIds, usedNames, prefix));
+  }
+  return result;
+}
+
+function renameImportedObject(object, usedIds, usedNames, prefix) {
+  const clone = structuredClone(object);
+  clone.id = uniqueName(clone.id || clone.name, usedIds, prefix);
+  clone.name = uniqueName(clone.name, usedNames, prefix);
+  usedIds.add(clone.id);
+  usedNames.add(clone.name);
+  return clone;
+}
+
+function uniqueName(value, used, prefix) {
+  const base = String(value || 'Imported');
+  if (!used.has(base)) return base;
+  const safePrefix = String(prefix || 'import').replace(/[^a-z0-9_-]+/gi, '_') || 'import';
+  let candidate = `${safePrefix}_${base}`;
+  let index = 2;
+  while (used.has(candidate)) {
+    candidate = `${safePrefix}_${base}_${index}`;
+    index += 1;
+  }
+  return candidate;
 }
 
 function sleep(ms) {

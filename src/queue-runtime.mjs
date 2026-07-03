@@ -2,6 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { defaultQueueDir, defaultResponseDir } from './paths.mjs';
+import { materializeDslAssetPaths } from './dsl-asset-paths.mjs';
 
 const DEFAULT_LOCK_TIMEOUT_MS = 30000;
 const DEFAULT_STALE_LOCK_MS = 10 * 60 * 1000;
@@ -11,6 +12,7 @@ export class QueueRuntime {
   constructor({
     queueDir = defaultQueueDir,
     responseDir = defaultResponseDir,
+    repoRoot = process.cwd(),
     timeoutMs = 30000,
     lockPath,
     lockTimeoutMs,
@@ -19,6 +21,7 @@ export class QueueRuntime {
   } = {}) {
     this.queueDir = queueDir;
     this.responseDir = responseDir;
+    this.repoRoot = path.resolve(repoRoot);
     this.timeoutMs = timeoutMs;
     this.lockPath = lockPath || path.join(path.dirname(queueDir), 'queue-runtime.lock');
     this.lockTimeoutMs = lockTimeoutMs ?? numberFromEnv('ALMA_SKETCHUP_QUEUE_LOCK_TIMEOUT_MS', Math.max(timeoutMs || 0, DEFAULT_LOCK_TIMEOUT_MS));
@@ -36,7 +39,8 @@ export class QueueRuntime {
   }
 
   async buildModel(code) {
-    return this.call('build_model', { code });
+    const queueReadyCode = materializeDslAssetPaths(code, { repoRoot: this.repoRoot });
+    return this.call('build_model', { code: queueReadyCode });
   }
 
   async saveModel({ outputPath, keepSession = true } = {}) {
@@ -54,12 +58,79 @@ export class QueueRuntime {
     return result;
   }
 
-  async captureView({ outputPath, path: requestedPath, view, width, height, antialias, compression, zoomExtents, zoom_extents } = {}) {
+  async saveModelVersion({ outputPath, basePath, label, keepSession = true } = {}) {
+    const requestedPath = outputPath || basePath;
+    const resolvedPath = requestedPath ? path.resolve(requestedPath) : requestedPath;
+    const result = await this.call('save_model_version', { path: resolvedPath, base_path: resolvedPath, label, keep_session: keepSession });
+    if (result && result.file_path) {
+      try {
+        const stats = await fs.stat(result.file_path);
+        result.file_size_bytes = stats.size;
+      } catch (_) {
+        // File may not be accessible; skip.
+      }
+    }
+    return result;
+  }
+
+  async openModel({ inputPath, path: requestedPath } = {}) {
+    const sourcePath = inputPath || requestedPath;
+    const resolvedPath = sourcePath ? path.resolve(sourcePath) : sourcePath;
+    return this.call('open_model', { path: resolvedPath });
+  }
+
+  async importModel({ inputPath, path: requestedPath, mode, prefix, options = {} } = {}) {
+    const sourcePath = inputPath || requestedPath;
+    const resolvedPath = sourcePath ? path.resolve(sourcePath) : sourcePath;
+    return this.call('import_model', { path: resolvedPath, mode, prefix, options });
+  }
+
+  async exportModel({ outputPath, path: requestedPath, format, options = {} } = {}) {
+    const targetPath = outputPath || requestedPath;
+    const resolvedPath = targetPath ? path.resolve(targetPath) : targetPath;
+    const result = await this.call('export_model', { path: resolvedPath, format, options });
+    if (result && result.file_path) {
+      try {
+        const stats = await fs.stat(result.file_path);
+        result.file_size_bytes = stats.size;
+      } catch (_) {
+        // File may not be accessible; skip.
+      }
+    }
+    return result;
+  }
+
+  async inspectModel(options = {}) {
+    return this.call('inspect_model', options);
+  }
+
+  async listEntities(options = {}) {
+    return this.call('list_entities', options);
+  }
+
+  async getModelInfo() {
+    return this.call('get_model_info', {});
+  }
+
+  async adoptOpenModel(options = {}) {
+    return this.call('adopt_open_model', options);
+  }
+
+  async getSelection() {
+    return this.call('get_selection', {});
+  }
+
+  async setSelection({ targets = [], mode = 'replace' } = {}) {
+    return this.call('set_selection', { targets, mode });
+  }
+
+  async captureView({ outputPath, path: requestedPath, view, scene, width, height, antialias, compression, zoomExtents, zoom_extents } = {}) {
     const outputPathValue = outputPath || requestedPath;
     const resolvedPath = outputPathValue ? path.resolve(outputPathValue) : outputPathValue;
     const result = await this.call('capture_view', {
       path: resolvedPath,
       view,
+      scene,
       width,
       height,
       antialias,

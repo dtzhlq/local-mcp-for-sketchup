@@ -1,6 +1,6 @@
 export const DSL_VERSION = 1;
-export const CAPABILITY_MANIFEST_VERSION = '2026-06-building-geometry-r3-quality';
-export const RUNTIME_CAPABILITY_VERSION = '0.1.0-capabilities.8';
+export const CAPABILITY_MANIFEST_VERSION = '2026-07-official-api-expression-r3';
+export const RUNTIME_CAPABILITY_VERSION = '0.1.0-capabilities.10';
 
 export const SUPPORT_STATUS = Object.freeze({
   supported: 'supported',
@@ -92,6 +92,22 @@ const OPERATION_REGISTRY_ENTRIES = [
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
     notes: 'Semantic alias for texture_transform with projection=box.'
+  },
+  {
+    op: 'face_uv',
+    description: 'Attach and, when enough face data exists, apply per-face UV coordinate mapping to a top-level group or component instance.',
+    schema: { required: ['op', 'uv'], optional: ['name', ...objectTarget, 'uv_id', 'uvId', 'face', 'face_id', 'face_selector', 'faceSelector', 'projection', 'material', 'image_reference', 'imageReference', 'image', 'mapping'] },
+    runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
+    stability: STABILITY.beta,
+    notes: 'API-parity texture slice: snapshots expose normalized per-face UV intent. Queue persists metadata and attempts Face#position_material for selected faces; unsupported mappings warn instead of failing.'
+  },
+  {
+    op: 'image_reference',
+    description: 'Register an image asset for reference, texture, or reporting workflows without creating geometry.',
+    schema: { required: ['op', 'name', 'path'], optional: ['file', 'filename', 'image', 'width', 'height', 'scale', 'role', 'source', 'metadata'] },
+    runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
+    stability: STABILITY.beta,
+    notes: 'Complements image_plane and material textures by tracking reusable image assets in snapshots/build reports.'
   },
   {
     op: 'delete',
@@ -405,11 +421,38 @@ const OPERATION_REGISTRY_ENTRIES = [
   {
     op: 'mesh',
     description: 'Create indexed geometry from vertices and faces.',
-    schema: { required: ['op', 'name', 'vertices', 'faces'], optional: ['smooth', ...commonPlacement] },
+    schema: { required: ['op', 'name', 'vertices', 'faces'], optional: ['back_material', 'f_material', 'b_material', 'smooth', ...commonPlacement] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
     component_definition: true,
-    notes: 'Prefer triangles or coplanar quads; complex topology is intentionally not a full CAD kernel.'
+    notes: 'Prefer triangles or coplanar quads; also backs Entities.add_faces_from_mesh/fill_from_mesh facade output. Complex topology is intentionally not a full CAD kernel.'
+  },
+  {
+    op: 'geometry_input',
+    description: 'Create generic indexed geometry from vertices, explicit edges, and faces with outer loops plus optional holes.',
+    schema: { required: ['op', 'name', 'vertices'], optional: ['faces', 'edges', 'material', 'smooth', 'faces[].pushpull', 'faces[].followme', 'faces[].position_material', ...commonPlacement] },
+    runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
+    stability: STABILITY.beta,
+    component_definition: true,
+    notes: 'SketchUp API parity slice for GeometryInput/LoopInput-style data. Faces can carry real pushpull, controlled followme, and positioned-material intent.'
+  },
+  {
+    op: 'curve',
+    description: 'Create a named SketchUp-style curve/polyline from ordered 3D points.',
+    schema: { required: ['op', 'name', 'points'], optional: ['vertices', 'closed', 'material', 'smooth', ...commonPlacement] },
+    runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
+    stability: STABILITY.beta,
+    component_definition: true,
+    notes: 'Legitimate zero-face edge geometry. Snapshots keep it as kind=curve without raising degenerate-geometry warnings.'
+  },
+  {
+    op: 'arc_curve',
+    description: 'Create an arc curve from center, radius, plane, start/end angles, and segment count.',
+    schema: { required: ['op', 'name', 'center', 'radius'], optional: ['start_angle', 'startAngle', 'end_angle', 'endAngle', 'plane', 'segments', 'material', 'smooth', ...commonPlacement] },
+    runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
+    stability: STABILITY.beta,
+    component_definition: true,
+    notes: 'SketchUp ArcCurve-style slice represented as a named curve with arc metadata in mock snapshots.'
   },
   {
     op: 'gable_roof',
@@ -706,6 +749,14 @@ const OPERATION_REGISTRY_ENTRIES = [
     notes: 'Supports translate/rotateZ transforms in the current DSL baseline.'
   },
   {
+    op: 'selection',
+    description: 'Set, add to, remove from, or clear the active runtime selection by stable object references.',
+    schema: { required: ['op', 'mode'], optional: ['targets'] },
+    runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
+    stability: STABILITY.beta,
+    notes: 'Official-style Selection facade bridge for build batches; targets use the same id/name reference shape as editing operations.'
+  },
+  {
     op: 'camera',
     description: 'Set the current saved model view state.',
     schema: { required: ['op', 'eye', 'target', 'up'], optional: ['fov'] },
@@ -715,11 +766,11 @@ const OPERATION_REGISTRY_ENTRIES = [
   },
   {
     op: 'scene',
-    description: 'Store a named camera view as a scene.',
-    schema: { required: ['op', 'name', 'camera'], optional: [] },
+    description: 'Store a named camera view and selected Page properties as a scene.',
+    schema: { required: ['op', 'name'], optional: ['camera', 'transition_time', 'transitionTime', 'use_camera', 'useCamera', 'layer_visibility', 'layerVisibility', 'drawingelement_visibility', 'drawingElementVisibility', 'rendering_options', 'renderingOptions', 'shadow', 'shadow_info', 'shadowInfo', 'style', 'update_flags', 'updateFlags'] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.stable,
-    notes: 'Scene camera shape follows the camera operation fields.'
+    notes: 'Scene camera shape follows camera fields. R3 adds Page transition time, saved layer/object visibility, and per-page rendering/shadow/style intent where SketchUp exposes setters.'
   },
   {
     op: 'style',

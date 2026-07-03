@@ -10,6 +10,8 @@ export function emptyModel() {
     manifold_checks: [],
     tags: {},
     materials: {},
+    image_references: {},
+    selection: [],
     warnings: [],
     view_state: null,
     style_state: null,

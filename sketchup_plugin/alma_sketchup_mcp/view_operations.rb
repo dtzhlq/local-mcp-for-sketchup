@@ -20,13 +20,110 @@ module AlmaSketchupMCP
       @view_state['scene'] = name if @view_state
     end
     page = model.pages.add(name)
-    page.use_camera = true if page.respond_to?(:use_camera=)
-    page.camera = model.active_view.camera if page.respond_to?(:camera=)
+    use_camera = operation.key?('use_camera') ? boolean_value(operation['use_camera'], 'scene.use_camera') : operation.key?('useCamera') ? boolean_value(operation['useCamera'], 'scene.useCamera') : true
+    page.use_camera = use_camera if page.respond_to?(:use_camera=)
+    page.camera = model.active_view.camera if use_camera && page.respond_to?(:camera=)
+    if operation.key?('transition_time') || operation.key?('transitionTime')
+      page.transition_time = finite_number(operation['transition_time'] || operation['transitionTime'], 'scene.transition_time') if page.respond_to?(:transition_time=)
+    end
+    apply_scene_layer_visibility(model, page, operation['layer_visibility'] || operation['layerVisibility'])
+    apply_scene_drawingelement_visibility(model, page, operation['drawingelement_visibility'] || operation['drawingElementVisibility'])
+    scene_rendering_options = operation['rendering_options'] || operation['renderingOptions']
+    scene_shadow = operation['shadow'] || operation['shadow_info'] || operation['shadowInfo']
+    scene_style = operation['style']
+    apply_page_rendering_options(page, scene_rendering_options) if scene_rendering_options.is_a?(Hash)
+    apply_page_shadow_info(page, scene_shadow) if scene_shadow.is_a?(Hash)
     @scenes ||= []
     scene = { 'name' => name }
     scene['camera'] = @view_state['camera'] if @view_state && @view_state['camera']
+    scene['transition_time'] = operation['transition_time'] || operation['transitionTime'] if operation.key?('transition_time') || operation.key?('transitionTime')
+    scene['use_camera'] = use_camera
+    scene['layer_visibility'] = normalize_scene_layer_visibility(operation['layer_visibility'] || operation['layerVisibility']) if operation['layer_visibility'] || operation['layerVisibility']
+    scene['drawingelement_visibility'] = normalize_scene_drawingelement_visibility(operation['drawingelement_visibility'] || operation['drawingElementVisibility']) if operation['drawingelement_visibility'] || operation['drawingElementVisibility']
+    scene['rendering_options'] = normalize_scene_nested_operation(scene_rendering_options) if scene_rendering_options.is_a?(Hash)
+    scene['shadow'] = normalize_scene_nested_operation(scene_shadow) if scene_shadow.is_a?(Hash)
+    scene['style'] = normalize_scene_nested_operation(scene_style) if scene_style.is_a?(Hash)
+    scene['update_flags'] = operation['update_flags'] || operation['updateFlags'] if operation.key?('update_flags') || operation.key?('updateFlags')
     @scenes << scene
+    update_flags = operation['update_flags'] || operation['updateFlags']
+    page.update(update_flags.to_i) if update_flags && page.respond_to?(:update)
     page
+  end
+
+  def apply_scene_layer_visibility(model, page, entries)
+    normalize_scene_layer_visibility(entries).each do |entry|
+      layer = model.layers[entry['layer']] || model.layers.add(entry['layer'])
+      page.set_visibility(layer, entry['visible']) if page.respond_to?(:set_visibility)
+    rescue StandardError => error
+      add_warning('rendering.apply_failed', 'warn', "Scene layer visibility could not be applied: #{error.message}", 'scene.layer_visibility')
+    end
+  end
+
+  def apply_scene_drawingelement_visibility(model, page, entries)
+    normalize_scene_drawingelement_visibility(entries).each do |entry|
+      next unless page.respond_to?(:set_drawingelement_visibility)
+
+      entity = find_referenced_entity(model, entry, 'scene.drawingelement_visibility')
+      page.set_drawingelement_visibility(entity, entry['visible'])
+    rescue StandardError => error
+      add_warning('rendering.apply_failed', 'warn', "Scene drawingelement visibility could not be applied: #{error.message}", 'scene.drawingelement_visibility')
+    end
+  end
+
+  def normalize_scene_layer_visibility(entries)
+    return [] unless entries
+    raise 'scene.layer_visibility must be an array' unless entries.is_a?(Array)
+
+    entries.map.with_index do |entry, index|
+      raise "scene.layer_visibility[#{index}] must be an object" unless entry.is_a?(Hash)
+
+      {
+        'layer' => non_empty_string(entry['layer'] || entry['tag'] || entry['name'], "scene.layer_visibility[#{index}].layer"),
+        'visible' => boolean_value(entry['visible'], "scene.layer_visibility[#{index}].visible")
+      }
+    end
+  end
+
+  def normalize_scene_drawingelement_visibility(entries)
+    return [] unless entries
+    raise 'scene.drawingelement_visibility must be an array' unless entries.is_a?(Array)
+
+    entries.map.with_index do |entry, index|
+      raise "scene.drawingelement_visibility[#{index}] must be an object" unless entry.is_a?(Hash)
+
+      normalized = {
+        'target_id' => entry['target_id'] || entry['targetId'] || entry['id'] || entry['object_id'] || entry['objectId'] || entry['guid'],
+        'name' => entry['name'] || entry['target'] || entry['object'],
+        'visible' => boolean_value(entry['visible'], "scene.drawingelement_visibility[#{index}].visible")
+      }.compact
+      raise "scene.drawingelement_visibility[#{index}] requires target_id or name" unless normalized['target_id'] || normalized['name']
+
+      normalized
+    end
+  end
+
+  def normalize_scene_nested_operation(operation)
+    operation.reject { |key, _value| key == 'op' }
+  end
+
+  def apply_page_rendering_options(page, operation)
+    return unless page.respond_to?(:rendering_options)
+
+    options = page.rendering_options
+    rendering_option_map.each do |field, config|
+      next unless operation.key?(field) || operation.key?(config[:alias])
+
+      value = operation.key?(field) ? operation[field] : operation[config[:alias]]
+      normalized = normalize_rendering_value(value, config[:type], "scene.rendering_options.#{field}", config[:range])
+      safe_set_rendering_option(options, config[:key], rendering_option_value(normalized, config[:type]))
+    end
+  end
+
+  def apply_page_shadow_info(page, operation)
+    return unless page.respond_to?(:shadow_info)
+
+    shadow_info = page.shadow_info
+    set_shadow_info_from_scene(shadow_info, operation)
   end
 
   def set_style(model, operation)
@@ -61,31 +158,40 @@ module AlmaSketchupMCP
   def set_shadow(model, operation)
     state = {}
     shadow_info = model.shadow_info
-    if operation.key?('display')
-      state['display'] = boolean_value(operation['display'], 'shadow.display')
-      safe_set_shadow_info(shadow_info, 'DisplayShadows', state['display'])
-    end
-    if operation.key?('time')
-      state['time'] = Time.parse(non_empty_string(operation['time'], 'shadow.time')).iso8601
-      safe_set_shadow_info(shadow_info, 'ShadowTime', Time.parse(state['time']))
-    end
-    if operation.key?('light')
-      state['light'] = number_in_range(operation['light'], 0.0, 100.0, 'shadow.light')
-      safe_set_shadow_info(shadow_info, 'Light', state['light'])
-    end
-    if operation.key?('dark')
-      state['dark'] = number_in_range(operation['dark'], 0.0, 100.0, 'shadow.dark')
-      safe_set_shadow_info(shadow_info, 'Dark', state['dark'])
-    end
-    if operation.key?('use_sun_for_shading') || operation.key?('useSunForShading')
-      value = operation.key?('use_sun_for_shading') ? operation['use_sun_for_shading'] : operation['useSunForShading']
-      state['use_sun_for_shading'] = boolean_value(value, 'shadow.use_sun_for_shading')
-      safe_set_shadow_info(shadow_info, 'UseSunForAllShading', state['use_sun_for_shading'])
-    end
+    set_shadow_info_from_scene(shadow_info, operation, state)
     @shadow_state = state
     state
   rescue ArgumentError => error
     raise "shadow.time must be an ISO-8601 date/time string: #{error.message}"
+  end
+
+  def set_shadow_info_from_scene(shadow_info, operation, state = nil)
+    if operation.key?('display')
+      value = boolean_value(operation['display'], 'shadow.display')
+      state['display'] = value if state
+      safe_set_shadow_info(shadow_info, 'DisplayShadows', value)
+    end
+    if operation.key?('time')
+      value = Time.parse(non_empty_string(operation['time'], 'shadow.time'))
+      state['time'] = value.iso8601 if state
+      safe_set_shadow_info(shadow_info, 'ShadowTime', value)
+    end
+    if operation.key?('light')
+      value = number_in_range(operation['light'], 0.0, 100.0, 'shadow.light')
+      state['light'] = value if state
+      safe_set_shadow_info(shadow_info, 'Light', value)
+    end
+    if operation.key?('dark')
+      value = number_in_range(operation['dark'], 0.0, 100.0, 'shadow.dark')
+      state['dark'] = value if state
+      safe_set_shadow_info(shadow_info, 'Dark', value)
+    end
+    if operation.key?('use_sun_for_shading') || operation.key?('useSunForShading')
+      value = operation.key?('use_sun_for_shading') ? operation['use_sun_for_shading'] : operation['useSunForShading']
+      normalized = boolean_value(value, 'shadow.use_sun_for_shading')
+      state['use_sun_for_shading'] = normalized if state
+      safe_set_shadow_info(shadow_info, 'UseSunForAllShading', normalized)
+    end
   end
 
   def set_rendering_options(model, operation)

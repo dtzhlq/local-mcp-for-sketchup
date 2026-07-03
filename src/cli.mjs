@@ -32,16 +32,85 @@ async function main() {
       const code = options.codeFile ? await fs.readFile(options.codeFile, 'utf8') : options.code;
       return output(await bridge.compile_expert({ code, ...expertOptions(options) }), options);
     }
+    case 'compile_python_sdk': {
+      const code = options.codeFile ? await fs.readFile(options.codeFile, 'utf8') : options.code;
+      return output(await bridge.compile_python_sdk({ code, ...pythonSdkOptions(options) }), options);
+    }
     case 'build_expert_model': {
       const code = options.codeFile ? await fs.readFile(options.codeFile, 'utf8') : options.code;
       return output(await bridge.build_expert_model({ code, runtime: options.runtime || 'mock', timeoutMs: options.timeoutMs, ...expertOptions(options) }), options);
     }
     case 'save_model':
       return output(await bridge.save_model({ path: options.path, keep_session: options.keepSession !== false, runtime: options.runtime || 'mock', timeoutMs: options.timeoutMs }), options);
+    case 'save_model_version':
+      return output(await bridge.save_model_version({ path: options.path, base_path: options.basePath, label: options.label, keep_session: options.keepSession !== false, runtime: options.runtime || 'mock', timeoutMs: options.timeoutMs }), options);
+    case 'open_model':
+      return output(await bridge.open_model({ path: options.path, runtime: options.runtime || 'queue', timeoutMs: options.timeoutMs }), options);
+    case 'import_model':
+      return output(await bridge.import_model({ path: options.path, mode: options.mode, prefix: options.prefix, runtime: options.runtime || 'queue', timeoutMs: options.timeoutMs }), options);
+    case 'export_model':
+      return output(await bridge.export_model({ path: options.path, format: options.exportFormat, runtime: options.runtime || 'queue', timeoutMs: options.timeoutMs }), options);
+    case 'get_model_info':
+      return output(await bridge.get_model_info({ runtime: options.runtime || 'mock', timeoutMs: options.timeoutMs }), options);
+    case 'list_entities':
+      return output(await bridge.list_entities({ runtime: options.runtime || 'mock', timeoutMs: options.timeoutMs, includeHidden: options.includeHidden !== false, kind: options.kind, material: options.material, tag: options.tag, name: options.name }), options);
+    case 'inspect_model':
+      return output(await bridge.inspect_model({ runtime: options.runtime || 'mock', timeoutMs: options.timeoutMs, includeEntities: options.includeEntities !== false, includeSnapshot: options.includeSnapshot === true, includeHidden: options.includeHidden !== false, kind: options.kind, material: options.material, tag: options.tag, name: options.name }), options);
+    case 'adopt_open_model':
+      return output(await bridge.adopt_open_model({ runtime: options.runtime || 'mock', timeoutMs: options.timeoutMs, recursive: options.recursive === true, recursive_limit: options.recursiveLimit, force: options.force === true, prefix: options.prefix }), options);
+    case 'resolve_model_targets':
+      return output(await bridge.resolve_model_targets({
+        query: options.query || options.targetQuery,
+        runtime: options.runtime || 'mock',
+        timeoutMs: options.timeoutMs,
+        includeHidden: options.includeHidden !== false,
+        kind: options.kind,
+        material: options.material,
+        tag: options.tag,
+        name: options.name,
+        definition: options.definition,
+        side: options.side,
+        nth: options.nth,
+        index: options.index,
+        targets: options.targets,
+        largest: options.largest,
+        smallest: options.smallest,
+        selection: options.selection,
+        allowMultiple: options.allowMultiple === true,
+        limit: options.limit
+      }), options);
+    case 'get_selection':
+      return output(await bridge.get_selection({ runtime: options.runtime || 'mock', timeoutMs: options.timeoutMs }), options);
+    case 'analyze_selection_geometry':
+      return output(await bridge.analyze_selection_geometry({
+        runtime: options.runtime || 'mock',
+        timeoutMs: options.timeoutMs,
+        assume: options.assume,
+        includeDetails: options.includeDetails !== false
+      }), options);
+    case 'plan_modification_intent': {
+      const parameters = await readOptionalJsonOption(options.parametersJson, options.parametersFile, 'parameters');
+      return output(await bridge.plan_modification_intent({
+        instruction: options.instruction || options.code,
+        action: options.action,
+        parameters,
+        target_query: options.targetQuery || options.query,
+        targets: options.targets,
+        assume: options.assume,
+        output_dir: options.outputDir,
+        compile_patch: options.compilePatch,
+        allow_ambiguous_targets: options.allowAmbiguousTargets,
+        runtime: options.runtime || 'mock',
+        timeoutMs: options.timeoutMs
+      }), options);
+    }
+    case 'set_selection':
+      return output(await bridge.set_selection({ targets: options.targets || [], mode: options.mode || 'replace', runtime: options.runtime || 'mock', timeoutMs: options.timeoutMs }), options);
     case 'capture_view':
       return output(await bridge.capture_view({
         path: options.path,
         view: options.view,
+        scene: options.scene,
         width: options.width,
         height: options.height,
         antialias: options.antialias,
@@ -57,6 +126,78 @@ async function main() {
         audit_path: options.auditPath,
         runtime: options.runtime || 'queue',
         timeoutMs: options.timeoutMs
+      }), options);
+    }
+    case 'evaluate_py': {
+      const code = options.codeFile ? await fs.readFile(options.codeFile, 'utf8') : options.code;
+      return output(await bridge.evaluate_py({
+        code,
+        input_format: options.inputFormat,
+        audit_path: options.auditPath,
+        runtime: options.runtime || 'mock',
+        timeoutMs: options.timeoutMs,
+        ...expertOptions(options),
+        ...pythonSdkOptions(options)
+      }), options);
+    }
+    case 'build_report': {
+      const code = options.codeFile ? await fs.readFile(options.codeFile, 'utf8') : options.code;
+      const snapshot = options.snapshotFile ? await readSnapshotJson(options.snapshotFile, 'snapshot') : undefined;
+      const modelSpec = options.modelSpecFile ? JSON.parse(await fs.readFile(options.modelSpecFile, 'utf8')) : (options.specFile ? JSON.parse(await fs.readFile(options.specFile, 'utf8')) : undefined);
+      const referenceSpec = options.referenceSpecFile ? JSON.parse(await fs.readFile(options.referenceSpecFile, 'utf8')) : undefined;
+      return output(await bridge.build_report({
+        code,
+        snapshot,
+        output_dir: options.outputDir,
+        save_path: options.path,
+        save_model: options.saveModel,
+        capture_view: options.captureView,
+        capture: captureOptions(options),
+        validate_model: options.validateModel,
+        validate_reference_model: options.validateReferenceModel,
+        model_spec: modelSpec,
+        reference_spec: referenceSpec,
+        runtime: options.runtime || 'mock',
+        timeoutMs: options.timeoutMs,
+        includePreview: options.includePreview !== false
+      }), options);
+    }
+    case 'iterate_model': {
+      const code = options.codeFile ? await fs.readFile(options.codeFile, 'utf8') : options.code;
+      const modelSpec = options.modelSpecFile ? JSON.parse(await fs.readFile(options.modelSpecFile, 'utf8')) : (options.specFile ? JSON.parse(await fs.readFile(options.specFile, 'utf8')) : undefined);
+      const referenceSpec = options.referenceSpecFile ? JSON.parse(await fs.readFile(options.referenceSpecFile, 'utf8')) : undefined;
+      const intent = await readOptionalJsonOption(options.intentJson, undefined, 'intent');
+      return output(await bridge.iterate_model({
+        code,
+        intent,
+        intent_file: options.intentFile,
+        input_format: options.inputFormat,
+        label: options.label,
+        output_dir: options.outputDir,
+        targets: options.targets,
+        target_query: options.targetQuery || options.query,
+        allow_ambiguous_targets: options.allowAmbiguousTargets,
+        preview_only: options.previewOnly,
+        selection_mode: options.mode,
+        save_model: options.saveModel,
+        save_path: options.path,
+        capture_view: options.captureView,
+        validate_model: options.validateModel,
+        validate_reference_model: options.validateReferenceModel,
+        model_spec: modelSpec,
+        reference_spec: referenceSpec,
+        runtime: options.runtime || 'mock',
+        timeoutMs: options.timeoutMs,
+        includePreview: options.includePreview !== false,
+        toleranceMm: options.toleranceMm,
+        topologyTolerance: topologyToleranceOptions(options),
+        budgets: budgetOptions(options),
+        topIssueLimit: options.topIssueLimit,
+        strictCollisions: options.strictCollisions,
+        strictUnanchored: options.strictUnanchored,
+        floatingDetails: options.floatingDetails,
+        ...expertOptions(options),
+        ...pythonSdkOptions(options)
       }), options);
     }
     case 'compare_snapshots': {
@@ -132,8 +273,40 @@ function parseArgs(argv) {
     else if (arg === '--code') options.code = argv[++index];
     else if (arg === '--code-file') options.codeFile = argv[++index];
     else if (arg === '--path') options.path = argv[++index];
+    else if (arg === '--base-path') options.basePath = argv[++index];
+    else if (arg === '--label') options.label = argv[++index];
+    else if (arg === '--mode') options.mode = argv[++index];
+    else if (arg === '--prefix') options.prefix = argv[++index];
+    else if (arg === '--kind') options.kind = argv[++index];
+    else if (arg === '--material') options.material = argv[++index];
+    else if (arg === '--tag') options.tag = argv[++index];
+    else if (arg === '--name') options.name = argv[++index];
+    else if (arg === '--definition') options.definition = argv[++index];
+    else if (arg === '--side') options.side = argv[++index];
+    else if (arg === '--nth') options.nth = Number(argv[++index]);
+    else if (arg === '--index') options.index = Number(argv[++index]);
+    else if (arg === '--query') options.query = argv[++index];
+    else if (arg === '--target-query') options.targetQuery = argv[++index];
+    else if (arg === '--assume') options.assume = argv[++index];
+    else if (arg === '--instruction') options.instruction = argv[++index];
+    else if (arg === '--action') options.action = argv[++index];
+    else if (arg === '--limit') options.limit = Number(argv[++index]);
+    else if (arg === '--recursive-limit') options.recursiveLimit = Number(argv[++index]);
+    else if (arg === '--target') {
+      options.targets ||= [];
+      options.targets.push(argv[++index]);
+    }
+    else if (arg === '--targets-json') options.targets = JSON.parse(argv[++index]);
+    else if (arg === '--parameters-json') options.parametersJson = argv[++index];
+    else if (arg === '--parameters-file') options.parametersFile = argv[++index];
+    else if (arg === '--intent-json') options.intentJson = argv[++index];
+    else if (arg === '--intent-file') options.intentFile = argv[++index];
+    else if (arg === '--input-format') options.inputFormat = argv[++index];
+    else if (arg === '--export-format') options.exportFormat = argv[++index];
+    else if (arg === '--output-dir') options.outputDir = argv[++index];
     else if (arg === '--audit-path') options.auditPath = argv[++index];
     else if (arg === '--view') options.view = argv[++index];
+    else if (arg === '--scene') options.scene = argv[++index];
     else if (arg === '--width') options.width = Number(argv[++index]);
     else if (arg === '--height') options.height = Number(argv[++index]);
     else if (arg === '--compression') options.compression = Number(argv[++index]);
@@ -143,6 +316,8 @@ function parseArgs(argv) {
     else if (arg === '--actual-file') options.actualFile = argv[++index];
     else if (arg === '--snapshot-file') options.snapshotFile = argv[++index];
     else if (arg === '--spec-file') options.specFile = argv[++index];
+    else if (arg === '--model-spec-file') options.modelSpecFile = argv[++index];
+    else if (arg === '--reference-spec-file') options.referenceSpecFile = argv[++index];
     else if (arg === '--preview-dir') options.previewDir = argv[++index];
     else if (arg === '--tolerance-mm') options.toleranceMm = Number(argv[++index]);
     else if (arg === '--face-tolerance') options.faceTolerance = Number(argv[++index]);
@@ -161,17 +336,37 @@ function parseArgs(argv) {
     else if (arg === '--max-statements') options.maxStatements = Number(argv[++index]);
     else if (arg === '--max-output-bytes') options.maxOutputBytes = Number(argv[++index]);
     else if (arg === '--expert-timeout-ms') options.expertTimeoutMs = Number(argv[++index]);
+    else if (arg === '--python-timeout-ms') options.pythonTimeoutMs = Number(argv[++index]);
+    else if (arg === '--python-command') options.pythonCommand = argv[++index];
     else if (arg === '--seed') options.seed = Number(argv[++index]);
     else if (arg === '--timeout-ms') options.timeoutMs = Number(argv[++index]);
     else if (arg === '--no-keep-session') options.keepSession = false;
     else if (arg === '--no-reset-first') options.resetFirst = false;
     else if (arg === '--include-snapshots') options.includeSnapshots = true;
+    else if (arg === '--include-snapshot') options.includeSnapshot = true;
+    else if (arg === '--no-entities') options.includeEntities = false;
+    else if (arg === '--no-hidden') options.includeHidden = false;
     else if (arg === '--include-files') options.includeFiles = true;
+    else if (arg === '--recursive') options.recursive = true;
+    else if (arg === '--force') options.force = true;
+    else if (arg === '--largest') options.largest = true;
+    else if (arg === '--smallest') options.smallest = true;
+    else if (arg === '--selection') options.selection = true;
+    else if (arg === '--allow-multiple') options.allowMultiple = true;
+    else if (arg === '--allow-ambiguous-targets') options.allowAmbiguousTargets = true;
+    else if (arg === '--compile-patch') options.compilePatch = true;
+    else if (arg === '--no-compile-patch') options.compilePatch = false;
+    else if (arg === '--preview-only') options.previewOnly = true;
     else if (arg === '--antialias') options.antialias = true;
     else if (arg === '--no-antialias') options.antialias = false;
     else if (arg === '--zoom-extents') options.zoomExtents = true;
     else if (arg === '--no-zoom-extents') options.zoomExtents = false;
     else if (arg === '--no-preview') options.includePreview = false;
+    else if (arg === '--no-details') options.includeDetails = false;
+    else if (arg === '--no-save-model') options.saveModel = false;
+    else if (arg === '--capture-view') options.captureView = true;
+    else if (arg === '--no-validate-model') options.validateModel = false;
+    else if (arg === '--validate-reference-model') options.validateReferenceModel = true;
     else if (arg === '--strict-collisions') options.strictCollisions = true;
     else if (arg === '--loose-collisions') options.strictCollisions = false;
     else if (arg === '--strict-unanchored') options.strictUnanchored = true;
@@ -192,6 +387,26 @@ function expertOptions(options) {
   };
 }
 
+function pythonSdkOptions(options) {
+  return {
+    maxOperations: options.maxOperations,
+    maxLoopIterations: options.maxLoopIterations,
+    maxStatements: options.maxStatements,
+    maxOutputBytes: options.maxOutputBytes,
+    pythonTimeoutMs: options.pythonTimeoutMs,
+    pythonCommand: options.pythonCommand
+  };
+}
+
+function captureOptions(options) {
+  const capture = {};
+  for (const key of ['view', 'scene', 'width', 'height', 'antialias', 'compression']) {
+    if (options[key] !== undefined) capture[key] = options[key];
+  }
+  if (options.zoomExtents !== undefined) capture.zoom_extents = options.zoomExtents;
+  return Object.keys(capture).length ? capture : undefined;
+}
+
 async function readSnapshotJson(filePath, label) {
   if (!filePath) throw new Error(`compare_snapshots requires --${label}-file`);
   const document = JSON.parse(await fs.readFile(filePath, 'utf8'));
@@ -200,6 +415,16 @@ async function readSnapshotJson(filePath, label) {
     ...document.snapshot,
     artifact_size_bytes: document.snapshot.artifact_size_bytes ?? document.file_size_bytes
   };
+}
+
+async function readOptionalJsonOption(jsonValue, filePath, label) {
+  if (filePath) return JSON.parse(await fs.readFile(filePath, 'utf8'));
+  if (jsonValue === undefined) return undefined;
+  try {
+    return JSON.parse(jsonValue);
+  } catch (error) {
+    throw new Error(`--${label}-json must be valid JSON: ${error.message}`);
+  }
 }
 
 function topologyToleranceOptions(options) {
@@ -280,10 +505,28 @@ function usage() {
   node src/cli.mjs reset_model [--runtime mock|queue]
   node src/cli.mjs build_model --code-file examples/demo-room.json [--runtime mock|queue]
   node src/cli.mjs compile_expert --code-file examples/expert-parametric-fixture.js [--format dsl]
+  node src/cli.mjs compile_python_sdk --code-file examples/python-sdk-facade-fixture.py [--format dsl]
   node src/cli.mjs build_expert_model --code-file examples/expert-parametric-fixture.js [--runtime mock|queue]
   node src/cli.mjs save_model --path output/model.json [--runtime mock|queue] [--no-keep-session]
-  node src/cli.mjs capture_view --path output/capture.png [--view current|top|front|right|iso] [--width 1280] [--height 720] [--runtime queue]
+  node src/cli.mjs save_model_version [--path output/model-version.json] [--base-path output/model.json] [--label review] [--runtime mock|queue]
+  node src/cli.mjs open_model --path output/model.json [--runtime mock|queue]
+  node src/cli.mjs import_model --path input/model.skp [--mode append|replace] [--prefix Imported] [--runtime mock|queue]
+  node src/cli.mjs export_model --path output/model.obj [--export-format obj] [--runtime mock|queue]
+  node src/cli.mjs get_model_info [--runtime mock|queue]
+  node src/cli.mjs list_entities [--runtime mock|queue] [--kind box] [--material Wall] [--tag Level1] [--name wall] [--no-hidden]
+  node src/cli.mjs inspect_model [--runtime mock|queue] [--include-snapshot] [--no-entities]
+  node src/cli.mjs adopt_open_model [--runtime mock|queue] [--recursive] [--recursive-limit 500] [--force] [--prefix adopted]
+  node src/cli.mjs resolve_model_targets --query "largest cabinet" [--runtime mock|queue] [--kind box] [--material Oak] [--side left] [--allow-multiple]
+  node src/cli.mjs get_selection [--runtime mock|queue]
+  node src/cli.mjs analyze_selection_geometry [--runtime mock|queue] [--assume road] [--no-details]
+  node src/cli.mjs plan_modification_intent --instruction "paint selected cabinet" --action set_material --parameters-json '{"material":"Oak"}' [--target-query "current selection"] [--output-dir output/intent] [--runtime mock|queue]
+  node src/cli.mjs set_selection --target object-id [--target other-id] [--mode replace|add|remove|clear] [--runtime mock|queue]
+  node src/cli.mjs capture_view --path output/capture.png [--view current|top|front|right|iso] [--scene Scene_Name] [--width 1280] [--height 720] [--runtime queue]
   ALMA_SKETCHUP_ENABLE_RUBY_EXPERT=1 node src/cli.mjs run_ruby_expert --code 'Sketchup.active_model.title' [--audit-path output/ruby-expert-audit.json] [--runtime queue]
+  node src/cli.mjs evaluate_py --code-file examples/demo-room.json [--input-format json_dsl|python_sdk|restricted_expert|ruby_expert] [--runtime mock|queue]
+  node src/cli.mjs build_report --code-file examples/demo-room.json [--output-dir output/build-report] [--model-spec-file examples/model-qa/spec.json] [--reference-spec-file examples/reference-visual-qa/spec.json] [--capture-view] [--runtime mock|queue]
+  node src/cli.mjs iterate_model --code-file patch.json [--input-format json_dsl|python_sdk|restricted_expert] [--target object-id] [--target-query "largest cabinet"] [--preview-only] [--label review] [--output-dir output/iterations/review] [--runtime mock|queue]
+  node src/cli.mjs iterate_model --intent-file output/intent/modification-intent.json [--output-dir output/iterations/from-intent] [--runtime mock|queue]
   node src/cli.mjs compare_snapshots --expected-file output/mock-a.json --actual-file output/mock-b.json [--tolerance-mm 1] [--face-tolerance 1] [--edge-tolerance 3] [--max-faces 5000] [--max-artifact-size-bytes 50000000] [--format markdown] [--output-file output/report.md]
   node src/cli.mjs compare_model --code-file examples/demo-room.json [--expected-runtime mock] [--actual-runtime queue] [--timeout-ms 60000] [--face-tolerance 1] [--edge-tolerance 3] [--format markdown] [--output-file output/report.md]
   node src/cli.mjs validate_model --code-file examples/demo-room.json [--runtime mock|queue] [--spec-file examples/model-qa/spec.json] [--preview-dir output/model-qa/demo] [--format markdown] [--output-file output/model-qa/demo.md]

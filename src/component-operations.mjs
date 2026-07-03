@@ -1,6 +1,6 @@
 import { emptyModel } from './model-state.mjs';
 import { ensureMaterial } from './material-operations.mjs';
-import { addMesh, addPrism, addCylinder } from './primitive-operations.mjs';
+import { addArcCurve, addCurve, addGeometryInput, addMesh, addPrism, addCylinder } from './primitive-operations.mjs';
 import { addBooleanCutout, addFaceWithHoles, addGableRoof, addPanelWithOpenings, addProfileExtrude, addShedRoof } from './profile-operations.mjs';
 import { addAnalogStick, addBowedPanel, addDomedSurface, addFaceOnCylinder, addLoftBetweenProfiles, addLoftedSolid, addPipeBetweenPoints, addScrewHole, addShellFromFrontSideProfiles, addSweptPath } from './surface-operations.mjs';
 import { addBeveledPanel, addBox, addButtonOnPanel, addChamfer, addEngravedLine, addFillet, addImagePlane, addRecess, addRib, addRoundedBox, addSlot, addSlotArray, addStandoffBoss, addText3d, addTextEmboss, addTextEngrave } from './product-operations.mjs';
@@ -160,6 +160,15 @@ function applyComponentDefinitionOperation(model, operation, componentName) {
       break;
     case 'mesh':
       addMesh(model, operation);
+      break;
+    case 'geometry_input':
+      addGeometryInput(model, operation);
+      break;
+    case 'curve':
+      addCurve(model, operation);
+      break;
+    case 'arc_curve':
+      addArcCurve(model, operation);
       break;
     case 'prism':
       addPrism(model, operation);

@@ -18,6 +18,7 @@ rescue LoadError
 end
 require_relative 'alma_sketchup_mcp/operation_registry'
 require_relative 'alma_sketchup_mcp/materials'
+require_relative 'alma_sketchup_mcp/appearance_operations'
 require_relative 'alma_sketchup_mcp/object_operations'
 require_relative 'alma_sketchup_mcp/geometry_operations'
 require_relative 'alma_sketchup_mcp/primitive_operations'
@@ -40,9 +41,9 @@ module AlmaSketchupMCP
   RESPONSE_DIR = File.join(STATE_DIR, 'responses')
   MM_PER_INCH = 25.4
   DEFAULT_OPERATION_LIMIT = 2000
-  PLUGIN_VERSION = 'queue-plugin-0.1.0-ruby-expert-gated.1'
-  CAPABILITY_MANIFEST_VERSION = '2026-06-building-geometry-r3-quality'
-  RUNTIME_CAPABILITY_VERSION = '0.1.0-capabilities.8'
+  PLUGIN_VERSION = 'queue-plugin-0.1.0-natural-iteration.2'
+  CAPABILITY_MANIFEST_VERSION = '2026-07-official-api-expression-r3'
+  RUNTIME_CAPABILITY_VERSION = '0.1.0-capabilities.10'
   DSL_VERSION = 1
 
   def start
@@ -133,6 +134,26 @@ module AlmaSketchupMCP
       build_model(params.fetch('code'))
     when 'save_model'
       save_model(params['path'], params.fetch('keep_session', true))
+    when 'save_model_version'
+      save_model_version(params)
+    when 'open_model'
+      open_model(params['path'])
+    when 'import_model'
+      import_model(params)
+    when 'export_model'
+      export_model(params)
+    when 'get_model_info'
+      get_model_info
+    when 'list_entities'
+      list_entities(params)
+    when 'inspect_model'
+      inspect_model(params)
+    when 'adopt_open_model'
+      adopt_open_model(params)
+    when 'get_selection'
+      get_selection
+    when 'set_selection'
+      set_selection(params)
     when 'capture_view'
       capture_view(params)
     when 'run_ruby_expert'
@@ -177,6 +198,7 @@ module AlmaSketchupMCP
     model = active_model_or_new('reset_model')
     model.start_operation('Alma Reset Model', true)
     clear_model(model)
+    clear_image_references(model)
     @warnings = []
     @scenes = []
     @levels = []
@@ -221,9 +243,226 @@ module AlmaSketchupMCP
     result
   end
 
+  def save_model_version(params)
+    keep_session = params.fetch('keep_session', true)
+    target = versioned_model_path(params['path'] || params['base_path'], params['label'])
+    save_model(target, keep_session).merge('kind' => 'save_model_version')
+  end
+
+  def open_model(path)
+    target = non_empty_string(path, 'open_model.path')
+    target = File.expand_path(target)
+    raise "open_model.path does not exist: #{target}" unless File.exist?(target)
+    raise 'Sketchup.open_file is unavailable in this SketchUp runtime' unless Sketchup.respond_to?(:open_file)
+
+    open_result = begin
+      Sketchup.open_file(target, with_status: true, show_version_warning_dialog: false)
+    rescue ArgumentError
+      Sketchup.open_file(target)
+    end
+    raise "Failed to open SketchUp model: #{target}" unless open_file_success?(open_result)
+    unless same_file_path?(active_model_path, target)
+      raise "Sketchup.open_file returned #{open_result.inspect}, but active_model.path did not switch to #{target}. open_model is not synchronous in this SketchUp runtime; open the file manually or retry after SketchUp focuses the opened model."
+    end
+
+    {
+      'kind' => 'open_model',
+      'runtime' => 'queue',
+      'file_path' => target,
+      'snapshot' => snapshot
+    }
+  end
+
+  def import_model(params)
+    model = active_model_or_new('import_model')
+    target = non_empty_string(params['path'], 'import_model.path')
+    target = File.expand_path(target)
+    raise "import_model.path does not exist: #{target}" unless File.exist?(target)
+    mode = (params['mode'] || 'append').to_s.downcase
+    raise 'import_model.mode must be append or replace' unless %w[append replace].include?(mode)
+
+    if mode == 'replace'
+      reset_model
+      model = active_model_or_new('import_model')
+    end
+    before_signature = snapshot_signature(snapshot)
+    model.start_operation('Alma Import Model', true)
+    import_result = if File.extname(target).downcase == '.skp'
+                      import_skp_model(model, target)
+                    else
+                      raise 'SketchUp model import is unavailable in this runtime' unless model.respond_to?(:import)
+
+                      ok = model.import(target)
+                      raise "Failed to import model: #{target}" unless ok
+
+                      { 'strategy' => 'model.import' }
+                    end
+
+    model.commit_operation
+    result_snapshot = snapshot
+    if snapshot_signature(result_snapshot) == before_signature
+      raise "import_model completed but did not change visible model contents: #{target}"
+    end
+    {
+      'kind' => 'import_model',
+      'runtime' => 'queue',
+      'file_path' => target,
+      'mode' => mode,
+      'import' => import_result,
+      'snapshot' => result_snapshot
+    }
+  rescue StandardError
+    model.abort_operation if model
+    raise
+  end
+
+  def export_model(params)
+    model = active_model_or_new('export_model')
+    target = non_empty_string(params['path'], 'export_model.path')
+    target = File.expand_path(target)
+    FileUtils.mkdir_p(File.dirname(target))
+    raise 'SketchUp model export is unavailable in this runtime' unless model.respond_to?(:export)
+
+    ok = model.export(target)
+    raise "Failed to export model: #{target}" unless ok && File.exist?(target)
+
+    {
+      'kind' => 'export_model',
+      'runtime' => 'queue',
+      'format' => params['format'] || File.extname(target).delete_prefix('.'),
+      'file_path' => target,
+      'snapshot' => snapshot
+    }
+  end
+
+  def get_model_info
+    model_snapshot = snapshot
+    {
+      'kind' => 'model_info',
+      'runtime' => 'queue',
+      'units' => 'mm',
+      'source_path' => active_model_path,
+      'totals' => model_snapshot['totals'],
+      'bounding_box' => model_snapshot['bounding_box'],
+      'counts' => {
+        'groups' => model_snapshot['groups'].length,
+        'instances' => model_snapshot['instances'].length,
+        'component_definitions' => model_snapshot['component_definitions'].length,
+        'materials' => model_snapshot['materials'].length,
+        'tags' => model_snapshot['tags'].length,
+        'scenes' => model_snapshot['scenes'].length,
+        'image_references' => model_snapshot['image_references'].length
+      },
+      'warning_summary' => model_snapshot['warning_summary'],
+      'material_names' => model_snapshot['material_names'],
+      'component_definitions' => model_snapshot['component_definitions'],
+      'tags' => model_snapshot['tags'],
+      'scenes' => model_snapshot['scenes']
+    }
+  end
+
+  def list_entities(params = {})
+    {
+      'kind' => 'list_entities',
+      'runtime' => 'queue',
+      'entities' => filtered_entity_snapshots(snapshot, params)
+    }
+  end
+
+  def inspect_model(params = {})
+    model_snapshot = snapshot
+    result = {
+      'kind' => 'inspect_model',
+      'runtime' => 'queue',
+      'model_info' => get_model_info,
+      'selection' => get_selection['selection']
+    }
+    result['entities'] = filtered_entity_snapshots(model_snapshot, params) unless params['includeEntities'] == false || params['include_entities'] == false
+    result['snapshot'] = model_snapshot if params['includeSnapshot'] == true || params['include_snapshot'] == true
+    result
+  end
+
+  def adopt_open_model(params = {})
+    model = active_model_or_new('adopt_open_model')
+    prefix = safe_adoption_token(params['prefix'] || 'adopted')
+    force = params['force'] == true
+    recursive = params['recursive'] == true
+    recursive_limit = positive_integer(params['recursive_limit'] || params['recursiveLimit'] || 500, 'adopt_open_model.recursive_limit')
+    adopted = 0
+    existing = 0
+
+    model.start_operation('Alma Adopt Open Model', true)
+    adoptable_entities(model).each_with_index do |entity, index|
+      current = entity_id(entity)
+      if current && !force
+        existing += 1
+        next
+      end
+      adopted_id = adoption_id_for(entity, prefix, index)
+      entity.set_attribute('AlmaSketchupMCP', 'adopted_id', adopted_id)
+      entity.set_attribute('AlmaSketchupMCP', 'adoption_version', '2026-07-natural-iteration-adoption.1')
+      entity.set_attribute('AlmaSketchupMCP', 'adopted_at', Time.now.utc.iso8601)
+      adopted += 1
+    end
+    model.commit_operation
+
+    model_snapshot = snapshot
+    entities = filtered_entity_snapshots(model_snapshot, { 'includeHidden' => true }).map do |entity|
+      entity.merge(
+        'editable' => true,
+        'edit_scope' => 'top_level',
+        'reference' => entity['id'] || entity['persistent_id'] || entity['name']
+      )
+    end
+    recursive_index = recursive ? recursive_entity_index(model, recursive_limit) : nil
+    {
+      'kind' => 'adopt_open_model',
+      'version' => '2026-07-natural-iteration-adoption.1',
+      'runtime' => 'queue',
+      'adopted_count' => adopted,
+      'existing_count' => existing,
+      'entity_count' => entities.length,
+      'recursive' => recursive,
+      'read_only_nested_count' => recursive_index ? recursive_index.count { |entry| entry['editable'] == false } : 0,
+      'model_info' => get_model_info,
+      'entities' => entities,
+      'recursive_index' => recursive_index,
+      'snapshot' => model_snapshot
+    }
+  rescue StandardError
+    model.abort_operation if model
+    raise
+  end
+
+  def get_selection
+    model = active_model_or_new('get_selection')
+    selected = model.selection.to_a.select { |entity| selectable_entity?(entity) }.map { |entity| selection_entity_summary(entity) }
+    {
+      'kind' => 'get_selection',
+      'runtime' => 'queue',
+      'selection' => selected
+    }
+  end
+
+  def set_selection(params)
+    model = active_model_or_new('set_selection')
+    mode = (params['mode'] || 'replace').to_s
+    raise 'set_selection.mode must be replace, add, remove, or clear' unless %w[replace add remove clear].include?(mode)
+
+    selected = apply_model_selection(model, mode, params['targets'] || [])
+    {
+      'kind' => 'set_selection',
+      'runtime' => 'queue',
+      'mode' => mode,
+      'selection' => selected,
+      'snapshot' => snapshot
+    }
+  end
+
   def capture_view(params)
     model = active_model_or_new('capture_view')
     view_name = (params['view'] || 'current').to_s
+    scene_name = params['scene'].to_s.strip
     width = positive_integer(params['width'] || 1280, 'capture_view.width')
     height = positive_integer(params['height'] || 720, 'capture_view.height')
     antialias = params.key?('antialias') ? !!params['antialias'] : true
@@ -238,7 +477,11 @@ module AlmaSketchupMCP
     target = File.expand_path(target)
     FileUtils.mkdir_p(File.dirname(target))
 
-    apply_capture_camera(model, view_name, params.fetch('zoom_extents', true))
+    if scene_name.empty?
+      apply_capture_camera(model, view_name, params.fetch('zoom_extents', true))
+    else
+      apply_capture_scene(model, scene_name, params.fetch('zoom_extents', false))
+    end
     view = model.active_view
     view.refresh if view.respond_to?(:refresh)
     ok = view.write_image(target, width, height, antialias, compression)
@@ -250,6 +493,7 @@ module AlmaSketchupMCP
       'runtime' => 'queue',
       'file_path' => target,
       'view' => view_name,
+      'scene' => scene_name.empty? ? nil : scene_name,
       'width' => width,
       'height' => height,
       'antialias' => antialias,
@@ -373,6 +617,17 @@ module AlmaSketchupMCP
     view.zoom_extents if zoom_extents && view.respond_to?(:zoom_extents)
   end
 
+  def apply_capture_scene(model, scene_name, zoom_extents)
+    page = model.pages.find { |candidate| candidate.name == scene_name }
+    raise "capture_view.scene not found: #{scene_name}" unless page
+
+    model.pages.selected_page = page if model.pages.respond_to?(:selected_page=)
+    if page.respond_to?(:camera) && page.camera
+      model.active_view.camera = page.camera
+    end
+    model.active_view.zoom_extents if zoom_extents && model.active_view.respond_to?(:zoom_extents)
+  end
+
   def camera_snapshot(camera)
     {
       'eye' => point_snapshot(camera.eye),
@@ -414,6 +669,283 @@ module AlmaSketchupMCP
     end
 
     value.inspect
+  end
+
+  def active_model_path
+    model = Sketchup.active_model
+    return nil unless model && model.respond_to?(:path)
+
+    model.path.to_s.empty? ? nil : model.path
+  end
+
+  def open_file_success?(result)
+    return true if result == true
+    return false if result == false || result.nil?
+
+    success_codes = []
+    if defined?(Sketchup::Model::LOAD_STATUS_SUCCESS)
+      success_codes << Sketchup::Model::LOAD_STATUS_SUCCESS
+    end
+    if defined?(Sketchup::Model::LOAD_STATUS_SUCCESS_MORE_RECENT)
+      success_codes << Sketchup::Model::LOAD_STATUS_SUCCESS_MORE_RECENT
+    end
+    success_codes.empty? ? !!result : success_codes.include?(result)
+  end
+
+  def same_file_path?(left, right)
+    return false if left.to_s.empty? || right.to_s.empty?
+
+    File.expand_path(left).casecmp(File.expand_path(right)).zero?
+  end
+
+  def import_skp_model(model, target)
+    definition = begin
+      model.definitions.load(target, allow_newer: true)
+    rescue ArgumentError
+      model.definitions.load(target)
+    end
+    raise "Failed to load SketchUp component definition from #{target}" unless definition
+
+    instance = model.entities.add_instance(definition, Geom::Transformation.new)
+    instance.name = File.basename(target, File.extname(target)) if instance.name.to_s.empty?
+    exploded = instance.explode
+    {
+      'strategy' => 'definitions.load+explode',
+      'definition' => definition.name,
+      'exploded_entities' => exploded.respond_to?(:length) ? exploded.length : nil
+    }
+  end
+
+  def snapshot_signature(model_snapshot)
+    totals = model_snapshot['totals'] || {}
+    [
+      totals['faces'],
+      totals['edges'],
+      totals['vertices'],
+      totals['groups'],
+      totals['instances'],
+      (model_snapshot['component_definitions'] || []).length,
+      (model_snapshot['materials'] || []).length
+    ]
+  end
+
+  def versioned_model_path(requested_path, label)
+    base = requested_path.to_s.strip
+    base = File.join(STATE_DIR, 'alma-sketchup-model.skp') if base.empty?
+    expanded = File.expand_path(base)
+    ext = File.extname(expanded)
+    ext = '.skp' if ext.empty?
+    stem = expanded.end_with?(ext) ? expanded[0...-ext.length] : expanded
+    safe_label = label.to_s.strip
+    safe_label = Time.now.utc.strftime('%Y%m%dT%H%M%SZ') if safe_label.empty?
+    safe_label = safe_label.gsub(/[^a-zA-Z0-9._-]+/, '-').gsub(/^-|-$/, '')
+    "#{stem}-#{safe_label}#{ext}"
+  end
+
+  def filtered_entity_snapshots(model_snapshot, params)
+    include_hidden = params.key?('includeHidden') ? params['includeHidden'] : params.fetch('include_hidden', true)
+    kind = params['kind']
+    material = params['material']
+    tag = params['tag']
+    name_pattern = params['name']
+    regex = name_pattern && !name_pattern.to_s.empty? ? Regexp.new(name_pattern.to_s, Regexp::IGNORECASE) : nil
+    entities = model_snapshot['groups'].map { |item| item.merge('entity_type' => 'group') } +
+               model_snapshot['instances'].map { |item| item.merge('entity_type' => 'component_instance') }
+    entities.select do |item|
+      next false if include_hidden == false && item['visible'] == false
+      next false if kind && item['kind'] != kind
+      next false if material && item['material'] != material
+      next false if tag && item['tag'] != tag
+      next false if regex && item['name'].to_s !~ regex
+
+      true
+    end.map do |item|
+      {
+        'id' => item['id'],
+        'persistent_id' => item['persistent_id'],
+        'name' => item['name'],
+        'entity_type' => item['entity_type'],
+        'kind' => item['kind'] || item['definition'] || item['entity_type'],
+        'definition' => item['definition'],
+        'visible' => item['visible'] != false,
+        'faces' => item['faces'],
+        'edges' => item['edges'],
+        'vertices' => item['vertices'],
+        'bounding_box' => item['bounding_box'],
+        'material' => item['material'],
+        'tag' => item['tag'],
+        'classification' => item['classification'],
+        'texture_transform' => item['texture_transform'],
+        'face_uvs' => item['face_uvs'],
+        'image' => item['image'],
+        'qa' => item['qa']
+      }
+    end
+  end
+
+  def adoptable_entities(model)
+    model.entities.grep(Sketchup::Group) + model.entities.grep(Sketchup::ComponentInstance)
+  end
+
+  def adoption_id_for(entity, prefix, index)
+    persistent = entity_persistent_id(entity)
+    entity_type = entity.is_a?(Sketchup::ComponentInstance) ? 'component-instance' : 'group'
+    return "#{prefix}-#{safe_adoption_token(entity_type)}-#{safe_adoption_token(persistent)}" if persistent && !persistent.empty?
+
+    raw_name = entity.respond_to?(:name) ? entity.name.to_s.strip : ''
+    name = raw_name.empty? ? '' : safe_adoption_token(raw_name)
+    "#{prefix}-#{safe_adoption_token(entity_type)}-#{name.empty? ? index + 1 : name}"
+  end
+
+  def safe_adoption_token(value)
+    token = value.to_s.strip.gsub(/[^a-zA-Z0-9_-]+/, '-').gsub(/\A-+|-+\z/, '').downcase
+    token.empty? ? 'adopted' : token
+  end
+
+  def recursive_entity_index(model, limit)
+    entries = []
+    adoptable_entities(model).each_with_index do |entity, index|
+      top_id = entity_id(entity) || entity_persistent_id(entity) || entity.name || "top-#{index + 1}"
+      collect_nested_entities(entity_entities(entity), "top:#{top_id}", entries, limit, entity)
+      break if entries.length >= limit
+    end
+    entries
+  end
+
+  def collect_nested_entities(entities, path_prefix, entries, limit, parent)
+    return unless entities
+
+    entities.each_with_index do |entity, index|
+      break if entries.length >= limit
+      next unless entity.respond_to?(:bounds) || entity.is_a?(Sketchup::Face) || entity.is_a?(Sketchup::Edge)
+
+      type_name = entity.respond_to?(:typename) ? entity.typename : entity.class.name
+      path = "#{path_prefix}/#{type_name}:#{index}"
+      entries << nested_entity_snapshot(entity, path, parent)
+      collect_nested_entities(entity_entities(entity), path, entries, limit, entity) if entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance)
+    end
+  end
+
+  def entity_entities(entity)
+    return entity.entities if entity.is_a?(Sketchup::Group)
+    return entity.definition.entities if entity.is_a?(Sketchup::ComponentInstance)
+
+    nil
+  end
+
+  def nested_entity_snapshot(entity, path, parent)
+    type_name = entity.respond_to?(:typename) ? entity.typename : entity.class.name
+    {
+      'path' => path,
+      'parent_id' => entity_id(parent) || entity_persistent_id(parent) || parent.name,
+      'name' => entity.respond_to?(:name) ? entity.name : nil,
+      'entity_type' => type_name,
+      'kind' => type_name.to_s.downcase,
+      'persistent_id' => entity_persistent_id(entity),
+      'bounding_box' => entity.respond_to?(:bounds) ? bounds_hash(entity.bounds) : nil,
+      'material' => entity.respond_to?(:material) && entity.material ? entity.material.name : nil,
+      'editable' => false,
+      'edit_scope' => 'nested_read_only',
+      'warning' => 'Nested entities are indexed for reference only in this slice; edit the top-level group/component instance unless definition-wide editing is explicitly implemented.'
+    }
+  end
+
+  def selectable_entity?(entity)
+    entity.is_a?(Sketchup::Group) ||
+      entity.is_a?(Sketchup::ComponentInstance) ||
+      entity.is_a?(Sketchup::Face) ||
+      entity.is_a?(Sketchup::Edge)
+  end
+
+  def selection_entity_summary(entity)
+    if entity.is_a?(Sketchup::Face)
+      return face_selection_summary(entity)
+    elsif entity.is_a?(Sketchup::Edge)
+      return edge_selection_summary(entity)
+    end
+
+    {
+      'id' => entity_id(entity) || entity.name,
+      'persistent_id' => entity_persistent_id(entity),
+      'name' => entity.name,
+      'entity_type' => entity.is_a?(Sketchup::ComponentInstance) ? 'component_instance' : 'group',
+      'kind' => group_kind(entity) || (entity.is_a?(Sketchup::ComponentInstance) ? 'component_instance' : 'group'),
+      'bounding_box' => bounds_hash(entity.bounds),
+      'visible' => entity.respond_to?(:hidden?) ? !entity.hidden? : true
+    }
+  end
+
+  def face_selection_summary(face)
+    normal = face.normal
+    outer_loop = face.outer_loop ? face.outer_loop.vertices.map { |vertex| point_to_mm(vertex.position) } : face.vertices.map { |vertex| point_to_mm(vertex.position) }
+    holes = face.loops
+      .select { |loop| !loop.outer? }
+      .map { |loop| loop.vertices.map { |vertex| point_to_mm(vertex.position) } }
+    {
+      'id' => entity_id(face) || entity_persistent_id(face),
+      'persistent_id' => entity_persistent_id(face),
+      'name' => nil,
+      'entity_type' => 'face',
+      'kind' => 'face',
+      'bounding_box' => bounds_hash(face.bounds),
+      'visible' => face.respond_to?(:hidden?) ? !face.hidden? : true,
+      'material' => face.material ? face.material.name : nil,
+      'back_material' => face.back_material ? face.back_material.name : nil,
+      'tag' => entity_tag_name(face),
+      'normal' => [normal.x.round(6), normal.y.round(6), normal.z.round(6)],
+      'area_mm2' => model_area_to_square_mm(face.area),
+      'vertices' => outer_loop,
+      'outer_loop' => outer_loop,
+      'holes' => holes,
+      'loop_count' => 1 + holes.length,
+      'edge_count' => face.edges.length,
+      'vertex_count' => outer_loop.length
+    }
+  end
+
+  def edge_selection_summary(edge)
+    {
+      'id' => entity_id(edge) || entity_persistent_id(edge),
+      'persistent_id' => entity_persistent_id(edge),
+      'name' => nil,
+      'entity_type' => 'edge',
+      'kind' => 'edge',
+      'bounding_box' => bounds_hash(edge.bounds),
+      'visible' => edge.respond_to?(:hidden?) ? !edge.hidden? : true,
+      'material' => edge.respond_to?(:material) && edge.material ? edge.material.name : nil,
+      'tag' => entity_tag_name(edge),
+      'length' => model_units_to_mm(edge.length),
+      'vertices' => edge.vertices.map { |vertex| point_to_mm(vertex.position) }
+    }
+  end
+
+  def point_to_mm(point)
+    [model_units_to_mm(point.x), model_units_to_mm(point.y), model_units_to_mm(point.z)]
+  end
+
+  def model_area_to_square_mm(value)
+    (value.to_f * MM_PER_INCH * MM_PER_INCH).round(6)
+  end
+
+  def find_selection_target(model, target)
+    operation = selection_reference_operation(target)
+    find_referenced_entity(model, operation, 'set_selection')
+  rescue StandardError
+    if target.is_a?(String)
+      fallback = { 'name' => target }
+      return find_referenced_entity(model, fallback, 'set_selection')
+    end
+    raise
+  end
+
+  def selection_reference_operation(target)
+    return { 'target_id' => target } if target.is_a?(String)
+    raise 'set_selection.targets entries must be strings or objects' unless target.is_a?(Hash)
+
+    {
+      'target_id' => target['target_id'] || target['targetId'] || target['id'] || target['object_id'] || target['objectId'] || target['guid'],
+      'name' => target['name'] || target['target'] || target['object']
+    }.compact
   end
 
   def positive_integer(value, field_name)
@@ -471,6 +1003,7 @@ module AlmaSketchupMCP
     case operation['op']
     when 'reset'
       clear_model(model)
+      clear_image_references(model)
       @warnings = []
       @scenes = []
       @levels = []
@@ -495,6 +1028,10 @@ module AlmaSketchupMCP
       set_object_texture_transform(model, operation.merge('projection' => 'planar'))
     when 'uv_project_box'
       set_object_texture_transform(model, operation.merge('projection' => 'box'))
+    when 'face_uv'
+      set_face_uv(model, operation)
+    when 'image_reference'
+      add_image_reference(model, operation)
     when 'delete'
       delete_object(model, operation)
     when 'rename'
@@ -599,6 +1136,12 @@ module AlmaSketchupMCP
       add_boolean_cutout(model.entities, operation)
     when 'mesh'
       add_mesh(model.entities, operation)
+    when 'geometry_input'
+      add_geometry_input(model.entities, operation)
+    when 'curve'
+      add_curve(model.entities, operation)
+    when 'arc_curve'
+      add_arc_curve(model.entities, operation)
     when 'prism'
       add_prism(model.entities, operation)
     when 'face_with_holes'
@@ -635,6 +1178,8 @@ module AlmaSketchupMCP
       add_component_definition(model, operation)
     when 'component_instance'
       add_component_instance(model, operation)
+    when 'selection'
+      apply_selection_operation(model, operation)
     when 'camera'
       set_camera(model, operation)
     when 'scene'
@@ -663,28 +1208,61 @@ module AlmaSketchupMCP
     reference
   end
 
+  def apply_selection_operation(model, operation)
+    mode = (operation['mode'] || 'replace').to_s
+    raise 'selection.mode must be replace, add, remove, or clear' unless %w[replace add remove clear].include?(mode)
+
+    apply_model_selection(model, mode, operation['targets'] || [])
+  end
+
+  def apply_model_selection(model, mode, targets)
+    targets = [targets] unless targets.is_a?(Array)
+    selection = model.selection
+    selection.clear if %w[replace clear].include?(mode)
+    unless mode == 'clear'
+      entities = targets.map { |target| find_selection_target(model, target) }
+      if mode == 'remove'
+        entities.each { |entity| selection.remove(entity) if selection.respond_to?(:remove) }
+      else
+        entities.each { |entity| selection.add(entity) }
+      end
+    end
+    selection.to_a.select { |entity| selectable_entity?(entity) }.map { |entity| selection_entity_summary(entity) }
+  end
+
   def reference_label(reference)
     [reference['id'] ? "id:#{reference['id']}" : nil, reference['name'] ? "name:#{reference['name']}" : nil].compact.join(' ')
   end
 
   def find_referenced_entity(model, operation, op_name)
     reference = object_reference(operation, op_name)
-    entity = (model.entities.grep(Sketchup::Group) + model.entities.grep(Sketchup::ComponentInstance)).find { |item| entity_matches_reference(item, reference) }
+    entity = selection_candidate_entities(model).find { |item| entity_matches_reference(item, reference) }
     raise "object not found: #{reference_label(reference)}" unless entity
 
     entity
   end
 
+  def selection_candidate_entities(model)
+    collections = [model.entities]
+    collections << model.active_entities if model.respond_to?(:active_entities) && model.active_entities != model.entities
+    collections.compact.uniq.flat_map do |entities|
+      entities.grep(Sketchup::Group) +
+        entities.grep(Sketchup::ComponentInstance) +
+        entities.grep(Sketchup::Face) +
+        entities.grep(Sketchup::Edge)
+    end
+  end
+
   def entity_matches_reference(entity, reference)
     id_matches = !reference['id'] || [entity_id(entity), entity_persistent_id(entity)].compact.include?(reference['id'])
-    name_matches = !reference['name'] || entity.name == reference['name']
+    name_matches = !reference['name'] || (entity.respond_to?(:name) && entity.name == reference['name'])
     id_matches && name_matches
   end
 
   def entity_id(entity)
     return nil unless entity.respond_to?(:get_attribute)
 
-    raw = entity.get_attribute('AlmaSketchupMCP', 'id')
+    raw = entity.get_attribute('AlmaSketchupMCP', 'id') || entity.get_attribute('AlmaSketchupMCP', 'adopted_id')
     raw.nil? || raw.to_s.empty? ? nil : raw.to_s
   end
 

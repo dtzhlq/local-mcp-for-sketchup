@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { normalizeMaterialAssetPaths, toPortableAssetPath } from '../dsl-asset-paths.mjs';
 
 const DEFAULT_REPO_ROOT = path.resolve(fileURLToPath(new URL('../..', import.meta.url)));
 const SHAPE_OPERATIONS = new Set([
@@ -233,7 +234,7 @@ function compileMaterials(profile) {
   return (profile.materials || []).map((material) => {
     const { name, color, ...rest } = material;
     if (!name || !color) throw new Error('ProductProfile materials require name and color');
-    return { op: 'material', name, color, ...cloneJson(rest) };
+    return { op: 'material', name, color, ...normalizeMaterialAssetPaths(rest, DEFAULT_REPO_ROOT) };
   });
 }
 
@@ -403,8 +404,7 @@ function partObjectId(partId, context) {
 }
 
 function resolveAssetPath(source, repoRoot) {
-  if (path.isAbsolute(source)) return source;
-  return path.resolve(repoRoot, source);
+  return toPortableAssetPath(source, repoRoot);
 }
 
 function cloneJson(value) {

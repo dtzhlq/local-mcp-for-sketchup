@@ -5,6 +5,8 @@ import { getOperationManifest, getOperationNames, getRuntimeCapabilities } from 
 import { SketchUpBridge } from '../src/bridge.mjs';
 import { compareSnapshots } from '../src/snapshot-diff.mjs';
 import { formatSnapshotReportMarkdown } from '../src/snapshot-report.mjs';
+import { resolveTargets } from '../src/target-resolution.mjs';
+import { analyzeSelectionGeometry } from '../src/selection-geometry-interpreter.mjs';
 
 const bridge = new SketchUpBridge();
 const demoPath = path.resolve('examples/demo-room.json');
@@ -62,6 +64,220 @@ assert.ok(docsResult.docs.includes('## Capability Baseline'), 'docs should inclu
 for (const operationName of getOperationNames()) {
   assert.ok(docsResult.docs.includes(`\`${operationName}\``), `docs should include manifest operation ${operationName}`);
 }
+
+const selectedSubEntities = resolveTargets({
+  query: 'selection',
+  selection: [
+    {
+      id: 'face-101',
+      persistent_id: '101',
+      entity_type: 'face',
+      kind: 'face',
+      bounding_box: { min: [0, 0, 0], max: [100, 100, 0], w: 100, d: 100, h: 0 }
+    },
+    {
+      id: 'edge-102',
+      persistent_id: '102',
+      entity_type: 'edge',
+      kind: 'edge',
+      bounding_box: { min: [0, 0, 0], max: [100, 0, 0], w: 100, d: 0, h: 0 }
+    }
+  ],
+  allowMultiple: true
+});
+assert.equal(selectedSubEntities.ok, true);
+assert.deepEqual(selectedSubEntities.selected.map((item) => item.entity.entity_type), ['face', 'edge']);
+
+const roadSegmentAnalysis = analyzeSelectionGeometry({
+  runtime: 'mock',
+  selection: [{
+    id: 'selected-road-face',
+    entity_type: 'face',
+    kind: 'face',
+    normal: [0, 0, 1],
+    vertices: [[0, 0, 0], [60000, 0, 0], [60000, 7000, 0], [0, 7000, 0]]
+  }]
+});
+const roadSegment = roadSegmentAnalysis.entities[0].hypotheses.find((item) => item.type === 'road_segment_candidate');
+assert.ok(roadSegment.confidence >= 0.7, 'elongated selected face should be interpreted as a road segment candidate');
+assert.equal(roadSegment.measurements.estimated_width_mm, 7000);
+assert.equal(roadSegment.measurements.centerline.type, 'single_segment_estimate');
+assert.equal(roadSegmentAnalysis.entities[0].geometry.road_graph.segments.length, 1);
+assert.equal(roadSegmentAnalysis.entities[0].geometry.road_graph.segments[0].width_mm, 7000);
+assert.equal(roadSegmentAnalysis.entities[0].geometry.road_graph.approaches.length, 2);
+
+const roadJunctionAnalysis = analyzeSelectionGeometry({
+  runtime: 'mock',
+  selection: [{
+    id: 'selected-t-junction-face',
+    entity_type: 'face',
+    kind: 'face',
+    normal: [0, 0, 1],
+    vertices: [[0, 0, 0], [12000, 0, 0], [12000, 4000, 0], [8000, 4000, 0], [8000, 10000, 0], [4000, 10000, 0], [4000, 4000, 0], [0, 4000, 0]]
+  }]
+});
+const junction = roadJunctionAnalysis.entities[0].hypotheses.find((item) => item.type === 'junction_or_branch_candidate');
+assert.ok(junction.confidence >= 0.6, 'concave selected road face should be interpreted as a junction or branch candidate');
+assert.equal(roadJunctionAnalysis.entities[0].geometry.corridor_width_estimate_mm, 4000);
+assert.equal(roadJunctionAnalysis.entities[0].geometry.road_graph.segments.length, 2);
+assert.equal(roadJunctionAnalysis.entities[0].geometry.road_graph.intersections.length, 1);
+assert.equal(roadJunctionAnalysis.entities[0].geometry.road_graph.approaches.length, 3);
+
+const rotatePoint = ([x, y, z = 0], degrees) => {
+  const radians = degrees * Math.PI / 180;
+  const c = Math.cos(radians);
+  const s = Math.sin(radians);
+  return [x * c - y * s, x * s + y * c, z];
+};
+const rotatedRoadJunctionAnalysis = analyzeSelectionGeometry({
+  runtime: 'mock',
+  assume: 'road',
+  selection: [{
+    id: 'selected-rotated-t-junction-face',
+    entity_type: 'face',
+    kind: 'face',
+    normal: [0, 0, 1],
+    outer_loop: [[0, 0, 0], [12000, 0, 0], [12000, 4000, 0], [8000, 4000, 0], [8000, 10000, 0], [4000, 10000, 0], [4000, 4000, 0], [0, 4000, 0]].map((point) => rotatePoint(point, 30))
+  }]
+});
+const rotatedRoadGraph = rotatedRoadJunctionAnalysis.entities[0].geometry.road_graph;
+assert.equal(rotatedRoadJunctionAnalysis.entities[0].geometry.corridor_width_estimate_mm, 4000);
+assert.equal(rotatedRoadGraph.segments.length, 2);
+assert.equal(rotatedRoadGraph.intersections.length, 1);
+assert.equal(rotatedRoadGraph.approaches.length, 3);
+assert.ok(rotatedRoadGraph.segments.some((segment) => Math.abs(segment.heading_degrees - 30) <= 0.01));
+assert.ok(rotatedRoadGraph.segments.some((segment) => Math.abs(segment.heading_degrees - 120) <= 0.01));
+
+const selectedRoadEdgeAnalysis = analyzeSelectionGeometry({
+  runtime: 'mock',
+  assume: 'road_boundary',
+  selection: [{
+    id: 'selected-road-edge',
+    entity_type: 'edge',
+    kind: 'edge',
+    vertices: [[0, 0, 0], [3000, 4000, 0], [8000, 4000, 0]]
+  }]
+});
+const selectedRoadEdge = selectedRoadEdgeAnalysis.entities[0];
+assert.equal(selectedRoadEdge.geometry.primitive, 'edge_polyline');
+assert.equal(selectedRoadEdge.geometry.segment_count, 2);
+assert.equal(selectedRoadEdge.geometry.length_mm, 10000);
+assert.equal(selectedRoadEdge.hypotheses[0].type, 'road_centerline_or_boundary_candidate');
+assert.equal(selectedRoadEdge.hypotheses[0].requires_confirmation, true);
+
+const selectedFaceWithHoleAnalysis = analyzeSelectionGeometry({
+  runtime: 'mock',
+  selection: [{
+    id: 'selected-face-with-hole',
+    entity_type: 'face',
+    kind: 'face',
+    normal: [0, 0, 1],
+    outer_loop: [[0, 0, 0], [10000, 0, 0], [10000, 8000, 0], [0, 8000, 0]],
+    holes: [[[2000, 2000, 0], [4000, 2000, 0], [4000, 4000, 0], [2000, 4000, 0]]]
+  }]
+});
+assert.equal(selectedFaceWithHoleAnalysis.entities[0].geometry.source, 'selected_face_outer_loop');
+assert.equal(selectedFaceWithHoleAnalysis.entities[0].geometry.hole_count, 1);
+assert.equal(selectedFaceWithHoleAnalysis.entities[0].geometry.area_mm2, 76000000);
+
+await bridge.build_model({
+  runtime: 'mock',
+  code: JSON.stringify({
+    version: 1,
+    units: 'mm',
+    operations: [
+      { op: 'reset' },
+      { op: 'geometry_input', id: 'intent-panel', name: 'Intent_Panel', vertices: [[0, 0, 0], [1000, 0, 0], [1000, 500, 0], [0, 500, 0]], faces: [[0, 1, 2, 3]] },
+      { op: 'box', id: 'intent-bbox-box', name: 'Intent_Bbox_Box', origin: [1200, 0, 0], size: [100, 100, 100] }
+    ]
+  })
+});
+await bridge.set_selection({ runtime: 'mock', targets: ['intent-panel'] });
+const materialIntent = await bridge.plan_modification_intent({
+  runtime: 'mock',
+  instruction: 'paint selected panel',
+  action: 'set_material',
+  parameters: { material: 'Intent_Blue' }
+});
+assert.equal(materialIntent.kind, 'modification_intent');
+assert.equal(materialIntent.ok, true);
+assert.equal(materialIntent.patch.operations[0].op, 'set_material');
+assert.ok(materialIntent.proposed_actions[0].evidence_refs.length >= 1);
+
+const transformIntent = await bridge.plan_modification_intent({
+  runtime: 'mock',
+  instruction: 'move selected panel',
+  action: 'transform_targets',
+  parameters: { translate: [100, 0, 0] }
+});
+assert.equal(transformIntent.patch.operations[0].op, 'transform_object');
+
+const attributeIntent = await bridge.plan_modification_intent({
+  runtime: 'mock',
+  instruction: 'mark selected panel as reviewed',
+  action: 'set_attribute',
+  parameters: { dictionary: 'IntentTest', key: 'reviewed', value: true }
+});
+assert.equal(attributeIntent.safe_to_execute, true);
+assert.equal(attributeIntent.patch.operations[0].op, 'attribute');
+
+const intentIterationDir = path.resolve('output', 'test-intent-iteration');
+await fs.rm(intentIterationDir, { recursive: true, force: true });
+const intentIteration = await bridge.iterate_model({
+  runtime: 'mock',
+  intent: attributeIntent,
+  output_dir: intentIterationDir,
+  validate_model: false,
+  save_model: false
+});
+assert.equal(intentIteration.kind, 'model_iteration');
+assert.equal(intentIteration.modification_intent.intent_id, attributeIntent.intent_id);
+assert.equal(intentIteration.evaluation.compatibility_mode, 'safe_json_dsl');
+assert.ok(intentIteration.artifacts.modification_intent.endsWith('modification-intent.json'));
+assert.ok(intentIteration.artifacts.intent_patch.endsWith('intent-patch.dsl.json'));
+
+await bridge.set_selection({ runtime: 'mock', targets: ['intent-bbox-box'] });
+const bboxIntent = await bridge.plan_modification_intent({
+  runtime: 'mock',
+  instruction: 'make a surface from selected box',
+  action: 'create_selection_surface',
+  parameters: { material: 'Intent_Red' }
+});
+assert.equal(bboxIntent.requires_confirmation, true);
+assert.equal(bboxIntent.safe_to_execute, false);
+assert.ok(bboxIntent.limitations.some((item) => item.type === 'geometry.bbox_only_requires_confirmation'));
+
+const deleteIntent = await bridge.plan_modification_intent({
+  runtime: 'mock',
+  instruction: 'delete selected box',
+  action: 'delete_targets'
+});
+assert.equal(deleteIntent.requires_confirmation, true);
+assert.equal(deleteIntent.safe_to_execute, false);
+
+const blockedIterationDir = path.resolve('output', 'test-intent-blocked-iteration');
+await fs.rm(blockedIterationDir, { recursive: true, force: true });
+const blockedIteration = await bridge.iterate_model({
+  runtime: 'mock',
+  intent: deleteIntent,
+  output_dir: blockedIterationDir,
+  validate_model: false,
+  save_model: false
+});
+assert.equal(blockedIteration.kind, 'model_iteration_preview');
+assert.equal(blockedIteration.blocked, true);
+assert.equal(blockedIteration.preview_only, true);
+assert.ok(blockedIteration.blocked_reason.includes('requires confirmation'));
+
+await bridge.reset_model({ runtime: 'mock' });
+const emptyIntent = await bridge.plan_modification_intent({
+  runtime: 'mock',
+  instruction: 'paint nothing',
+  action: 'set_material',
+  parameters: { material: 'No_Target' }
+});
+assert.equal(emptyIntent.ok, false);
+assert.equal(emptyIntent.patch, null);
 
 const reset = await bridge.reset_model({ runtime: 'mock' });
 assert.equal(reset.snapshot.runtime.name, 'mock');
@@ -312,6 +528,80 @@ assert.equal(meshSnapshot.bounding_box.w, 1000);
 assert.equal(meshSnapshot.bounding_box.d, 800);
 assert.equal(meshSnapshot.bounding_box.h, 900);
 assert.ok(meshSnapshot.material_names.includes('Mesh_Test'));
+
+const geometryInputCode = JSON.stringify({
+  version: 1,
+  units: 'mm',
+  operations: [
+    { op: 'reset' },
+    { op: 'image_reference', name: 'Geometry_Ref_Image', path: '/tmp/geometry-ref.png', width: 200, height: 100, role: 'reference' },
+    { op: 'geometry_input', id: 'geometry-input-panel', name: 'Geometry_Input_Panel', vertices: [[0, 0, 0], [120, 0, 0], [120, 80, 0], [0, 80, 0], [40, 20, 0], [80, 20, 0], [80, 60, 0], [40, 60, 0]], faces: [{ outer: [0, 1, 2, 3], holes: [[4, 5, 6, 7]] }], material: { name: 'Geometry_Input_Mat', color: '#446688' } },
+    { op: 'curve', id: 'geometry-input-curve', name: 'Geometry_Input_Curve', points: [[0, 0, 20], [40, 30, 20], [120, 0, 20]] },
+    { op: 'arc_curve', id: 'geometry-input-arc', name: 'Geometry_Input_Arc', center: [0, 0, 40], radius: 25, start_angle: 0, end_angle: 180, segments: 5 },
+    { op: 'face_uv', target_id: 'geometry-input-panel', uv_id: 'front', uv: [[0, 0], [1, 0], [1, 1], [0, 1]], image_reference: 'Geometry_Ref_Image' }
+  ]
+});
+const geometryInputBuilt = await bridge.build_model({ runtime: 'mock', code: geometryInputCode });
+const geometryInputSnapshot = geometryInputBuilt.snapshot;
+const geometryInputPanel = geometryInputSnapshot.groups.find((group) => group.id === 'geometry-input-panel');
+const geometryInputCurve = geometryInputSnapshot.groups.find((group) => group.id === 'geometry-input-curve');
+const geometryInputArc = geometryInputSnapshot.groups.find((group) => group.id === 'geometry-input-arc');
+assert.equal(geometryInputSnapshot.totals.groups, 3);
+assert.equal(geometryInputSnapshot.warning_summary.total, 0, 'curve/arc_curve should not count as degenerate zero-face geometry');
+assert.equal(geometryInputPanel.kind, 'geometry_input');
+assert.equal(geometryInputPanel.faces, 1);
+assert.equal(geometryInputPanel.edges, 8);
+assert.equal(geometryInputPanel.face_uvs[0].image_reference, 'Geometry_Ref_Image');
+assert.equal(geometryInputCurve.kind, 'curve');
+assert.equal(geometryInputCurve.faces, 0);
+assert.equal(geometryInputCurve.edges, 2);
+assert.equal(geometryInputArc.kind, 'arc_curve');
+assert.deepEqual(geometryInputArc.resolution_hint, { segments: 5 });
+assert.equal(geometryInputSnapshot.image_references[0].name, 'Geometry_Ref_Image');
+const geometryInfo = await bridge.get_model_info({ runtime: 'mock' });
+assert.equal(geometryInfo.counts.groups, 3);
+assert.equal(geometryInfo.counts.image_references, 1);
+const geometryEntities = await bridge.list_entities({ runtime: 'mock', kind: 'curve' });
+assert.equal(geometryEntities.entities.length, 1);
+assert.equal(geometryEntities.entities[0].id, 'geometry-input-curve');
+const geometryInspection = await bridge.inspect_model({ runtime: 'mock', includeSnapshot: true });
+assert.equal(geometryInspection.entities.length, 3);
+assert.equal(geometryInspection.snapshot.totals.groups, 3);
+const geometrySelection = await bridge.set_selection({ runtime: 'mock', targets: ['geometry-input-panel'] });
+assert.equal(geometrySelection.selection.length, 1);
+assert.equal(geometrySelection.selection[0].id, 'geometry-input-panel');
+const geometryCurrentSelection = await bridge.get_selection({ runtime: 'mock' });
+assert.equal(geometryCurrentSelection.selection[0].name, 'Geometry_Input_Panel');
+
+const iterationDir = path.resolve('output/mock-validation-iteration');
+await fs.rm(iterationDir, { recursive: true, force: true });
+const geometryIteration = await bridge.iterate_model({
+  runtime: 'mock',
+  code: JSON.stringify({
+    version: 1,
+    units: 'mm',
+    operations: [
+      { op: 'material', name: 'Iteration_Test_Mat', color: '#cc7733' },
+      { op: 'box', id: 'iteration-addon-box', name: 'Iteration_Addon_Box', origin: [150, 0, 0], size: [24, 18, 12], material: 'Iteration_Test_Mat' }
+    ]
+  }),
+  input_format: 'json_dsl',
+  label: 'mock-validation',
+  output_dir: iterationDir,
+  targets: ['geometry-input-panel'],
+  validate_model: false
+});
+assert.equal(geometryIteration.kind, 'model_iteration');
+assert.equal(geometryIteration.before.model_info.totals.groups, 3);
+assert.equal(geometryIteration.after.model_info.totals.groups, 4);
+assert.equal(geometryIteration.change_summary.totals_delta.groups, 1);
+assert.ok(geometryIteration.change_summary.added.some((item) => item.id === 'iteration-addon-box'));
+assert.equal(geometryIteration.target_selection[0].id, 'geometry-input-panel');
+assert.ok(geometryIteration.saved_model.file_path.endsWith('model-mock-validation.json'));
+await fs.access(geometryIteration.artifacts.manifest);
+await fs.access(geometryIteration.artifacts.change_summary);
+await fs.access(geometryIteration.artifacts.snapshot_diff);
+await fs.access(geometryIteration.saved_model.file_path);
 
 const roundedBoxCode = JSON.stringify({
   version: 1,
@@ -1559,6 +1849,44 @@ assert.equal(labelInstance.definition, 'Appearance_Label_Def');
 assert.equal(labelInstance.faces, 1);
 assert.equal(labelInstance.edges, 4);
 
+const interiorExpressionCode = await fs.readFile(path.resolve('examples/interior-expression-suite.json'), 'utf8');
+const interiorExpressionSpec = JSON.parse(await fs.readFile(path.resolve('examples/model-qa/interior-expression-suite.json'), 'utf8'));
+const interiorExpressionBuilt = await bridge.build_model({ runtime: 'mock', code: interiorExpressionCode });
+const interiorExpressionSnapshot = interiorExpressionBuilt.snapshot;
+assert.equal(interiorExpressionBuilt.expansion.changed, true);
+assert.equal(interiorExpressionBuilt.expansion.source_operations, 21);
+assert.ok(interiorExpressionBuilt.expansion.expanded_operations > interiorExpressionBuilt.expansion.source_operations);
+assert.ok(interiorExpressionSnapshot.material_names.includes('Interior_Countertop_Light_Stone'));
+assert.ok(interiorExpressionSnapshot.material_names.includes('Interior_Appliance_Black_Glass'));
+assert.ok(interiorExpressionSnapshot.component_definitions.includes('Interior_Bar_Handle_Def'));
+assert.ok(interiorExpressionSnapshot.component_definitions.includes('Interior_Subway_Tile_Def'));
+assert.ok(interiorExpressionSnapshot.instances.length >= 60);
+assert.ok(interiorExpressionSnapshot.scenes.some((scene) => scene.name === 'Interior_Open_Front'));
+assert.ok(interiorExpressionSnapshot.scenes.some((scene) => scene.name === 'Interior_Worktop_Eye_Level'));
+assert.ok(interiorExpressionSnapshot.scenes.some((scene) => scene.name === 'Interior_Top_Plan'));
+const suiteCountertop = interiorExpressionSnapshot.groups.find((group) => group.id === 'suite-north-countertop');
+assert.ok(suiteCountertop.features.some((feature) => feature.op === 'cut_recess' && feature.id === 'Suite_Main_Sink-recess'));
+assert.ok(suiteCountertop.features.some((feature) => feature.op === 'cut_recess' && feature.id === 'Suite_Induction_Cooktop-recess'));
+const interiorExpressionQa = await bridge.validate_model({ runtime: 'mock', snapshot: interiorExpressionSnapshot, spec: interiorExpressionSpec });
+assert.equal(interiorExpressionQa.ok, true);
+assert.equal(interiorExpressionQa.verdict, 'pass');
+assert.equal(interiorExpressionQa.issues.length, 0);
+assert.equal(interiorExpressionQa.accepted_warnings.length, 4);
+const interiorExpressionReport = await bridge.build_report({
+  runtime: 'mock',
+  code: interiorExpressionCode,
+  output_dir: 'output/interior-expression-suite/test',
+  model_spec: interiorExpressionSpec,
+  save_model: false
+});
+assert.ok(interiorExpressionReport.artifacts.expanded_dsl);
+assert.ok(interiorExpressionReport.artifacts.limitations_report);
+assert.ok(interiorExpressionReport.artifacts.limitations_markdown);
+assert.equal(interiorExpressionReport.summary.dsl_expansion.changed, true);
+assert.equal(interiorExpressionReport.summary.model_qa.ok, true);
+assert.equal(interiorExpressionReport.summary.model_qa.accepted_warning_count, 4);
+assert.equal(interiorExpressionReport.summary.limitations.by_type['dsl.bridge_macro_expansion'], 1);
+
 const largeOperationCode = JSON.stringify({
   version: 1,
   units: 'mm',
@@ -1634,5 +1962,133 @@ assert.ok(saved.file_size_bytes > 0, 'file_size_bytes should be reported');
 assert.ok(saved.snapshot.artifact_size_bytes > 0, 'artifact_size_bytes should be injected into snapshot');
 assert.equal(saved.snapshot.runtime.name, 'mock', 'saved snapshot should include runtime descriptor');
 await fs.access(saved.file_path);
+const versioned = await bridge.save_model_version({ runtime: 'mock', path: 'output/mock-validation-version.json', label: 'api-r1' });
+assert.ok(versioned.file_path.endsWith('output/mock-validation-version-api-r1.json'));
+await fs.access(versioned.file_path);
+const opened = await bridge.open_model({ runtime: 'mock', path: versioned.file_path });
+assert.equal(opened.kind, 'open_model');
+assert.equal(opened.snapshot.runtime.name, 'mock');
+const exported = await bridge.export_model({ runtime: 'mock', path: 'output/mock-validation-export.json', format: 'json' });
+assert.equal(exported.kind, 'export_model');
+assert.ok(exported.file_size_bytes > 0);
+await fs.access(exported.file_path);
+const imported = await bridge.import_model({ runtime: 'mock', path: exported.file_path, mode: 'append', prefix: 'Imported' });
+assert.equal(imported.kind, 'import_model');
+assert.ok(imported.snapshot.totals.groups >= opened.snapshot.totals.groups);
+
+const externalModelPath = path.resolve('output/mock-external-model.json');
+await fs.writeFile(externalModelPath, `${JSON.stringify({
+  model: {
+    version: 1,
+    units: 'mm',
+    groups: [
+      {
+        name: 'External_Main_Cabinet',
+        kind: 'box',
+        faces: 6,
+        edges: 12,
+        material: 'External_Oak',
+        bounding_box: { min: [0, 0, 0], max: [1200, 600, 900], w: 1200, d: 600, h: 900 }
+      },
+      {
+        name: 'External_Side_Drawer',
+        kind: 'box',
+        faces: 6,
+        edges: 12,
+        material: 'External_Oak',
+        bounding_box: { min: [1400, 0, 0], max: [1800, 520, 720], w: 400, d: 520, h: 720 }
+      }
+    ],
+    component_definitions: {
+      External_Handle_Def: {
+        name: 'External_Handle_Def',
+        groups: [
+          {
+            name: 'Handle_Nested_Bar',
+            kind: 'box',
+            faces: 6,
+            edges: 12,
+            bounding_box: { min: [0, 0, 0], max: [160, 20, 20], w: 160, d: 20, h: 20 }
+          }
+        ]
+      }
+    },
+    instances: [
+      {
+        name: 'External_Handle_Instance',
+        definition: 'External_Handle_Def',
+        faces: 6,
+        edges: 12,
+        bounding_box: { min: [160, -24, 460], max: [320, -4, 480], w: 160, d: 20, h: 20 }
+      }
+    ],
+    materials: { External_Oak: { name: 'External_Oak', color: '#9b7653' } },
+    tags: {},
+    selection: [],
+    warnings: []
+  }
+}, null, 2)}\n`, 'utf8');
+const externalOpened = await bridge.open_model({ runtime: 'mock', path: externalModelPath });
+assert.equal(externalOpened.kind, 'open_model');
+assert.equal(externalOpened.snapshot.totals.groups, 2);
+const adoption = await bridge.adopt_open_model({ runtime: 'mock', recursive: true, prefix: 'external' });
+assert.equal(adoption.kind, 'adopt_open_model');
+assert.equal(adoption.runtime, 'mock');
+assert.equal(adoption.adopted_count, 3);
+assert.ok(adoption.entities.every((entity) => entity.id.startsWith('external-')));
+assert.ok(adoption.recursive_index.some((entry) => entry.editable === false && entry.path.includes('External_Handle_Def')));
+const resolvedLargest = await bridge.resolve_model_targets({ runtime: 'mock', query: 'largest cabinet' });
+assert.equal(resolvedLargest.kind, 'target_resolution');
+assert.equal(resolvedLargest.ok, true);
+assert.equal(resolvedLargest.requires_confirmation, false);
+assert.equal(resolvedLargest.selected_targets[0].id, 'external-group-external_main_cabinet');
+const naturalIterationDir = path.resolve('output/mock-natural-iteration');
+await fs.rm(naturalIterationDir, { recursive: true, force: true });
+const naturalIteration = await bridge.iterate_model({
+  runtime: 'mock',
+  code: JSON.stringify({
+    version: 1,
+    units: 'mm',
+    operations: [
+      { op: 'transform_object', target_id: '$target', translate: [100, 0, 0] }
+    ]
+  }),
+  input_format: 'json_dsl',
+  target_query: 'largest cabinet',
+  label: 'natural-iteration',
+  output_dir: naturalIterationDir,
+  validate_model: false
+});
+assert.equal(naturalIteration.kind, 'model_iteration');
+assert.equal(naturalIteration.target_resolution.selected_targets[0].id, 'external-group-external_main_cabinet');
+assert.ok(naturalIteration.artifacts.resolved_input.endsWith('resolved-input.dsl.json'));
+assert.ok(naturalIteration.change_summary.changed.some((item) => item.id === 'external-group-external_main_cabinet' && item.changed_fields.includes('bounding_box')));
+const movedCabinet = naturalIteration.after.model_info.totals.groups === 2
+  ? JSON.parse(await fs.readFile(naturalIteration.artifacts.after_snapshot, 'utf8')).groups.find((group) => group.id === 'external-group-external_main_cabinet')
+  : null;
+assert.equal(movedCabinet.bounding_box.min[0], 100);
+const previewDir = path.resolve('output/mock-natural-iteration-preview');
+await fs.rm(previewDir, { recursive: true, force: true });
+const preview = await bridge.iterate_model({
+  runtime: 'mock',
+  code: JSON.stringify({
+    version: 1,
+    units: 'mm',
+    operations: [
+      { op: 'attribute', target_id: '$target', dictionary: 'NaturalIteration', key: 'preview', value: true }
+    ]
+  }),
+  input_format: 'json_dsl',
+  target_query: 'selection',
+  preview_only: true,
+  label: 'natural-preview',
+  output_dir: previewDir,
+  validate_model: false
+});
+assert.equal(preview.kind, 'model_iteration_preview');
+assert.equal(preview.preview_only, true);
+assert.equal(preview.after, undefined);
+assert.ok(preview.artifacts.target_resolution.endsWith('target-resolution.json'));
+assert.ok(preview.artifacts.resolved_input.endsWith('resolved-input.dsl.json'));
 
 console.log(JSON.stringify({ ok: true, totals: snapshot.totals, saved: saved.file_path }, null, 2));

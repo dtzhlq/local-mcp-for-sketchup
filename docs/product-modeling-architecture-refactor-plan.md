@@ -119,8 +119,10 @@ These are follow-up TODOs from the 2026-06-04 RhinoMCP review. They should be fo
 - [x] Add a lightweight user-facing SketchUp MCP command/agent bundle. `get_workflow_bundle` now returns inspector/modeler/QA reviewer workflows: start from `get_capabilities` or `queue_diagnostics`, capture a viewport when SketchUp is available, build/save only when requested, and finish substantial queue edits with QA plus a visible artifact.
 - [x] Add named queue session diagnostics before considering multi-process work. The first slice provides `queue_diagnostics` with stale lock, pending request, orphan response, timeout, and state-dir visibility around the existing single SketchUp queue. True multi-SketchUp slots remain out of scope.
 - [x] Consider a gated `run_ruby_expert` / `run_sketchup_command` tool for local debugging and capability discovery. `run_ruby_expert` is disabled by default, marked destructive, requires `ALMA_SKETCHUP_ENABLE_RUBY_EXPERT=1` in both Node and SketchUp plugin environments, returns stdout/error/result, and writes an audit artifact. It is not an acceptance path and must not bypass DSL schema, operation registry, or QA gates.
-- [ ] Formalize a `ParametricRecipe` / `FeatureMappingGraph` artifact inspired by Grasshopper graph workflows. The goal is to expose parameters, part keys, dependencies, and variation points in a reviewable graph that compiles into PartGraph/FeatureMappingPlan/DSL, rather than hiding parametric behavior inside one-off Expert Mode scripts.
-- [ ] Add a first-output discipline for batch operations. Any future batch save/render/QA runner should process one sample, save artifacts, and require the same report shape before fanning out. This borrows RhinoMCP's slot/bulk workflow ergonomics while preserving the repo's artifact-backed validation standard.
+- [x] Add a natural iteration artifact loop. `iterate_model` inspects the active session, optionally selects targets, applies an incremental patch through the existing controlled execution layer, then writes before/after snapshots, change summary, snapshot diff, QA, manifest, and a versioned model artifact.
+- [x] Formalize a minimal `ParametricRecipe` / `FeatureMappingGraph` artifact inspired by Grasshopper graph workflows. The first slice adds `schema/parametric-recipe.schema.json`, a reviewed Switch thumbstick recipe fixture, and a static `FeatureMappingPlan` compiler that exposes parameters, part keys, dependencies, variation points, and downstream compile target direction without opening arbitrary script execution.
+- [x] Add a first-output discipline contract for batch-oriented recipe fanout. The first slice is schema- and test-backed: `first_output_then_fanout` recipes must declare a first reviewed candidate plus required `feature_mapping_plan` and `compile_report` artifacts before any additional batch candidates are considered.
+- [ ] Extend `ParametricRecipe` compilation beyond the current static `FeatureMappingPlan` emission into direct reviewed `PartGraph` / safe JSON DSL authoring when the runtime path and QA evidence are ready.
 
 ## Proposed Artifacts
 
@@ -128,6 +130,7 @@ Add or formalize these artifacts:
 
 - `ProductProfile`: product taxonomy, default constraints, expected views, required parts, allowed primitives, QA rules.
 - `PartGraph`: part tree, relations, parameters, evidence status, feature intent, fallback state.
+- `ParametricRecipe`: parameters, part keys, dependency graph, variation points, batch first-output contract, and downstream compile target direction.
 - `FeatureMappingPlan`: selected runtime operations for each part or feature.
 - `ReferenceVisualQAReport`: reference alignment scores, keypoint deltas, silhouette metrics, correction suggestions.
 - `CorrectionPatch`: edits against `PartGraph` and evidence status, not only raw DSL output.

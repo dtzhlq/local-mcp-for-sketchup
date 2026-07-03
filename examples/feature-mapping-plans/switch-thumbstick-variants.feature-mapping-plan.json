@@ -1,0 +1,257 @@
+{
+  "version": 1,
+  "artifact": "FeatureMappingPlan",
+  "recipe_id": "switch-thumbstick-variants-v1",
+  "recipe_name": "Switch Thumbstick Feature Mapping First Slice",
+  "profile_id": "game_controller_switch",
+  "units": "mm",
+  "source_artifacts": {
+    "part_graph": "examples/part-graphs/switch-controller-reference.part-graph.json",
+    "product_profile": "examples/product-profiles/game_controller_switch.json"
+  },
+  "downstream_target_kind": "part_graph",
+  "parameter_defaults": {
+    "thumbstick_recess_depth_mm": 2.4,
+    "thumbstick_pad_lift_mm": 0,
+    "thumbstick_ring_segments": 24
+  },
+  "part_keys": [
+    {
+      "key": "left_thumbstick_stack",
+      "part_ids": [
+        "left-analog-stick-recess-ring",
+        "left-analog-stick-stem",
+        "left-analog-stick-top-pad",
+        "left-analog-stick-groove-ring"
+      ],
+      "description": "Reviewed left thumbstick stack from the accepted Switch PartGraph.",
+      "resolved_roles": [
+        "thumbstick"
+      ],
+      "evidence_statuses": [
+        "manual_confirmed"
+      ],
+      "fallback_states": [
+        "visual_helper"
+      ]
+    },
+    {
+      "key": "right_thumbstick_stack",
+      "part_ids": [
+        "right-analog-stick-recess-ring",
+        "right-analog-stick-stem",
+        "right-analog-stick-top-pad",
+        "right-analog-stick-groove-ring"
+      ],
+      "description": "Reviewed right thumbstick stack from the accepted Switch PartGraph.",
+      "resolved_roles": [
+        "thumbstick"
+      ],
+      "evidence_statuses": [
+        "manual_confirmed"
+      ],
+      "fallback_states": [
+        "visual_helper"
+      ]
+    }
+  ],
+  "graph": {
+    "execution_order": [
+      "left_thumbstick_recess",
+      "right_thumbstick_recess",
+      "left_thumbstick_stack_alignment",
+      "right_thumbstick_stack_alignment"
+    ],
+    "nodes": [
+      {
+        "id": "left_thumbstick_recess",
+        "kind": "feature",
+        "operation": "cut_recess",
+        "part_keys": [
+          "left_thumbstick_stack"
+        ],
+        "depends_on": [],
+        "parameter_bindings": [
+          {
+            "parameter_id": "thumbstick_recess_depth_mm",
+            "target": "parts[left-analog-stick-recess-ring].feature_intents[0].depth",
+            "transform": "replace"
+          }
+        ],
+        "variation_points": [
+          "thumbstick_height_family"
+        ],
+        "outputs": [
+          "feature_mapping_plan",
+          "part_graph"
+        ],
+        "notes": "First slice keeps recess promotion reviewable instead of directly mutating the accepted PartGraph."
+      },
+      {
+        "id": "right_thumbstick_recess",
+        "kind": "feature",
+        "operation": "cut_recess",
+        "part_keys": [
+          "right_thumbstick_stack"
+        ],
+        "depends_on": [],
+        "parameter_bindings": [
+          {
+            "parameter_id": "thumbstick_recess_depth_mm",
+            "target": "parts[right-analog-stick-recess-ring].feature_intents[0].depth",
+            "transform": "replace"
+          }
+        ],
+        "variation_points": [
+          "thumbstick_height_family"
+        ],
+        "outputs": [
+          "feature_mapping_plan",
+          "part_graph"
+        ],
+        "notes": "Mirror of the left recess mapping."
+      },
+      {
+        "id": "left_thumbstick_stack_alignment",
+        "kind": "part",
+        "operation": "cylinder",
+        "part_keys": [
+          "left_thumbstick_stack"
+        ],
+        "depends_on": [
+          "left_thumbstick_recess"
+        ],
+        "parameter_bindings": [
+          {
+            "parameter_id": "thumbstick_pad_lift_mm",
+            "target": "parts[left-analog-stick-top-pad].shape.parameters.origin[2]",
+            "transform": "add"
+          },
+          {
+            "parameter_id": "thumbstick_ring_segments",
+            "target": "parts[left-analog-stick-groove-ring].shape.parameters.segments",
+            "transform": "replace"
+          }
+        ],
+        "variation_points": [
+          "thumbstick_height_family",
+          "thumbstick_finish_family"
+        ],
+        "outputs": [
+          "feature_mapping_plan"
+        ],
+        "notes": "Static plan node for reviewed ring/pad variation before any runtime compile."
+      },
+      {
+        "id": "right_thumbstick_stack_alignment",
+        "kind": "part",
+        "operation": "cylinder",
+        "part_keys": [
+          "right_thumbstick_stack"
+        ],
+        "depends_on": [
+          "right_thumbstick_recess"
+        ],
+        "parameter_bindings": [
+          {
+            "parameter_id": "thumbstick_pad_lift_mm",
+            "target": "parts[right-analog-stick-top-pad].shape.parameters.origin[2]",
+            "transform": "add"
+          },
+          {
+            "parameter_id": "thumbstick_ring_segments",
+            "target": "parts[right-analog-stick-groove-ring].shape.parameters.segments",
+            "transform": "replace"
+          }
+        ],
+        "variation_points": [
+          "thumbstick_height_family",
+          "thumbstick_finish_family"
+        ],
+        "outputs": [
+          "feature_mapping_plan"
+        ],
+        "notes": "Static plan node for the mirrored right thumbstick stack."
+      }
+    ]
+  },
+  "variation_points": [
+    {
+      "id": "thumbstick_height_family",
+      "description": "Shared pad-lift and recess-depth changes that must be reviewed once before any fanout.",
+      "parameter_ids": [
+        "thumbstick_recess_depth_mm",
+        "thumbstick_pad_lift_mm"
+      ],
+      "node_ids": [
+        "left_thumbstick_recess",
+        "right_thumbstick_recess",
+        "left_thumbstick_stack_alignment",
+        "right_thumbstick_stack_alignment"
+      ],
+      "part_keys": [
+        "left_thumbstick_stack",
+        "right_thumbstick_stack"
+      ],
+      "compile_paths": [
+        "parts[left-analog-stick-recess-ring].feature_intents[0].depth",
+        "parts[right-analog-stick-recess-ring].feature_intents[0].depth",
+        "parts[left-analog-stick-top-pad].shape.parameters.origin[2]",
+        "parts[right-analog-stick-top-pad].shape.parameters.origin[2]"
+      ]
+    },
+    {
+      "id": "thumbstick_finish_family",
+      "description": "Ring segmentation changes should stay symmetric across left and right stacks.",
+      "parameter_ids": [
+        "thumbstick_ring_segments"
+      ],
+      "node_ids": [
+        "left_thumbstick_stack_alignment",
+        "right_thumbstick_stack_alignment"
+      ],
+      "part_keys": [
+        "left_thumbstick_stack",
+        "right_thumbstick_stack"
+      ],
+      "compile_paths": [
+        "parts[left-analog-stick-groove-ring].shape.parameters.segments",
+        "parts[right-analog-stick-groove-ring].shape.parameters.segments"
+      ]
+    }
+  ],
+  "batch": {
+    "mode": "first_output_then_fanout",
+    "first_output": {
+      "candidate_id": "baseline",
+      "required_artifacts": [
+        "feature_mapping_plan",
+        "compile_report"
+      ],
+      "required_report_shape": "parametric_recipe_compile_report_v1"
+    },
+    "fanout": [
+      {
+        "id": "baseline",
+        "label": "Baseline reviewed thumbstick mapping",
+        "parameter_overrides": {}
+      },
+      {
+        "id": "taller_pad",
+        "label": "Taller thumbstick pad review candidate",
+        "parameter_overrides": {
+          "thumbstick_pad_lift_mm": 1.5
+        },
+        "notes": "Only run after the baseline report shape exists."
+      }
+    ]
+  },
+  "summary": {
+    "parameter_count": 3,
+    "part_key_count": 2,
+    "node_count": 4,
+    "variation_point_count": 2,
+    "fanout_count": 2,
+    "first_output_required": true
+  }
+}

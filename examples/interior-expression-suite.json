@@ -1,0 +1,199 @@
+{
+  "version": 1,
+  "units": "mm",
+  "operations": [
+    { "op": "reset" },
+    { "op": "material_preset", "preset": "interior_kitchen" },
+    {
+      "op": "kitchen_component",
+      "kind": "room_shell",
+      "name": "Suite_Room",
+      "origin": [0, 0, 0],
+      "size": [5400, 4200, 2600],
+      "wall_thickness": 120,
+      "floor_thickness": 90
+    },
+    {
+      "op": "kitchen_component",
+      "kind": "tall_appliance_unit",
+      "name": "Suite_Tall_Appliance",
+      "origin": [120, 3500, 90],
+      "width": 600,
+      "depth": 620,
+      "height": 2200
+    },
+    {
+      "op": "kitchen_component",
+      "kind": "base_cabinet_run",
+      "name": "Suite_North_Base",
+      "origin": [760, 3500, 90],
+      "width": 2700,
+      "depth": 620,
+      "height": 820,
+      "count": 3,
+      "drawer_count": 2
+    },
+    {
+      "op": "kitchen_component",
+      "kind": "countertop_run",
+      "name": "Suite_North_Countertop",
+      "id": "suite-north-countertop",
+      "origin": [740, 3480, 910],
+      "size": [3000, 680, 45]
+    },
+    {
+      "op": "fixture_embed",
+      "kind": "sink",
+      "name": "Suite_Main_Sink",
+      "target_id": "suite-north-countertop",
+      "target_name": "Suite_North_Countertop",
+      "face": "top",
+      "center": [850, 340],
+      "size": [520, 360],
+      "depth": 35,
+      "insert": {
+        "op": "rounded_box",
+        "name": "Suite_Main_Sink_Insert",
+        "origin": [1330, 3640, 890],
+        "size": [520, 360, 90],
+        "radius": 18,
+        "material": "Interior_Stainless_Steel"
+      }
+    },
+    {
+      "op": "fixture_embed",
+      "kind": "cooktop",
+      "name": "Suite_Induction_Cooktop",
+      "target_id": "suite-north-countertop",
+      "target_name": "Suite_North_Countertop",
+      "face": "top",
+      "center": [2140, 340],
+      "size": [620, 420],
+      "depth": 14,
+      "insert": {
+        "op": "box",
+        "name": "Suite_Induction_Cooktop_Glass",
+        "origin": [2570, 3610, 951],
+        "size": [620, 420, 12],
+        "material": "Interior_Appliance_Black_Glass"
+      }
+    },
+    {
+      "op": "fixture_embed",
+      "kind": "outlet",
+      "name": "Suite_Wall_Outlet",
+      "target_id": "Suite_Room-back-wall",
+      "target_name": "Suite_Room_Back_Wall",
+      "face": "front",
+      "center": [3900, 1180],
+      "size": [145, 90],
+      "depth": 12,
+      "insert": {
+        "op": "box",
+        "name": "Suite_Wall_Outlet_Plate",
+        "origin": [3828, 4186, 1135],
+        "size": [145, 12, 90],
+        "material": "Interior_Outlet_White_Plastic"
+      }
+    },
+    {
+      "op": "kitchen_component",
+      "kind": "wall_cabinet_run",
+      "name": "Suite_North_Wall_Cabinets",
+      "origin": [760, 3540, 1440],
+      "width": 2700,
+      "depth": 360,
+      "height": 760,
+      "count": 3
+    },
+    {
+      "op": "kitchen_component",
+      "kind": "tile_backsplash",
+      "name": "Suite_North_Backsplash",
+      "origin": [780, 4130, 960],
+      "width": 2640,
+      "height": 470,
+      "tile_size": [220, 80],
+      "grout": 5
+    },
+    {
+      "op": "kitchen_component",
+      "kind": "open_shelf",
+      "name": "Suite_Display_Shelf",
+      "origin": [3700, 3580, 1580],
+      "width": 1050,
+      "depth": 260
+    },
+    {
+      "op": "kitchen_component",
+      "kind": "island",
+      "name": "Suite_Central_Island",
+      "origin": [1900, 1650, 90],
+      "size": [1900, 950, 920],
+      "stools": 3
+    },
+    {
+      "op": "kitchen_component",
+      "kind": "pendant_light",
+      "name": "Suite_Pendant_Left",
+      "origin": [2320, 2130, 2150],
+      "radius": 155,
+      "height": 175
+    },
+    {
+      "op": "kitchen_component",
+      "kind": "pendant_light",
+      "name": "Suite_Pendant_Center",
+      "origin": [2850, 2130, 2150],
+      "radius": 155,
+      "height": 175
+    },
+    {
+      "op": "kitchen_component",
+      "kind": "pendant_light",
+      "name": "Suite_Pendant_Right",
+      "origin": [3380, 2130, 2150],
+      "radius": 155,
+      "height": 175
+    },
+    {
+      "op": "style",
+      "name": "Interior_Review",
+      "display_edges": true,
+      "profiles": true,
+      "profile_width": 2,
+      "face_style": "shaded_with_textures",
+      "background_color": "#f5f4ef",
+      "sky_color": "#dceaf2",
+      "ground_color": "#d8d3c8"
+    },
+    {
+      "op": "rendering_options",
+      "edge_display_mode": 1,
+      "transparency": true,
+      "draw_hidden_geometry": false,
+      "material_transparency": 1
+    },
+    {
+      "op": "presentation_camera",
+      "name": "Interior_Open_Front",
+      "view": "open_front",
+      "room": { "origin": [0, 0, 0], "size": [5400, 4200, 2600] },
+      "transition_time": 1.2
+    },
+    {
+      "op": "presentation_camera",
+      "name": "Interior_Worktop_Eye_Level",
+      "view": "worktop",
+      "room": { "origin": [0, 0, 0], "size": [5400, 4200, 2600] },
+      "transition_time": 1.2
+    },
+    {
+      "op": "presentation_camera",
+      "name": "Interior_Top_Plan",
+      "view": "top_plan",
+      "room": { "origin": [0, 0, 0], "size": [5400, 4200, 2600] },
+      "transition_time": 1.0
+    }
+  ]
+}

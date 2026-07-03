@@ -38,14 +38,34 @@
 ```text
 get_docs() -> { docs }
 get_workflow_bundle() -> { workflows: { inspector, modeler, qa_reviewer } }
+get_capabilities({ runtime, timeoutMs? }) -> { runtime, compatibility, descriptor }
+queue_diagnostics({ includeFiles?, timeoutMs? }) -> { queue, responses, lock, recommendations }
 build_model({ code, runtime, timeoutMs? }) -> { snapshot }
 compile_expert({ code, seed?, ...limits }) -> { document, expert, code }
+compile_python_sdk({ code, seed?, ...limits }) -> { document, expert, code }
 build_expert_model({ code, runtime, seed?, ...limits }) -> { compiled, snapshot }
 reset_model({ runtime, timeoutMs? }) -> { snapshot }
 save_model({ path?, keep_session?, runtime, timeoutMs? }) -> { file_path, snapshot }
-queue_diagnostics({ includeFiles?, timeoutMs? }) -> { queue, responses, lock, recommendations }
+save_model_version({ runtime, timeoutMs?, ...versioning }) -> { file_path, snapshot, version }
+open_model({ path, runtime:"queue", timeoutMs? }) -> { snapshot, model_info }
+import_model({ path, runtime, timeoutMs?, ...options }) -> { snapshot, import_result }
+export_model({ path, runtime:"queue", timeoutMs?, ...options }) -> { file_path, export_result }
+get_model_info({ runtime, timeoutMs? }) -> { model_info }
+list_entities({ runtime, timeoutMs?, ...filters }) -> { entities }
+inspect_model({ runtime, timeoutMs?, ...filters }) -> { snapshot, model_info, entities }
+adopt_open_model({ runtime:"queue", timeoutMs? }) -> { snapshot, model_info }
+resolve_model_targets({ runtime, timeoutMs?, ...filters }) -> { targets }
+get_selection({ runtime, timeoutMs? }) -> { selection }
+analyze_selection_geometry({ runtime, timeoutMs?, ...options }) -> { selection, geometry_facts }
+plan_modification_intent({ runtime, timeoutMs?, ...options }) -> { intent, preview, limitations }
+set_selection({ runtime, timeoutMs?, ...options }) -> { selection }
 capture_view({ path?, view?, width?, height?, runtime:"queue", timeoutMs? }) -> { file_path, camera, model_summary }
 run_ruby_expert({ code, audit_path?, runtime:"queue", timeoutMs? }) -> { enabled, blocked, ok?, audit_path? }
+evaluate_py({ code, runtime, inputFormat?, timeoutMs?, ...options }) -> { snapshot, result }
+build_report({ code?|snapshot?, runtime?, outputDir?, ...options }) -> { manifest, artifacts }
+iterate_model({ prompt?, runtime, timeoutMs?, intent?, intent_file?, ...options }) -> { manifest, snapshot_before, snapshot_after }
+compare_snapshots({ expected, actual, ...options }) -> { report }
+compare_model({ code, expectedRuntime, actualRuntime, ...options }) -> { report }
 validate_model({ code?|snapshot?, runtime?, spec?, includePreview? }) -> { report, preview }
 validate_reference_model({ code?|snapshot?, runtime?, spec?, includePreview? }) -> { report, preview }
 ```
@@ -204,7 +224,15 @@ npm run qa:expert:mock
 
 ## MCP stdio 接入
 
-本项目自带一个最小 MCP stdio server，当前暴露 `get_docs`、`get_workflow_bundle`、`get_capabilities`、`queue_diagnostics`、`build_model`、`compile_expert`、`build_expert_model`、`reset_model`、`save_model`、`capture_view`、`run_ruby_expert`、`compare_snapshots`、`compare_model`、`validate_model` 和 `validate_reference_model`：
+本项目自带一个最小 MCP stdio server。按当前 `src/mcp-server.mjs` 的 `tools/list`，一共暴露 32 个工具：
+
+- `get_docs`、`get_workflow_bundle`、`get_capabilities`、`queue_diagnostics`
+- `build_model`、`compile_expert`、`compile_python_sdk`、`build_expert_model`
+- `reset_model`、`save_model`、`save_model_version`、`open_model`、`import_model`、`export_model`
+- `get_model_info`、`list_entities`、`inspect_model`、`adopt_open_model`、`resolve_model_targets`
+- `get_selection`、`analyze_selection_geometry`、`plan_modification_intent`、`set_selection`
+- `capture_view`、`run_ruby_expert`、`evaluate_py`、`build_report`、`iterate_model`
+- `compare_snapshots`、`compare_model`、`validate_model`、`validate_reference_model`
 
 ```bash
 node src/mcp-server.mjs
@@ -226,6 +254,8 @@ node src/mcp-server.mjs
 ```
 
 `run_ruby_expert` 是本地 SketchUp Ruby 调试入口，不属于安全 DSL 验收路径。默认返回 `blocked:true`；只有 Node 进程和 SketchUp 插件进程都设置 `ALMA_SKETCHUP_ENABLE_RUBY_EXPERT=1` 时才会执行，并会写入 audit artifact。
+
+`plan_modification_intent` / `iterate_model` 也有明确边界：`ModificationIntent v1` 是可审计意图层，不是自动语义建模智能体。`iterate_model` 只有在 `intent.ok=true`、`safe_to_execute=true`、`requires_confirmation=false` 时才会执行；否则只写 preview/blocked manifest 并停止。R2 live queue smoke 已验证 Face/Edge selection 会停在 preview/blocked，top-level group 的安全 `set_attribute` intent 可通过 `intent_file` 执行。
 
 ## HTTP bridge（可选）
 

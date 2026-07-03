@@ -1,0 +1,407 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/sketchup-mcp-replica/parametric-recipe.schema.json",
+  "title": "ParametricRecipe",
+  "type": "object",
+  "required": [
+    "artifact",
+    "version",
+    "id",
+    "name",
+    "profile_id",
+    "units",
+    "parameters",
+    "part_keys",
+    "feature_mapping_graph",
+    "compile"
+  ],
+  "properties": {
+    "artifact": {
+      "const": "ParametricRecipe"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "profile_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "units": {
+      "const": "mm"
+    },
+    "description": {
+      "type": "string"
+    },
+    "source_artifacts": {
+      "type": "object",
+      "properties": {
+        "part_graph": {
+          "type": "string",
+          "minLength": 1
+        },
+        "product_profile": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "parameters": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/parameter"
+      }
+    },
+    "part_keys": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/part_key"
+      }
+    },
+    "feature_mapping_graph": {
+      "type": "object",
+      "required": [
+        "nodes"
+      ],
+      "properties": {
+        "nodes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/node"
+          }
+        }
+      }
+    },
+    "variation_points": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/variation_point"
+      }
+    },
+    "compile": {
+      "type": "object",
+      "required": [
+        "target",
+        "batch"
+      ],
+      "properties": {
+        "target": {
+          "$ref": "#/$defs/compile_target"
+        },
+        "batch": {
+          "$ref": "#/$defs/batch_policy"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "parameter": {
+      "type": "object",
+      "required": [
+        "id",
+        "type",
+        "default"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "type": {
+          "enum": [
+            "number",
+            "integer",
+            "boolean",
+            "string"
+          ]
+        },
+        "default": {},
+        "min": {
+          "type": "number"
+        },
+        "max": {
+          "type": "number"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "part_key": {
+      "type": "object",
+      "required": [
+        "key",
+        "part_ids"
+      ],
+      "properties": {
+        "key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "part_ids": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "node": {
+      "type": "object",
+      "required": [
+        "id",
+        "kind",
+        "operation"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "enum": [
+            "part",
+            "feature",
+            "assembly",
+            "review_gate"
+          ]
+        },
+        "operation": {
+          "type": "string",
+          "minLength": 1
+        },
+        "part_keys": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "depends_on": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "parameter_bindings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/parameter_binding"
+          }
+        },
+        "variation_points": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "outputs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/target_kind"
+          }
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "parameter_binding": {
+      "type": "object",
+      "required": [
+        "parameter_id",
+        "target"
+      ],
+      "properties": {
+        "parameter_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "target": {
+          "type": "string",
+          "minLength": 1
+        },
+        "transform": {
+          "enum": [
+            "replace",
+            "add",
+            "multiply"
+          ]
+        }
+      }
+    },
+    "variation_point": {
+      "type": "object",
+      "required": [
+        "id",
+        "parameter_ids",
+        "node_ids",
+        "part_keys",
+        "compile_paths"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string"
+        },
+        "parameter_ids": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "node_ids": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "part_keys": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "compile_paths": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "compile_target": {
+      "type": "object",
+      "required": [
+        "kind"
+      ],
+      "properties": {
+        "kind": {
+          "$ref": "#/$defs/target_kind"
+        },
+        "entry_node_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "batch_policy": {
+      "type": "object",
+      "required": [
+        "mode"
+      ],
+      "properties": {
+        "mode": {
+          "enum": [
+            "single_output",
+            "first_output_then_fanout"
+          ]
+        },
+        "first_output": {
+          "$ref": "#/$defs/first_output"
+        },
+        "fanout": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/fanout_candidate"
+          }
+        }
+      }
+    },
+    "first_output": {
+      "type": "object",
+      "required": [
+        "candidate_id",
+        "required_artifacts",
+        "required_report_shape"
+      ],
+      "properties": {
+        "candidate_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "required_artifacts": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "enum": [
+              "feature_mapping_plan",
+              "compile_report",
+              "part_graph",
+              "safe_json_dsl"
+            ]
+          }
+        },
+        "required_report_shape": {
+          "const": "parametric_recipe_compile_report_v1"
+        }
+      }
+    },
+    "fanout_candidate": {
+      "type": "object",
+      "required": [
+        "id",
+        "label",
+        "parameter_overrides"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "parameter_overrides": {
+          "type": "object"
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "target_kind": {
+      "enum": [
+        "feature_mapping_plan",
+        "part_graph",
+        "safe_json_dsl"
+      ]
+    }
+  }
+}

@@ -97,6 +97,12 @@ module AlmaSketchupMCP
       add_boolean_cutout(entities, operation)
     when 'mesh'
       add_mesh(entities, operation)
+    when 'geometry_input'
+      add_geometry_input(entities, operation)
+    when 'curve'
+      add_curve(entities, operation)
+    when 'arc_curve'
+      add_arc_curve(entities, operation)
     when 'prism'
       add_prism(entities, operation)
     when 'face_with_holes'

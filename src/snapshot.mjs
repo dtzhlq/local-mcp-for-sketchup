@@ -47,10 +47,12 @@ export function createSnapshot(model) {
       tag: group.tag || null,
       classification: group.classification || null,
       texture_transform: group.texture_transform || null,
+      face_uvs: cloneJson(group.face_uvs) || null,
       image: group.image || null,
       attributes: cloneAttributes(group.attributes),
       features: cloneJson(group.features),
       curtain_wall: cloneJson(group.curtain_wall),
+      geometry_input: cloneJson(group.geometry_input),
       boolean_operations: cloneJson(group.boolean_operations),
       manifold: cloneJson(group.manifold),
       transform: group.transform || null,
@@ -80,6 +82,7 @@ export function createSnapshot(model) {
       tag: instance.tag || null,
       classification: instance.classification || null,
       texture_transform: instance.texture_transform || null,
+      face_uvs: cloneJson(instance.face_uvs) || null,
       attributes: cloneAttributes(instance.attributes),
       features: cloneJson(instance.features),
       boolean_operations: cloneJson(instance.boolean_operations),
@@ -108,7 +111,7 @@ export function createSnapshot(model) {
     return acc;
   }, { faces: 0, edges: 0, vertices: 0, groups: groups.filter((group) => group.visible !== false).length, instances: instances.filter((instance) => instance.visible !== false).length });
   const generatedWarnings = [
-    ...model.groups.filter((group) => group.faces === 0).map((group) => ({
+    ...model.groups.filter((group) => group.faces === 0 && !isZeroFaceAllowed(group)).map((group) => ({
       type: 'geometry.degenerate',
       severity: 'error',
       category: 'geometry',
@@ -124,6 +127,9 @@ export function createSnapshot(model) {
   const materials = Object.values(model.materials)
     .map((material) => ({ ...material }))
     .sort((a, b) => a.name.localeCompare(b.name));
+  const imageReferences = Object.values(model.image_references || {})
+    .map((reference) => ({ ...reference }))
+    .sort((a, b) => a.name.localeCompare(b.name));
 
   return {
     totals,
@@ -136,15 +142,49 @@ export function createSnapshot(model) {
     tags: Object.values(model.tags || {}).map((tag) => ({ ...tag })).sort((a, b) => a.name.localeCompare(b.name)),
     materials,
     material_names: materials.map((material) => material.name),
+    image_references: imageReferences,
     style_state: model.style_state || null,
     shadow_state: model.shadow_state || null,
     rendering_options: model.rendering_options || null,
     bounding_box: boundingBox,
+    selection: selectionSnapshot(model, groups, instances),
     warnings: allWarnings,
     warning_messages: allWarnings.map((w) => w.message),
     warning_summary: warningSummary,
     view_state: model.view_state || null
   };
+}
+
+function selectionSnapshot(model, groups, instances) {
+  const references = Array.isArray(model.selection) ? model.selection : [];
+  const entities = [
+    ...groups.map((item) => ({ ...item, entity_type: 'group' })),
+    ...instances.map((item) => ({ ...item, entity_type: 'component_instance' }))
+  ];
+  return references.flatMap((reference) => {
+    const match = entities.find((entity) => matchesSelectionReference(entity, reference));
+    if (!match) return [];
+    return [{
+      id: match.id || match.name,
+      name: match.name,
+      entity_type: match.entity_type,
+      kind: match.kind || match.definition || match.entity_type,
+      bounding_box: match.bounding_box,
+      visible: match.visible !== false
+    }];
+  });
+}
+
+function matchesSelectionReference(entity, reference) {
+  if (typeof reference === 'string') return entity.id === reference || entity.name === reference;
+  if (!reference || typeof reference !== 'object') return false;
+  const id = reference.id ?? reference.target_id ?? reference.targetId ?? reference.object_id ?? reference.objectId ?? reference.guid;
+  const name = reference.name ?? reference.target ?? reference.object;
+  return (id === undefined || entity.id === String(id)) && (name === undefined || entity.name === String(name));
+}
+
+function isZeroFaceAllowed(group) {
+  return ['curve', 'arc_curve'].includes(group.kind);
 }
 
 export function boundingBoxForVertices(vertices) {

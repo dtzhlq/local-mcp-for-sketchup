@@ -1,0 +1,31 @@
+{
+  "title": "Interior Expression Suite QA",
+  "rules": {
+    "allowed_collisions": [
+      { "item": "Suite_Main_Sink_Insert", "with": "Suite_North_Countertop" },
+      { "item": "Suite_Induction_Cooktop_Glass", "with": "Suite_North_Countertop" },
+      { "item": "Suite_Wall_Outlet_Plate", "with": "Suite_Room_Back_Wall" },
+      { "item": "Suite_Main_Sink_Insert", "with": "Suite_North_Base_01_Carcass" },
+      { "item": "Suite_Main_Sink_Insert", "with": "Suite_North_Base_02_Carcass" }
+    ],
+    "contacts": [
+      { "item": "Suite_North_Countertop", "with": "/Suite_North_Base_.*_Carcass/", "tolerance_mm": 2 },
+      { "item": "Suite_Main_Sink_Insert", "with": "Suite_North_Countertop", "tolerance_mm": 3 },
+      { "item": "Suite_Induction_Cooktop_Glass", "with": "Suite_North_Countertop", "tolerance_mm": 3 },
+      { "item": "Suite_Wall_Outlet_Plate", "with": "Suite_Room_Back_Wall", "tolerance_mm": 3 }
+    ],
+    "inside": [
+      { "item": "/Suite_North_.*/", "parent": "Suite_Room_Floor", "axes": ["x", "y"], "margin_mm": -160 },
+      { "item": "Suite_Central_Island_Countertop", "parent": "Suite_Room_Floor", "axes": ["x", "y"], "margin_mm": 0 }
+    ],
+    "support": [
+      { "item": "Suite_Central_Island_Countertop", "parent": "Suite_Central_Island_Base", "max_gap_mm": 2 },
+      { "item": "Suite_Display_Shelf_Shelf", "parent": "Suite_Display_Shelf_Left_Bracket", "max_gap_mm": 2 }
+    ],
+    "views": [
+      { "name": "plan", "title": "Plan", "axes": ["x", "y"] },
+      { "name": "front", "title": "Front", "axes": ["x", "z"] },
+      { "name": "right", "title": "Right", "axes": ["y", "z"] }
+    ]
+  }
+}

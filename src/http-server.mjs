@@ -13,7 +13,7 @@ const server = http.createServer(async (request, response) => {
     }
 
     if (request.method === 'GET' && request.url === '/tools') {
-      return sendJson(response, 200, { tools: ['get_docs', 'get_workflow_bundle', 'get_capabilities', 'queue_diagnostics', 'build_model', 'compile_expert', 'build_expert_model', 'reset_model', 'save_model', 'capture_view', 'run_ruby_expert', 'compare_snapshots', 'compare_model', 'validate_model', 'validate_reference_model'] });
+      return sendJson(response, 200, { tools: ['get_docs', 'get_workflow_bundle', 'get_capabilities', 'queue_diagnostics', 'build_model', 'compile_expert', 'compile_python_sdk', 'build_expert_model', 'reset_model', 'save_model', 'save_model_version', 'open_model', 'import_model', 'export_model', 'get_model_info', 'list_entities', 'inspect_model', 'adopt_open_model', 'resolve_model_targets', 'get_selection', 'analyze_selection_geometry', 'plan_modification_intent', 'set_selection', 'capture_view', 'run_ruby_expert', 'evaluate_py', 'build_report', 'iterate_model', 'compare_snapshots', 'compare_model', 'validate_model', 'validate_reference_model'] });
     }
 
     if (request.method === 'POST' && request.url?.startsWith('/tools/')) {
