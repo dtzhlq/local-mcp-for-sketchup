@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/axis-calibration-result.schema.json",
+  "title": "AxisCalibrationResult v1",
+  "type": "object",
+  "required": [
+    "kind",
+    "version",
+    "source_axis_calibration_workbench",
+    "source_axis_calibration_review_decision",
+    "status",
+    "axis_support",
+    "blockers",
+    "derived_drafting_allowed",
+    "promotion_allowed",
+    "compile_allowed",
+    "summary"
+  ],
+  "properties": {
+    "kind": { "const": "axis_calibration_result_v1" },
+    "version": { "const": 1 },
+    "source_axis_calibration_workbench": { "type": "string" },
+    "source_axis_calibration_review_decision": { "type": "string" },
+    "status": {
+      "enum": [
+        "blocked_no_accepted_axis_review",
+        "blocked_insufficient_axis_support",
+        "accepted_for_derived_drafting"
+      ]
+    },
+    "accepted_projection_model": { "type": ["string", "null"] },
+    "axis_support": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/axis_support" }
+    },
+    "blockers": { "type": "array", "items": { "type": "string" } },
+    "derived_drafting_allowed": { "type": "boolean" },
+    "promotion_allowed": { "const": false },
+    "compile_allowed": { "const": false },
+    "summary": {
+      "type": "object",
+      "required": ["accepted_line_count", "review_required", "derived_drafting_allowed", "promotion_allowed", "compile_allowed"],
+      "properties": {
+        "accepted_line_count": { "type": "integer", "minimum": 0 },
+        "review_required": { "const": true },
+        "derived_drafting_allowed": { "type": "boolean" },
+        "promotion_allowed": { "const": false },
+        "compile_allowed": { "const": false }
+      }
+    }
+  },
+  "$defs": {
+    "point": {
+      "type": "array",
+      "prefixItems": [{ "type": "number" }, { "type": "number" }],
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "axis_support": {
+      "type": "object",
+      "required": ["axis", "accepted_line_ids", "line_count", "required_line_count", "support_ok", "vanishing_type", "vanishing_point_px"],
+      "properties": {
+        "axis": { "enum": ["x_red", "y_green", "z_blue"] },
+        "accepted_line_ids": { "type": "array", "items": { "type": "string" } },
+        "line_count": { "type": "integer", "minimum": 0 },
+        "required_line_count": { "type": "integer", "minimum": 0 },
+        "support_ok": { "type": "boolean" },
+        "vanishing_type": { "enum": ["finite", "infinite", "unknown"] },
+        "vanishing_point_px": { "type": ["array", "null"] }
+      }
+    }
+  }
+}

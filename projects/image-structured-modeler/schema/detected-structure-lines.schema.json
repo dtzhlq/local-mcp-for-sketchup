@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/detected-structure-lines.schema.json",
+  "title": "DetectedStructureLines v1",
+  "type": "object",
+  "required": [
+    "kind",
+    "version",
+    "source_image",
+    "backend",
+    "line_candidates",
+    "vanishing_point_clusters",
+    "qa",
+    "summary"
+  ],
+  "properties": {
+    "kind": { "const": "detected_structure_lines_v1" },
+    "version": { "const": 1 },
+    "source_image": { "$ref": "#/$defs/source_image" },
+    "backend": { "type": "string" },
+    "preprocess": { "type": "object" },
+    "line_candidates": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/line_candidate" }
+    },
+    "vanishing_point_clusters": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/vp_cluster" }
+    },
+    "qa": {
+      "type": "object",
+      "required": ["status", "usable_for_axis_calibration", "blockers"],
+      "properties": {
+        "status": {
+          "enum": [
+            "accepted_two_horizontal_vp_clusters",
+            "blocked_vanishing_point_cluster_review_required",
+            "blocked_no_vanishing_point_clusters",
+            "blocked_single_vanishing_point_cluster",
+            "blocked_insufficient_detected_lines"
+          ]
+        },
+        "usable_for_axis_calibration": { "type": "boolean" },
+        "blockers": { "type": "array", "items": { "type": "string" } },
+        "notes": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": ["line_candidate_count", "non_vertical_line_count", "vp_cluster_count", "accepted_vp_cluster_count"],
+      "properties": {
+        "line_candidate_count": { "type": "integer", "minimum": 0 },
+        "non_vertical_line_count": { "type": "integer", "minimum": 0 },
+        "vp_cluster_count": { "type": "integer", "minimum": 0 },
+        "accepted_vp_cluster_count": { "type": "integer", "minimum": 0 }
+      }
+    }
+  },
+  "$defs": {
+    "point": {
+      "type": "array",
+      "prefixItems": [{ "type": "number" }, { "type": "number" }],
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "line": {
+      "type": "object",
+      "required": ["a", "b"],
+      "properties": {
+        "a": { "$ref": "#/$defs/point" },
+        "b": { "$ref": "#/$defs/point" }
+      }
+    },
+    "source_image": {
+      "type": "object",
+      "required": ["id", "source_image", "width", "height"],
+      "properties": {
+        "id": { "type": "string" },
+        "source_image": { "type": "string" },
+        "width": { "type": "number" },
+        "height": { "type": "number" }
+      }
+    },
+    "line_candidate": {
+      "type": "object",
+      "required": [
+        "id",
+        "source_image",
+        "line_px",
+        "length_px",
+        "angle_deg",
+        "support_score",
+        "source_kind",
+        "accepted_for_vp_clustering"
+      ],
+      "properties": {
+        "id": { "type": "string" },
+        "source_image": { "type": "string" },
+        "line_px": { "$ref": "#/$defs/line" },
+        "length_px": { "type": "number", "minimum": 0 },
+        "angle_deg": { "type": "number" },
+        "support_score": { "type": "number", "minimum": 0, "maximum": 1 },
+        "source_kind": { "const": "raster_detected_line" },
+        "accepted_for_vp_clustering": { "type": "boolean" },
+        "rejection_reason": { "type": ["string", "null"] }
+      }
+    },
+    "vp_cluster": {
+      "type": "object",
+      "required": ["id", "vanishing_point_px", "support_line_ids", "support_count", "accepted", "rejection_reason"],
+      "properties": {
+        "id": { "type": "string" },
+        "vanishing_point_px": { "$ref": "#/$defs/point" },
+        "support_line_ids": { "type": "array", "items": { "type": "string" } },
+        "support_count": { "type": "integer", "minimum": 0 },
+        "accepted": { "type": "boolean" },
+        "rejection_reason": { "type": ["string", "null"] }
+      }
+    }
+  }
+}

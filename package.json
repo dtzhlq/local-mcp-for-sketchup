@@ -48,6 +48,7 @@
     "image-structured:apply-promotion-patch": "node projects/image-structured-modeler/scripts/apply-candidate-promotion-patch.mjs",
     "image-structured:release-gate": "node projects/image-structured-modeler/scripts/run-release-gate.mjs",
     "image-structured:yellow-visible-effect": "node projects/image-structured-modeler/scripts/generate-yellow-visible-effect.mjs",
+    "image-structured:yellow-axis-calibration": "node projects/image-structured-modeler/scripts/generate-yellow-axis-calibration-workbench.mjs",
     "benchmark:image-structured:tier0": "node projects/image-structured-modeler/scripts/run-drafting-first-benchmark.mjs --tier tier0 --output output/image-structured-benchmark/tier0/benchmark-report.json",
     "benchmark:image-structured:tier1": "node projects/image-structured-modeler/scripts/run-drafting-first-benchmark.mjs --tier tier1 --manifest projects/image-structured-modeler/benchmarks/tier1-external-sample-manifest.json --output output/image-structured-benchmark/tier1/benchmark-report.json",
     "image-structured:prepare-real-world-building": "node projects/image-structured-modeler/scripts/prepare-real-world-building-release-sample.mjs",

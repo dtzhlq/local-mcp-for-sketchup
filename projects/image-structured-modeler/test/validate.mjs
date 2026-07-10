@@ -13,6 +13,7 @@ import { generateModelPlan } from '../scripts/generate-model-plan.mjs';
 import { generatePartGraphFromObservations } from '../scripts/generate-part-graph-from-observations.mjs';
 import { applyCandidatePromotionPatch } from '../scripts/apply-candidate-promotion-patch.mjs';
 import { buildCandidatePromotionPatch } from '../scripts/build-candidate-promotion-patch.mjs';
+import { generateYellowAxisCalibrationWorkbench } from '../scripts/generate-yellow-axis-calibration-workbench.mjs';
 import { generateYellowVisibleEffect } from '../scripts/generate-yellow-visible-effect.mjs';
 import {
   BUILDING_SINGLE_STRUCTURAL_PROJECTION_KIND,
@@ -108,6 +109,10 @@ const imageSetObservationSchema = await readJson('schema/image-set-observation.s
 const buildingSingleSemanticEvidenceSchema = await readJson('schema/building-single-semantic-evidence.schema.json');
 const facadePlaneGraphSchema = await readJson('schema/facade-plane-graph.schema.json');
 const structureEvidenceGraphSchema = await readJson('schema/structure-evidence-graph.schema.json');
+const detectedStructureLinesSchema = await readJson('schema/detected-structure-lines.schema.json');
+const axisCalibrationWorkbenchSchema = await readJson('schema/axis-calibration-workbench.schema.json');
+const axisCalibrationReviewDecisionSchema = await readJson('schema/axis-calibration-review-decision.schema.json');
+const axisCalibrationResultSchema = await readJson('schema/axis-calibration-result.schema.json');
 const calibratedViewGraphSchema = await readJson('schema/calibrated-view-graph.schema.json');
 const cornerChainTopologySchema = await readJson('schema/corner-chain-topology.schema.json');
 const draftViewGraphSchema = await readJson('schema/draft-view-graph.schema.json');
@@ -169,6 +174,10 @@ const validateImageSetObservation = compileSchema(imageSetObservationSchema);
 const validateBuildingSingleSemanticEvidence = compileSchema(buildingSingleSemanticEvidenceSchema);
 const validateFacadePlaneGraph = compileSchema(facadePlaneGraphSchema);
 const validateStructureEvidenceGraph = compileSchema(structureEvidenceGraphSchema);
+const validateDetectedStructureLines = compileSchema(detectedStructureLinesSchema);
+const validateAxisCalibrationWorkbench = compileSchema(axisCalibrationWorkbenchSchema);
+const validateAxisCalibrationReviewDecision = compileSchema(axisCalibrationReviewDecisionSchema);
+const validateAxisCalibrationResult = compileSchema(axisCalibrationResultSchema);
 const validateCalibratedViewGraph = compileSchema(calibratedViewGraphSchema);
 const validateCornerChainTopology = compileSchema(cornerChainTopologySchema);
 const validateDraftViewGraph = compileSchema(draftViewGraphSchema);
@@ -1562,6 +1571,7 @@ await assertStructuredAssetIntakeFailClosed();
 const draftingFirstBenchmarkChecked = await assertDraftingFirstBenchmarkReports();
 await assertImageStructuredReleaseGate();
 await assertBuildingSingleCompileGateRegression();
+await assertYellowAxisCalibrationWorkbench();
 await assertYellowVisibleEffectJudgment();
 const remoteChecked = await assertCompactRemoteSample();
 const ambulanceEvidenceChecked = await assertAmbulancePartGraphEvidenceSample();
@@ -1595,6 +1605,7 @@ process.stdout.write(`${JSON.stringify({
     real_world_building_manifest_builder: true,
     mcp_modeling_brief_builder: true,
     building_single_compile_gate: true,
+    yellow_axis_calibration_workbench: true,
     yellow_visible_effect_judgment: true,
     compact_remote_sample: remoteChecked,
     ambulance_part_graph_evidence: ambulanceEvidenceChecked,
@@ -5379,6 +5390,105 @@ async function assertBuildingSingleCompileGateRegression() {
     /PartGraph compile blocked by geometry gate.*promoted_geometry_parts 0 is below 1/,
     'building-single low-evidence PartGraph must be blocked before SketchUp DSL compile'
   );
+}
+
+async function assertYellowAxisCalibrationWorkbench() {
+  const outputDir = 'output/image-structured-modeler/yellow-axis-calibration-test';
+  const result = await generateYellowAxisCalibrationWorkbench({ outputDir });
+  const absoluteOutputDir = path.join(repoRoot, outputDir);
+
+  assertValid(validateAxisCalibrationWorkbench, result.workbench, 'yellow axis calibration workbench');
+  assert.equal(result.workbench.review_policy.status, 'needs_axis_review', 'yellow axis workbench should require axis review');
+  assert.equal(result.workbench.review_policy.derived_drafting_allowed, false, 'yellow axis workbench must not allow derived drafting before review');
+  assert.equal(result.workbench.line_candidates.every((candidate) => candidate.axis_assignment === 'axis_unknown'), true, 'yellow axis candidates must start unassigned');
+  assertValid(validateDetectedStructureLines, result.detectedStructureLines, 'yellow detected structure lines');
+  assert.equal(result.detectedStructureLines.qa.usable_for_axis_calibration, false, 'yellow detected structure lines should not auto-approve red/green axis calibration');
+  assert.equal(result.detectedStructureLines.qa.status, 'blocked_vanishing_point_cluster_review_required', 'yellow detected VP clusters should require review before axis calibration');
+  assert.ok(result.detectedStructureLines.qa.blockers.includes('accepted_vanishing_point_cluster_review_required'), 'yellow detected lines should require accepted VP cluster review');
+  assert.ok(result.detectedStructureLines.line_candidates.some((line) => line.extraction_method === 'local_short_segment_hough'), 'yellow detected lines should include local short structure-line candidates');
+  const maxDetectedLineLength = Math.max(...result.detectedStructureLines.line_candidates.map((line) => line.length_px));
+  assert.ok(maxDetectedLineLength <= 260, 'yellow detected lines should not prefer full-image global Hough lines over local short structure lines');
+  assert.ok(result.detectedStructureLines.line_candidates.length <= 18, 'yellow detected lines should expose sparse clean seeds instead of dense edge candidates');
+  assert.equal(result.detectedStructureLines.perspective_hypothesis.model, 'one_finite_vp_plus_parallel_candidate', 'yellow detected lines should preserve a finite VP family plus a parallel-axis candidate instead of only one VP direction');
+  assert.equal(result.detectedStructureLines.perspective_hypothesis.finite_vp_family_count, 1, 'yellow detected lines should report one finite VP family at this confidence level');
+  assert.equal(result.detectedStructureLines.perspective_hypothesis.parallel_family_count, 1, 'yellow detected lines should keep a parallel family for the possible single-point axis');
+  assert.ok(result.detectedStructureLines.qa.blockers.includes('perspective_model_review_required_single_point_vs_two_point'), 'yellow detected lines should require perspective-model review before axis calibration');
+  assert.ok(result.detectedStructureLines.line_candidates.some((line) => line.perspective_role === 'finite_vp_family_1'), 'yellow detected lines should expose finite VP seed roles');
+  assert.ok(result.detectedStructureLines.line_candidates.some((line) => line.perspective_role === 'parallel_axis_seed'), 'yellow detected lines should expose parallel-axis seed roles');
+  assert.ok(result.workbench.line_candidates.some((candidate) => candidate.source_kind === 'detected_structure_line_candidate'), 'yellow axis workbench should include raster-detected line candidates');
+  assert.ok(result.workbench.line_candidates.some((candidate) => candidate.id === 'candidate_corner_AB'), 'yellow axis workbench should expose AB as an unassigned candidate');
+  assert.ok(result.workbench.line_candidates.some((candidate) => candidate.id === 'candidate_corner_BC'), 'yellow axis workbench should expose BC as an unassigned candidate');
+  assert.ok(result.workbench.line_candidates.some((candidate) => candidate.source_family_hint === 'vertical'), 'yellow axis workbench should expose vertical candidate lines');
+
+  assertValid(validateAxisCalibrationReviewDecision, result.pendingReview, 'yellow pending axis calibration review');
+  assertValid(validateAxisCalibrationResult, result.pendingResult, 'yellow pending axis calibration result');
+  assert.equal(result.pendingResult.status, 'blocked_no_accepted_axis_review', 'yellow pending axis review must block calibration');
+  assert.ok(result.pendingResult.blockers.includes('accepted_axis_calibration_review_required'), 'yellow pending axis result should require accepted axis review');
+  assert.equal(result.pendingResult.derived_drafting_allowed, false, 'yellow pending axis result must block derived drafting');
+  assert.equal(result.pendingCalibratedViewGraph.review_policy.status, 'needs_calibrated_view_review', 'yellow pending axis result should build only a blocked calibrated-view graph');
+  assertValid(validateCalibratedViewGraph, result.pendingCalibratedViewGraph, 'yellow blocked calibrated view graph from pending review');
+  assert.equal(result.topologyGate.corner_chain_topology_allowed, false, 'yellow topology must be blocked before accepted axis review');
+  assert.equal(result.topologyGate.plan_projection_allowed, false, 'yellow plan projection must be blocked before accepted axis review');
+
+  assertValid(validateAxisCalibrationReviewDecision, result.previousHardcodedReview, 'yellow previous-hardcoded axis review example');
+  assertValid(validateAxisCalibrationResult, result.previousHardcodedResult, 'yellow previous-hardcoded axis result');
+  assert.equal(result.previousHardcodedResult.status, 'blocked_insufficient_axis_support', 'yellow previous hardcoded red/green assignment must be blocked');
+  assert.ok(result.previousHardcodedResult.blockers.includes('insufficient_y_green_axis_lines'), 'yellow previous hardcoded assignment should fail because y_green has only one accepted line');
+  assert.ok(result.previousHardcodedResult.blockers.includes('accepted_vanishing_point_cluster_review_required'), 'yellow previous hardcoded assignment should also fail without accepted detected VP clusters');
+  const previousGreenSupport = result.previousHardcodedResult.axis_support.find((support) => support.axis === 'y_green');
+  assert.equal(previousGreenSupport.line_count, 1, 'yellow previous hardcoded green axis should contain exactly one line');
+  assert.equal(previousGreenSupport.required_line_count, 2, 'yellow green axis should require at least two reviewed lines');
+
+  assertValid(validateAxisCalibrationReviewDecision, result.acceptedFixtureReview, 'yellow accepted axis calibration fixture review');
+  assertValid(validateAxisCalibrationResult, result.acceptedFixtureResult, 'yellow accepted axis calibration fixture result');
+  assert.equal(result.acceptedFixtureResult.status, 'blocked_insufficient_axis_support', 'yellow accepted line-count fixture should still block without accepted detected VP clusters');
+  assert.equal(result.acceptedFixtureResult.derived_drafting_allowed, false, 'yellow accepted line-count fixture must not allow derived drafting without VP cluster review');
+  assert.equal(result.acceptedFixtureResult.promotion_allowed, false, 'yellow accepted axis fixture must not allow PartGraph promotion');
+  assert.equal(result.acceptedFixtureResult.axis_support.every((support) => support.support_ok === true), true, 'yellow accepted axis fixture should satisfy every axis support minimum');
+  assert.ok(result.acceptedFixtureResult.blockers.includes('accepted_vanishing_point_cluster_review_required'), 'yellow accepted line-count fixture should expose the missing VP cluster review blocker');
+
+  for (const relative of [
+    '01-original.png',
+    '02-axis-calibration-workbench-overlay.png',
+    '02-axis-calibration-workbench-overlay.svg',
+    '03-previous-hardcoded-axis-overlay.png',
+    '03-previous-hardcoded-axis-overlay.svg',
+    '04-detected-structure-lines-overlay.png',
+    '04-detected-structure-lines-overlay.svg',
+    'detected-structure-lines.json',
+    'detected-structure-lines.md',
+    'axis-calibration-workbench.json',
+    'axis-calibration-workbench.md',
+    'axis-calibration-review.template.json',
+    'axis-calibration-review.pending.json',
+    'axis-calibration-result.pending.json',
+    'axis-calibration-review.previous-hardcoded-example.json',
+    'axis-calibration-result.previous-hardcoded-example.json',
+    'axis-calibration-review.accepted-fixture.json',
+    'axis-calibration-result.accepted-fixture.json',
+    'calibrated-view-graph.pending.blocked.json',
+    'calibrated-view-graph.previous-hardcoded.blocked.json',
+    'calibrated-view-graph.accepted-fixture.json',
+    'corner-chain-topology-gate.pending.blocked.json',
+    'review/index.html',
+    'judgment-report.json',
+    'judgment-report.md'
+  ]) {
+    const stat = await fs.stat(path.join(absoluteOutputDir, relative));
+    assert.equal(stat.size > 0, true, `yellow axis calibration artifact ${relative} should be non-empty`);
+  }
+  const overlaySvg = await fs.readFile(path.join(absoluteOutputDir, '02-axis-calibration-workbench-overlay.svg'), 'utf8');
+  assert.ok(overlaySvg.includes('data-layer="axis-calibration-line-candidate"'), 'yellow axis workbench overlay should expose line-candidate layers');
+  assert.ok(overlaySvg.includes('axis_unknown'), 'yellow axis workbench overlay should show unknown axis state');
+  const previousOverlaySvg = await fs.readFile(path.join(absoluteOutputDir, '03-previous-hardcoded-axis-overlay.svg'), 'utf8');
+  assert.ok(previousOverlaySvg.includes('candidate_corner_BC') && previousOverlaySvg.includes('y_green'), 'yellow previous hardcoded overlay should expose the blocked single-line green assignment');
+  const detectedOverlaySvg = await fs.readFile(path.join(absoluteOutputDir, '04-detected-structure-lines-overlay.svg'), 'utf8');
+  assert.ok(detectedOverlaySvg.includes('data-layer="detected-structure-line"'), 'yellow detected structure line overlay should expose raster-detected line layers');
+  assert.ok(detectedOverlaySvg.includes('blocked_vanishing_point_cluster_review_required'), 'yellow detected structure line overlay should show blocked VP review status');
+  const reviewHtml = await fs.readFile(path.join(absoluteOutputDir, 'review', 'index.html'), 'utf8');
+  assert.ok(reviewHtml.includes('Single-line green-axis assignments stay blocked'), 'yellow axis workbench UI should explain the single-line green-axis blocker');
+  assert.ok(reviewHtml.includes('previous-hardcoded=blocked_insufficient_axis_support'), 'yellow axis workbench UI should surface the previous hardcoded blocker');
+  assert.ok(reviewHtml.includes('VP clusters must come from raster-detected lines'), 'yellow axis workbench UI should explain raster-detected VP cluster evidence');
 }
 
 async function assertYellowVisibleEffectJudgment() {
