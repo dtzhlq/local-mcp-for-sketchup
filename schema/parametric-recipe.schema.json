@@ -243,8 +243,25 @@
           "enum": [
             "replace",
             "add",
-            "multiply"
+            "multiply",
+            "append"
           ]
+        },
+        "value_template": {
+          "type": "object"
+        },
+        "value": {}
+      }
+    },
+    "parameter_reference": {
+      "type": "object",
+      "required": [
+        "$parameter"
+      ],
+      "properties": {
+        "$parameter": {
+          "type": "string",
+          "minLength": 1
         }
       }
     },

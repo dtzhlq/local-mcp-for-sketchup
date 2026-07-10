@@ -5,7 +5,11 @@ import Ajv2020 from 'ajv/dist/2020.js';
 import { SketchUpBridge } from '../src/bridge.mjs';
 import { materializeDslAssetPaths } from '../src/dsl-asset-paths.mjs';
 import { compilePartGraphFiles, compilePartGraphToSketchUpDsl } from '../src/product-modeling/part-graph-compiler.mjs';
-import { compileParametricRecipe } from '../src/product-modeling/parametric-recipe.mjs';
+import {
+  compileParametricRecipe,
+  compileParametricRecipeCandidate,
+  compileParametricRecipeFirstOutput
+} from '../src/product-modeling/parametric-recipe.mjs';
 import { validatePartGraphPhysicalConsistency } from '../src/product-modeling/physical-consistency-qa.mjs';
 
 const repoRoot = process.cwd();
@@ -20,6 +24,7 @@ const cameraPartGraphPath = 'examples/part-graphs/fuji-camera-reference.part-gra
 const cameraOutputPath = 'examples/acceptance-fuji-camera.json';
 const parametricRecipePath = 'examples/parametric-recipes/switch-thumbstick-variants.parametric-recipe.json';
 const featureMappingPlanPath = 'examples/feature-mapping-plans/switch-thumbstick-variants.feature-mapping-plan.json';
+const parametricRecipePatchPath = 'examples/parametric-recipes/switch-thumbstick-variants.baseline.part-graph-correction-patch.json';
 const buildingProfilePath = 'examples/product-profiles/building_group_industrial_campus.json';
 const buildingPartGraphPath = 'projects/image-structured-modeler/examples/building-group/part-graph.massing.json';
 const buildingOutputPath = 'projects/image-structured-modeler/examples/building-group/output.massing.json';
@@ -30,9 +35,11 @@ const ajv = new Ajv2020({ allErrors: true, strict: false });
 const productProfileSchema = JSON.parse(await fs.readFile('schema/product-profile.schema.json', 'utf8'));
 const partGraphSchema = JSON.parse(await fs.readFile('schema/part-graph.schema.json', 'utf8'));
 const parametricRecipeSchema = JSON.parse(await fs.readFile('schema/parametric-recipe.schema.json', 'utf8'));
+const correctionPatchSchema = JSON.parse(await fs.readFile('schema/part-graph-correction-patch.schema.json', 'utf8'));
 const validateProfile = ajv.compile(productProfileSchema);
 const validatePartGraph = ajv.compile(partGraphSchema);
 const validateParametricRecipe = ajv.compile(parametricRecipeSchema);
+const validateCorrectionPatch = ajv.compile(correctionPatchSchema);
 
 const profile = JSON.parse(await fs.readFile(profilePath, 'utf8'));
 const partGraph = JSON.parse(await fs.readFile(partGraphPath, 'utf8'));
@@ -44,6 +51,7 @@ assertValid(validateProfile, switchProfile, switchProfilePath);
 assertValid(validatePartGraph, switchPartGraph, switchPartGraphPath);
 const parametricRecipe = JSON.parse(await fs.readFile(parametricRecipePath, 'utf8'));
 const expectedFeatureMappingPlan = JSON.parse(await fs.readFile(featureMappingPlanPath, 'utf8'));
+const expectedParametricRecipePatch = JSON.parse(await fs.readFile(parametricRecipePatchPath, 'utf8'));
 assertValid(validateParametricRecipe, parametricRecipe, parametricRecipePath);
 const cameraProfile = JSON.parse(await fs.readFile(cameraProfilePath, 'utf8'));
 const cameraPartGraph = JSON.parse(await fs.readFile(cameraPartGraphPath, 'utf8'));
@@ -112,6 +120,7 @@ assert.ok(driftedCameraDetailPhysicalReport.correction_suggestions.some((suggest
 const { featureMappingPlan, report: parametricRecipeReport } = compileParametricRecipe(parametricRecipe, { partGraph: switchPartGraph });
 assert.deepEqual(featureMappingPlan, expectedFeatureMappingPlan, 'parametric recipe should compile into the reviewed static FeatureMappingPlan artifact');
 assert.equal(parametricRecipeReport.ok, true, 'parametric recipe compile report should pass');
+assert.equal(parametricRecipeReport.report_shape, 'parametric_recipe_compile_report_v1', 'parametric recipe report should expose the first-output report shape');
 assert.equal(parametricRecipeReport.downstream_target_kind, 'part_graph', 'parametric recipe report should preserve the declared downstream target');
 assert.equal(parametricRecipeReport.summary.first_output_candidate, 'baseline', 'batch fanout should require a reviewed first output candidate');
 assert.deepEqual(
@@ -132,6 +141,60 @@ assert.throws(
   /batch\.first_output is required/,
   'batch fanout must fail closed when first-output discipline is missing'
 );
+
+const recipeFirstOutput = compileParametricRecipeFirstOutput(parametricRecipe, {
+  partGraph: switchPartGraph,
+  profile: switchProfile,
+  compilePartGraphToSketchUpDsl,
+  compileOptions: { repoRoot }
+});
+assert.deepEqual(recipeFirstOutput.featureMappingPlan, expectedFeatureMappingPlan, 'first-output runner should emit the reviewed FeatureMappingPlan artifact');
+assert.deepEqual(recipeFirstOutput.partGraphPatch, expectedParametricRecipePatch, 'first-output runner should emit the reviewed PartGraph correction patch fixture');
+assertValid(validateCorrectionPatch, recipeFirstOutput.partGraphPatch, parametricRecipePatchPath);
+assertValid(validatePartGraph, recipeFirstOutput.appliedPartGraph, 'ParametricRecipe applied Switch PartGraph');
+assert.equal(recipeFirstOutput.report.summary.patch_edits, 4, 'baseline first output should patch reviewed feature intents and supported shape parameter bindings');
+assert.equal(recipeFirstOutput.report.summary.skipped_bindings, 2, 'baseline first output should skip only no-op pad lift bindings');
+assert.deepEqual(recipeFirstOutput.report.summary.emitted_artifacts, [
+  'feature_mapping_plan',
+  'compile_report',
+  'part_graph_correction_patch',
+  'part_graph',
+  'safe_json_dsl'
+]);
+assert.equal(partById(recipeFirstOutput.appliedPartGraph, 'left-analog-stick-groove-ring').shape.parameters.segments, 24, 'applied baseline PartGraph should update left thumbstick ring segments');
+assert.equal(partById(recipeFirstOutput.appliedPartGraph, 'right-analog-stick-groove-ring').shape.parameters.segments, 24, 'applied baseline PartGraph should update right thumbstick ring segments');
+assert.equal(partById(recipeFirstOutput.appliedPartGraph, 'left-warm-white-joy-con-shell').feature_intents[0].operation, 'cut_recess', 'applied baseline PartGraph should promote the left thumbstick recess feature intent');
+assert.equal(partById(recipeFirstOutput.appliedPartGraph, 'right-warm-white-joy-con-shell').feature_intents[0].parameters.depth, 2.4, 'applied baseline PartGraph should promote the right thumbstick recess depth parameter');
+assert.equal(operationById(recipeFirstOutput.safeJsonDsl, 'left-analog-stick-groove-ring').segments, 24, 'safe JSON DSL should compile the left thumbstick ring segment variation');
+assert.equal(operationById(recipeFirstOutput.safeJsonDsl, 'right-analog-stick-groove-ring').segments, 24, 'safe JSON DSL should compile the right thumbstick ring segment variation');
+assert.equal(operationByFeatureId(recipeFirstOutput.safeJsonDsl, 'left-thumbstick-recess-feature').op, 'cut_recess', 'safe JSON DSL should compile the left thumbstick recess feature intent');
+assert.equal(operationByFeatureId(recipeFirstOutput.safeJsonDsl, 'right-thumbstick-recess-feature').depth, 2.4, 'safe JSON DSL should compile the right thumbstick recess depth');
+const recipeMockSessionPath = path.join(repoRoot, 'output', 'product-modeling', 'sessions', 'parametric-recipe-mock.json');
+await fs.mkdir(path.dirname(recipeMockSessionPath), { recursive: true });
+const recipeBridge = new SketchUpBridge({ mock: { sessionPath: recipeMockSessionPath } });
+const recipeBuild = await recipeBridge.build_model({ runtime: 'mock', code: JSON.stringify(recipeFirstOutput.safeJsonDsl) });
+assert.equal(recipeBuild.snapshot.warning_summary.by_severity.error, 0, 'ParametricRecipe safe JSON DSL should build cleanly in mock runtime');
+assert.ok(
+  snapshotGroupById(recipeBuild.snapshot, 'left-warm-white-joy-con-shell').features.some((feature) => feature.id === 'left-thumbstick-recess-feature'),
+  'mock snapshot should include the promoted left thumbstick recess feature'
+);
+assert.throws(
+  () => compileParametricRecipeCandidate(parametricRecipe, { candidateId: 'taller_pad', partGraph: switchPartGraph }),
+  /requires a passing first-output report/,
+  'fanout candidates must require a first-output report before compiling'
+);
+const tallerPadCandidate = compileParametricRecipeCandidate(parametricRecipe, {
+  candidateId: 'taller_pad',
+  firstOutputReport: recipeFirstOutput.report,
+  partGraph: switchPartGraph,
+  profile: switchProfile,
+  compilePartGraphToSketchUpDsl,
+  compileOptions: { repoRoot }
+});
+assert.equal(partById(tallerPadCandidate.appliedPartGraph, 'left-analog-stick-top-pad').shape.parameters.origin[2], 33.3, 'fanout candidate should apply reviewed left pad lift after first-output report');
+assert.equal(partById(tallerPadCandidate.appliedPartGraph, 'right-analog-stick-top-pad').shape.parameters.origin[2], 33.3, 'fanout candidate should apply reviewed right pad lift after first-output report');
+assert.equal(operationById(tallerPadCandidate.safeJsonDsl, 'left-analog-stick-top-pad').origin[2], 33.3, 'fanout candidate should compile left pad lift into safe JSON DSL');
+assert.equal(operationByFeatureId(tallerPadCandidate.safeJsonDsl, 'left-thumbstick-recess-feature').depth, 2.4, 'fanout candidate should retain reviewed feature intent promotion');
 
 const document = await compilePartGraphFiles({ profilePath, partGraphPath, repoRoot });
 assert.equal(document.version, 1);
@@ -364,6 +427,12 @@ function assertPhysicalRelationSubject(partGraph, partId, label) {
 function operationById(document, id) {
   const operation = document.operations.find((item) => item.id === id);
   assert.ok(operation, `expected compiled operation with id ${id}`);
+  return operation;
+}
+
+function operationByFeatureId(document, featureId) {
+  const operation = document.operations.find((item) => item.feature_id === featureId);
+  assert.ok(operation, `expected compiled feature operation with id ${featureId}`);
   return operation;
 }
 

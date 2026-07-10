@@ -122,7 +122,8 @@ These are follow-up TODOs from the 2026-06-04 RhinoMCP review. They should be fo
 - [x] Add a natural iteration artifact loop. `iterate_model` inspects the active session, optionally selects targets, applies an incremental patch through the existing controlled execution layer, then writes before/after snapshots, change summary, snapshot diff, QA, manifest, and a versioned model artifact.
 - [x] Formalize a minimal `ParametricRecipe` / `FeatureMappingGraph` artifact inspired by Grasshopper graph workflows. The first slice adds `schema/parametric-recipe.schema.json`, a reviewed Switch thumbstick recipe fixture, and a static `FeatureMappingPlan` compiler that exposes parameters, part keys, dependencies, variation points, and downstream compile target direction without opening arbitrary script execution.
 - [x] Add a first-output discipline contract for batch-oriented recipe fanout. The first slice is schema- and test-backed: `first_output_then_fanout` recipes must declare a first reviewed candidate plus required `feature_mapping_plan` and `compile_report` artifacts before any additional batch candidates are considered.
-- [ ] Extend `ParametricRecipe` compilation beyond the current static `FeatureMappingPlan` emission into direct reviewed `PartGraph` / safe JSON DSL authoring when the runtime path and QA evidence are ready.
+- [x] Extend `ParametricRecipe` first-output compilation into reviewed `part_graph_correction_patch`, applied `PartGraph`, and safe JSON DSL artifacts for currently whitelisted `shape.parameters` bindings. The Switch thumbstick recipe now has a baseline patch fixture and `npm run parametric-recipe:first-output-switch`, which writes a `FeatureMappingPlan`, compile report, patch, applied PartGraph, and safe JSON DSL before any fanout candidate can run.
+- [x] Extend `ParametricRecipe` patching beyond shape-parameter bindings into full reviewed `feature_intents` promotion for explicit `value_template` bindings. The Switch thumbstick recipe now promotes left/right shell `cut_recess` feature intents through the same correction-patch path, compiles them into safe JSON DSL, and verifies the promoted feature in the mock snapshot; this remains a controlled artifact compiler, not an open graph execution runtime.
 
 ## Proposed Artifacts
 
@@ -132,6 +133,7 @@ Add or formalize these artifacts:
 - `PartGraph`: part tree, relations, parameters, evidence status, feature intent, fallback state.
 - `ParametricRecipe`: parameters, part keys, dependency graph, variation points, batch first-output contract, and downstream compile target direction.
 - `FeatureMappingPlan`: selected runtime operations for each part or feature.
+- `PartGraphCorrectionPatch`: reviewed edits produced by QA, proposals, or ParametricRecipe bindings before a PartGraph is changed.
 - `ReferenceVisualQAReport`: reference alignment scores, keypoint deltas, silhouette metrics, correction suggestions.
 - `CorrectionPatch`: edits against `PartGraph` and evidence status, not only raw DSL output.
 

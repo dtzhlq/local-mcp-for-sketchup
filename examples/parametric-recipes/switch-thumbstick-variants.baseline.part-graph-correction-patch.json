@@ -1,0 +1,224 @@
+{
+  "version": 1,
+  "kind": "part_graph_correction_patch",
+  "source": "parametric_recipe",
+  "target_part_graph_id": "switch-controller-reference-part-graph",
+  "report_verdict": "pass",
+  "edits": [
+    {
+      "action": "set",
+      "path": "parts[left-warm-white-joy-con-shell].feature_intents",
+      "part_id": "left-warm-white-joy-con-shell",
+      "reason": "switch-thumbstick-variants-v1 baseline applies thumbstick_recess_depth_mm through node left_thumbstick_recess",
+      "issue_type": "parametric_recipe_binding",
+      "rule_id": "parametric_recipe_first_output",
+      "severity": "info",
+      "confidence": 0.78,
+      "value": [
+        {
+          "id": "left-thumbstick-recess-feature",
+          "operation": "cut_recess",
+          "semantic": "thumbstick_recess",
+          "face": "top",
+          "fallback_state": "real_feature_op",
+          "parameters": {
+            "center": [
+              25,
+              97
+            ],
+            "size": [
+              38,
+              38
+            ],
+            "depth": 2.4,
+            "radius": 17,
+            "segments": 24
+          },
+          "grounding_status": "review_confirmed",
+          "review_required": false,
+          "helper_allowed": false
+        }
+      ],
+      "note": "Generated from a reviewed ParametricRecipe binding; no open script execution was used.",
+      "evidence": {
+        "recipe_id": "switch-thumbstick-variants-v1",
+        "candidate_id": "baseline",
+        "node_id": "left_thumbstick_recess",
+        "node_kind": "feature",
+        "operation": "cut_recess",
+        "parameter_id": "thumbstick_recess_depth_mm",
+        "transform": "append",
+        "part_keys": [
+          "left_thumbstick_shell",
+          "left_thumbstick_stack"
+        ],
+        "part_ids": [
+          "left-warm-white-joy-con-shell",
+          "left-analog-stick-recess-ring",
+          "left-analog-stick-stem",
+          "left-analog-stick-top-pad",
+          "left-analog-stick-groove-ring"
+        ],
+        "variation_points": [
+          "thumbstick_height_family"
+        ]
+      },
+      "mark_evidence_status": "manual_confirmed"
+    },
+    {
+      "action": "set",
+      "path": "parts[right-warm-white-joy-con-shell].feature_intents",
+      "part_id": "right-warm-white-joy-con-shell",
+      "reason": "switch-thumbstick-variants-v1 baseline applies thumbstick_recess_depth_mm through node right_thumbstick_recess",
+      "issue_type": "parametric_recipe_binding",
+      "rule_id": "parametric_recipe_first_output",
+      "severity": "info",
+      "confidence": 0.78,
+      "value": [
+        {
+          "id": "right-thumbstick-recess-feature",
+          "operation": "cut_recess",
+          "semantic": "thumbstick_recess",
+          "face": "top",
+          "fallback_state": "real_feature_op",
+          "parameters": {
+            "center": [
+              37,
+              34
+            ],
+            "size": [
+              38,
+              38
+            ],
+            "depth": 2.4,
+            "radius": 17,
+            "segments": 24
+          },
+          "grounding_status": "review_confirmed",
+          "review_required": false,
+          "helper_allowed": false
+        }
+      ],
+      "note": "Generated from a reviewed ParametricRecipe binding; no open script execution was used.",
+      "evidence": {
+        "recipe_id": "switch-thumbstick-variants-v1",
+        "candidate_id": "baseline",
+        "node_id": "right_thumbstick_recess",
+        "node_kind": "feature",
+        "operation": "cut_recess",
+        "parameter_id": "thumbstick_recess_depth_mm",
+        "transform": "append",
+        "part_keys": [
+          "right_thumbstick_shell",
+          "right_thumbstick_stack"
+        ],
+        "part_ids": [
+          "right-warm-white-joy-con-shell",
+          "right-analog-stick-recess-ring",
+          "right-analog-stick-stem",
+          "right-analog-stick-top-pad",
+          "right-analog-stick-groove-ring"
+        ],
+        "variation_points": [
+          "thumbstick_height_family"
+        ]
+      },
+      "mark_evidence_status": "manual_confirmed"
+    },
+    {
+      "action": "set",
+      "path": "parts[left-analog-stick-groove-ring].shape.parameters.segments",
+      "part_id": "left-analog-stick-groove-ring",
+      "reason": "switch-thumbstick-variants-v1 baseline applies thumbstick_ring_segments through node left_thumbstick_stack_alignment",
+      "issue_type": "parametric_recipe_binding",
+      "rule_id": "parametric_recipe_first_output",
+      "severity": "info",
+      "confidence": 0.78,
+      "value": 24,
+      "note": "Generated from a reviewed ParametricRecipe binding; no open script execution was used.",
+      "evidence": {
+        "recipe_id": "switch-thumbstick-variants-v1",
+        "candidate_id": "baseline",
+        "node_id": "left_thumbstick_stack_alignment",
+        "node_kind": "part",
+        "operation": "cylinder",
+        "parameter_id": "thumbstick_ring_segments",
+        "transform": "replace",
+        "part_keys": [
+          "left_thumbstick_stack"
+        ],
+        "part_ids": [
+          "left-analog-stick-recess-ring",
+          "left-analog-stick-stem",
+          "left-analog-stick-top-pad",
+          "left-analog-stick-groove-ring"
+        ],
+        "variation_points": [
+          "thumbstick_height_family",
+          "thumbstick_finish_family"
+        ]
+      },
+      "mark_evidence_status": "manual_confirmed",
+      "previous_value": 48
+    },
+    {
+      "action": "set",
+      "path": "parts[right-analog-stick-groove-ring].shape.parameters.segments",
+      "part_id": "right-analog-stick-groove-ring",
+      "reason": "switch-thumbstick-variants-v1 baseline applies thumbstick_ring_segments through node right_thumbstick_stack_alignment",
+      "issue_type": "parametric_recipe_binding",
+      "rule_id": "parametric_recipe_first_output",
+      "severity": "info",
+      "confidence": 0.78,
+      "value": 24,
+      "note": "Generated from a reviewed ParametricRecipe binding; no open script execution was used.",
+      "evidence": {
+        "recipe_id": "switch-thumbstick-variants-v1",
+        "candidate_id": "baseline",
+        "node_id": "right_thumbstick_stack_alignment",
+        "node_kind": "part",
+        "operation": "cylinder",
+        "parameter_id": "thumbstick_ring_segments",
+        "transform": "replace",
+        "part_keys": [
+          "right_thumbstick_stack"
+        ],
+        "part_ids": [
+          "right-analog-stick-recess-ring",
+          "right-analog-stick-stem",
+          "right-analog-stick-top-pad",
+          "right-analog-stick-groove-ring"
+        ],
+        "variation_points": [
+          "thumbstick_height_family",
+          "thumbstick_finish_family"
+        ]
+      },
+      "mark_evidence_status": "manual_confirmed",
+      "previous_value": 48
+    }
+  ],
+  "metadata": {
+    "recipe_id": "switch-thumbstick-variants-v1",
+    "candidate_id": "baseline",
+    "report_shape": "parametric_recipe_compile_report_v1",
+    "skipped_bindings": [
+      {
+        "node_id": "left_thumbstick_stack_alignment",
+        "parameter_id": "thumbstick_pad_lift_mm",
+        "target": "parts[left-analog-stick-top-pad].shape.parameters.origin[2]",
+        "reason": "no_value_change"
+      },
+      {
+        "node_id": "right_thumbstick_stack_alignment",
+        "parameter_id": "thumbstick_pad_lift_mm",
+        "target": "parts[right-analog-stick-top-pad].shape.parameters.origin[2]",
+        "reason": "no_value_change"
+      }
+    ],
+    "patch_path_policy": [
+      "^parts\\[[^\\]]+\\]\\.shape\\.parameters\\.",
+      "^parts\\[[^\\]]+\\]\\.feature_intents$"
+    ]
+  }
+}

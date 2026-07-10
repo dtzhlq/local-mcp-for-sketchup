@@ -48,6 +48,13 @@
       "description": "Reviewed left thumbstick stack from the accepted Switch PartGraph."
     },
     {
+      "key": "left_thumbstick_shell",
+      "part_ids": [
+        "left-warm-white-joy-con-shell"
+      ],
+      "description": "Left Joy-Con shell that receives the reviewed thumbstick recess feature intent."
+    },
+    {
       "key": "right_thumbstick_stack",
       "part_ids": [
         "right-analog-stick-recess-ring",
@@ -56,6 +63,13 @@
         "right-analog-stick-groove-ring"
       ],
       "description": "Reviewed right thumbstick stack from the accepted Switch PartGraph."
+    },
+    {
+      "key": "right_thumbstick_shell",
+      "part_ids": [
+        "right-warm-white-joy-con-shell"
+      ],
+      "description": "Right Joy-Con shell that receives the reviewed thumbstick recess feature intent."
     }
   ],
   "feature_mapping_graph": {
@@ -65,13 +79,39 @@
         "kind": "feature",
         "operation": "cut_recess",
         "part_keys": [
+          "left_thumbstick_shell",
           "left_thumbstick_stack"
         ],
         "parameter_bindings": [
           {
             "parameter_id": "thumbstick_recess_depth_mm",
-            "target": "parts[left-analog-stick-recess-ring].feature_intents[0].depth",
-            "transform": "replace"
+            "target": "parts[left-warm-white-joy-con-shell].feature_intents",
+            "transform": "append",
+            "value_template": {
+              "id": "left-thumbstick-recess-feature",
+              "operation": "cut_recess",
+              "semantic": "thumbstick_recess",
+              "face": "top",
+              "fallback_state": "real_feature_op",
+              "parameters": {
+                "center": [
+                  25,
+                  97
+                ],
+                "size": [
+                  38,
+                  38
+                ],
+                "depth": {
+                  "$parameter": "thumbstick_recess_depth_mm"
+                },
+                "radius": 17,
+                "segments": 24
+              },
+              "grounding_status": "review_confirmed",
+              "review_required": false,
+              "helper_allowed": false
+            }
           }
         ],
         "variation_points": [
@@ -88,13 +128,39 @@
         "kind": "feature",
         "operation": "cut_recess",
         "part_keys": [
+          "right_thumbstick_shell",
           "right_thumbstick_stack"
         ],
         "parameter_bindings": [
           {
             "parameter_id": "thumbstick_recess_depth_mm",
-            "target": "parts[right-analog-stick-recess-ring].feature_intents[0].depth",
-            "transform": "replace"
+            "target": "parts[right-warm-white-joy-con-shell].feature_intents",
+            "transform": "append",
+            "value_template": {
+              "id": "right-thumbstick-recess-feature",
+              "operation": "cut_recess",
+              "semantic": "thumbstick_recess",
+              "face": "top",
+              "fallback_state": "real_feature_op",
+              "parameters": {
+                "center": [
+                  37,
+                  34
+                ],
+                "size": [
+                  38,
+                  38
+                ],
+                "depth": {
+                  "$parameter": "thumbstick_recess_depth_mm"
+                },
+                "radius": 17,
+                "segments": 24
+              },
+              "grounding_status": "review_confirmed",
+              "review_required": false,
+              "helper_allowed": false
+            }
           }
         ],
         "variation_points": [
@@ -185,12 +251,14 @@
         "right_thumbstick_stack_alignment"
       ],
       "part_keys": [
+        "left_thumbstick_shell",
+        "right_thumbstick_shell",
         "left_thumbstick_stack",
         "right_thumbstick_stack"
       ],
       "compile_paths": [
-        "parts[left-analog-stick-recess-ring].feature_intents[0].depth",
-        "parts[right-analog-stick-recess-ring].feature_intents[0].depth",
+        "parts[left-warm-white-joy-con-shell].feature_intents",
+        "parts[right-warm-white-joy-con-shell].feature_intents",
         "parts[left-analog-stick-top-pad].shape.parameters.origin[2]",
         "parts[right-analog-stick-top-pad].shape.parameters.origin[2]"
       ]

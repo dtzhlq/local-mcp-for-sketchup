@@ -1,4 +1,9 @@
 const TARGET_KINDS = new Set(['feature_mapping_plan', 'part_graph', 'safe_json_dsl']);
+const PATCHABLE_PART_GRAPH_PATHS = [
+  /^parts\[[^\]]+\]\.shape\.parameters\./,
+  /^parts\[[^\]]+\]\.feature_intents$/
+];
+const REPORT_SHAPE = 'parametric_recipe_compile_report_v1';
 
 export function compileParametricRecipe(recipe = {}, options = {}) {
   if (!recipe || typeof recipe !== 'object') throw new Error('ParametricRecipe must be an object');
@@ -10,6 +15,8 @@ export function compileParametricRecipe(recipe = {}, options = {}) {
   const compileTarget = normalizeCompileTarget(recipe.compile?.target || {});
   const batchPolicy = normalizeBatchPolicy(recipe.compile?.batch || {}, parameterMap);
   const executionOrder = topologicalSort(nodeMap);
+  const candidate = resolveCandidate(batchPolicy, options.candidateId);
+  enforceFirstOutputDiscipline(batchPolicy, candidate, options.firstOutputReport);
 
   const featureMappingPlan = {
     version: recipe.version || 1,
@@ -43,7 +50,9 @@ export function compileParametricRecipe(recipe = {}, options = {}) {
     verdict: 'pass',
     version: 1,
     artifact: 'ParametricRecipeCompileReport',
+    report_shape: REPORT_SHAPE,
     recipe_id: recipe.id,
+    candidate_id: candidate.id,
     emitted_artifact: 'FeatureMappingPlan',
     downstream_target_kind: compileTarget.kind,
     summary: {
@@ -55,7 +64,109 @@ export function compileParametricRecipe(recipe = {}, options = {}) {
     }
   };
 
-  return { featureMappingPlan, report };
+  const partGraphPatch = partGraph
+    ? buildPartGraphCorrectionPatch({
+      recipe,
+      partGraph,
+      parameterMap,
+      partKeyMap,
+      nodeMap,
+      executionOrder,
+      candidate
+    })
+    : null;
+
+  return { featureMappingPlan, report, partGraphPatch };
+}
+
+export function compileParametricRecipeCandidate(recipe = {}, options = {}) {
+  const { featureMappingPlan, report, partGraphPatch } = compileParametricRecipe(recipe, options);
+  const partGraph = options.partGraph || null;
+  const profile = options.profile || null;
+  const appliedPartGraph = partGraph && partGraphPatch
+    ? applyPartGraphCorrectionPatch(partGraph, partGraphPatch).partGraph
+    : null;
+  const safeJsonDsl = appliedPartGraph && profile && typeof options.compilePartGraphToSketchUpDsl === 'function'
+    ? options.compilePartGraphToSketchUpDsl(appliedPartGraph, profile, options.compileOptions || {})
+    : null;
+  return {
+    featureMappingPlan,
+    report: {
+      ...report,
+      summary: {
+        ...report.summary,
+        patch_edits: partGraphPatch?.edits?.length || 0,
+        skipped_bindings: partGraphPatch?.metadata?.skipped_bindings?.length || 0,
+        emitted_artifacts: [
+          'feature_mapping_plan',
+          'compile_report',
+          ...(partGraphPatch ? ['part_graph_correction_patch'] : []),
+          ...(appliedPartGraph ? ['part_graph'] : []),
+          ...(safeJsonDsl ? ['safe_json_dsl'] : [])
+        ]
+      }
+    },
+    partGraphPatch,
+    appliedPartGraph,
+    safeJsonDsl
+  };
+}
+
+export function compileParametricRecipeFirstOutput(recipe = {}, options = {}) {
+  const batch = recipe.compile?.batch || {};
+  const firstOutputId = batch.first_output?.candidate_id;
+  if (!firstOutputId) throw new Error('ParametricRecipe compile.batch.first_output.candidate_id is required');
+  return compileParametricRecipeCandidate(recipe, {
+    ...options,
+    candidateId: firstOutputId
+  });
+}
+
+export function applyPartGraphCorrectionPatch(partGraph = {}, patch = {}) {
+  if (patch.kind !== 'part_graph_correction_patch') {
+    throw new Error('PartGraph correction patch kind must be part_graph_correction_patch');
+  }
+  const next = clone(partGraph);
+  const applied = [];
+  for (const edit of patch.edits || []) {
+    if (edit.action !== 'set') continue;
+    assertPatchPathAllowed(edit.path);
+    setPathValue(next, edit.path, edit.value);
+    const part = partById(next, edit.part_id || partIdFromPath(edit.path));
+    if (part) {
+      part.evidence_status = edit.mark_evidence_status || part.evidence_status || 'inferred';
+      part.evidence_sources = [
+        ...(part.evidence_sources || []),
+        {
+          kind: 'parametric_recipe',
+          status: edit.mark_evidence_status || part.evidence_status || 'inferred',
+          confidence: edit.confidence,
+          note: `${edit.rule_id || 'parametric_recipe'}: ${edit.reason}`
+        }
+      ];
+      part.qa = {
+        ...(part.qa || {}),
+        parametric_recipe_applied: true,
+        parametric_recipe_candidate_id: patch.metadata?.candidate_id || null,
+        last_correction_rule: edit.rule_id || null
+      };
+    }
+    applied.push(edit);
+  }
+  next.review = {
+    ...(next.review || {}),
+    correction_patches_applied: [
+      ...(next.review?.correction_patches_applied || []),
+      {
+        source: patch.source || 'parametric_recipe',
+        edits: applied.length,
+        target_part_graph_id: patch.target_part_graph_id || next.id,
+        recipe_id: patch.metadata?.recipe_id || null,
+        candidate_id: patch.metadata?.candidate_id || null
+      }
+    ]
+  };
+  return { partGraph: next, applied };
 }
 
 function buildParameterMap(parameters) {
@@ -212,6 +323,172 @@ function normalizeBatchPolicy(batch, parameterMap) {
   };
 }
 
+function resolveCandidate(batchPolicy, candidateId) {
+  const candidates = batchPolicy.fanout || [];
+  if (candidates.length === 0) {
+    return { id: 'single_output', label: 'Single output', parameter_overrides: {} };
+  }
+  const selectedId = candidateId || batchPolicy.first_output?.candidate_id || candidates[0]?.id;
+  const candidate = candidates.find((item) => item.id === selectedId);
+  if (!candidate) throw new Error(`ParametricRecipe candidate ${selectedId} is not present in batch fanout`);
+  return clone(candidate);
+}
+
+function enforceFirstOutputDiscipline(batchPolicy, candidate, firstOutputReport) {
+  if (batchPolicy.mode !== 'first_output_then_fanout') return;
+  const firstOutputId = batchPolicy.first_output?.candidate_id;
+  if (candidate.id === firstOutputId) return;
+  const reportShape = firstOutputReport?.report_shape || firstOutputReport?.summary?.required_report_shape;
+  const reportCandidate = firstOutputReport?.candidate_id || firstOutputReport?.summary?.first_output_candidate;
+  if (reportShape !== REPORT_SHAPE || reportCandidate !== firstOutputId || firstOutputReport?.ok !== true) {
+    throw new Error(`ParametricRecipe candidate ${candidate.id} requires a passing first-output report for ${firstOutputId}`);
+  }
+}
+
+function buildPartGraphCorrectionPatch({ recipe, partGraph, parameterMap, partKeyMap, nodeMap, executionOrder, candidate }) {
+  const parameterValues = resolveParameterValues(parameterMap, candidate);
+  const edits = [];
+  const skippedBindings = [];
+  for (const nodeId of executionOrder) {
+    const node = nodeMap.get(nodeId);
+    for (const binding of node.parameter_bindings || []) {
+      const current = getPathValue(partGraph, binding.target);
+      const parameterValue = parameterValues[binding.parameter_id];
+      if (!isPatchPathAllowed(binding.target)) {
+        skippedBindings.push({
+          node_id: node.id,
+          parameter_id: binding.parameter_id,
+          target: binding.target,
+          reason: 'target_not_in_part_graph_patch_whitelist'
+        });
+        continue;
+      }
+      const value = transformParameterValue(current, parameterValue, binding.transform || 'replace', binding.target, binding, parameterValues);
+      if (sameJson(current, value)) {
+        skippedBindings.push({
+          node_id: node.id,
+          parameter_id: binding.parameter_id,
+          target: binding.target,
+          reason: 'no_value_change'
+        });
+        continue;
+      }
+      const partId = partIdFromPath(binding.target);
+      const edit = {
+        action: 'set',
+        path: binding.target,
+        part_id: partId,
+        reason: `${recipe.id} ${candidate.id} applies ${binding.parameter_id} through node ${node.id}`,
+        issue_type: 'parametric_recipe_binding',
+        rule_id: 'parametric_recipe_first_output',
+        severity: candidate.id === recipe.compile?.batch?.first_output?.candidate_id ? 'info' : 'warn',
+        confidence: 0.78,
+        value,
+        note: 'Generated from a reviewed ParametricRecipe binding; no open script execution was used.',
+        evidence: {
+          recipe_id: recipe.id,
+          candidate_id: candidate.id,
+          node_id: node.id,
+          node_kind: node.kind,
+          operation: node.operation,
+          parameter_id: binding.parameter_id,
+          transform: binding.transform || 'replace',
+          part_keys: [...(node.part_keys || [])],
+          part_ids: partIdsForNode(node, partKeyMap),
+          variation_points: [...(node.variation_points || [])]
+        },
+        mark_evidence_status: 'manual_confirmed'
+      };
+      if (current !== undefined) edit.previous_value = current;
+      edits.push(edit);
+    }
+  }
+  return {
+    version: 1,
+    kind: 'part_graph_correction_patch',
+    source: 'parametric_recipe',
+    target_part_graph_id: partGraph.id,
+    report_verdict: 'pass',
+    edits,
+    metadata: {
+      recipe_id: recipe.id,
+      candidate_id: candidate.id,
+      report_shape: REPORT_SHAPE,
+      skipped_bindings: skippedBindings,
+      patch_path_policy: PATCHABLE_PART_GRAPH_PATHS.map((pattern) => pattern.source)
+    }
+  };
+}
+
+function resolveParameterValues(parameterMap, candidate) {
+  const values = Object.fromEntries([...parameterMap.values()].map((parameter) => [parameter.id, clone(parameter.default)]));
+  for (const [parameterId, value] of Object.entries(candidate.parameter_overrides || {})) {
+    values[parameterId] = clone(value);
+  }
+  return values;
+}
+
+function transformParameterValue(current, parameterValue, transform, targetPath, binding = {}, parameterValues = {}) {
+  const templatedValue = binding.value_template !== undefined
+    ? resolveTemplate(binding.value_template, parameterValues)
+    : binding.value !== undefined
+      ? resolveTemplate(binding.value, parameterValues)
+      : undefined;
+  if (transform === 'replace') return clone(templatedValue !== undefined ? templatedValue : parameterValue);
+  if (transform === 'append') {
+    const currentItems = Array.isArray(current) ? clone(current) : [];
+    const item = clone(templatedValue !== undefined ? templatedValue : parameterValue);
+    if (item?.id) {
+      const existingIndex = currentItems.findIndex((existing) => existing?.id === item.id);
+      if (existingIndex >= 0) currentItems[existingIndex] = item;
+      else currentItems.push(item);
+      return currentItems;
+    }
+    return [...currentItems, item];
+  }
+  if (transform === 'add') {
+    if (!Number.isFinite(Number(current)) || !Number.isFinite(Number(parameterValue))) {
+      throw new Error(`ParametricRecipe add transform requires numeric current and parameter values for ${targetPath}`);
+    }
+    return round(Number(current) + Number(parameterValue), 6);
+  }
+  if (transform === 'multiply') {
+    if (!Number.isFinite(Number(current)) || !Number.isFinite(Number(parameterValue))) {
+      throw new Error(`ParametricRecipe multiply transform requires numeric current and parameter values for ${targetPath}`);
+    }
+    return round(Number(current) * Number(parameterValue), 6);
+  }
+  throw new Error(`Unsupported ParametricRecipe transform ${transform}`);
+}
+
+function resolveTemplate(value, parameterValues) {
+  if (Array.isArray(value)) return value.map((item) => resolveTemplate(item, parameterValues));
+  if (!value || typeof value !== 'object') return clone(value);
+  if (Object.keys(value).length === 1 && typeof value.$parameter === 'string') {
+    if (!(value.$parameter in parameterValues)) throw new Error(`Unknown ParametricRecipe template parameter ${value.$parameter}`);
+    return clone(parameterValues[value.$parameter]);
+  }
+  return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, resolveTemplate(item, parameterValues)]));
+}
+
+function partIdsForNode(node, partKeyMap) {
+  const ids = [];
+  for (const key of node.part_keys || []) {
+    ids.push(...(partKeyMap.get(key)?.source?.part_ids || []));
+  }
+  return [...new Set(ids)];
+}
+
+function isPatchPathAllowed(targetPath) {
+  return PATCHABLE_PART_GRAPH_PATHS.some((pattern) => pattern.test(String(targetPath)));
+}
+
+function assertPatchPathAllowed(targetPath) {
+  if (!isPatchPathAllowed(targetPath)) {
+    throw new Error(`ParametricRecipe patch target is outside the allowed PartGraph paths: ${targetPath}`);
+  }
+}
+
 function topologicalSort(nodeMap) {
   const indegree = new Map();
   const outgoing = new Map();
@@ -243,7 +520,7 @@ function topologicalSort(nodeMap) {
 }
 
 function compileNode(node) {
-  return {
+  const compiled = {
     id: node.id,
     kind: node.kind,
     operation: node.operation,
@@ -254,8 +531,82 @@ function compileNode(node) {
     outputs: [...(node.outputs || [])],
     notes: node.notes || ''
   };
+  for (const binding of compiled.parameter_bindings) {
+    const original = (node.parameter_bindings || []).find((item) => item.parameter_id === binding.parameter_id && item.target === binding.target);
+    if (original?.value_template !== undefined) binding.value_template = clone(original.value_template);
+    if (original?.value !== undefined) binding.value = clone(original.value);
+  }
+  return compiled;
 }
 
 function clone(value) {
+  if (value === undefined) return undefined;
   return JSON.parse(JSON.stringify(value));
+}
+
+function sameJson(left, right) {
+  return JSON.stringify(left) === JSON.stringify(right);
+}
+
+function getPathValue(document, targetPath) {
+  return pathTokens(targetPath).reduce((current, token) => {
+    if (current === undefined || current === null) return undefined;
+    if (token.collection === 'parts') return partById(current, token.id);
+    if (token.index !== undefined) return current[token.index];
+    return current[token];
+  }, document);
+}
+
+function setPathValue(document, targetPath, value) {
+  const tokens = pathTokens(targetPath);
+  const last = tokens.pop();
+  const parent = tokens.reduce((current, token, index) => {
+    const nextToken = tokens[index + 1] || last;
+    if (token.collection === 'parts') return partById(current, token.id);
+    if (token.index !== undefined) {
+      if (!Array.isArray(current)) throw new Error(`Expected array while setting PartGraph path: ${targetPath}`);
+      if (current[token.index] === undefined) current[token.index] = nextToken?.index !== undefined ? [] : {};
+      return current[token.index];
+    }
+    if (!current[token] || typeof current[token] !== 'object') current[token] = nextToken?.index !== undefined ? [] : {};
+    return current[token];
+  }, document);
+  if (last.collection === 'parts') throw new Error(`Unable to set PartGraph collection path: ${targetPath}`);
+  if (last.index !== undefined) {
+    if (!Array.isArray(parent)) throw new Error(`Expected array parent while setting PartGraph path: ${targetPath}`);
+    parent[last.index] = clone(value);
+    return;
+  }
+  if (!parent || typeof last !== 'string') throw new Error(`Unable to set PartGraph path: ${targetPath}`);
+  parent[last] = clone(value);
+}
+
+function pathTokens(targetPath) {
+  const tokens = [];
+  for (const token of String(targetPath).split('.')) {
+    const partMatch = token.match(/^parts\[([^\]]+)\]$/);
+    if (partMatch) {
+      tokens.push({ collection: 'parts', id: partMatch[1] });
+      continue;
+    }
+    const match = token.match(/^([^\[]+)(?:\[(\d+)\])?$/);
+    if (!match) throw new Error(`Unsupported PartGraph path token: ${token}`);
+    tokens.push(match[1]);
+    if (match[2] !== undefined) tokens.push({ index: Number(match[2]) });
+  }
+  return tokens;
+}
+
+function partById(root, id) {
+  const parts = Array.isArray(root) ? root : root?.parts;
+  return parts?.find((part) => part.id === id) || null;
+}
+
+function partIdFromPath(targetPath) {
+  return String(targetPath).match(/parts\[([^\]]+)\]/)?.[1] || null;
+}
+
+function round(value, digits = 2) {
+  const factor = 10 ** digits;
+  return Math.round(value * factor) / factor;
 }
