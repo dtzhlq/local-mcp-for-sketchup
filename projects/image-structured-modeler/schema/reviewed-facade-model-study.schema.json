@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/reviewed-facade-model-study.schema.json",
+  "title": "ReviewedFacadeModelStudyApproval v1",
+  "type": "object",
+  "required": [
+    "kind",
+    "version",
+    "sample_id",
+    "reviewer",
+    "status",
+    "accepted_axis_family_ids",
+    "accepted_topology_ids",
+    "accepted_view_slot_ids",
+    "accepted_plane_ids",
+    "detail_review",
+    "scale_assumption",
+    "hidden_geometry_assumptions",
+    "scope",
+    "blockers"
+  ],
+  "properties": {
+    "kind": { "const": "reviewed_facade_model_study_approval_v1" },
+    "version": { "const": 1 },
+    "sample_id": { "type": "string", "minLength": 1 },
+    "reviewer": { "type": "string", "minLength": 1 },
+    "status": { "enum": ["not_accepted", "accepted_for_mock_study"] },
+    "accepted_axis_family_ids": { "type": "array", "items": { "type": "string" } },
+    "accepted_topology_ids": { "type": "array", "items": { "type": "string" } },
+    "accepted_view_slot_ids": { "type": "array", "items": { "type": "string" } },
+    "accepted_plane_ids": { "type": "array", "items": { "type": "string" } },
+    "detail_review": {
+      "type": "object",
+      "required": ["status", "accepted_detail_ids", "promotion_allowed"],
+      "properties": {
+        "status": { "enum": ["not_accepted", "accepted"] },
+        "accepted_detail_ids": { "type": "array", "items": { "type": "string" } },
+        "promotion_allowed": { "type": "boolean" }
+      }
+    },
+    "scale_assumption": {
+      "type": "object",
+      "required": ["status", "width", "depth", "height", "units", "confidence", "release_allowed"],
+      "properties": {
+        "status": { "const": "assumed_for_mock_study" },
+        "width": { "type": "number", "exclusiveMinimum": 0 },
+        "depth": { "type": "number", "exclusiveMinimum": 0 },
+        "height": { "type": "number", "exclusiveMinimum": 0 },
+        "units": { "const": "mm" },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 0.5 },
+        "release_allowed": { "const": false },
+        "note": { "type": "string" }
+      }
+    },
+    "hidden_geometry_assumptions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "status", "release_allowed"],
+        "properties": {
+          "id": { "type": "string" },
+          "status": { "const": "inferred_for_closed_mock_mass" },
+          "release_allowed": { "const": false },
+          "note": { "type": "string" }
+        }
+      }
+    },
+    "scope": {
+      "type": "object",
+      "required": ["part_graph_study_allowed", "sketchup_mock_allowed", "live_sketchup_allowed", "release_allowed"],
+      "properties": {
+        "part_graph_study_allowed": { "type": "boolean" },
+        "sketchup_mock_allowed": { "type": "boolean" },
+        "live_sketchup_allowed": { "const": false },
+        "release_allowed": { "const": false }
+      }
+    },
+    "blockers": { "type": "array", "items": { "type": "string" } },
+    "notes": { "type": "array", "items": { "type": "string" } }
+  }
+}

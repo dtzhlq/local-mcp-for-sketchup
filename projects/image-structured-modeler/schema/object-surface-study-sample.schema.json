@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/object-surface-study-sample.schema.json",
+  "title": "ObjectSurfaceStudySample v1",
+  "type": "object",
+  "required": ["kind", "version", "sample_id", "domain", "observations", "seed_part_graph", "profile", "draft_view_review", "surface_review", "local_detail_review", "acceptance", "notes"],
+  "properties": {
+    "kind": { "const": "object_surface_study_sample_v1" },
+    "version": { "const": 1 },
+    "sample_id": { "type": "string" },
+    "domain": { "type": "string" },
+    "observations": { "type": "string" },
+    "seed_part_graph": { "type": "string" },
+    "profile": { "type": "string" },
+    "draft_view_review": { "type": "string" },
+    "surface_review": { "type": "string" },
+    "local_detail_review": { "type": "string" },
+    "acceptance": { "type": "object" },
+    "notes": { "type": "array", "items": { "type": "string" } }
+  }
+}

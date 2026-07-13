@@ -1,0 +1,12 @@
+{
+  "kind": "plane_local_detail_seed_v1",
+  "version": 1,
+  "sample_id": "building-single-london-corner",
+  "source_image": "external-datasets/wikimedia-commons/london-corner-building/london-corner-building.jpg",
+  "review_status": "draft_needs_user_acceptance",
+  "details": [],
+  "promotion_allowed": false,
+  "notes": [
+    "No semantic detail boxes are seeded; rectified planes must start with deterministic geometry-only proposals."
+  ]
+}

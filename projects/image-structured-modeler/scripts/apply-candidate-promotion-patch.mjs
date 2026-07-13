@@ -20,11 +20,26 @@ export function applyCandidatePromotionPatch({
   if (patch.apply_allowed !== true || patch.status !== 'ready_for_part_graph_patch') {
     throw new Error(`Candidate promotion patch is not applyable: status=${patch.status}, apply_allowed=${patch.apply_allowed}`);
   }
+  if (!geometryStrategiesMatch({ patch, candidateGraph })) {
+    throw new Error('Candidate promotion patch is not applyable: geometry strategy does not match the candidate graph');
+  }
+  if (requiresMultiViewGeometryFusionReview({ patch, candidateGraph })) {
+    throw new Error('Candidate promotion patch is not applyable: accepted multi-view relative pose or homography review is required before geometry fusion');
+  }
+  if (requiresCalibratedLineage({ patch, candidateGraph }) && !hasAcceptedCalibratedLineage({ patch, candidateGraph })) {
+    throw new Error('Candidate promotion patch is not applyable: accepted perspective calibration and corner-chain topology lineage are required before PartGraph promotion');
+  }
   if (requiresDraftingFirstReview({ patch, candidateGraph, observationSet }) && !hasAcceptedDraftingFirstReview(patch)) {
     throw new Error('Candidate promotion patch is not applyable: accepted DraftViewGraph and local detail review are required before PartGraph promotion');
   }
   if (requiresFacadePlaneReview({ patch, candidateGraph, profile }) && !hasAcceptedFacadePlaneReview(patch)) {
     throw new Error('Candidate promotion patch is not applyable: accepted facade plane review is required before building_single PartGraph promotion');
+  }
+  if (requiresCalibratedLineage({ patch, candidateGraph }) && !hasAcceptedCalibratedPlaneBindings({ patch, candidateGraph })) {
+    throw new Error('Candidate promotion patch is not applyable: every calibrated visible-plane action must bind to an accepted facade plane id');
+  }
+  if (requiresCalibratedLineage({ patch, candidateGraph }) && !hasAcceptedCalibratedDetailBindings({ patch, candidateGraph })) {
+    throw new Error('Candidate promotion patch is not applyable: every calibrated local-detail action must bind its accepted detail id to an accepted facade plane id');
   }
 
   const next = basePartGraph ? cloneJson(basePartGraph) : makePartGraphShell({
@@ -57,11 +72,14 @@ export function applyCandidatePromotionPatch({
         source_review: patch.source_review,
         actions: applied.length,
         apply_allowed: patch.apply_allowed,
-        status: patch.status
+        status: patch.status,
+        geometry_strategy: patch.geometry_strategy || candidateGraph.geometry_strategy || null,
+        source_perspective_calibration_review_result: patch.calibration_review?.source_perspective_calibration_review_result || null,
+        source_corner_chain_topology_review: patch.topology_review?.source_corner_chain_topology_review || null
       }
     ]
   };
-  next.evidence_graph = next.evidence_graph || evidenceGraphShell(observationSet);
+  next.evidence_graph = next.evidence_graph || evidenceGraphShell(observationSet, patch);
   next.evidence_graph.parts = [
     ...(next.evidence_graph.parts || []).filter((part) => !applied.some((action) => action.candidate_id === part.part_id)),
     ...applied.map((action) => evidenceGraphPartForAction(action))
@@ -74,6 +92,82 @@ function isBuildingSinglePromotion({ patch, candidateGraph, profile }) {
     || candidateGraph?.profile_id === 'building_single'
     || profile?.profile_id === 'building_single'
     || profile?.product_type === 'building_single';
+}
+
+function geometryStrategiesMatch({ patch, candidateGraph }) {
+  if (!patch?.geometry_strategy || !candidateGraph?.geometry_strategy) return true;
+  return patch.geometry_strategy === candidateGraph.geometry_strategy;
+}
+
+function requiresCalibratedLineage({ patch, candidateGraph }) {
+  return (candidateGraph?.geometry_strategy || patch?.geometry_strategy) === 'calibrated_manhattan_planes';
+}
+
+function requiresMultiViewGeometryFusionReview({ patch, candidateGraph }) {
+  return (candidateGraph?.geometry_strategy || patch?.geometry_strategy) === 'multi_view_calibration_pose_graph';
+}
+
+function hasAcceptedCalibratedLineage({ patch, candidateGraph }) {
+  const expected = candidateGraph?.calibration_lineage;
+  const embedded = patch?.calibration_lineage;
+  const calibration = patch?.calibration_review;
+  const topology = patch?.topology_review;
+  if (!expected || !embedded || !calibration || !topology) return false;
+  const lineageMatches = (
+    embedded.source_perspective_calibration_review_result === expected.source_perspective_calibration_review_result
+    && embedded.source_corner_chain_topology_review === expected.source_corner_chain_topology_review
+    && sameStringSet(embedded.accepted_axis_family_ids, expected.accepted_axis_family_ids)
+    && sameStringSet(embedded.accepted_topology_ids, expected.accepted_topology_ids)
+  );
+  const calibrationAccepted = (
+    calibration.status === 'accepted_for_rectification'
+    && calibration.rectification_allowed === true
+    && calibration.promotion_allowed === false
+    && calibration.source_perspective_calibration_review_result === expected.source_perspective_calibration_review_result
+    && sameStringSet(calibration.accepted_axis_family_ids, expected.accepted_axis_family_ids)
+    && calibration.accepted_axis_family_ids.length >= 3
+  );
+  const topologyAccepted = (
+    topology.status === 'accepted_for_derived_drafting'
+    && topology.derived_drafting_allowed === true
+    && topology.promotion_allowed === false
+    && topology.source_corner_chain_topology_review === expected.source_corner_chain_topology_review
+    && sameStringSet(topology.accepted_topology_ids, expected.accepted_topology_ids)
+    && topology.accepted_topology_ids.length > 0
+  );
+  return lineageMatches && calibrationAccepted && topologyAccepted;
+}
+
+function hasAcceptedCalibratedPlaneBindings({ patch, candidateGraph }) {
+  const acceptedPlaneIds = new Set(patch?.plane_review?.accepted_plane_ids || []);
+  const candidateById = new Map((candidateGraph?.candidates || []).map((candidate) => [candidate.id, candidate]));
+  return (patch?.actions || []).every((action) => {
+    const candidate = candidateById.get(action.candidate_id);
+    const role = action.role || candidate?.role || '';
+    if (!role.startsWith('visible_plane_')) return true;
+    const expectedPlaneId = candidate?.source_plane_id || candidate?.id;
+    return Boolean(action.accepted_plane_id)
+      && action.accepted_plane_id === expectedPlaneId
+      && acceptedPlaneIds.has(action.accepted_plane_id);
+  });
+}
+
+function hasAcceptedCalibratedDetailBindings({ patch, candidateGraph }) {
+  const acceptedPlaneIds = new Set(patch?.plane_review?.accepted_plane_ids || []);
+  const acceptedDetailIds = new Set(patch?.local_detail_review?.accepted_detail_ids || []);
+  const candidateById = new Map((candidateGraph?.candidates || []).map((candidate) => [candidate.id, candidate]));
+  return (patch?.actions || []).every((action) => {
+    const candidate = candidateById.get(action.candidate_id);
+    const role = action.role || candidate?.role || '';
+    if (role.startsWith('visible_plane_')) return true;
+    const expectedPlaneId = candidate?.source_plane_id || '';
+    return Boolean(action.accepted_detail_id)
+      && action.accepted_detail_id === candidate?.id
+      && acceptedDetailIds.has(action.accepted_detail_id)
+      && Boolean(action.accepted_plane_id)
+      && action.accepted_plane_id === expectedPlaneId
+      && acceptedPlaneIds.has(action.accepted_plane_id);
+  });
 }
 
 function requiresDraftingFirstReview({ patch, candidateGraph, observationSet }) {
@@ -139,12 +233,12 @@ function makePartGraphShell({ patch, observationSet, profile, id, productName })
       source: 'candidate promotion patch'
     },
     scale,
-    evidence_graph: evidenceGraphShell(observationSet),
+    evidence_graph: evidenceGraphShell(observationSet, patch),
     parts: []
   };
 }
 
-function evidenceGraphShell(observationSet) {
+function evidenceGraphShell(observationSet, patch = null) {
   return {
     version: 1,
     source_images: observationSet.object?.source_images || (observationSet.images || []).map((image) => image.image.path),
@@ -160,6 +254,7 @@ function evidenceGraphShell(observationSet) {
       inferred_slots: observationSet.draft_view_graph_v1.summary?.inferred_slots || 0,
       unknown_slots: observationSet.draft_view_graph_v1.summary?.unknown_slots || 0
     } : null,
+    calibration_lineage: patch?.calibration_lineage || null,
     open_questions: [
       'Candidate promotion generated PartGraph parts; run PartGraph compiler and QA gates before SketchUp output.'
     ],
@@ -209,6 +304,7 @@ function partFromCandidate({ action, candidate, observation, image, profile }) {
         source_image: candidate.source_image,
         observation_id: candidate.source_observation_id,
         accepted_draft_view_slot_id: action.accepted_draft_view_slot_id || '',
+        accepted_plane_id: action.accepted_plane_id || '',
         accepted_surface_id: action.accepted_surface_id || '',
         accepted_detail_id: action.accepted_detail_id || '',
         confidence: Number(action.confidence ?? candidate.confidence ?? 0),
@@ -234,6 +330,7 @@ function partFromCandidate({ action, candidate, observation, image, profile }) {
       source_candidate_role: candidate.role,
       source_view: candidate.view,
       accepted_draft_view_slot_id: action.accepted_draft_view_slot_id || '',
+      accepted_plane_id: action.accepted_plane_id || '',
       accepted_surface_id: action.accepted_surface_id || '',
       accepted_detail_id: action.accepted_detail_id || '',
       blocker_review_cleared: true
@@ -341,6 +438,13 @@ function safePartId(value) {
 function round(value, digits = 2) {
   const factor = 10 ** digits;
   return Math.round(value * factor) / factor;
+}
+
+function sameStringSet(first, second) {
+  if (!Array.isArray(first) || !Array.isArray(second)) return false;
+  const left = Array.from(new Set(first)).sort();
+  const right = Array.from(new Set(second)).sort();
+  return left.length === right.length && left.every((value, index) => value === right[index]);
 }
 
 function cloneJson(value) {

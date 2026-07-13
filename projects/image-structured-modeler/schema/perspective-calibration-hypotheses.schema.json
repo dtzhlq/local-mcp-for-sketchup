@@ -1,0 +1,163 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/perspective-calibration-hypotheses.schema.json",
+  "title": "PerspectiveCalibrationHypotheses v1",
+  "type": "object",
+  "required": [
+    "kind",
+    "version",
+    "source_structure_line_evidence",
+    "source_image",
+    "direction_families",
+    "camera_model_candidates",
+    "review_policy",
+    "qa",
+    "summary"
+  ],
+  "properties": {
+    "kind": { "const": "perspective_calibration_hypotheses_v1" },
+    "version": { "const": 1 },
+    "source_structure_line_evidence": { "type": "string" },
+    "source_image": { "$ref": "#/$defs/source_image" },
+    "direction_families": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/direction_family" }
+    },
+    "camera_model_candidates": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/camera_model" }
+    },
+    "review_policy": {
+      "type": "object",
+      "required": ["status", "accepted_calibration_review_required", "review_required", "promotion_allowed", "compile_allowed", "blockers"],
+      "properties": {
+        "status": { "enum": ["needs_calibration_review", "blocked_insufficient_direction_families"] },
+        "accepted_calibration_review_required": { "const": true },
+        "review_required": { "const": true },
+        "promotion_allowed": { "const": false },
+        "compile_allowed": { "const": false },
+        "blockers": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "qa": {
+      "type": "object",
+      "required": ["status", "sufficient_for_review", "false_promotion_count", "blockers"],
+      "properties": {
+        "status": { "enum": ["ready_for_calibration_review", "blocked_insufficient_direction_families", "blocked_insufficient_spatial_support", "blocked_low_family_evidence_quality"] },
+        "sufficient_for_review": { "type": "boolean" },
+        "false_promotion_count": { "const": 0 },
+        "blockers": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": ["direction_family_count", "horizontal_family_count", "vertical_family_count", "review_required", "promotion_allowed"],
+      "properties": {
+        "direction_family_count": { "type": "integer", "minimum": 0 },
+        "horizontal_family_count": { "type": "integer", "minimum": 0 },
+        "vertical_family_count": { "type": "integer", "minimum": 0 },
+        "strong_evidence_family_count": { "type": "integer", "minimum": 0 },
+        "review_required": { "const": true },
+        "promotion_allowed": { "const": false }
+      }
+    }
+  },
+  "$defs": {
+    "point": {
+      "type": "array",
+      "prefixItems": [{ "type": "number" }, { "type": "number" }],
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "source_image": {
+      "type": "object",
+      "required": ["id", "source_image", "width", "height"],
+      "properties": {
+        "id": { "type": "string" },
+        "source_image": { "type": "string" },
+        "width": { "type": "integer", "minimum": 1 },
+        "height": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "direction_family": {
+      "type": "object",
+      "required": [
+        "id",
+        "role",
+        "axis_assignment",
+        "vanishing_type",
+        "vanishing_point_px",
+        "image_direction_px",
+        "support_segment_ids",
+        "seed_segment_ids",
+        "support_count",
+        "spatial_cell_count",
+        "median_angular_residual_deg",
+        "evidence_quality",
+        "confidence",
+        "review_required",
+        "promotion_allowed"
+      ],
+      "properties": {
+        "id": { "type": "string" },
+        "role": { "enum": ["horizontal_candidate", "vertical_candidate", "unassigned_candidate"] },
+        "axis_assignment": { "const": "axis_unassigned" },
+        "vanishing_type": { "enum": ["finite", "infinite"] },
+        "vanishing_point_px": {
+          "type": ["array", "null"],
+          "prefixItems": [{ "type": "number" }, { "type": "number" }],
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "image_direction_px": {
+          "type": ["array", "null"],
+          "prefixItems": [{ "type": "number" }, { "type": "number" }],
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "support_segment_ids": { "type": "array", "items": { "type": "string" } },
+        "seed_segment_ids": { "type": "array", "items": { "type": "string" } },
+        "support_count": { "type": "integer", "minimum": 0 },
+        "spatial_cell_count": { "type": "integer", "minimum": 0 },
+        "median_angular_residual_deg": { "type": "number", "minimum": 0 },
+        "evidence_quality": {
+          "type": "object",
+          "required": ["status", "median_edge_support", "median_seed_quality", "high_edge_support_ratio", "blockers"],
+          "properties": {
+            "status": { "enum": ["strong", "weak"] },
+            "median_edge_support": { "type": "number", "minimum": 0, "maximum": 1 },
+            "median_seed_quality": { "type": "number", "minimum": 0, "maximum": 1 },
+            "high_edge_support_ratio": { "type": "number", "minimum": 0, "maximum": 1 },
+            "blockers": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "review_required": { "const": true },
+        "promotion_allowed": { "const": false }
+      }
+    },
+    "camera_model": {
+      "type": "object",
+      "required": ["id", "model", "horizontal_family_ids", "vertical_family_id", "confidence", "review_required", "promotion_allowed"],
+      "properties": {
+        "id": { "type": "string" },
+        "model": {
+          "enum": [
+            "perspective_3vp",
+            "two_point_vertical_parallel",
+            "shifted_lens_off_axis",
+            "one_point_or_near_affine",
+            "orthographic_or_near_orthographic",
+            "unknown"
+          ]
+        },
+        "horizontal_family_ids": { "type": "array", "items": { "type": "string" } },
+        "vertical_family_id": { "type": ["string", "null"] },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "review_required": { "const": true },
+        "promotion_allowed": { "const": false },
+        "notes": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

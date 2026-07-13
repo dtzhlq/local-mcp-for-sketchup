@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/visible-coverage-review-result.schema.json",
+  "title": "VisibleCoverageReviewResult v1",
+  "type": "object",
+  "required": [
+    "kind",
+    "version",
+    "source_surface_graph",
+    "source_surface_review_result",
+    "source_review_decision",
+    "status",
+    "coverage_status",
+    "accepted_visible_surface_ids",
+    "excluded_regions",
+    "visual_completion_eligible",
+    "promotion_allowed",
+    "compile_allowed",
+    "false_promotion_count",
+    "blockers"
+  ],
+  "properties": {
+    "kind": { "const": "visible_coverage_review_result_v1" },
+    "version": { "const": 1 },
+    "source_surface_graph": { "type": "string", "minLength": 1 },
+    "source_surface_review_result": { "type": "string", "minLength": 1 },
+    "source_review_decision": { "type": "string", "minLength": 1 },
+    "status": { "enum": ["accepted_for_visual_completion", "blocked_no_accepted_review", "blocked_invalid_review"] },
+    "coverage_status": { "enum": ["complete_visible_coverage", "complete_with_explicit_exclusions", "partial"] },
+    "accepted_visible_surface_ids": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "excluded_regions": { "type": "array", "items": { "$ref": "#/$defs/excluded_region" } },
+    "visual_completion_eligible": { "type": "boolean" },
+    "promotion_allowed": { "const": false },
+    "compile_allowed": { "const": false },
+    "false_promotion_count": { "const": 0 },
+    "blockers": { "type": "array", "items": { "type": "string" } }
+  },
+  "$defs": {
+    "point": {
+      "type": "array",
+      "prefixItems": [{ "type": "number" }, { "type": "number" }],
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "excluded_region": {
+      "type": "object",
+      "required": ["id", "source_image", "polygon_px", "affected_surface_ids", "occluder_class", "reason", "evidence_source", "status", "promotion_allowed", "compile_allowed"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "source_image": { "type": "string", "minLength": 1 },
+        "polygon_px": { "type": "array", "minItems": 3, "items": { "$ref": "#/$defs/point" } },
+        "affected_surface_ids": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+        "occluder_class": { "enum": ["person", "vehicle", "vegetation", "furniture", "reflective_or_transparent", "image_crop", "unknown_occluder"] },
+        "reason": { "type": "string", "minLength": 1 },
+        "evidence_source": { "enum": ["manual_review", "reviewed_detector_proposal"] },
+        "status": { "const": "excluded_non_promotable" },
+        "promotion_allowed": { "const": false },
+        "compile_allowed": { "const": false }
+      }
+    }
+  }
+}

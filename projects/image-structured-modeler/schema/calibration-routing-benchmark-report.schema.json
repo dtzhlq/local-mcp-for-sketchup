@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/calibration-routing-benchmark-report.schema.json",
+  "title": "CalibrationRoutingBenchmarkReport v1",
+  "type": "object",
+  "required": ["kind", "version", "cases", "summary"],
+  "properties": {
+    "kind": { "const": "calibration_routing_benchmark_report_v1" },
+    "version": { "const": 1 },
+    "cases": {
+      "type": "array",
+      "minItems": 6,
+      "items": {
+        "type": "object",
+        "required": ["id", "expected_strategy", "actual_strategy", "status", "promotion_allowed", "checks"],
+        "properties": {
+          "id": { "type": "string" },
+          "expected_strategy": { "type": "string" },
+          "actual_strategy": { "type": "string" },
+          "status": { "enum": ["pass", "fail"] },
+          "promotion_allowed": { "const": false },
+          "checks": { "type": "object" },
+          "blockers": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": ["case_count", "passed_case_count", "failed_case_count", "route_coverage", "false_promotion_count", "ok"],
+      "properties": {
+        "case_count": { "type": "integer", "minimum": 6 },
+        "passed_case_count": { "type": "integer", "minimum": 0 },
+        "failed_case_count": { "type": "integer", "minimum": 0 },
+        "route_coverage": { "type": "array", "items": { "type": "string" } },
+        "false_promotion_count": { "const": 0 },
+        "ok": { "type": "boolean" }
+      }
+    }
+  }
+}

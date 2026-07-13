@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/object-surface-feature-promotion.schema.json",
+  "title": "ObjectSurfaceFeaturePromotion v1",
+  "type": "object",
+  "required": ["kind", "version", "status", "source_object_surface_graph", "source_surface_review_result", "source_local_detail_review", "accepted_surface_ids", "accepted_feature_ids", "accepted_target_part_ids", "accepted_feature_mappings", "qa", "partgraph_promotion_allowed", "direct_compile_allowed", "release_allowed", "false_promotion_count", "blockers"],
+  "properties": {
+    "kind": { "const": "object_surface_feature_promotion_v1" },
+    "version": { "const": 1 },
+    "status": { "enum": ["accepted_for_mock_partgraph", "blocked_no_accepted_review", "blocked_invalid_review"] },
+    "source_object_surface_graph": { "type": "string" },
+    "source_surface_review_result": { "type": "string" },
+    "source_local_detail_review": { "type": "string" },
+    "accepted_surface_ids": { "type": "array", "items": { "type": "string" } },
+    "accepted_feature_ids": { "type": "array", "items": { "type": "string" } },
+    "accepted_target_part_ids": { "type": "array", "items": { "type": "string" } },
+    "accepted_feature_mappings": { "type": "array", "items": { "$ref": "#/$defs/mapping" } },
+    "qa": {
+      "type": "object",
+      "required": ["status", "checked_feature_count", "out_of_bounds_count", "degenerate_geometry_count"],
+      "properties": {
+        "status": { "enum": ["pass", "blocked"] },
+        "checked_feature_count": { "type": "integer", "minimum": 0 },
+        "out_of_bounds_count": { "type": "integer", "minimum": 0 },
+        "degenerate_geometry_count": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "partgraph_promotion_allowed": { "type": "boolean" },
+    "direct_compile_allowed": { "const": false },
+    "release_allowed": { "const": false },
+    "false_promotion_count": { "const": 0 },
+    "blockers": { "type": "array", "items": { "type": "string" } }
+  },
+  "$defs": {
+    "mapping": {
+      "type": "object",
+      "required": ["feature_id", "role", "source_image", "source_observation_id", "accepted_surface_id", "target_part_id", "bbox_px", "visible_quad_px", "source_kind", "confidence"],
+      "properties": {
+        "feature_id": { "type": "string" },
+        "role": { "type": "string" },
+        "source_image": { "type": "string" },
+        "source_observation_id": { "type": "string" },
+        "accepted_surface_id": { "type": "string" },
+        "target_part_id": { "type": "string" },
+        "bbox_px": { "type": "array", "minItems": 4, "maxItems": 4, "items": { "type": "number" } },
+        "visible_quad_px": { "type": "array" },
+        "source_kind": { "type": "string" },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    }
+  }
+}

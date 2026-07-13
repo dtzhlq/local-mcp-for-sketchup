@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/multi-view-calibration-graph.schema.json",
+  "title": "MultiViewCalibrationGraph v1",
+  "type": "object",
+  "required": ["kind", "version", "view_nodes", "shared_axis_hypotheses", "correspondence_candidates", "review_policy", "summary"],
+  "properties": {
+    "kind": { "const": "multi_view_calibration_graph_v1" },
+    "version": { "const": 1 },
+    "view_nodes": { "type": "array", "minItems": 2, "items": { "$ref": "#/$defs/view_node" } },
+    "shared_axis_hypotheses": { "type": "array", "items": { "type": "object" } },
+    "correspondence_candidates": { "type": "array", "items": { "$ref": "#/$defs/correspondence" } },
+    "review_policy": {
+      "type": "object",
+      "required": ["status", "accepted_multi_view_review_required", "evidence_fusion_allowed", "geometry_fusion_allowed", "promotion_allowed", "compile_allowed", "blockers"],
+      "properties": {
+        "status": { "enum": ["needs_multi_view_review", "blocked_missing_per_view_calibration", "blocked_no_correspondences"] },
+        "accepted_multi_view_review_required": { "const": true },
+        "evidence_fusion_allowed": { "const": false },
+        "geometry_fusion_allowed": { "const": false },
+        "promotion_allowed": { "const": false },
+        "compile_allowed": { "const": false },
+        "blockers": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": ["view_count", "accepted_calibration_view_count", "correspondence_candidate_count", "promotion_allowed"],
+      "properties": {
+        "view_count": { "type": "integer", "minimum": 2 },
+        "accepted_calibration_view_count": { "type": "integer", "minimum": 0 },
+        "correspondence_candidate_count": { "type": "integer", "minimum": 0 },
+        "promotion_allowed": { "const": false }
+      }
+    }
+  },
+  "$defs": {
+    "view_node": {
+      "type": "object",
+      "required": ["id", "source_image", "calibration_status", "camera_model", "accepted_axis_families", "review_required", "promotion_allowed"],
+      "properties": {
+        "id": { "type": "string" },
+        "source_image": { "type": "string" },
+        "calibration_status": { "enum": ["accepted_for_rectification", "pending", "blocked"] },
+        "camera_model": { "type": ["string", "null"] },
+        "accepted_axis_families": { "type": "array", "items": { "type": "object" } },
+        "review_required": { "const": true },
+        "promotion_allowed": { "const": false }
+      }
+    },
+    "correspondence": {
+      "type": "object",
+      "required": ["id", "kind", "source_view_id", "target_view_id", "source_evidence_id", "target_evidence_id", "confidence", "review_required", "promotion_allowed"],
+      "properties": {
+        "id": { "type": "string" },
+        "kind": { "enum": ["plane", "line", "point", "surface"] },
+        "source_view_id": { "type": "string" },
+        "target_view_id": { "type": "string" },
+        "source_evidence_id": { "type": "string" },
+        "target_evidence_id": { "type": "string" },
+        "source_point_px": { "$ref": "#/$defs/point_2d" },
+        "target_point_px": { "$ref": "#/$defs/point_2d" },
+        "source_point_model": { "$ref": "#/$defs/point_3d" },
+        "target_point_model": { "$ref": "#/$defs/point_3d" },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "review_required": { "const": true },
+        "promotion_allowed": { "const": false }
+      }
+    },
+    "point_2d": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number" } },
+    "point_3d": { "type": "array", "minItems": 3, "maxItems": 3, "items": { "type": "number" } }
+  }
+}

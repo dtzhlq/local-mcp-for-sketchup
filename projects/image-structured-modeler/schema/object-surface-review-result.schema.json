@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/object-surface-review-result.schema.json",
+  "title": "ObjectSurfaceReviewResult v1",
+  "type": "object",
+  "required": ["kind", "version", "source_object_surface_graph", "source_review_decision", "status", "accepted_surface_ids", "context_only_surface_ids", "local_feature_review_allowed", "promotion_allowed", "compile_allowed", "false_promotion_count", "blockers"],
+  "properties": {
+    "kind": { "const": "object_surface_review_result_v1" },
+    "version": { "const": 1 },
+    "source_object_surface_graph": { "type": "string" },
+    "source_review_decision": { "type": "string" },
+    "status": { "enum": ["accepted_for_local_feature_review", "blocked_no_accepted_review", "blocked_invalid_review"] },
+    "accepted_surface_ids": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "context_only_surface_ids": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "local_feature_review_allowed": { "type": "boolean" },
+    "promotion_allowed": { "const": false },
+    "compile_allowed": { "const": false },
+    "false_promotion_count": { "const": 0 },
+    "blockers": { "type": "array", "items": { "type": "string" } }
+  }
+}

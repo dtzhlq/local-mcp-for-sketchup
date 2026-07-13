@@ -1,0 +1,62 @@
+{
+  "kind": "plane_local_detail_seed_v1",
+  "version": 1,
+  "sample_id": "building-single-anime-yellow",
+  "source_image": "projects/image-structured-modeler/examples/building-single-anime-yellow/input-visible-crop.png",
+  "review_status": "draft_needs_user_acceptance",
+  "details": [
+    {
+      "id": "detail_upper_window_band_cd",
+      "role": "upper_window_bands",
+      "bbox_norm": [0.525, 0.22, 0.225, 0.35],
+      "candidate_plane_ids": ["visible_plane_main_front_cd"],
+      "attachment_hint": "candidate_on_main_front_cd; split into individual openings only after local-detail review",
+      "source": "user_annotation",
+      "semantic_evidence_id": "annotation:upper_window_bands",
+      "confidence": 0.72,
+      "blockers": ["window_count_review_required", "opening_depth_unknown"],
+      "review_required": true
+    },
+    {
+      "id": "detail_ground_floor_storefront_cd",
+      "role": "ground_floor_storefront",
+      "bbox_norm": [0.53, 0.58, 0.22, 0.22],
+      "candidate_plane_ids": ["visible_plane_main_front_cd"],
+      "attachment_hint": "candidate_on_main_front_cd; storefront depth remains unknown",
+      "source": "user_annotation",
+      "semantic_evidence_id": "annotation:ground_floor_storefront",
+      "confidence": 0.7,
+      "blockers": ["storefront_opening_review_required", "opening_depth_unknown"],
+      "review_required": true
+    },
+    {
+      "id": "detail_exterior_hvac_cd",
+      "role": "exterior_hvac_units",
+      "bbox_norm": [0.525, 0.3, 0.225, 0.25],
+      "candidate_plane_ids": ["visible_plane_main_front_cd"],
+      "attachment_hint": "candidate_boxes_on_main_front_cd; unit count and projection depth require review",
+      "source": "user_annotation",
+      "semantic_evidence_id": "annotation:exterior_hvac_units",
+      "confidence": 0.69,
+      "blockers": ["hvac_unit_count_review_required", "projection_depth_unknown"],
+      "review_required": true
+    },
+    {
+      "id": "detail_rectangular_utility_ducts_la",
+      "role": "rectangular_utility_ducts",
+      "bbox_norm": [0.16, 0.08, 0.22, 0.53],
+      "candidate_plane_ids": ["visible_plane_left_side_la"],
+      "attachment_hint": "candidate_on_left_side_la; upper duct extensions cross the roofline and require separate review",
+      "source": "user_annotation",
+      "semantic_evidence_id": "annotation:rectangular_utility_ducts",
+      "confidence": 0.68,
+      "blockers": ["duct_roofline_extension_review_required", "duct_section_review_required", "must_not_convert_to_round_pipe"],
+      "review_required": true
+    }
+  ],
+  "promotion_allowed": false,
+  "notes": [
+    "Detail candidates are subordinate to accepted plane review and never create geometry directly.",
+    "The duct candidate is bound to the newly reviewed L-A side-plane candidate, but roofline extensions and section remain review-required."
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "kind": "calibration_ground_truth_v1",
+  "version": 1,
+  "sample_id": "building-single-london-corner",
+  "source_image": "external-datasets/wikimedia-commons/london-corner-building/london-corner-building.jpg",
+  "image_size": {
+    "width": 900,
+    "height": 1200
+  },
+  "coordinate_mapping": {
+    "storage": "normalized_image_xy",
+    "reference_frame": "source_image_content",
+    "provenance": "manual_detector_assisted_review_of_license_clear_external_facade_sample",
+    "notes": [
+      "Coordinates target the 900x1200 calibration working raster and map uniformly to the 1200x1600 source thumbnail."
+    ]
+  },
+  "review_status": "draft_needs_user_acceptance",
+  "axis_families": [
+    {
+      "id": "london_left_facade_horizontal",
+      "role": "horizontal_axis",
+      "axis_label": "axis_family_1",
+      "support_lines": [
+        { "id": "left_roof_edge_upper", "line_norm": { "a": [0.2722, 0.1733], "b": [0.4544, 0.1158] }, "source": "manual_detector_assisted_image_review", "review_required": true },
+        { "id": "left_roof_edge_lower", "line_norm": { "a": [0.1211, 0.2658], "b": [0.2189, 0.2375] }, "source": "manual_detector_assisted_image_review", "review_required": true },
+        { "id": "left_floor_band_upper", "line_norm": { "a": [0.3833, 0.3383], "b": [0.4411, 0.325] }, "source": "manual_detector_assisted_image_review", "review_required": true },
+        { "id": "left_floor_band_middle", "line_norm": { "a": [0.3378, 0.5742], "b": [0.4033, 0.5633] }, "source": "manual_detector_assisted_image_review", "review_required": true },
+        { "id": "left_floor_band_lower", "line_norm": { "a": [0.1756, 0.6708], "b": [0.3433, 0.6575] }, "source": "manual_detector_assisted_image_review", "review_required": true },
+        { "id": "left_floor_band_base", "line_norm": { "a": [0.3811, 0.7583], "b": [0.4733, 0.755] }, "source": "manual_detector_assisted_image_review", "review_required": true }
+      ],
+      "expected_vanishing": {
+        "type": "finite",
+        "point_norm": [-1.953, 0.887]
+      }
+    },
+    {
+      "id": "london_right_facade_depth",
+      "role": "horizontal_axis",
+      "axis_label": "axis_family_2",
+      "support_lines": [
+        { "id": "right_roof_edge", "line_norm": { "a": [0.6302, 0.1356], "b": [0.8889, 0.4229] }, "source": "manual_detector_assisted_image_review", "review_required": true },
+        { "id": "right_floor_band_upper", "line_norm": { "a": [0.6136, 0.393], "b": [0.8806, 0.5821] }, "source": "manual_detector_assisted_image_review", "review_required": true },
+        { "id": "right_floor_band_1", "line_norm": { "a": [0.6556, 0.3358], "b": [0.7178, 0.3858] }, "source": "manual_detector_assisted_image_review", "review_required": true },
+        { "id": "right_floor_band_2", "line_norm": { "a": [0.66, 0.45], "b": [0.7189, 0.4933] }, "source": "manual_detector_assisted_image_review", "review_required": true },
+        { "id": "right_floor_band_3", "line_norm": { "a": [0.8242, 0.6182], "b": [0.8756, 0.648] }, "source": "manual_detector_assisted_image_review", "review_required": true },
+        { "id": "right_floor_band_lower", "line_norm": { "a": [0.7656, 0.6517], "b": [0.8511, 0.69] }, "source": "manual_detector_assisted_image_review", "review_required": true }
+      ],
+      "expected_vanishing": {
+        "type": "finite",
+        "point_norm": [1.293, 0.88]
+      }
+    },
+    {
+      "id": "london_vertical",
+      "role": "vertical_axis",
+      "axis_label": "vertical_family",
+      "support_lines": [
+        { "id": "corner_vertical_left", "line_norm": { "a": [0.5, 0.12], "b": [0.505, 0.8] }, "source": "manual_image_inspection", "review_required": true },
+        { "id": "corner_vertical_right", "line_norm": { "a": [0.59, 0.14], "b": [0.61, 0.8] }, "source": "manual_image_inspection", "review_required": true },
+        { "id": "right_mullion_vertical", "line_norm": { "a": [0.74, 0.3], "b": [0.755, 0.8] }, "source": "manual_image_inspection", "review_required": true }
+      ],
+      "expected_vanishing": {
+        "type": "infinite",
+        "direction_px": [0, -1]
+      }
+    }
+  ],
+  "ignore_regions": [
+    { "id": "neighbor_left", "polygon_norm": [[0, 0.15], [0.13, 0.25], [0.13, 0.9], [0, 0.9]], "reason": "adjacent_building_not_target" },
+    { "id": "street_foreground", "polygon_norm": [[0, 0.88], [1, 0.88], [1, 1], [0, 1]], "reason": "road_markings_and_vehicles_not_facade_structure" }
+  ],
+  "topology_truth": {
+    "kind": "corner_chamfer_visible_chain",
+    "corner_order": ["L", "A", "B", "R"],
+    "plan_edges": [
+      { "id": "LA", "from": "L", "to": "A", "role": "primary_left_facade" },
+      { "id": "AB", "from": "A", "to": "B", "role": "corner_chamfer" },
+      { "id": "BR", "from": "B", "to": "R", "role": "primary_right_facade" }
+    ],
+    "depth_metric_status": "unknown_single_view",
+    "review_required": true
+  },
+  "evaluation_policy": {
+    "line_match_max_angle_deg": 4.5,
+    "line_match_max_perpendicular_distance_px": 14,
+    "line_match_min_overlap_ratio": 0.12,
+    "target_structural_length_coverage_recall": 0.72,
+    "target_family_precision": 0.35,
+    "target_family_recall": 0.72
+  },
+  "notes": [
+    "This is a diagnostic draft fixture, not accepted release ground truth.",
+    "Horizontal support lines were selected from short, clear detector segments and then checked against visible roof and floor-band structure in the source image.",
+    "The narrow center chamfer is topology-reviewed but is not assigned to either Manhattan horizontal axis."
+  ]
+}

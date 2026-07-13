@@ -1,0 +1,36 @@
+{
+  "kind": "visible_coverage_review_decision_v1",
+  "version": 1,
+  "source_surface_graph": "room-surface-graph.json",
+  "source_surface_review_result": "room-surface-review-result.json",
+  "reviewer": "interior-hallway-visible-coverage-positive-fixture",
+  "status": "accepted",
+  "accepted_visible_surface_ids": [
+    "room_surface_left_wall",
+    "room_surface_right_wall",
+    "room_surface_ceiling",
+    "room_surface_floor",
+    "room_surface_end_wall"
+  ],
+  "excluded_regions": [
+    {
+      "id": "excluded_people_near_vanishing_region",
+      "source_image": "external-datasets/wikimedia-commons/interior-hallway-2013/hallway.jpg",
+      "polygon_px": [[365, 515], [469, 515], [486, 671], [355, 671]],
+      "affected_surface_ids": ["room_surface_floor", "room_surface_end_wall"],
+      "occluder_class": "person",
+      "reason": "Two people occlude the lower end wall and far floor; the hidden pixels have no promotable geometric evidence.",
+      "evidence_source": "manual_review",
+      "status": "excluded_non_promotable",
+      "promotion_allowed": false,
+      "compile_allowed": false
+    }
+  ],
+  "coverage_status": "complete_with_explicit_exclusions",
+  "promotion_allowed": false,
+  "compile_allowed": false,
+  "notes": [
+    "Visual completion may exclude this reviewed occlusion polygon permanently.",
+    "The exclusion is evidence metadata only and can never become PartGraph or DSL geometry."
+  ]
+}

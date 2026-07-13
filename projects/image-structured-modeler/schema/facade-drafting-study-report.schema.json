@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/facade-drafting-study-report.schema.json",
+  "title": "FacadeDraftingStudyReport",
+  "type": "object",
+  "required": [
+    "kind",
+    "version",
+    "sample_id",
+    "status",
+    "source_available",
+    "calibration_status",
+    "topology_status",
+    "no_review_false_promotion_count",
+    "model",
+    "blockers",
+    "artifacts"
+  ],
+  "properties": {
+    "kind": { "const": "facade_drafting_study_report_v1" },
+    "version": { "const": 1 },
+    "sample_id": { "type": "string", "minLength": 1 },
+    "status": {
+      "enum": [
+        "blocked_source_unavailable",
+        "blocked_no_accepted_facade_study_review",
+        "visible_plane_study_generated_detail_review_required",
+        "visible_detail_subset_generated_coverage_review_required",
+        "visible_detail_study_generated_release_blocked"
+      ]
+    },
+    "source_available": { "type": "boolean" },
+    "calibration_status": { "type": "string" },
+    "topology_status": { "type": "string" },
+    "accepted_axis_family_ids": { "type": "array", "items": { "type": "string" } },
+    "accepted_topology_ids": { "type": "array", "items": { "type": "string" } },
+    "accepted_plane_ids": { "type": "array", "items": { "type": "string" } },
+    "no_review_false_promotion_count": { "const": 0 },
+    "coordinate_mapping": { "type": "object" },
+    "model": {
+      "type": "object",
+      "required": [
+        "part_graph_generated",
+        "sketchup_dsl_generated",
+        "mock_executed",
+        "release_allowed"
+      ],
+      "properties": {
+        "part_graph_generated": { "type": "boolean" },
+        "sketchup_dsl_generated": { "type": "boolean" },
+        "mock_executed": { "type": "boolean" },
+        "release_allowed": { "const": false },
+        "qa_verdict": { "type": "string" }
+      }
+    },
+    "plane_local_evidence": { "type": "object" },
+    "local_detail_review": { "type": "object" },
+    "completion_status": { "type": "object" },
+    "blockers": { "type": "array", "items": { "type": "string" } },
+    "artifacts": { "type": "object" }
+  }
+}

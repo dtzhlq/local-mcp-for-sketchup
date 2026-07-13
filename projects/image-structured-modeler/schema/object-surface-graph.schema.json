@@ -8,9 +8,21 @@
     "kind": { "const": "object_surface_graph_v1" },
     "version": { "const": 1 },
     "profile_id": { "type": "string" },
-    "domain": { "enum": ["building_domain_projection", "generic_object_surface_projection"] },
+    "domain": { "enum": ["building_domain_projection", "interior_room_surface_projection", "generic_object_surface_projection"] },
     "source_draft_view_graph": { "type": "string" },
     "source_structure_evidence_graph": { "type": "string" },
+    "coordinate_references": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["source_image", "width", "height"],
+        "properties": {
+          "source_image": { "type": "string" },
+          "width": { "type": "number", "minimum": 0 },
+          "height": { "type": "number", "minimum": 0 }
+        }
+      }
+    },
     "surfaces": { "type": "array", "items": { "$ref": "#/$defs/surface" } },
     "surface_local_feature_candidates": { "type": "array", "items": { "$ref": "#/$defs/detail" } },
     "review_policy": {

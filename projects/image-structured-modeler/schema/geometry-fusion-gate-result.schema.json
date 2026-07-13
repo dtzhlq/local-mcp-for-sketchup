@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/geometry-fusion-gate-result.schema.json",
+  "title": "GeometryFusionGateResult v1",
+  "type": "object",
+  "required": ["kind", "version", "status", "evidence_fusion_allowed", "geometry_fusion_allowed", "metric_scale_allowed", "hidden_geometry_allowed", "conflicts_resolved", "geometry_scope", "partgraph_promotion_allowed", "release_candidate_allowed", "direct_compile_allowed", "false_promotion_count", "blockers"],
+  "properties": {
+    "kind": { "const": "geometry_fusion_gate_result_v1" },
+    "version": { "const": 1 },
+    "status": { "enum": ["blocked_geometry_fusion", "geometry_fusion_ready_promotion_blocked", "ready_for_reviewed_partgraph_promotion_release_blocked", "ready_for_reviewed_partgraph_promotion"] },
+    "evidence_fusion_allowed": { "type": "boolean" },
+    "geometry_fusion_allowed": { "type": "boolean" },
+    "metric_scale_allowed": { "type": "boolean" },
+    "hidden_geometry_allowed": { "type": "boolean" },
+    "conflicts_resolved": { "type": "boolean" },
+    "geometry_scope": { "enum": ["unresolved", "single_plane", "object_frame"] },
+    "partgraph_promotion_allowed": { "type": "boolean" },
+    "release_candidate_allowed": { "type": "boolean" },
+    "direct_compile_allowed": { "const": false },
+    "false_promotion_count": { "const": 0 },
+    "blockers": { "type": "array", "items": { "type": "string" } }
+  }
+}

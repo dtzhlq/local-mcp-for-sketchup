@@ -1,0 +1,15 @@
+{
+  "kind": "draft_view_review_decision_v1",
+  "version": 1,
+  "source_draft_view_graph": "draft-view-graph.json",
+  "reviewer": "ambulance-object-surface-positive-fixture",
+  "status": "accepted",
+  "promotion_allowed": true,
+  "compile_allowed": false,
+  "accepted_view_slot_ids": ["front", "left_or_right_side", "top", "oblique_context"],
+  "rejected_view_slot_ids": [],
+  "corrected_axes": [],
+  "accepted_plane_hypothesis_ids": [],
+  "blockers": ["accepted_object_surface_review_required"],
+  "notes": ["Accepts view slots for object-surface review; it does not compile geometry."]
+}

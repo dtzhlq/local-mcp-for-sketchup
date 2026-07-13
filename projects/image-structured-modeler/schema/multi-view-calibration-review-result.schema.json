@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/multi-view-calibration-review-result.schema.json",
+  "title": "MultiViewCalibrationReviewResult v1",
+  "type": "object",
+  "required": ["kind", "version", "status", "accepted_view_ids", "accepted_correspondence_ids", "shared_axis_frame", "fused_evidence_hypotheses", "evidence_fusion_allowed", "geometry_fusion_allowed", "promotion_allowed", "compile_allowed", "blockers"],
+  "properties": {
+    "kind": { "const": "multi_view_calibration_review_result_v1" },
+    "version": { "const": 1 },
+    "status": { "enum": ["blocked_no_accepted_review", "blocked_invalid_review", "accepted_for_evidence_fusion"] },
+    "accepted_view_ids": { "type": "array", "items": { "type": "string" } },
+    "accepted_correspondence_ids": { "type": "array", "items": { "type": "string" } },
+    "shared_axis_frame": { "type": ["object", "null"] },
+    "fused_evidence_hypotheses": { "type": "array", "items": { "type": "object" } },
+    "evidence_fusion_allowed": { "type": "boolean" },
+    "geometry_fusion_allowed": { "const": false },
+    "promotion_allowed": { "const": false },
+    "compile_allowed": { "const": false },
+    "blockers": { "type": "array", "items": { "type": "string" } }
+  }
+}

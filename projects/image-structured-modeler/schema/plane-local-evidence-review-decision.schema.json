@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/plane-local-evidence-review-decision.schema.json",
+  "title": "PlaneLocalEvidenceReviewDecision v1",
+  "type": "object",
+  "required": [
+    "kind",
+    "version",
+    "source_plane_local_evidence_graph",
+    "reviewer",
+    "status",
+    "plane_decisions",
+    "edge_decisions",
+    "corner_decisions",
+    "repetition_decisions",
+    "region_decisions",
+    "promotion_allowed",
+    "compile_allowed",
+    "blockers",
+    "notes"
+  ],
+  "properties": {
+    "kind": { "const": "plane_local_evidence_review_decision_v1" },
+    "version": { "const": 1 },
+    "source_plane_local_evidence_graph": { "type": "string" },
+    "reviewer": { "type": "string" },
+    "status": { "enum": ["not_accepted", "partial", "accepted", "rejected"] },
+    "plane_decisions": { "type": "array", "items": { "$ref": "#/$defs/decision" } },
+    "edge_decisions": { "type": "array", "items": { "$ref": "#/$defs/decision" } },
+    "corner_decisions": { "type": "array", "items": { "$ref": "#/$defs/decision" } },
+    "repetition_decisions": { "type": "array", "items": { "$ref": "#/$defs/decision" } },
+    "region_decisions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "status"],
+        "properties": {
+          "id": { "type": "string" },
+          "status": { "enum": ["accepted", "rejected", "split", "merged", "reclassified", "reassigned"] },
+          "target_plane_id": { "type": "string" },
+          "role": { "type": "string" },
+          "geometry_type": { "enum": ["recess_opening", "equipment_box", "linear_path_box"] },
+          "quad_uv": { "type": "array", "minItems": 4, "maxItems": 4, "items": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number" } } },
+          "source_region_ids": { "type": "array", "items": { "type": "string" } },
+          "note": { "type": "string" }
+        }
+      }
+    },
+    "geometry_authoring": {
+      "type": "object",
+      "required": ["mode", "correction_note"],
+      "properties": {
+        "mode": { "enum": ["proposal_geometry", "manual_rectified_annotation"] },
+        "correction_note": { "type": "string" }
+      }
+    },
+    "promotion_allowed": { "const": false },
+    "compile_allowed": { "const": false },
+    "blockers": { "type": "array", "items": { "type": "string" } },
+    "notes": { "type": "array", "items": { "type": "string" } }
+  },
+  "$defs": {
+    "decision": {
+      "type": "object",
+      "required": ["id", "status"],
+      "properties": {
+        "id": { "type": "string" },
+        "status": { "enum": ["accepted", "rejected"] },
+        "note": { "type": "string" }
+      }
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "kind": "room_surface_review_decision_v1",
+  "version": 1,
+  "source_room_surface_graph": "room-surface-graph.json",
+  "reviewer": "interior-hallway-room-surface-positive-fixture",
+  "status": "accepted_for_derived_drafting",
+  "accepted_surface_ids": [
+    "room_surface_left_wall",
+    "room_surface_right_wall",
+    "room_surface_ceiling",
+    "room_surface_floor",
+    "room_surface_end_wall"
+  ],
+  "rejected_surface_ids": [],
+  "promotion_allowed": false,
+  "compile_allowed": false,
+  "blockers": ["accepted_visible_coverage_review_required", "accepted_local_detail_review_required"],
+  "notes": [
+    "Accepts visible room topology for derived drafting only.",
+    "Metric dimensions and the unseen camera-side closure remain unaccepted."
+  ]
+}

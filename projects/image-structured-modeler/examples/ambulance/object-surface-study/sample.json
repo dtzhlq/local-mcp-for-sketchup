@@ -1,0 +1,25 @@
+{
+  "kind": "object_surface_study_sample_v1",
+  "version": 1,
+  "sample_id": "ambulance_object_surface_reviewed_subset",
+  "domain": "vehicle_ambulance",
+  "observations": "projects/image-structured-modeler/examples/ambulance/observations.json",
+  "seed_part_graph": "projects/image-structured-modeler/examples/ambulance/part-graph.generated.json",
+  "profile": "examples/product-profiles/vehicle_ambulance.json",
+  "draft_view_review": "projects/image-structured-modeler/examples/ambulance/object-surface-study/draft-view-review.accepted-fixture.json",
+  "surface_review": "projects/image-structured-modeler/examples/ambulance/object-surface-study/object-surface-review.accepted-fixture.json",
+  "local_detail_review": "projects/image-structured-modeler/examples/ambulance/object-surface-study/local-detail-review.accepted-fixture.json",
+  "acceptance": {
+    "accepted_surface_count": 3,
+    "context_only_surface_count": 1,
+    "accepted_feature_count": 13,
+    "accepted_target_part_count": 7,
+    "false_promotion_count": 0,
+    "release_allowed": false
+  },
+  "notes": [
+    "This study validates generic object-surface and local-feature review lineage, not full ambulance completeness.",
+    "Zero-area center-point wheel candidates are intentionally not accepted as geometry.",
+    "The target PartGraph subset reuses reviewed template geometry and remains mock-study-only."
+  ]
+}

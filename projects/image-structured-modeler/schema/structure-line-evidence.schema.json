@@ -1,0 +1,148 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/structure-line-evidence.schema.json",
+  "title": "StructureLineEvidence v2",
+  "type": "object",
+  "required": [
+    "kind",
+    "version",
+    "source_image",
+    "coordinate_convention",
+    "backend",
+    "raw_segments",
+    "eligible_segment_ids",
+    "seed_segment_ids",
+    "selection_policy",
+    "qa",
+    "summary"
+  ],
+  "properties": {
+    "kind": { "const": "structure_line_evidence_v2" },
+    "version": { "const": 2 },
+    "source_image": { "$ref": "#/$defs/source_image" },
+    "coordinate_convention": { "const": "image_x_right_y_down" },
+    "backend": {
+      "type": "object",
+      "required": ["id", "implementation", "deterministic", "capabilities", "passes"],
+      "properties": {
+        "id": { "type": "string" },
+        "implementation": { "type": "string" },
+        "deterministic": { "const": true },
+        "capabilities": { "type": "array", "items": { "type": "string" } },
+        "passes": { "type": "array", "minItems": 1, "items": { "type": "object" } }
+      }
+    },
+    "raw_segments": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/segment" }
+    },
+    "eligible_segment_ids": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "seed_segment_ids": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "selection_policy": {
+      "type": "object",
+      "required": ["raw_retention", "eligibility", "seed_selection", "neighbor_density_is_hard_rejection"],
+      "properties": {
+        "raw_retention": { "const": "retain_all_deduplicated_backend_segments" },
+        "eligibility": { "type": "string" },
+        "seed_selection": { "type": "string" },
+        "neighbor_density_is_hard_rejection": { "const": false }
+      }
+    },
+    "qa": {
+      "type": "object",
+      "required": ["status", "review_required", "promotion_allowed", "blockers"],
+      "properties": {
+        "status": { "enum": ["ready_for_perspective_hypotheses", "blocked_backend_unavailable", "blocked_insufficient_line_evidence"] },
+        "review_required": { "const": true },
+        "promotion_allowed": { "const": false },
+        "blockers": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": ["raw_segment_count", "eligible_segment_count", "seed_segment_count"],
+      "properties": {
+        "raw_segment_count": { "type": "integer", "minimum": 0 },
+        "eligible_segment_count": { "type": "integer", "minimum": 0 },
+        "seed_segment_count": { "type": "integer", "minimum": 0 }
+      }
+    }
+  },
+  "$defs": {
+    "point": {
+      "type": "array",
+      "prefixItems": [{ "type": "number" }, { "type": "number" }],
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "line": {
+      "type": "object",
+      "required": ["a", "b"],
+      "properties": {
+        "a": { "$ref": "#/$defs/point" },
+        "b": { "$ref": "#/$defs/point" }
+      }
+    },
+    "source_image": {
+      "type": "object",
+      "required": ["id", "source_image", "width", "height"],
+      "properties": {
+        "id": { "type": "string" },
+        "source_image": { "type": "string" },
+        "width": { "type": "integer", "minimum": 1 },
+        "height": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "segment": {
+      "type": "object",
+      "required": [
+        "id",
+        "line_px",
+        "length_px",
+        "angle_deg",
+        "backend_pass_ids",
+        "feature_scores",
+        "eligible",
+        "seed_selected",
+        "uncertainty",
+        "source_kind"
+      ],
+      "properties": {
+        "id": { "type": "string" },
+        "line_px": { "$ref": "#/$defs/line" },
+        "length_px": { "type": "number", "minimum": 0 },
+        "angle_deg": { "type": "number" },
+        "backend_pass_ids": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "feature_scores": {
+          "type": "object",
+          "required": ["edge_support", "contrast", "length_preference", "seed_quality"],
+          "properties": {
+            "edge_support": { "type": "number", "minimum": 0, "maximum": 1 },
+            "contrast": { "type": "number", "minimum": 0, "maximum": 1 },
+            "length_preference": { "type": "number", "minimum": 0, "maximum": 1 },
+            "seed_quality": { "type": "number", "minimum": 0, "maximum": 1 },
+            "local_density": { "type": "number", "minimum": 0 }
+          }
+        },
+        "eligible": { "type": "boolean" },
+        "eligibility_reasons": { "type": "array", "items": { "type": "string" } },
+        "seed_selected": { "type": "boolean" },
+        "uncertainty": {
+          "type": "object",
+          "required": ["endpoint_sigma_px", "angle_sigma_deg"],
+          "properties": {
+            "endpoint_sigma_px": { "type": "number", "minimum": 0 },
+            "angle_sigma_deg": { "type": "number", "minimum": 0 }
+          }
+        },
+        "source_kind": { "const": "raster_detected_line" }
+      }
+    }
+  }
+}

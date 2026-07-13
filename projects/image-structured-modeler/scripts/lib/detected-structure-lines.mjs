@@ -1,10 +1,32 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import sharp from 'sharp';
+import { buildStructureLineEvidence } from './opencv-structure-line-backend.mjs';
+import { buildPerspectiveCalibrationHypotheses } from './perspective-calibration.mjs';
 
 export const DETECTED_STRUCTURE_LINES_KIND = 'detected_structure_lines_v1';
 
-export async function buildDetectedStructureLines({
+export async function buildDetectedStructureLines(options = {}) {
+  if (options.backend === 'legacy_sobel_local_hough') {
+    return buildLegacyDetectedStructureLines(options);
+  }
+  const structureLineEvidence = options.structureLineEvidence || await buildStructureLineEvidence({
+    sourceImagePath: options.sourceImagePath,
+    sourceImage: options.sourceImage,
+    maxWidth: options.maxWidth || 900,
+    seedLimit: options.seedLimit || 96
+  });
+  const perspectiveCalibration = options.perspectiveCalibration || buildPerspectiveCalibrationHypotheses({
+    structureLineEvidence,
+    sourceStructureLineEvidence: 'structure-line-evidence.json'
+  });
+  return detectedStructureLinesCompatibilityV1({
+    structureLineEvidence,
+    perspectiveCalibration
+  });
+}
+
+export async function buildLegacyDetectedStructureLines({
   sourceImagePath,
   sourceImage,
   maxWidth = 900,
@@ -111,6 +133,127 @@ export async function buildDetectedStructureLines({
       vp_cluster_count: vpClusters.length,
       accepted_vp_cluster_count: acceptedVpClusters.length
     }
+  };
+}
+
+function detectedStructureLinesCompatibilityV1({
+  structureLineEvidence,
+  perspectiveCalibration
+}) {
+  const segmentById = new Map(structureLineEvidence.raw_segments.map((segment) => [segment.id, segment]));
+  const selectedSegments = structureLineEvidence.seed_segment_ids
+    .map((id) => segmentById.get(id))
+    .filter(Boolean);
+  const familyBySegmentId = new Map();
+  for (const family of perspectiveCalibration.direction_families) {
+    for (const segmentId of family.support_segment_ids) {
+      familyBySegmentId.set(segmentId, family);
+    }
+  }
+  const compatibilityIdBySegmentId = new Map();
+  const lineCandidates = selectedSegments.map((segment, index) => {
+    const id = `detected_line_${String(index + 1).padStart(3, '0')}`;
+    compatibilityIdBySegmentId.set(segment.id, id);
+    const family = familyBySegmentId.get(segment.id) || null;
+    const horizontalFamily = family?.role === 'horizontal_candidate';
+    return {
+      id,
+      source_image: structureLineEvidence.source_image.source_image,
+      line_px: segment.line_px,
+      length_px: segment.length_px,
+      angle_deg: segment.angle_deg,
+      support_score: segment.feature_scores.edge_support,
+      source_kind: 'raster_detected_line',
+      accepted_for_vp_clustering: horizontalFamily,
+      rejection_reason: horizontalFamily ? null : 'seed_not_in_selected_horizontal_direction_family',
+      extraction_method: 'opencv_wasm_multiscale_houghp',
+      clean_seed_score: segment.feature_scores.seed_quality,
+      isolation_score: null,
+      clutter_score: null,
+      nearby_candidate_count: segment.feature_scores.local_density,
+      touches_image_border: false,
+      perspective_family_id: family?.id || null,
+      perspective_role: family?.role || 'balanced_seed_unassigned',
+      evidence_segment_id: segment.id,
+      angle_bucket_deg: angleBucket(segment.angle_deg),
+      tile_px: null
+    };
+  });
+  const horizontalFamilies = perspectiveCalibration.direction_families.filter((family) => family.role === 'horizontal_candidate');
+  const vpClusters = horizontalFamilies.map((family, index) => ({
+    id: `vp_cluster_${index + 1}`,
+    vanishing_point_px: family.vanishing_point_px || [
+      family.image_direction_px?.[0] || 0,
+      family.image_direction_px?.[1] || 0
+    ],
+    support_line_ids: family.seed_segment_ids
+      .map((segmentId) => compatibilityIdBySegmentId.get(segmentId))
+      .filter(Boolean),
+    support_count: family.support_count,
+    accepted: false,
+    rejection_reason: 'accepted_calibration_review_required'
+  }));
+  const finiteCount = horizontalFamilies.filter((family) => family.vanishing_type === 'finite').length;
+  const verticalParallel = perspectiveCalibration.direction_families.some((family) => (
+    family.role === 'vertical_candidate' && family.vanishing_type === 'infinite'
+  ));
+  const cameraModel = perspectiveCalibration.camera_model_candidates[0]?.model || 'unknown';
+  return {
+    kind: DETECTED_STRUCTURE_LINES_KIND,
+    version: 1,
+    source_image: { ...structureLineEvidence.source_image },
+    backend: 'opencv_wasm_multiscale_houghp_v1_compatibility_projection',
+    preprocess: {
+      selection_policy: 'raw_eligible_seed_three_layer_compatibility_projection',
+      neighbor_density_is_hard_rejection: false,
+      seed_limit: structureLineEvidence.summary.seed_segment_count
+    },
+    perspective_hypothesis: {
+      model: cameraModel,
+      review_required: true,
+      promotion_allowed: false,
+      finite_vp_family_count: finiteCount,
+      parallel_family_count: verticalParallel ? 1 : 0,
+      selected_seed_count: selectedSegments.length,
+      family_summaries: horizontalFamilies.map((family) => ({
+        id: family.id,
+        type: family.vanishing_type,
+        vanishing_point_px: family.vanishing_point_px,
+        image_direction_px: family.image_direction_px,
+        support_count: family.support_count,
+        selected_line_count: family.seed_segment_ids.length,
+        score: family.confidence
+      })),
+      blockers: perspectiveCalibration.review_policy.blockers,
+      notes: [
+        'Compatibility projection only. structure-line-evidence.json and perspective-calibration-hypotheses.json are authoritative.',
+        'Axis labels remain unassigned until accepted calibration review.'
+      ]
+    },
+    line_candidates: lineCandidates,
+    vanishing_point_clusters: vpClusters,
+    qa: {
+      status: 'blocked_vanishing_point_cluster_review_required',
+      usable_for_axis_calibration: false,
+      blockers: perspectiveCalibration.review_policy.blockers,
+      notes: [
+        'Two direction families can be ready for review without being accepted for calibration.',
+        'No review means no rectification, topology derivation, PartGraph, or SketchUp promotion.'
+      ]
+    },
+    summary: {
+      line_candidate_count: lineCandidates.length,
+      raw_line_candidate_count: structureLineEvidence.summary.raw_segment_count,
+      clean_seed_candidate_count: structureLineEvidence.summary.seed_segment_count,
+      perspective_model: cameraModel,
+      finite_vp_family_count: finiteCount,
+      parallel_family_count: verticalParallel ? 1 : 0,
+      non_vertical_line_count: lineCandidates.filter((line) => isNonVertical(line.angle_deg)).length,
+      vp_cluster_count: vpClusters.length,
+      accepted_vp_cluster_count: 0
+    },
+    source_structure_line_evidence: 'structure-line-evidence.json',
+    source_perspective_calibration_hypotheses: 'perspective-calibration-hypotheses.json'
   };
 }
 

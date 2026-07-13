@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/multi-view-conflict-review-result.schema.json",
+  "title": "MultiViewConflictReviewResult v1",
+  "type": "object",
+  "required": ["kind", "version", "status", "accepted_resolutions", "geometry_conflicts_resolved", "source_relative_pose_edge_ids", "source_geometry_scope", "promotion_allowed", "compile_allowed", "false_promotion_count", "blockers"],
+  "properties": {
+    "kind": { "const": "multi_view_conflict_review_result_v1" },
+    "version": { "const": 1 },
+    "status": { "enum": ["blocked_no_accepted_review", "blocked_invalid_review", "accepted_conflict_resolution"] },
+    "accepted_resolutions": { "type": "array", "items": { "type": "object" } },
+    "geometry_conflicts_resolved": { "type": "boolean" },
+    "source_relative_pose_edge_ids": { "type": "array", "items": { "type": "string" } },
+    "source_geometry_scope": { "enum": ["unresolved", "single_plane", "object_frame"] },
+    "promotion_allowed": { "const": false },
+    "compile_allowed": { "const": false },
+    "false_promotion_count": { "const": 0 },
+    "blockers": { "type": "array", "items": { "type": "string" } }
+  }
+}

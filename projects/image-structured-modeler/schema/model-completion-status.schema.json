@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/model-completion-status.schema.json",
+  "title": "ModelCompletionStatus v1",
+  "type": "object",
+  "required": ["kind", "version", "visual_status", "release_status", "checks", "visual_blockers", "release_blockers"],
+  "properties": {
+    "kind": { "const": "model_completion_status_v1" },
+    "version": { "const": 1 },
+    "visual_status": { "enum": ["blocked", "in_progress", "complete"] },
+    "release_status": { "enum": ["blocked", "in_progress", "complete"] },
+    "checks": {
+      "type": "object",
+      "required": ["calibration_accepted", "topology_accepted", "visible_planes_accepted", "plane_local_details_accepted", "reprojection_qa_passed", "metric_scale_accepted", "hidden_geometry_accepted"],
+      "properties": {
+        "calibration_accepted": { "type": "boolean" },
+        "topology_accepted": { "type": "boolean" },
+        "visible_planes_accepted": { "type": "boolean" },
+        "plane_local_details_accepted": { "type": "boolean" },
+        "reprojection_qa_passed": { "type": "boolean" },
+        "metric_scale_accepted": { "type": "boolean" },
+        "hidden_geometry_accepted": { "type": "boolean" }
+      }
+    },
+    "visible_coverage": {
+      "type": "object",
+      "required": ["status", "coverage_status", "accepted_visible_surface_ids", "excluded_region_ids", "exclusion_policy"],
+      "properties": {
+        "status": { "enum": ["accepted_for_visual_completion", "blocked_no_accepted_review", "blocked_invalid_review"] },
+        "coverage_status": { "enum": ["complete_visible_coverage", "complete_with_explicit_exclusions", "partial"] },
+        "accepted_visible_surface_ids": { "type": "array", "items": { "type": "string" } },
+        "excluded_region_ids": { "type": "array", "items": { "type": "string" } },
+        "exclusion_policy": { "const": "permanent_non_promotable_non_compilable" }
+      }
+    },
+    "visual_blockers": { "type": "array", "items": { "type": "string" } },
+    "release_blockers": { "type": "array", "items": { "type": "string" } }
+  }
+}

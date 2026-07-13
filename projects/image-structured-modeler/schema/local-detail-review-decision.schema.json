@@ -9,6 +9,7 @@
     "version": { "const": 1 },
     "source_object_surface_graph": { "type": ["string", "null"] },
     "source_facade_plane_graph": { "type": ["string", "null"] },
+    "source_room_surface_graph": { "type": ["string", "null"] },
     "reviewer": { "type": "string" },
     "status": { "enum": ["not_accepted", "accepted", "partial", "rejected"] },
     "promotion_allowed": { "type": "boolean" },
@@ -24,6 +25,7 @@
           "detail_id": { "type": "string" },
           "target_surface_id": { "type": ["string", "null"] },
           "target_plane_id": { "type": ["string", "null"] },
+          "target_part_id": { "type": ["string", "null"] },
           "status": { "type": "string" }
         }
       }

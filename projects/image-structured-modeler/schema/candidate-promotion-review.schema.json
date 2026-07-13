@@ -56,6 +56,47 @@
         "note": { "type": "string" }
       }
     },
+    "calibration_review": {
+      "type": ["object", "null"],
+      "required": [
+        "source_perspective_calibration_review_result",
+        "status",
+        "accepted_axis_family_ids",
+        "rectification_allowed",
+        "promotion_allowed",
+        "blockers"
+      ],
+      "properties": {
+        "source_perspective_calibration_review_result": { "type": "string" },
+        "status": { "enum": ["blocked_no_accepted_review", "blocked_invalid_review", "accepted_for_rectification"] },
+        "accepted_axis_family_ids": { "type": "array", "items": { "type": "string" } },
+        "rectification_allowed": { "type": "boolean" },
+        "topology_inference_allowed": { "type": "boolean" },
+        "promotion_allowed": { "const": false },
+        "blockers": { "type": "array", "items": { "type": "string" } },
+        "reviewer_note": { "type": "string" }
+      }
+    },
+    "topology_review": {
+      "type": ["object", "null"],
+      "required": [
+        "source_corner_chain_topology_review",
+        "status",
+        "accepted_topology_ids",
+        "derived_drafting_allowed",
+        "promotion_allowed",
+        "blockers"
+      ],
+      "properties": {
+        "source_corner_chain_topology_review": { "type": "string" },
+        "status": { "enum": ["blocked_no_accepted_topology_review", "blocked_invalid_topology_review", "accepted_for_derived_drafting"] },
+        "accepted_topology_ids": { "type": "array", "items": { "type": "string" } },
+        "derived_drafting_allowed": { "type": "boolean" },
+        "promotion_allowed": { "const": false },
+        "blockers": { "type": "array", "items": { "type": "string" } },
+        "reviewer_note": { "type": "string" }
+      }
+    },
     "facade_plane_review": {
       "type": ["object", "null"],
       "required": [
@@ -137,6 +178,7 @@
         "confidence": { "type": "number" },
         "promotion_status": { "type": "string" },
         "accepted_draft_view_slot_id": { "type": "string" },
+        "accepted_plane_id": { "type": "string" },
         "accepted_surface_id": { "type": "string" },
         "accepted_detail_id": { "type": "string" },
         "blockers": { "type": "array", "items": { "type": "string" } },

@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/plane-topology-review-seed.schema.json",
+  "title": "PlaneTopologyReviewSeed v1",
+  "type": "object",
+  "required": ["kind", "version", "sample_id", "source_image", "review_status", "vertical_boundaries", "plane_spans", "plan_topology", "promotion_allowed"],
+  "properties": {
+    "kind": { "const": "plane_topology_review_seed_v1" },
+    "version": { "const": 1 },
+    "sample_id": { "type": "string" },
+    "source_image": { "type": "string" },
+    "review_status": { "enum": ["draft_needs_user_acceptance", "accepted", "rejected"] },
+    "vertical_boundaries": {
+      "type": "array",
+      "minItems": 2,
+      "items": { "$ref": "#/$defs/vertical_boundary" }
+    },
+    "plane_spans": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/plane_span" }
+    },
+    "plan_topology": {
+      "type": "object",
+      "required": ["kind", "corner_order", "corners", "edges", "metric_depth_status"],
+      "properties": {
+        "kind": { "type": "string", "minLength": 1 },
+        "origin_corner_id": { "type": "string", "minLength": 1 },
+        "corner_order": { "type": "array", "minItems": 2, "items": { "type": "string" } },
+        "corners": { "type": "array", "minItems": 2, "items": { "$ref": "#/$defs/plan_corner" } },
+        "edges": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/plan_edge" } },
+        "depth_order": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/depth_order" }
+        },
+        "metric_depth_status": { "const": "unknown_single_view" }
+      }
+    },
+    "promotion_allowed": { "const": false },
+    "notes": { "type": "array", "items": { "type": "string" } }
+  },
+  "$defs": {
+    "point_norm": {
+      "type": "array",
+      "prefixItems": [
+        { "type": "number", "minimum": 0, "maximum": 1 },
+        { "type": "number", "minimum": 0, "maximum": 1 }
+      ],
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "point": {
+      "type": "array",
+      "prefixItems": [{ "type": "number" }, { "type": "number" }],
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "vertical_boundary": {
+      "type": "object",
+      "required": ["id", "corner_id", "top_norm", "bottom_norm", "source", "review_required"],
+      "properties": {
+        "id": { "type": "string" },
+        "corner_id": { "type": "string", "minLength": 1 },
+        "top_norm": { "$ref": "#/$defs/point_norm" },
+        "bottom_norm": { "$ref": "#/$defs/point_norm" },
+        "source": { "enum": ["user_review_reference", "manual_image_inspection", "junction_candidate"] },
+        "origin_candidate": { "type": "boolean" },
+        "review_required": { "const": true }
+      }
+    },
+    "plane_span": {
+      "type": "object",
+      "required": ["id", "left_boundary_id", "right_boundary_id", "orientation_axis", "plan_role", "must_not_merge_with", "review_required"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^visible_plane_[a-z0-9_]+$" },
+        "plan_edge_id": { "type": "string", "minLength": 1 },
+        "left_boundary_id": { "type": "string" },
+        "right_boundary_id": { "type": "string" },
+        "orientation_axis": { "enum": ["x_red", "y_green", "unknown"] },
+        "plan_role": { "type": "string", "minLength": 1 },
+        "depth_relation": { "type": "string" },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "occlusion_order": {
+          "type": "object",
+          "required": ["rank", "relation_to_camera"],
+          "properties": {
+            "rank": { "type": "integer", "minimum": 1 },
+            "relation_to_camera": { "type": "string", "minLength": 1 }
+          }
+        },
+        "must_not_merge_with": { "type": "array", "items": { "type": "string" } },
+        "review_required": { "const": true }
+      }
+    },
+    "plan_corner": {
+      "type": "object",
+      "required": ["id", "diagram_xy"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "diagram_xy": { "$ref": "#/$defs/point" }
+      }
+    },
+    "plan_edge": {
+      "type": "object",
+      "required": ["id", "from", "to", "axis", "role", "depth_role"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "from": { "type": "string", "minLength": 1 },
+        "to": { "type": "string", "minLength": 1 },
+        "axis": { "enum": ["x_red", "y_green", "unknown"] },
+        "role": { "type": "string", "minLength": 1 },
+        "depth_role": { "type": "string" }
+      }
+    },
+    "depth_order": {
+      "type": "object",
+      "required": ["behind", "in_front", "evidence"],
+      "properties": {
+        "behind": { "type": "string", "minLength": 1 },
+        "in_front": { "type": "string", "minLength": 1 },
+        "evidence": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

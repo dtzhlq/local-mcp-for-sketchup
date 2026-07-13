@@ -9,6 +9,32 @@
     "kind": { "const": "candidate_graph" },
     "asset_set_id": { "type": "string" },
     "profile_id": { "type": "string" },
+    "geometry_strategy": {
+      "enum": [
+        "calibrated_manhattan_planes",
+        "multi_view_calibration_pose_graph",
+        "ground_plane_site",
+        "document_orthographic_views",
+        "object_surface_profile",
+        "multi_view_object_surface"
+      ]
+    },
+    "calibration_lineage": {
+      "type": ["object", "null"],
+      "required": [
+        "source_perspective_calibration_review_result",
+        "accepted_axis_family_ids",
+        "source_corner_chain_topology_review",
+        "accepted_topology_ids"
+      ],
+      "properties": {
+        "source_perspective_calibration_review_result": { "type": "string" },
+        "accepted_axis_family_ids": { "type": "array", "items": { "type": "string" }, "minItems": 3 },
+        "source_corner_chain_topology_review": { "type": "string" },
+        "accepted_topology_ids": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+        "source_facade_plane_graph": { "type": "string" }
+      }
+    },
     "candidates": {
       "type": "array",
       "items": {
@@ -19,6 +45,7 @@
           "role": { "type": "string" },
           "source_image": { "type": "string" },
           "source_observation_id": { "type": "string" },
+          "source_plane_id": { "type": "string" },
           "view": { "type": "string" },
           "bbox": { "type": "array", "items": { "type": "number" } },
           "polygon_px": { "type": "array", "items": { "$ref": "#/$defs/point" } },

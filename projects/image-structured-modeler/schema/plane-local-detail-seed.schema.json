@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/plane-local-detail-seed.schema.json",
+  "title": "PlaneLocalDetailSeed v1",
+  "type": "object",
+  "required": [
+    "kind",
+    "version",
+    "sample_id",
+    "source_image",
+    "review_status",
+    "details",
+    "promotion_allowed",
+    "notes"
+  ],
+  "properties": {
+    "kind": { "const": "plane_local_detail_seed_v1" },
+    "version": { "const": 1 },
+    "sample_id": { "type": "string" },
+    "source_image": { "type": "string" },
+    "review_status": { "enum": ["draft_needs_user_acceptance", "accepted", "rejected"] },
+    "details": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "role",
+          "bbox_norm",
+          "candidate_plane_ids",
+          "attachment_hint",
+          "source",
+          "confidence",
+          "blockers",
+          "review_required"
+        ],
+        "properties": {
+          "id": { "type": "string" },
+          "role": { "type": "string" },
+          "bbox_norm": {
+            "type": "array",
+            "prefixItems": [
+              { "type": "number", "minimum": 0, "maximum": 1 },
+              { "type": "number", "minimum": 0, "maximum": 1 },
+              { "type": "number", "minimum": 0, "maximum": 1 },
+              { "type": "number", "minimum": 0, "maximum": 1 }
+            ],
+            "minItems": 4,
+            "maxItems": 4
+          },
+          "candidate_plane_ids": { "type": "array", "items": { "type": "string" } },
+          "attachment_hint": { "type": "string" },
+          "source": { "enum": ["user_annotation", "vlm_candidate", "local_cv_proposal", "profile_prior", "unknown"] },
+          "semantic_evidence_id": { "type": "string" },
+          "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+          "blockers": { "type": "array", "items": { "type": "string" } },
+          "review_required": { "const": true }
+        }
+      }
+    },
+    "promotion_allowed": { "const": false },
+    "notes": { "type": "array", "items": { "type": "string" } }
+  }
+}

@@ -1,0 +1,136 @@
+{
+  "kind": "plane_local_evidence_review_decision_v1",
+  "version": 1,
+  "source_plane_local_evidence_graph": "plane-local-evidence/plane-local-evidence-graph.json",
+  "reviewer": "london-corner-partial-detail-fixture",
+  "status": "accepted",
+  "review_scope": {
+    "coverage_status": "partial_fixture_review",
+    "accepted_roles": [
+      "window_opening"
+    ],
+    "excluded_regions": [
+      "remaining_window_grid",
+      "ground_floor",
+      "roof_screen",
+      "street_occlusions"
+    ]
+  },
+  "geometry_authoring": {
+    "mode": "manual_rectified_annotation",
+    "correction_note": "Fixture quads were redrawn on the rectified plane images to cover only clearly visible window apertures; detector proposal ids provide lineage but their original oversized bounds are not promoted."
+  },
+  "plane_decisions": [
+    {
+      "id": "visible_plane_primary_left",
+      "status": "accepted",
+      "note": "Accepted only as the target for reviewed window openings."
+    },
+    {
+      "id": "visible_plane_corner_chamfer",
+      "status": "accepted",
+      "note": "Plane accepted; no local detail on the chamfer is promoted by this partial fixture."
+    },
+    {
+      "id": "visible_plane_primary_right",
+      "status": "accepted",
+      "note": "Accepted only as the target for reviewed window openings."
+    }
+  ],
+  "edge_decisions": [],
+  "corner_decisions": [],
+  "repetition_decisions": [],
+  "region_decisions": [
+    {
+      "id": "plane_local_proposal:visible_plane_primary_left:geometric_search_visible_plane_primary_left:opening_rect_007",
+      "status": "accepted",
+      "target_plane_id": "visible_plane_primary_left",
+      "role": "window_opening",
+      "geometry_type": "recess_opening",
+      "quad_uv": [[0.49, 0.13], [0.65, 0.13], [0.65, 0.235], [0.49, 0.235]],
+      "source_region_ids": ["plane_local_region:visible_plane_primary_left:geometric_search"],
+      "note": "Upper central window bay, manually tightened on the rectified plane."
+    },
+    {
+      "id": "plane_local_proposal:visible_plane_primary_left:geometric_search_visible_plane_primary_left:opening_rect_010",
+      "status": "accepted",
+      "target_plane_id": "visible_plane_primary_left",
+      "role": "window_opening",
+      "geometry_type": "recess_opening",
+      "quad_uv": [[0.49, 0.28], [0.65, 0.28], [0.65, 0.375], [0.49, 0.375]],
+      "source_region_ids": ["plane_local_region:visible_plane_primary_left:geometric_search"],
+      "note": "Second central window bay."
+    },
+    {
+      "id": "plane_local_proposal:visible_plane_primary_left:geometric_search_visible_plane_primary_left:opening_rect_006",
+      "status": "accepted",
+      "target_plane_id": "visible_plane_primary_left",
+      "role": "window_opening",
+      "geometry_type": "recess_opening",
+      "quad_uv": [[0.49, 0.42], [0.65, 0.42], [0.65, 0.515], [0.49, 0.515]],
+      "source_region_ids": ["plane_local_region:visible_plane_primary_left:geometric_search"],
+      "note": "Third central window bay."
+    },
+    {
+      "id": "plane_local_proposal:visible_plane_primary_left:geometric_search_visible_plane_primary_left:opening_rect_009",
+      "status": "accepted",
+      "target_plane_id": "visible_plane_primary_left",
+      "role": "window_opening",
+      "geometry_type": "recess_opening",
+      "quad_uv": [[0.04, 0.28], [0.25, 0.28], [0.25, 0.375], [0.04, 0.375]],
+      "source_region_ids": ["plane_local_region:visible_plane_primary_left:geometric_search"],
+      "note": "Second-row left window bay."
+    },
+    {
+      "id": "plane_local_proposal:visible_plane_primary_right:geometric_search_visible_plane_primary_right:opening_rect_002",
+      "status": "accepted",
+      "target_plane_id": "visible_plane_primary_right",
+      "role": "window_opening",
+      "geometry_type": "recess_opening",
+      "quad_uv": [[0.055, 0.12], [0.14, 0.12], [0.14, 0.235], [0.055, 0.235]],
+      "source_region_ids": ["plane_local_region:visible_plane_primary_right:geometric_search"],
+      "note": "Upper-row right facade window bay 1."
+    },
+    {
+      "id": "plane_local_proposal:visible_plane_primary_right:geometric_search_visible_plane_primary_right:opening_rect_007",
+      "status": "accepted",
+      "target_plane_id": "visible_plane_primary_right",
+      "role": "window_opening",
+      "geometry_type": "recess_opening",
+      "quad_uv": [[0.24, 0.12], [0.33, 0.12], [0.33, 0.235], [0.24, 0.235]],
+      "source_region_ids": ["plane_local_region:visible_plane_primary_right:geometric_search"],
+      "note": "Upper-row right facade window bay 2."
+    },
+    {
+      "id": "plane_local_proposal:visible_plane_primary_right:geometric_search_visible_plane_primary_right:opening_rect_004",
+      "status": "accepted",
+      "target_plane_id": "visible_plane_primary_right",
+      "role": "window_opening",
+      "geometry_type": "recess_opening",
+      "quad_uv": [[0.46, 0.12], [0.54, 0.12], [0.54, 0.235], [0.46, 0.235]],
+      "source_region_ids": ["plane_local_region:visible_plane_primary_right:geometric_search"],
+      "note": "Upper-row right facade window bay 3."
+    },
+    {
+      "id": "plane_local_proposal:visible_plane_primary_right:geometric_search_visible_plane_primary_right:opening_rect_006",
+      "status": "accepted",
+      "target_plane_id": "visible_plane_primary_right",
+      "role": "window_opening",
+      "geometry_type": "recess_opening",
+      "quad_uv": [[0.63, 0.12], [0.72, 0.12], [0.72, 0.235], [0.63, 0.235]],
+      "source_region_ids": ["plane_local_region:visible_plane_primary_right:geometric_search"],
+      "note": "Upper-row right facade window bay 4."
+    }
+  ],
+  "promotion_allowed": false,
+  "compile_allowed": false,
+  "blockers": [
+    "accepted_visible_detail_coverage_review_required",
+    "accepted_metric_scale_anchor_required",
+    "accepted_hidden_geometry_review_required"
+  ],
+  "notes": [
+    "Fixture proves reviewed opening promotion and source reprojection only.",
+    "It does not claim complete visible-detail coverage or release readiness."
+  ]
+}

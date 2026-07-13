@@ -168,6 +168,11 @@ export function buildObjectSurfaceGraphV1({
     domain: BUILDING_PROFILES.has(profile) ? 'building_domain_projection' : 'generic_object_surface_projection',
     source_draft_view_graph: 'draft-view-graph.json',
     source_structure_evidence_graph: 'structure-evidence-graph.json',
+    coordinate_references: (structureEvidenceGraph?.source_provenance || []).map((source) => ({
+      source_image: source.source_image,
+      width: source.width,
+      height: source.height
+    })),
     surfaces,
     surface_local_feature_candidates: featureCandidates,
     review_policy: {

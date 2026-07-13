@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/calibration-benchmark-report.schema.json",
+  "title": "CalibrationBenchmarkReport v1",
+  "type": "object",
+  "required": ["kind", "version", "sample_id", "ground_truth_status", "metrics", "gates", "false_promotion_count", "conclusion"],
+  "properties": {
+    "kind": { "const": "calibration_benchmark_report_v1" },
+    "version": { "const": 1 },
+    "sample_id": { "type": "string" },
+    "ground_truth_status": { "enum": ["draft_needs_user_acceptance", "accepted", "rejected"] },
+    "metrics": {
+      "type": "object",
+      "required": ["annotated_line_count", "matched_line_count", "structural_length_coverage_recall", "family_results"],
+      "properties": {
+        "annotated_line_count": { "type": "integer", "minimum": 0 },
+        "matched_line_count": { "type": "integer", "minimum": 0 },
+        "structural_length_coverage_recall": { "type": "number", "minimum": 0, "maximum": 1 },
+        "family_results": { "type": "array", "items": { "type": "object" } }
+      }
+    },
+    "gates": {
+      "type": "object",
+      "required": ["line_recall", "two_horizontal_families", "spatial_support", "accepted_ground_truth_required_for_release"],
+      "properties": {
+        "line_recall": { "type": "boolean" },
+        "two_horizontal_families": { "type": "boolean" },
+        "spatial_support": { "type": "boolean" },
+        "accepted_ground_truth_required_for_release": { "type": "boolean" }
+      }
+    },
+    "false_promotion_count": { "const": 0 },
+    "conclusion": { "enum": ["pass", "diagnostic_only_ground_truth_review_required", "fail_line_evidence", "fail_direction_families"] },
+    "blockers": { "type": "array", "items": { "type": "string" } }
+  }
+}

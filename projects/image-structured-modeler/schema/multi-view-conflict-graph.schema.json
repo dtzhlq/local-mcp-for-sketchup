@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/multi-view-conflict-graph.schema.json",
+  "title": "MultiViewConflictGraph v1",
+  "type": "object",
+  "required": ["kind", "version", "conflicts", "review_policy", "summary"],
+  "properties": {
+    "kind": { "const": "multi_view_conflict_graph_v1" },
+    "version": { "const": 1 },
+    "conflicts": { "type": "array", "items": { "$ref": "#/$defs/conflict" } },
+    "review_policy": {
+      "type": "object",
+      "required": ["status", "accepted_conflict_review_required", "geometry_fusion_allowed", "promotion_allowed", "compile_allowed", "blockers"],
+      "properties": {
+        "status": { "enum": ["needs_conflict_review", "no_conflicts_detected_review_still_required"] },
+        "accepted_conflict_review_required": { "const": true },
+        "geometry_fusion_allowed": { "const": false },
+        "promotion_allowed": { "const": false },
+        "compile_allowed": { "const": false },
+        "blockers": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": ["conflict_count", "blocking_conflict_count", "promotion_allowed"],
+      "properties": {
+        "conflict_count": { "type": "integer", "minimum": 0 },
+        "blocking_conflict_count": { "type": "integer", "minimum": 0 },
+        "promotion_allowed": { "const": false }
+      }
+    }
+  },
+  "$defs": {
+    "conflict": {
+      "type": "object",
+      "required": ["id", "kind", "severity", "involved_evidence_ids", "description", "review_required", "promotion_allowed"],
+      "properties": {
+        "id": { "type": "string" },
+        "kind": { "enum": ["reprojection_outlier", "identity_collision", "axis_inconsistency", "surface_overlap", "scale_inconsistency"] },
+        "severity": { "enum": ["warning", "blocking"] },
+        "involved_evidence_ids": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "description": { "type": "string", "minLength": 1 },
+        "review_required": { "const": true },
+        "promotion_allowed": { "const": false }
+      }
+    }
+  }
+}

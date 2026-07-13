@@ -1,0 +1,112 @@
+{
+  "kind": "room_surface_topology_seed_v1",
+  "version": 1,
+  "sample_id": "interior_hallway_one_point_wikimedia_2013",
+  "source_image": {
+    "source_image": "external-datasets/wikimedia-commons/interior-hallway-2013/hallway.jpg",
+    "width": 960,
+    "height": 1280
+  },
+  "surfaces": [
+    {
+      "id": "room_surface_left_wall",
+      "role": "left_wall",
+      "visible_polygon_px": [[0, 0], [184, 0], [378, 480], [375, 615], [0, 1015]],
+      "rectification_quad_px": [[184, 0], [378, 480], [375, 615], [0, 1015]],
+      "orientation_axis": "room_depth_axis",
+      "normal_hint": "normal_positive_width",
+      "adjacent_surface_ids": ["room_surface_ceiling", "room_surface_floor", "room_surface_end_wall"],
+      "must_not_merge_with": ["room_surface_right_wall", "room_surface_ceiling", "room_surface_floor", "room_surface_end_wall"],
+      "occlusion_rank": 1,
+      "visibility": "observed",
+      "confidence": 0.9,
+      "source": "manual_review_seed"
+    },
+    {
+      "id": "room_surface_right_wall",
+      "role": "right_wall",
+      "visible_polygon_px": [[850, 0], [960, 0], [960, 1195], [480, 630], [478, 480]],
+      "rectification_quad_px": [[850, 0], [478, 480], [480, 630], [960, 1195]],
+      "orientation_axis": "room_depth_axis",
+      "normal_hint": "normal_negative_width",
+      "adjacent_surface_ids": ["room_surface_ceiling", "room_surface_floor", "room_surface_end_wall"],
+      "must_not_merge_with": ["room_surface_left_wall", "room_surface_ceiling", "room_surface_floor", "room_surface_end_wall"],
+      "occlusion_rank": 1,
+      "visibility": "observed",
+      "confidence": 0.89,
+      "source": "manual_review_seed"
+    },
+    {
+      "id": "room_surface_ceiling",
+      "role": "ceiling",
+      "visible_polygon_px": [[184, 0], [850, 0], [478, 480], [378, 480]],
+      "rectification_quad_px": [[184, 0], [850, 0], [478, 480], [378, 480]],
+      "orientation_axis": "room_width_axis",
+      "normal_hint": "normal_negative_vertical",
+      "adjacent_surface_ids": ["room_surface_left_wall", "room_surface_right_wall", "room_surface_end_wall"],
+      "must_not_merge_with": ["room_surface_left_wall", "room_surface_right_wall", "room_surface_floor", "room_surface_end_wall"],
+      "occlusion_rank": 1,
+      "visibility": "observed",
+      "confidence": 0.92,
+      "source": "manual_review_seed"
+    },
+    {
+      "id": "room_surface_floor",
+      "role": "floor",
+      "visible_polygon_px": [[0, 1015], [960, 1195], [480, 630], [375, 615]],
+      "rectification_quad_px": [[0, 1015], [960, 1195], [480, 630], [375, 615]],
+      "orientation_axis": "room_width_axis",
+      "normal_hint": "normal_positive_vertical",
+      "adjacent_surface_ids": ["room_surface_left_wall", "room_surface_right_wall", "room_surface_end_wall"],
+      "must_not_merge_with": ["room_surface_left_wall", "room_surface_right_wall", "room_surface_ceiling", "room_surface_end_wall"],
+      "occlusion_rank": 1,
+      "visibility": "observed",
+      "confidence": 0.9,
+      "source": "manual_review_seed"
+    },
+    {
+      "id": "room_surface_end_wall",
+      "role": "end_wall",
+      "visible_polygon_px": [[378, 480], [478, 480], [480, 630], [375, 615]],
+      "rectification_quad_px": [[378, 480], [478, 480], [480, 630], [375, 615]],
+      "orientation_axis": "room_vertical_axis",
+      "normal_hint": "normal_negative_depth",
+      "adjacent_surface_ids": ["room_surface_left_wall", "room_surface_right_wall", "room_surface_ceiling", "room_surface_floor"],
+      "must_not_merge_with": ["room_surface_left_wall", "room_surface_right_wall", "room_surface_ceiling", "room_surface_floor"],
+      "occlusion_rank": 2,
+      "visibility": "partial",
+      "confidence": 0.72,
+      "source": "manual_review_seed"
+    }
+  ],
+  "surface_local_detail_candidates": [
+    {
+      "id": "room_detail_right_fire_cabinet",
+      "role": "fire_cabinet_panel",
+      "candidate_surface_ids": ["room_surface_right_wall"],
+      "visible_quad_px": [[844, 421], [959, 421], [959, 581], [842, 581]],
+      "geometry_type": "surface_panel",
+      "confidence": 0.91,
+      "source": "manual_review_seed",
+      "promotion_allowed": false
+    },
+    {
+      "id": "room_detail_ceiling_light_near",
+      "role": "ceiling_light_panel",
+      "candidate_surface_ids": ["room_surface_ceiling"],
+      "visible_quad_px": [[428, 286], [493, 286], [486, 330], [425, 330]],
+      "geometry_type": "surface_fixture",
+      "confidence": 0.9,
+      "source": "manual_review_seed",
+      "promotion_allowed": false
+    }
+  ],
+  "review_status": "draft_manual_annotation",
+  "promotion_allowed": false,
+  "compile_allowed": false,
+  "notes": [
+    "Manual review seed for validating the room-surface contract; it is not detector output.",
+    "The end wall is partial because two people occlude its lower center.",
+    "The open near boundary remains hidden/unknown and is not closed by this single view."
+  ]
+}

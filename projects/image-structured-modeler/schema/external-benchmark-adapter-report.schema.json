@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/external-benchmark-adapter-report.schema.json",
+  "title": "ExternalBenchmarkAdapterReport v1",
+  "type": "object",
+  "required": ["kind", "version", "sample_id", "dataset", "domain", "adapter", "status", "required_file_roles", "checked_files", "metrics", "promotion_allowed", "compile_allowed", "blockers", "artifacts"],
+  "properties": {
+    "kind": { "const": "external_benchmark_adapter_report_v1" },
+    "version": { "const": 1 },
+    "sample_id": { "type": "string" },
+    "dataset": { "type": "string" },
+    "domain": { "type": "string" },
+    "adapter": { "type": "string" },
+    "status": { "enum": ["ready_for_evidence_review", "blocked_sample_package_incomplete", "blocked_invalid_package"] },
+    "required_file_roles": { "type": "array", "items": { "type": "string" } },
+    "checked_files": { "type": "array", "items": { "type": "object" } },
+    "metrics": {
+      "type": "object",
+      "required": ["checked_file_count", "source_image_count", "annotation_count", "cad_model_count", "false_promotion_count"],
+      "properties": {
+        "checked_file_count": { "type": "integer", "minimum": 0 },
+        "source_image_count": { "type": "integer", "minimum": 0 },
+        "annotation_count": { "type": "integer", "minimum": 0 },
+        "cad_model_count": { "type": "integer", "minimum": 0 },
+        "false_promotion_count": { "const": 0 }
+      }
+    },
+    "promotion_allowed": { "const": false },
+    "compile_allowed": { "const": false },
+    "blockers": { "type": "array", "items": { "type": "string" } },
+    "artifacts": { "type": "object" }
+  }
+}

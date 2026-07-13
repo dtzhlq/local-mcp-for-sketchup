@@ -1,0 +1,140 @@
+{
+  "kind": "plane_topology_review_seed_v1",
+  "version": 1,
+  "sample_id": "building-single-anime-yellow",
+  "source_image": "projects/image-structured-modeler/examples/building-single-anime-yellow/input-visible-crop.png",
+  "review_status": "draft_needs_user_acceptance",
+  "vertical_boundaries": [
+    {
+      "id": "boundary_L",
+      "corner_id": "L",
+      "top_norm": [0.075, 0.267],
+      "bottom_norm": [0.106, 0.812],
+      "source": "user_review_reference",
+      "review_required": true
+    },
+    {
+      "id": "boundary_A",
+      "corner_id": "A",
+      "top_norm": [0.3944, 0.1019],
+      "bottom_norm": [0.38, 0.8489],
+      "source": "manual_image_inspection",
+      "review_required": true
+    },
+    {
+      "id": "boundary_B",
+      "corner_id": "B",
+      "top_norm": [0.4722, 0.1511],
+      "bottom_norm": [0.4722, 0.837],
+      "source": "user_review_reference",
+      "review_required": true
+    },
+    {
+      "id": "boundary_C",
+      "corner_id": "C",
+      "top_norm": [0.5256, 0.1205],
+      "bottom_norm": [0.5222, 0.8421],
+      "source": "user_review_reference",
+      "review_required": true
+    },
+    {
+      "id": "boundary_D",
+      "corner_id": "D",
+      "top_norm": [0.7556, 0.343],
+      "bottom_norm": [0.7556, 0.8268],
+      "source": "manual_image_inspection",
+      "review_required": true
+    }
+  ],
+  "plane_spans": [
+    {
+      "id": "visible_plane_left_side_la",
+      "plan_edge_id": "LA",
+      "left_boundary_id": "boundary_L",
+      "right_boundary_id": "boundary_A",
+      "orientation_axis": "y_green",
+      "plan_role": "left_side_before_recess",
+      "occlusion_order": {
+        "rank": 3,
+        "relation_to_camera": "extends_behind_recessed_front_at_A"
+      },
+      "must_not_merge_with": ["visible_plane_recessed_front_ab"],
+      "review_required": true
+    },
+    {
+      "id": "visible_plane_recessed_front_ab",
+      "plan_edge_id": "AB",
+      "left_boundary_id": "boundary_A",
+      "right_boundary_id": "boundary_B",
+      "orientation_axis": "x_red",
+      "plan_role": "recessed_front",
+      "occlusion_order": {
+        "rank": 2,
+        "relation_to_camera": "behind_main_front_in_reviewed_plan_topology"
+      },
+      "must_not_merge_with": ["visible_plane_left_side_la", "visible_plane_main_front_cd"],
+      "review_required": true
+    },
+    {
+      "id": "visible_plane_return_bc",
+      "plan_edge_id": "BC",
+      "left_boundary_id": "boundary_B",
+      "right_boundary_id": "boundary_C",
+      "orientation_axis": "y_green",
+      "plan_role": "return_depth",
+      "occlusion_order": {
+        "rank": 1,
+        "relation_to_camera": "connects_depth_layers"
+      },
+      "must_not_merge_with": [],
+      "review_required": true
+    },
+    {
+      "id": "visible_plane_main_front_cd",
+      "plan_edge_id": "CD",
+      "left_boundary_id": "boundary_C",
+      "right_boundary_id": "boundary_D",
+      "orientation_axis": "x_red",
+      "plan_role": "main_front",
+      "occlusion_order": {
+        "rank": 1,
+        "relation_to_camera": "in_front_of_recessed_front"
+      },
+      "must_not_merge_with": ["visible_plane_recessed_front_ab"],
+      "review_required": true
+    }
+  ],
+  "plan_topology": {
+    "kind": "left_front_recess_notch",
+    "origin_corner_id": "C",
+    "corner_order": ["L", "A", "B", "C", "D"],
+    "corners": [
+      { "id": "L", "diagram_xy": [0, 1] },
+      { "id": "A", "diagram_xy": [0, 0.18] },
+      { "id": "B", "diagram_xy": [0.31, 0.18] },
+      { "id": "C", "diagram_xy": [0.31, 0] },
+      { "id": "D", "diagram_xy": [1, 0] }
+    ],
+    "edges": [
+      { "id": "LA", "from": "L", "to": "A", "axis": "y_green", "role": "left_side_before_recess", "depth_role": "extends_behind_AB_at_A" },
+      { "id": "AB", "from": "A", "to": "B", "axis": "x_red", "role": "recessed_front", "depth_role": "behind_CD" },
+      { "id": "BC", "from": "B", "to": "C", "axis": "y_green", "role": "return_depth", "depth_role": "connects_AB_to_CD" },
+      { "id": "CD", "from": "C", "to": "D", "axis": "x_red", "role": "main_front", "depth_role": "in_front_of_AB" }
+    ],
+    "depth_order": [
+      {
+        "behind": "AB",
+        "in_front": "CD",
+        "evidence": ["reviewed_BC_return_edge", "AB_and_CD_must_not_merge"]
+      }
+    ],
+    "metric_depth_status": "unknown_single_view"
+  },
+  "promotion_allowed": false,
+  "notes": [
+    "This draft preserves the user-reviewed L-A-B-C-D side-plus-recess topology but does not claim metric setback depth.",
+    "Plane quads are generated only after accepted perspective calibration.",
+    "L-A is the visible side facade adjacent to A and shares the side/depth axis family with B-C.",
+    "AB and CD share one axis family but must not be merged because BC establishes a return/depth edge."
+  ]
+}

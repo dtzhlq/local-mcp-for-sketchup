@@ -1,0 +1,35 @@
+{
+  "kind": "facade_drafting_study_sample_v1",
+  "version": 1,
+  "sample_id": "building-single-london-corner",
+  "domain": "building_single",
+  "source": {
+    "local_path": "external-datasets/wikimedia-commons/london-corner-building/london-corner-building.jpg",
+    "download_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Corner_building.jpg/1280px-Corner_building.jpg",
+    "description_url": "https://commons.wikimedia.org/wiki/File:Corner_building.jpg",
+    "sha256": "42db585e2891572b522c97842c064139013e811aee17d5cb2a4d4e5c2759278b",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0/",
+    "attribution": "Corner building, London, by R/DV/RS via Wikimedia Commons",
+    "dataset_policy": "external_sample_not_committed"
+  },
+  "calibration": {
+    "max_width": 900,
+    "ground_truth": "projects/image-structured-modeler/examples/building-single-london-corner/calibration-ground-truth.draft.json",
+    "review_decision": "projects/image-structured-modeler/examples/building-single-london-corner/perspective-calibration-review.accepted-fixture.json"
+  },
+  "topology": {
+    "seed": "projects/image-structured-modeler/examples/building-single-london-corner/plane-topology-review-seed.draft.json",
+    "review_decision": "projects/image-structured-modeler/examples/building-single-london-corner/corner-chain-topology-review.accepted-fixture.json",
+    "detail_seed": "projects/image-structured-modeler/examples/building-single-london-corner/plane-local-detail-seed.empty.json"
+  },
+  "study_review": "projects/image-structured-modeler/examples/building-single-london-corner/reviewed-facade-model-study.accepted-fixture.json",
+  "local_detail_review": "projects/image-structured-modeler/examples/building-single-london-corner/plane-local-evidence-review.accepted-partial-fixture.json",
+  "profile": "examples/product-profiles/building_single_urban_oblique.json",
+  "promotion_allowed": false,
+  "notes": [
+    "The source raster is external and must not be committed to the repository.",
+    "The fixture reviews calibration/topology for a mock visual study only; metric scale, hidden closure, and release geometry remain blocked.",
+    "No semantic detail seed is supplied, so plane-local evidence begins as geometry-only proposals."
+  ]
+}

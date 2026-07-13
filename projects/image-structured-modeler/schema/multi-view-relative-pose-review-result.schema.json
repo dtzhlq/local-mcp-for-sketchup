@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/multi-view-relative-pose-review-result.schema.json",
+  "title": "MultiViewRelativePoseReviewResult v1",
+  "type": "object",
+  "required": ["kind", "version", "status", "reference_view_id", "accepted_pose_edges", "geometry_fusion_allowed", "geometry_scope", "metric_scale_status", "promotion_allowed", "compile_allowed", "false_promotion_count", "blockers"],
+  "properties": {
+    "kind": { "const": "multi_view_relative_pose_review_result_v1" },
+    "version": { "const": 1 },
+    "status": { "enum": ["blocked_no_accepted_review", "blocked_invalid_review", "accepted_for_geometry_fusion"] },
+    "reference_view_id": { "type": ["string", "null"] },
+    "accepted_pose_edges": { "type": "array", "items": { "type": "object" } },
+    "geometry_fusion_allowed": { "type": "boolean" },
+    "geometry_scope": { "enum": ["unresolved", "single_plane", "object_frame"] },
+    "metric_scale_status": { "enum": ["unresolved", "relative_pose_only"] },
+    "promotion_allowed": { "const": false },
+    "compile_allowed": { "const": false },
+    "false_promotion_count": { "const": 0 },
+    "blockers": { "type": "array", "items": { "type": "string" } }
+  }
+}

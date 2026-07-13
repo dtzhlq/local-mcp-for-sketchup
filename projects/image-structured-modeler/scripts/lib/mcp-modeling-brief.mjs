@@ -45,6 +45,12 @@ export function buildMcpModelingBrief({
     .map(candidateBriefItem);
   const candidateDisambiguation = buildCandidateDisambiguation(candidateCatalog);
   const roles = new Set(candidates.map((candidate) => candidate.role).filter(Boolean));
+  const structureLineEvidence = summarizeStructureLineEvidence(observationSet.structure_line_evidence_v2);
+  const perspectiveCalibration = summarizePerspectiveCalibration({
+    hypotheses: observationSet.perspective_calibration_hypotheses_v1,
+    reviewDecision: observationSet.perspective_calibration_review_decision_v1,
+    reviewResult: observationSet.perspective_calibration_review_result_v1
+  });
   const structureEvidenceGraph = summarizeStructureEvidenceGraph(observationSet.structure_evidence_graph_v1);
   const calibratedViewGraph = summarizeCalibratedViewGraph(observationSet.calibrated_view_graph_v1);
   const cornerChainTopology = summarizeCornerChainTopology(observationSet.corner_chain_topology_v1);
@@ -52,6 +58,28 @@ export function buildMcpModelingBrief({
   const objectSurfaceGraph = summarizeObjectSurfaceGraph(observationSet.object_surface_graph_v1);
   const visionEvidence = summarizeVisionEvidence(observationSet.vision_evidence_set_v1);
   const facadePlaneGraph = summarizeFacadePlaneGraph(observationSet.facade_plane_graph_v1);
+  const promotionStatus = buildPromotionStatus({
+    candidateGraph,
+    promotionReview,
+    perspectiveCalibration,
+    cornerChainTopology,
+    draftViewGraph,
+    objectSurfaceGraph,
+    facadePlaneGraph,
+    canPromoteCandidates,
+    canGenerateSketchUpDsl,
+    reasons
+  });
+  const artifactSequence = buildArtifactSequence({
+    structureLineEvidence,
+    perspectiveCalibration,
+    calibratedViewGraph,
+    cornerChainTopology,
+    draftViewGraph,
+    objectSurfaceGraph,
+    facadePlaneGraph,
+    promotionStatus
+  });
   const modelingConstraintSummary = buildModelingConstraintSummary({
     candidateDisambiguation,
     visionEvidence,
@@ -114,6 +142,8 @@ export function buildMcpModelingBrief({
       scale_source_metadata_hints: observationSet.scale_calibration?.source_metadata_hints || [],
       risks: observationSet.quality_report?.risks || [],
       visual_relations: Number(observationSet.visual_relation_graph?.relations?.length || observationSet.visual_relation_graph?.summary?.relations || 0),
+      structure_line_evidence: structureLineEvidence,
+      perspective_calibration: perspectiveCalibration,
       structure_evidence_graph: structureEvidenceGraph,
       calibrated_view_graph: calibratedViewGraph,
       corner_chain_topology: cornerChainTopology,
@@ -122,12 +152,17 @@ export function buildMcpModelingBrief({
       vision_evidence: visionEvidence,
       facade_plane_graph: facadePlaneGraph
     },
+    artifact_sequence: artifactSequence,
+    geometry_strategy: candidateGraph.geometry_strategy || observationSet.image_geometry_strategy_v1?.strategy || null,
+    structure_line_evidence: structureLineEvidence,
+    perspective_calibration: perspectiveCalibration,
     structure_evidence_graph: structureEvidenceGraph,
     calibrated_view_graph: calibratedViewGraph,
     corner_chain_topology: cornerChainTopology,
     draft_view_graph: draftViewGraph,
     object_surface_graph: objectSurfaceGraph,
     facade_plane_graph: facadePlaneGraph,
+    promotion_status: promotionStatus,
     candidate_summary: {
       candidate_count: candidates.length,
       blocked_count: candidates.filter((candidate) => candidate.promotion?.status === 'blocked').length,
@@ -144,6 +179,154 @@ export function buildMcpModelingBrief({
     prohibitions,
     role_notes: roleNotes
   };
+}
+
+function summarizeStructureLineEvidence(evidence = null) {
+  if (evidence?.kind !== 'structure_line_evidence_v2') {
+    return {
+      available: false,
+      status: 'not_available',
+      promotion_allowed: false,
+      blockers: []
+    };
+  }
+  return {
+    available: true,
+    status: 'evidence_ready_for_calibration',
+    backend: evidence.backend?.id || 'unknown',
+    deterministic: evidence.backend?.deterministic === true,
+    raw_segment_count: evidence.summary?.raw_segment_count || 0,
+    eligible_segment_count: evidence.summary?.eligible_segment_count || 0,
+    seed_segment_count: evidence.summary?.seed_segment_count || 0,
+    neighbor_density_is_hard_rejection: evidence.selection_policy?.neighbor_density_is_hard_rejection === true,
+    promotion_allowed: false,
+    blockers: ['accepted_perspective_calibration_review_required']
+  };
+}
+
+function summarizePerspectiveCalibration({ hypotheses = null, reviewDecision = null, reviewResult = null } = {}) {
+  if (hypotheses?.kind !== 'perspective_calibration_hypotheses_v1') {
+    return {
+      available: false,
+      status: 'not_available',
+      review_status: 'not_available',
+      fixture_only: false,
+      rectification_allowed: false,
+      topology_inference_allowed: false,
+      promotion_allowed: false,
+      camera_model_candidates: [],
+      direction_families: [],
+      blockers: []
+    };
+  }
+  return {
+    available: true,
+    status: hypotheses.review_policy?.status || hypotheses.qa?.status || 'unknown',
+    review_status: reviewResult?.status || 'not_accepted',
+    fixture_only: reviewDecision?.fixture_only === true,
+    rectification_allowed: reviewResult?.rectification_allowed === true,
+    topology_inference_allowed: reviewResult?.topology_inference_allowed === true,
+    promotion_allowed: false,
+    horizontal_family_count: hypotheses.summary?.horizontal_family_count || 0,
+    vertical_family_count: hypotheses.summary?.vertical_family_count || 0,
+    camera_model_candidates: (hypotheses.camera_model_candidates || []).map((candidate) => ({
+      id: candidate.id,
+      model: candidate.model,
+      confidence: Number(candidate.confidence || 0),
+      promotion_allowed: false
+    })),
+    direction_families: (hypotheses.direction_families || []).map((family) => ({
+      id: family.id,
+      role: family.role,
+      axis_assignment: family.axis_assignment || 'axis_unassigned',
+      vanishing_type: family.vanishing_type,
+      vanishing_point_px: family.vanishing_point_px || null,
+      image_direction_px: family.image_direction_px || null,
+      support_count: family.support_count || 0,
+      spatial_cell_count: family.spatial_cell_count || 0,
+      median_angular_residual_deg: Number(family.median_angular_residual_deg || 0)
+    })),
+    blockers: reviewResult?.blockers || hypotheses.review_policy?.blockers || []
+  };
+}
+
+function buildPromotionStatus({
+  candidateGraph,
+  promotionReview,
+  perspectiveCalibration,
+  cornerChainTopology,
+  draftViewGraph,
+  objectSurfaceGraph,
+  facadePlaneGraph,
+  canPromoteCandidates,
+  canGenerateSketchUpDsl,
+  reasons
+}) {
+  const calibratedStrategy = candidateGraph.geometry_strategy === 'calibrated_manhattan_planes';
+  const blockers = uniqueStrings([
+    ...reasons,
+    ...(calibratedStrategy && perspectiveCalibration.review_status !== 'accepted_for_rectification'
+      ? ['accepted_perspective_calibration_review_required']
+      : []),
+    ...(calibratedStrategy && promotionReview?.topology_review?.status !== 'accepted_for_derived_drafting'
+      ? ['accepted_corner_chain_topology_review_required']
+      : []),
+    ...(draftViewGraph.available && promotionReview?.draft_view_review?.status !== 'accepted'
+      ? ['accepted_draft_view_review_required']
+      : []),
+    ...(facadePlaneGraph.available && promotionReview?.facade_plane_review?.status !== 'accepted'
+      ? ['accepted_facade_plane_review_required']
+      : []),
+    ...(objectSurfaceGraph.available && promotionReview?.local_detail_review?.status !== 'accepted'
+      ? ['accepted_local_detail_review_required']
+      : [])
+  ]);
+  return {
+    status: canGenerateSketchUpDsl
+      ? 'ready_for_sketchup_dsl'
+      : canPromoteCandidates
+        ? 'ready_for_partgraph_promotion'
+        : 'blocked_pending_review',
+    calibration_review_status: perspectiveCalibration.review_status,
+    topology_review_status: promotionReview?.topology_review?.status || cornerChainTopology.status || 'not_available',
+    draft_view_review_status: promotionReview?.draft_view_review?.status || draftViewGraph.status || 'not_available',
+    domain_review_status: promotionReview?.facade_plane_review?.status
+      || promotionReview?.local_detail_review?.status
+      || facadePlaneGraph.status
+      || objectSurfaceGraph.status
+      || 'not_available',
+    partgraph_promotion_allowed: canPromoteCandidates,
+    sketchup_dsl_allowed: canGenerateSketchUpDsl,
+    blockers
+  };
+}
+
+function buildArtifactSequence({
+  structureLineEvidence,
+  perspectiveCalibration,
+  calibratedViewGraph,
+  cornerChainTopology,
+  draftViewGraph,
+  objectSurfaceGraph,
+  facadePlaneGraph,
+  promotionStatus
+}) {
+  const domainGraph = facadePlaneGraph.available ? facadePlaneGraph : objectSurfaceGraph;
+  const detailCount = facadePlaneGraph.available
+    ? facadePlaneGraph.plane_local_detail_candidates.length
+    : objectSurfaceGraph.available
+      ? objectSurfaceGraph.surface_local_feature_candidates.length
+      : 0;
+  return [
+    { order: 1, stage: 'structure_line_evidence', available: structureLineEvidence.available, status: structureLineEvidence.status },
+    { order: 2, stage: 'perspective_calibration', available: perspectiveCalibration.available, status: perspectiveCalibration.review_status },
+    { order: 3, stage: 'calibrated_view_graph', available: calibratedViewGraph.available, status: calibratedViewGraph.status },
+    { order: 4, stage: 'corner_chain_topology', available: cornerChainTopology.available, status: cornerChainTopology.status },
+    { order: 5, stage: 'draft_view_graph', available: draftViewGraph.available, status: draftViewGraph.status },
+    { order: 6, stage: facadePlaneGraph.available ? 'facade_plane_graph' : 'object_surface_graph', available: domainGraph.available, status: domainGraph.status },
+    { order: 7, stage: 'plane_or_surface_local_details', available: detailCount > 0, status: detailCount > 0 ? 'candidates_review_required' : 'not_available' },
+    { order: 8, stage: 'promotion_status', available: true, status: promotionStatus.status }
+  ];
 }
 
 function summarizeStructureEvidenceGraph(graph = null) {
@@ -702,6 +885,54 @@ export function renderMcpModelingBriefMarkdown(brief) {
     }
   }
   lines.push('');
+  if (brief.artifact_sequence?.length) {
+    lines.push('## Authoritative Artifact Sequence');
+    lines.push('| order | stage | available | status |');
+    lines.push('| ---: | --- | --- | --- |');
+    for (const artifact of brief.artifact_sequence) {
+      lines.push(`| ${artifact.order} | ${artifact.stage} | ${String(artifact.available === true)} | ${artifact.status} |`);
+    }
+    lines.push('');
+  }
+  if (brief.structure_line_evidence?.available || brief.evidence_summary.structure_line_evidence?.available) {
+    const structureLineEvidence = brief.structure_line_evidence || brief.evidence_summary.structure_line_evidence;
+    lines.push('## Structure Line Evidence');
+    lines.push(`- status: \`${structureLineEvidence.status || 'unknown'}\``);
+    lines.push(`- backend: \`${structureLineEvidence.backend || 'unknown'}\``);
+    lines.push(`- raw / eligible / seed: \`${structureLineEvidence.raw_segment_count || 0} / ${structureLineEvidence.eligible_segment_count || 0} / ${structureLineEvidence.seed_segment_count || 0}\``);
+    lines.push(`- neighbor_density_is_hard_rejection: \`${String(structureLineEvidence.neighbor_density_is_hard_rejection === true)}\``);
+    lines.push(`- promotion_allowed: \`${String(structureLineEvidence.promotion_allowed === true)}\``);
+    lines.push('');
+  }
+  if (brief.structure_evidence_graph?.available || brief.evidence_summary.structure_evidence_graph?.available) {
+    const structureEvidenceGraph = brief.structure_evidence_graph || brief.evidence_summary.structure_evidence_graph;
+    lines.push('## Structure Evidence Graph');
+    lines.push(`- status: \`${structureEvidenceGraph.status || 'unknown'}\``);
+    lines.push(`- edges: \`${structureEvidenceGraph.edge_evidence_count || 0}\``);
+    lines.push(`- corners: \`${structureEvidenceGraph.corner_evidence_count || 0}\``);
+    lines.push(`- planes: \`${structureEvidenceGraph.plane_hypothesis_count || 0}\``);
+    lines.push(`- default_heavy_model_required: \`${String(structureEvidenceGraph.default_heavy_model_required === true)}\``);
+    lines.push('');
+  }
+  if (brief.perspective_calibration?.available || brief.evidence_summary.perspective_calibration?.available) {
+    const perspectiveCalibration = brief.perspective_calibration || brief.evidence_summary.perspective_calibration;
+    lines.push('## Perspective Calibration');
+    lines.push(`- hypotheses_status: \`${perspectiveCalibration.status || 'unknown'}\``);
+    lines.push(`- review_status: \`${perspectiveCalibration.review_status || 'unknown'}\``);
+    lines.push(`- fixture_only: \`${String(perspectiveCalibration.fixture_only === true)}\``);
+    lines.push(`- horizontal / vertical families: \`${perspectiveCalibration.horizontal_family_count || 0} / ${perspectiveCalibration.vertical_family_count || 0}\``);
+    lines.push(`- rectification_allowed: \`${String(perspectiveCalibration.rectification_allowed === true)}\``);
+    lines.push(`- topology_inference_allowed: \`${String(perspectiveCalibration.topology_inference_allowed === true)}\``);
+    lines.push(`- promotion_allowed: \`${String(perspectiveCalibration.promotion_allowed === true)}\``);
+    lines.push(`- blockers: ${joinOrNone(perspectiveCalibration.blockers || [])}`);
+    lines.push('');
+    lines.push('| family | role | axis | vanishing | support | cells | residual |');
+    lines.push('| --- | --- | --- | --- | ---: | ---: | ---: |');
+    for (const family of perspectiveCalibration.direction_families || []) {
+      lines.push(`| ${family.id} | ${family.role} | ${family.axis_assignment} | ${family.vanishing_type} | ${family.support_count} | ${family.spatial_cell_count} | ${family.median_angular_residual_deg} |`);
+    }
+    lines.push('');
+  }
   if (brief.calibrated_view_graph?.available || brief.evidence_summary.calibrated_view_graph?.available) {
     const calibratedViewGraph = brief.calibrated_view_graph || brief.evidence_summary.calibrated_view_graph;
     lines.push('## Calibrated View Graph');
@@ -758,16 +989,6 @@ export function renderMcpModelingBriefMarkdown(brief) {
     }
     lines.push('');
   }
-  if (brief.structure_evidence_graph?.available || brief.evidence_summary.structure_evidence_graph?.available) {
-    const structureEvidenceGraph = brief.structure_evidence_graph || brief.evidence_summary.structure_evidence_graph;
-    lines.push('## Structure Evidence Graph');
-    lines.push(`- status: \`${structureEvidenceGraph.status || 'unknown'}\``);
-    lines.push(`- edges: \`${structureEvidenceGraph.edge_evidence_count || 0}\``);
-    lines.push(`- corners: \`${structureEvidenceGraph.corner_evidence_count || 0}\``);
-    lines.push(`- planes: \`${structureEvidenceGraph.plane_hypothesis_count || 0}\``);
-    lines.push(`- default_heavy_model_required: \`${String(structureEvidenceGraph.default_heavy_model_required === true)}\``);
-    lines.push('');
-  }
   if (brief.object_surface_graph?.available || brief.evidence_summary.object_surface_graph?.available) {
     const objectSurfaceGraph = brief.object_surface_graph || brief.evidence_summary.object_surface_graph;
     lines.push('## Object Surface Graph');
@@ -818,6 +1039,18 @@ export function renderMcpModelingBriefMarkdown(brief) {
         lines.push(`| ${detail.id} | ${detail.role} | ${joinOrNone(detail.candidate_plane_ids || [])} | ${escapeMarkdownTable(detail.attachment_hint || '')} | ${String(detail.promotion_allowed === true)} | ${joinOrNone(detail.blockers || [])} |`);
       }
     }
+    lines.push('');
+  }
+  if (brief.promotion_status) {
+    lines.push('## Promotion Status');
+    lines.push(`- status: \`${brief.promotion_status.status}\``);
+    lines.push(`- calibration_review_status: \`${brief.promotion_status.calibration_review_status}\``);
+    lines.push(`- topology_review_status: \`${brief.promotion_status.topology_review_status}\``);
+    lines.push(`- draft_view_review_status: \`${brief.promotion_status.draft_view_review_status}\``);
+    lines.push(`- domain_review_status: \`${brief.promotion_status.domain_review_status}\``);
+    lines.push(`- partgraph_promotion_allowed: \`${String(brief.promotion_status.partgraph_promotion_allowed === true)}\``);
+    lines.push(`- sketchup_dsl_allowed: \`${String(brief.promotion_status.sketchup_dsl_allowed === true)}\``);
+    lines.push(`- blockers: ${joinOrNone(brief.promotion_status.blockers || [])}`);
     lines.push('');
   }
   lines.push('## Candidate Groups');

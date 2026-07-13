@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/room-surface-review-result.schema.json",
+  "title": "RoomSurfaceReviewResult v1",
+  "type": "object",
+  "required": ["kind", "version", "source_room_surface_graph", "source_review_decision", "status", "accepted_surface_ids", "derived_drafting_allowed", "promotion_allowed", "compile_allowed", "false_promotion_count", "blockers"],
+  "properties": {
+    "kind": { "const": "room_surface_review_result_v1" },
+    "version": { "const": 1 },
+    "source_room_surface_graph": { "type": "string" },
+    "source_review_decision": { "type": "string" },
+    "status": { "enum": ["accepted_for_derived_drafting", "blocked_no_accepted_review", "blocked_invalid_review"] },
+    "accepted_surface_ids": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "derived_drafting_allowed": { "type": "boolean" },
+    "promotion_allowed": { "const": false },
+    "compile_allowed": { "const": false },
+    "false_promotion_count": { "const": 0 },
+    "blockers": { "type": "array", "items": { "type": "string" } }
+  }
+}

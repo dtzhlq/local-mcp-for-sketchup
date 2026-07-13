@@ -1,0 +1,38 @@
+{
+  "kind": "perspective_calibration_review_decision_v1",
+  "version": 1,
+  "source_perspective_calibration_hypotheses": "perspective-calibration-hypotheses.json",
+  "reviewer": "interior-hallway-one-point-positive-fixture",
+  "status": "accepted_for_rectification",
+  "accepted_camera_model_candidate_id": "camera_model_candidate_1",
+  "family_decisions": [
+    {
+      "direction_family_id": "horizontal_direction_family_1",
+      "decision": "assign_axis",
+      "assigned_axis": "x_red",
+      "reviewer_confidence": 0.94,
+      "reason": "reviewed_finite_corridor_depth_family"
+    },
+    {
+      "direction_family_id": "horizontal_direction_family_2",
+      "decision": "assign_axis",
+      "assigned_axis": "y_green",
+      "reviewer_confidence": 0.88,
+      "reason": "reviewed_near_infinite_corridor_width_family"
+    },
+    {
+      "direction_family_id": "vertical_direction_family_1",
+      "decision": "assign_axis",
+      "assigned_axis": "z_blue",
+      "reviewer_confidence": 0.95,
+      "reason": "reviewed_vertical_family"
+    }
+  ],
+  "fixture_only": true,
+  "promotion_allowed": false,
+  "compile_allowed": false,
+  "notes": [
+    "Axis colors select a coordinate frame; the evidence families remain neutral.",
+    "This fixture accepts rectification only and cannot promote geometry."
+  ]
+}

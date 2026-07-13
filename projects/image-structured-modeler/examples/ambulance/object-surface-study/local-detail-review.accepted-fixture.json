@@ -1,0 +1,54 @@
+{
+  "kind": "local_detail_review_decision_v1",
+  "version": 1,
+  "source_object_surface_graph": "object-surface-graph.json",
+  "source_facade_plane_graph": null,
+  "source_room_surface_graph": null,
+  "reviewer": "ambulance-object-feature-positive-fixture",
+  "status": "accepted",
+  "promotion_allowed": false,
+  "compile_allowed": false,
+  "accepted_surface_ids": ["surface_front", "surface_left_or_right_side", "surface_top"],
+  "accepted_detail_ids": [
+    "surface_detail_amb-main-body_qfraar",
+    "surface_detail_amb-main-body_1awmos4",
+    "surface_detail_amb-cab-lower_e6jbv9",
+    "surface_detail_amb-cab-lower_17yctti",
+    "surface_detail_amb-cab-upper-shell_1rlb5ik",
+    "surface_detail_amb-cab-upper-shell_1wt3dhf",
+    "surface_detail_amb-windshield_2vsudg",
+    "surface_detail_amb-windshield_1oguti1",
+    "surface_detail_amb-left-side-window_igvwtz",
+    "surface_detail_roof-red-lightbar_tujmq6",
+    "surface_detail_roof-red-lightbar_gcko2r",
+    "surface_detail_roof-red-lightbar_1qf723z",
+    "surface_detail_amb-left-red-stripe_2di6tq"
+  ],
+  "detail_bindings": [
+    { "detail_id": "surface_detail_amb-main-body_qfraar", "target_surface_id": "surface_left_or_right_side", "target_plane_id": null, "target_part_id": "amb-main-body", "status": "accepted" },
+    { "detail_id": "surface_detail_amb-main-body_1awmos4", "target_surface_id": "surface_top", "target_plane_id": null, "target_part_id": "amb-main-body", "status": "accepted" },
+    { "detail_id": "surface_detail_amb-cab-lower_e6jbv9", "target_surface_id": "surface_left_or_right_side", "target_plane_id": null, "target_part_id": "amb-cab-lower", "status": "accepted" },
+    { "detail_id": "surface_detail_amb-cab-lower_17yctti", "target_surface_id": "surface_front", "target_plane_id": null, "target_part_id": "amb-cab-lower", "status": "accepted" },
+    { "detail_id": "surface_detail_amb-cab-upper-shell_1rlb5ik", "target_surface_id": "surface_left_or_right_side", "target_plane_id": null, "target_part_id": "amb-cab-upper-shell", "status": "accepted" },
+    { "detail_id": "surface_detail_amb-cab-upper-shell_1wt3dhf", "target_surface_id": "surface_front", "target_plane_id": null, "target_part_id": "amb-cab-upper-shell", "status": "accepted" },
+    { "detail_id": "surface_detail_amb-windshield_2vsudg", "target_surface_id": "surface_left_or_right_side", "target_plane_id": null, "target_part_id": "amb-windshield", "status": "accepted" },
+    { "detail_id": "surface_detail_amb-windshield_1oguti1", "target_surface_id": "surface_front", "target_plane_id": null, "target_part_id": "amb-windshield", "status": "accepted" },
+    { "detail_id": "surface_detail_amb-left-side-window_igvwtz", "target_surface_id": "surface_left_or_right_side", "target_plane_id": null, "target_part_id": "amb-left-side-window", "status": "accepted" },
+    { "detail_id": "surface_detail_roof-red-lightbar_tujmq6", "target_surface_id": "surface_left_or_right_side", "target_plane_id": null, "target_part_id": "roof-red-lightbar", "status": "accepted" },
+    { "detail_id": "surface_detail_roof-red-lightbar_gcko2r", "target_surface_id": "surface_top", "target_plane_id": null, "target_part_id": "roof-red-lightbar", "status": "accepted" },
+    { "detail_id": "surface_detail_roof-red-lightbar_1qf723z", "target_surface_id": "surface_front", "target_plane_id": null, "target_part_id": "roof-red-lightbar", "status": "accepted" },
+    { "detail_id": "surface_detail_amb-left-red-stripe_2di6tq", "target_surface_id": "surface_left_or_right_side", "target_plane_id": null, "target_part_id": "amb-left-red-stripe", "status": "accepted" }
+  ],
+  "review_scope": {
+    "coverage_status": "accepted_reviewed_feature_subset"
+  },
+  "blockers": [
+    "accepted_metric_scale_anchor_required",
+    "accepted_complete_feature_coverage_review_required",
+    "accepted_hidden_surface_review_required"
+  ],
+  "notes": [
+    "Accepts a cross-view feature subset with explicit target PartGraph ids.",
+    "Wheel center-point candidates remain rejected because they have no reviewed extent."
+  ]
+}

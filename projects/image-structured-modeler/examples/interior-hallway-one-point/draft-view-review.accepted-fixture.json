@@ -1,0 +1,24 @@
+{
+  "kind": "draft_view_review_decision_v1",
+  "version": 1,
+  "source_draft_view_graph": "draft-view-graph.json",
+  "reviewer": "interior-hallway-draft-view-positive-fixture",
+  "status": "accepted",
+  "promotion_allowed": true,
+  "compile_allowed": false,
+  "accepted_view_slot_ids": ["front", "left_or_right_side", "top", "oblique_context"],
+  "rejected_view_slot_ids": [],
+  "corrected_axes": [],
+  "accepted_plane_hypothesis_ids": [
+    "room_surface_left_wall",
+    "room_surface_right_wall",
+    "room_surface_ceiling",
+    "room_surface_floor",
+    "room_surface_end_wall"
+  ],
+  "blockers": ["accepted_partgraph_promotion_review_required"],
+  "notes": [
+    "Accepts derived room drafting slots for downstream surface-local review.",
+    "This decision cannot compile geometry directly."
+  ]
+}

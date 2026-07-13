@@ -1,0 +1,161 @@
+{
+  "kind": "calibration_ground_truth_v1",
+  "version": 1,
+  "sample_id": "building-single-anime-yellow",
+  "source_image": "projects/image-structured-modeler/examples/building-single-anime-yellow/input-visible-crop.png",
+  "image_size": {
+    "width": 900,
+    "height": 589
+  },
+  "coordinate_mapping": {
+    "storage": "normalized_image_xy",
+    "reference_frame": "source_image_content",
+    "provenance": "Draft mapped from the user-provided SketchUp Photo Match reference into the 900x589 visible crop.",
+    "notes": [
+      "The previous fixture used screenshot-space points as if they were crop-space points and is not calibration truth.",
+      "These lines are benchmark annotations only. The detector cannot consume them during inference.",
+      "User acceptance is required before this fixture can become a release gate."
+    ]
+  },
+  "review_status": "draft_needs_user_acceptance",
+  "axis_families": [
+    {
+      "id": "truth_horizontal_family_1",
+      "role": "horizontal_axis",
+      "axis_label": "axis_family_1",
+      "support_lines": [
+        {
+          "id": "truth_f1_recess_roof_visible",
+          "line_norm": { "a": [0.3944, 0.1019], "b": [0.4711, 0.1613] },
+          "source": "manual_image_inspection",
+          "review_required": true,
+          "notes": ["Visible roof/facade edge supporting the A-B direction; topology endpoints are stored separately."]
+        },
+        {
+          "id": "truth_f1_recess_ground_visible",
+          "line_norm": { "a": [0.38, 0.8489], "b": [0.4722, 0.837] },
+          "source": "manual_image_inspection",
+          "review_required": true,
+          "notes": ["Visible recessed facade ground edge supporting axis family 1."]
+        },
+        {
+          "id": "truth_f1_main_roof_visible",
+          "line_norm": { "a": [0.5256, 0.1205], "b": [0.7444, 0.343] },
+          "source": "manual_image_inspection",
+          "review_required": true,
+          "notes": ["Visible main facade roof edge supporting the C-D direction."]
+        },
+        {
+          "id": "truth_f1_main_ground_visible",
+          "line_norm": { "a": [0.5222, 0.8421], "b": [0.7278, 0.8098] },
+          "source": "manual_image_inspection",
+          "review_required": true,
+          "notes": ["Visible main facade ground edge supporting axis family 1."]
+        }
+      ],
+      "expected_vanishing": { "type": "finite", "point_norm": null, "direction_px": null }
+    },
+    {
+      "id": "truth_horizontal_family_2",
+      "role": "horizontal_axis",
+      "axis_label": "axis_family_2",
+      "support_lines": [
+        {
+          "id": "truth_f2_roof_depth_visible",
+          "line_norm": { "a": [0.4556, 0.1273], "b": [0.5344, 0.09] },
+          "source": "manual_image_inspection",
+          "review_required": true,
+          "notes": ["Clear roof depth edge supporting the B-C direction."]
+        },
+        {
+          "id": "truth_f2_return_ground_visible",
+          "line_norm": { "a": [0.4722, 0.837], "b": [0.5222, 0.8421] },
+          "source": "manual_image_inspection",
+          "review_required": true,
+          "notes": ["Visible return/depth ground fragment supporting axis family 2."]
+        },
+        {
+          "id": "truth_f2_rooftop_short_visible",
+          "line_norm": { "a": [0.6778, 0.1817], "b": [0.7, 0.1715] },
+          "source": "manual_image_inspection",
+          "review_required": true,
+          "notes": ["Short clean rooftop segment; semantic owner is intentionally irrelevant."]
+        },
+        {
+          "id": "truth_f2_background_lintel_visible",
+          "line_norm": { "a": [0.91, 0.438], "b": [0.9689, 0.4278] },
+          "source": "manual_image_inspection",
+          "review_required": true,
+          "notes": ["Clear background-building line sharing the scene direction family."]
+        },
+        {
+          "id": "truth_f2_storefront_base_visible",
+          "line_norm": { "a": [0.5589, 0.747], "b": [0.7011, 0.7487] },
+          "source": "manual_image_inspection",
+          "review_required": true,
+          "notes": ["Long clear near-horizon line supporting the left vanishing direction."]
+        }
+      ],
+      "expected_vanishing": { "type": "finite", "point_norm": null, "direction_px": null }
+    },
+    {
+      "id": "truth_vertical_family",
+      "role": "vertical_axis",
+      "axis_label": "vertical_family",
+      "support_lines": [
+        {
+          "id": "truth_vertical_left_fragment",
+          "line_norm": { "a": [0.3744, 0.2105], "b": [0.3744, 0.3192] },
+          "source": "manual_image_inspection",
+          "review_required": true
+        },
+        {
+          "id": "truth_vertical_recess_corner",
+          "line_norm": { "a": [0.4722, 0.1528], "b": [0.4722, 0.837] },
+          "source": "manual_image_inspection",
+          "review_required": true
+        },
+        {
+          "id": "truth_vertical_main_corner",
+          "line_norm": { "a": [0.5222, 0.1222], "b": [0.5222, 0.8421] },
+          "source": "manual_image_inspection",
+          "review_required": true
+        },
+        {
+          "id": "truth_vertical_right_column",
+          "line_norm": { "a": [0.7378, 0.5806], "b": [0.7378, 0.8234] },
+          "source": "manual_image_inspection",
+          "review_required": true
+        }
+      ],
+      "expected_vanishing": { "type": "infinite", "point_norm": null, "direction_px": [0, 1] }
+    }
+  ],
+  "ignore_regions": [],
+  "topology_truth": {
+    "kind": "left_front_recess_notch",
+    "corner_order": ["L", "A", "B", "C", "D"],
+    "plan_edges": [
+      { "id": "LA", "from": "L", "to": "A", "role": "left_side_before_recess" },
+      { "id": "AB", "from": "A", "to": "B", "role": "recessed_front" },
+      { "id": "BC", "from": "B", "to": "C", "role": "return_depth" },
+      { "id": "CD", "from": "C", "to": "D", "role": "main_front" }
+    ],
+    "depth_metric_status": "unknown_single_view",
+    "review_required": true
+  },
+  "evaluation_policy": {
+    "line_match_max_angle_deg": 3,
+    "line_match_max_perpendicular_distance_px": 5,
+    "line_match_min_overlap_ratio": 0.35,
+    "target_structural_length_coverage_recall": 0.9,
+    "target_family_precision": 0.8,
+    "target_family_recall": 0.75
+  },
+  "notes": [
+    "Axis family labels are intentionally neutral. Red/green assignment occurs only after coordinate-frame review.",
+    "Visible calibration support lines are independent from L-A-B-C-D topology edges; inferred topology edges are not detector recall targets.",
+    "The vertical family is modeled as an infinite direction because the source appears vertically corrected or shifted.",
+    "Single-view topology can accept the recess relation but cannot claim metric setback depth."
+  ]
+}

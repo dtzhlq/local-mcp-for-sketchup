@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/multi-view-conflict-review-decision.schema.json",
+  "title": "MultiViewConflictReviewDecision v1",
+  "type": "object",
+  "required": ["kind", "version", "source_multi_view_conflict_graph", "reviewer", "status", "resolutions", "promotion_allowed", "compile_allowed", "notes"],
+  "properties": {
+    "kind": { "const": "multi_view_conflict_review_decision_v1" },
+    "version": { "const": 1 },
+    "source_multi_view_conflict_graph": { "type": "string" },
+    "reviewer": { "type": "string" },
+    "status": { "enum": ["not_accepted", "accepted_conflict_resolution"] },
+    "resolutions": { "type": "array", "items": { "$ref": "#/$defs/resolution" } },
+    "promotion_allowed": { "const": false },
+    "compile_allowed": { "const": false },
+    "notes": { "type": "array", "items": { "type": "string" } }
+  },
+  "$defs": {
+    "resolution": {
+      "type": "object",
+      "required": ["conflict_id", "decision", "retained_evidence_ids", "rejected_evidence_ids", "reason"],
+      "properties": {
+        "conflict_id": { "type": "string" },
+        "decision": { "enum": ["reject_outlier", "split_identity", "accept_reviewed_source"] },
+        "retained_evidence_ids": { "type": "array", "items": { "type": "string" } },
+        "rejected_evidence_ids": { "type": "array", "items": { "type": "string" } },
+        "reason": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

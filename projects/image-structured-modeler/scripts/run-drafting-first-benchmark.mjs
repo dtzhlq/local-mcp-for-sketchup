@@ -10,6 +10,10 @@ import {
 } from './lib/drafting-first-graphs.mjs';
 import { buildStructuredAssetIntake } from './intake-assets.mjs';
 import { repoRoot } from './lib/image-analysis.mjs';
+import { runFacadeDraftingStudy } from './run-facade-drafting-study.mjs';
+import { runInteriorDraftingStudy } from './run-interior-drafting-study.mjs';
+import { runObjectSurfaceStudy } from './run-object-surface-study.mjs';
+import { runExternalBenchmarkAdapter, supportedExternalBenchmarkAdapters } from './lib/external-benchmark-adapter.mjs';
 
 const scriptRoot = path.resolve(fileURLToPath(new URL('../../..', import.meta.url)));
 const DEFAULT_TIER1_MANIFEST = 'projects/image-structured-modeler/benchmarks/tier1-external-sample-manifest.json';
@@ -55,6 +59,12 @@ const TIER0_CASES = [
     domain: 'vehicle',
     mode: 'observations',
     observations: 'projects/image-structured-modeler/examples/ambulance/observations.json'
+  },
+  {
+    id: 'ambulance_object_surface_reviewed_subset',
+    domain: 'vehicle',
+    mode: 'object_surface_study',
+    sample: 'projects/image-structured-modeler/examples/ambulance/object-surface-study/sample.json'
   },
   {
     id: 'fuji_camera_profile_reference',
@@ -109,6 +119,14 @@ async function runTier0({ resolvedOutputDir }) {
         cases.push(caseFromDraftingGraphs(fixture, drafting));
       } else if (fixture.mode === 'profile_reference') {
         cases.push(await caseFromProfileReference(fixture));
+      } else if (fixture.mode === 'object_surface_study') {
+        const caseOutputDir = path.join(resolvedOutputDir, fixture.id);
+        const result = await runObjectSurfaceStudy({
+          sample: fixture.sample,
+          outputDir: caseOutputDir,
+          acceptedReviewFixtures: true
+        });
+        cases.push(caseFromObjectSurfaceStudy(fixture, result, caseOutputDir));
       } else {
         throw new Error(`Unknown Tier0 fixture mode: ${fixture.mode}`);
       }
@@ -116,7 +134,7 @@ async function runTier0({ resolvedOutputDir }) {
       cases.push({
         id: fixture.id,
         domain: fixture.domain,
-        source: fixture.input || fixture.observations || fixture.profile || '',
+        source: fixture.input || fixture.observations || fixture.profile || fixture.sample || '',
         status: 'fail',
         artifacts: {},
         metrics: {
@@ -143,11 +161,80 @@ async function runTier1({ manifest, resolvedOutputDir }) {
   for (const sample of datasetManifest.samples || []) {
     const localPath = sample.local_path ? path.resolve(repoRoot || scriptRoot, sample.local_path) : null;
     const exists = localPath ? await pathExists(localPath) : false;
+    if (sample.adapter === 'facade_drafting_study_adapter' && exists) {
+      try {
+        const caseOutputDir = path.join(resolvedOutputDir, sample.id);
+        const result = await runFacadeDraftingStudy({
+          sample: sample.sample_config,
+          outputDir: caseOutputDir,
+          acceptedStudyReviewFixture: true,
+          acceptedLocalDetailReviewFixture: true
+        });
+        cases.push(caseFromFacadeDraftingStudy(sample, result, caseOutputDir));
+      } catch (error) {
+        cases.push({
+          id: sample.id,
+          domain: sample.domain || 'building_single',
+          source: sample.dataset_url || sample.local_path || '',
+          status: 'fail',
+          artifacts: { adapter: sample.adapter, sample_config: sample.sample_config },
+          metrics: { dataset_available: true, adapter_executed: true, false_promotion_count: 0, error: error.message }
+        });
+      }
+      continue;
+    }
+    if (sample.adapter === 'interior_drafting_study_adapter' && exists) {
+      try {
+        const caseOutputDir = path.join(resolvedOutputDir, sample.id);
+        const result = await runInteriorDraftingStudy({
+          sample: sample.sample_config,
+          outputDir: caseOutputDir,
+          acceptedReviewFixtures: true
+        });
+        cases.push(caseFromInteriorDraftingStudy(sample, result, caseOutputDir));
+      } catch (error) {
+        cases.push({
+          id: sample.id,
+          domain: sample.domain || 'interior_room',
+          source: sample.dataset_url || sample.local_path || '',
+          status: 'fail',
+          artifacts: { adapter: sample.adapter, sample_config: sample.sample_config },
+          metrics: { dataset_available: true, adapter_executed: true, false_promotion_count: 0, error: error.message }
+        });
+      }
+      continue;
+    }
+    if (supportedExternalBenchmarkAdapters().includes(sample.adapter) && exists) {
+      const adapterReport = await runExternalBenchmarkAdapter({ sample, packageDir: localPath });
+      const caseOutputDir = path.join(resolvedOutputDir, sample.id);
+      await fs.mkdir(caseOutputDir, { recursive: true });
+      await fs.writeFile(path.join(caseOutputDir, 'external-adapter-report.json'), `${JSON.stringify(adapterReport, null, 2)}\n`, 'utf8');
+      cases.push({
+        id: sample.id,
+        domain: sample.domain || sample.dataset || 'external',
+        source: sample.dataset_url || sample.local_path || '',
+        status: adapterReport.status === 'ready_for_evidence_review'
+          ? 'review'
+          : adapterReport.status === 'blocked_sample_package_incomplete'
+            ? 'blocked_external_dataset_unavailable'
+            : 'fail',
+        artifacts: {
+          local_path: sample.local_path,
+          dataset: sample.dataset,
+          license_note: sample.license_note,
+          adapter: sample.adapter,
+          sample_package: path.join(sample.local_path, 'sample-package.json'),
+          adapter_report: path.join(path.relative(repoRoot || scriptRoot, caseOutputDir), 'external-adapter-report.json')
+        },
+        metrics: { ...adapterReport.metrics, dataset_available: true, adapter_executed: true, adapter_status: adapterReport.status }
+      });
+      continue;
+    }
     cases.push({
       id: sample.id,
       domain: sample.domain || sample.dataset || 'external',
       source: sample.dataset_url || sample.local_path || '',
-      status: exists ? 'review' : 'blocked_external_dataset_unavailable',
+      status: exists ? 'fail' : 'blocked_external_dataset_unavailable',
       artifacts: {
         local_path: sample.local_path || null,
         dataset: sample.dataset || null,
@@ -156,6 +243,8 @@ async function runTier1({ manifest, resolvedOutputDir }) {
       },
       metrics: {
         dataset_available: exists,
+        adapter_executed: false,
+        ...(exists ? { error: `Unsupported or unimplemented adapter: ${sample.adapter || 'missing'}` } : {}),
         expected_view_slots: sample.expected_view_slots || ['front', 'left_or_right_side', 'top', 'oblique_context'],
         false_promotion_count: 0
       }
@@ -171,6 +260,92 @@ async function runTier1({ manifest, resolvedOutputDir }) {
       'Prepare local external samples separately, then rerun this command.'
     ]
   });
+}
+
+function caseFromInteriorDraftingStudy(sample, result, caseOutputDir) {
+  const relativeOutputDir = path.relative(repoRoot || scriptRoot, caseOutputDir);
+  const report = result.report;
+  const falsePromotionCount = Number(report.no_review_false_promotion_count || 0)
+    + Number(result.detailPromotion?.false_promotion_count || 0);
+  return {
+    id: sample.id,
+    domain: sample.domain || 'interior_room',
+    source: sample.dataset_url || sample.local_path || '',
+    status: report.model.qa_verdict === 'pass' && falsePromotionCount === 0 ? 'review' : 'fail',
+    artifacts: {
+      adapter: sample.adapter,
+      sample_config: sample.sample_config,
+      report: path.join(relativeOutputDir, 'interior-study-report.json'),
+      comparison: path.join(relativeOutputDir, 'index.html'),
+      structure_overlay: path.join(relativeOutputDir, '03-structure-calibration-overlay.png'),
+      room_surface_graph: path.join(relativeOutputDir, '07-room-surface-graph.json'),
+      room_review_overlay: path.join(relativeOutputDir, '17-room-surface-review-overlay.png'),
+      part_graph: path.join(relativeOutputDir, '19-reviewed-visible-room-part-graph.json'),
+      sketchup_dsl: path.join(relativeOutputDir, '20-sketchup-dsl.mock-study.json'),
+      mock_qa: path.join(relativeOutputDir, '22-mock-qa.json'),
+      license_note: sample.license_note || null
+    },
+    metrics: {
+      dataset_available: true,
+      adapter_executed: true,
+      camera_model: result.calibrationReviewResult.accepted_camera_model,
+      accepted_surface_count: result.surfaceReviewResult.accepted_surface_ids.length,
+      accepted_detail_count: result.detailPromotion.accepted_details.length,
+      excluded_region_count: result.coverageResult.excluded_regions.length,
+      exclusion_geometry_compiled: false,
+      part_graph_generated: report.model.part_graph_generated,
+      sketchup_dsl_generated: report.model.sketchup_dsl_generated,
+      mock_qa_verdict: report.model.qa_verdict,
+      visual_status: report.completion_status.visual_status,
+      release_status: report.completion_status.release_status,
+      false_promotion_count: falsePromotionCount
+    }
+  };
+}
+
+function caseFromFacadeDraftingStudy(sample, result, caseOutputDir) {
+  const relativeOutputDir = path.relative(repoRoot || scriptRoot, caseOutputDir);
+  const report = result.report;
+  const calibration = result.calibration;
+  const falsePromotionCount = Number(report.no_review_false_promotion_count || 0)
+    + Number(result.detailPromotion?.false_promotion_count || 0);
+  return {
+    id: sample.id,
+    domain: sample.domain || 'building_single',
+    source: sample.dataset_url || sample.local_path || '',
+    status: report.model.qa_verdict === 'pass' && falsePromotionCount === 0 ? 'review' : 'fail',
+    artifacts: {
+      adapter: sample.adapter,
+      sample_config: sample.sample_config,
+      report: path.join(relativeOutputDir, 'facade-study-report.json'),
+      comparison: path.join(relativeOutputDir, 'index.html'),
+      perspective_overlay: path.join(relativeOutputDir, 'calibration/02-perspective-direction-families.png'),
+      topology_overlay: path.join(relativeOutputDir, 'calibration/04-calibrated-plane-topology.png'),
+      plane_local_evidence: path.join(relativeOutputDir, 'plane-local-evidence/index.html'),
+      source_reprojection: path.join(relativeOutputDir, '11-source-reprojection.png'),
+      part_graph: path.join(relativeOutputDir, '04-reviewed-visible-facade-part-graph.json'),
+      sketchup_dsl: path.join(relativeOutputDir, '05-sketchup-dsl.mock-study.json'),
+      mock_qa: path.join(relativeOutputDir, '07-mock-qa.json'),
+      license_note: sample.license_note || null
+    },
+    metrics: {
+      dataset_available: true,
+      adapter_executed: true,
+      calibration_line_recall: calibration.report.metrics.structural_length_coverage_recall,
+      two_horizontal_families: calibration.report.gates.two_horizontal_families,
+      accepted_visible_plane_count: report.accepted_plane_ids.length,
+      unknown_axis_visible_plane_count: calibration.topologySeed.plane_spans.filter((span) => span.orientation_axis === 'unknown').length,
+      rectified_plane_count: result.planeLocalEvidence.graph.summary.plane_count,
+      plane_local_detail_proposal_count: result.planeLocalEvidence.graph.summary.detail_instance_proposal_count,
+      accepted_partial_detail_count: result.detailPromotion.accepted_details.length,
+      part_graph_generated: report.model.part_graph_generated,
+      sketchup_dsl_generated: report.model.sketchup_dsl_generated,
+      mock_qa_verdict: report.model.qa_verdict,
+      visual_status: report.completion_status.visual_status,
+      release_status: report.completion_status.release_status,
+      false_promotion_count: falsePromotionCount
+    }
+  };
 }
 
 function caseFromIntake(fixture, intake) {
@@ -220,6 +395,44 @@ function caseFromDraftingGraphs(fixture, drafting) {
       draft_unknown_slots: draftSummary?.unknown_slots || 0,
       object_surfaces: surfaceSummary?.surface_count || 0,
       surface_local_features: surfaceSummary?.feature_candidate_count || 0,
+      false_promotion_count: falsePromotionCount
+    }
+  };
+}
+
+function caseFromObjectSurfaceStudy(fixture, result, caseOutputDir) {
+  const relativeOutputDir = path.relative(repoRoot || scriptRoot, caseOutputDir);
+  const report = result.report;
+  const falsePromotionCount = Number(report.no_review_false_promotion_count || 0)
+    + Number(result.featurePromotion?.false_promotion_count || 0);
+  const draftSummary = draftViewGraphSummary(result.drafting.draftViewGraph);
+  return {
+    id: fixture.id,
+    domain: fixture.domain,
+    source: fixture.sample,
+    status: report.model.qa_verdict === 'pass' && falsePromotionCount === 0 ? 'review' : 'fail',
+    artifacts: {
+      sample: fixture.sample,
+      report: path.join(relativeOutputDir, 'object-surface-study-report.json'),
+      comparison: path.join(relativeOutputDir, 'index.html'),
+      draft_view_graph: path.join(relativeOutputDir, '02-draft-view-graph.json'),
+      object_surface_graph: path.join(relativeOutputDir, '03-object-surface-graph.json'),
+      feature_promotion: path.join(relativeOutputDir, '08-object-surface-feature-promotion.json'),
+      part_graph: path.join(relativeOutputDir, '11-reviewed-feature-subset-part-graph.json'),
+      sketchup_dsl: path.join(relativeOutputDir, '12-sketchup-dsl.mock-study.json'),
+      mock_qa: path.join(relativeOutputDir, '14-mock-qa.json')
+    },
+    metrics: {
+      draft_observed_slots: draftSummary?.observed_slots || 0,
+      draft_unknown_slots: draftSummary?.unknown_slots || 0,
+      accepted_surface_count: report.model.accepted_surface_count,
+      accepted_feature_count: report.model.accepted_feature_count,
+      accepted_target_part_count: report.model.accepted_target_part_count,
+      context_only_surface_count: result.surfaceReviewResult.context_only_surface_ids.length,
+      part_graph_generated: report.model.part_graph_generated,
+      sketchup_dsl_generated: report.model.sketchup_dsl_generated,
+      mock_qa_verdict: report.model.qa_verdict,
+      release_allowed: report.model.release_allowed,
       false_promotion_count: falsePromotionCount
     }
   };

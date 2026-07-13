@@ -19,6 +19,17 @@
     "version": { "const": 1 },
     "profile": { "const": "building_single" },
     "coordinate_convention": { "const": "image_x_right_y_down" },
+    "coordinate_reference": {
+      "type": "object",
+      "required": ["space", "source_image", "width", "height"],
+      "properties": {
+        "space": { "enum": ["source_image_px", "calibration_working_image_px"] },
+        "source_image": { "type": "string" },
+        "width": { "type": "integer", "minimum": 1 },
+        "height": { "type": "integer", "minimum": 1 },
+        "normalized_from_source_image": { "type": "boolean" }
+      }
+    },
     "source_images": { "type": "array", "items": { "type": "string" } },
     "source_semantic_evidence": { "type": "string" },
     "planes": {

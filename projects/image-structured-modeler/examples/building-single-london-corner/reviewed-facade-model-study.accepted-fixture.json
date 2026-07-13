@@ -1,0 +1,50 @@
+{
+  "kind": "reviewed_facade_model_study_approval_v1",
+  "version": 1,
+  "sample_id": "building-single-london-corner",
+  "reviewer": "london-corner-mock-study-fixture",
+  "status": "accepted_for_mock_study",
+  "accepted_axis_family_ids": [
+    "horizontal_direction_family_1",
+    "horizontal_direction_family_2",
+    "vertical_direction_family_1"
+  ],
+  "accepted_topology_ids": ["corner_chamfer_visible_chain_candidate"],
+  "accepted_view_slot_ids": ["front", "left_or_right_side", "top", "oblique_context"],
+  "accepted_plane_ids": [
+    "visible_plane_primary_left",
+    "visible_plane_corner_chamfer",
+    "visible_plane_primary_right"
+  ],
+  "detail_review": {
+    "status": "not_accepted",
+    "accepted_detail_ids": [],
+    "promotion_allowed": false
+  },
+  "scale_assumption": {
+    "status": "assumed_for_mock_study",
+    "width": 16000,
+    "depth": 22000,
+    "height": 12000,
+    "units": "mm",
+    "confidence": 0.2,
+    "release_allowed": false,
+    "note": "Nominal dimensions exist only to make the accepted visible-plane chain inspectable in mock SketchUp QA."
+  },
+  "hidden_geometry_assumptions": [],
+  "scope": {
+    "part_graph_study_allowed": true,
+    "sketchup_mock_allowed": true,
+    "live_sketchup_allowed": false,
+    "release_allowed": false
+  },
+  "blockers": [
+    "accepted_metric_scale_anchor_required",
+    "accepted_plane_local_detail_review_required",
+    "accepted_hidden_geometry_review_required"
+  ],
+  "notes": [
+    "Only accepted visible planes may enter the mock-study PartGraph.",
+    "No hidden closure is created for this sample."
+  ]
+}

@@ -20,9 +20,12 @@ export function buildCandidatePromotionPatch({
   const candidateById = new Map((candidateGraph.candidates || []).map((candidate) => [candidate.id, candidate]));
   const acceptedBlockers = accepted.flatMap((candidate) => candidate.blockers || []);
   const resolvedBlockers = reviewResolvedBlockers(promotionReview);
-  const draftViewReviewBlockers = draftViewReviewBlockersFor(promotionReview);
-  const localDetailReviewBlockers = localDetailReviewBlockersFor({ promotionReview, accepted });
-  const planeReviewBlockers = facadePlaneReviewBlockers({ candidateGraph, promotionReview });
+  const calibrationReviewBlockers = perspectiveCalibrationReviewBlockersFor({ candidateGraph, promotionReview });
+  const topologyReviewBlockers = topologyReviewBlockersFor({ candidateGraph, promotionReview });
+  const geometryStrategyBlockers = geometryStrategyBlockersFor(candidateGraph);
+  const draftViewReviewBlockers = draftViewReviewBlockersFor({ candidateGraph, promotionReview });
+  const localDetailReviewBlockers = localDetailReviewBlockersFor({ candidateGraph, promotionReview, accepted });
+  const planeReviewBlockers = facadePlaneReviewBlockers({ candidateGraph, promotionReview, accepted });
   const unresolvedModelingInputs = (modelingBrief.missing_inputs || []).filter((blocker) => !resolvedBlockers.has(blocker));
   const reviewBlockers = unique([
     ...(assetSet.gates?.reasons || []),
@@ -33,6 +36,9 @@ export function buildCandidatePromotionPatch({
   ]).filter((blocker) => !resolvedBlockers.has(blocker));
   const blockers = unique([
     ...reviewBlockers,
+    ...calibrationReviewBlockers,
+    ...topologyReviewBlockers,
+    ...geometryStrategyBlockers,
     ...draftViewReviewBlockers,
     ...localDetailReviewBlockers,
     ...planeReviewBlockers
@@ -46,22 +52,28 @@ export function buildCandidatePromotionPatch({
   const acceptedDraftViewSlotIds = promotionReview.draft_view_review?.accepted_view_slot_ids || [];
   const acceptedSurfaceIds = promotionReview.local_detail_review?.accepted_surface_ids || [];
   const acceptedDetailIds = promotionReview.local_detail_review?.accepted_detail_ids || [];
+  const acceptedPlaneIds = promotionReview.facade_plane_review?.accepted_plane_ids || [];
   return {
     version: 1,
     kind: 'candidate_promotion_patch',
     asset_set_id: assetSet.id,
     profile_id: candidateGraph.profile_id,
+    geometry_strategy: candidateGraph.geometry_strategy || null,
     source_review: sourceReview,
     status,
     apply_allowed: applyAllowed,
     compile_allowed: false,
     blockers,
     resolved_blockers: Array.from(resolvedBlockers),
-    draft_view_review: draftViewReviewSummary(promotionReview),
-    local_detail_review: localDetailReviewSummary({ promotionReview, accepted }),
-    plane_review: planeReviewSummary({ candidateGraph, promotionReview }),
+    calibration_lineage: calibrationLineageSummary(candidateGraph),
+    calibration_review: perspectiveCalibrationReviewSummary({ candidateGraph, promotionReview }),
+    topology_review: topologyReviewSummary({ candidateGraph, promotionReview }),
+    draft_view_review: draftViewReviewSummary({ candidateGraph, promotionReview }),
+    local_detail_review: localDetailReviewSummary({ candidateGraph, promotionReview, accepted }),
+    plane_review: planeReviewSummary({ candidateGraph, promotionReview, accepted }),
     actions: applyAllowed ? accepted.map((item) => candidatePromotionAction(item, candidateById.get(item.candidate_id), {
       acceptedDraftViewSlotIds,
+      acceptedPlaneIds,
       acceptedSurfaceIds,
       acceptedDetailIds
     })) : [],
@@ -76,9 +88,11 @@ export function buildCandidatePromotionPatch({
   };
 }
 
-function draftViewReviewBlockersFor(promotionReview) {
+function draftViewReviewBlockersFor({ candidateGraph, promotionReview }) {
   const review = promotionReview?.draft_view_review;
-  if (!review) return [];
+  if (!review) return candidateGraphRequiresCalibratedLineage(candidateGraph)
+    ? ['accepted_draft_view_review_required']
+    : [];
   if (review.status !== 'accepted' || review.promotion_allowed !== true) {
     return ['accepted_draft_view_review_required'];
   }
@@ -88,10 +102,17 @@ function draftViewReviewBlockersFor(promotionReview) {
   return [];
 }
 
-function localDetailReviewBlockersFor({ promotionReview, accepted }) {
+function localDetailReviewBlockersFor({ candidateGraph, promotionReview, accepted }) {
   if (!accepted.length) return [];
+  const candidateById = new Map((candidateGraph?.candidates || []).map((candidate) => [candidate.id, candidate]));
+  const acceptedDetailCandidates = candidateGraphRequiresCalibratedLineage(candidateGraph)
+    ? accepted.filter((item) => {
+      const candidate = candidateById.get(item.candidate_id);
+      return !(item.role || candidate?.role || '').startsWith('visible_plane_');
+    })
+    : [];
   const review = promotionReview?.local_detail_review;
-  if (!review) return [];
+  if (!review) return acceptedDetailCandidates.length ? ['accepted_local_detail_review_required'] : [];
   if (review.status !== 'accepted' || review.promotion_allowed !== true) {
     return ['accepted_local_detail_review_required'];
   }
@@ -100,23 +121,38 @@ function localDetailReviewBlockersFor({ promotionReview, accepted }) {
   if (!acceptedSurfaces.length && !acceptedDetails.length) {
     return ['accepted_surface_or_detail_ids_required'];
   }
-  return [];
+  if (!acceptedDetailCandidates.length) return [];
+  const acceptedDetailIdSet = new Set(acceptedDetails);
+  const acceptedPlaneIdSet = new Set(promotionReview?.facade_plane_review?.accepted_plane_ids || []);
+  const blockers = [];
+  for (const item of acceptedDetailCandidates) {
+    const candidate = candidateById.get(item.candidate_id);
+    if (!acceptedDetailIdSet.has(item.accepted_detail_id || candidate?.id)) {
+      blockers.push('accepted_local_detail_ids_required');
+    }
+    const sourcePlaneId = candidate?.source_plane_id || '';
+    const planeId = item.accepted_plane_id || sourcePlaneId;
+    if (!sourcePlaneId || planeId !== sourcePlaneId || !acceptedPlaneIdSet.has(planeId)) {
+      blockers.push('accepted_candidate_plane_binding_required');
+    }
+  }
+  return unique(blockers);
 }
 
-function draftViewReviewSummary(promotionReview) {
+function draftViewReviewSummary({ candidateGraph, promotionReview }) {
   const review = promotionReview?.draft_view_review;
-  if (!review) return null;
+  if (!review && !candidateGraphRequiresCalibratedLineage(candidateGraph)) return null;
   return {
-    source_draft_view_graph: review.source_draft_view_graph || 'draft-view-graph.json',
-    status: review.status || 'not_accepted',
-    accepted_view_slot_ids: Array.isArray(review.accepted_view_slot_ids) ? review.accepted_view_slot_ids : [],
-    accepted_plane_hypothesis_ids: Array.isArray(review.accepted_plane_hypothesis_ids) ? review.accepted_plane_hypothesis_ids : [],
-    promotion_allowed: review.promotion_allowed === true,
-    blockers: draftViewReviewBlockersFor(promotionReview)
+    source_draft_view_graph: review?.source_draft_view_graph || 'draft-view-graph.json',
+    status: review?.status || 'not_accepted',
+    accepted_view_slot_ids: Array.isArray(review?.accepted_view_slot_ids) ? review.accepted_view_slot_ids : [],
+    accepted_plane_hypothesis_ids: Array.isArray(review?.accepted_plane_hypothesis_ids) ? review.accepted_plane_hypothesis_ids : [],
+    promotion_allowed: review?.promotion_allowed === true,
+    blockers: draftViewReviewBlockersFor({ candidateGraph, promotionReview })
   };
 }
 
-function localDetailReviewSummary({ promotionReview, accepted }) {
+function localDetailReviewSummary({ candidateGraph, promotionReview, accepted }) {
   const review = promotionReview?.local_detail_review;
   if (!review) return null;
   return {
@@ -126,11 +162,11 @@ function localDetailReviewSummary({ promotionReview, accepted }) {
     accepted_surface_ids: Array.isArray(review.accepted_surface_ids) ? review.accepted_surface_ids : [],
     accepted_detail_ids: Array.isArray(review.accepted_detail_ids) ? review.accepted_detail_ids : [],
     promotion_allowed: review.promotion_allowed === true,
-    blockers: localDetailReviewBlockersFor({ promotionReview, accepted })
+    blockers: localDetailReviewBlockersFor({ candidateGraph, promotionReview, accepted })
   };
 }
 
-function facadePlaneReviewBlockers({ candidateGraph, promotionReview }) {
+function facadePlaneReviewBlockers({ candidateGraph, promotionReview, accepted = [] }) {
   if (!candidateGraphRequiresFacadePlaneReview(candidateGraph)) return [];
   const review = promotionReview?.facade_plane_review;
   if (!review || review.status !== 'accepted' || review.promotion_allowed !== true) {
@@ -139,10 +175,21 @@ function facadePlaneReviewBlockers({ candidateGraph, promotionReview }) {
   if (!Array.isArray(review.accepted_plane_ids) || review.accepted_plane_ids.length === 0) {
     return ['accepted_facade_plane_ids_required'];
   }
+  if (candidateGraphRequiresCalibratedLineage(candidateGraph)) {
+    const acceptedPlaneIds = new Set(review.accepted_plane_ids);
+    const unboundPlaneCandidate = accepted.some((item) => {
+      const candidate = (candidateGraph.candidates || []).find((entry) => entry.id === item.candidate_id);
+      const role = item.role || candidate?.role || '';
+      if (!role.startsWith('visible_plane_')) return false;
+      const planeId = item.accepted_plane_id || candidate?.source_plane_id || candidate?.id;
+      return !acceptedPlaneIds.has(planeId);
+    });
+    if (unboundPlaneCandidate) return ['accepted_candidate_plane_binding_required'];
+  }
   return [];
 }
 
-function planeReviewSummary({ candidateGraph, promotionReview }) {
+function planeReviewSummary({ candidateGraph, promotionReview, accepted = [] }) {
   if (!candidateGraphRequiresFacadePlaneReview(candidateGraph)) return null;
   const review = promotionReview?.facade_plane_review || {};
   return {
@@ -150,8 +197,104 @@ function planeReviewSummary({ candidateGraph, promotionReview }) {
     status: review.status || 'not_accepted',
     accepted_plane_ids: Array.isArray(review.accepted_plane_ids) ? review.accepted_plane_ids : [],
     promotion_allowed: review.promotion_allowed === true,
-    blockers: facadePlaneReviewBlockers({ candidateGraph, promotionReview })
+    blockers: facadePlaneReviewBlockers({ candidateGraph, promotionReview, accepted })
   };
+}
+
+function perspectiveCalibrationReviewBlockersFor({ candidateGraph, promotionReview }) {
+  if (!candidateGraphRequiresCalibratedLineage(candidateGraph)) return [];
+  const lineage = candidateGraph.calibration_lineage;
+  if (!lineage) return ['calibration_lineage_required'];
+  const review = promotionReview?.calibration_review;
+  if (!review || review.status !== 'accepted_for_rectification' || review.rectification_allowed !== true) {
+    return ['accepted_perspective_calibration_review_required'];
+  }
+  if (!Array.isArray(review.accepted_axis_family_ids) || review.accepted_axis_family_ids.length < 3) {
+    return ['accepted_perspective_axis_families_required'];
+  }
+  if (review.promotion_allowed !== false) {
+    return ['calibration_review_must_not_directly_promote'];
+  }
+  if (
+    review.source_perspective_calibration_review_result !== lineage.source_perspective_calibration_review_result
+    || !sameStringSet(review.accepted_axis_family_ids, lineage.accepted_axis_family_ids)
+  ) {
+    return ['perspective_calibration_review_lineage_mismatch'];
+  }
+  return [];
+}
+
+function topologyReviewBlockersFor({ candidateGraph, promotionReview }) {
+  if (!candidateGraphRequiresCalibratedLineage(candidateGraph)) return [];
+  const lineage = candidateGraph.calibration_lineage;
+  if (!lineage) return ['calibration_lineage_required'];
+  const review = promotionReview?.topology_review;
+  if (!review || review.status !== 'accepted_for_derived_drafting' || review.derived_drafting_allowed !== true) {
+    return ['accepted_corner_chain_topology_review_required'];
+  }
+  if (!Array.isArray(review.accepted_topology_ids) || review.accepted_topology_ids.length === 0) {
+    return ['accepted_corner_chain_topology_ids_required'];
+  }
+  if (review.promotion_allowed !== false) {
+    return ['topology_review_must_not_directly_promote'];
+  }
+  if (
+    review.source_corner_chain_topology_review !== lineage.source_corner_chain_topology_review
+    || !sameStringSet(review.accepted_topology_ids, lineage.accepted_topology_ids)
+  ) {
+    return ['corner_chain_topology_review_lineage_mismatch'];
+  }
+  return [];
+}
+
+function geometryStrategyBlockersFor(candidateGraph) {
+  if (candidateGraph?.geometry_strategy === 'multi_view_calibration_pose_graph') {
+    return ['accepted_multi_view_geometry_fusion_review_required'];
+  }
+  return [];
+}
+
+function calibrationLineageSummary(candidateGraph) {
+  if (!candidateGraph?.calibration_lineage) return null;
+  const lineage = candidateGraph.calibration_lineage;
+  return {
+    source_perspective_calibration_review_result: lineage.source_perspective_calibration_review_result || '',
+    accepted_axis_family_ids: Array.isArray(lineage.accepted_axis_family_ids) ? lineage.accepted_axis_family_ids : [],
+    source_corner_chain_topology_review: lineage.source_corner_chain_topology_review || '',
+    accepted_topology_ids: Array.isArray(lineage.accepted_topology_ids) ? lineage.accepted_topology_ids : [],
+    source_facade_plane_graph: lineage.source_facade_plane_graph || ''
+  };
+}
+
+function perspectiveCalibrationReviewSummary({ candidateGraph, promotionReview }) {
+  const review = promotionReview?.calibration_review;
+  if (!review && !candidateGraphRequiresCalibratedLineage(candidateGraph)) return null;
+  return {
+    source_perspective_calibration_review_result: review?.source_perspective_calibration_review_result || '',
+    status: review?.status || 'blocked_no_accepted_review',
+    accepted_axis_family_ids: Array.isArray(review?.accepted_axis_family_ids) ? review.accepted_axis_family_ids : [],
+    rectification_allowed: review?.rectification_allowed === true,
+    topology_inference_allowed: review?.topology_inference_allowed === true,
+    promotion_allowed: false,
+    blockers: perspectiveCalibrationReviewBlockersFor({ candidateGraph, promotionReview })
+  };
+}
+
+function topologyReviewSummary({ candidateGraph, promotionReview }) {
+  const review = promotionReview?.topology_review;
+  if (!review && !candidateGraphRequiresCalibratedLineage(candidateGraph)) return null;
+  return {
+    source_corner_chain_topology_review: review?.source_corner_chain_topology_review || '',
+    status: review?.status || 'blocked_no_accepted_topology_review',
+    accepted_topology_ids: Array.isArray(review?.accepted_topology_ids) ? review.accepted_topology_ids : [],
+    derived_drafting_allowed: review?.derived_drafting_allowed === true,
+    promotion_allowed: false,
+    blockers: topologyReviewBlockersFor({ candidateGraph, promotionReview })
+  };
+}
+
+function candidateGraphRequiresCalibratedLineage(candidateGraph = {}) {
+  return candidateGraph.geometry_strategy === 'calibrated_manhattan_planes';
 }
 
 function candidateGraphRequiresFacadePlaneReview(candidateGraph = {}) {
@@ -184,6 +327,7 @@ function reviewConfirmationBlockers(promotionReview) {
 
 function candidatePromotionAction(reviewItem, candidate, {
   acceptedDraftViewSlotIds = [],
+  acceptedPlaneIds = [],
   acceptedSurfaceIds = [],
   acceptedDetailIds = []
 } = {}) {
@@ -201,12 +345,25 @@ function candidatePromotionAction(reviewItem, candidate, {
     source_image: reviewItem.source_image || candidate?.source_image || '',
     source_observation_id: reviewItem.source_observation_id || candidate?.source_observation_id || '',
     accepted_draft_view_slot_id: draftSlotId,
+    accepted_plane_id: reviewItem.accepted_plane_id
+      || (acceptedPlaneIds.includes(candidate?.source_plane_id) ? candidate.source_plane_id : '')
+      || (acceptedPlaneIds.includes(candidate?.id) ? candidate.id : ''),
     accepted_surface_id: reviewItem.accepted_surface_id || acceptedSurfaceIds[0] || '',
-    accepted_detail_id: reviewItem.accepted_detail_id || acceptedDetailIds[0] || '',
+    accepted_detail_id: reviewItem.accepted_detail_id
+      || (acceptedDetailIds.includes(candidate?.id) ? candidate.id : '')
+      || acceptedDetailIds[0]
+      || '',
     confidence: Number(reviewItem.confidence ?? candidate?.confidence ?? 0),
     requires_part_graph_review: true,
     reviewer_note: reviewItem.reviewer_note || ''
   };
+}
+
+function sameStringSet(first, second) {
+  if (!Array.isArray(first) || !Array.isArray(second)) return false;
+  const left = Array.from(new Set(first)).sort();
+  const right = Array.from(new Set(second)).sort();
+  return left.length === right.length && left.every((value, index) => value === right[index]);
 }
 
 function unique(values) {

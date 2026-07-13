@@ -21,12 +21,62 @@
     "kind": { "const": "candidate_promotion_patch" },
     "asset_set_id": { "type": "string" },
     "profile_id": { "type": "string" },
+    "geometry_strategy": { "type": ["string", "null"] },
     "source_review": { "type": "string" },
     "status": { "enum": ["blocked", "needs_review", "ready_for_part_graph_patch"] },
     "apply_allowed": { "type": "boolean" },
     "compile_allowed": { "type": "boolean" },
     "blockers": { "type": "array", "items": { "type": "string" } },
     "resolved_blockers": { "type": "array", "items": { "type": "string" } },
+    "calibration_lineage": {
+      "type": ["object", "null"],
+      "properties": {
+        "source_perspective_calibration_review_result": { "type": "string" },
+        "accepted_axis_family_ids": { "type": "array", "items": { "type": "string" } },
+        "source_corner_chain_topology_review": { "type": "string" },
+        "accepted_topology_ids": { "type": "array", "items": { "type": "string" } },
+        "source_facade_plane_graph": { "type": "string" }
+      }
+    },
+    "calibration_review": {
+      "type": ["object", "null"],
+      "required": [
+        "source_perspective_calibration_review_result",
+        "status",
+        "accepted_axis_family_ids",
+        "rectification_allowed",
+        "promotion_allowed",
+        "blockers"
+      ],
+      "properties": {
+        "source_perspective_calibration_review_result": { "type": "string" },
+        "status": { "enum": ["blocked_no_accepted_review", "blocked_invalid_review", "accepted_for_rectification"] },
+        "accepted_axis_family_ids": { "type": "array", "items": { "type": "string" } },
+        "rectification_allowed": { "type": "boolean" },
+        "topology_inference_allowed": { "type": "boolean" },
+        "promotion_allowed": { "const": false },
+        "blockers": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "topology_review": {
+      "type": ["object", "null"],
+      "required": [
+        "source_corner_chain_topology_review",
+        "status",
+        "accepted_topology_ids",
+        "derived_drafting_allowed",
+        "promotion_allowed",
+        "blockers"
+      ],
+      "properties": {
+        "source_corner_chain_topology_review": { "type": "string" },
+        "status": { "enum": ["blocked_no_accepted_topology_review", "blocked_invalid_topology_review", "accepted_for_derived_drafting"] },
+        "accepted_topology_ids": { "type": "array", "items": { "type": "string" } },
+        "derived_drafting_allowed": { "type": "boolean" },
+        "promotion_allowed": { "const": false },
+        "blockers": { "type": "array", "items": { "type": "string" } }
+      }
+    },
     "draft_view_review": {
       "type": ["object", "null"],
       "required": [
@@ -94,6 +144,7 @@
           "source_image": { "type": "string" },
           "source_observation_id": { "type": "string" },
           "accepted_draft_view_slot_id": { "type": "string" },
+          "accepted_plane_id": { "type": "string" },
           "accepted_surface_id": { "type": "string" },
           "accepted_detail_id": { "type": "string" },
           "confidence": { "type": "number" },

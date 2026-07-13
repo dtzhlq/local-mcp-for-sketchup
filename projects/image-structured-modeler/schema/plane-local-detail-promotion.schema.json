@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/plane-local-detail-promotion.schema.json",
+  "title": "PlaneLocalDetailPromotion v1",
+  "type": "object",
+  "required": [
+    "kind",
+    "version",
+    "source_plane_local_evidence_graph",
+    "source_review_decision",
+    "status",
+    "accepted_detail_ids",
+    "accepted_details",
+    "reprojection_qa",
+    "partgraph_promotion_allowed",
+    "direct_compile_allowed",
+    "false_promotion_count",
+    "blockers"
+  ],
+  "properties": {
+    "kind": { "const": "plane_local_detail_promotion_v1" },
+    "version": { "const": 1 },
+    "source_plane_local_evidence_graph": { "type": "string" },
+    "source_review_decision": { "type": "string" },
+    "status": { "enum": ["blocked_no_accepted_review", "blocked_invalid_review", "ready_for_partgraph_promotion"] },
+    "accepted_detail_ids": { "type": "array", "items": { "type": "string" } },
+    "accepted_details": { "type": "array", "items": { "$ref": "#/$defs/accepted_detail" } },
+    "reprojection_qa": {
+      "type": "object",
+      "required": ["status", "checked_detail_count", "max_round_trip_residual_px", "source_bounds_violations", "checks"],
+      "properties": {
+        "status": { "enum": ["not_run", "pass", "fail"] },
+        "checked_detail_count": { "type": "integer", "minimum": 0 },
+        "max_round_trip_residual_px": { "type": "number", "minimum": 0 },
+        "source_bounds_violations": { "type": "integer", "minimum": 0 },
+        "checks": { "type": "array", "items": { "type": "object" } }
+      }
+    },
+    "partgraph_promotion_allowed": { "type": "boolean" },
+    "direct_compile_allowed": { "const": false },
+    "false_promotion_count": { "const": 0 },
+    "blockers": { "type": "array", "items": { "type": "string" } },
+    "notes": { "type": "array", "items": { "type": "string" } }
+  },
+  "$defs": {
+    "point": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": { "type": "number" }
+    },
+    "quad": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": { "$ref": "#/$defs/point" }
+    },
+    "accepted_detail": {
+      "type": "object",
+      "required": [
+        "id",
+        "source_proposal_id",
+        "source_region_candidate_id",
+        "target_plane_id",
+        "role",
+        "geometry_type",
+        "geometry_source",
+        "quad_uv",
+        "source_quad_px",
+        "source_edge_ids",
+        "review_status",
+        "reprojection"
+      ],
+      "properties": {
+        "id": { "type": "string" },
+        "source_proposal_id": { "type": "string" },
+        "source_region_candidate_id": { "type": "string" },
+        "target_plane_id": { "type": "string" },
+        "role": { "type": "string" },
+        "geometry_type": { "enum": ["recess_opening", "equipment_box", "linear_path_box"] },
+        "geometry_source": { "enum": ["proposal_geometry", "manual_rectified_annotation"] },
+        "quad_uv": { "$ref": "#/$defs/quad" },
+        "source_quad_px": { "$ref": "#/$defs/quad" },
+        "source_edge_ids": { "type": "array", "items": { "type": "string" } },
+        "review_status": { "const": "accepted" },
+        "reprojection": {
+          "type": "object",
+          "required": ["status", "max_round_trip_residual_px", "within_source_bounds"],
+          "properties": {
+            "status": { "const": "pass" },
+            "max_round_trip_residual_px": { "type": "number", "minimum": 0 },
+            "within_source_bounds": { "const": true }
+          }
+        }
+      }
+    }
+  }
+}

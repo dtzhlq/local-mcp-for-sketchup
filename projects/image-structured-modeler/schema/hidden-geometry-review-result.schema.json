@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/hidden-geometry-review-result.schema.json",
+  "title": "HiddenGeometryReviewResult v1",
+  "type": "object",
+  "required": ["kind", "version", "status", "accepted_hidden_surface_ids", "hidden_geometry_allowed", "release_eligible", "promotion_allowed", "compile_allowed", "false_promotion_count", "blockers"],
+  "properties": {
+    "kind": { "const": "hidden_geometry_review_result_v1" },
+    "version": { "const": 1 },
+    "status": { "enum": ["blocked_no_accepted_review", "blocked_invalid_review", "accepted_hidden_geometry"] },
+    "accepted_hidden_surface_ids": { "type": "array", "items": { "type": "string" } },
+    "hidden_geometry_allowed": { "type": "boolean" },
+    "release_eligible": { "type": "boolean" },
+    "promotion_allowed": { "const": false },
+    "compile_allowed": { "const": false },
+    "false_promotion_count": { "const": 0 },
+    "blockers": { "type": "array", "items": { "type": "string" } }
+  }
+}

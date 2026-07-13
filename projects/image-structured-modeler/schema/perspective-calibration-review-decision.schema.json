@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/perspective-calibration-review-decision.schema.json",
+  "title": "PerspectiveCalibrationReviewDecision v1",
+  "type": "object",
+  "required": [
+    "kind",
+    "version",
+    "source_perspective_calibration_hypotheses",
+    "reviewer",
+    "status",
+    "accepted_camera_model_candidate_id",
+    "family_decisions",
+    "fixture_only",
+    "promotion_allowed",
+    "compile_allowed",
+    "notes"
+  ],
+  "properties": {
+    "kind": { "const": "perspective_calibration_review_decision_v1" },
+    "version": { "const": 1 },
+    "source_perspective_calibration_hypotheses": { "type": "string" },
+    "reviewer": { "type": "string" },
+    "status": { "enum": ["not_accepted", "accepted_for_rectification"] },
+    "accepted_camera_model_candidate_id": { "type": ["string", "null"] },
+    "family_decisions": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/family_decision" }
+    },
+    "fixture_only": { "type": "boolean" },
+    "promotion_allowed": { "const": false },
+    "compile_allowed": { "const": false },
+    "notes": { "type": "array", "items": { "type": "string" } }
+  },
+  "$defs": {
+    "family_decision": {
+      "type": "object",
+      "required": ["direction_family_id", "decision", "assigned_axis", "reviewer_confidence", "reason"],
+      "properties": {
+        "direction_family_id": { "type": "string" },
+        "decision": { "enum": ["axis_unknown", "assign_axis", "reject"] },
+        "assigned_axis": {
+          "type": ["string", "null"],
+          "enum": ["x_red", "y_green", "z_blue", null]
+        },
+        "reviewer_confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "reason": { "type": "string" }
+      }
+    }
+  }
+}

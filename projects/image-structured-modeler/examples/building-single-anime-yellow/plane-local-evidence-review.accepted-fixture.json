@@ -1,0 +1,223 @@
+{
+  "kind": "plane_local_evidence_review_decision_v1",
+  "version": 1,
+  "source_plane_local_evidence_graph": "plane-local-evidence/plane-local-evidence-graph.json",
+  "reviewer": "fixture_manual_rectified_plane_review_not_release_acceptance",
+  "status": "accepted",
+  "plane_decisions": [
+    { "id": "visible_plane_left_side_la", "status": "accepted" },
+    { "id": "visible_plane_recessed_front_ab", "status": "accepted" },
+    { "id": "visible_plane_return_bc", "status": "accepted" },
+    { "id": "visible_plane_main_front_cd", "status": "accepted" }
+  ],
+  "edge_decisions": [],
+  "corner_decisions": [],
+  "repetition_decisions": [],
+  "geometry_authoring": {
+    "mode": "manual_rectified_annotation",
+    "correction_note": "Major visible windows, entries, HVAC boxes, and supported utility strips were redrawn on the corrected rectified-plane images because the high-recall proposals do not provide reliable semantic extents."
+  },
+  "region_decisions": [
+    {
+      "id": "plane_local_proposal:visible_plane_main_front_cd:detail_upper_window_band_cd:opening_rect_007",
+      "status": "accepted",
+      "target_plane_id": "visible_plane_main_front_cd",
+      "role": "window_opening_upper_left",
+      "geometry_type": "recess_opening",
+      "quad_uv": [[0.035, 0.125], [0.31, 0.125], [0.31, 0.271], [0.035, 0.271]],
+      "source_region_ids": ["plane_local_region:detail_upper_window_band_cd"]
+    },
+    {
+      "id": "plane_local_proposal:visible_plane_main_front_cd:detail_upper_window_band_cd:opening_rect_003",
+      "status": "accepted",
+      "target_plane_id": "visible_plane_main_front_cd",
+      "role": "window_opening_upper_middle",
+      "geometry_type": "recess_opening",
+      "quad_uv": [[0.37, 0.125], [0.646, 0.125], [0.646, 0.278], [0.37, 0.278]],
+      "source_region_ids": ["plane_local_region:detail_upper_window_band_cd"]
+    },
+    {
+      "id": "plane_local_proposal:visible_plane_main_front_cd:detail_upper_window_band_cd:opening_rect_008",
+      "status": "accepted",
+      "target_plane_id": "visible_plane_main_front_cd",
+      "role": "window_opening_upper_right",
+      "geometry_type": "recess_opening",
+      "quad_uv": [[0.718, 0.13], [0.986, 0.13], [0.986, 0.279], [0.718, 0.279]],
+      "source_region_ids": ["plane_local_region:detail_upper_window_band_cd"]
+    },
+    {
+      "id": "plane_local_proposal:visible_plane_main_front_cd:detail_upper_window_band_cd:opening_rect_005",
+      "status": "accepted",
+      "target_plane_id": "visible_plane_main_front_cd",
+      "role": "window_opening_lower_left",
+      "geometry_type": "recess_opening",
+      "quad_uv": [[0.037, 0.397], [0.312, 0.397], [0.312, 0.585], [0.037, 0.585]],
+      "source_region_ids": ["plane_local_region:detail_upper_window_band_cd"]
+    },
+    {
+      "id": "plane_local_proposal:visible_plane_main_front_cd:detail_upper_window_band_cd:opening_rect_010",
+      "status": "accepted",
+      "target_plane_id": "visible_plane_main_front_cd",
+      "role": "window_opening_lower_middle",
+      "geometry_type": "recess_opening",
+      "quad_uv": [[0.371, 0.397], [0.646, 0.397], [0.646, 0.59], [0.371, 0.59]],
+      "source_region_ids": ["plane_local_region:detail_upper_window_band_cd"]
+    },
+    {
+      "id": "plane_local_proposal:visible_plane_main_front_cd:detail_upper_window_band_cd:opening_rect_006",
+      "status": "accepted",
+      "target_plane_id": "visible_plane_main_front_cd",
+      "role": "window_opening_lower_right",
+      "geometry_type": "recess_opening",
+      "quad_uv": [[0.716, 0.404], [0.981, 0.404], [0.981, 0.592], [0.716, 0.592]],
+      "source_region_ids": ["plane_local_region:detail_upper_window_band_cd"]
+    },
+    {
+      "id": "plane_local_proposal:visible_plane_main_front_cd:detail_ground_floor_storefront_cd:opening_rect_001",
+      "status": "accepted",
+      "target_plane_id": "visible_plane_main_front_cd",
+      "role": "storefront_opening",
+      "geometry_type": "recess_opening",
+      "quad_uv": [[0.014, 0.715], [0.871, 0.715], [0.871, 0.995], [0.014, 0.995]],
+      "source_region_ids": ["plane_local_region:detail_ground_floor_storefront_cd"]
+    },
+    {
+      "id": "plane_local_proposal:visible_plane_main_front_cd:detail_exterior_hvac_cd:equipment_rect_001",
+      "status": "accepted",
+      "target_plane_id": "visible_plane_main_front_cd",
+      "role": "hvac_equipment_upper_left",
+      "geometry_type": "equipment_box",
+      "quad_uv": [[0.023, 0.199], [0.185, 0.199], [0.185, 0.3], [0.023, 0.3]],
+      "source_region_ids": ["plane_local_region:detail_exterior_hvac_cd"]
+    },
+    {
+      "id": "plane_local_proposal:visible_plane_main_front_cd:detail_exterior_hvac_cd:equipment_rect_002",
+      "status": "accepted",
+      "target_plane_id": "visible_plane_main_front_cd",
+      "role": "hvac_equipment_upper_middle",
+      "geometry_type": "equipment_box",
+      "quad_uv": [[0.361, 0.197], [0.514, 0.197], [0.514, 0.297], [0.361, 0.297]],
+      "source_region_ids": ["plane_local_region:detail_exterior_hvac_cd"]
+    },
+    {
+      "id": "plane_local_proposal:visible_plane_main_front_cd:detail_exterior_hvac_cd:equipment_rect_004",
+      "status": "accepted",
+      "target_plane_id": "visible_plane_main_front_cd",
+      "role": "hvac_equipment_lower_left",
+      "geometry_type": "equipment_box",
+      "quad_uv": [[0.021, 0.506], [0.197, 0.506], [0.197, 0.615], [0.021, 0.615]],
+      "source_region_ids": ["plane_local_region:detail_exterior_hvac_cd"]
+    },
+    {
+      "id": "plane_local_proposal:visible_plane_main_front_cd:detail_exterior_hvac_cd:equipment_rect_003",
+      "status": "accepted",
+      "target_plane_id": "visible_plane_main_front_cd",
+      "role": "hvac_equipment_lower_middle",
+      "geometry_type": "equipment_box",
+      "quad_uv": [[0.357, 0.504], [0.546, 0.504], [0.546, 0.624], [0.357, 0.624]],
+      "source_region_ids": ["plane_local_region:detail_exterior_hvac_cd"]
+    },
+    {
+      "id": "plane_local_proposal:visible_plane_main_front_cd:detail_exterior_hvac_cd:equipment_rect_006",
+      "status": "accepted",
+      "target_plane_id": "visible_plane_main_front_cd",
+      "role": "hvac_equipment_lower_right",
+      "geometry_type": "equipment_box",
+      "quad_uv": [[0.702, 0.507], [0.884, 0.507], [0.884, 0.621], [0.702, 0.621]],
+      "source_region_ids": ["plane_local_region:detail_exterior_hvac_cd"]
+    },
+    {
+      "id": "plane_local_proposal:visible_plane_recessed_front_ab:geometric_search_visible_plane_recessed_front_ab:opening_rect_010",
+      "status": "accepted",
+      "target_plane_id": "visible_plane_recessed_front_ab",
+      "role": "window_opening_ab_upper_left",
+      "geometry_type": "recess_opening",
+      "quad_uv": [[0.294, 0.169], [0.475, 0.169], [0.475, 0.281], [0.294, 0.281]],
+      "source_region_ids": ["plane_local_region:visible_plane_recessed_front_ab:geometric_search"]
+    },
+    {
+      "id": "plane_local_proposal:visible_plane_recessed_front_ab:geometric_search_visible_plane_recessed_front_ab:opening_rect_008",
+      "status": "accepted",
+      "target_plane_id": "visible_plane_recessed_front_ab",
+      "role": "window_opening_ab_upper_right",
+      "geometry_type": "recess_opening",
+      "quad_uv": [[0.624, 0.174], [0.82, 0.174], [0.82, 0.285], [0.624, 0.285]],
+      "source_region_ids": ["plane_local_region:visible_plane_recessed_front_ab:geometric_search"]
+    },
+    {
+      "id": "plane_local_proposal:visible_plane_recessed_front_ab:geometric_search_visible_plane_recessed_front_ab:opening_rect_001",
+      "status": "accepted",
+      "target_plane_id": "visible_plane_recessed_front_ab",
+      "role": "window_opening_ab_lower_left",
+      "geometry_type": "recess_opening",
+      "quad_uv": [[0.27, 0.58], [0.45, 0.58], [0.45, 0.7], [0.27, 0.7]],
+      "source_region_ids": ["plane_local_region:visible_plane_recessed_front_ab:geometric_search"]
+    },
+    {
+      "id": "plane_local_proposal:visible_plane_recessed_front_ab:geometric_search_visible_plane_recessed_front_ab:opening_rect_004",
+      "status": "accepted",
+      "target_plane_id": "visible_plane_recessed_front_ab",
+      "role": "window_opening_ab_lower_right",
+      "geometry_type": "recess_opening",
+      "quad_uv": [[0.6, 0.583], [0.8, 0.583], [0.8, 0.702], [0.6, 0.702]],
+      "source_region_ids": ["plane_local_region:visible_plane_recessed_front_ab:geometric_search"]
+    },
+    {
+      "id": "plane_local_proposal:visible_plane_recessed_front_ab:geometric_search_visible_plane_recessed_front_ab:linear_path_strip_007",
+      "status": "accepted",
+      "target_plane_id": "visible_plane_recessed_front_ab",
+      "role": "entry_opening_ab",
+      "geometry_type": "recess_opening",
+      "quad_uv": [[0.274, 0.781], [0.85, 0.781], [0.85, 0.995], [0.274, 0.995]],
+      "source_region_ids": ["plane_local_region:visible_plane_recessed_front_ab:geometric_search"]
+    },
+    {
+      "id": "plane_local_proposal:visible_plane_left_side_la:detail_rectangular_utility_ducts_la:linear_path_strip_001",
+      "status": "accepted",
+      "target_plane_id": "visible_plane_left_side_la",
+      "role": "rectangular_utility_duct_horizontal_upper",
+      "geometry_type": "linear_path_box",
+      "quad_uv": [[0.48, 0.52], [0.98, 0.52], [0.98, 0.56], [0.48, 0.56]],
+      "source_region_ids": ["plane_local_region:detail_rectangular_utility_ducts_la"]
+    },
+    {
+      "id": "plane_local_proposal:visible_plane_left_side_la:detail_rectangular_utility_ducts_la:linear_path_strip_002",
+      "status": "accepted",
+      "target_plane_id": "visible_plane_left_side_la",
+      "role": "rectangular_utility_duct_horizontal_lower",
+      "geometry_type": "linear_path_box",
+      "quad_uv": [[0.51, 0.58], [0.98, 0.58], [0.98, 0.62], [0.51, 0.62]],
+      "source_region_ids": ["plane_local_region:detail_rectangular_utility_ducts_la"]
+    },
+    {
+      "id": "plane_local_proposal:visible_plane_return_bc:geometric_search_visible_plane_return_bc:linear_path_strip_002",
+      "status": "accepted",
+      "target_plane_id": "visible_plane_return_bc",
+      "role": "utility_pipe_bc_vertical_primary",
+      "geometry_type": "linear_path_box",
+      "quad_uv": [[0.677, 0.383], [0.722, 0.383], [0.722, 0.869], [0.677, 0.869]],
+      "source_region_ids": ["plane_local_region:visible_plane_return_bc:geometric_search"]
+    },
+    {
+      "id": "plane_local_proposal:visible_plane_return_bc:geometric_search_visible_plane_return_bc:linear_path_strip_004",
+      "status": "accepted",
+      "target_plane_id": "visible_plane_return_bc",
+      "role": "utility_pipe_bc_vertical_upper",
+      "geometry_type": "linear_path_box",
+      "quad_uv": [[0.722, 0.088], [0.769, 0.088], [0.769, 0.303], [0.722, 0.303]],
+      "source_region_ids": ["plane_local_region:visible_plane_return_bc:geometric_search"]
+    }
+  ],
+  "promotion_allowed": false,
+  "compile_allowed": false,
+  "blockers": [
+    "domain_partgraph_promotion_adapter_required",
+    "accepted_metric_scale_anchor_required",
+    "accepted_hidden_geometry_review_required"
+  ],
+  "notes": [
+    "Fixture-only manual review of major visible details in rectified planes.",
+    "This is suitable for mock visual-study regression, not release acceptance or metric truth.",
+    "Minor wall fixtures and unresolved duct bends remain outside the accepted subset."
+  ]
+}

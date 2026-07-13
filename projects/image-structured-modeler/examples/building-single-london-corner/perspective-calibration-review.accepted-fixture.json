@@ -1,0 +1,38 @@
+{
+  "kind": "perspective_calibration_review_decision_v1",
+  "version": 1,
+  "source_perspective_calibration_hypotheses": "perspective-calibration-hypotheses.json",
+  "reviewer": "london-corner-calibration-fixture",
+  "status": "accepted_for_rectification",
+  "accepted_camera_model_candidate_id": "camera_model_candidate_1",
+  "family_decisions": [
+    {
+      "direction_family_id": "horizontal_direction_family_1",
+      "decision": "assign_axis",
+      "assigned_axis": "x_red",
+      "reviewer_confidence": 0.86,
+      "reason": "finite family follows the reviewed left facade roof and floor-band edges"
+    },
+    {
+      "direction_family_id": "horizontal_direction_family_2",
+      "decision": "assign_axis",
+      "assigned_axis": "y_green",
+      "reviewer_confidence": 0.84,
+      "reason": "finite family follows the reviewed right facade floor and roof edges"
+    },
+    {
+      "direction_family_id": "vertical_direction_family_1",
+      "decision": "assign_axis",
+      "assigned_axis": "z_blue",
+      "reviewer_confidence": 0.9,
+      "reason": "level architectural image keeps the dominant facade verticals near parallel"
+    }
+  ],
+  "fixture_only": true,
+  "promotion_allowed": false,
+  "compile_allowed": false,
+  "notes": [
+    "Fixture-only axis assignment for rectification and topology tests.",
+    "Axis labels are coordinate-frame choices and do not authorize PartGraph promotion."
+  ]
+}

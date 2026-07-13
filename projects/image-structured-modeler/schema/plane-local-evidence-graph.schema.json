@@ -1,0 +1,265 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/plane-local-evidence-graph.schema.json",
+  "title": "PlaneLocalEvidenceGraph v1",
+  "type": "object",
+  "required": [
+    "kind",
+    "version",
+    "coordinate_convention",
+    "source_image",
+    "source_facade_plane_graph",
+    "planes",
+    "review_policy",
+    "summary"
+  ],
+  "properties": {
+    "kind": { "const": "plane_local_evidence_graph_v1" },
+    "version": { "const": 1 },
+    "coordinate_convention": { "const": "plane_local_u_right_v_down" },
+    "source_image": { "type": "string" },
+    "source_facade_plane_graph": { "type": "string" },
+    "planes": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/plane_evidence" }
+    },
+    "review_policy": { "$ref": "#/$defs/review_policy" },
+    "summary": {
+      "type": "object",
+      "required": [
+        "plane_count",
+        "edge_evidence_count",
+        "corner_evidence_count",
+        "repetition_hypothesis_count",
+        "region_candidate_count",
+        "detail_instance_proposal_count",
+        "review_required",
+        "promotion_allowed"
+      ],
+      "properties": {
+        "plane_count": { "type": "integer", "minimum": 0 },
+        "edge_evidence_count": { "type": "integer", "minimum": 0 },
+        "corner_evidence_count": { "type": "integer", "minimum": 0 },
+        "repetition_hypothesis_count": { "type": "integer", "minimum": 0 },
+        "region_candidate_count": { "type": "integer", "minimum": 0 },
+        "detail_instance_proposal_count": { "type": "integer", "minimum": 0 },
+        "review_required": { "const": true },
+        "promotion_allowed": { "const": false }
+      }
+    }
+  },
+  "$defs": {
+    "point_px": {
+      "type": "array",
+      "prefixItems": [{ "type": "number" }, { "type": "number" }],
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "point_uv": {
+      "type": "array",
+      "prefixItems": [{ "type": "number" }, { "type": "number" }],
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "quad_uv": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": { "$ref": "#/$defs/point_uv" }
+    },
+    "rectification": {
+      "type": "object",
+      "required": [
+        "source_plane_id",
+        "image_to_local_homography",
+        "local_to_image_homography",
+        "upstream_image_to_local_homography",
+        "source_coordinate_reference",
+        "source_raster_size",
+        "coordinate_transform",
+        "rectified_image",
+        "width",
+        "height",
+        "metric_scale_status"
+      ],
+      "properties": {
+        "source_plane_id": { "type": "string" },
+        "image_to_local_homography": { "type": "array", "minItems": 3, "maxItems": 3, "items": { "type": "array", "minItems": 3, "maxItems": 3, "items": { "type": "number" } } },
+        "local_to_image_homography": { "type": "array", "minItems": 3, "maxItems": 3, "items": { "type": "array", "minItems": 3, "maxItems": 3, "items": { "type": "number" } } },
+        "upstream_image_to_local_homography": { "type": "array", "minItems": 3, "maxItems": 3, "items": { "type": "array", "minItems": 3, "maxItems": 3, "items": { "type": "number" } } },
+        "source_coordinate_reference": {
+          "type": "object",
+          "required": ["space", "source_image", "width", "height", "normalized_from_source_image"],
+          "properties": {
+            "space": { "enum": ["source_image_px", "calibration_working_image_px"] },
+            "source_image": { "type": "string" },
+            "width": { "type": "number", "exclusiveMinimum": 0 },
+            "height": { "type": "number", "exclusiveMinimum": 0 },
+            "normalized_from_source_image": { "type": "boolean" }
+          }
+        },
+        "source_raster_size": {
+          "type": "object",
+          "required": ["width", "height"],
+          "properties": {
+            "width": { "type": "integer", "minimum": 1 },
+            "height": { "type": "integer", "minimum": 1 }
+          }
+        },
+        "coordinate_transform": {
+          "type": "object",
+          "required": ["source_to_reference_homography", "source_to_reference_scale", "reference_to_source_scale"],
+          "properties": {
+            "source_to_reference_homography": { "type": "array", "minItems": 3, "maxItems": 3, "items": { "type": "array", "minItems": 3, "maxItems": 3, "items": { "type": "number" } } },
+            "source_to_reference_scale": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number", "exclusiveMinimum": 0 } },
+            "reference_to_source_scale": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number", "exclusiveMinimum": 0 } }
+          }
+        },
+        "rectified_image": { "type": "string" },
+        "width": { "type": "integer", "minimum": 1 },
+        "height": { "type": "integer", "minimum": 1 },
+        "metric_scale_status": { "enum": ["unknown_single_view", "assumed_for_mock_study", "accepted_metric_scale"] }
+      }
+    },
+    "edge_evidence": {
+      "type": "object",
+      "required": [
+        "id",
+        "source_plane_id",
+        "line_px",
+        "line_uv",
+        "orientation_class",
+        "support_score",
+        "source",
+        "review_status",
+        "review_required",
+        "promotion_allowed"
+      ],
+      "properties": {
+        "id": { "type": "string" },
+        "source_plane_id": { "type": "string" },
+        "line_px": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "$ref": "#/$defs/point_px" } },
+        "line_uv": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "$ref": "#/$defs/point_uv" } },
+        "orientation_class": { "enum": ["local_u", "local_v", "diagonal_or_detail"] },
+        "support_score": { "type": "number", "minimum": 0, "maximum": 1 },
+        "source": { "type": "object" },
+        "review_status": { "enum": ["candidate", "rejected_by_eligibility", "accepted", "rejected"] },
+        "rejection_reasons": { "type": "array", "items": { "type": "string" } },
+        "review_required": { "const": true },
+        "promotion_allowed": { "const": false }
+      }
+    },
+    "corner_evidence": {
+      "type": "object",
+      "required": ["id", "source_plane_id", "point_px", "point_uv", "source_edge_ids", "support_score", "review_status", "review_required", "promotion_allowed"],
+      "properties": {
+        "id": { "type": "string" },
+        "source_plane_id": { "type": "string" },
+        "point_px": { "$ref": "#/$defs/point_px" },
+        "point_uv": { "$ref": "#/$defs/point_uv" },
+        "source_edge_ids": { "type": "array", "items": { "type": "string" } },
+        "support_score": { "type": "number", "minimum": 0, "maximum": 1 },
+        "review_status": { "enum": ["candidate", "accepted", "rejected"] },
+        "review_required": { "const": true },
+        "promotion_allowed": { "const": false }
+      }
+    },
+    "repetition_hypothesis": {
+      "type": "object",
+      "required": ["id", "source_plane_id", "axis", "line_positions_uv", "spacing_uv", "source_edge_ids", "support_score", "review_status", "review_required", "promotion_allowed"],
+      "properties": {
+        "id": { "type": "string" },
+        "source_plane_id": { "type": "string" },
+        "axis": { "enum": ["u", "v"] },
+        "line_positions_uv": { "type": "array", "items": { "type": "number" } },
+        "spacing_uv": { "type": "number", "exclusiveMinimum": 0 },
+        "spacing_variation": { "type": "number", "minimum": 0 },
+        "source_edge_ids": { "type": "array", "items": { "type": "string" } },
+        "support_score": { "type": "number", "minimum": 0, "maximum": 1 },
+        "review_status": { "enum": ["candidate", "accepted", "rejected"] },
+        "review_required": { "const": true },
+        "promotion_allowed": { "const": false }
+      }
+    },
+    "region_candidate": {
+      "type": "object",
+      "required": ["id", "source_plane_id", "role_hint", "quad_uv", "source_detail_candidate_id", "support_score", "source", "review_status", "review_required", "promotion_allowed", "blockers"],
+      "properties": {
+        "id": { "type": "string" },
+        "source_plane_id": { "type": "string" },
+        "role_hint": { "type": "string" },
+        "quad_uv": { "$ref": "#/$defs/quad_uv" },
+        "source_detail_candidate_id": { "type": "string" },
+        "support_score": { "type": "number", "minimum": 0, "maximum": 1 },
+        "source_edge_ids": { "type": "array", "items": { "type": "string" } },
+        "source": { "type": "object" },
+        "review_status": { "enum": ["candidate", "accepted", "rejected"] },
+        "review_required": { "const": true },
+        "promotion_allowed": { "const": false },
+        "blockers": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "detail_instance_proposal": {
+      "type": "object",
+      "required": ["id", "source_plane_id", "source_region_candidate_id", "proposal_type", "role_hint", "quad_uv", "support_score", "source_edge_ids", "review_status", "review_required", "promotion_allowed", "blockers"],
+      "properties": {
+        "id": { "type": "string" },
+        "source_plane_id": { "type": "string" },
+        "source_region_candidate_id": { "type": "string" },
+        "proposal_type": { "enum": ["opening_rect", "equipment_rect", "linear_path_strip"] },
+        "role_hint": { "type": "string" },
+        "quad_uv": { "$ref": "#/$defs/quad_uv" },
+        "support_score": { "type": "number", "minimum": 0, "maximum": 1 },
+        "side_coverage": { "type": "object" },
+        "source_edge_ids": { "type": "array", "items": { "type": "string" } },
+        "review_status": { "enum": ["candidate", "accepted", "rejected"] },
+        "review_required": { "const": true },
+        "promotion_allowed": { "const": false },
+        "blockers": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "plane_evidence": {
+      "type": "object",
+      "required": [
+        "id",
+        "source_plane_id",
+        "rectification",
+        "edge_evidence",
+        "corner_evidence",
+        "repetition_hypotheses",
+        "region_candidates",
+        "detail_instance_proposals",
+        "unknown_regions",
+        "qa",
+        "review_required",
+        "promotion_allowed"
+      ],
+      "properties": {
+        "id": { "type": "string" },
+        "source_plane_id": { "type": "string" },
+        "rectification": { "$ref": "#/$defs/rectification" },
+        "edge_evidence": { "type": "array", "items": { "$ref": "#/$defs/edge_evidence" } },
+        "corner_evidence": { "type": "array", "items": { "$ref": "#/$defs/corner_evidence" } },
+        "repetition_hypotheses": { "type": "array", "items": { "$ref": "#/$defs/repetition_hypothesis" } },
+        "region_candidates": { "type": "array", "items": { "$ref": "#/$defs/region_candidate" } },
+        "detail_instance_proposals": { "type": "array", "items": { "$ref": "#/$defs/detail_instance_proposal" } },
+        "unknown_regions": { "type": "array", "items": { "type": "object" } },
+        "qa": { "type": "object" },
+        "review_required": { "const": true },
+        "promotion_allowed": { "const": false }
+      }
+    },
+    "review_policy": {
+      "type": "object",
+      "required": ["status", "accepted_plane_local_review_required", "review_required", "promotion_allowed", "compile_allowed", "blockers"],
+      "properties": {
+        "status": { "enum": ["needs_plane_local_review", "accepted", "blocked"] },
+        "accepted_plane_local_review_required": { "const": true },
+        "review_required": { "const": true },
+        "promotion_allowed": { "const": false },
+        "compile_allowed": { "const": false },
+        "blockers": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/image-geometry-strategy.schema.json",
+  "title": "ImageGeometryStrategy v1",
+  "type": "object",
+  "required": ["kind", "version", "profile", "image_count", "source_mode", "strategy", "calibration_required", "expected_artifacts", "forbidden_artifacts", "review_policy"],
+  "properties": {
+    "kind": { "const": "image_geometry_strategy_v1" },
+    "version": { "const": 1 },
+    "profile": { "type": "string" },
+    "image_count": { "type": "integer", "minimum": 1 },
+    "source_mode": { "enum": ["perspective_photo", "bird_eye_photo", "orthographic_document", "mixed", "unknown"] },
+    "strategy": {
+      "enum": [
+        "calibrated_manhattan_planes",
+        "calibrated_room_surfaces",
+        "multi_view_calibration_pose_graph",
+        "ground_plane_site",
+        "document_orthographic_views",
+        "object_surface_profile",
+        "multi_view_object_surface",
+        "unclassified_evidence_only"
+      ]
+    },
+    "calibration_required": { "type": "boolean" },
+    "expected_artifacts": { "type": "array", "items": { "type": "string" } },
+    "forbidden_artifacts": { "type": "array", "items": { "type": "string" } },
+    "review_policy": {
+      "type": "object",
+      "required": ["review_required", "promotion_allowed", "compile_allowed", "blockers"],
+      "properties": {
+        "review_required": { "const": true },
+        "promotion_allowed": { "const": false },
+        "compile_allowed": { "const": false },
+        "blockers": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "notes": { "type": "array", "items": { "type": "string" } }
+  }
+}

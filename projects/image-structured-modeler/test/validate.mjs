@@ -14,12 +14,50 @@ import { generatePartGraphFromObservations } from '../scripts/generate-part-grap
 import { applyCandidatePromotionPatch } from '../scripts/apply-candidate-promotion-patch.mjs';
 import { buildCandidatePromotionPatch } from '../scripts/build-candidate-promotion-patch.mjs';
 import { generateYellowAxisCalibrationWorkbench } from '../scripts/generate-yellow-axis-calibration-workbench.mjs';
-import { generateYellowVisibleEffect } from '../scripts/generate-yellow-visible-effect.mjs';
+import { runCalibrationBenchmark } from '../scripts/run-calibration-benchmark.mjs';
+import { runCalibrationRoutingBenchmark } from '../scripts/run-calibration-routing-benchmark.mjs';
+import { runFacadeDraftingStudy } from '../scripts/run-facade-drafting-study.mjs';
+import { runInteriorDraftingStudy } from '../scripts/run-interior-drafting-study.mjs';
+import { runObjectSurfaceStudy } from '../scripts/run-object-surface-study.mjs';
+import { buildStructureLineEvidence } from '../scripts/lib/opencv-structure-line-backend.mjs';
+import { buildPerspectiveCalibrationHypotheses } from '../scripts/lib/perspective-calibration.mjs';
+import { evaluatePerspectiveCalibrationReview } from '../scripts/lib/perspective-calibration-review.mjs';
+import { applyCornerChainTopologyReview } from '../scripts/lib/calibrated-plane-topology.mjs';
+import { evaluateMultiViewCalibrationReview } from '../scripts/lib/multi-view-calibration.mjs';
 import {
-  BUILDING_SINGLE_STRUCTURAL_PROJECTION_KIND,
-  YELLOW_BUILDING_STRUCTURAL_PROJECTION_CONFIG,
-  buildBuildingSingleStructuralProjection
-} from '../scripts/lib/yellow-building-structural-projection.mjs';
+  evaluateGeometryFusionGate,
+  evaluateHiddenGeometryReview,
+  evaluateMetricScaleReview,
+  evaluateMultiViewConflictReview,
+  evaluateRelativePoseReview
+} from '../scripts/lib/multi-view-geometry-fusion.mjs';
+import { generateYellowVisibleEffect } from '../scripts/generate-yellow-visible-effect.mjs';
+import { buildYellowReviewedModel } from '../scripts/build-yellow-reviewed-model.mjs';
+import { promoteReviewedPlaneLocalDetails } from '../scripts/lib/plane-local-detail-promotion.mjs';
+import {
+  buildPendingRoomLocalDetailReview,
+  buildPendingRoomSurfaceReview,
+  buildRoomSurfaceGraph,
+  evaluateRoomSurfaceReview,
+  promoteReviewedRoomLocalDetails
+} from '../scripts/lib/room-surface-graph.mjs';
+import {
+  buildPendingVisibleCoverageReview,
+  evaluateVisibleCoverageReview
+} from '../scripts/lib/visible-coverage-review.mjs';
+import {
+  annotateObservationSetWithDraftingFirstGraphs,
+  buildDefaultDraftViewReviewDecision
+} from '../scripts/lib/drafting-first-graphs.mjs';
+import {
+  buildPendingObjectSurfaceReview,
+  evaluateObjectSurfaceReview,
+  promoteReviewedObjectSurfaceFeatures
+} from '../scripts/lib/object-surface-review.mjs';
+import {
+  prepareExternalBenchmarkSamplePackage,
+  runExternalBenchmarkAdapter
+} from '../scripts/lib/external-benchmark-adapter.mjs';
 import { applyCorrectionPatch, buildCorrectionPatchFromParameterProposals, buildCorrectionPatchFromReferenceReport } from '../scripts/lib/part-graph-corrections.mjs';
 import { buildStructuredAssetIntake } from '../scripts/intake-assets.mjs';
 import { exportMcpModelingBriefCli } from '../scripts/export-mcp-modeling-brief.mjs';
@@ -109,15 +147,56 @@ const imageSetObservationSchema = await readJson('schema/image-set-observation.s
 const buildingSingleSemanticEvidenceSchema = await readJson('schema/building-single-semantic-evidence.schema.json');
 const facadePlaneGraphSchema = await readJson('schema/facade-plane-graph.schema.json');
 const structureEvidenceGraphSchema = await readJson('schema/structure-evidence-graph.schema.json');
-const detectedStructureLinesSchema = await readJson('schema/detected-structure-lines.schema.json');
-const axisCalibrationWorkbenchSchema = await readJson('schema/axis-calibration-workbench.schema.json');
-const axisCalibrationReviewDecisionSchema = await readJson('schema/axis-calibration-review-decision.schema.json');
-const axisCalibrationResultSchema = await readJson('schema/axis-calibration-result.schema.json');
+const calibrationGroundTruthSchema = await readJson('schema/calibration-ground-truth.schema.json');
+const structureLineEvidenceSchema = await readJson('schema/structure-line-evidence.schema.json');
+const perspectiveCalibrationHypothesesSchema = await readJson('schema/perspective-calibration-hypotheses.schema.json');
+const perspectiveCalibrationReviewDecisionSchema = await readJson('schema/perspective-calibration-review-decision.schema.json');
+const perspectiveCalibrationReviewResultSchema = await readJson('schema/perspective-calibration-review-result.schema.json');
+const calibrationBenchmarkReportSchema = await readJson('schema/calibration-benchmark-report.schema.json');
+const planeTopologyReviewSeedSchema = await readJson('schema/plane-topology-review-seed.schema.json');
+const planeLocalDetailSeedSchema = await readJson('schema/plane-local-detail-seed.schema.json');
+const imageGeometryStrategySchema = await readJson('schema/image-geometry-strategy.schema.json');
+const multiViewCalibrationGraphSchema = await readJson('schema/multi-view-calibration-graph.schema.json');
+const multiViewCalibrationReviewDecisionSchema = await readJson('schema/multi-view-calibration-review-decision.schema.json');
+const multiViewCalibrationReviewResultSchema = await readJson('schema/multi-view-calibration-review-result.schema.json');
+const multiViewRelativePoseReviewDecisionSchema = await readJson('schema/multi-view-relative-pose-review-decision.schema.json');
+const multiViewRelativePoseReviewResultSchema = await readJson('schema/multi-view-relative-pose-review-result.schema.json');
+const metricScaleReviewDecisionSchema = await readJson('schema/metric-scale-review-decision.schema.json');
+const metricScaleReviewResultSchema = await readJson('schema/metric-scale-review-result.schema.json');
+const multiViewConflictGraphSchema = await readJson('schema/multi-view-conflict-graph.schema.json');
+const multiViewConflictReviewDecisionSchema = await readJson('schema/multi-view-conflict-review-decision.schema.json');
+const multiViewConflictReviewResultSchema = await readJson('schema/multi-view-conflict-review-result.schema.json');
+const hiddenGeometryReviewDecisionSchema = await readJson('schema/hidden-geometry-review-decision.schema.json');
+const hiddenGeometryReviewResultSchema = await readJson('schema/hidden-geometry-review-result.schema.json');
+const geometryFusionGateResultSchema = await readJson('schema/geometry-fusion-gate-result.schema.json');
+const calibrationRoutingBenchmarkReportSchema = await readJson('schema/calibration-routing-benchmark-report.schema.json');
+const facadeDraftingStudySampleSchema = await readJson('schema/facade-drafting-study-sample.schema.json');
+const facadeDraftingStudyReportSchema = await readJson('schema/facade-drafting-study-report.schema.json');
+const reviewedFacadeModelStudySchema = await readJson('schema/reviewed-facade-model-study.schema.json');
+const planeLocalEvidenceGraphSchema = await readJson('schema/plane-local-evidence-graph.schema.json');
+const planeLocalEvidenceReviewDecisionSchema = await readJson('schema/plane-local-evidence-review-decision.schema.json');
+const planeLocalDetailPromotionSchema = await readJson('schema/plane-local-detail-promotion.schema.json');
+const modelCompletionStatusSchema = await readJson('schema/model-completion-status.schema.json');
+const roomSurfaceTopologySeedSchema = await readJson('schema/room-surface-topology-seed.schema.json');
+const roomSurfaceGraphSchema = await readJson('schema/room-surface-graph.schema.json');
+const roomSurfaceReviewDecisionSchema = await readJson('schema/room-surface-review-decision.schema.json');
+const roomSurfaceReviewResultSchema = await readJson('schema/room-surface-review-result.schema.json');
+const visibleCoverageReviewDecisionSchema = await readJson('schema/visible-coverage-review-decision.schema.json');
+const visibleCoverageReviewResultSchema = await readJson('schema/visible-coverage-review-result.schema.json');
+const surfaceLocalDetailPromotionSchema = await readJson('schema/surface-local-detail-promotion.schema.json');
+const interiorDraftingStudySampleSchema = await readJson('schema/interior-drafting-study-sample.schema.json');
+const interiorDraftingStudyReportSchema = await readJson('schema/interior-drafting-study-report.schema.json');
+const objectSurfaceReviewDecisionSchema = await readJson('schema/object-surface-review-decision.schema.json');
+const objectSurfaceReviewResultSchema = await readJson('schema/object-surface-review-result.schema.json');
+const objectSurfaceFeaturePromotionSchema = await readJson('schema/object-surface-feature-promotion.schema.json');
+const objectSurfaceStudySampleSchema = await readJson('schema/object-surface-study-sample.schema.json');
+const objectSurfaceStudyReportSchema = await readJson('schema/object-surface-study-report.schema.json');
+const externalBenchmarkSamplePackageSchema = await readJson('schema/external-benchmark-sample-package.schema.json');
+const externalBenchmarkAdapterReportSchema = await readJson('schema/external-benchmark-adapter-report.schema.json');
 const calibratedViewGraphSchema = await readJson('schema/calibrated-view-graph.schema.json');
 const cornerChainTopologySchema = await readJson('schema/corner-chain-topology.schema.json');
 const draftViewGraphSchema = await readJson('schema/draft-view-graph.schema.json');
 const objectSurfaceGraphSchema = await readJson('schema/object-surface-graph.schema.json');
-const calibratedViewReviewDecisionSchema = await readJson('schema/calibrated-view-review-decision.schema.json');
 const cornerChainTopologyReviewDecisionSchema = await readJson('schema/corner-chain-topology-review-decision.schema.json');
 const draftViewReviewDecisionSchema = await readJson('schema/draft-view-review-decision.schema.json');
 const localDetailReviewDecisionSchema = await readJson('schema/local-detail-review-decision.schema.json');
@@ -174,15 +253,56 @@ const validateImageSetObservation = compileSchema(imageSetObservationSchema);
 const validateBuildingSingleSemanticEvidence = compileSchema(buildingSingleSemanticEvidenceSchema);
 const validateFacadePlaneGraph = compileSchema(facadePlaneGraphSchema);
 const validateStructureEvidenceGraph = compileSchema(structureEvidenceGraphSchema);
-const validateDetectedStructureLines = compileSchema(detectedStructureLinesSchema);
-const validateAxisCalibrationWorkbench = compileSchema(axisCalibrationWorkbenchSchema);
-const validateAxisCalibrationReviewDecision = compileSchema(axisCalibrationReviewDecisionSchema);
-const validateAxisCalibrationResult = compileSchema(axisCalibrationResultSchema);
+const validateCalibrationGroundTruth = compileSchema(calibrationGroundTruthSchema);
+const validateStructureLineEvidence = compileSchema(structureLineEvidenceSchema);
+const validatePerspectiveCalibrationHypotheses = compileSchema(perspectiveCalibrationHypothesesSchema);
+const validatePerspectiveCalibrationReviewDecision = compileSchema(perspectiveCalibrationReviewDecisionSchema);
+const validatePerspectiveCalibrationReviewResult = compileSchema(perspectiveCalibrationReviewResultSchema);
+const validateCalibrationBenchmarkReport = compileSchema(calibrationBenchmarkReportSchema);
+const validatePlaneTopologyReviewSeed = compileSchema(planeTopologyReviewSeedSchema);
+const validatePlaneLocalDetailSeed = compileSchema(planeLocalDetailSeedSchema);
+const validateImageGeometryStrategy = compileSchema(imageGeometryStrategySchema);
+const validateMultiViewCalibrationGraph = compileSchema(multiViewCalibrationGraphSchema);
+const validateMultiViewCalibrationReviewDecision = compileSchema(multiViewCalibrationReviewDecisionSchema);
+const validateMultiViewCalibrationReviewResult = compileSchema(multiViewCalibrationReviewResultSchema);
+const validateMultiViewRelativePoseReviewDecision = compileSchema(multiViewRelativePoseReviewDecisionSchema);
+const validateMultiViewRelativePoseReviewResult = compileSchema(multiViewRelativePoseReviewResultSchema);
+const validateMetricScaleReviewDecision = compileSchema(metricScaleReviewDecisionSchema);
+const validateMetricScaleReviewResult = compileSchema(metricScaleReviewResultSchema);
+const validateMultiViewConflictGraph = compileSchema(multiViewConflictGraphSchema);
+const validateMultiViewConflictReviewDecision = compileSchema(multiViewConflictReviewDecisionSchema);
+const validateMultiViewConflictReviewResult = compileSchema(multiViewConflictReviewResultSchema);
+const validateHiddenGeometryReviewDecision = compileSchema(hiddenGeometryReviewDecisionSchema);
+const validateHiddenGeometryReviewResult = compileSchema(hiddenGeometryReviewResultSchema);
+const validateGeometryFusionGateResult = compileSchema(geometryFusionGateResultSchema);
+const validateCalibrationRoutingBenchmarkReport = compileSchema(calibrationRoutingBenchmarkReportSchema);
+const validateFacadeDraftingStudySample = compileSchema(facadeDraftingStudySampleSchema);
+const validateFacadeDraftingStudyReport = compileSchema(facadeDraftingStudyReportSchema);
+const validateReviewedFacadeModelStudy = compileSchema(reviewedFacadeModelStudySchema);
+const validatePlaneLocalEvidenceGraph = compileSchema(planeLocalEvidenceGraphSchema);
+const validatePlaneLocalEvidenceReviewDecision = compileSchema(planeLocalEvidenceReviewDecisionSchema);
+const validatePlaneLocalDetailPromotion = compileSchema(planeLocalDetailPromotionSchema);
+const validateModelCompletionStatus = compileSchema(modelCompletionStatusSchema);
+const validateRoomSurfaceTopologySeed = compileSchema(roomSurfaceTopologySeedSchema);
+const validateRoomSurfaceGraph = compileSchema(roomSurfaceGraphSchema);
+const validateRoomSurfaceReviewDecision = compileSchema(roomSurfaceReviewDecisionSchema);
+const validateRoomSurfaceReviewResult = compileSchema(roomSurfaceReviewResultSchema);
+const validateVisibleCoverageReviewDecision = compileSchema(visibleCoverageReviewDecisionSchema);
+const validateVisibleCoverageReviewResult = compileSchema(visibleCoverageReviewResultSchema);
+const validateSurfaceLocalDetailPromotion = compileSchema(surfaceLocalDetailPromotionSchema);
+const validateInteriorDraftingStudySample = compileSchema(interiorDraftingStudySampleSchema);
+const validateInteriorDraftingStudyReport = compileSchema(interiorDraftingStudyReportSchema);
+const validateObjectSurfaceReviewDecision = compileSchema(objectSurfaceReviewDecisionSchema);
+const validateObjectSurfaceReviewResult = compileSchema(objectSurfaceReviewResultSchema);
+const validateObjectSurfaceFeaturePromotion = compileSchema(objectSurfaceFeaturePromotionSchema);
+const validateObjectSurfaceStudySample = compileSchema(objectSurfaceStudySampleSchema);
+const validateObjectSurfaceStudyReport = compileSchema(objectSurfaceStudyReportSchema);
+const validateExternalBenchmarkSamplePackage = compileSchema(externalBenchmarkSamplePackageSchema);
+const validateExternalBenchmarkAdapterReport = compileSchema(externalBenchmarkAdapterReportSchema);
 const validateCalibratedViewGraph = compileSchema(calibratedViewGraphSchema);
 const validateCornerChainTopology = compileSchema(cornerChainTopologySchema);
 const validateDraftViewGraph = compileSchema(draftViewGraphSchema);
 const validateObjectSurfaceGraph = compileSchema(objectSurfaceGraphSchema);
-const validateCalibratedViewReviewDecision = compileSchema(calibratedViewReviewDecisionSchema);
 const validateCornerChainTopologyReviewDecision = compileSchema(cornerChainTopologyReviewDecisionSchema);
 const validateDraftViewReviewDecision = compileSchema(draftViewReviewDecisionSchema);
 const validateLocalDetailReviewDecision = compileSchema(localDetailReviewDecisionSchema);
@@ -1571,8 +1691,13 @@ await assertStructuredAssetIntakeFailClosed();
 const draftingFirstBenchmarkChecked = await assertDraftingFirstBenchmarkReports();
 await assertImageStructuredReleaseGate();
 await assertBuildingSingleCompileGateRegression();
-await assertYellowAxisCalibrationWorkbench();
-await assertYellowVisibleEffectJudgment();
+await assertCalibrationBenchmark();
+await assertFacadeDraftingStudy();
+await assertCalibrationRoutingBenchmark();
+await assertInteriorDraftingStudy();
+await assertObjectSurfaceStudy();
+await assertYellowCalibrationCommandWrappers();
+await assertYellowReviewedModelStudy();
 const remoteChecked = await assertCompactRemoteSample();
 const ambulanceEvidenceChecked = await assertAmbulancePartGraphEvidenceSample();
 const buildingGroupChecked = await assertBuildingGroupObservationSample();
@@ -1607,6 +1732,7 @@ process.stdout.write(`${JSON.stringify({
     building_single_compile_gate: true,
     yellow_axis_calibration_workbench: true,
     yellow_visible_effect_judgment: true,
+    yellow_reviewed_model_study: true,
     compact_remote_sample: remoteChecked,
     ambulance_part_graph_evidence: ambulanceEvidenceChecked,
     building_group_observation_sample: buildingGroupChecked,
@@ -4353,6 +4479,7 @@ async function assertDraftingFirstBenchmarkReports() {
     'switch_controller',
     'compact_remote',
     'ambulance',
+    'ambulance_object_surface_reviewed_subset',
     'fuji_camera_profile_reference'
   ]) {
     assert.ok(tier0.report.cases.some((item) => item.id === id), `Tier0 benchmark should include ${id}`);
@@ -4364,6 +4491,14 @@ async function assertDraftingFirstBenchmarkReports() {
   const cameraCase = tier0.report.cases.find((item) => item.id === 'fuji_camera_profile_reference');
   assert.equal(cameraCase.status, 'review', 'camera profile Tier0 case should be profile-reference review coverage');
   assert.equal(cameraCase.metrics.false_promotion_count, 0, 'camera profile reference must not count as image promotion');
+  const ambulanceSurfaceCase = tier0.report.cases.find((item) => item.id === 'ambulance_object_surface_reviewed_subset');
+  assert.equal(ambulanceSurfaceCase.status, 'review', 'reviewed ambulance object-surface subset should remain a release-blocked benchmark review case');
+  assert.equal(ambulanceSurfaceCase.metrics.accepted_surface_count, 3, 'ambulance benchmark should accept three physical feature-binding surfaces');
+  assert.equal(ambulanceSurfaceCase.metrics.context_only_surface_count, 1, 'ambulance benchmark should keep oblique context separate from physical surfaces');
+  assert.equal(ambulanceSurfaceCase.metrics.accepted_feature_count, 13, 'ambulance benchmark should promote exactly thirteen reviewed cross-view feature records');
+  assert.equal(ambulanceSurfaceCase.metrics.mock_qa_verdict, 'pass', 'ambulance reviewed object-surface subset should pass mock QA');
+  assert.equal(ambulanceSurfaceCase.metrics.release_allowed, false, 'partial object-surface feature coverage must remain release-blocked');
+  assert.equal(ambulanceSurfaceCase.metrics.false_promotion_count, 0, 'ambulance object-surface benchmark must preserve zero false promotions');
 
   const savedTier0 = JSON.parse(await fs.readFile(path.join(repoRoot, 'output', 'image-structured-benchmark', 'regression-tier0', 'benchmark-report.json'), 'utf8'));
   assertValid(validateImageStructuredBenchmarkReport, savedTier0, 'saved Drafting-first Tier0 benchmark report');
@@ -4376,9 +4511,83 @@ async function assertDraftingFirstBenchmarkReports() {
   assertValid(validateImageStructuredBenchmarkReport, tier1.report, 'Drafting-first Tier1 benchmark report');
   assert.equal(tier1.report.status, 'blocked_external_dataset_unavailable', 'Tier1 benchmark should block cleanly when external samples are not prepared');
   assert.equal(tier1.report.false_promotion_count, 0, 'Tier1 adapter benchmark must not allow false promotions');
-  assert.ok(tier1.report.cases.every((item) => item.status === 'blocked_external_dataset_unavailable'), 'Tier1 manifest samples should remain external-data blocked by default');
+  const londonSourceAvailable = await pathExists(path.join(repoRoot, 'external-datasets', 'wikimedia-commons', 'london-corner-building', 'london-corner-building.jpg'));
+  const londonCase = tier1.report.cases.find((item) => item.id === 'wikimedia_london_corner_facade_study');
+  assert.ok(londonCase, 'Tier1 benchmark should include the generalized London facade study adapter');
+  assert.equal(londonCase.status, londonSourceAvailable ? 'review' : 'blocked_external_dataset_unavailable', 'London facade adapter should execute only when its ignored external source is prepared');
+  if (londonSourceAvailable) {
+    assert.equal(londonCase.metrics.adapter_executed, true, 'prepared London sample should execute the generalized facade adapter');
+    assert.equal(londonCase.metrics.two_horizontal_families, true, 'London adapter should recover two reviewed horizontal direction families');
+    assert.equal(londonCase.metrics.accepted_visible_plane_count, 3, 'London adapter should preserve both primary planes and the corner chamfer');
+    assert.equal(londonCase.metrics.unknown_axis_visible_plane_count, 1, 'London corner chamfer should remain an explicitly unknown-axis plane');
+    assert.equal(londonCase.metrics.accepted_partial_detail_count, 8, 'London partial review fixture should promote exactly eight reviewed openings');
+    assert.equal(londonCase.metrics.mock_qa_verdict, 'pass', 'London reviewed facade study should pass mock QA');
+    assert.equal(londonCase.metrics.visual_status, 'in_progress', 'partial detail coverage must not claim visual completion');
+    assert.equal(londonCase.metrics.release_status, 'blocked', 'single-view nominal-scale study must remain release-blocked');
+  }
+  const interiorSourceAvailable = await pathExists(path.join(repoRoot, 'external-datasets', 'wikimedia-commons', 'interior-hallway-2013', 'hallway.jpg'));
+  const interiorCase = tier1.report.cases.find((item) => item.id === 'wikimedia_interior_hallway_one_point_study');
+  assert.ok(interiorCase, 'Tier1 benchmark should include the generalized one-point interior adapter');
+  assert.equal(interiorCase.status, interiorSourceAvailable ? 'review' : 'blocked_external_dataset_unavailable', 'interior adapter should execute only when its ignored external source is prepared');
+  if (interiorSourceAvailable) {
+    assert.equal(interiorCase.metrics.adapter_executed, true, 'prepared interior sample should execute the room-surface adapter');
+    assert.equal(interiorCase.metrics.camera_model, 'one_point_or_near_affine', 'interior adapter should use the one-point or near-affine camera model');
+    assert.equal(interiorCase.metrics.accepted_surface_count, 5, 'interior adapter should preserve the reviewed room envelope surfaces');
+    assert.equal(interiorCase.metrics.accepted_detail_count, 2, 'interior adapter should promote only two reviewed clear local details');
+    assert.equal(interiorCase.metrics.excluded_region_count, 1, 'interior adapter should record the people region as an explicit visible-coverage exclusion');
+    assert.equal(interiorCase.metrics.exclusion_geometry_compiled, false, 'excluded interior regions must never compile geometry');
+    assert.equal(interiorCase.metrics.mock_qa_verdict, 'pass', 'reviewed interior study should pass mock QA');
+    assert.equal(interiorCase.metrics.visual_status, 'complete', 'accepted visible coverage with explicit exclusions may satisfy visual completion');
+    assert.notEqual(interiorCase.metrics.release_status, 'complete', 'single-view interior without metric scale and hidden closure review must not reach release completion');
+    assert.equal(interiorCase.metrics.false_promotion_count, 0, 'interior adapter must preserve zero false promotions');
+  }
+  for (const item of tier1.report.cases.filter((candidate) => ![
+    'wikimedia_london_corner_facade_study',
+    'wikimedia_interior_hallway_one_point_study'
+  ].includes(candidate.id))) {
+    assert.equal(item.status, 'blocked_external_dataset_unavailable', `${item.id} should remain blocked until its external sample is prepared`);
+  }
   const savedTier1 = JSON.parse(await fs.readFile(path.join(repoRoot, 'output', 'image-structured-benchmark', 'regression-tier1', 'benchmark-report.json'), 'utf8'));
   assertValid(validateImageStructuredBenchmarkReport, savedTier1, 'saved Drafting-first Tier1 benchmark report');
+
+  const adapterPackageDir = path.join(repoRoot, 'output', 'image-structured-benchmark', 'external-adapter-contract');
+  await fs.rm(adapterPackageDir, { recursive: true, force: true });
+  await fs.mkdir(adapterPackageDir, { recursive: true });
+  await Promise.all([
+    fs.copyFile(
+      path.join(subprojectRoot, 'examples', 'building-single-anime-yellow', 'input-visible-crop.png'),
+      path.join(adapterPackageDir, 'source.png')
+    ),
+    fs.writeFile(path.join(adapterPackageDir, 'annotation.json'), '{"image":"source.png"}\n', 'utf8'),
+    fs.writeFile(path.join(adapterPackageDir, 'model.obj'), 'v 0 0 0\nv 1 0 0\nv 0 1 0\nf 1 2 3\n', 'utf8')
+  ]);
+  const adapterSample = {
+    id: 'synthetic_pix3d_adapter_contract',
+    dataset: 'Synthetic Pix3D adapter contract',
+    domain: 'product',
+    adapter: 'pix3d_image_cad_adapter',
+    dataset_url: 'https://example.invalid/synthetic-adapter-contract',
+    license_note: 'Repository test fixture only.',
+    local_path: path.relative(repoRoot, adapterPackageDir)
+  };
+  const preparedAdapterPackage = await prepareExternalBenchmarkSamplePackage({
+    sample: adapterSample,
+    packageDir: adapterPackageDir,
+    files: { source_image: 'source.png', image_annotation: 'annotation.json', cad_model: 'model.obj' },
+    createdAt: '2026-07-13T00:00:00.000Z'
+  });
+  assertValid(validateExternalBenchmarkSamplePackage, preparedAdapterPackage.packageManifest, 'prepared external benchmark sample package');
+  const adapterReadyReport = await runExternalBenchmarkAdapter({ sample: adapterSample, packageDir: adapterPackageDir });
+  assertValid(validateExternalBenchmarkAdapterReport, adapterReadyReport, 'ready external benchmark adapter report');
+  assert.equal(adapterReadyReport.status, 'ready_for_evidence_review', 'complete hashed external subset package should enter evidence review');
+  assert.equal(adapterReadyReport.promotion_allowed, false, 'dataset adapter readiness must never promote geometry');
+  assert.equal(adapterReadyReport.metrics.false_promotion_count, 0, 'dataset adapter package should preserve zero false promotions');
+  await fs.appendFile(path.join(adapterPackageDir, 'annotation.json'), '{}\n', 'utf8');
+  const tamperedAdapterReport = await runExternalBenchmarkAdapter({ sample: adapterSample, packageDir: adapterPackageDir });
+  assertValid(validateExternalBenchmarkAdapterReport, tamperedAdapterReport, 'tampered external benchmark adapter report');
+  assert.equal(tamperedAdapterReport.status, 'blocked_invalid_package', 'tampered external subset files must fail checksum validation');
+  assert.ok(tamperedAdapterReport.blockers.includes('external_sample_checksum_mismatch:image_annotation'), 'tampered adapter report should identify the failed file role');
+  assert.equal(tamperedAdapterReport.promotion_allowed, false, 'invalid dataset package must remain non-promotable');
 
   return {
     tier0_cases: tier0.report.summary.case_count,
@@ -5392,294 +5601,1394 @@ async function assertBuildingSingleCompileGateRegression() {
   );
 }
 
-async function assertYellowAxisCalibrationWorkbench() {
-  const outputDir = 'output/image-structured-modeler/yellow-axis-calibration-test';
-  const result = await generateYellowAxisCalibrationWorkbench({ outputDir });
+async function assertCalibrationBenchmark() {
+  const outputDir = 'output/image-structured-modeler/calibration-benchmark-test/yellow-building';
+  const result = await runCalibrationBenchmark({ outputDir });
   const absoluteOutputDir = path.join(repoRoot, outputDir);
 
-  assertValid(validateAxisCalibrationWorkbench, result.workbench, 'yellow axis calibration workbench');
-  assert.equal(result.workbench.review_policy.status, 'needs_axis_review', 'yellow axis workbench should require axis review');
-  assert.equal(result.workbench.review_policy.derived_drafting_allowed, false, 'yellow axis workbench must not allow derived drafting before review');
-  assert.equal(result.workbench.line_candidates.every((candidate) => candidate.axis_assignment === 'axis_unknown'), true, 'yellow axis candidates must start unassigned');
-  assertValid(validateDetectedStructureLines, result.detectedStructureLines, 'yellow detected structure lines');
-  assert.equal(result.detectedStructureLines.qa.usable_for_axis_calibration, false, 'yellow detected structure lines should not auto-approve red/green axis calibration');
-  assert.equal(result.detectedStructureLines.qa.status, 'blocked_vanishing_point_cluster_review_required', 'yellow detected VP clusters should require review before axis calibration');
-  assert.ok(result.detectedStructureLines.qa.blockers.includes('accepted_vanishing_point_cluster_review_required'), 'yellow detected lines should require accepted VP cluster review');
-  assert.ok(result.detectedStructureLines.line_candidates.some((line) => line.extraction_method === 'local_short_segment_hough'), 'yellow detected lines should include local short structure-line candidates');
-  const maxDetectedLineLength = Math.max(...result.detectedStructureLines.line_candidates.map((line) => line.length_px));
-  assert.ok(maxDetectedLineLength <= 260, 'yellow detected lines should not prefer full-image global Hough lines over local short structure lines');
-  assert.ok(result.detectedStructureLines.line_candidates.length <= 18, 'yellow detected lines should expose sparse clean seeds instead of dense edge candidates');
-  assert.equal(result.detectedStructureLines.perspective_hypothesis.model, 'one_finite_vp_plus_parallel_candidate', 'yellow detected lines should preserve a finite VP family plus a parallel-axis candidate instead of only one VP direction');
-  assert.equal(result.detectedStructureLines.perspective_hypothesis.finite_vp_family_count, 1, 'yellow detected lines should report one finite VP family at this confidence level');
-  assert.equal(result.detectedStructureLines.perspective_hypothesis.parallel_family_count, 1, 'yellow detected lines should keep a parallel family for the possible single-point axis');
-  assert.ok(result.detectedStructureLines.qa.blockers.includes('perspective_model_review_required_single_point_vs_two_point'), 'yellow detected lines should require perspective-model review before axis calibration');
-  assert.ok(result.detectedStructureLines.line_candidates.some((line) => line.perspective_role === 'finite_vp_family_1'), 'yellow detected lines should expose finite VP seed roles');
-  assert.ok(result.detectedStructureLines.line_candidates.some((line) => line.perspective_role === 'parallel_axis_seed'), 'yellow detected lines should expose parallel-axis seed roles');
-  assert.ok(result.workbench.line_candidates.some((candidate) => candidate.source_kind === 'detected_structure_line_candidate'), 'yellow axis workbench should include raster-detected line candidates');
-  assert.ok(result.workbench.line_candidates.some((candidate) => candidate.id === 'candidate_corner_AB'), 'yellow axis workbench should expose AB as an unassigned candidate');
-  assert.ok(result.workbench.line_candidates.some((candidate) => candidate.id === 'candidate_corner_BC'), 'yellow axis workbench should expose BC as an unassigned candidate');
-  assert.ok(result.workbench.line_candidates.some((candidate) => candidate.source_family_hint === 'vertical'), 'yellow axis workbench should expose vertical candidate lines');
+  assertValid(validateCalibrationGroundTruth, result.groundTruth, 'yellow calibration ground truth draft');
+  assert.equal(result.groundTruth.review_status, 'draft_needs_user_acceptance', 'yellow calibration truth must remain draft until explicitly accepted by the user');
+  assertValid(validateStructureLineEvidence, result.structureLineEvidence, 'yellow structure line evidence v2');
+  assert.equal(result.structureLineEvidence.backend.id, 'opencv_wasm_multiscale_houghp_v1', 'calibration benchmark should use the deterministic OpenCV WASM backend');
+  assert.equal(result.structureLineEvidence.selection_policy.neighbor_density_is_hard_rejection, false, 'nearby line density must never hard-reject structural evidence');
+  assert.ok(result.structureLineEvidence.summary.raw_segment_count > result.structureLineEvidence.summary.seed_segment_count * 10, 'high-recall raw evidence must remain available beyond the sparse seed set');
+  assert.ok(result.structureLineEvidence.summary.eligible_segment_count > 500, 'yellow benchmark should retain a broad eligible line pool');
+  assert.equal(result.structureLineEvidence.summary.seed_segment_count, 96, 'yellow benchmark should use a spatially and directionally balanced seed set');
 
-  assertValid(validateAxisCalibrationReviewDecision, result.pendingReview, 'yellow pending axis calibration review');
-  assertValid(validateAxisCalibrationResult, result.pendingResult, 'yellow pending axis calibration result');
-  assert.equal(result.pendingResult.status, 'blocked_no_accepted_axis_review', 'yellow pending axis review must block calibration');
-  assert.ok(result.pendingResult.blockers.includes('accepted_axis_calibration_review_required'), 'yellow pending axis result should require accepted axis review');
-  assert.equal(result.pendingResult.derived_drafting_allowed, false, 'yellow pending axis result must block derived drafting');
-  assert.equal(result.pendingCalibratedViewGraph.review_policy.status, 'needs_calibrated_view_review', 'yellow pending axis result should build only a blocked calibrated-view graph');
-  assertValid(validateCalibratedViewGraph, result.pendingCalibratedViewGraph, 'yellow blocked calibrated view graph from pending review');
-  assert.equal(result.topologyGate.corner_chain_topology_allowed, false, 'yellow topology must be blocked before accepted axis review');
-  assert.equal(result.topologyGate.plan_projection_allowed, false, 'yellow plan projection must be blocked before accepted axis review');
+  assertValid(validatePerspectiveCalibrationHypotheses, result.perspectiveCalibration, 'yellow perspective calibration hypotheses');
+  assert.equal(result.perspectiveCalibration.qa.status, 'ready_for_calibration_review', 'yellow perspective families should be ready for review but not auto-accepted');
+  assert.equal(result.perspectiveCalibration.qa.sufficient_for_review, true, 'yellow perspective evidence should recover enough direction families for review');
+  assert.equal(result.perspectiveCalibration.summary.horizontal_family_count, 2, 'yellow perspective evidence should recover two independent horizontal direction families');
+  assert.equal(result.perspectiveCalibration.summary.vertical_family_count, 1, 'yellow perspective evidence should recover one vertical direction family');
+  const horizontalFamilies = result.perspectiveCalibration.direction_families.filter((family) => family.role === 'horizontal_candidate');
+  assert.equal(horizontalFamilies.every((family) => family.axis_assignment === 'axis_unassigned'), true, 'detected direction families must remain neutral before review');
+  assert.ok(horizontalFamilies.some((family) => family.vanishing_point_px[0] < 0), 'yellow calibration should retain the left-side horizontal vanishing family');
+  assert.ok(horizontalFamilies.some((family) => family.vanishing_point_px[0] > result.perspectiveCalibration.source_image.width), 'yellow calibration should retain the right-side horizontal vanishing family');
+  assert.ok(Math.abs(horizontalFamilies[0].vanishing_point_px[1] - horizontalFamilies[1].vanishing_point_px[1]) < 5, 'yellow horizontal vanishing families should define a near-horizontal horizon under vertical correction');
+  const verticalFamily = result.perspectiveCalibration.direction_families.find((family) => family.role === 'vertical_candidate');
+  assert.equal(verticalFamily.vanishing_type, 'infinite', 'yellow vertical family should support a shifted/rectified camera model');
+  assert.equal(result.perspectiveCalibration.camera_model_candidates[0].model, 'two_point_vertical_parallel', 'yellow primary camera candidate should model two finite horizontal VPs plus vertical infinity');
+  assert.equal(result.perspectiveCalibration.review_policy.promotion_allowed, false, 'perspective hypotheses must never promote geometry');
 
-  assertValid(validateAxisCalibrationReviewDecision, result.previousHardcodedReview, 'yellow previous-hardcoded axis review example');
-  assertValid(validateAxisCalibrationResult, result.previousHardcodedResult, 'yellow previous-hardcoded axis result');
-  assert.equal(result.previousHardcodedResult.status, 'blocked_insufficient_axis_support', 'yellow previous hardcoded red/green assignment must be blocked');
-  assert.ok(result.previousHardcodedResult.blockers.includes('insufficient_y_green_axis_lines'), 'yellow previous hardcoded assignment should fail because y_green has only one accepted line');
-  assert.ok(result.previousHardcodedResult.blockers.includes('accepted_vanishing_point_cluster_review_required'), 'yellow previous hardcoded assignment should also fail without accepted detected VP clusters');
-  const previousGreenSupport = result.previousHardcodedResult.axis_support.find((support) => support.axis === 'y_green');
-  assert.equal(previousGreenSupport.line_count, 1, 'yellow previous hardcoded green axis should contain exactly one line');
-  assert.equal(previousGreenSupport.required_line_count, 2, 'yellow green axis should require at least two reviewed lines');
+  assertValid(validateCalibrationBenchmarkReport, result.report, 'yellow calibration benchmark report');
+  assert.equal(result.report.metrics.structural_length_coverage_recall >= 0.9, true, 'yellow visible structural line coverage should meet the 0.90 diagnostic target');
+  assert.equal(result.report.gates.line_recall, true, 'yellow line evidence gate should pass');
+  assert.equal(result.report.gates.two_horizontal_families, true, 'yellow two-horizontal-family gate should pass');
+  assert.equal(result.report.gates.spatial_support, true, 'yellow direction families should have distributed image support');
+  assert.equal(result.report.gates.accepted_ground_truth_required_for_release, false, 'draft truth must not silently become a release gate');
+  assert.equal(result.report.conclusion, 'diagnostic_only_ground_truth_review_required', 'yellow benchmark must remain diagnostic until truth review is accepted');
+  assert.equal(result.report.false_promotion_count, 0, 'calibration benchmark must have zero false promotions');
 
-  assertValid(validateAxisCalibrationReviewDecision, result.acceptedFixtureReview, 'yellow accepted axis calibration fixture review');
-  assertValid(validateAxisCalibrationResult, result.acceptedFixtureResult, 'yellow accepted axis calibration fixture result');
-  assert.equal(result.acceptedFixtureResult.status, 'blocked_insufficient_axis_support', 'yellow accepted line-count fixture should still block without accepted detected VP clusters');
-  assert.equal(result.acceptedFixtureResult.derived_drafting_allowed, false, 'yellow accepted line-count fixture must not allow derived drafting without VP cluster review');
-  assert.equal(result.acceptedFixtureResult.promotion_allowed, false, 'yellow accepted axis fixture must not allow PartGraph promotion');
-  assert.equal(result.acceptedFixtureResult.axis_support.every((support) => support.support_ok === true), true, 'yellow accepted axis fixture should satisfy every axis support minimum');
-  assert.ok(result.acceptedFixtureResult.blockers.includes('accepted_vanishing_point_cluster_review_required'), 'yellow accepted line-count fixture should expose the missing VP cluster review blocker');
+  assertValid(validatePerspectiveCalibrationReviewDecision, result.pendingReview, 'yellow pending perspective calibration review');
+  assertValid(validatePerspectiveCalibrationReviewResult, result.pendingReviewResult, 'yellow pending perspective calibration review result');
+  assert.equal(result.pendingReviewResult.status, 'blocked_no_accepted_review', 'missing calibration review must fail closed');
+  assert.equal(result.pendingReviewResult.rectification_allowed, false, 'pending calibration review must block rectification');
+  assert.equal(result.pendingReviewResult.topology_inference_allowed, false, 'pending calibration review must block topology inference');
+  assert.equal(result.pendingReviewResult.promotion_allowed, false, 'pending calibration review must block promotion');
 
-  for (const relative of [
-    '01-original.png',
-    '02-axis-calibration-workbench-overlay.png',
-    '02-axis-calibration-workbench-overlay.svg',
-    '03-previous-hardcoded-axis-overlay.png',
-    '03-previous-hardcoded-axis-overlay.svg',
-    '04-detected-structure-lines-overlay.png',
-    '04-detected-structure-lines-overlay.svg',
-    'detected-structure-lines.json',
-    'detected-structure-lines.md',
-    'axis-calibration-workbench.json',
-    'axis-calibration-workbench.md',
-    'axis-calibration-review.template.json',
-    'axis-calibration-review.pending.json',
-    'axis-calibration-result.pending.json',
-    'axis-calibration-review.previous-hardcoded-example.json',
-    'axis-calibration-result.previous-hardcoded-example.json',
-    'axis-calibration-review.accepted-fixture.json',
-    'axis-calibration-result.accepted-fixture.json',
-    'calibrated-view-graph.pending.blocked.json',
-    'calibrated-view-graph.previous-hardcoded.blocked.json',
-    'calibrated-view-graph.accepted-fixture.json',
-    'corner-chain-topology-gate.pending.blocked.json',
-    'review/index.html',
-    'judgment-report.json',
-    'judgment-report.md'
-  ]) {
-    const stat = await fs.stat(path.join(absoluteOutputDir, relative));
-    assert.equal(stat.size > 0, true, `yellow axis calibration artifact ${relative} should be non-empty`);
+  assertValid(validatePerspectiveCalibrationReviewDecision, result.acceptedReviewFixture, 'yellow accepted perspective calibration fixture');
+  assertValid(validatePerspectiveCalibrationReviewResult, result.acceptedReviewFixtureResult, 'yellow accepted perspective calibration fixture result');
+  assert.equal(result.acceptedReviewFixtureResult.status, 'accepted_for_rectification', 'accepted calibration fixture should unlock rectification only');
+  assert.equal(result.acceptedReviewFixtureResult.rectification_allowed, true, 'accepted calibration fixture should allow rectification');
+  assert.equal(result.acceptedReviewFixtureResult.topology_inference_allowed, true, 'accepted calibration fixture should allow topology inference');
+  assert.equal(result.acceptedReviewFixtureResult.draft_view_derivation_allowed, false, 'calibration alone must not derive DraftViewGraph before topology review');
+  assert.equal(result.acceptedReviewFixtureResult.promotion_allowed, false, 'accepted calibration must not promote PartGraph geometry');
+  assert.ok(Math.abs(result.acceptedReviewFixtureResult.horizon_line_px.a[1] - result.acceptedReviewFixtureResult.horizon_line_px.b[1]) < 2, 'accepted yellow calibration should expose the near-horizontal horizon');
+
+  assertValid(validatePlaneTopologyReviewSeed, result.topologySeed, 'yellow plane topology review seed');
+  assert.equal(result.topologySeed.review_status, 'draft_needs_user_acceptance', 'yellow topology seed must remain a review draft');
+  assertValid(validatePlaneLocalDetailSeed, result.localDetailSeed, 'yellow plane-local detail review seed');
+  assert.equal(result.localDetailSeed.review_status, 'draft_needs_user_acceptance', 'yellow detail seed must remain a review draft');
+  assertValid(validateFacadePlaneGraph, result.blockedFacadePlaneGraph, 'yellow facade plane graph blocked before calibration review');
+  assert.equal(result.blockedFacadePlaneGraph.planes.length, 0, 'pending calibration review must produce no plane candidates');
+  assert.equal(result.blockedFacadePlaneGraph.review_policy.status, 'blocked_no_visible_planes', 'pending calibration review must block facade planes');
+  assertValid(validateCalibratedViewGraph, result.calibratedViewGraph, 'yellow calibrated view graph from accepted calibration fixture');
+  assert.equal(result.calibratedViewGraph.projection_model, 'two_point_vertical_parallel', 'accepted calibration graph should preserve the reviewed camera model');
+  assertValid(validateFacadePlaneGraph, result.facadePlaneGraph, 'yellow calibrated facade plane candidates');
+  assert.equal(result.facadePlaneGraph.planes.length, 4, 'accepted calibration fixture should expose LA, AB, BC, and CD plane candidates');
+  assert.equal(result.facadePlaneGraph.plane_local_detail_candidates.length, 4, 'calibrated facade graph should expose plane-local detail candidates after its plane candidates');
+  assert.equal(result.facadePlaneGraph.planes.every((plane) => plane.review_required && !plane.promotion_allowed), true, 'calibrated plane candidates must remain review-only');
+  assert.equal(result.facadePlaneGraph.planes.every((plane) => plane.rectification?.metric_scale_status === 'unknown_single_view'), true, 'single-view plane rectification must not claim metric scale');
+  const leftSidePlane = result.facadePlaneGraph.planes.find((plane) => plane.id === 'visible_plane_left_side_la');
+  const recessedPlane = result.facadePlaneGraph.planes.find((plane) => plane.id === 'visible_plane_recessed_front_ab');
+  const returnPlane = result.facadePlaneGraph.planes.find((plane) => plane.id === 'visible_plane_return_bc');
+  const mainPlane = result.facadePlaneGraph.planes.find((plane) => plane.id === 'visible_plane_main_front_cd');
+  assert.ok(leftSidePlane.adjacency.some((adjacency) => adjacency.plane_id === recessedPlane.id), 'LA side plane should remain adjacent to AB at A');
+  assert.ok(recessedPlane.adjacency.some((adjacency) => adjacency.plane_id === leftSidePlane.id), 'AB should preserve its reviewed A-boundary adjacency to LA');
+  assert.equal(leftSidePlane.orientation_hint.view, 'left_or_right_side', 'LA should use the same side-axis family as BC');
+  assert.equal(leftSidePlane.occlusion_order.relation_to_camera, 'extends_behind_recessed_front_at_A', 'LA should preserve its reviewed relation beyond A');
+  assert.ok(recessedPlane.must_not_merge_with.includes(mainPlane.id), 'AB and CD must not merge across the reviewed BC return');
+  assert.ok(returnPlane.adjacency.some((adjacency) => adjacency.plane_id === recessedPlane.id), 'BC return should remain adjacent to AB');
+  assert.ok(returnPlane.adjacency.some((adjacency) => adjacency.plane_id === mainPlane.id), 'BC return should remain adjacent to CD');
+  assert.equal(recessedPlane.occlusion_order.relation_to_camera, 'behind_main_front_in_reviewed_plan_topology', 'AB must remain behind CD in the review topology');
+  for (const role of ['upper_window_bands', 'ground_floor_storefront', 'exterior_hvac_units']) {
+    const detail = result.facadePlaneGraph.plane_local_detail_candidates.find((candidate) => candidate.role === role);
+    assert.deepEqual(detail.candidate_plane_ids, [mainPlane.id], `${role} should be a review-only candidate on the CD main plane`);
+    assert.equal(detail.promotion_allowed, false, `${role} must remain promotion-disabled`);
   }
-  const overlaySvg = await fs.readFile(path.join(absoluteOutputDir, '02-axis-calibration-workbench-overlay.svg'), 'utf8');
-  assert.ok(overlaySvg.includes('data-layer="axis-calibration-line-candidate"'), 'yellow axis workbench overlay should expose line-candidate layers');
-  assert.ok(overlaySvg.includes('axis_unknown'), 'yellow axis workbench overlay should show unknown axis state');
-  const previousOverlaySvg = await fs.readFile(path.join(absoluteOutputDir, '03-previous-hardcoded-axis-overlay.svg'), 'utf8');
-  assert.ok(previousOverlaySvg.includes('candidate_corner_BC') && previousOverlaySvg.includes('y_green'), 'yellow previous hardcoded overlay should expose the blocked single-line green assignment');
-  const detectedOverlaySvg = await fs.readFile(path.join(absoluteOutputDir, '04-detected-structure-lines-overlay.svg'), 'utf8');
-  assert.ok(detectedOverlaySvg.includes('data-layer="detected-structure-line"'), 'yellow detected structure line overlay should expose raster-detected line layers');
-  assert.ok(detectedOverlaySvg.includes('blocked_vanishing_point_cluster_review_required'), 'yellow detected structure line overlay should show blocked VP review status');
-  const reviewHtml = await fs.readFile(path.join(absoluteOutputDir, 'review', 'index.html'), 'utf8');
-  assert.ok(reviewHtml.includes('Single-line green-axis assignments stay blocked'), 'yellow axis workbench UI should explain the single-line green-axis blocker');
-  assert.ok(reviewHtml.includes('previous-hardcoded=blocked_insufficient_axis_support'), 'yellow axis workbench UI should surface the previous hardcoded blocker');
-  assert.ok(reviewHtml.includes('VP clusters must come from raster-detected lines'), 'yellow axis workbench UI should explain raster-detected VP cluster evidence');
-}
+  const leftSideDuct = result.facadePlaneGraph.plane_local_detail_candidates.find((candidate) => candidate.role === 'rectangular_utility_ducts');
+  assert.deepEqual(leftSideDuct.candidate_plane_ids, [leftSidePlane.id], 'visible rectangular ducts should remain review-only candidates on LA');
+  assert.ok(leftSideDuct.blockers.includes('duct_roofline_extension_review_required'), 'LA duct candidate must preserve the uncertain roofline extension');
+  assert.ok(!leftSideDuct.blockers.includes('accepted_plane_binding_required'), 'LA gives the duct candidate an explicit plane binding');
 
-async function assertYellowVisibleEffectJudgment() {
-  const outputDir = 'output/image-structured-modeler/yellow-visible-effect-test';
-  const result = await generateYellowVisibleEffect({ outputDir });
-  const absoluteOutputDir = path.join(repoRoot, outputDir);
-  const report = result.report;
+  assertValid(validateCornerChainTopology, result.cornerChainTopology, 'yellow corner-chain topology candidates');
+  assert.equal(result.cornerChainTopology.review_policy.status, 'needs_topology_review', 'calibrated L-A-B-C-D topology must still require review');
+  assert.equal(result.cornerChainTopology.summary.accepted_topology_id, null, 'topology candidate must not self-accept');
+  assert.equal(result.cornerChainTopology.summary.corner_count, 5, 'L-A-B-C-D topology must expose five reviewed corner candidates');
+  assert.deepEqual(result.cornerChainTopology.edge_chains[0].ordered_corner_ids, ['L', 'A', 'B', 'C', 'D'], 'topology chain must preserve the reviewed corner order');
+  assert.deepEqual(result.cornerChainTopology.edge_chains[0].edges.map((edge) => edge.axis), ['y_green', 'x_red', 'y_green', 'x_red'], 'L-A-B-C-D must preserve y/x/y/x side-plus-recess topology');
+  assertValid(validateCornerChainTopologyReviewDecision, result.pendingTopologyReview, 'yellow pending corner topology review');
+  assert.equal(result.pendingTopologyReviewResult.status, 'blocked_no_accepted_topology_review', 'missing topology review must fail closed');
+  assert.equal(result.pendingTopologyReviewResult.derived_drafting_allowed, false, 'pending topology review must block DraftView derivation');
+  assertValid(validateDraftViewGraph, result.blockedDraftViewGraph, 'yellow DraftViewGraph blocked before topology review');
+  assert.equal(result.blockedDraftViewGraph.view_slots.every((slot) => slot.status === 'unknown'), true, 'blocked topology path must leave every draft slot unknown');
 
-  assert.equal(report.kind, 'yellow_visible_effect_judgment', 'yellow visible effect should write a judgment report');
-  assert.equal(report.no_review_lane.patch_status, 'blocked', 'yellow no-review lane must stay blocked');
-  assert.equal(report.no_review_lane.actions, 0, 'yellow no-review lane must not create promotion actions');
-  assert.equal(report.no_review_lane.false_promotion_count, 0, 'yellow no-review lane must have zero false promotions');
-  assert.equal(report.no_review_lane.apply_allowed, false, 'yellow no-review lane must not be applyable');
-  assert.equal(report.fail_closed_checks.no_review_patch_blocked, true, 'yellow no-review fail-closed check should pass');
-  assert.equal(report.fail_closed_checks.forged_ready_without_accepted_review, true, 'yellow forged ready patch must fail closed');
-  assert.match(report.fail_closed_checks.forged_ready_error, /not applyable/, 'yellow forged ready failure should fail closed before PartGraph promotion');
+  assertValid(validateCornerChainTopologyReviewDecision, result.acceptedTopologyReviewFixture, 'yellow accepted topology fixture');
+  assert.equal(result.acceptedTopologyReviewFixtureResult.status, 'accepted_for_derived_drafting', 'accepted topology fixture should unlock DraftView derivation only');
+  assert.equal(result.acceptedTopologyReviewFixtureResult.promotion_allowed, false, 'accepted topology fixture must not promote geometry');
+  assertValid(validateCornerChainTopology, result.acceptedTopologyReviewFixtureResult.topology_graph, 'yellow accepted corner-chain topology graph');
+  assertValid(validateDraftViewGraph, result.acceptedTopologyDraftViewGraph, 'yellow DraftViewGraph after accepted topology fixture');
+  assert.equal(result.acceptedTopologyDraftViewGraph.view_slots.find((slot) => slot.slot_id === 'top').status, 'inferred', 'top view must be an inferred topology diagram, not an observed metric plan');
+  assert.equal(result.acceptedTopologyDraftViewGraph.view_slots.find((slot) => slot.slot_id === 'front').status, 'partial', 'front draft should preserve separate AB and CD planes');
+  assert.deepEqual(
+    result.acceptedTopologyDraftViewGraph.view_slots.find((slot) => slot.slot_id === 'left_or_right_side').projection_basis.plane_ids,
+    [leftSidePlane.id, returnPlane.id],
+    'side draft must preserve separate LA and BC side-facing candidates'
+  );
+  assert.equal(result.acceptedTopologyDraftViewGraph.review_policy.status, 'needs_draft_view_review', 'accepted topology still requires DraftView review');
+  assert.equal(result.acceptedTopologyDraftViewGraph.summary.promotion_allowed, false, 'accepted topology DraftViewGraph must remain promotion-disabled');
 
-  assertValid(validateCandidatePromotionReview, result.acceptedReview, 'yellow accepted visible effect review');
-  assertValid(validateCandidatePromotionPatch, result.acceptedPatch, 'yellow accepted visible effect patch');
-  assert.equal(result.acceptedPatch.status, 'blocked', 'yellow structural projection review should keep accepted-review patch blocked');
-  assert.equal(result.acceptedPatch.apply_allowed, false, 'yellow structural projection review should prevent patch application');
-  assert.equal(result.acceptedPatch.actions.length, 0, 'yellow structural projection review should not promote candidates');
-  assert.equal(result.acceptedReview.facade_plane_review.accepted_plane_ids.length, 0, 'yellow structural projection review should reject facade plane ids for promotion');
-  assert.equal(
-    result.acceptedReview.accepted_candidates.some((item) => item.role === 'shadow_or_recess_boundary'),
-    false,
-    'yellow accepted fixture must not promote shadow/recess boundary geometry'
+  const forgedTopologyReview = structuredClone(result.acceptedTopologyReviewFixture);
+  forgedTopologyReview.accepted_topology_ids = ['forged_topology'];
+  const forgedTopologyResult = applyCornerChainTopologyReview({
+    topologyGraph: result.cornerChainTopology,
+    reviewDecision: forgedTopologyReview
+  });
+  assert.equal(forgedTopologyResult.status, 'blocked_invalid_topology_review', 'forged topology ids must fail closed');
+  assert.equal(forgedTopologyResult.derived_drafting_allowed, false, 'forged topology review must not derive DraftViewGraph');
+  assert.equal(forgedTopologyResult.promotion_allowed, false, 'forged topology review must not promote geometry');
+
+  const forgedReview = structuredClone(result.acceptedReviewFixture);
+  forgedReview.family_decisions[0].direction_family_id = 'forged_direction_family';
+  const forgedResult = evaluatePerspectiveCalibrationReview({
+    perspectiveCalibration: result.perspectiveCalibration,
+    reviewDecision: forgedReview,
+    sourceReviewDecision: 'forged-review.json'
+  });
+  assert.equal(forgedResult.status, 'blocked_invalid_review', 'forged calibration family ids must fail closed');
+  assert.equal(forgedResult.rectification_allowed, false, 'forged calibration review must not unlock rectification');
+  assert.equal(forgedResult.promotion_allowed, false, 'forged calibration review must not unlock promotion');
+  assertValid(validateMcpModelingBrief, result.mcpModelingBrief, 'yellow calibration-first MCP modeling brief');
+  assert.deepEqual(
+    result.mcpModelingBrief.artifact_sequence.map((artifact) => artifact.stage),
+    [
+      'structure_line_evidence',
+      'perspective_calibration',
+      'calibrated_view_graph',
+      'corner_chain_topology',
+      'draft_view_graph',
+      'facade_plane_graph',
+      'plane_or_surface_local_details',
+      'promotion_status'
+    ],
+    'MCP brief must preserve the calibration-first artifact order'
+  );
+  assert.equal(result.mcpModelingBrief.perspective_calibration.fixture_only, true, 'yellow accepted calibration preview must be labeled fixture-only');
+  assert.equal(result.mcpModelingBrief.promotion_status.partgraph_promotion_allowed, false, 'MCP brief must keep PartGraph promotion blocked');
+  assert.equal(result.mcpModelingBrief.promotion_status.sketchup_dsl_allowed, false, 'MCP brief must keep SketchUp DSL blocked');
+
+  const acceptedAxisFamilyIds = result.acceptedReviewFixtureResult.accepted_axis_families
+    .map((family) => family.direction_family_id);
+  const acceptedTopologyIds = result.acceptedTopologyReviewFixture.accepted_topology_ids;
+  const calibratedCandidateGraph = {
+    version: 1,
+    kind: 'candidate_graph',
+    asset_set_id: 'yellow-calibrated-promotion-regression',
+    profile_id: 'building_single',
+    geometry_strategy: 'calibrated_manhattan_planes',
+    calibration_lineage: {
+      source_perspective_calibration_review_result: 'perspective-calibration-review-result.accepted-fixture.json',
+      accepted_axis_family_ids: acceptedAxisFamilyIds,
+      source_corner_chain_topology_review: 'corner-chain-topology-review.accepted-fixture.json',
+      accepted_topology_ids: acceptedTopologyIds,
+      source_facade_plane_graph: 'facade-plane-graph.accepted-calibration.candidates.json'
+    },
+    candidates: [
+      ...result.facadePlaneGraph.planes.map((plane) => ({
+        id: plane.id,
+        role: plane.role,
+        source_image: plane.source_image,
+        source_observation_id: plane.source.semantic_evidence_id,
+        source_plane_id: plane.id,
+        view: 'front',
+        bbox: [
+          plane.visible_bbox_px[0],
+          plane.visible_bbox_px[1],
+          plane.visible_bbox_px[2] - plane.visible_bbox_px[0],
+          plane.visible_bbox_px[3] - plane.visible_bbox_px[1]
+        ],
+        polygon_px: plane.visible_quad_px,
+        confidence: plane.source.confidence,
+        promotion: {
+          status: 'review_required',
+          blockers: []
+        }
+      })),
+      ...result.facadePlaneGraph.plane_local_detail_candidates.map((detail) => ({
+        id: detail.id,
+        role: detail.role,
+        source_image: detail.source_image,
+        source_observation_id: detail.source.semantic_evidence_id,
+        ...(detail.candidate_plane_ids.length === 1 ? { source_plane_id: detail.candidate_plane_ids[0] } : {}),
+        view: detail.view,
+        bbox: detail.bbox_px,
+        polygon_px: detail.visible_quad_px,
+        confidence: detail.source.confidence,
+        promotion: {
+          status: 'review_required',
+          blockers: []
+        }
+      }))
+    ],
+    summary: {
+      candidate_count: result.facadePlaneGraph.planes.length + result.facadePlaneGraph.plane_local_detail_candidates.length,
+      eligible_count: 0,
+      blocked_count: result.facadePlaneGraph.planes.length + result.facadePlaneGraph.plane_local_detail_candidates.length
+    }
+  };
+  assertValid(validateCandidateGraph, calibratedCandidateGraph, 'yellow calibrated-plane candidate graph');
+  const promotedPlane = calibratedCandidateGraph.candidates.find((candidate) => candidate.id === 'visible_plane_recessed_front_ab');
+  const calibratedAssetSet = {
+    id: calibratedCandidateGraph.asset_set_id,
+    gates: { reasons: [] }
+  };
+  const calibratedModelingBrief = { missing_inputs: [] };
+  const acceptedCalibrationSummary = {
+    source_perspective_calibration_review_result: calibratedCandidateGraph.calibration_lineage.source_perspective_calibration_review_result,
+    status: result.acceptedReviewFixtureResult.status,
+    accepted_axis_family_ids: acceptedAxisFamilyIds,
+    rectification_allowed: result.acceptedReviewFixtureResult.rectification_allowed,
+    topology_inference_allowed: result.acceptedReviewFixtureResult.topology_inference_allowed,
+    promotion_allowed: false,
+    blockers: result.acceptedReviewFixtureResult.blockers,
+    reviewer_note: 'Synthetic accepted calibration lineage for fail-closed promotion regression.'
+  };
+  const acceptedTopologySummary = {
+    source_corner_chain_topology_review: calibratedCandidateGraph.calibration_lineage.source_corner_chain_topology_review,
+    status: result.acceptedTopologyReviewFixtureResult.status,
+    accepted_topology_ids: acceptedTopologyIds,
+    derived_drafting_allowed: result.acceptedTopologyReviewFixtureResult.derived_drafting_allowed,
+    promotion_allowed: false,
+    blockers: result.acceptedTopologyReviewFixtureResult.blockers,
+    reviewer_note: 'Synthetic accepted L-A-B-C-D topology lineage for fail-closed promotion regression.'
+  };
+  const calibratedPromotionReview = {
+    version: 1,
+    kind: 'candidate_promotion_review',
+    asset_set_id: calibratedCandidateGraph.asset_set_id,
+    profile_id: calibratedCandidateGraph.profile_id,
+    source_candidate_graph: 'candidate-graph.calibrated-planes.json',
+    reviewer: 'validate.mjs calibrated promotion regression',
+    verdict: 'accepted_subset',
+    compile_allowed: false,
+    promotion_allowed: true,
+    missing_inputs: [],
+    blockers: [],
+    profile_confirmation: {
+      selected_profile: 'building_single_urban_oblique',
+      status: 'confirmed',
+      note: 'Fixture-only profile confirmation.'
+    },
+    scale_confirmation: {
+      status: 'confirmed',
+      known_width: 12000,
+      known_depth: 8000,
+      known_height: 9000,
+      units: 'mm',
+      note: 'Fixture-only dimensions; metric single-view depth remains outside calibration truth.'
+    },
+    calibration_review: acceptedCalibrationSummary,
+    topology_review: acceptedTopologySummary,
+    draft_view_review: {
+      source_draft_view_graph: 'draft-view-graph.accepted-topology-fixture.json',
+      status: 'accepted',
+      accepted_view_slot_ids: ['front', 'oblique_context'],
+      accepted_plane_hypothesis_ids: [promotedPlane.id],
+      promotion_allowed: true,
+      blockers: [],
+      reviewer_note: 'Fixture-only DraftView acceptance.'
+    },
+    local_detail_review: null,
+    facade_plane_review: {
+      source_facade_plane_graph: calibratedCandidateGraph.calibration_lineage.source_facade_plane_graph,
+      status: 'accepted',
+      accepted_plane_ids: [promotedPlane.id],
+      promotion_allowed: true,
+      blockers: [],
+      reviewer_note: 'Fixture-only accepted visible plane.'
+    },
+    accepted_candidates: [{
+      candidate_id: promotedPlane.id,
+      role: promotedPlane.role,
+      view: promotedPlane.view,
+      source_image: promotedPlane.source_image,
+      source_observation_id: promotedPlane.source_observation_id,
+      confidence: promotedPlane.confidence,
+      promotion_status: 'review_required',
+      accepted_draft_view_slot_id: 'front',
+      accepted_plane_id: promotedPlane.id,
+      blockers: [],
+      reviewer_note: 'Fixture-only candidate acceptance.'
+    }],
+    held_candidates: calibratedCandidateGraph.candidates
+      .filter((candidate) => candidate.id !== promotedPlane.id)
+      .map((candidate) => ({
+        candidate_id: candidate.id,
+        role: candidate.role,
+        view: candidate.view,
+        source_image: candidate.source_image,
+        source_observation_id: candidate.source_observation_id,
+        confidence: candidate.confidence,
+        promotion_status: 'review_required',
+        blockers: []
+      }))
+  };
+  assertValid(validateCandidatePromotionReview, calibratedPromotionReview, 'yellow calibrated accepted promotion review fixture');
+
+  const missingCalibrationPatch = buildCandidatePromotionPatch({
+    assetSet: calibratedAssetSet,
+    candidateGraph: calibratedCandidateGraph,
+    modelingBrief: calibratedModelingBrief,
+    promotionReview: { ...structuredClone(calibratedPromotionReview), calibration_review: null }
+  });
+  assertValid(validateCandidatePromotionPatch, missingCalibrationPatch, 'yellow calibrated promotion patch without calibration review');
+  assert.equal(missingCalibrationPatch.apply_allowed, false, 'calibrated promotion must fail closed without accepted perspective review');
+  assert.equal(missingCalibrationPatch.actions.length, 0, 'missing calibration review must produce zero promotion actions');
+  assert.ok(missingCalibrationPatch.blockers.includes('accepted_perspective_calibration_review_required'), 'missing calibration review must expose its blocker');
+
+  const missingTopologyPatch = buildCandidatePromotionPatch({
+    assetSet: calibratedAssetSet,
+    candidateGraph: calibratedCandidateGraph,
+    modelingBrief: calibratedModelingBrief,
+    promotionReview: { ...structuredClone(calibratedPromotionReview), topology_review: null }
+  });
+  assertValid(validateCandidatePromotionPatch, missingTopologyPatch, 'yellow calibrated promotion patch without topology review');
+  assert.equal(missingTopologyPatch.apply_allowed, false, 'calibrated promotion must fail closed without accepted topology review');
+  assert.equal(missingTopologyPatch.actions.length, 0, 'missing topology review must produce zero promotion actions');
+  assert.ok(missingTopologyPatch.blockers.includes('accepted_corner_chain_topology_review_required'), 'missing topology review must expose its blocker');
+
+  const calibratedReadyPatch = buildCandidatePromotionPatch({
+    assetSet: calibratedAssetSet,
+    candidateGraph: calibratedCandidateGraph,
+    modelingBrief: calibratedModelingBrief,
+    promotionReview: calibratedPromotionReview
+  });
+  assertValid(validateCandidatePromotionPatch, calibratedReadyPatch, 'yellow calibrated lineage-ready promotion patch');
+  assert.equal(calibratedReadyPatch.status, 'ready_for_part_graph_patch', 'fully reviewed calibrated lineage should unlock a PartGraph patch');
+  assert.equal(calibratedReadyPatch.apply_allowed, true, 'fully reviewed calibrated lineage patch should be applyable');
+  assert.equal(calibratedReadyPatch.compile_allowed, false, 'calibrated candidate patch must still block direct SketchUp compile');
+  assert.equal(calibratedReadyPatch.actions.length, 1, 'calibrated accepted subset should emit exactly one action');
+  assert.equal(calibratedReadyPatch.actions[0].accepted_plane_id, promotedPlane.id, 'calibrated promotion action must bind to the accepted source plane');
+
+  const windowDetail = calibratedCandidateGraph.candidates.find((candidate) => candidate.id === 'detail_upper_window_band_cd');
+  const detailPromotionReview = {
+    ...structuredClone(calibratedPromotionReview),
+    draft_view_review: {
+      ...structuredClone(calibratedPromotionReview.draft_view_review),
+      accepted_plane_hypothesis_ids: [windowDetail.source_plane_id]
+    },
+    facade_plane_review: {
+      ...structuredClone(calibratedPromotionReview.facade_plane_review),
+      accepted_plane_ids: [windowDetail.source_plane_id]
+    },
+    local_detail_review: {
+      source_object_surface_graph: null,
+      source_facade_plane_graph: calibratedCandidateGraph.calibration_lineage.source_facade_plane_graph,
+      status: 'accepted',
+      accepted_surface_ids: [],
+      accepted_detail_ids: [windowDetail.id],
+      promotion_allowed: true,
+      blockers: [],
+      reviewer_note: 'Fixture-only accepted window-band binding.'
+    },
+    accepted_candidates: [{
+      candidate_id: windowDetail.id,
+      role: windowDetail.role,
+      view: windowDetail.view,
+      source_image: windowDetail.source_image,
+      source_observation_id: windowDetail.source_observation_id,
+      confidence: windowDetail.confidence,
+      promotion_status: 'review_required',
+      accepted_draft_view_slot_id: 'front',
+      accepted_plane_id: windowDetail.source_plane_id,
+      accepted_detail_id: windowDetail.id,
+      blockers: [],
+      reviewer_note: 'Fixture-only local-detail acceptance.'
+    }],
+    held_candidates: calibratedCandidateGraph.candidates
+      .filter((candidate) => candidate.id !== windowDetail.id)
+      .map((candidate) => ({
+        candidate_id: candidate.id,
+        role: candidate.role,
+        view: candidate.view,
+        source_image: candidate.source_image,
+        source_observation_id: candidate.source_observation_id,
+        confidence: candidate.confidence,
+        promotion_status: 'review_required',
+        blockers: []
+      }))
+  };
+  assertValid(validateCandidatePromotionReview, detailPromotionReview, 'yellow calibrated local-detail promotion review fixture');
+  const missingLocalDetailPatch = buildCandidatePromotionPatch({
+    assetSet: calibratedAssetSet,
+    candidateGraph: calibratedCandidateGraph,
+    modelingBrief: calibratedModelingBrief,
+    promotionReview: { ...structuredClone(detailPromotionReview), local_detail_review: null }
+  });
+  assert.equal(missingLocalDetailPatch.apply_allowed, false, 'calibrated local detail must fail closed without accepted local-detail review');
+  assert.equal(missingLocalDetailPatch.actions.length, 0, 'missing local-detail review must produce zero actions');
+  assert.ok(missingLocalDetailPatch.blockers.includes('accepted_local_detail_review_required'), 'missing local-detail review must expose its blocker');
+  const detailReadyPatch = buildCandidatePromotionPatch({
+    assetSet: calibratedAssetSet,
+    candidateGraph: calibratedCandidateGraph,
+    modelingBrief: calibratedModelingBrief,
+    promotionReview: detailPromotionReview
+  });
+  assertValid(validateCandidatePromotionPatch, detailReadyPatch, 'yellow calibrated bound local-detail patch');
+  assert.equal(detailReadyPatch.apply_allowed, true, 'accepted local detail bound to an accepted plane should unlock its PartGraph patch');
+  assert.equal(detailReadyPatch.actions[0].accepted_plane_id, windowDetail.source_plane_id, 'local-detail action must preserve its accepted plane binding');
+  assert.equal(detailReadyPatch.actions[0].accepted_detail_id, windowDetail.id, 'local-detail action must preserve its accepted detail id');
+
+  const leftSideDuctCandidate = calibratedCandidateGraph.candidates.find((candidate) => candidate.id === 'detail_rectangular_utility_ducts_la');
+  const forgedDuctReview = structuredClone(detailPromotionReview);
+  forgedDuctReview.local_detail_review.accepted_detail_ids = [leftSideDuctCandidate.id];
+  forgedDuctReview.facade_plane_review.accepted_plane_ids = [promotedPlane.id];
+  forgedDuctReview.accepted_candidates = [{
+    candidate_id: leftSideDuctCandidate.id,
+    role: leftSideDuctCandidate.role,
+    view: leftSideDuctCandidate.view,
+    source_image: leftSideDuctCandidate.source_image,
+    source_observation_id: leftSideDuctCandidate.source_observation_id,
+    confidence: leftSideDuctCandidate.confidence,
+    promotion_status: 'review_required',
+    accepted_draft_view_slot_id: 'front',
+    accepted_plane_id: promotedPlane.id,
+    accepted_detail_id: leftSideDuctCandidate.id,
+    blockers: [],
+    reviewer_note: 'Forged plane binding must fail closed.'
+  }];
+  const forgedDuctPatch = buildCandidatePromotionPatch({
+    assetSet: calibratedAssetSet,
+    candidateGraph: calibratedCandidateGraph,
+    modelingBrief: calibratedModelingBrief,
+    promotionReview: forgedDuctReview
+  });
+  assert.equal(forgedDuctPatch.apply_allowed, false, 'LA duct detail must not accept a forged AB plane binding');
+  assert.equal(forgedDuctPatch.actions.length, 0, 'wrong-plane duct binding must produce zero promotion actions');
+  assert.ok(forgedDuctPatch.blockers.includes('accepted_candidate_plane_binding_required'), 'wrong-plane duct binding must expose the candidate-binding blocker');
+
+  const forgedCalibrationPatch = structuredClone(calibratedReadyPatch);
+  forgedCalibrationPatch.calibration_review.accepted_axis_family_ids[0] = 'forged_direction_family';
+  const calibratedProfile = await readRepoJson('examples/product-profiles/building_single_urban_oblique.json');
+  const calibratedObservationSet = {
+    object: {
+      type: 'building_single',
+      name: 'Yellow calibrated promotion regression',
+      source_images: [promotedPlane.source_image]
+    },
+    images: [{
+      image: {
+        path: promotedPlane.source_image,
+        width: result.structureLineEvidence.source_image.width,
+        height: result.structureLineEvidence.source_image.height
+      },
+      observations: []
+    }],
+    views_detected: ['oblique'],
+    draft_view_graph_v1: result.acceptedTopologyDraftViewGraph,
+    scale_calibration: {
+      default_scale: calibratedProfile.default_scale,
+      confidence: 0.4
+    }
+  };
+  assert.throws(
+    () => applyCandidatePromotionPatch({
+      patch: forgedCalibrationPatch,
+      candidateGraph: calibratedCandidateGraph,
+      observationSet: calibratedObservationSet,
+      profile: calibratedProfile
+    }),
+    /accepted perspective calibration and corner-chain topology lineage are required/,
+    'forged ready patches must not bypass accepted calibration lineage at apply time'
+  );
+  const calibratedApplied = applyCandidatePromotionPatch({
+    patch: calibratedReadyPatch,
+    candidateGraph: calibratedCandidateGraph,
+    observationSet: calibratedObservationSet,
+    profile: calibratedProfile,
+    id: 'yellow-calibrated-lineage-promotion-regression'
+  });
+  assert.equal(calibratedApplied.applied.length, 1, 'accepted calibration and topology lineage should apply the reviewed plane candidate');
+  assertValid(validatePartGraph, calibratedApplied.partGraph, 'yellow calibrated lineage PartGraph');
+  assert.equal(calibratedApplied.partGraph.parts[0].qa.accepted_plane_id, promotedPlane.id, 'calibrated PartGraph must preserve accepted plane lineage');
+  assert.equal(calibratedApplied.partGraph.evidence_graph.calibration_lineage.accepted_topology_ids[0], acceptedTopologyIds[0], 'calibrated PartGraph evidence must preserve accepted topology lineage');
+  const detailApplied = applyCandidatePromotionPatch({
+    patch: detailReadyPatch,
+    candidateGraph: calibratedCandidateGraph,
+    observationSet: calibratedObservationSet,
+    profile: calibratedProfile,
+    id: 'yellow-calibrated-detail-promotion-regression'
+  });
+  assert.equal(detailApplied.applied.length, 1, 'accepted local detail with accepted plane binding should apply exactly once');
+  assert.equal(detailApplied.partGraph.parts[0].qa.accepted_plane_id, windowDetail.source_plane_id, 'local-detail PartGraph must preserve accepted plane id');
+  assert.equal(detailApplied.partGraph.parts[0].qa.accepted_detail_id, windowDetail.id, 'local-detail PartGraph must preserve accepted detail id');
+  assert.throws(
+    () => applyCandidatePromotionPatch({
+      patch: {
+        ...structuredClone(forgedDuctPatch),
+        status: 'ready_for_part_graph_patch',
+        apply_allowed: true,
+        blockers: [],
+        actions: [{
+          action: 'promote_candidate',
+          candidate_id: leftSideDuctCandidate.id,
+          role: leftSideDuctCandidate.role,
+          view: leftSideDuctCandidate.view,
+          source_image: leftSideDuctCandidate.source_image,
+          source_observation_id: leftSideDuctCandidate.source_observation_id,
+          accepted_draft_view_slot_id: 'front',
+          accepted_plane_id: promotedPlane.id,
+          accepted_detail_id: leftSideDuctCandidate.id,
+          confidence: leftSideDuctCandidate.confidence,
+          requires_part_graph_review: true,
+          reviewer_note: 'Forged apply-time detail binding regression.'
+        }]
+      },
+      candidateGraph: calibratedCandidateGraph,
+      observationSet: calibratedObservationSet,
+      profile: calibratedProfile
+    }),
+    /every calibrated local-detail action must bind/,
+    'applyCandidatePromotionPatch must reject forged wrong-plane detail bindings'
   );
 
-  assert.equal(report.perspective_critique.status, 'calibration_topology_review_accepted_promotion_blocked', 'yellow perspective critique should record accepted calibration/topology with promotion still blocked');
-  assert.ok(report.perspective_critique.blockers.includes('accepted_partgraph_promotion_review_required'), 'yellow projection should require accepted PartGraph promotion review');
-  assert.ok(report.perspective_critique.blockers.includes('accepted_local_detail_review_required'), 'yellow projection should require accepted local-detail review');
-  assert.equal(report.perspective_critique.blockers.includes('perspective_line_fit_required'), false, 'yellow projection should no longer require missing line-fit evidence');
-  assert.equal(report.perspective_critique.blockers.includes('facade_plane_perspective_unverified'), false, 'yellow projection should no longer mark facade planes as perspective-unverified');
-  assert.ok(report.perspective_critique.line_fit.horizon_line_px.a[1] > 450, 'yellow line-fit horizon should not use the old high bbox placeholder');
-  assert.equal(report.accepted_review_lane.ok, false, 'yellow accepted-review lane should not generate geometry without accepted structural review');
-  assert.equal(report.accepted_review_lane.visible_delta, 'not_obvious', 'yellow accepted-review lane should not claim visible improvement');
-  assert.equal(report.judgment.visible_delta, 'partial', 'overall yellow judgment should record review-gated drafting improvement only');
-  assert.equal(report.accepted_review_lane.release_profile_compile_status.status, 'not_run', 'yellow release-grade compile should not run before accepted structural review');
-  assert.equal(report.accepted_review_lane.release_profile_compile_status.reason, 'calibration_topology_review_accepted_promotion_blocked', 'yellow blocked compile reason should reflect calibration/topology promotion gate');
-  assert.ok(report.artifact_links.sketchup_mock_preview_png.endsWith('07-sketchup-mock-preview.png'), 'yellow report should link mock preview image');
-  assert.equal(report.artifact_links.review_decision.endsWith('candidate-promotion-review.calibration-topology-promotion-blocked.yellow.json'), true, 'yellow blocked review file should name calibration/topology gate');
-  assert.equal(report.artifact_links.promotion_patch.endsWith('candidate-promotion-patch.calibration-topology-promotion-blocked.yellow.json'), true, 'yellow blocked patch file should name calibration/topology gate');
-  assert.equal(report.structural_projection.status, 'projection_review_ready', 'yellow structural projection should be review-ready');
-  assert.ok(report.structural_projection.support_score > 0.6, 'yellow structural projection should carry meaningful line support');
-  assert.ok(Math.abs(report.structural_projection.primary_plane_quad_px[0][0] - 444) < 8, 'yellow primary facade left roof corner should align with corrected structural line');
-  assert.ok(Math.abs(report.structural_projection.primary_plane_quad_px[1][0] - 757) < 10, 'yellow primary facade right roof corner should align with corrected structural line');
-  assert.ok(Math.abs(report.structural_projection.side_plane_quad_px[0][0] - 289) < 10, 'yellow side plane left roof corner should align with corrected structural line');
-  assert.ok(Math.abs(report.structural_projection.plan_projection.depth_to_width_ratio - 0.487) < 0.02, 'yellow plan projection should preserve the visible depth-to-width ratio');
-  assert.equal(report.structural_projection.plan_projection.footprint_topology, 'left_front_recess_notch', 'yellow plan projection should preserve the accepted left-front recess notch topology');
-  assert.equal(report.structural_projection.plan_projection.front_edge_policy, 'main_front_edge_CD_with_left_recess_AB_behind', 'yellow plan projection must keep A-B behind the C-D main front edge');
-  assert.equal(report.structural_projection.plan_projection.footprint_local.length >= 6, true, 'yellow stepped plan should use more than four footprint points');
-  assert.ok(report.structural_projection.plan_projection.depth_order.some((order) => order.behind === 'AB' && order.in_front === 'CD'), 'yellow plan projection should record A-B behind C-D');
-  const footprintById = new Map(report.structural_projection.plan_projection.footprint_local.map((point) => [point.id, point]));
-  assert.ok(footprintById.get('A_recessed_left_front')?.xy?.[1] > 0, 'yellow A corner should be set back from the main front edge');
-  assert.equal(footprintById.get('C_main_front_return_corner')?.xy?.[1], 0, 'yellow C corner should sit on the main front edge');
-  assert.equal(footprintById.get('D_main_front_right_corner')?.xy?.[1], 0, 'yellow D corner should sit on the main front edge');
-  const yellowFrontRecess = report.structural_projection.plan_projection.recesses?.find((recess) => recess.id === 'yellow_left_front_recess_notch');
-  assert.ok(yellowFrontRecess, 'yellow plan projection should include the accepted left-front recess notch');
-  assert.equal(yellowFrontRecess.recessed_edge_id, 'AB', 'yellow recess should bind A-B as the recessed edge');
-  assert.equal(yellowFrontRecess.return_edge_id, 'BC', 'yellow recess should bind B-C as the return/depth edge');
-  assert.equal(yellowFrontRecess.main_front_edge_id, 'CD', 'yellow recess should bind C-D as the main front edge');
-  assert.ok(yellowFrontRecess.depth_to_width_ratio > 0.05, 'yellow front recess should carry a non-zero relative depth');
-  assert.equal(yellowFrontRecess.promotion_allowed, false, 'yellow front recess must remain promotion-blocked until accepted promotion review');
-  assert.equal(result.mockSummary.ok, false, 'yellow mock SketchUp summary should be blocked');
-  assert.equal(result.mockSummary.status, 'blocked_calibration_topology_review_accepted_promotion_blocked', 'yellow mock SketchUp summary should name the calibration/topology promotion gate');
-  assert.equal(result.mockSummary.operation_counts.box || 0, 0, 'yellow blocked preview should not contain box primitives');
-  assert.equal(result.mockSummary.snapshot_summary.totals.groups, 0, 'yellow blocked mock snapshot should contain no groups');
-
-  const genericProjection = await buildBuildingSingleStructuralProjection({
-    sourceImagePath: path.join(repoRoot, 'projects/image-structured-modeler/examples/building-single-anime-yellow/input-visible-crop.png'),
-    sourceImage: 'projects/image-structured-modeler/examples/building-single-anime-yellow/input-visible-crop.png',
-    targetWidth: 900,
-    targetHeight: 589,
-    config: {
-      ...YELLOW_BUILDING_STRUCTURAL_PROJECTION_CONFIG,
-      kind: BUILDING_SINGLE_STRUCTURAL_PROJECTION_KIND,
-      graph_attachment_key: 'building_single_structural_projection_v1',
-      graph_attachment_source: 'building-single-structural-projection.json',
-      line_evidence_source_stage: 'building_single_structural_projection_line_fit',
-      plane_evidence_source_stage: 'building_single_structural_projection_line_intersections'
-    }
-  });
-  assert.equal(genericProjection.kind, BUILDING_SINGLE_STRUCTURAL_PROJECTION_KIND, 'building_single structural projection should be available through a generic builder');
-  assert.equal(genericProjection.line_evidence_source_stage, 'building_single_structural_projection_line_fit', 'generic builder should not be locked to yellow source stage');
-  assert.ok(Math.abs(genericProjection.planes[0].visible_quad_px[0][0] - report.structural_projection.primary_plane_quad_px[0][0]) < 0.01, 'generic builder should reproduce the yellow structural projection when given the yellow config');
-  assert.equal(genericProjection.plan_projection.footprint_topology, 'left_front_recess_notch', 'generic builder should preserve accepted left-front recess topology when configured');
-
-  const dsl = JSON.parse(await fs.readFile(path.join(absoluteOutputDir, '06-sketchup-dsl.preview.json'), 'utf8'));
-  assert.equal((dsl.operations || []).length, 0, 'yellow blocked preview DSL should contain no SketchUp operations');
-  const structureGraph = JSON.parse(await fs.readFile(path.join(absoluteOutputDir, 'intake', 'structure-evidence-graph.json'), 'utf8'));
-  assertValid(validateStructureEvidenceGraph, structureGraph, 'yellow structure evidence graph with structural projection');
-  assert.ok(structureGraph.edge_evidence.some((edge) => edge.source_stage === 'yellow_structural_projection_line_fit'), 'yellow structure graph should include line-fit structural edges');
-  assert.ok(structureGraph.view_axis_hypotheses.some((axis) => axis.axis_fit_source === 'yellow_structural_projection_line_fit'), 'yellow view axis should use line-fit structural projection');
-  const facadeGraph = JSON.parse(await fs.readFile(path.join(absoluteOutputDir, 'intake', 'facade-plane-graph.json'), 'utf8'));
-  assert.equal(facadeGraph.planes.every((plane) => plane.orientation_hint.projection_model === 'line_fit_perspective_projection'), true, 'yellow facade graph should use corrected line-fit plane projections');
-
-  const calibratedGraph = JSON.parse(await fs.readFile(path.join(absoluteOutputDir, 'yellow-calibrated-view-graph.json'), 'utf8'));
-  assertValid(validateCalibratedViewGraph, calibratedGraph, 'yellow calibrated view graph');
-  assert.equal(calibratedGraph.projection_model, 'two_point_vertical_parallel', 'yellow calibrated graph should record two-point perspective with verticals treated as parallel');
-  assert.ok(calibratedGraph.axis_families.some((axis) => axis.axis === 'x_red' && axis.image_line_ids.includes('AB') && axis.image_line_ids.includes('CD')), 'yellow red axis should bind A-B and C-D');
-  assert.ok(calibratedGraph.axis_families.some((axis) => axis.axis === 'y_green' && axis.image_line_ids.includes('BC')), 'yellow green axis should bind B-C');
-  assert.ok(calibratedGraph.axis_families.some((axis) => axis.axis === 'z_blue' && axis.vanishing_type === 'infinite'), 'yellow blue axis should allow vertical-parallel shift/rectified imagery');
-  const calibratedReview = JSON.parse(await fs.readFile(path.join(absoluteOutputDir, 'yellow-calibrated-view-review.accepted.json'), 'utf8'));
-  assertValid(validateCalibratedViewReviewDecision, calibratedReview, 'yellow accepted calibrated-view review decision');
-  assert.equal(calibratedReview.status, 'accepted_for_derived_drafting', 'yellow calibrated-view review should be accepted only for derived drafting');
-  assert.equal(calibratedReview.promotion_allowed, false, 'yellow calibrated-view review must not allow geometry promotion');
-  const topologyGraph = JSON.parse(await fs.readFile(path.join(absoluteOutputDir, 'yellow-corner-chain-topology.json'), 'utf8'));
-  assertValid(validateCornerChainTopology, topologyGraph, 'yellow corner-chain topology graph');
-  assert.equal(topologyGraph.summary.accepted_topology_id, 'yellow_left_front_recess_notch_topology', 'yellow topology graph should expose the accepted left-front notch hypothesis');
-  const acceptedTopology = topologyGraph.topology_hypotheses.find((hypothesis) => hypothesis.id === topologyGraph.summary.accepted_topology_id);
-  assert.equal(acceptedTopology.topology, 'left_front_recess_notch', 'yellow accepted topology should be a left-front recess notch');
-  assert.ok(acceptedTopology.depth_order.some((order) => order.behind === 'AB' && order.in_front === 'CD'), 'yellow accepted topology should record A-B behind C-D');
-  const topologyReview = JSON.parse(await fs.readFile(path.join(absoluteOutputDir, 'yellow-corner-chain-topology-review.accepted.json'), 'utf8'));
-  assertValid(validateCornerChainTopologyReviewDecision, topologyReview, 'yellow accepted corner-chain topology review decision');
-  assert.equal(topologyReview.status, 'accepted_for_derived_drafting', 'yellow topology review should be accepted only for derived drafting');
-  assert.equal(topologyReview.promotion_allowed, false, 'yellow topology review must not allow geometry promotion');
-  const mcpBriefMarkdown = await fs.readFile(path.join(absoluteOutputDir, 'intake', 'mcp-modeling-brief.md'), 'utf8');
+  for (const relative of [
+    'structure-line-evidence.json',
+    'perspective-calibration-hypotheses.json',
+    'calibration-benchmark-report.json',
+    'perspective-calibration-review.template.json',
+    'perspective-calibration-review-result.pending.json',
+    'perspective-calibration-review-result.accepted-fixture.json',
+    'plane-topology-review-seed.json',
+    'plane-local-detail-seed.json',
+    'facade-plane-graph.pending-calibration.blocked.json',
+    'calibrated-view-graph.accepted-calibration-fixture.json',
+    'facade-plane-graph.accepted-calibration.candidates.json',
+    'corner-chain-topology.candidates.json',
+    'corner-chain-topology-review.pending.json',
+    'corner-chain-topology-review.accepted-fixture.json',
+    'corner-chain-topology.accepted-fixture.json',
+    'draft-view-graph.pending-topology.blocked.json',
+    'draft-view-graph.accepted-topology-fixture.json',
+    'mcp-modeling-brief.json',
+    'mcp-modeling-brief.md',
+    '01-structure-line-evidence.svg',
+    '02-perspective-direction-families.svg',
+    '03-ground-truth-review.svg',
+    '04-calibrated-plane-topology.svg',
+    'index.html'
+  ]) {
+    const stat = await fs.stat(path.join(absoluteOutputDir, relative));
+    assert.equal(stat.size > 0, true, `calibration benchmark artifact ${relative} should be non-empty`);
+  }
+  const familySvg = await fs.readFile(path.join(absoluteOutputDir, '02-perspective-direction-families.svg'), 'utf8');
+  assert.ok(familySvg.includes('data-layer="raw-segment"'), 'calibration overlay should retain raw line layers');
+  assert.ok(familySvg.includes('data-layer="eligible-segment"'), 'calibration overlay should expose eligible line layers');
+  assert.ok(familySvg.includes('data-layer="seed-segment"'), 'calibration overlay should expose seed line layers');
+  assert.ok(familySvg.includes('data-layer="vp-family-support"'), 'calibration overlay should expose VP family support layers');
+  const topologySvg = await fs.readFile(path.join(absoluteOutputDir, '04-calibrated-plane-topology.svg'), 'utf8');
+  assert.ok(topologySvg.includes('data-plane-id="visible_plane_left_side_la"'), 'calibrated topology overlay should expose the added LA side plane');
+  assert.ok(topologySvg.includes('data-layer="calibrated-plane"'), 'calibrated topology overlay should expose LA, AB, BC, and CD plane layers');
+  assert.ok(topologySvg.includes('data-layer="plan-topology-edge"'), 'calibrated topology overlay should expose the L-A-B-C-D plan chain');
+  assert.ok(topologySvg.includes('metric depth unknown'), 'calibrated topology overlay must disclose unknown single-view depth');
+  const reviewHtml = await fs.readFile(path.join(absoluteOutputDir, 'index.html'), 'utf8');
+  assert.ok(reviewHtml.includes('window.buildCalibrationReviewDecision'), 'calibration workbench should expose deterministic review JSON export');
+  assert.ok(reviewHtml.includes('promotion_allowed:false'), 'calibration workbench export must remain promotion-disabled');
+  const mcpBriefMarkdown = await fs.readFile(path.join(absoluteOutputDir, 'mcp-modeling-brief.md'), 'utf8');
+  const structureLineIndex = mcpBriefMarkdown.indexOf('## Structure Line Evidence');
+  const perspectiveIndex = mcpBriefMarkdown.indexOf('## Perspective Calibration');
   const calibratedIndex = mcpBriefMarkdown.indexOf('## Calibrated View Graph');
   const topologyIndex = mcpBriefMarkdown.indexOf('## Corner Chain Topology');
   const draftIndex = mcpBriefMarkdown.indexOf('## Draft View Graph');
-  assert.ok(calibratedIndex !== -1 && topologyIndex > calibratedIndex && draftIndex > topologyIndex, 'yellow MCP brief should describe calibrated view, corner topology, then draft view');
+  const planeIndex = mcpBriefMarkdown.indexOf('## Facade Plane Graph');
+  const detailsIndex = mcpBriefMarkdown.indexOf('### Plane-Local Detail Candidates');
+  const promotionIndex = mcpBriefMarkdown.indexOf('## Promotion Status');
+  assert.ok(
+    structureLineIndex !== -1
+      && perspectiveIndex > structureLineIndex
+      && calibratedIndex > perspectiveIndex
+      && topologyIndex > calibratedIndex
+      && draftIndex > topologyIndex
+      && planeIndex > draftIndex
+      && detailsIndex > planeIndex
+      && promotionIndex > detailsIndex,
+    'MCP brief markdown must describe calibration evidence, plane graph, local details, then promotion status'
+  );
+}
 
-  const structureSvg = await fs.readFile(path.join(absoluteOutputDir, '02-structure-overlay.svg'), 'utf8');
-  const calibratedSvg = await fs.readFile(path.join(absoluteOutputDir, '02c-calibrated-view-overlay.svg'), 'utf8');
-  const topologySvg = await fs.readFile(path.join(absoluteOutputDir, '02d-corner-chain-topology-overlay.svg'), 'utf8');
-  const draftSvg = await fs.readFile(path.join(absoluteOutputDir, '03-draft-view-graph.svg'), 'utf8');
-  const planeSvg = await fs.readFile(path.join(absoluteOutputDir, '04-plane-review-overlay.svg'), 'utf8');
-  assert.ok(structureSvg.includes('data-layer="edge-evidence"'), 'yellow structure overlay should expose edge evidence layer');
-  assert.ok(structureSvg.includes('data-layer="corner-evidence"'), 'yellow structure overlay should expose corner evidence layer');
-  assert.ok(structureSvg.includes('data-layer="plane-hypothesis"'), 'yellow structure overlay should expose plane hypothesis layer');
-  assert.ok(calibratedSvg.includes('data-layer="calibrated-axis-line"'), 'yellow calibrated overlay should expose calibrated axis lines');
-  assert.ok(calibratedSvg.includes('two_point_vertical_parallel'), 'yellow calibrated overlay should name the calibrated projection model');
-  assert.ok(topologySvg.includes('data-layer="calibrated-axis-line"'), 'yellow topology overlay should expose calibrated corner-chain edges');
-  assert.ok(topologySvg.includes('data-layer="corner-chain-point"'), 'yellow topology overlay should expose corner-chain points');
-  assert.ok(topologySvg.includes('left_front_recess_notch'), 'yellow topology overlay should name the accepted notch topology');
-  assert.ok(draftSvg.includes('data-layer="draft-view-front"'), 'yellow draft overlay should expose front draft-view layer');
-  assert.ok(planeSvg.includes('data-layer="facade-plane"'), 'yellow plane overlay should expose facade plane layer');
-  assert.ok(planeSvg.includes('data-layer="plane-local-detail"'), 'yellow plane overlay should expose plane-local detail layer');
+async function assertFacadeDraftingStudy() {
+  const sample = await readJson('examples/building-single-london-corner/sample.json');
+  assertValid(validateFacadeDraftingStudySample, sample, 'generalized London facade study sample');
+
+  const occludedSource = path.join(
+    repoRoot,
+    'test',
+    '建筑单体',
+    '照片转rhino等距模型后，探索8种趣味玩法_2_AidMaster图灵_来自小红书网页版.jpg'
+  );
+  const occludedEvidence = await buildStructureLineEvidence({ sourceImagePath: occludedSource, maxWidth: 900 });
+  const occludedCalibration = buildPerspectiveCalibrationHypotheses({ structureLineEvidence: occludedEvidence });
+  assertValid(validateStructureLineEvidence, occludedEvidence, 'tree-occluded facade structure-line evidence');
+  assertValid(validatePerspectiveCalibrationHypotheses, occludedCalibration, 'tree-occluded facade calibration hypotheses');
+  assert.equal(occludedCalibration.qa.status, 'blocked_low_family_evidence_quality', 'cluttered tree-occluded facade must not become calibration-review ready from line count alone');
+  assert.equal(occludedCalibration.qa.sufficient_for_review, false, 'weak pixel support must block perspective review even when two VP candidates exist');
+  assert.equal(occludedCalibration.qa.false_promotion_count, 0, 'low-quality facade routing must preserve zero false promotions');
+  assert.equal(occludedCalibration.review_policy.promotion_allowed, false, 'unreviewed low-quality calibration must remain promotion-disabled');
+
+  const sourcePath = path.join(repoRoot, sample.source.local_path);
+  if (!(await pathExists(sourcePath))) return;
+
+  const blockedOutput = 'output/image-structured-modeler/london-corner-facade-study-test-blocked';
+  const blocked = await runFacadeDraftingStudy({ outputDir: blockedOutput });
+  assertValid(validateFacadeDraftingStudyReport, blocked.report, 'London facade no-review report');
+  assert.equal(blocked.report.status, 'blocked_no_accepted_facade_study_review', 'facade study must fail closed without an accepted study review');
+  assert.equal(blocked.report.no_review_false_promotion_count, 0, 'no-review facade study must have zero false promotions');
+  assert.equal(blocked.partGraph, null, 'no-review facade study must not return PartGraph geometry');
+  assert.equal(blocked.dsl, null, 'no-review facade study must not return SketchUp DSL');
+  assert.equal(await pathExists(path.join(repoRoot, blockedOutput, '04-reviewed-visible-facade-part-graph.json')), false, 'no-review facade package must not write a PartGraph artifact');
+  assert.equal(await pathExists(path.join(repoRoot, blockedOutput, '05-sketchup-dsl.mock-study.json')), false, 'no-review facade package must not write a SketchUp DSL artifact');
+  const noReviewProof = JSON.parse(await fs.readFile(path.join(repoRoot, blockedOutput, '01-no-review-promotion-blocked.json'), 'utf8'));
+  assert.equal(noReviewProof.promoted_geometry_action_count, 0, 'explicit no-review proof must record zero geometry actions');
+  assert.equal(noReviewProof.promotion_allowed, false, 'explicit no-review proof must remain promotion-disabled');
+
+  const planeOutput = 'output/image-structured-modeler/london-corner-facade-study-test-planes';
+  const planes = await runFacadeDraftingStudy({
+    outputDir: planeOutput,
+    acceptedStudyReviewFixture: true
+  });
+  assertValid(validateFacadeDraftingStudyReport, planes.report, 'London accepted visible-plane study report');
+  assertValid(validateReviewedFacadeModelStudy, planes.approval, 'London accepted facade study approval');
+  assertValid(validateFacadePlaneGraph, planes.calibration.facadePlaneGraph, 'London accepted facade plane graph');
+  assertValid(validateDraftViewGraph, planes.calibration.acceptedTopologyDraftViewGraph, 'London topology-derived DraftViewGraph');
+  assertValid(validatePlaneLocalEvidenceGraph, planes.planeLocalEvidence.graph, 'London rectified plane-local evidence graph');
+  assertValid(validatePlaneLocalEvidenceReviewDecision, planes.localDetailReview, 'London pending plane-local detail review');
+  assertValid(validatePlaneLocalDetailPromotion, planes.detailPromotion, 'London blocked local detail promotion');
+  assertValid(validateModelCompletionStatus, planes.report.completion_status, 'London visible-plane completion status');
+  assertValid(validatePartGraph, planes.partGraph, 'London accepted visible-plane PartGraph');
+  assertValid(validateMcpModelingBrief, planes.mcpModelingBrief, 'London visible-plane MCP brief');
+  assert.equal(planes.report.status, 'visible_plane_study_generated_detail_review_required', 'accepted visible planes should generate only a mock study until local details are reviewed');
+  assert.equal(planes.report.model.plane_part_count, 3, 'London study should preserve left, chamfer, and right visible planes');
+  assert.equal(planes.partGraph.parts.length, 3, 'plane-only facade study should contain only the three accepted visible planes');
+  assert.equal(planes.qa.verdict, 'pass', 'accepted visible-plane study should pass mock QA');
+  assert.equal(planes.report.model.release_allowed, false, 'nominal single-view facade study must not become release geometry');
+  assert.deepEqual(planes.report.coordinate_mapping.source_raster, { width: 1280, height: 1707 }, 'plane-local evidence must retain source-raster coordinates');
+  assert.equal(planes.report.coordinate_mapping.calibration_reference.width, 900, 'facade calibration should explicitly retain its resized working width');
+  assert.equal(planes.report.coordinate_mapping.calibration_reference.height, 1200, 'facade calibration should explicitly retain its resized working height');
+  assert.ok(planes.calibration.topologySeed.plane_spans.some((span) => span.orientation_axis === 'unknown'), 'corner chamfer must remain an unknown-axis visible plane instead of being forced onto red or green');
+  for (const plane of planes.calibration.facadePlaneGraph.planes) {
+    assert.ok(plane.id.startsWith('visible_plane_'), 'building-single intake planes must use visible-plane candidate naming');
+    assert.equal(plane.visible_quad_px.length, 4, `${plane.id} should retain its visible source-image quad`);
+    assert.ok(plane.orientation_hint, `${plane.id} should retain an orientation hint`);
+    assert.ok(Array.isArray(plane.adjacency), `${plane.id} should expose reviewed adjacency candidates`);
+    assert.ok(plane.occlusion_order, `${plane.id} should expose occlusion order evidence`);
+    assert.ok(Array.isArray(plane.must_not_merge_with), `${plane.id} should expose must-not-merge constraints`);
+    assert.ok(plane.source, `${plane.id} should expose source provenance`);
+    assert.equal(plane.review_required, true, `${plane.id} should remain review-required`);
+    assert.equal(plane.promotion_allowed, false, `${plane.id} should remain promotion-disabled in the domain graph`);
+  }
+
+  const detailOutput = 'output/image-structured-modeler/london-corner-facade-study-test-details';
+  const details = await runFacadeDraftingStudy({
+    outputDir: detailOutput,
+    acceptedStudyReviewFixture: true,
+    acceptedLocalDetailReviewFixture: true
+  });
+  assertValid(validateFacadeDraftingStudyReport, details.report, 'London accepted partial-detail study report');
+  assertValid(validatePlaneLocalEvidenceReviewDecision, details.localDetailReview, 'London accepted partial-detail review');
+  assertValid(validatePlaneLocalDetailPromotion, details.detailPromotion, 'London accepted partial-detail promotion');
+  assertValid(validateModelCompletionStatus, details.report.completion_status, 'London partial-detail completion status');
+  assertValid(validatePartGraph, details.partGraph, 'London accepted partial-detail PartGraph');
+  assertValid(validateMcpModelingBrief, details.mcpModelingBrief, 'London partial-detail MCP brief');
+  assert.equal(details.report.status, 'visible_detail_subset_generated_coverage_review_required', 'partial accepted details must not imply complete visible-detail coverage');
+  assert.equal(details.detailPromotion.accepted_details.length, 8, 'partial fixture should promote exactly eight manually reviewed windows');
+  assert.equal(details.detailPromotion.false_promotion_count, 0, 'accepted partial details must have zero false promotions');
+  assert.equal(details.detailPromotion.reprojection_qa.status, 'pass', 'every accepted detail must pass source-image reprojection QA');
+  assert.equal(details.detailPromotion.reprojection_qa.checked_detail_count, 8, 'reprojection QA should check all eight accepted openings');
+  assert.equal(details.detailPromotion.reprojection_qa.source_bounds_violations, 0, 'accepted openings must remain inside the source image');
+  assert.ok(details.detailPromotion.reprojection_qa.checks.every((check) => check.status === 'pass'), 'every accepted opening reprojection check should pass');
+  const backingParts = details.partGraph.parts.filter((part) => part.type === 'reviewed_recess_backing');
+  assert.equal(backingParts.length, 8, 'eight accepted openings should create eight recessed backing meshes');
+  assert.ok(backingParts.every((part) => part.qa.wall_void_created === true), 'accepted opening geometry must use true wall-mesh voids');
+  assert.equal(details.partGraph.parts.filter((part) => part.type === 'reviewed_visible_plane').reduce((sum, part) => sum + part.qa.opening_count, 0), 8, 'reviewed facade plane meshes should record all eight wall voids');
+  assert.equal(details.report.completion_status.visual_status, 'in_progress', 'partial fixture must remain visually incomplete');
+  assert.equal(details.report.completion_status.release_status, 'blocked', 'single-view study without metric scale and hidden review must remain release-blocked');
+  assert.ok(details.report.completion_status.visual_blockers.includes('accepted_visible_detail_coverage_review_required'), 'partial fixture should expose its missing visible-detail coverage review');
+  const briefStages = details.mcpModelingBrief.artifact_sequence.map((item) => item.stage);
+  assert.ok(briefStages.indexOf('draft_view_graph') < briefStages.indexOf('facade_plane_graph'), 'MCP brief should describe DraftViewGraph before the domain plane graph');
+  assert.ok(briefStages.indexOf('facade_plane_graph') < briefStages.indexOf('plane_local_detail_candidates'), 'MCP brief should describe plane-local candidates after the plane graph');
+  assert.ok(briefStages.indexOf('plane_local_detail_candidates') < briefStages.indexOf('promotion_status'), 'MCP brief should describe promotion status after local detail candidates');
+  const briefMarkdown = await fs.readFile(path.join(repoRoot, detailOutput, '12-mcp-modeling-brief.md'), 'utf8');
+  assert.ok(briefMarkdown.indexOf('## DraftViewGraph') < briefMarkdown.indexOf('## FacadePlaneGraph'), 'rendered MCP brief should lead with DraftViewGraph');
+  assert.ok(briefMarkdown.indexOf('## FacadePlaneGraph') < briefMarkdown.indexOf('## Plane-Local Detail Candidates'), 'rendered MCP brief should describe plane-local candidates after planes');
+  assert.ok(briefMarkdown.indexOf('## Plane-Local Detail Candidates') < briefMarkdown.indexOf('## Promotion Status'), 'rendered MCP brief should place promotion status last among authoritative review stages');
+  const planeReviewHtml = await fs.readFile(path.join(repoRoot, detailOutput, 'plane-local-evidence', 'index.html'), 'utf8');
+  for (const layer of ['plane-local-edge-evidence', 'plane-local-corner-evidence', 'plane-local-repetition-hypotheses', 'plane-local-region-candidates', 'plane-local-detail-proposals']) {
+    assert.ok(planeReviewHtml.includes(`data-layer-toggle="${layer}"`), `plane-local review workbench should expose ${layer}`);
+  }
   for (const relative of [
-    '01-original.png',
-    '02-structure-overlay.png',
-    '02b-structural-projection-overlay.png',
-    '02c-calibrated-view-overlay.png',
-    '02c-calibrated-view-overlay.svg',
-    '02d-corner-chain-topology-overlay.png',
-    '02d-corner-chain-topology-overlay.svg',
-    '03-draft-view-graph.png',
-    '03b-facade-projection.png',
-    '03c-plan-projection.png',
-    '04-plane-review-overlay.png',
-    '05-partgraph-preview.json',
-    '06-sketchup-dsl.preview.json',
-    '07-sketchup-mock-preview.png',
-    '07-sketchup-mock-preview.svg',
-    '07-sketchup-mock-summary.json',
-    'yellow-calibrated-view-graph.json',
-    'yellow-calibrated-view-graph.md',
-    'yellow-calibrated-view-review.accepted.json',
-    'yellow-corner-chain-topology.json',
-    'yellow-corner-chain-topology.md',
-    'yellow-corner-chain-topology-review.accepted.json',
-    'yellow-structural-projection.json',
-    'yellow-structural-methodology.md',
-    'perspective-critique-report.json',
-    'perspective-critique-report.md',
-    'intake/calibrated-view-graph.json',
-    'intake/calibrated-view-graph.md',
-    'intake/calibrated-view-review.accepted.json',
-    'intake/corner-chain-topology.json',
-    'intake/corner-chain-topology.md',
-    'intake/corner-chain-topology-review.accepted.json',
-    'comparison/index.html',
-    'judgment-report.json'
+    'calibration/02-perspective-direction-families.png',
+    'calibration/04-calibrated-plane-topology.png',
+    'plane-local-evidence/visible_plane_primary_left.evidence.png',
+    'plane-local-evidence/visible_plane_primary_right.evidence.png',
+    '10-isometric-study.png',
+    '11-source-reprojection.png',
+    'orthographic-preview/top.svg'
+  ]) {
+    const stat = await fs.stat(path.join(repoRoot, detailOutput, relative));
+    assert.equal(stat.size > 0, true, `generalized facade study artifact ${relative} should be non-empty`);
+  }
+
+  const acceptedStudyReview = await readJson('examples/building-single-london-corner/reviewed-facade-model-study.accepted-fixture.json');
+  acceptedStudyReview.accepted_plane_ids[0] = 'forged_visible_plane';
+  const forged = await runFacadeDraftingStudy({
+    outputDir: 'output/image-structured-modeler/london-corner-facade-study-test-forged',
+    studyReview: acceptedStudyReview
+  });
+  assert.equal(forged.report.status, 'blocked_no_accepted_facade_study_review', 'forged accepted plane ids must fail closed');
+  assert.equal(forged.report.model.part_graph_generated, false, 'forged facade review must not generate PartGraph geometry');
+  assert.equal(forged.report.model.sketchup_dsl_generated, false, 'forged facade review must not generate SketchUp DSL');
+  assert.equal(forged.report.no_review_false_promotion_count, 0, 'forged facade review must preserve zero false promotions');
+
+  const genericImplementation = await fs.readFile(path.join(subprojectRoot, 'scripts', 'lib', 'reviewed-facade-study.mjs'), 'utf8');
+  assert.equal(/anime|yellow-building|visible_plane_recessed_front_ab|visible_plane_main_front_cd/u.test(genericImplementation), false, 'generic reviewed facade assembly must not contain yellow-building fixture ids');
+}
+
+async function assertCalibrationRoutingBenchmark() {
+  const outputDir = 'output/image-structured-modeler/calibration-routing-benchmark-test';
+  const result = await runCalibrationRoutingBenchmark({ outputDir });
+  const absoluteOutputDir = path.join(repoRoot, outputDir);
+
+  assertValid(validateCalibrationRoutingBenchmarkReport, result.report, 'calibration routing benchmark report');
+  assert.equal(result.ok, true, 'calibration routing benchmark should pass every strategy case');
+  assert.equal(result.report.summary.case_count, 7, 'calibration routing benchmark should cover seven cases');
+  assert.equal(result.report.summary.failed_case_count, 0, 'calibration routing benchmark should have no failed cases');
+  assert.equal(result.report.summary.false_promotion_count, 0, 'calibration routing benchmark should have zero false promotions');
+  for (const strategy of Object.values(result.strategies)) {
+    assertValid(validateImageGeometryStrategy, strategy, `image geometry strategy ${strategy.strategy}`);
+    assert.equal(strategy.review_policy.promotion_allowed, false, `${strategy.strategy} must start promotion-disabled`);
+  }
+  assert.equal(result.strategies.birdEyeStrategy.strategy, 'ground_plane_site', 'bird-eye building groups must use the ground-plane route');
+  assert.equal(result.strategies.birdEyeStrategy.calibration_required, false, 'bird-eye site routing must not require facade VP calibration');
+  assert.ok(result.strategies.birdEyeStrategy.forbidden_artifacts.includes('facade_axis_as_site_ground_truth'), 'bird-eye site routing must reject facade axes as site truth');
+  assert.equal(result.strategies.orthographicStrategy.strategy, 'document_orthographic_views', 'existing orthographic drawings should bypass perspective calibration');
+  assert.equal(result.strategies.productStrategy.strategy, 'object_surface_profile', 'single-view products should use object surface reasoning');
+  assert.ok(result.strategies.productStrategy.forbidden_artifacts.includes('mandatory_red_green_facade_axes'), 'products must not require architectural red/green axes');
+  assert.equal(result.strategies.multiViewStrategy.strategy, 'multi_view_calibration_pose_graph', 'multi-image buildings should calibrate each view before fusion');
+
+  const interiorCase = result.report.cases.find((item) => item.id === 'synthetic_one_point_interior');
+  assert.deepEqual(interiorCase.checks.camera_model_candidates, ['one_point_or_near_affine'], 'one-point interior should preserve a finite depth VP plus an infinite horizontal direction');
+  assert.equal(interiorCase.promotion_allowed, false, 'one-point interior calibration must remain review-gated');
+
+  assertValid(validateMultiViewCalibrationGraph, result.multiViewGraph, 'multi-view calibration graph');
+  assert.equal(result.multiViewGraph.summary.accepted_calibration_view_count, 2, 'multi-view fixture should contain two independently accepted calibration views');
+  assert.equal(result.multiViewGraph.review_policy.evidence_fusion_allowed, false, 'multi-view graph must not fuse evidence before correspondence review');
+  assert.equal(result.multiViewGraph.review_policy.geometry_fusion_allowed, false, 'multi-view graph must not fuse geometry without relative pose');
+  assertValid(validateMultiViewCalibrationReviewDecision, result.pendingMultiViewReview, 'pending multi-view calibration review');
+  assertValid(validateMultiViewCalibrationReviewResult, result.pendingMultiViewResult, 'pending multi-view calibration result');
+  assert.equal(result.pendingMultiViewResult.status, 'blocked_no_accepted_review', 'pending multi-view review must fail closed');
+  assert.equal(result.pendingMultiViewResult.evidence_fusion_allowed, false, 'pending multi-view review must block evidence fusion');
+  assertValid(validateMultiViewCalibrationReviewDecision, result.acceptedMultiViewReview, 'accepted multi-view fixture review');
+  assertValid(validateMultiViewCalibrationReviewResult, result.acceptedMultiViewResult, 'accepted multi-view fixture result');
+  assert.equal(result.acceptedMultiViewResult.evidence_fusion_allowed, true, 'accepted correspondence review may fuse evidence identity');
+  assert.equal(result.acceptedMultiViewResult.geometry_fusion_allowed, false, 'accepted evidence correspondences must not imply metric geometry fusion');
+  assert.equal(result.acceptedMultiViewResult.promotion_allowed, false, 'accepted multi-view evidence fusion must not promote PartGraph');
+  assert.ok(result.acceptedMultiViewResult.blockers.includes('reviewed_relative_pose_or_homography_required_for_geometry_fusion'), 'multi-view evidence fusion should expose the missing relative-pose blocker');
+
+  const forgedMultiViewReview = structuredClone(result.acceptedMultiViewReview);
+  forgedMultiViewReview.accepted_correspondence_ids[0] = 'forged_correspondence';
+  const forgedMultiViewResult = evaluateMultiViewCalibrationReview({
+    graph: result.multiViewGraph,
+    reviewDecision: forgedMultiViewReview
+  });
+  assert.equal(forgedMultiViewResult.status, 'blocked_invalid_review', 'forged multi-view correspondence ids must fail closed');
+  assert.equal(forgedMultiViewResult.evidence_fusion_allowed, false, 'forged correspondences must not fuse evidence');
+  assert.equal(forgedMultiViewResult.geometry_fusion_allowed, false, 'forged correspondences must not fuse geometry');
+  assert.equal(forgedMultiViewResult.promotion_allowed, false, 'forged correspondences must not promote PartGraph');
+
+  assertValid(validateMultiViewRelativePoseReviewDecision, result.pendingRelativePoseReview, 'pending relative-pose review');
+  assertValid(validateMultiViewRelativePoseReviewResult, result.pendingRelativePoseResult, 'pending relative-pose result');
+  assert.equal(result.pendingRelativePoseResult.geometry_fusion_allowed, false, 'pending relative pose must block geometry fusion');
+  assertValid(validateMultiViewRelativePoseReviewDecision, result.acceptedPlanarPoseReview, 'accepted planar-pose fixture');
+  assertValid(validateMultiViewRelativePoseReviewResult, result.acceptedPlanarPoseResult, 'accepted planar-pose result');
+  assert.equal(result.acceptedPlanarPoseResult.geometry_scope, 'single_plane', 'homography must remain scoped to one reviewed plane');
+  assert.equal(result.acceptedPlanarPoseResult.accepted_pose_edges[0].measured_max_reprojection_residual_px, 0, 'homography residual must be recomputed from point coordinates');
+  assertValid(validateMultiViewRelativePoseReviewDecision, result.acceptedRelativePoseReview, 'accepted object-frame relative-pose fixture');
+  assertValid(validateMultiViewRelativePoseReviewResult, result.acceptedRelativePoseResult, 'accepted object-frame relative-pose result');
+  assert.equal(result.acceptedRelativePoseResult.geometry_scope, 'object_frame', 'reviewed non-collinear 3D correspondences should establish object-frame scope');
+  assert.ok(result.acceptedRelativePoseResult.accepted_pose_edges[0].measured_max_alignment_residual_model_units < 1e-12, 'rigid-pose residual must be measured rather than trusted from review text');
+
+  const forgedPoseReview = structuredClone(result.acceptedRelativePoseReview);
+  forgedPoseReview.pose_edges[0].transform_matrix[0][3] = 4.2;
+  const forgedPoseResult = evaluateRelativePoseReview({
+    graph: result.multiViewGraph,
+    evidenceReviewResult: result.acceptedMultiViewResult,
+    reviewDecision: forgedPoseReview
+  });
+  assert.equal(forgedPoseResult.status, 'blocked_invalid_review', 'a forged low reported pose residual must fail measured reprojection QA');
+  assert.equal(forgedPoseResult.geometry_fusion_allowed, false, 'a geometrically inconsistent transform must not fuse geometry');
+
+  assertValid(validateMetricScaleReviewDecision, result.pendingMetricScaleReview, 'pending metric-scale review');
+  assertValid(validateMetricScaleReviewResult, result.pendingMetricScaleResult, 'pending metric-scale result');
+  assert.equal(result.pendingMetricScaleResult.metric_scale_allowed, false, 'relative pose without accepted scale must remain non-metric');
+  assertValid(validateMetricScaleReviewDecision, result.acceptedMetricScaleReview, 'accepted metric-scale fixture');
+  assertValid(validateMetricScaleReviewResult, result.acceptedMetricScaleResult, 'accepted metric-scale result');
+  assert.equal(result.acceptedMetricScaleResult.units_per_model_unit, 1000, 'reviewed known-distance anchor should establish millimetres per model unit');
+  const forgedScaleReview = structuredClone(result.acceptedMetricScaleReview);
+  forgedScaleReview.units_per_model_unit = 900;
+  const forgedScaleResult = evaluateMetricScaleReview({
+    relativePoseReviewResult: result.acceptedRelativePoseResult,
+    evidenceReviewResult: result.acceptedMultiViewResult,
+    reviewDecision: forgedScaleReview
+  });
+  assert.equal(forgedScaleResult.status, 'blocked_invalid_review', 'a scale value inconsistent with its known-distance anchor must fail closed');
+
+  assertValid(validateMultiViewConflictGraph, result.multiViewConflictGraph, 'multi-view conflict graph');
+  assertValid(validateMultiViewConflictReviewDecision, result.pendingConflictReview, 'pending conflict review');
+  assertValid(validateMultiViewConflictReviewResult, result.pendingConflictResult, 'pending conflict result');
+  assert.equal(result.pendingConflictResult.geometry_conflicts_resolved, false, 'unreviewed blocking conflicts must block geometry fusion');
+  assertValid(validateMultiViewConflictReviewDecision, result.acceptedConflictReview, 'accepted conflict fixture');
+  assertValid(validateMultiViewConflictReviewResult, result.acceptedConflictResult, 'accepted conflict result');
+  assert.equal(result.acceptedConflictResult.geometry_conflicts_resolved, true, 'explicitly rejected unused outlier should resolve the blocking conflict');
+  const forgedConflictReview = structuredClone(result.acceptedConflictReview);
+  forgedConflictReview.resolutions[0].retained_evidence_ids = ['correspondence_point_outlier'];
+  forgedConflictReview.resolutions[0].rejected_evidence_ids = ['correspondence_point_corner_0'];
+  const forgedConflictResult = evaluateMultiViewConflictReview({
+    conflictGraph: result.multiViewConflictGraph,
+    evidenceReviewResult: result.acceptedMultiViewResult,
+    relativePoseReviewResult: result.acceptedRelativePoseResult,
+    reviewDecision: forgedConflictReview
+  });
+  assert.equal(forgedConflictResult.status, 'blocked_invalid_review', 'conflict review must not reject evidence already consumed by the accepted pose');
+
+  assertValid(validateHiddenGeometryReviewDecision, result.pendingHiddenGeometryReview, 'pending hidden-geometry review');
+  assertValid(validateHiddenGeometryReviewResult, result.pendingHiddenGeometryResult, 'pending hidden-geometry result');
+  assert.equal(result.pendingHiddenGeometryResult.hidden_geometry_allowed, false, 'unreviewed hidden closure must fail closed');
+  assertValid(validateHiddenGeometryReviewDecision, result.acceptedHiddenGeometryReview, 'accepted hidden-geometry fixture');
+  assertValid(validateHiddenGeometryReviewResult, result.acceptedHiddenGeometryResult, 'accepted hidden-geometry result');
+  assert.equal(result.acceptedHiddenGeometryResult.release_eligible, true, 'cross-view observed hidden closure may satisfy the hidden-geometry release prerequisite');
+  const assumptionHiddenReview = structuredClone(result.acceptedHiddenGeometryReview);
+  assumptionHiddenReview.accepted_hidden_surfaces[0].evidence_kind = 'explicit_user_assumption';
+  const assumptionHiddenResult = evaluateHiddenGeometryReview({
+    graph: result.multiViewGraph,
+    evidenceReviewResult: result.acceptedMultiViewResult,
+    reviewDecision: assumptionHiddenReview
+  });
+  assert.equal(assumptionHiddenResult.hidden_geometry_allowed, true, 'an explicit reviewed assumption may support a mock closure study');
+  assert.equal(assumptionHiddenResult.release_eligible, false, 'an explicit assumption must not satisfy release hidden-geometry evidence');
+  const forgedHiddenReview = structuredClone(result.acceptedHiddenGeometryReview);
+  forgedHiddenReview.accepted_hidden_surfaces[0].source_evidence_ids = ['forged_hidden_surface_evidence'];
+  const forgedHiddenResult = evaluateHiddenGeometryReview({
+    graph: result.multiViewGraph,
+    evidenceReviewResult: result.acceptedMultiViewResult,
+    reviewDecision: forgedHiddenReview
+  });
+  assert.equal(forgedHiddenResult.status, 'blocked_invalid_review', 'hidden closure sourced from a forged evidence id must fail closed');
+
+  assertValid(validateGeometryFusionGateResult, result.pendingGeometryFusionGate, 'pending geometry-fusion gate');
+  assert.equal(result.pendingGeometryFusionGate.partgraph_promotion_allowed, false, 'incomplete multi-view reviews must block PartGraph promotion');
+  assertValid(validateGeometryFusionGateResult, result.planarGeometryFusionGate, 'planar geometry-fusion gate');
+  assert.equal(result.planarGeometryFusionGate.partgraph_promotion_allowed, true, 'fully reviewed planar evidence may enter scoped PartGraph promotion');
+  assert.equal(result.planarGeometryFusionGate.release_candidate_allowed, false, 'a plane homography must not claim object-frame release readiness');
+  assert.ok(result.planarGeometryFusionGate.blockers.includes('object_frame_relative_pose_required_for_release'), 'planar fusion should expose its object-frame release blocker');
+  assertValid(validateMetricScaleReviewResult, result.planarMetricScaleResult, 'planar metric-scale result');
+  assertValid(validateMultiViewConflictReviewResult, result.planarConflictResult, 'planar conflict result');
+  const mixedPoseReviewGate = evaluateGeometryFusionGate({
+    evidenceReviewResult: result.acceptedMultiViewResult,
+    relativePoseReviewResult: result.acceptedPlanarPoseResult,
+    metricScaleReviewResult: result.acceptedMetricScaleResult,
+    conflictReviewResult: result.acceptedConflictResult,
+    hiddenGeometryReviewResult: result.acceptedHiddenGeometryResult
+  });
+  assert.equal(mixedPoseReviewGate.partgraph_promotion_allowed, false, 'review results derived from another pose edge must not be mixed into a promotion chain');
+  assert.ok(mixedPoseReviewGate.blockers.includes('metric_scale_review_pose_mismatch'), 'mixed pose chain should identify the metric-scale mismatch');
+  assert.ok(mixedPoseReviewGate.blockers.includes('conflict_review_pose_mismatch'), 'mixed pose chain should identify the conflict-review mismatch');
+  const assumptionGeometryGate = evaluateGeometryFusionGate({
+    evidenceReviewResult: result.acceptedMultiViewResult,
+    relativePoseReviewResult: result.acceptedRelativePoseResult,
+    metricScaleReviewResult: result.acceptedMetricScaleResult,
+    conflictReviewResult: result.acceptedConflictResult,
+    hiddenGeometryReviewResult: assumptionHiddenResult
+  });
+  assert.equal(assumptionGeometryGate.partgraph_promotion_allowed, true, 'reviewed assumed closure may enter a non-release mock PartGraph study');
+  assert.equal(assumptionGeometryGate.release_candidate_allowed, false, 'assumed hidden closure must remain release-blocked');
+  assertValid(validateGeometryFusionGateResult, result.acceptedGeometryFusionGate, 'accepted geometry-fusion gate');
+  assert.equal(result.acceptedGeometryFusionGate.status, 'ready_for_reviewed_partgraph_promotion', 'complete reviewed multi-view geometry should reach the PartGraph promotion boundary');
+  assert.equal(result.acceptedGeometryFusionGate.partgraph_promotion_allowed, true, 'complete reviewed multi-view geometry should allow reviewed PartGraph promotion');
+  assert.equal(result.acceptedGeometryFusionGate.release_candidate_allowed, true, 'object-frame pose, metric scale, conflict resolution, and observed closure should satisfy release-candidate prerequisites');
+  assert.equal(result.acceptedGeometryFusionGate.direct_compile_allowed, false, 'geometry fusion must never directly compile SketchUp DSL');
+  assert.equal(result.acceptedGeometryFusionGate.false_promotion_count, 0, 'accepted multi-view path should preserve zero false promotions');
+
+  for (const relative of [
+    'calibration-routing-benchmark-report.json',
+    'calibration-routing-benchmark-report.md',
+    'multi-view-calibration-graph.json',
+    'multi-view-calibration-review.pending.json',
+    'multi-view-calibration-review-result.pending.json',
+    'multi-view-calibration-review.accepted-fixture.json',
+    'multi-view-calibration-review-result.accepted-fixture.json',
+    'multi-view-relative-pose-review.pending.json',
+    'multi-view-relative-pose-review-result.pending.json',
+    'multi-view-relative-pose-review.planar-fixture.json',
+    'multi-view-relative-pose-review-result.planar-fixture.json',
+    'multi-view-relative-pose-review.accepted-fixture.json',
+    'multi-view-relative-pose-review-result.accepted-fixture.json',
+    'metric-scale-review.pending.json',
+    'metric-scale-review-result.pending.json',
+    'metric-scale-review.accepted-fixture.json',
+    'metric-scale-review-result.accepted-fixture.json',
+    'metric-scale-review-result.planar-fixture.json',
+    'multi-view-conflict-graph.json',
+    'multi-view-conflict-review.pending.json',
+    'multi-view-conflict-review-result.pending.json',
+    'multi-view-conflict-review.accepted-fixture.json',
+    'multi-view-conflict-review-result.accepted-fixture.json',
+    'multi-view-conflict-review-result.planar-fixture.json',
+    'hidden-geometry-review.pending.json',
+    'hidden-geometry-review-result.pending.json',
+    'hidden-geometry-review.accepted-fixture.json',
+    'hidden-geometry-review-result.accepted-fixture.json',
+    'geometry-fusion-gate.pending.json',
+    'geometry-fusion-gate.planar-release-blocked.json',
+    'geometry-fusion-gate.accepted-fixture.json',
+    'synthetic/two-point-building-a.png',
+    'synthetic/two-point-building-b.png',
+    'synthetic/one-point-interior.png'
   ]) {
     const stat = await fs.stat(path.join(absoluteOutputDir, relative));
-    assert.equal(stat.size > 0, true, `yellow visible effect artifact ${relative} should be non-empty`);
+    assert.equal(stat.size > 0, true, `calibration routing artifact ${relative} should be non-empty`);
   }
-  const comparisonHtml = await fs.readFile(path.join(absoluteOutputDir, 'comparison', 'index.html'), 'utf8');
-  assert.ok(comparisonHtml.includes('Original + Structure Evidence'), 'yellow comparison should show original/evidence panel');
-  assert.ok(comparisonHtml.includes('Line-fit Projection'), 'yellow comparison should show structural projection panel');
-  assert.ok(comparisonHtml.includes('Calibration + Corner Chain'), 'yellow comparison should show calibration/topology panel');
-  assert.ok(comparisonHtml.includes('yellow-calibrated-view-graph.json'), 'yellow comparison should link calibrated view graph');
-  assert.ok(comparisonHtml.includes('yellow-corner-chain-topology.json'), 'yellow comparison should link corner-chain topology');
-  assert.ok(comparisonHtml.includes('left_front_recess_notch'), 'yellow comparison should surface the accepted topology');
-  assert.ok(comparisonHtml.includes('Facade + Plan Projection'), 'yellow comparison should show facade and plan projection panel');
-  assert.ok(comparisonHtml.includes('partial'), 'yellow comparison should surface the partial drafting-visible delta');
-  assert.ok(comparisonHtml.includes('Drafting-first Review Layer'), 'yellow comparison should show Drafting-first review panel');
-  assert.ok(comparisonHtml.includes('Accepted Review SketchUp Preview'), 'yellow comparison should keep the SketchUp preview slot');
-  assert.ok(comparisonHtml.includes('07-sketchup-mock-preview.png'), 'yellow comparison should render the mock SketchUp preview image');
-  assert.ok(comparisonHtml.includes('SketchUp preview blocked'), 'yellow comparison should show blocked preview state');
+}
+
+async function assertInteriorDraftingStudy() {
+  const sample = await readJson('examples/interior-hallway-one-point/sample.json');
+  const topologySeed = await readJson('examples/interior-hallway-one-point/room-surface-topology-seed.draft.json');
+  const acceptedSurfaceReview = await readJson('examples/interior-hallway-one-point/room-surface-review.accepted-fixture.json');
+  const acceptedCoverageReview = await readJson('examples/interior-hallway-one-point/visible-coverage-review.accepted-fixture.json');
+  const acceptedLocalDetailReview = await readJson('examples/interior-hallway-one-point/local-detail-review.accepted-fixture.json');
+  assertValid(validateInteriorDraftingStudySample, sample, 'interior hallway study sample');
+  assertValid(validateRoomSurfaceTopologySeed, topologySeed, 'interior hallway room-surface topology seed');
+  assertValid(validateRoomSurfaceReviewDecision, acceptedSurfaceReview, 'interior hallway accepted room-surface review');
+  assertValid(validateVisibleCoverageReviewDecision, acceptedCoverageReview, 'interior hallway accepted visible-coverage review');
+  assertValid(validateLocalDetailReviewDecision, acceptedLocalDetailReview, 'interior hallway accepted local-detail review');
+
+  const rejectedCalibration = { status: 'blocked_no_accepted_review', accepted_camera_model: null };
+  const blockedGraph = buildRoomSurfaceGraph({ calibrationReviewResult: rejectedCalibration, topologySeed });
+  assertValid(validateRoomSurfaceGraph, blockedGraph, 'interior hallway blocked room-surface graph');
+  assert.equal(blockedGraph.review_policy.status, 'blocked_no_accepted_calibration', 'room-surface derivation must fail closed without accepted calibration');
+  assert.equal(blockedGraph.surfaces.length, 0, 'blocked room-surface graph must contain no candidate surfaces');
+
+  const acceptedCalibration = { status: 'accepted_for_rectification', accepted_camera_model: 'one_point_or_near_affine' };
+  const roomSurfaceGraph = buildRoomSurfaceGraph({ calibrationReviewResult: acceptedCalibration, topologySeed });
+  assertValid(validateRoomSurfaceGraph, roomSurfaceGraph, 'interior hallway room-surface graph');
+  assert.equal(roomSurfaceGraph.surfaces.length, 5, 'review seed should preserve five distinct room surfaces');
+  assert.ok(roomSurfaceGraph.surfaces.every((surface) => surface.visible_polygon_px.length >= 4), 'room surfaces should preserve visible polygons independently of rectification quads');
+  assert.ok(roomSurfaceGraph.surfaces.every((surface) => surface.rectification_quad_px.length === 4), 'room surfaces should expose stable four-point rectification regions');
+  assert.ok(roomSurfaceGraph.surfaces.every((surface) => surface.promotion_allowed === false), 'unreviewed room-surface graph must remain promotion-disabled');
+
+  const pendingSurfaceReview = buildPendingRoomSurfaceReview();
+  const pendingSurfaceResult = evaluateRoomSurfaceReview({ roomSurfaceGraph, reviewDecision: pendingSurfaceReview });
+  assertValid(validateRoomSurfaceReviewDecision, pendingSurfaceReview, 'pending room-surface review');
+  assertValid(validateRoomSurfaceReviewResult, pendingSurfaceResult, 'pending room-surface review result');
+  assert.equal(pendingSurfaceResult.status, 'blocked_no_accepted_review', 'pending room-surface review must fail closed');
+  assert.equal(pendingSurfaceResult.derived_drafting_allowed, false, 'pending surface review must not derive downstream drafting');
+
+  const surfaceReviewResult = evaluateRoomSurfaceReview({ roomSurfaceGraph, reviewDecision: acceptedSurfaceReview });
+  assertValid(validateRoomSurfaceReviewResult, surfaceReviewResult, 'accepted room-surface review result');
+  assert.equal(surfaceReviewResult.status, 'accepted_for_derived_drafting', 'accepted room-surface ids should unlock derived drafting only');
+  assert.equal(surfaceReviewResult.promotion_allowed, false, 'accepted room-surface review cannot promote PartGraph directly');
+
+  const pendingCoverage = buildPendingVisibleCoverageReview();
+  const pendingCoverageResult = evaluateVisibleCoverageReview({ surfaceGraph: roomSurfaceGraph, surfaceReviewResult, reviewDecision: pendingCoverage });
+  assertValid(validateVisibleCoverageReviewDecision, pendingCoverage, 'pending visible-coverage review');
+  assertValid(validateVisibleCoverageReviewResult, pendingCoverageResult, 'pending visible-coverage review result');
+  assert.equal(pendingCoverageResult.visual_completion_eligible, false, 'pending coverage review must block visual completion');
+
+  const coverageResult = evaluateVisibleCoverageReview({ surfaceGraph: roomSurfaceGraph, surfaceReviewResult, reviewDecision: acceptedCoverageReview });
+  assertValid(validateVisibleCoverageReviewResult, coverageResult, 'accepted visible-coverage review result');
+  assert.equal(coverageResult.status, 'accepted_for_visual_completion', 'reviewed occlusion exclusions may satisfy visible coverage');
+  assert.equal(coverageResult.coverage_status, 'complete_with_explicit_exclusions', 'people occlusion must remain an explicit exclusion');
+  assert.equal(coverageResult.excluded_regions[0].promotion_allowed, false, 'excluded region must remain permanently non-promotable');
+  assert.equal(coverageResult.excluded_regions[0].compile_allowed, false, 'excluded region must remain permanently non-compilable');
+
+  const forgedCoverage = structuredClone(acceptedCoverageReview);
+  forgedCoverage.excluded_regions[0].reason = '';
+  forgedCoverage.excluded_regions[0].promotion_allowed = true;
+  const forgedCoverageResult = evaluateVisibleCoverageReview({ surfaceGraph: roomSurfaceGraph, surfaceReviewResult, reviewDecision: forgedCoverage });
+  assert.equal(forgedCoverageResult.status, 'blocked_invalid_review', 'missing reason or promotable exclusion must invalidate coverage review');
+  assert.equal(forgedCoverageResult.visual_completion_eligible, false, 'invalid exclusions must block visual completion');
+  assert.equal(forgedCoverageResult.false_promotion_count, 0, 'invalid exclusion attempts must still produce no promoted geometry');
+
+  const pendingDetailReview = buildPendingRoomLocalDetailReview({ roomSurfaceGraph });
+  const pendingDetailPromotion = promoteReviewedRoomLocalDetails({ roomSurfaceGraph, roomSurfaceReviewResult: surfaceReviewResult, reviewDecision: pendingDetailReview });
+  assertValid(validateLocalDetailReviewDecision, pendingDetailReview, 'pending room-local detail review');
+  assertValid(validateSurfaceLocalDetailPromotion, pendingDetailPromotion, 'blocked room-local detail promotion');
+  assert.equal(pendingDetailPromotion.partgraph_promotion_allowed, false, 'unreviewed room-local details must fail closed');
+
+  const detailPromotion = promoteReviewedRoomLocalDetails({ roomSurfaceGraph, roomSurfaceReviewResult: surfaceReviewResult, reviewDecision: acceptedLocalDetailReview });
+  assertValid(validateSurfaceLocalDetailPromotion, detailPromotion, 'accepted room-local detail promotion');
+  assert.equal(detailPromotion.status, 'accepted_for_mock_study', 'accepted room-local details should unlock mock-study PartGraph promotion');
+  assert.equal(detailPromotion.accepted_details.length, 2, 'only the two reviewed visible room details should promote');
+  assert.equal(detailPromotion.reprojection_qa.status, 'pass', 'accepted room-local details must pass surface reprojection QA');
+  assert.equal(detailPromotion.false_promotion_count, 0, 'accepted room-local details must preserve zero false promotions');
+
+  const sourcePath = path.join(repoRoot, sample.source.local_path);
+  if (!(await pathExists(sourcePath))) return;
+
+  const blockedOutput = 'output/image-structured-modeler/interior-hallway-study-test-blocked';
+  const blocked = await runInteriorDraftingStudy({ outputDir: blockedOutput });
+  assertValid(validateInteriorDraftingStudyReport, blocked.report, 'interior hallway no-review report');
+  assert.equal(blocked.report.status, 'blocked_review_incomplete', 'real interior study must fail closed without accepted fixtures');
+  assert.equal(blocked.partGraph, null, 'no-review interior study must not generate PartGraph');
+  assert.equal(blocked.dsl, null, 'no-review interior study must not generate SketchUp DSL');
+  assert.equal(await pathExists(path.join(repoRoot, blockedOutput, '19-reviewed-visible-room-part-graph.json')), false, 'no-review interior package must not write PartGraph');
+  assert.equal(await pathExists(path.join(repoRoot, blockedOutput, '20-sketchup-dsl.mock-study.json')), false, 'no-review interior package must not write SketchUp DSL');
+  const noReviewProof = JSON.parse(await fs.readFile(path.join(repoRoot, blockedOutput, '04-no-review-promotion-blocked.json'), 'utf8'));
+  assert.equal(noReviewProof.promoted_geometry_action_count, 0, 'interior no-review proof must record zero promoted actions');
+  assert.equal(noReviewProof.false_promotion_count, 0, 'interior no-review proof must record zero false promotions');
+
+  const acceptedOutput = 'output/image-structured-modeler/interior-hallway-study-test-accepted';
+  const accepted = await runInteriorDraftingStudy({ outputDir: acceptedOutput, acceptedReviewFixtures: true });
+  assertValid(validatePerspectiveCalibrationHypotheses, accepted.perspectiveCalibration, 'real one-point interior perspective calibration');
+  assertValid(validatePerspectiveCalibrationReviewResult, accepted.calibrationReviewResult, 'real one-point interior calibration review result');
+  assertValid(validateRoomSurfaceGraph, accepted.roomSurfaceGraph, 'real one-point interior room-surface graph');
+  assertValid(validateRoomSurfaceReviewResult, accepted.surfaceReviewResult, 'real one-point interior surface review result');
+  assertValid(validateDraftViewGraph, accepted.draftViewGraph, 'real one-point interior DraftViewGraph');
+  assertValid(validateObjectSurfaceGraph, accepted.objectSurfaceGraph, 'real one-point interior object-surface projection');
+  assertValid(validateVisibleCoverageReviewResult, accepted.coverageResult, 'real one-point interior coverage review result');
+  assertValid(validateSurfaceLocalDetailPromotion, accepted.detailPromotion, 'real one-point interior detail promotion');
+  assertValid(validateInteriorDraftingStudyReport, accepted.report, 'real one-point interior study report');
+  assertValid(validateModelCompletionStatus, accepted.report.completion_status, 'real one-point interior completion status');
+  assertValid(validatePartGraph, accepted.partGraph, 'real one-point interior PartGraph');
+  assert.equal(accepted.perspectiveCalibration.camera_model_candidates[0].model, 'one_point_or_near_affine', 'real hallway must retain the one-point camera model');
+  assert.equal(accepted.perspectiveCalibration.qa.review_quality_basis.policy, 'one_point_finite_depth_plus_infinite_width', 'one-point hallway should use model-context family quality without weakening facade thresholds');
+  assert.equal(accepted.report.status, 'visual_complete_release_blocked', 'explicit reviewed exclusions may complete visible scope while release stays blocked');
+  assert.equal(accepted.report.completion_status.visual_status, 'complete', 'accepted visible surfaces, details, reprojection, and exclusions should complete visible scope');
+  assert.equal(accepted.report.completion_status.release_status, 'in_progress', 'single-view nominal scale and hidden closure must keep release incomplete');
+  assert.ok(accepted.report.completion_status.release_blockers.includes('accepted_metric_scale_anchor_required'), 'interior release status should require a metric scale anchor');
+  assert.ok(accepted.report.completion_status.release_blockers.includes('accepted_hidden_geometry_review_required'), 'interior release status should require hidden geometry review');
+  assert.equal(accepted.report.model.exclusion_geometry_compiled, false, 'reviewed exclusions must never compile as geometry');
+  assert.equal(accepted.qa.verdict, 'pass', 'accepted visible room study should pass mock QA');
+  const partGraphText = JSON.stringify(accepted.partGraph);
+  const dslText = JSON.stringify(accepted.dsl);
+  assert.equal(partGraphText.includes('excluded_people_near_vanishing_region'), false, 'excluded region ids must remain outside PartGraph geometry');
+  assert.equal(dslText.includes('excluded_people_near_vanishing_region'), false, 'excluded region ids must remain outside SketchUp DSL');
+  assert.equal(accepted.partGraph.parts.some((part) => part.role === 'near_wall' || part.role === 'camera_side_closure'), false, 'single-view room study must not invent the hidden camera-side closure');
+
+  const briefMarkdown = await fs.readFile(path.join(repoRoot, acceptedOutput, 'mcp-modeling-brief.md'), 'utf8');
+  assert.ok(briefMarkdown.indexOf('## DraftViewGraph') < briefMarkdown.indexOf('## RoomSurfaceGraph'), 'interior MCP brief must lead with DraftViewGraph');
+  assert.ok(briefMarkdown.indexOf('## RoomSurfaceGraph') < briefMarkdown.indexOf('## Surface-Local Detail Candidates'), 'interior MCP brief must describe surface-local details after the room graph');
+  assert.ok(briefMarkdown.indexOf('## Surface-Local Detail Candidates') < briefMarkdown.indexOf('## Promotion Status'), 'interior MCP brief must put promotion status last');
+  const overlaySvg = await fs.readFile(path.join(repoRoot, acceptedOutput, '17-room-surface-review-overlay.svg'), 'utf8');
+  for (const layer of ['room-surfaces', 'surface-local-details', 'excluded-regions']) assert.ok(overlaySvg.includes(`data-layer="${layer}"`), `interior review overlay should expose ${layer}`);
+  for (const relative of ['03-structure-calibration-overlay.png', '17-room-surface-review-overlay.png', '19-reviewed-visible-room-part-graph.json', '20-sketchup-dsl.mock-study.json', '22-mock-qa.json', '23-isometric-study.png', 'orthographic-preview/top.svg']) {
+    const stat = await fs.stat(path.join(repoRoot, acceptedOutput, relative));
+    assert.equal(stat.size > 0, true, `interior drafting artifact ${relative} should be non-empty`);
+  }
+}
+
+async function assertObjectSurfaceStudy() {
+  const sample = await readJson('examples/ambulance/object-surface-study/sample.json');
+  const observations = await readRepoJson(sample.observations);
+  const seedPartGraph = await readRepoJson(sample.seed_part_graph);
+  const draftReview = await readRepoJson(sample.draft_view_review);
+  const acceptedSurfaceReview = await readRepoJson(sample.surface_review);
+  const acceptedLocalDetailReview = await readRepoJson(sample.local_detail_review);
+  assertValid(validateObjectSurfaceStudySample, sample, 'ambulance object-surface study sample');
+  assertValid(validateDraftViewReviewDecision, draftReview, 'ambulance accepted DraftView review');
+  assertValid(validateObjectSurfaceReviewDecision, acceptedSurfaceReview, 'ambulance accepted object-surface review');
+  assertValid(validateLocalDetailReviewDecision, acceptedLocalDetailReview, 'ambulance accepted local-feature review');
+
+  const drafting = annotateObservationSetWithDraftingFirstGraphs({ observationSet: observations });
+  assertValid(validateDraftViewGraph, drafting.draftViewGraph, 'ambulance object DraftViewGraph');
+  assertValid(validateObjectSurfaceGraph, drafting.objectSurfaceGraph, 'ambulance object-surface graph');
+  assert.equal(drafting.objectSurfaceGraph.domain, 'generic_object_surface_projection', 'vehicle surfaces must use generic object projection rather than a building domain');
+  assert.equal(drafting.objectSurfaceGraph.surfaces.some((surface) => /facade|plane/u.test(`${surface.id}:${surface.role}`)), false, 'vehicle surface roles must not inherit facade or plane naming');
+  assert.equal(drafting.objectSurfaceGraph.coordinate_references.length, observations.images.length, 'object-surface graph should retain source-image coordinate references for bbox QA');
+
+  const pendingDraftReview = buildDefaultDraftViewReviewDecision({ draftViewGraph: drafting.draftViewGraph, accepted: false });
+  const pendingSurfaceReview = buildPendingObjectSurfaceReview();
+  const pendingSurfaceResult = evaluateObjectSurfaceReview({ objectSurfaceGraph: drafting.objectSurfaceGraph, draftViewGraph: drafting.draftViewGraph, draftViewReviewDecision: pendingDraftReview, reviewDecision: pendingSurfaceReview });
+  assertValid(validateObjectSurfaceReviewDecision, pendingSurfaceReview, 'pending object-surface review');
+  assertValid(validateObjectSurfaceReviewResult, pendingSurfaceResult, 'pending object-surface review result');
+  assert.equal(pendingSurfaceResult.status, 'blocked_no_accepted_review', 'object-surface review must fail closed by default');
+  assert.equal(pendingSurfaceResult.local_feature_review_allowed, false, 'pending object-surface review must block local feature review');
+
+  const surfaceReviewResult = evaluateObjectSurfaceReview({ objectSurfaceGraph: drafting.objectSurfaceGraph, draftViewGraph: drafting.draftViewGraph, draftViewReviewDecision: draftReview, reviewDecision: acceptedSurfaceReview });
+  assertValid(validateObjectSurfaceReviewResult, surfaceReviewResult, 'accepted ambulance object-surface review result');
+  assert.equal(surfaceReviewResult.status, 'accepted_for_local_feature_review', 'reviewed front, side, and top surfaces should unlock feature binding');
+  assert.deepEqual(surfaceReviewResult.context_only_surface_ids, ['surface_oblique_context'], 'oblique context should remain evidence-only rather than becoming a physical surface');
+  assert.equal(surfaceReviewResult.promotion_allowed, false, 'accepted object-surface review cannot directly promote PartGraph');
+
+  const featurePromotion = promoteReviewedObjectSurfaceFeatures({ objectSurfaceGraph: drafting.objectSurfaceGraph, surfaceReviewResult, localDetailReviewDecision: acceptedLocalDetailReview, seedPartGraph });
+  assertValid(validateObjectSurfaceFeaturePromotion, featurePromotion, 'accepted ambulance object-feature promotion');
+  assert.equal(featurePromotion.status, 'accepted_for_mock_partgraph', 'reviewed feature-to-surface-to-part lineage should unlock a mock PartGraph subset');
+  assert.equal(featurePromotion.accepted_feature_ids.length, 13, 'ambulance feature fixture should accept thirteen cross-view feature records');
+  assert.equal(featurePromotion.accepted_target_part_ids.length, 7, 'thirteen feature records should corroborate seven unique target parts');
+  assert.equal(featurePromotion.qa.status, 'pass', 'accepted bbox features should pass source-coordinate QA');
+  assert.equal(featurePromotion.false_promotion_count, 0, 'accepted object features must preserve zero false promotions');
+
+  const forgedPartReview = structuredClone(acceptedLocalDetailReview);
+  forgedPartReview.detail_bindings[0].target_part_id = 'forged_target_part';
+  const forgedPartPromotion = promoteReviewedObjectSurfaceFeatures({ objectSurfaceGraph: drafting.objectSurfaceGraph, surfaceReviewResult, localDetailReviewDecision: forgedPartReview, seedPartGraph });
+  assert.equal(forgedPartPromotion.status, 'blocked_invalid_review', 'unknown reviewed target part ids must fail closed');
+  assert.equal(forgedPartPromotion.partgraph_promotion_allowed, false, 'forged target part ids must not promote PartGraph');
+
+  const degenerateReview = structuredClone(acceptedLocalDetailReview);
+  degenerateReview.accepted_detail_ids.push('surface_detail_wheel-left-front-tire_18j26ks');
+  degenerateReview.detail_bindings.push({ detail_id: 'surface_detail_wheel-left-front-tire_18j26ks', target_surface_id: 'surface_left_or_right_side', target_plane_id: null, target_part_id: 'wheel-left-front-tire', status: 'accepted' });
+  const degeneratePromotion = promoteReviewedObjectSurfaceFeatures({ objectSurfaceGraph: drafting.objectSurfaceGraph, surfaceReviewResult, localDetailReviewDecision: degenerateReview, seedPartGraph });
+  assert.equal(degeneratePromotion.status, 'blocked_invalid_review', 'zero-area center-point candidates must not become geometry without an extent review');
+  assert.ok(degeneratePromotion.qa.degenerate_geometry_count >= 1, 'degenerate feature QA should count center-point geometry');
+  assert.equal(degeneratePromotion.false_promotion_count, 0, 'degenerate feature attempts must still generate no promoted geometry');
+
+  const remoteObservations = await readJson('examples/compact-remote/observations.json');
+  const remoteDrafting = annotateObservationSetWithDraftingFirstGraphs({ observationSet: remoteObservations });
+  assertValid(validateObjectSurfaceGraph, remoteDrafting.objectSurfaceGraph, 'compact remote object-surface graph');
+  assert.equal(remoteDrafting.objectSurfaceGraph.domain, 'generic_object_surface_projection', 'compact remote must use generic object surfaces');
+  assert.equal(remoteDrafting.objectSurfaceGraph.surfaces.some((surface) => /facade|plane/u.test(`${surface.id}:${surface.role}`)), false, 'compact remote must not depend on building-specific surface names');
+
+  const blockedOutput = 'output/image-structured-modeler/ambulance-object-surface-study-test-blocked';
+  const blocked = await runObjectSurfaceStudy({ outputDir: blockedOutput });
+  assertValid(validateObjectSurfaceStudyReport, blocked.report, 'ambulance object-surface no-review report');
+  assert.equal(blocked.report.status, 'blocked_review_incomplete', 'object-surface study must fail closed without accepted fixtures');
+  assert.equal(blocked.partGraph, null, 'no-review object-surface study must not generate PartGraph');
+  assert.equal(blocked.dsl, null, 'no-review object-surface study must not generate SketchUp DSL');
+  assert.equal(await pathExists(path.join(repoRoot, blockedOutput, '11-reviewed-feature-subset-part-graph.json')), false, 'no-review object package must not write PartGraph');
+  assert.equal(await pathExists(path.join(repoRoot, blockedOutput, '12-sketchup-dsl.mock-study.json')), false, 'no-review object package must not write SketchUp DSL');
+
+  const acceptedOutput = 'output/image-structured-modeler/ambulance-object-surface-study-test-accepted';
+  const accepted = await runObjectSurfaceStudy({ outputDir: acceptedOutput, acceptedReviewFixtures: true });
+  assertValid(validateObjectSurfaceStudyReport, accepted.report, 'ambulance accepted object-surface report');
+  assertValid(validateObjectSurfaceFeaturePromotion, accepted.featurePromotion, 'ambulance accepted object-surface promotion artifact');
+  assertValid(validatePartGraph, accepted.partGraph, 'ambulance reviewed feature subset PartGraph');
+  assert.equal(accepted.report.status, 'reviewed_feature_subset_generated_release_blocked', 'accepted object feature subset should remain explicitly incomplete and release-blocked');
+  assert.equal(accepted.report.model.accepted_surface_count, 3, 'accepted object study should retain three physical feature-binding surfaces');
+  assert.equal(accepted.report.model.accepted_feature_count, 13, 'accepted object study should retain thirteen reviewed feature records');
+  assert.equal(accepted.report.model.part_count, 7, 'accepted object study should compile only seven reviewed target parts');
+  assert.equal(accepted.qa.summary.by_severity.error, 0, 'reviewed object feature subset mock QA should have no errors');
+  assert.equal(accepted.partGraph.parts.every((part) => part.qa?.accepted_feature_ids?.length > 0), true, 'every object PartGraph part must trace to accepted feature ids');
+  assert.equal(accepted.partGraph.parts.some((part) => part.id === 'wheel-left-front-tire'), false, 'unreviewed zero-area wheel candidates must not enter PartGraph');
+  assert.equal(JSON.stringify(accepted.partGraph).includes('surface_oblique_context'), false, 'context-only oblique surface must not become PartGraph geometry lineage');
+  const briefMarkdown = await fs.readFile(path.join(repoRoot, acceptedOutput, 'mcp-modeling-brief.md'), 'utf8');
+  assert.ok(briefMarkdown.indexOf('## DraftViewGraph') < briefMarkdown.indexOf('## ObjectSurfaceGraph'), 'object MCP brief should lead with DraftViewGraph');
+  assert.ok(briefMarkdown.indexOf('## ObjectSurfaceGraph') < briefMarkdown.indexOf('## Surface-Local Feature Candidates'), 'object MCP brief should describe local features after surfaces');
+  assert.ok(briefMarkdown.indexOf('## Surface-Local Feature Candidates') < briefMarkdown.indexOf('## Promotion Status'), 'object MCP brief should place promotion status last');
+  for (const relative of ['03-object-surface-graph.json', '08-object-surface-feature-promotion.json', '11-reviewed-feature-subset-part-graph.json', '12-sketchup-dsl.mock-study.json', '14-mock-qa.json', 'orthographic-preview/front.svg', 'accepted-feature-overlays/manifest.json']) {
+    const stat = await fs.stat(path.join(repoRoot, acceptedOutput, relative));
+    assert.equal(stat.size > 0, true, `object-surface study artifact ${relative} should be non-empty`);
+  }
+}
+
+async function assertYellowCalibrationCommandWrappers() {
+  const axisOutputDir = 'output/image-structured-modeler/yellow-axis-calibration-test-v2';
+  const axisResult = await generateYellowAxisCalibrationWorkbench({ outputDir: axisOutputDir });
+  assertValid(validateStructureLineEvidence, axisResult.structureLineEvidence, 'yellow axis command structure-line evidence');
+  assertValid(validatePerspectiveCalibrationHypotheses, axisResult.perspectiveCalibration, 'yellow axis command perspective calibration');
+  assert.equal(axisResult.perspectiveCalibration.summary.horizontal_family_count, 2, 'yellow axis command must expose both horizontal VP families');
+  assert.equal(axisResult.pendingReviewResult.rectification_allowed, false, 'yellow axis command must default to pending calibration review');
+  assert.equal(axisResult.report.false_promotion_count, 0, 'yellow axis command must have zero false promotions');
+
+  const visibleOutputDir = 'output/image-structured-modeler/yellow-visible-effect-test-v2';
+  const visibleOutputAbs = path.join(repoRoot, visibleOutputDir);
+  await fs.mkdir(path.join(visibleOutputAbs, 'comparison'), { recursive: true });
+  await fs.writeFile(path.join(visibleOutputAbs, '05-partgraph-preview.json'), '{"legacy":true}\n', 'utf8');
+  await fs.writeFile(path.join(visibleOutputAbs, 'comparison', 'index.html'), '<p>legacy</p>\n', 'utf8');
+  const visibleResult = await generateYellowVisibleEffect({ outputDir: visibleOutputDir });
+  assert.equal(visibleResult.report.kind, 'yellow_visible_effect_judgment_v2', 'yellow visible command should emit calibration-first judgment v2');
+  assert.equal(visibleResult.report.rejected_legacy_path.status, 'retired', 'yellow visible command must retire the rejected hardcoded projection path');
+  assert.equal(visibleResult.report.geometry_output.part_graph_generated, false, 'yellow visible command must not generate PartGraph without user reviews');
+  assert.equal(visibleResult.report.geometry_output.sketchup_dsl_generated, false, 'yellow visible command must not generate SketchUp DSL without user reviews');
+  assert.equal(visibleResult.report.geometry_output.false_promotion_count, 0, 'yellow visible command must preserve zero false promotions');
+  assert.deepEqual(
+    visibleResult.report.plane_topology.candidate_plane_ids,
+    ['visible_plane_left_side_la', 'visible_plane_recessed_front_ab', 'visible_plane_return_bc', 'visible_plane_main_front_cd'],
+    'yellow visible command must expose the reviewed L-A, A-B, B-C, and C-D plane candidate order'
+  );
+  assert.deepEqual(
+    visibleResult.report.plane_topology.unassigned_detail_ids,
+    [],
+    'yellow visible command should bind every current detail candidate to a visible reviewed plane'
+  );
+  assert.equal(await pathExists(path.join(visibleOutputAbs, '05-partgraph-preview.json')), false, 'yellow visible command must remove stale legacy PartGraph previews');
+  assert.equal(await pathExists(path.join(visibleOutputAbs, '06-sketchup-dsl.preview.json')), false, 'yellow visible command must remove stale legacy SketchUp previews');
+  assert.equal(await pathExists(path.join(visibleOutputAbs, 'comparison', 'index.html')), false, 'yellow visible command must remove the rejected legacy comparison page');
+  const topologyOverlay = await fs.readFile(path.join(visibleOutputAbs, '04-calibrated-plane-topology.svg'), 'utf8');
+  assert.ok(topologyOverlay.includes('data-layer="plane-local-detail"'), 'yellow plane topology overlay must expose plane-local detail candidates');
+  assert.ok(topologyOverlay.includes('data-detail-id="detail_rectangular_utility_ducts_la"'), 'yellow overlay must expose the LA duct candidate');
+  assert.ok(topologyOverlay.includes('data-binding="plane-candidate"'), 'yellow overlay must keep the LA duct as a plane-bound review candidate');
+}
+
+async function assertYellowReviewedModelStudy() {
+  const blockedOutputDir = 'output/image-structured-modeler/yellow-reviewed-model-blocked-regression';
+  const blocked = await buildYellowReviewedModel({ outputDir: blockedOutputDir });
+  assertValid(validateReviewedFacadeModelStudy, blocked.approval, 'yellow pending reviewed-model study approval');
+  assert.equal(blocked.report.status, 'blocked_no_accepted_user_plane_review', 'yellow model study must fail closed without explicit user plane review');
+  assert.equal(blocked.report.model.part_graph_generated, false, 'blocked yellow model study must produce no PartGraph');
+  assert.equal(blocked.report.model.sketchup_dsl_generated, false, 'blocked yellow model study must produce no SketchUp DSL');
+  assert.equal(blocked.report.model.mock_executed, false, 'blocked yellow model study must not execute mock geometry');
+  assert.equal(await pathExists(path.join(repoRoot, blockedOutputDir, '03-topology-aware-part-graph.json')), false, 'blocked model study must not leave a PartGraph artifact');
+
+  const acceptedOutputDir = 'output/image-structured-modeler/yellow-reviewed-model-regression';
+  const accepted = await buildYellowReviewedModel({ outputDir: acceptedOutputDir, acceptedUserReview: true });
+  assertValid(validateReviewedFacadeModelStudy, accepted.approval, 'yellow accepted reviewed-model study approval');
+  assertValid(validatePartGraph, accepted.partGraph, 'yellow topology-aware reviewed PartGraph study');
+  assertValid(validatePlaneLocalEvidenceGraph, accepted.planeLocalEvidence.graph, 'yellow PlaneLocalEvidenceGraph');
+  assertValid(validatePlaneLocalEvidenceReviewDecision, accepted.planeLocalEvidence.pendingReview, 'yellow pending PlaneLocalEvidence review');
+  assertValid(validatePlaneLocalDetailPromotion, accepted.detailPromotion, 'yellow blocked PlaneLocalDetailPromotion');
+  assertValid(validateModelCompletionStatus, accepted.report.completion_status, 'yellow model completion status');
+  assert.equal(accepted.report.status, 'topology_model_generated_detail_review_required', 'accepted yellow plane review should generate the topology model study');
+  assert.equal(accepted.report.judgment.pipeline_executable, true, 'reviewed yellow pipeline should execute through mock QA');
+  assert.equal(accepted.report.judgment.full_image_model_complete, false, 'topology study must not claim full image modeling before detail and scale review');
+  assert.equal(accepted.report.model.release_allowed, false, 'nominal-scale study must remain release-blocked');
+  assert.equal(accepted.report.model.rectified_plane_count, 4, 'accepted yellow planes should each produce a plane-local rectification review');
+  assert.equal(accepted.planeLocalEvidence.graph.summary.plane_count, 4, 'PlaneLocalEvidenceGraph must preserve all four accepted planes');
+  assert.deepEqual(
+    accepted.calibration.facadePlaneGraph.coordinate_reference,
+    {
+      space: 'calibration_working_image_px',
+      source_image: 'projects/image-structured-modeler/examples/building-single-anime-yellow/input-visible-crop.png',
+      width: 900,
+      height: 589,
+      normalized_from_source_image: true
+    },
+    'FacadePlaneGraph must declare the working pixel coordinate reference used by its quads and homographies'
+  );
+  const mainFrontRectification = accepted.planeLocalEvidence.graph.planes
+    .find((plane) => plane.source_plane_id === 'visible_plane_main_front_cd').rectification;
+  assert.deepEqual(mainFrontRectification.source_raster_size, { width: 1080, height: 707 }, 'plane rectification must record the actual source raster size');
+  assert.equal(Math.abs(mainFrontRectification.coordinate_transform.source_to_reference_scale[0] - (900 / 1080)) < 1e-6, true, 'plane rectification must map actual source x into calibration-reference x');
+  assert.equal(Math.abs(mainFrontRectification.coordinate_transform.source_to_reference_scale[1] - (589 / 707)) < 1e-6, true, 'plane rectification must map actual source y into calibration-reference y');
+  const projectedMainFrontTopLeft = applyTestHomography(mainFrontRectification.local_to_image_homography, [0, 0]);
+  assert.equal(Math.abs(projectedMainFrontTopLeft[0] - (473 * 1080 / 900)) < 0.2, true, 'local origin must reproject to the source-raster-scaled C corner x');
+  assert.equal(Math.abs(projectedMainFrontTopLeft[1] - (71 * 707 / 589)) < 0.2, true, 'local origin must reproject to the source-raster-scaled C corner y');
+  assert.equal(accepted.planeLocalEvidence.graph.summary.edge_evidence_count > 0, true, 'rectified planes must expose local edge evidence');
+  assert.equal(accepted.planeLocalEvidence.graph.summary.corner_evidence_count > 0, true, 'rectified planes must expose local corner evidence');
+  assert.equal(accepted.planeLocalEvidence.graph.summary.region_candidate_count, 6, 'four semantic seeds plus two unclassified full-plane searches should become review-only plane-local regions');
+  assert.equal(
+    accepted.planeLocalEvidence.graph.planes
+      .filter((plane) => ['visible_plane_recessed_front_ab', 'visible_plane_return_bc'].includes(plane.source_plane_id))
+      .every((plane) => plane.region_candidates.some((region) => region.role_hint === 'unclassified_plane_local_detail')),
+    true,
+    'planes without semantic seeds must still expose geometry-only local search regions'
+  );
+  assert.equal(accepted.planeLocalEvidence.graph.summary.detail_instance_proposal_count > 0, true, 'supported local line arrangements must produce review-only detail instance proposals');
+  assert.equal(accepted.planeLocalEvidence.graph.planes.every((plane) => plane.review_required && !plane.promotion_allowed), true, 'plane-local evidence must remain review-only');
+  const detailInstanceProposals = accepted.planeLocalEvidence.graph.planes.flatMap((plane) => plane.detail_instance_proposals);
+  assert.equal(
+    detailInstanceProposals.every((proposal) => proposal.review_required && !proposal.promotion_allowed),
+    true,
+    'plane-local detail proposals must never bypass review'
+  );
+  assert.deepEqual(
+    [...new Set(detailInstanceProposals.map((proposal) => proposal.proposal_type))].sort(),
+    ['equipment_rect', 'linear_path_strip', 'opening_rect'],
+    'yellow local evidence should exercise all geometric proposal classes without accepting their semantic roles'
+  );
+  assert.equal(accepted.planeLocalEvidence.pendingReview.status, 'not_accepted', 'plane-local review template must fail closed');
+  assert.equal(accepted.planeLocalEvidence.pendingReview.region_decisions.length, 0, 'pending plane-local review must accept no detail regions');
+  assert.equal(accepted.detailPromotion.status, 'blocked_no_accepted_review', 'pending plane-local review must block detail promotion');
+  assert.equal(accepted.detailPromotion.partgraph_promotion_allowed, false, 'pending plane-local review must not authorize PartGraph details');
+  assert.equal(accepted.detailPromotion.accepted_details.length, 0, 'blocked promotion must emit no accepted details');
+  assert.equal(accepted.report.completion_status.visual_status, 'in_progress', 'accepted planes without accepted local details must remain visual-complete in progress');
+  assert.equal(accepted.report.completion_status.release_status, 'blocked', 'missing local details, scale, and hidden geometry must block release completion');
+  assert.equal(accepted.qa.verdict, 'pass', 'yellow topology-aware mock geometry should pass layout QA');
+  assert.deepEqual(
+    accepted.partGraph.parts.map((part) => part.id),
+    ['building_mass_study', 'visible_plane_left_side_la', 'visible_plane_recessed_front_ab', 'visible_plane_return_bc', 'visible_plane_main_front_cd'],
+    'PartGraph study must contain one coherent mass and the four accepted visible planes'
+  );
+  assert.equal(accepted.partGraph.detail_review_candidates.every((candidate) => candidate.promotion_allowed === false), true, 'unaccepted local details must remain outside promoted PartGraph geometry');
+  assert.equal(accepted.approval.detail_review.accepted_detail_ids.length, 0, 'study approval must not forge local-detail acceptance');
+  assert.equal(accepted.dsl.operations.filter((operation) => operation.op === 'box' || operation.op === 'mesh').length, 5, 'SketchUp DSL study should emit only the mass and accepted facade planes');
+  for (const relative of [
+    '01-reviewed-facade-model-study-approval.json',
+    '03-topology-aware-part-graph.json',
+    '04-sketchup-dsl.mock-study.json',
+    '05-mock-snapshot.json',
+    '06-model-qa.json',
+    '07-plane-local-detail-candidates.review-only.json',
+    '08-isometric-study.svg',
+    '08-isometric-study.png',
+    '09-plane-local-evidence-review.json',
+    '10-plane-local-detail-promotion.json',
+    '11-source-reprojection.svg',
+    '11-source-reprojection.png',
+    '12-mcp-modeling-brief.reviewed-model.json',
+    '12-mcp-modeling-brief.reviewed-model.md',
+    'orthographic-preview/top.svg',
+    'orthographic-preview/front.svg',
+    'orthographic-preview/left-side.svg',
+    'plane-local-evidence/manifest.json',
+    'plane-local-evidence/plane-local-evidence-graph.json',
+    'plane-local-evidence/plane-local-evidence-review.pending.json',
+    'plane-local-evidence/visible_plane_left_side_la.evidence.png',
+    'plane-local-evidence/visible_plane_recessed_front_ab.evidence.png',
+    'plane-local-evidence/visible_plane_return_bc.evidence.png',
+    'plane-local-evidence/visible_plane_main_front_cd.evidence.png',
+    'plane-local-evidence/index.html',
+    'index.html'
+  ]) {
+    const stat = await fs.stat(path.join(repoRoot, acceptedOutputDir, relative));
+    assert.equal(stat.size > 0, true, `yellow reviewed model artifact ${relative} should be non-empty`);
+  }
+  const planeLocalOverlay = await fs.readFile(path.join(repoRoot, acceptedOutputDir, 'plane-local-evidence/visible_plane_main_front_cd.evidence.svg'), 'utf8');
+  for (const layer of [
+    'plane-local-edge',
+    'plane-local-corner',
+    'plane-local-repetition',
+    'plane-local-region-candidate',
+    'plane-local-detail-proposal',
+    'plane-local-edge-evidence',
+    'plane-local-corner-evidence',
+    'plane-local-repetition-hypotheses',
+    'plane-local-region-candidates',
+    'plane-local-detail-proposals'
+  ]) {
+    assert.ok(planeLocalOverlay.includes(`data-layer="${layer}"`), `plane-local overlay must expose ${layer}`);
+  }
+  const planeLocalWorkbench = await fs.readFile(path.join(repoRoot, acceptedOutputDir, 'plane-local-evidence/index.html'), 'utf8');
+  assert.ok(planeLocalWorkbench.includes('window.buildPlaneLocalEvidenceReviewDecision=buildDecision'), 'plane-local workbench must expose a deterministic review decision builder');
+  assert.ok(planeLocalWorkbench.includes('data-proposal-row'), 'plane-local workbench must expose geometric detail proposal rows');
+  assert.ok(planeLocalWorkbench.includes('id="download-review"'), 'plane-local workbench must expose review JSON export');
+  assert.ok(planeLocalWorkbench.includes('data-field="geometry_type"'), 'plane-local workbench must require an explicit promotion geometry type');
+  assert.ok(planeLocalWorkbench.includes("mode:'proposal_geometry'"), 'workbench review export must identify unedited proposal geometry');
+  assert.ok(planeLocalWorkbench.includes("+'\\n']"), 'plane-local workbench must keep the exported JSON newline escaped inside browser JavaScript');
+
+  const detailedOutputDir = 'output/image-structured-modeler/yellow-reviewed-model-with-details-regression';
+  const detailed = await buildYellowReviewedModel({
+    outputDir: detailedOutputDir,
+    acceptedUserReview: true,
+    acceptedLocalDetailReviewFixture: true
+  });
+  assertValid(validatePlaneLocalEvidenceReviewDecision, detailed.localDetailReview, 'yellow accepted fixture PlaneLocalEvidence review');
+  assertValid(validatePlaneLocalDetailPromotion, detailed.detailPromotion, 'yellow accepted PlaneLocalDetailPromotion');
+  assertValid(validatePartGraph, detailed.partGraph, 'yellow visible-detail PartGraph study');
+  assertValid(validateMcpModelingBrief, detailed.mcpModelingBrief, 'yellow reviewed-model MCP brief');
+  assertValid(validateModelCompletionStatus, detailed.report.completion_status, 'yellow visible-detail completion status');
+  assert.equal(detailed.detailPromotion.status, 'ready_for_partgraph_promotion', 'accepted fixture detail review should pass promotion gate');
+  assert.equal(detailed.detailPromotion.partgraph_promotion_allowed, true, 'accepted fixture details with passing reprojection should allow the domain PartGraph adapter');
+  assert.equal(detailed.detailPromotion.false_promotion_count, 0, 'accepted detail promotion must keep zero false promotions');
+  assert.equal(detailed.detailPromotion.accepted_details.length, 21, 'yellow detail fixture should accept the reviewed major visible-detail subset');
+  assert.equal(detailed.detailPromotion.accepted_details.every((detail) => detail.geometry_source === 'manual_rectified_annotation'), true, 'corrected yellow detail extents must remain explicit manual rectified annotations');
+  assert.equal(detailed.detailPromotion.reprojection_qa.status, 'pass', 'accepted details must pass source-image reprojection QA');
+  assert.equal(detailed.detailPromotion.reprojection_qa.source_bounds_violations, 0, 'accepted detail reprojections must remain inside the source raster');
+  assert.equal(detailed.report.completion_status.visual_status, 'complete', 'accepted visible details and reprojection may complete the visual single-image study');
+  assert.notEqual(detailed.report.completion_status.release_status, 'complete', 'nominal scale and hidden closure must keep release incomplete');
+  assert.equal(detailed.dsl.operations.filter((operation) => operation.op === 'cut_recess').length, 12, 'accepted windows and entries should compile as real recess features');
+  assert.equal(detailed.partGraph.parts.filter((part) => part.qa?.accepted_detail_id).length, 9, 'accepted HVAC and utility details should compile as attached PartGraph parts');
+  assert.equal(detailed.qa.verdict, 'pass', 'visible-detail mock geometry should pass layout QA');
+  assert.equal(detailed.mcpModelingBrief.compile_permission.can_generate_sketchup_dsl, true, 'reviewed-model MCP brief should authorize only the generated mock-study DSL path');
+  assert.equal(detailed.mcpModelingBrief.promotion_status.runtime_scope, 'mock_study_only', 'reviewed-model MCP brief must bound promotion to mock study');
+  assert.equal(detailed.mcpModelingBrief.promotion_status.release_allowed, false, 'reviewed-model MCP brief must remain release-blocked');
+  assert.deepEqual(
+    detailed.mcpModelingBrief.artifact_sequence.slice(4, 9).map((item) => item.stage),
+    ['draft_view_graph', 'facade_plane_graph', 'plane_local_evidence', 'local_detail_review', 'promotion_status'],
+    'reviewed-model MCP brief must preserve DraftViewGraph -> domain graph -> plane-local evidence/review -> promotion order'
+  );
+  assert.equal(detailed.mcpModelingBrief.agent_contract.output_policy.sketchup_dsl_allowed, true, 'reviewed-model agent contract should not retain the stale pre-review DSL blocker');
+  assert.ok(detailed.mcpModelingBrief.agent_contract.output_policy.blocked_outputs.includes('release_complete_model'), 'reviewed-model agent contract must still block release completion');
+  const reviewedMcpMarkdown = await fs.readFile(path.join(repoRoot, detailedOutputDir, '12-mcp-modeling-brief.reviewed-model.md'), 'utf8');
+  assert.equal(reviewedMcpMarkdown.indexOf('draft_view_graph') < reviewedMcpMarkdown.indexOf('facade_plane_graph'), true, 'reviewed MCP markdown must describe DraftViewGraph before FacadePlaneGraph');
+  assert.equal(reviewedMcpMarkdown.indexOf('facade_plane_graph') < reviewedMcpMarkdown.indexOf('plane_local_evidence'), true, 'reviewed MCP markdown must describe domain planes before plane-local evidence');
+  assert.equal(reviewedMcpMarkdown.indexOf('local_detail_review') < reviewedMcpMarkdown.indexOf('promotion_status'), true, 'reviewed MCP markdown must describe local detail review before promotion');
+  const reprojectionOverlay = await fs.readFile(path.join(repoRoot, detailedOutputDir, '11-source-reprojection.svg'), 'utf8');
+  assert.ok(reprojectionOverlay.includes('data-layer="accepted-plane-local-detail-reprojection"'), 'accepted detail package must expose the source-image reprojection layer');
+  assert.ok(reprojectionOverlay.includes('window_opening_upper_left'), 'source reprojection must label accepted window geometry');
+  assert.ok(reprojectionOverlay.includes('hvac_equipment_lower_right'), 'source reprojection must label accepted equipment geometry');
+
+  const forgedReview = structuredClone(detailed.localDetailReview);
+  forgedReview.region_decisions[0].id = 'plane_local_proposal:forged_missing_detail';
+  const forgedPromotion = promoteReviewedPlaneLocalDetails({ graph: detailed.planeLocalEvidence.graph, reviewDecision: forgedReview });
+  assertValid(validatePlaneLocalDetailPromotion, forgedPromotion, 'yellow forged PlaneLocalDetailPromotion');
+  assert.equal(forgedPromotion.status, 'blocked_invalid_review', 'forged accepted detail ids must fail closed');
+  assert.equal(forgedPromotion.partgraph_promotion_allowed, false, 'forged detail review must authorize no PartGraph promotion');
+  assert.equal(forgedPromotion.accepted_details.length, 0, 'forged detail review must emit zero accepted details');
+
+  const mislabeledProposalGeometry = structuredClone(detailed.localDetailReview);
+  mislabeledProposalGeometry.geometry_authoring = { mode: 'proposal_geometry', correction_note: '' };
+  const mislabeledPromotion = promoteReviewedPlaneLocalDetails({ graph: detailed.planeLocalEvidence.graph, reviewDecision: mislabeledProposalGeometry });
+  assert.equal(mislabeledPromotion.status, 'blocked_invalid_review', 'manual corrected quads must not masquerade as detector proposal geometry');
+  assert.equal(mislabeledPromotion.partgraph_promotion_allowed, false, 'proposal-lineage mismatch must fail closed');
 }
 
 async function assertCompactRemoteSample() {
@@ -6613,6 +7922,15 @@ function operationByName(dsl, name) {
   const operation = dsl.operations.find((item) => item.name === name);
   assert.ok(operation, `expected DSL operation ${name}`);
   return operation;
+}
+
+function applyTestHomography(matrix, point) {
+  const [x, y] = point;
+  const denominator = matrix[2][0] * x + matrix[2][1] * y + matrix[2][2];
+  return [
+    (matrix[0][0] * x + matrix[0][1] * y + matrix[0][2]) / denominator,
+    (matrix[1][0] * x + matrix[1][1] * y + matrix[1][2]) / denominator
+  ];
 }
 
 function readEmbeddedJson(html, id) {

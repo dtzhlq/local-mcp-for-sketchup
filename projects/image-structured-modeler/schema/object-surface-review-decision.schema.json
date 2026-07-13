@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/object-surface-review-decision.schema.json",
+  "title": "ObjectSurfaceReviewDecision v1",
+  "type": "object",
+  "required": ["kind", "version", "source_object_surface_graph", "source_draft_view_review", "reviewer", "status", "accepted_surface_ids", "context_only_surface_ids", "rejected_surface_ids", "promotion_allowed", "compile_allowed", "blockers", "notes"],
+  "properties": {
+    "kind": { "const": "object_surface_review_decision_v1" },
+    "version": { "const": 1 },
+    "source_object_surface_graph": { "type": "string" },
+    "source_draft_view_review": { "type": "string" },
+    "reviewer": { "type": "string" },
+    "status": { "enum": ["not_accepted", "accepted_for_local_feature_review"] },
+    "accepted_surface_ids": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "context_only_surface_ids": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "rejected_surface_ids": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "promotion_allowed": { "const": false },
+    "compile_allowed": { "const": false },
+    "blockers": { "type": "array", "items": { "type": "string" } },
+    "notes": { "type": "array", "items": { "type": "string" } }
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/interior-drafting-study-sample.schema.json",
+  "title": "InteriorDraftingStudySample v1",
+  "type": "object",
+  "required": ["kind", "version", "sample_id", "domain", "source", "calibration_review", "surface_topology_seed", "surface_review", "draft_view_review", "visible_coverage_review", "local_detail_review", "mock_scale", "acceptance", "notes"],
+  "properties": {
+    "kind": { "const": "interior_drafting_study_sample_v1" },
+    "version": { "const": 1 },
+    "sample_id": { "type": "string" },
+    "domain": { "const": "interior_room" },
+    "source": {
+      "type": "object",
+      "required": ["local_path", "sha256", "source_url", "author", "license", "dataset_committed"],
+      "properties": {
+        "local_path": { "type": "string" },
+        "sha256": { "type": "string", "minLength": 64, "maxLength": 64 },
+        "source_url": { "type": "string" },
+        "author": { "type": "string" },
+        "license": { "type": "string" },
+        "dataset_committed": { "const": false }
+      }
+    },
+    "calibration_review": { "type": "string" },
+    "surface_topology_seed": { "type": "string" },
+    "surface_review": { "type": "string" },
+    "draft_view_review": { "type": "string" },
+    "visible_coverage_review": { "type": "string" },
+    "local_detail_review": { "type": "string" },
+    "mock_scale": {
+      "type": "object",
+      "required": ["status", "width", "depth", "height", "units", "confidence", "release_allowed"],
+      "properties": {
+        "status": { "const": "assumed_for_mock_study" },
+        "width": { "type": "number", "exclusiveMinimum": 0 },
+        "depth": { "type": "number", "exclusiveMinimum": 0 },
+        "height": { "type": "number", "exclusiveMinimum": 0 },
+        "units": { "const": "mm" },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "release_allowed": { "const": false }
+      }
+    },
+    "acceptance": { "type": "object" },
+    "notes": { "type": "array", "items": { "type": "string" } }
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/perspective-calibration-review-result.schema.json",
+  "title": "PerspectiveCalibrationReviewResult v1",
+  "type": "object",
+  "required": [
+    "kind",
+    "version",
+    "source_perspective_calibration_hypotheses",
+    "source_review_decision",
+    "status",
+    "accepted_camera_model",
+    "accepted_axis_families",
+    "horizon_line_px",
+    "rectification_allowed",
+    "topology_inference_allowed",
+    "draft_view_derivation_allowed",
+    "promotion_allowed",
+    "compile_allowed",
+    "blockers"
+  ],
+  "properties": {
+    "kind": { "const": "perspective_calibration_review_result_v1" },
+    "version": { "const": 1 },
+    "source_perspective_calibration_hypotheses": { "type": "string" },
+    "source_review_decision": { "type": "string" },
+    "status": { "enum": ["blocked_no_accepted_review", "blocked_invalid_review", "accepted_for_rectification"] },
+    "accepted_camera_model": { "type": ["string", "null"] },
+    "accepted_axis_families": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/accepted_axis_family" }
+    },
+    "horizon_line_px": {
+      "type": ["object", "null"],
+      "properties": {
+        "a": { "$ref": "#/$defs/point" },
+        "b": { "$ref": "#/$defs/point" }
+      },
+      "required": ["a", "b"]
+    },
+    "rectification_allowed": { "type": "boolean" },
+    "topology_inference_allowed": { "type": "boolean" },
+    "draft_view_derivation_allowed": { "const": false },
+    "promotion_allowed": { "const": false },
+    "compile_allowed": { "const": false },
+    "blockers": { "type": "array", "items": { "type": "string" } }
+  },
+  "$defs": {
+    "point": {
+      "type": "array",
+      "prefixItems": [{ "type": "number" }, { "type": "number" }],
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "accepted_axis_family": {
+      "type": "object",
+      "required": ["direction_family_id", "axis", "vanishing_type", "vanishing_point_px", "image_direction_px", "support_segment_ids"],
+      "properties": {
+        "direction_family_id": { "type": "string" },
+        "axis": { "enum": ["x_red", "y_green", "z_blue"] },
+        "vanishing_type": { "enum": ["finite", "infinite"] },
+        "vanishing_point_px": {
+          "type": ["array", "null"],
+          "prefixItems": [{ "type": "number" }, { "type": "number" }],
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "image_direction_px": {
+          "type": ["array", "null"],
+          "prefixItems": [{ "type": "number" }, { "type": "number" }],
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "support_segment_ids": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

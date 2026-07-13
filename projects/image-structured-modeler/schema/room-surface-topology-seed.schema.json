@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/room-surface-topology-seed.schema.json",
+  "title": "RoomSurfaceTopologySeed v1",
+  "type": "object",
+  "required": ["kind", "version", "sample_id", "source_image", "surfaces", "surface_local_detail_candidates", "review_status", "promotion_allowed", "compile_allowed", "notes"],
+  "properties": {
+    "kind": { "const": "room_surface_topology_seed_v1" },
+    "version": { "const": 1 },
+    "sample_id": { "type": "string", "minLength": 1 },
+    "source_image": {
+      "type": "object",
+      "required": ["source_image", "width", "height"],
+      "properties": {
+        "source_image": { "type": "string", "minLength": 1 },
+        "width": { "type": "integer", "minimum": 1 },
+        "height": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "surfaces": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/surface" } },
+    "surface_local_detail_candidates": { "type": "array", "items": { "$ref": "#/$defs/detail" } },
+    "review_status": { "enum": ["draft_manual_annotation", "rejected"] },
+    "promotion_allowed": { "const": false },
+    "compile_allowed": { "const": false },
+    "notes": { "type": "array", "items": { "type": "string" } }
+  },
+  "$defs": {
+    "point": {
+      "type": "array",
+      "prefixItems": [{ "type": "number" }, { "type": "number" }],
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "quad": { "type": "array", "minItems": 4, "maxItems": 4, "items": { "$ref": "#/$defs/point" } },
+    "surface": {
+      "type": "object",
+      "required": ["id", "role", "visible_polygon_px", "rectification_quad_px", "orientation_axis", "adjacent_surface_ids", "must_not_merge_with", "occlusion_rank", "visibility", "confidence", "source"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "role": { "type": "string", "minLength": 1 },
+        "visible_polygon_px": { "type": "array", "minItems": 4, "items": { "$ref": "#/$defs/point" } },
+        "rectification_quad_px": { "$ref": "#/$defs/quad" },
+        "orientation_axis": { "enum": ["room_depth_axis", "room_width_axis", "room_vertical_axis"] },
+        "normal_hint": { "enum": ["normal_positive_width", "normal_negative_width", "normal_positive_depth", "normal_negative_depth", "normal_positive_vertical", "normal_negative_vertical", "unknown"] },
+        "adjacent_surface_ids": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "must_not_merge_with": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "occlusion_rank": { "type": "integer", "minimum": 1 },
+        "visibility": { "enum": ["observed", "partial"] },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "source": { "enum": ["manual_review_seed", "reviewed_detector_proposal"] }
+      }
+    },
+    "detail": {
+      "type": "object",
+      "required": ["id", "role", "candidate_surface_ids", "visible_quad_px", "geometry_type", "confidence", "source", "promotion_allowed"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "role": { "type": "string", "minLength": 1 },
+        "candidate_surface_ids": { "type": "array", "minItems": 1, "items": { "type": "string" }, "uniqueItems": true },
+        "visible_quad_px": { "$ref": "#/$defs/quad" },
+        "geometry_type": { "enum": ["surface_panel", "surface_fixture", "recess_opening"] },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "source": { "enum": ["manual_review_seed", "reviewed_detector_proposal"] },
+        "promotion_allowed": { "const": false }
+      }
+    }
+  }
+}

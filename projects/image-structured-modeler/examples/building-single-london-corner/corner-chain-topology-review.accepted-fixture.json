@@ -1,0 +1,20 @@
+{
+  "kind": "corner_chain_topology_review_decision_v1",
+  "version": 1,
+  "source_corner_chain_topology": "corner-chain-topology.json",
+  "source_calibrated_view_graph": "calibrated-view-graph.json",
+  "reviewer": "london-corner-topology-fixture",
+  "status": "accepted_for_derived_drafting",
+  "accepted_corner_ids": ["L", "A", "B", "R"],
+  "accepted_edge_chain_ids": ["calibrated_corner_chain_L_A_B_R"],
+  "accepted_topology_ids": ["corner_chamfer_visible_chain_candidate"],
+  "rejected_topology_ids": [],
+  "depth_order_overrides": [],
+  "promotion_allowed": false,
+  "compile_allowed": false,
+  "blockers": ["accepted_draft_view_review_required", "accepted_partgraph_promotion_review_required"],
+  "notes": [
+    "Fixture accepts only the visible L-A-B-R chain for derived drafting.",
+    "The narrow A-B chamfer is retained as an unknown-axis reviewed plane."
+  ]
+}

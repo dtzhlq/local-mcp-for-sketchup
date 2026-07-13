@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/interior-drafting-study-report.schema.json",
+  "title": "InteriorDraftingStudyReport v1",
+  "type": "object",
+  "required": ["kind", "version", "sample_id", "status", "source_available", "calibration_hypothesis_status", "calibration_review_status", "surface_review_status", "visible_coverage_status", "local_detail_status", "no_review_false_promotion_count", "model", "blockers", "artifacts"],
+  "properties": {
+    "kind": { "const": "interior_drafting_study_report_v1" },
+    "version": { "const": 1 },
+    "sample_id": { "type": "string" },
+    "status": { "enum": ["blocked_source_unavailable", "blocked_review_incomplete", "visible_room_mock_study_generated", "visual_complete_release_blocked"] },
+    "source_available": { "type": "boolean" },
+    "calibration_hypothesis_status": { "type": "string" },
+    "calibration_review_status": { "type": "string" },
+    "surface_review_status": { "type": "string" },
+    "visible_coverage_status": { "type": "string" },
+    "local_detail_status": { "type": "string" },
+    "no_review_false_promotion_count": { "const": 0 },
+    "model": {
+      "type": "object",
+      "required": ["part_graph_generated", "sketchup_dsl_generated", "mock_executed", "release_allowed"],
+      "properties": {
+        "part_graph_generated": { "type": "boolean" },
+        "sketchup_dsl_generated": { "type": "boolean" },
+        "mock_executed": { "type": "boolean" },
+        "release_allowed": { "const": false },
+        "exclusion_geometry_compiled": { "const": false }
+      }
+    },
+    "completion_status": { "type": "object" },
+    "blockers": { "type": "array", "items": { "type": "string" } },
+    "artifacts": { "type": "object" }
+  }
+}

@@ -1,0 +1,180 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/calibration-ground-truth.schema.json",
+  "title": "CalibrationGroundTruth v1",
+  "type": "object",
+  "required": [
+    "kind",
+    "version",
+    "sample_id",
+    "source_image",
+    "image_size",
+    "coordinate_mapping",
+    "review_status",
+    "axis_families",
+    "topology_truth",
+    "evaluation_policy"
+  ],
+  "properties": {
+    "kind": { "const": "calibration_ground_truth_v1" },
+    "version": { "const": 1 },
+    "sample_id": { "type": "string", "minLength": 1 },
+    "source_image": { "type": "string", "minLength": 1 },
+    "image_size": { "$ref": "#/$defs/image_size" },
+    "coordinate_mapping": {
+      "type": "object",
+      "required": ["storage", "reference_frame", "provenance"],
+      "properties": {
+        "storage": { "const": "normalized_image_xy" },
+        "reference_frame": { "const": "source_image_content" },
+        "provenance": { "type": "string", "minLength": 1 },
+        "notes": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "review_status": {
+      "enum": ["draft_needs_user_acceptance", "accepted", "rejected"]
+    },
+    "axis_families": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/axis_family" }
+    },
+    "ignore_regions": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/ignore_region" }
+    },
+    "topology_truth": { "$ref": "#/$defs/topology_truth" },
+    "evaluation_policy": {
+      "type": "object",
+      "required": [
+        "line_match_max_angle_deg",
+        "line_match_max_perpendicular_distance_px",
+        "line_match_min_overlap_ratio",
+        "target_structural_length_coverage_recall",
+        "target_family_precision",
+        "target_family_recall"
+      ],
+      "properties": {
+        "line_match_max_angle_deg": { "type": "number", "exclusiveMinimum": 0 },
+        "line_match_max_perpendicular_distance_px": { "type": "number", "exclusiveMinimum": 0 },
+        "line_match_min_overlap_ratio": { "type": "number", "minimum": 0, "maximum": 1 },
+        "target_structural_length_coverage_recall": { "type": "number", "minimum": 0, "maximum": 1 },
+        "target_family_precision": { "type": "number", "minimum": 0, "maximum": 1 },
+        "target_family_recall": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "notes": { "type": "array", "items": { "type": "string" } }
+  },
+  "$defs": {
+    "point_norm": {
+      "type": "array",
+      "prefixItems": [
+        { "type": "number", "minimum": 0, "maximum": 1 },
+        { "type": "number", "minimum": 0, "maximum": 1 }
+      ],
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "line_norm": {
+      "type": "object",
+      "required": ["a", "b"],
+      "properties": {
+        "a": { "$ref": "#/$defs/point_norm" },
+        "b": { "$ref": "#/$defs/point_norm" }
+      }
+    },
+    "image_size": {
+      "type": "object",
+      "required": ["width", "height"],
+      "properties": {
+        "width": { "type": "integer", "minimum": 1 },
+        "height": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "support_line": {
+      "type": "object",
+      "required": ["id", "line_norm", "source", "review_required"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "line_norm": { "$ref": "#/$defs/line_norm" },
+        "source": { "enum": ["user_review_reference", "manual_image_inspection"] },
+        "review_required": { "type": "boolean" },
+        "notes": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "axis_family": {
+      "type": "object",
+      "required": ["id", "role", "axis_label", "support_lines", "expected_vanishing"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "role": { "enum": ["horizontal_axis", "vertical_axis"] },
+        "axis_label": { "type": "string", "minLength": 1 },
+        "support_lines": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/support_line" }
+        },
+        "expected_vanishing": {
+          "type": "object",
+          "required": ["type"],
+          "properties": {
+            "type": { "enum": ["finite", "infinite", "unknown"] },
+            "point_norm": {
+              "type": ["array", "null"],
+              "prefixItems": [{ "type": "number" }, { "type": "number" }],
+              "minItems": 2,
+              "maxItems": 2
+            },
+            "direction_px": {
+              "type": ["array", "null"],
+              "prefixItems": [{ "type": "number" }, { "type": "number" }],
+              "minItems": 2,
+              "maxItems": 2
+            }
+          }
+        }
+      }
+    },
+    "ignore_region": {
+      "type": "object",
+      "required": ["id", "polygon_norm", "reason"],
+      "properties": {
+        "id": { "type": "string" },
+        "polygon_norm": {
+          "type": "array",
+          "minItems": 3,
+          "items": { "$ref": "#/$defs/point_norm" }
+        },
+        "reason": { "type": "string" }
+      }
+    },
+    "topology_truth": {
+      "type": "object",
+      "required": ["kind", "corner_order", "plan_edges", "depth_metric_status", "review_required"],
+      "properties": {
+        "kind": { "type": "string", "minLength": 1 },
+        "corner_order": {
+          "type": "array",
+          "minItems": 2,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "plan_edges": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["id", "from", "to", "role"],
+            "properties": {
+              "id": { "type": "string" },
+              "from": { "type": "string", "minLength": 1 },
+              "to": { "type": "string", "minLength": 1 },
+              "role": { "type": "string", "minLength": 1 }
+            }
+          }
+        },
+        "depth_metric_status": { "const": "unknown_single_view" },
+        "review_required": { "const": true }
+      }
+    }
+  }
+}

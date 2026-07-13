@@ -1,0 +1,44 @@
+{
+  "kind": "local_detail_review_decision_v1",
+  "version": 1,
+  "source_object_surface_graph": "object-surface-graph.json",
+  "source_facade_plane_graph": null,
+  "source_room_surface_graph": "room-surface-graph.json",
+  "reviewer": "interior-hallway-local-detail-positive-fixture",
+  "status": "accepted",
+  "promotion_allowed": false,
+  "compile_allowed": false,
+  "accepted_surface_ids": [
+    "room_surface_left_wall",
+    "room_surface_right_wall",
+    "room_surface_ceiling",
+    "room_surface_floor",
+    "room_surface_end_wall"
+  ],
+  "accepted_detail_ids": [
+    "room_detail_right_fire_cabinet",
+    "room_detail_ceiling_light_near"
+  ],
+  "detail_bindings": [
+    {
+      "detail_id": "room_detail_right_fire_cabinet",
+      "target_surface_id": "room_surface_right_wall",
+      "target_plane_id": null,
+      "status": "accepted"
+    },
+    {
+      "detail_id": "room_detail_ceiling_light_near",
+      "target_surface_id": "room_surface_ceiling",
+      "target_plane_id": null,
+      "status": "accepted"
+    }
+  ],
+  "review_scope": {
+    "coverage_status": "accepted_visible_detail_coverage"
+  },
+  "blockers": ["accepted_metric_scale_anchor_required", "accepted_hidden_geometry_review_required"],
+  "notes": [
+    "Accepts only clear, visible surface-local details.",
+    "No feature behind the people exclusion polygon is accepted."
+  ]
+}

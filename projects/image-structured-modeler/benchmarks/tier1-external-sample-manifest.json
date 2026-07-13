@@ -4,6 +4,22 @@
   "policy": "adapter_only_no_dataset_download",
   "samples": [
     {
+      "id": "wikimedia_london_corner_facade_study",
+      "dataset": "Wikimedia Commons single-image facade study",
+      "domain": "building_single",
+      "adapter": "facade_drafting_study_adapter",
+      "sample_config": "projects/image-structured-modeler/examples/building-single-london-corner/sample.json",
+      "dataset_url": "https://commons.wikimedia.org/wiki/File:Corner_building.jpg",
+      "local_path": "external-datasets/wikimedia-commons/london-corner-building/london-corner-building.jpg",
+      "license_note": "CC BY 2.0; Corner building, London, by R/DV/RS via Wikimedia Commons. Source raster remains external and ignored by git.",
+      "expected_view_slots": [
+        "front",
+        "left_or_right_side",
+        "top",
+        "oblique_context"
+      ]
+    },
+    {
       "id": "objectnet3d_car_pose_subset",
       "dataset": "ObjectNet3D",
       "domain": "vehicle",
@@ -11,6 +27,22 @@
       "dataset_url": "https://cvgl.stanford.edu/projects/objectnet3d/",
       "local_path": "external-datasets/objectnet3d/subset/car_pose_sample",
       "license_note": "External dataset license and download terms must be reviewed before local preparation.",
+      "required_file_roles": ["source_image", "pose_annotation", "cad_model"],
+      "expected_metrics": { "false_promotion_count": 0, "promotion_allowed": false },
+      "expected_view_slots": ["front", "left_or_right_side", "top", "oblique_context"]
+    },
+    {
+      "id": "wikimedia_interior_hallway_one_point_study",
+      "dataset": "Wikimedia Commons one-point interior study",
+      "domain": "interior_room",
+      "adapter": "interior_drafting_study_adapter",
+      "sample_config": "projects/image-structured-modeler/examples/interior-hallway-one-point/sample.json",
+      "dataset_url": "https://commons.wikimedia.org/wiki/File:Hallway.jpg",
+      "local_path": "external-datasets/wikimedia-commons/interior-hallway-2013/hallway.jpg",
+      "source_sha256": "e25e46c5a3743c0d215eace59b34a23752436581228e9be271a76827b4f3a7d7",
+      "license_note": "CC BY-SA 3.0; Hallway by Isadoradel via Wikimedia Commons. Source raster remains external and ignored by git.",
+      "expected_camera_model": "one_point_or_near_affine",
+      "expected_surface_count": 5,
       "expected_view_slots": ["front", "left_or_right_side", "top", "oblique_context"]
     },
     {
@@ -21,6 +53,8 @@
       "dataset_url": "https://github.com/xingyuansun/pix3d",
       "local_path": "external-datasets/pix3d/subset/chair_surface_sample",
       "license_note": "External dataset license and download terms must be reviewed before local preparation.",
+      "required_file_roles": ["source_image", "image_annotation", "cad_model"],
+      "expected_metrics": { "false_promotion_count": 0, "promotion_allowed": false },
       "expected_view_slots": ["front", "left_or_right_side", "top", "oblique_context"]
     },
     {
@@ -31,6 +65,8 @@
       "dataset_url": "https://cmp.felk.cvut.cz/~tylecr1/facade/",
       "local_path": "external-datasets/cmp-facade/subset/visible_plane_sample",
       "license_note": "External dataset license and download terms must be reviewed before local preparation.",
+      "required_file_roles": ["source_image", "facade_label_map"],
+      "expected_metrics": { "false_promotion_count": 0, "promotion_allowed": false },
       "expected_view_slots": ["front", "left_or_right_side", "top", "oblique_context"]
     }
   ]

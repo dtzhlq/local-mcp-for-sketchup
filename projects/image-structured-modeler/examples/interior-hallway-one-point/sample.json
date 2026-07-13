@@ -1,0 +1,42 @@
+{
+  "kind": "interior_drafting_study_sample_v1",
+  "version": 1,
+  "sample_id": "interior_hallway_one_point_wikimedia_2013",
+  "domain": "interior_room",
+  "source": {
+    "local_path": "external-datasets/wikimedia-commons/interior-hallway-2013/hallway.jpg",
+    "sha256": "e25e46c5a3743c0d215eace59b34a23752436581228e9be271a76827b4f3a7d7",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Hallway.jpg",
+    "author": "Isadoradel",
+    "license": "CC BY-SA 3.0",
+    "dataset_committed": false
+  },
+  "calibration_review": "projects/image-structured-modeler/examples/interior-hallway-one-point/perspective-calibration-review.accepted-fixture.json",
+  "surface_topology_seed": "projects/image-structured-modeler/examples/interior-hallway-one-point/room-surface-topology-seed.draft.json",
+  "surface_review": "projects/image-structured-modeler/examples/interior-hallway-one-point/room-surface-review.accepted-fixture.json",
+  "draft_view_review": "projects/image-structured-modeler/examples/interior-hallway-one-point/draft-view-review.accepted-fixture.json",
+  "visible_coverage_review": "projects/image-structured-modeler/examples/interior-hallway-one-point/visible-coverage-review.accepted-fixture.json",
+  "local_detail_review": "projects/image-structured-modeler/examples/interior-hallway-one-point/local-detail-review.accepted-fixture.json",
+  "mock_scale": {
+    "status": "assumed_for_mock_study",
+    "width": 2500,
+    "depth": 12000,
+    "height": 2700,
+    "units": "mm",
+    "confidence": 0.25,
+    "release_allowed": false
+  },
+  "acceptance": {
+    "camera_model": "one_point_or_near_affine",
+    "minimum_surface_count": 5,
+    "minimum_detail_count": 2,
+    "maximum_reprojection_residual_px": 1,
+    "visual_complete_allowed_with_explicit_exclusions": true,
+    "release_allowed": false
+  },
+  "notes": [
+    "The raster remains external and git-ignored; the repository stores only source metadata, checksum, and reviewed fixtures.",
+    "Surface polygons and local details are manual review fixtures, not automatic detection claims.",
+    "People near the vanishing region are permanently excluded from geometry promotion and compilation."
+  ]
+}

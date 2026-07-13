@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/surface-local-detail-promotion.schema.json",
+  "title": "SurfaceLocalDetailPromotion v1",
+  "type": "object",
+  "required": ["kind", "version", "status", "source_room_surface_graph", "source_review_decision", "accepted_surface_ids", "accepted_detail_ids", "accepted_details", "reprojection_qa", "partgraph_promotion_allowed", "direct_compile_allowed", "release_allowed", "false_promotion_count", "blockers"],
+  "properties": {
+    "kind": { "const": "surface_local_detail_promotion_v1" },
+    "version": { "const": 1 },
+    "status": { "enum": ["accepted_for_mock_study", "blocked_no_accepted_review", "blocked_invalid_review"] },
+    "source_room_surface_graph": { "type": "string" },
+    "source_review_decision": { "type": "string" },
+    "accepted_surface_ids": { "type": "array", "items": { "type": "string" } },
+    "accepted_detail_ids": { "type": "array", "items": { "type": "string" } },
+    "accepted_details": { "type": "array", "items": { "$ref": "#/$defs/detail" } },
+    "reprojection_qa": {
+      "type": "object",
+      "required": ["status", "max_residual_px"],
+      "properties": {
+        "status": { "enum": ["pass", "blocked"] },
+        "max_residual_px": { "type": ["number", "null"], "minimum": 0 }
+      }
+    },
+    "partgraph_promotion_allowed": { "type": "boolean" },
+    "direct_compile_allowed": { "const": false },
+    "release_allowed": { "const": false },
+    "false_promotion_count": { "const": 0 },
+    "blockers": { "type": "array", "items": { "type": "string" } }
+  },
+  "$defs": {
+    "point": { "type": "array", "prefixItems": [{ "type": "number" }, { "type": "number" }], "minItems": 2, "maxItems": 2 },
+    "quad": { "type": "array", "minItems": 4, "maxItems": 4, "items": { "$ref": "#/$defs/point" } },
+    "detail": {
+      "type": "object",
+      "required": ["id", "role", "target_surface_id", "geometry_type", "source_quad_px", "quad_uv", "reprojection", "source_proposal_id"],
+      "properties": {
+        "id": { "type": "string" },
+        "role": { "type": "string" },
+        "target_surface_id": { "type": "string" },
+        "geometry_type": { "enum": ["surface_panel", "surface_fixture", "recess_opening"] },
+        "source_quad_px": { "$ref": "#/$defs/quad" },
+        "quad_uv": { "$ref": "#/$defs/quad" },
+        "reprojection": {
+          "type": "object",
+          "required": ["status", "max_residual_px", "reprojected_quad_px"],
+          "properties": {
+            "status": { "enum": ["pass", "fail"] },
+            "max_residual_px": { "type": "number", "minimum": 0 },
+            "reprojected_quad_px": { "$ref": "#/$defs/quad" }
+          }
+        },
+        "source_proposal_id": { "type": "string" }
+      }
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "kind": "object_surface_review_decision_v1",
+  "version": 1,
+  "source_object_surface_graph": "object-surface-graph.json",
+  "source_draft_view_review": "draft-view-review.json",
+  "reviewer": "ambulance-object-surface-positive-fixture",
+  "status": "accepted_for_local_feature_review",
+  "accepted_surface_ids": ["surface_front", "surface_left_or_right_side", "surface_top"],
+  "context_only_surface_ids": ["surface_oblique_context"],
+  "rejected_surface_ids": [],
+  "promotion_allowed": false,
+  "compile_allowed": false,
+  "blockers": ["accepted_local_detail_review_required", "accepted_partgraph_promotion_review_required"],
+  "notes": [
+    "Front, side, and top slots are accepted as feature-binding surfaces.",
+    "Oblique context remains evidence-only and cannot become a separate physical surface."
+  ]
+}

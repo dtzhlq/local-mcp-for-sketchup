@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/metric-scale-review-decision.schema.json",
+  "title": "MetricScaleReviewDecision v1",
+  "type": "object",
+  "required": ["kind", "version", "source_relative_pose_review_result", "reviewer", "status", "anchors", "units_per_model_unit", "promotion_allowed", "compile_allowed", "notes"],
+  "properties": {
+    "kind": { "const": "metric_scale_review_decision_v1" },
+    "version": { "const": 1 },
+    "source_relative_pose_review_result": { "type": "string" },
+    "reviewer": { "type": "string" },
+    "status": { "enum": ["not_accepted", "accepted_metric_scale"] },
+    "anchors": { "type": "array", "items": { "$ref": "#/$defs/anchor" } },
+    "units_per_model_unit": { "type": ["number", "null"], "exclusiveMinimum": 0 },
+    "promotion_allowed": { "const": false },
+    "compile_allowed": { "const": false },
+    "notes": { "type": "array", "items": { "type": "string" } }
+  },
+  "$defs": {
+    "anchor": {
+      "type": "object",
+      "required": ["id", "kind", "value", "units", "model_distance", "source_evidence_ids", "confidence"],
+      "properties": {
+        "id": { "type": "string" },
+        "kind": { "const": "known_distance" },
+        "value": { "type": "number", "exclusiveMinimum": 0 },
+        "units": { "const": "mm" },
+        "model_distance": { "type": "number", "exclusiveMinimum": 0 },
+        "source_evidence_ids": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    }
+  }
+}

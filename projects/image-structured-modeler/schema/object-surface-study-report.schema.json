@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/object-surface-study-report.schema.json",
+  "title": "ObjectSurfaceStudyReport v1",
+  "type": "object",
+  "required": ["kind", "version", "sample_id", "status", "draft_view_status", "object_surface_status", "local_feature_status", "no_review_false_promotion_count", "model", "blockers", "artifacts"],
+  "properties": {
+    "kind": { "const": "object_surface_study_report_v1" },
+    "version": { "const": 1 },
+    "sample_id": { "type": "string" },
+    "status": { "enum": ["blocked_review_incomplete", "reviewed_feature_subset_generated_release_blocked"] },
+    "draft_view_status": { "type": "string" },
+    "object_surface_status": { "type": "string" },
+    "local_feature_status": { "type": "string" },
+    "no_review_false_promotion_count": { "const": 0 },
+    "model": {
+      "type": "object",
+      "required": ["part_graph_generated", "sketchup_dsl_generated", "mock_executed", "accepted_surface_count", "accepted_feature_count", "accepted_target_part_count", "part_count", "dsl_operation_count", "qa_verdict", "complete_feature_coverage", "metric_scale_accepted", "hidden_surfaces_accepted", "release_allowed"],
+      "properties": {
+        "part_graph_generated": { "type": "boolean" },
+        "sketchup_dsl_generated": { "type": "boolean" },
+        "mock_executed": { "type": "boolean" },
+        "accepted_surface_count": { "type": "integer", "minimum": 0 },
+        "accepted_feature_count": { "type": "integer", "minimum": 0 },
+        "accepted_target_part_count": { "type": "integer", "minimum": 0 },
+        "part_count": { "type": "integer", "minimum": 0 },
+        "dsl_operation_count": { "type": "integer", "minimum": 0 },
+        "qa_verdict": { "type": ["string", "null"] },
+        "complete_feature_coverage": { "const": false },
+        "metric_scale_accepted": { "const": false },
+        "hidden_surfaces_accepted": { "const": false },
+        "release_allowed": { "const": false }
+      }
+    },
+    "blockers": { "type": "array", "items": { "type": "string" } },
+    "artifacts": { "type": "object" }
+  }
+}

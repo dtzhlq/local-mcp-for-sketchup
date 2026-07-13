@@ -1,0 +1,74 @@
+{
+  "kind": "plane_topology_review_seed_v1",
+  "version": 1,
+  "sample_id": "building-single-london-corner",
+  "source_image": "external-datasets/wikimedia-commons/london-corner-building/london-corner-building.jpg",
+  "review_status": "draft_needs_user_acceptance",
+  "vertical_boundaries": [
+    { "id": "boundary_L", "corner_id": "L", "top_norm": [0.135, 0.252], "bottom_norm": [0.14, 0.802], "source": "manual_image_inspection", "review_required": true },
+    { "id": "boundary_A", "corner_id": "A", "top_norm": [0.5, 0.112], "bottom_norm": [0.505, 0.802], "source": "manual_image_inspection", "review_required": true },
+    { "id": "boundary_B", "corner_id": "B", "top_norm": [0.59, 0.135], "bottom_norm": [0.61, 0.802], "source": "manual_image_inspection", "origin_candidate": true, "review_required": true },
+    { "id": "boundary_R", "corner_id": "R", "top_norm": [0.885, 0.425], "bottom_norm": [0.875, 0.802], "source": "manual_image_inspection", "review_required": true }
+  ],
+  "plane_spans": [
+    {
+      "id": "visible_plane_primary_left",
+      "plan_edge_id": "LA",
+      "left_boundary_id": "boundary_L",
+      "right_boundary_id": "boundary_A",
+      "orientation_axis": "x_red",
+      "plan_role": "primary_left_facade",
+      "occlusion_order": { "rank": 1, "relation_to_camera": "visible_left_primary_plane" },
+      "confidence": 0.83,
+      "must_not_merge_with": ["visible_plane_corner_chamfer"],
+      "review_required": true
+    },
+    {
+      "id": "visible_plane_corner_chamfer",
+      "plan_edge_id": "AB",
+      "left_boundary_id": "boundary_A",
+      "right_boundary_id": "boundary_B",
+      "orientation_axis": "unknown",
+      "plan_role": "corner_chamfer",
+      "occlusion_order": { "rank": 1, "relation_to_camera": "frontmost_corner_chamfer" },
+      "confidence": 0.78,
+      "must_not_merge_with": ["visible_plane_primary_left", "visible_plane_primary_right"],
+      "review_required": true
+    },
+    {
+      "id": "visible_plane_primary_right",
+      "plan_edge_id": "BR",
+      "left_boundary_id": "boundary_B",
+      "right_boundary_id": "boundary_R",
+      "orientation_axis": "y_green",
+      "plan_role": "primary_right_facade",
+      "occlusion_order": { "rank": 1, "relation_to_camera": "visible_right_primary_plane" },
+      "confidence": 0.82,
+      "must_not_merge_with": ["visible_plane_corner_chamfer"],
+      "review_required": true
+    }
+  ],
+  "plan_topology": {
+    "kind": "corner_chamfer_visible_chain",
+    "origin_corner_id": "B",
+    "corner_order": ["L", "A", "B", "R"],
+    "corners": [
+      { "id": "L", "diagram_xy": [0, 0] },
+      { "id": "A", "diagram_xy": [0.72, 0] },
+      { "id": "B", "diagram_xy": [0.82, 0.1] },
+      { "id": "R", "diagram_xy": [0.82, 1] }
+    ],
+    "edges": [
+      { "id": "LA", "from": "L", "to": "A", "axis": "x_red", "role": "primary_left_facade", "depth_role": "visible_left_extent" },
+      { "id": "AB", "from": "A", "to": "B", "axis": "unknown", "role": "corner_chamfer", "depth_role": "non_manhattan_corner_transition" },
+      { "id": "BR", "from": "B", "to": "R", "axis": "y_green", "role": "primary_right_facade", "depth_role": "visible_right_extent" }
+    ],
+    "depth_order": [],
+    "metric_depth_status": "unknown_single_view"
+  },
+  "promotion_allowed": false,
+  "notes": [
+    "The visible chain contains two Manhattan facade planes and one reviewed non-Manhattan chamfer plane.",
+    "No rear closure or metric depth is inferred from this image."
+  ]
+}

@@ -1,6 +1,6 @@
 # Image Structured Modeler
 
-> 子项目：从多张参考图片生成可编辑、结构化的 SketchUp MCP 模型计划，而不是生成不可编辑的点云/三角网。
+> 子项目：从一张或多张参考图片生成可审查、可编辑的结构化建模证据与 SketchUp MCP 模型计划，而不是生成不可编辑的点云/三角网。
 
 创建时间：2026-05-11
 
@@ -53,6 +53,95 @@ SketchUp MCP 不应该承担复杂视觉识别，否则会变成一个又大又�
 - 生成可审查的 2D overlay 和 3D plan
 
 它输出的是干净结构，而不是直接生成一坨 mesh。
+
+## 2026-07-13 Calibration-First / Drafting-First 主线
+
+建筑透视图当前不再直接“硬生成三视图”。权威链路是：
+
+```text
+image(s)
+  -> StructureLineEvidence v2 (raw / eligible / balanced seeds)
+  -> PerspectiveCalibrationHypotheses (axis-neutral VP families)
+  -> accepted calibration review
+  -> CalibratedViewGraph
+  -> visible topology review
+  -> FacadePlaneGraph / RoomSurfaceGraph / ObjectSurfaceGraph
+  -> visible-coverage review + plane/surface-local evidence
+  -> accepted local evidence review
+  -> visible-surface assembly + source-image reprojection QA
+  -> reviewed promotion gate
+  -> PartGraph
+  -> SketchUp DSL
+```
+
+`DraftViewGraph` 中的 front / side / top 是从已审校准、拓扑和可见面派生的制图显示，不是单图管线的权威输入，也不能反过来覆盖可见面拓扑。
+
+当前默认结构线后端为本地 deterministic OpenCV WASM CPU。短而清晰的线段可以成为 VP 支持；线长不是正确性的代理，局部线密度也不会硬删除候选。两组水平结构线分别估计有限灭点，竖直方向可保持无穷远，因此移轴镜头或后期竖直矫正不会被强行拟合成错误的三灭点模型。检测出的方向 family 在 review 前保持 `axis_unassigned`。
+
+黄色楼 L-A-B-C-D 只作为 draft topology hypothesis：L-A 为 A 点左侧可见侧立面、A-B 为内凹前段、B-C 为退进/return、C-D 为主前段；其 plan 坐标只表达拓扑，不表达单图无法恢复的 metric depth。窗带、店面和 HVAC 是 C-D plane-local candidates；矩形风管是 L-A plane-local candidate，但屋顶以上延伸和截面仍需 review。所有 fixture-only accepted reviews 均有 `promotion_allowed=false`，不能替代用户 acceptance。
+
+Candidate promotion 现在在 patch builder 和 patch apply 两层验证 calibration/topology lineage。缺校准、缺拓扑、缺 DraftView/plane/detail review、伪造 accepted ids、未绑定 plane 的 detail、没有 relative pose 的多图 geometry fusion 都 fail closed。
+
+```bash
+npm run benchmark:image-structured:calibration
+npm run benchmark:image-structured:calibration-routing
+npm run image-structured:yellow-axis-calibration
+npm run image-structured:yellow-visible-effect
+npm run image-structured:yellow-reviewed-model
+npm run image-structured:yellow-reviewed-model-with-details
+```
+
+`yellow-visible-effect` 当前只生成 structure-line、VP family、plane/topology、DraftView、MCP brief 和 review artifacts；它会清理旧的 hardcoded plan projection、PartGraph 和 SketchUp preview，不运行 SketchUp。详见 `docs/building-single-structural-projection-method.md`。
+
+`yellow-reviewed-model` 消费已接受的 calibration/topology/plane ids，生成 topology-aware PartGraph、SketchUp DSL、mock snapshot、正投影 QA 和等轴测 preview。黄色楼当前只允许 `mock_study_only`：尺度为显式 nominal assumption，隐藏后缘只用于闭合体块，未接受的窗/店面/HVAC/风管仍不进入 DSL，`release_allowed=false`。
+
+`yellow-reviewed-model-with-details` 额外消费 fixture-only manual rectified review，作为 accepted-review 技术回归：当前生成 12 个窗/入口 `cut_recess`、5 个 HVAC 盒和 4 个 utility path 盒，并输出原图回投 QA。这个 fixture 可以达到技术 contract 中的 `visual_complete`，但不是用户/release acceptance，仍缺真实尺度和隐藏闭合审阅。
+
+每个已接受的可见 plane 现在会生成通用 `plane_local_evidence_graph_v1`：包含矫正图、局部 U/V 结构线、角点、重复节奏、coarse region 和由四边形/平行条带支持的几何 detail proposals。这些 proposal 只保留 `role_hint`，默认全部 `review_required=true` / `promotion_allowed=false`；工作台可导出 `plane_local_evidence_review_decision_v1`，但该 decision 本身也不能直接编译或提升几何。
+
+plane graph 必须显式声明 `coordinate_reference`。例如黄色楼校准工作图为 `900x589`，真实 source raster 为 `1080x707`；`PlaneLocalEvidenceGraph` 会记录两者并合成 source-to-reference homography。禁止把工作分辨率的 pixel quad 直接用到原始 raster，否则轴和拓扑可以看似正确，局部立面却会系统性裁错。
+
+没有 semantic detail seed 的 plane 也会生成 `unclassified_plane_local_detail` 全平面搜索区，从局部结构线提出 rectangle/path geometry；这些候选不自动命名成窗、门或管线。review 还必须声明 geometry 来自 `proposal_geometry` 还是 `manual_rectified_annotation`；人工改绘不能伪装成 detector 命中。
+
+完成度由 `model_completion_status_v1` 拆分：在可见校准、拓扑、局部 detail review 和回投 QA 通过后，单图样本可以达到 `visual_complete`。被人物、车辆、树木等遮挡的区域只能通过带 polygon、reason 和永久 `non_promotable/non_compilable` 状态的 accepted coverage exclusion 排除；不能用自由文本跳过。`release_complete` 还必须有真实 metric scale anchor，并对隐藏面/闭合假设做明确审阅或提供经过 review 的多图证据。
+
+### 第二立面泛化门禁
+
+`building-single-london-corner` 是不同于黄色楼的外部街景样本，用于阻止 fixture 硬编码。源图保持在 git 忽略的 `external-datasets/` 中，repo 只提交 sample adapter、SHA-256、license/attribution、review fixtures 和 report schema。
+
+```bash
+npm run image-structured:prepare-london-corner-facade
+npm run image-structured:london-corner-facade-study
+npm run image-structured:london-corner-facade-study-with-details
+npm run benchmark:image-structured:tier1
+```
+
+ObjectNet3D、Pix3D 和 CMP Facade 不由 benchmark 自动下载。将固定小子集放入 manifest 的 `local_path` 后，使用 `image-structured:prepare-tier1-subset` 为 image/annotation/CAD 或 label-map 文件生成 `sample-package.json`、SHA-256 和 adapter preflight；缺角色、越界路径或 checksum 变化都会保持阻断。例如：
+
+```bash
+npm run image-structured:prepare-tier1-subset -- --sample-id pix3d_chair_surface_subset --file source_image=chair.png --file image_annotation=annotation.json --file cad_model=chair.obj
+```
+
+当外部图片已准备时，同一套通用流程会恢复两组水平 VP family，保留左立面、中间斜切面和右立面三面拓扑，并为每个面生成 rectified-plane evidence。当前 partial fixture 只审阅 8 个窗洞，用于验证真实 wall void、PartGraph/DSL/mock QA 和源图回投；它明确保持 `visual_status=in_progress` 和 `release_status=blocked`，不宣称自动 detail 识别或交付完成。
+
+另外有一个树木/电缆遮挡的真实建筑负样本：即使能拟合出两个 VP candidate，只要 family pixel support 不足，就必须返回 `blocked_low_family_evidence_quality`，不能因为线段数量多而进入 calibration review。
+
+### 已实现的通用分支
+
+- 一消点室内：复用 structure evidence / calibration review，输出 `room_surface_graph_v1`；人物遮挡以永久不可提升的 coverage exclusion 表达。真实走廊 fixture 在 accepted review 后可达到 visible-complete mock study，但缺真实尺度和隐藏闭合，所以 release 不完整。
+- 产品和车辆：以 `object_surface_graph_v1`、silhouette/profile/keypoint evidence 和 surface-local feature review 为主，不强制 red/green facade axes。救护车 fixture 只提升 13 个 reviewed feature records 到 7 个已存在目标部件，oblique context 不可伪装成物理面。
+- 多图：每张图先独立校准；correspondence review 只合并 evidence identity。平面 homography 仅得到 `single_plane` scope；对象级 promotion 还需要 reviewed 3D relative pose、metric scale、conflict resolution 和 hidden geometry review。即使全部通过也只进入 reviewed PartGraph promotion，不能直接编译。
+- 鸟瞰场地：继续走 ground-plane/site BoundaryGraph 路由，不把 facade VP 当作场地平面真值。
+
+```bash
+npm run image-structured:interior-hallway-study
+npm run image-structured:ambulance-object-surface-study
+npm run benchmark:image-structured:calibration-routing
+npm run benchmark:image-structured:tier0
+npm run benchmark:image-structured:tier1
+```
+
+完整权威关系、domain route 和完成度定义见 `docs/drafting-first-delivery-architecture.md`。
 
 ## 当前可运行入口
 
@@ -343,7 +432,7 @@ R12 现在也接入普通建筑 intake / upload-session：`building_single` 的�
 
 用户上传：
 
-- 严格三视图：front / side / top / back
+- 可选正投影视图：front / side / top / back，提供多少用多少，不作为单图建模的强制输入
 - 非正交实拍：多个角度照片
 - 产品页尺寸图
 - 细节特写

@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/image-structured-modeler/facade-drafting-study-sample.schema.json",
+  "title": "FacadeDraftingStudySample v1",
+  "type": "object",
+  "required": [
+    "kind",
+    "version",
+    "sample_id",
+    "domain",
+    "source",
+    "calibration",
+    "topology",
+    "study_review",
+    "profile",
+    "promotion_allowed"
+  ],
+  "properties": {
+    "kind": { "const": "facade_drafting_study_sample_v1" },
+    "version": { "const": 1 },
+    "sample_id": { "type": "string", "minLength": 1 },
+    "domain": { "const": "building_single" },
+    "source": {
+      "type": "object",
+      "required": ["local_path", "download_url", "description_url", "sha256", "license", "attribution"],
+      "properties": {
+        "local_path": { "type": "string", "minLength": 1 },
+        "download_url": { "type": "string", "format": "uri" },
+        "description_url": { "type": "string", "format": "uri" },
+        "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "license": { "type": "string", "minLength": 1 },
+        "license_url": { "type": "string", "format": "uri" },
+        "attribution": { "type": "string", "minLength": 1 },
+        "dataset_policy": { "const": "external_sample_not_committed" }
+      }
+    },
+    "calibration": {
+      "type": "object",
+      "required": ["max_width", "ground_truth", "review_decision"],
+      "properties": {
+        "max_width": { "type": "integer", "minimum": 320 },
+        "ground_truth": { "type": "string", "minLength": 1 },
+        "review_decision": { "type": "string", "minLength": 1 }
+      }
+    },
+    "topology": {
+      "type": "object",
+      "required": ["seed", "review_decision", "detail_seed"],
+      "properties": {
+        "seed": { "type": "string", "minLength": 1 },
+        "review_decision": { "type": "string", "minLength": 1 },
+        "detail_seed": { "type": "string", "minLength": 1 }
+      }
+    },
+    "study_review": { "type": "string", "minLength": 1 },
+    "local_detail_review": { "type": ["string", "null"] },
+    "profile": { "type": "string", "minLength": 1 },
+    "promotion_allowed": { "const": false },
+    "notes": { "type": "array", "items": { "type": "string" } }
+  }
+}
