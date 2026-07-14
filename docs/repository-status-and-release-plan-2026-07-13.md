@@ -39,6 +39,19 @@ M5 live gate 的真实结果是 **blocked**：RC 插件已复制到 SketchUp 202
 
 当前发布判定：**release-critical implementation complete offline / RC artifact built / live queue blocked / RC not signed**。解除条件只有：解锁 Mac、完全重启 SketchUp、fresh handshake compatibility 通过，再串行运行 queue、budget、identity、expert、Official API、high-value SDK 和 nested edit gates。图片 adapter 仍只做离线 preview，不进入 queue 自动执行。
 
+## 执行附录：2026-07-14 M5 fresh live gate
+
+本节覆盖上一执行附录中的 `live queue blocked / RC not signed` 状态；旧记录保留作为 stop-rule 生效的历史证据。
+
+- SketchUp 2026 启动 Alma Bridge 后，fresh `get_capabilities --runtime queue` 返回 runtime/plugin `0.1.0-rc.1`、SketchUp `26.2.242`、91 registered operations、compatibility `ok=true`且 issues 为空。
+- 串行 live gates 已通过：`qa:queue` 10/10，`qa:identity:queue` 1/1 零差异，`qa:expert:queue` 1/1，`qa:budget:queue` 4/4，Official API R3 12 operations / warnings 0，high-value SDK 8 operations / warnings 0，nested edit definition-wide 2 instances / `make_unique` 1 instance / Face-Edge read-only。
+- `qa:mcp-capability-suite -- --runtime queue --queue-required` 已覆盖 34/34 MCP tools，0 missing / 0 skipped，并保存 live build report、capture、iteration manifest 和 SKP。图片 adapter 在该套件中继续验证缺制品时 blocked、preview-only、`queue_called=false`。
+- 修正了遗留的 28-tool capability suite 硬编码；当前套件明确断言 34 tools，并将 91 operations 保持为独立 registry 计数。
+- 可选空 `features` 的 absent/空数组已做语义归一。`qa:queue` 因此有 9/10 样例零差异；唯一 review 是 `boolean-manifold-slice` 的 14 个 mock 近似几何与 SketchUp 实体内核差异，0 error，作为已审阅非阻断例外保留。
+- 新鲜 live 证据不来自 `plugin:check`；后者本轮仍只作为静态 registry/包清单门禁。
+
+发布判定更新为：**release-critical gates verified / reviewed boolean parity warning only / RC signed**。图片结构化仍只通过受审制品 adapter 连接主线，不自动执行 DSL；“真实发布级样本”继续排除。
+
 ## 结论
 
 - 当前 checkout 是 `codex/runtime-registry-split`，审计起点 HEAD 为 `9d1872f`。审计开始时该 checkout clean；本轮只留下事实口径修正、optional `result` 兼容修复/回归和本报告，没有 staged file、merge、cherry-pick、commit、reset、revert 或删除。

@@ -1,7 +1,7 @@
 # SketchUp MCP Replica — 项目状态与计划
 
 > 更新日期：2026-07-14
-> 当前状态：两周发布分支已完成 M0–M4 和 M5 离线实现；当前 `tools/list` 为 34 个工具、safe DSL registry 为 91 个 operation，两者不是同一计数。`ModificationIntent v1` 仍是可审计门控编排层，不是自主语义智能体。新增 image-structured MCP adapter 只消费路径化、schema-valid、review-cleared 制品并生成 DSL preview，不复制图片分析管线、不调用 queue。`0.1.0-rc.1` 候选 RBZ、SHA-256 和 release manifest 已生成，但 fresh queue handshake 在 Mac 锁屏、SketchUp 无响应时超时，因此 `rc_signed=false`，不能宣称 RC 已签发。正式发布继续把 `projects/image-structured-modeler` 保持为独立上游；`plugin:check` 不构成 live queue 证明。
+> 当前状态：两周发布分支已完成 M0–M5；当前 `tools/list` 为 34 个工具、safe DSL registry 为 91 个 operation，两者不是同一计数。`ModificationIntent v1` 仍是可审计门控编排层，不是自主语义智能体。image-structured MCP adapter 只消费路径化、schema-valid、review-cleared 制品并生成 DSL preview，不复制图片分析管线、不调用 queue。`0.1.0-rc.1` 已通过 fresh SketchUp 2026 handshake 和串行 queue gates，release manifest 可标记 `rc_signed=true`。基础 queue 10/10 成功，9 例零差异；唯一非阻断 review 是 boolean mock 近似几何与 SketchUp 实体内核的 14 个已审阅 warning，0 error。正式发布继续把 `projects/image-structured-modeler` 保持为独立上游；`plugin:check` 不构成 live queue 证明。
 
 > 2026-06-09 主线补充：建筑几何 R2/R3 已把本地 JSON DSL 推到 85 个 operation / 53 个 component scope，新增非正交/带洞 footprint、路径/弧墙、场地/道路/停车/柱网/幕墙/hip/footprint roof 等 mock-first 建筑能力；R3 进一步把 curtain wall 从占位带升级为 panel/mullion/rail 网格。MCP/CLI/HTTP 侧新增 `queue_diagnostics`、`capture_view`、`get_workflow_bundle` 和默认关闭的 `run_ruby_expert` 调试入口；这些是本地 queue 可用性和证据工具，不改变官方 Cloud/OAuth 不做的边界。
 >
@@ -13,7 +13,7 @@
 >
 > 2026-07-03 主线补充：自然迭代体验 R2 新增 `ModificationIntent v1` 和 `plan_modification_intent`，把 target resolution、当前 selection 和 geometry facts 转成可审计 edit intent。live queue smoke 已在 SketchUp 26.2.242 / `queue-plugin-0.1.0-natural-iteration.2` 下通过：Face+Edge selection 生成 `safe_to_execute=false`、`requires_confirmation=true` 的 preview/blocked intent；top-level group 的安全 `set_attribute` intent 可通过 `iterate_model --intent-file` 执行，并写出 before/after snapshot、modification-intent、intent-patch、intent-manifest、snapshot-diff 和 `.skp` artifact。
 >
-> 2026-07-14 发布分支补充：M1 新增 12 例官方风格 Python source compatibility corpus；M2 新增 `erase_entities`、`transform_entities`、`Page.update(flags)` 和受限同脚本 Face UVHelper 查询；M3 新增共享 definition 策略明确的 nested group/component instance 安全编辑；M4 新增 `prepare_image_modeling_brief` 与 `compile_reviewed_part_graph`，将当前 `tools/list` 推进到 34。上述新增能力已有 mock/targeted 回归；本轮 live queue 结果须在 RC 插件安装和 SketchUp 重启后另行记录。
+> 2026-07-14 发布分支补充：M1 新增 12 例官方风格 Python source compatibility corpus；M2 新增 `erase_entities`、`transform_entities`、`Page.update(flags)` 和受限同脚本 Face UVHelper 查询；M3 新增共享 definition 策略明确的 nested group/component instance 安全编辑；M4 新增 `prepare_image_modeling_brief` 与 `compile_reviewed_part_graph`，将当前 `tools/list` 推进到 34；M5 已在 SketchUp `26.2.242` / plugin `0.1.0-rc.1` 上通过 fresh compatibility handshake、34-tool MCP queue-required smoke、queue/budget/identity/expert、Official API R3、high-value SDK 和 nested-edit 门禁，关键 SKP/PNG/manifest 已保存。
 >
 > 2026-06-25 表达力 P0 第一刀：新增 `compile_python_sdk` 和 `evaluate_py input_format=python_sdk`，把受限官方风格 Python SDK facade 转译为安全 JSON DSL，不执行 Python bytecode。第一批 facade 覆盖 `model`、`SUPoint2D/3D`、`SUVector/SUVector3D`、`SUColor`、`SUTransformation`、`Material`、`LoopInput`、`GeometryInput` 和 `Group`，支持 `model.add_geometry/add_curve/add_arc_curve/add_box` 等常用调用、`range` 循环/list append 和 inches->mm 换算；任意 import/print/runtime/file/network 访问仍阻断，不声明完整官方 Python SDK。
 >
