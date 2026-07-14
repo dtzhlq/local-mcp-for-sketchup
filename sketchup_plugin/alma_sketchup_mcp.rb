@@ -42,9 +42,9 @@ module AlmaSketchupMCP
   RESPONSE_DIR = File.join(STATE_DIR, 'responses')
   MM_PER_INCH = 25.4
   DEFAULT_OPERATION_LIMIT = 2000
-  PLUGIN_VERSION = 'queue-plugin-0.1.0-natural-iteration.2'
-  CAPABILITY_MANIFEST_VERSION = '2026-07-official-api-expression-r3'
-  RUNTIME_CAPABILITY_VERSION = '0.1.0-capabilities.10'
+  PLUGIN_VERSION = '0.1.0-rc.1'
+  CAPABILITY_MANIFEST_VERSION = '2026-07-release-rc1'
+  RUNTIME_CAPABILITY_VERSION = '0.1.0-rc.1-capabilities.1'
   DSL_VERSION = 1
 
   def start

@@ -2,6 +2,7 @@
 import readline from 'node:readline';
 import { SketchUpBridge, callTool } from './bridge.mjs';
 import { compareSnapshots } from './snapshot-diff.mjs';
+import { PRODUCT_VERSION } from './version.mjs';
 
 const bridge = new SketchUpBridge();
 const rl = readline.createInterface({ input: process.stdin, crlfDelay: Infinity });
@@ -563,7 +564,7 @@ async function handleRequest(request) {
     return respond(request.id, {
       protocolVersion: request.params?.protocolVersion || '2024-11-05',
       capabilities: { tools: { listChanged: false } },
-      serverInfo: { name: 'sketchup-mcp-replica', version: '0.1.0' }
+      serverInfo: { name: 'sketchup-mcp-replica', version: PRODUCT_VERSION }
     });
   }
 

@@ -49,6 +49,8 @@ function assertSnapshotQualityFields(snapshot, label) {
 }
 
 const manifest = getOperationManifest();
+assert.equal(getRuntimeCapabilities('mock').version, 'mock-runtime-0.1.0-rc.1');
+assert.equal(getRuntimeCapabilities('queue').version, 'queue-runtime-0.1.0-rc.1');
 assert.ok(manifest.length > 0, 'capability manifest should list operations');
 for (const capability of manifest) {
   assert.equal(typeof capability.op, 'string', 'manifest capability should have op name');

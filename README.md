@@ -371,7 +371,7 @@ node src/cli.mjs save_model --runtime queue --path "$PWD/output/demo-room.skp" -
 {
   "runtime": {
     "name": "mock",
-    "version": "mock-runtime-0.1.0",
+    "version": "mock-runtime-0.1.0-rc.1",
     "capability_version": "0.1.0-capabilities.5",
     "manifest_version": "2026-05-phase7-boolean-manifold",
     "dsl_version": 1,

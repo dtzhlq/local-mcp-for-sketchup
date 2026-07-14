@@ -81,12 +81,15 @@ npm run qa:nested-edit:queue
 
 ```bash
 npm run plugin:package
+npm run release:manifest -- --live-status passed --offline-gate npm-test --offline-gate test-image-structured --offline-gate plugin-check
 ```
 
 输出：
 
 ```text
 out/releases/alma-sketchup-mcp-<PLUGIN_VERSION>.rbz
+out/releases/alma-sketchup-mcp-<PLUGIN_VERSION>.sha256
+out/releases/release-manifest-<PLUGIN_VERSION>.json
 ```
 
 打包内容必须包含：

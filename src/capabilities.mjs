@@ -1,6 +1,8 @@
+import { PRODUCT_VERSION } from './version.mjs';
+
 export const DSL_VERSION = 1;
-export const CAPABILITY_MANIFEST_VERSION = '2026-07-official-api-expression-r3';
-export const RUNTIME_CAPABILITY_VERSION = '0.1.0-capabilities.10';
+export const CAPABILITY_MANIFEST_VERSION = '2026-07-release-rc1';
+export const RUNTIME_CAPABILITY_VERSION = '0.1.0-rc.1-capabilities.1';
 
 export const SUPPORT_STATUS = Object.freeze({
   supported: 'supported',
@@ -839,7 +841,7 @@ export function getRuntimeCapabilities(runtime = 'mock') {
 
   return {
     name: runtime,
-    version: runtime === 'mock' ? 'mock-runtime-0.1.0' : 'queue-runtime-0.1.0',
+    version: runtime === 'mock' ? `mock-runtime-${PRODUCT_VERSION}` : `queue-runtime-${PRODUCT_VERSION}`,
     capability_version: RUNTIME_CAPABILITY_VERSION,
     manifest_version: CAPABILITY_MANIFEST_VERSION,
     dsl_version: DSL_VERSION,

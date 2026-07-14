@@ -37,6 +37,8 @@ server.stderr.on('data', (chunk) => {
 });
 
 try {
+  const initialized = await request({ id: 0, method: 'initialize', params: { protocolVersion: '2024-11-05' } });
+  assert.equal(initialized.result.serverInfo.version, '0.1.0-rc.1');
   const list = await request({ id: 1, method: 'tools/list' });
   const toolNames = list.result.tools.map((tool) => tool.name);
   assert.equal(toolNames.length, 34, 'MCP tools/list should expose exactly 34 tools');

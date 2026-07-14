@@ -2,6 +2,7 @@
 import http from 'node:http';
 import { SketchUpBridge, callTool } from './bridge.mjs';
 import { compareSnapshots } from './snapshot-diff.mjs';
+import { PRODUCT_VERSION } from './version.mjs';
 
 const bridge = new SketchUpBridge();
 const port = Number(process.env.PORT || 3977);
@@ -9,7 +10,7 @@ const port = Number(process.env.PORT || 3977);
 const server = http.createServer(async (request, response) => {
   try {
     if (request.method === 'GET' && request.url === '/health') {
-      return sendJson(response, 200, { ok: true, name: 'sketchup-mcp-replica' });
+      return sendJson(response, 200, { ok: true, name: 'sketchup-mcp-replica', version: PRODUCT_VERSION });
     }
 
     if (request.method === 'GET' && request.url === '/tools') {
