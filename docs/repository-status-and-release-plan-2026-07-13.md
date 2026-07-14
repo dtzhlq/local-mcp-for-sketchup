@@ -2,6 +2,19 @@
 
 审计日期：2026-07-13（Asia/Shanghai）
 
+## 执行附录：2026-07-14 主线收敛
+
+本节覆盖下方审计快照中“未提交 / 待整合 / branch convergence pending”的历史状态；下方原文保留用于说明决策依据。
+
+- optional `result` 兼容修复已作为 `5a5492f` 落库；事实口径和本报告已作为 `b6af2a3` 落库。
+- 参数化 continuation 仅 cherry-pick 原 `8aa7fb6`，在当前分支生成提交 `8dcc981`；没有 merge 整个 `codex/organize-parametric-worktree`。
+- 整合后 `git diff --check`、`npm test`、`npm run test:image-structured`、`npm run plugin:check`、`npm run qa:official-api-r3:mock`、`npm run parametric-recipe:first-output-switch` 全部通过；五类 first-output 制品均已重新生成。
+- `main` 经祖先关系和旧 HEAD 校验后，原子 fast-forward 到包含本附录的 release baseline；没有 merge commit、push、PR、remote 操作或 worktree 删除。
+- `RELEASE_PREVIEW_ZH.md` 明确排除并继续保持 untracked；四个 dirty detached worktree 原样保留。
+- M0 没有取得新的 queue handshake，因此 live SketchUp 仍是 **未新鲜验证**。最终 RC 必须在安装新插件并重启 SketchUp 后重新通过 live gate。
+
+执行判定：**offline green / parametric continuation integrated / mainline converged / live unverified**。
+
 ## 结论
 
 - 当前 checkout 是 `codex/runtime-registry-split`，审计起点 HEAD 为 `9d1872f`。审计开始时该 checkout clean；本轮只留下事实口径修正、optional `result` 兼容修复/回归和本报告，没有 staged file、merge、cherry-pick、commit、reset、revert 或删除。
