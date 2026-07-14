@@ -577,6 +577,7 @@ class PythonSdkInterpreter {
     if (object instanceof SdkGeometryInput) return object.call(method, args, kwargs, node);
     if (object instanceof SdkPolygonMesh) return object.call(method, args, kwargs, node);
     if (object instanceof SdkFaceInput) return object.call(method, args, kwargs, node);
+    if (object instanceof SdkUvHelper) return object.call(method, args, kwargs, node);
     if (object instanceof SdkLoopRef) return object.call(method, args, kwargs, node);
     if (object instanceof SdkEdgeRef) return object.call(method, args, kwargs, node);
     if (object instanceof SdkComponentDefinition) return object.call(method, args, kwargs, node);
@@ -865,6 +866,10 @@ class SdkEntitiesProxy {
         return this.addFacesFromMesh(args, kwargs, node);
       case 'fill_from_mesh':
         return this.fillFromMesh(args, kwargs, node);
+      case 'erase_entities':
+        return this.eraseEntities(args, kwargs, node);
+      case 'transform_entities':
+        return this.transformEntities(args, kwargs, node);
       case 'count':
       case 'length':
       case 'size':
@@ -987,6 +992,29 @@ class SdkEntitiesProxy {
     this.addOperation(mesh);
     this.items.push(mesh);
     return true;
+  }
+
+  eraseEntities(args, kwargs, node) {
+    const targets = collectionMutationTargets(args.length ? args : [kwargs.entities ?? kwargs.targets], node);
+    for (const target of targets) this.addMutationOperation({ op: 'delete', ...objectReferenceForFacade(target) }, node);
+    return targets.length;
+  }
+
+  transformEntities(args, kwargs, node) {
+    const transformation = args[0] ?? kwargs.transformation ?? kwargs.transform;
+    if (transformation === undefined) throw new PythonSdkCompileError(`${this.label}.transform_entities expects a transformation`, node);
+    const targets = collectionMutationTargets(args.length > 1 ? args.slice(1) : [kwargs.entities ?? kwargs.targets], node);
+    const transform = transformation instanceof SdkTransformation ? transformation.toTransform(this.model) : facadePlainValue(transformation);
+    for (const target of targets) {
+      this.addMutationOperation({ op: 'transform_object', transform, ...objectReferenceForFacade(target) }, node);
+    }
+    return targets.length;
+  }
+
+  addMutationOperation(operation, node) {
+    if (this.owner instanceof SdkModel) this.owner.operations.push(operation);
+    else if (this.owner instanceof SdkComponentDefinition) this.owner.addOperation(operation, node);
+    else throw new PythonSdkCompileError(`${this.label} collection editing is supported only for model or component-definition entities`, node);
   }
 
   targetGeometry(_args, kwargs, node, suffix) {
@@ -1822,6 +1850,13 @@ class SdkFaceInput {
       return null;
     }
     if (method === 'texture_positioned') return Boolean(this.position_material);
+    if (method === 'get_UVHelper' || method === 'get_uv_helper') {
+      this.geometry.facadeObjectSet.add('UVHelper');
+      return new SdkUvHelper(this, {
+        front: args[0] ?? kwargs.front ?? true,
+        back: args[1] ?? kwargs.back ?? true
+      }, node);
+    }
     if (method === 'mesh') return SdkPolygonMesh.fromFace(this);
     throw new PythonSdkCompileError(`Unsupported Face method: ${method}`, node);
   }
@@ -1879,6 +1914,38 @@ class SdkFaceInput {
       followme: this.followme,
       position_material: this.position_material
     };
+  }
+}
+
+class SdkUvHelper {
+  constructor(face, { front = true, back = true } = {}, node) {
+    this.face = face;
+    this.front = Boolean(front);
+    this.back = Boolean(back);
+    if (!this.front && !this.back) throw new PythonSdkCompileError('Face.get_UVHelper must request the front side, back side, or both', node);
+  }
+
+  call(method, args, kwargs, node) {
+    if (method === 'get_front_UVQ') return this.lookup(args[0] ?? kwargs.point, true, node);
+    if (method === 'get_back_UVQ') return this.lookup(args[0] ?? kwargs.point, false, node);
+    throw new PythonSdkCompileError(`Unsupported UVHelper method: ${method}`, node);
+  }
+
+  lookup(point, front, node) {
+    if (front && !this.front) throw new PythonSdkCompileError('UVHelper front-side queries were not requested', node);
+    if (!front && !this.back) throw new PythonSdkCompileError('UVHelper back-side queries were not requested', node);
+    const positioned = this.face.position_material;
+    if (!positioned || positioned.front !== front) {
+      throw new PythonSdkCompileError('UVHelper only supports the positioned material side authored on the same Face', node);
+    }
+    const rawPoint = point instanceof SdkPoint ? point.value : normalizeRawPoint(point, 'UVHelper point', node);
+    const match = positioned.mapping.find((entry) => entry.point.every((coordinate, index) => Math.abs(coordinate - rawPoint[index]) <= 1e-9));
+    if (!match) throw new PythonSdkCompileError('UVHelper only supports points present in the same-script Face.position_material mapping', node);
+    return new SdkPoint([match.uv[0], match.uv[1], 1], 3, 'SUPoint3D', node);
+  }
+
+  toJson() {
+    return { front: this.front, back: this.back, source: 'same_script_position_material' };
   }
 }
 
@@ -2325,12 +2392,21 @@ class SdkScene {
       ...(this.drawingelement_visibility.length ? { drawingelement_visibility: this.drawingelement_visibility.map((entry) => ({ ...entry })) } : {}),
       ...(Object.keys(this.rendering_options.options).length ? { rendering_options: { ...this.rendering_options.options } } : {}),
       ...(Object.keys(this.shadow_info.options).length ? { shadow: { ...this.shadow_info.options } } : {}),
-      ...(this.style ? { style: { ...this.style.options } } : {})
+      ...(this.style ? { style: { ...this.style.options } } : {}),
+      ...(this.update_flags !== undefined ? { update_flags: this.update_flags } : {})
     };
   }
 
   call(method, args, kwargs, _node) {
-    if (method === 'update') return this;
+    if (method === 'update') {
+      const flags = args[0] ?? kwargs.flags ?? kwargs.update_flags ?? kwargs.updateFlags;
+      if (flags !== undefined) {
+        const numericFlags = Number(flags);
+        if (!Number.isInteger(numericFlags) || numericFlags < 0) throw new PythonSdkCompileError('Page.update flags must be a non-negative integer', _node);
+        this.update_flags = numericFlags;
+      }
+      return this;
+    }
     if (method === 'use_camera') {
       this.camera = args[0] ?? kwargs.camera ?? this.camera;
       return this;
@@ -2585,6 +2661,21 @@ function objectReferenceForFacade(value) {
     if (value.name !== undefined) return { name: value.name };
   }
   return { target_id: value };
+}
+
+function collectionMutationTargets(values, node) {
+  const flattened = [];
+  for (const value of values || []) {
+    if (Array.isArray(value)) flattened.push(...value);
+    else if (value !== undefined && value !== null) flattened.push(value);
+  }
+  if (!flattened.length) throw new PythonSdkCompileError('Entities collection edit expects at least one entity', node);
+  for (const target of flattened) {
+    if (!(target instanceof SdkEntityRef || target instanceof SdkGroup || target instanceof SdkComponentInstance || target instanceof SdkGeometryInput || target instanceof SdkCurve || target instanceof SdkArcCurve)) {
+      throw new PythonSdkCompileError('Entities collection editing supports authored group/component/object references; Face and Edge collection mutation remains unsupported', node);
+    }
+  }
+  return flattened;
 }
 
 function meshOperationFromFacade(value, kwargs, model, node, fallbackName) {
@@ -3098,7 +3189,7 @@ function toJsonCompatible(value, path) {
   if (value instanceof SdkColor) return value.alpha === undefined ? value.color : { color: value.color, alpha: value.alpha };
   if (value instanceof SdkMaterial) return value.toOperation();
   if (value instanceof SdkGeometryInput) return value.toOperation(new SdkModel());
-  if (value instanceof SdkFaceInput || value instanceof SdkLoopRef || value instanceof SdkEdgeRef) return value.toJson();
+  if (value instanceof SdkFaceInput || value instanceof SdkUvHelper || value instanceof SdkLoopRef || value instanceof SdkEdgeRef) return value.toJson();
   if (value instanceof SdkEntityRef) return value.toJson();
   if (value instanceof SdkComponentDefinition || value instanceof SdkComponentInstance) return value.toJson();
   if (value instanceof SdkCamera || value instanceof SdkScene || value instanceof SdkStyle || value instanceof SdkShadowInfo || value instanceof SdkRenderingOptions) return value.toJson();

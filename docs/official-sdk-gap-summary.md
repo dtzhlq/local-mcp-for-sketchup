@@ -132,7 +132,7 @@
 - helper function 的完整 Python 语义：decorator、nested closure、varargs/kwargs、异常处理、运行时反射和标准库调用仍阻断。
 - `dir()`、`globals()`、`locals()`、反射式 API discovery 和运行时对象枚举；`list(obj.keys())` 仅对 facade 内部 plain dict 支持。
 - 可选 `result` 只回传 JSON-compatible 值；脚本未定义 `result` 时会正常编译/执行并省略该字段，显式 `result = None` 则回传 `null`。任意非 JSON-compatible Python 对象仍不支持。
-- 完整官方 Python 类行为；`model.entities/materials/layers/definitions/pages/selection/active_view`、`GeometryInput` / `LoopInput` / Face / Loop / Edge / Curve / ArcCurve / ComponentDefinition / ComponentInstance / Camera / Scene / Style / ShadowInfo / RenderingOptions / Layer / Texture / Image / ImageRep / PolygonMesh 已有结构表达第一刀，但它们仍是现有 DSL 的对象包装；`Face.pushpull`、受控 `followme`、mesh/fill、positioned texture 第一刀和 runtime selection 已默认实现几何或 runtime 效果，但完整 UVHelper、EntitiesBuilder/intersect、observer/UI/runtime reflection 仍不支持。
+- 完整官方 Python 类行为；`model.entities/materials/layers/definitions/pages/selection/active_view` 等仍是现有 DSL 的安全对象包装。集合 erase/transform、`Page.update(flags)` 透传和同脚本 positioned Face 的只读 UVQ 查询已有第一刀，但动态 active-model UVHelper、EntitiesBuilder/intersect、Page flags 完整宿主语义、observer/UI/runtime reflection 仍不支持。
 
 这是有意取舍：安全 JSON DSL 比官方 Python 环境表达力低，但更容易验证和限制。
 

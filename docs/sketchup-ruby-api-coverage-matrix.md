@@ -38,14 +38,14 @@
 | `Sketchup::ComponentInstance` | partial | direct constructor、`model.entities.add_instance`、`move_to`、`transform_by`、`set_attribute`、`make_unique/explode` safe facade | 新增 object attribute/tag/material mapping |
 | `Sketchup::Material` / `Materials` | partial | `Material(...)`、`model.materials.add`、`materials.count/keys/values/[]/unique_name` | 新增 collection behavior |
 | `Sketchup::Layer` / `Layers` | partial | `Layer(...)`、`model.layers.add`、entity `layer=` -> `assign_tag` | 新增 collection behavior |
-| `Sketchup::Pages` / `Page` | partial | `model.pages.add(...)` -> `scene`、`scene.update` safe facade、`transition_time`、`set_visibility`、`set_drawingelement_visibility`、scene-local rendering/shadow/style intent | R3 新增 Page 高级字段第一刀 |
+| `Sketchup::Pages` / `Page` | partial | `model.pages.add(...)` -> `scene`、`scene.update(flags)` non-negative bitmask passthrough、`transition_time`、`set_visibility`、`set_drawingelement_visibility`、scene-local rendering/shadow/style intent | flags 仅按显式整数传递给 mock/queue；不是完整 Page 行为 |
 | `Sketchup::Camera` / `View` | partial | `Camera(...)`、`look_at/set_eye`、`model.active_view.write_image` -> `image_reference`、`zoom_extents/refresh/invalidate` safe no-op | 新增 active_view facade |
 | `Sketchup::RenderingOptions` | partial | constructor + `keys/each_key/each_pair` + `options["key"]` set/get -> `rendering_options` op | 新增 key-value facade |
 | `Sketchup::ShadowInfo` | partial | constructor + `keys/each_key/each_pair` + `shadow["key"]` set/get -> `shadow` op | 新增 key-value facade |
 | `Sketchup::Selection` | partial | `model.selection.add/remove/clear/replace/count/to_a` -> runtime `selection` op + snapshot selection；queue selection 识别 `Group` / `ComponentInstance` / top-level or active-context `Face` / `Edge` | Face/Edge 已支持识别、bbox 和几何摘要及 persistent_id 目标引用；任意子实体局部编辑仍未覆盖 |
 | `Sketchup::AttributeDictionary` | partial | `entity.set_attribute/get_attribute/delete_attribute` -> `attribute` op / compile-time return | 新增 object method mapping |
 | Solid boolean methods | partial | `boolean_union/difference/intersect` DSL and group/component solid ops through existing runtime | 未扩展到 arbitrary face/edge selection |
-| Texture / UV | partial | `Texture/Image/ImageRep` facade、`image_reference`、`image_plane`、`face_uv` metadata、`Face#position_material` mapping | R3 新增 Face#position_material 和 face_uv 的 queue apply attempt；仍非完整 UVHelper |
+| Texture / UV | partial | `Texture/Image/ImageRep` facade、`image_reference`、`image_plane`、`face_uv` metadata、`Face#position_material` mapping、同脚本 Face 显式 mapping 的只读 `get_UVHelper` 查询 | 动态 active-model UV 查询和完整 UVHelper 仍不支持 |
 | UI / Tools / Observers / Extension Manager | unsupported | blocked | 不进入主线建模表达目标 |
 | Dynamic reflection / arbitrary runtime | unsupported | blocked | `dir/globals/locals/import/file/network` 继续阻断 |
 
@@ -62,7 +62,7 @@
 
 ## 仍待覆盖
 
-- `Face#get_UVHelper`、`uv_tile_at`、投影贴图和更完整的 Texture/ImageRep 数据面。
-- `Page#update(flags)` 的完整 flags 语义、section plane、axes/environment 字段。
+- active-model `Face#get_UVHelper`、插值/投影 UVQ、`uv_tile_at` 和更完整的 Texture/ImageRep 数据面。
+- `Page#update(flags)` 各 bit 的完整宿主语义、section plane、axes/environment 字段。
 - `EntitiesBuilder`、`intersect_with`、`transform_by_vectors` 等更偏底层/高性能的 Entities API。
 - `all_connected`、`classify_point`、`coplanar_with?` 等几何查询只适合继续做受控 query facade，不进入任意 Ruby runtime。

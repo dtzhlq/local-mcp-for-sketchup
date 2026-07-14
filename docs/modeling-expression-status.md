@@ -45,7 +45,7 @@
 
 - **云端 Connector 形态**：没有官方 OAuth / DCR / Bearer token / refresh token / hosted MCP endpoint / 云端 session / 下载 URL；我们是本地 Node bridge + stdio MCP + file queue。
 - **完整 Python 执行环境**：不执行 Python bytecode，不支持 import、stdlib/numpy、文件/网络、异常处理、decorator、nested closure、varargs/kwargs、reflection、`dir()`、`globals()`、直接 SketchUp API 调用。
-- **完整官方 SDK 类行为**：当前 facade 仍是现有 DSL 的安全对象包装；`Face.pushpull`、受控 `followme`、`Face.mesh`、mesh fill、positioned texture 第一刀和 runtime selection 已覆盖，但完整 UVHelper、EntitiesBuilder、intersect/query API、Page flags/section plane、observer/UI/runtime reflection 仍未覆盖。
+- **完整官方 SDK 类行为**：当前 facade 仍是现有 DSL 的安全对象包装；集合 erase/transform、`Page.update(flags)` 透传和同脚本 positioned Face 的只读 UVQ 查询已有第一刀，但动态 active-model UVHelper、EntitiesBuilder、intersect/query API、Page flags 的完整宿主语义、section plane、observer/UI/runtime reflection 仍未覆盖。
 - **完整 SketchUp API 面**：Layer/Tag 管理、Scenes/Pages、Style/Rendering key 枚举、材质/贴图/UV/嵌入图像、attribute/classification 版本差异已有更多 facade 第一刀，但还不是完整 API。
 - **通用 CAD kernel**：已有 boolean/manifold 第一版，但复杂曲面、任意边 fillet/chamfer、文字 solid union/subtraction、复杂 sweep frame、自动拓扑修复仍不完整。
 - **官方云端迭代体验**：官方在同一 chat 中跟踪版本并提供下载；本地新增 `iterate_model` 记录 active session 的 before/after/diff/QA/version artifact，但仍不是官方云端版本链或下载 URL。
