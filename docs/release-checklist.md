@@ -92,6 +92,8 @@ out/releases/alma-sketchup-mcp-<PLUGIN_VERSION>.sha256
 out/releases/release-manifest-<PLUGIN_VERSION>.json
 ```
 
+checksum 文件中的 RBZ 名是同目录相对路径，应在 `out/releases/` 内运行 `shasum -a 256 -c <file>.sha256`。
+
 打包内容必须包含：
 
 - `alma_sketchup_mcp.rb`

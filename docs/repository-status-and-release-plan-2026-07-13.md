@@ -15,6 +15,30 @@
 
 执行判定：**offline green / parametric continuation integrated / mainline converged / live unverified**。
 
+## 执行附录：2026-07-14 M1–M5 发布切片
+
+本节继续覆盖下方两周计划的执行结果。RC 候选源码基线为 `codex/two-week-release-critical@346344e`；`main` 仍停在整合基线 `e229e83`，未再次推进，且没有 push、PR、remote 操作或 worktree 删除。
+
+| 里程碑 | 提交/状态 | 验收证据 |
+|---|---|---|
+| M1 source compatibility | `b562348` | 12 cases：11 compiled / 1 classified unsupported；覆盖省略 `result`、显式 `None` 和 JSON result |
+| M2 high-value Python SDK | `6a663c8` | 8 ops；erase/transform/Page flags/同脚本 UVHelper mock assertions 全绿，warnings 0 |
+| M3 nested entity edit | `f272bce` | definition-wide 影响 2 instances；`make_unique` 只影响 1 instance；nested Face/Edge 继续 read-only |
+| M4 image artifact adapter | `5fe9eb8` | `tools/list=34`；schema-valid + review-cleared 输入生成 88-op DSL preview；缺 review 不写 DSL；`queue_called=false` |
+| M5 version/package | `346344e` | product/MCP/runtime/plugin 统一为 `0.1.0-rc.1`；插件安装检查通过；RBZ/manifest/checksum 已生成 |
+
+离线门禁全部通过：`git diff --check`、`npm test`、`npm run test:image-structured`（tier0=8 / tier1=5 / false promotion=0）、`npm run plugin:check`、`qa:official-api-r3:mock`、`qa:python-sdk-high-value:mock`、`qa:nested-edit:mock`、image adapter regression、`qa:expert:mock`、`qa:budget:mock` 和 `qa:mock`。
+
+M5 live gate 的真实结果是 **blocked**：RC 插件已复制到 SketchUp 2026 Plugins 目录，但 Mac 当时处于锁屏状态，无法安全退出并重启 SketchUp；随后 fresh `get_capabilities --runtime queue --timeout-ms 10000` 超时。依照 hard gate，没有运行后续 queue QA，也没有生成新的 queue SKP。`plugin:check`、安装检查和旧 queue artifacts 都不作为 live 证明。
+
+候选制品：
+
+- `out/releases/alma-sketchup-mcp-0.1.0-rc.1.rbz`：67,008 bytes，SHA-256 `85b09ed13c928fecc60319b9098d771c2057cbcedc9207e38f2c5dc131e37e73`；
+- `out/releases/alma-sketchup-mcp-0.1.0-rc.1.sha256`：已在 `out/releases` 目录内通过 `shasum -a 256 -c`；
+- `out/releases/release-manifest-0.1.0-rc.1.json`：`release_status=blocked_live_queue`、`rc_signed=false`、`mcp_tools=34`、`registered_operations=91`。
+
+当前发布判定：**release-critical implementation complete offline / RC artifact built / live queue blocked / RC not signed**。解除条件只有：解锁 Mac、完全重启 SketchUp、fresh handshake compatibility 通过，再串行运行 queue、budget、identity、expert、Official API、high-value SDK 和 nested edit gates。图片 adapter 仍只做离线 preview，不进入 queue 自动执行。
+
 ## 结论
 
 - 当前 checkout 是 `codex/runtime-registry-split`，审计起点 HEAD 为 `9d1872f`。审计开始时该 checkout clean；本轮只留下事实口径修正、optional `result` 兼容修复/回归和本报告，没有 staged file、merge、cherry-pick、commit、reset、revert 或删除。

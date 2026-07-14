@@ -1,7 +1,7 @@
 # SketchUp MCP Replica — 项目状态与计划
 
 > 更新日期：2026-07-14
-> 当前状态：两周发布分支已完成 M0–M4 离线切片；当前 `tools/list` 为 34 个工具、safe DSL registry 为 91 个 operation，两者不是同一计数。`ModificationIntent v1` 仍是可审计门控编排层，不是自主语义智能体。新增 image-structured MCP adapter 只消费路径化、schema-valid、review-cleared 制品并生成 DSL preview，不复制图片分析管线、不调用 queue。正式发布继续把 `projects/image-structured-modeler` 保持为独立上游；live SketchUp 仍须以本次 RC 安装后的 fresh `get_capabilities --runtime queue` 为准，`plugin:check` 不构成 live queue 证明。
+> 当前状态：两周发布分支已完成 M0–M4 和 M5 离线实现；当前 `tools/list` 为 34 个工具、safe DSL registry 为 91 个 operation，两者不是同一计数。`ModificationIntent v1` 仍是可审计门控编排层，不是自主语义智能体。新增 image-structured MCP adapter 只消费路径化、schema-valid、review-cleared 制品并生成 DSL preview，不复制图片分析管线、不调用 queue。`0.1.0-rc.1` 候选 RBZ、SHA-256 和 release manifest 已生成，但 fresh queue handshake 在 Mac 锁屏、SketchUp 无响应时超时，因此 `rc_signed=false`，不能宣称 RC 已签发。正式发布继续把 `projects/image-structured-modeler` 保持为独立上游；`plugin:check` 不构成 live queue 证明。
 
 > 2026-06-09 主线补充：建筑几何 R2/R3 已把本地 JSON DSL 推到 85 个 operation / 53 个 component scope，新增非正交/带洞 footprint、路径/弧墙、场地/道路/停车/柱网/幕墙/hip/footprint roof 等 mock-first 建筑能力；R3 进一步把 curtain wall 从占位带升级为 panel/mullion/rail 网格。MCP/CLI/HTTP 侧新增 `queue_diagnostics`、`capture_view`、`get_workflow_bundle` 和默认关闭的 `run_ruby_expert` 调试入口；这些是本地 queue 可用性和证据工具，不改变官方 Cloud/OAuth 不做的边界。
 >
