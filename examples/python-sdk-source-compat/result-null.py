@@ -1,0 +1,2 @@
+model.reset()
+result = None

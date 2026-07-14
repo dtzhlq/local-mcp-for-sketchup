@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "kind": "python_sdk_source_compat_manifest",
+  "cases": [
+    { "id": "base_geometry", "source": "examples/python-sdk-facade-fixture.py", "expected_status": "compiled" },
+    { "id": "face_edge_loop", "source": "examples/python-sdk-face-edge-loop-fixture.py", "expected_status": "compiled" },
+    { "id": "components", "source": "examples/python-sdk-component-facade-fixture.py", "expected_status": "compiled" },
+    { "id": "view_scene", "source": "examples/python-sdk-view-facade-fixture.py", "expected_status": "compiled" },
+    { "id": "appearance", "source": "examples/python-sdk-appearance-facade-fixture.py", "expected_status": "compiled" },
+    { "id": "curves", "source": "examples/python-sdk-curve-facade-fixture.py", "expected_status": "compiled" },
+    { "id": "helper_loop", "source": "examples/python-sdk-helper-functions-fixture.py", "expected_status": "compiled" },
+    { "id": "collections_and_transforms", "source": "examples/python-sdk-official-api-coverage-fixture.py", "expected_status": "compiled" },
+    { "id": "mesh_page_selection", "source": "examples/python-sdk-official-api-expression-r3-fixture.py", "expected_status": "compiled" },
+    { "id": "result_omitted", "source": "examples/python-sdk-source-compat/result-omitted.py", "expected_status": "compiled" },
+    { "id": "result_null", "source": "examples/python-sdk-source-compat/result-null.py", "expected_status": "compiled" },
+    { "id": "unsupported_import", "source": "examples/python-sdk-source-compat/unsupported-import.py", "expected_status": "unsupported" }
+  ]
+}

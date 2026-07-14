@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "kind": "python_sdk_source_compat_expectations",
+  "cases": {
+    "base_geometry": { "operations": 7, "required_ops": ["geometry_input", "curve", "arc_curve", "box"], "result_mode": "json", "result_keys": ["panel", "operation_count"] },
+    "face_edge_loop": { "operations": 4, "required_ops": ["geometry_input"], "result_mode": "json", "result_keys": ["edge_count", "loop_count", "outer_loop_is_outer"] },
+    "components": { "operations": 5, "required_ops": ["component_definition", "component_instance"], "result_mode": "json", "result_keys": ["definition_name", "second_definition"] },
+    "view_scene": { "operations": 6, "required_ops": ["camera", "scene", "style", "shadow", "rendering_options"], "result_mode": "json", "result_keys": ["scene_name", "shadow_light"] },
+    "appearance": { "operations": 7, "required_ops": ["tag", "material", "image_reference", "assign_tag"], "result_mode": "json", "result_keys": ["texture_path", "image_rep_role"] },
+    "curves": { "operations": 3, "required_ops": ["curve", "arc_curve"], "result_mode": "json", "result_keys": ["curve_points", "arc_segments"] },
+    "helper_loop": { "operations": 6, "required_ops": ["geometry_input"], "result_mode": "json", "result_keys": ["panel_count", "first_edge_length"] },
+    "collections_and_transforms": { "operations": 18, "required_ops": ["component_definition", "component_instance", "transform_object", "scene"], "result_mode": "json", "result_keys": ["material_count", "selection_size", "rendering_keys"] },
+    "mesh_page_selection": { "operations": 12, "required_ops": ["mesh", "scene", "selection"], "result_mode": "json", "result_keys": ["mesh_count", "page_name", "selection_size"] },
+    "result_omitted": { "operations": 2, "required_ops": ["reset", "box"], "result_mode": "omitted", "result_keys": [] },
+    "result_null": { "operations": 1, "required_ops": ["reset"], "result_mode": "null", "result_keys": [] },
+    "unsupported_import": { "reason": "unsupported_python_statement_import" }
+  }
+}
