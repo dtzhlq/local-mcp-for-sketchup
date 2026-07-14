@@ -237,6 +237,8 @@ File lifecycle tools extend the local runtime beyond the official v1 create-only
 
 Image-derived PartGraphs may include \`parameter_proposals\` on parts and in \`review.parameter_proposals\`. These proposals are review artifacts, not automatically trusted geometry: each proposal records the target PartGraph path, current value, proposed value, confidence, image scale/bbox/keypoint basis, and \`review_required\`. Accepted proposals can be converted into a standard \`part_graph_correction_patch\` with \`source: "parameter_proposal_review"\`; the current no-seed ambulance skeleton keeps inferred-only proposals review-gated until an accepted proposal review selects a subset. Run \`npm run image-structured:proposal-review-ambulance\` to generate an HTML proposal workbench that can export accepted proposal JSON for \`image-structured:proposal-patch-ambulance\`.
 
+\`prepare_image_modeling_brief\` and \`compile_reviewed_part_graph\` are file-based adapters at the mainline/subproject boundary. The first validates image-structured source artifacts and returns compile permission plus blockers. The second requires schema-valid MCP brief, promotion review, ProductProfile, and reviewed PartGraph inputs, then writes a safe JSON DSL preview only. Neither tool runs image analysis or calls the SketchUp queue, and a blocked or missing review produces no DSL preview.
+
 ## Runtimes
 
 - mock: local deterministic geometry snapshot, useful for Alma/test loops without opening SketchUp.

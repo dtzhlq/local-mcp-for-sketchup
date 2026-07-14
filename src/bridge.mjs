@@ -17,6 +17,7 @@ import { buildLimitationsReport, formatLimitationsReportMarkdown } from './limit
 import { resolveTargets } from './target-resolution.mjs';
 import { analyzeSelectionGeometry } from './selection-geometry-interpreter.mjs';
 import { planModificationIntent } from './modification-intent.mjs';
+import { compileReviewedPartGraph, prepareImageModelingBrief } from './image-structured-mcp-adapter.mjs';
 
 export class SketchUpBridge {
   constructor(options = {}) {
@@ -31,6 +32,14 @@ export class SketchUpBridge {
 
   async get_workflow_bundle() {
     return getWorkflowBundle();
+  }
+
+  async prepare_image_modeling_brief(options = {}) {
+    return prepareImageModelingBrief(options);
+  }
+
+  async compile_reviewed_part_graph(options = {}) {
+    return compileReviewedPartGraph(options);
   }
 
   async get_capabilities({ runtime = 'mock', timeoutMs } = {}) {

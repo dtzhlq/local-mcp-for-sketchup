@@ -39,6 +39,9 @@ server.stderr.on('data', (chunk) => {
 try {
   const list = await request({ id: 1, method: 'tools/list' });
   const toolNames = list.result.tools.map((tool) => tool.name);
+  assert.equal(toolNames.length, 34, 'MCP tools/list should expose exactly 34 tools');
+  assert.ok(toolNames.includes('prepare_image_modeling_brief'), 'MCP tools/list should expose prepare_image_modeling_brief');
+  assert.ok(toolNames.includes('compile_reviewed_part_graph'), 'MCP tools/list should expose compile_reviewed_part_graph');
   assert.ok(toolNames.includes('get_workflow_bundle'), 'MCP tools/list should expose get_workflow_bundle');
   assert.ok(toolNames.includes('compile_expert'), 'MCP tools/list should expose compile_expert');
   assert.ok(toolNames.includes('compile_python_sdk'), 'MCP tools/list should expose compile_python_sdk');
@@ -69,6 +72,8 @@ try {
   assert.ok(iterateTool.inputSchema.properties.input_format.enum.includes('python_sdk'));
   const adoptTool = list.result.tools.find((tool) => tool.name === 'adopt_open_model');
   assert.ok(adoptTool.inputSchema.properties.recursive);
+  const imageCompileTool = list.result.tools.find((tool) => tool.name === 'compile_reviewed_part_graph');
+  assert.deepEqual(imageCompileTool.inputSchema.required, ['mcp_brief_path', 'promotion_review_path', 'part_graph_path', 'profile_path']);
   const resolveTool = list.result.tools.find((tool) => tool.name === 'resolve_model_targets');
   assert.ok(resolveTool.inputSchema.properties.query);
   const analyzeSelectionTool = list.result.tools.find((tool) => tool.name === 'analyze_selection_geometry');

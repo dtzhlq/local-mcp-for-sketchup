@@ -55,6 +55,42 @@ const tools = [
     }
   },
   {
+    name: 'prepare_image_modeling_brief',
+    description: 'Validate path-based image-structured artifacts and prepare a review-aware MCP modeling brief. Returns compile permission and blockers; it does not call SketchUp.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        input_dir: { type: 'string', description: 'Directory containing asset-set.json, observations.json, candidate-graph.json, and modeling-brief.json.' },
+        asset_set_path: { type: 'string' },
+        observations_path: { type: 'string' },
+        candidate_graph_path: { type: 'string' },
+        modeling_brief_path: { type: 'string' },
+        promotion_review_path: { type: 'string' },
+        source_package_path: { type: 'string' },
+        output_dir: { type: 'string' },
+        output_json: { type: 'string' },
+        output_markdown: { type: 'string' },
+        max_candidates: { type: 'number', default: 80 }
+      }
+    }
+  },
+  {
+    name: 'compile_reviewed_part_graph',
+    description: 'Compile schema-valid, review-cleared image artifacts and a reviewed PartGraph to a safe JSON DSL preview. It never executes the DSL or calls the queue runtime.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        mcp_brief_path: { type: 'string' },
+        promotion_review_path: { type: 'string' },
+        part_graph_path: { type: 'string' },
+        profile_path: { type: 'string' },
+        output_dir: { type: 'string' },
+        output_dsl: { type: 'string' }
+      },
+      required: ['mcp_brief_path', 'promotion_review_path', 'part_graph_path', 'profile_path']
+    }
+  },
+  {
     name: 'build_model',
     description: 'Build model geometry from a safe JSON DSL string and return a structured snapshot.',
     inputSchema: {

@@ -181,7 +181,7 @@
     "image-structured:build-ambulance-part-graph": "npm run image-structured:analyze-ambulance && npm run image-structured:part-graph-ambulance && npm run image-structured:part-graph-ambulance-skeleton && npm run image-structured:proposal-review-chain-ambulance && npm run image-structured:compile-ambulance-generated && npm run image-structured:qa-ambulance-generated && npm run image-structured:correction-patch-ambulance && npm run image-structured:quality-ambulance",
     "test:image-structured": "node projects/image-structured-modeler/test/validate.mjs",
     "test:python-sdk-source-compat": "node test/python-sdk-source-compat.mjs",
-    "test": "node test/mock-validation.mjs && node test/operation-contract.mjs && node test/expert-compiler.mjs && node test/python-sdk-compiler.mjs && node test/python-sdk-source-compat.mjs && node test/python-sdk-high-value.mjs && node test/nested-entity-edit.mjs && node test/model-qa.mjs && node test/reference-visual-qa.mjs && node test/part-graph-compiler.mjs && node test/mcp-server.mjs && node test/queue-runtime-lock.mjs && npm run registry:check"
+    "test": "node test/mock-validation.mjs && node test/operation-contract.mjs && node test/expert-compiler.mjs && node test/python-sdk-compiler.mjs && node test/python-sdk-source-compat.mjs && node test/python-sdk-high-value.mjs && node test/nested-entity-edit.mjs && node test/image-structured-mcp-adapter.mjs && node test/model-qa.mjs && node test/reference-visual-qa.mjs && node test/part-graph-compiler.mjs && node test/mcp-server.mjs && node test/queue-runtime-lock.mjs && npm run registry:check"
   },
   "engines": {
     "node": ">=20"

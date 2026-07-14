@@ -42,6 +42,8 @@ get_docs() -> { docs }
 get_workflow_bundle() -> { workflows: { inspector, modeler, qa_reviewer } }
 get_capabilities({ runtime, timeoutMs? }) -> { runtime, compatibility, descriptor }
 queue_diagnostics({ includeFiles?, timeoutMs? }) -> { queue, responses, lock, recommendations }
+prepare_image_modeling_brief({ input_dir?|...artifact_paths, output_dir? }) -> { compile_allowed, blockers, artifacts }
+compile_reviewed_part_graph({ mcp_brief_path, promotion_review_path, part_graph_path, profile_path, output_dir? }) -> { preview_only, compile_allowed, artifacts }
 build_model({ code, runtime, timeoutMs? }) -> { snapshot }
 compile_expert({ code, seed?, ...limits }) -> { document, expert, code }
 compile_python_sdk({ code, seed?, ...limits }) -> { document, expert, code }
@@ -226,9 +228,10 @@ npm run qa:expert:mock
 
 ## MCP stdio 接入
 
-本项目自带一个最小 MCP stdio server。按当前 `src/mcp-server.mjs` 的 `tools/list`，一共暴露 32 个工具：
+本项目自带一个最小 MCP stdio server。按当前 `src/mcp-server.mjs` 的 `tools/list`，一共暴露 34 个工具：
 
 - `get_docs`、`get_workflow_bundle`、`get_capabilities`、`queue_diagnostics`
+- `prepare_image_modeling_brief`、`compile_reviewed_part_graph`
 - `build_model`、`compile_expert`、`compile_python_sdk`、`build_expert_model`
 - `reset_model`、`save_model`、`save_model_version`、`open_model`、`import_model`、`export_model`
 - `get_model_info`、`list_entities`、`inspect_model`、`adopt_open_model`、`resolve_model_targets`
@@ -258,6 +261,8 @@ node src/mcp-server.mjs
 `run_ruby_expert` 是本地 SketchUp Ruby 调试入口，不属于安全 DSL 验收路径。默认返回 `blocked:true`；只有 Node 进程和 SketchUp 插件进程都设置 `ALMA_SKETCHUP_ENABLE_RUBY_EXPERT=1` 时才会执行，并会写入 audit artifact。
 
 `plan_modification_intent` / `iterate_model` 也有明确边界：`ModificationIntent v1` 是可审计意图层，不是自动语义建模智能体。`iterate_model` 只有在 `intent.ok=true`、`safe_to_execute=true`、`requires_confirmation=false` 时才会执行；否则只写 preview/blocked manifest 并停止。R2 live queue smoke 已验证 Face/Edge selection 会停在 preview/blocked，top-level group 的安全 `set_attribute` intent 可通过 `intent_file` 执行。
+
+两个 image-structured adapter 只接收路径化 JSON 制品。`prepare_image_modeling_brief` 校验上游 schema 并返回 compile permission 与 blockers；`compile_reviewed_part_graph` 同时要求 MCP brief、promotion review、ProductProfile 和 PartGraph gates 通过，且只写安全 JSON DSL preview，不调用 queue。主线不复制 `projects/image-structured-modeler` 的图片分析管线，也不自动执行生成结果。
 
 ## HTTP bridge（可选）
 
