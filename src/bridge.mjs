@@ -343,7 +343,7 @@ export class SketchUpBridge {
           compiled: {
             document: compiled.document,
             python_sdk: compiled.python_sdk,
-            result: compiled.result
+            ...(Object.hasOwn(compiled, 'result') ? { result: compiled.result } : {})
           },
           snapshot: built.snapshot
         };

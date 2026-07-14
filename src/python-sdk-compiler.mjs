@@ -64,6 +64,10 @@ export function compilePythonSdkScript(source, options = {}) {
     maxOperations: limits.maxOperations,
     maxOutputBytes: limits.maxOutputBytes
   });
+  const hasResult = interpreter.scope.has('result');
+  const result = hasResult
+    ? toJsonCompatible(interpreter.scope.get('result'), 'result')
+    : undefined;
   return {
     code: `${JSON.stringify(document, null, 2)}\n`,
     document,
@@ -81,7 +85,7 @@ export function compilePythonSdkScript(source, options = {}) {
         blocked_runtime_access: true
       }
     },
-    result: toJsonCompatible(interpreter.scope.get('result'), 'result')
+    ...(hasResult ? { result } : {})
   };
 }
 

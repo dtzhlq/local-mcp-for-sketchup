@@ -29,6 +29,14 @@ assert.ok(compiled.python_sdk.facade_objects.includes('GeometryInput'));
 assert.ok(compiled.python_sdk.facade_objects.includes('SUPoint3D'));
 assert.equal(compiled.result.operation_count, 7);
 
+const noResultCompiled = compilePythonSdkScript('model.reset()\n', { timeoutMs: pythonTimeoutMs });
+assert.equal(noResultCompiled.document.operations.length, 1, 'Python SDK facade code should compile without defining result');
+assert.equal(Object.hasOwn(noResultCompiled, 'result'), false, 'missing optional result should be omitted from compiler output');
+
+const nullResultCompiled = compilePythonSdkScript('result = None\n', { timeoutMs: pythonTimeoutMs });
+assert.equal(Object.hasOwn(nullResultCompiled, 'result'), true, 'an explicitly assigned result should be preserved');
+assert.equal(nullResultCompiled.result, null, 'Python None should remain a JSON-compatible null result');
+
 const material = compiled.document.operations.find((operation) => operation.op === 'material' && operation.name === 'SDK_Wall');
 assert.equal(material.color, '#e6e2d8');
 
@@ -53,6 +61,9 @@ assert.deepEqual(box.size, [25.4, 50.8, 12.7]);
 assert.deepEqual(box.transform.translate, [0, 0, 12.7]);
 
 const bridge = new SketchUpBridge();
+const noResultEvaluated = await bridge.evaluate_py({ code: 'model.reset()\n', input_format: 'python_sdk', runtime: 'mock', pythonTimeoutMs });
+assert.equal(noResultEvaluated.executed, true, 'evaluate_py should execute restricted Python facade code without result');
+assert.equal(Object.hasOwn(noResultEvaluated.compiled, 'result'), false, 'evaluate_py should omit an undefined optional result');
 const evaluated = await bridge.evaluate_py({ code: source, input_format: 'python_sdk', runtime: 'mock', pythonTimeoutMs });
 assert.equal(evaluated.kind, 'evaluate_py');
 assert.equal(evaluated.compatibility_mode, 'python_sdk_facade_compiler');
