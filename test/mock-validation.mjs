@@ -1915,6 +1915,15 @@ assert.equal(identicalSnapshotDiff.summary.total, 0);
 assert.deepEqual(identicalSnapshotDiff.top_issues, []);
 assert.deepEqual(identicalSnapshotDiff.recommendations, []);
 
+const absentFeatureSnapshot = JSON.parse(JSON.stringify(snapshot));
+const emptyFeatureSnapshot = JSON.parse(JSON.stringify(snapshot));
+delete absentFeatureSnapshot.groups[0].features;
+emptyFeatureSnapshot.groups[0].features = [];
+const optionalFeatureDiff = compareSnapshots(absentFeatureSnapshot, emptyFeatureSnapshot);
+assert.equal(optionalFeatureDiff.ok, true);
+assert.equal(optionalFeatureDiff.verdict, 'pass');
+assert.equal(optionalFeatureDiff.summary.total, 0);
+
 const driftedSnapshot = JSON.parse(JSON.stringify(snapshot));
 const removedGroupName = snapshot.groups[0].name;
 driftedSnapshot.totals.groups += 1;
