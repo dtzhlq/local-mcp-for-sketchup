@@ -232,11 +232,11 @@ const tools = [
   },
   {
     name: 'adopt_open_model',
-    description: 'Assign stable Alma references to top-level groups/component instances in the currently open model so arbitrary local SKP files can be inspected and edited safely.',
+    description: 'Assign stable Alma references to top-level groups/component instances and index nested definition entities for safe, policy-gated editing.',
     inputSchema: {
       type: 'object',
       properties: {
-        recursive: { type: 'boolean', default: false, description: 'Also return a read-only nested entity index for component/group internals.' },
+        recursive: { type: 'boolean', default: false, description: 'Also return a nested index. Definition-level groups/component instances expose policy-gated entity_path targets; Face/Edge entries remain read-only.' },
         recursive_limit: { type: 'number', default: 500 },
         force: { type: 'boolean', default: false, description: 'Rewrite existing adopted references.' },
         prefix: { type: 'string', default: 'adopted' },
@@ -414,7 +414,7 @@ const tools = [
         input_format: { type: 'string', enum: ['auto', 'json_dsl', 'python_sdk', 'restricted_expert', 'expert'], default: 'auto' },
         label: { type: 'string', description: 'Human-readable label used for the iteration id and versioned save path.' },
         output_dir: { type: 'string', description: 'Directory for manifest, input, before/after snapshots, diff, QA, and model artifacts.' },
-        targets: { type: 'array', items: { type: ['string', 'object'] }, description: 'Optional stable ids or object references to select before applying the patch.' },
+        targets: { type: 'array', items: { type: ['string', 'object'] }, description: 'Optional top-level ids or nested {entity_path, edit_scope:"component_definition", instance_policy, instance_id?} references. Nested targets are reference-only and are not placed in SketchUp selection.' },
         target_query: { type: 'string', description: 'Optional natural-language target query resolved against the active model before applying the patch. JSON DSL patches can use "$target" or "$targets" placeholders.' },
         allow_ambiguous_targets: { type: 'boolean', default: false, description: 'Allow target queries that need confirmation or intentionally return multiple targets.' },
         preview_only: { type: 'boolean', default: false, description: 'Write before/target/input artifacts and manifest without executing the patch.' },

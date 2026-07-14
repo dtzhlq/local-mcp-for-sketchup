@@ -1,5 +1,5 @@
 import { ensureMaterial } from './material-operations.mjs';
-import { boxVertices, findModelObject, matchesObjectReference, referenceLabel, resolveObjectReference } from './object-identity.mjs';
+import { boxVertices, findModelObject, matchesObjectReference, referenceLabel, refreshNestedDefinition, resolveObjectReference } from './object-identity.mjs';
 import {
   classificationAttributeSnapshot,
   colorHex,
@@ -27,19 +27,26 @@ export function deleteObject(model, operation) {
 export function renameObject(model, operation) {
   const target = findModelObject(model, resolveObjectReference(operation, 'rename'));
   const newName = nonEmptyString(operation.new_name ?? operation.newName, 'rename.new_name');
-  if (findModelObject(model, { name: newName }, false)) throw new Error(`rename target already exists: ${newName}`);
+  const duplicate = target.nested
+    ? (target.definition[target.collection] || []).some((item) => item !== target.item && item.name === newName)
+    : Boolean(findModelObject(model, { name: newName }, false));
+  if (duplicate) throw new Error(`rename target already exists: ${newName}`);
   target.item.name = newName;
+  refreshNestedDefinition(model, target);
 }
 
 export function setObjectMaterial(model, operation) {
   const target = findModelObject(model, resolveObjectReference(operation, 'set_material'));
   target.item.material = ensureMaterial(model, operation.material ?? operation.material_name ?? operation.materialName);
+  refreshNestedDefinition(model, target);
 }
 
 export function setObjectVisibility(model, operation) {
   const target = findModelObject(model, resolveObjectReference(operation, 'set_visibility'));
   const visible = normalizeBoolean(operation.visible ?? !operation.hidden, 'set_visibility.visible');
   target.item.hidden = !visible;
+  target.item.visible = visible;
+  refreshNestedDefinition(model, target);
 }
 
 export function addTag(model, operation) {
@@ -95,6 +102,7 @@ export function transformObject(model, operation) {
   object.bounding_box = boundingBoxForVertices(object._vertices);
   object._orientation = applyOrientationTransform(object._orientation || identityMatrix3(), transform);
   object.transform = mergeObjectTransform(object.transform, transform);
+  refreshNestedDefinition(model, target);
 }
 
 function normalizeObjectTransform(operation, object) {

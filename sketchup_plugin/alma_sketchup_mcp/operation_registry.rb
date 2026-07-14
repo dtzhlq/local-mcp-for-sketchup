@@ -141,7 +141,7 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op', 'new_name'],
-        'optional' => ['name', 'target_id', 'targetId', 'target', 'object']
+        'optional' => ['name', 'target_id', 'targetId', 'target', 'object', 'entity_path', 'entityPath', 'target_path', 'targetPath', 'edit_scope', 'editScope', 'instance_policy', 'instancePolicy', 'instance_id', 'instanceId']
       },
       'component_scope' => {
         'status' => 'unsupported'
@@ -152,7 +152,7 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op', 'material'],
-        'optional' => ['name', 'target_id', 'targetId', 'target', 'object']
+        'optional' => ['name', 'target_id', 'targetId', 'target', 'object', 'entity_path', 'entityPath', 'target_path', 'targetPath', 'edit_scope', 'editScope', 'instance_policy', 'instancePolicy', 'instance_id', 'instanceId']
       },
       'component_scope' => {
         'status' => 'unsupported'
@@ -163,7 +163,7 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op', 'visible'],
-        'optional' => ['name', 'hidden', 'target_id', 'targetId', 'target', 'object']
+        'optional' => ['name', 'hidden', 'target_id', 'targetId', 'target', 'object', 'entity_path', 'entityPath', 'target_path', 'targetPath', 'edit_scope', 'editScope', 'instance_policy', 'instancePolicy', 'instance_id', 'instanceId']
       },
       'component_scope' => {
         'status' => 'unsupported'
@@ -174,7 +174,7 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op'],
-        'optional' => ['name', 'target_id', 'targetId', 'target', 'object', 'translate', 'rotateX', 'rotateY', 'rotateZ', 'axis', 'angle', 'rotate_axis', 'rotateAxis', 'local_axis', 'localAxis', 'local_angle', 'localAngle', 'rotate_local', 'rotateLocal', 'matrix', 'matrix4x4', 'local_matrix', 'localMatrix', 'matrix_local', 'matrixLocal', 'scale', 'mirror', 'pivot']
+        'optional' => ['name', 'target_id', 'targetId', 'target', 'object', 'entity_path', 'entityPath', 'target_path', 'targetPath', 'edit_scope', 'editScope', 'instance_policy', 'instancePolicy', 'instance_id', 'instanceId', 'translate', 'rotateX', 'rotateY', 'rotateZ', 'axis', 'angle', 'rotate_axis', 'rotateAxis', 'local_axis', 'localAxis', 'local_angle', 'localAngle', 'rotate_local', 'rotateLocal', 'matrix', 'matrix4x4', 'local_matrix', 'localMatrix', 'matrix_local', 'matrixLocal', 'scale', 'mirror', 'pivot']
       },
       'component_scope' => {
         'status' => 'unsupported'

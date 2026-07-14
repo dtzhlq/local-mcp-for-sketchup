@@ -11,7 +11,14 @@ module AlmaSketchupMCP
   def rename_object(model, operation)
     entity = find_referenced_entity(model, operation, 'rename')
     new_name = operation.fetch('new_name')
-    duplicate = (model.entities.grep(Sketchup::Group) + model.entities.grep(Sketchup::ComponentInstance)).find { |item| item != entity && item.name == new_name }
+    candidates = if operation['entity_path'] || operation['entityPath'] || operation['target_path'] || operation['targetPath']
+                   parent = entity.respond_to?(:parent) ? entity.parent : nil
+                   entities = parent.respond_to?(:entities) ? parent.entities : parent
+                   entities.respond_to?(:grep) ? entities.grep(Sketchup::Group) + entities.grep(Sketchup::ComponentInstance) : []
+                 else
+                   model.entities.grep(Sketchup::Group) + model.entities.grep(Sketchup::ComponentInstance)
+                 end
+    duplicate = candidates.find { |item| item != entity && item.name == new_name }
     raise "rename target already exists: #{new_name}" if duplicate
 
     entity.name = new_name

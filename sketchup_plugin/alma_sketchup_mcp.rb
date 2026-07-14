@@ -5,6 +5,7 @@ require 'fileutils'
 require 'time'
 require 'digest'
 require 'stringio'
+require 'base64'
 begin
   require 'sketchup.rb'
 rescue LoadError
@@ -400,7 +401,7 @@ module AlmaSketchupMCP
       end
       adopted_id = adoption_id_for(entity, prefix, index)
       entity.set_attribute('AlmaSketchupMCP', 'adopted_id', adopted_id)
-      entity.set_attribute('AlmaSketchupMCP', 'adoption_version', '2026-07-natural-iteration-adoption.1')
+      entity.set_attribute('AlmaSketchupMCP', 'adoption_version', '2026-07-natural-iteration-adoption.2')
       entity.set_attribute('AlmaSketchupMCP', 'adopted_at', Time.now.utc.iso8601)
       adopted += 1
     end
@@ -417,13 +418,14 @@ module AlmaSketchupMCP
     recursive_index = recursive ? recursive_entity_index(model, recursive_limit) : nil
     {
       'kind' => 'adopt_open_model',
-      'version' => '2026-07-natural-iteration-adoption.1',
+      'version' => '2026-07-natural-iteration-adoption.2',
       'runtime' => 'queue',
       'adopted_count' => adopted,
       'existing_count' => existing,
       'entity_count' => entities.length,
       'recursive' => recursive,
       'read_only_nested_count' => recursive_index ? recursive_index.count { |entry| entry['editable'] == false } : 0,
+      'editable_nested_count' => recursive_index ? recursive_index.count { |entry| entry['editable'] == true } : 0,
       'model_info' => get_model_info,
       'entities' => entities,
       'recursive_index' => recursive_index,
@@ -804,50 +806,74 @@ module AlmaSketchupMCP
 
   def recursive_entity_index(model, limit)
     entries = []
-    adoptable_entities(model).each_with_index do |entity, index|
-      top_id = entity_id(entity) || entity_persistent_id(entity) || entity.name || "top-#{index + 1}"
-      collect_nested_entities(entity_entities(entity), "top:#{top_id}", entries, limit, entity)
+    model.definitions.each do |definition|
+      next if definition.respond_to?(:image?) && definition.image?
+      affected_instance_count = definition_instance_count(model, definition)
+      definition.entities.each do |entity|
+        break if entries.length >= limit
+        next unless entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance) || entity.is_a?(Sketchup::Face) || entity.is_a?(Sketchup::Edge)
+
+        entries << definition_entity_snapshot(entity, definition, affected_instance_count)
+      end
       break if entries.length >= limit
     end
     entries
   end
 
-  def collect_nested_entities(entities, path_prefix, entries, limit, parent)
-    return unless entities
-
-    entities.each_with_index do |entity, index|
-      break if entries.length >= limit
-      next unless entity.respond_to?(:bounds) || entity.is_a?(Sketchup::Face) || entity.is_a?(Sketchup::Edge)
-
-      type_name = entity.respond_to?(:typename) ? entity.typename : entity.class.name
-      path = "#{path_prefix}/#{type_name}:#{index}"
-      entries << nested_entity_snapshot(entity, path, parent)
-      collect_nested_entities(entity_entities(entity), path, entries, limit, entity) if entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance)
+  def definition_instance_count(model, definition)
+    entity_collections = [model.entities] + model.definitions.map(&:entities)
+    entity_collections.sum do |entities|
+      entities.grep(Sketchup::ComponentInstance).count { |instance| instance.definition == definition }
     end
   end
 
-  def entity_entities(entity)
-    return entity.entities if entity.is_a?(Sketchup::Group)
-    return entity.definition.entities if entity.is_a?(Sketchup::ComponentInstance)
-
-    nil
-  end
-
-  def nested_entity_snapshot(entity, path, parent)
-    type_name = entity.respond_to?(:typename) ? entity.typename : entity.class.name
+  def definition_entity_snapshot(entity, definition, affected_instance_count)
+    entity_type = if entity.is_a?(Sketchup::Group)
+                    'group'
+                  elsif entity.is_a?(Sketchup::ComponentInstance)
+                    'component_instance'
+                  elsif entity.is_a?(Sketchup::Face)
+                    'face'
+                  else
+                    'edge'
+                  end
+    stable_reference = entity_id(entity) || entity_persistent_id(entity)
+    editable = %w[group component_instance].include?(entity_type)
+    entity_path = editable ? definition_entity_path(definition.name, entity_type, stable_reference) : nil
     {
-      'path' => path,
-      'parent_id' => entity_id(parent) || entity_persistent_id(parent) || parent.name,
+      'path' => entity_path || "definition-read-only:#{definition.name}/#{entity_type}:#{stable_reference}",
+      'entity_path' => entity_path,
+      'parent_definition' => definition.name,
+      'definition_name' => definition.name,
+      'reference' => stable_reference,
       'name' => entity.respond_to?(:name) ? entity.name : nil,
-      'entity_type' => type_name,
-      'kind' => type_name.to_s.downcase,
+      'entity_type' => entity_type,
+      'kind' => entity_type,
       'persistent_id' => entity_persistent_id(entity),
       'bounding_box' => entity.respond_to?(:bounds) ? bounds_hash(entity.bounds) : nil,
       'material' => entity.respond_to?(:material) && entity.material ? entity.material.name : nil,
-      'editable' => false,
-      'edit_scope' => 'nested_read_only',
-      'warning' => 'Nested entities are indexed for reference only in this slice; edit the top-level group/component instance unless definition-wide editing is explicitly implemented.'
+      'visible' => entity.respond_to?(:hidden?) ? !entity.hidden? : true,
+      'editable' => editable,
+      'edit_scope' => editable ? 'component_definition' : 'nested_read_only',
+      'allowed_operations' => editable ? %w[rename set_material set_visibility transform_object] : [],
+      'affected_instance_count' => affected_instance_count,
+      'shared_definition' => affected_instance_count > 1,
+      'instance_policy_required' => editable,
+      'warning' => editable ? 'Definition-wide edits affect every instance; use instance_policy=make_unique with instance_id for a per-instance edit.' : 'Nested Face/Edge entities remain read-only in this release slice.'
     }
+  end
+
+  def definition_entity_path(definition_name, entity_type, stable_reference)
+    "definition:#{encode_entity_path_token(definition_name)}/#{entity_type}:#{encode_entity_path_token(stable_reference)}"
+  end
+
+  def encode_entity_path_token(value)
+    Base64.urlsafe_encode64(value.to_s, padding: false)
+  end
+
+  def decode_entity_path_token(value)
+    token = value.to_s
+    Base64.urlsafe_decode64(token + ('=' * ((4 - token.length % 4) % 4)))
   end
 
   def selectable_entity?(entity)
@@ -1198,6 +1224,23 @@ module AlmaSketchupMCP
   end
 
   def object_reference(operation, op_name)
+    raw_entity_path = operation['entity_path'] || operation['entityPath'] || operation['target_path'] || operation['targetPath']
+    if raw_entity_path
+      raise "#{op_name} does not support nested entity_path targets" unless %w[rename set_material set_visibility transform_object].include?(op_name)
+      edit_scope = operation['edit_scope'] || operation['editScope']
+      raise "#{op_name}.edit_scope must be component_definition for nested targets" unless edit_scope == 'component_definition'
+      instance_policy = operation['instance_policy'] || operation['instancePolicy']
+      raise "#{op_name}.instance_policy must be definition_wide or make_unique for nested targets" unless %w[definition_wide make_unique].include?(instance_policy)
+      instance_id = operation['instance_id'] || operation['instanceId']
+      raise "#{op_name}.instance_id is required when instance_policy=make_unique" if instance_policy == 'make_unique' && instance_id.to_s.empty?
+
+      return {
+        'entity_path' => raw_entity_path.to_s,
+        'edit_scope' => edit_scope,
+        'instance_policy' => instance_policy,
+        'instance_id' => instance_id&.to_s
+      }.compact
+    end
     raw_id = operation['target_id'] || operation['targetId'] || operation['id'] || operation['object_id'] || operation['objectId'] || operation['guid']
     raw_name = operation['name'] || operation['target'] || operation['object']
     reference = {}
@@ -1231,15 +1274,54 @@ module AlmaSketchupMCP
   end
 
   def reference_label(reference)
-    [reference['id'] ? "id:#{reference['id']}" : nil, reference['name'] ? "name:#{reference['name']}" : nil].compact.join(' ')
+    [reference['entity_path'] ? "entity_path:#{reference['entity_path']}" : nil, reference['id'] ? "id:#{reference['id']}" : nil, reference['name'] ? "name:#{reference['name']}" : nil].compact.join(' ')
   end
 
   def find_referenced_entity(model, operation, op_name)
     reference = object_reference(operation, op_name)
+    return find_nested_definition_entity(model, reference, op_name) if reference['entity_path']
+
     entity = selection_candidate_entities(model).find { |item| entity_matches_reference(item, reference) }
     raise "object not found: #{reference_label(reference)}" unless entity
 
     entity
+  end
+
+  def find_nested_definition_entity(model, reference, op_name)
+    match = /\Adefinition:([^\/]+)\/(group|component_instance):([^\/]+)\z/.match(reference['entity_path'])
+    raise 'entity_path must use definition:<token>/<group|component_instance>:<token>' unless match
+
+    definition_name = decode_entity_path_token(match[1])
+    entity_type = match[2]
+    stable_reference = decode_entity_path_token(match[3])
+    definition = model.definitions[definition_name]
+    raise "component definition not found for entity_path: #{definition_name}" unless definition
+
+    source_entities = entity_type == 'group' ? definition.entities.grep(Sketchup::Group) : definition.entities.grep(Sketchup::ComponentInstance)
+    source_entity = source_entities.find { |entity| nested_entity_matches_reference(entity, stable_reference) }
+    raise "nested object not found: #{reference_label(reference)}" unless source_entity
+
+    if reference['instance_policy'] == 'make_unique'
+      instance = model.entities.grep(Sketchup::ComponentInstance).find do |candidate|
+        [entity_id(candidate), entity_persistent_id(candidate), candidate.name].compact.map(&:to_s).include?(reference['instance_id'].to_s)
+      end
+      raise "make_unique instance not found: #{reference['instance_id']}" unless instance
+      raise "make_unique instance #{reference['instance_id']} does not use definition #{definition_name}" unless instance.definition == definition
+
+      source_name = source_entity.respond_to?(:name) ? source_entity.name : nil
+      source_index = source_entities.index(source_entity)
+      instance.make_unique
+      definition = instance.definition
+      unique_entities = entity_type == 'group' ? definition.entities.grep(Sketchup::Group) : definition.entities.grep(Sketchup::ComponentInstance)
+      source_entity = unique_entities.find { |entity| source_name && entity.respond_to?(:name) && entity.name == source_name } || unique_entities[source_index]
+      raise "make_unique could not preserve nested target for #{op_name}" unless source_entity
+    end
+
+    source_entity
+  end
+
+  def nested_entity_matches_reference(entity, stable_reference)
+    [entity_id(entity), entity_persistent_id(entity), (entity.respond_to?(:name) ? entity.name : nil)].compact.map(&:to_s).include?(stable_reference.to_s)
   end
 
   def selection_candidate_entities(model)

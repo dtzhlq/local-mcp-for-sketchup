@@ -17,6 +17,7 @@ export const STABILITY = Object.freeze({
 
 const objectIdentity = ['id', 'object_id', 'objectId', 'guid'];
 const objectTarget = ['target_id', 'targetId', 'target', 'object'];
+const nestedObjectTarget = ['entity_path', 'entityPath', 'target_path', 'targetPath', 'edit_scope', 'editScope', 'instance_policy', 'instancePolicy', 'instance_id', 'instanceId'];
 const commonPlacement = [...objectIdentity, 'material', 'transform.translate', 'transform.rotateZ'];
 
 const OPERATION_REGISTRY_ENTRIES = [
@@ -120,7 +121,7 @@ const OPERATION_REGISTRY_ENTRIES = [
   {
     op: 'rename',
     description: 'Rename an existing named group or component instance.',
-    schema: { required: ['op', 'new_name'], optional: ['name', ...objectTarget] },
+    schema: { required: ['op', 'new_name'], optional: ['name', ...objectTarget, ...nestedObjectTarget] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
     notes: 'Fails if the target does not exist or the new name is already present in mock.'
@@ -128,7 +129,7 @@ const OPERATION_REGISTRY_ENTRIES = [
   {
     op: 'set_material',
     description: 'Assign a material to an existing named group or component instance.',
-    schema: { required: ['op', 'material'], optional: ['name', ...objectTarget] },
+    schema: { required: ['op', 'material'], optional: ['name', ...objectTarget, ...nestedObjectTarget] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
     notes: 'Creates the material if needed and applies it to the target object faces in queue.'
@@ -136,7 +137,7 @@ const OPERATION_REGISTRY_ENTRIES = [
   {
     op: 'set_visibility',
     description: 'Show or hide an existing named group or component instance.',
-    schema: { required: ['op', 'visible'], optional: ['name', 'hidden', ...objectTarget] },
+    schema: { required: ['op', 'visible'], optional: ['name', 'hidden', ...objectTarget, ...nestedObjectTarget] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
     notes: 'Hidden objects remain listed in snapshots with visible=false but are excluded from visible totals and bbox QA.'
@@ -144,7 +145,7 @@ const OPERATION_REGISTRY_ENTRIES = [
   {
     op: 'transform_object',
     description: 'Apply a safe transform to an existing named group or component instance.',
-    schema: { required: ['op'], optional: ['name', ...objectTarget, 'translate', 'rotateX', 'rotateY', 'rotateZ', 'axis', 'angle', 'rotate_axis', 'rotateAxis', 'local_axis', 'localAxis', 'local_angle', 'localAngle', 'rotate_local', 'rotateLocal', 'matrix', 'matrix4x4', 'local_matrix', 'localMatrix', 'matrix_local', 'matrixLocal', 'scale', 'mirror', 'pivot'] },
+    schema: { required: ['op'], optional: ['name', ...objectTarget, ...nestedObjectTarget, 'translate', 'rotateX', 'rotateY', 'rotateZ', 'axis', 'angle', 'rotate_axis', 'rotateAxis', 'local_axis', 'localAxis', 'local_angle', 'localAngle', 'rotate_local', 'rotateLocal', 'matrix', 'matrix4x4', 'local_matrix', 'localMatrix', 'matrix_local', 'matrixLocal', 'scale', 'mirror', 'pivot'] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
     notes: "Phase 2 object-editing slice. Prefer target_id for stable references; name remains supported as a compatibility fallback. Supports model-space rotateX/Y/Z, arbitrary model-space axis+angle, local-axis rotations, model-space 4x4 matrices, and local_matrix 4x4 transforms interpreted in the object's current local axes. Matrix snapshots include decomposition metadata for translation, basis axes, scale, shear, determinant, mirrored state, affine/non-affine reasons, homogeneous perspective terms, and Euler XYZ degrees when rotation-compatible."

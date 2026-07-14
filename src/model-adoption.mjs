@@ -1,7 +1,8 @@
 import { createSnapshot } from './snapshot.mjs';
 import { entityListFromSnapshot, modelInfoFromSnapshot } from './model-inspection.mjs';
+import { definitionEntityPath } from './object-identity.mjs';
 
-export const ADOPTION_VERSION = '2026-07-natural-iteration-adoption.1';
+export const ADOPTION_VERSION = '2026-07-natural-iteration-adoption.2';
 
 export function adoptMockModel(model, options = {}) {
   const prefix = safePrefix(options.prefix || 'adopted');
@@ -47,6 +48,7 @@ export function adoptionReport({ runtime, snapshot, adopted, existing, recursive
     reference: entity.id || entity.persistent_id || entity.name
   }));
   const readOnlyNested = recursiveIndex.filter((entry) => entry.editable === false).length;
+  const editableNested = recursiveIndex.filter((entry) => entry.editable === true).length;
   return {
     kind: 'adopt_open_model',
     version: ADOPTION_VERSION,
@@ -56,6 +58,7 @@ export function adoptionReport({ runtime, snapshot, adopted, existing, recursive
     entity_count: entities.length,
     recursive,
     read_only_nested_count: readOnlyNested,
+    editable_nested_count: editableNested,
     model_info: modelInfoFromSnapshot(snapshot, { runtime }),
     entities,
     recursive_index: recursive ? recursiveIndex : undefined,
@@ -65,27 +68,48 @@ export function adoptionReport({ runtime, snapshot, adopted, existing, recursive
 
 function mockRecursiveIndex(model, options = {}) {
   const limit = positiveInteger(options.recursive_limit ?? options.recursiveLimit ?? 500, 500);
+  const prefix = safePrefix(options.prefix || 'adopted');
   const entries = [];
   for (const [definitionName, definition] of Object.entries(model.component_definitions || {})) {
-    for (const [index, group] of (definition.groups || []).entries()) {
-      if (entries.length >= limit) return entries;
-      entries.push({
-        path: `definition:${definitionName}/group:${index}`,
-        parent_definition: definitionName,
-        name: group.name,
-        entity_type: 'group',
-        kind: group.kind || 'group',
-        material: group.material || null,
-        bounding_box: group.bounding_box || null,
-        faces: group.faces || 0,
-        edges: group.edges || 0,
-        editable: false,
-        edit_scope: 'component_definition_read_only',
-        warning: 'Nested definition entities are indexed for reference only in this slice; edit the top-level instance unless definition-wide editing is explicitly implemented.'
-      });
+    const affectedInstanceCount = (model.instances || []).filter((instance) => instance.definition === definitionName).length;
+    for (const [entityType, collection] of [['group', definition.groups || []], ['component_instance', definition.instances || []]]) {
+      for (const [index, item] of collection.entries()) {
+        if (entries.length >= limit) return entries;
+        const stableReference = item.id || item.adopted_id || item.persistent_id || nestedAdoptionId(prefix, definitionName, entityType, item, index);
+        item.id ||= stableReference;
+        item.adopted_id ||= stableReference;
+        const entityPath = definitionEntityPath(definitionName, entityType, stableReference);
+        entries.push({
+          path: entityPath,
+          entity_path: entityPath,
+          parent_definition: definitionName,
+          definition_name: definitionName,
+          reference: stableReference,
+          name: item.name,
+          entity_type: entityType,
+          kind: item.kind || entityType,
+          material: item.material || null,
+          visible: item.visible !== false && item.hidden !== true,
+          bounding_box: item.bounding_box || null,
+          faces: item.faces || 0,
+          edges: item.edges || 0,
+          editable: true,
+          edit_scope: 'component_definition',
+          allowed_operations: ['rename', 'set_material', 'set_visibility', 'transform_object'],
+          affected_instance_count: affectedInstanceCount,
+          shared_definition: affectedInstanceCount > 1,
+          instance_policy_required: true,
+          warning: 'Definition-wide edits affect every instance; use instance_policy=make_unique with instance_id for a per-instance edit.'
+        });
+      }
     }
   }
   return entries;
+}
+
+function nestedAdoptionId(prefix, definitionName, entityType, item, index) {
+  const seed = item.id || item.persistent_id || item.name || `${entityType}-${index + 1}`;
+  return `${prefix}-nested-${safeToken(definitionName)}-${safeToken(seed)}`;
 }
 
 function adoptionId(prefix, { item, index, entity_type }) {

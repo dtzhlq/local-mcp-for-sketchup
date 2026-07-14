@@ -55,7 +55,7 @@ export_model({ path, runtime:"queue", timeoutMs?, ...options }) -> { file_path, 
 get_model_info({ runtime, timeoutMs? }) -> { model_info }
 list_entities({ runtime, timeoutMs?, ...filters }) -> { entities }
 inspect_model({ runtime, timeoutMs?, ...filters }) -> { snapshot, model_info, entities }
-adopt_open_model({ runtime:"queue", timeoutMs? }) -> { snapshot, model_info }
+adopt_open_model({ runtime:"queue", recursive?, timeoutMs? }) -> { snapshot, model_info, adoption }
 resolve_model_targets({ runtime, timeoutMs?, ...filters }) -> { targets }
 get_selection({ runtime, timeoutMs? }) -> { selection }
 analyze_selection_geometry({ runtime, timeoutMs?, ...options }) -> { selection, geometry_facts }

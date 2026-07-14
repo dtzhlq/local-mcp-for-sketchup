@@ -98,6 +98,8 @@ export async function runModelIteration(bridge, {
   let selectedTargets = null;
   let selectedReferences = [];
   let targetResolution = null;
+  let nestedBeforeAdoption = null;
+  let nestedAfterAdoption = null;
   const allowAmbiguousValue = allow_ambiguous_targets === true || allowAmbiguousTargets === true;
   const targetQueryValue = target_query ?? targetQuery;
   const targetSelectionMode = selection_mode || selectionMode || 'replace';
@@ -131,6 +133,21 @@ export async function runModelIteration(bridge, {
       runtime,
       mode: 'current',
       selection: before.selection
+    };
+    await writeJsonArtifact(artifacts, 'target_selection', path.join(reportDir, 'target-selection.json'), selectedTargets);
+  } else if (hasNestedEntityTargets(targets)) {
+    selectedReferences = normalizeNestedEntityTargets(targets);
+    nestedBeforeAdoption = await bridge.adopt_open_model({ runtime, timeoutMs, recursive: true });
+    const indexedPaths = new Set((nestedBeforeAdoption.recursive_index || []).map((entry) => entry.entity_path).filter(Boolean));
+    for (const reference of selectedReferences) {
+      if (!indexedPaths.has(reference.entity_path)) throw new Error(`iterate_model nested entity_path is not present in the recursive adoption index: ${reference.entity_path}`);
+    }
+    await writeJsonArtifact(artifacts, 'before_nested_index', path.join(reportDir, 'before-nested-index.json'), nestedBeforeAdoption);
+    selectedTargets = {
+      kind: 'nested_target_selection',
+      runtime,
+      mode: 'reference_only',
+      selection: selectedReferences
     };
     await writeJsonArtifact(artifacts, 'target_selection', path.join(reportDir, 'target-selection.json'), selectedTargets);
   } else if (targets !== undefined) {
@@ -256,6 +273,10 @@ export async function runModelIteration(bridge, {
   await writeJsonArtifact(artifacts, 'evaluation', path.join(reportDir, 'evaluation.json'), evaluated);
   await writeJsonArtifact(artifacts, 'after_snapshot', path.join(reportDir, 'after-snapshot.json'), evaluated.snapshot);
   await writeJsonArtifact(artifacts, 'after_model_info', path.join(reportDir, 'after-model-info.json'), modelInfoFromSnapshot(evaluated.snapshot, { runtime }));
+  if (nestedBeforeAdoption) {
+    nestedAfterAdoption = await bridge.adopt_open_model({ runtime, timeoutMs, recursive: true });
+    await writeJsonArtifact(artifacts, 'after_nested_index', path.join(reportDir, 'after-nested-index.json'), nestedAfterAdoption);
+  }
 
   const snapshotDiff = compareSnapshots(before.snapshot, evaluated.snapshot, {
     toleranceMm,
@@ -358,7 +379,8 @@ export async function runModelIteration(bridge, {
         compiler: evaluated.compiled.python_sdk?.compiler_version || evaluated.compiled.expert?.compiler_version || null
       } : null,
       result: evaluated.compiled?.result
-    }
+    },
+    nested_edit: nestedBeforeAdoption ? nestedEditSummary(nestedBeforeAdoption, nestedAfterAdoption, selectedReferences) : null
   };
   await writeJsonArtifact(artifacts, 'manifest', path.join(reportDir, 'manifest.json'), manifest);
   return manifest;
@@ -503,14 +525,22 @@ function selectionSummary(selection = []) {
     id: item.id,
     name: item.name,
     entity_type: item.entity_type,
-    kind: item.kind
+    kind: item.kind,
+    entity_path: item.entity_path,
+    edit_scope: item.edit_scope,
+    instance_policy: item.instance_policy,
+    instance_id: item.instance_id
   }));
 }
 
 function selectionReference(item = {}) {
   return {
     id: item.id,
-    ...(item.name ? { name: item.name } : {})
+    ...(item.name ? { name: item.name } : {}),
+    ...(item.entity_path ? { entity_path: item.entity_path } : {}),
+    ...(item.edit_scope ? { edit_scope: item.edit_scope } : {}),
+    ...(item.instance_policy ? { instance_policy: item.instance_policy } : {}),
+    ...(item.instance_id ? { instance_id: item.instance_id } : {})
   };
 }
 
@@ -599,7 +629,57 @@ function replaceTargetPlaceholders(value, primary, all) {
 
 function referenceValue(reference) {
   if (typeof reference === 'string') return reference;
-  return reference?.id || reference?.target_id || reference?.targetId || reference?.name || null;
+  return reference?.entity_path || reference?.entityPath || reference?.id || reference?.target_id || reference?.targetId || reference?.name || null;
+}
+
+function hasNestedEntityTargets(targets) {
+  if (targets === undefined || targets === null) return false;
+  const list = Array.isArray(targets) ? targets : [targets];
+  const nested = list.filter((item) => item && typeof item === 'object' && (item.entity_path || item.entityPath));
+  if (nested.length && nested.length !== list.length) throw new Error('iterate_model cannot mix nested entity_path targets with top-level selection targets');
+  return nested.length > 0;
+}
+
+function normalizeNestedEntityTargets(targets) {
+  const list = Array.isArray(targets) ? targets : [targets];
+  return list.map((item, index) => {
+    const entityPath = item.entity_path || item.entityPath;
+    const editScope = item.edit_scope || item.editScope;
+    const instancePolicy = item.instance_policy || item.instancePolicy;
+    const instanceId = item.instance_id || item.instanceId;
+    if (editScope !== 'component_definition') throw new Error(`iterate_model.targets[${index}].edit_scope must be component_definition`);
+    if (!['definition_wide', 'make_unique'].includes(instancePolicy)) {
+      throw new Error(`iterate_model.targets[${index}].instance_policy must be definition_wide or make_unique`);
+    }
+    if (instancePolicy === 'make_unique' && !instanceId) throw new Error(`iterate_model.targets[${index}].instance_id is required for make_unique`);
+    return {
+      entity_path: String(entityPath),
+      edit_scope: editScope,
+      instance_policy: instancePolicy,
+      ...(instanceId ? { instance_id: String(instanceId) } : {})
+    };
+  });
+}
+
+function nestedEditSummary(before, after, references) {
+  const beforeIndex = new Map((before?.recursive_index || []).filter((entry) => entry.entity_path).map((entry) => [entry.entity_path, entry]));
+  const afterEntries = after?.recursive_index || [];
+  return {
+    target_count: references.length,
+    editable_nested_before: before?.editable_nested_count || 0,
+    editable_nested_after: after?.editable_nested_count || 0,
+    targets: references.map((reference) => {
+      const beforeEntry = beforeIndex.get(reference.entity_path) || null;
+      const matchingAfter = afterEntries.find((entry) => entry.entity_path === reference.entity_path)
+        || afterEntries.find((entry) => entry.reference && entry.reference === beforeEntry?.reference)
+        || null;
+      return {
+        ...reference,
+        before: beforeEntry,
+        after: matchingAfter
+      };
+    })
+  };
 }
 
 function resolutionSummary(resolution) {
