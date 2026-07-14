@@ -55,7 +55,10 @@ try {
   const list = await request({ method: 'tools/list' }, { timeoutMs: 10000 });
   const tools = list.result.tools;
   const toolNames = tools.map((tool) => tool.name).sort();
-  assert.equal(toolNames.length, 28, 'MCP server should expose the current 28-tool surface');
+  assert.equal(toolNames.length, 34, 'MCP server should expose the current 34-tool surface');
+  for (const requiredTool of ['prepare_image_modeling_brief', 'compile_reviewed_part_graph']) {
+    assert.ok(toolNames.includes(requiredTool), `MCP server should expose ${requiredTool}`);
+  }
 
   await runStep('get_docs', async () => {
     const docs = await callTool('get_docs', {});
@@ -80,6 +83,35 @@ try {
       lock_present: diagnostics.lock?.present
     };
   });
+
+  await runStep('prepare_image_modeling_brief:blocked', async () => {
+    const prepared = await callTool('prepare_image_modeling_brief', {
+      input_dir: path.join(outputDir, 'missing-image-input'),
+      output_dir: path.join(outputDir, 'image-brief-blocked')
+    });
+    assert.equal(prepared.blocked, true);
+    assert.equal(prepared.compile_allowed, false);
+    assert.ok(prepared.blockers.includes('missing_asset_set_artifact'));
+    await fs.access(prepared.artifacts.gate_report);
+    return { blocked: true, blockers: prepared.blockers };
+  }, { tool: 'prepare_image_modeling_brief' });
+
+  await runStep('compile_reviewed_part_graph:blocked', async () => {
+    const missingDir = path.join(outputDir, 'missing-image-input');
+    const compiled = await callTool('compile_reviewed_part_graph', {
+      mcp_brief_path: path.join(missingDir, 'mcp-modeling-brief.json'),
+      promotion_review_path: path.join(missingDir, 'candidate-promotion-review.json'),
+      part_graph_path: path.join(missingDir, 'part-graph.json'),
+      profile_path: path.join(missingDir, 'product-profile.json'),
+      output_dir: path.join(outputDir, 'image-compile-blocked')
+    });
+    assert.equal(compiled.blocked, true);
+    assert.equal(compiled.preview_only, true);
+    assert.equal(compiled.queue_called, false);
+    assert.equal(compiled.artifacts.safe_json_dsl_preview, undefined);
+    await fs.access(compiled.artifacts.gate_report);
+    return { blocked: true, preview_only: true, queue_called: false };
+  }, { tool: 'compile_reviewed_part_graph' });
 
   await runStep('get_capabilities:mock', async () => {
     const capabilities = await callTool('get_capabilities', { runtime: 'mock' });
@@ -131,6 +163,25 @@ try {
     return { entities: inspected.entities.length, snapshot_groups: inspected.snapshot.totals.groups };
   });
 
+  await runStep('adopt_open_model', async () => {
+    const adopted = await callTool('adopt_open_model', { runtime: 'mock', recursive: true, prefix: 'suite' });
+    assert.equal(adopted.kind, 'adopt_open_model');
+    assert.ok(adopted.existing_count >= 1);
+    assert.ok(Array.isArray(adopted.recursive_index));
+    return { existing: adopted.existing_count, nested: adopted.recursive_index.length };
+  });
+
+  await runStep('resolve_model_targets', async () => {
+    const resolved = await callTool('resolve_model_targets', {
+      runtime: 'mock',
+      targets: ['suite-base-panel']
+    });
+    assert.equal(resolved.kind, 'target_resolution');
+    assert.equal(resolved.ok, true);
+    assert.equal(resolved.selected_targets[0].id, 'suite-base-panel');
+    return { selected: resolved.selected_targets.map((target) => target.id) };
+  });
+
   await runStep('set_selection', async () => {
     const selected = await callTool('set_selection', { runtime: 'mock', targets: ['suite-base-panel', 'suite-component-instance'] });
     assert.equal(selected.selection.length, 2);
@@ -141,6 +192,33 @@ try {
     const selected = await callTool('get_selection', { runtime: 'mock' });
     assert.equal(selected.selection.length, 2);
     return { selected: selected.selection.length };
+  });
+
+  await runStep('analyze_selection_geometry', async () => {
+    const analysis = await callTool('analyze_selection_geometry', {
+      runtime: 'mock',
+      includeDetails: false
+    });
+    assert.equal(analysis.kind, 'selection_geometry_analysis');
+    assert.equal(analysis.entities.length, 2);
+    return { entities: analysis.entities.length, uncertainties: analysis.uncertainties.length };
+  });
+
+  await runStep('plan_modification_intent', async () => {
+    await callTool('set_selection', { runtime: 'mock', targets: ['suite-base-panel'] });
+    const intent = await callTool('plan_modification_intent', {
+      runtime: 'mock',
+      instruction: 'mark the selected suite entities as reviewed',
+      action: 'set_attribute',
+      parameters: { dictionary: 'CapabilitySuite', key: 'reviewed', value: true },
+      output_dir: path.join(outputDir, 'modification-intent')
+    });
+    assert.equal(intent.kind, 'modification_intent');
+    assert.equal(intent.safe_to_execute, true);
+    assert.equal(intent.requires_confirmation, false);
+    assert.equal(intent.patch.operations[0].op, 'attribute');
+    await fs.access(intent.artifacts.intent_manifest);
+    return { safe_to_execute: true, patch_operations: intent.patch.operations.length };
   });
 
   let savedModel;
