@@ -1,5 +1,9 @@
 
-
+LEGACY SDK SNAPSHOT — NOT THE CURRENT PUBLIC CONNECTOR TOOL LIST
+Captured before the public Connector v1 documentation standardized the execution
+tool name as evaluate_py. This snapshot still says build_model and is retained only
+as historical SDK-shape evidence. See README.md and docs/official-sdk-gap-summary.md
+for the current public-tool naming verified on 2026-07-13.
 
 Cloud SketchUp MCP server for generating .skp files.
 
@@ -551,4 +555,3 @@ COMMON MISTAKES:
   WRONG: ro[RenderingOptionKey.DRAW_SKY]       RIGHT: DRAW_SKY does not exist. Sky draws when DRAW_GROUND+DRAW_HORIZON are both False; SKY_COLOR sets its color
   WRONG: RenderMode.TEXTURED                   RIGHT: RenderMode has WIREFRAME/HIDDEN/FLAT/SMOOTH/NO_MATERIALS/PHYSICALLY_BASED. For textured look: SMOOTH + TEXTURE=True
   WRONG: sketchup.model.<anything>             RIGHT: sketchup is only sketchup_api. Use bare names (Camera, Scene, Style, Image, ...) — they are pre-loaded
-  

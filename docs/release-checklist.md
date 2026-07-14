@@ -1,10 +1,10 @@
 # Release Checklist
 
-更新时间：2026-07-03
+更新时间：2026-07-13
 
 本清单用于把当前本地 replica 收成可安装、可回归、可打包的技术预览 slice。
 
-发布边界调整：2026-05-25 验收复盘后，当前版本不再把 `projects/image-structured-modeler` 的照片级/多图产品建模能力与主线 MCP runtime 发布 gate 混写。下面的检查用于验证主线 MCP 的基础 runtime、Expert Mode、queue 回归、official API expression R3 和 RBZ 打包是否健康；子项目正式发布仍需独立的产品样本/照片级验收。
+发布边界调整：2026-05-25 验收复盘后，当前版本不再把 `projects/image-structured-modeler` 的照片级/多图产品建模能力与主线 MCP runtime 发布 gate 混写。下面的检查用于验证主线 MCP 的基础 runtime、Expert Mode、queue 回归、仓库内部 restricted facade expression R3 和 RBZ 打包是否健康；子项目正式发布仍需独立的产品样本/照片级验收。这里的 R3 不是 SketchUp 官方 API 版本。
 
 ## 1. 本地静态检查
 

@@ -1,8 +1,10 @@
 # SketchUp Ruby API Coverage Matrix
 
-更新时间：2026-07-02
+更新时间：2026-07-13
 
 本文记录主线 MCP 对官方 SketchUp Ruby API / 官方风格 Python facade 的覆盖情况。目标不是完整复刻 Ruby extension API，而是让 Agent 建模时最高频的对象模型、集合、几何、材质、组件、视图和选择调用能安全编译到本项目 JSON DSL，并能被 mock / queue runtime 验证。
+
+命名说明：表格里的 R2/R3 是本仓库 restricted Python facade 的内部迭代标签，不是 SketchUp 官方 Ruby/Python API 版本，也不是完整兼容等级。`official-api` fixture 与 npm script 名称暂作内部兼容标识保留。
 
 官方参考入口：
 

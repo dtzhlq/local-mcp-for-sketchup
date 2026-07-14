@@ -6,6 +6,8 @@
 
 当前公开官方口径仍是 SketchUp Connector v1：从对话生成新的 `.skp`，主要工具为 `get_docs`、`evaluate_py`、`save_model`。`evaluate_py` 在 live model 上执行 Python code，并在成功后生成 snapshot；`save_model` 返回 `.skp` URL。官方帮助页还说明 Claude 建模使用 inches，完成后提供静态 thumbnail 和下载链接。参考来源：[SketchUp Connector for Claude](https://help.sketchup.com/en/sketchup-claude-connector)、[Trimble newsroom 2026-04-28](https://news.trimble.com/2026-04-28-Trimble-Links-SketchUp-with-Anthropics-Claude%2C-Bringing-New-Conversational-AI-powered-Capabilities-to-3D-Modeling)。
 
+本文中的 “facade coverage R2” / “facade expression R3” 是本仓库 restricted Python facade 的内部里程碑名，不是 SketchUp 官方 API 版本，也不表示完整覆盖。现有 `qa:official-api-r3:*` 脚本名为兼容保留的内部标识。
+
 ## 当前本地表达能力
 
 | 层级 | 当前能力 | 证据入口 |
@@ -16,8 +18,8 @@
 | Python SDK facade P0-P0.5 | `model`、点/向量/颜色/变换、材质、GeometryInput/LoopInput、Face/Loop/Edge 返回对象、Curve/ArcCurve、Group、ComponentDefinition/Instance、Camera/Scene/Style/Shadow/RenderingOptions、Layer/Texture/Image/ImageRep | `src/python-sdk-compiler.mjs`、`examples/python-sdk-*-fixture.py` |
 | Python SDK facade P1 | 受限 `def` / `return`、局部 scope、位置/关键字/默认参数，用 helper function 复用建模片段 | `examples/python-sdk-helper-functions-fixture.py` |
 | Python SDK facade P2 | list/dict comprehension、tuple/list destructuring、dict `keys/values/items/get/update`、`list/tuple/dict/enumerate/zip/sorted/sum/reversed/all/any`、dict/string/list iterable、负索引和简单 slice | `examples/python-sdk-comprehension-fixture.py` |
-| Official API coverage R2 | `model.entities/materials/layers/definitions/pages/selection/active_view`、`Entities.add_face/add_group/add_instance/add_3d_text`、object `set_attribute/layer=/material=/transform_by`、Rendering/Shadow key-value、`Face.pushpull` 默认真实几何 | `docs/sketchup-ruby-api-coverage-matrix.md`、`examples/python-sdk-official-api-coverage-fixture.py` |
-| Official API expression R3 | `Face.followme`、`Face.mesh`、`Entities.add_faces_from_mesh/fill_from_mesh`、`Face.position_material`、runtime `Selection`、Page transition/layer/object visibility/rendering/shadow fields | `examples/python-sdk-official-api-expression-r3-fixture.py`、`test/python-sdk-compiler.mjs` |
+| Restricted facade coverage R2（仓库内部） | `model.entities/materials/layers/definitions/pages/selection/active_view`、`Entities.add_face/add_group/add_instance/add_3d_text`、object `set_attribute/layer=/material=/transform_by`、Rendering/Shadow key-value、`Face.pushpull` 默认真实几何 | `docs/sketchup-ruby-api-coverage-matrix.md`、`examples/python-sdk-official-api-coverage-fixture.py` |
+| Restricted facade expression R3（仓库内部） | `Face.followme`、`Face.mesh`、`Entities.add_faces_from_mesh/fill_from_mesh`、`Face.position_material`、runtime `Selection`、Page transition/layer/object visibility/rendering/shadow fields | `examples/python-sdk-official-api-expression-r3-fixture.py`、`test/python-sdk-compiler.mjs` |
 | Bridge-expanded intent layer | `material_preset`、`kitchen_component`、`fixture_embed`、`presentation_camera` 在 bridge 中展开为稳定 registry ops；`build_report` 同时保存原始 DSL、展开 DSL、限制报告和 QA accepted warnings | `src/dsl-expansion.mjs`、`src/limitations-report.mjs`、`examples/interior-expression-suite.json`、`test/mock-validation.mjs` |
 | runtime | mock runtime 离线 QA；queue runtime 通过 SketchUp Ruby plugin 生成真实本地 `.skp` | `src/mock-runtime.mjs`、`src/queue-runtime.mjs`、`sketchup_plugin/` |
 | QA/证据 | snapshot、warning_summary、geometry_input metadata、mock-vs-queue 对照、artifact report、layout/reference QA | `src/snapshot.mjs`、`src/snapshot-diff.mjs`、`src/model-qa.mjs` |

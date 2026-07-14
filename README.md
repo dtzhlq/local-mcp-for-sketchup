@@ -17,8 +17,10 @@
 暴露工具：
 
 - `get_docs`：返回 SDK 文档。
-- `build_model`：在云端模型 session 中执行 Python 建模代码。
+- `evaluate_py`：在 live cloud model 上执行 Python 建模代码；每次成功调用后返回模型 snapshot。
 - `save_model`：保存模型并返回 `.skp` 下载链接。
+
+以上是 2026-07-13 重新核对的公开 Connector v1 工具名。仓库根目录的 `sketchup_sdk_py.txt` 是早期抓取的 SDK 文本快照，仍使用旧 `build_model` 标签，只能作为历史 API 形状参考；本项目自己的 `build_model` 则是安全 JSON DSL 的本地工具名。
 
 官方 endpoint：
 

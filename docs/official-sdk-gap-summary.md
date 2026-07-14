@@ -4,7 +4,9 @@
 
 本文用于发布稿事实核对。结论先行：本项目已经复刻并本地增强了官方 SketchUp Connector v1 的核心交互闭环（`get_docs` / `evaluate_py` / snapshot / `save_model`），但它不是官方云端 Python SDK 的完整替代品。本项目定位是：用更安全、可测试的 JSON DSL，在本地 mock runtime 和 SketchUp queue runtime 中复现主要建模体验，并通过受控 `evaluate_py` 兼容层、restricted Python SDK facade、active model inspection、文件生命周期、artifact report、`plan_modification_intent` 可审计意图层和 `iterate_model` 增量迭代包补足本地工作流。
 
-官方来源核对（2026-07-02）：Trimble 帮助页仍说明 SketchUp Connector v1 主要覆盖从对话生成新 `.skp` 文件，并调用 `get_docs`、`evaluate_py`、`save_model` 三个工具；`evaluate_py` 在 live model 上执行 Python code，`save_model` 提供 URL。Trimble 新闻稿说明 Connector 通过 MCP service 让 Claude 与 SketchUp `.skp` files 交互，在 cloud SketchUp session 中构建几何，完成后提供 2D preview thumbnail 和 `.skp` 下载链接。来源：[SketchUp Connector for Claude](https://help.sketchup.com/en/sketchup-claude-connector)、[Trimble newsroom, 2026-04-28](https://news.trimble.com/2026-04-28-Trimble-Links-SketchUp-with-Anthropics-Claude%2C-Bringing-New-Conversational-AI-powered-Capabilities-to-3D-Modeling)。
+文中 R2/R3 若用于 Python facade coverage/expression，均是本仓库内部迭代标签，不是 SketchUp 官方 API 版本或完整兼容等级；`official-api` fixture、输出路径和 npm script 名称暂作为内部兼容标识保留。
+
+官方来源核对（2026-07-13）：Trimble 帮助页仍说明 SketchUp Connector v1 主要覆盖从对话生成新 `.skp` 文件，并调用 `get_docs`、`evaluate_py`、`save_model` 三个工具；`evaluate_py` 在 live model 上执行 Python code，`save_model` 提供 URL。Trimble 新闻稿说明 Connector 通过 MCP service 让 Claude 与 SketchUp `.skp` files 交互，在 cloud SketchUp session 中构建几何，完成后提供 2D preview thumbnail 和 `.skp` 下载链接。来源：[SketchUp Connector for Claude](https://help.sketchup.com/en/sketchup-claude-connector)、[Trimble newsroom, 2026-04-28](https://news.trimble.com/2026-04-28-Trimble-Links-SketchUp-with-Anthropics-Claude%2C-Bringing-New-Conversational-AI-powered-Capabilities-to-3D-Modeling)。
 
 ## 术语边界
 
@@ -129,7 +131,7 @@
 - 任意 Python 代码片段。
 - helper function 的完整 Python 语义：decorator、nested closure、varargs/kwargs、异常处理、运行时反射和标准库调用仍阻断。
 - `dir()`、`globals()`、`locals()`、反射式 API discovery 和运行时对象枚举；`list(obj.keys())` 仅对 facade 内部 plain dict 支持。
-- 设置 `result = {...}` 返回任意 Python 对象；当前只回传 JSON-compatible `result`。
+- 可选 `result` 只回传 JSON-compatible 值；脚本未定义 `result` 时会正常编译/执行并省略该字段，显式 `result = None` 则回传 `null`。任意非 JSON-compatible Python 对象仍不支持。
 - 完整官方 Python 类行为；`model.entities/materials/layers/definitions/pages/selection/active_view`、`GeometryInput` / `LoopInput` / Face / Loop / Edge / Curve / ArcCurve / ComponentDefinition / ComponentInstance / Camera / Scene / Style / ShadowInfo / RenderingOptions / Layer / Texture / Image / ImageRep / PolygonMesh 已有结构表达第一刀，但它们仍是现有 DSL 的对象包装；`Face.pushpull`、受控 `followme`、mesh/fill、positioned texture 第一刀和 runtime selection 已默认实现几何或 runtime 效果，但完整 UVHelper、EntitiesBuilder/intersect、observer/UI/runtime reflection 仍不支持。
 
 这是有意取舍：安全 JSON DSL 比官方 Python 环境表达力低，但更容易验证和限制。
