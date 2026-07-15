@@ -18,6 +18,7 @@ import { resolveTargets } from './target-resolution.mjs';
 import { analyzeSelectionGeometry } from './selection-geometry-interpreter.mjs';
 import { planModificationIntent } from './modification-intent.mjs';
 import { compileReviewedPartGraph, prepareImageModelingBrief } from './image-structured-mcp-adapter.mjs';
+import { applyReviewedExistingModelEdit, prepareExistingModelEdit } from './existing-model-editing.mjs';
 
 export class SketchUpBridge {
   constructor(options = {}) {
@@ -40,6 +41,14 @@ export class SketchUpBridge {
 
   async compile_reviewed_part_graph(options = {}) {
     return compileReviewedPartGraph(options);
+  }
+
+  async prepare_existing_model_edit(options = {}) {
+    return prepareExistingModelEdit({ ...options, bridge: this });
+  }
+
+  async apply_reviewed_model_edit(options = {}) {
+    return applyReviewedExistingModelEdit({ ...options, bridge: this });
   }
 
   async get_capabilities({ runtime = 'mock', timeoutMs } = {}) {

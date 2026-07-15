@@ -1,0 +1,76 @@
+{
+  "version": 1,
+  "kind": "python_sdk_source_compat_golden",
+  "case_id": "appearance",
+  "source_sha256": "a6745bfa7edf0a2256a0e5a24a6efb696cd8ff98058d163bf96ba7594af246c3",
+  "document": {
+    "version": 1,
+    "units": "mm",
+    "operations": [
+      {
+        "op": "reset"
+      },
+      {
+        "op": "tag",
+        "name": "SDK_Appearance_Layer",
+        "color": "#336699"
+      },
+      {
+        "op": "material",
+        "name": "SDK_Textured_Material",
+        "color": "#ffffff",
+        "texture": {
+          "path": "textures/sdk-facade-albedo.jpg",
+          "width": 128,
+          "height": 64
+        }
+      },
+      {
+        "op": "image_reference",
+        "name": "SDK_Reference_Image",
+        "path": "/tmp/sdk-reference.png",
+        "width": 320,
+        "height": 180,
+        "role": "reference"
+      },
+      {
+        "op": "image_reference",
+        "name": "SDK_Texture_ImageRep",
+        "path": "/tmp/sdk-texture.png",
+        "width": 256,
+        "height": 256,
+        "role": "texture"
+      },
+      {
+        "op": "box",
+        "name": "SDK_Textured_Box",
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "size": [
+          50.8,
+          25.4,
+          25.4
+        ],
+        "id": "sdk-textured-box",
+        "material": "SDK_Textured_Material"
+      },
+      {
+        "op": "assign_tag",
+        "tag": "SDK_Appearance_Layer",
+        "target_id": "sdk-textured-box"
+      }
+    ]
+  },
+  "result": {
+    "mode": "present",
+    "value": {
+      "layer_name": "SDK_Appearance_Layer",
+      "texture_path": "textures/sdk-facade-albedo.jpg",
+      "reference_image": "SDK_Reference_Image",
+      "image_rep_role": "texture"
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "kind": "python_sdk_source_compat_golden",
+  "case_id": "collection_transform_empty",
+  "source_sha256": "2caac54030bc1de881c8fd8887214d06d353000c94eca2dba94bfef35ecd18c0",
+  "document": {
+    "version": 1,
+    "units": "mm",
+    "operations": [
+      {
+        "op": "reset"
+      }
+    ]
+  },
+  "result": {
+    "mode": "present",
+    "value": {
+      "transform_result": false
+    }
+  }
+}

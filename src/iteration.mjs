@@ -647,7 +647,7 @@ function normalizeNestedEntityTargets(targets) {
     const editScope = item.edit_scope || item.editScope;
     const instancePolicy = item.instance_policy || item.instancePolicy;
     const instanceId = item.instance_id || item.instanceId;
-    if (editScope !== 'component_definition') throw new Error(`iterate_model.targets[${index}].edit_scope must be component_definition`);
+    if (!['component_definition', 'instance_path'].includes(editScope)) throw new Error(`iterate_model.targets[${index}].edit_scope must be component_definition or instance_path`);
     if (!['definition_wide', 'make_unique'].includes(instancePolicy)) {
       throw new Error(`iterate_model.targets[${index}].instance_policy must be definition_wide or make_unique`);
     }

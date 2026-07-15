@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "kind": "python_sdk_source_compat_golden",
+  "case_id": "collection_transform_return",
+  "source_sha256": "314604e3b56f05c8c6a2dfb41a25239083772829058a41bacb00effe287dfc2f",
+  "document": {
+    "version": 1,
+    "units": "mm",
+    "operations": [
+      {
+        "op": "reset"
+      },
+      {
+        "op": "box",
+        "name": "Corpus_Transform",
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "size": [
+          10,
+          10,
+          10
+        ],
+        "id": "corpus-transform"
+      },
+      {
+        "op": "transform_object",
+        "transform": {
+          "translate": [
+            25,
+            0,
+            0
+          ]
+        },
+        "target_id": "corpus-transform"
+      }
+    ]
+  },
+  "result": {
+    "mode": "present",
+    "value": {
+      "transform_result": true
+    }
+  }
+}

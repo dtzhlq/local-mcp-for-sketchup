@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "kind": "python_sdk_source_compat_golden",
+  "case_id": "scene_visibility",
+  "source_sha256": "671366d06ced6311347bccf27ee73df7f9b1d932b45c7d671fb422689173e893",
+  "document": {
+    "version": 1,
+    "units": "mm",
+    "operations": [
+      {
+        "op": "reset"
+      },
+      {
+        "op": "tag",
+        "name": "Corpus_Scene_Tag"
+      },
+      {
+        "op": "box",
+        "name": "Corpus_Scene_Box",
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "size": [
+          10,
+          10,
+          10
+        ],
+        "id": "corpus-scene-box"
+      },
+      {
+        "op": "scene",
+        "name": "Corpus_Scene",
+        "layer_visibility": [
+          {
+            "layer": "Corpus_Scene_Tag",
+            "visible": false
+          }
+        ],
+        "drawingelement_visibility": [
+          {
+            "target_id": "corpus-scene-box",
+            "visible": false
+          }
+        ]
+      }
+    ]
+  },
+  "result": {
+    "mode": "present",
+    "value": {
+      "page": "Corpus_Scene",
+      "hidden": true
+    }
+  }
+}

@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "kind": "python_sdk_source_compat_expectations",
   "cases": {
     "base_geometry": { "operations": 7, "required_ops": ["geometry_input", "curve", "arc_curve", "box"], "result_mode": "json", "result_keys": ["panel", "operation_count"] },
@@ -13,6 +13,29 @@
     "mesh_page_selection": { "operations": 12, "required_ops": ["mesh", "scene", "selection"], "result_mode": "json", "result_keys": ["mesh_count", "page_name", "selection_size"] },
     "result_omitted": { "operations": 2, "required_ops": ["reset", "box"], "result_mode": "omitted", "result_keys": [] },
     "result_null": { "operations": 1, "required_ops": ["reset"], "result_mode": "null", "result_keys": [] },
-    "unsupported_import": { "reason": "unsupported_python_statement_import" }
+    "unsupported_import": { "reason": "unsupported_python_statement_import" },
+    "high_value_api": { "operations": 8, "required_ops": ["transform_object", "delete", "scene"], "result_mode": "json", "result_keys": ["transformed_ok", "deleted_result", "front_uvq", "page_updated", "page_update_flags"] },
+    "geometry_face_pushpull": { "operations": 2, "required_ops": ["geometry_input"], "result_mode": "json", "result_keys": ["area", "distance"] },
+    "geometry_holes_loops": { "operations": 2, "required_ops": ["geometry_input"], "result_mode": "json", "result_keys": ["loops", "outer", "area"] },
+    "group_entity_metadata": { "operations": 6, "required_ops": ["geometry_input", "assign_tag", "attribute"], "result_mode": "json", "result_keys": ["name", "tag", "area"] },
+    "collection_erase_return": { "operations": 5, "required_ops": ["delete"], "result_mode": "json", "result_keys": ["erase_result"] },
+    "collection_transform_return": { "operations": 3, "required_ops": ["transform_object"], "result_mode": "json", "result_keys": ["transform_result"] },
+    "collection_transform_empty": { "operations": 1, "required_ops": ["reset"], "result_mode": "json", "result_keys": ["transform_result"] },
+    "page_named_flags": { "operations": 2, "required_ops": ["scene"], "result_mode": "json", "result_keys": ["updated", "flags"] },
+    "uv_affine_interpolation": { "operations": 3, "required_ops": ["geometry_input"], "result_mode": "json", "result_keys": ["center_uvq"] },
+    "material_texture": { "operations": 2, "required_ops": ["material"], "result_mode": "json", "result_keys": ["material", "texture", "width"] },
+    "component_nested_definition": { "operations": 3, "required_ops": ["component_definition", "component_instance"], "result_mode": "json", "result_keys": ["definition", "operations"] },
+    "scene_visibility": { "operations": 4, "required_ops": ["tag", "box", "scene"], "result_mode": "json", "result_keys": ["page", "hidden"] },
+    "selection_modes": { "operations": 7, "required_ops": ["selection"], "result_mode": "json", "result_keys": ["selection_size"] },
+    "mesh_roundtrip": { "operations": 2, "required_ops": ["mesh"], "result_mode": "json", "result_keys": ["face_count", "points", "polygons"] },
+    "transformation_axes": { "operations": 3, "required_ops": ["transform_object"], "result_mode": "json", "result_keys": ["matrix", "name"] },
+    "helper_comprehension": { "operations": 4, "required_ops": ["box"], "result_mode": "json", "result_keys": ["count", "names"] },
+    "dict_collection_helpers": { "operations": 1, "required_ops": ["reset"], "result_mode": "json", "result_keys": ["keys", "sum", "first_pair"] },
+    "result_scalar": { "operations": 1, "required_ops": ["reset"], "result_mode": "scalar" },
+    "unsupported_while": { "reason": "unsupported_python_statement_while" },
+    "unsupported_try": { "reason": "unsupported_python_statement_try" },
+    "unsupported_lambda": { "reason": "unsupported_python_expression_lambda" },
+    "unsupported_dynamic_call": { "reason": "unsupported_python_function_open" },
+    "unsupported_active_uv": { "reason": "unsupported_active_model_uv_query" }
   }
 }

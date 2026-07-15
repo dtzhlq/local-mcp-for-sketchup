@@ -1,0 +1,96 @@
+{
+  "version": 1,
+  "kind": "python_sdk_source_compat_golden",
+  "case_id": "view_scene",
+  "source_sha256": "bf31c05c399b7e015f41118803c3ab1ef525adb02cd30dd8a1c72176161535c9",
+  "document": {
+    "version": 1,
+    "units": "mm",
+    "operations": [
+      {
+        "op": "reset"
+      },
+      {
+        "op": "camera",
+        "eye": [
+          203.2,
+          -254,
+          152.4
+        ],
+        "target": [
+          25.4,
+          25.4,
+          25.4
+        ],
+        "up": [
+          0,
+          0,
+          1
+        ],
+        "fov": 42
+      },
+      {
+        "op": "scene",
+        "name": "SDK_View_Scene",
+        "camera": {
+          "eye": [
+            203.2,
+            -254,
+            152.4
+          ],
+          "target": [
+            25.4,
+            25.4,
+            25.4
+          ],
+          "up": [
+            0,
+            0,
+            1
+          ],
+          "fov": 42
+        }
+      },
+      {
+        "op": "style",
+        "name": "SDK_View_Style",
+        "display_edges": true,
+        "profiles": true,
+        "profile_width": 2,
+        "face_style": "shaded_with_textures",
+        "background_color": "#f7f4ed",
+        "sky_color": "#cfe8ff",
+        "ground_color": "#ded8c8"
+      },
+      {
+        "op": "shadow",
+        "display": true,
+        "time": "2026-06-25T10:00:00+08:00",
+        "light": 80,
+        "dark": 35,
+        "use_sun_for_shading": true
+      },
+      {
+        "op": "rendering_options",
+        "draw_hidden_geometry": false,
+        "transparency": true,
+        "edge_display_mode": 1,
+        "background_color": "#ffffff"
+      }
+    ]
+  },
+  "result": {
+    "mode": "present",
+    "value": {
+      "scene_name": "SDK_View_Scene",
+      "camera_target_source_units": [
+        1,
+        1,
+        1
+      ],
+      "style_name": "SDK_View_Style",
+      "shadow_light": 80,
+      "rendering_edge_display_mode": 1
+    }
+  }
+}

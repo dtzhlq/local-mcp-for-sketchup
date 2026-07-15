@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "kind": "python_sdk_source_compat_golden",
+  "case_id": "result_omitted",
+  "source_sha256": "01a600c4534454a1b385b95504ac1c2f87f0bf51a71eb9e8cb1dc1255dfbf8f7",
+  "document": {
+    "version": 1,
+    "units": "mm",
+    "operations": [
+      {
+        "op": "reset"
+      },
+      {
+        "op": "box",
+        "name": "SDK_Source_Compat_No_Result",
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "size": [
+          10,
+          20,
+          30
+        ],
+        "id": "sdk-source-compat-no-result"
+      }
+    ]
+  },
+  "result": {
+    "mode": "omitted"
+  }
+}

@@ -1,0 +1,149 @@
+{
+  "version": 1,
+  "kind": "python_sdk_source_compat_golden",
+  "case_id": "uv_affine_interpolation",
+  "source_sha256": "fc2643050f0ccf27552636a115481eeea8729e024b86b29cf9e9b040415c5b71",
+  "document": {
+    "version": 1,
+    "units": "mm",
+    "operations": [
+      {
+        "op": "reset"
+      },
+      {
+        "op": "material",
+        "name": "Corpus_UV_Material",
+        "color": "#cccccc"
+      },
+      {
+        "op": "geometry_input",
+        "name": "Corpus_UV",
+        "vertices": [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            100,
+            0,
+            0
+          ],
+          [
+            100,
+            100,
+            0
+          ],
+          [
+            0,
+            100,
+            0
+          ]
+        ],
+        "faces": [
+          {
+            "outer": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "holes": [],
+            "material": "Corpus_UV_Material",
+            "normal": [
+              0,
+              0,
+              1
+            ],
+            "plane": [
+              0,
+              0,
+              1,
+              0
+            ],
+            "area": 10000,
+            "position_material": {
+              "material": "Corpus_UV_Material",
+              "front": true,
+              "mapping": [
+                {
+                  "point": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "uv": [
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "point": [
+                    100,
+                    0,
+                    0
+                  ],
+                  "uv": [
+                    1,
+                    0
+                  ]
+                },
+                {
+                  "point": [
+                    100,
+                    100,
+                    0
+                  ],
+                  "uv": [
+                    1,
+                    1
+                  ]
+                },
+                {
+                  "point": [
+                    0,
+                    100,
+                    0
+                  ],
+                  "uv": [
+                    0,
+                    1
+                  ]
+                }
+              ],
+              "uv": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  1,
+                  0
+                ],
+                [
+                  1,
+                  1
+                ],
+                [
+                  0,
+                  1
+                ]
+              ]
+            }
+          }
+        ],
+        "material": "Corpus_UV_Material"
+      }
+    ]
+  },
+  "result": {
+    "mode": "present",
+    "value": {
+      "center_uvq": [
+        0.25,
+        0.75,
+        1
+      ]
+    }
+  }
+}

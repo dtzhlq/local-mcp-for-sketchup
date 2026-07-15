@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "kind": "python_sdk_source_compat_golden",
+  "case_id": "dict_collection_helpers",
+  "source_sha256": "ad3fe1c5236761250ef2fde7634b41a130bc858b14676a51154f7f0d91241658",
+  "document": {
+    "version": 1,
+    "units": "mm",
+    "operations": [
+      {
+        "op": "reset"
+      }
+    ]
+  },
+  "result": {
+    "mode": "present",
+    "value": {
+      "keys": [
+        "alpha",
+        "beta",
+        "gamma"
+      ],
+      "sum": 6,
+      "first_pair": [
+        "alpha",
+        1
+      ]
+    }
+  }
+}

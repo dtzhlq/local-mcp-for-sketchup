@@ -1,0 +1,58 @@
+{
+  "version": 1,
+  "kind": "python_sdk_source_compat_golden",
+  "case_id": "mesh_roundtrip",
+  "source_sha256": "1204bdf36df8cdd43331adfc16c3a1dc06539f19c0450667014f63039e45fafd",
+  "document": {
+    "version": 1,
+    "units": "mm",
+    "operations": [
+      {
+        "op": "reset"
+      },
+      {
+        "op": "mesh",
+        "id": "corpus-mesh",
+        "name": "Corpus_Mesh",
+        "vertices": [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            40,
+            0,
+            0
+          ],
+          [
+            40,
+            40,
+            10
+          ],
+          [
+            0,
+            40,
+            10
+          ]
+        ],
+        "faces": [
+          [
+            0,
+            1,
+            2,
+            3
+          ]
+        ]
+      }
+    ]
+  },
+  "result": {
+    "mode": "present",
+    "value": {
+      "face_count": 1,
+      "points": 4,
+      "polygons": 1
+    }
+  }
+}

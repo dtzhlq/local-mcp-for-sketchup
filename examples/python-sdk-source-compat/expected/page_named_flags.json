@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "kind": "python_sdk_source_compat_golden",
+  "case_id": "page_named_flags",
+  "source_sha256": "164dab6a53ad9fbc8cdc02dc49d425692b17d30fedbc8130a86574fac2e11985",
+  "document": {
+    "version": 1,
+    "units": "mm",
+    "operations": [
+      {
+        "op": "reset"
+      },
+      {
+        "op": "scene",
+        "name": "Corpus_Page_Flags",
+        "camera": {
+          "eye": [
+            100,
+            -100,
+            80
+          ],
+          "target": [
+            0,
+            0,
+            0
+          ],
+          "up": [
+            0,
+            0,
+            1
+          ],
+          "fov": 35
+        },
+        "update_flags": 37
+      }
+    ]
+  },
+  "result": {
+    "mode": "present",
+    "value": {
+      "updated": true,
+      "flags": 37
+    }
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "kind": "python_sdk_source_compat_golden",
+  "case_id": "curves",
+  "source_sha256": "2e35f0c9b2118ff2e0b1ef0cc72504d41c09c1ef131840ee069e11d58fa62807",
+  "document": {
+    "version": 1,
+    "units": "mm",
+    "operations": [
+      {
+        "op": "reset"
+      },
+      {
+        "op": "curve",
+        "name": "SDK_Curve_Object",
+        "points": [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            25.4,
+            12.7,
+            0
+          ],
+          [
+            50.8,
+            0,
+            0
+          ]
+        ],
+        "id": "sdk-curve-object"
+      },
+      {
+        "op": "arc_curve",
+        "name": "SDK_Arc_Object",
+        "center": [
+          0,
+          0,
+          25.4
+        ],
+        "radius": 38.1,
+        "start_angle": 0,
+        "end_angle": 180,
+        "segments": 8,
+        "plane": "xy",
+        "id": "sdk-arc-object"
+      }
+    ]
+  },
+  "result": {
+    "mode": "present",
+    "value": {
+      "curve_points": 3,
+      "arc_segments": 8
+    }
+  }
+}

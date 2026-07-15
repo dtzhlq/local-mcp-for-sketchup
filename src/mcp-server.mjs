@@ -92,6 +92,43 @@ const tools = [
     }
   },
   {
+    name: 'prepare_existing_model_edit',
+    description: 'Inspect and fingerprint the open model, validate persistent entity targets, classify edit risk, and write a reviewable edit plan without modifying geometry.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        instruction: { type: 'string' },
+        operations: { type: 'array', items: { type: 'object' }, minItems: 1 },
+        targets: { type: 'array', items: { type: ['string', 'object'] } },
+        output_dir: { type: 'string' },
+        recursive_limit: { type: 'number', default: 2000 },
+        budgets: { type: 'object' },
+        runtime: { type: 'string', enum: ['mock', 'queue'], default: 'mock' },
+        timeoutMs: { type: 'number' }
+      },
+      required: ['instruction', 'operations']
+    }
+  },
+  {
+    name: 'apply_reviewed_model_edit',
+    description: 'Apply an approved existing-model edit plan only when the live model revision still matches, then write before/after, diff, QA, review, and model artifacts.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        plan: { type: 'object' },
+        plan_file: { type: 'string' },
+        review: { type: 'object' },
+        review_file: { type: 'string' },
+        output_dir: { type: 'string' },
+        save_model: { type: 'boolean', default: true },
+        save_path: { type: 'string' },
+        capture_view: { type: 'boolean', default: false },
+        runtime: { type: 'string', enum: ['mock', 'queue'], default: 'mock' },
+        timeoutMs: { type: 'number' }
+      }
+    }
+  },
+  {
     name: 'build_model',
     description: 'Build model geometry from a safe JSON DSL string and return a structured snapshot.',
     inputSchema: {
@@ -269,11 +306,11 @@ const tools = [
   },
   {
     name: 'adopt_open_model',
-    description: 'Assign stable Alma references to top-level groups/component instances and index nested definition entities for safe, policy-gated editing.',
+    description: 'Assign stable Alma references and recursively index persistent occurrence paths for safe, policy-gated existing-model editing.',
     inputSchema: {
       type: 'object',
       properties: {
-        recursive: { type: 'boolean', default: false, description: 'Also return a nested index. Definition-level groups/component instances expose policy-gated entity_path targets; Face/Edge entries remain read-only.' },
+        recursive: { type: 'boolean', default: false, description: 'Also return nested occurrence paths. Group/instance/Face/Edge entries expose type-specific allowed operations and shared-definition policy metadata.' },
         recursive_limit: { type: 'number', default: 500 },
         force: { type: 'boolean', default: false, description: 'Rewrite existing adopted references.' },
         prefix: { type: 'string', default: 'adopted' },

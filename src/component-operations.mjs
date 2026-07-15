@@ -15,6 +15,7 @@ export function addComponentDefinition(model, { name, size = [1000, 1000, 1000],
   if (operations !== undefined) {
     if (!Array.isArray(operations)) throw new Error(`${name}.operations must be an array`);
     const componentModel = emptyModel();
+    componentModel.component_definitions = structuredClone(model.component_definitions || {});
     for (const operation of operations) {
       applyComponentDefinitionOperation(componentModel, operation, name);
     }
@@ -22,15 +23,17 @@ export function addComponentDefinition(model, { name, size = [1000, 1000, 1000],
       if (!model.materials[materialName]) model.materials[materialName] = materialValue;
     }
     const groups = componentModel.groups;
-    const faces = groups.reduce((sum, group) => sum + group.faces, 0);
-    const edges = groups.reduce((sum, group) => sum + group.edges, 0);
+    const instances = componentModel.instances || [];
+    const faces = groups.reduce((sum, group) => sum + group.faces, 0) + instances.reduce((sum, instance) => sum + instance.faces, 0);
+    const edges = groups.reduce((sum, group) => sum + group.edges, 0) + instances.reduce((sum, instance) => sum + instance.edges, 0);
     model.component_definitions[name] = {
       name,
       faces,
       edges,
       groups,
+      instances,
       material: groups.find((group) => group.material)?.material || null,
-      bounding_box: mergeBoundingBoxes(groups.map((group) => group.bounding_box))
+      bounding_box: mergeBoundingBoxes([...groups, ...instances].map((item) => item.bounding_box))
     };
     return;
   }
@@ -217,6 +220,9 @@ function applyComponentDefinitionOperation(model, operation, componentName) {
       break;
     case 'bowed_panel':
       addBowedPanel(model, operation);
+      break;
+    case 'component_instance':
+      addComponentInstance(model, operation);
       break;
     default:
       throw new Error(`${componentName}.operations does not support op: ${operation.op}`);

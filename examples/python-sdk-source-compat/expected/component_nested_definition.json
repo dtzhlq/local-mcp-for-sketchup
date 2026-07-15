@@ -1,0 +1,93 @@
+{
+  "version": 1,
+  "kind": "python_sdk_source_compat_golden",
+  "case_id": "component_nested_definition",
+  "source_sha256": "1c86bc873e09a8d40d0b5937492bf683a8b5b9dc6b60abfb49a5eb2c758d3c9e",
+  "document": {
+    "version": 1,
+    "units": "mm",
+    "operations": [
+      {
+        "op": "reset"
+      },
+      {
+        "op": "component_definition",
+        "name": "Corpus_Nested_Definition",
+        "operations": [
+          {
+            "op": "geometry_input",
+            "name": "Corpus_Definition_Face",
+            "vertices": [
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                30,
+                0,
+                0
+              ],
+              [
+                30,
+                20,
+                0
+              ],
+              [
+                0,
+                20,
+                0
+              ]
+            ],
+            "faces": [
+              {
+                "outer": [
+                  0,
+                  1,
+                  2,
+                  3
+                ],
+                "holes": [],
+                "normal": [
+                  0,
+                  0,
+                  1
+                ],
+                "plane": [
+                  0,
+                  0,
+                  1,
+                  0
+                ],
+                "area": 600,
+                "pushpull": {
+                  "distance": 8,
+                  "copy": false,
+                  "metadata_only": false
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "op": "component_instance",
+        "name": "Corpus_Definition_Instance",
+        "definition": "Corpus_Nested_Definition",
+        "origin": [
+          50,
+          0,
+          0
+        ],
+        "id": "corpus-definition-instance"
+      }
+    ]
+  },
+  "result": {
+    "mode": "present",
+    "value": {
+      "definition": "Corpus_Nested_Definition",
+      "operations": 1
+    }
+  }
+}

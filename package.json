@@ -1,6 +1,6 @@
 {
   "name": "sketchup-mcp-replica",
-  "version": "0.1.0-rc.1",
+  "version": "0.1.0-rc.2",
   "private": true,
   "type": "module",
   "description": "Local MVP replica of SketchUp Cloud MCP workflow for Alma.",
@@ -35,6 +35,9 @@
     "qa:python-sdk-high-value:queue": "node scripts/validate-python-sdk-high-value.mjs --runtime queue --timeout-ms 180000 --save-skp output/python-sdk-high-value.skp",
     "qa:nested-edit:mock": "node scripts/validate-nested-entity-edit.mjs --runtime mock --output-dir output/nested-entity-edit/mock",
     "qa:nested-edit:queue": "node scripts/validate-nested-entity-edit.mjs --runtime queue --timeout-ms 180000 --output-dir output/nested-entity-edit/queue --save-skp output/nested-entity-edit.skp",
+    "qa:mock-session-isolation": "node scripts/validate-mock-session-isolation.mjs 20",
+    "qa:existing-model-edit:mock": "node scripts/validate-existing-model-editing.mjs --runtime mock",
+    "qa:existing-model-edit:queue": "node scripts/validate-existing-model-editing.mjs --runtime queue --timeout-ms 240000 --save-skp output/existing-model-editing/queue/existing-model-editing.skp",
     "qa:model-layout": "node scripts/generate-model-qa-reports.mjs --output-dir output/model-qa",
     "qa:reference-visual": "node scripts/generate-reference-visual-qa-reports.mjs --output-dir output/reference-visual-qa",
     "qa:physical-consistency": "node scripts/generate-physical-consistency-reports.mjs --output-dir output/physical-consistency-qa",
@@ -182,7 +185,8 @@
     "image-structured:build-ambulance-part-graph": "npm run image-structured:analyze-ambulance && npm run image-structured:part-graph-ambulance && npm run image-structured:part-graph-ambulance-skeleton && npm run image-structured:proposal-review-chain-ambulance && npm run image-structured:compile-ambulance-generated && npm run image-structured:qa-ambulance-generated && npm run image-structured:correction-patch-ambulance && npm run image-structured:quality-ambulance",
     "test:image-structured": "node projects/image-structured-modeler/test/validate.mjs",
     "test:python-sdk-source-compat": "node test/python-sdk-source-compat.mjs",
-    "test": "node test/mock-validation.mjs && node test/operation-contract.mjs && node test/expert-compiler.mjs && node test/python-sdk-compiler.mjs && node test/python-sdk-source-compat.mjs && node test/python-sdk-high-value.mjs && node test/nested-entity-edit.mjs && node test/image-structured-mcp-adapter.mjs && node test/model-qa.mjs && node test/reference-visual-qa.mjs && node test/part-graph-compiler.mjs && node test/mcp-server.mjs && node test/queue-runtime-lock.mjs && npm run registry:check"
+    "python-sdk-source-compat:update-golden": "node scripts/update-python-sdk-source-compat-golden.mjs",
+    "test": "node test/mock-validation.mjs && node test/operation-contract.mjs && node test/expert-compiler.mjs && node test/python-sdk-compiler.mjs && node test/python-sdk-source-compat.mjs && node test/python-sdk-high-value.mjs && node test/nested-entity-edit.mjs && node test/existing-model-editing.mjs && node test/image-structured-mcp-adapter.mjs && node test/model-qa.mjs && node test/reference-visual-qa.mjs && node test/part-graph-compiler.mjs && node test/mcp-server.mjs && node test/queue-runtime-lock.mjs && npm run registry:check"
   },
   "engines": {
     "node": ">=20"

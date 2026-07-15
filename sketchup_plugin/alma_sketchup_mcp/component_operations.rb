@@ -135,12 +135,18 @@ module AlmaSketchupMCP
       add_domed_surface(entities, operation)
     when 'bowed_panel'
       add_bowed_panel(entities, operation)
+    when 'component_instance'
+      add_component_instance_to_entities(entities, Sketchup.active_model, operation)
     else
       raise "#{component_name}.operations does not support op: #{operation['op']}"
     end
   end
 
   def add_component_instance(model, operation)
+    add_component_instance_to_entities(model.entities, model, operation)
+  end
+
+  def add_component_instance_to_entities(entities, model, operation)
     name = operation.fetch('name')
     definition = model.definitions[operation.fetch('definition')]
     raise "#{name}.definition not found: #{operation['definition']}" unless definition
@@ -149,7 +155,7 @@ module AlmaSketchupMCP
     transform = operation['transform'] || {}
     rotate_z = transform['rotateZ'] || transform['rotationZ'] || operation['rotateZ']
     rotation = rotate_z ? Geom::Transformation.rotation(ORIGIN, Z_AXIS, rotate_z.to_f.degrees) : Geom::Transformation.new
-    instance = model.entities.add_instance(definition, rotation)
+    instance = entities.add_instance(definition, rotation)
     instance.name = name
     if instance.respond_to?(:set_attribute)
       id = object_id(operation, name)

@@ -12,7 +12,7 @@ import { booleanDifference, booleanIntersect, booleanUnion, manifoldCheck, manif
 import { addColumnGrid, addCurvedWall, addCurtainWall, addDoor, addFloorSlab, addFootprintSlab, addHipRoof, addLevel, addParapetPath, addParkingStallArray, addPathSurface, addRailing, addRoofFootprint, addStairs, addTerrainMesh, addWall, addWallPath, addWindow } from './architecture-operations.mjs';
 import { addComponentDefinition, addComponentInstance } from './component-operations.mjs';
 import { addDemoRoom } from './demo-operations.mjs';
-import { addTag, assignTag, deleteObject, renameObject, setObjectAttribute, setObjectClassification, setObjectMaterial, setObjectTextureTransform, setObjectVisibility, transformObject } from './object-operations.mjs';
+import { addTag, assignTag, deleteObject, duplicateEntity, eraseEntities, explodeEntity, pushpullFace, removeObjectAttribute, renameObject, replaceComponentDefinition, reverseFace, setEdgeProperties, setFaceMaterial, setObjectAttribute, setObjectClassification, setObjectMaterial, setObjectTextureTransform, setObjectVisibility, transformEntities, transformObject } from './object-operations.mjs';
 import { mockSessionPath } from './paths.mjs';
 import { entityListFromSnapshot, inspectSnapshot, modelInfoFromSnapshot, selectionFromModel, setModelSelection, versionedPath } from './model-inspection.mjs';
 import { createSnapshot } from './snapshot.mjs';
@@ -70,6 +70,9 @@ export class MockRuntime {
         case 'attribute':
           setObjectAttribute(model, operation);
           break;
+        case 'remove_attribute':
+          removeObjectAttribute(model, operation);
+          break;
         case 'classification':
           setObjectClassification(model, operation);
           break;
@@ -97,11 +100,38 @@ export class MockRuntime {
         case 'set_material':
           setObjectMaterial(model, operation);
           break;
+        case 'set_face_material':
+          setFaceMaterial(model, operation);
+          break;
         case 'set_visibility':
           setObjectVisibility(model, operation);
           break;
         case 'transform_object':
           transformObject(model, operation);
+          break;
+        case 'set_edge_properties':
+          setEdgeProperties(model, operation);
+          break;
+        case 'reverse_face':
+          reverseFace(model, operation);
+          break;
+        case 'pushpull_face':
+          pushpullFace(model, operation);
+          break;
+        case 'duplicate_entity':
+          duplicateEntity(model, operation);
+          break;
+        case 'replace_component_definition':
+          replaceComponentDefinition(model, operation);
+          break;
+        case 'explode_entity':
+          explodeEntity(model, operation);
+          break;
+        case 'erase_entities':
+          eraseEntities(model, operation);
+          break;
+        case 'transform_entities':
+          transformEntities(model, operation);
           break;
         case 'level':
           addLevel(model, operation);

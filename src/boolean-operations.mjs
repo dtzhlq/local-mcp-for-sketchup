@@ -64,6 +64,12 @@ export function manifoldRepair(model, operation) {
 function applySolidBoolean(model, operation, opName) {
   const target = solidGroupTarget(model, operation, opName);
   const tools = booleanToolTargets(model, operation, opName);
+  const resultCollection = booleanCollection(model, target);
+  for (const [index, tool] of tools.entries()) {
+    if (booleanCollection(model, tool) !== resultCollection) {
+      throw new Error(`${opName}.tools[${index}] must share the target Entities scope`);
+    }
+  }
   validateDistinctInputs(target, tools, opName);
   const keepTools = normalizeBoolean(operation.keep_tools ?? operation.keepTools ?? false, `${opName}.keep_tools`);
   const keepOriginals = normalizeBoolean(operation.keep_originals ?? operation.keepOriginals ?? false, `${opName}.keep_originals`);
@@ -87,12 +93,12 @@ function applySolidBoolean(model, operation, opName) {
     return;
   }
 
-  assertResultIdentityAvailable(model, { id: resultId, name: resultName }, keepOriginals ? [] : [target, ...tools]);
+  assertResultIdentityAvailable(model, resultCollection, { id: resultId, name: resultName }, keepOriginals ? [] : [target, ...tools]);
   removeGroups(model, [
     ...(!keepOriginals ? [target] : []),
     ...(!keepTools ? tools : [])
   ]);
-  model.groups.push(result);
+  resultCollection.push(result);
 }
 
 function booleanResultObject({ target, tools, operation, opName, resultName, resultId, resultBox }) {
@@ -182,7 +188,9 @@ function booleanEdgeCount(target, tools, opName) {
 
 function solidGroupTarget(model, operation, opName) {
   const target = findModelObject(model, resolveObjectReference(operation, opName));
-  if (target.collection !== 'groups') throw new Error(`${opName} currently requires a top-level group target`);
+  if (target.collection !== 'groups' || target.entity_type && target.entity_type !== 'group') {
+    throw new Error(`${opName} requires a group target`);
+  }
   validateSolidCandidate(target.item, `${opName}.target`);
   return target;
 }
@@ -192,16 +200,18 @@ function booleanToolTargets(model, operation, opName) {
   const values = Array.isArray(raw) ? raw : (raw === undefined ? [] : [raw]);
   if (values.length === 0) throw new Error(`${opName} requires tools, tool_ids, or tool_id`);
   return values.map((value, index) => {
-    const target = findToolObject(model, value, `${opName}.tools[${index}]`);
-    if (target.collection !== 'groups') throw new Error(`${opName}.tools[${index}] must resolve to a top-level group`);
+    const target = findToolObject(model, value, `${opName}.tools[${index}]`, opName);
+    if (target.collection !== 'groups' || target.entity_type && target.entity_type !== 'group') {
+      throw new Error(`${opName}.tools[${index}] must resolve to a group`);
+    }
     validateSolidCandidate(target.item, `${opName}.tools[${index}]`);
     return target;
   });
 }
 
-function findToolObject(model, value, fieldName) {
+function findToolObject(model, value, fieldName, opName = fieldName) {
   if (value && typeof value === 'object' && !Array.isArray(value)) {
-    return findModelObject(model, resolveObjectReference(value, fieldName));
+    return findModelObject(model, resolveObjectReference(value, opName));
   }
   const key = nonEmptyString(String(value), fieldName);
   const groupIndex = model.groups.findIndex((group) => group.id === key || group.name === key);
@@ -226,28 +236,42 @@ function validateDistinctInputs(target, tools, opName) {
 }
 
 function removeGroups(model, targets) {
-  const indexes = targets
-    .filter((target) => target.collection === 'groups')
-    .map((target) => target.index)
-    .sort((a, b) => b - a);
-  for (const index of indexes) model.groups.splice(index, 1);
+  const byCollection = new Map();
+  for (const target of targets.filter((item) => item.collection === 'groups')) {
+    const collection = booleanCollection(model, target);
+    const indexes = byCollection.get(collection) || [];
+    indexes.push(target.index);
+    byCollection.set(collection, indexes);
+  }
+  for (const [collection, indexes] of byCollection) {
+    for (const index of [...new Set(indexes)].sort((a, b) => b - a)) collection.splice(index, 1);
+  }
 }
 
-function assertResultIdentityAvailable(model, reference, replacingTargets) {
+function assertResultIdentityAvailable(model, collection, reference, replacingTargets) {
   const replacing = new Set(replacingTargets.map((target) => target.item));
-  const duplicate = model.groups.find((group) => !replacing.has(group) && matchesObjectReference(group, reference))
-    || (model.instances || []).find((instance) => !replacing.has(instance) && matchesObjectReference(instance, reference));
+  const duplicate = collection.find((group) => !replacing.has(group) && matchesObjectReference(group, reference));
   if (duplicate) throw new Error(`boolean result identity already exists: ${referenceLabel(reference)}`);
-  if (reference.id || reference.name) assertObjectIdentityAvailable({ ...model, groups: model.groups.filter((group) => !replacing.has(group)) }, reference);
+  if (collection === model.groups && (reference.id || reference.name)) {
+    assertObjectIdentityAvailable({ ...model, groups: model.groups.filter((group) => !replacing.has(group)) }, reference);
+  }
+}
+
+function booleanCollection(model, target) {
+  if (target.collection_ref) return target.collection_ref;
+  if (target.definition && Array.isArray(target.definition[target.collection])) return target.definition[target.collection];
+  if (Array.isArray(model[target.collection])) return model[target.collection];
+  throw new Error('boolean target does not expose an editable collection');
 }
 
 function manifoldTargets(model, operation, opName) {
   const rawTargets = operation.targets ?? operation.target_ids ?? operation.targetIds;
   if (rawTargets !== undefined) {
     const values = Array.isArray(rawTargets) ? rawTargets : [rawTargets];
-    return values.map((value, index) => findToolObject(model, value, `${opName}.targets[${index}]`));
+    return values.map((value, index) => findToolObject(model, value, `${opName}.targets[${index}]`, opName));
   }
-  if (operation.target_id !== undefined || operation.targetId !== undefined || operation.name !== undefined || operation.target !== undefined || operation.object !== undefined) {
+  if (operation.entity_path !== undefined || operation.entityPath !== undefined || operation.target_path !== undefined || operation.targetPath !== undefined
+    || operation.target_id !== undefined || operation.targetId !== undefined || operation.name !== undefined || operation.target !== undefined || operation.object !== undefined) {
     return [findModelObject(model, resolveObjectReference(operation, opName))];
   }
   return model.groups.map((item, index) => ({ collection: 'groups', index, item }));

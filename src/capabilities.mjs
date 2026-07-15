@@ -1,8 +1,8 @@
 import { PRODUCT_VERSION } from './version.mjs';
 
 export const DSL_VERSION = 1;
-export const CAPABILITY_MANIFEST_VERSION = '2026-07-release-rc1';
-export const RUNTIME_CAPABILITY_VERSION = '0.1.0-rc.1-capabilities.1';
+export const CAPABILITY_MANIFEST_VERSION = '2026-07-existing-model-edit-rc2';
+export const RUNTIME_CAPABILITY_VERSION = '0.1.0-rc.2-capabilities.1';
 
 export const SUPPORT_STATUS = Object.freeze({
   supported: 'supported',
@@ -50,32 +50,40 @@ const OPERATION_REGISTRY_ENTRIES = [
   },
   {
     op: 'assign_tag',
-    description: 'Assign an existing or implicit tag to a top-level group or component instance.',
-    schema: { required: ['op', 'tag'], optional: ['name', 'tag_name', 'tagName', ...objectTarget] },
+    description: 'Assign an existing or implicit tag to a top-level or nested group/component instance.',
+    schema: { required: ['op', 'tag'], optional: ['name', 'tag_name', 'tagName', ...objectTarget, ...nestedObjectTarget] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
     notes: 'Targets the same stable id/name reference path used by editing operations.'
   },
   {
     op: 'attribute',
-    description: 'Write structured metadata onto a top-level group or component instance.',
-    schema: { required: ['op'], optional: ['name', ...objectTarget, 'dictionary', 'namespace', 'key', 'attr_key', 'attrKey', 'value', 'attributes'] },
+    description: 'Write structured metadata onto a stable Group, ComponentInstance, Face, or Edge target.',
+    schema: { required: ['op'], optional: ['name', ...objectTarget, ...nestedObjectTarget, 'dictionary', 'namespace', 'key', 'attr_key', 'attrKey', 'value', 'attributes'] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
     notes: 'Stores JSON-compatible values under a SketchUp attribute dictionary and returns them in snapshots.'
   },
   {
+    op: 'remove_attribute',
+    description: 'Remove one attribute key or a non-protected attribute dictionary from a stable entity target.',
+    schema: { required: ['op'], optional: ['name', ...objectTarget, ...nestedObjectTarget, 'dictionary', 'namespace', 'key', 'attr_key', 'attrKey'] },
+    runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
+    stability: STABILITY.beta,
+    notes: 'Special SketchUp dictionaries remain protected by the host API; failures are fail-closed.'
+  },
+  {
     op: 'classification',
-    description: 'Attach BIM/classification metadata to a top-level group or component instance.',
-    schema: { required: ['op'], optional: ['name', ...objectTarget, 'system', 'schema', 'type', 'classification', 'class', 'ifc_class', 'ifcClass', 'identifier', 'attributes'] },
+    description: 'Attach BIM/classification metadata to a stable Group or ComponentInstance target.',
+    schema: { required: ['op'], optional: ['name', ...objectTarget, ...nestedObjectTarget, 'system', 'schema', 'type', 'classification', 'class', 'ifc_class', 'ifcClass', 'identifier', 'attributes'] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
     notes: 'Stores a normalized classification snapshot and mirrors fields to a SketchUp Classification attribute dictionary.'
   },
   {
     op: 'texture_transform',
-    description: 'Attach texture mapping metadata to a top-level group or component instance.',
-    schema: { required: ['op'], optional: ['name', ...objectTarget, 'material', 'projection', 'offset', 'offset_u', 'offsetU', 'offset_v', 'offsetV', 'scale', 'scale_u', 'scaleU', 'scale_v', 'scaleV', 'rotation', 'rotation_degrees', 'rotationDegrees'] },
+    description: 'Attach texture mapping metadata to a stable Group or ComponentInstance target.',
+    schema: { required: ['op'], optional: ['name', ...objectTarget, ...nestedObjectTarget, 'material', 'projection', 'offset', 'offset_u', 'offsetU', 'offset_v', 'offsetV', 'scale', 'scale_u', 'scaleU', 'scale_v', 'scaleV', 'rotation', 'rotation_degrees', 'rotationDegrees'] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
     notes: 'First texture-mapping slice: records deterministic UV/projection metadata in snapshots and mirrors it to SketchUp attributes.'
@@ -115,7 +123,7 @@ const OPERATION_REGISTRY_ENTRIES = [
   {
     op: 'delete',
     description: 'Delete an existing named group or component instance from the current model session.',
-    schema: { required: ['op'], optional: ['name', ...objectTarget] },
+    schema: { required: ['op'], optional: ['name', ...objectTarget, ...nestedObjectTarget, 'confirmed'] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
     notes: 'Phase 2 editing operation. Names must be unique enough to identify a top-level group or instance.'
@@ -151,6 +159,78 @@ const OPERATION_REGISTRY_ENTRIES = [
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
     notes: "Phase 2 object-editing slice. Prefer target_id for stable references; name remains supported as a compatibility fallback. Supports model-space rotateX/Y/Z, arbitrary model-space axis+angle, local-axis rotations, model-space 4x4 matrices, and local_matrix 4x4 transforms interpreted in the object's current local axes. Matrix snapshots include decomposition metadata for translation, basis axes, scale, shear, determinant, mirrored state, affine/non-affine reasons, homogeneous perspective terms, and Euler XYZ degrees when rotation-compatible."
+  },
+  {
+    op: 'set_face_material',
+    description: 'Assign front, back, or both materials to a Face addressed by persistent instance path.',
+    schema: { required: ['op', 'material'], optional: [...nestedObjectTarget, 'side'] },
+    runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
+    stability: STABILITY.beta,
+    notes: 'Only accepts Face targets; side defaults to front.'
+  },
+  {
+    op: 'set_edge_properties',
+    description: 'Set soft, smooth, and visibility properties on an Edge addressed by persistent instance path.',
+    schema: { required: ['op'], optional: [...nestedObjectTarget, 'soft', 'smooth', 'visible', 'hidden'] },
+    runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
+    stability: STABILITY.beta,
+    notes: 'Does not move or erase the Edge.'
+  },
+  {
+    op: 'reverse_face',
+    description: 'Reverse a Face orientation after explicit review.',
+    schema: { required: ['op', 'confirmed'], optional: [...nestedObjectTarget] },
+    runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
+    stability: STABILITY.beta,
+    notes: 'Requires confirmed=true because face orientation affects solids and rendering.'
+  },
+  {
+    op: 'pushpull_face',
+    description: 'Push/pull a Face by a signed millimeter distance after topology review.',
+    schema: { required: ['op', 'distance', 'confirmed'], optional: [...nestedObjectTarget, 'copy'] },
+    runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
+    stability: STABILITY.beta,
+    notes: 'Requires a stable Face occurrence path and confirmed=true.'
+  },
+  {
+    op: 'duplicate_entity',
+    description: 'Duplicate a Group or ComponentInstance within its current entity collection.',
+    schema: { required: ['op', 'new_id', 'new_name'], optional: [...objectTarget, ...nestedObjectTarget, 'translate'] },
+    runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
+    stability: STABILITY.beta,
+    notes: 'The duplicate remains in the same parent context and must use unique id/name values.'
+  },
+  {
+    op: 'replace_component_definition',
+    description: 'Replace the definition used by a ComponentInstance after explicit review.',
+    schema: { required: ['op', 'definition', 'confirmed'], optional: [...objectTarget, ...nestedObjectTarget] },
+    runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
+    stability: STABILITY.beta,
+    notes: 'Rejects non-instance targets and missing definitions.'
+  },
+  {
+    op: 'explode_entity',
+    description: 'Explode a Group or ComponentInstance in place after explicit destructive confirmation.',
+    schema: { required: ['op', 'confirmed'], optional: [...objectTarget, ...nestedObjectTarget] },
+    runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
+    stability: STABILITY.experimental,
+    notes: 'Destructive operation; always requires review and a transaction checkpoint.'
+  },
+  {
+    op: 'erase_entities',
+    description: 'Erase a reviewed collection of persistent entity targets atomically.',
+    schema: { required: ['op', 'targets', 'confirmed'], optional: ['edit_scope', 'instance_policy', 'instance_id', 'max_affected'] },
+    runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
+    stability: STABILITY.beta,
+    notes: 'Rejects empty targets and operations exceeding max_affected.'
+  },
+  {
+    op: 'transform_entities',
+    description: 'Apply one translation to a reviewed collection of Group/Instance/Face/Edge targets atomically.',
+    schema: { required: ['op', 'targets', 'translate', 'confirmed'], optional: ['edit_scope', 'instance_policy', 'instance_id', 'max_affected'] },
+    runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
+    stability: STABILITY.beta,
+    notes: 'Collection transforms require explicit topology review for Face/Edge targets.'
   },
   {
     op: 'box',
@@ -290,7 +370,7 @@ const OPERATION_REGISTRY_ENTRIES = [
   {
     op: 'cut_hole',
     description: 'Cut a controlled circular feature into an existing target face.',
-    schema: { required: ['op', 'center', 'radius'], optional: ['name', ...objectTarget, 'face', 'plane', 'feature_id', 'featureId', 'depth', 'through', 'segments'] },
+    schema: { required: ['op', 'center', 'radius'], optional: ['name', ...objectTarget, ...nestedObjectTarget, 'face', 'plane', 'feature_id', 'featureId', 'depth', 'through', 'segments'] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.experimental,
     notes: 'Phase 7 face-feature slice. Targets existing box/rounded_box/panel/floor_slab/wall groups by target_id or name, records feature metadata, and queue runtime uses SketchUp face pushpull on the selected planar face.'
@@ -298,7 +378,7 @@ const OPERATION_REGISTRY_ENTRIES = [
   {
     op: 'cut_slot',
     description: 'Cut a controlled rounded slot feature into an existing target face.',
-    schema: { required: ['op', 'center', 'length', 'width'], optional: ['name', ...objectTarget, 'face', 'plane', 'feature_id', 'featureId', 'depth', 'through', 'segments'] },
+    schema: { required: ['op', 'center', 'length', 'width'], optional: ['name', ...objectTarget, ...nestedObjectTarget, 'face', 'plane', 'feature_id', 'featureId', 'depth', 'through', 'segments'] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.experimental,
     notes: 'Phase 7 face-feature slice for elongated holes/vents. The first implementation covers planar target faces and uses target-local face coordinates.'
@@ -306,7 +386,7 @@ const OPERATION_REGISTRY_ENTRIES = [
   {
     op: 'cut_recess',
     description: 'Cut a controlled blind recess into an existing target face.',
-    schema: { required: ['op', 'center', 'size', 'depth'], optional: ['name', ...objectTarget, 'face', 'plane', 'feature_id', 'featureId', 'radius', 'segments'] },
+    schema: { required: ['op', 'center', 'size', 'depth'], optional: ['name', ...objectTarget, ...nestedObjectTarget, 'face', 'plane', 'feature_id', 'featureId', 'radius', 'segments'] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.experimental,
     notes: 'Phase 7 blind face feature. Use for shallow trays, depressed button pockets, panel wells, and other non-through concave details.'
@@ -314,7 +394,7 @@ const OPERATION_REGISTRY_ENTRIES = [
   {
     op: 'add_boss',
     description: 'Raise a controlled cylindrical boss from an existing target face.',
-    schema: { required: ['op', 'center', 'radius', 'height'], optional: ['name', ...objectTarget, 'face', 'plane', 'feature_id', 'featureId', 'outer_radius', 'outerRadius', 'segments'] },
+    schema: { required: ['op', 'center', 'radius', 'height'], optional: ['name', ...objectTarget, ...nestedObjectTarget, 'face', 'plane', 'feature_id', 'featureId', 'outer_radius', 'outerRadius', 'segments'] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.experimental,
     notes: 'Phase 7 additive face feature. It creates a boss in the target group rather than a separate marker object; complex hollow bosses remain a later CAD slice.'
@@ -322,7 +402,7 @@ const OPERATION_REGISTRY_ENTRIES = [
   {
     op: 'add_raised_rib',
     description: 'Raise a controlled rectangular rib from an existing target face.',
-    schema: { required: ['op', 'center', 'length', 'height'], optional: ['name', ...objectTarget, 'face', 'plane', 'feature_id', 'featureId', 'width', 'thickness', 'direction'] },
+    schema: { required: ['op', 'center', 'length', 'height'], optional: ['name', ...objectTarget, ...nestedObjectTarget, 'face', 'plane', 'feature_id', 'featureId', 'width', 'thickness', 'direction'] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.experimental,
     notes: 'Phase 7 additive face feature for ribs, roof lines, seams, and stiffeners. direction=u/v selects the target face local axis.'
@@ -330,7 +410,7 @@ const OPERATION_REGISTRY_ENTRIES = [
   {
     op: 'boolean_union',
     description: 'Union an existing target solid with one or more tool solids.',
-    schema: { required: ['op'], optional: ['name', ...objectTarget, 'tools', 'tool_id', 'toolId', 'tool_ids', 'toolIds', 'result_name', 'resultName', 'result_id', 'resultId', 'keep_tools', 'keepTools', 'keep_originals', 'keepOriginals', 'allow_disjoint', 'allowDisjoint', 'material'] },
+    schema: { required: ['op'], optional: ['name', ...objectTarget, ...nestedObjectTarget, 'tools', 'tool_id', 'toolId', 'tool_ids', 'toolIds', 'result_name', 'resultName', 'result_id', 'resultId', 'keep_tools', 'keepTools', 'keep_originals', 'keepOriginals', 'allow_disjoint', 'allowDisjoint', 'material'] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.experimental,
     notes: 'Phase 7 CAD boolean slice. Queue runtime uses SketchUp solid operations when available; mock runtime records deterministic boolean/manifold metadata for offline regression.'
@@ -338,7 +418,7 @@ const OPERATION_REGISTRY_ENTRIES = [
   {
     op: 'boolean_difference',
     description: 'Subtract one or more tool solids from an existing target solid.',
-    schema: { required: ['op'], optional: ['name', ...objectTarget, 'tools', 'tool_id', 'toolId', 'tool_ids', 'toolIds', 'result_name', 'resultName', 'result_id', 'resultId', 'keep_tools', 'keepTools', 'keep_originals', 'keepOriginals', 'allow_non_intersecting', 'allowNonIntersecting', 'material'] },
+    schema: { required: ['op'], optional: ['name', ...objectTarget, ...nestedObjectTarget, 'tools', 'tool_id', 'toolId', 'tool_ids', 'toolIds', 'result_name', 'resultName', 'result_id', 'resultId', 'keep_tools', 'keepTools', 'keep_originals', 'keepOriginals', 'allow_non_intersecting', 'allowNonIntersecting', 'material'] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.experimental,
     notes: 'Use for through cuts, pockets, and subtractive product tooling once cutter solids are modeled explicitly. Inputs must be manifold solids.'
@@ -346,7 +426,7 @@ const OPERATION_REGISTRY_ENTRIES = [
   {
     op: 'boolean_intersect',
     description: 'Keep the positive-volume intersection of an existing target solid and one or more tool solids.',
-    schema: { required: ['op'], optional: ['name', ...objectTarget, 'tools', 'tool_id', 'toolId', 'tool_ids', 'toolIds', 'result_name', 'resultName', 'result_id', 'resultId', 'keep_tools', 'keepTools', 'keep_originals', 'keepOriginals', 'material'] },
+    schema: { required: ['op'], optional: ['name', ...objectTarget, ...nestedObjectTarget, 'tools', 'tool_id', 'toolId', 'tool_ids', 'toolIds', 'result_name', 'resultName', 'result_id', 'resultId', 'keep_tools', 'keepTools', 'keep_originals', 'keepOriginals', 'material'] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.experimental,
     notes: 'Use for clipping, trimming, and validating overlapping product volumes. Fails when the target/tools do not have a positive-volume intersection.'
@@ -354,7 +434,7 @@ const OPERATION_REGISTRY_ENTRIES = [
   {
     op: 'manifold_check',
     description: 'Check one or more solids for manifold/solid validity and record the report in the snapshot.',
-    schema: { required: ['op'], optional: ['name', ...objectTarget, 'targets', 'target_ids', 'targetIds', 'check_id', 'checkId', 'fail_on_non_manifold', 'failOnNonManifold'] },
+    schema: { required: ['op'], optional: ['name', ...objectTarget, ...nestedObjectTarget, 'targets', 'target_ids', 'targetIds', 'check_id', 'checkId', 'fail_on_non_manifold', 'failOnNonManifold'] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.experimental,
     notes: 'Queue runtime uses SketchUp manifold/volume APIs plus edge fallback; mock runtime uses deterministic topology heuristics. Reports are returned under snapshot.manifold_checks and per-object manifold.'
@@ -362,7 +442,7 @@ const OPERATION_REGISTRY_ENTRIES = [
   {
     op: 'manifold_repair',
     description: 'Attempt to repair a target solid and record before/after manifold reports.',
-    schema: { required: ['op'], optional: ['name', ...objectTarget, 'strategy', 'repair_id', 'repairId', 'fail_on_non_manifold', 'failOnNonManifold'] },
+    schema: { required: ['op'], optional: ['name', ...objectTarget, ...nestedObjectTarget, 'strategy', 'repair_id', 'repairId', 'fail_on_non_manifold', 'failOnNonManifold'] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.experimental,
     notes: 'Best-effort cleanup for SketchUp solids: queue runtime runs face-finding/edge cleanup, while mock supports cleanup metadata and seal_bbox fallback for deterministic tests.'
@@ -749,6 +829,7 @@ const OPERATION_REGISTRY_ENTRIES = [
     schema: { required: ['op', 'name', 'definition', 'origin'], optional: ['transform', ...objectIdentity] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
+    component_definition: true,
     notes: 'Supports translate/rotateZ transforms in the current DSL baseline.'
   },
   {

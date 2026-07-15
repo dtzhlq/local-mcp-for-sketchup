@@ -1,0 +1,398 @@
+{
+  "version": 1,
+  "kind": "python_sdk_source_compat_golden",
+  "case_id": "mesh_page_selection",
+  "source_sha256": "d6e8946ce48043ab64260ec2316bc82f07edfa8fe00836e8bc6e42a11b99affc",
+  "document": {
+    "version": 1,
+    "units": "mm",
+    "operations": [
+      {
+        "op": "reset"
+      },
+      {
+        "op": "material",
+        "name": "SDK_R3_Material",
+        "color": "#d7b56d"
+      },
+      {
+        "op": "material",
+        "name": "SDK_R3_Accent",
+        "color": "#5d8bb0"
+      },
+      {
+        "op": "tag",
+        "name": "SDK_R3_Layer",
+        "color": "#334455"
+      },
+      {
+        "op": "geometry_input",
+        "id": "sdk-r3-followme",
+        "name": "SDK_R3_FollowMe_Group",
+        "vertices": [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            12.7,
+            0,
+            0
+          ],
+          [
+            12.7,
+            6.35,
+            0
+          ],
+          [
+            0,
+            6.35,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            38.1
+          ]
+        ],
+        "faces": [
+          {
+            "id": "sdk-r3-follow-profile",
+            "outer": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "holes": [],
+            "material": "SDK_R3_Material",
+            "normal": [
+              0,
+              0,
+              1
+            ],
+            "plane": [
+              0,
+              0,
+              1,
+              0
+            ],
+            "area": 80.645,
+            "followme": {
+              "path": [
+                [
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  38.1
+                ]
+              ],
+              "profile_vertices": 6
+            }
+          }
+        ],
+        "edges": [
+          [
+            4,
+            5
+          ]
+        ]
+      },
+      {
+        "op": "geometry_input",
+        "id": "sdk-r3-uv-face",
+        "name": "SDK_R3_UV_Face",
+        "vertices": [
+          [
+            31.75,
+            0,
+            0
+          ],
+          [
+            57.15,
+            0,
+            0
+          ],
+          [
+            57.15,
+            25.4,
+            0
+          ],
+          [
+            31.75,
+            25.4,
+            0
+          ]
+        ],
+        "faces": [
+          {
+            "id": "sdk-r3-uv-face",
+            "outer": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "holes": [],
+            "material": "SDK_R3_Accent",
+            "normal": [
+              0,
+              0,
+              1
+            ],
+            "plane": [
+              0,
+              0,
+              1,
+              0
+            ],
+            "area": 645.16,
+            "position_material": {
+              "material": "SDK_R3_Accent",
+              "front": true,
+              "mapping": [
+                {
+                  "point": [
+                    31.75,
+                    0,
+                    0
+                  ],
+                  "uv": [
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "point": [
+                    57.15,
+                    0,
+                    0
+                  ],
+                  "uv": [
+                    1,
+                    0
+                  ]
+                },
+                {
+                  "point": [
+                    57.15,
+                    25.4,
+                    0
+                  ],
+                  "uv": [
+                    1,
+                    1
+                  ]
+                },
+                {
+                  "point": [
+                    31.75,
+                    25.4,
+                    0
+                  ],
+                  "uv": [
+                    0,
+                    1
+                  ]
+                }
+              ],
+              "uv": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  1,
+                  0
+                ],
+                [
+                  1,
+                  1
+                ],
+                [
+                  0,
+                  1
+                ]
+              ]
+            }
+          }
+        ],
+        "material": "SDK_R3_Accent"
+      },
+      {
+        "op": "mesh",
+        "id": "sdk-r3-mesh",
+        "name": "SDK_R3_Mesh",
+        "vertices": [
+          [
+            0,
+            38.1,
+            0
+          ],
+          [
+            25.4,
+            38.1,
+            0
+          ],
+          [
+            25.4,
+            63.5,
+            12.7
+          ],
+          [
+            0,
+            63.5,
+            12.7
+          ]
+        ],
+        "faces": [
+          [
+            0,
+            1,
+            2,
+            3
+          ]
+        ],
+        "material": "SDK_R3_Material"
+      },
+      {
+        "op": "mesh",
+        "id": "sdk-r3-fill",
+        "name": "SDK_R3_Fill_From_Face_Mesh",
+        "vertices": [
+          [
+            31.75,
+            0,
+            0
+          ],
+          [
+            57.15,
+            0,
+            0
+          ],
+          [
+            57.15,
+            25.4,
+            0
+          ],
+          [
+            31.75,
+            25.4,
+            0
+          ]
+        ],
+        "faces": [
+          [
+            0,
+            1,
+            2,
+            3
+          ]
+        ],
+        "material": "SDK_R3_Accent",
+        "transform": {
+          "translate": [
+            31.75,
+            44.45,
+            6.35
+          ]
+        }
+      },
+      {
+        "op": "box",
+        "name": "SDK_R3_Selected_Box",
+        "origin": [
+          69.85,
+          0,
+          0
+        ],
+        "size": [
+          19.05,
+          19.05,
+          19.05
+        ],
+        "id": "sdk-r3-selected-box",
+        "material": "SDK_R3_Material"
+      },
+      {
+        "op": "assign_tag",
+        "tag": "SDK_R3_Layer",
+        "target_id": "sdk-r3-selected-box"
+      },
+      {
+        "op": "scene",
+        "name": "SDK_R3_Page",
+        "camera": {
+          "eye": [
+            127,
+            -152.4,
+            101.6
+          ],
+          "target": [
+            38.1,
+            25.4,
+            12.7
+          ],
+          "up": [
+            0,
+            0,
+            1
+          ],
+          "fov": 38
+        },
+        "transition_time": 1.5,
+        "use_camera": true,
+        "layer_visibility": [
+          {
+            "layer": "SDK_R3_Layer",
+            "visible": false
+          }
+        ],
+        "drawingelement_visibility": [
+          {
+            "target_id": "sdk-r3-selected-box",
+            "visible": false
+          }
+        ],
+        "rendering_options": {
+          "draw_hidden_geometry": true,
+          "edge_display_mode": 1
+        },
+        "shadow": {
+          "display": true,
+          "light": 60
+        }
+      },
+      {
+        "op": "selection",
+        "mode": "add",
+        "targets": [
+          {
+            "target_id": "sdk-r3-selected-box"
+          }
+        ]
+      }
+    ]
+  },
+  "result": {
+    "mode": "present",
+    "value": {
+      "follow_ok": true,
+      "texture_positioned": true,
+      "mesh_count": 1,
+      "fill_ok": true,
+      "selection_size": 1,
+      "page_name": "SDK_R3_Page"
+    }
+  }
+}

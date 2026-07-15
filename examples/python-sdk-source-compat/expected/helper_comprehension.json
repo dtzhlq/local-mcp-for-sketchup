@@ -1,0 +1,71 @@
+{
+  "version": 1,
+  "kind": "python_sdk_source_compat_golden",
+  "case_id": "helper_comprehension",
+  "source_sha256": "2c788b7aceb5bd28651145fe025c39606447fabcd416e521637046390f7aada4",
+  "document": {
+    "version": 1,
+    "units": "mm",
+    "operations": [
+      {
+        "op": "reset"
+      },
+      {
+        "op": "box",
+        "name": "Corpus_Helper_0",
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "size": [
+          10,
+          10,
+          10
+        ],
+        "id": "corpus-helper-0"
+      },
+      {
+        "op": "box",
+        "name": "Corpus_Helper_1",
+        "origin": [
+          15,
+          0,
+          0
+        ],
+        "size": [
+          10,
+          10,
+          10
+        ],
+        "id": "corpus-helper-1"
+      },
+      {
+        "op": "box",
+        "name": "Corpus_Helper_2",
+        "origin": [
+          30,
+          0,
+          0
+        ],
+        "size": [
+          10,
+          10,
+          10
+        ],
+        "id": "corpus-helper-2"
+      }
+    ]
+  },
+  "result": {
+    "mode": "present",
+    "value": {
+      "count": 3,
+      "names": [
+        "Corpus_Helper_0",
+        "Corpus_Helper_1",
+        "Corpus_Helper_2"
+      ]
+    }
+  }
+}

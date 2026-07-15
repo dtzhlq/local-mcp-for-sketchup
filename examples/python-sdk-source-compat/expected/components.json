@@ -1,0 +1,118 @@
+{
+  "version": 1,
+  "kind": "python_sdk_source_compat_golden",
+  "case_id": "components",
+  "source_sha256": "40e458f1f757c09a00ffd4304e7b9e635cc5a7660966601faa8922058fccbc8c",
+  "document": {
+    "version": 1,
+    "units": "mm",
+    "operations": [
+      {
+        "op": "reset"
+      },
+      {
+        "op": "material",
+        "name": "SDK_Component_Material",
+        "color": "#c7f0d8"
+      },
+      {
+        "op": "component_definition",
+        "name": "SDK_Component_Definition",
+        "operations": [
+          {
+            "op": "geometry_input",
+            "name": "SDK_Component_Panel",
+            "vertices": [
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                50.8,
+                0,
+                0
+              ],
+              [
+                50.8,
+                25.4,
+                0
+              ],
+              [
+                0,
+                25.4,
+                0
+              ]
+            ],
+            "faces": [
+              {
+                "id": "component-panel-face",
+                "outer": [
+                  0,
+                  1,
+                  2,
+                  3
+                ],
+                "holes": [],
+                "material": "SDK_Component_Material",
+                "normal": [
+                  0,
+                  0,
+                  1
+                ],
+                "plane": [
+                  0,
+                  0,
+                  1,
+                  0
+                ],
+                "area": 1290.32,
+                "metadata": {
+                  "role": "component_definition_face"
+                }
+              }
+            ],
+            "material": "SDK_Component_Material"
+          }
+        ]
+      },
+      {
+        "op": "component_instance",
+        "name": "SDK_Component_Instance_A",
+        "definition": "SDK_Component_Definition",
+        "origin": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "op": "component_instance",
+        "name": "SDK_Component_Instance_B",
+        "definition": "SDK_Component_Definition",
+        "origin": [
+          101.6,
+          0,
+          0
+        ],
+        "transform": {
+          "rotateZ": 90
+        }
+      }
+    ]
+  },
+  "result": {
+    "mode": "present",
+    "value": {
+      "definition_name": "SDK_Component_Definition",
+      "definition_operations": 1,
+      "first_definition": "SDK_Component_Definition",
+      "second_definition": "SDK_Component_Definition",
+      "second_origin_source_units": [
+        4,
+        0,
+        0
+      ]
+    }
+  }
+}

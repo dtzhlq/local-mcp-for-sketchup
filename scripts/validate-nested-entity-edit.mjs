@@ -5,7 +5,9 @@ import { fileURLToPath } from 'node:url';
 import { SketchUpBridge } from '../src/bridge.mjs';
 
 export async function validateNestedEntityEdit({ runtime = 'mock', timeoutMs = runtime === 'queue' ? 180000 : 20000, outputDir = `output/nested-entity-edit/${runtime}`, saveSkp } = {}) {
-  const bridge = new SketchUpBridge();
+  const bridge = new SketchUpBridge(runtime === 'mock'
+    ? { mock: { sessionPath: path.join(outputDir, '.mock-session.json') } }
+    : {});
   const document = {
     version: 1,
     units: 'mm',
@@ -27,7 +29,7 @@ export async function validateNestedEntityEdit({ runtime = 'mock', timeoutMs = r
   const adopted = await bridge.adopt_open_model({ runtime, timeoutMs, recursive: true, prefix: 'nested-edit' });
   const target = adopted.recursive_index?.find((entry) => entry.name === 'Nested_Edit_Bar');
   assert(target?.editable === true, 'nested definition group must be editable');
-  assert(target.edit_scope === 'component_definition', 'nested edit scope must be component_definition');
+  assert(['component_definition', 'instance_path'].includes(target.edit_scope), 'nested edit scope must be component_definition or instance_path');
   assert(target.affected_instance_count === 2, 'definition-wide target must report two affected instances');
   assert(target.shared_definition === true, 'two instances must report a shared definition');
 
@@ -35,15 +37,15 @@ export async function validateNestedEntityEdit({ runtime = 'mock', timeoutMs = r
   const definitionWide = await bridge.iterate_model({
     runtime,
     timeoutMs,
-    targets: [{ entity_path: target.entity_path, edit_scope: 'component_definition', instance_policy: 'definition_wide' }],
+    targets: [{ entity_path: target.entity_path, edit_scope: target.edit_scope, instance_policy: 'definition_wide' }],
     code: JSON.stringify({
       version: 1,
       units: 'mm',
       operations: [
-        { op: 'set_material', entity_path: '$target', edit_scope: 'component_definition', instance_policy: 'definition_wide', material: 'Nested_Edit_Blue' },
-        { op: 'set_visibility', entity_path: '$target', edit_scope: 'component_definition', instance_policy: 'definition_wide', visible: false },
-        { op: 'transform_object', entity_path: '$target', edit_scope: 'component_definition', instance_policy: 'definition_wide', translate: [10, 0, 0] },
-        { op: 'rename', entity_path: '$target', edit_scope: 'component_definition', instance_policy: 'definition_wide', new_name: 'Nested_Edit_Bar_Reviewed' }
+        { op: 'set_material', entity_path: '$target', edit_scope: target.edit_scope, instance_policy: 'definition_wide', material: 'Nested_Edit_Blue' },
+        { op: 'set_visibility', entity_path: '$target', edit_scope: target.edit_scope, instance_policy: 'definition_wide', visible: false },
+        { op: 'transform_object', entity_path: '$target', edit_scope: target.edit_scope, instance_policy: 'definition_wide', translate: [10, 0, 0] },
+        { op: 'rename', entity_path: '$target', edit_scope: target.edit_scope, instance_policy: 'definition_wide', new_name: 'Nested_Edit_Bar_Reviewed' }
       ]
     }),
     input_format: 'json_dsl',
@@ -63,12 +65,12 @@ export async function validateNestedEntityEdit({ runtime = 'mock', timeoutMs = r
   const makeUnique = await bridge.iterate_model({
     runtime,
     timeoutMs,
-    targets: [{ entity_path: target.entity_path, edit_scope: 'component_definition', instance_policy: 'make_unique', instance_id: 'nested-edit-instance-a' }],
+    targets: [{ entity_path: target.entity_path, edit_scope: target.edit_scope, instance_policy: 'make_unique', instance_id: 'nested-edit-instance-a' }],
     code: JSON.stringify({
       version: 1,
       units: 'mm',
       operations: [
-        { op: 'set_visibility', entity_path: '$target', edit_scope: 'component_definition', instance_policy: 'make_unique', instance_id: 'nested-edit-instance-a', visible: true }
+        { op: 'set_visibility', entity_path: '$target', edit_scope: target.edit_scope, instance_policy: 'make_unique', instance_id: 'nested-edit-instance-a', visible: true }
       ]
     }),
     input_format: 'json_dsl',
@@ -92,7 +94,7 @@ export async function validateNestedEntityEdit({ runtime = 'mock', timeoutMs = r
       await bridge.evaluate_py({
         runtime,
         input_format: 'json_dsl',
-        code: JSON.stringify({ version: 1, units: 'mm', operations: [{ op: 'set_visibility', entity_path: target.entity_path, edit_scope: 'component_definition', visible: true }] })
+        code: JSON.stringify({ version: 1, units: 'mm', operations: [{ op: 'set_visibility', entity_path: target.entity_path, edit_scope: target.edit_scope, visible: true }] })
       });
     } catch (error) {
       blocked = /instance_policy must be definition_wide or make_unique/.test(error.message);

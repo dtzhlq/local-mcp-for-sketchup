@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "kind": "python_sdk_source_compat_golden",
+  "case_id": "result_scalar",
+  "source_sha256": "5f7c4a506f2acaed25c148ef8e0609825f46a5db7ffe4cf6ffb9d10662988985",
+  "document": {
+    "version": 1,
+    "units": "mm",
+    "operations": [
+      {
+        "op": "reset"
+      }
+    ]
+  },
+  "result": {
+    "mode": "present",
+    "value": 42
+  }
+}

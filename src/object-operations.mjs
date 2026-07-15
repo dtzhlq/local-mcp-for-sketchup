@@ -16,12 +16,10 @@ import { normalizeVector } from './operation-utils.mjs';
 import { boundingBoxForVertices } from './snapshot.mjs';
 
 export function deleteObject(model, operation) {
-  const target = resolveObjectReference(operation, 'delete');
-  const beforeGroups = model.groups.length;
-  const beforeInstances = (model.instances || []).length;
-  model.groups = model.groups.filter((group) => !matchesObjectReference(group, target));
-  model.instances = (model.instances || []).filter((instance) => !matchesObjectReference(instance, target));
-  if (model.groups.length === beforeGroups && (model.instances || []).length === beforeInstances) throw new Error(`delete target not found: ${referenceLabel(target)}`);
+  const reference = resolveObjectReference(operation, 'delete');
+  if (reference.entity_path && operation.confirmed !== true) throw new Error('delete.confirmed=true is required for nested entity deletion');
+  const target = findModelObject(model, reference);
+  removeResolvedTarget(model, target);
 }
 
 export function renameObject(model, operation) {
@@ -77,6 +75,68 @@ export function setObjectAttribute(model, operation) {
   Object.assign(target.item.attributes[dictionary], updates);
 }
 
+export function removeObjectAttribute(model, operation) {
+  const target = findModelObject(model, resolveObjectReference(operation, 'remove_attribute'));
+  const dictionary = nonEmptyString(operation.dictionary ?? operation.namespace ?? 'AlmaSketchupMCP', 'remove_attribute.dictionary');
+  const key = operation.key ?? operation.attr_key ?? operation.attrKey;
+  if (!target.item.attributes?.[dictionary]) return;
+  if (key === undefined) delete target.item.attributes[dictionary];
+  else delete target.item.attributes[dictionary][nonEmptyString(key, 'remove_attribute.key')];
+}
+
+export function setFaceMaterial(model, operation) {
+  const target = findModelObject(model, resolveObjectReference(operation, 'set_face_material'));
+  if (target.entity_type !== 'face') throw new Error('set_face_material target must be a Face');
+  const material = ensureMaterial(model, operation.material ?? operation.material_name ?? operation.materialName);
+  const side = String(operation.side || 'front');
+  if (!['front', 'back', 'both'].includes(side)) throw new Error('set_face_material.side must be front, back, or both');
+  if (side === 'front' || side === 'both') target.item.material = material;
+  if (side === 'back' || side === 'both') target.item.back_material = material;
+}
+
+export function setEdgeProperties(model, operation) {
+  const target = findModelObject(model, resolveObjectReference(operation, 'set_edge_properties'));
+  if (target.entity_type !== 'edge') throw new Error('set_edge_properties target must be an Edge');
+  if (operation.soft !== undefined) target.item.soft = normalizeBoolean(operation.soft, 'set_edge_properties.soft');
+  if (operation.smooth !== undefined) target.item.smooth = normalizeBoolean(operation.smooth, 'set_edge_properties.smooth');
+  if (operation.visible !== undefined || operation.hidden !== undefined) {
+    const visible = normalizeBoolean(operation.visible ?? !operation.hidden, 'set_edge_properties.visible');
+    target.item.visible = visible;
+    target.item.hidden = !visible;
+  }
+}
+
+export function reverseFace(model, operation) {
+  assertConfirmed(operation, 'reverse_face');
+  const target = findModelObject(model, resolveObjectReference(operation, 'reverse_face'));
+  if (target.entity_type !== 'face') throw new Error('reverse_face target must be a Face');
+  [target.item.material, target.item.back_material] = [target.item.back_material || null, target.item.material || null];
+  target.item.reversed = !target.item.reversed;
+  if (Array.isArray(target.item.normal)) target.item.normal = target.item.normal.map((value) => -value);
+}
+
+export function pushpullFace(model, operation) {
+  assertConfirmed(operation, 'pushpull_face');
+  const target = findModelObject(model, resolveObjectReference(operation, 'pushpull_face'));
+  if (target.entity_type !== 'face') throw new Error('pushpull_face target must be a Face');
+  const distance = finiteNumber(operation.distance, undefined, 'pushpull_face.distance');
+  if (Math.abs(distance) <= 1e-9) throw new Error('pushpull_face.distance must be non-zero');
+  const group = target.parent_group;
+  if (!group) throw new Error('mock pushpull_face requires a Face contained by a group');
+  group.topology_edits ||= [];
+  group.topology_edits.push({ op: 'pushpull_face', face: target.item.persistent_id, distance, copy: operation.copy === true });
+  group.faces = Math.max(1, Number(group.faces || 1) + (operation.copy === true ? 1 : 0) + 4);
+  group.edges = Math.max(3, Number(group.edges || 0) + 8);
+  const normal = target.item.normal || [0, 0, 1];
+  const box = group.bounding_box;
+  if (box) {
+    const moved = normal.map((axis) => axis * distance);
+    const points = [box.min, box.max, box.min.map((value, axis) => value + moved[axis]), box.max.map((value, axis) => value + moved[axis])];
+    group.bounding_box = boundingBoxForVertices(points);
+  }
+  target.item.pushpull_distance = (target.item.pushpull_distance || 0) + distance;
+}
+
 export function setObjectClassification(model, operation) {
   const target = findModelObject(model, resolveObjectReference(operation, 'classification'));
   const classification = normalizeClassification(operation);
@@ -93,6 +153,97 @@ export function setObjectTextureTransform(model, operation) {
   target.item.attributes.TextureTransform = textureTransformAttributeSnapshot(textureTransform);
 }
 
+export function duplicateEntity(model, operation) {
+  const target = findModelObject(model, resolveObjectReference(operation, 'duplicate_entity'));
+  const entityType = target.entity_type || target.item.entity_type || (target.collection === 'instances' ? 'component_instance' : 'group');
+  if (!['group', 'component_instance'].includes(entityType)) throw new Error('duplicate_entity target must be a Group or ComponentInstance');
+  const collection = resolvedCollection(model, target);
+  const clone = structuredClone(target.item);
+  clone.id = nonEmptyString(operation.new_id ?? operation.newId, 'duplicate_entity.new_id');
+  clone.name = nonEmptyString(operation.new_name ?? operation.newName, 'duplicate_entity.new_name');
+  if (collection.some((item) => item.id === clone.id || item.name === clone.name)) throw new Error('duplicate_entity new_id and new_name must be unique in the target scope');
+  const translate = normalizeVector(operation.translate ?? [0, 0, 0], [0, 0, 0], 'duplicate_entity.translate');
+  if (clone.bounding_box) {
+    clone.bounding_box = boundingBoxForVertices([clone.bounding_box.min, clone.bounding_box.max].map((point) => point.map((value, axis) => value + translate[axis])));
+  }
+  if (clone._vertices) clone._vertices = clone._vertices.map((point) => point.map((value, axis) => value + translate[axis]));
+  clone.duplicated_from = target.item.id || target.item.persistent_id || target.item.name;
+  collection.push(clone);
+  return clone;
+}
+
+export function replaceComponentDefinition(model, operation) {
+  assertConfirmed(operation, 'replace_component_definition');
+  const target = findModelObject(model, resolveObjectReference(operation, 'replace_component_definition'));
+  const entityType = target.entity_type || target.item.entity_type || (target.collection === 'instances' ? 'component_instance' : null);
+  if (entityType !== 'component_instance') throw new Error('replace_component_definition target must be a ComponentInstance');
+  const definitionName = nonEmptyString(operation.definition ?? operation.new_definition ?? operation.newDefinition, 'replace_component_definition.definition');
+  const definition = model.component_definitions?.[definitionName];
+  if (!definition) throw new Error(`replace_component_definition definition not found: ${definitionName}`);
+  target.item.definition = definitionName;
+  target.item.faces = definition.faces;
+  target.item.edges = definition.edges;
+  target.item.material = definition.material;
+  const translate = target.item.transform?.translate || target.item.bounding_box?.min || [0, 0, 0];
+  if (definition.bounding_box) {
+    target.item.bounding_box = boundingBoxForVertices([definition.bounding_box.min, definition.bounding_box.max].map((point) => point.map((value, axis) => value + Number(translate[axis] || 0))));
+  }
+}
+
+export function explodeEntity(model, operation) {
+  assertConfirmed(operation, 'explode_entity');
+  const target = findModelObject(model, resolveObjectReference(operation, 'explode_entity'));
+  const collection = resolvedCollection(model, target);
+  const inserted = [];
+  if (target.item.definition && model.component_definitions?.[target.item.definition]) {
+    const definition = model.component_definitions[target.item.definition];
+    for (const child of [...(definition.groups || []), ...(definition.instances || [])]) {
+      const clone = structuredClone(child);
+      clone.id = `${target.item.id || target.item.name}__${clone.id || clone.name}`;
+      clone.name = `${target.item.name || 'Exploded'}__${clone.name || clone.id}`;
+      clone.exploded_from = target.item.id || target.item.name;
+      collection.push(clone);
+      inserted.push(clone.id);
+    }
+  }
+  const source = target.item.id || target.item.name;
+  removeResolvedTarget(model, target);
+  model.exploded_entities ||= [];
+  model.exploded_entities.push({ source, inserted });
+  return inserted;
+}
+
+export function eraseEntities(model, operation) {
+  assertConfirmed(operation, 'erase_entities');
+  const targets = normalizeTargetList(operation.targets ?? operation.entity_paths ?? operation.entityPaths, 'erase_entities.targets');
+  if (operation.max_affected !== undefined && targets.length > Number(operation.max_affected)) throw new Error('erase_entities exceeds max_affected');
+  const resolved = targets.map((target) => findModelObject(model, resolveObjectReference(withCollectionPolicy(target, operation), 'erase_entities')));
+  for (const target of resolved.reverse()) removeResolvedTarget(model, target);
+}
+
+export function transformEntities(model, operation) {
+  assertConfirmed(operation, 'transform_entities');
+  const targets = normalizeTargetList(operation.targets ?? operation.entity_paths ?? operation.entityPaths, 'transform_entities.targets');
+  const translate = normalizeVector(operation.translate ?? operation.translation, [0, 0, 0], 'transform_entities.translate');
+  if (operation.max_affected !== undefined && targets.length > Number(operation.max_affected)) throw new Error('transform_entities exceeds max_affected');
+  for (const reference of targets) {
+    const merged = withCollectionPolicy(reference, operation);
+    const target = findModelObject(model, resolveObjectReference(merged, 'transform_entities'));
+    if (['group', 'component_instance'].includes(target.entity_type || target.item.entity_type)) {
+      transformObject(model, { ...merged, op: 'transform_object', translate });
+    } else {
+      target.item.transform = { translate };
+      if (target.parent_group?.bounding_box) {
+        const box = target.parent_group.bounding_box;
+        const moved = [box.min, box.max].map((point) => point.map((value, axis) => value + translate[axis]));
+        target.parent_group.bounding_box = boundingBoxForVertices([box.min, box.max, ...moved]);
+        target.parent_group.topology_edits ||= [];
+        target.parent_group.topology_edits.push({ op: 'transform_entities', entity: target.item.persistent_id, translate });
+      }
+    }
+  }
+}
+
 export function transformObject(model, operation) {
   const target = findModelObject(model, resolveObjectReference(operation, 'transform_object'));
   const object = target.item;
@@ -102,6 +253,44 @@ export function transformObject(model, operation) {
   object.bounding_box = boundingBoxForVertices(object._vertices);
   object._orientation = applyOrientationTransform(object._orientation || identityMatrix3(), transform);
   object.transform = mergeObjectTransform(object.transform, transform);
+  refreshNestedDefinition(model, target);
+}
+
+function assertConfirmed(operation, opName) {
+  if (operation.confirmed !== true) throw new Error(`${opName}.confirmed=true is required`);
+}
+
+function normalizeTargetList(value, fieldName) {
+  if (!Array.isArray(value) || !value.length) throw new Error(`${fieldName} must be a non-empty array`);
+  return value.map((item) => typeof item === 'string' ? { entity_path: item } : item);
+}
+
+function withCollectionPolicy(reference, operation) {
+  return {
+    ...reference,
+    edit_scope: reference.edit_scope || operation.edit_scope,
+    instance_policy: reference.instance_policy || operation.instance_policy,
+    instance_id: reference.instance_id || operation.instance_id
+  };
+}
+
+function resolvedCollection(model, target) {
+  if (target.collection_ref) return target.collection_ref;
+  if (target.definition && target.collection) return target.definition[target.collection] || [];
+  if (target.collection === 'groups') return model.groups;
+  if (target.collection === 'instances') return model.instances;
+  throw new Error('resolved target does not expose an editable collection');
+}
+
+function removeResolvedTarget(model, target) {
+  const collection = resolvedCollection(model, target);
+  const index = collection.indexOf(target.item);
+  if (index < 0) throw new Error(`delete target not found: ${target.item.id || target.item.name || target.item.persistent_id}`);
+  collection.splice(index, 1);
+  if (target.parent_group) {
+    if (target.entity_type === 'face') target.parent_group.faces = Math.max(0, Number(target.parent_group.faces || 0) - 1);
+    if (target.entity_type === 'edge') target.parent_group.edges = Math.max(0, Number(target.parent_group.edges || 0) - 1);
+  }
   refreshNestedDefinition(model, target);
 }
 

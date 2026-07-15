@@ -1,0 +1,225 @@
+{
+  "version": 1,
+  "kind": "python_sdk_source_compat_golden",
+  "case_id": "high_value_api",
+  "source_sha256": "84e8ecce2c4d2cbe9246e12287ec83ef3942de5717c387c329b1244abdc8e4a7",
+  "document": {
+    "version": 1,
+    "units": "mm",
+    "operations": [
+      {
+        "op": "reset"
+      },
+      {
+        "op": "material",
+        "name": "SDK_High_Value_Material",
+        "color": "#7aa6c2"
+      },
+      {
+        "op": "box",
+        "name": "SDK_High_Value_Moving_Box",
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "size": [
+          25.4,
+          25.4,
+          25.4
+        ],
+        "id": "sdk-high-value-moving-box",
+        "material": "SDK_High_Value_Material"
+      },
+      {
+        "op": "box",
+        "name": "SDK_High_Value_Deleted_Box",
+        "origin": [
+          76.2,
+          0,
+          0
+        ],
+        "size": [
+          25.4,
+          25.4,
+          25.4
+        ],
+        "id": "sdk-high-value-deleted-box",
+        "material": "SDK_High_Value_Material"
+      },
+      {
+        "op": "transform_object",
+        "transform": {
+          "translate": [
+            50.8,
+            0,
+            0
+          ]
+        },
+        "target_id": "sdk-high-value-moving-box"
+      },
+      {
+        "op": "delete",
+        "target_id": "sdk-high-value-deleted-box"
+      },
+      {
+        "op": "geometry_input",
+        "id": "sdk-high-value-uv-face",
+        "name": "SDK_High_Value_UV_Face",
+        "vertices": [
+          [
+            0,
+            50.8,
+            0
+          ],
+          [
+            25.4,
+            50.8,
+            0
+          ],
+          [
+            25.4,
+            76.2,
+            0
+          ],
+          [
+            0,
+            76.2,
+            0
+          ]
+        ],
+        "faces": [
+          {
+            "id": "sdk-high-value-uv-face",
+            "outer": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "holes": [],
+            "material": "SDK_High_Value_Material",
+            "normal": [
+              0,
+              0,
+              1
+            ],
+            "plane": [
+              0,
+              0,
+              1,
+              0
+            ],
+            "area": 645.16,
+            "position_material": {
+              "material": "SDK_High_Value_Material",
+              "front": true,
+              "mapping": [
+                {
+                  "point": [
+                    0,
+                    50.8,
+                    0
+                  ],
+                  "uv": [
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "point": [
+                    25.4,
+                    50.8,
+                    0
+                  ],
+                  "uv": [
+                    1,
+                    0
+                  ]
+                },
+                {
+                  "point": [
+                    25.4,
+                    76.2,
+                    0
+                  ],
+                  "uv": [
+                    1,
+                    1
+                  ]
+                },
+                {
+                  "point": [
+                    0,
+                    76.2,
+                    0
+                  ],
+                  "uv": [
+                    0,
+                    1
+                  ]
+                }
+              ],
+              "uv": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  1,
+                  0
+                ],
+                [
+                  1,
+                  1
+                ],
+                [
+                  0,
+                  1
+                ]
+              ]
+            }
+          }
+        ],
+        "material": "SDK_High_Value_Material"
+      },
+      {
+        "op": "scene",
+        "name": "SDK_High_Value_Page",
+        "camera": {
+          "eye": [
+            152.4,
+            -203.2,
+            127
+          ],
+          "target": [
+            25.4,
+            25.4,
+            0
+          ],
+          "up": [
+            0,
+            0,
+            1
+          ],
+          "fov": 40
+        },
+        "update_flags": 37
+      }
+    ]
+  },
+  "result": {
+    "mode": "present",
+    "value": {
+      "transformed_ok": true,
+      "deleted_result": null,
+      "front_uvq": [
+        0.5,
+        0.5,
+        1
+      ],
+      "page_updated": true,
+      "page_update_flags": 37
+    }
+  }
+}

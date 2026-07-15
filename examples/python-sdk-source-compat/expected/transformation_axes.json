@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "kind": "python_sdk_source_compat_golden",
+  "case_id": "transformation_axes",
+  "source_sha256": "de25acd3a6d6d95e7375c799f0ec5f3d2755e106efbc38cef6d9eed1873f5e90",
+  "document": {
+    "version": 1,
+    "units": "mm",
+    "operations": [
+      {
+        "op": "reset"
+      },
+      {
+        "op": "box",
+        "name": "Corpus_Axes_Box",
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "size": [
+          10,
+          10,
+          10
+        ],
+        "id": "corpus-axes-box"
+      },
+      {
+        "op": "transform_object",
+        "transform": {
+          "translate": [
+            25,
+            10,
+            0
+          ]
+        },
+        "target_id": "corpus-axes-box"
+      }
+    ]
+  },
+  "result": {
+    "mode": "present",
+    "value": {
+      "matrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "name": "Corpus_Axes_Box"
+    }
+  }
+}

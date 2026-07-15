@@ -12,6 +12,21 @@ const DEFAULT_LIMITS = Object.freeze({
   timeoutMs: 5000
 });
 
+const PAGE_UPDATE_FLAGS = Object.freeze({
+  PAGE_USE_CAMERA: 1,
+  PAGE_USE_RENDERING_OPTIONS: 2,
+  PAGE_USE_SHADOWINFO: 4,
+  PAGE_USE_SKETCHCS: 8,
+  PAGE_USE_HIDDEN: 16,
+  PAGE_USE_LAYER_VISIBILITY: 32,
+  PAGE_USE_SECTION_PLANES: 64,
+  PAGE_USE_HIDDEN_GEOMETRY: 128,
+  PAGE_USE_HIDDEN_OBJECTS: 256,
+  PAGE_USE_ENVIRONMENT: 512,
+  PAGE_USE_ALL: 0xffff,
+  PAGE_NO_CAMERA: 0xfffe
+});
+
 const PYTHON_AST_EXPORTER = `
 import ast
 import json
@@ -164,6 +179,7 @@ class PythonSdkInterpreter {
     ]) {
       this.scope.set(name, new SdkClassRef(name));
     }
+    for (const [name, value] of Object.entries(PAGE_UPDATE_FLAGS)) this.scope.set(name, value);
   }
 
   get facadeObjects() {
@@ -631,6 +647,16 @@ class PythonSdkInterpreter {
         return Number(left) % Number(right);
       case 'Pow':
         return Number(left) ** Number(right);
+      case 'BitOr':
+        return Number(left) | Number(right);
+      case 'BitAnd':
+        return Number(left) & Number(right);
+      case 'BitXor':
+        return Number(left) ^ Number(right);
+      case 'LShift':
+        return Number(left) << Number(right);
+      case 'RShift':
+        return Number(left) >> Number(right);
       default:
         throw new PythonSdkCompileError(`Unsupported binary operator: ${operator?._type}`, node);
     }
@@ -997,7 +1023,7 @@ class SdkEntitiesProxy {
   eraseEntities(args, kwargs, node) {
     const targets = collectionMutationTargets(args.length ? args : [kwargs.entities ?? kwargs.targets], node);
     for (const target of targets) this.addMutationOperation({ op: 'delete', ...objectReferenceForFacade(target) }, node);
-    return targets.length;
+    return null;
   }
 
   transformEntities(args, kwargs, node) {
@@ -1008,7 +1034,7 @@ class SdkEntitiesProxy {
     for (const target of targets) {
       this.addMutationOperation({ op: 'transform_object', transform, ...objectReferenceForFacade(target) }, node);
     }
-    return targets.length;
+    return targets.length > 0;
   }
 
   addMutationOperation(operation, node) {
@@ -1940,8 +1966,8 @@ class SdkUvHelper {
     }
     const rawPoint = point instanceof SdkPoint ? point.value : normalizeRawPoint(point, 'UVHelper point', node);
     const match = positioned.mapping.find((entry) => entry.point.every((coordinate, index) => Math.abs(coordinate - rawPoint[index]) <= 1e-9));
-    if (!match) throw new PythonSdkCompileError('UVHelper only supports points present in the same-script Face.position_material mapping', node);
-    return new SdkPoint([match.uv[0], match.uv[1], 1], 3, 'SUPoint3D', node);
+    const uv = match?.uv ?? affineUvForPositionedMapping(positioned.mapping, rawPoint, node);
+    return new SdkPoint([uv[0], uv[1], 1], 3, 'SUPoint3D', node);
   }
 
   toJson() {
@@ -2405,7 +2431,7 @@ class SdkScene {
         if (!Number.isInteger(numericFlags) || numericFlags < 0) throw new PythonSdkCompileError('Page.update flags must be a non-negative integer', _node);
         this.update_flags = numericFlags;
       }
-      return this;
+      return true;
     }
     if (method === 'use_camera') {
       this.camera = args[0] ?? kwargs.camera ?? this.camera;
@@ -2669,7 +2695,6 @@ function collectionMutationTargets(values, node) {
     if (Array.isArray(value)) flattened.push(...value);
     else if (value !== undefined && value !== null) flattened.push(value);
   }
-  if (!flattened.length) throw new PythonSdkCompileError('Entities collection edit expects at least one entity', node);
   for (const target of flattened) {
     if (!(target instanceof SdkEntityRef || target instanceof SdkGroup || target instanceof SdkComponentInstance || target instanceof SdkGeometryInput || target instanceof SdkCurve || target instanceof SdkArcCurve)) {
       throw new PythonSdkCompileError('Entities collection editing supports authored group/component/object references; Face and Edge collection mutation remains unsupported', node);
@@ -2754,6 +2779,67 @@ function normalizeUvPair(value, node) {
     throw new PythonSdkCompileError('position material UV point must contain at least u/v numbers', node);
   }
   return [Number(raw[0]), Number(raw[1])];
+}
+
+function affineUvForPositionedMapping(mapping, point, node) {
+  if (!Array.isArray(mapping) || mapping.length < 3) {
+    throw new PythonSdkCompileError('UVHelper arbitrary-point queries require at least three same-script Face.position_material pairs', node);
+  }
+  let basis = null;
+  for (let a = 0; a < mapping.length - 2 && !basis; a += 1) {
+    for (let b = a + 1; b < mapping.length - 1 && !basis; b += 1) {
+      for (let c = b + 1; c < mapping.length && !basis; c += 1) {
+        const candidate = barycentricBasis(mapping[a].point, mapping[b].point, mapping[c].point);
+        if (candidate) basis = { ...candidate, entries: [mapping[a], mapping[b], mapping[c]] };
+      }
+    }
+  }
+  if (!basis) throw new PythonSdkCompileError('UVHelper positioned material mapping must contain three non-collinear model points', node);
+
+  const interpolate = (modelPoint) => {
+    const weights = barycentricWeights(basis, modelPoint);
+    if (Math.abs(weights.plane_distance) > 1e-7) {
+      throw new PythonSdkCompileError('UVHelper query point must lie on the same-script positioned Face plane', node);
+    }
+    return [0, 1].map((axis) => roundNumber(
+      weights.a * basis.entries[0].uv[axis] + weights.b * basis.entries[1].uv[axis] + weights.c * basis.entries[2].uv[axis],
+      9
+    ));
+  };
+  for (const entry of mapping) {
+    const expected = interpolate(entry.point);
+    if (expected.some((value, axis) => Math.abs(value - entry.uv[axis]) > 1e-7)) {
+      throw new PythonSdkCompileError('UVHelper arbitrary-point queries currently require an affine same-script Face.position_material mapping', node);
+    }
+  }
+  return interpolate(point);
+}
+
+function barycentricBasis(a, b, c) {
+  const v0 = subtract3(b, a);
+  const v1 = subtract3(c, a);
+  const normal = cross3(v0, v1);
+  const normalLengthSquared = dot3(normal, normal);
+  const d00 = dot3(v0, v0);
+  const d01 = dot3(v0, v1);
+  const d11 = dot3(v1, v1);
+  const denominator = d00 * d11 - d01 * d01;
+  if (normalLengthSquared <= 1e-18 || Math.abs(denominator) <= 1e-18) return null;
+  return { origin: a, v0, v1, normal, normal_length: Math.sqrt(normalLengthSquared), d00, d01, d11, denominator };
+}
+
+function barycentricWeights(basis, point) {
+  const v2 = subtract3(point, basis.origin);
+  const d20 = dot3(v2, basis.v0);
+  const d21 = dot3(v2, basis.v1);
+  const b = (basis.d11 * d20 - basis.d01 * d21) / basis.denominator;
+  const c = (basis.d00 * d21 - basis.d01 * d20) / basis.denominator;
+  return {
+    a: 1 - b - c,
+    b,
+    c,
+    plane_distance: dot3(v2, basis.normal) / basis.normal_length
+  };
 }
 
 function scalePositionMaterial(spec, scale) {

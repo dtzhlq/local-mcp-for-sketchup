@@ -42,7 +42,7 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op', 'tag'],
-        'optional' => ['name', 'tag_name', 'tagName', 'target_id', 'targetId', 'target', 'object']
+        'optional' => ['name', 'tag_name', 'tagName', 'target_id', 'targetId', 'target', 'object', 'entity_path', 'entityPath', 'target_path', 'targetPath', 'edit_scope', 'editScope', 'instance_policy', 'instancePolicy', 'instance_id', 'instanceId']
       },
       'component_scope' => {
         'status' => 'unsupported'
@@ -53,7 +53,18 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op'],
-        'optional' => ['name', 'target_id', 'targetId', 'target', 'object', 'dictionary', 'namespace', 'key', 'attr_key', 'attrKey', 'value', 'attributes']
+        'optional' => ['name', 'target_id', 'targetId', 'target', 'object', 'entity_path', 'entityPath', 'target_path', 'targetPath', 'edit_scope', 'editScope', 'instance_policy', 'instancePolicy', 'instance_id', 'instanceId', 'dictionary', 'namespace', 'key', 'attr_key', 'attrKey', 'value', 'attributes']
+      },
+      'component_scope' => {
+        'status' => 'unsupported'
+      }
+    },
+    'remove_attribute' => {
+      'status' => 'supported',
+      'stability' => 'beta',
+      'schema' => {
+        'required' => ['op'],
+        'optional' => ['name', 'target_id', 'targetId', 'target', 'object', 'entity_path', 'entityPath', 'target_path', 'targetPath', 'edit_scope', 'editScope', 'instance_policy', 'instancePolicy', 'instance_id', 'instanceId', 'dictionary', 'namespace', 'key', 'attr_key', 'attrKey']
       },
       'component_scope' => {
         'status' => 'unsupported'
@@ -64,7 +75,7 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op'],
-        'optional' => ['name', 'target_id', 'targetId', 'target', 'object', 'system', 'schema', 'type', 'classification', 'class', 'ifc_class', 'ifcClass', 'identifier', 'attributes']
+        'optional' => ['name', 'target_id', 'targetId', 'target', 'object', 'entity_path', 'entityPath', 'target_path', 'targetPath', 'edit_scope', 'editScope', 'instance_policy', 'instancePolicy', 'instance_id', 'instanceId', 'system', 'schema', 'type', 'classification', 'class', 'ifc_class', 'ifcClass', 'identifier', 'attributes']
       },
       'component_scope' => {
         'status' => 'unsupported'
@@ -75,7 +86,7 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op'],
-        'optional' => ['name', 'target_id', 'targetId', 'target', 'object', 'material', 'projection', 'offset', 'offset_u', 'offsetU', 'offset_v', 'offsetV', 'scale', 'scale_u', 'scaleU', 'scale_v', 'scaleV', 'rotation', 'rotation_degrees', 'rotationDegrees']
+        'optional' => ['name', 'target_id', 'targetId', 'target', 'object', 'entity_path', 'entityPath', 'target_path', 'targetPath', 'edit_scope', 'editScope', 'instance_policy', 'instancePolicy', 'instance_id', 'instanceId', 'material', 'projection', 'offset', 'offset_u', 'offsetU', 'offset_v', 'offsetV', 'scale', 'scale_u', 'scaleU', 'scale_v', 'scaleV', 'rotation', 'rotation_degrees', 'rotationDegrees']
       },
       'component_scope' => {
         'status' => 'unsupported'
@@ -130,7 +141,7 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op'],
-        'optional' => ['name', 'target_id', 'targetId', 'target', 'object']
+        'optional' => ['name', 'target_id', 'targetId', 'target', 'object', 'entity_path', 'entityPath', 'target_path', 'targetPath', 'edit_scope', 'editScope', 'instance_policy', 'instancePolicy', 'instance_id', 'instanceId', 'confirmed']
       },
       'component_scope' => {
         'status' => 'unsupported'
@@ -175,6 +186,105 @@ module AlmaSketchupMCP
       'schema' => {
         'required' => ['op'],
         'optional' => ['name', 'target_id', 'targetId', 'target', 'object', 'entity_path', 'entityPath', 'target_path', 'targetPath', 'edit_scope', 'editScope', 'instance_policy', 'instancePolicy', 'instance_id', 'instanceId', 'translate', 'rotateX', 'rotateY', 'rotateZ', 'axis', 'angle', 'rotate_axis', 'rotateAxis', 'local_axis', 'localAxis', 'local_angle', 'localAngle', 'rotate_local', 'rotateLocal', 'matrix', 'matrix4x4', 'local_matrix', 'localMatrix', 'matrix_local', 'matrixLocal', 'scale', 'mirror', 'pivot']
+      },
+      'component_scope' => {
+        'status' => 'unsupported'
+      }
+    },
+    'set_face_material' => {
+      'status' => 'supported',
+      'stability' => 'beta',
+      'schema' => {
+        'required' => ['op', 'material'],
+        'optional' => ['entity_path', 'entityPath', 'target_path', 'targetPath', 'edit_scope', 'editScope', 'instance_policy', 'instancePolicy', 'instance_id', 'instanceId', 'side']
+      },
+      'component_scope' => {
+        'status' => 'unsupported'
+      }
+    },
+    'set_edge_properties' => {
+      'status' => 'supported',
+      'stability' => 'beta',
+      'schema' => {
+        'required' => ['op'],
+        'optional' => ['entity_path', 'entityPath', 'target_path', 'targetPath', 'edit_scope', 'editScope', 'instance_policy', 'instancePolicy', 'instance_id', 'instanceId', 'soft', 'smooth', 'visible', 'hidden']
+      },
+      'component_scope' => {
+        'status' => 'unsupported'
+      }
+    },
+    'reverse_face' => {
+      'status' => 'supported',
+      'stability' => 'beta',
+      'schema' => {
+        'required' => ['op', 'confirmed'],
+        'optional' => ['entity_path', 'entityPath', 'target_path', 'targetPath', 'edit_scope', 'editScope', 'instance_policy', 'instancePolicy', 'instance_id', 'instanceId']
+      },
+      'component_scope' => {
+        'status' => 'unsupported'
+      }
+    },
+    'pushpull_face' => {
+      'status' => 'supported',
+      'stability' => 'beta',
+      'schema' => {
+        'required' => ['op', 'distance', 'confirmed'],
+        'optional' => ['entity_path', 'entityPath', 'target_path', 'targetPath', 'edit_scope', 'editScope', 'instance_policy', 'instancePolicy', 'instance_id', 'instanceId', 'copy']
+      },
+      'component_scope' => {
+        'status' => 'unsupported'
+      }
+    },
+    'duplicate_entity' => {
+      'status' => 'supported',
+      'stability' => 'beta',
+      'schema' => {
+        'required' => ['op', 'new_id', 'new_name'],
+        'optional' => ['target_id', 'targetId', 'target', 'object', 'entity_path', 'entityPath', 'target_path', 'targetPath', 'edit_scope', 'editScope', 'instance_policy', 'instancePolicy', 'instance_id', 'instanceId', 'translate']
+      },
+      'component_scope' => {
+        'status' => 'unsupported'
+      }
+    },
+    'replace_component_definition' => {
+      'status' => 'supported',
+      'stability' => 'beta',
+      'schema' => {
+        'required' => ['op', 'definition', 'confirmed'],
+        'optional' => ['target_id', 'targetId', 'target', 'object', 'entity_path', 'entityPath', 'target_path', 'targetPath', 'edit_scope', 'editScope', 'instance_policy', 'instancePolicy', 'instance_id', 'instanceId']
+      },
+      'component_scope' => {
+        'status' => 'unsupported'
+      }
+    },
+    'explode_entity' => {
+      'status' => 'supported',
+      'stability' => 'experimental',
+      'schema' => {
+        'required' => ['op', 'confirmed'],
+        'optional' => ['target_id', 'targetId', 'target', 'object', 'entity_path', 'entityPath', 'target_path', 'targetPath', 'edit_scope', 'editScope', 'instance_policy', 'instancePolicy', 'instance_id', 'instanceId']
+      },
+      'component_scope' => {
+        'status' => 'unsupported'
+      }
+    },
+    'erase_entities' => {
+      'status' => 'supported',
+      'stability' => 'beta',
+      'schema' => {
+        'required' => ['op', 'targets', 'confirmed'],
+        'optional' => ['edit_scope', 'instance_policy', 'instance_id', 'max_affected']
+      },
+      'component_scope' => {
+        'status' => 'unsupported'
+      }
+    },
+    'transform_entities' => {
+      'status' => 'supported',
+      'stability' => 'beta',
+      'schema' => {
+        'required' => ['op', 'targets', 'translate', 'confirmed'],
+        'optional' => ['edit_scope', 'instance_policy', 'instance_id', 'max_affected']
       },
       'component_scope' => {
         'status' => 'unsupported'
@@ -350,7 +460,7 @@ module AlmaSketchupMCP
       'stability' => 'experimental',
       'schema' => {
         'required' => ['op', 'center', 'radius'],
-        'optional' => ['name', 'target_id', 'targetId', 'target', 'object', 'face', 'plane', 'feature_id', 'featureId', 'depth', 'through', 'segments']
+        'optional' => ['name', 'target_id', 'targetId', 'target', 'object', 'entity_path', 'entityPath', 'target_path', 'targetPath', 'edit_scope', 'editScope', 'instance_policy', 'instancePolicy', 'instance_id', 'instanceId', 'face', 'plane', 'feature_id', 'featureId', 'depth', 'through', 'segments']
       },
       'component_scope' => {
         'status' => 'unsupported'
@@ -361,7 +471,7 @@ module AlmaSketchupMCP
       'stability' => 'experimental',
       'schema' => {
         'required' => ['op', 'center', 'length', 'width'],
-        'optional' => ['name', 'target_id', 'targetId', 'target', 'object', 'face', 'plane', 'feature_id', 'featureId', 'depth', 'through', 'segments']
+        'optional' => ['name', 'target_id', 'targetId', 'target', 'object', 'entity_path', 'entityPath', 'target_path', 'targetPath', 'edit_scope', 'editScope', 'instance_policy', 'instancePolicy', 'instance_id', 'instanceId', 'face', 'plane', 'feature_id', 'featureId', 'depth', 'through', 'segments']
       },
       'component_scope' => {
         'status' => 'unsupported'
@@ -372,7 +482,7 @@ module AlmaSketchupMCP
       'stability' => 'experimental',
       'schema' => {
         'required' => ['op', 'center', 'size', 'depth'],
-        'optional' => ['name', 'target_id', 'targetId', 'target', 'object', 'face', 'plane', 'feature_id', 'featureId', 'radius', 'segments']
+        'optional' => ['name', 'target_id', 'targetId', 'target', 'object', 'entity_path', 'entityPath', 'target_path', 'targetPath', 'edit_scope', 'editScope', 'instance_policy', 'instancePolicy', 'instance_id', 'instanceId', 'face', 'plane', 'feature_id', 'featureId', 'radius', 'segments']
       },
       'component_scope' => {
         'status' => 'unsupported'
@@ -383,7 +493,7 @@ module AlmaSketchupMCP
       'stability' => 'experimental',
       'schema' => {
         'required' => ['op', 'center', 'radius', 'height'],
-        'optional' => ['name', 'target_id', 'targetId', 'target', 'object', 'face', 'plane', 'feature_id', 'featureId', 'outer_radius', 'outerRadius', 'segments']
+        'optional' => ['name', 'target_id', 'targetId', 'target', 'object', 'entity_path', 'entityPath', 'target_path', 'targetPath', 'edit_scope', 'editScope', 'instance_policy', 'instancePolicy', 'instance_id', 'instanceId', 'face', 'plane', 'feature_id', 'featureId', 'outer_radius', 'outerRadius', 'segments']
       },
       'component_scope' => {
         'status' => 'unsupported'
@@ -394,7 +504,7 @@ module AlmaSketchupMCP
       'stability' => 'experimental',
       'schema' => {
         'required' => ['op', 'center', 'length', 'height'],
-        'optional' => ['name', 'target_id', 'targetId', 'target', 'object', 'face', 'plane', 'feature_id', 'featureId', 'width', 'thickness', 'direction']
+        'optional' => ['name', 'target_id', 'targetId', 'target', 'object', 'entity_path', 'entityPath', 'target_path', 'targetPath', 'edit_scope', 'editScope', 'instance_policy', 'instancePolicy', 'instance_id', 'instanceId', 'face', 'plane', 'feature_id', 'featureId', 'width', 'thickness', 'direction']
       },
       'component_scope' => {
         'status' => 'unsupported'
@@ -405,7 +515,7 @@ module AlmaSketchupMCP
       'stability' => 'experimental',
       'schema' => {
         'required' => ['op'],
-        'optional' => ['name', 'target_id', 'targetId', 'target', 'object', 'tools', 'tool_id', 'toolId', 'tool_ids', 'toolIds', 'result_name', 'resultName', 'result_id', 'resultId', 'keep_tools', 'keepTools', 'keep_originals', 'keepOriginals', 'allow_disjoint', 'allowDisjoint', 'material']
+        'optional' => ['name', 'target_id', 'targetId', 'target', 'object', 'entity_path', 'entityPath', 'target_path', 'targetPath', 'edit_scope', 'editScope', 'instance_policy', 'instancePolicy', 'instance_id', 'instanceId', 'tools', 'tool_id', 'toolId', 'tool_ids', 'toolIds', 'result_name', 'resultName', 'result_id', 'resultId', 'keep_tools', 'keepTools', 'keep_originals', 'keepOriginals', 'allow_disjoint', 'allowDisjoint', 'material']
       },
       'component_scope' => {
         'status' => 'unsupported'
@@ -416,7 +526,7 @@ module AlmaSketchupMCP
       'stability' => 'experimental',
       'schema' => {
         'required' => ['op'],
-        'optional' => ['name', 'target_id', 'targetId', 'target', 'object', 'tools', 'tool_id', 'toolId', 'tool_ids', 'toolIds', 'result_name', 'resultName', 'result_id', 'resultId', 'keep_tools', 'keepTools', 'keep_originals', 'keepOriginals', 'allow_non_intersecting', 'allowNonIntersecting', 'material']
+        'optional' => ['name', 'target_id', 'targetId', 'target', 'object', 'entity_path', 'entityPath', 'target_path', 'targetPath', 'edit_scope', 'editScope', 'instance_policy', 'instancePolicy', 'instance_id', 'instanceId', 'tools', 'tool_id', 'toolId', 'tool_ids', 'toolIds', 'result_name', 'resultName', 'result_id', 'resultId', 'keep_tools', 'keepTools', 'keep_originals', 'keepOriginals', 'allow_non_intersecting', 'allowNonIntersecting', 'material']
       },
       'component_scope' => {
         'status' => 'unsupported'
@@ -427,7 +537,7 @@ module AlmaSketchupMCP
       'stability' => 'experimental',
       'schema' => {
         'required' => ['op'],
-        'optional' => ['name', 'target_id', 'targetId', 'target', 'object', 'tools', 'tool_id', 'toolId', 'tool_ids', 'toolIds', 'result_name', 'resultName', 'result_id', 'resultId', 'keep_tools', 'keepTools', 'keep_originals', 'keepOriginals', 'material']
+        'optional' => ['name', 'target_id', 'targetId', 'target', 'object', 'entity_path', 'entityPath', 'target_path', 'targetPath', 'edit_scope', 'editScope', 'instance_policy', 'instancePolicy', 'instance_id', 'instanceId', 'tools', 'tool_id', 'toolId', 'tool_ids', 'toolIds', 'result_name', 'resultName', 'result_id', 'resultId', 'keep_tools', 'keepTools', 'keep_originals', 'keepOriginals', 'material']
       },
       'component_scope' => {
         'status' => 'unsupported'
@@ -438,7 +548,7 @@ module AlmaSketchupMCP
       'stability' => 'experimental',
       'schema' => {
         'required' => ['op'],
-        'optional' => ['name', 'target_id', 'targetId', 'target', 'object', 'targets', 'target_ids', 'targetIds', 'check_id', 'checkId', 'fail_on_non_manifold', 'failOnNonManifold']
+        'optional' => ['name', 'target_id', 'targetId', 'target', 'object', 'entity_path', 'entityPath', 'target_path', 'targetPath', 'edit_scope', 'editScope', 'instance_policy', 'instancePolicy', 'instance_id', 'instanceId', 'targets', 'target_ids', 'targetIds', 'check_id', 'checkId', 'fail_on_non_manifold', 'failOnNonManifold']
       },
       'component_scope' => {
         'status' => 'unsupported'
@@ -449,7 +559,7 @@ module AlmaSketchupMCP
       'stability' => 'experimental',
       'schema' => {
         'required' => ['op'],
-        'optional' => ['name', 'target_id', 'targetId', 'target', 'object', 'strategy', 'repair_id', 'repairId', 'fail_on_non_manifold', 'failOnNonManifold']
+        'optional' => ['name', 'target_id', 'targetId', 'target', 'object', 'entity_path', 'entityPath', 'target_path', 'targetPath', 'edit_scope', 'editScope', 'instance_policy', 'instancePolicy', 'instance_id', 'instanceId', 'strategy', 'repair_id', 'repairId', 'fail_on_non_manifold', 'failOnNonManifold']
       },
       'component_scope' => {
         'status' => 'unsupported'
@@ -925,7 +1035,7 @@ module AlmaSketchupMCP
         'optional' => ['transform', 'id', 'object_id', 'objectId', 'guid']
       },
       'component_scope' => {
-        'status' => 'unsupported'
+        'status' => 'supported'
       }
     },
     'selection' => {

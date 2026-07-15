@@ -1,0 +1,283 @@
+{
+  "version": 1,
+  "kind": "python_sdk_source_compat_golden",
+  "case_id": "collections_and_transforms",
+  "source_sha256": "81227b2e39a9d1dc40cfbf9962152223b3c93be4da104c19945cbe9f56310f30",
+  "document": {
+    "version": 1,
+    "units": "mm",
+    "operations": [
+      {
+        "op": "reset"
+      },
+      {
+        "op": "material",
+        "name": "SDK_API_Material",
+        "color": "#88ccaa"
+      },
+      {
+        "op": "tag",
+        "name": "SDK_API_Layer",
+        "color": "#225588"
+      },
+      {
+        "op": "component_definition",
+        "name": "SDK_API_Component_Definition",
+        "operations": [
+          {
+            "op": "geometry_input",
+            "name": "SDK_API_Definition_Profile",
+            "vertices": [
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                38.1,
+                0,
+                0
+              ],
+              [
+                38.1,
+                25.4,
+                0
+              ],
+              [
+                0,
+                25.4,
+                0
+              ]
+            ],
+            "faces": [
+              {
+                "outer": [
+                  0,
+                  1,
+                  2,
+                  3
+                ],
+                "holes": [],
+                "material": "SDK_API_Material",
+                "normal": [
+                  0,
+                  0,
+                  1
+                ],
+                "plane": [
+                  0,
+                  0,
+                  1,
+                  0
+                ],
+                "area": 967.74,
+                "pushpull": {
+                  "distance": 6.35,
+                  "copy": false,
+                  "metadata_only": false
+                }
+              }
+            ],
+            "material": "SDK_API_Material"
+          }
+        ]
+      },
+      {
+        "op": "component_instance",
+        "name": "SDK_API_Component_Instance",
+        "definition": "SDK_API_Component_Definition",
+        "origin": [
+          76.2,
+          0,
+          0
+        ],
+        "id": "sdk-api-component-instance",
+        "material": "SDK_API_Material",
+        "transform": {
+          "rotateZ": 30
+        }
+      },
+      {
+        "op": "assign_tag",
+        "tag": "SDK_API_Layer",
+        "target_id": "sdk-api-component-instance"
+      },
+      {
+        "op": "attribute",
+        "dictionary": "SDK_API",
+        "attributes": {
+          "role": "component"
+        },
+        "target_id": "sdk-api-component-instance"
+      },
+      {
+        "op": "geometry_input",
+        "id": "sdk-api-entities-group",
+        "name": "SDK_API_Entities_Group",
+        "vertices": [
+          [
+            0,
+            50.8,
+            0
+          ],
+          [
+            50.8,
+            50.8,
+            0
+          ],
+          [
+            50.8,
+            76.2,
+            0
+          ],
+          [
+            0,
+            76.2,
+            0
+          ]
+        ],
+        "faces": [
+          {
+            "outer": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "holes": [],
+            "material": "SDK_API_Material",
+            "normal": [
+              0,
+              0,
+              1
+            ],
+            "plane": [
+              0,
+              0,
+              1,
+              0
+            ],
+            "area": 1290.32,
+            "pushpull": {
+              "distance": 12.7,
+              "copy": false,
+              "metadata_only": false
+            }
+          }
+        ]
+      },
+      {
+        "op": "assign_tag",
+        "tag": "SDK_API_Layer",
+        "target_id": "sdk-api-entities-group"
+      },
+      {
+        "op": "attribute",
+        "dictionary": "SDK_API",
+        "attributes": {
+          "role": "entities_group"
+        },
+        "target_id": "sdk-api-entities-group"
+      },
+      {
+        "op": "box",
+        "name": "SDK_API_Box",
+        "origin": [
+          0,
+          101.6,
+          0
+        ],
+        "size": [
+          25.4,
+          25.4,
+          25.4
+        ],
+        "id": "sdk-api-box",
+        "material": "SDK_API_Material"
+      },
+      {
+        "op": "assign_tag",
+        "tag": "SDK_API_Layer",
+        "target_id": "sdk-api-box"
+      },
+      {
+        "op": "attribute",
+        "dictionary": "SDK_API",
+        "key": "role",
+        "value": "box",
+        "target_id": "sdk-api-box"
+      },
+      {
+        "op": "transform_object",
+        "transform": {
+          "translate": [
+            0,
+            0,
+            12.7
+          ]
+        },
+        "target_id": "sdk-api-box"
+      },
+      {
+        "op": "scene",
+        "name": "SDK_API_Page",
+        "camera": {
+          "eye": [
+            152.4,
+            -203.2,
+            127
+          ],
+          "target": [
+            25.4,
+            50.8,
+            25.4
+          ],
+          "up": [
+            0,
+            0,
+            1
+          ],
+          "fov": 40
+        }
+      },
+      {
+        "op": "rendering_options",
+        "edge_display_mode": 1,
+        "transparency": true
+      },
+      {
+        "op": "shadow",
+        "display": true,
+        "light": 75
+      },
+      {
+        "op": "image_reference",
+        "name": "SDK_API_View_Image",
+        "path": "/tmp/sdk-api-view.png",
+        "role": "view_capture"
+      }
+    ]
+  },
+  "result": {
+    "mode": "present",
+    "value": {
+      "material_count": 1,
+      "layer_name": "SDK_API_Layer",
+      "definition_name": "SDK_API_Component_Definition",
+      "definition_operations": 1,
+      "component_definition": "SDK_API_Component_Definition",
+      "group_face_area": 2,
+      "page_name": "SDK_API_Page",
+      "selection_size": 0,
+      "rendering_keys": [
+        "draw_hidden_geometry",
+        "display_color_by_layer",
+        "transparency"
+      ],
+      "shadow_keys": [
+        "display",
+        "time"
+      ]
+    }
+  }
+}

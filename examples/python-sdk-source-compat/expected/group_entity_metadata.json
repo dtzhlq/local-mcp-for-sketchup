@@ -1,0 +1,101 @@
+{
+  "version": 1,
+  "kind": "python_sdk_source_compat_golden",
+  "case_id": "group_entity_metadata",
+  "source_sha256": "8872e1d4effb8c5fc511f0581a872ecb3e6dc4307101cb654ab6cf649c445331",
+  "document": {
+    "version": 1,
+    "units": "mm",
+    "operations": [
+      {
+        "op": "reset"
+      },
+      {
+        "op": "material",
+        "name": "Corpus_Group_Material",
+        "color": "#5a88aa"
+      },
+      {
+        "op": "tag",
+        "name": "Corpus_Group_Tag"
+      },
+      {
+        "op": "geometry_input",
+        "id": "corpus-metadata-group",
+        "name": "Corpus_Metadata_Group",
+        "vertices": [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            50,
+            0,
+            0
+          ],
+          [
+            50,
+            30,
+            0
+          ],
+          [
+            0,
+            30,
+            0
+          ]
+        ],
+        "faces": [
+          {
+            "outer": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "holes": [],
+            "material": "Corpus_Group_Material",
+            "normal": [
+              0,
+              0,
+              1
+            ],
+            "plane": [
+              0,
+              0,
+              1,
+              0
+            ],
+            "area": 1500,
+            "pushpull": {
+              "distance": 10,
+              "copy": false,
+              "metadata_only": false
+            }
+          }
+        ]
+      },
+      {
+        "op": "assign_tag",
+        "tag": "Corpus_Group_Tag",
+        "target_id": "corpus-metadata-group"
+      },
+      {
+        "op": "attribute",
+        "dictionary": "Corpus",
+        "attributes": {
+          "role": "editable"
+        },
+        "target_id": "corpus-metadata-group"
+      }
+    ]
+  },
+  "result": {
+    "mode": "present",
+    "value": {
+      "name": "Corpus_Metadata_Group",
+      "tag": "Corpus_Group_Tag",
+      "area": 1500
+    }
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "version": 1,
+  "kind": "python_sdk_source_compat_golden",
+  "case_id": "geometry_face_pushpull",
+  "source_sha256": "1e4aa12e89799979e9e0c04e34db663e1c8810848fa238f3b41fc224743c8e74",
+  "document": {
+    "version": 1,
+    "units": "mm",
+    "operations": [
+      {
+        "op": "reset"
+      },
+      {
+        "op": "geometry_input",
+        "id": "corpus-pushpull",
+        "name": "Corpus_PushPull",
+        "vertices": [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            40,
+            0,
+            0
+          ],
+          [
+            40,
+            20,
+            0
+          ],
+          [
+            0,
+            20,
+            0
+          ]
+        ],
+        "faces": [
+          {
+            "id": "corpus-pushpull",
+            "outer": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "holes": [],
+            "normal": [
+              0,
+              0,
+              1
+            ],
+            "plane": [
+              0,
+              0,
+              1,
+              0
+            ],
+            "area": 800,
+            "pushpull": {
+              "distance": 12,
+              "copy": false,
+              "metadata_only": false
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "result": {
+    "mode": "present",
+    "value": {
+      "area": 800,
+      "distance": 12
+    }
+  }
+}

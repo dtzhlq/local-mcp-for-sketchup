@@ -1,0 +1,138 @@
+{
+  "version": 1,
+  "kind": "python_sdk_source_compat_golden",
+  "case_id": "face_edge_loop",
+  "source_sha256": "6f0cb400fedbe0377c8f6554bf692010f7dd71cbb5c50393e39b4b595f6c76a8",
+  "document": {
+    "version": 1,
+    "units": "mm",
+    "operations": [
+      {
+        "op": "reset"
+      },
+      {
+        "op": "material",
+        "name": "SDK_Face_Front",
+        "color": "#d8e9ff"
+      },
+      {
+        "op": "material",
+        "name": "SDK_Face_Back",
+        "color": "#ffe1c4"
+      },
+      {
+        "op": "geometry_input",
+        "id": "sdk-face-panel",
+        "name": "SDK_Face_Loop_Edge_Panel",
+        "vertices": [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            152.4,
+            0,
+            0
+          ],
+          [
+            152.4,
+            101.6,
+            0
+          ],
+          [
+            0,
+            101.6,
+            0
+          ],
+          [
+            50.8,
+            25.4,
+            0
+          ],
+          [
+            101.6,
+            25.4,
+            0
+          ],
+          [
+            101.6,
+            76.2,
+            0
+          ],
+          [
+            50.8,
+            76.2,
+            0
+          ]
+        ],
+        "faces": [
+          {
+            "id": "front-face",
+            "outer": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "holes": [
+              [
+                4,
+                5,
+                6,
+                7
+              ]
+            ],
+            "material": "SDK_Face_Front",
+            "back_material": "SDK_Face_Back",
+            "reversed": true,
+            "normal": [
+              0,
+              0,
+              -1
+            ],
+            "plane": [
+              0,
+              0,
+              -1,
+              0
+            ],
+            "area": 12903.2,
+            "pushpull": {
+              "distance": 6.35,
+              "copy": true,
+              "metadata_only": false
+            },
+            "metadata": {
+              "role": "panel_face",
+              "source": "sdk_facade"
+            }
+          }
+        ],
+        "material": "SDK_Face_Front"
+      }
+    ]
+  },
+  "result": {
+    "mode": "present",
+    "value": {
+      "face_area_source_units": 20,
+      "edge_count": 4,
+      "loop_count": 2,
+      "outer_loop_is_outer": true,
+      "outer_loop_vertices": 4,
+      "first_edge_length": 6,
+      "normal_after_reverse": [
+        0,
+        0,
+        -1
+      ],
+      "plane_after_reverse": [
+        0,
+        0,
+        -1,
+        0
+      ]
+    }
+  }
+}

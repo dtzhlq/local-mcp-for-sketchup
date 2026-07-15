@@ -3,6 +3,7 @@ import crypto from 'node:crypto';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
+import { getComponentDefinitionOperationNames, getOperationNames } from '../src/capabilities.mjs';
 
 const options = parseArgs(process.argv.slice(2));
 const packageJson = JSON.parse(await fs.readFile('package.json', 'utf8'));
@@ -21,6 +22,8 @@ const shaPath = path.join(releaseDir, `alma-sketchup-mcp-${pluginVersion}.sha256
 const manifestPath = path.join(releaseDir, `release-manifest-${pluginVersion}.json`);
 const liveStatus = options.liveStatus || 'unverified';
 if (!['passed', 'blocked', 'unverified'].includes(liveStatus)) throw new Error(`Invalid --live-status: ${liveStatus}`);
+const registeredOperations = getOperationNames().length;
+const componentScopeOperations = getComponentDefinitionOperationNames().length;
 
 const manifest = {
   version: 1,
@@ -35,9 +38,9 @@ const manifest = {
   release_status: liveStatus === 'passed' ? 'rc_candidate_verified' : 'blocked_live_queue',
   rc_signed: liveStatus === 'passed',
   contracts: {
-    mcp_tools: 34,
-    registered_operations: 91,
-    component_scope_operations: 56
+    mcp_tools: 36,
+    registered_operations: registeredOperations,
+    component_scope_operations: componentScopeOperations
   },
   offline_gates: options.offlineGates,
   live_queue: {

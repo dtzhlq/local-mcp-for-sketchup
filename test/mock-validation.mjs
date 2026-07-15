@@ -49,8 +49,8 @@ function assertSnapshotQualityFields(snapshot, label) {
 }
 
 const manifest = getOperationManifest();
-assert.equal(getRuntimeCapabilities('mock').version, 'mock-runtime-0.1.0-rc.1');
-assert.equal(getRuntimeCapabilities('queue').version, 'queue-runtime-0.1.0-rc.1');
+assert.equal(getRuntimeCapabilities('mock').version, 'mock-runtime-0.1.0-rc.2');
+assert.equal(getRuntimeCapabilities('queue').version, 'queue-runtime-0.1.0-rc.2');
 assert.ok(manifest.length > 0, 'capability manifest should list operations');
 for (const capability of manifest) {
   assert.equal(typeof capability.op, 'string', 'manifest capability should have op name');
@@ -2049,9 +2049,9 @@ assert.equal(adoption.adopted_count, 3);
 assert.ok(adoption.entities.every((entity) => entity.id.startsWith('external-')));
 const adoptedNestedHandle = adoption.recursive_index.find((entry) => entry.definition_name === 'External_Handle_Def' && entry.name === 'Handle_Nested_Bar');
 assert.equal(adoptedNestedHandle.editable, true);
-assert.equal(adoptedNestedHandle.edit_scope, 'component_definition');
+assert.equal(adoptedNestedHandle.edit_scope, 'instance_path');
 assert.equal(adoptedNestedHandle.affected_instance_count, 1);
-assert.ok(adoptedNestedHandle.entity_path.startsWith('definition:'));
+assert.ok(adoptedNestedHandle.entity_path.startsWith('mock:'));
 const resolvedLargest = await bridge.resolve_model_targets({ runtime: 'mock', query: 'largest cabinet' });
 assert.equal(resolvedLargest.kind, 'target_resolution');
 assert.equal(resolvedLargest.ok, true);

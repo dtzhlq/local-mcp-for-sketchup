@@ -1,0 +1,206 @@
+{
+  "version": 1,
+  "kind": "python_sdk_source_compat_golden",
+  "case_id": "helper_loop",
+  "source_sha256": "638fbfcb2abff6915888c910f335f9359fc25b65e66bd6565c864b3897169c34",
+  "document": {
+    "version": 1,
+    "units": "mm",
+    "operations": [
+      {
+        "op": "reset"
+      },
+      {
+        "op": "material",
+        "name": "SDK_Helper_Base",
+        "color": "#dbeafe"
+      },
+      {
+        "op": "material",
+        "name": "SDK_Helper_Accent",
+        "color": "#f97316"
+      },
+      {
+        "op": "geometry_input",
+        "id": "SDK_Helper_Panel_0-id",
+        "name": "SDK_Helper_Panel_0",
+        "vertices": [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            50.8,
+            0,
+            0
+          ],
+          [
+            50.8,
+            38.1,
+            0
+          ],
+          [
+            0,
+            38.1,
+            0
+          ]
+        ],
+        "faces": [
+          {
+            "id": "SDK_Helper_Panel_0-face",
+            "outer": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "holes": [],
+            "material": "SDK_Helper_Base",
+            "normal": [
+              0,
+              0,
+              1
+            ],
+            "plane": [
+              0,
+              0,
+              1,
+              0
+            ],
+            "area": 1935.48,
+            "metadata": {
+              "source": "helper_function",
+              "index": 0
+            }
+          }
+        ],
+        "material": "SDK_Helper_Base"
+      },
+      {
+        "op": "geometry_input",
+        "id": "SDK_Helper_Panel_1-id",
+        "name": "SDK_Helper_Panel_1",
+        "vertices": [
+          [
+            76.2,
+            0,
+            0
+          ],
+          [
+            127,
+            0,
+            0
+          ],
+          [
+            127,
+            38.1,
+            0
+          ],
+          [
+            76.2,
+            38.1,
+            0
+          ]
+        ],
+        "faces": [
+          {
+            "id": "SDK_Helper_Panel_1-face",
+            "outer": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "holes": [],
+            "material": "SDK_Helper_Base",
+            "normal": [
+              0,
+              0,
+              1
+            ],
+            "plane": [
+              0,
+              0,
+              1,
+              0
+            ],
+            "area": 1935.48,
+            "metadata": {
+              "source": "helper_function",
+              "index": 3
+            }
+          }
+        ],
+        "material": "SDK_Helper_Base"
+      },
+      {
+        "op": "geometry_input",
+        "id": "SDK_Helper_Panel_2-id",
+        "name": "SDK_Helper_Panel_2",
+        "vertices": [
+          [
+            152.4,
+            0,
+            0
+          ],
+          [
+            203.2,
+            0,
+            0
+          ],
+          [
+            203.2,
+            38.1,
+            0
+          ],
+          [
+            152.4,
+            38.1,
+            0
+          ]
+        ],
+        "faces": [
+          {
+            "id": "SDK_Helper_Panel_2-face",
+            "outer": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "holes": [],
+            "material": "SDK_Helper_Accent",
+            "normal": [
+              0,
+              0,
+              1
+            ],
+            "plane": [
+              0,
+              0,
+              1,
+              0
+            ],
+            "area": 1935.48,
+            "metadata": {
+              "source": "helper_function",
+              "index": 6
+            }
+          }
+        ],
+        "material": "SDK_Helper_Accent"
+      }
+    ]
+  },
+  "result": {
+    "mode": "present",
+    "value": {
+      "panel_count": 3,
+      "operation_count": 6,
+      "first_edge_length": 2,
+      "first_outer_loop": true,
+      "last_face_area": 3
+    }
+  }
+}

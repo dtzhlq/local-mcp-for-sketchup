@@ -4,7 +4,9 @@ module AlmaSketchupMCP
   extend self
 
   def delete_object(model, operation)
+    require_confirmed!(operation, 'delete') if operation['entity_path'] || operation['entityPath'] || operation['target_path'] || operation['targetPath']
     entity = find_referenced_entity(model, operation, 'delete')
+    assert_entity_editable!(entity, 'delete')
     entity.erase!
   end
 
@@ -58,6 +60,167 @@ module AlmaSketchupMCP
     updates = attribute_updates(operation, dictionary)
     updates.each { |key, value| entity.set_attribute(dictionary, key, value) }
     entity
+  end
+
+  def remove_object_attribute(model, operation)
+    entity = find_referenced_entity(model, operation, 'remove_attribute')
+    dictionary = non_empty_string(operation['dictionary'] || operation['namespace'] || 'AlmaSketchupMCP', 'remove_attribute.dictionary')
+    key = operation['key'] || operation['attr_key'] || operation['attrKey']
+    key.nil? ? entity.delete_attribute(dictionary) : entity.delete_attribute(dictionary, non_empty_string(key, 'remove_attribute.key'))
+    entity
+  end
+
+  def set_face_material(model, operation)
+    face = find_referenced_entity(model, operation, 'set_face_material')
+    raise 'set_face_material target must be a Face' unless face.is_a?(Sketchup::Face)
+
+    material = ensure_material(operation.fetch('material'), '#cccccc')
+    side = (operation['side'] || 'front').to_s
+    raise 'set_face_material.side must be front, back, or both' unless %w[front back both].include?(side)
+
+    face.material = material if %w[front both].include?(side)
+    face.back_material = material if %w[back both].include?(side)
+    face
+  end
+
+  def set_edge_properties(model, operation)
+    edge = find_referenced_entity(model, operation, 'set_edge_properties')
+    raise 'set_edge_properties target must be an Edge' unless edge.is_a?(Sketchup::Edge)
+
+    edge.soft = boolean_value(operation['soft'], 'set_edge_properties.soft') if operation.key?('soft')
+    edge.smooth = boolean_value(operation['smooth'], 'set_edge_properties.smooth') if operation.key?('smooth')
+    if operation.key?('visible') || operation.key?('hidden')
+      visible = operation.key?('visible') ? boolean_value(operation['visible'], 'set_edge_properties.visible') : !boolean_value(operation['hidden'], 'set_edge_properties.hidden')
+      edge.hidden = !visible
+    end
+    edge
+  end
+
+  def reverse_face(model, operation)
+    require_confirmed!(operation, 'reverse_face')
+    face = find_referenced_entity(model, operation, 'reverse_face')
+    raise 'reverse_face target must be a Face' unless face.is_a?(Sketchup::Face)
+
+    face.reverse!
+  end
+
+  def pushpull_face(model, operation)
+    require_confirmed!(operation, 'pushpull_face')
+    face = find_referenced_entity(model, operation, 'pushpull_face')
+    raise 'pushpull_face target must be a Face' unless face.is_a?(Sketchup::Face)
+
+    distance = finite_number(operation['distance'], 'pushpull_face.distance')
+    raise 'pushpull_face.distance must be non-zero' if distance.abs <= 1e-9
+
+    face.pushpull(mm_to_model_units(distance), operation['copy'] == true)
+  end
+
+  def duplicate_entity(model, operation)
+    entity = find_referenced_entity(model, operation, 'duplicate_entity')
+    raise 'duplicate_entity target must be a Group or ComponentInstance' unless entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance)
+
+    copy = entity.copy
+    new_id = non_empty_string(operation['new_id'] || operation['newId'], 'duplicate_entity.new_id')
+    new_name = non_empty_string(operation['new_name'] || operation['newName'], 'duplicate_entity.new_name')
+    parent_entities = editable_parent_entities(entity)
+    duplicate = parent_entities.grep(Sketchup::Group).concat(parent_entities.grep(Sketchup::ComponentInstance)).find do |candidate|
+      candidate != copy && ([entity_id(candidate), entity_persistent_id(candidate)].compact.map(&:to_s).include?(new_id) || candidate.name == new_name)
+    end
+    raise 'duplicate_entity new_id and new_name must be unique in the target scope' if duplicate
+
+    copy.name = new_name
+    copy.set_attribute('AlmaSketchupMCP', 'id', new_id)
+    translate = operation['translate'] || [0, 0, 0]
+    copy.transform!(Geom::Transformation.translation(vector(translate, 'duplicate_entity.translate').map { |value| mm_to_model_units(value) }))
+    copy.set_attribute('AlmaSketchupMCP', 'duplicated_from', entity_id(entity) || entity_persistent_id(entity))
+    copy
+  end
+
+  def replace_component_definition(model, operation)
+    require_confirmed!(operation, 'replace_component_definition')
+    entity = find_referenced_entity(model, operation, 'replace_component_definition')
+    raise 'replace_component_definition target must be a ComponentInstance' unless entity.is_a?(Sketchup::ComponentInstance)
+
+    definition_name = non_empty_string(operation['definition'] || operation['new_definition'] || operation['newDefinition'], 'replace_component_definition.definition')
+    definition = model.definitions[definition_name]
+    raise "replace_component_definition definition not found: #{definition_name}" unless definition
+
+    parent_entities = editable_parent_entities(entity)
+    replacement = parent_entities.add_instance(definition, entity.transformation)
+    replacement.name = entity.name
+    replacement.layer = entity.layer if replacement.respond_to?(:layer=)
+    replacement.material = entity.material if replacement.respond_to?(:material=) && entity.material
+    if entity.respond_to?(:attribute_dictionaries) && entity.attribute_dictionaries
+      entity.attribute_dictionaries.each { |dictionary| dictionary.each_pair { |key, value| replacement.set_attribute(dictionary.name, key, value) } }
+    end
+    entity.erase!
+    replacement
+  end
+
+  def explode_entity(model, operation)
+    require_confirmed!(operation, 'explode_entity')
+    entity = find_referenced_entity(model, operation, 'explode_entity')
+    assert_entity_editable!(entity, 'explode_entity')
+    raise 'explode_entity target must be a Group or ComponentInstance' unless entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance)
+
+    entity.explode
+  end
+
+  def erase_entities_operation(model, operation)
+    require_confirmed!(operation, 'erase_entities')
+    targets = operation['targets'] || operation['entity_paths'] || operation['entityPaths']
+    raise 'erase_entities.targets must be a non-empty array' unless targets.is_a?(Array) && !targets.empty?
+    max_affected = operation['max_affected'] || operation['maxAffected']
+    raise 'erase_entities exceeds max_affected' if max_affected && targets.length > Integer(max_affected)
+
+    entities = targets.map { |target| find_referenced_entity(model, collection_target_operation(target, operation), 'erase_entities') }
+    entities.each { |entity| assert_entity_editable!(entity, 'erase_entities') }
+    entities.group_by { |entity| editable_parent_entities(entity) }.each do |parent, items|
+      parent.erase_entities(items)
+    end
+    entities.length
+  end
+
+  def transform_entities_operation(model, operation)
+    require_confirmed!(operation, 'transform_entities')
+    targets = operation['targets'] || operation['entity_paths'] || operation['entityPaths']
+    raise 'transform_entities.targets must be a non-empty array' unless targets.is_a?(Array) && !targets.empty?
+    max_affected = operation['max_affected'] || operation['maxAffected']
+    raise 'transform_entities exceeds max_affected' if max_affected && targets.length > Integer(max_affected)
+
+    entities = targets.map { |target| find_referenced_entity(model, collection_target_operation(target, operation), 'transform_entities') }
+    entities.each { |entity| assert_entity_editable!(entity, 'transform_entities') }
+    translate = vector(operation['translate'] || operation['translation'], 'transform_entities.translate')
+    transform = Geom::Transformation.translation(translate.map { |value| mm_to_model_units(value) })
+    entities.group_by { |entity| editable_parent_entities(entity) }.each do |parent, items|
+      parent.transform_entities(transform, items)
+    end
+    true
+  end
+
+  def collection_target_operation(target, operation)
+    reference = target.is_a?(String) ? { 'entity_path' => target } : target.dup
+    reference['edit_scope'] ||= operation['edit_scope'] || operation['editScope']
+    reference['instance_policy'] ||= operation['instance_policy'] || operation['instancePolicy']
+    reference['instance_id'] ||= operation['instance_id'] || operation['instanceId']
+    reference
+  end
+
+  def editable_parent_entities(entity)
+    parent = entity.parent
+    return parent.entities if parent.respond_to?(:entities)
+    return parent if parent.respond_to?(:erase_entities) && parent.respond_to?(:transform_entities)
+
+    raise 'entity parent does not expose an editable Entities collection'
+  end
+
+  def require_confirmed!(operation, op_name)
+    raise "#{op_name}.confirmed=true is required" unless operation['confirmed'] == true
+  end
+
+  def assert_entity_editable!(entity, op_name)
+    raise "#{op_name} target is locked" if entity.respond_to?(:locked?) && entity.locked?
+    raise "#{op_name} target is invalid" if entity.respond_to?(:valid?) && !entity.valid?
   end
 
   def set_object_classification(model, operation)

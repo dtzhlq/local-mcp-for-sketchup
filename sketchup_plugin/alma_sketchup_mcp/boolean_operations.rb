@@ -60,7 +60,7 @@ module AlmaSketchupMCP
 
   def apply_solid_boolean(model, operation, op_name, method_name)
     target = solid_boolean_target(model, operation, op_name)
-    tools = solid_boolean_tools(model, operation, op_name)
+    tools = solid_boolean_tools(model, operation, op_name, target)
     validate_distinct_boolean_inputs(target, tools, op_name)
     keep_tools = boolean_value(operation['keep_tools'] || operation['keepTools'] || false, "#{op_name}.keep_tools")
     keep_originals = boolean_value(operation['keep_originals'] || operation['keepOriginals'] || false, "#{op_name}.keep_originals")
@@ -110,35 +110,46 @@ module AlmaSketchupMCP
 
   def solid_boolean_target(model, operation, op_name)
     entity = find_referenced_entity(model, operation, op_name)
-    raise "#{op_name} requires a top-level SketchUp group target" unless entity.is_a?(Sketchup::Group)
+    raise "#{op_name} requires a SketchUp group target" unless entity.is_a?(Sketchup::Group)
     raise "#{op_name}.target must be a manifold SketchUp solid: #{entity.name}" unless manifold_report(entity)['is_manifold']
 
     entity
   end
 
-  def solid_boolean_tools(model, operation, op_name)
+  def solid_boolean_tools(model, operation, op_name, target)
     raw = operation['tools'] || operation['tool_ids'] || operation['toolIds'] || operation['tool_id'] || operation['toolId']
     values = raw.is_a?(Array) ? raw : (raw.nil? ? [] : [raw])
     raise "#{op_name} requires tools, tool_ids, or tool_id" if values.empty?
 
     values.each_with_index.map do |value, index|
-      entity = find_boolean_tool(model, value, "#{op_name}.tools[#{index}]")
-      raise "#{op_name}.tools[#{index}] must resolve to a top-level SketchUp group" unless entity.is_a?(Sketchup::Group)
+      entity = find_boolean_tool(model, value, "#{op_name}.tools[#{index}]", op_name, editable_parent_entities(target))
+      raise "#{op_name}.tools[#{index}] must resolve to a SketchUp group" unless entity.is_a?(Sketchup::Group)
+      raise "#{op_name}.tools[#{index}] must share the target Entities scope" unless editable_parent_entities(entity).equal?(editable_parent_entities(target))
       raise "#{op_name}.tools[#{index}] must be a manifold SketchUp solid: #{entity.name}" unless manifold_report(entity)['is_manifold']
 
       entity
     end
   end
 
-  def find_boolean_tool(model, value, field_name)
+  def find_boolean_tool(model, value, field_name, op_name = field_name, scoped_entities = nil)
     if value.is_a?(Hash)
-      operation = {}
-      operation['target_id'] = value['target_id'] || value['targetId'] || value['id'] || value['object_id'] || value['objectId'] || value['guid']
-      operation['name'] = value['name'] || value['target'] || value['object']
-      return find_referenced_entity(model, operation, field_name)
+      begin
+        return find_referenced_entity(model, value, op_name)
+      rescue StandardError
+        fallback = value['name'] || value['target'] || value['object'] || value['target_id'] || value['targetId'] || value['id']
+        raise unless fallback && scoped_entities
+
+        scoped = scoped_entities.grep(Sketchup::Group).find do |item|
+          [entity_id(item), entity_persistent_id(item), item.name].compact.map(&:to_s).include?(fallback.to_s)
+        end
+        return scoped if scoped
+
+        raise
+      end
     end
     key = non_empty_string(value.to_s, field_name)
-    entity = (model.entities.grep(Sketchup::Group) + model.entities.grep(Sketchup::ComponentInstance)).find do |item|
+    candidates = scoped_entities ? scoped_entities.grep(Sketchup::Group) : (model.entities.grep(Sketchup::Group) + model.entities.grep(Sketchup::ComponentInstance))
+    entity = candidates.find do |item|
       [entity_id(item), entity_persistent_id(item), item.name].compact.include?(key)
     end
     raise "object not found: #{field_name} #{key}" unless entity
@@ -220,9 +231,10 @@ module AlmaSketchupMCP
     raw_targets = operation['targets'] || operation['target_ids'] || operation['targetIds']
     if raw_targets
       values = raw_targets.is_a?(Array) ? raw_targets : [raw_targets]
-      return values.each_with_index.map { |value, index| find_boolean_tool(model, value, "#{op_name}.targets[#{index}]") }
+      return values.each_with_index.map { |value, index| find_boolean_tool(model, value, "#{op_name}.targets[#{index}]", op_name) }
     end
-    if operation['target_id'] || operation['targetId'] || operation['name'] || operation['target'] || operation['object']
+    if operation['entity_path'] || operation['entityPath'] || operation['target_path'] || operation['targetPath'] ||
+       operation['target_id'] || operation['targetId'] || operation['name'] || operation['target'] || operation['object']
       return [find_referenced_entity(model, operation, op_name)]
     end
     model.entities.grep(Sketchup::Group)

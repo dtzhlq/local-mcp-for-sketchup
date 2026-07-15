@@ -1,0 +1,85 @@
+{
+  "version": 1,
+  "kind": "python_sdk_source_compat_golden",
+  "case_id": "selection_modes",
+  "source_sha256": "e4923d970c495e9e7387dbd215e58773ede2b652a2a73339e93602db87988b62",
+  "document": {
+    "version": 1,
+    "units": "mm",
+    "operations": [
+      {
+        "op": "reset"
+      },
+      {
+        "op": "box",
+        "name": "Corpus_Select_First",
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "size": [
+          10,
+          10,
+          10
+        ],
+        "id": "corpus-select-first"
+      },
+      {
+        "op": "box",
+        "name": "Corpus_Select_Second",
+        "origin": [
+          20,
+          0,
+          0
+        ],
+        "size": [
+          10,
+          10,
+          10
+        ],
+        "id": "corpus-select-second"
+      },
+      {
+        "op": "selection",
+        "mode": "add",
+        "targets": [
+          {
+            "target_id": "corpus-select-first"
+          },
+          {
+            "target_id": "corpus-select-second"
+          }
+        ]
+      },
+      {
+        "op": "selection",
+        "mode": "remove",
+        "targets": [
+          {
+            "target_id": "corpus-select-first"
+          }
+        ]
+      },
+      {
+        "op": "selection",
+        "mode": "replace",
+        "targets": [
+          {
+            "target_id": "corpus-select-second"
+          }
+        ]
+      },
+      {
+        "op": "selection",
+        "mode": "clear"
+      }
+    ]
+  },
+  "result": {
+    "mode": "present",
+    "value": {
+      "selection_size": 0
+    }
+  }
+}

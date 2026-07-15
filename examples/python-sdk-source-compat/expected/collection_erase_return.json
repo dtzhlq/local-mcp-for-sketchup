@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "kind": "python_sdk_source_compat_golden",
+  "case_id": "collection_erase_return",
+  "source_sha256": "b6501a216394860322fbef5db7677fcb5fc5e5110e81062873ffd725484a4b54",
+  "document": {
+    "version": 1,
+    "units": "mm",
+    "operations": [
+      {
+        "op": "reset"
+      },
+      {
+        "op": "box",
+        "name": "Corpus_Erase_First",
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "size": [
+          10,
+          10,
+          10
+        ],
+        "id": "corpus-erase-first"
+      },
+      {
+        "op": "box",
+        "name": "Corpus_Erase_Second",
+        "origin": [
+          20,
+          0,
+          0
+        ],
+        "size": [
+          10,
+          10,
+          10
+        ],
+        "id": "corpus-erase-second"
+      },
+      {
+        "op": "delete",
+        "target_id": "corpus-erase-first"
+      },
+      {
+        "op": "delete",
+        "target_id": "corpus-erase-second"
+      }
+    ]
+  },
+  "result": {
+    "mode": "present",
+    "value": {
+      "erase_result": null
+    }
+  }
+}

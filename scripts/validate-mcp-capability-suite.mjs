@@ -55,8 +55,8 @@ try {
   const list = await request({ method: 'tools/list' }, { timeoutMs: 10000 });
   const tools = list.result.tools;
   const toolNames = tools.map((tool) => tool.name).sort();
-  assert.equal(toolNames.length, 34, 'MCP server should expose the current 34-tool surface');
-  for (const requiredTool of ['prepare_image_modeling_brief', 'compile_reviewed_part_graph']) {
+  assert.equal(toolNames.length, 36, 'MCP server should expose the current 36-tool surface');
+  for (const requiredTool of ['prepare_image_modeling_brief', 'compile_reviewed_part_graph', 'prepare_existing_model_edit', 'apply_reviewed_model_edit']) {
     assert.ok(toolNames.includes(requiredTool), `MCP server should expose ${requiredTool}`);
   }
 
@@ -125,6 +125,8 @@ try {
 
   const baseCode = JSON.stringify(baseModelDsl());
   let baseSnapshot;
+  let adoptedModel;
+  let existingEditPlan;
   await runStep('reset_model:mock', async () => {
     const reset = await callTool('reset_model', { runtime: 'mock' });
     assert.equal(reset.snapshot.totals.groups, 0);
@@ -165,10 +167,39 @@ try {
 
   await runStep('adopt_open_model', async () => {
     const adopted = await callTool('adopt_open_model', { runtime: 'mock', recursive: true, prefix: 'suite' });
+    adoptedModel = adopted;
     assert.equal(adopted.kind, 'adopt_open_model');
     assert.ok(adopted.existing_count >= 1);
     assert.ok(Array.isArray(adopted.recursive_index));
     return { existing: adopted.existing_count, nested: adopted.recursive_index.length };
+  });
+
+  await runStep('prepare_existing_model_edit', async () => {
+    const target = adoptedModel.recursive_index.find((entry) => entry.entity_type === 'face');
+    assert.ok(target?.entity_path);
+    const prepared = await callTool('prepare_existing_model_edit', {
+      runtime: 'mock',
+      instruction: 'Hide one reviewed existing-model face.',
+      targets: [{ entity_path: target.entity_path, edit_scope: 'instance_path', instance_policy: 'definition_wide' }],
+      operations: [{ op: 'set_visibility', entity_path: target.entity_path, edit_scope: 'instance_path', instance_policy: 'definition_wide', visible: false }],
+      output_dir: path.join(outputDir, 'existing-edit-prepare')
+    });
+    assert.equal(prepared.plan.compile_permission, 'ready_for_review');
+    existingEditPlan = prepared.plan;
+    return { plan_id: prepared.plan.plan_id, risk: prepared.plan.risk_level };
+  });
+
+  await runStep('apply_reviewed_model_edit', async () => {
+    const applied = await callTool('apply_reviewed_model_edit', {
+      runtime: 'mock',
+      plan: existingEditPlan,
+      review: { status: 'approved', plan_id: existingEditPlan.plan_id, reviewer: 'mcp-capability-suite' },
+      output_dir: path.join(outputDir, 'existing-edit-apply'),
+      save_model: false
+    });
+    assert.equal(applied.ok, true);
+    await fs.access(applied.artifacts.review);
+    return { plan_id: applied.plan_id, risk: applied.risk_level };
   });
 
   await runStep('resolve_model_targets', async () => {

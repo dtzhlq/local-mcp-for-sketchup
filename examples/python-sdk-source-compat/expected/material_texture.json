@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "kind": "python_sdk_source_compat_golden",
+  "case_id": "material_texture",
+  "source_sha256": "4639b80d9e552ba713e386a596b6a022b0ff57877e656031b2831b3bc3619616",
+  "document": {
+    "version": 1,
+    "units": "mm",
+    "operations": [
+      {
+        "op": "reset"
+      },
+      {
+        "op": "material",
+        "name": "Corpus_Texture_Material",
+        "color": "#ffffff",
+        "texture": {
+          "path": "assets/corpus-texture.png",
+          "width": 64,
+          "height": 32
+        }
+      }
+    ]
+  },
+  "result": {
+    "mode": "present",
+    "value": {
+      "material": "Corpus_Texture_Material",
+      "texture": "assets/corpus-texture.png",
+      "width": 64
+    }
+  }
+}

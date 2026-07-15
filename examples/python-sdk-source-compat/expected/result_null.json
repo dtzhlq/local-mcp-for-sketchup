@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "kind": "python_sdk_source_compat_golden",
+  "case_id": "result_null",
+  "source_sha256": "21343d349cb224a69b4f72431c571cb66eb2c1780baf251b07fe2f493d24a15f",
+  "document": {
+    "version": 1,
+    "units": "mm",
+    "operations": [
+      {
+        "op": "reset"
+      }
+    ]
+  },
+  "result": {
+    "mode": "present",
+    "value": null
+  }
+}

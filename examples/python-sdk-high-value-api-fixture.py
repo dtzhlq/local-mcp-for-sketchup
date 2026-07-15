@@ -17,11 +17,11 @@ deleted_box = model.add_box(
     material=material,
 )
 
-transformed_count = model.entities.transform_entities(
+transformed_ok = model.entities.transform_entities(
     SUTransformation.translation(SUPoint3D(2, 0, 0)),
     [moving_box],
 )
-deleted_count = model.entities.erase_entities(deleted_box)
+deleted_result = model.entities.erase_entities(deleted_box)
 
 uv_face = model.entities.add_face(
     [
@@ -45,17 +45,18 @@ uv_face.position_material(
     True,
 )
 uv_helper = uv_face.get_UVHelper(True, False)
-front_uvq = uv_helper.get_front_UVQ(SUPoint3D(1, 3, 0))
+front_uvq = uv_helper.get_front_UVQ(SUPoint3D(0.5, 2.5, 0))
 
 page = model.pages.add(
     "SDK_High_Value_Page",
     camera=Camera(SUPoint3D(6, -8, 5), SUPoint3D(1, 1, 0), fov=40),
 )
-page.update(17)
+page_updated = page.update(PAGE_USE_CAMERA | PAGE_USE_SHADOWINFO | PAGE_USE_LAYER_VISIBILITY)
 
 result = {
-    "transformed_count": transformed_count,
-    "deleted_count": deleted_count,
+    "transformed_ok": transformed_ok,
+    "deleted_result": deleted_result,
     "front_uvq": front_uvq,
+    "page_updated": page_updated,
     "page_update_flags": page.update_flags,
 }

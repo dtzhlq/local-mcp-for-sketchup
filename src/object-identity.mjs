@@ -1,6 +1,36 @@
 import { nonEmptyString } from './object-operation-utils.mjs';
 
-const NESTED_EDIT_OPERATIONS = new Set(['rename', 'set_material', 'set_visibility', 'transform_object']);
+const NESTED_EDIT_OPERATIONS = new Set([
+  'delete',
+  'rename',
+  'set_material',
+  'set_visibility',
+  'transform_object',
+  'assign_tag',
+  'attribute',
+  'classification',
+  'texture_transform',
+  'remove_attribute',
+  'set_face_material',
+  'reverse_face',
+  'pushpull_face',
+  'set_edge_properties',
+  'duplicate_entity',
+  'replace_component_definition',
+  'explode_entity',
+  'erase_entities',
+  'transform_entities',
+  'cut_hole',
+  'cut_slot',
+  'cut_recess',
+  'add_boss',
+  'add_raised_rib',
+  'boolean_union',
+  'boolean_difference',
+  'boolean_intersect',
+  'manifold_check',
+  'manifold_repair'
+]);
 
 export function objectId(operation, fallbackName) {
   return nonEmptyString(operation.id ?? operation.object_id ?? operation.objectId ?? operation.guid ?? fallbackName, `${fallbackName}.id`);
@@ -23,7 +53,7 @@ export function resolveObjectReference(operation, opName) {
   if (rawEntityPath !== undefined) {
     if (!NESTED_EDIT_OPERATIONS.has(opName)) throw new Error(`${opName} does not support nested entity_path targets`);
     const editScope = operation.edit_scope ?? operation.editScope;
-    if (editScope !== 'component_definition') throw new Error(`${opName}.edit_scope must be component_definition for nested targets`);
+    if (!['component_definition', 'instance_path'].includes(editScope)) throw new Error(`${opName}.edit_scope must be component_definition or instance_path for nested targets`);
     const instancePolicy = operation.instance_policy ?? operation.instancePolicy;
     if (!['definition_wide', 'make_unique'].includes(instancePolicy)) {
       throw new Error(`${opName}.instance_policy must be definition_wide or make_unique for nested targets`);
@@ -63,6 +93,7 @@ export function referenceLabel(reference) {
 }
 
 export function findModelObject(model, reference, required = true) {
+  if (reference?.entity_path?.startsWith('mock:')) return findMockPersistentObject(model, reference, required);
   if (reference?.entity_path) return findNestedDefinitionObject(model, reference, required);
   const groupIndex = model.groups.findIndex((group) => matchesObjectReference(group, reference));
   if (groupIndex >= 0) return { collection: 'groups', index: groupIndex, item: model.groups[groupIndex] };
@@ -72,9 +103,145 @@ export function findModelObject(model, reference, required = true) {
   return null;
 }
 
+function findMockPersistentObject(model, reference, required) {
+  const segments = parseMockPersistentEntityPath(reference.entity_path);
+  let current = null;
+  let definition = null;
+  let definitionName = null;
+  let collection = null;
+  let collectionName = null;
+  let index = -1;
+  let parentGroup = null;
+  const root = segments[0];
+  if (root.entity_type === 'group') {
+    collection = model.groups || [];
+    collectionName = 'groups';
+  } else if (root.entity_type === 'component_instance') {
+    collection = model.instances || [];
+    collectionName = 'instances';
+  } else {
+    if (required) throw new Error('mock persistent entity path must start with a group or component_instance');
+    return null;
+  }
+  index = collection.findIndex((item) => nestedStableReferences(item).includes(root.reference));
+  if (index < 0) {
+    if (required) throw new Error(`mock persistent path root not found: ${root.reference}`);
+    return null;
+  }
+  current = collection[index];
+
+  if (reference.instance_policy === 'make_unique' && root.entity_type === 'component_instance') {
+    if (reference.instance_id && !nestedStableReferences(current).includes(String(reference.instance_id))) {
+      throw new Error(`make_unique instance ${reference.instance_id} does not match persistent path root ${root.reference}`);
+    }
+    current = makeMockInstanceUnique(model, current);
+    collection[index] = current;
+  }
+
+  for (let segmentIndex = 1; segmentIndex < segments.length; segmentIndex += 1) {
+    const segment = segments[segmentIndex];
+    if (current?.definition) {
+      definitionName = current.definition;
+      definition = model.component_definitions?.[definitionName];
+      if (!definition) throw new Error(`component definition not found for mock persistent path: ${definitionName}`);
+      if (segment.entity_type === 'group') {
+        collection = definition.groups || [];
+        collectionName = 'groups';
+      } else if (segment.entity_type === 'component_instance') {
+        collection = definition.instances || [];
+        collectionName = 'instances';
+      } else {
+        throw new Error(`mock persistent path cannot resolve ${segment.entity_type} directly under component instance`);
+      }
+      index = collection.findIndex((item) => nestedStableReferences(item).includes(segment.reference));
+      if (index < 0) throw new Error(`mock persistent path segment not found: ${segment.reference}`);
+      current = collection[index];
+      if (reference.instance_policy === 'make_unique' && segment.entity_type === 'component_instance') {
+        current = makeMockInstanceUnique(model, current);
+        collection[index] = current;
+      }
+      continue;
+    }
+    if (segment.entity_type === 'face' || segment.entity_type === 'edge') {
+      parentGroup = current;
+      const key = segment.entity_type === 'face' ? '_face_states' : '_edge_states';
+      collection = parentGroup[key] || [];
+      collectionName = key;
+      index = collection.findIndex((item) => nestedStableReferences(item).includes(segment.reference));
+      if (index < 0) throw new Error(`mock persistent ${segment.entity_type} not found: ${segment.reference}`);
+      current = collection[index];
+      if (segmentIndex !== segments.length - 1) throw new Error(`${segment.entity_type} must be the leaf of a mock persistent path`);
+      continue;
+    }
+    throw new Error(`mock persistent path cannot descend through ${current?.entity_type || 'entity'}`);
+  }
+
+  const affectedInstanceCount = definitionName
+    ? countMockDefinitionInstances(model, definitionName)
+    : 1;
+  return {
+    collection: collectionName,
+    collection_ref: collection,
+    index,
+    item: current,
+    nested: segments.length > 1,
+    definition,
+    definition_name: definitionName,
+    entity_type: segments.at(-1).entity_type,
+    parent_group: parentGroup,
+    affected_instance_count: reference.instance_policy === 'make_unique' ? 1 : affectedInstanceCount,
+    instance_policy: reference.instance_policy,
+    persistent_id_path: reference.entity_path
+  };
+}
+
+function makeMockInstanceUnique(model, instance) {
+  const definition = model.component_definitions?.[instance.definition];
+  if (!definition) throw new Error(`make_unique definition not found: ${instance.definition}`);
+  if (countMockDefinitionInstances(model, instance.definition) <= 1) return instance;
+  const base = `${instance.definition}__${safeIdentityToken(instance.id || instance.name)}__unique`;
+  const uniqueName = uniqueDefinitionName(model, base);
+  const clone = structuredClone(definition);
+  clone.name = uniqueName;
+  model.component_definitions[uniqueName] = clone;
+  instance.definition = uniqueName;
+  return instance;
+}
+
+function countMockDefinitionInstances(model, definitionName) {
+  let count = 0;
+  const walk = (instance, stack = []) => {
+    if (instance.definition === definitionName) count += 1;
+    if (stack.includes(instance.definition)) return;
+    const definition = model.component_definitions?.[instance.definition];
+    for (const nested of definition?.instances || []) walk(nested, [...stack, instance.definition]);
+  };
+  for (const instance of model.instances || []) walk(instance);
+  return count;
+}
+
 export function definitionEntityPath(definitionName, entityType, stableReference) {
   if (!['group', 'component_instance'].includes(entityType)) throw new Error(`unsupported nested entity type: ${entityType}`);
   return `definition:${encodeEntityPathToken(definitionName)}/${entityType}:${encodeEntityPathToken(stableReference)}`;
+}
+
+export function mockPersistentEntityPath(segments) {
+  if (!Array.isArray(segments) || !segments.length) throw new Error('mock persistent entity path requires at least one segment');
+  return `mock:${segments.map((segment) => `${segment.entity_type}:${encodeEntityPathToken(segment.reference)}`).join('/')}`;
+}
+
+export function parseMockPersistentEntityPath(value) {
+  const raw = String(value || '');
+  if (!raw.startsWith('mock:')) throw new Error('mock persistent entity path must start with mock:');
+  const segments = raw.slice(5).split('/').filter(Boolean).map((segment) => {
+    const split = segment.indexOf(':');
+    if (split < 1) throw new Error('mock persistent entity path contains an invalid segment');
+    const entityType = segment.slice(0, split);
+    if (!['group', 'component_instance', 'face', 'edge'].includes(entityType)) throw new Error(`unsupported mock persistent entity type: ${entityType}`);
+    return { entity_type: entityType, reference: decodeEntityPathToken(segment.slice(split + 1)) };
+  });
+  if (!segments.length) throw new Error('mock persistent entity path must contain at least one segment');
+  return segments;
 }
 
 export function parseDefinitionEntityPath(value) {
@@ -130,6 +297,7 @@ function findNestedDefinitionObject(model, reference, required) {
   }
   return {
     collection: collectionName,
+    collection_ref: collection,
     index,
     item: collection[index],
     nested: true,

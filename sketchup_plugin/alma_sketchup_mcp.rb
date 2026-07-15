@@ -42,9 +42,9 @@ module AlmaSketchupMCP
   RESPONSE_DIR = File.join(STATE_DIR, 'responses')
   MM_PER_INCH = 25.4
   DEFAULT_OPERATION_LIMIT = 2000
-  PLUGIN_VERSION = '0.1.0-rc.1'
-  CAPABILITY_MANIFEST_VERSION = '2026-07-release-rc1'
-  RUNTIME_CAPABILITY_VERSION = '0.1.0-rc.1-capabilities.1'
+  PLUGIN_VERSION = '0.1.0-rc.2'
+  CAPABILITY_MANIFEST_VERSION = '2026-07-existing-model-edit-rc2'
+  RUNTIME_CAPABILITY_VERSION = '0.1.0-rc.2-capabilities.1'
   DSL_VERSION = 1
 
   def start
@@ -401,7 +401,7 @@ module AlmaSketchupMCP
       end
       adopted_id = adoption_id_for(entity, prefix, index)
       entity.set_attribute('AlmaSketchupMCP', 'adopted_id', adopted_id)
-      entity.set_attribute('AlmaSketchupMCP', 'adoption_version', '2026-07-natural-iteration-adoption.2')
+      entity.set_attribute('AlmaSketchupMCP', 'adoption_version', '2026-07-existing-model-editing.1')
       entity.set_attribute('AlmaSketchupMCP', 'adopted_at', Time.now.utc.iso8601)
       adopted += 1
     end
@@ -415,15 +415,18 @@ module AlmaSketchupMCP
         'reference' => entity['id'] || entity['persistent_id'] || entity['name']
       )
     end
-    recursive_index = recursive ? recursive_entity_index(model, recursive_limit) : nil
+    recursive_result = recursive ? recursive_entity_index(model, recursive_limit) : nil
+    recursive_index = recursive_result ? recursive_result['entries'] : nil
     {
       'kind' => 'adopt_open_model',
-      'version' => '2026-07-natural-iteration-adoption.2',
+      'version' => '2026-07-existing-model-editing.1',
       'runtime' => 'queue',
       'adopted_count' => adopted,
       'existing_count' => existing,
       'entity_count' => entities.length,
       'recursive' => recursive,
+      'recursive_truncated' => recursive_result ? recursive_result['truncated'] : false,
+      'recursive_total_seen' => recursive_result ? recursive_result['total_seen'] : 0,
       'read_only_nested_count' => recursive_index ? recursive_index.count { |entry| entry['editable'] == false } : 0,
       'editable_nested_count' => recursive_index ? recursive_index.count { |entry| entry['editable'] == true } : 0,
       'model_info' => get_model_info,
@@ -805,19 +808,128 @@ module AlmaSketchupMCP
   end
 
   def recursive_entity_index(model, limit)
-    entries = []
-    model.definitions.each do |definition|
-      next if definition.respond_to?(:image?) && definition.image?
-      affected_instance_count = definition_instance_count(model, definition)
-      definition.entities.each do |entity|
-        break if entries.length >= limit
-        next unless entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance) || entity.is_a?(Sketchup::Face) || entity.is_a?(Sketchup::Edge)
+    state = { 'entries' => [], 'total_seen' => 0 }
+    counts = definition_occurrence_counts(model)
+    walk_occurrence_entities(model, model.entities, [], [], counts, state, limit)
+    {
+      'entries' => state['entries'],
+      'total_seen' => state['total_seen'],
+      'truncated' => state['total_seen'] > limit
+    }
+  end
 
-        entries << definition_entity_snapshot(entity, definition, affected_instance_count)
-      end
-      break if entries.length >= limit
+  def walk_occurrence_entities(model, entities, ancestors, definition_stack, counts, state, limit)
+    entities.each do |entity|
+      next unless selectable_entity?(entity)
+
+      path_entities = ancestors + [entity]
+      state['total_seen'] += 1
+      state['entries'] << occurrence_entity_snapshot(entity, path_entities, counts) if state['entries'].length < limit
+      next unless entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance)
+
+      definition = entity.definition
+      definition_key = entity_persistent_id(definition) || definition.name.to_s
+      next if definition_stack.include?(definition_key)
+
+      walk_occurrence_entities(model, definition.entities, path_entities, definition_stack + [definition_key], counts, state, limit)
     end
-    entries
+  end
+
+  def definition_occurrence_counts(model)
+    counts = Hash.new(0)
+    walk = lambda do |entities, stack|
+      entities.grep(Sketchup::Group).concat(entities.grep(Sketchup::ComponentInstance)).each do |instance|
+        definition = instance.definition
+        key = entity_persistent_id(definition) || definition.name.to_s
+        counts[key] += 1
+        next if stack.include?(key)
+
+        walk.call(definition.entities, stack + [key])
+      end
+    end
+    walk.call(model.entities, [])
+    counts
+  end
+
+  def occurrence_entity_snapshot(entity, path_entities, counts)
+    entity_type = if entity.is_a?(Sketchup::Group)
+                    'group'
+                  elsif entity.is_a?(Sketchup::ComponentInstance)
+                    'component_instance'
+                  elsif entity.is_a?(Sketchup::Face)
+                    'face'
+                  else
+                    'edge'
+                  end
+    parent_instance = path_entities.length > 1 ? path_entities[-2] : nil
+    definition = parent_instance && parent_instance.respond_to?(:definition) ? parent_instance.definition : nil
+    definition_key = definition ? (entity_persistent_id(definition) || definition.name.to_s) : nil
+    affected_instance_count = definition_key ? counts[definition_key] : 1
+    instance_path = Sketchup::InstancePath.new(path_entities)
+    persistent_id_path = instance_path.persistent_id_path
+    entity_path = "pid:#{persistent_id_path}"
+    legacy_path = if definition && %w[group component_instance].include?(entity_type)
+                    definition_entity_path(definition.name, entity_type, entity_id(entity) || entity_persistent_id(entity))
+                  end
+    geometry_counts = occurrence_geometry_counts(entity)
+    {
+      'path' => entity_path,
+      'entity_path' => entity_path,
+      'persistent_id_path' => persistent_id_path,
+      'legacy_entity_path' => legacy_path,
+      'parent_definition' => definition&.name,
+      'definition_name' => definition&.name,
+      'reference' => entity_id(entity) || entity_persistent_id(entity),
+      'name' => entity.respond_to?(:name) ? entity.name : nil,
+      'entity_type' => entity_type,
+      'kind' => entity_type,
+      'persistent_id' => entity_persistent_id(entity),
+      'transformation' => instance_path.transformation.to_a,
+      'bounding_box' => entity.respond_to?(:bounds) ? bounds_hash(entity.bounds) : nil,
+      'material' => entity.respond_to?(:material) && entity.material ? entity.material.name : nil,
+      'back_material' => entity.is_a?(Sketchup::Face) && entity.back_material ? entity.back_material.name : nil,
+      'visible' => entity.respond_to?(:hidden?) ? !entity.hidden? : true,
+      'soft' => entity.is_a?(Sketchup::Edge) ? entity.soft? : nil,
+      'smooth' => entity.is_a?(Sketchup::Edge) ? entity.smooth? : nil,
+      'faces' => geometry_counts['faces'],
+      'edges' => geometry_counts['edges'],
+      'vertices' => geometry_counts['vertices'],
+      'features' => entity.respond_to?(:get_attribute) ? entity_features(entity) : [],
+      'editable' => true,
+      'edit_scope' => 'instance_path',
+      'allowed_operations' => occurrence_allowed_operations(entity_type),
+      'affected_instance_count' => affected_instance_count,
+      'shared_definition' => affected_instance_count > 1,
+      'instance_policy_required' => !definition.nil?,
+      'warning' => definition ? 'Definition-wide edits affect every occurrence; use instance_policy=make_unique for one occurrence.' : nil
+    }
+  end
+
+  def occurrence_geometry_counts(entity)
+    entities = if entity.is_a?(Sketchup::Group)
+                 entity.entities
+               elsif entity.is_a?(Sketchup::ComponentInstance)
+                 entity.definition.entities
+               end
+    return { 'faces' => 0, 'edges' => 0, 'vertices' => 0 } unless entities
+
+    edges = entities.grep(Sketchup::Edge)
+    {
+      'faces' => entities.grep(Sketchup::Face).length,
+      'edges' => edges.length,
+      'vertices' => edges.flat_map(&:vertices).uniq.length
+    }
+  end
+
+  def occurrence_allowed_operations(entity_type)
+    case entity_type
+    when 'face'
+      %w[set_material set_face_material set_visibility attribute remove_attribute reverse_face pushpull_face erase_entities transform_entities]
+    when 'edge'
+      %w[set_visibility attribute remove_attribute set_edge_properties erase_entities transform_entities]
+    else
+      %w[delete rename set_material set_visibility transform_object assign_tag attribute remove_attribute classification texture_transform duplicate_entity replace_component_definition explode_entity erase_entities transform_entities cut_hole cut_slot cut_recess add_boss add_raised_rib boolean_union boolean_difference boolean_intersect manifold_check manifold_repair]
+    end
   end
 
   def definition_instance_count(model, definition)
@@ -855,11 +967,11 @@ module AlmaSketchupMCP
       'visible' => entity.respond_to?(:hidden?) ? !entity.hidden? : true,
       'editable' => editable,
       'edit_scope' => editable ? 'component_definition' : 'nested_read_only',
-      'allowed_operations' => editable ? %w[rename set_material set_visibility transform_object] : [],
+      'allowed_operations' => editable ? occurrence_allowed_operations(entity_type) : [],
       'affected_instance_count' => affected_instance_count,
       'shared_definition' => affected_instance_count > 1,
       'instance_policy_required' => editable,
-      'warning' => editable ? 'Definition-wide edits affect every instance; use instance_policy=make_unique with instance_id for a per-instance edit.' : 'Nested Face/Edge entities remain read-only in this release slice.'
+      'warning' => editable ? 'Definition-wide edits affect every instance; use instance_policy=make_unique with instance_id for a per-instance edit.' : 'Legacy definition-only indexes do not expose Face/Edge paths; use recursive occurrence indexing.'
     }
   end
 
@@ -1046,6 +1158,8 @@ module AlmaSketchupMCP
       assign_tag(model, operation)
     when 'attribute'
       set_object_attribute(model, operation)
+    when 'remove_attribute'
+      remove_object_attribute(model, operation)
     when 'classification'
       set_object_classification(model, operation)
     when 'texture_transform'
@@ -1064,10 +1178,28 @@ module AlmaSketchupMCP
       rename_object(model, operation)
     when 'set_material'
       set_object_material(model, operation)
+    when 'set_face_material'
+      set_face_material(model, operation)
     when 'set_visibility'
       set_object_visibility(model, operation)
     when 'transform_object'
       transform_object(model, operation)
+    when 'set_edge_properties'
+      set_edge_properties(model, operation)
+    when 'reverse_face'
+      reverse_face(model, operation)
+    when 'pushpull_face'
+      pushpull_face(model, operation)
+    when 'duplicate_entity'
+      duplicate_entity(model, operation)
+    when 'replace_component_definition'
+      replace_component_definition(model, operation)
+    when 'explode_entity'
+      explode_entity(model, operation)
+    when 'erase_entities'
+      erase_entities_operation(model, operation)
+    when 'transform_entities'
+      transform_entities_operation(model, operation)
     when 'level'
       add_level(operation)
     when 'box'
@@ -1226,9 +1358,10 @@ module AlmaSketchupMCP
   def object_reference(operation, op_name)
     raw_entity_path = operation['entity_path'] || operation['entityPath'] || operation['target_path'] || operation['targetPath']
     if raw_entity_path
-      raise "#{op_name} does not support nested entity_path targets" unless %w[rename set_material set_visibility transform_object].include?(op_name)
+      allowed = %w[delete rename set_material set_visibility transform_object assign_tag attribute remove_attribute classification texture_transform set_face_material reverse_face pushpull_face set_edge_properties duplicate_entity replace_component_definition explode_entity erase_entities transform_entities cut_hole cut_slot cut_recess add_boss add_raised_rib boolean_union boolean_difference boolean_intersect manifold_check manifold_repair]
+      raise "#{op_name} does not support nested entity_path targets" unless allowed.include?(op_name)
       edit_scope = operation['edit_scope'] || operation['editScope']
-      raise "#{op_name}.edit_scope must be component_definition for nested targets" unless edit_scope == 'component_definition'
+      raise "#{op_name}.edit_scope must be component_definition or instance_path for nested targets" unless %w[component_definition instance_path].include?(edit_scope)
       instance_policy = operation['instance_policy'] || operation['instancePolicy']
       raise "#{op_name}.instance_policy must be definition_wide or make_unique for nested targets" unless %w[definition_wide make_unique].include?(instance_policy)
       instance_id = operation['instance_id'] || operation['instanceId']
@@ -1288,6 +1421,8 @@ module AlmaSketchupMCP
   end
 
   def find_nested_definition_entity(model, reference, op_name)
+    return find_persistent_path_entity(model, reference, op_name) if reference['entity_path'].start_with?('pid:')
+
     match = /\Adefinition:([^\/]+)\/(group|component_instance):([^\/]+)\z/.match(reference['entity_path'])
     raise 'entity_path must use definition:<token>/<group|component_instance>:<token>' unless match
 
@@ -1318,6 +1453,79 @@ module AlmaSketchupMCP
     end
 
     source_entity
+  end
+
+  def find_persistent_path_entity(model, reference, op_name)
+    pid_path = reference['entity_path'].delete_prefix('pid:')
+    instance_path = model.instance_path_from_pid_path(pid_path)
+    raise "persistent entity path not found: #{pid_path}" unless instance_path && instance_path.valid?
+
+    path_entities = instance_path.to_a
+    root = path_entities.first
+    if reference['instance_policy'] == 'make_unique' && reference['instance_id']
+      root_refs = [entity_id(root), entity_persistent_id(root), (root.respond_to?(:name) ? root.name : nil)].compact.map(&:to_s)
+      raise "make_unique instance #{reference['instance_id']} does not match persistent path root" unless root_refs.include?(reference['instance_id'].to_s)
+    end
+    return path_entities.last unless reference['instance_policy'] == 'make_unique'
+
+    make_unique_persistent_path(model, path_entities, op_name)
+  end
+
+  def make_unique_persistent_path(model, path_entities, op_name)
+    locators = []
+    entities = model.entities
+    path_entities.each do |entity|
+      candidates = locator_candidates(entities, entity)
+      locators << entity_locator(entity, candidates)
+      entities = entity.respond_to?(:definition) ? entity.definition.entities : nil
+      break unless entities
+    end
+
+    entities = model.entities
+    resolved = nil
+    locators.each_with_index do |locator, index|
+      resolved = resolve_entity_locator(entities, locator)
+      raise "make_unique could not preserve persistent target for #{op_name}" unless resolved
+      break if index == locators.length - 1
+      raise "make_unique path contains a non-instance ancestor for #{op_name}" unless resolved.respond_to?(:definition)
+
+      resolved.make_unique if resolved.respond_to?(:make_unique)
+      entities = resolved.definition.entities
+    end
+    resolved
+  end
+
+  def locator_candidates(entities, entity)
+    return [] unless entities
+    klass = entity.class
+    entities.select { |candidate| candidate.class == klass }
+  end
+
+  def entity_locator(entity, candidates)
+    {
+      'class' => entity.class,
+      'id' => entity_id(entity),
+      'persistent_id' => entity_persistent_id(entity),
+      'name' => entity.respond_to?(:name) ? entity.name.to_s : nil,
+      'ordinal' => candidates.index(entity) || 0
+    }
+  end
+
+  def resolve_entity_locator(entities, locator)
+    candidates = entities.select { |candidate| candidate.class == locator['class'] }
+    if locator['id']
+      match = candidates.find { |candidate| entity_id(candidate).to_s == locator['id'].to_s }
+      return match if match
+    end
+    if locator['persistent_id']
+      match = candidates.find { |candidate| entity_persistent_id(candidate).to_s == locator['persistent_id'].to_s }
+      return match if match
+    end
+    if locator['name'] && !locator['name'].empty?
+      named = candidates.select { |candidate| candidate.respond_to?(:name) && candidate.name.to_s == locator['name'] }
+      return named.first if named.length == 1
+    end
+    candidates[locator['ordinal']]
   end
 
   def nested_entity_matches_reference(entity, stable_reference)

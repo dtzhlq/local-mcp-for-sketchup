@@ -1,0 +1,100 @@
+{
+  "version": 1,
+  "kind": "python_sdk_source_compat_golden",
+  "case_id": "geometry_holes_loops",
+  "source_sha256": "9dea9320b1afe5a3151562bbbc811a1de5056f60311633c148a1d78dafef4ca4",
+  "document": {
+    "version": 1,
+    "units": "mm",
+    "operations": [
+      {
+        "op": "reset"
+      },
+      {
+        "op": "geometry_input",
+        "id": "corpus-holed-face",
+        "name": "Corpus_Holed_Face",
+        "vertices": [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            100,
+            0,
+            0
+          ],
+          [
+            100,
+            80,
+            0
+          ],
+          [
+            0,
+            80,
+            0
+          ],
+          [
+            30,
+            20,
+            0
+          ],
+          [
+            70,
+            20,
+            0
+          ],
+          [
+            70,
+            60,
+            0
+          ],
+          [
+            30,
+            60,
+            0
+          ]
+        ],
+        "faces": [
+          {
+            "outer": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "holes": [
+              [
+                4,
+                5,
+                6,
+                7
+              ]
+            ],
+            "normal": [
+              0,
+              0,
+              1
+            ],
+            "plane": [
+              0,
+              0,
+              1,
+              0
+            ],
+            "area": 6400
+          }
+        ]
+      }
+    ]
+  },
+  "result": {
+    "mode": "present",
+    "value": {
+      "loops": 2,
+      "outer": true,
+      "area": 6400
+    }
+  }
+}
