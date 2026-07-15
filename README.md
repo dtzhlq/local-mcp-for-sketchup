@@ -86,6 +86,7 @@ src/bridge.mjs           # 工具接口实现
 src/cli.mjs              # CLI 入口
 src/http-server.mjs      # HTTP bridge，可选
 src/mcp-server.mjs       # stdio MCP server，可接入支持 MCP 的客户端
+src/tool-registry.mjs    # stdio / HTTP / tests 共享的 tool registry 入口
 src/model-qa.mjs         # 无 GUI 的语义布局 QA、正交 SVG/HTML preview 和 correction suggestions
 src/reference-visual-qa.mjs # 参考视觉 QA：silhouette/keypoint/extent/area/relative placement + PartGraph correction targets
 src/mock-runtime.mjs     # 离线可验证 runtime
@@ -228,17 +229,9 @@ npm run qa:expert:mock
 
 ## MCP stdio 接入
 
-本项目自带一个最小 MCP stdio server。按当前 `src/mcp-server.mjs` 的 `tools/list`，一共暴露 36 个工具；safe JSON DSL registry 另有 101 个 operation，两者不是同一计数：
+本项目自带一个最小 MCP stdio server。当前共享 tool registry 暴露 36 个工具；safe JSON DSL registry 另有 101 个 operation，两者不是同一计数。stdio MCP、HTTP `/tools`、parity tests 和生成的工具文档都从同一 registry 派生；完整列表见 `docs/tool-registry.md`。
 
-- `get_docs`、`get_workflow_bundle`、`get_capabilities`、`queue_diagnostics`
-- `prepare_image_modeling_brief`、`compile_reviewed_part_graph`
-- `prepare_existing_model_edit`、`apply_reviewed_model_edit`
-- `build_model`、`compile_expert`、`compile_python_sdk`、`build_expert_model`
-- `reset_model`、`save_model`、`save_model_version`、`open_model`、`import_model`、`export_model`
-- `get_model_info`、`list_entities`、`inspect_model`、`adopt_open_model`、`resolve_model_targets`
-- `get_selection`、`analyze_selection_geometry`、`plan_modification_intent`、`set_selection`
-- `capture_view`、`run_ruby_expert`、`evaluate_py`、`build_report`、`iterate_model`
-- `compare_snapshots`、`compare_model`、`validate_model`、`validate_reference_model`
+`get_docs` 默认返回短上下文 overview，支持 `topic` / `detail` / `max_chars`。用 `topic: "dsl"`、`"existing_model_edit"`、`"image_artifacts"` 或 `"capabilities"` 按需读取；只有显式 `topic: "all", detail: "full"` 才请求完整长文档。MCP `tools/call` 同时返回兼容的 text content 和 `structuredContent`。
 
 ```bash
 node src/mcp-server.mjs
@@ -280,12 +273,15 @@ source compatibility corpus 当前包含 35 个官方风格源码样本、29 个
 ## HTTP bridge（可选）
 
 ```bash
-npm run server
+ALMA_SKETCHUP_HTTP_SESSION_SECRET='replace-with-at-least-16-bytes' npm run server
 curl http://127.0.0.1:3977/health
 curl -X POST http://127.0.0.1:3977/tools/build_model \
   -H 'content-type: application/json' \
+  -H 'authorization: Bearer replace-with-at-least-16-bytes' \
   -d "$(jq -n --rawfile code examples/demo-room.json '{runtime:"mock", code:$code}')"
 ```
+
+HTTP 默认显式绑定 `127.0.0.1`，但 localhost 不是信任边界。所有 POST tool 调用都需要 Bearer session secret，并受 body limit、timeout 和 workspace/state/configured allowed-root 路径策略约束。详见 `docs/http-local-server-security.md`。
 
 ## SketchUp 插件安装
 

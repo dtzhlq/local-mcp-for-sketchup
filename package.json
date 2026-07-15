@@ -15,6 +15,8 @@
     "server": "node src/http-server.mjs",
     "mcp": "node src/mcp-server.mjs",
     "qa:mcp-capability-suite": "node scripts/validate-mcp-capability-suite.mjs",
+    "tool-registry:sync": "node scripts/generate-tool-registry-doc.mjs",
+    "tool-registry:check": "node scripts/generate-tool-registry-doc.mjs --check",
     "registry:sync": "node scripts/generate-ruby-operation-registry.mjs",
     "registry:check": "node scripts/generate-ruby-operation-registry.mjs --check",
     "plugin:check": "npm run registry:check && node scripts/package-sketchup-plugin.mjs --check",
@@ -186,7 +188,7 @@
     "test:image-structured": "node projects/image-structured-modeler/test/validate.mjs",
     "test:python-sdk-source-compat": "node test/python-sdk-source-compat.mjs",
     "python-sdk-source-compat:update-golden": "node scripts/update-python-sdk-source-compat-golden.mjs",
-    "test": "node test/mock-validation.mjs && node test/operation-contract.mjs && node test/expert-compiler.mjs && node test/python-sdk-compiler.mjs && node test/python-sdk-source-compat.mjs && node test/python-sdk-high-value.mjs && node test/nested-entity-edit.mjs && node test/existing-model-editing.mjs && node test/image-structured-mcp-adapter.mjs && node test/model-qa.mjs && node test/reference-visual-qa.mjs && node test/part-graph-compiler.mjs && node test/mcp-server.mjs && node test/queue-runtime-lock.mjs && npm run registry:check"
+    "test": "node test/mock-validation.mjs && node test/operation-contract.mjs && node test/expert-compiler.mjs && node test/python-sdk-compiler.mjs && node test/python-sdk-source-compat.mjs && node test/python-sdk-high-value.mjs && node test/nested-entity-edit.mjs && node test/existing-model-editing.mjs && node test/image-structured-mcp-adapter.mjs && node test/model-qa.mjs && node test/reference-visual-qa.mjs && node test/part-graph-compiler.mjs && node test/mcp-server.mjs && node test/http-server.mjs && node test/queue-runtime-lock.mjs && node test/mcp-capability-suite-safety.mjs && npm run tool-registry:check && npm run registry:check"
   },
   "engines": {
     "node": ">=20"

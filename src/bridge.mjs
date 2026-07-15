@@ -27,8 +27,9 @@ export class SketchUpBridge {
     this.runtimeCapabilitiesCache = new Map();
   }
 
-  async get_docs() {
-    return { docs: getDocs() };
+  async get_docs(options = {}) {
+    const document = getDocs(options);
+    return { ...document, docs: document.content };
   }
 
   async get_workflow_bundle() {

@@ -11,6 +11,7 @@
 ```bash
 npm run plugin:check
 npm test
+npm run tool-registry:check
 npm run qa:mock
 npm run qa:model-layout
 npm run qa:expert:mock
@@ -31,7 +32,7 @@ git diff --check
 - Ruby 插件主文件和所有子模块 `ruby -c` 通过。
 - Operation contract 输出 manifest / mock / Ruby dispatch 为 `101 / 101 / 101`，component registry / dispatch 为 `57 / 57`。
 - Expert Mode fixture 编译和 mock build 通过，且安全拒绝场景由 `test/expert-compiler.mjs` 覆盖。
-- MCP stdio server 的 `tools/list` 必须精确为 36；两个 image artifact adapter 和两个 reviewed existing-model edit 工具的 allowed/blocked 合同分别由 targeted tests 与 capability suite 覆盖。
+- MCP stdio server 和 HTTP `/tools` 必须从共享 registry 精确暴露 36 tools；`docs/tool-registry.md` 必须通过生成检查。两个 image artifact adapter 和两个 reviewed existing-model edit 工具的 allowed/blocked 合同分别由 targeted tests 与 capability suite 覆盖。
 - Python source corpus 必须为 35 cases / 29 canonical golden / 6 stable unsupported / 0 unclassified；mock session 并发隔离必须通过。
 - mock QA、model layout QA、Expert mock QA 与 mock budget 均 Verdict `pass`；`qa:model-layout` 必须生成 Switch、救护车和儿童房的正交 preview/report，且 issues 为 `0`。
 

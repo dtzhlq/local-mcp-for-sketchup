@@ -61,8 +61,8 @@ for (const capability of manifest) {
   assert.ok(capability.stability, `${capability.op} should declare stability`);
 }
 
-const docsResult = await bridge.get_docs();
-assert.ok(docsResult.docs.includes('## Capability Baseline'), 'docs should include generated capability baseline');
+const docsResult = await bridge.get_docs({ topic: 'capabilities', detail: 'full', max_chars: 250000 });
+assert.ok(docsResult.docs.includes('Capability Baseline'), 'docs should include generated capability baseline');
 for (const operationName of getOperationNames()) {
   assert.ok(docsResult.docs.includes(`\`${operationName}\``), `docs should include manifest operation ${operationName}`);
 }

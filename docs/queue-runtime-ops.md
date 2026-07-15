@@ -6,6 +6,14 @@
 
 ## 快速验收顺序
 
+`npm run qa:mcp-capability-suite` 默认仅运行 mock，不发送 queue 请求。只有显式使用下列参数才能进入 live queue：
+
+```bash
+npm run qa:mcp-capability-suite -- --runtime queue --queue-required --timeout-ms 180000
+```
+
+该命令会在运行前警告，并会重置/修改当前 SketchUp 模型。未确认当前模型可被覆盖时不得运行。SIGINT/SIGTERM/异常退出会按进程 owner 清理本次 request 和 lock，不会删除其他 queue 进程的文件。
+
 1. 确认插件已加载：
 
 ```bash

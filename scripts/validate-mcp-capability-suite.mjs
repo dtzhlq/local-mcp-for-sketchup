@@ -5,13 +5,21 @@ import path from 'node:path';
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { getOperationNames } from '../src/capabilities.mjs';
+import { defaultQueueDir, defaultResponseDir } from '../src/paths.mjs';
+import { cleanupQueueArtifactsForPid } from '../src/queue-runtime.mjs';
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const options = parseArgs(process.argv.slice(2));
 const outputDir = path.resolve(options.outputDir || 'output/mcp-capability-suite');
 const timeoutMs = options.timeoutMs || 180000;
 const queueRequired = options.queueRequired === true;
-const requestedRuntime = options.runtime || 'auto';
+const requestedRuntime = options.runtime || 'mock';
+if (queueRequired && requestedRuntime !== 'queue') {
+  throw new Error('--queue-required is only valid together with --runtime queue');
+}
+if (requestedRuntime === 'queue') {
+  process.stderr.write('[DANGER] --runtime queue will reset and modify the model currently open in SketchUp. Close valuable unsaved work and confirm the intended model before continuing.\n');
+}
 
 await fs.rm(outputDir, { recursive: true, force: true });
 await fs.mkdir(outputDir, { recursive: true });
@@ -26,6 +34,13 @@ const server = spawn(process.execPath, [path.join(repoRoot, 'src/mcp-server.mjs'
   },
   stdio: ['pipe', 'pipe', 'pipe']
 });
+let stopServerPromise = null;
+
+const handleSignal = (signal) => {
+  void stopServer(signal).finally(() => process.exit(signal === 'SIGINT' ? 130 : 143));
+};
+process.once('SIGINT', () => handleSignal('SIGINT'));
+process.once('SIGTERM', () => handleSignal('SIGTERM'));
 
 const resolvers = new Map();
 const usedTools = new Set();
@@ -488,7 +503,7 @@ try {
   if (!ok) process.exitCode = 1;
   process.stdout.write(`${JSON.stringify(report, null, 2)}\n`);
 } finally {
-  server.kill('SIGTERM');
+  await stopServer('SIGTERM');
 }
 
 async function maybeRunQueueSuite(baseCode) {
@@ -774,8 +789,27 @@ function parseArgs(argv) {
     else if (arg === '--queue-required') parsed.queueRequired = true;
     else throw new Error(`Unknown argument: ${arg}`);
   }
-  if (parsed.runtime && !['mock', 'queue', 'auto'].includes(parsed.runtime)) {
-    throw new Error('--runtime must be mock, queue, or auto');
+  if (parsed.runtime && !['mock', 'queue'].includes(parsed.runtime)) {
+    throw new Error('--runtime must be mock or queue');
   }
   return parsed;
+}
+
+function stopServer(signal = 'SIGTERM') {
+  if (stopServerPromise) return stopServerPromise;
+  stopServerPromise = (async () => {
+    const childPid = server.pid;
+    if (server.exitCode === null && !server.killed) {
+      const exited = new Promise((resolve) => server.once('exit', resolve));
+      server.kill(signal);
+      await Promise.race([exited, new Promise((resolve) => setTimeout(resolve, 2000))]);
+    }
+    if (childPid) {
+      await cleanupQueueArtifactsForPid(childPid, {
+        queueDir: defaultQueueDir,
+        responseDir: defaultResponseDir
+      });
+    }
+  })();
+  return stopServerPromise;
 }

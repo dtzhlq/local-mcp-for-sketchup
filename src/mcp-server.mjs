@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 import readline from 'node:readline';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { SketchUpBridge, callTool } from './bridge.mjs';
 import { compareSnapshots } from './snapshot-diff.mjs';
 import { PRODUCT_VERSION } from './version.mjs';
-
-const bridge = new SketchUpBridge();
-const rl = readline.createInterface({ input: process.stdin, crlfDelay: Infinity });
+import { cleanupOwnedQueueArtifacts } from './queue-runtime.mjs';
 
 const expertOptionProperties = {
   seed: { type: 'number', description: 'Seed for deterministic Expert Mode random helpers.' },
@@ -25,11 +25,19 @@ const pythonSdkOptionProperties = {
   pythonCommand: { type: 'string', description: 'Optional Python command used only for ast.parse, such as python3.' }
 };
 
-const tools = [
+export const TOOL_REGISTRY = Object.freeze([
   {
     name: 'get_docs',
-    description: 'Return the safe SketchUp JSON DSL and runtime documentation.',
-    inputSchema: { type: 'object', properties: {}, additionalProperties: false }
+    description: 'Return progressively scoped safe SketchUp documentation by topic and detail level.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        topic: { type: 'string', enum: ['overview', 'tools', 'dsl', 'coordinates', 'examples', 'snapshot', 'runtimes', 'existing_model_edit', 'image_artifacts', 'capabilities', 'all'], default: 'overview' },
+        detail: { type: 'string', enum: ['summary', 'standard', 'full'], default: 'summary' },
+        max_chars: { type: 'number', minimum: 256, maximum: 250000, default: 8000 }
+      },
+      additionalProperties: false
+    }
   },
   {
     name: 'get_workflow_bundle',
@@ -583,20 +591,9 @@ const tools = [
       }
     }
   }
-];
+]);
 
-rl.on('line', async (line) => {
-  if (!line.trim()) return;
-  let request;
-  try {
-    request = JSON.parse(line);
-    await handleRequest(request);
-  } catch (error) {
-    respond(request?.id ?? null, null, error);
-  }
-});
-
-async function handleRequest(request) {
+async function handleRequest(request, bridge) {
   if (request.method === 'initialize') {
     return respond(request.id, {
       protocolVersion: request.params?.protocolVersion || '2024-11-05',
@@ -608,7 +605,7 @@ async function handleRequest(request) {
   if (request.method === 'notifications/initialized') return;
 
   if (request.method === 'tools/list') {
-    return respond(request.id, { tools });
+    return respond(request.id, { tools: TOOL_REGISTRY });
   }
 
   if (request.method === 'tools/call') {
@@ -618,7 +615,8 @@ async function handleRequest(request) {
       ? compareSnapshots(normalizeSnapshotArgument(args.expected), normalizeSnapshotArgument(args.actual), { toleranceMm: args.toleranceMm, budgets: args.budgets, topIssueLimit: args.topIssueLimit })
       : await callTool(name, args, bridge);
     return respond(request.id, {
-      content: [{ type: 'text', text: JSON.stringify(result, null, 2) }]
+      content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
+      structuredContent: result
     });
   }
 
@@ -639,3 +637,34 @@ function respond(id, result, error) {
     : { jsonrpc: '2.0', id, result };
   process.stdout.write(`${JSON.stringify(payload)}\n`);
 }
+
+async function main() {
+  const bridge = new SketchUpBridge();
+  const rl = readline.createInterface({ input: process.stdin, crlfDelay: Infinity });
+  let shuttingDown = false;
+
+  const shutdown = async (signal) => {
+    if (shuttingDown) return;
+    shuttingDown = true;
+    rl.close();
+    await cleanupOwnedQueueArtifacts();
+    process.exit(signal === 'SIGINT' ? 130 : 143);
+  };
+
+  process.once('SIGINT', () => void shutdown('SIGINT'));
+  process.once('SIGTERM', () => void shutdown('SIGTERM'));
+
+  rl.on('line', async (line) => {
+    if (!line.trim()) return;
+    let request;
+    try {
+      request = JSON.parse(line);
+      await handleRequest(request, bridge);
+    } catch (error) {
+      respond(request?.id ?? null, null, error);
+    }
+  });
+}
+
+const isMain = process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
+if (isMain) await main();

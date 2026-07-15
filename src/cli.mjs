@@ -15,7 +15,7 @@ async function main() {
 
   switch (command) {
     case 'get_docs':
-      return output(await bridge.get_docs(), options);
+      return output(await bridge.get_docs({ topic: options.topic, detail: options.detail, max_chars: options.maxChars }), options);
     case 'get_workflow_bundle':
       return output(await bridge.get_workflow_bundle(), options);
     case 'get_capabilities':
@@ -286,6 +286,8 @@ function parseArgs(argv) {
     else if (arg === '--nth') options.nth = Number(argv[++index]);
     else if (arg === '--index') options.index = Number(argv[++index]);
     else if (arg === '--query') options.query = argv[++index];
+    else if (arg === '--topic') options.topic = argv[++index];
+    else if (arg === '--detail') options.detail = argv[++index];
     else if (arg === '--target-query') options.targetQuery = argv[++index];
     else if (arg === '--assume') options.assume = argv[++index];
     else if (arg === '--instruction') options.instruction = argv[++index];
@@ -335,6 +337,7 @@ function parseArgs(argv) {
     else if (arg === '--max-loop-iterations') options.maxLoopIterations = Number(argv[++index]);
     else if (arg === '--max-statements') options.maxStatements = Number(argv[++index]);
     else if (arg === '--max-output-bytes') options.maxOutputBytes = Number(argv[++index]);
+    else if (arg === '--max-chars') options.maxChars = Number(argv[++index]);
     else if (arg === '--expert-timeout-ms') options.expertTimeoutMs = Number(argv[++index]);
     else if (arg === '--python-timeout-ms') options.pythonTimeoutMs = Number(argv[++index]);
     else if (arg === '--python-command') options.pythonCommand = argv[++index];

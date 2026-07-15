@@ -7,6 +7,8 @@ import { materializeDslAssetPaths } from './dsl-asset-paths.mjs';
 const DEFAULT_LOCK_TIMEOUT_MS = 30000;
 const DEFAULT_STALE_LOCK_MS = 10 * 60 * 1000;
 const DEFAULT_POLL_INTERVAL_MS = 250;
+const ownedQueueArtifacts = new Set();
+let queueRuntimeShuttingDown = false;
 
 export class QueueRuntime {
   constructor({
@@ -211,14 +213,22 @@ export class QueueRuntime {
   }
 
   async callUnlocked(method, params) {
+    if (queueRuntimeShuttingDown) throw new Error('Queue runtime is shutting down.');
     await fs.mkdir(this.queueDir, { recursive: true });
     await fs.mkdir(this.responseDir, { recursive: true });
 
-    const id = `${Date.now()}-${crypto.randomUUID()}`;
+    const id = `${process.pid}-${Date.now()}-${crypto.randomUUID()}`;
     const requestPath = path.join(this.queueDir, `${id}.json`);
     const responsePath = path.join(this.responseDir, `${id}.json`);
-    const request = { id, method, params, created_at: new Date().toISOString() };
-    await fs.writeFile(requestPath, `${JSON.stringify(request, null, 2)}\n`, 'utf8');
+    const request = { id, method, params, client_pid: process.pid, created_at: new Date().toISOString() };
+    ownedQueueArtifacts.add(requestPath);
+    try {
+      await fs.writeFile(requestPath, `${JSON.stringify(request, null, 2)}\n`, 'utf8');
+    } catch (error) {
+      await fs.rm(requestPath, { force: true }).catch(() => {});
+      ownedQueueArtifacts.delete(requestPath);
+      throw error;
+    }
 
     try {
       const startedAt = Date.now();
@@ -240,18 +250,22 @@ export class QueueRuntime {
       throw new Error(`Timed out waiting for SketchUp plugin response after ${this.timeoutMs}ms. Open SketchUp and enable Alma SketchUp MCP Bridge.`);
     } finally {
       await fs.rm(requestPath, { force: true }).catch(() => {});
+      ownedQueueArtifacts.delete(requestPath);
     }
   }
 
   async withExclusiveAccess(callback, { method = 'queue-runtime' } = {}) {
+    if (queueRuntimeShuttingDown) throw new Error('Queue runtime is shutting down.');
     if (this.lockDepth > 0) return callback();
 
     await fs.mkdir(path.dirname(this.lockPath), { recursive: true });
     const startedAt = Date.now();
     while (true) {
+      if (queueRuntimeShuttingDown) throw new Error('Queue runtime is shutting down.');
       let handle;
       try {
         handle = await fs.open(this.lockPath, 'wx');
+        ownedQueueArtifacts.add(this.lockPath);
         await handle.writeFile(`${JSON.stringify({
           pid: process.pid,
           method,
@@ -262,7 +276,11 @@ export class QueueRuntime {
         break;
       } catch (error) {
         if (handle) await handle.close().catch(() => {});
-        if (error.code !== 'EEXIST') throw error;
+        if (error.code !== 'EEXIST') {
+          await fs.rm(this.lockPath, { force: true }).catch(() => {});
+          ownedQueueArtifacts.delete(this.lockPath);
+          throw error;
+        }
         await this.removeStaleLock();
         if (Date.now() - startedAt > this.lockTimeoutMs) {
           throw new Error(`Timed out waiting for SketchUp queue runtime lock after ${this.lockTimeoutMs}ms: ${this.lockPath}. Another queue command may be running; run queue commands serially.`);
@@ -277,6 +295,7 @@ export class QueueRuntime {
     } finally {
       this.lockDepth -= 1;
       await fs.rm(this.lockPath, { force: true }).catch(() => {});
+      ownedQueueArtifacts.delete(this.lockPath);
     }
   }
 
@@ -289,6 +308,66 @@ export class QueueRuntime {
     } catch (error) {
       if (error.code !== 'ENOENT') throw error;
     }
+  }
+}
+
+export async function cleanupOwnedQueueArtifacts() {
+  queueRuntimeShuttingDown = true;
+  for (let pass = 0; pass < 3; pass += 1) {
+    const artifacts = [...ownedQueueArtifacts];
+    await Promise.all(artifacts.map((artifactPath) => fs.rm(artifactPath, { force: true }).catch(() => {})));
+    if (pass < 2) await new Promise((resolve) => setImmediate(resolve));
+  }
+  ownedQueueArtifacts.clear();
+}
+
+export async function cleanupQueueArtifactsForPid(pid, {
+  queueDir = defaultQueueDir,
+  responseDir = defaultResponseDir,
+  lockPath = path.join(path.dirname(queueDir), 'queue-runtime.lock')
+} = {}) {
+  const requestIds = [];
+  let removedRequests = 0;
+  try {
+    for (const entry of await fs.readdir(queueDir)) {
+      if (!entry.endsWith('.json')) continue;
+      const requestPath = path.join(queueDir, entry);
+      const owner = await readArtifactPid(requestPath);
+      if (owner !== Number(pid) && !entry.startsWith(`${Number(pid)}-`)) continue;
+      requestIds.push(entry.slice(0, -5));
+      await fs.rm(requestPath, { force: true });
+      removedRequests += 1;
+    }
+  } catch (error) {
+    if (error.code !== 'ENOENT') throw error;
+  }
+
+  let removedLock = false;
+  if (await readArtifactPid(lockPath) === Number(pid)) {
+    await fs.rm(lockPath, { force: true });
+    removedLock = true;
+  }
+
+  let removedResponses = 0;
+  for (const id of requestIds) {
+    try {
+      await fs.rm(path.join(responseDir, `${id}.json`), { force: true });
+      removedResponses += 1;
+    } catch (error) {
+      if (error.code !== 'ENOENT') throw error;
+    }
+  }
+
+  return { pid: Number(pid), removed_requests: removedRequests, removed_lock: removedLock, removed_responses: removedResponses };
+}
+
+async function readArtifactPid(artifactPath) {
+  try {
+    const document = JSON.parse(await fs.readFile(artifactPath, 'utf8'));
+    return Number(document.client_pid ?? document.pid);
+  } catch (error) {
+    if (error.code === 'ENOENT' || error instanceof SyntaxError) return null;
+    throw error;
   }
 }
 
