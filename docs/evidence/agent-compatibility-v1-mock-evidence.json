@@ -1,0 +1,14 @@
+{
+  "version": "agent-compatibility-v1-mock-evidence.1",
+  "command": "node scripts/run-agent-compatibility-harness.mjs",
+  "runtime": "mock",
+  "result": "pass",
+  "levels": { "L0": { "scenarios": 7, "tool_calls": 17 }, "L1": { "scenarios": 7, "tool_calls": 17 }, "L2": { "scenarios": 7, "tool_calls": 17 } },
+  "metrics": { "completion_rate": 1, "tool_calls": 51, "target_top_k_rate": 1, "recovery_rate": 1 },
+  "hard_gates": { "wrong_object_automatic_execution": 0, "unauthorized_s2_s4_execution": 0, "duplicate_request_duplicate_modification": 0 },
+  "hashes": {
+    "scripts/run-agent-compatibility-harness.mjs": "7587f154562045087fb981ece6df2cb7f07507d8537b79661d6db09fc056c2b8",
+    "schema/agent-compatibility-report-v1.schema.json": "80924cd32da8bd9c847280fb79726f6d3b62772776d4fafd69ec02c441f1b7c8"
+  },
+  "live_queue_called": false
+}

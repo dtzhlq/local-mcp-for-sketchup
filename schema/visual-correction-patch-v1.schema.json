@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/schema/visual-correction-patch-v1.schema.json",
+  "title": "VisualCorrectionPatchV1",
+  "type": "object",
+  "required": ["version", "kind", "correction_patch_id", "evidence_id", "model_revision", "targets", "operations", "blockers", "execution_allowed", "review_required", "execution_route"],
+  "properties": {
+    "version": { "const": "visual-correction-patch.v1" },
+    "kind": { "const": "visual_correction_patch" },
+    "correction_patch_id": { "type": "string", "minLength": 1 },
+    "evidence_id": { "type": "string", "minLength": 1 },
+    "model_revision": { "type": "string", "pattern": "^sha256:" },
+    "targets": { "type": "array", "items": { "type": "object" } },
+    "operations": { "type": "array", "items": { "type": "object", "required": ["op"] } },
+    "risk_level": { "enum": ["S1", "S2", "S3", "S4", null] },
+    "blockers": { "type": "array", "items": { "type": "string" } },
+    "execution_allowed": { "const": false },
+    "review_required": { "const": true },
+    "execution_route": { "const": "trusted_reviewed_existing_model_edit_only" }
+  }
+}

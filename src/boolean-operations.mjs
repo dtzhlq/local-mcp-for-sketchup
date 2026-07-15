@@ -35,7 +35,7 @@ export function manifoldCheck(model, operation) {
 }
 
 export function manifoldRepair(model, operation) {
-  const target = solidGroupTarget(model, operation, 'manifold_repair');
+  const target = repairGroupTarget(model, operation);
   const strategy = String(operation.strategy ?? 'cleanup').trim().toLowerCase().replaceAll('-', '_');
   if (!['cleanup', 'seal_bbox'].includes(strategy)) throw new Error('manifold_repair.strategy must be cleanup or seal_bbox');
   const before = manifoldReport(target.item);
@@ -59,6 +59,19 @@ export function manifoldRepair(model, operation) {
   if (!after.is_manifold && normalizeBoolean(operation.fail_on_non_manifold ?? operation.failOnNonManifold ?? false, 'manifold_repair.fail_on_non_manifold')) {
     throw new Error(`manifold_repair failed: ${target.item.name} is still non-manifold`);
   }
+}
+
+function repairGroupTarget(model, operation) {
+  const target = findModelObject(model, resolveObjectReference(operation, 'manifold_repair'));
+  if (target.collection !== 'groups' || target.entity_type && target.entity_type !== 'group') {
+    throw new Error('manifold_repair requires a group target');
+  }
+  const box = target.item.bounding_box;
+  if (!box || [box.w, box.d, box.h].some((value) => !Number.isFinite(value) || value <= EPSILON)) {
+    throw new Error('manifold_repair.target must have a positive-volume bounding box');
+  }
+  if (target.item.locked === true) throw new Error('manifold_repair target is locked');
+  return target;
 }
 
 function applySolidBoolean(model, operation, opName) {

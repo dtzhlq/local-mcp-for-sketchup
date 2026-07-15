@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/sketchup-mcp-replica/design-parameter-change-plan-v1.schema.json",
+  "title": "Design Parameter Change Plan v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "kind", "design_graph_id", "source_model_graph_id", "model_revision", "instruction", "changes", "affected_subgraph", "targets", "operations", "risk_level", "divergence", "blockers", "execution_allowed", "execution_route", "change_plan_id", "next_action"],
+  "properties": {
+    "version": { "const": "design-parameter-change-plan.v1" },
+    "kind": { "const": "design_parameter_change_plan" },
+    "change_plan_id": { "type": "string", "pattern": "^design-change-[0-9a-f]{24}$" },
+    "design_graph_id": { "type": "string", "pattern": "^design-graph-[0-9a-f]{24}$" },
+    "source_model_graph_id": { "type": "string", "pattern": "^model-graph-[0-9a-f]{24}$" },
+    "model_revision": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "instruction": { "type": "object" },
+    "changes": { "type": "object", "minProperties": 1 },
+    "affected_subgraph": { "type": "array" },
+    "targets": { "type": "array" },
+    "operations": { "type": "array" },
+    "risk_level": { "type": ["string", "null"], "enum": ["S1", "S2", "S3", "S4", null] },
+    "divergence": { "type": "array" },
+    "blockers": { "type": "array", "items": { "type": "string" } },
+    "execution_allowed": { "const": false },
+    "execution_route": { "const": "trusted_reviewed_existing_model_edit_only" },
+    "next_action": { "type": "object" }
+  }
+}

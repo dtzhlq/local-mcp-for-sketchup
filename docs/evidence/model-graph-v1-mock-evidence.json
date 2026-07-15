@@ -1,0 +1,14 @@
+{
+  "version": "model-graph-v1-mock-evidence.1",
+  "command": "node test/model-graph-proposer.mjs",
+  "runtime": "mock",
+  "result": "pass",
+  "domains": ["architecture", "interior", "product", "deep_shared_component"],
+  "metrics": { "wrong_target_executions": 0, "proposal_executions": 0, "ambiguity_asked": true, "product_top_target": "Controller_Body" },
+  "hashes": {
+    "src/model-graph.mjs": "de5bf941c2c0754b9c0899cbb235c864554f2e3662212b311cab95a7384dbd57",
+    "src/existing-model-edit-proposer.mjs": "ca46d4c242d0245eea8ee1e84fec27509fee2bc93da89cae2641406a6eeaadcb",
+    "test/model-graph-proposer.mjs": "f5ce81d8ed66e1dc3eac9c36cc09e8cf886e863bef03b2d4f7b77977d05da2cb"
+  },
+  "live_queue_called": false
+}

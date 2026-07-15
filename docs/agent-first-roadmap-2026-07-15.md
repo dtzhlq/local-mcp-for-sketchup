@@ -2,7 +2,7 @@
 
 日期：2026-07-15
 当前发布线：`codex/two-week-release-critical` / `0.1.0-rc.2`
-状态口径：这是实施和验收路由文档，不是已完成功能声明。
+状态口径：这是实施、验收路由和当前执行台账；完成项仅按对应 mock/live 证据范围声明。
 
 ## 1. 现场复核基线
 
@@ -17,7 +17,7 @@
 - Existing Model Editing Engine 已有 plan/apply、persistent occurrence path、model revision、S1-S4 risk、shared-definition policy、stale-plan rejection 和 before/after/diff/QA。
 - image-structured 主线 adapter 仍为 review-gated / preview-only；不自动调用 queue。
 - `ParametricRecipe -> FeatureMappingPlan -> PartGraphCorrectionPatch -> reviewed PartGraph -> safe JSON DSL` 已进入当前主线事实基线。
-- 本轮修改前 `npm test` 通过。本轮没有发送 live queue handshake，因此不更新 live SketchUp 结论。
+- 当前架构分支根级 `npm test`、40-tool mock capability suite 和 Existing Model Editing mock QA 通过。本轮没有发送 live queue handshake，因此不更新 live SketchUp 结论。
 
 计数是不同层的事实：36 tools 不等于 101 operations，101 operations 不等于完整 SketchUp API。
 
@@ -32,9 +32,9 @@
 
 ### 后续架构线
 
-Agent Contract v1、ModelGraph v1、DesignIntentGraph、视觉校正和 compatibility harness 应在后续独立分支进行。建议起点名为 `codex/agent-contract-v1`，但创建/切换分支会改变 Git 状态，必须先得到用户确认。
+Agent Contract v1、ModelGraph v1、DesignIntentGraph、视觉校正和 compatibility harness 在独立分支推进。用户已确认后，当前已创建并切换到 `codex/agent-contract-v1`；起点为发布修复提交 `c9eb0f7`。`codex/two-week-release-critical` 保持在该提交，不混入后续架构工作。
 
-本轮不 commit、merge、cherry-pick、reset、revert 或删除 worktree。
+除用户已明确确认的发布修复提交和架构分支创建外，本轮不继续 commit、merge、cherry-pick、reset、revert 或删除工作树内容。
 
 ## 3. 依赖链
 
@@ -193,7 +193,17 @@ live queue 不是默认测试。只有用户明确配合、当前 SketchUp 模�
 - [x] 确认 Queue QA 默认 `auto` 会探测 live queue。
 - [x] R0 实现与全量验收：36-tool registry parity、默认 mock queue safety、中断 cleanup、HTTP 安全边界、文档与操作指南已通过 `npm test`。
 - [x] P0 的发现/短上下文兼容前置：`get_docs.v2` 支持 `topic/detail/max_chars`，workflow bundle 覆盖 create/understand/reviewed edit/image artifact/verify，MCP 返回 `structuredContent`。
-- [ ] 在用户确认提交与分支动作后进入 P0-A/P0-B 后续架构线。
+- [x] 用户确认后提交 R0 为 `c9eb0f7`，创建并切换 `codex/agent-contract-v1`；发布分支保持在同一提交，未 push/merge。
+- [x] P0-A：落地版本化 task/result/artifact schemas、12-state machine、14-code error registry、原子持久 task store、disk restart resume、idempotency 和 opaque artifact handle。
+- [x] P0-B mock 闭环：保留 36 expert tools，增加 4 Gateway tools；可信一次性 approval 绑定 task/plan hash/model revision/risk/operations/expiry；伪造 review、tamper、stale、replay 和越权均 fail closed；S1 仅显式服务端策略可自动批准。
+- [x] P0 回归证据：`npm test`、`qa:existing-model-edit:mock`、40-tool mock capability suite 通过；证据见 `docs/evidence/agent-contract-v1-mock-evidence.json`。
+- [x] P1：ModelGraph v1 与 proposal-only edit generator 落地；建筑、室内、产品、深层共享组件 benchmark 覆盖候选证据、歧义询问、make_unique 和零执行提案。
+- [x] P2：DesignIntentGraph v1 落地参数／feature／persistent entity 双向映射、依赖子图重建、reviewed edit 路由、save/reopen identity、人工 divergence 检测与 reconciliation；覆盖建筑门墙、产品孔径和室内阵列。
+- [x] P3 mock 闭环：参考图／capture artifact 服务端摘要、alignment/difference、overlay handle、非执行 CorrectionPatch、可信 reviewed edit 路由和 recapture QA；无视觉／无本地文件 Agent 可用，路径越界 fail closed。
+- [x] P4 mock corpus：7 个难例覆盖建筑、室内、产品 boolean/manifold、1600 项递归共享组件、导入脏拓扑、UV/材质/Scene、缩放/镜像/locked；任务成功率 100%、错误对象修改 0、静默几何损坏 0、恢复率 100%。修复了 `manifold_repair` 无法接收非 manifold 目标的缺陷。
+- [x] P5 capability harness：L0/L1/L2 各 7/7 场景、17 次串行调用；覆盖丢状态、重复调用、错 enum、stale、伪造 approval、忽略 warning、resume、make_unique、image summary、human approval。三项硬门禁均为 0。
+- [ ] live queue 未运行；待用户明确配合 fresh handshake 和可信用户批准 host adapter 后再做。
+- [ ] 下一阶段只剩 live/real-SKP 证据层：fresh queue、真实 SketchUp 版本矩阵、真实保存重开与 viewport recapture；未经用户明确配合不运行。
 
 ## 7. 主要风险与止损
 

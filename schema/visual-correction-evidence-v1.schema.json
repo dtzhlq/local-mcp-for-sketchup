@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/schema/visual-correction-evidence-v1.schema.json",
+  "title": "VisualCorrectionEvidenceV1",
+  "type": "object",
+  "required": ["version", "kind", "evidence_id", "model_revision", "input_image", "captured_image", "alignment", "difference", "confidence", "blockers"],
+  "properties": {
+    "version": { "const": "visual-correction-evidence.v1" },
+    "kind": { "const": "reference_image_existing_model_evidence" },
+    "evidence_id": { "type": "string", "minLength": 1 },
+    "model_revision": { "type": "string", "pattern": "^sha256:" },
+    "input_image": { "$ref": "#/$defs/image" },
+    "captured_image": { "$ref": "#/$defs/image" },
+    "alignment": { "type": "object", "required": ["method", "translation_norm", "foreground_center_delta_norm"] },
+    "difference": { "type": "object", "required": ["method", "mean_absolute_error", "root_mean_square_error"] },
+    "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+    "blockers": { "type": "array", "items": { "type": "string" } }
+  },
+  "$defs": {
+    "image": {
+      "type": "object",
+      "required": ["sha256", "format", "width", "height"],
+      "properties": {
+        "sha256": { "type": "string", "pattern": "^sha256:" },
+        "format": { "enum": ["png", "jpeg", "webp", "tiff"] },
+        "width": { "type": "integer", "minimum": 1 },
+        "height": { "type": "integer", "minimum": 1 }
+      }
+    }
+  }
+}

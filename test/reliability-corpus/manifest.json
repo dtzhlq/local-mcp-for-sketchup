@@ -1,0 +1,14 @@
+{
+  "version": "real-model-reliability-corpus.v1",
+  "description": "Small adversarial model corpus. Mock gates are deterministic; live SketchUp version proof is tracked separately and is not implied.",
+  "cases": [
+    { "id": "architecture-golden", "domain": "architecture", "source": "examples/golden-architecture.json", "focus": ["openings", "scenes", "save_reopen"] },
+    { "id": "interior-expression", "domain": "interior", "source": "examples/interior-expression-suite.json", "focus": ["materials", "fixtures", "hidden_context", "save_reopen"] },
+    { "id": "product-boolean-manifold", "domain": "product", "source": "examples/boolean-manifold-slice.json", "focus": ["boolean", "manifold", "material_preservation", "save_reopen"] },
+    { "id": "deep-shared-components", "domain": "shared_component", "source": "generated_in_test", "focus": ["recursive_index", "shared_definition", "persistent_identity"] },
+    { "id": "imported-dirty-topology", "domain": "imported_cad", "source": "generated_mock_import_artifact", "focus": ["open_mesh_detection", "repair", "recovery"] },
+    { "id": "appearance-scenes-hidden", "domain": "appearance", "source": "examples/appearance-texture-slice.json", "focus": ["uv", "materials", "scenes", "visibility", "save_reopen"] },
+    { "id": "scaled-mirrored-locked", "domain": "transform_edge_case", "source": "generated_in_test", "focus": ["nonuniform_scale", "mirror", "locked_fail_closed", "rollback"] }
+  ],
+  "hard_metrics": ["task_success_rate", "wrong_object_modification_count", "silent_geometry_corruption_count", "recovery_rate"]
+}

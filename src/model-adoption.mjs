@@ -45,7 +45,8 @@ export function adoptionReport({ runtime, snapshot, adopted, existing, recursive
     ...entity,
     editable: true,
     edit_scope: 'top_level',
-    reference: entity.id || entity.persistent_id || entity.name
+    reference: entity.id || entity.persistent_id || entity.name,
+    allowed_operations: allowedMockOperations(entity.entity_type)
   }));
   const readOnlyNested = recursiveIndex.filter((entry) => entry.editable === false).length;
   const editableNested = recursiveIndex.filter((entry) => entry.editable === true).length;
@@ -137,7 +138,13 @@ function mockOccurrenceEntry(item, entityPath, definitionName, affectedInstanceC
     kind: item.kind || entityType,
     material: item.material || null,
     back_material: item.back_material || null,
+    classification: item.classification || null,
+    attributes: structuredClone(item.attributes || null),
+    texture_transform: structuredClone(item.texture_transform || null),
+    face_uvs: structuredClone(item.face_uvs || null),
+    transform: structuredClone(item.transform || null),
     visible: item.visible !== false && item.hidden !== true,
+    locked: item.locked === true,
     soft: item.soft === true,
     smooth: item.smooth === true,
     reversed: item.reversed === true,

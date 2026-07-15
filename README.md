@@ -229,9 +229,9 @@ npm run qa:expert:mock
 
 ## MCP stdio 接入
 
-本项目自带一个最小 MCP stdio server。当前共享 tool registry 暴露 36 个工具；safe JSON DSL registry 另有 101 个 operation，两者不是同一计数。stdio MCP、HTTP `/tools`、parity tests 和生成的工具文档都从同一 registry 派生；完整列表见 `docs/tool-registry.md`。
+本项目自带一个 MCP stdio server。Agent Contract v1 分支的共享 tool registry 暴露 40 个工具：保留原有 36 个 expert tools，并增加 4 个持久化 Agent Gateway tools；safe JSON DSL registry 另有 101 个 operation，这些计数不是同一层。stdio MCP、HTTP `/tools`、parity tests 和生成的工具文档都从同一 registry 派生；完整列表见 `docs/tool-registry.md`。
 
-`get_docs` 默认返回短上下文 overview，支持 `topic` / `detail` / `max_chars`。用 `topic: "dsl"`、`"existing_model_edit"`、`"image_artifacts"` 或 `"capabilities"` 按需读取；只有显式 `topic: "all", detail: "full"` 才请求完整长文档。MCP `tools/call` 同时返回兼容的 text content 和 `structuredContent`。
+`get_docs` 默认返回短上下文 overview，支持 `topic` / `detail` / `max_chars`。用 `topic: "dsl"`、`"model_graph"`、`"design_intent"`、`"visual_correction"`、`"agent_compatibility"`、`"existing_model_edit"`、`"image_artifacts"` 或 `"capabilities"` 按需读取；只有显式 `topic: "all", detail: "full"` 才请求完整长文档。MCP `tools/call` 同时返回兼容的 text content 和 `structuredContent`。
 
 ```bash
 node src/mcp-server.mjs

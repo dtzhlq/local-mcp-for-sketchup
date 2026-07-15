@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/sketchup-mcp-replica/design-intent-graph-v1.schema.json",
+  "title": "DesignIntentGraph v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "kind", "source_model_graph_id", "model_revision", "artifacts", "parameters", "bindings", "relationships", "bidirectional", "correction_history", "divergence_policy", "untrusted_data_fields", "design_graph_id", "stats"],
+  "properties": {
+    "version": { "const": "design-intent-graph.v1" },
+    "kind": { "const": "design_intent_graph" },
+    "design_graph_id": { "type": "string", "pattern": "^design-graph-[0-9a-f]{24}$" },
+    "source_model_graph_id": { "type": "string", "pattern": "^model-graph-[0-9a-f]{24}$" },
+    "model_revision": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "artifacts": { "type": "object" },
+    "parameters": { "type": "object", "additionalProperties": { "$ref": "#/$defs/parameter" } },
+    "bindings": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/binding" } },
+    "relationships": { "type": "array", "items": { "type": "object", "required": ["type", "from", "to"] } },
+    "bidirectional": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["design_to_entities", "entity_to_design"],
+      "properties": {
+        "design_to_entities": { "type": "object", "additionalProperties": { "type": "array", "items": { "type": "string" } } },
+        "entity_to_design": { "type": "object", "additionalProperties": { "type": "array", "items": { "type": "string" } } }
+      }
+    },
+    "correction_history": { "type": "array" },
+    "divergence_policy": { "const": "review_required_no_silent_overwrite" },
+    "untrusted_data_fields": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+    "stats": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["parameters", "bindings", "mapped_entities", "correction_events"],
+      "properties": {
+        "parameters": { "type": "integer", "minimum": 0 },
+        "bindings": { "type": "integer", "minimum": 1 },
+        "mapped_entities": { "type": "integer", "minimum": 1 },
+        "correction_events": { "type": "integer", "minimum": 0 }
+      }
+    }
+  },
+  "$defs": {
+    "parameter": {
+      "type": "object",
+      "required": ["parameter_id", "value", "type", "unit", "minimum", "maximum", "enum", "description"]
+    },
+    "binding": {
+      "type": "object",
+      "required": ["binding_id", "part_id", "feature_id", "entity_node_id", "persistent_ref", "baseline_fingerprint", "parameter_bindings", "associated_binding_ids", "existing_targets", "erase_before_rebuild", "rebuild_template", "repeat", "lineage"],
+      "properties": {
+        "binding_id": { "type": "string", "minLength": 1 },
+        "entity_node_id": { "type": "string", "pattern": "^node_[0-9a-f]{24}$" },
+        "persistent_ref": { "$ref": "#/$defs/persistent_ref" },
+        "baseline_fingerprint": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+        "parameter_bindings": { "type": "array", "minItems": 1, "items": { "type": "object" } },
+        "existing_targets": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/persistent_ref" } }
+      }
+    },
+    "persistent_ref": {
+      "type": "object",
+      "oneOf": [
+        { "required": ["target_id"] },
+        { "required": ["entity_path", "edit_scope", "instance_policy"] }
+      ]
+    }
+  }
+}

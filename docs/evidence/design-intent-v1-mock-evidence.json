@@ -1,0 +1,14 @@
+{
+  "version": "design-intent-v1-mock-evidence.1",
+  "command": "node test/design-intent-graph.mjs",
+  "runtime": "mock",
+  "result": "pass",
+  "domains": ["architecture", "product", "interior"],
+  "parameters": ["door_width_mm", "wall_thickness_mm", "hole_diameter_mm", "shelf_count"],
+  "metrics": { "reviewed_rebuild_executed": true, "save_reopen_lineage_stable": true, "manual_divergence_detected": true, "silent_overwrite": false, "gateway_preview_only": true },
+  "hashes": {
+    "src/design-intent-graph.mjs": "2dad0a16bf9c7d69a5a91f02261fea821b0dd7f98aa468a2e4b6eabbf200d538",
+    "test/design-intent-graph.mjs": "7c365abb8a4e127136f67f2b93fec5978da4412bc878d95b7ccf7ac8d038d512"
+  },
+  "live_queue_called": false
+}

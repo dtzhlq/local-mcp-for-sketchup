@@ -32,7 +32,7 @@ export const TOOL_REGISTRY = Object.freeze([
     inputSchema: {
       type: 'object',
       properties: {
-        topic: { type: 'string', enum: ['overview', 'tools', 'dsl', 'coordinates', 'examples', 'snapshot', 'runtimes', 'existing_model_edit', 'image_artifacts', 'capabilities', 'all'], default: 'overview' },
+        topic: { type: 'string', enum: ['overview', 'tools', 'dsl', 'coordinates', 'examples', 'snapshot', 'runtimes', 'agent_contract', 'model_graph', 'existing_model_edit', 'image_artifacts', 'capabilities', 'all'], default: 'overview' },
         detail: { type: 'string', enum: ['summary', 'standard', 'full'], default: 'summary' },
         max_chars: { type: 'number', minimum: 256, maximum: 250000, default: 8000 }
       },
@@ -111,6 +111,8 @@ export const TOOL_REGISTRY = Object.freeze([
         output_dir: { type: 'string' },
         recursive_limit: { type: 'number', default: 2000 },
         budgets: { type: 'object' },
+        task_id: { type: 'string', description: 'Optional Agent Contract task id used to bind the approval challenge.' },
+        approval_expires_ms: { type: 'number', minimum: 1000, maximum: 86400000 },
         runtime: { type: 'string', enum: ['mock', 'queue'], default: 'mock' },
         timeoutMs: { type: 'number' }
       },
@@ -119,7 +121,7 @@ export const TOOL_REGISTRY = Object.freeze([
   },
   {
     name: 'apply_reviewed_model_edit',
-    description: 'Apply an approved existing-model edit plan only when the live model revision still matches, then write before/after, diff, QA, review, and model artifacts.',
+    description: 'Apply an existing-model edit only with configured S1 auto-policy or a trusted one-time approval token and a matching live model revision, then write before/after, diff, QA, review, and model artifacts.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -127,12 +129,77 @@ export const TOOL_REGISTRY = Object.freeze([
         plan_file: { type: 'string' },
         review: { type: 'object' },
         review_file: { type: 'string' },
+        approval_token: { type: 'string', description: 'One-time token issued through a trusted user-presence channel. Agent-supplied review fields are not authorization.' },
         output_dir: { type: 'string' },
         save_model: { type: 'boolean', default: true },
         save_path: { type: 'string' },
         capture_view: { type: 'boolean', default: false },
         runtime: { type: 'string', enum: ['mock', 'queue'], default: 'mock' },
         timeoutMs: { type: 'number' }
+      }
+    }
+  },
+  {
+    name: 'start_agent_task',
+    description: 'Start a persistent Agent Contract v1 task using guided, standard, or expert presentation. Client capabilities only shape responses and never elevate server execution policy.',
+    inputSchema: {
+      type: 'object',
+      additionalProperties: false,
+      required: ['intent', 'instruction'],
+      properties: {
+        intent: { type: 'string', enum: ['create_model', 'understand_model', 'propose_existing_model_edit', 'modify_design_parameters', 'reconcile_design_intent', 'reference_image_correction', 'visual_correction_qa', 'reviewed_existing_model_edit', 'image_artifact', 'verify_model'] },
+        instruction: { type: 'string', minLength: 1 },
+        interface_level: { type: 'string', enum: ['guided', 'standard', 'expert'], default: 'guided' },
+        client_capabilities: {
+          type: 'object',
+          additionalProperties: false,
+          properties: {
+            vision: { type: 'boolean', default: false },
+            local_files: { type: 'boolean', default: false },
+            structured_output: { type: 'boolean', default: false },
+            parallel: { type: 'boolean', default: false },
+            context: { type: 'string', enum: ['short', 'standard', 'long'], default: 'short' }
+          }
+        },
+        idempotency_key: { type: 'string', minLength: 1 },
+        inputs: { type: 'object' }
+      }
+    }
+  },
+  {
+    name: 'resume_agent_task',
+    description: 'Resume a persistent Agent Contract v1 task by task_id and receive its stable state, next_action, and artifact handles.',
+    inputSchema: {
+      type: 'object',
+      additionalProperties: false,
+      required: ['task_id'],
+      properties: { task_id: { type: 'string', pattern: '^task_[0-9a-f-]+$' } }
+    }
+  },
+  {
+    name: 'submit_agent_task_input',
+    description: 'Submit the next required input or a trusted approval token to a persistent task. Idempotency keys prevent duplicate mutations.',
+    inputSchema: {
+      type: 'object',
+      additionalProperties: false,
+      required: ['task_id', 'input'],
+      properties: {
+        task_id: { type: 'string', pattern: '^task_[0-9a-f-]+$' },
+        idempotency_key: { type: 'string', minLength: 1 },
+        input: { type: 'object' }
+      }
+    }
+  },
+  {
+    name: 'read_agent_artifact',
+    description: 'Read a server-managed artifact by opaque handle with progressive max_chars limits; local filesystem access is not required.',
+    inputSchema: {
+      type: 'object',
+      additionalProperties: false,
+      required: ['handle'],
+      properties: {
+        handle: { type: 'string', pattern: '^artifact:task_[0-9a-f-]+:[0-9a-f-]+$' },
+        max_chars: { type: 'number', minimum: 256, maximum: 100000, default: 12000 }
       }
     }
   },
@@ -633,7 +700,20 @@ function normalizeSnapshotArgument(document) {
 
 function respond(id, result, error) {
   const payload = error
-    ? { jsonrpc: '2.0', id, error: { code: -32000, message: error.message } }
+    ? {
+      jsonrpc: '2.0',
+      id,
+      error: {
+        code: -32000,
+        message: error.code === 'INTERNAL_ERROR' ? 'The server could not complete the request.' : error.message,
+        data: {
+          code: error.code || 'INTERNAL_ERROR',
+          retryable: error.retryable === true,
+          next_action: error.next_action || null,
+          ...(error.details !== undefined ? { details: error.details } : {})
+        }
+      }
+    }
     : { jsonrpc: '2.0', id, result };
   process.stdout.write(`${JSON.stringify(payload)}\n`);
 }

@@ -1,0 +1,13 @@
+{
+  "version": "real-model-reliability-v1-mock-evidence.1",
+  "command": "node test/reliability-corpus.mjs",
+  "runtime": "mock",
+  "result": "pass",
+  "corpus_cases": 7,
+  "metrics": { "task_success_rate": 1, "wrong_object_modification_count": 0, "silent_geometry_corruption_count": 0, "recovery_rate": 1 },
+  "hashes": {
+    "test/reliability-corpus/manifest.json": "95bfa4851d85b9121ef877f6afeb3759054838b1685084bde2f73ed560e251ff",
+    "test/reliability-corpus.mjs": "c303a22845877f73c7d2b635feb9be4c6581b013baf4516eebf2daa1d44c320b"
+  },
+  "live_sketchup_version_matrix": "not_run_requires_explicit_user_coordination"
+}

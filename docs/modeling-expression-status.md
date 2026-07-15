@@ -12,7 +12,7 @@
 
 | 层级 | 当前能力 | 证据入口 |
 |---|---|---|
-| MCP 工具闭环 | 当前 `src/mcp-server.mjs` `tools/list` 为 36 个工具：两个 review-gated image artifact adapter 加两个 reviewed existing-model edit 工具；工具数不等同于 101 个 safe DSL operation | `src/mcp-server.mjs`、`src/bridge.mjs`、`test/mcp-server.mjs` |
+| MCP 工具闭环 | Agent Contract v1 分支当前 `src/mcp-server.mjs` `tools/list` 为 40 个工具：保留 rc.2 的 36 个 expert tools，并增加 4 个持久化 Gateway tools；工具数不等同于 101 个 safe DSL operation | `src/mcp-server.mjs`、`src/bridge.mjs`、`test/mcp-server.mjs` |
 | ModificationIntent v1 | `plan_modification_intent` 把 selection、target resolution 和几何事实转成可审计 intent，记录 evidence refs、confidence、`requires_confirmation`、`safe_to_execute`、limitations 和可选 JSON DSL patch；`iterate_model` 可消费 `intent` / `intent_file`，仅在安全门控满足时执行 | `src/modification-intent.mjs`、`src/iteration.mjs`、`src/mcp-server.mjs` |
 | 安全 JSON DSL | 101 个 operation，57 个 component_definition scope；覆盖 primitive/profile/surface/product/architecture/component/view/appearance/object/boolean/file-inspection 和受控 existing-model edits 主要子集 | `src/capabilities.mjs`、`test/operation-contract.mjs` |
 | Existing Model Editing Engine | `prepare_existing_model_edit` / `apply_reviewed_model_edit` 提供 persistent occurrence path、model revision、S1-S4 risk、budget、review 和 stale-model gate；覆盖深层 Group/Instance/Face/Edge 的受控属性、结构、集合、拓扑、feature、same-scope boolean/manifold | `src/existing-model-editing.mjs`、`scripts/validate-existing-model-editing.mjs`、`test/existing-model-editing.mjs` |
@@ -32,7 +32,7 @@
 - `npm run plugin:check`：registry 与插件包检查通过。
 - `npm run qa:official-api-r3:mock`：保存 `output/python-sdk-official-api-expression-r3-mock.json`，并断言 12 ops / 5 groups / >=16 faces / warnings 0 / selection / scene advanced fields / followme / positioned texture / fill mesh。
 - `npm run qa:official-api-r3:queue`：保存 `output/python-sdk-official-api-expression-r3-queue.json` 和 `output/python-sdk-official-api-expression-r3.skp`；queue snapshot 为 12 ops / 5 groups / 10 faces / 29 edges / 25 vertices / selection 1 / scene 1 / warnings 0。
-- `src/mcp-server.mjs` 文档核对：当前 `tools/list` 为 36 个工具；其中 `plan_modification_intent` / `iterate_model` 属于可审计门控编排层，不代表自动语义建模智能体；两个图片 adapter 只做受审制品校验和 DSL preview，不自动执行。
+- `src/mcp-server.mjs` 文档核对：当前架构分支 `tools/list` 为 40 个工具（36 expert + 4 Gateway）；其中 `plan_modification_intent` / `iterate_model` 属于可审计门控编排层，不代表自动语义建模智能体；两个图片 adapter 只做受审制品校验和 DSL preview，不自动执行。
 - `npm run qa:existing-model-edit:mock`：深层 Face/Edge 属性、single-occurrence `make_unique`、nested feature、same-Entities boolean/manifold、保存重开后的 persistent path 与 model revision 全部通过。
 - `npm run test:python-sdk-source-compat`：35 total / 29 compiled / 6 classified unsupported / 0 unclassified，每个 compiled case 校验 canonical DSL/result。
 - `0.1.0-rc.2` fresh queue：2026-07-15 已完全重启 SketchUp 2026 并重新启动 Bridge；plugin/runtime `0.1.0-rc.2`、manifest/capability 和 101 operations 全匹配，compatibility issues 为空。Existing Model Editing Engine、nested edit、high-value SDK、Official API R3、queue/identity/expert/budget 及 36-tool queue-required 套件均通过并保存 SKP/capture/report 证据。

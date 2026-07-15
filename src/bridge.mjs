@@ -19,11 +19,19 @@ import { analyzeSelectionGeometry } from './selection-geometry-interpreter.mjs';
 import { planModificationIntent } from './modification-intent.mjs';
 import { compileReviewedPartGraph, prepareImageModelingBrief } from './image-structured-mcp-adapter.mjs';
 import { applyReviewedExistingModelEdit, prepareExistingModelEdit } from './existing-model-editing.mjs';
+import { ApprovalAuthority } from './approval-tokens.mjs';
+import { normalizeExecutionPolicy } from './agent-contract.mjs';
+import { AgentTaskStore } from './agent-task-store.mjs';
+import { AgentGateway } from './agent-gateway.mjs';
 
 export class SketchUpBridge {
   constructor(options = {}) {
     this.options = options;
     this.mockRuntime = new MockRuntime(options.mock || {});
+    this.executionPolicy = normalizeExecutionPolicy(options.executionPolicy || policyFromEnvironment());
+    this.approvalAuthority = options.approvalAuthority || new ApprovalAuthority(options.approval || {});
+    this.taskStore = options.taskStore || new AgentTaskStore(options.agentContract || {});
+    this.agentGateway = options.agentGateway || new AgentGateway({ bridge: this, taskStore: this.taskStore });
     this.runtimeCapabilitiesCache = new Map();
   }
 
@@ -50,6 +58,22 @@ export class SketchUpBridge {
 
   async apply_reviewed_model_edit(options = {}) {
     return applyReviewedExistingModelEdit({ ...options, bridge: this });
+  }
+
+  async start_agent_task(options = {}) {
+    return this.agentGateway.start(options);
+  }
+
+  async resume_agent_task(options = {}) {
+    return this.agentGateway.resume(options);
+  }
+
+  async submit_agent_task_input(options = {}) {
+    return this.agentGateway.submit(options);
+  }
+
+  async read_agent_artifact(options = {}) {
+    return this.agentGateway.readArtifact(options);
   }
 
   async get_capabilities({ runtime = 'mock', timeoutMs } = {}) {
@@ -734,6 +758,17 @@ export class SketchUpBridge {
       return callback(lockedBridge);
     }, { method: `${runtime}-runtime-session` });
   }
+}
+
+function policyFromEnvironment() {
+  const allowedRuntimes = process.env.ALMA_SKETCHUP_AGENT_ALLOWED_RUNTIMES
+    ? process.env.ALMA_SKETCHUP_AGENT_ALLOWED_RUNTIMES.split(',').map((item) => item.trim()).filter(Boolean)
+    : ['mock'];
+  return {
+    auto_approve_risks: process.env.ALMA_SKETCHUP_AUTO_APPROVE_S1 === '1' ? ['S1'] : [],
+    allowed_runtimes: allowedRuntimes,
+    allow_queue_mutation: process.env.ALMA_SKETCHUP_AGENT_ALLOW_QUEUE_MUTATION === '1'
+  };
 }
 
 async function sha256Hex(value) {

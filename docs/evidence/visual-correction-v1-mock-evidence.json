@@ -1,0 +1,12 @@
+{
+  "version": "visual-correction-v1-mock-evidence.1",
+  "command": "node test/visual-correction.mjs",
+  "runtime": "mock",
+  "result": "pass",
+  "metrics": { "visual_agent_required": false, "initial_mae": 0.019636, "initial_alignment_delta": 0.039063, "patch_execution_allowed": false, "recapture_verdict": "pass", "path_policy_fail_closed": true },
+  "hashes": {
+    "src/visual-correction.mjs": "f8e33fe010038143bcc6d305219246f4be919e0c0ee575faae9052962b8c791e",
+    "test/visual-correction.mjs": "582a37ef3435f23464464548f2242a0328da9b966de80ac6791ea9b9d23bc652"
+  },
+  "live_queue_called": false
+}

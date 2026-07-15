@@ -3,7 +3,7 @@ import fs from 'node:fs/promises';
 import { spawn } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { listToolNames } from '../src/tool-registry.mjs';
+import { AGENT_GATEWAY_TOOL_NAMES, EXPERT_TOOL_NAMES, listToolNames } from '../src/tool-registry.mjs';
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const pythonSdkSource = await fs.readFile(path.join(repoRoot, 'examples/python-sdk-facade-fixture.py'), 'utf8');
@@ -42,7 +42,9 @@ try {
   assert.equal(initialized.result.serverInfo.version, '0.1.0-rc.2');
   const list = await request({ id: 1, method: 'tools/list' });
   const toolNames = list.result.tools.map((tool) => tool.name);
-  assert.equal(toolNames.length, 36, 'MCP tools/list should expose exactly 36 tools');
+  assert.equal(toolNames.length, 40, 'MCP tools/list should expose 36 expert tools plus 4 Agent Gateway tools');
+  assert.equal(EXPERT_TOOL_NAMES.length, 36, 'the original 36-tool expert surface must remain available');
+  assert.equal(AGENT_GATEWAY_TOOL_NAMES.length, 4);
   assert.deepEqual(toolNames, listToolNames(), 'stdio MCP must expose the shared tool registry without drift');
   const docsTool = list.result.tools.find((tool) => tool.name === 'get_docs');
   assert.ok(docsTool.inputSchema.properties.topic.enum.includes('existing_model_edit'));
@@ -52,6 +54,7 @@ try {
   assert.ok(toolNames.includes('compile_reviewed_part_graph'), 'MCP tools/list should expose compile_reviewed_part_graph');
   assert.ok(toolNames.includes('prepare_existing_model_edit'), 'MCP tools/list should expose prepare_existing_model_edit');
   assert.ok(toolNames.includes('apply_reviewed_model_edit'), 'MCP tools/list should expose apply_reviewed_model_edit');
+  for (const toolName of AGENT_GATEWAY_TOOL_NAMES) assert.ok(toolNames.includes(toolName), `MCP tools/list should expose ${toolName}`);
   assert.ok(toolNames.includes('get_workflow_bundle'), 'MCP tools/list should expose get_workflow_bundle');
   assert.ok(toolNames.includes('compile_expert'), 'MCP tools/list should expose compile_expert');
   assert.ok(toolNames.includes('compile_python_sdk'), 'MCP tools/list should expose compile_python_sdk');
@@ -82,6 +85,16 @@ try {
   assert.ok(iterateTool.inputSchema.properties.input_format.enum.includes('python_sdk'));
   const adoptTool = list.result.tools.find((tool) => tool.name === 'adopt_open_model');
   assert.ok(adoptTool.inputSchema.properties.recursive);
+  const startTaskTool = list.result.tools.find((tool) => tool.name === 'start_agent_task');
+  assert.deepEqual(startTaskTool.inputSchema.required, ['intent', 'instruction']);
+  assert.ok(startTaskTool.inputSchema.properties.intent.enum.includes('propose_existing_model_edit'));
+  assert.ok(startTaskTool.inputSchema.properties.intent.enum.includes('modify_design_parameters'));
+  assert.ok(startTaskTool.inputSchema.properties.intent.enum.includes('reconcile_design_intent'));
+  assert.ok(startTaskTool.inputSchema.properties.intent.enum.includes('reference_image_correction'));
+  assert.ok(startTaskTool.inputSchema.properties.intent.enum.includes('visual_correction_qa'));
+  assert.equal(startTaskTool.inputSchema.properties.execution_policy, undefined, 'Agents must not be able to submit execution policy');
+  const applyExistingTool = list.result.tools.find((tool) => tool.name === 'apply_reviewed_model_edit');
+  assert.ok(applyExistingTool.inputSchema.properties.approval_token);
   const imageCompileTool = list.result.tools.find((tool) => tool.name === 'compile_reviewed_part_graph');
   assert.deepEqual(imageCompileTool.inputSchema.required, ['mcp_brief_path', 'promotion_review_path', 'part_graph_path', 'profile_path']);
   const resolveTool = list.result.tools.find((tool) => tool.name === 'resolve_model_targets');
@@ -103,6 +116,7 @@ try {
   for (const workflow of ['create', 'understand', 'reviewed_existing_model_edit', 'image_artifact', 'verify']) {
     assert.ok(workflowBundle.workflows[workflow], `workflow bundle should include ${workflow}`);
   }
+  assert.ok(workflowBundle.workflows.propose_existing_model_edit);
   assert.equal(JSON.stringify(workflowBundle).includes('read-only nested index'), false, 'workflow bundle must not retain obsolete nested-read-only wording');
   assert.ok(workflowBundle.guardrails.some((item) => item.includes('untrusted data')));
   assert.ok(workflowBundle.guardrails.some((item) => item.includes('S2-S4')));

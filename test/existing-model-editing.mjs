@@ -6,7 +6,10 @@ import { modelRevisionForAdoption } from '../src/existing-model-editing.mjs';
 
 const outputDir = path.resolve('output/existing-model-editing/test');
 await fs.rm(outputDir, { recursive: true, force: true });
-const bridge = new SketchUpBridge({ mock: { sessionPath: path.join(outputDir, 'session.json') } });
+const bridge = new SketchUpBridge({
+  mock: { sessionPath: path.join(outputDir, 'session.json') },
+  approval: { stateDir: path.join(outputDir, 'approvals'), secret: 'existing-model-editing-test-secret-at-least-32-bytes' }
+});
 
 await bridge.build_model({ runtime: 'mock', code: JSON.stringify({
   version: 1,
@@ -53,11 +56,31 @@ const prepared = await bridge.prepare_existing_model_edit({
 });
 assert.equal(prepared.plan.compile_permission, 'ready_for_review');
 assert.equal(prepared.plan.risk_level, 'S1');
+assert.match(prepared.plan.plan_hash, /^sha256:[0-9a-f]{64}$/);
+await assert.rejects(
+  bridge.apply_reviewed_model_edit({
+    runtime: 'mock',
+    plan: prepared.plan,
+    review: { status: 'approved', plan_id: prepared.plan.plan_id, reviewer: 'ordinary-agent' },
+    output_dir: path.join(outputDir, 'forged-review-apply'),
+    save_model: false
+  }),
+  (error) => error.code === 'APPROVAL_REQUIRED'
+);
+await assert.rejects(
+  bridge.apply_reviewed_model_edit({
+    runtime: 'mock',
+    plan: { ...structuredClone(prepared.plan), instruction: 'Tampered after review.' },
+    output_dir: path.join(outputDir, 'tampered-plan-apply'),
+    save_model: false
+  }),
+  (error) => error.code === 'PLAN_HASH_MISMATCH'
+);
 
 const applied = await bridge.apply_reviewed_model_edit({
   runtime: 'mock',
   plan: prepared.plan,
-  review: { status: 'approved', plan_id: prepared.plan.plan_id, reviewer: 'existing-model-editing-test' },
+  approval_token: await approvalToken(prepared),
   output_dir: path.join(outputDir, 'property-apply'),
   save_model: false
 });
@@ -79,7 +102,7 @@ const uniquePrepared = await bridge.prepare_existing_model_edit({
 await bridge.apply_reviewed_model_edit({
   runtime: 'mock',
   plan: uniquePrepared.plan,
-  review: { status: 'approved', plan_id: uniquePrepared.plan.plan_id, reviewer: 'existing-model-editing-test' },
+  approval_token: await approvalToken(uniquePrepared),
   output_dir: path.join(outputDir, 'unique-apply'),
   save_model: false
 });
@@ -99,7 +122,7 @@ assert.equal(topologyPrepared.plan.risk_level, 'S3');
 await bridge.apply_reviewed_model_edit({
   runtime: 'mock',
   plan: topologyPrepared.plan,
-  review: { status: 'approved', plan_id: topologyPrepared.plan.plan_id, reviewer: 'existing-model-editing-test' },
+  approval_token: await approvalToken(topologyPrepared),
   output_dir: path.join(outputDir, 'topology-apply'),
   save_model: false
 });
@@ -118,7 +141,7 @@ assert.equal(featurePrepared.plan.risk_level, 'S3');
 await bridge.apply_reviewed_model_edit({
   runtime: 'mock',
   plan: featurePrepared.plan,
-  review: { status: 'approved', plan_id: featurePrepared.plan.plan_id, reviewer: 'existing-model-editing-test' },
+  approval_token: await approvalToken(featurePrepared),
   output_dir: path.join(outputDir, 'feature-apply'),
   save_model: false
 });
@@ -144,7 +167,7 @@ assert.equal(booleanPrepared.plan.risk_level, 'S3');
 await bridge.apply_reviewed_model_edit({
   runtime: 'mock',
   plan: booleanPrepared.plan,
-  review: { status: 'approved', plan_id: booleanPrepared.plan.plan_id, reviewer: 'existing-model-editing-test' },
+  approval_token: await approvalToken(booleanPrepared),
   output_dir: path.join(outputDir, 'boolean-apply'),
   save_model: false
 });
@@ -163,7 +186,7 @@ const manifoldPrepared = await bridge.prepare_existing_model_edit({
 const manifoldApplied = await bridge.apply_reviewed_model_edit({
   runtime: 'mock',
   plan: manifoldPrepared.plan,
-  review: { status: 'approved', plan_id: manifoldPrepared.plan.plan_id, reviewer: 'existing-model-editing-test' },
+  approval_token: await approvalToken(manifoldPrepared),
   output_dir: path.join(outputDir, 'manifold-apply'),
   save_model: false
 });
@@ -188,12 +211,34 @@ await assert.rejects(
   bridge.apply_reviewed_model_edit({
     runtime: 'mock',
     plan: stalePrepared.plan,
-    review: { status: 'approved', plan_id: stalePrepared.plan.plan_id, reviewer: 'existing-model-editing-test' },
+    approval_token: await approvalToken(stalePrepared),
     output_dir: path.join(outputDir, 'stale-apply'),
     save_model: false
   }),
-  /stale_model_revision/
+  (error) => error.code === 'MODEL_REVISION_MISMATCH'
 );
+
+adopted = await bridge.adopt_open_model({ runtime: 'mock', recursive: true, recursive_limit: 500 });
+const autoTarget = adopted.recursive_index.find((entry) => entry.entity_type === 'edge');
+const autoBridge = new SketchUpBridge({
+  mock: { sessionPath: path.join(outputDir, 'session.json') },
+  approval: { stateDir: path.join(outputDir, 'auto-approvals'), secret: 'existing-model-editing-auto-test-secret-at-least-32-bytes' },
+  executionPolicy: { allowed_runtimes: ['mock'], auto_approve_risks: ['S1'] }
+});
+const autoPrepared = await autoBridge.prepare_existing_model_edit({
+  runtime: 'mock',
+  instruction: 'Apply an S1 attribute under explicitly configured server policy.',
+  targets: [target(autoTarget)],
+  operations: [{ op: 'attribute', ...target(autoTarget), dictionary: 'ExistingModelEdit', key: 'auto_s1', value: true }],
+  output_dir: path.join(outputDir, 'auto-s1-prepare')
+});
+const autoApplied = await autoBridge.apply_reviewed_model_edit({
+  runtime: 'mock',
+  plan: autoPrepared.plan,
+  output_dir: path.join(outputDir, 'auto-s1-apply'),
+  save_model: false
+});
+assert.equal(autoApplied.authorization.mode, 'server_policy_auto_approval');
 
 adopted = await bridge.adopt_open_model({ runtime: 'mock', recursive: true, recursive_limit: 500 });
 const rollbackFace = adopted.recursive_index.find((entry) => entry.entity_type === 'face');
@@ -221,10 +266,20 @@ process.stdout.write(`${JSON.stringify({
   feature_plan: featurePrepared.plan.plan_id,
   boolean_plan: booleanPrepared.plan.plan_id,
   manifold_plan: manifoldPrepared.plan.plan_id,
+  forged_approval_rejected: true,
+  tampered_plan_rejected: true,
+  configured_s1_auto_approval: true,
   stale_revision_rejected: true,
   rollback_verified: true
 }, null, 2)}\n`);
 
 function target(entry) {
   return { entity_path: entry.entity_path, edit_scope: 'instance_path', instance_policy: 'definition_wide' };
+}
+
+async function approvalToken(preparedEdit) {
+  return bridge.approvalAuthority.approveChallengeFromTrustedUser(
+    preparedEdit.approval_challenge,
+    { user_id: 'existing-model-editing-human-fixture', channel: 'test-only-trusted-user-fixture', confirmed: true }
+  );
 }

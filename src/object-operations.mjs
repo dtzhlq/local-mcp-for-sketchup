@@ -19,11 +19,13 @@ export function deleteObject(model, operation) {
   const reference = resolveObjectReference(operation, 'delete');
   if (reference.entity_path && operation.confirmed !== true) throw new Error('delete.confirmed=true is required for nested entity deletion');
   const target = findModelObject(model, reference);
+  assertUnlocked(target, 'delete');
   removeResolvedTarget(model, target);
 }
 
 export function renameObject(model, operation) {
   const target = findModelObject(model, resolveObjectReference(operation, 'rename'));
+  assertUnlocked(target, 'rename');
   const newName = nonEmptyString(operation.new_name ?? operation.newName, 'rename.new_name');
   const duplicate = target.nested
     ? (target.definition[target.collection] || []).some((item) => item !== target.item && item.name === newName)
@@ -35,12 +37,14 @@ export function renameObject(model, operation) {
 
 export function setObjectMaterial(model, operation) {
   const target = findModelObject(model, resolveObjectReference(operation, 'set_material'));
+  assertUnlocked(target, 'set_material');
   target.item.material = ensureMaterial(model, operation.material ?? operation.material_name ?? operation.materialName);
   refreshNestedDefinition(model, target);
 }
 
 export function setObjectVisibility(model, operation) {
   const target = findModelObject(model, resolveObjectReference(operation, 'set_visibility'));
+  assertUnlocked(target, 'set_visibility');
   const visible = normalizeBoolean(operation.visible ?? !operation.hidden, 'set_visibility.visible');
   target.item.hidden = !visible;
   target.item.visible = visible;
@@ -60,6 +64,7 @@ export function addTag(model, operation) {
 
 export function assignTag(model, operation) {
   const target = findModelObject(model, resolveObjectReference(operation, 'assign_tag'));
+  assertUnlocked(target, 'assign_tag');
   const tagName = nonEmptyString(operation.tag ?? operation.tag_name ?? operation.tagName, 'assign_tag.tag');
   model.tags ||= {};
   if (!model.tags[tagName]) model.tags[tagName] = { name: tagName, color: null, visible: true };
@@ -68,6 +73,7 @@ export function assignTag(model, operation) {
 
 export function setObjectAttribute(model, operation) {
   const target = findModelObject(model, resolveObjectReference(operation, 'attribute'));
+  assertUnlocked(target, 'attribute');
   const dictionary = nonEmptyString(operation.dictionary ?? operation.namespace ?? 'AlmaSketchupMCP', 'attribute.dictionary');
   const updates = normalizeAttributeUpdates(operation, dictionary);
   target.item.attributes ||= {};
@@ -77,6 +83,7 @@ export function setObjectAttribute(model, operation) {
 
 export function removeObjectAttribute(model, operation) {
   const target = findModelObject(model, resolveObjectReference(operation, 'remove_attribute'));
+  assertUnlocked(target, 'remove_attribute');
   const dictionary = nonEmptyString(operation.dictionary ?? operation.namespace ?? 'AlmaSketchupMCP', 'remove_attribute.dictionary');
   const key = operation.key ?? operation.attr_key ?? operation.attrKey;
   if (!target.item.attributes?.[dictionary]) return;
@@ -86,6 +93,7 @@ export function removeObjectAttribute(model, operation) {
 
 export function setFaceMaterial(model, operation) {
   const target = findModelObject(model, resolveObjectReference(operation, 'set_face_material'));
+  assertUnlocked(target, 'set_face_material');
   if (target.entity_type !== 'face') throw new Error('set_face_material target must be a Face');
   const material = ensureMaterial(model, operation.material ?? operation.material_name ?? operation.materialName);
   const side = String(operation.side || 'front');
@@ -96,6 +104,7 @@ export function setFaceMaterial(model, operation) {
 
 export function setEdgeProperties(model, operation) {
   const target = findModelObject(model, resolveObjectReference(operation, 'set_edge_properties'));
+  assertUnlocked(target, 'set_edge_properties');
   if (target.entity_type !== 'edge') throw new Error('set_edge_properties target must be an Edge');
   if (operation.soft !== undefined) target.item.soft = normalizeBoolean(operation.soft, 'set_edge_properties.soft');
   if (operation.smooth !== undefined) target.item.smooth = normalizeBoolean(operation.smooth, 'set_edge_properties.smooth');
@@ -109,6 +118,7 @@ export function setEdgeProperties(model, operation) {
 export function reverseFace(model, operation) {
   assertConfirmed(operation, 'reverse_face');
   const target = findModelObject(model, resolveObjectReference(operation, 'reverse_face'));
+  assertUnlocked(target, 'reverse_face');
   if (target.entity_type !== 'face') throw new Error('reverse_face target must be a Face');
   [target.item.material, target.item.back_material] = [target.item.back_material || null, target.item.material || null];
   target.item.reversed = !target.item.reversed;
@@ -118,6 +128,7 @@ export function reverseFace(model, operation) {
 export function pushpullFace(model, operation) {
   assertConfirmed(operation, 'pushpull_face');
   const target = findModelObject(model, resolveObjectReference(operation, 'pushpull_face'));
+  assertUnlocked(target, 'pushpull_face');
   if (target.entity_type !== 'face') throw new Error('pushpull_face target must be a Face');
   const distance = finiteNumber(operation.distance, undefined, 'pushpull_face.distance');
   if (Math.abs(distance) <= 1e-9) throw new Error('pushpull_face.distance must be non-zero');
@@ -139,6 +150,7 @@ export function pushpullFace(model, operation) {
 
 export function setObjectClassification(model, operation) {
   const target = findModelObject(model, resolveObjectReference(operation, 'classification'));
+  assertUnlocked(target, 'classification');
   const classification = normalizeClassification(operation);
   target.item.classification = classification;
   target.item.attributes ||= {};
@@ -147,6 +159,7 @@ export function setObjectClassification(model, operation) {
 
 export function setObjectTextureTransform(model, operation) {
   const target = findModelObject(model, resolveObjectReference(operation, 'texture_transform'));
+  assertUnlocked(target, 'texture_transform');
   const textureTransform = normalizeTextureTransform(operation, 'texture_transform');
   target.item.texture_transform = textureTransform;
   target.item.attributes ||= {};
@@ -155,6 +168,7 @@ export function setObjectTextureTransform(model, operation) {
 
 export function duplicateEntity(model, operation) {
   const target = findModelObject(model, resolveObjectReference(operation, 'duplicate_entity'));
+  assertUnlocked(target, 'duplicate_entity');
   const entityType = target.entity_type || target.item.entity_type || (target.collection === 'instances' ? 'component_instance' : 'group');
   if (!['group', 'component_instance'].includes(entityType)) throw new Error('duplicate_entity target must be a Group or ComponentInstance');
   const collection = resolvedCollection(model, target);
@@ -175,6 +189,7 @@ export function duplicateEntity(model, operation) {
 export function replaceComponentDefinition(model, operation) {
   assertConfirmed(operation, 'replace_component_definition');
   const target = findModelObject(model, resolveObjectReference(operation, 'replace_component_definition'));
+  assertUnlocked(target, 'replace_component_definition');
   const entityType = target.entity_type || target.item.entity_type || (target.collection === 'instances' ? 'component_instance' : null);
   if (entityType !== 'component_instance') throw new Error('replace_component_definition target must be a ComponentInstance');
   const definitionName = nonEmptyString(operation.definition ?? operation.new_definition ?? operation.newDefinition, 'replace_component_definition.definition');
@@ -193,6 +208,7 @@ export function replaceComponentDefinition(model, operation) {
 export function explodeEntity(model, operation) {
   assertConfirmed(operation, 'explode_entity');
   const target = findModelObject(model, resolveObjectReference(operation, 'explode_entity'));
+  assertUnlocked(target, 'explode_entity');
   const collection = resolvedCollection(model, target);
   const inserted = [];
   if (target.item.definition && model.component_definitions?.[target.item.definition]) {
@@ -218,6 +234,7 @@ export function eraseEntities(model, operation) {
   const targets = normalizeTargetList(operation.targets ?? operation.entity_paths ?? operation.entityPaths, 'erase_entities.targets');
   if (operation.max_affected !== undefined && targets.length > Number(operation.max_affected)) throw new Error('erase_entities exceeds max_affected');
   const resolved = targets.map((target) => findModelObject(model, resolveObjectReference(withCollectionPolicy(target, operation), 'erase_entities')));
+  for (const target of resolved) assertUnlocked(target, 'erase_entities');
   for (const target of resolved.reverse()) removeResolvedTarget(model, target);
 }
 
@@ -229,6 +246,7 @@ export function transformEntities(model, operation) {
   for (const reference of targets) {
     const merged = withCollectionPolicy(reference, operation);
     const target = findModelObject(model, resolveObjectReference(merged, 'transform_entities'));
+    assertUnlocked(target, 'transform_entities');
     if (['group', 'component_instance'].includes(target.entity_type || target.item.entity_type)) {
       transformObject(model, { ...merged, op: 'transform_object', translate });
     } else {
@@ -246,6 +264,7 @@ export function transformEntities(model, operation) {
 
 export function transformObject(model, operation) {
   const target = findModelObject(model, resolveObjectReference(operation, 'transform_object'));
+  assertUnlocked(target, 'transform_object');
   const object = target.item;
   const transform = normalizeObjectTransform(operation, object);
   const vertices = object._vertices || boxVertices(object.bounding_box.min, [object.bounding_box.w, object.bounding_box.d, object.bounding_box.h]);
@@ -258,6 +277,11 @@ export function transformObject(model, operation) {
 
 function assertConfirmed(operation, opName) {
   if (operation.confirmed !== true) throw new Error(`${opName}.confirmed=true is required`);
+}
+
+function assertUnlocked(target, opName) {
+  if (target?.item?.locked === true) throw new Error(`${opName} target is locked`);
+  if (target?.parent_group?.locked === true) throw new Error(`${opName} target is inside a locked entity`);
 }
 
 function normalizeTargetList(value, fieldName) {

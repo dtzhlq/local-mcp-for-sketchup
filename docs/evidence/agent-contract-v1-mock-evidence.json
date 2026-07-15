@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "kind": "agent_contract_v1_mock_evidence",
+  "created_on": "2026-07-15",
+  "branch": "codex/agent-contract-v1",
+  "baseline_commit": "c9eb0f70adc3cc8214e84680d8de732c051c6a80",
+  "contracts": {
+    "agent_contract": "agent-contract.v1",
+    "approval_token": "approval-token.v1",
+    "mcp_tools_total": 40,
+    "expert_tools_retained": 36,
+    "agent_gateway_tools": 4,
+    "safe_dsl_operations": 101,
+    "component_scope_operations": 57,
+    "stable_error_codes": 14,
+    "task_states": 12
+  },
+  "fixture_sha256": {
+    "test/agent-contract.mjs": "15a5218bf5b8fe7da238d56b5e6daf78731222a39924901b6e16fa34e291c6cd",
+    "test/approval-tokens.mjs": "053251c0ae39957fa471869c91efc1e7f845a29b07ae96b51d2c4ef78a628038",
+    "test/agent-gateway.mjs": "35c877e0b7fea0151787b23356883e954722de685003d9a309ca934c45b4dea5",
+    "test/existing-model-editing.mjs": "a4a88a911a648106fa79c0bd2ac0a083fc72763d44f96ca5213a67179183277b"
+  },
+  "mock_gates": [
+    {
+      "command": "npm test",
+      "status": "passed"
+    },
+    {
+      "command": "npm run qa:existing-model-edit:mock",
+      "status": "passed"
+    },
+    {
+      "command": "node scripts/validate-mcp-capability-suite.mjs --runtime mock --output-dir output/mcp-capability-suite-agent-contract",
+      "status": "passed",
+      "tools_missing": 0,
+      "tools_unaccounted": 0,
+      "queue_requested": false
+    }
+  ],
+  "acceptance": {
+    "forged_agent_approval_executions": 0,
+    "unapproved_s2_s4_executions": 0,
+    "duplicate_mutations_from_idempotent_retry": 0,
+    "wrong_object_automatic_executions": 0,
+    "token_replay_accepted": 0,
+    "tampered_plan_accepted": 0,
+    "stale_revision_accepted": 0,
+    "task_restart_recovery": "passed",
+    "opaque_artifact_read_without_local_files": "passed",
+    "queue_interrupt_request_cleanup": "passed",
+    "queue_interrupt_lock_cleanup": "passed"
+  },
+  "live_queue": {
+    "status": "not_run",
+    "reason": "No user-coordinated fresh SketchUp handshake was requested for this architecture milestone."
+  },
+  "boundary": "This evidence proves the mock Agent Contract and approval enforcement loop. It does not claim live SketchUp proof, complete API coverage, autonomous semantic modeling, arbitrary Python, or automatic visual modeling."
+}

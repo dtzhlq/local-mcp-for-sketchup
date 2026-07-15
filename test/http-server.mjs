@@ -4,7 +4,7 @@ import http from 'node:http';
 import os from 'node:os';
 import path from 'node:path';
 import { createHttpConfig, createHttpServer } from '../src/http-server.mjs';
-import { listToolNames } from '../src/tool-registry.mjs';
+import { EXPERT_TOOL_NAMES, listToolNames } from '../src/tool-registry.mjs';
 
 const root = await fs.mkdtemp(path.join(os.tmpdir(), 'alma-http-server-'));
 const externalRoot = path.join(root, 'external-models');
@@ -38,10 +38,12 @@ try {
 
   const tools = await request({ port, method: 'GET', pathname: '/tools' });
   assert.equal(tools.statusCode, 200);
-  assert.equal(tools.body.count, 36);
+  assert.equal(tools.body.count, 40);
+  assert.equal(EXPERT_TOOL_NAMES.length, 36);
   assert.deepEqual(tools.body.tools, listToolNames(), 'HTTP and stdio must derive from the same tool registry');
   assert.ok(tools.body.tools.includes('prepare_existing_model_edit'));
   assert.ok(tools.body.tools.includes('apply_reviewed_model_edit'));
+  assert.ok(tools.body.tools.includes('start_agent_task'));
 
   const unauthorized = await request({ port, method: 'POST', pathname: '/tools/get_docs', body: {} });
   assert.equal(unauthorized.statusCode, 401);

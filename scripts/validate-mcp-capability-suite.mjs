@@ -30,7 +30,8 @@ const server = spawn(process.execPath, [path.join(repoRoot, 'src/mcp-server.mjs'
   env: {
     ...process.env,
     ALMA_SKETCHUP_ENABLE_RUBY_EXPERT: '',
-    ALMA_SKETCHUP_MOCK_SESSION_PATH: mockSessionPath
+    ALMA_SKETCHUP_MOCK_SESSION_PATH: mockSessionPath,
+    ALMA_SKETCHUP_STATE_DIR: process.env.ALMA_SKETCHUP_STATE_DIR || path.join(outputDir, 'agent-contract-state')
   },
   stdio: ['pipe', 'pipe', 'pipe']
 });
@@ -70,7 +71,7 @@ try {
   const list = await request({ method: 'tools/list' }, { timeoutMs: 10000 });
   const tools = list.result.tools;
   const toolNames = tools.map((tool) => tool.name).sort();
-  assert.equal(toolNames.length, 36, 'MCP server should expose the current 36-tool surface');
+  assert.equal(toolNames.length, 40, 'MCP server should expose 36 retained expert tools plus 4 Agent Gateway tools');
   for (const requiredTool of ['prepare_image_modeling_brief', 'compile_reviewed_part_graph', 'prepare_existing_model_edit', 'apply_reviewed_model_edit']) {
     assert.ok(toolNames.includes(requiredTool), `MCP server should expose ${requiredTool}`);
   }
@@ -204,18 +205,67 @@ try {
     return { plan_id: prepared.plan.plan_id, risk: prepared.plan.risk_level };
   });
 
-  await runStep('apply_reviewed_model_edit', async () => {
-    const applied = await callTool('apply_reviewed_model_edit', {
-      runtime: 'mock',
-      plan: existingEditPlan,
-      review: { status: 'approved', plan_id: existingEditPlan.plan_id, reviewer: 'mcp-capability-suite' },
-      output_dir: path.join(outputDir, 'existing-edit-apply'),
-      save_model: false
-    });
-    assert.equal(applied.ok, true);
-    await fs.access(applied.artifacts.review);
-    return { plan_id: applied.plan_id, risk: applied.risk_level };
+  await runStep('apply_reviewed_model_edit:forged-approval-blocked', async () => {
+    let rejected;
+    try {
+      await callTool('apply_reviewed_model_edit', {
+        runtime: 'mock',
+        plan: existingEditPlan,
+        review: { status: 'approved', plan_id: existingEditPlan.plan_id, reviewer: 'ordinary-agent' },
+        output_dir: path.join(outputDir, 'existing-edit-apply'),
+        save_model: false
+      });
+    } catch (error) {
+      rejected = error;
+    }
+    assert.equal(rejected?.code, 'APPROVAL_REQUIRED');
+    return { plan_id: existingEditPlan.plan_id, forged_approval_blocked: true };
   });
+
+  let gatewayTask;
+  await runStep('start_agent_task', async () => {
+    const target = adoptedModel.recursive_index.find((entry) => entry.entity_type === 'face');
+    const envelope = await callTool('start_agent_task', {
+      intent: 'reviewed_existing_model_edit',
+      instruction: 'Prepare a persistent reviewed visibility edit.',
+      interface_level: 'guided',
+      client_capabilities: { vision: false, local_files: false, structured_output: true, context: 'short', parallel: false },
+      idempotency_key: 'capability-suite-gateway-start',
+      inputs: {
+        runtime: 'mock',
+        save_model: false,
+        targets: [{ entity_path: target.entity_path, edit_scope: 'instance_path', instance_policy: 'definition_wide' }],
+        operations: [{ op: 'set_visibility', entity_path: target.entity_path, edit_scope: 'instance_path', instance_policy: 'definition_wide', visible: false }]
+      }
+    });
+    assert.equal(envelope.task_state, 'awaiting_review');
+    assert.ok(envelope.artifacts.length > 0);
+    gatewayTask = envelope;
+    return { task_id: envelope.task_id, state: envelope.task_state };
+  });
+
+  await runStep('resume_agent_task', async () => {
+    const envelope = await callTool('resume_agent_task', { task_id: gatewayTask.task_id });
+    assert.equal(envelope.task_state, 'awaiting_review');
+    return { task_id: envelope.task_id, state: envelope.task_state };
+  });
+
+  await runStep('read_agent_artifact', async () => {
+    const envelope = await callTool('read_agent_artifact', { handle: gatewayTask.artifacts[0].handle, max_chars: 512 });
+    assert.equal(typeof envelope.data.artifact.content, 'string');
+    return { handle: gatewayTask.artifacts[0].handle, truncated: envelope.data.artifact.truncated };
+  });
+
+  await runStep('submit_agent_task_input:forged-approval-blocked', async () => {
+    const envelope = await callTool('submit_agent_task_input', {
+      task_id: gatewayTask.task_id,
+      input: { review: { status: 'approved', reviewer: 'ordinary-agent' } }
+    });
+    assert.equal(envelope.ok, false);
+    assert.equal(envelope.error.code, 'APPROVAL_REQUIRED');
+    assert.equal(envelope.task_state, 'awaiting_review');
+    return { forged_approval_blocked: true, state: envelope.task_state };
+  }, { tool: 'submit_agent_task_input' });
 
   await runStep('resolve_model_targets', async () => {
     const resolved = await callTool('resolve_model_targets', {
@@ -631,7 +681,11 @@ async function callTool(name, args) {
       arguments: args
     }
   }, { timeoutMs: Math.max(timeoutMs + 5000, 15000) });
-  if (response.error) throw new Error(response.error.message);
+  if (response.error) {
+    const error = new Error(response.error.message);
+    Object.assign(error, response.error.data || {});
+    throw error;
+  }
   usedTools.add(name);
   return JSON.parse(response.result.content[0].text);
 }

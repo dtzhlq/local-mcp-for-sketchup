@@ -53,6 +53,7 @@ export function entityListFromSnapshot(snapshot, options = {}) {
     kind: item.kind || item.definition || item.entity_type,
     definition: item.definition,
     visible: item.visible !== false,
+    locked: item.locked === true,
     faces: item.faces,
     edges: item.edges,
     vertices: item.vertices,
@@ -60,8 +61,11 @@ export function entityListFromSnapshot(snapshot, options = {}) {
     material: item.material,
     tag: item.tag,
     classification: item.classification,
+    attributes: item.attributes,
     texture_transform: item.texture_transform,
     face_uvs: item.face_uvs,
+    features: item.features,
+    transform: item.transform,
     image: item.image,
     qa: item.qa
   }));

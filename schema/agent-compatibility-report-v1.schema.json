@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/schema/agent-compatibility-report-v1.schema.json",
+  "title": "AgentCompatibilityReportV1",
+  "type": "object",
+  "required": ["version", "kind", "runtime", "levels", "aggregate", "hard_gates"],
+  "properties": {
+    "version": { "const": "agent-compatibility-report.v1" },
+    "kind": { "const": "agent_compatibility_report" },
+    "runtime": { "const": "mock" },
+    "levels": { "type": "array", "minItems": 3, "items": { "type": "object", "required": ["level", "completion_rate", "tool_calls", "schema_errors", "invalid_retries", "recovery_rate"] } },
+    "aggregate": { "type": "object" },
+    "hard_gates": {
+      "type": "object",
+      "required": ["wrong_object_automatic_execution", "unauthorized_s2_s4_execution", "duplicate_request_duplicate_modification"],
+      "properties": {
+        "wrong_object_automatic_execution": { "const": 0 },
+        "unauthorized_s2_s4_execution": { "const": 0 },
+        "duplicate_request_duplicate_modification": { "const": 0 }
+      }
+    }
+  }
+}

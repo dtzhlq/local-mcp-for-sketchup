@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/sketchup-mcp-replica/agent-result-envelope-v1.schema.json",
+  "title": "Agent Contract v1 Result Envelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract_version", "kind", "ok", "task_id", "task_state", "task_version", "retryable", "idempotent_replay", "data", "error", "next_action", "artifacts"],
+  "properties": {
+    "contract_version": { "const": "agent-contract.v1" },
+    "kind": { "const": "agent_result_envelope" },
+    "ok": { "type": "boolean" },
+    "task_id": { "type": ["string", "null"], "pattern": "^task_[0-9a-f-]+$" },
+    "task_state": { "anyOf": [{ "$ref": "agent-task-v1.schema.json#/$defs/task_state" }, { "type": "null" }] },
+    "task_version": { "type": ["integer", "null"], "minimum": 1 },
+    "retryable": { "type": "boolean" },
+    "idempotent_replay": { "type": "boolean" },
+    "data": {},
+    "error": {
+      "type": ["object", "null"],
+      "required": ["code", "message", "retryable", "next_action"],
+      "properties": {
+        "code": { "enum": ["INVALID_ARGUMENT", "TASK_NOT_FOUND", "TASK_STATE_CONFLICT", "IDEMPOTENCY_CONFLICT", "APPROVAL_REQUIRED", "APPROVAL_INVALID", "APPROVAL_EXPIRED", "APPROVAL_REPLAYED", "PLAN_HASH_MISMATCH", "MODEL_REVISION_MISMATCH", "OPERATION_NOT_ALLOWED", "POLICY_DENIED", "ARTIFACT_NOT_FOUND", "INTERNAL_ERROR"] },
+        "message": { "type": "string", "minLength": 1 },
+        "retryable": { "type": "boolean" },
+        "next_action": { "type": ["object", "null"] },
+        "details": {}
+      },
+      "additionalProperties": false
+    },
+    "next_action": { "type": ["object", "null"] },
+    "artifacts": { "type": "array", "items": { "$ref": "artifact-handle-v1.schema.json" } }
+  }
+}

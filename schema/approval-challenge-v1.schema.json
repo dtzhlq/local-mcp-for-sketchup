@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/sketchup-mcp-replica/approval-challenge-v1.schema.json",
+  "title": "Agent Contract v1 Approval Challenge",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "kind", "challenge_id", "task_id", "plan_id", "plan_hash", "model_revision", "risk_level", "allowed_operations", "nonce", "issued_at", "expires_at", "status"],
+  "properties": {
+    "version": { "const": "approval-token.v1" },
+    "kind": { "const": "approval_challenge" },
+    "challenge_id": { "type": "string", "pattern": "^approval_[0-9a-f-]+$" },
+    "task_id": { "type": ["string", "null"], "pattern": "^task_[0-9a-f-]+$" },
+    "plan_id": { "type": "string", "minLength": 1 },
+    "plan_hash": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "model_revision": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "risk_level": { "enum": ["S1", "S2", "S3", "S4"] },
+    "allowed_operations": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+    "nonce": { "type": "string", "minLength": 16 },
+    "issued_at": { "type": "string", "format": "date-time" },
+    "expires_at": { "type": "string", "format": "date-time" },
+    "status": { "enum": ["awaiting_trusted_user", "consumed"] },
+    "consumed_at": { "type": "string", "format": "date-time" }
+  }
+}

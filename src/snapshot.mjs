@@ -57,6 +57,7 @@ export function createSnapshot(model) {
       manifold: cloneJson(group.manifold),
       transform: group.transform || null,
       visible: group.hidden ? false : true,
+      locked: group.locked === true,
       qa: group.qa || null
     };
     if (group.vertices && Array.isArray(group.vertices)) {
@@ -89,6 +90,7 @@ export function createSnapshot(model) {
       manifold: cloneJson(instance.manifold),
       transform: instance.transform || null,
       visible: instance.hidden ? false : true,
+      locked: instance.locked === true,
       qa: instance.qa || null
     };
     if (instance.vertices && Array.isArray(instance.vertices)) {

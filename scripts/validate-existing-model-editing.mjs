@@ -5,13 +5,23 @@ import { fileURLToPath } from 'node:url';
 import { SketchUpBridge } from '../src/bridge.mjs';
 import { modelRevisionForAdoption } from '../src/existing-model-editing.mjs';
 
-export async function validateExistingModelEditing({ runtime = 'mock', timeoutMs = runtime === 'queue' ? 240000 : 30000, outputDir = `output/existing-model-editing/${runtime}`, saveSkp = `output/existing-model-editing/${runtime}/existing-model-editing.skp` } = {}) {
+export async function validateExistingModelEditing({ runtime = 'mock', timeoutMs = runtime === 'queue' ? 240000 : 30000, outputDir = `output/existing-model-editing/${runtime}`, saveSkp = `output/existing-model-editing/${runtime}/existing-model-editing.skp`, trustedApprovalProvider } = {}) {
+  if (runtime === 'queue' && typeof trustedApprovalProvider !== 'function') {
+    throw new Error('Live existing-model editing requires a trusted user-presence approval provider; the CLI will not mint S2-S4 approval tokens or modify SketchUp without it.');
+  }
   const absoluteOutputDir = path.resolve(outputDir);
   const absoluteSavePath = path.resolve(saveSkp);
   await fs.mkdir(absoluteOutputDir, { recursive: true });
   const bridge = new SketchUpBridge(runtime === 'mock'
-    ? { mock: { sessionPath: path.join(absoluteOutputDir, '.mock-session.json') } }
+    ? {
+      mock: { sessionPath: path.join(absoluteOutputDir, '.mock-session.json') },
+      approval: { stateDir: path.join(absoluteOutputDir, '.approval-state'), secret: 'existing-model-validator-fixture-secret-at-least-32-bytes' }
+    }
     : {});
+  bridge.validationApprovalProvider = trustedApprovalProvider || ((prepared) => bridge.approvalAuthority.approveChallengeFromTrustedUser(
+    prepared.approval_challenge,
+    { user_id: 'mock-validator-human-fixture', channel: 'test-only-trusted-user-fixture', confirmed: true }
+  ));
 
   await bridge.build_model({ runtime, timeoutMs, code: JSON.stringify(seedDocument()) });
   let adoption = await adopt(bridge, runtime, timeoutMs);
@@ -173,7 +183,7 @@ async function prepareAndApply(bridge, { runtime, timeoutMs, outputDir, instruct
     runtime,
     timeoutMs,
     plan: prepared.plan,
-    review: { status: 'approved', plan_id: prepared.plan.plan_id, reviewer: 'existing-model-editing-validator' },
+    approval_token: await bridge.validationApprovalProvider(prepared, bridge),
     output_dir: `${outputDir}-apply`,
     save_model: false
   });

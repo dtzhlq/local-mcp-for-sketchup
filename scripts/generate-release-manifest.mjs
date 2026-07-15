@@ -4,6 +4,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { getComponentDefinitionOperationNames, getOperationNames } from '../src/capabilities.mjs';
+import { EXPERT_TOOL_NAMES, TOOL_NAMES } from '../src/tool-registry.mjs';
 
 const options = parseArgs(process.argv.slice(2));
 const packageJson = JSON.parse(await fs.readFile('package.json', 'utf8'));
@@ -38,7 +39,8 @@ const manifest = {
   release_status: liveStatus === 'passed' ? 'rc_candidate_verified' : 'blocked_live_queue',
   rc_signed: liveStatus === 'passed',
   contracts: {
-    mcp_tools: 36,
+    mcp_tools: TOOL_NAMES.length,
+    expert_tools: EXPERT_TOOL_NAMES.length,
     registered_operations: registeredOperations,
     component_scope_operations: componentScopeOperations
   },

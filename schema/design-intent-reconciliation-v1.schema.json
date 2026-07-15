@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/sketchup-mcp-replica/design-intent-reconciliation-v1.schema.json",
+  "title": "Design Intent Reconciliation v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "kind", "design_graph_id", "previous_model_revision", "current_model_revision", "aligned", "expected_changes", "unexpected_divergence", "review_required", "silent_overwrite_allowed", "proposed_decisions", "reconciliation_id", "next_action"],
+  "properties": {
+    "version": { "const": "design-intent-reconciliation.v1" },
+    "kind": { "const": "design_intent_reconciliation" },
+    "reconciliation_id": { "type": "string", "pattern": "^reconciliation-[0-9a-f]{24}$" },
+    "design_graph_id": { "type": "string" },
+    "previous_model_revision": { "type": "string" },
+    "current_model_revision": { "type": "string" },
+    "aligned": { "type": "boolean" },
+    "expected_changes": { "type": "array" },
+    "unexpected_divergence": { "type": "array" },
+    "review_required": { "type": "boolean" },
+    "silent_overwrite_allowed": { "const": false },
+    "proposed_decisions": { "type": "array" },
+    "next_action": { "type": ["object", "null"] }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/schema/visual-correction-qa-v1.schema.json",
+  "title": "VisualCorrectionQaV1",
+  "type": "object",
+  "required": ["version", "kind", "qa_id", "alignment", "difference", "verdict", "review_required"],
+  "properties": {
+    "version": { "const": "visual-correction-qa.v1" },
+    "kind": { "const": "visual_correction_qa" },
+    "qa_id": { "type": "string", "minLength": 1 },
+    "verdict": { "enum": ["pass", "review", "fail"] },
+    "review_required": { "type": "boolean" },
+    "alignment": { "type": "object" },
+    "difference": { "type": "object" }
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/sketchup-mcp-replica/model-graph-v1.schema.json",
+  "title": "ModelGraph v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "kind", "model_revision", "runtime", "source_adoption_version", "nodes", "relationships", "catalogs", "lineage", "untrusted_data_fields", "graph_id", "stats"],
+  "properties": {
+    "version": { "const": "model-graph.v1" },
+    "kind": { "const": "model_graph" },
+    "graph_id": { "type": "string", "pattern": "^model-graph-[0-9a-f]{24}$" },
+    "model_revision": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "runtime": { "enum": ["mock", "queue"] },
+    "source_adoption_version": { "type": "string", "minLength": 1 },
+    "nodes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["node_id", "node_type"],
+        "properties": {
+          "node_id": { "type": "string", "pattern": "^node_[0-9a-f]{24}$" },
+          "node_type": { "enum": ["occurrence", "definition", "feature"] },
+          "entity_path": { "type": ["string", "null"] },
+          "parent_id": { "type": ["string", "null"] },
+          "entity_type": { "type": "string" },
+          "definition_name": { "type": ["string", "null"] },
+          "allowed_operations": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
+          "shared_definition": { "type": "boolean" },
+          "affected_instance_count": { "type": "integer", "minimum": 0 },
+          "trust": { "const": "untrusted_data" }
+        }
+      }
+    },
+    "relationships": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["hierarchy", "definition_membership", "topology", "spatial", "lineage"],
+      "properties": {
+        "hierarchy": { "$ref": "#/$defs/relationships" },
+        "definition_membership": { "$ref": "#/$defs/relationships" },
+        "topology": { "$ref": "#/$defs/relationships" },
+        "spatial": { "$ref": "#/$defs/relationships" },
+        "lineage": { "$ref": "#/$defs/relationships" }
+      }
+    },
+    "catalogs": { "type": "object" },
+    "lineage": { "type": "object" },
+    "untrusted_data_fields": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string" } },
+    "stats": {
+      "type": "object",
+      "required": ["nodes", "occurrences", "definitions", "faces", "edges", "shared_occurrences", "hierarchy_relationships", "spatial_relationships", "topology_relationships", "lineage_relationships"],
+      "additionalProperties": false,
+      "properties": {
+        "nodes": { "type": "integer", "minimum": 0 },
+        "occurrences": { "type": "integer", "minimum": 0 },
+        "definitions": { "type": "integer", "minimum": 0 },
+        "faces": { "type": "integer", "minimum": 0 },
+        "edges": { "type": "integer", "minimum": 0 },
+        "shared_occurrences": { "type": "integer", "minimum": 0 },
+        "hierarchy_relationships": { "type": "integer", "minimum": 0 },
+        "spatial_relationships": { "type": "integer", "minimum": 0 },
+        "topology_relationships": { "type": "integer", "minimum": 0 },
+        "lineage_relationships": { "type": "integer", "minimum": 0 }
+      }
+    }
+  },
+  "$defs": {
+    "relationships": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "from", "to"],
+        "properties": {
+          "type": { "type": "string", "minLength": 1 },
+          "from": { "type": "string", "minLength": 1 },
+          "to": { "type": "string", "minLength": 1 }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}
