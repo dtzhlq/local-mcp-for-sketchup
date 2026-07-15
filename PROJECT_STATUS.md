@@ -1,7 +1,7 @@
 # SketchUp MCP Replica — 项目状态与计划
 
-> 更新日期：2026-07-14
-> 当前状态：两周发布分支已完成 M0–M5；当前 `tools/list` 为 34 个工具、safe DSL registry 为 91 个 operation，两者不是同一计数。`ModificationIntent v1` 仍是可审计门控编排层，不是自主语义智能体。image-structured MCP adapter 只消费路径化、schema-valid、review-cleared 制品并生成 DSL preview，不复制图片分析管线、不调用 queue。`0.1.0-rc.1` 已通过 fresh SketchUp 2026 handshake 和串行 queue gates，release manifest 可标记 `rc_signed=true`。基础 queue 10/10 成功，9 例零差异；唯一非阻断 review 是 boolean mock 近似几何与 SketchUp 实体内核的 14 个已审阅 warning，0 error。正式发布继续把 `projects/image-structured-modeler` 保持为独立上游；`plugin:check` 不构成 live queue 证明。
+> 更新日期：2026-07-15
+> 当前状态：`codex/two-week-release-critical` 已形成 `0.1.0-rc.2` 既有模型编辑候选；当前 `tools/list` 为 36 个工具、safe DSL registry 为 101 个 operation / 57 个 component scope，两者不是同一计数，也不等于完整 SketchUp API。新增 `prepare_existing_model_edit` / `apply_reviewed_model_edit` 审查入口、深层 persistent occurrence path、model revision、S1-S4 风险与 budget、Face/Edge 属性和受控拓扑、结构/集合操作、nested feature、同 `Entities` 作用域 boolean/manifold。restricted Python source corpus 已扩为 35 例（29 个 canonical DSL/result golden、6 个稳定拒绝、0 unclassified）。离线 `npm test`、`test:image-structured`、targeted mock、101-operation contract、36-tool MCP mock suite、20 轮并发隔离和 `plugin:check` 全部通过；完全重启 SketchUp 2026 后的 fresh `0.1.0-rc.2` handshake、Existing Model Editing Engine、nested edit、high-value SDK、Official API R3、queue/identity/expert/budget 和 36-tool queue-required 门禁也全部通过。当前发布判定为 `rc_candidate_verified` / `rc_signed=true`。`ModificationIntent` 仍是可审计编排层，不是自主语义智能体；`projects/image-structured-modeler` 仍是独立上游，`plugin:check` 本身仍不构成 live queue 证明。
 
 > 2026-06-09 主线补充：建筑几何 R2/R3 已把本地 JSON DSL 推到 85 个 operation / 53 个 component scope，新增非正交/带洞 footprint、路径/弧墙、场地/道路/停车/柱网/幕墙/hip/footprint roof 等 mock-first 建筑能力；R3 进一步把 curtain wall 从占位带升级为 panel/mullion/rail 网格。MCP/CLI/HTTP 侧新增 `queue_diagnostics`、`capture_view`、`get_workflow_bundle` 和默认关闭的 `run_ruby_expert` 调试入口；这些是本地 queue 可用性和证据工具，不改变官方 Cloud/OAuth 不做的边界。
 >
@@ -14,6 +14,8 @@
 > 2026-07-03 主线补充：自然迭代体验 R2 新增 `ModificationIntent v1` 和 `plan_modification_intent`，把 target resolution、当前 selection 和 geometry facts 转成可审计 edit intent。live queue smoke 已在 SketchUp 26.2.242 / `queue-plugin-0.1.0-natural-iteration.2` 下通过：Face+Edge selection 生成 `safe_to_execute=false`、`requires_confirmation=true` 的 preview/blocked intent；top-level group 的安全 `set_attribute` intent 可通过 `iterate_model --intent-file` 执行，并写出 before/after snapshot、modification-intent、intent-patch、intent-manifest、snapshot-diff 和 `.skp` artifact。
 >
 > 2026-07-14 发布分支补充：M1 新增 12 例官方风格 Python source compatibility corpus；M2 新增 `erase_entities`、`transform_entities`、`Page.update(flags)` 和受限同脚本 Face UVHelper 查询；M3 新增共享 definition 策略明确的 nested group/component instance 安全编辑；M4 新增 `prepare_image_modeling_brief` 与 `compile_reviewed_part_graph`，将当前 `tools/list` 推进到 34；M5 已在 SketchUp `26.2.242` / plugin `0.1.0-rc.1` 上通过 fresh compatibility handshake、34-tool MCP queue-required smoke、queue/budget/identity/expert、Official API R3、high-value SDK 和 nested-edit 门禁，关键 SKP/PNG/manifest 已保存。
+>
+> 2026-07-15 既有模型编辑增强：在上述 `rc.1` 历史基线上新增两项正式 MCP 工具，`tools/list` 推进到 36；DSL registry 从 91 推进到 101。`adopt_open_model(recursive=true)` 现在输出跨深层 group/component/Face/Edge 的 occurrence path、truncation 和 affected-instance metadata；`instance_path + definition_wide/make_unique` 支持深层单实例隔离。受审操作新增 Face 双面材质/reverse/pushpull、Edge soft/smooth/visibility、remove attribute、duplicate/replace/explode、erase/transform collections，以及 nested feature、same-parent boolean/manifold。mock `qa:existing-model-edit:mock` 已证明保存重开后 persistent path 与 model revision 不漂移；fresh queue 证据仍待重新打开 SketchUp 后生成。
 >
 > 2026-06-25 表达力 P0 第一刀：新增 `compile_python_sdk` 和 `evaluate_py input_format=python_sdk`，把受限官方风格 Python SDK facade 转译为安全 JSON DSL，不执行 Python bytecode。第一批 facade 覆盖 `model`、`SUPoint2D/3D`、`SUVector/SUVector3D`、`SUColor`、`SUTransformation`、`Material`、`LoopInput`、`GeometryInput` 和 `Group`，支持 `model.add_geometry/add_curve/add_arc_curve/add_box` 等常用调用、`range` 循环/list append 和 inches->mm 换算；任意 import/print/runtime/file/network 访问仍阻断，不声明完整官方 Python SDK。
 >
@@ -86,7 +88,7 @@
 
 | 文件 | 职责 |
 |---|---|
-| `src/mcp-server.mjs` | stdio MCP server，暴露 34 个工具 |
+| `src/mcp-server.mjs` | stdio MCP server，暴露 36 个工具 |
 | `src/bridge.mjs` | 工具路由层，mock/queue 分发、runtime descriptor 附加、compatibility check、queue 诊断/视口截图/工作流包、ModificationIntent / 自然迭代编排入口和 bridge 生命周期内 descriptor cache |
 | `src/mock-runtime.mjs` | 离线 runtime，解析 DSL operation → 调用 appearance / material / primitive / profile / surface / product / architecture / component / view / object operation modules，并支持 inspection / file lifecycle |
 | `src/queue-runtime.mjs` | 队列 runtime，写 JSON 请求到 `~/.sketchup-mcp-replica/queue/` |
@@ -114,7 +116,7 @@
 | `src/boolean-operations.mjs` | mock runtime solid boolean / manifold check-repair metadata |
 | `src/expert-compiler.mjs` | Expert Mode v1 受限脚本 AST 解释器，编译为标准 JSON DSL |
 | `src/python-sdk-compiler.mjs` | 受限官方风格 Python SDK facade 编译器：用 Python `ast.parse` 解析但不执行 Python，输出标准 JSON DSL |
-| `src/capabilities.mjs` | 单一真源 operation registry，91 个 operation 的支持状态/稳定性/schema/component-scope |
+| `src/capabilities.mjs` | 单一真源 operation registry，101 个 operation 的支持状态/稳定性/schema/component-scope |
 | `src/snapshot-diff.mjs` | snapshot 对比 QA：totals、bbox、materials、groups、instances、levels、scenes |
 | `sketchup_plugin/alma_sketchup_mcp.rb` | SketchUp 2026 Ruby 插件，读队列、执行 DSL、返回 snapshot |
 | `sketchup_plugin/alma_sketchup_mcp/operation_registry.rb` | 由 `src/capabilities.mjs` 生成的 Ruby queue runtime operation support 表 |
@@ -181,7 +183,7 @@
 - `transform_object` pivot：默认 origin、`"center"`、显式 `[x,y,z]`
 - `face_with_holes`、`profile_extrude` 通用 profile 第一切片：支持简单闭合多边形 outer + 多边形 holes，拒绝自交、触边和重叠洞；已通过 mock/queue 对照验证
 - Operation contract 测试：manifest、mock runtime、Ruby queue runtime、component_definition dispatch 覆盖自动校验
-- Operation registry / runtime contract 单一注册表化：`src/capabilities.mjs` 作为唯一 operation registry，manifest、runtime `operation_support`、schema、component-scope、docs matrix、contract tests 均从 registry 派生；当前 91 个 operation，56 个 component_definition-scoped operation
+- Operation registry / runtime contract 单一注册表化：`src/capabilities.mjs` 作为唯一 operation registry，manifest、runtime `operation_support`、schema、component-scope、docs matrix、contract tests 均从 registry 派生；当前 101 个 operation，57 个 component_definition-scoped operation
 
 **待做（P1）：**
 - [x] 二次编辑的 chain 支持：新增 `examples/transform-chain-regression.json`，连续多个 `transform_object` 叠加时的 center pivot、本地轴、模型轴、平移和 matrix 已通过 mock/queue 对照验证。

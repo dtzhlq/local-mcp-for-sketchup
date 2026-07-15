@@ -228,10 +228,11 @@ npm run qa:expert:mock
 
 ## MCP stdio 接入
 
-本项目自带一个最小 MCP stdio server。按当前 `src/mcp-server.mjs` 的 `tools/list`，一共暴露 34 个工具：
+本项目自带一个最小 MCP stdio server。按当前 `src/mcp-server.mjs` 的 `tools/list`，一共暴露 36 个工具；safe JSON DSL registry 另有 101 个 operation，两者不是同一计数：
 
 - `get_docs`、`get_workflow_bundle`、`get_capabilities`、`queue_diagnostics`
 - `prepare_image_modeling_brief`、`compile_reviewed_part_graph`
+- `prepare_existing_model_edit`、`apply_reviewed_model_edit`
 - `build_model`、`compile_expert`、`compile_python_sdk`、`build_expert_model`
 - `reset_model`、`save_model`、`save_model_version`、`open_model`、`import_model`、`export_model`
 - `get_model_info`、`list_entities`、`inspect_model`、`adopt_open_model`、`resolve_model_targets`
@@ -263,6 +264,18 @@ node src/mcp-server.mjs
 `plan_modification_intent` / `iterate_model` 也有明确边界：`ModificationIntent v1` 是可审计意图层，不是自动语义建模智能体。`iterate_model` 只有在 `intent.ok=true`、`safe_to_execute=true`、`requires_confirmation=false` 时才会执行；否则只写 preview/blocked manifest 并停止。R2 live queue smoke 已验证 Face/Edge selection 会停在 preview/blocked，top-level group 的安全 `set_attribute` intent 可通过 `intent_file` 执行。
 
 两个 image-structured adapter 只接收路径化 JSON 制品。`prepare_image_modeling_brief` 校验上游 schema 并返回 compile permission 与 blockers；`compile_reviewed_part_graph` 同时要求 MCP brief、promotion review、ProductProfile 和 PartGraph gates 通过，且只写安全 JSON DSL preview，不调用 queue。主线不复制 `projects/image-structured-modeler` 的图片分析管线，也不自动执行生成结果。
+
+既有模型编辑使用独立的审查入口：`prepare_existing_model_edit` 先递归索引 persistent entity path、锁定 model revision、计算 S1-S4 风险和 affected-instance budget，只生成待审计划；`apply_reviewed_model_edit` 仅接受匹配 `plan_id` 的批准记录，并在执行前再次校验 model revision。深层 Group/ComponentInstance/Face/Edge 支持受限属性、结构、集合、Face pushpull、特征、同 `Entities` 作用域布尔与 manifold 操作；共享 definition 必须显式选择 `definition_wide` 或 `make_unique`。它不是任意 Ruby/Python 执行，也不等于完整 SketchUp API。
+
+对应发布门禁：
+
+```bash
+npm run qa:existing-model-edit:mock
+npm run qa:existing-model-edit:queue
+npm run test:python-sdk-source-compat
+```
+
+source compatibility corpus 当前包含 35 个官方风格源码样本、29 个精确 DSL/result golden 和 6 个稳定 fail-closed 拒绝样本。集合编辑返回语义、Page named flags/位运算以及同脚本仿射 positioned-material 的任意点 UVQ 均有独立回归合同。
 
 ## HTTP bridge（可选）
 
@@ -371,9 +384,9 @@ node src/cli.mjs save_model --runtime queue --path "$PWD/output/demo-room.skp" -
 {
   "runtime": {
     "name": "mock",
-    "version": "mock-runtime-0.1.0-rc.1",
-    "capability_version": "0.1.0-capabilities.5",
-    "manifest_version": "2026-05-phase7-boolean-manifold",
+    "version": "mock-runtime-0.1.0-rc.2",
+    "capability_version": "0.1.0-rc.2-capabilities.1",
+    "manifest_version": "2026-07-existing-model-edit-rc2",
     "dsl_version": 1,
     "supported_operations": ["reset", "material", "box"],
     "operation_support": {
@@ -387,7 +400,7 @@ node src/cli.mjs save_model --runtime queue --path "$PWD/output/demo-room.skp" -
     "compatibility": {
       "ok": true,
       "level": "ok",
-      "checked_against": { "manifest_version": "2026-05-phase7-boolean-manifold", "capability_version": "0.1.0-capabilities.5", "dsl_version": 1 },
+      "checked_against": { "manifest_version": "2026-07-existing-model-edit-rc2", "capability_version": "0.1.0-rc.2-capabilities.1", "dsl_version": 1 },
       "issues": []
     }
   },

@@ -1,6 +1,6 @@
 # Release Checklist
 
-更新时间：2026-07-14
+更新时间：2026-07-15
 
 本清单用于把当前本地 replica 收成可安装、可回归、可打包的技术预览 slice。
 
@@ -17,6 +17,11 @@ npm run qa:expert:mock
 npm run qa:budget:mock
 npm run qa:python-sdk-high-value:mock
 npm run qa:nested-edit:mock
+npm run qa:existing-model-edit:mock
+npm run qa:mock-session-isolation
+npm run test:python-sdk-source-compat
+npm run qa:mcp-capability-suite -- --runtime mock
+npm run test:image-structured
 node test/image-structured-mcp-adapter.mjs
 git diff --check
 ```
@@ -24,9 +29,10 @@ git diff --check
 通过标准：
 
 - Ruby 插件主文件和所有子模块 `ruby -c` 通过。
-- Operation contract 输出 manifest / mock / Ruby dispatch 为 `91 / 91 / 91`，component registry / dispatch 为 `56 / 56`。
+- Operation contract 输出 manifest / mock / Ruby dispatch 为 `101 / 101 / 101`，component registry / dispatch 为 `57 / 57`。
 - Expert Mode fixture 编译和 mock build 通过，且安全拒绝场景由 `test/expert-compiler.mjs` 覆盖。
-- MCP stdio server 的 `tools/list` 必须精确为 34；两个 image artifact adapter 的 allowed/blocked preview 合同由 `test/image-structured-mcp-adapter.mjs` 覆盖。
+- MCP stdio server 的 `tools/list` 必须精确为 36；两个 image artifact adapter 和两个 reviewed existing-model edit 工具的 allowed/blocked 合同分别由 targeted tests 与 capability suite 覆盖。
+- Python source corpus 必须为 35 cases / 29 canonical golden / 6 stable unsupported / 0 unclassified；mock session 并发隔离必须通过。
 - mock QA、model layout QA、Expert mock QA 与 mock budget 均 Verdict `pass`；`qa:model-layout` 必须生成 Switch、救护车和儿童房的正交 preview/report，且 issues 为 `0`。
 
 ## 2. 安装 SketchUp 插件
@@ -52,7 +58,7 @@ node src/cli.mjs get_capabilities --runtime queue --timeout-ms 10000
 - `runtime.version` 等于当前 `PLUGIN_VERSION`。
 - `runtime.compatibility.ok` 为 `true`。
 - `runtime.compatibility.issues` 为空。
-- supported operations 数量为 `91`。
+- supported operations 数量为 `101`。
 
 ## 3. Queue 回归
 
@@ -63,6 +69,8 @@ npm run qa:budget:queue
 npm run qa:official-api-r3:queue
 npm run qa:python-sdk-high-value:queue
 npm run qa:nested-edit:queue
+npm run qa:existing-model-edit:queue
+npm run qa:mcp-capability-suite -- --runtime queue --queue-required --timeout-ms 180000
 ```
 
 `queue` runtime 绑定当前 SketchUp 进程和 file queue，发布验证必须串行执行这些命令。Node 侧会用 `~/.sketchup-mcp-replica/queue-runtime.lock` 防止多个 queue 命令互相插入。
@@ -75,7 +83,7 @@ npm run qa:nested-edit:queue
 - `output/qa-reports/expert-queue/index.md` Verdict `pass`，Expert fixture 编译、queue 构建、SKP artifact 保存、runtime compatibility、warnings 和基础预算均通过。
 - `output/performance-budgets/queue/index.md` Verdict `pass`，四个发布样例低于默认 face / edge / vertex / group / instance / SKP size budget。
 - `output/python-sdk-official-api-expression-r3-queue.json` 断言全部通过，并保存 `output/python-sdk-official-api-expression-r3.skp`；当前基线为 `12 operations / 5 groups / 10 faces / 29 edges / 25 vertices / selection 1 / scene 1 / warnings 0`。
-- 高频 Python SDK 和 nested edit queue gate 必须保存对应 JSON/SKP；image adapter 只生成离线 preview，不进入 queue 执行。
+- 高频 Python SDK、nested edit 和 Existing Model Editing Engine queue gate 必须保存对应 JSON/SKP；后者还必须证明 deep path/revision 在 save/reopen 后稳定。image adapter 只生成离线 preview，不进入 queue 执行。
 
 ## 4. 打包 RBZ
 
