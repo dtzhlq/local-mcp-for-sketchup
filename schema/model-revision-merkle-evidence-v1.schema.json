@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/sketchup-mcp-replica/model-revision-merkle-evidence-v1.schema.json",
+  "title": "Model Revision Merkle v1 Mock Evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "kind", "created_on", "runtime", "result", "contract", "tests", "safety", "live_evidence", "hashes"],
+  "properties": {
+    "version": { "const": "model-revision-merkle-evidence.v1" },
+    "kind": { "const": "model_revision_merkle_mock_evidence" },
+    "created_on": { "type": "string", "format": "date" },
+    "runtime": { "const": "mock" },
+    "result": { "const": "pass" },
+    "contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["strategy", "capability_version", "manifest_version", "structural_groups_probe_version", "capability_delta_read_only_only", "manifest_changed", "dsl_operation_set_changed", "unique_entity_limit", "logical_occurrences", "unique_entities", "reachable_definitions", "shared_occurrence_snapshots_materialized"],
+      "properties": {
+        "strategy": { "const": "definition-merkle.v1" },
+        "capability_version": { "const": "0.1.0-rc.2-capabilities.6" },
+        "manifest_version": { "const": "2026-07-agent-contract-v1.3" },
+        "structural_groups_probe_version": { "const": "structural-groups.v1" },
+        "capability_delta_read_only_only": { "const": true },
+        "manifest_changed": { "const": false },
+        "dsl_operation_set_changed": { "const": false },
+        "unique_entity_limit": { "const": 1000000 },
+        "logical_occurrences": { "const": 201000 },
+        "unique_entities": { "const": 1200 },
+        "reachable_definitions": { "const": 2 },
+        "shared_occurrence_snapshots_materialized": { "const": false }
+      }
+    },
+    "tests": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["command", "assertions", "deterministic_revision", "transform_change_detected", "unique_limit_failed_closed", "recursive_cycle_failed_closed"],
+      "properties": {
+        "command": { "const": "ruby test/ruby/model_revision_merkle_test.rb" },
+        "assertions": { "const": 14 },
+        "deterministic_revision": { "const": true },
+        "transform_change_detected": { "const": true },
+        "unique_limit_failed_closed": { "const": true },
+        "recursive_cycle_failed_closed": { "const": true }
+      }
+    },
+    "safety": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["complete_requires_total_equals_indexed", "logical_count_js_safe", "capability_version_binds_strategy", "session_contract_binds_unique_entity_limit", "incremental_entry_digest", "occurrence_target_index_remains_bounded", "model_mutation_requested"],
+      "properties": {
+        "complete_requires_total_equals_indexed": { "const": true },
+        "logical_count_js_safe": { "const": true },
+        "capability_version_binds_strategy": { "const": true },
+        "session_contract_binds_unique_entity_limit": { "const": true },
+        "incremental_entry_digest": { "const": true },
+        "occurrence_target_index_remains_bounded": { "const": true },
+        "model_mutation_requested": { "const": false }
+      }
+    },
+    "live_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "legacy_large_model_logical_occurrences", "observed_unique_entities", "observed_blocker", "current_limit_live_passed", "new_strategy_live_proven", "structural_groups_probe_live_proven", "release_acceptance"],
+      "properties": {
+        "status": { "enum": ["pending_plugin_restart", "live_capacity_blocker_observed", "supplemented_by_separate_live_evidence"] },
+        "legacy_large_model_logical_occurrences": { "const": 1903677 },
+        "observed_unique_entities": { "const": 639351 },
+        "observed_blocker": { "const": "unique_entity_limit_exceeded" },
+        "current_limit_live_passed": { "const": true },
+        "new_strategy_live_proven": { "type": "boolean" },
+        "structural_groups_probe_live_proven": { "const": false },
+        "release_acceptance": { "const": false }
+      }
+    },
+    "hashes": {
+      "type": "object",
+      "minProperties": 7,
+      "additionalProperties": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+      "propertyNames": { "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+/.+$" }
+    }
+  }
+}

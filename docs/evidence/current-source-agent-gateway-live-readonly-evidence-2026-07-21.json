@@ -1,0 +1,93 @@
+{
+  "version": "current-source-agent-readonly-live-report.v1",
+  "kind": "current_source_agent_readonly_live_report",
+  "captured_at": "2026-07-21T14:41:37.816Z",
+  "result": "pass",
+  "runtime": {
+    "plugin_version": "0.1.0-rc.2",
+    "sketchup_version": "26.2.242",
+    "ruby_version": "3.2.2",
+    "capability_version": "0.1.0-rc.2-capabilities.7",
+    "manifest_version": "2026-07-agent-contract-v1.4",
+    "dsl_version": 1,
+    "occurrence_contract": "canonical-occurrence-path.v1",
+    "model_revision_strategy": "definition-merkle.v2",
+    "boolean_operations_sha256": "sha256:b98fd554894f629359651f40929cf30a7122ac90ba01217a662bea2f4c407610",
+    "model_revision_source_sha256": "sha256:b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134",
+    "compatibility_ok": true
+  },
+  "model": {
+    "fixture_handle": "fixture:sha256:7e649c220a265a5e27a24aae2ed9687427186c06ba335616d5cdc0191966ce72",
+    "label_trust": "untrusted_data",
+    "bytes_sha256_before": "sha256:7e649c220a265a5e27a24aae2ed9687427186c06ba335616d5cdc0191966ce72",
+    "bytes_sha256_after": "sha256:7e649c220a265a5e27a24aae2ed9687427186c06ba335616d5cdc0191966ce72",
+    "bytes_unchanged": true,
+    "size_bytes": 142149,
+    "model_revision": "sha256:d540fdc8697e93f27a0312f75d382b6d5901597ef87e6673980fd21e97e3abb4",
+    "model_revision_complete": true,
+    "revision_indexed": 5859,
+    "revision_total_seen": 5859,
+    "model_modified_before": false,
+    "model_modified_after": false,
+    "source_path_disclosed": false
+  },
+  "agent_gateway": {
+    "interface_level": "guided",
+    "client_profile": "short_context_no_files_no_vision_single_tool",
+    "understand_task_state": "completed",
+    "understand_entity_count": 1,
+    "proposal_task_state": "awaiting_input",
+    "proposal_requires_clarification": true,
+    "proposal_candidate_count": 5,
+    "proposal_selected_target_count": 0,
+    "proposal_operation_count": 0,
+    "proposal_execution_allowed": false,
+    "proposal_risk_level": "S2",
+    "proposal_next_action": "submit_task_input",
+    "persisted_model_graph": true,
+    "public_artifact_pagination_used": true,
+    "model_content_trust": "untrusted_data"
+  },
+  "safety": {
+    "queue_before": {
+      "queue": 0,
+      "processing": 0,
+      "responses": 0,
+      "lock_exists": false
+    },
+    "queue_after": {
+      "queue": 0,
+      "processing": 0,
+      "responses": 0,
+      "lock_exists": false
+    },
+    "plugin_process_unchanged": true,
+    "document_unchanged": true,
+    "model_identity_unchanged": true,
+    "revision_unchanged": true,
+    "signed_handshakes_verified_at_capture": 2,
+    "raw_artifacts_contain_sensitive_fields": true,
+    "sensitive_values_embedded_in_public_report": false,
+    "mutation_requested": false,
+    "mutation_performed": false,
+    "save_requested": false,
+    "save_performed": false,
+    "approval_requested": false,
+    "approval_issued": false
+  },
+  "artifact_hashes": {
+    "handshake_before": "sha256:1acbff657902030503c787e9a9546edb330a45ddade8f1869af081f964563f9c",
+    "understand_envelope": "sha256:c93a7f627f3449e917cccdcf87238b1cf4b37d992cfc3f005500254a922b1d36",
+    "understand_projection": "sha256:2e854619e6bc100573b36284d9f06672e0eb5fba1499772334b320f133ad1410",
+    "proposal_envelope": "sha256:0a80b93f8872393e473579349aa22476871cbd79ad525975b024246fdc866706",
+    "proposal_projection": "sha256:4ef152312500e551d08a504740fa676364517f5774eb6249246acf30688498a4",
+    "handshake_after": "sha256:3984b7e332868fd304e25a86cfe1fe52932ed02dc68559142ef296e2d1fe5789"
+  },
+  "acceptance": {
+    "current_source_agent_gateway_read_only": true,
+    "target_selection_accepted": false,
+    "live_mutation": false,
+    "release_acceptance": false
+  },
+  "boundary": "This proves a weak-client Agent Gateway understand/propose flow against one current-source disposable live model. It does not authorize or prove a mutation, save/reopen, target correctness across the corpus, or release acceptance."
+}

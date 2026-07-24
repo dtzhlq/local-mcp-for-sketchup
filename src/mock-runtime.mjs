@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { emptyModel } from './model-state.mjs';
@@ -34,8 +35,9 @@ function operationLimit() {
 }
 
 export class MockRuntime {
-  constructor({ sessionPath = process.env.ALMA_SKETCHUP_MOCK_SESSION_PATH || mockSessionPath, lockTimeoutMs = DEFAULT_LOCK_TIMEOUT_MS } = {}) {
+  constructor({ sessionPath = process.env.ALMA_SKETCHUP_MOCK_SESSION_PATH || mockSessionPath, sourcePath = null, lockTimeoutMs = DEFAULT_LOCK_TIMEOUT_MS } = {}) {
     this.sessionPath = sessionPath;
+    this.sourcePath = typeof sourcePath === 'string' && sourcePath.trim() ? path.resolve(sourcePath) : null;
     this.lockPath = `${sessionPath}.lock`;
     this.lockTimeoutMs = lockTimeoutMs;
   }
@@ -488,9 +490,21 @@ export class MockRuntime {
   async adoptOpenModel(options = {}) {
     return this.withSessionLock(async () => {
       const model = await this.readModel();
-      const report = adoptMockModel(model, options);
-      await this.writeModel(model);
-      return report;
+      const workingModel = options.read_only === true || options.readOnly === true ? structuredClone(model) : model;
+      const report = adoptMockModel(workingModel, options);
+      if (workingModel === model) await this.writeModel(model);
+      const mockDocumentFingerprint = crypto.createHash('sha256').update(path.resolve(this.sessionPath)).digest('hex');
+      return {
+        ...report,
+        read_only: workingModel !== model,
+        model_identity: {
+          model_guid: `mock_${mockDocumentFingerprint}`,
+          runtime_object_id: null,
+          title: 'mock_session',
+          source_path: this.sourcePath
+        },
+        document_id: `mock_document_${mockDocumentFingerprint}`
+      };
     });
   }
 
@@ -593,6 +607,7 @@ function normalizeImportedModel(model) {
     groups: model.groups || [],
     instances: model.instances || [],
     component_definitions: model.component_definitions || {},
+    classification_schemas: model.classification_schemas || [],
     materials: model.materials || {},
     tags: model.tags || {},
     image_references: model.image_references || {},
@@ -606,6 +621,10 @@ function appendImportedModel(model, imported, { prefix }) {
   Object.assign(result.materials, importedModel.materials);
   Object.assign(result.tags, importedModel.tags);
   Object.assign(result.image_references, importedModel.image_references);
+  result.classification_schemas = [...new Map([
+    ...(result.classification_schemas || []),
+    ...(importedModel.classification_schemas || [])
+  ].map((schema) => [JSON.stringify(schema), schema])).values()];
   for (const [definitionName, definition] of Object.entries(importedModel.component_definitions || {})) {
     const nextName = uniqueName(definitionName, new Set(Object.keys(result.component_definitions || {})), prefix);
     result.component_definitions[nextName] = { ...definition, name: nextName };

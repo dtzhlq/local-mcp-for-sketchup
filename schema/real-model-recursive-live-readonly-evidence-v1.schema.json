@@ -1,0 +1,395 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/sketchup-mcp-replica/real-model-recursive-live-readonly-evidence-v1.schema.json",
+  "title": "Capability .6 real-model recursive read-only live evidence v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "kind",
+    "captured_at",
+    "branch",
+    "result",
+    "evidence_scope",
+    "runtime",
+    "installed_source",
+    "artifact_bindings",
+    "source",
+    "session_summary",
+    "revision_attestation",
+    "structural_probe",
+    "terminal_review",
+    "safety",
+    "authorization_boundary",
+    "release_acceptance",
+    "boundary"
+  ],
+  "properties": {
+    "version": { "const": "real-model-recursive-live-readonly-evidence.v1" },
+    "kind": { "const": "real_model_recursive_live_readonly_evidence" },
+    "captured_at": { "const": "2026-07-20T15:25:19.649Z" },
+    "branch": { "const": "codex/agent-contract-v1" },
+    "result": { "const": "pass_with_fail_closed_terminal_blocker" },
+    "evidence_scope": { "const": "capability6_trimble_s6_original_read_only_structural_probe_and_offline_recursive_review" },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "live_probe",
+        "terminal_review",
+        "plugin_version",
+        "capability_version",
+        "manifest_version",
+        "dsl_version",
+        "structural_groups_version",
+        "compatibility_ok"
+      ],
+      "properties": {
+        "live_probe": { "const": "queue" },
+        "terminal_review": { "const": "offline" },
+        "plugin_version": { "const": "0.1.0-rc.2" },
+        "capability_version": { "const": "0.1.0-rc.2-capabilities.6" },
+        "manifest_version": { "const": "2026-07-agent-contract-v1.3" },
+        "dsl_version": { "const": 1 },
+        "structural_groups_version": { "const": "structural-groups.v1" },
+        "compatibility_ok": { "const": true }
+      }
+    },
+    "installed_source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "installed_location_disclosed",
+        "fresh_process_verified",
+        "requires_reinstall_restart",
+        "plugin_main",
+        "model_revision",
+        "structural_probe"
+      ],
+      "properties": {
+        "installed_location_disclosed": { "const": false },
+        "fresh_process_verified": { "const": true },
+        "requires_reinstall_restart": { "const": false },
+        "plugin_main": {
+          "$ref": "#/$defs/installedSourceBinding"
+        },
+        "model_revision": {
+          "$ref": "#/$defs/installedSourceBinding"
+        },
+        "structural_probe": {
+          "$ref": "#/$defs/installedSourceBinding"
+        }
+      }
+    },
+    "artifact_bindings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "inventory",
+        "semantic_mapping",
+        "semantic_mapping_amendment",
+        "session_contract",
+        "structural_phase1",
+        "structural_terminal_probe",
+        "recursive_terminal_review"
+      ],
+      "properties": {
+        "inventory": {
+          "$ref": "#/$defs/artifactBinding"
+        },
+        "semantic_mapping": {
+          "$ref": "#/$defs/artifactBinding"
+        },
+        "semantic_mapping_amendment": {
+          "$ref": "#/$defs/artifactBinding"
+        },
+        "session_contract": {
+          "allOf": [
+            { "$ref": "#/$defs/artifactBinding" },
+            {
+              "type": "object",
+              "required": ["source_contains_sensitive_fields", "sensitive_fields_embedded_in_wrapper"],
+              "properties": {
+                "source_contains_sensitive_fields": { "const": true },
+                "sensitive_fields_embedded_in_wrapper": { "const": false }
+              }
+            }
+          ]
+        },
+        "structural_phase1": {
+          "$ref": "#/$defs/artifactBinding"
+        },
+        "structural_terminal_probe": {
+          "$ref": "#/$defs/artifactBinding"
+        },
+        "recursive_terminal_review": {
+          "$ref": "#/$defs/artifactBinding"
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidate_id",
+        "candidate_handle",
+        "scope",
+        "relative_path",
+        "label_trust",
+        "size_bytes",
+        "sha256_before",
+        "sha256_after",
+        "bytes_unchanged"
+      ],
+      "properties": {
+        "candidate_id": { "const": "candidate_cb1cf0f53d27f53b277b34e1" },
+        "candidate_handle": { "const": "candidate:sha256:cb1cf0f53d27f53b277b34e1" },
+        "scope": { "const": "configured_input_root_original" },
+        "relative_path": { "const": "test/模型/Trimble S6.skp" },
+        "label_trust": { "const": "untrusted_data" },
+        "size_bytes": { "const": 5413634 },
+        "sha256_before": { "const": "sha256:8678e0f86768cde57ae6f81c138a0c9296b5fcbee978e34ef01063e883d22efb" },
+        "sha256_after": { "const": "sha256:8678e0f86768cde57ae6f81c138a0c9296b5fcbee978e34ef01063e883d22efb" },
+        "bytes_unchanged": { "const": true }
+      }
+    },
+    "session_summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "kind",
+        "issued_at",
+        "expires_at",
+        "runtime",
+        "queue_state",
+        "document_id",
+        "model_revision",
+        "model_revision_complete",
+        "used_as_mutation_authority",
+        "sensitive_fields_embedded_in_wrapper"
+      ],
+      "properties": {
+        "version": { "const": "session-contract.v1" },
+        "kind": { "const": "fresh_queue_handshake" },
+        "issued_at": { "const": "2026-07-20T15:10:32.556Z" },
+        "expires_at": { "const": "2026-07-20T15:15:32.556Z" },
+        "runtime": { "const": "queue" },
+        "queue_state": { "const": "idle" },
+        "document_id": { "const": "document_171c47a5d02c2377163d6f6c4f5cdef808da5d816de662be0b1d059d63289a1f" },
+        "model_revision": { "const": "sha256:56a7dbc028b7ebe3bb2d35e30402e21585e24bfd411870a3f4f5dc56f6c2a792" },
+        "model_revision_complete": { "const": true },
+        "used_as_mutation_authority": { "const": false },
+        "sensitive_fields_embedded_in_wrapper": { "const": false }
+      }
+    },
+    "revision_attestation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "handshake",
+        "structural_phase1",
+        "structural_terminal_probe",
+        "recursive_terminal_review",
+        "complete",
+        "unchanged",
+        "strategy",
+        "unique_entity_limit",
+        "unique_entities",
+        "reachable_definitions",
+        "logical_occurrences"
+      ],
+      "properties": {
+        "handshake": { "$ref": "#/$defs/modelRevision" },
+        "structural_phase1": { "$ref": "#/$defs/modelRevision" },
+        "structural_terminal_probe": { "$ref": "#/$defs/modelRevision" },
+        "recursive_terminal_review": { "$ref": "#/$defs/modelRevision" },
+        "complete": { "const": true },
+        "unchanged": { "const": true },
+        "strategy": { "const": "definition-merkle.v1" },
+        "unique_entity_limit": { "const": 1000000 },
+        "unique_entities": { "const": 60247 },
+        "reachable_definitions": { "const": 44 },
+        "logical_occurrences": { "const": 71360 }
+      }
+    },
+    "structural_probe": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "read_only",
+        "total_seen",
+        "total_seen_exact",
+        "returned",
+        "truncated",
+        "limit",
+        "phase1_fresh_requested",
+        "terminal_fresh_requested",
+        "terminal_fresh_matched",
+        "terminal_fresh_unmatched",
+        "terminal_exact_fresh_entry_matches",
+        "terminal_manifold",
+        "terminal_non_manifold"
+      ],
+      "properties": {
+        "read_only": { "const": true },
+        "total_seen": { "const": 41 },
+        "total_seen_exact": { "const": true },
+        "returned": { "const": 41 },
+        "truncated": { "const": false },
+        "limit": { "const": 500 },
+        "phase1_fresh_requested": { "const": 0 },
+        "terminal_fresh_requested": { "const": 15 },
+        "terminal_fresh_matched": { "const": 15 },
+        "terminal_fresh_unmatched": { "const": 0 },
+        "terminal_exact_fresh_entry_matches": { "const": 15 },
+        "terminal_manifold": { "const": 1 },
+        "terminal_non_manifold": { "const": 14 }
+      }
+    },
+    "terminal_review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "runtime",
+        "status",
+        "operation",
+        "candidate_count",
+        "pair_review_eligible_count",
+        "excluded_candidate_count",
+        "scope_count",
+        "same_parent_scope_pair_count",
+        "pair_evaluations_considered",
+        "pair_evaluation_budget_exhausted",
+        "manifold_probe_paths",
+        "role_bindings",
+        "recommended_proposal",
+        "blockers",
+        "next_action"
+      ],
+      "properties": {
+        "version": { "const": "real-model-recursive-target-review.v1" },
+        "runtime": { "const": "offline" },
+        "status": { "const": "blocked" },
+        "operation": { "const": "difference" },
+        "candidate_count": { "const": 41 },
+        "pair_review_eligible_count": { "const": 33 },
+        "excluded_candidate_count": { "const": 8 },
+        "scope_count": { "const": 14 },
+        "same_parent_scope_pair_count": { "const": 35 },
+        "pair_evaluations_considered": { "const": 30 },
+        "pair_evaluation_budget_exhausted": { "const": false },
+        "manifold_probe_paths": {
+          "type": "array",
+          "maxItems": 0
+        },
+        "role_bindings": { "type": "null" },
+        "recommended_proposal": { "type": "null" },
+        "blockers": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": { "const": "no_manifold_qualified_pair" }
+        },
+        "next_action": { "const": "select_manifold_qualified_disposable_model_case" }
+      }
+    },
+    "safety": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "explicit_queue_opt_in",
+        "live_queue_called",
+        "read_only_live_calls_only",
+        "original_model_opened",
+        "original_bytes_unchanged_verified",
+        "model_content_mutation_requested",
+        "model_content_mutation_performed",
+        "save_requested",
+        "selection_changed",
+        "visual_capture_requested",
+        "approval_token_requested",
+        "queue_before",
+        "queue_after"
+      ],
+      "properties": {
+        "explicit_queue_opt_in": { "const": true },
+        "live_queue_called": { "const": true },
+        "read_only_live_calls_only": { "const": true },
+        "original_model_opened": { "const": true },
+        "original_bytes_unchanged_verified": { "const": true },
+        "model_content_mutation_requested": { "const": false },
+        "model_content_mutation_performed": { "const": false },
+        "save_requested": { "const": false },
+        "selection_changed": { "const": false },
+        "visual_capture_requested": { "const": false },
+        "approval_token_requested": { "const": false },
+        "queue_before": { "$ref": "#/$defs/cleanQueueState" },
+        "queue_after": { "$ref": "#/$defs/cleanQueueState" }
+      }
+    },
+    "authorization_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "target_roles_confirmed",
+        "role_bindings_issued",
+        "real_user_mutation_approval_observed",
+        "approval_token_issued",
+        "mutation_authorized"
+      ],
+      "properties": {
+        "target_roles_confirmed": { "const": false },
+        "role_bindings_issued": { "const": false },
+        "real_user_mutation_approval_observed": { "const": false },
+        "approval_token_issued": { "const": false },
+        "mutation_authorized": { "const": false }
+      }
+    },
+    "release_acceptance": { "const": false },
+    "boundary": { "type": "string", "minLength": 180, "maxLength": 3000 }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "modelRevision": { "const": "sha256:56a7dbc028b7ebe3bb2d35e30402e21585e24bfd411870a3f4f5dc56f6c2a792" },
+    "artifactBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1, "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$" },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "source_contains_sensitive_fields": { "type": "boolean" },
+        "sensitive_fields_embedded_in_wrapper": { "type": "boolean" }
+      }
+    },
+    "installedSourceBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "workspace_path",
+        "workspace_sha256_at_capture",
+        "installed_sha256_at_capture",
+        "capture_time_exact_match"
+      ],
+      "properties": {
+        "workspace_path": { "type": "string", "minLength": 1, "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$" },
+        "workspace_sha256_at_capture": { "$ref": "#/$defs/sha256" },
+        "installed_sha256_at_capture": { "$ref": "#/$defs/sha256" },
+        "capture_time_exact_match": { "const": true }
+      }
+    },
+    "cleanQueueState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["queue", "processing", "responses", "lock_exists"],
+      "properties": {
+        "queue": { "const": 0 },
+        "processing": { "const": 0 },
+        "responses": { "const": 0 },
+        "lock_exists": { "const": false }
+      }
+    }
+  }
+}

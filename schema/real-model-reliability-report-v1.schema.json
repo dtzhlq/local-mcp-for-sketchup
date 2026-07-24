@@ -1,0 +1,355 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/schemas/real-model-reliability-report-v1.schema.json",
+  "title": "Real-model reliability report v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "kind",
+    "ok",
+    "runtime",
+    "evidence_scope",
+    "live_sketchup_version_matrix",
+    "live_queue_called",
+    "manifest",
+    "safety",
+    "corpus_cases",
+    "passed_cases",
+    "tasks",
+    "metrics",
+    "coverage",
+    "results"
+  ],
+  "properties": {
+    "version": { "const": "real-model-reliability-report.v1" },
+    "kind": { "const": "real_model_reliability_report" },
+    "ok": { "type": "boolean" },
+    "runtime": { "enum": ["mock", "queue"] },
+    "evidence_scope": {
+      "enum": ["deterministic_mock_only", "user_coordinated_live_artifacts"]
+    },
+    "live_sketchup_version_matrix": {
+      "oneOf": [
+        { "const": "not_run_requires_explicit_user_coordination" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["versions", "complete"],
+          "properties": {
+            "versions": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": { "type": "string", "minLength": 1 }
+            },
+            "complete": { "const": false }
+          }
+        }
+      ]
+    },
+    "live_queue_called": { "type": "boolean" },
+    "manifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "sha256",
+        "path",
+        "repository_tracked_skp_count",
+        "external_live_artifacts_required",
+        "external_live_artifacts_verified"
+      ],
+      "properties": {
+        "version": { "const": "real-model-reliability-corpus.v1" },
+        "sha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+        "path": { "type": "string", "minLength": 1 },
+        "repository_tracked_skp_count": { "const": 0 },
+        "external_live_artifacts_required": { "const": 7 },
+        "external_live_artifacts_verified": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "safety": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "default_runtime",
+        "explicit_queue_opt_in",
+        "fresh_handshake_per_guarded_operation",
+        "preflight_before_queue",
+        "interrupt_cleanup_enabled",
+        "active_model_mutation_warning_emitted",
+        "disposable_copy_only"
+      ],
+      "properties": {
+        "default_runtime": { "const": "mock" },
+        "explicit_queue_opt_in": { "type": "boolean" },
+        "fresh_handshake_per_guarded_operation": { "const": true },
+        "preflight_before_queue": { "const": true },
+        "interrupt_cleanup_enabled": { "type": "boolean" },
+        "active_model_mutation_warning_emitted": { "type": "boolean" },
+        "disposable_copy_only": { "type": "boolean" }
+      }
+    },
+    "corpus_cases": { "const": 7 },
+    "passed_cases": { "type": "integer", "minimum": 0, "maximum": 7 },
+    "tasks": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["total", "passed", "failed"],
+      "properties": {
+        "total": { "const": 23 },
+        "passed": { "type": "integer", "minimum": 0, "maximum": 23 },
+        "failed": { "type": "integer", "minimum": 0, "maximum": 23 }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "task_success_rate",
+        "wrong_object_modification_count",
+        "silent_geometry_corruption_count",
+        "recovery_attempts",
+        "recoveries",
+        "recovery_rate"
+      ],
+      "properties": {
+        "task_success_rate": { "type": "number", "minimum": 0, "maximum": 1 },
+        "wrong_object_modification_count": { "type": "integer", "minimum": 0 },
+        "silent_geometry_corruption_count": { "type": "integer", "minimum": 0 },
+        "recovery_attempts": { "type": "integer", "minimum": 0 },
+        "recoveries": { "type": "integer", "minimum": 0 },
+        "recovery_rate": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "abnormal_topology_detection",
+        "boolean_manifold",
+        "large_recursive_index",
+        "locked_fail_closed",
+        "manifold_repair",
+        "material_preservation",
+        "nonuniform_mirror",
+        "recovery",
+        "rollback",
+        "save_reopen_identity",
+        "scene_visibility_preservation",
+        "shared_definition_identity",
+        "uv_material_preservation",
+        "wrong_object_isolation"
+      ],
+      "properties": {
+        "abnormal_topology_detection": { "$ref": "#/$defs/coverage" },
+        "boolean_manifold": { "$ref": "#/$defs/coverage" },
+        "large_recursive_index": { "$ref": "#/$defs/coverage" },
+        "locked_fail_closed": { "$ref": "#/$defs/coverage" },
+        "manifold_repair": { "$ref": "#/$defs/coverage" },
+        "material_preservation": { "$ref": "#/$defs/coverage" },
+        "nonuniform_mirror": { "$ref": "#/$defs/coverage" },
+        "recovery": { "$ref": "#/$defs/coverage" },
+        "rollback": { "$ref": "#/$defs/coverage" },
+        "save_reopen_identity": { "$ref": "#/$defs/coverage" },
+        "scene_visibility_preservation": { "$ref": "#/$defs/coverage" },
+        "shared_definition_identity": { "$ref": "#/$defs/coverage" },
+        "uv_material_preservation": { "$ref": "#/$defs/coverage" },
+        "wrong_object_isolation": { "$ref": "#/$defs/coverage" }
+      }
+    },
+    "results": {
+      "type": "array",
+      "minItems": 7,
+      "maxItems": 7,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/case_result" }
+    }
+  },
+  "$defs": {
+    "coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cases", "passed", "status"],
+      "properties": {
+        "cases": { "type": "integer", "minimum": 1 },
+        "passed": { "type": "integer", "minimum": 0 },
+        "status": { "enum": ["passed", "failed"] }
+      }
+    },
+    "task_result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["task_id", "status", "evidence"],
+      "properties": {
+        "task_id": {
+          "enum": [
+            "boolean_manifold",
+            "material_preservation",
+            "uv_material_preservation",
+            "scene_visibility_preservation",
+            "large_recursive_index",
+            "shared_definition_identity",
+            "abnormal_topology_detection",
+            "manifold_repair",
+            "recovery",
+            "locked_fail_closed",
+            "rollback",
+            "nonuniform_mirror",
+            "wrong_object_isolation",
+            "save_reopen_identity"
+          ]
+        },
+        "status": { "enum": ["passed", "failed"] },
+        "evidence": { "type": "object" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "status": { "const": "passed" } }, "required": ["status"] },
+          "then": { "properties": { "evidence": { "minProperties": 1 } } }
+        }
+      ]
+    },
+    "case_result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "domain",
+        "evidence_class",
+        "source_kind",
+        "live_requirement",
+        "ok",
+        "duration_ms",
+        "tasks",
+        "details"
+      ],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]+$" },
+        "domain": {
+          "enum": ["architecture", "interior", "product", "shared_component", "imported_cad", "appearance", "transform_edge_case"]
+        },
+        "evidence_class": { "enum": ["deterministic_mock_fixture", "external_live_artifact"] },
+        "source_kind": {
+          "enum": ["repository_json_fixture", "generated_mock_fixture", "generated_mock_import_fixture", "external_skp"]
+        },
+        "live_requirement": { "enum": ["external_live_required", "satisfied_by_hash_bound_external_artifact"] },
+        "ok": { "type": "boolean" },
+        "duration_ms": { "type": "integer", "minimum": 0 },
+        "tasks": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/task_result" }
+        },
+        "details": { "type": "object" },
+        "error": { "type": "string", "minLength": 1 }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "ok": { "const": true } }, "required": ["ok"] },
+          "then": { "not": { "required": ["error"] } },
+          "else": { "required": ["error"] }
+        }
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "ok": { "const": true } }, "required": ["ok"] },
+      "then": {
+        "properties": {
+          "passed_cases": { "const": 7 },
+          "tasks": {
+            "properties": {
+              "passed": { "const": 23 },
+              "failed": { "const": 0 }
+            }
+          },
+          "metrics": {
+            "properties": {
+              "task_success_rate": { "const": 1 },
+              "wrong_object_modification_count": { "const": 0 },
+              "silent_geometry_corruption_count": { "const": 0 },
+              "recovery_attempts": { "const": 2 },
+              "recoveries": { "const": 2 },
+              "recovery_rate": { "const": 1 }
+            }
+          },
+          "results": {
+            "items": {
+              "properties": {
+                "ok": { "const": true },
+                "tasks": {
+                  "items": {
+                    "properties": { "status": { "const": "passed" } }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "runtime": { "const": "mock" } }, "required": ["runtime"] },
+      "then": {
+        "properties": {
+          "evidence_scope": { "const": "deterministic_mock_only" },
+          "live_queue_called": { "const": false },
+          "live_sketchup_version_matrix": { "const": "not_run_requires_explicit_user_coordination" },
+          "manifest": {
+            "properties": { "external_live_artifacts_verified": { "const": 0 } }
+          },
+          "safety": {
+            "properties": {
+              "explicit_queue_opt_in": { "const": false },
+              "interrupt_cleanup_enabled": { "const": false },
+              "active_model_mutation_warning_emitted": { "const": false },
+              "disposable_copy_only": { "const": false }
+            }
+          },
+          "results": {
+            "items": {
+              "properties": {
+                "evidence_class": { "const": "deterministic_mock_fixture" },
+                "live_requirement": { "const": "external_live_required" }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "runtime": { "const": "queue" } }, "required": ["runtime"] },
+      "then": {
+        "properties": {
+          "evidence_scope": { "const": "user_coordinated_live_artifacts" },
+          "live_queue_called": { "const": true },
+          "live_sketchup_version_matrix": { "type": "object" },
+          "manifest": {
+            "properties": { "external_live_artifacts_verified": { "const": 7 } }
+          },
+          "safety": {
+            "properties": {
+              "explicit_queue_opt_in": { "const": true },
+              "interrupt_cleanup_enabled": { "const": true },
+              "active_model_mutation_warning_emitted": { "const": true },
+              "disposable_copy_only": { "const": true }
+            }
+          },
+          "results": {
+            "items": {
+              "properties": {
+                "evidence_class": { "const": "external_live_artifact" },
+                "source_kind": { "const": "external_skp" },
+                "live_requirement": { "const": "satisfied_by_hash_bound_external_artifact" }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

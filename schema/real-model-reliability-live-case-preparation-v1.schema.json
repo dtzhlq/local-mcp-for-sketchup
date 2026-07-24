@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/sketchup-mcp-replica/real-model-reliability-live-case-preparation-v1.schema.json",
+  "title": "Real-model reliability single-window preparation v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "kind",
+    "ok",
+    "queue_called",
+    "selected_case",
+    "artifacts",
+    "next_action"
+  ],
+  "properties": {
+    "version": { "const": "real-model-reliability-live-case-preparation.v1" },
+    "kind": { "const": "real_model_reliability_live_case_preparation" },
+    "ok": { "const": true },
+    "queue_called": { "const": false },
+    "selected_case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["case_id", "domain", "artifact_file", "contract_file"],
+      "properties": {
+        "case_id": {
+          "enum": [
+            "architecture-golden",
+            "interior-expression",
+            "product-boolean-manifold",
+            "deep-shared-components",
+            "imported-dirty-topology",
+            "appearance-scenes-hidden",
+            "scaled-mirrored-locked"
+          ]
+        },
+        "domain": {
+          "enum": [
+            "architecture",
+            "interior",
+            "product",
+            "shared_component",
+            "imported_cad",
+            "appearance",
+            "transform_edge_case"
+          ]
+        },
+        "artifact_file": { "type": "string", "pattern": "^[^/]+\\.skp$" },
+        "contract_file": { "type": "string", "pattern": "^[^/]+\\.reliability\\.json$" }
+      }
+    },
+    "artifacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_artifact",
+        "source_sha256",
+        "working_copy",
+        "working_copy_sha256",
+        "contract",
+        "contract_sha256"
+      ],
+      "properties": {
+        "source_artifact": { "type": "string", "minLength": 1 },
+        "source_sha256": { "$ref": "#/$defs/prefixedSha256" },
+        "working_copy": { "type": "string", "minLength": 1 },
+        "working_copy_sha256": { "$ref": "#/$defs/prefixedSha256" },
+        "contract": { "type": "string", "minLength": 1 },
+        "contract_sha256": { "$ref": "#/$defs/prefixedSha256" }
+      }
+    },
+    "next_action": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["action", "cli_flag", "requires_plugin_start", "note"],
+      "properties": {
+        "action": { "const": "launch_working_copy_as_only_sketchup_document_then_run_active_prepared_case" },
+        "cli_flag": { "const": "--active-working-copy" },
+        "requires_plugin_start": { "const": true },
+        "note": { "type": "string", "minLength": 1, "maxLength": 500 }
+      }
+    }
+  },
+  "$defs": {
+    "prefixedSha256": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    }
+  }
+}

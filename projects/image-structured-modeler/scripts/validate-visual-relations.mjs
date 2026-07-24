@@ -3,6 +3,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { SketchUpBridge } from '../../../src/bridge.mjs';
+import { freshSessionOptions } from '../../../src/live-session-contract.mjs';
 import { repoRoot } from './lib/image-analysis.mjs';
 
 const AXIS_INDEX = { x: 0, y: 1, z: 2 };
@@ -41,7 +42,7 @@ export async function validateVisualRelations({ observations, fixture, code, run
     throw new Error('visual relation QA requires fixture.required_relations or fixture.footprint_rules');
   }
   const bridge = new SketchUpBridge({ mock: { sessionPath: resolveRepo(mockSessionPath || 'output/image-structured-modeler/sessions/visual-relation-qa-mock-session.json') } });
-  const { snapshot } = await bridge.build_model({ runtime, code, timeoutMs });
+  const { snapshot } = await bridge.build_model({ runtime, code, timeoutMs, ...await freshSessionOptions(bridge, { runtime, timeoutMs }) });
   const modelContext = makeModelContext(snapshot, fixture);
   const relationResults = [];
   const footprintResults = [];

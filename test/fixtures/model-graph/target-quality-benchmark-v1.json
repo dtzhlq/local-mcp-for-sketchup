@@ -1,0 +1,179 @@
+{
+  "version": "model-graph-target-quality-benchmark.v1",
+  "kind": "model_graph_target_quality_benchmark",
+  "content_trust": "trusted_test_fixture",
+  "models": [
+    {
+      "model_id": "architecture-fixture",
+      "domain": "architecture",
+      "dsl_document": {
+        "version": 1,
+        "units": "mm",
+        "operations": [
+          { "op": "reset" },
+          { "op": "material", "name": "Reviewed_Concrete", "color": "#999999" },
+          {
+            "op": "component_definition",
+            "name": "Architecture_Domain",
+            "operations": [
+              { "op": "box", "id": "north-wall", "name": "North_Wall", "origin": [0, 0, 0], "size": [5000, 200, 3000] },
+              { "op": "box", "id": "south-wall", "name": "South_Wall", "origin": [0, 4000, 0], "size": [3000, 200, 3000] }
+            ]
+          },
+          { "op": "component_instance", "id": "architecture-domain-instance", "name": "Architecture_Domain_Instance", "definition": "Architecture_Domain", "origin": [0, 0, 0] }
+        ]
+      },
+      "cases": [
+        {
+          "case_id": "architecture-largest-wall",
+          "flow": "start",
+          "instruction": "Set the largest wall to the reviewed concrete material.",
+          "target_query": "largest wall",
+          "action": "set_material",
+          "parameters": { "material": "Reviewed_Concrete" },
+          "expected": {
+            "task_state": "awaiting_review",
+            "selected_fixture_label": "North_Wall",
+            "candidate_fixture_labels": ["North_Wall"],
+            "ambiguity_reason": null,
+            "instance_policy": "definition_wide"
+          }
+        }
+      ]
+    },
+    {
+      "model_id": "interior-fixture",
+      "domain": "interior",
+      "dsl_document": {
+        "version": 1,
+        "units": "mm",
+        "operations": [
+          { "op": "reset" },
+          {
+            "op": "component_definition",
+            "name": "Interior_Domain",
+            "operations": [
+              { "op": "box", "id": "left-cabinet", "name": "Left_Cabinet", "origin": [0, 0, 0], "size": [900, 600, 2200] },
+              { "op": "box", "id": "right-cabinet", "name": "Right_Cabinet", "origin": [1200, 0, 0], "size": [900, 600, 2200] }
+            ]
+          },
+          { "op": "component_instance", "id": "interior-domain-instance", "name": "Interior_Domain_Instance", "definition": "Interior_Domain", "origin": [0, 0, 0] }
+        ]
+      },
+      "cases": [
+        {
+          "case_id": "interior-ambiguous-cabinet",
+          "flow": "start",
+          "instruction": "Rename the cabinet to Reviewed_Cabinet.",
+          "target_query": "cabinet",
+          "action": "rename",
+          "parameters": { "new_name": "Reviewed_Cabinet" },
+          "expected": {
+            "task_state": "awaiting_input",
+            "selected_fixture_label": null,
+            "candidate_fixture_labels": ["Left_Cabinet", "Right_Cabinet"],
+            "ambiguity_reason": "multiple_similar_targets",
+            "instance_policy": null
+          }
+        }
+      ]
+    },
+    {
+      "model_id": "product-fixture",
+      "domain": "product",
+      "dsl_document": {
+        "version": 1,
+        "units": "mm",
+        "operations": [
+          { "op": "reset" },
+          {
+            "op": "component_definition",
+            "name": "Product_Domain",
+            "operations": [
+              { "op": "rounded_box", "id": "controller-body", "name": "Controller_Body", "origin": [0, 0, 0], "size": [180, 90, 24], "radius": 12 },
+              { "op": "cylinder", "id": "controller-button-a", "name": "Controller_Button_A", "origin": [130, 45, 24], "radius": 8, "height": 5 },
+              { "op": "cylinder", "id": "controller-button-b", "name": "Controller_Button_B", "origin": [150, 45, 24], "radius": 8, "height": 5 }
+            ]
+          },
+          { "op": "component_instance", "id": "product-domain-instance", "name": "Product_Domain_Instance", "definition": "Product_Domain", "origin": [0, 0, 0] }
+        ]
+      },
+      "cases": [
+        {
+          "case_id": "product-largest-body",
+          "flow": "start",
+          "instruction": "Attach reviewed metadata to the largest product body.",
+          "target_query": "largest body",
+          "action": "attribute",
+          "parameters": { "dictionary": "DesignIntent", "key": "reviewed", "value": true },
+          "expected": {
+            "task_state": "awaiting_review",
+            "selected_fixture_label": "Controller_Body",
+            "candidate_fixture_labels": ["Controller_Body"],
+            "ambiguity_reason": null,
+            "instance_policy": "definition_wide"
+          }
+        }
+      ]
+    },
+    {
+      "model_id": "deep-shared-fixture",
+      "domain": "deep_shared_components",
+      "dsl_document": {
+        "version": 1,
+        "units": "mm",
+        "operations": [
+          { "op": "reset" },
+          {
+            "op": "component_definition",
+            "name": "Shared_Leaf_Definition",
+            "operations": [
+              { "op": "box", "id": "shared-leaf", "name": "Shared_Leaf", "origin": [0, 0, 0], "size": [100, 60, 30] }
+            ]
+          },
+          {
+            "op": "component_definition",
+            "name": "Shared_Parent_Definition",
+            "operations": [
+              { "op": "component_instance", "id": "shared-leaf-instance", "name": "Shared_Leaf_Instance", "definition": "Shared_Leaf_Definition", "origin": [0, 0, 0] }
+            ]
+          },
+          { "op": "component_instance", "id": "shared-parent-a", "name": "Shared_Parent_A", "definition": "Shared_Parent_Definition", "origin": [0, 0, 0] },
+          { "op": "component_instance", "id": "shared-parent-b", "name": "Shared_Parent_B", "definition": "Shared_Parent_Definition", "origin": [250, 0, 0] }
+        ]
+      },
+      "cases": [
+        {
+          "case_id": "deep-shared-policy-required",
+          "flow": "start",
+          "instruction": "Rename one shared leaf to Shared_Leaf_Reviewed.",
+          "target_query": "Shared_Leaf",
+          "action": "rename",
+          "parameters": { "new_name": "Shared_Leaf_Reviewed" },
+          "expected": {
+            "task_state": "awaiting_input",
+            "selected_fixture_label": null,
+            "candidate_fixture_labels": ["Shared_Leaf"],
+            "ambiguity_reason": "shared_definition_policy_required",
+            "instance_policy": null
+          }
+        },
+        {
+          "case_id": "deep-shared-make-unique",
+          "flow": "clarify",
+          "source_case_id": "deep-shared-policy-required",
+          "clarification_fixture_label": "Shared_Leaf",
+          "clarification_candidate_rank": 1,
+          "shared_policy": "make_unique",
+          "expected": {
+            "task_state": "awaiting_review",
+            "selected_fixture_label": "Shared_Leaf",
+            "candidate_fixture_labels": ["Shared_Leaf"],
+            "ambiguity_reason": null,
+            "instance_policy": "make_unique"
+          }
+        }
+      ]
+    }
+  ]
+}

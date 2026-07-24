@@ -28,19 +28,83 @@
     },
     "execution_policy": {
       "type": "object",
-      "required": ["policy_version", "auto_approve_risks", "allowed_runtimes", "approval_required_risks", "allow_queue_mutation"],
+      "required": ["policy_version", "auto_approve_risks", "allowed_runtimes", "approval_required_risks", "resource_limits", "allow_queue_mutation", "allow_direct_expert_queue_mutation", "trusted_model_copy_auto_approval", "copy_fast_mode"],
       "properties": {
         "policy_version": { "const": "execution-policy.v1" },
         "auto_approve_risks": { "type": "array", "uniqueItems": true, "items": { "const": "S1" } },
         "allowed_runtimes": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "enum": ["mock", "queue"] } },
         "approval_required_risks": { "type": "array", "items": { "enum": ["S2", "S3", "S4"] } },
-        "allow_queue_mutation": { "type": "boolean" }
+        "resource_limits": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["max_operations", "max_affected_instances", "max_recursive_entities", "auto_approve_s1_max_affected_instances"],
+          "properties": {
+            "max_operations": { "type": "integer", "minimum": 1 },
+            "max_affected_instances": { "type": "integer", "minimum": 1 },
+            "max_recursive_entities": { "type": "integer", "minimum": 1 },
+            "auto_approve_s1_max_affected_instances": { "type": "integer", "minimum": 1 }
+          }
+        },
+        "allow_queue_mutation": { "type": "boolean" },
+        "allow_direct_expert_queue_mutation": { "type": "boolean" },
+        "trusted_model_copy_auto_approval": {
+          "type": "object",
+          "required": ["version", "enabled", "allowed_risks", "allowed_root_count", "max_affected_instances", "allow_save_model", "session_ttl_ms", "scope_fingerprint"],
+          "properties": {
+            "version": { "const": "trusted-model-copy-auto-approval-policy.v1" },
+            "enabled": { "type": "boolean" },
+            "allowed_risks": { "type": "array", "uniqueItems": true, "items": { "enum": ["S1", "S2", "S3", "S4"] } },
+            "allowed_root_count": { "type": "integer", "minimum": 0 },
+            "max_affected_instances": { "type": "integer", "minimum": 1 },
+            "allow_save_model": { "type": "boolean" },
+            "session_ttl_ms": { "type": "integer", "minimum": 300000, "maximum": 86400000 },
+            "scope_fingerprint": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" }
+          },
+          "additionalProperties": false
+        },
+        "copy_fast_mode": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["version", "enabled", "activation", "session_scope", "allowed_risks", "allowed_root_count", "max_affected_instances", "allow_save_model", "session_ttl_ms", "user_action_required_per_edit", "agent_can_enable"],
+          "properties": {
+            "version": { "const": "copy-fast-mode.v1" },
+            "enabled": { "type": "boolean" },
+            "activation": { "const": "server_verified_copy_root" },
+            "session_scope": { "const": "current_server_process_and_model_copy" },
+            "allowed_risks": { "type": "array", "uniqueItems": true, "items": { "enum": ["S1", "S2", "S3", "S4"] } },
+            "allowed_root_count": { "type": "integer", "minimum": 0 },
+            "max_affected_instances": { "type": "integer", "minimum": 1 },
+            "allow_save_model": { "type": "boolean" },
+            "session_ttl_ms": { "type": "integer", "minimum": 300000, "maximum": 86400000 },
+            "user_action_required_per_edit": { "const": false },
+            "agent_can_enable": { "const": false }
+          }
+        }
       },
       "additionalProperties": false
+    },
+    "response_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["policy_version", "source", "requested_interface_level", "interface_level", "requested_capabilities", "effective_capabilities", "max_context_chars", "max_in_flight_per_task", "parallel_scope", "server_serialization", "execution_policy_effect"],
+      "properties": {
+        "policy_version": { "const": "agent-response-policy.v1" },
+        "source": { "const": "server_trusted_profile_intersection" },
+        "requested_interface_level": { "enum": ["guided", "standard", "expert"] },
+        "interface_level": { "enum": ["guided", "standard", "expert"] },
+        "requested_capabilities": { "$ref": "#/$defs/client_capabilities" },
+        "effective_capabilities": { "$ref": "#/$defs/client_capabilities" },
+        "max_context_chars": { "type": "integer", "minimum": 2048, "maximum": 250000 },
+        "max_in_flight_per_task": { "const": 1 },
+        "parallel_scope": { "const": "same_task_serial" },
+        "server_serialization": { "const": "json_envelope" },
+        "execution_policy_effect": { "const": "none" }
+      }
     },
     "next_action": { "type": ["object", "null"] },
     "inputs": { "type": "object" },
     "result": {},
+    "last_error": { "$ref": "agent-result-envelope-v1.schema.json#/properties/error" },
     "private": { "type": "object" },
     "artifacts": { "type": "array", "items": { "$ref": "artifact-handle-v1.schema.json" } },
     "history": {
@@ -61,6 +125,18 @@
     "updated_at": { "type": "string", "format": "date-time" }
   },
   "$defs": {
+    "client_capabilities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["vision", "local_files", "structured_output", "parallel", "context"],
+      "properties": {
+        "vision": { "type": "boolean" },
+        "local_files": { "type": "boolean" },
+        "structured_output": { "type": "boolean" },
+        "parallel": { "type": "boolean" },
+        "context": { "enum": ["short", "standard", "long"] }
+      }
+    },
     "task_state": {
       "type": "string",
       "enum": ["created", "understanding", "awaiting_input", "awaiting_review", "approved", "executing", "verifying", "completed", "failed", "cancelled", "expired"]

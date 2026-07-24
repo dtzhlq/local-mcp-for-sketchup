@@ -31,7 +31,13 @@ const server = spawn(process.execPath, [path.join(repoRoot, 'src/mcp-server.mjs'
     ...process.env,
     ALMA_SKETCHUP_ENABLE_RUBY_EXPERT: '',
     ALMA_SKETCHUP_MOCK_SESSION_PATH: mockSessionPath,
-    ALMA_SKETCHUP_STATE_DIR: process.env.ALMA_SKETCHUP_STATE_DIR || path.join(outputDir, 'agent-contract-state')
+    ALMA_SKETCHUP_STATE_DIR: process.env.ALMA_SKETCHUP_STATE_DIR || path.join(outputDir, 'agent-contract-state'),
+    // Keep the live transport bound to the queue directories resolved by this
+    // validation process. ALMA_SKETCHUP_STATE_DIR above isolates contract state;
+    // without these explicit overrides it would also silently relocate the
+    // child MCP server's queue away from the running SketchUp plugin.
+    ALMA_SKETCHUP_QUEUE_DIR: process.env.ALMA_SKETCHUP_QUEUE_DIR || defaultQueueDir,
+    ALMA_SKETCHUP_RESPONSE_DIR: process.env.ALMA_SKETCHUP_RESPONSE_DIR || defaultResponseDir
   },
   stdio: ['pipe', 'pipe', 'pipe']
 });
@@ -71,7 +77,7 @@ try {
   const list = await request({ method: 'tools/list' }, { timeoutMs: 10000 });
   const tools = list.result.tools;
   const toolNames = tools.map((tool) => tool.name).sort();
-  assert.equal(toolNames.length, 40, 'MCP server should expose 36 retained expert tools plus 4 Agent Gateway tools');
+  assert.equal(toolNames.length, 41, 'MCP server should expose 36 retained expert tools, 4 Agent Gateway tools, and create_queue_handshake');
   for (const requiredTool of ['prepare_image_modeling_brief', 'compile_reviewed_part_graph', 'prepare_existing_model_edit', 'apply_reviewed_model_edit']) {
     assert.ok(toolNames.includes(requiredTool), `MCP server should expose ${requiredTool}`);
   }
@@ -424,12 +430,18 @@ try {
       runtime: 'mock',
       output_dir: path.join(outputDir, 'build-report'),
       validate_model: true,
-      includePreview: false
+      includePreview: false,
+      floatingDetails: false
     });
     assert.equal(buildReport.kind, 'build_report');
     assert.ok(buildReport.summary.model_qa.ok);
+    assert.equal(buildReport.summary.model_qa.verdict, 'pass');
     await fs.access(buildReport.artifacts.manifest);
-    return { groups: buildReport.summary.totals.groups, manifest: buildReport.artifacts.manifest };
+    return {
+      groups: buildReport.summary.totals.groups,
+      model_qa: { ok: buildReport.summary.model_qa.ok, verdict: buildReport.summary.model_qa.verdict },
+      manifest: buildReport.artifacts.manifest
+    };
   });
 
   let iteration;
@@ -442,16 +454,19 @@ try {
       label: 'suite',
       targets: ['suite-base-panel'],
       validate_model: true,
-      includePreview: false
+      includePreview: false,
+      floatingDetails: false
     });
     assert.equal(iteration.kind, 'model_iteration');
     assert.equal(iteration.change_summary.totals_delta.groups, 1);
     assert.ok(iteration.change_summary.added.some((item) => item.id === 'suite-iteration-addon'));
     assert.ok(iteration.model_qa.ok);
+    assert.equal(iteration.model_qa.verdict, 'pass');
     await fs.access(iteration.artifacts.manifest);
     return {
       before_groups: iteration.before.model_info.totals.groups,
       after_groups: iteration.after.model_info.totals.groups,
+      model_qa: { ok: iteration.model_qa.ok, verdict: iteration.model_qa.verdict },
       manifest: iteration.artifacts.manifest
     };
   });
@@ -559,6 +574,7 @@ try {
 async function maybeRunQueueSuite(baseCode) {
   if (requestedRuntime === 'mock') {
     recordSkipped('capture_view', 'queue runtime not requested');
+    recordSkipped('create_queue_handshake', 'queue runtime not requested');
     return { ok: null, skipped: true, reason: 'queue runtime not requested' };
   }
 
@@ -589,13 +605,13 @@ async function maybeRunQueueSuite(baseCode) {
   }
 
   await runStep('reset_model:queue', async () => {
-    const reset = await callTool('reset_model', { runtime: 'queue', timeoutMs });
+    const reset = await callTool('reset_model', { runtime: 'queue', timeoutMs, session_contract: await freshQueueContract() });
     assert.equal(reset.snapshot.totals.groups, 0);
     return { groups: 0 };
   }, { tool: 'reset_model' });
 
   await runStep('build_model:queue', async () => {
-    const built = await callTool('build_model', { code: baseCode, runtime: 'queue', timeoutMs });
+    const built = await callTool('build_model', { code: baseCode, runtime: 'queue', timeoutMs, session_contract: await freshQueueContract() });
     assert.ok(built.snapshot.totals.groups >= 17);
     assert.equal(built.snapshot.warning_summary.total, 0);
     return { groups: built.snapshot.totals.groups, faces: built.snapshot.totals.faces };
@@ -608,14 +624,22 @@ async function maybeRunQueueSuite(baseCode) {
       capture_view: true,
       validate_model: true,
       includePreview: false,
-      timeoutMs
+      floatingDetails: false,
+      timeoutMs,
+      session_contract: await freshQueueContract()
     });
     assert.equal(report.kind, 'build_report');
     assert.ok(report.saved_model.file_path.endsWith('.skp'));
+    assert.equal(report.summary.model_qa.ok, true);
+    assert.equal(report.summary.model_qa.verdict, 'pass');
     queue.artifacts.build_report = report.artifacts.manifest;
     queue.artifacts.skp = report.saved_model.file_path;
     queue.artifacts.capture = report.capture?.file_path;
-    return { skp: report.saved_model.file_path, capture: report.capture?.file_path };
+    return {
+      skp: report.saved_model.file_path,
+      capture: report.capture?.file_path,
+      model_qa: { ok: report.summary.model_qa.ok, verdict: report.summary.model_qa.verdict }
+    };
   }, { tool: 'build_report' });
 
   await runStep('capture_view:queue', async () => {
@@ -625,7 +649,8 @@ async function maybeRunQueueSuite(baseCode) {
       view: 'iso',
       width: 1280,
       height: 720,
-      timeoutMs
+      timeoutMs,
+      session_contract: await freshQueueContract()
     });
     assert.ok(capture.file_path.endsWith('.png'));
     queue.artifacts.iso_capture = capture.file_path;
@@ -634,7 +659,7 @@ async function maybeRunQueueSuite(baseCode) {
 
   await runStep('iterate_model:queue', async () => {
     const iteration = await callTool('iterate_model', {
-      code: JSON.stringify(iterationPatchDsl({ id: 'suite-queue-iteration-addon', name: 'Suite_Queue_Iteration_Addon', origin: [420, 0, 0] })),
+      code: JSON.stringify(iterationPatchDsl({ id: 'suite-queue-iteration-addon', name: 'Suite_Queue_Iteration_Addon' })),
       input_format: 'json_dsl',
       runtime: 'queue',
       output_dir: path.join(outputDir, 'queue-iteration'),
@@ -642,14 +667,36 @@ async function maybeRunQueueSuite(baseCode) {
       capture_view: true,
       validate_model: true,
       includePreview: false,
-      timeoutMs
+      floatingDetails: false,
+      timeoutMs,
+      session_contract: await freshQueueContract()
     });
     assert.equal(iteration.kind, 'model_iteration');
     assert.equal(iteration.change_summary.totals_delta.groups, 1);
+    assert.equal(iteration.model_qa.ok, true);
+    assert.equal(iteration.model_qa.verdict, 'pass');
     queue.artifacts.iteration_manifest = iteration.artifacts.manifest;
     queue.artifacts.iteration_model = iteration.saved_model.file_path;
-    return { manifest: iteration.artifacts.manifest, model: iteration.saved_model.file_path };
+    return {
+      manifest: iteration.artifacts.manifest,
+      model: iteration.saved_model.file_path,
+      model_qa: { ok: iteration.model_qa.ok, verdict: iteration.model_qa.verdict }
+    };
   }, { tool: 'iterate_model' });
+
+  await runStep('queue_diagnostics:post-queue', async () => {
+    const diagnostics = await callTool('queue_diagnostics', { includeFiles: true, timeoutMs: 5000 });
+    assert.equal(diagnostics.queue?.count, 0);
+    assert.equal(diagnostics.processing?.count, 0);
+    assert.equal(diagnostics.responses?.count, 0);
+    assert.equal(diagnostics.lock?.exists, false);
+    return {
+      queue: diagnostics.queue.count,
+      processing: diagnostics.processing.count,
+      responses: diagnostics.responses.count,
+      lock: diagnostics.lock.exists
+    };
+  }, { tool: 'queue_diagnostics' });
 
   queue.ok = true;
   return queue;
@@ -688,6 +735,11 @@ async function callTool(name, args) {
   }
   usedTools.add(name);
   return JSON.parse(response.result.content[0].text);
+}
+
+async function freshQueueContract() {
+  const result = await callTool('create_queue_handshake', { expires_in_ms: 120000, timeoutMs });
+  return result.session_contract;
 }
 
 function request(message, { timeoutMs: requestTimeoutMs = 15000 } = {}) {

@@ -1,0 +1,582 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/schemas/current-source-real-model-reliability-live-evidence-v2.schema.json",
+  "title": "Current Source Real Model Reliability Live Evidence v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "kind",
+    "captured_at",
+    "branch",
+    "result",
+    "evidence_scope",
+    "runtime",
+    "execution_authorization",
+    "lineage",
+    "corpus",
+    "cases",
+    "aggregate_metrics",
+    "performance_boundary",
+    "locked_target_guard",
+    "source_sha256",
+    "acceptance",
+    "boundaries"
+  ],
+  "properties": {
+    "version": { "const": "current-source-real-model-reliability-live-evidence.v2" },
+    "kind": { "const": "current_source_real_model_reliability_live_evidence" },
+    "captured_at": { "type": "string", "format": "date-time" },
+    "branch": { "const": "codex/agent-contract-v1" },
+    "result": { "const": "partial_pass" },
+    "evidence_scope": { "const": "three_hash_bound_real_model_cases_with_one_guarded_geometry_mutation" },
+    "runtime": { "$ref": "#/$defs/runtime" },
+    "execution_authorization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "user_authorized_disposable_copies",
+        "queue_required",
+        "allowed_runtimes_explicit",
+        "queue_mutation_explicit",
+        "direct_expert_mutation_explicit",
+        "policy_persisted",
+        "default_policy_unchanged",
+        "agent_self_authorization_allowed"
+      ],
+      "properties": {
+        "mode": { "const": "local_operator_ephemeral_process_policy" },
+        "user_authorized_disposable_copies": { "const": true },
+        "queue_required": { "const": true },
+        "allowed_runtimes_explicit": { "const": true },
+        "queue_mutation_explicit": { "const": true },
+        "direct_expert_mutation_explicit": { "const": true },
+        "policy_persisted": { "const": false },
+        "default_policy_unchanged": { "const": true },
+        "agent_self_authorization_allowed": { "const": false }
+      }
+    },
+    "lineage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["base_two_case_evidence", "locked_target_guard_evidence"],
+      "properties": {
+        "base_two_case_evidence": { "$ref": "#/$defs/artifact" },
+        "locked_target_guard_evidence": { "$ref": "#/$defs/artifact" }
+      }
+    },
+    "corpus": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "manifest_path",
+        "manifest_sha256",
+        "formal_cases_total",
+        "formal_cases_passed",
+        "formal_corpus_complete",
+        "passed_case_ids",
+        "remaining_case_ids"
+      ],
+      "properties": {
+        "manifest_path": { "const": "test/reliability-corpus/manifest.json" },
+        "manifest_sha256": { "$ref": "#/$defs/prefixedSha256" },
+        "formal_cases_total": { "const": 7 },
+        "formal_cases_passed": { "const": 3 },
+        "formal_corpus_complete": { "const": false },
+        "passed_case_ids": {
+          "const": ["deep-shared-components", "interior-expression", "scaled-mirrored-locked"]
+        },
+        "remaining_case_ids": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": { "$ref": "#/$defs/caseEvidence" }
+    },
+    "aggregate_metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tasks_total",
+        "tasks_passed",
+        "task_success_rate",
+        "geometry_mutation_cases_passed",
+        "wrong_object_modification_count",
+        "silent_geometry_corruption_count",
+        "recovery_attempts",
+        "recoveries",
+        "recovery_rate",
+        "aggregate_duration_ms",
+        "queue_clean_after_each_case"
+      ],
+      "properties": {
+        "tasks_total": { "const": 11 },
+        "tasks_passed": { "const": 11 },
+        "task_success_rate": { "const": 1 },
+        "geometry_mutation_cases_passed": { "const": 1 },
+        "wrong_object_modification_count": { "const": 0 },
+        "silent_geometry_corruption_count": { "const": 0 },
+        "recovery_attempts": { "const": 1 },
+        "recoveries": { "const": 1 },
+        "recovery_rate": { "const": 1 },
+        "aggregate_duration_ms": { "type": "integer", "minimum": 1 },
+        "queue_clean_after_each_case": { "const": true }
+      }
+    },
+    "performance_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "stress_case_id",
+        "stress_case_duration_ms",
+        "interactive_budget_ms",
+        "stress_case_within_interactive_budget",
+        "use_as_default_agent_payload",
+        "complete_revision_retained",
+        "bounded_occurrence_payload_retained",
+        "next_action"
+      ],
+      "properties": {
+        "stress_case_id": { "const": "interior-expression" },
+        "stress_case_duration_ms": { "type": "integer", "minimum": 120001 },
+        "interactive_budget_ms": { "const": 120000 },
+        "stress_case_within_interactive_budget": { "const": false },
+        "use_as_default_agent_payload": { "const": false },
+        "complete_revision_retained": { "const": true },
+        "bounded_occurrence_payload_retained": { "const": true },
+        "next_action": { "const": "separate_revision_attestation_from_payload_and_add_runtime_budget" }
+      }
+    },
+    "locked_target_guard": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "native_lock_gap_discovered",
+        "native_lock_alone_sufficient",
+        "application_guard_required",
+        "loaded_boolean_source_sha256",
+        "mutating_operations_guarded",
+        "read_only_locked_access",
+        "locked_batch_rejected_before_commit",
+        "locked_target_unchanged",
+        "guard_unchanged"
+      ],
+      "properties": {
+        "native_lock_gap_discovered": { "const": true },
+        "native_lock_alone_sufficient": { "const": false },
+        "application_guard_required": { "const": true },
+        "loaded_boolean_source_sha256": { "$ref": "#/$defs/sha256" },
+        "mutating_operations_guarded": { "const": 25 },
+        "read_only_locked_access": { "const": ["set_selection", "manifold_check"] },
+        "locked_batch_rejected_before_commit": { "const": true },
+        "locked_target_unchanged": { "const": true },
+        "guard_unchanged": { "const": true }
+      }
+    },
+    "source_sha256": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "test/reliability-corpus/manifest.json",
+        "scripts/aggregate-current-source-real-model-reliability-live-v2.mjs",
+        "scripts/run-real-model-reliability-live-case.mjs",
+        "schema/current-source-real-model-reliability-live-evidence-v2.schema.json",
+        "schema/locked-target-guard-live-evidence-v1.schema.json",
+        "schema/real-model-reliability-live-case-report-v1.schema.json",
+        "schema/real-model-reliability-live-case-v1.schema.json",
+        "sketchup_plugin/alma_sketchup_mcp.rb",
+        "sketchup_plugin/alma_sketchup_mcp/boolean_operations.rb",
+        "sketchup_plugin/alma_sketchup_mcp/model_revision.rb",
+        "sketchup_plugin/alma_sketchup_mcp/runtime_source_manifest.rb"
+      ],
+      "properties": {
+        "test/reliability-corpus/manifest.json": { "$ref": "#/$defs/sha256" },
+        "scripts/aggregate-current-source-real-model-reliability-live-v2.mjs": { "$ref": "#/$defs/sha256" },
+        "scripts/run-real-model-reliability-live-case.mjs": { "$ref": "#/$defs/sha256" },
+        "schema/current-source-real-model-reliability-live-evidence-v2.schema.json": { "$ref": "#/$defs/sha256" },
+        "schema/locked-target-guard-live-evidence-v1.schema.json": { "$ref": "#/$defs/sha256" },
+        "schema/real-model-reliability-live-case-report-v1.schema.json": { "$ref": "#/$defs/sha256" },
+        "schema/real-model-reliability-live-case-v1.schema.json": { "$ref": "#/$defs/sha256" },
+        "sketchup_plugin/alma_sketchup_mcp.rb": { "$ref": "#/$defs/sha256" },
+        "sketchup_plugin/alma_sketchup_mcp/boolean_operations.rb": { "$ref": "#/$defs/sha256" },
+        "sketchup_plugin/alma_sketchup_mcp/model_revision.rb": { "$ref": "#/$defs/sha256" },
+        "sketchup_plugin/alma_sketchup_mcp/runtime_source_manifest.rb": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "acceptance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "three_case_live_reliability",
+        "full_recursive_save_reopen",
+        "bounded_large_model_save_reopen",
+        "shared_definition_scope",
+        "material_and_scene_preservation",
+        "mutation_cases_passed",
+        "locked_transform_rollback",
+        "native_lock_guard_enforced",
+        "boolean_manifold",
+        "dirty_topology_recovery",
+        "appearance_uv_hidden_preservation",
+        "architecture_case",
+        "formal_corpus_cases_passed",
+        "formal_corpus_cases_total",
+        "formal_corpus_complete",
+        "agent_gateway_default_profile_qualified",
+        "cross_version",
+        "release_acceptance"
+      ],
+      "properties": {
+        "three_case_live_reliability": { "const": true },
+        "full_recursive_save_reopen": { "const": true },
+        "bounded_large_model_save_reopen": { "const": true },
+        "shared_definition_scope": { "const": true },
+        "material_and_scene_preservation": { "const": true },
+        "mutation_cases_passed": { "const": 1 },
+        "locked_transform_rollback": { "const": true },
+        "native_lock_guard_enforced": { "const": true },
+        "boolean_manifold": { "const": false },
+        "dirty_topology_recovery": { "const": false },
+        "appearance_uv_hidden_preservation": { "const": false },
+        "architecture_case": { "const": false },
+        "formal_corpus_cases_passed": { "const": 3 },
+        "formal_corpus_cases_total": { "const": 7 },
+        "formal_corpus_complete": { "const": false },
+        "agent_gateway_default_profile_qualified": { "const": false },
+        "cross_version": { "const": "deferred_by_user" },
+        "release_acceptance": { "const": false }
+      }
+    },
+    "boundaries": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 8,
+      "items": { "type": "string", "minLength": 40 }
+    }
+  },
+  "allOf": [
+    {
+      "properties": {
+        "cases": {
+          "contains": {
+            "type": "object",
+            "required": ["case_id"],
+            "properties": {
+              "case_id": { "const": "deep-shared-components" },
+              "mutation": {
+                "type": "object",
+                "properties": {
+                  "geometry_mutation_executed": { "const": false },
+                  "recovery_attempts": { "const": 0 },
+                  "recoveries": { "const": 0 }
+                }
+              }
+            }
+          },
+          "minContains": 1,
+          "maxContains": 1
+        }
+      }
+    },
+    {
+      "properties": {
+        "cases": {
+          "contains": {
+            "type": "object",
+            "required": ["case_id"],
+            "properties": {
+              "case_id": { "const": "interior-expression" },
+              "mutation": {
+                "type": "object",
+                "properties": {
+                  "geometry_mutation_executed": { "const": false },
+                  "recovery_attempts": { "const": 0 },
+                  "recoveries": { "const": 0 }
+                }
+              }
+            }
+          },
+          "minContains": 1,
+          "maxContains": 1
+        }
+      }
+    },
+    {
+      "properties": {
+        "cases": {
+          "contains": {
+            "type": "object",
+            "required": ["case_id"],
+            "properties": {
+              "case_id": { "const": "scaled-mirrored-locked" },
+              "mutation": {
+                "type": "object",
+                "properties": {
+                  "geometry_mutation_executed": { "const": true },
+                  "locked_target_fail_closed": { "const": true },
+                  "rollback_verified": { "const": true },
+                  "guard_unchanged": { "const": true },
+                  "locked_target_unchanged": { "const": true },
+                  "exact_target_changed": { "const": true },
+                  "nonuniform_scale": { "const": [1.5, 0.75, 2] },
+                  "mirror_axis": { "const": "x" },
+                  "recovery_attempts": { "const": 1 },
+                  "recoveries": { "const": 1 }
+                }
+              }
+            }
+          },
+          "minContains": 1,
+          "maxContains": 1
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "prefixedSha256": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "bytes"],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "not": { "pattern": "^(?:/|[A-Za-z]:[\\\\/]|file://|~/)" }
+        },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "bytes": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "server_version",
+        "plugin_version",
+        "sketchup_version",
+        "ruby_version",
+        "capability_version",
+        "manifest_version",
+        "dsl_version",
+        "occurrence_contract",
+        "revision_strategy",
+        "revision_source_sha256",
+        "compatibility_ok"
+      ],
+      "properties": {
+        "name": { "const": "queue" },
+        "server_version": { "const": "0.1.0-rc.2" },
+        "plugin_version": { "const": "0.1.0-rc.2" },
+        "sketchup_version": { "const": "26.2.242" },
+        "ruby_version": { "const": "3.2.2" },
+        "capability_version": { "const": "0.1.0-rc.2-capabilities.7" },
+        "manifest_version": { "const": "2026-07-agent-contract-v1.4" },
+        "dsl_version": { "const": 1 },
+        "occurrence_contract": { "const": "canonical-occurrence-path.v1" },
+        "revision_strategy": { "const": "definition-merkle.v2" },
+        "revision_source_sha256": { "$ref": "#/$defs/sha256" },
+        "compatibility_ok": { "const": true }
+      }
+    },
+    "queueClean": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["queue", "processing", "responses", "lock"],
+      "properties": {
+        "queue": { "const": 0 },
+        "processing": { "const": 0 },
+        "responses": { "const": 0 },
+        "lock": { "const": false }
+      }
+    },
+    "coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "full_recursive_identity",
+        "bounded_recursive_identity",
+        "shared_definition_scope",
+        "material_preservation",
+        "scene_visibility_preservation",
+        "save_reopen_identity"
+      ],
+      "properties": {
+        "full_recursive_identity": { "type": "boolean" },
+        "bounded_recursive_identity": { "type": "boolean" },
+        "shared_definition_scope": { "type": "boolean" },
+        "material_preservation": { "type": "boolean" },
+        "scene_visibility_preservation": { "type": "boolean" },
+        "save_reopen_identity": { "const": true }
+      }
+    },
+    "mutation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "geometry_mutation_executed",
+        "locked_target_fail_closed",
+        "rollback_verified",
+        "guard_unchanged",
+        "locked_target_unchanged",
+        "exact_target_changed",
+        "nonuniform_scale",
+        "mirror_axis",
+        "recovery_attempts",
+        "recoveries"
+      ],
+      "properties": {
+        "geometry_mutation_executed": { "type": "boolean" },
+        "locked_target_fail_closed": { "type": "boolean" },
+        "rollback_verified": { "type": "boolean" },
+        "guard_unchanged": { "type": "boolean" },
+        "locked_target_unchanged": { "type": "boolean" },
+        "exact_target_changed": { "type": "boolean" },
+        "nonuniform_scale": {
+          "oneOf": [
+            { "type": "null" },
+            { "const": [1.5, 0.75, 2] }
+          ]
+        },
+        "mirror_axis": {
+          "oneOf": [
+            { "type": "null" },
+            { "const": "x" }
+          ]
+        },
+        "recovery_attempts": { "type": "integer", "minimum": 0, "maximum": 1 },
+        "recoveries": { "type": "integer", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "entries_before",
+        "entries_after",
+        "total_before",
+        "total_after",
+        "recursive_limit",
+        "truncated_before",
+        "truncated_after",
+        "exact_match",
+        "identity_digest",
+        "snapshot_error_diffs",
+        "model_revision_before",
+        "model_revision_after",
+        "model_revision_exact_match",
+        "model_revision_strategy",
+        "model_revision_source_sha256",
+        "active_verified_copy_after_reopen"
+      ],
+      "properties": {
+        "mode": {
+          "enum": ["full_recursive", "complete_revision_bounded_occurrence_sample"]
+        },
+        "entries_before": { "type": "integer", "minimum": 1 },
+        "entries_after": { "type": "integer", "minimum": 1 },
+        "total_before": { "type": "integer", "minimum": 1 },
+        "total_after": { "type": "integer", "minimum": 1 },
+        "recursive_limit": { "const": 100000 },
+        "truncated_before": { "type": "boolean" },
+        "truncated_after": { "type": "boolean" },
+        "exact_match": { "const": true },
+        "identity_digest": { "$ref": "#/$defs/prefixedSha256" },
+        "snapshot_error_diffs": { "const": 0 },
+        "model_revision_before": { "$ref": "#/$defs/prefixedSha256" },
+        "model_revision_after": { "$ref": "#/$defs/prefixedSha256" },
+        "model_revision_exact_match": { "const": true },
+        "model_revision_strategy": { "const": "definition-merkle.v2" },
+        "model_revision_source_sha256": { "$ref": "#/$defs/sha256" },
+        "active_verified_copy_after_reopen": { "const": true }
+      }
+    },
+    "quality": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "wrong_object_modification_count",
+        "silent_geometry_corruption_count",
+        "original_bytes_unchanged",
+        "disposable_copy_only",
+        "queue_clean"
+      ],
+      "properties": {
+        "wrong_object_modification_count": { "const": 0 },
+        "silent_geometry_corruption_count": { "const": 0 },
+        "original_bytes_unchanged": { "const": true },
+        "disposable_copy_only": { "const": true },
+        "queue_clean": { "$ref": "#/$defs/queueClean" }
+      }
+    },
+    "caseArtifacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["report", "diagnostic", "source_model", "contract", "verified_model"],
+      "properties": {
+        "report": { "$ref": "#/$defs/artifact" },
+        "diagnostic": { "$ref": "#/$defs/artifact" },
+        "source_model": { "$ref": "#/$defs/artifact" },
+        "contract": { "$ref": "#/$defs/artifact" },
+        "verified_model": { "$ref": "#/$defs/artifact" }
+      }
+    },
+    "caseEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "case_id",
+        "domain",
+        "result",
+        "duration_ms",
+        "tasks_total",
+        "tasks_passed",
+        "task_ids",
+        "coverage",
+        "mutation",
+        "identity",
+        "quality",
+        "artifacts"
+      ],
+      "properties": {
+        "case_id": {
+          "enum": ["deep-shared-components", "interior-expression", "scaled-mirrored-locked"]
+        },
+        "domain": { "type": "string", "minLength": 1 },
+        "result": { "const": "pass" },
+        "duration_ms": { "type": "integer", "minimum": 1 },
+        "tasks_total": { "type": "integer", "minimum": 1 },
+        "tasks_passed": { "type": "integer", "minimum": 1 },
+        "task_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "coverage": { "$ref": "#/$defs/coverage" },
+        "mutation": { "$ref": "#/$defs/mutation" },
+        "identity": { "$ref": "#/$defs/identity" },
+        "quality": { "$ref": "#/$defs/quality" },
+        "artifacts": { "$ref": "#/$defs/caseArtifacts" }
+      }
+    }
+  }
+}

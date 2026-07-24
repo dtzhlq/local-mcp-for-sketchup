@@ -3,7 +3,8 @@ import fs from 'node:fs/promises';
 import { spawn } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { AGENT_GATEWAY_TOOL_NAMES, EXPERT_TOOL_NAMES, listToolNames } from '../src/tool-registry.mjs';
+import { AGENT_GATEWAY_TOOL_NAMES, EXPERT_TOOL_NAMES, SESSION_CONTRACT_TOOL_NAMES, listToolNames } from '../src/tool-registry.mjs';
+import { PRODUCT_VERSION } from '../src/version.mjs';
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const pythonSdkSource = await fs.readFile(path.join(repoRoot, 'examples/python-sdk-facade-fixture.py'), 'utf8');
@@ -39,15 +40,18 @@ server.stderr.on('data', (chunk) => {
 
 try {
   const initialized = await request({ id: 0, method: 'initialize', params: { protocolVersion: '2024-11-05' } });
-  assert.equal(initialized.result.serverInfo.version, '0.1.0-rc.2');
+  assert.equal(initialized.result.serverInfo.version, PRODUCT_VERSION);
   const list = await request({ id: 1, method: 'tools/list' });
   const toolNames = list.result.tools.map((tool) => tool.name);
-  assert.equal(toolNames.length, 40, 'MCP tools/list should expose 36 expert tools plus 4 Agent Gateway tools');
+  const registryToolMap = new Map(list.result.tools.map((tool) => [tool.name, tool]));
+  assert.equal(toolNames.length, 41, 'MCP tools/list should expose 36 expert tools, 4 Agent Gateway tools, and the fresh handshake tool');
   assert.equal(EXPERT_TOOL_NAMES.length, 36, 'the original 36-tool expert surface must remain available');
   assert.equal(AGENT_GATEWAY_TOOL_NAMES.length, 4);
+  assert.deepEqual(SESSION_CONTRACT_TOOL_NAMES, ['create_queue_handshake']);
   assert.deepEqual(toolNames, listToolNames(), 'stdio MCP must expose the shared tool registry without drift');
   const docsTool = list.result.tools.find((tool) => tool.name === 'get_docs');
   assert.ok(docsTool.inputSchema.properties.topic.enum.includes('existing_model_edit'));
+  assert.ok(docsTool.inputSchema.properties.topic.enum.includes('copy_fast'));
   assert.ok(docsTool.inputSchema.properties.topic.enum.includes('image_artifacts'));
   assert.deepEqual(docsTool.inputSchema.properties.detail.enum, ['summary', 'standard', 'full']);
   assert.ok(toolNames.includes('prepare_image_modeling_brief'), 'MCP tools/list should expose prepare_image_modeling_brief');
@@ -62,6 +66,7 @@ try {
   assert.ok(toolNames.includes('validate_model'), 'MCP tools/list should expose validate_model');
   assert.ok(toolNames.includes('validate_reference_model'), 'MCP tools/list should expose validate_reference_model');
   assert.ok(toolNames.includes('queue_diagnostics'), 'MCP tools/list should expose queue_diagnostics');
+  assert.ok(toolNames.includes('create_queue_handshake'), 'MCP tools/list should expose create_queue_handshake');
   assert.ok(toolNames.includes('capture_view'), 'MCP tools/list should expose capture_view');
   assert.ok(toolNames.includes('run_ruby_expert'), 'MCP tools/list should expose run_ruby_expert');
   for (const toolName of ['inspect_model', 'list_entities', 'get_model_info', 'adopt_open_model', 'resolve_model_targets', 'get_selection', 'analyze_selection_geometry', 'plan_modification_intent', 'set_selection', 'open_model', 'import_model', 'export_model', 'save_model_version', 'evaluate_py', 'build_report', 'iterate_model']) {
@@ -94,7 +99,67 @@ try {
   assert.ok(startTaskTool.inputSchema.properties.intent.enum.includes('visual_correction_qa'));
   assert.equal(startTaskTool.inputSchema.properties.execution_policy, undefined, 'Agents must not be able to submit execution policy');
   const applyExistingTool = list.result.tools.find((tool) => tool.name === 'apply_reviewed_model_edit');
-  assert.ok(applyExistingTool.inputSchema.properties.approval_token);
+  assert.equal(Object.hasOwn(applyExistingTool.inputSchema.properties, 'approval_token'), false, 'public expert schema must not accept approval credentials');
+  assert.ok(applyExistingTool.inputSchema.properties.session_contract);
+  const submitTaskTool = list.result.tools.find((tool) => tool.name === 'submit_agent_task_input');
+  assert.equal(JSON.stringify(submitTaskTool.inputSchema).includes('approval_token'), false, 'Agent task schema must not publish an approval-token field');
+  const readArtifactTool = list.result.tools.find((tool) => tool.name === 'read_agent_artifact');
+  assert.ok(readArtifactTool.inputSchema.properties.offset, 'artifact reads must expose resumable offset pagination');
+  assert.equal(readArtifactTool.inputSchema.properties.max_chars.type, 'integer');
+  assert.match('image-artifact:sha256:'.concat('a'.repeat(64)), new RegExp(readArtifactTool.inputSchema.properties.handle.pattern), 'immutable image handles must be readable without local files');
+  const unknownTool = await request({
+    id: nextId(), method: 'tools/call', params: { name: 'not_a_registered_tool', arguments: {} }
+  });
+  assert.equal(unknownTool.error.data.code, 'INVALID_ARGUMENT');
+  const unexpectedToolField = await request({
+    id: nextId(), method: 'tools/call', params: { name: 'get_docs', arguments: { unexpected_field: true } }
+  });
+  assert.equal(unexpectedToolField.error.data.code, 'INVALID_ARGUMENT');
+  const wrongNestedToolField = await request({
+    id: nextId(),
+    method: 'tools/call',
+    params: {
+      name: 'start_agent_task',
+      arguments: {
+        intent: 'understand_model',
+        instruction: 'Invalid nested capability fixture.',
+        client_capabilities: { context: 'unbounded' }
+      }
+    }
+  });
+  assert.equal(wrongNestedToolField.error.data.code, 'INVALID_ARGUMENT');
+  const forbiddenGatewayToken = await request({
+    id: nextId(),
+    method: 'tools/call',
+    params: {
+      name: 'start_agent_task',
+      arguments: {
+        intent: 'understand_model',
+        instruction: 'Reject an Agent-supplied approval credential before task persistence.',
+        inputs: { nested: { approval_token: 'forged-public-credential' } }
+      }
+    }
+  });
+  assert.equal(forbiddenGatewayToken.error.data.code, 'APPROVAL_TOKEN_FORBIDDEN');
+  const forbiddenExpertToken = await request({
+    id: nextId(),
+    method: 'tools/call',
+    params: { name: 'apply_reviewed_model_edit', arguments: { approval_token: 'forged-public-credential' } }
+  });
+  assert.equal(forbiddenExpertToken.error.data.code, 'INVALID_ARGUMENT');
+  const buildReportTool = list.result.tools.find((tool) => tool.name === 'build_report');
+  assert.equal(buildReportTool.inputSchema.properties.strictCollisions.type, 'boolean');
+  assert.equal(buildReportTool.inputSchema.properties.strictUnanchored.type, 'boolean');
+  assert.equal(buildReportTool.inputSchema.properties.floatingDetails.type, 'boolean');
+  const handshakeTool = list.result.tools.find((tool) => tool.name === 'create_queue_handshake');
+  assert.equal(handshakeTool.inputSchema.properties.expires_in_ms.maximum, 300000);
+  const importTool = list.result.tools.find((tool) => tool.name === 'import_model');
+  assert.ok(importTool.description.includes('queue supports append only'));
+  assert.ok(importTool.inputSchema.properties.mode.description.includes('OPERATION_NOT_ALLOWED'));
+  for (const toolName of ['build_model', 'reset_model', 'save_model', 'open_model', 'import_model', 'export_model', 'adopt_open_model', 'set_selection', 'capture_view', 'run_ruby_expert', 'evaluate_py', 'build_report', 'iterate_model', 'compare_model', 'validate_model', 'validate_reference_model']) {
+    const liveTool = list.result.tools.find((tool) => tool.name === toolName);
+    assert.ok(liveTool.inputSchema.properties.session_contract, `${toolName} must expose the live Session Contract input`);
+  }
   const imageCompileTool = list.result.tools.find((tool) => tool.name === 'compile_reviewed_part_graph');
   assert.deepEqual(imageCompileTool.inputSchema.required, ['mcp_brief_path', 'promotion_review_path', 'part_graph_path', 'profile_path']);
   const resolveTool = list.result.tools.find((tool) => tool.name === 'resolve_model_targets');
@@ -107,6 +172,7 @@ try {
   const rubyExpertTool = list.result.tools.find((tool) => tool.name === 'run_ruby_expert');
   assert.deepEqual(rubyExpertTool.inputSchema.required, ['code']);
   assert.equal(rubyExpertTool.inputSchema.properties.runtime.enum[0], 'queue');
+  assert.ok(rubyExpertTool.inputSchema.properties.session_contract);
 
   const workflowBundle = await callTool('get_workflow_bundle', {});
   assert.equal(workflowBundle.kind, 'sketchup_mcp_workflow_bundle');
@@ -120,6 +186,26 @@ try {
   assert.equal(JSON.stringify(workflowBundle).includes('read-only nested index'), false, 'workflow bundle must not retain obsolete nested-read-only wording');
   assert.ok(workflowBundle.guardrails.some((item) => item.includes('untrusted data')));
   assert.ok(workflowBundle.guardrails.some((item) => item.includes('S2-S4')));
+  assert.equal(JSON.stringify(workflowBundle).includes('approval_token'), false, 'workflow examples must never instruct an Agent to relay approval credentials');
+  for (const [workflowName, workflow] of Object.entries(workflowBundle.workflows)) {
+    const entries = [['guided_entry', workflow.guided_entry], ...(workflow.steps || []).map((step, index) => [`step_${index}`, step])];
+    for (const [entryName, entry] of entries) {
+      if (!entry?.tool) continue;
+      const definition = registryToolMap.get(entry.tool);
+      assert.ok(definition, `${workflowName}.${entryName} must reference a registered tool`);
+      for (const required of definition.inputSchema?.required || []) {
+        assert.ok(Object.hasOwn(entry.arguments || {}, required), `${workflowName}.${entryName} must include a placeholder for required argument ${required}`);
+      }
+    }
+  }
+  const verifySteps = workflowBundle.workflows.verify.steps;
+  for (const toolName of ['compare_model', 'capture_view', 'save_model_version']) {
+    const index = verifySteps.findIndex((step) => step.tool === toolName);
+    assert.ok(index > 0 && verifySteps[index - 1].tool === 'create_queue_handshake', `${toolName} must be immediately preceded by a fresh queue handshake`);
+    assert.ok(verifySteps[index].arguments.session_contract, `${toolName} must consume the fresh Session Contract`);
+  }
+  const verifyContracts = verifySteps.filter((step) => ['compare_model', 'capture_view', 'save_model_version'].includes(step.tool)).map((step) => step.arguments.session_contract);
+  assert.equal(new Set(verifyContracts).size, verifyContracts.length, 'workflow examples must not reuse a Session Contract after mutation');
 
   const docsOverview = await callTool('get_docs', {});
   assert.equal(docsOverview.contract_version, 'get_docs.v2');
@@ -137,11 +223,26 @@ try {
   assert.equal(structuredDocs.result.structuredContent.kind, 'sketchup_mcp_docs');
   assert.equal(structuredDocs.result.structuredContent.topic, 'existing_model_edit');
   assert.equal(JSON.parse(structuredDocs.result.content[0].text).topic, 'existing_model_edit');
+  const copyFastDocs = await callTool('get_docs', { topic: 'copy_fast', detail: 'summary', max_chars: 5000 });
+  assert.equal(copyFastDocs.topic, 'copy_fast');
+  assert.equal(copyFastDocs.truncated, false);
+  assert.match(copyFastDocs.docs, /next_action=execute_copy_edit/);
+  assert.match(copyFastDocs.docs, /user_action_required=false/);
+  assert.match(copyFastDocs.docs, /never by Agent input/);
 
   const blockedRubyExpert = await callTool('run_ruby_expert', { code: 'Sketchup.active_model.title' });
   assert.equal(blockedRubyExpert.kind, 'run_ruby_expert');
   assert.equal(blockedRubyExpert.enabled, false);
   assert.equal(blockedRubyExpert.blocked, true);
+
+  const blockedQueueReplace = await request({
+    method: 'tools/call',
+    params: { name: 'import_model', arguments: { runtime: 'queue', path: 'must-not-be-read.skp', mode: 'replace' } }
+  });
+  assert.equal(blockedQueueReplace.error.data.code, 'OPERATION_NOT_ALLOWED');
+  assert.equal(blockedQueueReplace.error.data.retryable, false);
+  assert.equal(blockedQueueReplace.error.data.next_action.action, 'prepare_new_plan');
+  assert.deepEqual(blockedQueueReplace.error.data.next_action.allowed_queue_modes, ['append']);
 
   const expertSource = [
     'const ops = [];',

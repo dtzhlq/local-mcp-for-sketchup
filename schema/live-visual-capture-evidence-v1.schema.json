@@ -1,0 +1,139 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/schema/live-visual-capture-evidence-v1.schema.json",
+  "title": "Current-source live visual capture evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "kind",
+    "captured_at",
+    "evidence_scope",
+    "runtime",
+    "installed_source",
+    "model_binding",
+    "capture",
+    "invariants",
+    "queue_before",
+    "queue_after",
+    "release_acceptance",
+    "boundaries"
+  ],
+  "properties": {
+    "version": { "const": "live-visual-capture-evidence.v1" },
+    "kind": { "const": "live_visual_capture_evidence" },
+    "captured_at": { "type": "string", "minLength": 20 },
+    "evidence_scope": { "const": "current_source_live_read_only_capture" },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "plugin_version", "capability_version", "manifest_version", "sketchup_version", "ruby_version", "compatibility_ok", "fresh_process", "session_changed_from_pre_restart"],
+      "properties": {
+        "name": { "const": "queue" },
+        "plugin_version": { "const": "0.1.0-rc.2" },
+        "capability_version": { "const": "0.1.0-rc.2-capabilities.3" },
+        "manifest_version": { "const": "2026-07-agent-contract-v1.1" },
+        "sketchup_version": { "type": "string", "minLength": 1 },
+        "ruby_version": { "type": "string", "minLength": 1 },
+        "compatibility_ok": { "const": true },
+        "fresh_process": { "const": true },
+        "session_changed_from_pre_restart": { "const": true }
+      }
+    },
+    "installed_source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["installed_plugin_main_sha256", "workspace_plugin_main_sha256", "exact_hash_match"],
+      "properties": {
+        "installed_plugin_main_sha256": { "$ref": "#/$defs/sha256" },
+        "workspace_plugin_main_sha256": { "$ref": "#/$defs/sha256" },
+        "exact_hash_match": { "const": true }
+      }
+    },
+    "model_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["model_key", "graph_id", "model_revision", "revision_complete", "total_seen", "indexed", "recursive_truncated", "graph_nodes"],
+      "properties": {
+        "model_key": { "type": "string", "pattern": "^model_[0-9a-f]{32}$" },
+        "graph_id": { "type": "string", "pattern": "^model-graph-[0-9a-f]{24}$" },
+        "model_revision": { "$ref": "#/$defs/prefixedSha256" },
+        "revision_complete": { "const": true },
+        "total_seen": { "type": "integer", "minimum": 1 },
+        "indexed": { "type": "integer", "minimum": 1 },
+        "recursive_truncated": { "const": false },
+        "graph_nodes": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "capture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "handle", "sha256", "media_type", "size_bytes", "width", "height", "cas_reused", "provenance"],
+      "properties": {
+        "mode": { "const": "server_live_current_view" },
+        "handle": { "type": "string", "pattern": "^image-artifact:sha256:[0-9a-f]{64}$" },
+        "sha256": { "$ref": "#/$defs/prefixedSha256" },
+        "media_type": { "const": "image/png" },
+        "size_bytes": { "type": "integer", "minimum": 1 },
+        "width": { "const": 1280 },
+        "height": { "const": 720 },
+        "cas_reused": { "type": "boolean" },
+        "provenance": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "provider", "phase", "model_revision", "capture_spec_hash", "camera_hash", "state_unchanged", "view_unchanged", "receipt_id", "receipt_hash"],
+          "properties": {
+            "kind": { "const": "server_live_capture" },
+            "provider": { "const": "sketchup_capture_view" },
+            "phase": { "const": "before" },
+            "model_revision": { "$ref": "#/$defs/prefixedSha256" },
+            "capture_spec_hash": { "$ref": "#/$defs/prefixedSha256" },
+            "camera_hash": { "$ref": "#/$defs/prefixedSha256" },
+            "state_unchanged": { "const": true },
+            "view_unchanged": { "const": true },
+            "receipt_id": { "type": "string", "pattern": "^live-capture-receipt-[0-9a-f]{24}$" },
+            "receipt_hash": { "$ref": "#/$defs/prefixedSha256" }
+          }
+        }
+      }
+    },
+    "invariants": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["session_unchanged", "document_unchanged", "revision_unchanged", "temporary_task_directory_removed", "source_path_exposed", "live_mutation_performed", "external_reference_used", "reviewed_edit_performed"],
+      "properties": {
+        "session_unchanged": { "const": true },
+        "document_unchanged": { "const": true },
+        "revision_unchanged": { "const": true },
+        "temporary_task_directory_removed": { "const": true },
+        "source_path_exposed": { "const": false },
+        "live_mutation_performed": { "const": false },
+        "external_reference_used": { "const": false },
+        "reviewed_edit_performed": { "const": false }
+      }
+    },
+    "queue_before": { "$ref": "#/$defs/cleanQueue" },
+    "queue_after": { "$ref": "#/$defs/cleanQueue" },
+    "release_acceptance": { "const": false },
+    "boundaries": {
+      "type": "array",
+      "minItems": 2,
+      "items": { "type": "string", "minLength": 1 }
+    }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "prefixedSha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "cleanQueue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["queue", "processing", "responses", "lock_exists"],
+      "properties": {
+        "queue": { "const": 0 },
+        "processing": { "const": 0 },
+        "responses": { "const": 0 },
+        "lock_exists": { "const": false }
+      }
+    }
+  }
+}

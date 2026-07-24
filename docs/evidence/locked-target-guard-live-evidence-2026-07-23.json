@@ -1,0 +1,163 @@
+{
+  "version": "locked-target-guard-live-evidence.v1",
+  "kind": "locked_target_guard_live_evidence",
+  "captured_at": "2026-07-23T04:20:49.724Z",
+  "branch": "codex/agent-contract-v1",
+  "result": "fixed_and_live_verified",
+  "evidence_scope": "single_hash_bound_native_lock_discovery_fix_and_rerun",
+  "case_id": "scaled-mirrored-locked",
+  "runtime": {
+    "name": "queue",
+    "server_version": "0.1.0-rc.2",
+    "plugin_version": "0.1.0-rc.2",
+    "sketchup_version": "26.2.242",
+    "ruby_version": "3.2.2",
+    "capability_version": "0.1.0-rc.2-capabilities.7",
+    "manifest_version": "2026-07-agent-contract-v1.4",
+    "dsl_version": 1,
+    "occurrence_contract": "canonical-occurrence-path.v1",
+    "revision_strategy": "definition-merkle.v2",
+    "revision_source_sha256": "b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134",
+    "compatibility_ok": true,
+    "loaded_boolean_source_sha256": "7bf36679d5052ecf7963ce945a8bc91796fa91024a471804be024b502ff8900e",
+    "loaded_boolean_source_match": true,
+    "full_restart_observed": true
+  },
+  "source_fixture": {
+    "derivation_class": "controlled_fixture_overlay_on_user_authorized_real_model_copy",
+    "original_input_sha256": "363e55b4bd34637fff8d4915c4870da4f55427374f0e0ba08817aa6c1fa9a384",
+    "original_bytes_unchanged": true,
+    "native_lock_observed_before_save": true,
+    "native_lock_observed_after_reopen": true,
+    "locked_target_persistent_id": "596743",
+    "recursive_total": 12944,
+    "recursive_materialized": 12944,
+    "recursive_truncated": false
+  },
+  "discovery": {
+    "expected_locked_batch_rejection": true,
+    "observed_locked_batch_rejection": false,
+    "native_lock_alone_prevented_ruby_mutation": false,
+    "batch_unexpectedly_committed": true,
+    "failure_state_saved": true,
+    "queue_clean_after_failed_expectation": true,
+    "failure_error": "Expected operation to reject with /locked|MUTATION_EXECUTION_FAILED/i",
+    "root_cause": "SketchUp native locked state does not itself prevent Ruby transform calls; the central entity resolver lacked an application-level locked-target guard."
+  },
+  "fix": {
+    "central_mutation_guard_added": true,
+    "top_level_locked_target_rejected": true,
+    "locked_occurrence_ancestor_rejected": true,
+    "invalid_target_rejected_even_for_read_only_lookup": true,
+    "nested_make_unique_precheck": true,
+    "boolean_tool_guard_propagated": true,
+    "mutating_operations_guarded": 25,
+    "read_only_locked_access": [
+      "set_selection",
+      "manifold_check"
+    ],
+    "manifold_repair_locked_rejected": true,
+    "runtime_restart_required": true,
+    "runtime_attestation_bound": true
+  },
+  "live_verification": {
+    "tasks_total": 5,
+    "tasks_passed": 5,
+    "locked_batch_rejected_before_commit": true,
+    "rollback_revision_preserved": true,
+    "guard_unchanged": true,
+    "locked_target_unchanged": true,
+    "exact_transform_target_changed": true,
+    "nonuniform_scale": [
+      1.5,
+      0.75,
+      2
+    ],
+    "mirror_axis": "x",
+    "save_reopen_exact_identity": true,
+    "recursive_entries_before": 12944,
+    "recursive_entries_after": 12944,
+    "model_revision_exact_match": true,
+    "snapshot_error_diffs": 0,
+    "wrong_object_modification_count": 0,
+    "silent_geometry_corruption_count": 0,
+    "recovery_attempts": 1,
+    "recoveries": 1,
+    "recovery_rate": 1,
+    "queue_clean": true
+  },
+  "artifacts": {
+    "original_input": {
+      "path": "test/模型/场地模型.skp",
+      "sha256": "363e55b4bd34637fff8d4915c4870da4f55427374f0e0ba08817aa6c1fa9a384",
+      "bytes": 505186
+    },
+    "finalization_report": {
+      "path": "output/live-validation/real-model-reliability-preparation/scaled-mirrored-locked-derived-v1/run-20260723-v4/finalization-report.v1.json",
+      "sha256": "d790e28f22365ab442af72d73f941682a38780ff9f5f79818b41d58349e07e6b",
+      "bytes": 2075
+    },
+    "source_model": {
+      "path": "output/live-validation/real-model-reliability-inputs/scaled-mirrored-locked-derived-v1/scaled-mirrored-locked.skp",
+      "sha256": "6c0040ad84a9f7b63a9681a89742ef44f195d721c72e3cc4dc4270922fd59af1",
+      "bytes": 533217
+    },
+    "source_contract": {
+      "path": "output/live-validation/real-model-reliability-inputs/scaled-mirrored-locked-derived-v1/scaled-mirrored-locked.reliability.json",
+      "sha256": "3bcb1ba2d5abee1ca6ca0d9fa25ce5e1e84fb2eb2daaa7dcb1b780ea854c0e7d",
+      "bytes": 836
+    },
+    "failure_report": {
+      "path": "output/live-validation/real-model-reliability/scaled-mirrored-locked-current-source-v1/real-model-reliability-live-case-failure.v1.json",
+      "sha256": "9fedaed892f7276e4d7e3e74061fab5a2f7a741d062235c31d913dd40113a715",
+      "bytes": 2215
+    },
+    "failure_state": {
+      "path": "output/live-validation/real-model-reliability/scaled-mirrored-locked-current-source-v1/locked-native-bypass-failure-state.skp",
+      "sha256": "162ea4538313ae279b953e7b606fc7a1d48dfd64c845d8d741366ecc19c98ecd",
+      "bytes": 534751
+    },
+    "success_report": {
+      "path": "output/live-validation/real-model-reliability/scaled-mirrored-locked-current-source-v2/real-model-reliability-live-case-report.v1.json",
+      "sha256": "0b28020f0b24599fba92c439c92bcf0e56bd99f8d4a4bec091bf3099a2097eb4",
+      "bytes": 6020
+    },
+    "success_diagnostic": {
+      "path": "output/live-validation/real-model-reliability/scaled-mirrored-locked-current-source-v2/live-work/preflight-8e9747dd-e2f1-4954-9a8c-284cfe5a7919/01-scaled-mirrored-locked/scaled-mirrored-locked.save-reopen-diagnostic.json",
+      "sha256": "e2ad086d0a02cc9baaa99a84b54f8235053beaba84be77b6896e730657239e4a",
+      "bytes": 1542
+    },
+    "verified_model": {
+      "path": "output/live-validation/real-model-reliability/scaled-mirrored-locked-current-source-v2/live-work/preflight-8e9747dd-e2f1-4954-9a8c-284cfe5a7919/01-scaled-mirrored-locked/scaled-mirrored-locked.verified.skp",
+      "sha256": "3d7ee9c202421ea7d9b9698627f9e6ff49c9bb47c363a8c8d220495b451a4396",
+      "bytes": 533530
+    }
+  },
+  "source_sha256": {
+    "scripts/build-locked-target-guard-live-evidence.mjs": "4ebf107836106795d95081ea6aed493419e89b280d9fcc05e384af2bdf22555e",
+    "scripts/run-real-model-reliability-live-case.mjs": "b3fd977be35612c37b6beb51f1151406ecd946eaec0d5c2da46259f31d6aa17b",
+    "schema/real-model-reliability-live-case-report-v1.schema.json": "e0531c951e77858a9e0e59290e4cbd0a66f22156d93186dedb2075fa910e75e8",
+    "sketchup_plugin/alma_sketchup_mcp.rb": "b8afb434c7a9c4e4463e47bd13b3aa87fa0f264bbc21c57b7ae176e0c2600595",
+    "sketchup_plugin/alma_sketchup_mcp/boolean_operations.rb": "7bf36679d5052ecf7963ce945a8bc91796fa91024a471804be024b502ff8900e",
+    "sketchup_plugin/alma_sketchup_mcp/model_revision.rb": "b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134",
+    "sketchup_plugin/alma_sketchup_mcp/runtime_source_manifest.rb": "cc0d68b153dee561c8a41515409677b05e831ffe85ede03a20dc70ec6b159692",
+    "test/ruby/locked_target_guard_test.rb": "edfa7fabe805878bef946c28d201871077a5d196536869a5d942e525bfe9f11f"
+  },
+  "acceptance": {
+    "native_lock_gap_discovered": true,
+    "application_lock_guard_verified": true,
+    "selected_case_passed": true,
+    "formal_corpus_cases_passed": 1,
+    "formal_corpus_cases_total": 7,
+    "formal_corpus_complete": false,
+    "cross_version": "deferred_by_user",
+    "release_acceptance": false
+  },
+  "boundaries": [
+    "This evidence is bound to one controlled fixture over a user-authorized disposable real-model copy; the original input remained byte-identical.",
+    "The first run is retained as a negative discovery: SketchUp native locked state alone did not reject the Ruby mutation batch.",
+    "The fix is an application-level central resolver guard, including persistent-path ancestors and Boolean tool resolution; read-only selection and manifold inspection remain available.",
+    "The fresh-process rerun proves fail-closed rejection, rollback isolation, one exact nonuniform mirrored transform, and exact 12,944-entry save/reopen identity.",
+    "The result advances one of seven formal reliability cases. It does not prove Boolean/manifold, dirty-topology recovery, appearance/UV/hidden preservation, architecture, independent Agents, cross-version behavior, or release acceptance."
+  ]
+}

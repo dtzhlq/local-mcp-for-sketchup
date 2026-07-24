@@ -1,0 +1,81 @@
+{
+  "version": "live-visual-capture-evidence.v1",
+  "kind": "live_visual_capture_evidence",
+  "captured_at": "2026-07-16T03:02:19Z",
+  "evidence_scope": "current_source_live_read_only_capture",
+  "runtime": {
+    "name": "queue",
+    "plugin_version": "0.1.0-rc.2",
+    "capability_version": "0.1.0-rc.2-capabilities.3",
+    "manifest_version": "2026-07-agent-contract-v1.1",
+    "sketchup_version": "26.2.242",
+    "ruby_version": "3.2.2",
+    "compatibility_ok": true,
+    "fresh_process": true,
+    "session_changed_from_pre_restart": true
+  },
+  "installed_source": {
+    "installed_plugin_main_sha256": "03fc30ca6403dace6837870a8a276ac4397c147763f2ab2c69b329d832eb8a89",
+    "workspace_plugin_main_sha256": "03fc30ca6403dace6837870a8a276ac4397c147763f2ab2c69b329d832eb8a89",
+    "exact_hash_match": true
+  },
+  "model_binding": {
+    "model_key": "model_2624fa2cbd3d47a0fc539c1518a4c602",
+    "graph_id": "model-graph-5de187d529e73e9942a566f5",
+    "model_revision": "sha256:f425da136acb596c4cd515090d87061bdd2f1f44b5a19ce4328eef62e4e11b0e",
+    "revision_complete": true,
+    "total_seen": 1889,
+    "indexed": 1889,
+    "recursive_truncated": false,
+    "graph_nodes": 1891
+  },
+  "capture": {
+    "mode": "server_live_current_view",
+    "handle": "image-artifact:sha256:892861021c799544946497008205691387085b55c05e1d28a12826fca684f8e0",
+    "sha256": "sha256:892861021c799544946497008205691387085b55c05e1d28a12826fca684f8e0",
+    "media_type": "image/png",
+    "size_bytes": 10467,
+    "width": 1280,
+    "height": 720,
+    "cas_reused": false,
+    "provenance": {
+      "kind": "server_live_capture",
+      "provider": "sketchup_capture_view",
+      "phase": "before",
+      "model_revision": "sha256:f425da136acb596c4cd515090d87061bdd2f1f44b5a19ce4328eef62e4e11b0e",
+      "capture_spec_hash": "sha256:749b0f5fccf5fa6b4f8e22f7204f2e1e7a8d660b2f0648aeb2a4e5b3a878e2bd",
+      "camera_hash": "sha256:6f1b4524a4bfa9de1fe374b422e1dbfa05ceadda594cc9c1fa409f0377f170e5",
+      "state_unchanged": true,
+      "view_unchanged": true,
+      "receipt_id": "live-capture-receipt-6a53b4052fdebfc755259f97",
+      "receipt_hash": "sha256:6a53b4052fdebfc755259f97c4dc5fa2eb0ef2b16e9524bb8509c39fc5995bc1"
+    }
+  },
+  "invariants": {
+    "session_unchanged": true,
+    "document_unchanged": true,
+    "revision_unchanged": true,
+    "temporary_task_directory_removed": true,
+    "source_path_exposed": false,
+    "live_mutation_performed": false,
+    "external_reference_used": false,
+    "reviewed_edit_performed": false
+  },
+  "queue_before": {
+    "queue": 0,
+    "processing": 0,
+    "responses": 0,
+    "lock_exists": false
+  },
+  "queue_after": {
+    "queue": 0,
+    "processing": 0,
+    "responses": 0,
+    "lock_exists": false
+  },
+  "release_acceptance": false,
+  "boundaries": [
+    "This proves exact-current-source fresh-process server-owned current-view capture, immutable CAS ingest, read-only attestation, temporary cleanup, and unchanged session/document/revision/camera state for one user-provided model.",
+    "It does not use an external reference image, execute a correction, exercise trusted S2-S4 approval, recapture after an edit, prove a seven-model corpus, or re-sign the historical rc.2 release candidate."
+  ]
+}

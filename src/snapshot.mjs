@@ -1,3 +1,5 @@
+import { createNativeClassificationSummary, normalizeClassificationSchemas } from './native-classification.mjs';
+
 const VALID_WARNING_TYPES = [
   'geometry.degenerate', 'geometry.bbox_overlap', 'geometry.bbox_collision', 'geometry.bbox_contact', 'material.missing_texture',
   'geometry.non_manifold', 'geometry.boolean_failed',
@@ -35,6 +37,17 @@ export function addWarning(model, typeOrMessage, severity, message, source) {
 }
 
 export function createSnapshot(model) {
+  const classificationSchemas = normalizeClassificationSchemas(model.classification_schemas || []);
+  const componentDefinitionSummaries = Object.entries(model.component_definitions || {}).map(([name, definition]) => ({
+    name,
+    persistent_id: definition?.persistent_id || null,
+    native_classification: createNativeClassificationSummary({
+      classificationSchemas,
+      attributeDictionaries: definition?.attribute_dictionaries || {},
+      valueLookupSupported: true
+    })
+  })).sort((left, right) => left.name.localeCompare(right.name));
+  const nativeClassificationByDefinition = new Map(componentDefinitionSummaries.map((summary) => [summary.name, summary.native_classification]));
   const groups = model.groups.map((group) => {
     const entry = {
       id: group.id || group.name,
@@ -46,6 +59,11 @@ export function createSnapshot(model) {
       material: group.material || null,
       tag: group.tag || null,
       classification: group.classification || null,
+      native_classification: createNativeClassificationSummary({
+        classificationSchemas,
+        attributeDictionaries: group.definition_attribute_dictionaries || {},
+        valueLookupSupported: true
+      }),
       texture_transform: group.texture_transform || null,
       face_uvs: cloneJson(group.face_uvs) || null,
       image: group.image || null,
@@ -82,6 +100,10 @@ export function createSnapshot(model) {
       material: instance.material || null,
       tag: instance.tag || null,
       classification: instance.classification || null,
+      native_classification: nativeClassificationByDefinition.get(instance.definition) || createNativeClassificationSummary({
+        classificationSchemas,
+        valueLookupSupported: true
+      }),
       texture_transform: instance.texture_transform || null,
       face_uvs: cloneJson(instance.face_uvs) || null,
       attributes: cloneAttributes(instance.attributes),
@@ -139,6 +161,8 @@ export function createSnapshot(model) {
     instances,
     manifold_checks: cloneJson(model.manifold_checks) || [],
     component_definitions: Object.keys(model.component_definitions || {}).sort(),
+    component_definition_summaries: componentDefinitionSummaries,
+    classification_schemas: classificationSchemas,
     scenes: model.scenes || [],
     levels: model.levels || [],
     tags: Object.values(model.tags || {}).map((tag) => ({ ...tag })).sort((a, b) => a.name.localeCompare(b.name)),

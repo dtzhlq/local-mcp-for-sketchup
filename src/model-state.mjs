@@ -4,6 +4,7 @@ export function emptyModel() {
     units: 'mm',
     groups: [],
     component_definitions: {},
+    classification_schemas: [],
     instances: [],
     scenes: [],
     levels: [],

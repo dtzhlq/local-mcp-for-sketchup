@@ -1,0 +1,73 @@
+{
+  "version": "local-approval-host-evidence.v1",
+  "kind": "local_approval_host_v1_mock_evidence",
+  "created_on": "2026-07-16",
+  "branch": "codex/agent-contract-v1",
+  "baseline_commit": "ee0708adf845c51f71294091b8013e1cc6aa8979",
+  "evidence_scope": "isolated_mock_browser_only",
+  "browser_verification": {
+    "browser_surface": "controlled_chrome",
+    "isolated_state": true,
+    "setup_completed": true,
+    "challenge_rendered": true,
+    "untrusted_target_displayed": true,
+    "script_element_count": 0,
+    "script_dialog_open": false,
+    "decision_recorded": true,
+    "public_decision_status": "approved_pending_execution",
+    "credential_file_mode": "0600",
+    "opaque_origin_handling": "accepted_only_when_sec_fetch_site_same-origin"
+  },
+  "security_gates": {
+    "loopback_only": true,
+    "exact_host_required": true,
+    "cross_site_origin_rejected": true,
+    "csrf_required": true,
+    "same_site_strict_cookie": true,
+    "http_only_cookie": true,
+    "per_decision_reauthentication": true,
+    "authentication_throttled": true,
+    "request_body_limited": true,
+    "untrusted_html_escaped": true,
+    "approval_token_server_private": true,
+    "secret_echo_absent": true
+  },
+  "boundaries": {
+    "real_user_approval": false,
+    "live_queue_called": false,
+    "sketchup_model_mutated": false,
+    "reference_image_supplied": false,
+    "release_acceptance": false
+  },
+  "fixture_sha256": {
+    "schema/approval-challenge-v1.schema.json": "61bf56c097b9d3c4716df5e203af3df74e0d1b42aad009173e869cd7996da0e2",
+    "schema/local-approval-decision-v1.schema.json": "13149c8828f04762e9e69a7d5d3c252535fab2dbf3bf27472cea9e1df900d2f2",
+    "schema/local-approval-host-evidence-v1.schema.json": "e3b62a4cb43316bd0133db90093f89274001aa1f5d349437654f701864293548",
+    "src/approval-tokens.mjs": "d677fb2b47b9a66c7bc00fc3b694ee049471eced7eafa53554c4c2f40943a35f",
+    "src/local-approval-host.mjs": "7e526fc966e173be9d2a1c1d7e9701ca7e87f69d0ef6a3e7384665fb8fa8b7c4",
+    "src/agent-gateway.mjs": "c4bcdcb152d3963f54664595d6a847e9617927c26e784bd8c8873b40a415a3bb",
+    "src/existing-model-editing.mjs": "4c2185fe8fa8f8760c87e6ec123e9096170e24116d1de1e7a982ca9420d1a1a8",
+    "test/local-approval-host.mjs": "ab2182945ad151e1262bfd786a0bf64b4ca1606c7f72914460ae67fceacb11a5",
+    "test/local-approval-host-evidence.mjs": "8d54e188263f118ed1efb71e29b4274a165eb5eaeb513715e2546036ec944ec7",
+    "test/agent-gateway.mjs": "287cf65fb27ffc0e56b097bba4b243fbfb4a7abf8f2c47b2f3442b4e454541b6",
+    "docs/local-approval-host-v1.md": "68aa7d80ba4566777de1eb055ef5bc4f3680c1ef4a08b6fee2227cc01ed2bd46"
+  },
+  "commands": [
+    {
+      "command": "node --check src/local-approval-host.mjs && node test/local-approval-host.mjs",
+      "status": "passed",
+      "live_queue_called": false
+    },
+    {
+      "command": "node test/agent-gateway.mjs",
+      "status": "passed",
+      "live_queue_called": false
+    },
+    {
+      "command": "node test/local-approval-host-evidence.mjs",
+      "status": "passed",
+      "live_queue_called": false
+    }
+  ],
+  "boundary": "This evidence covers an isolated temporary approval state, an automated controlled-Chrome interaction, and current automated loopback rendering of the hash-bound Boolean candidate-only geometry disclosure. It proves rendering, browser controls, fail-closed request checks, untrusted-data escaping, private decision storage, token redaction, and display of the BBox-versus-exact-overlap boundary; it does not prove exact solid overlap. It is not a real user approval, does not call the live queue, does not mutate SketchUp, does not include a reference image, and cannot establish release acceptance."
+}

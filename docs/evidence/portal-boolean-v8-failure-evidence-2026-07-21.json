@@ -1,0 +1,164 @@
+{
+  "version": "portal-boolean-v8-failure-evidence.v1",
+  "kind": "portal_boolean_v8_precommit_abort_evidence",
+  "captured_at": "2026-07-21T07:05:28.460Z",
+  "branch": "codex/agent-contract-v1",
+  "result": "confirmed_precommit_abort",
+  "evidence_scope": "portal_structure_disposable_copy_s3_apply_failure",
+  "artifact_bindings": {
+    "apply_precommit_abort": {
+      "path": "output/real-model-reliability/boolean-live/portal-structure/2026-07-21T06-52-17-076Z-5d8f4640/apply-precommit-abort.json",
+      "sha256": "sha256:eec68904436a4f46d04ed97a782aaf37150dc91ca4c9beab101f9d878475bd33",
+      "size_bytes": 1729,
+      "default_verifier_access": "forbidden",
+      "verification_mode": "explicit_local_capture_only"
+    },
+    "post_abort_readonly_adoption": {
+      "path": "output/real-model-reliability/boolean-live/portal-structure/2026-07-21T06-52-17-076Z-5d8f4640/post-abort-readonly-adoption.json",
+      "sha256": "sha256:c62bf70b3d6a689a198d7821307be7b6ad90bd4d0c57f03f3044d983daee758a",
+      "size_bytes": 39083871,
+      "default_verifier_access": "forbidden",
+      "verification_mode": "explicit_local_capture_only"
+    },
+    "status_after_failure": {
+      "path": "output/real-model-reliability/boolean-live/portal-structure/2026-07-21T06-52-17-076Z-5d8f4640/status-terminal.json",
+      "sha256": "sha256:adc1525f2e32e3e98950124e43960739a1b4d78d53e56cf869386a37b1e34872",
+      "size_bytes": 1156,
+      "default_verifier_access": "forbidden",
+      "verification_mode": "explicit_local_capture_only"
+    }
+  },
+  "source_contract_bindings": {
+    "prepare_evidence": {
+      "path": "docs/evidence/portal-boolean-v8-prepare-2026-07-21.json",
+      "sha256": "sha256:344cd39f06d3f4fe74a098465e67523259ac754999de5fd875ae4381d727ed7c"
+    },
+    "readonly_discovery_evidence": {
+      "path": "docs/evidence/portal-boolean-v8-readonly-discovery-2026-07-21.json",
+      "sha256": "sha256:c3490e938bd2bfbdce5a26461c0450e698048d29dbed09459eabd4cae20e8a30"
+    }
+  },
+  "workflow": {
+    "version": "portal-structure-s3-boolean-live.v8",
+    "run_id": "2026-07-21T06-52-17-076Z-5d8f4640",
+    "runtime": "queue",
+    "task_id": "task_182054a9-31eb-49f0-90ca-7cc21a8ce9d8",
+    "task_state": "failed",
+    "risk_level": "S3"
+  },
+  "runtime_contract": {
+    "capability_version": "0.1.0-rc.2-capabilities.7",
+    "manifest_version": "2026-07-agent-contract-v1.4",
+    "model_revision_strategy": "definition-merkle.v2",
+    "boolean_operations_sha256": "sha256:2e3d686ba926f8b43f5a9847e05471587a217b536fd901811f10444948c2c444",
+    "model_revision_source_sha256": "sha256:b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134",
+    "historical_exact_loaded_runtime": true
+  },
+  "approval": {
+    "plan_id": "existing-edit-7e458d809376c461e913be6e",
+    "plan_hash": "sha256:8fb5cd2ef92c306d6593bbe83737adca01c875343e586de9d3ff57f93f695bea",
+    "status_after_failure": "consumed_failed",
+    "approval_reusable": false,
+    "same_task_retry_allowed": false,
+    "previous_plan_or_approval_replay_allowed": false,
+    "agent_self_approval_accepted": false,
+    "private_approval_material_exposed": false
+  },
+  "operation": {
+    "op": "boolean_difference",
+    "target_path": "pid:11543",
+    "tool_paths": ["pid:11635"],
+    "result_id": "portal-structure-s3-boolean-result-v8",
+    "result_name": "Portal_S3_Boolean_Result_v8",
+    "keep_originals": true,
+    "keep_tools": true,
+    "risk_level": "S3"
+  },
+  "failure": {
+    "error_code": "MUTATION_EXECUTION_FAILED",
+    "phase": "precommit_execution",
+    "outcome_unknown": false,
+    "mutation_committed": false,
+    "rollback_confirmed": true,
+    "evidence_conflict": false,
+    "commit_state": "not_committed",
+    "abort_succeeded": true,
+    "durable_receipt_confirmed": false,
+    "durable_receipt_present": false,
+    "automatic_retry_performed": false,
+    "automatic_replay_performed": false,
+    "duplicate_mutation_observed": false,
+    "exact_solid_overlap": {
+      "status": "not_verified_atomic_trial_aborted",
+      "verified": false,
+      "verification_stage": "review_gated_atomic_apply"
+    }
+  },
+  "post_abort_model": {
+    "verification_mode": "read_only_adoption",
+    "document_id": "document_baaef9d1d43e79fc755c54b849181c30406b8a10f3ccbf64441ab99af896baba",
+    "revision": "sha256:c03d317c25883606f0f8d7819610823118d916694d5a5d323deabe2ac7bcdf36",
+    "revision_strategy": "definition-merkle.v2",
+    "revision_complete": true,
+    "revision_indexed": 11474,
+    "revision_total_seen": 11474,
+    "revision_unique_entities": 9588,
+    "revision_reachable_definitions": 11,
+    "recursive_total_seen": 11474,
+    "recursive_truncated": false,
+    "top_level_groups": 18,
+    "model_modified": false,
+    "pair_baseline_unchanged": true,
+    "target": {
+      "entity_path": "pid:11543",
+      "faces": 38,
+      "edges": 108,
+      "vertices": 72,
+      "volume": 61350393.972267,
+      "world_bounding_box": {
+        "min": [-7286.931445, 376.95, -1916.983936],
+        "max": [-4037.70638, 642.25, -318.145223]
+      },
+      "manifold": true,
+      "manifold_revision": "sha256:c03d317c25883606f0f8d7819610823118d916694d5a5d323deabe2ac7bcdf36"
+    },
+    "tool": {
+      "entity_path": "pid:11635",
+      "faces": 8,
+      "edges": 18,
+      "vertices": 12,
+      "volume": 723623.440001,
+      "world_bounding_box": {
+        "min": [-6024.107717, 376.95, -1510.638035],
+        "max": [-5830.315299, 503.15, -814.163406]
+      },
+      "manifold": true,
+      "manifold_revision": "sha256:c03d317c25883606f0f8d7819610823118d916694d5a5d323deabe2ac7bcdf36"
+    }
+  },
+  "source": {
+    "scope": "workspace_disposable_copy",
+    "path": "output/real-model-reliability/intake/live-work/preflight-176129c4-e1ef-4b53-b991-8f7b936df118/candidate_e2ef3c5f82332f9174066759/candidate.skp",
+    "size_bytes": 608815,
+    "sha256_before": "sha256:4a75190929bfa47b1506a8ed037a08e0f08e1632169d9bb550c4a9219b43e90c",
+    "sha256_after": "sha256:4a75190929bfa47b1506a8ed037a08e0f08e1632169d9bb550c4a9219b43e90c",
+    "bytes_unchanged": true,
+    "original_model_in_scope": false,
+    "source_overwritten": false
+  },
+  "recovery": {
+    "post_abort_readonly_check_completed": true,
+    "queue_after_recovery": {
+      "queue": 0,
+      "processing": 0,
+      "responses": 0,
+      "lock_exists": false,
+      "evidence_mode": "orchestrator_observation_not_bundled"
+    },
+    "saved_result_copy_created": false,
+    "new_review_required_before_any_retry": true,
+    "next_action": "Correct the candidate or implementation, then create a new reviewed task. Do not retry or replay this consumed task."
+  },
+  "release_acceptance": false,
+  "boundary": "This public artifact records a failed Portal v8 S3 atomic Boolean attempt on a workspace disposable copy. The SketchUp transaction failed during precommit execution and the abort was confirmed: no mutation committed, no durable receipt exists, the source bytes and model revision stayed unchanged, the reviewed pair remained manifold at its baseline geometry, the recovery queue was observed clean, and no result copy was saved. The task and its approval are consumed_failed and must never be retried or replayed; any later attempt requires a corrected candidate or implementation and a new reviewed task. Exact solid overlap remains unverified, and this record is not release acceptance. Raw machine-local captures are hash-bound but are read only by the explicit local-capture verifier."
+}

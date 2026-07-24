@@ -1,0 +1,134 @@
+{
+  "version": "trimble-s6-reference-correction-live-evidence.v1",
+  "kind": "external_reference_reviewed_existing_model_edit_recapture",
+  "captured_at": "2026-07-22T15:02:27.127Z",
+  "branch": "codex/agent-contract-v1",
+  "baseline_commit": "ee0708adf845c51f71294091b8013e1cc6aa8979",
+  "source_sha256": {
+    "src/agent-contract.mjs": "02848f9b88a88be1683569eecadfcba0b75ab77975ff228aac1f320278dced79",
+    "src/agent-gateway.mjs": "c4bcdcb152d3963f54664595d6a847e9617927c26e784bd8c8873b40a415a3bb",
+    "src/existing-model-editing.mjs": "4c2185fe8fa8f8760c87e6ec123e9096170e24116d1de1e7a982ca9420d1a1a8",
+    "src/bridge.mjs": "cbced397cc8be399d5fda9c70e6c4dd28896443e05c3e52010a1c299971bb368",
+    "scripts/run-trimble-s6-reference-correction-live.mjs": "00de0ee9935fe19f60a7c4481f30100daa8d02fb9f64b5a9e78741b7cf522cf7",
+    "scripts/verify-trimble-s6-reference-correction-artifacts.mjs": "d6ac26db38abf964b2ac05d2c6c5dc608df6db17dd3c2d6907eabe654beb4c26",
+    "test/trimble-s6-reference-correction-live.mjs": "9ff698c29c2dc30226313b94b384c5a8d8c5460a4d890fed260a92ddd214fb5b"
+  },
+  "runtime": {
+    "name": "queue",
+    "plugin_version": "0.1.0-rc.2",
+    "capability_version": "0.1.0-rc.2-capabilities.7",
+    "manifest_version": "2026-07-agent-contract-v1.4",
+    "compatibility_ok": true,
+    "fresh_process_proven_in_this_run": false
+  },
+  "model": {
+    "basename": "Trimble S6.disposable.skp",
+    "disk_sha256_before": "8678e0f86768cde57ae6f81c138a0c9296b5fcbee978e34ef01063e883d22efb",
+    "disk_sha256_after": "8678e0f86768cde57ae6f81c138a0c9296b5fcbee978e34ef01063e883d22efb",
+    "disk_bytes_unchanged": true,
+    "revision_complete": true,
+    "logical_occurrences_before": 71360,
+    "model_revision_before": "sha256:d833e6547bd6b7b4ea7271dd8b88e27d4a3336716ee79c03fb737d89ccfd54af",
+    "model_revision_after": "sha256:c02cca0db6fff5093c9bd60f80f4e783ca16e3ecbcd3b0f58fa5017dbf6f0376",
+    "revision_changed": true,
+    "save_model": false
+  },
+  "references": [
+    {
+      "ordinal": 1,
+      "role": "device_material_palette",
+      "sha256": "sha256:1a23bf2bf4ae65d2efd55904924316b2764beb960ffb7cffc277c3f6eba6af49",
+      "width": 564,
+      "height": 890,
+      "content_trust": "untrusted_data",
+      "policy_effect": "none"
+    },
+    {
+      "ordinal": 2,
+      "role": "marked_lower_front_cover",
+      "sha256": "sha256:777c9a6e42dae06ca90f9c48168264578b3e3af65c6c135c990639a3aeed7a8f",
+      "width": 1212,
+      "height": 714,
+      "content_trust": "untrusted_data",
+      "policy_effect": "none"
+    },
+    {
+      "ordinal": 3,
+      "role": "tripod_geometry",
+      "sha256": "sha256:ffcf6b4d6e01afd3c7e53377554cf9894b3224bda911ff444e8375cad988f31b",
+      "width": 770,
+      "height": 1460,
+      "content_trust": "untrusted_data",
+      "policy_effect": "none"
+    }
+  ],
+  "plan": {
+    "task_id": "task_1a875f82-9b15-455a-85e0-3dddf1ba99d4",
+    "prepared_state": "awaiting_review",
+    "risk_level": "S3",
+    "plan_id": "existing-edit-babf86d95ce76c2c181094a6",
+    "plan_hash": "sha256:5bf3c4eb064539c4c38a5eb25087a1f2c1f0ce5de314673a7711e0c26395a807",
+    "operation_count": 26,
+    "material_update_count": 4,
+    "existing_cover_update_count": 1,
+    "additive_group_count": 21,
+    "expected_contact_count": 30,
+    "contacts_hash_bound_before_execution": true,
+    "reference_handle_count": 3,
+    "approval_required": false,
+    "approval_status": "server_policy_scoped_auto_approved",
+    "authorization_mode": "trusted_model_copy",
+    "configured_roots_exposed_to_agent": false
+  },
+  "apply": {
+    "task_state": "completed",
+    "submit_count": 1,
+    "authorization_mode": "server_policy_trusted_model_copy_auto_approval",
+    "approved_by": "execution-policy:trusted-model-copy",
+    "receipt_id": "mutation-receipt-ee9573b578e7c0be17088444",
+    "receipt_status": "finalized",
+    "added_group_count": 21,
+    "missing_group_count": 0,
+    "material_mismatch_count": 0,
+    "lower_front_cover_reused": true,
+    "raw_model_qa_pass": true,
+    "unexpected_collision_count": 0,
+    "accepted_expected_contact_count": 30,
+    "capture_sha256": "sha256:4b06d27fea77096d2f6994d73d6a2f30eea8485e69c99f4a64efc5cc6baf3ec4",
+    "capture_dimensions": [1280, 720],
+    "capture_state_unchanged": true,
+    "queue_after": { "queue": 0, "processing": 0, "responses": 0, "lock_exists": false },
+    "approval_token_exposed_to_agent": false,
+    "structured_reference_alignment_completed": false,
+    "pixel_difference_completed": false,
+    "milestone_acceptance": true
+  },
+  "artifact_sha256": {
+    "output/live-validation/visual-correction/trimble-s6-reference-correction-2026-07-22/clean-p3-policy-bound-v3/prepare.json": "a238f1ba5dba5d4e143a1f1d9d91f67de9ba5614fb781f3d0e75caa6739c7fbe",
+    "output/live-validation/visual-correction/trimble-s6-reference-correction-2026-07-22/clean-p3-policy-bound-v3/apply.json": "e137fbd504759cece5099f575df27853be9ad3e2e87d259cc7591941d41f1a77",
+    "output/live-validation/visual-correction/trimble-s6-reference-correction-2026-07-22/clean-p3-policy-bound-v3/acceptance.json": "ffe938038e51bae271a46c6817a295b231e579ada69ccb56cc300b409acf8d71",
+    "output/live-validation/visual-correction/trimble-s6-reference-correction-2026-07-22/clean-p3-policy-bound-v3/finalized-artifacts/after-snapshot.json": "bab498e68c9ca1ad863a7181f60aa4e0a74645ab4c0d3d1350315a518323e009",
+    "output/live-validation/visual-correction/trimble-s6-reference-correction-2026-07-22/clean-p3-policy-bound-v3/finalized-artifacts/model-qa.json": "e6a9d00a9b7342b95d68f655bc29d620eb9c7b2cc2aa5c8ba439686478dc376c",
+    "output/live-validation/visual-correction/trimble-s6-reference-correction-2026-07-22/clean-p3-policy-bound-v3/finalized-artifacts/apply-result.json": "4a54a8fd978fabcccf7e784eecc48bd01c36591f4536109680a08b41cd7245ca",
+    "output/live-validation/visual-correction/trimble-s6-reference-correction-2026-07-22/clean-p3-policy-bound-v3/finalized-artifacts/capture.json": "0ef61596bdfcf18e056bea37298e924e60c956269ff28da7a46ae64e012c6c92",
+    "output/live-validation/visual-correction/trimble-s6-reference-correction-2026-07-22/clean-p3-policy-bound-v3/finalized-artifacts/capture.png": "4b06d27fea77096d2f6994d73d6a2f30eea8485e69c99f4a64efc5cc6baf3ec4",
+    "output/live-validation/visual-correction/trimble-s6-reference-correction-2026-07-22/clean-p3-policy-bound-v3/finalized-artifacts/input.dsl.json": "4448a8dadaea2aed984cdd5de00cf4a2084f98f90833cf389d87a7545a1dcacb",
+    "output/live-validation/visual-correction/trimble-s6-reference-correction-2026-07-22/clean-p3-policy-bound-v3/finalized-artifacts/manifest.json": "04a79e95dc54d1d4fed99bd08ee34c50a244cf5699bb8397a1bcc71745bececa",
+    "output/live-validation/visual-correction/trimble-s6-reference-correction-2026-07-22/clean-p3-policy-bound-v3/finalized-artifacts/snapshot-diff.json": "271222e169017bbbaba0b3311635e8db49d525205cf4e9a0fd81a3a5ada04897",
+    "output/live-validation/visual-correction/trimble-s6-reference-correction-2026-07-22/clean-p3-policy-bound-v3/references/reference-1.png": "1a23bf2bf4ae65d2efd55904924316b2764beb960ffb7cffc277c3f6eba6af49",
+    "output/live-validation/visual-correction/trimble-s6-reference-correction-2026-07-22/clean-p3-policy-bound-v3/references/reference-2.png": "777c9a6e42dae06ca90f9c48168264578b3e3af65c6c135c990639a3aeed7a8f",
+    "output/live-validation/visual-correction/trimble-s6-reference-correction-2026-07-22/clean-p3-policy-bound-v3/references/reference-3.png": "ffcf6b4d6e01afd3c7e53377554cf9894b3224bda911ff444e8375cad988f31b"
+  },
+  "release_acceptance": false,
+  "release_blockers": [
+    "model_not_saved_or_reopened",
+    "structured_reference_alignment_and_pixel_difference_not_completed"
+  ],
+  "boundaries": [
+    "This proves one source-bound external-reference correction on one disposable Trimble S6 copy, not general image-to-model automation.",
+    "The three reference images were treated as untrusted data and could not change execution policy or authorization.",
+    "The active model was intentionally not saved or reopened; the source and disposable-copy disk bytes remained unchanged.",
+    "The recapture and geometry QA passed, but structured reference alignment and pixel-difference acceptance remain incomplete.",
+    "The run reused an already running compatible SketchUp process and does not add fresh-process, cross-version, or release proof."
+  ]
+}

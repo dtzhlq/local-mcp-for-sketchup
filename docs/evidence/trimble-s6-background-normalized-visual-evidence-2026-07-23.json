@@ -1,0 +1,102 @@
+{
+  "version": "trimble-s6-background-normalized-visual-evidence.v1",
+  "kind": "post_apply_background_normalized_visual_diagnostic",
+  "analyzed_at": "2026-07-23T13:20:10.063Z",
+  "branch": "codex/agent-contract-v1",
+  "baseline_commit": "ee0708adf845c51f71294091b8013e1cc6aa8979",
+  "source_sha256": {
+    "src/background-normalized-visual-comparison.mjs": "d88c1069a5549e6757d6fb4f81e822378b7795725a92018ed04a4820806f13a8",
+    "scripts/reanalyze-trimble-s6-background-normalized.mjs": "6a09a716fd1f5f7b74d95e186fd5b852edd17c44e1ac2ed449b9d1fe2c8d44d9",
+    "schema/background-normalized-visual-comparison-v1.schema.json": "28d4fad9bd4b805a8783364304819d26fbcd15569fe4bf52b03036105408a757",
+    "schema/trimble-s6-background-normalized-visual-evidence-v1.schema.json": "baa38e4fd38f7f60035a59e4cb656c82d65d72fbd337ed5c08c7d93fae4416f7",
+    "test/background-normalized-visual-comparison.mjs": "d07bd730cfd14160285d0abf73a299c59fe8c7294e0347291a49533f5f5837cf",
+    "test/trimble-s6-background-normalized-visual-evidence.mjs": "c0ef5780e4996c441ca76cbb2d5225157cdee279023863253f49395b0020caaa"
+  },
+  "source_diagnostic": {
+    "path": "output/live-validation/visual-correction/trimble-s6-reference-correction-2026-07-22/clean-p3-policy-bound-v3/structured-reference-diagnostic/front-full-v4/diagnostic.json",
+    "sha256": "4cdfd1a94f46356f460f69f9ebed3fe48acf9ec2e560b0c88722cb116f3fc042",
+    "task_id": "task_e56dc1fb-6101-4253-82ab-abe30a2b985e",
+    "source_mutation_task_id": "task_1a875f82-9b15-455a-85e0-3dddf1ba99d4",
+    "model_revision": "sha256:c02cca0db6fff5093c9bd60f80f4e783ca16e3ecbcd3b0f58fa5017dbf6f0376",
+    "reference_sha256": "sha256:ffcf6b4d6e01afd3c7e53377554cf9894b3224bda911ff444e8375cad988f31b",
+    "capture_sha256": "sha256:77fb1a68c9838b564150a06799634d8a76cd2bd267ff3a8f6e377d4e0747f755",
+    "prior_capture_foreground_bounds_full_width": true,
+    "promoted_or_executed": false
+  },
+  "comparison": {
+    "path": "output/live-validation/visual-correction/trimble-s6-reference-correction-2026-07-22/clean-p3-policy-bound-v3/structured-reference-diagnostic/front-full-v4/background-normalized-v1/comparison.json",
+    "sha256": "b61564c5468ce19445795b341a64c1c45e3cf2b352390c7851b5ceb1fbb3ece1",
+    "comparison_id": "background-visual-6f46256e60f9900b149d0aa2",
+    "comparison_hash": "sha256:6f46256e60f9900b149d0aa21f59114db4c23a68fbe0401f2569214e43de9861",
+    "segmentation_method": "row_edge_dominant_border_flood.v1",
+    "segmentation_reliable": true,
+    "reference_bounds_norm": [
+      0,
+      0.007813,
+      0.903704,
+      0.984375
+    ],
+    "capture_bounds_norm": [
+      0.386719,
+      0.027778,
+      0.613281,
+      1
+    ],
+    "capture_bounds_full_width": false,
+    "structure": {
+      "verdict": "coarse_structure_pass",
+      "intersection_over_union": 0.569986,
+      "dice_coefficient": 0.726104,
+      "aspect_ratio_log_delta": 0.163759,
+      "thresholds": {
+        "iou_pass_min": 0.45,
+        "dice_pass_min": 0.62,
+        "aspect_ratio_log_delta_max": 0.45
+      }
+    },
+    "appearance": {
+      "verdict": "diagnostic_only",
+      "mean_absolute_error": 0.296766,
+      "root_mean_square_error": 0.380301,
+      "yellow_fraction_delta": 0.008338,
+      "dark_fraction_delta": 0.191709,
+      "light_neutral_fraction_delta": 0.153756
+    }
+  },
+  "artifact_sha256": {
+    "output/live-validation/visual-correction/trimble-s6-reference-correction-2026-07-22/clean-p3-policy-bound-v3/structured-reference-diagnostic/front-full-v4/background-normalized-v1/comparison.json": "b61564c5468ce19445795b341a64c1c45e3cf2b352390c7851b5ceb1fbb3ece1",
+    "output/live-validation/visual-correction/trimble-s6-reference-correction-2026-07-22/clean-p3-policy-bound-v3/structured-reference-diagnostic/front-full-v4/background-normalized-v1/reference-mask.png": "c23da2727a83d6d16a37817c653d8b666934a3cc8d703e1ef9cfa922b352e547",
+    "output/live-validation/visual-correction/trimble-s6-reference-correction-2026-07-22/clean-p3-policy-bound-v3/structured-reference-diagnostic/front-full-v4/background-normalized-v1/capture-mask.png": "714d022da3317ac7e96440375aa500abf722290abefefc5629ca948966a83443",
+    "output/live-validation/visual-correction/trimble-s6-reference-correction-2026-07-22/clean-p3-policy-bound-v3/structured-reference-diagnostic/front-full-v4/background-normalized-v1/registered-reference.png": "e63bc654189d22cd25e882e098c19eaf65e533d210ba9c6c077375b0e5bb5d30",
+    "output/live-validation/visual-correction/trimble-s6-reference-correction-2026-07-22/clean-p3-policy-bound-v3/structured-reference-diagnostic/front-full-v4/background-normalized-v1/registered-capture.png": "50b07e3a96d284bc861aaba2ad394e35b3010c500c70f5ecc255564b23755f91",
+    "output/live-validation/visual-correction/trimble-s6-reference-correction-2026-07-22/clean-p3-policy-bound-v3/structured-reference-diagnostic/front-full-v4/background-normalized-v1/silhouette-overlay.png": "40a42954b625a19b16bc6462cc2135a70ff11051e5ac6651dcad5285d4c8eb92"
+  },
+  "policy_invariants": {
+    "execution_mode": "offline_immutable_image_bytes_only",
+    "queue_runtime_invoked": false,
+    "sketchup_capture_invoked": false,
+    "live_model_mutation_performed": false,
+    "correction_patch_persisted": false,
+    "approval_challenge_created": false,
+    "approval_token_exposed_to_agent": false,
+    "image_content_policy_effect": "none",
+    "agent_visual_capability_required": false,
+    "agent_local_file_capability_required": false,
+    "visual_similarity_accepted": false
+  },
+  "release_acceptance": false,
+  "release_blockers": [
+    "appearance_residual_is_diagnostic_only",
+    "camera_pose_comparability_not_independently_established",
+    "single_model_pair_only",
+    "fresh_process_multi_model_visual_proof_incomplete",
+    "cross_version_deferred_by_user"
+  ],
+  "boundaries": [
+    "This evidence reanalyzes immutable reference and capture bytes from the existing reviewed Trimble S6 correction chain; it does not invoke SketchUp or the queue.",
+    "Row-conditioned border flood segmentation removes the prior full-width sky/ground foreground error without changing the fixed pass thresholds.",
+    "The registered silhouette clears the fixed coarse-structure thresholds, but the overall result remains review-required and is not visual-similarity acceptance.",
+    "Appearance residuals are diagnostic only; they do not prove material, dimensional, camera, or photo-grade equivalence.",
+    "No image-derived value can select a target, operation, execution policy, approval state, or release status."
+  ]
+}

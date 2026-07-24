@@ -1,0 +1,132 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/sketchup-mcp-replica/model-revision-v1-archival-lineage-manifest-v1.schema.json",
+  "title": "Model Revision v1 archival lineage manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "kind",
+    "frozen_on",
+    "revision_strategy",
+    "superseded_by",
+    "lineage_only",
+    "current_acceptance",
+    "release_acceptance",
+    "historical_schema_readable",
+    "immutable_evidence",
+    "policy",
+    "entries",
+    "evidence_sha256"
+  ],
+  "properties": {
+    "version": { "const": "model-revision-v1-archival-lineage-manifest.v1" },
+    "kind": { "const": "model_revision_v1_archival_lineage_manifest" },
+    "frozen_on": { "type": "string", "format": "date" },
+    "revision_strategy": { "const": "definition-merkle.v1" },
+    "superseded_by": { "const": "definition-merkle.v2" },
+    "lineage_only": { "const": true },
+    "current_acceptance": { "const": false },
+    "release_acceptance": { "const": false },
+    "historical_schema_readable": { "const": true },
+    "immutable_evidence": { "const": true },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "hashes_bind_evidence_bytes",
+        "embedded_source_hashes_are_capture_time_only",
+        "historical_schema_validation_allowed",
+        "historical_evidence_may_authorize_current_execution",
+        "historical_evidence_may_satisfy_current_acceptance",
+        "current_evidence_source_hash_validation_preserved"
+      ],
+      "properties": {
+        "hashes_bind_evidence_bytes": { "const": true },
+        "embedded_source_hashes_are_capture_time_only": { "const": true },
+        "historical_schema_validation_allowed": { "const": true },
+        "historical_evidence_may_authorize_current_execution": { "const": false },
+        "historical_evidence_may_satisfy_current_acceptance": { "const": false },
+        "current_evidence_source_hash_validation_preserved": { "const": true }
+      }
+    },
+    "entries": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/entry" }
+    },
+    "evidence_sha256": {
+      "type": "object",
+      "minProperties": 4,
+      "maxProperties": 4,
+      "propertyNames": { "$ref": "#/$defs/repoPath" },
+      "additionalProperties": { "$ref": "#/$defs/sha256" }
+    }
+  },
+  "$defs": {
+    "repoPath": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 320,
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9._/-]+$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "sha256",
+        "schema_path",
+        "evidence_kind",
+        "runtime",
+        "capability_version",
+        "manifest_version",
+        "strategy_pointer",
+        "release_acceptance_pointer",
+        "lineage_only",
+        "current_acceptance",
+        "release_acceptance"
+      ],
+      "properties": {
+        "path": { "$ref": "#/$defs/repoPath" },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "schema_path": { "$ref": "#/$defs/repoPath" },
+        "evidence_kind": {
+          "type": "string",
+          "pattern": "^[a-z0-9_]+$",
+          "maxLength": 100
+        },
+        "runtime": { "enum": ["mock", "queue"] },
+        "capability_version": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9.-]+$",
+          "maxLength": 100
+        },
+        "manifest_version": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9.-]+$",
+          "maxLength": 100
+        },
+        "strategy_pointer": {
+          "type": "string",
+          "pattern": "^/",
+          "maxLength": 200
+        },
+        "release_acceptance_pointer": {
+          "type": "string",
+          "pattern": "^/",
+          "maxLength": 200
+        },
+        "lineage_only": { "const": true },
+        "current_acceptance": { "const": false },
+        "release_acceptance": { "const": false }
+      }
+    }
+  }
+}

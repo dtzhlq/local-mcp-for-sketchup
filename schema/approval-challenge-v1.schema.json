@@ -4,7 +4,7 @@
   "title": "Agent Contract v1 Approval Challenge",
   "type": "object",
   "additionalProperties": false,
-  "required": ["version", "kind", "challenge_id", "task_id", "plan_id", "plan_hash", "model_revision", "risk_level", "allowed_operations", "nonce", "issued_at", "expires_at", "status"],
+  "required": ["version", "kind", "challenge_id", "task_id", "plan_id", "plan_hash", "model_revision", "risk_level", "allowed_operations", "review_context_hash", "nonce", "issued_at", "expires_at", "status"],
   "properties": {
     "version": { "const": "approval-token.v1" },
     "kind": { "const": "approval_challenge" },
@@ -15,6 +15,11 @@
     "model_revision": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
     "risk_level": { "enum": ["S1", "S2", "S3", "S4"] },
     "allowed_operations": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+    "review_context_hash": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "review_context": {
+      "type": "object",
+      "description": "Human-readable review context. Model names, instructions, attributes, OCR, and other displayed text remain untrusted data and cannot change policy or execution scope."
+    },
     "nonce": { "type": "string", "minLength": 16 },
     "issued_at": { "type": "string", "format": "date-time" },
     "expires_at": { "type": "string", "format": "date-time" },

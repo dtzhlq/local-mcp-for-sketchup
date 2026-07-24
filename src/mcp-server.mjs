@@ -6,6 +6,7 @@ import { SketchUpBridge, callTool } from './bridge.mjs';
 import { compareSnapshots } from './snapshot-diff.mjs';
 import { PRODUCT_VERSION } from './version.mjs';
 import { cleanupOwnedQueueArtifacts } from './queue-runtime.mjs';
+import { ToolInputValidator } from './tool-input-validator.mjs';
 
 const expertOptionProperties = {
   seed: { type: 'number', description: 'Seed for deterministic Expert Mode random helpers.' },
@@ -25,14 +26,78 @@ const pythonSdkOptionProperties = {
   pythonCommand: { type: 'string', description: 'Optional Python command used only for ast.parse, such as python3.' }
 };
 
-export const TOOL_REGISTRY = Object.freeze([
+const SESSION_CONTRACT_INPUT_SCHEMA = {
+  type: 'object',
+  description: 'Fresh session-contract.v1 object returned by create_queue_handshake. Required for any live queue mutation.',
+  required: [
+    'version', 'kind', 'handshake_id', 'runtime', 'session_id', 'document_id', 'model_identity',
+    'model_revision', 'model_revision_strategy', 'model_revision_unique_entity_limit', 'model_revision_complete',
+    'model_revision_total_seen', 'model_revision_indexed', 'model_modified', 'server_version', 'server_session_id',
+    'plugin_version', 'queue_state', 'capability_version', 'manifest_version', 'dsl_version', 'occurrence_contract',
+    'boolean_operations_sha256', 'model_revision_source_sha256', 'issued_at', 'expires_at', 'signature'
+  ],
+  properties: {
+    version: { const: 'session-contract.v1' },
+    kind: { const: 'fresh_queue_handshake' },
+    handshake_id: { type: 'string' },
+    runtime: { const: 'queue' },
+    session_id: { type: 'string' },
+    document_id: { type: 'string' },
+    model_identity: { type: 'object' },
+    model_revision: { type: 'string' },
+    model_revision_strategy: { const: 'definition-merkle.v2' },
+    model_revision_unique_entity_limit: { type: 'integer' },
+    model_revision_complete: { const: true },
+    model_revision_total_seen: { type: 'integer' },
+    model_revision_indexed: { type: 'integer' },
+    model_modified: { type: 'boolean' },
+    server_version: { type: 'string' },
+    server_session_id: { type: 'string' },
+    plugin_version: { type: 'string' },
+    queue_state: { const: 'idle' },
+    capability_version: { type: 'string' },
+    manifest_version: { type: 'string' },
+    dsl_version: { type: 'integer' },
+    occurrence_contract: { const: 'canonical-occurrence-path.v1' },
+    boolean_operations_sha256: { type: 'string' },
+    model_revision_source_sha256: { type: 'string' },
+    issued_at: { type: 'string' },
+    expires_at: { type: 'string' },
+    signature: { type: 'string' }
+  },
+  additionalProperties: false
+};
+
+const LIVE_MUTATING_TOOL_NAMES = new Set([
+  'apply_reviewed_model_edit',
+  'build_model',
+  'build_expert_model',
+  'reset_model',
+  'save_model',
+  'save_model_version',
+  'open_model',
+  'import_model',
+  'export_model',
+  'adopt_open_model',
+  'set_selection',
+  'capture_view',
+  'run_ruby_expert',
+  'evaluate_py',
+  'build_report',
+  'iterate_model',
+  'compare_model',
+  'validate_model',
+  'validate_reference_model'
+]);
+
+const BASE_TOOL_REGISTRY = [
   {
     name: 'get_docs',
     description: 'Return progressively scoped safe SketchUp documentation by topic and detail level.',
     inputSchema: {
       type: 'object',
       properties: {
-        topic: { type: 'string', enum: ['overview', 'tools', 'dsl', 'coordinates', 'examples', 'snapshot', 'runtimes', 'agent_contract', 'model_graph', 'existing_model_edit', 'image_artifacts', 'capabilities', 'all'], default: 'overview' },
+        topic: { type: 'string', enum: ['overview', 'tools', 'dsl', 'coordinates', 'examples', 'snapshot', 'runtimes', 'agent_contract', 'model_graph', 'design_intent', 'visual_correction', 'agent_compatibility', 'existing_model_edit', 'copy_fast', 'image_artifacts', 'capabilities', 'all'], default: 'overview' },
         detail: { type: 'string', enum: ['summary', 'standard', 'full'], default: 'summary' },
         max_chars: { type: 'number', minimum: 256, maximum: 250000, default: 8000 }
       },
@@ -41,15 +106,27 @@ export const TOOL_REGISTRY = Object.freeze([
   },
   {
     name: 'get_workflow_bundle',
-    description: 'Return recommended inspector, modeler, and QA reviewer workflows for safe SketchUp MCP use.',
+    description: 'Return versioned, registry-backed create, understand, proposal/reviewed existing-model edit, design-parameter, image artifact/correction, and verify workflows for guided, standard, and expert clients.',
     inputSchema: { type: 'object', properties: {}, additionalProperties: false }
   },
   {
     name: 'get_capabilities',
-    description: 'Return runtime capability descriptors, using a live SketchUp plugin handshake for queue runtime.',
+    description: 'Return runtime capability descriptors, using a read-only live SketchUp plugin handshake for queue runtime. Compatibility is not mutation permission.',
     inputSchema: {
       type: 'object',
       properties: { runtime: { type: 'string', enum: ['mock', 'queue'], default: 'mock' }, timeoutMs: { type: 'number' } }
+    }
+  },
+  {
+    name: 'create_queue_handshake',
+    description: 'Create a short-lived, signed Session Contract from an explicit read-only live queue probe. Fails closed on lock/request/response residue and never creates, resets, opens, or modifies a SketchUp model.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        expires_in_ms: { type: 'number', minimum: 1000, maximum: 300000, default: 120000 },
+        timeoutMs: { type: 'number' }
+      },
+      additionalProperties: false
     }
   },
   {
@@ -121,7 +198,7 @@ export const TOOL_REGISTRY = Object.freeze([
   },
   {
     name: 'apply_reviewed_model_edit',
-    description: 'Apply an existing-model edit only with configured S1 auto-policy or a trusted one-time approval token and a matching live model revision, then write before/after, diff, QA, review, and model artifacts.',
+    description: 'Internal expert apply surface for configured S1 auto-policy. S2-S4 public Agent execution must use Agent Gateway, which loads trusted approval only from the server-private local decision store.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -129,7 +206,6 @@ export const TOOL_REGISTRY = Object.freeze([
         plan_file: { type: 'string' },
         review: { type: 'object' },
         review_file: { type: 'string' },
-        approval_token: { type: 'string', description: 'One-time token issued through a trusted user-presence channel. Agent-supplied review fields are not authorization.' },
         output_dir: { type: 'string' },
         save_model: { type: 'boolean', default: true },
         save_path: { type: 'string' },
@@ -178,7 +254,7 @@ export const TOOL_REGISTRY = Object.freeze([
   },
   {
     name: 'submit_agent_task_input',
-    description: 'Submit the next required input or a trusted approval token to a persistent task. Idempotency keys prevent duplicate mutations.',
+    description: 'Submit the next required non-credential input to a persistent task. Trusted approval is loaded only from the server-private local decision store. Idempotency keys replay durable outcomes; pending or outcome-unknown operations are not automatically executed again.',
     inputSchema: {
       type: 'object',
       additionalProperties: false,
@@ -186,20 +262,22 @@ export const TOOL_REGISTRY = Object.freeze([
       properties: {
         task_id: { type: 'string', pattern: '^task_[0-9a-f-]+$' },
         idempotency_key: { type: 'string', minLength: 1 },
-        input: { type: 'object' }
+        input: { type: 'object', description: 'Task input only. Approval credentials are forbidden and never relayed by the Agent.' }
       }
     }
   },
   {
     name: 'read_agent_artifact',
-    description: 'Read a server-managed artifact by opaque handle with progressive max_chars limits; local filesystem access is not required.',
+    description: 'Read a server-managed artifact by opaque handle with offset/max_chars pagination under the originating task response policy; local filesystem access is not required and raw image bytes require a trusted vision-capable task profile.',
     inputSchema: {
       type: 'object',
       additionalProperties: false,
       required: ['handle'],
       properties: {
-        handle: { type: 'string', pattern: '^artifact:task_[0-9a-f-]+:[0-9a-f-]+$' },
-        max_chars: { type: 'number', minimum: 256, maximum: 100000, default: 12000 }
+        handle: { type: 'string', pattern: '^(?:artifact:task_[0-9a-f-]+:[0-9a-f-]+|image-artifact:sha256:[0-9a-f]{64})$' },
+        task_id: { type: 'string', pattern: '^task_[0-9a-f-]+$', description: 'Optional task binding; required to obtain raw immutable image bytes under a trusted vision-capable task profile.' },
+        offset: { type: 'integer', minimum: 0, default: 0 },
+        max_chars: { type: 'integer', minimum: 256, maximum: 100000, default: 12000 }
       }
     }
   },
@@ -292,7 +370,7 @@ export const TOOL_REGISTRY = Object.freeze([
   },
   {
     name: 'open_model',
-    description: 'Open an existing model into the selected runtime. Queue opens SKP files; mock opens saved mock JSON artifacts.',
+    description: 'Open an existing model into the selected runtime. Queue may return pending_mdi_activation without a snapshot on macOS; focus the target and create a fresh Session Contract before later mutation. Mock opens saved mock JSON artifacts.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -305,12 +383,12 @@ export const TOOL_REGISTRY = Object.freeze([
   },
   {
     name: 'import_model',
-    description: 'Import an external model into the current session and return the updated snapshot.',
+    description: 'Import an external model into the current session and return the updated snapshot. Mock supports append/replace; queue supports append only and rejects replace before queue dispatch to preserve the active model.',
     inputSchema: {
       type: 'object',
       properties: {
         path: { type: 'string' },
-        mode: { type: 'string', enum: ['append', 'replace'], default: 'append' },
+        mode: { type: 'string', enum: ['append', 'replace'], default: 'append', description: 'Mock: append or replace. Queue: append only; replace fails closed with OPERATION_NOT_ALLOWED before creating a queue request.' },
         prefix: { type: 'string' },
         options: { type: 'object' },
         runtime: { type: 'string', enum: ['mock', 'queue'], default: 'queue' },
@@ -387,11 +465,41 @@ export const TOOL_REGISTRY = Object.freeze([
       properties: {
         recursive: { type: 'boolean', default: false, description: 'Also return nested occurrence paths. Group/instance/Face/Edge entries expose type-specific allowed operations and shared-definition policy metadata.' },
         recursive_limit: { type: 'number', default: 500 },
+        structural_groups: { type: 'boolean', default: false, description: 'Return a bounded read-only projection of Group occurrences without materializing Face/Edge leaf entries.' },
+        structural_group_limit: { type: 'integer', minimum: 1, maximum: 5000, default: 500 },
+        fresh_manifold_paths: {
+          type: 'array',
+          maxItems: 20,
+          uniqueItems: true,
+          items: { type: 'string', pattern: '^pid:[1-9][0-9]*(?:\\.[1-9][0-9]*)*$' },
+          description: 'Exact canonical Group occurrence paths to attest with a fresh read-only manifold report. Requires structural_groups=true and read_only=true.'
+        },
+        read_only: { type: 'boolean', default: false, description: 'Inspect/index without writing adoption attributes. Structural group projection options require true.' },
         force: { type: 'boolean', default: false, description: 'Rewrite existing adopted references.' },
         prefix: { type: 'string', default: 'adopted' },
         runtime: { type: 'string', enum: ['mock', 'queue'], default: 'mock' },
         timeoutMs: { type: 'number' }
-      }
+      },
+      allOf: [
+        {
+          if: {
+            anyOf: [
+              { required: ['structural_groups'], properties: { structural_groups: { const: true } } },
+              { required: ['structural_group_limit'] },
+              { required: ['fresh_manifold_paths'] }
+            ]
+          },
+          then: { required: ['read_only'], properties: { read_only: { const: true } } }
+        },
+        {
+          if: { required: ['fresh_manifold_paths'] },
+          then: { required: ['structural_groups'], properties: { structural_groups: { const: true } } }
+        },
+        {
+          if: { required: ['structural_group_limit'] },
+          then: { required: ['structural_groups'], properties: { structural_groups: { const: true } } }
+        }
+      ]
     }
   },
   {
@@ -546,6 +654,9 @@ export const TOOL_REGISTRY = Object.freeze([
         model_spec: { type: 'object' },
         reference_spec: { type: 'object' },
         includePreview: { type: 'boolean', default: true },
+        strictCollisions: { type: 'boolean' },
+        strictUnanchored: { type: 'boolean' },
+        floatingDetails: { type: 'boolean' },
         runtime: { type: 'string', enum: ['mock', 'queue'], default: 'mock' },
         timeoutMs: { type: 'number' }
       }
@@ -658,7 +769,24 @@ export const TOOL_REGISTRY = Object.freeze([
       }
     }
   }
-]);
+];
+
+export const TOOL_REGISTRY = Object.freeze(BASE_TOOL_REGISTRY.map((tool) => {
+  const properties = { ...(tool.inputSchema?.properties || {}) };
+  if (LIVE_MUTATING_TOOL_NAMES.has(tool.name)) properties.session_contract = SESSION_CONTRACT_INPUT_SCHEMA;
+  if (tool.name === 'adopt_open_model') {
+    properties.read_only = { type: 'boolean', default: false, description: 'When true, inspect/index the open model without writing adoption attributes; no Session Contract is required.' };
+  }
+  return {
+    ...tool,
+    inputSchema: {
+      ...(tool.inputSchema || { type: 'object' }),
+      properties
+    }
+  };
+}));
+
+const TOOL_INPUT_VALIDATOR = new ToolInputValidator(TOOL_REGISTRY);
 
 async function handleRequest(request, bridge) {
   if (request.method === 'initialize') {
@@ -678,6 +806,7 @@ async function handleRequest(request, bridge) {
   if (request.method === 'tools/call') {
     const name = request.params?.name;
     const args = request.params?.arguments || {};
+    TOOL_INPUT_VALIDATOR.validate(name, args);
     const result = name === 'compare_snapshots'
       ? compareSnapshots(normalizeSnapshotArgument(args.expected), normalizeSnapshotArgument(args.actual), { toleranceMm: args.toleranceMm, budgets: args.budgets, topIssueLimit: args.topIssueLimit })
       : await callTool(name, args, bridge);

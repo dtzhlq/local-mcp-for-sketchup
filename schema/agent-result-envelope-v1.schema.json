@@ -4,7 +4,7 @@
   "title": "Agent Contract v1 Result Envelope",
   "type": "object",
   "additionalProperties": false,
-  "required": ["contract_version", "kind", "ok", "task_id", "task_state", "task_version", "retryable", "idempotent_replay", "data", "error", "next_action", "artifacts"],
+  "required": ["contract_version", "kind", "ok", "task_id", "task_state", "task_version", "retryable", "idempotent_replay", "result", "data", "warnings", "error", "next_action", "artifacts"],
   "properties": {
     "contract_version": { "const": "agent-contract.v1" },
     "kind": { "const": "agent_result_envelope" },
@@ -14,12 +14,27 @@
     "task_version": { "type": ["integer", "null"], "minimum": 1 },
     "retryable": { "type": "boolean" },
     "idempotent_replay": { "type": "boolean" },
-    "data": {},
+    "result": {},
+    "data": { "description": "Backward-compatible alias of the canonical result payload; new clients should prefer result." },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["code", "message", "severity"],
+        "properties": {
+          "code": { "type": "string", "minLength": 1 },
+          "message": { "type": "string", "minLength": 1 },
+          "severity": { "const": "warn" },
+          "source": { "type": "string" }
+        }
+      }
+    },
     "error": {
       "type": ["object", "null"],
       "required": ["code", "message", "retryable", "next_action"],
       "properties": {
-        "code": { "enum": ["INVALID_ARGUMENT", "TASK_NOT_FOUND", "TASK_STATE_CONFLICT", "IDEMPOTENCY_CONFLICT", "APPROVAL_REQUIRED", "APPROVAL_INVALID", "APPROVAL_EXPIRED", "APPROVAL_REPLAYED", "PLAN_HASH_MISMATCH", "MODEL_REVISION_MISMATCH", "OPERATION_NOT_ALLOWED", "POLICY_DENIED", "ARTIFACT_NOT_FOUND", "INTERNAL_ERROR"] },
+        "code": { "enum": ["INVALID_ARGUMENT", "TASK_NOT_FOUND", "TASK_STATE_CONFLICT", "IDEMPOTENCY_CONFLICT", "APPROVAL_REQUIRED", "APPROVAL_TOKEN_FORBIDDEN", "APPROVAL_INVALID", "APPROVAL_EXPIRED", "APPROVAL_REPLAYED", "PLAN_HASH_MISMATCH", "MODEL_IDENTITY_MISMATCH", "MODEL_REVISION_MISMATCH", "MODEL_REVISION_INCOMPLETE", "HANDSHAKE_REQUIRED", "HANDSHAKE_INVALID", "HANDSHAKE_EXPIRED", "HANDSHAKE_SESSION_MISMATCH", "HANDSHAKE_DOCUMENT_MISMATCH", "HANDSHAKE_MODEL_IDENTITY_MISMATCH", "HANDSHAKE_MODEL_REVISION_MISMATCH", "HANDSHAKE_SERVER_VERSION_MISMATCH", "HANDSHAKE_SERVER_RESTARTED", "HANDSHAKE_PLUGIN_VERSION_MISMATCH", "HANDSHAKE_CAPABILITIES_MISMATCH", "QUEUE_NOT_IDLE", "QUEUE_LOCK_PRESENT", "QUEUE_STALE_LOCK", "QUEUE_REQUESTS_PENDING", "QUEUE_RESPONSES_PENDING", "OPERATION_NOT_ALLOWED", "POLICY_DENIED", "ARTIFACT_NOT_FOUND", "ARTIFACT_INTEGRITY_ERROR", "MODEL_IDENTITY_UNAVAILABLE", "MODEL_GRAPH_NOT_FOUND", "MODEL_GRAPH_INTEGRITY_ERROR", "MUTATION_RECOVERY_REQUIRED", "MUTATION_RECEIPT_INVALID", "MUTATION_EXECUTION_FAILED", "INTERNAL_ERROR"] },
         "message": { "type": "string", "minLength": 1 },
         "retryable": { "type": "boolean" },
         "next_action": { "type": ["object", "null"] },
@@ -28,6 +43,33 @@
       "additionalProperties": false
     },
     "next_action": { "type": ["object", "null"] },
-    "artifacts": { "type": "array", "items": { "$ref": "artifact-handle-v1.schema.json" } }
+    "artifacts": { "type": "array", "items": { "$ref": "artifact-handle-v1.schema.json" } },
+    "presentation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["policy_version", "interface_level", "context", "max_chars", "local_files", "vision", "structured_output", "serialization", "client_structured_output_required", "parallel", "max_in_flight_per_task", "projected", "full_result_artifact", "omitted_local_paths", "omitted_visual_payloads"],
+      "properties": {
+        "policy_version": { "const": "agent-response-policy.v1" },
+        "interface_level": { "enum": ["guided", "standard", "expert"] },
+        "context": { "enum": ["short", "standard", "long"] },
+        "max_chars": { "type": "integer", "minimum": 2048, "maximum": 250000 },
+        "local_files": { "type": "boolean" },
+        "vision": { "type": "boolean" },
+        "structured_output": { "const": true },
+        "serialization": { "const": "json_envelope" },
+        "client_structured_output_required": { "const": false },
+        "parallel": { "const": false },
+        "max_in_flight_per_task": { "const": 1 },
+        "projected": { "type": "boolean" },
+        "full_result_artifact": {
+          "anyOf": [
+            { "type": "null" },
+            { "type": "string", "pattern": "^artifact:task_[0-9a-f-]+:[0-9a-f-]+$" }
+          ]
+        },
+        "omitted_local_paths": { "type": "integer", "minimum": 0 },
+        "omitted_visual_payloads": { "type": "integer", "minimum": 0 }
+      }
+    }
   }
 }

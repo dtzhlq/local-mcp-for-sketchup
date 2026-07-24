@@ -1,0 +1,111 @@
+{
+  "version": "current-source-live-readonly-evidence.v1",
+  "kind": "current_source_live_readonly_evidence",
+  "captured_at": "2026-07-21T14:27:45.013Z",
+  "branch": "codex/agent-contract-v1",
+  "result": "pass",
+  "evidence_scope": "current_source_fresh_process_fire_escape_disposable_read_only",
+  "runtime": {
+    "name": "queue",
+    "server_version": "0.1.0-rc.2",
+    "plugin_version": "0.1.0-rc.2",
+    "sketchup_version": "26.2.242",
+    "ruby_version": "3.2.2",
+    "capability_version": "0.1.0-rc.2-capabilities.7",
+    "manifest_version": "2026-07-agent-contract-v1.4",
+    "dsl_version": 1,
+    "operation_count": 101,
+    "component_scope_operation_count": 57,
+    "occurrence_contract": "canonical-occurrence-path.v1",
+    "compatibility_ok": true
+  },
+  "installed_source": {
+    "managed_file_count": 22,
+    "installed_workspace_exact_match": true,
+    "installed_manifest_sha256": "sha256:1d564d258df0b7893be7a758927b631cce45977c4526558cc8e9808a368abc09",
+    "fresh_process_verified": true,
+    "requires_reinstall_restart": false,
+    "loaded_boolean_operations_sha256": "sha256:b98fd554894f629359651f40929cf30a7122ac90ba01217a662bea2f4c407610",
+    "workspace_boolean_operations_sha256_at_capture": "sha256:b98fd554894f629359651f40929cf30a7122ac90ba01217a662bea2f4c407610",
+    "loaded_model_revision_sha256": "sha256:b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134",
+    "workspace_model_revision_sha256_at_capture": "sha256:b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134"
+  },
+  "model": {
+    "fixture_handle": "fixture:sha256:7e649c220a265a5e27a24aae2ed9687427186c06ba335616d5cdc0191966ce72",
+    "label_trust": "untrusted_data",
+    "source_bytes_sha256": "sha256:7e649c220a265a5e27a24aae2ed9687427186c06ba335616d5cdc0191966ce72",
+    "disposable_bytes_sha256": "sha256:7e649c220a265a5e27a24aae2ed9687427186c06ba335616d5cdc0191966ce72",
+    "source_disposable_exact_match": true,
+    "size_bytes": 142149,
+    "title_disclosed": false,
+    "source_path_disclosed": false,
+    "top_level_entity_count": 1,
+    "logical_occurrence_count": 5859,
+    "revision_indexed": 5859,
+    "revision_total_seen": 5859,
+    "revision_unique_entities": 5859,
+    "reachable_definitions": 2,
+    "revision_complete": true,
+    "recursive_truncated": false,
+    "structural_group_count": 2,
+    "structural_groups_truncated": false
+  },
+  "read_only_attestation": {
+    "handshake_before_revision": "sha256:d540fdc8697e93f27a0312f75d382b6d5901597ef87e6673980fd21e97e3abb4",
+    "adoption_revision": "sha256:d540fdc8697e93f27a0312f75d382b6d5901597ef87e6673980fd21e97e3abb4",
+    "handshake_after_revision": "sha256:d540fdc8697e93f27a0312f75d382b6d5901597ef87e6673980fd21e97e3abb4",
+    "revision_unchanged": true,
+    "revision_strategy": "definition-merkle.v2",
+    "revision_unique_entity_limit": 1000000,
+    "model_modified_before": false,
+    "model_modified_during_adoption": false,
+    "model_modified_after": false,
+    "plugin_process_unchanged": true,
+    "document_unchanged": true,
+    "model_identity_unchanged": true,
+    "handshake_before_signed": true,
+    "handshake_after_signed": true,
+    "handshake_after_signature_verified_at_capture": true,
+    "session_contract_used_as_mutation_authority": false,
+    "model_mutation_requested": false,
+    "model_mutation_performed": false,
+    "model_saved_by_validation": false
+  },
+  "local_artifacts": {
+    "raw_artifacts_retained": true,
+    "raw_artifacts_contain_sensitive_fields": true,
+    "sensitive_values_embedded_in_public_evidence": false,
+    "handshake_before_sha256": "sha256:d3511b47457118d80f26dfdc47ad3afc51b70a0a527701af0fbcf5e511e42a6e",
+    "adoption_sha256": "sha256:1fcf1d3c7cb2dcf5828a7cbf0bcd5cf75de2f7d038a2c6c37c128b97efa8d6ec",
+    "handshake_after_sha256": "sha256:cd98365e65d873d81a2b5e0498e0f53ccd94e02d5e60847dce4cc25e613634e5"
+  },
+  "queue_state": {
+    "before": {
+      "queue": 0,
+      "processing": 0,
+      "responses": 0,
+      "lock_exists": false
+    },
+    "after": {
+      "queue": 0,
+      "processing": 0,
+      "responses": 0,
+      "lock_exists": false
+    }
+  },
+  "acceptance": {
+    "current_source_live_handshake": true,
+    "current_source_live_read_only_model": true,
+    "live_mutation": false,
+    "live_save_reopen": false,
+    "multi_model_native_corpus": false,
+    "external_reference_visual_correction": false,
+    "cross_version": false,
+    "release_acceptance": false
+  },
+  "boundaries": [
+    "This proves a fresh SketchUp 2026 process loaded the exact 22-file workspace plugin and returned the current capability, manifest, revision strategy, and two loaded-source attestations.",
+    "It proves one byte-exact disposable model remained on the same complete 5859-of-5859 revision with model_modified=false across a signed handshake, read-only recursive adoption, and a second signed handshake.",
+    "It does not prove a live mutation, native save/reopen, the seven-case native corpus, external-reference correction, cross-version behavior, or release acceptance."
+  ]
+}

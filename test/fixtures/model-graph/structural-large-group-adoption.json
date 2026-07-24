@@ -1,0 +1,108 @@
+{
+  "version": "2026-07-existing-model-editing.1",
+  "kind": "adopt_open_model",
+  "runtime": "mock",
+  "read_only": true,
+  "model_modified": false,
+  "model_revision": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "model_revision_complete": true,
+  "model_revision_total_seen": 71360,
+  "model_revision_indexed": 71360,
+  "occurrence_contract": "canonical-occurrence-path.v1",
+  "recursive": false,
+  "recursive_truncated": false,
+  "recursive_total_seen": 0,
+  "recursive_index": [],
+  "entities": [],
+  "classification_schemas": [],
+  "component_definition_summaries": [],
+  "snapshot": {
+    "materials": [],
+    "tags": [],
+    "scenes": [],
+    "component_definitions": [],
+    "component_definition_summaries": [],
+    "classification_schemas": []
+  },
+  "structural_groups": {
+    "version": "structural-groups.v1",
+    "total_seen": 3,
+    "total_seen_exact": true,
+    "returned": 3,
+    "truncated": false,
+    "limit": 5000,
+    "fresh_manifold_requested": 0,
+    "fresh_manifold_matched": 0,
+    "fresh_manifold_unmatched": 0,
+    "fresh_manifold_unmatched_paths": [],
+    "entries": [
+      {
+        "entity_path": "pid:101",
+        "parent_entity_path": null,
+        "path_segments": [
+          { "entity_type": "group", "persistent_id": "101", "reference": "101" }
+        ],
+        "persistent_id": "101",
+        "entity_type": "group",
+        "name": "Product_A",
+        "material": null,
+        "tag": "Product",
+        "visible": true,
+        "locked": false,
+        "effective_locked": false,
+        "locked_by_ancestor": false,
+        "direct_counts": { "faces": 6000, "edges": 12000, "vertices": 8000, "groups": 0, "component_instances": 0 },
+        "world_bounding_box": { "min": [0, 0, 0], "max": [100, 100, 100], "w": 100, "d": 100, "h": 100 },
+        "world_transform": [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+        "shared_definition": false,
+        "affected_instance_count": 1,
+        "instance_policy_required": false
+      },
+      {
+        "entity_path": "pid:102",
+        "parent_entity_path": null,
+        "path_segments": [
+          { "entity_type": "group", "persistent_id": "102", "reference": "102" }
+        ],
+        "persistent_id": "102",
+        "entity_type": "group",
+        "name": "Product_B",
+        "material": null,
+        "tag": "Product",
+        "visible": true,
+        "locked": false,
+        "effective_locked": false,
+        "locked_by_ancestor": false,
+        "direct_counts": { "faces": 2, "edges": 7, "vertices": 6, "groups": 1, "component_instances": 0 },
+        "world_bounding_box": { "min": [300, 0, 0], "max": [700, 300, 200], "w": 400, "d": 300, "h": 200 },
+        "world_transform": [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 300, 0, 0, 1],
+        "shared_definition": false,
+        "affected_instance_count": 1,
+        "instance_policy_required": false
+      },
+      {
+        "entity_path": "pid:102.201",
+        "parent_entity_path": "pid:102",
+        "path_segments": [
+          { "entity_type": "group", "persistent_id": "102", "reference": "102" },
+          { "entity_type": "group", "persistent_id": "201", "reference": "201" }
+        ],
+        "persistent_id": "201",
+        "entity_type": "group",
+        "name": "Nested_Feature",
+        "material": null,
+        "tag": "Product",
+        "visible": true,
+        "locked": false,
+        "effective_locked": false,
+        "locked_by_ancestor": false,
+        "direct_counts": { "faces": 3000, "edges": 6000, "vertices": 4000, "groups": 0, "component_instances": 0 },
+        "world_bounding_box": { "min": [350, 50, 20], "max": [450, 150, 120], "w": 100, "d": 100, "h": 100 },
+        "world_transform": [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 350, 50, 20, 1],
+        "shared_definition": true,
+        "affected_instance_count": 2,
+        "instance_policy_required": true
+      }
+    ]
+  }
+}

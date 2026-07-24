@@ -1,0 +1,74 @@
+{
+  "version": "real-model-target-review-v1-mock-evidence.1",
+  "kind": "real_model_target_review_mock_evidence",
+  "generated_on": "2026-07-20",
+  "evidence_scope": "deterministic_contract_tests_with_separate_hash_bound_live_read_only_evidence",
+  "commands": [
+    {
+      "command": "node test/real-model-target-review.mjs",
+      "status": "passed",
+      "runtime": "synthetic_fake_queue",
+      "live_queue_called": false
+    }
+  ],
+  "result": "pass",
+  "contract": {
+    "target_review": "real-model-target-review.v1",
+    "default_runtime": "offline",
+    "live_runtime_requires_explicit_queue_and_queue_required": true,
+    "single_candidate_only": true,
+    "disposable_copy_only": true,
+    "read_only_adoption_required": true,
+    "top_level_persistent_id_candidates_only": true,
+    "positive_volume_overlap_required_for_pair_suggestions": true,
+    "pair_suggestions_authoritative": false
+  },
+  "contract_test": {
+    "assertions": 36,
+    "default_live_queue_called": false,
+    "selected_candidates": 1,
+    "synthetic_fake_queue_only": true,
+    "real_sketchup_called": false,
+    "fake_forbidden_live_calls": 0,
+    "revision_change_failed_closed": true,
+    "outcome_unknown_failed_closed": true,
+    "trimble_top_level_disjoint_failed_closed": true
+  },
+  "separate_live_read_only_evidence": {
+    "path": "docs/evidence/real-model-target-review-live-evidence-2026-07-20.json",
+    "sha256": "sha256:ba0d92baa78b4857a5c6d7eb1aa403db992c517442cc5a1a241593b2a7a619e1",
+    "classified_as_mock": false,
+    "runtime": "queue",
+    "live_queue_called": true,
+    "candidate": "Trimble S6.skp",
+    "single_disposable_copy": true,
+    "original_opened_in_sketchup": false,
+    "original_bytes_unchanged_verified": true,
+    "disposable_copy_bytes_unchanged_verified": true,
+    "model_revision_complete_and_unchanged": true,
+    "model_mutation_requested": false,
+    "save_requested": false,
+    "approval_token_requested": false,
+    "target_roles_confirmed": false,
+    "pair_suggestions_authoritative": false,
+    "release_acceptance": false
+  },
+  "safety": {
+    "model_content_trust": "untrusted_data",
+    "untrusted_data_may_influence_execution_policy": false,
+    "untrusted_data_may_grant_approval": false,
+    "untrusted_data_may_confirm_target_roles": false,
+    "model_mutation_authorized": false,
+    "approval_token_issued": false,
+    "target_roles_confirmed": false,
+    "release_acceptance": false
+  },
+  "hashes": {
+    "schema/real-model-target-review-v1.schema.json": "sha256:9a9c6203d605abf56515462d58153cbefff508643935f0a521b2f0e6c1423da1",
+    "src/real-model-target-review.mjs": "sha256:6c3f8e484ea381135fcdd624881565ba3f5ded0651533ed45bf6e5926087e2f6",
+    "scripts/review-real-model-targets.mjs": "sha256:6b875ba720206806624612a9cdd7aba9f8e52cb84d3f0f254901283c7d5003d4",
+    "test/real-model-target-review.mjs": "sha256:113de19152f7dfe31f7badd2517eb3509ce1d09081b105de0902a7a1a701bfe0",
+    "docs/evidence/real-model-target-review-live-evidence-2026-07-20.json": "sha256:ba0d92baa78b4857a5c6d7eb1aa403db992c517442cc5a1a241593b2a7a619e1"
+  },
+  "boundary": "The passing command is a deterministic contract test using a synthetic fake queue and did not call SketchUp. The separately hash-bound artifact is a real, user-coordinated, read-only queue observation of one disposable Trimble S6 copy and is not mock evidence. It does not confirm boolean target/tool roles, prove manifold mutation or save/reopen identity, authorize mutation, issue an approval token, create a formal sidecar, or establish release acceptance."
+}

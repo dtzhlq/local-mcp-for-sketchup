@@ -1,0 +1,70 @@
+{
+  "version": "copy-fast-session-mock-evidence.v1",
+  "kind": "copy_fast_session_mock_evidence",
+  "created_at": "2026-07-24T12:00:00.000Z",
+  "branch": "codex/agent-contract-v1",
+  "runtime": "mock_offline",
+  "result": "pass",
+  "contracts": {
+    "session": "copy-fast-session.v1",
+    "public_summary": "copy-fast-session-summary.v1",
+    "agent_task": "agent-contract.v1",
+    "mutation_receipt": "task-mutation-receipt.v1"
+  },
+  "policy": {
+    "source": "server_user_execution_policy",
+    "activation": "server_verified_copy_root",
+    "session_scope": "current_server_process_and_model_copy",
+    "allowed_risks": ["S1", "S2", "S3", "S4"],
+    "default_ttl_ms": 28800000,
+    "allow_save_model_by_default": false,
+    "agent_can_enable": false,
+    "outside_root_behavior": "trusted_user_approval_required"
+  },
+  "acceptance": {
+    "prepared_task_state": "approved",
+    "next_action": "execute_copy_edit",
+    "authorization_mode": "server_policy_copy_fast_session",
+    "per_edit_user_action_required": false,
+    "per_edit_approval_challenges": 0,
+    "session_reused_across_tasks": true,
+    "session_reused_across_model_revisions": true,
+    "s1_executed": true,
+    "s4_executed": true,
+    "idempotent_retry": true,
+    "duplicate_mutation": false,
+    "outside_root_failed_closed": true,
+    "agent_policy_claim_cannot_enable": true,
+    "legacy_binding_without_session_failed_closed": true,
+    "restart_failed_closed": true,
+    "expiry_failed_closed": true,
+    "revocation_failed_closed": true,
+    "public_roots_exposed": false,
+    "public_path_fingerprints_exposed": false,
+    "live_queue_calls": 0
+  },
+  "checks": [
+    { "command": "node test/copy-fast-session.mjs", "status": "passed" },
+    { "command": "node test/trusted-model-copy-auto-approval.mjs", "status": "passed" },
+    { "command": "node test/agent-contract.mjs", "status": "passed" },
+    { "command": "node test/agent-gateway.mjs", "status": "passed" },
+    { "command": "node test/agent-gateway-mutation-recovery.mjs", "status": "passed" }
+  ],
+  "source_hashes": {
+    "src/copy-fast-session.mjs": "9478034fcbcbe739bccf687c7ea4e01e7a40783926d72cc11fd5b356e8d291ea",
+    "src/agent-contract.mjs": "5e0901b3136f6c9f8ff09d2085d98a5b879e83646394fc827863b854560a164b",
+    "src/existing-model-editing.mjs": "8deb1c4c97ff3acd9d462cdb599fada290cf65e3b24ea6f3c7f82468022295e3",
+    "src/agent-gateway.mjs": "f43dc965b696555d431d979862d4ccfcf695520651f1d81e28030e225d42f6a7",
+    "src/agent-response-projection.mjs": "93adbbcf67420a85255986f48211abf0c1ad2d82d5c393fed22b7a7c4d6e07d6",
+    "src/bridge.mjs": "294dde77769a015b9fd7ea2808fe1cdcd2adb826f9a60bef46762cc3c056b58d",
+    "src/task-mutation-receipt-ledger.mjs": "947f2ee40a1a597c3a5a9ff244b2e9ecd00c684de12e3f4f6f17ec2377ba3ac3",
+    "schema/copy-fast-session-v1.schema.json": "0d8e6b0477e05a9ff44dd83723a082fa8aab0b62e21448034ceaff6a1894acee",
+    "schema/copy-fast-session-summary-v1.schema.json": "0ae8a0d377a97fd86f2d34d1848c690f868fce100f4fac0ef5e41f80037d9626",
+    "schema/agent-task-v1.schema.json": "ef4d7c9be6634c6bfc3c5ebf656b878a9abceb34db0887b120ed5c3a5c2cd62e",
+    "schema/task-mutation-receipt-v1.schema.json": "f322cf90db131fd203f66f28ec084d4bb7693f49b36b58afaaa88f1d7acc3f63",
+    "test/copy-fast-session.mjs": "6070b373044132b768cc06429a78e46a01c17d280f0c6134153cfa9ecaaeb7bd",
+    "test/trusted-model-copy-auto-approval.mjs": "f63c77c9205c64e4b0616b6cd50f0cc7c45fa2499f23eccf8fb347b011244bcc"
+  },
+  "release_acceptance": false,
+  "boundary": "This current-source mock evidence proves the server-owned Copy Fast contract and offline mutation behavior only. It does not prove live SketchUp queue execution, plugin/runtime compatibility, a fresh live handshake, visual correctness, cross-version behavior, or release acceptance."
+}

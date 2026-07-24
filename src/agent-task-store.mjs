@@ -1,27 +1,37 @@
 import crypto from 'node:crypto';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { AGENT_CONTRACT_VERSION, AgentContractError, assertTaskTransition, fingerprintRequest } from './agent-contract.mjs';
+import {
+  AGENT_CONTRACT_VERSION,
+  AgentContractError,
+  assertTaskTransition,
+  fingerprintRequest,
+  publicExecutionPolicy
+} from './agent-contract.mjs';
 import { defaultStateDir } from './paths.mjs';
+import { TaskMutationReceiptLedger } from './task-mutation-receipt-ledger.mjs';
 
 export class AgentTaskStore {
-  constructor({ rootDir = path.join(defaultStateDir, 'agent-contract-v1') } = {}) {
+  constructor({ rootDir = path.join(defaultStateDir, 'agent-contract-v1'), idempotencyLeaseMs = 30_000 } = {}) {
     this.rootDir = path.resolve(rootDir);
     this.tasksDir = path.join(this.rootDir, 'tasks');
     this.idempotencyDir = path.join(this.rootDir, 'idempotency');
+    this.taskRequestLocksDir = path.join(this.rootDir, 'task-request-locks');
+    this.mutationReceiptLedger = new TaskMutationReceiptLedger({ rootDir: path.join(this.rootDir, 'mutation-receipts-v1') });
+    this.idempotencyLeaseMs = positiveLease(idempotencyLeaseMs);
     this.operationChain = Promise.resolve();
   }
 
-  async createTask({ intent, interfaceLevel = 'guided', instruction, clientCapabilities, executionPolicy, inputs = {}, idempotencyKey } = {}) {
+  async createTask({ intent, interfaceLevel = 'guided', instruction, clientCapabilities, executionPolicy, responsePolicy, inputs = {}, idempotencyKey } = {}) {
     return this.serialized(async () => {
       requireString(intent, 'intent');
       requireString(instruction, 'instruction');
+      const taskId = `task_${crypto.randomUUID()}`;
       const fingerprint = fingerprintRequest({ operation: 'create_task', intent, interfaceLevel, instruction, clientCapabilities, inputs });
-      const claim = await this.claimIdempotency({ key: idempotencyKey, fingerprint, operation: 'create_task' });
-      if (claim.replayed) return { task: await this.getTask(claim.record.task_id, { includePrivate: true }), replayed: true };
+      const claim = await this.claimIdempotency({ key: idempotencyKey, fingerprint, operation: 'create_task', taskId });
+      if (claim.replayed) return { task: await this.getTask(claim.record.task_id, { includePrivate: true }), replayed: true, recovered_pending: claim.recovered_pending === true };
 
       const now = new Date().toISOString();
-      const taskId = `task_${crypto.randomUUID()}`;
       const task = {
         contract_version: AGENT_CONTRACT_VERSION,
         kind: 'agent_task',
@@ -32,7 +42,8 @@ export class AgentTaskStore {
         interface_level: ['guided', 'standard', 'expert'].includes(interfaceLevel) ? interfaceLevel : 'guided',
         instruction,
         client_capabilities: clientCapabilities,
-        execution_policy: executionPolicy,
+        execution_policy: publicExecutionPolicy(executionPolicy),
+        ...(responsePolicy ? { response_policy: structuredClone(responsePolicy) } : {}),
         inputs,
         next_action: { action: 'continue_server_work' },
         artifacts: [],
@@ -43,7 +54,7 @@ export class AgentTaskStore {
       };
       await this.writeTask(task);
       await this.finishIdempotencyClaim(claim, taskId);
-      return { task, replayed: false };
+      return { task, replayed: false, recovered_pending: claim.recovered_pending === true };
     });
   }
 
@@ -57,6 +68,60 @@ export class AgentTaskStore {
       throw error;
     }
     return includePrivate ? task : publicTask(task);
+  }
+
+  async claimTaskRequest({ taskId, operation = 'agent_task_request' } = {}) {
+    await this.getTask(taskId, { includePrivate: true });
+    requireString(operation, 'task_request.operation');
+    await fs.mkdir(this.taskRequestLocksDir, { recursive: true, mode: 0o700 });
+    const lockPath = path.join(this.taskRequestLocksDir, `${taskId}.lock`);
+    const record = {
+      version: 'agent-task-request-lock.v1',
+      owner_id: crypto.randomUUID(),
+      owner_pid: process.pid,
+      task_id: taskId,
+      operation,
+      created_at: new Date().toISOString()
+    };
+    for (let attempt = 0; attempt < 3; attempt += 1) {
+      try {
+        await createJsonExclusive(lockPath, record);
+        return { lockPath, record };
+      } catch (error) {
+        if (error?.code !== 'EEXIST') throw error;
+        let existing;
+        try {
+          existing = JSON.parse(await fs.readFile(lockPath, 'utf8'));
+        } catch (readError) {
+          if (readError?.code === 'ENOENT') continue;
+          throw taskRequestConflict(taskId);
+        }
+        if (!validTaskRequestLock(existing, taskId) || processIsAlive(existing.owner_pid)) {
+          throw taskRequestConflict(taskId);
+        }
+        if (!await recoverDeadTaskRequestLock(lockPath, existing, taskId)) {
+          throw taskRequestConflict(taskId);
+        }
+      }
+    }
+    throw taskRequestConflict(taskId);
+  }
+
+  async releaseTaskRequest(claim) {
+    if (!claim?.lockPath || !claim?.record?.owner_id) return;
+    let current;
+    try {
+      current = JSON.parse(await fs.readFile(claim.lockPath, 'utf8'));
+    } catch (error) {
+      if (error?.code === 'ENOENT') return;
+      throw error;
+    }
+    if (current.owner_id !== claim.record.owner_id
+      || current.owner_pid !== claim.record.owner_pid
+      || current.task_id !== claim.record.task_id) {
+      throw new AgentContractError('TASK_STATE_CONFLICT', 'The task request lock owner changed before release.');
+    }
+    await fs.unlink(claim.lockPath);
   }
 
   async transition(taskId, to, { reason = 'server_transition', patch = {} } = {}) {
@@ -96,14 +161,122 @@ export class AgentTaskStore {
 
   async claimTaskOperation({ taskId, operation, idempotencyKey, input }) {
     return this.serialized(async () => {
-      await this.getTask(taskId, { includePrivate: true });
+      const task = await this.getTask(taskId, { includePrivate: true });
       const fingerprint = fingerprintRequest({ task_id: taskId, operation, input });
-      return this.claimIdempotency({ key: idempotencyKey, fingerprint, operation, taskId });
+      return this.claimIdempotency({
+        key: idempotencyKey,
+        fingerprint,
+        operation,
+        taskId,
+        taskVersionAtClaim: task.task_version,
+        taskStateAtClaim: task.state
+      });
     });
   }
 
-  async completeTaskOperation(claim, taskId) {
-    return this.serialized(() => this.finishIdempotencyClaim(claim, taskId));
+  async completeTaskOperation(claim, taskId, { response } = {}) {
+    return this.serialized(async () => {
+      try {
+        return await this.finishIdempotencyClaim(claim, taskId, { response });
+      } finally {
+        if (claim?.recovery_lock) await releaseIdempotencyRecoveryLock(claim.recovery_lock);
+      }
+    });
+  }
+
+  async abandonTaskOperationRecovery(claim, { errorCode = 'MUTATION_RECOVERY_REQUIRED' } = {}) {
+    return this.serialized(async () => {
+      if (!claim?.filePath || !claim?.record) return;
+      try {
+        const current = JSON.parse(await fs.readFile(claim.filePath, 'utf8'));
+        if (current.fingerprint !== claim.record.fingerprint || current.bound_task_id !== claim.record.bound_task_id) {
+          throw new AgentContractError('MUTATION_RECEIPT_INVALID', 'The recovering idempotency claim changed during finalization.');
+        }
+        if (current.status === 'completed' || current.completed_at) return;
+        await atomicWriteJson(claim.filePath, {
+          ...current,
+          status: 'pending',
+          owner_pid: null,
+          lease_expires_at: new Date().toISOString(),
+          last_finalization_error: String(errorCode || 'MUTATION_RECOVERY_REQUIRED'),
+          finalization_abandoned_at: new Date().toISOString()
+        });
+      } finally {
+        if (claim.recovery_lock) await releaseIdempotencyRecoveryLock(claim.recovery_lock);
+      }
+    });
+  }
+
+  async recordTaskMutationReceipt({ taskId, claim, binding, bridgeReceipt, finalizer } = {}) {
+    return this.serialized(async () => {
+      const task = await this.getTask(taskId, { includePrivate: true });
+      return this.mutationReceiptLedger.record({ task, claim, binding, bridgeReceipt, finalizer });
+    });
+  }
+
+  async loadTaskMutationReceipt(taskId, { allowMissing = false, claimRecord } = {}) {
+    const receipt = await this.mutationReceiptLedger.load(taskId, { allowMissing });
+    if (receipt && claimRecord) await this.mutationReceiptLedger.verify(receipt, { taskId, claimRecord });
+    return receipt;
+  }
+
+  async claimMutationFinalizationRecovery(taskId) {
+    return this.serialized(async () => {
+      const task = await this.getTask(taskId, { includePrivate: true });
+      if (!['executing', 'verifying'].includes(task.state)) return null;
+      const receipt = await this.mutationReceiptLedger.load(taskId, { allowMissing: true });
+      if (!receipt) {
+        return { outcome_unknown: true, task };
+      }
+      const filePath = this.idempotencyClaimPath(receipt.idempotency_claim_id);
+      let existing;
+      try {
+        existing = JSON.parse(await fs.readFile(filePath, 'utf8'));
+      } catch (error) {
+        if (error?.code === 'ENOENT') {
+          throw new AgentContractError('MUTATION_RECEIPT_INVALID', 'The mutation receipt idempotency claim is missing.');
+        }
+        throw error;
+      }
+      await this.mutationReceiptLedger.verify(receipt, { taskId, claimRecord: existing });
+      if (existing.status === 'completed' || existing.completed_at) {
+        return { receipt, task, completed_claim: existing, filePath };
+      }
+      if (existing.response !== undefined) {
+        throw new AgentContractError('MUTATION_RECEIPT_INVALID', 'A pending mutation claim unexpectedly already contains a response.');
+      }
+      if (!pendingClaimIsStale(existing, this.idempotencyLeaseMs)) return null;
+      const recoveryLock = await acquireIdempotencyRecoveryLock(filePath, this.idempotencyLeaseMs);
+      if (!recoveryLock) return null;
+      try {
+        existing = JSON.parse(await fs.readFile(filePath, 'utf8'));
+        await this.mutationReceiptLedger.verify(receipt, { taskId, claimRecord: existing });
+        if (existing.status === 'completed' || existing.completed_at) {
+          await releaseIdempotencyRecoveryLock(recoveryLock);
+          return { receipt, task, completed_claim: existing, filePath };
+        }
+        if (existing.response !== undefined) {
+          throw new AgentContractError('MUTATION_RECEIPT_INVALID', 'A pending mutation claim unexpectedly already contains a response.');
+        }
+        if (!pendingClaimIsStale(existing, this.idempotencyLeaseMs)) {
+          await releaseIdempotencyRecoveryLock(recoveryLock);
+          return null;
+        }
+        const recovered = recoveredMutationClaim(existing, this.idempotencyLeaseMs);
+        await atomicWriteJson(filePath, recovered);
+        return {
+          filePath,
+          record: recovered,
+          replayed: false,
+          recovered_pending: true,
+          recovery_receipt: receipt,
+          recovery_lock: recoveryLock
+        };
+      } catch (error) {
+        await releaseIdempotencyRecoveryLock(recoveryLock);
+        throw error;
+      }
+    });
   }
 
   async registerArtifact(taskId, { filePath, kind = 'json', mediaType = 'application/json', label } = {}) {
@@ -112,6 +285,13 @@ export class AgentTaskStore {
       const task = await this.getTask(taskId, { includePrivate: true });
       const stat = await fs.stat(filePath);
       if (!stat.isFile()) throw new AgentContractError('ARTIFACT_NOT_FOUND', 'The server artifact is not a regular file.');
+      const resolvedPath = path.resolve(filePath);
+      const existingRecord = task.artifacts.find((item) => item.label === (label || path.basename(filePath))
+        && item.kind === kind
+        && item.media_type === mediaType
+        && item.size_bytes === stat.size
+        && task.private?.artifact_paths?.[item.handle] === resolvedPath);
+      if (existingRecord) return structuredClone(existingRecord);
       const artifactId = crypto.randomUUID();
       const handle = `artifact:${taskId}:${artifactId}`;
       const record = {
@@ -129,7 +309,7 @@ export class AgentTaskStore {
         artifacts: [...task.artifacts, record],
         private: {
           ...task.private,
-          artifact_paths: { ...(task.private?.artifact_paths || {}), [handle]: path.resolve(filePath) }
+          artifact_paths: { ...(task.private?.artifact_paths || {}), [handle]: resolvedPath }
         }
       };
       await this.writeTask(next);
@@ -137,7 +317,7 @@ export class AgentTaskStore {
     });
   }
 
-  async readArtifact(handle, { maxChars = 12000 } = {}) {
+  async readArtifact(handle, { maxChars = 12000, offset = 0 } = {}) {
     const match = /^artifact:(task_[0-9a-f-]+):([0-9a-f-]+)$/i.exec(String(handle || ''));
     if (!match) throw new AgentContractError('ARTIFACT_NOT_FOUND', 'The artifact handle is invalid.');
     const task = await this.getTask(match[1], { includePrivate: true });
@@ -153,41 +333,190 @@ export class AgentTaskStore {
       if (error?.code === 'ENOENT') throw new AgentContractError('ARTIFACT_NOT_FOUND', 'The artifact content is no longer available.');
       throw error;
     }
-    const limit = Math.max(256, Math.min(Number(maxChars) || 12000, 100000));
+    const requestedLimit = Number(maxChars);
+    if (!Number.isInteger(requestedLimit) || requestedLimit < 256 || requestedLimit > 100000) {
+      throw new AgentContractError('INVALID_ARGUMENT', 'artifact max_chars must be an integer between 256 and 100000.');
+    }
+    const limit = requestedLimit;
+    const start = Number(offset);
+    if (!Number.isInteger(start) || start < 0 || start > content.length) {
+      throw new AgentContractError('INVALID_ARGUMENT', 'artifact offset must be an integer within the available content.');
+    }
+    const end = Math.min(start + limit, content.length);
+    const eof = end >= content.length;
     return {
       ...record,
       encoding: binary ? 'base64' : 'utf8',
-      content: content.slice(0, limit),
-      truncated: content.length > limit,
-      next_action: content.length > limit ? { action: 'read_artifact', handle, max_chars: Math.min(limit * 2, 100000) } : null
+      content: content.slice(start, end),
+      offset: start,
+      next_offset: eof ? null : end,
+      total_chars: content.length,
+      eof,
+      truncated: !eof,
+      next_action: eof ? null : { action: 'read_artifact', handle, offset: end, max_chars: limit }
     };
   }
 
-  async claimIdempotency({ key, fingerprint, operation, taskId = null }) {
+  async inspectArtifact(handle) {
+    const match = /^artifact:(task_[0-9a-f-]+):([0-9a-f-]+)$/i.exec(String(handle || ''));
+    if (!match) throw new AgentContractError('ARTIFACT_NOT_FOUND', 'The artifact handle is invalid.');
+    const task = await this.getTask(match[1], { includePrivate: true });
+    const record = task.artifacts.find((item) => item.handle === handle);
+    const filePath = task.private?.artifact_paths?.[handle];
+    if (!record || !filePath) throw new AgentContractError('ARTIFACT_NOT_FOUND', 'The artifact handle does not exist.');
+    let buffer;
+    try {
+      buffer = await fs.readFile(filePath);
+    } catch (error) {
+      if (error?.code === 'ENOENT') throw new AgentContractError('ARTIFACT_NOT_FOUND', 'The artifact content is no longer available.');
+      throw error;
+    }
+    let json = null;
+    if (record.media_type === 'application/json') {
+      try {
+        json = JSON.parse(buffer.toString('utf8'));
+      } catch {
+        throw new AgentContractError('MODEL_GRAPH_INTEGRITY_ERROR', 'A JSON lineage artifact is no longer valid JSON.');
+      }
+    }
+    return {
+      record: structuredClone(record),
+      task_id: match[1],
+      content_sha256: `sha256:${crypto.createHash('sha256').update(buffer).digest('hex')}`,
+      json
+    };
+  }
+
+  async claimIdempotency({ key, fingerprint, operation, taskId = null, taskVersionAtClaim = null, taskStateAtClaim = null }) {
     if (!key) return { disabled: true };
     requireString(key, 'idempotency_key');
     const filePath = this.idempotencyPath(key);
     await fs.mkdir(this.idempotencyDir, { recursive: true });
-    const record = { key_hash: fingerprintRequest(key), fingerprint, operation, task_id: taskId, created_at: new Date().toISOString() };
+    const record = {
+      key_hash: fingerprintRequest(key),
+      fingerprint,
+      operation,
+      task_id: operation === 'create_task' ? taskId : null,
+      bound_task_id: taskId || null,
+      status: 'pending',
+      owner_pid: process.pid,
+      lease_expires_at: new Date(Date.now() + this.idempotencyLeaseMs).toISOString(),
+      task_version_at_claim: taskVersionAtClaim,
+      task_state_at_claim: taskStateAtClaim,
+      created_at: new Date().toISOString()
+    };
     try {
-      const handle = await fs.open(filePath, 'wx', 0o600);
-      await handle.writeFile(`${JSON.stringify(record, null, 2)}\n`, 'utf8');
-      await handle.close();
+      await createJsonExclusive(filePath, record);
       return { filePath, record, replayed: false };
     } catch (error) {
       if (error?.code !== 'EEXIST') throw error;
       const existing = JSON.parse(await fs.readFile(filePath, 'utf8'));
-      if (existing.fingerprint !== fingerprint || existing.operation !== operation || (taskId && existing.task_id && existing.task_id !== taskId)) {
-        throw new AgentContractError('IDEMPOTENCY_CONFLICT', 'The idempotency key was already used for a different request.');
+      assertMatchingIdempotencyRecord(existing, record, operation, taskId);
+      const completed = existing.status === 'completed' || Boolean(existing.completed_at);
+      if (!completed || !existing.task_id) {
+        const recovered = await this.recoverPendingIdempotencyClaim({
+          filePath,
+          existing,
+          replacement: record,
+          operation,
+          taskId
+        });
+        if (recovered) return recovered;
+        throw new AgentContractError('TASK_STATE_CONFLICT', 'The matching request is still being processed.');
       }
-      if (!existing.task_id) throw new AgentContractError('TASK_STATE_CONFLICT', 'The matching request is still being processed.');
       return { filePath, record: existing, replayed: true };
     }
   }
 
-  async finishIdempotencyClaim(claim, taskId) {
+  async recoverPendingIdempotencyClaim({ filePath, existing, replacement, operation, taskId }) {
+    if (!pendingClaimIsStale(existing, this.idempotencyLeaseMs)) return null;
+    const recoveryLock = await acquireIdempotencyRecoveryLock(filePath, this.idempotencyLeaseMs);
+    if (!recoveryLock) return null;
+    let retainRecoveryLock = false;
+    try {
+      existing = JSON.parse(await fs.readFile(filePath, 'utf8'));
+      assertMatchingIdempotencyRecord(existing, replacement, operation, taskId);
+      const completedClaim = existing.status === 'completed' || Boolean(existing.completed_at);
+      if (completedClaim && existing.task_id) {
+        return { filePath, record: existing, replayed: true, recovered_pending: true };
+      }
+      if (!pendingClaimIsStale(existing, this.idempotencyLeaseMs)) return null;
+
+      const boundTaskId = existing.bound_task_id || existing.task_id || null;
+      let boundTask = null;
+      if (boundTaskId) {
+        try {
+          boundTask = await this.getTask(boundTaskId, { includePrivate: true });
+        } catch (error) {
+          if (error?.code !== 'TASK_NOT_FOUND') throw error;
+        }
+      }
+      if (operation === 'create_task') {
+        if (boundTask) {
+          const completed = recoveredCompletedClaim(existing, boundTask.task_id);
+          await atomicWriteJson(filePath, completed);
+          return { filePath, record: completed, replayed: true, recovered_pending: true };
+        }
+        const recovered = {
+          ...replacement,
+          task_id: taskId,
+          bound_task_id: taskId,
+          recovered_at: new Date().toISOString()
+        };
+        await atomicWriteJson(filePath, recovered);
+        return { filePath, record: recovered, replayed: false, recovered_pending: true };
+      }
+      if (!boundTask) {
+        throw new AgentContractError('TASK_STATE_CONFLICT', 'A stale idempotency claim references a missing task.');
+      }
+      if (['executing', 'verifying'].includes(boundTask.state)) {
+        const receipt = await this.mutationReceiptLedger.load(boundTask.task_id, { allowMissing: true });
+        if (receipt) {
+          await this.mutationReceiptLedger.verify(receipt, { taskId: boundTask.task_id, claimRecord: existing });
+          if (existing.response !== undefined) {
+            throw new AgentContractError('MUTATION_RECEIPT_INVALID', 'A pending mutation claim unexpectedly already contains a response.');
+          }
+          const recovered = recoveredMutationClaim(existing, this.idempotencyLeaseMs);
+          await atomicWriteJson(filePath, recovered);
+          retainRecoveryLock = true;
+          return {
+            filePath,
+            record: recovered,
+            replayed: false,
+            recovered_pending: true,
+            recovery_receipt: receipt,
+            recovery_lock: recoveryLock
+          };
+        }
+        throw new AgentContractError('MUTATION_EXECUTION_FAILED', 'A prior request stopped after mutation may have started. Inspect the task and active model before continuing.', {
+          details: { task_id: boundTask.task_id, task_state: boundTask.state, outcome_unknown: true }
+        });
+      }
+      const noProgress = boundTask.task_version === existing.task_version_at_claim && boundTask.state === existing.task_state_at_claim;
+      if (noProgress) {
+        const recovered = { ...replacement, recovered_at: new Date().toISOString() };
+        await atomicWriteJson(filePath, recovered);
+        return { filePath, record: recovered, replayed: false, recovered_pending: true };
+      }
+      const completed = recoveredCompletedClaim(existing, boundTask.task_id);
+      await atomicWriteJson(filePath, completed);
+      return { filePath, record: completed, replayed: true, recovered_pending: true };
+    } finally {
+      if (!retainRecoveryLock) await releaseIdempotencyRecoveryLock(recoveryLock);
+    }
+  }
+
+  async finishIdempotencyClaim(claim, taskId, { response } = {}) {
     if (!claim || claim.disabled || claim.replayed) return;
-    await atomicWriteJson(claim.filePath, { ...claim.record, task_id: taskId, completed_at: new Date().toISOString() });
+    await atomicWriteJson(claim.filePath, {
+      ...claim.record,
+      task_id: taskId,
+      bound_task_id: claim.record.bound_task_id || taskId,
+      status: 'completed',
+      lease_expires_at: null,
+      ...(response !== undefined ? { response: structuredClone(response) } : {}),
+      completed_at: new Date().toISOString()
+    });
   }
 
   async writeTask(task) {
@@ -202,6 +531,13 @@ export class AgentTaskStore {
 
   idempotencyPath(key) {
     return path.join(this.idempotencyDir, `${crypto.createHash('sha256').update(key).digest('hex')}.json`);
+  }
+
+  idempotencyClaimPath(claimId) {
+    if (!/^[0-9a-f]{64}$/.test(String(claimId || ''))) {
+      throw new AgentContractError('MUTATION_RECEIPT_INVALID', 'The mutation receipt idempotency claim id is invalid.');
+    }
+    return path.join(this.idempotencyDir, `${claimId}.json`);
   }
 
   serialized(callback) {
@@ -223,6 +559,186 @@ async function atomicWriteJson(filePath, value) {
   await fs.rename(temporary, filePath);
 }
 
+async function createJsonExclusive(filePath, value) {
+  await fs.mkdir(path.dirname(filePath), { recursive: true });
+  const temporary = `${filePath}.${process.pid}.${crypto.randomUUID()}.tmp`;
+  let handle;
+  try {
+    handle = await fs.open(temporary, 'wx', 0o600);
+    await handle.writeFile(`${JSON.stringify(value, null, 2)}\n`, 'utf8');
+    await handle.sync();
+    await handle.close();
+    handle = null;
+    await fs.link(temporary, filePath);
+  } finally {
+    await handle?.close().catch(() => {});
+    await fs.unlink(temporary).catch(() => {});
+  }
+}
+
 function requireString(value, field) {
   if (typeof value !== 'string' || !value.trim()) throw new AgentContractError('INVALID_ARGUMENT', `${field} must be a non-empty string.`);
+}
+
+function positiveLease(value) {
+  const parsed = Number(value);
+  if (!Number.isInteger(parsed) || parsed < 10 || parsed > 10 * 60 * 1000) {
+    throw new AgentContractError('INVALID_ARGUMENT', 'idempotencyLeaseMs must be between 10 ms and 10 minutes.');
+  }
+  return parsed;
+}
+
+function taskRequestConflict(taskId) {
+  return new AgentContractError(
+    'TASK_STATE_CONFLICT',
+    'Another request for this task is already in flight.',
+    { nextAction: { action: 'resume_task', task_id: taskId, retry: 'after_current_request' } }
+  );
+}
+
+function validTaskRequestLock(value, taskId) {
+  return value?.version === 'agent-task-request-lock.v1'
+    && value.task_id === taskId
+    && typeof value.owner_id === 'string'
+    && /^[0-9a-f-]{36}$/i.test(value.owner_id)
+    && Number.isInteger(value.owner_pid)
+    && value.owner_pid > 0;
+}
+
+async function recoverDeadTaskRequestLock(lockPath, expected, taskId) {
+  const recoveryPath = `${lockPath}.recovery`;
+  const recovery = {
+    version: 'agent-task-request-lock-recovery.v1',
+    owner_id: crypto.randomUUID(),
+    owner_pid: process.pid,
+    task_id: taskId,
+    created_at: new Date().toISOString()
+  };
+  try {
+    await createJsonExclusive(recoveryPath, recovery);
+  } catch (error) {
+    if (error?.code === 'EEXIST') return false;
+    throw error;
+  }
+  try {
+    let current;
+    try {
+      current = JSON.parse(await fs.readFile(lockPath, 'utf8'));
+    } catch (error) {
+      if (error?.code === 'ENOENT') return true;
+      return false;
+    }
+    if (!validTaskRequestLock(current, taskId)
+      || current.owner_id !== expected.owner_id
+      || current.owner_pid !== expected.owner_pid
+      || processIsAlive(current.owner_pid)) return false;
+    await fs.unlink(lockPath);
+    return true;
+  } finally {
+    await fs.unlink(recoveryPath).catch(() => {});
+  }
+}
+
+function pendingClaimIsStale(record, fallbackLeaseMs) {
+  const leaseExpiry = Date.parse(record?.lease_expires_at || '');
+  const createdAt = Date.parse(record?.created_at || '');
+  const expired = Number.isFinite(leaseExpiry)
+    ? leaseExpiry <= Date.now()
+    : Number.isFinite(createdAt) && createdAt + fallbackLeaseMs <= Date.now();
+  return expired && !processIsAlive(record?.owner_pid);
+}
+
+function processIsAlive(pid) {
+  if (!Number.isInteger(Number(pid)) || Number(pid) <= 0) return false;
+  try {
+    process.kill(Number(pid), 0);
+    return true;
+  } catch (error) {
+    return error?.code !== 'ESRCH';
+  }
+}
+
+function recoveredCompletedClaim(record, taskId) {
+  return {
+    ...record,
+    task_id: taskId,
+    bound_task_id: record.bound_task_id || taskId,
+    status: 'completed',
+    lease_expires_at: null,
+    recovered_at: new Date().toISOString(),
+    completed_at: new Date().toISOString()
+  };
+}
+
+function recoveredMutationClaim(record, leaseMs) {
+  return {
+    ...record,
+    status: 'recovery_pending',
+    owner_pid: process.pid,
+    lease_expires_at: new Date(Date.now() + leaseMs).toISOString(),
+    finalization_recovery_started_at: new Date().toISOString()
+  };
+}
+
+function assertMatchingIdempotencyRecord(record, replacement, operation, taskId) {
+  const boundTaskId = record.bound_task_id || record.task_id || null;
+  if (record.fingerprint !== replacement.fingerprint || record.operation !== operation || (operation !== 'create_task' && taskId && boundTaskId && boundTaskId !== taskId)) {
+    throw new AgentContractError('IDEMPOTENCY_CONFLICT', 'The idempotency key was already used for a different request.');
+  }
+}
+
+async function acquireIdempotencyRecoveryLock(filePath, leaseMs) {
+  const lockPath = `${filePath}.recovery.lock`;
+  const ownerToken = crypto.randomUUID();
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    let handle;
+    try {
+      handle = await fs.open(lockPath, 'wx', 0o600);
+      const now = new Date();
+      await handle.writeFile(`${JSON.stringify({
+        owner_token: ownerToken,
+        owner_pid: process.pid,
+        lease_expires_at: new Date(now.getTime() + leaseMs).toISOString(),
+        created_at: now.toISOString()
+      }, null, 2)}\n`, 'utf8');
+      await handle.close();
+      return { lockPath, ownerToken };
+    } catch (error) {
+      await handle?.close().catch(() => {});
+      if (error?.code !== 'EEXIST') {
+        await fs.unlink(lockPath).catch(() => {});
+        throw error;
+      }
+      const stale = await idempotencyRecoveryLockIsStale(lockPath, leaseMs);
+      if (!stale) return null;
+      await fs.unlink(lockPath).catch((unlinkError) => {
+        if (unlinkError?.code !== 'ENOENT') throw unlinkError;
+      });
+    }
+  }
+  return null;
+}
+
+async function idempotencyRecoveryLockIsStale(lockPath, fallbackLeaseMs) {
+  try {
+    const record = JSON.parse(await fs.readFile(lockPath, 'utf8'));
+    return pendingClaimIsStale(record, fallbackLeaseMs);
+  } catch (error) {
+    if (error?.code === 'ENOENT') return true;
+    const stat = await fs.stat(lockPath).catch((statError) => {
+      if (statError?.code === 'ENOENT') return null;
+      throw statError;
+    });
+    return !stat || stat.mtimeMs + fallbackLeaseMs <= Date.now();
+  }
+}
+
+async function releaseIdempotencyRecoveryLock({ lockPath, ownerToken }) {
+  try {
+    const record = JSON.parse(await fs.readFile(lockPath, 'utf8'));
+    if (record.owner_token !== ownerToken) return;
+    await fs.unlink(lockPath);
+  } catch (error) {
+    if (error?.code !== 'ENOENT') throw error;
+  }
 }

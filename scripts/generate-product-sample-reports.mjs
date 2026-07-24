@@ -2,6 +2,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { SketchUpBridge } from '../src/bridge.mjs';
+import { freshSessionOptions } from '../src/live-session-contract.mjs';
 import { compilePartGraphFiles } from '../src/product-modeling/part-graph-compiler.mjs';
 import { validatePartGraphPhysicalConsistency } from '../src/product-modeling/physical-consistency-qa.mjs';
 
@@ -100,14 +101,16 @@ async function evaluateSample(sample, options) {
     spec: layoutSpec,
     runtime: options.runtime,
     timeoutMs: options.timeoutMs,
-    includePreview: false
+    includePreview: false,
+    ...await freshSessionOptions(bridge, options)
   });
   const referenceVisual = await bridge.validate_reference_model({
     code,
     spec: referenceSpec,
     runtime: options.runtime,
     timeoutMs: options.timeoutMs,
-    includePreview: false
+    includePreview: false,
+    ...await freshSessionOptions(bridge, options)
   });
   const physicalConsistency = validatePartGraphPhysicalConsistency(partGraph);
   const artifact = options.saveArtifacts
@@ -142,7 +145,8 @@ async function saveSampleArtifact(sample, options) {
   const saved = await bridge.save_model({
     path: filePath,
     runtime: options.runtime,
-    timeoutMs: options.timeoutMs
+    timeoutMs: options.timeoutMs,
+    ...await freshSessionOptions(bridge, options)
   });
   return {
     path: saved.file_path,

@@ -1,0 +1,78 @@
+{
+  "version": "real-model-candidate-intake-v1-mock-evidence.1",
+  "kind": "real_model_candidate_intake_mock_evidence",
+  "generated_on": "2026-07-20",
+  "evidence_scope": "deterministic_contract_tests_and_local_offline_intake",
+  "commands": [
+    "node test/real-model-candidate-intake.mjs",
+    "node scripts/intake-real-model-corpus.mjs --runtime offline --input-root test/模型 --output-dir output/real-model-reliability/intake --cross-version-status deferred_by_user"
+  ],
+  "result": "pass",
+  "contract_test": {
+    "assertions": 65,
+    "default_runtime": "offline",
+    "default_live_queue_called": false,
+    "synthetic_fake_queue_only": true,
+    "real_sketchup_called": false,
+    "mutating_methods_called_by_fake_profile": 0,
+    "schemas_validated": [
+      "real-model-candidate-inventory.v1",
+      "real-model-candidate-profile.v1"
+    ]
+  },
+  "local_offline_intake": {
+    "input_scope": "untracked_user_supplied_test_models",
+    "candidate_count": 5,
+    "unique_content_hashes": 5,
+    "total_bytes": 23150909,
+    "stable_read_verified": 5,
+    "sketchup_header_verified": 5,
+    "live_queue_called": false,
+    "originals_modified": false,
+    "formal_sidecars_generated": 0,
+    "formal_cases_accepted": 0
+  },
+  "safety_evidence": {
+    "default_process_created_queue_state": false,
+    "explicit_runtime_queue_and_queue_required_needed": true,
+    "input_root_and_entries_reject_symlinks": true,
+    "path_escape_failed_closed": true,
+    "non_regular_entry_failed_closed": true,
+    "renamed_non_skp_content_failed_closed": true,
+    "max_file_bytes_enforced": true,
+    "stable_descriptor_inode_size_timestamp_checked": true,
+    "read_time_replacement_failed_closed": true,
+    "all_disposable_copies_preflighted_before_transport": true,
+    "preflight_failure_queue_calls": 0,
+    "queue_flags_cannot_elevate_execution_policy": true,
+    "original_paths_not_opened_in_sketchup_contract": true,
+    "candidates_profiled_smallest_first": true,
+    "working_copy_and_original_bytes_reverified_after_profile": true,
+    "read_only_adoption_and_revision_unchanged_required": true,
+    "revision_strategy_and_unique_entity_limit_attested": true,
+    "model_names_materials_tags_scenes_attributes_untrusted": true,
+    "untrusted_data_cannot_change_policy_or_grant_approval": true,
+    "exception_cleanup_verified": true,
+    "sigterm_cleanup_verified": true,
+    "formal_sidecar_requires_human_review": true
+  },
+  "cross_version": {
+    "status": "deferred_by_user",
+    "represented_as_pass": false,
+    "required_for_current_milestone": false
+  },
+  "live_evidence": {
+    "status": "supplemented_by_five_candidate_live_read_only_evidence",
+    "candidate_read_only_profiles_proven": 5,
+    "seven_case_mutation_corpus_proven": false,
+    "release_acceptance": false
+  },
+  "hashes": {
+    "src/real-model-candidate-intake.mjs": "sha256:ef3e5c135cda98478b71d9b42951f5251c1b9ab5f918f921659f06c5f1ec5bd1",
+    "scripts/intake-real-model-corpus.mjs": "sha256:6f19689557e3bd6b94ee349517dc12e5d6e6a622a4b29d97526b3ff3a010c80f",
+    "schema/real-model-candidate-inventory-v1.schema.json": "sha256:0e9dc63b826aa3d264554f45522c60342debbdf74b2445b5055186dce9714452",
+    "schema/real-model-candidate-profile-v1.schema.json": "sha256:29d97e238a3101b3b7cf5e0223722af8dbf68afbcc35aed0c3aba84faf4878d2",
+    "test/real-model-candidate-intake.mjs": "sha256:91cfd4c2435aa5a0c48fb89db39cce2619ca9c9086628990313142ab8597fc31",
+    "docs/real-model-reliability-corpus-v1.md": "sha256:11e908cea8c3ed9043db4a9ce9466b8d557cffd7055a7819e0e4546718d4f862"
+  }
+}

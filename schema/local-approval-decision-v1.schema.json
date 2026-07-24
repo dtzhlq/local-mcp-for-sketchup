@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/sketchup-mcp-replica/local-approval-decision-v1.schema.json",
+  "title": "Local Approval Host Decision v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "kind", "decision_id", "challenge_id", "task_id", "plan_id", "binding_hash", "decision", "decided_by", "approval_channel", "decided_at", "expires_at", "status"],
+  "properties": {
+    "version": { "const": "local-approval-decision.v1" },
+    "kind": { "const": "local_approval_decision" },
+    "decision_id": { "type": "string", "pattern": "^decision_[0-9a-f]{32}$" },
+    "challenge_id": { "type": "string", "pattern": "^approval_[0-9a-f-]+$" },
+    "task_id": { "type": ["string", "null"], "pattern": "^task_[0-9a-f-]+$" },
+    "plan_id": { "type": "string", "minLength": 1 },
+    "binding_hash": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "decision": { "enum": ["approved", "rejected"] },
+    "decided_by": { "type": "string", "minLength": 1 },
+    "approval_channel": { "const": "local-approval-host.v1" },
+    "decided_at": { "type": "string", "format": "date-time" },
+    "expires_at": { "type": "string", "format": "date-time" },
+    "status": { "enum": ["approved_pending_execution", "rejected", "consumed"] },
+    "reason": { "type": "string", "maxLength": 500 },
+    "review_selection": { "type": "string", "minLength": 1, "maxLength": 200 },
+    "consumed_at": { "type": "string", "format": "date-time" }
+  }
+}

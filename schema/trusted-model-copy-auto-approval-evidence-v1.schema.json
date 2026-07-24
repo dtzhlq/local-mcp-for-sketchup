@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/schema/trusted-model-copy-auto-approval-evidence-v1.schema.json",
+  "title": "Trusted model-copy auto-approval mock evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "kind",
+    "captured_at",
+    "branch",
+    "baseline_commit",
+    "runtime",
+    "policy",
+    "results",
+    "tests",
+    "release_acceptance",
+    "boundaries"
+  ],
+  "properties": {
+    "version": { "const": "trusted-model-copy-auto-approval-evidence.v1" },
+    "kind": { "const": "trusted_model_copy_auto_approval_mock_evidence" },
+    "captured_at": { "type": "string", "minLength": 20 },
+    "branch": { "const": "codex/agent-contract-v1" },
+    "baseline_commit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "runtime": { "const": "mock" },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source",
+        "default_s2_s4_behavior",
+        "allowed_risks",
+        "path_scope_required",
+        "max_affected_instances",
+        "allow_save_model",
+        "public_roots_exposed",
+        "agent_capabilities_can_elevate"
+      ],
+      "properties": {
+        "source": { "const": "server_user_execution_policy" },
+        "default_s2_s4_behavior": { "const": "trusted_user_approval_required" },
+        "allowed_risks": {
+          "type": "array",
+          "prefixItems": [{ "const": "S2" }, { "const": "S3" }, { "const": "S4" }],
+          "items": false,
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "path_scope_required": { "const": true },
+        "max_affected_instances": { "type": "integer", "minimum": 1 },
+        "allow_save_model": { "const": false },
+        "public_roots_exposed": { "const": false },
+        "agent_capabilities_can_elevate": { "const": false }
+      }
+    },
+    "results": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scoped_s4_auto_executed",
+        "authorization_mode",
+        "local_decision_forged",
+        "outside_root_failed_closed",
+        "forged_agent_review_failed",
+        "idempotent_retry",
+        "duplicate_mutation",
+        "finalized_receipt",
+        "live_queue_calls"
+      ],
+      "properties": {
+        "scoped_s4_auto_executed": { "const": true },
+        "authorization_mode": { "const": "server_policy_trusted_model_copy_auto_approval" },
+        "local_decision_forged": { "const": false },
+        "outside_root_failed_closed": { "const": true },
+        "forged_agent_review_failed": { "const": true },
+        "idempotent_retry": { "const": true },
+        "duplicate_mutation": { "const": false },
+        "finalized_receipt": { "const": true },
+        "live_queue_calls": { "const": 0 }
+      }
+    },
+    "tests": {
+      "type": "array",
+      "minItems": 4,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "passed"],
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "passed": { "const": true }
+        }
+      }
+    },
+    "release_acceptance": { "const": false },
+    "boundaries": {
+      "type": "array",
+      "minItems": 3,
+      "items": { "type": "string", "minLength": 1 }
+    }
+  }
+}

@@ -1,0 +1,307 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/schemas/locked-target-guard-live-evidence-v1.schema.json",
+  "title": "Locked Target Guard Live Evidence v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "kind",
+    "captured_at",
+    "branch",
+    "result",
+    "evidence_scope",
+    "case_id",
+    "runtime",
+    "source_fixture",
+    "discovery",
+    "fix",
+    "live_verification",
+    "artifacts",
+    "source_sha256",
+    "acceptance",
+    "boundaries"
+  ],
+  "properties": {
+    "version": { "const": "locked-target-guard-live-evidence.v1" },
+    "kind": { "const": "locked_target_guard_live_evidence" },
+    "captured_at": { "type": "string", "format": "date-time" },
+    "branch": { "const": "codex/agent-contract-v1" },
+    "result": { "const": "fixed_and_live_verified" },
+    "evidence_scope": { "const": "single_hash_bound_native_lock_discovery_fix_and_rerun" },
+    "case_id": { "const": "scaled-mirrored-locked" },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "server_version",
+        "plugin_version",
+        "sketchup_version",
+        "ruby_version",
+        "capability_version",
+        "manifest_version",
+        "dsl_version",
+        "occurrence_contract",
+        "revision_strategy",
+        "revision_source_sha256",
+        "compatibility_ok",
+        "loaded_boolean_source_sha256",
+        "loaded_boolean_source_match",
+        "full_restart_observed"
+      ],
+      "properties": {
+        "name": { "const": "queue" },
+        "server_version": { "const": "0.1.0-rc.2" },
+        "plugin_version": { "const": "0.1.0-rc.2" },
+        "sketchup_version": { "const": "26.2.242" },
+        "ruby_version": { "const": "3.2.2" },
+        "capability_version": { "const": "0.1.0-rc.2-capabilities.7" },
+        "manifest_version": { "const": "2026-07-agent-contract-v1.4" },
+        "dsl_version": { "const": 1 },
+        "occurrence_contract": { "const": "canonical-occurrence-path.v1" },
+        "revision_strategy": { "const": "definition-merkle.v2" },
+        "revision_source_sha256": { "$ref": "#/$defs/sha256" },
+        "compatibility_ok": { "const": true },
+        "loaded_boolean_source_sha256": { "$ref": "#/$defs/sha256" },
+        "loaded_boolean_source_match": { "const": true },
+        "full_restart_observed": { "const": true }
+      }
+    },
+    "source_fixture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "derivation_class",
+        "original_input_sha256",
+        "original_bytes_unchanged",
+        "native_lock_observed_before_save",
+        "native_lock_observed_after_reopen",
+        "locked_target_persistent_id",
+        "recursive_total",
+        "recursive_materialized",
+        "recursive_truncated"
+      ],
+      "properties": {
+        "derivation_class": { "const": "controlled_fixture_overlay_on_user_authorized_real_model_copy" },
+        "original_input_sha256": { "$ref": "#/$defs/sha256" },
+        "original_bytes_unchanged": { "const": true },
+        "native_lock_observed_before_save": { "const": true },
+        "native_lock_observed_after_reopen": { "const": true },
+        "locked_target_persistent_id": { "type": "string", "pattern": "^[0-9]+$" },
+        "recursive_total": { "const": 12944 },
+        "recursive_materialized": { "const": 12944 },
+        "recursive_truncated": { "const": false }
+      }
+    },
+    "discovery": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "expected_locked_batch_rejection",
+        "observed_locked_batch_rejection",
+        "native_lock_alone_prevented_ruby_mutation",
+        "batch_unexpectedly_committed",
+        "failure_state_saved",
+        "queue_clean_after_failed_expectation",
+        "failure_error",
+        "root_cause"
+      ],
+      "properties": {
+        "expected_locked_batch_rejection": { "const": true },
+        "observed_locked_batch_rejection": { "const": false },
+        "native_lock_alone_prevented_ruby_mutation": { "const": false },
+        "batch_unexpectedly_committed": { "const": true },
+        "failure_state_saved": { "const": true },
+        "queue_clean_after_failed_expectation": { "const": true },
+        "failure_error": {
+          "type": "string",
+          "pattern": "^Expected operation to reject with .*locked"
+        },
+        "root_cause": { "type": "string", "minLength": 80 }
+      }
+    },
+    "fix": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "central_mutation_guard_added",
+        "top_level_locked_target_rejected",
+        "locked_occurrence_ancestor_rejected",
+        "invalid_target_rejected_even_for_read_only_lookup",
+        "nested_make_unique_precheck",
+        "boolean_tool_guard_propagated",
+        "mutating_operations_guarded",
+        "read_only_locked_access",
+        "manifold_repair_locked_rejected",
+        "runtime_restart_required",
+        "runtime_attestation_bound"
+      ],
+      "properties": {
+        "central_mutation_guard_added": { "const": true },
+        "top_level_locked_target_rejected": { "const": true },
+        "locked_occurrence_ancestor_rejected": { "const": true },
+        "invalid_target_rejected_even_for_read_only_lookup": { "const": true },
+        "nested_make_unique_precheck": { "const": true },
+        "boolean_tool_guard_propagated": { "const": true },
+        "mutating_operations_guarded": { "const": 25 },
+        "read_only_locked_access": {
+          "const": ["set_selection", "manifold_check"]
+        },
+        "manifold_repair_locked_rejected": { "const": true },
+        "runtime_restart_required": { "const": true },
+        "runtime_attestation_bound": { "const": true }
+      }
+    },
+    "live_verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tasks_total",
+        "tasks_passed",
+        "locked_batch_rejected_before_commit",
+        "rollback_revision_preserved",
+        "guard_unchanged",
+        "locked_target_unchanged",
+        "exact_transform_target_changed",
+        "nonuniform_scale",
+        "mirror_axis",
+        "save_reopen_exact_identity",
+        "recursive_entries_before",
+        "recursive_entries_after",
+        "model_revision_exact_match",
+        "snapshot_error_diffs",
+        "wrong_object_modification_count",
+        "silent_geometry_corruption_count",
+        "recovery_attempts",
+        "recoveries",
+        "recovery_rate",
+        "queue_clean"
+      ],
+      "properties": {
+        "tasks_total": { "const": 5 },
+        "tasks_passed": { "const": 5 },
+        "locked_batch_rejected_before_commit": { "const": true },
+        "rollback_revision_preserved": { "const": true },
+        "guard_unchanged": { "const": true },
+        "locked_target_unchanged": { "const": true },
+        "exact_transform_target_changed": { "const": true },
+        "nonuniform_scale": {
+          "const": [1.5, 0.75, 2]
+        },
+        "mirror_axis": { "const": "x" },
+        "save_reopen_exact_identity": { "const": true },
+        "recursive_entries_before": { "const": 12944 },
+        "recursive_entries_after": { "const": 12944 },
+        "model_revision_exact_match": { "const": true },
+        "snapshot_error_diffs": { "const": 0 },
+        "wrong_object_modification_count": { "const": 0 },
+        "silent_geometry_corruption_count": { "const": 0 },
+        "recovery_attempts": { "const": 1 },
+        "recoveries": { "const": 1 },
+        "recovery_rate": { "const": 1 },
+        "queue_clean": { "const": true }
+      }
+    },
+    "artifacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "original_input",
+        "finalization_report",
+        "source_model",
+        "source_contract",
+        "failure_report",
+        "failure_state",
+        "success_report",
+        "success_diagnostic",
+        "verified_model"
+      ],
+      "properties": {
+        "original_input": { "$ref": "#/$defs/artifact" },
+        "finalization_report": { "$ref": "#/$defs/artifact" },
+        "source_model": { "$ref": "#/$defs/artifact" },
+        "source_contract": { "$ref": "#/$defs/artifact" },
+        "failure_report": { "$ref": "#/$defs/artifact" },
+        "failure_state": { "$ref": "#/$defs/artifact" },
+        "success_report": { "$ref": "#/$defs/artifact" },
+        "success_diagnostic": { "$ref": "#/$defs/artifact" },
+        "verified_model": { "$ref": "#/$defs/artifact" }
+      }
+    },
+    "source_sha256": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scripts/build-locked-target-guard-live-evidence.mjs",
+        "scripts/run-real-model-reliability-live-case.mjs",
+        "schema/real-model-reliability-live-case-report-v1.schema.json",
+        "sketchup_plugin/alma_sketchup_mcp.rb",
+        "sketchup_plugin/alma_sketchup_mcp/boolean_operations.rb",
+        "sketchup_plugin/alma_sketchup_mcp/model_revision.rb",
+        "sketchup_plugin/alma_sketchup_mcp/runtime_source_manifest.rb",
+        "test/ruby/locked_target_guard_test.rb"
+      ],
+      "properties": {
+        "scripts/build-locked-target-guard-live-evidence.mjs": { "$ref": "#/$defs/sha256" },
+        "scripts/run-real-model-reliability-live-case.mjs": { "$ref": "#/$defs/sha256" },
+        "schema/real-model-reliability-live-case-report-v1.schema.json": { "$ref": "#/$defs/sha256" },
+        "sketchup_plugin/alma_sketchup_mcp.rb": { "$ref": "#/$defs/sha256" },
+        "sketchup_plugin/alma_sketchup_mcp/boolean_operations.rb": { "$ref": "#/$defs/sha256" },
+        "sketchup_plugin/alma_sketchup_mcp/model_revision.rb": { "$ref": "#/$defs/sha256" },
+        "sketchup_plugin/alma_sketchup_mcp/runtime_source_manifest.rb": { "$ref": "#/$defs/sha256" },
+        "test/ruby/locked_target_guard_test.rb": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "acceptance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "native_lock_gap_discovered",
+        "application_lock_guard_verified",
+        "selected_case_passed",
+        "formal_corpus_cases_passed",
+        "formal_corpus_cases_total",
+        "formal_corpus_complete",
+        "cross_version",
+        "release_acceptance"
+      ],
+      "properties": {
+        "native_lock_gap_discovered": { "const": true },
+        "application_lock_guard_verified": { "const": true },
+        "selected_case_passed": { "const": true },
+        "formal_corpus_cases_passed": { "const": 1 },
+        "formal_corpus_cases_total": { "const": 7 },
+        "formal_corpus_complete": { "const": false },
+        "cross_version": { "const": "deferred_by_user" },
+        "release_acceptance": { "const": false }
+      }
+    },
+    "boundaries": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "items": { "type": "string", "minLength": 40 }
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "bytes"],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "not": { "pattern": "^(?:/|[A-Za-z]:[\\\\/]|file://|~/)" }
+        },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "bytes": { "type": "integer", "minimum": 1 }
+      }
+    }
+  }
+}

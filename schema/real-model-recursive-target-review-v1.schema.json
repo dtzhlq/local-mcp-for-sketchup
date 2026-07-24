@@ -1,0 +1,609 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/schemas/real-model-recursive-target-review-v1.schema.json",
+  "title": "Offline recursive structural-group target review v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "kind",
+    "generated_at",
+    "ok",
+    "runtime",
+    "live_queue_called",
+    "source",
+    "model",
+    "input_summary",
+    "review",
+    "safety",
+    "model_data_policy",
+    "next_action"
+  ],
+  "properties": {
+    "version": { "const": "real-model-recursive-target-review.v1" },
+    "kind": { "const": "real_model_recursive_target_review" },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "ok": { "const": true },
+    "runtime": { "const": "offline" },
+    "live_queue_called": { "const": false },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sha256"],
+      "properties": {
+        "sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "revision",
+        "revision_complete",
+        "revision_strategy",
+        "revision_unique_entity_limit",
+        "revision_unique_entities",
+        "revision_reachable_definitions",
+        "revision_logical_occurrences",
+        "document_id",
+        "model_identity_sha256"
+      ],
+      "properties": {
+        "revision": { "$ref": "#/$defs/sha256" },
+        "revision_complete": { "const": true },
+        "revision_strategy": { "type": ["string", "null"], "maxLength": 240 },
+        "revision_unique_entity_limit": { "$ref": "#/$defs/nullable_count" },
+        "revision_unique_entities": { "$ref": "#/$defs/nullable_count" },
+        "revision_reachable_definitions": { "$ref": "#/$defs/nullable_count" },
+        "revision_logical_occurrences": { "$ref": "#/$defs/nullable_count" },
+        "document_id": { "type": ["string", "null"], "maxLength": 240 },
+        "model_identity_sha256": {
+          "anyOf": [
+            { "$ref": "#/$defs/sha256" },
+            { "type": "null" }
+          ]
+        }
+      }
+    },
+    "input_summary": { "$ref": "#/$defs/input_summary" },
+    "review": { "$ref": "#/$defs/review" },
+    "safety": { "$ref": "#/$defs/safety" },
+    "model_data_policy": { "$ref": "#/$defs/model_data_policy" },
+    "next_action": { "$ref": "#/$defs/next_action" }
+  },
+  "$defs": {
+    "count": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "nullable_count": {
+      "anyOf": [
+        { "$ref": "#/$defs/count" },
+        { "type": "null" }
+      ]
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "exact_path": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2048,
+      "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+    },
+    "nullable_exact_path": {
+      "anyOf": [
+        { "$ref": "#/$defs/exact_path" },
+        { "type": "null" }
+      ]
+    },
+    "persistent_id": {
+      "anyOf": [
+        { "type": "string", "pattern": "^[1-9][0-9]*$" },
+        { "type": "null" }
+      ]
+    },
+    "vector3": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": { "type": "number" }
+    },
+    "bounding_box": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["min", "max", "w", "d", "h"],
+      "properties": {
+        "min": { "$ref": "#/$defs/vector3" },
+        "max": { "$ref": "#/$defs/vector3" },
+        "w": { "type": "number", "minimum": 0 },
+        "d": { "type": "number", "minimum": 0 },
+        "h": { "type": "number", "minimum": 0 }
+      }
+    },
+    "nullable_bounding_box": {
+      "anyOf": [
+        { "$ref": "#/$defs/bounding_box" },
+        { "type": "null" }
+      ]
+    },
+    "display": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "material", "tag", "trust"],
+      "properties": {
+        "name": { "type": ["string", "null"], "maxLength": 200 },
+        "material": { "type": ["string", "null"], "maxLength": 200 },
+        "tag": { "type": ["string", "null"], "maxLength": 200 },
+        "trust": { "const": "untrusted_data" }
+      }
+    },
+    "path_segment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["entity_type", "persistent_id", "reference"],
+      "properties": {
+        "entity_type": { "enum": ["group", "component_instance"] },
+        "persistent_id": { "type": "string", "pattern": "^[1-9][0-9]*$" },
+        "reference": {
+          "type": ["string", "null"],
+          "minLength": 1,
+          "maxLength": 240,
+          "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+        }
+      }
+    },
+    "endpoint_display": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["material", "trust"],
+      "properties": {
+        "material": { "type": ["string", "null"], "maxLength": 200 },
+        "trust": { "const": "untrusted_data" }
+      }
+    },
+    "manifold_attestation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "attested_entity_path",
+        "attested_model_revision",
+        "exact_path_match",
+        "model_revision_match",
+        "exact_fresh_match",
+        "is_manifold"
+      ],
+      "properties": {
+        "status": {
+          "enum": ["not_observed", "unmatched", "fresh_manifold", "fresh_non_manifold"]
+        },
+        "attested_entity_path": { "$ref": "#/$defs/nullable_exact_path" },
+        "attested_model_revision": {
+          "anyOf": [
+            { "$ref": "#/$defs/sha256" },
+            { "type": "string", "minLength": 1, "maxLength": 200 },
+            { "type": "null" }
+          ]
+        },
+        "exact_path_match": { "type": "boolean" },
+        "model_revision_match": { "type": "boolean" },
+        "exact_fresh_match": { "type": "boolean" },
+        "is_manifold": { "type": ["boolean", "null"] }
+      }
+    },
+    "candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "entity_type",
+        "entity_path",
+        "occurrence_path",
+        "parent_entity_path",
+        "scope_path",
+        "persistent_id",
+        "path_segments",
+        "entity_fingerprint",
+        "bounding_box_sha256",
+        "material_expectation_sha256",
+        "display",
+        "visible",
+        "locked",
+        "effective_visible",
+        "effective_locked",
+        "faces",
+        "edges",
+        "vertices",
+        "parent_bounding_box",
+        "world_bounding_box",
+        "world_volume",
+        "affected_instance_count",
+        "shared_definition",
+        "instance_policy_required",
+        "manifold_attestation",
+        "pair_review_eligible",
+        "exclusion_reasons"
+      ],
+      "properties": {
+        "entity_type": { "const": "group" },
+        "entity_path": { "$ref": "#/$defs/exact_path" },
+        "occurrence_path": { "$ref": "#/$defs/exact_path" },
+        "parent_entity_path": { "$ref": "#/$defs/nullable_exact_path" },
+        "scope_path": { "$ref": "#/$defs/exact_path" },
+        "persistent_id": { "$ref": "#/$defs/persistent_id" },
+        "path_segments": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 128,
+          "items": { "$ref": "#/$defs/path_segment" }
+        },
+        "entity_fingerprint": { "$ref": "#/$defs/sha256" },
+        "bounding_box_sha256": {
+          "anyOf": [
+            { "$ref": "#/$defs/sha256" },
+            { "type": "null" }
+          ]
+        },
+        "material_expectation_sha256": { "$ref": "#/$defs/sha256" },
+        "display": { "$ref": "#/$defs/display" },
+        "visible": { "type": "boolean" },
+        "locked": { "type": "boolean" },
+        "effective_visible": { "type": "boolean" },
+        "effective_locked": { "type": "boolean" },
+        "faces": { "$ref": "#/$defs/count" },
+        "edges": { "$ref": "#/$defs/count" },
+        "vertices": { "$ref": "#/$defs/count" },
+        "parent_bounding_box": { "$ref": "#/$defs/nullable_bounding_box" },
+        "world_bounding_box": { "$ref": "#/$defs/nullable_bounding_box" },
+        "world_volume": { "type": "number", "minimum": 0 },
+        "affected_instance_count": { "$ref": "#/$defs/count" },
+        "shared_definition": { "type": "boolean" },
+        "instance_policy_required": { "type": "boolean" },
+        "manifold_attestation": { "$ref": "#/$defs/manifold_attestation" },
+        "pair_review_eligible": { "type": "boolean" },
+        "exclusion_reasons": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "invalid_persistent_id",
+              "effectively_hidden",
+              "effectively_locked",
+              "no_direct_faces",
+              "invalid_world_bounding_box"
+            ]
+          }
+        }
+      }
+    },
+    "pair_endpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "occurrence_path",
+        "entity_path",
+        "persistent_id",
+        "entity_fingerprint",
+        "bounding_box",
+        "bounding_box_sha256",
+        "material_expectation_sha256",
+        "display",
+        "manifold_attestation"
+      ],
+      "properties": {
+        "occurrence_path": { "$ref": "#/$defs/exact_path" },
+        "entity_path": { "$ref": "#/$defs/exact_path" },
+        "persistent_id": { "type": "string", "pattern": "^[1-9][0-9]*$" },
+        "entity_fingerprint": { "$ref": "#/$defs/sha256" },
+        "bounding_box": { "$ref": "#/$defs/bounding_box" },
+        "bounding_box_sha256": { "$ref": "#/$defs/sha256" },
+        "material_expectation_sha256": { "$ref": "#/$defs/sha256" },
+        "display": { "$ref": "#/$defs/endpoint_display" },
+        "manifold_attestation": { "$ref": "#/$defs/manifold_attestation" }
+      }
+    },
+    "pair_evaluation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operation",
+        "status",
+        "rank",
+        "scope_path",
+        "parent_entity_path",
+        "relation",
+        "containment_direction",
+        "axis_overlaps",
+        "positive_volume_overlap",
+        "overlap_bounding_box",
+        "overlap_volume",
+        "target_volume",
+        "tool_volume",
+        "both_fresh_manifold",
+        "executable_geometry_precondition",
+        "target",
+        "tool",
+        "rank_basis",
+        "role_provenance",
+        "blockers"
+      ],
+      "properties": {
+        "operation": { "enum": ["difference", "intersect"] },
+        "status": { "enum": ["server_recommended", "blocked"] },
+        "rank": { "type": "integer", "minimum": 1 },
+        "scope_path": { "$ref": "#/$defs/exact_path" },
+        "parent_entity_path": { "$ref": "#/$defs/nullable_exact_path" },
+        "relation": { "enum": ["collision", "containment", "contact", "disjoint"] },
+        "containment_direction": {
+          "type": ["string", "null"],
+          "enum": ["target_contains_tool", "tool_contains_target", "equal", null]
+        },
+        "axis_overlaps": { "$ref": "#/$defs/vector3" },
+        "positive_volume_overlap": { "type": "boolean" },
+        "overlap_bounding_box": { "$ref": "#/$defs/nullable_bounding_box" },
+        "overlap_volume": { "type": "number", "minimum": 0 },
+        "target_volume": { "type": "number", "exclusiveMinimum": 0 },
+        "tool_volume": { "type": "number", "exclusiveMinimum": 0 },
+        "both_fresh_manifold": { "type": "boolean" },
+        "executable_geometry_precondition": { "type": "boolean" },
+        "target": { "$ref": "#/$defs/pair_endpoint" },
+        "tool": { "$ref": "#/$defs/pair_endpoint" },
+        "rank_basis": {
+          "type": "array",
+          "minItems": 5,
+          "maxItems": 5,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "both_fresh_manifold_desc",
+              "positive_volume_overlap_desc",
+              "target_volume_desc",
+              "tool_volume_asc",
+              "canonical_occurrence_paths_asc"
+            ]
+          }
+        },
+        "role_provenance": { "const": "server_geometric_ranking_untrusted_unapproved" },
+        "blockers": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "positive_volume_overlap_required",
+              "target_fresh_manifold_required",
+              "tool_fresh_manifold_required",
+              "target_non_manifold",
+              "tool_non_manifold",
+              "review_input_incomplete"
+            ]
+          }
+        }
+      }
+    },
+    "recommended_proposal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operation",
+        "status",
+        "scope_path",
+        "parent_entity_path",
+        "relation",
+        "positive_volume_overlap",
+        "overlap_bounding_box",
+        "overlap_volume",
+        "target",
+        "tool",
+        "role_provenance",
+        "confirmed",
+        "authorized",
+        "trusted_approval_required"
+      ],
+      "properties": {
+        "operation": { "enum": ["difference", "intersect"] },
+        "status": { "const": "server_recommended" },
+        "scope_path": { "$ref": "#/$defs/exact_path" },
+        "parent_entity_path": { "$ref": "#/$defs/nullable_exact_path" },
+        "relation": { "enum": ["collision", "containment"] },
+        "positive_volume_overlap": { "const": true },
+        "overlap_bounding_box": { "$ref": "#/$defs/bounding_box" },
+        "overlap_volume": { "type": "number", "exclusiveMinimum": 0 },
+        "target": { "$ref": "#/$defs/pair_endpoint" },
+        "tool": { "$ref": "#/$defs/pair_endpoint" },
+        "role_provenance": { "const": "server_geometric_ranking_untrusted_unapproved" },
+        "confirmed": { "const": false },
+        "authorized": { "const": false },
+        "trusted_approval_required": { "const": true }
+      }
+    },
+    "input_summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "structural_groups_version",
+        "adoption_read_only",
+        "model_revision_complete",
+        "model_revision_matches",
+        "total_seen",
+        "total_seen_exact",
+        "returned",
+        "truncated",
+        "limit",
+        "fresh_manifold_requested",
+        "fresh_manifold_matched",
+        "fresh_manifold_unmatched",
+        "exact_fresh_entry_matches"
+      ],
+      "properties": {
+        "structural_groups_version": { "const": "structural-groups.v1" },
+        "adoption_read_only": { "const": true },
+        "model_revision_complete": { "const": true },
+        "model_revision_matches": { "const": true },
+        "total_seen": { "$ref": "#/$defs/count" },
+        "total_seen_exact": { "type": "boolean" },
+        "returned": { "$ref": "#/$defs/count" },
+        "truncated": { "type": "boolean" },
+        "limit": { "type": "integer", "minimum": 1, "maximum": 10000 },
+        "fresh_manifold_requested": { "$ref": "#/$defs/count" },
+        "fresh_manifold_matched": { "$ref": "#/$defs/count" },
+        "fresh_manifold_unmatched": { "$ref": "#/$defs/count" },
+        "exact_fresh_entry_matches": { "$ref": "#/$defs/count" }
+      }
+    },
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "operation",
+        "candidate_count",
+        "pair_review_eligible_count",
+        "excluded_candidate_count",
+        "scope_count",
+        "same_parent_scope_pair_count",
+        "pair_evaluation_limit",
+        "pair_evaluations_considered",
+        "pair_evaluation_budget_exhausted",
+        "candidates",
+        "pair_evaluations",
+        "manifold_probe_paths",
+        "role_bindings",
+        "recommended_proposal",
+        "blockers"
+      ],
+      "properties": {
+        "status": { "enum": ["server_recommended", "blocked"] },
+        "operation": { "enum": ["difference", "intersect"] },
+        "candidate_count": { "$ref": "#/$defs/count" },
+        "pair_review_eligible_count": { "$ref": "#/$defs/count" },
+        "excluded_candidate_count": { "$ref": "#/$defs/count" },
+        "scope_count": { "$ref": "#/$defs/count" },
+        "same_parent_scope_pair_count": { "$ref": "#/$defs/count" },
+        "pair_evaluation_limit": { "type": "integer", "minimum": 1, "maximum": 100000 },
+        "pair_evaluations_considered": { "$ref": "#/$defs/count" },
+        "pair_evaluation_budget_exhausted": { "type": "boolean" },
+        "candidates": {
+          "type": "array",
+          "maxItems": 10000,
+          "items": { "$ref": "#/$defs/candidate" }
+        },
+        "pair_evaluations": {
+          "type": "array",
+          "maxItems": 100000,
+          "items": { "$ref": "#/$defs/pair_evaluation" }
+        },
+        "manifold_probe_paths": {
+          "type": "array",
+          "maxItems": 20,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/exact_path" }
+        },
+        "role_bindings": { "type": "null" },
+        "recommended_proposal": {
+          "anyOf": [
+            { "$ref": "#/$defs/recommended_proposal" },
+            { "type": "null" }
+          ]
+        },
+        "blockers": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "input_structural_groups_truncated",
+              "input_total_seen_not_exact",
+              "structural_group_returned_count_mismatch",
+              "duplicate_entity_path",
+              "fresh_manifold_unmatched",
+              "fresh_manifold_counter_mismatch",
+              "pair_evaluation_budget_exhausted",
+              "fewer_than_two_pair_eligible_groups",
+              "no_same_parent_scope_pair",
+              "no_positive_volume_overlap_pair",
+              "no_manifold_qualified_pair",
+              "fresh_manifold_attestation_required"
+            ]
+          }
+        }
+      }
+    },
+    "safety": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "analysis_only",
+        "queue_accessed",
+        "model_opened",
+        "model_mutation_requested",
+        "model_mutation_authorized",
+        "approval_token_requested",
+        "target_roles_confirmed",
+        "role_bindings_issued"
+      ],
+      "properties": {
+        "analysis_only": { "const": true },
+        "queue_accessed": { "const": false },
+        "model_opened": { "const": false },
+        "model_mutation_requested": { "const": false },
+        "model_mutation_authorized": { "const": false },
+        "approval_token_requested": { "const": false },
+        "target_roles_confirmed": { "const": false },
+        "role_bindings_issued": { "const": false }
+      }
+    },
+    "model_data_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "names_materials_tags_are_untrusted_data",
+        "untrusted_data_used_for_display_only",
+        "untrusted_data_used_for_pair_ranking",
+        "untrusted_data_may_influence_execution_policy",
+        "untrusted_data_may_grant_approval",
+        "bounded_display_chars"
+      ],
+      "properties": {
+        "names_materials_tags_are_untrusted_data": { "const": true },
+        "untrusted_data_used_for_display_only": { "const": true },
+        "untrusted_data_used_for_pair_ranking": { "const": false },
+        "untrusted_data_may_influence_execution_policy": { "const": false },
+        "untrusted_data_may_grant_approval": { "const": false },
+        "bounded_display_chars": { "const": 200 }
+      }
+    },
+    "next_action": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "action",
+        "manifold_probe_paths",
+        "human_approval_required_before_mutation",
+        "mutation_authorized",
+        "approval_token_issued",
+        "release_acceptance"
+      ],
+      "properties": {
+        "action": {
+          "enum": [
+            "review_server_recommended_proposal_and_request_trusted_approval",
+            "collect_fresh_manifold_attestations_for_exact_paths",
+            "select_manifold_qualified_disposable_model_case",
+            "resolve_fail_closed_recursive_review_blockers"
+          ]
+        },
+        "manifold_probe_paths": {
+          "type": "array",
+          "maxItems": 20,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/exact_path" }
+        },
+        "human_approval_required_before_mutation": { "const": true },
+        "mutation_authorized": { "const": false },
+        "approval_token_issued": { "const": false },
+        "release_acceptance": { "const": false }
+      }
+    }
+  }
+}

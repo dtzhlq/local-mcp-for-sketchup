@@ -1,40 +1,117 @@
 {
   "version": 1,
   "kind": "agent_contract_v1_mock_evidence",
-  "created_on": "2026-07-15",
+  "created_on": "2026-07-21",
   "branch": "codex/agent-contract-v1",
-  "baseline_commit": "c9eb0f70adc3cc8214e84680d8de732c051c6a80",
+  "baseline_commit": "ee0708adf845c51f71294091b8013e1cc6aa8979",
   "contracts": {
     "agent_contract": "agent-contract.v1",
     "approval_token": "approval-token.v1",
-    "mcp_tools_total": 40,
+    "session_contract_wire_envelope": "session-contract.v1",
+    "session_contract_current_schema_branch": "definition-merkle.v2",
+    "current_capability_version": "0.1.0-rc.2-capabilities.7",
+    "current_manifest_version": "2026-07-agent-contract-v1.4",
+    "mcp_tools_total": 41,
     "expert_tools_retained": 36,
     "agent_gateway_tools": 4,
+    "session_contract_tools": 1,
     "safe_dsl_operations": 101,
     "component_scope_operations": 57,
-    "stable_error_codes": 14,
-    "task_states": 12
+    "stable_error_codes": 40,
+    "gateway_creation_operations": 56,
+    "gateway_registry_blocked_operations": 45,
+    "task_states": 11
+  },
+  "current_runtime_attestation": {
+    "boolean_operations_sha256": "b98fd554894f629359651f40929cf30a7122ac90ba01217a662bea2f4c407610",
+    "model_revision_source_sha256": "b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134",
+    "model_modified_bound": true,
+    "archival_v1_schema_readable": true,
+    "archival_v1_current_verifier_accepted": false
   },
   "fixture_sha256": {
-    "test/agent-contract.mjs": "15a5218bf5b8fe7da238d56b5e6daf78731222a39924901b6e16fa34e291c6cd",
-    "test/approval-tokens.mjs": "053251c0ae39957fa471869c91efc1e7f845a29b07ae96b51d2c4ef78a628038",
-    "test/agent-gateway.mjs": "35c877e0b7fea0151787b23356883e954722de685003d9a309ca934c45b4dea5",
-    "test/existing-model-editing.mjs": "a4a88a911a648106fa79c0bd2ac0a083fc72763d44f96ca5213a67179183277b"
+    "test/agent-contract.mjs": "ec1664f283ce1be259709f8312fafce38efc1a1c8d38c251d749a80b8dbc81dc",
+    "test/approval-tokens.mjs": "973ca6e10b569e001222ba5fcfd658c1c7d36d274968d2fe8b4e8ab6a36837d0",
+    "test/agent-gateway.mjs": "287cf65fb27ffc0e56b097bba4b243fbfb4a7abf8f2c47b2f3442b4e454541b6",
+    "test/agent-gateway-production-capabilities.mjs": "bacdcb5ecbef7c9763a29d8699cf92b3af060ed62307510dfe79b041a8cb9f69",
+    "test/agent-gateway-mutation-recovery.mjs": "4084e137c0c5eb3377090a9fe403696383ca123dfccab2ab190b9e53a68e7ce5",
+    "test/existing-model-editing.mjs": "13c381b49c5351a6c399eabd3d769def10833455229a3bb6f1e722df1e7dc8de",
+    "test/session-contract.mjs": "986c42593999fd05957c0bf83135fa6fe6b24e287f4e5ab4e1016e3e6fb2baab",
+    "test/queue-runtime-lock.mjs": "e0ea509aa7b6290efa1bb428c0957215ee5041f024b40f4598fec0cb597644fa",
+    "test/runtime-source-attestation.mjs": "d46aab32d00d835e89111223fd03748dc6e3621c3ab1df7696df74e792bf629f",
+    "test/sketchup-plugin-crash-safety.mjs": "3d2d07e61ef09a8bbc974a69ca4d33c8a9231622a4fa23b54c8a10d26fc1e7cc",
+    "test/sketchup-plugin-document-state.mjs": "811892f6a067fcbe394b9857506a517fb9e0f2b07f4861d8defbc62fdb580013",
+    "test/save-reopen-identity.mjs": "84e2945d926b3a111270354835fb8caf8ef6850099c81ae5eaebec275c112509",
+    "test/s1-batch-abort.mjs": "50bf0bf7778395c62629797b658e45cd7749e2052ac6fc0fbfb3a88ab3dfb867",
+    "test/agent-task-store-recovery.mjs": "542b191f2270dcfadc9bb40d501334a00ef05eb5dee46c8db9ca2a83f2feaf00",
+    "test/mcp-server.mjs": "80e6d5b907b61922e3681a7ec80c31bac57e0d24ccb5b3e29253d6ef7b0a4f97",
+    "test/tool-input-validator.mjs": "c338a1eacaca463518d2c4c7e5c95900284cbfa36dd27d14fdbdf65829bde6b6",
+    "scripts/validate-s1-batch-abort.mjs": "7bea4489e66d6c4e0e5b837a211e069a7fd04da5b3df0c2a4021f3920623dc09"
+  },
+  "p1_extension_sha256": {
+    "src/agent-contract.mjs": "02848f9b88a88be1683569eecadfcba0b75ab77975ff228aac1f320278dced79",
+    "src/agent-gateway.mjs": "c4bcdcb152d3963f54664595d6a847e9617927c26e784bd8c8873b40a415a3bb",
+    "src/agent-response-projection.mjs": "3d2d95e0f977bfc80db8c872071bbef143d21471a6ae963cc2cbe22b32a4416d",
+    "src/agent-task-store.mjs": "0a69c374030451b8a290b5907befe95fdb9ff25ca5fa7c57e84f88903a2f7d91",
+    "src/model-graph-store.mjs": "7ead48d7e567a7845ff0deebc965ef02d3576a6d200424437a31b5f3ecbdec02",
+    "src/model-identity.mjs": "df0b430c175b7895a2ec6dedf8a529e70a17afa878b07cae725807c86cf97f52",
+    "src/native-classification.mjs": "71140db850d6587c96b80848f3db80d618b16ce44ae700e1e48df75a58cd4179",
+    "test/model-graph-store.mjs": "08feaa7452b6d3101e9732cfb1ca188242904fff26add532ca72eb3e36f47fa5",
+    "test/native-classification.mjs": "ea91a0c602596de65207f2c15711cbed12bbc479d4dd56d6b83de5d6d425086a",
+    "test/sketchup-plugin-model-graph-contract.mjs": "5f11b635f7d9f34342ac4fe7d49c1fdfaf6e86f3c694f170cb094dd5d2c5a923",
+    "test/sketchup-native-classification-contract.mjs": "20c52e7999d318a3bf6c966a19633df16745ba939697ad43db17ba8cb3deb5b1"
   },
   "mock_gates": [
     {
-      "command": "npm test",
-      "status": "passed"
-    },
-    {
-      "command": "npm run qa:existing-model-edit:mock",
-      "status": "passed"
-    },
-    {
-      "command": "node scripts/validate-mcp-capability-suite.mjs --runtime mock --output-dir output/mcp-capability-suite-agent-contract",
+      "command": "node test/agent-contract.mjs && node test/approval-tokens.mjs && node test/agent-gateway.mjs && node test/existing-model-editing.mjs",
       "status": "passed",
-      "tools_missing": 0,
-      "tools_unaccounted": 0,
+      "task_states": 11,
+      "stable_error_codes": 40,
+      "creation_operations": 56,
+      "queue_requested": false
+    },
+    {
+      "command": "node test/session-contract.mjs && node test/queue-runtime-lock.mjs && node test/runtime-source-attestation.mjs",
+      "status": "passed",
+      "session_tests": 29,
+      "queue_runtime_tests": 18,
+      "queue_requested": false
+    },
+    {
+      "command": "node test/save-reopen-identity.mjs && node test/s1-batch-abort.mjs",
+      "status": "passed",
+      "save_reopen_report_contract": "save-reopen-identity-report.v2",
+      "save_reopen_live_proof": false,
+      "queue_requested": false
+    },
+    {
+      "command": "node test/model-graph-store.mjs && node test/model-graph-proposer.mjs && node test/native-classification.mjs && node test/sketchup-plugin-model-graph-contract.mjs && node test/sketchup-native-classification-contract.mjs",
+      "status": "passed",
+      "queue_requested": false,
+      "verification_scope": "mock_queue_shaped_golden_json_schema_and_current_v2_ruby_source_shape"
+    },
+    {
+      "command": "node test/agent-task-store-recovery.mjs",
+      "status": "passed",
+      "queue_requested": false
+    },
+    {
+      "command": "node test/agent-gateway-production-capabilities.mjs && node test/agent-gateway-mutation-recovery.mjs",
+      "status": "passed",
+      "bounded_response_chars": 4096,
+      "same_task_max_in_flight": 1,
+      "live_queue_calls": 0
+    },
+    {
+      "command": "node test/tool-input-validator.mjs && node test/mcp-server.mjs",
+      "status": "passed",
+      "tools": 41,
+      "queue_requested": false
+    },
+    {
+      "command": "package.json pretest (13 commands) + test (78 commands; HTTP security suite 60 scenarios)",
+      "status": "passed",
+      "current_source_revalidated": true,
       "queue_requested": false
     }
   ],
@@ -47,13 +124,49 @@
     "tampered_plan_accepted": 0,
     "stale_revision_accepted": 0,
     "task_restart_recovery": "passed",
-    "opaque_artifact_read_without_local_files": "passed",
+    "opaque_artifact_read_without_local_files": "passed_integer_pagination_to_eof",
+    "result_data_alias": "passed",
+    "warnings_all_sources_merged": "passed",
+    "failed_idempotency_replay_preserves_error": "passed",
+    "preflight_task_recovery": "passed_nonterminal_then_single_execution",
+    "reviewed_preflight_preserves_approval_token": "passed",
+    "workflow_registry_and_fresh_handshake_validation": "passed",
+    "http_gateway_error_mapping_and_redaction": "passed_60_scenarios",
+    "fresh_handshake_mutation_count": 0,
+    "failed_handshake_mutation_count": 0,
+    "session_wire_envelope_remains_v1": true,
+    "session_current_v2_branch_is_strict": true,
+    "session_current_capability_and_manifest_bound": true,
+    "session_archival_v1_schema_readable_only": true,
+    "model_modified_bound": true,
+    "boolean_loaded_source_attestation_bound": true,
+    "model_revision_loaded_source_attestation_bound": true,
+    "revision_and_modified_guard_consumed_together_after_successful_true_mutation": true,
+    "failed_true_mutation_retains_revision_and_modified_guard": true,
     "queue_interrupt_request_cleanup": "passed",
-    "queue_interrupt_lock_cleanup": "passed"
+    "queue_interrupt_claimed_processing_preserved": "passed_outcome_unknown_blocks_fresh_handshake",
+    "queue_interrupt_unobserved_response_preserved": "passed",
+    "plugin_crash_request_replay_count": 0,
+    "raw_queue_mutation_without_transport_guard": 0,
+    "queue_interrupt_lock_cleanup": "passed",
+    "gateway_creation_registry_partition": "passed_56_allowed_45_blocked_unclassified_fail_closed",
+    "queue_import_replace_dispatch_count": 0,
+    "controlled_s1_batch_abort": "passed_valid_attribute_then_fail_on_non_manifold_rollback_mock",
+    "strong_save_reopen_mock": "passed_v2_distinct_path_exact_identity_zero_diff_without_live_proof",
+    "mdi_document_state_source_and_fake_ruby": "passed_active_model_authoritative_and_request_latched",
+    "ruby_transaction_precommit_abort": "passed",
+    "ruby_commit_unknown_never_aborted": "passed",
+    "ruby_atomic_response_persistence": "passed",
+    "model_graph_store_restart_identity_atomicity_and_integrity": "passed",
+    "source_proposal_server_binding": "passed_tamper_override_and_stale_blocked",
+    "native_classification_fail_closed_summary": "passed_unknown_incomplete_no_values_no_mutation_api",
+    "agent_task_store_crash_recovery": "passed_single_owner_and_executing_verifying_fail_closed",
+    "model_graph_stable_errors": "passed_40_total",
+    "release_acceptance": false
   },
   "live_queue": {
-    "status": "not_run",
-    "reason": "No user-coordinated fresh SketchUp handshake was requested for this architecture milestone."
+    "status": "pending_current_v2_revalidation",
+    "reason": "This file remains mock/source-shape only and cannot itself establish live behavior. The separate 2026-07-21 current-source read-only evidence records a clean install/restart and fresh capabilities.7 / manifest v1.4 / definition-merkle.v2 handshake; that separate proof still does not establish a current-source live mutation or release acceptance."
   },
-  "boundary": "This evidence proves the mock Agent Contract and approval enforcement loop. It does not claim live SketchUp proof, complete API coverage, autonomous semantic modeling, arbitrary Python, or automatic visual modeling."
+  "boundary": "This evidence proves the Agent Contract, trusted approval boundary, Session Contract current-v2 branch, creation-only Gateway policy, paired revision/unsaved-state transport guard, controlled S1 pre-commit abort, queue residue preservation, mock save/reopen v2 contract, Ruby transaction/response boundaries, and ModelGraph/native-classification mock or current source-shape contracts. It does not itself prove current-source live SketchUp behavior, live save/reopen identity, release acceptance, universal native exactly-once across the pre-receipt crash window, complete API coverage, autonomous semantic modeling, arbitrary Python, or automatic visual modeling."
 }

@@ -7,11 +7,18 @@ import { formatReferenceVisualQaReportMarkdown } from './reference-visual-qa.mjs
 import { compareSnapshots } from './snapshot-diff.mjs';
 import { formatSnapshotReportMarkdown } from './snapshot-report.mjs';
 
-const bridge = new SketchUpBridge();
+const bridge = new SketchUpBridge({ sessionContract: { serverSessionId: 'cli-session-contract.v1' } });
 
 async function main() {
   const [command, ...argv] = process.argv.slice(2);
   const options = parseArgs(argv);
+  if (options.sessionContractFile) {
+    const document = JSON.parse(await fs.readFile(options.sessionContractFile, 'utf8'));
+    options.sessionContract = document.session_contract || document;
+  }
+  if (options.freshHandshake === true && !options.sessionContract && command !== 'create_queue_handshake') {
+    options.sessionContract = (await bridge.create_queue_handshake({ expires_in_ms: options.expiresInMs, timeoutMs: options.timeoutMs })).session_contract;
+  }
 
   switch (command) {
     case 'get_docs':
@@ -20,13 +27,22 @@ async function main() {
       return output(await bridge.get_workflow_bundle(), options);
     case 'get_capabilities':
       return output(await bridge.get_capabilities({ runtime: options.runtime || 'mock', timeoutMs: options.timeoutMs }), options);
+    case 'create_queue_handshake':
+      return output(await bridge.create_queue_handshake({ expires_in_ms: options.expiresInMs, timeoutMs: options.timeoutMs }), options);
     case 'queue_diagnostics':
       return output(await bridge.queue_diagnostics({ includeFiles: options.includeFiles === true, timeoutMs: options.timeoutMs }), options);
+    case 'recover_queue_response':
+      return output(await bridge.recover_queue_response({
+        request_id: options.requestId,
+        expected_result_kind: options.expectedResultKind,
+        expected_client_pid: options.expectedClientPid,
+        timeoutMs: options.timeoutMs
+      }), options);
     case 'reset_model':
-      return output(await bridge.reset_model({ runtime: options.runtime || 'mock', timeoutMs: options.timeoutMs }), options);
+      return output(await bridge.reset_model({ runtime: options.runtime || 'mock', timeoutMs: options.timeoutMs, ...liveSessionOptions(options) }), options);
     case 'build_model': {
       const code = options.codeFile ? await fs.readFile(options.codeFile, 'utf8') : options.code;
-      return output(await bridge.build_model({ code, runtime: options.runtime || 'mock', timeoutMs: options.timeoutMs }), options);
+      return output(await bridge.build_model({ code, runtime: options.runtime || 'mock', timeoutMs: options.timeoutMs, ...liveSessionOptions(options) }), options);
     }
     case 'compile_expert': {
       const code = options.codeFile ? await fs.readFile(options.codeFile, 'utf8') : options.code;
@@ -38,18 +54,18 @@ async function main() {
     }
     case 'build_expert_model': {
       const code = options.codeFile ? await fs.readFile(options.codeFile, 'utf8') : options.code;
-      return output(await bridge.build_expert_model({ code, runtime: options.runtime || 'mock', timeoutMs: options.timeoutMs, ...expertOptions(options) }), options);
+      return output(await bridge.build_expert_model({ code, runtime: options.runtime || 'mock', timeoutMs: options.timeoutMs, ...expertOptions(options), ...liveSessionOptions(options) }), options);
     }
     case 'save_model':
-      return output(await bridge.save_model({ path: options.path, keep_session: options.keepSession !== false, runtime: options.runtime || 'mock', timeoutMs: options.timeoutMs }), options);
+      return output(await bridge.save_model({ path: options.path, keep_session: options.keepSession !== false, runtime: options.runtime || 'mock', timeoutMs: options.timeoutMs, ...liveSessionOptions(options) }), options);
     case 'save_model_version':
-      return output(await bridge.save_model_version({ path: options.path, base_path: options.basePath, label: options.label, keep_session: options.keepSession !== false, runtime: options.runtime || 'mock', timeoutMs: options.timeoutMs }), options);
+      return output(await bridge.save_model_version({ path: options.path, base_path: options.basePath, label: options.label, keep_session: options.keepSession !== false, runtime: options.runtime || 'mock', timeoutMs: options.timeoutMs, ...liveSessionOptions(options) }), options);
     case 'open_model':
-      return output(await bridge.open_model({ path: options.path, runtime: options.runtime || 'queue', timeoutMs: options.timeoutMs }), options);
+      return output(await bridge.open_model({ path: options.path, runtime: options.runtime || 'queue', timeoutMs: options.timeoutMs, ...liveSessionOptions(options) }), options);
     case 'import_model':
-      return output(await bridge.import_model({ path: options.path, mode: options.mode, prefix: options.prefix, runtime: options.runtime || 'queue', timeoutMs: options.timeoutMs }), options);
+      return output(await bridge.import_model({ path: options.path, mode: options.mode, prefix: options.prefix, runtime: options.runtime || 'queue', timeoutMs: options.timeoutMs, ...liveSessionOptions(options) }), options);
     case 'export_model':
-      return output(await bridge.export_model({ path: options.path, format: options.exportFormat, runtime: options.runtime || 'queue', timeoutMs: options.timeoutMs }), options);
+      return output(await bridge.export_model({ path: options.path, format: options.exportFormat, runtime: options.runtime || 'queue', timeoutMs: options.timeoutMs, ...liveSessionOptions(options) }), options);
     case 'get_model_info':
       return output(await bridge.get_model_info({ runtime: options.runtime || 'mock', timeoutMs: options.timeoutMs }), options);
     case 'list_entities':
@@ -57,7 +73,17 @@ async function main() {
     case 'inspect_model':
       return output(await bridge.inspect_model({ runtime: options.runtime || 'mock', timeoutMs: options.timeoutMs, includeEntities: options.includeEntities !== false, includeSnapshot: options.includeSnapshot === true, includeHidden: options.includeHidden !== false, kind: options.kind, material: options.material, tag: options.tag, name: options.name }), options);
     case 'adopt_open_model':
-      return output(await bridge.adopt_open_model({ runtime: options.runtime || 'mock', timeoutMs: options.timeoutMs, recursive: options.recursive === true, recursive_limit: options.recursiveLimit, force: options.force === true, prefix: options.prefix }), options);
+      return output(await bridge.adopt_open_model({
+        runtime: options.runtime || 'mock',
+        timeoutMs: options.timeoutMs,
+        recursive: options.recursive === true,
+        recursive_limit: options.recursiveLimit,
+        force: options.force === true,
+        prefix: options.prefix,
+        read_only: options.readOnly === true,
+        ...structuralProbeCliOptions(options),
+        ...liveSessionOptions(options)
+      }), options);
     case 'resolve_model_targets':
       return output(await bridge.resolve_model_targets({
         query: options.query || options.targetQuery,
@@ -105,7 +131,7 @@ async function main() {
       }), options);
     }
     case 'set_selection':
-      return output(await bridge.set_selection({ targets: options.targets || [], mode: options.mode || 'replace', runtime: options.runtime || 'mock', timeoutMs: options.timeoutMs }), options);
+      return output(await bridge.set_selection({ targets: options.targets || [], mode: options.mode || 'replace', runtime: options.runtime || 'mock', timeoutMs: options.timeoutMs, ...liveSessionOptions(options) }), options);
     case 'capture_view':
       return output(await bridge.capture_view({
         path: options.path,
@@ -117,7 +143,8 @@ async function main() {
         compression: options.compression,
         zoom_extents: options.zoomExtents,
         runtime: options.runtime || 'queue',
-        timeoutMs: options.timeoutMs
+        timeoutMs: options.timeoutMs,
+        ...liveSessionOptions(options)
       }), options);
     case 'run_ruby_expert': {
       const code = options.codeFile ? await fs.readFile(options.codeFile, 'utf8') : options.code;
@@ -125,7 +152,8 @@ async function main() {
         code,
         audit_path: options.auditPath,
         runtime: options.runtime || 'queue',
-        timeoutMs: options.timeoutMs
+        timeoutMs: options.timeoutMs,
+        ...liveSessionOptions(options)
       }), options);
     }
     case 'evaluate_py': {
@@ -137,7 +165,8 @@ async function main() {
         runtime: options.runtime || 'mock',
         timeoutMs: options.timeoutMs,
         ...expertOptions(options),
-        ...pythonSdkOptions(options)
+        ...pythonSdkOptions(options),
+        ...liveSessionOptions(options)
       }), options);
     }
     case 'build_report': {
@@ -159,7 +188,8 @@ async function main() {
         reference_spec: referenceSpec,
         runtime: options.runtime || 'mock',
         timeoutMs: options.timeoutMs,
-        includePreview: options.includePreview !== false
+        includePreview: options.includePreview !== false,
+        ...liveSessionOptions(options)
       }), options);
     }
     case 'iterate_model': {
@@ -197,7 +227,8 @@ async function main() {
         strictUnanchored: options.strictUnanchored,
         floatingDetails: options.floatingDetails,
         ...expertOptions(options),
-        ...pythonSdkOptions(options)
+        ...pythonSdkOptions(options),
+        ...liveSessionOptions(options)
       }), options);
     }
     case 'compare_snapshots': {
@@ -217,7 +248,8 @@ async function main() {
         topologyTolerance: topologyToleranceOptions(options),
         budgets: budgetOptions(options),
         topIssueLimit: options.topIssueLimit,
-        include_snapshots: options.includeSnapshots === true
+        include_snapshots: options.includeSnapshots === true,
+        ...liveSessionOptions(options)
       }), options, { markdownTitle: 'SketchUp Model Runtime Compare Report' });
     }
     case 'validate_model': {
@@ -233,7 +265,8 @@ async function main() {
         includePreview: options.includePreview !== false,
         strictCollisions: options.strictCollisions,
         strictUnanchored: options.strictUnanchored,
-        floatingDetails: options.floatingDetails
+        floatingDetails: options.floatingDetails,
+        ...liveSessionOptions(options)
       });
       if (options.previewDir) {
         await writePreviewFiles(result, options.previewDir);
@@ -250,7 +283,8 @@ async function main() {
         spec,
         runtime: options.runtime || 'mock',
         timeoutMs: options.timeoutMs,
-        includePreview: options.includePreview !== false
+        includePreview: options.includePreview !== false,
+        ...liveSessionOptions(options)
       });
       if (options.previewDir) {
         await writePreviewFiles(result, options.previewDir);
@@ -268,6 +302,9 @@ function parseArgs(argv) {
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
     if (arg === '--runtime') options.runtime = argv[++index];
+    else if (arg === '--request-id') options.requestId = argv[++index];
+    else if (arg === '--expected-result-kind') options.expectedResultKind = argv[++index];
+    else if (arg === '--expected-client-pid') options.expectedClientPid = Number(argv[++index]);
     else if (arg === '--expected-runtime') options.expectedRuntime = argv[++index];
     else if (arg === '--actual-runtime') options.actualRuntime = argv[++index];
     else if (arg === '--code') options.code = argv[++index];
@@ -294,6 +331,14 @@ function parseArgs(argv) {
     else if (arg === '--action') options.action = argv[++index];
     else if (arg === '--limit') options.limit = Number(argv[++index]);
     else if (arg === '--recursive-limit') options.recursiveLimit = Number(argv[++index]);
+    else if (arg === '--structural-groups') options.structuralGroups = true;
+    else if (arg === '--structural-group-limit') options.structuralGroupLimit = Number(argv[++index]);
+    else if (arg === '--fresh-manifold-path') {
+      options.freshManifoldPaths ||= [];
+      options.freshManifoldPaths.push(argv[++index]);
+    }
+    else if (arg === '--expires-in-ms') options.expiresInMs = Number(argv[++index]);
+    else if (arg === '--session-contract-file') options.sessionContractFile = argv[++index];
     else if (arg === '--target') {
       options.targets ||= [];
       options.targets.push(argv[++index]);
@@ -351,6 +396,8 @@ function parseArgs(argv) {
     else if (arg === '--no-hidden') options.includeHidden = false;
     else if (arg === '--include-files') options.includeFiles = true;
     else if (arg === '--recursive') options.recursive = true;
+    else if (arg === '--read-only') options.readOnly = true;
+    else if (arg === '--fresh-handshake') options.freshHandshake = true;
     else if (arg === '--force') options.force = true;
     else if (arg === '--largest') options.largest = true;
     else if (arg === '--smallest') options.smallest = true;
@@ -399,6 +446,18 @@ function pythonSdkOptions(options) {
     pythonTimeoutMs: options.pythonTimeoutMs,
     pythonCommand: options.pythonCommand
   };
+}
+
+function liveSessionOptions(options) {
+  return options.sessionContract ? { session_contract: options.sessionContract } : {};
+}
+
+function structuralProbeCliOptions(options) {
+  const result = {};
+  if (options.structuralGroups === true) result.structural_groups = true;
+  if (options.structuralGroupLimit !== undefined) result.structural_group_limit = options.structuralGroupLimit;
+  if (Array.isArray(options.freshManifoldPaths)) result.fresh_manifold_paths = options.freshManifoldPaths;
+  return result;
 }
 
 function captureOptions(options) {
@@ -504,8 +563,10 @@ function usage() {
   node src/cli.mjs get_docs
   node src/cli.mjs get_workflow_bundle
   node src/cli.mjs get_capabilities [--runtime mock|queue]
+  node src/cli.mjs create_queue_handshake [--expires-in-ms 120000] [--output-file output/session-contract.json]
   node src/cli.mjs queue_diagnostics [--include-files]
-  node src/cli.mjs reset_model [--runtime mock|queue]
+  node src/cli.mjs recover_queue_response --request-id CLIENTPID-CREATEDMS-UUID --expected-result-kind queue_session_state [--expected-client-pid CLIENTPID]
+  node src/cli.mjs reset_model [--runtime mock|queue] [--session-contract-file output/session-contract.json]
   node src/cli.mjs build_model --code-file examples/demo-room.json [--runtime mock|queue]
   node src/cli.mjs compile_expert --code-file examples/expert-parametric-fixture.js [--format dsl]
   node src/cli.mjs compile_python_sdk --code-file examples/python-sdk-facade-fixture.py [--format dsl]
@@ -513,12 +574,12 @@ function usage() {
   node src/cli.mjs save_model --path output/model.json [--runtime mock|queue] [--no-keep-session]
   node src/cli.mjs save_model_version [--path output/model-version.json] [--base-path output/model.json] [--label review] [--runtime mock|queue]
   node src/cli.mjs open_model --path output/model.json [--runtime mock|queue]
-  node src/cli.mjs import_model --path input/model.skp [--mode append|replace] [--prefix Imported] [--runtime mock|queue]
+  node src/cli.mjs import_model --path input/model.skp [--mode append|replace] [--prefix Imported] [--runtime mock|queue]  # replace is mock-only; queue fails closed
   node src/cli.mjs export_model --path output/model.obj [--export-format obj] [--runtime mock|queue]
   node src/cli.mjs get_model_info [--runtime mock|queue]
   node src/cli.mjs list_entities [--runtime mock|queue] [--kind box] [--material Wall] [--tag Level1] [--name wall] [--no-hidden]
   node src/cli.mjs inspect_model [--runtime mock|queue] [--include-snapshot] [--no-entities]
-  node src/cli.mjs adopt_open_model [--runtime mock|queue] [--recursive] [--recursive-limit 500] [--force] [--prefix adopted]
+  node src/cli.mjs adopt_open_model [--runtime mock|queue] [--read-only] [--recursive] [--recursive-limit 500] [--structural-groups] [--structural-group-limit 500] [--fresh-manifold-path pid:...] [--force] [--prefix adopted]
   node src/cli.mjs resolve_model_targets --query "largest cabinet" [--runtime mock|queue] [--kind box] [--material Oak] [--side left] [--allow-multiple]
   node src/cli.mjs get_selection [--runtime mock|queue]
   node src/cli.mjs analyze_selection_geometry [--runtime mock|queue] [--assume road] [--no-details]
@@ -537,7 +598,7 @@ function usage() {
 
 Runtime notes:
   mock  - deterministic offline runtime for tests and Alma iteration.
-  queue - sends requests to the SketchUp Ruby plugin through ~/.sketchup-mcp-replica.
+  queue - sends requests to the SketchUp Ruby plugin through ~/.sketchup-mcp-replica. Live mutations require --session-contract-file, or explicit same-command --fresh-handshake.
 `);
 }
 

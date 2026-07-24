@@ -15,7 +15,7 @@ export function validateModelSnapshot(snapshot = {}, options = {}) {
   const issues = [];
   const acceptedWarnings = [];
 
-  validateSnapshotWarnings(issues, snapshot, expectedPairs, options, acceptedWarnings);
+  validateSnapshotWarnings(issues, snapshot, expectedPairs, itemIndex, options, acceptedWarnings);
   validateContactRules(issues, spec.contacts, itemIndex);
   validateInsideRules(issues, spec.inside, itemIndex);
   validateSupportRules(issues, spec.support, itemIndex);
@@ -158,11 +158,17 @@ function normalizeRuleArray(value) {
 function visibleItems(snapshot) {
   return [...(snapshot.groups || []), ...(snapshot.instances || [])]
     .filter((item) => item?.visible !== false && item?.bounding_box)
-    .map((item) => ({
-      ...item,
-      ref: item.id || item.name,
-      type: item.definition ? 'instance' : 'group'
-    }));
+    .map((item) => {
+      const persistentRef = item.persistent_id === undefined || item.persistent_id === null
+        ? null
+        : `pid:${item.persistent_id}`;
+      return {
+        ...item,
+        ref: item.id || item.name || persistentRef,
+        persistent_ref: persistentRef,
+        type: item.definition ? 'instance' : 'group'
+      };
+    });
 }
 
 function buildItemIndex(items) {
@@ -170,6 +176,8 @@ function buildItemIndex(items) {
   for (const item of items) {
     if (item.id) index.set(item.id, item);
     if (item.name) index.set(item.name, item);
+    if (item.ref) index.set(item.ref, item);
+    if (item.persistent_ref) index.set(item.persistent_ref, item);
   }
   return { items, byRef: index };
 }
@@ -202,11 +210,11 @@ function addResolvedPairs(pairs, rule, itemIndex) {
   }
 }
 
-function validateSnapshotWarnings(issues, snapshot, expectedPairs, options, acceptedWarnings = []) {
+function validateSnapshotWarnings(issues, snapshot, expectedPairs, itemIndex, options, acceptedWarnings = []) {
   for (const warning of snapshot.warnings || []) {
     if (warning.severity === 'info') continue;
     if (warning.type === 'geometry.bbox_collision' || warning.type === 'geometry.bbox_overlap') {
-      const [left, right] = warningPairRefs(warning);
+      const [left, right] = warningPairRefs(warning, itemIndex);
       if (left && right && expectedPairs.has(pairKey(left, right))) {
         acceptedWarnings.push({
           type: warning.type,
@@ -528,7 +536,7 @@ function uniqueItems(items) {
   const seen = new Set();
   const unique = [];
   for (const item of items) {
-    const key = item.id || item.name;
+    const key = item.ref || item.id || item.name;
     if (seen.has(key)) continue;
     seen.add(key);
     unique.push(item);
@@ -536,13 +544,39 @@ function uniqueItems(items) {
   return unique;
 }
 
-function warningPairRefs(warning) {
+function warningPairRefs(warning, itemIndex) {
   const source = warning.source || '';
-  const sourceMatch = /group:([^;]+);([^;]+)/.exec(source);
-  if (sourceMatch) return [sourceMatch[1], sourceMatch[2]];
+  const sourceMatch = /group:([^;]*);([^;]*)/.exec(source);
+  if (sourceMatch) return recoverAnonymousWarningRefPair(sourceMatch[1], sourceMatch[2], itemIndex);
   const messageMatch = /:\s+(.+?)\s+intersects\s+(.+)$/i.exec(warning.message || '');
-  if (messageMatch) return [messageMatch[1], messageMatch[2]];
+  if (messageMatch) return recoverAnonymousWarningRefPair(messageMatch[1], messageMatch[2], itemIndex);
   return [null, null];
+}
+
+function recoverAnonymousWarningRefPair(leftValue, rightValue, itemIndex) {
+  let left = String(leftValue || '').trim() || null;
+  let right = String(rightValue || '').trim() || null;
+  if (!itemIndex || (left && right)) return [left, right];
+
+  if (!left && right) {
+    const candidates = anonymousOverlapCandidates(right, itemIndex);
+    if (candidates.length === 1) left = candidates[0].ref;
+  } else if (left && !right) {
+    const candidates = anonymousOverlapCandidates(left, itemIndex);
+    if (candidates.length === 1) right = candidates[0].ref;
+  }
+  return [left, right];
+}
+
+function anonymousOverlapCandidates(knownRef, itemIndex) {
+  const known = itemIndex.items.filter((item) => [item.ref, item.id, item.name, item.persistent_ref].includes(knownRef));
+  if (known.length !== 1) return [];
+  return itemIndex.items.filter((item) => !item.id && !item.name && item.ref
+    && positiveBoxOverlap(item.bounding_box, known[0].bounding_box));
+}
+
+function positiveBoxOverlap(left, right) {
+  return Boolean(left && right) && [0, 1, 2].every((axis) => overlapAmount(left, right, axis) > 0);
 }
 
 function pairKey(left, right) {

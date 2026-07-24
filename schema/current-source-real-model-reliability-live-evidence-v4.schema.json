@@ -1,0 +1,514 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/schemas/current-source-real-model-reliability-live-evidence-v4.schema.json",
+  "title": "Current Source Real Model Reliability Live Evidence v4",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "kind",
+    "captured_at",
+    "branch",
+    "result",
+    "evidence_scope",
+    "runtime",
+    "execution_authorization",
+    "lineage",
+    "corpus",
+    "case_summaries",
+    "aggregate_metrics",
+    "performance_boundary",
+    "locked_target_guard",
+    "appearance_preservation",
+    "architecture_preservation",
+    "source_sha256",
+    "acceptance",
+    "boundaries"
+  ],
+  "properties": {
+    "version": { "const": "current-source-real-model-reliability-live-evidence.v4" },
+    "kind": { "const": "current_source_real_model_reliability_live_evidence" },
+    "captured_at": { "type": "string", "format": "date-time" },
+    "branch": { "const": "codex/agent-contract-v1" },
+    "result": { "const": "partial_pass" },
+    "evidence_scope": { "const": "five_hash_bound_real_model_cases_with_one_guarded_geometry_mutation_and_controlled_metadata_or_geometry_overlays" },
+    "runtime": { "$ref": "#/$defs/runtime" },
+    "execution_authorization": { "$ref": "#/$defs/executionAuthorization" },
+    "lineage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["prior_four_case_evidence", "architecture_case_evidence"],
+      "properties": {
+        "prior_four_case_evidence": { "$ref": "#/$defs/artifact" },
+        "architecture_case_evidence": { "$ref": "#/$defs/artifact" }
+      }
+    },
+    "corpus": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "manifest_path",
+        "manifest_sha256",
+        "formal_cases_total",
+        "formal_cases_passed",
+        "formal_corpus_complete",
+        "passed_case_ids",
+        "remaining_case_ids"
+      ],
+      "properties": {
+        "manifest_path": { "const": "test/reliability-corpus/manifest.json" },
+        "manifest_sha256": { "$ref": "#/$defs/prefixedSha256" },
+        "formal_cases_total": { "const": 7 },
+        "formal_cases_passed": { "const": 5 },
+        "formal_corpus_complete": { "const": false },
+        "passed_case_ids": {
+          "const": [
+            "appearance-scenes-hidden",
+            "architecture-golden",
+            "deep-shared-components",
+            "interior-expression",
+            "scaled-mirrored-locked"
+          ]
+        },
+        "remaining_case_ids": {
+          "const": ["product-boolean-manifold", "imported-dirty-topology"]
+        }
+      }
+    },
+    "case_summaries": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "items": { "$ref": "#/$defs/caseSummary" }
+    },
+    "aggregate_metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tasks_total",
+        "tasks_passed",
+        "task_success_rate",
+        "geometry_mutation_cases_passed",
+        "controlled_fixture_overlay_cases_passed",
+        "wrong_object_modification_count",
+        "silent_geometry_corruption_count",
+        "recovery_attempts",
+        "recoveries",
+        "recovery_rate",
+        "aggregate_duration_ms",
+        "queue_clean_after_each_case"
+      ],
+      "properties": {
+        "tasks_total": { "const": 17 },
+        "tasks_passed": { "const": 17 },
+        "task_success_rate": { "const": 1 },
+        "geometry_mutation_cases_passed": { "const": 1 },
+        "controlled_fixture_overlay_cases_passed": { "const": 3 },
+        "wrong_object_modification_count": { "const": 0 },
+        "silent_geometry_corruption_count": { "const": 0 },
+        "recovery_attempts": { "const": 1 },
+        "recoveries": { "const": 1 },
+        "recovery_rate": { "const": 1 },
+        "aggregate_duration_ms": { "type": "integer", "minimum": 1 },
+        "queue_clean_after_each_case": { "const": true }
+      }
+    },
+    "performance_boundary": { "$ref": "#/$defs/performanceBoundary" },
+    "locked_target_guard": { "$ref": "#/$defs/lockedTargetGuard" },
+    "appearance_preservation": { "$ref": "#/$defs/appearancePreservation" },
+    "architecture_preservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "case_id",
+        "fixture_overlay_mutated_disposable_copy_metadata",
+        "fixture_overlay_geometry_mutation_performed",
+        "formal_case_geometry_mutation_executed",
+        "material_signature",
+        "material_signature_preserved",
+        "scene_visibility_signature",
+        "scene_visibility_signature_preserved",
+        "scenes",
+        "hidden_top_level_entities",
+        "recursive_entries",
+        "model_revision_exact_match",
+        "nested_hidden_occurrence_attestation"
+      ],
+      "properties": {
+        "case_id": { "const": "architecture-golden" },
+        "fixture_overlay_mutated_disposable_copy_metadata": { "const": true },
+        "fixture_overlay_geometry_mutation_performed": { "const": false },
+        "formal_case_geometry_mutation_executed": { "const": false },
+        "material_signature": { "$ref": "#/$defs/prefixedSha256" },
+        "material_signature_preserved": { "const": true },
+        "scene_visibility_signature": { "$ref": "#/$defs/prefixedSha256" },
+        "scene_visibility_signature_preserved": { "const": true },
+        "scenes": { "const": 1 },
+        "hidden_top_level_entities": { "const": 0 },
+        "recursive_entries": { "const": 5859 },
+        "model_revision_exact_match": { "const": true },
+        "nested_hidden_occurrence_attestation": { "const": false }
+      }
+    },
+    "source_sha256": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "test/reliability-corpus/manifest.json",
+        "scripts/aggregate-current-source-real-model-reliability-live-v4.mjs",
+        "scripts/build-architecture-golden-live-evidence.mjs",
+        "scripts/run-real-model-reliability-harness.mjs",
+        "scripts/run-real-model-reliability-live-case.mjs",
+        "schema/current-source-real-model-reliability-live-evidence-v4.schema.json",
+        "schema/architecture-golden-live-evidence-v1.schema.json",
+        "schema/real-model-reliability-live-case-report-v1.schema.json",
+        "schema/real-model-reliability-live-case-v1.schema.json",
+        "sketchup_plugin/alma_sketchup_mcp/materials.rb",
+        "sketchup_plugin/alma_sketchup_mcp/model_revision.rb",
+        "sketchup_plugin/alma_sketchup_mcp/runtime_source_manifest.rb",
+        "sketchup_plugin/alma_sketchup_mcp/view_operations.rb"
+      ],
+      "properties": {
+        "test/reliability-corpus/manifest.json": { "$ref": "#/$defs/sha256" },
+        "scripts/aggregate-current-source-real-model-reliability-live-v4.mjs": { "$ref": "#/$defs/sha256" },
+        "scripts/build-architecture-golden-live-evidence.mjs": { "$ref": "#/$defs/sha256" },
+        "scripts/run-real-model-reliability-harness.mjs": { "$ref": "#/$defs/sha256" },
+        "scripts/run-real-model-reliability-live-case.mjs": { "$ref": "#/$defs/sha256" },
+        "schema/current-source-real-model-reliability-live-evidence-v4.schema.json": { "$ref": "#/$defs/sha256" },
+        "schema/architecture-golden-live-evidence-v1.schema.json": { "$ref": "#/$defs/sha256" },
+        "schema/real-model-reliability-live-case-report-v1.schema.json": { "$ref": "#/$defs/sha256" },
+        "schema/real-model-reliability-live-case-v1.schema.json": { "$ref": "#/$defs/sha256" },
+        "sketchup_plugin/alma_sketchup_mcp/materials.rb": { "$ref": "#/$defs/sha256" },
+        "sketchup_plugin/alma_sketchup_mcp/model_revision.rb": { "$ref": "#/$defs/sha256" },
+        "sketchup_plugin/alma_sketchup_mcp/runtime_source_manifest.rb": { "$ref": "#/$defs/sha256" },
+        "sketchup_plugin/alma_sketchup_mcp/view_operations.rb": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "acceptance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "five_case_live_reliability",
+        "full_recursive_save_reopen",
+        "bounded_large_model_save_reopen",
+        "shared_definition_scope",
+        "material_and_scene_preservation",
+        "appearance_uv_hidden_preservation",
+        "architecture_case",
+        "mutation_cases_passed",
+        "locked_transform_rollback",
+        "native_lock_guard_enforced",
+        "boolean_manifold",
+        "dirty_topology_recovery",
+        "formal_corpus_cases_passed",
+        "formal_corpus_cases_total",
+        "formal_corpus_complete",
+        "agent_gateway_default_profile_qualified",
+        "cross_version",
+        "release_acceptance"
+      ],
+      "properties": {
+        "five_case_live_reliability": { "const": true },
+        "full_recursive_save_reopen": { "const": true },
+        "bounded_large_model_save_reopen": { "const": true },
+        "shared_definition_scope": { "const": true },
+        "material_and_scene_preservation": { "const": true },
+        "appearance_uv_hidden_preservation": { "const": true },
+        "architecture_case": { "const": true },
+        "mutation_cases_passed": { "const": 1 },
+        "locked_transform_rollback": { "const": true },
+        "native_lock_guard_enforced": { "const": true },
+        "boolean_manifold": { "const": false },
+        "dirty_topology_recovery": { "const": false },
+        "formal_corpus_cases_passed": { "const": 5 },
+        "formal_corpus_cases_total": { "const": 7 },
+        "formal_corpus_complete": { "const": false },
+        "agent_gateway_default_profile_qualified": { "const": false },
+        "cross_version": { "const": "deferred_by_user" },
+        "release_acceptance": { "const": false }
+      }
+    },
+    "boundaries": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 8,
+      "items": { "type": "string", "minLength": 40 }
+    }
+  },
+  "allOf": [
+    { "$ref": "#/$defs/containsAppearance" },
+    { "$ref": "#/$defs/containsArchitecture" },
+    { "$ref": "#/$defs/containsDeepShared" },
+    { "$ref": "#/$defs/containsInterior" },
+    { "$ref": "#/$defs/containsScaledLocked" }
+  ],
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "prefixedSha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "bytes"],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "not": { "pattern": "^(?:/|[A-Za-z]:[\\\\/]|file://|~/)" }
+        },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "bytes": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "server_version",
+        "plugin_version",
+        "sketchup_version",
+        "ruby_version",
+        "capability_version",
+        "manifest_version",
+        "dsl_version",
+        "occurrence_contract",
+        "revision_strategy",
+        "revision_source_sha256",
+        "compatibility_ok"
+      ],
+      "properties": {
+        "name": { "const": "queue" },
+        "server_version": { "const": "0.1.0-rc.2" },
+        "plugin_version": { "const": "0.1.0-rc.2" },
+        "sketchup_version": { "const": "26.2.242" },
+        "ruby_version": { "const": "3.2.2" },
+        "capability_version": { "const": "0.1.0-rc.2-capabilities.7" },
+        "manifest_version": { "const": "2026-07-agent-contract-v1.4" },
+        "dsl_version": { "const": 1 },
+        "occurrence_contract": { "const": "canonical-occurrence-path.v1" },
+        "revision_strategy": { "const": "definition-merkle.v2" },
+        "revision_source_sha256": { "$ref": "#/$defs/sha256" },
+        "compatibility_ok": { "const": true }
+      }
+    },
+    "executionAuthorization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "user_authorized_disposable_copies",
+        "queue_required",
+        "allowed_runtimes_explicit",
+        "queue_mutation_explicit",
+        "direct_expert_mutation_explicit",
+        "policy_persisted",
+        "default_policy_unchanged",
+        "agent_self_authorization_allowed"
+      ],
+      "properties": {
+        "mode": { "const": "local_operator_ephemeral_process_policy" },
+        "user_authorized_disposable_copies": { "const": true },
+        "queue_required": { "const": true },
+        "allowed_runtimes_explicit": { "const": true },
+        "queue_mutation_explicit": { "const": true },
+        "direct_expert_mutation_explicit": { "const": true },
+        "policy_persisted": { "const": false },
+        "default_policy_unchanged": { "const": true },
+        "agent_self_authorization_allowed": { "const": false }
+      }
+    },
+    "caseSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "case_id",
+        "tasks_total",
+        "tasks_passed",
+        "duration_ms",
+        "geometry_mutation_executed",
+        "save_reopen_exact",
+        "wrong_object_modification_count",
+        "silent_geometry_corruption_count",
+        "queue_clean"
+      ],
+      "properties": {
+        "case_id": {
+          "enum": [
+            "appearance-scenes-hidden",
+            "architecture-golden",
+            "deep-shared-components",
+            "interior-expression",
+            "scaled-mirrored-locked"
+          ]
+        },
+        "tasks_total": { "type": "integer", "minimum": 1 },
+        "tasks_passed": { "type": "integer", "minimum": 1 },
+        "duration_ms": { "type": "integer", "minimum": 1 },
+        "geometry_mutation_executed": { "type": "boolean" },
+        "save_reopen_exact": { "const": true },
+        "wrong_object_modification_count": { "const": 0 },
+        "silent_geometry_corruption_count": { "const": 0 },
+        "queue_clean": { "const": true }
+      }
+    },
+    "performanceBoundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "stress_case_id",
+        "stress_case_duration_ms",
+        "interactive_budget_ms",
+        "stress_case_within_interactive_budget",
+        "use_as_default_agent_payload",
+        "complete_revision_retained",
+        "bounded_occurrence_payload_retained",
+        "next_action"
+      ],
+      "properties": {
+        "stress_case_id": { "const": "interior-expression" },
+        "stress_case_duration_ms": { "type": "integer", "minimum": 120001 },
+        "interactive_budget_ms": { "const": 120000 },
+        "stress_case_within_interactive_budget": { "const": false },
+        "use_as_default_agent_payload": { "const": false },
+        "complete_revision_retained": { "const": true },
+        "bounded_occurrence_payload_retained": { "const": true },
+        "next_action": { "const": "separate_revision_attestation_from_payload_and_add_runtime_budget" }
+      }
+    },
+    "lockedTargetGuard": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "native_lock_gap_discovered",
+        "native_lock_alone_sufficient",
+        "application_guard_required",
+        "loaded_boolean_source_sha256",
+        "mutating_operations_guarded",
+        "read_only_locked_access",
+        "locked_batch_rejected_before_commit",
+        "locked_target_unchanged",
+        "guard_unchanged"
+      ],
+      "properties": {
+        "native_lock_gap_discovered": { "const": true },
+        "native_lock_alone_sufficient": { "const": false },
+        "application_guard_required": { "const": true },
+        "loaded_boolean_source_sha256": { "$ref": "#/$defs/sha256" },
+        "mutating_operations_guarded": { "const": 25 },
+        "read_only_locked_access": { "const": ["set_selection", "manifold_check"] },
+        "locked_batch_rejected_before_commit": { "const": true },
+        "locked_target_unchanged": { "const": true },
+        "guard_unchanged": { "const": true }
+      }
+    },
+    "appearancePreservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "case_id",
+        "fixture_overlay_mutated_disposable_copy",
+        "formal_case_geometry_mutation_executed",
+        "face_uv_evidence_kind",
+        "face_uv_operation_applied_without_warning",
+        "face_uv_payload_persisted",
+        "textured_material_persisted",
+        "uv_material_signature_preserved",
+        "scene_visibility_signature_preserved",
+        "scenes",
+        "hidden_entities",
+        "recursive_entries",
+        "independent_uvhelper_coordinate_attestation",
+        "arbitrary_uv_editing_proven"
+      ],
+      "properties": {
+        "case_id": { "const": "appearance-scenes-hidden" },
+        "fixture_overlay_mutated_disposable_copy": { "const": true },
+        "formal_case_geometry_mutation_executed": { "const": false },
+        "face_uv_evidence_kind": { "const": "face_uvs" },
+        "face_uv_operation_applied_without_warning": { "const": true },
+        "face_uv_payload_persisted": { "const": true },
+        "textured_material_persisted": { "const": true },
+        "uv_material_signature_preserved": { "const": true },
+        "scene_visibility_signature_preserved": { "const": true },
+        "scenes": { "const": 1 },
+        "hidden_entities": { "const": 1 },
+        "recursive_entries": { "const": 5897 },
+        "independent_uvhelper_coordinate_attestation": { "const": false },
+        "arbitrary_uv_editing_proven": { "const": false }
+      }
+    },
+    "containsAppearance": {
+      "properties": {
+        "case_summaries": {
+          "contains": {
+            "type": "object",
+            "required": ["case_id"],
+            "properties": { "case_id": { "const": "appearance-scenes-hidden" } }
+          },
+          "minContains": 1,
+          "maxContains": 1
+        }
+      }
+    },
+    "containsArchitecture": {
+      "properties": {
+        "case_summaries": {
+          "contains": {
+            "type": "object",
+            "required": ["case_id", "tasks_total", "tasks_passed", "geometry_mutation_executed"],
+            "properties": {
+              "case_id": { "const": "architecture-golden" },
+              "tasks_total": { "const": 3 },
+              "tasks_passed": { "const": 3 },
+              "geometry_mutation_executed": { "const": false }
+            }
+          },
+          "minContains": 1,
+          "maxContains": 1
+        }
+      }
+    },
+    "containsDeepShared": {
+      "properties": {
+        "case_summaries": {
+          "contains": {
+            "type": "object",
+            "required": ["case_id"],
+            "properties": { "case_id": { "const": "deep-shared-components" } }
+          },
+          "minContains": 1,
+          "maxContains": 1
+        }
+      }
+    },
+    "containsInterior": {
+      "properties": {
+        "case_summaries": {
+          "contains": {
+            "type": "object",
+            "required": ["case_id"],
+            "properties": { "case_id": { "const": "interior-expression" } }
+          },
+          "minContains": 1,
+          "maxContains": 1
+        }
+      }
+    },
+    "containsScaledLocked": {
+      "properties": {
+        "case_summaries": {
+          "contains": {
+            "type": "object",
+            "required": ["case_id", "geometry_mutation_executed"],
+            "properties": {
+              "case_id": { "const": "scaled-mirrored-locked" },
+              "geometry_mutation_executed": { "const": true }
+            }
+          },
+          "minContains": 1,
+          "maxContains": 1
+        }
+      }
+    }
+  }
+}

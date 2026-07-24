@@ -1,0 +1,192 @@
+{
+  "version": "current-source-reviewed-plan-v3-live-evidence.v1",
+  "kind": "historical_exact_source_reviewed_plan_v3_live_evidence",
+  "captured_at": "2026-07-21T17:03:52.848Z",
+  "evidence_scope": "single_large_disposable_model_plan_v3_execution_policy_read_only",
+  "source_binding_status": "historical_exact_source_snapshot",
+  "current_source_replacement": {
+    "target_selection_scope": "docs/evidence/current-source-multi-model-target-quality-live-evidence-2026-07-22.json",
+    "reviewed_plan_scope": null
+  },
+  "runtime": {
+    "plugin_version": "0.1.0-rc.2",
+    "sketchup_version": "26.2.242",
+    "ruby_version": "3.2.2",
+    "capability_version": "0.1.0-rc.2-capabilities.7",
+    "manifest_version": "2026-07-agent-contract-v1.4",
+    "model_revision_strategy": "definition-merkle.v2",
+    "boolean_operations_sha256": "sha256:b98fd554894f629359651f40929cf30a7122ac90ba01217a662bea2f4c407610",
+    "model_revision_source_sha256": "sha256:b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134",
+    "compatibility_ok": true
+  },
+  "source_bindings": [
+    {
+      "path": "src/model-graph.mjs",
+      "sha256": "sha256:6bd4446a1eef063274b4d18f6ca7cf37760b3a277c182885dd56ec850a29cbce"
+    },
+    {
+      "path": "src/existing-model-edit-proposer.mjs",
+      "sha256": "sha256:2039909f487b4562bd2f7241945b6a4ce415d9da8ac44c8c895c61b5a024ed45"
+    },
+    {
+      "path": "src/existing-model-editing.mjs",
+      "sha256": "sha256:2f239c929a2e2d700f398356810a83d18646b82bbc28ceb9b0ecd5ee1449be47"
+    },
+    {
+      "path": "src/agent-gateway.mjs",
+      "sha256": "sha256:abc2e51c9b74e5cb4ac3e8bc7676918054b3ccf18fb0dccd7c378eb0cac5f08c"
+    },
+    {
+      "path": "src/model-adoption.mjs",
+      "sha256": "sha256:39f4f7fa2e5a8255f9c709e6b6e904f7999b5008c679bd0346fef6972cf7f764"
+    },
+    {
+      "path": "schema/model-graph-v1.schema.json",
+      "sha256": "sha256:17da463e354d32b47052537222802d96779b5f2173334ed02062d7cce19c8fd8"
+    },
+    {
+      "path": "schema/existing-model-edit-proposal-v1.schema.json",
+      "sha256": "sha256:e51288a7f0e0e16ebf726c8da1923496d6b7140e33c449f6d7fe66678d7d7c87"
+    },
+    {
+      "path": "schema/existing-edit-target-validation-v1.schema.json",
+      "sha256": "sha256:a30a68405e2985f02a26f6515a8da56fa80e401c3d08957e6a76bc8c2b122e16"
+    },
+    {
+      "path": "schema/existing-edit-execution-target-validation-v1.schema.json",
+      "sha256": "sha256:fb0342b5b574cc17c22ac552654ec911a44a8302d073d904b0befbe79e37d075"
+    },
+    {
+      "path": "test/model-graph-proposer.mjs",
+      "sha256": "sha256:e8efb6c6805531f8750960e8fa1d83ec520126bd0c3b534745dfc94d1c594423"
+    },
+    {
+      "path": "test/current-source-reviewed-plan-readonly-live.mjs",
+      "sha256": "sha256:bb84fd120ea5075406a33d5a06bddf04fbae415a362c1317245de6861f9bc1ff"
+    },
+    {
+      "path": "scripts/run-current-source-reviewed-plan-readonly-live.mjs",
+      "sha256": "sha256:0021035aeb9e9600bdc011968e2000c80aca8caf822f8502be7baa239beaf020"
+    }
+  ],
+  "model": {
+    "fixture_handle": "fixture:sha256:8678e0f86768cde57ae6f81c138a0c9296b5fcbee978e34ef01063e883d22efb",
+    "label_trust": "untrusted_data",
+    "size_bytes": 5413634,
+    "model_revision": "sha256:d833e6547bd6b7b4ea7271dd8b88e27d4a3336716ee79c03fb737d89ccfd54af",
+    "revision_indexed": 71360,
+    "revision_total_seen": 71360,
+    "model_revision_complete": true,
+    "bytes_unchanged": true,
+    "revision_unchanged": true,
+    "document_unchanged": true,
+    "model_modified": false,
+    "source_path_disclosed": false
+  },
+  "proposal": {
+    "task_state": "awaiting_review",
+    "discovery_mode": "structural_groups",
+    "full_model_graph_complete": false,
+    "full_model_graph_blockers": [
+      "recursive_index_not_requested"
+    ],
+    "projection_complete": true,
+    "projected_groups": 41,
+    "leaf_entities_materialized": false,
+    "selected_target_count": 1,
+    "selected_entity_path": "pid:89456",
+    "operation_count": 1,
+    "risk_level": "S2",
+    "execution_allowed": false
+  },
+  "reviewed_plan": {
+    "task_state": "awaiting_review",
+    "plan_id": "existing-edit-0750298cc1b774e3adb212d5",
+    "plan_hash": "sha256:2185953a3048514623b166498e3c69cca2b20954eb07afc85dacdf89e5b33947",
+    "plan_version": "2026-07-existing-model-edit-plan.3",
+    "compile_permission": "ready_for_review",
+    "selected_entity_path": "pid:89456",
+    "operation": "rename",
+    "target_validation": {
+      "version": "existing-edit-target-validation.v1",
+      "mode": "structural_groups",
+      "source": "server_bound_source_proposal",
+      "projection_version": "structural-groups.v1",
+      "complete": true,
+      "truncated": false,
+      "indexed": 41,
+      "total_seen": 41,
+      "total_seen_exact": true,
+      "structural_group_limit": 5000,
+      "exact_target_count": 1,
+      "requested_target_count": 1,
+      "exact_targets_verified": true,
+      "leaf_entities_materialized": false,
+      "sufficient_for_review": true
+    },
+    "execution_target_validation_policy": {
+      "version": "existing-edit-execution-target-validation.v1",
+      "mode": "structural_groups",
+      "source": "hash_bound_server_proposal",
+      "leaf_entities_materialized": false,
+      "structural_group_limit": 5000
+    },
+    "blocker_count": 0,
+    "approval_challenge_status": "awaiting_trusted_user",
+    "approval_decision_recorded": false,
+    "approval_token_issued": false,
+    "execution_allowed": false
+  },
+  "timing": {
+    "total_ms": 61262,
+    "proposal_ms": 24515,
+    "reviewed_plan_ms": 23599,
+    "performance_guarantee": false
+  },
+  "capture_artifact_hashes": {
+    "public_report": "sha256:9496ec1c53dfaf2e3be4969c29300789b13138fbc93ac4c96c9e46e817dbf17c",
+    "private_proposal_projection": "sha256:1c8ef5c1f21f84429fe88e045fdeaa042c92cfe34da7426ba17f4c90d0681f2c",
+    "private_reviewed_projection": "sha256:572c9dc9c0a7fb1433677b775f2c758d6ce70b3ddc51ce9866d5fa7bce42af63",
+    "private_reviewed_plan": "sha256:c718f451dfe7f8da5472f3018f9856f7bc46e1d7dd1f3731523f6dfc98ba4659",
+    "private_handshake_before": "sha256:2aa61824e5541916f8372293fc61dffb603738900bdbc758b564633a6e9ae369",
+    "private_handshake_after": "sha256:70b7439f85fdb2f7a9a7f1b28b9649d603be9685d3c662d44942b9829d8f2aae"
+  },
+  "safety": {
+    "weak_client_profile": "short_context_no_files_no_vision_single_tool",
+    "signed_handshakes_verified_at_capture": 2,
+    "queue_before_clean": true,
+    "queue_after_clean": true,
+    "final_queue": 0,
+    "final_processing": 0,
+    "final_responses": 0,
+    "final_lock_exists": false,
+    "sensitive_values_embedded": false,
+    "approval_challenge_created": true,
+    "approval_decision_recorded": false,
+    "approval_token_issued": false,
+    "mutation_requested": false,
+    "mutation_performed": false,
+    "save_requested": false,
+    "save_performed": false
+  },
+  "acceptance": {
+    "current_source_plan_v3_reviewed_preparation": false,
+    "capture_time_current_source": true,
+    "current_acceptance": false,
+    "proposal_and_plan_target_binding_exact": true,
+    "target_validation_hash_bound": true,
+    "execution_policy_disclosed_to_reviewer": true,
+    "partial_graph_not_overclaimed_as_complete": true,
+    "leaf_entities_materialized": false,
+    "approval_or_execution_performed": false,
+    "mock_six_phase_execution_contract": true,
+    "live_post_approval_execution": false,
+    "wrong_object_automatic_execution": 0,
+    "unauthorized_s2_s4_execution": 0,
+    "duplicate_request_duplicate_modification": 0,
+    "multi_model_target_quality": false,
+    "live_mutation": false,
+    "release_acceptance": false
+  },
+  "boundary": "This historical exact-source record proves that plan .3 proposal-to-reviewed-plan preparation and reviewer-visible disclosure of the hash-bound bounded execution policy succeeded on one byte-exact large disposable model at capture time. The proposer changed afterward, so this record is not current-source reviewed-plan acceptance. Current-source replacement exists only for the narrower four-model structural target-selection scope; no current reviewed-plan replacement is claimed. The challenge remained pending without a decision or token, and no mutation or save occurred. The six-phase bounded execution path remains schema/mock proven only; live post-approval execution, save/reopen, cross-version behavior, and release acceptance remain unestablished."
+}

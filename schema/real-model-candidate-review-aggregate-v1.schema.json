@@ -1,0 +1,225 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/schemas/real-model-candidate-review-aggregate-v1.schema.json",
+  "title": "Real-model candidate review aggregate v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "kind",
+    "generated_on",
+    "evidence_scope",
+    "bindings",
+    "lineage",
+    "summary",
+    "target_review",
+    "case_reviews",
+    "safety",
+    "next_action"
+  ],
+  "properties": {
+    "version": { "const": "real-model-candidate-review-aggregate.v1" },
+    "kind": { "const": "real_model_candidate_review_aggregate" },
+    "generated_on": { "type": "string", "format": "date" },
+    "evidence_scope": { "const": "base_five_candidate_evidence_plus_hash_bound_read_only_target_review" },
+    "bindings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["base_mapping", "candidate_inventory", "target_review", "formal_manifest"],
+      "properties": {
+        "base_mapping": { "$ref": "#/$defs/file_binding" },
+        "candidate_inventory": { "$ref": "#/$defs/file_binding" },
+        "target_review": { "$ref": "#/$defs/file_binding" },
+        "formal_manifest": { "$ref": "#/$defs/file_binding" }
+      }
+    },
+    "lineage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["base_mapping_version", "amendment_version", "base_candidates", "added_candidates", "total_candidates"],
+      "properties": {
+        "base_mapping_version": { "const": "real-model-candidate-semantic-mapping.v1" },
+        "amendment_version": { "const": "real-model-candidate-semantic-mapping-amendment.v1" },
+        "base_candidates": { "const": 5 },
+        "added_candidates": { "const": 1 },
+        "total_candidates": { "const": 6 }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidates",
+        "confirmed_candidates",
+        "formal_cases",
+        "semantically_mapped_cases",
+        "unmapped_cases",
+        "formal_sidecars_ready",
+        "formal_sidecars_generated"
+      ],
+      "properties": {
+        "candidates": { "const": 6 },
+        "confirmed_candidates": { "const": 6 },
+        "formal_cases": { "const": 7 },
+        "semantically_mapped_cases": { "const": 7 },
+        "unmapped_cases": { "const": 0 },
+        "formal_sidecars_ready": { "const": 0 },
+        "formal_sidecars_generated": { "const": 0 }
+      }
+    },
+    "target_review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["candidate_id", "candidate_handle", "source_sha256", "status", "target_roles_confirmed", "suggestions_authoritative"],
+      "properties": {
+        "candidate_id": { "type": "string", "pattern": "^candidate_[0-9a-f]{24}$" },
+        "candidate_handle": { "type": "string", "pattern": "^candidate:sha256:[0-9a-f]{24}$" },
+        "source_sha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+        "status": { "const": "read_only_verified" },
+        "target_roles_confirmed": { "const": false },
+        "suggestions_authoritative": { "const": false }
+      }
+    },
+    "case_reviews": {
+      "type": "array",
+      "minItems": 7,
+      "maxItems": 7,
+      "items": { "$ref": "#/$defs/case_review" }
+    },
+    "safety": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "aggregation_live_queue_called",
+        "source_target_review_read_only",
+        "model_mutation_authorized",
+        "model_mutation_performed",
+        "approval_token_issued",
+        "execution_policy_changed",
+        "target_roles_confirmed",
+        "formal_sidecar_auto_generated",
+        "release_acceptance"
+      ],
+      "properties": {
+        "aggregation_live_queue_called": { "const": false },
+        "source_target_review_read_only": { "const": true },
+        "model_mutation_authorized": { "const": false },
+        "model_mutation_performed": { "const": false },
+        "approval_token_issued": { "const": false },
+        "execution_policy_changed": { "const": false },
+        "target_roles_confirmed": { "const": false },
+        "formal_sidecar_auto_generated": { "const": false },
+        "release_acceptance": { "const": false }
+      }
+    },
+    "next_action": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["action", "human_input_required", "required_decisions"],
+      "properties": {
+        "action": { "const": "collect_reviewed_target_roles_and_prepare_disposable_formal_fixtures" },
+        "human_input_required": { "const": true },
+        "required_decisions": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^[a-z][a-z0-9_]+$" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "safe_relative_path": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500,
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[^\\u0000]+$"
+    },
+    "file_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": { "$ref": "#/$defs/safe_relative_path" },
+        "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+      }
+    },
+    "count": { "type": "integer", "minimum": 0, "maximum": 9007199254740991 },
+    "mapped_candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["candidate_id", "candidate_handle", "source_sha256", "source_label", "role"],
+      "properties": {
+        "candidate_id": { "type": "string", "pattern": "^candidate_[0-9a-f]{24}$" },
+        "candidate_handle": { "type": "string", "pattern": "^candidate:sha256:[0-9a-f]{24}$" },
+        "source_sha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+        "source_label": { "type": "string", "minLength": 1, "maxLength": 240 },
+        "role": { "enum": ["primary", "supporting"] }
+      }
+    },
+    "structural_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "materials",
+        "scenes",
+        "hidden_occurrences",
+        "locked_occurrences",
+        "uv_occurrences",
+        "shared_occurrences",
+        "nonuniform_instances",
+        "mirrored_instances",
+        "logical_occurrences",
+        "profile_sample_truncated"
+      ],
+      "properties": {
+        "materials": { "$ref": "#/$defs/count" },
+        "scenes": { "$ref": "#/$defs/count" },
+        "hidden_occurrences": { "$ref": "#/$defs/count" },
+        "locked_occurrences": { "$ref": "#/$defs/count" },
+        "uv_occurrences": { "$ref": "#/$defs/count" },
+        "shared_occurrences": { "$ref": "#/$defs/count" },
+        "nonuniform_instances": { "$ref": "#/$defs/count" },
+        "mirrored_instances": { "$ref": "#/$defs/count" },
+        "logical_occurrences": { "$ref": "#/$defs/count" },
+        "profile_sample_truncated": { "type": "boolean" }
+      }
+    },
+    "case_review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["case_id", "domain", "status", "mapped_candidates", "required_target_roles", "structural_evidence", "blockers", "formal_sidecar_ready"],
+      "properties": {
+        "case_id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]+$" },
+        "domain": { "type": "string", "pattern": "^[a-z][a-z0-9_]+$" },
+        "status": {
+          "enum": [
+            "blocked_missing_semantic_mapping",
+            "blocked_missing_baseline_or_probe",
+            "blocked_missing_reviewed_targets",
+            "blocked_missing_formal_sidecar"
+          ]
+        },
+        "mapped_candidates": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/mapped_candidate" }
+        },
+        "required_target_roles": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^[a-z][a-z0-9_]+$" }
+        },
+        "structural_evidence": { "$ref": "#/$defs/structural_evidence" },
+        "blockers": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^[a-z][a-z0-9_]+$" }
+        },
+        "formal_sidecar_ready": { "const": false }
+      }
+    }
+  }
+}

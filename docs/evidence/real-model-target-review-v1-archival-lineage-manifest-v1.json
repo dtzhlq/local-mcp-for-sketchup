@@ -1,0 +1,44 @@
+{
+  "version": "real-model-target-review-v1-archival-lineage-manifest.v1",
+  "kind": "real_model_target_review_v1_archival_lineage_manifest",
+  "frozen_on": "2026-07-21",
+  "target_review_version": "real-model-target-review.v1",
+  "superseded_by": "real-model-target-review.v2",
+  "lineage_only": true,
+  "current_acceptance": false,
+  "release_acceptance": false,
+  "historical_schema_readable": true,
+  "immutable_evidence": true,
+  "policy": {
+    "hashes_bind_evidence_bytes": true,
+    "historical_schema_bytes_bound": true,
+    "linked_live_evidence_bytes_bound": true,
+    "embedded_source_hashes_are_capture_time_only": true,
+    "historical_source_hashes_compared_to_current_tree": false,
+    "historical_contract_tests_are_not_rerun_as_current_acceptance": true,
+    "historical_evidence_may_authorize_current_execution": false,
+    "historical_evidence_may_satisfy_current_acceptance": false,
+    "current_evidence_source_hash_validation_preserved": true
+  },
+  "entries": [
+    {
+      "path": "docs/evidence/real-model-target-review-v1-mock-evidence.json",
+      "sha256": "sha256:20139fad3c0ae7964b5f88f79ec7531acb06194d80b36c21bfb5d889c6e91274",
+      "contract_schema_path": "schema/real-model-target-review-v1.schema.json",
+      "contract_schema_sha256": "sha256:9a9c6203d605abf56515462d58153cbefff508643935f0a521b2f0e6c1423da1",
+      "linked_live_evidence_path": "docs/evidence/real-model-target-review-live-evidence-2026-07-20.json",
+      "linked_live_evidence_sha256": "sha256:ba0d92baa78b4857a5c6d7eb1aa403db992c517442cc5a1a241593b2a7a619e1",
+      "evidence_kind": "real_model_target_review_mock_evidence",
+      "runtime": "synthetic_fake_queue",
+      "target_review_version_pointer": "/contract/target_review",
+      "release_acceptance_pointer": "/safety/release_acceptance",
+      "mutation_authorized_pointer": "/safety/model_mutation_authorized",
+      "lineage_only": true,
+      "current_acceptance": false,
+      "release_acceptance": false
+    }
+  ],
+  "evidence_sha256": {
+    "docs/evidence/real-model-target-review-v1-mock-evidence.json": "sha256:20139fad3c0ae7964b5f88f79ec7531acb06194d80b36c21bfb5d889c6e91274"
+  }
+}

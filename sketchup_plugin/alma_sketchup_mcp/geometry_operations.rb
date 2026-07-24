@@ -106,6 +106,83 @@ module AlmaSketchupMCP
     classification
   end
 
+  # SketchUp's public Ruby API can enumerate loaded schemas and look up a
+  # caller-supplied classification path, but it does not enumerate the schema
+  # types assigned to a ComponentDefinition. Keep that distinction explicit:
+  # no undocumented classification dictionaries are interpreted here.
+  def classification_schema_catalog(model)
+    raise 'SketchUp classification schema enumeration is unavailable' unless model.respond_to?(:classifications)
+
+    schemas = []
+    model.classifications.each do |schema|
+      schemas << {
+        'name' => schema.name.to_s,
+        'namespace' => schema.namespace.nil? ? nil : schema.namespace.to_s
+      }
+    end
+    schemas.sort_by { |schema| [schema['name'], schema['namespace'].to_s] }
+  end
+
+  def native_definition_classification_summary(definition, classification_schemas)
+    dictionaries = definition_attribute_fingerprint_payload(definition)
+    fingerprint = "sha256:#{Digest::SHA256.hexdigest(JSON.generate(dictionaries))}"
+    lookup_supported = definition.respond_to?(:get_classification_value)
+    blockers = ['assigned_schema_types_not_enumerable']
+    blockers << 'classification_value_lookup_unavailable' unless lookup_supported
+    {
+      'version' => 'sketchup-native-classification-summary.v1',
+      'source' => 'sketchup_component_definition',
+      'trust' => 'untrusted_data',
+      'policy_effect' => 'none',
+      'loaded_schema_names' => classification_schemas.map { |schema| schema['name'] }.uniq.sort,
+      'value_lookup_supported' => lookup_supported,
+      'assignment_enumeration' => 'unsupported_by_sketchup_ruby_api',
+      'assignment_presence' => 'unknown',
+      'assigned_type_count' => nil,
+      'definition_attribute_fingerprint' => fingerprint,
+      'fingerprint_coverage' => 'all_definition_attribute_dictionaries',
+      'attribute_dictionary_count' => dictionaries.length,
+      'attribute_key_count' => dictionaries.sum { |dictionary| dictionary['entries'].length },
+      'values_exposed' => false,
+      'complete' => false,
+      'blockers' => blockers.sort
+    }
+  end
+
+  def definition_attribute_fingerprint_payload(definition)
+    dictionaries = definition.respond_to?(:attribute_dictionaries) ? definition.attribute_dictionaries : nil
+    return [] unless dictionaries
+
+    dictionaries.map do |dictionary|
+      entries = []
+      dictionary.each_pair do |key, value|
+        entries << [key.to_s, canonical_attribute_fingerprint_value(value)]
+      end
+      {
+        'name' => dictionary.name.to_s,
+        'entries' => entries.sort_by(&:first)
+      }
+    end.sort_by { |dictionary| dictionary['name'] }
+  end
+
+  def canonical_attribute_fingerprint_value(value)
+    return value if value.nil? || value.is_a?(String) || value == true || value == false
+    return value.finite? ? value : value.to_s if value.is_a?(Numeric)
+    return value.utc.iso8601(6) if value.is_a?(Time)
+    return value.map { |item| canonical_attribute_fingerprint_value(item) } if value.is_a?(Array)
+    if value.is_a?(Hash)
+      return value.keys.map(&:to_s).sort.each_with_object({}) do |key, result|
+        original_key = value.keys.find { |candidate| candidate.to_s == key }
+        result[key] = canonical_attribute_fingerprint_value(value[original_key])
+      end
+    end
+    if value.respond_to?(:to_a) && %w[Geom::Point3d Geom::Vector3d].include?(value.class.name)
+      return value.to_a.map { |item| canonical_attribute_fingerprint_value(item) }
+    end
+
+    { '$type' => value.class.name, '$value' => value.to_s }
+  end
+
   def entity_texture_transform(entity)
     return nil unless entity.respond_to?(:get_attribute)
 

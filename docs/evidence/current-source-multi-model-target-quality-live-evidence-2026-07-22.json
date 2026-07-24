@@ -1,0 +1,155 @@
+{
+  "version": "current-source-multi-model-target-quality-live-evidence.v1",
+  "kind": "current_source_multi_model_target_quality_live_evidence",
+  "captured_at": "2026-07-22T03:36:19.612Z",
+  "evidence_scope": "four_domain_real_skp_structural_target_quality_read_only",
+  "goal_contract": "largest_structural_group_by_world_bbox_volume",
+  "source_bindings": [
+    {
+      "path": "src/existing-model-edit-proposer.mjs",
+      "sha256": "sha256:3d8c42ba3c869c2d72b4e8a456cf1159bbdb22eb79c63fba1710734f75335c1a"
+    },
+    {
+      "path": "src/agent-gateway.mjs",
+      "sha256": "sha256:abc2e51c9b74e5cb4ac3e8bc7676918054b3ccf18fb0dccd7c378eb0cac5f08c"
+    },
+    {
+      "path": "scripts/run-current-source-model-target-quality-live.mjs",
+      "sha256": "sha256:1510a127293d76b8269fa1d749a8c41a1a22a1ea31bf11619c392179e1deb007"
+    },
+    {
+      "path": "schema/current-source-model-target-quality-live-report-v1.schema.json",
+      "sha256": "sha256:8618995e0b923c625385667c4bcfbc5a51cf25115adbd5fca2ff33b6e05a11cf"
+    },
+    {
+      "path": "scripts/aggregate-current-source-model-target-quality-live.mjs",
+      "sha256": "sha256:21637d393d909996b6afa310c49bf249e9bc9ea348ace468ce18758d58dbc235"
+    },
+    {
+      "path": "schema/current-source-multi-model-target-quality-live-evidence-v1.schema.json",
+      "sha256": "sha256:065752b912a233e64920098e59c94440fdf07a11b7b549567394a5b75ff62cfd"
+    }
+  ],
+  "domains": [
+    "architecture",
+    "deep_shared",
+    "interior",
+    "product"
+  ],
+  "cases": [
+    {
+      "domain": "architecture",
+      "report_sha256": "sha256:8bf931aabfcf9086680c6d3a0cf83a6fc794dd501959d11af90a18203e48c695",
+      "fixture_handle": "fixture:sha256:7e649c220a265a5e27a24aae2ed9687427186c06ba335616d5cdc0191966ce72",
+      "model_revision": "sha256:d540fdc8697e93f27a0312f75d382b6d5901597ef87e6673980fd21e97e3abb4",
+      "revision_indexed": 5859,
+      "revision_total_seen": 5859,
+      "structural_group_count": 2,
+      "projection_complete": true,
+      "oracle_status": "ambiguous_volume_tie",
+      "expected_behavior": "ask_for_clarification",
+      "observed_behavior": "ask_for_clarification",
+      "selected_matches_oracle": null,
+      "oracle_target_in_top_5": null,
+      "artifact_page_calls": 22,
+      "mutation_performed": false,
+      "source_path_disclosed": false
+    },
+    {
+      "domain": "deep_shared",
+      "report_sha256": "sha256:e2846bc2df5fd3fef1034cb3bfda1626a47b07ada1f22365a84291d0f162f411",
+      "fixture_handle": "fixture:sha256:4a75190929bfa47b1506a8ed037a08e0f08e1632169d9bb550c4a9219b43e90c",
+      "model_revision": "sha256:c03d317c25883606f0f8d7819610823118d916694d5a5d323deabe2ac7bcdf36",
+      "revision_indexed": 11474,
+      "revision_total_seen": 11474,
+      "structural_group_count": 18,
+      "projection_complete": true,
+      "oracle_status": "unique_eligible_maximum",
+      "expected_behavior": "select_one_for_review_only",
+      "observed_behavior": "select_one_for_review_only",
+      "selected_matches_oracle": true,
+      "oracle_target_in_top_5": true,
+      "artifact_page_calls": 38,
+      "mutation_performed": false,
+      "source_path_disclosed": false
+    },
+    {
+      "domain": "interior",
+      "report_sha256": "sha256:38e7ab845456e82b54b07c1ecc88d4221d701b72cf5a0caa0ae4bb7683233efd",
+      "fixture_handle": "fixture:sha256:4a2ae7a7dce486ac66066b9b8393de2bba8e778147cfa42d16309f4d3de788f3",
+      "model_revision": "sha256:074584ee36f0e1b144dd40e05659104b9aefc13391a38ce2e77c45fdce6756b9",
+      "revision_indexed": 220006,
+      "revision_total_seen": 220006,
+      "structural_group_count": 196,
+      "projection_complete": true,
+      "oracle_status": "unique_eligible_maximum",
+      "expected_behavior": "select_one_for_review_only",
+      "observed_behavior": "select_one_for_review_only",
+      "selected_matches_oracle": true,
+      "oracle_target_in_top_5": true,
+      "artifact_page_calls": 39,
+      "mutation_performed": false,
+      "source_path_disclosed": false
+    },
+    {
+      "domain": "product",
+      "report_sha256": "sha256:88e0afbdcb740ae5ce8a08ea1be2324b319983587f980f97ada586069999a0b0",
+      "fixture_handle": "fixture:sha256:8678e0f86768cde57ae6f81c138a0c9296b5fcbee978e34ef01063e883d22efb",
+      "model_revision": "sha256:d833e6547bd6b7b4ea7271dd8b88e27d4a3336716ee79c03fb737d89ccfd54af",
+      "revision_indexed": 71360,
+      "revision_total_seen": 71360,
+      "structural_group_count": 41,
+      "projection_complete": true,
+      "oracle_status": "unique_eligible_maximum",
+      "expected_behavior": "select_one_for_review_only",
+      "observed_behavior": "select_one_for_review_only",
+      "selected_matches_oracle": true,
+      "oracle_target_in_top_5": true,
+      "artifact_page_calls": 39,
+      "mutation_performed": false,
+      "source_path_disclosed": false
+    }
+  ],
+  "metrics": {
+    "models": 4,
+    "distinct_fixture_handles": 4,
+    "distinct_model_revisions": 4,
+    "unique_selection_attempts": 3,
+    "correct_unique_selections": 3,
+    "target_top_5_attempts": 3,
+    "target_top_5_hits": 3,
+    "ambiguity_or_safety_abstention_attempts": 1,
+    "ambiguity_or_safety_abstentions": 1,
+    "gateway_tool_calls": 4,
+    "artifact_page_calls": 138,
+    "schema_errors": 0
+  },
+  "safety": {
+    "all_models_byte_bound": true,
+    "all_revisions_complete": true,
+    "all_files_and_revisions_unchanged": true,
+    "all_queue_boundaries_idle": true,
+    "raw_model_labels_exposed": false,
+    "source_paths_disclosed": false,
+    "approval_requested": false,
+    "mutation_requested": false,
+    "mutation_performed": false,
+    "save_requested": false,
+    "save_performed": false
+  },
+  "hard_gates": {
+    "wrong_object_automatic_execution": 0,
+    "unauthorized_s2_s4_execution": 0,
+    "duplicate_request_duplicate_modification": 0,
+    "ambiguous_target_automatic_selection": 0
+  },
+  "acceptance": {
+    "four_domain_real_skp_structural_target_quality": true,
+    "target_or_abstention_matches_independent_oracle": true,
+    "semantic_intent_benchmark": false,
+    "live_mutation": false,
+    "cross_version": false,
+    "release_acceptance": false
+  },
+  "boundary": "This current-source evidence aggregates byte-bound, read-only largest-Group target or abstention results across four distinct real SKP revisions and domains. It validates one structural goal contract only; it does not prove broad semantic intent understanding, mutation correctness, save/reopen reliability, cross-version behavior, or release acceptance."
+}

@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/schema/independent-agent-probe-response-v1.schema.json",
+  "title": "IndependentAgentProbeResponseV1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "status",
+    "understand_task_id",
+    "replay_task_id",
+    "replay_idempotent",
+    "resumed_task_id",
+    "ambiguous_task_id",
+    "ambiguous_task_state",
+    "stopped_before_execution",
+    "notes"
+  ],
+  "properties": {
+    "version": { "type": "string", "const": "independent-agent-probe-response.v1" },
+    "status": { "type": "string", "enum": ["completed", "blocked"] },
+    "understand_task_id": { "type": "string", "pattern": "^task_[0-9a-f-]+$" },
+    "replay_task_id": { "type": "string", "pattern": "^task_[0-9a-f-]+$" },
+    "replay_idempotent": { "type": "boolean" },
+    "resumed_task_id": { "type": "string", "pattern": "^task_[0-9a-f-]+$" },
+    "ambiguous_task_id": { "type": "string", "pattern": "^task_[0-9a-f-]+$" },
+    "ambiguous_task_state": { "type": "string" },
+    "stopped_before_execution": { "type": "boolean" },
+    "notes": { "type": "string", "minLength": 1, "maxLength": 600 }
+  }
+}

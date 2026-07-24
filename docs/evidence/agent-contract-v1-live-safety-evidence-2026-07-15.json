@@ -1,0 +1,185 @@
+{
+  "version": 1,
+  "kind": "agent_contract_v1_live_safety_evidence",
+  "recorded_at": "2026-07-15T22:56:51+08:00",
+  "overall_status": "current_source_named_slice_passed",
+  "named_slice_acceptance": true,
+  "release_acceptance": false,
+  "source_binding": {
+    "branch": "codex/agent-contract-v1",
+    "baseline_commit": "ee0708adf845c51f71294091b8013e1cc6aa8979",
+    "working_tree_uncommitted": true,
+    "critical_files": [
+      {
+        "path": "sketchup_plugin/alma_sketchup_mcp.rb",
+        "sha256": "9ed2512dfec830db8226b04185f6cf285f0b79f415539f0136086b5c71e97226",
+        "role": "plugin_source",
+        "installed_sha256": "9ed2512dfec830db8226b04185f6cf285f0b79f415539f0136086b5c71e97226",
+        "installed_match": true
+      },
+      {
+        "path": "sketchup_plugin/alma_sketchup_mcp/document_state.rb",
+        "sha256": "f7cc3fe08c24fefe23757dac39e6c848ead6e329c59eded683d84a8f428e8eec",
+        "role": "plugin_source",
+        "installed_sha256": "f7cc3fe08c24fefe23757dac39e6c848ead6e329c59eded683d84a8f428e8eec",
+        "installed_match": true
+      },
+      {
+        "path": "scripts/validate-save-reopen-identity.mjs",
+        "sha256": "cc0a3f7adea82ecf8bcd8e58195eb6a98e3ab7009cd53b898471ba23645d27d5",
+        "role": "validation_script"
+      },
+      {
+        "path": "scripts/validate-s1-batch-abort.mjs",
+        "sha256": "b09c58da3f434ee80c450d062e3fa40d46833f101740ad493a72b64530b59bf7",
+        "role": "validation_script"
+      },
+      {
+        "path": "schema/agent-contract-live-safety-evidence-v1.schema.json",
+        "sha256": "79f4948c7930cbe88f4946fdb77acd6c938b0c77115122aebba34a71bddd5cbe",
+        "role": "evidence_schema"
+      },
+      {
+        "path": "test/live-safety-evidence.mjs",
+        "sha256": "05ede625f26a17814443f5eeb253a272ec012e0a636d77dc9f2bc265859ecd1b",
+        "role": "contract_test"
+      },
+      {
+        "path": "test/sketchup-plugin-document-state.mjs",
+        "sha256": "811892f6a067fcbe394b9857506a517fb9e0f2b07f4861d8defbc62fdb580013",
+        "role": "contract_test"
+      },
+      {
+        "path": "test/ruby/document_state_test.rb",
+        "sha256": "85d3a13485e587d710b519db8ed2d518ef9251bfecd85ade9d4fce7512f1930e",
+        "role": "contract_test"
+      }
+    ],
+    "installed_plugin_matches_source": true,
+    "full_sketchup_restart_after_install": true,
+    "superseded_if_critical_hash_changes": true
+  },
+  "user_coordination": {
+    "sketchup_opened_by_user": true,
+    "disposable_fixture_authorized": true,
+    "mutation_warning_shown": true,
+    "s2_s4_live_execution_requested": false
+  },
+  "runtime": {
+    "sketchup_version": "26.2.242",
+    "ruby_version": "3.2.2",
+    "plugin_version": "0.1.0-rc.2",
+    "capability_version": "0.1.0-rc.2-capabilities.2",
+    "manifest_version": "2026-07-session-contract-v1",
+    "dsl_version": 1,
+    "supported_operations": 101,
+    "compatibility_ok": true,
+    "session_started_at": "2026-07-15T14:52:44Z"
+  },
+  "gates": {
+    "fresh_handshake": {
+      "status": "passed",
+      "read_only": true,
+      "mutation_count": 0,
+      "queue_state": "idle",
+      "session_binding_checked": true,
+      "document_binding_checked": true,
+      "model_revision_binding_checked": true,
+      "plugin_and_manifest_binding_checked": true,
+      "secret_material_recorded": false
+    },
+    "mdi_routing": {
+      "status": "passed_current_source_after_restart",
+      "discovery_evidence": "docs/evidence/save-reopen-mdi-bug-discovery-2026-07-15.json",
+      "root_cause": "A still-valid observer hint was treated as permanent routing authority and could outlive the focused macOS document.",
+      "source_fix": "Reconcile from Sketchup.active_model at request start and latch one Model for the complete guard and operation callback.",
+      "explicit_window_menu_switch": true,
+      "bidirectional_source_paths_verified": true,
+      "intermediary_closed_to_force_routing": false,
+      "wrong_document_mutation_count": 0
+    },
+    "strong_save_reopen": {
+      "status": "passed_current_source_after_restart",
+      "fixture": "deterministic_shared_definition_fixture",
+      "distinct_target_and_intermediary": true,
+      "source_sequence": ["target", "intermediary", "target"],
+      "resumed_after_target_activation": true,
+      "active_source_verified": true,
+      "model_revision_exact_match": true,
+      "persistent_identity_exact_match": true,
+      "identity_entries_before": 42,
+      "identity_entries_after": 42,
+      "shared_leaf_occurrences": 2,
+      "face_edge_entries": 36,
+      "snapshot_tolerance_mm": 0,
+      "snapshot_diff_count": 0,
+      "intermediary_closed_to_force_routing": false,
+      "artifact": {
+        "path": "output/save-reopen-identity/queue/save-reopen-identity-report.json",
+        "sha256": "fa35aad25e82ca15f7db182a70e3c6c020707b8e35268749a97bc7e8095780e4",
+        "exposure": "local_only"
+      }
+    },
+    "controlled_s1_abort": {
+      "status": "passed_current_source_after_restart",
+      "scope": "single_ruby_dsl_batch_abort_only",
+      "authorization": "server_policy_auto_approval:S1",
+      "stable_error_code": "MUTATION_EXECUTION_FAILED",
+      "retryable": false,
+      "model_revision_unchanged": true,
+      "probe_absent": true,
+      "idempotent_failed_envelope_replayed": true,
+      "duplicate_mutation_count": 0,
+      "artifact": {
+        "path": "output/s1-batch-abort/queue/s1-batch-abort-report.json",
+        "sha256": "f8f4570404291d0cd373e5e47233c1d20c4358cb07c7565f9339f4d92e8c9eee",
+        "exposure": "local_only"
+      }
+    }
+  },
+  "safety_observations": [
+    {
+      "after": "strong_save_reopen",
+      "queue": 0,
+      "processing": 0,
+      "responses": 0,
+      "lock_exists": false,
+      "manual_queue_cleanup_performed": false,
+      "sketchup_process_alive": true,
+      "same_pid_as_evidence_window_start": true,
+      "new_crash_reports_since_window_start": 0
+    },
+    {
+      "after": "controlled_s1_abort",
+      "queue": 0,
+      "processing": 0,
+      "responses": 0,
+      "lock_exists": false,
+      "manual_queue_cleanup_performed": false,
+      "sketchup_process_alive": true,
+      "same_pid_as_evidence_window_start": true,
+      "new_crash_reports_since_window_start": 0
+    }
+  ],
+  "redaction": {
+    "absolute_paths_omitted": true,
+    "session_and_handshake_ids_omitted": true,
+    "document_and_model_ids_omitted": true,
+    "request_task_plan_ids_omitted": true,
+    "user_model_content_omitted": true,
+    "raw_pid_omitted": true,
+    "artifact_paths_repo_relative": true
+  },
+  "boundaries": {
+    "trusted_s2_s4_approval_host_tested": false,
+    "task_wide_exactly_once_proven": false,
+    "native_crash_recovery_proven": false,
+    "resumable_postcommit_finalizer_proven": false,
+    "direct_expert_idempotency_proven": false,
+    "all_101_operations_live_tested": false,
+    "real_model_corpus_completed": false,
+    "sketchup_version_matrix_tested": false,
+    "release_candidate_signed": false
+  },
+  "summary": "This evidence covers only the named user-coordinated safety slice on the recorded SketchUp runtime and exact installed-source hashes: a read-only fresh Session Contract handshake, two-window active-document routing, deterministic target-intermediary-target identity preservation, and a controlled S1 pre-commit abort effect. No new crash report was observed during the bounded run. It is not release acceptance."
+}

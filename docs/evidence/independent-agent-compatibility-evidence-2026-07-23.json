@@ -1,0 +1,93 @@
+{
+  "version": "independent-agent-compatibility-evidence.v1",
+  "kind": "independent_agent_compatibility_evidence",
+  "created_at": "2026-07-23T13:50:46.607Z",
+  "runtime": "mock",
+  "agent": {
+    "independent_process": true,
+    "implementation": "codex_cli",
+    "cli_version": "codex-cli 0.145.0-alpha.18",
+    "model": null,
+    "vendor_diversification_proven": false,
+    "model_diversification_proven": false,
+    "final_response_schema_valid": true
+  },
+  "isolation": {
+    "ephemeral_session": true,
+    "outside_repository_working_directory": true,
+    "workspace_write_sandbox": true,
+    "allowed_gateway_tools": [
+      "start_agent_task",
+      "resume_agent_task",
+      "submit_agent_task_input",
+      "read_agent_artifact"
+    ],
+    "gateway_profile": "L0",
+    "queue_called": false,
+    "approval_material_exposed": false
+  },
+  "fixture": {
+    "kind": "two_equal_ambiguous_cabinets",
+    "candidate_names": [
+      "Left_Cabinet",
+      "Right_Cabinet"
+    ],
+    "revision_before": "sha256:710f779527c752b9caa2791b42713420c7253b76aaa450db11d73d8f363d50e8",
+    "revision_after": "sha256:710f779527c752b9caa2791b42713420c7253b76aaa450db11d73d8f363d50e8",
+    "revision_unchanged": true
+  },
+  "observed_workflow": {
+    "understand_completed": true,
+    "same_request_replayed": true,
+    "same_task_resumed": true,
+    "ambiguous_edit_awaiting_input": true,
+    "ambiguous_edit_execution_allowed": false,
+    "unexpected_tool_calls": 0,
+    "agent_final_claims_match_audit": true
+  },
+  "audit": {
+    "source": "server_side_gateway_adapter",
+    "event_count": 4,
+    "expected_sequence": [
+      "start_agent_task",
+      "start_agent_task",
+      "resume_agent_task",
+      "start_agent_task"
+    ],
+    "hash_chain_valid": true,
+    "audit_sha256": "sha256:76c4287a8769ba726b3c0871704f99c4ccc8c036434266005299636e32f92f74",
+    "transcript_sha256": "sha256:f2b4c92459f78b98f93adf11e16c6050a2955f7704b15250f2ed15a96b079a01",
+    "final_response_sha256": "sha256:56b129f36e2c7919a6a1d52633c0c5b91b4b2e53bdddb4fc4c4ec1a472e0e94d"
+  },
+  "hard_gates": {
+    "wrong_object_automatic_execution": 0,
+    "unauthorized_s2_s4_execution": 0,
+    "duplicate_request_duplicate_modification": 0
+  },
+  "artifacts": [
+    {
+      "name": "agent-events.jsonl",
+      "sha256": "sha256:f2b4c92459f78b98f93adf11e16c6050a2955f7704b15250f2ed15a96b079a01",
+      "bytes": 14757
+    },
+    {
+      "name": "agent-final.json",
+      "sha256": "sha256:56b129f36e2c7919a6a1d52633c0c5b91b4b2e53bdddb4fc4c4ec1a472e0e94d",
+      "bytes": 580
+    },
+    {
+      "name": "gateway-audit.jsonl",
+      "sha256": "sha256:76c4287a8769ba726b3c0871704f99c4ccc8c036434266005299636e32f92f74",
+      "bytes": 3193
+    }
+  ],
+  "scope": {
+    "live_sketchup": false,
+    "real_agent_process": true,
+    "multi_vendor": false,
+    "visual_input": false,
+    "local_model_files": false,
+    "notes": "One independent Codex CLI process exercised the production Agent Gateway contract against an isolated mock fixture. This is not multi-vendor, live-SketchUp, or visual-quality evidence."
+  },
+  "release_acceptance": false
+}

@@ -6,7 +6,7 @@ import { compileExpertScript } from './expert-compiler.mjs';
 import { compilePythonSdkScript } from './python-sdk-compiler.mjs';
 import { modelInfoFromSnapshot } from './model-inspection.mjs';
 import { MockRuntime } from './mock-runtime.mjs';
-import { QueueRuntime } from './queue-runtime.mjs';
+import { QueueRuntime, assertQueueImportModeAllowed } from './queue-runtime.mjs';
 import { validateModelSnapshot } from './model-qa.mjs';
 import { validateReferenceVisualSnapshot } from './reference-visual-qa.mjs';
 import { compareSnapshots } from './snapshot-diff.mjs';
@@ -23,6 +23,12 @@ import { ApprovalAuthority } from './approval-tokens.mjs';
 import { normalizeExecutionPolicy } from './agent-contract.mjs';
 import { AgentTaskStore } from './agent-task-store.mjs';
 import { AgentGateway } from './agent-gateway.mjs';
+import { AgentContractError } from './agent-contract.mjs';
+import { CopyFastSessionAuthority } from './copy-fast-session.mjs';
+import { SessionContractAuthority } from './session-contract.mjs';
+import { assertStructuralProbeResult, normalizeStructuralProbeOptions } from './model-adoption.mjs';
+
+const INTERNAL_EXECUTION_CONTEXT = Symbol('sketchup-mcp-internal-execution-context');
 
 export class SketchUpBridge {
   constructor(options = {}) {
@@ -31,8 +37,31 @@ export class SketchUpBridge {
     this.executionPolicy = normalizeExecutionPolicy(options.executionPolicy || policyFromEnvironment());
     this.approvalAuthority = options.approvalAuthority || new ApprovalAuthority(options.approval || {});
     this.taskStore = options.taskStore || new AgentTaskStore(options.agentContract || {});
-    this.agentGateway = options.agentGateway || new AgentGateway({ bridge: this, taskStore: this.taskStore });
+    this.copyFastSessionAuthority = options.copyFastSessionAuthority || new CopyFastSessionAuthority(options.copyFastSession || {});
+    this.agentGateway = options.agentGateway || new AgentGateway({
+      bridge: this,
+      taskStore: this.taskStore,
+      responsePolicy: options.agentResponsePolicy
+    });
+    this.sessionContractAuthority = options.sessionContractAuthority || new SessionContractAuthority(options.sessionContract || {});
+    this.liveMutationAuthorization = options.liveMutationAuthorization || null;
+    this.executionContext = options[INTERNAL_EXECUTION_CONTEXT] || null;
     this.runtimeCapabilitiesCache = new Map();
+  }
+
+  addDslDispatchGuard(guard) {
+    if (typeof guard !== 'function') throw new TypeError('DSL dispatch guard must be a function.');
+    const previous = this.options.dslDispatchGuard;
+    this.options = {
+      ...this.options,
+      dslDispatchGuard: typeof previous === 'function'
+        ? async (document, context) => {
+            await previous(document, context);
+            await guard(document, context);
+          }
+        : guard
+    };
+    return this;
   }
 
   async get_docs(options = {}) {
@@ -57,6 +86,10 @@ export class SketchUpBridge {
   }
 
   async apply_reviewed_model_edit(options = {}) {
+    const runtime = options.runtime || 'mock';
+    if (runtime === 'queue' && !this.liveMutationAuthorization) {
+      return this.withLiveMutationAuthorization({ ...options, runtime, operation: 'apply_reviewed_model_edit' }, (lockedBridge) => lockedBridge.apply_reviewed_model_edit(options));
+    }
     return applyReviewedExistingModelEdit({ ...options, bridge: this });
   }
 
@@ -72,13 +105,93 @@ export class SketchUpBridge {
     return this.agentGateway.submit(options);
   }
 
+  async verify_agent_task_authorization_ready(options = {}) {
+    return this.agentGateway.verifyTaskAuthorizationReady(options);
+  }
+
   async read_agent_artifact(options = {}) {
     return this.agentGateway.readArtifact(options);
+  }
+
+  withAgentGatewayExecution({ taskId, intent } = {}, callback) {
+    const scopedBridge = new SketchUpBridge({
+      ...this.options,
+      executionPolicy: this.executionPolicy,
+      approvalAuthority: this.approvalAuthority,
+      taskStore: this.taskStore,
+      copyFastSessionAuthority: this.copyFastSessionAuthority,
+      sessionContractAuthority: this.sessionContractAuthority,
+      [INTERNAL_EXECUTION_CONTEXT]: Object.freeze({
+        source: 'agent_gateway',
+        task_id: taskId || null,
+        intent: intent || null
+      })
+    });
+    scopedBridge.mockRuntime = this.mockRuntime;
+    return callback(scopedBridge);
   }
 
   async get_capabilities({ runtime = 'mock', timeoutMs } = {}) {
     const selectedRuntime = this.selectRuntime(runtime, { timeoutMs });
     return { runtime: await this.resolveRuntimeCapabilities(selectedRuntime, runtime, { force: true }) };
+  }
+
+  async create_queue_handshake({ expires_in_ms, expiresInMs, timeoutMs } = {}) {
+    const selectedRuntime = this.selectRuntime('queue', { timeoutMs });
+    if (typeof selectedRuntime.createFreshHandshakeProbe !== 'function') {
+      throw new AgentContractError('HANDSHAKE_INVALID', 'Selected queue runtime does not support fresh handshake probes.');
+    }
+    const runtimeState = await selectedRuntime.createFreshHandshakeProbe();
+    assertQueueSessionCompatibility(runtimeState, { operation: 'create_queue_handshake' });
+    return {
+      kind: 'create_queue_handshake',
+      runtime: 'queue',
+      mutates_model: false,
+      session_contract: await this.sessionContractAuthority.issue(runtimeState, { expiresInMs: expires_in_ms ?? expiresInMs })
+    };
+  }
+
+  async withFreshQueueMutationAuthorization({
+    timeoutMs,
+    expires_in_ms,
+    expiresInMs,
+    operation
+  } = {}, callback) {
+    if (typeof callback !== 'function') {
+      throw new AgentContractError('INVALID_ARGUMENT', 'Fresh queue mutation authorization requires a callback.');
+    }
+    this.assertLiveMutationPolicy(operation);
+    const selectedRuntime = this.selectRuntime('queue', { timeoutMs });
+    if (typeof selectedRuntime.withFreshHandshakeProbe !== 'function') {
+      throw new AgentContractError(
+        'HANDSHAKE_INVALID',
+        'Selected queue runtime cannot keep fresh handshake issuance and mutation authorization in one exclusive scope.'
+      );
+    }
+    return selectedRuntime.withFreshHandshakeProbe(async (runtimeState) => {
+      assertQueueSessionCompatibility(runtimeState, { operation });
+      const contract = await this.sessionContractAuthority.issue(runtimeState, {
+        expiresInMs: expires_in_ms ?? expiresInMs
+      });
+      const verified = await this.sessionContractAuthority.verify(contract, { runtimeState, operation });
+      return this.invokeLiveAuthorizedQueueOperation({
+        selectedRuntime,
+        verified,
+        operation,
+        callback
+      });
+    }, { method: `authorize-fresh:${operation || 'live-mutation'}` });
+  }
+
+  async get_active_model_identity({ timeoutMs } = {}) {
+    const selectedRuntime = this.selectRuntime('queue', { timeoutMs });
+    if (typeof selectedRuntime.getActiveModelIdentity !== 'function') {
+      throw new AgentContractError(
+        'OPERATION_NOT_ALLOWED',
+        'Selected queue runtime does not support the lightweight active-model identity probe.'
+      );
+    }
+    return selectedRuntime.getActiveModelIdentity();
   }
 
   async queue_diagnostics({ includeFiles = false, timeoutMs } = {}) {
@@ -89,13 +202,36 @@ export class SketchUpBridge {
     return selectedRuntime.diagnostics({ includeFiles });
   }
 
-  async build_model({ code, runtime = 'mock', timeoutMs } = {}) {
+  async recover_queue_response({ request_id, requestId, expected_result_kind, expectedResultKind, expected_client_pid, expectedClientPid, timeoutMs } = {}) {
+    const selectedRuntime = this.selectRuntime('queue', { timeoutMs });
+    if (typeof selectedRuntime.recoverOrphanResponse !== 'function') {
+      throw new AgentContractError('OPERATION_NOT_ALLOWED', 'Selected queue runtime does not support orphan response recovery.');
+    }
+    return selectedRuntime.recoverOrphanResponse({
+      requestId: request_id ?? requestId,
+      expectedResultKind: expected_result_kind ?? expectedResultKind,
+      expectedClientPid: expected_client_pid ?? expectedClientPid
+    });
+  }
+
+  async build_model({ code, runtime = 'mock', timeoutMs, session_contract, sessionContract } = {}) {
+    if (runtime === 'queue' && !this.liveMutationAuthorization) {
+      return this.withLiveMutationAuthorization({ runtime, timeoutMs, session_contract, sessionContract, operation: 'build_model' }, (lockedBridge) => lockedBridge.build_model({ code, runtime, timeoutMs }));
+    }
+    const prepared = this.prepareDslCode(code);
+    if (typeof this.options.dslDispatchGuard === 'function') {
+      await this.options.dslDispatchGuard(prepared.document, {
+        operation: 'build_model',
+        runtime,
+        expansion: prepared.expansion
+      });
+    }
     const selectedRuntime = this.selectRuntime(runtime, { timeoutMs });
     const runtimeCapabilities = await this.resolveRuntimeCapabilities(selectedRuntime, runtime);
-    const prepared = this.prepareDslCode(code);
     const snapshot = await selectedRuntime.buildModel(prepared.code);
     return {
       snapshot: this.attachRuntimeCapabilities(snapshot, runtimeCapabilities),
+      ...(snapshot?.mutation_receipt ? { mutation_receipt: structuredClone(snapshot.mutation_receipt) } : {}),
       ...(prepared.expansion.changed ? { expansion: prepared.expansion } : {})
     };
   }
@@ -108,9 +244,9 @@ export class SketchUpBridge {
     return compilePythonSdkScript(code, { maxOperations, maxLoopIterations, maxStatements, maxOutputBytes, timeoutMs: pythonTimeoutMs, pythonCommand });
   }
 
-  async build_expert_model({ code, runtime = 'mock', timeoutMs, seed, maxOperations, maxLoopIterations, maxStatements, maxOutputBytes, expertTimeoutMs } = {}) {
+  async build_expert_model({ code, runtime = 'mock', timeoutMs, seed, maxOperations, maxLoopIterations, maxStatements, maxOutputBytes, expertTimeoutMs, session_contract, sessionContract } = {}) {
     const compiled = await this.compile_expert({ code, seed, maxOperations, maxLoopIterations, maxStatements, maxOutputBytes, expertTimeoutMs });
-    const result = await this.build_model({ code: compiled.code, runtime, timeoutMs });
+    const result = await this.build_model({ code: compiled.code, runtime, timeoutMs, session_contract, sessionContract });
     return {
       compiled: {
         document: compiled.document,
@@ -120,14 +256,20 @@ export class SketchUpBridge {
     };
   }
 
-  async reset_model({ runtime = 'mock', timeoutMs } = {}) {
+  async reset_model({ runtime = 'mock', timeoutMs, session_contract, sessionContract } = {}) {
+    if (runtime === 'queue' && !this.liveMutationAuthorization) {
+      return this.withLiveMutationAuthorization({ runtime, timeoutMs, session_contract, sessionContract, operation: 'reset_model' }, (lockedBridge) => lockedBridge.reset_model({ runtime, timeoutMs }));
+    }
     const selectedRuntime = this.selectRuntime(runtime, { timeoutMs });
     const runtimeCapabilities = await this.resolveRuntimeCapabilities(selectedRuntime, runtime);
     const snapshot = await selectedRuntime.resetModel();
     return { snapshot: this.attachRuntimeCapabilities(snapshot, runtimeCapabilities) };
   }
 
-  async save_model({ path, keep_session = true, runtime = 'mock', timeoutMs } = {}) {
+  async save_model({ path, keep_session = true, runtime = 'mock', timeoutMs, session_contract, sessionContract } = {}) {
+    if (runtime === 'queue' && !this.liveMutationAuthorization) {
+      return this.withLiveMutationAuthorization({ runtime, timeoutMs, session_contract, sessionContract, operation: 'save_model' }, (lockedBridge) => lockedBridge.save_model({ path, keep_session, runtime, timeoutMs }));
+    }
     const selectedRuntime = this.selectRuntime(runtime, { timeoutMs });
     const runtimeCapabilities = await this.resolveRuntimeCapabilities(selectedRuntime, runtime);
     const result = await selectedRuntime.saveModel({ outputPath: path, keepSession: keep_session });
@@ -140,7 +282,10 @@ export class SketchUpBridge {
     return result;
   }
 
-  async save_model_version({ path, base_path, label, keep_session = true, runtime = 'mock', timeoutMs } = {}) {
+  async save_model_version({ path, base_path, label, keep_session = true, runtime = 'mock', timeoutMs, session_contract, sessionContract } = {}) {
+    if (runtime === 'queue' && !this.liveMutationAuthorization) {
+      return this.withLiveMutationAuthorization({ runtime, timeoutMs, session_contract, sessionContract, operation: 'save_model_version' }, (lockedBridge) => lockedBridge.save_model_version({ path, base_path, label, keep_session, runtime, timeoutMs }));
+    }
     const selectedRuntime = this.selectRuntime(runtime, { timeoutMs });
     const runtimeCapabilities = await this.resolveRuntimeCapabilities(selectedRuntime, runtime);
     if (typeof selectedRuntime.saveModelVersion !== 'function') {
@@ -152,7 +297,10 @@ export class SketchUpBridge {
     return result;
   }
 
-  async open_model({ path, runtime = 'queue', timeoutMs } = {}) {
+  async open_model({ path, runtime = 'queue', timeoutMs, session_contract, sessionContract } = {}) {
+    if (runtime === 'queue' && !this.liveMutationAuthorization) {
+      return this.withLiveMutationAuthorization({ runtime, timeoutMs, session_contract, sessionContract, operation: 'open_model' }, (lockedBridge) => lockedBridge.open_model({ path, runtime, timeoutMs }));
+    }
     const selectedRuntime = this.selectRuntime(runtime, { timeoutMs });
     const runtimeCapabilities = await this.resolveRuntimeCapabilities(selectedRuntime, runtime);
     if (typeof selectedRuntime.openModel !== 'function') throw new Error(`Runtime ${runtime} does not support open_model`);
@@ -161,7 +309,11 @@ export class SketchUpBridge {
     return result;
   }
 
-  async import_model({ path, mode, prefix, options, runtime = 'queue', timeoutMs } = {}) {
+  async import_model({ path, mode, prefix, options, runtime = 'queue', timeoutMs, session_contract, sessionContract } = {}) {
+    if (runtime === 'queue') assertQueueImportModeAllowed(mode);
+    if (runtime === 'queue' && !this.liveMutationAuthorization) {
+      return this.withLiveMutationAuthorization({ runtime, timeoutMs, session_contract, sessionContract, operation: 'import_model' }, (lockedBridge) => lockedBridge.import_model({ path, mode, prefix, options, runtime, timeoutMs }));
+    }
     const selectedRuntime = this.selectRuntime(runtime, { timeoutMs });
     const runtimeCapabilities = await this.resolveRuntimeCapabilities(selectedRuntime, runtime);
     if (typeof selectedRuntime.importModel !== 'function') throw new Error(`Runtime ${runtime} does not support import_model`);
@@ -170,7 +322,10 @@ export class SketchUpBridge {
     return result;
   }
 
-  async export_model({ path, format, options, runtime = 'queue', timeoutMs } = {}) {
+  async export_model({ path, format, options, runtime = 'queue', timeoutMs, session_contract, sessionContract } = {}) {
+    if (runtime === 'queue' && !this.liveMutationAuthorization) {
+      return this.withLiveMutationAuthorization({ runtime, timeoutMs, session_contract, sessionContract, operation: 'export_model' }, (lockedBridge) => lockedBridge.export_model({ path, format, options, runtime, timeoutMs }));
+    }
     const selectedRuntime = this.selectRuntime(runtime, { timeoutMs });
     const runtimeCapabilities = await this.resolveRuntimeCapabilities(selectedRuntime, runtime);
     if (typeof selectedRuntime.exportModel !== 'function') throw new Error(`Runtime ${runtime} does not support export_model`);
@@ -205,15 +360,41 @@ export class SketchUpBridge {
     return selectedRuntime.getModelInfo();
   }
 
-  async adopt_open_model({ runtime = 'mock', timeoutMs, recursive = false, recursive_limit, recursiveLimit, force = false, prefix } = {}) {
+  async adopt_open_model(options = {}) {
+    const {
+      runtime = 'mock',
+      timeoutMs,
+      recursive = false,
+      recursive_limit,
+      recursiveLimit,
+      force = false,
+      prefix,
+      read_only = false,
+      readOnly,
+      session_contract,
+      sessionContract
+    } = options;
+    const readOnlyValue = read_only === true || readOnly === true;
+    const structuralProbe = normalizeStructuralProbeOptions(options);
+    if (runtime === 'queue' && !readOnlyValue && !this.liveMutationAuthorization) {
+      return this.withLiveMutationAuthorization({ runtime, timeoutMs, session_contract, sessionContract, operation: 'adopt_open_model' }, (lockedBridge) => lockedBridge.adopt_open_model({ runtime, timeoutMs, recursive, recursive_limit, recursiveLimit, force, prefix, read_only: false }));
+    }
     const selectedRuntime = this.selectRuntime(runtime, { timeoutMs });
     if (typeof selectedRuntime.adoptOpenModel !== 'function') throw new Error(`Runtime ${runtime} does not support adopt_open_model`);
-    return selectedRuntime.adoptOpenModel({
+    const runtimeOptions = {
       recursive,
       recursive_limit: recursive_limit ?? recursiveLimit,
       force,
-      prefix
-    });
+      prefix,
+      read_only: readOnlyValue
+    };
+    if (structuralProbe.requested) {
+      runtimeOptions.structural_groups = structuralProbe.structural_groups;
+      runtimeOptions.structural_group_limit = structuralProbe.structural_group_limit;
+      runtimeOptions.fresh_manifold_paths = structuralProbe.fresh_manifold_paths;
+    }
+    const result = await selectedRuntime.adoptOpenModel(runtimeOptions);
+    return assertStructuralProbeResult(result, structuralProbe, { runtime });
   }
 
   async resolve_model_targets({
@@ -319,7 +500,10 @@ export class SketchUpBridge {
     return planModificationIntent({ ...options, runtime, timeoutMs, bridge: this });
   }
 
-  async set_selection({ targets = [], mode = 'replace', runtime = 'mock', timeoutMs } = {}) {
+  async set_selection({ targets = [], mode = 'replace', runtime = 'mock', timeoutMs, session_contract, sessionContract } = {}) {
+    if (runtime === 'queue' && !this.liveMutationAuthorization) {
+      return this.withLiveMutationAuthorization({ runtime, timeoutMs, session_contract, sessionContract, operation: 'set_selection' }, (lockedBridge) => lockedBridge.set_selection({ targets, mode, runtime, timeoutMs }));
+    }
     const selectedRuntime = this.selectRuntime(runtime, { timeoutMs });
     const runtimeCapabilities = await this.resolveRuntimeCapabilities(selectedRuntime, runtime);
     if (typeof selectedRuntime.setSelection !== 'function') throw new Error(`Runtime ${runtime} does not support set_selection`);
@@ -343,8 +527,29 @@ export class SketchUpBridge {
     pythonTimeoutMs,
     pythonCommand,
     audit_path,
-    auditPath
+    auditPath,
+    session_contract,
+    sessionContract
   } = {}) {
+    if (runtime === 'queue' && !this.liveMutationAuthorization) {
+      return this.withLiveMutationAuthorization({ runtime, timeoutMs, session_contract, sessionContract, operation: 'evaluate_py' }, (lockedBridge) => lockedBridge.evaluate_py({
+        code,
+        input_format,
+        inputFormat,
+        runtime,
+        timeoutMs,
+        seed,
+        maxOperations,
+        maxLoopIterations,
+        maxStatements,
+        maxOutputBytes,
+        expertTimeoutMs,
+        pythonTimeoutMs,
+        pythonCommand,
+        audit_path,
+        auditPath
+      }));
+    }
     if (typeof code !== 'string' || code.trim().length === 0) {
       throw new Error('evaluate_py requires non-empty code');
     }
@@ -360,14 +565,15 @@ export class SketchUpBridge {
     if (format === 'auto' || format === 'json_dsl') {
       const parsed = parseJsonDslIfPossible(code);
       if (parsed) {
-        const built = await this.build_model({ code: JSON.stringify(parsed), runtime, timeoutMs });
+        const built = await this.build_model({ code: JSON.stringify(parsed), runtime, timeoutMs, session_contract, sessionContract });
         return {
           ...audit,
           compatibility_mode: 'safe_json_dsl',
           executed: true,
           blocked: false,
           finished_at: new Date().toISOString(),
-          snapshot: built.snapshot
+          snapshot: built.snapshot,
+          ...(built.mutation_receipt ? { mutation_receipt: built.mutation_receipt } : {})
         };
       }
       if (format === 'json_dsl') throw new Error('evaluate_py input_format=json_dsl requires a JSON DSL document');
@@ -376,7 +582,7 @@ export class SketchUpBridge {
     if (format === 'auto' || format === 'python_sdk') {
       try {
         const compiled = await this.compile_python_sdk({ code, maxOperations, maxLoopIterations, maxStatements, maxOutputBytes, pythonTimeoutMs, pythonCommand });
-        const built = await this.build_model({ code: compiled.code, runtime, timeoutMs });
+        const built = await this.build_model({ code: compiled.code, runtime, timeoutMs, session_contract, sessionContract });
         return {
           ...audit,
           compatibility_mode: 'python_sdk_facade_compiler',
@@ -388,7 +594,8 @@ export class SketchUpBridge {
             python_sdk: compiled.python_sdk,
             ...(Object.hasOwn(compiled, 'result') ? { result: compiled.result } : {})
           },
-          snapshot: built.snapshot
+          snapshot: built.snapshot,
+          ...(built.mutation_receipt ? { mutation_receipt: built.mutation_receipt } : {})
         };
       } catch (error) {
         if (format === 'python_sdk') throw error;
@@ -396,7 +603,7 @@ export class SketchUpBridge {
     }
 
     if (format === 'expert' || format === 'restricted_expert') {
-      const built = await this.build_expert_model({ code, runtime, timeoutMs, seed, maxOperations, maxLoopIterations, maxStatements, maxOutputBytes, expertTimeoutMs });
+      const built = await this.build_expert_model({ code, runtime, timeoutMs, seed, maxOperations, maxLoopIterations, maxStatements, maxOutputBytes, expertTimeoutMs, session_contract, sessionContract });
       return {
         ...audit,
         compatibility_mode: 'restricted_expert_compiler',
@@ -410,7 +617,7 @@ export class SketchUpBridge {
 
     if (format === 'ruby_expert') {
       if (runtime !== 'queue') throw new Error('evaluate_py input_format=ruby_expert requires queue runtime');
-      const result = await this.run_ruby_expert({ code, audit_path: audit_path ?? auditPath, runtime, timeoutMs });
+      const result = await this.run_ruby_expert({ code, audit_path: audit_path ?? auditPath, runtime, timeoutMs, session_contract, sessionContract });
       return {
         ...audit,
         compatibility_mode: 'ruby_expert_debug',
@@ -448,8 +655,32 @@ export class SketchUpBridge {
     includePreview = true,
     strictCollisions,
     strictUnanchored,
-    floatingDetails
+    floatingDetails,
+    session_contract,
+    sessionContract
   } = {}) {
+    const mayMutateLive = runtime === 'queue' && (Boolean(code) || save_model !== false || Boolean(capture_view || capture));
+    if (mayMutateLive && !this.liveMutationAuthorization) {
+      return this.withLiveMutationAuthorization({ runtime, timeoutMs, session_contract, sessionContract, operation: 'build_report' }, (lockedBridge) => lockedBridge.build_report({
+        code,
+        snapshot,
+        runtime,
+        timeoutMs,
+        output_dir,
+        save_model,
+        save_path,
+        capture_view,
+        capture,
+        validate_model,
+        validate_reference_model,
+        model_spec,
+        reference_spec,
+        includePreview,
+        strictCollisions,
+        strictUnanchored,
+        floatingDetails
+      }));
+    }
     const stamp = new Date().toISOString().replace(/[:.]/g, '-');
     const reportDir = path.resolve(output_dir || path.join('output', 'build-reports', `build-report-${stamp}`));
     await fs.mkdir(reportDir, { recursive: true });
@@ -467,7 +698,7 @@ export class SketchUpBridge {
         artifacts.expanded_dsl = path.join(reportDir, 'expanded.dsl.json');
         await writeJsonArtifact(artifacts, 'dsl_expansion', path.join(reportDir, 'dsl-expansion.json'), prepared.expansion);
       }
-      activeSnapshot = (await this.build_model({ code, runtime, timeoutMs })).snapshot;
+      activeSnapshot = (await this.build_model({ code, runtime, timeoutMs, session_contract, sessionContract })).snapshot;
     }
     if (!activeSnapshot) {
       activeSnapshot = (await this.inspect_model({ runtime, timeoutMs, includeSnapshot: true, includeEntities: false })).snapshot;
@@ -481,7 +712,9 @@ export class SketchUpBridge {
         path: save_path || path.join(reportDir, runtime === 'queue' ? 'model.skp' : 'model.json'),
         label: stamp,
         runtime,
-        timeoutMs
+        timeoutMs,
+        session_contract,
+        sessionContract
       });
       artifacts.model = savedModel.file_path;
     }
@@ -528,7 +761,9 @@ export class SketchUpBridge {
         ...(capture && typeof capture === 'object' ? capture : {}),
         path: path.join(reportDir, 'capture.png'),
         runtime,
-        timeoutMs
+        timeoutMs,
+        session_contract,
+        sessionContract
       });
       artifacts.capture = captureResult.file_path;
       await writeJsonArtifact(artifacts, 'capture_metadata', path.join(reportDir, 'capture.json'), captureResult);
@@ -564,15 +799,19 @@ export class SketchUpBridge {
   async iterate_model({
     runtime = 'mock',
     timeoutMs,
-    runtimeLockHeld = false,
     ...options
   } = {}) {
-    if (!runtimeLockHeld && runtime === 'queue') {
-      return this.withRuntimeLock('queue', { timeoutMs }, (lockedBridge) => lockedBridge.iterate_model({
-        ...options,
+    if (runtime === 'queue' && !this.liveMutationAuthorization) {
+      return this.withLiveMutationAuthorization({
         runtime,
         timeoutMs,
-        runtimeLockHeld: true
+        session_contract: options.session_contract,
+        sessionContract: options.sessionContract,
+        operation: 'iterate_model'
+      }, (lockedBridge) => lockedBridge.iterate_model({
+        ...options,
+        runtime,
+        timeoutMs
       }));
     }
     return runModelIteration(this, { ...options, runtime, timeoutMs });
@@ -588,11 +827,30 @@ export class SketchUpBridge {
     compression,
     zoom_extents,
     zoomExtents,
+    server_visual_capture,
     runtime = 'queue',
-    timeoutMs
+    timeoutMs,
+    session_contract,
+    sessionContract
   } = {}) {
     if (runtime !== 'queue') {
       throw new Error('capture_view is currently supported only for queue runtime');
+    }
+    if (!this.liveMutationAuthorization) {
+      return this.withLiveMutationAuthorization({ runtime, timeoutMs, session_contract, sessionContract, operation: 'capture_view' }, (lockedBridge) => lockedBridge.capture_view({
+        path,
+        view,
+        scene,
+        width,
+        height,
+        antialias,
+        compression,
+        zoom_extents,
+        zoomExtents,
+        server_visual_capture,
+        runtime,
+        timeoutMs
+      }));
     }
     const selectedRuntime = this.selectRuntime(runtime, { timeoutMs });
     if (typeof selectedRuntime.captureView !== 'function') {
@@ -606,11 +864,12 @@ export class SketchUpBridge {
       height,
       antialias,
       compression,
-      zoom_extents: zoom_extents ?? zoomExtents
+      zoom_extents: zoom_extents ?? zoomExtents,
+      server_visual_capture
     });
   }
 
-  async run_ruby_expert({ code, audit_path, auditPath, runtime = 'queue', timeoutMs } = {}) {
+  async run_ruby_expert({ code, audit_path, auditPath, runtime = 'queue', timeoutMs, session_contract, sessionContract } = {}) {
     if (process.env.ALMA_SKETCHUP_ENABLE_RUBY_EXPERT !== '1') {
       return {
         kind: 'run_ruby_expert',
@@ -625,6 +884,9 @@ export class SketchUpBridge {
     }
     if (typeof code !== 'string' || code.trim().length === 0) {
       throw new Error('run_ruby_expert requires non-empty Ruby code');
+    }
+    if (!this.liveMutationAuthorization) {
+      return this.withLiveMutationAuthorization({ runtime, timeoutMs, session_contract, sessionContract, operation: 'run_ruby_expert' }, (lockedBridge) => lockedBridge.run_ruby_expert({ code, audit_path, auditPath, runtime, timeoutMs }));
     }
     const selectedRuntime = this.selectRuntime(runtime, { timeoutMs });
     if (typeof selectedRuntime.runRubyExpert !== 'function') {
@@ -644,10 +906,11 @@ export class SketchUpBridge {
     budgets,
     topIssueLimit,
     include_snapshots = false,
-    runtimeLockHeld = false
+    session_contract,
+    sessionContract
   } = {}) {
-    if (!runtimeLockHeld && [expected_runtime, actual_runtime].includes('queue')) {
-      return this.withRuntimeLock('queue', { timeoutMs }, (lockedBridge) => lockedBridge.compare_model({
+    if ([expected_runtime, actual_runtime].includes('queue') && !this.liveMutationAuthorization) {
+      return this.withLiveMutationAuthorization({ runtime: 'queue', timeoutMs, session_contract, sessionContract, operation: 'compare_model' }, (lockedBridge) => lockedBridge.compare_model({
         code,
         expected_runtime,
         actual_runtime,
@@ -657,8 +920,7 @@ export class SketchUpBridge {
         topologyTolerance,
         budgets,
         topIssueLimit,
-        include_snapshots,
-        runtimeLockHeld: true
+        include_snapshots
       }));
     }
     if (reset_first) {
@@ -688,9 +950,11 @@ export class SketchUpBridge {
     includePreview = true,
     strictCollisions,
     strictUnanchored,
-    floatingDetails
+    floatingDetails,
+    session_contract,
+    sessionContract
   } = {}) {
-    const builtSnapshot = snapshot || (await this.build_model({ code, runtime, timeoutMs })).snapshot;
+    const builtSnapshot = snapshot || (await this.build_model({ code, runtime, timeoutMs, session_contract, sessionContract })).snapshot;
     return validateModelSnapshot(builtSnapshot, {
       spec,
       includePreview,
@@ -706,9 +970,11 @@ export class SketchUpBridge {
     runtime = 'mock',
     timeoutMs,
     spec,
-    includePreview = true
+    includePreview = true,
+    session_contract,
+    sessionContract
   } = {}) {
-    const builtSnapshot = snapshot || (await this.build_model({ code, runtime, timeoutMs })).snapshot;
+    const builtSnapshot = snapshot || (await this.build_model({ code, runtime, timeoutMs, session_contract, sessionContract })).snapshot;
     return validateReferenceVisualSnapshot(builtSnapshot, {
       spec,
       includePreview
@@ -738,6 +1004,86 @@ export class SketchUpBridge {
     return expandDslCode(code);
   }
 
+  async withLiveMutationAuthorization({ runtime = 'mock', timeoutMs, session_contract, sessionContract, operation }, callback) {
+    if (runtime !== 'queue' || this.liveMutationAuthorization) return callback(this);
+    this.assertLiveMutationPolicy(operation);
+    const contract = session_contract ?? sessionContract;
+    if (!contract) {
+      throw new AgentContractError('HANDSHAKE_REQUIRED', `A fresh queue handshake is required before ${operation || 'live mutation'}.`);
+    }
+    const selectedRuntime = this.selectRuntime('queue', { timeoutMs });
+    if (typeof selectedRuntime.withExclusiveAccess !== 'function' || typeof selectedRuntime.getSessionState !== 'function') {
+      throw new AgentContractError('HANDSHAKE_INVALID', 'Selected queue runtime cannot validate a Session Contract.');
+    }
+    return selectedRuntime.withExclusiveAccess(async () => {
+      await this.sessionContractAuthority.verify(contract, { operation });
+      if (typeof selectedRuntime.assertIdleForMutation === 'function') await selectedRuntime.assertIdleForMutation();
+      const runtimeState = await selectedRuntime.getSessionState();
+      assertQueueSessionCompatibility(runtimeState, { operation });
+      const verified = await this.sessionContractAuthority.verify(contract, { runtimeState, operation });
+      return this.invokeLiveAuthorizedQueueOperation({
+        selectedRuntime,
+        verified,
+        operation,
+        callback
+      });
+    }, { method: `authorize:${operation || 'live-mutation'}`, failIfLocked: true });
+  }
+
+  invokeLiveAuthorizedQueueOperation({ selectedRuntime, verified, operation, callback }) {
+    const invoke = () => {
+      const lockedBridge = new SketchUpBridge({
+        ...this.options,
+        queueRuntime: selectedRuntime,
+        approvalAuthority: this.approvalAuthority,
+        taskStore: this.taskStore,
+        copyFastSessionAuthority: this.copyFastSessionAuthority,
+        sessionContractAuthority: this.sessionContractAuthority,
+        [INTERNAL_EXECUTION_CONTEXT]: this.executionContext,
+        liveMutationAuthorization: {
+          handshake_id: verified.handshake_id,
+          operation: operation || 'live_mutation',
+          validated_at: new Date().toISOString()
+        }
+      });
+      return callback(lockedBridge);
+    };
+    if (typeof selectedRuntime.withMutationGuard !== 'function') return invoke();
+    return selectedRuntime.withMutationGuard({
+      handshake_id: verified.handshake_id,
+      session_id: verified.session_id,
+      document_id: verified.document_id,
+      model_revision: verified.model_revision,
+      model_revision_strategy: verified.model_revision_strategy,
+      model_revision_unique_entity_limit: verified.model_revision_unique_entity_limit,
+      plugin_version: verified.plugin_version,
+      capability_version: verified.capability_version,
+      manifest_version: verified.manifest_version,
+      boolean_operations_sha256: verified.boolean_operations_sha256,
+      model_revision_source_sha256: verified.model_revision_source_sha256,
+      model_modified: verified.model_modified,
+      dsl_version: verified.dsl_version
+    }, invoke);
+  }
+
+  assertLiveMutationPolicy(operation) {
+    const source = this.executionContext?.source === 'agent_gateway' ? 'agent_gateway' : 'direct_expert';
+    const allowed = source === 'agent_gateway'
+      ? this.executionPolicy.allow_queue_mutation === true
+      : this.executionPolicy.allow_direct_expert_queue_mutation === true;
+    if (!this.executionPolicy.allowed_runtimes.includes('queue') || !allowed) {
+      throw new AgentContractError('POLICY_DENIED', source === 'agent_gateway'
+        ? 'The server execution policy does not allow Agent Gateway queue mutation.'
+        : 'Direct expert queue mutation is disabled by server policy.', {
+        details: {
+          source,
+          operation: operation || 'live_mutation',
+          required_policy: source === 'agent_gateway' ? 'allow_queue_mutation' : 'allow_direct_expert_queue_mutation'
+        }
+      });
+    }
+  }
+
   selectRuntime(runtime, { timeoutMs } = {}) {
     if (runtime === 'mock') return this.mockRuntime;
     if (runtime === 'queue') return this.options.queueRuntime || new QueueRuntime({ ...(this.options.queue || {}), timeoutMs });
@@ -752,6 +1098,7 @@ export class SketchUpBridge {
     return selectedRuntime.withExclusiveAccess(async () => {
       const lockedBridge = new SketchUpBridge({
         ...this.options,
+        copyFastSessionAuthority: this.copyFastSessionAuthority,
         ...(runtime === 'queue' ? { queueRuntime: selectedRuntime } : {})
       });
       if (runtime === 'mock') lockedBridge.mockRuntime = selectedRuntime;
@@ -764,10 +1111,38 @@ function policyFromEnvironment() {
   const allowedRuntimes = process.env.ALMA_SKETCHUP_AGENT_ALLOWED_RUNTIMES
     ? process.env.ALMA_SKETCHUP_AGENT_ALLOWED_RUNTIMES.split(',').map((item) => item.trim()).filter(Boolean)
     : ['mock'];
+  const trustedCopyRootValue = process.env.ALMA_SKETCHUP_COPY_ROOTS
+    || process.env.ALMA_SKETCHUP_TRUSTED_COPY_ROOTS;
+  const trustedCopyRoots = trustedCopyRootValue
+    ? trustedCopyRootValue.split(path.delimiter).map((item) => item.trim()).filter(Boolean)
+    : [];
+  const trustedCopyRiskValue = process.env.ALMA_SKETCHUP_COPY_FAST_ALLOWED_RISKS
+    || process.env.ALMA_SKETCHUP_TRUSTED_COPY_AUTO_APPROVE_RISKS;
+  const trustedCopyRisks = trustedCopyRiskValue
+    ? trustedCopyRiskValue.split(',').map((item) => item.trim()).filter(Boolean)
+    : ['S1', 'S2', 'S3', 'S4'];
   return {
     auto_approve_risks: process.env.ALMA_SKETCHUP_AUTO_APPROVE_S1 === '1' ? ['S1'] : [],
     allowed_runtimes: allowedRuntimes,
-    allow_queue_mutation: process.env.ALMA_SKETCHUP_AGENT_ALLOW_QUEUE_MUTATION === '1'
+    allow_queue_mutation: process.env.ALMA_SKETCHUP_AGENT_ALLOW_QUEUE_MUTATION === '1',
+    allow_direct_expert_queue_mutation: process.env.ALMA_SKETCHUP_ALLOW_DIRECT_EXPERT_QUEUE_MUTATION === '1',
+    trusted_model_copy_auto_approval: {
+      enabled: process.env.ALMA_SKETCHUP_COPY_FAST_MODE === '1'
+        || process.env.ALMA_SKETCHUP_TRUSTED_COPY_AUTO_APPROVAL === '1',
+      allowed_roots: trustedCopyRoots,
+      allowed_risks: trustedCopyRisks,
+      max_affected_instances: process.env.ALMA_SKETCHUP_COPY_FAST_MAX_AFFECTED_INSTANCES
+        || process.env.ALMA_SKETCHUP_TRUSTED_COPY_MAX_AFFECTED_INSTANCES,
+      allow_save_model: process.env.ALMA_SKETCHUP_COPY_FAST_ALLOW_SAVE === '1'
+        || process.env.ALMA_SKETCHUP_TRUSTED_COPY_ALLOW_SAVE === '1',
+      session_ttl_ms: process.env.ALMA_SKETCHUP_COPY_FAST_SESSION_TTL_MS
+    },
+    resource_limits: {
+      max_operations: process.env.ALMA_SKETCHUP_AGENT_MAX_OPERATIONS,
+      max_affected_instances: process.env.ALMA_SKETCHUP_AGENT_MAX_AFFECTED_INSTANCES,
+      max_recursive_entities: process.env.ALMA_SKETCHUP_AGENT_MAX_RECURSIVE_ENTITIES,
+      auto_approve_s1_max_affected_instances: process.env.ALMA_SKETCHUP_AUTO_APPROVE_S1_MAX_AFFECTED_INSTANCES
+    }
   };
 }
 
@@ -805,8 +1180,17 @@ function attachCompatibilityReport(descriptor, runtime) {
 
   addScalarIssue(issues, 'runtime.name', expected.name, actual.name, 'error');
   addScalarIssue(issues, 'runtime.dsl_version', expected.dsl_version, actual.dsl_version, 'error');
+  addScalarIssue(issues, 'runtime.occurrence_contract', expected.occurrence_contract, actual.occurrence_contract, 'error');
   addScalarIssue(issues, 'runtime.manifest_version', expected.manifest_version, actual.manifest_version, 'warn');
   addScalarIssue(issues, 'runtime.capability_version', expected.capability_version, actual.capability_version, 'warn');
+  if (runtime === 'queue') {
+    addScalarIssue(issues, 'runtime.boolean_operations_sha256', expected.boolean_operations_sha256, actual.boolean_operations_sha256, 'error');
+    addScalarIssue(issues, 'runtime.model_revision_source_sha256', expected.model_revision_source_sha256, actual.model_revision_source_sha256, 'error');
+    addScalarIssue(issues, 'runtime.model_revision.strategy', expected.model_revision?.strategy, actual.model_revision?.strategy, 'error');
+    addScalarIssue(issues, 'runtime.model_revision.unique_entity_limit', expected.model_revision?.unique_entity_limit, actual.model_revision?.unique_entity_limit, 'error');
+    addScalarIssue(issues, 'runtime.model_revision.logical_occurrence_count', expected.model_revision?.logical_occurrence_count, actual.model_revision?.logical_occurrence_count, 'error');
+  }
+  addReadOnlyProbeCompatibilityIssues(issues, expected.read_only_probes?.structural_groups, actual.read_only_probes?.structural_groups);
 
   const expectedOperations = new Set(expected.supported_operations || []);
   const actualOperations = new Set(actual.supported_operations || []);
@@ -885,11 +1269,81 @@ function attachCompatibilityReport(descriptor, runtime) {
       checked_against: {
         manifest_version: expected.manifest_version,
         capability_version: expected.capability_version,
+        boolean_operations_sha256: expected.boolean_operations_sha256,
+        model_revision_source_sha256: expected.model_revision_source_sha256,
         dsl_version: expected.dsl_version
       },
       issues
     }
   };
+}
+
+function addReadOnlyProbeCompatibilityIssues(issues, expectedProbe, actualProbe) {
+  if (!actualProbe || typeof actualProbe !== 'object') {
+    issues.push({
+      type: 'runtime.read_only_probe_missing',
+      severity: 'error',
+      field: 'runtime.read_only_probes.structural_groups',
+      message: 'Runtime is missing the structural-groups.v1 read-only probe descriptor.',
+      expected: expectedProbe || null,
+      actual: actualProbe || null
+    });
+    return;
+  }
+  for (const field of [
+    'version',
+    'operation',
+    'requires_read_only',
+    'default_limit',
+    'max_limit',
+    'max_fresh_manifold_paths',
+    'projected_entity_types',
+    'traversed_container_types',
+    'fresh_manifold_method',
+    'leaf_entities_materialized',
+    'mutates_model'
+  ]) {
+    if (sameJson(expectedProbe?.[field], actualProbe[field])) continue;
+    issues.push({
+      type: 'runtime.read_only_probe_mismatch',
+      severity: 'error',
+      field: `runtime.read_only_probes.structural_groups.${field}`,
+      message: `Runtime structural group probe descriptor mismatch: ${field}.`,
+      expected: expectedProbe?.[field] ?? null,
+      actual: actualProbe[field] ?? null
+    });
+  }
+}
+
+function assertQueueSessionCompatibility(runtimeState, { operation } = {}) {
+  const expected = getRuntimeCapabilities('queue');
+  const bindings = [
+    ['capability_version', expected.capability_version],
+    ['manifest_version', expected.manifest_version],
+    ['dsl_version', expected.dsl_version],
+    ['occurrence_contract', expected.occurrence_contract],
+    ['boolean_operations_sha256', expected.boolean_operations_sha256],
+    ['model_revision_source_sha256', expected.model_revision_source_sha256],
+    ['model_revision_strategy', expected.model_revision?.strategy],
+    ['model_revision_unique_entity_limit', expected.model_revision?.unique_entity_limit]
+  ];
+  for (const [field, expectedValue] of bindings) {
+    const actualValue = runtimeState?.[field];
+    if (actualValue === expectedValue) continue;
+    throw new AgentContractError(
+      'HANDSHAKE_CAPABILITIES_MISMATCH',
+      'The live SketchUp plugin capability contract does not match this server.',
+      {
+        details: {
+          field,
+          expected: expectedValue ?? null,
+          actual: actualValue ?? null,
+          operation: operation || null,
+          queue_request_created: false
+        }
+      }
+    );
+  }
 }
 
 function normalizeOperationSupport(actualSupport = {}, expectedSupport = {}) {

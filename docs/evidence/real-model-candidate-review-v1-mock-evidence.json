@@ -1,0 +1,56 @@
+{
+  "version": "real-model-candidate-review-v1-mock-evidence.1",
+  "kind": "real_model_candidate_review_mock_evidence",
+  "generated_on": "2026-07-20",
+  "evidence_scope": "offline_user_confirmed_semantic_mapping_and_formal_case_readiness",
+  "commands": [
+    "node test/real-model-candidate-review.mjs",
+    "node scripts/review-real-model-candidates.mjs"
+  ],
+  "result": "pass",
+  "contract": {
+    "mapping": "real-model-candidate-semantic-mapping.v1",
+    "report": "real-model-candidate-review-report.v1",
+    "candidate_bindings": 5,
+    "formal_cases": 7,
+    "semantically_mapped_cases": 6,
+    "formal_sidecars_ready": 0,
+    "formal_sidecars_generated": 0
+  },
+  "readiness": {
+    "architecture-golden": "blocked_missing_scene_and_formal_sidecar",
+    "interior-expression": "blocked_missing_formal_sidecar",
+    "product-boolean-manifold": "blocked_missing_semantic_mapping_and_target_tool",
+    "deep-shared-components": "blocked_missing_full_recursive_attestation_and_formal_sidecar",
+    "imported-dirty-topology": "blocked_missing_reviewed_topology_probe_and_target",
+    "appearance-scenes-hidden": "blocked_missing_uv_target_and_formal_sidecar",
+    "scaled-mirrored-locked": "blocked_missing_locked_target_and_formal_sidecar"
+  },
+  "safety": {
+    "live_queue_called": false,
+    "model_mutation_authorized": false,
+    "model_mutation_performed": false,
+    "approval_token_issued": false,
+    "execution_policy_changed": false,
+    "untrusted_model_data_policy_effect": "none",
+    "release_acceptance": false
+  },
+  "negative_cases": {
+    "semantic_mapping_mutation_elevation": "rejected",
+    "approval_token_injection": "rejected",
+    "unknown_formal_case": "rejected",
+    "candidate_source_hash_tamper": "rejected",
+    "bound_artifact_hash_tamper": "rejected",
+    "false_release_acceptance": "rejected"
+  },
+  "hashes": {
+    "src/real-model-candidate-review.mjs": "sha256:b8b7e0783383bb7209bea36340d7a437a9a6c59edb3128cb9776081286fae53f",
+    "scripts/review-real-model-candidates.mjs": "sha256:a94888a698d04461bbd3d0f5490bf72671fd9a27b513b3fd2567f7c05b9a0c78",
+    "schema/real-model-candidate-semantic-mapping-v1.schema.json": "sha256:952f4ee6d2cc26bfb2631b0efd114553048c4f3b061e1c637c12f067dc3edf22",
+    "schema/real-model-candidate-review-report-v1.schema.json": "sha256:43fe0775065ce0d2ed3d3cd54f56893842da3a8139a731724e31780ff78fc7cc",
+    "docs/evidence/real-model-candidate-semantic-mapping-2026-07-20.json": "sha256:72a1508783d2f34a927e994d5c45ea7cb797388d572b6af4ab208fe68e73191d",
+    "test/real-model-candidate-review.mjs": "sha256:00d2c657082887ca6b8aad406d4832d297c9521cca421b617180d7a786f48e94",
+    "docs/real-model-reliability-corpus-v1.md": "sha256:11e908cea8c3ed9043db4a9ce9466b8d557cffd7055a7819e0e4546718d4f862"
+  },
+  "boundary": "This evidence records the user's semantic routing decision and an offline structural readiness analysis. It does not identify or approve mutating persistent-id targets, create formal sidecars, call SketchUp, prove native mutations, or establish release acceptance."
+}

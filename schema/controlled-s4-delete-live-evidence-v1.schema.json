@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/schema/controlled-s4-delete-live-evidence-v1.schema.json",
+  "title": "Controlled disposable-copy S4 delete live evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "kind",
+    "captured_at",
+    "branch",
+    "baseline_commit",
+    "source_sha256",
+    "runtime",
+    "model",
+    "prepare",
+    "apply",
+    "artifact_sha256",
+    "release_acceptance",
+    "boundaries"
+  ],
+  "properties": {
+    "version": { "const": "controlled-s4-delete-live-evidence.v1" },
+    "kind": { "const": "trusted_model_copy_scoped_auto_approved_s4_delete" },
+    "captured_at": { "type": "string", "minLength": 20 },
+    "branch": { "const": "codex/agent-contract-v1" },
+    "baseline_commit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "source_sha256": {
+      "type": "object",
+      "minProperties": 7,
+      "propertyNames": { "pattern": "^(src|scripts|test)/" },
+      "additionalProperties": { "$ref": "#/$defs/sha256" }
+    },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "plugin_version", "capability_version", "manifest_version", "compatibility_ok", "fresh_process_proven_in_this_run"],
+      "properties": {
+        "name": { "const": "queue" },
+        "plugin_version": { "const": "0.1.0-rc.2" },
+        "capability_version": { "const": "0.1.0-rc.2-capabilities.7" },
+        "manifest_version": { "const": "2026-07-agent-contract-v1.4" },
+        "compatibility_ok": { "const": true },
+        "fresh_process_proven_in_this_run": { "const": false }
+      }
+    },
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["basename", "disk_sha256_before", "disk_sha256_after", "disk_bytes_unchanged", "revision_complete", "logical_occurrences_before", "save_model", "active_document_modified_after"],
+      "properties": {
+        "basename": { "const": "Fire Escape.current-source.disposable.skp" },
+        "disk_sha256_before": { "$ref": "#/$defs/sha256" },
+        "disk_sha256_after": { "$ref": "#/$defs/sha256" },
+        "disk_bytes_unchanged": { "const": true },
+        "revision_complete": { "const": true },
+        "logical_occurrences_before": { "const": 5859 },
+        "save_model": { "const": false },
+        "active_document_modified_after": { "const": true }
+      }
+    },
+    "prepare": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["task_id", "task_state", "risk_level", "plan_id", "plan_hash", "model_revision", "approval_required", "approval_status", "authorization_mode", "policy_enabled", "allowed_root_count", "configured_roots_exposed_to_agent", "target_entity_path", "expected_empty_parent_cleanup", "destructive_side_effect_projected", "queue_before"],
+      "properties": {
+        "task_id": { "$ref": "#/$defs/taskId" },
+        "task_state": { "const": "awaiting_review" },
+        "risk_level": { "const": "S4" },
+        "plan_id": { "type": "string", "pattern": "^existing-edit-[0-9a-f]{24}$" },
+        "plan_hash": { "$ref": "#/$defs/prefixedSha256" },
+        "model_revision": { "$ref": "#/$defs/prefixedSha256" },
+        "approval_required": { "const": false },
+        "approval_status": { "const": "server_policy_scoped_auto_approved" },
+        "authorization_mode": { "const": "trusted_model_copy" },
+        "policy_enabled": { "const": true },
+        "allowed_root_count": { "type": "integer", "minimum": 1 },
+        "configured_roots_exposed_to_agent": { "const": false },
+        "target_entity_path": { "const": "pid:9287.9289" },
+        "expected_empty_parent_cleanup": { "const": "pid:9287" },
+        "destructive_side_effect_projected": { "const": true },
+        "queue_before": { "$ref": "#/$defs/cleanQueue" }
+      }
+    },
+    "apply": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["task_state", "submit_count", "authorization_mode", "approved_by", "receipt_id", "receipt_status", "model_revision_before", "model_revision_after", "revision_changed", "target_absent", "empty_parent_absent", "structural_group_count_after", "queue_before", "queue_after", "approval_token_exposed_to_agent", "milestone_acceptance"],
+      "properties": {
+        "task_state": { "const": "completed" },
+        "submit_count": { "const": 1 },
+        "authorization_mode": { "const": "server_policy_trusted_model_copy_auto_approval" },
+        "approved_by": { "const": "execution-policy:trusted-model-copy" },
+        "receipt_id": { "type": "string", "pattern": "^mutation-receipt-[0-9a-f]{24}$" },
+        "receipt_status": { "const": "finalized" },
+        "model_revision_before": { "$ref": "#/$defs/prefixedSha256" },
+        "model_revision_after": { "$ref": "#/$defs/prefixedSha256" },
+        "revision_changed": { "const": true },
+        "target_absent": { "const": true },
+        "empty_parent_absent": { "const": true },
+        "structural_group_count_after": { "const": 0 },
+        "queue_before": { "$ref": "#/$defs/cleanQueue" },
+        "queue_after": { "$ref": "#/$defs/cleanQueue" },
+        "approval_token_exposed_to_agent": { "const": false },
+        "milestone_acceptance": { "const": true }
+      }
+    },
+    "artifact_sha256": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["prepare_record", "apply_record"],
+      "properties": {
+        "prepare_record": { "$ref": "#/$defs/sha256" },
+        "apply_record": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "release_acceptance": { "const": false },
+    "boundaries": {
+      "type": "array",
+      "minItems": 3,
+      "items": { "type": "string", "minLength": 1 }
+    }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "prefixedSha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "taskId": { "type": "string", "pattern": "^task_[0-9a-f-]{36}$" },
+    "cleanQueue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["queue", "processing", "responses", "lock_exists"],
+      "properties": {
+        "queue": { "const": 0 },
+        "processing": { "const": 0 },
+        "responses": { "const": 0 },
+        "lock_exists": { "const": false }
+      }
+    }
+  }
+}

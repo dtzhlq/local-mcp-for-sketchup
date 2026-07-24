@@ -1,0 +1,158 @@
+{
+  "version": "local-approval-live-evidence.v1",
+  "kind": "trusted_local_approval_s2_live_evidence",
+  "captured_at": "2026-07-16T07:34:10.256Z",
+  "branch": "codex/agent-contract-v1",
+  "baseline_commit": "ee0708adf845c51f71294091b8013e1cc6aa8979",
+  "evidence_scope": "current_source_single_model_s2_trusted_approval_and_receipt",
+  "runtime": {
+    "name": "queue",
+    "plugin_version": "0.1.0-rc.2",
+    "capability_version": "0.1.0-rc.2-capabilities.3",
+    "manifest_version": "2026-07-agent-contract-v1.1",
+    "sketchup_version": "26.2.242",
+    "ruby_version": "3.2.2",
+    "compatibility_ok": true,
+    "fresh_process": true,
+    "session_id": "6e998276-35ce-489c-8c2d-7c536b925b33"
+  },
+  "installed_source": {
+    "workspace_plugin_main_sha256": "e02517ba8266806c14f6ec48b8bb7c309af3683bdaec7e0506a3dfa20c6b041a",
+    "installed_plugin_main_sha256": "e02517ba8266806c14f6ec48b8bb7c309af3683bdaec7e0506a3dfa20c6b041a",
+    "exact_hash_match": true,
+    "source_sha256": {
+      "src/agent-gateway.mjs": "ac56180e57e2efd411c0f82c39211ad88beab38c95e39eabb748b9db3018a191",
+      "src/local-approval-host.mjs": "343fe2063af90c41507f3808f2e74e7f86f12eb8b8aea2937f4ddffcfb226481",
+      "src/approval-tokens.mjs": "9dbec0ddda0022c8bafc728c036230d48cfad52b70d6a21f2bdb6fa25bfb6d0f",
+      "src/task-mutation-receipt-ledger.mjs": "bb00eaf05b997eee74875b7b510b080e0e47774be7cbd34c0f171d6e3b86cd2f",
+      "scripts/run-local-approval-live-smoke.mjs": "68f16b391e75b14ea88416406455d4988fd4690aac44dc5321946149c22b09e5"
+    }
+  },
+  "failure_discovery": {
+    "task_id": "task_897ae2ab-409f-49a8-aab2-c5a540608b0c",
+    "risk_level": "S2",
+    "real_user_approval": true,
+    "native_mutation_committed": true,
+    "task_completion_reported_live_mutation": false,
+    "task_state": "failed",
+    "error_code": "MODEL_IDENTITY_MISMATCH",
+    "durable_task_receipt_recorded": false,
+    "active_model_identity_changed": true,
+    "root_cause": "versioned_save_used_save_as",
+    "queue_after": {
+      "queue": 0,
+      "processing": 0,
+      "responses": 0,
+      "lock_exists": false
+    }
+  },
+  "remediation": {
+    "api": "Sketchup::Model#save_copy",
+    "keep_session": true,
+    "save_mode": "copy",
+    "active_model_identity_preserved": true,
+    "plugin_restart_required": true,
+    "ruby_contract_tests_passed": true,
+    "source_contract_tests_passed": true
+  },
+  "successful_attempt": {
+    "task_id": "task_09681a68-6790-4bd5-a1be-62076fba2fc2",
+    "plan_id": "existing-edit-2b84c6de8debe81a2c016c6c",
+    "plan_hash": "sha256:bbe2c624bc40c71fa5a714034eb26eb4c5be252eaaffcdff190570bfb46a7537",
+    "challenge_id": "approval_b38ef371-a783-42da-960d-25ce0a05bfc5",
+    "model_key": "model_3d2ed084607bd70f203edc5d1e508eb3",
+    "risk_level": "S2",
+    "allowed_operations": [
+      "rename"
+    ],
+    "real_user_approval": true,
+    "approval_token_exposed_to_agent": false,
+    "challenge_status": "consumed",
+    "private_token_retained_after_consumption": false,
+    "task_state": "completed",
+    "native_commit_state": "committed",
+    "receipt": {
+      "receipt_id": "mutation-receipt-bca0addad1e4b576096158a1",
+      "status": "finalized",
+      "integrity_hmac_present": true
+    },
+    "model_revision_before": "sha256:b1b88432471177d92300b63bda10bb260d8b2334d0ada10c12885ee50e76b7d7",
+    "model_revision_after": "sha256:ab3b47921bb75eaaa24d13c5643857d7d069b9debeeb55879e357eeae5c30582",
+    "target": {
+      "entity_path": "pid:9287",
+      "persistent_id": "9287",
+      "before_name": "ALMA_Approval_Proof_2026_07_16T07_22_08_626Z",
+      "after_name": "ALMA_Approval_Receipt_Proof_2026_07_16",
+      "same_persistent_entity": true,
+      "affected_instance_count": 1,
+      "shared_definition": false
+    },
+    "save": {
+      "mode": "copy",
+      "active_model_identity_preserved": true,
+      "identity_attestation_matches_pre_save_document": true,
+      "artifact_size_bytes": 151516
+    },
+    "geometry_delta": {
+      "faces": 0,
+      "edges": 0,
+      "vertices": 0,
+      "groups": 0,
+      "instances": 0,
+      "bbox_w": 0,
+      "bbox_d": 0,
+      "bbox_h": 0,
+      "warnings": 0
+    },
+    "capture": {
+      "sha256": "33b665e3c964307ae004da005433e55c6e5a0795472e3109b54883e42aac48bf",
+      "size_bytes": 79819,
+      "width": 1280,
+      "height": 720,
+      "state_unchanged": true,
+      "view_unchanged": true
+    },
+    "queue_before": {
+      "queue": 0,
+      "processing": 0,
+      "responses": 0,
+      "lock_exists": false
+    },
+    "queue_after": {
+      "queue": 0,
+      "processing": 0,
+      "responses": 0,
+      "lock_exists": false
+    }
+  },
+  "artifact_sha256": {
+    "first_prepare_record": "8b650004be3203f62228367abe9845871403d2cd35c9cad8a94830be29b60435",
+    "first_apply_record": "190d77ee6e11ddf30eb82e09ec6064ea34e930c3d6265e152621b04ae14477fc",
+    "first_saved_model": "d9a579029409de16e129fa464ec55fa9c86dc5beebc7b70b143c4177fc206b23",
+    "second_prepare_record": "e05f6908d1ea20015c67928b69ea2e76efbd73b2f513b0d9edd51f9832291f40",
+    "second_apply_record": "d04a2bdbb011e04c8b42b4c2ca71a82197271defda4f66a269df44cc36546b95",
+    "second_saved_model": "ad338878d54f11c776817032bbf66f0e0f609ea3477898e835a73eba7acf57f5",
+    "task_mutation_receipt": "79675271f6bb26819bb128cdd6846557030e80411f3f27652596601bbe05eb1e",
+    "apply_result": "974e24e021b1659d26e020f8d508a3bcdabd104840611bf64af38d4b11c9b97a",
+    "capture_png": "33b665e3c964307ae004da005433e55c6e5a0795472e3109b54883e42aac48bf"
+  },
+  "release_acceptance": false,
+  "boundaries": {
+    "model_count": 1,
+    "proven_risk_levels": [
+      "S2"
+    ],
+    "s3_s4_proven": false,
+    "external_reference_used": false,
+    "multi_model_corpus_proven": false,
+    "version_matrix_proven": false,
+    "native_commit_to_task_receipt_gap_eliminated": false,
+    "universal_exactly_once_proven": false,
+    "reference_image_pending": true,
+    "notes": [
+      "This proves one current-source S2 rename through real local-user approval, a fresh queue Session Contract, a consumed private approval decision, a native commit, a finalized HMAC-protected task receipt, identity-preserving save_copy, and clean queues.",
+      "The first approved run is retained as a failure-discovery record: its native rename committed, but Save As changed the active document identity, so strict identity verification failed and no durable task receipt was accepted.",
+      "This does not prove S3 or S4 approval, external-reference correction and recapture, multiple real models, a SketchUp version matrix, elimination of the native-commit-to-task-receipt crash gap, universal exactly-once semantics, or release acceptance."
+    ]
+  }
+}

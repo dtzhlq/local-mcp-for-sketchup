@@ -1,0 +1,229 @@
+{
+  "version": "real-model-recursive-reliability-evidence.v2",
+  "kind": "real_model_recursive_reliability_v2_mock_evidence",
+  "created_on": "2026-07-21",
+  "runtime": "offline",
+  "result": "pass",
+  "evidence_scope": "deterministic_offline_bbox_semantics_and_review_gated_atomic_trial_contracts",
+  "contracts": {
+    "target_review": {
+      "version": "real-model-target-review.v2",
+      "relation_evidence": "axis_aligned_bbox_only",
+      "positive_bbox_overlap_is_exact_solid_overlap": false,
+      "exact_solid_overlap": {
+        "status": "unverified_before_manifold_probe_and_atomic_trial",
+        "verified": false,
+        "verification_stage": "manifold_probe_then_review_gated_atomic_apply"
+      },
+      "atomic_boolean_trial_eligible": false,
+      "model_mutation_authorized": false
+    },
+    "recursive_review": {
+      "version": "real-model-recursive-target-review.v2",
+      "runtime": "offline",
+      "bbox_relation_fields_are_explicit": true,
+      "legacy_volume_names_removed": true,
+      "server_recommended_is_proposal_only": true,
+      "exact_solid_overlap": {
+        "status": "unverified_before_atomic_trial",
+        "verified": false,
+        "verification_stage": "review_gated_atomic_apply"
+      },
+      "atomic_boolean_trial_requires_positive_bbox_overlap_and_both_fresh_manifold": true,
+      "model_mutation_authorized": false
+    },
+    "reliability_plan": {
+      "version": "real-model-reliability-execution-plan.v3",
+      "required_recursive_review_version": "real-model-recursive-target-review.v2",
+      "stage": "offline_prepare_only",
+      "risk_level": "S3",
+      "execution_disposition": "awaiting_local_approval_for_atomic_trial",
+      "executable_now": false,
+      "local_approval_required": true,
+      "exact_solid_overlap_verified_before_trial": false,
+      "mutation_authorized": false
+    },
+    "portal_boolean_approval": {
+      "workflow_version": "portal-structure-s3-boolean-live.v8",
+      "primary_readonly_review_sha256": "sha256:2339a9876535abc903377e78e5a85488d3cc562ee72fbd83960c75698d809955",
+      "pinned_pair": {
+        "target_path": "pid:11543",
+        "tool_path": "pid:11635"
+      },
+      "review_lineage": {
+        "recommendation": "server_recommended",
+        "bbox_relation": "containment",
+        "positive_bbox_overlap": true,
+        "exact_solid_overlap": {
+          "status": "unverified_before_atomic_trial",
+          "verified": false,
+          "verification_stage": "review_gated_atomic_apply"
+        },
+        "atomic_boolean_trial_eligible": true,
+        "target_fresh_manifold": true,
+        "tool_fresh_manifold": true,
+        "role_provenance": "server_geometric_ranking_untrusted_unapproved"
+      },
+      "geometry_disclosure": {
+        "evidence_kind": "bbox_candidate_only",
+        "bbox_relation": "positive_bbox_overlap_unverified",
+        "exact_solid_overlap": {
+          "status": "unverified_before_atomic_trial",
+          "verified": false,
+          "verification_stage": "review_gated_atomic_apply"
+        },
+        "approved_action": "review_gated_atomic_boolean_trial",
+        "success_preconditions": [
+          "target_exact_volume_strictly_reduced",
+          "result_manifold"
+        ],
+        "failure_disposition": "abort_before_commit"
+      },
+      "superseded_workflow_versions": [
+        "v1",
+        "v2",
+        "v3",
+        "v4",
+        "v5",
+        "v6",
+        "v7"
+      ],
+      "historical_witnesses": [
+        {
+          "version": "portal-structure-s3-boolean-witness.v1",
+          "lineage_only": true,
+          "approval_reusable": false,
+          "task_reusable": false
+        },
+        {
+          "version": "portal-structure-s3-boolean-witness.v2",
+          "lineage_only": true,
+          "approval_reusable": false,
+          "task_reusable": false
+        }
+      ],
+      "trusted_local_user_approval_required": true,
+      "agent_self_approval_accepted": false,
+      "automatic_replay_after_abort_or_unknown_outcome": false
+    }
+  },
+  "tests": {
+    "target_review": {
+      "command": "node test/real-model-target-review.mjs",
+      "assertions": 40,
+      "default_live_queue_called": false,
+      "fake_forbidden_live_calls": 0,
+      "revision_change_fail_closed": true,
+      "outcome_unknown_fail_closed": true
+    },
+    "recursive_review": {
+      "command": "node test/real-model-recursive-target-review.mjs",
+      "assertions": 146,
+      "trimble_bbox_relation": "disjoint",
+      "two_phase_probe_paths": 2,
+      "server_recommended": "server_recommended",
+      "queue_requests_created": 0,
+      "deterministic": true
+    },
+    "reliability_plan": {
+      "command": "node test/real-model-reliability-plan.mjs",
+      "assertions": 129,
+      "positive_strategy": "existing_pair",
+      "generated_cutter_strategy": "generated_cutter",
+      "generated_cutter_blocked": true,
+      "cli_live_queue_called": false,
+      "mutation_authorized": false,
+      "release_acceptance": false
+    },
+    "portal_boolean_disclosure": {
+      "command": "node test/real-model-boolean-live.mjs",
+      "assertions": 193,
+      "runtime": "portable_witness_and_mock_fixtures_only",
+      "portable_witness_version": "portal-structure-s3-boolean-witness.v3",
+      "pinned_post_restart_review_sha256": "sha256:2339a9876535abc903377e78e5a85488d3cc562ee72fbd83960c75698d809955",
+      "pinned_pair": [
+        "pid:11543",
+        "pid:11635"
+      ],
+      "live_queue_called": false,
+      "live_mutation_performed": false,
+      "unapproved_end_to_end_queue_calls": 0,
+      "forged_approval_end_to_end_queue_calls": 0,
+      "superseded_v7_task_end_to_end_queue_calls": 0,
+      "duplicate_apply_mutation_count": 0,
+      "sensitive_fields_exposed": false,
+      "negative_witness_cases": 15
+    },
+    "evidence_verifier": {
+      "command": "node test/real-model-recursive-reliability-v2-evidence.mjs",
+      "core_commands_rerun": true,
+      "hash_bindings_checked": 16,
+      "schema_hash_bindings": 4,
+      "source_hash_bindings": 6,
+      "queue_requests_created": 0
+    }
+  },
+  "queue_boundary": {
+    "live_queue_called": false,
+    "queue_requests_created": 0,
+    "queue_state_directory_created": false
+  },
+  "authorization_boundary": {
+    "server_recommended_is_execution_authority": false,
+    "trusted_local_user_approval_required": true,
+    "real_user_approval_observed_in_this_mock_evidence": false,
+    "agent_self_approval_accepted": false,
+    "approval_token_issued": false,
+    "mutation_authorized": false
+  },
+  "geometry_boundary": {
+    "positive_bbox_overlap_is_exact_solid_overlap": false,
+    "exact_solid_overlap_preapply": {
+      "status": "unverified_before_atomic_trial",
+      "verified": false,
+      "verification_stage": "review_gated_atomic_apply"
+    },
+    "exact_overlap_may_be_established_by_review_alone": false
+  },
+  "atomic_trial_boundary": {
+    "trial_executed_in_this_mock_evidence": false,
+    "success_preconditions": {
+      "atomic_split_success_required": true,
+      "target_exact_volume_reduction_required": true,
+      "result_manifold_required": true,
+      "all_required_before_commit": true
+    },
+    "failure_disposition": "abort_before_commit",
+    "commit_before_all_success_preconditions": false,
+    "partial_commit_allowed": false
+  },
+  "release_boundary": {
+    "live_boolean_executed": false,
+    "save_reopen_identity_proven": false,
+    "release_acceptance": false
+  },
+  "hash_summary": {
+    "total_hash_bindings": 16,
+    "schema_hash_bindings": 4,
+    "source_hash_bindings": 6
+  },
+  "hashes": {
+    "schema/approval-challenge-v1.schema.json": "sha256:61bf56c097b9d3c4716df5e203af3df74e0d1b42aad009173e869cd7996da0e2",
+    "schema/real-model-recursive-target-review-v2.schema.json": "sha256:f520c5366d10c6de581fc7e9a660c21100f84efbccdabb1a2c7062dd6d23b8c6",
+    "schema/real-model-reliability-execution-plan-v3.schema.json": "sha256:f019f4e083e81c295baf80d14d17bd0e0585021a11fdb4db63e8fd2571860d40",
+    "schema/real-model-target-review-v2.schema.json": "sha256:a6fe1c3234dbc42ab695d3200e0b19712643c63de00f68d745ad11d4cf101607",
+    "scripts/run-real-model-boolean-live.mjs": "sha256:c0682cdee70549b2f54523c83699a5f60cc0a2abfc01fa63e59e0591dbdd06a2",
+    "src/approval-tokens.mjs": "sha256:d677fb2b47b9a66c7bc00fc3b694ee049471eced7eafa53554c4c2f40943a35f",
+    "src/existing-model-editing.mjs": "sha256:4c2185fe8fa8f8760c87e6ec123e9096170e24116d1de1e7a982ca9420d1a1a8",
+    "src/real-model-recursive-target-review.mjs": "sha256:71d85694f3ee57ca19bf06ebdc8c083850d4e4b8b65b77e0a05b445cbc90e56e",
+    "src/real-model-reliability-plan.mjs": "sha256:adb30fe0894d13325294116323e6421285913db7e8b122a33e4ccc6577cb066f",
+    "src/real-model-target-review.mjs": "sha256:5448ca5a7616bb0d6b99dab87bb3c1163db3894e8c27f5898feebd29cc715554",
+    "test/fixtures/portal-boolean-live-witness.v3.json": "sha256:074ef1b29460b926f7910820123aefaaf3029b89291616c4648452702f7623ed",
+    "test/real-model-boolean-live.mjs": "sha256:f84cf670f176ff8d74f0d07b301cfb7fca6e64ba67c59c9fa54aee370f222caf",
+    "test/real-model-recursive-reliability-v2-evidence.mjs": "sha256:ed91a6e244cd08b4067652f69284c9c0263c0f1c0e64851a6b1f09d65b5bc369",
+    "test/real-model-recursive-target-review.mjs": "sha256:e8f1fc36b598637d127c5dd3bcc4ab852c3ac1cb9a957f45aff2166b3fbe8e45",
+    "test/real-model-reliability-plan.mjs": "sha256:87a6511115bcd5b23f4a6752beedd34dffa089642e57b3907875ebac9d325a1b",
+    "test/real-model-target-review.mjs": "sha256:bbf204c50638a181dbf9d8218e6aa6b96ec6017d18ee287f1d72dfddde5f44a3"
+  },
+  "boundary": "This v2 mock evidence covers deterministic offline Target Review v2, Recursive Review v2, Reliability Plan v3, and Portal v8 geometry-disclosure contracts. Portal v8 pins the fresh read-only Recursive Review v2 candidate pair pid:11543/pid:11635 while preserving Portal witness v1/v2 only as non-reusable archival lineage. Positive AABB containment remains candidate evidence only: exact solid overlap is unverified before a trusted-user-approved atomic trial. A successful commit requires atomic split success, strict target exact-volume reduction, and a manifold result; every failed precondition aborts before commit. The verifier creates zero queue requests, accepts no Agent self-approval, authorizes no mutation, performs no live boolean or save/reopen QA, and cannot establish release acceptance."
+}

@@ -2,6 +2,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { SketchUpBridge } from '../src/bridge.mjs';
+import { freshSessionOptions } from '../src/live-session-contract.mjs';
 import { formatSnapshotReportMarkdown } from '../src/snapshot-report.mjs';
 
 const DEFAULT_EXAMPLES = [
@@ -32,11 +33,7 @@ async function main() {
       process.stderr.write(`${result.report.ok ? 'PASS' : 'FAIL'} ${result.name} -> ${result.markdown_path}\n`);
     }
   };
-  if (options.actualRuntime === 'queue' || options.expectedRuntime === 'queue') {
-    await bridge.withRuntimeLock('queue', { timeoutMs: options.timeoutMs }, run);
-  } else {
-    await run(bridge);
-  }
+  await run(bridge);
 
   const indexMarkdown = formatIndexMarkdown(results, options);
   const indexJsonPath = path.join(options.outputDir, 'index.json');
@@ -61,7 +58,11 @@ async function runExample(examplePath, options, activeBridge) {
     topologyTolerance: options.topologyTolerance,
     budgets: options.budgets,
     topIssueLimit: options.topIssueLimit,
-    include_snapshots: options.includeSnapshots
+    include_snapshots: options.includeSnapshots,
+    ...await freshSessionOptions(activeBridge, {
+      runtime: options.actualRuntime === 'queue' || options.expectedRuntime === 'queue' ? 'queue' : 'mock',
+      timeoutMs: options.timeoutMs
+    })
   });
   const safeName = name.replaceAll(/[^a-zA-Z0-9._-]/g, '-');
   const jsonPath = path.join(options.outputDir, `${safeName}.json`);

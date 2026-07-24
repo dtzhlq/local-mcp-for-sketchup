@@ -1,0 +1,426 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/schema/agent-contract-live-safety-evidence-v1.schema.json",
+  "title": "Agent Contract live safety evidence v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "kind",
+    "recorded_at",
+    "overall_status",
+    "named_slice_acceptance",
+    "release_acceptance",
+    "source_binding",
+    "user_coordination",
+    "runtime",
+    "gates",
+    "safety_observations",
+    "redaction",
+    "boundaries",
+    "summary"
+  ],
+  "properties": {
+    "version": { "const": 1 },
+    "kind": { "const": "agent_contract_v1_live_safety_evidence" },
+    "recorded_at": { "type": "string", "format": "date-time" },
+    "overall_status": {
+      "enum": ["partial_failed_closed", "current_source_named_slice_passed"]
+    },
+    "named_slice_acceptance": { "type": "boolean" },
+    "release_acceptance": { "const": false },
+    "source_binding": { "$ref": "#/$defs/sourceBinding" },
+    "user_coordination": { "$ref": "#/$defs/userCoordination" },
+    "runtime": { "$ref": "#/$defs/runtime" },
+    "gates": { "$ref": "#/$defs/gates" },
+    "safety_observations": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/safetyObservation" }
+    },
+    "redaction": { "$ref": "#/$defs/redaction" },
+    "boundaries": { "$ref": "#/$defs/boundaries" },
+    "summary": { "type": "string", "minLength": 20, "maxLength": 2000 }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "overall_status": { "const": "current_source_named_slice_passed" } },
+        "required": ["overall_status"]
+      },
+      "then": {
+        "properties": {
+          "named_slice_acceptance": { "const": true },
+          "source_binding": {
+            "properties": {
+              "installed_plugin_matches_source": { "const": true },
+              "full_sketchup_restart_after_install": { "const": true }
+            }
+          },
+          "gates": {
+            "properties": {
+              "fresh_handshake": {
+                "properties": { "status": { "const": "passed" } }
+              },
+              "mdi_routing": {
+                "properties": {
+                  "status": { "const": "passed_current_source_after_restart" },
+                  "bidirectional_source_paths_verified": { "const": true },
+                  "intermediary_closed_to_force_routing": { "const": false },
+                  "wrong_document_mutation_count": { "const": 0 }
+                }
+              },
+              "strong_save_reopen": {
+                "properties": { "status": { "const": "passed_current_source_after_restart" } }
+              },
+              "controlled_s1_abort": {
+                "properties": { "status": { "const": "passed_current_source_after_restart" } }
+              }
+            }
+          },
+          "safety_observations": {
+            "minItems": 2,
+            "items": {
+              "properties": {
+                "queue": { "const": 0 },
+                "processing": { "const": 0 },
+                "responses": { "const": 0 },
+                "lock_exists": { "const": false },
+                "manual_queue_cleanup_performed": { "const": false },
+                "sketchup_process_alive": { "const": true },
+                "same_pid_as_evidence_window_start": { "const": true },
+                "new_crash_reports_since_window_start": { "const": 0 }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "repoPath": {
+      "type": "string",
+      "pattern": "^(?!/)(?!~)(?!.*\\.\\.)[A-Za-z0-9._/-]+$"
+    },
+    "criticalFile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "role"],
+      "properties": {
+        "path": { "$ref": "#/$defs/repoPath" },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "role": {
+          "enum": ["plugin_source", "validation_script", "evidence_schema", "contract_test"]
+        },
+        "installed_sha256": { "$ref": "#/$defs/sha256" },
+        "installed_match": { "type": "boolean" }
+      }
+    },
+    "sourceBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "branch",
+        "baseline_commit",
+        "working_tree_uncommitted",
+        "critical_files",
+        "installed_plugin_matches_source",
+        "full_sketchup_restart_after_install",
+        "superseded_if_critical_hash_changes"
+      ],
+      "properties": {
+        "branch": { "type": "string", "minLength": 1 },
+        "baseline_commit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+        "working_tree_uncommitted": { "type": "boolean" },
+        "critical_files": {
+          "type": "array",
+          "minItems": 4,
+          "items": { "$ref": "#/$defs/criticalFile" }
+        },
+        "installed_plugin_matches_source": { "type": "boolean" },
+        "full_sketchup_restart_after_install": { "type": "boolean" },
+        "superseded_if_critical_hash_changes": { "const": true }
+      }
+    },
+    "userCoordination": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sketchup_opened_by_user",
+        "disposable_fixture_authorized",
+        "mutation_warning_shown",
+        "s2_s4_live_execution_requested"
+      ],
+      "properties": {
+        "sketchup_opened_by_user": { "const": true },
+        "disposable_fixture_authorized": { "const": true },
+        "mutation_warning_shown": { "const": true },
+        "s2_s4_live_execution_requested": { "const": false }
+      }
+    },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sketchup_version",
+        "ruby_version",
+        "plugin_version",
+        "capability_version",
+        "manifest_version",
+        "dsl_version",
+        "supported_operations",
+        "compatibility_ok",
+        "session_started_at"
+      ],
+      "properties": {
+        "sketchup_version": { "type": "string" },
+        "ruby_version": { "type": "string" },
+        "plugin_version": { "type": "string" },
+        "capability_version": { "type": "string" },
+        "manifest_version": { "type": "string" },
+        "dsl_version": { "type": "integer", "minimum": 1 },
+        "supported_operations": { "type": "integer", "minimum": 0 },
+        "compatibility_ok": { "type": "boolean" },
+        "session_started_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "exposure"],
+      "properties": {
+        "path": { "$ref": "#/$defs/repoPath" },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "exposure": { "const": "local_only" }
+      }
+    },
+    "freshHandshake": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "read_only",
+        "mutation_count",
+        "queue_state",
+        "session_binding_checked",
+        "document_binding_checked",
+        "model_revision_binding_checked",
+        "plugin_and_manifest_binding_checked",
+        "secret_material_recorded"
+      ],
+      "properties": {
+        "status": { "enum": ["passed", "failed_closed", "not_run"] },
+        "read_only": { "type": "boolean" },
+        "mutation_count": { "type": "integer", "minimum": 0 },
+        "queue_state": { "type": "string" },
+        "session_binding_checked": { "type": "boolean" },
+        "document_binding_checked": { "type": "boolean" },
+        "model_revision_binding_checked": { "type": "boolean" },
+        "plugin_and_manifest_binding_checked": { "type": "boolean" },
+        "secret_material_recorded": { "const": false }
+      }
+    },
+    "mdiRouting": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "discovery_evidence",
+        "root_cause",
+        "source_fix",
+        "explicit_window_menu_switch",
+        "bidirectional_source_paths_verified",
+        "intermediary_closed_to_force_routing",
+        "wrong_document_mutation_count"
+      ],
+      "properties": {
+        "status": {
+          "enum": ["not_run", "failed_closed", "passed_current_source_after_restart"]
+        },
+        "discovery_evidence": { "$ref": "#/$defs/repoPath" },
+        "root_cause": { "type": "string", "minLength": 10 },
+        "source_fix": { "type": "string", "minLength": 10 },
+        "explicit_window_menu_switch": { "type": "boolean" },
+        "bidirectional_source_paths_verified": { "type": "boolean" },
+        "intermediary_closed_to_force_routing": { "type": "boolean" },
+        "wrong_document_mutation_count": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "strongSaveReopen": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "fixture",
+        "distinct_target_and_intermediary",
+        "source_sequence",
+        "resumed_after_target_activation",
+        "active_source_verified",
+        "model_revision_exact_match",
+        "persistent_identity_exact_match",
+        "identity_entries_before",
+        "identity_entries_after",
+        "shared_leaf_occurrences",
+        "face_edge_entries",
+        "snapshot_tolerance_mm",
+        "snapshot_diff_count",
+        "intermediary_closed_to_force_routing",
+        "artifact"
+      ],
+      "properties": {
+        "status": {
+          "enum": ["not_run", "failed_closed", "passed_current_source_after_restart"]
+        },
+        "fixture": { "type": "string" },
+        "distinct_target_and_intermediary": { "type": "boolean" },
+        "source_sequence": {
+          "type": "array",
+          "prefixItems": [
+            { "const": "target" },
+            { "const": "intermediary" },
+            { "const": "target" }
+          ],
+          "items": false
+        },
+        "resumed_after_target_activation": { "type": "boolean" },
+        "active_source_verified": { "type": "boolean" },
+        "model_revision_exact_match": { "type": "boolean" },
+        "persistent_identity_exact_match": { "type": "boolean" },
+        "identity_entries_before": { "type": "integer", "minimum": 0 },
+        "identity_entries_after": { "type": "integer", "minimum": 0 },
+        "shared_leaf_occurrences": { "type": "integer", "minimum": 0 },
+        "face_edge_entries": { "type": "integer", "minimum": 0 },
+        "snapshot_tolerance_mm": { "type": "number", "minimum": 0 },
+        "snapshot_diff_count": { "type": "integer", "minimum": 0 },
+        "intermediary_closed_to_force_routing": { "type": "boolean" },
+        "artifact": { "$ref": "#/$defs/artifact" }
+      }
+    },
+    "controlledS1Abort": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "scope",
+        "authorization",
+        "stable_error_code",
+        "retryable",
+        "model_revision_unchanged",
+        "probe_absent",
+        "idempotent_failed_envelope_replayed",
+        "duplicate_mutation_count",
+        "artifact"
+      ],
+      "properties": {
+        "status": {
+          "enum": ["not_run", "failed_closed", "passed_current_source_after_restart"]
+        },
+        "scope": { "const": "single_ruby_dsl_batch_abort_only" },
+        "authorization": { "const": "server_policy_auto_approval:S1" },
+        "stable_error_code": { "const": "MUTATION_EXECUTION_FAILED" },
+        "retryable": { "const": false },
+        "model_revision_unchanged": { "type": "boolean" },
+        "probe_absent": { "type": "boolean" },
+        "idempotent_failed_envelope_replayed": { "type": "boolean" },
+        "duplicate_mutation_count": { "type": "integer", "minimum": 0 },
+        "artifact": { "$ref": "#/$defs/artifact" }
+      }
+    },
+    "gates": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fresh_handshake",
+        "mdi_routing",
+        "strong_save_reopen",
+        "controlled_s1_abort"
+      ],
+      "properties": {
+        "fresh_handshake": { "$ref": "#/$defs/freshHandshake" },
+        "mdi_routing": { "$ref": "#/$defs/mdiRouting" },
+        "strong_save_reopen": { "$ref": "#/$defs/strongSaveReopen" },
+        "controlled_s1_abort": { "$ref": "#/$defs/controlledS1Abort" }
+      }
+    },
+    "safetyObservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "after",
+        "queue",
+        "processing",
+        "responses",
+        "lock_exists",
+        "manual_queue_cleanup_performed",
+        "sketchup_process_alive",
+        "same_pid_as_evidence_window_start",
+        "new_crash_reports_since_window_start"
+      ],
+      "properties": {
+        "after": {
+          "enum": ["strong_save_reopen", "controlled_s1_abort"]
+        },
+        "queue": { "type": "integer", "minimum": 0 },
+        "processing": { "type": "integer", "minimum": 0 },
+        "responses": { "type": "integer", "minimum": 0 },
+        "lock_exists": { "type": "boolean" },
+        "manual_queue_cleanup_performed": { "type": "boolean" },
+        "sketchup_process_alive": { "type": "boolean" },
+        "same_pid_as_evidence_window_start": { "type": "boolean" },
+        "new_crash_reports_since_window_start": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "redaction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "absolute_paths_omitted",
+        "session_and_handshake_ids_omitted",
+        "document_and_model_ids_omitted",
+        "request_task_plan_ids_omitted",
+        "user_model_content_omitted",
+        "raw_pid_omitted",
+        "artifact_paths_repo_relative"
+      ],
+      "properties": {
+        "absolute_paths_omitted": { "const": true },
+        "session_and_handshake_ids_omitted": { "const": true },
+        "document_and_model_ids_omitted": { "const": true },
+        "request_task_plan_ids_omitted": { "const": true },
+        "user_model_content_omitted": { "const": true },
+        "raw_pid_omitted": { "const": true },
+        "artifact_paths_repo_relative": { "const": true }
+      }
+    },
+    "boundaries": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "trusted_s2_s4_approval_host_tested",
+        "task_wide_exactly_once_proven",
+        "native_crash_recovery_proven",
+        "resumable_postcommit_finalizer_proven",
+        "direct_expert_idempotency_proven",
+        "all_101_operations_live_tested",
+        "real_model_corpus_completed",
+        "sketchup_version_matrix_tested",
+        "release_candidate_signed"
+      ],
+      "properties": {
+        "trusted_s2_s4_approval_host_tested": { "const": false },
+        "task_wide_exactly_once_proven": { "const": false },
+        "native_crash_recovery_proven": { "const": false },
+        "resumable_postcommit_finalizer_proven": { "const": false },
+        "direct_expert_idempotency_proven": { "const": false },
+        "all_101_operations_live_tested": { "const": false },
+        "real_model_corpus_completed": { "const": false },
+        "sketchup_version_matrix_tested": { "const": false },
+        "release_candidate_signed": { "const": false }
+      }
+    }
+  }
+}

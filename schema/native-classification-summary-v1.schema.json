@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/sketchup-mcp-replica/native-classification-summary-v1.schema.json",
+  "title": "SketchUp native classification summary v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version", "source", "trust", "policy_effect", "loaded_schema_names", "value_lookup_supported",
+    "assignment_enumeration", "assignment_presence", "assigned_type_count", "definition_attribute_fingerprint",
+    "fingerprint_coverage", "attribute_dictionary_count", "attribute_key_count", "values_exposed", "complete", "blockers"
+  ],
+  "properties": {
+    "version": { "const": "sketchup-native-classification-summary.v1" },
+    "source": { "const": "sketchup_component_definition" },
+    "trust": { "const": "untrusted_data" },
+    "policy_effect": { "const": "none" },
+    "loaded_schema_names": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+    "value_lookup_supported": { "type": "boolean" },
+    "assignment_enumeration": { "const": "unsupported_by_sketchup_ruby_api" },
+    "assignment_presence": { "const": "unknown" },
+    "assigned_type_count": { "type": "null" },
+    "definition_attribute_fingerprint": {
+      "anyOf": [
+        { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+        { "type": "null" }
+      ]
+    },
+    "fingerprint_coverage": { "const": "all_definition_attribute_dictionaries" },
+    "attribute_dictionary_count": { "type": "integer", "minimum": 0 },
+    "attribute_key_count": { "type": "integer", "minimum": 0 },
+    "values_exposed": { "const": false },
+    "complete": { "const": false },
+    "blockers": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "contains": { "const": "assigned_schema_types_not_enumerable" },
+      "items": {
+        "enum": [
+          "assigned_schema_types_not_enumerable",
+          "classification_value_lookup_unavailable",
+          "definition_attribute_fingerprint_unavailable"
+        ]
+      }
+    }
+  }
+}

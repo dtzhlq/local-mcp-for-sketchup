@@ -1,0 +1,54 @@
+{
+  "version": "agent-contract-mutation-recovery-evidence.v1",
+  "kind": "agent_contract_mutation_recovery_mock_evidence",
+  "generated_at": "2026-07-16T02:30:00+08:00",
+  "runtime": "mock",
+  "implementation": {
+    "receipt_schema": "schema/task-mutation-receipt-v1.schema.json",
+    "receipt_ledger": "src/task-mutation-receipt-ledger.mjs",
+    "gateway": "src/agent-gateway.mjs",
+    "task_store": "src/agent-task-store.mjs",
+    "stable_error_codes": [
+      "MUTATION_RECOVERY_REQUIRED",
+      "MUTATION_RECEIPT_INVALID",
+      "MUTATION_EXECUTION_FAILED"
+    ]
+  },
+  "mock_gates": {
+    "strict_schema": true,
+    "hmac_integrity": true,
+    "claim_plan_model_revision_binding": true,
+    "private_files": true,
+    "symlink_fail_closed": true,
+    "native_queue_receipt_shape_checked": true,
+    "restart_after_receipt": true,
+    "restart_inside_artifact_finalizer": true,
+    "restart_inside_visual_finalizer": true,
+    "restart_inside_design_finalizer": true,
+    "terminal_response_persistence_recovered": true,
+    "concurrent_finalizer_single_owner": true,
+    "visual_lineage_stable": true,
+    "design_version_not_duplicated": true,
+    "idempotent_approval_challenge": true,
+    "wrong_receipt_rejected": true,
+    "model_mutation_replayed": false,
+    "public_native_or_finalizer_payload_exposed": false,
+    "native_receipt_public_artifact_leak": false,
+    "after_revision_drift_blocked": true,
+    "no_receipt_outcome_unknown": true
+  },
+  "tests": [
+    "node test/task-mutation-receipt-ledger.mjs",
+    "node test/agent-gateway-mutation-recovery.mjs",
+    "node test/agent-task-store-recovery.mjs",
+    "node test/agent-gateway.mjs",
+    "node test/design-intent-gateway-store.mjs",
+    "node test/approval-tokens.mjs"
+  ],
+  "boundary": {
+    "live_queue_called": false,
+    "live_sketchup_proven": false,
+    "universal_native_exactly_once_claimed": false,
+    "native_commit_to_task_receipt_gap": "outcome_unknown_fail_closed"
+  }
+}

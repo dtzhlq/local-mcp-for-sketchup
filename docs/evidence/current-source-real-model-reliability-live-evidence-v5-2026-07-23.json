@@ -1,0 +1,294 @@
+{
+  "version": "current-source-real-model-reliability-live-evidence.v5",
+  "kind": "current_source_real_model_reliability_live_evidence",
+  "captured_at": "2026-07-23T11:53:37.608Z",
+  "branch": "codex/agent-contract-v1",
+  "result": "partial_pass",
+  "evidence_scope": "six_hash_bound_real_model_cases_with_two_guarded_geometry_mutations_and_controlled_overlay_boundaries",
+  "runtime": {
+    "name": "queue",
+    "server_version": "0.1.0-rc.2",
+    "plugin_version": "0.1.0-rc.2",
+    "sketchup_version": "26.2.242",
+    "ruby_version": "3.2.2",
+    "capability_version": "0.1.0-rc.2-capabilities.7",
+    "manifest_version": "2026-07-agent-contract-v1.4",
+    "dsl_version": 1,
+    "occurrence_contract": "canonical-occurrence-path.v1",
+    "revision_strategy": "definition-merkle.v2",
+    "revision_source_sha256": "b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134",
+    "compatibility_ok": true
+  },
+  "execution_authorization": {
+    "mode": "local_operator_ephemeral_process_policy",
+    "user_authorized_disposable_copies": true,
+    "queue_required": true,
+    "allowed_runtimes_explicit": true,
+    "queue_mutation_explicit": true,
+    "direct_expert_mutation_explicit": true,
+    "policy_persisted": false,
+    "default_policy_unchanged": true,
+    "agent_self_authorization_allowed": false
+  },
+  "lineage": {
+    "prior_five_case_evidence": {
+      "path": "docs/evidence/current-source-real-model-reliability-live-evidence-v4-2026-07-23.json",
+      "sha256": "17fdc455ce8e5934ddb4921b89f5aaca4ee0cdf3c581aad852e8c653f656bc56",
+      "bytes": 10361
+    },
+    "dirty_topology_case_report": {
+      "path": "output/live-validation/real-model-reliability/imported-dirty-topology-current-source-v6/real-model-reliability-live-case-report.v1.json",
+      "sha256": "ae90ad4c55011162f4aad4668fc8bd85d14594e979fc129ce0d759444acd9a84",
+      "bytes": 6744
+    }
+  },
+  "corpus": {
+    "manifest_path": "test/reliability-corpus/manifest.json",
+    "manifest_sha256": "sha256:4faa8caf2a097c3d1a7810f1bf7635eceede8de3ca3674cda16519117c2377fa",
+    "formal_cases_total": 7,
+    "formal_cases_passed": 6,
+    "formal_corpus_complete": false,
+    "passed_case_ids": [
+      "appearance-scenes-hidden",
+      "architecture-golden",
+      "deep-shared-components",
+      "imported-dirty-topology",
+      "interior-expression",
+      "scaled-mirrored-locked"
+    ],
+    "remaining_case_ids": [
+      "product-boolean-manifold"
+    ]
+  },
+  "case_summaries": [
+    {
+      "case_id": "appearance-scenes-hidden",
+      "tasks_total": 3,
+      "tasks_passed": 3,
+      "duration_ms": 29684,
+      "geometry_mutation_executed": false,
+      "save_reopen_exact": true,
+      "wrong_object_modification_count": 0,
+      "silent_geometry_corruption_count": 0,
+      "queue_clean": true
+    },
+    {
+      "case_id": "architecture-golden",
+      "tasks_total": 3,
+      "tasks_passed": 3,
+      "duration_ms": 62768,
+      "geometry_mutation_executed": false,
+      "save_reopen_exact": true,
+      "wrong_object_modification_count": 0,
+      "silent_geometry_corruption_count": 0,
+      "queue_clean": true
+    },
+    {
+      "case_id": "deep-shared-components",
+      "tasks_total": 3,
+      "tasks_passed": 3,
+      "duration_ms": 510608,
+      "geometry_mutation_executed": false,
+      "save_reopen_exact": true,
+      "wrong_object_modification_count": 0,
+      "silent_geometry_corruption_count": 0,
+      "queue_clean": true
+    },
+    {
+      "case_id": "imported-dirty-topology",
+      "tasks_total": 3,
+      "tasks_passed": 3,
+      "duration_ms": 1423821,
+      "geometry_mutation_executed": true,
+      "save_reopen_exact": true,
+      "wrong_object_modification_count": 0,
+      "silent_geometry_corruption_count": 0,
+      "queue_clean": true
+    },
+    {
+      "case_id": "interior-expression",
+      "tasks_total": 3,
+      "tasks_passed": 3,
+      "duration_ms": 1291250,
+      "geometry_mutation_executed": false,
+      "save_reopen_exact": true,
+      "wrong_object_modification_count": 0,
+      "silent_geometry_corruption_count": 0,
+      "queue_clean": true
+    },
+    {
+      "case_id": "scaled-mirrored-locked",
+      "tasks_total": 5,
+      "tasks_passed": 5,
+      "duration_ms": 69448,
+      "geometry_mutation_executed": true,
+      "save_reopen_exact": true,
+      "wrong_object_modification_count": 0,
+      "silent_geometry_corruption_count": 0,
+      "queue_clean": true
+    }
+  ],
+  "aggregate_metrics": {
+    "tasks_total": 20,
+    "tasks_passed": 20,
+    "task_success_rate": 1,
+    "geometry_mutation_cases_passed": 2,
+    "controlled_fixture_overlay_cases_passed": 4,
+    "wrong_object_modification_count": 0,
+    "silent_geometry_corruption_count": 0,
+    "recovery_attempts": 2,
+    "recoveries": 2,
+    "recovery_rate": 1,
+    "aggregate_duration_ms": 3387579,
+    "queue_clean_after_each_case": true
+  },
+  "performance_boundary": {
+    "stress_case_id": "interior-expression",
+    "stress_case_duration_ms": 1291250,
+    "interactive_budget_ms": 120000,
+    "stress_case_within_interactive_budget": false,
+    "use_as_default_agent_payload": false,
+    "complete_revision_retained": true,
+    "bounded_occurrence_payload_retained": true,
+    "next_action": "separate_revision_attestation_from_payload_and_add_runtime_budget"
+  },
+  "locked_target_guard": {
+    "native_lock_gap_discovered": true,
+    "native_lock_alone_sufficient": false,
+    "application_guard_required": true,
+    "loaded_boolean_source_sha256": "7bf36679d5052ecf7963ce945a8bc91796fa91024a471804be024b502ff8900e",
+    "mutating_operations_guarded": 25,
+    "read_only_locked_access": [
+      "set_selection",
+      "manifold_check"
+    ],
+    "locked_batch_rejected_before_commit": true,
+    "locked_target_unchanged": true,
+    "guard_unchanged": true
+  },
+  "appearance_preservation": {
+    "case_id": "appearance-scenes-hidden",
+    "fixture_overlay_mutated_disposable_copy": true,
+    "formal_case_geometry_mutation_executed": false,
+    "face_uv_evidence_kind": "face_uvs",
+    "face_uv_operation_applied_without_warning": true,
+    "face_uv_payload_persisted": true,
+    "textured_material_persisted": true,
+    "uv_material_signature_preserved": true,
+    "scene_visibility_signature_preserved": true,
+    "scenes": 1,
+    "hidden_entities": 1,
+    "recursive_entries": 5897,
+    "independent_uvhelper_coordinate_attestation": false,
+    "arbitrary_uv_editing_proven": false
+  },
+  "architecture_preservation": {
+    "case_id": "architecture-golden",
+    "fixture_overlay_mutated_disposable_copy_metadata": true,
+    "fixture_overlay_geometry_mutation_performed": false,
+    "formal_case_geometry_mutation_executed": false,
+    "material_signature": "sha256:dd4d54c50650160dc3ce5a8e27ccd355b8e9b82acc6ecfc96a2ed8a1cc92ad3f",
+    "material_signature_preserved": true,
+    "scene_visibility_signature": "sha256:e4a9015d02e0f9787b11dda5c8e541c7dc766f8cd6030979aebb1695f5d3fabb",
+    "scene_visibility_signature_preserved": true,
+    "scenes": 1,
+    "hidden_top_level_entities": 0,
+    "recursive_entries": 5859,
+    "model_revision_exact_match": true,
+    "nested_hidden_occurrence_attestation": false
+  },
+  "dirty_topology_recovery": {
+    "case_id": "imported-dirty-topology",
+    "derivation_class": "controlled_loose_edge_overlay_on_user_authorized_imported_model_copy",
+    "controlled_overlay_target_only": true,
+    "imported_context_retained": true,
+    "arbitrary_imported_cad_repair_proven": false,
+    "formal_case_geometry_mutation_executed": true,
+    "abnormal_topology_detected": true,
+    "expected_issue_codes": [
+      "boundary_edges"
+    ],
+    "repair_strategy": "cleanup",
+    "before": {
+      "is_manifold": false,
+      "method": "sketchup_manifold_api",
+      "faces": 6,
+      "edges": 13,
+      "vertices": 10,
+      "issues": [
+        "boundary_edges",
+        "sketchup_manifold_false"
+      ]
+    },
+    "after": {
+      "is_manifold": true,
+      "method": "sketchup_manifold_api",
+      "faces": 6,
+      "edges": 12,
+      "vertices": 8,
+      "issues": []
+    },
+    "exact_target_changed": true,
+    "non_target_top_level_entities_unchanged": true,
+    "source_artifact_bytes_unchanged": true,
+    "save_reopen_identity_exact": true,
+    "model_revision_exact_match": true,
+    "recursive_entries_before": 100000,
+    "recursive_entries_after": 100000,
+    "recursive_total_before": 1903696,
+    "recursive_total_after": 1903696,
+    "recursive_payload_bounded": true,
+    "queue_clean": true,
+    "source_sha256": "sha256:fc07f288442d7cbcbe9983b9faedee017926892cb2044a6ee79c4cee9ad6d261",
+    "verified_model_sha256": "sha256:354f8af1d49340e327df6ac4a74cf5f91171e06202fd448bb5104c0844ec10da",
+    "verified_model_bytes": 15788286
+  },
+  "source_sha256": {
+    "test/reliability-corpus/manifest.json": "4faa8caf2a097c3d1a7810f1bf7635eceede8de3ca3674cda16519117c2377fa",
+    "scripts/aggregate-current-source-real-model-reliability-live-v5.mjs": "b7e31459194deca21e762a634655697d86b362fbfae7faafc05753b18873aa12",
+    "scripts/prepare-imported-dirty-topology-live-fixture.mjs": "f715c635e75dcc360961df32c9d0f908f4054bcc32eba8f6a89c75f7aab19591",
+    "scripts/run-real-model-reliability-harness.mjs": "86545701e2cb1a764096cb8a0d35410e4c815a30a4d7966a96529de435b18872",
+    "scripts/run-real-model-reliability-live-case.mjs": "b526f457acd969086622eb1f327fb51cd3451296f6d61484ec1cde425f13b010",
+    "schema/current-source-real-model-reliability-live-evidence-v5.schema.json": "d94a8f0f21fcd3f965b701317075c245e4cd4f1a6bcbc4600ff692eae6bac489",
+    "schema/controlled-dirty-topology-live-fixture-v1.schema.json": "2fde1ca924aa77938dc1e5753181a5481fcdee24b93e2e5649be1e6267173171",
+    "schema/real-model-reliability-live-case-report-v1.schema.json": "e0531c951e77858a9e0e59290e4cbd0a66f22156d93186dedb2075fa910e75e8",
+    "schema/real-model-reliability-live-case-v1.schema.json": "3eb2d59174760a3168f8a1dff48e3300ea1136aeb981c933fdc8cf98fd0338a4",
+    "src/bridge.mjs": "6c40ecf71dd2a60f1f11d9b545225baf351489d8530581e4a2cf2303bcdee95c",
+    "src/queue-runtime.mjs": "1f5dfbe1a4dfc6c7945b3dc984960b0492f70ae436b6a818c52d59819d32cefa",
+    "sketchup_plugin/alma_sketchup_mcp/boolean_operations.rb": "4e23e8d35603f4d08c9c5c9c9174c99451ffcb3bd94ab233001d331beafb3b4b",
+    "sketchup_plugin/alma_sketchup_mcp/model_revision.rb": "b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134",
+    "sketchup_plugin/alma_sketchup_mcp/runtime_source_manifest.rb": "eaa5e24fd417b96af49815feafc7ad1b0b29b137ef294c846be4fe7b70600fa8"
+  },
+  "acceptance": {
+    "six_case_live_reliability": true,
+    "full_recursive_save_reopen": true,
+    "bounded_large_model_save_reopen": true,
+    "shared_definition_scope": true,
+    "material_and_scene_preservation": true,
+    "appearance_uv_hidden_preservation": true,
+    "architecture_case": true,
+    "mutation_cases_passed": 2,
+    "locked_transform_rollback": true,
+    "native_lock_guard_enforced": true,
+    "boolean_manifold": false,
+    "dirty_topology_recovery": true,
+    "arbitrary_imported_cad_repair": false,
+    "formal_corpus_cases_passed": 6,
+    "formal_corpus_cases_total": 7,
+    "formal_corpus_complete": false,
+    "agent_gateway_default_profile_qualified": false,
+    "cross_version": "deferred_by_user",
+    "release_acceptance": false
+  },
+  "boundaries": [
+    "This v5 wrapper preserves the immutable five-case v4 evidence and adds one separately hash-bound current-source dirty-topology live report.",
+    "The six formal cases total 20 of 20 named tasks with zero wrong-object modifications and zero silent geometry corruption.",
+    "The dirty-topology case used an isolated controlled loose-edge overlay on a user-authorized imported-model copy; it does not prove arbitrary imported CAD repair.",
+    "The formal repair changed only the exact persistent target, removed its boundary-edge defect, and left all non-target top-level entities unchanged.",
+    "The repaired target stayed manifold after save and reopen, with an exact definition-merkle revision match and a stable bounded 100,000-entry occurrence sample.",
+    "The source artifact remained byte-exact; only the verified disposable result has a different content hash.",
+    "The interior and dirty-topology stress runs exceed the 120-second ordinary-Agent interactive budget, so this corpus is not a default projection contract.",
+    "Product Boolean/manifold, independent real Agent runs, and cross-version evidence remain open.",
+    "This is 6 of 7 partial engineering evidence only. It is not release acceptance and cannot grant execution authority to an Agent."
+  ]
+}

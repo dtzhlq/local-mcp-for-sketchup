@@ -1,0 +1,136 @@
+{
+  "version": "architecture-golden-live-evidence.v1",
+  "kind": "architecture_golden_live_evidence",
+  "captured_at": "2026-07-23T05:02:16.581Z",
+  "branch": "codex/agent-contract-v1",
+  "result": "live_verified",
+  "evidence_scope": "single_hash_bound_architecture_metadata_overlay_and_save_reopen_case",
+  "case_id": "architecture-golden",
+  "runtime": {
+    "name": "queue",
+    "server_version": "0.1.0-rc.2",
+    "plugin_version": "0.1.0-rc.2",
+    "sketchup_version": "26.2.242",
+    "ruby_version": "3.2.2",
+    "capability_version": "0.1.0-rc.2-capabilities.7",
+    "manifest_version": "2026-07-agent-contract-v1.4",
+    "dsl_version": 1,
+    "occurrence_contract": "canonical-occurrence-path.v1",
+    "revision_strategy": "definition-merkle.v2",
+    "revision_source_sha256": "b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134",
+    "compatibility_ok": true
+  },
+  "source_fixture": {
+    "derivation_class": "controlled_metadata_overlay_on_user_authorized_real_model_copy",
+    "original_input_sha256": "7e649c220a265a5e27a24aae2ed9687427186c06ba335616d5cdc0191966ce72",
+    "original_bytes_unchanged": true,
+    "source_artifact_sha256": "sha256:1b95de536965ea630ac7f2768ea8ccbfea0620f4bcbc337cbbf4f59c67d416fa",
+    "metadata_operations": [
+      "material",
+      "scene"
+    ],
+    "geometry_mutation_performed": false,
+    "top_level_entities_before": 1,
+    "top_level_entities_after": 1,
+    "recursive_total_before": 5859,
+    "recursive_total_after": 5859,
+    "recursive_truncated": false
+  },
+  "preservation_contract": {
+    "material_name_untrusted": "ALMA_Reliability_Architecture_Material",
+    "material_persisted": true,
+    "scene_name_untrusted": "ALMA_Reliability_Architecture_Scene",
+    "scene_persisted": true,
+    "existing_material_assignments_in_signature": true,
+    "top_level_visibility_in_signature": true,
+    "nested_hidden_occurrence_attestation": false
+  },
+  "live_verification": {
+    "tasks_total": 3,
+    "tasks_passed": 3,
+    "material_signature": "sha256:dd4d54c50650160dc3ce5a8e27ccd355b8e9b82acc6ecfc96a2ed8a1cc92ad3f",
+    "material_signature_preserved": true,
+    "scene_visibility_signature": "sha256:e4a9015d02e0f9787b11dda5c8e541c7dc766f8cd6030979aebb1695f5d3fabb",
+    "scene_visibility_signature_preserved": true,
+    "scenes": 1,
+    "hidden_top_level_entities": 0,
+    "save_reopen_exact_identity": true,
+    "recursive_entries_before": 5859,
+    "recursive_entries_after": 5859,
+    "model_revision_exact_match": true,
+    "snapshot_error_diffs": 0,
+    "wrong_object_modification_count": 0,
+    "silent_geometry_corruption_count": 0,
+    "recovery_attempts": 0,
+    "recoveries": 0,
+    "recovery_rate": 1,
+    "queue_clean": true
+  },
+  "artifacts": {
+    "original_input": {
+      "path": "test/模型/Fire Escape.skp",
+      "sha256": "7e649c220a265a5e27a24aae2ed9687427186c06ba335616d5cdc0191966ce72",
+      "bytes": 142149
+    },
+    "finalization_report": {
+      "path": "output/live-validation/real-model-reliability-preparation/architecture-golden-derived-v1/run-20260723-architecture-v1/finalization-report.v1.json",
+      "sha256": "754df5e15eb3fa8a9cc45e41ba4b2883920b06f6c19a761909dca71281645288",
+      "bytes": 2362
+    },
+    "source_model": {
+      "path": "output/live-validation/real-model-reliability-inputs/architecture-golden-derived-v1/architecture-building.skp",
+      "sha256": "1b95de536965ea630ac7f2768ea8ccbfea0620f4bcbc337cbbf4f59c67d416fa",
+      "bytes": 147280
+    },
+    "source_contract": {
+      "path": "output/live-validation/real-model-reliability-inputs/architecture-golden-derived-v1/architecture-building.reliability.json",
+      "sha256": "6028ae23f2efd2baca51d1fb45d948c91bdd135b3fc4186b04f047933b16e4ed",
+      "bytes": 692
+    },
+    "success_report": {
+      "path": "output/live-validation/real-model-reliability/architecture-golden-current-source-v1/real-model-reliability-live-case-report.v1.json",
+      "sha256": "7b46c2bc4b08bfd6f2c2fc2838f7b483eb6dcdd2ea545a86ca77a82d8d4a3d35",
+      "bytes": 6256
+    },
+    "success_diagnostic": {
+      "path": "output/live-validation/real-model-reliability/architecture-golden-current-source-v1/live-work/preflight-3b8f8a4c-1d23-4a93-b9e5-7e1510dfb0de/01-architecture-golden/architecture-golden.save-reopen-diagnostic.json",
+      "sha256": "533edfd3ab04f12bf7c5d092ac2ab09cae6a20c8a1d63b45494a43a5d7e3fd90",
+      "bytes": 1535
+    },
+    "verified_model": {
+      "path": "output/live-validation/real-model-reliability/architecture-golden-current-source-v1/live-work/preflight-3b8f8a4c-1d23-4a93-b9e5-7e1510dfb0de/01-architecture-golden/architecture-golden.verified.skp",
+      "sha256": "37be72b54e7d9937f23273a10ca34a5c6ce3636cfaa7205fac58868b8f7b4663",
+      "bytes": 147307
+    }
+  },
+  "source_sha256": {
+    "scripts/build-architecture-golden-live-evidence.mjs": "5fe078174d14fb759df6395f73eb6f55dc4debf7266f5ba509e424ee40348211",
+    "scripts/prepare-architecture-golden-live-fixture.mjs": "53b71ec55daadb88778cde20f21720f96d1d4304ee98225ebfde92dae349bc86",
+    "scripts/run-real-model-reliability-harness.mjs": "6f4aff1365dd73b217f0cb5b600b2696d80e46681b0585362a520cd154e93d98",
+    "scripts/run-real-model-reliability-live-case.mjs": "b3fd977be35612c37b6beb51f1151406ecd946eaec0d5c2da46259f31d6aa17b",
+    "schema/architecture-golden-live-evidence-v1.schema.json": "939ac0ff6bab4ea10b2c5b3defd720758419514fb97ae2b1f2675aadb51de902",
+    "schema/controlled-architecture-live-fixture-v1.schema.json": "cbea07088ab0afca8e2533b41b54f42db07a385bd7bccb4f871bb01b05144151",
+    "schema/real-model-reliability-live-case-report-v1.schema.json": "e0531c951e77858a9e0e59290e4cbd0a66f22156d93186dedb2075fa910e75e8",
+    "schema/real-model-reliability-live-case-v1.schema.json": "34a85f645586f616bdf8d08edff8f98e3c4596266feb975626b2f9186a3a9261",
+    "sketchup_plugin/alma_sketchup_mcp/materials.rb": "7176dcc611761e98814e4e0c4fb64bc7d7303eae2a845e471da7317dc7a114dc",
+    "sketchup_plugin/alma_sketchup_mcp/model_revision.rb": "b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134",
+    "sketchup_plugin/alma_sketchup_mcp/snapshot.rb": "4c43d3c9ac786619bb9ebd9b4da6088665b9b0c7772563cd32e34eb671f00147",
+    "sketchup_plugin/alma_sketchup_mcp/view_operations.rb": "4a90d0201e9165d20d0d4af51ec70bebaff19413e471c0ad08b8b1d3367ac26f"
+  },
+  "acceptance": {
+    "selected_case_passed": true,
+    "architecture_material_scene_preservation": true,
+    "formal_corpus_cases_passed": 1,
+    "formal_corpus_cases_total": 7,
+    "formal_corpus_complete": false,
+    "cross_version": "deferred_by_user",
+    "release_acceptance": false
+  },
+  "boundaries": [
+    "This evidence is bound to one user-mapped architecture source and a controlled metadata-only overlay on a disposable copy; the original SKP remained byte-identical.",
+    "The preparation added one material catalog entry and one Scene without adding, deleting, or transforming geometry, and entity counts remained unchanged.",
+    "The formal case proves material and top-level Scene/visibility signatures plus full-recursive identity across save and reopen.",
+    "The presentation signature reports zero hidden top-level entities; it does not independently attest every nested hidden occurrence in the source architecture.",
+    "This advances one of seven formal reliability cases. It does not prove Boolean/manifold, dirty-topology recovery, cross-version behavior, or release acceptance."
+  ]
+}

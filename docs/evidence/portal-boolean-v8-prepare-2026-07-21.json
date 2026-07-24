@@ -1,0 +1,133 @@
+{
+  "version": "portal-boolean-v8-prepare-evidence.v1",
+  "kind": "portal_boolean_v8_prepare_evidence",
+  "captured_at": "2026-07-21T06:52:26.623Z",
+  "branch": "codex/agent-contract-v1",
+  "result": "awaiting_review",
+  "evidence_scope": "portal_structure_disposable_copy_s3_prepare_only",
+  "artifact_bindings": {
+    "prepare_capture": {
+      "path": "output/real-model-reliability/boolean-live/portal-structure/2026-07-21T06-52-17-076Z-5d8f4640/prepare.json",
+      "sha256": "sha256:5d98b5842729066ff54106d341e436437127553d021c38e629607e49f5ad0548",
+      "size_bytes": 11165,
+      "default_verifier_access": "forbidden",
+      "verification_mode": "explicit_local_capture_only"
+    },
+    "readonly_discovery": {
+      "capabilities": {
+        "path": "output/real-model-reliability/boolean-live/portal-structure/readonly-probe-2026-07-21T06-31-04Z-90dd4d46/capabilities.json",
+        "sha256": "sha256:1aad10601fabf8408362eb4a41854be04940d1c0b7fdaeba2dc88e6f855e2cff"
+      },
+      "queue_before": {
+        "path": "output/real-model-reliability/boolean-live/portal-structure/readonly-probe-2026-07-21T06-31-04Z-90dd4d46/queue-before-adoption.json",
+        "sha256": "sha256:a6e710e81d80465e55902729bb047d910c56c86838f1b537e4181112502609df"
+      },
+      "structural_adoption": {
+        "path": "output/real-model-reliability/boolean-live/portal-structure/readonly-probe-2026-07-21T06-31-04Z-90dd4d46/structural-adoption.json",
+        "sha256": "sha256:c0050321bf08b6ad6d74dc1536a5eaab5ccdc8c65a6db19bdf0f013908040837"
+      },
+      "recursive_review": {
+        "path": "output/real-model-reliability/boolean-live/portal-structure/readonly-probe-2026-07-21T06-31-04Z-90dd4d46/recursive-target-review-v2.json",
+        "sha256": "sha256:2339a9876535abc903377e78e5a85488d3cc562ee72fbd83960c75698d809955"
+      },
+      "queue_after": {
+        "path": "output/real-model-reliability/boolean-live/portal-structure/readonly-probe-2026-07-21T06-31-04Z-90dd4d46/queue-after-adoption.json",
+        "sha256": "sha256:a6e710e81d80465e55902729bb047d910c56c86838f1b537e4181112502609df"
+      }
+    }
+  },
+  "source_contract_bindings": {
+    "readonly_discovery_evidence": {
+      "path": "docs/evidence/portal-boolean-v8-readonly-discovery-2026-07-21.json",
+      "sha256": "sha256:c3490e938bd2bfbdce5a26461c0450e698048d29dbed09459eabd4cae20e8a30"
+    }
+  },
+  "workflow": {
+    "version": "portal-structure-s3-boolean-live.v8",
+    "kind": "portal_structure_s3_boolean_prepare",
+    "run_id": "2026-07-21T06-52-17-076Z-5d8f4640",
+    "runtime": "queue",
+    "task_state": "awaiting_review",
+    "risk_level": "S3"
+  },
+  "approval": {
+    "task_id": "task_182054a9-31eb-49f0-90ca-7cc21a8ce9d8",
+    "plan_id": "existing-edit-7e458d809376c461e913be6e",
+    "plan_hash": "sha256:8fb5cd2ef92c306d6593bbe83737adca01c875343e586de9d3ff57f93f695bea",
+    "challenge_id": "approval_007843ef-a552-4e5e-b03a-0896bb07f59f",
+    "review_context_sha256": "sha256:f5692b75e28987535c286e7fbaeda92288c076fb6054454ef970073f5f30864e",
+    "expires_at": "2026-07-21T07:07:26.356Z",
+    "state": "awaiting_trusted_user",
+    "approval_challenge_issued": true,
+    "approval_bound_to_exact_plan": true,
+    "previous_approval_applicable": false,
+    "previous_plan_or_approval_replay_allowed": false,
+    "agent_self_approval_accepted": false,
+    "mutation_authorized": false,
+    "private_approval_material_exposed": false
+  },
+  "operation": {
+    "op": "boolean_difference",
+    "target_path": "pid:11543",
+    "tool_paths": ["pid:11635"],
+    "result_id": "portal-structure-s3-boolean-result-v8",
+    "result_name": "Portal_S3_Boolean_Result_v8",
+    "keep_originals": true,
+    "keep_tools": true,
+    "risk_level": "S3"
+  },
+  "geometry_validation": {
+    "evidence_kind": "bbox_candidate_only",
+    "bbox_relation": "positive_bbox_overlap_unverified",
+    "exact_solid_overlap": {
+      "status": "unverified_before_atomic_trial",
+      "verified": false,
+      "verification_stage": "review_gated_atomic_apply"
+    },
+    "atomic_boolean_trial_eligible": true,
+    "success_preconditions": [
+      "target_exact_volume_strictly_reduced",
+      "result_manifold"
+    ],
+    "failure_disposition": "abort_before_commit"
+  },
+  "source": {
+    "scope": "workspace_disposable_copy",
+    "path": "output/real-model-reliability/intake/live-work/preflight-176129c4-e1ef-4b53-b991-8f7b936df118/candidate_e2ef3c5f82332f9174066759/candidate.skp",
+    "sha256_before": "sha256:4a75190929bfa47b1506a8ed037a08e0f08e1632169d9bb550c4a9219b43e90c",
+    "sha256_after": "sha256:4a75190929bfa47b1506a8ed037a08e0f08e1632169d9bb550c4a9219b43e90c",
+    "bytes_unchanged": true,
+    "original_model_in_scope": false
+  },
+  "model": {
+    "document_id": "document_baaef9d1d43e79fc755c54b849181c30406b8a10f3ccbf64441ab99af896baba",
+    "revision": "sha256:c03d317c25883606f0f8d7819610823118d916694d5a5d323deabe2ac7bcdf36",
+    "revision_strategy": "definition-merkle.v2",
+    "revision_complete": true,
+    "modified": false
+  },
+  "safety": {
+    "live_queue_called_by_prepare": true,
+    "read_only_model_calls_only": true,
+    "model_content_mutation_requested": false,
+    "model_content_mutation_performed": false,
+    "save_requested": false,
+    "output_write_performed": false,
+    "planned_save_copy_only": true,
+    "source_overwrite_planned": false,
+    "queue_before": {
+      "queue": 0,
+      "processing": 0,
+      "responses": 0,
+      "lock_exists": false
+    },
+    "queue_after": {
+      "queue": 0,
+      "processing": 0,
+      "responses": 0,
+      "lock_exists": false
+    }
+  },
+  "release_acceptance": false,
+  "boundary": "This public artifact records only an S3 prepare result in awaiting_review state for the disposable Portal Structure copy. It binds the exact plan, challenge, review context, source revision, candidate pair, raw capture bytes, and five read-only discovery artifacts without reproducing machine-local paths or private approval material. It proves no authorization, no model mutation, no save, no exact solid overlap, and no release acceptance. Any approval from an earlier task or plan is inapplicable and cannot be replayed."
+}

@@ -1,0 +1,90 @@
+{
+  "version": "model-graph-live-readonly-evidence.v1",
+  "kind": "model_graph_live_readonly_evidence",
+  "captured_at": "2026-07-16T03:02:19Z",
+  "evidence_scope": "live_queue_read_only",
+  "runtime": {
+    "name": "queue",
+    "plugin_version": "0.1.0-rc.2",
+    "capability_version": "0.1.0-rc.2-capabilities.3",
+    "manifest_version": "2026-07-agent-contract-v1.1",
+    "sketchup_version": "26.2.242",
+    "ruby_version": "3.2.2",
+    "compatibility_ok": true
+  },
+  "installed_source": {
+    "installed_plugin_main_sha256": "03fc30ca6403dace6837870a8a276ac4397c147763f2ab2c69b329d832eb8a89",
+    "workspace_plugin_main_sha256_after_capture": "03fc30ca6403dace6837870a8a276ac4397c147763f2ab2c69b329d832eb8a89",
+    "current_workspace_exact_hash_match": true,
+    "post_capture_diff_scope": [
+      "none_current_workspace_exact_match"
+    ],
+    "requires_reinstall_restart": false
+  },
+  "model": {
+    "model_revision": "sha256:f425da136acb596c4cd515090d87061bdd2f1f44b5a19ce4328eef62e4e11b0e",
+    "document_identity_opaque": true,
+    "top_level_entities": 1,
+    "recursive_entities": 1889,
+    "graph_nodes": 1891,
+    "definitions": 1,
+    "faces": 110,
+    "edges": 1778,
+    "vertices": 1678
+  },
+  "adoption": {
+    "kind": "adopt_open_model",
+    "read_only": true,
+    "model_revision_before": "sha256:f425da136acb596c4cd515090d87061bdd2f1f44b5a19ce4328eef62e4e11b0e",
+    "model_revision_after": "sha256:f425da136acb596c4cd515090d87061bdd2f1f44b5a19ce4328eef62e4e11b0e",
+    "revision_complete": true,
+    "total_seen": 1889,
+    "indexed": 1889,
+    "recursive_truncated": false
+  },
+  "proposal": {
+    "task_state": "awaiting_input",
+    "execution_allowed": false,
+    "requires_clarification": true,
+    "confidence": 0.34,
+    "candidate_count": 5,
+    "selected_target_count": 0,
+    "operation_count": 0,
+    "risk_level": "S2",
+    "next_action": "submit_task_input",
+    "ambiguity_reasons": [
+      "target_confidence_too_low"
+    ]
+  },
+  "artifacts": {
+    "model_graph_sha256": "14b018953ea68749341f5740ea778a58cf09e3267eacec2864a7f79833be5add",
+    "model_graph_manifest_sha256": "83829204d5d9bc8f7655365fe1a1f1578c430d182c14875495eac12546493344",
+    "edit_proposal_sha256": "6fe47bc5645f608ea03c7f8c7b414250aca1de74fc6d74bf3bf314191c8cbe7e",
+    "model_graph_schema_valid": true,
+    "proposal_schema_valid": true,
+    "integrity_reload_ok": true,
+    "public_absolute_path_exposed": false,
+    "policy_environment_exposed": false
+  },
+  "invariants": {
+    "session_unchanged": true,
+    "document_unchanged": true,
+    "revision_unchanged": true,
+    "wrong_target_executed": false,
+    "unauthorized_execution": false,
+    "source_model_path_exposed": false
+  },
+  "queue_state": {
+    "queue": 0,
+    "processing": 0,
+    "responses": 0,
+    "lock_exists": false
+  },
+  "live_mutation_performed": false,
+  "release_acceptance": false,
+  "boundaries": [
+    "This proves exact-current-source fresh-process read-only adoption, complete revision binding, durable ModelGraph/proposal artifacts, and ambiguity abstention for one user-provided SketchUp model.",
+    "It does not prove any live mutation, S2-S4 approval host, external-reference visual correction, seven-case real-model corpus, or SketchUp version matrix.",
+    "The installed and workspace plugin main hashes match after a complete SketchUp restart. Release acceptance remains false because this is a scoped architecture-branch proof, not an rc.2 release re-sign or broad real-model acceptance."
+  ]
+}

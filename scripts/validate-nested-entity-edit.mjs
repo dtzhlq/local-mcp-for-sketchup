@@ -3,6 +3,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { SketchUpBridge } from '../src/bridge.mjs';
+import { freshSessionOptions } from '../src/live-session-contract.mjs';
 
 export async function validateNestedEntityEdit({ runtime = 'mock', timeoutMs = runtime === 'queue' ? 180000 : 20000, outputDir = `output/nested-entity-edit/${runtime}`, saveSkp } = {}) {
   const bridge = new SketchUpBridge(runtime === 'mock'
@@ -25,8 +26,8 @@ export async function validateNestedEntityEdit({ runtime = 'mock', timeoutMs = r
       { op: 'component_instance', id: 'nested-edit-instance-b', name: 'Nested_Edit_Instance_B', definition: 'Nested_Edit_Definition', origin: [0, 80, 0] }
     ]
   };
-  await bridge.build_model({ runtime, timeoutMs, code: JSON.stringify(document) });
-  const adopted = await bridge.adopt_open_model({ runtime, timeoutMs, recursive: true, prefix: 'nested-edit' });
+  await bridge.build_model({ runtime, timeoutMs, code: JSON.stringify(document), ...await freshSessionOptions(bridge, { runtime, timeoutMs }) });
+  const adopted = await bridge.adopt_open_model({ runtime, timeoutMs, recursive: true, prefix: 'nested-edit', read_only: true });
   const target = adopted.recursive_index?.find((entry) => entry.name === 'Nested_Edit_Bar');
   assert(target?.editable === true, 'nested definition group must be editable');
   assert(['component_definition', 'instance_path'].includes(target.edit_scope), 'nested edit scope must be component_definition or instance_path');
@@ -52,7 +53,8 @@ export async function validateNestedEntityEdit({ runtime = 'mock', timeoutMs = r
     output_dir: definitionWideDir,
     label: 'nested-definition-wide',
     save_model: false,
-    validate_model: false
+    validate_model: false,
+    ...await freshSessionOptions(bridge, { runtime, timeoutMs })
   });
   const definitionAfter = definitionWide.nested_edit?.targets?.[0]?.after;
   assert(definitionAfter?.name === 'Nested_Edit_Bar_Reviewed', 'definition-wide rename must be visible in the after index');
@@ -77,7 +79,8 @@ export async function validateNestedEntityEdit({ runtime = 'mock', timeoutMs = r
     output_dir: makeUniqueDir,
     label: 'nested-make-unique',
     save_model: false,
-    validate_model: false
+    validate_model: false,
+    ...await freshSessionOptions(bridge, { runtime, timeoutMs })
   });
   const afterUniqueAdoption = JSON.parse(await fs.readFile(makeUnique.artifacts.after_nested_index, 'utf8'));
   const matchingEntries = (afterUniqueAdoption.recursive_index || []).filter((entry) => entry.reference === target.reference);
@@ -104,7 +107,7 @@ export async function validateNestedEntityEdit({ runtime = 'mock', timeoutMs = r
 
   let savedModel = null;
   if (saveSkp) {
-    const saved = await bridge.save_model({ runtime, timeoutMs, path: saveSkp, keep_session: true });
+    const saved = await bridge.save_model({ runtime, timeoutMs, path: saveSkp, keep_session: true, ...await freshSessionOptions(bridge, { runtime, timeoutMs }) });
     savedModel = saved.path || saved.file_path || saveSkp;
   }
   const report = {

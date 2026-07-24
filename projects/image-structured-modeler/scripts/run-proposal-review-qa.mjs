@@ -3,6 +3,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { SketchUpBridge } from '../../../src/bridge.mjs';
+import { freshSessionOptions } from '../../../src/live-session-contract.mjs';
 import { compilePartGraphFiles } from '../../../src/product-modeling/part-graph-compiler.mjs';
 import { validatePartGraphPhysicalConsistency } from '../../../src/product-modeling/physical-consistency-qa.mjs';
 import { validateGroundingV3 } from './lib/grounding-v3.mjs';
@@ -60,14 +61,16 @@ async function main() {
     spec: layoutSpec,
     runtime,
     timeoutMs: options.timeoutMs,
-    includePreview: false
+    includePreview: false,
+    ...await freshSessionOptions(bridge, { runtime, timeoutMs: options.timeoutMs })
   });
   const referenceVisual = await bridge.validate_reference_model({
     code,
     spec: referenceSpec,
     runtime,
     timeoutMs: options.timeoutMs,
-    includePreview: false
+    includePreview: false,
+    ...await freshSessionOptions(bridge, { runtime, timeoutMs: options.timeoutMs })
   });
   const visualRelations = observations && visualRelationsFixture
     ? await validateVisualRelations({
@@ -110,7 +113,8 @@ async function main() {
     ? await bridge.save_model({
       path: resolveRepo(options.saveSkp || path.join(outputDir, `${options.name || DEFAULTS.name}.${runtime === 'queue' ? 'skp' : 'json'}`)),
       runtime,
-      timeoutMs: options.timeoutMs
+      timeoutMs: options.timeoutMs,
+      ...await freshSessionOptions(bridge, { runtime, timeoutMs: options.timeoutMs })
     })
     : null;
 

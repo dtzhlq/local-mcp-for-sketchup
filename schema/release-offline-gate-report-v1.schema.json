@@ -1,0 +1,143 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/schema/release-offline-gate-report-v1.schema.json",
+  "title": "Release offline gate report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "kind",
+    "created_at",
+    "queue_allowed",
+    "expected_runtime",
+    "checks",
+    "passed",
+    "failed",
+    "duration_ms",
+    "result",
+    "failed_checks",
+    "command_results",
+    "artifact_boundary",
+    "offline_acceptance",
+    "live_queue_acceptance",
+    "release_acceptance"
+  ],
+  "properties": {
+    "version": { "const": "release-offline-gate-report.v1" },
+    "kind": { "const": "release_offline_gate_report" },
+    "created_at": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+    },
+    "queue_allowed": { "const": false },
+    "expected_runtime": { "const": "mock_or_offline" },
+    "checks": { "const": 18 },
+    "passed": { "type": "integer", "minimum": 0, "maximum": 18 },
+    "failed": { "type": "integer", "minimum": 0, "maximum": 18 },
+    "duration_ms": { "type": "integer", "minimum": 0 },
+    "result": { "enum": ["pass", "fail"] },
+    "failed_checks": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/checkName" }
+    },
+    "command_results": {
+      "type": "array",
+      "minItems": 18,
+      "maxItems": 18,
+      "items": { "$ref": "#/$defs/commandResult" }
+    },
+    "artifact_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "existing_rc2_artifacts_are_historical_and_immutable",
+        "canonical_new_version_target_checked_here"
+      ],
+      "properties": {
+        "existing_rc2_artifacts_are_historical_and_immutable": { "const": true },
+        "canonical_new_version_target_checked_here": { "const": false }
+      }
+    },
+    "offline_acceptance": { "type": "boolean" },
+    "live_queue_acceptance": { "const": false },
+    "release_acceptance": { "const": false }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "result": { "const": "pass" } },
+        "required": ["result"]
+      },
+      "then": {
+        "properties": {
+          "passed": { "const": 18 },
+          "failed": { "const": 0 },
+          "failed_checks": { "maxItems": 0 },
+          "offline_acceptance": { "const": true }
+        }
+      },
+      "else": {
+        "properties": {
+          "failed": { "minimum": 1 },
+          "failed_checks": { "minItems": 1 },
+          "offline_acceptance": { "const": false }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "checkName": {
+      "enum": [
+        "current-source-core",
+        "copy-fast-live-evidence",
+        "plugin-source-and-registry",
+        "tool-registry",
+        "mock-qa",
+        "expert-mock-qa",
+        "mock-performance-budgets",
+        "restricted-python-corpus",
+        "official-api-r3-mock",
+        "python-sdk-high-value-mock",
+        "nested-edit-mock",
+        "save-reopen-mock",
+        "mcp-capability-suite-mock",
+        "image-structured-regression",
+        "plugin-install-safety",
+        "release-manifest-create-new",
+        "historical-artifact-drift-guard",
+        "diff-whitespace"
+      ]
+    },
+    "commandResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "command", "ok", "exit_code", "duration_ms"],
+      "properties": {
+        "name": { "$ref": "#/$defs/checkName" },
+        "command": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "ok": { "type": "boolean" },
+        "exit_code": { "type": "integer", "minimum": 0, "maximum": 255 },
+        "duration_ms": { "type": "integer", "minimum": 0 }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "ok": { "const": true } },
+            "required": ["ok"]
+          },
+          "then": {
+            "properties": { "exit_code": { "const": 0 } }
+          },
+          "else": {
+            "properties": { "exit_code": { "minimum": 1 } }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -11,8 +11,34 @@ export const AGENT_GATEWAY_TOOL_NAMES = Object.freeze([
   'read_agent_artifact'
 ]);
 
+export const SESSION_CONTRACT_TOOL_NAMES = Object.freeze(['create_queue_handshake']);
+
+export const TOOL_EFFECT_CONTRACT_VERSION = 'tool-effect.v1';
+const SIDE_EFFECT_FREE_TOOL_NAMES = new Set([
+  'get_docs',
+  'get_workflow_bundle',
+  'get_capabilities',
+  'queue_diagnostics',
+  'compile_expert',
+  'compile_python_sdk',
+  'get_model_info',
+  'list_entities',
+  'inspect_model',
+  'resolve_model_targets',
+  'get_selection',
+  'analyze_selection_geometry',
+  'compare_snapshots'
+]);
+
+export const TOOL_EFFECTS = Object.freeze(Object.fromEntries(TOOL_NAMES.map((name) => [name, Object.freeze({
+  version: TOOL_EFFECT_CONTRACT_VERSION,
+  effect: SIDE_EFFECT_FREE_TOOL_NAMES.has(name) ? 'none' : 'persistent_or_unknown',
+  timeout_outcome: SIDE_EFFECT_FREE_TOOL_NAMES.has(name) ? 'no_persistent_effect_expected' : 'unknown_do_not_retry'
+})])));
+
 const gatewayToolNames = new Set(AGENT_GATEWAY_TOOL_NAMES);
-export const EXPERT_TOOL_NAMES = Object.freeze(TOOL_NAMES.filter((name) => !gatewayToolNames.has(name)));
+const sessionContractToolNames = new Set(SESSION_CONTRACT_TOOL_NAMES);
+export const EXPERT_TOOL_NAMES = Object.freeze(TOOL_NAMES.filter((name) => !gatewayToolNames.has(name) && !sessionContractToolNames.has(name)));
 
 const toolByName = new Map(TOOL_REGISTRY.map((tool) => [tool.name, tool]));
 
@@ -26,4 +52,12 @@ export function listToolDefinitions() {
 
 export function listToolNames() {
   return TOOL_NAMES;
+}
+
+export function getToolEffect(name) {
+  return TOOL_EFFECTS[name] || Object.freeze({
+    version: TOOL_EFFECT_CONTRACT_VERSION,
+    effect: 'persistent_or_unknown',
+    timeout_outcome: 'unknown_do_not_retry'
+  });
 }

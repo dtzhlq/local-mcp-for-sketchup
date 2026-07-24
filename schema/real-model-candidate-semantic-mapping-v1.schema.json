@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/schemas/real-model-candidate-semantic-mapping-v1.schema.json",
+  "title": "User-confirmed real-model candidate semantic mapping v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "kind", "created_on", "decision_scope", "authority", "bindings", "mappings", "unresolved", "cross_version"],
+  "properties": {
+    "version": { "const": "real-model-candidate-semantic-mapping.v1" },
+    "kind": { "const": "real_model_candidate_semantic_mapping" },
+    "created_on": { "type": "string", "format": "date" },
+    "decision_scope": { "const": "semantic_candidate_mapping_only" },
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "user_confirmed", "mutation_authorized", "approval_token_issued", "execution_policy_changed", "model_content_trust"],
+      "properties": {
+        "source": { "const": "interactive_user_confirmation" },
+        "user_confirmed": { "const": true },
+        "mutation_authorized": { "const": false },
+        "approval_token_issued": { "const": false },
+        "execution_policy_changed": { "const": false },
+        "model_content_trust": { "const": "untrusted_data" }
+      }
+    },
+    "bindings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["inventory", "profile", "live_evidence", "formal_manifest"],
+      "properties": {
+        "inventory": { "$ref": "#/$defs/file_binding" },
+        "profile": { "$ref": "#/$defs/file_binding" },
+        "live_evidence": { "$ref": "#/$defs/file_binding" },
+        "formal_manifest": { "$ref": "#/$defs/file_binding" }
+      }
+    },
+    "mappings": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/candidate_mapping" }
+    },
+    "unresolved": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "product_boolean_candidate_and_target_tool",
+          "locked_target_or_controlled_disposable_fixture",
+          "reviewed_dirty_topology_repair_target",
+          "reviewed_uv_target",
+          "architecture_scene_strategy",
+          "formal_persistent_target_roles"
+        ]
+      }
+    },
+    "cross_version": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "represented_as_pass"],
+      "properties": {
+        "status": { "const": "deferred_by_user" },
+        "represented_as_pass": { "const": false }
+      }
+    }
+  },
+  "$defs": {
+    "safe_relative_path": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500,
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[^\\u0000]+$"
+    },
+    "file_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": { "$ref": "#/$defs/safe_relative_path" },
+        "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+      }
+    },
+    "candidate_mapping": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["candidate_id", "candidate_handle", "source_sha256", "source_label", "source_label_trust", "assignments"],
+      "properties": {
+        "candidate_id": { "type": "string", "pattern": "^candidate_[0-9a-f]{24}$" },
+        "candidate_handle": { "type": "string", "pattern": "^candidate:sha256:[0-9a-f]{24}$" },
+        "source_sha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+        "source_label": { "type": "string", "minLength": 1, "maxLength": 240 },
+        "source_label_trust": { "const": "untrusted_data" },
+        "assignments": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["case_id", "role", "review_status"],
+            "properties": {
+              "case_id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]+$" },
+              "role": { "enum": ["primary", "supporting"] },
+              "review_status": { "const": "user_confirmed" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

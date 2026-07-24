@@ -1,0 +1,83 @@
+{
+  "version": "real-model-candidate-review-amendment-v1-mock-evidence.1",
+  "kind": "real_model_candidate_review_amendment_mock_evidence",
+  "generated_on": "2026-07-20",
+  "evidence_scope": "offline_amendment_contract_tests_with_separate_hash_bound_live_read_only_target_review",
+  "commands": [
+    {
+      "command": "node test/real-model-candidate-review-amendment.mjs",
+      "status": "passed",
+      "runtime": "synthetic_fixture",
+      "live_queue_called": false
+    },
+    {
+      "command": "node scripts/review-real-model-candidate-amendment.mjs",
+      "status": "passed",
+      "runtime": "offline_hash_bound_aggregate",
+      "live_queue_called": false
+    }
+  ],
+  "result": "pass",
+  "contract": {
+    "amendment": "real-model-candidate-semantic-mapping-amendment.v1",
+    "aggregate": "real-model-candidate-review-aggregate.v1",
+    "base_candidates": 5,
+    "added_candidates": 1,
+    "confirmed_candidates": 6,
+    "candidate_coverage": "6/6",
+    "formal_cases": 7,
+    "semantically_mapped_cases": 7,
+    "semantic_coverage": "7/7",
+    "unmapped_cases": 0,
+    "formal_sidecars_ready": 0,
+    "formal_sidecars_generated": 0,
+    "formal_sidecar_coverage": "0/7",
+    "product_candidate": "Trimble S6.skp",
+    "product_case": "product-boolean-manifold"
+  },
+  "contract_test": {
+    "negative_cases": 11,
+    "cli_offline_round_trip": true,
+    "historical_five_candidate_bindings_preserved": true,
+    "target_review_v2_compatibility": "passed_non_authorizing_semantic_mapping_only",
+    "exactly_one_additive_candidate_required": true,
+    "actual_amendment_binding_verified_by_offline_cli": true,
+    "semantic_mapping_may_authorize_mutation": false,
+    "semantic_mapping_may_issue_approval_token": false,
+    "semantic_mapping_may_confirm_target_roles": false,
+    "false_release_acceptance_rejected": true
+  },
+  "actual_mapping_and_live_boundary": {
+    "amendment_path": "docs/evidence/real-model-candidate-semantic-mapping-amendment-2026-07-20.json",
+    "amendment_sha256": "sha256:52dd22fdc730095d0de1566885d16bde15c0dae73d24308943df7a716d191268",
+    "live_target_review_path": "docs/evidence/real-model-target-review-live-evidence-2026-07-20.json",
+    "live_target_review_sha256": "sha256:ba0d92baa78b4857a5c6d7eb1aa403db992c517442cc5a1a241593b2a7a619e1",
+    "live_target_review_classified_as_mock": false,
+    "live_target_review_read_only": true,
+    "live_target_review_suggestions_authoritative": false,
+    "target_roles_confirmed": false,
+    "boolean_target_confirmed": false,
+    "boolean_tool_confirmed": false,
+    "model_mutation_authorized": false,
+    "approval_token_issued": false,
+    "release_acceptance": false
+  },
+  "readiness": {
+    "semantic_candidate_routing": "complete_7_of_7",
+    "formal_sidecars": "blocked_0_of_7",
+    "product_target_roles": "blocked_human_confirmation_required",
+    "product_boolean_manifold": "blocked_live_mutation_not_verified",
+    "product_save_reopen_identity": "blocked_not_verified",
+    "release_acceptance": false
+  },
+  "hashes": {
+    "schema/real-model-candidate-semantic-mapping-amendment-v1.schema.json": "sha256:0fc701e44dfcafd60dcd282d10c4756c381b9350d7f5ff6dd7be9a94ece59506",
+    "schema/real-model-candidate-review-aggregate-v1.schema.json": "sha256:bc18db44ab3bcf836757690d310754607a308a40996d9f357ae5aa434484b87a",
+    "src/real-model-candidate-review-amendment.mjs": "sha256:0564327828bd06ecadee691b21717a4dac3db421d050e75c0cfdbd47c845f440",
+    "scripts/review-real-model-candidate-amendment.mjs": "sha256:a1c79f3bf375bfea2af41ca680a421af0ff66b311f4899f885e8e56d14e8c97b",
+    "test/real-model-candidate-review-amendment.mjs": "sha256:4872520c08b2dfe2056bf8e2d3445391ae0ad191296de8be6e9f6cb63eff2985",
+    "docs/evidence/real-model-candidate-semantic-mapping-amendment-2026-07-20.json": "sha256:52dd22fdc730095d0de1566885d16bde15c0dae73d24308943df7a716d191268",
+    "docs/evidence/real-model-target-review-live-evidence-2026-07-20.json": "sha256:ba0d92baa78b4857a5c6d7eb1aa403db992c517442cc5a1a241593b2a7a619e1"
+  },
+  "boundary": "The passing test and aggregate command are offline contract and binding checks; neither calls SketchUp. The current amendment verifier accepts Target Review v1 or v2 only as non-authorizing semantic-mapping input; the hash-bound Target Review artifact in this evidence remains the separate v1 live read-only observation and is not reinterpreted as v2. The user-confirmed Trimble S6 mapping completes semantic routing for 6/6 candidates and 7/7 formal categories, but 0/7 formal sidecars are ready. Structural pair suggestions remain non-authoritative, boolean target/tool roles remain unconfirmed, and no mutation authorization, approval token, exact solid-overlap proof, manifold mutation proof, save/reopen proof, or release acceptance is implied."
+}

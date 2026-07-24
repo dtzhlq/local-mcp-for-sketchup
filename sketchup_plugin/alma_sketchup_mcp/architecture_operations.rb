@@ -5,15 +5,16 @@ module AlmaSketchupMCP
 
   GEOMETRY_EPSILON = 1e-6 unless const_defined?(:GEOMETRY_EPSILON)
 
-  def add_level(operation)
+  def add_level(model, operation)
     name = operation.fetch('name')
-    @levels ||= []
+    levels = document_state_array('levels', model)
     level = {
       'name' => name,
       'elevation' => finite_number(operation['elevation'] || 0, "#{name}.elevation")
     }
     level['height'] = positive_number(operation['height'], nil, "#{name}.height") if operation.key?('height')
-    @levels << level
+    levels.reject! { |entry| entry.is_a?(Hash) && entry['name'].to_s == name.to_s }
+    levels << level
     level
   end
 

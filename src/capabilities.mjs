@@ -1,8 +1,18 @@
 import { PRODUCT_VERSION } from './version.mjs';
+import {
+  DEFAULT_STRUCTURAL_GROUP_LIMIT,
+  MAX_FRESH_MANIFOLD_PATHS,
+  MAX_STRUCTURAL_GROUP_LIMIT,
+  STRUCTURAL_GROUPS_VERSION
+} from './model-adoption.mjs';
+import { BOOLEAN_OPERATIONS_SHA256, MODEL_REVISION_SOURCE_SHA256 } from './runtime-source-attestation.mjs';
 
 export const DSL_VERSION = 1;
-export const CAPABILITY_MANIFEST_VERSION = '2026-07-existing-model-edit-rc2';
-export const RUNTIME_CAPABILITY_VERSION = '0.1.0-rc.2-capabilities.1';
+export const CAPABILITY_MANIFEST_VERSION = '2026-07-agent-contract-rc3.1';
+export const RUNTIME_CAPABILITY_VERSION = '0.1.0-rc.3-capabilities.1';
+export const OCCURRENCE_CONTRACT_VERSION = 'canonical-occurrence-path.v1';
+export const QUEUE_MODEL_REVISION_STRATEGY = 'definition-merkle.v2';
+export const QUEUE_MODEL_REVISION_UNIQUE_ENTITY_LIMIT = 1_000_000;
 
 export const SUPPORT_STATUS = Object.freeze({
   supported: 'supported',
@@ -926,6 +936,31 @@ export function getRuntimeCapabilities(runtime = 'mock') {
     capability_version: RUNTIME_CAPABILITY_VERSION,
     manifest_version: CAPABILITY_MANIFEST_VERSION,
     dsl_version: DSL_VERSION,
+    occurrence_contract: OCCURRENCE_CONTRACT_VERSION,
+    ...(runtime === 'queue' ? {
+      boolean_operations_sha256: BOOLEAN_OPERATIONS_SHA256,
+      model_revision_source_sha256: MODEL_REVISION_SOURCE_SHA256,
+      model_revision: {
+        strategy: QUEUE_MODEL_REVISION_STRATEGY,
+        unique_entity_limit: QUEUE_MODEL_REVISION_UNIQUE_ENTITY_LIMIT,
+        logical_occurrence_count: 'complete_definition_graph_expansion'
+      }
+    } : {}),
+    read_only_probes: {
+      structural_groups: {
+        version: STRUCTURAL_GROUPS_VERSION,
+        operation: 'adopt_open_model',
+        requires_read_only: true,
+        default_limit: DEFAULT_STRUCTURAL_GROUP_LIMIT,
+        max_limit: MAX_STRUCTURAL_GROUP_LIMIT,
+        max_fresh_manifold_paths: MAX_FRESH_MANIFOLD_PATHS,
+        projected_entity_types: ['group'],
+        traversed_container_types: ['group', 'component_instance'],
+        fresh_manifold_method: runtime === 'queue' ? 'manifold_report' : 'fixture_only',
+        leaf_entities_materialized: false,
+        mutates_model: false
+      }
+    },
     supported_operations: OPERATION_CAPABILITIES
       .filter((capability) => isRuntimeSupported(capability.runtime_support[runtime]))
       .map((capability) => capability.op),

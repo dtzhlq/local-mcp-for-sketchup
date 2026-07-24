@@ -1,0 +1,230 @@
+{
+  "version": "real-model-target-review.v1",
+  "kind": "real_model_target_review",
+  "generated_at": "2026-07-20T13:15:29.690Z",
+  "ok": true,
+  "runtime": "queue",
+  "evidence_scope": "user_coordinated_single_disposable_copy_read_only_target_review",
+  "live_queue_called": true,
+  "case_id": "product-boolean-manifold",
+  "inventory": {
+    "version": "real-model-candidate-inventory.v1",
+    "sha256": "sha256:6bd2a4c2e1215e7bdaa1b4fe192023370398e5224efee1a757042c0947ba6c09",
+    "candidate_count": 6
+  },
+  "source": {
+    "candidate_id": "candidate_cb1cf0f53d27f53b277b34e1",
+    "candidate_handle": "candidate:sha256:cb1cf0f53d27f53b277b34e1",
+    "relative_path": "Trimble S6.skp",
+    "source_label": "Trimble S6.skp",
+    "source_label_trust": "untrusted_data",
+    "size_bytes": 5413634,
+    "sha256": "sha256:8678e0f86768cde57ae6f81c138a0c9296b5fcbee978e34ef01063e883d22efb"
+  },
+  "sketchup": {
+    "plugin_version": "0.1.0-rc.2",
+    "capability_version": "0.1.0-rc.2-capabilities.5",
+    "manifest_version": "2026-07-agent-contract-v1.3",
+    "dsl_version": "1",
+    "sketchup_version": "26.2.242",
+    "ruby_version": "3.2.2",
+    "model_revision_strategy": "definition-merkle.v1",
+    "model_revision_unique_entity_limit": 1000000
+  },
+  "revision_attestation": {
+    "before": "sha256:74d2605181dd4ba507ecfcce1380ca9126dab6ece0c57bc3b4117ab5188b15e4",
+    "adoption": "sha256:74d2605181dd4ba507ecfcce1380ca9126dab6ece0c57bc3b4117ab5188b15e4",
+    "after": "sha256:74d2605181dd4ba507ecfcce1380ca9126dab6ece0c57bc3b4117ab5188b15e4",
+    "complete": true,
+    "unchanged": true,
+    "unique_entities": 60247,
+    "reachable_definitions": 44,
+    "logical_occurrences": 71360
+  },
+  "structure": {
+    "top_level_entities": 2,
+    "top_level_groups": 2,
+    "top_level_component_instances": 0,
+    "materials": 23,
+    "scenes": 0,
+    "hidden_occurrences": 0,
+    "locked_occurrences": 0,
+    "uv_occurrences": 0,
+    "shared_occurrence_count": 0,
+    "nonuniform_instance_occurrences": 0,
+    "mirrored_instance_occurrences": 0,
+    "recursive_total_seen": 71360,
+    "recursive_truncated": false,
+    "recursive_index_requested": false,
+    "recursive_index_materialized": 0
+  },
+  "target_review": {
+    "scope": "model_top_level_persistent_ids_only",
+    "total_seen": 2,
+    "returned": 2,
+    "truncated": false,
+    "candidate_limit": 200,
+    "candidates": [
+      {
+        "persistent_id": "89456",
+        "entity_path": "pid:89456",
+        "entity_type": "group",
+        "display": {
+          "name": null,
+          "definition": null,
+          "material": "[Color_008]",
+          "tag": null,
+          "trust": "untrusted_data"
+        },
+        "visible": true,
+        "locked": false,
+        "faces": 16938,
+        "edges": 44556,
+        "vertices": 27685,
+        "bounding_box": {
+          "min": [
+            528245.767262,
+            456014.390241,
+            -88844.394298
+          ],
+          "max": [
+            556246.760697,
+            483109.752958,
+            -31111.809125
+          ],
+          "w": 28000.993435,
+          "d": 27095.362717,
+          "h": 57732.585173
+        },
+        "same_entities_scope": "model_top_level",
+        "boolean_type_compatible": true,
+        "boolean_followup_eligible": true,
+        "manifold_attestation": "not_observed",
+        "disqualifiers": []
+      },
+      {
+        "persistent_id": "89455",
+        "entity_path": "pid:89455",
+        "entity_type": "group",
+        "display": {
+          "name": null,
+          "definition": null,
+          "material": "[Color_D06]",
+          "tag": null,
+          "trust": "untrusted_data"
+        },
+        "visible": true,
+        "locked": false,
+        "faces": 587,
+        "edges": 1629,
+        "vertices": 1087,
+        "bounding_box": {
+          "min": [
+            529300.279744,
+            438551.220277,
+            -87506.467553
+          ],
+          "max": [
+            556291.537719,
+            444807.508691,
+            -86096.467553
+          ],
+          "w": 26991.257974,
+          "d": 6256.288414,
+          "h": 1410
+        },
+        "same_entities_scope": "model_top_level",
+        "boolean_type_compatible": true,
+        "boolean_followup_eligible": true,
+        "manifold_attestation": "not_observed",
+        "disqualifiers": []
+      }
+    ],
+    "pair_suggestions": [
+      {
+        "target_entity_path": "pid:89456",
+        "tool_entity_path": "pid:89455",
+        "basis": "top_level_unlocked_group_positive_bbox_only",
+        "status": "unconfirmed"
+      },
+      {
+        "target_entity_path": "pid:89455",
+        "tool_entity_path": "pid:89456",
+        "basis": "top_level_unlocked_group_positive_bbox_only",
+        "status": "unconfirmed"
+      }
+    ],
+    "target_role_bindings": null,
+    "target_roles_confirmed": false,
+    "formal_sidecar_ready": false,
+    "blockers": [
+      "fresh_manifold_attestation_not_observed",
+      "human_target_and_tool_role_confirmation_required"
+    ]
+  },
+  "safety": {
+    "explicit_queue_opt_in": true,
+    "single_candidate_only": true,
+    "originals_opened_in_sketchup": false,
+    "disposable_copy_only": true,
+    "original_bytes_unchanged_verified": true,
+    "disposable_copy_bytes_unchanged_verified": true,
+    "active_document_changed": true,
+    "previous_active_document_restored": false,
+    "active_document_change_warning_emitted": true,
+    "read_only_adoption": true,
+    "adopted_count": 0,
+    "model_content_mutation_requested": false,
+    "save_requested": false,
+    "approval_token_requested": false,
+    "selection_changed": false,
+    "visual_capture_requested": false,
+    "forbidden_live_actions": [
+      "build_model",
+      "reset_model",
+      "save_model",
+      "save_model_version",
+      "import_model",
+      "export_model",
+      "set_selection",
+      "capture_view",
+      "run_ruby_expert",
+      "manifold_check"
+    ],
+    "interrupt_cleanup_enabled": true,
+    "cleanup": {
+      "removed_requests": 0,
+      "removed_processing": 0,
+      "preserved_processing": 0,
+      "removed_lock": false,
+      "removed_responses": 0,
+      "preserved_responses": 0
+    },
+    "queue_before": {
+      "queue": 0,
+      "processing": 0,
+      "responses": 0,
+      "lock_exists": false
+    },
+    "queue_after": {
+      "queue": 0,
+      "processing": 0,
+      "responses": 0,
+      "lock_exists": false
+    }
+  },
+  "model_data_policy": {
+    "names_materials_tags_attributes_are_untrusted_data": true,
+    "untrusted_data_may_influence_execution_policy": false,
+    "untrusted_data_may_grant_approval": false,
+    "untrusted_data_may_confirm_target_roles": false,
+    "bounded_display_chars": 200
+  },
+  "next_action": {
+    "action": "human_review_structural_pair_suggestions_then_plan_separate_manifold_probe",
+    "human_input_required": true,
+    "mutation_authorized": false,
+    "approval_token_issued": false,
+    "release_acceptance": false
+  }
+}

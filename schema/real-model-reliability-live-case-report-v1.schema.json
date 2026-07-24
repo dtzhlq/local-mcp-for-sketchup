@@ -1,0 +1,176 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/sketchup-mcp-replica/real-model-reliability-live-case-report-v1.schema.json",
+  "title": "Real-model reliability single live case report v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "kind",
+    "ok",
+    "runtime",
+    "evidence_scope",
+    "full_manifest",
+    "selected_case",
+    "runtime_attestation",
+    "safety",
+    "metrics",
+    "result",
+    "queue_clean",
+    "artifacts",
+    "acceptance"
+  ],
+  "properties": {
+    "version": { "const": "real-model-reliability-live-case-report.v1" },
+    "kind": { "const": "real_model_reliability_live_case_report" },
+    "ok": { "const": true },
+    "runtime": { "const": "queue" },
+    "evidence_scope": { "const": "user_authorized_single_hash_bound_live_case" },
+    "full_manifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "path", "sha256", "case_count"],
+      "properties": {
+        "version": { "const": "real-model-reliability-corpus.v1" },
+        "path": { "const": "test/reliability-corpus/manifest.json" },
+        "sha256": { "$ref": "#/$defs/prefixedSha256" },
+        "case_count": { "const": 7 }
+      }
+    },
+    "selected_case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["case_id", "domain", "task_count", "artifact_file", "contract_file"],
+      "properties": {
+        "case_id": { "enum": ["architecture-golden", "interior-expression", "product-boolean-manifold", "deep-shared-components", "imported-dirty-topology", "appearance-scenes-hidden", "scaled-mirrored-locked"] },
+        "domain": { "enum": ["architecture", "interior", "product", "shared_component", "imported_cad", "appearance", "transform_edge_case"] },
+        "task_count": { "type": "integer", "minimum": 1, "maximum": 5 },
+        "artifact_file": { "type": "string", "pattern": "^[^/]+\\.skp$" },
+        "contract_file": { "type": "string", "pattern": "^[^/]+\\.reliability\\.json$" }
+      }
+    },
+    "runtime_attestation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "server_version", "plugin_version", "sketchup_version", "ruby_version", "capability_version", "manifest_version", "dsl_version", "occurrence_contract", "revision_strategy", "revision_source_sha256", "compatibility_ok"],
+      "properties": {
+        "name": { "const": "queue" },
+        "server_version": { "const": "0.1.0-rc.2" },
+        "plugin_version": { "const": "0.1.0-rc.2" },
+        "sketchup_version": { "type": "string", "minLength": 1 },
+        "ruby_version": { "type": "string", "minLength": 1 },
+        "capability_version": { "const": "0.1.0-rc.2-capabilities.7" },
+        "manifest_version": { "const": "2026-07-agent-contract-v1.4" },
+        "dsl_version": { "const": 1 },
+        "occurrence_contract": { "const": "canonical-occurrence-path.v1" },
+        "revision_strategy": { "const": "definition-merkle.v2" },
+        "revision_source_sha256": { "pattern": "^[0-9a-f]{64}$" },
+        "compatibility_ok": { "const": true }
+      }
+    },
+    "safety": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["explicit_queue_opt_in", "ephemeral_operator_policy", "default_policy_unchanged", "preflight_before_queue", "disposable_copy_only", "original_bytes_unchanged", "interrupt_cleanup_enabled"],
+      "properties": {
+        "explicit_queue_opt_in": { "const": true },
+        "ephemeral_operator_policy": { "const": true },
+        "default_policy_unchanged": { "const": true },
+        "preflight_before_queue": { "const": true },
+        "disposable_copy_only": { "const": true },
+        "original_bytes_unchanged": { "const": true },
+        "interrupt_cleanup_enabled": { "const": true }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tasks_total", "tasks_passed", "task_success_rate", "wrong_object_modification_count", "silent_geometry_corruption_count", "recovery_attempts", "recoveries", "recovery_rate"],
+      "properties": {
+        "tasks_total": { "type": "integer", "minimum": 1, "maximum": 5 },
+        "tasks_passed": { "type": "integer", "minimum": 1, "maximum": 5 },
+        "task_success_rate": { "const": 1 },
+        "wrong_object_modification_count": { "const": 0 },
+        "silent_geometry_corruption_count": { "const": 0 },
+        "recovery_attempts": { "type": "integer", "minimum": 0 },
+        "recoveries": { "type": "integer", "minimum": 0 },
+        "recovery_rate": { "const": 1 }
+      }
+    },
+    "result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "domain", "evidence_class", "source_kind", "live_requirement", "ok", "duration_ms", "tasks", "details"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "domain": { "type": "string", "minLength": 1 },
+        "evidence_class": { "const": "external_live_artifact" },
+        "source_kind": { "const": "external_skp" },
+        "live_requirement": { "const": "satisfied_by_hash_bound_external_artifact" },
+        "ok": { "const": true },
+        "duration_ms": { "type": "integer", "minimum": 0 },
+        "tasks": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 5,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["task_id", "status", "evidence"],
+            "properties": {
+              "task_id": { "type": "string", "minLength": 1 },
+              "status": { "const": "passed" },
+              "evidence": { "type": "object", "minProperties": 1 }
+            }
+          }
+        },
+        "details": { "type": "object", "minProperties": 1 }
+      }
+    },
+    "queue_clean": { "$ref": "#/$defs/cleanQueue" },
+    "artifacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_artifact", "source_sha256", "working_copy", "working_copy_sha256", "verified_model", "verified_model_sha256", "verified_model_bytes", "contract", "contract_sha256", "report"],
+      "properties": {
+        "source_artifact": { "type": "string", "minLength": 1 },
+        "source_sha256": { "$ref": "#/$defs/prefixedSha256" },
+        "working_copy": { "type": "string", "minLength": 1 },
+        "working_copy_sha256": { "$ref": "#/$defs/prefixedSha256" },
+        "verified_model": { "type": "string", "minLength": 1 },
+        "verified_model_sha256": { "$ref": "#/$defs/prefixedSha256" },
+        "verified_model_bytes": { "type": "integer", "minimum": 1 },
+        "contract": { "type": "string", "minLength": 1 },
+        "contract_sha256": { "$ref": "#/$defs/prefixedSha256" },
+        "report": { "type": "string", "minLength": 1 }
+      }
+    },
+    "acceptance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["selected_case_passed", "formal_corpus_cases_passed", "formal_corpus_cases_total", "formal_corpus_complete", "cross_version", "release_acceptance"],
+      "properties": {
+        "selected_case_passed": { "const": true },
+        "formal_corpus_cases_passed": { "const": 1 },
+        "formal_corpus_cases_total": { "const": 7 },
+        "formal_corpus_complete": { "const": false },
+        "cross_version": { "const": "deferred_by_user" },
+        "release_acceptance": { "const": false }
+      }
+    }
+  },
+  "$defs": {
+    "prefixedSha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "cleanQueue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["queue", "processing", "responses", "lock"],
+      "properties": {
+        "queue": { "const": 0 },
+        "processing": { "const": 0 },
+        "responses": { "const": 0 },
+        "lock": { "const": false }
+      }
+    }
+  }
+}

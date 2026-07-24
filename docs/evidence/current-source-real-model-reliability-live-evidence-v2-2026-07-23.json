@@ -1,0 +1,424 @@
+{
+  "version": "current-source-real-model-reliability-live-evidence.v2",
+  "kind": "current_source_real_model_reliability_live_evidence",
+  "captured_at": "2026-07-23T04:22:02.016Z",
+  "branch": "codex/agent-contract-v1",
+  "result": "partial_pass",
+  "evidence_scope": "three_hash_bound_real_model_cases_with_one_guarded_geometry_mutation",
+  "runtime": {
+    "name": "queue",
+    "server_version": "0.1.0-rc.2",
+    "plugin_version": "0.1.0-rc.2",
+    "sketchup_version": "26.2.242",
+    "ruby_version": "3.2.2",
+    "capability_version": "0.1.0-rc.2-capabilities.7",
+    "manifest_version": "2026-07-agent-contract-v1.4",
+    "dsl_version": 1,
+    "occurrence_contract": "canonical-occurrence-path.v1",
+    "revision_strategy": "definition-merkle.v2",
+    "revision_source_sha256": "b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134",
+    "compatibility_ok": true
+  },
+  "execution_authorization": {
+    "mode": "local_operator_ephemeral_process_policy",
+    "user_authorized_disposable_copies": true,
+    "queue_required": true,
+    "allowed_runtimes_explicit": true,
+    "queue_mutation_explicit": true,
+    "direct_expert_mutation_explicit": true,
+    "policy_persisted": false,
+    "default_policy_unchanged": true,
+    "agent_self_authorization_allowed": false
+  },
+  "lineage": {
+    "base_two_case_evidence": {
+      "path": "docs/evidence/current-source-real-model-reliability-live-evidence-2026-07-23.json",
+      "sha256": "bc4974fdcd716f5fe38c228235b59f2ac535e2464deb356e28ee4288f1fbc45b",
+      "bytes": 12618
+    },
+    "locked_target_guard_evidence": {
+      "path": "docs/evidence/locked-target-guard-live-evidence-2026-07-23.json",
+      "sha256": "27bfd3deb590a6682d2b2306e8849e182c80af85dbc4f5637d6a02a3f3c2134c",
+      "bytes": 8291
+    }
+  },
+  "corpus": {
+    "manifest_path": "test/reliability-corpus/manifest.json",
+    "manifest_sha256": "sha256:4faa8caf2a097c3d1a7810f1bf7635eceede8de3ca3674cda16519117c2377fa",
+    "formal_cases_total": 7,
+    "formal_cases_passed": 3,
+    "formal_corpus_complete": false,
+    "passed_case_ids": [
+      "deep-shared-components",
+      "interior-expression",
+      "scaled-mirrored-locked"
+    ],
+    "remaining_case_ids": [
+      "architecture-golden",
+      "product-boolean-manifold",
+      "imported-dirty-topology",
+      "appearance-scenes-hidden"
+    ]
+  },
+  "cases": [
+    {
+      "case_id": "deep-shared-components",
+      "domain": "shared_component",
+      "result": "pass",
+      "duration_ms": 510608,
+      "tasks_total": 3,
+      "tasks_passed": 3,
+      "task_ids": [
+        "large_recursive_index",
+        "shared_definition_identity",
+        "save_reopen_identity"
+      ],
+      "coverage": {
+        "full_recursive_identity": true,
+        "bounded_recursive_identity": false,
+        "shared_definition_scope": true,
+        "material_preservation": false,
+        "scene_visibility_preservation": false,
+        "save_reopen_identity": true
+      },
+      "identity": {
+        "mode": "full_recursive",
+        "entries_before": 11474,
+        "entries_after": 11474,
+        "total_before": 11474,
+        "total_after": 11474,
+        "recursive_limit": 100000,
+        "truncated_before": false,
+        "truncated_after": false,
+        "exact_match": true,
+        "identity_digest": "sha256:9730d932bee21ab25baf7319ba64c9cf45d568555feaacff49c3fc0526c79da0",
+        "snapshot_error_diffs": 0,
+        "model_revision_before": "sha256:c03d317c25883606f0f8d7819610823118d916694d5a5d323deabe2ac7bcdf36",
+        "model_revision_after": "sha256:c03d317c25883606f0f8d7819610823118d916694d5a5d323deabe2ac7bcdf36",
+        "model_revision_exact_match": true,
+        "model_revision_strategy": "definition-merkle.v2",
+        "model_revision_source_sha256": "b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134",
+        "active_verified_copy_after_reopen": true
+      },
+      "quality": {
+        "wrong_object_modification_count": 0,
+        "silent_geometry_corruption_count": 0,
+        "original_bytes_unchanged": true,
+        "disposable_copy_only": true,
+        "queue_clean": {
+          "queue": 0,
+          "processing": 0,
+          "responses": 0,
+          "lock": false
+        }
+      },
+      "artifacts": {
+        "report": {
+          "path": "output/live-validation/real-model-reliability/deep-shared-components-current-source-v6/real-model-reliability-live-case-report.v1.json",
+          "sha256": "61a1738d629e15d89f4d72ee96241c3ed2dc47f7c33478145b7c2d554e99de0b",
+          "bytes": 5601
+        },
+        "diagnostic": {
+          "path": "output/live-validation/real-model-reliability/deep-shared-components-current-source-v6/live-work/preflight-f46c049c-9e5b-408b-b87a-bfb85140a713/01-deep-shared-components/deep-shared-components.save-reopen-diagnostic.json",
+          "sha256": "e8c91f012a848a7638b76cf0cb5b3379ebd84a6bcb408b1491059e930f4f9f48",
+          "bytes": 1542
+        },
+        "source_model": {
+          "path": "output/live-validation/real-model-reliability-inputs/deep-shared-components-v1/deep-shared-components.skp",
+          "sha256": "4a75190929bfa47b1506a8ed037a08e0f08e1632169d9bb550c4a9219b43e90c",
+          "bytes": 608815
+        },
+        "contract": {
+          "path": "output/live-validation/real-model-reliability-inputs/deep-shared-components-v1/deep-shared-components.reliability.json",
+          "sha256": "d7f1bd51a29f4c1e973d380fc4f1c8e9154fc04be5db086ae04031daf10b9c46",
+          "bytes": 646
+        },
+        "verified_model": {
+          "path": "output/live-validation/real-model-reliability/deep-shared-components-current-source-v6/live-work/preflight-f46c049c-9e5b-408b-b87a-bfb85140a713/01-deep-shared-components/deep-shared-components.verified.skp",
+          "sha256": "5bba080f041c8693f0804f9de07a5960fc91d945ca4a1adcc6a6481d9a3d5b7c",
+          "bytes": 262715
+        }
+      },
+      "mutation": {
+        "geometry_mutation_executed": false,
+        "locked_target_fail_closed": false,
+        "rollback_verified": false,
+        "guard_unchanged": false,
+        "locked_target_unchanged": false,
+        "exact_target_changed": false,
+        "nonuniform_scale": null,
+        "mirror_axis": null,
+        "recovery_attempts": 0,
+        "recoveries": 0
+      }
+    },
+    {
+      "case_id": "interior-expression",
+      "domain": "interior",
+      "result": "pass",
+      "duration_ms": 1291250,
+      "tasks_total": 3,
+      "tasks_passed": 3,
+      "task_ids": [
+        "material_preservation",
+        "scene_visibility_preservation",
+        "save_reopen_identity"
+      ],
+      "coverage": {
+        "full_recursive_identity": false,
+        "bounded_recursive_identity": true,
+        "shared_definition_scope": false,
+        "material_preservation": true,
+        "scene_visibility_preservation": true,
+        "save_reopen_identity": true
+      },
+      "identity": {
+        "mode": "complete_revision_bounded_occurrence_sample",
+        "entries_before": 100000,
+        "entries_after": 100000,
+        "total_before": 220006,
+        "total_after": 220006,
+        "recursive_limit": 100000,
+        "truncated_before": true,
+        "truncated_after": true,
+        "exact_match": true,
+        "identity_digest": "sha256:d08ccc301db692a6d93464b60a54ad86ec64cdc4e2ce67c6620234193651ed6a",
+        "snapshot_error_diffs": 0,
+        "model_revision_before": "sha256:074584ee36f0e1b144dd40e05659104b9aefc13391a38ce2e77c45fdce6756b9",
+        "model_revision_after": "sha256:074584ee36f0e1b144dd40e05659104b9aefc13391a38ce2e77c45fdce6756b9",
+        "model_revision_exact_match": true,
+        "model_revision_strategy": "definition-merkle.v2",
+        "model_revision_source_sha256": "b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134",
+        "active_verified_copy_after_reopen": true
+      },
+      "quality": {
+        "wrong_object_modification_count": 0,
+        "silent_geometry_corruption_count": 0,
+        "original_bytes_unchanged": true,
+        "disposable_copy_only": true,
+        "queue_clean": {
+          "queue": 0,
+          "processing": 0,
+          "responses": 0,
+          "lock": false
+        }
+      },
+      "artifacts": {
+        "report": {
+          "path": "output/live-validation/real-model-reliability/interior-expression-current-source-v1/real-model-reliability-live-case-report.v1.json",
+          "sha256": "c406a75030e61738dbbd9d1561eb2cd946168de4c32b702d9e709c19dbaa999d",
+          "bytes": 6199
+        },
+        "diagnostic": {
+          "path": "output/live-validation/real-model-reliability/interior-expression-current-source-v1/live-work/preflight-161ee347-68aa-4191-86ee-22c1ad2a03e3/01-interior-expression/interior-expression.save-reopen-diagnostic.json",
+          "sha256": "e64058ceb133c007575c4b69145ef839c09ad1ddc343c3067e71f5075f2f23f4",
+          "bytes": 1572
+        },
+        "source_model": {
+          "path": "output/live-validation/real-model-reliability-inputs/interior-expression-v1/interior-room.skp",
+          "sha256": "4a2ae7a7dce486ac66066b9b8393de2bba8e778147cfa42d16309f4d3de788f3",
+          "bytes": 6502581
+        },
+        "contract": {
+          "path": "output/live-validation/real-model-reliability-inputs/interior-expression-v1/interior-room.reliability.json",
+          "sha256": "bb61f18fab2888f67da7db3aa7b48a1c3c3a5422bbdd8f6ce88d1365d6eebc96",
+          "bytes": 670
+        },
+        "verified_model": {
+          "path": "output/live-validation/real-model-reliability/interior-expression-current-source-v1/live-work/preflight-161ee347-68aa-4191-86ee-22c1ad2a03e3/01-interior-expression/interior-expression.verified.skp",
+          "sha256": "c809daceadec33a56916e28c1ea7d0c95018ef7899f0d602a0127a2a4ca58656",
+          "bytes": 2663476
+        }
+      },
+      "mutation": {
+        "geometry_mutation_executed": false,
+        "locked_target_fail_closed": false,
+        "rollback_verified": false,
+        "guard_unchanged": false,
+        "locked_target_unchanged": false,
+        "exact_target_changed": false,
+        "nonuniform_scale": null,
+        "mirror_axis": null,
+        "recovery_attempts": 0,
+        "recoveries": 0
+      }
+    },
+    {
+      "case_id": "scaled-mirrored-locked",
+      "domain": "transform_edge_case",
+      "result": "pass",
+      "duration_ms": 69448,
+      "tasks_total": 5,
+      "tasks_passed": 5,
+      "task_ids": [
+        "locked_fail_closed",
+        "rollback",
+        "nonuniform_mirror",
+        "wrong_object_isolation",
+        "save_reopen_identity"
+      ],
+      "coverage": {
+        "full_recursive_identity": true,
+        "bounded_recursive_identity": false,
+        "shared_definition_scope": false,
+        "material_preservation": false,
+        "scene_visibility_preservation": false,
+        "save_reopen_identity": true
+      },
+      "mutation": {
+        "geometry_mutation_executed": true,
+        "locked_target_fail_closed": true,
+        "rollback_verified": true,
+        "guard_unchanged": true,
+        "locked_target_unchanged": true,
+        "exact_target_changed": true,
+        "nonuniform_scale": [
+          1.5,
+          0.75,
+          2
+        ],
+        "mirror_axis": "x",
+        "recovery_attempts": 1,
+        "recoveries": 1
+      },
+      "identity": {
+        "mode": "full_recursive",
+        "entries_before": 12944,
+        "entries_after": 12944,
+        "total_before": 12944,
+        "total_after": 12944,
+        "recursive_limit": 100000,
+        "truncated_before": false,
+        "truncated_after": false,
+        "exact_match": true,
+        "identity_digest": "sha256:5206b3380539f03e47dfc1bf6ee5d6289b0cd31e40b5bd17cebc89973ff370fe",
+        "snapshot_error_diffs": 0,
+        "model_revision_before": "sha256:5636da5e8cddb300f6aad3c1d39b64d6cd8d97db570f9044c9bb760983cd6727",
+        "model_revision_after": "sha256:5636da5e8cddb300f6aad3c1d39b64d6cd8d97db570f9044c9bb760983cd6727",
+        "model_revision_exact_match": true,
+        "model_revision_strategy": "definition-merkle.v2",
+        "model_revision_source_sha256": "b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134",
+        "active_verified_copy_after_reopen": true
+      },
+      "quality": {
+        "wrong_object_modification_count": 0,
+        "silent_geometry_corruption_count": 0,
+        "original_bytes_unchanged": true,
+        "disposable_copy_only": true,
+        "queue_clean": {
+          "queue": 0,
+          "processing": 0,
+          "responses": 0,
+          "lock": false
+        }
+      },
+      "artifacts": {
+        "report": {
+          "path": "output/live-validation/real-model-reliability/scaled-mirrored-locked-current-source-v2/real-model-reliability-live-case-report.v1.json",
+          "sha256": "0b28020f0b24599fba92c439c92bcf0e56bd99f8d4a4bec091bf3099a2097eb4",
+          "bytes": 6020
+        },
+        "diagnostic": {
+          "path": "output/live-validation/real-model-reliability/scaled-mirrored-locked-current-source-v2/live-work/preflight-8e9747dd-e2f1-4954-9a8c-284cfe5a7919/01-scaled-mirrored-locked/scaled-mirrored-locked.save-reopen-diagnostic.json",
+          "sha256": "e2ad086d0a02cc9baaa99a84b54f8235053beaba84be77b6896e730657239e4a",
+          "bytes": 1542
+        },
+        "source_model": {
+          "path": "output/live-validation/real-model-reliability-inputs/scaled-mirrored-locked-derived-v1/scaled-mirrored-locked.skp",
+          "sha256": "6c0040ad84a9f7b63a9681a89742ef44f195d721c72e3cc4dc4270922fd59af1",
+          "bytes": 533217
+        },
+        "contract": {
+          "path": "output/live-validation/real-model-reliability-inputs/scaled-mirrored-locked-derived-v1/scaled-mirrored-locked.reliability.json",
+          "sha256": "3bcb1ba2d5abee1ca6ca0d9fa25ce5e1e84fb2eb2daaa7dcb1b780ea854c0e7d",
+          "bytes": 836
+        },
+        "verified_model": {
+          "path": "output/live-validation/real-model-reliability/scaled-mirrored-locked-current-source-v2/live-work/preflight-8e9747dd-e2f1-4954-9a8c-284cfe5a7919/01-scaled-mirrored-locked/scaled-mirrored-locked.verified.skp",
+          "sha256": "3d7ee9c202421ea7d9b9698627f9e6ff49c9bb47c363a8c8d220495b451a4396",
+          "bytes": 533530
+        }
+      }
+    }
+  ],
+  "aggregate_metrics": {
+    "tasks_total": 11,
+    "tasks_passed": 11,
+    "task_success_rate": 1,
+    "geometry_mutation_cases_passed": 1,
+    "wrong_object_modification_count": 0,
+    "silent_geometry_corruption_count": 0,
+    "recovery_attempts": 1,
+    "recoveries": 1,
+    "recovery_rate": 1,
+    "aggregate_duration_ms": 1871306,
+    "queue_clean_after_each_case": true
+  },
+  "performance_boundary": {
+    "stress_case_id": "interior-expression",
+    "stress_case_duration_ms": 1291250,
+    "interactive_budget_ms": 120000,
+    "stress_case_within_interactive_budget": false,
+    "use_as_default_agent_payload": false,
+    "complete_revision_retained": true,
+    "bounded_occurrence_payload_retained": true,
+    "next_action": "separate_revision_attestation_from_payload_and_add_runtime_budget"
+  },
+  "locked_target_guard": {
+    "native_lock_gap_discovered": true,
+    "native_lock_alone_sufficient": false,
+    "application_guard_required": true,
+    "loaded_boolean_source_sha256": "7bf36679d5052ecf7963ce945a8bc91796fa91024a471804be024b502ff8900e",
+    "mutating_operations_guarded": 25,
+    "read_only_locked_access": [
+      "set_selection",
+      "manifold_check"
+    ],
+    "locked_batch_rejected_before_commit": true,
+    "locked_target_unchanged": true,
+    "guard_unchanged": true
+  },
+  "source_sha256": {
+    "test/reliability-corpus/manifest.json": "4faa8caf2a097c3d1a7810f1bf7635eceede8de3ca3674cda16519117c2377fa",
+    "scripts/aggregate-current-source-real-model-reliability-live-v2.mjs": "4fb151a8b730b1230ed45a8dbb04917b5b6ab0a0b0e6b6d38935891d2084e87a",
+    "scripts/run-real-model-reliability-live-case.mjs": "b3fd977be35612c37b6beb51f1151406ecd946eaec0d5c2da46259f31d6aa17b",
+    "schema/current-source-real-model-reliability-live-evidence-v2.schema.json": "4ebd0a941b70343aae3e05fa42059280c42c6f5cff5253f408042f0606c82be2",
+    "schema/locked-target-guard-live-evidence-v1.schema.json": "92d7e3b4d34dcf579994abec77b1461a1c3bec441715a923a58c10bf1fb56e93",
+    "schema/real-model-reliability-live-case-report-v1.schema.json": "e0531c951e77858a9e0e59290e4cbd0a66f22156d93186dedb2075fa910e75e8",
+    "schema/real-model-reliability-live-case-v1.schema.json": "34a85f645586f616bdf8d08edff8f98e3c4596266feb975626b2f9186a3a9261",
+    "sketchup_plugin/alma_sketchup_mcp.rb": "b8afb434c7a9c4e4463e47bd13b3aa87fa0f264bbc21c57b7ae176e0c2600595",
+    "sketchup_plugin/alma_sketchup_mcp/boolean_operations.rb": "7bf36679d5052ecf7963ce945a8bc91796fa91024a471804be024b502ff8900e",
+    "sketchup_plugin/alma_sketchup_mcp/model_revision.rb": "b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134",
+    "sketchup_plugin/alma_sketchup_mcp/runtime_source_manifest.rb": "cc0d68b153dee561c8a41515409677b05e831ffe85ede03a20dc70ec6b159692"
+  },
+  "acceptance": {
+    "three_case_live_reliability": true,
+    "full_recursive_save_reopen": true,
+    "bounded_large_model_save_reopen": true,
+    "shared_definition_scope": true,
+    "material_and_scene_preservation": true,
+    "mutation_cases_passed": 1,
+    "locked_transform_rollback": true,
+    "native_lock_guard_enforced": true,
+    "boolean_manifold": false,
+    "dirty_topology_recovery": false,
+    "appearance_uv_hidden_preservation": false,
+    "architecture_case": false,
+    "formal_corpus_cases_passed": 3,
+    "formal_corpus_cases_total": 7,
+    "formal_corpus_complete": false,
+    "agent_gateway_default_profile_qualified": false,
+    "cross_version": "deferred_by_user",
+    "release_acceptance": false
+  },
+  "boundaries": [
+    "This v2 wrapper preserves the immutable two-case evidence and adds one separately hash-bound scaled/mirrored/locked current-source live run.",
+    "The three formal cases total 11 of 11 named tasks with zero wrong-object modifications and zero silent geometry corruption.",
+    "The scaled/mirrored/locked run is the first promoted geometry-mutation case: the locked batch was rejected before commit, rollback isolation held, and only the exact transform target changed.",
+    "Native SketchUp locked state was proven insufficient against direct Ruby transforms; current acceptance therefore requires the attested application-level resolver guard.",
+    "The transformed model retained exact 12,944-entry recursive identity, an unchanged model revision after save/reopen, and zero snapshot errors.",
+    "The interior stress run remains outside the 120-second ordinary-Agent interactive budget, so this corpus is not a default projection contract.",
+    "Architecture, Boolean/manifold, imported dirty-topology recovery, appearance/UV/hidden preservation, independent Agent runs, and cross-version evidence remain open.",
+    "This is 3 of 7 partial engineering evidence only. It is not release acceptance and cannot grant execution authority to an Agent."
+  ]
+}

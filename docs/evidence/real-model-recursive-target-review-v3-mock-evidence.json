@@ -1,0 +1,130 @@
+{
+  "version": "real-model-recursive-target-review-v3-mock-evidence.v1",
+  "kind": "real_model_recursive_target_review_v3_mock_evidence",
+  "generated_at": "2026-07-21T08:00:00.000Z",
+  "verification_scope": [
+    "offline",
+    "portable_fixture",
+    "json_schema",
+    "v1_v2_compatibility",
+    "negative_trial_exact_runtime",
+    "runtime_source_delta_fail_closed",
+    "bbox_fill_ratio_sparsity_only"
+  ],
+  "contract": {
+    "version": "real-model-recursive-target-review.v3",
+    "base_review_version": "real-model-recursive-target-review.v2",
+    "negative_lineage_version": "negative-atomic-trial-lineage.v1",
+    "default_low_fill_threshold": 0.1,
+    "bbox_fill_ratio_semantics": "sparsity_hint_only_not_exact_overlap"
+  },
+  "runtime_cases": {
+    "historical_exact_match": {
+      "current_runtime_source_hashes": {
+        "boolean_operations_sha256": "sha256:2e3d686ba926f8b43f5a9847e05471587a217b536fd901811f10444948c2c444",
+        "model_revision_source_sha256": "sha256:b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134"
+      },
+      "negative_trial_runtime_source_hashes": {
+        "boolean_operations_sha256": "sha256:2e3d686ba926f8b43f5a9847e05471587a217b536fd901811f10444948c2c444",
+        "model_revision_source_sha256": "sha256:b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134"
+      },
+      "lineage_status": "exact_runtime_match",
+      "failed_pair_status": "confirmed_precommit_abort_exact_runtime",
+      "review_status": "blocked",
+      "automatic_s3_recommendation": false
+    },
+    "workspace_pending_delta": {
+      "current_runtime_source_hashes": {
+        "boolean_operations_sha256": "sha256:b98fd554894f629359651f40929cf30a7122ac90ba01217a662bea2f4c407610",
+        "model_revision_source_sha256": "sha256:b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134"
+      },
+      "negative_trial_runtime_source_hashes": {
+        "boolean_operations_sha256": "sha256:2e3d686ba926f8b43f5a9847e05471587a217b536fd901811f10444948c2c444",
+        "model_revision_source_sha256": "sha256:b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134"
+      },
+      "runtime_delta_fields": [
+        "boolean_operations_sha256"
+      ],
+      "lineage_status": "runtime_delta_requires_review",
+      "failed_pair_status": "negative_trial_not_directly_reusable",
+      "review_status": "blocked",
+      "next_action": "audit_runtime_source_delta_before_new_atomic_trial",
+      "automatic_s3_recommendation": false
+    }
+  },
+  "results": {
+    "v2_regression_assertions": 146,
+    "v3_focused_assertions": 140,
+    "exact_volume_preserved": true,
+    "exact_pair_excluded": true,
+    "failed_plan_replay_allowed": false,
+    "rank_2_automatic_recommendation": false,
+    "low_fill_containment_requires_stronger_evidence": true,
+    "runtime_delta_requires_review": true,
+    "runtime_delta_automatic_s3_recommendation": false,
+    "runner_source_evidence_verified": true,
+    "wrong_source_evidence_hash_rejected": true,
+    "source_evidence_path_escape_rejected": true,
+    "source_evidence_symlink_rejected": true,
+    "public_evidence_content_binding_negative_cases": 4,
+    "strict_negative_lineage_cases": 15
+  },
+  "artifact_bindings": {
+    "source_module": {
+      "path": "src/real-model-recursive-target-review.mjs",
+      "sha256": "sha256:71d85694f3ee57ca19bf06ebdc8c083850d4e4b8b65b77e0a05b445cbc90e56e"
+    },
+    "cli": {
+      "path": "scripts/review-real-model-recursive-targets.mjs",
+      "sha256": "sha256:9b6038dd05c49ca2cae0d5f6ece6c9692c30c348ec6bb5f5f2eb85292884217d"
+    },
+    "review_v1_schema": {
+      "path": "schema/real-model-recursive-target-review-v1.schema.json",
+      "sha256": "sha256:e47cb6ccb139b0511183ab49943718582bc762d89b13c8125e8a782b639273f5"
+    },
+    "review_v2_schema": {
+      "path": "schema/real-model-recursive-target-review-v2.schema.json",
+      "sha256": "sha256:f520c5366d10c6de581fc7e9a660c21100f84efbccdabb1a2c7062dd6d23b8c6"
+    },
+    "review_v3_schema": {
+      "path": "schema/real-model-recursive-target-review-v3.schema.json",
+      "sha256": "sha256:44ba0652b65c5eebf82bf00d2fcc483949477821df414352460bb8c44c855f3b"
+    },
+    "evidence_schema": {
+      "path": "schema/real-model-recursive-target-review-v3-evidence-v1.schema.json",
+      "sha256": "sha256:d3d86699bd8b18bd332eaaa54cad96afcdd826fd037b2268e4f3cb13d028b818"
+    },
+    "portable_fixture": {
+      "path": "test/fixtures/real-model-recursive-target-review-v3.json",
+      "sha256": "sha256:cd2a4115ee4a82d7e075cd65f49d9e98fb6010d02b94e84493e9b8d7d36ef4f9"
+    },
+    "focused_test": {
+      "path": "test/real-model-recursive-target-review-v3.mjs",
+      "sha256": "sha256:99d3f5f5e986f93ff4634dbc4bc55e8e429fa5f924ce1f52490923bbe5fa1d73"
+    },
+    "evidence_test": {
+      "path": "test/real-model-recursive-target-review-v3-evidence.mjs",
+      "sha256": "sha256:68288714f4e2b3dd6753486c77442708cfe8e702628433213e1cd366765a8b9c"
+    },
+    "workflow": {
+      "path": "docs/real-model-recursive-target-review-v3-workflow.md",
+      "sha256": "sha256:3c3803e83caaa60f47eb8cb3ab59e3104e6832d40f50a4a2d4b63df6c76e2c01"
+    },
+    "public_v8_failure_evidence": {
+      "path": "docs/evidence/portal-boolean-v8-failure-evidence-2026-07-21.json",
+      "sha256": "sha256:455fc88ae03141d67ebccd22fad71eaf75ab13d3967cb7540fa8c1808419e2a1"
+    }
+  },
+  "safety": {
+    "runtime": "offline",
+    "live_queue_called": false,
+    "queue_requests_created": 0,
+    "model_opened": false,
+    "model_mutation_requested": false,
+    "approval_token_requested": false,
+    "historical_runtime_hash_rewritten": false,
+    "runtime_delta_silently_ignored": false
+  },
+  "release_acceptance": false,
+  "boundary": "This artifact is portable mock evidence for Recursive Target Review v3 only. It proves that exact solid volume is retained from fresh, path-and-revision-bound structural manifold reports; bbox fill ratio is treated only as a sparsity hint; the confirmed Portal v8 precommit-abort pair is excluded under its exact historical loaded runtime; and a Boolean source-hash delta blocks every automatic S3 recommendation pending a trusted implementation-difference audit. It does not replay the failed task, call the queue, inspect a live model, authorize mutation, establish exact solid overlap, or provide release acceptance."
+}

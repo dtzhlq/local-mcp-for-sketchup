@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/schema/copy-fast-session-v1.schema.json",
+  "title": "CopyFastSessionV1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "kind",
+    "session_id",
+    "authority_session_id",
+    "policy_scope_fingerprint",
+    "trusted_scope_binding_hash",
+    "source_path_fingerprint",
+    "matched_root_fingerprint",
+    "model_key",
+    "runtime",
+    "initial_model_revision",
+    "issued_at",
+    "expires_at",
+    "binding_hash"
+  ],
+  "properties": {
+    "version": { "const": "copy-fast-session.v1" },
+    "kind": { "const": "copy_fast_session" },
+    "session_id": { "type": "string", "pattern": "^copy_session_[0-9a-f-]+$" },
+    "authority_session_id": { "type": "string", "minLength": 1 },
+    "policy_scope_fingerprint": { "$ref": "#/$defs/hash" },
+    "trusted_scope_binding_hash": { "$ref": "#/$defs/hash" },
+    "source_path_fingerprint": { "$ref": "#/$defs/hash" },
+    "matched_root_fingerprint": { "$ref": "#/$defs/hash" },
+    "model_key": { "type": "string", "pattern": "^model_[0-9a-f]{32}$" },
+    "runtime": { "enum": ["mock", "queue"] },
+    "initial_model_revision": { "$ref": "#/$defs/hash" },
+    "issued_at": { "type": "string", "format": "date-time" },
+    "expires_at": { "type": "string", "format": "date-time" },
+    "binding_hash": { "$ref": "#/$defs/hash" }
+  },
+  "$defs": {
+    "hash": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    }
+  }
+}

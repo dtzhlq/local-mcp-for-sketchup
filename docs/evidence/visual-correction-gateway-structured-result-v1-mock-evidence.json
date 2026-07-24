@@ -1,0 +1,68 @@
+{
+  "version": "visual-correction-gateway-structured-result-mock-evidence.v1",
+  "kind": "visual_correction_gateway_structured_result_mock_evidence",
+  "created_at": "2026-07-23T16:58:18.000Z",
+  "runtime": "mock_offline",
+  "result": "pass",
+  "contracts": {
+    "qa_result": "visual-correction-qa-result.v1",
+    "comparison": "background-normalized-visual-comparison.v1",
+    "agent_result": "agent-result-envelope.v1"
+  },
+  "acceptance": {
+    "source_lineage_bound": true,
+    "structured_result_schema_valid": true,
+    "background_normalized_structure_verdict": "coarse_structure_pass",
+    "background_normalized_segmentation_reliable": true,
+    "immutable_visual_artifact_handles": 8,
+    "l0_max_chars": 4096,
+    "l0_no_vision_supported": true,
+    "l0_no_local_files_supported": true,
+    "l0_full_result_paged": true,
+    "visual_similarity_accepted": false,
+    "execution_allowed": false,
+    "client_decision_injection_rejected": [
+      "comparison",
+      "visual_acceptance",
+      "review_or_execution"
+    ],
+    "diagnostic_boundary": {
+      "review_authority": "none",
+      "approval_authority": "none",
+      "execution_policy_effect": "none",
+      "promotion_allowed": false
+    },
+    "queue_called": false
+  },
+  "checks": [
+    {
+      "command": "node test/visual-correction.mjs",
+      "status": "passed"
+    },
+    {
+      "command": "node test/background-normalized-visual-comparison.mjs",
+      "status": "passed"
+    },
+    {
+      "command": "node test/agent-gateway.mjs",
+      "status": "passed"
+    },
+    {
+      "command": "node test/agent-gateway-production-capabilities.mjs",
+      "status": "passed"
+    }
+  ],
+  "source_hashes": {
+    "src/visual-correction.mjs": "a6e153aa20a1acf9dafa6b617d34b2b20562c62db200e2321e4d8f666cf24db4",
+    "src/background-normalized-visual-comparison.mjs": "d88c1069a5549e6757d6fb4f81e822378b7795725a92018ed04a4820806f13a8",
+    "src/agent-gateway.mjs": "30e5512b434d73ef686a37f31be8cf38f017ea45d1dbf95896811c9f13b4f022",
+    "src/agent-response-projection.mjs": "05f6e4d6f3b573e25de40de08a5afb2b181f459fb772e203035e4f34b3a97d35",
+    "schema/visual-correction-qa-result-v1.schema.json": "c36ba6a695d49c0f7c24e6c8b8a8f1d822e34d9a4e788fa3c1b7e7438ee37012",
+    "test/visual-correction.mjs": "08ce6d428401e9bed4821355c5be9a0e4d67c062d64f2c19bc4c130bfff46eb2",
+    "test/background-normalized-visual-comparison.mjs": "d07bd730cfd14160285d0abf73a299c59fe8c7294e0347291a49533f5f5837cf",
+    "test/agent-gateway.mjs": "16321f7570db2ebf347fc7fba0214bc5da9e9b1188cda6bb2032fba0645a8446",
+    "test/agent-gateway-production-capabilities.mjs": "bacdcb5ecbef7c9763a29d8699cf92b3af060ed62307510dfe79b041a8cb9f69"
+  },
+  "release_acceptance": false,
+  "boundary": "This immutable mock evidence proves the current-source structured QA result, background-normalized diagnostics, L0 no-vision/no-file projection, artifact paging, and fail-closed decision injection only. It does not prove external-reference camera comparability, visual similarity acceptance, live SketchUp mutation, human approval, or release acceptance."
+}

@@ -1,0 +1,278 @@
+{
+  "version": "real-model-recursive-target-review-v3-fixture.v1",
+  "kind": "portable_offline_recursive_review_fixture",
+  "context": {
+    "case_id": "portal_structure_disposable_copy",
+    "source_sha256": "sha256:4a75190929bfa47b1506a8ed037a08e0f08e1632169d9bb550c4a9219b43e90c",
+    "model_revision": "sha256:c03d317c25883606f0f8d7819610823118d916694d5a5d323deabe2ac7bcdf36",
+    "v8_loaded_runtime_source_hashes": {
+      "boolean_operations_sha256": "sha256:2e3d686ba926f8b43f5a9847e05471587a217b536fd901811f10444948c2c444",
+      "model_revision_source_sha256": "sha256:b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134"
+    },
+    "workspace_pending_runtime_source_hashes": {
+      "boolean_operations_sha256": "sha256:b98fd554894f629359651f40929cf30a7122ac90ba01217a662bea2f4c407610",
+      "model_revision_source_sha256": "sha256:b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134"
+    }
+  },
+  "negative_atomic_trial_lineage": {
+    "version": "negative-atomic-trial-lineage.v1",
+    "kind": "negative_atomic_trial_lineage",
+    "case_id": "portal_structure_disposable_copy",
+    "source_sha256": "sha256:4a75190929bfa47b1506a8ed037a08e0f08e1632169d9bb550c4a9219b43e90c",
+    "model_revision": "sha256:c03d317c25883606f0f8d7819610823118d916694d5a5d323deabe2ac7bcdf36",
+    "operation": "difference",
+    "target_path": "pid:11543",
+    "tool_path": "pid:11635",
+    "plan_id": "existing-edit-7e458d809376c461e913be6e",
+    "plan_hash": "sha256:8fb5cd2ef92c306d6593bbe83737adca01c875343e586de9d3ff57f93f695bea",
+    "source_evidence": {
+      "path": "docs/evidence/portal-boolean-v8-failure-evidence-2026-07-21.json",
+      "sha256": "sha256:455fc88ae03141d67ebccd22fad71eaf75ab13d3967cb7540fa8c1808419e2a1"
+    },
+    "runtime_source_hashes": {
+      "boolean_operations_sha256": "sha256:2e3d686ba926f8b43f5a9847e05471587a217b536fd901811f10444948c2c444",
+      "model_revision_source_sha256": "sha256:b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134"
+    },
+    "outcome": {
+      "error_code": "MUTATION_EXECUTION_FAILED",
+      "phase": "precommit_execution",
+      "commit_state": "not_committed",
+      "abort_succeeded": true,
+      "outcome_unknown": false,
+      "mutation_committed": false,
+      "rollback_confirmed": true,
+      "exact_solid_overlap_verified": false
+    },
+    "retry_policy": {
+      "approval_status_after_failure": "consumed_failed",
+      "approval_reusable": false,
+      "same_task_retry_allowed": false,
+      "previous_plan_or_approval_replay_allowed": false,
+      "automatic_retry_performed": false,
+      "automatic_replay_performed": false
+    },
+    "release_acceptance": false
+  },
+  "adoption": {
+    "kind": "adopt_open_model",
+    "read_only": true,
+    "model_revision": "sha256:c03d317c25883606f0f8d7819610823118d916694d5a5d323deabe2ac7bcdf36",
+    "model_revision_complete": true,
+    "model_revision_strategy": "definition-merkle.v2",
+    "model_revision_unique_entity_limit": 1000000,
+    "model_revision_unique_entities": 9588,
+    "model_revision_reachable_definitions": 11,
+    "model_revision_total_seen": 11474,
+    "document_id": "fixture_portal_document",
+    "model_identity": {
+      "document_id": "fixture_portal_document",
+      "source_kind": "portable_fixture"
+    },
+    "structural_groups": {
+      "version": "structural-groups.v1",
+      "total_seen": 3,
+      "total_seen_exact": true,
+      "returned": 3,
+      "truncated": false,
+      "limit": 500,
+      "fresh_manifold_requested": 3,
+      "fresh_manifold_matched": 3,
+      "fresh_manifold_unmatched": 0,
+      "entries": [
+        {
+          "entity_path": "pid:11543",
+          "parent_entity_path": null,
+          "scope_path": "model",
+          "persistent_id": "11543",
+          "path_segments": [
+            {
+              "entity_type": "group",
+              "persistent_id": "11543",
+              "reference": "fixture-target"
+            }
+          ],
+          "visible": true,
+          "locked": false,
+          "effective_visible": true,
+          "effective_locked": false,
+          "faces": 38,
+          "edges": 108,
+          "vertices": 72,
+          "parent_bounding_box": {
+            "min": [-7286.931445, 376.95, -1916.983936],
+            "max": [-4037.70638, 642.25, -318.145223],
+            "w": 3249.225065,
+            "d": 265.3,
+            "h": 1598.838713
+          },
+          "world_bounding_box": {
+            "min": [-7286.931445, 376.95, -1916.983936],
+            "max": [-4037.70638, 642.25, -318.145223],
+            "w": 3249.225065,
+            "d": 265.3,
+            "h": 1598.838713
+          },
+          "name": "untrusted fixture target",
+          "material": null,
+          "tag": "untrusted fixture tag",
+          "affected_instance_count": 1,
+          "shared_definition": false,
+          "instance_policy_required": false,
+          "manifold_attestation": {
+            "status": "fresh_matched",
+            "fresh": true,
+            "matched": true,
+            "entity_path": "pid:11543",
+            "model_revision": "sha256:c03d317c25883606f0f8d7819610823118d916694d5a5d323deabe2ac7bcdf36",
+            "is_manifold": true,
+            "report": {
+              "entity_path": "pid:11543",
+              "model_revision": "sha256:c03d317c25883606f0f8d7819610823118d916694d5a5d323deabe2ac7bcdf36",
+              "persistent_id": "11543",
+              "is_manifold": true,
+              "checked": true,
+              "faces": 38,
+              "edges": 108,
+              "vertices": 72,
+              "volume": 61350393.972267,
+              "checks": {
+                "positive_volume": true
+              }
+            }
+          }
+        },
+        {
+          "entity_path": "pid:11635",
+          "parent_entity_path": null,
+          "scope_path": "model",
+          "persistent_id": "11635",
+          "path_segments": [
+            {
+              "entity_type": "group",
+              "persistent_id": "11635",
+              "reference": "fixture-v8-failed-tool"
+            }
+          ],
+          "visible": true,
+          "locked": false,
+          "effective_visible": true,
+          "effective_locked": false,
+          "faces": 8,
+          "edges": 18,
+          "vertices": 12,
+          "parent_bounding_box": {
+            "min": [-6024.107717, 376.95, -1510.638035],
+            "max": [-5830.315299, 503.15, -814.163406],
+            "w": 193.792418,
+            "d": 126.2,
+            "h": 696.474629
+          },
+          "world_bounding_box": {
+            "min": [-6024.107717, 376.95, -1510.638035],
+            "max": [-5830.315299, 503.15, -814.163406],
+            "w": 193.792418,
+            "d": 126.2,
+            "h": 696.474629
+          },
+          "name": "untrusted fixture failed tool",
+          "material": null,
+          "tag": "untrusted fixture tag",
+          "affected_instance_count": 1,
+          "shared_definition": false,
+          "instance_policy_required": false,
+          "manifold_attestation": {
+            "status": "fresh_matched",
+            "fresh": true,
+            "matched": true,
+            "entity_path": "pid:11635",
+            "model_revision": "sha256:c03d317c25883606f0f8d7819610823118d916694d5a5d323deabe2ac7bcdf36",
+            "is_manifold": true,
+            "report": {
+              "entity_path": "pid:11635",
+              "model_revision": "sha256:c03d317c25883606f0f8d7819610823118d916694d5a5d323deabe2ac7bcdf36",
+              "persistent_id": "11635",
+              "is_manifold": true,
+              "checked": true,
+              "faces": 8,
+              "edges": 18,
+              "vertices": 12,
+              "volume": 723623.440001,
+              "checks": {
+                "positive_volume": true
+              }
+            }
+          }
+        },
+        {
+          "entity_path": "pid:11636",
+          "parent_entity_path": null,
+          "scope_path": "model",
+          "persistent_id": "11636",
+          "path_segments": [
+            {
+              "entity_type": "group",
+              "persistent_id": "11636",
+              "reference": "fixture-alternative-tool"
+            }
+          ],
+          "visible": true,
+          "locked": false,
+          "effective_visible": true,
+          "effective_locked": false,
+          "faces": 8,
+          "edges": 18,
+          "vertices": 12,
+          "parent_bounding_box": {
+            "min": [-6194.05762, 516.05, -1514.792589],
+            "max": [-5677.991148, 642.25, -814.731658],
+            "w": 516.066472,
+            "d": 126.2,
+            "h": 700.060931
+          },
+          "world_bounding_box": {
+            "min": [-6194.05762, 516.05, -1514.792589],
+            "max": [-5677.991148, 642.25, -814.731658],
+            "w": 516.066472,
+            "d": 126.2,
+            "h": 700.060931
+          },
+          "name": "untrusted fixture alternative tool",
+          "material": null,
+          "tag": "untrusted fixture tag",
+          "affected_instance_count": 1,
+          "shared_definition": false,
+          "instance_policy_required": false,
+          "manifold_attestation": {
+            "status": "fresh_matched",
+            "fresh": true,
+            "matched": true,
+            "entity_path": "pid:11636",
+            "model_revision": "sha256:c03d317c25883606f0f8d7819610823118d916694d5a5d323deabe2ac7bcdf36",
+            "is_manifold": true,
+            "report": {
+              "entity_path": "pid:11636",
+              "model_revision": "sha256:c03d317c25883606f0f8d7819610823118d916694d5a5d323deabe2ac7bcdf36",
+              "persistent_id": "11636",
+              "is_manifold": true,
+              "checked": true,
+              "faces": 8,
+              "edges": 18,
+              "vertices": 12,
+              "volume": 723623.440001,
+              "checks": {
+                "positive_volume": true
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "policy": {
+    "fixture_only": true,
+    "portable": true,
+    "live_queue_called": false,
+    "model_mutation_performed": false,
+    "release_acceptance": false
+  }
+}

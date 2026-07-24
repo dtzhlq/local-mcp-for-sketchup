@@ -1,0 +1,27 @@
+{
+  "version": "real-model-recursive-live-readonly-witness.v1",
+  "capability_version": "0.1.0-rc.2-capabilities.6",
+  "structural_groups_version": "structural-groups.v1",
+  "contract": {
+    "total_groups": 41,
+    "fresh_manifold_matched": 15,
+    "manifold": 1,
+    "non_manifold": 14,
+    "terminal_blocker": "no_manifold_qualified_pair",
+    "next_action": "select_manifold_qualified_disposable_model_case"
+  },
+  "hash_bindings": {
+    "wrapper": "sha256:0f834f17ed128db864a0e07792f002abcb268c8ed37edbb26a05bf7ee08963b4",
+    "wrapper_schema": "sha256:1b50ac936002615e281e2326ac55390170d6dc07db97bbb1d7c9b873d29d5edc",
+    "inventory": "sha256:6bd2a4c2e1215e7bdaa1b4fe192023370398e5224efee1a757042c0947ba6c09",
+    "semantic_mapping": "sha256:72a1508783d2f34a927e994d5c45ea7cb797388d572b6af4ab208fe68e73191d",
+    "semantic_mapping_amendment": "sha256:52dd22fdc730095d0de1566885d16bde15c0dae73d24308943df7a716d191268",
+    "session_contract_capture": "sha256:4fcf841b2c04c92b0babff4dc87f6fa35bf430f8773d06780a90e8daec46f20b",
+    "structural_phase1_capture": "sha256:bf0cd2207f78067d3af75dcbbc325a3b84c3f1f9c3693c816ead74857b3ab31d",
+    "structural_terminal_capture": "sha256:ff82aea9dba2d7b39cc4fdac1684377f68e54f939850be8104af0d21663fbedf",
+    "recursive_terminal_review_capture": "sha256:00e27067a484789e4e1eccd42d1eb9d92bb0eda705fb31ab34a518b807153ce5"
+  },
+  "read_only": true,
+  "mutation_authorized": false,
+  "release_acceptance": false
+}

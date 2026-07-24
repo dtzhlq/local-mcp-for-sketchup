@@ -1,0 +1,269 @@
+{
+  "version": "fresh-process-multi-model-visual-evidence.v1",
+  "kind": "fresh_process_multi_model_read_only_visual_consistency",
+  "captured_at": "2026-07-23T15:26:26.453Z",
+  "branch": "codex/agent-contract-v1",
+  "result": "pass",
+  "runtime": {
+    "plugin_version": "0.1.0-rc.2",
+    "sketchup_version": "26.2.242",
+    "capability_version": "0.1.0-rc.2-capabilities.7",
+    "manifest_version": "2026-07-agent-contract-v1.4",
+    "model_revision_strategy": "definition-merkle.v2",
+    "compatibility_ok": true
+  },
+  "source_sha256": {
+    "src/background-normalized-visual-comparison.mjs": "d88c1069a5549e6757d6fb4f81e822378b7795725a92018ed04a4820806f13a8",
+    "scripts/run-fresh-process-multi-model-visual-live.mjs": "6bfc43408e8b002dff2f5c08d5d381f55b38617aa9c88c5505b6abbb3cf9b7e6",
+    "schema/background-normalized-visual-comparison-v1.schema.json": "28d4fad9bd4b805a8783364304819d26fbcd15569fe4bf52b03036105408a757",
+    "schema/fresh-process-multi-model-visual-evidence-v1.schema.json": "dba6cce68a460cca600cea36e63cab362b71a754f40f47a9eaee4a9447b373a4",
+    "test/fresh-process-multi-model-visual-runner.mjs": "3fe434ad62f7a53c23d62eadce58ad1931ae16f1e8ca26d42e8376c68aa05e09",
+    "test/fresh-process-multi-model-visual-evidence.mjs": "6b3c8e8f68f09f33d7d693466add81b2b25cc4d77a31f66347b7fdaa3232377f"
+  },
+  "cases": [
+    {
+      "case_id": "architecture",
+      "domain": "architecture",
+      "fixture_handle": "fixture:sha256:1b95de536965ea630ac7f2768ea8ccbfea0620f4bcbc337cbbf4f59c67d416fa",
+      "source_fixture_unchanged": true,
+      "working_copy_unchanged": true,
+      "size_bytes": 147280,
+      "model_key_distinct": true,
+      "model_revision": "sha256:7b486013b42b515265c296f16e02390a185fb7532ff2229c50b84345bfd0a027",
+      "logical_occurrences": 5859,
+      "recursive_complete": true,
+      "full_restart": {
+        "plugin_session_changed": true,
+        "raw_session_values_omitted": true,
+        "model_key_exact": true,
+        "graph_id_exact": true,
+        "model_revision_exact": true,
+        "camera_hash_exact": true,
+        "capture_spec_hash_exact": true
+      },
+      "before_capture": {
+        "image": {
+          "path": "output/live-validation/visual-consistency/current-source-2026-07-23-v1/captures/architecture/before.png",
+          "sha256": "sha256:c5fcf20c51b87b3718e9a2f8973df489f2926c5b8e1d164dd352a14f8f34e1de",
+          "width": 1280,
+          "height": 720,
+          "size_bytes": 43547
+        },
+        "model_revision": "sha256:7b486013b42b515265c296f16e02390a185fb7532ff2229c50b84345bfd0a027",
+        "logical_occurrences": 5859,
+        "indexed_occurrences": 5859,
+        "recursive_truncated": false,
+        "camera_hash": "sha256:6823a8f2ba784a72a75df0e74802256af64cf77f351abd8dd483455a2ff0c9c2",
+        "capture_spec_hash": "sha256:749b0f5fccf5fa6b4f8e22f7204f2e1e7a8d660b2f0648aeb2a4e5b3a878e2bd",
+        "state_unchanged": true,
+        "view_unchanged": true,
+        "model_modified": false,
+        "runtime": {
+          "plugin_version": "0.1.0-rc.2",
+          "sketchup_version": "26.2.242",
+          "capability_version": "0.1.0-rc.2-capabilities.7",
+          "manifest_version": "2026-07-agent-contract-v1.4",
+          "model_revision_strategy": "definition-merkle.v2",
+          "compatibility_ok": true
+        }
+      },
+      "after_capture": {
+        "image": {
+          "path": "output/live-validation/visual-consistency/current-source-2026-07-23-v1/captures/architecture/after.png",
+          "sha256": "sha256:c5fcf20c51b87b3718e9a2f8973df489f2926c5b8e1d164dd352a14f8f34e1de",
+          "width": 1280,
+          "height": 720,
+          "size_bytes": 43547
+        },
+        "model_revision": "sha256:7b486013b42b515265c296f16e02390a185fb7532ff2229c50b84345bfd0a027",
+        "logical_occurrences": 5859,
+        "indexed_occurrences": 5859,
+        "recursive_truncated": false,
+        "camera_hash": "sha256:6823a8f2ba784a72a75df0e74802256af64cf77f351abd8dd483455a2ff0c9c2",
+        "capture_spec_hash": "sha256:749b0f5fccf5fa6b4f8e22f7204f2e1e7a8d660b2f0648aeb2a4e5b3a878e2bd",
+        "state_unchanged": true,
+        "view_unchanged": true,
+        "model_modified": false,
+        "runtime": {
+          "plugin_version": "0.1.0-rc.2",
+          "sketchup_version": "26.2.242",
+          "capability_version": "0.1.0-rc.2-capabilities.7",
+          "manifest_version": "2026-07-agent-contract-v1.4",
+          "model_revision_strategy": "definition-merkle.v2",
+          "compatibility_ok": true
+        }
+      },
+      "comparison": {
+        "path": "output/live-validation/visual-consistency/current-source-2026-07-23-v1/captures/architecture/background-normalized/comparison.json",
+        "sha256": "1b79113cb850018d399d76e2c8437c823398bb1fd501a44659697f7520c6e168",
+        "comparison_id": "background-visual-92a69f305cc2447e3cc49283",
+        "comparison_hash": "sha256:92a69f305cc2447e3cc49283be65f89eac09c22d87354dcefb47e9f68c4d7c54",
+        "image_bytes_equal": true,
+        "structure_verdict": "coarse_structure_pass",
+        "intersection_over_union": 1,
+        "dice_coefficient": 1,
+        "appearance_mean_absolute_error": 0,
+        "appearance_root_mean_square_error": 0
+      },
+      "queue_before": {
+        "queue": 0,
+        "processing": 0,
+        "responses": 0,
+        "lock_exists": false
+      },
+      "queue_after": {
+        "queue": 0,
+        "processing": 0,
+        "responses": 0,
+        "lock_exists": false
+      }
+    },
+    {
+      "case_id": "product",
+      "domain": "product",
+      "fixture_handle": "fixture:sha256:d3f81bdc748e8326c77d1c5f78c1c7d7420cbe0ca244494c1f2fbeb8f480e092",
+      "source_fixture_unchanged": true,
+      "working_copy_unchanged": true,
+      "size_bytes": 3114415,
+      "model_key_distinct": true,
+      "model_revision": "sha256:bfe8eac459e7140cb1636a22a029a7110f76ba58cfd3fd3101a440c0c342ebba",
+      "logical_occurrences": 71626,
+      "recursive_complete": true,
+      "full_restart": {
+        "plugin_session_changed": true,
+        "raw_session_values_omitted": true,
+        "model_key_exact": true,
+        "graph_id_exact": true,
+        "model_revision_exact": true,
+        "camera_hash_exact": true,
+        "capture_spec_hash_exact": true
+      },
+      "before_capture": {
+        "image": {
+          "path": "output/live-validation/visual-consistency/current-source-2026-07-23-v1/captures/product/before.png",
+          "sha256": "sha256:4e0e20f828f47cff8b60ef74c71651429859e606709015a3061cd3fc449e5059",
+          "width": 1280,
+          "height": 720,
+          "size_bytes": 63156
+        },
+        "model_revision": "sha256:bfe8eac459e7140cb1636a22a029a7110f76ba58cfd3fd3101a440c0c342ebba",
+        "logical_occurrences": 71626,
+        "indexed_occurrences": 71626,
+        "recursive_truncated": false,
+        "camera_hash": "sha256:b8bd9e83a0fdb91b54d3a3d01f655d14d8fe127187c20f89531016c5d04adbb9",
+        "capture_spec_hash": "sha256:749b0f5fccf5fa6b4f8e22f7204f2e1e7a8d660b2f0648aeb2a4e5b3a878e2bd",
+        "state_unchanged": true,
+        "view_unchanged": true,
+        "model_modified": false,
+        "runtime": {
+          "plugin_version": "0.1.0-rc.2",
+          "sketchup_version": "26.2.242",
+          "capability_version": "0.1.0-rc.2-capabilities.7",
+          "manifest_version": "2026-07-agent-contract-v1.4",
+          "model_revision_strategy": "definition-merkle.v2",
+          "compatibility_ok": true
+        }
+      },
+      "after_capture": {
+        "image": {
+          "path": "output/live-validation/visual-consistency/current-source-2026-07-23-v1/captures/product/after.png",
+          "sha256": "sha256:4e0e20f828f47cff8b60ef74c71651429859e606709015a3061cd3fc449e5059",
+          "width": 1280,
+          "height": 720,
+          "size_bytes": 63156
+        },
+        "model_revision": "sha256:bfe8eac459e7140cb1636a22a029a7110f76ba58cfd3fd3101a440c0c342ebba",
+        "logical_occurrences": 71626,
+        "indexed_occurrences": 71626,
+        "recursive_truncated": false,
+        "camera_hash": "sha256:b8bd9e83a0fdb91b54d3a3d01f655d14d8fe127187c20f89531016c5d04adbb9",
+        "capture_spec_hash": "sha256:749b0f5fccf5fa6b4f8e22f7204f2e1e7a8d660b2f0648aeb2a4e5b3a878e2bd",
+        "state_unchanged": true,
+        "view_unchanged": true,
+        "model_modified": false,
+        "runtime": {
+          "plugin_version": "0.1.0-rc.2",
+          "sketchup_version": "26.2.242",
+          "capability_version": "0.1.0-rc.2-capabilities.7",
+          "manifest_version": "2026-07-agent-contract-v1.4",
+          "model_revision_strategy": "definition-merkle.v2",
+          "compatibility_ok": true
+        }
+      },
+      "comparison": {
+        "path": "output/live-validation/visual-consistency/current-source-2026-07-23-v1/captures/product/background-normalized/comparison.json",
+        "sha256": "52b1b5d7416a3fedf5e8f155311a471f56c16031f7ab364826229d3193d360ff",
+        "comparison_id": "background-visual-cf46292d479e84baa2497082",
+        "comparison_hash": "sha256:cf46292d479e84baa249708238b1f04f9ac307250ca7405ba5c10c2ea729f142",
+        "image_bytes_equal": true,
+        "structure_verdict": "coarse_structure_pass",
+        "intersection_over_union": 1,
+        "dice_coefficient": 1,
+        "appearance_mean_absolute_error": 0,
+        "appearance_root_mean_square_error": 0
+      },
+      "queue_before": {
+        "queue": 0,
+        "processing": 0,
+        "responses": 0,
+        "lock_exists": false
+      },
+      "queue_after": {
+        "queue": 0,
+        "processing": 0,
+        "responses": 0,
+        "lock_exists": false
+      }
+    }
+  ],
+  "aggregate": {
+    "case_count": 2,
+    "distinct_model_keys": 2,
+    "distinct_model_revisions": 2,
+    "full_restart_cases": 2,
+    "camera_hash_exact_cases": 2,
+    "coarse_structure_pass_cases": 2,
+    "model_bytes_changed_cases": 0,
+    "model_modified_cases": 0,
+    "queue_residue_cases": 0
+  },
+  "agent_compatibility": {
+    "visual_agent_required": false,
+    "local_files_required": false,
+    "structured_summary_available": true
+  },
+  "policy_invariants": {
+    "read_only_capture_only": true,
+    "model_mutation_performed": false,
+    "model_save_performed": false,
+    "approval_challenge_created": false,
+    "approval_token_exposed_to_agent": false,
+    "image_content_policy_effect": "none",
+    "visual_similarity_accepted": false
+  },
+  "artifact_sha256": {
+    "output/live-validation/visual-consistency/current-source-2026-07-23-v1/captures/architecture/before.png": "c5fcf20c51b87b3718e9a2f8973df489f2926c5b8e1d164dd352a14f8f34e1de",
+    "output/live-validation/visual-consistency/current-source-2026-07-23-v1/captures/architecture/after.png": "c5fcf20c51b87b3718e9a2f8973df489f2926c5b8e1d164dd352a14f8f34e1de",
+    "output/live-validation/visual-consistency/current-source-2026-07-23-v1/captures/architecture/background-normalized/comparison.json": "1b79113cb850018d399d76e2c8437c823398bb1fd501a44659697f7520c6e168",
+    "output/live-validation/visual-consistency/current-source-2026-07-23-v1/captures/architecture/background-normalized/reference-mask.png": "c67a97c030968cb9e0243056852c356b1ab6cd98edad03fd6e314f5a7f1ff11d",
+    "output/live-validation/visual-consistency/current-source-2026-07-23-v1/captures/architecture/background-normalized/capture-mask.png": "c67a97c030968cb9e0243056852c356b1ab6cd98edad03fd6e314f5a7f1ff11d",
+    "output/live-validation/visual-consistency/current-source-2026-07-23-v1/captures/architecture/background-normalized/registered-reference.png": "85ae6008e2264d1d929563430e01ca251ad3ee28b188b7b79eb11167a88f115d",
+    "output/live-validation/visual-consistency/current-source-2026-07-23-v1/captures/architecture/background-normalized/registered-capture.png": "85ae6008e2264d1d929563430e01ca251ad3ee28b188b7b79eb11167a88f115d",
+    "output/live-validation/visual-consistency/current-source-2026-07-23-v1/captures/architecture/background-normalized/silhouette-overlay.png": "1b950409ce01611ff56c193789a21ca7a528647235ac6d1c5a58afd24d083d51",
+    "output/live-validation/visual-consistency/current-source-2026-07-23-v1/captures/product/before.png": "4e0e20f828f47cff8b60ef74c71651429859e606709015a3061cd3fc449e5059",
+    "output/live-validation/visual-consistency/current-source-2026-07-23-v1/captures/product/after.png": "4e0e20f828f47cff8b60ef74c71651429859e606709015a3061cd3fc449e5059",
+    "output/live-validation/visual-consistency/current-source-2026-07-23-v1/captures/product/background-normalized/comparison.json": "52b1b5d7416a3fedf5e8f155311a471f56c16031f7ab364826229d3193d360ff",
+    "output/live-validation/visual-consistency/current-source-2026-07-23-v1/captures/product/background-normalized/reference-mask.png": "efdb413d8ada502680c7409faf216d76d1a45321142baea9a9886f35c6a8eee5",
+    "output/live-validation/visual-consistency/current-source-2026-07-23-v1/captures/product/background-normalized/capture-mask.png": "efdb413d8ada502680c7409faf216d76d1a45321142baea9a9886f35c6a8eee5",
+    "output/live-validation/visual-consistency/current-source-2026-07-23-v1/captures/product/background-normalized/registered-reference.png": "571335f6e2052dbfb077a523027147de84049a5b656241c5367e043aa8d0982c",
+    "output/live-validation/visual-consistency/current-source-2026-07-23-v1/captures/product/background-normalized/registered-capture.png": "571335f6e2052dbfb077a523027147de84049a5b656241c5367e043aa8d0982c",
+    "output/live-validation/visual-consistency/current-source-2026-07-23-v1/captures/product/background-normalized/silhouette-overlay.png": "6d518f3f9c06678f51459dd140ea643b288a9ca9bc3b1faa6742145d9ea68085"
+  },
+  "release_acceptance": false,
+  "boundaries": [
+    "The two cases prove server-owned current-view capture consistency across full plugin-process restarts with one SketchUp instance at a time.",
+    "The first capture is an internal same-model reference; this is not an external-reference correction-quality benchmark.",
+    "No model edit, save, approval, CorrectionPatch promotion, or visual-similarity acceptance occurs.",
+    "Cross-version validation remains deferred by the user."
+  ]
+}

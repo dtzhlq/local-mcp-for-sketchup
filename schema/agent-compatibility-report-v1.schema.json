@@ -3,21 +3,360 @@
   "$id": "https://alma.local/schema/agent-compatibility-report-v1.schema.json",
   "title": "AgentCompatibilityReportV1",
   "type": "object",
-  "required": ["version", "kind", "runtime", "levels", "aggregate", "hard_gates"],
+  "additionalProperties": false,
+  "required": [
+    "version", "kind", "runtime", "brand_specific", "profile_version", "levels",
+    "aggregate", "gateway_audit", "mutation_ledger", "hard_gates", "live_queue_called"
+  ],
   "properties": {
     "version": { "const": "agent-compatibility-report.v1" },
     "kind": { "const": "agent_compatibility_report" },
     "runtime": { "const": "mock" },
-    "levels": { "type": "array", "minItems": 3, "items": { "type": "object", "required": ["level", "completion_rate", "tool_calls", "schema_errors", "invalid_retries", "recovery_rate"] } },
-    "aggregate": { "type": "object" },
+    "brand_specific": { "const": false },
+    "profile_version": { "const": "agent-capability-profile.v1" },
+    "levels": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": { "$ref": "#/$defs/level_report" },
+      "allOf": [
+        { "contains": { "properties": { "level": { "const": "L0" } }, "required": ["level"] }, "minContains": 1, "maxContains": 1 },
+        { "contains": { "properties": { "level": { "const": "L1" } }, "required": ["level"] }, "minContains": 1, "maxContains": 1 },
+        { "contains": { "properties": { "level": { "const": "L2" } }, "required": ["level"] }, "minContains": 1, "maxContains": 1 }
+      ]
+    },
+    "aggregate": { "$ref": "#/$defs/metrics" },
+    "gateway_audit": { "$ref": "#/$defs/gateway_audit" },
+    "mutation_ledger": { "type": "array", "items": { "$ref": "#/$defs/mutation_entry" } },
+    "hard_gates": { "$ref": "#/$defs/hard_gates" },
+    "live_queue_called": { "const": false }
+  },
+  "$defs": {
+    "non_negative_integer": { "type": "integer", "minimum": 0 },
+    "rate": { "type": "number", "minimum": 0, "maximum": 1 },
+    "capabilities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["vision", "local_files", "structured_output", "context", "parallel"],
+      "properties": {
+        "vision": { "type": "boolean" },
+        "local_files": { "type": "boolean" },
+        "structured_output": { "type": "boolean" },
+        "context": { "enum": ["short", "standard", "long"] },
+        "parallel": { "type": "boolean" }
+      }
+    },
+    "constraint_toggle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["declared", "enforced"],
+      "properties": {
+        "declared": { "type": "boolean" },
+        "enforced": { "type": "boolean" }
+      }
+    },
+    "constraints": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["context", "local_files", "vision", "structured_output", "parallel", "max_in_flight", "tool_surface"],
+      "properties": {
+        "context": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["declared", "max_chars", "enforced"],
+          "properties": {
+            "declared": { "enum": ["short", "standard", "long"] },
+            "max_chars": { "type": "integer", "minimum": 256 },
+            "enforced": { "type": "boolean" }
+          }
+        },
+        "local_files": { "$ref": "#/$defs/constraint_toggle" },
+        "vision": { "$ref": "#/$defs/constraint_toggle" },
+        "structured_output": { "$ref": "#/$defs/constraint_toggle" },
+        "parallel": { "$ref": "#/$defs/constraint_toggle" },
+        "max_in_flight": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["limit", "enforced"],
+          "properties": {
+            "limit": { "type": "integer", "minimum": 1 },
+            "enforced": { "type": "boolean" }
+          }
+        },
+        "tool_surface": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["declared", "allowed_tools", "enforced"],
+          "properties": {
+            "declared": { "const": "agent_gateway" },
+            "allowed_tools": {
+              "const": ["start_agent_task", "resume_agent_task", "submit_agent_task_input", "read_agent_artifact"]
+            },
+            "enforced": { "type": "boolean" }
+          }
+        }
+      }
+    },
+    "capability_violation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["constraint", "message"],
+      "properties": {
+        "constraint": {
+          "enum": ["tool_surface", "context_budget", "local_files", "vision", "structured_output", "max_in_flight"]
+        },
+        "message": { "type": "string", "minLength": 1 }
+      }
+    },
+    "scenario_result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status", "coverage", "constraint_enforced", "agent_tool_calls", "artifact_page_tool_calls", "fixture_calls",
+        "trusted_host_calls", "text_only_round_trips", "text_only_round_trip_failures", "violations", "notes"
+      ],
+      "properties": {
+        "status": { "enum": ["passed", "failed"] },
+        "coverage": { "enum": ["full", "partial", "label_only"] },
+        "constraint_enforced": { "type": "boolean" },
+        "agent_tool_calls": { "$ref": "#/$defs/non_negative_integer" },
+        "artifact_page_tool_calls": { "$ref": "#/$defs/non_negative_integer" },
+        "fixture_calls": { "$ref": "#/$defs/non_negative_integer" },
+        "trusted_host_calls": { "$ref": "#/$defs/non_negative_integer" },
+        "text_only_round_trips": { "$ref": "#/$defs/non_negative_integer" },
+        "text_only_round_trip_failures": { "const": 0 },
+        "violations": { "type": "array", "items": { "$ref": "#/$defs/capability_violation" } },
+        "notes": { "type": "string", "minLength": 1 }
+      }
+    },
+    "scenario_results": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "invalid_arguments", "create_idempotent_retry", "understand_resume", "ambiguous_edit",
+        "make_unique", "image_summary", "stale_recovery_and_approval"
+      ],
+      "properties": {
+        "invalid_arguments": { "$ref": "#/$defs/scenario_result" },
+        "create_idempotent_retry": { "$ref": "#/$defs/scenario_result" },
+        "understand_resume": { "$ref": "#/$defs/scenario_result" },
+        "ambiguous_edit": { "$ref": "#/$defs/scenario_result" },
+        "make_unique": { "$ref": "#/$defs/scenario_result" },
+        "image_summary": { "$ref": "#/$defs/scenario_result" },
+        "stale_recovery_and_approval": { "$ref": "#/$defs/scenario_result" }
+      }
+    },
+    "top_k_metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["attempts", "hits", "rate"],
+      "properties": {
+        "attempts": { "$ref": "#/$defs/non_negative_integer" },
+        "hits": { "$ref": "#/$defs/non_negative_integer" },
+        "rate": { "$ref": "#/$defs/rate" }
+      }
+    },
+    "recovery_metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["attempts", "successes", "rate"],
+      "properties": {
+        "attempts": { "$ref": "#/$defs/non_negative_integer" },
+        "successes": { "$ref": "#/$defs/non_negative_integer" },
+        "rate": { "$ref": "#/$defs/rate" }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scenarios", "completed_scenarios", "completion_rate", "agent_tool_calls", "artifact_page_tool_calls", "fixture_calls",
+        "trusted_host_calls", "expected_schema_rejections", "unexpected_schema_errors",
+        "invalid_retry_attempts", "invalid_retries_blocked", "invalid_retries_executed",
+        "target_top_k", "recovery", "context_budget_violations", "path_violations",
+        "image_content_violations", "concurrency_violations", "text_only_round_trips", "text_only_round_trip_failures"
+      ],
+      "properties": {
+        "scenarios": { "$ref": "#/$defs/non_negative_integer" },
+        "completed_scenarios": { "$ref": "#/$defs/non_negative_integer" },
+        "completion_rate": { "$ref": "#/$defs/rate" },
+        "agent_tool_calls": { "$ref": "#/$defs/non_negative_integer" },
+        "artifact_page_tool_calls": { "$ref": "#/$defs/non_negative_integer" },
+        "fixture_calls": { "$ref": "#/$defs/non_negative_integer" },
+        "trusted_host_calls": { "$ref": "#/$defs/non_negative_integer" },
+        "expected_schema_rejections": { "$ref": "#/$defs/non_negative_integer" },
+        "unexpected_schema_errors": { "$ref": "#/$defs/non_negative_integer" },
+        "invalid_retry_attempts": { "$ref": "#/$defs/non_negative_integer" },
+        "invalid_retries_blocked": { "$ref": "#/$defs/non_negative_integer" },
+        "invalid_retries_executed": { "$ref": "#/$defs/non_negative_integer" },
+        "target_top_k": { "$ref": "#/$defs/top_k_metrics" },
+        "recovery": { "$ref": "#/$defs/recovery_metrics" },
+        "context_budget_violations": { "$ref": "#/$defs/non_negative_integer" },
+        "path_violations": { "$ref": "#/$defs/non_negative_integer" },
+        "image_content_violations": { "$ref": "#/$defs/non_negative_integer" },
+        "concurrency_violations": { "$ref": "#/$defs/non_negative_integer" },
+        "text_only_round_trips": { "$ref": "#/$defs/non_negative_integer" },
+        "text_only_round_trip_failures": { "const": 0 }
+      }
+    },
     "hard_gates": {
       "type": "object",
+      "additionalProperties": false,
       "required": ["wrong_object_automatic_execution", "unauthorized_s2_s4_execution", "duplicate_request_duplicate_modification"],
       "properties": {
         "wrong_object_automatic_execution": { "const": 0 },
         "unauthorized_s2_s4_execution": { "const": 0 },
         "duplicate_request_duplicate_modification": { "const": 0 }
       }
+    },
+    "gateway_audit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "source", "events", "mutation_events", "model_diffs", "durable_receipts", "event_hash"],
+      "properties": {
+        "version": { "const": "agent-gateway-mutation-audit-summary.v1" },
+        "source": { "const": "actual_gateway_dispatch_and_model_diff" },
+        "events": { "$ref": "#/$defs/non_negative_integer" },
+        "mutation_events": { "$ref": "#/$defs/non_negative_integer" },
+        "model_diffs": { "$ref": "#/$defs/non_negative_integer" },
+        "durable_receipts": { "$ref": "#/$defs/non_negative_integer" },
+        "event_hash": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" }
+      }
+    },
+    "mutation_entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "level", "scenario", "request_id", "idempotency_key", "risk_level", "automatic_execution",
+        "trusted_approval", "reviewed_targets", "actual_modified_targets", "mutation_applied", "mutation_receipt",
+        "source_event_id", "source_event_hash", "model_diff_hash", "receipt_verified"
+      ],
+      "properties": {
+        "level": { "enum": ["L0", "L1", "L2"] },
+        "scenario": { "type": "string", "minLength": 1 },
+        "request_id": { "type": "string", "minLength": 1 },
+        "idempotency_key": { "type": ["string", "null"] },
+        "risk_level": { "type": ["string", "null"], "enum": ["S1", "S2", "S3", "S4", null] },
+        "automatic_execution": { "type": "boolean" },
+        "trusted_approval": { "type": "boolean" },
+        "reviewed_targets": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
+        "actual_modified_targets": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
+        "mutation_applied": { "type": "boolean" },
+        "mutation_receipt": { "type": ["string", "null"] },
+        "source_event_id": { "type": "string", "pattern": "^gateway-audit-l[0-2]-[0-9]{4}$" },
+        "source_event_hash": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+        "model_diff_hash": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+        "receipt_verified": { "type": "boolean" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "mutation_receipt": { "type": "string" } }, "required": ["mutation_receipt"] },
+          "then": { "properties": { "receipt_verified": { "const": true } } },
+          "else": { "properties": { "receipt_verified": { "const": false } } }
+        },
+        {
+          "if": {
+            "properties": {
+              "mutation_applied": { "const": true },
+              "risk_level": { "enum": ["S2", "S3", "S4"] }
+            },
+            "required": ["mutation_applied", "risk_level"]
+          },
+          "then": {
+            "properties": {
+              "trusted_approval": { "const": true },
+              "receipt_verified": { "const": true },
+              "mutation_receipt": { "type": "string", "minLength": 1 },
+              "actual_modified_targets": { "minItems": 1 }
+            }
+          }
+        }
+      ]
+    },
+    "level_report": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["level", "capabilities", "constraints", "scenario_results", "gateway_audit", "metrics", "hard_gates"],
+      "properties": {
+        "level": { "enum": ["L0", "L1", "L2"] },
+        "capabilities": { "$ref": "#/$defs/capabilities" },
+        "constraints": { "$ref": "#/$defs/constraints" },
+        "scenario_results": { "$ref": "#/$defs/scenario_results" },
+        "gateway_audit": { "$ref": "#/$defs/gateway_audit" },
+        "metrics": { "$ref": "#/$defs/metrics" },
+        "hard_gates": { "$ref": "#/$defs/hard_gates" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "level": { "const": "L0" } }, "required": ["level"] },
+          "then": {
+            "properties": {
+              "capabilities": { "const": { "vision": false, "local_files": false, "structured_output": false, "context": "short", "parallel": false } },
+              "constraints": { "$ref": "#/$defs/l0_constraints" },
+              "metrics": { "properties": { "text_only_round_trips": { "type": "integer", "minimum": 1 } } }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "level": { "const": "L1" } }, "required": ["level"] },
+          "then": {
+            "properties": {
+              "capabilities": { "const": { "vision": false, "local_files": false, "structured_output": true, "context": "standard", "parallel": false } },
+              "constraints": { "$ref": "#/$defs/l1_constraints" },
+              "metrics": { "properties": { "text_only_round_trips": { "const": 0 } } }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "level": { "const": "L2" } }, "required": ["level"] },
+          "then": {
+            "properties": {
+              "capabilities": { "const": { "vision": true, "local_files": true, "structured_output": true, "context": "long", "parallel": true } },
+              "constraints": { "$ref": "#/$defs/l2_constraints" },
+              "metrics": { "properties": { "text_only_round_trips": { "const": 0 } } }
+            }
+          }
+        }
+      ]
+    },
+    "l0_constraints": {
+      "allOf": [
+        { "$ref": "#/$defs/constraints" },
+        { "properties": {
+          "context": { "properties": { "declared": { "const": "short" }, "max_chars": { "const": 4096 } } },
+          "local_files": { "properties": { "declared": { "const": false } } },
+          "vision": { "properties": { "declared": { "const": false } } },
+          "structured_output": { "properties": { "declared": { "const": false }, "enforced": { "const": true } } },
+          "parallel": { "properties": { "declared": { "const": false } } },
+          "max_in_flight": { "properties": { "limit": { "const": 1 } } }
+        } }
+      ]
+    },
+    "l1_constraints": {
+      "allOf": [
+        { "$ref": "#/$defs/constraints" },
+        { "properties": {
+          "context": { "properties": { "declared": { "const": "standard" }, "max_chars": { "const": 16384 } } },
+          "local_files": { "properties": { "declared": { "const": false } } },
+          "vision": { "properties": { "declared": { "const": false } } },
+          "structured_output": { "properties": { "declared": { "const": true }, "enforced": { "const": true } } },
+          "parallel": { "properties": { "declared": { "const": false } } },
+          "max_in_flight": { "properties": { "limit": { "const": 1 } } }
+        } }
+      ]
+    },
+    "l2_constraints": {
+      "allOf": [
+        { "$ref": "#/$defs/constraints" },
+        { "properties": {
+          "context": { "properties": { "declared": { "const": "long" }, "max_chars": { "const": 65536 } } },
+          "local_files": { "properties": { "declared": { "const": true } } },
+          "vision": { "properties": { "declared": { "const": true } } },
+          "structured_output": { "properties": { "declared": { "const": true }, "enforced": { "const": true } } },
+          "parallel": { "properties": { "declared": { "const": true } } },
+          "max_in_flight": { "properties": { "limit": { "const": 4 } } }
+        } }
+      ]
     }
   }
 }

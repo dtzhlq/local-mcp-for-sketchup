@@ -136,7 +136,8 @@ module AlmaSketchupMCP
     when 'bowed_panel'
       add_bowed_panel(entities, operation)
     when 'component_instance'
-      add_component_instance_to_entities(entities, Sketchup.active_model, operation)
+      model = @document_state_model || active_model_required('component_definition component_instance')
+      add_component_instance_to_entities(entities, model, operation)
     else
       raise "#{component_name}.operations does not support op: #{operation['op']}"
     end

@@ -1,13 +1,98 @@
 {
-  "version": "real-model-reliability-v1-mock-evidence.1",
-  "command": "node test/reliability-corpus.mjs",
-  "runtime": "mock",
+  "version": "real-model-reliability-v1-mock-evidence.3",
+  "kind": "real_model_reliability_mock_evidence",
+  "evidence_scope": "deterministic_mock_only",
+  "commands": [
+    "node test/reliability-report-schema.mjs",
+    "node test/reliability-corpus.mjs",
+    "npm run qa:real-model-reliability:mock"
+  ],
   "result": "pass",
-  "corpus_cases": 7,
-  "metrics": { "task_success_rate": 1, "wrong_object_modification_count": 0, "silent_geometry_corruption_count": 0, "recovery_rate": 1 },
-  "hashes": {
-    "test/reliability-corpus/manifest.json": "95bfa4851d85b9121ef877f6afeb3759054838b1685084bde2f73ed560e251ff",
-    "test/reliability-corpus.mjs": "c303a22845877f73c7d2b635feb9be4c6581b013baf4516eebf2daa1d44c320b"
+  "runtime": "mock",
+  "live_queue_called": false,
+  "corpus": {
+    "cases": 7,
+    "passed_cases": 7,
+    "tasks": 23,
+    "passed_tasks": 23,
+    "domains": [
+      "architecture",
+      "interior",
+      "product",
+      "shared_component",
+      "imported_cad",
+      "appearance",
+      "transform_edge_case"
+    ],
+    "covered_tasks": [
+      "abnormal_topology_detection",
+      "boolean_manifold",
+      "large_recursive_index",
+      "locked_fail_closed",
+      "manifold_repair",
+      "material_preservation",
+      "nonuniform_mirror",
+      "recovery",
+      "rollback",
+      "save_reopen_identity",
+      "scene_visibility_preservation",
+      "shared_definition_identity",
+      "uv_material_preservation",
+      "wrong_object_isolation"
+    ]
   },
-  "live_sketchup_version_matrix": "not_run_requires_explicit_user_coordination"
+  "metrics": {
+    "task_success_rate": 1,
+    "wrong_object_modification_count": 0,
+    "silent_geometry_corruption_count": 0,
+    "recovery_attempts": 2,
+    "recoveries": 2,
+    "recovery_rate": 1
+  },
+  "safety_evidence": {
+    "default_runtime": "mock",
+    "default_queue_directory_created": false,
+    "default_queue_lock_created": false,
+    "missing_queue_required_failed_before_transport": true,
+    "missing_external_corpus_failed_before_transport": true,
+    "artifact_sha256_mismatch_failed_before_transport": true,
+    "external_paths_lstat_realpath_regular_file_checked": true,
+    "external_files_opened_no_follow_when_supported": true,
+    "artifact_symlink_failed_before_transport": true,
+    "sidecar_symlink_failed_before_transport": true,
+    "read_time_inode_or_size_swap_failed_before_transport": true,
+    "verified_bytes_copied_before_transport": true,
+    "execution_policy_cannot_be_overridden_by_cli_flags": true,
+    "sigterm_removed_own_unclaimed_request": true,
+    "sigterm_removed_own_lock": true,
+    "sigterm_preserved_outcome_unknown_processing_and_response": true,
+    "interrupt_fixture_queue_runtime_called": false
+  },
+  "repository_live_artifacts": {
+    "tracked_skp_or_skb_count": 0,
+    "generated_output_artifacts_are_live_evidence": false,
+    "external_live_artifacts_required": 7,
+    "external_live_artifacts_verified": 0
+  },
+  "schema_negative_tests": {
+    "report": 11,
+    "manifest": 6,
+    "external_live_case": 5
+  },
+  "live_evidence": {
+    "status": "not_run_external_live_required",
+    "sketchup_version_matrix": "not_run_requires_explicit_user_coordination",
+    "native_boolean_manifold_proven": false,
+    "native_uv_material_preservation_proven": false,
+    "native_save_reopen_identity_proven": false
+  },
+  "hashes": {
+    "test/reliability-corpus/manifest.json": "sha256:4faa8caf2a097c3d1a7810f1bf7635eceede8de3ca3674cda16519117c2377fa",
+    "scripts/run-real-model-reliability-harness.mjs": "sha256:d460f653103483c5753606031ca2a13713d370372b335390fb75f97456f73e0d",
+    "schema/real-model-reliability-corpus-v1.schema.json": "sha256:2be730e0934d4456c070387174f39c8f4f7f1261ecba0f6898be7604b8515ce9",
+    "schema/real-model-reliability-live-case-v1.schema.json": "sha256:1b7e5db311760cb803c3ff631ae0887e9c4801ec1c63b16d910953645bc4fe22",
+    "schema/real-model-reliability-report-v1.schema.json": "sha256:a819f85b507bee4e1dec3b8f566a13810da7672785b23b2803d5c5e8ff58886c",
+    "test/reliability-corpus.mjs": "sha256:10d53e1e75bc251f291b731d46822bf6e7cd575a5bf26cde58cfc2ce1eddb111",
+    "test/reliability-report-schema.mjs": "sha256:dac55b407b52ae6595a4aa15da9cbdf5dee75d2918ffb34f33381b0baa2a810b"
+  }
 }

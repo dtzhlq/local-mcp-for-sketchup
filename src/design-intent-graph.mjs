@@ -1,13 +1,19 @@
 import crypto from 'node:crypto';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { markUntrustedData, sha256Canonical } from './agent-contract.mjs';
+import { AgentContractError, markUntrustedData, sha256Canonical } from './agent-contract.mjs';
+import { AGENT_GATEWAY_ADDITIVE_CREATION_OPERATIONS } from './agent-dsl-policy.mjs';
+import { validateExpertDocument } from './expert-compiler.mjs';
 
 export const DESIGN_INTENT_GRAPH_VERSION = 'design-intent-graph.v1';
 export const DESIGN_PARAMETER_CHANGE_VERSION = 'design-parameter-change-plan.v1';
 export const DESIGN_RECONCILIATION_VERSION = 'design-intent-reconciliation.v1';
 
+const MODEL_KEY_PATTERN = /^model_[0-9a-f]{32}$/;
+const ADDITIVE_CREATION_OPERATIONS = new Set(AGENT_GATEWAY_ADDITIVE_CREATION_OPERATIONS);
+
 export function buildDesignIntentGraph({
+  modelKey,
   modelGraph,
   parametricRecipe = {},
   featureMappingPlan = {},
@@ -15,6 +21,7 @@ export function buildDesignIntentGraph({
   entityBindings,
   correctionHistory = []
 } = {}) {
+  assertModelKey(modelKey);
   if (modelGraph?.version !== 'model-graph.v1') throw new Error('buildDesignIntentGraph requires ModelGraph v1');
   const parameters = normalizeParameters(parametricRecipe, featureMappingPlan);
   const bindings = normalizeBindings(entityBindings || featureMappingPlan.entity_bindings || partGraph.entity_bindings || [], modelGraph);
@@ -28,6 +35,7 @@ export function buildDesignIntentGraph({
   const core = {
     version: DESIGN_INTENT_GRAPH_VERSION,
     kind: 'design_intent_graph',
+    model_key: modelKey,
     source_model_graph_id: modelGraph.graph_id,
     model_revision: modelGraph.model_revision,
     artifacts,
@@ -45,7 +53,7 @@ export function buildDesignIntentGraph({
     stats: {
       parameters: Object.keys(parameters).length,
       bindings: bindings.length,
-      mapped_entities: new Set(bindings.map((binding) => binding.entity_node_id)).size,
+      mapped_entities: new Set(bindings.flatMap((binding) => binding.resolved_entities.map((entry) => entry.entity_node_id))).size,
       correction_events: correctionHistory.length
     }
   };
@@ -69,19 +77,25 @@ export function planDesignParameterChange({ designGraph, currentModelGraph, chan
   const operations = [];
   const eraseTargets = uniqueTargets(affectedBindings.filter((binding) => binding.erase_before_rebuild !== false).flatMap((binding) => binding.existing_targets));
   if (eraseTargets.length) operations.push({ op: 'erase_entities', targets: eraseTargets });
-  for (const binding of affectedBindings) operations.push(...expandBindingOperations(binding, values));
-  const affectedSubgraph = affectedBindings.map((binding) => ({
-    binding_id: binding.binding_id,
-    part_id: binding.part_id,
-    feature_id: binding.feature_id,
-    entity_node_id: binding.entity_node_id,
-    persistent_ref: binding.persistent_ref,
-    reasons: binding.parameter_bindings.filter((item) => changedParameterIds.includes(item.parameter_id)).map((item) => `parameter:${item.parameter_id}`),
-    associated_bindings: binding.associated_binding_ids
-  }));
+  const operationRanges = new Map();
+  for (const binding of affectedBindings) {
+    const start = operations.length;
+    operations.push(...expandBindingOperations(binding, values));
+    operationRanges.set(binding.binding_id, { start, end: operations.length });
+  }
+  validateChangePlanOperations(operations);
+  const affectedSubgraph = affectedBindings.map((binding) => affectedBindingPlan(
+    binding,
+    operations,
+    operationRanges.get(binding.binding_id),
+    changedParameterIds,
+    currentModelGraph.runtime
+  ));
+  const replacementBlockers = affectedSubgraph.flatMap((entry) => entry.blockers);
   const core = {
     version: DESIGN_PARAMETER_CHANGE_VERSION,
     kind: 'design_parameter_change_plan',
+    model_key: designGraph.model_key,
     design_graph_id: designGraph.design_graph_id,
     source_model_graph_id: currentModelGraph.graph_id,
     model_revision: currentModelGraph.model_revision,
@@ -92,14 +106,14 @@ export function planDesignParameterChange({ designGraph, currentModelGraph, chan
     operations,
     risk_level: eraseTargets.length ? 'S4' : 'S3',
     divergence: [],
-    blockers: operations.length ? [] : ['no_rebuild_operations'],
+    blockers: [...(operations.length ? [] : ['no_rebuild_operations']), ...replacementBlockers],
     execution_allowed: false,
     execution_route: 'trusted_reviewed_existing_model_edit_only'
   };
   return {
     ...core,
     change_plan_id: `design-change-${sha256Canonical(core).slice(7, 31)}`,
-    next_action: operations.length ? {
+    next_action: operations.length && core.blockers.length === 0 ? {
       action: 'start_reviewed_existing_model_edit',
       tool: 'start_agent_task',
       arguments: {
@@ -122,6 +136,7 @@ export function reconcileDesignIntentGraph({ designGraph, currentModelGraph, acc
   const core = {
     version: DESIGN_RECONCILIATION_VERSION,
     kind: 'design_intent_reconciliation',
+    model_key: designGraph.model_key,
     design_graph_id: designGraph.design_graph_id,
     previous_model_revision: designGraph.model_revision,
     current_model_revision: currentModelGraph.model_revision,
@@ -145,14 +160,33 @@ export function reconcileDesignIntentGraph({ designGraph, currentModelGraph, acc
   };
 }
 
-export function acceptReconciliation({ designGraph, currentModelGraph, reconciliation, decision, acceptedChangePlan = null } = {}) {
+export function acceptReconciliation({
+  designGraph,
+  currentModelGraph,
+  reconciliation,
+  decision,
+  acceptedChangePlan = null,
+  eventId = null,
+  reviewedAt = null
+} = {}) {
   if (reconciliation?.version !== DESIGN_RECONCILIATION_VERSION) throw new Error('acceptReconciliation requires a reconciliation artifact');
+  if (reconciliation.model_key !== designGraph?.model_key) throw new Error('acceptReconciliation model_key mismatch');
   if (!['accept_reviewed_parameter_change', 'adopt_manual_edit'].includes(decision)) throw new Error('acceptReconciliation decision is not supported');
   if (decision === 'adopt_manual_edit' && !reconciliation.unexpected_divergence.length) throw new Error('There is no manual divergence to adopt');
-  const nodes = new Map(currentModelGraph.nodes.map((node) => [node.node_id, node]));
+  if (decision === 'accept_reviewed_parameter_change') {
+    if (!acceptedChangePlan || acceptedChangePlan.model_key !== designGraph.model_key || acceptedChangePlan.design_graph_id !== designGraph.design_graph_id) {
+      throw new Error('acceptReconciliation requires the server-bound DesignIntent change plan');
+    }
+  }
+  const affected = new Map((acceptedChangePlan?.affected_subgraph || []).map((entry) => [entry.binding_id, entry]));
   const updatedBindings = designGraph.bindings.map((binding) => {
-    const current = resolveCurrentNode(binding, currentModelGraph, nodes);
-    return current ? { ...binding, baseline_fingerprint: entityFingerprint(current), entity_node_id: current.node_id } : binding;
+    const affectedEntry = decision === 'accept_reviewed_parameter_change' ? affected.get(binding.binding_id) : null;
+    const sourceRefs = affectedEntry ? affectedEntry.replacement_refs.map((entry) => entry.selector) : binding.existing_targets;
+    const resolved = resolveCanonicalTargets(currentModelGraph, sourceRefs, `binding:${binding.binding_id}:reconciliation`);
+    if (affectedEntry && resolved.length !== affectedEntry.replacement_refs.length) {
+      throw new Error(`DesignIntent replacement mapping count mismatch for ${binding.binding_id}`);
+    }
+    return reboundBinding(binding, resolved);
   });
   const updatedParameters = structuredClone(designGraph.parameters);
   if (decision === 'accept_reviewed_parameter_change') {
@@ -161,8 +195,8 @@ export function acceptReconciliation({ designGraph, currentModelGraph, reconcili
     }
   }
   const historyEvent = {
-    event_id: `correction-${crypto.randomUUID()}`,
-    at: new Date().toISOString(),
+    event_id: eventId || `correction-${crypto.randomUUID()}`,
+    at: reviewedAt || new Date().toISOString(),
     decision,
     reconciliation_id: reconciliation.reconciliation_id,
     change_plan_id: acceptedChangePlan?.change_plan_id || null,
@@ -171,6 +205,7 @@ export function acceptReconciliation({ designGraph, currentModelGraph, reconcili
   };
   const core = {
     ...structuredClone(designGraph),
+    model_key: designGraph.model_key,
     source_model_graph_id: currentModelGraph.graph_id,
     model_revision: currentModelGraph.model_revision,
     parameters: updatedParameters,
@@ -178,7 +213,11 @@ export function acceptReconciliation({ designGraph, currentModelGraph, reconcili
     correction_history: [...designGraph.correction_history, historyEvent]
   };
   core.bidirectional = buildBidirectionalIndexes(updatedBindings);
-  core.stats = { ...core.stats, correction_events: core.correction_history.length };
+  core.stats = {
+    ...core.stats,
+    mapped_entities: new Set(updatedBindings.flatMap((binding) => binding.resolved_entities.map((entry) => entry.entity_node_id))).size,
+    correction_events: core.correction_history.length
+  };
   core.design_graph_id = `design-graph-${sha256Canonical({ ...core, design_graph_id: undefined }).slice(7, 31)}`;
   return core;
 }
@@ -186,9 +225,20 @@ export function acceptReconciliation({ designGraph, currentModelGraph, reconcili
 export async function writeDesignArtifact(filePath, value) {
   await fs.mkdir(path.dirname(filePath), { recursive: true });
   const temporary = `${filePath}.${process.pid}.${crypto.randomUUID()}.tmp`;
-  await fs.writeFile(temporary, `${JSON.stringify(value, null, 2)}\n`, 'utf8');
-  await fs.rename(temporary, filePath);
-  return filePath;
+  let handle;
+  try {
+    handle = await fs.open(temporary, 'wx', 0o600);
+    await handle.writeFile(`${JSON.stringify(value, null, 2)}\n`, 'utf8');
+    await handle.sync();
+    await handle.close();
+    handle = null;
+    await fs.rename(temporary, filePath);
+    await fs.chmod(filePath, 0o600);
+    return filePath;
+  } finally {
+    await handle?.close().catch(() => {});
+    await fs.rm(temporary, { force: true });
+  }
 }
 
 function normalizeParameters(recipe, mappingPlan) {
@@ -217,25 +267,27 @@ function normalizeParameters(recipe, mappingPlan) {
 function normalizeBindings(rawBindings, modelGraph) {
   if (!Array.isArray(rawBindings) || rawBindings.length === 0) throw new Error('DesignIntentGraph requires entity_bindings');
   return rawBindings.map((binding, index) => {
-    const persistentRef = normalizePersistentRef(binding.entity || binding.persistent_ref || binding.target);
-    const node = findModelNode(modelGraph, persistentRef);
-    if (!node) throw new Error(`entity_bindings[${index}] does not resolve in ModelGraph`);
+    const requestedPrimary = normalizePersistentRef(binding.entity || binding.persistent_ref || binding.target);
+    const requestedTargets = uniqueTargets([requestedPrimary, ...(binding.existing_targets || [])]);
+    const resolved = resolveCanonicalTargets(modelGraph, requestedTargets, `entity_bindings[${index}]`);
+    const primary = resolved[0];
     const parameterBindings = (binding.parameter_bindings || binding.parameters || []).map((item) => typeof item === 'string' ? { parameter_id: item } : structuredClone(item));
-    return {
+    return reboundBinding({
       binding_id: binding.binding_id || `binding-${index + 1}`,
       part_id: binding.part_id || null,
       feature_id: binding.feature_id || null,
-      entity_node_id: node.node_id,
-      persistent_ref: persistentRef,
-      baseline_fingerprint: entityFingerprint(node),
+      entity_node_id: primary.node.node_id,
+      persistent_ref: primary.ref,
+      baseline_fingerprint: bindingFingerprint(resolved),
+      resolved_entities: [],
       parameter_bindings: parameterBindings,
       associated_binding_ids: [...new Set(binding.associated_binding_ids || binding.associations || [])],
-      existing_targets: uniqueTargets(binding.existing_targets || [persistentRef]),
+      existing_targets: resolved.map((entry) => entry.ref),
       erase_before_rebuild: binding.erase_before_rebuild !== false,
       rebuild_template: structuredClone(binding.rebuild_template || []),
       repeat: binding.repeat ? structuredClone(binding.repeat) : null,
       lineage: structuredClone(binding.lineage || {})
-    };
+    }, resolved);
   });
 }
 
@@ -254,14 +306,16 @@ function buildBidirectionalIndexes(bindings) {
   const designToEntities = {};
   const entityToDesign = {};
   for (const binding of bindings) {
-    const entityKey = persistentRefKey(binding.persistent_ref);
     const designRefs = [
       ...(binding.part_id ? [`part:${binding.part_id}`] : []),
       ...(binding.feature_id ? [`feature:${binding.feature_id}`] : []),
       ...binding.parameter_bindings.map((item) => `parameter:${item.parameter_id}`)
     ];
-    entityToDesign[entityKey] = [...new Set([...(entityToDesign[entityKey] || []), ...designRefs])];
-    for (const designRef of designRefs) designToEntities[designRef] = [...new Set([...(designToEntities[designRef] || []), entityKey])];
+    for (const persistentRef of binding.existing_targets) {
+      const entityKey = persistentRefKey(persistentRef);
+      entityToDesign[entityKey] = [...new Set([...(entityToDesign[entityKey] || []), ...designRefs])];
+      for (const designRef of designRefs) designToEntities[designRef] = [...new Set([...(designToEntities[designRef] || []), entityKey])];
+    }
   }
   return { design_to_entities: designToEntities, entity_to_design: entityToDesign };
 }
@@ -272,6 +326,7 @@ function normalizeChanges(changes, parameters) {
   for (const [id, value] of Object.entries(changes)) {
     const parameter = parameters[id];
     if (!parameter) throw new Error(`Unknown design parameter: ${id}`);
+    if (typeof value === 'number' && !Number.isFinite(value)) throw new Error(`${id} must be a finite number`);
     if (parameter.enum && !parameter.enum.includes(value)) throw new Error(`${id} must be one of its enum values`);
     if (typeof value === 'number' && parameter.minimum !== null && value < parameter.minimum) throw new Error(`${id} is below minimum`);
     if (typeof value === 'number' && parameter.maximum !== null && value > parameter.maximum) throw new Error(`${id} is above maximum`);
@@ -295,6 +350,87 @@ function dependencyClosure(initial, allBindings) {
     }
   }
   return [...selected.values()];
+}
+
+function affectedBindingPlan(binding, operations, range, changedParameterIds, runtime) {
+  const generatedRefs = [];
+  for (let index = range.start; index < range.end; index += 1) {
+    const operation = operations[index];
+    if (!ADDITIVE_CREATION_OPERATIONS.has(operation.op)) continue;
+    const targetId = operation.id || operation.object_id || operation.objectId || operation.name;
+    if (!targetId) continue;
+    generatedRefs.push({
+      selector: { target_id: String(targetId) },
+      selector_source: operation.id || operation.object_id || operation.objectId ? 'operation_id' : 'operation_name',
+      source_operation_index: index,
+      source_operation: operation.op,
+      expected_count: 1
+    });
+  }
+  const uniqueGenerated = uniqueGeneratedRefs(generatedRefs);
+  const replacementRefs = uniqueGenerated.length
+    ? uniqueGenerated.map((entry) => ({ ...entry, replacement_kind: 'generated_entity' }))
+    : binding.erase_before_rebuild === false
+      ? binding.existing_targets.map((selector) => ({
+          selector: structuredClone(selector),
+          selector_source: 'retained_canonical_ref',
+          source_operation_index: null,
+          source_operation: 'retained_entity',
+          expected_count: 1,
+          replacement_kind: 'retained_entity'
+        }))
+      : [];
+  const blockers = [
+    ...(binding.erase_before_rebuild !== false && replacementRefs.length === 0 ? [`replacement_references_unavailable:${binding.binding_id}`] : []),
+    ...(runtime === 'queue' && replacementRefs.some((entry) => entry.selector_source === 'operation_name')
+      ? [`queue_generated_reference_requires_operation_id:${binding.binding_id}`]
+      : [])
+  ];
+  return {
+    binding_id: binding.binding_id,
+    part_id: binding.part_id,
+    feature_id: binding.feature_id,
+    entity_node_id: binding.entity_node_id,
+    persistent_ref: structuredClone(binding.persistent_ref),
+    previous_refs: structuredClone(binding.existing_targets),
+    generated_refs: uniqueGenerated,
+    replacement_refs: replacementRefs,
+    reasons: binding.parameter_bindings
+      .filter((item) => changedParameterIds.includes(item.parameter_id))
+      .map((item) => `parameter:${item.parameter_id}`),
+    associated_bindings: binding.associated_binding_ids,
+    blockers
+  };
+}
+
+function uniqueGeneratedRefs(entries) {
+  const seen = new Set();
+  const result = [];
+  for (const entry of entries) {
+    const key = persistentRefKey(entry.selector);
+    if (seen.has(key)) {
+      throw new AgentContractError('INVALID_ARGUMENT', 'A DesignIntent rebuild emits duplicate generated entity selectors.');
+    }
+    seen.add(key);
+    result.push(entry);
+  }
+  return result;
+}
+
+function validateChangePlanOperations(operations) {
+  try {
+    validateExpertDocument({
+      version: 1,
+      units: 'mm',
+      operations: operations.map((operation) => operation.op === 'erase_entities'
+        ? { ...operation, confirmed: true }
+        : operation)
+    }, { maxOperations: Math.max(1, operations.length) });
+  } catch (error) {
+    throw new AgentContractError('INVALID_ARGUMENT', 'DesignIntent rebuild operations do not satisfy the shared safe-DSL contract.', {
+      details: { reason: String(error?.message || error) }
+    });
+  }
 }
 
 function expandBindingOperations(binding, values) {
@@ -336,34 +472,29 @@ function evaluateExpression(expression, parameters, index, repeat) {
 }
 
 function compareBindingFingerprints(designGraph, currentModelGraph) {
-  const nodes = new Map(currentModelGraph.nodes.map((node) => [node.node_id, node]));
   const result = [];
   for (const binding of designGraph.bindings) {
-    const current = resolveCurrentNode(binding, currentModelGraph, nodes);
-    const currentFingerprint = current ? entityFingerprint(current) : null;
+    const resolution = tryResolveCanonicalTargets(currentModelGraph, binding.existing_targets, `binding:${binding.binding_id}:compare`);
+    const currentFingerprint = resolution.ok ? bindingFingerprint(resolution.resolved) : null;
     if (currentFingerprint !== binding.baseline_fingerprint) {
       result.push({
         binding_id: binding.binding_id,
         persistent_ref: binding.persistent_ref,
         expected_fingerprint: binding.baseline_fingerprint,
         current_fingerprint: currentFingerprint,
-        status: current ? 'changed' : 'missing'
+        status: resolution.ok ? 'changed' : resolution.status,
+        candidate_count: resolution.candidate_count
       });
     }
   }
   return result;
 }
 
-function resolveCurrentNode(binding, graph, nodes) {
-  const direct = nodes.get(binding.entity_node_id);
-  if (direct && matchesPersistentRef(direct, binding.persistent_ref)) return direct;
-  return findModelNode(graph, binding.persistent_ref);
-}
-
 function blockedChangePlan(designGraph, currentGraph, changes, divergence, instruction) {
   const core = {
     version: DESIGN_PARAMETER_CHANGE_VERSION,
     kind: 'design_parameter_change_plan',
+    model_key: designGraph.model_key,
     design_graph_id: designGraph.design_graph_id,
     source_model_graph_id: currentGraph.graph_id,
     model_revision: currentGraph.model_revision,
@@ -395,10 +526,121 @@ function normalizePersistentRef(value) {
   throw new Error('Entity binding requires entity_path or target_id');
 }
 
-function findModelNode(graph, ref) {
-  const candidates = graph.nodes.filter((node) => matchesPersistentRef(node, ref));
-  if (ref.entity_path) return candidates.find((node) => node.entity_path === ref.entity_path) || null;
-  return candidates.sort((left, right) => targetMatchRank(right, ref.target_id) - targetMatchRank(left, ref.target_id))[0] || null;
+function canonicalRefForNode(graph, node, requested) {
+  const topLevelMock = graph.runtime === 'mock' && !node.parent_id;
+  const stableTopLevelId = node.reference || node.persistent_id || null;
+  if (topLevelMock && stableTopLevelId) {
+    return { target_id: String(stableTopLevelId), edit_scope: 'top_level' };
+  }
+  if (!node.entity_path) {
+    if (graph.runtime === 'queue') {
+      throw mappingError('missing', 'Queue DesignIntent mappings require a canonical occurrence entity_path.', 0);
+    }
+    if (!stableTopLevelId) throw mappingError('missing', 'The ModelGraph occurrence has no stable reference.', 0);
+    return { target_id: String(stableTopLevelId), edit_scope: 'top_level' };
+  }
+  const suppliedPolicy = requested.instance_policy || requested.instancePolicy || null;
+  if (node.instance_policy_required === true && !suppliedPolicy) {
+    throw mappingError('ambiguous', 'A shared-definition DesignIntent mapping requires an explicit instance_policy.', node.affected_instance_count || 2);
+  }
+  const instancePolicy = suppliedPolicy || 'definition_wide';
+  if (!['definition_wide', 'make_unique'].includes(instancePolicy)) {
+    throw mappingError('ambiguous', 'DesignIntent instance_policy must be definition_wide or make_unique.', 0);
+  }
+  const instanceId = requested.instance_id || requested.instanceId || null;
+  if (instancePolicy === 'make_unique' && !instanceId) {
+    throw mappingError('ambiguous', 'DesignIntent make_unique mappings require instance_id.', 0);
+  }
+  return {
+    entity_path: String(node.entity_path),
+    edit_scope: node.edit_scope || 'instance_path',
+    instance_policy: instancePolicy,
+    ...(instanceId ? { instance_id: String(instanceId) } : {})
+  };
+}
+
+function reboundBinding(binding, resolved) {
+  if (!Array.isArray(resolved) || resolved.length === 0) throw new Error(`DesignIntent binding ${binding.binding_id} has no resolved entities`);
+  const primary = resolved[0];
+  return {
+    ...structuredClone(binding),
+    entity_node_id: primary.node.node_id,
+    persistent_ref: structuredClone(primary.ref),
+    baseline_fingerprint: bindingFingerprint(resolved),
+    resolved_entities: resolved.map((entry) => ({
+      entity_node_id: entry.node.node_id,
+      persistent_ref: structuredClone(entry.ref),
+      baseline_fingerprint: entityFingerprint(entry.node)
+    })),
+    existing_targets: resolved.map((entry) => structuredClone(entry.ref))
+  };
+}
+
+function bindingFingerprint(resolved) {
+  return sha256Canonical(resolved
+    .map((entry) => ({ persistent_ref: entry.ref, entity_fingerprint: entityFingerprint(entry.node) }))
+    .sort((left, right) => persistentRefKey(left.persistent_ref).localeCompare(persistentRefKey(right.persistent_ref))));
+}
+
+function mappingError(status, message, candidateCount) {
+  const error = new AgentContractError('INVALID_ARGUMENT', message, {
+    details: { mapping_status: status, candidate_count: candidateCount }
+  });
+  error.mapping_status = status;
+  error.candidate_count = candidateCount;
+  return error;
+}
+
+function resolveCanonicalTargets(graph, refs, context) {
+  const resolved = [];
+  const seen = new Set();
+  for (const ref of refs) {
+    const entry = resolveCanonicalTarget(graph, normalizePersistentRef(ref), context);
+    const key = persistentRefKey(entry.ref);
+    if (!seen.has(key)) {
+      seen.add(key);
+      resolved.push(entry);
+    }
+  }
+  if (!resolved.length) throw mappingError('missing', `${context} has no resolvable ModelGraph occurrences.`, 0);
+  return resolved;
+}
+
+function tryResolveCanonicalTargets(graph, refs, context) {
+  try {
+    return { ok: true, resolved: resolveCanonicalTargets(graph, refs, context), status: null, candidate_count: null };
+  } catch (error) {
+    if (error?.mapping_status) {
+      return { ok: false, resolved: [], status: error.mapping_status, candidate_count: error.candidate_count ?? null };
+    }
+    throw error;
+  }
+}
+
+function resolveCanonicalTarget(graph, ref, context) {
+  const occurrences = graph.nodes.filter((node) => node.node_type === 'occurrence');
+  if (ref.entity_path) {
+    const candidates = occurrences.filter((node) => node.entity_path === ref.entity_path);
+    if (candidates.length === 0) throw mappingError('missing', `${context} does not resolve in ModelGraph.`, 0);
+    if (candidates.length !== 1) throw mappingError('ambiguous', `${context} resolves to multiple occurrence paths.`, candidates.length);
+    return { node: candidates[0], ref: canonicalRefForNode(graph, candidates[0], ref), match_kind: 'entity_path' };
+  }
+  const candidates = occurrences.filter((node) => matchesPersistentRef(node, ref));
+  if (candidates.length === 0) throw mappingError('missing', `${context} does not resolve in ModelGraph.`, 0);
+  const ranked = candidates.map((node) => ({ node, rank: targetMatchRank(node, ref.target_id) }));
+  const bestRank = Math.max(...ranked.map((entry) => entry.rank));
+  const best = ranked.filter((entry) => entry.rank === bestRank);
+  if (best.length !== 1) throw mappingError('ambiguous', `${context} is ambiguous in ModelGraph.`, best.length);
+  const node = best[0].node;
+  const matchKind = node.reference === ref.target_id
+    ? 'reference'
+    : node.persistent_id === ref.target_id
+      ? 'persistent_id'
+      : 'name';
+  if (graph.runtime === 'queue' && matchKind === 'name') {
+    throw mappingError('ambiguous', `${context} cannot persist a queue mapping resolved only by an untrusted name.`, candidates.length);
+  }
+  return { node, ref: canonicalRefForNode(graph, node, ref), match_kind: matchKind };
 }
 
 function targetMatchRank(node, targetId) {
@@ -418,17 +660,43 @@ function matchesPersistentRef(node, ref) {
 
 function entityFingerprint(node) {
   return sha256Canonical({
-    persistent_ref: node.entity_path || node.reference || node.persistent_id,
+    entity_path: node.entity_path || null,
+    parent_entity_path: node.parent_entity_path || null,
+    path_segments: node.path_segments || [],
+    reference: node.reference || null,
+    persistent_id: node.persistent_id || null,
     entity_type: node.entity_type,
     definition_name: node.definition_name,
+    definition_persistent_id: node.definition_persistent_id,
+    entity_definition_name: node.entity_definition_name,
+    entity_definition_persistent_id: node.entity_definition_persistent_id,
     material: node.material,
+    back_material: node.back_material,
     tag: node.tag,
     classification: node.classification,
+    native_classification: node.native_classification,
     attributes: node.attributes,
+    texture_transform: node.texture_transform,
+    face_uvs: node.face_uvs,
+    transform: node.transform,
+    transformation: node.transformation,
+    world_transform: node.world_transform,
+    geometry_summary: node.geometry_summary,
     visible: node.visible,
+    locked: node.locked,
+    effective_locked: node.effective_locked,
+    locked_ancestor_path: node.locked_ancestor_path,
+    soft: node.soft,
+    smooth: node.smooth,
+    reversed: node.reversed,
+    editable: node.editable,
+    edit_scope: node.edit_scope,
     bounding_box: node.bounding_box,
     topology_summary: node.topology_summary,
-    features: node.features
+    features: node.features,
+    shared_definition: node.shared_definition,
+    affected_instance_count: node.affected_instance_count,
+    instance_policy_required: node.instance_policy_required
   });
 }
 
@@ -457,6 +725,12 @@ function artifactRef(value) {
     version: value.version || null,
     sha256: sha256Canonical(value)
   };
+}
+
+function assertModelKey(modelKey) {
+  if (!MODEL_KEY_PATTERN.test(String(modelKey || ''))) {
+    throw new AgentContractError('INVALID_ARGUMENT', 'DesignIntentGraph requires a server-derived model_key.');
+  }
 }
 
 function inferParameterType(value) {

@@ -1,0 +1,179 @@
+{
+  "version": "real-model-recursive-live-readonly-evidence.v1",
+  "kind": "real_model_recursive_live_readonly_evidence",
+  "captured_at": "2026-07-20T15:25:19.649Z",
+  "branch": "codex/agent-contract-v1",
+  "result": "pass_with_fail_closed_terminal_blocker",
+  "evidence_scope": "capability6_trimble_s6_original_read_only_structural_probe_and_offline_recursive_review",
+  "runtime": {
+    "live_probe": "queue",
+    "terminal_review": "offline",
+    "plugin_version": "0.1.0-rc.2",
+    "capability_version": "0.1.0-rc.2-capabilities.6",
+    "manifest_version": "2026-07-agent-contract-v1.3",
+    "dsl_version": 1,
+    "structural_groups_version": "structural-groups.v1",
+    "compatibility_ok": true
+  },
+  "installed_source": {
+    "installed_location_disclosed": false,
+    "fresh_process_verified": true,
+    "requires_reinstall_restart": false,
+    "plugin_main": {
+      "workspace_path": "sketchup_plugin/alma_sketchup_mcp.rb",
+      "workspace_sha256_at_capture": "sha256:7dd189008eedaf0bdb295f1fa8e39ae3da19d3a856ea8eb76306eb4c23b5e77d",
+      "installed_sha256_at_capture": "sha256:7dd189008eedaf0bdb295f1fa8e39ae3da19d3a856ea8eb76306eb4c23b5e77d",
+      "capture_time_exact_match": true
+    },
+    "model_revision": {
+      "workspace_path": "sketchup_plugin/alma_sketchup_mcp/model_revision.rb",
+      "workspace_sha256_at_capture": "sha256:8bb444ea0d0d52c4950db85337dd777fe6edeef94e2b9ce0a6436d31a571aca7",
+      "installed_sha256_at_capture": "sha256:8bb444ea0d0d52c4950db85337dd777fe6edeef94e2b9ce0a6436d31a571aca7",
+      "capture_time_exact_match": true
+    },
+    "structural_probe": {
+      "workspace_path": "sketchup_plugin/alma_sketchup_mcp/structural_probe.rb",
+      "workspace_sha256_at_capture": "sha256:62999c4278dcb83f1b8050514e8c0527a8019c0dfef1c927d9d93f709552a54d",
+      "installed_sha256_at_capture": "sha256:62999c4278dcb83f1b8050514e8c0527a8019c0dfef1c927d9d93f709552a54d",
+      "capture_time_exact_match": true
+    }
+  },
+  "artifact_bindings": {
+    "inventory": {
+      "path": "output/real-model-reliability/target-review/trimble-s6/real-model-candidate-inventory.v1.json",
+      "sha256": "sha256:6bd2a4c2e1215e7bdaa1b4fe192023370398e5224efee1a757042c0947ba6c09"
+    },
+    "semantic_mapping": {
+      "path": "docs/evidence/real-model-candidate-semantic-mapping-2026-07-20.json",
+      "sha256": "sha256:72a1508783d2f34a927e994d5c45ea7cb797388d572b6af4ab208fe68e73191d"
+    },
+    "semantic_mapping_amendment": {
+      "path": "docs/evidence/real-model-candidate-semantic-mapping-amendment-2026-07-20.json",
+      "sha256": "sha256:52dd22fdc730095d0de1566885d16bde15c0dae73d24308943df7a716d191268"
+    },
+    "session_contract": {
+      "path": "output/real-model-reliability/target-review/trimble-s6/live-work/preflight-bb66815d-c910-4967-92d3-927c32c7864a/capability6-session-contract.json",
+      "sha256": "sha256:4fcf841b2c04c92b0babff4dc87f6fa35bf430f8773d06780a90e8daec46f20b",
+      "source_contains_sensitive_fields": true,
+      "sensitive_fields_embedded_in_wrapper": false
+    },
+    "structural_phase1": {
+      "path": "output/real-model-reliability/target-review/trimble-s6/live-work/preflight-bb66815d-c910-4967-92d3-927c32c7864a/structural-adoption-phase1-original-readonly.json",
+      "sha256": "sha256:bf0cd2207f78067d3af75dcbbc325a3b84c3f1f9c3693c816ead74857b3ab31d"
+    },
+    "structural_terminal_probe": {
+      "path": "output/real-model-reliability/target-review/trimble-s6/live-work/preflight-bb66815d-c910-4967-92d3-927c32c7864a/structural-adoption-probe-round8-original-readonly.json",
+      "sha256": "sha256:ff82aea9dba2d7b39cc4fdac1684377f68e54f939850be8104af0d21663fbedf"
+    },
+    "recursive_terminal_review": {
+      "path": "output/real-model-reliability/target-review/trimble-s6/live-work/preflight-bb66815d-c910-4967-92d3-927c32c7864a/recursive-review-probe-round8-terminal-v2-original-readonly.json",
+      "sha256": "sha256:00e27067a484789e4e1eccd42d1eb9d92bb0eda705fb31ab34a518b807153ce5"
+    }
+  },
+  "source": {
+    "candidate_id": "candidate_cb1cf0f53d27f53b277b34e1",
+    "candidate_handle": "candidate:sha256:cb1cf0f53d27f53b277b34e1",
+    "scope": "configured_input_root_original",
+    "relative_path": "test/模型/Trimble S6.skp",
+    "label_trust": "untrusted_data",
+    "size_bytes": 5413634,
+    "sha256_before": "sha256:8678e0f86768cde57ae6f81c138a0c9296b5fcbee978e34ef01063e883d22efb",
+    "sha256_after": "sha256:8678e0f86768cde57ae6f81c138a0c9296b5fcbee978e34ef01063e883d22efb",
+    "bytes_unchanged": true
+  },
+  "session_summary": {
+    "version": "session-contract.v1",
+    "kind": "fresh_queue_handshake",
+    "issued_at": "2026-07-20T15:10:32.556Z",
+    "expires_at": "2026-07-20T15:15:32.556Z",
+    "runtime": "queue",
+    "queue_state": "idle",
+    "document_id": "document_171c47a5d02c2377163d6f6c4f5cdef808da5d816de662be0b1d059d63289a1f",
+    "model_revision": "sha256:56a7dbc028b7ebe3bb2d35e30402e21585e24bfd411870a3f4f5dc56f6c2a792",
+    "model_revision_complete": true,
+    "used_as_mutation_authority": false,
+    "sensitive_fields_embedded_in_wrapper": false
+  },
+  "revision_attestation": {
+    "handshake": "sha256:56a7dbc028b7ebe3bb2d35e30402e21585e24bfd411870a3f4f5dc56f6c2a792",
+    "structural_phase1": "sha256:56a7dbc028b7ebe3bb2d35e30402e21585e24bfd411870a3f4f5dc56f6c2a792",
+    "structural_terminal_probe": "sha256:56a7dbc028b7ebe3bb2d35e30402e21585e24bfd411870a3f4f5dc56f6c2a792",
+    "recursive_terminal_review": "sha256:56a7dbc028b7ebe3bb2d35e30402e21585e24bfd411870a3f4f5dc56f6c2a792",
+    "complete": true,
+    "unchanged": true,
+    "strategy": "definition-merkle.v1",
+    "unique_entity_limit": 1000000,
+    "unique_entities": 60247,
+    "reachable_definitions": 44,
+    "logical_occurrences": 71360
+  },
+  "structural_probe": {
+    "read_only": true,
+    "total_seen": 41,
+    "total_seen_exact": true,
+    "returned": 41,
+    "truncated": false,
+    "limit": 500,
+    "phase1_fresh_requested": 0,
+    "terminal_fresh_requested": 15,
+    "terminal_fresh_matched": 15,
+    "terminal_fresh_unmatched": 0,
+    "terminal_exact_fresh_entry_matches": 15,
+    "terminal_manifold": 1,
+    "terminal_non_manifold": 14
+  },
+  "terminal_review": {
+    "version": "real-model-recursive-target-review.v1",
+    "runtime": "offline",
+    "status": "blocked",
+    "operation": "difference",
+    "candidate_count": 41,
+    "pair_review_eligible_count": 33,
+    "excluded_candidate_count": 8,
+    "scope_count": 14,
+    "same_parent_scope_pair_count": 35,
+    "pair_evaluations_considered": 30,
+    "pair_evaluation_budget_exhausted": false,
+    "manifold_probe_paths": [],
+    "role_bindings": null,
+    "recommended_proposal": null,
+    "blockers": [
+      "no_manifold_qualified_pair"
+    ],
+    "next_action": "select_manifold_qualified_disposable_model_case"
+  },
+  "safety": {
+    "explicit_queue_opt_in": true,
+    "live_queue_called": true,
+    "read_only_live_calls_only": true,
+    "original_model_opened": true,
+    "original_bytes_unchanged_verified": true,
+    "model_content_mutation_requested": false,
+    "model_content_mutation_performed": false,
+    "save_requested": false,
+    "selection_changed": false,
+    "visual_capture_requested": false,
+    "approval_token_requested": false,
+    "queue_before": {
+      "queue": 0,
+      "processing": 0,
+      "responses": 0,
+      "lock_exists": false
+    },
+    "queue_after": {
+      "queue": 0,
+      "processing": 0,
+      "responses": 0,
+      "lock_exists": false
+    }
+  },
+  "authorization_boundary": {
+    "target_roles_confirmed": false,
+    "role_bindings_issued": false,
+    "real_user_mutation_approval_observed": false,
+    "approval_token_issued": false,
+    "mutation_authorized": false
+  },
+  "release_acceptance": false,
+  "boundary": "This immutable capability .6 live-evidence wrapper binds the user-coordinated Trimble S6 original-model read-only structural probe and its offline recursive terminal review. It proves complete 41-group enumeration and exact fresh manifold attestations for 15 requested paths, with one manifold and fourteen non-manifold results. The review correctly fails closed with no_manifold_qualified_pair and selects a different manifold-qualified disposable model case as the next action. It copies no sensitive session-contract field, authorizes no target roles or mutation, performs no save, selection, capture, boolean, rollback, or save/reopen QA, and cannot establish release acceptance."
+}

@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "kind": "save_reopen_mdi_bug_discovery_evidence",
+  "date": "2026-07-15",
+  "status": "failed_closed_bug_discovery",
+  "acceptance_proof": false,
+  "runtime": {
+    "name": "queue",
+    "sketchup_version": "26.2.242",
+    "plugin_version": "0.1.0-rc.2"
+  },
+  "scope": {
+    "target_model": "output/save-reopen-identity/queue/save-reopen-identity.skp",
+    "intermediary_model": "output/save-reopen-identity/queue/save-reopen-intermediary.skp",
+    "disposable_model_authorized": true
+  },
+  "observations": [
+    {
+      "step": "same_path_open",
+      "result": "inconclusive",
+      "detail": "The first gate saved and opened the already-active target path. Identity and revision matched, but this did not exclude a same-path no-op."
+    },
+    {
+      "step": "real_path_switch",
+      "result": "failed_closed",
+      "detail": "After saving a distinct intermediary model, Sketchup.open_file returned load status 0 for the target while the queue callback still observed the intermediary model. The gate exited non-zero instead of claiming success."
+    },
+    {
+      "step": "macos_mdi_ui_check",
+      "result": "target_opened_in_second_window",
+      "detail": "The SketchUp UI showed the target model focused while the old queue timer still reported the intermediary document."
+    },
+    {
+      "step": "close_saved_intermediary_then_read_target",
+      "result": "cross_document_sidecar_leak",
+      "detail": "After closing only the saved intermediary window, source_path, geometry, materials, definitions, and persistent paths came from the target, but scenes and view_state still reported Save_Reopen_Intermediary_Scene."
+    }
+  ],
+  "identity": {
+    "recursive_entries": 42,
+    "shared_leaf_occurrences": 2,
+    "target_revision_before_switch": "sha256:f47880d621e29dffef18ec3d6760fd6a3936701a8969731b5589b59edff36006",
+    "target_revision_with_leaked_sidecar": "sha256:82bed981b016ac48abe9414072000c65bb701ef6ba052b6633e5a4d066de4d6f"
+  },
+  "safety": {
+    "sketchup_process_survived": true,
+    "new_crash_reports": 0,
+    "queue": 0,
+    "processing": 0,
+    "responses": 0,
+    "lock": false,
+    "automatic_open_retry_performed": false
+  },
+  "required_fix": [
+    "Route queue work through the model reported by macOS activation events instead of the callback's stale document context.",
+    "Persist and hydrate scenes, levels, view, style, shadow, rendering, and manifold sidecar state per SketchUp model.",
+    "Return an explicit pending MDI activation result without a snapshot from the wrong document.",
+    "Require target activation plus a fresh Session Contract before any later mutation.",
+    "Re-run the strong target-intermediary-target gate and require an empty zero-tolerance snapshot diff."
+  ]
+}

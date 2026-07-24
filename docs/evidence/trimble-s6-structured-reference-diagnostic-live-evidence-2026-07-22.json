@@ -1,0 +1,118 @@
+{
+  "version": "trimble-s6-structured-reference-diagnostic-live-evidence.v1",
+  "kind": "post_apply_external_reference_structured_diagnostic",
+  "captured_at": "2026-07-22T15:53:40.419Z",
+  "branch": "codex/agent-contract-v1",
+  "baseline_commit": "ee0708adf845c51f71294091b8013e1cc6aa8979",
+  "source_sha256": {
+    "src/visual-correction.mjs": "1caf1a2502ca5e038c3c118982e77b325ebfa14f4a0fac79c515b56186cc32ea",
+    "src/live-visual-capture.mjs": "f5ee23209dc70907532413729ca8a724f6ac0443b04df53cfdddba72797ae650",
+    "src/image-artifact-store.mjs": "29a585677319f8c907e7664e7212617da870341ff5f84f58f6fa825b078a880b",
+    "scripts/run-trimble-s6-structured-reference-diagnostic-live.mjs": "4875f63615371028884bd88e2cf310b1ee70601dcf01c0a925249710425cb618",
+    "test/trimble-s6-structured-reference-diagnostic-live.mjs": "12a6bfd2b6179d5ebcb675045d23c843ccb1f5b3fec4e5019113f1d02dd50933"
+  },
+  "runtime": {
+    "name": "queue",
+    "plugin_version": "0.1.0-rc.2",
+    "capability_version": "0.1.0-rc.2-capabilities.7",
+    "manifest_version": "2026-07-agent-contract-v1.4",
+    "compatibility_ok": true,
+    "fresh_process_proven_in_this_run": false
+  },
+  "source_mutation": {
+    "task_id": "task_1a875f82-9b15-455a-85e0-3dddf1ba99d4",
+    "plan_id": "existing-edit-babf86d95ce76c2c181094a6",
+    "plan_hash": "sha256:5bf3c4eb064539c4c38a5eb25087a1f2c1f0ce5de314673a7711e0c26395a807",
+    "model_revision_after": "sha256:c02cca0db6fff5093c9bd60f80f4e783ca16e3ecbcd3b0f58fa5017dbf6f0376"
+  },
+  "diagnostic": {
+    "path": "output/live-validation/visual-correction/trimble-s6-reference-correction-2026-07-22/clean-p3-policy-bound-v3/structured-reference-diagnostic/front-full-v4/diagnostic.json",
+    "sha256": "4cdfd1a94f46356f460f69f9ebed3fe48acf9ec2e560b0c88722cb116f3fc042",
+    "task_id": "task_e56dc1fb-6101-4253-82ab-abe30a2b985e",
+    "task_state": "diagnostic_completed",
+    "correction_patch_id": "visual-patch-58dcb5359e5ab0581ea894f6",
+    "correction_patch_hash": "sha256:58dcb5359e5ab0581ea894f6aa49004f4630b4bcae56cde7fec8decde7b3cb29",
+    "promoted_or_executed": false,
+    "promotion_available": false
+  },
+  "model": {
+    "basename": "Trimble S6.disposable.skp",
+    "disk_sha256_before": "8678e0f86768cde57ae6f81c138a0c9296b5fcbee978e34ef01063e883d22efb",
+    "disk_sha256_after": "8678e0f86768cde57ae6f81c138a0c9296b5fcbee978e34ef01063e883d22efb",
+    "disk_bytes_unchanged": true,
+    "modified_state_unchanged": true,
+    "save_model": false
+  },
+  "reference": {
+    "ordinal": 3,
+    "role": "tripod_geometry",
+    "sha256": "sha256:ffcf6b4d6e01afd3c7e53377554cf9894b3224bda911ff444e8375cad988f31b",
+    "width": 770,
+    "height": 1460,
+    "content_trust": "untrusted_data",
+    "policy_effect": "none"
+  },
+  "capture": {
+    "sha256": "sha256:77fb1a68c9838b564150a06799634d8a76cd2bd267ff3a8f6e377d4e0747f755",
+    "width": 1280,
+    "height": 720,
+    "full_tripod_visible": true,
+    "visual_review_automated": false,
+    "state_unchanged": true,
+    "view_unchanged": true,
+    "camera_hash": "sha256:f10f85ff4c9e7b23690d61771eb221e8be9690519e3262e41531b6e5a0e081b3"
+  },
+  "structured_metrics": {
+    "alignment_method": "normalized_canvas_and_foreground_centroid.v1",
+    "foreground_center_delta_norm": 0.007812,
+    "difference_method": "normalized_rgb.v1",
+    "mean_absolute_error": 0.209854,
+    "root_mean_square_error": 0.304953,
+    "compared_pixels": 16384,
+    "capture_foreground_bounds_full_width": true,
+    "computed": true,
+    "acceptance": false,
+    "verdict": "review"
+  },
+  "operator_visual_review": {
+    "method": "fresh_ui_capture_review",
+    "full_tripod_visible": true,
+    "automated": false,
+    "visual_similarity_accepted": false
+  },
+  "policy_invariants": {
+    "live_model_mutation_performed": false,
+    "correction_patch_persisted": false,
+    "correction_patch_promotion_available": false,
+    "approval_challenge_created": false,
+    "approval_token_exposed_to_agent": false,
+    "queue_before": { "queue": 0, "processing": 0, "responses": 0, "lock_exists": false },
+    "queue_after": { "queue": 0, "processing": 0, "responses": 0, "lock_exists": false }
+  },
+  "artifact_sha256": {
+    "output/live-validation/visual-correction/trimble-s6-reference-correction-2026-07-22/clean-p3-policy-bound-v3/structured-reference-diagnostic/front-full-v4/capture-checkpoint.json": "b71e56385ae605995f2bae3ef3969af560c7b5fb31464cf6fc5f4173dc710a96",
+    "output/live-validation/visual-correction/trimble-s6-reference-correction-2026-07-22/clean-p3-policy-bound-v3/structured-reference-diagnostic/front-full-v4/capture-checkpoint.png": "77fb1a68c9838b564150a06799634d8a76cd2bd267ff3a8f6e377d4e0747f755",
+    "output/live-validation/visual-correction/trimble-s6-reference-correction-2026-07-22/clean-p3-policy-bound-v3/structured-reference-diagnostic/front-full-v4/capture-thumbnail.png": "9e1fc232e4c596d0f8ebf57deb4565fe18170a3fc09f021f94bfdd3c03876ad4",
+    "output/live-validation/visual-correction/trimble-s6-reference-correction-2026-07-22/clean-p3-policy-bound-v3/structured-reference-diagnostic/front-full-v4/capture.png": "77fb1a68c9838b564150a06799634d8a76cd2bd267ff3a8f6e377d4e0747f755",
+    "output/live-validation/visual-correction/trimble-s6-reference-correction-2026-07-22/clean-p3-policy-bound-v3/structured-reference-diagnostic/front-full-v4/diagnostic.json": "4cdfd1a94f46356f460f69f9ebed3fe48acf9ec2e560b0c88722cb116f3fc042",
+    "output/live-validation/visual-correction/trimble-s6-reference-correction-2026-07-22/clean-p3-policy-bound-v3/structured-reference-diagnostic/front-full-v4/difference-overlay.png": "28aff1b8d70f1988ced87164fe5c0a67511619934be381e446b5fd87511beb5e",
+    "output/live-validation/visual-correction/trimble-s6-reference-correction-2026-07-22/clean-p3-policy-bound-v3/structured-reference-diagnostic/front-full-v4/reference-thumbnail.png": "646c00deee8b1baccee977d09d4d269f47464f6645cce026f6af3a1c520946be",
+    "output/live-validation/visual-correction/trimble-s6-reference-correction-2026-07-22/clean-p3-policy-bound-v3/structured-reference-diagnostic/front-full-v4/reference.png": "ffcf6b4d6e01afd3c7e53377554cf9894b3224bda911ff444e8375cad988f31b"
+  },
+  "release_acceptance": false,
+  "release_blockers": [
+    "camera_render_background_comparability_not_established",
+    "foreground_segmentation_classifies_full_capture_width",
+    "model_not_saved_or_reopened",
+    "single_model_current_process_only",
+    "fresh_process_not_proven",
+    "cross_version_deferred_by_user"
+  ],
+  "boundaries": [
+    "This is a post-apply read-only diagnostic attached to the earlier Trimble S6 mutation causal chain; it performs no additional model edit.",
+    "The full tripod is visible by fresh operator UI review, but this semantic observation is not an automated image-quality result.",
+    "Alignment and RGB residuals were computed, but the capture foreground spans the full image width because the render background differs from the photographic reference.",
+    "The review-only CorrectionPatch was intentionally not persisted or exposed for promotion, and no approval challenge or token was created.",
+    "The model was not saved or reopened; multi-model, fresh-process, cross-version, and release acceptance remain unproven."
+  ]
+}

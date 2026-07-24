@@ -1,0 +1,273 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/sketchup-mcp-replica/real-model-recursive-reliability-evidence-v1.schema.json",
+  "title": "Real-model recursive review and staged reliability plan v1 mock evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "kind",
+    "created_on",
+    "runtime",
+    "result",
+    "evidence_scope",
+    "contracts",
+    "tests",
+    "queue_boundary",
+    "fail_closed",
+    "authorization_boundary",
+    "release_boundary",
+    "hashes",
+    "boundary"
+  ],
+  "properties": {
+    "version": { "const": "real-model-recursive-reliability-evidence.v1" },
+    "kind": { "const": "real_model_recursive_reliability_v1_mock_evidence" },
+    "created_on": { "type": "string", "format": "date" },
+    "runtime": { "const": "offline" },
+    "result": { "const": "pass" },
+    "evidence_scope": { "const": "deterministic_offline_contract_tests_only" },
+    "contracts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["structural_probe", "recursive_review", "staged_plan"],
+      "properties": {
+        "structural_probe": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "version",
+            "two_phase",
+            "read_only_required",
+            "phase_two_exact_paths_only",
+            "complete_revision_required",
+            "untrusted_model_data_cannot_change_policy"
+          ],
+          "properties": {
+            "version": { "const": "structural-groups.v1" },
+            "two_phase": { "const": true },
+            "read_only_required": { "const": true },
+            "phase_two_exact_paths_only": { "const": true },
+            "complete_revision_required": { "const": true },
+            "untrusted_model_data_cannot_change_policy": { "const": true }
+          }
+        },
+        "recursive_review": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "version",
+            "runtime",
+            "server_recommended_is_proposal_only",
+            "recommended_confirmed",
+            "recommended_authorized",
+            "model_mutation_authorized"
+          ],
+          "properties": {
+            "version": { "const": "real-model-recursive-target-review.v1" },
+            "runtime": { "const": "offline" },
+            "server_recommended_is_proposal_only": { "const": true },
+            "recommended_confirmed": { "const": false },
+            "recommended_authorized": { "const": false },
+            "model_mutation_authorized": { "const": false }
+          }
+        },
+        "staged_plan": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "version",
+            "stage",
+            "risk_level",
+            "exact_allowed_operation",
+            "disposable_copy_only",
+            "local_approval_required",
+            "fresh_session_contract_required",
+            "executable_now",
+            "mutation_authorized"
+          ],
+          "properties": {
+            "version": { "const": "real-model-reliability-execution-plan.v1" },
+            "stage": { "const": "offline_prepare_only" },
+            "risk_level": { "const": "S3" },
+            "exact_allowed_operation": { "const": "boolean_difference" },
+            "disposable_copy_only": { "const": true },
+            "local_approval_required": { "const": true },
+            "fresh_session_contract_required": { "const": true },
+            "executable_now": { "const": false },
+            "mutation_authorized": { "const": false }
+          }
+        }
+      }
+    },
+    "tests": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["recursive_review", "staged_plan", "evidence_contract"],
+      "properties": {
+        "recursive_review": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "command",
+            "assertions",
+            "trimble_relation",
+            "two_phase_probe_paths",
+            "server_recommended_observed",
+            "queue_requests_created",
+            "deterministic"
+          ],
+          "properties": {
+            "command": { "const": "node test/real-model-recursive-target-review.mjs" },
+            "assertions": { "const": 116 },
+            "trimble_relation": { "const": "disjoint" },
+            "two_phase_probe_paths": { "const": 2 },
+            "server_recommended_observed": { "const": true },
+            "queue_requests_created": { "const": 0 },
+            "deterministic": { "const": true }
+          }
+        },
+        "staged_plan": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "command",
+            "assertions",
+            "positive_strategy",
+            "generated_cutter_strategy",
+            "generated_cutter_blocked",
+            "cli_live_queue_called",
+            "mutation_authorized",
+            "release_acceptance"
+          ],
+          "properties": {
+            "command": { "const": "node test/real-model-reliability-plan.mjs" },
+            "assertions": { "const": 80 },
+            "positive_strategy": { "const": "existing_pair" },
+            "generated_cutter_strategy": { "const": "generated_cutter" },
+            "generated_cutter_blocked": { "const": true },
+            "cli_live_queue_called": { "const": false },
+            "mutation_authorized": { "const": false },
+            "release_acceptance": { "const": false }
+          }
+        },
+        "evidence_contract": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "command",
+            "core_commands_rerun",
+            "hash_bindings_checked",
+            "fresh_nonmanifold_failed_closed",
+            "schema_negative_cases"
+          ],
+          "properties": {
+            "command": { "const": "node test/real-model-recursive-reliability-evidence.mjs" },
+            "core_commands_rerun": { "const": true },
+            "hash_bindings_checked": { "const": 11 },
+            "fresh_nonmanifold_failed_closed": { "const": true },
+            "schema_negative_cases": { "const": 5 }
+          }
+        }
+      }
+    },
+    "queue_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["live_queue_called", "queue_requests_created", "queue_state_directory_created"],
+      "properties": {
+        "live_queue_called": { "const": false },
+        "queue_requests_created": { "const": 0 },
+        "queue_state_directory_created": { "const": false }
+      }
+    },
+    "fail_closed": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "disjoint_existing_pair",
+        "locked_or_hidden_occurrence",
+        "truncated_structural_probe",
+        "fresh_nonmanifold_pair",
+        "stale_or_incomplete_revision",
+        "generated_cutter_without_lineage"
+      ],
+      "properties": {
+        "disjoint_existing_pair": { "const": true },
+        "locked_or_hidden_occurrence": { "const": true },
+        "truncated_structural_probe": { "const": true },
+        "fresh_nonmanifold_pair": { "const": true },
+        "stale_or_incomplete_revision": { "const": true },
+        "generated_cutter_without_lineage": { "const": true }
+      }
+    },
+    "authorization_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "server_recommended_is_execution_authority",
+        "agent_self_approval_accepted",
+        "real_user_approval_observed",
+        "approval_token_issued",
+        "mutation_authorized"
+      ],
+      "properties": {
+        "server_recommended_is_execution_authority": { "const": false },
+        "agent_self_approval_accepted": { "const": false },
+        "real_user_approval_observed": { "const": false },
+        "approval_token_issued": { "const": false },
+        "mutation_authorized": { "const": false }
+      }
+    },
+    "release_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "live_structural_probe_in_this_evidence",
+        "live_boolean_executed",
+        "save_reopen_identity_proven",
+        "release_acceptance"
+      ],
+      "properties": {
+        "live_structural_probe_in_this_evidence": { "const": false },
+        "live_boolean_executed": { "const": false },
+        "save_reopen_identity_proven": { "const": false },
+        "release_acceptance": { "const": false }
+      }
+    },
+    "hashes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema/real-model-recursive-target-review-v1.schema.json",
+        "src/real-model-recursive-target-review.mjs",
+        "scripts/review-real-model-recursive-targets.mjs",
+        "test/real-model-recursive-target-review.mjs",
+        "schema/real-model-reliability-execution-plan-v1.schema.json",
+        "src/real-model-reliability-plan.mjs",
+        "scripts/prepare-real-model-reliability-case.mjs",
+        "test/real-model-reliability-plan.mjs",
+        "docs/real-model-recursive-reliability-workflow-v1.md",
+        "schema/real-model-recursive-reliability-evidence-v1.schema.json",
+        "test/real-model-recursive-reliability-evidence.mjs"
+      ],
+      "properties": {
+        "schema/real-model-recursive-target-review-v1.schema.json": { "$ref": "#/$defs/sha256" },
+        "src/real-model-recursive-target-review.mjs": { "$ref": "#/$defs/sha256" },
+        "scripts/review-real-model-recursive-targets.mjs": { "$ref": "#/$defs/sha256" },
+        "test/real-model-recursive-target-review.mjs": { "$ref": "#/$defs/sha256" },
+        "schema/real-model-reliability-execution-plan-v1.schema.json": { "$ref": "#/$defs/sha256" },
+        "src/real-model-reliability-plan.mjs": { "$ref": "#/$defs/sha256" },
+        "scripts/prepare-real-model-reliability-case.mjs": { "$ref": "#/$defs/sha256" },
+        "test/real-model-reliability-plan.mjs": { "$ref": "#/$defs/sha256" },
+        "docs/real-model-recursive-reliability-workflow-v1.md": { "$ref": "#/$defs/sha256" },
+        "schema/real-model-recursive-reliability-evidence-v1.schema.json": { "$ref": "#/$defs/sha256" },
+        "test/real-model-recursive-reliability-evidence.mjs": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "boundary": { "type": "string", "minLength": 120, "maxLength": 3000 }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" }
+  }
+}

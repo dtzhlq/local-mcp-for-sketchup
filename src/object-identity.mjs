@@ -1,4 +1,5 @@
 import { nonEmptyString } from './object-operation-utils.mjs';
+import { mockStructuralPersistentId, parseCanonicalMockPidPath } from './mock-structural-identity.mjs';
 
 const NESTED_EDIT_OPERATIONS = new Set([
   'delete',
@@ -94,11 +95,91 @@ export function referenceLabel(reference) {
 
 export function findModelObject(model, reference, required = true) {
   if (reference?.entity_path?.startsWith('mock:')) return findMockPersistentObject(model, reference, required);
+  if (reference?.entity_path?.startsWith('pid:')) return findMockCanonicalPidObject(model, reference, required);
   if (reference?.entity_path) return findNestedDefinitionObject(model, reference, required);
   const groupIndex = model.groups.findIndex((group) => matchesObjectReference(group, reference));
   if (groupIndex >= 0) return { collection: 'groups', index: groupIndex, item: model.groups[groupIndex] };
   const instanceIndex = (model.instances || []).findIndex((instance) => matchesObjectReference(instance, reference));
   if (instanceIndex >= 0) return { collection: 'instances', index: instanceIndex, item: model.instances[instanceIndex] };
+  if (required) throw new Error(`object not found: ${referenceLabel(reference)}`);
+  return null;
+}
+
+function findMockCanonicalPidObject(model, reference, required) {
+  const persistentIds = parseCanonicalMockPidPath(reference.entity_path);
+  let groupItems = model.groups || [];
+  let instanceItems = model.instances || [];
+  let ancestors = [];
+  let current = null;
+  let collection = null;
+  let collectionName = null;
+  let index = -1;
+  let definition = null;
+  let definitionName = null;
+  let parentGroup = null;
+
+  for (let segmentIndex = 0; segmentIndex < persistentIds.length; segmentIndex += 1) {
+    const persistentId = persistentIds[segmentIndex];
+    const candidates = [];
+    for (const [entityType, items, name] of [
+      ['group', groupItems, 'groups'],
+      ['component_instance', instanceItems, 'instances']
+    ]) {
+      items.forEach((item, itemIndex) => {
+        const candidateId = mockStructuralPersistentId(item, entityType, ancestors);
+        if (candidateId === persistentId) candidates.push({ entityType, items, name, item, itemIndex, persistentId: candidateId });
+      });
+    }
+    if (candidates.length !== 1) {
+      if (required) throw new Error(`mock canonical persistent path segment resolved ${candidates.length} objects: ${persistentId}`);
+      return null;
+    }
+    const candidate = candidates[0];
+    current = candidate.item;
+    collection = candidate.items;
+    collectionName = candidate.name;
+    index = candidate.itemIndex;
+    ancestors = [...ancestors, candidate.persistentId];
+
+    if (reference.instance_policy === 'make_unique' && candidate.entityType === 'component_instance') {
+      if (reference.instance_id && !nestedStableReferences(current).includes(String(reference.instance_id))) {
+        throw new Error(`make_unique instance ${reference.instance_id} does not match canonical persistent path segment ${persistentId}`);
+      }
+      current = makeMockInstanceUnique(model, current);
+      collection[index] = current;
+    }
+
+    if (segmentIndex === persistentIds.length - 1) {
+      const affectedInstanceCount = definitionName ? countMockDefinitionInstances(model, definitionName) : 1;
+      return {
+        collection: collectionName,
+        collection_ref: collection,
+        index,
+        item: current,
+        nested: segmentIndex > 0,
+        definition,
+        definition_name: definitionName,
+        entity_type: candidate.entityType,
+        parent_group: parentGroup,
+        affected_instance_count: reference.instance_policy === 'make_unique' ? 1 : affectedInstanceCount,
+        instance_policy: reference.instance_policy,
+        persistent_id_path: reference.entity_path
+      };
+    }
+
+    if (candidate.entityType === 'component_instance') {
+      definitionName = current.definition;
+      definition = model.component_definitions?.[definitionName];
+      if (!definition) throw new Error(`component definition not found for mock canonical persistent path: ${definitionName}`);
+      groupItems = definition.groups || [];
+      instanceItems = definition.instances || [];
+      parentGroup = null;
+    } else {
+      parentGroup = current;
+      groupItems = current.groups || [];
+      instanceItems = current.instances || [];
+    }
+  }
   if (required) throw new Error(`object not found: ${referenceLabel(reference)}`);
   return null;
 }
@@ -165,7 +246,8 @@ function findMockPersistentObject(model, reference, required) {
     if (segment.entity_type === 'face' || segment.entity_type === 'edge') {
       parentGroup = current;
       const key = segment.entity_type === 'face' ? '_face_states' : '_edge_states';
-      collection = parentGroup[key] || [];
+      ensureMockSubentityStates(parentGroup, segment.entity_type, Number(parentGroup[segment.entity_type === 'face' ? 'faces' : 'edges'] || 0));
+      collection = parentGroup[key];
       collectionName = key;
       index = collection.findIndex((item) => nestedStableReferences(item).includes(segment.reference));
       if (index < 0) throw new Error(`mock persistent ${segment.entity_type} not found: ${segment.reference}`);
@@ -193,6 +275,25 @@ function findMockPersistentObject(model, reference, required) {
     instance_policy: reference.instance_policy,
     persistent_id_path: reference.entity_path
   };
+}
+
+export function ensureMockSubentityStates(group, entityType, count) {
+  const key = entityType === 'face' ? '_face_states' : '_edge_states';
+  group[key] ||= [];
+  while (group[key].length < count) {
+    const index = group[key].length;
+    const boxNormals = [[-1, 0, 0], [1, 0, 0], [0, -1, 0], [0, 1, 0], [0, 0, -1], [0, 0, 1]];
+    group[key].push({
+      entity_type: entityType,
+      persistent_id: `${group.id || group.name}:${entityType}:${index + 1}`,
+      id: `${group.id || group.name}:${entityType}:${index + 1}`,
+      material: entityType === 'face' ? group.material || null : null,
+      normal: entityType === 'face' ? boxNormals[index % boxNormals.length] : null,
+      visible: true,
+      bounding_box: group.bounding_box || null
+    });
+  }
+  return group[key].slice(0, count);
 }
 
 function makeMockInstanceUnique(model, instance) {

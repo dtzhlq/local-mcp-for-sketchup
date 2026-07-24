@@ -8,11 +8,13 @@ import {
   acceptReconciliation,
   buildDesignIntentGraph,
   planDesignParameterChange,
-  reconcileDesignIntentGraph
+  reconcileDesignIntentGraph,
+  writeDesignArtifact
 } from '../src/design-intent-graph.mjs';
 import { buildModelGraph } from '../src/model-graph.mjs';
 
 const root = await fs.mkdtemp(path.join(os.tmpdir(), 'alma-design-intent-'));
+const TEST_MODEL_KEY = `model_${'d'.repeat(32)}`;
 const bridge = new SketchUpBridge({
   mock: { sessionPath: path.join(root, 'session.json') },
   agentContract: { rootDir: path.join(root, 'agent-state') },
@@ -24,7 +26,7 @@ try {
   const architecture = architectureFixture();
   await bridge.build_model({ runtime: 'mock', code: JSON.stringify(architecture.document) });
   let modelGraph = await currentModelGraph();
-  const designGraph = buildDesignIntentGraph({ modelGraph, ...architecture.artifacts });
+  const designGraph = buildDesignIntentGraph({ modelKey: TEST_MODEL_KEY, modelGraph, ...architecture.artifacts });
   assert.equal(designGraph.stats.parameters, 2);
   assert.ok(designGraph.bidirectional.design_to_entities['parameter:door_width_mm'].includes('target_id:main-door'));
   assert.ok(designGraph.bidirectional.entity_to_design['target_id:main-wall'].includes('part:wall-main'));
@@ -107,7 +109,7 @@ try {
   const product = productFixture();
   await bridge.build_model({ runtime: 'mock', code: JSON.stringify(product.document) });
   const productModelGraph = await currentModelGraph();
-  const productDesignGraph = buildDesignIntentGraph({ modelGraph: productModelGraph, ...product.artifacts });
+  const productDesignGraph = buildDesignIntentGraph({ modelKey: TEST_MODEL_KEY, modelGraph: productModelGraph, ...product.artifacts });
   const holePlan = planDesignParameterChange({
     designGraph: productDesignGraph,
     currentModelGraph: productModelGraph,
@@ -117,10 +119,95 @@ try {
   assert.equal(holePlan.blockers.length, 0);
   assert.equal(holePlan.operations.find((operation) => operation.op === 'cut_hole').radius, 10);
 
+  for (const [field, value] of [
+    ['world_transform', [1, 0, 0, 10, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]],
+    ['geometry_summary', { type: 'face', area_mm2: 1234 }],
+    ['back_material', 'Fingerprint_Back'],
+    ['texture_transform', { u_scale: 2, v_scale: 1 }],
+    ['face_uvs', [[0, 0], [1, 0], [1, 1]]],
+    ['reversed', true],
+    ['soft', true],
+    ['smooth', true],
+    ['effective_locked', true],
+    ['shared_definition', true],
+    ['affected_instance_count', 3]
+  ]) {
+    const drifted = structuredClone(productModelGraph);
+    drifted.nodes.find((node) => node.reference === 'mounting-panel')[field] = value;
+    const blockedByFingerprint = planDesignParameterChange({
+      designGraph: productDesignGraph,
+      currentModelGraph: drifted,
+      changes: { hole_diameter_mm: 20 }
+    });
+    assert.deepEqual(blockedByFingerprint.blockers, ['manual_or_external_divergence_requires_reconciliation'], `${field} must participate in the binding fingerprint`);
+    assert.equal(blockedByFingerprint.divergence[0].status, 'changed');
+  }
+
+  const invalidDslArtifacts = structuredClone(product.artifacts);
+  invalidDslArtifacts.entityBindings[0].rebuild_template.push({ op: 'not_a_registered_safe_operation' });
+  const invalidDslGraph = buildDesignIntentGraph({ modelKey: TEST_MODEL_KEY, modelGraph: productModelGraph, ...invalidDslArtifacts });
+  assert.throws(
+    () => planDesignParameterChange({
+      designGraph: invalidDslGraph,
+      currentModelGraph: productModelGraph,
+      changes: { hole_diameter_mm: 20 }
+    }),
+    (error) => error?.code === 'INVALID_ARGUMENT' && /safe-DSL contract/.test(error.message),
+    'DesignIntent rebuild operations must pass the shared operation registry contract'
+  );
+
+  const ambiguousModelGraph = structuredClone(productModelGraph);
+  const ambiguousOriginal = ambiguousModelGraph.nodes.find((node) => node.reference === 'mounting-panel');
+  ambiguousModelGraph.nodes.push({
+    ...structuredClone(ambiguousOriginal),
+    node_id: `node_${'9'.repeat(24)}`,
+    reference: 'mounting-panel-copy',
+    persistent_id: 'mounting-panel-copy',
+    entity_path: 'mock:mounting-panel-copy'
+  });
+  const ambiguousArtifacts = structuredClone(product.artifacts);
+  ambiguousArtifacts.entityBindings[0].entity = { target_id: ambiguousOriginal.name };
+  assert.throws(
+    () => buildDesignIntentGraph({ modelKey: TEST_MODEL_KEY, modelGraph: ambiguousModelGraph, ...ambiguousArtifacts }),
+    (error) => error?.code === 'INVALID_ARGUMENT'
+      && error?.details?.mapping_status === 'ambiguous'
+      && error?.details?.candidate_count === 2,
+    'tied name matches must never be persisted as an entity binding'
+  );
+
+  const queueAdoption = JSON.parse(await fs.readFile(path.resolve('test/fixtures/model-graph/queue-pid-adoption.json'), 'utf8'));
+  const queueModelGraph = buildModelGraph(queueAdoption);
+  const queueArtifacts = {
+    parametricRecipe: { version: 1, id: 'queue-wall-recipe', parameters: [{ id: 'wall_depth_mm', default: 200, type: 'number', unit: 'mm' }] },
+    featureMappingPlan: { version: 1, id: 'queue-wall-map' },
+    partGraph: { version: 1, id: 'queue-wall-parts', parts: [{ id: 'north-wall' }] },
+    entityBindings: [{
+      binding_id: 'queue-north-wall-binding',
+      part_id: 'north-wall',
+      feature_id: 'wall-depth',
+      entity: { entity_path: 'pid:101.201', edit_scope: 'instance_path', instance_policy: 'definition_wide' },
+      parameter_bindings: ['wall_depth_mm'],
+      rebuild_template: [{ op: 'box', id: 'north-wall', name: 'North_Wall', origin: [0, 0, 0], size: [5000, { $parameter: 'wall_depth_mm' }, 3000] }]
+    }]
+  };
+  const queueDesignGraph = buildDesignIntentGraph({ modelKey: TEST_MODEL_KEY, modelGraph: queueModelGraph, ...queueArtifacts });
+  assert.deepEqual(queueDesignGraph.bindings[0].persistent_ref, {
+    entity_path: 'pid:101.201',
+    edit_scope: 'instance_path',
+    instance_policy: 'definition_wide'
+  });
+  const fuzzyQueueArtifacts = structuredClone(queueArtifacts);
+  fuzzyQueueArtifacts.entityBindings[0].entity = { target_id: 'North_Wall' };
+  assert.throws(
+    () => buildDesignIntentGraph({ modelKey: TEST_MODEL_KEY, modelGraph: queueModelGraph, ...fuzzyQueueArtifacts }),
+    (error) => error?.code === 'INVALID_ARGUMENT' && /untrusted name/.test(error.message),
+    'queue-shaped graphs must never persist fuzzy name-only mappings'
+  );
+
   const interior = interiorFixture();
   await bridge.build_model({ runtime: 'mock', code: JSON.stringify(interior.document) });
   const interiorModelGraph = await currentModelGraph();
-  const interiorDesignGraph = buildDesignIntentGraph({ modelGraph: interiorModelGraph, ...interior.artifacts });
+  const interiorDesignGraph = buildDesignIntentGraph({ modelKey: TEST_MODEL_KEY, modelGraph: interiorModelGraph, ...interior.artifacts });
   const arrayPlan = planDesignParameterChange({
     designGraph: interiorDesignGraph,
     currentModelGraph: interiorModelGraph,
@@ -147,8 +234,14 @@ try {
   });
   assert.equal(gatewayTask.task_state, 'awaiting_review');
   assert.equal(gatewayTask.data.change_plan.execution_allowed, false);
-  assert.equal(gatewayTask.data.change_plan.operations.filter((operation) => operation.op === 'box').length, 4);
-  assert.ok(gatewayTask.artifacts.some((artifact) => artifact.label === 'design_intent_graph'));
+  assert.equal(gatewayTask.data.change_plan.operation_count, 5);
+  const gatewayProjection = await expandedEnvelopeDocument(bridge, gatewayTask);
+  assert.equal(gatewayProjection.result.change_plan.operations.filter((operation) => operation.op === 'box').length, 4);
+  assert.ok(gatewayProjection.artifacts.some((artifact) => artifact.label === 'design_intent_graph'));
+
+  const privateArtifactPath = path.join(root, 'permission-check', 'design-artifact.json');
+  await writeDesignArtifact(privateArtifactPath, { version: 'permission-check.v1' });
+  assert.equal((await fs.stat(privateArtifactPath)).mode & 0o777, 0o600, 'DesignIntent task artifacts must be owner-only');
 
   await validateSchemas(updatedDesignGraph, doorPlan, manualReconciliation);
   process.stdout.write(`${JSON.stringify({
@@ -159,7 +252,13 @@ try {
     save_reopen_lineage_stable: true,
     manual_divergence_detected: true,
     silent_overwrite: false,
-    gateway_preview_only: true
+    gateway_preview_only: true,
+    canonical_occurrence_mapping: true,
+    ambiguous_mapping_fail_closed: true,
+    expanded_fingerprint_coverage: true,
+    shared_dsl_contract_validated: true,
+    private_artifact_mode: '0600',
+    runtime: 'mock-only-no-queue'
   }, null, 2)}\n`);
 } finally {
   await fs.rm(root, { recursive: true, force: true });
@@ -253,6 +352,47 @@ function interiorFixture() {
     ] },
     artifacts: { parametricRecipe, featureMappingPlan, partGraph, entityBindings }
   };
+}
+
+async function expandedEnvelopeDocument(targetBridge, envelope) {
+  const handle = envelope.presentation?.full_result_artifact;
+  if (!handle) {
+    return {
+      result: envelope.data,
+      next_action: envelope.next_action,
+      artifacts: envelope.artifacts || []
+    };
+  }
+  return JSON.parse(await readArtifactText(targetBridge, handle, envelope.task_id));
+}
+
+async function readArtifactText(targetBridge, handle, taskId) {
+  const handleMatch = /^artifact:(task_[0-9a-f-]+):[0-9a-f-]+$/i.exec(String(handle));
+  assert.ok(handleMatch, 'The full projection must use an opaque task artifact handle.');
+  assert.equal(handleMatch[1], taskId, 'The full projection artifact must be bound to its owning task.');
+
+  let offset = 0;
+  let content = '';
+  while (true) {
+    const page = await targetBridge.read_agent_artifact({
+      handle,
+      task_id: taskId,
+      offset,
+      max_chars: 1024
+    });
+    assert.equal(page.ok, true, JSON.stringify(page.error));
+    assert.equal(page.task_id, taskId);
+    assert.equal(page.data?.artifact?.handle, handle);
+    assert.equal(page.data?.artifact?.offset, offset);
+    assert.equal(typeof page.data?.artifact?.content, 'string');
+    content += page.data.artifact.content;
+    if (page.data.artifact.eof) {
+      assert.equal(page.data.artifact.next_offset, null);
+      return content;
+    }
+    assert.ok(Number.isInteger(page.data.artifact.next_offset) && page.data.artifact.next_offset > offset);
+    offset = page.data.artifact.next_offset;
+  }
 }
 
 async function validateSchemas(graph, plan, reconciliation) {

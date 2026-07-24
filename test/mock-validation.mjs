@@ -3,6 +3,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { getOperationManifest, getOperationNames, getRuntimeCapabilities } from '../src/capabilities.mjs';
 import { SketchUpBridge } from '../src/bridge.mjs';
+import { PRODUCT_VERSION } from '../src/version.mjs';
 import { compareSnapshots } from '../src/snapshot-diff.mjs';
 import { formatSnapshotReportMarkdown } from '../src/snapshot-report.mjs';
 import { resolveTargets } from '../src/target-resolution.mjs';
@@ -49,8 +50,8 @@ function assertSnapshotQualityFields(snapshot, label) {
 }
 
 const manifest = getOperationManifest();
-assert.equal(getRuntimeCapabilities('mock').version, 'mock-runtime-0.1.0-rc.2');
-assert.equal(getRuntimeCapabilities('queue').version, 'queue-runtime-0.1.0-rc.2');
+assert.equal(getRuntimeCapabilities('mock').version, `mock-runtime-${PRODUCT_VERSION}`);
+assert.equal(getRuntimeCapabilities('queue').version, `queue-runtime-${PRODUCT_VERSION}`);
 assert.ok(manifest.length > 0, 'capability manifest should list operations');
 for (const capability of manifest) {
   assert.equal(typeof capability.op, 'string', 'manifest capability should have op name');
@@ -291,6 +292,9 @@ assert.deepEqual(reset.snapshot.bounding_box.min, [0, 0, 0]);
 
 let fakeQueueCapabilityCalls = 0;
 const fakeQueueBridge = new SketchUpBridge({
+  // This fixture exercises descriptor caching below an already-authorized queue scope.
+  // Session Contract issuance and fail-closed behavior are covered in test/session-contract.mjs.
+  liveMutationAuthorization: { handshake_id: 'test-authorized-scope' },
   queueRuntime: {
     async getCapabilities() {
       fakeQueueCapabilityCalls += 1;

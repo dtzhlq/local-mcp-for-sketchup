@@ -10,14 +10,15 @@ module AlmaSketchupMCP
     camera = Sketchup::Camera.new(Geom::Point3d.new(*eye), Geom::Point3d.new(*target), Geom::Vector3d.new(*up), true)
     camera.fov = (operation['fov'] || 35).to_f
     model.active_view.camera = camera
-    @view_state = { 'camera' => { 'eye' => operation['eye'], 'target' => operation['target'], 'up' => operation['up'] || [0, 0, 1], 'fov' => operation['fov'] || 35 } }
+    set_document_state_value('view_state', { 'camera' => { 'eye' => operation['eye'], 'target' => operation['target'], 'up' => operation['up'] || [0, 0, 1], 'fov' => operation['fov'] || 35 } }, model)
   end
 
   def add_scene(model, operation)
     name = operation.fetch('name')
     if operation['camera']
       set_camera(model, operation['camera'])
-      @view_state['scene'] = name if @view_state
+      view_state = document_state_value('view_state', model)
+      view_state['scene'] = name if view_state
     end
     page = model.pages.add(name)
     use_camera = operation.key?('use_camera') ? boolean_value(operation['use_camera'], 'scene.use_camera') : operation.key?('useCamera') ? boolean_value(operation['useCamera'], 'scene.useCamera') : true
@@ -33,9 +34,10 @@ module AlmaSketchupMCP
     scene_style = operation['style']
     apply_page_rendering_options(page, scene_rendering_options) if scene_rendering_options.is_a?(Hash)
     apply_page_shadow_info(page, scene_shadow) if scene_shadow.is_a?(Hash)
-    @scenes ||= []
+    scenes = document_state_array('scenes', model)
+    view_state = document_state_value('view_state', model)
     scene = { 'name' => name }
-    scene['camera'] = @view_state['camera'] if @view_state && @view_state['camera']
+    scene['camera'] = view_state['camera'] if view_state && view_state['camera']
     scene['transition_time'] = operation['transition_time'] || operation['transitionTime'] if operation.key?('transition_time') || operation.key?('transitionTime')
     scene['use_camera'] = use_camera
     scene['layer_visibility'] = normalize_scene_layer_visibility(operation['layer_visibility'] || operation['layerVisibility']) if operation['layer_visibility'] || operation['layerVisibility']
@@ -44,7 +46,8 @@ module AlmaSketchupMCP
     scene['shadow'] = normalize_scene_nested_operation(scene_shadow) if scene_shadow.is_a?(Hash)
     scene['style'] = normalize_scene_nested_operation(scene_style) if scene_style.is_a?(Hash)
     scene['update_flags'] = operation['update_flags'] || operation['updateFlags'] if operation.key?('update_flags') || operation.key?('updateFlags')
-    @scenes << scene
+    scenes.reject! { |entry| entry.is_a?(Hash) && entry['name'].to_s == name.to_s }
+    scenes << scene
     update_flags = operation['update_flags'] || operation['updateFlags']
     page.update(update_flags.to_i) if update_flags && page.respond_to?(:update)
     page
@@ -151,7 +154,7 @@ module AlmaSketchupMCP
     safe_set_rendering_option(options, 'GroundColor', sketchup_color(state['ground_color'])) if state.key?('ground_color')
     safe_set_rendering_option(options, 'DrawGround', state['draw_ground']) if state.key?('draw_ground')
     safe_set_rendering_option(options, 'DrawHorizon', state['draw_sky']) if state.key?('draw_sky')
-    @style_state = state
+    set_document_state_value('style_state', state, model)
     state
   end
 
@@ -159,7 +162,7 @@ module AlmaSketchupMCP
     state = {}
     shadow_info = model.shadow_info
     set_shadow_info_from_scene(shadow_info, operation, state)
-    @shadow_state = state
+    set_document_state_value('shadow_state', state, model)
     state
   rescue ArgumentError => error
     raise "shadow.time must be an ISO-8601 date/time string: #{error.message}"
@@ -211,7 +214,7 @@ module AlmaSketchupMCP
         safe_set_rendering_option(options, config[:key], rendering_option_value(normalized, config[:type]))
       end
     end
-    @rendering_options_state = state
+    set_document_state_value('rendering_options_state', state, model)
     state
   end
 

@@ -1,14 +1,40 @@
 {
-  "version": "design-intent-v1-mock-evidence.1",
-  "command": "node test/design-intent-graph.mjs",
+  "version": "design-intent-v1-mock-evidence.3",
+  "created_on": "2026-07-16",
+  "branch": "codex/agent-contract-v1",
   "runtime": "mock",
   "result": "pass",
+  "verification_scope": ["mock", "schema", "durable_store_restart"],
+  "commands": [
+    { "command": "node test/design-intent-graph.mjs", "status": "passed", "live_queue_called": false },
+    { "command": "node test/design-intent-store.mjs", "status": "passed", "live_queue_called": false },
+    { "command": "node test/design-intent-gateway-store.mjs", "status": "passed", "live_queue_called": false },
+    { "command": "node test/design-intent-cross-domain.mjs", "status": "passed", "live_queue_called": false }
+  ],
   "domains": ["architecture", "product", "interior"],
   "parameters": ["door_width_mm", "wall_thickness_mm", "hole_diameter_mm", "shelf_count"],
-  "metrics": { "reviewed_rebuild_executed": true, "save_reopen_lineage_stable": true, "manual_divergence_detected": true, "silent_overwrite": false, "gateway_preview_only": true },
-  "hashes": {
-    "src/design-intent-graph.mjs": "2dad0a16bf9c7d69a5a91f02261fea821b0dd7f98aa468a2e4b6eabbf200d538",
-    "test/design-intent-graph.mjs": "7c365abb8a4e127136f67f2b93fec5978da4412bc878d95b7ccf7ac8d038d512"
+  "metrics": {
+    "reviewed_rebuild_executed": true,
+    "save_reopen_lineage_stable": true,
+    "manual_divergence_detected": true,
+    "silent_overwrite": false,
+    "gateway_preview_only": true,
+    "durable_model_scoped_store": true,
+    "immutable_version_history": true,
+    "trusted_reconciliation_required": true,
+    "idempotent_retry_duplicate_mutation": false
   },
-  "live_queue_called": false
+  "hashes": {
+    "src/design-intent-graph.mjs": "1d8069d14546e04f3da3fa44f8f91d4bd41c237386ea1c009fc0c2cb89db7367",
+    "src/design-intent-store.mjs": "6f00671a15679e1780b0dd262c725668b35a72746ee9db6e8ec80365ac5ae977",
+    "src/agent-gateway.mjs": "c4bcdcb152d3963f54664595d6a847e9617927c26e784bd8c8873b40a415a3bb",
+    "src/agent-response-projection.mjs": "3d2d95e0f977bfc80db8c872071bbef143d21471a6ae963cc2cbe22b32a4416d",
+    "schema/design-intent-store-v1.schema.json": "189c6ce71b0be57ec50f59208662c1ba1fda9940d9cc7f1bf9db52ee1f17d0d8",
+    "test/design-intent-graph.mjs": "5d46b9014f4c1e4f80c6322f96503801df6f04793ace4466c73e3671ef01513e",
+    "test/design-intent-store.mjs": "00ad57954738e9d8055c2b7347875bb53d288517f968102592a747a124d9dc01",
+    "test/design-intent-gateway-store.mjs": "6fd79654236e02715798e60c16ffabfc87fdb2c221ac5224bf2eb4f895751326",
+    "test/design-intent-cross-domain.mjs": "b50b311b13a4bad5a71718a8979c627845cdc93d14e32ad1f09e9c1bdb698f5b"
+  },
+  "live_queue_called": false,
+  "boundary": "Three-domain durable save/open/reload/reconciliation is mock-only. This evidence is not live SketchUp FeatureHistory, observer-based continuous monitoring, or proof across SketchUp versions."
 }

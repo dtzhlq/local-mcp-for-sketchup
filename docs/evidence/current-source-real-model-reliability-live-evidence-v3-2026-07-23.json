@@ -1,0 +1,554 @@
+{
+  "version": "current-source-real-model-reliability-live-evidence.v3",
+  "kind": "current_source_real_model_reliability_live_evidence",
+  "captured_at": "2026-07-23T04:46:23.064Z",
+  "branch": "codex/agent-contract-v1",
+  "result": "partial_pass",
+  "evidence_scope": "four_hash_bound_real_model_cases_with_one_guarded_geometry_mutation_and_one_controlled_appearance_overlay",
+  "runtime": {
+    "name": "queue",
+    "server_version": "0.1.0-rc.2",
+    "plugin_version": "0.1.0-rc.2",
+    "sketchup_version": "26.2.242",
+    "ruby_version": "3.2.2",
+    "capability_version": "0.1.0-rc.2-capabilities.7",
+    "manifest_version": "2026-07-agent-contract-v1.4",
+    "dsl_version": 1,
+    "occurrence_contract": "canonical-occurrence-path.v1",
+    "revision_strategy": "definition-merkle.v2",
+    "revision_source_sha256": "b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134",
+    "compatibility_ok": true
+  },
+  "execution_authorization": {
+    "mode": "local_operator_ephemeral_process_policy",
+    "user_authorized_disposable_copies": true,
+    "queue_required": true,
+    "allowed_runtimes_explicit": true,
+    "queue_mutation_explicit": true,
+    "direct_expert_mutation_explicit": true,
+    "policy_persisted": false,
+    "default_policy_unchanged": true,
+    "agent_self_authorization_allowed": false
+  },
+  "lineage": {
+    "prior_three_case_evidence": {
+      "path": "docs/evidence/current-source-real-model-reliability-live-evidence-v2-2026-07-23.json",
+      "sha256": "d7b3777465f19cc9992c7db91f870eb7a80aad53c14bc6e4ea5816089f08e4ed",
+      "bytes": 18988
+    },
+    "appearance_case_evidence": {
+      "path": "docs/evidence/appearance-scenes-hidden-live-evidence-2026-07-23.json",
+      "sha256": "f512fa1253a8b589c5a62ef677524a4fe26e39a1d05eed35084c3d71ea82158d",
+      "bytes": 7784
+    }
+  },
+  "corpus": {
+    "manifest_path": "test/reliability-corpus/manifest.json",
+    "manifest_sha256": "sha256:4faa8caf2a097c3d1a7810f1bf7635eceede8de3ca3674cda16519117c2377fa",
+    "formal_cases_total": 7,
+    "formal_cases_passed": 4,
+    "formal_corpus_complete": false,
+    "passed_case_ids": [
+      "appearance-scenes-hidden",
+      "deep-shared-components",
+      "interior-expression",
+      "scaled-mirrored-locked"
+    ],
+    "remaining_case_ids": [
+      "architecture-golden",
+      "product-boolean-manifold",
+      "imported-dirty-topology"
+    ]
+  },
+  "cases": [
+    {
+      "case_id": "appearance-scenes-hidden",
+      "domain": "appearance",
+      "result": "pass",
+      "duration_ms": 29684,
+      "tasks_total": 3,
+      "tasks_passed": 3,
+      "task_ids": [
+        "uv_material_preservation",
+        "scene_visibility_preservation",
+        "save_reopen_identity"
+      ],
+      "coverage": {
+        "full_recursive_identity": true,
+        "bounded_recursive_identity": false,
+        "shared_definition_scope": false,
+        "material_preservation": true,
+        "scene_visibility_preservation": true,
+        "save_reopen_identity": true,
+        "uv_preservation": true,
+        "hidden_visibility_preservation": true
+      },
+      "mutation": {
+        "geometry_mutation_executed": false,
+        "locked_target_fail_closed": false,
+        "rollback_verified": false,
+        "guard_unchanged": false,
+        "locked_target_unchanged": false,
+        "exact_target_changed": false,
+        "nonuniform_scale": null,
+        "mirror_axis": null,
+        "recovery_attempts": 0,
+        "recoveries": 0
+      },
+      "appearance": {
+        "face_uv_evidence_kind": "face_uvs",
+        "uv_material_signature": "sha256:5be87a27e4bd55f6d666a3c323eb7ec17168c3bca582df11186005d2f54bd985",
+        "uv_material_signature_preserved": true,
+        "scene_visibility_signature": "sha256:cbdcca3e4cae08baaa8a5416209fbc8a9d016f1f5855f0de6e7b54785b1d3520",
+        "scene_visibility_signature_preserved": true,
+        "scenes": 1,
+        "hidden_entities": 1
+      },
+      "identity": {
+        "mode": "full_recursive",
+        "entries_before": 5897,
+        "entries_after": 5897,
+        "total_before": 5897,
+        "total_after": 5897,
+        "recursive_limit": 100000,
+        "truncated_before": false,
+        "truncated_after": false,
+        "exact_match": true,
+        "identity_digest": "sha256:93709bca6762a54a9e1cf534090a87a4fa6faec5749d826ad6e8dadeafaa061d",
+        "snapshot_error_diffs": 0,
+        "model_revision_before": "sha256:c85143f39f87a901cd3c185a318037d99931e3b1e97f1e25b9ea14b15ba4ee86",
+        "model_revision_after": "sha256:c85143f39f87a901cd3c185a318037d99931e3b1e97f1e25b9ea14b15ba4ee86",
+        "model_revision_exact_match": true,
+        "model_revision_strategy": "definition-merkle.v2",
+        "model_revision_source_sha256": "b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134",
+        "active_verified_copy_after_reopen": true
+      },
+      "quality": {
+        "wrong_object_modification_count": 0,
+        "silent_geometry_corruption_count": 0,
+        "original_bytes_unchanged": true,
+        "disposable_copy_only": true,
+        "queue_clean": {
+          "queue": 0,
+          "processing": 0,
+          "responses": 0,
+          "lock": false
+        }
+      },
+      "artifacts": {
+        "report": {
+          "path": "output/live-validation/real-model-reliability/appearance-scenes-hidden-current-source-v1/real-model-reliability-live-case-report.v1.json",
+          "sha256": "c34df59f96e262d2f2eda6cf01f75d12eff43c4a634a1dad2f64438f8ae8483b",
+          "bytes": 6286
+        },
+        "diagnostic": {
+          "path": "output/live-validation/real-model-reliability/appearance-scenes-hidden-current-source-v1/live-work/preflight-672e4cfa-cabc-4382-b4fe-8c75e4ca9c97/01-appearance-scenes-hidden/appearance-scenes-hidden.save-reopen-diagnostic.json",
+          "sha256": "beb64e64b06fd4092a245bf390328ce32e68759bc98b0a11ddddae114014aaad",
+          "bytes": 1540
+        },
+        "source_model": {
+          "path": "output/live-validation/real-model-reliability-inputs/appearance-scenes-hidden-derived-v1/appearance-scenes-hidden.skp",
+          "sha256": "ad9214768ade8a969d415ed50b7cb3dbcba66019ff163ff6d0d3489c448b588b",
+          "bytes": 1572488
+        },
+        "contract": {
+          "path": "output/live-validation/real-model-reliability-inputs/appearance-scenes-hidden-derived-v1/appearance-scenes-hidden.reliability.json",
+          "sha256": "5db4614f14546dae271ddaebef6ef9e01a66f400c9b95fe4fc5596f33278d016",
+          "bytes": 867
+        },
+        "verified_model": {
+          "path": "output/live-validation/real-model-reliability/appearance-scenes-hidden-current-source-v1/live-work/preflight-672e4cfa-cabc-4382-b4fe-8c75e4ca9c97/01-appearance-scenes-hidden/appearance-scenes-hidden.verified.skp",
+          "sha256": "93afa1af585fe12c70a94ac696da78ba12a656fd4b4bb5ce9157177b217eab7c",
+          "bytes": 1572488
+        }
+      }
+    },
+    {
+      "case_id": "deep-shared-components",
+      "domain": "shared_component",
+      "result": "pass",
+      "duration_ms": 510608,
+      "tasks_total": 3,
+      "tasks_passed": 3,
+      "task_ids": [
+        "large_recursive_index",
+        "shared_definition_identity",
+        "save_reopen_identity"
+      ],
+      "coverage": {
+        "full_recursive_identity": true,
+        "bounded_recursive_identity": false,
+        "shared_definition_scope": true,
+        "material_preservation": false,
+        "scene_visibility_preservation": false,
+        "save_reopen_identity": true,
+        "uv_preservation": false,
+        "hidden_visibility_preservation": false
+      },
+      "identity": {
+        "mode": "full_recursive",
+        "entries_before": 11474,
+        "entries_after": 11474,
+        "total_before": 11474,
+        "total_after": 11474,
+        "recursive_limit": 100000,
+        "truncated_before": false,
+        "truncated_after": false,
+        "exact_match": true,
+        "identity_digest": "sha256:9730d932bee21ab25baf7319ba64c9cf45d568555feaacff49c3fc0526c79da0",
+        "snapshot_error_diffs": 0,
+        "model_revision_before": "sha256:c03d317c25883606f0f8d7819610823118d916694d5a5d323deabe2ac7bcdf36",
+        "model_revision_after": "sha256:c03d317c25883606f0f8d7819610823118d916694d5a5d323deabe2ac7bcdf36",
+        "model_revision_exact_match": true,
+        "model_revision_strategy": "definition-merkle.v2",
+        "model_revision_source_sha256": "b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134",
+        "active_verified_copy_after_reopen": true
+      },
+      "quality": {
+        "wrong_object_modification_count": 0,
+        "silent_geometry_corruption_count": 0,
+        "original_bytes_unchanged": true,
+        "disposable_copy_only": true,
+        "queue_clean": {
+          "queue": 0,
+          "processing": 0,
+          "responses": 0,
+          "lock": false
+        }
+      },
+      "artifacts": {
+        "report": {
+          "path": "output/live-validation/real-model-reliability/deep-shared-components-current-source-v6/real-model-reliability-live-case-report.v1.json",
+          "sha256": "61a1738d629e15d89f4d72ee96241c3ed2dc47f7c33478145b7c2d554e99de0b",
+          "bytes": 5601
+        },
+        "diagnostic": {
+          "path": "output/live-validation/real-model-reliability/deep-shared-components-current-source-v6/live-work/preflight-f46c049c-9e5b-408b-b87a-bfb85140a713/01-deep-shared-components/deep-shared-components.save-reopen-diagnostic.json",
+          "sha256": "e8c91f012a848a7638b76cf0cb5b3379ebd84a6bcb408b1491059e930f4f9f48",
+          "bytes": 1542
+        },
+        "source_model": {
+          "path": "output/live-validation/real-model-reliability-inputs/deep-shared-components-v1/deep-shared-components.skp",
+          "sha256": "4a75190929bfa47b1506a8ed037a08e0f08e1632169d9bb550c4a9219b43e90c",
+          "bytes": 608815
+        },
+        "contract": {
+          "path": "output/live-validation/real-model-reliability-inputs/deep-shared-components-v1/deep-shared-components.reliability.json",
+          "sha256": "d7f1bd51a29f4c1e973d380fc4f1c8e9154fc04be5db086ae04031daf10b9c46",
+          "bytes": 646
+        },
+        "verified_model": {
+          "path": "output/live-validation/real-model-reliability/deep-shared-components-current-source-v6/live-work/preflight-f46c049c-9e5b-408b-b87a-bfb85140a713/01-deep-shared-components/deep-shared-components.verified.skp",
+          "sha256": "5bba080f041c8693f0804f9de07a5960fc91d945ca4a1adcc6a6481d9a3d5b7c",
+          "bytes": 262715
+        }
+      },
+      "mutation": {
+        "geometry_mutation_executed": false,
+        "locked_target_fail_closed": false,
+        "rollback_verified": false,
+        "guard_unchanged": false,
+        "locked_target_unchanged": false,
+        "exact_target_changed": false,
+        "nonuniform_scale": null,
+        "mirror_axis": null,
+        "recovery_attempts": 0,
+        "recoveries": 0
+      },
+      "appearance": null
+    },
+    {
+      "case_id": "interior-expression",
+      "domain": "interior",
+      "result": "pass",
+      "duration_ms": 1291250,
+      "tasks_total": 3,
+      "tasks_passed": 3,
+      "task_ids": [
+        "material_preservation",
+        "scene_visibility_preservation",
+        "save_reopen_identity"
+      ],
+      "coverage": {
+        "full_recursive_identity": false,
+        "bounded_recursive_identity": true,
+        "shared_definition_scope": false,
+        "material_preservation": true,
+        "scene_visibility_preservation": true,
+        "save_reopen_identity": true,
+        "uv_preservation": false,
+        "hidden_visibility_preservation": false
+      },
+      "identity": {
+        "mode": "complete_revision_bounded_occurrence_sample",
+        "entries_before": 100000,
+        "entries_after": 100000,
+        "total_before": 220006,
+        "total_after": 220006,
+        "recursive_limit": 100000,
+        "truncated_before": true,
+        "truncated_after": true,
+        "exact_match": true,
+        "identity_digest": "sha256:d08ccc301db692a6d93464b60a54ad86ec64cdc4e2ce67c6620234193651ed6a",
+        "snapshot_error_diffs": 0,
+        "model_revision_before": "sha256:074584ee36f0e1b144dd40e05659104b9aefc13391a38ce2e77c45fdce6756b9",
+        "model_revision_after": "sha256:074584ee36f0e1b144dd40e05659104b9aefc13391a38ce2e77c45fdce6756b9",
+        "model_revision_exact_match": true,
+        "model_revision_strategy": "definition-merkle.v2",
+        "model_revision_source_sha256": "b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134",
+        "active_verified_copy_after_reopen": true
+      },
+      "quality": {
+        "wrong_object_modification_count": 0,
+        "silent_geometry_corruption_count": 0,
+        "original_bytes_unchanged": true,
+        "disposable_copy_only": true,
+        "queue_clean": {
+          "queue": 0,
+          "processing": 0,
+          "responses": 0,
+          "lock": false
+        }
+      },
+      "artifacts": {
+        "report": {
+          "path": "output/live-validation/real-model-reliability/interior-expression-current-source-v1/real-model-reliability-live-case-report.v1.json",
+          "sha256": "c406a75030e61738dbbd9d1561eb2cd946168de4c32b702d9e709c19dbaa999d",
+          "bytes": 6199
+        },
+        "diagnostic": {
+          "path": "output/live-validation/real-model-reliability/interior-expression-current-source-v1/live-work/preflight-161ee347-68aa-4191-86ee-22c1ad2a03e3/01-interior-expression/interior-expression.save-reopen-diagnostic.json",
+          "sha256": "e64058ceb133c007575c4b69145ef839c09ad1ddc343c3067e71f5075f2f23f4",
+          "bytes": 1572
+        },
+        "source_model": {
+          "path": "output/live-validation/real-model-reliability-inputs/interior-expression-v1/interior-room.skp",
+          "sha256": "4a2ae7a7dce486ac66066b9b8393de2bba8e778147cfa42d16309f4d3de788f3",
+          "bytes": 6502581
+        },
+        "contract": {
+          "path": "output/live-validation/real-model-reliability-inputs/interior-expression-v1/interior-room.reliability.json",
+          "sha256": "bb61f18fab2888f67da7db3aa7b48a1c3c3a5422bbdd8f6ce88d1365d6eebc96",
+          "bytes": 670
+        },
+        "verified_model": {
+          "path": "output/live-validation/real-model-reliability/interior-expression-current-source-v1/live-work/preflight-161ee347-68aa-4191-86ee-22c1ad2a03e3/01-interior-expression/interior-expression.verified.skp",
+          "sha256": "c809daceadec33a56916e28c1ea7d0c95018ef7899f0d602a0127a2a4ca58656",
+          "bytes": 2663476
+        }
+      },
+      "mutation": {
+        "geometry_mutation_executed": false,
+        "locked_target_fail_closed": false,
+        "rollback_verified": false,
+        "guard_unchanged": false,
+        "locked_target_unchanged": false,
+        "exact_target_changed": false,
+        "nonuniform_scale": null,
+        "mirror_axis": null,
+        "recovery_attempts": 0,
+        "recoveries": 0
+      },
+      "appearance": null
+    },
+    {
+      "case_id": "scaled-mirrored-locked",
+      "domain": "transform_edge_case",
+      "result": "pass",
+      "duration_ms": 69448,
+      "tasks_total": 5,
+      "tasks_passed": 5,
+      "task_ids": [
+        "locked_fail_closed",
+        "rollback",
+        "nonuniform_mirror",
+        "wrong_object_isolation",
+        "save_reopen_identity"
+      ],
+      "coverage": {
+        "full_recursive_identity": true,
+        "bounded_recursive_identity": false,
+        "shared_definition_scope": false,
+        "material_preservation": false,
+        "scene_visibility_preservation": false,
+        "save_reopen_identity": true,
+        "uv_preservation": false,
+        "hidden_visibility_preservation": false
+      },
+      "mutation": {
+        "geometry_mutation_executed": true,
+        "locked_target_fail_closed": true,
+        "rollback_verified": true,
+        "guard_unchanged": true,
+        "locked_target_unchanged": true,
+        "exact_target_changed": true,
+        "nonuniform_scale": [
+          1.5,
+          0.75,
+          2
+        ],
+        "mirror_axis": "x",
+        "recovery_attempts": 1,
+        "recoveries": 1
+      },
+      "identity": {
+        "mode": "full_recursive",
+        "entries_before": 12944,
+        "entries_after": 12944,
+        "total_before": 12944,
+        "total_after": 12944,
+        "recursive_limit": 100000,
+        "truncated_before": false,
+        "truncated_after": false,
+        "exact_match": true,
+        "identity_digest": "sha256:5206b3380539f03e47dfc1bf6ee5d6289b0cd31e40b5bd17cebc89973ff370fe",
+        "snapshot_error_diffs": 0,
+        "model_revision_before": "sha256:5636da5e8cddb300f6aad3c1d39b64d6cd8d97db570f9044c9bb760983cd6727",
+        "model_revision_after": "sha256:5636da5e8cddb300f6aad3c1d39b64d6cd8d97db570f9044c9bb760983cd6727",
+        "model_revision_exact_match": true,
+        "model_revision_strategy": "definition-merkle.v2",
+        "model_revision_source_sha256": "b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134",
+        "active_verified_copy_after_reopen": true
+      },
+      "quality": {
+        "wrong_object_modification_count": 0,
+        "silent_geometry_corruption_count": 0,
+        "original_bytes_unchanged": true,
+        "disposable_copy_only": true,
+        "queue_clean": {
+          "queue": 0,
+          "processing": 0,
+          "responses": 0,
+          "lock": false
+        }
+      },
+      "artifacts": {
+        "report": {
+          "path": "output/live-validation/real-model-reliability/scaled-mirrored-locked-current-source-v2/real-model-reliability-live-case-report.v1.json",
+          "sha256": "0b28020f0b24599fba92c439c92bcf0e56bd99f8d4a4bec091bf3099a2097eb4",
+          "bytes": 6020
+        },
+        "diagnostic": {
+          "path": "output/live-validation/real-model-reliability/scaled-mirrored-locked-current-source-v2/live-work/preflight-8e9747dd-e2f1-4954-9a8c-284cfe5a7919/01-scaled-mirrored-locked/scaled-mirrored-locked.save-reopen-diagnostic.json",
+          "sha256": "e2ad086d0a02cc9baaa99a84b54f8235053beaba84be77b6896e730657239e4a",
+          "bytes": 1542
+        },
+        "source_model": {
+          "path": "output/live-validation/real-model-reliability-inputs/scaled-mirrored-locked-derived-v1/scaled-mirrored-locked.skp",
+          "sha256": "6c0040ad84a9f7b63a9681a89742ef44f195d721c72e3cc4dc4270922fd59af1",
+          "bytes": 533217
+        },
+        "contract": {
+          "path": "output/live-validation/real-model-reliability-inputs/scaled-mirrored-locked-derived-v1/scaled-mirrored-locked.reliability.json",
+          "sha256": "3bcb1ba2d5abee1ca6ca0d9fa25ce5e1e84fb2eb2daaa7dcb1b780ea854c0e7d",
+          "bytes": 836
+        },
+        "verified_model": {
+          "path": "output/live-validation/real-model-reliability/scaled-mirrored-locked-current-source-v2/live-work/preflight-8e9747dd-e2f1-4954-9a8c-284cfe5a7919/01-scaled-mirrored-locked/scaled-mirrored-locked.verified.skp",
+          "sha256": "3d7ee9c202421ea7d9b9698627f9e6ff49c9bb47c363a8c8d220495b451a4396",
+          "bytes": 533530
+        }
+      },
+      "appearance": null
+    }
+  ],
+  "aggregate_metrics": {
+    "tasks_total": 14,
+    "tasks_passed": 14,
+    "task_success_rate": 1,
+    "geometry_mutation_cases_passed": 1,
+    "controlled_fixture_overlay_cases_passed": 2,
+    "wrong_object_modification_count": 0,
+    "silent_geometry_corruption_count": 0,
+    "recovery_attempts": 1,
+    "recoveries": 1,
+    "recovery_rate": 1,
+    "aggregate_duration_ms": 1900990,
+    "queue_clean_after_each_case": true
+  },
+  "performance_boundary": {
+    "stress_case_id": "interior-expression",
+    "stress_case_duration_ms": 1291250,
+    "interactive_budget_ms": 120000,
+    "stress_case_within_interactive_budget": false,
+    "use_as_default_agent_payload": false,
+    "complete_revision_retained": true,
+    "bounded_occurrence_payload_retained": true,
+    "next_action": "separate_revision_attestation_from_payload_and_add_runtime_budget"
+  },
+  "locked_target_guard": {
+    "native_lock_gap_discovered": true,
+    "native_lock_alone_sufficient": false,
+    "application_guard_required": true,
+    "loaded_boolean_source_sha256": "7bf36679d5052ecf7963ce945a8bc91796fa91024a471804be024b502ff8900e",
+    "mutating_operations_guarded": 25,
+    "read_only_locked_access": [
+      "set_selection",
+      "manifold_check"
+    ],
+    "locked_batch_rejected_before_commit": true,
+    "locked_target_unchanged": true,
+    "guard_unchanged": true
+  },
+  "appearance_preservation": {
+    "case_id": "appearance-scenes-hidden",
+    "fixture_overlay_mutated_disposable_copy": true,
+    "formal_case_geometry_mutation_executed": false,
+    "face_uv_evidence_kind": "face_uvs",
+    "face_uv_operation_applied_without_warning": true,
+    "face_uv_payload_persisted": true,
+    "textured_material_persisted": true,
+    "uv_material_signature_preserved": true,
+    "scene_visibility_signature_preserved": true,
+    "scenes": 1,
+    "hidden_entities": 1,
+    "recursive_entries": 5897,
+    "independent_uvhelper_coordinate_attestation": false,
+    "arbitrary_uv_editing_proven": false
+  },
+  "source_sha256": {
+    "test/reliability-corpus/manifest.json": "4faa8caf2a097c3d1a7810f1bf7635eceede8de3ca3674cda16519117c2377fa",
+    "scripts/aggregate-current-source-real-model-reliability-live-v3.mjs": "96b23a6a0aa21603235e9ff91d0fbaa56b4f2c3738eb4242bda80e5885d2aaee",
+    "scripts/build-appearance-scenes-hidden-live-evidence.mjs": "172c79be451b85e53167d816c4fa4c301513daf8c71b51406bf57bbf2114d570",
+    "scripts/run-real-model-reliability-harness.mjs": "6f4aff1365dd73b217f0cb5b600b2696d80e46681b0585362a520cd154e93d98",
+    "scripts/run-real-model-reliability-live-case.mjs": "b3fd977be35612c37b6beb51f1151406ecd946eaec0d5c2da46259f31d6aa17b",
+    "schema/current-source-real-model-reliability-live-evidence-v3.schema.json": "17042eb5c4e018b200464cbe18c6d551e317c4a766eeee848a38f573edcecc12",
+    "schema/appearance-scenes-hidden-live-evidence-v1.schema.json": "e9d5c98d024b2dfb0d9b807613fea4a60cc4963ebbd81fb64f9292e4a3f4996b",
+    "schema/real-model-reliability-live-case-report-v1.schema.json": "e0531c951e77858a9e0e59290e4cbd0a66f22156d93186dedb2075fa910e75e8",
+    "schema/real-model-reliability-live-case-v1.schema.json": "34a85f645586f616bdf8d08edff8f98e3c4596266feb975626b2f9186a3a9261",
+    "sketchup_plugin/alma_sketchup_mcp/appearance_operations.rb": "4f39c642ac7cd59653e22b1d0932423904752294d3517bf04995cef6f75d72e1",
+    "sketchup_plugin/alma_sketchup_mcp/model_revision.rb": "b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134",
+    "sketchup_plugin/alma_sketchup_mcp/runtime_source_manifest.rb": "cc0d68b153dee561c8a41515409677b05e831ffe85ede03a20dc70ec6b159692",
+    "sketchup_plugin/alma_sketchup_mcp/snapshot.rb": "4c43d3c9ac786619bb9ebd9b4da6088665b9b0c7772563cd32e34eb671f00147"
+  },
+  "acceptance": {
+    "four_case_live_reliability": true,
+    "full_recursive_save_reopen": true,
+    "bounded_large_model_save_reopen": true,
+    "shared_definition_scope": true,
+    "material_and_scene_preservation": true,
+    "appearance_uv_hidden_preservation": true,
+    "mutation_cases_passed": 1,
+    "locked_transform_rollback": true,
+    "native_lock_guard_enforced": true,
+    "boolean_manifold": false,
+    "dirty_topology_recovery": false,
+    "architecture_case": false,
+    "formal_corpus_cases_passed": 4,
+    "formal_corpus_cases_total": 7,
+    "formal_corpus_complete": false,
+    "agent_gateway_default_profile_qualified": false,
+    "cross_version": "deferred_by_user",
+    "release_acceptance": false
+  },
+  "boundaries": [
+    "This v3 wrapper preserves the immutable three-case evidence and adds one separately hash-bound appearance/scenes/hidden current-source live run.",
+    "The four formal cases total 14 of 14 named tasks with zero wrong-object modifications and zero silent geometry corruption.",
+    "The appearance fixture preparation mutated only a disposable real-model copy; the formal appearance case itself performed preservation and save/reopen verification without a geometry edit.",
+    "FaceUV, textured material, one Scene, and one hidden top-level target persisted with stable signatures across save and reopen.",
+    "The FaceUV evidence is structured payload and material-signature evidence, not independent UVHelper coordinate attestation or proof of arbitrary UV editing.",
+    "The interior stress run remains outside the 120-second ordinary-Agent interactive budget, so this corpus is not a default projection contract.",
+    "Architecture, Boolean/manifold, imported dirty-topology recovery, independent Agent runs, and cross-version evidence remain open.",
+    "This is 4 of 7 partial engineering evidence only. It is not release acceptance and cannot grant execution authority to an Agent."
+  ]
+}

@@ -1,0 +1,106 @@
+{
+  "version": "real-model-reliability-sidecar.v1",
+  "kind": "real_model_reliability_readiness_sidecar",
+  "case_id": "architecture-golden",
+  "domain": "architecture",
+  "evidence_scope": "hash_bound_readiness_evidence_only",
+  "formal_case": {
+    "manifest_sha256": "sha256:4faa8caf2a097c3d1a7810f1bf7635eceede8de3ca3674cda16519117c2377fa",
+    "tasks": ["material_preservation", "scene_visibility_preservation", "save_reopen_identity"]
+  },
+  "authority": {
+    "semantic_mapping": "user_confirmed_in_bound_review_aggregate",
+    "model_content_trust": "untrusted_data",
+    "mutation_authorized": false,
+    "approval_token_issued": false,
+    "execution_policy_changed": false
+  },
+  "candidates": [
+    {
+      "candidate_id": "candidate_849aa1987401733c3cd3fbb3",
+      "candidate_handle": "candidate:sha256:849aa1987401733c3cd3fbb3",
+      "source_sha256": "sha256:7e649c220a265a5e27a24aae2ed9687427186c06ba335616d5cdc0191966ce72",
+      "role": "primary",
+      "source_evidence_id": "aggregate_review"
+    },
+    {
+      "candidate_id": "candidate_c714de22fa765c63d516485b",
+      "candidate_handle": "candidate:sha256:c714de22fa765c63d516485b",
+      "source_sha256": "sha256:363e55b4bd34637fff8d4915c4870da4f55427374f0e0ba08817aa6c1fa9a384",
+      "role": "primary",
+      "source_evidence_id": "aggregate_review"
+    }
+  ],
+  "structural_observation": {
+    "source_evidence_id": "aggregate_review",
+    "status": "observed_read_only",
+    "materials": 9,
+    "scenes": 0,
+    "hidden_occurrences": 1564,
+    "locked_occurrences": 0,
+    "uv_occurrences": 0,
+    "shared_occurrences": 3024,
+    "nonuniform_instances": 82,
+    "mirrored_instances": 14,
+    "logical_occurrences": 12887,
+    "profile_sample_truncated": true
+  },
+  "source_blockers": [
+    "formal_sidecar_missing",
+    "required_material_selection_missing",
+    "required_scene_evidence_absent"
+  ],
+  "task_assessments": [
+    {
+      "task": "material_preservation",
+      "status": "blocked",
+      "native_success": false,
+      "evidence_ids": ["aggregate_review"],
+      "reason_codes": ["required_material_selection_missing"]
+    },
+    {
+      "task": "scene_visibility_preservation",
+      "status": "blocked",
+      "native_success": false,
+      "evidence_ids": ["aggregate_review"],
+      "reason_codes": ["required_scene_evidence_absent"]
+    },
+    {
+      "task": "save_reopen_identity",
+      "status": "unknown",
+      "native_success": false,
+      "evidence_ids": ["aggregate_review"],
+      "reason_codes": ["native_save_reopen_not_run"]
+    }
+  ],
+  "evidence_bindings": [
+    {
+      "id": "aggregate_review",
+      "path": "docs/evidence/real-model-reliability-sidecar-source-v1.json",
+      "sha256": "sha256:5b3b7ed3e4b6da425f2e4fb451c9082dcbf63040e8952eb22d684052b0d9fc06",
+      "evidence_class": "derived_user_confirmed_review_aggregate"
+    }
+  ],
+  "readiness": {
+    "status": "blocked",
+    "execution_eligible": false,
+    "live_execution_contract_present": false,
+    "native_mutation_successes": 0,
+    "release_acceptance": false,
+    "blockers": [
+      "live_execution_contract_missing",
+      "required_material_selection_missing",
+      "required_scene_evidence_absent",
+      "native_mutation_success_not_established"
+    ],
+    "unknowns": ["material_target", "scene_strategy", "save_reopen_identity"]
+  },
+  "validation_policy": {
+    "json_only": true,
+    "original_model_file_access": false,
+    "queue_access": false,
+    "model_mutation": false,
+    "artifact_copy": false,
+    "cross_version_status": "deferred_by_user"
+  }
+}

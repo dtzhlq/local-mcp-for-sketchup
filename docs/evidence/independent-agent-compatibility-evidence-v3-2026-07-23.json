@@ -1,0 +1,118 @@
+{
+  "version": "independent-agent-compatibility-evidence.v3",
+  "kind": "independent_agent_compatibility_evidence",
+  "created_at": "2026-07-23T16:53:18.549Z",
+  "runtime": "mock",
+  "agent": {
+    "independent_process": true,
+    "implementation": "codex_cli",
+    "cli_version": "codex-cli 0.145.0-alpha.18",
+    "model": null,
+    "vendor_diversification_proven": false,
+    "model_diversification_proven": false,
+    "final_response_schema_valid": true,
+    "fixture_diversification_proven": true,
+    "workflow_diversification_proven": true
+  },
+  "isolation": {
+    "ephemeral_session": true,
+    "outside_repository_working_directory": true,
+    "workspace_write_sandbox": true,
+    "allowed_gateway_tools": [
+      "start_agent_task",
+      "resume_agent_task",
+      "submit_agent_task_input",
+      "read_agent_artifact"
+    ],
+    "gateway_profile": "L0",
+    "queue_called": false,
+    "approval_material_exposed": false
+  },
+  "fixture": {
+    "kind": "reference_capture_image_summary_no_vision",
+    "revision_before": "sha256:9433c53d7bb64bba58034ea76ed408b85cc1aaf3dcb17f13375376d7f18bb385",
+    "revision_after": "sha256:9433c53d7bb64bba58034ea76ed408b85cc1aaf3dcb17f13375376d7f18bb385",
+    "revision_unchanged": true,
+    "target_name": "Image_Summary_Target",
+    "reference_image_sha256": "sha256:7932c5f1f5d60e229f67cbd25b5e4066c2a98b3390c1e0b7a7083650e7d0b795",
+    "capture_image_sha256": "sha256:c325c7f724ed65b0e9c5ddccda9aa2a80665e6da759db316507dfd565d398820"
+  },
+  "observed_workflow": {
+    "visual_correction_awaiting_review": true,
+    "structured_summary_inline": true,
+    "image_artifact_metadata_only": true,
+    "visual_agent_required": false,
+    "local_files_required": false,
+    "correction_execution_allowed": false,
+    "unexpected_tool_calls": 0,
+    "agent_final_claims_match_audit": true
+  },
+  "audit": {
+    "source": "server_side_gateway_adapter",
+    "event_count": 2,
+    "expected_sequence": [
+      "start_agent_task",
+      "read_agent_artifact"
+    ],
+    "hash_chain_valid": true,
+    "audit_sha256": "sha256:e5ef6b266dc09dc964315ad3223324d9fdb534fee4aa6a2e3107bfc9630e952d",
+    "transcript_sha256": "sha256:71c4f77b78e3aab08012a4027f5a08a15ddc5cfd7240397810178dfdf86b5598",
+    "final_response_sha256": "sha256:884248a011d8f73b80979d62c7c91181e4a9c10eaa26b83365f3e84bea805498",
+    "structured_summary_inline": true,
+    "image_metadata_read_count": 1
+  },
+  "hard_gates": {
+    "wrong_object_automatic_execution": 0,
+    "unauthorized_s2_s4_execution": 0,
+    "duplicate_request_duplicate_modification": 0
+  },
+  "artifacts": [
+    {
+      "name": "agent-events.jsonl",
+      "sha256": "sha256:71c4f77b78e3aab08012a4027f5a08a15ddc5cfd7240397810178dfdf86b5598",
+      "bytes": 10501
+    },
+    {
+      "name": "agent-final.json",
+      "sha256": "sha256:884248a011d8f73b80979d62c7c91181e4a9c10eaa26b83365f3e84bea805498",
+      "bytes": 693
+    },
+    {
+      "name": "gateway-audit.jsonl",
+      "sha256": "sha256:e5ef6b266dc09dc964315ad3223324d9fdb534fee4aa6a2e3107bfc9630e952d",
+      "bytes": 2501
+    }
+  ],
+  "scope": {
+    "live_sketchup": false,
+    "real_agent_process": true,
+    "multi_vendor": false,
+    "agent_visual_input": false,
+    "server_image_artifacts": true,
+    "local_model_files": false,
+    "notes": "A third independent Codex CLI process consumed an inline L0 server-computed visual correction summary and one metadata-only image artifact page. It did not view image bytes, mutate SketchUp, or prove visual quality."
+  },
+  "prior_aggregate_evidence": {
+    "path": "docs/evidence/independent-agent-compatibility-evidence-v2-2026-07-23.json",
+    "sha256": "sha256:9146cfdd3c06d6ed018621247a96065025383d03e3ffcebc194d0d57d1558973",
+    "fixture_count": 2,
+    "independent_process_runs": 2,
+    "gateway_event_count": 8
+  },
+  "aggregate": {
+    "fixture_count": 3,
+    "workflow_count": 2,
+    "independent_process_runs": 3,
+    "fixture_kinds": [
+      "two_equal_ambiguous_cabinets",
+      "two_shared_survey_pod_component_instances",
+      "reference_capture_image_summary_no_vision"
+    ],
+    "gateway_event_count": 10,
+    "image_summary_process_runs": 1,
+    "wrong_object_automatic_execution": 0,
+    "unauthorized_s2_s4_execution": 0,
+    "duplicate_request_duplicate_modification": 0
+  },
+  "release_acceptance": false
+}

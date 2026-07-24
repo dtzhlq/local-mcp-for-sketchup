@@ -1,0 +1,58 @@
+{
+  "version": "model-revision-merkle-evidence.v1",
+  "kind": "model_revision_merkle_mock_evidence",
+  "created_on": "2026-07-20",
+  "runtime": "mock",
+  "result": "pass",
+  "contract": {
+    "strategy": "definition-merkle.v1",
+    "capability_version": "0.1.0-rc.2-capabilities.6",
+    "manifest_version": "2026-07-agent-contract-v1.3",
+    "structural_groups_probe_version": "structural-groups.v1",
+    "capability_delta_read_only_only": true,
+    "manifest_changed": false,
+    "dsl_operation_set_changed": false,
+    "unique_entity_limit": 1000000,
+    "logical_occurrences": 201000,
+    "unique_entities": 1200,
+    "reachable_definitions": 2,
+    "shared_occurrence_snapshots_materialized": false
+  },
+  "tests": {
+    "command": "ruby test/ruby/model_revision_merkle_test.rb",
+    "assertions": 14,
+    "deterministic_revision": true,
+    "transform_change_detected": true,
+    "unique_limit_failed_closed": true,
+    "recursive_cycle_failed_closed": true
+  },
+  "safety": {
+    "complete_requires_total_equals_indexed": true,
+    "logical_count_js_safe": true,
+    "capability_version_binds_strategy": true,
+    "session_contract_binds_unique_entity_limit": true,
+    "incremental_entry_digest": true,
+    "occurrence_target_index_remains_bounded": true,
+    "model_mutation_requested": false
+  },
+  "live_evidence": {
+    "status": "supplemented_by_separate_live_evidence",
+    "legacy_large_model_logical_occurrences": 1903677,
+    "observed_unique_entities": 639351,
+    "observed_blocker": "unique_entity_limit_exceeded",
+    "current_limit_live_passed": true,
+    "new_strategy_live_proven": true,
+    "structural_groups_probe_live_proven": false,
+    "release_acceptance": false
+  },
+  "hashes": {
+    "sketchup_plugin/alma_sketchup_mcp/model_revision.rb": "sha256:8bb444ea0d0d52c4950db85337dd777fe6edeef94e2b9ce0a6436d31a571aca7",
+    "sketchup_plugin/alma_sketchup_mcp.rb": "sha256:92bde4c776589a03903eefbc23b3373ed897b5ffa8c1ec2f6213b4b3939a737b",
+    "src/capabilities.mjs": "sha256:5905c4aa4a5b5ab86d50b9c4ede0bb63134eed69c716ab82cb45c60a1fc38e5d",
+    "src/session-contract.mjs": "sha256:373e5f75d0a7c060a5118d58972b8ac26c3dfa37a18827ffeb524be2226babde",
+    "scripts/package-sketchup-plugin.mjs": "sha256:ff80dd3f7d039c3acce14f36d7dc649120ffd21dedc709ccee93c1ae93e8c6ff",
+    "test/ruby/model_revision_merkle_test.rb": "sha256:353c4b5925395bf37a028cd16851fa76081fd875d3a0acdf1259077c9bb5704d",
+    "test/sketchup-plugin-model-graph-contract.mjs": "sha256:e71d6db1ac67bad73e329fa7341303992ae95ce3e792b3fb547878746c2644f1",
+    "schema/model-revision-merkle-evidence-v1.schema.json": "sha256:23c2d0d9ae1ece5c1209c2d26a859ed59cf24b26e66047516ef7d30079c20869"
+  }
+}

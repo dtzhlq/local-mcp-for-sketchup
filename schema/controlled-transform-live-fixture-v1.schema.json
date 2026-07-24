@@ -1,0 +1,257 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/sketchup-mcp-replica/controlled-transform-live-fixture-v1.schema.json",
+  "title": "Controlled transform live fixture v1",
+  "oneOf": [
+    { "$ref": "#/$defs/preparation" },
+    { "$ref": "#/$defs/finalization" }
+  ],
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "prefixedSha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "absolutePath": { "type": "string", "pattern": "^/", "minLength": 2 },
+    "persistentId": { "type": "string", "pattern": "^[1-9][0-9]*$" },
+    "cleanQueue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["queue", "processing", "responses", "lock"],
+      "properties": {
+        "queue": { "const": 0 },
+        "processing": { "const": 0 },
+        "responses": { "const": 0 },
+        "lock": { "const": false }
+      }
+    },
+    "fixtureIds": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["locked_target", "guard_target", "transform_target"],
+      "properties": {
+        "locked_target": { "const": "reliability-locked-target" },
+        "guard_target": { "const": "reliability-guard-target" },
+        "transform_target": { "const": "reliability-transform-target" }
+      }
+    },
+    "fixtureNames": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["locked_target", "guard_target", "transform_target"],
+      "properties": {
+        "locked_target": { "const": "ALMA_Reliability_Locked_Target" },
+        "guard_target": { "const": "ALMA_Reliability_Guard_Target" },
+        "transform_target": { "const": "ALMA_Reliability_Transform_Target" }
+      }
+    },
+    "runtimeAttestation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name", "server_version", "plugin_version", "sketchup_version",
+        "capability_version", "manifest_version", "revision_strategy",
+        "revision_source_sha256", "compatibility_ok"
+      ],
+      "properties": {
+        "name": { "const": "queue" },
+        "server_version": { "type": "string", "minLength": 1 },
+        "plugin_version": { "type": ["string", "null"] },
+        "sketchup_version": { "type": ["string", "null"] },
+        "capability_version": { "type": "string", "minLength": 1 },
+        "manifest_version": { "type": "string", "minLength": 1 },
+        "revision_strategy": { "type": ["string", "null"] },
+        "revision_source_sha256": {
+          "anyOf": [
+            { "$ref": "#/$defs/sha256" },
+            { "type": "null" }
+          ]
+        },
+        "compatibility_ok": { "const": true }
+      }
+    },
+    "preparation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version", "kind", "status", "prepared_at", "source", "working_path",
+        "unlocked_checkpoint", "final_artifact_path", "final_contract_path",
+        "fixture_origin_mm", "fixture_ids", "fixture_names", "model_revision_before",
+        "model_revision_after_fixture_insert", "runtime_attestation",
+        "native_lock_instruction", "original_bytes_unchanged", "queue_clean"
+      ],
+      "properties": {
+        "version": { "const": "controlled-transform-live-fixture.v1" },
+        "kind": { "const": "controlled_transform_live_fixture_preparation" },
+        "status": { "const": "awaiting_native_lock" },
+        "prepared_at": { "type": "string", "format": "date-time" },
+        "source": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["path", "sha256"],
+          "properties": {
+            "path": { "$ref": "#/$defs/absolutePath" },
+            "sha256": { "$ref": "#/$defs/sha256" }
+          }
+        },
+        "working_path": { "$ref": "#/$defs/absolutePath" },
+        "active_path_after_prepare": {
+          "anyOf": [
+            { "$ref": "#/$defs/absolutePath" },
+            { "type": "null" }
+          ]
+        },
+        "unlocked_checkpoint": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["path", "sha256"],
+          "properties": {
+            "path": { "$ref": "#/$defs/absolutePath" },
+            "sha256": { "$ref": "#/$defs/sha256" }
+          }
+        },
+        "final_artifact_path": { "$ref": "#/$defs/absolutePath" },
+        "final_contract_path": { "$ref": "#/$defs/absolutePath" },
+        "fixture_origin_mm": {
+          "type": "array",
+          "prefixItems": [
+            { "type": "number" }, { "type": "number" }, { "type": "number" }
+          ],
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "fixture_ids": { "$ref": "#/$defs/fixtureIds" },
+        "fixture_names": { "$ref": "#/$defs/fixtureNames" },
+        "model_revision_before": { "$ref": "#/$defs/prefixedSha256" },
+        "model_revision_after_fixture_insert": {
+          "anyOf": [
+            { "$ref": "#/$defs/prefixedSha256" },
+            { "type": "null" }
+          ]
+        },
+        "runtime_attestation": { "$ref": "#/$defs/runtimeAttestation" },
+        "native_lock_instruction": { "type": "string", "minLength": 1 },
+        "original_bytes_unchanged": { "const": true },
+        "queue_clean": { "$ref": "#/$defs/cleanQueue" }
+      }
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["persistent_id", "name_untrusted", "locked"],
+      "properties": {
+        "persistent_id": { "$ref": "#/$defs/persistentId" },
+        "name_untrusted": { "type": "string" },
+        "locked": { "type": "boolean" }
+      }
+    },
+    "finalization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version", "kind", "status", "finalized_at", "derivation_class", "source",
+        "artifact", "contract", "native_lock", "targets", "identity", "queue_clean",
+        "release_acceptance"
+      ],
+      "properties": {
+        "version": { "const": "controlled-transform-live-fixture.v1" },
+        "kind": { "const": "controlled_transform_live_fixture_finalization" },
+        "status": { "const": "ready_for_formal_live_case" },
+        "finalized_at": { "type": "string", "format": "date-time" },
+        "derivation_class": { "const": "controlled_fixture_overlay_on_user_authorized_real_model_copy" },
+        "source": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["sha256", "original_bytes_unchanged"],
+          "properties": {
+            "sha256": { "$ref": "#/$defs/sha256" },
+            "original_bytes_unchanged": { "const": true }
+          }
+        },
+        "artifact": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["path", "sha256", "bytes"],
+          "properties": {
+            "path": { "$ref": "#/$defs/absolutePath" },
+            "sha256": { "$ref": "#/$defs/prefixedSha256" },
+            "bytes": { "type": "integer", "minimum": 1 }
+          }
+        },
+        "contract": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["path", "sha256"],
+          "properties": {
+            "path": { "$ref": "#/$defs/absolutePath" },
+            "sha256": { "$ref": "#/$defs/prefixedSha256" }
+          }
+        },
+        "native_lock": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["target_persistent_id", "observed_before_save", "observed_after_reopen"],
+          "properties": {
+            "target_persistent_id": { "$ref": "#/$defs/persistentId" },
+            "observed_before_save": { "const": true },
+            "observed_after_reopen": { "const": true }
+          }
+        },
+        "targets": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["locked_target", "guard_target", "transform_target"],
+          "properties": {
+            "locked_target": {
+              "allOf": [
+                { "$ref": "#/$defs/target" },
+                {
+                  "properties": {
+                    "name_untrusted": { "const": "ALMA_Reliability_Locked_Target" },
+                    "locked": { "const": true }
+                  }
+                }
+              ]
+            },
+            "guard_target": {
+              "allOf": [
+                { "$ref": "#/$defs/target" },
+                {
+                  "properties": {
+                    "name_untrusted": { "const": "ALMA_Reliability_Guard_Target" },
+                    "locked": { "const": false }
+                  }
+                }
+              ]
+            },
+            "transform_target": {
+              "allOf": [
+                { "$ref": "#/$defs/target" },
+                {
+                  "properties": {
+                    "name_untrusted": { "const": "ALMA_Reliability_Transform_Target" },
+                    "locked": { "const": false }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "identity": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "model_revision", "model_revision_complete", "recursive_total",
+            "recursive_materialized", "recursive_truncated"
+          ],
+          "properties": {
+            "model_revision": { "$ref": "#/$defs/prefixedSha256" },
+            "model_revision_complete": { "const": true },
+            "recursive_total": { "type": "integer", "minimum": 1 },
+            "recursive_materialized": { "type": "integer", "minimum": 1, "maximum": 100000 },
+            "recursive_truncated": { "type": "boolean" }
+          }
+        },
+        "queue_clean": { "$ref": "#/$defs/cleanQueue" },
+        "release_acceptance": { "const": false }
+      }
+    }
+  }
+}

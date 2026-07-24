@@ -1,0 +1,68 @@
+{
+  "version": "real-model-candidate-semantic-mapping-amendment.v1",
+  "kind": "real_model_candidate_semantic_mapping_amendment",
+  "created_on": "2026-07-20",
+  "decision_scope": "semantic_candidate_mapping_addition_only",
+  "authority": {
+    "source": "interactive_user_confirmation",
+    "user_confirmed": true,
+    "mutation_authorized": false,
+    "approval_token_issued": false,
+    "execution_policy_changed": false,
+    "target_roles_confirmed": false,
+    "model_content_trust": "untrusted_data"
+  },
+  "bindings": {
+    "base_mapping": {
+      "path": "docs/evidence/real-model-candidate-semantic-mapping-2026-07-20.json",
+      "sha256": "72a1508783d2f34a927e994d5c45ea7cb797388d572b6af4ab208fe68e73191d"
+    },
+    "candidate_inventory": {
+      "path": "output/real-model-reliability/target-review/trimble-s6/real-model-candidate-inventory.v1.json",
+      "sha256": "6bd2a4c2e1215e7bdaa1b4fe192023370398e5224efee1a757042c0947ba6c09"
+    },
+    "target_review": {
+      "path": "docs/evidence/real-model-target-review-live-evidence-2026-07-20.json",
+      "sha256": "ba0d92baa78b4857a5c6d7eb1aa403db992c517442cc5a1a241593b2a7a619e1"
+    },
+    "formal_manifest": {
+      "path": "test/reliability-corpus/manifest.json",
+      "sha256": "4faa8caf2a097c3d1a7810f1bf7635eceede8de3ca3674cda16519117c2377fa"
+    }
+  },
+  "addition": {
+    "candidate_id": "candidate_cb1cf0f53d27f53b277b34e1",
+    "candidate_handle": "candidate:sha256:cb1cf0f53d27f53b277b34e1",
+    "source_sha256": "sha256:8678e0f86768cde57ae6f81c138a0c9296b5fcbee978e34ef01063e883d22efb",
+    "source_label": "Trimble S6.skp",
+    "source_label_trust": "untrusted_data",
+    "assignments": [
+      {
+        "case_id": "product-boolean-manifold",
+        "role": "primary",
+        "review_status": "user_confirmed"
+      }
+    ]
+  },
+  "target_review_disposition": {
+    "target_roles_confirmed": false,
+    "boolean_target_confirmed": false,
+    "boolean_tool_confirmed": false,
+    "selection_authority_granted": false
+  },
+  "remaining_requirements": [
+    "boolean_target",
+    "boolean_tool",
+    "required_material_selection",
+    "formal_persistent_target_roles",
+    "formal_sidecar",
+    "locked_target_or_controlled_disposable_fixture",
+    "reviewed_dirty_topology_repair_target",
+    "reviewed_uv_target",
+    "architecture_scene_strategy"
+  ],
+  "cross_version": {
+    "status": "deferred_by_user",
+    "represented_as_pass": false
+  }
+}

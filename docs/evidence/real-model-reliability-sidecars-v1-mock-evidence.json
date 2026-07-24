@@ -1,0 +1,71 @@
+{
+  "version": "real-model-reliability-sidecars-v1-mock-evidence.1",
+  "kind": "real_model_reliability_sidecars_mock_evidence",
+  "generated_on": "2026-07-21",
+  "evidence_scope": "offline_json_only_contract_and_loader_regression",
+  "bindings": {
+    "manifest": {
+      "path": "test/reliability-corpus/sidecar-manifest.v1.json",
+      "sha256": "sha256:8d2a23376c14300386f15a733a856ddca29ac3e97ff5a3856c651c23f304f128"
+    },
+    "sidecar_schema": {
+      "path": "schema/real-model-reliability-sidecar-v1.schema.json",
+      "sha256": "sha256:4829c01688f3334a2097c8128802aba089126e2e95ab7e758d6954c63ccb3c63"
+    },
+    "manifest_schema": {
+      "path": "schema/real-model-reliability-sidecar-manifest-v1.schema.json",
+      "sha256": "sha256:112bad98eb3a9e7ddd0d25aaf9323f1459a233424e41d4d28cceacd27333fd0b"
+    },
+    "source_snapshot": {
+      "path": "docs/evidence/real-model-reliability-sidecar-source-v1.json",
+      "sha256": "sha256:5b3b7ed3e4b6da425f2e4fb451c9082dcbf63040e8952eb22d684052b0d9fc06"
+    },
+    "loader": {
+      "path": "src/real-model-reliability-sidecars.mjs",
+      "sha256": "sha256:486c56298b3925183570db99a6ccd3fc84b8445786332ea90f78dfa78b7cdef1"
+    },
+    "test": {
+      "path": "test/real-model-reliability-sidecars.mjs",
+      "sha256": "sha256:ba1f39959237d2d822780695afaa5fba15dbd5b2df54406ed666ec8087405608"
+    },
+    "documentation": {
+      "path": "docs/real-model-reliability-sidecars-v1.md",
+      "sha256": "sha256:6b16846e61bace6ac5339006746d0ce17b6d93747f6b5e0409fe957b897b61c5"
+    }
+  },
+  "source_hashes": {
+    "test/reliability-corpus/sidecar-manifest.v1.json": "sha256:8d2a23376c14300386f15a733a856ddca29ac3e97ff5a3856c651c23f304f128",
+    "schema/real-model-reliability-sidecar-v1.schema.json": "sha256:4829c01688f3334a2097c8128802aba089126e2e95ab7e758d6954c63ccb3c63",
+    "schema/real-model-reliability-sidecar-manifest-v1.schema.json": "sha256:112bad98eb3a9e7ddd0d25aaf9323f1459a233424e41d4d28cceacd27333fd0b",
+    "docs/evidence/real-model-reliability-sidecar-source-v1.json": "sha256:5b3b7ed3e4b6da425f2e4fb451c9082dcbf63040e8952eb22d684052b0d9fc06",
+    "src/real-model-reliability-sidecars.mjs": "sha256:486c56298b3925183570db99a6ccd3fc84b8445786332ea90f78dfa78b7cdef1",
+    "test/real-model-reliability-sidecars.mjs": "sha256:ba1f39959237d2d822780695afaa5fba15dbd5b2df54406ed666ec8087405608",
+    "docs/real-model-reliability-sidecars-v1.md": "sha256:6b16846e61bace6ac5339006746d0ce17b6d93747f6b5e0409fe957b897b61c5"
+  },
+  "result": {
+    "ok": true,
+    "assertions": 127,
+    "schema_negative_cases": 8,
+    "loader_negative_cases": 21,
+    "case_count": 7,
+    "blocked_cases": 7,
+    "execution_eligible_cases": 0,
+    "native_mutation_successes": 0,
+    "live_queue_called": false,
+    "model_files_read": 0,
+    "artifact_copies": 0,
+    "model_mutations": 0,
+    "cross_version_status": "deferred_by_user",
+    "ignored_output_lineage_verified": true
+  },
+  "safety": {
+    "default_runtime": "offline",
+    "json_only": true,
+    "original_model_file_access": false,
+    "queue_access": false,
+    "mutation_authorized": false,
+    "release_acceptance": false,
+    "readiness_sidecars_are_live_execution_contracts": false
+  },
+  "boundary": "This evidence proves strict offline validation of seven semantic readiness sidecars and their hash-bound JSON lineage, including the Portal v8 consumed-failed precommit exclusion and non-replay boundary. It proves no native SketchUp mutation success, does not authorize a mutation, does not establish a live *.reliability.json contract, and does not grant release acceptance."
+}

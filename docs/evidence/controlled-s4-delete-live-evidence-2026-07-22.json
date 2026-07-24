@@ -1,0 +1,81 @@
+{
+  "version": "controlled-s4-delete-live-evidence.v1",
+  "kind": "trusted_model_copy_scoped_auto_approved_s4_delete",
+  "captured_at": "2026-07-22T14:17:30.000Z",
+  "branch": "codex/agent-contract-v1",
+  "baseline_commit": "ee0708adf845c51f71294091b8013e1cc6aa8979",
+  "source_sha256": {
+    "src/agent-contract.mjs": "02848f9b88a88be1683569eecadfcba0b75ab77975ff228aac1f320278dced79",
+    "src/agent-gateway.mjs": "c4bcdcb152d3963f54664595d6a847e9617927c26e784bd8c8873b40a415a3bb",
+    "src/agent-response-projection.mjs": "3d2d95e0f977bfc80db8c872071bbef143d21471a6ae963cc2cbe22b32a4416d",
+    "src/agent-task-store.mjs": "0a69c374030451b8a290b5907befe95fdb9ff25ca5fa7c57e84f88903a2f7d91",
+    "src/existing-model-editing.mjs": "4c2185fe8fa8f8760c87e6ec123e9096170e24116d1de1e7a982ca9420d1a1a8",
+    "src/bridge.mjs": "cbced397cc8be399d5fda9c70e6c4dd28896443e05c3e52010a1c299971bb368",
+    "scripts/run-controlled-s4-delete-live.mjs": "5d6e1c841676990f43cbd947be2e78935fcdaabb4ff08f97096a2746d0cb9178"
+  },
+  "runtime": {
+    "name": "queue",
+    "plugin_version": "0.1.0-rc.2",
+    "capability_version": "0.1.0-rc.2-capabilities.7",
+    "manifest_version": "2026-07-agent-contract-v1.4",
+    "compatibility_ok": true,
+    "fresh_process_proven_in_this_run": false
+  },
+  "model": {
+    "basename": "Fire Escape.current-source.disposable.skp",
+    "disk_sha256_before": "7e649c220a265a5e27a24aae2ed9687427186c06ba335616d5cdc0191966ce72",
+    "disk_sha256_after": "7e649c220a265a5e27a24aae2ed9687427186c06ba335616d5cdc0191966ce72",
+    "disk_bytes_unchanged": true,
+    "revision_complete": true,
+    "logical_occurrences_before": 5859,
+    "save_model": false,
+    "active_document_modified_after": true
+  },
+  "prepare": {
+    "task_id": "task_c7473519-fb1e-45c4-9832-a6ce7006dea1",
+    "task_state": "awaiting_review",
+    "risk_level": "S4",
+    "plan_id": "existing-edit-0e8b43e1baebea3102ad03eb",
+    "plan_hash": "sha256:4e2f40054cb8ac0025572241407ea8bc0b956bf32850e38bc71e65719b06697e",
+    "model_revision": "sha256:d540fdc8697e93f27a0312f75d382b6d5901597ef87e6673980fd21e97e3abb4",
+    "approval_required": false,
+    "approval_status": "server_policy_scoped_auto_approved",
+    "authorization_mode": "trusted_model_copy",
+    "policy_enabled": true,
+    "allowed_root_count": 2,
+    "configured_roots_exposed_to_agent": false,
+    "target_entity_path": "pid:9287.9289",
+    "expected_empty_parent_cleanup": "pid:9287",
+    "destructive_side_effect_projected": true,
+    "queue_before": { "queue": 0, "processing": 0, "responses": 0, "lock_exists": false }
+  },
+  "apply": {
+    "task_state": "completed",
+    "submit_count": 1,
+    "authorization_mode": "server_policy_trusted_model_copy_auto_approval",
+    "approved_by": "execution-policy:trusted-model-copy",
+    "receipt_id": "mutation-receipt-c60f7852409f8fa3306fc799",
+    "receipt_status": "finalized",
+    "model_revision_before": "sha256:d540fdc8697e93f27a0312f75d382b6d5901597ef87e6673980fd21e97e3abb4",
+    "model_revision_after": "sha256:525f50eec4f5101a32951fa35399c602663e3a0408360d1b607b5f58c966ab16",
+    "revision_changed": true,
+    "target_absent": true,
+    "empty_parent_absent": true,
+    "structural_group_count_after": 0,
+    "queue_before": { "queue": 0, "processing": 0, "responses": 0, "lock_exists": false },
+    "queue_after": { "queue": 0, "processing": 0, "responses": 0, "lock_exists": false },
+    "approval_token_exposed_to_agent": false,
+    "milestone_acceptance": true
+  },
+  "artifact_sha256": {
+    "prepare_record": "ca61a64343395f1a1c8db866e844b97e6c185eb634c8c909e52eeb004c5257b4",
+    "apply_record": "c2c407c1a8c4abe04291708bd579298eddace93e29380919a70f7ccd7b8c8fac"
+  },
+  "release_acceptance": false,
+  "boundaries": [
+    "This proves one controlled S4 delete on one disposable copy, not broad destructive-edit reliability.",
+    "The active model was intentionally not saved or reopened; disk bytes remained unchanged.",
+    "The run reused an already running compatible SketchUp process and does not add fresh-process or cross-version proof.",
+    "The policy is disabled by default and applies only to server-configured roots, risks, budgets, and save behavior."
+  ]
+}

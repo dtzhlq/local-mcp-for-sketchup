@@ -1,0 +1,42 @@
+{
+  "version": "real-model-reliability-plan-v1-archival-lineage-manifest.v1",
+  "kind": "real_model_reliability_plan_v1_archival_lineage_manifest",
+  "frozen_on": "2026-07-21",
+  "staged_plan_version": "real-model-reliability-execution-plan.v1",
+  "superseded_by": "real-model-reliability-execution-plan.v2",
+  "lineage_only": true,
+  "current_acceptance": false,
+  "release_acceptance": false,
+  "historical_schema_readable": true,
+  "immutable_evidence": true,
+  "policy": {
+    "hashes_bind_evidence_bytes": true,
+    "historical_schema_bytes_bound": true,
+    "embedded_source_hashes_are_capture_time_only": true,
+    "historical_source_hashes_compared_to_current_tree": false,
+    "historical_core_commands_are_not_rerun_as_current_acceptance": true,
+    "historical_evidence_may_authorize_current_execution": false,
+    "historical_evidence_may_satisfy_current_acceptance": false,
+    "current_evidence_source_hash_validation_preserved": true
+  },
+  "entries": [
+    {
+      "path": "docs/evidence/real-model-recursive-reliability-v1-mock-evidence.json",
+      "sha256": "sha256:0efe311bda21ed69e0a68ef19222b16936cabf7e3836605b3bc505a880989219",
+      "schema_path": "schema/real-model-recursive-reliability-evidence-v1.schema.json",
+      "schema_sha256": "sha256:221354ddce6467f9ea04c9099451d1261154b175198e013255cff7274f157b6d",
+      "plan_schema_path": "schema/real-model-reliability-execution-plan-v1.schema.json",
+      "plan_schema_sha256": "sha256:2fa1675ae86b8a1f934c62f8cd74e4275942dfbaf14e7d7c124ebf75d9d39d32",
+      "evidence_kind": "real_model_recursive_reliability_v1_mock_evidence",
+      "runtime": "offline",
+      "staged_plan_version_pointer": "/contracts/staged_plan/version",
+      "release_acceptance_pointer": "/release_boundary/release_acceptance",
+      "lineage_only": true,
+      "current_acceptance": false,
+      "release_acceptance": false
+    }
+  ],
+  "evidence_sha256": {
+    "docs/evidence/real-model-recursive-reliability-v1-mock-evidence.json": "sha256:0efe311bda21ed69e0a68ef19222b16936cabf7e3836605b3bc505a880989219"
+  }
+}

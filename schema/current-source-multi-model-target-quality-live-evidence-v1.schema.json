@@ -1,0 +1,154 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/sketchup-mcp-replica/current-source-multi-model-target-quality-live-evidence-v1.schema.json",
+  "title": "Current-source four-domain real-SKP target-quality live evidence v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version", "kind", "captured_at", "evidence_scope", "goal_contract", "source_bindings",
+    "domains", "cases", "metrics", "safety", "hard_gates", "acceptance", "boundary"
+  ],
+  "properties": {
+    "version": { "const": "current-source-multi-model-target-quality-live-evidence.v1" },
+    "kind": { "const": "current_source_multi_model_target_quality_live_evidence" },
+    "captured_at": { "type": "string", "minLength": 20, "maxLength": 40 },
+    "evidence_scope": { "const": "four_domain_real_skp_structural_target_quality_read_only" },
+    "goal_contract": { "const": "largest_structural_group_by_world_bbox_volume" },
+    "source_bindings": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/sourceBinding" }
+    },
+    "domains": { "const": ["architecture", "deep_shared", "interior", "product"] },
+    "cases": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "prefixItems": [
+        { "allOf": [{ "$ref": "#/$defs/case" }, { "properties": { "domain": { "const": "architecture" } } }] },
+        { "allOf": [{ "$ref": "#/$defs/case" }, { "properties": { "domain": { "const": "deep_shared" } } }] },
+        { "allOf": [{ "$ref": "#/$defs/case" }, { "properties": { "domain": { "const": "interior" } } }] },
+        { "allOf": [{ "$ref": "#/$defs/case" }, { "properties": { "domain": { "const": "product" } } }] }
+      ],
+      "items": false
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "models", "distinct_fixture_handles", "distinct_model_revisions", "unique_selection_attempts",
+        "correct_unique_selections", "target_top_5_attempts", "target_top_5_hits",
+        "ambiguity_or_safety_abstention_attempts", "ambiguity_or_safety_abstentions",
+        "gateway_tool_calls", "artifact_page_calls", "schema_errors"
+      ],
+      "properties": {
+        "models": { "const": 4 },
+        "distinct_fixture_handles": { "const": 4 },
+        "distinct_model_revisions": { "const": 4 },
+        "unique_selection_attempts": { "type": "integer", "minimum": 1, "maximum": 3 },
+        "correct_unique_selections": { "type": "integer", "minimum": 1, "maximum": 3 },
+        "target_top_5_attempts": { "type": "integer", "minimum": 1, "maximum": 3 },
+        "target_top_5_hits": { "type": "integer", "minimum": 1, "maximum": 3 },
+        "ambiguity_or_safety_abstention_attempts": { "type": "integer", "minimum": 1, "maximum": 3 },
+        "ambiguity_or_safety_abstentions": { "type": "integer", "minimum": 1, "maximum": 3 },
+        "gateway_tool_calls": { "const": 4 },
+        "artifact_page_calls": { "type": "integer", "minimum": 0, "maximum": 40000 },
+        "schema_errors": { "const": 0 }
+      }
+    },
+    "safety": {
+      "const": {
+        "all_models_byte_bound": true,
+        "all_revisions_complete": true,
+        "all_files_and_revisions_unchanged": true,
+        "all_queue_boundaries_idle": true,
+        "raw_model_labels_exposed": false,
+        "source_paths_disclosed": false,
+        "approval_requested": false,
+        "mutation_requested": false,
+        "mutation_performed": false,
+        "save_requested": false,
+        "save_performed": false
+      }
+    },
+    "hard_gates": {
+      "const": {
+        "wrong_object_automatic_execution": 0,
+        "unauthorized_s2_s4_execution": 0,
+        "duplicate_request_duplicate_modification": 0,
+        "ambiguous_target_automatic_selection": 0
+      }
+    },
+    "acceptance": {
+      "const": {
+        "four_domain_real_skp_structural_target_quality": true,
+        "target_or_abstention_matches_independent_oracle": true,
+        "semantic_intent_benchmark": false,
+        "live_mutation": false,
+        "cross_version": false,
+        "release_acceptance": false
+      }
+    },
+    "boundary": {
+      "const": "This current-source evidence aggregates byte-bound, read-only largest-Group target or abstention results across four distinct real SKP revisions and domains. It validates one structural goal contract only; it does not prove broad semantic intent understanding, mutation correctness, save/reopen reliability, cross-version behavior, or release acceptance."
+    }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "nullableBoolean": { "type": ["boolean", "null"] },
+    "sourceBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {
+          "type": "string",
+          "enum": [
+            "src/existing-model-edit-proposer.mjs",
+            "src/agent-gateway.mjs",
+            "scripts/run-current-source-model-target-quality-live.mjs",
+            "schema/current-source-model-target-quality-live-report-v1.schema.json",
+            "scripts/aggregate-current-source-model-target-quality-live.mjs",
+            "schema/current-source-multi-model-target-quality-live-evidence-v1.schema.json"
+          ]
+        },
+        "sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "domain", "report_sha256", "fixture_handle", "model_revision", "revision_indexed",
+        "revision_total_seen", "structural_group_count", "projection_complete", "oracle_status",
+        "expected_behavior", "observed_behavior", "selected_matches_oracle", "oracle_target_in_top_5",
+        "artifact_page_calls", "mutation_performed", "source_path_disclosed"
+      ],
+      "properties": {
+        "domain": { "enum": ["architecture", "deep_shared", "interior", "product"] },
+        "report_sha256": { "$ref": "#/$defs/sha256" },
+        "fixture_handle": { "type": "string", "pattern": "^fixture:sha256:[0-9a-f]{64}$" },
+        "model_revision": { "$ref": "#/$defs/sha256" },
+        "revision_indexed": { "type": "integer", "minimum": 0 },
+        "revision_total_seen": { "type": "integer", "minimum": 0 },
+        "structural_group_count": { "type": "integer", "minimum": 0, "maximum": 5000 },
+        "projection_complete": { "type": "boolean" },
+        "oracle_status": {
+          "enum": [
+            "unique_eligible_maximum", "ambiguous_volume_tie", "projection_incomplete",
+            "no_projected_groups", "largest_group_locked_or_ineligible"
+          ]
+        },
+        "expected_behavior": { "enum": ["select_one_for_review_only", "ask_for_clarification"] },
+        "observed_behavior": { "enum": ["select_one_for_review_only", "ask_for_clarification"] },
+        "selected_matches_oracle": { "$ref": "#/$defs/nullableBoolean" },
+        "oracle_target_in_top_5": { "$ref": "#/$defs/nullableBoolean" },
+        "artifact_page_calls": { "type": "integer", "minimum": 0, "maximum": 10000 },
+        "mutation_performed": { "const": false },
+        "source_path_disclosed": { "const": false }
+      }
+    }
+  }
+}

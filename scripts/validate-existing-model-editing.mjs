@@ -3,6 +3,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { SketchUpBridge } from '../src/bridge.mjs';
+import { freshSessionOptions } from '../src/live-session-contract.mjs';
 import { modelRevisionForAdoption } from '../src/existing-model-editing.mjs';
 
 export async function validateExistingModelEditing({ runtime = 'mock', timeoutMs = runtime === 'queue' ? 240000 : 30000, outputDir = `output/existing-model-editing/${runtime}`, saveSkp = `output/existing-model-editing/${runtime}/existing-model-editing.skp`, trustedApprovalProvider } = {}) {
@@ -23,7 +24,7 @@ export async function validateExistingModelEditing({ runtime = 'mock', timeoutMs
     { user_id: 'mock-validator-human-fixture', channel: 'test-only-trusted-user-fixture', confirmed: true }
   ));
 
-  await bridge.build_model({ runtime, timeoutMs, code: JSON.stringify(seedDocument()) });
+  await bridge.build_model({ runtime, timeoutMs, code: JSON.stringify(seedDocument()), ...await freshSessionOptions(bridge, { runtime, timeoutMs }) });
   let adoption = await adopt(bridge, runtime, timeoutMs);
   assert(adoption.recursive_truncated === false, 'recursive index must not truncate');
   assert(adoption.recursive_index.filter((entry) => entry.name === 'Existing_Edit_Leaf_Box').length === 2, 'shared deep leaf must have two occurrences');
@@ -110,8 +111,8 @@ export async function validateExistingModelEditing({ runtime = 'mock', timeoutMs
   const beforeSave = await adopt(bridge, runtime, timeoutMs);
   const beforeReopenRevision = modelRevisionForAdoption(beforeSave);
   const beforeReopenPath = requireEntry(beforeSave, (entry) => entry.name === 'Existing_Edit_Boolean_Result', 'pre-reopen boolean result').entity_path;
-  const saved = await bridge.save_model({ runtime, timeoutMs, path: absoluteSavePath, keep_session: true });
-  await bridge.open_model({ runtime, timeoutMs, path: absoluteSavePath });
+  const saved = await bridge.save_model({ runtime, timeoutMs, path: absoluteSavePath, keep_session: true, ...await freshSessionOptions(bridge, { runtime, timeoutMs }) });
+  await bridge.open_model({ runtime, timeoutMs, path: absoluteSavePath, ...await freshSessionOptions(bridge, { runtime, timeoutMs }) });
   const reopened = await adopt(bridge, runtime, timeoutMs);
   const reopenedResult = requireEntry(reopened, (entry) => entry.name === 'Existing_Edit_Boolean_Result', 'reopened boolean result');
   assert(reopenedResult.entity_path === beforeReopenPath, 'persistent entity_path must survive save/reopen');
@@ -173,7 +174,7 @@ function seedDocument() {
 }
 
 async function adopt(bridge, runtime, timeoutMs) {
-  return bridge.adopt_open_model({ runtime, timeoutMs, recursive: true, recursive_limit: 1000, prefix: 'existing-edit' });
+  return bridge.adopt_open_model({ runtime, timeoutMs, recursive: true, recursive_limit: 1000, prefix: 'existing-edit', read_only: true });
 }
 
 async function prepareAndApply(bridge, { runtime, timeoutMs, outputDir, instruction, targets, operations }) {
@@ -185,7 +186,8 @@ async function prepareAndApply(bridge, { runtime, timeoutMs, outputDir, instruct
     plan: prepared.plan,
     approval_token: await bridge.validationApprovalProvider(prepared, bridge),
     output_dir: `${outputDir}-apply`,
-    save_model: false
+    save_model: false,
+    ...await freshSessionOptions(bridge, { runtime, timeoutMs })
   });
   assert(applied.ok === true, `${prepared.plan.plan_id} must apply successfully`);
   return { plan: prepared.plan, applied };

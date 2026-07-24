@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/schemas/real-model-reliability-sidecar-manifest-v1.schema.json",
+  "title": "Real-model reliability readiness sidecar manifest v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "kind",
+    "description",
+    "formal_manifest",
+    "sidecar_schema",
+    "policy",
+    "summary",
+    "cases"
+  ],
+  "properties": {
+    "version": { "const": "real-model-reliability-sidecar-manifest.v1" },
+    "kind": { "const": "real_model_reliability_readiness_sidecar_manifest" },
+    "description": { "type": "string", "minLength": 1 },
+    "formal_manifest": { "$ref": "#/$defs/binding" },
+    "sidecar_schema": { "$ref": "#/$defs/binding" },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidence_only",
+        "live_execution_contracts",
+        "default_runtime",
+        "json_only_validation",
+        "original_model_file_access",
+        "queue_access",
+        "model_mutation",
+        "artifact_copy",
+        "cross_version_status"
+      ],
+      "properties": {
+        "evidence_only": { "const": true },
+        "live_execution_contracts": { "const": false },
+        "default_runtime": { "const": "offline" },
+        "json_only_validation": { "const": true },
+        "original_model_file_access": { "const": false },
+        "queue_access": { "const": false },
+        "model_mutation": { "const": false },
+        "artifact_copy": { "const": false },
+        "cross_version_status": { "const": "deferred_by_user" }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "case_count",
+        "blocked_cases",
+        "execution_eligible_cases",
+        "native_mutation_successes",
+        "release_acceptance"
+      ],
+      "properties": {
+        "case_count": { "const": 7 },
+        "blocked_cases": { "const": 7 },
+        "execution_eligible_cases": { "const": 0 },
+        "native_mutation_successes": { "const": 0 },
+        "release_acceptance": { "const": false }
+      }
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 7,
+      "maxItems": 7,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["case_id", "path", "sha256"],
+        "properties": {
+          "case_id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]+$" },
+          "path": {
+            "type": "string",
+            "pattern": "^test/reliability-corpus/sidecars/[a-z0-9][a-z0-9-]+\\.sidecar\\.v1\\.json$"
+          },
+          "sha256": { "$ref": "#/$defs/sha256" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500,
+          "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\).+\\.json$"
+        },
+        "sha256": { "$ref": "#/$defs/sha256" }
+      }
+    }
+  }
+}

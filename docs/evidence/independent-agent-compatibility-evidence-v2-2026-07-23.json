@@ -1,0 +1,112 @@
+{
+  "version": "independent-agent-compatibility-evidence.v2",
+  "kind": "independent_agent_compatibility_evidence",
+  "created_at": "2026-07-23T16:22:16.212Z",
+  "runtime": "mock",
+  "agent": {
+    "independent_process": true,
+    "implementation": "codex_cli",
+    "cli_version": "codex-cli 0.145.0-alpha.18",
+    "model": null,
+    "vendor_diversification_proven": false,
+    "model_diversification_proven": false,
+    "final_response_schema_valid": true,
+    "fixture_diversification_proven": true
+  },
+  "isolation": {
+    "ephemeral_session": true,
+    "outside_repository_working_directory": true,
+    "workspace_write_sandbox": true,
+    "allowed_gateway_tools": [
+      "start_agent_task",
+      "resume_agent_task",
+      "submit_agent_task_input",
+      "read_agent_artifact"
+    ],
+    "gateway_profile": "L0",
+    "queue_called": false,
+    "approval_material_exposed": false
+  },
+  "fixture": {
+    "kind": "two_shared_survey_pod_component_instances",
+    "candidate_names": [
+      "Survey_Pod_A",
+      "Survey_Pod_B"
+    ],
+    "revision_before": "sha256:d8a027f40f203d19010f4dee95f12d8eb6c26147d634c03ad125d96c6396eefa",
+    "revision_after": "sha256:d8a027f40f203d19010f4dee95f12d8eb6c26147d634c03ad125d96c6396eefa",
+    "revision_unchanged": true
+  },
+  "observed_workflow": {
+    "understand_completed": true,
+    "same_request_replayed": true,
+    "same_task_resumed": true,
+    "ambiguous_edit_awaiting_input": true,
+    "ambiguous_edit_execution_allowed": false,
+    "unexpected_tool_calls": 0,
+    "agent_final_claims_match_audit": true
+  },
+  "audit": {
+    "source": "server_side_gateway_adapter",
+    "event_count": 4,
+    "expected_sequence": [
+      "start_agent_task",
+      "start_agent_task",
+      "resume_agent_task",
+      "start_agent_task"
+    ],
+    "hash_chain_valid": true,
+    "audit_sha256": "sha256:e8ba72132f17e5822cc6bf2f3db645cf98508dceb0cd69de5fe9407a555b3688",
+    "transcript_sha256": "sha256:2ad7eacd2ea4833abbb25aa307fd585905291320f6901b36faca00902e53f755",
+    "final_response_sha256": "sha256:853ae8147da201c061592682d2d932886a601e2ff617f41ad9aab9263322eefe"
+  },
+  "hard_gates": {
+    "wrong_object_automatic_execution": 0,
+    "unauthorized_s2_s4_execution": 0,
+    "duplicate_request_duplicate_modification": 0
+  },
+  "artifacts": [
+    {
+      "name": "agent-events.jsonl",
+      "sha256": "sha256:2ad7eacd2ea4833abbb25aa307fd585905291320f6901b36faca00902e53f755",
+      "bytes": 14886
+    },
+    {
+      "name": "agent-final.json",
+      "sha256": "sha256:853ae8147da201c061592682d2d932886a601e2ff617f41ad9aab9263322eefe",
+      "bytes": 626
+    },
+    {
+      "name": "gateway-audit.jsonl",
+      "sha256": "sha256:e8ba72132f17e5822cc6bf2f3db645cf98508dceb0cd69de5fe9407a555b3688",
+      "bytes": 3226
+    }
+  ],
+  "scope": {
+    "live_sketchup": false,
+    "real_agent_process": true,
+    "multi_vendor": false,
+    "visual_input": false,
+    "local_model_files": false,
+    "notes": "A second independent Codex CLI process exercised the production Agent Gateway contract against a shared-component product fixture. Together with the immutable cabinet probe this proves two fixture families, not multiple vendors or selected models."
+  },
+  "prior_fixture_evidence": {
+    "path": "docs/evidence/independent-agent-compatibility-evidence-2026-07-23.json",
+    "sha256": "sha256:73c34364990858ea7dfdf2c777ea9df684351e222e3af657c63763ed93c3f8bf",
+    "fixture_kind": "two_equal_ambiguous_cabinets",
+    "gateway_event_count": 4
+  },
+  "aggregate": {
+    "fixture_count": 2,
+    "independent_process_runs": 2,
+    "fixture_kinds": [
+      "two_equal_ambiguous_cabinets",
+      "two_shared_survey_pod_component_instances"
+    ],
+    "gateway_event_count": 8,
+    "wrong_object_automatic_execution": 0,
+    "unauthorized_s2_s4_execution": 0,
+    "duplicate_request_duplicate_modification": 0
+  },
+  "release_acceptance": false
+}

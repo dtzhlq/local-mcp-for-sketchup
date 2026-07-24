@@ -1,0 +1,41 @@
+{
+  "version": "trusted-model-copy-auto-approval-evidence.v1",
+  "kind": "trusted_model_copy_auto_approval_mock_evidence",
+  "captured_at": "2026-07-22T14:17:30.000Z",
+  "branch": "codex/agent-contract-v1",
+  "baseline_commit": "ee0708adf845c51f71294091b8013e1cc6aa8979",
+  "runtime": "mock",
+  "policy": {
+    "source": "server_user_execution_policy",
+    "default_s2_s4_behavior": "trusted_user_approval_required",
+    "allowed_risks": ["S2", "S3", "S4"],
+    "path_scope_required": true,
+    "max_affected_instances": 10,
+    "allow_save_model": false,
+    "public_roots_exposed": false,
+    "agent_capabilities_can_elevate": false
+  },
+  "results": {
+    "scoped_s4_auto_executed": true,
+    "authorization_mode": "server_policy_trusted_model_copy_auto_approval",
+    "local_decision_forged": false,
+    "outside_root_failed_closed": true,
+    "forged_agent_review_failed": true,
+    "idempotent_retry": true,
+    "duplicate_mutation": false,
+    "finalized_receipt": true,
+    "live_queue_calls": 0
+  },
+  "tests": [
+    { "name": "test/trusted-model-copy-auto-approval.mjs", "passed": true },
+    { "name": "test/controlled-s4-delete-live.mjs", "passed": true },
+    { "name": "test/agent-contract.mjs", "passed": true },
+    { "name": "test/agent-gateway-mutation-recovery.mjs", "passed": true }
+  ],
+  "release_acceptance": false,
+  "boundaries": [
+    "This is mock evidence and does not call the live SketchUp queue.",
+    "Only server-configured roots, risks, budgets, and save policy can waive a per-task user click.",
+    "The default outside configured roots remains trusted-user approval for S2-S4."
+  ]
+}

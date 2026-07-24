@@ -1,0 +1,68 @@
+{
+  "version": "real-model-reliability-sidecar-manifest.v1",
+  "kind": "real_model_reliability_readiness_sidecar_manifest",
+  "description": "Hash-bound, JSON-only readiness sidecars for the seven formal real-model cases. These records preserve unknown and blocked evidence without becoming live execution contracts.",
+  "formal_manifest": {
+    "path": "test/reliability-corpus/manifest.json",
+    "sha256": "sha256:4faa8caf2a097c3d1a7810f1bf7635eceede8de3ca3674cda16519117c2377fa"
+  },
+  "sidecar_schema": {
+    "path": "schema/real-model-reliability-sidecar-v1.schema.json",
+    "sha256": "sha256:4829c01688f3334a2097c8128802aba089126e2e95ab7e758d6954c63ccb3c63"
+  },
+  "policy": {
+    "evidence_only": true,
+    "live_execution_contracts": false,
+    "default_runtime": "offline",
+    "json_only_validation": true,
+    "original_model_file_access": false,
+    "queue_access": false,
+    "model_mutation": false,
+    "artifact_copy": false,
+    "cross_version_status": "deferred_by_user"
+  },
+  "summary": {
+    "case_count": 7,
+    "blocked_cases": 7,
+    "execution_eligible_cases": 0,
+    "native_mutation_successes": 0,
+    "release_acceptance": false
+  },
+  "cases": [
+    {
+      "case_id": "architecture-golden",
+      "path": "test/reliability-corpus/sidecars/architecture-golden.sidecar.v1.json",
+      "sha256": "sha256:91e7453f3a4877258cc86ee0e1993b4ba3f12ed1c7bd7ed27f2b68dc289d59b9"
+    },
+    {
+      "case_id": "interior-expression",
+      "path": "test/reliability-corpus/sidecars/interior-expression.sidecar.v1.json",
+      "sha256": "sha256:b485509f681679d6bafeb7822d4ea653663d4b1be2a5b849a47edff2256a691f"
+    },
+    {
+      "case_id": "product-boolean-manifold",
+      "path": "test/reliability-corpus/sidecars/product-boolean-manifold.sidecar.v1.json",
+      "sha256": "sha256:9a56fef9a637c5fda0b1a583f273d0fd180ce8ce89a71a0b8ff2061fa680562b"
+    },
+    {
+      "case_id": "deep-shared-components",
+      "path": "test/reliability-corpus/sidecars/deep-shared-components.sidecar.v1.json",
+      "sha256": "sha256:fb92849fb64084ec61f54f24aaa936f8bd69ac7f93ce49be19424d044ce5f01e"
+    },
+    {
+      "case_id": "imported-dirty-topology",
+      "path": "test/reliability-corpus/sidecars/imported-dirty-topology.sidecar.v1.json",
+      "sha256": "sha256:80082de646699edd9a514bb0ea8a45d32a97523bb916e67d235a997dd140ba1b"
+    },
+    {
+      "case_id": "appearance-scenes-hidden",
+      "path": "test/reliability-corpus/sidecars/appearance-scenes-hidden.sidecar.v1.json",
+      "sha256": "sha256:461e9a4c7ca50dc279fe0abea0ddf01baab3c1d55794825084f03d521bc84df2"
+    },
+    {
+      "case_id": "scaled-mirrored-locked",
+      "path": "test/reliability-corpus/sidecars/scaled-mirrored-locked.sidecar.v1.json",
+      "sha256": "sha256:5b96b52f3b447258501f4058d6f66226d2b0c2cc056ce196a6ca9e07e41a68c2"
+    }
+  ]
+}

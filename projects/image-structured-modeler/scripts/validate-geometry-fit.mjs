@@ -3,6 +3,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { SketchUpBridge } from '../../../src/bridge.mjs';
+import { freshSessionOptions } from '../../../src/live-session-contract.mjs';
 import { repoRoot } from './lib/image-analysis.mjs';
 import {
   groundingAcceptanceIssues,
@@ -61,7 +62,7 @@ export async function validateGeometryFit({ observations, fixture, code, runtime
     throw new Error('GeometryFit QA requires fixture.footprint_rules or fixture.required_relations.');
   }
   const bridge = new SketchUpBridge({ mock: { sessionPath: resolveRepo(mockSessionPath || 'output/image-structured-modeler/sessions/geometry-fit-qa-mock-session.json') } });
-  const { snapshot } = await bridge.build_model({ runtime, code, timeoutMs });
+  const { snapshot } = await bridge.build_model({ runtime, code, timeoutMs, ...await freshSessionOptions(bridge, { runtime, timeoutMs }) });
   const codeDocument = parseCodeDocument(code);
   const context = makeModelContext(snapshot, fixture);
   const calibration = calibrateProjection({ observations, fixture, context });

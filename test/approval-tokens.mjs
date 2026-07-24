@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
+import { sha256Canonical } from '../src/agent-contract.mjs';
 import { ApprovalAuthority } from '../src/approval-tokens.mjs';
 
 const root = await fs.mkdtemp(path.join(os.tmpdir(), 'alma-approval-token-'));
@@ -12,7 +13,14 @@ const binding = {
   planHash: `sha256:${'a'.repeat(64)}`,
   modelRevision: `sha256:${'b'.repeat(64)}`,
   riskLevel: 'S3',
-  allowedOperations: ['pushpull_face', 'set_material']
+  allowedOperations: ['pushpull_face', 'set_material'],
+  reviewContext: {
+    kind: 'existing_model_edit_review_context',
+    content_trust: 'untrusted_data',
+    policy_effect: 'none',
+    targets: [{ entity_path: 'pid:123', name: 'Untrusted target name' }],
+    operations: [{ index: 0, op: 'pushpull_face', target: 'pid:123' }]
+  }
 };
 
 try {
@@ -40,6 +48,15 @@ try {
   const tampered = `${token.slice(0, -1)}${token.endsWith('a') ? 'b' : 'a'}`;
   await assert.rejects(authority.verifyToken(tampered), (error) => error.code === 'APPROVAL_INVALID');
 
+  const deterministicBinding = { ...binding, planId: 'plan-idempotent-finalizer', idempotencyKey: 'post-commit-finalizer-step' };
+  const deterministicChallenge = await authority.createChallenge(deterministicBinding);
+  const deterministicReplay = await authority.createChallenge(deterministicBinding);
+  assert.deepEqual(deterministicReplay, deterministicChallenge, 'post-commit challenge creation must be idempotent across finalizer restart');
+  await assert.rejects(
+    authority.createChallenge({ ...deterministicBinding, planHash: `sha256:${'e'.repeat(64)}` }),
+    (error) => error.code === 'APPROVAL_INVALID'
+  );
+
   const expiringChallenge = await authority.createChallenge({ ...binding, planId: 'plan-expired', expiresInMs: 1000 });
   const expiringToken = await authority.approveChallengeFromTrustedUser(expiringChallenge, { user_id: 'user-42', channel: 'local-user-ui', confirmed: true });
   const originalNow = Date.now;
@@ -50,7 +67,112 @@ try {
     Date.now = originalNow;
   }
 
-  process.stdout.write(`${JSON.stringify({ ok: true, one_time: true, bindings: ['task_id', 'plan_hash', 'model_revision', 'risk_level', 'allowed_operations', 'expiry'] }, null, 2)}\n`);
+  const decisionBinding = {
+    ...binding,
+    planId: 'plan-signed-decision',
+    reviewContext: {
+      ...binding.reviewContext,
+      decision_options: [{ value: 'accept_reviewed_change', label: 'Accept reviewed change' }]
+    }
+  };
+  const decisionChallenge = await authority.createChallenge(decisionBinding);
+  const publicDecision = await authority.recordTrustedDecision(decisionChallenge, {
+    decision: 'approved',
+    user_id: 'user-42',
+    channel: 'local-approval-host.v1',
+    confirmed: true,
+    selection: 'accept_reviewed_change',
+    reason: 'Reviewed in the trusted local host.'
+  });
+  assert.equal(Object.hasOwn(publicDecision, 'approval_token'), false);
+  assert.equal(Object.hasOwn(publicDecision, 'approval_token_hash'), false);
+  assert.equal(Object.hasOwn(publicDecision, 'decision_signature'), false);
+  const decisionPath = authority.decisionPath(decisionChallenge.challenge_id);
+  const signedDecision = JSON.parse(await fs.readFile(decisionPath, 'utf8'));
+  assert.match(signedDecision.decision_signature, /^[A-Za-z0-9_-]+$/);
+  assert.match(signedDecision.approval_token_hash, /^sha256:[0-9a-f]{64}$/);
+  const ready = await authority.verifyStoredApprovalAuthorizationReady(decisionChallenge, expected(decisionBinding));
+  assert.equal(ready.decision.status, 'approved_pending_execution');
+  assert.equal(Object.hasOwn(ready, 'approval_token'), false);
+  assert.equal(ready.authorization.review_context_hash, sha256Canonical(decisionBinding.reviewContext));
+  await assert.rejects(
+    authority.verifyStoredApprovalAuthorizationReady(decisionChallenge, {
+      ...expected(decisionBinding),
+      review_context_hash: `sha256:${'f'.repeat(64)}`
+    }),
+    (error) => error.code === 'APPROVAL_INVALID'
+  );
+
+  for (const mutate of [
+    (value) => { value.status = 'rejected'; },
+    (value) => { value.review_selection = 'tampered-selection'; },
+    (value) => { value.reason = 'tampered reason'; },
+    (value) => { value.approval_token_hash = `sha256:${'0'.repeat(64)}`; },
+    (value) => { value.decision_signature = `${value.decision_signature.slice(0, -1)}${value.decision_signature.endsWith('a') ? 'b' : 'a'}`; }
+  ]) {
+    const tamperedDecision = structuredClone(signedDecision);
+    mutate(tamperedDecision);
+    await fs.writeFile(decisionPath, `${JSON.stringify(tamperedDecision, null, 2)}\n`, 'utf8');
+    await assert.rejects(
+      authority.verifyStoredApprovalAuthorizationReady(decisionChallenge, expected(decisionBinding)),
+      (error) => error.code === 'APPROVAL_INVALID'
+    );
+  }
+  await fs.writeFile(decisionPath, `${JSON.stringify(signedDecision, null, 2)}\n`, 'utf8');
+
+  const legacyBinding = { ...binding, planId: 'plan-legacy-unsigned-decision' };
+  const legacyChallenge = await authority.createChallenge(legacyBinding);
+  await authority.recordTrustedDecision(legacyChallenge, {
+    decision: 'approved', user_id: 'legacy-user', channel: 'local-approval-host.v1', confirmed: true
+  });
+  const legacyPath = authority.decisionPath(legacyChallenge.challenge_id);
+  const legacyRecord = JSON.parse(await fs.readFile(legacyPath, 'utf8'));
+  delete legacyRecord.decision_signature;
+  await fs.writeFile(legacyPath, `${JSON.stringify(legacyRecord, null, 2)}\n`, 'utf8');
+  await assert.rejects(
+    authority.verifyStoredApprovalAuthorizationReady(legacyChallenge, expected(legacyBinding)),
+    (error) => error.code === 'APPROVAL_INVALID'
+  );
+  const legacyDisplay = await authority.readDecisionForDisplay(legacyChallenge.challenge_id);
+  assert.equal(legacyDisplay.status, 'reauthorization_required');
+  assert.equal(legacyDisplay.executable, false);
+  const listedLegacy = (await authority.listChallenges()).find((entry) => entry.challenge_id === legacyChallenge.challenge_id);
+  assert.equal(listedLegacy.decision.status, 'reauthorization_required', 'one legacy record must not make the approval list fail');
+
+  const freshAfterLegacyBinding = { ...binding, planId: 'plan-fresh-after-legacy' };
+  const freshAfterLegacy = await authority.createChallenge(freshAfterLegacyBinding);
+  await authority.recordTrustedDecision(freshAfterLegacy, {
+    decision: 'approved', user_id: 'fresh-user', channel: 'local-approval-host.v1', confirmed: true
+  });
+  assert.equal(
+    (await authority.verifyStoredApprovalAuthorizationReady(freshAfterLegacy, expected(freshAfterLegacyBinding))).decision.status,
+    'approved_pending_execution'
+  );
+
+  const expiringDecisionBinding = { ...binding, planId: 'plan-expiring-signed-decision', expiresInMs: 1000 };
+  const expiringDecisionChallenge = await authority.createChallenge(expiringDecisionBinding);
+  await authority.recordTrustedDecision(expiringDecisionChallenge, {
+    decision: 'approved', user_id: 'user-42', channel: 'local-approval-host.v1', confirmed: true
+  });
+  const decisionOriginalNow = Date.now;
+  Date.now = () => Date.parse(expiringDecisionChallenge.expires_at) + 1;
+  try {
+    await assert.rejects(
+      authority.verifyStoredApprovalAuthorizationReady(expiringDecisionChallenge, expected(expiringDecisionBinding)),
+      (error) => error.code === 'APPROVAL_EXPIRED'
+    );
+  } finally {
+    Date.now = decisionOriginalNow;
+  }
+
+  process.stdout.write(`${JSON.stringify({
+    ok: true,
+    one_time: true,
+    idempotent_challenge_creation: true,
+    decision_hmac: true,
+    legacy_unsigned_display_safe: true,
+    bindings: ['task_id', 'plan_hash', 'model_revision', 'risk_level', 'allowed_operations', 'review_context_hash', 'expiry']
+  }, null, 2)}\n`);
 } finally {
   await fs.rm(root, { recursive: true, force: true });
 }
@@ -67,6 +189,7 @@ function expected(values) {
     plan_hash: values.planHash,
     model_revision: values.modelRevision,
     risk_level: values.riskLevel,
-    allowed_operations: values.allowedOperations
+    allowed_operations: values.allowedOperations,
+    review_context_hash: sha256Canonical(values.reviewContext ?? null)
   };
 }

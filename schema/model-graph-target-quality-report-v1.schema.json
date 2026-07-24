@@ -1,0 +1,233 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/schema/model-graph-target-quality-report-v1.schema.json",
+  "title": "ModelGraph target-quality report v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "kind",
+    "benchmark_version",
+    "runtime",
+    "execution_surface",
+    "client_profile",
+    "source_bindings",
+    "model_count",
+    "domains",
+    "cases",
+    "metrics",
+    "safety",
+    "hard_gates",
+    "acceptance",
+    "boundary"
+  ],
+  "properties": {
+    "version": { "const": "model-graph-target-quality-report.v1" },
+    "kind": { "const": "model_graph_target_quality_report" },
+    "benchmark_version": { "const": "model-graph-target-quality-benchmark.v1" },
+    "runtime": { "const": "mock" },
+    "execution_surface": { "const": "agent_gateway" },
+    "client_profile": {
+      "const": {
+        "level": "L0",
+        "vision": false,
+        "local_files": false,
+        "structured_output": false,
+        "context": "short",
+        "parallel": false,
+        "max_in_flight": 1
+      }
+    },
+    "source_bindings": {
+      "type": "array",
+      "minItems": 9,
+      "maxItems": 9,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "sha256"],
+        "properties": {
+          "path": {
+            "enum": [
+              "src/model-graph.mjs",
+              "src/existing-model-edit-proposer.mjs",
+              "src/agent-gateway.mjs",
+              "schema/model-graph-v1.schema.json",
+              "schema/existing-model-edit-proposal-v1.schema.json",
+              "schema/model-graph-target-quality-benchmark-v1.schema.json",
+              "schema/model-graph-target-quality-report-v1.schema.json",
+              "test/fixtures/model-graph/target-quality-benchmark-v1.json",
+              "scripts/run-model-graph-target-quality-benchmark.mjs"
+            ]
+          },
+          "sha256": { "$ref": "#/$defs/sha256" }
+        }
+      }
+    },
+    "model_count": { "const": 4 },
+    "domains": {
+      "const": ["architecture", "deep_shared_components", "interior", "product"]
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "items": { "$ref": "#/$defs/case_result" }
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "models",
+        "cases",
+        "distinct_model_revisions",
+        "unique_selection_attempts",
+        "correct_unique_selections",
+        "target_top_k",
+        "ambiguity_abstention",
+        "clarification_recovery",
+        "gateway_tool_calls",
+        "artifact_page_calls",
+        "schema_errors",
+        "invalid_retries"
+      ],
+      "properties": {
+        "models": { "const": 4 },
+        "cases": { "const": 5 },
+        "distinct_model_revisions": { "const": 4 },
+        "unique_selection_attempts": { "const": 3 },
+        "correct_unique_selections": { "const": 3 },
+        "target_top_k": {
+          "const": { "k": 5, "attempts": 3, "hits": 3, "rate": 1 }
+        },
+        "ambiguity_abstention": {
+          "const": { "attempts": 2, "passed": 2, "rate": 1 }
+        },
+        "clarification_recovery": {
+          "const": { "attempts": 1, "succeeded": 1, "rate": 1 }
+        },
+        "gateway_tool_calls": { "const": 5 },
+        "artifact_page_calls": { "type": "integer", "minimum": 5 },
+        "schema_errors": { "const": 0 },
+        "invalid_retries": { "const": 0 }
+      }
+    },
+    "safety": {
+      "const": {
+        "fixture_setup_mutations_excluded_from_agent_metrics": true,
+        "model_revision_unchanged_after_each_agent_flow": true,
+        "proposal_execution_count": 0,
+        "model_mutation_count_after_fixture_setup": 0,
+        "approval_challenge_count": 0,
+        "live_queue_called": false,
+        "untrusted_model_data_policy_effect": "none"
+      }
+    },
+    "hard_gates": {
+      "const": {
+        "wrong_object_automatic_execution": 0,
+        "unauthorized_s2_s4_execution": 0,
+        "duplicate_request_duplicate_modification": 0,
+        "ambiguous_target_automatic_selection": 0
+      }
+    },
+    "acceptance": {
+      "const": {
+        "cross_domain_fixture_benchmark": true,
+        "ambiguity_fail_closed": true,
+        "top_k_measured": true,
+        "real_skp_multi_model_live": false,
+        "live_mutation": false,
+        "release_acceptance": false
+      }
+    },
+    "boundary": {
+      "const": "This source-bound benchmark proves deterministic target selection, ambiguity abstention, and explicit shared-occurrence clarification across four independent mock domain models through the Agent Gateway. It does not prove target quality on multiple live SKP files, authorize or execute any model edit, or establish release acceptance."
+    }
+  },
+  "$defs": {
+    "case_result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "case_id",
+        "model_id",
+        "domain",
+        "flow",
+        "model_revision",
+        "task_state",
+        "expected_task_state",
+        "candidate_count",
+        "expected_candidate_count",
+        "expected_candidates_in_top_k",
+        "selected_target_count",
+        "operation_count",
+        "requires_clarification",
+        "ambiguity_reason_verified",
+        "ground_truth_match",
+        "instance_policy_verified",
+        "execution_allowed",
+        "selected_target_fingerprint",
+        "content_trust",
+        "policy_effect"
+      ],
+      "properties": {
+        "case_id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+        "model_id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+        "domain": { "enum": ["architecture", "interior", "product", "deep_shared_components"] },
+        "flow": { "enum": ["start", "clarify"] },
+        "model_revision": { "$ref": "#/$defs/sha256" },
+        "task_state": { "enum": ["awaiting_input", "awaiting_review"] },
+        "expected_task_state": { "enum": ["awaiting_input", "awaiting_review"] },
+        "candidate_count": { "type": "integer", "minimum": 1 },
+        "expected_candidate_count": { "type": "integer", "minimum": 1 },
+        "expected_candidates_in_top_k": { "type": "integer", "minimum": 1 },
+        "selected_target_count": { "type": "integer", "minimum": 0, "maximum": 1 },
+        "operation_count": { "type": "integer", "minimum": 0, "maximum": 1 },
+        "requires_clarification": { "type": "boolean" },
+        "ambiguity_reason_verified": { "type": "boolean" },
+        "ground_truth_match": { "const": true },
+        "instance_policy_verified": { "type": "boolean" },
+        "execution_allowed": { "const": false },
+        "selected_target_fingerprint": {
+          "anyOf": [
+            { "$ref": "#/$defs/sha256" },
+            { "type": "null" }
+          ]
+        },
+        "content_trust": { "const": "untrusted_data" },
+        "policy_effect": { "const": "none" }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "expected_task_state": { "const": "awaiting_input" } },
+            "required": ["expected_task_state"]
+          },
+          "then": {
+            "properties": {
+              "task_state": { "const": "awaiting_input" },
+              "selected_target_count": { "const": 0 },
+              "operation_count": { "const": 0 },
+              "requires_clarification": { "const": true },
+              "selected_target_fingerprint": { "type": "null" }
+            }
+          },
+          "else": {
+            "properties": {
+              "task_state": { "const": "awaiting_review" },
+              "selected_target_count": { "const": 1 },
+              "operation_count": { "const": 1 },
+              "requires_clarification": { "const": false },
+              "selected_target_fingerprint": { "$ref": "#/$defs/sha256" }
+            }
+          }
+        }
+      ]
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    }
+  }
+}

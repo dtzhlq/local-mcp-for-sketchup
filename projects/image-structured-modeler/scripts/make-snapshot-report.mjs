@@ -3,6 +3,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { SketchUpBridge } from '../../../src/bridge.mjs';
+import { freshSessionOptions } from '../../../src/live-session-contract.mjs';
 import { formatSnapshotReportMarkdown } from '../../../src/snapshot-report.mjs';
 import { classifySnapshotWarnings, createWarningGate, summarizeWarningClassifications } from './lib/warning-budget.mjs';
 
@@ -49,13 +50,14 @@ async function createBridge() {
 }
 
 async function createRuntimeSnapshotReport({ bridge, code, dsl, options, outputDslPath }) {
-  const built = await bridge.build_model({ runtime: options.runtime, code, timeoutMs: options.timeoutMs });
+  const built = await bridge.build_model({ runtime: options.runtime, code, timeoutMs: options.timeoutMs, ...await freshSessionOptions(bridge, { runtime: options.runtime, timeoutMs: options.timeoutMs }) });
   let saved;
   if (options.saveSkp) {
     saved = await bridge.save_model({
       runtime: options.runtime,
       path: path.resolve(repoRoot, options.saveSkp),
-      timeoutMs: options.timeoutMs
+      timeoutMs: options.timeoutMs,
+      ...await freshSessionOptions(bridge, { runtime: options.runtime, timeoutMs: options.timeoutMs })
     });
   }
 
@@ -82,7 +84,11 @@ async function createRuntimeDiffReport({ bridge, code, dsl, options, outputDslPa
     topologyTolerance: options.topologyTolerance,
     budgets: options.budgets,
     topIssueLimit: options.topIssueLimit,
-    include_snapshots: true
+    include_snapshots: true,
+    ...await freshSessionOptions(bridge, {
+      runtime: options.runtime === 'queue' || options.compareRuntime === 'queue' ? 'queue' : 'mock',
+      timeoutMs: options.timeoutMs
+    })
   });
   return createDiffReport({
     dsl,

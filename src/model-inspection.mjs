@@ -13,6 +13,7 @@ export function modelInfoFromSnapshot(snapshot, { runtime = 'mock', sourcePath =
       groups: snapshot.groups?.length || 0,
       instances: snapshot.instances?.length || 0,
       component_definitions: snapshot.component_definitions?.length || 0,
+      classification_schemas: snapshot.classification_schemas?.length || 0,
       materials: snapshot.materials?.length || 0,
       tags: snapshot.tags?.length || 0,
       scenes: snapshot.scenes?.length || 0,
@@ -21,6 +22,8 @@ export function modelInfoFromSnapshot(snapshot, { runtime = 'mock', sourcePath =
     warning_summary: snapshot.warning_summary,
     material_names: snapshot.material_names || [],
     component_definitions: snapshot.component_definitions || [],
+    component_definition_summaries: snapshot.component_definition_summaries || [],
+    classification_schemas: snapshot.classification_schemas || [],
     tags: snapshot.tags || [],
     scenes: snapshot.scenes || []
   };
@@ -61,6 +64,7 @@ export function entityListFromSnapshot(snapshot, options = {}) {
     material: item.material,
     tag: item.tag,
     classification: item.classification,
+    native_classification: item.native_classification,
     attributes: item.attributes,
     texture_transform: item.texture_transform,
     face_uvs: item.face_uvs,

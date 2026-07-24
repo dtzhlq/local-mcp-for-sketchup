@@ -1,0 +1,268 @@
+{
+  "version": "current-source-real-model-reliability-live-evidence.v1",
+  "kind": "current_source_real_model_reliability_live_evidence",
+  "captured_at": "2026-07-22T17:28:33.048Z",
+  "branch": "codex/agent-contract-v1",
+  "result": "partial_pass",
+  "evidence_scope": "two_hash_bound_real_model_save_reopen_cases",
+  "runtime": {
+    "name": "queue",
+    "server_version": "0.1.0-rc.2",
+    "plugin_version": "0.1.0-rc.2",
+    "sketchup_version": "26.2.242",
+    "ruby_version": "3.2.2",
+    "capability_version": "0.1.0-rc.2-capabilities.7",
+    "manifest_version": "2026-07-agent-contract-v1.4",
+    "dsl_version": 1,
+    "occurrence_contract": "canonical-occurrence-path.v1",
+    "revision_strategy": "definition-merkle.v2",
+    "revision_source_sha256": "b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134",
+    "compatibility_ok": true
+  },
+  "execution_authorization": {
+    "mode": "local_operator_ephemeral_process_policy",
+    "user_authorized_disposable_copies": true,
+    "queue_required": true,
+    "allowed_runtimes_explicit": true,
+    "queue_mutation_explicit": true,
+    "direct_expert_mutation_explicit": true,
+    "policy_persisted": false,
+    "default_policy_unchanged": true,
+    "agent_self_authorization_allowed": false
+  },
+  "corpus": {
+    "manifest_path": "test/reliability-corpus/manifest.json",
+    "manifest_sha256": "sha256:4faa8caf2a097c3d1a7810f1bf7635eceede8de3ca3674cda16519117c2377fa",
+    "formal_cases_total": 7,
+    "formal_cases_passed": 2,
+    "formal_corpus_complete": false,
+    "passed_case_ids": [
+      "deep-shared-components",
+      "interior-expression"
+    ],
+    "remaining_case_ids": [
+      "architecture-golden",
+      "product-boolean-manifold",
+      "imported-dirty-topology",
+      "appearance-scenes-hidden",
+      "scaled-mirrored-locked"
+    ]
+  },
+  "cases": [
+    {
+      "case_id": "deep-shared-components",
+      "domain": "shared_component",
+      "result": "pass",
+      "duration_ms": 510608,
+      "tasks_total": 3,
+      "tasks_passed": 3,
+      "task_ids": [
+        "large_recursive_index",
+        "shared_definition_identity",
+        "save_reopen_identity"
+      ],
+      "coverage": {
+        "full_recursive_identity": true,
+        "bounded_recursive_identity": false,
+        "shared_definition_scope": true,
+        "material_preservation": false,
+        "scene_visibility_preservation": false,
+        "save_reopen_identity": true
+      },
+      "identity": {
+        "mode": "full_recursive",
+        "entries_before": 11474,
+        "entries_after": 11474,
+        "total_before": 11474,
+        "total_after": 11474,
+        "recursive_limit": 100000,
+        "truncated_before": false,
+        "truncated_after": false,
+        "exact_match": true,
+        "identity_digest": "sha256:9730d932bee21ab25baf7319ba64c9cf45d568555feaacff49c3fc0526c79da0",
+        "snapshot_error_diffs": 0,
+        "model_revision_before": "sha256:c03d317c25883606f0f8d7819610823118d916694d5a5d323deabe2ac7bcdf36",
+        "model_revision_after": "sha256:c03d317c25883606f0f8d7819610823118d916694d5a5d323deabe2ac7bcdf36",
+        "model_revision_exact_match": true,
+        "model_revision_strategy": "definition-merkle.v2",
+        "model_revision_source_sha256": "b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134",
+        "active_verified_copy_after_reopen": true
+      },
+      "quality": {
+        "wrong_object_modification_count": 0,
+        "silent_geometry_corruption_count": 0,
+        "original_bytes_unchanged": true,
+        "disposable_copy_only": true,
+        "queue_clean": {
+          "queue": 0,
+          "processing": 0,
+          "responses": 0,
+          "lock": false
+        }
+      },
+      "artifacts": {
+        "report": {
+          "path": "output/live-validation/real-model-reliability/deep-shared-components-current-source-v6/real-model-reliability-live-case-report.v1.json",
+          "sha256": "61a1738d629e15d89f4d72ee96241c3ed2dc47f7c33478145b7c2d554e99de0b",
+          "bytes": 5601
+        },
+        "diagnostic": {
+          "path": "output/live-validation/real-model-reliability/deep-shared-components-current-source-v6/live-work/preflight-f46c049c-9e5b-408b-b87a-bfb85140a713/01-deep-shared-components/deep-shared-components.save-reopen-diagnostic.json",
+          "sha256": "e8c91f012a848a7638b76cf0cb5b3379ebd84a6bcb408b1491059e930f4f9f48",
+          "bytes": 1542
+        },
+        "source_model": {
+          "path": "output/live-validation/real-model-reliability-inputs/deep-shared-components-v1/deep-shared-components.skp",
+          "sha256": "4a75190929bfa47b1506a8ed037a08e0f08e1632169d9bb550c4a9219b43e90c",
+          "bytes": 608815
+        },
+        "contract": {
+          "path": "output/live-validation/real-model-reliability-inputs/deep-shared-components-v1/deep-shared-components.reliability.json",
+          "sha256": "d7f1bd51a29f4c1e973d380fc4f1c8e9154fc04be5db086ae04031daf10b9c46",
+          "bytes": 646
+        },
+        "verified_model": {
+          "path": "output/live-validation/real-model-reliability/deep-shared-components-current-source-v6/live-work/preflight-f46c049c-9e5b-408b-b87a-bfb85140a713/01-deep-shared-components/deep-shared-components.verified.skp",
+          "sha256": "5bba080f041c8693f0804f9de07a5960fc91d945ca4a1adcc6a6481d9a3d5b7c",
+          "bytes": 262715
+        }
+      }
+    },
+    {
+      "case_id": "interior-expression",
+      "domain": "interior",
+      "result": "pass",
+      "duration_ms": 1291250,
+      "tasks_total": 3,
+      "tasks_passed": 3,
+      "task_ids": [
+        "material_preservation",
+        "scene_visibility_preservation",
+        "save_reopen_identity"
+      ],
+      "coverage": {
+        "full_recursive_identity": false,
+        "bounded_recursive_identity": true,
+        "shared_definition_scope": false,
+        "material_preservation": true,
+        "scene_visibility_preservation": true,
+        "save_reopen_identity": true
+      },
+      "identity": {
+        "mode": "complete_revision_bounded_occurrence_sample",
+        "entries_before": 100000,
+        "entries_after": 100000,
+        "total_before": 220006,
+        "total_after": 220006,
+        "recursive_limit": 100000,
+        "truncated_before": true,
+        "truncated_after": true,
+        "exact_match": true,
+        "identity_digest": "sha256:d08ccc301db692a6d93464b60a54ad86ec64cdc4e2ce67c6620234193651ed6a",
+        "snapshot_error_diffs": 0,
+        "model_revision_before": "sha256:074584ee36f0e1b144dd40e05659104b9aefc13391a38ce2e77c45fdce6756b9",
+        "model_revision_after": "sha256:074584ee36f0e1b144dd40e05659104b9aefc13391a38ce2e77c45fdce6756b9",
+        "model_revision_exact_match": true,
+        "model_revision_strategy": "definition-merkle.v2",
+        "model_revision_source_sha256": "b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134",
+        "active_verified_copy_after_reopen": true
+      },
+      "quality": {
+        "wrong_object_modification_count": 0,
+        "silent_geometry_corruption_count": 0,
+        "original_bytes_unchanged": true,
+        "disposable_copy_only": true,
+        "queue_clean": {
+          "queue": 0,
+          "processing": 0,
+          "responses": 0,
+          "lock": false
+        }
+      },
+      "artifacts": {
+        "report": {
+          "path": "output/live-validation/real-model-reliability/interior-expression-current-source-v1/real-model-reliability-live-case-report.v1.json",
+          "sha256": "c406a75030e61738dbbd9d1561eb2cd946168de4c32b702d9e709c19dbaa999d",
+          "bytes": 6199
+        },
+        "diagnostic": {
+          "path": "output/live-validation/real-model-reliability/interior-expression-current-source-v1/live-work/preflight-161ee347-68aa-4191-86ee-22c1ad2a03e3/01-interior-expression/interior-expression.save-reopen-diagnostic.json",
+          "sha256": "e64058ceb133c007575c4b69145ef839c09ad1ddc343c3067e71f5075f2f23f4",
+          "bytes": 1572
+        },
+        "source_model": {
+          "path": "output/live-validation/real-model-reliability-inputs/interior-expression-v1/interior-room.skp",
+          "sha256": "4a2ae7a7dce486ac66066b9b8393de2bba8e778147cfa42d16309f4d3de788f3",
+          "bytes": 6502581
+        },
+        "contract": {
+          "path": "output/live-validation/real-model-reliability-inputs/interior-expression-v1/interior-room.reliability.json",
+          "sha256": "bb61f18fab2888f67da7db3aa7b48a1c3c3a5422bbdd8f6ce88d1365d6eebc96",
+          "bytes": 670
+        },
+        "verified_model": {
+          "path": "output/live-validation/real-model-reliability/interior-expression-current-source-v1/live-work/preflight-161ee347-68aa-4191-86ee-22c1ad2a03e3/01-interior-expression/interior-expression.verified.skp",
+          "sha256": "c809daceadec33a56916e28c1ea7d0c95018ef7899f0d602a0127a2a4ca58656",
+          "bytes": 2663476
+        }
+      }
+    }
+  ],
+  "aggregate_metrics": {
+    "tasks_total": 6,
+    "tasks_passed": 6,
+    "task_success_rate": 1,
+    "wrong_object_modification_count": 0,
+    "silent_geometry_corruption_count": 0,
+    "aggregate_duration_ms": 1801858,
+    "queue_clean_after_each_case": true
+  },
+  "performance_boundary": {
+    "stress_case_id": "interior-expression",
+    "stress_case_duration_ms": 1291250,
+    "interactive_budget_ms": 120000,
+    "stress_case_within_interactive_budget": false,
+    "use_as_default_agent_payload": false,
+    "complete_revision_retained": true,
+    "bounded_occurrence_payload_retained": true,
+    "next_action": "separate_revision_attestation_from_payload_and_add_runtime_budget"
+  },
+  "source_sha256": {
+    "test/reliability-corpus/manifest.json": "4faa8caf2a097c3d1a7810f1bf7635eceede8de3ca3674cda16519117c2377fa",
+    "scripts/aggregate-current-source-real-model-reliability-live.mjs": "572b12a6c61cb275286f8e6e83be581bb131a7b5e019643eab6b99806c15b918",
+    "scripts/run-real-model-reliability-harness.mjs": "d753f67c0db4b0c3e99ec9cb5006f5f9c60b38774fea23e37304b0cbcd77141f",
+    "scripts/run-real-model-reliability-live-case.mjs": "b3fd977be35612c37b6beb51f1151406ecd946eaec0d5c2da46259f31d6aa17b",
+    "schema/real-model-reliability-live-case-report-v1.schema.json": "e0531c951e77858a9e0e59290e4cbd0a66f22156d93186dedb2075fa910e75e8",
+    "schema/real-model-reliability-live-case-v1.schema.json": "34a85f645586f616bdf8d08edff8f98e3c4596266feb975626b2f9186a3a9261",
+    "src/bridge.mjs": "cbced397cc8be399d5fda9c70e6c4dd28896443e05c3e52010a1c299971bb368",
+    "src/model-adoption.mjs": "39f4f7fa2e5a8255f9c709e6b6e904f7999b5008c679bd0346fef6972cf7f764",
+    "src/queue-runtime.mjs": "73ff43bcde39c9018686518bd482e535ecd27ae2a06f1f9e658f41d63ad87058",
+    "src/real-model-candidate-intake.mjs": "ef3e5c135cda98478b71d9b42951f5251c1b9ab5f918f921659f06c5f1ec5bd1",
+    "sketchup_plugin/alma_sketchup_mcp/model_revision.rb": "b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134"
+  },
+  "acceptance": {
+    "two_case_live_reliability": true,
+    "full_recursive_save_reopen": true,
+    "bounded_large_model_save_reopen": true,
+    "shared_definition_scope": true,
+    "material_and_scene_preservation": true,
+    "mutation_cases_passed": 0,
+    "boolean_manifold": false,
+    "dirty_topology_recovery": false,
+    "locked_transform_rollback": false,
+    "formal_corpus_cases_passed": 2,
+    "formal_corpus_cases_total": 7,
+    "formal_corpus_complete": false,
+    "agent_gateway_default_profile_qualified": false,
+    "cross_version": "deferred_by_user",
+    "release_acceptance": false
+  },
+  "boundaries": [
+    "This evidence binds two current-source SketchUp 2026 live runs to hash-bound disposable copies; the operator-supplied source artifacts remained byte-identical and were never overwritten.",
+    "The deep-shared case proves full recursive occurrence identity for 11,474 entries and 2,986 shared-definition occurrences across save/reopen.",
+    "The interior stress case proves a complete definition-merkle.v2 revision across 220,006 occurrences plus a deterministic bounded sample of 100,000 entries, material preservation, and one scene visibility signature.",
+    "The interior run exceeded the interactive budget, so this stress profile is not a default payload contract for ordinary Agents; performance projection remains open.",
+    "No geometry mutation case is promoted by this wrapper. Boolean/manifold, dirty-topology recovery, locked-transform rollback, five remaining corpus cases, independent Agent runs, and cross-version evidence remain open.",
+    "This is partial engineering evidence only. It is not release acceptance and cannot grant execution authority to an Agent."
+  ]
+}

@@ -1,0 +1,334 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/schemas/design-intent-live-lineage-evidence-v1.schema.json",
+  "title": "DesignIntent Live Lineage Evidence v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "kind",
+    "captured_at",
+    "branch",
+    "result",
+    "evidence_scope",
+    "runtime",
+    "fixture",
+    "lineage",
+    "manual_divergence",
+    "agent_compatibility",
+    "safety",
+    "baseline",
+    "source_attestation",
+    "acceptance",
+    "limitations"
+  ],
+  "properties": {
+    "version": { "const": "design-intent-live-lineage-evidence.v1" },
+    "kind": { "const": "design_intent_live_lineage_evidence" },
+    "captured_at": { "type": "string", "format": "date-time" },
+    "branch": { "const": "codex/agent-contract-v1" },
+    "result": { "const": "pass" },
+    "evidence_scope": {
+      "const": "single_version_live_save_restart_lineage_and_unsaved_manual_divergence"
+    },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "server_version",
+        "plugin_version",
+        "sketchup_version",
+        "ruby_version",
+        "capability_version",
+        "manifest_version",
+        "dsl_version",
+        "occurrence_contract",
+        "revision_strategy",
+        "revision_source_sha256",
+        "boolean_operations_sha256",
+        "compatibility_ok",
+        "fresh_plugin_session_observed",
+        "session_changed_from_capture",
+        "raw_session_values_omitted"
+      ],
+      "properties": {
+        "name": { "const": "queue" },
+        "server_version": { "const": "0.1.0-rc.2" },
+        "plugin_version": { "const": "0.1.0-rc.2" },
+        "sketchup_version": { "type": "string", "minLength": 1 },
+        "ruby_version": { "type": "string", "minLength": 1 },
+        "capability_version": { "const": "0.1.0-rc.2-capabilities.7" },
+        "manifest_version": { "const": "2026-07-agent-contract-v1.4" },
+        "dsl_version": { "const": 1 },
+        "occurrence_contract": { "const": "canonical-occurrence-path.v1" },
+        "revision_strategy": { "const": "definition-merkle.v2" },
+        "revision_source_sha256": { "$ref": "#/$defs/sha256" },
+        "boolean_operations_sha256": { "$ref": "#/$defs/sha256" },
+        "compatibility_ok": { "const": true },
+        "fresh_plugin_session_observed": { "const": true },
+        "session_changed_from_capture": { "const": true },
+        "raw_session_values_omitted": { "const": true }
+      }
+    },
+    "fixture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_fixture_handle",
+        "working_copy_artifact",
+        "saved_fixture_handle",
+        "size_bytes",
+        "source_fixture_unchanged",
+        "disposable_copy_only"
+      ],
+      "properties": {
+        "source_fixture_handle": { "$ref": "#/$defs/fixtureHandle" },
+        "working_copy_artifact": {
+          "const": "output/live-validation/design-intent-lineage/current-source-2026-07-23-v1/live-work/design-intent-lineage.live-working.skp"
+        },
+        "saved_fixture_handle": { "$ref": "#/$defs/fixtureHandle" },
+        "size_bytes": { "type": "integer", "minimum": 1 },
+        "source_fixture_unchanged": { "const": true },
+        "disposable_copy_only": { "const": true }
+      }
+    },
+    "lineage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "original_task_state",
+        "task_resumed_by_task_id",
+        "design_graph_id_stable",
+        "target_entity_path",
+        "target_binding_fingerprint_stable_after_restart",
+        "model_revision_exact_after_restart",
+        "feature_history_versions_before_restart",
+        "feature_history_versions_after_restart",
+        "aligned_reconciliation_completed",
+        "aligned_reconciliation_review_required",
+        "reconciliation_records_after_restart"
+      ],
+      "properties": {
+        "original_task_state": { "const": "awaiting_review" },
+        "task_resumed_by_task_id": { "const": true },
+        "design_graph_id_stable": { "const": true },
+        "target_entity_path": { "const": "pid:92187" },
+        "target_binding_fingerprint_stable_after_restart": { "const": true },
+        "model_revision_exact_after_restart": { "const": true },
+        "feature_history_versions_before_restart": { "const": 1 },
+        "feature_history_versions_after_restart": { "const": 1 },
+        "aligned_reconciliation_completed": { "const": true },
+        "aligned_reconciliation_review_required": { "const": false },
+        "reconciliation_records_after_restart": { "const": 1 }
+      }
+    },
+    "manual_divergence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mutation_scope",
+        "operation",
+        "target_entity_path",
+        "target_path_preserved",
+        "model_revision_changed",
+        "divergent_material_observed",
+        "parameter_change_task_state",
+        "blocker",
+        "proposed_operation_count",
+        "wrong_object_modification_count",
+        "reconciliation_task_state",
+        "unexpected_divergence_count",
+        "review_required",
+        "silent_overwrite_allowed",
+        "approval_challenge_status",
+        "approval_decision_recorded",
+        "approval_token_exposed",
+        "agent_supplied_decision_error_code",
+        "feature_history_versions_before_review",
+        "feature_history_versions_after_review",
+        "feature_history_advanced_without_trusted_review",
+        "save_performed_after_divergence",
+        "disk_bytes_unchanged_after_divergence"
+      ],
+      "properties": {
+        "mutation_scope": { "const": "unsaved_disposable_copy_only" },
+        "operation": { "const": "set_material" },
+        "target_entity_path": { "const": "pid:92187" },
+        "target_path_preserved": { "const": true },
+        "model_revision_changed": { "const": true },
+        "divergent_material_observed": { "const": true },
+        "parameter_change_task_state": { "const": "awaiting_input" },
+        "blocker": { "const": "manual_or_external_divergence_requires_reconciliation" },
+        "proposed_operation_count": { "const": 0 },
+        "wrong_object_modification_count": { "const": 0 },
+        "reconciliation_task_state": { "const": "awaiting_review" },
+        "unexpected_divergence_count": { "const": 1 },
+        "review_required": { "const": true },
+        "silent_overwrite_allowed": { "const": false },
+        "approval_challenge_status": { "const": "awaiting_trusted_user" },
+        "approval_decision_recorded": { "const": false },
+        "approval_token_exposed": { "const": false },
+        "agent_supplied_decision_error_code": { "const": "APPROVAL_REQUIRED" },
+        "feature_history_versions_before_review": { "const": 1 },
+        "feature_history_versions_after_review": { "const": 1 },
+        "feature_history_advanced_without_trusted_review": { "const": false },
+        "save_performed_after_divergence": { "const": false },
+        "disk_bytes_unchanged_after_divergence": { "const": true }
+      }
+    },
+    "agent_compatibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "interface_level",
+        "client_vision",
+        "client_local_files",
+        "client_context",
+        "client_parallel",
+        "structured_output",
+        "resume_by_task_id",
+        "server_persisted_state"
+      ],
+      "properties": {
+        "interface_level": { "const": "guided" },
+        "client_vision": { "const": false },
+        "client_local_files": { "const": false },
+        "client_context": { "const": "short" },
+        "client_parallel": { "const": false },
+        "structured_output": { "const": true },
+        "resume_by_task_id": { "const": true },
+        "server_persisted_state": { "const": true }
+      }
+    },
+    "safety": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "explicit_queue_opt_in",
+        "explicit_disposable_copy_confirmation",
+        "live_mutation_warning_emitted",
+        "queue_before",
+        "queue_after",
+        "interrupt_cleanup_enabled",
+        "source_fixture_unchanged",
+        "approval_created_by_server",
+        "trusted_approval_recorded",
+        "reconciliation_executed",
+        "divergence_saved",
+        "sensitive_values_embedded_in_public_report"
+      ],
+      "properties": {
+        "explicit_queue_opt_in": { "const": true },
+        "explicit_disposable_copy_confirmation": { "const": true },
+        "live_mutation_warning_emitted": { "const": true },
+        "queue_before": { "$ref": "#/$defs/emptyQueue" },
+        "queue_after": { "$ref": "#/$defs/emptyQueue" },
+        "interrupt_cleanup_enabled": { "const": true },
+        "source_fixture_unchanged": { "const": true },
+        "approval_created_by_server": { "const": true },
+        "trusted_approval_recorded": { "const": false },
+        "reconciliation_executed": { "const": false },
+        "divergence_saved": { "const": false },
+        "sensitive_values_embedded_in_public_report": { "const": false }
+      }
+    },
+    "baseline": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mock_evidence_artifact",
+        "mock_evidence_sha256",
+        "mock_domains",
+        "live_domain"
+      ],
+      "properties": {
+        "mock_evidence_artifact": { "const": "docs/evidence/design-intent-v1-mock-evidence.json" },
+        "mock_evidence_sha256": { "$ref": "#/$defs/prefixedSha256" },
+        "mock_domains": { "const": ["architecture", "product", "interior"] },
+        "live_domain": { "const": "small_component_fixture" }
+      }
+    },
+    "source_attestation": {
+      "type": "array",
+      "minItems": 9,
+      "maxItems": 9,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "sha256"],
+        "properties": {
+          "path": {
+            "enum": [
+              "scripts/run-design-intent-lineage-live.mjs",
+              "src/agent-gateway.mjs",
+              "src/design-intent-graph.mjs",
+              "src/design-intent-store.mjs",
+              "schema/design-intent-graph-v1.schema.json",
+              "schema/design-intent-reconciliation-v1.schema.json",
+              "schema/design-intent-store-v1.schema.json",
+              "schema/design-intent-live-lineage-evidence-v1.schema.json",
+              "test/design-intent-live-lineage-evidence.mjs"
+            ]
+          },
+          "sha256": { "$ref": "#/$defs/prefixedSha256" }
+        }
+      }
+    },
+    "acceptance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "live_save_restart_lineage_stable",
+        "manual_divergence_detected",
+        "parameter_rebuild_blocked_on_divergence",
+        "reconciliation_review_generated",
+        "silent_overwrite_count",
+        "unauthorized_reconciliation_count",
+        "duplicate_mutation_count",
+        "release_acceptance"
+      ],
+      "properties": {
+        "live_save_restart_lineage_stable": { "const": true },
+        "manual_divergence_detected": { "const": true },
+        "parameter_rebuild_blocked_on_divergence": { "const": true },
+        "reconciliation_review_generated": { "const": true },
+        "silent_overwrite_count": { "const": 0 },
+        "unauthorized_reconciliation_count": { "const": 0 },
+        "duplicate_mutation_count": { "const": 0 },
+        "release_acceptance": { "const": false }
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": { "type": "string", "minLength": 20 }
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "prefixedSha256": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "fixtureHandle": {
+      "type": "string",
+      "pattern": "^fixture:sha256:[0-9a-f]{64}$"
+    },
+    "emptyQueue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["queue", "processing", "responses", "lock_exists"],
+      "properties": {
+        "queue": { "const": 0 },
+        "processing": { "const": 0 },
+        "responses": { "const": 0 },
+        "lock_exists": { "const": false }
+      }
+    }
+  }
+}

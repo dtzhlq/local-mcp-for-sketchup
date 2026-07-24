@@ -1,0 +1,92 @@
+{
+  "version": "model-revision-merkle-evidence.v2",
+  "kind": "model_revision_merkle_mock_evidence",
+  "created_on": "2026-07-21",
+  "runtime": "mock",
+  "result": "pass",
+  "contract": {
+    "strategy": "definition-merkle.v2",
+    "capability_version": "0.1.0-rc.2-capabilities.7",
+    "manifest_version": "2026-07-agent-contract-v1.4",
+    "model_revision_source": {
+      "path": "sketchup_plugin/alma_sketchup_mcp/model_revision.rb",
+      "sha256": "b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134",
+      "manifest_path": "sketchup_plugin/alma_sketchup_mcp/runtime_source_manifest.rb",
+      "loaded_source_attestation_required": true
+    },
+    "dsl_operation_count": 101,
+    "component_scope_operation_count": 57,
+    "dsl_operation_set_changed": false,
+    "unique_entity_limit": 1000000,
+    "logical_occurrences": 201000,
+    "unique_entities": 1200,
+    "reachable_definitions": 2,
+    "shared_occurrence_snapshots_materialized": false
+  },
+  "normalization": {
+    "process_local_entity_id_hashed": false,
+    "stable_entity_identity_sources": [
+      "persistent_id",
+      "alma_custom_reference"
+    ],
+    "stable_definition_identity_sources": [
+      "persistent_id",
+      "alma_custom_reference"
+    ],
+    "entity_enumeration_order_independent": true,
+    "attribute_dictionary_and_key_order_independent": true,
+    "face_loop_start_independent": true,
+    "face_loop_direction_independent": true,
+    "face_hole_order_independent": true,
+    "edge_endpoint_direction_independent": true
+  },
+  "fail_closed": {
+    "missing_entity_identity": true,
+    "duplicate_entity_identity": true,
+    "cross_type_duplicate_entity_identity": true,
+    "missing_definition_identity": true,
+    "duplicate_definition_identity": true,
+    "unique_entity_limit_exceeded": true,
+    "recursive_definition_cycle": true
+  },
+  "semantic_change_detection": {
+    "transform": true,
+    "material": true,
+    "attribute_value": true,
+    "geometry": true
+  },
+  "tests": {
+    "ruby_command": "ruby test/ruby/model_revision_merkle_test.rb",
+    "ruby_assertions": 38,
+    "evidence_command": "node test/model-revision-merkle-evidence.mjs"
+  },
+  "safety": {
+    "complete_requires_total_equals_indexed": true,
+    "logical_count_js_safe": true,
+    "capability_version_binds_strategy": true,
+    "capability_binds_model_revision_source_sha256": true,
+    "session_contract_binds_model_revision_source_sha256": true,
+    "incremental_entry_digest": true,
+    "occurrence_target_index_remains_bounded": true,
+    "queue_requests_sent": 0,
+    "model_mutation_requested": false
+  },
+  "live_evidence": {
+    "status": "pending_clean_plugin_install_restart_reopen",
+    "current_strategy_live_proven": false,
+    "loaded_source_attestation_live_proven": false,
+    "clean_reopen_live_proven": false,
+    "release_acceptance": false
+  },
+  "hashes": {
+    "sketchup_plugin/alma_sketchup_mcp/model_revision.rb": "sha256:b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134",
+    "sketchup_plugin/alma_sketchup_mcp/runtime_source_manifest.rb": "sha256:c43531d05240f37d341c47f043bbd3659c867c248978fd5d861bf354657bc505",
+    "sketchup_plugin/alma_sketchup_mcp/runtime_source_attestation.rb": "sha256:02bc9a921fa6cd22fd840c6165c1ad07190aa9a92e85a2b24dd33cca533cdb13",
+    "sketchup_plugin/alma_sketchup_mcp.rb": "sha256:c5b3b4f536f765a815200b7fd56945405fce6dd9f5d281576c141c8425844d52",
+    "src/runtime-source-attestation.mjs": "sha256:ad94d2c1f44b1a5e9cbe7e5f430b4863f47cbef2110fdb7bc981f8b744de39b6",
+    "src/capabilities.mjs": "sha256:93f2f5553502e680767055fe657dfcd42249119437d0607557792c24c93b96ba",
+    "test/ruby/model_revision_merkle_test.rb": "sha256:39a9c7d2826d790ae2eaf1697228631a0e908c5b43ad020a0325c9a3b45edf46",
+    "schema/model-revision-merkle-evidence-v2.schema.json": "sha256:56de0288de290add97166563ac603d51460d2326c7864c9adc5ef0fa8c3186d2",
+    "test/model-revision-merkle-evidence.mjs": "sha256:cc6ce6e9521cb7641c0129f2b23708b85aa5f663425a309961afe9e1fe04977c"
+  }
+}

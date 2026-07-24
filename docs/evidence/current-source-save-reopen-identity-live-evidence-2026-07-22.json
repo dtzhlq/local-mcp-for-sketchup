@@ -1,0 +1,93 @@
+{
+  "version": "current-source-save-reopen-identity-live-evidence.v1",
+  "kind": "current_source_save_reopen_identity_live_evidence",
+  "captured_at": "2026-07-22T16:26:13Z",
+  "branch": "codex/agent-contract-v1",
+  "result": "pass",
+  "evidence_scope": "current_source_queue_distinct_path_save_reopen",
+  "runtime": {
+    "name": "queue",
+    "server_version": "0.1.0-rc.2",
+    "plugin_version": "0.1.0-rc.2",
+    "sketchup_version": "26.2.242",
+    "ruby_version": "3.2.2",
+    "capability_version": "0.1.0-rc.2-capabilities.7",
+    "manifest_version": "2026-07-agent-contract-v1.4",
+    "dsl_version": 1,
+    "revision_strategy": "definition-merkle.v2",
+    "revision_source_sha256": "b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134",
+    "compatibility_ok": true
+  },
+  "execution_authorization": {
+    "mode": "local_operator_ephemeral_process_policy",
+    "user_authorized_disposable_copies": true,
+    "queue_required": true,
+    "allowed_runtimes_explicit": true,
+    "queue_mutation_explicit": true,
+    "direct_expert_mutation_explicit": true,
+    "policy_persisted": false,
+    "default_policy_unchanged": true
+  },
+  "report": {
+    "path": "output/live-validation/save-reopen-identity/current-source-2026-07-22-v1/save-reopen-identity-report.json",
+    "contract_version": "save-reopen-identity-report.v2",
+    "live_proof": true,
+    "destructive_opt_in_observed": true,
+    "model_revision_before": "sha256:406f4db9bb35be1d783110f94bd5eefb021552ea6790c9780ef36690e459acb8",
+    "model_revision_after": "sha256:406f4db9bb35be1d783110f94bd5eefb021552ea6790c9780ef36690e459acb8",
+    "revision_exact_match": true,
+    "source_exact_match": true,
+    "after_reopen_clean": true,
+    "path_switch_verified": true,
+    "active_source_path_verified": true,
+    "entries_before": 42,
+    "entries_after": 42,
+    "identity_exact_match": true,
+    "shared_leaf_occurrences": 2,
+    "face_edge_entries": 36,
+    "snapshot_diff_count": 0,
+    "snapshot_verdict": "pass",
+    "queue_clean": {
+      "queue": 0,
+      "processing": 0,
+      "responses": 0,
+      "lock": false
+    }
+  },
+  "source_sha256": {
+    "scripts/validate-save-reopen-identity.mjs": "7f63f0faa346cf86b5a7c6eab20bf05d468989ad075d0f9e6c86a280e24a70f8",
+    "schema/save-reopen-identity-report-v2.schema.json": "ea951ce30313f91fcef6c7489348176ac0398ca41238b4f17554cb84f73bc5da",
+    "src/bridge.mjs": "cbced397cc8be399d5fda9c70e6c4dd28896443e05c3e52010a1c299971bb368",
+    "sketchup_plugin/alma_sketchup_mcp/model_revision.rb": "b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134"
+  },
+  "artifact_sha256": {
+    "output/live-validation/save-reopen-identity/current-source-2026-07-22-v1/save-reopen-identity-report.json": "a016ce90becc9884cab532d55fb499d76214b49302c4e4daf73603fccc801a22",
+    "output/live-validation/save-reopen-identity/current-source-2026-07-22-v1/target.skp": "32dddb732579785f6d3a98e3500c53774c27a4cfefd9c85a423972b1914790ff",
+    "output/live-validation/save-reopen-identity/current-source-2026-07-22-v1/intermediary.skp": "94d0b6d4fbf1108482b97733fe5787c940a5ffbaf5961a1757cac8cc51c18004",
+    "output/live-validation/save-reopen-identity/current-source-2026-07-22-v1/save-reopen-snapshot-diff.json": "6b06224d246552756cb0287356db5f7786ab9e8be7109ba6c323fcc85359dd35",
+    "output/live-validation/save-reopen-identity/current-source-2026-07-22-v1/save-reopen-checkpoint.json": "b5d4e509b063d9eeff3daa4c79e9599e2b95462f6cee9ef2857b7dbd942eb904"
+  },
+  "artifact_sizes": {
+    "target_skp_bytes": 19990,
+    "intermediary_skp_bytes": 17381,
+    "checkpoint_bytes": 396507
+  },
+  "acceptance": {
+    "current_source_live_save_reopen": true,
+    "persistent_occurrence_identity": true,
+    "model_revision_stability": true,
+    "zero_tolerance_snapshot": true,
+    "feature_history_lineage": false,
+    "manual_divergence_reconciliation": false,
+    "multi_model_native_corpus": false,
+    "cross_version": "deferred_by_user",
+    "release_acceptance": false
+  },
+  "boundaries": [
+    "This proves one current-source SketchUp 2026 queue run saved a generated shared-component fixture, switched to a distinct intermediary file, reopened the target, and returned to a clean queue.",
+    "Persistent occurrence identity, definition-merkle.v2 revision, loaded revision source, and a zero-tolerance snapshot compare remained exact across the real path switch and reopen.",
+    "Authorization was an ephemeral local operator process policy layered on explicit queue-required opt-in; repository defaults were not relaxed and an Agent cannot infer this authority from the evidence.",
+    "The checkpoint is retained as a private local artifact because it contains absolute paths and runtime identity details; this public evidence exposes only repo-relative paths and digests.",
+    "This does not prove DesignIntentGraph lineage persistence, manual-divergence reconciliation, the multi-model native mutation corpus, cross-version behavior, or release acceptance."
+  ]
+}

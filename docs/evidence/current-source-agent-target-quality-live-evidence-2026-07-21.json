@@ -1,0 +1,132 @@
+{
+  "version": "current-source-agent-target-quality-live-evidence.v1",
+  "kind": "current_source_agent_target_quality_live_evidence",
+  "captured_at": "2026-07-21T15:00:33.572Z",
+  "evidence_scope": "single_disposable_model_positive_and_abstention_read_only",
+  "source_binding_status": "historical_exact_source_snapshot",
+  "superseded_by": "docs/evidence/current-source-agent-bounded-group-live-evidence-2026-07-21.json",
+  "runtime": {
+    "plugin_version": "0.1.0-rc.2",
+    "sketchup_version": "26.2.242",
+    "ruby_version": "3.2.2",
+    "capability_version": "0.1.0-rc.2-capabilities.7",
+    "manifest_version": "2026-07-agent-contract-v1.4",
+    "model_revision_strategy": "definition-merkle.v2",
+    "boolean_operations_sha256": "sha256:b98fd554894f629359651f40929cf30a7122ac90ba01217a662bea2f4c407610",
+    "model_revision_source_sha256": "sha256:b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134",
+    "compatibility_ok": true
+  },
+  "source_bindings": [
+    {
+      "path": "src/existing-model-edit-proposer.mjs",
+      "sha256": "sha256:7b7c3814a9ebbbabd9bfa73d678ac24c90eb50b9a4873ebb486bb12952c9b577"
+    },
+    {
+      "path": "scripts/run-current-source-agent-readonly-live.mjs",
+      "sha256": "sha256:5d7d0f4f4bf36eefa1190a87f080ac03e8e4d9d7e9cab2ced05202fba35ab967"
+    }
+  ],
+  "model": {
+    "fixture_handle": "fixture:sha256:7e649c220a265a5e27a24aae2ed9687427186c06ba335616d5cdc0191966ce72",
+    "label_trust": "untrusted_data",
+    "size_bytes": 142149,
+    "model_revision": "sha256:d540fdc8697e93f27a0312f75d382b6d5901597ef87e6673980fd21e97e3abb4",
+    "revision_indexed": 5859,
+    "revision_total_seen": 5859,
+    "model_revision_complete": true,
+    "group_occurrences": 2,
+    "equal_bbox_group_pair": true,
+    "bytes_unchanged_across_cases": true,
+    "revision_unchanged_across_cases": true,
+    "model_modified": false,
+    "source_path_disclosed": false
+  },
+  "cases": [
+    {
+      "case_id": "unique_deepest_geometry_bearing_group",
+      "target_query": {
+        "trust": "untrusted_data",
+        "source": "benchmark_prompt",
+        "value": "deepest geometry-bearing group",
+        "policy_effect": "none"
+      },
+      "expected_behavior": "select_one_for_review_only",
+      "task_state": "awaiting_review",
+      "requires_clarification": false,
+      "confidence": 0.86,
+      "candidate_count": 5,
+      "selected_target_count": 1,
+      "operation_count": 1,
+      "selected_role": "inner_geometry_bearing_group",
+      "selected_depth": 2,
+      "selected_topology": {
+        "faces": 2142,
+        "edges": 3715,
+        "vertices": 1657
+      },
+      "evidence_kinds": [
+        "trusted_topology_match",
+        "deterministic_structural_ranking"
+      ],
+      "execution_allowed": false,
+      "approval_requested": false,
+      "mutation_performed": false
+    },
+    {
+      "case_id": "equal_bbox_largest_group_abstention",
+      "target_query": {
+        "trust": "untrusted_data",
+        "source": "benchmark_prompt",
+        "value": "largest group",
+        "policy_effect": "none"
+      },
+      "expected_behavior": "ask_for_clarification",
+      "task_state": "awaiting_input",
+      "requires_clarification": true,
+      "top_confidence": 0.52,
+      "equal_top_candidate_count": 2,
+      "equal_bbox": true,
+      "ambiguity_reasons": [
+        "target_confidence_too_low",
+        "multiple_similar_targets"
+      ],
+      "selected_target_count": 0,
+      "operation_count": 0,
+      "execution_allowed": false,
+      "approval_requested": false,
+      "mutation_performed": false
+    }
+  ],
+  "capture_artifact_hashes": {
+    "positive_public_report": "sha256:3ae37c1518b1629b31a3441fe0328371c25c741ccc4931cc417f3b01f92ee429",
+    "positive_private_projection": "sha256:27f2476b6d9260d66e53a1628647fe5b8b3410b78a7a9c7179fbab57bca0d496",
+    "abstention_public_report": "sha256:9d7cf3d1e1afc40225b11c6bd75bce16aa4a89392dfd9a8a7d9bff4862d9b7fb",
+    "abstention_private_projection": "sha256:5b8fbe54b7f7b5b028a6abf129f63b85ce2717956c97537ea230f7395a3001f9"
+  },
+  "safety": {
+    "weak_client_profile": "short_context_no_files_no_vision_single_tool",
+    "signed_handshakes_verified_at_capture": 4,
+    "queue_before_each_clean": true,
+    "queue_after_each_clean": true,
+    "final_queue": 0,
+    "final_processing": 0,
+    "final_responses": 0,
+    "final_lock_exists": false,
+    "sensitive_values_embedded": false,
+    "mutation_requested": false,
+    "mutation_performed": false,
+    "save_requested": false,
+    "save_performed": false
+  },
+  "acceptance": {
+    "single_model_structural_target_positive": true,
+    "equal_geometry_abstention": true,
+    "wrong_object_automatic_execution": 0,
+    "unauthorized_s2_s4_execution": 0,
+    "duplicate_request_duplicate_modification": 0,
+    "multi_model_target_quality": false,
+    "live_mutation": false,
+    "release_acceptance": false
+  },
+  "boundary": "This current-source evidence proves one weak-client read-only positive target proposal and one equal-geometry abstention on a byte-exact disposable model. It does not prove target quality across the corpus, authorize a reviewed edit, perform a mutation or save, or establish release acceptance."
+}

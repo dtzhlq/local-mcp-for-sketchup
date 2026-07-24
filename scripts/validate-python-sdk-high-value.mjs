@@ -2,6 +2,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { SketchUpBridge } from '../src/bridge.mjs';
+import { freshSessionOptions } from '../src/live-session-contract.mjs';
 
 const options = parseArgs(process.argv.slice(2));
 const runtime = options.runtime || 'mock';
@@ -11,13 +12,13 @@ const code = await fs.readFile(options.codeFile || 'examples/python-sdk-high-val
 const bridge = new SketchUpBridge(runtime === 'mock'
   ? { mock: { sessionPath: `${outputFile}.session.json` } }
   : {});
-const result = await bridge.evaluate_py({ code, input_format: 'python_sdk', runtime, timeoutMs, pythonTimeoutMs: 20000 });
+const result = await bridge.evaluate_py({ code, input_format: 'python_sdk', runtime, timeoutMs, pythonTimeoutMs: 20000, ...await freshSessionOptions(bridge, { runtime, timeoutMs }) });
 
 await fs.mkdir(path.dirname(outputFile), { recursive: true });
 await fs.writeFile(outputFile, `${JSON.stringify(result, null, 2)}\n`, 'utf8');
 let savedModel = null;
 if (options.saveSkp) {
-  const saved = await bridge.save_model({ path: options.saveSkp, keep_session: true, runtime, timeoutMs });
+  const saved = await bridge.save_model({ path: options.saveSkp, keep_session: true, runtime, timeoutMs, ...await freshSessionOptions(bridge, { runtime, timeoutMs }) });
   savedModel = saved.path || options.saveSkp;
 }
 

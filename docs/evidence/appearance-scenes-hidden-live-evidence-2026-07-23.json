@@ -1,0 +1,140 @@
+{
+  "version": "appearance-scenes-hidden-live-evidence.v1",
+  "kind": "appearance_scenes_hidden_live_evidence",
+  "captured_at": "2026-07-23T04:42:21.332Z",
+  "branch": "codex/agent-contract-v1",
+  "result": "live_verified",
+  "evidence_scope": "single_hash_bound_controlled_appearance_overlay_and_save_reopen_case",
+  "case_id": "appearance-scenes-hidden",
+  "runtime": {
+    "name": "queue",
+    "server_version": "0.1.0-rc.2",
+    "plugin_version": "0.1.0-rc.2",
+    "sketchup_version": "26.2.242",
+    "ruby_version": "3.2.2",
+    "capability_version": "0.1.0-rc.2-capabilities.7",
+    "manifest_version": "2026-07-agent-contract-v1.4",
+    "dsl_version": 1,
+    "occurrence_contract": "canonical-occurrence-path.v1",
+    "revision_strategy": "definition-merkle.v2",
+    "revision_source_sha256": "b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134",
+    "compatibility_ok": true
+  },
+  "source_fixture": {
+    "derivation_class": "controlled_fixture_overlay_on_user_authorized_real_model_copy",
+    "original_input_sha256": "7e649c220a265a5e27a24aae2ed9687427186c06ba335616d5cdc0191966ce72",
+    "original_bytes_unchanged": true,
+    "texture_input_sha256": "a5fe9632dfaa8ae9ff713ae5a62651f79558369633f6daca040095a58d1b001d",
+    "texture_input_bytes_unchanged": true,
+    "source_artifact_sha256": "sha256:ad9214768ade8a969d415ed50b7cb3dbcba66019ff163ff6d0d3489c448b588b",
+    "uv_target_persistent_id": "16816",
+    "hidden_target_persistent_id": "16848",
+    "recursive_total": 5897,
+    "recursive_materialized": 5897,
+    "recursive_truncated": false
+  },
+  "appearance_contract": {
+    "material_name_untrusted": "ALMA_Reliability_Appearance_Texture",
+    "scene_name_untrusted": "ALMA_Reliability_Appearance_Scene",
+    "uv_id": "reliability-appearance-face-uv",
+    "uv_evidence_kind": "face_uvs",
+    "face_uv_operation_applied_without_warning": true,
+    "face_uv_payload_persisted": true,
+    "textured_material_persisted": true,
+    "hidden_target_persisted": true,
+    "independent_uvhelper_coordinate_attestation": false,
+    "arbitrary_uv_editing_proven": false
+  },
+  "live_verification": {
+    "tasks_total": 3,
+    "tasks_passed": 3,
+    "uv_material_signature": "sha256:5be87a27e4bd55f6d666a3c323eb7ec17168c3bca582df11186005d2f54bd985",
+    "uv_material_signature_preserved": true,
+    "scene_visibility_signature": "sha256:cbdcca3e4cae08baaa8a5416209fbc8a9d016f1f5855f0de6e7b54785b1d3520",
+    "scene_visibility_signature_preserved": true,
+    "scenes": 1,
+    "hidden_entities": 1,
+    "save_reopen_exact_identity": true,
+    "recursive_entries_before": 5897,
+    "recursive_entries_after": 5897,
+    "model_revision_exact_match": true,
+    "snapshot_error_diffs": 0,
+    "wrong_object_modification_count": 0,
+    "silent_geometry_corruption_count": 0,
+    "recovery_attempts": 0,
+    "recoveries": 0,
+    "recovery_rate": 1,
+    "queue_clean": true
+  },
+  "artifacts": {
+    "original_input": {
+      "path": "test/模型/Fire Escape.skp",
+      "sha256": "7e649c220a265a5e27a24aae2ed9687427186c06ba335616d5cdc0191966ce72",
+      "bytes": 142149
+    },
+    "texture_input": {
+      "path": "test/ScreenShot_2026-04-30_165028_429.png",
+      "sha256": "a5fe9632dfaa8ae9ff713ae5a62651f79558369633f6daca040095a58d1b001d",
+      "bytes": 1414613
+    },
+    "finalization_report": {
+      "path": "output/live-validation/real-model-reliability-preparation/appearance-scenes-hidden-derived-v1/run-20260723-appearance-v1/finalization-report.v1.json",
+      "sha256": "8c32fa55bb728774bd1f8d3af0a533c85bbce944fa7f7de3197f12ec3bf5f99a",
+      "bytes": 2997
+    },
+    "source_model": {
+      "path": "output/live-validation/real-model-reliability-inputs/appearance-scenes-hidden-derived-v1/appearance-scenes-hidden.skp",
+      "sha256": "ad9214768ade8a969d415ed50b7cb3dbcba66019ff163ff6d0d3489c448b588b",
+      "bytes": 1572488
+    },
+    "source_contract": {
+      "path": "output/live-validation/real-model-reliability-inputs/appearance-scenes-hidden-derived-v1/appearance-scenes-hidden.reliability.json",
+      "sha256": "5db4614f14546dae271ddaebef6ef9e01a66f400c9b95fe4fc5596f33278d016",
+      "bytes": 867
+    },
+    "success_report": {
+      "path": "output/live-validation/real-model-reliability/appearance-scenes-hidden-current-source-v1/real-model-reliability-live-case-report.v1.json",
+      "sha256": "c34df59f96e262d2f2eda6cf01f75d12eff43c4a634a1dad2f64438f8ae8483b",
+      "bytes": 6286
+    },
+    "success_diagnostic": {
+      "path": "output/live-validation/real-model-reliability/appearance-scenes-hidden-current-source-v1/live-work/preflight-672e4cfa-cabc-4382-b4fe-8c75e4ca9c97/01-appearance-scenes-hidden/appearance-scenes-hidden.save-reopen-diagnostic.json",
+      "sha256": "beb64e64b06fd4092a245bf390328ce32e68759bc98b0a11ddddae114014aaad",
+      "bytes": 1540
+    },
+    "verified_model": {
+      "path": "output/live-validation/real-model-reliability/appearance-scenes-hidden-current-source-v1/live-work/preflight-672e4cfa-cabc-4382-b4fe-8c75e4ca9c97/01-appearance-scenes-hidden/appearance-scenes-hidden.verified.skp",
+      "sha256": "93afa1af585fe12c70a94ac696da78ba12a656fd4b4bb5ce9157177b217eab7c",
+      "bytes": 1572488
+    }
+  },
+  "source_sha256": {
+    "scripts/build-appearance-scenes-hidden-live-evidence.mjs": "172c79be451b85e53167d816c4fa4c301513daf8c71b51406bf57bbf2114d570",
+    "scripts/prepare-appearance-scenes-hidden-live-fixture.mjs": "5c568d4fc90dac9a680f2fd3bf2fe961db14d046ae74f00299ace64bb659a358",
+    "scripts/run-real-model-reliability-harness.mjs": "6f4aff1365dd73b217f0cb5b600b2696d80e46681b0585362a520cd154e93d98",
+    "scripts/run-real-model-reliability-live-case.mjs": "b3fd977be35612c37b6beb51f1151406ecd946eaec0d5c2da46259f31d6aa17b",
+    "schema/appearance-scenes-hidden-live-evidence-v1.schema.json": "e9d5c98d024b2dfb0d9b807613fea4a60cc4963ebbd81fb64f9292e4a3f4996b",
+    "schema/controlled-appearance-live-fixture-v1.schema.json": "a6076024f62f248bad77705f2a5d42c6424842cc08df57aab764f7d5d7d17d47",
+    "schema/real-model-reliability-live-case-report-v1.schema.json": "e0531c951e77858a9e0e59290e4cbd0a66f22156d93186dedb2075fa910e75e8",
+    "schema/real-model-reliability-live-case-v1.schema.json": "34a85f645586f616bdf8d08edff8f98e3c4596266feb975626b2f9186a3a9261",
+    "sketchup_plugin/alma_sketchup_mcp/appearance_operations.rb": "4f39c642ac7cd59653e22b1d0932423904752294d3517bf04995cef6f75d72e1",
+    "sketchup_plugin/alma_sketchup_mcp/model_revision.rb": "b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134",
+    "sketchup_plugin/alma_sketchup_mcp/snapshot.rb": "4c43d3c9ac786619bb9ebd9b4da6088665b9b0c7772563cd32e34eb671f00147"
+  },
+  "acceptance": {
+    "selected_case_passed": true,
+    "appearance_uv_hidden_preservation": true,
+    "formal_corpus_cases_passed": 1,
+    "formal_corpus_cases_total": 7,
+    "formal_corpus_complete": false,
+    "cross_version": "deferred_by_user",
+    "release_acceptance": false
+  },
+  "boundaries": [
+    "This evidence is bound to one controlled overlay on a user-authorized disposable Fire Escape model copy; the original SKP and texture input remained byte-identical.",
+    "The FaceUV operation completed without the plugin texture-position warning, its face_uvs payload persisted, and the textured material remained observable after save and reopen.",
+    "The UV result is a stable structured FaceUV and material-signature proof; it is not an independent UVHelper coordinate readback or a claim of arbitrary UV editing.",
+    "One Scene and one hidden top-level target preserved an identical presentation signature across save and reopen.",
+    "This advances one of seven formal reliability cases. It does not prove architecture, Boolean/manifold, dirty-topology recovery, cross-version behavior, or release acceptance."
+  ]
+}

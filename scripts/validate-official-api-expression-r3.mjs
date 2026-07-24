@@ -2,6 +2,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { SketchUpBridge } from '../src/bridge.mjs';
+import { freshSessionOptions } from '../src/live-session-contract.mjs';
 
 const DEFAULT_CODE_FILE = 'examples/python-sdk-official-api-expression-r3-fixture.py';
 const DEFAULT_OUTPUT_FILE = 'output/python-sdk-official-api-expression-r3-mock.json';
@@ -18,7 +19,8 @@ const result = await bridge.evaluate_py({
   input_format: 'python_sdk',
   runtime,
   timeoutMs,
-  pythonTimeoutMs: options.pythonTimeoutMs || 20000
+  pythonTimeoutMs: options.pythonTimeoutMs || 20000,
+  ...await freshSessionOptions(bridge, { runtime, timeoutMs })
 });
 
 await fs.mkdir(path.dirname(outputFile), { recursive: true });
@@ -30,7 +32,8 @@ if (options.saveSkp) {
     path: options.saveSkp,
     keep_session: true,
     runtime,
-    timeoutMs
+    timeoutMs,
+    ...await freshSessionOptions(bridge, { runtime, timeoutMs })
   });
   savedModel = saved.path || options.saveSkp;
 }

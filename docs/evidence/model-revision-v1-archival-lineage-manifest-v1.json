@@ -1,0 +1,84 @@
+{
+  "version": "model-revision-v1-archival-lineage-manifest.v1",
+  "kind": "model_revision_v1_archival_lineage_manifest",
+  "frozen_on": "2026-07-21",
+  "revision_strategy": "definition-merkle.v1",
+  "superseded_by": "definition-merkle.v2",
+  "lineage_only": true,
+  "current_acceptance": false,
+  "release_acceptance": false,
+  "historical_schema_readable": true,
+  "immutable_evidence": true,
+  "policy": {
+    "hashes_bind_evidence_bytes": true,
+    "embedded_source_hashes_are_capture_time_only": true,
+    "historical_schema_validation_allowed": true,
+    "historical_evidence_may_authorize_current_execution": false,
+    "historical_evidence_may_satisfy_current_acceptance": false,
+    "current_evidence_source_hash_validation_preserved": true
+  },
+  "entries": [
+    {
+      "path": "docs/evidence/model-revision-merkle-v1-mock-evidence.json",
+      "sha256": "sha256:188a562af03c11e6ee682b45e11573ebc4e4d9ab85ceafd570bfcc614cc39eda",
+      "schema_path": "schema/model-revision-merkle-evidence-v1.schema.json",
+      "evidence_kind": "model_revision_merkle_mock_evidence",
+      "runtime": "mock",
+      "capability_version": "0.1.0-rc.2-capabilities.6",
+      "manifest_version": "2026-07-agent-contract-v1.3",
+      "strategy_pointer": "/contract/strategy",
+      "release_acceptance_pointer": "/live_evidence/release_acceptance",
+      "lineage_only": true,
+      "current_acceptance": false,
+      "release_acceptance": false
+    },
+    {
+      "path": "docs/evidence/real-model-candidate-live-evidence-2026-07-20.json",
+      "sha256": "sha256:8b814d5a1f23c70adde54835c98098e9644fffae94893f1d05e2b27b3abe3b50",
+      "schema_path": "schema/real-model-candidate-live-evidence-v1.schema.json",
+      "evidence_kind": "real_model_candidate_live_readonly_evidence",
+      "runtime": "queue",
+      "capability_version": "0.1.0-rc.2-capabilities.5",
+      "manifest_version": "2026-07-agent-contract-v1.3",
+      "strategy_pointer": "/runtime/model_revision_strategy",
+      "release_acceptance_pointer": "/release_acceptance",
+      "lineage_only": true,
+      "current_acceptance": false,
+      "release_acceptance": false
+    },
+    {
+      "path": "docs/evidence/real-model-recursive-live-readonly-evidence-2026-07-20-capability6.json",
+      "sha256": "sha256:0f834f17ed128db864a0e07792f002abcb268c8ed37edbb26a05bf7ee08963b4",
+      "schema_path": "schema/real-model-recursive-live-readonly-evidence-v1.schema.json",
+      "evidence_kind": "real_model_recursive_live_readonly_evidence",
+      "runtime": "queue",
+      "capability_version": "0.1.0-rc.2-capabilities.6",
+      "manifest_version": "2026-07-agent-contract-v1.3",
+      "strategy_pointer": "/revision_attestation/strategy",
+      "release_acceptance_pointer": "/release_acceptance",
+      "lineage_only": true,
+      "current_acceptance": false,
+      "release_acceptance": false
+    },
+    {
+      "path": "docs/evidence/real-model-target-review-live-evidence-2026-07-20.json",
+      "sha256": "sha256:ba0d92baa78b4857a5c6d7eb1aa403db992c517442cc5a1a241593b2a7a619e1",
+      "schema_path": "schema/real-model-target-review-v1.schema.json",
+      "evidence_kind": "real_model_target_review",
+      "runtime": "queue",
+      "capability_version": "0.1.0-rc.2-capabilities.5",
+      "manifest_version": "2026-07-agent-contract-v1.3",
+      "strategy_pointer": "/sketchup/model_revision_strategy",
+      "release_acceptance_pointer": "/next_action/release_acceptance",
+      "lineage_only": true,
+      "current_acceptance": false,
+      "release_acceptance": false
+    }
+  ],
+  "evidence_sha256": {
+    "docs/evidence/model-revision-merkle-v1-mock-evidence.json": "sha256:188a562af03c11e6ee682b45e11573ebc4e4d9ab85ceafd570bfcc614cc39eda",
+    "docs/evidence/real-model-candidate-live-evidence-2026-07-20.json": "sha256:8b814d5a1f23c70adde54835c98098e9644fffae94893f1d05e2b27b3abe3b50",
+    "docs/evidence/real-model-recursive-live-readonly-evidence-2026-07-20-capability6.json": "sha256:0f834f17ed128db864a0e07792f002abcb268c8ed37edbb26a05bf7ee08963b4",
+    "docs/evidence/real-model-target-review-live-evidence-2026-07-20.json": "sha256:ba0d92baa78b4857a5c6d7eb1aa403db992c517442cc5a1a241593b2a7a619e1"
+  }
+}

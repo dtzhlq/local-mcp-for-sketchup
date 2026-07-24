@@ -1,0 +1,105 @@
+{
+  "version": "real-model-recursive-reliability-evidence.v1",
+  "kind": "real_model_recursive_reliability_v1_mock_evidence",
+  "created_on": "2026-07-20",
+  "runtime": "offline",
+  "result": "pass",
+  "evidence_scope": "deterministic_offline_contract_tests_only",
+  "contracts": {
+    "structural_probe": {
+      "version": "structural-groups.v1",
+      "two_phase": true,
+      "read_only_required": true,
+      "phase_two_exact_paths_only": true,
+      "complete_revision_required": true,
+      "untrusted_model_data_cannot_change_policy": true
+    },
+    "recursive_review": {
+      "version": "real-model-recursive-target-review.v1",
+      "runtime": "offline",
+      "server_recommended_is_proposal_only": true,
+      "recommended_confirmed": false,
+      "recommended_authorized": false,
+      "model_mutation_authorized": false
+    },
+    "staged_plan": {
+      "version": "real-model-reliability-execution-plan.v1",
+      "stage": "offline_prepare_only",
+      "risk_level": "S3",
+      "exact_allowed_operation": "boolean_difference",
+      "disposable_copy_only": true,
+      "local_approval_required": true,
+      "fresh_session_contract_required": true,
+      "executable_now": false,
+      "mutation_authorized": false
+    }
+  },
+  "tests": {
+    "recursive_review": {
+      "command": "node test/real-model-recursive-target-review.mjs",
+      "assertions": 116,
+      "trimble_relation": "disjoint",
+      "two_phase_probe_paths": 2,
+      "server_recommended_observed": true,
+      "queue_requests_created": 0,
+      "deterministic": true
+    },
+    "staged_plan": {
+      "command": "node test/real-model-reliability-plan.mjs",
+      "assertions": 80,
+      "positive_strategy": "existing_pair",
+      "generated_cutter_strategy": "generated_cutter",
+      "generated_cutter_blocked": true,
+      "cli_live_queue_called": false,
+      "mutation_authorized": false,
+      "release_acceptance": false
+    },
+    "evidence_contract": {
+      "command": "node test/real-model-recursive-reliability-evidence.mjs",
+      "core_commands_rerun": true,
+      "hash_bindings_checked": 11,
+      "fresh_nonmanifold_failed_closed": true,
+      "schema_negative_cases": 5
+    }
+  },
+  "queue_boundary": {
+    "live_queue_called": false,
+    "queue_requests_created": 0,
+    "queue_state_directory_created": false
+  },
+  "fail_closed": {
+    "disjoint_existing_pair": true,
+    "locked_or_hidden_occurrence": true,
+    "truncated_structural_probe": true,
+    "fresh_nonmanifold_pair": true,
+    "stale_or_incomplete_revision": true,
+    "generated_cutter_without_lineage": true
+  },
+  "authorization_boundary": {
+    "server_recommended_is_execution_authority": false,
+    "agent_self_approval_accepted": false,
+    "real_user_approval_observed": false,
+    "approval_token_issued": false,
+    "mutation_authorized": false
+  },
+  "release_boundary": {
+    "live_structural_probe_in_this_evidence": false,
+    "live_boolean_executed": false,
+    "save_reopen_identity_proven": false,
+    "release_acceptance": false
+  },
+  "hashes": {
+    "schema/real-model-recursive-target-review-v1.schema.json": "sha256:e47cb6ccb139b0511183ab49943718582bc762d89b13c8125e8a782b639273f5",
+    "src/real-model-recursive-target-review.mjs": "sha256:5dc91fae717b246cb2ad7b8dcbf562adcb234d7f48536bc099b3ecee51d2d4a5",
+    "scripts/review-real-model-recursive-targets.mjs": "sha256:aacf21b57e7283e301ff407618f091505dddd7e72d15dc6b87343c9a7dac6560",
+    "test/real-model-recursive-target-review.mjs": "sha256:b908067fd50775748ac231b17ab138c7bd618b52faf50f95718b6e05eb88d093",
+    "schema/real-model-reliability-execution-plan-v1.schema.json": "sha256:2fa1675ae86b8a1f934c62f8cd74e4275942dfbaf14e7d7c124ebf75d9d39d32",
+    "src/real-model-reliability-plan.mjs": "sha256:72758b1695a03b38ad8f93753f8903932bbe6e6d05c9093bbfd96eb3c9fddb13",
+    "scripts/prepare-real-model-reliability-case.mjs": "sha256:ed408434d247de11b519fd22af836d278d084b559d4f54cf200e791bc25bd930",
+    "test/real-model-reliability-plan.mjs": "sha256:1c2a3d3438c9a18d561c20b2d7f63286c748d4f66a0c66446de952df00269489",
+    "docs/real-model-recursive-reliability-workflow-v1.md": "sha256:3d61270eaf5c7de6a181afd38c7dfd6c05d5503bc1fc2afe544cab977144b365",
+    "schema/real-model-recursive-reliability-evidence-v1.schema.json": "sha256:221354ddce6467f9ea04c9099451d1261154b175198e013255cff7274f157b6d",
+    "test/real-model-recursive-reliability-evidence.mjs": "sha256:ab87a5d1b8ea575368bcc1a6d27b54fc56b55a377316a2f20b9af19822e704af"
+  },
+  "boundary": "This mock evidence covers deterministic offline structural-review and staged-plan contracts only. It proves the two-phase selection logic, fail-closed disjoint, locked, truncated and fresh-nonmanifold handling, including a terminal no_manifold_qualified_pair result instead of an empty-probe retry loop, and the blocked generated-cutter lineage boundary. It creates zero queue requests, observes no real-user approval, issues no approval token, authorizes no mutation, performs no live SketchUp boolean or save/reopen QA, and cannot establish release acceptance."
+}

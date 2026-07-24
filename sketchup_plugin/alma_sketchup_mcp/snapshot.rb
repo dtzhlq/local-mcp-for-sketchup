@@ -3,8 +3,23 @@
 module AlmaSketchupMCP
   extend self
 
-  def snapshot
-    model = active_model_or_new('snapshot')
+  def snapshot(model = nil)
+    model ||= active_model_or_new('snapshot')
+    state = document_state(model)
+    classification_schemas = classification_schema_catalog(model)
+    native_classification_by_definition = {}
+    native_classification_for = lambda do |definition|
+      next nil unless definition
+
+      native_classification_by_definition[definition.object_id] ||= native_definition_classification_summary(definition, classification_schemas)
+    end
+    component_definition_summaries = model.definitions.reject { |definition| sketchup_temp_definition?(definition) }.map do |definition|
+      {
+        'name' => definition.name.to_s,
+        'persistent_id' => entity_persistent_id(definition),
+        'native_classification' => native_classification_for.call(definition)
+      }
+    end.sort_by { |summary| [summary['name'], summary['persistent_id'].to_s] }
     groups = model.entities.grep(Sketchup::Group).map do |group|
       bounds = group.bounds
       {
@@ -19,6 +34,7 @@ module AlmaSketchupMCP
         'material' => first_entities_material(group.entities),
         'tag' => entity_tag_name(group),
         'classification' => entity_classification(group),
+        'native_classification' => native_classification_for.call(group.definition),
         'texture_transform' => entity_texture_transform(group),
         'face_uvs' => entity_face_uvs(group),
         'geometry_input' => entity_geometry_input(group),
@@ -29,6 +45,7 @@ module AlmaSketchupMCP
         'manifold' => entity_manifold_report(group),
         'transform' => entity_object_transform(group),
         'visible' => group.respond_to?(:hidden?) ? !group.hidden? : true,
+        'locked' => group.respond_to?(:locked?) ? group.locked? : false,
         'qa' => entity_qa(group)
       }
     end
@@ -45,6 +62,7 @@ module AlmaSketchupMCP
         'material' => first_entities_material(instance.definition.entities),
         'tag' => entity_tag_name(instance),
         'classification' => entity_classification(instance),
+        'native_classification' => native_classification_for.call(instance.definition),
         'texture_transform' => entity_texture_transform(instance),
         'face_uvs' => entity_face_uvs(instance),
         'attributes' => entity_attributes(instance),
@@ -53,6 +71,7 @@ module AlmaSketchupMCP
         'manifold' => entity_manifold_report(instance),
         'transform' => entity_object_transform(instance),
         'visible' => instance.respond_to?(:hidden?) ? !instance.hidden? : true,
+        'locked' => instance.respond_to?(:locked?) ? instance.locked? : false,
         'qa' => entity_qa(instance)
       }
     end
@@ -64,28 +83,30 @@ module AlmaSketchupMCP
       acc['edges'] += item['edges']
       acc['vertices'] += (item['vertices'] || 0)
     end
-    all_warnings = snapshot_warnings(visible_items)
+    all_warnings = snapshot_warnings(visible_items, model)
     {
       'totals' => totals,
       'groups' => groups,
       'instances' => instances,
-      'manifold_checks' => @manifold_checks || [],
+      'manifold_checks' => state['manifold_checks'] || [],
       'component_definitions' => model.definitions.reject { |definition| sketchup_group_definition?(definition) || sketchup_temp_definition?(definition) || definition.name.empty? }.map(&:name).sort,
-      'scenes' => @scenes || [],
-      'levels' => @levels || [],
+      'component_definition_summaries' => component_definition_summaries,
+      'classification_schemas' => classification_schemas,
+      'scenes' => snapshot_scenes(model, state),
+      'levels' => state['levels'] || [],
       'tags' => model.layers.reject { |layer| layer.name.to_s.empty? || %w[Untagged Layer0].include?(layer.name) }.map { |layer| tag_snapshot(layer) }.sort_by { |tag| tag['name'] },
       'materials' => model.materials.map { |material| material_snapshot(material) }.sort_by { |material| material['name'] },
       'material_names' => model.materials.map(&:name).reject(&:empty?).sort,
       'image_references' => image_references_snapshot(model),
-      'style_state' => @style_state,
-      'shadow_state' => @shadow_state,
-      'rendering_options' => @rendering_options_state,
+      'style_state' => state['style_state'],
+      'shadow_state' => state['shadow_state'],
+      'rendering_options' => state['rendering_options_state'],
       'bounding_box' => merge_bounds_hashes(visible_items.map { |item| item['bounding_box'] }),
       'selection' => selection_snapshot(model),
       'warnings' => all_warnings,
       'warning_messages' => all_warnings.map { |w| w['message'] },
       'warning_summary' => warning_summary(all_warnings),
-      'view_state' => @view_state
+      'view_state' => snapshot_view_state(model, state)
     }
   end
 
@@ -104,33 +125,49 @@ module AlmaSketchupMCP
     definition.name.to_s.match?(/\ATempInstance#\d+\z/)
   end
 
-  def snapshot_warnings(groups)
-    warnings = (@warnings || []).dup
+  def snapshot_warnings(groups, model = nil)
+    warnings = document_state_array('warnings', model).dup
     groups.each do |group|
       if group['faces'].zero? && !zero_face_allowed?(group)
+        group_ref = snapshot_item_reference(group)
         warnings << {
           'type' => 'geometry.degenerate',
           'severity' => 'error',
           'category' => 'geometry',
-          'message' => "#{group['name']} has zero faces",
-          'source' => "group:#{group['name']}"
+          'message' => "#{group_ref} has zero faces",
+          'source' => "group:#{group_ref}"
         }
       end
     end
     groups.each_with_index do |group, index|
       groups[(index + 1)..].to_a.each do |other|
         if boxes_intersect?(group['bounding_box'], other['bounding_box'])
+          group_ref = snapshot_item_reference(group)
+          other_ref = snapshot_item_reference(other)
           warnings << {
             'type' => 'geometry.bbox_overlap',
             'severity' => 'warn',
             'category' => 'geometry',
-            'message' => "Bounding boxes overlap: #{group['name']} intersects #{other['name']}",
-            'source' => "group:#{group['name']};#{other['name']}"
+            'message' => "Bounding boxes overlap: #{group_ref} intersects #{other_ref}",
+            'source' => "group:#{group_ref};#{other_ref}"
           }
         end
       end
     end
     warnings
+  end
+
+  def snapshot_item_reference(item)
+    name = item['name'].to_s
+    return name unless name.empty?
+
+    id = item['id'].to_s
+    return id unless id.empty?
+
+    persistent_id = item['persistent_id'].to_s
+    return "pid:#{persistent_id}" unless persistent_id.empty?
+
+    'anonymous'
   end
 
   def zero_face_allowed?(group)

@@ -2,6 +2,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { SketchUpBridge } from '../src/bridge.mjs';
+import { freshSessionOptions } from '../src/live-session-contract.mjs';
 import { formatModelQaReportMarkdown } from '../src/model-qa.mjs';
 
 const DEFAULT_EXAMPLES = [
@@ -44,7 +45,8 @@ for (const example of examples) {
     runtime: options.runtime || 'mock',
     timeoutMs: options.timeoutMs,
     strictCollisions: options.strictCollisions,
-    strictUnanchored: options.strictUnanchored
+    strictUnanchored: options.strictUnanchored,
+    ...await freshSessionOptions(bridge, { runtime: options.runtime || 'mock', timeoutMs: options.timeoutMs })
   });
   const exampleDir = path.join(outputDir, example.name);
   await fs.mkdir(exampleDir, { recursive: true });

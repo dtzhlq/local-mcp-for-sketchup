@@ -1,0 +1,462 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/schemas/current-source-real-model-reliability-live-evidence-v6.schema.json",
+  "title": "Current Source Real Model Reliability Live Evidence v6",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "kind",
+    "captured_at",
+    "branch",
+    "result",
+    "evidence_scope",
+    "runtime",
+    "execution_authorization",
+    "lineage",
+    "corpus",
+    "case_summaries",
+    "aggregate_metrics",
+    "performance_boundary",
+    "locked_target_guard",
+    "appearance_preservation",
+    "architecture_preservation",
+    "dirty_topology_recovery",
+    "product_boolean_reliability",
+    "source_sha256",
+    "acceptance",
+    "boundaries"
+  ],
+  "properties": {
+    "version": { "const": "current-source-real-model-reliability-live-evidence.v6" },
+    "kind": { "const": "current_source_real_model_reliability_live_evidence" },
+    "captured_at": { "type": "string", "format": "date-time" },
+    "branch": { "const": "codex/agent-contract-v1" },
+    "result": { "const": "pass" },
+    "evidence_scope": {
+      "const": "seven_hash_bound_real_model_cases_with_three_guarded_geometry_mutations_and_controlled_overlay_boundaries"
+    },
+    "runtime": { "$ref": "#/$defs/runtime" },
+    "execution_authorization": { "$ref": "#/$defs/executionAuthorization" },
+    "lineage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "prior_six_case_evidence",
+        "product_boolean_fixture_report",
+        "product_boolean_case_report"
+      ],
+      "properties": {
+        "prior_six_case_evidence": { "$ref": "#/$defs/artifact" },
+        "product_boolean_fixture_report": { "$ref": "#/$defs/artifact" },
+        "product_boolean_case_report": { "$ref": "#/$defs/artifact" }
+      }
+    },
+    "corpus": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "manifest_path",
+        "manifest_sha256",
+        "formal_cases_total",
+        "formal_cases_passed",
+        "formal_corpus_complete",
+        "passed_case_ids",
+        "remaining_case_ids"
+      ],
+      "properties": {
+        "manifest_path": { "const": "test/reliability-corpus/manifest.json" },
+        "manifest_sha256": { "$ref": "#/$defs/prefixedSha256" },
+        "formal_cases_total": { "const": 7 },
+        "formal_cases_passed": { "const": 7 },
+        "formal_corpus_complete": { "const": true },
+        "passed_case_ids": {
+          "const": [
+            "appearance-scenes-hidden",
+            "architecture-golden",
+            "deep-shared-components",
+            "imported-dirty-topology",
+            "interior-expression",
+            "product-boolean-manifold",
+            "scaled-mirrored-locked"
+          ]
+        },
+        "remaining_case_ids": {
+          "type": "array",
+          "maxItems": 0
+        }
+      }
+    },
+    "case_summaries": {
+      "type": "array",
+      "minItems": 7,
+      "maxItems": 7,
+      "items": { "$ref": "#/$defs/caseSummary" }
+    },
+    "aggregate_metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tasks_total",
+        "tasks_passed",
+        "task_success_rate",
+        "geometry_mutation_cases_passed",
+        "controlled_fixture_overlay_cases_passed",
+        "wrong_object_modification_count",
+        "silent_geometry_corruption_count",
+        "recovery_attempts",
+        "recoveries",
+        "recovery_rate",
+        "aggregate_duration_ms",
+        "queue_clean_after_each_case"
+      ],
+      "properties": {
+        "tasks_total": { "const": 23 },
+        "tasks_passed": { "const": 23 },
+        "task_success_rate": { "const": 1 },
+        "geometry_mutation_cases_passed": { "const": 3 },
+        "controlled_fixture_overlay_cases_passed": { "const": 5 },
+        "wrong_object_modification_count": { "const": 0 },
+        "silent_geometry_corruption_count": { "const": 0 },
+        "recovery_attempts": { "const": 2 },
+        "recoveries": { "const": 2 },
+        "recovery_rate": { "const": 1 },
+        "aggregate_duration_ms": { "type": "integer", "minimum": 1 },
+        "queue_clean_after_each_case": { "const": true }
+      }
+    },
+    "performance_boundary": { "type": "object", "minProperties": 1 },
+    "locked_target_guard": { "type": "object", "minProperties": 1 },
+    "appearance_preservation": { "type": "object", "minProperties": 1 },
+    "architecture_preservation": { "type": "object", "minProperties": 1 },
+    "dirty_topology_recovery": { "type": "object", "minProperties": 1 },
+    "product_boolean_reliability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "case_id",
+        "derivation_class",
+        "controlled_overlay_inputs_only",
+        "product_context_retained",
+        "original_top_level_entities_preserved_during_fixture_creation",
+        "isolated_from_source",
+        "positive_3d_overlap",
+        "through_cut",
+        "target_initial_manifold",
+        "tool_initial_manifold",
+        "input_pair_manifold_after_fixture_reopen",
+        "formal_case_geometry_mutation_executed",
+        "operation",
+        "result_persistent_id",
+        "result_manifold",
+        "exact_target_replaced",
+        "tool_preserved_unchanged",
+        "non_input_top_level_entities_unchanged",
+        "target_material_preserved",
+        "material_preserved_across_save_reopen",
+        "source_artifact_bytes_unchanged",
+        "save_reopen_identity_exact",
+        "model_revision_exact_match",
+        "recursive_entries_before",
+        "recursive_entries_after",
+        "recursive_total_before",
+        "recursive_total_after",
+        "full_recursive_payload",
+        "queue_clean",
+        "source_sha256",
+        "verified_model_sha256",
+        "verified_model_bytes"
+      ],
+      "properties": {
+        "case_id": { "const": "product-boolean-manifold" },
+        "derivation_class": {
+          "const": "controlled_overlapping_manifold_pair_overlay_on_trimble_s6_copy"
+        },
+        "controlled_overlay_inputs_only": { "const": true },
+        "product_context_retained": { "const": true },
+        "original_top_level_entities_preserved_during_fixture_creation": { "const": true },
+        "isolated_from_source": { "const": true },
+        "positive_3d_overlap": { "const": true },
+        "through_cut": { "const": true },
+        "target_initial_manifold": { "const": true },
+        "tool_initial_manifold": { "const": true },
+        "input_pair_manifold_after_fixture_reopen": { "const": true },
+        "formal_case_geometry_mutation_executed": { "const": true },
+        "operation": { "const": "boolean_difference" },
+        "result_persistent_id": { "type": "string", "pattern": "^[1-9][0-9]*$" },
+        "result_manifold": { "const": true },
+        "exact_target_replaced": { "const": true },
+        "tool_preserved_unchanged": { "const": true },
+        "non_input_top_level_entities_unchanged": { "const": true },
+        "target_material_preserved": { "const": true },
+        "material_preserved_across_save_reopen": { "const": true },
+        "source_artifact_bytes_unchanged": { "const": true },
+        "save_reopen_identity_exact": { "const": true },
+        "model_revision_exact_match": { "const": true },
+        "recursive_entries_before": { "const": 71868 },
+        "recursive_entries_after": { "const": 71868 },
+        "recursive_total_before": { "const": 71868 },
+        "recursive_total_after": { "const": 71868 },
+        "full_recursive_payload": { "const": true },
+        "queue_clean": { "const": true },
+        "source_sha256": { "$ref": "#/$defs/prefixedSha256" },
+        "verified_model_sha256": { "$ref": "#/$defs/prefixedSha256" },
+        "verified_model_bytes": { "const": 3123553 }
+      }
+    },
+    "source_sha256": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "test/reliability-corpus/manifest.json",
+        "scripts/aggregate-current-source-real-model-reliability-live-v6.mjs",
+        "scripts/prepare-product-boolean-manifold-live-fixture.mjs",
+        "scripts/run-real-model-reliability-harness.mjs",
+        "scripts/run-real-model-reliability-live-case.mjs",
+        "schema/current-source-real-model-reliability-live-evidence-v6.schema.json",
+        "schema/controlled-product-boolean-live-fixture-v1.schema.json",
+        "schema/real-model-reliability-live-case-report-v1.schema.json",
+        "schema/real-model-reliability-live-case-v1.schema.json",
+        "src/bridge.mjs",
+        "src/queue-runtime.mjs",
+        "sketchup_plugin/alma_sketchup_mcp/boolean_operations.rb",
+        "sketchup_plugin/alma_sketchup_mcp/model_revision.rb",
+        "sketchup_plugin/alma_sketchup_mcp/runtime_source_manifest.rb"
+      ],
+      "properties": {
+        "test/reliability-corpus/manifest.json": { "$ref": "#/$defs/sha256" },
+        "scripts/aggregate-current-source-real-model-reliability-live-v6.mjs": { "$ref": "#/$defs/sha256" },
+        "scripts/prepare-product-boolean-manifold-live-fixture.mjs": { "$ref": "#/$defs/sha256" },
+        "scripts/run-real-model-reliability-harness.mjs": { "$ref": "#/$defs/sha256" },
+        "scripts/run-real-model-reliability-live-case.mjs": { "$ref": "#/$defs/sha256" },
+        "schema/current-source-real-model-reliability-live-evidence-v6.schema.json": { "$ref": "#/$defs/sha256" },
+        "schema/controlled-product-boolean-live-fixture-v1.schema.json": { "$ref": "#/$defs/sha256" },
+        "schema/real-model-reliability-live-case-report-v1.schema.json": { "$ref": "#/$defs/sha256" },
+        "schema/real-model-reliability-live-case-v1.schema.json": { "$ref": "#/$defs/sha256" },
+        "src/bridge.mjs": { "$ref": "#/$defs/sha256" },
+        "src/queue-runtime.mjs": { "$ref": "#/$defs/sha256" },
+        "sketchup_plugin/alma_sketchup_mcp/boolean_operations.rb": { "$ref": "#/$defs/sha256" },
+        "sketchup_plugin/alma_sketchup_mcp/model_revision.rb": { "$ref": "#/$defs/sha256" },
+        "sketchup_plugin/alma_sketchup_mcp/runtime_source_manifest.rb": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "acceptance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "seven_case_live_reliability",
+        "full_recursive_save_reopen",
+        "bounded_large_model_save_reopen",
+        "shared_definition_scope",
+        "material_and_scene_preservation",
+        "appearance_uv_hidden_preservation",
+        "architecture_case",
+        "mutation_cases_passed",
+        "locked_transform_rollback",
+        "native_lock_guard_enforced",
+        "boolean_manifold",
+        "boolean_target_isolation",
+        "dirty_topology_recovery",
+        "arbitrary_imported_cad_repair",
+        "formal_corpus_cases_passed",
+        "formal_corpus_cases_total",
+        "formal_corpus_complete",
+        "agent_gateway_default_profile_qualified",
+        "cross_version",
+        "release_acceptance"
+      ],
+      "properties": {
+        "seven_case_live_reliability": { "const": true },
+        "full_recursive_save_reopen": { "const": true },
+        "bounded_large_model_save_reopen": { "const": true },
+        "shared_definition_scope": { "const": true },
+        "material_and_scene_preservation": { "const": true },
+        "appearance_uv_hidden_preservation": { "const": true },
+        "architecture_case": { "const": true },
+        "mutation_cases_passed": { "const": 3 },
+        "locked_transform_rollback": { "const": true },
+        "native_lock_guard_enforced": { "const": true },
+        "boolean_manifold": { "const": true },
+        "boolean_target_isolation": { "const": true },
+        "dirty_topology_recovery": { "const": true },
+        "arbitrary_imported_cad_repair": { "const": false },
+        "formal_corpus_cases_passed": { "const": 7 },
+        "formal_corpus_cases_total": { "const": 7 },
+        "formal_corpus_complete": { "const": true },
+        "agent_gateway_default_profile_qualified": { "const": false },
+        "cross_version": { "const": "deferred_by_user" },
+        "release_acceptance": { "const": false }
+      }
+    },
+    "boundaries": {
+      "type": "array",
+      "minItems": 10,
+      "maxItems": 10,
+      "items": { "type": "string", "minLength": 40 }
+    }
+  },
+  "allOf": [
+    {
+      "properties": {
+        "case_summaries": {
+          "contains": {
+            "type": "object",
+            "required": ["case_id", "tasks_total", "tasks_passed", "geometry_mutation_executed"],
+            "properties": {
+              "case_id": { "const": "product-boolean-manifold" },
+              "tasks_total": { "const": 3 },
+              "tasks_passed": { "const": 3 },
+              "geometry_mutation_executed": { "const": true }
+            }
+          },
+          "minContains": 1,
+          "maxContains": 1
+        }
+      }
+    },
+    {
+      "properties": {
+        "case_summaries": {
+          "contains": {
+            "type": "object",
+            "required": ["case_id", "geometry_mutation_executed"],
+            "properties": {
+              "case_id": { "const": "imported-dirty-topology" },
+              "geometry_mutation_executed": { "const": true }
+            }
+          },
+          "minContains": 1,
+          "maxContains": 1
+        }
+      }
+    },
+    {
+      "properties": {
+        "case_summaries": {
+          "contains": {
+            "type": "object",
+            "required": ["case_id", "geometry_mutation_executed"],
+            "properties": {
+              "case_id": { "const": "scaled-mirrored-locked" },
+              "geometry_mutation_executed": { "const": true }
+            }
+          },
+          "minContains": 1,
+          "maxContains": 1
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "prefixedSha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "bytes"],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "not": { "pattern": "^(?:/|[A-Za-z]:[\\\\/]|file://|~/)" }
+        },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "bytes": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "server_version",
+        "plugin_version",
+        "sketchup_version",
+        "ruby_version",
+        "capability_version",
+        "manifest_version",
+        "dsl_version",
+        "occurrence_contract",
+        "revision_strategy",
+        "revision_source_sha256",
+        "compatibility_ok"
+      ],
+      "properties": {
+        "name": { "const": "queue" },
+        "server_version": { "const": "0.1.0-rc.2" },
+        "plugin_version": { "const": "0.1.0-rc.2" },
+        "sketchup_version": { "const": "26.2.242" },
+        "ruby_version": { "const": "3.2.2" },
+        "capability_version": { "const": "0.1.0-rc.2-capabilities.7" },
+        "manifest_version": { "const": "2026-07-agent-contract-v1.4" },
+        "dsl_version": { "const": 1 },
+        "occurrence_contract": { "const": "canonical-occurrence-path.v1" },
+        "revision_strategy": { "const": "definition-merkle.v2" },
+        "revision_source_sha256": { "$ref": "#/$defs/sha256" },
+        "compatibility_ok": { "const": true }
+      }
+    },
+    "executionAuthorization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "user_authorized_disposable_copies",
+        "queue_required",
+        "allowed_runtimes_explicit",
+        "queue_mutation_explicit",
+        "direct_expert_mutation_explicit",
+        "policy_persisted",
+        "default_policy_unchanged",
+        "agent_self_authorization_allowed"
+      ],
+      "properties": {
+        "mode": { "const": "local_operator_ephemeral_process_policy" },
+        "user_authorized_disposable_copies": { "const": true },
+        "queue_required": { "const": true },
+        "allowed_runtimes_explicit": { "const": true },
+        "queue_mutation_explicit": { "const": true },
+        "direct_expert_mutation_explicit": { "const": true },
+        "policy_persisted": { "const": false },
+        "default_policy_unchanged": { "const": true },
+        "agent_self_authorization_allowed": { "const": false }
+      }
+    },
+    "caseSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "case_id",
+        "tasks_total",
+        "tasks_passed",
+        "duration_ms",
+        "geometry_mutation_executed",
+        "save_reopen_exact",
+        "wrong_object_modification_count",
+        "silent_geometry_corruption_count",
+        "queue_clean"
+      ],
+      "properties": {
+        "case_id": {
+          "enum": [
+            "appearance-scenes-hidden",
+            "architecture-golden",
+            "deep-shared-components",
+            "imported-dirty-topology",
+            "interior-expression",
+            "product-boolean-manifold",
+            "scaled-mirrored-locked"
+          ]
+        },
+        "tasks_total": { "type": "integer", "minimum": 1 },
+        "tasks_passed": { "type": "integer", "minimum": 1 },
+        "duration_ms": { "type": "integer", "minimum": 1 },
+        "geometry_mutation_executed": { "type": "boolean" },
+        "save_reopen_exact": { "const": true },
+        "wrong_object_modification_count": { "const": 0 },
+        "silent_geometry_corruption_count": { "const": 0 },
+        "queue_clean": { "const": true }
+      }
+    }
+  }
+}

@@ -1,0 +1,123 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/sketchup-mcp-replica/task-mutation-receipt-v1.schema.json",
+  "title": "Agent Task Mutation Receipt v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version", "kind", "receipt_id", "task_id", "operation",
+    "idempotency_claim_id", "request_fingerprint", "task_version_at_claim",
+    "task_state_at_claim", "plan_id", "plan_hash", "model_key",
+    "model_revision_before", "model_revision_after", "risk_level", "runtime",
+    "bridge_receipt", "finalizer", "recorded_at", "payload_hash", "integrity_hmac"
+  ],
+  "properties": {
+    "version": { "const": "task-mutation-receipt.v1" },
+    "kind": { "const": "agent_task_mutation_receipt" },
+    "receipt_id": { "type": "string", "pattern": "^mutation-receipt-[0-9a-f]{24}$" },
+    "task_id": { "type": "string", "pattern": "^task_[0-9a-f-]+$" },
+    "operation": { "const": "submit_agent_task_input" },
+    "idempotency_claim_id": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "request_fingerprint": { "$ref": "#/$defs/sha256" },
+    "task_version_at_claim": { "type": "integer", "minimum": 1 },
+    "task_state_at_claim": { "enum": ["awaiting_review", "approved"] },
+    "plan_id": { "type": "string", "minLength": 1 },
+    "plan_hash": { "$ref": "#/$defs/sha256" },
+    "model_key": { "type": "string", "pattern": "^model_[0-9a-f]{32}$" },
+    "model_revision_before": { "$ref": "#/$defs/sha256" },
+    "model_revision_after": { "$ref": "#/$defs/sha256" },
+    "risk_level": { "enum": ["S1", "S2", "S3", "S4"] },
+    "runtime": { "enum": ["mock", "queue"] },
+    "bridge_receipt": {
+      "oneOf": [
+        { "$ref": "#/$defs/mock_receipt" },
+        { "$ref": "#/$defs/queue_receipt" }
+      ]
+    },
+    "finalizer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "kind", "applied_result"],
+      "properties": {
+        "version": { "const": "task-mutation-finalizer.v1" },
+        "kind": { "const": "reviewed_existing_model_edit" },
+        "applied_result": {
+          "type": "object",
+          "required": ["kind", "ok", "plan_id", "model_revision_before"],
+          "properties": {
+            "kind": { "const": "apply_reviewed_model_edit" },
+            "ok": { "const": true },
+            "plan_id": { "type": "string", "minLength": 1 },
+            "model_revision_before": { "$ref": "#/$defs/sha256" }
+          }
+        }
+      }
+    },
+    "recorded_at": { "type": "string", "format": "date-time" },
+    "payload_hash": { "$ref": "#/$defs/sha256" },
+    "integrity_hmac": { "$ref": "#/$defs/sha256" }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "receipt_common": {
+      "type": "object",
+      "required": ["version", "kind", "source", "runtime", "commit_state", "receipt_hash"],
+      "properties": {
+        "version": { "const": "trusted-bridge-mutation-receipt.v1" },
+        "source": { "type": "string", "minLength": 1 },
+        "runtime": { "enum": ["mock", "queue"] },
+        "commit_state": { "const": "committed" },
+        "receipt_hash": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "mock_receipt": {
+      "allOf": [
+        { "$ref": "#/$defs/receipt_common" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["version", "kind", "source", "runtime", "application_result_hash", "commit_state", "receipt_hash"],
+          "properties": {
+            "version": { "const": "trusted-bridge-mutation-receipt.v1" },
+            "kind": { "const": "trusted_mock_application_receipt" },
+            "source": { "const": "mock_runtime" },
+            "runtime": { "const": "mock" },
+            "application_result_hash": { "$ref": "#/$defs/sha256" },
+            "commit_state": { "const": "committed" },
+            "receipt_hash": { "$ref": "#/$defs/sha256" }
+          }
+        }
+      ]
+    },
+    "queue_receipt": {
+      "allOf": [
+        { "$ref": "#/$defs/receipt_common" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["version", "kind", "source", "runtime", "native_receipt", "commit_state", "receipt_hash"],
+          "properties": {
+            "version": { "const": "trusted-bridge-mutation-receipt.v1" },
+            "kind": { "const": "trusted_sketchup_commit_receipt" },
+            "source": { "const": "sketchup_plugin" },
+            "runtime": { "const": "queue" },
+            "native_receipt": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["version", "kind", "operation", "commit_state", "committed_at"],
+              "properties": {
+                "version": { "const": "mutation-receipt.v1" },
+                "kind": { "const": "sketchup_mutation_receipt" },
+                "operation": { "type": "string", "minLength": 1 },
+                "commit_state": { "const": "committed" },
+                "committed_at": { "type": "string", "format": "date-time" }
+              }
+            },
+            "commit_state": { "const": "committed" },
+            "receipt_hash": { "$ref": "#/$defs/sha256" }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,170 @@
+{
+  "version": "current-source-reviewed-plan-live-evidence.v1",
+  "kind": "current_source_reviewed_plan_live_evidence",
+  "captured_at": "2026-07-21T16:25:41.287Z",
+  "evidence_scope": "single_large_disposable_model_bounded_proposal_to_reviewed_plan_read_only",
+  "source_binding_status": "historical_exact_source_snapshot",
+  "superseded_by": "docs/evidence/current-source-reviewed-plan-v3-live-evidence-2026-07-21.json",
+  "runtime": {
+    "plugin_version": "0.1.0-rc.2",
+    "sketchup_version": "26.2.242",
+    "ruby_version": "3.2.2",
+    "capability_version": "0.1.0-rc.2-capabilities.7",
+    "manifest_version": "2026-07-agent-contract-v1.4",
+    "model_revision_strategy": "definition-merkle.v2",
+    "boolean_operations_sha256": "sha256:b98fd554894f629359651f40929cf30a7122ac90ba01217a662bea2f4c407610",
+    "model_revision_source_sha256": "sha256:b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134",
+    "compatibility_ok": true
+  },
+  "source_bindings": [
+    {
+      "path": "src/model-graph.mjs",
+      "sha256": "sha256:6bd4446a1eef063274b4d18f6ca7cf37760b3a277c182885dd56ec850a29cbce"
+    },
+    {
+      "path": "src/existing-model-edit-proposer.mjs",
+      "sha256": "sha256:2039909f487b4562bd2f7241945b6a4ce415d9da8ac44c8c895c61b5a024ed45"
+    },
+    {
+      "path": "src/existing-model-editing.mjs",
+      "sha256": "sha256:8e14bdaa16b7bbfb706fd92b3b45be1d7be4e779e9958f043a33a46ad08c9674"
+    },
+    {
+      "path": "src/agent-gateway.mjs",
+      "sha256": "sha256:88f4059b9a800d7e03f2b15072cb38c4ab93f43efc9933d031b0f1560b790127"
+    },
+    {
+      "path": "schema/model-graph-v1.schema.json",
+      "sha256": "sha256:17da463e354d32b47052537222802d96779b5f2173334ed02062d7cce19c8fd8"
+    },
+    {
+      "path": "schema/existing-model-edit-proposal-v1.schema.json",
+      "sha256": "sha256:e51288a7f0e0e16ebf726c8da1923496d6b7140e33c449f6d7fe66678d7d7c87"
+    },
+    {
+      "path": "schema/existing-edit-target-validation-v1.schema.json",
+      "sha256": "sha256:a30a68405e2985f02a26f6515a8da56fa80e401c3d08957e6a76bc8c2b122e16"
+    },
+    {
+      "path": "test/model-graph-proposer.mjs",
+      "sha256": "sha256:ae433e572614f94c5e45d0139a83e76c9a058bc83c5a10d236fc9d0e41410802"
+    },
+    {
+      "path": "test/current-source-reviewed-plan-readonly-live.mjs",
+      "sha256": "sha256:bb84fd120ea5075406a33d5a06bddf04fbae415a362c1317245de6861f9bc1ff"
+    },
+    {
+      "path": "scripts/run-current-source-reviewed-plan-readonly-live.mjs",
+      "sha256": "sha256:479c3b85b6d12bac5e62b729936efb5cb0b50737d4e97b21acd0c3913393d3ae"
+    }
+  ],
+  "model": {
+    "fixture_handle": "fixture:sha256:8678e0f86768cde57ae6f81c138a0c9296b5fcbee978e34ef01063e883d22efb",
+    "label_trust": "untrusted_data",
+    "size_bytes": 5413634,
+    "model_revision": "sha256:d833e6547bd6b7b4ea7271dd8b88e27d4a3336716ee79c03fb737d89ccfd54af",
+    "revision_indexed": 71360,
+    "revision_total_seen": 71360,
+    "model_revision_complete": true,
+    "bytes_unchanged": true,
+    "revision_unchanged": true,
+    "document_unchanged": true,
+    "model_modified": false,
+    "source_path_disclosed": false
+  },
+  "proposal": {
+    "task_state": "awaiting_review",
+    "discovery_mode": "structural_groups",
+    "full_model_graph_complete": false,
+    "full_model_graph_blockers": [
+      "recursive_index_not_requested"
+    ],
+    "projection_complete": true,
+    "projected_groups": 41,
+    "leaf_entities_materialized": false,
+    "selected_target_count": 1,
+    "selected_entity_path": "pid:89456",
+    "operation_count": 1,
+    "risk_level": "S2",
+    "execution_allowed": false
+  },
+  "reviewed_plan": {
+    "task_state": "awaiting_review",
+    "plan_id": "existing-edit-f442d49e4f179637b3c4e287",
+    "plan_hash": "sha256:b27a9321845a9c578267dfd2a52acf15485bf3a4af2e0f39ed96c7a0129efd0f",
+    "compile_permission": "ready_for_review",
+    "selected_entity_path": "pid:89456",
+    "operation": "rename",
+    "target_validation": {
+      "version": "existing-edit-target-validation.v1",
+      "mode": "structural_groups",
+      "source": "server_bound_source_proposal",
+      "projection_version": "structural-groups.v1",
+      "complete": true,
+      "truncated": false,
+      "indexed": 41,
+      "total_seen": 41,
+      "total_seen_exact": true,
+      "structural_group_limit": 5000,
+      "exact_target_count": 1,
+      "requested_target_count": 1,
+      "exact_targets_verified": true,
+      "leaf_entities_materialized": false,
+      "sufficient_for_review": true
+    },
+    "blocker_count": 0,
+    "approval_challenge_status": "awaiting_trusted_user",
+    "approval_decision_recorded": false,
+    "approval_token_issued": false,
+    "execution_allowed": false
+  },
+  "timing": {
+    "total_ms": 61697,
+    "proposal_ms": 24402,
+    "reviewed_plan_ms": 24384,
+    "performance_guarantee": false
+  },
+  "capture_artifact_hashes": {
+    "public_report": "sha256:ac4a8120d1a1747299d5c7418cffaede3fa8f2bed80801f8180749e48d7ce08c",
+    "private_proposal_projection": "sha256:0d334a4a5bd5c23674be5f4893de7c377493ce90941839f6997c401fd77c9b4c",
+    "private_reviewed_projection": "sha256:e2ea2a01577a45e401cce3efcc6c7f328400643a42d65b03f0a6ab27170e518c",
+    "private_reviewed_plan": "sha256:7b7f478a833e5dbb6452d175f50e4b09c9eb1915cd14af970cebefb8fd3ef542",
+    "private_handshake_before": "sha256:ca9e66e35b6eb59681a579e1952bebd586179d96a725f713b6c92ab3c45cdcae",
+    "private_handshake_after": "sha256:b657c59d360f8c1269429b0ebe61c6b5545e347f24784cc89b010062e1229e31"
+  },
+  "safety": {
+    "weak_client_profile": "short_context_no_files_no_vision_single_tool",
+    "signed_handshakes_verified_at_capture": 2,
+    "queue_before_clean": true,
+    "queue_after_clean": true,
+    "final_queue": 0,
+    "final_processing": 0,
+    "final_responses": 0,
+    "final_lock_exists": false,
+    "sensitive_values_embedded": false,
+    "approval_challenge_created": true,
+    "approval_decision_recorded": false,
+    "approval_token_issued": false,
+    "mutation_requested": false,
+    "mutation_performed": false,
+    "save_requested": false,
+    "save_performed": false
+  },
+  "acceptance": {
+    "current_source_bounded_reviewed_plan_preparation": true,
+    "capture_time_current_source": true,
+    "current_acceptance": false,
+    "proposal_and_plan_target_binding_exact": true,
+    "partial_graph_not_overclaimed_as_complete": true,
+    "leaf_entities_materialized": false,
+    "approval_or_execution_performed": false,
+    "wrong_object_automatic_execution": 0,
+    "unauthorized_s2_s4_execution": 0,
+    "duplicate_request_duplicate_modification": 0,
+    "multi_model_target_quality": false,
+    "post_approval_execution_path": false,
+    "live_mutation": false,
+    "release_acceptance": false
+  },
+  "boundary": "This current-source evidence proves proposal-to-reviewed-plan preparation with exact Group target validation on one byte-exact large disposable model. The challenge remains pending without a user decision, the full ModelGraph remains incomplete for leaf entities, and execution, mutation, save/reopen, multi-model target quality, post-approval performance, and release acceptance are not established."
+}

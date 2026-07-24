@@ -1,14 +1,153 @@
 {
   "version": "real-model-reliability-corpus.v1",
-  "description": "Small adversarial model corpus. Mock gates are deterministic; live SketchUp version proof is tracked separately and is not implied.",
+  "kind": "real_model_reliability_corpus",
+  "description": "Small adversarial reliability corpus. Deterministic fixtures are mock evidence only; independently sourced SketchUp artifacts remain an explicit live prerequisite.",
+  "default_runtime": "mock",
+  "repository_live_artifacts": {
+    "tracked_skp_count": 0,
+    "status": "external_live_required",
+    "generated_output_artifacts_are_evidence": false
+  },
+  "live_policy": {
+    "required_flags": ["--runtime queue", "--queue-required"],
+    "fresh_handshake_per_guarded_operation": true,
+    "modifies_and_reopens_active_model": true,
+    "disposable_copy_required": true,
+    "preflight_all_artifacts_before_queue": true,
+    "interrupt_cleanup_required": true
+  },
   "cases": [
-    { "id": "architecture-golden", "domain": "architecture", "source": "examples/golden-architecture.json", "focus": ["openings", "scenes", "save_reopen"] },
-    { "id": "interior-expression", "domain": "interior", "source": "examples/interior-expression-suite.json", "focus": ["materials", "fixtures", "hidden_context", "save_reopen"] },
-    { "id": "product-boolean-manifold", "domain": "product", "source": "examples/boolean-manifold-slice.json", "focus": ["boolean", "manifold", "material_preservation", "save_reopen"] },
-    { "id": "deep-shared-components", "domain": "shared_component", "source": "generated_in_test", "focus": ["recursive_index", "shared_definition", "persistent_identity"] },
-    { "id": "imported-dirty-topology", "domain": "imported_cad", "source": "generated_mock_import_artifact", "focus": ["open_mesh_detection", "repair", "recovery"] },
-    { "id": "appearance-scenes-hidden", "domain": "appearance", "source": "examples/appearance-texture-slice.json", "focus": ["uv", "materials", "scenes", "visibility", "save_reopen"] },
-    { "id": "scaled-mirrored-locked", "domain": "transform_edge_case", "source": "generated_in_test", "focus": ["nonuniform_scale", "mirror", "locked_fail_closed", "rollback"] }
+    {
+      "id": "architecture-golden",
+      "domain": "architecture",
+      "mock": {
+        "evidence_class": "deterministic_mock_fixture",
+        "source_kind": "repository_json_fixture",
+        "source": "examples/golden-architecture.json",
+        "runner": "repository_document"
+      },
+      "live": {
+        "status": "external_live_required",
+        "artifact": "architecture-building.skp",
+        "contract": "architecture-building.reliability.json",
+        "repository_tracked": false,
+        "disposable_copy_required": true
+      },
+      "tasks": ["material_preservation", "scene_visibility_preservation", "save_reopen_identity"]
+    },
+    {
+      "id": "interior-expression",
+      "domain": "interior",
+      "mock": {
+        "evidence_class": "deterministic_mock_fixture",
+        "source_kind": "repository_json_fixture",
+        "source": "examples/interior-expression-suite.json",
+        "runner": "repository_document"
+      },
+      "live": {
+        "status": "external_live_required",
+        "artifact": "interior-room.skp",
+        "contract": "interior-room.reliability.json",
+        "repository_tracked": false,
+        "disposable_copy_required": true
+      },
+      "tasks": ["material_preservation", "scene_visibility_preservation", "save_reopen_identity"]
+    },
+    {
+      "id": "product-boolean-manifold",
+      "domain": "product",
+      "mock": {
+        "evidence_class": "deterministic_mock_fixture",
+        "source_kind": "repository_json_fixture",
+        "source": "examples/boolean-manifold-slice.json",
+        "runner": "repository_document"
+      },
+      "live": {
+        "status": "external_live_required",
+        "artifact": "product-boolean-manifold.skp",
+        "contract": "product-boolean-manifold.reliability.json",
+        "repository_tracked": false,
+        "disposable_copy_required": true
+      },
+      "tasks": ["boolean_manifold", "material_preservation", "save_reopen_identity"]
+    },
+    {
+      "id": "deep-shared-components",
+      "domain": "shared_component",
+      "mock": {
+        "evidence_class": "deterministic_mock_fixture",
+        "source_kind": "generated_mock_fixture",
+        "source": null,
+        "runner": "deep_shared_generated"
+      },
+      "live": {
+        "status": "external_live_required",
+        "artifact": "deep-shared-components.skp",
+        "contract": "deep-shared-components.reliability.json",
+        "repository_tracked": false,
+        "disposable_copy_required": true
+      },
+      "tasks": ["large_recursive_index", "shared_definition_identity", "save_reopen_identity"]
+    },
+    {
+      "id": "imported-dirty-topology",
+      "domain": "imported_cad",
+      "mock": {
+        "evidence_class": "deterministic_mock_fixture",
+        "source_kind": "generated_mock_import_fixture",
+        "source": null,
+        "runner": "dirty_import_generated"
+      },
+      "live": {
+        "status": "external_live_required",
+        "artifact": "imported-dirty-topology.skp",
+        "contract": "imported-dirty-topology.reliability.json",
+        "repository_tracked": false,
+        "disposable_copy_required": true
+      },
+      "tasks": ["abnormal_topology_detection", "manifold_repair", "recovery"]
+    },
+    {
+      "id": "appearance-scenes-hidden",
+      "domain": "appearance",
+      "mock": {
+        "evidence_class": "deterministic_mock_fixture",
+        "source_kind": "repository_json_fixture",
+        "source": "examples/appearance-texture-slice.json",
+        "runner": "repository_document"
+      },
+      "live": {
+        "status": "external_live_required",
+        "artifact": "appearance-scenes-hidden.skp",
+        "contract": "appearance-scenes-hidden.reliability.json",
+        "repository_tracked": false,
+        "disposable_copy_required": true
+      },
+      "tasks": ["uv_material_preservation", "scene_visibility_preservation", "save_reopen_identity"]
+    },
+    {
+      "id": "scaled-mirrored-locked",
+      "domain": "transform_edge_case",
+      "mock": {
+        "evidence_class": "deterministic_mock_fixture",
+        "source_kind": "generated_mock_fixture",
+        "source": null,
+        "runner": "transform_locked_generated"
+      },
+      "live": {
+        "status": "external_live_required",
+        "artifact": "scaled-mirrored-locked.skp",
+        "contract": "scaled-mirrored-locked.reliability.json",
+        "repository_tracked": false,
+        "disposable_copy_required": true
+      },
+      "tasks": ["locked_fail_closed", "rollback", "nonuniform_mirror", "wrong_object_isolation", "save_reopen_identity"]
+    }
   ],
-  "hard_metrics": ["task_success_rate", "wrong_object_modification_count", "silent_geometry_corruption_count", "recovery_rate"]
+  "hard_metrics": [
+    "task_success_rate",
+    "wrong_object_modification_count",
+    "silent_geometry_corruption_count",
+    "recovery_rate"
+  ]
 }

@@ -3,14 +3,199 @@
   "$id": "https://alma.local/schema/visual-correction-qa-v1.schema.json",
   "title": "VisualCorrectionQaV1",
   "type": "object",
-  "required": ["version", "kind", "qa_id", "alignment", "difference", "verdict", "review_required"],
+  "additionalProperties": false,
+  "required": [
+    "version", "kind", "content_trust", "policy_effect", "qa_task_id", "source_task_id",
+    "source_lineage_hash", "model_key", "before_graph_id", "after_graph_id",
+    "before_model_revision", "after_model_revision", "source_evidence", "source_patch",
+    "source_plan", "apply_receipt", "reference_image", "recaptured_image", "alignment",
+    "difference", "improved", "verdict", "review_required", "next_action", "qa_id", "qa_hash"
+  ],
   "properties": {
     "version": { "const": "visual-correction-qa.v1" },
     "kind": { "const": "visual_correction_qa" },
-    "qa_id": { "type": "string", "minLength": 1 },
+    "content_trust": { "const": "untrusted_data" },
+    "policy_effect": { "const": "none" },
+    "qa_task_id": { "$ref": "#/$defs/task_id" },
+    "source_task_id": { "$ref": "#/$defs/task_id" },
+    "source_lineage_hash": { "$ref": "#/$defs/sha256" },
+    "model_key": { "$ref": "#/$defs/model_key" },
+    "before_graph_id": { "$ref": "#/$defs/graph_id" },
+    "after_graph_id": { "$ref": "#/$defs/graph_id" },
+    "before_model_revision": { "$ref": "#/$defs/sha256" },
+    "after_model_revision": { "$ref": "#/$defs/sha256" },
+    "source_evidence": { "$ref": "#/$defs/source_evidence" },
+    "source_patch": { "$ref": "#/$defs/source_patch" },
+    "source_plan": { "$ref": "#/$defs/source_plan" },
+    "apply_receipt": { "$ref": "#/$defs/apply_receipt" },
+    "reference_image": { "$ref": "#/$defs/image" },
+    "recaptured_image": { "$ref": "#/$defs/captured_image" },
+    "alignment": { "$ref": "#/$defs/alignment" },
+    "difference": { "$ref": "#/$defs/difference" },
+    "improved": { "type": "boolean" },
     "verdict": { "enum": ["pass", "review", "fail"] },
     "review_required": { "type": "boolean" },
-    "alignment": { "type": "object" },
-    "difference": { "type": "object" }
+    "next_action": {
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["action", "source_visual_correction"],
+          "properties": {
+            "action": { "const": "review_visual_residuals" },
+            "source_visual_correction": { "type": "string", "pattern": "^source_visual_correction:task_[A-Za-z0-9_-]+$" }
+          }
+        }
+      ]
+    },
+    "qa_id": { "type": "string", "pattern": "^visual-qa-[0-9a-f]{24}$" },
+    "qa_hash": { "$ref": "#/$defs/sha256" }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "task_id": { "type": "string", "pattern": "^task_[A-Za-z0-9_-]+$" },
+    "model_key": { "type": "string", "pattern": "^model_[0-9a-f]{32}$" },
+    "graph_id": { "type": "string", "pattern": "^model-graph-[0-9a-f]{24}$" },
+    "image": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["handle", "sha256", "media_type", "format", "size_bytes", "width", "height", "channels", "content_trust", "policy_effect"],
+      "properties": {
+        "handle": { "type": "string", "pattern": "^image-artifact:sha256:[0-9a-f]{64}$" },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "media_type": { "enum": ["image/png", "image/jpeg", "image/webp", "image/tiff"] },
+        "format": { "enum": ["png", "jpeg", "webp", "tiff"] },
+        "size_bytes": { "type": "integer", "minimum": 1 },
+        "width": { "type": "integer", "minimum": 1 },
+        "height": { "type": "integer", "minimum": 1 },
+        "channels": { "type": "integer", "minimum": 1, "maximum": 4 },
+        "content_trust": { "const": "untrusted_data" },
+        "policy_effect": { "const": "none" }
+      }
+    },
+    "captured_image": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["handle", "sha256", "media_type", "format", "size_bytes", "width", "height", "channels", "content_trust", "policy_effect", "capture_provenance"],
+      "properties": {
+        "handle": { "type": "string", "pattern": "^image-artifact:sha256:[0-9a-f]{64}$" },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "media_type": { "enum": ["image/png", "image/jpeg", "image/webp", "image/tiff"] },
+        "format": { "enum": ["png", "jpeg", "webp", "tiff"] },
+        "size_bytes": { "type": "integer", "minimum": 1 },
+        "width": { "type": "integer", "minimum": 1 },
+        "height": { "type": "integer", "minimum": 1 },
+        "channels": { "type": "integer", "minimum": 1, "maximum": 4 },
+        "content_trust": { "const": "untrusted_data" },
+        "policy_effect": { "const": "none" },
+        "capture_provenance": { "$ref": "#/$defs/capture_provenance" }
+      }
+    },
+    "capture_provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "kind", "capture_id", "provider", "runtime", "source_task_id", "model_key", "graph_id", "model_revision", "captured_at"],
+      "properties": {
+        "version": { "const": "visual-capture-provenance.v1" },
+        "kind": { "enum": ["trusted_test_capture", "server_live_capture"] },
+        "capture_id": { "type": "string", "minLength": 1 },
+        "provider": { "enum": ["test_fixture", "sketchup_capture_view"] },
+        "runtime": { "enum": ["mock", "queue"] },
+        "source_task_id": { "$ref": "#/$defs/task_id" },
+        "model_key": { "$ref": "#/$defs/model_key" },
+        "graph_id": { "$ref": "#/$defs/graph_id" },
+        "model_revision": { "$ref": "#/$defs/sha256" },
+        "phase": { "enum": ["before", "after"] },
+        "image_handle": { "type": "string", "pattern": "^image-artifact:sha256:[0-9a-f]{64}$" },
+        "image_sha256": { "$ref": "#/$defs/sha256" },
+        "capture_spec_hash": { "$ref": "#/$defs/sha256" },
+        "camera_hash": { "$ref": "#/$defs/sha256" },
+        "session_binding_hash": { "$ref": "#/$defs/sha256" },
+        "state_unchanged": { "type": "boolean" },
+        "view_unchanged": { "type": "boolean" },
+        "receipt_id": { "type": "string", "pattern": "^live-capture-receipt-[0-9a-f]{24}$" },
+        "receipt_hash": { "$ref": "#/$defs/sha256" },
+        "captured_at": { "type": "string", "format": "date-time" }
+      },
+      "allOf": [{
+        "if": { "properties": { "kind": { "const": "server_live_capture" } }, "required": ["kind"] },
+        "then": { "required": ["phase", "image_handle", "image_sha256", "capture_spec_hash", "camera_hash", "session_binding_hash", "state_unchanged", "view_unchanged", "receipt_id", "receipt_hash"] }
+      }]
+    },
+    "source_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evidence_id", "evidence_hash", "difference_mean_absolute_error"],
+      "properties": {
+        "evidence_id": { "type": "string", "pattern": "^visual-evidence-[0-9a-f]{24}$" },
+        "evidence_hash": { "$ref": "#/$defs/sha256" },
+        "difference_mean_absolute_error": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "source_patch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["correction_patch_id", "patch_hash", "private_payload_hash", "risk_level"],
+      "properties": {
+        "correction_patch_id": { "type": "string", "pattern": "^visual-patch-[0-9a-f]{24}$" },
+        "patch_hash": { "$ref": "#/$defs/sha256" },
+        "private_payload_hash": { "$ref": "#/$defs/sha256" },
+        "risk_level": { "enum": ["S1", "S2", "S3", "S4"] }
+      }
+    },
+    "source_plan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["plan_id", "plan_hash", "model_key", "model_revision", "source_visual_correction"],
+      "properties": {
+        "plan_id": { "type": "string", "minLength": 1 },
+        "plan_hash": { "$ref": "#/$defs/sha256" },
+        "model_key": { "$ref": "#/$defs/model_key" },
+        "model_revision": { "$ref": "#/$defs/sha256" },
+        "source_visual_correction": { "type": "string", "pattern": "^source_visual_correction:task_[A-Za-z0-9_-]+$" }
+      }
+    },
+    "apply_receipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "kind", "receipt_id", "plan_id", "plan_hash", "model_key", "model_revision_before", "model_revision_after", "committed", "applied_at", "receipt_hash"],
+      "properties": {
+        "version": { "const": "visual-correction-apply-receipt.v1" },
+        "kind": { "const": "reviewed_existing_model_edit_apply_receipt" },
+        "receipt_id": { "type": "string", "minLength": 1 },
+        "plan_id": { "type": "string", "minLength": 1 },
+        "plan_hash": { "$ref": "#/$defs/sha256" },
+        "model_key": { "$ref": "#/$defs/model_key" },
+        "model_revision_before": { "$ref": "#/$defs/sha256" },
+        "model_revision_after": { "$ref": "#/$defs/sha256" },
+        "committed": { "const": true },
+        "applied_at": { "type": "string", "format": "date-time" },
+        "receipt_hash": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "alignment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["method", "scale", "translation_norm", "foreground_center_delta_norm"],
+      "properties": {
+        "method": { "const": "normalized_canvas_and_foreground_centroid.v1" },
+        "scale": { "$ref": "#/$defs/vector2" },
+        "translation_norm": { "$ref": "#/$defs/vector2" },
+        "foreground_center_delta_norm": { "type": "number", "minimum": 0 }
+      }
+    },
+    "difference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["method", "mean_absolute_error", "root_mean_square_error", "compared_pixels"],
+      "properties": {
+        "method": { "const": "normalized_rgb.v1" },
+        "mean_absolute_error": { "type": "number", "minimum": 0, "maximum": 1 },
+        "root_mean_square_error": { "type": "number", "minimum": 0, "maximum": 1 },
+        "compared_pixels": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "vector2": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number" } }
   }
 }

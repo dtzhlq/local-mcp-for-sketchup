@@ -1,0 +1,176 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/schema/trimble-s6-reference-correction-live-evidence-v1.schema.json",
+  "title": "Trimble S6 external-reference correction live evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "kind",
+    "captured_at",
+    "branch",
+    "baseline_commit",
+    "source_sha256",
+    "runtime",
+    "model",
+    "references",
+    "plan",
+    "apply",
+    "artifact_sha256",
+    "release_acceptance",
+    "release_blockers",
+    "boundaries"
+  ],
+  "properties": {
+    "version": { "const": "trimble-s6-reference-correction-live-evidence.v1" },
+    "kind": { "const": "external_reference_reviewed_existing_model_edit_recapture" },
+    "captured_at": { "type": "string", "minLength": 20 },
+    "branch": { "const": "codex/agent-contract-v1" },
+    "baseline_commit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "source_sha256": {
+      "type": "object",
+      "minProperties": 7,
+      "propertyNames": { "pattern": "^(src|scripts|test)/" },
+      "additionalProperties": { "$ref": "#/$defs/sha256" }
+    },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "plugin_version", "capability_version", "manifest_version", "compatibility_ok", "fresh_process_proven_in_this_run"],
+      "properties": {
+        "name": { "const": "queue" },
+        "plugin_version": { "const": "0.1.0-rc.2" },
+        "capability_version": { "const": "0.1.0-rc.2-capabilities.7" },
+        "manifest_version": { "const": "2026-07-agent-contract-v1.4" },
+        "compatibility_ok": { "const": true },
+        "fresh_process_proven_in_this_run": { "const": false }
+      }
+    },
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["basename", "disk_sha256_before", "disk_sha256_after", "disk_bytes_unchanged", "revision_complete", "logical_occurrences_before", "model_revision_before", "model_revision_after", "revision_changed", "save_model"],
+      "properties": {
+        "basename": { "const": "Trimble S6.disposable.skp" },
+        "disk_sha256_before": { "$ref": "#/$defs/sha256" },
+        "disk_sha256_after": { "$ref": "#/$defs/sha256" },
+        "disk_bytes_unchanged": { "const": true },
+        "revision_complete": { "const": true },
+        "logical_occurrences_before": { "const": 71360 },
+        "model_revision_before": { "$ref": "#/$defs/prefixedSha256" },
+        "model_revision_after": { "$ref": "#/$defs/prefixedSha256" },
+        "revision_changed": { "const": true },
+        "save_model": { "const": false }
+      }
+    },
+    "references": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["ordinal", "role", "sha256", "width", "height", "content_trust", "policy_effect"],
+        "properties": {
+          "ordinal": { "type": "integer", "minimum": 1, "maximum": 3 },
+          "role": { "enum": ["device_material_palette", "marked_lower_front_cover", "tripod_geometry"] },
+          "sha256": { "$ref": "#/$defs/prefixedSha256" },
+          "width": { "type": "integer", "minimum": 1 },
+          "height": { "type": "integer", "minimum": 1 },
+          "content_trust": { "const": "untrusted_data" },
+          "policy_effect": { "const": "none" }
+        }
+      }
+    },
+    "plan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["task_id", "prepared_state", "risk_level", "plan_id", "plan_hash", "operation_count", "material_update_count", "existing_cover_update_count", "additive_group_count", "expected_contact_count", "contacts_hash_bound_before_execution", "reference_handle_count", "approval_required", "approval_status", "authorization_mode", "configured_roots_exposed_to_agent"],
+      "properties": {
+        "task_id": { "$ref": "#/$defs/taskId" },
+        "prepared_state": { "const": "awaiting_review" },
+        "risk_level": { "const": "S3" },
+        "plan_id": { "type": "string", "pattern": "^existing-edit-[0-9a-f]{24}$" },
+        "plan_hash": { "$ref": "#/$defs/prefixedSha256" },
+        "operation_count": { "const": 26 },
+        "material_update_count": { "const": 4 },
+        "existing_cover_update_count": { "const": 1 },
+        "additive_group_count": { "const": 21 },
+        "expected_contact_count": { "const": 30 },
+        "contacts_hash_bound_before_execution": { "const": true },
+        "reference_handle_count": { "const": 3 },
+        "approval_required": { "const": false },
+        "approval_status": { "const": "server_policy_scoped_auto_approved" },
+        "authorization_mode": { "const": "trusted_model_copy" },
+        "configured_roots_exposed_to_agent": { "const": false }
+      }
+    },
+    "apply": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["task_state", "submit_count", "authorization_mode", "approved_by", "receipt_id", "receipt_status", "added_group_count", "missing_group_count", "material_mismatch_count", "lower_front_cover_reused", "raw_model_qa_pass", "unexpected_collision_count", "accepted_expected_contact_count", "capture_sha256", "capture_dimensions", "capture_state_unchanged", "queue_after", "approval_token_exposed_to_agent", "structured_reference_alignment_completed", "pixel_difference_completed", "milestone_acceptance"],
+      "properties": {
+        "task_state": { "const": "completed" },
+        "submit_count": { "const": 1 },
+        "authorization_mode": { "const": "server_policy_trusted_model_copy_auto_approval" },
+        "approved_by": { "const": "execution-policy:trusted-model-copy" },
+        "receipt_id": { "type": "string", "pattern": "^mutation-receipt-[0-9a-f]{24}$" },
+        "receipt_status": { "const": "finalized" },
+        "added_group_count": { "const": 21 },
+        "missing_group_count": { "const": 0 },
+        "material_mismatch_count": { "const": 0 },
+        "lower_front_cover_reused": { "const": true },
+        "raw_model_qa_pass": { "const": true },
+        "unexpected_collision_count": { "const": 0 },
+        "accepted_expected_contact_count": { "const": 30 },
+        "capture_sha256": { "$ref": "#/$defs/prefixedSha256" },
+        "capture_dimensions": {
+          "type": "array",
+          "prefixItems": [{ "const": 1280 }, { "const": 720 }],
+          "items": false,
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "capture_state_unchanged": { "const": true },
+        "queue_after": { "$ref": "#/$defs/cleanQueue" },
+        "approval_token_exposed_to_agent": { "const": false },
+        "structured_reference_alignment_completed": { "const": false },
+        "pixel_difference_completed": { "const": false },
+        "milestone_acceptance": { "const": true }
+      }
+    },
+    "artifact_sha256": {
+      "type": "object",
+      "minProperties": 12,
+      "propertyNames": { "pattern": "^output/live-validation/visual-correction/" },
+      "additionalProperties": { "$ref": "#/$defs/sha256" }
+    },
+    "release_acceptance": { "const": false },
+    "release_blockers": {
+      "type": "array",
+      "minItems": 2,
+      "contains": { "const": "structured_reference_alignment_and_pixel_difference_not_completed" }
+    },
+    "boundaries": {
+      "type": "array",
+      "minItems": 4,
+      "items": { "type": "string", "minLength": 1 }
+    }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "prefixedSha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "taskId": { "type": "string", "pattern": "^task_[0-9a-f-]{36}$" },
+    "cleanQueue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["queue", "processing", "responses", "lock_exists"],
+      "properties": {
+        "queue": { "const": 0 },
+        "processing": { "const": 0 },
+        "responses": { "const": 0 },
+        "lock_exists": { "const": false }
+      }
+    }
+  }
+}

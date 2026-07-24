@@ -1,0 +1,167 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/schema/existing-edit-execution-target-validation-v1.schema.json",
+  "title": "Existing Edit Execution Target Validation v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "mode",
+    "source",
+    "leaf_entities_materialized",
+    "phases"
+  ],
+  "properties": {
+    "version": {
+      "const": "existing-edit-execution-target-validation.v1"
+    },
+    "mode": {
+      "enum": ["full_recursive", "structural_groups"]
+    },
+    "source": {
+      "enum": [
+        "hash_bound_server_proposal",
+        "hash_bound_targetless_model_anchor",
+        "hash_bound_top_level_group_plan",
+        "hash_bound_reviewed_plan",
+        "conservative_full_recursive_fallback"
+      ]
+    },
+    "leaf_entities_materialized": {
+      "type": "boolean"
+    },
+    "phases": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["apply_preflight"],
+      "properties": {
+        "gateway_pre_apply": { "$ref": "#/$defs/phase" },
+        "apply_preflight": { "$ref": "#/$defs/phase" },
+        "iteration_before": { "$ref": "#/$defs/phase" },
+        "iteration_after": { "$ref": "#/$defs/phase" },
+        "gateway_post_apply": { "$ref": "#/$defs/phase" },
+        "finalization": { "$ref": "#/$defs/phase" }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "mode": { "const": "structural_groups" } },
+        "required": ["mode"]
+      },
+      "then": {
+        "properties": {
+          "source": {
+            "enum": [
+              "hash_bound_server_proposal",
+              "hash_bound_targetless_model_anchor",
+              "hash_bound_top_level_group_plan"
+            ]
+          },
+          "leaf_entities_materialized": { "const": false },
+          "phases": {
+            "required": ["apply_preflight", "iteration_before", "iteration_after"]
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "leaf_entities_materialized": { "const": true }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "phase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "phase",
+        "mode",
+        "model_key",
+        "model_revision",
+        "requested_target_count",
+        "destructive_side_effect_target_count",
+        "exact_target_count",
+        "exact_targets_verified",
+        "locked_target_count",
+        "leaf_entities_materialized",
+        "recursive_indexed",
+        "recursive_truncated"
+      ],
+      "properties": {
+        "phase": {
+          "enum": [
+            "gateway_pre_apply",
+            "apply_preflight",
+            "iteration_before",
+            "iteration_after",
+            "gateway_post_apply",
+            "finalization"
+          ]
+        },
+        "mode": {
+          "enum": ["full_recursive", "structural_groups"]
+        },
+        "model_key": {
+          "type": "string",
+          "pattern": "^model_[0-9a-f]{32}$"
+        },
+        "model_revision": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "requested_target_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "destructive_side_effect_target_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "exact_target_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "exact_targets_verified": {
+          "type": "boolean"
+        },
+        "expected_present_target_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "expected_absent_target_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "verified_absent_target_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "target_postconditions_verified": {
+          "type": "boolean"
+        },
+        "locked_target_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "leaf_entities_materialized": {
+          "type": "boolean"
+        },
+        "recursive_indexed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "recursive_truncated": {
+          "type": "boolean"
+        },
+        "structural_group_limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5000
+        }
+      }
+    }
+  }
+}

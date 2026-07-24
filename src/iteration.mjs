@@ -56,6 +56,7 @@ export async function runModelIteration(bridge, {
   expertTimeoutMs,
   pythonTimeoutMs,
   pythonCommand,
+  trusted_nested_target_validator,
   intent,
   intent_file,
   intentFile
@@ -100,6 +101,10 @@ export async function runModelIteration(bridge, {
   let targetResolution = null;
   let nestedBeforeAdoption = null;
   let nestedAfterAdoption = null;
+  let nestedTargetValidation = null;
+  const nestedRecursiveLimit = Number.isInteger(budgets?.recursive_limit)
+    ? budgets.recursive_limit
+    : (Number.isInteger(budgets?.recursiveLimit) ? budgets.recursiveLimit : undefined);
   const allowAmbiguousValue = allow_ambiguous_targets === true || allowAmbiguousTargets === true;
   const targetQueryValue = target_query ?? targetQuery;
   const targetSelectionMode = selection_mode || selectionMode || 'replace';
@@ -137,10 +142,22 @@ export async function runModelIteration(bridge, {
     await writeJsonArtifact(artifacts, 'target_selection', path.join(reportDir, 'target-selection.json'), selectedTargets);
   } else if (hasNestedEntityTargets(targets)) {
     selectedReferences = normalizeNestedEntityTargets(targets);
-    nestedBeforeAdoption = await bridge.adopt_open_model({ runtime, timeoutMs, recursive: true });
-    const indexedPaths = new Set((nestedBeforeAdoption.recursive_index || []).map((entry) => entry.entity_path).filter(Boolean));
+    const trustedBefore = typeof trusted_nested_target_validator === 'function'
+      ? await trusted_nested_target_validator({ phase: 'iteration_before', references: structuredClone(selectedReferences) })
+      : null;
+    nestedBeforeAdoption = trustedBefore?.adoption || await bridge.adopt_open_model({
+      runtime,
+      timeoutMs,
+      recursive: true,
+      ...(nestedRecursiveLimit ? { recursive_limit: nestedRecursiveLimit } : {}),
+      read_only: true
+    });
+    const indexedPaths = new Set(targetValidationEntries(nestedBeforeAdoption).map((entry) => entry.entity_path).filter(Boolean));
     for (const reference of selectedReferences) {
-      if (!indexedPaths.has(reference.entity_path)) throw new Error(`iterate_model nested entity_path is not present in the recursive adoption index: ${reference.entity_path}`);
+      if (!indexedPaths.has(reference.entity_path)) throw new Error(`iterate_model nested entity_path is not present in the execution target-validation index: ${reference.entity_path}`);
+    }
+    if (trustedBefore?.summary) {
+      nestedTargetValidation = { mode: trustedBefore.policy?.mode || trustedBefore.summary.mode, before: trustedBefore.summary };
     }
     await writeJsonArtifact(artifacts, 'before_nested_index', path.join(reportDir, 'before-nested-index.json'), nestedBeforeAdoption);
     selectedTargets = {
@@ -270,11 +287,31 @@ export async function runModelIteration(bridge, {
   if (!evaluated?.snapshot) {
     throw new Error(`iterate_model requires a patch format that returns a snapshot; got ${evaluated?.compatibility_mode || 'unknown'}${evaluated?.reason ? ` (${evaluated.reason})` : ''}`);
   }
+  const afterModelInfo = modelInfoFromSnapshot(evaluated.snapshot, {
+    runtime,
+    sourcePath: before.model_info?.source_path || null
+  });
+  const trustedMutationReceipt = evaluated.mutation_receipt || evaluated.snapshot?.mutation_receipt || null;
+  delete evaluated.mutation_receipt;
+  if (evaluated.snapshot && typeof evaluated.snapshot === 'object') delete evaluated.snapshot.mutation_receipt;
   await writeJsonArtifact(artifacts, 'evaluation', path.join(reportDir, 'evaluation.json'), evaluated);
   await writeJsonArtifact(artifacts, 'after_snapshot', path.join(reportDir, 'after-snapshot.json'), evaluated.snapshot);
-  await writeJsonArtifact(artifacts, 'after_model_info', path.join(reportDir, 'after-model-info.json'), modelInfoFromSnapshot(evaluated.snapshot, { runtime }));
+  await writeJsonArtifact(artifacts, 'after_model_info', path.join(reportDir, 'after-model-info.json'), afterModelInfo);
   if (nestedBeforeAdoption) {
-    nestedAfterAdoption = await bridge.adopt_open_model({ runtime, timeoutMs, recursive: true });
+    const trustedAfter = typeof trusted_nested_target_validator === 'function'
+      ? await trusted_nested_target_validator({ phase: 'iteration_after', references: structuredClone(selectedReferences) })
+      : null;
+    nestedAfterAdoption = trustedAfter?.adoption || await bridge.adopt_open_model({
+      runtime,
+      timeoutMs,
+      recursive: true,
+      ...(nestedRecursiveLimit ? { recursive_limit: nestedRecursiveLimit } : {}),
+      read_only: true
+    });
+    if (trustedAfter?.summary) {
+      nestedTargetValidation ||= { mode: trustedAfter.policy?.mode || trustedAfter.summary.mode };
+      nestedTargetValidation.after = trustedAfter.summary;
+    }
     await writeJsonArtifact(artifacts, 'after_nested_index', path.join(reportDir, 'after-nested-index.json'), nestedAfterAdoption);
   }
 
@@ -360,7 +397,7 @@ export async function runModelIteration(bridge, {
       selection: selectionSummary(before.selection)
     },
     after: {
-      model_info: modelInfoFromSnapshot(evaluated.snapshot, { runtime }),
+      model_info: afterModelInfo,
       selection: selectionSummary(evaluated.snapshot.selection || [])
     },
     change_summary: changeSummary,
@@ -380,9 +417,18 @@ export async function runModelIteration(bridge, {
       } : null,
       result: evaluated.compiled?.result
     },
-    nested_edit: nestedBeforeAdoption ? nestedEditSummary(nestedBeforeAdoption, nestedAfterAdoption, selectedReferences) : null
+    nested_edit: nestedBeforeAdoption ? nestedEditSummary(nestedBeforeAdoption, nestedAfterAdoption, selectedReferences) : null,
+    target_validation: nestedTargetValidation
   };
   await writeJsonArtifact(artifacts, 'manifest', path.join(reportDir, 'manifest.json'), manifest);
+  if (trustedMutationReceipt) {
+    Object.defineProperty(manifest, 'mutation_receipt', {
+      value: structuredClone(trustedMutationReceipt),
+      enumerable: false,
+      configurable: false,
+      writable: false
+    });
+  }
   return manifest;
 }
 
@@ -662,8 +708,9 @@ function normalizeNestedEntityTargets(targets) {
 }
 
 function nestedEditSummary(before, after, references) {
-  const beforeIndex = new Map((before?.recursive_index || []).filter((entry) => entry.entity_path).map((entry) => [entry.entity_path, entry]));
-  const afterEntries = after?.recursive_index || [];
+  const beforeEntries = targetValidationEntries(before);
+  const beforeIndex = new Map(beforeEntries.filter((entry) => entry.entity_path).map((entry) => [entry.entity_path, entry]));
+  const afterEntries = targetValidationEntries(after);
   return {
     target_count: references.length,
     editable_nested_before: before?.editable_nested_count || 0,
@@ -680,6 +727,12 @@ function nestedEditSummary(before, after, references) {
       };
     })
   };
+}
+
+function targetValidationEntries(adoption) {
+  if (Array.isArray(adoption?.recursive_index) && adoption.recursive_index.length > 0) return adoption.recursive_index;
+  if (Array.isArray(adoption?.structural_groups?.entries)) return adoption.structural_groups.entries;
+  return [];
 }
 
 function resolutionSummary(resolution) {

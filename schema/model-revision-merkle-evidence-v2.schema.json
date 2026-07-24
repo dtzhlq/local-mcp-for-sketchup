@@ -1,0 +1,213 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/sketchup-mcp-replica/model-revision-merkle-evidence-v2.schema.json",
+  "title": "Model Revision Merkle v2 Current Mock Evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "kind",
+    "created_on",
+    "runtime",
+    "result",
+    "contract",
+    "normalization",
+    "fail_closed",
+    "semantic_change_detection",
+    "tests",
+    "safety",
+    "live_evidence",
+    "hashes"
+  ],
+  "properties": {
+    "version": { "const": "model-revision-merkle-evidence.v2" },
+    "kind": { "const": "model_revision_merkle_mock_evidence" },
+    "created_on": { "type": "string", "format": "date" },
+    "runtime": { "const": "mock" },
+    "result": { "const": "pass" },
+    "contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "strategy",
+        "capability_version",
+        "manifest_version",
+        "model_revision_source",
+        "dsl_operation_count",
+        "component_scope_operation_count",
+        "dsl_operation_set_changed",
+        "unique_entity_limit",
+        "logical_occurrences",
+        "unique_entities",
+        "reachable_definitions",
+        "shared_occurrence_snapshots_materialized"
+      ],
+      "properties": {
+        "strategy": { "const": "definition-merkle.v2" },
+        "capability_version": { "const": "0.1.0-rc.2-capabilities.7" },
+        "manifest_version": { "const": "2026-07-agent-contract-v1.4" },
+        "model_revision_source": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["path", "sha256", "manifest_path", "loaded_source_attestation_required"],
+          "properties": {
+            "path": { "const": "sketchup_plugin/alma_sketchup_mcp/model_revision.rb" },
+            "sha256": { "const": "b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134" },
+            "manifest_path": { "const": "sketchup_plugin/alma_sketchup_mcp/runtime_source_manifest.rb" },
+            "loaded_source_attestation_required": { "const": true }
+          }
+        },
+        "dsl_operation_count": { "const": 101 },
+        "component_scope_operation_count": { "const": 57 },
+        "dsl_operation_set_changed": { "const": false },
+        "unique_entity_limit": { "const": 1000000 },
+        "logical_occurrences": { "const": 201000 },
+        "unique_entities": { "const": 1200 },
+        "reachable_definitions": { "const": 2 },
+        "shared_occurrence_snapshots_materialized": { "const": false }
+      }
+    },
+    "normalization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "process_local_entity_id_hashed",
+        "stable_entity_identity_sources",
+        "stable_definition_identity_sources",
+        "entity_enumeration_order_independent",
+        "attribute_dictionary_and_key_order_independent",
+        "face_loop_start_independent",
+        "face_loop_direction_independent",
+        "face_hole_order_independent",
+        "edge_endpoint_direction_independent"
+      ],
+      "properties": {
+        "process_local_entity_id_hashed": { "const": false },
+        "stable_entity_identity_sources": { "const": ["persistent_id", "alma_custom_reference"] },
+        "stable_definition_identity_sources": { "const": ["persistent_id", "alma_custom_reference"] },
+        "entity_enumeration_order_independent": { "const": true },
+        "attribute_dictionary_and_key_order_independent": { "const": true },
+        "face_loop_start_independent": { "const": true },
+        "face_loop_direction_independent": { "const": true },
+        "face_hole_order_independent": { "const": true },
+        "edge_endpoint_direction_independent": { "const": true }
+      }
+    },
+    "fail_closed": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "missing_entity_identity",
+        "duplicate_entity_identity",
+        "cross_type_duplicate_entity_identity",
+        "missing_definition_identity",
+        "duplicate_definition_identity",
+        "unique_entity_limit_exceeded",
+        "recursive_definition_cycle"
+      ],
+      "properties": {
+        "missing_entity_identity": { "const": true },
+        "duplicate_entity_identity": { "const": true },
+        "cross_type_duplicate_entity_identity": { "const": true },
+        "missing_definition_identity": { "const": true },
+        "duplicate_definition_identity": { "const": true },
+        "unique_entity_limit_exceeded": { "const": true },
+        "recursive_definition_cycle": { "const": true }
+      }
+    },
+    "semantic_change_detection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["transform", "material", "attribute_value", "geometry"],
+      "properties": {
+        "transform": { "const": true },
+        "material": { "const": true },
+        "attribute_value": { "const": true },
+        "geometry": { "const": true }
+      }
+    },
+    "tests": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ruby_command", "ruby_assertions", "evidence_command"],
+      "properties": {
+        "ruby_command": { "const": "ruby test/ruby/model_revision_merkle_test.rb" },
+        "ruby_assertions": { "const": 38 },
+        "evidence_command": { "const": "node test/model-revision-merkle-evidence.mjs" }
+      }
+    },
+    "safety": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "complete_requires_total_equals_indexed",
+        "logical_count_js_safe",
+        "capability_version_binds_strategy",
+        "capability_binds_model_revision_source_sha256",
+        "session_contract_binds_model_revision_source_sha256",
+        "incremental_entry_digest",
+        "occurrence_target_index_remains_bounded",
+        "queue_requests_sent",
+        "model_mutation_requested"
+      ],
+      "properties": {
+        "complete_requires_total_equals_indexed": { "const": true },
+        "logical_count_js_safe": { "const": true },
+        "capability_version_binds_strategy": { "const": true },
+        "capability_binds_model_revision_source_sha256": { "const": true },
+        "session_contract_binds_model_revision_source_sha256": { "const": true },
+        "incremental_entry_digest": { "const": true },
+        "occurrence_target_index_remains_bounded": { "const": true },
+        "queue_requests_sent": { "const": 0 },
+        "model_mutation_requested": { "const": false }
+      }
+    },
+    "live_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "current_strategy_live_proven",
+        "loaded_source_attestation_live_proven",
+        "clean_reopen_live_proven",
+        "release_acceptance"
+      ],
+      "properties": {
+        "status": { "const": "pending_clean_plugin_install_restart_reopen" },
+        "current_strategy_live_proven": { "const": false },
+        "loaded_source_attestation_live_proven": { "const": false },
+        "clean_reopen_live_proven": { "const": false },
+        "release_acceptance": { "const": false }
+      }
+    },
+    "hashes": {
+      "type": "object",
+      "additionalProperties": { "$ref": "#/$defs/sha256" },
+      "propertyNames": { "$ref": "#/$defs/repoPath" },
+      "required": [
+        "sketchup_plugin/alma_sketchup_mcp/model_revision.rb",
+        "sketchup_plugin/alma_sketchup_mcp/runtime_source_manifest.rb",
+        "sketchup_plugin/alma_sketchup_mcp/runtime_source_attestation.rb",
+        "sketchup_plugin/alma_sketchup_mcp.rb",
+        "src/runtime-source-attestation.mjs",
+        "src/capabilities.mjs",
+        "test/ruby/model_revision_merkle_test.rb",
+        "schema/model-revision-merkle-evidence-v2.schema.json",
+        "test/model-revision-merkle-evidence.mjs"
+      ],
+      "minProperties": 9
+    }
+  },
+  "$defs": {
+    "repoPath": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 320,
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9._/-]+$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    }
+  }
+}

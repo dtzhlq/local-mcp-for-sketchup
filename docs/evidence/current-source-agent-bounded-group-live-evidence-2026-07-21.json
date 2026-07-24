@@ -1,0 +1,162 @@
+{
+  "version": "current-source-agent-bounded-group-live-evidence.v1",
+  "kind": "current_source_agent_bounded_group_live_evidence",
+  "captured_at": "2026-07-21T15:48:07.603Z",
+  "evidence_scope": "single_large_disposable_model_bounded_group_proposal_read_only",
+  "source_binding_status": "historical_exact_source_snapshot",
+  "superseded_by": "docs/evidence/current-source-reviewed-plan-live-evidence-2026-07-21.json",
+  "runtime": {
+    "plugin_version": "0.1.0-rc.2",
+    "sketchup_version": "26.2.242",
+    "ruby_version": "3.2.2",
+    "capability_version": "0.1.0-rc.2-capabilities.7",
+    "manifest_version": "2026-07-agent-contract-v1.4",
+    "model_revision_strategy": "definition-merkle.v2",
+    "boolean_operations_sha256": "sha256:b98fd554894f629359651f40929cf30a7122ac90ba01217a662bea2f4c407610",
+    "model_revision_source_sha256": "sha256:b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134",
+    "compatibility_ok": true
+  },
+  "source_bindings": [
+    { "path": "src/model-graph.mjs", "sha256": "sha256:6bd4446a1eef063274b4d18f6ca7cf37760b3a277c182885dd56ec850a29cbce" },
+    { "path": "src/existing-model-edit-proposer.mjs", "sha256": "sha256:8d2da817d13a601c991a582bea58ebeafe78fedb41f39f8772e5d0272719b323" },
+    { "path": "src/agent-gateway.mjs", "sha256": "sha256:1f76ba5871847d9c57d0304c37d7da8b85c92ee9ac19dd6fe60d145e3513b4fa" },
+    { "path": "schema/model-graph-v1.schema.json", "sha256": "sha256:17da463e354d32b47052537222802d96779b5f2173334ed02062d7cce19c8fd8" },
+    { "path": "schema/existing-model-edit-proposal-v1.schema.json", "sha256": "sha256:e51288a7f0e0e16ebf726c8da1923496d6b7140e33c449f6d7fe66678d7d7c87" },
+    { "path": "test/model-graph-proposer.mjs", "sha256": "sha256:3f3c4b1da882b97b41e9f32d02a2e8113e8c25c15f13cf9585f6760a1b3eb26f" },
+    { "path": "test/fixtures/model-graph/structural-large-group-adoption.json", "sha256": "sha256:b80e77078791594c9d7569f2505dcfed999ea0954130457bc7de8db5c321db20" },
+    { "path": "scripts/run-current-source-agent-readonly-live.mjs", "sha256": "sha256:5d7d0f4f4bf36eefa1190a87f080ac03e8e4d9d7e9cab2ced05202fba35ab967" }
+  ],
+  "model": {
+    "fixture_handle": "fixture:sha256:8678e0f86768cde57ae6f81c138a0c9296b5fcbee978e34ef01063e883d22efb",
+    "label_trust": "untrusted_data",
+    "size_bytes": 5413634,
+    "model_revision": "sha256:d833e6547bd6b7b4ea7271dd8b88e27d4a3336716ee79c03fb737d89ccfd54af",
+    "revision_indexed": 71360,
+    "revision_total_seen": 71360,
+    "model_revision_complete": true,
+    "group_occurrences": 41,
+    "top_level_groups": 2,
+    "maximum_group_depth": 7,
+    "bytes_unchanged": true,
+    "revision_unchanged": true,
+    "document_unchanged": true,
+    "model_modified": false,
+    "source_path_disclosed": false
+  },
+  "target_discovery": {
+    "target_query": {
+      "trust": "untrusted_data",
+      "source": "benchmark_prompt",
+      "value": "largest group",
+      "policy_effect": "none"
+    },
+    "mode": "structural_groups",
+    "reason": "bounded_group_scope_is_sufficient_for_target_discovery",
+    "full_model_graph_complete": false,
+    "full_model_graph_blockers": ["recursive_index_not_requested"],
+    "projection": {
+      "version": "structural-groups.v1",
+      "complete": true,
+      "total_seen": 41,
+      "total_seen_exact": true,
+      "indexed": 41,
+      "truncated": false,
+      "limit": 5000,
+      "eligible_entity_types": ["group"],
+      "leaf_entities_materialized": false,
+      "coordinate_space": "model_world",
+      "proposal_only": true,
+      "execution_allowed": false
+    },
+    "model_graph": {
+      "graph_id": "model-graph-1d7521f51e797509a4334900",
+      "nodes": 87,
+      "occurrences": 41,
+      "definitions": 45,
+      "faces": 0,
+      "edges": 0,
+      "hierarchy_relationships": 39,
+      "spatial_relationships": 200,
+      "persistent_store": true,
+      "identity_stability": "persistent"
+    }
+  },
+  "proposal": {
+    "task_state": "awaiting_review",
+    "proposal_id": "edit-proposal-b03b8880b954e3890fb99388",
+    "proposal_hash": "sha256:b03b8880b954e3890fb9938871cb5ee4ce1235ee8b6284a2da22bacc4be5a5c1",
+    "requested_action": "rename",
+    "requires_clarification": false,
+    "ambiguity_reasons": [],
+    "confidence": 0.86,
+    "candidate_count": 5,
+    "selected_target_count": 1,
+    "selected_target": {
+      "entity_path": "pid:89456",
+      "edit_scope": "instance_path",
+      "instance_policy": "definition_wide",
+      "effective_locked": false,
+      "shared_definition": false,
+      "affected_instance_count": 1,
+      "direct_topology": { "faces": 2, "edges": 7, "vertices": 6 }
+    },
+    "evidence_kinds": [
+      "bounded_structural_group_projection",
+      "object_scope_preferred",
+      "deterministic_spatial_ranking"
+    ],
+    "operation_count": 1,
+    "risk_level": "S2",
+    "execution_allowed": false,
+    "execution_route": "trusted_reviewed_existing_model_edit_only",
+    "next_action": "start_reviewed_existing_model_edit",
+    "approval_requested": false,
+    "mutation_performed": false
+  },
+  "timing": {
+    "handshake_to_final_handshake_ms": 101187,
+    "proposal_task_ms": 62254,
+    "performance_guarantee": false
+  },
+  "capture_artifact_hashes": {
+    "public_report": "sha256:e9b2085c0438e3f5ea39b65cd8671936617c49a689267fed7b0319d191c82002",
+    "private_proposal_projection": "sha256:99db9ba19d7659bed7cf3b984b1d5204425774f1f610d1b390c2480e38a8d9ce",
+    "private_model_graph": "sha256:f5d3fd92e9324d4932e63d97c5b75dfc3facbf31b809883d2ce44315283ebbef",
+    "private_handshake_before": "sha256:aa54ca2363f7bab259ccf505916989d5f30433358c9bf09c451bc37edb3d066c",
+    "private_handshake_after": "sha256:ff92a7ae45cfc099b1d71e2c23457f27efccaefca5e2c939897c323f96c0c260"
+  },
+  "safety": {
+    "weak_client_profile": "short_context_no_files_no_vision_single_tool",
+    "signed_handshakes_verified_at_capture": 2,
+    "queue_before_clean": true,
+    "queue_after_clean": true,
+    "final_queue": 0,
+    "final_processing": 0,
+    "final_responses": 0,
+    "final_lock_exists": false,
+    "plugin_process_unchanged": true,
+    "sensitive_values_embedded": false,
+    "mutation_requested": false,
+    "mutation_performed": false,
+    "save_requested": false,
+    "save_performed": false,
+    "approval_requested": false,
+    "approval_issued": false
+  },
+  "acceptance": {
+    "current_source_bounded_group_live": true,
+    "capture_time_current_source": true,
+    "current_acceptance": false,
+    "large_revision_group_projection_complete": true,
+    "partial_graph_not_overclaimed_as_complete": true,
+    "single_model_target_selected_for_review_only": true,
+    "wrong_object_automatic_execution": 0,
+    "unauthorized_s2_s4_execution": 0,
+    "duplicate_request_duplicate_modification": 0,
+    "full_recursive_large_model_proposal": false,
+    "multi_model_target_quality": false,
+    "live_mutation": false,
+    "release_acceptance": false
+  },
+  "boundary": "This historical exact-source snapshot proves a bounded, complete Group-only proposal projection on one byte-exact large disposable model at capture time. It is superseded for current-source acceptance by the reviewed-plan evidence, the persisted ModelGraph remains explicitly incomplete for leaf entities, and no approval, mutation, save/reopen, corpus-wide target-quality claim, performance guarantee, or release acceptance is established."
+}

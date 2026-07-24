@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/sketchup-mcp-replica/save-reopen-identity-report-v1.schema.json",
+  "title": "Save/Reopen Persistent Identity Report v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "kind", "ok", "runtime", "model_revision_before", "model_revision_after", "saved_model", "path_switch", "identity", "snapshot_compare", "queue_clean", "artifacts"],
+  "properties": {
+    "version": { "const": 1 },
+    "kind": { "const": "save_reopen_identity_report" },
+    "ok": { "const": true },
+    "runtime": { "enum": ["mock", "queue"] },
+    "model_revision_before": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "model_revision_after": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "saved_model": { "type": "string", "minLength": 1 },
+    "path_switch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["verified", "active_source_path_verified", "resumed_after_activation", "target_path", "intermediary_path", "source_before_switch", "source_before_reopen", "source_after_reopen", "open_result_path"],
+      "properties": {
+        "verified": { "const": true },
+        "active_source_path_verified": { "type": "boolean" },
+        "resumed_after_activation": { "type": "boolean" },
+        "target_path": { "type": "string", "minLength": 1 },
+        "intermediary_path": { "type": "string", "minLength": 1 },
+        "source_before_switch": { "type": ["string", "null"] },
+        "source_before_reopen": { "type": ["string", "null"] },
+        "source_after_reopen": { "type": ["string", "null"] },
+        "open_result_path": { "type": "string", "minLength": 1 }
+      }
+    },
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["entries_before", "entries_after", "signature_before", "signature_after", "exact_match", "shared_leaf_occurrences", "face_edge_entries"],
+      "properties": {
+        "entries_before": { "type": "integer", "minimum": 1 },
+        "entries_after": { "type": "integer", "minimum": 1 },
+        "signature_before": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+        "signature_after": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+        "exact_match": { "const": true },
+        "shared_leaf_occurrences": { "const": 2 },
+        "face_edge_entries": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "snapshot_compare": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tolerance_mm", "diff_count", "exact_match", "verdict"],
+      "properties": {
+        "tolerance_mm": { "const": 0 },
+        "diff_count": { "const": 0 },
+        "exact_match": { "const": true },
+        "verdict": { "const": "pass" }
+      }
+    },
+    "queue_clean": {
+      "anyOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["queue", "processing", "responses", "lock"],
+          "properties": {
+            "queue": { "const": 0 },
+            "processing": { "const": 0 },
+            "responses": { "const": 0 },
+            "lock": { "const": false }
+          }
+        }
+      ]
+    },
+    "artifacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["report", "saved_model", "intermediary_model", "snapshot_diff", "checkpoint"],
+      "properties": {
+        "report": { "type": "string", "minLength": 1 },
+        "saved_model": { "type": "string", "minLength": 1 },
+        "intermediary_model": { "type": "string", "minLength": 1 },
+        "snapshot_diff": { "type": "string", "minLength": 1 },
+        "checkpoint": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

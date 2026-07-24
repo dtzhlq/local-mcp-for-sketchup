@@ -1,0 +1,169 @@
+{
+  "version": "design-intent-live-lineage-evidence.v1",
+  "kind": "design_intent_live_lineage_evidence",
+  "captured_at": "2026-07-23T12:52:32.730Z",
+  "branch": "codex/agent-contract-v1",
+  "result": "pass",
+  "evidence_scope": "single_version_live_save_restart_lineage_and_unsaved_manual_divergence",
+  "runtime": {
+    "name": "queue",
+    "server_version": "0.1.0-rc.2",
+    "plugin_version": "0.1.0-rc.2",
+    "sketchup_version": "26.2.242",
+    "ruby_version": "3.2.2",
+    "capability_version": "0.1.0-rc.2-capabilities.7",
+    "manifest_version": "2026-07-agent-contract-v1.4",
+    "dsl_version": 1,
+    "occurrence_contract": "canonical-occurrence-path.v1",
+    "revision_strategy": "definition-merkle.v2",
+    "revision_source_sha256": "b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134",
+    "boolean_operations_sha256": "4e23e8d35603f4d08c9c5c9c9174c99451ffcb3bd94ab233001d331beafb3b4b",
+    "compatibility_ok": true,
+    "fresh_plugin_session_observed": true,
+    "session_changed_from_capture": true,
+    "raw_session_values_omitted": true
+  },
+  "fixture": {
+    "source_fixture_handle": "fixture:sha256:32dddb732579785f6d3a98e3500c53774c27a4cfefd9c85a423972b1914790ff",
+    "working_copy_artifact": "output/live-validation/design-intent-lineage/current-source-2026-07-23-v1/live-work/design-intent-lineage.live-working.skp",
+    "saved_fixture_handle": "fixture:sha256:0baedaea5ee5f90d34782bffe579c3d6bf25a3379ddacca3d23c562dcc4c63ce",
+    "size_bytes": 19723,
+    "source_fixture_unchanged": true,
+    "disposable_copy_only": true
+  },
+  "lineage": {
+    "original_task_state": "awaiting_review",
+    "task_resumed_by_task_id": true,
+    "design_graph_id_stable": true,
+    "target_entity_path": "pid:92187",
+    "target_binding_fingerprint_stable_after_restart": true,
+    "model_revision_exact_after_restart": true,
+    "feature_history_versions_before_restart": 1,
+    "feature_history_versions_after_restart": 1,
+    "aligned_reconciliation_completed": true,
+    "aligned_reconciliation_review_required": false,
+    "reconciliation_records_after_restart": 1
+  },
+  "manual_divergence": {
+    "mutation_scope": "unsaved_disposable_copy_only",
+    "operation": "set_material",
+    "target_entity_path": "pid:92187",
+    "target_path_preserved": true,
+    "model_revision_changed": true,
+    "divergent_material_observed": true,
+    "parameter_change_task_state": "awaiting_input",
+    "blocker": "manual_or_external_divergence_requires_reconciliation",
+    "proposed_operation_count": 0,
+    "wrong_object_modification_count": 0,
+    "reconciliation_task_state": "awaiting_review",
+    "unexpected_divergence_count": 1,
+    "review_required": true,
+    "silent_overwrite_allowed": false,
+    "approval_challenge_status": "awaiting_trusted_user",
+    "approval_decision_recorded": false,
+    "approval_token_exposed": false,
+    "agent_supplied_decision_error_code": "APPROVAL_REQUIRED",
+    "feature_history_versions_before_review": 1,
+    "feature_history_versions_after_review": 1,
+    "feature_history_advanced_without_trusted_review": false,
+    "save_performed_after_divergence": false,
+    "disk_bytes_unchanged_after_divergence": true
+  },
+  "agent_compatibility": {
+    "interface_level": "guided",
+    "client_vision": false,
+    "client_local_files": false,
+    "client_context": "short",
+    "client_parallel": false,
+    "structured_output": true,
+    "resume_by_task_id": true,
+    "server_persisted_state": true
+  },
+  "safety": {
+    "explicit_queue_opt_in": true,
+    "explicit_disposable_copy_confirmation": true,
+    "live_mutation_warning_emitted": true,
+    "queue_before": {
+      "queue": 0,
+      "processing": 0,
+      "responses": 0,
+      "lock_exists": false
+    },
+    "queue_after": {
+      "queue": 0,
+      "processing": 0,
+      "responses": 0,
+      "lock_exists": false
+    },
+    "interrupt_cleanup_enabled": true,
+    "source_fixture_unchanged": true,
+    "approval_created_by_server": true,
+    "trusted_approval_recorded": false,
+    "reconciliation_executed": false,
+    "divergence_saved": false,
+    "sensitive_values_embedded_in_public_report": false
+  },
+  "baseline": {
+    "mock_evidence_artifact": "docs/evidence/design-intent-v1-mock-evidence.json",
+    "mock_evidence_sha256": "sha256:1503eec219a28f447420603383c3f9c1d30c93700d670bde46d2e450749790c7",
+    "mock_domains": [
+      "architecture",
+      "product",
+      "interior"
+    ],
+    "live_domain": "small_component_fixture"
+  },
+  "source_attestation": [
+    {
+      "path": "scripts/run-design-intent-lineage-live.mjs",
+      "sha256": "sha256:46ef8f41d942f00a4030087b9a0982937c9cc72f1cbbdd89be1c2b14a8751e93"
+    },
+    {
+      "path": "src/agent-gateway.mjs",
+      "sha256": "sha256:c4bcdcb152d3963f54664595d6a847e9617927c26e784bd8c8873b40a415a3bb"
+    },
+    {
+      "path": "src/design-intent-graph.mjs",
+      "sha256": "sha256:1d8069d14546e04f3da3fa44f8f91d4bd41c237386ea1c009fc0c2cb89db7367"
+    },
+    {
+      "path": "src/design-intent-store.mjs",
+      "sha256": "sha256:6f00671a15679e1780b0dd262c725668b35a72746ee9db6e8ec80365ac5ae977"
+    },
+    {
+      "path": "schema/design-intent-graph-v1.schema.json",
+      "sha256": "sha256:7e4198eb2f7e9cee110452d672dd1154f479ecd4e0c2dca1798ef9a3d0fe747b"
+    },
+    {
+      "path": "schema/design-intent-reconciliation-v1.schema.json",
+      "sha256": "sha256:c4ed7bb935d60d22367a9d7cbceb7bd362dc3b1306e3d4ad7d17ff086d9dca10"
+    },
+    {
+      "path": "schema/design-intent-store-v1.schema.json",
+      "sha256": "sha256:189c6ce71b0be57ec50f59208662c1ba1fda9940d9cc7f1bf9db52ee1f17d0d8"
+    },
+    {
+      "path": "schema/design-intent-live-lineage-evidence-v1.schema.json",
+      "sha256": "sha256:48fff81f7d956bd3dd05853f7f8dc2e5e1067ec2b838faa73d99b4544e43ddbd"
+    },
+    {
+      "path": "test/design-intent-live-lineage-evidence.mjs",
+      "sha256": "sha256:91518fde56c9e612d3fbfc1c718444192cc5b1a931cd83e1826e94dc19c4a8c9"
+    }
+  ],
+  "acceptance": {
+    "live_save_restart_lineage_stable": true,
+    "manual_divergence_detected": true,
+    "parameter_rebuild_blocked_on_divergence": true,
+    "reconciliation_review_generated": true,
+    "silent_overwrite_count": 0,
+    "unauthorized_reconciliation_count": 0,
+    "duplicate_mutation_count": 0,
+    "release_acceptance": false
+  },
+  "limitations": [
+    "One current SketchUp version was exercised; cross-version verification is explicitly deferred.",
+    "The manual divergence was intentionally left unsaved and the reconciliation was intentionally left awaiting trusted review.",
+    "This proves live lineage recovery and fail-closed divergence handling for one small component fixture, not arbitrary feature reconstruction."
+  ]
+}

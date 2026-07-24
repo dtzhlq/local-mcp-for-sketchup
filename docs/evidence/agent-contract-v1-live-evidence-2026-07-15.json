@@ -1,0 +1,81 @@
+{
+  "version": 1,
+  "kind": "agent_contract_v1_live_evidence",
+  "created_on": "2026-07-15",
+  "branch": "codex/agent-contract-v1",
+  "baseline_commit": "ee0708adf845c51f71294091b8013e1cc6aa8979",
+  "user_coordination": {
+    "sketchup_opened_by_user": true,
+    "disposable_test_model_authorized": true,
+    "live_reset_and_mutation_warning_emitted": true
+  },
+  "runtime": {
+    "sketchup_version": "26.2.242",
+    "ruby_version": "3.2.2",
+    "plugin_version": "0.1.0-rc.2",
+    "capability_version": "0.1.0-rc.2-capabilities.2",
+    "compatibility_level": "ok",
+    "safe_dsl_operations_registered": 101,
+    "component_scope_operations": 57
+  },
+  "capability_suite": {
+    "command": "ALMA_SKETCHUP_AGENT_ALLOWED_RUNTIMES=mock,queue ALMA_SKETCHUP_AGENT_ALLOW_QUEUE_MUTATION=1 ALMA_SKETCHUP_ALLOW_DIRECT_EXPERT_QUEUE_MUTATION=1 node scripts/validate-mcp-capability-suite.mjs --runtime queue --queue-required --timeout-ms 240000 --output-dir output/mcp-capability-suite/agent-contract-live",
+    "status": "passed",
+    "tools_exposed": 41,
+    "tools_used": 41,
+    "tools_missing": 0,
+    "dsl_operations_registered": 101,
+    "live_fixture_operations": 34,
+    "queue_build_model_qa": "pass",
+    "queue_iteration_model_qa": "pass",
+    "post_queue": 0,
+    "post_processing": 0,
+    "post_responses": 0,
+    "post_lock_exists": false
+  },
+  "artifacts": {
+    "report_json": "output/mcp-capability-suite/agent-contract-live/report.json",
+    "report_markdown": "output/mcp-capability-suite/agent-contract-live/report.md",
+    "saved_model": "output/mcp-capability-suite/agent-contract-live/queue-build-report/model-2026-07-15T12-40-54-489Z.skp",
+    "iteration_model": "output/mcp-capability-suite/agent-contract-live/queue-iteration/model-queue-suite.skp",
+    "build_capture": "output/mcp-capability-suite/agent-contract-live/queue-build-report/capture.png",
+    "iso_capture": "output/mcp-capability-suite/agent-contract-live/queue-iso.png"
+  },
+  "post_run_observation": {
+    "sketchup_process_alive": true,
+    "new_crash_reports_after_2026_07_15_20_39_local": 0,
+    "queue_diagnostics_clean": true,
+    "captures_verified_as_1280_by_720_png": true,
+    "captures_visually_reviewed": true
+  },
+  "installed_plugin_at_time_of_suite": {
+    "atomic_processing_claim_and_no_replay_fix_loaded": true,
+    "split_ruby_modules_matched_then_current_worktree": true,
+    "main_file_full_source_parity": false,
+    "difference": "The loaded main file predates the later QueueGuardError next-action refinement; crash claim, transport guard, and reset hardening used by this live run are present."
+  },
+  "post_suite_contract_hardening": {
+    "scope": "mock_and_fake_queue_only",
+    "features": [
+      "recoverable pre-execution task states",
+      "persisted error idempotency outcomes",
+      "HTTP Gateway error-envelope status mapping and redaction",
+      "integer artifact pagination",
+      "merged warning sources",
+      "workflow schema and fresh-handshake validation"
+    ],
+    "gate": "npm test passed after these changes; no additional real S2-S4 approval-host mutation was performed."
+  },
+  "post_suite_source_only_hardening": {
+    "live_proof_status": "superseded_by_separate_exact_hash_targeted_live_evidence",
+    "features": [
+      "per-Model document sidecar isolation and macOS activation routing",
+      "pending_mdi_activation fail-closed open_model result",
+      "strong distinct-path save/reopen gate",
+      "controlled S1 pre-commit abort gate",
+      "transaction and atomic response persistence hardening"
+    ],
+    "note": "The plugin loaded for this earlier 41-tool suite does not contain these later source changes, so this historical evidence cannot validate them. Current-source MDI/save-reopen/S1 proof is recorded separately in docs/evidence/agent-contract-v1-live-safety-evidence-2026-07-15.json; that targeted slice is not a replacement for the earlier broad suite or a release signature."
+  },
+  "boundary": "This proves a user-coordinated 41-tool capability workflow and selected live model build/iteration behavior, not 101-operation-by-operation semantic coverage, a trusted S2-S4 approval host, complete real-model corpus reliability, or SketchUp version-matrix support."
+}

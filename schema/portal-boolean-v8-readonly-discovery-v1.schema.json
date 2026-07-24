@@ -1,0 +1,234 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/sketchup-mcp-replica/portal-boolean-v8-readonly-discovery-v1.schema.json",
+  "title": "Portal Boolean v8 read-only discovery evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version", "kind", "captured_at", "branch", "result", "evidence_scope",
+    "artifact_bindings", "runtime", "source", "model", "structural_probe",
+    "recommended_pair", "authorization_boundary", "safety", "release_acceptance", "boundary"
+  ],
+  "properties": {
+    "version": { "const": "portal-boolean-v8-readonly-discovery-evidence.v1" },
+    "kind": { "const": "portal_boolean_v8_readonly_discovery_evidence" },
+    "captured_at": { "const": "2026-07-21T06:33:31.096Z" },
+    "branch": { "const": "codex/agent-contract-v1" },
+    "result": { "const": "pass_candidate_ready_for_trusted_review_only" },
+    "evidence_scope": { "const": "portal_structure_disposable_copy_capability7_readonly_candidate_discovery" },
+    "artifact_bindings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["capabilities", "queue_before", "structural_adoption", "recursive_review", "queue_after"],
+      "properties": {
+        "capabilities": {
+          "allOf": [
+            { "$ref": "#/$defs/artifact" },
+            { "properties": {
+              "path": { "const": "output/real-model-reliability/boolean-live/portal-structure/readonly-probe-2026-07-21T06-31-04Z-90dd4d46/capabilities.json" },
+              "sha256": { "const": "sha256:1aad10601fabf8408362eb4a41854be04940d1c0b7fdaeba2dc88e6f855e2cff" }
+            } }
+          ]
+        },
+        "queue_before": {
+          "allOf": [
+            { "$ref": "#/$defs/artifact" },
+            { "properties": {
+              "path": { "const": "output/real-model-reliability/boolean-live/portal-structure/readonly-probe-2026-07-21T06-31-04Z-90dd4d46/queue-before-adoption.json" },
+              "sha256": { "const": "sha256:a6e710e81d80465e55902729bb047d910c56c86838f1b537e4181112502609df" }
+            } }
+          ]
+        },
+        "structural_adoption": {
+          "allOf": [
+            { "$ref": "#/$defs/artifact" },
+            { "properties": {
+              "path": { "const": "output/real-model-reliability/boolean-live/portal-structure/readonly-probe-2026-07-21T06-31-04Z-90dd4d46/structural-adoption.json" },
+              "sha256": { "const": "sha256:c0050321bf08b6ad6d74dc1536a5eaab5ccdc8c65a6db19bdf0f013908040837" }
+            } }
+          ]
+        },
+        "recursive_review": {
+          "allOf": [
+            { "$ref": "#/$defs/artifact" },
+            { "properties": {
+              "path": { "const": "output/real-model-reliability/boolean-live/portal-structure/readonly-probe-2026-07-21T06-31-04Z-90dd4d46/recursive-target-review-v2.json" },
+              "sha256": { "const": "sha256:2339a9876535abc903377e78e5a85488d3cc562ee72fbd83960c75698d809955" }
+            } }
+          ]
+        },
+        "queue_after": {
+          "allOf": [
+            { "$ref": "#/$defs/artifact" },
+            { "properties": {
+              "path": { "const": "output/real-model-reliability/boolean-live/portal-structure/readonly-probe-2026-07-21T06-31-04Z-90dd4d46/queue-after-adoption.json" },
+              "sha256": { "const": "sha256:a6e710e81d80465e55902729bb047d910c56c86838f1b537e4181112502609df" }
+            } }
+          ]
+        }
+      }
+    },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["live_probe", "review", "plugin_version", "capability_version", "manifest_version", "dsl_version", "structural_groups_version", "boolean_operations_sha256", "model_revision_source_sha256", "compatibility_ok"],
+      "properties": {
+        "live_probe": { "const": "queue" },
+        "review": { "const": "offline" },
+        "plugin_version": { "const": "0.1.0-rc.2" },
+        "capability_version": { "const": "0.1.0-rc.2-capabilities.7" },
+        "manifest_version": { "const": "2026-07-agent-contract-v1.4" },
+        "dsl_version": { "const": 1 },
+        "structural_groups_version": { "const": "structural-groups.v1" },
+        "boolean_operations_sha256": { "const": "sha256:2e3d686ba926f8b43f5a9847e05471587a217b536fd901811f10444948c2c444" },
+        "model_revision_source_sha256": { "const": "sha256:b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134" },
+        "compatibility_ok": { "const": true }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["candidate_id", "candidate_handle", "scope", "path", "label_trust", "size_bytes", "sha256_before", "sha256_after", "bytes_unchanged"],
+      "properties": {
+        "candidate_id": { "const": "candidate_e2ef3c5f82332f9174066759" },
+        "candidate_handle": { "const": "candidate:sha256:e2ef3c5f82332f9174066759" },
+        "scope": { "const": "workspace_disposable_copy" },
+        "path": { "const": "output/real-model-reliability/intake/live-work/preflight-176129c4-e1ef-4b53-b991-8f7b936df118/candidate_e2ef3c5f82332f9174066759/candidate.skp" },
+        "label_trust": { "const": "untrusted_data" },
+        "size_bytes": { "const": 608815 },
+        "sha256_before": { "const": "sha256:4a75190929bfa47b1506a8ed037a08e0f08e1632169d9bb550c4a9219b43e90c" },
+        "sha256_after": { "const": "sha256:4a75190929bfa47b1506a8ed037a08e0f08e1632169d9bb550c4a9219b43e90c" },
+        "bytes_unchanged": { "const": true }
+      }
+    },
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["document_id", "model_identity_sha256", "revision", "revision_complete", "revision_strategy", "revision_unique_entity_limit", "revision_unique_entities", "revision_reachable_definitions", "revision_logical_occurrences", "model_modified"],
+      "properties": {
+        "document_id": { "const": "document_baaef9d1d43e79fc755c54b849181c30406b8a10f3ccbf64441ab99af896baba" },
+        "model_identity_sha256": { "const": "sha256:d51e2f277f8d2349051afa5d82250b106116bf433fa2877fcdaec99c1b641719" },
+        "revision": { "const": "sha256:c03d317c25883606f0f8d7819610823118d916694d5a5d323deabe2ac7bcdf36" },
+        "revision_complete": { "const": true },
+        "revision_strategy": { "const": "definition-merkle.v2" },
+        "revision_unique_entity_limit": { "const": 1000000 },
+        "revision_unique_entities": { "const": 9588 },
+        "revision_reachable_definitions": { "const": 11 },
+        "revision_logical_occurrences": { "const": 11474 },
+        "model_modified": { "const": false }
+      }
+    },
+    "structural_probe": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["read_only", "recursive_total_seen", "recursive_truncated", "top_level_groups_total_seen", "top_level_groups_total_seen_exact", "top_level_groups_returned", "top_level_groups_truncated", "fresh_manifold_requested", "fresh_manifold_matched", "fresh_manifold_unmatched", "fresh_manifold_true", "fresh_manifold_false"],
+      "properties": {
+        "read_only": { "const": true },
+        "recursive_total_seen": { "const": 11474 },
+        "recursive_truncated": { "const": false },
+        "top_level_groups_total_seen": { "const": 18 },
+        "top_level_groups_total_seen_exact": { "const": true },
+        "top_level_groups_returned": { "const": 18 },
+        "top_level_groups_truncated": { "const": false },
+        "fresh_manifold_requested": { "const": 9 },
+        "fresh_manifold_matched": { "const": 9 },
+        "fresh_manifold_unmatched": { "const": 0 },
+        "fresh_manifold_true": { "const": 8 },
+        "fresh_manifold_false": { "const": 1 }
+      }
+    },
+    "recommended_pair": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["review_version", "review_status", "operation", "target_path", "tool_path", "bbox_relation", "positive_bbox_overlap", "bbox_axis_overlaps", "bbox_overlap_volume", "target_fresh_manifold", "tool_fresh_manifold", "atomic_boolean_trial_eligible", "exact_solid_overlap", "role_provenance", "confirmed", "authorized", "trusted_approval_required"],
+      "properties": {
+        "review_version": { "const": "real-model-recursive-target-review.v2" },
+        "review_status": { "const": "server_recommended" },
+        "operation": { "const": "difference" },
+        "target_path": { "const": "pid:11543" },
+        "tool_path": { "const": "pid:11635" },
+        "bbox_relation": { "const": "containment" },
+        "positive_bbox_overlap": { "const": true },
+        "bbox_axis_overlaps": {
+          "type": "array",
+          "prefixItems": [{ "const": 193.792418 }, { "const": 126.19999999999999 }, { "const": 696.4746289999999 }],
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "bbox_overlap_volume": { "const": 17033403.60661084 },
+        "target_fresh_manifold": { "const": true },
+        "tool_fresh_manifold": { "const": true },
+        "atomic_boolean_trial_eligible": { "const": true },
+        "exact_solid_overlap": { "$ref": "#/$defs/exactPending" },
+        "role_provenance": { "const": "server_geometric_ranking_untrusted_unapproved" },
+        "confirmed": { "const": false },
+        "authorized": { "const": false },
+        "trusted_approval_required": { "const": true }
+      }
+    },
+    "authorization_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["trusted_local_approval_required", "approval_challenge_issued", "prior_task_or_approval_replay_allowed", "agent_self_approval_accepted", "mutation_authorized"],
+      "properties": {
+        "trusted_local_approval_required": { "const": true },
+        "approval_challenge_issued": { "const": false },
+        "prior_task_or_approval_replay_allowed": { "const": false },
+        "agent_self_approval_accepted": { "const": false },
+        "mutation_authorized": { "const": false }
+      }
+    },
+    "safety": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["live_queue_called", "read_only_live_calls_only", "model_content_mutation_requested", "model_content_mutation_performed", "save_requested", "selection_changed", "visual_capture_requested", "source_bytes_unchanged_verified", "queue_before", "queue_after"],
+      "properties": {
+        "live_queue_called": { "const": true },
+        "read_only_live_calls_only": { "const": true },
+        "model_content_mutation_requested": { "const": false },
+        "model_content_mutation_performed": { "const": false },
+        "save_requested": { "const": false },
+        "selection_changed": { "const": false },
+        "visual_capture_requested": { "const": false },
+        "source_bytes_unchanged_verified": { "const": true },
+        "queue_before": { "$ref": "#/$defs/cleanQueue" },
+        "queue_after": { "$ref": "#/$defs/cleanQueue" }
+      }
+    },
+    "release_acceptance": { "const": false },
+    "boundary": { "type": "string", "minLength": 100, "maxLength": 1200 }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": { "type": "string", "pattern": "^output/real-model-reliability/boolean-live/portal-structure/readonly-probe-2026-07-21T06-31-04Z-90dd4d46/[a-z0-9-]+\\.json$" },
+        "sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "exactPending": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "verified", "verification_stage"],
+      "properties": {
+        "status": { "const": "unverified_before_atomic_trial" },
+        "verified": { "const": false },
+        "verification_stage": { "const": "review_gated_atomic_apply" }
+      }
+    },
+    "cleanQueue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["queue", "processing", "responses", "lock_exists"],
+      "properties": {
+        "queue": { "const": 0 },
+        "processing": { "const": 0 },
+        "responses": { "const": 0 },
+        "lock_exists": { "const": false }
+      }
+    }
+  }
+}

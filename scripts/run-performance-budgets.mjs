@@ -3,6 +3,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { performance } from 'node:perf_hooks';
 import { SketchUpBridge } from '../src/bridge.mjs';
+import { freshSessionOptions } from '../src/live-session-contract.mjs';
 import { compareSnapshots } from '../src/snapshot-diff.mjs';
 import { formatSnapshotReportMarkdown } from '../src/snapshot-report.mjs';
 
@@ -38,11 +39,7 @@ async function main() {
       process.stderr.write(`${result.report.verdict === 'pass' ? 'PASS' : 'REVIEW'} ${result.name} -> ${result.markdown_path}\n`);
     }
   };
-  if (options.runtime === 'queue') {
-    await bridge.withRuntimeLock('queue', { timeoutMs: options.timeoutMs }, run);
-  } else {
-    await run(bridge);
-  }
+  await run(bridge);
 
   const aggregate = aggregateResult(results);
   const indexJsonPath = path.join(options.outputDir, 'index.json');
@@ -61,12 +58,12 @@ async function runExample(examplePath, options, activeBridge) {
   const artifactExtension = options.runtime === 'queue' ? 'skp' : 'json';
   const artifactPath = path.join(options.artifactDir, `${safeName}.${artifactExtension}`);
 
-  await activeBridge.reset_model({ runtime: options.runtime, timeoutMs: options.timeoutMs });
+  await activeBridge.reset_model({ runtime: options.runtime, timeoutMs: options.timeoutMs, ...await freshSessionOptions(activeBridge, options) });
   const buildStarted = performance.now();
-  await activeBridge.build_model({ code, runtime: options.runtime, timeoutMs: options.timeoutMs });
+  await activeBridge.build_model({ code, runtime: options.runtime, timeoutMs: options.timeoutMs, ...await freshSessionOptions(activeBridge, options) });
   const buildMs = Math.round(performance.now() - buildStarted);
   const saveStarted = performance.now();
-  const saved = await activeBridge.save_model({ path: artifactPath, keep_session: true, runtime: options.runtime, timeoutMs: options.timeoutMs });
+  const saved = await activeBridge.save_model({ path: artifactPath, keep_session: true, runtime: options.runtime, timeoutMs: options.timeoutMs, ...await freshSessionOptions(activeBridge, options) });
   const saveMs = Math.round(performance.now() - saveStarted);
   const report = compareSnapshots(saved.snapshot, saved.snapshot, { budgets: options.budgets, topIssueLimit: options.topIssueLimit });
   const metrics = metricsFromSnapshot(saved.snapshot, saved.file_size_bytes, buildMs, saveMs);

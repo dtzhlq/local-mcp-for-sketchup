@@ -1,0 +1,60 @@
+{
+  "version": "model-graph-target-quality-v1-mock-evidence.v1",
+  "kind": "model_graph_target_quality_mock_evidence",
+  "evidence_scope": "cross_domain_agent_gateway_target_quality_mock",
+  "runtime": "mock-only-no-queue",
+  "hashes": {
+    "src/model-graph.mjs": "sha256:6bd4446a1eef063274b4d18f6ca7cf37760b3a277c182885dd56ec850a29cbce",
+    "src/existing-model-edit-proposer.mjs": "sha256:3d8c42ba3c869c2d72b4e8a456cf1159bbdb22eb79c63fba1710734f75335c1a",
+    "src/agent-gateway.mjs": "sha256:c4bcdcb152d3963f54664595d6a847e9617927c26e784bd8c8873b40a415a3bb",
+    "schema/model-graph-v1.schema.json": "sha256:17da463e354d32b47052537222802d96779b5f2173334ed02062d7cce19c8fd8",
+    "schema/existing-model-edit-proposal-v1.schema.json": "sha256:e51288a7f0e0e16ebf726c8da1923496d6b7140e33c449f6d7fe66678d7d7c87",
+    "schema/model-graph-target-quality-benchmark-v1.schema.json": "sha256:89a4a1c8d145405f572e1853846fda2916042515afbc7fa5879c2caa1a331fe9",
+    "schema/model-graph-target-quality-report-v1.schema.json": "sha256:464650df7a71520df925d48993c87ecf23b052d72a4fa8ab2f8649213c43b169",
+    "schema/model-graph-target-quality-mock-evidence-v1.schema.json": "sha256:b9f6535e3c0eaf40548ab23d51fbd3a69ff10da2a9fd0ff78577ace5cd7c0a6c",
+    "test/fixtures/model-graph/target-quality-benchmark-v1.json": "sha256:4d404d1de8d936be17fcb7e2e1edba8a36f27c959fdb6b359a655ee17c234332",
+    "scripts/run-model-graph-target-quality-benchmark.mjs": "sha256:788682400a1b2a1a02a92420a85dd20d8a7857b737e68b1ebb469bb6a99c4b5e",
+    "test/model-graph-target-quality-benchmark.mjs": "sha256:8634f9927f9f1567f7871dfa474f409ff7d2dda707d41deeb0f43dfc2c4d62c1"
+  },
+  "report": {
+    "contract": "model-graph-target-quality-report.v1",
+    "deterministic_sha256": "sha256:3283b7b6322841d1a72fd2ad0e1a6e9472b15789a884326d502f5b029374cdad",
+    "independent_runs_byte_equal": true,
+    "raw_model_labels_exposed": false
+  },
+  "coverage": {
+    "architecture_unique_selection": true,
+    "interior_ambiguity_abstention": true,
+    "product_unique_selection": true,
+    "deep_shared_policy_required": true,
+    "deep_shared_make_unique_clarification": true
+  },
+  "metrics": {
+    "models": 4,
+    "domains": 4,
+    "cases": 5,
+    "distinct_model_revisions": 4,
+    "target_top_k_attempts": 3,
+    "target_top_k_hits": 3,
+    "ambiguity_attempts": 2,
+    "ambiguity_abstentions": 2,
+    "clarification_attempts": 1,
+    "clarification_recoveries": 1,
+    "gateway_tool_calls": 5,
+    "artifact_page_calls": 191,
+    "schema_errors": 0
+  },
+  "hard_gates": {
+    "wrong_object_automatic_execution": 0,
+    "unauthorized_s2_s4_execution": 0,
+    "duplicate_request_duplicate_modification": 0,
+    "ambiguous_target_automatic_selection": 0
+  },
+  "acceptance": {
+    "cross_domain_fixture_benchmark": true,
+    "real_skp_multi_model_live": false,
+    "live_mutation": false,
+    "release_acceptance": false
+  },
+  "boundary": "This evidence is a deterministic, source-bound Agent Gateway mock benchmark across architecture, interior, product, and deep shared-component fixtures. It proves top-k measurement, fail-closed ambiguity, and explicit make_unique clarification without proposal execution. It does not prove multi-model live SKP target quality, native mutation, or release acceptance."
+}

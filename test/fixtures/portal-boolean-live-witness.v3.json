@@ -1,0 +1,126 @@
+{
+  "version": "portal-structure-s3-boolean-witness.v3",
+  "case_id": "portal_structure_disposable_copy",
+  "runtime_contract": {
+    "capability_version": "0.1.0-rc.2-capabilities.7",
+    "manifest_version": "2026-07-agent-contract-v1.4",
+    "structural_groups_version": "structural-groups.v1"
+  },
+  "source_binding": {
+    "sha256": "sha256:4a75190929bfa47b1506a8ed037a08e0f08e1632169d9bb550c4a9219b43e90c",
+    "model_revision": "sha256:c03d317c25883606f0f8d7819610823118d916694d5a5d323deabe2ac7bcdf36",
+    "document_id": "document_baaef9d1d43e79fc755c54b849181c30406b8a10f3ccbf64441ab99af896baba",
+    "model_identity_sha256": "sha256:d51e2f277f8d2349051afa5d82250b106116bf433fa2877fcdaec99c1b641719"
+  },
+  "operation_contract": {
+    "op": "boolean_difference",
+    "risk_level": "S3",
+    "target_path": "pid:11543",
+    "tool_path": "pid:11635",
+    "result_id": "portal-structure-s3-boolean-result-v8",
+    "result_name": "Portal_S3_Boolean_Result_v8",
+    "keep_originals": true,
+    "keep_tools": true,
+    "baseline_group_count": 18
+  },
+  "geometry_contract": {
+    "target": {
+      "faces": 38,
+      "edges": 108,
+      "vertices": 72,
+      "exact_solid_volume": 61350393.972267,
+      "world_bounding_box": {
+        "min": [-7286.931445, 376.95, -1916.983936],
+        "max": [-4037.70638, 642.25, -318.145223]
+      }
+    },
+    "tool": {
+      "faces": 8,
+      "edges": 18,
+      "vertices": 12,
+      "exact_solid_volume": 723623.440001,
+      "world_bounding_box": {
+        "min": [-6024.107717, 376.95, -1510.638035],
+        "max": [-5830.315299, 503.15, -814.163406]
+      }
+    }
+  },
+  "capture_hash_bindings": {
+    "capabilities_capture": "sha256:1aad10601fabf8408362eb4a41854be04940d1c0b7fdaeba2dc88e6f855e2cff",
+    "queue_before_capture": "sha256:a6e710e81d80465e55902729bb047d910c56c86838f1b537e4181112502609df",
+    "structural_capture": "sha256:c0050321bf08b6ad6d74dc1536a5eaab5ccdc8c65a6db19bdf0f013908040837",
+    "primary_review_capture": "sha256:2339a9876535abc903377e78e5a85488d3cc562ee72fbd83960c75698d809955",
+    "queue_after_capture": "sha256:a6e710e81d80465e55902729bb047d910c56c86838f1b537e4181112502609df"
+  },
+  "review_lineage": {
+    "primary_review": "readonly_probe_capability7_recursive_review_v2",
+    "review_version": "real-model-recursive-target-review.v2",
+    "recommendation": "server_recommended",
+    "bbox_relation": "containment",
+    "positive_bbox_overlap": true,
+    "exact_solid_overlap": {
+      "status": "unverified_before_atomic_trial",
+      "verified": false,
+      "verification_stage": "review_gated_atomic_apply"
+    },
+    "atomic_boolean_trial_eligible": true,
+    "target_fresh_manifold": true,
+    "tool_fresh_manifold": true,
+    "role_provenance": "server_geometric_ranking_untrusted_unapproved"
+  },
+  "approval_disclosure": {
+    "evidence_kind": "bbox_candidate_only",
+    "bbox_relation": "positive_bbox_overlap_unverified",
+    "exact_solid_overlap": {
+      "status": "unverified_before_atomic_trial",
+      "verified": false,
+      "verification_stage": "review_gated_atomic_apply"
+    },
+    "approved_action": "review_gated_atomic_boolean_trial",
+    "success_preconditions": [
+      "target_exact_volume_strictly_reduced",
+      "result_manifold"
+    ],
+    "failure_disposition": "abort_before_commit"
+  },
+  "authorization_boundary": {
+    "confirmed": false,
+    "authorized": false,
+    "trusted_user_approval_required": true,
+    "model_mutation_authorized": false
+  },
+  "workflow_contract": {
+    "current_workflow_version": "portal-structure-s3-boolean-live.v8",
+    "superseded_workflow_versions": [
+      "portal-structure-s3-boolean-live.v1",
+      "portal-structure-s3-boolean-live.v2",
+      "portal-structure-s3-boolean-live.v3",
+      "portal-structure-s3-boolean-live.v4",
+      "portal-structure-s3-boolean-live.v5",
+      "portal-structure-s3-boolean-live.v6",
+      "portal-structure-s3-boolean-live.v7"
+    ],
+    "historical_witnesses": [
+      {
+        "version": "portal-structure-s3-boolean-witness.v1",
+        "lineage_only": true,
+        "approval_reusable": false,
+        "task_reusable": false
+      },
+      {
+        "version": "portal-structure-s3-boolean-witness.v2",
+        "lineage_only": true,
+        "approval_reusable": false,
+        "task_reusable": false
+      }
+    ],
+    "default_live_queue_called": false,
+    "default_model_mutation_performed": false,
+    "prepare_read_only": true,
+    "private_capture_required_for_live_prepare": true,
+    "source_save_target_forbidden": true,
+    "automatic_replay_after_unknown_outcome": false,
+    "automatic_replay_after_confirmed_abort": false
+  },
+  "release_acceptance": false
+}

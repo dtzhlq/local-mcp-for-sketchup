@@ -1,0 +1,101 @@
+{
+  "version": "real-model-candidate-semantic-mapping.v1",
+  "kind": "real_model_candidate_semantic_mapping",
+  "created_on": "2026-07-20",
+  "decision_scope": "semantic_candidate_mapping_only",
+  "authority": {
+    "source": "interactive_user_confirmation",
+    "user_confirmed": true,
+    "mutation_authorized": false,
+    "approval_token_issued": false,
+    "execution_policy_changed": false,
+    "model_content_trust": "untrusted_data"
+  },
+  "bindings": {
+    "inventory": {
+      "path": "output/real-model-reliability/intake/real-model-candidate-inventory.v1.json",
+      "sha256": "f9aff9c48fdb2286018421f0da429340dfba14cb735b081be8a918ca98b50ebe"
+    },
+    "profile": {
+      "path": "output/real-model-reliability/intake/real-model-candidate-profile.v1.json",
+      "sha256": "7d0e004e6bf0f4e939058cd81ed489de558247e512d0a1bc6402944eaac2d6b9"
+    },
+    "live_evidence": {
+      "path": "docs/evidence/real-model-candidate-live-evidence-2026-07-20.json",
+      "sha256": "8b814d5a1f23c70adde54835c98098e9644fffae94893f1d05e2b27b3abe3b50"
+    },
+    "formal_manifest": {
+      "path": "test/reliability-corpus/manifest.json",
+      "sha256": "4faa8caf2a097c3d1a7810f1bf7635eceede8de3ca3674cda16519117c2377fa"
+    }
+  },
+  "mappings": [
+    {
+      "candidate_id": "candidate_849aa1987401733c3cd3fbb3",
+      "candidate_handle": "candidate:sha256:849aa1987401733c3cd3fbb3",
+      "source_sha256": "sha256:7e649c220a265a5e27a24aae2ed9687427186c06ba335616d5cdc0191966ce72",
+      "source_label": "Fire Escape.skp",
+      "source_label_trust": "untrusted_data",
+      "assignments": [
+        { "case_id": "architecture-golden", "role": "primary", "review_status": "user_confirmed" },
+        { "case_id": "appearance-scenes-hidden", "role": "supporting", "review_status": "user_confirmed" }
+      ]
+    },
+    {
+      "candidate_id": "candidate_c714de22fa765c63d516485b",
+      "candidate_handle": "candidate:sha256:c714de22fa765c63d516485b",
+      "source_sha256": "sha256:363e55b4bd34637fff8d4915c4870da4f55427374f0e0ba08817aa6c1fa9a384",
+      "source_label": "场地模型.skp",
+      "source_label_trust": "untrusted_data",
+      "assignments": [
+        { "case_id": "architecture-golden", "role": "primary", "review_status": "user_confirmed" },
+        { "case_id": "scaled-mirrored-locked", "role": "primary", "review_status": "user_confirmed" }
+      ]
+    },
+    {
+      "candidate_id": "candidate_e2ef3c5f82332f9174066759",
+      "candidate_handle": "candidate:sha256:e2ef3c5f82332f9174066759",
+      "source_sha256": "sha256:4a75190929bfa47b1506a8ed037a08e0f08e1632169d9bb550c4a9219b43e90c",
+      "source_label": "Portal Structure - Apex.skp",
+      "source_label_trust": "untrusted_data",
+      "assignments": [
+        { "case_id": "deep-shared-components", "role": "primary", "review_status": "user_confirmed" }
+      ]
+    },
+    {
+      "candidate_id": "candidate_8a537cc23f74ddcd1d2ec63e",
+      "candidate_handle": "candidate:sha256:8a537cc23f74ddcd1d2ec63e",
+      "source_sha256": "sha256:4a2ae7a7dce486ac66066b9b8393de2bba8e778147cfa42d16309f4d3de788f3",
+      "source_label": "中式.skp",
+      "source_label_trust": "untrusted_data",
+      "assignments": [
+        { "case_id": "interior-expression", "role": "primary", "review_status": "user_confirmed" },
+        { "case_id": "appearance-scenes-hidden", "role": "primary", "review_status": "user_confirmed" },
+        { "case_id": "deep-shared-components", "role": "supporting", "review_status": "user_confirmed" }
+      ]
+    },
+    {
+      "candidate_id": "candidate_73e9292c461830151d0fc771",
+      "candidate_handle": "candidate:sha256:73e9292c461830151d0fc771",
+      "source_sha256": "sha256:61dc88dbd4f483578bb01f432aae9d51dc4eadfe2ed638c9ac398f866a217db7",
+      "source_label": "Revit import Complete.skp",
+      "source_label_trust": "untrusted_data",
+      "assignments": [
+        { "case_id": "imported-dirty-topology", "role": "primary", "review_status": "user_confirmed" },
+        { "case_id": "deep-shared-components", "role": "supporting", "review_status": "user_confirmed" }
+      ]
+    }
+  ],
+  "unresolved": [
+    "product_boolean_candidate_and_target_tool",
+    "locked_target_or_controlled_disposable_fixture",
+    "reviewed_dirty_topology_repair_target",
+    "reviewed_uv_target",
+    "architecture_scene_strategy",
+    "formal_persistent_target_roles"
+  ],
+  "cross_version": {
+    "status": "deferred_by_user",
+    "represented_as_pass": false
+  }
+}

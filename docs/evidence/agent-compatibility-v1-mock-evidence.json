@@ -1,14 +1,220 @@
 {
-  "version": "agent-compatibility-v1-mock-evidence.1",
+  "version": "agent-compatibility-v1-mock-evidence.6",
+  "created_on": "2026-07-22",
   "command": "node scripts/run-agent-compatibility-harness.mjs",
   "runtime": "mock",
   "result": "pass",
-  "levels": { "L0": { "scenarios": 7, "tool_calls": 17 }, "L1": { "scenarios": 7, "tool_calls": 17 }, "L2": { "scenarios": 7, "tool_calls": 17 } },
-  "metrics": { "completion_rate": 1, "tool_calls": 51, "target_top_k_rate": 1, "recovery_rate": 1 },
-  "hard_gates": { "wrong_object_automatic_execution": 0, "unauthorized_s2_s4_execution": 0, "duplicate_request_duplicate_modification": 0 },
-  "hashes": {
-    "scripts/run-agent-compatibility-harness.mjs": "7587f154562045087fb981ece6df2cb7f07507d8537b79661d6db09fc056c2b8",
-    "schema/agent-compatibility-report-v1.schema.json": "80924cd32da8bd9c847280fb79726f6d3b62772776d4fafd69ec02c441f1b7c8"
+  "report_contract": "agent-compatibility-report.v1",
+  "profiles": {
+    "L0": {
+      "capabilities": {
+        "vision": false,
+        "local_files": false,
+        "structured_output": false,
+        "context": "short",
+        "parallel": false
+      },
+      "constraints": {
+        "context_max_chars": 4096,
+        "max_in_flight": 1,
+        "structured_output_enforced": true,
+        "result_transport": "lossless_canonical_json_text_round_trip"
+      },
+      "metrics": {
+        "scenarios": 7,
+        "completed_scenarios": 7,
+        "agent_tool_calls": 178,
+        "artifact_page_tool_calls": 156,
+        "fixture_calls": 19,
+        "trusted_host_calls": 3,
+        "expected_schema_rejections": 3,
+        "unexpected_schema_errors": 0,
+        "invalid_retry_attempts": 2,
+        "invalid_retries_blocked": 2,
+        "invalid_retries_executed": 0,
+        "target_top_k": { "attempts": 1, "hits": 1, "rate": 1 },
+        "recovery": { "attempts": 4, "successes": 4, "rate": 1 },
+        "context_budget_violations": 0,
+        "path_violations": 0,
+        "image_content_violations": 0,
+        "concurrency_violations": 0,
+        "text_only_round_trips": 173,
+        "text_only_round_trip_failures": 0
+      },
+      "scenario_calls": {
+        "invalid_arguments": { "agent": 4, "artifact_pages": 0, "fixture": 1, "trusted_host": 0, "text_only_round_trips": 1 },
+        "create_idempotent_retry": { "agent": 2, "artifact_pages": 0, "fixture": 1, "trusted_host": 0, "text_only_round_trips": 1 },
+        "understand_resume": { "agent": 2, "artifact_pages": 0, "fixture": 2, "trusted_host": 0, "text_only_round_trips": 2 },
+        "ambiguous_edit": { "agent": 45, "artifact_pages": 42, "fixture": 3, "trusted_host": 0, "text_only_round_trips": 45 },
+        "make_unique": { "agent": 40, "artifact_pages": 37, "fixture": 3, "trusted_host": 1, "text_only_round_trips": 40 },
+        "image_summary": { "agent": 21, "artifact_pages": 20, "fixture": 3, "trusted_host": 0, "text_only_round_trips": 21 },
+        "stale_recovery_and_approval": { "agent": 64, "artifact_pages": 57, "fixture": 6, "trusted_host": 2, "text_only_round_trips": 63 }
+      }
+    },
+    "L1": {
+      "capabilities": {
+        "vision": false,
+        "local_files": false,
+        "structured_output": true,
+        "context": "standard",
+        "parallel": false
+      },
+      "constraints": {
+        "context_max_chars": 16384,
+        "max_in_flight": 1,
+        "structured_output_enforced": true,
+        "result_transport": "structured_value"
+      },
+      "metrics": {
+        "scenarios": 7,
+        "completed_scenarios": 7,
+        "agent_tool_calls": 178,
+        "artifact_page_tool_calls": 156,
+        "fixture_calls": 19,
+        "trusted_host_calls": 3,
+        "expected_schema_rejections": 3,
+        "unexpected_schema_errors": 0,
+        "invalid_retry_attempts": 2,
+        "invalid_retries_blocked": 2,
+        "invalid_retries_executed": 0,
+        "target_top_k": { "attempts": 1, "hits": 1, "rate": 1 },
+        "recovery": { "attempts": 4, "successes": 4, "rate": 1 },
+        "context_budget_violations": 0,
+        "path_violations": 0,
+        "image_content_violations": 0,
+        "concurrency_violations": 0,
+        "text_only_round_trips": 0,
+        "text_only_round_trip_failures": 0
+      },
+      "scenario_calls": {
+        "invalid_arguments": { "agent": 4, "artifact_pages": 0, "fixture": 1, "trusted_host": 0, "text_only_round_trips": 0 },
+        "create_idempotent_retry": { "agent": 2, "artifact_pages": 0, "fixture": 1, "trusted_host": 0, "text_only_round_trips": 0 },
+        "understand_resume": { "agent": 2, "artifact_pages": 0, "fixture": 2, "trusted_host": 0, "text_only_round_trips": 0 },
+        "ambiguous_edit": { "agent": 45, "artifact_pages": 42, "fixture": 3, "trusted_host": 0, "text_only_round_trips": 0 },
+        "make_unique": { "agent": 40, "artifact_pages": 37, "fixture": 3, "trusted_host": 1, "text_only_round_trips": 0 },
+        "image_summary": { "agent": 21, "artifact_pages": 20, "fixture": 3, "trusted_host": 0, "text_only_round_trips": 0 },
+        "stale_recovery_and_approval": { "agent": 64, "artifact_pages": 57, "fixture": 6, "trusted_host": 2, "text_only_round_trips": 0 }
+      }
+    },
+    "L2": {
+      "capabilities": {
+        "vision": true,
+        "local_files": true,
+        "structured_output": true,
+        "context": "long",
+        "parallel": true
+      },
+      "constraints": {
+        "context_max_chars": 65536,
+        "max_in_flight": 4,
+        "structured_output_enforced": true,
+        "result_transport": "structured_value"
+      },
+      "metrics": {
+        "scenarios": 7,
+        "completed_scenarios": 7,
+        "agent_tool_calls": 180,
+        "artifact_page_tool_calls": 156,
+        "fixture_calls": 19,
+        "trusted_host_calls": 3,
+        "expected_schema_rejections": 3,
+        "unexpected_schema_errors": 0,
+        "invalid_retry_attempts": 2,
+        "invalid_retries_blocked": 2,
+        "invalid_retries_executed": 0,
+        "target_top_k": { "attempts": 1, "hits": 1, "rate": 1 },
+        "recovery": { "attempts": 4, "successes": 4, "rate": 1 },
+        "context_budget_violations": 0,
+        "path_violations": 0,
+        "image_content_violations": 0,
+        "concurrency_violations": 0,
+        "text_only_round_trips": 0,
+        "text_only_round_trip_failures": 0
+      },
+      "scenario_calls": {
+        "invalid_arguments": { "agent": 4, "artifact_pages": 0, "fixture": 1, "trusted_host": 0, "text_only_round_trips": 0 },
+        "create_idempotent_retry": { "agent": 2, "artifact_pages": 0, "fixture": 1, "trusted_host": 0, "text_only_round_trips": 0 },
+        "understand_resume": { "agent": 4, "artifact_pages": 0, "fixture": 2, "trusted_host": 0, "text_only_round_trips": 0 },
+        "ambiguous_edit": { "agent": 45, "artifact_pages": 42, "fixture": 3, "trusted_host": 0, "text_only_round_trips": 0 },
+        "make_unique": { "agent": 40, "artifact_pages": 37, "fixture": 3, "trusted_host": 1, "text_only_round_trips": 0 },
+        "image_summary": { "agent": 21, "artifact_pages": 20, "fixture": 3, "trusted_host": 0, "text_only_round_trips": 0 },
+        "stale_recovery_and_approval": { "agent": 64, "artifact_pages": 57, "fixture": 6, "trusted_host": 2, "text_only_round_trips": 0 }
+      }
+    }
   },
-  "live_queue_called": false
+  "scenario_contract": [
+    "invalid_arguments",
+    "create_idempotent_retry",
+    "understand_resume",
+    "ambiguous_edit",
+    "make_unique",
+    "image_summary",
+    "stale_recovery_and_approval"
+  ],
+  "aggregate": {
+    "scenarios": 21,
+    "completed_scenarios": 21,
+    "completion_rate": 1,
+    "agent_tool_calls": 536,
+    "artifact_page_tool_calls": 468,
+    "fixture_calls": 57,
+    "trusted_host_calls": 9,
+    "expected_schema_rejections": 9,
+    "unexpected_schema_errors": 0,
+    "invalid_retry_attempts": 6,
+    "invalid_retries_blocked": 6,
+    "invalid_retries_executed": 0,
+    "target_top_k": { "attempts": 3, "hits": 3, "rate": 1 },
+    "recovery": { "attempts": 12, "successes": 12, "rate": 1 },
+    "context_budget_violations": 0,
+    "path_violations": 0,
+    "image_content_violations": 0,
+    "concurrency_violations": 0,
+    "text_only_round_trips": 173,
+    "text_only_round_trip_failures": 0,
+    "mutation_ledger_entries": 24
+  },
+  "gateway_audit": {
+    "source": "actual_gateway_dispatch_and_model_diff",
+    "events": 536,
+    "mutation_events": 24,
+    "model_diffs": 24,
+    "hmac_verified_durable_receipts": 6,
+    "scenario_supplied_mutation_outcomes": false,
+    "complete_semantic_sibling_and_guard_fingerprints_checked": true
+  },
+  "hard_gates": {
+    "wrong_object_automatic_execution": 0,
+    "unauthorized_s2_s4_execution": 0,
+    "duplicate_request_duplicate_modification": 0
+  },
+  "validation": {
+    "report_schema_valid": true,
+    "rejected_invalid_report_mutations": 18,
+    "event_lineage_required": true,
+    "strict_additional_properties": true,
+    "tool_surface_enforced": true,
+    "context_budget_enforced": true,
+    "local_files_enforced": true,
+    "vision_enforced": true,
+    "max_in_flight_enforced": true,
+    "structured_output_serialization_enforced": true,
+    "l0_lossless_json_text_round_trip_enforced": true,
+    "non_json_result_fail_closed": true,
+    "undefined_optional_projection_fields_omitted_explicitly": true,
+    "production_projection_pagination_enforced": true,
+    "projection_pages_via_gateway_only": true,
+    "artifact_task_binding_checked": true,
+    "projection_path_vision_redaction_checked": true,
+    "live_queue_called": false
+  },
+  "hashes": {
+    "generated_report_sample": "afbd677b241a733a1462c1eb3c7634551c6699a2dc4b65803e9347509790d319",
+    "scripts/run-agent-compatibility-harness.mjs": "76a5dd4fc233d5fb2208dd78cfa6c60975cd54107657d85a5c64d6aa437d281d",
+    "src/agent-compatibility-simulator.mjs": "264a63e8cf5ad2ee23095adb2f7203ed4a7b21021139b1eddf7e3692bebb4fb0",
+    "schema/agent-compatibility-report-v1.schema.json": "12b6fe11ae6dc556458f5d477653ec1c702a1d7b4bf3f00b3f603c3a37997e33",
+    "test/agent-compatibility-simulator.mjs": "261da3c8e49454fd7dd01ca85b739b8e6fc68672973cac4a405a24b7e7c973c0",
+    "test/agent-compatibility-report-schema.mjs": "8527d514befe721d037a915ad842d8390a5eb5a8391e7fd285a263249b98554d"
+  },
+  "boundary": "This evidence has deterministic mock assertions and aggregate counts; the generated_report_sample hash binds one run whose random receipt IDs and timestamps are not a byte-stability claim. It proves the configured L0/L1/L2 constraints, 173 lossless L0 canonical-JSON text round trips with zero failures, production projection pagination through read_agent_artifact, mutation-ledger hard gates, recovery/idempotency fixtures, and the strict report schema. It does not benchmark independent real Agents, prove live SketchUp behavior, or establish visual quality."
 }

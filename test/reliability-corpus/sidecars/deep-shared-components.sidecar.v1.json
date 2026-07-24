@@ -1,0 +1,120 @@
+{
+  "version": "real-model-reliability-sidecar.v1",
+  "kind": "real_model_reliability_readiness_sidecar",
+  "case_id": "deep-shared-components",
+  "domain": "shared_component",
+  "evidence_scope": "hash_bound_readiness_evidence_only",
+  "formal_case": {
+    "manifest_sha256": "sha256:4faa8caf2a097c3d1a7810f1bf7635eceede8de3ca3674cda16519117c2377fa",
+    "tasks": ["large_recursive_index", "shared_definition_identity", "save_reopen_identity"]
+  },
+  "authority": {
+    "semantic_mapping": "user_confirmed_in_bound_review_aggregate",
+    "model_content_trust": "untrusted_data",
+    "mutation_authorized": false,
+    "approval_token_issued": false,
+    "execution_policy_changed": false
+  },
+  "candidates": [
+    {
+      "candidate_id": "candidate_e2ef3c5f82332f9174066759",
+      "candidate_handle": "candidate:sha256:e2ef3c5f82332f9174066759",
+      "source_sha256": "sha256:4a75190929bfa47b1506a8ed037a08e0f08e1632169d9bb550c4a9219b43e90c",
+      "role": "primary",
+      "source_evidence_id": "aggregate_review"
+    },
+    {
+      "candidate_id": "candidate_73e9292c461830151d0fc771",
+      "candidate_handle": "candidate:sha256:73e9292c461830151d0fc771",
+      "source_sha256": "sha256:61dc88dbd4f483578bb01f432aae9d51dc4eadfe2ed638c9ac398f866a217db7",
+      "role": "supporting",
+      "source_evidence_id": "aggregate_review"
+    },
+    {
+      "candidate_id": "candidate_8a537cc23f74ddcd1d2ec63e",
+      "candidate_handle": "candidate:sha256:8a537cc23f74ddcd1d2ec63e",
+      "source_sha256": "sha256:4a2ae7a7dce486ac66066b9b8393de2bba8e778147cfa42d16309f4d3de788f3",
+      "role": "supporting",
+      "source_evidence_id": "aggregate_review"
+    }
+  ],
+  "structural_observation": {
+    "source_evidence_id": "aggregate_review",
+    "status": "observed_read_only",
+    "materials": 121,
+    "scenes": 1,
+    "hidden_occurrences": 112,
+    "locked_occurrences": 0,
+    "uv_occurrences": 0,
+    "shared_occurrences": 6145,
+    "nonuniform_instances": 12,
+    "mirrored_instances": 8,
+    "logical_occurrences": 1903677,
+    "profile_sample_truncated": true
+  },
+  "source_blockers": ["formal_sidecar_missing", "full_recursive_index_not_yet_attested"],
+  "task_assessments": [
+    {
+      "task": "large_recursive_index",
+      "status": "read_only_observed",
+      "native_success": false,
+      "evidence_ids": ["aggregate_review", "portal_v8_readonly"],
+      "reason_codes": ["complete_recursive_index_observed_read_only"]
+    },
+    {
+      "task": "shared_definition_identity",
+      "status": "unknown",
+      "native_success": false,
+      "evidence_ids": ["aggregate_review", "portal_v8_readonly"],
+      "reason_codes": ["shared_occurrences_observed_identity_not_reopened"]
+    },
+    {
+      "task": "save_reopen_identity",
+      "status": "unknown",
+      "native_success": false,
+      "evidence_ids": ["aggregate_review"],
+      "reason_codes": ["native_save_reopen_not_run"]
+    }
+  ],
+  "evidence_bindings": [
+    {
+      "id": "aggregate_review",
+      "path": "docs/evidence/real-model-reliability-sidecar-source-v1.json",
+      "sha256": "sha256:5b3b7ed3e4b6da425f2e4fb451c9082dcbf63040e8952eb22d684052b0d9fc06",
+      "evidence_class": "derived_user_confirmed_review_aggregate"
+    },
+    {
+      "id": "portal_v8_readonly",
+      "path": "docs/evidence/portal-boolean-v8-readonly-discovery-2026-07-21.json",
+      "sha256": "sha256:c3490e938bd2bfbdce5a26461c0450e698048d29dbed09459eabd4cae20e8a30",
+      "evidence_class": "read_only_live_observation"
+    },
+    {
+      "id": "portal_v8_failure",
+      "path": "docs/evidence/portal-boolean-v8-failure-evidence-2026-07-21.json",
+      "sha256": "sha256:455fc88ae03141d67ebccd22fad71eaf75ab13d3967cb7540fa8c1808419e2a1",
+      "evidence_class": "failed_precommit_live_attempt"
+    }
+  ],
+  "readiness": {
+    "status": "blocked",
+    "execution_eligible": false,
+    "live_execution_contract_present": false,
+    "native_mutation_successes": 0,
+    "release_acceptance": false,
+    "blockers": [
+      "live_execution_contract_missing",
+      "shared_definition_save_reopen_identity_not_verified",
+      "native_mutation_success_not_established"
+    ],
+    "unknowns": ["shared_definition_identity", "save_reopen_identity"]
+  },
+  "validation_policy": {
+    "json_only": true,
+    "original_model_file_access": false,
+    "queue_access": false,
+    "model_mutation": false,
+    "artifact_copy": false,
+    "cross_version_status": "deferred_by_user"
+  }
+}
