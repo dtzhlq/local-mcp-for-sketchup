@@ -76,7 +76,7 @@ const TEST_LAYERS = Object.freeze({
       node('test/trimble-s6-background-normalized-visual-evidence.mjs'),
       node('test/local-approval-live-evidence.mjs'),
       node('test/trusted-model-copy-auto-approval-evidence.mjs'),
-      node('test/copy-fast-session-live-evidence.mjs'),
+      node('test/copy-fast-session-live-evidence-v2.mjs'),
       node('test/visual-correction-gateway-structured-result-mock-evidence.mjs'),
       node('test/independent-agent-compatibility-evidence.mjs'),
       node('test/independent-agent-compatibility-evidence-v2.mjs'),

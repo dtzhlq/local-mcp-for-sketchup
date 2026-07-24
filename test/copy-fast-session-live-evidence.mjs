@@ -3,14 +3,18 @@ import crypto from 'node:crypto';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import {
-  COPY_FAST_LIVE_DEFAULT_MODEL,
-  COPY_FAST_LIVE_MODEL_SHA256,
-  assertCopyFastLiveEvidenceBindings,
-  assertCopyFastLiveEvidenceSchema
-} from '../scripts/run-copy-fast-session-live.mjs';
+import Ajv2020 from 'ajv/dist/2020.js';
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const historicalModelPath = path.join(
+  repoRoot,
+  'output',
+  'live-validation',
+  'next-models',
+  'controlled-s4-delete-2026-07-22-v1',
+  'Fire Escape.disposable.skp'
+);
+const historicalModelSha256 = '7e649c220a265a5e27a24aae2ed9687427186c06ba335616d5cdc0191966ce72';
 const evidencePath = path.join(
   repoRoot,
   'docs',
@@ -25,19 +29,26 @@ assert.equal(
   '0968b72f268243e22c60e0b46c32d1f01d179a4fe01367de1e6cc168be7c4d80',
   'public Copy Fast live evidence bytes drifted'
 );
-assert.equal(await assertCopyFastLiveEvidenceSchema(evidence), true);
-assert.equal(assertCopyFastLiveEvidenceBindings(evidence), true);
+const schema = JSON.parse(await fs.readFile(
+  path.join(repoRoot, 'schema', 'copy-fast-session-live-evidence-v1.schema.json'),
+  'utf8'
+));
+const validate = new Ajv2020({
+  allErrors: true,
+  strict: false,
+  formats: { 'date-time': true }
+}).compile(schema);
+assert.equal(validate(evidence), true, JSON.stringify(validate.errors));
+assert.equal(evidence.version, 'copy-fast-session-live.v1');
+assert.equal(evidence.runtime.plugin_version, '0.1.0-rc.2');
+assert.equal(evidence.runtime.capability_version, '0.1.0-rc.2-capabilities.7');
+assert.equal(evidence.runtime.manifest_version, '2026-07-agent-contract-v1.4');
 
-for (const [relativePath, expected] of Object.entries(evidence.source_sha256)) {
-  const actual = sha256(await fs.readFile(path.join(repoRoot, relativePath)));
-  assert.equal(actual, expected, `${relativePath} drifted after the Copy Fast live capture`);
-}
-
-const modelBytes = await fs.readFile(COPY_FAST_LIVE_DEFAULT_MODEL);
-assert.equal(sha256(modelBytes), COPY_FAST_LIVE_MODEL_SHA256);
+const modelBytes = await fs.readFile(historicalModelPath);
+assert.equal(sha256(modelBytes), historicalModelSha256);
 assert.equal(modelBytes.length, evidence.model.size_bytes);
-assert.equal(evidence.model.disk_sha256_before, COPY_FAST_LIVE_MODEL_SHA256);
-assert.equal(evidence.model.disk_sha256_after, COPY_FAST_LIVE_MODEL_SHA256);
+assert.equal(evidence.model.disk_sha256_before, historicalModelSha256);
+assert.equal(evidence.model.disk_sha256_after, historicalModelSha256);
 assert.equal(evidence.model.disk_bytes_unchanged, true);
 assert.equal(evidence.prepare.approval_challenges_created, 0);
 assert.equal(evidence.apply.authorization_mode, 'server_policy_copy_fast_session');
@@ -56,7 +67,9 @@ process.stdout.write(`${JSON.stringify({
   ok: true,
   version: evidence.version,
   evidence_sha256: sha256(evidenceBytes),
-  source_hashes_verified: Object.keys(evidence.source_sha256).length,
+  frozen_source_hashes: Object.keys(evidence.source_sha256).length,
+  historical_lineage_only: true,
+  current_source_binding_checked: false,
   installed_plugin_files: evidence.installed_source.file_count,
   operation_count: evidence.runtime.operation_count,
   risk_level: evidence.prepare.risk_level,

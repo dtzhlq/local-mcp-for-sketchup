@@ -27,7 +27,7 @@ for (let index = 0; index < args.length; index += 1) {
 
 const checks = Object.freeze([
   nodeCheck('current-source-core', 'scripts/run-test-layer.mjs', 'current-source-core'),
-  nodeCheck('copy-fast-live-evidence', 'test/copy-fast-session-live-evidence.mjs'),
+  nodeCheck('copy-fast-live-evidence', 'test/copy-fast-session-live-evidence-v2.mjs'),
   npmCheck('plugin-source-and-registry', 'run', 'plugin:check'),
   npmCheck('tool-registry', 'run', 'tool-registry:check'),
   npmCheck('mock-qa', 'run', 'qa:mock'),

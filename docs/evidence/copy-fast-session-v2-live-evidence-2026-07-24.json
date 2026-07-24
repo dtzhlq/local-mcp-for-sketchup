@@ -1,0 +1,120 @@
+{
+  "version": "copy-fast-session-live.v2",
+  "kind": "copy_fast_session_live_evidence",
+  "captured_at": "2026-07-24T05:58:35.250Z",
+  "branch": "codex/agent-contract-v1",
+  "baseline_commit": "bd8048fc789dea5d3d55b091a6d1e8712908c970",
+  "source_sha256": {
+    "src/copy-fast-session.mjs": "9478034fcbcbe739bccf687c7ea4e01e7a40783926d72cc11fd5b356e8d291ea",
+    "src/agent-contract.mjs": "5e0901b3136f6c9f8ff09d2085d98a5b879e83646394fc827863b854560a164b",
+    "src/agent-gateway.mjs": "f43dc965b696555d431d979862d4ccfcf695520651f1d81e28030e225d42f6a7",
+    "src/agent-response-projection.mjs": "93adbbcf67420a85255986f48211abf0c1ad2d82d5c393fed22b7a7c4d6e07d6",
+    "src/existing-model-editing.mjs": "8deb1c4c97ff3acd9d462cdb599fada290cf65e3b24ea6f3c7f82468022295e3",
+    "src/bridge.mjs": "294dde77769a015b9fd7ea2808fe1cdcd2adb826f9a60bef46762cc3c056b58d",
+    "src/queue-runtime.mjs": "1f5dfbe1a4dfc6c7945b3dc984960b0492f70ae436b6a818c52d59819d32cefa",
+    "src/session-contract.mjs": "2ee3098c01cc1fbf9c525d1966be1825b8c4d3a7140adf8a33e4f0687a5029f8",
+    "src/task-mutation-receipt-ledger.mjs": "947f2ee40a1a597c3a5a9ff244b2e9ecd00c684de12e3f4f6f17ec2377ba3ac3",
+    "src/version.mjs": "35d8a1d12e274d0fc199855082af6035f040b58d35b4404fa24d0af86d0807a4",
+    "src/capabilities.mjs": "4bdff50cf6c88a37dbb07ce386502cb0ac066084080bceb1055cb2eb28f22c75",
+    "scripts/run-copy-fast-session-live.mjs": "d767e024321ffd91806eca3a916486dd4cef3b2b04a18683b809248fd89d8685",
+    "schema/copy-fast-session-live-evidence-v2.schema.json": "3ea2151929c660f0427c2c76a9d574a9d9773a88e03739f05550e239a4201eae"
+  },
+  "runtime": {
+    "name": "queue",
+    "server_version": "0.1.0-rc.3",
+    "plugin_version": "0.1.0-rc.3",
+    "sketchup_version": "26.2.242",
+    "capability_version": "0.1.0-rc.3-capabilities.1",
+    "manifest_version": "2026-07-agent-contract-rc3.1",
+    "compatibility_ok": true,
+    "operation_count": 101,
+    "boolean_operations_sha256": "4e23e8d35603f4d08c9c5c9c9174c99451ffcb3bd94ab233001d331beafb3b4b",
+    "model_revision_source_sha256": "b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134",
+    "model_revision_strategy": "definition-merkle.v2",
+    "loaded_source_attestation_match": true,
+    "server_process_fresh_for_session": true,
+    "operator_confirmed_full_sketchup_restart": true,
+    "handshake_id": "handshake_533c4f2a-7484-462a-9822-7164f97d9703",
+    "plugin_session_id": "dd6383ca-ff96-4bb2-93db-17d69b83e456",
+    "document_id": "document_e88b71024a3d7e3bdb0c5b76cd87bcf3b3fcb0a680ccc6f818965492a1ca39e6"
+  },
+  "installed_source": {
+    "file_count": 22,
+    "manifest_sha256": "8e90986a02bea1aa552659536295a6a851bdcc2b2f1570fc8e2aa40cdb9a816a",
+    "exact_workspace_match": true,
+    "paths_exposed": false
+  },
+  "model": {
+    "basename": "Fire Escape.disposable.skp",
+    "sha256": "7e649c220a265a5e27a24aae2ed9687427186c06ba335616d5cdc0191966ce72",
+    "size_bytes": 142149,
+    "expected_initial_revision": "sha256:d540fdc8697e93f27a0312f75d382b6d5901597ef87e6673980fd21e97e3abb4",
+    "save_model": false,
+    "disk_sha256_before": "7e649c220a265a5e27a24aae2ed9687427186c06ba335616d5cdc0191966ce72",
+    "disk_sha256_after": "7e649c220a265a5e27a24aae2ed9687427186c06ba335616d5cdc0191966ce72",
+    "disk_bytes_unchanged": true,
+    "revision_complete": true,
+    "logical_occurrences_before": 5859,
+    "active_document_modified_after": true
+  },
+  "prepare": {
+    "task_id": "task_9a67cc73-05a7-44c8-9b7f-bdf67f5695ed",
+    "task_state": "approved",
+    "risk_level": "S4",
+    "plan_id": "existing-edit-dafd9e076953e167823d7ec2",
+    "plan_hash": "sha256:7c17db3e8017e8aaa0a6d642d611b092809a371769f2a6a9c53ed619d7aa9e2e",
+    "model_revision": "sha256:d540fdc8697e93f27a0312f75d382b6d5901597ef87e6673980fd21e97e3abb4",
+    "execution_mode": "copy_fast",
+    "next_action": "execute_copy_edit",
+    "user_action_required": false,
+    "approval_challenge": null,
+    "copy_fast_session_id": "copy_session_ce20bfe6-c348-4fd0-8900-e0032c5f84c4",
+    "copy_fast_session_expires_at": "2026-07-24T06:28:16.208Z",
+    "approval_challenges_created": 0,
+    "configured_roots_exposed_to_agent": false
+  },
+  "apply": {
+    "task_state": "completed",
+    "submit_count": 1,
+    "authorization_mode": "server_policy_copy_fast_session",
+    "approved_by": "execution-policy:copy-fast-session",
+    "copy_fast_session_id": "copy_session_ce20bfe6-c348-4fd0-8900-e0032c5f84c4",
+    "user_action_required": false,
+    "receipt_id": "mutation-receipt-017ffd2f9fb70809a55951e7",
+    "receipt_status": "finalized",
+    "model_revision_before": "sha256:d540fdc8697e93f27a0312f75d382b6d5901597ef87e6673980fd21e97e3abb4",
+    "model_revision_after": "sha256:525f50eec4f5101a32951fa35399c602663e3a0408360d1b607b5f58c966ab16",
+    "revision_changed": true,
+    "target_absent": true,
+    "empty_parent_absent": true,
+    "structural_group_count_after": 0,
+    "approval_token_exposed_to_agent": false,
+    "milestone_acceptance": true
+  },
+  "replay": {
+    "same_idempotency_key": true,
+    "idempotent_replay": true,
+    "duplicate_mutation": false,
+    "task_state": "completed"
+  },
+  "queue": {
+    "before": {
+      "queue": 0,
+      "processing": 0,
+      "responses": 0,
+      "lock_exists": false
+    },
+    "after": {
+      "queue": 0,
+      "processing": 0,
+      "responses": 0,
+      "lock_exists": false
+    }
+  },
+  "release_acceptance": false,
+  "boundaries": [
+    "This proves one current-source Copy Fast S4 live path on an exact disposable model copy.",
+    "The SKP is intentionally not saved; save/reopen behavior is covered by separate reliability evidence.",
+    "This does not prove broad destructive-edit reliability, visual quality, multi-Agent compatibility, or cross-version SketchUp support."
+  ]
+}

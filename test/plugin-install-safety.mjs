@@ -14,6 +14,7 @@ import {
 import {
   acquireReleaseArtifactSetLock
 } from '../scripts/release-artifact-set.mjs';
+import { PRODUCT_VERSION } from '../src/version.mjs';
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const realTmpRoot = await fs.realpath(os.tmpdir());
@@ -375,7 +376,7 @@ try {
   assert.equal(await pathExists(untouchedRoot), false); assertions += 1;
   progress('source symlink rejection');
 
-  const packageVersion = '0.1.0-rc.2';
+  const packageVersion = PRODUCT_VERSION;
   const previousCwd = process.cwd();
   try {
     process.chdir(testRoot);

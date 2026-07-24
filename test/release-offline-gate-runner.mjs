@@ -29,7 +29,11 @@ assert.equal(definition.expected_runtime, 'mock_or_offline');
 assert.equal(definition.checks.length, 18);
 assert.equal(new Set(definition.checks.map((entry) => entry.name)).size, 18);
 assert.ok(definition.checks.some((entry) => entry.command === 'node scripts/run-test-layer.mjs current-source-core'));
-assert.ok(definition.checks.some((entry) => entry.command === 'node test/copy-fast-session-live-evidence.mjs'));
+assert.ok(definition.checks.some((entry) => entry.command === 'node test/copy-fast-session-live-evidence-v2.mjs'));
+assert.equal(
+  definition.checks.some((entry) => entry.command === 'node test/copy-fast-session-live-evidence.mjs'),
+  false
+);
 assert.ok(definition.checks.some((entry) => entry.command === 'npm run qa:mcp-capability-suite -- --runtime mock'));
 assert.ok(definition.checks.some((entry) => entry.command === 'npm run test:image-structured'));
 assert.ok(definition.checks.some((entry) => entry.command === 'npm run test:release-manifest-create-new'));

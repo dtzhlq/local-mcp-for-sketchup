@@ -1,0 +1,148 @@
+{
+  "version": "release-offline-gate-report.v1",
+  "kind": "release_offline_gate_report",
+  "created_at": "2026-07-24T06:14:09.768Z",
+  "queue_allowed": false,
+  "expected_runtime": "mock_or_offline",
+  "checks": 18,
+  "passed": 18,
+  "failed": 0,
+  "duration_ms": 368627,
+  "result": "pass",
+  "failed_checks": [],
+  "command_results": [
+    {
+      "name": "current-source-core",
+      "command": "node scripts/run-test-layer.mjs current-source-core",
+      "ok": true,
+      "exit_code": 0,
+      "duration_ms": 86531
+    },
+    {
+      "name": "copy-fast-live-evidence",
+      "command": "node test/copy-fast-session-live-evidence-v2.mjs",
+      "ok": true,
+      "exit_code": 0,
+      "duration_ms": 302
+    },
+    {
+      "name": "plugin-source-and-registry",
+      "command": "npm run plugin:check",
+      "ok": true,
+      "exit_code": 0,
+      "duration_ms": 3124
+    },
+    {
+      "name": "tool-registry",
+      "command": "npm run tool-registry:check",
+      "ok": true,
+      "exit_code": 0,
+      "duration_ms": 480
+    },
+    {
+      "name": "mock-qa",
+      "command": "npm run qa:mock",
+      "ok": true,
+      "exit_code": 0,
+      "duration_ms": 486
+    },
+    {
+      "name": "expert-mock-qa",
+      "command": "npm run qa:expert:mock",
+      "ok": true,
+      "exit_code": 0,
+      "duration_ms": 459
+    },
+    {
+      "name": "mock-performance-budgets",
+      "command": "npm run qa:budget:mock",
+      "ok": true,
+      "exit_code": 0,
+      "duration_ms": 575
+    },
+    {
+      "name": "restricted-python-corpus",
+      "command": "npm run test:python-sdk-source-compat",
+      "ok": true,
+      "exit_code": 0,
+      "duration_ms": 2572
+    },
+    {
+      "name": "official-api-r3-mock",
+      "command": "npm run qa:official-api-r3:mock",
+      "ok": true,
+      "exit_code": 0,
+      "duration_ms": 1005
+    },
+    {
+      "name": "python-sdk-high-value-mock",
+      "command": "npm run qa:python-sdk-high-value:mock",
+      "ok": true,
+      "exit_code": 0,
+      "duration_ms": 744
+    },
+    {
+      "name": "nested-edit-mock",
+      "command": "npm run qa:nested-edit:mock",
+      "ok": true,
+      "exit_code": 0,
+      "duration_ms": 810
+    },
+    {
+      "name": "save-reopen-mock",
+      "command": "npm run qa:save-reopen:mock",
+      "ok": true,
+      "exit_code": 0,
+      "duration_ms": 586
+    },
+    {
+      "name": "mcp-capability-suite-mock",
+      "command": "npm run qa:mcp-capability-suite -- --runtime mock",
+      "ok": true,
+      "exit_code": 0,
+      "duration_ms": 3850
+    },
+    {
+      "name": "image-structured-regression",
+      "command": "npm run test:image-structured",
+      "ok": true,
+      "exit_code": 0,
+      "duration_ms": 239099
+    },
+    {
+      "name": "plugin-install-safety",
+      "command": "npm run test:plugin-install-safety",
+      "ok": true,
+      "exit_code": 0,
+      "duration_ms": 12293
+    },
+    {
+      "name": "release-manifest-create-new",
+      "command": "npm run test:release-manifest-create-new",
+      "ok": true,
+      "exit_code": 0,
+      "duration_ms": 14474
+    },
+    {
+      "name": "historical-artifact-drift-guard",
+      "command": "npm run test:release-artifact-drift-evidence",
+      "ok": true,
+      "exit_code": 0,
+      "duration_ms": 1039
+    },
+    {
+      "name": "diff-whitespace",
+      "command": "git diff --check",
+      "ok": true,
+      "exit_code": 0,
+      "duration_ms": 189
+    }
+  ],
+  "artifact_boundary": {
+    "existing_rc2_artifacts_are_historical_and_immutable": true,
+    "canonical_new_version_target_checked_here": false
+  },
+  "offline_acceptance": true,
+  "live_queue_acceptance": false,
+  "release_acceptance": false
+}

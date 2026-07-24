@@ -91,3 +91,5 @@ npm run qa:copy-fast:queue -- \
 2026-07-24 已在 SketchUp `26.2.242` 完成一次 rc.2 `copy-fast-session-live.v1` 历史 capture：S4 plan 直接进入 `approved`，未创建 approval challenge；一次 submit 返回 finalized mutation receipt，target/empty parent 均不存在；同 idempotency key 重放没有第二次修改；模型 revision 改变而磁盘 SKP SHA 不变，queue 前后 `0/0/0` 且无 lock。严格公共证据见 [`copy-fast-session-v1-live-evidence-2026-07-24.json`](evidence/copy-fast-session-v1-live-evidence-2026-07-24.json)，文件保持不可变。
 
 rc.3 发布候选必须另行采集并严格验证 v2 successor；v1 历史证据不能替代它。两类验收都只证明一个精确副本上的 Copy Fast S4 路径，不证明宽泛破坏性编辑、视觉质量、多 Agent 兼容、保存/重开或跨 SketchUp 版本，也不会单独把 `release_acceptance` 改为 `true`。
+
+2026-07-24 的 rc.3 successor 已在 SketchUp `26.2.242` 完成：server/plugin/capability/manifest 与 13 个源码/合同 hash 精确匹配，S4 task 为 0 challenge / 1 submit，receipt finalized，同 idempotency key 重放没有重复修改，原 SKP 字节不变，queue 前后全清。公共 create-new evidence 为 [`copy-fast-session-v2-live-evidence-2026-07-24.json`](evidence/copy-fast-session-v2-live-evidence-2026-07-24.json)，SHA-256 `1357a42face31640096cdadcc462d736f8c4825a626e8cae41115e4de51b56e2`。该单项仍保持 `release_acceptance=false`；它与独立的 18/18 offline gate 组合后才进入 rc.3 manifest 的 scoped candidate signoff。

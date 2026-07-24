@@ -10,13 +10,13 @@
 
 `codex/agent-contract-v1` 当前从共享 registry 导出 41 MCP tools（36 expert + 4 Gateway + 1 Session Contract），DSL contract 为 101 operations / 57 component-definition scope。历史 manifest/sidecar 定义的 `0.1.0-rc.2` 身份仍是 36-tool surface，但当前同名 RBZ 的 bytes/size 已不匹配，状态为 `invalid_for_signed_rc`。三个现存文件不得覆盖、删除或自动修复。本清单的新项是架构分支的下一个候选门禁，不会自动恢复历史 RC 或签名当前分支。
 
-- 2026-07-24 rc.3 集成：当前源码版本为产品 `0.1.0-rc.3` / capability `0.1.0-rc.3-capabilities.1` / manifest `2026-07-agent-contract-rc3.1`，current-source core 为 `39 / 39`。版本合同和 Copy Fast v2 runner 已提交为 `70be58f`；插件尚未安装并完整重启，rc.3 v2 live evidence、最终离线门禁和签名制品均待完成，因此 `release_acceptance=false`。
+- 2026-07-24 rc.3 签署：产品 `0.1.0-rc.3` / capability `0.1.0-rc.3-capabilities.1` / manifest `2026-07-agent-contract-rc3.1` 已完成安装、完整重启和 Copy Fast v2 scoped live；evidence SHA 为 `1357a42f…b56e2`。current-source core `39 / 39` 与正式离线门禁 `18 / 18` 通过，报告 SHA 为 `2f087378…9dba4`。create-new-only RBZ/checksum/manifest 已生成，RBZ SHA 为 `b5b4dcc4…7b8f2`，checksum 为 OK，manifest 为 `rc_candidate_verified` / `rc_signed=true`。签署细节与边界见 [`release-candidate-0.1.0-rc.3.md`](release-candidate-0.1.0-rc.3.md)。
 
 当前证据必须保持以下限定：
 
 - 离线回归与不可变证据 freshness 必须分层运行：`npm run test:current-source-core` 验证当前源码的 mock/offline 行为，`npm run test:capture-bound-evidence` 严格验证捕获证据的 source/artifact bindings。后者因源码漂移失败时必须记为 stale 并重新采集，不能改写旧证据。完整说明见 [`docs/test-evidence-layers.md`](test-evidence-layers.md)。两条入口均 `queue_allowed=false`，不替代显式 live queue 验收。
 - Copy Fast 当前已有 `copy-fast-session.v1` 的 current-source mock/offline acceptance、默认零 queue 的单进程 live 验收器，以及 2026-07-24 的 current-source live replacement：S1/S4、跨 task/revision reuse、零逐任务 challenge、幂等、目录/save target 越界、restart/expiry/revoke fail-closed 均通过；live S4 的 finalized receipt、target/empty-parent postcondition、disk bytes unchanged 与 queue cleanup 已由严格 schema 和独立 current-source validator 固定。7 月 22 日旧授权模式的历史 S4 capture 保持不可变，不被新证据改写。新证据仍是 scoped milestone，`release_acceptance=false`。配置和证据见 [`docs/copy-fast-mode-v1.md`](copy-fast-mode-v1.md)。
-- 2026-07-24 pre-version 盘点：版本提升前 `current-source-core` 为 `38 / 38`；加入 rc.2 Copy Fast live successor 后，`capture-bound-evidence` 为 `14 / 23`，其余 9 项因绑定源码已演进而明确 stale。正式 `release:offline-gates` 当时以 18 / 18 通过。当前 rc.3 core 已为 `39 / 39`；必须在 rc.3 v2 live evidence 固化并接入后重新运行 18 项门禁，旧报告不得充当 rc.3 签名依据。stale 是正确的 fail-closed 结果，不得把旧 JSON 的 hash 改成当前值。
+- 2026-07-24 pre-version 盘点：版本提升前 `current-source-core` 为 `38 / 38`；加入 rc.2 Copy Fast live successor 后，`capture-bound-evidence` 为 `14 / 23`，其余 9 项因绑定源码已演进而明确 stale。该 checkpoint 保持历史。rc.3 已使用新的 v2 live evidence 和 39-check core 重新运行完整 18 项门禁，不沿用旧报告；其他 stale evidence 继续作为 fail-closed lineage，不改写旧 JSON hash。
 
 - 2026-07-21 rc.2 历史边界：当时的 22-file workspace 插件在 SketchUp 2026 完整重启后完成 fresh capability `.7` / manifest `2026-07-agent-contract-v1.4` / `definition-merkle.v2` 只读验收。loaded Boolean/Model Revision SHA 与当时 workspace 精确匹配；一个 byte-exact disposable model 在签名 handshake -> `5859 / 5859` recursive adoption -> 第二次签名 handshake 前后 revision 和 `model_modified=false` 均不变，queue 前后全清。该记录只作为 rc.2 immutable lineage，不能替代 rc.3 live。公共脱敏证据见 `docs/evidence/current-source-live-readonly-evidence-2026-07-21.json`。
 
@@ -158,7 +158,7 @@ npm run qa:mcp-capability-suite -- --runtime queue --queue-required --timeout-ms
 
 ## 4. 打包 RBZ
 
-当前源码版本已提升为 `0.1.0-rc.3`。冲突的 rc.2 三件套继续保持不可变历史；rc.3 使用不同文件名，因此只有在 rc.3 插件完整重启、Copy Fast v2 live gate、严格证据 validator 与最终离线门禁均通过后，才可在默认 `out/releases` 执行下面的 canonical create-new-only 流程：
+当前源码版本为 `0.1.0-rc.3`。冲突的 rc.2 三件套继续保持不可变历史；rc.3 已在插件完整重启、Copy Fast v2 live gate、严格证据 validator 与最终离线门禁通过后执行了下面的 canonical create-new-only 流程。相同版本再次执行必须因目标已存在而失败，不得覆盖：
 
 ```bash
 npm run plugin:package
