@@ -4,14 +4,16 @@
 
 ## 执行附录：2026-07-15 Existing Model Editing Engine v1 / rc.2
 
-本节是当前事实源；下方 `rc.1`、34 tools、91 operations 和 Face/Edge read-only 均保留为历史执行记录。
+本节记录 `c9eb0f7` 上的 RC.2 当时事实；下方 `rc.1`、34 tools、91 operations 和 Face/Edge read-only 均保留为更早历史执行记录。2026-07-15 后续架构分支真实 path-switch 验证发现 MDI/document-state 缺陷并进入 source hardening，因此本节的旧 RC 签名不再代表“当前无需复验即可发布”。
+
+2026-07-21 只读制品检查又确认：当前同名 rc.2 RBZ 已与本节历史 manifest/sidecar 声明的 size/hash 不匹配，状态为 `invalid_for_signed_rc`。历史文件保持原样；这不改写 2026-07-15 当时结论，但当前文件不能作为该签名 RC 发布。
 
 - 当前候选版本为 `0.1.0-rc.2`，MCP `tools/list=36`，safe DSL registry `101 operations / 57 component scope`。101 只是本项目 registry，不等于完整 SketchUp API。
 - 新增 `prepare_existing_model_edit` / `apply_reviewed_model_edit`；计划阶段锁定 persistent occurrence paths、model revision、S1-S4 risk、affected-instance/operation budget 和 blockers，执行阶段要求 plan-matched approval 并拒绝 stale revision。
 - recursive adoption 覆盖深层 group/component occurrence、Face 和 Edge；受控编辑扩到 material/visibility/metadata、Face 双面材质/reverse/pushpull、Edge soft/smooth、duplicate/replace/explode/erase/collection transform、nested feature、同 `Entities` 作用域 boolean/manifold。共享 definition 必须显式 `definition_wide` 或 `make_unique`。
 - M1 corpus 扩为 35 cases：29 compiled canonical DSL/result golden、6 stable fail-closed reasons、0 unclassified。M2 对齐 `Entities.erase_entities -> None`、`transform_entities -> Boolean`（空集合 False）、Page named flags/bitwise OR/Boolean update 和同脚本 affine UVQ arbitrary-point read。
 - 离线证据已通过：`npm test`、`npm run test:image-structured`、`qa:existing-model-edit:mock`、`qa:python-sdk-high-value:mock`、`test:python-sdk-source-compat`、101-operation contract、36-tool MCP capability suite、20×2 concurrent session isolation、Official API R3 mock、参数化五类制品和 `plugin:check`。
-- fresh queue 已通过：完全重启 SketchUp `26.2.242` 后，plugin/runtime `0.1.0-rc.2`、manifest/capability 和 101 operations 全匹配，compatibility issues 为空。`qa:existing-model-edit:queue` 验证深层 Face/Edge、make_unique、nested feature/boolean/manifold 及 save/reopen path+revision；通用 queue 10/10、identity 1/1、expert 1/1、budget 4/4、high-value SDK、Official API R3、nested edit 均通过。36-tool queue-required 套件 0 missing / 0 skipped，已保存 SKP、capture、iteration 和 report 制品。`rc.2` 发布判定更新为 `rc_candidate_verified`、`rc_signed=true`；`plugin:check` 本身仍不是 live 证明。
+- fresh queue 当时已通过：完全重启 SketchUp `26.2.242` 后，plugin/runtime `0.1.0-rc.2`、manifest/capability 和 101 operations 全匹配，compatibility issues 为空。`qa:existing-model-edit:queue` 验证深层 Face/Edge、make_unique、nested feature/boolean/manifold 及同会话保存/重读 path+revision；它不是后续新增的 distinct intermediary/active source/zero-diff 强门禁。通用 queue 10/10、identity 1/1、expert 1/1、budget 4/4、high-value SDK、Official API R3、nested edit 均通过。36-tool queue-required 套件 0 missing / 0 skipped，已保存 SKP、capture、iteration 和 report 制品。该时点将 `rc.2` 判为 `rc_candidate_verified`、`rc_signed=true`；当前需要修复回补与 fresh live revalidation，`plugin:check` 本身仍不是 live 证明。
 
 ## 执行附录：2026-07-14 主线收敛
 

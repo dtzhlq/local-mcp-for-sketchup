@@ -6,6 +6,42 @@
 
 当前 MVP 走自建本地路线：**安全 JSON DSL + 本地 Node bridge + stdio MCP server + SketchUp Ruby 队列插件 + mock runtime**。
 
+> **2026-07-24 rc.3 集成边界：**当前源码产品版本已提升为 `0.1.0-rc.3`，runtime capability 为 `0.1.0-rc.3-capabilities.1`，manifest 为 `2026-07-agent-contract-rc3.1`；共享 registry 为 **41 MCP tools**（36 expert + 4 Agent Gateway + 1 Session Contract），safe JSON DSL 为 **101 operations / 57 component-definition scope**，current-source core 为 **39 / 39**。版本迁移由提交 `70be58f` 建立，并保留 rc.2 的 session 配对兼容与不可变历史证据；rc.3 插件安装、完整重启、Copy Fast v2 live capture、最终离线复跑和 create-new-only 发布制品尚未完成，因此 `release_acceptance=false`。
+
+> **2026-07-21 分支/制品边界：**当前 `codex/agent-contract-v1` 是后续架构分支，共享 registry 为 **41 MCP tools**（36 expert + 4 Agent Gateway + 1 Session Contract），safe JSON DSL 为 **101 operations / 57 component-definition scope**。2026-07-15 的 manifest/sidecar 曾定义一个 36-tool `0.1.0-rc.2` 签名身份，但当前同名 RBZ 的 bytes/size 已与该身份不匹配，现被只读证据门禁判为 `invalid_for_signed_rc`。三个历史文件保持原样；只能恢复精确匹配的历史 RBZ，或升级版本后重建并重新签名整套制品。架构分支的新能力和测试不构成新的发布签名。
+
+> **2026-07-21 rc.2 历史 runtime 迁移边界：**当时架构分支源码合同推进到 capability `.7` / manifest `2026-07-agent-contract-v1.4` / `definition-merkle.v2`。v2 不再把进程内 SketchUp `entityID` 当作稳定身份，对缺失/重复的 entity 或 definition 身份 fail closed，并规范化 attribute JSON、Face loop/hole 和 Edge 端点顺序。capability、Session Contract 和 transport guard 同时绑定已加载的 Boolean/Model Revision 两份源码 SHA 以及 `model_modified` 状态；当时的 22-file workspace 插件已精确安装、完整重启并通过 fresh `.7` 只读握手。17 个 allowlisted Boolean failure detail codes 只适用于对应源码后的运行，不能回填解释历史 Portal v8 失败，也不能替代 rc.3 的重新安装与 live 验收。此前 `.3` 的 ModelGraph/current-view capture 与 `.6` 的结构探针证据都只是历史 lineage。`release_acceptance=false`。
+
+> **2026-07-22 P1 结构目标质量与 reviewed-plan 边界：**`auto / structural_groups / full_recursive` discovery、plan `.3`、`existing-edit-target-validation.v1` 和 `existing-edit-execution-target-validation.v1` 已形成可测试合同；eligible Group property edit 的六阶段有界执行仍是 schema + trusted-user-fixture mock 证明。修复后的当前选择器不会在几何唯一最大目标 locked/ineligible 时退而选择第二大目标，也不会用不可信名称打破等几何并列。当前源码的 L0/no-file/no-vision/short-context/single-tool 只读 live benchmark 已覆盖 architecture、deep-shared、interior、product 四个 byte-exact SKP：唯一选择 `3 / 3` 全部匹配独立几何 oracle 且进入 top-5，歧义中止 `1 / 1`，共 `138` 次 artifact 分页；错误对象自动执行、未授权 S2-S4、重复修改、歧义自动选择均为 `0`。该证据只覆盖固定的结构目标“largest group”，未创建 approval、mutation 或 save，不等于宽泛自然语言语义、live post-approval execution、跨版本或发布验收。7 月 21 日的 plan `.3` capture 因 proposer 随后变更，现仅作历史精确源码快照，当前 reviewed-plan replacement 尚未采集。详见 [四领域当前源码 live evidence](docs/evidence/current-source-multi-model-target-quality-live-evidence-2026-07-22.json)、[历史 plan v3 evidence](docs/evidence/current-source-reviewed-plan-v3-live-evidence-2026-07-21.json) 与 [跨领域 mock evidence](docs/evidence/model-graph-target-quality-v1-mock-evidence.json)。
+
+> **2026-07-22 副本自动授权与受控 S4 live：**用户明确授权配置目录内的备份副本可直接修改后，服务端新增 `trusted_model_copy_auto_approval`。它不是“Agent 免审批”：只有可信进程配置的 canonical copy root、risk、affected-instance budget 和 save policy 能生效，Agent 自报能力、`approved` 或 reviewer 字符串仍不能提权；目录外 S2-S4 默认继续走真人审批页。当前源码在一个未保存的 Fire Escape 副本上把目标 delete 与 SketchUp 空父组清理同时纳入 plan hash/guided projection，一次 submit 后 receipt finalized、revision 改变、target/parent 均 absent、disk bytes 未变、queue 全清。详见 [mock policy evidence](docs/evidence/trusted-model-copy-auto-approval-v1-mock-evidence.json) 与 [current-source S4 live evidence](docs/evidence/controlled-s4-delete-live-evidence-2026-07-22.json)。这只是一例 disposable-copy S4，`release_acceptance=false`。
+
+> **2026-07-24 副本快速模式 v1：**上述 server-only 副本策略现已形成面向普通 Agent 的短期 `copy-fast-session.v1`。命中可信 root 的 S1-S4 计划直接进入 `approved`，返回 `execute_copy_edit` 和 `user_action_required=false`，不再创建逐任务审批 challenge；同一服务进程/模型副本可跨 task 与 model revision 复用。每次执行仍重新检查 plan/revision/risk/operation/budget/save contract、fresh Session Contract 和幂等收据；Agent 不能自报启用，目录外、越界 save path、重启、过期或撤销均 fail closed。mock/offline 闭环和 rc.2 的 `copy-fast-session-live.v1` 历史 capture 已完成；rc.3 runner 已升级为 source/version-bound 的 `copy-fast-session-live.v2`，但 rc.3 live capture 尚待安装与完整重启后采集。配置与边界见 [副本快速模式 v1](docs/copy-fast-mode-v1.md)，严格 mock 证据见 [Copy Fast mock evidence](docs/evidence/copy-fast-session-v1-mock-evidence.json)。
+
+> **2026-07-23 P3 Trimble S6 参考图校正与背景归一化：**3 张外部参考图已进入同一个 hash-bound S3 reviewed plan；一次 submit 后 26 个操作、30 个预期装配接触、21 / 21 新增组、材质/下前面板、raw Model QA、recapture 与 queue cleanup 均完成，原始因果证据见 [Trimble S6 live evidence](docs/evidence/trimble-s6-reference-correction-live-evidence-2026-07-22.json)。旧正视图诊断真实暴露了 capture 全宽误分割；新的离线重分析保持原始纵横比，以逐行边界背景 + border flood 提取设备后再配准，同一 immutable capture bounds 收敛为 `[0.386719, 0.027778, 0.613281, 1]`，固定门槛下 silhouette IoU `0.569986`、Dice `0.726104`、aspect log delta `0.163759`，得到仅限粗结构的 `coarse_structure_pass`。严格证据见 [background-normalized visual evidence](docs/evidence/trimble-s6-background-normalized-visual-evidence-2026-07-23.json)。appearance MAE `0.296766` / RMSE `0.380301` 仍是 diagnostic-only；整体依然 review-required，不构成视觉相似度或发布验收。重分析未启动 SketchUp/queue、未 promotion、未执行、未审批；外部参考图质量仍缺独立 camera-pose 可比性，跨版本按用户决定暂缓，`release_acceptance=false`。
+
+> **2026-07-23 P3 Gateway structured result：**上述 background-normalized 算法现已进入 `visual-correction-qa-result.v1`，不再只存在于离线脚本。服务端从 lineage-bound immutable bytes 生成 comparison、result id/hash 和 8 个 immutable image handles；默认 L0 guided/short/no-file/no-vision 响应在 4,096 字符内直接保留 verdict、IoU/Dice、appearance/palette delta、blockers 与不可提权边界，完整安全结果可分页读取。Agent 注入 comparison、视觉接受、review 或 execution decision 会 fail closed。严格的 current-source mock evidence 绑定 9 个源码/合同 hash、4 个通过命令和 10 个负例，见 [Gateway structured-result mock evidence](docs/evidence/visual-correction-gateway-structured-result-v1-mock-evidence.json)。当前不新增 live 或 release acceptance。
+
+> **2026-07-23 P3 双模型 fresh-process 视觉一致性：**architecture 与 product 两个 byte-exact disposable copy 分别在完整退出/重开 SketchUp 和 Bridge 后完成 server-owned 1280×720 capture/recapture。两例均观察到新的 plugin session，同时保持 exact model key、graph id、`definition-merkle.v2` revision、camera hash 和 capture-spec hash；完整递归索引分别为 `5,859 / 5,859` 与 `71,626 / 71,626`，前后 PNG 字节完全一致，IoU/Dice 均为 `1`，模型 bytes/modified state 与 queue 均不变。严格证据见 [fresh-process multi-model visual evidence](docs/evidence/fresh-process-multi-model-visual-evidence-2026-07-23.json)。这关闭的是“两个域的同模型重启捕获一致性”，不是外部参考图姿态可比性、跨模型视觉质量、自动校正接受或发布验收；`visual_similarity_accepted=false`、`release_acceptance=false`。
+
+> **2026-07-22 P5 L0 文本边界：**兼容性 harness 的 21 / 21 个 L0/L1/L2 场景继续通过。L0 不再只声明 `structured_output=false`：其七类场景中的每个成功工具结果与 artifact page 都必须经过 canonical JSON 文本序列化/解析，共 173 次 lossless round trip、0 failure。投影层显式省略 undefined optional fields；稀疏数组、undefined array value、非有限数、BigInt/function/symbol、非普通对象、循环或非无损结果均 fail closed。当前仍是受控 mock simulator，不等于独立真实 Agent benchmark；严格证据见 [Agent compatibility mock evidence](docs/evidence/agent-compatibility-v1-mock-evidence.json)。
+
+> **2026-07-23 P5 独立进程 checkpoint：**create-new、mock-only 的独立 Agent 探针现已运行三次。三个 ephemeral Codex CLI 进程分别在仓库外临时目录中，只能经 4-tool Gateway allowlist 顺序调用；服务端强制覆盖为 L0 guided/short/no-file/no-vision profile，禁止 queue/direct-expert mutation，并记录 hash-chained audit。柜体与共享 `Survey_Pod_Definition` 双实例两个 fixture 各精确完成 4 次调用：understand、同请求同 `task_id` 幂等重放、按 `task_id` 恢复、歧义 rename 中止；第三个 reference/capture fixture 只用 2 次调用完成服务端 structured image summary 与 overlay handle 元数据读取，图片 bytes 未交给 Agent，任务停在 `awaiting_review`。聚合为 3 个 fixture family、2 个 workflow family、3 个独立进程、10 次 Gateway 调用；revision 均保持不变，意外命令、敏感批准材料与三项 mutation 硬门禁均为 0。严格证据见 [v1 cabinet evidence](docs/evidence/independent-agent-compatibility-evidence-2026-07-23.json)、[v2 shared-component evidence](docs/evidence/independent-agent-compatibility-evidence-v2-2026-07-23.json) 与 [v3 no-vision image-summary evidence](docs/evidence/independent-agent-compatibility-evidence-v3-2026-07-23.json)。这证明独立进程、fixture/workflow diversification 以及无视觉 Agent 消费服务端图片摘要，不是多厂商/多模型生态或视觉质量基准；本机仍只有一种 Agent 实现，实际模型未独立钉住，且未覆盖 live SketchUp 或 production human approval，因此 `vendor_diversification_proven=false`、`model_diversification_proven=false`、`release_acceptance=false`。
+
+> **2026-07-22 current-source save/reopen identity：**在 SketchUp 26.2.242 当前 `.7/v1.4/definition-merkle.v2` runtime 上，显式本机运维策略完成 `target -> distinct intermediary -> target` 的真实保存/切换/重开。42 / 42 persistent occurrence identity、2 个共享 leaf occurrences、36 个 Face/Edge entries 与 model revision 前后完全一致，zero-tolerance snapshot diff 为 0，重开后 `model_modified=false`，queue/processing/responses/lock 全清。授权仅存在于该验证进程，仓库默认策略未放宽。严格证据见 [current-source save/reopen live evidence](docs/evidence/current-source-save-reopen-identity-live-evidence-2026-07-22.json)。这证明底层 identity/save-reopen 基础，不等于 DesignIntentGraph/FeatureHistory lineage、正式多模型 mutation corpus、跨版本或发布验收。
+
+> **2026-07-23 DesignIntent live lineage：**一个 guided、短上下文、无文件/无视觉 Agent task 在小型 disposable SKP 上持久绑定 `pid:92187`。保存并完整重启 SketchUp/plugin 后，原 `task_id`、DesignIntentGraph、binding fingerprint、model revision 与单一 FeatureHistory version 精确恢复；一次故意不保存的材质偏差让后续参数计划以 0 operations 停止，并生成 `awaiting_review` reconciliation。Agent 自报采用偏差被 `APPROVAL_REQUIRED` 拒绝，history 未晋级，source/working-copy 磁盘字节与 queue 均保持安全。严格证据见 [DesignIntent live lineage evidence](docs/evidence/design-intent-live-lineage-evidence-2026-07-23.json)。这只证明一个 current-version fixture 的 task-time 检测，不等于连续 observer、trusted reconciliation acceptance、任意 feature reconstruction、多 live 域、跨版本或发布验收。
+
+> **2026-07-23 P4 七领域 current-source live checkpoint：**七个 formal reliability case 已在 hash-bound disposable copies 上完成，合计 `23 / 23` named tasks、`3` 个 formal geometry-mutation cases，错误对象修改与静默几何损坏均为 0，恢复 `2 / 2`，每例 save/reopen 与 queue cleanup 均通过。最后补齐的 `product-boolean-manifold` 在 byte-preserved `Trimble S6` 副本的隔离位置加入 manifold box/through-cylinder pair；正式 `boolean_difference` 精确替换 target，tool 与全部 non-input 顶层实体保持不变，结果 manifold、目标材质保留，保存/重开后 `71,868 / 71,868` 全量 recursive identity 与 `definition-merkle.v2` revision 精确一致。严格证据见 [seven-case aggregate v6](docs/evidence/current-source-real-model-reliability-live-evidence-v6-2026-07-23.json)；v1-v5 JSON 保持不可变 lineage。该产品例与 dirty-topology 例都使用受控隔离 overlay，不能外推为任意产品 Boolean 或任意 imported CAD 自动修复；室内与 dirty 压力例也不适合作为普通 Agent 默认负载。P4 corpus-category 当前源码闭环完成，但跨版本按用户决定暂缓；P2/P3 仍有 live 扩展缺口，P5 仍缺多厂商/多模型与 human-approval benchmark，`release_acceptance=false`。
+
+> **2026-07-20 P4 候选真实模型边界：**新增可运行的 offline intake / explicit queue profile harness。用户在未跟踪 `test/模型` 中最终提供 5 个 SKP，已完成稳定读取、SketchUp header、512 MiB 默认上限和 SHA-256 入库，总计 23,150,909 bytes / 5 个唯一 hash。首次 disposable-copy live 只读画像暴露旧 revision 上限；`.4` 的 `definition-merkle.v1` 继而在大模型上不展开共享 occurrence 地计数 `1,903,677` logical / `639,351` unique，并按 500,000 上限 fail closed。现在 capability `.5` 已完成重启后的 5/5 live 复验：增量 entry digest、1,000,000 unique 安全上限以及 capability/session/transport 绑定全部生效；5 个 revision 全部 complete + unchanged，原件/副本字节未变，SketchUp 存活，queue/processing/responses/lock 全清。materialized target sample 独立限制为默认 10,000 / 最大 100,000。这仍是候选入库/只读画像通过，不会自动生成正式 sidecar，也不证明编辑、rollback 或 save/reopen。正式 7-case mutation corpus 仍为 `0 / 7`；跨版本矩阵按用户决定暂缓，不能记为通过。
+
+> **2026-07-20 P4 语义复核补充：**用户已确认 Fire Escape / 场地 / Portal / 中式 / Revit 候选的建筑、室内、共享组件、外观、缩放镜像和导入 CAD 路由。该决定由 `real-model-candidate-semantic-mapping.v1` 绑定 exact inventory/profile/live-evidence/manifest hash，只能影响候选分类，不能授权修改、生成 approval token 或改变 execution policy。offline readiness report 为 `6 / 7` formal categories mapped、`0 / 7` formal sidecars ready：产品 boolean 未映射，建筑候选无 Scene，画像未发现 UV/locked target，dirty-topology repair target 与所有 mutating persistent-id roles 仍待复核。
+
+> **2026-07-20 P4 Trimble S6 增量复核（v2 语义更正）：**旧 5 模型证据链保持冻结；新增 `Trimble S6.skp` 作为产品候选后，聚合结果为 `6 / 6` candidates confirmed、`7 / 7` semantic categories mapped、`0 / 7` formal sidecars ready。历史 v1 只读报告列出的 2 个方向性 suggestions 仅来自“正尺寸包围盒”旧启发式，不能视为重叠；Target Review v2 按 world AABB 重新计算后，两顶层 Group 为 disjoint，不生成 Boolean pair suggestion。boolean target/tool 角色、material、manifold、mutation 与 save/reopen 均未批准或验证，`release_acceptance=false`。跨版本矩阵仍为 deferred。详见 [Trimble S6 真实模型只读 target 复核](docs/real-model-target-review-trimble-s6-2026-07-20.md)。
+
+> **2026-07-21 Portal v8 负向 S3 证据：**真实用户批准了精确、一次性的 S3 challenge，服务端只提交一次；SketchUp 在 commit 前失败并成功 abort，model revision/source bytes 未变，没有 durable receipt 或保存副本，approval 已进入 `consumed_failed`，不得重放。Recursive Target Review v3 在旧 loaded runtime 下排除该 exact pair；当前 workspace runtime 与旧 Boolean source 有差异时全局阻断自动 S3 推荐，并把低 bbox fill ratio 仅视为 sparsity hint，不视为 exact overlap。详见 [Portal v8 workflow](docs/real-model-portal-s3-boolean-live-workflow.md) 与 [Recursive Target Review v3](docs/real-model-recursive-target-review-v3-workflow.md)。这不是成功 S3 case，`release_acceptance=false`。
+
 2026-05-27 验收复盘后，项目状态调整为：**技术预览闭环已验证，正式发布暂停**。主线 runtime、Expert Mode、mock/queue 回归和打包链路可继续作为基础能力使用；阶段 7 已补 `target_id + face` 的受控 feature operations、queue active model 防护，以及 `boolean_union` / `boolean_difference` / `boolean_intersect` / `manifold_check` / `manifold_repair` 组成的 CAD boolean/manifold 能力；Image Structured Modeler 已补齐 observation/model-plan/review evidence graph、`review.semantic_fusion` 跨图语义融合层、交互式 corrections workbench，以及 `blind_recess` / `convex` 到真实 feature operations 的第一版映射。正式发布仍需要用新 boolean/manifold 能力复跑更多产品类验收。
 
 2026-05-29 起，下一阶段计划不是重写 runtime，而是重构 runtime 之上的产品建模架构：`ObservationSet -> EvidenceGraph -> ProductProfile -> PartGraph -> FeatureMappingPlan -> JSON DSL -> Layout QA + Reference Visual QA`。R1/R2 已落地 root `ProductProfile` / `PartGraph` schema、`vehicle_ambulance` profile、救护车 part graph、part graph compiler，并让救护车验收 DSL 从 `profile + part graph` 生成。R3 已加入 Reference Visual QA：救护车样例现在有独立的 silhouette/keypoint/extent/area/relative-placement/orientation 参考视觉规则，correction suggestions 指回 PartGraph 字段。R4 已完成子项目技术预览闭环：ambulance image evidence 可生成 seed/no-seed PartGraph、Reference Visual QA correction patch 和质量报告，并在 observations 中记录 mirror-risk orientation hints。R5 已完成三样本 mock + live queue 批量报告：ambulance、Switch 手柄、Fuji X-T10 相机都已进入 `ProductProfile -> PartGraph -> DSL -> Layout QA + Reference Visual QA` 和 fallback-ratio 产品样本报告，并保存 queue `.skp` artifacts。R6 已完成当前收口边界：no-seed 参数提案、proposal-to-patch authoring、参数提案 review UI、proposal-applied mock/queue 复验链，以及 REST3D 启发的 PartGraph physical consistency QA；ambulance、Switch、Fuji 三样例都记录支撑/贴合/接地等物理关系，并能在部件漂移时把 correction suggestion 指回 PartGraph target。R7 已完成当前 GPT Image 建筑群 technical baseline：`building_group` ObservationSet -> EvidenceGraph -> known-element scale anchors -> review-gated massing PartGraph -> DSL -> mock/live queue Layout QA + Reference Visual QA，accepted-all roofline/facade/opening detail proposals -> patch -> feature Reference Visual QA -> mock/live queue QA，并保存 massing 和 final detail queue `.skp`。2026-06-01 起下一刀转向 Visual Grounding / VisualRelationGraph：ObservationSet 会保存 image-space relation candidates，Switch 人工视觉检查已变成 relation fixture + 镜像负例，建筑群 PartGraph 已能接收 relation evidence，并新增建筑群 relation fixture 覆盖四栋仓库、蓝屋顶、停车/道路/树列关系的 image evidence；四栋仓库、停车线/车道和树列进入 review-gated PartGraph candidate proposal queue。该候选链现在会先从 top-view 像素中分割蓝屋顶、四个白色仓库屋顶、停车线/车道和树列 footprint，再用 VisualRelationGraph footprint QA 对比模型投影的 center/extent 与图片 bbox；accepted fixture 会把两条 warehouse row 退成 reference container，并新增 8 个 `manual_confirmed` parts（4 个仓库单体、2 条停车线、1 条停车车道、1 条树列）。Grounding v2 又新增 provenance schema、mask/contour evidence、top/oblique camera calibration records 和 GeometryFit v2 residual QA；当前候选链检查 9 个 footprint、12 条 relation、4 个 scale anchors 和 1 个 handedness negative，右下角停车线/车道/树列已由 bbox proxy 改为 mask/gap/contour-grounded evidence，候选链通过 layout/reference/visual relation/GeometryFit/physical consistency QA 并保存 `.skp`。R8 no-texture 模型保留为 editable geometry boundary，但 GeometryFit v2 会把 dense detail helper ratio `1` 和 photo-grade eligible ratio `0` 报成 review；第二个生成建筑群样本已跑通 ObservationSet/EvidenceGraph/PartGraph/GeometryFit v2 mock primary gate。正式发布仍暂停，因为这仍不是照片级/测绘级重建，还需要继续降低模板/视觉辅助比例，并在真实照片/oblique facade 边界复验。详细计划见 [Product Modeling Architecture Refactor Plan](docs/product-modeling-architecture-refactor-plan.md)。
@@ -37,42 +73,7 @@
 
 ## MVP 工具接口
 
-```text
-get_docs() -> { docs }
-get_workflow_bundle() -> { workflows: { inspector, modeler, qa_reviewer } }
-get_capabilities({ runtime, timeoutMs? }) -> { runtime, compatibility, descriptor }
-queue_diagnostics({ includeFiles?, timeoutMs? }) -> { queue, responses, lock, recommendations }
-prepare_image_modeling_brief({ input_dir?|...artifact_paths, output_dir? }) -> { compile_allowed, blockers, artifacts }
-compile_reviewed_part_graph({ mcp_brief_path, promotion_review_path, part_graph_path, profile_path, output_dir? }) -> { preview_only, compile_allowed, artifacts }
-build_model({ code, runtime, timeoutMs? }) -> { snapshot }
-compile_expert({ code, seed?, ...limits }) -> { document, expert, code }
-compile_python_sdk({ code, seed?, ...limits }) -> { document, expert, code }
-build_expert_model({ code, runtime, seed?, ...limits }) -> { compiled, snapshot }
-reset_model({ runtime, timeoutMs? }) -> { snapshot }
-save_model({ path?, keep_session?, runtime, timeoutMs? }) -> { file_path, snapshot }
-save_model_version({ runtime, timeoutMs?, ...versioning }) -> { file_path, snapshot, version }
-open_model({ path, runtime:"queue", timeoutMs? }) -> { snapshot, model_info }
-import_model({ path, runtime, timeoutMs?, ...options }) -> { snapshot, import_result }
-export_model({ path, runtime:"queue", timeoutMs?, ...options }) -> { file_path, export_result }
-get_model_info({ runtime, timeoutMs? }) -> { model_info }
-list_entities({ runtime, timeoutMs?, ...filters }) -> { entities }
-inspect_model({ runtime, timeoutMs?, ...filters }) -> { snapshot, model_info, entities }
-adopt_open_model({ runtime:"queue", recursive?, timeoutMs? }) -> { snapshot, model_info, adoption }
-resolve_model_targets({ runtime, timeoutMs?, ...filters }) -> { targets }
-get_selection({ runtime, timeoutMs? }) -> { selection }
-analyze_selection_geometry({ runtime, timeoutMs?, ...options }) -> { selection, geometry_facts }
-plan_modification_intent({ runtime, timeoutMs?, ...options }) -> { intent, preview, limitations }
-set_selection({ runtime, timeoutMs?, ...options }) -> { selection }
-capture_view({ path?, view?, width?, height?, runtime:"queue", timeoutMs? }) -> { file_path, camera, model_summary }
-run_ruby_expert({ code, audit_path?, runtime:"queue", timeoutMs? }) -> { enabled, blocked, ok?, audit_path? }
-evaluate_py({ code, runtime, inputFormat?, timeoutMs?, ...options }) -> { snapshot, result }
-build_report({ code?|snapshot?, runtime?, outputDir?, ...options }) -> { manifest, artifacts }
-iterate_model({ prompt?, runtime, timeoutMs?, intent?, intent_file?, ...options }) -> { manifest, snapshot_before, snapshot_after }
-compare_snapshots({ expected, actual, ...options }) -> { report }
-compare_model({ code, expectedRuntime, actualRuntime, ...options }) -> { report }
-validate_model({ code?|snapshot?, runtime?, spec?, includePreview? }) -> { report, preview }
-validate_reference_model({ code?|snapshot?, runtime?, spec?, includePreview? }) -> { report, preview }
-```
+工具名、计数和简要合同不在 README 手工维护。它们由 stdio / HTTP 共享的单一 registry 生成，完整列表见 [MCP Tool Registry](docs/tool-registry.md)。普通 Agent 应优先使用 4 个 Gateway tools，服务端持久化 `task_id` / `next_action` / opaque artifact handles；36 个底层工具保留为 expert surface。`get_workflow_bundle` 返回 create、understand、proposal/reviewed existing-model edit、design-parameter change、reference-image correction、image artifact 和 verify 的渐进式路径。
 
 `runtime` 支持：
 
@@ -85,6 +86,7 @@ validate_reference_model({ code?|snapshot?, runtime?, spec?, includePreview? }) 
 src/bridge.mjs           # 工具接口实现
 src/cli.mjs              # CLI 入口
 src/http-server.mjs      # HTTP bridge，可选
+src/local-approval-host.mjs # loopback-only 真人审批页，不属于 MCP tool surface
 src/mcp-server.mjs       # stdio MCP server，可接入支持 MCP 的客户端
 src/tool-registry.mjs    # stdio / HTTP / tests 共享的 tool registry 入口
 src/model-qa.mjs         # 无 GUI 的语义布局 QA、正交 SVG/HTML preview 和 correction suggestions
@@ -111,6 +113,8 @@ src/boolean-operations.mjs # mock runtime solid boolean / manifold check-repair 
 src/expert-compiler.mjs # Expert Mode v1 受限脚本 -> JSON DSL compiler
 sketchup_plugin/         # SketchUp Ruby 插件
 sketchup_plugin/alma_sketchup_mcp/operation_registry.rb # 由 src/capabilities.mjs 生成的 Ruby runtime contract 表
+sketchup_plugin/alma_sketchup_mcp/document_state.rb # Ruby queue runtime document/session/model identity 和 active-model 安全状态
+sketchup_plugin/alma_sketchup_mcp/appearance_operations.rb # Ruby queue runtime image plane / texture transform 表现层操作
 sketchup_plugin/alma_sketchup_mcp/object_operations.rb # Ruby queue runtime 对象编辑/metadata/texture transform
 sketchup_plugin/alma_sketchup_mcp/materials.rb # Ruby queue runtime 材质/PBR/贴图 helper
 sketchup_plugin/alma_sketchup_mcp/geometry_operations.rb # Ruby queue runtime 共享 geometry/entity helper
@@ -118,6 +122,7 @@ sketchup_plugin/alma_sketchup_mcp/primitive_operations.rb # Ruby queue runtime m
 sketchup_plugin/alma_sketchup_mcp/product_operations.rb # Ruby queue runtime box/product helper
 sketchup_plugin/alma_sketchup_mcp/profile_operations.rb # Ruby queue runtime panel/profile/roof helper
 sketchup_plugin/alma_sketchup_mcp/surface_operations.rb # Ruby queue runtime loft/shell/sweep/domed/bowed helper
+sketchup_plugin/alma_sketchup_mcp/feature_operations.rb # Ruby queue runtime 受控 Face feature operations
 sketchup_plugin/alma_sketchup_mcp/boolean_operations.rb # Ruby queue runtime SketchUp solid boolean / manifold check-repair
 sketchup_plugin/alma_sketchup_mcp/demo_operations.rb # Ruby queue runtime demo room helper
 sketchup_plugin/alma_sketchup_mcp/architecture_operations.rb # Ruby queue runtime 建筑 helper：level/slab/wall/path/roof/site/stairs/railing
@@ -176,11 +181,12 @@ node src/cli.mjs get_workflow_bundle
 node src/cli.mjs get_capabilities --runtime mock
 node src/cli.mjs get_capabilities --runtime queue --timeout-ms 60000
 node src/cli.mjs queue_diagnostics --include-files
+node src/cli.mjs create_queue_handshake --timeout-ms 10000 --output-file output/session-contract.json
 node src/cli.mjs reset_model --runtime mock
 node src/cli.mjs build_model --runtime mock --code-file examples/demo-room.json
 node src/cli.mjs save_model --runtime mock --path output/mock-model.json
-node src/cli.mjs capture_view --runtime queue --path output/current-view.png --view iso --width 1280 --height 720 --timeout-ms 60000
-ALMA_SKETCHUP_ENABLE_RUBY_EXPERT=1 node src/cli.mjs run_ruby_expert --runtime queue --code 'Sketchup.active_model.title' --audit-path output/ruby-expert-audit.json --timeout-ms 60000
+node src/cli.mjs capture_view --runtime queue --fresh-handshake --path output/current-view.png --view iso --width 1280 --height 720 --timeout-ms 60000
+ALMA_SKETCHUP_ENABLE_RUBY_EXPERT=1 node src/cli.mjs run_ruby_expert --runtime queue --fresh-handshake --code 'Sketchup.active_model.title' --audit-path output/ruby-expert-audit.json --timeout-ms 60000
 node src/cli.mjs compare_snapshots --expected-file output/mock-a.json --actual-file output/mock-b.json --tolerance-mm 1 --max-faces 5000 --max-artifact-size-bytes 50000000
 node src/cli.mjs compare_model --code-file examples/demo-room.json --expected-runtime mock --actual-runtime mock --max-faces 5000
 node src/cli.mjs compare_model --code-file examples/demo-room.json --expected-runtime mock --actual-runtime mock --max-faces 5000 --format markdown --output-file output/mock-parity-report.md
@@ -199,7 +205,7 @@ npm run image-structured:qa-building-group
 npm run qa:expert:mock
 npm run qa:identity:mock
 # 打开 SketchUp 插件后，把 actual-runtime 改成 queue：
-node src/cli.mjs compare_model --code-file examples/demo-room.json --expected-runtime mock --actual-runtime queue --timeout-ms 60000 --max-faces 5000 --format markdown --output-file output/live-demo-room-report.md
+node src/cli.mjs compare_model --code-file examples/demo-room.json --expected-runtime mock --actual-runtime queue --fresh-handshake --timeout-ms 60000 --max-faces 5000 --format markdown --output-file output/live-demo-room-report.md
 npm run qa:queue
 npm run qa:expert:queue
 npm run qa:identity:queue
@@ -229,7 +235,11 @@ npm run qa:expert:mock
 
 ## MCP stdio 接入
 
-本项目自带一个 MCP stdio server。Agent Contract v1 分支的共享 tool registry 暴露 40 个工具：保留原有 36 个 expert tools，并增加 4 个持久化 Agent Gateway tools；safe JSON DSL registry 另有 101 个 operation，这些计数不是同一层。stdio MCP、HTTP `/tools`、parity tests 和生成的工具文档都从同一 registry 派生；完整列表见 `docs/tool-registry.md`。
+本项目自带一个 MCP stdio server。Agent Contract v1 分支的共享 tool registry 暴露 41 个工具：保留原有 36 个 expert tools，增加 4 个持久化 Agent Gateway tools，并增加 1 个显式 queue-only `create_queue_handshake`；safe JSON DSL registry 另有 101 个 operation，这些计数不是同一层。stdio MCP、HTTP `/tools`、parity tests 和生成的工具文档都从同一 registry 派生；完整列表见 `docs/tool-registry.md`。
+
+`get_capabilities --runtime queue` 只证明当前插件可应答，不授权修改。所有 live mutating tools 都必须收到由 `create_queue_handshake` 返回的短时签名 `session-contract.v1`；CLI 可用 `--session-contract-file` 传入，也可对单个显式 queue 命令使用 `--fresh-handshake`。握手只读，不会创建、打开、reset 或修改当前模型；session、document/model identity、model revision、版本、capability、expiry 或 queue idle 状态任一漂移都会 fail closed。详见 `docs/agent-contract-v1.md` 与 `docs/queue-runtime-ops.md`。
+
+普通 Agent 应优先使用 `start_agent_task` / `resume_agent_task` / `submit_agent_task_input` / `read_agent_artifact`。任务会持久化 `task_id`、结构化 `result`/`warnings`、opaque artifact handles 和一个 `next_action`；preflight handshake/queue/policy 错误保持非终态并在 resume/idempotent replay 中保留原错误，不会伪装成成功。`allow_queue_mutation` 只授权 Gateway，direct expert queue mutation 还需可信 host 单独启用 `ALMA_SKETCHUP_ALLOW_DIRECT_EXPERT_QUEUE_MUTATION=1`。S2-S4 existing-model edit 默认由非 MCP 的真实用户在场渠道写入本机可信决策；也可由用户预先配置的 server-side disposable-copy policy 仅对 exact root/risk/budget/save scope 授权。两种模式都不接受 Agent 自报 approved/reviewer 或 `approval_token`。仓库现已分别验证 loopback-only `Local Approval Host v1` 的单模型 S2 rename，以及不保存副本的单模型 S4 delete；两者都生成 finalized durable receipt，均不外推为通用 S3/S4、外部参考图、多模型或发布验收。
 
 `get_docs` 默认返回短上下文 overview，支持 `topic` / `detail` / `max_chars`。用 `topic: "dsl"`、`"model_graph"`、`"design_intent"`、`"visual_correction"`、`"agent_compatibility"`、`"existing_model_edit"`、`"image_artifacts"` 或 `"capabilities"` 按需读取；只有显式 `topic: "all", detail: "full"` 才请求完整长文档。MCP `tools/call` 同时返回兼容的 text content 和 `structuredContent`。
 
@@ -258,7 +268,7 @@ node src/mcp-server.mjs
 
 两个 image-structured adapter 只接收路径化 JSON 制品。`prepare_image_modeling_brief` 校验上游 schema 并返回 compile permission 与 blockers；`compile_reviewed_part_graph` 同时要求 MCP brief、promotion review、ProductProfile 和 PartGraph gates 通过，且只写安全 JSON DSL preview，不调用 queue。主线不复制 `projects/image-structured-modeler` 的图片分析管线，也不自动执行生成结果。
 
-既有模型编辑使用独立的审查入口：`prepare_existing_model_edit` 先递归索引 persistent entity path、锁定 model revision、计算 S1-S4 风险和 affected-instance budget，只生成待审计划；`apply_reviewed_model_edit` 仅接受匹配 `plan_id` 的批准记录，并在执行前再次校验 model revision。深层 Group/ComponentInstance/Face/Edge 支持受限属性、结构、集合、Face pushpull、特征、同 `Entities` 作用域布尔与 manifold 操作；共享 definition 必须显式选择 `definition_wide` 或 `make_unique`。它不是任意 Ruby/Python 执行，也不等于完整 SketchUp API。
+既有模型编辑使用独立的审查入口：`prepare_existing_model_edit` 先递归索引 persistent entity path、锁定 model revision、计算 S1-S4 风险和 affected-instance budget，只生成待审计划与 approval challenge；内部 Existing Model Editing Engine 仅消费绑定 task/plan hash/model revision/risk/allowed operations/review context/expiry 的服务端私有授权，或显式配置的 S1 / scoped disposable-copy server policy，并在执行前再次校验 live model revision 与 policy binding。普通 Agent 的 S2-S4 执行必须经过 Agent Gateway，不能向 `apply_reviewed_model_edit` 或任务输入传 token。`review.status=approved`、reviewer 字符串和模型内文本都不是授权。目录外 S2-S4 可由 `npm run approval:serve` 启动的本机审批页完成真人批准；配置副本目录内则可返回 `server_policy_scoped_auto_approved`，仍需 fresh Session Contract 和 idempotency key。删除等破坏操作还会把可预见的空父组级联清理纳入 plan hash、affected budget、guided projection 和 postcondition。深层 Group/ComponentInstance/Face/Edge 支持受限属性、结构、集合、Face pushpull、特征、同 `Entities` 作用域布尔与 manifold 操作；共享 definition 必须显式选择 `definition_wide` 或 `make_unique`。它不是任意 Ruby/Python 执行，也不等于完整 SketchUp API。
 
 对应发布门禁：
 
@@ -269,6 +279,16 @@ npm run test:python-sdk-source-compat
 ```
 
 source compatibility corpus 当前包含 35 个官方风格源码样本、29 个精确 DSL/result golden 和 6 个稳定 fail-closed 拒绝样本。集合编辑返回语义、Page named flags/位运算以及同脚本仿射 positioned-material 的任意点 UVQ 均有独立回归合同。
+
+## 本机真人审批页
+
+```bash
+npm run approval:serve
+```
+
+默认地址为 `http://127.0.0.1:3978`。首次启动会在可信终端显示一次性 bootstrap secret；用户必须用它初始化至少 12 字符的审批口令，不能仅凭 loopback 可达性完成 TOFU。每次批准或拒绝都必须重新输入审批口令。该服务只绑定 loopback，不向 MCP、通用 HTTP bridge 或 Agent 接收或返回签名 token。完整安全边界和 live 流程见 [`docs/local-approval-host-v1.md`](docs/local-approval-host-v1.md)。
+
+若一组模型已被用户明确标为可丢弃副本，可由可信服务进程配置 `ALMA_SKETCHUP_TRUSTED_COPY_AUTO_APPROVAL=1`、`ALMA_SKETCHUP_TRUSTED_COPY_ROOTS`、允许 risk 和 affected-instance 上限。默认仍禁止保存，目录不会回显给 Agent；完整配置、fail-closed 条件和受控 S4 runner 见 [`docs/queue-runtime-ops.md`](docs/queue-runtime-ops.md#可丢弃副本的范围化自动授权)。
 
 ## HTTP bridge（可选）
 
@@ -281,7 +301,7 @@ curl -X POST http://127.0.0.1:3977/tools/build_model \
   -d "$(jq -n --rawfile code examples/demo-room.json '{runtime:"mock", code:$code}')"
 ```
 
-HTTP 默认显式绑定 `127.0.0.1`，但 localhost 不是信任边界。所有 POST tool 调用都需要 Bearer session secret，并受 body limit、timeout 和 workspace/state/configured allowed-root 路径策略约束。详见 `docs/http-local-server-security.md`。
+HTTP 默认显式绑定 `127.0.0.1`，但 localhost 不是信任边界。除 `GET /health` 外，`GET /tools` 和所有 POST tool 调用都需要 Bearer session secret，并受 body limit、timeout 和 workspace/state/configured allowed-root 路径策略约束。详见 `docs/http-local-server-security.md`。
 
 ## SketchUp 插件安装
 
@@ -291,22 +311,28 @@ HTTP 默认显式绑定 `127.0.0.1`，但 localhost 不是信任边界。所有 
 npm run plugin:install
 ```
 
-`plugin:install` 会复制主文件和 `alma_sketchup_mcp/` 子模块，并对安装后的 Ruby 文件执行语法检查。打包 `.rbz` 用：
+`plugin:install` 使用 22 文件精确清单，在同一插件根目录 staging，校验 Ruby syntax、逐文件 bytes 和 runtime source manifest，再以受锁的 per-target rename 激活；普通异常及 SIGINT/SIGTERM 会回滚。安装字节通过不代表当前 SketchUp 进程已经加载新代码，安装后必须完全退出并重新打开 SketchUp。打包 `.rbz` 用：
 
 ```bash
 npm run plugin:package
 ```
 
+默认发布路径是 create-new-only。当前同名 `rc.2` RBZ/sidecar/manifest 已存在且彼此不一致，禁止在该路径继续运行默认 package/manifest 流程。非发布预览必须使用独立 output directory 和显式唯一 artifact label；正式制品只能恢复历史精确副本，或提升版本后生成新的完整制品集。
+
 然后：
 
-1. 打开 SketchUp 2026。
+1. 完全退出并重新打开 SketchUp 2026。
 2. 菜单选择 `Extensions/Plugins -> Alma SketchUp MCP -> Start Bridge`。
 3. 回到项目目录运行：
 
 ```bash
-node src/cli.mjs build_model --runtime queue --code-file examples/demo-room.json --timeout-ms 60000
-node src/cli.mjs save_model --runtime queue --path "$PWD/output/demo-room.skp" --timeout-ms 60000
+ALMA_SKETCHUP_AGENT_ALLOWED_RUNTIMES=mock,queue ALMA_SKETCHUP_AGENT_ALLOW_QUEUE_MUTATION=1 ALMA_SKETCHUP_ALLOW_DIRECT_EXPERT_QUEUE_MUTATION=1 \
+  node src/cli.mjs build_model --runtime queue --fresh-handshake --code-file examples/demo-room.json --timeout-ms 60000
+ALMA_SKETCHUP_AGENT_ALLOWED_RUNTIMES=mock,queue ALMA_SKETCHUP_AGENT_ALLOW_QUEUE_MUTATION=1 ALMA_SKETCHUP_ALLOW_DIRECT_EXPERT_QUEUE_MUTATION=1 \
+  node src/cli.mjs save_model --runtime queue --fresh-handshake --path output/demo-room.skp --timeout-ms 60000
 ```
+
+这两个显式 queue 命令会修改当前 SketchUp 模型；只应对已确认可覆盖的测试模型运行。长驻 MCP/HTTP Agent host 不应启用 direct-expert 开关。
 
 更完整的 queue 手动验收和排障见 `docs/queue-runtime-ops.md`；性能和 SKP size 预算见 `docs/performance-budgets.md`；技术预览打包检查见 `docs/release-checklist.md`。
 
@@ -380,10 +406,11 @@ node src/cli.mjs save_model --runtime queue --path "$PWD/output/demo-room.skp" -
 {
   "runtime": {
     "name": "mock",
-    "version": "mock-runtime-0.1.0-rc.2",
-    "capability_version": "0.1.0-rc.2-capabilities.1",
-    "manifest_version": "2026-07-existing-model-edit-rc2",
+    "version": "mock-runtime-0.1.0-rc.3",
+    "capability_version": "0.1.0-rc.3-capabilities.1",
+    "manifest_version": "2026-07-agent-contract-rc3.1",
     "dsl_version": 1,
+    "occurrence_contract": "canonical-occurrence-path.v1",
     "supported_operations": ["reset", "material", "box"],
     "operation_support": {
       "box": {
@@ -396,7 +423,7 @@ node src/cli.mjs save_model --runtime queue --path "$PWD/output/demo-room.skp" -
     "compatibility": {
       "ok": true,
       "level": "ok",
-      "checked_against": { "manifest_version": "2026-07-existing-model-edit-rc2", "capability_version": "0.1.0-rc.2-capabilities.1", "dsl_version": 1 },
+      "checked_against": { "manifest_version": "2026-07-agent-contract-rc3.1", "capability_version": "0.1.0-rc.3-capabilities.1", "dsl_version": 1 },
       "issues": []
     }
   },
