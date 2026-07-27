@@ -23,6 +23,7 @@ const steps = [
   ['installed-bundle client configuration', ['test/configure-client.mjs']],
   ['SketchUp 2026 platform paths', ['test/sketchup-plugin-platform-paths.mjs']],
   ['service bundle target plan', ['test/service-bundle-plan.mjs']],
+  ['service bundle reproducibility', ['test/service-bundle-reproducibility.mjs']],
   ['plugin install safety', ['test/plugin-install-safety.mjs']],
   ['plugin crash safety', ['test/sketchup-plugin-crash-safety.mjs']],
   ['plugin document state', ['test/sketchup-plugin-document-state.mjs']],

@@ -1,10 +1,13 @@
 #!/usr/bin/env node
 import crypto from 'node:crypto';
+import { createReadStream, createWriteStream } from 'node:fs';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { spawn } from 'node:child_process';
+import { pipeline } from 'node:stream/promises';
 import { fileURLToPath } from 'node:url';
+import { createGzip } from 'node:zlib';
 
 const scriptPath = fileURLToPath(import.meta.url);
 const repoRoot = path.resolve(path.dirname(scriptPath), '..');
@@ -444,11 +447,24 @@ async function listPackageDirectories(nodeModulesRoot) {
   return directories;
 }
 
-async function createArchive(bundleRoot, artifactPath, extension) {
+export async function createArchive(bundleRoot, artifactPath, extension) {
   const parent = path.dirname(bundleRoot);
   const rootName = path.basename(bundleRoot);
   if (extension === 'tar.gz') {
-    await runChecked('tar', ['-czf', artifactPath, '-C', parent, rootName]);
+    const tarPath = path.join(parent, `.${productId}-${crypto.randomUUID()}.tar`);
+    try {
+      await runChecked('tar', ['-cf', tarPath, '-C', parent, rootName]);
+      await pipeline(
+        createReadStream(tarPath),
+        createGzip({ level: 9 }),
+        createWriteStream(artifactPath, { flags: 'wx', mode: 0o644 })
+      );
+    } catch (error) {
+      await fs.rm(artifactPath, { force: true });
+      throw error;
+    } finally {
+      await fs.rm(tarPath, { force: true });
+    }
   } else {
     await runChecked('zip', ['-q', '-X', '-r', artifactPath, rootName], { cwd: parent });
   }

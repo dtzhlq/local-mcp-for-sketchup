@@ -69,6 +69,7 @@ test/operation-contract.mjs
 test/plugin-install-safety.mjs
 test/runtime-source-attestation.mjs
 test/service-bundle-plan.mjs
+test/service-bundle-reproducibility.mjs
 test/sketchup-native-classification-contract.mjs
 test/sketchup-plugin-bridge-lifecycle-contract.mjs
 test/sketchup-plugin-crash-safety.mjs
