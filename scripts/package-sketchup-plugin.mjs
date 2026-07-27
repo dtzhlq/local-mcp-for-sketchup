@@ -66,6 +66,7 @@ const MANAGED_LOADER = 'local_mcp_for_sketchup.rb';
 const MANAGED_MODULE_DIR = 'local_mcp_for_sketchup';
 const INSTALL_TRANSACTION_PREFIX = '.local-mcp-for-sketchup-install-';
 const INSTALL_LOCK_NAME = '.local-mcp-for-sketchup.install.lock';
+const REPRODUCIBLE_PACKAGE_TIME = new Date('2026-01-01T00:00:00.000Z');
 const RUBY_SYNTAX_VERIFIED_MANIFESTS = new Set();
 
 async function main() {
@@ -509,11 +510,13 @@ async function buildAndPublishPackage({
       const target = path.join(stageDir, file.target);
       await fs.mkdir(path.dirname(target), { recursive: true });
       await fs.copyFile(sourceFilePath(sourceRoot, file.source), target);
+      await fs.chmod(target, 0o644);
+      await fs.utimes(target, REPRODUCIBLE_PACKAGE_TIME, REPRODUCIBLE_PACKAGE_TIME);
     }
     await verifyPluginTree(path.resolve(stageDir), sourceManifest);
     const stagedVersion = await pluginVersionFromLoaderPath(path.join(stageDir, MANAGED_LOADER));
     if (stagedVersion !== version) throw packageVersionMismatch();
-    const result = spawnSync('zip', ['-qr', stagedPackagePath, ...PLUGIN_FILES.map((file) => file.target)], {
+    const result = spawnSync('zip', ['-qX', stagedPackagePath, ...PLUGIN_FILES.map((file) => file.target)], {
       cwd: stageDir,
       encoding: 'utf8'
     });

@@ -393,6 +393,11 @@ try {
   });
   assert.equal(unsignedCandidate.artifact_class, 'canonical_unsigned_candidate'); assertions += 1;
   assert.equal(unsignedCandidate.release_artifact, false); assertions += 1;
+  const repeatedUnsignedCandidateRoot = await makeInstallRoot('canonical-unsigned-candidate-repeat');
+  const repeatedUnsignedCandidate = await packagePlugin(packageVersion, repeatedUnsignedCandidateRoot, repoRoot, {
+    canonicalOutputDir: repeatedUnsignedCandidateRoot
+  });
+  assert.equal(repeatedUnsignedCandidate.package_sha256, unsignedCandidate.package_sha256); assertions += 1;
   progress('canonical unsigned candidate is not a release artifact');
 
   const versionMismatchRoot = path.join(testRoot, 'version-mismatch-output-not-created');
