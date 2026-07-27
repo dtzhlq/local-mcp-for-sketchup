@@ -1,11 +1,15 @@
 #!/usr/bin/env node
 import { spawn } from 'node:child_process';
+import fs from 'node:fs/promises';
+import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const scriptPath = fileURLToPath(import.meta.url);
 const repoRoot = path.resolve(path.dirname(scriptPath), '..');
 
+const runRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'local-mcp-for-sketchup-core-check-'));
+const stateDir = path.join(runRoot, 'state');
 const steps = [
   ['version contract', ['test/version-contract.mjs']],
   ['tool registry drift', ['scripts/generate-tool-registry-doc.mjs', '--check']],
@@ -37,30 +41,43 @@ const steps = [
   ['41-tool mock capability suite', [
     'scripts/validate-mcp-capability-suite.mjs',
     '--runtime', 'mock',
-    '--output-dir', 'output/core-check/mcp-capability-suite'
+    '--output-dir', path.join(runRoot, 'mcp-capability-suite')
   ]]
 ];
 
 const startedAt = new Date();
-for (const [label, args] of steps) {
-  process.stdout.write(`\n[core-check] ${label}\n`);
-  const result = await run(process.execPath, args);
-  if (result.code !== 0) {
-    process.stderr.write(`[core-check] FAILED: ${label} (exit ${result.code})\n`);
-    process.exit(result.code || 1);
+let failedStep = null;
+try {
+  for (const [label, args] of steps) {
+    process.stdout.write(`\n[core-check] ${label}\n`);
+    const result = await run(process.execPath, args);
+    if (result.code !== 0) {
+      failedStep = { label, code: result.code || 1 };
+      break;
+    }
   }
+
+  if (!failedStep) {
+    process.stdout.write(`${JSON.stringify({
+      kind: 'local_mcp_for_sketchup_core_check',
+      status: 'passed',
+      layer: 'offline_and_mock_only',
+      isolated_test_state: true,
+      live_sketchup_verified: false,
+      release_acceptance: false,
+      step_count: steps.length,
+      started_at: startedAt.toISOString(),
+      finished_at: new Date().toISOString()
+    }, null, 2)}\n`);
+  }
+} finally {
+  await fs.rm(runRoot, { recursive: true, force: true });
 }
 
-process.stdout.write(`${JSON.stringify({
-  kind: 'local_mcp_for_sketchup_core_check',
-  status: 'passed',
-  layer: 'offline_and_mock_only',
-  live_sketchup_verified: false,
-  release_acceptance: false,
-  step_count: steps.length,
-  started_at: startedAt.toISOString(),
-  finished_at: new Date().toISOString()
-}, null, 2)}\n`);
+if (failedStep) {
+  process.stderr.write(`[core-check] FAILED: ${failedStep.label} (exit ${failedStep.code})\n`);
+  process.exitCode = failedStep.code;
+}
 
 function run(command, args) {
   return new Promise((resolve, reject) => {
@@ -68,7 +85,7 @@ function run(command, args) {
       cwd: repoRoot,
       env: {
         ...process.env,
-        LOCAL_MCP_FOR_SKETCHUP_STATE_DIR: path.join(repoRoot, 'output', 'core-check', 'state')
+        LOCAL_MCP_FOR_SKETCHUP_STATE_DIR: stateDir
       },
       stdio: 'inherit'
     });
