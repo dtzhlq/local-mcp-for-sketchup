@@ -555,8 +555,8 @@ async function buildAndPublishPackage({
       package_path: packagePath,
       package_sha256: sha256(packageBytes),
       package_size_bytes: packageBytes.length,
-      artifact_class: normalizedLabel ? 'non_release_preview' : 'canonical_release_candidate',
-      release_artifact: normalizedLabel === null,
+      artifact_class: normalizedLabel ? 'non_release_preview' : 'canonical_unsigned_candidate',
+      release_artifact: false,
       overwrite_performed: false
     };
   } finally {

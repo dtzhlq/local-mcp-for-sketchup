@@ -387,6 +387,14 @@ try {
   }
   progress('repository-relative canonical output');
 
+  const unsignedCandidateRoot = await makeInstallRoot('canonical-unsigned-candidate');
+  const unsignedCandidate = await packagePlugin(packageVersion, unsignedCandidateRoot, repoRoot, {
+    canonicalOutputDir: unsignedCandidateRoot
+  });
+  assert.equal(unsignedCandidate.artifact_class, 'canonical_unsigned_candidate'); assertions += 1;
+  assert.equal(unsignedCandidate.release_artifact, false); assertions += 1;
+  progress('canonical unsigned candidate is not a release artifact');
+
   const versionMismatchRoot = path.join(testRoot, 'version-mismatch-output-not-created');
   await assert.rejects(
     packagePlugin('0.1.0-rc.999', versionMismatchRoot, repoRoot, {
