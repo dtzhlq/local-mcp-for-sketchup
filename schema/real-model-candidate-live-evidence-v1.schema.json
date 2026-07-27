@@ -1,0 +1,243 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/schema/real-model-candidate-live-evidence-v1.schema.json",
+  "title": "Real-model candidate live read-only evidence v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version", "kind", "captured_at", "branch", "evidence_scope", "runtime",
+    "installed_source", "artifacts", "corpus", "cases", "large_model_gate",
+    "safety", "cross_version", "hard_gates", "release_acceptance", "boundaries"
+  ],
+  "properties": {
+    "version": { "const": "real-model-candidate-live-evidence.v1" },
+    "kind": { "const": "real_model_candidate_live_readonly_evidence" },
+    "captured_at": { "type": "string", "format": "date-time" },
+    "branch": { "const": "codex/agent-contract-v1" },
+    "evidence_scope": { "const": "user_coordinated_disposable_copy_read_only_profile" },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name", "plugin_version", "capability_version", "manifest_version",
+        "sketchup_version", "ruby_version", "compatibility_ok", "model_revision_strategy",
+        "model_revision_unique_entity_limit"
+      ],
+      "properties": {
+        "name": { "const": "queue" },
+        "plugin_version": { "const": "0.1.0-rc.2" },
+        "capability_version": { "const": "0.1.0-rc.2-capabilities.5" },
+        "manifest_version": { "const": "2026-07-agent-contract-v1.3" },
+        "sketchup_version": { "const": "26.2.242" },
+        "ruby_version": { "const": "3.2.2" },
+        "compatibility_ok": { "const": true },
+        "model_revision_strategy": { "const": "definition-merkle.v1" },
+        "model_revision_unique_entity_limit": { "const": 1000000 }
+      }
+    },
+    "installed_source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "workspace_plugin_main_sha256", "installed_plugin_main_sha256",
+        "workspace_model_revision_sha256", "installed_model_revision_sha256",
+        "exact_match", "fresh_process_verified", "requires_reinstall_restart"
+      ],
+      "properties": {
+        "workspace_plugin_main_sha256": { "$ref": "#/$defs/sha256" },
+        "installed_plugin_main_sha256": { "$ref": "#/$defs/sha256" },
+        "workspace_model_revision_sha256": { "$ref": "#/$defs/sha256" },
+        "installed_model_revision_sha256": { "$ref": "#/$defs/sha256" },
+        "exact_match": { "const": true },
+        "fresh_process_verified": { "const": true },
+        "requires_reinstall_restart": { "const": false }
+      }
+    },
+    "artifacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "inventory_path", "inventory_sha256", "inventory_schema_valid",
+        "profile_path", "profile_sha256", "profile_schema_valid"
+      ],
+      "properties": {
+        "inventory_path": { "const": "output/real-model-reliability/intake/real-model-candidate-inventory.v1.json" },
+        "inventory_sha256": { "$ref": "#/$defs/sha256" },
+        "inventory_schema_valid": { "const": true },
+        "profile_path": { "const": "output/real-model-reliability/intake/real-model-candidate-profile.v1.json" },
+        "profile_sha256": { "$ref": "#/$defs/sha256" },
+        "profile_schema_valid": { "const": true }
+      }
+    },
+    "corpus": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidate_count", "profiled", "failed", "not_run", "unique_content_hashes",
+        "total_bytes", "formal_sidecars_generated", "materialized_recursive_sample_limit"
+      ],
+      "properties": {
+        "candidate_count": { "const": 5 },
+        "profiled": { "const": 5 },
+        "failed": { "const": 0 },
+        "not_run": { "const": 0 },
+        "unique_content_hashes": { "const": 5 },
+        "total_bytes": { "const": 23150909 },
+        "formal_sidecars_generated": { "const": 0 },
+        "materialized_recursive_sample_limit": { "const": 10000 }
+      }
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "items": { "$ref": "#/$defs/case" }
+    },
+    "large_model_gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidate_id", "logical_occurrences", "unique_entities", "reachable_definitions",
+        "revision_complete", "revision_unchanged", "shared_occurrences_materialized",
+        "old_limit_failure_recovered", "sketchup_survived"
+      ],
+      "properties": {
+        "candidate_id": { "const": "candidate_73e9292c461830151d0fc771" },
+        "logical_occurrences": { "const": 1903677 },
+        "unique_entities": { "const": 639351 },
+        "reachable_definitions": { "const": 5531 },
+        "revision_complete": { "const": true },
+        "revision_unchanged": { "const": true },
+        "shared_occurrences_materialized": { "const": false },
+        "old_limit_failure_recovered": { "const": true },
+        "sketchup_survived": { "const": true }
+      }
+    },
+    "safety": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "explicit_queue_opt_in", "preflight_all_candidates", "originals_opened_in_sketchup",
+        "disposable_copy_only", "model_content_mutation_requested", "save_requested",
+        "reset_requested", "ruby_expert_requested", "original_bytes_unchanged_verified",
+        "copy_bytes_unchanged_verified", "all_revisions_complete", "all_revisions_unchanged",
+        "untrusted_model_data_policy_effect", "queue", "processing", "responses", "lock_exists",
+        "sketchup_process_alive", "computer_use_scope", "original_focus_restored"
+      ],
+      "properties": {
+        "explicit_queue_opt_in": { "const": true },
+        "preflight_all_candidates": { "const": true },
+        "originals_opened_in_sketchup": { "const": false },
+        "disposable_copy_only": { "const": true },
+        "model_content_mutation_requested": { "const": false },
+        "save_requested": { "const": false },
+        "reset_requested": { "const": false },
+        "ruby_expert_requested": { "const": false },
+        "original_bytes_unchanged_verified": { "const": true },
+        "copy_bytes_unchanged_verified": { "const": true },
+        "all_revisions_complete": { "const": true },
+        "all_revisions_unchanged": { "const": true },
+        "untrusted_model_data_policy_effect": { "const": "none" },
+        "queue": { "const": 0 },
+        "processing": { "const": 0 },
+        "responses": { "const": 0 },
+        "lock_exists": { "const": false },
+        "sketchup_process_alive": { "const": true },
+        "computer_use_scope": { "const": "focus_disposable_copies_then_restore_original_only" },
+        "original_focus_restored": { "const": true }
+      }
+    },
+    "cross_version": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "represented_as_pass", "observed_versions"],
+      "properties": {
+        "status": { "const": "deferred_by_user" },
+        "represented_as_pass": { "const": false },
+        "observed_versions": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": { "const": "26.2.242" }
+        }
+      }
+    },
+    "hard_gates": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "wrong_object_automatic_execution", "unauthorized_s2_s4_execution",
+        "duplicate_request_duplicate_modification"
+      ],
+      "properties": {
+        "wrong_object_automatic_execution": { "const": 0 },
+        "unauthorized_s2_s4_execution": { "const": 0 },
+        "duplicate_request_duplicate_modification": { "const": 0 }
+      }
+    },
+    "release_acceptance": { "const": false },
+    "boundaries": {
+      "type": "array",
+      "minItems": 3,
+      "items": { "type": "string", "minLength": 1 }
+    }
+  },
+  "$defs": {
+    "count": { "type": "integer", "minimum": 0, "maximum": 9007199254740991 },
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "prefixedSha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "structure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "top_level_entities", "recursive_sample_indexed", "logical_occurrences",
+        "recursive_sample_truncated", "max_occurrence_depth", "materials", "tags", "scenes",
+        "classification_schemas", "hidden_occurrences", "locked_occurrences",
+        "shared_definition_count", "shared_occurrence_count", "nonuniform_instances",
+        "mirrored_instances", "warning_count"
+      ],
+      "properties": {
+        "top_level_entities": { "$ref": "#/$defs/count" },
+        "recursive_sample_indexed": { "type": "integer", "minimum": 0, "maximum": 10000 },
+        "logical_occurrences": { "$ref": "#/$defs/count" },
+        "recursive_sample_truncated": { "type": "boolean" },
+        "max_occurrence_depth": { "$ref": "#/$defs/count" },
+        "materials": { "$ref": "#/$defs/count" },
+        "tags": { "$ref": "#/$defs/count" },
+        "scenes": { "$ref": "#/$defs/count" },
+        "classification_schemas": { "$ref": "#/$defs/count" },
+        "hidden_occurrences": { "$ref": "#/$defs/count" },
+        "locked_occurrences": { "$ref": "#/$defs/count" },
+        "shared_definition_count": { "$ref": "#/$defs/count" },
+        "shared_occurrence_count": { "$ref": "#/$defs/count" },
+        "nonuniform_instances": { "$ref": "#/$defs/count" },
+        "mirrored_instances": { "$ref": "#/$defs/count" },
+        "warning_count": { "$ref": "#/$defs/count" }
+      }
+    },
+    "case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidate_id", "source_sha256", "source_bytes", "status", "revision_before",
+        "revision_after", "revision_complete", "revision_unchanged", "revision_strategy",
+        "unique_entity_limit", "unique_entities", "reachable_definitions", "structure"
+      ],
+      "properties": {
+        "candidate_id": { "type": "string", "pattern": "^candidate_[0-9a-f]{24}$" },
+        "source_sha256": { "$ref": "#/$defs/prefixedSha256" },
+        "source_bytes": { "type": "integer", "minimum": 1 },
+        "status": { "const": "profiled" },
+        "revision_before": { "$ref": "#/$defs/prefixedSha256" },
+        "revision_after": { "$ref": "#/$defs/prefixedSha256" },
+        "revision_complete": { "const": true },
+        "revision_unchanged": { "const": true },
+        "revision_strategy": { "const": "definition-merkle.v1" },
+        "unique_entity_limit": { "const": 1000000 },
+        "unique_entities": { "$ref": "#/$defs/count" },
+        "reachable_definitions": { "$ref": "#/$defs/count" },
+        "structure": { "$ref": "#/$defs/structure" }
+      }
+    }
+  }
+}

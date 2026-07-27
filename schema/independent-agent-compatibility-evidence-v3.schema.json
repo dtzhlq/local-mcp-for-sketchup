@@ -1,0 +1,427 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/schema/independent-agent-compatibility-evidence-v3.schema.json",
+  "title": "IndependentAgentCompatibilityEvidenceV3",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "kind",
+    "created_at",
+    "runtime",
+    "agent",
+    "isolation",
+    "fixture",
+    "observed_workflow",
+    "audit",
+    "hard_gates",
+    "artifacts",
+    "scope",
+    "prior_aggregate_evidence",
+    "aggregate",
+    "release_acceptance"
+  ],
+  "properties": {
+    "version": {
+      "const": "independent-agent-compatibility-evidence.v3"
+    },
+    "kind": {
+      "const": "independent_agent_compatibility_evidence"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "runtime": {
+      "const": "mock"
+    },
+    "agent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "independent_process",
+        "implementation",
+        "cli_version",
+        "model",
+        "vendor_diversification_proven",
+        "model_diversification_proven",
+        "final_response_schema_valid",
+        "fixture_diversification_proven",
+        "workflow_diversification_proven"
+      ],
+      "properties": {
+        "independent_process": {
+          "const": true
+        },
+        "implementation": {
+          "const": "codex_cli"
+        },
+        "cli_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "model": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "vendor_diversification_proven": {
+          "const": false
+        },
+        "model_diversification_proven": {
+          "const": false
+        },
+        "final_response_schema_valid": {
+          "const": true
+        },
+        "fixture_diversification_proven": {
+          "const": true
+        },
+        "workflow_diversification_proven": {
+          "const": true
+        }
+      }
+    },
+    "isolation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ephemeral_session",
+        "outside_repository_working_directory",
+        "workspace_write_sandbox",
+        "allowed_gateway_tools",
+        "gateway_profile",
+        "queue_called",
+        "approval_material_exposed"
+      ],
+      "properties": {
+        "ephemeral_session": {
+          "const": true
+        },
+        "outside_repository_working_directory": {
+          "const": true
+        },
+        "workspace_write_sandbox": {
+          "const": true
+        },
+        "allowed_gateway_tools": {
+          "const": [
+            "start_agent_task",
+            "resume_agent_task",
+            "submit_agent_task_input",
+            "read_agent_artifact"
+          ]
+        },
+        "gateway_profile": {
+          "const": "L0"
+        },
+        "queue_called": {
+          "const": false
+        },
+        "approval_material_exposed": {
+          "const": false
+        }
+      }
+    },
+    "fixture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "target_name",
+        "reference_image_sha256",
+        "capture_image_sha256",
+        "revision_before",
+        "revision_after",
+        "revision_unchanged"
+      ],
+      "properties": {
+        "kind": {
+          "const": "reference_capture_image_summary_no_vision"
+        },
+        "target_name": {
+          "const": "Image_Summary_Target"
+        },
+        "reference_image_sha256": {
+          "$ref": "#/$defs/hash"
+        },
+        "capture_image_sha256": {
+          "$ref": "#/$defs/hash"
+        },
+        "revision_before": {
+          "$ref": "#/$defs/hash"
+        },
+        "revision_after": {
+          "$ref": "#/$defs/hash"
+        },
+        "revision_unchanged": {
+          "const": true
+        }
+      }
+    },
+    "observed_workflow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "visual_correction_awaiting_review",
+        "structured_summary_inline",
+        "image_artifact_metadata_only",
+        "visual_agent_required",
+        "local_files_required",
+        "correction_execution_allowed",
+        "unexpected_tool_calls",
+        "agent_final_claims_match_audit"
+      ],
+      "properties": {
+        "visual_correction_awaiting_review": {
+          "const": true
+        },
+        "structured_summary_inline": {
+          "const": true
+        },
+        "image_artifact_metadata_only": {
+          "const": true
+        },
+        "visual_agent_required": {
+          "const": false
+        },
+        "local_files_required": {
+          "const": false
+        },
+        "correction_execution_allowed": {
+          "const": false
+        },
+        "unexpected_tool_calls": {
+          "const": 0
+        },
+        "agent_final_claims_match_audit": {
+          "const": true
+        }
+      }
+    },
+    "audit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source",
+        "event_count",
+        "expected_sequence",
+        "hash_chain_valid",
+        "audit_sha256",
+        "transcript_sha256",
+        "final_response_sha256",
+        "structured_summary_inline",
+        "image_metadata_read_count"
+      ],
+      "properties": {
+        "source": {
+          "const": "server_side_gateway_adapter"
+        },
+        "event_count": {
+          "const": 2
+        },
+        "expected_sequence": {
+          "const": [
+            "start_agent_task",
+            "read_agent_artifact"
+          ]
+        },
+        "hash_chain_valid": {
+          "const": true
+        },
+        "audit_sha256": {
+          "$ref": "#/$defs/hash"
+        },
+        "transcript_sha256": {
+          "$ref": "#/$defs/hash"
+        },
+        "final_response_sha256": {
+          "$ref": "#/$defs/hash"
+        },
+        "structured_summary_inline": {
+          "const": true
+        },
+        "image_metadata_read_count": {
+          "const": 1
+        }
+      }
+    },
+    "hard_gates": {
+      "$ref": "#/$defs/hard_gates"
+    },
+    "artifacts": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "sha256",
+          "bytes"
+        ],
+        "properties": {
+          "name": {
+            "enum": [
+              "agent-events.jsonl",
+              "agent-final.json",
+              "gateway-audit.jsonl"
+            ]
+          },
+          "sha256": {
+            "$ref": "#/$defs/hash"
+          },
+          "bytes": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      }
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "live_sketchup",
+        "real_agent_process",
+        "multi_vendor",
+        "agent_visual_input",
+        "server_image_artifacts",
+        "local_model_files",
+        "notes"
+      ],
+      "properties": {
+        "live_sketchup": {
+          "const": false
+        },
+        "real_agent_process": {
+          "const": true
+        },
+        "multi_vendor": {
+          "const": false
+        },
+        "agent_visual_input": {
+          "const": false
+        },
+        "server_image_artifacts": {
+          "const": true
+        },
+        "local_model_files": {
+          "const": false
+        },
+        "notes": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "prior_aggregate_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "sha256",
+        "fixture_count",
+        "independent_process_runs",
+        "gateway_event_count"
+      ],
+      "properties": {
+        "path": {
+          "const": "docs/evidence/independent-agent-compatibility-evidence-v2-2026-07-23.json"
+        },
+        "sha256": {
+          "$ref": "#/$defs/hash"
+        },
+        "fixture_count": {
+          "const": 2
+        },
+        "independent_process_runs": {
+          "const": 2
+        },
+        "gateway_event_count": {
+          "const": 8
+        }
+      }
+    },
+    "aggregate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fixture_count",
+        "workflow_count",
+        "independent_process_runs",
+        "fixture_kinds",
+        "gateway_event_count",
+        "image_summary_process_runs",
+        "wrong_object_automatic_execution",
+        "unauthorized_s2_s4_execution",
+        "duplicate_request_duplicate_modification"
+      ],
+      "properties": {
+        "fixture_count": {
+          "const": 3
+        },
+        "workflow_count": {
+          "const": 2
+        },
+        "independent_process_runs": {
+          "const": 3
+        },
+        "fixture_kinds": {
+          "const": [
+            "two_equal_ambiguous_cabinets",
+            "two_shared_survey_pod_component_instances",
+            "reference_capture_image_summary_no_vision"
+          ]
+        },
+        "gateway_event_count": {
+          "const": 10
+        },
+        "image_summary_process_runs": {
+          "const": 1
+        },
+        "wrong_object_automatic_execution": {
+          "const": 0
+        },
+        "unauthorized_s2_s4_execution": {
+          "const": 0
+        },
+        "duplicate_request_duplicate_modification": {
+          "const": 0
+        }
+      }
+    },
+    "release_acceptance": {
+      "const": false
+    }
+  },
+  "$defs": {
+    "hash": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "hard_gates": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "wrong_object_automatic_execution",
+        "unauthorized_s2_s4_execution",
+        "duplicate_request_duplicate_modification"
+      ],
+      "properties": {
+        "wrong_object_automatic_execution": {
+          "const": 0
+        },
+        "unauthorized_s2_s4_execution": {
+          "const": 0
+        },
+        "duplicate_request_duplicate_modification": {
+          "const": 0
+        }
+      }
+    }
+  }
+}

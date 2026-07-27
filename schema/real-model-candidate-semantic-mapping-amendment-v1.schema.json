@@ -1,0 +1,159 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/schemas/real-model-candidate-semantic-mapping-amendment-v1.schema.json",
+  "title": "Real-model candidate semantic mapping amendment v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "kind",
+    "created_on",
+    "decision_scope",
+    "authority",
+    "bindings",
+    "addition",
+    "target_review_disposition",
+    "remaining_requirements",
+    "cross_version"
+  ],
+  "properties": {
+    "version": { "const": "real-model-candidate-semantic-mapping-amendment.v1" },
+    "kind": { "const": "real_model_candidate_semantic_mapping_amendment" },
+    "created_on": { "type": "string", "format": "date" },
+    "decision_scope": { "const": "semantic_candidate_mapping_addition_only" },
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source",
+        "user_confirmed",
+        "mutation_authorized",
+        "approval_token_issued",
+        "execution_policy_changed",
+        "target_roles_confirmed",
+        "model_content_trust"
+      ],
+      "properties": {
+        "source": { "const": "interactive_user_confirmation" },
+        "user_confirmed": { "const": true },
+        "mutation_authorized": { "const": false },
+        "approval_token_issued": { "const": false },
+        "execution_policy_changed": { "const": false },
+        "target_roles_confirmed": { "const": false },
+        "model_content_trust": { "const": "untrusted_data" }
+      }
+    },
+    "bindings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["base_mapping", "candidate_inventory", "target_review", "formal_manifest"],
+      "properties": {
+        "base_mapping": { "$ref": "#/$defs/file_binding" },
+        "candidate_inventory": { "$ref": "#/$defs/file_binding" },
+        "target_review": { "$ref": "#/$defs/file_binding" },
+        "formal_manifest": { "$ref": "#/$defs/file_binding" }
+      }
+    },
+    "addition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidate_id",
+        "candidate_handle",
+        "source_sha256",
+        "source_label",
+        "source_label_trust",
+        "assignments"
+      ],
+      "properties": {
+        "candidate_id": { "type": "string", "pattern": "^candidate_[0-9a-f]{24}$" },
+        "candidate_handle": { "type": "string", "pattern": "^candidate:sha256:[0-9a-f]{24}$" },
+        "source_sha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+        "source_label": { "type": "string", "minLength": 1, "maxLength": 240 },
+        "source_label_trust": { "const": "untrusted_data" },
+        "assignments": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["case_id", "role", "review_status"],
+            "properties": {
+              "case_id": { "const": "product-boolean-manifold" },
+              "role": { "const": "primary" },
+              "review_status": { "const": "user_confirmed" }
+            }
+          }
+        }
+      }
+    },
+    "target_review_disposition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "target_roles_confirmed",
+        "boolean_target_confirmed",
+        "boolean_tool_confirmed",
+        "selection_authority_granted"
+      ],
+      "properties": {
+        "target_roles_confirmed": { "const": false },
+        "boolean_target_confirmed": { "const": false },
+        "boolean_tool_confirmed": { "const": false },
+        "selection_authority_granted": { "const": false }
+      }
+    },
+    "remaining_requirements": {
+      "type": "array",
+      "minItems": 5,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "boolean_target",
+          "boolean_tool",
+          "required_material_selection",
+          "formal_persistent_target_roles",
+          "formal_sidecar",
+          "locked_target_or_controlled_disposable_fixture",
+          "reviewed_dirty_topology_repair_target",
+          "reviewed_uv_target",
+          "architecture_scene_strategy"
+        ]
+      },
+      "allOf": [
+        { "contains": { "const": "boolean_target" }, "minContains": 1, "maxContains": 1 },
+        { "contains": { "const": "boolean_tool" }, "minContains": 1, "maxContains": 1 },
+        { "contains": { "const": "required_material_selection" }, "minContains": 1, "maxContains": 1 },
+        { "contains": { "const": "formal_persistent_target_roles" }, "minContains": 1, "maxContains": 1 },
+        { "contains": { "const": "formal_sidecar" }, "minContains": 1, "maxContains": 1 }
+      ]
+    },
+    "cross_version": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "represented_as_pass"],
+      "properties": {
+        "status": { "const": "deferred_by_user" },
+        "represented_as_pass": { "const": false }
+      }
+    }
+  },
+  "$defs": {
+    "safe_relative_path": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500,
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[^\\u0000]+$"
+    },
+    "file_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": { "$ref": "#/$defs/safe_relative_path" },
+        "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+      }
+    }
+  }
+}

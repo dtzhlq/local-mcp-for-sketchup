@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/schema/copy-fast-session-summary-v1.schema.json",
+  "title": "CopyFastSessionSummaryV1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "status",
+    "session_id",
+    "model_key",
+    "runtime",
+    "issued_at",
+    "expires_at",
+    "reused",
+    "user_action_required",
+    "agent_can_enable",
+    "local_paths_exposed"
+  ],
+  "properties": {
+    "version": { "const": "copy-fast-session-summary.v1" },
+    "status": { "const": "active" },
+    "session_id": { "type": "string", "pattern": "^copy_session_[0-9a-f-]+$" },
+    "model_key": { "type": "string", "pattern": "^model_[0-9a-f]{32}$" },
+    "runtime": { "enum": ["mock", "queue"] },
+    "issued_at": { "type": "string", "format": "date-time" },
+    "expires_at": { "type": "string", "format": "date-time" },
+    "reused": { "type": "boolean" },
+    "user_action_required": { "const": false },
+    "agent_can_enable": { "const": false },
+    "local_paths_exposed": { "const": false }
+  }
+}

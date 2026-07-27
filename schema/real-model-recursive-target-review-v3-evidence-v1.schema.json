@@ -1,0 +1,216 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/schemas/real-model-recursive-target-review-v3-evidence-v1.schema.json",
+  "title": "Recursive Target Review v3 portable mock evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "kind",
+    "generated_at",
+    "verification_scope",
+    "contract",
+    "runtime_cases",
+    "results",
+    "artifact_bindings",
+    "safety",
+    "release_acceptance",
+    "boundary"
+  ],
+  "properties": {
+    "version": { "const": "real-model-recursive-target-review-v3-mock-evidence.v1" },
+    "kind": { "const": "real_model_recursive_target_review_v3_mock_evidence" },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "verification_scope": {
+      "type": "array",
+      "minItems": 6,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "offline",
+          "portable_fixture",
+          "json_schema",
+          "v1_v2_compatibility",
+          "negative_trial_exact_runtime",
+          "runtime_source_delta_fail_closed",
+          "bbox_fill_ratio_sparsity_only"
+        ]
+      }
+    },
+    "contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "base_review_version",
+        "negative_lineage_version",
+        "default_low_fill_threshold",
+        "bbox_fill_ratio_semantics"
+      ],
+      "properties": {
+        "version": { "const": "real-model-recursive-target-review.v3" },
+        "base_review_version": { "const": "real-model-recursive-target-review.v2" },
+        "negative_lineage_version": { "const": "negative-atomic-trial-lineage.v1" },
+        "default_low_fill_threshold": { "const": 0.1 },
+        "bbox_fill_ratio_semantics": { "const": "sparsity_hint_only_not_exact_overlap" }
+      }
+    },
+    "runtime_cases": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["historical_exact_match", "workspace_pending_delta"],
+      "properties": {
+        "historical_exact_match": { "$ref": "#/$defs/runtime_case_exact" },
+        "workspace_pending_delta": { "$ref": "#/$defs/runtime_case_delta" }
+      }
+    },
+    "results": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "v2_regression_assertions",
+        "v3_focused_assertions",
+        "exact_volume_preserved",
+        "exact_pair_excluded",
+        "failed_plan_replay_allowed",
+        "rank_2_automatic_recommendation",
+        "low_fill_containment_requires_stronger_evidence",
+        "runtime_delta_requires_review",
+        "runtime_delta_automatic_s3_recommendation",
+        "runner_source_evidence_verified",
+        "wrong_source_evidence_hash_rejected",
+        "source_evidence_path_escape_rejected",
+        "source_evidence_symlink_rejected",
+        "public_evidence_content_binding_negative_cases",
+        "strict_negative_lineage_cases"
+      ],
+      "properties": {
+        "v2_regression_assertions": { "const": 146 },
+        "v3_focused_assertions": { "const": 140 },
+        "exact_volume_preserved": { "const": true },
+        "exact_pair_excluded": { "const": true },
+        "failed_plan_replay_allowed": { "const": false },
+        "rank_2_automatic_recommendation": { "const": false },
+        "low_fill_containment_requires_stronger_evidence": { "const": true },
+        "runtime_delta_requires_review": { "const": true },
+        "runtime_delta_automatic_s3_recommendation": { "const": false },
+        "runner_source_evidence_verified": { "const": true },
+        "wrong_source_evidence_hash_rejected": { "const": true },
+        "source_evidence_path_escape_rejected": { "const": true },
+        "source_evidence_symlink_rejected": { "const": true },
+        "public_evidence_content_binding_negative_cases": { "const": 4 },
+        "strict_negative_lineage_cases": { "const": 15 }
+      }
+    },
+    "artifact_bindings": {
+      "type": "object",
+      "minProperties": 8,
+      "additionalProperties": { "$ref": "#/$defs/artifact_binding" }
+    },
+    "safety": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "runtime",
+        "live_queue_called",
+        "queue_requests_created",
+        "model_opened",
+        "model_mutation_requested",
+        "approval_token_requested",
+        "historical_runtime_hash_rewritten",
+        "runtime_delta_silently_ignored"
+      ],
+      "properties": {
+        "runtime": { "const": "offline" },
+        "live_queue_called": { "const": false },
+        "queue_requests_created": { "const": 0 },
+        "model_opened": { "const": false },
+        "model_mutation_requested": { "const": false },
+        "approval_token_requested": { "const": false },
+        "historical_runtime_hash_rewritten": { "const": false },
+        "runtime_delta_silently_ignored": { "const": false }
+      }
+    },
+    "release_acceptance": { "const": false },
+    "boundary": { "type": "string", "minLength": 300, "maxLength": 1800 }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "runtime_hashes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["boolean_operations_sha256", "model_revision_source_sha256"],
+      "properties": {
+        "boolean_operations_sha256": { "$ref": "#/$defs/sha256" },
+        "model_revision_source_sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "runtime_case_exact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "current_runtime_source_hashes",
+        "negative_trial_runtime_source_hashes",
+        "lineage_status",
+        "failed_pair_status",
+        "review_status",
+        "automatic_s3_recommendation"
+      ],
+      "properties": {
+        "current_runtime_source_hashes": { "$ref": "#/$defs/runtime_hashes" },
+        "negative_trial_runtime_source_hashes": { "$ref": "#/$defs/runtime_hashes" },
+        "lineage_status": { "const": "exact_runtime_match" },
+        "failed_pair_status": { "const": "confirmed_precommit_abort_exact_runtime" },
+        "review_status": { "const": "blocked" },
+        "automatic_s3_recommendation": { "const": false }
+      }
+    },
+    "runtime_case_delta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "current_runtime_source_hashes",
+        "negative_trial_runtime_source_hashes",
+        "runtime_delta_fields",
+        "lineage_status",
+        "failed_pair_status",
+        "review_status",
+        "next_action",
+        "automatic_s3_recommendation"
+      ],
+      "properties": {
+        "current_runtime_source_hashes": { "$ref": "#/$defs/runtime_hashes" },
+        "negative_trial_runtime_source_hashes": { "$ref": "#/$defs/runtime_hashes" },
+        "runtime_delta_fields": {
+          "type": "array",
+          "prefixItems": [{ "const": "boolean_operations_sha256" }],
+          "items": false,
+          "minItems": 1,
+          "maxItems": 1
+        },
+        "lineage_status": { "const": "runtime_delta_requires_review" },
+        "failed_pair_status": { "const": "negative_trial_not_directly_reusable" },
+        "review_status": { "const": "blocked" },
+        "next_action": { "const": "audit_runtime_source_delta_before_new_atomic_trial" },
+        "automatic_s3_recommendation": { "const": false }
+      }
+    },
+    "artifact_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024,
+          "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[^\\u0000-\\u001f\\u007f\\\\]+$"
+        },
+        "sha256": { "$ref": "#/$defs/sha256" }
+      }
+    }
+  }
+}

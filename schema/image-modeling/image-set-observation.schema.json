@@ -1,0 +1,559 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/schema/image-modeling/image-set-observation.schema.json",
+  "title": "Image Set Observation",
+  "type": "object",
+  "required": ["version", "object", "images", "views_detected", "missing_views", "quality_report"],
+  "properties": {
+    "version": { "const": 1 },
+    "object": {
+      "type": "object",
+      "required": ["type", "name", "source_images"],
+      "properties": {
+        "type": { "type": "string" },
+        "name": { "type": "string" },
+        "profile": { "enum": ["unknown_object", "switch_controller", "compact_remote", "vehicle_ambulance", "building_group", "building_single"] },
+        "source_images": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "image_set_quality": { "enum": ["low", "medium", "high"] },
+    "views_detected": {
+      "type": "array",
+      "items": { "enum": ["front", "rear", "left", "right", "top", "bottom", "oblique", "detail", "unknown"] }
+    },
+    "missing_views": { "type": "array", "items": { "type": "string" } },
+    "images": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/image_observation" }
+    },
+    "scale_calibration": { "$ref": "#/$defs/scale_calibration" },
+    "visual_relation_graph": { "$ref": "#/$defs/visual_relation_graph" },
+    "grounding_v3": { "$ref": "#/$defs/grounding_v3" },
+    "evidence_graph": { "$ref": "#/$defs/evidence_graph" },
+    "building_single_semantic_evidence_v1": { "type": "object" },
+    "quality_report": {
+      "type": "object",
+      "required": ["usable_for_modeling", "risks"],
+      "properties": {
+        "usable_for_modeling": { "type": "boolean" },
+        "risks": { "type": "array", "items": { "type": "string" } },
+        "notes": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "review": {
+      "type": "object",
+      "properties": {
+        "overlay_dir": { "type": ["string", "null"] },
+        "open_questions": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  },
+  "$defs": {
+    "image_observation": {
+      "type": "object",
+      "required": ["version", "image", "detected_view", "observations"],
+      "properties": {
+        "version": { "const": 1 },
+        "image": {
+          "type": "object",
+          "required": ["path", "width", "height"],
+          "properties": {
+            "path": { "type": "string" },
+            "width": { "type": "integer" },
+            "height": { "type": "integer" },
+            "analysis_width": { "type": "integer" },
+            "analysis_height": { "type": "integer" },
+            "content_frame": { "$ref": "#/$defs/content_frame" }
+          }
+        },
+        "detected_view": {
+          "type": "object",
+          "required": ["kind", "confidence"],
+          "properties": {
+            "kind": { "enum": ["front", "rear", "left", "right", "top", "bottom", "oblique", "detail", "unknown"] },
+            "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+            "notes": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "camera_hints": {
+          "type": "object",
+          "properties": {
+            "perspective_strength": { "enum": ["low", "medium", "high", "unknown"] },
+            "symmetry_axis": { "$ref": "#/$defs/line2" },
+            "vanishing_lines": { "type": "array", "items": { "$ref": "#/$defs/line2" } },
+            "vanishing_points": { "type": "array", "items": { "$ref": "#/$defs/point2" } },
+            "horizon_line": { "$ref": "#/$defs/line2" },
+            "projection_model": { "type": "string" },
+            "review_required": { "type": "boolean" }
+          }
+        },
+        "orientation_hints": { "$ref": "#/$defs/orientation_hints" },
+        "relation_candidates": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/visual_relation_candidate" }
+        },
+        "metrics": {
+          "type": "object",
+          "properties": {
+            "edge_count": { "type": "integer" },
+            "edge_density": { "type": "number" },
+            "raw_edge_count": { "type": "integer" },
+            "raw_edge_density": { "type": "number" },
+            "object_bbox": { "$ref": "#/$defs/bbox" },
+            "object_bbox_ratio": { "type": "number" },
+            "symmetry_score": { "type": "number" },
+            "content_frame_bbox": { "$ref": "#/$defs/bbox" }
+          }
+        },
+        "observations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "kind", "confidence"],
+            "properties": {
+              "id": { "type": "string" },
+              "kind": { "enum": ["silhouette", "component_bbox", "center_point", "keypoint", "edge", "curve", "color_region", "text_or_logo", "uncertain", "mask_polygon", "sampled_contour", "line_segment", "gap_region", "vegetation_region", "scale_anchor", "camera_hint", "manual_review", "profile_prior", "helper_generated"] },
+              "source_view": { "enum": ["front", "rear", "left", "right", "top", "bottom", "oblique", "detail", "derived_site", "unknown"] },
+              "component_hint": { "type": "string" },
+              "bbox": { "$ref": "#/$defs/bbox" },
+              "points": { "$ref": "#/$defs/polyline2" },
+              "contour": { "$ref": "#/$defs/contour_evidence" },
+              "mask": { "$ref": "#/$defs/mask_evidence" },
+              "edge_map": { "$ref": "#/$defs/edge_map_evidence" },
+              "keypoints": { "type": "array", "items": { "$ref": "#/$defs/keypoint_evidence" } },
+              "grounding": { "$ref": "#/$defs/grounding_evidence" },
+              "grounding_status": { "$ref": "#/$defs/grounding_status" },
+              "isolation": { "$ref": "#/$defs/grounding_quality" },
+              "occlusion_hints": { "type": "array", "items": { "$ref": "#/$defs/occlusion_hint" } },
+              "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+              "note": { "type": "string" }
+            }
+          }
+        },
+        "quality_report": {
+          "type": "object",
+          "properties": {
+            "usable_for_modeling": { "type": "boolean" },
+            "risks": { "type": "array", "items": { "type": "string" } },
+            "missing_views": { "type": "array", "items": { "type": "string" } }
+          }
+        }
+      }
+    },
+    "point2": {
+      "type": "array",
+      "prefixItems": [{ "type": "number" }, { "type": "number" }],
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "polyline2": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/point2" }
+    },
+    "line2": {
+      "type": "object",
+      "required": ["a", "b"],
+      "properties": {
+        "a": { "$ref": "#/$defs/point2" },
+        "b": { "$ref": "#/$defs/point2" }
+      }
+    },
+    "bbox": {
+      "type": "array",
+      "prefixItems": [{ "type": "number" }, { "type": "number" }, { "type": "number" }, { "type": "number" }],
+      "minItems": 4,
+      "maxItems": 4
+    },
+    "content_frame": {
+      "type": "object",
+      "required": ["method", "applied", "bbox", "source_bbox", "confidence", "removed_area_ratio", "removed_regions", "review_required"],
+      "properties": {
+        "method": { "const": "auto_screenshot_chrome_v1" },
+        "applied": { "type": "boolean" },
+        "bbox": { "$ref": "#/$defs/bbox" },
+        "source_bbox": { "$ref": "#/$defs/bbox" },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "removed_area_ratio": { "type": "number", "minimum": 0, "maximum": 1 },
+        "removed_regions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["side", "reason", "bbox", "source_bbox"],
+            "properties": {
+              "side": { "enum": ["top", "bottom", "left", "right"] },
+              "reason": { "type": "string" },
+              "bbox": { "$ref": "#/$defs/bbox" },
+              "source_bbox": { "$ref": "#/$defs/bbox" }
+            }
+          }
+        },
+        "review_required": { "type": "boolean" },
+        "notes": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "grounding_evidence": {
+      "type": "object",
+      "properties": {
+        "method": { "type": "string" },
+        "mask": { "type": "string" },
+        "pixel_bbox": { "$ref": "#/$defs/bbox" },
+        "pixel_count": { "type": "integer" },
+        "prior_bbox": { "$ref": "#/$defs/bbox" },
+        "derived_from": { "type": "array", "items": { "type": "string" } },
+        "derived_from_kind": { "type": "string" },
+        "fill": { "type": "number" },
+        "contour_basis": { "type": "string" },
+        "grounding_quality": { "$ref": "#/$defs/grounding_quality" },
+        "review_required": { "type": "boolean" }
+      }
+    },
+    "mask_evidence": {
+      "type": "object",
+      "required": ["id", "method"],
+      "properties": {
+        "id": { "type": "string" },
+        "method": { "type": "string" },
+        "bbox": { "$ref": "#/$defs/bbox" },
+        "polygon": { "$ref": "#/$defs/polyline2" },
+        "sampled_contour": { "$ref": "#/$defs/polyline2" },
+        "pixel_count": { "type": "integer" },
+        "fill": { "type": "number" },
+        "quality": { "$ref": "#/$defs/grounding_quality" },
+        "review_required": { "type": "boolean" }
+      }
+    },
+    "grounding_quality": {
+      "type": "object",
+      "properties": {
+        "version": { "type": "integer" },
+        "status": { "type": "string" },
+        "raw_to_evidence_bbox_ratio": { "type": ["number", "null"] },
+        "prior_to_evidence_bbox_ratio": { "type": ["number", "null"] },
+        "bbox_proxy": { "type": "boolean" },
+        "review_required": { "type": "boolean" },
+        "reasons": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "grounding_status": {
+      "enum": ["image_grounded", "review_confirmed", "helper_only", "profile_prior", "rejected"]
+    },
+    "contour_evidence": {
+      "type": "object",
+      "required": ["kind", "polygon"],
+      "properties": {
+        "kind": { "type": "string" },
+        "polygon": { "$ref": "#/$defs/polyline2" },
+        "sample_count": { "type": "integer" },
+        "source": { "type": "string" },
+        "review_required": { "type": "boolean" }
+      }
+    },
+    "edge_map_evidence": {
+      "type": "object",
+      "required": ["method", "sample_count"],
+      "properties": {
+        "method": { "type": "string" },
+        "sample_count": { "type": "integer" },
+        "threshold": { "type": "number" },
+        "width": { "type": "integer" },
+        "height": { "type": "integer" },
+        "review_required": { "type": "boolean" }
+      }
+    },
+    "keypoint_evidence": {
+      "type": "object",
+      "required": ["id", "point"],
+      "properties": {
+        "id": { "type": "string" },
+        "point": { "$ref": "#/$defs/point2" },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "source": { "type": "string" }
+      }
+    },
+    "occlusion_hint": {
+      "type": "object",
+      "required": ["status", "confidence"],
+      "properties": {
+        "status": { "enum": ["visible", "partially_occluded", "occluded", "unknown"] },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "reason": { "type": "string" }
+      }
+    },
+    "orientation_hints": {
+      "type": "object",
+      "required": ["coordinate_convention", "mirror_risk", "semantic_anchors", "review_required"],
+      "properties": {
+        "coordinate_convention": { "const": "image_x_right_y_down" },
+        "model_convention": { "type": "string" },
+        "mirror_risk": {
+          "type": "object",
+          "required": ["status", "confidence", "reasons"],
+          "properties": {
+            "status": { "enum": ["low", "medium", "high", "unknown"] },
+            "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+            "reasons": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "semantic_anchors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "item", "anchor", "direction", "confidence"],
+            "properties": {
+              "id": { "type": "string" },
+              "item": { "type": "string" },
+              "anchor": { "type": "string" },
+              "direction": { "enum": ["left_of", "right_of", "above", "below"] },
+              "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+              "note": { "type": "string" }
+            }
+          }
+        },
+        "review_required": { "type": "boolean" }
+      }
+    },
+    "evidence_status": {
+      "enum": ["observed", "inferred", "template_prior", "manual_confirmed"]
+    },
+    "evidence_graph": {
+      "type": "object",
+      "required": ["version", "image_count", "parts", "open_questions"],
+      "properties": {
+        "version": { "const": 1 },
+        "image_count": { "type": "integer" },
+        "views_detected": { "type": "array", "items": { "type": "string" } },
+        "missing_views": { "type": "array", "items": { "type": "string" } },
+        "parts": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/evidence_graph_part" }
+        },
+        "part_matches": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/part_match" }
+        },
+        "visual_relations": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/visual_relation_candidate" }
+        },
+        "scale_calibration": { "$ref": "#/$defs/scale_calibration" },
+        "ground_plan": { "$ref": "#/$defs/ground_plan" },
+        "open_questions": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "grounding_v3": {
+      "type": "object",
+      "required": ["kind", "version", "scale_anchor_graph", "ground_plan", "line_grid_fit", "top_view_overlay", "promotion_decisions", "summary"],
+      "properties": {
+        "kind": { "const": "grounding_graph_v3" },
+        "version": { "const": 3 },
+        "scale_anchor_graph": { "type": "object" },
+        "ground_plan": { "$ref": "#/$defs/ground_plan" },
+        "line_grid_fit": { "type": "object" },
+        "top_view_overlay": { "type": "object" },
+        "promotion_decisions": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/promotion_decision" }
+        },
+        "summary": { "type": "object" }
+      }
+    },
+    "ground_plan": {
+      "type": "object",
+      "required": ["version", "region_classes", "site_surface", "regions", "qa"],
+      "properties": {
+        "version": { "const": 3 },
+        "region_classes": {
+          "type": "array",
+          "items": { "enum": ["building_footprint", "road", "parking", "green", "walkway", "service_yard", "gap"] }
+        },
+        "site_surface": { "type": ["object", "null"] },
+        "regions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "class", "source", "source_observation_ids", "area_ratio", "review_required"],
+            "properties": {
+              "id": { "type": "string" },
+              "class": { "enum": ["building_footprint", "road", "parking", "green", "walkway", "service_yard", "gap"] },
+              "source": { "type": "string" },
+              "source_observation_ids": { "type": "array", "items": { "type": "string" } },
+              "area_ratio": { "type": "number" },
+              "grounding_method": { "type": ["string", "null"] },
+              "confidence": { "type": "number" },
+              "review_required": { "type": "boolean" }
+            }
+          }
+        },
+        "qa": { "type": "object" }
+      }
+    },
+    "promotion_decision": {
+      "type": "object",
+      "required": ["part_id", "region_id", "region_class", "decision", "confidence", "reasons"],
+      "properties": {
+        "part_id": { "type": "string" },
+        "region_id": { "type": "string" },
+        "region_class": { "enum": ["building_footprint", "road", "parking", "green", "walkway", "service_yard", "gap"] },
+        "decision": { "enum": ["promoted_geometry", "review_candidate", "helper_only", "rejected"] },
+        "confidence": { "type": "number" },
+        "source_observation_ids": { "type": "array", "items": { "type": "string" } },
+        "reasons": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "evidence_graph_part": {
+      "type": "object",
+      "required": ["part_id", "status", "required_views", "confirmed_views", "missing_views", "sources", "open_questions"],
+      "properties": {
+        "part_id": { "type": "string" },
+        "status": { "$ref": "#/$defs/evidence_status" },
+        "template_prior": { "type": "boolean" },
+        "manual_confirmed": { "type": "boolean" },
+        "required_views": { "type": "array", "items": { "type": "string" } },
+        "confirmed_views": { "type": "array", "items": { "type": "string" } },
+        "missing_views": { "type": "array", "items": { "type": "string" } },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "sources": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/evidence_graph_source" }
+        },
+        "conflicts": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/evidence_graph_conflict" }
+        },
+        "open_questions": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "part_match": {
+      "type": "object",
+      "required": ["part_id", "strategy", "matched_views", "missing_views", "source_count", "confidence"],
+      "properties": {
+        "part_id": { "type": "string" },
+        "strategy": { "type": "string" },
+        "matched_views": { "type": "array", "items": { "type": "string" } },
+        "missing_views": { "type": "array", "items": { "type": "string" } },
+        "source_count": { "type": "integer" },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "scale_calibration": {
+      "type": "object",
+      "required": ["units", "strategy", "default_scale", "measurements", "confidence", "missing_views"],
+      "properties": {
+        "units": { "const": "mm" },
+        "strategy": { "type": "string" },
+        "default_scale": {
+          "type": "object",
+          "properties": {
+            "width": { "type": "number" },
+            "depth": { "type": "number" },
+            "height": { "type": "number" }
+          }
+        },
+        "measurements": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["view", "source_image", "object_bbox", "confidence"],
+            "properties": {
+              "view": { "type": "string" },
+              "source_image": { "type": "string" },
+              "observation_id": { "type": "string" },
+              "anchor_type": { "type": "string" },
+              "object_bbox": { "$ref": "#/$defs/bbox" },
+              "physical_width_mm": { "type": "number" },
+              "physical_height_mm": { "type": "number" },
+              "pixels_per_mm_x": { "type": "number" },
+              "pixels_per_mm_y": { "type": "number" },
+              "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+              "basis": { "type": "array", "items": { "type": "string" } },
+              "review_required": { "type": "boolean" },
+              "note": { "type": "string" }
+            }
+          }
+        },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "missing_views": { "type": "array", "items": { "type": "string" } },
+        "notes": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "evidence_graph_source": {
+      "type": "object",
+      "required": ["view", "kind", "status"],
+      "properties": {
+        "view": { "type": "string" },
+        "view_kind": { "type": "string" },
+        "kind": { "type": "string" },
+        "status": { "$ref": "#/$defs/evidence_status" },
+        "source_image": { "type": "string" },
+        "observation_id": { "type": "string" },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "note": { "type": "string" }
+      }
+    },
+    "evidence_graph_conflict": {
+      "type": "object",
+      "required": ["type", "severity", "note"],
+      "properties": {
+        "type": { "type": "string" },
+        "severity": { "enum": ["info", "warn", "error"] },
+        "views": { "type": "array", "items": { "type": "string" } },
+        "note": { "type": "string" }
+      }
+    },
+    "visual_relation_graph": {
+      "type": "object",
+      "required": ["version", "coordinate_convention", "relation_types", "relations", "summary", "open_questions"],
+      "properties": {
+        "version": { "const": 1 },
+        "coordinate_convention": { "const": "image_x_right_y_down" },
+        "relation_types": {
+          "type": "array",
+          "items": { "enum": ["left_of", "right_of", "above", "below", "inside", "aligned_with", "touching", "same_row", "mirrored_pair", "centered_on"] }
+        },
+        "source_images": { "type": "array", "items": { "type": "string" } },
+        "relations": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/visual_relation_candidate" }
+        },
+        "summary": { "type": "object" },
+        "open_questions": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "visual_relation_candidate": {
+      "type": "object",
+      "required": ["id", "type", "item", "anchor", "source_image", "view", "basis", "confidence", "review_required"],
+      "properties": {
+        "id": { "type": "string" },
+        "type": { "enum": ["left_of", "right_of", "above", "below", "inside", "aligned_with", "touching", "same_row", "mirrored_pair", "centered_on"] },
+        "item": { "type": "string" },
+        "anchor": { "type": "string" },
+        "source_image": { "type": "string" },
+        "view": { "type": "string" },
+        "basis": {
+          "type": "object",
+          "required": ["kind"],
+          "properties": {
+            "kind": { "type": "string" },
+            "item_observation_id": { "type": "string" },
+            "anchor_observation_id": { "type": "string" },
+            "item_bbox": { "type": ["array", "null"] },
+            "anchor_bbox": { "type": ["array", "null"] },
+            "item_keypoint": { "type": ["array", "null"] },
+            "anchor_keypoint": { "type": ["array", "null"] },
+            "delta_norm": { "type": "array", "items": { "type": "number" } },
+            "spacing_ratio": { "type": "number" },
+            "axis": { "type": "string" },
+            "semantic_anchor_id": { "type": "string" },
+            "coordinate_convention": { "type": "string" },
+            "containment_ratio": { "type": "number" },
+            "symmetry_axis_x": { "type": "number" }
+          }
+        },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "review_required": { "type": "boolean" },
+        "note": { "type": "string" }
+      }
+    }
+  }
+}

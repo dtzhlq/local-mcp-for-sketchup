@@ -1,0 +1,171 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/schema/trimble-s6-background-normalized-visual-evidence-v1.schema.json",
+  "title": "TrimbleS6BackgroundNormalizedVisualEvidenceV1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version", "kind", "analyzed_at", "branch", "baseline_commit",
+    "source_sha256", "source_diagnostic", "comparison", "artifact_sha256",
+    "policy_invariants", "release_acceptance", "release_blockers", "boundaries"
+  ],
+  "properties": {
+    "version": { "const": "trimble-s6-background-normalized-visual-evidence.v1" },
+    "kind": { "const": "post_apply_background_normalized_visual_diagnostic" },
+    "analyzed_at": { "type": "string", "format": "date-time" },
+    "branch": { "type": "string", "minLength": 1 },
+    "baseline_commit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "source_sha256": { "$ref": "#/$defs/hash_map" },
+    "source_diagnostic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path", "sha256", "task_id", "source_mutation_task_id",
+        "model_revision", "reference_sha256", "capture_sha256",
+        "prior_capture_foreground_bounds_full_width", "promoted_or_executed"
+      ],
+      "properties": {
+        "path": { "$ref": "#/$defs/project_path" },
+        "sha256": { "$ref": "#/$defs/hex_sha256" },
+        "task_id": { "$ref": "#/$defs/task_id" },
+        "source_mutation_task_id": { "$ref": "#/$defs/task_id" },
+        "model_revision": { "$ref": "#/$defs/tagged_sha256" },
+        "reference_sha256": { "$ref": "#/$defs/tagged_sha256" },
+        "capture_sha256": { "$ref": "#/$defs/tagged_sha256" },
+        "prior_capture_foreground_bounds_full_width": { "const": true },
+        "promoted_or_executed": { "const": false }
+      }
+    },
+    "comparison": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path", "sha256", "comparison_id", "comparison_hash",
+        "segmentation_method", "segmentation_reliable",
+        "reference_bounds_norm", "capture_bounds_norm",
+        "capture_bounds_full_width", "structure", "appearance"
+      ],
+      "properties": {
+        "path": { "$ref": "#/$defs/project_path" },
+        "sha256": { "$ref": "#/$defs/hex_sha256" },
+        "comparison_id": { "type": "string", "pattern": "^background-visual-[0-9a-f]{24}$" },
+        "comparison_hash": { "$ref": "#/$defs/tagged_sha256" },
+        "segmentation_method": { "const": "row_edge_dominant_border_flood.v1" },
+        "segmentation_reliable": { "const": true },
+        "reference_bounds_norm": { "$ref": "#/$defs/vector4" },
+        "capture_bounds_norm": { "$ref": "#/$defs/vector4" },
+        "capture_bounds_full_width": { "const": false },
+        "structure": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "verdict", "intersection_over_union", "dice_coefficient",
+            "aspect_ratio_log_delta", "thresholds"
+          ],
+          "properties": {
+            "verdict": { "enum": ["review", "coarse_structure_pass"] },
+            "intersection_over_union": { "$ref": "#/$defs/unit_interval" },
+            "dice_coefficient": { "$ref": "#/$defs/unit_interval" },
+            "aspect_ratio_log_delta": { "type": "number", "minimum": 0 },
+            "thresholds": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["iou_pass_min", "dice_pass_min", "aspect_ratio_log_delta_max"],
+              "properties": {
+                "iou_pass_min": { "$ref": "#/$defs/unit_interval" },
+                "dice_pass_min": { "$ref": "#/$defs/unit_interval" },
+                "aspect_ratio_log_delta_max": { "type": "number", "minimum": 0 }
+              }
+            }
+          }
+        },
+        "appearance": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "verdict", "mean_absolute_error", "root_mean_square_error",
+            "yellow_fraction_delta", "dark_fraction_delta",
+            "light_neutral_fraction_delta"
+          ],
+          "properties": {
+            "verdict": { "const": "diagnostic_only" },
+            "mean_absolute_error": { "$ref": "#/$defs/unit_interval" },
+            "root_mean_square_error": { "$ref": "#/$defs/unit_interval" },
+            "yellow_fraction_delta": { "$ref": "#/$defs/unit_interval" },
+            "dark_fraction_delta": { "$ref": "#/$defs/unit_interval" },
+            "light_neutral_fraction_delta": { "$ref": "#/$defs/unit_interval" }
+          }
+        }
+      }
+    },
+    "artifact_sha256": { "$ref": "#/$defs/hash_map" },
+    "policy_invariants": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "execution_mode", "queue_runtime_invoked", "sketchup_capture_invoked",
+        "live_model_mutation_performed", "correction_patch_persisted",
+        "approval_challenge_created", "approval_token_exposed_to_agent",
+        "image_content_policy_effect", "agent_visual_capability_required",
+        "agent_local_file_capability_required", "visual_similarity_accepted"
+      ],
+      "properties": {
+        "execution_mode": { "const": "offline_immutable_image_bytes_only" },
+        "queue_runtime_invoked": { "const": false },
+        "sketchup_capture_invoked": { "const": false },
+        "live_model_mutation_performed": { "const": false },
+        "correction_patch_persisted": { "const": false },
+        "approval_challenge_created": { "const": false },
+        "approval_token_exposed_to_agent": { "const": false },
+        "image_content_policy_effect": { "const": "none" },
+        "agent_visual_capability_required": { "const": false },
+        "agent_local_file_capability_required": { "const": false },
+        "visual_similarity_accepted": { "const": false }
+      }
+    },
+    "release_acceptance": { "const": false },
+    "release_blockers": {
+      "type": "array",
+      "minItems": 5,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "coarse_structure_below_fixed_pass_threshold",
+          "appearance_residual_is_diagnostic_only",
+          "camera_pose_comparability_not_independently_established",
+          "single_model_pair_only",
+          "fresh_process_multi_model_visual_proof_incomplete",
+          "cross_version_deferred_by_user"
+        ]
+      }
+    },
+    "boundaries": {
+      "type": "array",
+      "minItems": 5,
+      "items": { "type": "string", "minLength": 1 }
+    }
+  },
+  "$defs": {
+    "hex_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "tagged_sha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "task_id": { "type": "string", "pattern": "^task_[A-Za-z0-9_-]+$" },
+    "unit_interval": { "type": "number", "minimum": 0, "maximum": 1 },
+    "vector4": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": { "type": "number", "minimum": 0, "maximum": 1 }
+    },
+    "project_path": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?!.*\\.\\./).+$"
+    },
+    "hash_map": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": { "$ref": "#/$defs/project_path" },
+      "additionalProperties": { "$ref": "#/$defs/hex_sha256" }
+    }
+  }
+}

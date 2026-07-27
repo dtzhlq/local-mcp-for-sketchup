@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/local-mcp-for-sketchup/current-source-model-target-quality-runner-mock-evidence-v1.schema.json",
+  "title": "Current-source model target-quality runner mock evidence v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version", "kind", "evidence_scope", "runtime", "hashes", "contract",
+    "scenarios", "weak_client", "tests", "hard_gates", "acceptance", "boundary"
+  ],
+  "properties": {
+    "version": { "const": "current-source-model-target-quality-runner-mock-evidence.v1" },
+    "kind": { "const": "current_source_model_target_quality_runner_mock_evidence" },
+    "evidence_scope": { "const": "single_model_live_runner_contract_and_fail_closed_oracle" },
+    "runtime": { "const": "mock-only-no-queue" },
+    "hashes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "src/existing-model-edit-proposer.mjs",
+        "scripts/run-current-source-model-target-quality-live.mjs",
+        "schema/current-source-model-target-quality-live-report-v1.schema.json",
+        "schema/current-source-model-target-quality-runner-mock-evidence-v1.schema.json",
+        "test/current-source-model-target-quality-live.mjs",
+        "test/current-source-model-target-quality-mock-evidence.mjs",
+        "test/model-graph-proposer.mjs"
+      ],
+      "properties": {
+        "src/existing-model-edit-proposer.mjs": { "$ref": "#/$defs/sha256" },
+        "scripts/run-current-source-model-target-quality-live.mjs": { "$ref": "#/$defs/sha256" },
+        "schema/current-source-model-target-quality-live-report-v1.schema.json": { "$ref": "#/$defs/sha256" },
+        "schema/current-source-model-target-quality-runner-mock-evidence-v1.schema.json": { "$ref": "#/$defs/sha256" },
+        "test/current-source-model-target-quality-live.mjs": { "$ref": "#/$defs/sha256" },
+        "test/current-source-model-target-quality-mock-evidence.mjs": { "$ref": "#/$defs/sha256" },
+        "test/model-graph-proposer.mjs": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "contract": {
+      "const": {
+        "report_version": "current-source-model-target-quality-live-report.v1",
+        "explicit_runtime_queue_required": true,
+        "queue_required_flag": true,
+        "prepared_copy_confirmation_required": true,
+        "expected_model_sha256_required": true,
+        "allowed_model_root_required": true,
+        "active_model_switch_performed_by_runner": false,
+        "proposal_only": true
+      }
+    },
+    "scenarios": {
+      "const": {
+        "unique_eligible_maximum_selected_for_review_only": true,
+        "equal_volume_abstention": true,
+        "locked_largest_abstention": true,
+        "ineligible_largest_abstention": true,
+        "incomplete_projection_abstention": true,
+        "empty_projection_abstention": true,
+        "wrong_target_rejected": true,
+        "untrusted_text_cannot_break_geometry_tie": true,
+        "trusted_object_scope_can_resolve_duplicate_bbox_layers": true
+      }
+    },
+    "weak_client": {
+      "const": {
+        "level": "L0",
+        "vision": false,
+        "local_files": false,
+        "structured_output": false,
+        "context": "short",
+        "parallel": false,
+        "max_in_flight": 1
+      }
+    },
+    "tests": {
+      "const": {
+        "runner_assertions": 72,
+        "runner_negative_schema_cases": 7,
+        "proposer_contract_passed": true,
+        "default_live_queue_calls": 0,
+        "mutation_requested": false
+      }
+    },
+    "hard_gates": {
+      "const": {
+        "wrong_object_automatic_execution": 0,
+        "unauthorized_s2_s4_execution": 0,
+        "duplicate_request_duplicate_modification": 0,
+        "ambiguous_target_automatic_selection": 0
+      }
+    },
+    "acceptance": {
+      "const": {
+        "single_model_runner_mock_contract": true,
+        "locked_target_fallback_failed_closed": true,
+        "live_queue_called": false,
+        "multi_model_live_target_quality": false,
+        "live_mutation": false,
+        "release_acceptance": false
+      }
+    },
+    "boundary": {
+      "const": "This source-bound mock evidence validates the one-model live runner contract, its independent structural oracle, and fail-closed locked, tied, incomplete, and wrong-target behavior. It does not prove any live SKP result, multi-model target quality, mutation correctness, or release acceptance."
+    }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" }
+  }
+}

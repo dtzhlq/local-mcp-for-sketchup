@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/local-mcp-for-sketchup/immutable-image-artifact-v1.schema.json",
+  "title": "Immutable Image Artifact v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "kind",
+    "content_trust",
+    "policy_effect",
+    "handle",
+    "sha256",
+    "media_type",
+    "format",
+    "size_bytes",
+    "width",
+    "height",
+    "channels",
+    "pages",
+    "frames",
+    "total_pixels",
+    "created_at",
+    "record_integrity_sha256"
+  ],
+  "properties": {
+    "version": { "const": "immutable-image-artifact.v1" },
+    "kind": { "const": "immutable_image_artifact" },
+    "content_trust": { "const": "untrusted_data" },
+    "policy_effect": { "const": "none" },
+    "handle": { "type": "string", "pattern": "^image-artifact:sha256:[0-9a-f]{64}$" },
+    "sha256": { "$ref": "#/$defs/sha256" },
+    "media_type": { "enum": ["image/png", "image/jpeg", "image/webp", "image/tiff"] },
+    "format": { "enum": ["png", "jpeg", "webp", "tiff"] },
+    "size_bytes": { "type": "integer", "minimum": 1 },
+    "width": { "type": "integer", "minimum": 1 },
+    "height": { "type": "integer", "minimum": 1 },
+    "channels": { "type": "integer", "minimum": 1 },
+    "pages": { "type": "integer", "minimum": 1 },
+    "frames": { "type": "integer", "minimum": 1 },
+    "total_pixels": { "type": "integer", "minimum": 1 },
+    "created_at": { "type": "string", "format": "date-time" },
+    "record_integrity_sha256": { "$ref": "#/$defs/sha256" }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    }
+  }
+}

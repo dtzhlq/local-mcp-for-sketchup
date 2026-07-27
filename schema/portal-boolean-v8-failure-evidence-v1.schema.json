@@ -1,0 +1,349 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/local-mcp-for-sketchup/portal-boolean-v8-failure-evidence-v1.schema.json",
+  "title": "Portal Boolean v8 confirmed precommit abort public evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version", "kind", "captured_at", "branch", "result", "evidence_scope",
+    "artifact_bindings", "source_contract_bindings", "workflow", "runtime_contract", "approval",
+    "operation", "failure", "post_abort_model", "source", "recovery",
+    "release_acceptance", "boundary"
+  ],
+  "properties": {
+    "version": { "const": "portal-boolean-v8-failure-evidence.v1" },
+    "kind": { "const": "portal_boolean_v8_precommit_abort_evidence" },
+    "captured_at": { "const": "2026-07-21T07:05:28.460Z" },
+    "branch": { "const": "codex/agent-contract-v1" },
+    "result": { "const": "confirmed_precommit_abort" },
+    "evidence_scope": { "const": "portal_structure_disposable_copy_s3_apply_failure" },
+    "artifact_bindings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["apply_precommit_abort", "post_abort_readonly_adoption", "status_after_failure"],
+      "properties": {
+        "apply_precommit_abort": { "$ref": "#/$defs/abortArtifact" },
+        "post_abort_readonly_adoption": { "$ref": "#/$defs/adoptionArtifact" },
+        "status_after_failure": { "$ref": "#/$defs/statusArtifact" }
+      }
+    },
+    "source_contract_bindings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["prepare_evidence", "readonly_discovery_evidence"],
+      "properties": {
+        "prepare_evidence": { "$ref": "#/$defs/prepareContract" },
+        "readonly_discovery_evidence": { "$ref": "#/$defs/discoveryContract" }
+      }
+    },
+    "workflow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "run_id", "runtime", "task_id", "task_state", "risk_level"],
+      "properties": {
+        "version": { "const": "portal-structure-s3-boolean-live.v8" },
+        "run_id": { "const": "2026-07-21T06-52-17-076Z-5d8f4640" },
+        "runtime": { "const": "queue" },
+        "task_id": { "const": "task_182054a9-31eb-49f0-90ca-7cc21a8ce9d8" },
+        "task_state": { "const": "failed" },
+        "risk_level": { "const": "S3" }
+      }
+    },
+    "runtime_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "capability_version", "manifest_version", "model_revision_strategy",
+        "boolean_operations_sha256", "model_revision_source_sha256",
+        "historical_exact_loaded_runtime"
+      ],
+      "properties": {
+        "capability_version": { "const": "0.1.0-rc.2-capabilities.7" },
+        "manifest_version": { "const": "2026-07-agent-contract-v1.4" },
+        "model_revision_strategy": { "const": "definition-merkle.v2" },
+        "boolean_operations_sha256": { "const": "sha256:2e3d686ba926f8b43f5a9847e05471587a217b536fd901811f10444948c2c444" },
+        "model_revision_source_sha256": { "const": "sha256:b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134" },
+        "historical_exact_loaded_runtime": { "const": true }
+      }
+    },
+    "approval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "plan_id", "plan_hash", "status_after_failure", "approval_reusable",
+        "same_task_retry_allowed", "previous_plan_or_approval_replay_allowed",
+        "agent_self_approval_accepted", "private_approval_material_exposed"
+      ],
+      "properties": {
+        "plan_id": { "const": "existing-edit-7e458d809376c461e913be6e" },
+        "plan_hash": { "const": "sha256:8fb5cd2ef92c306d6593bbe83737adca01c875343e586de9d3ff57f93f695bea" },
+        "status_after_failure": { "const": "consumed_failed" },
+        "approval_reusable": { "const": false },
+        "same_task_retry_allowed": { "const": false },
+        "previous_plan_or_approval_replay_allowed": { "const": false },
+        "agent_self_approval_accepted": { "const": false },
+        "private_approval_material_exposed": { "const": false }
+      }
+    },
+    "operation": { "$ref": "#/$defs/operation" },
+    "failure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "error_code", "phase", "outcome_unknown", "mutation_committed",
+        "rollback_confirmed", "evidence_conflict", "commit_state", "abort_succeeded",
+        "durable_receipt_confirmed", "durable_receipt_present", "automatic_retry_performed",
+        "automatic_replay_performed", "duplicate_mutation_observed", "exact_solid_overlap"
+      ],
+      "properties": {
+        "error_code": { "const": "MUTATION_EXECUTION_FAILED" },
+        "phase": { "const": "precommit_execution" },
+        "outcome_unknown": { "const": false },
+        "mutation_committed": { "const": false },
+        "rollback_confirmed": { "const": true },
+        "evidence_conflict": { "const": false },
+        "commit_state": { "const": "not_committed" },
+        "abort_succeeded": { "const": true },
+        "durable_receipt_confirmed": { "const": false },
+        "durable_receipt_present": { "const": false },
+        "automatic_retry_performed": { "const": false },
+        "automatic_replay_performed": { "const": false },
+        "duplicate_mutation_observed": { "const": false },
+        "exact_solid_overlap": { "$ref": "#/$defs/exactAborted" }
+      }
+    },
+    "post_abort_model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "verification_mode", "document_id", "revision", "revision_strategy", "revision_complete",
+        "revision_indexed", "revision_total_seen", "revision_unique_entities",
+        "revision_reachable_definitions", "recursive_total_seen", "recursive_truncated",
+        "top_level_groups", "model_modified", "pair_baseline_unchanged", "target", "tool"
+      ],
+      "properties": {
+        "verification_mode": { "const": "read_only_adoption" },
+        "document_id": { "const": "document_baaef9d1d43e79fc755c54b849181c30406b8a10f3ccbf64441ab99af896baba" },
+        "revision": { "$ref": "#/$defs/modelRevision" },
+        "revision_strategy": { "const": "definition-merkle.v2" },
+        "revision_complete": { "const": true },
+        "revision_indexed": { "const": 11474 },
+        "revision_total_seen": { "const": 11474 },
+        "revision_unique_entities": { "const": 9588 },
+        "revision_reachable_definitions": { "const": 11 },
+        "recursive_total_seen": { "const": 11474 },
+        "recursive_truncated": { "const": false },
+        "top_level_groups": { "const": 18 },
+        "model_modified": { "const": false },
+        "pair_baseline_unchanged": { "const": true },
+        "target": { "$ref": "#/$defs/targetBaseline" },
+        "tool": { "$ref": "#/$defs/toolBaseline" }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scope", "path", "size_bytes", "sha256_before", "sha256_after", "bytes_unchanged",
+        "original_model_in_scope", "source_overwritten"
+      ],
+      "properties": {
+        "scope": { "const": "workspace_disposable_copy" },
+        "path": { "const": "output/real-model-reliability/intake/live-work/preflight-176129c4-e1ef-4b53-b991-8f7b936df118/candidate_e2ef3c5f82332f9174066759/candidate.skp" },
+        "size_bytes": { "const": 608815 },
+        "sha256_before": { "const": "sha256:4a75190929bfa47b1506a8ed037a08e0f08e1632169d9bb550c4a9219b43e90c" },
+        "sha256_after": { "const": "sha256:4a75190929bfa47b1506a8ed037a08e0f08e1632169d9bb550c4a9219b43e90c" },
+        "bytes_unchanged": { "const": true },
+        "original_model_in_scope": { "const": false },
+        "source_overwritten": { "const": false }
+      }
+    },
+    "recovery": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "post_abort_readonly_check_completed", "queue_after_recovery", "saved_result_copy_created",
+        "new_review_required_before_any_retry", "next_action"
+      ],
+      "properties": {
+        "post_abort_readonly_check_completed": { "const": true },
+        "queue_after_recovery": { "$ref": "#/$defs/observedCleanQueue" },
+        "saved_result_copy_created": { "const": false },
+        "new_review_required_before_any_retry": { "const": true },
+        "next_action": { "const": "Correct the candidate or implementation, then create a new reviewed task. Do not retry or replay this consumed task." }
+      }
+    },
+    "release_acceptance": { "const": false },
+    "boundary": { "type": "string", "minLength": 400, "maxLength": 1500 }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "rawArtifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "size_bytes", "default_verifier_access", "verification_mode"],
+      "properties": {
+        "path": { "type": "string", "pattern": "^output/real-model-reliability/boolean-live/portal-structure/2026-07-21T06-52-17-076Z-5d8f4640/[a-z0-9-]+\\.json$" },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "size_bytes": { "type": "integer", "minimum": 1 },
+        "default_verifier_access": { "const": "forbidden" },
+        "verification_mode": { "const": "explicit_local_capture_only" }
+      }
+    },
+    "abortArtifact": {
+      "allOf": [
+        { "$ref": "#/$defs/rawArtifact" },
+        { "properties": {
+          "path": { "const": "output/real-model-reliability/boolean-live/portal-structure/2026-07-21T06-52-17-076Z-5d8f4640/apply-precommit-abort.json" },
+          "sha256": { "const": "sha256:eec68904436a4f46d04ed97a782aaf37150dc91ca4c9beab101f9d878475bd33" },
+          "size_bytes": { "const": 1729 }
+        } }
+      ]
+    },
+    "adoptionArtifact": {
+      "allOf": [
+        { "$ref": "#/$defs/rawArtifact" },
+        { "properties": {
+          "path": { "const": "output/real-model-reliability/boolean-live/portal-structure/2026-07-21T06-52-17-076Z-5d8f4640/post-abort-readonly-adoption.json" },
+          "sha256": { "const": "sha256:c62bf70b3d6a689a198d7821307be7b6ad90bd4d0c57f03f3044d983daee758a" },
+          "size_bytes": { "const": 39083871 }
+        } }
+      ]
+    },
+    "statusArtifact": {
+      "allOf": [
+        { "$ref": "#/$defs/rawArtifact" },
+        { "properties": {
+          "path": { "const": "output/real-model-reliability/boolean-live/portal-structure/2026-07-21T06-52-17-076Z-5d8f4640/status-terminal.json" },
+          "sha256": { "const": "sha256:adc1525f2e32e3e98950124e43960739a1b4d78d53e56cf869386a37b1e34872" },
+          "size_bytes": { "const": 1156 }
+        } }
+      ]
+    },
+    "publicContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": { "type": "string", "pattern": "^docs/evidence/[a-z0-9-]+\\.json$" },
+        "sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "prepareContract": {
+      "allOf": [
+        { "$ref": "#/$defs/publicContract" },
+        { "properties": {
+          "path": { "const": "docs/evidence/portal-boolean-v8-prepare-2026-07-21.json" },
+          "sha256": { "const": "sha256:344cd39f06d3f4fe74a098465e67523259ac754999de5fd875ae4381d727ed7c" }
+        } }
+      ]
+    },
+    "discoveryContract": {
+      "allOf": [
+        { "$ref": "#/$defs/publicContract" },
+        { "properties": {
+          "path": { "const": "docs/evidence/portal-boolean-v8-readonly-discovery-2026-07-21.json" },
+          "sha256": { "const": "sha256:c3490e938bd2bfbdce5a26461c0450e698048d29dbed09459eabd4cae20e8a30" }
+        } }
+      ]
+    },
+    "operation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["op", "target_path", "tool_paths", "result_id", "result_name", "keep_originals", "keep_tools", "risk_level"],
+      "properties": {
+        "op": { "const": "boolean_difference" },
+        "target_path": { "const": "pid:11543" },
+        "tool_paths": {
+          "type": "array",
+          "prefixItems": [{ "const": "pid:11635" }],
+          "minItems": 1,
+          "maxItems": 1
+        },
+        "result_id": { "const": "portal-structure-s3-boolean-result-v8" },
+        "result_name": { "const": "Portal_S3_Boolean_Result_v8" },
+        "keep_originals": { "const": true },
+        "keep_tools": { "const": true },
+        "risk_level": { "const": "S3" }
+      }
+    },
+    "exactAborted": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "verified", "verification_stage"],
+      "properties": {
+        "status": { "const": "not_verified_atomic_trial_aborted" },
+        "verified": { "const": false },
+        "verification_stage": { "const": "review_gated_atomic_apply" }
+      }
+    },
+    "modelRevision": { "const": "sha256:c03d317c25883606f0f8d7819610823118d916694d5a5d323deabe2ac7bcdf36" },
+    "bbox": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["min", "max"],
+      "properties": {
+        "min": { "type": "array", "items": { "type": "number" }, "minItems": 3, "maxItems": 3 },
+        "max": { "type": "array", "items": { "type": "number" }, "minItems": 3, "maxItems": 3 }
+      }
+    },
+    "targetBaseline": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["entity_path", "faces", "edges", "vertices", "volume", "world_bounding_box", "manifold", "manifold_revision"],
+      "properties": {
+        "entity_path": { "const": "pid:11543" },
+        "faces": { "const": 38 },
+        "edges": { "const": 108 },
+        "vertices": { "const": 72 },
+        "volume": { "const": 61350393.972267 },
+        "world_bounding_box": {
+          "allOf": [
+            { "$ref": "#/$defs/bbox" },
+            { "properties": {
+              "min": { "const": [-7286.931445, 376.95, -1916.983936] },
+              "max": { "const": [-4037.70638, 642.25, -318.145223] }
+            } }
+          ]
+        },
+        "manifold": { "const": true },
+        "manifold_revision": { "$ref": "#/$defs/modelRevision" }
+      }
+    },
+    "toolBaseline": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["entity_path", "faces", "edges", "vertices", "volume", "world_bounding_box", "manifold", "manifold_revision"],
+      "properties": {
+        "entity_path": { "const": "pid:11635" },
+        "faces": { "const": 8 },
+        "edges": { "const": 18 },
+        "vertices": { "const": 12 },
+        "volume": { "const": 723623.440001 },
+        "world_bounding_box": {
+          "allOf": [
+            { "$ref": "#/$defs/bbox" },
+            { "properties": {
+              "min": { "const": [-6024.107717, 376.95, -1510.638035] },
+              "max": { "const": [-5830.315299, 503.15, -814.163406] }
+            } }
+          ]
+        },
+        "manifold": { "const": true },
+        "manifold_revision": { "$ref": "#/$defs/modelRevision" }
+      }
+    },
+    "observedCleanQueue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["queue", "processing", "responses", "lock_exists", "evidence_mode"],
+      "properties": {
+        "queue": { "const": 0 },
+        "processing": { "const": 0 },
+        "responses": { "const": 0 },
+        "lock_exists": { "const": false },
+        "evidence_mode": { "const": "orchestrator_observation_not_bundled" }
+      }
+    }
+  }
+}

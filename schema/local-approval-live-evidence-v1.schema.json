@@ -1,0 +1,321 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/schema/local-approval-live-evidence-v1.schema.json",
+  "title": "Current-source trusted local approval live evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "kind",
+    "captured_at",
+    "branch",
+    "baseline_commit",
+    "evidence_scope",
+    "runtime",
+    "installed_source",
+    "failure_discovery",
+    "remediation",
+    "successful_attempt",
+    "artifact_sha256",
+    "release_acceptance",
+    "boundaries"
+  ],
+  "properties": {
+    "version": { "const": "local-approval-live-evidence.v1" },
+    "kind": { "const": "trusted_local_approval_s2_live_evidence" },
+    "captured_at": { "type": "string", "minLength": 20 },
+    "branch": { "const": "codex/agent-contract-v1" },
+    "baseline_commit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "evidence_scope": { "const": "current_source_single_model_s2_trusted_approval_and_receipt" },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "plugin_version",
+        "capability_version",
+        "manifest_version",
+        "sketchup_version",
+        "ruby_version",
+        "compatibility_ok",
+        "fresh_process",
+        "session_id"
+      ],
+      "properties": {
+        "name": { "const": "queue" },
+        "plugin_version": { "const": "0.1.0-rc.2" },
+        "capability_version": { "const": "0.1.0-rc.2-capabilities.3" },
+        "manifest_version": { "const": "2026-07-agent-contract-v1.1" },
+        "sketchup_version": { "type": "string", "minLength": 1 },
+        "ruby_version": { "type": "string", "minLength": 1 },
+        "compatibility_ok": { "const": true },
+        "fresh_process": { "const": true },
+        "session_id": { "type": "string", "pattern": "^[0-9a-f-]{36}$" }
+      }
+    },
+    "installed_source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "workspace_plugin_main_sha256",
+        "installed_plugin_main_sha256",
+        "exact_hash_match",
+        "source_sha256"
+      ],
+      "properties": {
+        "workspace_plugin_main_sha256": { "$ref": "#/$defs/sha256" },
+        "installed_plugin_main_sha256": { "$ref": "#/$defs/sha256" },
+        "exact_hash_match": { "const": true },
+        "source_sha256": {
+          "type": "object",
+          "minProperties": 5,
+          "propertyNames": { "pattern": "^(src|scripts)/" },
+          "additionalProperties": { "$ref": "#/$defs/sha256" }
+        }
+      }
+    },
+    "failure_discovery": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "task_id",
+        "risk_level",
+        "real_user_approval",
+        "native_mutation_committed",
+        "task_completion_reported_live_mutation",
+        "task_state",
+        "error_code",
+        "durable_task_receipt_recorded",
+        "active_model_identity_changed",
+        "root_cause",
+        "queue_after"
+      ],
+      "properties": {
+        "task_id": { "$ref": "#/$defs/taskId" },
+        "risk_level": { "const": "S2" },
+        "real_user_approval": { "const": true },
+        "native_mutation_committed": { "const": true },
+        "task_completion_reported_live_mutation": { "const": false },
+        "task_state": { "const": "failed" },
+        "error_code": { "const": "MODEL_IDENTITY_MISMATCH" },
+        "durable_task_receipt_recorded": { "const": false },
+        "active_model_identity_changed": { "const": true },
+        "root_cause": { "const": "versioned_save_used_save_as" },
+        "queue_after": { "$ref": "#/$defs/cleanQueue" }
+      }
+    },
+    "remediation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "api",
+        "keep_session",
+        "save_mode",
+        "active_model_identity_preserved",
+        "plugin_restart_required",
+        "ruby_contract_tests_passed",
+        "source_contract_tests_passed"
+      ],
+      "properties": {
+        "api": { "const": "Sketchup::Model#save_copy" },
+        "keep_session": { "const": true },
+        "save_mode": { "const": "copy" },
+        "active_model_identity_preserved": { "const": true },
+        "plugin_restart_required": { "const": true },
+        "ruby_contract_tests_passed": { "const": true },
+        "source_contract_tests_passed": { "const": true }
+      }
+    },
+    "successful_attempt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "task_id",
+        "plan_id",
+        "plan_hash",
+        "challenge_id",
+        "model_key",
+        "risk_level",
+        "allowed_operations",
+        "real_user_approval",
+        "approval_token_exposed_to_agent",
+        "challenge_status",
+        "private_token_retained_after_consumption",
+        "task_state",
+        "native_commit_state",
+        "receipt",
+        "model_revision_before",
+        "model_revision_after",
+        "target",
+        "save",
+        "geometry_delta",
+        "capture",
+        "queue_before",
+        "queue_after"
+      ],
+      "properties": {
+        "task_id": { "$ref": "#/$defs/taskId" },
+        "plan_id": { "type": "string", "pattern": "^existing-edit-[0-9a-f]{24}$" },
+        "plan_hash": { "$ref": "#/$defs/prefixedSha256" },
+        "challenge_id": { "type": "string", "pattern": "^approval_[0-9a-f-]{36}$" },
+        "model_key": { "type": "string", "pattern": "^model_[0-9a-f]{32}$" },
+        "risk_level": { "const": "S2" },
+        "allowed_operations": {
+          "type": "array",
+          "prefixItems": [{ "const": "rename" }],
+          "items": false,
+          "minItems": 1,
+          "maxItems": 1
+        },
+        "real_user_approval": { "const": true },
+        "approval_token_exposed_to_agent": { "const": false },
+        "challenge_status": { "const": "consumed" },
+        "private_token_retained_after_consumption": { "const": false },
+        "task_state": { "const": "completed" },
+        "native_commit_state": { "const": "committed" },
+        "receipt": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["receipt_id", "status", "integrity_hmac_present"],
+          "properties": {
+            "receipt_id": { "type": "string", "pattern": "^mutation-receipt-[0-9a-f]{24}$" },
+            "status": { "const": "finalized" },
+            "integrity_hmac_present": { "const": true }
+          }
+        },
+        "model_revision_before": { "$ref": "#/$defs/prefixedSha256" },
+        "model_revision_after": { "$ref": "#/$defs/prefixedSha256" },
+        "target": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "entity_path",
+            "persistent_id",
+            "before_name",
+            "after_name",
+            "same_persistent_entity",
+            "affected_instance_count",
+            "shared_definition"
+          ],
+          "properties": {
+            "entity_path": { "type": "string", "pattern": "^pid:[0-9.]+$" },
+            "persistent_id": { "type": "string", "pattern": "^[0-9]+$" },
+            "before_name": { "type": "string", "minLength": 1 },
+            "after_name": { "type": "string", "minLength": 1 },
+            "same_persistent_entity": { "const": true },
+            "affected_instance_count": { "const": 1 },
+            "shared_definition": { "const": false }
+          }
+        },
+        "save": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "mode",
+            "active_model_identity_preserved",
+            "identity_attestation_matches_pre_save_document",
+            "artifact_size_bytes"
+          ],
+          "properties": {
+            "mode": { "const": "copy" },
+            "active_model_identity_preserved": { "const": true },
+            "identity_attestation_matches_pre_save_document": { "const": true },
+            "artifact_size_bytes": { "type": "integer", "minimum": 1 }
+          }
+        },
+        "geometry_delta": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["faces", "edges", "vertices", "groups", "instances", "bbox_w", "bbox_d", "bbox_h", "warnings"],
+          "properties": {
+            "faces": { "const": 0 },
+            "edges": { "const": 0 },
+            "vertices": { "const": 0 },
+            "groups": { "const": 0 },
+            "instances": { "const": 0 },
+            "bbox_w": { "const": 0 },
+            "bbox_d": { "const": 0 },
+            "bbox_h": { "const": 0 },
+            "warnings": { "const": 0 }
+          }
+        },
+        "capture": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["sha256", "size_bytes", "width", "height", "state_unchanged", "view_unchanged"],
+          "properties": {
+            "sha256": { "$ref": "#/$defs/sha256" },
+            "size_bytes": { "type": "integer", "minimum": 1 },
+            "width": { "const": 1280 },
+            "height": { "const": 720 },
+            "state_unchanged": { "const": true },
+            "view_unchanged": { "const": true }
+          }
+        },
+        "queue_before": { "$ref": "#/$defs/cleanQueue" },
+        "queue_after": { "$ref": "#/$defs/cleanQueue" }
+      }
+    },
+    "artifact_sha256": {
+      "type": "object",
+      "minProperties": 8,
+      "propertyNames": { "pattern": "^[a-z0-9_]+$" },
+      "additionalProperties": { "$ref": "#/$defs/sha256" }
+    },
+    "release_acceptance": { "const": false },
+    "boundaries": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "model_count",
+        "proven_risk_levels",
+        "s3_s4_proven",
+        "external_reference_used",
+        "multi_model_corpus_proven",
+        "version_matrix_proven",
+        "native_commit_to_task_receipt_gap_eliminated",
+        "universal_exactly_once_proven",
+        "reference_image_pending",
+        "notes"
+      ],
+      "properties": {
+        "model_count": { "const": 1 },
+        "proven_risk_levels": {
+          "type": "array",
+          "prefixItems": [{ "const": "S2" }],
+          "items": false,
+          "minItems": 1,
+          "maxItems": 1
+        },
+        "s3_s4_proven": { "const": false },
+        "external_reference_used": { "const": false },
+        "multi_model_corpus_proven": { "const": false },
+        "version_matrix_proven": { "const": false },
+        "native_commit_to_task_receipt_gap_eliminated": { "const": false },
+        "universal_exactly_once_proven": { "const": false },
+        "reference_image_pending": { "const": true },
+        "notes": {
+          "type": "array",
+          "minItems": 2,
+          "items": { "type": "string", "minLength": 20 }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "prefixedSha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "taskId": { "type": "string", "pattern": "^task_[0-9a-f-]{36}$" },
+    "cleanQueue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["queue", "processing", "responses", "lock_exists"],
+      "properties": {
+        "queue": { "const": 0 },
+        "processing": { "const": 0 },
+        "responses": { "const": 0 },
+        "lock_exists": { "const": false }
+      }
+    }
+  }
+}

@@ -1,0 +1,201 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/schema/trimble-s6-structured-reference-diagnostic-live-evidence-v1.schema.json",
+  "title": "Trimble S6 supplemental structured-reference live evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "kind",
+    "captured_at",
+    "branch",
+    "baseline_commit",
+    "source_sha256",
+    "runtime",
+    "source_mutation",
+    "diagnostic",
+    "model",
+    "reference",
+    "capture",
+    "structured_metrics",
+    "operator_visual_review",
+    "policy_invariants",
+    "artifact_sha256",
+    "release_acceptance",
+    "release_blockers",
+    "boundaries"
+  ],
+  "properties": {
+    "version": { "const": "trimble-s6-structured-reference-diagnostic-live-evidence.v1" },
+    "kind": { "const": "post_apply_external_reference_structured_diagnostic" },
+    "captured_at": { "type": "string", "minLength": 20 },
+    "branch": { "const": "codex/agent-contract-v1" },
+    "baseline_commit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "source_sha256": {
+      "type": "object",
+      "minProperties": 5,
+      "propertyNames": { "pattern": "^(src|scripts|test)/" },
+      "additionalProperties": { "$ref": "#/$defs/sha256" }
+    },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "plugin_version", "capability_version", "manifest_version", "compatibility_ok", "fresh_process_proven_in_this_run"],
+      "properties": {
+        "name": { "const": "queue" },
+        "plugin_version": { "const": "0.1.0-rc.2" },
+        "capability_version": { "const": "0.1.0-rc.2-capabilities.7" },
+        "manifest_version": { "const": "2026-07-agent-contract-v1.4" },
+        "compatibility_ok": { "const": true },
+        "fresh_process_proven_in_this_run": { "const": false }
+      }
+    },
+    "source_mutation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["task_id", "plan_id", "plan_hash", "model_revision_after"],
+      "properties": {
+        "task_id": { "$ref": "#/$defs/taskId" },
+        "plan_id": { "type": "string", "pattern": "^existing-edit-[0-9a-f]{24}$" },
+        "plan_hash": { "$ref": "#/$defs/prefixedSha256" },
+        "model_revision_after": { "$ref": "#/$defs/prefixedSha256" }
+      }
+    },
+    "diagnostic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "task_id", "task_state", "correction_patch_id", "correction_patch_hash", "promoted_or_executed", "promotion_available"],
+      "properties": {
+        "path": { "type": "string", "pattern": "^output/live-validation/visual-correction/.+/structured-reference-diagnostic/front-full-v4/diagnostic\\.json$" },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "task_id": { "$ref": "#/$defs/taskId" },
+        "task_state": { "const": "diagnostic_completed" },
+        "correction_patch_id": { "type": "string", "pattern": "^visual-patch-[0-9a-f]{24}$" },
+        "correction_patch_hash": { "$ref": "#/$defs/prefixedSha256" },
+        "promoted_or_executed": { "const": false },
+        "promotion_available": { "const": false }
+      }
+    },
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["basename", "disk_sha256_before", "disk_sha256_after", "disk_bytes_unchanged", "modified_state_unchanged", "save_model"],
+      "properties": {
+        "basename": { "const": "Trimble S6.disposable.skp" },
+        "disk_sha256_before": { "$ref": "#/$defs/sha256" },
+        "disk_sha256_after": { "$ref": "#/$defs/sha256" },
+        "disk_bytes_unchanged": { "const": true },
+        "modified_state_unchanged": { "const": true },
+        "save_model": { "const": false }
+      }
+    },
+    "reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ordinal", "role", "sha256", "width", "height", "content_trust", "policy_effect"],
+      "properties": {
+        "ordinal": { "const": 3 },
+        "role": { "const": "tripod_geometry" },
+        "sha256": { "$ref": "#/$defs/prefixedSha256" },
+        "width": { "const": 770 },
+        "height": { "const": 1460 },
+        "content_trust": { "const": "untrusted_data" },
+        "policy_effect": { "const": "none" }
+      }
+    },
+    "capture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sha256", "width", "height", "full_tripod_visible", "visual_review_automated", "state_unchanged", "view_unchanged", "camera_hash"],
+      "properties": {
+        "sha256": { "$ref": "#/$defs/prefixedSha256" },
+        "width": { "const": 1280 },
+        "height": { "const": 720 },
+        "full_tripod_visible": { "const": true },
+        "visual_review_automated": { "const": false },
+        "state_unchanged": { "const": true },
+        "view_unchanged": { "const": true },
+        "camera_hash": { "$ref": "#/$defs/prefixedSha256" }
+      }
+    },
+    "structured_metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["alignment_method", "foreground_center_delta_norm", "difference_method", "mean_absolute_error", "root_mean_square_error", "compared_pixels", "capture_foreground_bounds_full_width", "computed", "acceptance", "verdict"],
+      "properties": {
+        "alignment_method": { "const": "normalized_canvas_and_foreground_centroid.v1" },
+        "foreground_center_delta_norm": { "type": "number", "minimum": 0 },
+        "difference_method": { "const": "normalized_rgb.v1" },
+        "mean_absolute_error": { "type": "number", "minimum": 0, "maximum": 1 },
+        "root_mean_square_error": { "type": "number", "minimum": 0, "maximum": 1 },
+        "compared_pixels": { "const": 16384 },
+        "capture_foreground_bounds_full_width": { "const": true },
+        "computed": { "const": true },
+        "acceptance": { "const": false },
+        "verdict": { "const": "review" }
+      }
+    },
+    "operator_visual_review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["method", "full_tripod_visible", "automated", "visual_similarity_accepted"],
+      "properties": {
+        "method": { "const": "fresh_ui_capture_review" },
+        "full_tripod_visible": { "const": true },
+        "automated": { "const": false },
+        "visual_similarity_accepted": { "const": false }
+      }
+    },
+    "policy_invariants": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["live_model_mutation_performed", "correction_patch_persisted", "correction_patch_promotion_available", "approval_challenge_created", "approval_token_exposed_to_agent", "queue_before", "queue_after"],
+      "properties": {
+        "live_model_mutation_performed": { "const": false },
+        "correction_patch_persisted": { "const": false },
+        "correction_patch_promotion_available": { "const": false },
+        "approval_challenge_created": { "const": false },
+        "approval_token_exposed_to_agent": { "const": false },
+        "queue_before": { "$ref": "#/$defs/cleanQueue" },
+        "queue_after": { "$ref": "#/$defs/cleanQueue" }
+      }
+    },
+    "artifact_sha256": {
+      "type": "object",
+      "minProperties": 8,
+      "propertyNames": { "pattern": "^output/live-validation/visual-correction/" },
+      "additionalProperties": { "$ref": "#/$defs/sha256" }
+    },
+    "release_acceptance": { "const": false },
+    "release_blockers": {
+      "type": "array",
+      "minItems": 4,
+      "allOf": [
+        { "contains": { "const": "camera_render_background_comparability_not_established" } },
+        { "contains": { "const": "foreground_segmentation_classifies_full_capture_width" } },
+        { "contains": { "const": "model_not_saved_or_reopened" } }
+      ]
+    },
+    "boundaries": {
+      "type": "array",
+      "minItems": 4,
+      "items": { "type": "string", "minLength": 1 }
+    }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "prefixedSha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "taskId": { "type": "string", "pattern": "^task_[0-9a-f-]{36}$" },
+    "cleanQueue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["queue", "processing", "responses", "lock_exists"],
+      "properties": {
+        "queue": { "const": 0 },
+        "processing": { "const": 0 },
+        "responses": { "const": 0 },
+        "lock_exists": { "const": false }
+      }
+    }
+  }
+}

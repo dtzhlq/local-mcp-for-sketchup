@@ -1,0 +1,168 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/local-mcp-for-sketchup/current-source-agent-readonly-live-report-v1.schema.json",
+  "title": "Current-source Agent Gateway live read-only report v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version", "kind", "captured_at", "result", "runtime", "model", "agent_gateway",
+    "safety", "artifact_hashes", "acceptance", "boundary"
+  ],
+  "properties": {
+    "version": { "const": "current-source-agent-readonly-live-report.v1" },
+    "kind": { "const": "current_source_agent_readonly_live_report" },
+    "captured_at": { "const": "2026-07-21T14:41:37.816Z" },
+    "result": { "const": "pass" },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "plugin_version", "sketchup_version", "ruby_version", "capability_version",
+        "manifest_version", "dsl_version", "occurrence_contract", "model_revision_strategy",
+        "boolean_operations_sha256", "model_revision_source_sha256", "compatibility_ok"
+      ],
+      "properties": {
+        "plugin_version": { "const": "0.1.0-rc.2" },
+        "sketchup_version": { "const": "26.2.242" },
+        "ruby_version": { "const": "3.2.2" },
+        "capability_version": { "const": "0.1.0-rc.2-capabilities.7" },
+        "manifest_version": { "const": "2026-07-agent-contract-v1.4" },
+        "dsl_version": { "const": 1 },
+        "occurrence_contract": { "const": "canonical-occurrence-path.v1" },
+        "model_revision_strategy": { "const": "definition-merkle.v2" },
+        "boolean_operations_sha256": { "const": "sha256:b98fd554894f629359651f40929cf30a7122ac90ba01217a662bea2f4c407610" },
+        "model_revision_source_sha256": { "const": "sha256:b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134" },
+        "compatibility_ok": { "const": true }
+      }
+    },
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fixture_handle", "label_trust", "bytes_sha256_before", "bytes_sha256_after",
+        "bytes_unchanged", "size_bytes", "model_revision", "model_revision_complete",
+        "revision_indexed", "revision_total_seen", "model_modified_before",
+        "model_modified_after", "source_path_disclosed"
+      ],
+      "properties": {
+        "fixture_handle": { "const": "fixture:sha256:7e649c220a265a5e27a24aae2ed9687427186c06ba335616d5cdc0191966ce72" },
+        "label_trust": { "const": "untrusted_data" },
+        "bytes_sha256_before": { "$ref": "#/$defs/modelBytesHash" },
+        "bytes_sha256_after": { "$ref": "#/$defs/modelBytesHash" },
+        "bytes_unchanged": { "const": true },
+        "size_bytes": { "const": 142149 },
+        "model_revision": { "const": "sha256:d540fdc8697e93f27a0312f75d382b6d5901597ef87e6673980fd21e97e3abb4" },
+        "model_revision_complete": { "const": true },
+        "revision_indexed": { "const": 5859 },
+        "revision_total_seen": { "const": 5859 },
+        "model_modified_before": { "const": false },
+        "model_modified_after": { "const": false },
+        "source_path_disclosed": { "const": false }
+      }
+    },
+    "agent_gateway": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "interface_level", "client_profile", "understand_task_state", "understand_entity_count",
+        "proposal_task_state", "proposal_requires_clarification", "proposal_candidate_count",
+        "proposal_selected_target_count", "proposal_operation_count", "proposal_execution_allowed",
+        "proposal_risk_level", "proposal_next_action", "persisted_model_graph",
+        "public_artifact_pagination_used", "model_content_trust"
+      ],
+      "properties": {
+        "interface_level": { "const": "guided" },
+        "client_profile": { "const": "short_context_no_files_no_vision_single_tool" },
+        "understand_task_state": { "const": "completed" },
+        "understand_entity_count": { "const": 1 },
+        "proposal_task_state": { "const": "awaiting_input" },
+        "proposal_requires_clarification": { "const": true },
+        "proposal_candidate_count": { "const": 5 },
+        "proposal_selected_target_count": { "const": 0 },
+        "proposal_operation_count": { "const": 0 },
+        "proposal_execution_allowed": { "const": false },
+        "proposal_risk_level": { "const": "S2" },
+        "proposal_next_action": { "const": "submit_task_input" },
+        "persisted_model_graph": { "const": true },
+        "public_artifact_pagination_used": { "const": true },
+        "model_content_trust": { "const": "untrusted_data" }
+      }
+    },
+    "safety": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "queue_before", "queue_after", "plugin_process_unchanged", "document_unchanged",
+        "model_identity_unchanged", "revision_unchanged", "signed_handshakes_verified_at_capture",
+        "raw_artifacts_contain_sensitive_fields", "sensitive_values_embedded_in_public_report",
+        "mutation_requested", "mutation_performed", "save_requested", "save_performed",
+        "approval_requested", "approval_issued"
+      ],
+      "properties": {
+        "queue_before": { "$ref": "#/$defs/cleanQueue" },
+        "queue_after": { "$ref": "#/$defs/cleanQueue" },
+        "plugin_process_unchanged": { "const": true },
+        "document_unchanged": { "const": true },
+        "model_identity_unchanged": { "const": true },
+        "revision_unchanged": { "const": true },
+        "signed_handshakes_verified_at_capture": { "const": 2 },
+        "raw_artifacts_contain_sensitive_fields": { "const": true },
+        "sensitive_values_embedded_in_public_report": { "const": false },
+        "mutation_requested": { "const": false },
+        "mutation_performed": { "const": false },
+        "save_requested": { "const": false },
+        "save_performed": { "const": false },
+        "approval_requested": { "const": false },
+        "approval_issued": { "const": false }
+      }
+    },
+    "artifact_hashes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "handshake_before", "understand_envelope", "understand_projection",
+        "proposal_envelope", "proposal_projection", "handshake_after"
+      ],
+      "properties": {
+        "handshake_before": { "$ref": "#/$defs/hash" },
+        "understand_envelope": { "$ref": "#/$defs/hash" },
+        "understand_projection": { "$ref": "#/$defs/hash" },
+        "proposal_envelope": { "$ref": "#/$defs/hash" },
+        "proposal_projection": { "$ref": "#/$defs/hash" },
+        "handshake_after": { "$ref": "#/$defs/hash" }
+      }
+    },
+    "acceptance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "current_source_agent_gateway_read_only", "target_selection_accepted",
+        "live_mutation", "release_acceptance"
+      ],
+      "properties": {
+        "current_source_agent_gateway_read_only": { "const": true },
+        "target_selection_accepted": { "const": false },
+        "live_mutation": { "const": false },
+        "release_acceptance": { "const": false }
+      }
+    },
+    "boundary": {
+      "const": "This proves a weak-client Agent Gateway understand/propose flow against one current-source disposable live model. It does not authorize or prove a mutation, save/reopen, target correctness across the corpus, or release acceptance."
+    }
+  },
+  "$defs": {
+    "hash": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "modelBytesHash": { "const": "sha256:7e649c220a265a5e27a24aae2ed9687427186c06ba335616d5cdc0191966ce72" },
+    "cleanQueue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["queue", "processing", "responses", "lock_exists"],
+      "properties": {
+        "queue": { "const": 0 },
+        "processing": { "const": 0 },
+        "responses": { "const": 0 },
+        "lock_exists": { "const": false }
+      }
+    }
+  }
+}

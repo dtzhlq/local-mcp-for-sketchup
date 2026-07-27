@@ -1,0 +1,251 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/schema/background-normalized-visual-comparison-v1.schema.json",
+  "title": "BackgroundNormalizedVisualComparisonV1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version", "kind", "content_trust", "policy_effect", "inputs",
+    "working_canvas", "segmentation", "registration", "structure", "appearance",
+    "agent_compatibility", "execution_allowed", "review_required",
+    "visual_similarity_accepted", "blockers", "boundaries",
+    "comparison_id", "comparison_hash"
+  ],
+  "properties": {
+    "version": { "const": "background-normalized-visual-comparison.v1" },
+    "kind": { "const": "background_normalized_structured_visual_comparison" },
+    "content_trust": { "const": "untrusted_data" },
+    "policy_effect": { "const": "none" },
+    "inputs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reference", "capture"],
+      "properties": {
+        "reference": { "$ref": "#/$defs/input_image" },
+        "capture": { "$ref": "#/$defs/input_image" }
+      }
+    },
+    "working_canvas": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["max_dimension", "fit", "orientation_normalized"],
+      "properties": {
+        "max_dimension": { "type": "integer", "minimum": 64, "maximum": 1024 },
+        "fit": { "const": "inside" },
+        "orientation_normalized": { "const": true }
+      }
+    },
+    "segmentation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["method", "reference", "capture", "reliable", "blockers"],
+      "properties": {
+        "method": { "const": "row_edge_dominant_border_flood.v1" },
+        "reference": { "$ref": "#/$defs/segmentation_summary" },
+        "capture": { "$ref": "#/$defs/segmentation_summary" },
+        "reliable": { "type": "boolean" },
+        "blockers": { "$ref": "#/$defs/blockers" }
+      }
+    },
+    "registration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["method", "canvas", "padding_px", "reference", "capture"],
+      "properties": {
+        "method": { "const": "foreground_bbox_fit_center.v1" },
+        "canvas": { "$ref": "#/$defs/vector2_integer" },
+        "padding_px": { "type": "integer", "minimum": 0 },
+        "reference": { "$ref": "#/$defs/registration_summary" },
+        "capture": { "$ref": "#/$defs/registration_summary" }
+      }
+    },
+    "structure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "method", "reference_pixels", "capture_pixels", "intersection_pixels",
+        "union_pixels", "intersection_over_union", "dice_coefficient", "xor_ratio",
+        "aspect_ratio_log_delta", "thresholds", "verdict"
+      ],
+      "properties": {
+        "method": { "const": "registered_silhouette_overlap.v1" },
+        "reference_pixels": { "type": "integer", "minimum": 0 },
+        "capture_pixels": { "type": "integer", "minimum": 0 },
+        "intersection_pixels": { "type": "integer", "minimum": 0 },
+        "union_pixels": { "type": "integer", "minimum": 0 },
+        "intersection_over_union": { "$ref": "#/$defs/unit_interval" },
+        "dice_coefficient": { "$ref": "#/$defs/unit_interval" },
+        "xor_ratio": { "$ref": "#/$defs/unit_interval" },
+        "aspect_ratio_log_delta": { "type": "number", "minimum": 0 },
+        "thresholds": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["iou_pass_min", "dice_pass_min", "aspect_ratio_log_delta_max"],
+          "properties": {
+            "iou_pass_min": { "$ref": "#/$defs/unit_interval" },
+            "dice_pass_min": { "$ref": "#/$defs/unit_interval" },
+            "aspect_ratio_log_delta_max": { "type": "number", "minimum": 0 }
+          }
+        },
+        "verdict": { "enum": ["blocked", "review", "coarse_structure_pass"] }
+      }
+    },
+    "appearance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "method", "overlap_pixels", "mean_absolute_error",
+        "root_mean_square_error", "palette", "verdict"
+      ],
+      "properties": {
+        "method": { "const": "registered_foreground_rgb_and_palette.v1" },
+        "overlap_pixels": { "type": "integer", "minimum": 0 },
+        "mean_absolute_error": { "$ref": "#/$defs/unit_interval" },
+        "root_mean_square_error": { "$ref": "#/$defs/unit_interval" },
+        "palette": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "reference", "capture", "yellow_fraction_delta",
+            "dark_fraction_delta", "light_neutral_fraction_delta"
+          ],
+          "properties": {
+            "reference": { "$ref": "#/$defs/palette_summary" },
+            "capture": { "$ref": "#/$defs/palette_summary" },
+            "yellow_fraction_delta": { "$ref": "#/$defs/unit_interval" },
+            "dark_fraction_delta": { "$ref": "#/$defs/unit_interval" },
+            "light_neutral_fraction_delta": { "$ref": "#/$defs/unit_interval" }
+          }
+        },
+        "verdict": { "const": "diagnostic_only" }
+      }
+    },
+    "agent_compatibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["visual_agent_required", "local_files_required", "structured_summary_available"],
+      "properties": {
+        "visual_agent_required": { "const": false },
+        "local_files_required": { "const": false },
+        "structured_summary_available": { "const": true }
+      }
+    },
+    "execution_allowed": { "const": false },
+    "review_required": { "const": true },
+    "visual_similarity_accepted": { "const": false },
+    "blockers": { "$ref": "#/$defs/blockers" },
+    "boundaries": {
+      "type": "array",
+      "minItems": 4,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "comparison_id": { "type": "string", "pattern": "^background-visual-[0-9a-f]{24}$" },
+    "comparison_hash": { "$ref": "#/$defs/sha256" }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "unit_interval": { "type": "number", "minimum": 0, "maximum": 1 },
+    "vector2": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": { "type": "number" }
+    },
+    "vector2_integer": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": { "type": "integer", "minimum": 1 }
+    },
+    "vector4": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": { "type": "number" }
+    },
+    "blockers": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "reference_foreground_segmentation_unreliable",
+          "capture_foreground_segmentation_unreliable"
+        ]
+      }
+    },
+    "input_image": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sha256", "size_bytes", "normalized_width", "normalized_height"],
+      "properties": {
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "size_bytes": { "type": "integer", "minimum": 1 },
+        "normalized_width": { "type": "integer", "minimum": 64, "maximum": 1024 },
+        "normalized_height": { "type": "integer", "minimum": 64, "maximum": 1024 }
+      }
+    },
+    "touches_border": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["left", "top", "right", "bottom"],
+      "properties": {
+        "left": { "type": "boolean" },
+        "top": { "type": "boolean" },
+        "right": { "type": "boolean" },
+        "bottom": { "type": "boolean" }
+      }
+    },
+    "segmentation_summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reliable", "confidence", "foreground_coverage", "bounds_norm",
+        "center_norm", "aspect_ratio", "component_count",
+        "selected_component_count", "selected_component_fraction",
+        "border_background_ratio", "average_edge_color_residual", "touches_border"
+      ],
+      "properties": {
+        "reliable": { "type": "boolean" },
+        "confidence": { "$ref": "#/$defs/unit_interval" },
+        "foreground_coverage": { "$ref": "#/$defs/unit_interval" },
+        "bounds_norm": { "$ref": "#/$defs/vector4" },
+        "center_norm": { "$ref": "#/$defs/vector2" },
+        "aspect_ratio": { "type": "number", "minimum": 0 },
+        "component_count": { "type": "integer", "minimum": 0 },
+        "selected_component_count": { "type": "integer", "minimum": 0 },
+        "selected_component_fraction": { "$ref": "#/$defs/unit_interval" },
+        "border_background_ratio": { "$ref": "#/$defs/unit_interval" },
+        "average_edge_color_residual": { "type": "number", "minimum": 0 },
+        "touches_border": { "$ref": "#/$defs/touches_border" }
+      }
+    },
+    "registration_summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_bounds_px", "source_aspect_ratio", "scale",
+        "registered_bounds_norm"
+      ],
+      "properties": {
+        "source_bounds_px": { "$ref": "#/$defs/vector4" },
+        "source_aspect_ratio": { "type": "number", "minimum": 0 },
+        "scale": { "type": "number", "minimum": 0 },
+        "registered_bounds_norm": { "$ref": "#/$defs/vector4" }
+      }
+    },
+    "palette_summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "foreground_pixels", "yellow_fraction", "dark_fraction",
+        "light_neutral_fraction"
+      ],
+      "properties": {
+        "foreground_pixels": { "type": "integer", "minimum": 0 },
+        "yellow_fraction": { "$ref": "#/$defs/unit_interval" },
+        "dark_fraction": { "$ref": "#/$defs/unit_interval" },
+        "light_neutral_fraction": { "$ref": "#/$defs/unit_interval" }
+      }
+    }
+  }
+}

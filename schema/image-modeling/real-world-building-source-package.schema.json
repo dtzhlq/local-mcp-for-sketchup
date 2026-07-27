@@ -1,0 +1,575 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/schema/image-modeling/real-world-building-source-package.schema.json",
+  "title": "RealWorldBuildingSourcePackageAssessment",
+  "type": "object",
+  "required": [
+    "version",
+    "kind",
+    "generated_at",
+    "asset_set_id",
+    "profile_id",
+    "status",
+    "input_ready_for_release_work",
+    "release_ready",
+    "source_authenticity",
+    "view_package",
+    "scale_package",
+    "semantic_package",
+    "release_package",
+    "source_request",
+    "blockers",
+    "next_actions"
+  ],
+  "properties": {
+    "version": { "const": 1 },
+    "kind": { "const": "real_world_building_source_package_assessment" },
+    "generated_at": { "type": "string", "minLength": 1 },
+    "asset_set_id": { "type": "string", "minLength": 1 },
+    "profile_id": { "type": "string", "minLength": 1 },
+    "status": {
+      "enum": [
+        "input_ready_for_release_work",
+        "needs_views_or_scale",
+        "needs_semantic_review",
+        "blocked_source_assets",
+        "blocked_profile"
+      ]
+    },
+    "input_ready_for_release_work": { "type": "boolean" },
+    "release_ready": { "type": "boolean" },
+    "source_authenticity": {
+      "type": "object",
+      "required": [
+        "status",
+        "asset_count",
+        "media_types",
+        "generated_or_scaffold_assets",
+        "unsupported_assets",
+        "duplicate_content_assets"
+      ],
+      "properties": {
+        "status": { "enum": ["pass", "fail"] },
+        "asset_count": { "type": "integer", "minimum": 0 },
+        "media_types": {
+          "type": "array",
+          "items": { "enum": ["image", "pdf", "cad", "unknown"] }
+        },
+        "generated_or_scaffold_assets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["path", "markers"],
+            "properties": {
+              "path": { "type": "string", "minLength": 1 },
+              "markers": {
+                "type": "array",
+                "items": { "type": "string", "minLength": 1 }
+              }
+            }
+          }
+        },
+        "unsupported_assets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["path", "media_type"],
+            "properties": {
+              "path": { "type": "string", "minLength": 1 },
+              "media_type": { "type": "string", "minLength": 1 }
+            }
+          }
+        },
+        "duplicate_content_assets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["content_sha256", "paths", "media_types", "detected_views"],
+            "properties": {
+              "content_sha256": { "type": "string", "minLength": 1 },
+              "paths": {
+                "type": "array",
+                "items": { "type": "string", "minLength": 1 }
+              },
+              "media_types": {
+                "type": "array",
+                "items": { "enum": ["image", "pdf", "cad", "unknown"] }
+              },
+              "detected_views": {
+                "type": "array",
+                "items": { "type": "string", "minLength": 1 }
+              }
+            }
+          }
+        }
+      }
+    },
+    "view_package": {
+      "type": "object",
+      "required": [
+        "status",
+        "required_views",
+        "present_views",
+        "missing_views",
+        "view_evidence",
+        "has_top_or_plan",
+        "has_oblique",
+        "has_front_or_facade",
+        "has_side_view"
+      ],
+      "properties": {
+        "status": { "enum": ["pass", "fail"] },
+        "required_views": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "present_views": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "missing_views": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "view_evidence": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "view",
+              "required",
+              "status",
+              "asset_count",
+              "asset_ids",
+              "source_images",
+              "media_types",
+              "content_sha256"
+            ],
+            "properties": {
+              "view": { "type": "string", "minLength": 1 },
+              "required": { "type": "boolean" },
+              "status": { "enum": ["present", "missing"] },
+              "asset_count": { "type": "integer", "minimum": 0 },
+              "asset_ids": {
+                "type": "array",
+                "items": { "type": "string", "minLength": 1 }
+              },
+              "source_images": {
+                "type": "array",
+                "items": { "type": "string", "minLength": 1 }
+              },
+              "media_types": {
+                "type": "array",
+                "items": { "type": "string", "minLength": 1 }
+              },
+              "content_sha256": {
+                "type": "array",
+                "items": { "type": "string", "minLength": 1 }
+              }
+            }
+          }
+        },
+        "has_top_or_plan": { "type": "boolean" },
+        "has_oblique": { "type": "boolean" },
+        "has_front_or_facade": { "type": "boolean" },
+        "has_side_view": { "type": "boolean" }
+      }
+    },
+    "scale_package": {
+      "type": "object",
+      "required": ["status", "confidence", "blockers"],
+      "properties": {
+        "status": { "enum": ["pass", "fail"] },
+        "confidence": { "type": "number", "minimum": 0 },
+        "strategy": { "type": "string" },
+        "default_scale": {
+          "type": "object",
+          "properties": {
+            "width": { "type": "number" },
+            "depth": { "type": "number" },
+            "height": { "type": "number" }
+          }
+        },
+        "measurement_count": { "type": "integer", "minimum": 0 },
+        "source_metadata_hints": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["kind", "confidence", "source", "metadata_path"],
+            "properties": {
+              "kind": { "enum": ["known_dimensions", "scale_anchor"] },
+              "target": { "type": "string" },
+              "units": { "type": "string" },
+              "width_mm": { "type": "number" },
+              "depth_mm": { "type": "number" },
+              "height_mm": { "type": "number" },
+              "anchor_type": { "type": "string" },
+              "source_image": { "type": "string" },
+              "physical_width_mm": { "type": "number" },
+              "physical_height_mm": { "type": "number" },
+              "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+              "source": { "enum": ["view_hints_file", "upload_manifest"] },
+              "metadata_path": { "type": "string", "minLength": 1 },
+              "basis": {
+                "type": "array",
+                "items": { "type": "string", "minLength": 1 }
+              }
+            }
+          }
+        },
+        "blockers": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "semantic_package": {
+      "type": "object",
+      "required": [
+        "status",
+        "required_roles",
+        "covered_roles",
+        "missing_roles",
+        "candidate_count",
+        "role_counts",
+        "role_evidence",
+        "evidence_quality"
+      ],
+      "properties": {
+        "status": { "enum": ["pass", "fail", "review"] },
+        "required_roles": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "covered_roles": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "missing_roles": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "candidate_count": { "type": "integer", "minimum": 0 },
+        "role_counts": {
+          "type": "object",
+          "additionalProperties": { "type": "integer", "minimum": 0 }
+        },
+        "role_evidence": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "role",
+              "required",
+              "status",
+              "candidate_count",
+              "candidate_ids",
+              "views",
+              "source_images",
+              "confidence_min",
+              "confidence_max",
+              "view_count",
+              "source_image_count",
+              "evidence_quality_status",
+              "requires_human_review",
+              "geometry_promotion_allowed",
+              "quality_flags"
+            ],
+            "properties": {
+              "role": { "type": "string", "minLength": 1 },
+              "required": { "type": "boolean" },
+              "status": { "enum": ["covered", "missing"] },
+              "candidate_count": { "type": "integer", "minimum": 0 },
+              "candidate_ids": {
+                "type": "array",
+                "items": { "type": "string", "minLength": 1 }
+              },
+              "views": {
+                "type": "array",
+                "items": { "type": "string", "minLength": 1 }
+              },
+              "source_images": {
+                "type": "array",
+                "items": { "type": "string", "minLength": 1 }
+              },
+              "confidence_min": { "type": "number", "minimum": 0 },
+              "confidence_max": { "type": "number", "minimum": 0 },
+              "view_count": { "type": "integer", "minimum": 0 },
+              "source_image_count": { "type": "integer", "minimum": 0 },
+              "evidence_quality_status": {
+                "enum": [
+                  "missing",
+                  "weak_candidate",
+                  "review_candidate",
+                  "multi_view_review_candidate"
+                ]
+              },
+              "requires_human_review": { "type": "boolean" },
+              "geometry_promotion_allowed": { "const": false },
+              "quality_flags": {
+                "type": "array",
+                "items": { "type": "string", "minLength": 1 }
+              }
+            }
+          }
+        },
+        "evidence_quality": {
+          "type": "object",
+          "required": [
+            "status",
+            "required_role_count",
+            "covered_role_count",
+            "missing_role_count",
+            "weak_role_count",
+            "review_required_role_count",
+            "geometry_promotion_allowed",
+            "weak_roles",
+            "review_required_roles",
+            "flags"
+          ],
+          "properties": {
+            "status": {
+              "enum": [
+                "not_applicable",
+                "missing",
+                "weak_review_required",
+                "review_required"
+              ]
+            },
+            "required_role_count": { "type": "integer", "minimum": 0 },
+            "covered_role_count": { "type": "integer", "minimum": 0 },
+            "missing_role_count": { "type": "integer", "minimum": 0 },
+            "weak_role_count": { "type": "integer", "minimum": 0 },
+            "review_required_role_count": { "type": "integer", "minimum": 0 },
+            "geometry_promotion_allowed": { "const": false },
+            "weak_roles": {
+              "type": "array",
+              "items": { "type": "string", "minLength": 1 }
+            },
+            "review_required_roles": {
+              "type": "array",
+              "items": { "type": "string", "minLength": 1 }
+            },
+            "flags": {
+              "type": "array",
+              "items": { "type": "string", "minLength": 1 }
+            }
+          }
+        }
+      }
+    },
+    "release_package": {
+      "type": "object",
+      "required": [
+        "checklist_ready",
+        "can_promote_to_release_manifest",
+        "blockers",
+        "required_check_ids",
+        "failed_required_check_ids",
+        "review_required_check_ids"
+      ],
+      "properties": {
+        "checklist_ready": { "type": "boolean" },
+        "can_promote_to_release_manifest": { "type": "boolean" },
+        "blockers": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "required_check_ids": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "failed_required_check_ids": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "review_required_check_ids": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "source_request": {
+      "type": "object",
+      "required": [
+        "version",
+        "kind",
+        "status",
+        "purpose",
+        "accepted_asset_types",
+        "blocked_until_satisfied",
+        "semantic_evidence_quality",
+        "source_asset_requirements",
+        "view_requirements",
+        "view_source_requirements",
+        "scale_requirement",
+        "semantic_requirements",
+        "upload_manifest_recommendation"
+      ],
+      "properties": {
+        "version": { "const": 1 },
+        "kind": { "const": "real_world_building_source_request" },
+        "status": {
+          "enum": [
+            "needs_source_replacement",
+            "needs_views_or_scale",
+            "needs_semantic_confirmation",
+            "input_ready_for_release_work",
+            "release_ready"
+          ]
+        },
+        "purpose": { "type": "string", "minLength": 1 },
+        "accepted_asset_types": {
+          "type": "array",
+          "items": { "enum": ["image", "pdf", "cad"] }
+        },
+        "blocked_until_satisfied": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "semantic_evidence_quality": {
+          "type": "object",
+          "required": [
+            "status",
+            "required_role_count",
+            "covered_role_count",
+            "missing_role_count",
+            "weak_role_count",
+            "review_required_role_count",
+            "geometry_promotion_allowed",
+            "weak_roles",
+            "review_required_roles",
+            "flags"
+          ],
+          "properties": {
+            "status": {
+              "enum": [
+                "not_applicable",
+                "missing",
+                "weak_review_required",
+                "review_required"
+              ]
+            },
+            "required_role_count": { "type": "integer", "minimum": 0 },
+            "covered_role_count": { "type": "integer", "minimum": 0 },
+            "missing_role_count": { "type": "integer", "minimum": 0 },
+            "weak_role_count": { "type": "integer", "minimum": 0 },
+            "review_required_role_count": { "type": "integer", "minimum": 0 },
+            "geometry_promotion_allowed": { "const": false },
+            "weak_roles": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+            "review_required_roles": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+            "flags": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+          }
+        },
+        "source_asset_requirements": {
+          "type": "object",
+          "required": ["status", "needs_replacement_assets", "needs_supported_assets", "needs_distinct_assets", "requests"],
+          "properties": {
+            "status": { "enum": ["pass", "fail"] },
+            "needs_replacement_assets": { "type": "boolean" },
+            "needs_supported_assets": { "type": "boolean" },
+            "needs_distinct_assets": { "type": "boolean" },
+            "requests": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+          }
+        },
+        "view_requirements": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["view", "required", "status", "request", "acceptable_sources"],
+            "properties": {
+              "view": { "type": "string", "minLength": 1 },
+              "required": { "type": "boolean" },
+              "status": { "enum": ["present", "missing"] },
+              "request": { "type": "string", "minLength": 1 },
+              "acceptable_sources": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+            }
+          }
+        },
+        "view_source_requirements": {
+          "type": "object",
+          "required": ["distinct_source_images_required", "required_views", "source_image_field", "blocker", "rules"],
+          "properties": {
+            "distinct_source_images_required": { "type": "boolean" },
+            "required_views": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+            "source_image_field": { "const": "views[].source_image" },
+            "blocker": { "const": "view_sources_not_distinct" },
+            "rules": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+          }
+        },
+        "scale_requirement": {
+          "type": "object",
+          "required": ["status", "current_confidence", "minimum_confidence", "blockers", "acceptable_evidence"],
+          "properties": {
+            "status": { "enum": ["pass", "fail"] },
+            "current_confidence": { "type": "number", "minimum": 0 },
+            "minimum_confidence": { "type": "number", "minimum": 0 },
+            "blockers": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+            "acceptable_evidence": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+          }
+        },
+        "semantic_requirements": {
+          "type": "object",
+          "required": ["status", "missing_roles", "requests", "evidence_quality"],
+          "properties": {
+            "status": { "enum": ["pass", "fail", "review"] },
+            "missing_roles": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+            "requests": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+            "evidence_quality": {
+              "type": "object",
+              "required": [
+                "status",
+                "required_role_count",
+                "covered_role_count",
+                "missing_role_count",
+                "weak_role_count",
+                "review_required_role_count",
+                "geometry_promotion_allowed",
+                "weak_roles",
+                "review_required_roles",
+                "flags"
+              ],
+              "properties": {
+                "status": {
+                  "enum": [
+                    "not_applicable",
+                    "missing",
+                    "weak_review_required",
+                    "review_required"
+                  ]
+                },
+                "required_role_count": { "type": "integer", "minimum": 0 },
+                "covered_role_count": { "type": "integer", "minimum": 0 },
+                "missing_role_count": { "type": "integer", "minimum": 0 },
+                "weak_role_count": { "type": "integer", "minimum": 0 },
+                "review_required_role_count": { "type": "integer", "minimum": 0 },
+                "geometry_promotion_allowed": { "const": false },
+                "weak_roles": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+                "review_required_roles": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+                "flags": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+              }
+            }
+          }
+        },
+        "upload_manifest_recommendation": {
+          "type": "object",
+          "required": ["include_manifest", "template_kind", "recommended_fields", "note"],
+          "properties": {
+            "include_manifest": { "type": "boolean" },
+            "template_kind": { "const": "real_world_building_upload_manifest" },
+            "recommended_fields": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+            "note": { "type": "string", "minLength": 1 }
+          }
+        }
+      }
+    },
+    "blockers": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "next_actions": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    }
+  }
+}

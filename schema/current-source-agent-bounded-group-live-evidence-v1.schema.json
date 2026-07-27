@@ -1,0 +1,301 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/local-mcp-for-sketchup/current-source-agent-bounded-group-live-evidence-v1.schema.json",
+  "title": "Current-source Agent bounded Group live evidence v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version", "kind", "captured_at", "evidence_scope", "source_binding_status", "superseded_by", "runtime", "source_bindings", "model",
+    "target_discovery", "proposal", "timing", "capture_artifact_hashes", "safety", "acceptance", "boundary"
+  ],
+  "properties": {
+    "version": { "const": "current-source-agent-bounded-group-live-evidence.v1" },
+    "kind": { "const": "current_source_agent_bounded_group_live_evidence" },
+    "captured_at": { "const": "2026-07-21T15:48:07.603Z" },
+    "evidence_scope": { "const": "single_large_disposable_model_bounded_group_proposal_read_only" },
+    "source_binding_status": { "const": "historical_exact_source_snapshot" },
+    "superseded_by": { "const": "docs/evidence/current-source-reviewed-plan-live-evidence-2026-07-21.json" },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "plugin_version", "sketchup_version", "ruby_version", "capability_version", "manifest_version",
+        "model_revision_strategy", "boolean_operations_sha256", "model_revision_source_sha256", "compatibility_ok"
+      ],
+      "properties": {
+        "plugin_version": { "const": "0.1.0-rc.2" },
+        "sketchup_version": { "const": "26.2.242" },
+        "ruby_version": { "const": "3.2.2" },
+        "capability_version": { "const": "0.1.0-rc.2-capabilities.7" },
+        "manifest_version": { "const": "2026-07-agent-contract-v1.4" },
+        "model_revision_strategy": { "const": "definition-merkle.v2" },
+        "boolean_operations_sha256": { "const": "sha256:b98fd554894f629359651f40929cf30a7122ac90ba01217a662bea2f4c407610" },
+        "model_revision_source_sha256": { "const": "sha256:b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134" },
+        "compatibility_ok": { "const": true }
+      }
+    },
+    "source_bindings": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "sha256"],
+        "properties": {
+          "path": {
+            "enum": [
+              "src/model-graph.mjs",
+              "src/existing-model-edit-proposer.mjs",
+              "src/agent-gateway.mjs",
+              "schema/model-graph-v1.schema.json",
+              "schema/existing-model-edit-proposal-v1.schema.json",
+              "test/model-graph-proposer.mjs",
+              "test/fixtures/model-graph/structural-large-group-adoption.json",
+              "scripts/run-current-source-agent-readonly-live.mjs"
+            ]
+          },
+          "sha256": { "$ref": "#/$defs/sha256" }
+        }
+      }
+    },
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fixture_handle", "label_trust", "size_bytes", "model_revision", "revision_indexed",
+        "revision_total_seen", "model_revision_complete", "group_occurrences", "top_level_groups",
+        "maximum_group_depth", "bytes_unchanged", "revision_unchanged", "document_unchanged",
+        "model_modified", "source_path_disclosed"
+      ],
+      "properties": {
+        "fixture_handle": { "const": "fixture:sha256:8678e0f86768cde57ae6f81c138a0c9296b5fcbee978e34ef01063e883d22efb" },
+        "label_trust": { "const": "untrusted_data" },
+        "size_bytes": { "const": 5413634 },
+        "model_revision": { "const": "sha256:d833e6547bd6b7b4ea7271dd8b88e27d4a3336716ee79c03fb737d89ccfd54af" },
+        "revision_indexed": { "const": 71360 },
+        "revision_total_seen": { "const": 71360 },
+        "model_revision_complete": { "const": true },
+        "group_occurrences": { "const": 41 },
+        "top_level_groups": { "const": 2 },
+        "maximum_group_depth": { "const": 7 },
+        "bytes_unchanged": { "const": true },
+        "revision_unchanged": { "const": true },
+        "document_unchanged": { "const": true },
+        "model_modified": { "const": false },
+        "source_path_disclosed": { "const": false }
+      }
+    },
+    "target_discovery": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "target_query", "mode", "reason", "full_model_graph_complete", "full_model_graph_blockers",
+        "projection", "model_graph"
+      ],
+      "properties": {
+        "target_query": { "$ref": "#/$defs/untrusted_query" },
+        "mode": { "const": "structural_groups" },
+        "reason": { "const": "bounded_group_scope_is_sufficient_for_target_discovery" },
+        "full_model_graph_complete": { "const": false },
+        "full_model_graph_blockers": { "const": ["recursive_index_not_requested"] },
+        "projection": { "$ref": "#/$defs/projection" },
+        "model_graph": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "graph_id", "nodes", "occurrences", "definitions", "faces", "edges",
+            "hierarchy_relationships", "spatial_relationships", "persistent_store", "identity_stability"
+          ],
+          "properties": {
+            "graph_id": { "const": "model-graph-1d7521f51e797509a4334900" },
+            "nodes": { "const": 87 },
+            "occurrences": { "const": 41 },
+            "definitions": { "const": 45 },
+            "faces": { "const": 0 },
+            "edges": { "const": 0 },
+            "hierarchy_relationships": { "const": 39 },
+            "spatial_relationships": { "const": 200 },
+            "persistent_store": { "const": true },
+            "identity_stability": { "const": "persistent" }
+          }
+        }
+      }
+    },
+    "proposal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "task_state", "proposal_id", "proposal_hash", "requested_action", "requires_clarification",
+        "ambiguity_reasons", "confidence", "candidate_count", "selected_target_count", "selected_target",
+        "evidence_kinds", "operation_count", "risk_level", "execution_allowed", "execution_route",
+        "next_action", "approval_requested", "mutation_performed"
+      ],
+      "properties": {
+        "task_state": { "const": "awaiting_review" },
+        "proposal_id": { "const": "edit-proposal-b03b8880b954e3890fb99388" },
+        "proposal_hash": { "const": "sha256:b03b8880b954e3890fb9938871cb5ee4ce1235ee8b6284a2da22bacc4be5a5c1" },
+        "requested_action": { "const": "rename" },
+        "requires_clarification": { "const": false },
+        "ambiguity_reasons": { "const": [] },
+        "confidence": { "const": 0.86 },
+        "candidate_count": { "const": 5 },
+        "selected_target_count": { "const": 1 },
+        "selected_target": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "entity_path", "edit_scope", "instance_policy", "effective_locked", "shared_definition",
+            "affected_instance_count", "direct_topology"
+          ],
+          "properties": {
+            "entity_path": { "const": "pid:89456" },
+            "edit_scope": { "const": "instance_path" },
+            "instance_policy": { "const": "definition_wide" },
+            "effective_locked": { "const": false },
+            "shared_definition": { "const": false },
+            "affected_instance_count": { "const": 1 },
+            "direct_topology": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["faces", "edges", "vertices"],
+              "properties": {
+                "faces": { "const": 2 },
+                "edges": { "const": 7 },
+                "vertices": { "const": 6 }
+              }
+            }
+          }
+        },
+        "evidence_kinds": {
+          "const": ["bounded_structural_group_projection", "object_scope_preferred", "deterministic_spatial_ranking"]
+        },
+        "operation_count": { "const": 1 },
+        "risk_level": { "const": "S2" },
+        "execution_allowed": { "const": false },
+        "execution_route": { "const": "trusted_reviewed_existing_model_edit_only" },
+        "next_action": { "const": "start_reviewed_existing_model_edit" },
+        "approval_requested": { "const": false },
+        "mutation_performed": { "const": false }
+      }
+    },
+    "timing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["handshake_to_final_handshake_ms", "proposal_task_ms", "performance_guarantee"],
+      "properties": {
+        "handshake_to_final_handshake_ms": { "const": 101187 },
+        "proposal_task_ms": { "const": 62254 },
+        "performance_guarantee": { "const": false }
+      }
+    },
+    "capture_artifact_hashes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "public_report", "private_proposal_projection", "private_model_graph",
+        "private_handshake_before", "private_handshake_after"
+      ],
+      "properties": {
+        "public_report": { "const": "sha256:e9b2085c0438e3f5ea39b65cd8671936617c49a689267fed7b0319d191c82002" },
+        "private_proposal_projection": { "const": "sha256:99db9ba19d7659bed7cf3b984b1d5204425774f1f610d1b390c2480e38a8d9ce" },
+        "private_model_graph": { "const": "sha256:f5d3fd92e9324d4932e63d97c5b75dfc3facbf31b809883d2ce44315283ebbef" },
+        "private_handshake_before": { "const": "sha256:aa54ca2363f7bab259ccf505916989d5f30433358c9bf09c451bc37edb3d066c" },
+        "private_handshake_after": { "const": "sha256:ff92a7ae45cfc099b1d71e2c23457f27efccaefca5e2c939897c323f96c0c260" }
+      }
+    },
+    "safety": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "weak_client_profile", "signed_handshakes_verified_at_capture", "queue_before_clean", "queue_after_clean",
+        "final_queue", "final_processing", "final_responses", "final_lock_exists", "plugin_process_unchanged",
+        "sensitive_values_embedded", "mutation_requested", "mutation_performed", "save_requested",
+        "save_performed", "approval_requested", "approval_issued"
+      ],
+      "properties": {
+        "weak_client_profile": { "const": "short_context_no_files_no_vision_single_tool" },
+        "signed_handshakes_verified_at_capture": { "const": 2 },
+        "queue_before_clean": { "const": true },
+        "queue_after_clean": { "const": true },
+        "final_queue": { "const": 0 },
+        "final_processing": { "const": 0 },
+        "final_responses": { "const": 0 },
+        "final_lock_exists": { "const": false },
+        "plugin_process_unchanged": { "const": true },
+        "sensitive_values_embedded": { "const": false },
+        "mutation_requested": { "const": false },
+        "mutation_performed": { "const": false },
+        "save_requested": { "const": false },
+        "save_performed": { "const": false },
+        "approval_requested": { "const": false },
+        "approval_issued": { "const": false }
+      }
+    },
+    "acceptance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "current_source_bounded_group_live", "capture_time_current_source", "current_acceptance", "large_revision_group_projection_complete",
+        "partial_graph_not_overclaimed_as_complete", "single_model_target_selected_for_review_only",
+        "wrong_object_automatic_execution", "unauthorized_s2_s4_execution",
+        "duplicate_request_duplicate_modification", "full_recursive_large_model_proposal",
+        "multi_model_target_quality", "live_mutation", "release_acceptance"
+      ],
+      "properties": {
+        "current_source_bounded_group_live": { "const": true },
+        "capture_time_current_source": { "const": true },
+        "current_acceptance": { "const": false },
+        "large_revision_group_projection_complete": { "const": true },
+        "partial_graph_not_overclaimed_as_complete": { "const": true },
+        "single_model_target_selected_for_review_only": { "const": true },
+        "wrong_object_automatic_execution": { "const": 0 },
+        "unauthorized_s2_s4_execution": { "const": 0 },
+        "duplicate_request_duplicate_modification": { "const": 0 },
+        "full_recursive_large_model_proposal": { "const": false },
+        "multi_model_target_quality": { "const": false },
+        "live_mutation": { "const": false },
+        "release_acceptance": { "const": false }
+      }
+    },
+    "boundary": {
+      "const": "This historical exact-source snapshot proves a bounded, complete Group-only proposal projection on one byte-exact large disposable model at capture time. It is superseded for current-source acceptance by the reviewed-plan evidence, the persisted ModelGraph remains explicitly incomplete for leaf entities, and no approval, mutation, save/reopen, corpus-wide target-quality claim, performance guarantee, or release acceptance is established."
+    }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "untrusted_query": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["trust", "source", "value", "policy_effect"],
+      "properties": {
+        "trust": { "const": "untrusted_data" },
+        "source": { "const": "benchmark_prompt" },
+        "value": { "const": "largest group" },
+        "policy_effect": { "const": "none" }
+      }
+    },
+    "projection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version", "complete", "total_seen", "total_seen_exact", "indexed", "truncated", "limit",
+        "eligible_entity_types", "leaf_entities_materialized", "coordinate_space", "proposal_only", "execution_allowed"
+      ],
+      "properties": {
+        "version": { "const": "structural-groups.v1" },
+        "complete": { "const": true },
+        "total_seen": { "const": 41 },
+        "total_seen_exact": { "const": true },
+        "indexed": { "const": 41 },
+        "truncated": { "const": false },
+        "limit": { "const": 5000 },
+        "eligible_entity_types": { "const": ["group"] },
+        "leaf_entities_materialized": { "const": false },
+        "coordinate_space": { "const": "model_world" },
+        "proposal_only": { "const": true },
+        "execution_allowed": { "const": false }
+      }
+    }
+  }
+}

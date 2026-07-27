@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/local-mcp-for-sketchup/queue-response-recovery-v1.schema.json",
+  "title": "Queue Orphan Response Recovery v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "kind",
+    "runtime",
+    "mutates_model",
+    "request_id",
+    "request_client_pid",
+    "expected_result_kind",
+    "response_filename",
+    "queue_idle_verified",
+    "processing_idle_verified",
+    "lock_idle_verified",
+    "response_removed",
+    "recovered_at",
+    "result"
+  ],
+  "properties": {
+    "version": { "const": "queue-response-recovery.v1" },
+    "kind": { "const": "queue_orphan_response_recovery" },
+    "runtime": { "const": "queue" },
+    "mutates_model": { "const": false },
+    "request_id": {
+      "type": "string",
+      "pattern": "^[1-9][0-9]{0,14}-[0-9]{13}-[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "request_client_pid": { "type": "integer", "minimum": 1 },
+    "expected_result_kind": { "type": "string", "pattern": "^[a-z][a-z0-9_]{0,63}$" },
+    "expected_client_pid": { "type": "integer", "minimum": 1 },
+    "response_filename": { "type": "string", "pattern": "^[1-9][0-9]{0,14}-[0-9]{13}-[0-9a-f-]{36}\\.json$" },
+    "queue_idle_verified": { "const": true },
+    "processing_idle_verified": { "const": true },
+    "lock_idle_verified": { "const": true },
+    "response_removed": { "const": true },
+    "recovered_at": { "type": "string", "format": "date-time" },
+    "result": {
+      "type": "object",
+      "required": ["kind"],
+      "properties": {
+        "kind": { "type": "string", "pattern": "^[a-z][a-z0-9_]{0,63}$" }
+      }
+    }
+  }
+}

@@ -1,0 +1,221 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/local-mcp-for-sketchup/current-source-save-reopen-identity-live-evidence-v1.schema.json",
+  "title": "Current-source save/reopen identity live evidence v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "kind",
+    "captured_at",
+    "branch",
+    "result",
+    "evidence_scope",
+    "runtime",
+    "execution_authorization",
+    "report",
+    "source_sha256",
+    "artifact_sha256",
+    "artifact_sizes",
+    "acceptance",
+    "boundaries"
+  ],
+  "properties": {
+    "version": { "const": "current-source-save-reopen-identity-live-evidence.v1" },
+    "kind": { "const": "current_source_save_reopen_identity_live_evidence" },
+    "captured_at": { "type": "string", "format": "date-time" },
+    "branch": { "const": "codex/agent-contract-v1" },
+    "result": { "const": "pass" },
+    "evidence_scope": { "const": "current_source_queue_distinct_path_save_reopen" },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "server_version",
+        "plugin_version",
+        "sketchup_version",
+        "ruby_version",
+        "capability_version",
+        "manifest_version",
+        "dsl_version",
+        "revision_strategy",
+        "revision_source_sha256",
+        "compatibility_ok"
+      ],
+      "properties": {
+        "name": { "const": "queue" },
+        "server_version": { "const": "0.1.0-rc.2" },
+        "plugin_version": { "const": "0.1.0-rc.2" },
+        "sketchup_version": { "const": "26.2.242" },
+        "ruby_version": { "const": "3.2.2" },
+        "capability_version": { "const": "0.1.0-rc.2-capabilities.7" },
+        "manifest_version": { "const": "2026-07-agent-contract-v1.4" },
+        "dsl_version": { "const": 1 },
+        "revision_strategy": { "const": "definition-merkle.v2" },
+        "revision_source_sha256": { "const": "b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134" },
+        "compatibility_ok": { "const": true }
+      }
+    },
+    "execution_authorization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "user_authorized_disposable_copies",
+        "queue_required",
+        "allowed_runtimes_explicit",
+        "queue_mutation_explicit",
+        "direct_expert_mutation_explicit",
+        "policy_persisted",
+        "default_policy_unchanged"
+      ],
+      "properties": {
+        "mode": { "const": "local_operator_ephemeral_process_policy" },
+        "user_authorized_disposable_copies": { "const": true },
+        "queue_required": { "const": true },
+        "allowed_runtimes_explicit": { "const": true },
+        "queue_mutation_explicit": { "const": true },
+        "direct_expert_mutation_explicit": { "const": true },
+        "policy_persisted": { "const": false },
+        "default_policy_unchanged": { "const": true }
+      }
+    },
+    "report": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "contract_version",
+        "live_proof",
+        "destructive_opt_in_observed",
+        "model_revision_before",
+        "model_revision_after",
+        "revision_exact_match",
+        "source_exact_match",
+        "after_reopen_clean",
+        "path_switch_verified",
+        "active_source_path_verified",
+        "entries_before",
+        "entries_after",
+        "identity_exact_match",
+        "shared_leaf_occurrences",
+        "face_edge_entries",
+        "snapshot_diff_count",
+        "snapshot_verdict",
+        "queue_clean"
+      ],
+      "properties": {
+        "path": { "const": "output/live-validation/save-reopen-identity/current-source-2026-07-22-v1/save-reopen-identity-report.json" },
+        "contract_version": { "const": "save-reopen-identity-report.v2" },
+        "live_proof": { "const": true },
+        "destructive_opt_in_observed": { "const": true },
+        "model_revision_before": { "$ref": "#/$defs/modelRevision" },
+        "model_revision_after": { "$ref": "#/$defs/modelRevision" },
+        "revision_exact_match": { "const": true },
+        "source_exact_match": { "const": true },
+        "after_reopen_clean": { "const": true },
+        "path_switch_verified": { "const": true },
+        "active_source_path_verified": { "const": true },
+        "entries_before": { "const": 42 },
+        "entries_after": { "const": 42 },
+        "identity_exact_match": { "const": true },
+        "shared_leaf_occurrences": { "const": 2 },
+        "face_edge_entries": { "const": 36 },
+        "snapshot_diff_count": { "const": 0 },
+        "snapshot_verdict": { "const": "pass" },
+        "queue_clean": { "$ref": "#/$defs/cleanQueue" }
+      }
+    },
+    "source_sha256": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scripts/validate-save-reopen-identity.mjs",
+        "schema/save-reopen-identity-report-v2.schema.json",
+        "src/bridge.mjs",
+        "sketchup_plugin/local_mcp_for_sketchup/model_revision.rb"
+      ],
+      "properties": {
+        "scripts/validate-save-reopen-identity.mjs": { "$ref": "#/$defs/sha256" },
+        "schema/save-reopen-identity-report-v2.schema.json": { "$ref": "#/$defs/sha256" },
+        "src/bridge.mjs": { "$ref": "#/$defs/sha256" },
+        "sketchup_plugin/local_mcp_for_sketchup/model_revision.rb": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "artifact_sha256": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "output/live-validation/save-reopen-identity/current-source-2026-07-22-v1/save-reopen-identity-report.json",
+        "output/live-validation/save-reopen-identity/current-source-2026-07-22-v1/target.skp",
+        "output/live-validation/save-reopen-identity/current-source-2026-07-22-v1/intermediary.skp",
+        "output/live-validation/save-reopen-identity/current-source-2026-07-22-v1/save-reopen-snapshot-diff.json",
+        "output/live-validation/save-reopen-identity/current-source-2026-07-22-v1/save-reopen-checkpoint.json"
+      ],
+      "properties": {
+        "output/live-validation/save-reopen-identity/current-source-2026-07-22-v1/save-reopen-identity-report.json": { "$ref": "#/$defs/sha256" },
+        "output/live-validation/save-reopen-identity/current-source-2026-07-22-v1/target.skp": { "$ref": "#/$defs/sha256" },
+        "output/live-validation/save-reopen-identity/current-source-2026-07-22-v1/intermediary.skp": { "$ref": "#/$defs/sha256" },
+        "output/live-validation/save-reopen-identity/current-source-2026-07-22-v1/save-reopen-snapshot-diff.json": { "$ref": "#/$defs/sha256" },
+        "output/live-validation/save-reopen-identity/current-source-2026-07-22-v1/save-reopen-checkpoint.json": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "artifact_sizes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["target_skp_bytes", "intermediary_skp_bytes", "checkpoint_bytes"],
+      "properties": {
+        "target_skp_bytes": { "const": 19990 },
+        "intermediary_skp_bytes": { "const": 17381 },
+        "checkpoint_bytes": { "const": 396507 }
+      }
+    },
+    "acceptance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "current_source_live_save_reopen",
+        "persistent_occurrence_identity",
+        "model_revision_stability",
+        "zero_tolerance_snapshot",
+        "feature_history_lineage",
+        "manual_divergence_reconciliation",
+        "multi_model_native_corpus",
+        "cross_version",
+        "release_acceptance"
+      ],
+      "properties": {
+        "current_source_live_save_reopen": { "const": true },
+        "persistent_occurrence_identity": { "const": true },
+        "model_revision_stability": { "const": true },
+        "zero_tolerance_snapshot": { "const": true },
+        "feature_history_lineage": { "const": false },
+        "manual_divergence_reconciliation": { "const": false },
+        "multi_model_native_corpus": { "const": false },
+        "cross_version": { "const": "deferred_by_user" },
+        "release_acceptance": { "const": false }
+      }
+    },
+    "boundaries": {
+      "type": "array",
+      "minItems": 4,
+      "items": { "type": "string", "minLength": 1 }
+    }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "modelRevision": { "const": "sha256:406f4db9bb35be1d783110f94bd5eefb021552ea6790c9780ef36690e459acb8" },
+    "cleanQueue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["queue", "processing", "responses", "lock"],
+      "properties": {
+        "queue": { "const": 0 },
+        "processing": { "const": 0 },
+        "responses": { "const": 0 },
+        "lock": { "const": false }
+      }
+    }
+  }
+}

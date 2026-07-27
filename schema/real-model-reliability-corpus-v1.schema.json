@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/schemas/real-model-reliability-corpus-v1.schema.json",
+  "title": "Real-model reliability corpus manifest v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "kind", "description", "default_runtime", "repository_live_artifacts", "live_policy", "cases", "hard_metrics"],
+  "properties": {
+    "version": { "const": "real-model-reliability-corpus.v1" },
+    "kind": { "const": "real_model_reliability_corpus" },
+    "description": { "type": "string", "minLength": 1 },
+    "default_runtime": { "const": "mock" },
+    "repository_live_artifacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tracked_skp_count", "status", "generated_output_artifacts_are_evidence"],
+      "properties": {
+        "tracked_skp_count": { "const": 0 },
+        "status": { "const": "external_live_required" },
+        "generated_output_artifacts_are_evidence": { "const": false }
+      }
+    },
+    "live_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required_flags", "fresh_handshake_per_guarded_operation", "modifies_and_reopens_active_model", "disposable_copy_required", "preflight_all_artifacts_before_queue", "interrupt_cleanup_required"],
+      "properties": {
+        "required_flags": {
+          "const": ["--runtime queue", "--queue-required"]
+        },
+        "fresh_handshake_per_guarded_operation": { "const": true },
+        "modifies_and_reopens_active_model": { "const": true },
+        "disposable_copy_required": { "const": true },
+        "preflight_all_artifacts_before_queue": { "const": true },
+        "interrupt_cleanup_required": { "const": true }
+      }
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 7,
+      "maxItems": 7,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/case" }
+    },
+    "hard_metrics": {
+      "const": ["task_success_rate", "wrong_object_modification_count", "silent_geometry_corruption_count", "recovery_rate"]
+    }
+  },
+  "$defs": {
+    "case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "domain", "mock", "live", "tasks"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]+$" },
+        "domain": { "enum": ["architecture", "interior", "product", "shared_component", "imported_cad", "appearance", "transform_edge_case"] },
+        "mock": { "$ref": "#/$defs/mock" },
+        "live": { "$ref": "#/$defs/live" },
+        "tasks": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "boolean_manifold", "material_preservation", "uv_material_preservation",
+              "scene_visibility_preservation", "large_recursive_index", "shared_definition_identity",
+              "abnormal_topology_detection", "manifold_repair", "recovery", "locked_fail_closed",
+              "rollback", "nonuniform_mirror", "wrong_object_isolation", "save_reopen_identity"
+            ]
+          }
+        }
+      }
+    },
+    "mock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evidence_class", "source_kind", "source", "runner"],
+      "properties": {
+        "evidence_class": { "const": "deterministic_mock_fixture" },
+        "source_kind": { "enum": ["repository_json_fixture", "generated_mock_fixture", "generated_mock_import_fixture"] },
+        "source": { "type": ["string", "null"] },
+        "runner": { "enum": ["repository_document", "deep_shared_generated", "dirty_import_generated", "transform_locked_generated"] }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "source_kind": { "const": "repository_json_fixture" } } },
+          "then": { "properties": { "source": { "type": "string", "minLength": 1 } } },
+          "else": { "properties": { "source": { "type": "null" } } }
+        }
+      ]
+    },
+    "live": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "artifact", "contract", "repository_tracked", "disposable_copy_required"],
+      "properties": {
+        "status": { "const": "external_live_required" },
+        "artifact": { "type": "string", "pattern": "^[^/]+\\.skp$" },
+        "contract": { "type": "string", "pattern": "^[^/]+\\.reliability\\.json$" },
+        "repository_tracked": { "const": false },
+        "disposable_copy_required": { "const": true }
+      }
+    }
+  }
+}

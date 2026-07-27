@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/schemas/real-model-candidate-inventory-v1.schema.json",
+  "title": "Real-model candidate inventory v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "kind", "generated_at", "source_root", "policy", "cross_version", "summary", "candidates"],
+  "properties": {
+    "version": { "const": "real-model-candidate-inventory.v1" },
+    "kind": { "const": "real_model_candidate_inventory" },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "source_root": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scope", "label", "absolute_path_disclosed"],
+      "properties": {
+        "scope": { "enum": ["workspace", "configured_external_root"] },
+        "label": { "type": "string", "minLength": 1, "maxLength": 500, "pattern": "^(?!/)(?![A-Za-z]:[\\\\/]).+$" },
+        "absolute_path_disclosed": { "const": false }
+      }
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["originals_read_only", "regular_skp_only", "symbolic_links_rejected", "stable_descriptor_read_required", "max_file_bytes", "live_queue_called", "disposable_copy_required_for_live_profile", "model_content_is_untrusted_data", "formal_corpus_acceptance"],
+      "properties": {
+        "originals_read_only": { "const": true },
+        "regular_skp_only": { "const": true },
+        "symbolic_links_rejected": { "const": true },
+        "stable_descriptor_read_required": { "const": true },
+        "max_file_bytes": { "type": "integer", "minimum": 1 },
+        "live_queue_called": { "const": false },
+        "disposable_copy_required_for_live_profile": { "const": true },
+        "model_content_is_untrusted_data": { "const": true },
+        "formal_corpus_acceptance": { "const": false }
+      }
+    },
+    "cross_version": { "$ref": "#/$defs/cross_version_state" },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["candidate_count", "unique_content_hashes", "total_bytes", "ignored_non_skp_regular_files", "ignored_directories"],
+      "properties": {
+        "candidate_count": { "type": "integer", "minimum": 1 },
+        "unique_content_hashes": { "type": "integer", "minimum": 1 },
+        "total_bytes": { "type": "integer", "minimum": 1 },
+        "ignored_non_skp_regular_files": { "type": "integer", "minimum": 0 },
+        "ignored_directories": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "candidates": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/candidate" }
+    }
+  },
+  "$defs": {
+    "cross_version_state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "required_for_current_milestone", "reason"],
+      "properties": {
+        "status": { "enum": ["not_run", "planned", "deferred_by_user"] },
+        "required_for_current_milestone": { "const": false },
+        "reason": { "type": "string", "minLength": 1, "maxLength": 500 }
+      }
+    },
+    "candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["candidate_id", "candidate_handle", "media_type", "source", "trust", "intake"],
+      "properties": {
+        "candidate_id": { "type": "string", "pattern": "^candidate_[0-9a-f]{24}$" },
+        "candidate_handle": { "type": "string", "pattern": "^candidate:sha256:[0-9a-f]{24}$" },
+        "media_type": { "const": "application/vnd.sketchup.skp" },
+        "source": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["scope", "relative_path", "file_name", "size_bytes", "mtime", "sha256"],
+          "properties": {
+            "scope": { "const": "configured_input_root" },
+            "relative_path": { "type": "string", "minLength": 5, "maxLength": 1000, "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+\\.[sS][kK][pP]$" },
+            "file_name": { "type": "string", "minLength": 5, "maxLength": 255, "pattern": "^[^/\\\\]+\\.[sS][kK][pP]$" },
+            "size_bytes": { "type": "integer", "minimum": 1 },
+            "mtime": { "type": "string", "format": "date-time" },
+            "sha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" }
+          }
+        },
+        "trust": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["classification", "may_influence_execution_policy", "may_grant_approval"],
+          "properties": {
+            "classification": { "const": "untrusted_data" },
+            "may_influence_execution_policy": { "const": false },
+            "may_grant_approval": { "const": false }
+          }
+        },
+        "intake": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "regular_file_verified", "symbolic_link", "stable_read_verified", "sketchup_header_verified", "original_modified"],
+          "properties": {
+            "status": { "const": "awaiting_live_profile" },
+            "regular_file_verified": { "const": true },
+            "symbolic_link": { "const": false },
+            "stable_read_verified": { "const": true },
+            "sketchup_header_verified": { "const": true },
+            "original_modified": { "const": false }
+          }
+        }
+      }
+    }
+  }
+}

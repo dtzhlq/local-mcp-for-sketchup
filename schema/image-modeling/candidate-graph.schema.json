@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/schema/image-modeling/candidate-graph.schema.json",
+  "title": "CandidateGraph",
+  "type": "object",
+  "required": ["version", "kind", "asset_set_id", "profile_id", "candidates", "summary"],
+  "properties": {
+    "version": { "const": 1 },
+    "kind": { "const": "candidate_graph" },
+    "asset_set_id": { "type": "string" },
+    "profile_id": { "type": "string" },
+    "geometry_strategy": {
+      "enum": [
+        "calibrated_manhattan_planes",
+        "multi_view_calibration_pose_graph",
+        "ground_plane_site",
+        "document_orthographic_views",
+        "object_surface_profile",
+        "multi_view_object_surface"
+      ]
+    },
+    "calibration_lineage": {
+      "type": ["object", "null"],
+      "required": [
+        "source_perspective_calibration_review_result",
+        "accepted_axis_family_ids",
+        "source_corner_chain_topology_review",
+        "accepted_topology_ids"
+      ],
+      "properties": {
+        "source_perspective_calibration_review_result": { "type": "string" },
+        "accepted_axis_family_ids": { "type": "array", "items": { "type": "string" }, "minItems": 3 },
+        "source_corner_chain_topology_review": { "type": "string" },
+        "accepted_topology_ids": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+        "source_facade_plane_graph": { "type": "string" }
+      }
+    },
+    "candidates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "role", "source_image", "view", "confidence", "promotion"],
+        "properties": {
+          "id": { "type": "string" },
+          "role": { "type": "string" },
+          "source_image": { "type": "string" },
+          "source_observation_id": { "type": "string" },
+          "source_plane_id": { "type": "string" },
+          "view": { "type": "string" },
+          "bbox": { "type": "array", "items": { "type": "number" } },
+          "polygon_px": { "type": "array", "items": { "$ref": "#/$defs/point" } },
+          "projection_model": { "type": "string" },
+          "perspective_strength": { "enum": ["low", "medium", "high", "unknown"] },
+          "image_space_geometry": { "type": "string" },
+          "polygon_derivation": { "type": "string" },
+          "orthographic_projection_allowed": { "type": "boolean" },
+          "semantic_evidence_id": { "type": "string" },
+          "semantic_source": { "enum": ["user_annotation", "vlm_candidate", "local_cv_proposal", "profile_prior"] },
+          "semantic_source_priority": { "type": "integer" },
+          "blocked_interpretations": { "type": "array", "items": { "type": "string" } },
+          "allowed_semantics": { "type": "array", "items": { "type": "string" } },
+          "geometry_promotion_allowed": { "type": "boolean" },
+          "confidence": { "type": "number" },
+          "promotion": {
+            "type": "object",
+            "required": ["status", "blockers"],
+            "properties": {
+              "status": { "enum": ["blocked", "review_required", "eligible"] },
+              "blockers": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": ["candidate_count", "eligible_count", "blocked_count"],
+      "properties": {
+        "candidate_count": { "type": "integer" },
+        "eligible_count": { "type": "integer" },
+        "blocked_count": { "type": "integer" }
+      }
+    }
+  },
+  "$defs": {
+    "point": {
+      "type": "array",
+      "prefixItems": [
+        { "type": "number" },
+        { "type": "number" }
+      ],
+      "minItems": 2,
+      "maxItems": 2
+    }
+  }
+}

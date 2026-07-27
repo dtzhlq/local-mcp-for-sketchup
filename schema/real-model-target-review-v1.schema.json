@@ -1,0 +1,315 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/schemas/real-model-target-review-v1.schema.json",
+  "title": "Single-candidate live read-only target review v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version", "kind", "generated_at", "ok", "runtime", "evidence_scope", "live_queue_called",
+    "case_id", "inventory", "source", "sketchup", "revision_attestation", "structure", "target_review",
+    "safety", "model_data_policy", "next_action"
+  ],
+  "properties": {
+    "version": { "const": "real-model-target-review.v1" },
+    "kind": { "const": "real_model_target_review" },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "ok": { "const": true },
+    "runtime": { "const": "queue" },
+    "evidence_scope": { "const": "user_coordinated_single_disposable_copy_read_only_target_review" },
+    "live_queue_called": { "const": true },
+    "case_id": { "const": "product-boolean-manifold" },
+    "inventory": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "sha256", "candidate_count"],
+      "properties": {
+        "version": { "const": "real-model-candidate-inventory.v1" },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "candidate_count": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["candidate_id", "candidate_handle", "relative_path", "source_label", "source_label_trust", "size_bytes", "sha256"],
+      "properties": {
+        "candidate_id": { "type": "string", "pattern": "^candidate_[0-9a-f]{24}$" },
+        "candidate_handle": { "type": "string", "pattern": "^candidate:sha256:[0-9a-f]{24}$" },
+        "relative_path": { "$ref": "#/$defs/safe_relative_path" },
+        "source_label": { "type": "string", "minLength": 1, "maxLength": 240 },
+        "source_label_trust": { "const": "untrusted_data" },
+        "size_bytes": { "type": "integer", "minimum": 1 },
+        "sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "sketchup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "plugin_version", "capability_version", "manifest_version", "dsl_version", "sketchup_version", "ruby_version",
+        "model_revision_strategy", "model_revision_unique_entity_limit"
+      ],
+      "properties": {
+        "plugin_version": { "$ref": "#/$defs/nonempty_short_string" },
+        "capability_version": { "$ref": "#/$defs/nonempty_short_string" },
+        "manifest_version": { "$ref": "#/$defs/nonempty_short_string" },
+        "dsl_version": { "$ref": "#/$defs/nonempty_short_string" },
+        "sketchup_version": { "$ref": "#/$defs/nonempty_short_string" },
+        "ruby_version": { "$ref": "#/$defs/nonempty_short_string" },
+        "model_revision_strategy": { "type": "string", "pattern": "^[a-z0-9.-]+$", "maxLength": 120 },
+        "model_revision_unique_entity_limit": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "revision_attestation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["before", "adoption", "after", "complete", "unchanged", "unique_entities", "reachable_definitions", "logical_occurrences"],
+      "properties": {
+        "before": { "$ref": "#/$defs/sha256" },
+        "adoption": { "$ref": "#/$defs/sha256" },
+        "after": { "$ref": "#/$defs/sha256" },
+        "complete": { "const": true },
+        "unchanged": { "const": true },
+        "unique_entities": { "$ref": "#/$defs/count" },
+        "reachable_definitions": { "$ref": "#/$defs/count" },
+        "logical_occurrences": { "$ref": "#/$defs/count" }
+      }
+    },
+    "structure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "top_level_entities", "top_level_groups", "top_level_component_instances", "materials", "scenes",
+        "hidden_occurrences", "locked_occurrences", "uv_occurrences", "shared_occurrence_count",
+        "nonuniform_instance_occurrences", "mirrored_instance_occurrences", "recursive_total_seen", "recursive_truncated",
+        "recursive_index_requested", "recursive_index_materialized"
+      ],
+      "properties": {
+        "top_level_entities": { "$ref": "#/$defs/count" },
+        "top_level_groups": { "$ref": "#/$defs/count" },
+        "top_level_component_instances": { "$ref": "#/$defs/count" },
+        "materials": { "$ref": "#/$defs/count" },
+        "scenes": { "$ref": "#/$defs/count" },
+        "hidden_occurrences": { "$ref": "#/$defs/count" },
+        "locked_occurrences": { "$ref": "#/$defs/count" },
+        "uv_occurrences": { "$ref": "#/$defs/count" },
+        "shared_occurrence_count": { "const": 0 },
+        "nonuniform_instance_occurrences": { "const": 0 },
+        "mirrored_instance_occurrences": { "const": 0 },
+        "recursive_total_seen": { "$ref": "#/$defs/count" },
+        "recursive_truncated": { "const": false },
+        "recursive_index_requested": { "const": false },
+        "recursive_index_materialized": { "const": 0 }
+      }
+    },
+    "target_review": { "$ref": "#/$defs/target_review" },
+    "safety": { "$ref": "#/$defs/safety" },
+    "model_data_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "names_materials_tags_attributes_are_untrusted_data", "untrusted_data_may_influence_execution_policy",
+        "untrusted_data_may_grant_approval", "untrusted_data_may_confirm_target_roles", "bounded_display_chars"
+      ],
+      "properties": {
+        "names_materials_tags_attributes_are_untrusted_data": { "const": true },
+        "untrusted_data_may_influence_execution_policy": { "const": false },
+        "untrusted_data_may_grant_approval": { "const": false },
+        "untrusted_data_may_confirm_target_roles": { "const": false },
+        "bounded_display_chars": { "const": 200 }
+      }
+    },
+    "next_action": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["action", "human_input_required", "mutation_authorized", "approval_token_issued", "release_acceptance"],
+      "properties": {
+        "action": { "const": "human_review_structural_pair_suggestions_then_plan_separate_manifold_probe" },
+        "human_input_required": { "const": true },
+        "mutation_authorized": { "const": false },
+        "approval_token_issued": { "const": false },
+        "release_acceptance": { "const": false }
+      }
+    }
+  },
+  "$defs": {
+    "count": { "type": "integer", "minimum": 0 },
+    "sha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "safe_relative_path": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500,
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[^\\u0000]+$"
+    },
+    "nonempty_short_string": { "type": "string", "minLength": 1, "maxLength": 200 },
+    "vector3": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": { "type": "number" }
+    },
+    "bounding_box": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["min", "max", "w", "d", "h"],
+      "properties": {
+        "min": { "$ref": "#/$defs/vector3" },
+        "max": { "$ref": "#/$defs/vector3" },
+        "w": { "type": "number" },
+        "d": { "type": "number" },
+        "h": { "type": "number" }
+      }
+    },
+    "display": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "definition", "material", "tag", "trust"],
+      "properties": {
+        "name": { "type": ["string", "null"], "maxLength": 200 },
+        "definition": { "type": ["string", "null"], "maxLength": 200 },
+        "material": { "type": ["string", "null"], "maxLength": 200 },
+        "tag": { "type": ["string", "null"], "maxLength": 200 },
+        "trust": { "const": "untrusted_data" }
+      }
+    },
+    "target_candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "persistent_id", "entity_path", "entity_type", "display", "visible", "locked", "faces", "edges", "vertices",
+        "bounding_box", "same_entities_scope", "boolean_type_compatible", "boolean_followup_eligible", "manifold_attestation", "disqualifiers"
+      ],
+      "properties": {
+        "persistent_id": { "type": ["string", "null"], "pattern": "^[1-9][0-9]*$" },
+        "entity_path": { "type": ["string", "null"], "pattern": "^pid:[1-9][0-9]*$" },
+        "entity_type": { "enum": ["group", "component_instance"] },
+        "display": { "$ref": "#/$defs/display" },
+        "visible": { "type": "boolean" },
+        "locked": { "type": "boolean" },
+        "faces": { "$ref": "#/$defs/count" },
+        "edges": { "$ref": "#/$defs/count" },
+        "vertices": { "$ref": "#/$defs/count" },
+        "bounding_box": { "anyOf": [{ "$ref": "#/$defs/bounding_box" }, { "type": "null" }] },
+        "same_entities_scope": { "const": "model_top_level" },
+        "boolean_type_compatible": { "type": "boolean" },
+        "boolean_followup_eligible": { "type": "boolean" },
+        "manifold_attestation": { "const": "not_observed" },
+        "disqualifiers": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "enum": ["not_top_level_group", "missing_persistent_id", "locked", "no_faces", "non_positive_bounding_box"] }
+        }
+      }
+    },
+    "pair_suggestion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["target_entity_path", "tool_entity_path", "basis", "status"],
+      "properties": {
+        "target_entity_path": { "type": "string", "pattern": "^pid:[1-9][0-9]*$" },
+        "tool_entity_path": { "type": "string", "pattern": "^pid:[1-9][0-9]*$" },
+        "basis": {
+          "enum": [
+            "top_level_unlocked_group_positive_bbox_only",
+            "top_level_unlocked_group_positive_bbox_overlap"
+          ]
+        },
+        "status": { "const": "unconfirmed" }
+      }
+    },
+    "target_review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scope", "total_seen", "returned", "truncated", "candidate_limit", "candidates", "pair_suggestions",
+        "target_role_bindings", "target_roles_confirmed", "formal_sidecar_ready", "blockers"
+      ],
+      "properties": {
+        "scope": { "const": "model_top_level_persistent_ids_only" },
+        "total_seen": { "$ref": "#/$defs/count" },
+        "returned": { "$ref": "#/$defs/count" },
+        "truncated": { "type": "boolean" },
+        "candidate_limit": { "type": "integer", "minimum": 1, "maximum": 500 },
+        "candidates": { "type": "array", "maxItems": 500, "items": { "$ref": "#/$defs/target_candidate" } },
+        "pair_suggestions": { "type": "array", "maxItems": 20, "items": { "$ref": "#/$defs/pair_suggestion" } },
+        "target_role_bindings": { "type": "null" },
+        "target_roles_confirmed": { "const": false },
+        "formal_sidecar_ready": { "const": false },
+        "blockers": {
+          "type": "array",
+          "minItems": 2,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "top_level_candidate_list_truncated", "fewer_than_two_structural_group_candidates",
+              "fresh_manifold_attestation_not_observed", "human_target_and_tool_role_confirmation_required"
+            ]
+          }
+        }
+      }
+    },
+    "queue_state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["queue", "processing", "responses", "lock_exists"],
+      "properties": {
+        "queue": { "const": 0 },
+        "processing": { "const": 0 },
+        "responses": { "const": 0 },
+        "lock_exists": { "const": false }
+      }
+    },
+    "cleanup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["removed_requests", "removed_processing", "preserved_processing", "removed_lock", "removed_responses", "preserved_responses"],
+      "properties": {
+        "removed_requests": { "$ref": "#/$defs/count" },
+        "removed_processing": { "const": 0 },
+        "preserved_processing": { "const": 0 },
+        "removed_lock": { "type": "boolean" },
+        "removed_responses": { "const": 0 },
+        "preserved_responses": { "const": 0 }
+      }
+    },
+    "safety": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "explicit_queue_opt_in", "single_candidate_only", "originals_opened_in_sketchup", "disposable_copy_only",
+        "original_bytes_unchanged_verified", "disposable_copy_bytes_unchanged_verified", "active_document_changed",
+        "previous_active_document_restored", "active_document_change_warning_emitted", "read_only_adoption", "adopted_count",
+        "model_content_mutation_requested", "save_requested", "approval_token_requested", "selection_changed",
+        "visual_capture_requested", "forbidden_live_actions", "interrupt_cleanup_enabled", "cleanup", "queue_before", "queue_after"
+      ],
+      "properties": {
+        "explicit_queue_opt_in": { "const": true },
+        "single_candidate_only": { "const": true },
+        "originals_opened_in_sketchup": { "const": false },
+        "disposable_copy_only": { "const": true },
+        "original_bytes_unchanged_verified": { "const": true },
+        "disposable_copy_bytes_unchanged_verified": { "const": true },
+        "active_document_changed": { "const": true },
+        "previous_active_document_restored": { "const": false },
+        "active_document_change_warning_emitted": { "type": "boolean" },
+        "read_only_adoption": { "const": true },
+        "adopted_count": { "const": 0 },
+        "model_content_mutation_requested": { "const": false },
+        "save_requested": { "const": false },
+        "approval_token_requested": { "const": false },
+        "selection_changed": { "const": false },
+        "visual_capture_requested": { "const": false },
+        "forbidden_live_actions": {
+          "const": [
+            "build_model", "reset_model", "save_model", "save_model_version", "import_model", "export_model",
+            "set_selection", "capture_view", "run_ruby_expert", "manifold_check"
+          ]
+        },
+        "interrupt_cleanup_enabled": { "type": "boolean" },
+        "cleanup": { "$ref": "#/$defs/cleanup" },
+        "queue_before": { "$ref": "#/$defs/queue_state" },
+        "queue_after": { "$ref": "#/$defs/queue_state" }
+      }
+    }
+  }
+}

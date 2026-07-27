@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/schema/independent-agent-image-summary-probe-response-v1.schema.json",
+  "title": "IndependentAgentImageSummaryProbeResponseV1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "status",
+    "visual_task_id",
+    "visual_task_state",
+    "structured_summary_inline",
+    "visual_agent_required",
+    "local_files_required",
+    "correction_execution_allowed",
+    "image_artifact_handle",
+    "image_artifact_encoding",
+    "image_content_omitted_for_capability",
+    "stopped_before_execution",
+    "notes"
+  ],
+  "properties": {
+    "version": {
+      "type": "string",
+      "const": "independent-agent-image-summary-probe-response.v1"
+    },
+    "status": {
+      "type": "string",
+      "const": "completed"
+    },
+    "visual_task_id": {
+      "type": "string",
+      "pattern": "^task_[0-9a-f-]+$"
+    },
+    "visual_task_state": {
+      "type": "string",
+      "const": "awaiting_review"
+    },
+    "structured_summary_inline": {
+      "type": "boolean",
+      "const": true
+    },
+    "visual_agent_required": {
+      "type": "boolean",
+      "const": false
+    },
+    "local_files_required": {
+      "type": "boolean",
+      "const": false
+    },
+    "correction_execution_allowed": {
+      "type": "boolean",
+      "const": false
+    },
+    "image_artifact_handle": {
+      "type": "string",
+      "pattern": "^image-artifact:sha256:[0-9a-f]{64}$"
+    },
+    "image_artifact_encoding": {
+      "type": "string",
+      "const": "omitted"
+    },
+    "image_content_omitted_for_capability": {
+      "type": "boolean",
+      "const": true
+    },
+    "stopped_before_execution": {
+      "type": "boolean",
+      "const": true
+    },
+    "notes": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 600
+    }
+  }
+}

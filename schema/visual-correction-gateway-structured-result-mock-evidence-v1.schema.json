@@ -1,0 +1,231 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/schema/visual-correction-gateway-structured-result-mock-evidence-v1.schema.json",
+  "title": "VisualCorrectionGatewayStructuredResultMockEvidenceV1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "kind",
+    "created_at",
+    "runtime",
+    "result",
+    "contracts",
+    "acceptance",
+    "checks",
+    "source_hashes",
+    "release_acceptance",
+    "boundary"
+  ],
+  "properties": {
+    "version": {
+      "const": "visual-correction-gateway-structured-result-mock-evidence.v1"
+    },
+    "kind": {
+      "const": "visual_correction_gateway_structured_result_mock_evidence"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "runtime": {
+      "const": "mock_offline"
+    },
+    "result": {
+      "const": "pass"
+    },
+    "contracts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "qa_result",
+        "comparison",
+        "agent_result"
+      ],
+      "properties": {
+        "qa_result": {
+          "const": "visual-correction-qa-result.v1"
+        },
+        "comparison": {
+          "const": "background-normalized-visual-comparison.v1"
+        },
+        "agent_result": {
+          "const": "agent-result-envelope.v1"
+        }
+      }
+    },
+    "acceptance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_lineage_bound",
+        "structured_result_schema_valid",
+        "background_normalized_structure_verdict",
+        "background_normalized_segmentation_reliable",
+        "immutable_visual_artifact_handles",
+        "l0_max_chars",
+        "l0_no_vision_supported",
+        "l0_no_local_files_supported",
+        "l0_full_result_paged",
+        "visual_similarity_accepted",
+        "execution_allowed",
+        "client_decision_injection_rejected",
+        "diagnostic_boundary",
+        "queue_called"
+      ],
+      "properties": {
+        "source_lineage_bound": {
+          "const": true
+        },
+        "structured_result_schema_valid": {
+          "const": true
+        },
+        "background_normalized_structure_verdict": {
+          "const": "coarse_structure_pass"
+        },
+        "background_normalized_segmentation_reliable": {
+          "const": true
+        },
+        "immutable_visual_artifact_handles": {
+          "const": 8
+        },
+        "l0_max_chars": {
+          "const": 4096
+        },
+        "l0_no_vision_supported": {
+          "const": true
+        },
+        "l0_no_local_files_supported": {
+          "const": true
+        },
+        "l0_full_result_paged": {
+          "const": true
+        },
+        "visual_similarity_accepted": {
+          "const": false
+        },
+        "execution_allowed": {
+          "const": false
+        },
+        "client_decision_injection_rejected": {
+          "const": [
+            "comparison",
+            "visual_acceptance",
+            "review_or_execution"
+          ]
+        },
+        "diagnostic_boundary": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "review_authority",
+            "approval_authority",
+            "execution_policy_effect",
+            "promotion_allowed"
+          ],
+          "properties": {
+            "review_authority": {
+              "const": "none"
+            },
+            "approval_authority": {
+              "const": "none"
+            },
+            "execution_policy_effect": {
+              "const": "none"
+            },
+            "promotion_allowed": {
+              "const": false
+            }
+          }
+        },
+        "queue_called": {
+          "const": false
+        }
+      }
+    },
+    "checks": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "command",
+          "status"
+        ],
+        "properties": {
+          "command": {
+            "enum": [
+              "node test/visual-correction.mjs",
+              "node test/background-normalized-visual-comparison.mjs",
+              "node test/agent-gateway.mjs",
+              "node test/agent-gateway-production-capabilities.mjs"
+            ]
+          },
+          "status": {
+            "const": "passed"
+          }
+        }
+      }
+    },
+    "source_hashes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "src/visual-correction.mjs",
+        "src/background-normalized-visual-comparison.mjs",
+        "src/agent-gateway.mjs",
+        "src/agent-response-projection.mjs",
+        "schema/visual-correction-qa-result-v1.schema.json",
+        "test/visual-correction.mjs",
+        "test/background-normalized-visual-comparison.mjs",
+        "test/agent-gateway.mjs",
+        "test/agent-gateway-production-capabilities.mjs"
+      ],
+      "properties": {
+        "src/visual-correction.mjs": {
+          "$ref": "#/$defs/hash"
+        },
+        "src/background-normalized-visual-comparison.mjs": {
+          "$ref": "#/$defs/hash"
+        },
+        "src/agent-gateway.mjs": {
+          "$ref": "#/$defs/hash"
+        },
+        "src/agent-response-projection.mjs": {
+          "$ref": "#/$defs/hash"
+        },
+        "schema/visual-correction-qa-result-v1.schema.json": {
+          "$ref": "#/$defs/hash"
+        },
+        "test/visual-correction.mjs": {
+          "$ref": "#/$defs/hash"
+        },
+        "test/background-normalized-visual-comparison.mjs": {
+          "$ref": "#/$defs/hash"
+        },
+        "test/agent-gateway.mjs": {
+          "$ref": "#/$defs/hash"
+        },
+        "test/agent-gateway-production-capabilities.mjs": {
+          "$ref": "#/$defs/hash"
+        }
+      }
+    },
+    "release_acceptance": {
+      "const": false
+    },
+    "boundary": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "$defs": {
+    "hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

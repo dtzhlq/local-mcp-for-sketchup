@@ -1,0 +1,665 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/schemas/real-model-recursive-target-review-v3.schema.json",
+  "title": "Offline recursive structural-group target review v3 decision overlay",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "kind",
+    "generated_at",
+    "ok",
+    "runtime",
+    "live_queue_called",
+    "case_id",
+    "source",
+    "model",
+    "runtime_source_hashes",
+    "base_review",
+    "geometry_attestations",
+    "negative_atomic_trial_lineage",
+    "review",
+    "safety",
+    "model_data_policy",
+    "next_action"
+  ],
+  "properties": {
+    "version": { "const": "real-model-recursive-target-review.v3" },
+    "kind": { "const": "real_model_recursive_target_review" },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "ok": { "const": true },
+    "runtime": { "const": "offline" },
+    "live_queue_called": { "const": false },
+    "case_id": { "$ref": "#/$defs/case_id" },
+    "source": {
+      "$ref": "https://local-mcp-for-sketchup.invalid/schemas/real-model-recursive-target-review-v2.schema.json#/properties/source"
+    },
+    "model": {
+      "$ref": "https://local-mcp-for-sketchup.invalid/schemas/real-model-recursive-target-review-v2.schema.json#/properties/model"
+    },
+    "runtime_source_hashes": { "$ref": "#/$defs/runtime_source_hashes" },
+    "base_review": {
+      "$ref": "https://local-mcp-for-sketchup.invalid/schemas/real-model-recursive-target-review-v2.schema.json"
+    },
+    "geometry_attestations": {
+      "type": "array",
+      "maxItems": 10000,
+      "items": { "$ref": "#/$defs/geometry_attestation" }
+    },
+    "negative_atomic_trial_lineage": { "$ref": "#/$defs/negative_lineage_summary" },
+    "review": { "$ref": "#/$defs/review" },
+    "safety": { "$ref": "#/$defs/safety" },
+    "model_data_policy": {
+      "$ref": "https://local-mcp-for-sketchup.invalid/schemas/real-model-recursive-target-review-v2.schema.json#/properties/model_data_policy"
+    },
+    "next_action": { "$ref": "#/$defs/next_action" }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "negative_atomic_trial_lineage": {
+            "properties": {
+              "negative_trial_not_directly_reusable": { "const": true }
+            },
+            "required": ["negative_trial_not_directly_reusable"]
+          },
+          "safety": {
+            "properties": {
+              "negative_source_evidence_bytes_verified": { "const": true }
+            },
+            "required": ["negative_source_evidence_bytes_verified"]
+          }
+        },
+        "required": ["negative_atomic_trial_lineage", "safety"]
+      },
+      "then": {
+        "properties": {
+          "review": {
+            "properties": {
+              "status": { "const": "blocked" },
+              "recommended_proposal": { "type": "null" },
+              "blockers": { "contains": { "const": "runtime_delta_requires_review" } }
+            }
+          },
+          "next_action": {
+            "properties": {
+              "action": { "const": "audit_runtime_source_delta_before_new_atomic_trial" },
+              "runtime_delta_requires_review": { "const": true },
+              "negative_trial_not_directly_reusable": { "const": true }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "case_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{0,119}$"
+    },
+    "exact_path": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2048,
+      "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+    },
+    "nullable_exact_path": {
+      "anyOf": [
+        { "$ref": "#/$defs/exact_path" },
+        { "type": "null" }
+      ]
+    },
+    "nullable_positive_number": {
+      "anyOf": [
+        { "type": "number", "exclusiveMinimum": 0 },
+        { "type": "null" }
+      ]
+    },
+    "nullable_fill_ratio": {
+      "anyOf": [
+        { "type": "number", "exclusiveMinimum": 0, "maximum": 1.000001 },
+        { "type": "null" }
+      ]
+    },
+    "runtime_source_hashes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["boolean_operations_sha256", "model_revision_source_sha256"],
+      "properties": {
+        "boolean_operations_sha256": { "$ref": "#/$defs/sha256" },
+        "model_revision_source_sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "geometry_attestation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "occurrence_path",
+        "entity_fingerprint",
+        "manifold_status",
+        "exact_solid_volume",
+        "exact_solid_volume_provenance",
+        "world_bbox_volume",
+        "bbox_fill_ratio",
+        "bbox_fill_ratio_semantics",
+        "exact_overlap_proof"
+      ],
+      "properties": {
+        "occurrence_path": { "$ref": "#/$defs/exact_path" },
+        "entity_fingerprint": { "$ref": "#/$defs/sha256" },
+        "manifold_status": {
+          "enum": ["not_observed", "unmatched", "fresh_manifold", "fresh_non_manifold"]
+        },
+        "exact_solid_volume": { "$ref": "#/$defs/nullable_positive_number" },
+        "exact_solid_volume_provenance": {
+          "enum": ["fresh_manifold_structural_attestation", "not_available"]
+        },
+        "world_bbox_volume": { "type": "number", "minimum": 0 },
+        "bbox_fill_ratio": { "$ref": "#/$defs/nullable_fill_ratio" },
+        "bbox_fill_ratio_semantics": { "const": "sparsity_hint_only_not_exact_overlap" },
+        "exact_overlap_proof": { "const": false }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "exact_solid_volume_provenance": { "const": "fresh_manifold_structural_attestation" }
+            },
+            "required": ["exact_solid_volume_provenance"]
+          },
+          "then": {
+            "properties": {
+              "manifold_status": { "const": "fresh_manifold" },
+              "exact_solid_volume": { "type": "number", "exclusiveMinimum": 0 },
+              "bbox_fill_ratio": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "maximum": 1.000001
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "exact_solid_volume": { "type": "null" },
+              "bbox_fill_ratio": { "type": "null" }
+            }
+          }
+        }
+      ]
+    },
+    "source_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "verification"],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024,
+          "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[^\\u0000-\\u001f\\u007f\\\\]+$"
+        },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "verification": {
+          "enum": [
+            "not_verified_pure_derivation",
+            "verified_repo_regular_file_and_bound_content"
+          ]
+        }
+      }
+    },
+    "negative_outcome": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "error_code",
+        "phase",
+        "commit_state",
+        "abort_succeeded",
+        "outcome_unknown",
+        "mutation_committed",
+        "rollback_confirmed",
+        "exact_solid_overlap_verified"
+      ],
+      "properties": {
+        "error_code": { "const": "MUTATION_EXECUTION_FAILED" },
+        "phase": { "const": "precommit_execution" },
+        "commit_state": { "const": "not_committed" },
+        "abort_succeeded": { "const": true },
+        "outcome_unknown": { "const": false },
+        "mutation_committed": { "const": false },
+        "rollback_confirmed": { "const": true },
+        "exact_solid_overlap_verified": { "const": false }
+      }
+    },
+    "retry_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "approval_status_after_failure",
+        "approval_reusable",
+        "same_task_retry_allowed",
+        "previous_plan_or_approval_replay_allowed",
+        "automatic_retry_performed",
+        "automatic_replay_performed"
+      ],
+      "properties": {
+        "approval_status_after_failure": { "const": "consumed_failed" },
+        "approval_reusable": { "const": false },
+        "same_task_retry_allowed": { "const": false },
+        "previous_plan_or_approval_replay_allowed": { "const": false },
+        "automatic_retry_performed": { "const": false },
+        "automatic_replay_performed": { "const": false }
+      }
+    },
+    "negative_trial": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "lineage_sha256",
+        "case_id",
+        "source_sha256",
+        "model_revision",
+        "operation",
+        "target_path",
+        "tool_path",
+        "plan_id",
+        "plan_hash",
+        "source_evidence",
+        "runtime_source_hashes",
+        "outcome",
+        "retry_policy",
+        "release_acceptance",
+        "runtime_binding_status",
+        "runtime_delta_fields",
+        "pair_present_in_base_review",
+        "failed_plan_replay_allowed"
+      ],
+      "properties": {
+        "lineage_sha256": { "$ref": "#/$defs/sha256" },
+        "case_id": { "$ref": "#/$defs/case_id" },
+        "source_sha256": { "$ref": "#/$defs/sha256" },
+        "model_revision": { "$ref": "#/$defs/sha256" },
+        "operation": { "enum": ["difference", "intersect"] },
+        "target_path": { "$ref": "#/$defs/exact_path" },
+        "tool_path": { "$ref": "#/$defs/exact_path" },
+        "plan_id": { "type": "string", "minLength": 1, "maxLength": 240 },
+        "plan_hash": { "$ref": "#/$defs/sha256" },
+        "source_evidence": { "$ref": "#/$defs/source_evidence" },
+        "runtime_source_hashes": { "$ref": "#/$defs/runtime_source_hashes" },
+        "outcome": { "$ref": "#/$defs/negative_outcome" },
+        "retry_policy": { "$ref": "#/$defs/retry_policy" },
+        "release_acceptance": { "const": false },
+        "runtime_binding_status": {
+          "enum": ["exact_runtime_match", "runtime_delta_requires_review"]
+        },
+        "runtime_delta_fields": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 2,
+          "uniqueItems": true,
+          "items": {
+            "enum": ["boolean_operations_sha256", "model_revision_source_sha256"]
+          }
+        },
+        "pair_present_in_base_review": { "const": true },
+        "failed_plan_replay_allowed": { "const": false }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "runtime_binding_status": { "const": "exact_runtime_match" } },
+            "required": ["runtime_binding_status"]
+          },
+          "then": { "properties": { "runtime_delta_fields": { "maxItems": 0 } } },
+          "else": { "properties": { "runtime_delta_fields": { "minItems": 1 } } }
+        }
+      ]
+    },
+    "negative_lineage_summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "input_version",
+        "status",
+        "supplied_count",
+        "exact_runtime_match_count",
+        "runtime_delta_count",
+        "negative_trial_not_directly_reusable",
+        "source_evidence_verification",
+        "trials"
+      ],
+      "properties": {
+        "input_version": { "const": "negative-atomic-trial-lineage.v1" },
+        "status": {
+          "enum": [
+            "none_supplied",
+            "exact_runtime_match",
+            "runtime_delta_requires_review",
+            "mixed_runtime_applicability_requires_review"
+          ]
+        },
+        "supplied_count": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "exact_runtime_match_count": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "runtime_delta_count": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "negative_trial_not_directly_reusable": { "type": "boolean" },
+        "source_evidence_verification": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "required_count", "verified_count"],
+          "properties": {
+            "status": {
+              "enum": [
+                "not_required",
+                "not_verified_pure_derivation",
+                "verified_repo_regular_files_and_bound_content"
+              ]
+            },
+            "required_count": { "type": "integer", "minimum": 0, "maximum": 100 },
+            "verified_count": { "type": "integer", "minimum": 0, "maximum": 100 }
+          }
+        },
+        "trials": {
+          "type": "array",
+          "maxItems": 100,
+          "items": { "$ref": "#/$defs/negative_trial" }
+        }
+      }
+    },
+    "fill_ratio_assessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["low_threshold", "low_fill_ratio_observed", "semantics", "exact_overlap_proof"],
+      "properties": {
+        "low_threshold": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 },
+        "low_fill_ratio_observed": { "type": "boolean" },
+        "semantics": { "const": "sparsity_hint_only_not_exact_overlap" },
+        "exact_overlap_proof": { "const": false }
+      }
+    },
+    "exact_overlap_assessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "verified", "evidence_requirement", "bbox_fill_ratio_is_exact_overlap_proof"],
+      "properties": {
+        "status": { "const": "exact_overlap_unverified" },
+        "verified": { "const": false },
+        "evidence_requirement": {
+          "enum": [
+            "failed_atomic_trial_pair_excluded",
+            "verified_negative_source_evidence_required",
+            "trusted_runtime_delta_audit_required",
+            "needs_stronger_evidence",
+            "review_gated_atomic_trial",
+            "geometric_preconditions_required"
+          ]
+        },
+        "bbox_fill_ratio_is_exact_overlap_proof": { "const": false }
+      }
+    },
+    "pair_negative_trial": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "lineage_sha256",
+        "plan_hash",
+        "runtime_exact_match",
+        "failed_plan_replay_allowed"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "not_observed_for_pair",
+            "negative_source_evidence_unverified",
+            "confirmed_precommit_abort_exact_runtime",
+            "negative_trial_not_directly_reusable"
+          ]
+        },
+        "lineage_sha256": {
+          "anyOf": [{ "$ref": "#/$defs/sha256" }, { "type": "null" }]
+        },
+        "plan_hash": {
+          "anyOf": [{ "$ref": "#/$defs/sha256" }, { "type": "null" }]
+        },
+        "runtime_exact_match": { "type": ["boolean", "null"] },
+        "failed_plan_replay_allowed": { "const": false }
+      }
+    },
+    "pair_decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "base_rank",
+        "operation",
+        "status",
+        "target_path",
+        "tool_path",
+        "scope_path",
+        "parent_entity_path",
+        "bbox_relation",
+        "positive_bbox_overlap",
+        "bbox_overlap_volume",
+        "target_exact_solid_volume",
+        "tool_exact_solid_volume",
+        "target_bbox_fill_ratio",
+        "tool_bbox_fill_ratio",
+        "fill_ratio_assessment",
+        "exact_solid_overlap",
+        "exact_overlap_assessment",
+        "negative_atomic_trial",
+        "atomic_boolean_trial_eligible",
+        "role_provenance",
+        "blockers"
+      ],
+      "properties": {
+        "base_rank": { "type": "integer", "minimum": 1 },
+        "operation": { "enum": ["difference", "intersect"] },
+        "status": { "enum": ["server_recommended", "blocked"] },
+        "target_path": { "$ref": "#/$defs/exact_path" },
+        "tool_path": { "$ref": "#/$defs/exact_path" },
+        "scope_path": { "$ref": "#/$defs/exact_path" },
+        "parent_entity_path": { "$ref": "#/$defs/nullable_exact_path" },
+        "bbox_relation": { "enum": ["collision", "containment", "contact", "disjoint"] },
+        "positive_bbox_overlap": { "type": "boolean" },
+        "bbox_overlap_volume": { "type": "number", "minimum": 0 },
+        "target_exact_solid_volume": { "$ref": "#/$defs/nullable_positive_number" },
+        "tool_exact_solid_volume": { "$ref": "#/$defs/nullable_positive_number" },
+        "target_bbox_fill_ratio": { "$ref": "#/$defs/nullable_fill_ratio" },
+        "tool_bbox_fill_ratio": { "$ref": "#/$defs/nullable_fill_ratio" },
+        "fill_ratio_assessment": { "$ref": "#/$defs/fill_ratio_assessment" },
+        "exact_solid_overlap": {
+          "$ref": "https://local-mcp-for-sketchup.invalid/schemas/real-model-recursive-target-review-v2.schema.json#/$defs/exact_solid_overlap"
+        },
+        "exact_overlap_assessment": { "$ref": "#/$defs/exact_overlap_assessment" },
+        "negative_atomic_trial": { "$ref": "#/$defs/pair_negative_trial" },
+        "atomic_boolean_trial_eligible": { "type": "boolean" },
+        "role_provenance": { "const": "server_geometric_ranking_untrusted_unapproved" },
+        "blockers": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1, "maxLength": 120 }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "status": { "const": "server_recommended" } },
+            "required": ["status"]
+          },
+          "then": {
+            "properties": {
+              "atomic_boolean_trial_eligible": { "const": true },
+              "blockers": { "maxItems": 0 }
+            }
+          },
+          "else": {
+            "properties": { "atomic_boolean_trial_eligible": { "const": false } }
+          }
+        }
+      ]
+    },
+    "recommended_proposal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operation",
+        "status",
+        "base_pair_rank",
+        "target_path",
+        "tool_path",
+        "scope_path",
+        "parent_entity_path",
+        "bbox_relation",
+        "positive_bbox_overlap",
+        "bbox_overlap_volume",
+        "exact_overlap_assessment",
+        "atomic_boolean_trial_eligible",
+        "role_provenance",
+        "confirmed",
+        "authorized",
+        "trusted_approval_required"
+      ],
+      "properties": {
+        "operation": { "enum": ["difference", "intersect"] },
+        "status": { "const": "server_recommended" },
+        "base_pair_rank": { "type": "integer", "minimum": 1 },
+        "target_path": { "$ref": "#/$defs/exact_path" },
+        "tool_path": { "$ref": "#/$defs/exact_path" },
+        "scope_path": { "$ref": "#/$defs/exact_path" },
+        "parent_entity_path": { "$ref": "#/$defs/nullable_exact_path" },
+        "bbox_relation": { "enum": ["collision", "containment"] },
+        "positive_bbox_overlap": { "const": true },
+        "bbox_overlap_volume": { "type": "number", "exclusiveMinimum": 0 },
+        "exact_overlap_assessment": { "$ref": "#/$defs/exact_overlap_assessment" },
+        "atomic_boolean_trial_eligible": { "const": true },
+        "role_provenance": { "const": "server_geometric_ranking_untrusted_unapproved" },
+        "confirmed": { "const": false },
+        "authorized": { "const": false },
+        "trusted_approval_required": { "const": true }
+      }
+    },
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "operation",
+        "fill_ratio_low_threshold",
+        "bbox_fill_ratio_semantics",
+        "pair_decisions",
+        "recommended_proposal",
+        "findings",
+        "blockers"
+      ],
+      "properties": {
+        "status": { "enum": ["server_recommended", "blocked"] },
+        "operation": { "enum": ["difference", "intersect"] },
+        "fill_ratio_low_threshold": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 },
+        "bbox_fill_ratio_semantics": { "const": "sparsity_hint_only_not_exact_overlap" },
+        "pair_decisions": {
+          "type": "array",
+          "maxItems": 100000,
+          "items": { "$ref": "#/$defs/pair_decision" }
+        },
+        "recommended_proposal": {
+          "anyOf": [
+            { "$ref": "#/$defs/recommended_proposal" },
+            { "type": "null" }
+          ]
+        },
+        "findings": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "negative_atomic_trial_pair_excluded",
+              "negative_source_evidence_unverified",
+              "negative_trial_not_directly_reusable",
+              "runtime_delta_requires_review",
+              "stronger_exact_overlap_evidence_required"
+            ]
+          }
+        },
+        "blockers": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1, "maxLength": 120 }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "status": { "const": "server_recommended" } },
+            "required": ["status"]
+          },
+          "then": { "properties": { "recommended_proposal": { "$ref": "#/$defs/recommended_proposal" } } },
+          "else": { "properties": { "recommended_proposal": { "type": "null" } } }
+        }
+      ]
+    },
+    "safety": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "analysis_only",
+        "queue_accessed",
+        "model_opened",
+        "model_mutation_requested",
+        "model_mutation_authorized",
+        "approval_token_requested",
+        "negative_trial_may_grant_authorization",
+        "negative_source_evidence_bytes_verified",
+        "runtime_delta_may_be_silently_ignored",
+        "release_acceptance"
+      ],
+      "properties": {
+        "analysis_only": { "const": true },
+        "queue_accessed": { "const": false },
+        "model_opened": { "const": false },
+        "model_mutation_requested": { "const": false },
+        "model_mutation_authorized": { "const": false },
+        "approval_token_requested": { "const": false },
+        "negative_trial_may_grant_authorization": { "const": false },
+        "negative_source_evidence_bytes_verified": { "type": "boolean" },
+        "runtime_delta_may_be_silently_ignored": { "const": false },
+        "release_acceptance": { "const": false }
+      }
+    },
+    "next_action": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "action",
+        "runtime_delta_requires_review",
+        "negative_trial_not_directly_reusable",
+        "human_approval_required_before_mutation",
+        "mutation_authorized",
+        "approval_token_issued",
+        "release_acceptance"
+      ],
+      "properties": {
+        "action": {
+          "enum": [
+            "audit_runtime_source_delta_before_new_atomic_trial",
+            "verify_negative_source_evidence_before_candidate_policy",
+            "review_server_recommended_proposal_and_request_trusted_approval",
+            "collect_stronger_exact_overlap_evidence",
+            "select_distinct_candidate_or_correct_implementation",
+            "resolve_fail_closed_recursive_review_blockers"
+          ]
+        },
+        "runtime_delta_requires_review": { "type": "boolean" },
+        "negative_trial_not_directly_reusable": { "type": "boolean" },
+        "human_approval_required_before_mutation": { "const": true },
+        "mutation_authorized": { "const": false },
+        "approval_token_issued": { "const": false },
+        "release_acceptance": { "const": false }
+      }
+    }
+  }
+}

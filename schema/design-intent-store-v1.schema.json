@@ -1,0 +1,201 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/local-mcp-for-sketchup/design-intent-store-v1.schema.json",
+  "title": "DesignIntentGraph Store Manifest v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "kind",
+    "model_key",
+    "current_design_graph_id",
+    "current_source_model_graph_id",
+    "current_model_revision",
+    "version_count",
+    "versions",
+    "reconciliation_count",
+    "reconciliation_history",
+    "privacy",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "version": { "const": "design-intent-store.v1" },
+    "kind": { "const": "design_intent_manifest" },
+    "model_key": { "$ref": "#/$defs/model_key" },
+    "current_design_graph_id": { "$ref": "#/$defs/design_graph_id" },
+    "current_source_model_graph_id": { "$ref": "#/$defs/model_graph_id" },
+    "current_model_revision": { "$ref": "#/$defs/sha256" },
+    "version_count": { "type": "integer", "minimum": 1 },
+    "versions": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/version_entry" }
+    },
+    "reconciliation_count": { "type": "integer", "minimum": 0 },
+    "reconciliation_history": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/reconciliation_entry" }
+    },
+    "privacy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["raw_external_paths_persisted", "sensitive_identity_persisted"],
+      "properties": {
+        "raw_external_paths_persisted": { "const": false },
+        "sensitive_identity_persisted": { "const": false }
+      }
+    },
+    "created_at": { "type": "string", "minLength": 1 },
+    "updated_at": { "type": "string", "minLength": 1 }
+  },
+  "$defs": {
+    "model_key": {
+      "type": "string",
+      "pattern": "^model_[0-9a-f]{32}$"
+    },
+    "design_graph_id": {
+      "type": "string",
+      "pattern": "^design-graph-[0-9a-f]{24}$"
+    },
+    "model_graph_id": {
+      "type": "string",
+      "pattern": "^model-graph-[0-9a-f]{24}$"
+    },
+    "reconciliation_id": {
+      "type": "string",
+      "pattern": "^reconciliation-[0-9a-f]{24}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "source_task_id": {
+      "type": ["string", "null"],
+      "pattern": "^task_[0-9a-f-]+$"
+    },
+    "version_entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sequence",
+        "model_key",
+        "design_graph_id",
+        "source_model_graph_id",
+        "model_revision",
+        "content_sha256",
+        "artifact_path",
+        "source_task_id",
+        "created_at",
+        "transition",
+        "history_delta"
+      ],
+      "properties": {
+        "sequence": { "type": "integer", "minimum": 1 },
+        "model_key": { "$ref": "#/$defs/model_key" },
+        "design_graph_id": { "$ref": "#/$defs/design_graph_id" },
+        "source_model_graph_id": { "$ref": "#/$defs/model_graph_id" },
+        "model_revision": { "$ref": "#/$defs/sha256" },
+        "content_sha256": { "$ref": "#/$defs/sha256" },
+        "artifact_path": {
+          "type": "string",
+          "pattern": "^graphs/design-graph-[0-9a-f]{24}\\.json$"
+        },
+        "source_task_id": { "$ref": "#/$defs/source_task_id" },
+        "created_at": { "type": "string", "minLength": 1 },
+        "transition": { "$ref": "#/$defs/transition" },
+        "history_delta": { "$ref": "#/$defs/history_delta" }
+      }
+    },
+    "transition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "reconciliation_id", "added_correction_event_ids"],
+      "properties": {
+        "kind": {
+          "enum": ["initial", "snapshot", "reconciliation", "correction", "reconciliation_correction"]
+        },
+        "reconciliation_id": {
+          "oneOf": [
+            { "$ref": "#/$defs/reconciliation_id" },
+            { "type": "null" }
+          ]
+        },
+        "added_correction_event_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^[A-Za-z][A-Za-z0-9._:-]{0,127}$" }
+        }
+      }
+    },
+    "history_delta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "previous_design_graph_id",
+        "source_model_graph_changed",
+        "model_revision_changed",
+        "changed_parameter_ids",
+        "added_binding_ids",
+        "removed_binding_ids",
+        "changed_binding_ids",
+        "added_correction_event_ids"
+      ],
+      "properties": {
+        "previous_design_graph_id": {
+          "oneOf": [
+            { "$ref": "#/$defs/design_graph_id" },
+            { "type": "null" }
+          ]
+        },
+        "source_model_graph_changed": { "type": "boolean" },
+        "model_revision_changed": { "type": "boolean" },
+        "changed_parameter_ids": { "$ref": "#/$defs/string_set" },
+        "added_binding_ids": { "$ref": "#/$defs/string_set" },
+        "removed_binding_ids": { "$ref": "#/$defs/string_set" },
+        "changed_binding_ids": { "$ref": "#/$defs/string_set" },
+        "added_correction_event_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^[A-Za-z][A-Za-z0-9._:-]{0,127}$" }
+        }
+      }
+    },
+    "string_set": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "reconciliation_entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sequence",
+        "model_key",
+        "reconciliation_id",
+        "design_graph_id",
+        "previous_model_revision",
+        "current_model_revision",
+        "content_sha256",
+        "artifact_path",
+        "source_task_id",
+        "created_at"
+      ],
+      "properties": {
+        "sequence": { "type": "integer", "minimum": 1 },
+        "model_key": { "$ref": "#/$defs/model_key" },
+        "reconciliation_id": { "$ref": "#/$defs/reconciliation_id" },
+        "design_graph_id": { "$ref": "#/$defs/design_graph_id" },
+        "previous_model_revision": { "$ref": "#/$defs/sha256" },
+        "current_model_revision": { "$ref": "#/$defs/sha256" },
+        "content_sha256": { "$ref": "#/$defs/sha256" },
+        "artifact_path": {
+          "type": "string",
+          "pattern": "^reconciliations/reconciliation-[0-9a-f]{24}\\.json$"
+        },
+        "source_task_id": { "$ref": "#/$defs/source_task_id" },
+        "created_at": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

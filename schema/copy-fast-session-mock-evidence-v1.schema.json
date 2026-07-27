@@ -1,0 +1,189 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/schema/copy-fast-session-mock-evidence-v1.schema.json",
+  "title": "Copy Fast session current-source mock evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "kind",
+    "created_at",
+    "branch",
+    "runtime",
+    "result",
+    "contracts",
+    "policy",
+    "acceptance",
+    "checks",
+    "source_hashes",
+    "release_acceptance",
+    "boundary"
+  ],
+  "properties": {
+    "version": { "const": "copy-fast-session-mock-evidence.v1" },
+    "kind": { "const": "copy_fast_session_mock_evidence" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "branch": { "const": "codex/agent-contract-v1" },
+    "runtime": { "const": "mock_offline" },
+    "result": { "const": "pass" },
+    "contracts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["session", "public_summary", "agent_task", "mutation_receipt"],
+      "properties": {
+        "session": { "const": "copy-fast-session.v1" },
+        "public_summary": { "const": "copy-fast-session-summary.v1" },
+        "agent_task": { "const": "agent-contract.v1" },
+        "mutation_receipt": { "const": "task-mutation-receipt.v1" }
+      }
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source",
+        "activation",
+        "session_scope",
+        "allowed_risks",
+        "default_ttl_ms",
+        "allow_save_model_by_default",
+        "agent_can_enable",
+        "outside_root_behavior"
+      ],
+      "properties": {
+        "source": { "const": "server_user_execution_policy" },
+        "activation": { "const": "server_verified_copy_root" },
+        "session_scope": { "const": "current_server_process_and_model_copy" },
+        "allowed_risks": {
+          "type": "array",
+          "prefixItems": [
+            { "const": "S1" },
+            { "const": "S2" },
+            { "const": "S3" },
+            { "const": "S4" }
+          ],
+          "items": false,
+          "minItems": 4,
+          "maxItems": 4
+        },
+        "default_ttl_ms": { "const": 28800000 },
+        "allow_save_model_by_default": { "const": false },
+        "agent_can_enable": { "const": false },
+        "outside_root_behavior": { "const": "trusted_user_approval_required" }
+      }
+    },
+    "acceptance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "prepared_task_state",
+        "next_action",
+        "authorization_mode",
+        "per_edit_user_action_required",
+        "per_edit_approval_challenges",
+        "session_reused_across_tasks",
+        "session_reused_across_model_revisions",
+        "s1_executed",
+        "s4_executed",
+        "idempotent_retry",
+        "duplicate_mutation",
+        "outside_root_failed_closed",
+        "agent_policy_claim_cannot_enable",
+        "legacy_binding_without_session_failed_closed",
+        "restart_failed_closed",
+        "expiry_failed_closed",
+        "revocation_failed_closed",
+        "public_roots_exposed",
+        "public_path_fingerprints_exposed",
+        "live_queue_calls"
+      ],
+      "properties": {
+        "prepared_task_state": { "const": "approved" },
+        "next_action": { "const": "execute_copy_edit" },
+        "authorization_mode": { "const": "server_policy_copy_fast_session" },
+        "per_edit_user_action_required": { "const": false },
+        "per_edit_approval_challenges": { "const": 0 },
+        "session_reused_across_tasks": { "const": true },
+        "session_reused_across_model_revisions": { "const": true },
+        "s1_executed": { "const": true },
+        "s4_executed": { "const": true },
+        "idempotent_retry": { "const": true },
+        "duplicate_mutation": { "const": false },
+        "outside_root_failed_closed": { "const": true },
+        "agent_policy_claim_cannot_enable": { "const": true },
+        "legacy_binding_without_session_failed_closed": { "const": true },
+        "restart_failed_closed": { "const": true },
+        "expiry_failed_closed": { "const": true },
+        "revocation_failed_closed": { "const": true },
+        "public_roots_exposed": { "const": false },
+        "public_path_fingerprints_exposed": { "const": false },
+        "live_queue_calls": { "const": 0 }
+      }
+    },
+    "checks": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["command", "status"],
+        "properties": {
+          "command": {
+            "enum": [
+              "node test/copy-fast-session.mjs",
+              "node test/trusted-model-copy-auto-approval.mjs",
+              "node test/agent-contract.mjs",
+              "node test/agent-gateway.mjs",
+              "node test/agent-gateway-mutation-recovery.mjs"
+            ]
+          },
+          "status": { "const": "passed" }
+        }
+      }
+    },
+    "source_hashes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "src/copy-fast-session.mjs",
+        "src/agent-contract.mjs",
+        "src/existing-model-editing.mjs",
+        "src/agent-gateway.mjs",
+        "src/agent-response-projection.mjs",
+        "src/bridge.mjs",
+        "src/task-mutation-receipt-ledger.mjs",
+        "schema/copy-fast-session-v1.schema.json",
+        "schema/copy-fast-session-summary-v1.schema.json",
+        "schema/agent-task-v1.schema.json",
+        "schema/task-mutation-receipt-v1.schema.json",
+        "test/copy-fast-session.mjs",
+        "test/trusted-model-copy-auto-approval.mjs"
+      ],
+      "properties": {
+        "src/copy-fast-session.mjs": { "$ref": "#/$defs/hash" },
+        "src/agent-contract.mjs": { "$ref": "#/$defs/hash" },
+        "src/existing-model-editing.mjs": { "$ref": "#/$defs/hash" },
+        "src/agent-gateway.mjs": { "$ref": "#/$defs/hash" },
+        "src/agent-response-projection.mjs": { "$ref": "#/$defs/hash" },
+        "src/bridge.mjs": { "$ref": "#/$defs/hash" },
+        "src/task-mutation-receipt-ledger.mjs": { "$ref": "#/$defs/hash" },
+        "schema/copy-fast-session-v1.schema.json": { "$ref": "#/$defs/hash" },
+        "schema/copy-fast-session-summary-v1.schema.json": { "$ref": "#/$defs/hash" },
+        "schema/agent-task-v1.schema.json": { "$ref": "#/$defs/hash" },
+        "schema/task-mutation-receipt-v1.schema.json": { "$ref": "#/$defs/hash" },
+        "test/copy-fast-session.mjs": { "$ref": "#/$defs/hash" },
+        "test/trusted-model-copy-auto-approval.mjs": { "$ref": "#/$defs/hash" }
+      }
+    },
+    "release_acceptance": { "const": false },
+    "boundary": { "type": "string", "minLength": 80 }
+  },
+  "$defs": {
+    "hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

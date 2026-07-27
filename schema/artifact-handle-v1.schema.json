@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/local-mcp-for-sketchup/artifact-handle-v1.schema.json",
+  "title": "Agent Contract v1 Artifact Handle",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["handle", "kind", "media_type", "label", "size_bytes", "created_at"],
+  "properties": {
+    "handle": { "type": "string", "pattern": "^artifact:task_[0-9a-f-]+:[0-9a-f-]+$" },
+    "kind": { "type": "string", "minLength": 1 },
+    "media_type": { "type": "string", "minLength": 1 },
+    "label": { "type": "string", "minLength": 1 },
+    "size_bytes": { "type": "integer", "minimum": 0 },
+    "created_at": { "type": "string", "format": "date-time" }
+  }
+}

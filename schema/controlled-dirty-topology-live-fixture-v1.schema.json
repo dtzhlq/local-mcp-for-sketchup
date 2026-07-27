@@ -1,0 +1,265 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/local-mcp-for-sketchup/controlled-dirty-topology-live-fixture-v1.schema.json",
+  "title": "Controlled imported dirty-topology live fixture v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "kind",
+    "status",
+    "finalized_at",
+    "derivation_class",
+    "working_copy_mode",
+    "recovery",
+    "source",
+    "overlay",
+    "repair_target",
+    "artifact",
+    "contract",
+    "identity",
+    "runtime_attestation",
+    "session_contract_ttl_ms",
+    "queue_clean",
+    "release_acceptance"
+  ],
+  "properties": {
+    "version": { "const": "controlled-dirty-topology-live-fixture.v1" },
+    "kind": { "const": "controlled_dirty_topology_live_fixture_finalization" },
+    "status": { "const": "ready_for_formal_live_case" },
+    "finalized_at": { "type": "string", "format": "date-time" },
+    "derivation_class": {
+      "const": "controlled_loose_edge_overlay_on_user_authorized_imported_model_copy"
+    },
+    "working_copy_mode": {
+      "enum": [
+        "new_byte_exact_copy",
+        "resumed_byte_exact_pristine_copy",
+        "recovered_saved_artifact_after_document_focus_drift"
+      ]
+    },
+    "recovery": {
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "mode",
+            "reason_code",
+            "active_artifact_path_verified",
+            "artifact_clean_after_save",
+            "source_profile_path",
+            "source_profile_sha256",
+            "source_top_level_entities",
+            "artifact_non_target_top_level_entities",
+            "pre_save_isolation_assertions_precede_guarded_save_in_preparer"
+          ],
+          "properties": {
+            "mode": { "const": "post_save_active_artifact_recovery" },
+            "reason_code": { "const": "HANDSHAKE_DOCUMENT_MISMATCH" },
+            "active_artifact_path_verified": { "const": true },
+            "artifact_clean_after_save": { "const": true },
+            "source_profile_path": { "$ref": "#/$defs/absolutePath" },
+            "source_profile_sha256": { "$ref": "#/$defs/prefixedSha256" },
+            "source_top_level_entities": { "type": "integer", "minimum": 1 },
+            "artifact_non_target_top_level_entities": { "type": "integer", "minimum": 1 },
+            "pre_save_isolation_assertions_precede_guarded_save_in_preparer": { "const": true }
+          }
+        }
+      ]
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sha256", "original_bytes_unchanged"],
+      "properties": {
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "original_bytes_unchanged": { "const": true }
+      }
+    },
+    "overlay": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operation_count",
+        "operations",
+        "geometry_mutation_performed",
+        "imported_context_retained",
+        "original_top_level_entities_preserved",
+        "defect_fixture",
+        "origin_mm",
+        "separation_margin_mm"
+      ],
+      "properties": {
+        "operation_count": { "const": 1 },
+        "operations": { "const": ["geometry_input"] },
+        "geometry_mutation_performed": { "const": true },
+        "imported_context_retained": { "const": true },
+        "original_top_level_entities_preserved": { "const": true },
+        "defect_fixture": { "const": "closed_box_plus_one_isolated_loose_edge" },
+        "origin_mm": { "$ref": "#/$defs/point" },
+        "separation_margin_mm": { "type": "number", "minimum": 1000 }
+      }
+    },
+    "repair_target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "public_id",
+        "persistent_id",
+        "name_untrusted",
+        "expected_issue_codes",
+        "initial_report",
+        "reopened_report",
+        "repair_performed_during_preparation"
+      ],
+      "properties": {
+        "public_id": { "const": "local-mcp-reliability-dirty-topology-target" },
+        "persistent_id": { "type": "string", "minLength": 1 },
+        "name_untrusted": { "const": "LOCAL_MCP_FOR_SKETCHUP_Reliability_Dirty_Topology_Target" },
+        "expected_issue_codes": { "const": ["boundary_edges"] },
+        "initial_report": { "$ref": "#/$defs/manifoldReport" },
+        "reopened_report": { "$ref": "#/$defs/manifoldReport" },
+        "repair_performed_during_preparation": { "const": false }
+      }
+    },
+    "artifact": { "$ref": "#/$defs/artifact" },
+    "contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": { "$ref": "#/$defs/absolutePath" },
+        "sha256": { "$ref": "#/$defs/prefixedSha256" }
+      }
+    },
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "model_revision",
+        "model_revision_complete",
+        "identity_mode",
+        "top_level_entities_before",
+        "top_level_entities_after",
+        "recursive_total_before",
+        "recursive_total_after",
+        "recursive_entries_materialized",
+        "recursive_truncated"
+      ],
+      "properties": {
+        "model_revision": { "$ref": "#/$defs/prefixedSha256" },
+        "model_revision_complete": { "const": true },
+        "identity_mode": {
+          "enum": ["full_recursive", "complete_revision_bounded_occurrence_sample"]
+        },
+        "top_level_entities_before": { "type": "integer", "minimum": 1 },
+        "top_level_entities_after": { "type": "integer", "minimum": 2 },
+        "recursive_total_before": { "type": "integer", "minimum": 1 },
+        "recursive_total_after": { "type": "integer", "minimum": 1 },
+        "recursive_entries_materialized": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000
+        },
+        "recursive_truncated": { "type": "boolean" }
+      }
+    },
+    "runtime_attestation": { "$ref": "#/$defs/runtimeAttestation" },
+    "session_contract_ttl_ms": { "const": 300000 },
+    "queue_clean": { "$ref": "#/$defs/cleanQueue" },
+    "release_acceptance": { "const": false }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "prefixedSha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "absolutePath": { "type": "string", "pattern": "^/", "minLength": 2 },
+    "point": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": { "type": "number" }
+    },
+    "manifoldReport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["is_manifold", "method", "faces", "edges", "vertices", "issues"],
+      "properties": {
+        "is_manifold": { "const": false },
+        "method": { "type": "string", "minLength": 1 },
+        "faces": { "const": 6 },
+        "edges": { "type": "integer", "minimum": 13 },
+        "vertices": { "type": "integer", "minimum": 10 },
+        "issues": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "contains": { "const": "boundary_edges" },
+          "items": {
+            "enum": [
+              "not_group",
+              "no_faces",
+              "non_positive_volume",
+              "sketchup_manifold_false",
+              "boundary_edges",
+              "non_manifold_edges"
+            ]
+          }
+        }
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "bytes"],
+      "properties": {
+        "path": { "$ref": "#/$defs/absolutePath" },
+        "sha256": { "$ref": "#/$defs/prefixedSha256" },
+        "bytes": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "cleanQueue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["queue", "processing", "responses", "lock"],
+      "properties": {
+        "queue": { "const": 0 },
+        "processing": { "const": 0 },
+        "responses": { "const": 0 },
+        "lock": { "const": false }
+      }
+    },
+    "runtimeAttestation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "server_version",
+        "plugin_version",
+        "sketchup_version",
+        "capability_version",
+        "manifest_version",
+        "revision_strategy",
+        "revision_source_sha256",
+        "compatibility_ok"
+      ],
+      "properties": {
+        "name": { "const": "queue" },
+        "server_version": { "type": "string", "minLength": 1 },
+        "plugin_version": { "type": ["string", "null"] },
+        "sketchup_version": { "type": ["string", "null"] },
+        "capability_version": { "type": "string", "minLength": 1 },
+        "manifest_version": { "type": "string", "minLength": 1 },
+        "revision_strategy": { "type": ["string", "null"] },
+        "revision_source_sha256": {
+          "anyOf": [
+            { "$ref": "#/$defs/sha256" },
+            { "type": "null" }
+          ]
+        },
+        "compatibility_ok": { "const": true }
+      }
+    }
+  }
+}

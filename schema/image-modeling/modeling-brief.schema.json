@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/schema/image-modeling/modeling-brief.schema.json",
+  "title": "ModelingBrief",
+  "type": "object",
+  "required": ["version", "kind", "asset_set_id", "profile_id", "status", "compile_allowed", "missing_inputs", "instructions"],
+  "properties": {
+    "version": { "const": 1 },
+    "kind": { "const": "modeling_brief" },
+    "asset_set_id": { "type": "string" },
+    "profile_id": { "type": "string" },
+    "status": { "enum": ["blocked", "review_required", "ready_for_promotion_review"] },
+    "compile_allowed": { "type": "boolean" },
+    "candidate_count": { "type": "integer" },
+    "missing_inputs": { "type": "array", "items": { "type": "string" } },
+    "instructions": { "type": "array", "items": { "type": "string" } }
+  }
+}

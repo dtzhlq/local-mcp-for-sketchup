@@ -1,0 +1,242 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/local-mcp-for-sketchup/current-source-agent-target-quality-live-evidence-v1.schema.json",
+  "title": "Current-source Agent target-quality live evidence v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version", "kind", "captured_at", "evidence_scope", "source_binding_status", "superseded_by", "runtime", "source_bindings",
+    "model", "cases", "capture_artifact_hashes", "safety", "acceptance", "boundary"
+  ],
+  "properties": {
+    "version": { "const": "current-source-agent-target-quality-live-evidence.v1" },
+    "kind": { "const": "current_source_agent_target_quality_live_evidence" },
+    "captured_at": { "const": "2026-07-21T15:00:33.572Z" },
+    "evidence_scope": { "const": "single_disposable_model_positive_and_abstention_read_only" },
+    "source_binding_status": { "const": "historical_exact_source_snapshot" },
+    "superseded_by": { "const": "docs/evidence/current-source-agent-bounded-group-live-evidence-2026-07-21.json" },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "plugin_version", "sketchup_version", "ruby_version", "capability_version",
+        "manifest_version", "model_revision_strategy", "boolean_operations_sha256",
+        "model_revision_source_sha256", "compatibility_ok"
+      ],
+      "properties": {
+        "plugin_version": { "const": "0.1.0-rc.2" },
+        "sketchup_version": { "const": "26.2.242" },
+        "ruby_version": { "const": "3.2.2" },
+        "capability_version": { "const": "0.1.0-rc.2-capabilities.7" },
+        "manifest_version": { "const": "2026-07-agent-contract-v1.4" },
+        "model_revision_strategy": { "const": "definition-merkle.v2" },
+        "boolean_operations_sha256": { "const": "sha256:b98fd554894f629359651f40929cf30a7122ac90ba01217a662bea2f4c407610" },
+        "model_revision_source_sha256": { "const": "sha256:b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134" },
+        "compatibility_ok": { "const": true }
+      }
+    },
+    "source_bindings": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "prefixItems": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["path", "sha256"],
+          "properties": {
+            "path": { "const": "src/existing-model-edit-proposer.mjs" },
+            "sha256": { "const": "sha256:7b7c3814a9ebbbabd9bfa73d678ac24c90eb50b9a4873ebb486bb12952c9b577" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["path", "sha256"],
+          "properties": {
+            "path": { "const": "scripts/run-current-source-agent-readonly-live.mjs" },
+            "sha256": { "const": "sha256:5d7d0f4f4bf36eefa1190a87f080ac03e8e4d9d7e9cab2ced05202fba35ab967" }
+          }
+        }
+      ],
+      "items": false
+    },
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fixture_handle", "label_trust", "size_bytes", "model_revision", "revision_indexed",
+        "revision_total_seen", "model_revision_complete", "group_occurrences",
+        "equal_bbox_group_pair", "bytes_unchanged_across_cases", "revision_unchanged_across_cases",
+        "model_modified", "source_path_disclosed"
+      ],
+      "properties": {
+        "fixture_handle": { "const": "fixture:sha256:7e649c220a265a5e27a24aae2ed9687427186c06ba335616d5cdc0191966ce72" },
+        "label_trust": { "const": "untrusted_data" },
+        "size_bytes": { "const": 142149 },
+        "model_revision": { "const": "sha256:d540fdc8697e93f27a0312f75d382b6d5901597ef87e6673980fd21e97e3abb4" },
+        "revision_indexed": { "const": 5859 },
+        "revision_total_seen": { "const": 5859 },
+        "model_revision_complete": { "const": true },
+        "group_occurrences": { "const": 2 },
+        "equal_bbox_group_pair": { "const": true },
+        "bytes_unchanged_across_cases": { "const": true },
+        "revision_unchanged_across_cases": { "const": true },
+        "model_modified": { "const": false },
+        "source_path_disclosed": { "const": false }
+      }
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "prefixItems": [
+        { "$ref": "#/$defs/positiveCase" },
+        { "$ref": "#/$defs/abstentionCase" }
+      ],
+      "items": false
+    },
+    "capture_artifact_hashes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "positive_public_report", "positive_private_projection",
+        "abstention_public_report", "abstention_private_projection"
+      ],
+      "properties": {
+        "positive_public_report": { "const": "sha256:3ae37c1518b1629b31a3441fe0328371c25c741ccc4931cc417f3b01f92ee429" },
+        "positive_private_projection": { "const": "sha256:27f2476b6d9260d66e53a1628647fe5b8b3410b78a7a9c7179fbab57bca0d496" },
+        "abstention_public_report": { "const": "sha256:9d7cf3d1e1afc40225b11c6bd75bce16aa4a89392dfd9a8a7d9bff4862d9b7fb" },
+        "abstention_private_projection": { "const": "sha256:5b8fbe54b7f7b5b028a6abf129f63b85ce2717956c97537ea230f7395a3001f9" }
+      }
+    },
+    "safety": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "weak_client_profile", "signed_handshakes_verified_at_capture", "queue_before_each_clean",
+        "queue_after_each_clean", "final_queue", "final_processing", "final_responses",
+        "final_lock_exists", "sensitive_values_embedded", "mutation_requested",
+        "mutation_performed", "save_requested", "save_performed"
+      ],
+      "properties": {
+        "weak_client_profile": { "const": "short_context_no_files_no_vision_single_tool" },
+        "signed_handshakes_verified_at_capture": { "const": 4 },
+        "queue_before_each_clean": { "const": true },
+        "queue_after_each_clean": { "const": true },
+        "final_queue": { "const": 0 },
+        "final_processing": { "const": 0 },
+        "final_responses": { "const": 0 },
+        "final_lock_exists": { "const": false },
+        "sensitive_values_embedded": { "const": false },
+        "mutation_requested": { "const": false },
+        "mutation_performed": { "const": false },
+        "save_requested": { "const": false },
+        "save_performed": { "const": false }
+      }
+    },
+    "acceptance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "single_model_structural_target_positive", "equal_geometry_abstention",
+        "wrong_object_automatic_execution", "unauthorized_s2_s4_execution",
+        "duplicate_request_duplicate_modification", "multi_model_target_quality",
+        "live_mutation", "release_acceptance"
+      ],
+      "properties": {
+        "single_model_structural_target_positive": { "const": true },
+        "equal_geometry_abstention": { "const": true },
+        "wrong_object_automatic_execution": { "const": 0 },
+        "unauthorized_s2_s4_execution": { "const": 0 },
+        "duplicate_request_duplicate_modification": { "const": 0 },
+        "multi_model_target_quality": { "const": false },
+        "live_mutation": { "const": false },
+        "release_acceptance": { "const": false }
+      }
+    },
+    "boundary": {
+      "const": "This current-source evidence proves one weak-client read-only positive target proposal and one equal-geometry abstention on a byte-exact disposable model. It does not prove target quality across the corpus, authorize a reviewed edit, perform a mutation or save, or establish release acceptance."
+    }
+  },
+  "$defs": {
+    "untrustedQuery": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["trust", "source", "value", "policy_effect"],
+      "properties": {
+        "trust": { "const": "untrusted_data" },
+        "source": { "const": "benchmark_prompt" },
+        "value": { "type": "string", "minLength": 1 },
+        "policy_effect": { "const": "none" }
+      }
+    },
+    "positiveCase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "case_id", "target_query", "expected_behavior", "task_state", "requires_clarification",
+        "confidence", "candidate_count", "selected_target_count", "operation_count", "selected_role",
+        "selected_depth", "selected_topology", "evidence_kinds", "execution_allowed",
+        "approval_requested", "mutation_performed"
+      ],
+      "properties": {
+        "case_id": { "const": "unique_deepest_geometry_bearing_group" },
+        "target_query": { "$ref": "#/$defs/untrustedQuery" },
+        "expected_behavior": { "const": "select_one_for_review_only" },
+        "task_state": { "const": "awaiting_review" },
+        "requires_clarification": { "const": false },
+        "confidence": { "const": 0.86 },
+        "candidate_count": { "const": 5 },
+        "selected_target_count": { "const": 1 },
+        "operation_count": { "const": 1 },
+        "selected_role": { "const": "inner_geometry_bearing_group" },
+        "selected_depth": { "const": 2 },
+        "selected_topology": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["faces", "edges", "vertices"],
+          "properties": {
+            "faces": { "const": 2142 },
+            "edges": { "const": 3715 },
+            "vertices": { "const": 1657 }
+          }
+        },
+        "evidence_kinds": {
+          "const": ["trusted_topology_match", "deterministic_structural_ranking"]
+        },
+        "execution_allowed": { "const": false },
+        "approval_requested": { "const": false },
+        "mutation_performed": { "const": false }
+      }
+    },
+    "abstentionCase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "case_id", "target_query", "expected_behavior", "task_state", "requires_clarification",
+        "top_confidence", "equal_top_candidate_count", "equal_bbox", "ambiguity_reasons",
+        "selected_target_count", "operation_count", "execution_allowed", "approval_requested",
+        "mutation_performed"
+      ],
+      "properties": {
+        "case_id": { "const": "equal_bbox_largest_group_abstention" },
+        "target_query": { "$ref": "#/$defs/untrustedQuery" },
+        "expected_behavior": { "const": "ask_for_clarification" },
+        "task_state": { "const": "awaiting_input" },
+        "requires_clarification": { "const": true },
+        "top_confidence": { "const": 0.52 },
+        "equal_top_candidate_count": { "const": 2 },
+        "equal_bbox": { "const": true },
+        "ambiguity_reasons": {
+          "const": ["target_confidence_too_low", "multiple_similar_targets"]
+        },
+        "selected_target_count": { "const": 0 },
+        "operation_count": { "const": 0 },
+        "execution_allowed": { "const": false },
+        "approval_requested": { "const": false },
+        "mutation_performed": { "const": false }
+      }
+    }
+  }
+}

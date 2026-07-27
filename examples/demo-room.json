@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "units": "mm",
+  "operations": [
+    { "op": "reset" },
+    { "op": "material", "name": "Wall_Paint", "color": "#efe7dc" },
+    { "op": "material", "name": "Floor_Oak", "color": "#a87945" },
+    { "op": "material", "name": "Door_Wood", "color": "#7a4a2b" },
+    { "op": "material", "name": "Window_Glass", "color": "#8ecae6" },
+    {
+      "op": "room",
+      "name": "MVP_Room",
+      "width": 4500,
+      "depth": 3000,
+      "height": 2400,
+      "wall_thickness": 120,
+      "floor_thickness": 100
+    }
+  ]
+}

@@ -1,0 +1,162 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/schema/model-graph-live-readonly-evidence-v1.schema.json",
+  "title": "ModelGraph v1 live read-only evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "kind",
+    "captured_at",
+    "evidence_scope",
+    "runtime",
+    "installed_source",
+    "model",
+    "adoption",
+    "proposal",
+    "artifacts",
+    "invariants",
+    "queue_state",
+    "live_mutation_performed",
+    "release_acceptance",
+    "boundaries"
+  ],
+  "properties": {
+    "version": { "const": "model-graph-live-readonly-evidence.v1" },
+    "kind": { "const": "model_graph_live_readonly_evidence" },
+    "captured_at": { "type": "string", "minLength": 20 },
+    "evidence_scope": { "const": "live_queue_read_only" },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "plugin_version", "capability_version", "manifest_version", "sketchup_version", "ruby_version", "compatibility_ok"],
+      "properties": {
+        "name": { "const": "queue" },
+        "plugin_version": { "const": "0.1.0-rc.2" },
+        "capability_version": { "type": "string", "minLength": 1 },
+        "manifest_version": { "type": "string", "minLength": 1 },
+        "sketchup_version": { "type": "string", "minLength": 1 },
+        "ruby_version": { "type": "string", "minLength": 1 },
+        "compatibility_ok": { "const": true }
+      }
+    },
+    "installed_source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["installed_plugin_main_sha256", "workspace_plugin_main_sha256_after_capture", "current_workspace_exact_hash_match", "post_capture_diff_scope", "requires_reinstall_restart"],
+      "properties": {
+        "installed_plugin_main_sha256": { "$ref": "#/$defs/sha256" },
+        "workspace_plugin_main_sha256_after_capture": { "$ref": "#/$defs/sha256" },
+        "current_workspace_exact_hash_match": { "const": true },
+        "post_capture_diff_scope": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "requires_reinstall_restart": { "const": false }
+      }
+    },
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["model_revision", "document_identity_opaque", "top_level_entities", "recursive_entities", "graph_nodes", "definitions", "faces", "edges", "vertices"],
+      "properties": {
+        "model_revision": { "$ref": "#/$defs/prefixedSha256" },
+        "document_identity_opaque": { "const": true },
+        "top_level_entities": { "type": "integer", "minimum": 0 },
+        "recursive_entities": { "type": "integer", "minimum": 0 },
+        "graph_nodes": { "type": "integer", "minimum": 0 },
+        "definitions": { "type": "integer", "minimum": 0 },
+        "faces": { "type": "integer", "minimum": 0 },
+        "edges": { "type": "integer", "minimum": 0 },
+        "vertices": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "adoption": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "read_only", "model_revision_before", "model_revision_after", "revision_complete", "total_seen", "indexed", "recursive_truncated"],
+      "properties": {
+        "kind": { "const": "adopt_open_model" },
+        "read_only": { "const": true },
+        "model_revision_before": { "$ref": "#/$defs/prefixedSha256" },
+        "model_revision_after": { "$ref": "#/$defs/prefixedSha256" },
+        "revision_complete": { "const": true },
+        "total_seen": { "type": "integer", "minimum": 0 },
+        "indexed": { "type": "integer", "minimum": 0 },
+        "recursive_truncated": { "const": false }
+      }
+    },
+    "proposal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["task_state", "execution_allowed", "requires_clarification", "confidence", "candidate_count", "selected_target_count", "operation_count", "risk_level", "next_action", "ambiguity_reasons"],
+      "properties": {
+        "task_state": { "const": "awaiting_input" },
+        "execution_allowed": { "const": false },
+        "requires_clarification": { "const": true },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "candidate_count": { "type": "integer", "minimum": 1 },
+        "selected_target_count": { "const": 0 },
+        "operation_count": { "const": 0 },
+        "risk_level": { "enum": ["S1", "S2", "S3", "S4"] },
+        "next_action": { "const": "submit_task_input" },
+        "ambiguity_reasons": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "artifacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["model_graph_sha256", "model_graph_manifest_sha256", "edit_proposal_sha256", "model_graph_schema_valid", "proposal_schema_valid", "integrity_reload_ok", "public_absolute_path_exposed", "policy_environment_exposed"],
+      "properties": {
+        "model_graph_sha256": { "$ref": "#/$defs/sha256" },
+        "model_graph_manifest_sha256": { "$ref": "#/$defs/sha256" },
+        "edit_proposal_sha256": { "$ref": "#/$defs/sha256" },
+        "model_graph_schema_valid": { "const": true },
+        "proposal_schema_valid": { "const": true },
+        "integrity_reload_ok": { "const": true },
+        "public_absolute_path_exposed": { "const": false },
+        "policy_environment_exposed": { "const": false }
+      }
+    },
+    "invariants": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["session_unchanged", "document_unchanged", "revision_unchanged", "wrong_target_executed", "unauthorized_execution", "source_model_path_exposed"],
+      "properties": {
+        "session_unchanged": { "const": true },
+        "document_unchanged": { "const": true },
+        "revision_unchanged": { "const": true },
+        "wrong_target_executed": { "const": false },
+        "unauthorized_execution": { "const": false },
+        "source_model_path_exposed": { "const": false }
+      }
+    },
+    "queue_state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["queue", "processing", "responses", "lock_exists"],
+      "properties": {
+        "queue": { "const": 0 },
+        "processing": { "const": 0 },
+        "responses": { "const": 0 },
+        "lock_exists": { "const": false }
+      }
+    },
+    "live_mutation_performed": { "const": false },
+    "release_acceptance": { "const": false },
+    "boundaries": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "prefixedSha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" }
+  }
+}

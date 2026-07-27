@@ -1,0 +1,49 @@
+{
+  "name": "local-mcp-for-sketchup",
+  "version": "0.1.0-rc.4",
+  "private": true,
+  "type": "module",
+  "description": "Independent, offline-capable local MCP bridge for reviewed SketchUp modeling workflows.",
+  "license": "Apache-2.0",
+  "author": "zhanglinqi",
+  "bin": {
+    "local-mcp-for-sketchup": "./bin/local-mcp-for-sketchup.mjs"
+  },
+  "files": [
+    "bin/",
+    "src/",
+    "schema/",
+    "sketchup_plugin/",
+    "LICENSE",
+    "NOTICE",
+    "THIRD_PARTY_NOTICES.md"
+  ],
+  "scripts": {
+    "get-docs": "node src/cli.mjs get_docs",
+    "server": "node src/http-server.mjs",
+    "mcp": "node src/mcp-server.mjs",
+    "registry:sync": "node scripts/generate-ruby-operation-registry.mjs",
+    "registry:check": "node scripts/generate-ruby-operation-registry.mjs --check",
+    "tool-registry:sync": "node scripts/generate-tool-registry-doc.mjs",
+    "tool-registry:check": "node scripts/generate-tool-registry-doc.mjs --check",
+    "plugin:check": "npm run registry:check && node scripts/package-sketchup-plugin.mjs --check",
+    "plugin:package": "npm run registry:check && node scripts/package-sketchup-plugin.mjs --check --package",
+    "service:package": "node scripts/package-service-bundle.mjs",
+    "agent-install:check": "node scripts/validate-agent-install-manifest.mjs",
+    "public-source:export": "node scripts/export-public-source.mjs",
+    "public-source:audit": "node scripts/audit-public-source.mjs",
+    "core:check": "node scripts/run-core-check.mjs",
+    "dependency:audit": "npm audit --omit=dev --audit-level=high"
+  },
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "dependencies": {
+    "acorn": "^8.16.0",
+    "ajv": "^8.20.0",
+    "sharp": "^0.35.3"
+  },
+  "overrides": {
+    "fast-uri": "3.1.4"
+  }
+}

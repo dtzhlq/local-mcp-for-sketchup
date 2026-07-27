@@ -1,0 +1,143 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/schema/visual-correction-patch-v1.schema.json",
+  "title": "VisualCorrectionPatchV1Public",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version", "kind", "content_trust", "policy_effect", "source_task_id", "model_key",
+    "graph_id", "model_revision", "evidence_id", "evidence_hash", "reference_image",
+    "captured_image", "private_payload_hash", "mapping_declaration", "risk_level", "blockers",
+    "execution_allowed", "review_required", "execution_route", "next_action",
+    "correction_patch_id", "patch_hash"
+  ],
+  "properties": {
+    "version": { "const": "visual-correction-patch.v1" },
+    "kind": { "const": "visual_correction_patch" },
+    "content_trust": { "const": "untrusted_data" },
+    "policy_effect": { "const": "none" },
+    "source_task_id": { "$ref": "#/$defs/task_id" },
+    "model_key": { "$ref": "#/$defs/model_key" },
+    "graph_id": { "$ref": "#/$defs/graph_id" },
+    "model_revision": { "$ref": "#/$defs/sha256" },
+    "evidence_id": { "type": "string", "pattern": "^visual-evidence-[0-9a-f]{24}$" },
+    "evidence_hash": { "$ref": "#/$defs/sha256" },
+    "reference_image": { "$ref": "#/$defs/image" },
+    "captured_image": { "$ref": "#/$defs/captured_image" },
+    "private_payload_hash": { "$ref": "#/$defs/sha256" },
+    "mapping_declaration": { "$ref": "#/$defs/mapping" },
+    "risk_level": { "enum": ["S1", "S2", "S3", "S4"] },
+    "blockers": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+    "execution_allowed": { "const": false },
+    "review_required": { "const": true },
+    "execution_route": { "const": "trusted_reviewed_existing_model_edit_only" },
+    "next_action": { "$ref": "#/$defs/next_action" },
+    "correction_patch_id": { "type": "string", "pattern": "^visual-patch-[0-9a-f]{24}$" },
+    "patch_hash": { "$ref": "#/$defs/sha256" }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "task_id": { "type": "string", "pattern": "^task_[A-Za-z0-9_-]+$" },
+    "model_key": { "type": "string", "pattern": "^model_[0-9a-f]{32}$" },
+    "graph_id": { "type": "string", "pattern": "^model-graph-[0-9a-f]{24}$" },
+    "image": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["handle", "sha256", "media_type", "format", "size_bytes", "width", "height", "channels", "content_trust", "policy_effect"],
+      "properties": {
+        "handle": { "type": "string", "pattern": "^image-artifact:sha256:[0-9a-f]{64}$" },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "media_type": { "enum": ["image/png", "image/jpeg", "image/webp", "image/tiff"] },
+        "format": { "enum": ["png", "jpeg", "webp", "tiff"] },
+        "size_bytes": { "type": "integer", "minimum": 1 },
+        "width": { "type": "integer", "minimum": 1 },
+        "height": { "type": "integer", "minimum": 1 },
+        "channels": { "type": "integer", "minimum": 1, "maximum": 4 },
+        "content_trust": { "const": "untrusted_data" },
+        "policy_effect": { "const": "none" }
+      }
+    },
+    "captured_image": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["handle", "sha256", "media_type", "format", "size_bytes", "width", "height", "channels", "content_trust", "policy_effect", "capture_provenance"],
+      "properties": {
+        "handle": { "type": "string", "pattern": "^image-artifact:sha256:[0-9a-f]{64}$" },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "media_type": { "enum": ["image/png", "image/jpeg", "image/webp", "image/tiff"] },
+        "format": { "enum": ["png", "jpeg", "webp", "tiff"] },
+        "size_bytes": { "type": "integer", "minimum": 1 },
+        "width": { "type": "integer", "minimum": 1 },
+        "height": { "type": "integer", "minimum": 1 },
+        "channels": { "type": "integer", "minimum": 1, "maximum": 4 },
+        "content_trust": { "const": "untrusted_data" },
+        "policy_effect": { "const": "none" },
+        "capture_provenance": { "$ref": "#/$defs/capture_provenance" }
+      }
+    },
+    "capture_provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "kind", "capture_id", "provider", "runtime", "source_task_id", "model_key", "graph_id", "model_revision", "captured_at"],
+      "properties": {
+        "version": { "const": "visual-capture-provenance.v1" },
+        "kind": { "enum": ["trusted_test_capture", "server_live_capture"] },
+        "capture_id": { "type": "string", "minLength": 1 },
+        "provider": { "enum": ["test_fixture", "sketchup_capture_view"] },
+        "runtime": { "enum": ["mock", "queue"] },
+        "source_task_id": { "$ref": "#/$defs/task_id" },
+        "model_key": { "$ref": "#/$defs/model_key" },
+        "graph_id": { "$ref": "#/$defs/graph_id" },
+        "model_revision": { "$ref": "#/$defs/sha256" },
+        "phase": { "enum": ["before", "after"] },
+        "image_handle": { "type": "string", "pattern": "^image-artifact:sha256:[0-9a-f]{64}$" },
+        "image_sha256": { "$ref": "#/$defs/sha256" },
+        "capture_spec_hash": { "$ref": "#/$defs/sha256" },
+        "camera_hash": { "$ref": "#/$defs/sha256" },
+        "session_binding_hash": { "$ref": "#/$defs/sha256" },
+        "state_unchanged": { "type": "boolean" },
+        "view_unchanged": { "type": "boolean" },
+        "receipt_id": { "type": "string", "pattern": "^live-capture-receipt-[0-9a-f]{24}$" },
+        "receipt_hash": { "$ref": "#/$defs/sha256" },
+        "captured_at": { "type": "string", "format": "date-time" }
+      },
+      "allOf": [{
+        "if": { "properties": { "kind": { "const": "server_live_capture" } }, "required": ["kind"] },
+        "then": { "required": ["phase", "image_handle", "image_sha256", "capture_spec_hash", "camera_hash", "session_binding_hash", "state_unchanged", "view_unchanged", "receipt_id", "receipt_hash"] }
+      }]
+    },
+    "mapping": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["content_trust", "policy_effect", "declared_target_count", "declared_operation_count"],
+      "properties": {
+        "content_trust": { "const": "untrusted_data" },
+        "policy_effect": { "const": "none" },
+        "declared_target_count": { "type": "integer", "minimum": 1 },
+        "declared_operation_count": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "next_action": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["action", "source_visual_correction"],
+          "properties": {
+            "action": { "const": "start_reviewed_existing_model_edit" },
+            "source_visual_correction": { "type": "string", "pattern": "^source_visual_correction:task_[A-Za-z0-9_-]+$" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["action", "source_visual_correction"],
+          "properties": {
+            "action": { "const": "submit_better_visual_evidence" },
+            "source_visual_correction": { "type": "null" }
+          }
+        }
+      ]
+    }
+  }
+}

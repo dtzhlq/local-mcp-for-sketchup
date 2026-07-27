@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/local-mcp-for-sketchup/real-model-target-review-v1-archival-lineage-manifest-v1.schema.json",
+  "title": "Real-model target review v1 archival lineage manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "kind",
+    "frozen_on",
+    "target_review_version",
+    "superseded_by",
+    "lineage_only",
+    "current_acceptance",
+    "release_acceptance",
+    "historical_schema_readable",
+    "immutable_evidence",
+    "policy",
+    "entries",
+    "evidence_sha256"
+  ],
+  "properties": {
+    "version": { "const": "real-model-target-review-v1-archival-lineage-manifest.v1" },
+    "kind": { "const": "real_model_target_review_v1_archival_lineage_manifest" },
+    "frozen_on": { "type": "string", "format": "date" },
+    "target_review_version": { "const": "real-model-target-review.v1" },
+    "superseded_by": { "const": "real-model-target-review.v2" },
+    "lineage_only": { "const": true },
+    "current_acceptance": { "const": false },
+    "release_acceptance": { "const": false },
+    "historical_schema_readable": { "const": true },
+    "immutable_evidence": { "const": true },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "hashes_bind_evidence_bytes",
+        "historical_schema_bytes_bound",
+        "linked_live_evidence_bytes_bound",
+        "embedded_source_hashes_are_capture_time_only",
+        "historical_source_hashes_compared_to_current_tree",
+        "historical_contract_tests_are_not_rerun_as_current_acceptance",
+        "historical_evidence_may_authorize_current_execution",
+        "historical_evidence_may_satisfy_current_acceptance",
+        "current_evidence_source_hash_validation_preserved"
+      ],
+      "properties": {
+        "hashes_bind_evidence_bytes": { "const": true },
+        "historical_schema_bytes_bound": { "const": true },
+        "linked_live_evidence_bytes_bound": { "const": true },
+        "embedded_source_hashes_are_capture_time_only": { "const": true },
+        "historical_source_hashes_compared_to_current_tree": { "const": false },
+        "historical_contract_tests_are_not_rerun_as_current_acceptance": { "const": true },
+        "historical_evidence_may_authorize_current_execution": { "const": false },
+        "historical_evidence_may_satisfy_current_acceptance": { "const": false },
+        "current_evidence_source_hash_validation_preserved": { "const": true }
+      }
+    },
+    "entries": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 1,
+      "items": { "$ref": "#/$defs/entry" }
+    },
+    "evidence_sha256": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["docs/evidence/real-model-target-review-v1-mock-evidence.json"],
+      "properties": {
+        "docs/evidence/real-model-target-review-v1-mock-evidence.json": { "$ref": "#/$defs/sha256" }
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "sha256",
+        "contract_schema_path",
+        "contract_schema_sha256",
+        "linked_live_evidence_path",
+        "linked_live_evidence_sha256",
+        "evidence_kind",
+        "runtime",
+        "target_review_version_pointer",
+        "release_acceptance_pointer",
+        "mutation_authorized_pointer",
+        "lineage_only",
+        "current_acceptance",
+        "release_acceptance"
+      ],
+      "properties": {
+        "path": { "const": "docs/evidence/real-model-target-review-v1-mock-evidence.json" },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "contract_schema_path": { "const": "schema/real-model-target-review-v1.schema.json" },
+        "contract_schema_sha256": { "$ref": "#/$defs/sha256" },
+        "linked_live_evidence_path": { "const": "docs/evidence/real-model-target-review-live-evidence-2026-07-20.json" },
+        "linked_live_evidence_sha256": { "$ref": "#/$defs/sha256" },
+        "evidence_kind": { "const": "real_model_target_review_mock_evidence" },
+        "runtime": { "const": "synthetic_fake_queue" },
+        "target_review_version_pointer": { "const": "/contract/target_review" },
+        "release_acceptance_pointer": { "const": "/safety/release_acceptance" },
+        "mutation_authorized_pointer": { "const": "/safety/model_mutation_authorized" },
+        "lineage_only": { "const": true },
+        "current_acceptance": { "const": false },
+        "release_acceptance": { "const": false }
+      }
+    }
+  }
+}

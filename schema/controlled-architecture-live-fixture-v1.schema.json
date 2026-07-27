@@ -1,0 +1,152 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/local-mcp-for-sketchup/controlled-architecture-live-fixture-v1.schema.json",
+  "title": "Controlled architecture live fixture v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "kind",
+    "status",
+    "finalized_at",
+    "derivation_class",
+    "source",
+    "overlay",
+    "artifact",
+    "contract",
+    "identity",
+    "runtime_attestation",
+    "queue_clean",
+    "release_acceptance"
+  ],
+  "properties": {
+    "version": { "const": "controlled-architecture-live-fixture.v1" },
+    "kind": { "const": "controlled_architecture_live_fixture_finalization" },
+    "status": { "const": "ready_for_formal_live_case" },
+    "finalized_at": { "type": "string", "format": "date-time" },
+    "derivation_class": { "const": "controlled_metadata_overlay_on_user_authorized_real_model_copy" },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sha256", "original_bytes_unchanged"],
+      "properties": {
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "original_bytes_unchanged": { "const": true }
+      }
+    },
+    "overlay": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operation_count",
+        "operations",
+        "geometry_mutation_performed",
+        "material_name_untrusted",
+        "material_persisted",
+        "scene_name_untrusted",
+        "scene_persisted"
+      ],
+      "properties": {
+        "operation_count": { "const": 2 },
+        "operations": { "const": ["material", "scene"] },
+        "geometry_mutation_performed": { "const": false },
+        "material_name_untrusted": { "const": "LOCAL_MCP_FOR_SKETCHUP_Reliability_Architecture_Material" },
+        "material_persisted": { "const": true },
+        "scene_name_untrusted": { "const": "LOCAL_MCP_FOR_SKETCHUP_Reliability_Architecture_Scene" },
+        "scene_persisted": { "const": true }
+      }
+    },
+    "artifact": { "$ref": "#/$defs/artifact" },
+    "contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": { "$ref": "#/$defs/absolutePath" },
+        "sha256": { "$ref": "#/$defs/prefixedSha256" }
+      }
+    },
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "model_revision",
+        "model_revision_complete",
+        "top_level_entities_before",
+        "top_level_entities_after",
+        "recursive_total_before",
+        "recursive_total_after",
+        "recursive_truncated"
+      ],
+      "properties": {
+        "model_revision": { "$ref": "#/$defs/prefixedSha256" },
+        "model_revision_complete": { "const": true },
+        "top_level_entities_before": { "type": "integer", "minimum": 1 },
+        "top_level_entities_after": { "type": "integer", "minimum": 1 },
+        "recursive_total_before": { "type": "integer", "minimum": 1, "maximum": 100000 },
+        "recursive_total_after": { "type": "integer", "minimum": 1, "maximum": 100000 },
+        "recursive_truncated": { "const": false }
+      }
+    },
+    "runtime_attestation": { "$ref": "#/$defs/runtimeAttestation" },
+    "queue_clean": { "$ref": "#/$defs/cleanQueue" },
+    "release_acceptance": { "const": false }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "prefixedSha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "absolutePath": { "type": "string", "pattern": "^/", "minLength": 2 },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "bytes"],
+      "properties": {
+        "path": { "$ref": "#/$defs/absolutePath" },
+        "sha256": { "$ref": "#/$defs/prefixedSha256" },
+        "bytes": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "cleanQueue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["queue", "processing", "responses", "lock"],
+      "properties": {
+        "queue": { "const": 0 },
+        "processing": { "const": 0 },
+        "responses": { "const": 0 },
+        "lock": { "const": false }
+      }
+    },
+    "runtimeAttestation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "server_version",
+        "plugin_version",
+        "sketchup_version",
+        "capability_version",
+        "manifest_version",
+        "revision_strategy",
+        "revision_source_sha256",
+        "compatibility_ok"
+      ],
+      "properties": {
+        "name": { "const": "queue" },
+        "server_version": { "type": "string", "minLength": 1 },
+        "plugin_version": { "type": ["string", "null"] },
+        "sketchup_version": { "type": ["string", "null"] },
+        "capability_version": { "type": "string", "minLength": 1 },
+        "manifest_version": { "type": "string", "minLength": 1 },
+        "revision_strategy": { "type": ["string", "null"] },
+        "revision_source_sha256": {
+          "anyOf": [
+            { "$ref": "#/$defs/sha256" },
+            { "type": "null" }
+          ]
+        },
+        "compatibility_ok": { "const": true }
+      }
+    }
+  }
+}

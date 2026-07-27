@@ -1,0 +1,273 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/schema/copy-fast-session-live-evidence-v2.schema.json",
+  "title": "Copy Fast session rc.3 current-source live evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "kind",
+    "captured_at",
+    "branch",
+    "baseline_commit",
+    "source_sha256",
+    "runtime",
+    "installed_source",
+    "model",
+    "prepare",
+    "apply",
+    "replay",
+    "queue",
+    "release_acceptance",
+    "boundaries"
+  ],
+  "properties": {
+    "version": { "const": "copy-fast-session-live.v2" },
+    "kind": { "const": "copy_fast_session_live_evidence" },
+    "captured_at": { "type": "string", "format": "date-time" },
+    "branch": { "const": "codex/agent-contract-v1" },
+    "baseline_commit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "source_sha256": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "src/copy-fast-session.mjs",
+        "src/agent-contract.mjs",
+        "src/agent-gateway.mjs",
+        "src/agent-response-projection.mjs",
+        "src/existing-model-editing.mjs",
+        "src/bridge.mjs",
+        "src/queue-runtime.mjs",
+        "src/session-contract.mjs",
+        "src/task-mutation-receipt-ledger.mjs",
+        "src/version.mjs",
+        "src/capabilities.mjs",
+        "scripts/run-copy-fast-session-live.mjs",
+        "schema/copy-fast-session-live-evidence-v2.schema.json"
+      ],
+      "properties": {
+        "src/copy-fast-session.mjs": { "$ref": "#/$defs/sha256" },
+        "src/agent-contract.mjs": { "$ref": "#/$defs/sha256" },
+        "src/agent-gateway.mjs": { "$ref": "#/$defs/sha256" },
+        "src/agent-response-projection.mjs": { "$ref": "#/$defs/sha256" },
+        "src/existing-model-editing.mjs": { "$ref": "#/$defs/sha256" },
+        "src/bridge.mjs": { "$ref": "#/$defs/sha256" },
+        "src/queue-runtime.mjs": { "$ref": "#/$defs/sha256" },
+        "src/session-contract.mjs": { "$ref": "#/$defs/sha256" },
+        "src/task-mutation-receipt-ledger.mjs": { "$ref": "#/$defs/sha256" },
+        "src/version.mjs": { "$ref": "#/$defs/sha256" },
+        "src/capabilities.mjs": { "$ref": "#/$defs/sha256" },
+        "scripts/run-copy-fast-session-live.mjs": { "$ref": "#/$defs/sha256" },
+        "schema/copy-fast-session-live-evidence-v2.schema.json": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "server_version",
+        "plugin_version",
+        "sketchup_version",
+        "capability_version",
+        "manifest_version",
+        "compatibility_ok",
+        "operation_count",
+        "boolean_operations_sha256",
+        "model_revision_source_sha256",
+        "model_revision_strategy",
+        "loaded_source_attestation_match",
+        "server_process_fresh_for_session",
+        "operator_confirmed_full_sketchup_restart",
+        "handshake_id",
+        "plugin_session_id",
+        "document_id"
+      ],
+      "properties": {
+        "name": { "const": "queue" },
+        "server_version": { "const": "0.1.0-rc.3" },
+        "plugin_version": { "const": "0.1.0-rc.3" },
+        "sketchup_version": { "type": "string", "minLength": 1 },
+        "capability_version": { "const": "0.1.0-rc.3-capabilities.1" },
+        "manifest_version": { "const": "2026-07-agent-contract-rc3.1" },
+        "compatibility_ok": { "const": true },
+        "operation_count": { "const": 101 },
+        "boolean_operations_sha256": { "const": "4e23e8d35603f4d08c9c5c9c9174c99451ffcb3bd94ab233001d331beafb3b4b" },
+        "model_revision_source_sha256": { "const": "b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134" },
+        "model_revision_strategy": { "const": "definition-merkle.v2" },
+        "loaded_source_attestation_match": { "const": true },
+        "server_process_fresh_for_session": { "const": true },
+        "operator_confirmed_full_sketchup_restart": { "const": true },
+        "handshake_id": { "type": "string", "pattern": "^handshake_[0-9a-f-]+$" },
+        "plugin_session_id": { "type": "string", "minLength": 1 },
+        "document_id": { "type": "string", "minLength": 1 }
+      }
+    },
+    "installed_source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "file_count",
+        "manifest_sha256",
+        "exact_workspace_match",
+        "paths_exposed"
+      ],
+      "properties": {
+        "file_count": { "const": 22 },
+        "manifest_sha256": { "$ref": "#/$defs/sha256" },
+        "exact_workspace_match": { "const": true },
+        "paths_exposed": { "const": false }
+      }
+    },
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "basename",
+        "sha256",
+        "size_bytes",
+        "expected_initial_revision",
+        "save_model",
+        "disk_sha256_before",
+        "disk_sha256_after",
+        "disk_bytes_unchanged",
+        "revision_complete",
+        "logical_occurrences_before",
+        "active_document_modified_after"
+      ],
+      "properties": {
+        "basename": { "const": "Fire Escape.disposable.skp" },
+        "sha256": { "const": "7e649c220a265a5e27a24aae2ed9687427186c06ba335616d5cdc0191966ce72" },
+        "size_bytes": { "const": 142149 },
+        "expected_initial_revision": { "const": "sha256:d540fdc8697e93f27a0312f75d382b6d5901597ef87e6673980fd21e97e3abb4" },
+        "save_model": { "const": false },
+        "disk_sha256_before": { "const": "7e649c220a265a5e27a24aae2ed9687427186c06ba335616d5cdc0191966ce72" },
+        "disk_sha256_after": { "const": "7e649c220a265a5e27a24aae2ed9687427186c06ba335616d5cdc0191966ce72" },
+        "disk_bytes_unchanged": { "const": true },
+        "revision_complete": { "const": true },
+        "logical_occurrences_before": { "const": 5859 },
+        "active_document_modified_after": { "const": true }
+      }
+    },
+    "prepare": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "task_id",
+        "task_state",
+        "risk_level",
+        "plan_id",
+        "plan_hash",
+        "model_revision",
+        "execution_mode",
+        "next_action",
+        "user_action_required",
+        "approval_challenge",
+        "copy_fast_session_id",
+        "copy_fast_session_expires_at",
+        "approval_challenges_created",
+        "configured_roots_exposed_to_agent"
+      ],
+      "properties": {
+        "task_id": { "$ref": "#/$defs/taskId" },
+        "task_state": { "const": "approved" },
+        "risk_level": { "const": "S4" },
+        "plan_id": { "type": "string", "pattern": "^existing-edit-[0-9a-f]{24}$" },
+        "plan_hash": { "$ref": "#/$defs/prefixedSha256" },
+        "model_revision": { "const": "sha256:d540fdc8697e93f27a0312f75d382b6d5901597ef87e6673980fd21e97e3abb4" },
+        "execution_mode": { "const": "copy_fast" },
+        "next_action": { "const": "execute_copy_edit" },
+        "user_action_required": { "const": false },
+        "approval_challenge": { "type": "null" },
+        "copy_fast_session_id": { "$ref": "#/$defs/copySessionId" },
+        "copy_fast_session_expires_at": { "type": "string", "format": "date-time" },
+        "approval_challenges_created": { "const": 0 },
+        "configured_roots_exposed_to_agent": { "const": false }
+      }
+    },
+    "apply": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "task_state",
+        "submit_count",
+        "authorization_mode",
+        "approved_by",
+        "copy_fast_session_id",
+        "user_action_required",
+        "receipt_id",
+        "receipt_status",
+        "model_revision_before",
+        "model_revision_after",
+        "revision_changed",
+        "target_absent",
+        "empty_parent_absent",
+        "structural_group_count_after",
+        "approval_token_exposed_to_agent",
+        "milestone_acceptance"
+      ],
+      "properties": {
+        "task_state": { "const": "completed" },
+        "submit_count": { "const": 1 },
+        "authorization_mode": { "const": "server_policy_copy_fast_session" },
+        "approved_by": { "const": "execution-policy:copy-fast-session" },
+        "copy_fast_session_id": { "$ref": "#/$defs/copySessionId" },
+        "user_action_required": { "const": false },
+        "receipt_id": { "type": "string", "pattern": "^mutation-receipt-[0-9a-f]{24}$" },
+        "receipt_status": { "const": "finalized" },
+        "model_revision_before": { "const": "sha256:d540fdc8697e93f27a0312f75d382b6d5901597ef87e6673980fd21e97e3abb4" },
+        "model_revision_after": { "$ref": "#/$defs/prefixedSha256" },
+        "revision_changed": { "const": true },
+        "target_absent": { "const": true },
+        "empty_parent_absent": { "const": true },
+        "structural_group_count_after": { "const": 0 },
+        "approval_token_exposed_to_agent": { "const": false },
+        "milestone_acceptance": { "const": true }
+      }
+    },
+    "replay": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["same_idempotency_key", "idempotent_replay", "duplicate_mutation", "task_state"],
+      "properties": {
+        "same_idempotency_key": { "const": true },
+        "idempotent_replay": { "const": true },
+        "duplicate_mutation": { "const": false },
+        "task_state": { "const": "completed" }
+      }
+    },
+    "queue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["before", "after"],
+      "properties": {
+        "before": { "$ref": "#/$defs/cleanQueue" },
+        "after": { "$ref": "#/$defs/cleanQueue" }
+      }
+    },
+    "release_acceptance": { "const": false },
+    "boundaries": {
+      "type": "array",
+      "minItems": 3,
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 20 }
+    }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "prefixedSha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "taskId": { "type": "string", "pattern": "^task_[0-9a-f-]+$" },
+    "copySessionId": { "type": "string", "pattern": "^copy_session_[0-9a-f-]+$" },
+    "cleanQueue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["queue", "processing", "responses", "lock_exists"],
+      "properties": {
+        "queue": { "const": 0 },
+        "processing": { "const": 0 },
+        "responses": { "const": 0 },
+        "lock_exists": { "const": false }
+      }
+    }
+  }
+}

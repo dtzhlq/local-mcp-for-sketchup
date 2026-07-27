@@ -1,0 +1,230 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/schema/trimble-s6-structured-reference-diagnostic-v1.schema.json",
+  "title": "Trimble S6 structured external-reference diagnostic",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "kind",
+    "captured_at",
+    "source_run_id",
+    "source_mutation_task_id",
+    "diagnostic_task_id",
+    "task_state",
+    "promoted_or_executed",
+    "promotion_available",
+    "correction_patch",
+    "model",
+    "reference",
+    "capture",
+    "structured_metrics",
+    "materialized_artifacts",
+    "queue_before",
+    "queue_after",
+    "live_model_mutation_performed",
+    "approval_challenge_created",
+    "approval_token_exposed_to_agent",
+    "release_acceptance",
+    "boundaries"
+  ],
+  "properties": {
+    "version": { "const": "trimble-s6-structured-reference-diagnostic.v1" },
+    "kind": { "const": "external_reference_structured_alignment_diagnostic" },
+    "captured_at": { "type": "string", "minLength": 20 },
+    "source_run_id": { "const": "clean-p3-policy-bound-v3" },
+    "source_mutation_task_id": { "$ref": "#/$defs/taskId" },
+    "diagnostic_task_id": { "$ref": "#/$defs/taskId" },
+    "task_state": { "const": "diagnostic_completed" },
+    "promoted_or_executed": { "const": false },
+    "promotion_available": { "const": false },
+    "correction_patch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["correction_patch_id", "patch_hash", "execution_allowed", "review_required", "intentionally_not_persisted"],
+      "properties": {
+        "correction_patch_id": { "type": "string", "pattern": "^visual-patch-[0-9a-f]{24}$" },
+        "patch_hash": { "$ref": "#/$defs/prefixedSha256" },
+        "execution_allowed": { "const": false },
+        "review_required": { "const": true },
+        "intentionally_not_persisted": { "const": true }
+      }
+    },
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["basename", "source_path_matches", "modified_state_before", "modified_state_after", "disk_sha256_before", "disk_sha256_after", "disk_bytes_unchanged", "save_model"],
+      "properties": {
+        "basename": { "const": "Trimble S6.disposable.skp" },
+        "source_path_matches": { "const": true },
+        "modified_state_before": { "const": true },
+        "modified_state_after": { "const": true },
+        "disk_sha256_before": { "$ref": "#/$defs/prefixedSha256" },
+        "disk_sha256_after": { "$ref": "#/$defs/prefixedSha256" },
+        "disk_bytes_unchanged": { "const": true },
+        "save_model": { "const": false }
+      }
+    },
+    "reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ordinal", "handle", "sha256", "width", "height", "content_trust", "policy_effect"],
+      "properties": {
+        "ordinal": { "const": 3 },
+        "handle": { "$ref": "#/$defs/imageHandle" },
+        "sha256": { "$ref": "#/$defs/prefixedSha256" },
+        "width": { "const": 770 },
+        "height": { "const": 1460 },
+        "content_trust": { "const": "untrusted_data" },
+        "policy_effect": { "const": "none" }
+      }
+    },
+    "capture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["handle", "sha256", "width", "height", "provenance", "full_tripod_view_requested_via_ui"],
+      "properties": {
+        "handle": { "$ref": "#/$defs/imageHandle" },
+        "sha256": { "$ref": "#/$defs/prefixedSha256" },
+        "width": { "const": 1280 },
+        "height": { "const": 720 },
+        "provenance": { "$ref": "#/$defs/captureProvenance" },
+        "full_tripod_view_requested_via_ui": { "const": true }
+      }
+    },
+    "structured_metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["alignment", "difference", "foreground", "confidence", "blockers", "computed", "acceptance", "verdict", "reason"],
+      "properties": {
+        "alignment": { "$ref": "#/$defs/alignment" },
+        "difference": { "$ref": "#/$defs/difference" },
+        "foreground": { "$ref": "#/$defs/foregroundPair" },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "blockers": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+        "computed": { "const": true },
+        "acceptance": { "const": false },
+        "verdict": { "const": "review" },
+        "reason": { "type": "string", "minLength": 40 }
+      }
+    },
+    "materialized_artifacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reference.png", "capture.png", "difference-overlay.png", "reference-thumbnail.png", "capture-thumbnail.png"],
+      "properties": {
+        "reference.png": { "$ref": "#/$defs/imageBinding" },
+        "capture.png": { "$ref": "#/$defs/imageBinding" },
+        "difference-overlay.png": { "$ref": "#/$defs/imageBinding" },
+        "reference-thumbnail.png": { "$ref": "#/$defs/imageBinding" },
+        "capture-thumbnail.png": { "$ref": "#/$defs/imageBinding" }
+      }
+    },
+    "queue_before": { "$ref": "#/$defs/cleanQueue" },
+    "queue_after": { "$ref": "#/$defs/cleanQueue" },
+    "live_model_mutation_performed": { "const": false },
+    "approval_challenge_created": { "const": false },
+    "approval_token_exposed_to_agent": { "const": false },
+    "release_acceptance": { "const": false },
+    "boundaries": {
+      "type": "array",
+      "minItems": 4,
+      "items": { "type": "string", "minLength": 1 }
+    }
+  },
+  "$defs": {
+    "prefixedSha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "taskId": { "type": "string", "pattern": "^task_[0-9a-f-]{36}$" },
+    "imageHandle": { "type": "string", "pattern": "^image-artifact:sha256:[0-9a-f]{64}$" },
+    "vector2": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number" } },
+    "alignment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["method", "scale", "translation_norm", "foreground_center_delta_norm"],
+      "properties": {
+        "method": { "const": "normalized_canvas_and_foreground_centroid.v1" },
+        "scale": { "$ref": "#/$defs/vector2" },
+        "translation_norm": { "$ref": "#/$defs/vector2" },
+        "foreground_center_delta_norm": { "type": "number", "minimum": 0 }
+      }
+    },
+    "difference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["method", "mean_absolute_error", "root_mean_square_error", "compared_pixels"],
+      "properties": {
+        "method": { "const": "normalized_rgb.v1" },
+        "mean_absolute_error": { "type": "number", "minimum": 0, "maximum": 1 },
+        "root_mean_square_error": { "type": "number", "minimum": 0, "maximum": 1 },
+        "compared_pixels": { "const": 16384 }
+      }
+    },
+    "foreground": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["coverage", "bounds_norm", "center"],
+      "properties": {
+        "coverage": { "type": "number", "minimum": 0, "maximum": 1 },
+        "bounds_norm": { "type": "array", "minItems": 4, "maxItems": 4, "items": { "type": "number", "minimum": 0, "maximum": 1 } },
+        "center": { "$ref": "#/$defs/vector2" }
+      }
+    },
+    "foregroundPair": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reference", "capture"],
+      "properties": {
+        "reference": { "$ref": "#/$defs/foreground" },
+        "capture": { "$ref": "#/$defs/foreground" }
+      }
+    },
+    "captureProvenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "kind", "capture_id", "provider", "runtime", "source_task_id", "phase", "model_key", "graph_id", "model_revision", "image_handle", "image_sha256", "capture_spec_hash", "camera_hash", "session_binding_hash", "state_unchanged", "view_unchanged", "captured_at", "receipt_id", "receipt_hash"],
+      "properties": {
+        "version": { "const": "visual-capture-provenance.v1" },
+        "kind": { "const": "server_live_capture" },
+        "capture_id": { "type": "string", "pattern": "^visual-capture-[0-9a-f]{24}$" },
+        "provider": { "const": "sketchup_capture_view" },
+        "runtime": { "const": "queue" },
+        "source_task_id": { "$ref": "#/$defs/taskId" },
+        "phase": { "const": "before" },
+        "model_key": { "type": "string", "pattern": "^model_[0-9a-f]{32}$" },
+        "graph_id": { "type": "string", "pattern": "^model-graph-[0-9a-f]{24}$" },
+        "model_revision": { "$ref": "#/$defs/prefixedSha256" },
+        "image_handle": { "$ref": "#/$defs/imageHandle" },
+        "image_sha256": { "$ref": "#/$defs/prefixedSha256" },
+        "capture_spec_hash": { "$ref": "#/$defs/prefixedSha256" },
+        "camera_hash": { "$ref": "#/$defs/prefixedSha256" },
+        "session_binding_hash": { "$ref": "#/$defs/prefixedSha256" },
+        "state_unchanged": { "const": true },
+        "view_unchanged": { "const": true },
+        "captured_at": { "type": "string", "minLength": 20 },
+        "receipt_id": { "type": "string", "pattern": "^live-capture-receipt-[0-9a-f]{24}$" },
+        "receipt_hash": { "$ref": "#/$defs/prefixedSha256" }
+      }
+    },
+    "imageBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sha256", "size_bytes", "handle"],
+      "properties": {
+        "sha256": { "$ref": "#/$defs/prefixedSha256" },
+        "size_bytes": { "type": "integer", "minimum": 1 },
+        "handle": { "$ref": "#/$defs/imageHandle" }
+      }
+    },
+    "cleanQueue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["queue", "processing", "responses", "lock_exists"],
+      "properties": {
+        "queue": { "const": 0 },
+        "processing": { "const": 0 },
+        "responses": { "const": 0 },
+        "lock_exists": { "const": false }
+      }
+    }
+  }
+}

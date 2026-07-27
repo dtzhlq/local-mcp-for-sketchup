@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/local-mcp-for-sketchup/agent-contract-mutation-recovery-evidence-v1.schema.json",
+  "title": "Agent Contract Mutation Recovery Mock Evidence v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "kind", "generated_at", "runtime", "implementation", "mock_gates", "tests", "boundary"],
+  "properties": {
+    "version": { "const": "agent-contract-mutation-recovery-evidence.v1" },
+    "kind": { "const": "agent_contract_mutation_recovery_mock_evidence" },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "runtime": { "const": "mock" },
+    "implementation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["receipt_schema", "receipt_ledger", "gateway", "task_store", "stable_error_codes"],
+      "properties": {
+        "receipt_schema": { "const": "schema/task-mutation-receipt-v1.schema.json" },
+        "receipt_ledger": { "const": "src/task-mutation-receipt-ledger.mjs" },
+        "gateway": { "const": "src/agent-gateway.mjs" },
+        "task_store": { "const": "src/agent-task-store.mjs" },
+        "stable_error_codes": {
+          "type": "array",
+          "prefixItems": [
+            { "const": "MUTATION_RECOVERY_REQUIRED" },
+            { "const": "MUTATION_RECEIPT_INVALID" },
+            { "const": "MUTATION_EXECUTION_FAILED" }
+          ],
+          "minItems": 3,
+          "maxItems": 3
+        }
+      }
+    },
+    "mock_gates": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "strict_schema", "hmac_integrity", "claim_plan_model_revision_binding",
+        "private_files", "symlink_fail_closed", "native_queue_receipt_shape_checked", "restart_after_receipt",
+        "restart_inside_artifact_finalizer", "restart_inside_visual_finalizer",
+        "restart_inside_design_finalizer", "terminal_response_persistence_recovered", "concurrent_finalizer_single_owner", "visual_lineage_stable",
+        "design_version_not_duplicated", "idempotent_approval_challenge",
+        "wrong_receipt_rejected", "model_mutation_replayed",
+        "public_native_or_finalizer_payload_exposed", "native_receipt_public_artifact_leak", "after_revision_drift_blocked",
+        "no_receipt_outcome_unknown"
+      ],
+      "properties": {
+        "strict_schema": { "const": true },
+        "hmac_integrity": { "const": true },
+        "claim_plan_model_revision_binding": { "const": true },
+        "private_files": { "const": true },
+        "symlink_fail_closed": { "const": true },
+        "native_queue_receipt_shape_checked": { "const": true },
+        "restart_after_receipt": { "const": true },
+        "restart_inside_artifact_finalizer": { "const": true },
+        "restart_inside_visual_finalizer": { "const": true },
+        "restart_inside_design_finalizer": { "const": true },
+        "terminal_response_persistence_recovered": { "const": true },
+        "concurrent_finalizer_single_owner": { "const": true },
+        "visual_lineage_stable": { "const": true },
+        "design_version_not_duplicated": { "const": true },
+        "idempotent_approval_challenge": { "const": true },
+        "wrong_receipt_rejected": { "const": true },
+        "model_mutation_replayed": { "const": false },
+        "public_native_or_finalizer_payload_exposed": { "const": false },
+        "native_receipt_public_artifact_leak": { "const": false },
+        "after_revision_drift_blocked": { "const": true },
+        "no_receipt_outcome_unknown": { "const": true }
+      }
+    },
+    "tests": {
+      "type": "array",
+      "minItems": 6,
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^node test/[a-z0-9-]+\\.mjs$" }
+    },
+    "boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["live_queue_called", "live_sketchup_proven", "universal_native_exactly_once_claimed", "native_commit_to_task_receipt_gap"],
+      "properties": {
+        "live_queue_called": { "const": false },
+        "live_sketchup_proven": { "const": false },
+        "universal_native_exactly_once_claimed": { "const": false },
+        "native_commit_to_task_receipt_gap": { "const": "outcome_unknown_fail_closed" }
+      }
+    }
+  }
+}

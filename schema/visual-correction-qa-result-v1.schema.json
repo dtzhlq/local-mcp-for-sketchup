@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/schema/visual-correction-qa-result-v1.schema.json",
+  "title": "VisualCorrectionQaResultV1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "kind",
+    "report",
+    "background_normalized_comparison",
+    "image_artifacts",
+    "visual_agent_required",
+    "local_files_required",
+    "structured_summary_available",
+    "capture_mode",
+    "diagnostic_boundary",
+    "result_id",
+    "result_hash"
+  ],
+  "properties": {
+    "version": { "const": "visual-correction-qa-result.v1" },
+    "kind": { "const": "visual_correction_qa_result" },
+    "report": { "$ref": "visual-correction-qa-v1.schema.json" },
+    "background_normalized_comparison": {
+      "$ref": "background-normalized-visual-comparison-v1.schema.json"
+    },
+    "image_artifacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "overlay",
+        "reference_thumbnail",
+        "capture_thumbnail",
+        "reference_mask",
+        "capture_mask",
+        "registered_reference",
+        "registered_capture",
+        "silhouette_overlay"
+      ],
+      "properties": {
+        "overlay": { "$ref": "#/$defs/image_artifact" },
+        "reference_thumbnail": { "$ref": "#/$defs/image_artifact" },
+        "capture_thumbnail": { "$ref": "#/$defs/image_artifact" },
+        "reference_mask": { "$ref": "#/$defs/image_artifact" },
+        "capture_mask": { "$ref": "#/$defs/image_artifact" },
+        "registered_reference": { "$ref": "#/$defs/image_artifact" },
+        "registered_capture": { "$ref": "#/$defs/image_artifact" },
+        "silhouette_overlay": { "$ref": "#/$defs/image_artifact" }
+      }
+    },
+    "visual_agent_required": { "const": false },
+    "local_files_required": { "const": false },
+    "structured_summary_available": { "const": true },
+    "capture_mode": {
+      "enum": ["provided_server_artifact_only", "server_live_current_view"]
+    },
+    "diagnostic_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "content_trust",
+        "policy_effect",
+        "target_selection_allowed",
+        "operation_selection_allowed",
+        "approval_state_change_allowed",
+        "execution_authorization_allowed",
+        "visual_similarity_accepted"
+      ],
+      "properties": {
+        "content_trust": { "const": "untrusted_data" },
+        "policy_effect": { "const": "none" },
+        "target_selection_allowed": { "const": false },
+        "operation_selection_allowed": { "const": false },
+        "approval_state_change_allowed": { "const": false },
+        "execution_authorization_allowed": { "const": false },
+        "visual_similarity_accepted": { "const": false }
+      }
+    },
+    "result_id": {
+      "type": "string",
+      "pattern": "^visual-qa-result-[0-9a-f]{24}$"
+    },
+    "result_hash": { "$ref": "#/$defs/sha256" }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "image_artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "role",
+        "handle",
+        "sha256",
+        "media_type",
+        "format",
+        "size_bytes",
+        "width",
+        "height",
+        "channels",
+        "content_trust",
+        "policy_effect"
+      ],
+      "properties": {
+        "role": { "type": "string", "minLength": 1 },
+        "handle": {
+          "type": "string",
+          "pattern": "^image-artifact:sha256:[0-9a-f]{64}$"
+        },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "media_type": { "const": "image/png" },
+        "format": { "const": "png" },
+        "size_bytes": { "type": "integer", "minimum": 1 },
+        "width": { "type": "integer", "minimum": 1 },
+        "height": { "type": "integer", "minimum": 1 },
+        "channels": { "type": "integer", "minimum": 1, "maximum": 4 },
+        "content_trust": { "const": "untrusted_data" },
+        "policy_effect": { "const": "none" }
+      }
+    }
+  }
+}

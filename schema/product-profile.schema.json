@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/local-mcp-for-sketchup/product-profile.schema.json",
+  "title": "ProductProfile",
+  "type": "object",
+  "required": ["version", "profile_id", "product_type", "name", "units", "materials", "required_parts", "allowed_primitives"],
+  "properties": {
+    "version": { "type": "integer", "minimum": 1 },
+    "profile_id": { "type": "string", "minLength": 1 },
+    "product_type": { "type": "string", "minLength": 1 },
+    "name": { "type": "string", "minLength": 1 },
+    "description": { "type": "string" },
+    "dsl_version": { "type": "integer", "minimum": 1 },
+    "units": { "const": "mm" },
+    "default_scale": {
+      "type": "object",
+      "properties": {
+        "width": { "type": "number", "exclusiveMinimum": 0 },
+        "depth": { "type": "number", "exclusiveMinimum": 0 },
+        "height": { "type": "number", "exclusiveMinimum": 0 }
+      }
+    },
+    "expected_views": {
+      "type": "array",
+      "items": { "enum": ["front", "rear", "left", "right", "top", "bottom", "oblique", "detail"] }
+    },
+    "required_parts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "role"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "role": { "type": "string", "minLength": 1 },
+          "required": { "type": "boolean" },
+          "expected_count": { "type": "integer", "minimum": 1 },
+          "evidence_required": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "fallback_allowed": {
+            "type": "array",
+            "items": { "$ref": "#/$defs/fallback_state" }
+          }
+        }
+      }
+    },
+    "allowed_primitives": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "materials": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/material" }
+    },
+    "tags": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/tag" }
+    },
+    "reference_images": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/reference_image" }
+    },
+    "qa_rules": { "type": "object" },
+    "review": { "type": "object" },
+    "compiler": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "version": { "type": "string" },
+        "geometry_gate": { "$ref": "#/$defs/geometry_gate" }
+      }
+    }
+  },
+  "$defs": {
+    "vec3": {
+      "type": "array",
+      "prefixItems": [{ "type": "number" }, { "type": "number" }, { "type": "number" }],
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "size2": {
+      "type": "array",
+      "prefixItems": [{ "type": "number", "exclusiveMinimum": 0 }, { "type": "number", "exclusiveMinimum": 0 }],
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "material": {
+      "type": "object",
+      "required": ["name", "color"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "color": { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$" },
+        "alpha": { "type": "number", "minimum": 0, "maximum": 1 },
+        "texture": { "type": "object" },
+        "metallic": { "type": "number", "minimum": 0, "maximum": 1 },
+        "roughness": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "tag": {
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "color": { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$" }
+      }
+    },
+    "reference_image": {
+      "type": "object",
+      "required": ["id", "name", "source", "origin", "plane", "size"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "source": { "type": "string", "minLength": 1 },
+        "origin": { "$ref": "#/$defs/vec3" },
+        "plane": { "enum": ["xy", "xz", "yz"] },
+        "size": { "$ref": "#/$defs/size2" },
+        "alpha": { "type": "number", "minimum": 0, "maximum": 1 },
+        "texture_transform": { "type": "object" }
+      }
+    },
+    "geometry_gate": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "max_needs_review_ratio": { "type": "number", "minimum": 0, "maximum": 1 },
+        "max_profile_default_ratio": { "type": "number", "minimum": 0, "maximum": 1 },
+        "min_observed_parts": { "type": "integer", "minimum": 0 },
+        "min_inferred_parts": { "type": "integer", "minimum": 0 },
+        "min_scale_confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "require_promoted_geometry": { "type": "boolean" },
+        "block_reference_only_output": { "type": "boolean" }
+      }
+    },
+    "fallback_state": {
+      "enum": ["real_feature_op", "structured_primitive", "visual_helper", "box_approximation", "profile_default", "reference_only", "needs_review"]
+    }
+  }
+}

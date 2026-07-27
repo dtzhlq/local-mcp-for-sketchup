@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/local-mcp-for-sketchup/session-contract-v1.schema.json",
+  "title": "Fresh Queue Handshake / Session Contract v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version", "kind", "handshake_id", "runtime", "session_id", "document_id", "model_identity",
+    "model_revision", "model_revision_strategy", "model_revision_unique_entity_limit", "model_revision_complete", "model_revision_total_seen", "model_revision_indexed", "server_version", "server_session_id", "plugin_version", "queue_state", "capability_version",
+    "manifest_version", "dsl_version", "occurrence_contract", "issued_at", "expires_at", "signature"
+  ],
+  "properties": {
+    "version": { "const": "session-contract.v1" },
+    "kind": { "const": "fresh_queue_handshake" },
+    "handshake_id": { "type": "string", "pattern": "^handshake_[0-9a-f-]+$" },
+    "runtime": { "const": "queue" },
+    "session_id": { "type": "string", "minLength": 1 },
+    "document_id": { "type": "string", "minLength": 1 },
+    "model_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["model_guid", "runtime_object_id", "title", "source_path"],
+      "properties": {
+        "model_guid": { "type": ["string", "null"] },
+        "runtime_object_id": { "type": "string", "minLength": 1 },
+        "title": { "type": ["string", "null"] },
+        "source_path": { "type": ["string", "null"] }
+      }
+    },
+    "model_revision": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "model_revision_strategy": { "enum": ["definition-merkle.v1", "definition-merkle.v2"] },
+    "model_revision_unique_entity_limit": { "const": 1000000 },
+    "model_revision_complete": { "const": true },
+    "model_revision_total_seen": { "type": "integer", "minimum": 0 },
+    "model_revision_indexed": { "type": "integer", "minimum": 0 },
+    "model_modified": {
+      "type": "boolean",
+      "description": "Required by capability .7+ live issuers. Optional only so immutable earlier Session Contract evidence remains schema-readable."
+    },
+    "server_version": { "type": "string", "minLength": 1 },
+    "server_session_id": { "type": "string", "minLength": 1 },
+    "plugin_version": { "type": "string", "minLength": 1 },
+    "queue_state": { "const": "idle" },
+    "capability_version": { "type": "string", "minLength": 1 },
+    "manifest_version": { "type": "string", "minLength": 1 },
+    "dsl_version": { "type": "integer", "minimum": 1 },
+    "occurrence_contract": { "const": "canonical-occurrence-path.v1" },
+    "boolean_operations_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "Required by the live issuer and verifier. Optional in this archival v1 schema only so immutable pre-attestation evidence remains readable; such legacy contracts cannot authorize current live execution."
+    },
+    "model_revision_source_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "Required by capability .7+ live issuers to attest the loaded Model Revision v2 source. Optional only for immutable earlier evidence."
+    },
+    "issued_at": { "type": "string", "format": "date-time" },
+    "expires_at": { "type": "string", "format": "date-time" },
+    "signature": { "type": "string", "pattern": "^hmac_sha256:[A-Za-z0-9_-]+$" }
+  },
+  "allOf": [
+    {
+      "if": {
+        "required": ["model_revision_strategy"],
+        "properties": {
+          "model_revision_strategy": { "const": "definition-merkle.v2" }
+        }
+      },
+      "then": {
+        "required": ["model_modified", "boolean_operations_sha256", "model_revision_source_sha256"],
+        "oneOf": [
+          {
+            "properties": {
+              "capability_version": { "const": "0.1.0-rc.2-capabilities.7" },
+              "manifest_version": { "const": "2026-07-agent-contract-v1.4" }
+            }
+          },
+          {
+            "properties": {
+              "capability_version": { "const": "0.1.0-rc.3-capabilities.1" },
+              "manifest_version": { "const": "2026-07-agent-contract-rc3.1" }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

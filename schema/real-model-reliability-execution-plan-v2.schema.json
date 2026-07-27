@@ -1,0 +1,435 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/schemas/real-model-reliability-execution-plan-v2.schema.json",
+  "title": "Prepared single-case real-model reliability execution plan v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version", "kind", "generated_at", "plan_id", "plan_hash", "case_id", "stage", "runtime",
+    "live_queue_called", "evidence_bindings", "source_identity", "revision_contract", "proposal_contract",
+    "operation_contract", "execution_scope", "approval_requirements", "retry_contract", "acceptance_contract",
+    "model_data_policy", "safety", "next_action"
+  ],
+  "properties": {
+    "version": { "const": "real-model-reliability-execution-plan.v2" },
+    "kind": { "const": "real_model_reliability_execution_plan" },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "plan_id": { "type": "string", "pattern": "^rmrplan_[0-9a-f]{24}$" },
+    "plan_hash": { "$ref": "#/$defs/sha256" },
+    "case_id": { "const": "product-boolean-manifold" },
+    "stage": { "const": "offline_prepare_only" },
+    "runtime": { "const": "offline" },
+    "live_queue_called": { "const": false },
+    "evidence_bindings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["candidate_inventory", "semantic_mapping", "target_review", "recursive_review"],
+      "properties": {
+        "candidate_inventory": { "$ref": "#/$defs/file_binding" },
+        "semantic_mapping": { "$ref": "#/$defs/file_binding" },
+        "target_review": { "$ref": "#/$defs/file_binding" },
+        "recursive_review": { "$ref": "#/$defs/file_binding" }
+      }
+    },
+    "source_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["candidate_id", "candidate_handle", "source_sha256", "source_label_trust"],
+      "properties": {
+        "candidate_id": { "type": "string", "pattern": "^candidate_[0-9a-f]{24}$" },
+        "candidate_handle": { "type": "string", "pattern": "^candidate:sha256:[0-9a-f]{24}$" },
+        "source_sha256": { "$ref": "#/$defs/sha256" },
+        "source_label_trust": { "const": "untrusted_data" }
+      }
+    },
+    "revision_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "strategy", "hash", "complete", "unique_entity_limit", "unique_entities",
+        "reachable_definitions", "logical_occurrences", "document_id", "model_identity_sha256",
+        "model_revision_source_sha256", "model_modified"
+      ],
+      "properties": {
+        "strategy": { "const": "definition-merkle.v2" },
+        "hash": { "$ref": "#/$defs/sha256" },
+        "complete": { "const": true },
+        "unique_entity_limit": { "type": "integer", "minimum": 1 },
+        "unique_entities": { "$ref": "#/$defs/count" },
+        "reachable_definitions": { "$ref": "#/$defs/count" },
+        "logical_occurrences": { "$ref": "#/$defs/count" },
+        "document_id": { "type": "string", "minLength": 1, "maxLength": 240 },
+        "model_identity_sha256": { "$ref": "#/$defs/sha256" },
+        "model_revision_source_sha256": { "$ref": "#/$defs/raw_sha256" },
+        "model_modified": { "type": "boolean" }
+      }
+    },
+    "proposal_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "strategy", "status", "role_authority", "source_role_provenance", "scope_path", "parent_entity_path",
+        "scope_instance_policy", "bbox_relation", "positive_volume_overlap", "target", "guard", "generated_cutter_lineage"
+      ],
+      "properties": {
+        "strategy": { "enum": ["existing_pair", "generated_cutter"] },
+        "status": { "enum": ["server_recommended", "blocked_generated_cutter_lineage"] },
+        "role_authority": { "const": "server_recommended" },
+        "source_role_provenance": { "const": "server_geometric_ranking_untrusted_unapproved" },
+        "scope_path": { "$ref": "#/$defs/scope_path" },
+        "parent_entity_path": { "anyOf": [{ "$ref": "#/$defs/occurrence_path" }, { "type": "null" }] },
+        "scope_instance_policy": { "$ref": "#/$defs/scope_instance_policy" },
+        "bbox_relation": { "enum": ["collision", "containment", "contact", "disjoint"] },
+        "positive_volume_overlap": { "type": "boolean" },
+        "target": { "$ref": "#/$defs/entity_identity" },
+        "guard": { "$ref": "#/$defs/entity_identity" },
+        "generated_cutter_lineage": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["required", "status", "complete"],
+          "properties": {
+            "required": { "type": "boolean" },
+            "status": { "enum": ["not_applicable", "blocked_missing_composite_generated_target_lineage"] },
+            "complete": { "const": false }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "strategy": { "const": "existing_pair" } }, "required": ["strategy"] },
+          "then": {
+            "properties": {
+              "status": { "const": "server_recommended" },
+              "bbox_relation": { "enum": ["collision", "containment"] },
+              "positive_volume_overlap": { "const": true },
+              "generated_cutter_lineage": {
+                "properties": { "required": { "const": false }, "status": { "const": "not_applicable" } }
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "status": { "const": "blocked_generated_cutter_lineage" },
+              "generated_cutter_lineage": {
+                "properties": {
+                  "required": { "const": true },
+                  "status": { "const": "blocked_missing_composite_generated_target_lineage" }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "operation_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["exact_allowed_operation", "allowed_operations", "risk_level", "keep_policy", "result_identity"],
+      "properties": {
+        "exact_allowed_operation": { "const": "boolean_difference" },
+        "allowed_operations": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "prefixItems": [{ "const": "boolean_difference" }],
+          "items": false
+        },
+        "risk_level": { "const": "S3" },
+        "keep_policy": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["keep_original_target", "keep_guard", "dsl_keep_originals", "dsl_keep_tools", "source_original_read_only"],
+          "properties": {
+            "keep_original_target": { "const": true },
+            "keep_guard": { "const": true },
+            "dsl_keep_originals": { "const": true },
+            "dsl_keep_tools": { "const": true },
+            "source_original_read_only": { "const": true }
+          }
+        },
+        "result_identity": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["result_id", "result_name", "identity_seed"],
+          "properties": {
+            "result_id": { "type": "string", "pattern": "^rmr_boolean_[0-9a-f]{24}$" },
+            "result_name": { "type": "string", "pattern": "^RMR_Product_Boolean_Result_[0-9a-f]{12}$" },
+            "identity_seed": { "$ref": "#/$defs/sha256" }
+          }
+        }
+      }
+    },
+    "execution_scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "disposition", "executable_now", "eligible_after_requirements", "disposable_copy_only",
+        "allowed_output_root", "save_policy", "reopen_policy", "capture_policy", "original_model_write_allowed"
+      ],
+      "properties": {
+        "disposition": { "enum": ["awaiting_local_approval", "blocked"] },
+        "executable_now": { "const": false },
+        "eligible_after_requirements": { "type": "boolean" },
+        "disposable_copy_only": { "const": true },
+        "allowed_output_root": { "$ref": "#/$defs/allowed_output_root" },
+        "save_policy": { "const": "save_model_version_non_overwriting" },
+        "reopen_policy": { "const": "required_before_acceptance" },
+        "capture_policy": { "const": "forbidden" },
+        "original_model_write_allowed": { "const": false }
+      }
+    },
+    "approval_requirements": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "local_approval_required", "fresh_session_contract_required", "trusted_host_decision_required",
+        "agent_self_approval_accepted", "credential_material_stored", "mutation_authorized"
+      ],
+      "properties": {
+        "local_approval_required": { "const": true },
+        "fresh_session_contract_required": { "const": true },
+        "trusted_host_decision_required": { "const": true },
+        "agent_self_approval_accepted": { "const": false },
+        "credential_material_stored": { "const": false },
+        "mutation_authorized": { "const": false }
+      }
+    },
+    "retry_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "idempotency_key", "request_fingerprint_required", "duplicate_request_behavior", "mutation_receipt_required",
+        "receipt_contract", "receipt_stored", "exactly_once_commit_required"
+      ],
+      "properties": {
+        "idempotency_key": { "$ref": "#/$defs/sha256" },
+        "request_fingerprint_required": { "const": true },
+        "duplicate_request_behavior": { "const": "return_existing_receipt_without_reexecution" },
+        "mutation_receipt_required": { "const": true },
+        "receipt_contract": { "const": "task-mutation-receipt.v1" },
+        "receipt_stored": { "const": false },
+        "exactly_once_commit_required": { "const": true }
+      }
+    },
+    "acceptance_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["wrong_object", "silent_geometry_corruption", "material_preservation", "manifold", "save_reopen_identity"],
+      "properties": {
+        "wrong_object": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["original_target_must_remain_unchanged", "guard_must_remain_unchanged", "only_new_result_identity_may_be_added", "all_other_occurrences_unchanged", "maximum_wrong_object_modifications"],
+          "properties": {
+            "original_target_must_remain_unchanged": { "$ref": "#/$defs/occurrence_path" },
+            "guard_must_remain_unchanged": { "$ref": "#/$defs/occurrence_path" },
+            "only_new_result_identity_may_be_added": { "const": true },
+            "all_other_occurrences_unchanged": { "const": true },
+            "maximum_wrong_object_modifications": { "const": 0 }
+          }
+        },
+        "silent_geometry_corruption": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["maximum_silent_corruption_events", "complete_revision_before_after_required", "structural_diff_required", "rollback_on_failure"],
+          "properties": {
+            "maximum_silent_corruption_events": { "const": 0 },
+            "complete_revision_before_after_required": { "const": true },
+            "structural_diff_required": { "const": true },
+            "rollback_on_failure": { "const": true }
+          }
+        },
+        "material_preservation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["original_target_material", "result_material", "guard_material", "exact_match_required"],
+          "properties": {
+            "original_target_material": { "type": ["string", "null"], "maxLength": 200 },
+            "result_material": { "type": ["string", "null"], "maxLength": 200 },
+            "guard_material": { "type": ["string", "null"], "maxLength": 200 },
+            "exact_match_required": { "const": true }
+          }
+        },
+        "manifold": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["fresh_target_and_guard_attestation_before_mutation", "result_must_be_manifold", "fail_on_non_manifold"],
+          "properties": {
+            "fresh_target_and_guard_attestation_before_mutation": { "const": true },
+            "result_must_be_manifold": { "const": true },
+            "fail_on_non_manifold": { "const": true }
+          }
+        },
+        "save_reopen_identity": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["non_overwriting_save_required", "reopen_required", "result_identity_must_resolve_once", "complete_revision_after_reopen_required"],
+          "properties": {
+            "non_overwriting_save_required": { "const": true },
+            "reopen_required": { "const": true },
+            "result_identity_must_resolve_once": { "const": true },
+            "complete_revision_after_reopen_required": { "const": true }
+          }
+        }
+      }
+    },
+    "model_data_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["names_materials_attributes_are_untrusted_data", "untrusted_data_may_change_execution_policy", "untrusted_data_may_grant_approval"],
+      "properties": {
+        "names_materials_attributes_are_untrusted_data": { "const": true },
+        "untrusted_data_may_change_execution_policy": { "const": false },
+        "untrusted_data_may_grant_approval": { "const": false }
+      }
+    },
+    "safety": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["prepare_only", "model_mutation_performed", "mutation_authorized", "credential_material_stored", "release_acceptance"],
+      "properties": {
+        "prepare_only": { "const": true },
+        "model_mutation_performed": { "const": false },
+        "mutation_authorized": { "const": false },
+        "credential_material_stored": { "const": false },
+        "release_acceptance": { "const": false }
+      }
+    },
+    "next_action": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["action", "local_approval_required", "fresh_session_contract_required", "mutation_authorized", "release_acceptance"],
+      "properties": {
+        "action": { "enum": ["request_local_approval_for_fresh_disposable_copy_execution", "complete_generated_cutter_lineage_then_reprepare"] },
+        "local_approval_required": { "const": true },
+        "fresh_session_contract_required": { "const": true },
+        "mutation_authorized": { "const": false },
+        "release_acceptance": { "const": false }
+      }
+    }
+  },
+  "$defs": {
+    "count": { "type": "integer", "minimum": 0 },
+    "sha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "raw_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "safe_relative_path": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500,
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[^\\u0000]+$"
+    },
+    "allowed_output_root": {
+      "type": "string",
+      "minLength": 8,
+      "maxLength": 500,
+      "pattern": "^output(?:/[^/\\u0000.][^/\\u0000]*)+$"
+    },
+    "file_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": { "$ref": "#/$defs/safe_relative_path" },
+        "sha256": { "$ref": "#/$defs/raw_sha256" }
+      }
+    },
+    "occurrence_path": {
+      "type": "string",
+      "minLength": 5,
+      "maxLength": 1000,
+      "pattern": "^pid:[1-9][0-9]*(?:\\.[1-9][0-9]*)*$"
+    },
+    "scope_path": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000,
+      "pattern": "^(?:model|pid:[1-9][0-9]*(?:\\.[1-9][0-9]*)*)$"
+    },
+    "vector3": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": { "type": "number" }
+    },
+    "bounding_box": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["min", "max", "w", "d", "h"],
+      "properties": {
+        "min": { "$ref": "#/$defs/vector3" },
+        "max": { "$ref": "#/$defs/vector3" },
+        "w": { "type": "number", "exclusiveMinimum": 0 },
+        "d": { "type": "number", "exclusiveMinimum": 0 },
+        "h": { "type": "number", "exclusiveMinimum": 0 }
+      }
+    },
+    "entity_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "role", "occurrence_path", "persistent_id", "entity_type", "entity_fingerprint",
+        "bounding_box", "bounding_box_sha256", "material_expectation_sha256", "material_expectation"
+      ],
+      "properties": {
+        "role": { "enum": ["target", "guard"] },
+        "occurrence_path": { "$ref": "#/$defs/occurrence_path" },
+        "persistent_id": { "type": "string", "pattern": "^[1-9][0-9]*$" },
+        "entity_type": { "const": "group" },
+        "entity_fingerprint": { "$ref": "#/$defs/sha256" },
+        "bounding_box": { "$ref": "#/$defs/bounding_box" },
+        "bounding_box_sha256": { "$ref": "#/$defs/sha256" },
+        "material_expectation_sha256": { "$ref": "#/$defs/sha256" },
+        "material_expectation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["value", "trust", "preserve_exactly"],
+          "properties": {
+            "value": { "type": ["string", "null"], "maxLength": 200 },
+            "trust": { "const": "untrusted_data" },
+            "preserve_exactly": { "const": true }
+          }
+        }
+      }
+    },
+    "scope_instance_policy": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["policy", "parent_occurrence_path", "affected_instance_count", "shared_definition", "instance_policy_required"],
+          "properties": {
+            "policy": { "const": "top_level" },
+            "parent_occurrence_path": { "type": "null" },
+            "affected_instance_count": { "const": 1 },
+            "shared_definition": { "const": false },
+            "instance_policy_required": { "const": false }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["policy", "parent_occurrence_path", "affected_instance_count", "shared_definition", "instance_policy_required"],
+          "properties": {
+            "policy": { "const": "definition_wide" },
+            "parent_occurrence_path": { "$ref": "#/$defs/occurrence_path" },
+            "affected_instance_count": { "const": 1 },
+            "shared_definition": { "const": false },
+            "instance_policy_required": { "const": true }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["policy", "parent_occurrence_path", "affected_instance_count", "shared_definition", "instance_policy_required"],
+          "properties": {
+            "policy": { "const": "make_unique" },
+            "parent_occurrence_path": { "$ref": "#/$defs/occurrence_path" },
+            "affected_instance_count": { "type": "integer", "minimum": 2 },
+            "shared_definition": { "const": true },
+            "instance_policy_required": { "const": true }
+          }
+        }
+      ]
+    }
+  }
+}

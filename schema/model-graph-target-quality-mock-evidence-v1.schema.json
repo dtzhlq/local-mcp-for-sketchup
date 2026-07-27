@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/schema/model-graph-target-quality-mock-evidence-v1.schema.json",
+  "title": "ModelGraph target-quality mock evidence v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "kind",
+    "evidence_scope",
+    "runtime",
+    "hashes",
+    "report",
+    "coverage",
+    "metrics",
+    "hard_gates",
+    "acceptance",
+    "boundary"
+  ],
+  "properties": {
+    "version": { "const": "model-graph-target-quality-v1-mock-evidence.v1" },
+    "kind": { "const": "model_graph_target_quality_mock_evidence" },
+    "evidence_scope": { "const": "cross_domain_agent_gateway_target_quality_mock" },
+    "runtime": { "const": "mock-only-no-queue" },
+    "hashes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "src/model-graph.mjs",
+        "src/existing-model-edit-proposer.mjs",
+        "src/agent-gateway.mjs",
+        "schema/model-graph-v1.schema.json",
+        "schema/existing-model-edit-proposal-v1.schema.json",
+        "schema/model-graph-target-quality-benchmark-v1.schema.json",
+        "schema/model-graph-target-quality-report-v1.schema.json",
+        "schema/model-graph-target-quality-mock-evidence-v1.schema.json",
+        "test/fixtures/model-graph/target-quality-benchmark-v1.json",
+        "scripts/run-model-graph-target-quality-benchmark.mjs",
+        "test/model-graph-target-quality-benchmark.mjs"
+      ],
+      "properties": {
+        "src/model-graph.mjs": { "$ref": "#/$defs/sha256" },
+        "src/existing-model-edit-proposer.mjs": { "$ref": "#/$defs/sha256" },
+        "src/agent-gateway.mjs": { "$ref": "#/$defs/sha256" },
+        "schema/model-graph-v1.schema.json": { "$ref": "#/$defs/sha256" },
+        "schema/existing-model-edit-proposal-v1.schema.json": { "$ref": "#/$defs/sha256" },
+        "schema/model-graph-target-quality-benchmark-v1.schema.json": { "$ref": "#/$defs/sha256" },
+        "schema/model-graph-target-quality-report-v1.schema.json": { "$ref": "#/$defs/sha256" },
+        "schema/model-graph-target-quality-mock-evidence-v1.schema.json": { "$ref": "#/$defs/sha256" },
+        "test/fixtures/model-graph/target-quality-benchmark-v1.json": { "$ref": "#/$defs/sha256" },
+        "scripts/run-model-graph-target-quality-benchmark.mjs": { "$ref": "#/$defs/sha256" },
+        "test/model-graph-target-quality-benchmark.mjs": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "report": {
+      "const": {
+        "contract": "model-graph-target-quality-report.v1",
+        "deterministic_sha256": "sha256:3283b7b6322841d1a72fd2ad0e1a6e9472b15789a884326d502f5b029374cdad",
+        "independent_runs_byte_equal": true,
+        "raw_model_labels_exposed": false
+      }
+    },
+    "coverage": {
+      "const": {
+        "architecture_unique_selection": true,
+        "interior_ambiguity_abstention": true,
+        "product_unique_selection": true,
+        "deep_shared_policy_required": true,
+        "deep_shared_make_unique_clarification": true
+      }
+    },
+    "metrics": {
+      "const": {
+        "models": 4,
+        "domains": 4,
+        "cases": 5,
+        "distinct_model_revisions": 4,
+        "target_top_k_attempts": 3,
+        "target_top_k_hits": 3,
+        "ambiguity_attempts": 2,
+        "ambiguity_abstentions": 2,
+        "clarification_attempts": 1,
+        "clarification_recoveries": 1,
+        "gateway_tool_calls": 5,
+        "artifact_page_calls": 191,
+        "schema_errors": 0
+      }
+    },
+    "hard_gates": {
+      "const": {
+        "wrong_object_automatic_execution": 0,
+        "unauthorized_s2_s4_execution": 0,
+        "duplicate_request_duplicate_modification": 0,
+        "ambiguous_target_automatic_selection": 0
+      }
+    },
+    "acceptance": {
+      "const": {
+        "cross_domain_fixture_benchmark": true,
+        "real_skp_multi_model_live": false,
+        "live_mutation": false,
+        "release_acceptance": false
+      }
+    },
+    "boundary": {
+      "const": "This evidence is a deterministic, source-bound Agent Gateway mock benchmark across architecture, interior, product, and deep shared-component fixtures. It proves top-k measurement, fail-closed ambiguity, and explicit make_unique clarification without proposal execution. It does not prove multi-model live SKP target quality, native mutation, or release acceptance."
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    }
+  }
+}

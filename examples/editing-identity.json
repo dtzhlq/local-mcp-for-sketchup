@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "units": "mm",
+  "operations": [
+    { "op": "reset" },
+    { "op": "material", "name": "Identity_Base", "color": "#777777" },
+    { "op": "material", "name": "Identity_Accent", "color": "#ee8844" },
+    { "op": "box", "id": "stable-panel-id", "name": "Panel_Original", "origin": [0, 0, 0], "size": [120, 80, 12], "material": "Identity_Base" },
+    { "op": "box", "id": "delete-target-id", "name": "Delete_Target", "origin": [180, 0, 0], "size": [40, 40, 12], "material": "Identity_Base" },
+    { "op": "component_definition", "name": "Identity_LED_Def", "size": [12, 6, 4], "material": "Identity_Base" },
+    { "op": "component_instance", "id": "stable-led-id", "name": "LED_Original", "definition": "Identity_LED_Def", "origin": [0, 120, 0] },
+    { "op": "rename", "target_id": "stable-panel-id", "name": "Panel_Original", "new_name": "Panel_Renamed" },
+    { "op": "set_material", "target_id": "stable-panel-id", "material": "Identity_Accent" },
+    { "op": "transform_object", "target_id": "stable-panel-id", "translate": [25, 0, 0] },
+    { "op": "transform_object", "target_id": "stable-led-id", "translate": [0, 30, 0] },
+    { "op": "set_visibility", "target_id": "stable-led-id", "visible": false },
+    { "op": "delete", "target_id": "delete-target-id" }
+  ]
+}

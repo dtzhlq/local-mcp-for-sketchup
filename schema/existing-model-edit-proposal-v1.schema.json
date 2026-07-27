@@ -1,0 +1,169 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/local-mcp-for-sketchup/existing-model-edit-proposal-v1.schema.json",
+  "title": "Existing Model Edit Proposal v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "kind", "model_key", "graph_id", "model_revision", "instruction", "target_query", "target_resolution", "requested_action", "candidates", "exclusions", "selected_targets", "operation_proposal", "shared_definition_policy", "risk_level", "confidence", "requires_clarification", "ambiguity_reasons", "execution_allowed", "execution_route", "proposal_id", "proposal_hash", "clarification", "next_action"],
+  "properties": {
+    "version": { "const": "existing-model-edit-proposal.v1" },
+    "kind": { "const": "existing_model_edit_proposal" },
+    "proposal_id": { "type": "string", "pattern": "^edit-proposal-[0-9a-f]{24}$" },
+    "proposal_hash": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "model_key": { "type": "string", "pattern": "^model_[0-9a-f]{32}$" },
+    "graph_id": { "type": "string", "pattern": "^model-graph-[0-9a-f]{24}$" },
+    "model_revision": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "instruction": { "$ref": "#/$defs/untrusted" },
+    "target_query": { "$ref": "#/$defs/untrusted" },
+    "target_resolution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "status", "match_count", "exact_reference_required", "fallback_selection_allowed"],
+      "properties": {
+        "mode": { "enum": ["explicit_reference", "evidence_ranking"] },
+        "status": { "enum": ["exact_one", "not_found", "ambiguous", "ranked_candidate", "unresolved"] },
+        "match_count": { "type": "integer", "minimum": 0 },
+        "exact_reference_required": { "type": "boolean" },
+        "fallback_selection_allowed": { "const": false },
+        "coverage": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "mode", "sufficient_for_proposal", "full_model_graph_complete", "structural_groups_complete",
+            "eligible_entity_types", "leaf_entities_materialized", "blocker"
+          ],
+          "properties": {
+            "mode": {
+              "enum": [
+                "full_recursive_model_graph",
+                "complete_structural_group_projection",
+                "exact_structural_group_reference",
+                "incomplete_structural_group_projection",
+                "structural_group_scope_mismatch"
+              ]
+            },
+            "sufficient_for_proposal": { "type": "boolean" },
+            "full_model_graph_complete": { "type": "boolean" },
+            "structural_groups_complete": { "type": "boolean" },
+            "eligible_entity_types": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": { "enum": ["group", "component_instance", "face", "edge"] }
+            },
+            "leaf_entities_materialized": { "type": "boolean" },
+            "blocker": {
+              "enum": ["target_projection_incomplete", "target_projection_scope_mismatch", null]
+            }
+          }
+        }
+      }
+    },
+    "requested_action": { "type": ["string", "null"] },
+    "candidates": { "type": "array", "items": { "$ref": "#/$defs/candidate" } },
+    "exclusions": { "type": "array", "items": { "$ref": "#/$defs/exclusion" } },
+    "selected_targets": { "type": "array", "maxItems": 1, "items": { "$ref": "#/$defs/target" } },
+    "operation_proposal": {
+      "type": "array",
+      "maxItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["op"],
+        "properties": { "op": { "type": "string", "minLength": 1 } },
+        "anyOf": [
+          { "required": ["target_id", "edit_scope"] },
+          { "required": ["entity_path", "edit_scope", "instance_policy"] }
+        ]
+      }
+    },
+    "shared_definition_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required", "policy", "affected_instance_count", "requires_clarification"],
+      "properties": {
+        "required": { "type": "boolean" },
+        "policy": { "enum": ["definition_wide", "make_unique", null] },
+        "recommended": { "enum": ["definition_wide", "make_unique"] },
+        "affected_instance_count": { "type": "integer", "minimum": 0 },
+        "requires_clarification": { "type": "boolean" },
+        "reason": { "type": "string" }
+      }
+    },
+    "risk_level": { "type": ["string", "null"], "enum": ["S1", "S2", "S3", "S4", null] },
+    "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+    "requires_clarification": { "type": "boolean" },
+    "ambiguity_reasons": { "type": "array", "items": { "type": "string" } },
+    "execution_allowed": { "const": false },
+    "execution_route": { "const": "trusted_reviewed_existing_model_edit_only" },
+    "clarification": { "type": ["object", "null"] },
+    "next_action": { "type": "object", "required": ["action"] }
+  },
+  "$defs": {
+    "untrusted": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["trust", "source", "value", "policy_effect"],
+      "properties": {
+        "trust": { "const": "untrusted_data" },
+        "source": { "type": "string" },
+        "value": {},
+        "policy_effect": { "const": "none" }
+      }
+    },
+    "candidate": {
+      "type": "object",
+      "required": ["node_id", "persistent_ref", "entity_path", "entity_type", "confidence", "allowed_for_operation", "evidence", "effective_locked", "locked_ancestor_path", "shared_definition", "affected_instance_count", "summary"],
+      "properties": {
+        "node_id": { "type": "string" },
+        "persistent_ref": { "type": "object", "minProperties": 1 },
+        "entity_path": { "type": ["string", "null"] },
+        "entity_type": { "type": "string" },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "allowed_for_operation": { "type": "boolean" },
+        "evidence": { "type": "array", "items": { "type": "object" } },
+        "effective_locked": { "type": "boolean" },
+        "locked_ancestor_path": { "type": ["string", "null"] },
+        "shared_definition": { "type": "boolean" },
+        "affected_instance_count": { "type": "integer", "minimum": 0 },
+        "summary": { "$ref": "#/$defs/untrusted" }
+      },
+      "additionalProperties": false
+    },
+    "persistent_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "maxProperties": 1,
+      "properties": {
+        "entity_path": { "type": "string", "minLength": 1 },
+        "target_id": { "type": ["string", "number"] }
+      }
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["edit_scope"],
+      "properties": {
+        "target_id": { "type": ["string", "number"] },
+        "entity_path": { "type": "string", "minLength": 1 },
+        "edit_scope": { "enum": ["top_level", "instance_path"] },
+        "instance_policy": { "enum": ["definition_wide", "make_unique"] },
+        "instance_id": { "type": ["string", "number"] }
+      },
+      "oneOf": [
+        { "required": ["target_id"] },
+        { "required": ["entity_path", "instance_policy"] }
+      ]
+    },
+    "exclusion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["node_id", "persistent_ref", "entity_path", "reason"],
+      "properties": {
+        "node_id": { "type": "string", "pattern": "^node_[0-9a-f]{24}$" },
+        "persistent_ref": { "$ref": "#/$defs/persistent_ref" },
+        "entity_path": { "type": ["string", "null"] },
+        "reason": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

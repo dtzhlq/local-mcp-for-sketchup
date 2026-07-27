@@ -1,0 +1,280 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/local-mcp-for-sketchup/save-reopen-identity-report-v2.schema.json",
+  "title": "Save/Reopen Persistent Identity Report v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "contract_version",
+    "kind",
+    "ok",
+    "runtime",
+    "evidence_scope",
+    "live_proof",
+    "destructive_opt_in",
+    "model_revision_before",
+    "model_revision_after",
+    "revision_attestation",
+    "saved_model",
+    "path_switch",
+    "identity",
+    "snapshot_compare",
+    "queue_clean",
+    "artifacts"
+  ],
+  "properties": {
+    "version": { "const": 2 },
+    "contract_version": { "const": "save-reopen-identity-report.v2" },
+    "kind": { "const": "save_reopen_identity_report" },
+    "ok": { "const": true },
+    "runtime": { "enum": ["mock", "queue"] },
+    "evidence_scope": { "enum": ["mock_contract_only", "live_queue_distinct_path_save_reopen"] },
+    "live_proof": { "type": "boolean" },
+    "destructive_opt_in": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required_for_queue", "observed", "resume_is_read_only"],
+      "properties": {
+        "required_for_queue": { "const": true },
+        "observed": { "type": "boolean" },
+        "resume_is_read_only": { "const": true }
+      }
+    },
+    "model_revision_before": { "$ref": "#/$defs/modelRevision" },
+    "model_revision_after": { "$ref": "#/$defs/modelRevision" },
+    "revision_attestation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "before",
+        "after",
+        "revision_exact_match",
+        "strategy_exact_match",
+        "source_exact_match",
+        "current_source_verified",
+        "after_reopen_clean"
+      ],
+      "properties": {
+        "before": {
+          "anyOf": [
+            { "$ref": "#/$defs/mockRevisionObservation" },
+            { "$ref": "#/$defs/queueRevisionObservationBefore" }
+          ]
+        },
+        "after": {
+          "anyOf": [
+            { "$ref": "#/$defs/mockRevisionObservation" },
+            { "$ref": "#/$defs/queueRevisionObservationAfter" }
+          ]
+        },
+        "revision_exact_match": { "const": true },
+        "strategy_exact_match": { "type": ["boolean", "null"] },
+        "source_exact_match": { "type": ["boolean", "null"] },
+        "current_source_verified": { "type": "boolean" },
+        "after_reopen_clean": { "type": "boolean" }
+      }
+    },
+    "saved_model": { "type": "string", "minLength": 1 },
+    "path_switch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "verified",
+        "active_source_path_verified",
+        "resumed_after_activation",
+        "target_path",
+        "intermediary_path",
+        "source_before_switch",
+        "source_before_reopen",
+        "source_after_reopen",
+        "open_result_path"
+      ],
+      "properties": {
+        "verified": { "const": true },
+        "active_source_path_verified": { "type": "boolean" },
+        "resumed_after_activation": { "type": "boolean" },
+        "target_path": { "type": "string", "minLength": 1 },
+        "intermediary_path": { "type": "string", "minLength": 1 },
+        "source_before_switch": { "type": ["string", "null"] },
+        "source_before_reopen": { "type": ["string", "null"] },
+        "source_after_reopen": { "type": ["string", "null"] },
+        "open_result_path": { "type": "string", "minLength": 1 }
+      }
+    },
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "entries_before",
+        "entries_after",
+        "signature_before",
+        "signature_after",
+        "exact_match",
+        "shared_leaf_occurrences",
+        "face_edge_entries"
+      ],
+      "properties": {
+        "entries_before": { "type": "integer", "minimum": 1 },
+        "entries_after": { "type": "integer", "minimum": 1 },
+        "signature_before": { "$ref": "#/$defs/modelRevision" },
+        "signature_after": { "$ref": "#/$defs/modelRevision" },
+        "exact_match": { "const": true },
+        "shared_leaf_occurrences": { "const": 2 },
+        "face_edge_entries": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "snapshot_compare": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tolerance_mm", "diff_count", "exact_match", "verdict"],
+      "properties": {
+        "tolerance_mm": { "const": 0 },
+        "diff_count": { "const": 0 },
+        "exact_match": { "const": true },
+        "verdict": { "const": "pass" }
+      }
+    },
+    "queue_clean": {
+      "anyOf": [
+        { "type": "null" },
+        { "$ref": "#/$defs/queueClean" }
+      ]
+    },
+    "artifacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["report", "saved_model", "intermediary_model", "snapshot_diff", "checkpoint"],
+      "properties": {
+        "report": { "type": "string", "minLength": 1 },
+        "saved_model": { "type": "string", "minLength": 1 },
+        "intermediary_model": { "type": "string", "minLength": 1 },
+        "snapshot_diff": { "type": "string", "minLength": 1 },
+        "checkpoint": { "type": "string", "minLength": 1 }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "required": ["runtime"],
+        "properties": { "runtime": { "const": "queue" } }
+      },
+      "then": {
+        "properties": {
+          "evidence_scope": { "const": "live_queue_distinct_path_save_reopen" },
+          "live_proof": { "const": true },
+          "destructive_opt_in": {
+            "properties": { "observed": { "const": true } }
+          },
+          "revision_attestation": {
+            "properties": {
+              "before": { "$ref": "#/$defs/queueRevisionObservationBefore" },
+              "after": { "$ref": "#/$defs/queueRevisionObservationAfter" },
+              "strategy_exact_match": { "const": true },
+              "source_exact_match": { "const": true },
+              "current_source_verified": { "const": true },
+              "after_reopen_clean": { "const": true }
+            }
+          },
+          "path_switch": {
+            "properties": { "active_source_path_verified": { "const": true } }
+          },
+          "queue_clean": { "$ref": "#/$defs/queueClean" }
+        }
+      },
+      "else": {
+        "properties": {
+          "evidence_scope": { "const": "mock_contract_only" },
+          "live_proof": { "const": false },
+          "destructive_opt_in": {
+            "properties": { "observed": { "const": false } }
+          },
+          "revision_attestation": {
+            "properties": {
+              "before": { "$ref": "#/$defs/mockRevisionObservation" },
+              "after": { "$ref": "#/$defs/mockRevisionObservation" },
+              "strategy_exact_match": { "type": "null" },
+              "source_exact_match": { "type": "null" },
+              "current_source_verified": { "const": false },
+              "after_reopen_clean": { "const": false }
+            }
+          },
+          "path_switch": {
+            "properties": { "active_source_path_verified": { "const": false } }
+          },
+          "queue_clean": { "type": "null" }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "modelRevision": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "rawSha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "mockRevisionObservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "model_revision",
+        "model_revision_strategy",
+        "model_revision_source_sha256",
+        "model_modified"
+      ],
+      "properties": {
+        "model_revision": { "$ref": "#/$defs/modelRevision" },
+        "model_revision_strategy": { "type": "null" },
+        "model_revision_source_sha256": { "type": "null" },
+        "model_modified": { "type": "null" }
+      }
+    },
+    "queueRevisionObservationBefore": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "model_revision",
+        "model_revision_strategy",
+        "model_revision_source_sha256",
+        "model_modified"
+      ],
+      "properties": {
+        "model_revision": { "$ref": "#/$defs/modelRevision" },
+        "model_revision_strategy": { "const": "definition-merkle.v2" },
+        "model_revision_source_sha256": { "$ref": "#/$defs/rawSha256" },
+        "model_modified": { "type": "boolean" }
+      }
+    },
+    "queueRevisionObservationAfter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "model_revision",
+        "model_revision_strategy",
+        "model_revision_source_sha256",
+        "model_modified"
+      ],
+      "properties": {
+        "model_revision": { "$ref": "#/$defs/modelRevision" },
+        "model_revision_strategy": { "const": "definition-merkle.v2" },
+        "model_revision_source_sha256": { "$ref": "#/$defs/rawSha256" },
+        "model_modified": { "const": false }
+      }
+    },
+    "queueClean": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["queue", "processing", "responses", "lock"],
+      "properties": {
+        "queue": { "const": 0 },
+        "processing": { "const": 0 },
+        "responses": { "const": 0 },
+        "lock": { "const": false }
+      }
+    }
+  }
+}

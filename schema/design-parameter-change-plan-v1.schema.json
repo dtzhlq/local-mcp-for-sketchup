@@ -1,0 +1,158 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/local-mcp-for-sketchup/design-parameter-change-plan-v1.schema.json",
+  "title": "Design Parameter Change Plan v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "kind", "model_key", "design_graph_id", "source_model_graph_id", "model_revision", "instruction", "changes", "affected_subgraph", "targets", "operations", "risk_level", "divergence", "blockers", "execution_allowed", "execution_route", "change_plan_id", "next_action"],
+  "properties": {
+    "version": { "const": "design-parameter-change-plan.v1" },
+    "kind": { "const": "design_parameter_change_plan" },
+    "model_key": { "$ref": "#/$defs/model_key" },
+    "change_plan_id": { "type": "string", "pattern": "^design-change-[0-9a-f]{24}$" },
+    "design_graph_id": { "type": "string", "pattern": "^design-graph-[0-9a-f]{24}$" },
+    "source_model_graph_id": { "type": "string", "pattern": "^model-graph-[0-9a-f]{24}$" },
+    "model_revision": { "$ref": "#/$defs/hash" },
+    "instruction": { "$ref": "#/$defs/untrusted_value" },
+    "changes": { "type": "object", "minProperties": 1, "additionalProperties": { "$ref": "#/$defs/json_value" } },
+    "affected_subgraph": { "type": "array", "items": { "$ref": "#/$defs/affected_binding" } },
+    "targets": { "type": "array", "items": { "$ref": "#/$defs/selector_ref" } },
+    "operations": { "type": "array", "items": { "$ref": "#/$defs/dsl_operation" } },
+    "risk_level": { "type": ["string", "null"], "enum": ["S1", "S2", "S3", "S4", null] },
+    "divergence": { "type": "array", "items": { "$ref": "#/$defs/divergence" } },
+    "blockers": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+    "execution_allowed": { "const": false },
+    "execution_route": { "const": "trusted_reviewed_existing_model_edit_only" },
+    "next_action": { "$ref": "#/$defs/next_action" }
+  },
+  "$defs": {
+    "model_key": { "type": "string", "pattern": "^model_[0-9a-f]{32}$" },
+    "hash": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "json_value": {
+      "oneOf": [
+        { "type": "null" }, { "type": "boolean" }, { "type": "number" }, { "type": "string" },
+        { "type": "array", "items": { "$ref": "#/$defs/json_value" } },
+        { "type": "object", "additionalProperties": { "$ref": "#/$defs/json_value" } }
+      ]
+    },
+    "untrusted_value": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["trust", "source", "value", "policy_effect"],
+      "properties": {
+        "trust": { "const": "untrusted_data" },
+        "source": { "const": "agent_instruction" },
+        "value": { "$ref": "#/$defs/json_value" },
+        "policy_effect": { "const": "none" }
+      }
+    },
+    "affected_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["binding_id", "part_id", "feature_id", "entity_node_id", "persistent_ref", "previous_refs", "generated_refs", "replacement_refs", "reasons", "associated_bindings", "blockers"],
+      "properties": {
+        "binding_id": { "type": "string", "minLength": 1 },
+        "part_id": { "type": ["string", "null"] },
+        "feature_id": { "type": ["string", "null"] },
+        "entity_node_id": { "type": "string", "pattern": "^node_[0-9a-f]{24}$" },
+        "persistent_ref": { "$ref": "#/$defs/persistent_ref" },
+        "previous_refs": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/persistent_ref" } },
+        "generated_refs": { "type": "array", "items": { "$ref": "#/$defs/generated_ref" } },
+        "replacement_refs": { "type": "array", "items": { "$ref": "#/$defs/replacement_ref" } },
+        "reasons": { "type": "array", "items": { "type": "string", "pattern": "^parameter:.+$" } },
+        "associated_bindings": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+        "blockers": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } }
+      }
+    },
+    "generated_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["selector", "selector_source", "source_operation_index", "source_operation", "expected_count"],
+      "properties": {
+        "selector": { "$ref": "#/$defs/selector_ref" },
+        "selector_source": { "enum": ["operation_id", "operation_name"] },
+        "source_operation_index": { "type": "integer", "minimum": 0 },
+        "source_operation": { "type": "string", "minLength": 1 },
+        "expected_count": { "const": 1 }
+      }
+    },
+    "replacement_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["selector", "selector_source", "source_operation_index", "source_operation", "expected_count", "replacement_kind"],
+      "properties": {
+        "selector": { "$ref": "#/$defs/selector_ref" },
+        "selector_source": { "enum": ["operation_id", "operation_name", "retained_canonical_ref"] },
+        "source_operation_index": { "type": ["integer", "null"], "minimum": 0 },
+        "source_operation": { "type": "string", "minLength": 1 },
+        "expected_count": { "const": 1 },
+        "replacement_kind": { "enum": ["generated_entity", "retained_entity"] }
+      }
+    },
+    "selector_ref": {
+      "oneOf": [
+        { "$ref": "#/$defs/target_selector" },
+        { "$ref": "#/$defs/persistent_ref" }
+      ]
+    },
+    "persistent_ref": {
+      "oneOf": [
+        { "$ref": "#/$defs/top_level_ref" },
+        { "$ref": "#/$defs/occurrence_ref" }
+      ]
+    },
+    "target_selector": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["target_id"],
+      "properties": { "target_id": { "type": "string", "minLength": 1 } }
+    },
+    "top_level_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["target_id", "edit_scope"],
+      "properties": { "target_id": { "type": "string", "minLength": 1 }, "edit_scope": { "const": "top_level" } }
+    },
+    "occurrence_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["entity_path", "edit_scope", "instance_policy"],
+      "properties": {
+        "entity_path": { "type": "string", "minLength": 1 },
+        "edit_scope": { "enum": ["top_level", "instance_path", "definition"] },
+        "instance_policy": { "enum": ["definition_wide", "make_unique"] },
+        "instance_id": { "type": "string", "minLength": 1 }
+      },
+      "allOf": [{ "if": { "properties": { "instance_policy": { "const": "make_unique" } } }, "then": { "required": ["instance_id"] } }]
+    },
+    "dsl_operation": {
+      "type": "object",
+      "required": ["op"],
+      "properties": { "op": { "type": "string", "minLength": 1 } },
+      "additionalProperties": { "$ref": "#/$defs/json_value" }
+    },
+    "divergence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["binding_id", "persistent_ref", "expected_fingerprint", "current_fingerprint", "status", "candidate_count"],
+      "properties": {
+        "binding_id": { "type": "string", "minLength": 1 },
+        "persistent_ref": { "$ref": "#/$defs/persistent_ref" },
+        "expected_fingerprint": { "$ref": "#/$defs/hash" },
+        "current_fingerprint": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/hash" }] },
+        "status": { "enum": ["changed", "missing", "ambiguous"] },
+        "candidate_count": { "type": ["integer", "null"], "minimum": 0 }
+      }
+    },
+    "next_action": {
+      "type": "object",
+      "required": ["action"],
+      "properties": {
+        "action": { "enum": ["start_reviewed_existing_model_edit", "correct_design_mapping", "reconcile_design_intent"] },
+        "tool": { "type": "string", "minLength": 1 },
+        "arguments": { "type": "object" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

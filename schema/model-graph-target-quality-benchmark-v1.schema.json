@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/schema/model-graph-target-quality-benchmark-v1.schema.json",
+  "title": "ModelGraph target-quality benchmark v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "kind", "content_trust", "models"],
+  "properties": {
+    "version": { "const": "model-graph-target-quality-benchmark.v1" },
+    "kind": { "const": "model_graph_target_quality_benchmark" },
+    "content_trust": { "const": "trusted_test_fixture" },
+    "models": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": { "$ref": "#/$defs/model" }
+    }
+  },
+  "$defs": {
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["model_id", "domain", "dsl_document", "cases"],
+      "properties": {
+        "model_id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+        "domain": { "enum": ["architecture", "interior", "product", "deep_shared_components"] },
+        "dsl_document": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["version", "units", "operations"],
+          "properties": {
+            "version": { "const": 1 },
+            "units": { "const": "mm" },
+            "operations": {
+              "type": "array",
+              "minItems": 2,
+              "items": {
+                "type": "object",
+                "required": ["op"],
+                "properties": { "op": { "type": "string", "minLength": 1 } }
+              }
+            }
+          }
+        },
+        "cases": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "oneOf": [
+              { "$ref": "#/$defs/start_case" },
+              { "$ref": "#/$defs/clarify_case" }
+            ]
+          }
+        }
+      }
+    },
+    "start_case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["case_id", "flow", "instruction", "target_query", "action", "parameters", "expected"],
+      "properties": {
+        "case_id": { "$ref": "#/$defs/case_id" },
+        "flow": { "const": "start" },
+        "instruction": { "type": "string", "minLength": 1, "maxLength": 500 },
+        "target_query": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "action": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "parameters": { "type": "object" },
+        "expected": { "$ref": "#/$defs/expected" }
+      }
+    },
+    "clarify_case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["case_id", "flow", "source_case_id", "clarification_fixture_label", "clarification_candidate_rank", "shared_policy", "expected"],
+      "properties": {
+        "case_id": { "$ref": "#/$defs/case_id" },
+        "flow": { "const": "clarify" },
+        "source_case_id": { "$ref": "#/$defs/case_id" },
+        "clarification_fixture_label": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "clarification_candidate_rank": { "type": "integer", "minimum": 1, "maximum": 20 },
+        "shared_policy": { "enum": ["definition_wide", "make_unique"] },
+        "expected": { "$ref": "#/$defs/expected" }
+      }
+    },
+    "expected": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["task_state", "selected_fixture_label", "candidate_fixture_labels", "ambiguity_reason", "instance_policy"],
+      "properties": {
+        "task_state": { "enum": ["awaiting_input", "awaiting_review"] },
+        "selected_fixture_label": { "type": ["string", "null"], "maxLength": 200 },
+        "candidate_fixture_labels": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1, "maxLength": 200 }
+        },
+        "ambiguity_reason": { "type": ["string", "null"], "maxLength": 120 },
+        "instance_policy": { "enum": ["definition_wide", "make_unique", null] }
+      }
+    },
+    "case_id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" }
+  }
+}

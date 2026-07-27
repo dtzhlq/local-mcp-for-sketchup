@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/local-mcp-for-sketchup/controlled-s1-batch-abort-report-v1.schema.json",
+  "title": "Controlled S1 Batch Abort Report v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "kind", "ok", "runtime", "scope", "target", "task_id", "plan_id", "risk_level", "authorization", "error", "model_revision_before", "model_revision_after", "model_revision_after_replay", "probe_absent", "idempotent_error_replay", "task_history_states", "queue_clean", "artifacts"],
+  "properties": {
+    "version": { "const": 1 },
+    "kind": { "const": "controlled_s1_batch_abort_report" },
+    "ok": { "const": true },
+    "runtime": { "enum": ["mock", "queue"] },
+    "scope": { "const": "single_ruby_dsl_batch_abort_only" },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["target_id", "name"],
+      "properties": {
+        "target_id": { "type": "string", "minLength": 1 },
+        "name": { "type": ["string", "null"] }
+      }
+    },
+    "task_id": { "type": "string", "pattern": "^task_[0-9a-f-]+$" },
+    "plan_id": { "type": "string", "minLength": 1 },
+    "risk_level": { "const": "S1" },
+    "authorization": { "const": "server_policy_auto_approval:S1" },
+    "error": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "retryable", "task_state"],
+      "properties": {
+        "code": { "const": "MUTATION_EXECUTION_FAILED" },
+        "retryable": { "const": false },
+        "task_state": { "const": "failed" }
+      }
+    },
+    "model_revision_before": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "model_revision_after": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "model_revision_after_replay": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "probe_absent": { "const": true },
+    "idempotent_error_replay": { "const": true },
+    "task_history_states": {
+      "type": "array",
+      "items": { "type": "string" },
+      "allOf": [
+        { "contains": { "const": "awaiting_review" } },
+        { "contains": { "const": "approved" } },
+        { "contains": { "const": "executing" } },
+        { "contains": { "const": "failed" } }
+      ]
+    },
+    "queue_clean": {
+      "anyOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["queue", "processing", "responses", "lock"],
+          "properties": {
+            "queue": { "const": 0 },
+            "processing": { "const": 0 },
+            "responses": { "const": 0 },
+            "lock": { "const": false }
+          }
+        }
+      ]
+    },
+    "artifacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["report"],
+      "properties": { "report": { "type": "string", "minLength": 1 } }
+    }
+  }
+}

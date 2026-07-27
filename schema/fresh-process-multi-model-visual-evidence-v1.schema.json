@@ -1,0 +1,229 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/schema/fresh-process-multi-model-visual-evidence-v1.schema.json",
+  "title": "FreshProcessMultiModelVisualEvidenceV1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version", "kind", "captured_at", "branch", "result", "runtime",
+    "source_sha256", "cases", "aggregate", "agent_compatibility",
+    "policy_invariants", "artifact_sha256", "release_acceptance", "boundaries"
+  ],
+  "properties": {
+    "version": { "const": "fresh-process-multi-model-visual-evidence.v1" },
+    "kind": { "const": "fresh_process_multi_model_read_only_visual_consistency" },
+    "captured_at": { "type": "string", "format": "date-time" },
+    "branch": { "const": "codex/agent-contract-v1" },
+    "result": { "const": "pass" },
+    "runtime": { "$ref": "#/$defs/runtime" },
+    "source_sha256": { "$ref": "#/$defs/hash_map" },
+    "cases": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": { "$ref": "#/$defs/case" }
+    },
+    "aggregate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "case_count", "distinct_model_keys", "distinct_model_revisions",
+        "full_restart_cases", "camera_hash_exact_cases",
+        "coarse_structure_pass_cases", "model_bytes_changed_cases",
+        "model_modified_cases", "queue_residue_cases"
+      ],
+      "properties": {
+        "case_count": { "const": 2 },
+        "distinct_model_keys": { "const": 2 },
+        "distinct_model_revisions": { "const": 2 },
+        "full_restart_cases": { "const": 2 },
+        "camera_hash_exact_cases": { "const": 2 },
+        "coarse_structure_pass_cases": { "const": 2 },
+        "model_bytes_changed_cases": { "const": 0 },
+        "model_modified_cases": { "const": 0 },
+        "queue_residue_cases": { "const": 0 }
+      }
+    },
+    "agent_compatibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["visual_agent_required", "local_files_required", "structured_summary_available"],
+      "properties": {
+        "visual_agent_required": { "const": false },
+        "local_files_required": { "const": false },
+        "structured_summary_available": { "const": true }
+      }
+    },
+    "policy_invariants": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "read_only_capture_only", "model_mutation_performed",
+        "model_save_performed", "approval_challenge_created",
+        "approval_token_exposed_to_agent", "image_content_policy_effect",
+        "visual_similarity_accepted"
+      ],
+      "properties": {
+        "read_only_capture_only": { "const": true },
+        "model_mutation_performed": { "const": false },
+        "model_save_performed": { "const": false },
+        "approval_challenge_created": { "const": false },
+        "approval_token_exposed_to_agent": { "const": false },
+        "image_content_policy_effect": { "const": "none" },
+        "visual_similarity_accepted": { "const": false }
+      }
+    },
+    "artifact_sha256": { "$ref": "#/$defs/hash_map" },
+    "release_acceptance": { "const": false },
+    "boundaries": {
+      "type": "array",
+      "minItems": 4,
+      "items": { "type": "string", "minLength": 1 }
+    }
+  },
+  "$defs": {
+    "hex_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "tagged_sha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "unit_interval": { "type": "number", "minimum": 0, "maximum": 1 },
+    "project_path": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?!.*\\.\\./).+$"
+    },
+    "hash_map": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": { "$ref": "#/$defs/project_path" },
+      "additionalProperties": { "$ref": "#/$defs/hex_sha256" }
+    },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "plugin_version", "sketchup_version", "capability_version",
+        "manifest_version", "model_revision_strategy", "compatibility_ok"
+      ],
+      "properties": {
+        "plugin_version": { "const": "0.1.0-rc.2" },
+        "sketchup_version": { "type": "string", "minLength": 1 },
+        "capability_version": { "const": "0.1.0-rc.2-capabilities.7" },
+        "manifest_version": { "const": "2026-07-agent-contract-v1.4" },
+        "model_revision_strategy": { "const": "definition-merkle.v2" },
+        "compatibility_ok": { "const": true }
+      }
+    },
+    "queue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["queue", "processing", "responses", "lock_exists"],
+      "properties": {
+        "queue": { "const": 0 },
+        "processing": { "const": 0 },
+        "responses": { "const": 0 },
+        "lock_exists": { "const": false }
+      }
+    },
+    "image": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "width", "height", "size_bytes"],
+      "properties": {
+        "path": { "$ref": "#/$defs/project_path" },
+        "sha256": { "$ref": "#/$defs/tagged_sha256" },
+        "width": { "const": 1280 },
+        "height": { "const": 720 },
+        "size_bytes": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "capture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "image", "model_revision", "logical_occurrences",
+        "indexed_occurrences", "recursive_truncated", "camera_hash",
+        "capture_spec_hash", "state_unchanged", "view_unchanged",
+        "model_modified", "runtime"
+      ],
+      "properties": {
+        "image": { "$ref": "#/$defs/image" },
+        "model_revision": { "$ref": "#/$defs/tagged_sha256" },
+        "logical_occurrences": { "type": "integer", "minimum": 1 },
+        "indexed_occurrences": { "type": "integer", "minimum": 1 },
+        "recursive_truncated": { "const": false },
+        "camera_hash": { "$ref": "#/$defs/tagged_sha256" },
+        "capture_spec_hash": { "$ref": "#/$defs/tagged_sha256" },
+        "state_unchanged": { "const": true },
+        "view_unchanged": { "const": true },
+        "model_modified": { "const": false },
+        "runtime": { "$ref": "#/$defs/runtime" }
+      }
+    },
+    "case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "case_id", "domain", "fixture_handle", "source_fixture_unchanged",
+        "working_copy_unchanged", "size_bytes", "model_key_distinct",
+        "model_revision", "logical_occurrences", "recursive_complete",
+        "full_restart", "before_capture", "after_capture", "comparison",
+        "queue_before", "queue_after"
+      ],
+      "properties": {
+        "case_id": { "enum": ["architecture", "product"] },
+        "domain": { "enum": ["architecture", "product"] },
+        "fixture_handle": { "type": "string", "pattern": "^fixture:sha256:[0-9a-f]{64}$" },
+        "source_fixture_unchanged": { "const": true },
+        "working_copy_unchanged": { "const": true },
+        "size_bytes": { "type": "integer", "minimum": 1 },
+        "model_key_distinct": { "const": true },
+        "model_revision": { "$ref": "#/$defs/tagged_sha256" },
+        "logical_occurrences": { "type": "integer", "minimum": 1 },
+        "recursive_complete": { "const": true },
+        "full_restart": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "plugin_session_changed", "raw_session_values_omitted",
+            "model_key_exact", "graph_id_exact", "model_revision_exact",
+            "camera_hash_exact", "capture_spec_hash_exact"
+          ],
+          "properties": {
+            "plugin_session_changed": { "const": true },
+            "raw_session_values_omitted": { "const": true },
+            "model_key_exact": { "const": true },
+            "graph_id_exact": { "const": true },
+            "model_revision_exact": { "const": true },
+            "camera_hash_exact": { "const": true },
+            "capture_spec_hash_exact": { "const": true }
+          }
+        },
+        "before_capture": { "$ref": "#/$defs/capture" },
+        "after_capture": { "$ref": "#/$defs/capture" },
+        "comparison": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path", "sha256", "comparison_id", "comparison_hash",
+            "image_bytes_equal", "structure_verdict",
+            "intersection_over_union", "dice_coefficient",
+            "appearance_mean_absolute_error", "appearance_root_mean_square_error"
+          ],
+          "properties": {
+            "path": { "$ref": "#/$defs/project_path" },
+            "sha256": { "$ref": "#/$defs/hex_sha256" },
+            "comparison_id": { "type": "string", "pattern": "^background-visual-[0-9a-f]{24}$" },
+            "comparison_hash": { "$ref": "#/$defs/tagged_sha256" },
+            "image_bytes_equal": { "type": "boolean" },
+            "structure_verdict": { "const": "coarse_structure_pass" },
+            "intersection_over_union": { "$ref": "#/$defs/unit_interval" },
+            "dice_coefficient": { "$ref": "#/$defs/unit_interval" },
+            "appearance_mean_absolute_error": { "$ref": "#/$defs/unit_interval" },
+            "appearance_root_mean_square_error": { "$ref": "#/$defs/unit_interval" }
+          }
+        },
+        "queue_before": { "$ref": "#/$defs/queue" },
+        "queue_after": { "$ref": "#/$defs/queue" }
+      }
+    }
+  }
+}

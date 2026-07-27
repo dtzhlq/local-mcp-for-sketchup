@@ -1,0 +1,240 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/local-mcp-for-sketchup/controlled-product-boolean-live-fixture-v1.schema.json",
+  "title": "Controlled product Boolean live fixture v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "kind",
+    "status",
+    "finalized_at",
+    "derivation_class",
+    "source",
+    "overlay",
+    "target",
+    "tool",
+    "artifact",
+    "contract",
+    "identity",
+    "runtime_attestation",
+    "queue_clean",
+    "release_acceptance"
+  ],
+  "properties": {
+    "version": { "const": "controlled-product-boolean-live-fixture.v1" },
+    "kind": { "const": "controlled_product_boolean_live_fixture_finalization" },
+    "status": { "const": "ready_for_formal_live_case" },
+    "finalized_at": { "type": "string", "format": "date-time" },
+    "derivation_class": {
+      "const": "controlled_overlapping_manifold_pair_overlay_on_trimble_s6_copy"
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sha256", "original_bytes_unchanged"],
+      "properties": {
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "original_bytes_unchanged": { "const": true }
+      }
+    },
+    "overlay": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operation_count",
+        "operations",
+        "geometry_mutation_performed",
+        "product_context_retained",
+        "original_top_level_entities_preserved",
+        "fixture",
+        "origin_mm",
+        "separation_margin_mm",
+        "isolated_from_source",
+        "positive_3d_overlap",
+        "through_cut",
+        "overlap_mm"
+      ],
+      "properties": {
+        "operation_count": { "const": 4 },
+        "operations": { "const": ["material", "material", "box", "cylinder"] },
+        "geometry_mutation_performed": { "const": true },
+        "product_context_retained": { "const": true },
+        "original_top_level_entities_preserved": { "const": true },
+        "fixture": { "const": "manifold_box_with_through_cylinder" },
+        "origin_mm": { "$ref": "#/$defs/point" },
+        "separation_margin_mm": { "type": "number", "minimum": 1000 },
+        "isolated_from_source": { "const": true },
+        "positive_3d_overlap": { "const": true },
+        "through_cut": { "const": true },
+        "overlap_mm": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": { "type": "number", "exclusiveMinimum": 0 }
+        }
+      }
+    },
+    "target": {
+      "allOf": [
+        { "$ref": "#/$defs/inputRole" },
+        {
+          "properties": {
+            "public_id": { "const": "local-mcp-reliability-product-boolean-target" },
+            "name_untrusted": { "const": "LOCAL_MCP_FOR_SKETCHUP_Reliability_Product_Boolean_Target" },
+            "material": { "const": "LOCAL_MCP_FOR_SKETCHUP_Reliability_Product_Boolean_Material" }
+          }
+        }
+      ]
+    },
+    "tool": {
+      "allOf": [
+        { "$ref": "#/$defs/inputRole" },
+        {
+          "properties": {
+            "public_id": { "const": "local-mcp-reliability-product-boolean-tool" },
+            "name_untrusted": { "const": "LOCAL_MCP_FOR_SKETCHUP_Reliability_Product_Boolean_Tool" },
+            "material": { "const": "LOCAL_MCP_FOR_SKETCHUP_Reliability_Product_Boolean_Tool_Material" }
+          }
+        }
+      ]
+    },
+    "artifact": { "$ref": "#/$defs/artifact" },
+    "contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": { "$ref": "#/$defs/absolutePath" },
+        "sha256": { "$ref": "#/$defs/prefixedSha256" }
+      }
+    },
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "model_revision",
+        "model_revision_complete",
+        "identity_mode",
+        "top_level_entities_before",
+        "top_level_entities_after",
+        "recursive_total_before",
+        "recursive_total_after",
+        "recursive_entries_materialized",
+        "recursive_truncated"
+      ],
+      "properties": {
+        "model_revision": { "$ref": "#/$defs/prefixedSha256" },
+        "model_revision_complete": { "const": true },
+        "identity_mode": {
+          "enum": ["full_recursive", "complete_revision_bounded_occurrence_sample"]
+        },
+        "top_level_entities_before": { "type": "integer", "minimum": 1 },
+        "top_level_entities_after": { "type": "integer", "minimum": 3 },
+        "recursive_total_before": { "type": "integer", "minimum": 1 },
+        "recursive_total_after": { "type": "integer", "minimum": 3 },
+        "recursive_entries_materialized": { "type": "integer", "minimum": 1, "maximum": 100000 },
+        "recursive_truncated": { "type": "boolean" }
+      }
+    },
+    "runtime_attestation": { "$ref": "#/$defs/runtimeAttestation" },
+    "queue_clean": { "$ref": "#/$defs/cleanQueue" },
+    "release_acceptance": { "const": false }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "prefixedSha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "absolutePath": { "type": "string", "pattern": "^/", "minLength": 2 },
+    "point": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": { "type": "number" }
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "bytes"],
+      "properties": {
+        "path": { "$ref": "#/$defs/absolutePath" },
+        "sha256": { "$ref": "#/$defs/prefixedSha256" },
+        "bytes": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "manifoldReport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["is_manifold", "method", "faces", "edges", "vertices", "issues"],
+      "properties": {
+        "is_manifold": { "const": true },
+        "method": { "const": "sketchup_manifold_api" },
+        "faces": { "type": "integer", "minimum": 4 },
+        "edges": { "type": "integer", "minimum": 6 },
+        "vertices": { "type": "integer", "minimum": 4 },
+        "issues": { "const": [] }
+      }
+    },
+    "inputRole": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "public_id",
+        "persistent_id",
+        "name_untrusted",
+        "material",
+        "initial_manifold_report",
+        "reopened_manifold_report"
+      ],
+      "properties": {
+        "public_id": { "type": "string", "minLength": 1 },
+        "persistent_id": { "type": "string", "minLength": 1 },
+        "name_untrusted": { "type": "string", "minLength": 1 },
+        "material": { "type": "string", "minLength": 1 },
+        "initial_manifold_report": { "$ref": "#/$defs/manifoldReport" },
+        "reopened_manifold_report": { "$ref": "#/$defs/manifoldReport" }
+      }
+    },
+    "cleanQueue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["queue", "processing", "responses", "lock"],
+      "properties": {
+        "queue": { "const": 0 },
+        "processing": { "const": 0 },
+        "responses": { "const": 0 },
+        "lock": { "const": false }
+      }
+    },
+    "runtimeAttestation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "server_version",
+        "plugin_version",
+        "sketchup_version",
+        "capability_version",
+        "manifest_version",
+        "revision_strategy",
+        "revision_source_sha256",
+        "compatibility_ok"
+      ],
+      "properties": {
+        "name": { "const": "queue" },
+        "server_version": { "type": "string", "minLength": 1 },
+        "plugin_version": { "type": ["string", "null"] },
+        "sketchup_version": { "type": ["string", "null"] },
+        "capability_version": { "type": "string", "minLength": 1 },
+        "manifest_version": { "type": "string", "minLength": 1 },
+        "revision_strategy": { "type": ["string", "null"] },
+        "revision_source_sha256": {
+          "anyOf": [
+            { "$ref": "#/$defs/sha256" },
+            { "type": "null" }
+          ]
+        },
+        "compatibility_ok": { "const": true }
+      }
+    }
+  }
+}

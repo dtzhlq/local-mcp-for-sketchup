@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/schemas/real-model-reliability-live-case-v1.schema.json",
+  "title": "External live reliability case contract v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "kind", "case_id", "artifact_file", "artifact_sha256", "targets", "expectations"],
+  "properties": {
+    "version": { "const": "real-model-reliability-live-case.v1" },
+    "kind": { "const": "real_model_reliability_live_case" },
+    "case_id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]+$" },
+    "artifact_file": { "type": "string", "pattern": "^[^/]+\\.skp$" },
+    "artifact_sha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "targets": {
+      "type": "object",
+      "propertyNames": { "pattern": "^[a-z][a-z0-9_]*$" },
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["persistent_id"],
+        "properties": {
+          "persistent_id": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "expectations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["minimum_entities", "minimum_recursive_entities", "minimum_scenes", "required_materials", "uv_target_roles", "hidden_target_roles", "minimum_shared_occurrences", "boolean_operation"],
+      "properties": {
+        "minimum_entities": { "type": "integer", "minimum": 1 },
+        "minimum_recursive_entities": { "type": "integer", "minimum": 1 },
+        "minimum_scenes": { "type": "integer", "minimum": 0 },
+        "required_materials": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+        "uv_target_roles": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+        "hidden_target_roles": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+        "minimum_shared_occurrences": { "type": "integer", "minimum": 0 },
+        "boolean_operation": { "enum": ["boolean_difference", "boolean_union", "boolean_intersect", null] },
+        "expected_topology_issue_codes": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "not_group",
+              "no_faces",
+              "non_positive_volume",
+              "sketchup_manifold_false",
+              "boundary_edges",
+              "non_manifold_edges"
+            ]
+          }
+        },
+        "identity_mode": { "enum": ["full_recursive", "complete_revision_bounded_occurrence_sample"] },
+        "recursive_limit": { "type": "integer", "minimum": 1, "maximum": 100000 }
+      }
+    }
+  }
+}

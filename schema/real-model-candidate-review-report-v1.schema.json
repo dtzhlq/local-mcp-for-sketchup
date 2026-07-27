@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/schemas/real-model-candidate-review-report-v1.schema.json",
+  "title": "Real-model candidate formal-corpus readiness report v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "kind", "generated_on", "evidence_scope", "bindings", "summary", "case_reviews", "safety", "next_action"],
+  "properties": {
+    "version": { "const": "real-model-candidate-review-report.v1" },
+    "kind": { "const": "real_model_candidate_review_report" },
+    "generated_on": { "type": "string", "format": "date" },
+    "evidence_scope": { "const": "user_confirmed_semantics_and_structural_readiness_only" },
+    "bindings": { "$ref": "real-model-candidate-semantic-mapping-v1.schema.json#/properties/bindings" },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["candidates", "confirmed_candidates", "formal_cases", "semantically_mapped_cases", "unmapped_cases", "formal_sidecars_ready", "formal_sidecars_generated"],
+      "properties": {
+        "candidates": { "type": "integer", "minimum": 1 },
+        "confirmed_candidates": { "type": "integer", "minimum": 0 },
+        "formal_cases": { "const": 7 },
+        "semantically_mapped_cases": { "type": "integer", "minimum": 0, "maximum": 7 },
+        "unmapped_cases": { "type": "integer", "minimum": 0, "maximum": 7 },
+        "formal_sidecars_ready": { "const": 0 },
+        "formal_sidecars_generated": { "const": 0 }
+      }
+    },
+    "case_reviews": {
+      "type": "array",
+      "minItems": 7,
+      "maxItems": 7,
+      "items": { "$ref": "#/$defs/case_review" }
+    },
+    "safety": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["live_queue_called", "model_mutation_authorized", "model_mutation_performed", "approval_token_issued", "formal_sidecar_auto_generated", "release_acceptance"],
+      "properties": {
+        "live_queue_called": { "const": false },
+        "model_mutation_authorized": { "const": false },
+        "model_mutation_performed": { "const": false },
+        "approval_token_issued": { "const": false },
+        "formal_sidecar_auto_generated": { "const": false },
+        "release_acceptance": { "const": false }
+      }
+    },
+    "next_action": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["action", "human_input_required", "required_decisions"],
+      "properties": {
+        "action": { "const": "collect_reviewed_target_roles_and_prepare_disposable_formal_fixtures" },
+        "human_input_required": { "const": true },
+        "required_decisions": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^[a-z][a-z0-9_]+$" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "case_review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["case_id", "domain", "status", "mapped_candidates", "required_target_roles", "structural_evidence", "blockers", "formal_sidecar_ready"],
+      "properties": {
+        "case_id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]+$" },
+        "domain": { "type": "string", "pattern": "^[a-z][a-z0-9_]+$" },
+        "status": { "enum": ["blocked_missing_semantic_mapping", "blocked_missing_baseline_or_probe", "blocked_missing_formal_sidecar"] },
+        "mapped_candidates": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["candidate_id", "candidate_handle", "source_sha256", "source_label", "role"],
+            "properties": {
+              "candidate_id": { "type": "string", "pattern": "^candidate_[0-9a-f]{24}$" },
+              "candidate_handle": { "type": "string", "pattern": "^candidate:sha256:[0-9a-f]{24}$" },
+              "source_sha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+              "source_label": { "type": "string", "minLength": 1, "maxLength": 240 },
+              "role": { "enum": ["primary", "supporting"] }
+            }
+          }
+        },
+        "required_target_roles": { "type": "array", "uniqueItems": true, "items": { "type": "string", "pattern": "^[a-z][a-z0-9_]+$" } },
+        "structural_evidence": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["materials", "scenes", "hidden_occurrences", "locked_occurrences", "uv_occurrences", "shared_occurrences", "nonuniform_instances", "mirrored_instances", "logical_occurrences", "profile_sample_truncated"],
+          "properties": {
+            "materials": { "type": "integer", "minimum": 0 },
+            "scenes": { "type": "integer", "minimum": 0 },
+            "hidden_occurrences": { "type": "integer", "minimum": 0 },
+            "locked_occurrences": { "type": "integer", "minimum": 0 },
+            "uv_occurrences": { "type": "integer", "minimum": 0 },
+            "shared_occurrences": { "type": "integer", "minimum": 0 },
+            "nonuniform_instances": { "type": "integer", "minimum": 0 },
+            "mirrored_instances": { "type": "integer", "minimum": 0 },
+            "logical_occurrences": { "type": "integer", "minimum": 0 },
+            "profile_sample_truncated": { "type": "boolean" }
+          }
+        },
+        "blockers": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "pattern": "^[a-z][a-z0-9_]+$" } },
+        "formal_sidecar_ready": { "const": false }
+      }
+    }
+  }
+}

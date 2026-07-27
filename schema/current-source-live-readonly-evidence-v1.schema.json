@@ -1,0 +1,208 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/local-mcp-for-sketchup/current-source-live-readonly-evidence-v1.schema.json",
+  "title": "Current-source fresh-process live read-only evidence v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "kind",
+    "captured_at",
+    "branch",
+    "result",
+    "evidence_scope",
+    "runtime",
+    "installed_source",
+    "model",
+    "read_only_attestation",
+    "local_artifacts",
+    "queue_state",
+    "acceptance",
+    "boundaries"
+  ],
+  "properties": {
+    "version": { "const": "current-source-live-readonly-evidence.v1" },
+    "kind": { "const": "current_source_live_readonly_evidence" },
+    "captured_at": { "const": "2026-07-21T14:27:45.013Z" },
+    "branch": { "const": "codex/agent-contract-v1" },
+    "result": { "const": "pass" },
+    "evidence_scope": { "const": "current_source_fresh_process_fire_escape_disposable_read_only" },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name", "server_version", "plugin_version", "sketchup_version", "ruby_version",
+        "capability_version", "manifest_version", "dsl_version", "operation_count",
+        "component_scope_operation_count", "occurrence_contract", "compatibility_ok"
+      ],
+      "properties": {
+        "name": { "const": "queue" },
+        "server_version": { "const": "0.1.0-rc.2" },
+        "plugin_version": { "const": "0.1.0-rc.2" },
+        "sketchup_version": { "const": "26.2.242" },
+        "ruby_version": { "const": "3.2.2" },
+        "capability_version": { "const": "0.1.0-rc.2-capabilities.7" },
+        "manifest_version": { "const": "2026-07-agent-contract-v1.4" },
+        "dsl_version": { "const": 1 },
+        "operation_count": { "const": 101 },
+        "component_scope_operation_count": { "const": 57 },
+        "occurrence_contract": { "const": "canonical-occurrence-path.v1" },
+        "compatibility_ok": { "const": true }
+      }
+    },
+    "installed_source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "managed_file_count", "installed_workspace_exact_match", "installed_manifest_sha256",
+        "fresh_process_verified", "requires_reinstall_restart", "loaded_boolean_operations_sha256",
+        "workspace_boolean_operations_sha256_at_capture", "loaded_model_revision_sha256",
+        "workspace_model_revision_sha256_at_capture"
+      ],
+      "properties": {
+        "managed_file_count": { "const": 22 },
+        "installed_workspace_exact_match": { "const": true },
+        "installed_manifest_sha256": { "const": "sha256:1d564d258df0b7893be7a758927b631cce45977c4526558cc8e9808a368abc09" },
+        "fresh_process_verified": { "const": true },
+        "requires_reinstall_restart": { "const": false },
+        "loaded_boolean_operations_sha256": { "$ref": "#/$defs/booleanHash" },
+        "workspace_boolean_operations_sha256_at_capture": { "$ref": "#/$defs/booleanHash" },
+        "loaded_model_revision_sha256": { "$ref": "#/$defs/modelRevisionSourceHash" },
+        "workspace_model_revision_sha256_at_capture": { "$ref": "#/$defs/modelRevisionSourceHash" }
+      }
+    },
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fixture_handle", "label_trust", "source_bytes_sha256", "disposable_bytes_sha256",
+        "source_disposable_exact_match", "size_bytes", "title_disclosed", "source_path_disclosed",
+        "top_level_entity_count", "logical_occurrence_count", "revision_indexed", "revision_total_seen",
+        "revision_unique_entities", "reachable_definitions", "revision_complete", "recursive_truncated",
+        "structural_group_count", "structural_groups_truncated"
+      ],
+      "properties": {
+        "fixture_handle": { "const": "fixture:sha256:7e649c220a265a5e27a24aae2ed9687427186c06ba335616d5cdc0191966ce72" },
+        "label_trust": { "const": "untrusted_data" },
+        "source_bytes_sha256": { "$ref": "#/$defs/modelBytesHash" },
+        "disposable_bytes_sha256": { "$ref": "#/$defs/modelBytesHash" },
+        "source_disposable_exact_match": { "const": true },
+        "size_bytes": { "const": 142149 },
+        "title_disclosed": { "const": false },
+        "source_path_disclosed": { "const": false },
+        "top_level_entity_count": { "const": 1 },
+        "logical_occurrence_count": { "const": 5859 },
+        "revision_indexed": { "const": 5859 },
+        "revision_total_seen": { "const": 5859 },
+        "revision_unique_entities": { "const": 5859 },
+        "reachable_definitions": { "const": 2 },
+        "revision_complete": { "const": true },
+        "recursive_truncated": { "const": false },
+        "structural_group_count": { "const": 2 },
+        "structural_groups_truncated": { "const": false }
+      }
+    },
+    "read_only_attestation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "handshake_before_revision", "adoption_revision", "handshake_after_revision",
+        "revision_unchanged", "revision_strategy", "revision_unique_entity_limit",
+        "model_modified_before", "model_modified_during_adoption", "model_modified_after",
+        "plugin_process_unchanged", "document_unchanged", "model_identity_unchanged",
+        "handshake_before_signed", "handshake_after_signed",
+        "handshake_after_signature_verified_at_capture", "session_contract_used_as_mutation_authority",
+        "model_mutation_requested", "model_mutation_performed", "model_saved_by_validation"
+      ],
+      "properties": {
+        "handshake_before_revision": { "$ref": "#/$defs/modelRevision" },
+        "adoption_revision": { "$ref": "#/$defs/modelRevision" },
+        "handshake_after_revision": { "$ref": "#/$defs/modelRevision" },
+        "revision_unchanged": { "const": true },
+        "revision_strategy": { "const": "definition-merkle.v2" },
+        "revision_unique_entity_limit": { "const": 1000000 },
+        "model_modified_before": { "const": false },
+        "model_modified_during_adoption": { "const": false },
+        "model_modified_after": { "const": false },
+        "plugin_process_unchanged": { "const": true },
+        "document_unchanged": { "const": true },
+        "model_identity_unchanged": { "const": true },
+        "handshake_before_signed": { "const": true },
+        "handshake_after_signed": { "const": true },
+        "handshake_after_signature_verified_at_capture": { "const": true },
+        "session_contract_used_as_mutation_authority": { "const": false },
+        "model_mutation_requested": { "const": false },
+        "model_mutation_performed": { "const": false },
+        "model_saved_by_validation": { "const": false }
+      }
+    },
+    "local_artifacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "raw_artifacts_retained", "raw_artifacts_contain_sensitive_fields",
+        "sensitive_values_embedded_in_public_evidence", "handshake_before_sha256",
+        "adoption_sha256", "handshake_after_sha256"
+      ],
+      "properties": {
+        "raw_artifacts_retained": { "const": true },
+        "raw_artifacts_contain_sensitive_fields": { "const": true },
+        "sensitive_values_embedded_in_public_evidence": { "const": false },
+        "handshake_before_sha256": { "$ref": "#/$defs/hash" },
+        "adoption_sha256": { "$ref": "#/$defs/hash" },
+        "handshake_after_sha256": { "$ref": "#/$defs/hash" }
+      }
+    },
+    "queue_state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["before", "after"],
+      "properties": {
+        "before": { "$ref": "#/$defs/cleanQueue" },
+        "after": { "$ref": "#/$defs/cleanQueue" }
+      }
+    },
+    "acceptance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "current_source_live_handshake", "current_source_live_read_only_model", "live_mutation",
+        "live_save_reopen", "multi_model_native_corpus", "external_reference_visual_correction",
+        "cross_version", "release_acceptance"
+      ],
+      "properties": {
+        "current_source_live_handshake": { "const": true },
+        "current_source_live_read_only_model": { "const": true },
+        "live_mutation": { "const": false },
+        "live_save_reopen": { "const": false },
+        "multi_model_native_corpus": { "const": false },
+        "external_reference_visual_correction": { "const": false },
+        "cross_version": { "const": false },
+        "release_acceptance": { "const": false }
+      }
+    },
+    "boundaries": {
+      "type": "array",
+      "minItems": 3,
+      "items": { "type": "string", "minLength": 1 }
+    }
+  },
+  "$defs": {
+    "hash": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "booleanHash": { "const": "sha256:b98fd554894f629359651f40929cf30a7122ac90ba01217a662bea2f4c407610" },
+    "modelRevisionSourceHash": { "const": "sha256:b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134" },
+    "modelBytesHash": { "const": "sha256:7e649c220a265a5e27a24aae2ed9687427186c06ba335616d5cdc0191966ce72" },
+    "modelRevision": { "const": "sha256:d540fdc8697e93f27a0312f75d382b6d5901597ef87e6673980fd21e97e3abb4" },
+    "cleanQueue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["queue", "processing", "responses", "lock_exists"],
+      "properties": {
+        "queue": { "const": 0 },
+        "processing": { "const": 0 },
+        "responses": { "const": 0 },
+        "lock_exists": { "const": false }
+      }
+    }
+  }
+}

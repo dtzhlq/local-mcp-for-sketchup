@@ -1,0 +1,238 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/schemas/real-model-reliability-sidecar-v1.schema.json",
+  "title": "Real-model reliability readiness sidecar v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "kind",
+    "case_id",
+    "domain",
+    "evidence_scope",
+    "formal_case",
+    "authority",
+    "candidates",
+    "structural_observation",
+    "source_blockers",
+    "task_assessments",
+    "evidence_bindings",
+    "readiness",
+    "validation_policy"
+  ],
+  "properties": {
+    "version": { "const": "real-model-reliability-sidecar.v1" },
+    "kind": { "const": "real_model_reliability_readiness_sidecar" },
+    "case_id": { "$ref": "#/$defs/caseId" },
+    "domain": { "$ref": "#/$defs/domain" },
+    "evidence_scope": { "const": "hash_bound_readiness_evidence_only" },
+    "formal_case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["manifest_sha256", "tasks"],
+      "properties": {
+        "manifest_sha256": { "$ref": "#/$defs/sha256" },
+        "tasks": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/task" }
+        }
+      }
+    },
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "semantic_mapping",
+        "model_content_trust",
+        "mutation_authorized",
+        "approval_token_issued",
+        "execution_policy_changed"
+      ],
+      "properties": {
+        "semantic_mapping": { "const": "user_confirmed_in_bound_review_aggregate" },
+        "model_content_trust": { "const": "untrusted_data" },
+        "mutation_authorized": { "const": false },
+        "approval_token_issued": { "const": false },
+        "execution_policy_changed": { "const": false }
+      }
+    },
+    "candidates": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["candidate_id", "candidate_handle", "source_sha256", "role", "source_evidence_id"],
+        "properties": {
+          "candidate_id": { "type": "string", "pattern": "^candidate_[0-9a-f]{24}$" },
+          "candidate_handle": { "type": "string", "pattern": "^candidate:sha256:[0-9a-f]{24}$" },
+          "source_sha256": { "$ref": "#/$defs/sha256" },
+          "role": { "enum": ["primary", "supporting"] },
+          "source_evidence_id": { "const": "aggregate_review" }
+        }
+      }
+    },
+    "structural_observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_evidence_id",
+        "status",
+        "materials",
+        "scenes",
+        "hidden_occurrences",
+        "locked_occurrences",
+        "uv_occurrences",
+        "shared_occurrences",
+        "nonuniform_instances",
+        "mirrored_instances",
+        "logical_occurrences",
+        "profile_sample_truncated"
+      ],
+      "properties": {
+        "source_evidence_id": { "const": "aggregate_review" },
+        "status": { "const": "observed_read_only" },
+        "materials": { "$ref": "#/$defs/count" },
+        "scenes": { "$ref": "#/$defs/count" },
+        "hidden_occurrences": { "$ref": "#/$defs/count" },
+        "locked_occurrences": { "$ref": "#/$defs/count" },
+        "uv_occurrences": { "$ref": "#/$defs/count" },
+        "shared_occurrences": { "$ref": "#/$defs/count" },
+        "nonuniform_instances": { "$ref": "#/$defs/count" },
+        "mirrored_instances": { "$ref": "#/$defs/count" },
+        "logical_occurrences": { "$ref": "#/$defs/count" },
+        "profile_sample_truncated": { "type": "boolean" }
+      }
+    },
+    "source_blockers": { "$ref": "#/$defs/reasonCodes" },
+    "task_assessments": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["task", "status", "native_success", "evidence_ids", "reason_codes"],
+        "properties": {
+          "task": { "$ref": "#/$defs/task" },
+          "status": {
+            "enum": ["read_only_observed", "blocked", "unknown", "failed_precommit"]
+          },
+          "native_success": { "const": false },
+          "evidence_ids": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": { "type": "string", "pattern": "^[a-z][a-z0-9_]{2,63}$" }
+          },
+          "reason_codes": { "$ref": "#/$defs/reasonCodes" }
+        }
+      }
+    },
+    "evidence_bindings": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "path", "sha256", "evidence_class"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]{2,63}$" },
+          "path": { "$ref": "#/$defs/jsonPath" },
+          "sha256": { "$ref": "#/$defs/sha256" },
+          "evidence_class": {
+            "enum": [
+              "derived_user_confirmed_review_aggregate",
+              "read_only_live_observation",
+              "failed_precommit_live_attempt"
+            ]
+          }
+        }
+      }
+    },
+    "readiness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "execution_eligible",
+        "live_execution_contract_present",
+        "native_mutation_successes",
+        "release_acceptance",
+        "blockers",
+        "unknowns"
+      ],
+      "properties": {
+        "status": { "const": "blocked" },
+        "execution_eligible": { "const": false },
+        "live_execution_contract_present": { "const": false },
+        "native_mutation_successes": { "const": 0 },
+        "release_acceptance": { "const": false },
+        "blockers": { "$ref": "#/$defs/reasonCodes" },
+        "unknowns": { "$ref": "#/$defs/reasonCodes" }
+      }
+    },
+    "validation_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "json_only",
+        "original_model_file_access",
+        "queue_access",
+        "model_mutation",
+        "artifact_copy",
+        "cross_version_status"
+      ],
+      "properties": {
+        "json_only": { "const": true },
+        "original_model_file_access": { "const": false },
+        "queue_access": { "const": false },
+        "model_mutation": { "const": false },
+        "artifact_copy": { "const": false },
+        "cross_version_status": { "const": "deferred_by_user" }
+      }
+    }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "jsonPath": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500,
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\)(?!.*\\.(?:skp|skb)$).+\\.json$"
+    },
+    "caseId": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]+$" },
+    "domain": {
+      "enum": ["architecture", "interior", "product", "shared_component", "imported_cad", "appearance", "transform_edge_case"]
+    },
+    "count": { "type": "integer", "minimum": 0 },
+    "task": {
+      "enum": [
+        "boolean_manifold",
+        "material_preservation",
+        "uv_material_preservation",
+        "scene_visibility_preservation",
+        "large_recursive_index",
+        "shared_definition_identity",
+        "abnormal_topology_detection",
+        "manifold_repair",
+        "recovery",
+        "locked_fail_closed",
+        "rollback",
+        "nonuniform_mirror",
+        "wrong_object_isolation",
+        "save_reopen_identity"
+      ]
+    },
+    "reasonCodes": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^[a-z][a-z0-9_]{2,95}$" }
+    }
+  }
+}
