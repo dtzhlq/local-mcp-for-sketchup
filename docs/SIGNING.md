@@ -15,6 +15,9 @@ official SketchUp extension signature.
    - `local_mcp_for_sketchup/`
 6. Confirm that the extension name is `Local MCP for SketchUp`.
 
+Keep unsigned RBZ and service-bundle candidates local; canonical names do not
+make them release artifacts.
+
 Do not upload a file containing `nonrelease` in its name.
 
 ## Portal choices

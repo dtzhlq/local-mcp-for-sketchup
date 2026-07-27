@@ -46,24 +46,31 @@ export function planServiceBundle({
   targetId,
   version,
   outputDir,
-  artifactLabel
+  artifactLabel,
+  candidate = false
 }) {
   const target = serviceBundleTargets[targetId];
   if (!target) throw codedError('SERVICE_BUNDLE_TARGET_UNSUPPORTED', `Unsupported service bundle target: ${targetId}`);
   if (!/^0\.1\.0-rc\.[0-9]+$/.test(String(version || ''))) {
     throw codedError('SERVICE_BUNDLE_VERSION_INVALID', `Invalid technical-preview version: ${version}`);
   }
-  if (!/^[a-z0-9][a-z0-9._-]{2,63}$/.test(String(artifactLabel || ''))) {
+  if (candidate && artifactLabel) {
+    throw codedError('SERVICE_BUNDLE_CANDIDATE_LABEL_FORBIDDEN', '--candidate uses the canonical file name and cannot be combined with --artifact-label.');
+  }
+  if (!candidate && !/^[a-z0-9][a-z0-9._-]{2,63}$/.test(String(artifactLabel || ''))) {
     throw codedError('SERVICE_BUNDLE_LABEL_REQUIRED', 'A 3-64 character lowercase --artifact-label is required for a non-release bundle.');
   }
   const resolvedOutput = path.resolve(String(outputDir || ''));
   if (!outputDir) throw codedError('SERVICE_BUNDLE_OUTPUT_REQUIRED', '--output-dir is required.');
-  const fileName = `nonrelease-${artifactLabel}-${productId}-${version}-${targetId}.${target.archiveExtension}`;
+  const fileName = candidate
+    ? `${productId}-${version}-${targetId}.${target.archiveExtension}`
+    : `nonrelease-${artifactLabel}-${productId}-${version}-${targetId}.${target.archiveExtension}`;
   return Object.freeze({
     targetId,
     target,
     version,
     artifactLabel,
+    candidate,
     outputDir: resolvedOutput,
     artifactPath: path.join(resolvedOutput, fileName),
     fileName
@@ -74,6 +81,7 @@ export async function packageServiceBundle({
   targetId,
   outputDir,
   artifactLabel,
+  candidate = false,
   sourceRoot = repoRoot,
   cacheDir = path.join(os.homedir(), '.cache', productId, 'upstream')
 }) {
@@ -82,7 +90,8 @@ export async function packageServiceBundle({
     targetId,
     version: packageMetadata.version,
     outputDir,
-    artifactLabel
+    artifactLabel,
+    candidate
   });
   await fs.mkdir(plan.outputDir, { recursive: true, mode: 0o755 });
   await assertAbsent(plan.artifactPath);
@@ -128,6 +137,8 @@ export async function packageServiceBundle({
       version: plan.version,
       target: targetId,
       sketchup_major: 2026,
+      release_candidate: plan.candidate,
+      release_artifact: false,
       entrypoint: {
         command_relative: plan.target.nodeExecutable,
         args_relative: ['app/src/mcp-server.mjs']
@@ -156,7 +167,10 @@ export async function packageServiceBundle({
 
     const artifactBytes = await fs.readFile(plan.artifactPath);
     return Object.freeze({
-      kind: 'local_mcp_for_sketchup_service_bundle_preview',
+      kind: plan.candidate
+        ? 'local_mcp_for_sketchup_service_bundle_candidate'
+        : 'local_mcp_for_sketchup_service_bundle_preview',
+      release_candidate: plan.candidate,
       release_artifact: false,
       target: targetId,
       version: plan.version,
@@ -524,12 +538,13 @@ function parseArgs(argv) {
     if (argv[index] === '--target') options.targetId = argv[++index];
     else if (argv[index] === '--output-dir') options.outputDir = argv[++index];
     else if (argv[index] === '--artifact-label') options.artifactLabel = argv[++index];
+    else if (argv[index] === '--candidate') options.candidate = true;
     else if (argv[index] === '--cache-dir') options.cacheDir = argv[++index];
     else if (argv[index] === '--help') {
       process.stdout.write(
         'Usage: node scripts/package-service-bundle.mjs '
-        + '--target darwin-arm64|win32-x64 --output-dir out/previews/NAME '
-        + '--artifact-label NAME [--cache-dir PATH]\n'
+        + '--target darwin-arm64|win32-x64 --output-dir PATH '
+        + '(--artifact-label NAME | --candidate) [--cache-dir PATH]\n'
       );
       process.exit(0);
     } else throw codedError('SERVICE_BUNDLE_ARGUMENT_UNKNOWN', `Unknown argument: ${argv[index]}`);

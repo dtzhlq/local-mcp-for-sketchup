@@ -20,6 +20,25 @@ const planned = planServiceBundle({
 });
 assert.equal(planned.fileName, 'nonrelease-local-review-local-mcp-for-sketchup-0.1.0-rc.4-darwin-arm64.tar.gz');
 assert.equal(planned.artifactPath, path.join('/opt/local-mcp-test-output', planned.fileName));
+
+const candidate = planServiceBundle({
+  targetId: 'win32-x64',
+  version: '0.1.0-rc.4',
+  outputDir: '/opt/local-mcp-test-output',
+  candidate: true
+});
+assert.equal(candidate.fileName, 'local-mcp-for-sketchup-0.1.0-rc.4-win32-x64.zip');
+assert.equal(candidate.candidate, true);
+assert.throws(
+  () => planServiceBundle({
+    targetId: 'darwin-arm64',
+    version: '0.1.0-rc.4',
+    outputDir: '/opt/local-mcp-test-output',
+    artifactLabel: 'misleading',
+    candidate: true
+  }),
+  (error) => error?.code === 'SERVICE_BUNDLE_CANDIDATE_LABEL_FORBIDDEN'
+);
 assert.throws(
   () => planServiceBundle({
     targetId: 'darwin-x64',
@@ -43,5 +62,6 @@ process.stdout.write(`${JSON.stringify({
   ok: true,
   targets: Object.keys(serviceBundleTargets),
   intel_mac_excluded: true,
-  release_name_impersonation_blocked: true
+  release_name_impersonation_blocked: true,
+  candidate_name_is_canonical: true
 }, null, 2)}\n`);

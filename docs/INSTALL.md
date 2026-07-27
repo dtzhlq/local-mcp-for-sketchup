@@ -37,6 +37,12 @@ flow packages a clean source revision, uploads the exact RBZ to the SketchUp
 Extension Signing Portal without encryption, downloads the signed result, and
 then recalculates all checksums.
 
+Release-candidate service bundles use `--candidate` and canonical file names,
+but their embedded metadata still records `release_artifact=false` and
+`release_acceptance=false`. They become publishable only after the signed RBZ,
+platform acceptance evidence, and final manifest all bind to the same source
+commit.
+
 ## Starting the MCP server from source
 
 ```text
