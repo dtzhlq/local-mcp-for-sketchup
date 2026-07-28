@@ -1,7 +1,13 @@
+![Local MCP for SketchUp — Auditable local modeling for SketchUp](brand/materials/dist/readme-header-1600x480.png)
+
 # Local MCP for SketchUp
 
 一个独立、免费、开源、可离线运行的本地 MCP 技术预览项目，用于让 Agent
 在明确能力、目标和审核边界内与 SketchUp 协作。
+
+[安装指南](docs/INSTALL.md) ·
+[Discord 社区](https://discord.gg/UXFs9pQbUW) ·
+[问题反馈](https://github.com/dtzhlq/local-mcp-for-sketchup/issues)
 
 > 当前公开版本：`v0.1.0-rc.4.unsigned.1` 无签名技术预览；
 > `release_acceptance=false`，不是正式签名版或 GA。
