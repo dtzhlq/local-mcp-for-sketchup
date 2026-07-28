@@ -1,0 +1,727 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Local MCP for SketchUp — Brand Materials</title>
+  <style>
+    :root {
+      --blue: #002fa7;
+      --ink: #111111;
+      --paper: #ffffff;
+      --charcoal: #141414;
+      --grey: #6e6e6e;
+      --line: #e5e5e5;
+      --signal: #ff4d00;
+      --sans: "Helvetica Neue", "PingFang SC", "Noto Sans SC", Arial, sans-serif;
+      --mono: "SFMono-Regular", "SF Mono", Menlo, Monaco, Consolas, monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      background: #d8d8d8;
+    }
+
+    body {
+      color: var(--ink);
+      font-family: var(--sans);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: geometricPrecision;
+    }
+
+    .artboard {
+      display: none;
+      position: relative;
+      overflow: hidden;
+      background: var(--paper);
+      isolation: isolate;
+    }
+
+    body[data-asset="avatar"] .avatar,
+    body[data-asset="social"] .social,
+    body[data-asset="readme"] .readme,
+    body[data-asset="release"] .release,
+    body[data-asset="install"] .install {
+      display: flex;
+    }
+
+    .dots {
+      background-image: radial-gradient(var(--line) 1.5px, transparent 1.5px);
+      background-size: 24px 24px;
+    }
+
+    .wordmark {
+      align-items: baseline;
+      display: flex;
+      font-size: 22px;
+      font-weight: 500;
+      gap: 12px;
+      letter-spacing: .2em;
+      line-height: 1;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .wordmark strong {
+      color: var(--blue);
+      font-weight: 800;
+    }
+
+    .wordmark small {
+      color: var(--grey);
+      font-size: .68em;
+      font-weight: 600;
+      letter-spacing: .16em;
+    }
+
+    .index {
+      align-items: center;
+      border: 1px solid currentColor;
+      color: var(--blue);
+      display: inline-flex;
+      font-family: var(--mono);
+      font-size: 17px;
+      font-weight: 700;
+      height: 34px;
+      justify-content: center;
+      letter-spacing: .12em;
+      padding: 0 12px;
+    }
+
+    .meta {
+      color: var(--grey);
+      font-family: var(--mono);
+      font-size: 14px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .rule {
+      background: var(--ink);
+      height: 4px;
+    }
+
+    .json-card {
+      background: var(--charcoal);
+      border: 1px solid #343434;
+      color: white;
+      font-family: var(--mono);
+      font-size: 18px;
+      line-height: 1.72;
+      margin: 0;
+      padding: 26px 30px;
+      white-space: pre-wrap;
+    }
+
+    .json-card .key {
+      color: #ffffff;
+    }
+
+    .json-card .value {
+      color: #829cff;
+    }
+
+    .json-card .number {
+      color: #ff8a66;
+    }
+
+    .json-card .punct {
+      color: #7f7f7f;
+    }
+
+    .iso {
+      fill: none;
+      stroke: currentColor;
+      stroke-linecap: square;
+      stroke-linejoin: miter;
+      stroke-width: 1.5;
+    }
+
+    /* Discord / GitHub avatar — 1024 × 1024 */
+    .avatar {
+      align-items: center;
+      height: 1024px;
+      justify-content: center;
+      width: 1024px;
+    }
+
+    .avatar img {
+      display: block;
+      height: 1024px;
+      object-fit: cover;
+      width: 1024px;
+    }
+
+    /* GitHub / Open Graph social preview — 1200 × 630 */
+    .social {
+      background:
+        linear-gradient(90deg, transparent 0 76%, rgba(255, 255, 255, .035) 76% 76.2%, transparent 76.2%),
+        var(--charcoal);
+      color: white;
+      height: 630px;
+      padding: 56px 64px;
+      width: 1200px;
+    }
+
+    .social::before {
+      background-image: radial-gradient(#313131 1.2px, transparent 1.2px);
+      background-size: 24px 24px;
+      content: "";
+      inset: 0;
+      opacity: .55;
+      position: absolute;
+      z-index: -1;
+    }
+
+    .social .left {
+      display: flex;
+      flex: 1 1 62%;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .social .right {
+      align-items: flex-end;
+      display: flex;
+      flex: 0 0 430px;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .social .wordmark {
+      color: white;
+      font-size: 17px;
+    }
+
+    .social .wordmark small {
+      color: #a7a7a7;
+    }
+
+    .social h1 {
+      font-size: 58px;
+      letter-spacing: -.035em;
+      line-height: 1.06;
+      margin: auto 0 18px;
+      max-width: 610px;
+    }
+
+    .social h1 span {
+      color: #829cff;
+    }
+
+    .social .subtitle {
+      color: #b7b7b7;
+      font-size: 20px;
+      line-height: 1.45;
+      margin: 0 0 34px;
+    }
+
+    .social .footer {
+      align-items: center;
+      border-top: 1px solid #3a3a3a;
+      display: flex;
+      justify-content: space-between;
+      padding-top: 18px;
+    }
+
+    .social .footer .meta {
+      color: #8f8f8f;
+    }
+
+    .social .icon {
+      border-radius: 15%;
+      height: 118px;
+      width: 118px;
+    }
+
+    .social .json-card {
+      font-size: 16px;
+      width: 410px;
+    }
+
+    /* README header — 1600 × 480 */
+    .readme {
+      align-items: center;
+      height: 480px;
+      padding: 44px 80px 42px;
+      width: 1600px;
+    }
+
+    .readme::after {
+      background: var(--blue);
+      bottom: 0;
+      content: "";
+      height: 10px;
+      left: 0;
+      position: absolute;
+      width: 310px;
+    }
+
+    .readme .logo {
+      flex: 0 0 340px;
+      height: 340px;
+      object-fit: contain;
+      width: 340px;
+    }
+
+    .readme .content {
+      border-left: 1px solid var(--line);
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      height: 100%;
+      justify-content: center;
+      margin-left: 62px;
+      padding-left: 66px;
+    }
+
+    .readme .wordmark {
+      margin-bottom: 30px;
+    }
+
+    .readme h1 {
+      font-size: 64px;
+      letter-spacing: -.035em;
+      line-height: 1.02;
+      margin: 0;
+    }
+
+    .readme .tagline {
+      color: var(--grey);
+      font-size: 22px;
+      line-height: 1.4;
+      margin: 22px 0 0;
+    }
+
+    .readme .labels {
+      display: flex;
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .readme .labels span {
+      border: 1px solid var(--line);
+      font-family: var(--mono);
+      font-size: 13px;
+      letter-spacing: .03em;
+      padding: 7px 12px;
+      text-transform: uppercase;
+    }
+
+    .readme .labels span:first-child {
+      border-color: var(--blue);
+      color: var(--blue);
+    }
+
+    /* Release announcement — 1600 × 900 */
+    .release {
+      background: var(--charcoal);
+      color: white;
+      height: 900px;
+      padding: 74px 84px 64px;
+      width: 1600px;
+    }
+
+    .release::before {
+      background-image: radial-gradient(#303030 1.4px, transparent 1.4px);
+      background-size: 26px 26px;
+      content: "";
+      inset: 0;
+      opacity: .58;
+      position: absolute;
+      z-index: -2;
+    }
+
+    .release::after {
+      border: 1px solid #2e2e2e;
+      content: "";
+      height: 620px;
+      position: absolute;
+      right: -180px;
+      top: 140px;
+      transform: rotate(30deg);
+      width: 620px;
+      z-index: -1;
+    }
+
+    .release .column {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+    }
+
+    .release .topline {
+      align-items: center;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .release .wordmark {
+      color: white;
+      font-size: 21px;
+    }
+
+    .release .wordmark small {
+      color: #9b9b9b;
+    }
+
+    .release .status {
+      align-items: center;
+      color: var(--signal);
+      display: flex;
+      font-family: var(--mono);
+      font-size: 15px;
+      font-weight: 700;
+      gap: 10px;
+      letter-spacing: .12em;
+    }
+
+    .release .status::before {
+      background: var(--signal);
+      content: "";
+      height: 10px;
+      width: 10px;
+    }
+
+    .release .body {
+      align-items: center;
+      display: flex;
+      flex: 1;
+      gap: 90px;
+    }
+
+    .release .copy {
+      flex: 1;
+    }
+
+    .release .eyebrow {
+      color: #829cff;
+      font-family: var(--mono);
+      font-size: 18px;
+      letter-spacing: .14em;
+      margin-bottom: 24px;
+    }
+
+    .release h1 {
+      font-size: 86px;
+      letter-spacing: -.045em;
+      line-height: .98;
+      margin: 0;
+      max-width: 920px;
+    }
+
+    .release h1 em {
+      color: #829cff;
+      font-style: normal;
+    }
+
+    .release .summary {
+      color: #b9b9b9;
+      font-size: 22px;
+      line-height: 1.45;
+      margin: 28px 0 0;
+      max-width: 860px;
+    }
+
+    .release .mark-wrap {
+      align-items: center;
+      display: flex;
+      flex: 0 0 330px;
+      justify-content: center;
+    }
+
+    .release .mark-wrap img {
+      border-radius: 15%;
+      height: 310px;
+      width: 310px;
+    }
+
+    .release .bottomline {
+      align-items: center;
+      border-top: 1px solid #373737;
+      display: flex;
+      justify-content: space-between;
+      padding-top: 20px;
+    }
+
+    .release .bottomline .meta {
+      color: #8f8f8f;
+    }
+
+    .release .boundary {
+      color: #b4b4b4;
+      font-size: 15px;
+    }
+
+    /* Installation guide cover — 1086 × 1448 */
+    .install {
+      flex-direction: column;
+      height: 1448px;
+      padding: 70px 68px 62px;
+      width: 1086px;
+    }
+
+    .install::after {
+      background: var(--blue);
+      bottom: 0;
+      content: "";
+      height: 16px;
+      left: 0;
+      position: absolute;
+      width: 260px;
+    }
+
+    .install .top {
+      align-items: flex-start;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .install .logo {
+      height: 112px;
+      object-fit: contain;
+      width: 112px;
+    }
+
+    .install .cover-index {
+      align-items: flex-end;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .install .cover-index .meta {
+      font-size: 13px;
+    }
+
+    .install .hero {
+      margin-top: 134px;
+      max-width: 880px;
+    }
+
+    .install .hero .kicker {
+      color: var(--blue);
+      font-family: var(--mono);
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      margin-bottom: 28px;
+      text-transform: uppercase;
+    }
+
+    .install h1 {
+      font-size: 92px;
+      letter-spacing: -.05em;
+      line-height: 1.02;
+      margin: 0;
+    }
+
+    .install h1 em {
+      color: var(--blue);
+      font-style: normal;
+    }
+
+    .install .subtitle {
+      color: var(--grey);
+      font-size: 25px;
+      line-height: 1.5;
+      margin: 34px 0 0;
+      max-width: 760px;
+    }
+
+    .install .steps {
+      border-top: 1px solid var(--line);
+      display: grid;
+      gap: 0;
+      grid-template-columns: repeat(2, 1fr);
+      margin-top: auto;
+    }
+
+    .install .step {
+      border-bottom: 1px solid var(--line);
+      min-height: 122px;
+      padding: 24px 28px 20px 0;
+    }
+
+    .install .step:nth-child(odd) {
+      border-right: 1px solid var(--line);
+      margin-right: 28px;
+    }
+
+    .install .step .no {
+      color: var(--blue);
+      font-family: var(--mono);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: .1em;
+    }
+
+    .install .step h2 {
+      font-size: 24px;
+      margin: 8px 0 0;
+    }
+
+    .install .step p {
+      color: var(--grey);
+      font-size: 15px;
+      line-height: 1.45;
+      margin: 6px 0 0;
+    }
+
+    .install .footer {
+      align-items: center;
+      display: flex;
+      justify-content: space-between;
+      padding-top: 36px;
+    }
+
+    .install .footer .warning {
+      color: var(--signal);
+      font-family: var(--mono);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: .08em;
+    }
+  </style>
+</head>
+<body>
+  <main class="artboard avatar" aria-label="Discord and GitHub avatar">
+    <img src="../logo-icon.png" alt="Local MCP for SketchUp icon">
+  </main>
+
+  <main class="artboard social" aria-label="GitHub social preview">
+    <section class="left">
+      <div class="wordmark"><strong>Local MCP</strong><small>for SketchUp</small></div>
+      <h1>本地、安全、<br>可回放的 <span>AI 建模协议</span></h1>
+      <p class="subtitle">Independent local-first MCP bridge for reviewed SketchUp workflows.</p>
+      <div class="footer">
+        <span class="meta">Apache-2.0 · Local-first · Review-gated</span>
+        <span class="index">N°01</span>
+      </div>
+    </section>
+    <aside class="right">
+      <img class="icon" src="../logo-icon.png" alt="">
+      <pre class="json-card"><span class="punct">{</span>
+  <span class="key">"runtime"</span><span class="punct">:</span> <span class="value">"local"</span><span class="punct">,</span>
+  <span class="key">"intent"</span><span class="punct">:</span> <span class="value">"reviewed_edit"</span><span class="punct">,</span>
+  <span class="key">"evidence"</span><span class="punct">:</span> <span class="value">"replayable"</span>
+<span class="punct">}</span></pre>
+    </aside>
+  </main>
+
+  <main class="artboard readme dots" aria-label="README brand header">
+    <img class="logo" src="../logo-primary.png" alt="Local MCP for SketchUp">
+    <section class="content">
+      <div class="wordmark"><strong>Local MCP</strong><small>for SketchUp</small></div>
+      <h1>Auditable local modeling<br>for SketchUp</h1>
+      <p class="tagline">独立、免费、开源、可离线运行的本地 MCP 技术预览。</p>
+      <div class="labels">
+        <span>Local-first</span>
+        <span>Safe JSON DSL</span>
+        <span>Review-gated</span>
+        <span>Replayable evidence</span>
+      </div>
+    </section>
+  </main>
+
+  <main class="artboard release" aria-label="Technical preview release banner">
+    <section class="column">
+      <div class="topline">
+        <div class="wordmark"><strong>Local MCP</strong><small>for SketchUp</small></div>
+        <div class="status">NOT GA</div>
+      </div>
+      <div class="body">
+        <div class="copy">
+          <div class="eyebrow">0.1.0-rc.4 · TECHNICAL PREVIEW</div>
+          <h1>Local-first MCP,<br><em>review before execution.</em></h1>
+          <p class="summary">Safe JSON DSL · mock/queue runtimes · auditable intent, artifacts and replay.</p>
+        </div>
+        <div class="mark-wrap">
+          <img src="../logo-icon.png" alt="">
+        </div>
+      </div>
+      <div class="bottomline">
+        <span class="meta">Independent open-source project · Apache-2.0</span>
+        <span class="boundary">Unsigned technical preview · release acceptance pending</span>
+      </div>
+    </section>
+  </main>
+
+  <main class="artboard install dots" aria-label="Installation guide cover">
+    <div class="top">
+      <img class="logo" src="../logo-primary.png" alt="Local MCP for SketchUp">
+      <div class="cover-index">
+        <span class="index">N°01</span>
+        <span class="meta">Installation guide · v1</span>
+      </div>
+    </div>
+    <section class="hero">
+      <div class="kicker">Local MCP for SketchUp</div>
+      <h1>安装与<em>连接</em><br>指南</h1>
+      <p class="subtitle">Agent-guided local setup for macOS and Windows.<br>先校验、再安装、最后连接。</p>
+    </section>
+    <section class="steps">
+      <article class="step">
+        <span class="no">01 / DOWNLOAD</span>
+        <h2>获取固定版本</h2>
+        <p>只使用明确版本、来源和校验和。</p>
+      </article>
+      <article class="step">
+        <span class="no">02 / VERIFY</span>
+        <h2>验证制品</h2>
+        <p>确认 SHA-256、平台和签名边界。</p>
+      </article>
+      <article class="step">
+        <span class="no">03 / CONNECT</span>
+        <h2>安全连接</h2>
+        <p>备份并合并 MCP 客户端配置。</p>
+      </article>
+      <article class="step">
+        <span class="no">04 / VALIDATE</span>
+        <h2>只读握手</h2>
+        <p>从能力检查开始，不直接修改模型。</p>
+      </article>
+    </section>
+    <footer class="footer">
+      <span class="meta">Local-first · Review-gated · Replayable</span>
+      <span class="warning">TECHNICAL PREVIEW</span>
+    </footer>
+  </main>
+
+  <script>
+    const sizes = {
+      avatar: [1024, 1024],
+      social: [1200, 630],
+      readme: [1600, 480],
+      release: [1600, 900],
+      install: [1086, 1448],
+    };
+    const requested = new URLSearchParams(window.location.search).get("asset") || "social";
+    const asset = Object.prototype.hasOwnProperty.call(sizes, requested) ? requested : "social";
+    const [width, height] = sizes[asset];
+    document.body.dataset.asset = asset;
+    document.documentElement.style.width = `${width}px`;
+    document.documentElement.style.height = `${height}px`;
+    document.body.style.width = `${width}px`;
+    document.body.style.height = `${height}px`;
+    document.title = `Local MCP material — ${asset} — ${width}x${height}`;
+    Promise.all([
+      document.fonts ? document.fonts.ready : Promise.resolve(),
+      ...Array.from(document.images).map((img) => img.complete
+        ? Promise.resolve()
+        : new Promise((resolve) => {
+            img.addEventListener("load", resolve, { once: true });
+            img.addEventListener("error", resolve, { once: true });
+          })),
+    ]).then(() => {
+      document.body.dataset.ready = "true";
+    });
+  </script>
+</body>
+</html>
