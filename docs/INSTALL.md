@@ -1,7 +1,31 @@
 # Installation
 
-No public release is available yet. The steps below are for local source review
-and must not be presented as the final one-line installer.
+An unsigned plugin-only technical preview is publicly available as
+`v0.1.0-rc.4.unsigned.1`. It is not the final one-line installer and does not
+include the local MCP service or bundled Node.js. Users who want an Agent to
+download, verify, and guide the preview installation should start with
+[INSTALL_FOR_AGENTS.md](../INSTALL_FOR_AGENTS.md).
+
+The source steps below remain for local review and must not be presented as the
+final end-user installer.
+
+## Public unsigned preview
+
+The same preview RBZ is available from:
+
+- [Gitee](https://gitee.com/dtzhlq/local-mcp-for-sketchup/releases/tag/v0.1.0-rc.4.unsigned.1)
+- [GitHub](https://github.com/dtzhlq/local-mcp-for-sketchup/releases/tag/v0.1.0-rc.4.unsigned.1)
+
+File:
+`local-mcp-for-sketchup-0.1.0-rc.4-nonrelease-unsigned-preview.rbz`
+
+SHA-256:
+`4d3517ed90654bddc278cf3c099c5c240816b65dcd2e75fe15c8465dd46c398a`
+
+This preview can be downloaded and checked without cloning the repository.
+SketchUp may refuse to load it under a strict Extension Loading Policy. Do not
+lower that policy. Import it through SketchUp Extension Manager only after
+acknowledging that it is an unsigned technical preview.
 
 ## Requirements
 

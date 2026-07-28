@@ -16,6 +16,7 @@ const steps = [
   ['Ruby operation registry drift', ['scripts/generate-ruby-operation-registry.mjs', '--check']],
   ['plugin structure and Ruby syntax', ['scripts/package-sketchup-plugin.mjs', '--check']],
   ['agent-install manifest', ['scripts/validate-agent-install-manifest.mjs']],
+  ['agent installation entry', ['test/agent-install-entry-doc.mjs']],
   ['agent-install release blockers', ['test/agent-install-manifest.mjs']],
   ['DCO policy parser', ['test/dco-check.mjs']],
   ['agent JSON and TOML merge', ['test/agent-config-merge.mjs']],

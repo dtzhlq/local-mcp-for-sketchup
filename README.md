@@ -3,7 +3,29 @@
 一个独立、免费、开源、可离线运行的本地 MCP 技术预览项目，用于让 Agent
 在明确能力、目标和审核边界内与 SketchUp 协作。
 
-> 当前版本：`0.1.0-rc.4` 发布准备中，尚未公开发布。
+> 当前公开版本：`v0.1.0-rc.4.unsigned.1` 无签名技术预览；
+> `release_acceptance=false`，不是正式签名版或 GA。
+
+## 让 Agent 帮你安装
+
+不需要先学习 Git 或 GitHub。把下面整句话复制给你的 Agent：
+
+> 请打开
+> https://gitee.com/dtzhlq/local-mcp-for-sketchup/blob/main/INSTALL_FOR_AGENTS.md，
+> 严格按照其中的当前公开状态安装 Local MCP for SketchUp；不要猜测缺失制品，
+> 遇到权限、签名、平台或配置冲突时停止并告诉我需要手动完成什么。
+
+海外或能够访问 GitHub 的 Agent 也可以读取
+[GitHub 安装入口](https://github.com/dtzhlq/local-mcp-for-sketchup/blob/main/INSTALL_FOR_AGENTS.md)。
+两处入口应描述同一安装边界，Agent 可以选择能够访问的官方镜像。
+
+当前公开制品只支持下载、校验和导入无签名 SketchUp 插件预览，不包含本地
+MCP 服务包或随包 Node.js。因此 Agent 必须明确报告“仅安装插件预览”，不能
+声称完整 MCP 已经安装。正式的一句话安装将在签名 RBZ、两平台服务包、
+固定版本清单和实机验收完成后启用。
+
+面向 Agent 的完整入口见 [INSTALL_FOR_AGENTS.md](INSTALL_FOR_AGENTS.md)；
+底层固定版本协议见 [docs/AGENT_INSTALL.md](docs/AGENT_INSTALL.md)。
 
 ## 当前边界
 

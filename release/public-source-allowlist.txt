@@ -5,6 +5,7 @@
 .gitignore
 .github/
 README.md
+INSTALL_FOR_AGENTS.md
 LICENSE
 NOTICE
 THIRD_PARTY_NOTICES.md
@@ -60,6 +61,7 @@ test/configure-client.mjs
 test/agent-contract.mjs
 test/agent-gateway-production-capabilities.mjs
 test/agent-gateway.mjs
+test/agent-install-entry-doc.mjs
 test/agent-install-manifest.mjs
 test/dco-check.mjs
 test/expert-compiler.mjs
