@@ -9,6 +9,7 @@
 | --- | ---: | --- |
 | `dist/avatar-1024.png` | 1024 × 1024 | Discord / GitHub 头像 |
 | `dist/github-social-1200x630.png` | 1200 × 630 | GitHub Social Preview / Open Graph |
+| `dist/github-social-1280x640.png` | 1280 × 640 | GitHub 仓库设置推荐尺寸 |
 | `dist/readme-header-1600x480.png` | 1600 × 480 | README 品牌头图 |
 | `dist/release-technical-preview-1600x900.png` | 1600 × 900 | 技术预览发布页与发布帖 |
 | `dist/install-guide-cover-1086x1448.png` | 1086 × 1448 | 安装指南封面 |
