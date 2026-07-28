@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SketchUp Local MCP — Brand Board v1</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ikb:#002FA7; --ink:#111111; --paper:#FFFFFF; --charcoal:#141414;
+    --grey:#6E6E6E; --line:#E5E5E5; --signal:#FF4D00;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    font-family:"Inter","PingFang SC","Noto Sans SC","Helvetica Neue",Arial,sans-serif;
+    background:var(--paper); color:var(--ink); font-size:16px; line-height:1.6;
+    background-image:radial-gradient(var(--line) 1px, transparent 1px);
+    background-size:24px 24px;
+  }
+  .mono{font-family:"JetBrains Mono","SF Mono",Menlo,monospace}
+  .grotesk{font-family:"Space Grotesk","Inter","PingFang SC",sans-serif}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 48px}
+  /* ---------- header ---------- */
+  header{border-bottom:3px solid var(--ink);padding:56px 0 32px;background:var(--paper)}
+  .wordmark{font-family:"Space Grotesk",sans-serif;font-size:15px;letter-spacing:.28em;font-weight:500}
+  .wordmark b{font-weight:700;color:var(--ikb)}
+  h1.display{font-family:"Space Grotesk","PingFang SC",sans-serif;font-size:64px;line-height:1.05;font-weight:700;letter-spacing:-.01em;margin:18px 0 14px}
+  .tagline{font-size:18px;color:var(--grey);max-width:560px}
+  .meta-row{display:flex;gap:32px;margin-top:28px;font-size:13px;color:var(--grey)}
+  .meta-row span b{color:var(--ink);font-weight:600}
+  /* ---------- sections ---------- */
+  section{padding:72px 0 64px;border-bottom:1px solid var(--line);background:var(--paper)}
+  .sec-head{display:flex;align-items:baseline;gap:20px;margin-bottom:40px}
+  .sec-num{font-family:"Space Grotesk",sans-serif;font-size:15px;font-weight:700;color:var(--ikb);letter-spacing:.15em;border:1px solid var(--ikb);padding:2px 10px}
+  h2{font-family:"Space Grotesk","PingFang SC",sans-serif;font-size:40px;font-weight:700;letter-spacing:-.01em}
+  .sec-note{color:var(--grey);font-size:14px;margin-left:auto;max-width:320px;text-align:right}
+  /* ---------- logo grid ---------- */
+  .logo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+  .logo-card{border:1px solid var(--line)}
+  .logo-card .stage{aspect-ratio:1;display:flex;align-items:center;justify-content:center}
+  .logo-card img{width:72%;height:72%;object-fit:contain}
+  .stage.light{background:#fff}
+  .stage.dark{background:var(--charcoal)}
+  .stage.icon{padding:0}
+  .stage.icon img{width:100%;height:100%}
+  .logo-card .cap{border-top:1px solid var(--line);padding:12px 16px;font-size:13px;color:var(--grey);display:flex;justify-content:space-between}
+  .cap .mono{font-size:12px;color:var(--ink)}
+  .rules{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:24px}
+  .rule-box{border:1px solid var(--line);padding:24px}
+  .rule-box h4{font-size:14px;letter-spacing:.08em;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+  .tick{width:10px;height:10px;background:var(--ikb);display:inline-block}
+  .tick.bad{background:var(--signal)}
+  .rule-box ul{list-style:none;font-size:14px;color:var(--grey)}
+  .rule-box li{padding:4px 0 4px 16px;position:relative}
+  .rule-box li::before{content:"—";position:absolute;left:0;color:var(--line)}
+  .dont-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:12px}
+  .dont{aspect-ratio:1;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;position:relative;background:#fff;overflow:hidden}
+  .dont img{width:70%;object-fit:contain}
+  .dont .x{position:absolute;top:6px;right:8px;color:var(--signal);font-weight:700;font-size:13px}
+  .dont.stretch img{transform:scaleX(1.5)}
+  .dont.recolor img{filter:hue-rotate(120deg)}
+  .dont.shadow img{filter:drop-shadow(6px 6px 4px rgba(0,0,0,.5))}
+  .dont.busy{background:repeating-linear-gradient(45deg,#cfd8ff 0 8px,#ffe9c2 8px 16px)}
+  /* ---------- color ---------- */
+  .swatches{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+  .sw{border:1px solid var(--line)}
+  .sw .chip{height:120px}
+  .sw .info{padding:12px 16px;border-top:1px solid var(--line)}
+  .sw .name{font-weight:600;font-size:14px}
+  .sw .hex{font-size:12px;color:var(--grey)}
+  .sw .use{font-size:12px;color:var(--grey);margin-top:4px}
+  .proportion{display:flex;height:44px;margin-top:32px;border:1px solid var(--line)}
+  .proportion div{display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600}
+  /* ---------- type ---------- */
+  .type-scale{border-top:1px solid var(--line)}
+  .trow{display:grid;grid-template-columns:180px 1fr 200px;gap:24px;align-items:baseline;padding:20px 0;border-bottom:1px solid var(--line)}
+  .trow .spec{font-size:12px;color:var(--grey)}
+  .trow .usage{font-size:12px;color:var(--grey);text-align:right}
+  /* ---------- graphic language ---------- */
+  .gl-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+  .gl-card{border:1px solid var(--line);min-height:260px;display:flex;flex-direction:column}
+  .gl-card .demo{flex:1;display:flex;align-items:center;justify-content:center;padding:24px;position:relative;overflow:hidden}
+  .gl-card .cap{border-top:1px solid var(--line);padding:10px 16px;font-size:13px;color:var(--grey)}
+  .dots{background-image:radial-gradient(#c9c9c9 1.2px, transparent 1.2px);background-size:16px 16px}
+  .json-card{background:var(--charcoal);color:#fff;font-size:13px;line-height:1.7;padding:20px 24px;width:100%;border-radius:0}
+  .json-card .k{color:#fff}.json-card .s{color:#7C9BFF}.json-card .p{color:#8a8a8a}.json-card .n{color:#FF8a66}
+  .annot{border:1px solid var(--ikb);padding:18px 20px;position:relative;background:#fff;width:80%}
+  .annot .idx{position:absolute;top:-11px;left:12px;background:var(--ikb);color:#fff;font-size:11px;font-weight:700;padding:1px 8px;letter-spacing:.1em}
+  /* ---------- templates ---------- */
+  .tpl-grid{display:grid;grid-template-columns:300px 1fr;gap:32px;align-items:start}
+  .cover34{aspect-ratio:3/4;background:#fff;border:1px solid var(--ink);padding:22px;display:flex;flex-direction:column;position:relative}
+  .cover34 .top{display:flex;justify-content:space-between;align-items:flex-start}
+  .cover34 img{width:34px;height:34px}
+  .cover34 .bignum{font-family:"Space Grotesk";font-size:15px;font-weight:700;color:var(--ikb);border:1px solid var(--ikb);padding:2px 8px}
+  .cover34 h3{font-family:"Space Grotesk","PingFang SC";font-size:30px;line-height:1.15;font-weight:700;margin-top:auto;letter-spacing:-.01em}
+  .cover34 h3 em{font-style:normal;color:var(--ikb)}
+  .cover34 .foot{margin-top:16px;padding-top:10px;border-top:1px solid var(--line);font-size:10px;color:var(--grey);display:flex;justify-content:space-between}
+  .cover34::after{content:"";position:absolute;left:0;bottom:52px;width:56px;height:6px;background:var(--ikb)}
+  .social{aspect-ratio:1.91/1;background:var(--charcoal);color:#fff;padding:34px 40px;display:flex;gap:32px;align-items:center}
+  .social .left{flex:1.2}
+  .social .wm{font-size:11px;letter-spacing:.25em;color:#9aa7ff;margin-bottom:14px}
+  .social h3{font-family:"Space Grotesk","PingFang SC";font-size:34px;line-height:1.2;font-weight:700}
+  .social h3 em{font-style:normal;color:#7C9BFF}
+  .social .foot{margin-top:18px;font-size:11px;color:#8a8a8a}
+  .social .right{flex:1}
+  /* ---------- discipline ---------- */
+  .discipline{background:var(--charcoal);color:#fff;border-bottom:none}
+  .discipline .sec-num{color:#7C9BFF;border-color:#7C9BFF}
+  .discipline h2{color:#fff}
+  .disc-list{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+  .disc{border:1px solid #333;padding:24px}
+  .disc .no{font-family:"Space Grotesk";color:var(--signal);font-weight:700;font-size:13px;letter-spacing:.15em;margin-bottom:10px}
+  .disc p{font-size:14px;color:#c9c9c9}
+  .disc code{color:#7C9BFF;font-size:12px}
+  footer{padding:40px 0 64px;background:var(--paper);font-size:12px;color:var(--grey);display:flex;justify-content:space-between}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="wordmark grotesk">SKETCHUP <b>LOCAL&nbsp;MCP</b></div>
+    <h1 class="display">Brand Identity<br>Board — v1</h1>
+    <p class="tagline">本地、安全、可回放的 AI 建模协议。瑞士国际主义 × 工程图解：网格、无衬线、黑白打底，单一蓝色强调。</p>
+    <div class="meta-row mono">
+      <span>PROJECT <b>sketchup-mcp-replica</b></span>
+      <span>DATE <b>2026-07-28</b></span>
+      <span>STATUS <b>draft for review</b></span>
+    </div>
+  </div>
+</header>
+
+<!-- 01 LOGO -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-num">01</span><h2>Logo</h2>
+      <p class="sec-note">等轴测六边形 + S 形折带 = 致敬 SketchUp 的形体语言；顶点四角星火 = AI 驱动。</p>
+    </div>
+    <div class="logo-grid">
+      <div class="logo-card">
+        <div class="stage light"><img src="logo-primary.png" alt="primary logo"></div>
+        <div class="cap"><span>主标识 · 浅色场景</span><span class="mono">logo-primary.png</span></div>
+      </div>
+      <div class="logo-card">
+        <div class="stage dark"><img src="logo-dark.png" alt="dark logo"></div>
+        <div class="cap"><span>深色场景</span><span class="mono">logo-dark.png</span></div>
+      </div>
+      <div class="logo-card">
+        <div class="stage icon"><img src="logo-icon.png" alt="icon"></div>
+        <div class="cap"><span>头像 / favicon</span><span class="mono">logo-icon.png</span></div>
+      </div>
+    </div>
+    <div class="rules">
+      <div class="rule-box">
+        <h4><span class="tick"></span>使用规则</h4>
+        <ul>
+          <li>净空 = 六边形高度的 1/2，四边同宽</li>
+          <li>最小尺寸：屏幕 24px / 印刷 8mm</li>
+          <li>星火是品牌蓝唯一强制出现的位置</li>
+          <li>字标永远用字体排版，不用图片生成</li>
+        </ul>
+      </div>
+      <div class="rule-box">
+        <h4><span class="tick bad"></span>禁止</h4>
+        <div class="dont-row">
+          <div class="dont stretch"><img src="logo-primary.png"><span class="x">✕</span></div>
+          <div class="dont recolor"><img src="logo-primary.png"><span class="x">✕</span></div>
+          <div class="dont shadow"><img src="logo-primary.png"><span class="x">✕</span></div>
+          <div class="dont busy"><img src="logo-primary.png"><span class="x">✕</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 COLOR -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-num">02</span><h2>Color</h2>
+      <p class="sec-note">70% 白 + 25% 黑灰 + 5% 蓝。橙色仅用于警告，≤2%。</p>
+    </div>
+    <div class="swatches">
+      <div class="sw"><div class="chip" style="background:#002FA7"></div><div class="info"><div class="name">Brand Blue</div><div class="hex mono">#002FA7</div><div class="use">唯一主强调：星火 / 索引号 / 链接</div></div></div>
+      <div class="sw"><div class="chip" style="background:#111111"></div><div class="info"><div class="name">Ink</div><div class="hex mono">#111111</div><div class="use">标题、正文</div></div></div>
+      <div class="sw"><div class="chip" style="background:#141414"></div><div class="info"><div class="name">Charcoal</div><div class="hex mono">#141414</div><div class="use">深色底、代码卡</div></div></div>
+      <div class="sw"><div class="chip" style="background:#FFFFFF"></div><div class="info"><div class="name">Paper</div><div class="hex mono">#FFFFFF</div><div class="use">浅色底</div></div></div>
+      <div class="sw"><div class="chip" style="background:#6E6E6E"></div><div class="info"><div class="name">Grey</div><div class="hex mono">#6E6E6E</div><div class="use">次要文字、图注</div></div></div>
+      <div class="sw"><div class="chip" style="background:#E5E5E5"></div><div class="info"><div class="name">Line</div><div class="hex mono">#E5E5E5</div><div class="use">分隔线、网格</div></div></div>
+      <div class="sw"><div class="chip" style="background:#FF4D00"></div><div class="info"><div class="name">Signal Orange</div><div class="hex mono">#FF4D00</div><div class="use">仅警告 / 限制说明</div></div></div>
+    </div>
+    <div class="proportion">
+      <div style="flex:70;background:#fff;color:var(--grey)">70 PAPER</div>
+      <div style="flex:15;background:#111;color:#fff">15 INK</div>
+      <div style="flex:10;background:#6E6E6E;color:#fff">10 GREY</div>
+      <div style="flex:5;background:#002FA7;color:#fff">5 BLUE</div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 TYPE -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-num">03</span><h2>Typography</h2>
+      <p class="sec-note">Space Grotesk × 思源黑体 × JetBrains Mono</p>
+    </div>
+    <div class="type-scale">
+      <div class="trow"><span class="spec mono">Display / Space Grotesk 64</span><span class="grotesk" style="font-size:56px;font-weight:700;line-height:1.1">本地 AI 建模</span><span class="usage">封面主标题</span></div>
+      <div class="trow"><span class="spec mono">H1 / 40 Bold</span><span class="grotesk" style="font-size:40px;font-weight:700">JSON DSL 协议</span><span class="usage">章节标题</span></div>
+      <div class="trow"><span class="spec mono">H2 / 28 Bold</span><span class="grotesk" style="font-size:28px;font-weight:700">队列同步与快照</span><span class="usage">小节标题</span></div>
+      <div class="trow"><span class="spec mono">Body / 16 Regular</span><span style="font-size:16px">每个新能力必须 mock 能测、queue 能落地、manifest 能说明。</span><span class="usage">正文</span></div>
+      <div class="trow"><span class="spec mono">Caption / 13</span><span style="font-size:13px;color:var(--grey)">图 04 — boolean_cutout 的 queue 回归结果</span><span class="usage">图注</span></div>
+      <div class="trow"><span class="spec mono">Code / 14</span><span class="mono" style="font-size:14px">{ "op": "rounded_box", "radius": 3 }</span><span class="usage">代码 / DSL</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 GRAPHIC LANGUAGE -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-num">04</span><h2>Graphic Language</h2>
+      <p class="sec-note">内容即设计：线框、网格、DSL 代码本身就是视觉素材。</p>
+    </div>
+    <div class="gl-grid">
+      <div class="gl-card">
+        <div class="demo">
+          <svg width="180" height="200" viewBox="0 0 120 150" fill="none">
+            <path d="M60 10 L110 38 L60 66 L10 38 Z" stroke="#002FA7" stroke-width="1.5"/>
+            <path d="M10 38 V108 L60 136 V66" stroke="#002FA7" stroke-width="1.5"/>
+            <path d="M110 38 V108 L60 136" stroke="#002FA7" stroke-width="1.5"/>
+            <path d="M60 2 v16 M52 10 h16 M55 5 l10 10 M65 5 l-10 10" stroke="#002FA7" stroke-width="1.5"/>
+          </svg>
+        </div>
+        <div class="cap">轴测线框 — 1px 线宽、轴测投影，禁止照片感 3D 渲染插图</div>
+      </div>
+      <div class="gl-card">
+        <div class="demo dots"><span class="mono" style="font-size:12px;color:var(--grey);background:#fff;padding:2px 8px">8px grid / 1px dot / #E5E5E5</span></div>
+        <div class="cap">点阵网格 — 背景纹理唯一指定形态</div>
+      </div>
+      <div class="gl-card">
+        <div class="demo" style="background:var(--charcoal)">
+          <pre class="json-card"><span class="p">{</span>
+  <span class="k">"op"</span><span class="p">:</span> <span class="s">"boolean_cutout"</span><span class="p">,</span>
+  <span class="k">"target"</span><span class="p">:</span> <span class="s">"panel"</span><span class="p">,</span>
+  <span class="k">"depth"</span><span class="p">:</span> <span class="n">12</span>
+<span class="p">}</span></pre>
+        </div>
+        <div class="cap">JSON 卡片 — 键白 / 字符串蓝 / 数字橙 / 标点灰</div>
+      </div>
+      <div class="gl-card">
+        <div class="demo dots">
+          <div class="annot">
+            <span class="idx">NOTE 01</span>
+            <span style="font-size:14px">transform_object 现支持显式 <code class="mono" style="color:var(--ikb)">[x,y,z]</code> pivot，默认仍为模型原点。</span>
+          </div>
+        </div>
+        <div class="cap">蓝色标注框 — 1px 蓝框 + 左上索引号，用于技术注解</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 TEMPLATES -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-num">05</span><h2>Templates</h2>
+      <p class="sec-note">HTML 活模板，截图出图 — 文字永远不让图像模型生成。</p>
+    </div>
+    <div class="tpl-grid">
+      <div>
+        <div class="cover34">
+          <div class="top"><img src="logo-primary.png"><span class="bignum grotesk">N°01</span></div>
+          <h3>让 AI 在<em>本地</em>驱动 SketchUp</h3>
+          <div class="foot mono"><span>SKETCHUP LOCAL MCP</span><span>2026-07</span></div>
+        </div>
+        <p class="mono" style="font-size:12px;color:var(--grey);margin-top:8px">文章封面 · 3:4 · 1086×1448</p>
+      </div>
+      <div>
+        <div class="social">
+          <div class="left">
+            <div class="wm grotesk">SKETCHUP LOCAL MCP</div>
+            <h3>安全、可测、可回放的 <em>JSON DSL</em> 建模协议</h3>
+            <div class="foot mono">mock 能测 · queue 能落地 · manifest 能说明</div>
+          </div>
+          <div class="right">
+            <pre class="json-card"><span class="p">{</span> <span class="k">"op"</span><span class="p">:</span> <span class="s">"fillet"</span><span class="p">,</span> <span class="k">"radius"</span><span class="p">:</span> <span class="n">3</span> <span class="p">}</span></pre>
+          </div>
+        </div>
+        <p class="mono" style="font-size:12px;color:var(--grey);margin-top:8px">社交预览 · 1.91:1 · 1200×630 · GitHub / 公众号头图</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 DISCIPLINE -->
+<section class="discipline">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-num">06</span><h2>图像生成纪律</h2>
+    </div>
+    <div class="disc-list">
+      <div class="disc"><div class="no">RULE / 01</div><p>prompt 禁止出现颜色名缩写（<code>IKB</code>、Klein、克莱因）—— 会被渲染成画面文字。一律写 <code>saturated deep ultramarine blue</code>。</p></div>
+      <div class="disc"><div class="no">RULE / 02</div><p>prompt 禁止包含需要渲染的文字内容。所有文字用 HTML/字体排版后期合成。</p></div>
+      <div class="disc"><div class="no">RULE / 03</div><p>参考图只用当前干净正式图。历史临时图、backup 图一律不作为生成输入。</p></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap" style="display:flex;justify-content:space-between;width:100%">
+    <span class="mono">SKETCHUP LOCAL MCP — BRAND BOARD v1</span>
+    <span class="mono">2026-07-28 · DRAFT FOR REVIEW</span>
+  </div>
+</footer>
+
+</body>
+</html>
