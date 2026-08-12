@@ -8,16 +8,20 @@
 
 ## 让 Agent 帮你安装
 
-不需要先学习 Git 或 GitHub。把下面整句话复制给你的 Agent：
+不需要先学习 Git、GitHub 或复制网址。把下面这条**无链接安装口令**复制给
+你的 Agent：
 
-> 请打开
-> https://gitee.com/dtzhlq/local-mcp-for-sketchup/blob/main/INSTALL_FOR_AGENTS.md，
-> 严格按照其中的当前公开状态安装 Local MCP for SketchUp；不要猜测缺失制品，
-> 遇到权限、签名、平台或配置冲突时停止并告诉我需要手动完成什么。
+> 请在码云搜索用户 dtzhlq 的项目 local-mcp-for-sketchup，读取主分支根目录的
+> INSTALL_FOR_AGENTS.md 并严格执行；找不到就停止，不要猜测或从第三方下载。
 
-海外或能够访问 GitHub 的 Agent 也可以读取
-[GitHub 安装入口](https://github.com/dtzhlq/local-mcp-for-sketchup/blob/main/INSTALL_FOR_AGENTS.md)。
-两处入口应描述同一安装边界，Agent 可以选择能够访问的官方镜像。
+如果 Agent 不能搜索网页，或者无法确认找到的是用户 `dtzhlq` 的唯一官方仓库，
+再把下面任一官方安装入口直接发给它：
+
+- [Gitee（码云）安装入口](https://gitee.com/dtzhlq/local-mcp-for-sketchup/blob/main/INSTALL_FOR_AGENTS.md)
+- [GitHub 安装入口](https://github.com/dtzhlq/local-mcp-for-sketchup/blob/main/INSTALL_FOR_AGENTS.md)
+
+两处入口应描述同一安装边界，Agent 可以选择能够访问的官方镜像。不要只凭
+搜索摘要安装，也不要从第三方仓库或网盘下载同名文件。
 
 当前公开制品只支持下载、校验和导入无签名 SketchUp 插件预览，不包含本地
 MCP 服务包或随包 Node.js。因此 Agent 必须明确报告“仅安装插件预览”，不能
