@@ -58,6 +58,7 @@ scripts/validate-mcp-capability-suite.mjs
 test/agent-config-merge.mjs
 test/agent-config-writer.mjs
 test/configure-client.mjs
+test/source-preview-install.mjs
 test/agent-contract.mjs
 test/agent-gateway-production-capabilities.mjs
 test/agent-gateway.mjs

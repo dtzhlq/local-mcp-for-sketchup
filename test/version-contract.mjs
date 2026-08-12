@@ -9,8 +9,9 @@ import {
 import { PRODUCT_VERSION } from '../src/version.mjs';
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const [packageJson, packageLock, pluginLoaderSource, pluginBridgeSource] = await Promise.all([
+const [packageJson, publicPackageJson, packageLock, pluginLoaderSource, pluginBridgeSource] = await Promise.all([
   readJson('package.json'),
+  readJson('release/public-package.json'),
   readJson('package-lock.json'),
   fs.readFile(path.join(repoRoot, 'sketchup_plugin', 'local_mcp_for_sketchup.rb'), 'utf8'),
   fs.readFile(path.join(repoRoot, 'sketchup_plugin', 'local_mcp_for_sketchup', 'bridge.rb'), 'utf8')
@@ -18,6 +19,7 @@ const [packageJson, packageLock, pluginLoaderSource, pluginBridgeSource] = await
 
 assert.equal(PRODUCT_VERSION, '0.1.0-rc.4');
 assert.equal(packageJson.version, PRODUCT_VERSION);
+assert.deepEqual(publicPackageJson, packageJson);
 assert.equal(packageLock.version, PRODUCT_VERSION);
 assert.equal(packageLock.packages?.['']?.version, PRODUCT_VERSION);
 assert.deepEqual(uniqueRubyConstant(pluginLoaderSource, 'PLUGIN_VERSION'), [PRODUCT_VERSION]);
@@ -38,6 +40,7 @@ process.stdout.write(`${JSON.stringify({
   runtime_capability_version: RUNTIME_CAPABILITY_VERSION,
   capability_manifest_version: CAPABILITY_MANIFEST_VERSION,
   package_lock_bound: true,
+  public_package_template_bound: true,
   plugin_loader_bound: true,
   live_queue_called: false
 }, null, 2)}\n`);

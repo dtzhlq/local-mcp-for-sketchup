@@ -8,8 +8,10 @@ rules.
 ```text
 entrypoint_version: install-for-agents.v1
 project_id: local-mcp-for-sketchup
-current_channel: unsigned-technical-preview
+current_channel: source-technical-preview
+plugin_channel: unsigned-technical-preview
 full_auto_install_available: false
+source_preview_install_available: true
 release_acceptance: false
 ```
 
@@ -22,8 +24,8 @@ For every attempted installation:
 
 1. identify the operating system, CPU architecture, SketchUp major version, and
    current Agent/MCP client;
-2. use only the exact artifacts and checksums written in this file or in a
-   future immutable `agent-install.v1` release manifest;
+2. use only the official source remotes and exact preview artifact checksums
+   written in this file, or a future immutable `agent-install.v1` manifest;
 3. never invent a download URL, select a similar platform, disable SketchUp's
    extension loading policy, install a system-wide Node.js, or overwrite an
    existing MCP configuration;
@@ -32,15 +34,19 @@ For every attempted installation:
 5. stop safely when a required artifact, permission, signature, supported
    platform, or unambiguous configuration target is missing.
 
-Do not use `npm install`, clone the source repository, or execute a remote
-script as a substitute for missing release artifacts. The future
-`agent-install.v1` manifest is data; never interpolate its values into a shell
-command.
+Never use `npm install`, a third-party repository, a pre-existing modified
+checkout, or a remote shell script. The source-preview path below is the only
+current authorization to clone source and run `npm ci --ignore-scripts`. The
+future `agent-install.v1` manifest is data; never interpolate its values into a
+shell command.
 
 ## Current public state
 
-The current public release is an unsigned, unencrypted plugin-only technical
-preview:
+The current public state has two related technical-preview paths:
+
+1. a source MCP service installed from a fresh official `main` checkout using
+   an already-installed Node.js 24; and
+2. an unsigned, unencrypted plugin preview:
 
 | Field | Value |
 | --- | --- |
@@ -53,6 +59,13 @@ preview:
 | Full local MCP service included | `false` |
 | Bundled Node.js included | `false` |
 | Release acceptance | `false` |
+
+The source-preview service is not a release artifact and is not included in
+the RBZ. Its verifier reports the exact checked-out commit and requires one of
+these origin remotes:
+
+- `https://gitee.com/dtzhlq/local-mcp-for-sketchup.git`
+- `https://github.com/dtzhlq/local-mcp-for-sketchup.git`
 
 Official download mirrors for these exact RBZ bytes:
 
@@ -74,9 +87,66 @@ Intel Mac is not supported. Windows SketchUp 2026 live acceptance of the final
 product is still pending. Do not silently select another platform or SketchUp
 version.
 
-## What the Agent may do now
+## Source MCP preview — preferred when Node.js 24 is already present
 
-The current safe outcome is `plugin-preview-only`.
+This path can install and configure the actual MCP stdio service. It is still a
+source technical preview, not the future bundled-Node release.
+
+1. Confirm the target matches a supported preview target and the machine
+   already has Git, npm, and Node.js major version 24. Do not install or upgrade
+   system Node.js. If Node.js 24 is absent, skip to the plugin-only path.
+2. Choose a new, user-writable installation directory. Never overwrite, pull,
+   reset, clean, or reuse an existing directory.
+3. Clone exactly one official mirror. Prefer Gitee when GitHub is unreachable:
+
+   ```text
+   git clone --branch main --single-branch https://gitee.com/dtzhlq/local-mcp-for-sketchup.git
+   ```
+
+   GitHub alternative:
+
+   ```text
+   git clone --branch main --single-branch https://github.com/dtzhlq/local-mcp-for-sketchup.git
+   ```
+
+4. In that new checkout, install only the locked dependency graph and audit it:
+
+   ```text
+   npm ci --ignore-scripts
+   npm audit --omit=dev --audit-level=high
+   ```
+
+   Stop on any install error or high/critical audit finding.
+5. Run `npm run source-preview:check`. Continue only when it reports the
+   official remote, `main`, a clean HEAD equal to fetched `origin/main`, Node.js
+   24, `mcp_stdio.verified: true`, and exactly 41 tools.
+6. Run the configuration command without `--apply` first:
+
+   ```text
+   npm run source-preview:configure -- --client <client-id>
+   ```
+
+   Review the reported absolute Node/server paths and configuration target.
+7. For `codex` or `cursor`, when the user already asked for installation and
+   the dry run shows the expected target, re-run with `--apply`. The helper
+   refuses conflicting entries and symlinked paths, preserves unrelated
+   settings, and creates a timestamped backup before changing an existing file.
+8. For `claude-desktop` or any other client, do not add `--apply`; use the
+   returned manual snippet and tell the user where their client documentation
+   says to place it. Do not guess a domestic client's configuration path.
+9. Restart the MCP client, confirm it exposes exactly 41 Local MCP tools, then
+   complete the plugin-preview path below so SketchUp can provide the queue
+   runtime. If the plugin is refused, the MCP stdio server may still start but
+   live SketchUp operations remain unavailable.
+
+Never run `npm install`, install Node.js, execute a downloaded script, enable
+arbitrary Ruby, lower a security policy, or report live SketchUp success from
+the stdio tools/list check alone.
+
+## Unsigned SketchUp plugin preview
+
+This path may be used alone when Node.js 24 is unavailable, or after the source
+MCP preview above.
 
 1. Confirm the target matches one of the supported preview targets. If it does
    not, stop with `unsupported-platform`.
@@ -94,16 +164,16 @@ The current safe outcome is `plugin-preview-only`.
    choose **Install Extension** for the verified RBZ. Otherwise, show the exact
    verified local file path and guide the user through that action.
 7. Restart SketchUp completely if it accepted the extension.
-8. Report the result as `plugin-preview-only`. Do not claim that the MCP server
-   is installed or connected.
+8. When this is the only completed path, report `plugin-preview-only`. When the
+   source service was also configured, report the plugin outcome separately;
+   do not claim a live SketchUp connection until a queue handshake succeeds.
 
-The current preview does **not** authorize the Agent to:
+Neither current preview path authorizes the Agent to:
 
-- modify Codex, Claude Desktop, Cursor, or another MCP client configuration;
 - download or install Node.js;
-- build or install the MCP service from a source checkout;
+- modify Claude Desktop or an unknown client's configuration automatically;
 - disable signature enforcement or another security control;
-- report full success when only the RBZ was downloaded or imported.
+- report full success when only the RBZ was imported or stdio tools were listed.
 
 ## Full one-line installation
 
@@ -120,8 +190,9 @@ and use the documented manual fallback. It must not use
 `release/agent-install.v1.template.json`, because that file intentionally
 contains placeholders and `release_acceptance=false`.
 
-Until those two final manifest values appear here, the only permitted public
-installation outcome is the unsigned `plugin-preview-only` flow above.
+Until those two final manifest values appear here, the permitted public
+outcomes are the bounded `source-technical-preview` and unsigned
+`plugin-preview-only` flows above. Neither is the final bundled release.
 
 ## Required final report
 
@@ -130,13 +201,19 @@ Return a short report containing:
 ```text
 project: Local MCP for SketchUp
 platform: <detected OS / architecture / SketchUp version>
-channel: unsigned-technical-preview
+channel: source-technical-preview | unsigned-technical-preview
+source_remote: <official origin or not cloned>
+source_commit: <verified HEAD or not cloned>
+node_version: <24.x or unavailable>
 artifact: <downloaded RBZ path or not downloaded>
 sha256_verified: true | false
 plugin_action: installed | manual-step-required | refused | not-attempted
-mcp_service_installed: false
-mcp_config_modified: false
-result: plugin-preview-only | unsupported-platform | stopped-safely
+mcp_stdio_verified: true | false
+mcp_tools: 41 | not-verified
+mcp_config_modified: true | false
+mcp_config_backup: <path or none>
+live_sketchup_verified: true | false
+result: source-technical-preview | plugin-preview-only | partial-preview | unsupported-platform | stopped-safely
 next_manual_step: <exact action or none>
 ```
 

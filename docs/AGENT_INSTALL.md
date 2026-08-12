@@ -3,6 +3,21 @@
 Status: draft for `0.1.0-rc.4`. This protocol must not be advertised as
 release-ready while its manifest contains placeholder URLs or hashes.
 
+## Interim source technical preview
+
+Before the bundled-Node release exists, `INSTALL_FOR_AGENTS.md` authorizes a
+bounded source-preview path on the same two target platforms. It requires an
+already-installed Node.js 24, a fresh official `main` clone, locked dependency
+installation with lifecycle scripts disabled, a clean dependency audit, and
+`npm run source-preview:check` proving a 41-tool stdio handshake.
+
+`npm run source-preview:configure -- --client CLIENT` is dry-run by default.
+Codex and Cursor may use `--apply` after review; the existing atomic writer and
+conflict/backup rules below still apply. Claude Desktop and unknown clients
+receive manual snippets only. This interim path is not driven by the draft
+manifest, does not contain bundled Node.js, and does not change
+`release_acceptance=false`.
+
 ## Goal
 
 An Agent receives one immutable manifest URL and the separately published

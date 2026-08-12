@@ -29,6 +29,8 @@
     "plugin:check": "npm run registry:check && node scripts/package-sketchup-plugin.mjs --check",
     "plugin:package": "npm run registry:check && node scripts/package-sketchup-plugin.mjs --check --package",
     "service:package": "node scripts/package-service-bundle.mjs",
+    "source-preview:check": "node src/installer/source-preview.mjs",
+    "source-preview:configure": "node src/installer/configure-source-preview.mjs",
     "agent-install:check": "node scripts/validate-agent-install-manifest.mjs",
     "public-source:export": "node scripts/export-public-source.mjs",
     "public-source:audit": "node scripts/audit-public-source.mjs",
@@ -44,6 +46,6 @@
     "sharp": "^0.35.3"
   },
   "overrides": {
-    "fast-uri": "3.1.4"
+    "fast-uri": "3.1.5"
   }
 }

@@ -22,6 +22,7 @@ const steps = [
   ['agent JSON and TOML merge', ['test/agent-config-merge.mjs']],
   ['agent atomic config writer', ['test/agent-config-writer.mjs']],
   ['installed-bundle client configuration', ['test/configure-client.mjs']],
+  ['source-preview installation and configuration', ['test/source-preview-install.mjs']],
   ['SketchUp 2026 platform paths', ['test/sketchup-plugin-platform-paths.mjs']],
   ['service bundle target plan', ['test/service-bundle-plan.mjs']],
   ['service bundle reproducibility', ['test/service-bundle-reproducibility.mjs']],

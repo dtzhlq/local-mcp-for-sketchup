@@ -1,13 +1,33 @@
 # Installation
 
-An unsigned plugin-only technical preview is publicly available as
-`v0.1.0-rc.4.unsigned.1`. It is not the final one-line installer and does not
-include the local MCP service or bundled Node.js. Users who want an Agent to
-download, verify, and guide the preview installation should start with
+An unsigned plugin preview is publicly available as
+`v0.1.0-rc.4.unsigned.1`. A separate source technical-preview path can install
+and configure the actual MCP stdio service when Node.js 24 is already present.
+Neither path is the final bundled-Node installer. Users who want an Agent to
+perform the bounded preview installation should start with
 [INSTALL_FOR_AGENTS.md](../INSTALL_FOR_AGENTS.md).
 
-The source steps below remain for local review and must not be presented as the
-final end-user installer.
+## Source MCP technical preview
+
+Use a fresh `main` clone from the official GitHub or Gitee repository. Do not
+reuse a modified checkout.
+
+```text
+npm ci --ignore-scripts
+npm audit --omit=dev --audit-level=high
+npm run source-preview:check
+npm run source-preview:configure -- --client codex
+```
+
+The configuration command is dry-run by default. After reviewing its absolute
+paths, append `--apply` for Codex or Cursor. Claude Desktop and unknown clients
+return a manual snippet without modifying configuration. The checker requires
+Node.js 24, an official clean `main` checkout equal to `origin/main`, a
+supported platform, and a successful 41-tool stdio handshake.
+
+This verifies the MCP service itself, not a live SketchUp queue connection.
+The unsigned plugin must also load and return a fresh queue handshake before
+claiming live SketchUp success.
 
 ## Public unsigned preview
 

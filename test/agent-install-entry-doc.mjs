@@ -36,16 +36,22 @@ for (const mirror of ['gitee.com', 'github.com']) {
 }
 
 assert.match(agentEntry, /full_auto_install_available: false/);
+assert.match(agentEntry, /source_preview_install_available: true/);
 assert.match(agentEntry, /release_acceptance: false/);
 assert.match(agentEntry, /plugin-preview-only/);
-assert.match(agentEntry, /mcp_service_installed: false/);
-assert.match(agentEntry, /mcp_config_modified: false/);
+assert.match(agentEntry, /source-technical-preview/);
+assert.match(agentEntry, /npm ci --ignore-scripts/);
+assert.match(agentEntry, /npm run source-preview:check/);
+assert.match(agentEntry, /npm run source-preview:configure -- --client/);
+assert.match(agentEntry, /mcp_stdio_verified: true \| false/);
+assert.match(agentEntry, /mcp_config_modified: true \| false/);
 assert.match(agentEntry, /Never lower\s+that policy/);
 assert.doesNotMatch(agentEntry, /example\.invalid/);
 
 assert.match(readme, /无签名技术预览/);
-assert.match(readme, /不能\s*声称完整 MCP 已经安装/);
-assert.match(installDoc, /unsigned plugin-only technical preview/);
+assert.match(readme, /源码技术预览/);
+assert.match(readme, /仅安装\s*RBZ 时不能声称 MCP 服务已经安装/);
+assert.match(installDoc, /source technical-preview path can install/);
 
 process.stdout.write(`${JSON.stringify({
   ok: true,
@@ -53,6 +59,7 @@ process.stdout.write(`${JSON.stringify({
   customer_prompts: guideUrls.length + 1,
   primary_prompt: 'link-free-gitee-search',
   mirrors: 2,
-  current_outcome: 'plugin-preview-only',
+  current_outcomes: ['source-technical-preview', 'plugin-preview-only'],
+  source_preview_install_available: true,
   full_auto_install_available: false
 }, null, 2)}\n`);
