@@ -1,5 +1,11 @@
 # Installation
 
+<p align="center">
+  <img src="../brand/materials/dist/install-guide-cover-1086x1448.png"
+       width="520"
+       alt="Local MCP for SketchUp installation guide cover">
+</p>
+
 An unsigned plugin-only technical preview is publicly available as
 `v0.1.0-rc.4.unsigned.1`. It is not the final one-line installer and does not
 include the local MCP service or bundled Node.js. Users who want an Agent to

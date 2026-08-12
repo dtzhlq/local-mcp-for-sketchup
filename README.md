@@ -1,7 +1,13 @@
+![Local MCP for SketchUp — Auditable local modeling for SketchUp](brand/materials/dist/readme-header-1600x480.png)
+
 # Local MCP for SketchUp
 
 一个独立、免费、开源、可离线运行的本地 MCP 技术预览项目，用于让 Agent
 在明确能力、目标和审核边界内与 SketchUp 协作。
+
+[安装指南](docs/INSTALL.md) ·
+[Discord 社区](https://discord.gg/UXFs9pQbUW) ·
+[问题反馈](https://github.com/dtzhlq/local-mcp-for-sketchup/issues)
 
 > 当前公开版本：`v0.1.0-rc.4.unsigned.1` 无签名技术预览；
 > `release_acceptance=false`，不是正式签名版或 GA。
@@ -107,6 +113,16 @@ manifest 中的签署字段不能替代该签名。未签名包可能被 SketchU
 
 未来中国大陆官方安装渠道的登记表单属于独立服务，将在收集数据前单独说明
 字段、用途、保存期限和联系方式。登记不用于验证 SketchUp 是否为正版。
+
+## 社区与反馈
+
+欢迎加入 [Discord 社区](https://discord.gg/UXFs9pQbUW)，获取安装协助、提交
+可复现问题、讨论功能建议并展示 SketchUp 工作流。邀请链接会进入 `#welcome`
+频道，长期有效。
+
+Discord 用于交流和初步排查；需要持续跟踪的问题仍应整理到
+[GitHub Issues](https://github.com/dtzhlq/local-mcp-for-sketchup/issues)。
+发布日志或截图前，请移除私有模型内容、账号信息、API 密钥和其他敏感数据。
 
 ## 开源与贡献
 
