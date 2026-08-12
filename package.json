@@ -44,6 +44,6 @@
     "sharp": "^0.35.3"
   },
   "overrides": {
-    "fast-uri": "3.1.4"
+    "fast-uri": "3.1.5"
   }
 }
