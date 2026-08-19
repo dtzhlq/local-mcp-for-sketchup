@@ -40,8 +40,14 @@ const steps = [
   ['Agent Contract store', ['test/agent-contract.mjs']],
   ['Agent Gateway', ['test/agent-gateway.mjs']],
   ['Agent production capability boundary', ['test/agent-gateway-production-capabilities.mjs']],
+  ['image-structured main-project hardening', ['test/image-structured-provenance.mjs']],
   ['reviewed image-brief boundary', ['test/image-structured-mcp-adapter.mjs']],
-  ['41-tool mock capability suite', [
+  ['architectural primitives', ['test/architectural-primitives.mjs']],
+  ['traditional hall semantic contract', ['test/traditional-hall-semantic-contract.mjs']],
+  ['image-structured benchmark', ['test/image-structured-main-benchmark.mjs']],
+  ['image-structured semantic live gate', ['test/image-structured-semantic-live-gate.mjs']],
+  ['image-structured Ruby semantic metadata', ['test/ruby/image_structured_semantic_metadata_test.rb']],
+  ['42-tool mock capability suite', [
     'scripts/validate-mcp-capability-suite.mjs',
     '--runtime', 'mock',
     '--output-dir', path.join(runRoot, 'mcp-capability-suite')
@@ -53,7 +59,8 @@ let failedStep = null;
 try {
   for (const [label, args] of steps) {
     process.stdout.write(`\n[core-check] ${label}\n`);
-    const result = await run(process.execPath, args);
+    const command = args.length === 1 && args[0].endsWith('.rb') ? 'ruby' : process.execPath;
+    const result = await run(command, args);
     if (result.code !== 0) {
       failedStep = { label, code: result.code || 1 };
       break;

@@ -23,6 +23,9 @@ if (requestedRuntime === 'queue') {
 
 await fs.rm(outputDir, { recursive: true, force: true });
 await fs.mkdir(outputDir, { recursive: true });
+const imageArtifactScratchParent = path.join(repoRoot, 'output');
+await fs.mkdir(imageArtifactScratchParent, { recursive: true });
+const imageArtifactScratchDir = await fs.mkdtemp(path.join(imageArtifactScratchParent, '.mcp-capability-image-'));
 
 const mockSessionPath = path.join(outputDir, 'mock-session.json');
 const server = spawn(process.execPath, [path.join(repoRoot, 'src/mcp-server.mjs')], {
@@ -77,8 +80,8 @@ try {
   const list = await request({ method: 'tools/list' }, { timeoutMs: 10000 });
   const tools = list.result.tools;
   const toolNames = tools.map((tool) => tool.name).sort();
-  assert.equal(toolNames.length, 41, 'MCP server should expose 36 retained expert tools, 4 Agent Gateway tools, and create_queue_handshake');
-  for (const requiredTool of ['prepare_image_modeling_brief', 'compile_reviewed_part_graph', 'prepare_existing_model_edit', 'apply_reviewed_model_edit']) {
+  assert.equal(toolNames.length, 42, 'MCP server should expose 37 retained expert tools, 4 Agent Gateway tools, and create_queue_handshake');
+  for (const requiredTool of ['prepare_image_modeling_brief', 'prepare_image_compile_review', 'compile_reviewed_part_graph', 'prepare_existing_model_edit', 'apply_reviewed_model_edit']) {
     assert.ok(toolNames.includes(requiredTool), `MCP server should expose ${requiredTool}`);
   }
 
@@ -108,8 +111,8 @@ try {
 
   await runStep('prepare_image_modeling_brief:blocked', async () => {
     const prepared = await callTool('prepare_image_modeling_brief', {
-      input_dir: path.join(outputDir, 'missing-image-input'),
-      output_dir: path.join(outputDir, 'image-brief-blocked')
+      input_dir: path.join(imageArtifactScratchDir, 'missing-image-input'),
+      output_dir: path.join(imageArtifactScratchDir, 'image-brief-blocked')
     });
     assert.equal(prepared.blocked, true);
     assert.equal(prepared.compile_allowed, false);
@@ -118,14 +121,38 @@ try {
     return { blocked: true, blockers: prepared.blockers };
   }, { tool: 'prepare_image_modeling_brief' });
 
-  await runStep('compile_reviewed_part_graph:blocked', async () => {
-    const missingDir = path.join(outputDir, 'missing-image-input');
-    const compiled = await callTool('compile_reviewed_part_graph', {
+  await runStep('prepare_image_compile_review:blocked', async () => {
+    const missingDir = path.join(imageArtifactScratchDir, 'missing-image-input');
+    const prepared = await callTool('prepare_image_compile_review', {
+      asset_set_path: path.join(missingDir, 'asset-set.json'),
+      observations_path: path.join(missingDir, 'observations.json'),
+      candidate_graph_path: path.join(missingDir, 'candidate-graph.json'),
       mcp_brief_path: path.join(missingDir, 'mcp-modeling-brief.json'),
       promotion_review_path: path.join(missingDir, 'candidate-promotion-review.json'),
+      promotion_patch_path: path.join(missingDir, 'candidate-promotion-patch.json'),
+      part_graph_path: path.join(missingDir, 'part-graph.json'),
+      profile_path: path.join(missingDir, 'product-profile.json')
+    });
+    assert.equal(prepared.blocked, true);
+    assert.equal(prepared.review_ready, false);
+    assert.equal(prepared.compile_allowed, false);
+    assert.equal(prepared.queue_called, false);
+    return { blocked: true, review_ready: false, queue_called: false };
+  }, { tool: 'prepare_image_compile_review' });
+
+  await runStep('compile_reviewed_part_graph:blocked', async () => {
+    const missingDir = path.join(imageArtifactScratchDir, 'missing-image-input');
+    const compiled = await callTool('compile_reviewed_part_graph', {
+      asset_set_path: path.join(missingDir, 'asset-set.json'),
+      observations_path: path.join(missingDir, 'observations.json'),
+      candidate_graph_path: path.join(missingDir, 'candidate-graph.json'),
+      mcp_brief_path: path.join(missingDir, 'mcp-modeling-brief.json'),
+      promotion_review_path: path.join(missingDir, 'candidate-promotion-review.json'),
+      promotion_patch_path: path.join(missingDir, 'candidate-promotion-patch.json'),
       part_graph_path: path.join(missingDir, 'part-graph.json'),
       profile_path: path.join(missingDir, 'product-profile.json'),
-      output_dir: path.join(outputDir, 'image-compile-blocked')
+      approval_challenge_id: 'missing-image-approval',
+      output_dir: path.join(imageArtifactScratchDir, 'image-compile-blocked')
     });
     assert.equal(compiled.blocked, true);
     assert.equal(compiled.preview_only, true);
@@ -569,6 +596,7 @@ try {
   process.stdout.write(`${JSON.stringify(report, null, 2)}\n`);
 } finally {
   await stopServer('SIGTERM');
+  await fs.rm(imageArtifactScratchDir, { recursive: true, force: true });
 }
 
 async function maybeRunQueueSuite(baseCode) {

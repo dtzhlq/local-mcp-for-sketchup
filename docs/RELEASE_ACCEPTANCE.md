@@ -26,7 +26,7 @@ Current decision: `release_acceptance=false`.
 
 ## Automated core checks
 
-- [ ] Exactly 41 MCP tools are listed and exercised by the mock capability
+- [ ] Exactly 42 MCP tools are listed and exercised by the mock capability
   suite.
 - [ ] Plugin registration root, 22 support files, Ruby syntax, runtime source
   manifest, and packaging inventory pass.
@@ -48,7 +48,7 @@ Current decision: `release_acceptance=false`.
   Node.js.
 - [ ] Obtain a fresh `get_capabilities --runtime queue` handshake.
 - [ ] Confirm the running plugin version, capability version, source
-  attestation, and 41-tool registry match the release.
+  attestation, and 42-tool registry match the release.
 - [ ] Run a controlled read-only check.
 - [ ] Run one approved mutation on a disposable model.
 - [ ] Save, close, reopen, and verify the exact saved model.
@@ -65,7 +65,7 @@ artifact checks.
 - [ ] Start the final bundled Windows x64 service without a separately
   installed Node.js.
 - [ ] Obtain a fresh `get_capabilities --runtime queue` handshake.
-- [ ] Confirm version, capability version, source attestation, and 41 tools.
+- [ ] Confirm version, capability version, source attestation, and 42 tools.
 - [ ] Run the same disposable-model read, approved mutation, save, close,
   reopen, and verification flow.
 - [ ] Confirm Windows path, spaces, Unicode user name, and `%APPDATA%` handling.

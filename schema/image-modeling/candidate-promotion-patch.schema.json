@@ -1,0 +1,212 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/schema/image-modeling/candidate-promotion-patch.schema.json",
+  "title": "CandidatePromotionPatch",
+  "type": "object",
+  "required": [
+    "version",
+    "kind",
+    "asset_set_id",
+    "profile_id",
+    "source_review",
+    "status",
+    "apply_allowed",
+    "compile_allowed",
+    "blockers",
+    "actions",
+    "review_summary"
+  ],
+  "properties": {
+    "version": { "const": 1 },
+    "kind": { "const": "candidate_promotion_patch" },
+    "asset_set_id": { "type": "string" },
+    "profile_id": { "type": "string" },
+    "content_signature": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+    "artifact_bindings": {
+      "type": "object",
+      "required": ["asset_set", "observations", "candidate_graph", "promotion_review"],
+      "properties": {
+        "asset_set": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+        "observations": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+        "candidate_graph": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+        "promotion_review": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" }
+      },
+      "additionalProperties": false
+    },
+    "accepted_candidate_ids": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "geometry_strategy": { "type": ["string", "null"] },
+    "source_review": { "type": "string" },
+    "status": { "enum": ["blocked", "needs_review", "ready_for_part_graph_patch"] },
+    "apply_allowed": { "type": "boolean" },
+    "compile_allowed": { "type": "boolean" },
+    "blockers": { "type": "array", "items": { "type": "string" } },
+    "resolved_blockers": { "type": "array", "items": { "type": "string" } },
+    "calibration_lineage": {
+      "type": ["object", "null"],
+      "properties": {
+        "source_perspective_calibration_review_result": { "type": "string" },
+        "accepted_axis_family_ids": { "type": "array", "items": { "type": "string" } },
+        "source_corner_chain_topology_review": { "type": "string" },
+        "accepted_topology_ids": { "type": "array", "items": { "type": "string" } },
+        "source_facade_plane_graph": { "type": "string" }
+      }
+    },
+    "calibration_review": {
+      "type": ["object", "null"],
+      "required": [
+        "source_perspective_calibration_review_result",
+        "status",
+        "accepted_axis_family_ids",
+        "rectification_allowed",
+        "promotion_allowed",
+        "blockers"
+      ],
+      "properties": {
+        "source_perspective_calibration_review_result": { "type": "string" },
+        "status": { "enum": ["blocked_no_accepted_review", "blocked_invalid_review", "accepted_for_rectification"] },
+        "accepted_axis_family_ids": { "type": "array", "items": { "type": "string" } },
+        "rectification_allowed": { "type": "boolean" },
+        "topology_inference_allowed": { "type": "boolean" },
+        "promotion_allowed": { "const": false },
+        "blockers": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "topology_review": {
+      "type": ["object", "null"],
+      "required": [
+        "source_corner_chain_topology_review",
+        "status",
+        "accepted_topology_ids",
+        "derived_drafting_allowed",
+        "promotion_allowed",
+        "blockers"
+      ],
+      "properties": {
+        "source_corner_chain_topology_review": { "type": "string" },
+        "status": { "enum": ["blocked_no_accepted_topology_review", "blocked_invalid_topology_review", "accepted_for_derived_drafting"] },
+        "accepted_topology_ids": { "type": "array", "items": { "type": "string" } },
+        "derived_drafting_allowed": { "type": "boolean" },
+        "promotion_allowed": { "const": false },
+        "blockers": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "draft_view_review": {
+      "type": ["object", "null"],
+      "required": [
+        "source_draft_view_graph",
+        "status",
+        "accepted_view_slot_ids",
+        "promotion_allowed",
+        "blockers"
+      ],
+      "properties": {
+        "source_draft_view_graph": { "type": "string" },
+        "status": { "enum": ["not_accepted", "accepted", "partial", "rejected"] },
+        "accepted_view_slot_ids": { "type": "array", "items": { "type": "string" } },
+        "accepted_plane_hypothesis_ids": { "type": "array", "items": { "type": "string" } },
+        "promotion_allowed": { "type": "boolean" },
+        "blockers": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "local_detail_review": {
+      "type": ["object", "null"],
+      "required": [
+        "status",
+        "accepted_surface_ids",
+        "accepted_detail_ids",
+        "promotion_allowed",
+        "blockers"
+      ],
+      "properties": {
+        "source_object_surface_graph": { "type": ["string", "null"] },
+        "source_facade_plane_graph": { "type": ["string", "null"] },
+        "status": { "enum": ["not_accepted", "accepted", "partial", "rejected"] },
+        "accepted_surface_ids": { "type": "array", "items": { "type": "string" } },
+        "accepted_detail_ids": { "type": "array", "items": { "type": "string" } },
+        "promotion_allowed": { "type": "boolean" },
+        "blockers": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "plane_review": {
+      "type": ["object", "null"],
+      "required": [
+        "source_facade_plane_graph",
+        "status",
+        "accepted_plane_ids",
+        "promotion_allowed",
+        "blockers"
+      ],
+      "properties": {
+        "source_facade_plane_graph": { "type": "string" },
+        "status": { "enum": ["not_accepted", "accepted", "rejected"] },
+        "accepted_plane_ids": { "type": "array", "items": { "type": "string" } },
+        "promotion_allowed": { "type": "boolean" },
+        "blockers": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "actions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["action", "candidate_id", "role", "view", "requires_part_graph_review"],
+        "properties": {
+          "action": { "const": "promote_candidate" },
+          "candidate_id": { "type": "string" },
+          "role": { "type": "string" },
+          "view": { "type": "string" },
+          "source_image": { "type": "string" },
+          "source_observation_id": { "type": "string" },
+          "supporting_observations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["source_image", "source_observation_id", "view", "status"],
+              "properties": {
+                "source_image": { "type": "string" },
+                "source_observation_id": { "type": "string" },
+                "view": { "type": "string" },
+                "status": { "const": "confirmed_support" }
+              }
+            }
+          },
+          "accepted_draft_view_slot_id": { "type": "string" },
+          "accepted_plane_id": { "type": "string" },
+          "accepted_surface_id": { "type": "string" },
+          "accepted_detail_id": { "type": "string" },
+          "confidence": { "type": "number" },
+          "requires_part_graph_review": { "type": "boolean" },
+          "reviewer_note": { "type": "string" }
+        }
+      }
+    },
+    "review_summary": {
+      "type": "object",
+      "required": ["accepted_candidates", "held_candidates", "missing_inputs"],
+      "properties": {
+        "accepted_candidates": { "type": "integer" },
+        "held_candidates": { "type": "integer" },
+        "missing_inputs": { "type": "integer" }
+      }
+    },
+    "notes": { "type": "string" }
+  },
+  "allOf": [
+    {
+      "if": { "required": ["artifact_bindings"] },
+      "then": {
+        "required": ["content_signature", "accepted_candidate_ids"],
+        "properties": {
+          "accepted_candidate_ids": { "minItems": 1 },
+          "actions": {
+            "minItems": 1,
+            "items": { "required": ["source_image", "source_observation_id"] }
+          }
+        }
+      }
+    }
+  ]
+}

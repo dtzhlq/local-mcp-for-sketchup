@@ -37,6 +37,7 @@ examples/python-sdk-facade-fixture.py
 examples/python-sdk-official-api-expression-r3-fixture.py
 examples/part-graphs/switch-controller-reference.part-graph.json
 examples/product-profiles/game_controller_switch.json
+examples/product-profiles/traditional_chinese_hall.json
 
 release/agent-install.v1.template.json
 release/public-package.json
@@ -50,8 +51,11 @@ scripts/generate-ruby-operation-registry.mjs
 scripts/generate-tool-registry-doc.mjs
 scripts/package-sketchup-plugin.mjs
 scripts/package-service-bundle.mjs
+scripts/prepare-traditional-hall-runtime-live-fixture.mjs
 scripts/release-artifact-set.mjs
 scripts/run-core-check.mjs
+scripts/run-image-structured-main-benchmark.mjs
+scripts/run-image-structured-semantic-live-gate.mjs
 scripts/validate-agent-install-manifest.mjs
 scripts/validate-mcp-capability-suite.mjs
 
@@ -66,7 +70,15 @@ test/agent-install-entry-doc.mjs
 test/agent-install-manifest.mjs
 test/dco-check.mjs
 test/expert-compiler.mjs
+test/architectural-primitives.mjs
+test/fixtures/image-structured-provenance-fixture.mjs
+test/fixtures/traditional-hall-semantic-fixture.mjs
+test/fixtures/xieshan-hall-building-single-router-observation.v1.json
+test/fixtures/xieshan-hall-semantic-ground-truth.v1.json
+test/image-structured-main-benchmark.mjs
 test/image-structured-mcp-adapter.mjs
+test/image-structured-provenance.mjs
+test/image-structured-semantic-live-gate.mjs
 test/mcp-server.mjs
 test/operation-contract.mjs
 test/plugin-install-safety.mjs
@@ -81,5 +93,6 @@ test/sketchup-plugin-model-graph-contract.mjs
 test/sketchup-plugin-platform-paths.mjs
 test/sketchup-plugin-structural-probe-contract.mjs
 test/tool-input-validator.mjs
+test/traditional-hall-semantic-contract.mjs
 test/version-contract.mjs
 test/ruby/

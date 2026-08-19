@@ -47,6 +47,70 @@ module LocalMcpForSketchUp
     nil
   end
 
+  def native_mesh_semantic(group)
+    return nil unless group_kind(group).to_s == 'mesh' && group.respond_to?(:entities)
+
+    faces = group.entities.to_a.select do |entity|
+      entity.respond_to?(:normal) && entity.respond_to?(:vertices) && entity.vertices.respond_to?(:map)
+    end
+    return nil if faces.empty?
+
+    point_by_key = {}
+    faces.each do |face|
+      face.vertices.each do |vertex|
+        point = vertex.position
+        point_by_key[[point.x.to_f, point.y.to_f, point.z.to_f]] = point
+      end
+    end
+    points = point_by_key.values
+    center = [0, 1, 2].map do |axis|
+      points.sum { |point| [point.x, point.y, point.z][axis].to_f } / points.length
+    end
+    degenerate = 0
+    inward = 0
+    missing_back = 0
+    material_mismatch = 0
+    front_materials = []
+    back_materials = []
+    faces.each do |face|
+      face_points = face.vertices.map(&:position)
+      face_center = [0, 1, 2].map do |axis|
+        face_points.sum { |point| [point.x, point.y, point.z][axis].to_f } / face_points.length
+      end
+      normal = face.normal
+      magnitude = Math.sqrt(normal.x.to_f**2 + normal.y.to_f**2 + normal.z.to_f**2)
+      area = face.respond_to?(:area) ? face.area.to_f.abs : magnitude
+      if magnitude <= 1.0e-12 || area <= 1.0e-12
+        degenerate += 1
+      else
+        outward = normal.x.to_f * (face_center[0] - center[0])
+        outward += normal.y.to_f * (face_center[1] - center[1])
+        outward += normal.z.to_f * (face_center[2] - center[2])
+        inward += 1 if outward <= 1.0e-12
+      end
+      front_name = face.respond_to?(:material) && face.material ? face.material.name.to_s : nil
+      back_name = face.respond_to?(:back_material) && face.back_material ? face.back_material.name.to_s : nil
+      front_materials << front_name if front_name && !front_name.empty?
+      back_materials << back_name if back_name && !back_name.empty?
+      missing_back += 1 if back_name.nil? || back_name.empty?
+      material_mismatch += 1 if front_name && back_name && front_name != back_name
+    end
+    {
+      'version' => 1,
+      'kind' => 'runtime_mesh_semantic_measurement',
+      'runtime' => 'queue',
+      'native_geometry_remeasured' => true,
+      'geometry_remeasured' => true,
+      'face_count' => faces.length,
+      'degenerate_face_count' => degenerate,
+      'inward_face_count' => inward,
+      'missing_back_material_face_count' => missing_back,
+      'front_back_material_mismatch_count' => material_mismatch,
+      'front_material_names' => front_materials.uniq.sort,
+      'back_material_names' => back_materials.uniq.sort
+    }
+  end
+
   def entity_tag_name(entity)
     tag = entity.respond_to?(:layer) ? entity.layer : nil
     return nil unless tag && tag.respond_to?(:name)

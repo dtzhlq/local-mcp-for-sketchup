@@ -30,7 +30,7 @@
         "channel": { "const": "technical-preview" },
         "server_id": { "const": "local-mcp-for-sketchup" },
         "license": { "const": "Apache-2.0" },
-        "tool_count": { "const": 41 }
+        "tool_count": { "const": 42 }
       }
     },
     "publisher": {

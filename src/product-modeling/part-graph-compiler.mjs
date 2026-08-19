@@ -2,6 +2,15 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { normalizeMaterialAssetPaths, toPortableAssetPath } from '../dsl-asset-paths.mjs';
+import {
+  assertImageStructuredCompileBundle,
+  interpretationEligibilityForPartGraph,
+  sourceModeForPartGraph
+} from '../image-structured-provenance.mjs';
+import { verifyImageStructuredCompileReceipt } from '../image-structured-compile-receipts.mjs';
+import { validatePartGraphPhysicalConsistency } from './physical-consistency-qa.mjs';
+import { assertPartGraphSemanticContract } from './semantic-contract-qa.mjs';
+import { expandArchitecturalPrimitives } from './architectural-primitives.mjs';
 
 const DEFAULT_REPO_ROOT = path.resolve(fileURLToPath(new URL('../..', import.meta.url)));
 const SHAPE_OPERATIONS = new Set([
@@ -58,9 +67,13 @@ export async function compilePartGraphFiles({ profilePath, partGraphPath, repoRo
 
 export function compilePartGraphToSketchUpDsl(partGraph = {}, profile = {}, options = {}) {
   validateProfileMatch(partGraph, profile);
+  const provenanceVerification = enforceSourceProvenance(partGraph, options);
+  partGraph = expandArchitecturalPrimitives(partGraph);
+  const semanticPrecompile = assertPartGraphSemanticContract(partGraph, { phase: 'precompile' });
+  const physicalConsistency = enforcePhysicalConsistencyForSemanticContract(partGraph);
   enforceCompileGate(partGraph, profile);
   const repoRoot = path.resolve(options.repoRoot || DEFAULT_REPO_ROOT);
-  const context = buildContext(partGraph, profile, { ...options, repoRoot });
+  const context = buildContext(partGraph, profile, { ...options, repoRoot, provenanceVerification });
   const operations = [];
 
   if (options.includeReset !== false) operations.push({ op: 'reset' });
@@ -78,11 +91,68 @@ export function compilePartGraphToSketchUpDsl(partGraph = {}, profile = {}, opti
 
   operations.push(...compileReviewOperations(profile));
 
-  return {
+  const document = {
     version: partGraph.dsl_version || profile.dsl_version || 1,
     units: partGraph.units || profile.units || 'mm',
-    metadata: compileDocumentMetadata(partGraph, profile),
+    metadata: {
+      ...compileDocumentMetadata(partGraph, profile, provenanceVerification),
+      ...(partGraph.semantic_contract ? {
+        semantic_contract: {
+          id: partGraph.semantic_contract.id,
+          precompile_digest: semanticPrecompile.semantic_digest,
+          physical_verdict: physicalConsistency.verdict
+        }
+      } : {}),
+      ...(partGraph.architectural_primitive_expansion?.expansions?.length ? {
+        architectural_primitive_expansion: partGraph.architectural_primitive_expansion
+      } : {})
+    },
     operations
+  };
+  const semanticPostcompile = assertPartGraphSemanticContract(partGraph, { phase: 'postcompile', dsl: document });
+  if (partGraph.semantic_contract) {
+    document.metadata.semantic_contract.postcompile_digest = semanticPostcompile.semantic_digest;
+    document.metadata.semantic_contract.assertions = semanticPostcompile.summary.assertions;
+  }
+  return document;
+}
+
+function enforcePhysicalConsistencyForSemanticContract(partGraph) {
+  if (!partGraph.semantic_contract) {
+    return { ok: true, verdict: 'not_applicable', issues: [] };
+  }
+  const report = validatePartGraphPhysicalConsistency(partGraph);
+  if (!report.ok) {
+    throw new Error(`PartGraph physical consistency blocked semantic compile: ${report.issues.map((issue) => issue.message).join('; ')}`);
+  }
+  return report;
+}
+
+function enforceSourceProvenance(partGraph, options) {
+  const sourceMode = sourceModeForPartGraph(partGraph);
+  if (sourceMode !== 'image_structured') {
+    return {
+      ok: true,
+      source_mode: sourceMode,
+      interpretation: interpretationEligibilityForPartGraph(partGraph),
+      binding: null
+    };
+  }
+  if (!options.provenanceBundle) {
+    throw new Error('Image-structured PartGraph compile requires the complete provenance bundle');
+  }
+  const verified = assertImageStructuredCompileBundle(options.provenanceBundle, {
+    requireSourceAssetVerification: true
+  });
+  verifyImageStructuredCompileReceipt(options.compileReceipt, {
+    binding: verified.binding,
+    publicKeyPem: options.trustedCompilePublicKey,
+    expectedPhase: 'precompile_authorization'
+  });
+  return {
+    ...verified,
+    source_mode: sourceMode,
+    interpretation: interpretationEligibilityForPartGraph(partGraph)
   };
 }
 
@@ -285,9 +355,16 @@ function compilePart(part, context) {
     ...cloneJson(part.shape.parameters || {})
   };
   if (part.material && operation.material === undefined) operation.material = part.material;
-  operation.qa = qaForPart(part);
+  operation.qa = qaForPart(part, context);
 
   const operations = [operation];
+  if (part.tag) {
+    operations.push({
+      op: 'assign_tag',
+      target_id: part.id,
+      tag: part.tag
+    });
+  }
   for (const feature of part.feature_intents || []) {
     operations.push(compileFeatureIntent(part, feature));
   }
@@ -329,7 +406,7 @@ function compileGraphOperation(operation, context) {
   }
   if (compiled.part_id && !compiled.qa) {
     const part = context.partsById.get(compiled.part_id);
-    if (part) compiled.qa = qaForPart(part);
+    if (part) compiled.qa = qaForPart(part, context);
   }
   return compiled;
 }
@@ -346,20 +423,28 @@ function compileReviewOperations(profile) {
   return operations;
 }
 
-function compileDocumentMetadata(partGraph, profile) {
+function compileDocumentMetadata(partGraph, profile, provenanceVerification = null) {
+  const interpretation = interpretationEligibilityForPartGraph(partGraph);
   return {
     kind: 'product_modeling_dsl',
     profile_id: partGraph.profile_id || profile.profile_id,
     product_type: partGraph.product?.type || profile.product_type,
     product_name: partGraph.product?.name || profile.name,
     source: 'part_graph_compiler',
+    ...(partGraph.source_mode ? {
+      source_mode: sourceModeForPartGraph(partGraph),
+      interpretation_eligible: interpretation.eligible && provenanceVerification?.ok === true,
+      interpretation_eligibility_reason: interpretation.reason,
+      provenance_binding_hash: provenanceVerification?.binding?.binding_hash || null,
+      source_asset_binding_hash: provenanceVerification?.binding?.source_asset_binding_hash || null
+    } : {}),
     part_graph_id: partGraph.id,
     profile_version: profile.version,
     part_graph_version: partGraph.version
   };
 }
 
-function qaForPart(part) {
+function qaForPart(part, context = {}) {
   const qa = {
     role: part.role || part.type,
     part_id: part.id,
@@ -368,6 +453,13 @@ function qaForPart(part) {
     fallback_state: part.fallback_state || 'needs_review'
   };
   if (part.parent) qa.parent_part_id = part.parent;
+  if (context.partGraph?.semantic_contract && part.shape?.primitive === 'mesh') {
+    qa.mesh_semantic = {
+      front_material: part.shape.parameters?.material || part.material || null,
+      back_material: part.shape.parameters?.back_material || null,
+      precompile_winding_validated: true
+    };
+  }
   if (part.evidence_sources) qa.evidence_sources = cloneJson(part.evidence_sources);
   if (part.feature_intents) {
     qa.feature_intents = part.feature_intents.map((feature) => ({
@@ -376,7 +468,14 @@ function qaForPart(part) {
       fallback_state: feature.fallback_state || feature.feature_mapping?.fallback || 'needs_review'
     }));
   }
-  return { ...qa, ...cloneJson(part.qa || {}) };
+  const merged = { ...qa, ...cloneJson(part.qa || {}) };
+  if (merged.source_candidate_ids === undefined && part.source_candidate_ids) {
+    merged.source_candidate_ids = cloneJson(part.source_candidate_ids);
+  }
+  if (merged.source_observation_ids === undefined && part.source_observation_ids) {
+    merged.source_observation_ids = cloneJson(part.source_observation_ids);
+  }
+  return merged;
 }
 
 function qaForFeatureIntent(part, feature) {

@@ -8,6 +8,7 @@
     "version": { "const": 1 },
     "kind": { "const": "asset_set" },
     "id": { "type": "string" },
+    "content_signature": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
     "source_input": { "type": "string" },
     "assets": {
       "type": "array",
@@ -45,5 +46,22 @@
         "reasons": { "type": "array", "items": { "type": "string" } }
       }
     }
-  }
+  },
+  "allOf": [
+    {
+      "if": { "required": ["content_signature"] },
+      "then": {
+        "properties": {
+          "assets": {
+            "items": {
+              "required": ["content_sha256"],
+              "properties": {
+                "content_sha256": { "type": "string", "pattern": "^(sha256:)?[a-f0-9]{64}$" }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
 }

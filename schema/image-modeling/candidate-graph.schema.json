@@ -7,6 +7,7 @@
   "properties": {
     "version": { "const": 1 },
     "kind": { "const": "candidate_graph" },
+    "content_signature": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
     "asset_set_id": { "type": "string" },
     "profile_id": { "type": "string" },
     "geometry_strategy": {
@@ -82,6 +83,18 @@
       }
     }
   },
+  "allOf": [
+    {
+      "if": { "required": ["content_signature"] },
+      "then": {
+        "properties": {
+          "candidates": {
+            "items": { "required": ["source_observation_id"] }
+          }
+        }
+      }
+    }
+  ],
   "$defs": {
     "point": {
       "type": "array",

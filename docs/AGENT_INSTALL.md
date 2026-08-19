@@ -9,7 +9,7 @@ Before the bundled-Node release exists, `INSTALL_FOR_AGENTS.md` authorizes a
 bounded source-preview path on the same two target platforms. It requires an
 already-installed Node.js 24, a fresh official `main` clone, locked dependency
 installation with lifecycle scripts disabled, a clean dependency audit, and
-`npm run source-preview:check` proving a 41-tool stdio handshake.
+`npm run source-preview:check` proving a 42-tool stdio handshake.
 
 `npm run source-preview:configure -- --client CLIENT` is dry-run by default.
 Codex and Cursor may use `--apply` after review; the existing atomic writer and
@@ -35,7 +35,7 @@ The manifest is data, not a remote script. Values from the manifest must never
 be interpolated into a shell command.
 
 The release manifest also binds the canonical GitHub repository, public commit,
-clean-tree hash, 41-tool count, per-platform dependency inventory, and
+clean-tree hash, 42-tool count, per-platform dependency inventory, and
 artifact-specific acceptance evidence. Draft values intentionally fail the
 release-only validator.
 

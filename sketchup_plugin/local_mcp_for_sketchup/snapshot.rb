@@ -43,6 +43,7 @@ module LocalMcpForSketchUp
         'features' => entity_features(group),
         'boolean_operations' => entity_boolean_operations(group),
         'manifold' => entity_manifold_report(group),
+        'mesh_semantic' => native_mesh_semantic(group),
         'transform' => entity_object_transform(group),
         'visible' => group.respond_to?(:hidden?) ? !group.hidden? : true,
         'locked' => group.respond_to?(:locked?) ? group.locked? : false,

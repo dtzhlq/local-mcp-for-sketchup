@@ -1,0 +1,162 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/schema/image-structured-main-benchmark-report.schema.json",
+  "title": "Image Structured Main Benchmark Report",
+  "type": "object",
+  "required": ["version", "kind", "generated_at", "scoring_policy", "methods", "summary", "evidence_level", "live_status", "verdict", "release_ready"],
+  "properties": {
+    "version": { "const": 1 },
+    "kind": { "const": "image_structured_main_benchmark_report" },
+    "generated_at": { "type": "string", "minLength": 1 },
+    "scoring_policy": {
+      "type": "object",
+      "required": ["dimensions_are_independent", "aggregate_score", "interpretation_cannot_be_replaced_by_face_count_or_model_size", "imported_geometry_and_dsl_reverse_wrapping_are_excluded_from_interpretation"],
+      "properties": {
+        "dimensions_are_independent": { "const": true },
+        "aggregate_score": { "type": "null" },
+        "interpretation_cannot_be_replaced_by_face_count_or_model_size": { "const": true },
+        "imported_geometry_and_dsl_reverse_wrapping_are_excluded_from_interpretation": { "const": true }
+      },
+      "additionalProperties": false
+    },
+    "methods": { "type": "array", "minItems": 2, "items": { "$ref": "#/$defs/method" } },
+    "summary": {
+      "type": "object",
+      "required": ["method_count", "interpretation_scored_methods", "structure_passed_methods", "live_verified_methods"],
+      "properties": {
+        "method_count": { "type": "integer", "minimum": 2 },
+        "interpretation_scored_methods": { "type": "integer", "minimum": 0 },
+        "structure_passed_methods": { "type": "integer", "minimum": 0 },
+        "live_verified_methods": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "evidence_level": { "enum": ["offline_mock_and_static", "queue_live_scoped"] },
+    "live_status": { "enum": ["live_unverified", "scoped_live_verified"] },
+    "verdict": { "const": "technical_baseline" },
+    "release_ready": { "const": false }
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": { "properties": { "live_status": { "const": "scoped_live_verified" } } },
+      "then": {
+        "properties": {
+          "evidence_level": { "const": "queue_live_scoped" },
+          "summary": { "properties": { "live_verified_methods": { "minimum": 1 } } }
+        }
+      },
+      "else": {
+        "properties": {
+          "evidence_level": { "const": "offline_mock_and_static" },
+          "summary": { "properties": { "live_verified_methods": { "const": 0 } } }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "interpretation": {
+      "type": "object",
+      "required": ["status", "eligible", "score", "provenance_verified", "face_count_used"],
+      "properties": {
+        "status": { "enum": ["scored", "excluded"] },
+        "eligible": { "type": "boolean" },
+        "score": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+        "passed": { "type": "integer", "minimum": 0 },
+        "total": { "type": "integer", "minimum": 0 },
+        "reason": { "type": "string", "minLength": 1 },
+        "provenance_verified": { "type": "boolean" },
+        "face_count_used": { "const": false }
+      },
+      "additionalProperties": true,
+      "allOf": [
+        {
+          "if": { "properties": { "status": { "const": "excluded" } } },
+          "then": { "properties": { "eligible": { "const": false }, "score": { "type": "null" } }, "required": ["reason"] },
+          "else": { "properties": { "eligible": { "const": true }, "score": { "type": "number" } }, "required": ["passed", "total"] }
+        }
+      ]
+    },
+    "structure": {
+      "type": "object",
+      "required": ["status", "passed", "total", "score", "checks"],
+      "properties": {
+        "status": { "enum": ["pass", "fail"] },
+        "passed": { "type": "integer", "minimum": 0 },
+        "total": { "type": "integer", "minimum": 1 },
+        "score": { "type": "number", "minimum": 0, "maximum": 1 },
+        "checks": { "type": "object" },
+        "reason": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "runtime": {
+      "type": "object",
+      "required": ["preview", "offline", "mock", "live", "release"],
+      "properties": {
+        "preview": {
+          "type": "object",
+          "required": ["status", "evidence_level", "queue_called"],
+          "properties": {
+            "status": { "enum": ["verified", "not_available"] },
+            "evidence_level": { "enum": ["safe_json_dsl_preview", "none"] },
+            "queue_called": { "const": false }
+          },
+          "additionalProperties": false
+        },
+        "offline": {
+          "type": "object",
+          "required": ["status", "evidence_level", "operation_count", "mock_build_ok"],
+          "properties": {
+            "status": { "enum": ["pass", "fail", "not_available"] },
+            "evidence_level": { "enum": ["offline_compile", "offline_mock", "none"] },
+            "operation_count": { "type": "integer", "minimum": 0 },
+            "mock_build_ok": { "type": ["boolean", "null"] }
+          },
+          "additionalProperties": false
+        },
+        "mock": {
+          "type": "object",
+          "required": ["status", "evidence_level"],
+          "properties": {
+            "status": { "enum": ["verified", "not_verified"] },
+            "evidence_level": { "enum": ["offline_mock", "none"] }
+          },
+          "additionalProperties": false
+        },
+        "live": {
+          "type": "object",
+          "required": ["status", "evidence_level"],
+          "properties": {
+            "status": { "enum": ["verified", "live_unverified"] },
+            "evidence_level": { "enum": ["queue_live_scoped", "none"] }
+          },
+          "additionalProperties": true
+        },
+        "release": {
+          "type": "object",
+          "required": ["status", "evidence_level", "release_ready"],
+          "properties": {
+            "status": { "const": "not_accepted" },
+            "evidence_level": { "const": "none" },
+            "release_ready": { "const": false }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "method": {
+      "type": "object",
+      "required": ["id", "source_mode", "interpretation", "structure", "runtime"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "source_mode": { "type": "string", "minLength": 1 },
+        "interpretation": { "$ref": "#/$defs/interpretation" },
+        "structure": { "$ref": "#/$defs/structure" },
+        "runtime": { "$ref": "#/$defs/runtime" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

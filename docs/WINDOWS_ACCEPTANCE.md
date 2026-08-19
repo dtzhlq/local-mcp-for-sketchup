@@ -28,7 +28,7 @@ path, or unrelated machine information in public evidence.
 6. Confirm it starts with its bundled `node.exe`; do not rely on a system Node.
 7. Request a fresh `get_capabilities --runtime queue` handshake.
 8. Confirm version `0.1.0-rc.4`, the expected capability manifest, runtime
-   source attestation, and 41 MCP tools.
+   source attestation, and 42 MCP tools.
 9. Run a read-only inspection on a disposable model.
 10. Approve one bounded mutation on that disposable model.
 11. Save to a new file, close SketchUp, reopen that exact file, and verify the

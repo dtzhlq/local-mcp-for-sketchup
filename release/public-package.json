@@ -34,6 +34,10 @@
     "agent-install:check": "node scripts/validate-agent-install-manifest.mjs",
     "public-source:export": "node scripts/export-public-source.mjs",
     "public-source:audit": "node scripts/audit-public-source.mjs",
+    "image-structured:main-benchmark": "node scripts/run-image-structured-main-benchmark.mjs",
+    "image-structured:prepare-runtime-live-fixture": "node scripts/prepare-traditional-hall-runtime-live-fixture.mjs",
+    "image-structured:semantic-live-gate": "node scripts/run-image-structured-semantic-live-gate.mjs",
+    "test:image-structured-main-hardening": "node test/image-structured-provenance.mjs && node test/image-structured-mcp-adapter.mjs && node test/architectural-primitives.mjs && node test/traditional-hall-semantic-contract.mjs && node test/image-structured-main-benchmark.mjs && node test/image-structured-semantic-live-gate.mjs",
     "core:check": "node scripts/run-core-check.mjs",
     "dependency:audit": "npm audit --omit=dev --audit-level=high"
   },

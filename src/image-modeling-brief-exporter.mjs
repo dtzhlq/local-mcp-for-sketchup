@@ -19,7 +19,8 @@ export async function exportMcpModelingBriefCli({
   sourcePackagePath = null,
   outputJson = null,
   outputMarkdown = null,
-  maxCandidates = 80
+  maxCandidates = 80,
+  writeOutputs = true
 } = {}) {
   if (!inputDir && (!assetSetPath || !observationsPath || !candidateGraphPath || !modelingBriefPath)) {
     throw new Error('inputDir or all explicit artifact paths are required');
@@ -66,9 +67,11 @@ export async function exportMcpModelingBriefCli({
   });
   const resolvedOutputJson = resolveRepo(outputJson || (baseDir ? path.join(baseDir, 'mcp-modeling-brief.json') : 'output/image-structured-modeler/mcp-modeling-brief.json'));
   const resolvedOutputMarkdown = resolveRepo(outputMarkdown || (baseDir ? path.join(baseDir, 'mcp-modeling-brief.md') : 'output/image-structured-modeler/mcp-modeling-brief.md'));
-  await writeJson(resolvedOutputJson, brief);
-  await fs.mkdir(path.dirname(resolvedOutputMarkdown), { recursive: true });
-  await fs.writeFile(resolvedOutputMarkdown, renderMcpModelingBriefMarkdown(brief), 'utf8');
+  if (writeOutputs) {
+    await writeJson(resolvedOutputJson, brief);
+    await fs.mkdir(path.dirname(resolvedOutputMarkdown), { recursive: true });
+    await fs.writeFile(resolvedOutputMarkdown, renderMcpModelingBriefMarkdown(brief), 'utf8');
+  }
   return {
     ok: true,
     brief,

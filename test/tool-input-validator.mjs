@@ -5,7 +5,7 @@ import { ValidatedToolDispatcher } from '../src/validated-tool-dispatcher.mjs';
 
 const registry = listToolDefinitions();
 const validator = new ToolInputValidator(registry);
-assert.equal(registry.length, 41);
+assert.equal(registry.length, 42);
 
 assert.deepEqual(validator.validate('get_docs', { topic: 'overview', detail: 'summary', max_chars: 512 }), {
   topic: 'overview', detail: 'summary', max_chars: 512

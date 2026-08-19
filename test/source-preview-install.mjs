@@ -19,7 +19,7 @@ try {
   });
   assert.equal(verified.channel, 'source-technical-preview');
   assert.equal(verified.mcp_stdio.verified, true);
-  assert.equal(verified.mcp_stdio.tools, 41);
+  assert.equal(verified.mcp_stdio.tools, 42);
   assert.equal(verified.live_sketchup_verified, false);
   assert.equal(verified.release_acceptance, false);
 
@@ -113,7 +113,7 @@ try {
   process.stdout.write(`${JSON.stringify({
     ok: true,
     source_preview_check: true,
-    mcp_stdio_tools: 41,
+    mcp_stdio_tools: 42,
     codex_dry_run_default: true,
     codex_safe_apply: true,
     cursor_safe_apply: true,

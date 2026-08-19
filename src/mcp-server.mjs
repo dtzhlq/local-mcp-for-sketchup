@@ -161,19 +161,61 @@ const BASE_TOOL_REGISTRY = [
     }
   },
   {
-    name: 'compile_reviewed_part_graph',
-    description: 'Compile schema-valid, review-cleared image artifacts and a reviewed PartGraph to a safe JSON DSL preview. It never executes the DSL or calls the queue runtime.',
+    name: 'prepare_image_compile_review',
+    description: 'Recompute the complete signed image-structured lineage and create a Local Approval Host challenge bound to the exact PartGraph and accepted candidates. It does not compile or call SketchUp.',
     inputSchema: {
       type: 'object',
       properties: {
+        asset_set_path: { type: 'string' },
+        observations_path: { type: 'string' },
+        candidate_graph_path: { type: 'string' },
         mcp_brief_path: { type: 'string' },
         promotion_review_path: { type: 'string' },
+        promotion_patch_path: { type: 'string' },
+        part_graph_path: { type: 'string' },
+        profile_path: { type: 'string' }
+      },
+      required: [
+        'asset_set_path',
+        'observations_path',
+        'candidate_graph_path',
+        'mcp_brief_path',
+        'promotion_review_path',
+        'promotion_patch_path',
+        'part_graph_path',
+        'profile_path'
+      ]
+    }
+  },
+  {
+    name: 'compile_reviewed_part_graph',
+    description: 'Compile a fully bound image-structured artifact chain to a safe JSON DSL preview only after its exact Local Approval Host challenge is approved. It never executes the DSL or calls the queue runtime.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        asset_set_path: { type: 'string' },
+        observations_path: { type: 'string' },
+        candidate_graph_path: { type: 'string' },
+        mcp_brief_path: { type: 'string' },
+        promotion_review_path: { type: 'string' },
+        promotion_patch_path: { type: 'string' },
         part_graph_path: { type: 'string' },
         profile_path: { type: 'string' },
+        approval_challenge_id: { type: 'string' },
         output_dir: { type: 'string' },
         output_dsl: { type: 'string' }
       },
-      required: ['mcp_brief_path', 'promotion_review_path', 'part_graph_path', 'profile_path']
+      required: [
+        'asset_set_path',
+        'observations_path',
+        'candidate_graph_path',
+        'mcp_brief_path',
+        'promotion_review_path',
+        'promotion_patch_path',
+        'part_graph_path',
+        'profile_path',
+        'approval_challenge_id'
+      ]
     }
   },
   {
