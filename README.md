@@ -26,7 +26,7 @@
 现在有两条公开安装路径：
 
 - 默认源码技术预览：本机已有 Node.js 24 时，Agent 可以从官方 Gitee/GitHub
-  克隆源码、安装锁定依赖、验证 41 个 tools，并安全配置 MCP 客户端；
+  克隆源码、安装锁定依赖、验证 42 个 tools，并安全配置 MCP 客户端；
 - 插件预览：Agent 下载、校验并指导导入无签名 RBZ。
 
 当前仍没有随包 Node.js 或正式签名 RBZ。Agent 必须把结果报告为“源码技术
@@ -39,9 +39,23 @@ RBZ 时不能声称 MCP 服务已经安装。正式免 Node 一句话安装仍�
 
 ## 当前边界
 
-当前核心服务暴露 41 个 MCP tools，覆盖能力发现、受控建模、现有模型编辑、
+当前核心服务暴露 42 个 MCP tools，覆盖能力发现、受控建模、现有模型编辑、
 会话与队列诊断、审批和证据输出。工具注册表见
 [docs/tool-registry.md](docs/tool-registry.md)。
+
+本轮新增的图像结构化主链路采用失败即关闭的双层门禁：服务端从完整且签名
+对齐的资产、观察、候选、审核、promotion patch 与 PartGraph 自动推导是否可
+编译，再由编译器独立复验短时授权回执。传统建筑语义契约可分别检查必需/缺失
+角色、禁止区域、具名部件关系、网格正反面材质、多视角证据以及保存复开后的
+语义摘要；`column_grid`、`bay_enclosure`、`masonry_sill_wall` 和
+`podium_with_front_stair` 会降级编译到现有安全 JSON DSL，并保留可编辑身份与
+证据 lineage。
+
+基准报告分别给出图像解释、结构化/可编辑性和运行可靠性结果，不合成一个总分；
+导入几何与 DSL 反向包装不计入图像解释准确率。当前公开证据仍为
+`live_unverified`、`release_ready=false`：尚未附上新的完整 queue 握手、构建、
+保存、复开、多视角截图和语义复验链，因此不能据此宣称照片建模准确率或正式
+发布验收已经完成。
 
 这仍是边界明确的技术预览候选：
 
@@ -84,7 +98,7 @@ npm run source-preview:configure -- --client <codex|cursor|claude-desktop|其他
 
 `source-preview:check` 会拒绝非官方远程仓库、非 `main`、与 `origin/main` 不同
 的提交、被修改的跟踪文件、不受支持的平台和非 Node.js 24，并实际启动 stdio
-服务验证 41 个 tools。它不会调用或修改正在运行的 SketchUp 模型。
+服务验证 42 个 tools。它不会调用或修改正在运行的 SketchUp 模型。
 
 ## 从源码检查
 

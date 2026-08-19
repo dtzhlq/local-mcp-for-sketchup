@@ -158,8 +158,8 @@ async function verifyMcpHandshake({ root, serverPath, expectedVersion }) {
     }
     const listed = await request(2, 'tools/list');
     const names = listed.result?.tools?.map((tool) => tool.name) || [];
-    if (listed.error || names.length !== 41 || new Set(names).size !== 41) {
-      throw codedError('SOURCE_PREVIEW_MCP_TOOLS_MISMATCH', `Expected 41 unique MCP tools, received ${names.length}.`);
+    if (listed.error || names.length !== 42 || new Set(names).size !== 42) {
+      throw codedError('SOURCE_PREVIEW_MCP_TOOLS_MISMATCH', `Expected 42 unique MCP tools, received ${names.length}.`);
     }
     return Object.freeze({ verified: true, tools: names.length, protocol_version: '2024-11-05' });
   } finally {

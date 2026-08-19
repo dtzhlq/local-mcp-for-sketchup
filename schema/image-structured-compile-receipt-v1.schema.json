@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/schema/image-structured-compile-receipt-v1.schema.json",
+  "title": "Image Structured Compile Receipt v1",
+  "type": "object",
+  "required": [
+    "version",
+    "kind",
+    "receipt_id",
+    "phase",
+    "binding_hash",
+    "source_asset_binding_hash",
+    "dsl_sha256",
+    "part_graph_id",
+    "part_graph_signature",
+    "accepted_candidate_ids",
+    "approval_challenge_id",
+    "approved_by",
+    "approval_channel",
+    "issued_at",
+    "expires_at",
+    "public_key_fingerprint",
+    "signature"
+  ],
+  "properties": {
+    "version": { "const": "image-structured-compile-receipt.v1" },
+    "kind": { "const": "image_structured_compile_receipt" },
+    "receipt_id": { "type": "string", "pattern": "^image_compile_[0-9a-f-]+$" },
+    "phase": { "enum": ["precompile_authorization", "compiled_dsl"] },
+    "binding_hash": { "$ref": "#/$defs/sha256" },
+    "source_asset_binding_hash": { "$ref": "#/$defs/sha256" },
+    "dsl_sha256": {
+      "oneOf": [
+        { "$ref": "#/$defs/sha256" },
+        { "type": "null" }
+      ]
+    },
+    "part_graph_id": { "type": "string", "minLength": 1 },
+    "part_graph_signature": { "$ref": "#/$defs/sha256" },
+    "accepted_candidate_ids": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "approval_challenge_id": { "type": "string", "minLength": 1 },
+    "approved_by": { "type": "string", "minLength": 1 },
+    "approval_channel": { "type": "string", "minLength": 1 },
+    "issued_at": { "type": "string", "minLength": 1 },
+    "expires_at": { "type": "string", "minLength": 1 },
+    "public_key_fingerprint": { "$ref": "#/$defs/sha256" },
+    "signature": { "type": "string", "minLength": 32 }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "phase": { "const": "compiled_dsl" } }, "required": ["phase"] },
+      "then": { "properties": { "dsl_sha256": { "$ref": "#/$defs/sha256" } } },
+      "else": { "properties": { "dsl_sha256": { "type": "null" } } }
+    }
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" }
+  }
+}

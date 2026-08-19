@@ -247,13 +247,25 @@ module LocalMcpForSketchUp
     return nil unless qa.is_a?(Hash)
 
     sanitized = {}
-    %w[role part_id intent evidence_status fallback_state parent_part_id].each do |key|
+    %w[role part_id intent evidence_status fallback_state parent_part_id architectural_primitive_id architectural_primitive architectural_primitive_role].each do |key|
       value = qa[key]
       sanitized[key] = value.to_s unless value.nil? || value.to_s.empty?
     end
-    %w[evidence_sources feature_intents].each do |key|
+    %w[evidence_sources feature_intents source_candidate_ids source_observation_ids].each do |key|
       value = qa[key]
       sanitized[key] = value if value.is_a?(Array) || value.is_a?(Hash)
+    end
+    mesh_semantic = qa['mesh_semantic']
+    if mesh_semantic.is_a?(Hash)
+      sanitized_mesh = {}
+      %w[front_material back_material].each do |key|
+        value = mesh_semantic[key]
+        sanitized_mesh[key] = value.to_s unless value.nil? || value.to_s.empty?
+      end
+      if mesh_semantic['precompile_winding_validated'] == true
+        sanitized_mesh['precompile_winding_validated'] = true
+      end
+      sanitized['mesh_semantic'] = sanitized_mesh unless sanitized_mesh.empty?
     end
     contacts = qa['expected_contacts'] || qa['expectedContacts']
     if contacts.is_a?(Array)

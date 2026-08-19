@@ -73,6 +73,7 @@ export function createSnapshot(model) {
       geometry_input: cloneJson(group.geometry_input),
       boolean_operations: cloneJson(group.boolean_operations),
       manifold: cloneJson(group.manifold),
+      mesh_semantic: meshSemanticForGroup(group),
       transform: group.transform || null,
       visible: group.hidden ? false : true,
       locked: group.locked === true,
@@ -242,6 +243,55 @@ export function mergeBoundingBoxes(boxes) {
 function cloneAttributes(attributes) {
   if (!attributes || typeof attributes !== 'object') return null;
   return structuredClone(attributes);
+}
+
+function meshSemanticForGroup(group) {
+  if (group.kind !== 'mesh' || !Array.isArray(group.vertices) || !Array.isArray(group.mesh_faces)) return null;
+  const center = [0, 1, 2].map((axis) => group.vertices.reduce((sum, point) => sum + Number(point[axis]), 0) / group.vertices.length);
+  let degenerateFaces = 0;
+  let inwardFaces = 0;
+  for (const face of group.mesh_faces) {
+    const points = face.map((index) => group.vertices[index]);
+    if (points.length < 3 || points.some((point) => !point)) {
+      degenerateFaces += 1;
+      continue;
+    }
+    const a = points[0].map(Number);
+    const b = points[1].map(Number);
+    const c = points[2].map(Number);
+    const ab = b.map((value, axis) => value - a[axis]);
+    const ac = c.map((value, axis) => value - a[axis]);
+    const normal = [
+      ab[1] * ac[2] - ab[2] * ac[1],
+      ab[2] * ac[0] - ab[0] * ac[2],
+      ab[0] * ac[1] - ab[1] * ac[0]
+    ];
+    if (Math.hypot(...normal) <= 1e-9) {
+      degenerateFaces += 1;
+      continue;
+    }
+    const faceCenter = [0, 1, 2].map((axis) => points.reduce((sum, point) => sum + Number(point[axis]), 0) / points.length);
+    const outward = normal.reduce((sum, value, axis) => sum + value * (faceCenter[axis] - center[axis]), 0);
+    if (outward <= 1e-9) inwardFaces += 1;
+  }
+  const backMaterialMissing = group.back_material ? 0 : group.mesh_faces.length;
+  const frontBackMismatch = group.material && group.back_material && group.material !== group.back_material
+    ? group.mesh_faces.length
+    : 0;
+  return {
+    version: 1,
+    kind: 'runtime_mesh_semantic_measurement',
+    runtime: 'mock',
+    native_geometry_remeasured: false,
+    geometry_remeasured: true,
+    face_count: group.mesh_faces.length,
+    degenerate_face_count: degenerateFaces,
+    inward_face_count: inwardFaces,
+    missing_back_material_face_count: backMaterialMissing,
+    front_back_material_mismatch_count: frontBackMismatch,
+    front_material_names: group.material ? [group.material] : [],
+    back_material_names: group.back_material ? [group.back_material] : []
+  };
 }
 
 function cloneJson(value) {

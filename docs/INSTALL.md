@@ -23,7 +23,7 @@ The configuration command is dry-run by default. After reviewing its absolute
 paths, append `--apply` for Codex or Cursor. Claude Desktop and unknown clients
 return a manual snippet without modifying configuration. The checker requires
 Node.js 24, an official clean `main` checkout equal to `origin/main`, a
-supported platform, and a successful 41-tool stdio handshake.
+supported platform, and a successful 42-tool stdio handshake.
 
 This verifies the MCP service itself, not a live SketchUp queue connection.
 The unsigned plugin must also load and return a fresh queue handshake before

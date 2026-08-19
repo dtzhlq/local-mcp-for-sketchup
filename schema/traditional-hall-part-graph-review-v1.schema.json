@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/schema/traditional-hall-part-graph-review-v1.schema.json",
+  "title": "TraditionalHallPartGraphReviewV1",
+  "type": "object",
+  "required": [
+    "version",
+    "kind",
+    "profile_id",
+    "reviewer",
+    "status",
+    "artifact_bindings",
+    "parameter_scope",
+    "metric_accuracy_claimed",
+    "accepted_primitive_ids",
+    "semantic_contract_id",
+    "confirmed_truth_ids",
+    "blockers",
+    "release_ready"
+  ],
+  "properties": {
+    "version": { "const": 1 },
+    "kind": { "const": "traditional_hall_part_graph_review_v1" },
+    "profile_id": { "const": "traditional_chinese_hall" },
+    "content_signature": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+    "reviewer": { "type": "string", "minLength": 1 },
+    "status": { "const": "accepted" },
+    "artifact_bindings": {
+      "type": "object",
+      "required": ["asset_set", "observations", "candidate_graph", "promotion_review", "promotion_patch"],
+      "properties": {
+        "asset_set": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+        "observations": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+        "candidate_graph": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+        "promotion_review": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+        "promotion_patch": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" }
+      },
+      "additionalProperties": false
+    },
+    "parameter_scope": { "const": "test_runtime_profile_default" },
+    "metric_accuracy_claimed": { "const": false },
+    "accepted_primitive_ids": {
+      "type": "array",
+      "items": { "enum": ["hall-column-grids", "front-bays", "front-masonry-sill", "hall-podium", "roof-shell"] },
+      "minItems": 5,
+      "maxItems": 5,
+      "uniqueItems": true
+    },
+    "semantic_contract_id": { "const": "xieshan-hall-four-truths-v1-reviewed-image-lineage" },
+    "confirmed_truth_ids": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "outer_and_enclosure_column_grids",
+          "podium_balustrade_absent",
+          "masonry_sill_is_enclosure_wall",
+          "front_center_stair_only"
+        ]
+      },
+      "minItems": 4,
+      "maxItems": 4,
+      "uniqueItems": true
+    },
+    "blockers": { "type": "array", "items": { "type": "string" }, "maxItems": 0 },
+    "notes": { "type": "array", "items": { "type": "string" } },
+    "release_ready": { "const": false }
+  },
+  "additionalProperties": false
+}

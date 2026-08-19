@@ -17,7 +17,12 @@ import { buildLimitationsReport, formatLimitationsReportMarkdown } from './limit
 import { resolveTargets } from './target-resolution.mjs';
 import { analyzeSelectionGeometry } from './selection-geometry-interpreter.mjs';
 import { planModificationIntent } from './modification-intent.mjs';
-import { compileReviewedPartGraph, prepareImageModelingBrief } from './image-structured-mcp-adapter.mjs';
+import {
+  compileReviewedPartGraph,
+  prepareImageCompileReview,
+  prepareImageModelingBrief
+} from './image-structured-mcp-adapter.mjs';
+import { ImageStructuredCompileReceiptAuthority } from './image-structured-compile-receipts.mjs';
 import { applyReviewedExistingModelEdit, prepareExistingModelEdit } from './existing-model-editing.mjs';
 import { ApprovalAuthority } from './approval-tokens.mjs';
 import { normalizeExecutionPolicy } from './agent-contract.mjs';
@@ -36,6 +41,8 @@ export class SketchUpBridge {
     this.mockRuntime = new MockRuntime(options.mock || {});
     this.executionPolicy = normalizeExecutionPolicy(options.executionPolicy || policyFromEnvironment());
     this.approvalAuthority = options.approvalAuthority || new ApprovalAuthority(options.approval || {});
+    this.imageStructuredReceiptAuthority = options.imageStructuredReceiptAuthority
+      || new ImageStructuredCompileReceiptAuthority(options.imageStructuredCompileReceipts || {});
     this.taskStore = options.taskStore || new AgentTaskStore(options.agentContract || {});
     this.copyFastSessionAuthority = options.copyFastSessionAuthority || new CopyFastSessionAuthority(options.copyFastSession || {});
     this.agentGateway = options.agentGateway || new AgentGateway({
@@ -77,8 +84,19 @@ export class SketchUpBridge {
     return prepareImageModelingBrief(options);
   }
 
+  async prepare_image_compile_review(options = {}) {
+    return prepareImageCompileReview({
+      ...options,
+      approvalAuthority: this.approvalAuthority
+    });
+  }
+
   async compile_reviewed_part_graph(options = {}) {
-    return compileReviewedPartGraph(options);
+    return compileReviewedPartGraph({
+      ...options,
+      approvalAuthority: this.approvalAuthority,
+      imageStructuredReceiptAuthority: this.imageStructuredReceiptAuthority
+    });
   }
 
   async prepare_existing_model_edit(options = {}) {
@@ -118,6 +136,7 @@ export class SketchUpBridge {
       ...this.options,
       executionPolicy: this.executionPolicy,
       approvalAuthority: this.approvalAuthority,
+      imageStructuredReceiptAuthority: this.imageStructuredReceiptAuthority,
       taskStore: this.taskStore,
       copyFastSessionAuthority: this.copyFastSessionAuthority,
       sessionContractAuthority: this.sessionContractAuthority,

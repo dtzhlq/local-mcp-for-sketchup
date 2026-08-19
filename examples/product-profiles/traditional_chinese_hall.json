@@ -1,0 +1,62 @@
+{
+  "version": 1,
+  "profile_id": "traditional_chinese_hall",
+  "product_type": "traditional_chinese_hall",
+  "name": "Traditional Chinese Timber Hall",
+  "description": "Review-gated profile for traditional timber halls. It requires distinct outer-eave and enclosure-wall column grids, enclosure sill walls, a podium with front-only stair, and explicit negative evidence for balustrades and side/rear stairs.",
+  "dsl_version": 1,
+  "units": "mm",
+  "default_scale": { "width": 10000, "depth": 9000, "height": 6000 },
+  "expected_views": ["front", "rear", "left", "right", "top", "oblique"],
+  "required_parts": [
+    { "id": "outer_eave_column_grid", "role": "outer_eave_column", "required": true, "expected_count": 8, "evidence_required": ["front", "oblique"], "fallback_allowed": ["structured_primitive", "needs_review"] },
+    { "id": "enclosure_wall_column_grid", "role": "enclosure_column", "required": true, "expected_count": 8, "evidence_required": ["front", "oblique"], "fallback_allowed": ["structured_primitive", "needs_review"] },
+    { "id": "bay_enclosure", "role": "enclosure_wall", "required": true, "expected_count": 1, "evidence_required": ["front"], "fallback_allowed": ["structured_primitive", "needs_review"] },
+    { "id": "masonry_sill_wall", "role": "masonry_sill_wall", "required": true, "expected_count": 1, "evidence_required": ["front", "oblique"], "fallback_allowed": ["structured_primitive", "needs_review"] },
+    { "id": "podium_with_front_stair", "role": "front_stair", "required": true, "expected_count": 1, "evidence_required": ["front", "left", "right", "rear"], "fallback_allowed": ["structured_primitive", "needs_review"] },
+    { "id": "roof_shell", "role": "roof_shell", "required": true, "expected_count": 1, "evidence_required": ["front", "top", "oblique"], "fallback_allowed": ["structured_primitive", "needs_review"] }
+  ],
+  "allowed_primitives": [
+    "column_grid",
+    "bay_enclosure",
+    "masonry_sill_wall",
+    "podium_with_front_stair",
+    "box",
+    "mesh",
+    "gable_roof",
+    "image_plane"
+  ],
+  "materials": [
+    { "name": "Hall_Red_Wood", "color": "#7b241c" },
+    { "name": "Hall_Stone", "color": "#a99f8d" },
+    { "name": "Hall_Plaster", "color": "#d8c7aa" },
+    { "name": "Hall_Window", "color": "#3f5d5b", "alpha": 0.7 },
+    { "name": "Hall_Roof", "color": "#4d5358" }
+  ],
+  "tags": [
+    { "name": "Hall_Structure", "color": "#7b241c" },
+    { "name": "Hall_Enclosure", "color": "#d8c7aa" },
+    { "name": "Hall_Negative_Evidence", "color": "#c0392b" }
+  ],
+  "review": {
+    "scenes": [
+      { "name": "Hall_Front_Semantic_Review", "camera": { "eye": [0, -18000, 5500], "target": [0, 0, 2500], "up": [0, 0, 1], "fov": 38 } },
+      { "name": "Hall_Oblique_Semantic_Review", "camera": { "eye": [14000, -16000, 9000], "target": [0, 0, 2500], "up": [0, 0, 1], "fov": 40 } }
+    ],
+    "style": { "name": "Traditional_Hall_Review", "display_edges": true, "profiles": true, "profile_width": 2, "face_style": "shaded_with_textures", "background_color": "#eee9df", "sky_color": "#d6e5ef", "ground_color": "#cbc0aa" }
+  },
+  "compiler": {
+    "name": "compile-part-graph-to-sketchup-dsl",
+    "version": "traditional-hall-semantic-gated-v1",
+    "geometry_gate": {
+      "enabled": true,
+      "max_needs_review_ratio": 0,
+      "max_profile_default_ratio": 0,
+      "min_observed_parts": 0,
+      "min_inferred_parts": 0,
+      "min_scale_confidence": 0.7,
+      "require_promoted_geometry": true,
+      "block_reference_only_output": true
+    }
+  }
+}

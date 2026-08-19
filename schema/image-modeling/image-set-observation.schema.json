@@ -6,13 +6,14 @@
   "required": ["version", "object", "images", "views_detected", "missing_views", "quality_report"],
   "properties": {
     "version": { "const": 1 },
+    "content_signature": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
     "object": {
       "type": "object",
       "required": ["type", "name", "source_images"],
       "properties": {
         "type": { "type": "string" },
         "name": { "type": "string" },
-        "profile": { "enum": ["unknown_object", "switch_controller", "compact_remote", "vehicle_ambulance", "building_group", "building_single"] },
+        "profile": { "enum": ["unknown_object", "switch_controller", "compact_remote", "vehicle_ambulance", "building_group", "building_single", "traditional_chinese_hall"] },
         "source_images": { "type": "array", "items": { "type": "string" } }
       }
     },
@@ -124,6 +125,7 @@
               "keypoints": { "type": "array", "items": { "$ref": "#/$defs/keypoint_evidence" } },
               "grounding": { "$ref": "#/$defs/grounding_evidence" },
               "grounding_status": { "$ref": "#/$defs/grounding_status" },
+              "negative_semantic_role": { "enum": ["balustrade", "side_stair", "rear_stair"] },
               "isolation": { "$ref": "#/$defs/grounding_quality" },
               "occlusion_hints": { "type": "array", "items": { "$ref": "#/$defs/occlusion_hint" } },
               "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
@@ -169,7 +171,7 @@
       "type": "object",
       "required": ["method", "applied", "bbox", "source_bbox", "confidence", "removed_area_ratio", "removed_regions", "review_required"],
       "properties": {
-        "method": { "const": "auto_screenshot_chrome_v1" },
+        "method": { "enum": ["auto_screenshot_chrome_v1", "reviewed_source_region_v1"] },
         "applied": { "type": "boolean" },
         "bbox": { "$ref": "#/$defs/bbox" },
         "source_bbox": { "$ref": "#/$defs/bbox" },

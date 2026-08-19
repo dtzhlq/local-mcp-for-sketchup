@@ -44,8 +44,8 @@ try {
   const list = await request({ id: 1, method: 'tools/list' });
   const toolNames = list.result.tools.map((tool) => tool.name);
   const registryToolMap = new Map(list.result.tools.map((tool) => [tool.name, tool]));
-  assert.equal(toolNames.length, 41, 'MCP tools/list should expose 36 expert tools, 4 Agent Gateway tools, and the fresh handshake tool');
-  assert.equal(EXPERT_TOOL_NAMES.length, 36, 'the original 36-tool expert surface must remain available');
+  assert.equal(toolNames.length, 42, 'MCP tools/list should expose 37 expert tools, 4 Agent Gateway tools, and the fresh handshake tool');
+  assert.equal(EXPERT_TOOL_NAMES.length, 37, 'the original 36-tool expert surface plus the compile-review preparation tool must remain available');
   assert.equal(AGENT_GATEWAY_TOOL_NAMES.length, 4);
   assert.deepEqual(SESSION_CONTRACT_TOOL_NAMES, ['create_queue_handshake']);
   assert.deepEqual(toolNames, listToolNames(), 'stdio MCP must expose the shared tool registry without drift');
@@ -55,6 +55,7 @@ try {
   assert.ok(docsTool.inputSchema.properties.topic.enum.includes('image_artifacts'));
   assert.deepEqual(docsTool.inputSchema.properties.detail.enum, ['summary', 'standard', 'full']);
   assert.ok(toolNames.includes('prepare_image_modeling_brief'), 'MCP tools/list should expose prepare_image_modeling_brief');
+  assert.ok(toolNames.includes('prepare_image_compile_review'), 'MCP tools/list should expose prepare_image_compile_review');
   assert.ok(toolNames.includes('compile_reviewed_part_graph'), 'MCP tools/list should expose compile_reviewed_part_graph');
   assert.ok(toolNames.includes('prepare_existing_model_edit'), 'MCP tools/list should expose prepare_existing_model_edit');
   assert.ok(toolNames.includes('apply_reviewed_model_edit'), 'MCP tools/list should expose apply_reviewed_model_edit');
@@ -161,7 +162,17 @@ try {
     assert.ok(liveTool.inputSchema.properties.session_contract, `${toolName} must expose the live Session Contract input`);
   }
   const imageCompileTool = list.result.tools.find((tool) => tool.name === 'compile_reviewed_part_graph');
-  assert.deepEqual(imageCompileTool.inputSchema.required, ['mcp_brief_path', 'promotion_review_path', 'part_graph_path', 'profile_path']);
+  assert.deepEqual(imageCompileTool.inputSchema.required, [
+    'asset_set_path',
+    'observations_path',
+    'candidate_graph_path',
+    'mcp_brief_path',
+    'promotion_review_path',
+    'promotion_patch_path',
+    'part_graph_path',
+    'profile_path',
+    'approval_challenge_id'
+  ]);
   const resolveTool = list.result.tools.find((tool) => tool.name === 'resolve_model_targets');
   assert.ok(resolveTool.inputSchema.properties.query);
   const analyzeSelectionTool = list.result.tools.find((tool) => tool.name === 'analyze_selection_geometry');

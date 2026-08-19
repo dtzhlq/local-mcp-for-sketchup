@@ -1,0 +1,64 @@
+{
+  "version": 1,
+  "kind": "traditional_chinese_hall_semantic_ground_truth",
+  "source": "user_review_2026-08-05",
+  "scope": "large_form_semantics_not_metric_reconstruction",
+  "assertions": [
+    {
+      "id": "hall-column-grids-outer-and-enclosure",
+      "severity": "error",
+      "expected": {
+        "outer_eave_column_grid": "present",
+        "enclosure_wall_column_grid": "present",
+        "relationship": "distinct_parallel_depth_layers"
+      },
+      "forbidden": [
+        "outer_columns_only",
+        "wall_panels_without_wall_connected_columns"
+      ]
+    },
+    {
+      "id": "podium-no-perimeter-balustrade",
+      "severity": "error",
+      "expected": {
+        "perimeter_balustrade": "absent"
+      },
+      "forbidden": [
+        "stone_balustrade",
+        "railing_posts",
+        "railing_panels"
+      ]
+    },
+    {
+      "id": "masonry-below-enclosure",
+      "severity": "error",
+      "expected": {
+        "masonry_sill_wall": "below_window_or_enclosure",
+        "plane": "enclosure_wall_plane"
+      },
+      "forbidden": [
+        "masonry_sill_interpreted_as_podium_edge_balustrade"
+      ]
+    },
+    {
+      "id": "front-stair-only",
+      "severity": "error",
+      "expected": {
+        "stair_locations": [
+          "front_center"
+        ],
+        "podium_side_and_rear": "vertical"
+      },
+      "forbidden": [
+        "side_stairs",
+        "rear_stairs",
+        "tread_depth_podium_tiers_on_side_or_rear"
+      ]
+    }
+  ],
+  "scoring_policy": {
+    "all_error_assertions_required": true,
+    "geometry_density_cannot_offset_semantic_failure": true,
+    "save_reopen_is_scored_separately": true
+  }
+}

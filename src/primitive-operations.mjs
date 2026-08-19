@@ -28,6 +28,7 @@ export function addMesh(model, operation) {
     });
   });
   const materialName = ensureMaterial(model, material);
+  const backMaterialName = ensureMaterial(model, operation.back_material ?? material);
   const transformedVertices = applyTransform(normalizedVertices, operation, name);
   const bbox = boundingBoxForVertices(transformedVertices);
   const id = objectId(operation, name);
@@ -39,6 +40,7 @@ export function addMesh(model, operation) {
     faces: normalizedFaces.length,
     edges: countMeshEdges(normalizedFaces),
     material: materialName,
+    back_material: backMaterialName,
     vertices: normalizedVertices,
     mesh_faces: normalizedFaces,
     transform: normalizeTransform(operation, name),

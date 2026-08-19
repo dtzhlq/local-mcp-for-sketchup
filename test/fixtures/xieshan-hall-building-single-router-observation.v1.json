@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "kind": "image_structured_router_observation_fixture",
+  "source_artifacts": {
+    "candidate_graph": {
+      "sha256": "sha256:c1f1e06adc1129170f8c45848e89f7511f4bbe60b97db1a5eaa8480422b967f8"
+    },
+    "promotion_review": {
+      "sha256": "sha256:073b330344620c29128ea9b671fbd0e576917e4ca6d238d814de7b2f642a95e8"
+    },
+    "promotion_patch": {
+      "sha256": "sha256:74a10bb7b8bf4e6c4c3a91ca27bfd7b5ec6f8f75a881977aaaf918ab3741865e"
+    }
+  },
+  "intake": {
+    "views": 8,
+    "profile_id": "building_single",
+    "candidate_count": 153,
+    "eligible_count": 0,
+    "accepted_count": 0,
+    "held_count": 153,
+    "compile_allowed": false,
+    "promotion_allowed": false,
+    "apply_allowed": false,
+    "promotion_actions": 0
+  },
+  "role_counts": {
+    "building_main_mass": 3,
+    "exterior_hvac_units": 8,
+    "ground_floor_storefront": 8,
+    "main_object": 56,
+    "main_outline": 8,
+    "rectangular_utility_ducts": 14,
+    "roof_parapet_and_rail": 6,
+    "shadow_or_recess_boundary": 10,
+    "symmetry_axis": 8,
+    "upper_window_bands": 8,
+    "visible_plane_primary": 10,
+    "visible_plane_recessed_left": 14
+  },
+  "negative_evidence_roles": [],
+  "historical_counterexample": {
+    "method": "direct_multimodal_dsl_reverse_wrapped",
+    "semantic_difference_after_qa_id_and_order_exclusions": 0,
+    "interpretation_credit_allowed": false
+  },
+  "status": "historical_observed_router_output",
+  "release_ready": false,
+  "content_signature": "sha256:262b86d21943c1de79bdfcb76c1883098e6acf641dd5c67d2cb66d43636ba60b"
+}

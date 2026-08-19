@@ -28,6 +28,17 @@
     "asset_set_id": { "type": "string" },
     "profile_id": { "type": "string" },
     "source_candidate_graph": { "type": "string" },
+    "content_signature": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+    "artifact_bindings": {
+      "type": "object",
+      "required": ["asset_set", "observations", "candidate_graph"],
+      "properties": {
+        "asset_set": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+        "observations": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+        "candidate_graph": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" }
+      },
+      "additionalProperties": false
+    },
     "reviewer": { "type": "string" },
     "verdict": { "enum": ["blocked", "needs_review", "accepted_subset", "rejected"] },
     "compile_allowed": { "type": "boolean" },
@@ -53,6 +64,8 @@
         "known_depth": { "type": "number" },
         "known_height": { "type": "number" },
         "units": { "const": "mm" },
+        "confirmation_scope": { "enum": ["metric_truth", "test_runtime_profile_default"] },
+        "metric_accuracy_claimed": { "type": "boolean" },
         "note": { "type": "string" }
       }
     },
@@ -154,6 +167,20 @@
         "reviewer_note": { "type": "string" }
       }
     },
+    "negative_evidence_review": {
+      "type": ["object", "null"],
+      "required": ["status", "semantic_contract_allowed", "confirmed_observations", "blockers"],
+      "properties": {
+        "status": { "enum": ["not_accepted", "accepted", "partial", "rejected"] },
+        "semantic_contract_allowed": { "type": "boolean" },
+        "confirmed_observations": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/negative_evidence_review_item" }
+        },
+        "blockers": { "type": "array", "items": { "type": "string" } },
+        "reviewer_note": { "type": "string" }
+      }
+    },
     "accepted_candidates": {
       "type": "array",
       "items": { "$ref": "#/$defs/candidate_review_item" }
@@ -165,6 +192,25 @@
     "notes": { "type": "string" },
     "instructions": { "type": "array", "items": { "type": "string" } }
   },
+  "allOf": [
+    {
+      "if": { "required": ["artifact_bindings"] },
+      "then": {
+        "required": ["content_signature"],
+        "properties": {
+          "accepted_candidates": {
+            "items": {
+              "required": ["source_image", "source_observation_id"],
+              "properties": {
+                "promotion_status": { "const": "accepted_for_part_graph" },
+                "blockers": { "maxItems": 0 }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
   "$defs": {
     "candidate_review_item": {
       "type": "object",
@@ -181,7 +227,36 @@
         "accepted_plane_id": { "type": "string" },
         "accepted_surface_id": { "type": "string" },
         "accepted_detail_id": { "type": "string" },
+        "resolved_blockers": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "supporting_observations": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/supporting_observation" }
+        },
         "blockers": { "type": "array", "items": { "type": "string" } },
+        "reviewer_note": { "type": "string" }
+      }
+    },
+    "supporting_observation": {
+      "type": "object",
+      "required": ["source_image", "source_observation_id", "view", "status"],
+      "properties": {
+        "source_image": { "type": "string" },
+        "source_observation_id": { "type": "string" },
+        "view": { "type": "string" },
+        "status": { "const": "confirmed_support" },
+        "reviewer_note": { "type": "string" }
+      }
+    },
+    "negative_evidence_review_item": {
+      "type": "object",
+      "required": ["source_image", "source_observation_id", "view", "absent_role", "status", "blockers"],
+      "properties": {
+        "source_image": { "type": "string" },
+        "source_observation_id": { "type": "string" },
+        "view": { "enum": ["front", "rear", "left", "right", "oblique"] },
+        "absent_role": { "enum": ["balustrade", "side_stair", "rear_stair"] },
+        "status": { "const": "confirmed_absent" },
+        "blockers": { "type": "array", "items": { "type": "string" }, "maxItems": 0 },
         "reviewer_note": { "type": "string" }
       }
     }

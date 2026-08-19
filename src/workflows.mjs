@@ -1,7 +1,7 @@
 export function getWorkflowBundle() {
   return {
     kind: 'sketchup_mcp_workflow_bundle',
-    version: '2026-07-agent-first.6',
+    version: '2026-08-image-provenance.1',
     scope: 'mainline_safe_json_dsl',
     default_client_profile: 'lowest_common_capability',
     interface_levels: {
@@ -114,8 +114,9 @@ export function getWorkflowBundle() {
         steps: [
           { tool: 'get_docs', arguments: { topic: 'image_artifacts', detail: 'summary', max_chars: 5000 }, purpose: 'Read the fail-closed artifact boundary.' },
           { tool: 'start_agent_task', arguments: { intent: 'image_artifact', instruction: '<prepare a reviewed image artifact>', interface_level: 'guided', inputs: { input_dir: '<trusted server-managed input directory>' } }, purpose: 'Validate server-side evidence and promotion review while returning only task state and artifact handles to the Agent.' },
-          { action: 'human_review', purpose: 'Resolve missing or blocked promotion review outside the Agent.' },
-          { tool: 'compile_reviewed_part_graph', arguments: { mcp_brief_path: '<reviewed MCP brief>', promotion_review_path: '<trusted promotion review>', part_graph_path: '<reviewed PartGraph>', profile_path: '<reviewed product profile>' }, purpose: 'Expert route: write a safe JSON DSL preview only; never call queue from this workflow.' },
+          { tool: 'prepare_image_compile_review', arguments: { asset_set_path: '<signed asset set>', observations_path: '<signed observations>', candidate_graph_path: '<signed candidate graph>', mcp_brief_path: '<derived MCP brief>', promotion_review_path: '<signed promotion review>', promotion_patch_path: '<signed promotion patch>', part_graph_path: '<reviewed and signed PartGraph>', profile_path: '<reviewed product profile>' }, purpose: 'Recompute the complete chain and create a trusted Local Approval Host challenge bound to its exact hashes.' },
+          { action: 'human_review', purpose: 'Wait for the trusted local user-presence decision; Agent text and top-level JSON booleans cannot approve the compile.' },
+          { tool: 'compile_reviewed_part_graph', arguments: { asset_set_path: '<signed asset set>', observations_path: '<signed observations>', candidate_graph_path: '<signed candidate graph>', mcp_brief_path: '<derived MCP brief>', promotion_review_path: '<signed promotion review>', promotion_patch_path: '<signed promotion patch>', part_graph_path: '<reviewed and signed PartGraph>', profile_path: '<reviewed product profile>', approval_challenge_id: '<approved challenge id>' }, purpose: 'Expert route: revalidate artifacts and the server-signed compile receipt, then write a safe JSON DSL preview only; never call queue from this workflow.' },
           { tool: 'validate_reference_model', arguments: { runtime: 'mock' }, purpose: 'Verify the reviewed preview against structured reference rules when available.' }
         ]
       },

@@ -1,0 +1,207 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local-mcp-for-sketchup.invalid/schema/image-structured-semantic-live-gate-report.schema.json",
+  "title": "Image Structured Semantic Live Gate Report",
+  "type": "object",
+  "required": ["version", "kind", "claim_scope", "runtime", "ok", "live_status", "evidence_level", "source_model", "disposable_working_copy", "inputs", "fresh_capability_handshake", "capability_runtime", "steps", "save_reopen_semantic_digest_matches", "claim_boundaries", "evidence_limits", "release_ready"],
+  "properties": {
+    "version": { "const": 1 },
+    "kind": { "const": "image_structured_semantic_live_gate_report" },
+    "claim_scope": { "enum": ["image_structured_full", "semantic_runtime_only"] },
+    "runtime": { "const": "queue" },
+    "ok": { "type": "boolean" },
+    "live_status": { "enum": ["live_unverified", "scoped_live_verified"] },
+    "evidence_level": { "enum": ["queue_incomplete", "queue_live_scoped"] },
+    "source_model": { "$ref": "#/$defs/sourceModel" },
+    "disposable_working_copy": { "type": "string", "minLength": 1 },
+    "saved_model": { "$ref": "#/$defs/fileArtifact" },
+    "inputs": {
+      "type": "object",
+      "required": ["dsl", "part_graph", "compile_manifest", "source_mode", "interpretation_eligible", "semantic_contract_id", "provenance_binding_hash", "source_asset_binding_hash", "compile_receipt_id"],
+      "properties": {
+        "dsl": { "$ref": "#/$defs/fileArtifact" },
+        "part_graph": { "$ref": "#/$defs/fileArtifact" },
+        "compile_manifest": { "anyOf": [{ "$ref": "#/$defs/fileArtifact" }, { "type": "null" }] },
+        "source_mode": { "type": "string", "minLength": 1 },
+        "interpretation_eligible": { "type": "boolean" },
+        "semantic_contract_id": { "type": ["string", "null"] },
+        "provenance_binding_hash": { "type": ["string", "null"], "pattern": "^sha256:[a-f0-9]{64}$" },
+        "source_asset_binding_hash": { "type": ["string", "null"], "pattern": "^sha256:[a-f0-9]{64}$" },
+        "compile_receipt_id": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "fresh_capability_handshake": { "type": "boolean" },
+    "capability_runtime": { "type": ["string", "null"], "enum": ["queue", null] },
+    "steps": { "type": "array", "items": { "$ref": "#/$defs/step" } },
+    "captures": { "type": "array", "items": { "$ref": "#/$defs/capture" } },
+    "save_reopen_semantic_digest_matches": { "type": "boolean" },
+    "semantic_revalidation": { "type": "object" },
+    "claim_boundaries": {
+      "type": "object",
+      "required": ["image_interpretation_accuracy", "structured_semantic_contract", "queue_execution_save_reopen", "note"],
+      "properties": {
+        "image_interpretation_accuracy": { "const": false },
+        "structured_semantic_contract": { "const": true },
+        "queue_execution_save_reopen": { "type": "boolean" },
+        "note": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "evidence_limits": {
+      "type": "object",
+      "required": ["view_evidence", "pixel_level_semantic_segmentation", "native_mesh_check_in_scope", "native_face_normal_remeasurement", "mesh_winding_evidence", "note"],
+      "properties": {
+        "view_evidence": { "const": "server_capture_bound_aabb_occlusion_projection" },
+        "pixel_level_semantic_segmentation": { "const": false },
+        "native_mesh_check_in_scope": { "type": "boolean" },
+        "native_face_normal_remeasurement": { "type": "boolean" },
+        "mesh_winding_evidence": { "enum": ["native_runtime_face_measurement", "incomplete", "not_in_scope"] },
+        "note": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": { "properties": { "native_mesh_check_in_scope": { "const": false } } },
+          "then": {
+            "properties": {
+              "native_face_normal_remeasurement": { "const": false },
+              "mesh_winding_evidence": { "const": "not_in_scope" }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "native_face_normal_remeasurement": { "const": true } } },
+          "then": {
+            "properties": {
+              "native_mesh_check_in_scope": { "const": true },
+              "mesh_winding_evidence": { "const": "native_runtime_face_measurement" }
+            }
+          }
+        }
+      ]
+    },
+    "error": { "type": "string", "minLength": 1 },
+    "release_ready": { "const": false }
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": { "properties": { "ok": { "const": true } } },
+      "then": {
+        "required": ["saved_model", "captures", "semantic_revalidation"],
+        "properties": {
+          "live_status": { "const": "scoped_live_verified" },
+          "evidence_level": { "const": "queue_live_scoped" },
+          "source_model": { "properties": { "modified": { "const": false } } },
+          "fresh_capability_handshake": { "const": true },
+          "capability_runtime": { "const": "queue" },
+          "captures": { "minItems": 2 },
+          "save_reopen_semantic_digest_matches": { "const": true },
+          "claim_boundaries": { "properties": { "queue_execution_save_reopen": { "const": true } } }
+        }
+      },
+      "else": {
+        "properties": {
+          "live_status": { "const": "live_unverified" },
+          "evidence_level": { "const": "queue_incomplete" },
+          "claim_boundaries": { "properties": { "queue_execution_save_reopen": { "const": false } } }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "claim_scope": { "const": "image_structured_full" } } },
+      "then": {
+        "properties": {
+          "inputs": {
+            "properties": {
+              "compile_manifest": { "$ref": "#/$defs/fileArtifact" },
+              "source_mode": { "const": "image_structured" },
+              "interpretation_eligible": { "const": true }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "inputs": {
+            "properties": {
+              "compile_manifest": { "type": "null" },
+              "source_mode": { "not": { "const": "image_structured" } },
+              "interpretation_eligible": { "const": false },
+              "provenance_binding_hash": { "type": "null" },
+              "source_asset_binding_hash": { "type": "null" },
+              "compile_receipt_id": { "type": "null" }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "allOf": [
+          { "properties": { "ok": { "const": true } } },
+          { "properties": { "claim_scope": { "const": "image_structured_full" } } }
+        ]
+      },
+      "then": {
+        "properties": {
+          "inputs": {
+            "properties": {
+              "provenance_binding_hash": { "$ref": "#/$defs/sha256" },
+              "source_asset_binding_hash": { "$ref": "#/$defs/sha256" },
+              "compile_receipt_id": { "type": "string", "minLength": 1 }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+    "fileArtifact": {
+      "type": "object",
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1 },
+        "sha256": { "$ref": "#/$defs/sha256" }
+      },
+      "additionalProperties": false
+    },
+    "sourceModel": {
+      "type": "object",
+      "required": ["path", "sha256", "modified"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1 },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "modified": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "step": {
+      "type": "object",
+      "required": ["kind", "ok"],
+      "properties": {
+        "kind": { "type": "string", "minLength": 1 },
+        "ok": { "type": "boolean" }
+      },
+      "additionalProperties": true
+    },
+    "capture": {
+      "type": "object",
+      "required": ["kind", "ok", "view", "queue_view", "path", "sha256", "server_visual_capture", "read_only_attestation_verified"],
+      "properties": {
+        "kind": { "const": "capture_view" },
+        "ok": { "const": true },
+        "view": { "enum": ["front", "oblique"] },
+        "queue_view": { "type": "string", "minLength": 1 },
+        "path": { "type": "string", "minLength": 1 },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "server_visual_capture": { "const": true },
+        "read_only_attestation_verified": { "const": true },
+        "eye": { "type": "array", "minItems": 3, "maxItems": 3, "items": { "type": "number" } }
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -119,7 +119,7 @@ source technical preview, not the future bundled-Node release.
    Stop on any install error or high/critical audit finding.
 5. Run `npm run source-preview:check`. Continue only when it reports the
    official remote, `main`, a clean HEAD equal to fetched `origin/main`, Node.js
-   24, `mcp_stdio.verified: true`, and exactly 41 tools.
+   24, `mcp_stdio.verified: true`, and exactly 42 tools.
 6. Run the configuration command without `--apply` first:
 
    ```text
@@ -134,7 +134,7 @@ source technical preview, not the future bundled-Node release.
 8. For `claude-desktop` or any other client, do not add `--apply`; use the
    returned manual snippet and tell the user where their client documentation
    says to place it. Do not guess a domestic client's configuration path.
-9. Restart the MCP client, confirm it exposes exactly 41 Local MCP tools, then
+9. Restart the MCP client, confirm it exposes exactly 42 Local MCP tools, then
    complete the plugin-preview path below so SketchUp can provide the queue
    runtime. If the plugin is refused, the MCP stdio server may still start but
    live SketchUp operations remain unavailable.
@@ -209,7 +209,7 @@ artifact: <downloaded RBZ path or not downloaded>
 sha256_verified: true | false
 plugin_action: installed | manual-step-required | refused | not-attempted
 mcp_stdio_verified: true | false
-mcp_tools: 41 | not-verified
+mcp_tools: 42 | not-verified
 mcp_config_modified: true | false
 mcp_config_backup: <path or none>
 live_sketchup_verified: true | false
