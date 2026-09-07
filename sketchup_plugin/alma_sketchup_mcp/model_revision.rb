@@ -12,7 +12,7 @@ module AlmaSketchupMCP
   end
 
   def session_model_revision_report(model, model_snapshot = nil)
-    model_snapshot ||= snapshot(model)
+    model_snapshot ||= snapshot(model, include_detail_evidence: false)
     graph = model_revision_merkle_graph(model, model_snapshot)
     source = {
       'strategy' => MODEL_REVISION_STRATEGY,
@@ -24,8 +24,10 @@ module AlmaSketchupMCP
       'blockers' => graph['blockers'],
       'totals' => model_snapshot['totals'],
       'materials' => model_snapshot['materials'],
+      'native_appearance' => model_snapshot['native_appearance'],
       'tags' => model_snapshot['tags'],
       'scenes' => model_snapshot['scenes'],
+      'section_planes' => model_snapshot['section_planes'],
       'classification_schemas' => model_snapshot['classification_schemas'],
       'component_definition_summaries' => model_snapshot['component_definition_summaries'],
       'image_references' => model_snapshot['image_references']
@@ -44,7 +46,7 @@ module AlmaSketchupMCP
   end
 
   def model_revision_merkle_graph(model, model_snapshot = nil, unique_entity_limit: MODEL_REVISION_UNIQUE_ENTITY_LIMIT)
-    model_snapshot ||= snapshot(model)
+    model_snapshot ||= snapshot(model, include_detail_evidence: false)
     limit = unique_entity_limit.to_i
     raise 'model revision unique entity limit must be positive' unless limit.positive?
 
@@ -271,8 +273,13 @@ module AlmaSketchupMCP
     return normalized if normalized.length < 2
 
     candidates = []
+    # The first point determines the lexicographic minimum unless tied. Avoid
+    # serializing every full rotation of a large loop just to find that point.
+    point_keys = normalized.map { |point| revision_json(point) }
+    first_key = point_keys.min
     [normalized, normalized.reverse].each do |sequence|
       sequence.length.times do |offset|
+        next unless revision_json(sequence[offset]) == first_key
         candidates << sequence.rotate(offset)
       end
     end
@@ -287,10 +294,14 @@ module AlmaSketchupMCP
     case value
     when Hash
       pairs = value.map { |key, child| [key.to_s, revision_canonical_value(child)] }
-      pairs.sort_by! { |key, child| [key, JSON.generate(child)] }
-      if pairs.each_cons(2).any? { |left, right| left[0] == right[0] }
+      # Normal native dictionaries have unique string keys. Serializing every
+      # subtree as a secondary sort key was redundant for that common case.
+      duplicate_keys = pairs.map(&:first).uniq.length != pairs.length
+      if duplicate_keys
+        pairs.sort_by! { |key, child| [key, JSON.generate(child)] }
         { '$pairs' => pairs }
       else
+        pairs.sort_by!(&:first)
         pairs.each_with_object({}) { |(key, child), result| result[key] = child }
       end
     when Array

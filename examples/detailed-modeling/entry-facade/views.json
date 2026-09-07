@@ -1,0 +1,208 @@
+[
+  {
+    "id": "entry-overview",
+    "name": "entry-overview",
+    "kind": "overview",
+    "width": 1600,
+    "height": 1000,
+    "camera": {
+      "eye": [
+        8500,
+        -9800,
+        5400
+      ],
+      "target": [
+        2400,
+        -300,
+        1580
+      ],
+      "up": [
+        0,
+        0,
+        1
+      ],
+      "fov": 42
+    }
+  },
+  {
+    "id": "entry-front",
+    "name": "entry-front",
+    "kind": "overview",
+    "width": 1600,
+    "height": 1000,
+    "camera": {
+      "eye": [
+        2600,
+        -10800,
+        1750
+      ],
+      "target": [
+        2600,
+        0,
+        1650
+      ],
+      "up": [
+        0,
+        0,
+        1
+      ],
+      "fov": 42
+    }
+  },
+  {
+    "id": "entry-window-closeup",
+    "name": "entry-window-closeup",
+    "kind": "closeup",
+    "target_id": "entry-window",
+    "width": 1600,
+    "height": 1000,
+    "camera": {
+      "eye": [
+        4400,
+        -2250,
+        2290
+      ],
+      "target": [
+        3200,
+        60,
+        1800
+      ],
+      "up": [
+        0,
+        0,
+        1
+      ],
+      "fov": 38
+    }
+  },
+  {
+    "id": "entry-door-closeup",
+    "name": "entry-door-closeup",
+    "kind": "closeup",
+    "target_id": "entry-door",
+    "width": 1600,
+    "height": 1000,
+    "camera": {
+      "eye": [
+        2000,
+        -2000,
+        1560
+      ],
+      "target": [
+        1170,
+        0,
+        1250
+      ],
+      "up": [
+        0,
+        0,
+        1
+      ],
+      "fov": 38
+    }
+  },
+  {
+    "id": "entry-eaves-closeup",
+    "name": "entry-eaves-closeup",
+    "kind": "closeup",
+    "target_id": "entry-eaves",
+    "width": 1600,
+    "height": 1000,
+    "camera": {
+      "eye": [
+        6500,
+        -1400,
+        4150
+      ],
+      "target": [
+        4780,
+        -70,
+        3300
+      ],
+      "up": [
+        0,
+        0,
+        1
+      ],
+      "fov": 38
+    }
+  },
+  {
+    "id": "entry-railing-closeup",
+    "name": "entry-railing-closeup",
+    "kind": "closeup",
+    "target_id": "entry-railing",
+    "width": 1600,
+    "height": 1000,
+    "camera": {
+      "eye": [
+        4300,
+        -3550,
+        1000
+      ],
+      "target": [
+        3830,
+        -1900,
+        550
+      ],
+      "up": [
+        0,
+        0,
+        1
+      ],
+      "fov": 38
+    }
+  },
+  {
+    "id": "entry-wall-junction-closeup",
+    "name": "entry-wall-junction-closeup",
+    "kind": "closeup",
+    "target_id": "entry-wall",
+    "width": 1600,
+    "height": 1000,
+    "camera": {
+      "eye": [
+        -1200,
+        -1500,
+        1850
+      ],
+      "target": [
+        -80,
+        50,
+        1700
+      ],
+      "up": [
+        0,
+        0,
+        1
+      ],
+      "fov": 38
+    }
+  },
+  {
+    "id": "entry-paving-closeup",
+    "name": "entry-paving-closeup",
+    "kind": "closeup",
+    "target_id": "entry-paving",
+    "width": 1600,
+    "height": 1000,
+    "camera": {
+      "eye": [
+        2900,
+        -4000,
+        1500
+      ],
+      "target": [
+        2600,
+        -450,
+        10
+      ],
+      "up": [
+        0,
+        0,
+        1
+      ],
+      "fov": 38
+    }
+  }
+]

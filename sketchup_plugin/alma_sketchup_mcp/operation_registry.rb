@@ -4,6 +4,83 @@
 
 module AlmaSketchupMCP
   OPERATION_SUPPORT = {
+    'section_plane' => {
+      'status' => 'partial',
+      'stability' => 'experimental',
+      'schema' => {
+        'required' => ['op', 'name', 'origin', 'normal'],
+        'optional' => ['id', 'activate']
+      },
+      'component_scope' => {
+        'status' => 'unsupported'
+      }
+    },
+    'section_plane_activate' => {
+      'status' => 'partial',
+      'stability' => 'experimental',
+      'schema' => {
+        'required' => ['op', 'section_ref'],
+        'optional' => []
+      },
+      'component_scope' => {
+        'status' => 'unsupported'
+      }
+    },
+    'environment_define' => {
+      'status' => 'partial',
+      'stability' => 'experimental',
+      'schema' => {
+        'required' => ['op', 'name', 'path'],
+        'optional' => ['id', 'description', 'rotation', 'skydome_exposure', 'reflection_exposure', 'use_as_skydome', 'use_for_reflections', 'linked_sun', 'linked_sun_position']
+      },
+      'component_scope' => {
+        'status' => 'unsupported'
+      }
+    },
+    'environment_update' => {
+      'status' => 'partial',
+      'stability' => 'experimental',
+      'schema' => {
+        'required' => ['op', 'environment_ref'],
+        'optional' => ['description', 'rotation', 'skydome_exposure', 'reflection_exposure', 'use_as_skydome', 'use_for_reflections', 'linked_sun', 'linked_sun_position']
+      },
+      'component_scope' => {
+        'status' => 'unsupported'
+      }
+    },
+    'environment_activate' => {
+      'status' => 'partial',
+      'stability' => 'experimental',
+      'schema' => {
+        'required' => ['op', 'environment_ref'],
+        'optional' => []
+      },
+      'component_scope' => {
+        'status' => 'unsupported'
+      }
+    },
+    'style_load' => {
+      'status' => 'partial',
+      'stability' => 'experimental',
+      'schema' => {
+        'required' => ['op', 'name', 'path'],
+        'optional' => ['activate', 'capture_current_display']
+      },
+      'component_scope' => {
+        'status' => 'unsupported'
+      }
+    },
+    'style_activate' => {
+      'status' => 'partial',
+      'stability' => 'experimental',
+      'schema' => {
+        'required' => ['op', 'style_ref'],
+        'optional' => []
+      },
+      'component_scope' => {
+        'status' => 'unsupported'
+      }
+    },
     'reset' => {
       'status' => 'supported',
       'stability' => 'stable',
@@ -20,7 +97,7 @@ module AlmaSketchupMCP
       'stability' => 'stable',
       'schema' => {
         'required' => ['op', 'name'],
-        'optional' => ['color', 'alpha', 'texture', 'workflow', 'pbr']
+        'optional' => ['color', 'alpha', 'texture', 'workflow', 'pbr', 'skm_path']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -86,7 +163,7 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op'],
-        'optional' => ['name', 'target_id', 'targetId', 'target', 'object', 'entity_path', 'entityPath', 'target_path', 'targetPath', 'edit_scope', 'editScope', 'instance_policy', 'instancePolicy', 'instance_id', 'instanceId', 'material', 'projection', 'offset', 'offset_u', 'offsetU', 'offset_v', 'offsetV', 'scale', 'scale_u', 'scaleU', 'scale_v', 'scaleV', 'rotation', 'rotation_degrees', 'rotationDegrees']
+        'optional' => ['name', 'target_id', 'targetId', 'target', 'object', 'entity_path', 'entityPath', 'target_path', 'targetPath', 'edit_scope', 'editScope', 'instance_policy', 'instancePolicy', 'instance_id', 'instanceId', 'material', 'projection', 'offset', 'offset_u', 'offsetU', 'offset_v', 'offsetV', 'scale', 'scale_u', 'scaleU', 'scale_v', 'scaleV', 'rotation', 'rotation_degrees', 'rotationDegrees', 'texture_size_mm', 'side', 'face_selector']
       },
       'component_scope' => {
         'status' => 'unsupported'
@@ -295,7 +372,7 @@ module AlmaSketchupMCP
       'stability' => 'stable',
       'schema' => {
         'required' => ['op', 'name', 'origin', 'size'],
-        'optional' => ['id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'optional' => ['id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -306,7 +383,7 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op', 'name', 'origin', 'size', 'radius'],
-        'optional' => ['segments', 'smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'optional' => ['segments', 'smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -317,7 +394,7 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op', 'name', 'origin', 'size', 'bevel'],
-        'optional' => ['smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'optional' => ['smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -328,7 +405,7 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op', 'name', 'origin', 'size', 'radius'],
-        'optional' => ['segments', 'smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'optional' => ['segments', 'smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -339,7 +416,7 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op', 'name', 'origin', 'size', 'amount'],
-        'optional' => ['bevel', 'smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'optional' => ['bevel', 'smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -350,7 +427,7 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op', 'name', 'center', 'size', 'depth'],
-        'optional' => ['radius', 'segments', 'smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'optional' => ['radius', 'segments', 'smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -361,7 +438,7 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op', 'name', 'points', 'width'],
-        'optional' => ['depth', 'smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'optional' => ['depth', 'smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -372,7 +449,7 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op', 'name', 'text', 'height'],
-        'optional' => ['origin', 'center', 'width', 'depth', 'spacing', 'align', 'mode', 'text_mode', 'outline', 'font', 'bold', 'italic', 'filled', 'extrusion', 'tolerance', 'smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'optional' => ['origin', 'center', 'width', 'depth', 'spacing', 'align', 'mode', 'text_mode', 'outline', 'font', 'bold', 'italic', 'filled', 'extrusion', 'tolerance', 'smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -383,7 +460,7 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op', 'name', 'text', 'height'],
-        'optional' => ['origin', 'center', 'width', 'depth', 'spacing', 'align', 'mode', 'text_mode', 'outline', 'font', 'bold', 'italic', 'filled', 'extrusion', 'tolerance', 'smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'optional' => ['origin', 'center', 'width', 'depth', 'spacing', 'align', 'mode', 'text_mode', 'outline', 'font', 'bold', 'italic', 'filled', 'extrusion', 'tolerance', 'smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -394,7 +471,7 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op', 'name', 'text', 'height'],
-        'optional' => ['origin', 'center', 'font', 'align', 'bold', 'italic', 'filled', 'extrusion', 'depth', 'tolerance', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'optional' => ['origin', 'center', 'font', 'align', 'bold', 'italic', 'filled', 'extrusion', 'depth', 'tolerance', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -405,7 +482,7 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op', 'name', 'center', 'length', 'width', 'depth'],
-        'optional' => ['segments', 'smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'optional' => ['segments', 'smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -416,7 +493,7 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op', 'name', 'count', 'spacing', 'length', 'width', 'depth'],
-        'optional' => ['center', 'origin', 'direction', 'segments', 'smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'optional' => ['center', 'origin', 'direction', 'segments', 'smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -427,7 +504,7 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op', 'name', 'origin', 'length', 'height', 'thickness'],
-        'optional' => ['direction', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'optional' => ['direction', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -438,7 +515,7 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op', 'name', 'center', 'outer_radius', 'inner_radius', 'height'],
-        'optional' => ['segments', 'hole_material', 'smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'optional' => ['segments', 'hole_material', 'smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -449,7 +526,7 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op', 'name', 'center', 'height'],
-        'optional' => ['radius', 'size', 'corner_radius', 'segments', 'smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'optional' => ['radius', 'size', 'corner_radius', 'segments', 'smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -581,7 +658,7 @@ module AlmaSketchupMCP
       'stability' => 'stable',
       'schema' => {
         'required' => ['op', 'name', 'plane', 'points', 'depth'],
-        'optional' => ['id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'optional' => ['id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -592,7 +669,7 @@ module AlmaSketchupMCP
       'stability' => 'stable',
       'schema' => {
         'required' => ['op', 'name', 'origin', 'plane', 'size', 'thickness'],
-        'optional' => ['openings', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'optional' => ['openings', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -603,7 +680,7 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op', 'name', 'origin', 'size', 'cutouts'],
-        'optional' => ['smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'optional' => ['smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -614,7 +691,7 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op', 'name', 'origin', 'plane', 'outer'],
-        'optional' => ['holes', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'optional' => ['holes', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -625,7 +702,7 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op', 'name', 'origin', 'plane', 'outer', 'depth'],
-        'optional' => ['holes', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'optional' => ['holes', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -636,7 +713,7 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op', 'name', 'vertices', 'faces'],
-        'optional' => ['back_material', 'f_material', 'b_material', 'smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'optional' => ['back_material', 'f_material', 'b_material', 'smooth', 'construction', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -647,7 +724,7 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op', 'name', 'vertices'],
-        'optional' => ['faces', 'edges', 'material', 'smooth', 'faces[].pushpull', 'faces[].followme', 'faces[].position_material', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'optional' => ['faces', 'edges', 'material', 'smooth', 'faces[].pushpull', 'faces[].followme', 'faces[].position_material', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -658,7 +735,7 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op', 'name', 'points'],
-        'optional' => ['vertices', 'closed', 'material', 'smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'optional' => ['vertices', 'closed', 'material', 'smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -669,7 +746,7 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op', 'name', 'center', 'radius'],
-        'optional' => ['start_angle', 'startAngle', 'end_angle', 'endAngle', 'plane', 'segments', 'material', 'smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'optional' => ['start_angle', 'startAngle', 'end_angle', 'endAngle', 'plane', 'segments', 'chord_tolerance_mm', 'max_segments', 'material', 'smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -680,7 +757,7 @@ module AlmaSketchupMCP
       'stability' => 'stable',
       'schema' => {
         'required' => ['op', 'name', 'origin', 'width', 'depth', 'rise'],
-        'optional' => ['overhang', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'optional' => ['overhang', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -691,7 +768,7 @@ module AlmaSketchupMCP
       'stability' => 'stable',
       'schema' => {
         'required' => ['op', 'name', 'origin', 'width', 'depth', 'rise'],
-        'optional' => ['overhang', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'optional' => ['overhang', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -702,7 +779,7 @@ module AlmaSketchupMCP
       'stability' => 'stable',
       'schema' => {
         'required' => ['op', 'name', 'origin', 'radius', 'height'],
-        'optional' => ['segments', 'smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'optional' => ['segments', 'chord_tolerance_mm', 'max_segments', 'smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -713,7 +790,7 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op', 'name', 'profiles'],
-        'optional' => ['smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'optional' => ['smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -724,7 +801,7 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op', 'name', 'origin', 'front_profile', 'side_profile'],
-        'optional' => ['smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'optional' => ['smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -735,7 +812,7 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op', 'name', 'origin', 'profile'],
-        'optional' => ['segments', 'smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'optional' => ['segments', 'smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -746,7 +823,7 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op', 'name', 'center', 'cylinder_radius', 'width', 'height'],
-        'optional' => ['cylinder_center', 'angle', 'depth', 'smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'optional' => ['cylinder_center', 'angle', 'depth', 'smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -757,7 +834,7 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op', 'name', 'origin'],
-        'optional' => ['height', 'shaft_height', 'base_radius', 'shaft_radius', 'cap_radius', 'top_radius', 'profile', 'segments', 'smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'optional' => ['height', 'shaft_height', 'base_radius', 'shaft_radius', 'cap_radius', 'top_radius', 'profile', 'segments', 'smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -768,7 +845,7 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op', 'name', 'center', 'radius'],
-        'optional' => ['depth', 'head_radius', 'head_depth', 'segments', 'smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'optional' => ['depth', 'head_radius', 'head_depth', 'segments', 'smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -778,8 +855,8 @@ module AlmaSketchupMCP
       'status' => 'supported',
       'stability' => 'beta',
       'schema' => {
-        'required' => ['op', 'name', 'points', 'radius'],
-        'optional' => ['path', 'start', 'end', 'segments', 'smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'required' => ['op', 'name', 'radius'],
+        'optional' => ['points', 'path', 'start', 'end', 'segments', 'chord_tolerance_mm', 'max_segments', 'smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -790,7 +867,7 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op', 'name', 'path', 'radius'],
-        'optional' => ['segments', 'smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'optional' => ['segments', 'chord_tolerance_mm', 'max_segments', 'smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -801,7 +878,7 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op', 'name', 'origin', 'width', 'depth', 'thickness', 'crown_height'],
-        'optional' => ['segments_x', 'segments_y', 'smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'optional' => ['segments_x', 'segments_y', 'smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -812,7 +889,7 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op', 'name', 'origin', 'width', 'height', 'thickness', 'bow_depth'],
-        'optional' => ['segments_x', 'segments_z', 'smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'optional' => ['segments_x', 'segments_z', 'smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -834,7 +911,7 @@ module AlmaSketchupMCP
       'stability' => 'stable',
       'schema' => {
         'required' => ['op', 'name', 'origin', 'width', 'depth'],
-        'optional' => ['thickness', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'optional' => ['thickness', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -845,7 +922,7 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op', 'name', 'points', 'thickness'],
-        'optional' => ['origin', 'holes', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'optional' => ['origin', 'holes', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -856,7 +933,7 @@ module AlmaSketchupMCP
       'stability' => 'stable',
       'schema' => {
         'required' => ['op', 'name', 'start', 'end', 'height'],
-        'optional' => ['thickness', 'openings', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'optional' => ['thickness', 'openings', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -867,7 +944,7 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op', 'name', 'path', 'height'],
-        'optional' => ['thickness', 'openings', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'optional' => ['thickness', 'openings', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -878,7 +955,7 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op', 'name', 'center', 'radius', 'start_angle', 'end_angle', 'height'],
-        'optional' => ['thickness', 'segments', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'optional' => ['thickness', 'segments', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -889,7 +966,7 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op', 'name', 'points'],
-        'optional' => ['origin', 'holes', 'elevation', 'thickness', 'rise', 'slope_direction', 'overhang', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'optional' => ['origin', 'holes', 'elevation', 'thickness', 'rise', 'slope_direction', 'overhang', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -900,7 +977,7 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op', 'name', 'origin', 'width', 'depth', 'rise'],
-        'optional' => ['thickness', 'overhang', 'ridge_ratio', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'optional' => ['thickness', 'overhang', 'ridge_ratio', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -911,7 +988,7 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op', 'name'],
-        'optional' => ['path', 'points', 'origin', 'closed', 'height', 'thickness', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'optional' => ['path', 'points', 'origin', 'closed', 'height', 'thickness', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -922,7 +999,7 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op', 'name', 'height'],
-        'optional' => ['path', 'start', 'end', 'module_width', 'mullion_width', 'row_count', 'thickness', 'panel_thickness', 'frame_material', 'panel_material', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'optional' => ['path', 'start', 'end', 'module_width', 'mullion_width', 'row_count', 'thickness', 'panel_thickness', 'frame_material', 'panel_material', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -933,7 +1010,7 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op', 'name', 'height'],
-        'optional' => ['origin', 'points', 'x_count', 'y_count', 'spacing', 'shape', 'column_size', 'radius', 'segments', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'optional' => ['origin', 'points', 'x_count', 'y_count', 'spacing', 'shape', 'column_size', 'radius', 'segments', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -944,7 +1021,7 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op', 'name', 'path', 'width'],
-        'optional' => ['thickness', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'optional' => ['thickness', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -955,7 +1032,7 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op', 'name', 'vertices', 'faces'],
-        'optional' => ['smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'optional' => ['smooth', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -966,7 +1043,7 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op', 'name', 'origin', 'count', 'stall_width', 'stall_depth'],
-        'optional' => ['line_width', 'line_height', 'direction', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'optional' => ['line_width', 'line_height', 'direction', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -977,7 +1054,7 @@ module AlmaSketchupMCP
       'stability' => 'stable',
       'schema' => {
         'required' => ['op', 'name', 'origin', 'width', 'height'],
-        'optional' => ['plane', 'thickness', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'optional' => ['plane', 'thickness', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -988,7 +1065,7 @@ module AlmaSketchupMCP
       'stability' => 'stable',
       'schema' => {
         'required' => ['op', 'name', 'origin', 'width', 'height'],
-        'optional' => ['plane', 'thickness', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ']
+        'optional' => ['plane', 'thickness', 'id', 'object_id', 'objectId', 'guid', 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -1010,7 +1087,7 @@ module AlmaSketchupMCP
       'stability' => 'beta',
       'schema' => {
         'required' => ['op', 'name', 'path'],
-        'optional' => ['height', 'rail_radius', 'post_radius', 'post_spacing', 'smooth', 'material']
+        'optional' => ['height', 'rail_radius', 'post_radius', 'post_spacing', 'segments', 'chord_tolerance_mm', 'max_segments', 'smooth', 'material']
       },
       'component_scope' => {
         'status' => 'supported'
@@ -1065,7 +1142,7 @@ module AlmaSketchupMCP
       'stability' => 'stable',
       'schema' => {
         'required' => ['op', 'name'],
-        'optional' => ['camera', 'transition_time', 'transitionTime', 'use_camera', 'useCamera', 'layer_visibility', 'layerVisibility', 'drawingelement_visibility', 'drawingElementVisibility', 'rendering_options', 'renderingOptions', 'shadow', 'shadow_info', 'shadowInfo', 'style', 'update_flags', 'updateFlags']
+        'optional' => ['camera', 'transition_time', 'transitionTime', 'use_camera', 'useCamera', 'layer_visibility', 'layerVisibility', 'drawingelement_visibility', 'drawingElementVisibility', 'rendering_options', 'renderingOptions', 'shadow', 'shadow_info', 'shadowInfo', 'style', 'update_flags', 'updateFlags', 'environment_ref', 'use_environment', 'style_ref']
       },
       'component_scope' => {
         'status' => 'unsupported'

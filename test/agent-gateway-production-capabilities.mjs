@@ -14,6 +14,14 @@ import {
 import { createResultEnvelope } from '../src/agent-contract.mjs';
 import { SketchUpBridge } from '../src/bridge.mjs';
 
+const detailPathPolicy = { effective_capabilities: { local_files: false, vision: false } };
+assert.deepEqual(projectCapabilityValue({ instance_path: ['id-window', 'frame'], persistent_path: ['123', '456'] }, detailPathPolicy),
+  { instance_path: ['id-window', 'frame'], persistent_path: ['123', '456'] });
+assert.deepEqual(projectCapabilityValue({ instance_path: ['/Users/private/model.skp', 'frame'], file_path: '/Users/private/model.skp' }, detailPathPolicy),
+  { instance_path: [] });
+assert.deepEqual(projectCapabilityValue({ instance_path: ['/Users/private/model.skp', 'pid:123'] }, detailPathPolicy),
+  { instance_path: [] }, 'Never shorten a malformed chain into a different native target');
+
 const root = await fs.mkdtemp(path.join(os.tmpdir(), 'alma-agent-production-capabilities-'));
 try {
   checkpoint('policy');

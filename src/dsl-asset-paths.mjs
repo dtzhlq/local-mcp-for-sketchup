@@ -45,13 +45,20 @@ function materializeOperationAssetPaths(operation, repoRoot) {
     case 'material':
       rewriteMaterialTexturePaths(operation, (value) => toAbsoluteAssetPath(value, repoRoot));
       break;
+    case 'environment_define':
+    case 'style_load':
+      rewritePathField(operation, 'path', repoRoot);
+      break;
     default:
       break;
   }
+  if (operation.material && typeof operation.material === 'object') rewriteMaterialTexturePaths(operation.material, value => toAbsoluteAssetPath(value, repoRoot));
+  for (const child of operation.operations || []) materializeOperationAssetPaths(child, repoRoot);
 }
 
 function rewriteMaterialTexturePaths(material, transformPath) {
   if (!material || typeof material !== 'object') return;
+  if (typeof material.skm_path === 'string') material.skm_path = transformPath(material.skm_path);
 
   if (typeof material.texture === 'string') {
     material.texture = transformPath(material.texture);

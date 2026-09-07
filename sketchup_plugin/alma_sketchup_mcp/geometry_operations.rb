@@ -203,6 +203,10 @@ module AlmaSketchupMCP
     }
     material = entity.get_attribute('TextureTransform', 'material')
     texture_transform['material'] = material unless material.nil?
+    stored = entity.get_attribute('TextureTransform', 'payload_json')
+    texture_transform.merge!(JSON.parse(stored)) if stored
+    texture_transform['application'] = entity.get_attribute('TextureTransform', 'application_json') ? 'native_mapping_requested' : 'legacy_metadata_only'
+    texture_transform['native_uv'] = native_texture_mapping_snapshot(entity, texture_transform.fetch('side', 'front')) if respond_to?(:native_texture_mapping_snapshot)
     texture_transform
   end
 

@@ -1,0 +1,1118 @@
+{
+  "version": 1,
+  "scene_id": "detailed-entry-facade",
+  "detail_level": "detailed",
+  "required_parts": [
+    {
+      "id": "entry-wall-inner-lining",
+      "role": "inner-lining",
+      "material": "Detail_Plaster",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 2
+        }
+      ],
+      "instance_path": [
+        "id-entry-wall",
+        "entry-wall-inner-lining"
+      ],
+      "definition_path": [
+        "PG2_entry-wall"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "entry-wall-service-layer",
+      "role": "service-layer",
+      "material": "Detail_Waterproofing",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 2
+        }
+      ],
+      "instance_path": [
+        "id-entry-wall",
+        "entry-wall-service-layer"
+      ],
+      "definition_path": [
+        "PG2_entry-wall"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "entry-wall-structure",
+      "role": "structure",
+      "material": "Detail_Concrete",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 2
+        }
+      ],
+      "instance_path": [
+        "id-entry-wall",
+        "entry-wall-structure"
+      ],
+      "definition_path": [
+        "PG2_entry-wall"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "entry-wall-insulation",
+      "role": "insulation",
+      "material": "Detail_Insulation",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 2
+        }
+      ],
+      "instance_path": [
+        "id-entry-wall",
+        "entry-wall-insulation"
+      ],
+      "definition_path": [
+        "PG2_entry-wall"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "entry-wall-outer-render",
+      "role": "outer-render",
+      "material": "Detail_Plaster",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 2
+        }
+      ],
+      "instance_path": [
+        "id-entry-wall",
+        "entry-wall-outer-render"
+      ],
+      "definition_path": [
+        "PG2_entry-wall"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "entry-wall-skirting",
+      "role": "skirting",
+      "material": "Detail_Oak",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 7
+        }
+      ],
+      "instance_path": [
+        "id-entry-wall",
+        "entry-wall-skirting"
+      ],
+      "definition_path": [
+        "PG2_entry-wall"
+      ],
+      "min_faces": 8
+    },
+    {
+      "id": "entry-door-jamb-left",
+      "role": "door_jamb",
+      "material": "Detail_Oak",
+      "bounds_mm": {
+        "size": [
+          60,
+          190,
+          2350
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [],
+      "instance_path": [
+        "id-entry-door",
+        "entry-door-jamb-left"
+      ],
+      "definition_path": [
+        "PG2_entry-door"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "entry-door-jamb-right",
+      "role": "door_jamb",
+      "material": "Detail_Oak",
+      "bounds_mm": {
+        "size": [
+          60,
+          190,
+          2350
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [],
+      "instance_path": [
+        "id-entry-door",
+        "entry-door-jamb-right"
+      ],
+      "definition_path": [
+        "PG2_entry-door"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "entry-door-threshold",
+      "role": "threshold",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 8
+        }
+      ],
+      "instance_path": [
+        "id-entry-door",
+        "entry-door-threshold"
+      ],
+      "definition_path": [
+        "PG2_entry-door"
+      ],
+      "min_faces": 8
+    },
+    {
+      "id": "entry-door-leaf-stiles-rails",
+      "role": "door_leaf",
+      "material": "Detail_Oak",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        }
+      ],
+      "instance_path": [
+        "id-entry-door",
+        "entry-door-leaf-instance",
+        "entry-door-leaf-stiles-rails"
+      ],
+      "definition_path": [
+        "PG2_entry-door",
+        "PG2_entry-door-leaf"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "entry-door-leaf-inset-panel",
+      "role": "raised_panel",
+      "material": "Detail_Oak_Endgrain",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 20
+        }
+      ],
+      "instance_path": [
+        "id-entry-door",
+        "entry-door-leaf-instance",
+        "entry-door-leaf-inset-panel"
+      ],
+      "definition_path": [
+        "PG2_entry-door",
+        "PG2_entry-door-leaf"
+      ],
+      "min_faces": 8
+    },
+    {
+      "id": "entry-door-lock-escutcheon",
+      "role": "lock_escutcheon",
+      "material": "Detail_Brass",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        },
+        {
+          "type": "profile",
+          "min_vertices": 20
+        }
+      ],
+      "instance_path": [
+        "id-entry-door",
+        "entry-door-leaf-instance",
+        "entry-door-lock-escutcheon"
+      ],
+      "definition_path": [
+        "PG2_entry-door",
+        "PG2_entry-door-leaf"
+      ],
+      "min_faces": 8
+    },
+    {
+      "id": "entry-window-outer-frame",
+      "role": "frame",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        },
+        {
+          "type": "profile",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-window",
+        "entry-window-outer-frame"
+      ],
+      "definition_path": [
+        "PG2_entry-window"
+      ],
+      "min_faces": 8
+    },
+    {
+      "id": "entry-window-thermal-break",
+      "role": "thermal_break",
+      "material": "Detail_Gasket",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        }
+      ],
+      "instance_path": [
+        "id-entry-window",
+        "entry-window-thermal-break"
+      ],
+      "definition_path": [
+        "PG2_entry-window"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "entry-window-outer-rebate",
+      "role": "rebate",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        }
+      ],
+      "instance_path": [
+        "id-entry-window",
+        "entry-window-outer-rebate"
+      ],
+      "definition_path": [
+        "PG2_entry-window"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "entry-window-sash-frame",
+      "role": "sash_frame",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        }
+      ],
+      "instance_path": [
+        "id-entry-window",
+        "entry-window-left-sash",
+        "entry-window-sash-frame"
+      ],
+      "definition_path": [
+        "PG2_entry-window",
+        "PG2_entry-window-sash"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "entry-window-sash-gasket",
+      "role": "glazing_gasket",
+      "material": "Detail_Gasket",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        }
+      ],
+      "instance_path": [
+        "id-entry-window",
+        "entry-window-left-sash",
+        "entry-window-sash-gasket"
+      ],
+      "definition_path": [
+        "PG2_entry-window",
+        "PG2_entry-window-sash"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "entry-window-glazing-spacer",
+      "role": "spacer",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        }
+      ],
+      "instance_path": [
+        "id-entry-window",
+        "entry-window-left-sash",
+        "entry-window-glazing-spacer"
+      ],
+      "definition_path": [
+        "PG2_entry-window",
+        "PG2_entry-window-sash"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "entry-window-projecting-sill",
+      "role": "sill",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 6
+        }
+      ],
+      "instance_path": [
+        "id-entry-window",
+        "entry-window-projecting-sill"
+      ],
+      "definition_path": [
+        "PG2_entry-window"
+      ],
+      "min_faces": 8
+    },
+    {
+      "id": "entry-eaves-fascia",
+      "role": "fascia",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 6
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-fascia"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "min_faces": 8
+    },
+    {
+      "id": "entry-eaves-vent-0",
+      "role": "soffit_vent",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 3
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-vent-0"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "entry-eaves-vent-1",
+      "role": "soffit_vent",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 3
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-vent-1"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "entry-eaves-vent-2",
+      "role": "soffit_vent",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 3
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-vent-2"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "entry-eaves-vent-3",
+      "role": "soffit_vent",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 3
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-vent-3"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "entry-eaves-vent-4",
+      "role": "soffit_vent",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 3
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-vent-4"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "entry-eaves-vent-5",
+      "role": "soffit_vent",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 3
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-vent-5"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "entry-eaves-vent-6",
+      "role": "soffit_vent",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 3
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-vent-6"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "entry-eaves-vent-7",
+      "role": "soffit_vent",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 3
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-vent-7"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "entry-eaves-vent-8",
+      "role": "soffit_vent",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 3
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-vent-8"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "entry-eaves-vent-9",
+      "role": "soffit_vent",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 3
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-vent-9"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "entry-eaves-vent-10",
+      "role": "soffit_vent",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 3
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-vent-10"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "entry-eaves-vent-11",
+      "role": "soffit_vent",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 3
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-vent-11"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "entry-eaves-vent-12",
+      "role": "soffit_vent",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 3
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-vent-12"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "entry-eaves-vent-13",
+      "role": "soffit_vent",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 3
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-vent-13"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "entry-eaves-vent-14",
+      "role": "soffit_vent",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 3
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-vent-14"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "entry-eaves-vent-15",
+      "role": "soffit_vent",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 3
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-vent-15"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "entry-eaves-vent-16",
+      "role": "soffit_vent",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 3
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-vent-16"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "entry-eaves-vent-17",
+      "role": "soffit_vent",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 3
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-vent-17"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "entry-eaves-vent-18",
+      "role": "soffit_vent",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 3
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-vent-18"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "entry-eaves-vent-19",
+      "role": "soffit_vent",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 3
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-vent-19"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "entry-eaves-vent-20",
+      "role": "soffit_vent",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 3
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-vent-20"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "entry-eaves-vent-21",
+      "role": "soffit_vent",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 3
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-vent-21"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "entry-eaves-vent-22",
+      "role": "soffit_vent",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 3
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-vent-22"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "entry-eaves-vent-23",
+      "role": "soffit_vent",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 3
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-vent-23"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "entry-eaves-half-round-gutter",
+      "role": "gutter",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 40
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-half-round-gutter"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "min_faces": 8
+    },
+    {
+      "id": "entry-eaves-downpipe",
+      "role": "downpipe",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        },
+        {
+          "type": "profile",
+          "min_vertices": 32
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-downpipe"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "min_faces": 8
+    },
+    {
+      "id": "entry-eaves-pipe-clamp-380",
+      "role": "pipe_clamp",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-pipe-clamp-380"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "entry-eaves-pipe-clamp-1650",
+      "role": "pipe_clamp",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-pipe-clamp-1650"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "entry-eaves-pipe-clamp-3080",
+      "role": "pipe_clamp",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-pipe-clamp-3080"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "entry-railing-post-base",
+      "role": "baseplate",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 4
+        },
+        {
+          "type": "profile",
+          "min_vertices": 20
+        }
+      ],
+      "instance_path": [
+        "id-entry-railing",
+        "entry-railing-post-1",
+        "entry-railing-post-base"
+      ],
+      "definition_path": [
+        "PG2_entry-railing",
+        "PG2_entry-railing-post"
+      ],
+      "min_faces": 8
+    },
+    {
+      "id": "entry-railing-post-tube",
+      "role": "hollow_post",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        },
+        {
+          "type": "profile",
+          "min_vertices": 32
+        }
+      ],
+      "instance_path": [
+        "id-entry-railing",
+        "entry-railing-post-1",
+        "entry-railing-post-tube"
+      ],
+      "definition_path": [
+        "PG2_entry-railing",
+        "PG2_entry-railing-post"
+      ],
+      "min_faces": 8
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 20
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-0-0",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "min_faces": 8
+    },
+    {
+      "id": "entry-paving-grate-frame",
+      "role": "grate",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 8
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-grate-0",
+        "entry-paving-grate-frame"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-grate"
+      ],
+      "min_faces": 6
+    }
+  ],
+  "required_views": [
+    {
+      "id": "entry-overview",
+      "min_width": 1400,
+      "min_height": 900,
+      "kind": "overview"
+    },
+    {
+      "id": "entry-front",
+      "min_width": 1400,
+      "min_height": 900,
+      "kind": "overview"
+    },
+    {
+      "id": "entry-window-closeup",
+      "target_id": "entry-window",
+      "min_width": 1400,
+      "min_height": 900,
+      "kind": "closeup"
+    },
+    {
+      "id": "entry-door-closeup",
+      "target_id": "entry-door",
+      "min_width": 1400,
+      "min_height": 900,
+      "kind": "closeup"
+    },
+    {
+      "id": "entry-eaves-closeup",
+      "target_id": "entry-eaves",
+      "min_width": 1400,
+      "min_height": 900,
+      "kind": "closeup"
+    },
+    {
+      "id": "entry-railing-closeup",
+      "target_id": "entry-railing",
+      "min_width": 1400,
+      "min_height": 900,
+      "kind": "closeup"
+    },
+    {
+      "id": "entry-wall-junction-closeup",
+      "target_id": "entry-wall",
+      "min_width": 1400,
+      "min_height": 900,
+      "kind": "closeup"
+    },
+    {
+      "id": "entry-paving-closeup",
+      "target_id": "entry-paving",
+      "min_width": 1400,
+      "min_height": 900,
+      "kind": "closeup"
+    }
+  ],
+  "max_iterations": 6,
+  "source_type": "designed_benchmark_not_measured_project"
+}

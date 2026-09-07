@@ -3,7 +3,7 @@
 module AlmaSketchupMCP
   extend self
 
-  def snapshot(model = nil)
+  def snapshot(model = nil, include_detail_evidence: true)
     model ||= active_model_or_new('snapshot')
     state = document_state(model)
     classification_schemas = classification_schema_catalog(model)
@@ -86,16 +86,20 @@ module AlmaSketchupMCP
     all_warnings = snapshot_warnings(visible_items, model)
     {
       'totals' => totals,
+      'resource_totals' => include_detail_evidence ? native_geometry_resource_totals(model) : nil,
       'groups' => groups,
       'instances' => instances,
+      'geometry_occurrences' => include_detail_evidence ? geometry_occurrences(model) : nil,
       'manifold_checks' => state['manifold_checks'] || [],
       'component_definitions' => model.definitions.reject { |definition| sketchup_group_definition?(definition) || sketchup_temp_definition?(definition) || definition.name.empty? }.map(&:name).sort,
       'component_definition_summaries' => component_definition_summaries,
       'classification_schemas' => classification_schemas,
       'scenes' => snapshot_scenes(model, state),
+      'section_planes' => native_section_planes_snapshot(model),
       'levels' => state['levels'] || [],
       'tags' => model.layers.reject { |layer| layer.name.to_s.empty? || %w[Untagged Layer0].include?(layer.name) }.map { |layer| tag_snapshot(layer) }.sort_by { |tag| tag['name'] },
       'materials' => model.materials.map { |material| material_snapshot(material) }.sort_by { |material| material['name'] },
+      'native_appearance' => respond_to?(:native_appearance_snapshot) ? native_appearance_snapshot(model) : nil,
       'material_names' => model.materials.map(&:name).reject(&:empty?).sort,
       'image_references' => image_references_snapshot(model),
       'style_state' => state['style_state'],
@@ -108,6 +112,44 @@ module AlmaSketchupMCP
       'warning_summary' => warning_summary(all_warnings),
       'view_state' => snapshot_view_state(model, state)
     }
+  end
+
+  # Storage counts include hidden and unused definitions and loose root geometry.
+  # Expanded counts charge each placed occurrence, so shared definitions remain
+  # distinguishable from physically duplicated geometry. Neither is a detail score.
+  def native_geometry_resource_totals(model)
+    direct = lambda do |entities|
+      vertices = {}
+      edges = entities.grep(Sketchup::Edge)
+      edges.each { |edge| edge.vertices.each { |vertex| vertices[vertex.object_id] = true } }
+      { 'faces' => entities.grep(Sketchup::Face).length, 'edges' => edges.length, 'vertices' => vertices.length }
+    end
+    add = lambda { |sum, counts| %w[faces edges vertices].each { |field| sum[field] += counts[field] }; sum }
+    cache = {}
+    direct_for = lambda { |entities| cache[entities.object_id] ||= direct.call(entities) }
+    definitions = model.definitions.to_a.uniq { |definition| definition.object_id }
+    stored = direct_for.call(model.entities).dup
+    definitions.each { |definition| add.call(stored, direct_for.call(definition.entities)) }
+    expanded_cache = {}
+    expand = nil
+    expand = lambda do |entities, ancestors|
+      raise 'Geometry resource recursion limit exceeded' if ancestors.length > 64
+      counts = direct_for.call(entities).dup
+      entities.each do |entity|
+        next unless entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance)
+        definition = entity.definition
+        raise 'Cyclic geometry resources cannot be counted' if ancestors.include?(definition.object_id)
+        nested = expanded_cache[definition.object_id] ||= expand.call(definition.entities, ancestors + [definition.object_id])
+        add.call(counts, nested)
+      end
+      counts
+    end
+    stored.merge('complete' => true, 'scope' => 'all_native_stored_geometry', 'definition_count' => definitions.length,
+      'expanded_totals' => expand.call(model.entities, []), 'includes_hidden' => true, 'includes_unused_definitions' => true,
+      'evidence_source' => 'sketchup_runtime', 'detail_score' => false)
+  rescue StandardError => error
+    { 'complete' => false, 'scope' => 'all_native_stored_geometry', 'evidence_source' => 'sketchup_runtime',
+      'error' => "#{error.class}: #{error.message}", 'detail_score' => false }
   end
 
   def selection_snapshot(model)
@@ -229,11 +271,11 @@ module AlmaSketchupMCP
   end
 
   def count_faces(entities)
-    entities.grep(Sketchup::Face).length + entities.grep(Sketchup::Group).sum { |group| count_faces(group.entities) }
+    entities.grep(Sketchup::Face).length + nested_geometry_entities(entities).sum { |child| count_faces(child.definition.entities) }
   end
 
   def count_edges(entities)
-    entities.grep(Sketchup::Edge).length + entities.grep(Sketchup::Group).sum { |group| count_edges(group.entities) }
+    entities.grep(Sketchup::Edge).length + nested_geometry_entities(entities).sum { |child| count_edges(child.definition.entities) }
   end
 
   def count_vertices(entities)
@@ -245,7 +287,11 @@ module AlmaSketchupMCP
         points[key] = true
       end
     end
-    points.length + entities.grep(Sketchup::Group).sum { |group| count_vertices(group.entities) }
+    points.length + nested_geometry_entities(entities).sum { |child| count_vertices(child.definition.entities) }
+  end
+
+  def nested_geometry_entities(entities)
+    entities.select { |entity| entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance) }
   end
 
   def first_entities_material(entities)
@@ -253,8 +299,8 @@ module AlmaSketchupMCP
     material = face && (face.material || face.back_material)
     return material.name if material
 
-    nested_group = entities.grep(Sketchup::Group).find { |group| first_entities_material(group.entities) }
-    nested_group && first_entities_material(nested_group.entities)
+    nested_group = nested_geometry_entities(entities).find { |group| first_entities_material(group.definition.entities) }
+    nested_group && first_entities_material(nested_group.definition.entities)
   end
 
   def material_snapshot(material)
@@ -264,9 +310,16 @@ module AlmaSketchupMCP
     }
     snapshot['alpha'] = material.alpha if material.respond_to?(:alpha)
     snapshot['texture'] = texture_snapshot(material.texture) if material.respond_to?(:texture) && material.texture
+    if material.respond_to?(:get_attribute)
+      source_path = material.get_attribute('AlmaMaterialSource', 'skm_path')
+      snapshot['native_asset_source'] = { 'skm_path' => source_path, 'source_sha256' => material.get_attribute('AlmaMaterialSource', 'source_sha256') } if source_path
+    end
     if supports_pbr_materials?
       snapshot['workflow'] = material.workflow == Sketchup::Material::WORKFLOW_PBR_METALLIC_ROUGHNESS ? 'pbr_metallic_roughness' : 'classic' if material.respond_to?(:workflow)
       pbr = {}
+      %w[metalness_enabled roughness_enabled normal_enabled ao_enabled].each do |field|
+        pbr[field] = material.public_send("#{field}?") if material.respond_to?("#{field}?")
+      end
       pbr['metallic_factor'] = material.metallic_factor if material.respond_to?(:metallic_factor)
       pbr['roughness_factor'] = material.roughness_factor if material.respond_to?(:roughness_factor)
       pbr['ao_strength'] = material.ao_strength if material.respond_to?(:ao_strength)
@@ -276,10 +329,15 @@ module AlmaSketchupMCP
         'metallic' => material_texture_path(material, :metallic_texture),
         'roughness' => material_texture_path(material, :roughness_texture),
         'normal' => material_texture_path(material, :normal_texture),
-        'ao' => material_texture_path(material, :ao_texture),
-        'opacity' => material_texture_path(material, :opacity_texture)
+        'ao' => material_texture_path(material, :ao_texture)
       }.compact
       pbr['textures'] = textures unless textures.empty?
+      pixels = {}
+      textures.each_key do |channel|
+        fingerprint = native_texture_pixel_fingerprint(material.public_send("#{channel}_texture"))
+        pixels[channel] = fingerprint if fingerprint
+      end
+      pbr['texture_pixels'] = pixels unless pixels.empty?
       snapshot['pbr'] = pbr unless pbr.empty?
     end
     snapshot
@@ -321,6 +379,28 @@ module AlmaSketchupMCP
     return nil unless texture
 
     texture.respond_to?(:filename) ? texture.filename : texture.to_s
+  end
+
+  def native_texture_pixel_fingerprint(texture)
+    return nil unless texture.respond_to?(:image_rep)
+    # Bound the native copy for unexpectedly large assets. Missing evidence
+    # never becomes a successful pixel comparison.
+    if texture.respond_to?(:image_width) && texture.respond_to?(:image_height)
+      return nil if texture.image_width * texture.image_height > 16_777_216
+    end
+    image = texture.image_rep(false)
+    return nil unless image && image.width.positive? && image.height.positive?
+    return nil if image.width * image.height > 16_777_216
+    data = image.data
+    return nil unless data.is_a?(String) && !data.empty?
+    return nil unless image.bits_per_pixel.positive? && image.row_padding >= 0
+    row_bytes = (image.width * image.bits_per_pixel + 7) / 8 + image.row_padding
+    return nil unless data.bytesize == row_bytes * image.height
+    { 'evidence' => 'native_texture_pixels_v1', 'width' => image.width, 'height' => image.height,
+      'bits_per_pixel' => image.bits_per_pixel, 'row_padding' => image.row_padding,
+      'platform' => Sketchup.platform.to_s, 'sha256' => Digest::SHA256.hexdigest(data) }
+  rescue StandardError
+    nil
   end
 
 end

@@ -3,7 +3,28 @@
 module AlmaSketchupMCP
   extend self
 
+  def curve_segments(operation, radius, sweep_degrees = 360.0, default_segments = 16, min_segments = 3, legacy_max = 96)
+    specified = operation['n'] || operation['segments']
+    tolerance = operation['chord_tolerance_mm']
+    if tolerance.nil?
+      value = specified || default_segments
+      raise "segments must be an integer from #{min_segments} to #{legacy_max}" unless value.is_a?(Integer) && value >= min_segments && value <= legacy_max
+      return value
+    end
+    raise 'Curve radius, sweep and chord_tolerance_mm must be finite and positive in magnitude.' unless radius.is_a?(Numeric) && radius.finite? && radius.positive? && tolerance.is_a?(Numeric) && tolerance.finite? && tolerance.positive? && sweep_degrees.is_a?(Numeric) && sweep_degrees.finite? && sweep_degrees.abs > 1e-12
+    budget = operation['max_segments'] || 512
+    raise "max_segments must be an integer from #{min_segments} to 4096" unless budget.is_a?(Integer) && budget >= min_segments && budget <= 4096
+    raise 'Explicit segments exceed the curve budget or are invalid.' if specified && (!specified.is_a?(Integer) || specified < min_segments || specified > budget)
+    max_angle = 2 * Math.acos([[-1.0, 1.0 - tolerance.to_f / radius].max, 1.0].min)
+    raise 'chord_tolerance_mm is below numerical resolution.' unless max_angle.positive?
+    required = [min_segments, (sweep_degrees.abs * Math::PI / 180.0 / max_angle).ceil].max
+    resolved = [specified || min_segments, required].max
+    raise "Curve tolerance requires #{resolved} segments but max_segments is #{budget}." if resolved > budget
+    resolved
+  end
+
   def add_mesh(parent_entities, operation)
+    construction_started = Process.clock_gettime(Process::CLOCK_MONOTONIC)
     name = operation.fetch('name')
     vertices = operation.fetch('vertices')
     faces = operation.fetch('faces')
@@ -15,19 +36,64 @@ module AlmaSketchupMCP
       Geom::Point3d.new(x, y, z)
     end
 
-    group = parent_entities.add_group
-    group.name = name
-    annotate_group(group, operation, 'mesh')
-    faces.each_with_index do |face_indices, face_index|
+    indexed_faces = faces.each_with_index.map do |face_indices, face_index|
       raise "#{name}.faces[#{face_index}] must contain at least 3 vertex indices" unless face_indices.is_a?(Array) && face_indices.length >= 3
 
-      face_points = face_indices.each_with_index.map do |item, item_index|
+      face_indices.each_with_index.map do |item, item_index|
         index = integer_index(item, "#{name}.faces[#{face_index}][#{item_index}]", points.length)
         points[index]
       end
-      face = group.entities.add_face(face_points)
-      raise "Failed to create face #{face_index} for #{name}" unless face
     end
+    # SketchUp Length comparisons use its modeling tolerance. Convert to Float
+    # before the numeric degeneracy check, otherwise valid sub-tolerance edges
+    # are rejected before the enlarged construction path can handle them.
+    edge_lengths = indexed_faces.flat_map { |polygon| polygon.each_with_index.map { |point, i| point.distance(polygon[(i + 1) % polygon.length]).to_f } }
+    raise "#{name} contains a zero-length edge" if edge_lengths.any? { |length| length <= 1e-10 }
+    minimum_mm = model_units_to_mm(edge_lengths.min)
+    build_scale = minimum_mm > 0 && minimum_mm < 1 ? [100.0, 2.0 / minimum_mm].max : 1.0
+    if build_scale > 1
+      scaling = Geom::Transformation.scaling(build_scale)
+      indexed_faces = indexed_faces.map { |polygon| polygon.map { |point| point.transform(scaling) } }
+    end
+    group = parent_entities.add_group
+    group.name = name
+    annotate_group(group, operation, 'mesh')
+    strategy = operation['construction'] || 'standard'
+    raise "#{name}.construction must be standard or bulk" unless %w[standard bulk].include?(strategy)
+    build_faces = lambda do |builder|
+      indexed_faces.each_with_index do |face_points, face_index|
+        if builder
+          plane = Geom.fit_plane_to_points(face_points)
+          raise "#{name}.faces[#{face_index}] is not planar" unless plane && face_points.all? { |point| point.distance_to_plane(plane).abs <= mm_to_model_units(0.001) * build_scale }
+        end
+        face = (builder || group.entities).add_face(face_points)
+        raise "Failed to create face #{face_index} for #{name}" unless face
+        # Entities may orient ground-plane faces downwards, while the bulk
+        # builder preserves winding. Honor the input loop in both paths.
+        winding = [0.0, 0.0, 0.0]
+        face_points.each_with_index do |point, i|
+          a = point.to_a
+          b = face_points[(i + 1) % face_points.length].to_a
+          winding[0] += (a[1] - b[1]) * (a[2] + b[2])
+          winding[1] += (a[2] - b[2]) * (a[0] + b[0])
+          winding[2] += (a[0] - b[0]) * (a[1] + b[1])
+        end
+        face.reverse! if face.normal.to_a.zip(winding).sum { |a, b| a * b } < 0
+      end
+    end
+    if strategy == 'bulk'
+      raise 'Bulk construction requires SketchUp 2022+' unless group.entities.respond_to?(:build)
+      group.entities.build { |builder| build_faces.call(builder) }
+    else
+      build_faces.call(nil)
+    end
+    group.entities.transform_entities(Geom::Transformation.scaling(1.0 / build_scale), group.entities.to_a) if build_scale > 1
+    raise "#{name} did not create its intended faces" if group.entities.grep(Sketchup::Face).length < faces.length
+    group.set_attribute('AlmaSketchupMCP', 'construction', {
+      'strategy' => strategy, 'small_feature_scale' => build_scale,
+      'minimum_input_edge_mm' => minimum_mm, 'input_faces' => faces.length,
+      'elapsed_ms' => (Process.clock_gettime(Process::CLOCK_MONOTONIC) - construction_started) * 1000
+    })
 
     material_name = operation['material'] || operation['f_material']
     back_material_name = operation['back_material'] || operation['b_material']
@@ -128,7 +194,7 @@ module AlmaSketchupMCP
     radius = positive_number(operation['radius'], nil, "#{name}.radius")
     start_angle = finite_number(operation['startAngle'] || operation['start_angle'] || 0, "#{name}.start_angle")
     end_angle = finite_number(operation['endAngle'] || operation['end_angle'] || 90, "#{name}.end_angle")
-    segments = integer_range(operation['segments'] || 16, 2, 128, "#{name}.segments")
+    segments = curve_segments(operation, radius, end_angle - start_angle, 16, 2, 128)
     plane = operation['plane'] || 'xy'
     raise "#{name}.plane must be one of xy, xz, yz" unless %w[xy xz yz].include?(plane)
 
@@ -372,7 +438,7 @@ module AlmaSketchupMCP
     origin = operation['origin'] || [0, 0, 0]
     radius = positive_number(operation['radius'], nil, "#{name}.radius")
     height = positive_number(operation['height'], nil, "#{name}.height")
-    segments = integer_range(operation['segments'] || 16, 3, 96, "#{name}.segments")
+    segments = curve_segments(operation, radius, 360.0, 16, 3, 96)
     vertices = []
     segments.times do |i|
       angle = Math::PI * 2.0 * i / segments
@@ -383,6 +449,6 @@ module AlmaSketchupMCP
     (1...(segments - 1)).each { |i| faces << [0, i + 1, i] }
     (1...(segments - 1)).each { |i| faces << [segments, segments + i, segments + i + 1] }
     segments.times { |i| faces << [i, (i + 1) % segments, segments + ((i + 1) % segments), segments + i] }
-    add_mesh(parent_entities, 'name' => name, 'id' => operation['id'], 'object_id' => operation['object_id'], 'objectId' => operation['objectId'], 'guid' => operation['guid'], 'vertices' => vertices, 'faces' => faces, 'material' => operation['material'], 'smooth' => operation['smooth'] || 'all', 'kind' => operation['kind'] || 'cylinder', 'qa' => operation['qa'])
+    add_mesh(parent_entities, operation.merge('vertices' => vertices, 'faces' => faces, 'smooth' => operation['smooth'] || 'all', 'kind' => operation['kind'] || 'cylinder'))
   end
 end

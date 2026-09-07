@@ -10,6 +10,7 @@ import {
 import { AGENT_GATEWAY_ADDITIVE_CREATION_OPERATIONS, prepareAgentGatewayCreationDsl } from './agent-dsl-policy.mjs';
 import { validateExpertDocument } from './expert-compiler.mjs';
 import { modelIdentityForAdoption, modelKeyForIdentity } from './model-identity.mjs';
+import { normalizeTextureTransform } from './object-operation-utils.mjs';
 
 export const EXISTING_MODEL_EDIT_PLAN_VERSION = '2026-07-existing-model-edit-plan.3';
 export const EXISTING_MODEL_EDIT_EXECUTION_TARGET_VALIDATION_VERSION = 'existing-edit-execution-target-validation.v1';
@@ -182,6 +183,7 @@ export async function observeExistingModelEditExecutionState({
       timeoutMs,
       recursive: true,
       recursive_limit: plan.budgets?.recursive_limit || 2000,
+      recursive_roots: plan.target_validation?.recursive_root_paths,
       read_only: true
     });
   const modelRevision = modelRevisionForAdoption(adoption);
@@ -375,7 +377,7 @@ export function inferExistingModelEditDestructiveSideEffects({ adoption, operati
   };
 }
 
-export async function prepareExistingModelEdit({ bridge, runtime = 'mock', timeoutMs, instruction, operations, targets, output_dir, recursive_limit = 2000, budgets = {}, task_id = null, approval_expires_ms, source_proposal_binding, expected_model_revision, expected_model_key, execution_contract, target_validation } = {}) {
+export async function prepareExistingModelEdit({ bridge, runtime = 'mock', timeoutMs, instruction, operations, targets, output_dir, recursive_limit = 2000, recursive_roots, budgets = {}, task_id = null, approval_expires_ms, source_proposal_binding, expected_model_revision, expected_model_key, execution_contract, target_validation } = {}) {
   if (!bridge) throw new Error('prepare_existing_model_edit requires a bridge');
   const normalizedInstruction = nonEmptyString(instruction, 'prepare_existing_model_edit.instruction');
   const operationValidation = validateExistingModelEditOperations(operations);
@@ -401,9 +403,10 @@ export async function prepareExistingModelEdit({ bridge, runtime = 'mock', timeo
       structural_groups: true,
       structural_group_limit: normalizedTargetValidation.structural_group_limit
     })
-    : await bridge.adopt_open_model({ runtime, timeoutMs, recursive: true, recursive_limit: normalizedBudgets.recursive_limit, read_only: true });
+    : await bridge.adopt_open_model({ runtime, timeoutMs, recursive: true, recursive_limit: normalizedBudgets.recursive_limit, recursive_roots, read_only: true });
   const indexed = indexedAdoptionTargets(adoption);
   const blockers = [];
+  if (recursive_roots && (normalizedOperations.some(operation => operation.op !== 'replace_component_definition') || requestedTargets.some(target => { const matches = (adoption.recursive_index || []).filter(entry => recursive_roots.includes(entry.entity_path) && (target.entity_path ? entry.entity_path === target.entity_path : [entry.id, entry.reference, entry.persistent_id].includes(target.target_id))); return matches.length !== 1; }))) throw new AgentContractError('OPERATION_NOT_ALLOWED', 'Scoped assembly review permits only replacements of the explicitly indexed root instances');
   if (normalizedTargetValidation.mode === 'full_recursive' && adoption.recursive_truncated) {
     blockers.push({ code: 'recursive_index_truncated', message: 'Recursive entity index was truncated; increase recursive_limit before review.' });
   }
@@ -693,7 +696,7 @@ export async function applyReviewedExistingModelEdit({ bridge, runtime = 'mock',
   await fs.mkdir(outputDir, { recursive: true });
   const reviewArtifact = path.join(outputDir, 'review-decision.json');
   await writeJson(reviewArtifact, { ...trustedReview, authorization });
-  const trustedNestedTargetValidator = preflight.policy.mode === 'structural_groups'
+  const trustedNestedTargetValidator = preflight.policy.mode === 'structural_groups' || loadedPlan.target_validation?.recursive_root_paths
     ? async ({ phase, references }) => {
       assertIterationReferencesMatchPlan(references, loadedPlan);
       return observeExistingModelEditExecutionState({
@@ -984,8 +987,7 @@ function validateExistingOperationContract(operation, index) {
     if (operation.attributes !== undefined && (!isPlainJsonObject(operation.attributes) || !isJsonCompatible(operation.attributes))) invalidOperationField(field('attributes'), 'a JSON object');
     break;
   case 'texture_transform':
-    if (operation.projection !== undefined && !['planar', 'box', 'cylindrical', 'spherical', 'custom'].includes(operation.projection)) invalidOperationField(field('projection'), 'a supported projection enum');
-    for (const name of ['offset_u', 'offsetU', 'offset_v', 'offsetV', 'scale_u', 'scaleU', 'scale_v', 'scaleV', 'rotation', 'rotation_degrees', 'rotationDegrees']) optionalFinite([name]);
+    normalizeTextureTransform(operation, field('texture_transform'));
     break;
   case 'transform_object':
   case 'transform_entities':
@@ -1251,6 +1253,7 @@ function preparationTargetValidationRecord(validation, adoption, requestedTarget
       version: 'existing-edit-target-validation.v1',
       mode: 'full_recursive',
       source: validation.source,
+      ...(adoption.recursive_root_paths ? { recursive_root_paths: adoption.recursive_root_paths } : {}),
       complete: adoption.recursive_truncated !== true,
       truncated: adoption.recursive_truncated === true,
       indexed: Array.isArray(adoption.recursive_index) ? adoption.recursive_index.length : 0,

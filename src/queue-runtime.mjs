@@ -12,7 +12,7 @@ const DEFAULT_POLL_INTERVAL_MS = 250;
 const QUEUE_REQUEST_ID_PATTERN = /^(?<clientPid>[1-9]\d{0,14})-(?<createdAtMs>\d{13})-(?<uuid>[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})$/;
 const QUEUE_GUARDED_METHODS = new Set([
   'reset_model', 'build_model', 'save_model', 'save_model_version', 'open_model', 'import_model', 'export_model',
-  'adopt_open_model', 'set_selection', 'capture_view', 'run_ruby_expert'
+  'adopt_open_model', 'set_selection', 'capture_view', 'capture_detail_views', 'run_ruby_expert'
 ]);
 const QUEUE_MODEL_MUTATING_METHODS = new Set([
   'reset_model', 'build_model', 'import_model', 'adopt_open_model', 'run_ruby_expert'
@@ -23,6 +23,7 @@ const INTERRUPT_SAFE_READ_ONLY_QUEUE_METHODS = new Set([
   'get_session_state',
   'get_active_model_identity',
   'inspect_model',
+  'inspect_detail_regions',
   'list_entities',
   'get_model_info',
   'get_selection'
@@ -184,6 +185,10 @@ export class QueueRuntime {
     return this.call('inspect_model', options);
   }
 
+  async inspectDetailRegions(options = {}) {
+    return this.call('inspect_detail_regions', options);
+  }
+
   async listEntities(options = {}) {
     return this.call('list_entities', options);
   }
@@ -241,6 +246,10 @@ export class QueueRuntime {
       }
     }
     return result;
+  }
+
+  async captureDetailViews({ views, output_dir } = {}) {
+    return this.call('capture_detail_views', { views, output_dir: path.resolve(output_dir) });
   }
 
   async runRubyExpert({ code, auditPath, audit_path } = {}) {

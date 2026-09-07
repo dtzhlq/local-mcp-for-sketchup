@@ -262,14 +262,16 @@ module AlmaSketchupMCP
     front = add_panel_face_with_holes(group.entities, origin, plane, outer, openings, false)
     back_origin = offset_origin(origin, plane, model_thickness)
     back = add_panel_face_with_holes(group.entities, back_origin, plane, outer.reverse, openings, true)
-    raise "Failed to create panel faces for #{name}" unless front && back
+    raise "Failed to create panel faces for #{name}" unless front && back && front.valid? && back.valid?
 
-    add_panel_side_faces(group.entities, origin, plane, outer, model_thickness)
-    openings.each do |opening|
-      x = opening['x']; y = opening['y']; w = opening['width']; h = opening['height']
-      hole = [[x, y], [x + w, y], [x + w, y + h], [x, y + h]]
-      add_panel_side_faces(group.entities, origin, plane, hole, model_thickness)
-    end
+    # An opening touching an edge changes the outer loop into a notch. Extrude
+    # the actual surviving boundaries; extruding the original rectangle would
+    # leave a stray cap across the door's bottom edge.
+    add_panel_native_boundary_sides(group.entities, front, plane, model_thickness)
+    # Cutting a notch leaves the removed opening's boundary edge on the panel
+    # perimeter. It has no incident face and would make an otherwise closed
+    # shell non-manifold. Remove only these construction leftovers.
+    group.entities.grep(Sketchup::Edge).select { |edge| edge.faces.empty? }.each(&:erase!)
 
     material_name = operation['material']
     if material_name
@@ -280,6 +282,7 @@ module AlmaSketchupMCP
       end
     end
     soften_edges(group, operation['smooth'] || 'coplanar')
+    apply_transform(group, operation)
     group
   end
 
@@ -294,7 +297,16 @@ module AlmaSketchupMCP
       hole_face = entities.add_face(hole.map { |u, v| point_for_plane(origin, plane, mm_to_model_units(u), mm_to_model_units(v)) })
       hole_face.erase! if hole_face && hole_face.valid?
     end
-    face
+    return face if face.valid?
+
+    # An edge-touching opening may replace the original face in SketchUp.
+    # Reacquire only the surviving face on this panel plane, never its back or
+    # a bounding-box substitute. Disconnected remnants require explicit parts.
+    axis = { 'xy' => 2, 'xz' => 1, 'yz' => 0 }.fetch(plane)
+    survivors = entities.grep(Sketchup::Face).select do |candidate|
+      candidate.valid? && candidate.vertices.all? { |vertex| (vertex.position.to_a[axis] - origin[axis]).abs < 1.0e-7 }
+    end
+    survivors.length == 1 ? survivors.first : nil
   end
 
   def add_panel_side_faces(entities, origin, plane, loop, model_thickness)
@@ -305,6 +317,17 @@ module AlmaSketchupMCP
       p3 = offset_point(p2, plane, model_thickness)
       p4 = offset_point(p1, plane, model_thickness)
       entities.add_face(p1, p2, p3, p4)
+    end
+  end
+
+  def add_panel_native_boundary_sides(entities, front, plane, thickness)
+    boundaries = front.loops.map { |loop| loop.vertices.map(&:position) }
+    boundaries.each do |points|
+      points.each_with_index do |p1, index|
+        p2 = points[(index + 1) % points.length]
+        face = entities.add_face(p1, p2, offset_point(p2, plane, thickness), offset_point(p1, plane, thickness))
+        raise 'Failed to create a real panel boundary face' unless face
+      end
     end
   end
 

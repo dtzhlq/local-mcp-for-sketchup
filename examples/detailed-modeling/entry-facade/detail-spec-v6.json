@@ -1,0 +1,8440 @@
+{
+  "version": 1,
+  "coverage_version": 2,
+  "scene_id": "detailed-entry-facade",
+  "detail_level": "detailed",
+  "resource_budget": {
+    "max_faces": 150000,
+    "max_edges": 400000,
+    "max_vertices": 300000
+  },
+  "required_parts": [
+    {
+      "id": "entry-wall-inner-lining",
+      "role": "inner-lining",
+      "material": "Detail_Plaster",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        }
+      ],
+      "instance_path": [
+        "id-entry-wall",
+        "entry-wall-inner-lining"
+      ],
+      "definition_path": [
+        "PG2_entry-wall"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          5200,
+          15,
+          3300
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-wall-service-layer",
+      "role": "service-layer",
+      "material": "Detail_Waterproofing",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        }
+      ],
+      "instance_path": [
+        "id-entry-wall",
+        "entry-wall-service-layer"
+      ],
+      "definition_path": [
+        "PG2_entry-wall"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          5200,
+          35,
+          3300
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-wall-structure",
+      "role": "structure",
+      "material": "Detail_Concrete",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        }
+      ],
+      "instance_path": [
+        "id-entry-wall",
+        "entry-wall-structure"
+      ],
+      "definition_path": [
+        "PG2_entry-wall"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          5200,
+          150,
+          3300
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-wall-insulation",
+      "role": "insulation",
+      "material": "Detail_Insulation",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        }
+      ],
+      "instance_path": [
+        "id-entry-wall",
+        "entry-wall-insulation"
+      ],
+      "definition_path": [
+        "PG2_entry-wall"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          5200,
+          90,
+          3300
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-wall-outer-render",
+      "role": "outer-render",
+      "material": "Detail_Plaster",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        }
+      ],
+      "instance_path": [
+        "id-entry-wall",
+        "entry-wall-outer-render"
+      ],
+      "definition_path": [
+        "PG2_entry-wall"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          5200,
+          18,
+          3300
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-wall-inner-lining-corner-return",
+      "role": "corner_return",
+      "material": "Detail_Plaster",
+      "instance_path": [
+        "id-entry-wall",
+        "entry-wall-inner-lining-corner-return"
+      ],
+      "definition_path": [
+        "PG2_entry-wall"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          15,
+          455,
+          3300
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ]
+    },
+    {
+      "id": "entry-wall-service-layer-corner-return",
+      "role": "corner_return",
+      "material": "Detail_Waterproofing",
+      "instance_path": [
+        "id-entry-wall",
+        "entry-wall-service-layer-corner-return"
+      ],
+      "definition_path": [
+        "PG2_entry-wall"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          50,
+          490,
+          3300
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 6
+        }
+      ]
+    },
+    {
+      "id": "entry-wall-structure-corner-return",
+      "role": "corner_return",
+      "material": "Detail_Concrete",
+      "instance_path": [
+        "id-entry-wall",
+        "entry-wall-structure-corner-return"
+      ],
+      "definition_path": [
+        "PG2_entry-wall"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          200,
+          640,
+          3300
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 6
+        }
+      ]
+    },
+    {
+      "id": "entry-wall-insulation-corner-return",
+      "role": "corner_return",
+      "material": "Detail_Insulation",
+      "instance_path": [
+        "id-entry-wall",
+        "entry-wall-insulation-corner-return"
+      ],
+      "definition_path": [
+        "PG2_entry-wall"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          290,
+          730,
+          3300
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 6
+        }
+      ]
+    },
+    {
+      "id": "entry-wall-outer-render-corner-return",
+      "role": "corner_return",
+      "material": "Detail_Plaster",
+      "instance_path": [
+        "id-entry-wall",
+        "entry-wall-outer-render-corner-return"
+      ],
+      "definition_path": [
+        "PG2_entry-wall"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          308,
+          748,
+          3300
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 6
+        }
+      ]
+    },
+    {
+      "id": "entry-wall-skirting",
+      "role": "skirting",
+      "material": "Detail_Oak",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 7,
+          "loop": "outer"
+        }
+      ],
+      "instance_path": [
+        "id-entry-wall",
+        "entry-wall-skirting"
+      ],
+      "definition_path": [
+        "PG2_entry-wall"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          610,
+          19,
+          112
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-wall-skirting-2",
+      "role": "skirting",
+      "material": "Detail_Oak",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 7,
+          "loop": "outer"
+        }
+      ],
+      "instance_path": [
+        "id-entry-wall",
+        "entry-wall-skirting-2"
+      ],
+      "definition_path": [
+        "PG2_entry-wall"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          3490,
+          19,
+          112
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-door-jamb-left",
+      "role": "door_jamb",
+      "material": "Detail_Oak",
+      "bounds_mm": {
+        "size": [
+          60,
+          190,
+          2350
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [],
+      "instance_path": [
+        "id-entry-door",
+        "entry-door-jamb-left"
+      ],
+      "definition_path": [
+        "PG2_entry-door"
+      ],
+      "require_visible": true,
+      "min_faces": 6
+    },
+    {
+      "id": "entry-door-jamb-right",
+      "role": "door_jamb",
+      "material": "Detail_Oak",
+      "bounds_mm": {
+        "size": [
+          60,
+          190,
+          2350
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [],
+      "instance_path": [
+        "id-entry-door",
+        "entry-door-jamb-right"
+      ],
+      "definition_path": [
+        "PG2_entry-door"
+      ],
+      "require_visible": true,
+      "min_faces": 6
+    },
+    {
+      "id": "entry-door-head",
+      "role": "door_head",
+      "material": "Detail_Oak",
+      "instance_path": [
+        "id-entry-door",
+        "entry-door-head"
+      ],
+      "definition_path": [
+        "PG2_entry-door"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          980,
+          190,
+          60
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-door-jamb-rebate-left",
+      "role": "rebate",
+      "material": "Detail_Oak_Endgrain",
+      "instance_path": [
+        "id-entry-door",
+        "entry-door-jamb-rebate-left"
+      ],
+      "definition_path": [
+        "PG2_entry-door"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          14,
+          36,
+          2290
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-door-jamb-rebate-right",
+      "role": "rebate",
+      "material": "Detail_Oak_Endgrain",
+      "instance_path": [
+        "id-entry-door",
+        "entry-door-jamb-rebate-right"
+      ],
+      "definition_path": [
+        "PG2_entry-door"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          14,
+          36,
+          2290
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-door-threshold",
+      "role": "threshold",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 8,
+          "loop": "outer"
+        }
+      ],
+      "instance_path": [
+        "id-entry-door",
+        "entry-door-threshold"
+      ],
+      "definition_path": [
+        "PG2_entry-door"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          1000,
+          210,
+          27
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-door-leaf-stiles-rails",
+      "role": "door_leaf",
+      "material": "Detail_Oak",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-door",
+        "entry-door-leaf-instance",
+        "entry-door-leaf-stiles-rails"
+      ],
+      "definition_path": [
+        "PG2_entry-door",
+        "PG2_entry-door-leaf"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          972,
+          46,
+          2256
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-door-leaf-inset-panel",
+      "role": "raised_panel",
+      "material": "Detail_Oak_Endgrain",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.00000000000472
+        }
+      ],
+      "instance_path": [
+        "id-entry-door",
+        "entry-door-leaf-instance",
+        "entry-door-leaf-inset-panel"
+      ],
+      "definition_path": [
+        "PG2_entry-door",
+        "PG2_entry-door-leaf"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          812,
+          22,
+          2062
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-door-leaf-horizontal-rail",
+      "role": "rail",
+      "material": "Detail_Oak",
+      "instance_path": [
+        "id-entry-door",
+        "entry-door-leaf-instance",
+        "entry-door-leaf-horizontal-rail"
+      ],
+      "definition_path": [
+        "PG2_entry-door",
+        "PG2_entry-door-leaf"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          852,
+          12,
+          70
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-door-door-handle-bar",
+      "role": "door-handle-bar",
+      "material": "Detail_Brass",
+      "instance_path": [
+        "id-entry-door",
+        "entry-door-leaf-instance",
+        "entry-door-handle",
+        "entry-door-door-handle-bar"
+      ],
+      "definition_path": [
+        "PG2_entry-door",
+        "PG2_entry-door-leaf",
+        "PG2_entry-door-door-handle"
+      ],
+      "require_visible": true,
+      "min_faces": 34,
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-door-door-handle-post-l",
+      "role": "door-handle-post-l",
+      "material": "Detail_Brass",
+      "instance_path": [
+        "id-entry-door",
+        "entry-door-leaf-instance",
+        "entry-door-handle",
+        "entry-door-door-handle-post-l"
+      ],
+      "definition_path": [
+        "PG2_entry-door",
+        "PG2_entry-door-leaf",
+        "PG2_entry-door-door-handle"
+      ],
+      "require_visible": true,
+      "min_faces": 34,
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-door-door-handle-post-r",
+      "role": "door-handle-post-r",
+      "material": "Detail_Brass",
+      "instance_path": [
+        "id-entry-door",
+        "entry-door-leaf-instance",
+        "entry-door-handle",
+        "entry-door-door-handle-post-r"
+      ],
+      "definition_path": [
+        "PG2_entry-door",
+        "PG2_entry-door-leaf",
+        "PG2_entry-door-door-handle"
+      ],
+      "require_visible": true,
+      "min_faces": 34,
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-door-door-handle-screw-0",
+      "role": "fixing",
+      "material": "Detail_Brass",
+      "instance_path": [
+        "id-entry-door",
+        "entry-door-leaf-instance",
+        "entry-door-handle",
+        "entry-door-door-handle-screw-0"
+      ],
+      "definition_path": [
+        "PG2_entry-door",
+        "PG2_entry-door-leaf",
+        "PG2_entry-door-door-handle"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          8,
+          3,
+          8
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 20,
+          "max_turn_degrees": 20.000000000000053
+        }
+      ]
+    },
+    {
+      "id": "entry-door-door-handle-screw-1",
+      "role": "fixing",
+      "material": "Detail_Brass",
+      "instance_path": [
+        "id-entry-door",
+        "entry-door-leaf-instance",
+        "entry-door-handle",
+        "entry-door-door-handle-screw-1"
+      ],
+      "definition_path": [
+        "PG2_entry-door",
+        "PG2_entry-door-leaf",
+        "PG2_entry-door-door-handle"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          8,
+          3,
+          8
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 20,
+          "max_turn_degrees": 20.000000000000053
+        }
+      ]
+    },
+    {
+      "id": "entry-door-lock-escutcheon",
+      "role": "lock_escutcheon",
+      "material": "Detail_Brass",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        },
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000000153
+        }
+      ],
+      "instance_path": [
+        "id-entry-door",
+        "entry-door-leaf-instance",
+        "entry-door-lock-escutcheon"
+      ],
+      "definition_path": [
+        "PG2_entry-door",
+        "PG2_entry-door-leaf"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          30,
+          5,
+          70
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-door-hinge-0",
+      "role": "hinge-0",
+      "material": "Detail_Brass",
+      "instance_path": [
+        "id-entry-door",
+        "entry-door-leaf-instance",
+        "entry-door-hinge-0"
+      ],
+      "definition_path": [
+        "PG2_entry-door",
+        "PG2_entry-door-leaf"
+      ],
+      "require_visible": true,
+      "min_faces": 34,
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-door-hinge-leaf-0",
+      "role": "hinge_plate",
+      "material": "Detail_Brass",
+      "instance_path": [
+        "id-entry-door",
+        "entry-door-leaf-instance",
+        "entry-door-hinge-leaf-0"
+      ],
+      "definition_path": [
+        "PG2_entry-door",
+        "PG2_entry-door-leaf"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          24,
+          3,
+          58
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-door-hinge-1",
+      "role": "hinge-1",
+      "material": "Detail_Brass",
+      "instance_path": [
+        "id-entry-door",
+        "entry-door-leaf-instance",
+        "entry-door-hinge-1"
+      ],
+      "definition_path": [
+        "PG2_entry-door",
+        "PG2_entry-door-leaf"
+      ],
+      "require_visible": true,
+      "min_faces": 34,
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-door-hinge-leaf-1",
+      "role": "hinge_plate",
+      "material": "Detail_Brass",
+      "instance_path": [
+        "id-entry-door",
+        "entry-door-leaf-instance",
+        "entry-door-hinge-leaf-1"
+      ],
+      "definition_path": [
+        "PG2_entry-door",
+        "PG2_entry-door-leaf"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          24,
+          3,
+          58
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-door-hinge-2",
+      "role": "hinge-2",
+      "material": "Detail_Brass",
+      "instance_path": [
+        "id-entry-door",
+        "entry-door-leaf-instance",
+        "entry-door-hinge-2"
+      ],
+      "definition_path": [
+        "PG2_entry-door",
+        "PG2_entry-door-leaf"
+      ],
+      "require_visible": true,
+      "min_faces": 34,
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-door-hinge-leaf-2",
+      "role": "hinge_plate",
+      "material": "Detail_Brass",
+      "instance_path": [
+        "id-entry-door",
+        "entry-door-leaf-instance",
+        "entry-door-hinge-leaf-2"
+      ],
+      "definition_path": [
+        "PG2_entry-door",
+        "PG2_entry-door-leaf"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          24,
+          3,
+          58
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-window-outer-frame",
+      "role": "frame",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        },
+        {
+          "type": "profile",
+          "min_vertices": 4,
+          "loop": "outer"
+        }
+      ],
+      "instance_path": [
+        "id-entry-window",
+        "entry-window-outer-frame"
+      ],
+      "definition_path": [
+        "PG2_entry-window"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          1600,
+          170,
+          1550
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-window-thermal-break",
+      "role": "thermal_break",
+      "material": "Detail_Gasket",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-window",
+        "entry-window-thermal-break"
+      ],
+      "definition_path": [
+        "PG2_entry-window"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          1564,
+          16,
+          1514
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-window-outer-rebate",
+      "role": "rebate",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-window",
+        "entry-window-outer-rebate"
+      ],
+      "definition_path": [
+        "PG2_entry-window"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          1584,
+          12,
+          1534
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-window-sash-frame",
+      "role": "sash_frame",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-window",
+        "entry-window-left-sash",
+        "entry-window-sash-frame"
+      ],
+      "definition_path": [
+        "PG2_entry-window",
+        "PG2_entry-window-sash"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          736,
+          58,
+          1422
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-window-sash-gasket",
+      "role": "glazing_gasket",
+      "material": "Detail_Gasket",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-window",
+        "entry-window-left-sash",
+        "entry-window-sash-gasket"
+      ],
+      "definition_path": [
+        "PG2_entry-window",
+        "PG2_entry-window-sash"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          688,
+          4,
+          1374
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-window-glass-outer",
+      "role": "glazing",
+      "material": "Detail_Glass",
+      "instance_path": [
+        "id-entry-window",
+        "entry-window-left-sash",
+        "entry-window-glass-outer"
+      ],
+      "definition_path": [
+        "PG2_entry-window",
+        "PG2_entry-window-sash"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          672,
+          6,
+          1358
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-window-glass-inner",
+      "role": "glazing",
+      "material": "Detail_Glass",
+      "instance_path": [
+        "id-entry-window",
+        "entry-window-left-sash",
+        "entry-window-glass-inner"
+      ],
+      "definition_path": [
+        "PG2_entry-window",
+        "PG2_entry-window-sash"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          672,
+          6,
+          1358
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-window-glazing-spacer",
+      "role": "spacer",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-window",
+        "entry-window-left-sash",
+        "entry-window-glazing-spacer"
+      ],
+      "definition_path": [
+        "PG2_entry-window",
+        "PG2_entry-window-sash"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          672,
+          18,
+          1358
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-window-window-handle-bar",
+      "role": "window-handle-bar",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-window",
+        "entry-window-left-sash",
+        "entry-window-sash-handle",
+        "entry-window-window-handle-bar"
+      ],
+      "definition_path": [
+        "PG2_entry-window",
+        "PG2_entry-window-sash",
+        "PG2_entry-window-window-handle"
+      ],
+      "require_visible": true,
+      "min_faces": 34,
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-window-window-handle-post-l",
+      "role": "window-handle-post-l",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-window",
+        "entry-window-left-sash",
+        "entry-window-sash-handle",
+        "entry-window-window-handle-post-l"
+      ],
+      "definition_path": [
+        "PG2_entry-window",
+        "PG2_entry-window-sash",
+        "PG2_entry-window-window-handle"
+      ],
+      "require_visible": true,
+      "min_faces": 34,
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-window-window-handle-post-r",
+      "role": "window-handle-post-r",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-window",
+        "entry-window-left-sash",
+        "entry-window-sash-handle",
+        "entry-window-window-handle-post-r"
+      ],
+      "definition_path": [
+        "PG2_entry-window",
+        "PG2_entry-window-sash",
+        "PG2_entry-window-window-handle"
+      ],
+      "require_visible": true,
+      "min_faces": 34,
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-window-window-handle-screw-0",
+      "role": "fixing",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-window",
+        "entry-window-left-sash",
+        "entry-window-sash-handle",
+        "entry-window-window-handle-screw-0"
+      ],
+      "definition_path": [
+        "PG2_entry-window",
+        "PG2_entry-window-sash",
+        "PG2_entry-window-window-handle"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          8,
+          3,
+          8
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 20,
+          "max_turn_degrees": 20.000000000000053
+        }
+      ]
+    },
+    {
+      "id": "entry-window-window-handle-screw-1",
+      "role": "fixing",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-window",
+        "entry-window-left-sash",
+        "entry-window-sash-handle",
+        "entry-window-window-handle-screw-1"
+      ],
+      "definition_path": [
+        "PG2_entry-window",
+        "PG2_entry-window-sash",
+        "PG2_entry-window-window-handle"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          8,
+          3,
+          8
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 20,
+          "max_turn_degrees": 20.000000000000053
+        }
+      ]
+    },
+    {
+      "id": "entry-window-sash-frame",
+      "role": "sash_frame",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-window",
+        "entry-window-right-sash",
+        "entry-window-sash-frame"
+      ],
+      "definition_path": [
+        "PG2_entry-window",
+        "PG2_entry-window-sash"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          736,
+          58,
+          1422
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-window-sash-gasket",
+      "role": "glazing_gasket",
+      "material": "Detail_Gasket",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-window",
+        "entry-window-right-sash",
+        "entry-window-sash-gasket"
+      ],
+      "definition_path": [
+        "PG2_entry-window",
+        "PG2_entry-window-sash"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          688,
+          4,
+          1374
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-window-glass-outer",
+      "role": "glazing",
+      "material": "Detail_Glass",
+      "instance_path": [
+        "id-entry-window",
+        "entry-window-right-sash",
+        "entry-window-glass-outer"
+      ],
+      "definition_path": [
+        "PG2_entry-window",
+        "PG2_entry-window-sash"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          672,
+          6,
+          1358
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-window-glass-inner",
+      "role": "glazing",
+      "material": "Detail_Glass",
+      "instance_path": [
+        "id-entry-window",
+        "entry-window-right-sash",
+        "entry-window-glass-inner"
+      ],
+      "definition_path": [
+        "PG2_entry-window",
+        "PG2_entry-window-sash"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          672,
+          6,
+          1358
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-window-glazing-spacer",
+      "role": "spacer",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-window",
+        "entry-window-right-sash",
+        "entry-window-glazing-spacer"
+      ],
+      "definition_path": [
+        "PG2_entry-window",
+        "PG2_entry-window-sash"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          672,
+          18,
+          1358
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-window-window-handle-bar",
+      "role": "window-handle-bar",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-window",
+        "entry-window-right-sash",
+        "entry-window-sash-handle",
+        "entry-window-window-handle-bar"
+      ],
+      "definition_path": [
+        "PG2_entry-window",
+        "PG2_entry-window-sash",
+        "PG2_entry-window-window-handle"
+      ],
+      "require_visible": true,
+      "min_faces": 34,
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-window-window-handle-post-l",
+      "role": "window-handle-post-l",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-window",
+        "entry-window-right-sash",
+        "entry-window-sash-handle",
+        "entry-window-window-handle-post-l"
+      ],
+      "definition_path": [
+        "PG2_entry-window",
+        "PG2_entry-window-sash",
+        "PG2_entry-window-window-handle"
+      ],
+      "require_visible": true,
+      "min_faces": 34,
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-window-window-handle-post-r",
+      "role": "window-handle-post-r",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-window",
+        "entry-window-right-sash",
+        "entry-window-sash-handle",
+        "entry-window-window-handle-post-r"
+      ],
+      "definition_path": [
+        "PG2_entry-window",
+        "PG2_entry-window-sash",
+        "PG2_entry-window-window-handle"
+      ],
+      "require_visible": true,
+      "min_faces": 34,
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-window-window-handle-screw-0",
+      "role": "fixing",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-window",
+        "entry-window-right-sash",
+        "entry-window-sash-handle",
+        "entry-window-window-handle-screw-0"
+      ],
+      "definition_path": [
+        "PG2_entry-window",
+        "PG2_entry-window-sash",
+        "PG2_entry-window-window-handle"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          8,
+          3,
+          8
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 20,
+          "max_turn_degrees": 20.000000000000053
+        }
+      ]
+    },
+    {
+      "id": "entry-window-window-handle-screw-1",
+      "role": "fixing",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-window",
+        "entry-window-right-sash",
+        "entry-window-sash-handle",
+        "entry-window-window-handle-screw-1"
+      ],
+      "definition_path": [
+        "PG2_entry-window",
+        "PG2_entry-window-sash",
+        "PG2_entry-window-window-handle"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          8,
+          3,
+          8
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 20,
+          "max_turn_degrees": 20.000000000000053
+        }
+      ]
+    },
+    {
+      "id": "entry-window-central-mullion",
+      "role": "mullion",
+      "material": "Detail_Aluminium",
+      "instance_path": [
+        "id-entry-window",
+        "entry-window-central-mullion"
+      ],
+      "definition_path": [
+        "PG2_entry-window"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          36,
+          170,
+          1440
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-window-projecting-sill",
+      "role": "sill",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 6,
+          "loop": "outer"
+        }
+      ],
+      "instance_path": [
+        "id-entry-window",
+        "entry-window-projecting-sill"
+      ],
+      "definition_path": [
+        "PG2_entry-window"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          1670,
+          270,
+          28
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-eaves-fascia",
+      "role": "fascia",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 6,
+          "loop": "outer"
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-fascia"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          5300,
+          35,
+          180
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-eaves-soffit",
+      "role": "soffit",
+      "material": "Detail_Oak",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 24
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-soffit"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          5300,
+          420,
+          18
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-eaves-vent-0",
+      "role": "soffit_vent",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 3
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-vent-0"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          140,
+          90,
+          5
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-eaves-vent-1",
+      "role": "soffit_vent",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 3
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-vent-1"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          140,
+          90,
+          5
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-eaves-vent-2",
+      "role": "soffit_vent",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 3
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-vent-2"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          140,
+          90,
+          5
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-eaves-vent-3",
+      "role": "soffit_vent",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 3
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-vent-3"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          140,
+          90,
+          5
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-eaves-vent-4",
+      "role": "soffit_vent",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 3
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-vent-4"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          140,
+          90,
+          5
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-eaves-vent-5",
+      "role": "soffit_vent",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 3
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-vent-5"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          140,
+          90,
+          5
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-eaves-vent-6",
+      "role": "soffit_vent",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 3
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-vent-6"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          140,
+          90,
+          5
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-eaves-vent-7",
+      "role": "soffit_vent",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 3
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-vent-7"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          140,
+          90,
+          5
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-eaves-vent-8",
+      "role": "soffit_vent",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 3
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-vent-8"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          140,
+          90,
+          5
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-eaves-vent-9",
+      "role": "soffit_vent",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 3
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-vent-9"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          140,
+          90,
+          5
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-eaves-vent-10",
+      "role": "soffit_vent",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 3
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-vent-10"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          140,
+          90,
+          5
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-eaves-vent-11",
+      "role": "soffit_vent",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 3
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-vent-11"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          140,
+          90,
+          5
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-eaves-vent-12",
+      "role": "soffit_vent",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 3
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-vent-12"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          140,
+          90,
+          5
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-eaves-vent-13",
+      "role": "soffit_vent",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 3
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-vent-13"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          140,
+          90,
+          5
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-eaves-vent-14",
+      "role": "soffit_vent",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 3
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-vent-14"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          140,
+          90,
+          5
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-eaves-vent-15",
+      "role": "soffit_vent",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 3
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-vent-15"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          140,
+          90,
+          5
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-eaves-vent-16",
+      "role": "soffit_vent",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 3
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-vent-16"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          140,
+          90,
+          5
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-eaves-vent-17",
+      "role": "soffit_vent",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 3
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-vent-17"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          140,
+          90,
+          5
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-eaves-vent-18",
+      "role": "soffit_vent",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 3
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-vent-18"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          140,
+          90,
+          5
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-eaves-vent-19",
+      "role": "soffit_vent",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 3
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-vent-19"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          140,
+          90,
+          5
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-eaves-vent-20",
+      "role": "soffit_vent",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 3
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-vent-20"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          140,
+          90,
+          5
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-eaves-vent-21",
+      "role": "soffit_vent",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 3
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-vent-21"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          140,
+          90,
+          5
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-eaves-vent-22",
+      "role": "soffit_vent",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 3
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-vent-22"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          140,
+          90,
+          5
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-eaves-vent-23",
+      "role": "soffit_vent",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 3
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-vent-23"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          140,
+          90,
+          5
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-eaves-half-round-gutter",
+      "role": "gutter",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 50,
+          "loop": "outer"
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-half-round-gutter"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          5125,
+          170,
+          85.00000000000001
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-eaves-gutter-outlet-return",
+      "role": "gutter",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 50,
+          "loop": "outer"
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-gutter-outlet-return"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          85,
+          170,
+          85.00000000000001
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-eaves-outlet-pan",
+      "role": "gutter_outlet",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-outlet-pan"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          90,
+          170,
+          3
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-eaves-outlet-back",
+      "role": "outlet_wall",
+      "material": "Detail_Aluminium",
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-outlet-back"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          90,
+          3,
+          84
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-eaves-outlet-front",
+      "role": "outlet_wall",
+      "material": "Detail_Aluminium",
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-outlet-front"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          90,
+          3,
+          84
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-eaves-gutter-endcap-left",
+      "role": "gutter_endcap",
+      "material": "Detail_Aluminium",
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-gutter-endcap-left"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          3,
+          170,
+          85.00000000000001
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 25
+        }
+      ]
+    },
+    {
+      "id": "entry-eaves-gutter-endcap-right",
+      "role": "gutter_endcap",
+      "material": "Detail_Aluminium",
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-gutter-endcap-right"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          3,
+          170,
+          85.00000000000001
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 25
+        }
+      ]
+    },
+    {
+      "id": "entry-eaves-gutter-bracket-0",
+      "role": "gutter_bracket",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-gutter-bracket-0"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          18,
+          125,
+          8
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-eaves-gutter-bracket-1",
+      "role": "gutter_bracket",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-gutter-bracket-1"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          18,
+          125,
+          8
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-eaves-gutter-bracket-2",
+      "role": "gutter_bracket",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-gutter-bracket-2"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          18,
+          125,
+          8
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-eaves-gutter-bracket-3",
+      "role": "gutter_bracket",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-gutter-bracket-3"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          18,
+          125,
+          8
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-eaves-gutter-bracket-4",
+      "role": "gutter_bracket",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-gutter-bracket-4"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          18,
+          125,
+          8
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-eaves-gutter-bracket-5",
+      "role": "gutter_bracket",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-gutter-bracket-5"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          18,
+          125,
+          8
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-eaves-gutter-bracket-6",
+      "role": "gutter_bracket",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-gutter-bracket-6"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          18,
+          125,
+          8
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-eaves-gutter-bracket-7",
+      "role": "gutter_bracket",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-gutter-bracket-7"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          18,
+          125,
+          8
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-eaves-gutter-bracket-8",
+      "role": "gutter_bracket",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-gutter-bracket-8"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          18,
+          125,
+          8
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-eaves-downpipe",
+      "role": "downpipe",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        },
+        {
+          "type": "profile",
+          "min_vertices": 40,
+          "loop": "outer",
+          "max_turn_degrees": 11.000000000000188
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-downpipe"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          84,
+          84,
+          3233
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-eaves-pipe-clamp-380",
+      "role": "pipe_clamp",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 40,
+          "max_turn_degrees": 11.000000000000107
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-pipe-clamp-380"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          94,
+          94,
+          20
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-eaves-pipe-clamp-stand-380",
+      "role": "pipe_clamp_stand",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-pipe-clamp-stand-380"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          24,
+          62,
+          14
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-eaves-pipe-clamp-1650",
+      "role": "pipe_clamp",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 40,
+          "max_turn_degrees": 11.000000000000107
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-pipe-clamp-1650"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          94,
+          94,
+          20
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-eaves-pipe-clamp-stand-1650",
+      "role": "pipe_clamp_stand",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-pipe-clamp-stand-1650"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          24,
+          62,
+          14
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-eaves-pipe-clamp-3080",
+      "role": "pipe_clamp",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 40,
+          "max_turn_degrees": 11.000000000000107
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-pipe-clamp-3080"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          94,
+          94,
+          20
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-eaves-pipe-clamp-stand-3080",
+      "role": "pipe_clamp_stand",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-pipe-clamp-stand-3080"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          24,
+          62,
+          14
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-eaves-shoe",
+      "role": "hollow_outlet_shoe",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "solid",
+          "expected": true
+        }
+      ],
+      "instance_path": [
+        "id-entry-eaves",
+        "entry-eaves-shoe"
+      ],
+      "definition_path": [
+        "PG2_entry-eaves"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          84,
+          156.36484601967808,
+          144.46709007300814
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-railing-post-base",
+      "role": "baseplate",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 4
+        },
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000000213
+        }
+      ],
+      "instance_path": [
+        "id-entry-railing",
+        "entry-railing-post-1",
+        "entry-railing-post-base"
+      ],
+      "definition_path": [
+        "PG2_entry-railing",
+        "PG2_entry-railing-post"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          110,
+          110,
+          12
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-railing-post-tube",
+      "role": "hollow_post",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        },
+        {
+          "type": "profile",
+          "min_vertices": 32,
+          "loop": "outer",
+          "max_turn_degrees": 13.250000000000137
+        }
+      ],
+      "instance_path": [
+        "id-entry-railing",
+        "entry-railing-post-1",
+        "entry-railing-post-tube"
+      ],
+      "definition_path": [
+        "PG2_entry-railing",
+        "PG2_entry-railing-post"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          42,
+          42,
+          1005
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-railing-rail-post-connector",
+      "role": "rail_connector",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-railing",
+        "entry-railing-post-1",
+        "entry-railing-rail-post-connector"
+      ],
+      "definition_path": [
+        "PG2_entry-railing",
+        "PG2_entry-railing-post"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          34,
+          34,
+          22
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 32
+        }
+      ]
+    },
+    {
+      "id": "entry-railing-base-bolt-20-20",
+      "role": "bolt",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-railing",
+        "entry-railing-post-1",
+        "entry-railing-base-bolt-20-20"
+      ],
+      "definition_path": [
+        "PG2_entry-railing",
+        "PG2_entry-railing-post"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          16,
+          13.856406460551018,
+          7
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 6
+        }
+      ]
+    },
+    {
+      "id": "entry-railing-base-bolt-90-20",
+      "role": "bolt",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-railing",
+        "entry-railing-post-1",
+        "entry-railing-base-bolt-90-20"
+      ],
+      "definition_path": [
+        "PG2_entry-railing",
+        "PG2_entry-railing-post"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          16,
+          13.856406460551018,
+          7
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 6
+        }
+      ]
+    },
+    {
+      "id": "entry-railing-base-bolt-90-90",
+      "role": "bolt",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-railing",
+        "entry-railing-post-1",
+        "entry-railing-base-bolt-90-90"
+      ],
+      "definition_path": [
+        "PG2_entry-railing",
+        "PG2_entry-railing-post"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          16,
+          13.856406460551018,
+          7
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 6
+        }
+      ]
+    },
+    {
+      "id": "entry-railing-base-bolt-20-90",
+      "role": "bolt",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-railing",
+        "entry-railing-post-1",
+        "entry-railing-base-bolt-20-90"
+      ],
+      "definition_path": [
+        "PG2_entry-railing",
+        "PG2_entry-railing-post"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          16,
+          13.856406460551018,
+          7
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 6
+        }
+      ]
+    },
+    {
+      "id": "entry-railing-post-base",
+      "role": "baseplate",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 4
+        },
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000000213
+        }
+      ],
+      "instance_path": [
+        "id-entry-railing",
+        "entry-railing-post-2",
+        "entry-railing-post-base"
+      ],
+      "definition_path": [
+        "PG2_entry-railing",
+        "PG2_entry-railing-post"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          110,
+          110,
+          12
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-railing-post-tube",
+      "role": "hollow_post",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        },
+        {
+          "type": "profile",
+          "min_vertices": 32,
+          "loop": "outer",
+          "max_turn_degrees": 13.250000000000137
+        }
+      ],
+      "instance_path": [
+        "id-entry-railing",
+        "entry-railing-post-2",
+        "entry-railing-post-tube"
+      ],
+      "definition_path": [
+        "PG2_entry-railing",
+        "PG2_entry-railing-post"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          42,
+          42,
+          1005
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-railing-rail-post-connector",
+      "role": "rail_connector",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-railing",
+        "entry-railing-post-2",
+        "entry-railing-rail-post-connector"
+      ],
+      "definition_path": [
+        "PG2_entry-railing",
+        "PG2_entry-railing-post"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          34,
+          34,
+          22
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 32
+        }
+      ]
+    },
+    {
+      "id": "entry-railing-base-bolt-20-20",
+      "role": "bolt",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-railing",
+        "entry-railing-post-2",
+        "entry-railing-base-bolt-20-20"
+      ],
+      "definition_path": [
+        "PG2_entry-railing",
+        "PG2_entry-railing-post"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          16,
+          13.856406460551018,
+          7
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 6
+        }
+      ]
+    },
+    {
+      "id": "entry-railing-base-bolt-90-20",
+      "role": "bolt",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-railing",
+        "entry-railing-post-2",
+        "entry-railing-base-bolt-90-20"
+      ],
+      "definition_path": [
+        "PG2_entry-railing",
+        "PG2_entry-railing-post"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          16,
+          13.856406460551018,
+          7
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 6
+        }
+      ]
+    },
+    {
+      "id": "entry-railing-base-bolt-90-90",
+      "role": "bolt",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-railing",
+        "entry-railing-post-2",
+        "entry-railing-base-bolt-90-90"
+      ],
+      "definition_path": [
+        "PG2_entry-railing",
+        "PG2_entry-railing-post"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          16,
+          13.856406460551018,
+          7
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 6
+        }
+      ]
+    },
+    {
+      "id": "entry-railing-base-bolt-20-90",
+      "role": "bolt",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-railing",
+        "entry-railing-post-2",
+        "entry-railing-base-bolt-20-90"
+      ],
+      "definition_path": [
+        "PG2_entry-railing",
+        "PG2_entry-railing-post"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          16,
+          13.856406460551018,
+          7
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 6
+        }
+      ]
+    },
+    {
+      "id": "entry-railing-post-base",
+      "role": "baseplate",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 4
+        },
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000000213
+        }
+      ],
+      "instance_path": [
+        "id-entry-railing",
+        "entry-railing-post-3",
+        "entry-railing-post-base"
+      ],
+      "definition_path": [
+        "PG2_entry-railing",
+        "PG2_entry-railing-post"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          110,
+          110,
+          12
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-railing-post-tube",
+      "role": "hollow_post",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        },
+        {
+          "type": "profile",
+          "min_vertices": 32,
+          "loop": "outer",
+          "max_turn_degrees": 13.250000000000137
+        }
+      ],
+      "instance_path": [
+        "id-entry-railing",
+        "entry-railing-post-3",
+        "entry-railing-post-tube"
+      ],
+      "definition_path": [
+        "PG2_entry-railing",
+        "PG2_entry-railing-post"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          42,
+          42,
+          1005
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-railing-rail-post-connector",
+      "role": "rail_connector",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-railing",
+        "entry-railing-post-3",
+        "entry-railing-rail-post-connector"
+      ],
+      "definition_path": [
+        "PG2_entry-railing",
+        "PG2_entry-railing-post"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          34,
+          34,
+          22
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 32
+        }
+      ]
+    },
+    {
+      "id": "entry-railing-base-bolt-20-20",
+      "role": "bolt",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-railing",
+        "entry-railing-post-3",
+        "entry-railing-base-bolt-20-20"
+      ],
+      "definition_path": [
+        "PG2_entry-railing",
+        "PG2_entry-railing-post"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          16,
+          13.856406460551018,
+          7
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 6
+        }
+      ]
+    },
+    {
+      "id": "entry-railing-base-bolt-90-20",
+      "role": "bolt",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-railing",
+        "entry-railing-post-3",
+        "entry-railing-base-bolt-90-20"
+      ],
+      "definition_path": [
+        "PG2_entry-railing",
+        "PG2_entry-railing-post"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          16,
+          13.856406460551018,
+          7
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 6
+        }
+      ]
+    },
+    {
+      "id": "entry-railing-base-bolt-90-90",
+      "role": "bolt",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-railing",
+        "entry-railing-post-3",
+        "entry-railing-base-bolt-90-90"
+      ],
+      "definition_path": [
+        "PG2_entry-railing",
+        "PG2_entry-railing-post"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          16,
+          13.856406460551018,
+          7
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 6
+        }
+      ]
+    },
+    {
+      "id": "entry-railing-base-bolt-20-90",
+      "role": "bolt",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-railing",
+        "entry-railing-post-3",
+        "entry-railing-base-bolt-20-90"
+      ],
+      "definition_path": [
+        "PG2_entry-railing",
+        "PG2_entry-railing-post"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          16,
+          13.856406460551018,
+          7
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 6
+        }
+      ]
+    },
+    {
+      "id": "entry-railing-post-base",
+      "role": "baseplate",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 4
+        },
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000000213
+        }
+      ],
+      "instance_path": [
+        "id-entry-railing",
+        "entry-railing-post-4",
+        "entry-railing-post-base"
+      ],
+      "definition_path": [
+        "PG2_entry-railing",
+        "PG2_entry-railing-post"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          110,
+          110,
+          12
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-railing-post-tube",
+      "role": "hollow_post",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        },
+        {
+          "type": "profile",
+          "min_vertices": 32,
+          "loop": "outer",
+          "max_turn_degrees": 13.250000000000137
+        }
+      ],
+      "instance_path": [
+        "id-entry-railing",
+        "entry-railing-post-4",
+        "entry-railing-post-tube"
+      ],
+      "definition_path": [
+        "PG2_entry-railing",
+        "PG2_entry-railing-post"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          42,
+          42,
+          1005
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-railing-rail-post-connector",
+      "role": "rail_connector",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-railing",
+        "entry-railing-post-4",
+        "entry-railing-rail-post-connector"
+      ],
+      "definition_path": [
+        "PG2_entry-railing",
+        "PG2_entry-railing-post"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          34,
+          34,
+          22
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 32
+        }
+      ]
+    },
+    {
+      "id": "entry-railing-base-bolt-20-20",
+      "role": "bolt",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-railing",
+        "entry-railing-post-4",
+        "entry-railing-base-bolt-20-20"
+      ],
+      "definition_path": [
+        "PG2_entry-railing",
+        "PG2_entry-railing-post"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          16,
+          13.856406460551018,
+          7
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 6
+        }
+      ]
+    },
+    {
+      "id": "entry-railing-base-bolt-90-20",
+      "role": "bolt",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-railing",
+        "entry-railing-post-4",
+        "entry-railing-base-bolt-90-20"
+      ],
+      "definition_path": [
+        "PG2_entry-railing",
+        "PG2_entry-railing-post"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          16,
+          13.856406460551018,
+          7
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 6
+        }
+      ]
+    },
+    {
+      "id": "entry-railing-base-bolt-90-90",
+      "role": "bolt",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-railing",
+        "entry-railing-post-4",
+        "entry-railing-base-bolt-90-90"
+      ],
+      "definition_path": [
+        "PG2_entry-railing",
+        "PG2_entry-railing-post"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          16,
+          13.856406460551018,
+          7
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 6
+        }
+      ]
+    },
+    {
+      "id": "entry-railing-base-bolt-20-90",
+      "role": "bolt",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-railing",
+        "entry-railing-post-4",
+        "entry-railing-base-bolt-20-90"
+      ],
+      "definition_path": [
+        "PG2_entry-railing",
+        "PG2_entry-railing-post"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          16,
+          13.856406460551018,
+          7
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 6
+        }
+      ]
+    },
+    {
+      "id": "entry-railing-top-rail",
+      "role": "continuous_curved_rail",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "solid",
+          "expected": true
+        }
+      ],
+      "instance_path": [
+        "id-entry-railing",
+        "entry-railing-top-rail"
+      ],
+      "definition_path": [
+        "PG2_entry-railing"
+      ],
+      "require_visible": true,
+      "min_faces": 42
+    },
+    {
+      "id": "entry-railing-glass-panel-0",
+      "role": "guard_panel",
+      "material": "Detail_Glass",
+      "instance_path": [
+        "id-entry-railing",
+        "entry-railing-glass-panel-0"
+      ],
+      "definition_path": [
+        "PG2_entry-railing"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          730,
+          12,
+          800
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-railing-glass-clamp-0-75-220",
+      "role": "glass_clamp",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-railing",
+        "entry-railing-glass-clamp-0-75-220"
+      ],
+      "definition_path": [
+        "PG2_entry-railing"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          32,
+          42,
+          42
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-railing-glass-clamp-0-75-850",
+      "role": "glass_clamp",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-railing",
+        "entry-railing-glass-clamp-0-75-850"
+      ],
+      "definition_path": [
+        "PG2_entry-railing"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          32,
+          42,
+          42
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-railing-glass-clamp-0-820-220",
+      "role": "glass_clamp",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-railing",
+        "entry-railing-glass-clamp-0-820-220"
+      ],
+      "definition_path": [
+        "PG2_entry-railing"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          32,
+          42,
+          42
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-railing-glass-clamp-0-820-850",
+      "role": "glass_clamp",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-railing",
+        "entry-railing-glass-clamp-0-820-850"
+      ],
+      "definition_path": [
+        "PG2_entry-railing"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          32,
+          42,
+          42
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-railing-glass-panel-1",
+      "role": "guard_panel",
+      "material": "Detail_Glass",
+      "instance_path": [
+        "id-entry-railing",
+        "entry-railing-glass-panel-1"
+      ],
+      "definition_path": [
+        "PG2_entry-railing"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          730,
+          12,
+          800
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-railing-glass-clamp-1-875-220",
+      "role": "glass_clamp",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-railing",
+        "entry-railing-glass-clamp-1-875-220"
+      ],
+      "definition_path": [
+        "PG2_entry-railing"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          32,
+          42,
+          42
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-railing-glass-clamp-1-875-850",
+      "role": "glass_clamp",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-railing",
+        "entry-railing-glass-clamp-1-875-850"
+      ],
+      "definition_path": [
+        "PG2_entry-railing"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          32,
+          42,
+          42
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-railing-glass-clamp-1-1620-220",
+      "role": "glass_clamp",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-railing",
+        "entry-railing-glass-clamp-1-1620-220"
+      ],
+      "definition_path": [
+        "PG2_entry-railing"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          32,
+          42,
+          42
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-railing-glass-clamp-1-1620-850",
+      "role": "glass_clamp",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-railing",
+        "entry-railing-glass-clamp-1-1620-850"
+      ],
+      "definition_path": [
+        "PG2_entry-railing"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          32,
+          42,
+          42
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-railing-glass-panel-2",
+      "role": "guard_panel",
+      "material": "Detail_Glass",
+      "instance_path": [
+        "id-entry-railing",
+        "entry-railing-glass-panel-2"
+      ],
+      "definition_path": [
+        "PG2_entry-railing"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          730,
+          12,
+          800
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-railing-glass-clamp-2-1675-220",
+      "role": "glass_clamp",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-railing",
+        "entry-railing-glass-clamp-2-1675-220"
+      ],
+      "definition_path": [
+        "PG2_entry-railing"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          32,
+          42,
+          42
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-railing-glass-clamp-2-1675-850",
+      "role": "glass_clamp",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-railing",
+        "entry-railing-glass-clamp-2-1675-850"
+      ],
+      "definition_path": [
+        "PG2_entry-railing"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          32,
+          42,
+          42
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-railing-glass-clamp-2-2420-220",
+      "role": "glass_clamp",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-railing",
+        "entry-railing-glass-clamp-2-2420-220"
+      ],
+      "definition_path": [
+        "PG2_entry-railing"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          32,
+          42,
+          42
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-railing-glass-clamp-2-2420-850",
+      "role": "glass_clamp",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-railing",
+        "entry-railing-glass-clamp-2-2420-850"
+      ],
+      "definition_path": [
+        "PG2_entry-railing"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          32,
+          42,
+          42
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-paving-substrate",
+      "role": "paving_substrate",
+      "material": "Detail_Concrete",
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-substrate"
+      ],
+      "definition_path": [
+        "PG2_entry-paving"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          5600,
+          2600,
+          80
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-paving-bedding",
+      "role": "paving_bedding",
+      "material": "Detail_Grout",
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-bedding"
+      ],
+      "definition_path": [
+        "PG2_entry-paving"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          5600,
+          2600,
+          24
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-0-0",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-560-0",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-1120-0",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-1680-0",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-2240-0",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-2800-0",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-3360-0",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-3920-0",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-4480-0",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-5040-0",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-0-400",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-560-400",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-1120-400",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-1680-400",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-2240-400",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-2800-400",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-3360-400",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-3920-400",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-4480-400",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-5040-400",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-0-800",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-560-800",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-1120-800",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-1680-800",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-2240-800",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-2800-800",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-3360-800",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-3920-800",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-4480-800",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-5040-800",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-0-1200",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-560-1200",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-1120-1200",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-1680-1200",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-2240-1200",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-2800-1200",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-3360-1200",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-3920-1200",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-4480-1200",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-5040-1200",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-0-1600",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-560-1600",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-1120-1600",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-1680-1600",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-2240-1600",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-2800-1600",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-3360-1600",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-3920-1600",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-4480-1600",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-5040-1600",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-0-2000",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-560-2000",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-1120-2000",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-1680-2000",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-2240-2000",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-2800-2000",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-3360-2000",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-3920-2000",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-4480-2000",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-body",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-5040-2000",
+        "entry-paving-tile-body"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          395,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-cut-body-2400",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-0-2400",
+        "entry-paving-tile-cut-body-2400"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile-cut-2400"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          58,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-cut-body-2400",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-560-2400",
+        "entry-paving-tile-cut-body-2400"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile-cut-2400"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          58,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-cut-body-2400",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-1120-2400",
+        "entry-paving-tile-cut-body-2400"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile-cut-2400"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          58,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-cut-body-2400",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-1680-2400",
+        "entry-paving-tile-cut-body-2400"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile-cut-2400"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          58,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-cut-body-2400",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-2240-2400",
+        "entry-paving-tile-cut-body-2400"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile-cut-2400"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          58,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-cut-body-2400",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-2800-2400",
+        "entry-paving-tile-cut-body-2400"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile-cut-2400"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          58,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-cut-body-2400",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-3360-2400",
+        "entry-paving-tile-cut-body-2400"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile-cut-2400"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          58,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-cut-body-2400",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-3920-2400",
+        "entry-paving-tile-cut-body-2400"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile-cut-2400"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          58,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-cut-body-2400",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-4480-2400",
+        "entry-paving-tile-cut-body-2400"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile-cut-2400"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          58,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-tile-cut-body-2400",
+      "role": "paver",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 24,
+          "loop": "outer",
+          "max_turn_degrees": 20.000000000004928
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-tile-5040-2400",
+        "entry-paving-tile-cut-body-2400"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-tile-cut-2400"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          555,
+          58,
+          35
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-channel-bed",
+      "role": "drain_channel",
+      "material": "Detail_Aluminium",
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-channel-bed"
+      ],
+      "definition_path": [
+        "PG2_entry-paving"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          5600,
+          115,
+          12
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-paving-channel-wall-front",
+      "role": "drain_channel",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-channel-wall-front"
+      ],
+      "definition_path": [
+        "PG2_entry-paving"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          5600,
+          5,
+          30
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-paving-channel-wall-back",
+      "role": "drain_channel",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-channel-wall-back"
+      ],
+      "definition_path": [
+        "PG2_entry-paving"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          5600,
+          5,
+          30
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-paving-grate-frame",
+      "role": "grate",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 8
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-grate-0",
+        "entry-paving-grate-frame"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-grate"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          290,
+          100,
+          12
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-grate-frame",
+      "role": "grate",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 8
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-grate-1",
+        "entry-paving-grate-frame"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-grate"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          290,
+          100,
+          12
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-grate-frame",
+      "role": "grate",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 8
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-grate-2",
+        "entry-paving-grate-frame"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-grate"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          290,
+          100,
+          12
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-grate-frame",
+      "role": "grate",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 8
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-grate-3",
+        "entry-paving-grate-frame"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-grate"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          290,
+          100,
+          12
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-grate-frame",
+      "role": "grate",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 8
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-grate-4",
+        "entry-paving-grate-frame"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-grate"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          290,
+          100,
+          12
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-grate-frame",
+      "role": "grate",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 8
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-grate-5",
+        "entry-paving-grate-frame"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-grate"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          290,
+          100,
+          12
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-grate-frame",
+      "role": "grate",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 8
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-grate-6",
+        "entry-paving-grate-frame"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-grate"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          290,
+          100,
+          12
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-grate-frame",
+      "role": "grate",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 8
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-grate-7",
+        "entry-paving-grate-frame"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-grate"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          290,
+          100,
+          12
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-grate-frame",
+      "role": "grate",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 8
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-grate-8",
+        "entry-paving-grate-frame"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-grate"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          290,
+          100,
+          12
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-grate-frame",
+      "role": "grate",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 8
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-grate-9",
+        "entry-paving-grate-frame"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-grate"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          290,
+          100,
+          12
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-grate-frame",
+      "role": "grate",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 8
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-grate-10",
+        "entry-paving-grate-frame"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-grate"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          290,
+          100,
+          12
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-grate-frame",
+      "role": "grate",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 8
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-grate-11",
+        "entry-paving-grate-frame"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-grate"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          290,
+          100,
+          12
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-grate-frame",
+      "role": "grate",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 8
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-grate-12",
+        "entry-paving-grate-frame"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-grate"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          290,
+          100,
+          12
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-grate-frame",
+      "role": "grate",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 8
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-grate-13",
+        "entry-paving-grate-frame"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-grate"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          290,
+          100,
+          12
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-grate-frame",
+      "role": "grate",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 8
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-grate-14",
+        "entry-paving-grate-frame"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-grate"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          290,
+          100,
+          12
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-grate-frame",
+      "role": "grate",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 8
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-grate-15",
+        "entry-paving-grate-frame"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-grate"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          290,
+          100,
+          12
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-grate-frame",
+      "role": "grate",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 8
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-grate-16",
+        "entry-paving-grate-frame"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-grate"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          290,
+          100,
+          12
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-paving-grate-frame",
+      "role": "grate",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 8
+        },
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-entry-paving",
+        "entry-paving-grate-17",
+        "entry-paving-grate-frame"
+      ],
+      "definition_path": [
+        "PG2_entry-paving",
+        "PG2_entry-paving-grate"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          290,
+          100,
+          12
+        ],
+        "tolerance_mm": 0.5
+      }
+    },
+    {
+      "id": "entry-slat-0",
+      "role": "facade_slat",
+      "material": "Detail_Oak",
+      "instance_path": [
+        "id-entry-slats",
+        "entry-slat-0"
+      ],
+      "definition_path": [
+        "PG2_entry-slats"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          28,
+          50,
+          2840
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 24,
+          "max_turn_degrees": 20.000000000000213
+        }
+      ]
+    },
+    {
+      "id": "entry-slat-1",
+      "role": "facade_slat",
+      "material": "Detail_Oak",
+      "instance_path": [
+        "id-entry-slats",
+        "entry-slat-1"
+      ],
+      "definition_path": [
+        "PG2_entry-slats"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          28,
+          50,
+          2840
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 24,
+          "max_turn_degrees": 20.000000000000213
+        }
+      ]
+    },
+    {
+      "id": "entry-slat-2",
+      "role": "facade_slat",
+      "material": "Detail_Oak",
+      "instance_path": [
+        "id-entry-slats",
+        "entry-slat-2"
+      ],
+      "definition_path": [
+        "PG2_entry-slats"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          28,
+          50,
+          2840
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 24,
+          "max_turn_degrees": 20.000000000000213
+        }
+      ]
+    },
+    {
+      "id": "entry-slat-3",
+      "role": "facade_slat",
+      "material": "Detail_Oak",
+      "instance_path": [
+        "id-entry-slats",
+        "entry-slat-3"
+      ],
+      "definition_path": [
+        "PG2_entry-slats"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          28,
+          50,
+          2840
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 24,
+          "max_turn_degrees": 20.000000000000213
+        }
+      ]
+    },
+    {
+      "id": "entry-slat-4",
+      "role": "facade_slat",
+      "material": "Detail_Oak",
+      "instance_path": [
+        "id-entry-slats",
+        "entry-slat-4"
+      ],
+      "definition_path": [
+        "PG2_entry-slats"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          28,
+          50,
+          2840
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 24,
+          "max_turn_degrees": 20.000000000000213
+        }
+      ]
+    },
+    {
+      "id": "entry-slat-5",
+      "role": "facade_slat",
+      "material": "Detail_Oak",
+      "instance_path": [
+        "id-entry-slats",
+        "entry-slat-5"
+      ],
+      "definition_path": [
+        "PG2_entry-slats"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          28,
+          50,
+          2840
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 24,
+          "max_turn_degrees": 20.000000000000213
+        }
+      ]
+    },
+    {
+      "id": "entry-slat-6",
+      "role": "facade_slat",
+      "material": "Detail_Oak",
+      "instance_path": [
+        "id-entry-slats",
+        "entry-slat-6"
+      ],
+      "definition_path": [
+        "PG2_entry-slats"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          28,
+          50,
+          2840
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 24,
+          "max_turn_degrees": 20.000000000000213
+        }
+      ]
+    },
+    {
+      "id": "entry-canopy-roof",
+      "role": "canopy_roof",
+      "material": "Detail_Aluminium",
+      "instance_path": [
+        "id-entry-canopy",
+        "entry-canopy-roof"
+      ],
+      "definition_path": [
+        "PG2_entry-canopy"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          1430,
+          1220,
+          48
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "loop": "outer",
+          "min_vertices": 24,
+          "max_turn_degrees": 20.000000000004206
+        }
+      ]
+    },
+    {
+      "id": "entry-canopy-rear-beam",
+      "role": "canopy_beam",
+      "material": "Detail_Aluminium",
+      "instance_path": [
+        "id-entry-canopy",
+        "entry-canopy-rear-beam"
+      ],
+      "definition_path": [
+        "PG2_entry-canopy"
+      ],
+      "require_visible": true,
+      "min_faces": 6,
+      "bounds_mm": {
+        "size": [
+          1430,
+          65,
+          70
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-canopy-stay-left",
+      "role": "canopy_stay",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-canopy",
+        "entry-canopy-stay-left"
+      ],
+      "definition_path": [
+        "PG2_entry-canopy"
+      ],
+      "require_visible": true,
+      "min_faces": 34,
+      "geometry_checks": []
+    },
+    {
+      "id": "entry-canopy-stay-right",
+      "role": "canopy_stay",
+      "material": "Detail_Stainless",
+      "instance_path": [
+        "id-entry-canopy",
+        "entry-canopy-stay-right"
+      ],
+      "definition_path": [
+        "PG2_entry-canopy"
+      ],
+      "require_visible": true,
+      "min_faces": 34,
+      "geometry_checks": []
+    }
+  ],
+  "required_voids": [
+    {
+      "id": "id-entry-wall:entry-wall-opening-1-through-depth",
+      "instance_path": [
+        "id-entry-wall"
+      ],
+      "search_scope": "assembly",
+      "bounds_mm": {
+        "min": [
+          612,
+          -1,
+          2
+        ],
+        "max": [
+          1708,
+          309,
+          2348
+        ]
+      },
+      "boundary_checks": []
+    },
+    {
+      "id": "id-entry-wall:entry-wall-opening-1-inner-lining-reveals",
+      "instance_path": [
+        "id-entry-wall"
+      ],
+      "search_scope": "assembly",
+      "bounds_mm": {
+        "min": [
+          612,
+          1,
+          2
+        ],
+        "max": [
+          1708,
+          14,
+          2348
+        ]
+      },
+      "boundary_checks": [
+        {
+          "side": "min_x",
+          "offset_mm": 5
+        },
+        {
+          "side": "max_x",
+          "offset_mm": 5
+        },
+        {
+          "side": "max_z",
+          "offset_mm": 5
+        }
+      ]
+    },
+    {
+      "id": "id-entry-wall:entry-wall-opening-1-service-layer-reveals",
+      "instance_path": [
+        "id-entry-wall"
+      ],
+      "search_scope": "assembly",
+      "bounds_mm": {
+        "min": [
+          612,
+          16,
+          2
+        ],
+        "max": [
+          1708,
+          49,
+          2348
+        ]
+      },
+      "boundary_checks": [
+        {
+          "side": "min_x",
+          "offset_mm": 5
+        },
+        {
+          "side": "max_x",
+          "offset_mm": 5
+        },
+        {
+          "side": "max_z",
+          "offset_mm": 5
+        }
+      ]
+    },
+    {
+      "id": "id-entry-wall:entry-wall-opening-1-structure-reveals",
+      "instance_path": [
+        "id-entry-wall"
+      ],
+      "search_scope": "assembly",
+      "bounds_mm": {
+        "min": [
+          612,
+          51,
+          2
+        ],
+        "max": [
+          1708,
+          199,
+          2348
+        ]
+      },
+      "boundary_checks": [
+        {
+          "side": "min_x",
+          "offset_mm": 5
+        },
+        {
+          "side": "max_x",
+          "offset_mm": 5
+        },
+        {
+          "side": "max_z",
+          "offset_mm": 5
+        }
+      ]
+    },
+    {
+      "id": "id-entry-wall:entry-wall-opening-1-insulation-reveals",
+      "instance_path": [
+        "id-entry-wall"
+      ],
+      "search_scope": "assembly",
+      "bounds_mm": {
+        "min": [
+          612,
+          201,
+          2
+        ],
+        "max": [
+          1708,
+          289,
+          2348
+        ]
+      },
+      "boundary_checks": [
+        {
+          "side": "min_x",
+          "offset_mm": 5
+        },
+        {
+          "side": "max_x",
+          "offset_mm": 5
+        },
+        {
+          "side": "max_z",
+          "offset_mm": 5
+        }
+      ]
+    },
+    {
+      "id": "id-entry-wall:entry-wall-opening-1-outer-render-reveals",
+      "instance_path": [
+        "id-entry-wall"
+      ],
+      "search_scope": "assembly",
+      "bounds_mm": {
+        "min": [
+          612,
+          291,
+          2
+        ],
+        "max": [
+          1708,
+          307,
+          2348
+        ]
+      },
+      "boundary_checks": [
+        {
+          "side": "min_x",
+          "offset_mm": 5
+        },
+        {
+          "side": "max_x",
+          "offset_mm": 5
+        },
+        {
+          "side": "max_z",
+          "offset_mm": 5
+        }
+      ]
+    },
+    {
+      "id": "id-entry-wall:entry-wall-opening-2-through-depth",
+      "instance_path": [
+        "id-entry-wall"
+      ],
+      "search_scope": "assembly",
+      "bounds_mm": {
+        "min": [
+          2402,
+          -1,
+          1052
+        ],
+        "max": [
+          3998,
+          309,
+          2598
+        ]
+      },
+      "boundary_checks": []
+    },
+    {
+      "id": "id-entry-wall:entry-wall-opening-2-inner-lining-reveals",
+      "instance_path": [
+        "id-entry-wall"
+      ],
+      "search_scope": "assembly",
+      "bounds_mm": {
+        "min": [
+          2402,
+          1,
+          1052
+        ],
+        "max": [
+          3998,
+          14,
+          2598
+        ]
+      },
+      "boundary_checks": [
+        {
+          "side": "min_x",
+          "offset_mm": 5
+        },
+        {
+          "side": "max_x",
+          "offset_mm": 5
+        },
+        {
+          "side": "min_z",
+          "offset_mm": 5
+        },
+        {
+          "side": "max_z",
+          "offset_mm": 5
+        }
+      ]
+    },
+    {
+      "id": "id-entry-wall:entry-wall-opening-2-service-layer-reveals",
+      "instance_path": [
+        "id-entry-wall"
+      ],
+      "search_scope": "assembly",
+      "bounds_mm": {
+        "min": [
+          2402,
+          16,
+          1052
+        ],
+        "max": [
+          3998,
+          49,
+          2598
+        ]
+      },
+      "boundary_checks": [
+        {
+          "side": "min_x",
+          "offset_mm": 5
+        },
+        {
+          "side": "max_x",
+          "offset_mm": 5
+        },
+        {
+          "side": "min_z",
+          "offset_mm": 5
+        },
+        {
+          "side": "max_z",
+          "offset_mm": 5
+        }
+      ]
+    },
+    {
+      "id": "id-entry-wall:entry-wall-opening-2-structure-reveals",
+      "instance_path": [
+        "id-entry-wall"
+      ],
+      "search_scope": "assembly",
+      "bounds_mm": {
+        "min": [
+          2402,
+          51,
+          1052
+        ],
+        "max": [
+          3998,
+          199,
+          2598
+        ]
+      },
+      "boundary_checks": [
+        {
+          "side": "min_x",
+          "offset_mm": 5
+        },
+        {
+          "side": "max_x",
+          "offset_mm": 5
+        },
+        {
+          "side": "min_z",
+          "offset_mm": 5
+        },
+        {
+          "side": "max_z",
+          "offset_mm": 5
+        }
+      ]
+    },
+    {
+      "id": "id-entry-wall:entry-wall-opening-2-insulation-reveals",
+      "instance_path": [
+        "id-entry-wall"
+      ],
+      "search_scope": "assembly",
+      "bounds_mm": {
+        "min": [
+          2402,
+          201,
+          1052
+        ],
+        "max": [
+          3998,
+          289,
+          2598
+        ]
+      },
+      "boundary_checks": [
+        {
+          "side": "min_x",
+          "offset_mm": 5
+        },
+        {
+          "side": "max_x",
+          "offset_mm": 5
+        },
+        {
+          "side": "min_z",
+          "offset_mm": 5
+        },
+        {
+          "side": "max_z",
+          "offset_mm": 5
+        }
+      ]
+    },
+    {
+      "id": "id-entry-wall:entry-wall-opening-2-outer-render-reveals",
+      "instance_path": [
+        "id-entry-wall"
+      ],
+      "search_scope": "assembly",
+      "bounds_mm": {
+        "min": [
+          2402,
+          291,
+          1052
+        ],
+        "max": [
+          3998,
+          307,
+          2598
+        ]
+      },
+      "boundary_checks": [
+        {
+          "side": "min_x",
+          "offset_mm": 5
+        },
+        {
+          "side": "max_x",
+          "offset_mm": 5
+        },
+        {
+          "side": "min_z",
+          "offset_mm": 5
+        },
+        {
+          "side": "max_z",
+          "offset_mm": 5
+        }
+      ]
+    },
+    {
+      "id": "id-entry-paving:entry-paving-grate-0-waterway",
+      "instance_path": [
+        "id-entry-paving"
+      ],
+      "search_scope": "assembly",
+      "bounds_mm": {
+        "min": [
+          14,
+          2490,
+          1
+        ],
+        "max": [
+          25,
+          2560,
+          31
+        ]
+      },
+      "boundary_checks": []
+    },
+    {
+      "id": "id-entry-paving:entry-paving-grate-1-waterway",
+      "instance_path": [
+        "id-entry-paving"
+      ],
+      "search_scope": "assembly",
+      "bounds_mm": {
+        "min": [
+          314,
+          2490,
+          1
+        ],
+        "max": [
+          325,
+          2560,
+          31
+        ]
+      },
+      "boundary_checks": []
+    },
+    {
+      "id": "id-entry-paving:entry-paving-grate-2-waterway",
+      "instance_path": [
+        "id-entry-paving"
+      ],
+      "search_scope": "assembly",
+      "bounds_mm": {
+        "min": [
+          614,
+          2490,
+          1
+        ],
+        "max": [
+          625,
+          2560,
+          31
+        ]
+      },
+      "boundary_checks": []
+    },
+    {
+      "id": "id-entry-paving:entry-paving-grate-3-waterway",
+      "instance_path": [
+        "id-entry-paving"
+      ],
+      "search_scope": "assembly",
+      "bounds_mm": {
+        "min": [
+          914,
+          2490,
+          1
+        ],
+        "max": [
+          925,
+          2560,
+          31
+        ]
+      },
+      "boundary_checks": []
+    },
+    {
+      "id": "id-entry-paving:entry-paving-grate-4-waterway",
+      "instance_path": [
+        "id-entry-paving"
+      ],
+      "search_scope": "assembly",
+      "bounds_mm": {
+        "min": [
+          1214,
+          2490,
+          1
+        ],
+        "max": [
+          1225,
+          2560,
+          31
+        ]
+      },
+      "boundary_checks": []
+    },
+    {
+      "id": "id-entry-paving:entry-paving-grate-5-waterway",
+      "instance_path": [
+        "id-entry-paving"
+      ],
+      "search_scope": "assembly",
+      "bounds_mm": {
+        "min": [
+          1514,
+          2490,
+          1
+        ],
+        "max": [
+          1525,
+          2560,
+          31
+        ]
+      },
+      "boundary_checks": []
+    },
+    {
+      "id": "id-entry-paving:entry-paving-grate-6-waterway",
+      "instance_path": [
+        "id-entry-paving"
+      ],
+      "search_scope": "assembly",
+      "bounds_mm": {
+        "min": [
+          1814,
+          2490,
+          1
+        ],
+        "max": [
+          1825,
+          2560,
+          31
+        ]
+      },
+      "boundary_checks": []
+    },
+    {
+      "id": "id-entry-paving:entry-paving-grate-7-waterway",
+      "instance_path": [
+        "id-entry-paving"
+      ],
+      "search_scope": "assembly",
+      "bounds_mm": {
+        "min": [
+          2114,
+          2490,
+          1
+        ],
+        "max": [
+          2125,
+          2560,
+          31
+        ]
+      },
+      "boundary_checks": []
+    },
+    {
+      "id": "id-entry-paving:entry-paving-grate-8-waterway",
+      "instance_path": [
+        "id-entry-paving"
+      ],
+      "search_scope": "assembly",
+      "bounds_mm": {
+        "min": [
+          2414,
+          2490,
+          1
+        ],
+        "max": [
+          2425,
+          2560,
+          31
+        ]
+      },
+      "boundary_checks": []
+    },
+    {
+      "id": "id-entry-paving:entry-paving-grate-9-waterway",
+      "instance_path": [
+        "id-entry-paving"
+      ],
+      "search_scope": "assembly",
+      "bounds_mm": {
+        "min": [
+          2714,
+          2490,
+          1
+        ],
+        "max": [
+          2725,
+          2560,
+          31
+        ]
+      },
+      "boundary_checks": []
+    },
+    {
+      "id": "id-entry-paving:entry-paving-grate-10-waterway",
+      "instance_path": [
+        "id-entry-paving"
+      ],
+      "search_scope": "assembly",
+      "bounds_mm": {
+        "min": [
+          3014,
+          2490,
+          1
+        ],
+        "max": [
+          3025,
+          2560,
+          31
+        ]
+      },
+      "boundary_checks": []
+    },
+    {
+      "id": "id-entry-paving:entry-paving-grate-11-waterway",
+      "instance_path": [
+        "id-entry-paving"
+      ],
+      "search_scope": "assembly",
+      "bounds_mm": {
+        "min": [
+          3314,
+          2490,
+          1
+        ],
+        "max": [
+          3325,
+          2560,
+          31
+        ]
+      },
+      "boundary_checks": []
+    },
+    {
+      "id": "id-entry-paving:entry-paving-grate-12-waterway",
+      "instance_path": [
+        "id-entry-paving"
+      ],
+      "search_scope": "assembly",
+      "bounds_mm": {
+        "min": [
+          3614,
+          2490,
+          1
+        ],
+        "max": [
+          3625,
+          2560,
+          31
+        ]
+      },
+      "boundary_checks": []
+    },
+    {
+      "id": "id-entry-paving:entry-paving-grate-13-waterway",
+      "instance_path": [
+        "id-entry-paving"
+      ],
+      "search_scope": "assembly",
+      "bounds_mm": {
+        "min": [
+          3914,
+          2490,
+          1
+        ],
+        "max": [
+          3925,
+          2560,
+          31
+        ]
+      },
+      "boundary_checks": []
+    },
+    {
+      "id": "id-entry-paving:entry-paving-grate-14-waterway",
+      "instance_path": [
+        "id-entry-paving"
+      ],
+      "search_scope": "assembly",
+      "bounds_mm": {
+        "min": [
+          4214,
+          2490,
+          1
+        ],
+        "max": [
+          4225,
+          2560,
+          31
+        ]
+      },
+      "boundary_checks": []
+    },
+    {
+      "id": "id-entry-paving:entry-paving-grate-15-waterway",
+      "instance_path": [
+        "id-entry-paving"
+      ],
+      "search_scope": "assembly",
+      "bounds_mm": {
+        "min": [
+          4514,
+          2490,
+          1
+        ],
+        "max": [
+          4525,
+          2560,
+          31
+        ]
+      },
+      "boundary_checks": []
+    },
+    {
+      "id": "id-entry-paving:entry-paving-grate-16-waterway",
+      "instance_path": [
+        "id-entry-paving"
+      ],
+      "search_scope": "assembly",
+      "bounds_mm": {
+        "min": [
+          4814,
+          2490,
+          1
+        ],
+        "max": [
+          4825,
+          2560,
+          31
+        ]
+      },
+      "boundary_checks": []
+    },
+    {
+      "id": "id-entry-paving:entry-paving-grate-17-waterway",
+      "instance_path": [
+        "id-entry-paving"
+      ],
+      "search_scope": "assembly",
+      "bounds_mm": {
+        "min": [
+          5114,
+          2490,
+          1
+        ],
+        "max": [
+          5125,
+          2560,
+          31
+        ]
+      },
+      "boundary_checks": []
+    }
+  ],
+  "required_views": [
+    {
+      "id": "entry-overview",
+      "min_width": 1400,
+      "min_height": 900,
+      "kind": "overview"
+    },
+    {
+      "id": "entry-front",
+      "min_width": 1400,
+      "min_height": 900,
+      "kind": "overview"
+    },
+    {
+      "id": "entry-window-closeup",
+      "target_id": "entry-window",
+      "min_width": 1400,
+      "min_height": 900,
+      "kind": "closeup"
+    },
+    {
+      "id": "entry-door-closeup",
+      "target_id": "entry-door",
+      "min_width": 1400,
+      "min_height": 900,
+      "kind": "closeup"
+    },
+    {
+      "id": "entry-eaves-closeup",
+      "target_id": "entry-eaves",
+      "min_width": 1400,
+      "min_height": 900,
+      "kind": "closeup"
+    },
+    {
+      "id": "entry-railing-closeup",
+      "target_id": "entry-railing",
+      "min_width": 1400,
+      "min_height": 900,
+      "kind": "closeup"
+    },
+    {
+      "id": "entry-wall-junction-closeup",
+      "target_id": "entry-wall",
+      "min_width": 1400,
+      "min_height": 900,
+      "kind": "closeup"
+    },
+    {
+      "id": "entry-paving-closeup",
+      "target_id": "entry-paving",
+      "min_width": 1400,
+      "min_height": 900,
+      "kind": "closeup"
+    }
+  ],
+  "max_iterations": 6,
+  "source_type": "designed_benchmark_not_measured_project"
+}

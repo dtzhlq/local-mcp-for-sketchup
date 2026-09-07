@@ -21,7 +21,13 @@ end
 require_relative 'alma_sketchup_mcp/operation_registry'
 require_relative 'alma_sketchup_mcp/document_state'
 require_relative 'alma_sketchup_mcp/materials'
+require_relative 'alma_sketchup_mcp/environment_operations'
+require_relative 'alma_sketchup_mcp/creation_scope'
+require_relative 'alma_sketchup_mcp/geometry_evidence'
+require_relative 'alma_sketchup_mcp/capture_detail_views'
+require_relative 'alma_sketchup_mcp/section_operations'
 require_relative 'alma_sketchup_mcp/appearance_operations'
+require_relative 'alma_sketchup_mcp/texture_mapping'
 require_relative 'alma_sketchup_mcp/object_operations'
 require_relative 'alma_sketchup_mcp/geometry_operations'
 require_relative 'alma_sketchup_mcp/primitive_operations'
@@ -53,19 +59,19 @@ module AlmaSketchupMCP
   MM_PER_INCH = 25.4
   DEFAULT_OPERATION_LIMIT = 2000
   PLUGIN_VERSION = '0.1.0-rc.3'
-  CAPABILITY_MANIFEST_VERSION = '2026-07-agent-contract-rc3.1'
-  RUNTIME_CAPABILITY_VERSION = '0.1.0-rc.3-capabilities.1'
+  CAPABILITY_MANIFEST_VERSION = '2026-09-detail-modeling-alpha.1'
+  RUNTIME_CAPABILITY_VERSION = '0.1.0-rc.3-detail-alpha.1'
   OCCURRENCE_CONTRACT_VERSION = 'canonical-occurrence-path.v1'
   BOOLEAN_OPERATIONS_SHA256 = RuntimeSourceAttestation.loaded_boolean_operations_sha256
   MODEL_REVISION_SOURCE_SHA256 = RuntimeSourceAttestation.loaded_model_revision_sha256
   DSL_VERSION = 1
   GUARDED_QUEUE_METHODS = %w[
     reset_model build_model save_model save_model_version open_model import_model export_model
-    adopt_open_model set_selection capture_view run_ruby_expert
+    adopt_open_model set_selection capture_view capture_detail_views run_ruby_expert
   ].freeze
   MUTATION_UNCERTAIN_QUEUE_METHODS = %w[
     reset_model build_model save_model save_model_version open_model import_model export_model
-    adopt_open_model set_selection capture_view run_ruby_expert
+    adopt_open_model set_selection capture_view capture_detail_views run_ruby_expert
   ].freeze
 
   class QueueGuardError < StandardError
@@ -293,6 +299,8 @@ module AlmaSketchupMCP
       list_entities(params)
     when 'inspect_model'
       inspect_model(params)
+    when 'inspect_detail_regions'
+      inspect_detail_regions(params)
     when 'adopt_open_model'
       adopt_open_model(params)
     when 'get_selection'
@@ -301,6 +309,8 @@ module AlmaSketchupMCP
       set_selection(params)
     when 'capture_view'
       capture_view(params)
+    when 'capture_detail_views'
+      capture_detail_views(params)
     when 'run_ruby_expert'
       run_ruby_expert(params)
     else
@@ -470,6 +480,20 @@ module AlmaSketchupMCP
       end
     end
     discard_document_state_cache(model) if model
+    # Keep the original exception locally; public mutation errors deliberately
+    # expose only commit state, but debugging must not require replaying a model.
+    begin
+      directory = File.join(STATE_DIR, 'audit', 'transaction-failures')
+      FileUtils.mkdir_p(directory)
+      diagnostic = { 'operation' => operation_name.to_s, 'error_class' => error.class.name,
+        'message' => error.message.to_s, 'backtrace' => Array(error.backtrace).first(24),
+        'committed' => committed, 'commit_attempted' => commit_attempted,
+        'abort_succeeded' => abort_succeeded, 'recorded_at' => Time.now.utc.iso8601 }
+      File.open(File.join(directory, "#{SecureRandom.uuid}.json"), 'wx', 0o600) { |file| file.write(JSON.pretty_generate(diagnostic)) }
+    rescue StandardError
+      # Diagnostic persistence must never change the original failure outcome.
+      nil
+    end
 
     if error.is_a?(QueueOperationError)
       error.details['abort_succeeded'] = abort_succeeded if error.details && !abort_succeeded.nil?
@@ -529,6 +553,9 @@ module AlmaSketchupMCP
       'manifest_version' => CAPABILITY_MANIFEST_VERSION,
       'dsl_version' => DSL_VERSION,
       'occurrence_contract' => OCCURRENCE_CONTRACT_VERSION,
+      'creation_scope' => { 'version' => 'creation-scope.v1', 'atomic_absence_validation' => true },
+      'detail_geometry' => { 'version' => 'native-geometry-evidence.v2', 'nested_occurrences' => true, 'measured' => true, 'context_void_queries' => true, 'resource_totals' => true, 'resource_scope' => 'all_native_stored_geometry' },
+      'native_appearance' => native_appearance_capabilities(queue_active_model),
       'boolean_operations_sha256' => BOOLEAN_OPERATIONS_SHA256,
       'model_revision_source_sha256' => MODEL_REVISION_SOURCE_SHA256,
       'model_revision' => {
@@ -536,6 +563,8 @@ module AlmaSketchupMCP
         'unique_entity_limit' => MODEL_REVISION_UNIQUE_ENTITY_LIMIT,
         'logical_occurrence_count' => 'complete_definition_graph_expansion'
       },
+      'scoped_recursive_adoption' => { 'version' => 'scoped-recursive-roots.v1', 'max_roots' => 32, 'requires_read_only' => true, 'whole_model_revision' => true },
+      'detail_pair_separation' => { 'version' => 'native_leaf_separation.v1', 'read_only' => true, 'numerical_tolerance_mm' => 0.000001, 'max_leaf_pairs' => 100000 },
       'read_only_probes' => {
         'structural_groups' => {
           'version' => STRUCTURAL_GROUPS_VERSION,
@@ -641,18 +670,42 @@ module AlmaSketchupMCP
 
   def build_model(code)
     model = nil
+    profiling_started = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+    operation_timings = []
+    snapshot_elapsed_ms = nil
     previous_document_state_model = @document_state_model
     document = parse_dsl(code)
     model = active_model_or_new('build_model')
     @document_state_model = model
-    with_atomic_model_transaction(model, 'Alma Build Model') do
+    built_snapshot = with_atomic_model_transaction(model, 'Alma Build Model') do
+      validate_creation_scope!(model, document)
       document_state(model)['warnings'] = []
-      document.fetch('operations').each do |operation|
+      document.fetch('operations').each_with_index do |operation, index|
+        operation_started = Process.clock_gettime(Process::CLOCK_MONOTONIC)
         apply_operation(model, operation)
+        operation_timings << {
+          'index' => index, 'op' => operation['op'],
+          'elapsed_ms' => (Process.clock_gettime(Process::CLOCK_MONOTONIC) - operation_started) * 1000
+        }
       end
       persist_document_state(model)
-      snapshot(model)
+      snapshot_started = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+      result = snapshot(model)
+      snapshot_elapsed_ms = (Process.clock_gettime(Process::CLOCK_MONOTONIC) - snapshot_started) * 1000
+      result
     end
+    revision_started = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+    revision = session_model_revision_report(model, built_snapshot)
+    built_snapshot['model_revision'] = revision['model_revision']
+    built_snapshot['model_revision_complete'] = revision['complete']
+    built_snapshot['runtime_profile'] = {
+      'source' => 'native_monotonic_clock', 'scope' => 'this_build_call_only',
+      'operations' => operation_timings, 'snapshot_elapsed_ms' => snapshot_elapsed_ms,
+      'revision_elapsed_ms' => (Process.clock_gettime(Process::CLOCK_MONOTONIC) - revision_started) * 1000,
+      'total_elapsed_ms' => (Process.clock_gettime(Process::CLOCK_MONOTONIC) - profiling_started) * 1000,
+      'includes_queue_wait' => false, 'quality_evidence' => false
+    }
+    built_snapshot
   ensure
     @document_state_model = previous_document_state_model
   end
@@ -849,7 +902,7 @@ module AlmaSketchupMCP
     before_signature = snapshot_signature(snapshot(model))
     with_atomic_model_transaction(model, 'Alma Import Model') do
       import_result = if File.extname(target).downcase == '.skp'
-                        import_skp_model(model, target)
+                        import_skp_model(model, target, params['options'] || {})
                       else
                         raise 'SketchUp model import is unavailable in this runtime' unless model.respond_to?(:import)
 
@@ -895,7 +948,7 @@ module AlmaSketchupMCP
 
   def get_model_info
     model = active_model_or_new('get_model_info')
-    model_info_payload(model, snapshot(model))
+    model_info_payload(model, snapshot(model, include_detail_evidence: false))
   end
 
   def model_info_payload(model, model_snapshot)
@@ -939,6 +992,9 @@ module AlmaSketchupMCP
   def inspect_model(params = {})
     model = active_model_or_new('inspect_model')
     model_snapshot = snapshot(model)
+    revision = session_model_revision_report(model, model_snapshot)
+    model_snapshot['model_revision'] = revision['model_revision']
+    model_snapshot['model_revision_complete'] = revision['complete']
     result = {
       'kind' => 'inspect_model',
       'runtime' => 'queue',
@@ -957,6 +1013,12 @@ module AlmaSketchupMCP
     prefix = safe_adoption_token(params['prefix'] || 'adopted')
     force = params['force'] == true
     recursive = params['recursive'] == true
+    recursive_roots = params['recursive_roots']
+    if recursive_roots
+      raise 'recursive_roots requires read-only recursive adoption and distinct root pid paths' unless read_only && recursive && recursive_roots.is_a?(Array) && recursive_roots.length.between?(1, 32) && recursive_roots.uniq.length == recursive_roots.length && recursive_roots.all? { |root| root.is_a?(String) && root.match?(/\Apid:[1-9]\d*\z/) }
+      available = model.entities.to_a.select { |entity| entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance) }.map { |entity| "pid:#{entity_persistent_id(entity)}" }
+      raise 'recursive_roots contains a missing top-level container' unless (recursive_roots - available).empty?
+    end
     recursive_limit = positive_integer(params['recursive_limit'] || params['recursiveLimit'] || 500, 'adopt_open_model.recursive_limit')
     adopted = 0
     existing = 0
@@ -972,6 +1034,7 @@ module AlmaSketchupMCP
         existing: existing,
         recursive: recursive,
         recursive_limit: recursive_limit,
+        recursive_roots: recursive_roots,
         structural_probe_options: structural_probe_options
       )
     end
@@ -996,12 +1059,13 @@ module AlmaSketchupMCP
         existing: existing,
         recursive: recursive,
         recursive_limit: recursive_limit,
+        recursive_roots: recursive_roots,
         structural_probe_options: structural_probe_options
       )
     end
   end
 
-  def adoption_result(model, read_only:, adopted:, existing:, recursive:, recursive_limit:, structural_probe_options:)
+  def adoption_result(model, read_only:, adopted:, existing:, recursive:, recursive_limit:, structural_probe_options:, recursive_roots: nil)
     model_snapshot = snapshot(model)
     entities = filtered_entity_snapshots(model_snapshot, { 'includeHidden' => true }).map do |entity|
       entity.merge(
@@ -1011,7 +1075,7 @@ module AlmaSketchupMCP
         'allowed_operations' => occurrence_allowed_operations(entity['entity_type'])
       )
     end
-    recursive_result = recursive ? recursive_entity_index(model, recursive_limit) : nil
+    recursive_result = recursive ? recursive_entity_index(model, recursive_limit, roots: recursive_roots) : nil
     recursive_index = recursive_result ? recursive_result['entries'] : nil
     revision = session_model_revision_report(model, model_snapshot)
     result = {
@@ -1046,6 +1110,7 @@ module AlmaSketchupMCP
       'component_definition_summaries' => model_snapshot['component_definition_summaries'],
       'entities' => entities,
       'recursive_index' => recursive_index,
+      'recursive_root_paths' => recursive_roots,
       'snapshot' => model_snapshot
     }
     if structural_probe_options['structural_groups']
@@ -1384,7 +1449,7 @@ module AlmaSketchupMCP
     File.expand_path(left).casecmp(File.expand_path(right)).zero?
   end
 
-  def import_skp_model(model, target)
+  def import_skp_model(model, target, options = {})
     definition = begin
       model.definitions.load(target, allow_newer: true)
     rescue ArgumentError
@@ -1394,6 +1459,17 @@ module AlmaSketchupMCP
 
     instance = model.entities.add_instance(definition, Geom::Transformation.new)
     instance.name = File.basename(target, File.extname(target)) if instance.name.to_s.empty?
+    if options['preserve_root'] == true
+      identifier = options['id'] || "import_#{instance.persistent_id}"
+      instance.set_attribute('AlmaSketchupMCP', 'id', identifier)
+      return {
+        'strategy' => 'definitions.load+component_instance', 'root_preserved' => true,
+        'definition' => definition.name, 'instance_id' => identifier,
+        'persistent_id' => instance.persistent_id.to_s,
+        'bounding_box' => bounds_hash(instance.bounds),
+        'geometry_evidence' => measured_entity_geometry(instance)
+      }
+    end
     exploded = instance.explode
     {
       'strategy' => 'definitions.load+explode',
@@ -1493,10 +1569,11 @@ module AlmaSketchupMCP
     token.empty? ? 'adopted' : token
   end
 
-  def recursive_entity_index(model, limit)
+  def recursive_entity_index(model, limit, roots: nil)
     state = {
       'entries' => [],
       'total_seen' => 0,
+      'recursive_roots' => roots,
       'classification_schemas' => classification_schema_catalog(model),
       'native_classification_by_definition' => {}
     }
@@ -1518,6 +1595,7 @@ module AlmaSketchupMCP
       state['entries'] << occurrence_entity_snapshot(entity, path_entities, counts, state) if state['entries'].length < limit
       next unless entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance)
 
+      next if ancestors.empty? && state['recursive_roots'] && !state['recursive_roots'].include?("pid:#{entity_persistent_id(entity)}")
       definition = entity.definition
       definition_key = entity_persistent_id(definition) || definition.name.to_s
       next if definition_stack.include?(definition_key)
@@ -1582,6 +1660,7 @@ module AlmaSketchupMCP
       'definition_name' => definition&.name,
       'definition_persistent_id' => definition ? entity_persistent_id(definition) : nil,
       'entity_definition_name' => entity_definition&.name,
+      'entity_definition_occurrence_count' => entity_definition ? counts[entity_persistent_id(entity_definition) || entity_definition.name.to_s] : nil,
       'entity_definition_persistent_id' => entity_definition ? entity_persistent_id(entity_definition) : nil,
       'reference' => entity_id(entity) || entity_persistent_id(entity),
       'name' => entity.respond_to?(:name) ? entity.name : nil,
@@ -1924,6 +2003,20 @@ module AlmaSketchupMCP
       reset_document_state(model)
     when 'material'
       ensure_material(operation)
+    when 'environment_define'
+      environment_define(model, operation)
+    when 'environment_update'
+      environment_update(model, operation)
+    when 'environment_activate'
+      environment_activate(model, operation)
+    when 'style_load'
+      style_load(model, operation)
+    when 'style_activate'
+      style_activate(model, operation)
+    when 'section_plane'
+      section_plane_define(model, operation)
+    when 'section_plane_activate'
+      section_plane_activate(model, operation)
     when 'tag'
       add_tag(model, operation)
     when 'assign_tag'

@@ -26,7 +26,7 @@ export const TASK_TRANSITIONS = Object.freeze({
   awaiting_review: ['awaiting_input', 'approved', 'cancelled', 'expired', 'failed'],
   approved: ['awaiting_input', 'executing', 'cancelled', 'expired', 'failed'],
   executing: ['verifying', 'completed', 'failed'],
-  verifying: ['awaiting_review', 'completed', 'failed'],
+  verifying: ['awaiting_input', 'awaiting_review', 'completed', 'failed'],
   completed: [],
   failed: [],
   cancelled: [],

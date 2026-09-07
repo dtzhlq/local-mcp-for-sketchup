@@ -21,6 +21,12 @@ async function main() {
   }
 
   switch (command) {
+    case 'inspect_detail_regions':
+      return output(await bridge.inspect_detail_regions({ queries: JSON.parse(await fs.readFile(options.queriesFile, 'utf8')), runtime: 'queue', timeoutMs: options.timeoutMs }), options);
+    case 'query_assets':
+      return output(await bridge.query_assets({ catalog_path: options.catalogPath, query: options.query, kind: options.kind, limit: options.limit }), options);
+    case 'capture_detail_views':
+      return output(await bridge.capture_detail_views({ views: JSON.parse(await fs.readFile(options.viewsFile, 'utf8')), output_dir: options.outputDir, runtime: 'queue', timeoutMs: options.timeoutMs, ...liveSessionOptions(options) }), options);
     case 'get_docs':
       return output(await bridge.get_docs({ topic: options.topic, detail: options.detail, max_chars: options.maxChars }), options);
     case 'get_workflow_bundle':
@@ -63,7 +69,7 @@ async function main() {
     case 'open_model':
       return output(await bridge.open_model({ path: options.path, runtime: options.runtime || 'queue', timeoutMs: options.timeoutMs, ...liveSessionOptions(options) }), options);
     case 'import_model':
-      return output(await bridge.import_model({ path: options.path, mode: options.mode, prefix: options.prefix, runtime: options.runtime || 'queue', timeoutMs: options.timeoutMs, ...liveSessionOptions(options) }), options);
+      return output(await bridge.import_model({ path: options.path, mode: options.mode, prefix: options.prefix, options: { preserve_root: options.preserveRoot === true }, runtime: options.runtime || 'queue', timeoutMs: options.timeoutMs, ...liveSessionOptions(options) }), options);
     case 'export_model':
       return output(await bridge.export_model({ path: options.path, format: options.exportFormat, runtime: options.runtime || 'queue', timeoutMs: options.timeoutMs, ...liveSessionOptions(options) }), options);
     case 'get_model_info':
@@ -324,6 +330,10 @@ function parseArgs(argv) {
     else if (arg === '--index') options.index = Number(argv[++index]);
     else if (arg === '--query') options.query = argv[++index];
     else if (arg === '--topic') options.topic = argv[++index];
+    else if (arg === '--catalog-file') options.catalogPath = argv[++index];
+    else if (arg === '--views-file') options.viewsFile = argv[++index];
+    else if (arg === '--queries-file') options.queriesFile = argv[++index];
+    else if (arg === '--preserve-root') options.preserveRoot = true;
     else if (arg === '--detail') options.detail = argv[++index];
     else if (arg === '--target-query') options.targetQuery = argv[++index];
     else if (arg === '--assume') options.assume = argv[++index];

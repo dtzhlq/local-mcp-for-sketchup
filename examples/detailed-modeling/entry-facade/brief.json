@@ -1,0 +1,23 @@
+{
+  "id": "detailed-entry-brief-v1",
+  "scene": "entry-facade",
+  "intent": "A modern entrance with measurable window/door rebates, a layered wall corner, canopy, hollow drainpipe, ventilated soffit, railing fixings and drained paving.",
+  "dimensions_mm": [
+    5600,
+    2908,
+    3570
+  ],
+  "required_features": [
+    "layered_wall_openings",
+    "window_thermal_break_and_double_glazing",
+    "framed_door_with_hinges",
+    "canopy_structure",
+    "hollow_downpipe",
+    "gutter_profile",
+    "soffit_vent_openings",
+    "railing_baseplate_fixings",
+    "paving_joints_and_grate_openings"
+  ],
+  "variant_change": "Window width increases 200 mm, including every host wall opening; the door opens a further 24 degrees.",
+  "source_type": "designed_benchmark_not_measured_project"
+}

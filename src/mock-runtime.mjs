@@ -16,9 +16,12 @@ import { addDemoRoom } from './demo-operations.mjs';
 import { addTag, assignTag, deleteObject, duplicateEntity, eraseEntities, explodeEntity, pushpullFace, removeObjectAttribute, renameObject, replaceComponentDefinition, reverseFace, setEdgeProperties, setFaceMaterial, setObjectAttribute, setObjectClassification, setObjectMaterial, setObjectTextureTransform, setObjectVisibility, transformEntities, transformObject } from './object-operations.mjs';
 import { mockSessionPath } from './paths.mjs';
 import { entityListFromSnapshot, inspectSnapshot, modelInfoFromSnapshot, selectionFromModel, setModelSelection, versionedPath } from './model-inspection.mjs';
-import { createSnapshot } from './snapshot.mjs';
+import { createSnapshot, mergeBoundingBoxes } from './snapshot.mjs';
 import { addScene, setCamera, setRenderingOptions, setShadow, setStyle } from './view-operations.mjs';
 import { adoptMockModel } from './model-adoption.mjs';
+import { validateCreationScopeAgainstModel } from './agent-dsl-policy.mjs';
+import { environmentDefine, environmentUpdate, environmentActivate, styleLoad, styleActivate } from './environment-operations.mjs';
+import { sectionPlane, sectionPlaneActivate } from './section-operations.mjs';
 
 const DEFAULT_OPERATION_LIMIT = 2000;
 const DEFAULT_LOCK_TIMEOUT_MS = 30000;
@@ -54,9 +57,17 @@ export class MockRuntime {
     return this.withSessionLock(async () => {
       const document = parseDsl(code);
       let model = await this.readModel();
+      validateCreationScopeAgainstModel(document, model);
 
       for (const operation of document.operations) {
         switch (operation.op) {
+        case 'environment_define': environmentDefine(model, operation); break;
+        case 'environment_update': environmentUpdate(model, operation); break;
+        case 'environment_activate': environmentActivate(model, operation); break;
+        case 'style_load': styleLoad(model, operation); break;
+        case 'style_activate': styleActivate(model, operation); break;
+        case 'section_plane': sectionPlane(model, operation); break;
+        case 'section_plane_activate': sectionPlaneActivate(model, operation); break;
         case 'reset':
           model = emptyModel();
           break;
@@ -412,14 +423,24 @@ export class MockRuntime {
     });
   }
 
-  async importModel({ inputPath, path: requestedPath, mode = 'append', prefix } = {}) {
+  async importModel({ inputPath, path: requestedPath, mode = 'append', prefix, options = {} } = {}) {
     if (!inputPath && !requestedPath) throw new Error('import_model requires path');
     const targetPath = path.resolve(inputPath || requestedPath);
     return this.withSessionLock(async () => {
       const imported = await readMockModelArtifact(targetPath, 'import_model');
       let model = await this.readModel();
       const normalizedMode = String(mode || 'append').toLowerCase();
-      if (normalizedMode === 'replace') {
+      if (!['append', 'replace'].includes(normalizedMode)) throw new Error('import_model.mode must be append or replace');
+      let importResult;
+      if (options.preserve_root === true) {
+        const preserved = appendImportedRoot(normalizedMode === 'replace' ? emptyModel() : model, imported, {
+          prefix: prefix || path.basename(targetPath, path.extname(targetPath)),
+          id: options.id,
+          sourcePath: targetPath
+        });
+        model = preserved.model;
+        importResult = preserved.import;
+      } else if (normalizedMode === 'replace') {
         model = imported;
       } else if (normalizedMode === 'append') {
         model = appendImportedModel(model, imported, { prefix: prefix || path.basename(targetPath, path.extname(targetPath)) });
@@ -432,6 +453,7 @@ export class MockRuntime {
         runtime: 'mock',
         file_path: targetPath,
         mode: normalizedMode,
+        ...(importResult ? { import: importResult } : {}),
         snapshot: createSnapshot(model)
       };
     });
@@ -639,6 +661,113 @@ function appendImportedModel(model, imported, { prefix }) {
     result.instances.push(renameImportedObject(instance, usedIds, usedNames, prefix));
   }
   return result;
+}
+
+// Component import has its own collision-safe path. Legacy exploded append is unchanged.
+function appendImportedRoot(model, imported, { prefix, id, sourcePath }) {
+  const result = normalizeImportedModel(structuredClone(model));
+  const source = normalizeImportedModel(structuredClone(imported));
+  for (const container of [source, ...Object.values(source.component_definitions)]) {
+    for (const instance of container.instances || []) {
+      if (!Object.hasOwn(source.component_definitions, instance.definition)) throw new Error(`import_model definition not found in asset: ${instance.definition}`);
+    }
+  }
+  const maps = { definitions: {}, materials: {}, tags: {}, image_references: {}, entity_ids: {} };
+  for (const [collection, mapKey] of [['component_definitions', 'definitions'], ['materials', 'materials'], ['tags', 'tags'], ['image_references', 'image_references']]) {
+    const used = new Set(Object.keys(result[collection]));
+    for (const name of Object.keys(source[collection])) {
+      const renamed = uniqueName(name, used, prefix);
+      used.add(renamed);
+      maps[mapKey][name] = renamed;
+    }
+  }
+
+  const usedIds = new Set();
+  const usedNames = new Set();
+  const collectIdentities = (container) => {
+    for (const item of [...(container.groups || []), ...(container.instances || [])]) {
+      usedIds.add(item.id || item.name); usedNames.add(item.name);
+    }
+  };
+  collectIdentities(result);
+  Object.values(result.component_definitions).forEach(collectIdentities);
+  const rootDefinitionName = uniqueName(`${prefix || 'Imported'}_Root`, new Set([...Object.keys(result.component_definitions), ...Object.values(maps.definitions)]), prefix);
+  const rootId = uniqueName(id || `${prefix || 'Imported'}_root`, usedIds, prefix);
+  const rootName = uniqueName(prefix || 'Imported', usedNames, prefix);
+  usedIds.add(rootId); usedNames.add(rootName);
+  const remapContainer = (container, scope) => {
+    const ids = new Set();
+    const names = new Set();
+    maps.entity_ids[scope] = {};
+    for (const item of [...(container.groups || []), ...(container.instances || [])]) {
+      const originalId = item.id || item.name;
+      if (!originalId || !item.name || ids.has(originalId) || names.has(item.name)) throw new Error(`import_model has missing or duplicate entity identity in ${scope}`);
+      ids.add(originalId); names.add(item.name);
+      item.id = uniqueName(originalId, usedIds, prefix); usedIds.add(item.id);
+      item.name = uniqueName(item.name, usedNames, prefix); usedNames.add(item.name);
+      maps.entity_ids[scope][originalId] = item.id;
+      // Runtime persistent IDs belong to the source document and cannot identify the new object.
+      delete item.persistent_id;
+      delete item.guid;
+    }
+    return remapImportedResources(container, maps);
+  };
+
+  for (const [collection, mapKey] of [['materials', 'materials'], ['tags', 'tags'], ['image_references', 'image_references']]) {
+    for (const [name, value] of Object.entries(source[collection])) {
+      const renamed = maps[mapKey][name];
+      result[collection][renamed] = typeof value === 'object' && value !== null ? { ...structuredClone(value), name: renamed } : structuredClone(value);
+    }
+  }
+  for (const [name, definition] of Object.entries(source.component_definitions)) {
+    const remapped = remapContainer(definition, `definition:${name}`);
+    delete remapped.persistent_id;
+    result.component_definitions[maps.definitions[name]] = { ...remapped, name: maps.definitions[name] };
+  }
+  const top = remapContainer({ groups: source.groups, instances: source.instances }, 'model');
+  const completed = new Set();
+  const visiting = new Set();
+  const summarize = (container) => {
+    for (const instance of container.instances || []) {
+      const definition = result.component_definitions[instance.definition];
+      if (!definition || !Object.values(maps.definitions).includes(instance.definition)) throw new Error(`import_model definition not found in asset: ${instance.definition}`);
+      if (visiting.has(instance.definition)) throw new Error(`import_model component definitions contain a cycle: ${instance.definition}`);
+      if (!completed.has(instance.definition)) {
+        visiting.add(instance.definition);
+        // Size-only legacy component definitions keep their stored primitive totals.
+        if ((definition.groups || []).length || (definition.instances || []).length) Object.assign(definition, summarize(definition));
+        visiting.delete(instance.definition); completed.add(instance.definition);
+      }
+      instance.faces = definition.faces; instance.edges = definition.edges;
+    }
+    const items = [...(container.groups || []), ...(container.instances || [])];
+    return { faces: items.reduce((n, item) => n + (item.faces || 0), 0), edges: items.reduce((n, item) => n + (item.edges || 0), 0), bounding_box: mergeBoundingBoxes(items.map(item => item.bounding_box)) };
+  };
+  const summary = summarize(top);
+  result.component_definitions[rootDefinitionName] = {
+    name: rootDefinitionName, groups: top.groups, instances: top.instances,
+    ...summary, material: null,
+    import_source: { path: sourcePath, runtime: 'mock', native_geometry_verified: false }
+  };
+  result.classification_schemas = [...new Map([...(result.classification_schemas || []), ...(source.classification_schemas || [])].map(schema => [JSON.stringify(schema), schema])).values()];
+  addComponentInstance(result, { id: rootId, name: rootName, definition: rootDefinitionName, origin: [0, 0, 0] });
+  return { model: result, import: {
+    strategy: 'mock_component_definition+component_instance', root_preserved: true,
+    definition: rootDefinitionName, instance_id: rootId, bounding_box: summary.bounding_box,
+    identity_map: maps, native_geometry_verified: false
+  } };
+}
+
+function remapImportedResources(value, maps) {
+  if (Array.isArray(value)) return value.map(item => remapImportedResources(item, maps));
+  if (!value || typeof value !== 'object') return value;
+  const fields = { definition: 'definitions', material: 'materials', back_material: 'materials', frame_material: 'materials', panel_material: 'materials', tag: 'tags', image_reference: 'image_references' };
+  return Object.fromEntries(Object.entries(value).map(([key, child]) => {
+    if (fields[key] && typeof child === 'string') return [key, maps[fields[key]][child] || child];
+    // Free-form user attributes and provenance strings are data, not resource references.
+    if (['attributes', 'attribute_dictionaries', 'definition_attribute_dictionaries', 'metadata'].includes(key)) return [key, structuredClone(child)];
+    return [key, remapImportedResources(child, maps)];
+  }));
 }
 
 function renameImportedObject(object, usedIds, usedNames, prefix) {

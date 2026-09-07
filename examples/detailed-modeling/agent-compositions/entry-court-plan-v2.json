@@ -1,0 +1,374 @@
+{
+  "version": 1,
+  "id": "agent-entry-court-20260906-v2",
+  "brief": {
+    "title": "建筑入口、精细立面与下沉前场",
+    "intent": "保留入口门窗节点、檐沟、弯曲栏杆和铺装细节，补齐入口平台的真实支撑、三级踏步、路缘与前场。",
+    "source": "Agent composed design from the approved modeling brief; not a surveyed project",
+    "decisions": [
+      "保持原门窗标高，前场降低450毫米，用三级踏步连接平台。",
+      "踏步高差150毫米、宽1500毫米，表面由结构与面层组成。",
+      "路缘和前场铺装使用真实构件，花盆重复使用共享定义。",
+      "门洞、窗洞和排水必须由实际几何检查，未通过时保留修正项。",
+      "前场铺装从最下一级台阶脚部起铺，整体向外移900毫米，两侧路缘同步移动；台阶构件尺寸与150毫米高差不变。"
+    ]
+  },
+  "additions": [
+    {
+      "family": "paving",
+      "id": "lower-court-paving",
+      "parameters": {
+        "width": 5600,
+        "depth": 1500,
+        "tile_width": 560,
+        "tile_depth": 300
+      },
+      "instances": [
+        {
+          "id": "lower-court",
+          "origin": [
+            -200,
+            -5000,
+            -450
+          ]
+        }
+      ]
+    },
+    {
+      "asset_kind": "potted_plant",
+      "id": "entry-planter",
+      "parameters": {
+        "height": 1100,
+        "pot_height": 340,
+        "pot_radius": 170
+      },
+      "instances": [
+        {
+          "id": "entry-planter-left",
+          "origin": [
+            180,
+            -1320,
+            29
+          ]
+        },
+        {
+          "id": "entry-planter-right",
+          "origin": [
+            5020,
+            -700,
+            29
+          ]
+        }
+      ]
+    }
+  ],
+  "explicit_parts": [
+    {
+      "id": "entry-platform-support",
+      "role": "platform_structure",
+      "material": "Detail_Concrete",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            -200,
+            -2600,
+            -450
+          ],
+          "size": [
+            5600,
+            2600,
+            340
+          ]
+        }
+      }
+    },
+    {
+      "id": "entry-step-upper-core",
+      "role": "stair_core",
+      "material": "Detail_Concrete",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            450,
+            -2900,
+            -450
+          ],
+          "size": [
+            1500,
+            300,
+            450
+          ]
+        }
+      }
+    },
+    {
+      "id": "entry-step-middle-core",
+      "role": "stair_core",
+      "material": "Detail_Concrete",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            450,
+            -3200,
+            -450
+          ],
+          "size": [
+            1500,
+            300,
+            300
+          ]
+        }
+      }
+    },
+    {
+      "id": "entry-step-lower-core",
+      "role": "stair_core",
+      "material": "Detail_Concrete",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            450,
+            -3500,
+            -450
+          ],
+          "size": [
+            1500,
+            300,
+            150
+          ]
+        }
+      }
+    },
+    {
+      "id": "entry-step-upper-tread",
+      "role": "stair_tread",
+      "material": "Detail_Stone",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            442,
+            -2918,
+            0
+          ],
+          "plane": "yz",
+          "outer": [
+            [
+              0,
+              0
+            ],
+            [
+              318,
+              0
+            ],
+            [
+              318,
+              29
+            ],
+            [
+              4,
+              29
+            ],
+            [
+              0,
+              25
+            ]
+          ],
+          "depth": 1516
+        }
+      }
+    },
+    {
+      "id": "entry-step-middle-tread",
+      "role": "stair_tread",
+      "material": "Detail_Stone",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            442,
+            -3218,
+            -150
+          ],
+          "plane": "yz",
+          "outer": [
+            [
+              0,
+              0
+            ],
+            [
+              318,
+              0
+            ],
+            [
+              318,
+              29
+            ],
+            [
+              4,
+              29
+            ],
+            [
+              0,
+              25
+            ]
+          ],
+          "depth": 1516
+        }
+      }
+    },
+    {
+      "id": "entry-step-lower-tread",
+      "role": "stair_tread",
+      "material": "Detail_Stone",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            442,
+            -3518,
+            -300
+          ],
+          "plane": "yz",
+          "outer": [
+            [
+              0,
+              0
+            ],
+            [
+              318,
+              0
+            ],
+            [
+              318,
+              29
+            ],
+            [
+              4,
+              29
+            ],
+            [
+              0,
+              25
+            ]
+          ],
+          "depth": 1516
+        }
+      }
+    },
+    {
+      "id": "court-curb-left",
+      "role": "curb",
+      "material": "Detail_Stone",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            -350,
+            -4100,
+            -450
+          ],
+          "size": [
+            150,
+            1500,
+            150
+          ]
+        }
+      },
+      "instances": [
+        {
+          "id": "id-court-curb-left",
+          "origin": [
+            0,
+            -900,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "court-curb-right",
+      "role": "curb",
+      "material": "Detail_Stone",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            5400,
+            -4100,
+            -450
+          ],
+          "size": [
+            150,
+            1500,
+            150
+          ]
+        }
+      },
+      "instances": [
+        {
+          "id": "id-court-curb-right",
+          "origin": [
+            0,
+            -900,
+            0
+          ]
+        }
+      ]
+    }
+  ],
+  "views": [
+    {
+      "id": "entry-court-overview",
+      "kind": "overview",
+      "width": 1800,
+      "height": 1100,
+      "camera": {
+        "eye": [
+          9900,
+          -12700,
+          6100
+        ],
+        "target": [
+          2350,
+          -1200,
+          1290
+        ],
+        "up": [
+          0,
+          0,
+          1
+        ],
+        "fov": 40
+      }
+    },
+    {
+      "id": "entry-steps-closeup",
+      "kind": "closeup",
+      "width": 1600,
+      "height": 1000,
+      "camera": {
+        "eye": [
+          2700,
+          -4600,
+          800
+        ],
+        "target": [
+          1200,
+          -3000,
+          -50
+        ],
+        "up": [
+          0,
+          0,
+          1
+        ],
+        "fov": 40
+      }
+    }
+  ]
+}

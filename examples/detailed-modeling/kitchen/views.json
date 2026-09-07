@@ -1,0 +1,155 @@
+[
+  {
+    "id": "kitchen-overview",
+    "name": "kitchen-overview",
+    "kind": "overview",
+    "width": 1600,
+    "height": 1000,
+    "camera": {
+      "eye": [
+        6500,
+        -4500,
+        3650
+      ],
+      "target": [
+        2200,
+        2250,
+        1150
+      ],
+      "up": [
+        0,
+        0,
+        1
+      ],
+      "fov": 42
+    }
+  },
+  {
+    "id": "kitchen-front",
+    "name": "kitchen-front",
+    "kind": "overview",
+    "width": 1600,
+    "height": 1000,
+    "camera": {
+      "eye": [
+        2180,
+        -4600,
+        1800
+      ],
+      "target": [
+        2180,
+        2720,
+        1380
+      ],
+      "up": [
+        0,
+        0,
+        1
+      ],
+      "fov": 42
+    }
+  },
+  {
+    "id": "kitchen-sink-closeup",
+    "name": "kitchen-sink-closeup",
+    "kind": "closeup",
+    "target_id": "kitchen-sink",
+    "width": 1600,
+    "height": 1000,
+    "camera": {
+      "eye": [
+        2800,
+        1950,
+        1700
+      ],
+      "target": [
+        2460,
+        2800,
+        915
+      ],
+      "up": [
+        0,
+        0,
+        1
+      ],
+      "fov": 38
+    }
+  },
+  {
+    "id": "kitchen-cabinet-closeup",
+    "name": "kitchen-cabinet-closeup",
+    "kind": "closeup",
+    "target_id": "kitchen-cabinet-feature",
+    "width": 1600,
+    "height": 1000,
+    "camera": {
+      "eye": [
+        1350,
+        1510,
+        1250
+      ],
+      "target": [
+        820,
+        2540,
+        640
+      ],
+      "up": [
+        0,
+        0,
+        1
+      ],
+      "fov": 38
+    }
+  },
+  {
+    "id": "kitchen-window-closeup",
+    "name": "kitchen-window-closeup",
+    "kind": "closeup",
+    "target_id": "kitchen-window",
+    "width": 1600,
+    "height": 1000,
+    "camera": {
+      "eye": [
+        2800,
+        2380,
+        2080
+      ],
+      "target": [
+        2480,
+        3260,
+        1820
+      ],
+      "up": [
+        0,
+        0,
+        1
+      ],
+      "fov": 38
+    }
+  },
+  {
+    "id": "kitchen-top",
+    "name": "kitchen-top",
+    "kind": "overview",
+    "width": 1600,
+    "height": 1000,
+    "camera": {
+      "eye": [
+        2150,
+        1650,
+        8200
+      ],
+      "target": [
+        2150,
+        1651,
+        0
+      ],
+      "up": [
+        0,
+        0,
+        1
+      ],
+      "fov": 42
+    }
+  }
+]

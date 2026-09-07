@@ -4,6 +4,7 @@ import path from 'node:path';
 import { AgentContractError, markUntrustedData, sha256Canonical } from './agent-contract.mjs';
 import { AGENT_GATEWAY_ADDITIVE_CREATION_OPERATIONS } from './agent-dsl-policy.mjs';
 import { validateExpertDocument } from './expert-compiler.mjs';
+import { compileVersionedAssemblyRebuild, validateAssemblyMaterialReferences } from './detailed-modeling/assembly-edit.mjs';
 
 export const DESIGN_INTENT_GRAPH_VERSION = 'design-intent-graph.v1';
 export const DESIGN_PARAMETER_CHANGE_VERSION = 'design-parameter-change-plan.v1';
@@ -59,7 +60,7 @@ export function buildDesignIntentGraph({
   };
 }
 
-export function planDesignParameterChange({ designGraph, currentModelGraph, changes, instruction = 'Modify reviewed design parameters.' } = {}) {
+export function planDesignParameterChange({ designGraph, currentModelGraph, changes, instruction = 'Modify reviewed design parameters.', assemblyRebuild = null } = {}) {
   if (designGraph?.version !== DESIGN_INTENT_GRAPH_VERSION) throw new Error('planDesignParameterChange requires DesignIntentGraph v1');
   if (currentModelGraph?.version !== 'model-graph.v1') throw new Error('planDesignParameterChange requires current ModelGraph v1');
   const normalizedChanges = normalizeChanges(changes, designGraph.parameters);
@@ -71,6 +72,7 @@ export function planDesignParameterChange({ designGraph, currentModelGraph, chan
   const changedParameterIds = Object.keys(normalizedChanges);
   const initialBindings = designGraph.bindings.filter((binding) => binding.parameter_bindings.some((item) => changedParameterIds.includes(item.parameter_id)));
   const affectedBindings = dependencyClosure(initialBindings, designGraph.bindings);
+  if (assemblyRebuild) return planAssemblyParameterChange({ designGraph, currentModelGraph, normalizedChanges, changedParameterIds, affectedBindings, instruction, assemblyRebuild });
   const values = Object.fromEntries(Object.entries(designGraph.parameters).map(([id, parameter]) => [id, parameter.value]));
   Object.assign(values, normalizedChanges);
   const targets = uniqueTargets(affectedBindings.flatMap((binding) => binding.existing_targets));
@@ -120,10 +122,58 @@ export function planDesignParameterChange({ designGraph, currentModelGraph, chan
         intent: 'reviewed_existing_model_edit',
         instruction,
         interface_level: 'guided',
-        inputs: { runtime: 'mock', targets, operations }
+        inputs: { runtime: currentModelGraph.runtime, targets, operations }
       }
     } : { action: 'correct_design_mapping' }
   };
+}
+
+function planAssemblyParameterChange({ designGraph, currentModelGraph, normalizedChanges, changedParameterIds, affectedBindings, instruction, assemblyRebuild }) {
+  if (!currentModelGraph.completeness?.complete && !currentModelGraph.completeness?.scope_complete) throw new AgentContractError('MODEL_REVISION_INCOMPLETE', 'Versioned assembly editing requires a complete occurrence graph');
+  if (!['single', 'all'].includes(assemblyRebuild.scope)) throw new Error('assemblyRebuild.scope must explicitly be single or all');
+  const selections = new Map();
+  for (const binding of affectedBindings) {
+    if (binding.lineage?.binding_fingerprint_version !== 'assembly-subtree.v1') throw new Error(`Assembly binding ${binding.binding_id} requires a current subtree fingerprint baseline`);
+    const resolved = resolveCanonicalTargets(currentModelGraph, binding.existing_targets, `assembly:${binding.binding_id}`);
+    if (assemblyRebuild.scope === 'single' && resolved.length !== 1) throw new Error('single assembly scope requires exactly one bound instance per affected binding');
+    for (const entry of resolved) {
+      const node = entry.node;
+      if (currentModelGraph.completeness.recursive_root_paths && !currentModelGraph.completeness.recursive_root_paths.includes(node.entity_path)) throw new Error('Assembly target is outside the complete indexed roots');
+      if (node.entity_type !== 'component_instance' || node.parent_id) throw new Error('Versioned assembly replacement requires a top-level ComponentInstance; isolate the parent assembly before editing a nested occurrence');
+      const sourceDefinition = node.entity_definition_name || node.definition_name;
+      if (!sourceDefinition) throw new Error('Assembly definition identity is unavailable');
+      if (assemblyRebuild.scope === 'all') {
+        const all = currentModelGraph.nodes.filter(candidate => candidate.node_type === 'occurrence' && candidate.entity_type === 'component_instance' && (candidate.entity_definition_name || candidate.definition_name) === sourceDefinition);
+        if (all.some(candidate => candidate.parent_id)) throw new Error('all assembly scope includes nested occurrences; replace their parent assembly explicitly');
+        if (currentModelGraph.completeness.recursive_root_paths && node.entity_definition_occurrence_count !== all.length) throw new Error('all assembly scope requires the exact global definition occurrence count');
+        const bound = new Set(resolved.map(candidate => candidate.node.node_id));
+        if (all.some(candidate => !bound.has(candidate.node_id))) throw new Error('all assembly scope requires every current instance of the definition in the binding baseline');
+      }
+      const key = persistentRefKey(entry.ref);
+      const existing = selections.get(key);
+      const logicalDefinition = binding.lineage.assembly_definitions?.[key] || binding.lineage.assembly_definition || sourceDefinition;
+      if (existing && existing.logical_definition !== logicalDefinition) throw new Error('Overlapping assembly bindings disagree on their source definition');
+      selections.set(key, { target: structuredClone(entry.ref), source_definition: sourceDefinition, logical_definition: logicalDefinition,
+        binding_ids: [...new Set([...(existing?.binding_ids || []), binding.binding_id])] });
+    }
+  }
+  const stage = compileVersionedAssemblyRebuild({ ...assemblyRebuild, selections: [...selections.values()] });
+  validateAssemblyMaterialReferences(stage.creation_document, currentModelGraph);
+  validateChangePlanOperations(stage.operations);
+  const targets = [...selections.values()].map(entry => entry.target);
+  const affectedSubgraph = affectedBindings.map(binding => affectedBindingPlan({ ...binding, erase_before_rebuild: false }, [], { start: 0, end: 0 }, changedParameterIds, currentModelGraph.runtime));
+  const core = {
+    version: DESIGN_PARAMETER_CHANGE_VERSION, kind: 'design_parameter_change_plan',
+    model_key: designGraph.model_key, design_graph_id: designGraph.design_graph_id,
+    source_model_graph_id: currentModelGraph.graph_id, model_revision: currentModelGraph.model_revision,
+    instruction: markUntrustedData(instruction, 'agent_instruction'), changes: normalizedChanges,
+    affected_subgraph: affectedSubgraph, targets, operations: stage.operations, risk_level: 'S2',
+    divergence: [], blockers: [], execution_allowed: false, execution_route: 'trusted_reviewed_existing_model_edit_only', assembly_rebuild: stage, ...(currentModelGraph.completeness.recursive_root_paths ? { recursive_roots: currentModelGraph.completeness.recursive_root_paths } : {})
+  };
+  return { ...core, change_plan_id: `design-change-${sha256Canonical(core).slice(7, 31)}`,
+    next_action: { action: 'prepare_versioned_assembly_edit', arguments: { runtime: currentModelGraph.runtime,
+      preparation_function: 'prepareAssemblyParameterEdit', approval_route: 'existing_reviewed_model_edit',
+      replacement_scope: stage.scope, instance_count: stage.replacements.length } } };
 }
 
 export function reconcileDesignIntentGraph({ designGraph, currentModelGraph, acceptedChangePlan = null } = {}) {
@@ -131,6 +181,16 @@ export function reconcileDesignIntentGraph({ designGraph, currentModelGraph, acc
   if (currentModelGraph?.version !== 'model-graph.v1') throw new Error('reconcileDesignIntentGraph requires current ModelGraph v1');
   const differences = compareBindingFingerprints(designGraph, currentModelGraph);
   const acceptedBindingIds = new Set(acceptedChangePlan?.affected_subgraph?.map((item) => item.binding_id) || []);
+  if (acceptedChangePlan?.assembly_rebuild) {
+    // Splitting a shared definition can change its usage count on an untouched
+    // sibling. Reconcile that derived metadata only when its complete semantic
+    // subtree is identical to the stored baseline.
+    for (const binding of designGraph.bindings) {
+      if (!binding.lineage?.assembly_semantic_fingerprint) continue;
+      const resolution = tryResolveCanonicalTargets(currentModelGraph, binding.existing_targets, 'assembly usage reconciliation');
+      if (resolution.ok && assemblySubtreeFingerprint(resolution.resolved, currentModelGraph, true) === binding.lineage.assembly_semantic_fingerprint) acceptedBindingIds.add(binding.binding_id);
+    }
+  }
   const expected = differences.filter((item) => acceptedBindingIds.has(item.binding_id));
   const unexpected = differences.filter((item) => !acceptedBindingIds.has(item.binding_id));
   const core = {
@@ -186,7 +246,13 @@ export function acceptReconciliation({
     if (affectedEntry && resolved.length !== affectedEntry.replacement_refs.length) {
       throw new Error(`DesignIntent replacement mapping count mismatch for ${binding.binding_id}`);
     }
-    return reboundBinding(binding, resolved);
+    let sourceBinding = binding;
+    if (affectedEntry && acceptedChangePlan?.assembly_rebuild) {
+      const definitions = Object.fromEntries(acceptedChangePlan.assembly_rebuild.replacements
+        .filter(entry => entry.binding_ids.includes(binding.binding_id)).map(entry => [persistentRefKey(entry.target), entry.logical_definition]));
+      sourceBinding = { ...binding, lineage: { ...binding.lineage, assembly_definitions: definitions } };
+    }
+    return reboundBinding(sourceBinding, resolved, currentModelGraph);
   });
   const updatedParameters = structuredClone(designGraph.parameters);
   if (decision === 'accept_reviewed_parameter_change') {
@@ -287,7 +353,7 @@ function normalizeBindings(rawBindings, modelGraph) {
       rebuild_template: structuredClone(binding.rebuild_template || []),
       repeat: binding.repeat ? structuredClone(binding.repeat) : null,
       lineage: structuredClone(binding.lineage || {})
-    }, resolved);
+    }, resolved, modelGraph);
   });
 }
 
@@ -422,7 +488,7 @@ function validateChangePlanOperations(operations) {
     validateExpertDocument({
       version: 1,
       units: 'mm',
-      operations: operations.map((operation) => operation.op === 'erase_entities'
+      operations: operations.map((operation) => ['erase_entities', 'replace_component_definition'].includes(operation.op)
         ? { ...operation, confirmed: true }
         : operation)
     }, { maxOperations: Math.max(1, operations.length) });
@@ -475,7 +541,8 @@ function compareBindingFingerprints(designGraph, currentModelGraph) {
   const result = [];
   for (const binding of designGraph.bindings) {
     const resolution = tryResolveCanonicalTargets(currentModelGraph, binding.existing_targets, `binding:${binding.binding_id}:compare`);
-    const currentFingerprint = resolution.ok ? bindingFingerprint(resolution.resolved) : null;
+    const currentFingerprint = resolution.ok ? binding.lineage?.binding_fingerprint_version === 'assembly-subtree.v1'
+      ? assemblySubtreeFingerprint(resolution.resolved, currentModelGraph) : bindingFingerprint(resolution.resolved) : null;
     if (currentFingerprint !== binding.baseline_fingerprint) {
       result.push({
         binding_id: binding.binding_id,
@@ -488,6 +555,10 @@ function compareBindingFingerprints(designGraph, currentModelGraph) {
     }
   }
   return result;
+}
+
+export function compareDesignBindingFingerprints(designGraph, currentModelGraph) {
+  return compareBindingFingerprints(designGraph, currentModelGraph);
 }
 
 function blockedChangePlan(designGraph, currentGraph, changes, divergence, instruction) {
@@ -559,14 +630,17 @@ function canonicalRefForNode(graph, node, requested) {
   };
 }
 
-function reboundBinding(binding, resolved) {
+function reboundBinding(binding, resolved, modelGraph = null) {
   if (!Array.isArray(resolved) || resolved.length === 0) throw new Error(`DesignIntent binding ${binding.binding_id} has no resolved entities`);
   const primary = resolved[0];
+  const assembly = modelGraph && resolved.every(entry => entry.node.entity_type === 'component_instance');
   return {
     ...structuredClone(binding),
     entity_node_id: primary.node.node_id,
     persistent_ref: structuredClone(primary.ref),
-    baseline_fingerprint: bindingFingerprint(resolved),
+    baseline_fingerprint: assembly ? assemblySubtreeFingerprint(resolved, modelGraph) : bindingFingerprint(resolved),
+    ...(assembly ? { lineage: { ...binding.lineage, binding_fingerprint_version: 'assembly-subtree.v1',
+      assembly_semantic_fingerprint: assemblySubtreeFingerprint(resolved, modelGraph, true) } } : {}),
     resolved_entities: resolved.map((entry) => ({
       entity_node_id: entry.node.node_id,
       persistent_ref: structuredClone(entry.ref),
@@ -574,6 +648,22 @@ function reboundBinding(binding, resolved) {
     })),
     existing_targets: resolved.map((entry) => structuredClone(entry.ref))
   };
+}
+
+function assemblySubtreeFingerprint(resolved, modelGraph, ignoreUsage = false) {
+  const descendants = new Map();
+  for (const node of modelGraph.nodes) {
+    if (node.node_type !== 'occurrence') continue;
+    if (!descendants.has(node.parent_id)) descendants.set(node.parent_id, []);
+    descendants.get(node.parent_id).push(node);
+  }
+  const fingerprint = (node) => {
+    const semantic = ignoreUsage ? { ...node, shared_definition: undefined, affected_instance_count: undefined, instance_policy_required: undefined } : node;
+    return { path: node.entity_path, fingerprint: entityFingerprint(semantic), children: (descendants.get(node.node_id) || [])
+      .sort((a, b) => String(a.entity_path).localeCompare(String(b.entity_path))).map(fingerprint) };
+  };
+  return sha256Canonical(resolved.map(entry => ({ persistent_ref: entry.ref, subtree: fingerprint(entry.node) }))
+    .sort((a, b) => persistentRefKey(a.persistent_ref).localeCompare(persistentRefKey(b.persistent_ref))));
 }
 
 function bindingFingerprint(resolved) {

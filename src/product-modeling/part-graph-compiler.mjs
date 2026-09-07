@@ -37,6 +37,7 @@ const SHAPE_OPERATIONS = new Set([
 ]);
 
 const FEATURE_OPERATIONS = new Set(['cut_hole', 'cut_slot', 'cut_recess', 'add_boss', 'add_raised_rib']);
+const ASSEMBLY_EXTRA_SHAPES = new Set(['pipe_between_points', 'lofted_solid', 'beveled_panel']);
 
 export async function readJsonFile(filePath) {
   return JSON.parse(await fs.readFile(filePath, 'utf8'));
@@ -68,8 +69,10 @@ export function compilePartGraphToSketchUpDsl(partGraph = {}, profile = {}, opti
   operations.push(...compileTags(profile));
   operations.push(...compileReferenceImages(profile, context));
 
-  for (const part of partGraph.parts || []) {
-    operations.push(...compilePart(part, context));
+  if (partGraph.version === 2 && partGraph.roots) {
+    operations.push(...compileAssemblyGraph(partGraph, context));
+  } else {
+    for (const part of partGraph.parts || []) operations.push(...compilePart(part, context));
   }
 
   for (const operation of partGraph.operations || []) {
@@ -84,6 +87,71 @@ export function compilePartGraphToSketchUpDsl(partGraph = {}, profile = {}, opti
     metadata: compileDocumentMetadata(partGraph, profile),
     operations
   };
+}
+
+// Version 1 parent remains descriptive metadata. Only explicit version 2 roots
+// opt into local-coordinate, reusable assembly definitions.
+function compileAssemblyGraph(graph, context) {
+  if (!Array.isArray(graph.roots) || graph.roots.length === 0) throw new Error('PartGraph v2 roots must not be empty');
+  const emitted = new Set();
+  const visiting = new Set();
+  const operations = [];
+  const definitionName = (id) => `PG2_${id}`;
+  const lookup = (id) => {
+    const part = context.partsById.get(id);
+    if (!part) throw new Error(`Unknown assembly part reference: ${id}`);
+    return part;
+  };
+  const emit = (id) => {
+    const part = lookup(id);
+    if (visiting.has(id)) throw new Error(`Cyclic PartGraph assembly: ${id}`);
+    if (emitted.has(id)) return;
+    if (part.compile?.emit === false) throw new Error(`Assembly references suppressed part: ${id}`);
+    if (part.feature_intents?.length) throw new Error(`Assembly definition ${id} cannot contain editing feature_intents; use constructive profiles or meshes`);
+    visiting.add(id);
+    const children = part.assembly?.children;
+    const nested = [];
+    if (children) {
+      if (part.shape) throw new Error(`Assembly ${id} cannot also declare shape`);
+      if (!Array.isArray(children) || children.length === 0) throw new Error(`Assembly ${id} children must not be empty`);
+      const childIds = new Set();
+      for (const reference of children) {
+        const child = lookup(reference.part_id);
+        const instanceId = reference.instance_id || child.id;
+        if (childIds.has(instanceId)) throw new Error(`Duplicate assembly child instance: ${instanceId}`);
+        childIds.add(instanceId);
+        if (child.assembly) {
+          emit(child.id);
+          nested.push({ op:'component_instance', id:instanceId, name:instanceId, definition:definitionName(child.id), origin:cloneJson(reference.origin || [0,0,0]), ...(reference.transform ? {transform:cloneJson(reference.transform)} : {}), qa:qaForPart(child) });
+        } else {
+          if (reference.origin || reference.transform) throw new Error(`Leaf ${child.id} placement belongs in shape.parameters, not its assembly reference`);
+          if (child.feature_intents?.length) throw new Error(`Assembly leaf ${child.id} cannot contain editing feature_intents`);
+          const shapes = compilePart(child, context);
+          if (!shapes.length) throw new Error(`Assembly leaf ${child.id} has no constructive shape`);
+          if (shapes.some((op) => op.op === 'image_plane')) throw new Error('Image planes cannot substitute assembly geometry');
+          nested.push(...shapes);
+        }
+      }
+    } else {
+      nested.push(...compilePart(part, context));
+      if (!nested.length) throw new Error(`Assembly root ${id} has no geometry`);
+    }
+    operations.push({op:'component_definition',name:definitionName(id),operations:nested});
+    visiting.delete(id);emitted.add(id);
+  };
+  const rootIds = new Set();
+  for (const root of graph.roots) {
+    const part = lookup(root.part_id);
+    const id = root.instance_id || part.id;
+    if (rootIds.has(id)) throw new Error(`Duplicate assembly root instance: ${id}`);
+    rootIds.add(id);
+    emit(part.id);
+  }
+  for (const root of graph.roots) {
+    const part = lookup(root.part_id);const id = root.instance_id || part.id;
+    operations.push({op:'component_instance',id,name:id,definition:definitionName(part.id),origin:cloneJson(root.origin || [0,0,0]),...(root.transform ? {transform:cloneJson(root.transform)} : {}),qa:qaForPart(part)});
+  }
+  return operations;
 }
 
 function validateProfileMatch(partGraph, profile) {
@@ -276,7 +344,7 @@ function compilePart(part, context) {
   if (part.compile?.emit === false) return [];
   if (!part.shape) return [];
   const primitive = part.shape.primitive;
-  if (!SHAPE_OPERATIONS.has(primitive)) throw new Error(`Unsupported PartGraph shape primitive: ${primitive}`);
+  if (!SHAPE_OPERATIONS.has(primitive) && !(context.partGraph.version === 2 && ASSEMBLY_EXTRA_SHAPES.has(primitive))) throw new Error(`Unsupported PartGraph shape primitive: ${primitive}`);
 
   const operation = {
     op: primitive,

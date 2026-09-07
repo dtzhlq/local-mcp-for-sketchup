@@ -1,0 +1,74 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import {buildDetailedScene,buildDetailedRecipeSample} from '../src/detailed-modeling/scenes.mjs';
+import {composeDesign} from '../src/detailed-modeling/compose-design.mjs';
+import {recompileDetailedBundle} from '../src/detailed-modeling/recompile-bundle.mjs';
+const plan=JSON.parse(await fs.readFile(new URL('../examples/detailed-modeling/agent-compositions/kitchen-living-plan.json',import.meta.url)));
+const original=composeDesign(buildDetailedScene({scene:'kitchen'}),plan);
+const chair=plan.additions.find(addition=>addition.asset_kind==='reading_chair');
+const changed=recompileDetailedBundle(original,{partId:chair.id,parameters:{width:860}});
+const unchanged=original.part_graph.parts.filter(part=>!part.id.startsWith(chair.id));
+for(const part of unchanged)assert.deepEqual(changed.part_graph.parts.find(candidate=>candidate.id===part.id),part);
+assert.notDeepEqual(changed.part_graph.parts.filter(part=>part.id.startsWith(chair.id)),original.part_graph.parts.filter(part=>part.id.startsWith(chair.id)));
+assert.deepEqual(changed.part_graph.roots,original.part_graph.roots);
+const cabinet=recompileDetailedBundle(changed,{partId:'kitchen-cabinet-feature',parameters:{drawer_extension:160}});
+assert.equal(cabinet.composition_plan.additions.find(addition=>addition.id===chair.id).parameters.width,860);
+assert.equal(cabinet.base_parameters.drawer_extension,160);
+const seated=recompileDetailedBundle(cabinet,{partId:'kitchen-window',parameters:{window_sill_back_edge:-40}});
+for(const part of cabinet.part_graph.parts.filter(part=>part.id!=='kitchen-window-projecting-sill'))assert.deepEqual(seated.part_graph.parts.find(candidate=>candidate.id===part.id),part,'Sill placement must preserve the frame, glazing, hardware and unrelated assemblies');
+assert.deepEqual(seated.detail_spec.required_parts,cabinet.detail_spec.required_parts,'Sill placement cannot weaken the frozen feature or dimension requirements');
+assert.equal(seated.composition_plan.additions.find(addition=>addition.id===chair.id).parameters.width,860);
+assert.throws(()=>recompileDetailedBundle(cabinet,{partId:'kitchen-window',parameters:{window_sill_back_edge:Infinity}}),/sill_back_edge/);
+assert.throws(()=>recompileDetailedBundle(original,{partId:'kitchen-window',parameters:{unknown:1}}),/not supported/);
+assert.throws(()=>recompileDetailedBundle(original,{parameters:{width:860}}),/explicit root/);
+const entryPlan=JSON.parse(await fs.readFile(new URL('../examples/detailed-modeling/agent-compositions/entry-court-plan.json',import.meta.url)));
+const sourceBeforeCommonEdit=JSON.stringify(original);
+const narrowedCommon=recompileDetailedBundle(original,{partId:'kitchen-cabinet-common',parameters:{width:760}});
+assert.equal(narrowedCommon.base_assembly_parameters['kitchen-cabinet-common'].width,760);
+assert.equal(JSON.stringify(original),sourceBeforeCommonEdit);
+for(const part of original.part_graph.parts.filter(part=>!part.id.startsWith('kitchen-cabinet-common')))assert.deepEqual(narrowedCommon.part_graph.parts.find(next=>next.id===part.id),part);
+assert.deepEqual(narrowedCommon.part_graph.roots,original.part_graph.roots,'Recipe edits must preserve both instance placements; execution chooses single or all');
+const originalFeet=original.part_graph.parts.filter(part=>part.id.startsWith('kitchen-cabinet-common')&&part.role==='adjustable_foot');
+for(const foot of originalFeet){const next=narrowedCommon.part_graph.parts.find(part=>part.id===foot.id);assert.ok(next,'Coordinate changes must not delete the frozen foot identity');assert.equal(next.shape.parameters.origin[0],foot.shape.parameters.origin[0]===45?45:715);}
+assert.deepEqual(narrowedCommon.detail_spec.required_parts.filter(part=>part.role==='adjustable_foot').map(part=>part.id),original.detail_spec.required_parts.filter(part=>part.role==='adjustable_foot').map(part=>part.id));
+assert.notDeepEqual(narrowedCommon.part_graph.parts.find(part=>part.id==='kitchen-cabinet-common-side-right'),original.part_graph.parts.find(part=>part.id==='kitchen-cabinet-common-side-right'));
+const nextCommon=recompileDetailedBundle(narrowedCommon,{partId:'kitchen-cabinet-common',parameters:{height:900}});
+assert.deepEqual(nextCommon.base_assembly_parameters['kitchen-cabinet-common'],{width:760,height:900});
+assert.throws(()=>recompileDetailedBundle(original,{partId:'kitchen-cabinet-common',parameters:{bogus:760}}),/not supported/);
+assert.throws(()=>recompileDetailedBundle(original,{partId:'kitchen-cabinet-common',parameters:{width:760},associatedPartIds:['kitchen-window']}),/declared scene parameter/);
+const entry=composeDesign(buildDetailedScene({scene:'entry-facade',parameters:{window_sill_back_edge:150}}),entryPlan);
+const entrySeated=recompileDetailedBundle(entry,{partId:'entry-window',parameters:{window_sill_back_edge:-10}});
+for(const part of entry.part_graph.parts.filter(part=>part.id!=='entry-window-projecting-sill'))assert.deepEqual(entrySeated.part_graph.parts.find(candidate=>candidate.id===part.id),part);
+assert.deepEqual(entrySeated.detail_spec.required_parts,entry.detail_spec.required_parts,'Entry sill correction must preserve every frozen dimension and feature');
+const beforeExplicit=JSON.stringify(entrySeated);
+const stairIds=['entry-step-upper-core','entry-step-middle-core','entry-step-lower-core'];
+const stairArgs={partId:`${stairIds[0]}-assembly`,associatedPartIds:stairIds.slice(1).map(id=>`${id}-assembly`),parameters:{base_elevation:-421}};
+const revisedBoxes=recompileDetailedBundle(entrySeated,stairArgs);
+assert.equal(JSON.stringify(entrySeated),beforeExplicit,'A proposed design revision must never mutate the frozen source bundle');
+for(const part of entrySeated.part_graph.parts){
+  const next=revisedBoxes.part_graph.parts.find(p=>p.id===part.id);
+  if(!stairIds.includes(part.id))assert.deepEqual(next,part,'Explicit scope must preserve every unselected part');
+  else{assert.equal(next.shape.parameters.origin[2],-421);assert.equal(next.shape.parameters.origin[2]+next.shape.parameters.size[2],part.shape.parameters.origin[2]+part.shape.parameters.size[2]);}
+}
+assert.deepEqual(recompileDetailedBundle(revisedBoxes,stairArgs).part_graph,revisedBoxes.part_graph,'Repeating the same absolute base parameter must not apply another delta');
+assert.throws(()=>recompileDetailedBundle(entrySeated,{...stairArgs,associatedPartIds:['not-declared']}),/declared box/);
+assert.throws(()=>recompileDetailedBundle(entrySeated,{...stairArgs,associatedPartIds:[stairArgs.partId]}),/distinct/);
+assert.throws(()=>recompileDetailedBundle(entrySeated,{...stairArgs,associatedPartIds:['entry-step-upper-tread-assembly']}),/declared box/);
+assert.throws(()=>recompileDetailedBundle(entrySeated,{...stairArgs,parameters:{base_elevation:0}}),/invalid box bounds/);
+assert.throws(()=>recompileDetailedBundle(entrySeated,{...stairArgs,parameters:{base_elevation:NaN}}),/finite base_elevation/);
+const standalone=buildDetailedRecipeSample({kind:'cabinet',id:'editable-cabinet',parameters:{width:800,depth:600}});
+const standaloneBefore=JSON.stringify(standalone);
+const standaloneNarrow=recompileDetailedBundle(standalone,{parameters:{width:720,depth:640}});
+const standaloneFeet=standalone.part_graph.parts.filter(part=>part.role==='adjustable_foot');
+for(const foot of standaloneFeet){
+  const next=standaloneNarrow.part_graph.parts.find(part=>part.id===foot.id);
+  assert.ok(next,'Standalone sample parameter edits must preserve each declared foot identity');
+  assert.equal(next.shape.parameters.origin[0],foot.shape.parameters.origin[0]===45?45:675);
+  assert.equal(next.shape.parameters.origin[1],foot.shape.parameters.origin[1]===80?80:570);
+  assert.ok(JSON.stringify(standaloneNarrow.dsl).includes(foot.id),'Recompiled DSL must retain the original part reference');
+}
+assert.equal(JSON.stringify(standalone),standaloneBefore);
+assert.deepEqual(standaloneNarrow.detail_spec.required_parts.filter(part=>part.role==='adjustable_foot').map(part=>part.id),standalone.detail_spec.required_parts.filter(part=>part.role==='adjustable_foot').map(part=>part.id));
+const standaloneAgain=recompileDetailedBundle(standaloneNarrow,{parameters:{width:700}});
+assert.ok(standaloneFeet.every(foot=>standaloneAgain.part_graph.parts.some(part=>part.id===foot.id)),'Repeated edits must retain the earliest accepted identities');
+console.log('recompile-detailed-bundle: composed asset parameters preserve unrelated parts, placements and previous accepted parameters; unsupported bindings rejected');

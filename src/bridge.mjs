@@ -1,4 +1,6 @@
 import fs from 'node:fs/promises';
+import { createHash } from 'node:crypto';
+import { queryLocalAssets } from './asset-catalog.mjs';
 import path from 'node:path';
 import { getRuntimeCapabilities } from './capabilities.mjs';
 import { getDocs } from './docs.mjs';
@@ -67,6 +69,16 @@ export class SketchUpBridge {
   async get_docs(options = {}) {
     const document = getDocs(options);
     return { ...document, docs: document.content };
+  }
+
+  async query_assets(options = {}) {
+    return queryLocalAssets(options);
+  }
+
+  async inspect_detail_regions({ queries, runtime = 'queue', timeoutMs } = {}) {
+    if (runtime !== 'queue') throw new AgentContractError('OPERATION_NOT_ALLOWED', 'Detail region acceptance requires actual native geometry.');
+    if (!Array.isArray(queries) || queries.length < 1 || queries.length > 128) throw new AgentContractError('INVALID_ARGUMENT', 'inspect_detail_regions requires 1..128 frozen region queries.');
+    return this.selectRuntime(runtime, { timeoutMs }).inspectDetailRegions({ queries });
   }
 
   async get_workflow_bundle() {
@@ -228,6 +240,9 @@ export class SketchUpBridge {
     }
     const selectedRuntime = this.selectRuntime(runtime, { timeoutMs });
     const runtimeCapabilities = await this.resolveRuntimeCapabilities(selectedRuntime, runtime);
+    if (prepared.document.creation_scope && (runtimeCapabilities.creation_scope?.version !== 'creation-scope.v1' || runtimeCapabilities.creation_scope?.atomic_absence_validation !== true)) {
+      throw new AgentContractError('OPERATION_NOT_ALLOWED', 'The installed runtime does not support atomic scoped creation; update and restart the bridge.');
+    }
     const snapshot = await selectedRuntime.buildModel(prepared.code);
     return {
       snapshot: this.attachRuntimeCapabilities(snapshot, runtimeCapabilities),
@@ -375,6 +390,8 @@ export class SketchUpBridge {
       sessionContract
     } = options;
     const readOnlyValue = read_only === true || readOnly === true;
+    const roots = options.recursive_roots;
+    if (roots !== undefined && (!readOnlyValue || recursive !== true || !Array.isArray(roots) || !roots.length || roots.length > 32 || new Set(roots).size !== roots.length || roots.some(root => typeof root !== 'string' || !(runtime === 'mock' ? /^mock:(group|component_instance):[A-Za-z0-9_-]+$/ : /^pid:[1-9]\d*$/).test(root)))) throw new Error('recursive_roots requires distinct top-level pid paths, read_only and recursive=true');
     const structuralProbe = normalizeStructuralProbeOptions(options);
     if (runtime === 'queue' && !readOnlyValue && !this.liveMutationAuthorization) {
       return this.withLiveMutationAuthorization({ runtime, timeoutMs, session_contract, sessionContract, operation: 'adopt_open_model' }, (lockedBridge) => lockedBridge.adopt_open_model({ runtime, timeoutMs, recursive, recursive_limit, recursiveLimit, force, prefix, read_only: false }));
@@ -384,6 +401,7 @@ export class SketchUpBridge {
     const runtimeOptions = {
       recursive,
       recursive_limit: recursive_limit ?? recursiveLimit,
+      ...(roots ? { recursive_roots: roots } : {}),
       force,
       prefix,
       read_only: readOnlyValue
@@ -394,6 +412,7 @@ export class SketchUpBridge {
       runtimeOptions.fresh_manifold_paths = structuralProbe.fresh_manifold_paths;
     }
     const result = await selectedRuntime.adoptOpenModel(runtimeOptions);
+    if (roots && JSON.stringify(result.recursive_root_paths) !== JSON.stringify(roots)) throw new AgentContractError('CAPABILITY_MISMATCH', 'Runtime did not attest the exact requested recursive roots');
     return assertStructuralProbeResult(result, structuralProbe, { runtime });
   }
 
@@ -867,6 +886,30 @@ export class SketchUpBridge {
       zoom_extents: zoom_extents ?? zoomExtents,
       server_visual_capture
     });
+  }
+
+  async capture_detail_views({ views, output_dir, runtime = 'queue', timeoutMs, session_contract, sessionContract } = {}) {
+    if (runtime !== 'queue') throw new AgentContractError('OPERATION_NOT_ALLOWED', 'Detail image evidence requires a live SketchUp runtime.');
+    if (!Array.isArray(views) || !views.length || views.length > 24 || !output_dir) throw new AgentContractError('INVALID_ARGUMENT', 'capture_detail_views requires 1..24 views and output_dir.');
+    if (!this.liveMutationAuthorization) {
+      return this.withLiveMutationAuthorization({ runtime, timeoutMs, session_contract, sessionContract, operation: 'capture_detail_views' }, lockedBridge => lockedBridge.capture_detail_views({ views, output_dir, runtime, timeoutMs }));
+    }
+    const selectedRuntime = this.selectRuntime(runtime, { timeoutMs });
+    const result = await selectedRuntime.captureDetailViews({ views, output_dir });
+    const captures = [];
+    for (const capture of result.captures || []) {
+      const imagePath = path.resolve(capture.path || capture.file_path);
+      if (!imagePath.startsWith(`${path.resolve(output_dir)}${path.sep}`)) throw new Error('Detail capture escaped its output directory.');
+      const bytes = await fs.readFile(imagePath);
+      const png = bytes.subarray(0, 8).equals(Buffer.from([137,80,78,71,13,10,26,10]));
+      const width = png && bytes.length >= 24 ? bytes.readUInt32BE(16) : null;
+      const height = png && bytes.length >= 24 ? bytes.readUInt32BE(20) : null;
+      captures.push({ ...capture, path: imagePath, width, height,
+        sha256: createHash('sha256').update(bytes).digest('hex'),
+        server_verified: Boolean(width && height && capture.model_revision && capture.model_revision_complete === true && capture.evidence === 'native_view_write_image' && capture.camera_stable_during_export === true && result.restored === true),
+        evidence_level: 'live_runtime' });
+    }
+    return { ...result, captures };
   }
 
   async run_ruby_expert({ code, audit_path, auditPath, runtime = 'queue', timeoutMs, session_contract, sessionContract } = {}) {

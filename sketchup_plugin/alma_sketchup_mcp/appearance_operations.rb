@@ -27,8 +27,8 @@ module AlmaSketchupMCP
   def set_face_uv(model, operation)
     entity = find_referenced_entity(model, operation, 'face_uv')
     payload = face_uv_payload(operation)
+    payload['application'] = apply_face_uv_payload(entity, payload)
     entity.set_attribute('FaceUV', payload['id'], JSON.generate(payload))
-    apply_face_uv_payload(entity, payload)
     entity
   end
 
@@ -72,28 +72,28 @@ module AlmaSketchupMCP
   end
 
   def apply_face_uv_payload(entity, payload)
-    return unless payload['material']
-
-    material = ensure_material(payload['material'], '#cccccc')
-    face_uv_target_faces(entity, payload['selector']).each do |face|
-      face.material = material if face.respond_to?(:material=)
+    faces = face_uv_target_faces(entity, payload['selector'])
+    raise "face_uv #{payload['id']} matched no direct faces" if faces.empty?
+    plans = faces.map do |face|
+      material = texture_mapping_material(entity, face, payload['material'], true)
       mapping = face_uv_position_mapping(face, payload)
-      next if mapping.length < 4 || !face.respond_to?(:position_material)
-
-      face.position_material(material, mapping, true)
-      face.set_attribute('FaceUV', payload['id'], JSON.generate(payload)) if face.respond_to?(:set_attribute)
-    rescue StandardError => error
-      add_warning('geometry.texture_position_failed', 'warn', "face_uv #{payload['id']} could not be applied: #{error.message}", 'face_uv')
+      raise 'face_uv requires 3 or 4 model/UV point pairs' unless [6, 8].include?(mapping.length)
+      raise 'Native face UV positioning/readback is unsupported' unless face.respond_to?(:position_material) && face.respond_to?(:get_UVHelper)
+      [face, material, mapping]
     end
+    plans.each do |face, material, mapping|
+      raise 'Native Face.position_material did not apply face_uv' unless face.position_material(material, mapping, true)
+      points = mapping.each_slice(2).map { |pair| tm_xyz(pair[0]) }
+      expected = mapping.each_slice(2).map { |pair| tm_xyz(pair[1]).first(2) }
+      texture_mapping_verify(face, true, points, expected)
+      face.set_attribute('FaceUV', payload['id'], JSON.generate(payload)) if face.respond_to?(:set_attribute)
+    end
+    { 'status' => 'applied', 'source' => 'native_face_uv', 'scope' => 'direct_faces_only',
+      'applied_face_count' => faces.length, 'readback' => native_texture_mapping_snapshot(entity, 'front', faces) }
   end
 
   def face_uv_target_faces(entity, selector)
-    entities = if entity.is_a?(Sketchup::Group)
-                 entity.entities
-               elsif entity.is_a?(Sketchup::ComponentInstance)
-                 entity.definition.entities
-               end
-    faces = entities ? entities.grep(Sketchup::Face) : []
+    faces = texture_mapping_direct_faces(entity)
     selector ||= { 'type' => 'all' }
     type = selector['type'] || selector[:type]
     value = selector['value'] || selector[:value]
@@ -101,6 +101,7 @@ module AlmaSketchupMCP
     when 'all', nil
       faces
     when 'index'
+      return [] unless value.is_a?(Numeric) && value.to_i == value && value >= 0
       face = faces[value.to_i]
       face ? [face] : []
     when 'named'
@@ -122,6 +123,7 @@ module AlmaSketchupMCP
       return result
     end
     vertices = face.vertices.map(&:position)
+    raise 'face_uv UV count exceeds the face vertex count' if payload['uv'].length > vertices.length
     payload['uv'].zip(vertices).each_with_object([]) do |(uv, point), result|
       next unless uv && point
 
@@ -137,7 +139,9 @@ module AlmaSketchupMCP
     return nil unless dictionary
 
     dictionary.map do |key, value|
-      JSON.parse(value.to_s)
+      payload = JSON.parse(value.to_s)
+      payload['native_uv'] = native_texture_mapping_snapshot(entity, 'front', face_uv_target_faces(entity, payload['selector']))
+      payload
     rescue JSON::ParserError
       { 'id' => key.to_s, 'raw' => value.to_s }
     end.sort_by { |entry| entry['id'].to_s }

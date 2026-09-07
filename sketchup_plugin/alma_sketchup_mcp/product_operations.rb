@@ -64,10 +64,6 @@ module AlmaSketchupMCP
     end
     group.set_attribute('AlmaSketchupMCP', 'image', operation['image'] || operation['texture']) if operation['image'] || operation['texture']
     group.set_attribute('AlmaSketchupMCP', 'plane', plane)
-    if operation['texture_transform']
-      texture_transform = texture_transform_payload(operation['texture_transform'], "#{name}.texture_transform")
-      write_texture_transform_attributes(group, texture_transform)
-    end
     apply_transform(group, operation)
     group
   end

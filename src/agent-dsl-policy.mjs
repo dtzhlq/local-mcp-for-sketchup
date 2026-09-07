@@ -1,4 +1,4 @@
-import { AgentContractError } from './agent-contract.mjs';
+import { AgentContractError, sha256Canonical } from './agent-contract.mjs';
 import { OPERATION_REGISTRY } from './capabilities.mjs';
 import { expandDslCode } from './dsl-expansion.mjs';
 
@@ -187,4 +187,135 @@ function findMutableMaterialSpecs(value, currentPath, found = []) {
     findMutableMaterialSpecs(nested, nestedPath, found);
   }
   return found;
+}
+
+export const CREATION_SCOPE_VERSION = 'creation-scope.v1';
+const SCOPED_CUTS = new Set(['cut_hole', 'cut_slot', 'cut_recess']);
+const SCOPED_CUT_HOSTS = new Set(['box', 'rounded_box', 'beveled_panel', 'panel_with_openings']);
+
+// Scoped companion to the unchanged additive-only policy. This is a plan, not
+// permission: both runtimes must validate absence and target closure atomically.
+export function prepareTaskOwnedCreationDsl(code, { taskId, iteration = 0 } = {}) {
+  if (!/^task_[0-9a-f-]+$/i.test(String(taskId)) || !Number.isInteger(iteration) || iteration < 0) throw new AgentContractError('INVALID_ARGUMENT', 'A server task and creation iteration are required.');
+  const expanded = expandDslCode(code);
+  if (expanded.document.creation_scope) throw new AgentContractError('INVALID_ARGUMENT', 'Creation scope is server generated.');
+  const prefix = `alma_${sha256Canonical({ taskId, iteration }).slice(7, 27)}_`;
+  const identityMap = {};
+  const definitions = new Map();
+  const materials = new Map();
+  for (const operation of expanded.document.operations) {
+    if (operation.op === 'component_definition' || operation.op === 'material') {
+      const map = operation.op === 'material' ? materials : definitions;
+      if (typeof operation.name !== 'string' || !operation.name || map.has(operation.name)) throw new AgentContractError('INVALID_ARGUMENT', 'New resource names must be unique.');
+      map.set(operation.name, `${prefix}${operation.op}_${map.size}`);
+    }
+  }
+  const rename = (operation) => {
+    const result = structuredClone(operation);
+    if (operation.op === 'material') result.name = materials.get(operation.name);
+    else if (operation.op === 'component_definition') {
+      result.name = definitions.get(operation.name);
+      result.operations = (operation.operations || []).map(rename);
+      if (!operation.operations) { delete result.operations; }
+    } else if (!SCOPED_CUTS.has(operation.op)) {
+      const logicalId = operation.id || operation.object_id || operation.objectId || operation.name;
+      if (typeof logicalId === 'string' && logicalId) {
+        identityMap[logicalId] ||= `${prefix}object_${sha256Canonical(logicalId).slice(7, 23)}`;
+        result.id = identityMap[logicalId];
+        delete result.object_id;
+        delete result.objectId;
+      }
+    }
+    if (operation.definition) result.definition = definitions.get(operation.definition) || operation.definition;
+    for (const key of MATERIAL_SPEC_FIELDS) if (typeof result[key] === 'string' && materials.has(result[key])) result[key] = materials.get(result[key]);
+    return result;
+  };
+  const operations = expanded.document.operations.map(rename);
+  const patchTargets = (ops) => ops.forEach(operation => {
+    if (SCOPED_CUTS.has(operation.op)) {
+      const logicalTarget = operation.target_id || operation.target || operation.name;
+      operation.target_id = identityMap[logicalTarget] || logicalTarget;
+      delete operation.target;
+      delete operation.name;
+    }
+    if (operation.operations) patchTargets(operation.operations);
+  });
+  patchTargets(operations);
+  const document = { ...expanded.document, operations, creation_scope: {
+    version: CREATION_SCOPE_VERSION, task_id: taskId, iteration, namespace: prefix,
+    definitions: [...definitions.values()], materials: [...materials.values()]
+  } };
+  validateTaskOwnedCreationDocument(document);
+  return { ...expanded, document, code: JSON.stringify(document), identity_map: identityMap, material_map: Object.fromEntries(materials), creation_scope: document.creation_scope };
+}
+
+export function validateTaskOwnedCreationDocument(document) {
+  const scope = document.creation_scope;
+  const deny = (reason) => { throw new AgentContractError('OPERATION_NOT_ALLOWED', `Creation scope rejected: ${reason}`); };
+  if (scope?.version !== CREATION_SCOPE_VERSION || !/^alma_[0-9a-f]{20}_$/.test(scope.namespace || '')) deny('invalid contract');
+  const definitions = new Set();
+  const materials = new Set();
+  const rootObjects = [];
+  const visit = (operations, nested = false) => {
+    const objects = new Map();
+    for (const operation of operations) {
+      if (!operation || typeof operation !== 'object') deny('invalid operation');
+      if (operation.op === 'material') {
+        if (nested || !operation.name?.startsWith(scope.namespace) || materials.has(operation.name)) deny('material must be a fresh top-level resource');
+        materials.add(operation.name);
+        continue;
+      }
+      if (operation.op === 'component_definition') {
+        if (nested || !operation.name?.startsWith(scope.namespace) || definitions.has(operation.name)) deny('definition must be fresh and acyclic');
+        if (findMutableMaterialSpecs({ ...operation, operations: undefined }, '').length) deny('inline mutable material');
+        visit(operation.operations || [], true);
+        definitions.add(operation.name);
+        continue;
+      }
+      if (SCOPED_CUTS.has(operation.op)) {
+        const host = objects.get(operation.target_id);
+        if (nested || !host || !SCOPED_CUT_HOSTS.has(host.op) || host.transform) deny('cut target must be an earlier untransformed Group in this transaction');
+        if (EXISTING_TARGET_FIELDS.some(key => key !== 'target_id' && Object.hasOwn(operation, key))) deny('cut target aliases are forbidden');
+        continue;
+      }
+      if (!ADDITIVE_CREATION_SET.has(operation.op) || !OPERATION_REGISTRY[operation.op]) deny(`unsupported operation ${operation.op}`);
+      if (nested && OPERATION_REGISTRY[operation.op].component_scope?.status !== 'supported') deny('operation is not supported in definitions');
+      if (EXISTING_TARGET_FIELDS.some(key => Object.hasOwn(operation, key)) || operation.operations) deny('existing references or hidden operations');
+      if (findMutableMaterialSpecs(operation, '').length) deny('inline mutable material');
+      if (operation.op === 'component_instance' && !definitions.has(operation.definition)) deny('instance must refer to an earlier new definition');
+      if (!operation.id?.startsWith(scope.namespace) || objects.has(operation.id)) deny('fresh unique object id required');
+      objects.set(operation.id, operation);
+      if (!nested) rootObjects.push(operation);
+    }
+  };
+  visit(document.operations || []);
+  if (JSON.stringify([...definitions]) !== JSON.stringify(scope.definitions) || JSON.stringify([...materials]) !== JSON.stringify(scope.materials)) deny('resource declaration mismatch');
+  return { scope, root_objects: rootObjects };
+}
+
+// Pass complete runtime state, including unused definitions/materials. A public
+// bounded snapshot is not an authoritative resource inventory.
+export function validateCreationScopeAgainstModel(document, model) {
+  if (!document.creation_scope) return null;
+  const validation = validateTaskOwnedCreationDocument(document);
+  const names = value => new Set(Array.isArray(value) ? value.map(item => typeof item === 'string' ? item : item.name) : Object.keys(value || {}));
+  const definitions = names(model.component_definitions);
+  const materials = names(model.materials);
+  if (validation.scope.definitions.some(name => definitions.has(name)) || validation.scope.materials.some(name => materials.has(name))) throw new AgentContractError('OPERATION_NOT_ALLOWED', 'Creation resource already exists.');
+  const declaredMaterials = new Set([...materials, ...validation.scope.materials]);
+  const inspectMaterials = value => {
+    if (Array.isArray(value)) return value.forEach(inspectMaterials);
+    if (!value || typeof value !== 'object') return;
+    for (const [key, item] of Object.entries(value)) {
+      if (MATERIAL_SPEC_FIELDS.has(key) && item !== null && typeof item !== 'string') throw new AgentContractError('OPERATION_NOT_ALLOWED', 'Scoped material references must be strings.');
+      if (MATERIAL_SPEC_FIELDS.has(key) && typeof item === 'string' && !declaredMaterials.has(item)) throw new AgentContractError('OPERATION_NOT_ALLOWED', `Creation material is neither declared nor already present: ${item}`);
+      inspectMaterials(item);
+    }
+  };
+  inspectMaterials(document.operations);
+  const objects = [...(model.groups || []), ...(model.instances || [])];
+  for (const operation of validation.root_objects) {
+    if (objects.some(item => item.id === operation.id || item.name === operation.name)) throw new AgentContractError('OPERATION_NOT_ALLOWED', 'Creation object already exists.');
+  }
+  return validation;
 }

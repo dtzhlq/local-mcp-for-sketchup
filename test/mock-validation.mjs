@@ -1206,9 +1206,10 @@ assert.ok(pipeBetweenPointsSnapshot.component_definitions.includes('Pipe_Def'));
 assert.equal(diagonalPipe.kind, 'pipe_between_points');
 assert.equal(diagonalPipe.faces, 44);
 assert.equal(diagonalPipe.edges, 66);
-assert.ok(Math.abs(diagonalPipe.bounding_box.w - 77.45923643500014) < 1e-9);
-assert.ok(Math.abs(diagonalPipe.bounding_box.d - 86.57432296387634) < 1e-9);
-assert.ok(Math.abs(diagonalPipe.bounding_box.h - 44.48472543554132) < 1e-9);
+// Ring phases now follow a continuous parallel-transport frame along the bend.
+assert.ok(Math.abs(diagonalPipe.bounding_box.w - 77.34948057043708) < 1e-9);
+assert.ok(Math.abs(diagonalPipe.bounding_box.d - 86.68328157299975) < 1e-9);
+assert.ok(Math.abs(diagonalPipe.bounding_box.h - 44.44878817925634) < 1e-9);
 assert.deepEqual(diagonalPipe.resolution_hint, { segments: 8 });
 assert.ok(pipeBetweenPointsSnapshot.material_names.includes('Pipe_Test'));
 
@@ -1362,9 +1363,10 @@ assert.equal(diagonalWall.bounding_box.h, 250);
 assert.equal(axisWall.kind, 'wall');
 assert.ok(axisWall.faces >= 1, 'axis-aligned wall with openings should keep existing panel path');
 assert.equal(wallPath.kind, 'wall_path');
-assert.equal(wallPath.faces, 12);
-assert.equal(wallPath.edges, 24);
-assert.equal(wallPath.vertices, 16);
+// Joined walls share their miter seam and omit the two internal end caps.
+assert.equal(wallPath.faces, 10);
+assert.equal(wallPath.edges, 20);
+assert.equal(wallPath.vertices, 12);
 assert.deepEqual(wallPath.bounding_box.min, [0, 860, 0]);
 assert.equal(wallPath.bounding_box.w, 340);
 assert.equal(wallPath.bounding_box.d, 440);
@@ -1439,8 +1441,8 @@ for (const kind of ['terrain_mesh', 'footprint_slab', 'path_surface', 'parking_s
   assert.ok(buildingGeometryR2.snapshot.groups.some((group) => group.kind === kind), `R2 aggressive sample should include ${kind}`);
 }
 assert.equal(buildingGeometryR2.snapshot.groups.find((group) => group.name === 'Courtyard_Site_Slab').faces, 12);
-assert.equal(buildingGeometryR2.snapshot.groups.find((group) => group.name === 'East_L_Wall_With_Openings').faces, 20);
-assert.equal(buildingGeometryR2.snapshot.groups.find((group) => group.name === 'Curved_Entry_Wall').vertices, 64);
+assert.equal(buildingGeometryR2.snapshot.groups.find((group) => group.name === 'East_L_Wall_With_Openings').faces, 70);
+assert.equal(buildingGeometryR2.snapshot.groups.find((group) => group.name === 'Curved_Entry_Wall').vertices, 36);
 assert.equal(buildingGeometryR2.snapshot.groups.find((group) => group.name === 'Gallery_Footprint_Roof').kind, 'roof_footprint');
 assert.equal(buildingGeometryR2.snapshot.groups.find((group) => group.name === 'North_Parking_Stalls').kind, 'parking_stall_array');
 assert.equal(buildingGeometryR2.snapshot.scenes[0].name, 'Building_Geometry_R2_Aggressive_View');
@@ -1588,7 +1590,7 @@ const buildingCode = JSON.stringify({
     { op: 'door', name: 'Entry_Door', origin: [425, -45, 160], plane: 'xz', width: 850, height: 2050, thickness: 40, material: 'Wood' },
     { op: 'window', name: 'Front_Window', origin: [1925, -35, 1080], plane: 'xz', width: 850, height: 720, thickness: 24, material: 'Glass' },
     { op: 'stairs', name: 'Entry_Stairs', origin: [0, -900, 0], steps: 4, width: 1400, tread_depth: 300, riser_height: 160, direction: 'y', material: 'Concrete' },
-    { op: 'railing', name: 'Front_Railing', path: [[0, -940, 640], [1800, -940, 640]], height: 900, rail_radius: 35, post_radius: 30, post_spacing: 600, material: 'Wood' }
+    { op: 'railing', name: 'Front_Railing', path: [[0, -940, 640], [1800, -940, 640]], height: 900, rail_radius: 35, post_radius: 30, post_spacing: 600, segments: 8, material: 'Wood' }
   ]
 });
 const buildingBuilt = await bridge.build_model({ runtime: 'mock', code: buildingCode });

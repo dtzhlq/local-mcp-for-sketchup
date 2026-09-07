@@ -81,6 +81,7 @@ const LIVE_MUTATING_TOOL_NAMES = new Set([
   'adopt_open_model',
   'set_selection',
   'capture_view',
+  'capture_detail_views',
   'run_ruby_expert',
   'evaluate_py',
   'build_report',
@@ -91,6 +92,26 @@ const LIVE_MUTATING_TOOL_NAMES = new Set([
 ]);
 
 const BASE_TOOL_REGISTRY = [
+  {
+    name: 'inspect_detail_regions',
+    description: 'Read actual native geometry to test frozen void regions and construction boundaries in anchor_local or model coordinates. mode: pair_separation with two explicit assembly paths verifies native leaf separation and boundary contacts; enclosing solids, external caps and ambiguous geometry remain unresolved.',
+    inputSchema: { type: 'object', required: ['queries'], additionalProperties: false, properties: {
+      queries: { type: 'array', minItems: 1, maxItems: 128, items: { type: 'object' } }, runtime: { const: 'queue' }, timeoutMs: { type: 'number' }
+    } }
+  },
+  {
+    name: 'query_assets',
+    description: 'Search local component recipes or an explicit asset catalog; check file availability, provenance, license, component hierarchy, material inventory and evidence freshness. Never buys or downloads assets.',
+    inputSchema: { type: 'object', additionalProperties: false, properties: {
+      catalog_path: { type: 'string' }, query: { type: 'string' }, kind: { type: 'string' }, limit: { type: 'integer', minimum: 1, maximum: 200 }
+    } }
+  },
+  {
+    name: 'capture_detail_views',
+    description: 'Capture stable native close-up views for explicit component occurrences. Optional views[].scene_ref performs controlled scene inspection, requiring a selected scene and saved style; otherwise capture is camera-only. Restores camera, scene, environment and style and reports actual modification state.',
+    inputSchema: { type: 'object', required: ['views', 'output_dir'], additionalProperties: false,
+      properties: { views: { type: 'array', minItems: 1, maxItems: 24, items: { type: 'object' } }, output_dir: { type: 'string' }, runtime: { const: 'queue' }, timeoutMs: { type: 'number' } } }
+  },
   {
     name: 'get_docs',
     description: 'Return progressively scoped safe SketchUp documentation by topic and detail level.',

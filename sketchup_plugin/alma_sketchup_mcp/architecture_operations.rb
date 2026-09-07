@@ -49,22 +49,30 @@ module AlmaSketchupMCP
     dy = end_point[1] - start_point[1]
     length = Math.sqrt(dx**2 + dy**2)
     raise "#{name}.start and end must not be identical" if length <= GEOMETRY_EPSILON
+    raise "#{name} wall endpoints must share an elevation" if (end_point[2] - start_point[2]).abs > GEOMETRY_EPSILON
+    normalized_openings = normalize_wall_openings(operation['openings'] || [], [length], height, "#{name}.openings", false)
+    panel_openings = normalized_openings.map { |o| { 'name' => o['name'], 'x' => o['offset'], 'y' => o['sill_height'], 'width' => o['width'], 'height' => o['height'] } }
 
     axis_aligned = dx.abs <= GEOMETRY_EPSILON || dy.abs <= GEOMETRY_EPSILON
     unless axis_aligned
-      add_wall_segment_mesh(parent_entities, operation.merge('start' => start_point, 'end' => end_point, 'height' => height, 'thickness' => thickness, 'kind' => 'wall'))
-      return
+      group = add_panel_with_openings(parent_entities, operation.merge('origin' => [0, -thickness / 2.0, 0], 'plane' => 'xz', 'size' => [length, height], 'thickness' => thickness, 'openings' => panel_openings, 'kind' => 'wall'))
+      apply_transform(group, 'name' => name, 'transform' => { 'rotateZ' => Math.atan2(dy, dx) * 180.0 / Math::PI })
+      apply_transform(group, 'name' => name, 'transform' => { 'translate' => start_point })
+      apply_wall_placement_transform(group, operation)
+      return group
     end
 
     if dx.abs >= dy.abs
       origin = [start_point[0], start_point[1], start_point[2]]
       origin[0] = [start_point[0], end_point[0]].min
-      add_panel_with_openings(parent_entities, operation.merge('origin' => origin, 'plane' => 'xz', 'size' => [dx.abs, height], 'thickness' => thickness))
+      group = add_panel_with_openings(parent_entities, operation.merge('origin' => origin, 'plane' => 'xz', 'size' => [dx.abs, height], 'thickness' => thickness, 'openings' => panel_openings, 'kind' => 'wall'))
     else
       origin = [start_point[0], start_point[1], start_point[2]]
       origin[1] = [start_point[1], end_point[1]].min
-      add_panel_with_openings(parent_entities, operation.merge('origin' => origin, 'plane' => 'yz', 'size' => [dy.abs, height], 'thickness' => thickness))
+      group = add_panel_with_openings(parent_entities, operation.merge('origin' => origin, 'plane' => 'yz', 'size' => [dy.abs, height], 'thickness' => thickness, 'openings' => panel_openings, 'kind' => 'wall'))
     end
+    apply_wall_placement_transform(group, operation)
+    group
   end
 
   def add_wall_path(parent_entities, operation)
@@ -76,14 +84,22 @@ module AlmaSketchupMCP
     assert_unique_3d_points(points, "#{name}.path")
     height = positive_number(operation['height'], nil, "#{name}.height")
     thickness = positive_number(operation['thickness'], 120, "#{name}.thickness")
-    vertices = []
-    faces = []
-    points.each_cons(2).with_index do |(start_point, end_point), index|
-      offset = vertices.length
-      vertices.concat(wall_segment_vertices(start_point, end_point, height, thickness, "#{name}.path[#{index}]"))
-      faces.concat(cuboid_faces(offset))
-    end
-    add_mesh(parent_entities, operation.merge('vertices' => vertices, 'faces' => faces, 'kind' => operation['kind'] || 'wall_path'))
+    lengths = points.each_cons(2).map { |a, b| Math.sqrt((b[0] - a[0])**2 + (b[1] - a[1])**2) }
+    openings = normalize_wall_openings(operation['openings'] || [], lengths, height, "#{name}.openings", true)
+    mesh = build_joined_wall_mesh(points, height, thickness, openings, name)
+    raw_operation = operation.reject { |key, _| %w[transform translation rotateZ].include?(key) }
+    group = add_mesh(parent_entities, raw_operation.merge('vertices' => mesh['vertices'], 'faces' => mesh['faces'], 'kind' => operation['kind'] || 'wall_path'))
+    apply_wall_placement_transform(group, operation)
+    group
+  end
+
+  def apply_wall_placement_transform(group, operation)
+    transform = operation['transform'] || {}
+    angle = transform['rotateZ'] || transform['rotationZ'] || operation['rotateZ']
+    translation = transform['translate'] || transform['translation'] || operation['translation']
+    apply_transform(group, 'name' => operation['name'], 'transform' => { 'rotateZ' => angle }) if angle
+    apply_transform(group, 'name' => operation['name'], 'transform' => { 'translate' => translation }) if translation
+    group
   end
 
   def add_curved_wall(parent_entities, operation)
@@ -322,9 +338,10 @@ module AlmaSketchupMCP
     post_radius = positive_number(operation['post_radius'] || operation['postRadius'], 35, "#{name}.post_radius")
     post_spacing = positive_number(operation['post_spacing'] || operation['postSpacing'], 900, "#{name}.post_spacing")
     rail_path = points.map { |x, y, z| [x, y, z + rail_height] }
-    add_pipe_between_points(parent_entities, 'name' => "#{name}_Top_Rail", 'points' => rail_path, 'radius' => rail_radius, 'segments' => 8, 'material' => operation['material'], 'smooth' => operation['smooth'] || 'all', 'kind' => 'railing_rail')
+    curve_options = operation.select { |key, _| %w[chord_tolerance_mm max_segments].include?(key) }
+    add_pipe_between_points(parent_entities, curve_options.merge('name' => "#{name}_Top_Rail", 'points' => rail_path, 'radius' => rail_radius, 'segments' => operation['rail_segments'] || operation['segments'] || 32, 'material' => operation['material'], 'smooth' => operation['smooth'] || 'all', 'kind' => 'railing_rail'))
     points_along_polyline(points, post_spacing).each_with_index do |point, index|
-      add_cylinder(parent_entities, 'name' => "#{name}_Post_#{index + 1}", 'origin' => point, 'radius' => post_radius, 'height' => rail_height, 'segments' => 8, 'material' => operation['material'], 'smooth' => operation['smooth'] || 'all', 'kind' => 'railing_post')
+      add_cylinder(parent_entities, curve_options.merge('name' => "#{name}_Post_#{index + 1}", 'origin' => point, 'radius' => post_radius, 'height' => rail_height, 'segments' => operation['post_segments'] || operation['segments'] || 32, 'material' => operation['material'], 'smooth' => operation['smooth'] || 'all', 'kind' => 'railing_post'))
     end
   end
 
@@ -524,6 +541,99 @@ module AlmaSketchupMCP
       [offset + 2, offset + 6, offset + 7, offset + 3],
       [offset + 3, offset + 7, offset + 4, offset]
     ]
+  end
+
+  def normalize_wall_openings(openings, lengths, height, field_name, with_segment)
+    raise "#{field_name} must be an array" unless openings.is_a?(Array)
+    normalized = openings.each_with_index.map do |opening, index|
+      raise "#{field_name}[#{index}] must be an object" unless opening.is_a?(Hash)
+      segment = with_segment ? integer_range(opening['segment_index'] || opening['segmentIndex'], 0, lengths.length - 1, "#{field_name}[#{index}].segment_index") : 0
+      offset = non_negative_number(opening['offset'] || opening['x'] || opening.dig('origin', 0), nil, "#{field_name}[#{index}].offset")
+      sill = non_negative_number(opening['sill_height'] || opening['sillHeight'] || opening['y'] || opening['z'] || opening.dig('origin', 1), 0, "#{field_name}[#{index}].sill_height")
+      width = positive_number(opening['width'], nil, "#{field_name}[#{index}].width")
+      opening_height = positive_number(opening['height'], nil, "#{field_name}[#{index}].height")
+      raise "#{field_name}[#{index}] must fit inside wall segment length" if offset + width > lengths[segment] + GEOMETRY_EPSILON
+      raise "#{field_name}[#{index}] must fit inside wall height" if sill + opening_height > height + GEOMETRY_EPSILON
+      result = { 'name' => opening['name'] || 'Opening', 'offset' => offset, 'sill_height' => sill, 'width' => width, 'height' => opening_height }
+      result['segment_index'] = segment if with_segment
+      result
+    end
+    normalized.combination(2).each do |a, b|
+      next if with_segment && a['segment_index'] != b['segment_index']
+      x_overlap = [a['offset'], b['offset']].max < [a['offset'] + a['width'], b['offset'] + b['width']].min - GEOMETRY_EPSILON
+      z_overlap = [a['sill_height'], b['sill_height']].max < [a['sill_height'] + a['height'], b['sill_height'] + b['height']].min - GEOMETRY_EPSILON
+      raise "#{field_name} must not overlap another opening" if x_overlap && z_overlap
+    end
+    normalized
+  end
+
+  def build_joined_wall_mesh(points, height, thickness, openings = [], name = 'wall_path')
+    half = thickness / 2.0; tangents = []; normals = []; lengths = []
+    points.each_cons(2) do |a, b|
+      dx = b[0] - a[0]; dy = b[1] - a[1]; length = Math.sqrt(dx**2 + dy**2)
+      raise "#{name} has a zero-length plan segment" if length <= GEOMETRY_EPSILON
+      raise "#{name} wall path must share one elevation" if (a[2] - points.first[2]).abs > GEOMETRY_EPSILON || (b[2] - points.first[2]).abs > GEOMETRY_EPSILON
+      lengths << length; tangents << [dx / length, dy / length]; normals << [-dy / length, dx / length]
+    end
+    offsets = points.each_index.map do |i|
+      if i.zero?
+        normals.first.map { |x| x * half }
+      elsif i == points.length - 1
+        normals.last.map { |x| x * half }
+      else
+        a = normals[i - 1]; b = normals[i]; denominator = 1 + a[0] * b[0] + a[1] * b[1]
+        raise "#{name} has a reversing wall corner" if denominator <= 1e-8
+        offset = a.each_with_index.map { |x, j| (x + b[j]) * half / denominator }
+        raise "#{name} wall corner exceeds the safe miter limit" if Math.sqrt(offset[0]**2 + offset[1]**2) > thickness * 4
+        offset
+      end
+    end
+    left = points.each_with_index.map { |p, i| [p[0] + offsets[i][0], p[1] + offsets[i][1]] }
+    right = points.each_with_index.map { |p, i| [p[0] - offsets[i][0], p[1] - offsets[i][1]] }
+    assert_simple_polygon(left + right.reverse, "#{name}.joined_outline")
+    z_cuts = ([0, height] + openings.flat_map { |o| [o['sill_height'], o['sill_height'] + o['height']] }).uniq.sort
+    vertices = []; vertex_index = {}; faces_by_key = {}
+    vertex = lambda do |p|
+      key = p.map { |x| (x * 1e8).round }.join(':')
+      unless vertex_index.key?(key)
+        vertex_index[key] = vertices.length; vertices << p
+      end
+      vertex_index[key]
+    end
+    add_face = lambda do |face|
+      key = face.sort.join(':')
+      faces_by_key.key?(key) ? faces_by_key.delete(key) : faces_by_key[key] = face
+    end
+    lengths.each_with_index do |length, segment|
+      start_point = points[segment]; t = tangents[segment]; n = normals[segment]
+      segment_openings = openings.select { |o| o['segment_index'] == segment }
+      start_shift = (offsets[segment][0] * t[0] + offsets[segment][1] * t[1]).abs
+      end_shift = (offsets[segment + 1][0] * t[0] + offsets[segment + 1][1] * t[1]).abs
+      segment_openings.each do |o|
+        raise "#{name} opening intersects a mitered corner; move it inside the clear segment" if o['offset'] < start_shift - GEOMETRY_EPSILON || o['offset'] + o['width'] > length - end_shift + GEOMETRY_EPSILON
+      end
+      x_cuts = ([0, length] + segment_openings.flat_map { |o| [o['offset'], o['offset'] + o['width']] }).uniq.sort
+      cross = lambda do |s, side, z|
+        sign = side.zero? ? 1 : -1
+        if s.abs < GEOMETRY_EPSILON
+          [start_point[0] + sign * offsets[segment][0], start_point[1] + sign * offsets[segment][1], start_point[2] + z]
+        elsif (s - length).abs < GEOMETRY_EPSILON
+          finish = points[segment + 1]
+          [finish[0] + sign * offsets[segment + 1][0], finish[1] + sign * offsets[segment + 1][1], finish[2] + z]
+        else
+          [start_point[0] + t[0] * s + sign * n[0] * half, start_point[1] + t[1] * s + sign * n[1] * half, start_point[2] + z]
+        end
+      end
+      x_cuts.each_cons(2) do |x0, x1|
+        z_cuts.each_cons(2) do |z0, z1|
+          cx = (x0 + x1) / 2.0; cz = (z0 + z1) / 2.0
+          next if segment_openings.any? { |o| cx > o['offset'] - GEOMETRY_EPSILON && cx < o['offset'] + o['width'] + GEOMETRY_EPSILON && cz > o['sill_height'] - GEOMETRY_EPSILON && cz < o['sill_height'] + o['height'] + GEOMETRY_EPSILON }
+          cell = [cross.call(x0, 0, z0), cross.call(x0, 1, z0), cross.call(x1, 1, z0), cross.call(x1, 0, z0), cross.call(x0, 0, z1), cross.call(x0, 1, z1), cross.call(x1, 1, z1), cross.call(x1, 0, z1)].map { |p| vertex.call(p) }
+          cuboid_faces(0).each { |face| add_face.call(face.map { |i| cell[i] }.reverse) }
+        end
+      end
+    end
+    { 'vertices' => vertices, 'faces' => faces_by_key.values }
   end
 
   def normalize_simple_polygon(points, field_name)

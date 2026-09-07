@@ -164,6 +164,12 @@ export function createSnapshot(model) {
     component_definition_summaries: componentDefinitionSummaries,
     classification_schemas: classificationSchemas,
     scenes: model.scenes || [],
+    section_planes: cloneJson(model.section_planes || []),
+    native_appearance: {
+      evidence: 'mock', environments: cloneJson(model.environments || []),
+      current_environment: model.current_environment || null,
+      styles: cloneJson(model.native_styles || []), current_style: model.current_style || null
+    },
     levels: model.levels || [],
     tags: Object.values(model.tags || {}).map((tag) => ({ ...tag })).sort((a, b) => a.name.localeCompare(b.name)),
     materials,

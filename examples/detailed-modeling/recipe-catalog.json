@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "kinds": [
+    "window",
+    "door",
+    "cabinet",
+    "sink",
+    "railing",
+    "wall_junction",
+    "eaves_drainage",
+    "paving"
+  ],
+  "units": "mm",
+  "source_type": "designed_benchmark_not_manufacturer_cad",
+  "detail_level": "detailed",
+  "recipe_module": "src/detailed-modeling/recipes.mjs",
+  "geometry_policy": "Constructive profiles, explicit meshes and assembled boards; no feature-editing operations inside definitions."
+}

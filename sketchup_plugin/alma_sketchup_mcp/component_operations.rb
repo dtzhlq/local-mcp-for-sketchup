@@ -154,8 +154,17 @@ module AlmaSketchupMCP
 
     origin = vector(operation['origin'] || [0, 0, 0], "#{name}.origin").map { |value| mm_to_model_units(value) }
     transform = operation['transform'] || {}
+    mirror = transform.key?('mirror') ? transform['mirror'] : []
+    mirror_axes = mirror.is_a?(Array) ? mirror : [mirror]
+    unless mirror_axes.length <= 3 && mirror_axes.uniq.length == mirror_axes.length && mirror_axes.all? { |axis| %w[x y z].include?(axis) }
+      raise "#{name}.transform.mirror must contain distinct x, y, or z axes"
+    end
     rotate_z = transform['rotateZ'] || transform['rotationZ'] || operation['rotateZ']
     rotation = rotate_z ? Geom::Transformation.rotation(ORIGIN, Z_AXIS, rotate_z.to_f.degrees) : Geom::Transformation.new
+    if mirror_axes.any?
+      factors = %w[x y z].map { |axis| mirror_axes.include?(axis) ? -1 : 1 }
+      rotation = rotation * Geom::Transformation.scaling(ORIGIN, *factors)
+    end
     instance = entities.add_instance(definition, rotation)
     instance.name = name
     if instance.respond_to?(:set_attribute)
@@ -176,6 +185,9 @@ module AlmaSketchupMCP
   end
 
   def apply_transform(entity, operation)
+    if operation['texture_transform']
+      write_texture_transform_attributes(entity, texture_transform_payload(operation['texture_transform'], "#{operation['name']}.texture_transform"))
+    end
     transform = operation['transform'] || {}
     translate = transform['translate'] || transform['translation'] || operation['translation']
     if translate

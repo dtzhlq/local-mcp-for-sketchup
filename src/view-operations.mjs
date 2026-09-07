@@ -1,4 +1,5 @@
 import { nonEmptyString, normalizeBoolean, normalizeCamera, normalizeColor, normalizeKeyword, optionalNumberInRange, positiveNumber } from './operation-utils.mjs';
+import { resolveEnvironment, resolveStyle } from './environment-operations.mjs';
 
 export function setCamera(model, { eye, target, up = [0, 0, 1], fov = 35 }) {
   model.view_state = {
@@ -10,6 +11,12 @@ export function addScene(model, operation = {}) {
   const { name, camera } = operation;
   if (!name || typeof name !== 'string') throw new Error('scene operation requires a string name');
   const scene = { name };
+  if (Object.hasOwn(operation, 'environment_ref')) {
+    scene.environment_ref = resolveEnvironment(model, operation.environment_ref).id;
+    scene.use_environment = true;
+  }
+  if (operation.use_environment !== undefined) scene.use_environment = normalizeBoolean(operation.use_environment, `${name}.use_environment`);
+  if (operation.style_ref !== undefined) scene.style_ref = resolveStyle(model, operation.style_ref).name;
   if (camera) scene.camera = normalizeCamera(camera, `${name}.camera`);
   const transitionTime = operation.transition_time ?? operation.transitionTime;
   if (transitionTime !== undefined) scene.transition_time = optionalNumberInRange(transitionTime, -1, 3600, `${name}.transition_time`);
@@ -89,6 +96,11 @@ function normalizeRenderingOptions(operation = {}) {
   assignRenderingBoolean(options, operation, 'draw_hidden', 'drawHidden');
   assignRenderingBoolean(options, operation, 'draw_ground', 'drawGround');
   assignRenderingBoolean(options, operation, 'draw_horizon', 'drawHorizon');
+  assignRenderingBoolean(options, operation, 'ambient_occlusion', 'ambientOcclusion');
+  assignRenderingNumber(options, operation, 'ambient_occlusion_distance', 'ambientOcclusionDistance', 0, Number.MAX_VALUE);
+  assignRenderingNumber(options, operation, 'ambient_occlusion_intensity', 'ambientOcclusionIntensity', 0, Number.MAX_VALUE);
+  assignRenderingNumber(options, operation, 'ambient_occlusion_multiplier', 'ambientOcclusionMultiplier', 0, Number.MAX_VALUE);
+  assignRenderingColor(options, operation, 'ambient_occlusion_color', 'ambientOcclusionColor');
   assignRenderingNumber(options, operation, 'edge_display_mode', 'edgeDisplayMode', 0, 10);
   assignRenderingNumber(options, operation, 'render_mode', 'renderMode', 0, 10);
   assignRenderingNumber(options, operation, 'face_color_mode', 'faceColorMode', 0, 10);

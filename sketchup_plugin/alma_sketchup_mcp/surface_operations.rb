@@ -184,7 +184,7 @@ module AlmaSketchupMCP
     (1...(segments - 1)).each { |i| faces << [0, i + 1, i] }
     top_start = (profile.length - 1) * segments
     (1...(segments - 1)).each { |i| faces << [top_start, top_start + i, top_start + i + 1] }
-    add_mesh(parent_entities, 'name' => name, 'vertices' => vertices, 'faces' => faces, 'material' => operation['material'], 'smooth' => operation['smooth'] || 'all', 'transform' => operation['transform'], 'kind' => operation['kind'] || 'lofted_solid', 'qa' => operation['qa'])
+    add_mesh(parent_entities, operation.merge('vertices' => vertices, 'faces' => faces, 'smooth' => operation['smooth'] || 'all', 'kind' => operation['kind'] || 'lofted_solid'))
   end
 
   def add_analog_stick(parent_entities, operation)
@@ -224,36 +224,13 @@ module AlmaSketchupMCP
 
     points = raw_path.each_with_index.map { |point, index| vector(point, "#{name}.points[#{index}]") }
     radius = positive_number(operation['radius'], nil, "#{name}.radius")
-    segments = integer_range(operation['n'] || operation['segments'] || 8, 3, 96, "#{name}.segments")
-    vertices = []
-    points.each_with_index do |point, index|
-      tangent = pipe_tangent(points, index, name)
-      u_axis, v_axis = perpendicular_frame(tangent)
-      x, y, z = point
-      segments.times do |i|
-        angle = Math::PI * 2.0 * i / segments
-        cos = Math.cos(angle) * radius
-        sin = Math.sin(angle) * radius
-        vertices << [x + u_axis[0] * cos + v_axis[0] * sin, y + u_axis[1] * cos + v_axis[1] * sin, z + u_axis[2] * cos + v_axis[2] * sin]
-      end
-    end
-
-    faces = []
-    (0...(points.length - 1)).each do |ring|
-      base = ring * segments
-      top = (ring + 1) * segments
-      segments.times do |i|
-        nxt = (i + 1) % segments
-        faces << [base + i, base + nxt, top + nxt]
-        faces << [base + i, top + nxt, top + i]
-      end
-    end
-    (1...(segments - 1)).each { |i| faces << [0, i + 1, i] }
-    top_start = (points.length - 1) * segments
-    (1...(segments - 1)).each { |i| faces << [top_start, top_start + i, top_start + i + 1] }
-    add_mesh(parent_entities, 'name' => name, 'vertices' => vertices, 'faces' => faces, 'material' => operation['material'], 'smooth' => operation['smooth'] || 'all', 'transform' => operation['transform'], 'kind' => operation['kind'] || 'pipe_between_points', 'qa' => operation['qa'])
-    group = parent_entities.grep(Sketchup::Group).last
+    segments = curve_segments(operation, radius, 360.0, 8, 3, 96)
+    mesh = tube_mesh_from_path(points, radius, segments, name)
+    vertices = mesh['vertices']
+    faces = mesh['faces']
+    group = add_mesh(parent_entities, operation.merge('vertices' => vertices, 'faces' => faces, 'smooth' => operation['smooth'] || 'all', 'kind' => operation['kind'] || 'pipe_between_points'))
     group.set_attribute('AlmaSketchupMCP', 'segments', segments) if group&.respond_to?(:set_attribute)
+    group
   end
 
   def pipe_tangent(points, index, name)
@@ -284,6 +261,96 @@ module AlmaSketchupMCP
     values.map { |value| value / length }
   end
 
+  def dot_3(a, b)
+    a.zip(b).sum { |x, y| x * y }
+  end
+
+  def subtract_3(a, b)
+    a.zip(b).map { |x, y| x - y }
+  end
+
+  def rotate_around_3(vector, axis, angle)
+    c = Math.cos(angle); s = Math.sin(angle)
+    cross = cross_3(axis, vector); dot = dot_3(axis, vector)
+    vector.each_with_index.map { |v, i| v * c + cross[i] * s + axis[i] * dot * (1 - c) }
+  end
+
+  def parallel_transport_frames(points, name = 'path')
+    raise "#{name} needs at least two path points" unless points.is_a?(Array) && points.length >= 2
+    magnitude = lambda { |v| Math.sqrt(dot_3(v, v)) }
+    edges = points.each_cons(2).map do |a, b|
+      delta = subtract_3(b, a)
+      raise "#{name} must not contain repeated adjacent points" if magnitude.call(delta) <= 1e-9
+      normalize_3(delta)
+    end
+    closed = points.length > 3 && magnitude.call(subtract_3(points.first, points.last)) <= 1e-9
+    average = lambda do |a, b|
+      sum = a.zip(b).map { |x, y| x + y }
+      raise "#{name} contains an unsupported reversing cusp" if magnitude.call(sum) <= 1e-8
+      normalize_3(sum)
+    end
+    tangents = points.each_index.map do |i|
+      if i.zero?
+        closed ? average.call(edges.last, edges.first) : edges.first
+      elsif i == points.length - 1
+        closed ? average.call(edges.last, edges.first) : edges.last
+      else
+        average.call(edges[i - 1], edges[i])
+      end
+    end
+    first_u, first_v = perpendicular_frame(tangents.first)
+    frames = [{ 'tangent' => tangents.first, 'u' => first_u, 'v' => first_v }]
+    tangents.drop(1).each do |t|
+      previous = frames.last
+      axis = cross_3(previous['tangent'], t)
+      s = magnitude.call(axis); c = [[dot_3(previous['tangent'], t), -1].max, 1].min
+      raise "#{name} contains a reversing tangent" if s <= 1e-9 && c.negative?
+      u = s <= 1e-9 ? previous['u'] : rotate_around_3(previous['u'], axis.map { |v| v / s }, Math.atan2(s, c))
+      dot = dot_3(u, t)
+      u = normalize_3(u.each_with_index.map { |v, j| v - t[j] * dot })
+      frames << { 'tangent' => t, 'u' => u, 'v' => normalize_3(cross_3(t, u)) }
+    end
+    if closed
+      angle = Math.atan2(dot_3(tangents.first, cross_3(frames.last['u'], first_u)), dot_3(frames.last['u'], first_u))
+      distances = [0.0]
+      points.each_cons(2) { |a, b| distances << distances.last + magnitude.call(subtract_3(b, a)) }
+      (1...frames.length).each do |i|
+        frame = frames[i]
+        frame['u'] = rotate_around_3(frame['u'], frame['tangent'], angle * distances[i] / distances.last)
+        frame['v'] = normalize_3(cross_3(frame['tangent'], frame['u']))
+      end
+    end
+    { 'frames' => frames, 'closed' => closed }
+  end
+
+  def tube_mesh_from_path(points, radius, segments, name = 'tube')
+    transported = parallel_transport_frames(points, name)
+    frames = transported['frames']; closed = transported['closed']
+    ring_total = closed ? points.length - 1 : points.length
+    vertices = []; faces = []
+    ring_total.times do |ring|
+      u = frames[ring]['u']; v = frames[ring]['v']
+      segments.times do |i|
+        angle = Math::PI * 2.0 * i / segments
+        vertices << points[ring].each_with_index.map { |x, j| x + radius * (u[j] * Math.cos(angle) + v[j] * Math.sin(angle)) }
+      end
+    end
+    spans = closed ? ring_total : ring_total - 1
+    spans.times do |ring|
+      a = ring * segments; b = ((ring + 1) % ring_total) * segments
+      segments.times do |i|
+        j = (i + 1) % segments
+        faces << [a + i, a + j, b + j] << [a + i, b + j, b + i]
+      end
+    end
+    unless closed
+      (1...(segments - 1)).each { |i| faces << [0, i + 1, i] }
+      top = (ring_total - 1) * segments
+      (1...(segments - 1)).each { |i| faces << [top, top + i, top + i + 1] }
+    end
+    { 'vertices' => vertices, 'faces' => faces, 'frames' => frames, 'closed' => closed }
+  end
+
   def add_swept_path(parent_entities, operation)
     name = operation.fetch('name')
     path = operation.fetch('path')
@@ -291,27 +358,10 @@ module AlmaSketchupMCP
 
     points = path.each_with_index.map { |point, index| vector(point, "#{name}.path[#{index}]") }
     radius = positive_number(operation['radius'], nil, "#{name}.radius")
-    segments = integer_range(operation['n'] || operation['segments'] || 8, 3, 96, "#{name}.segments")
-    vertices = []
-    points.each do |x, y, z|
-      segments.times do |i|
-        angle = Math::PI * 2.0 * i / segments
-        vertices << [x, y + radius * Math.cos(angle), z + radius * Math.sin(angle)]
-      end
-    end
-    faces = []
-    (0...(points.length - 1)).each do |ring|
-      base = ring * segments
-      top = (ring + 1) * segments
-      segments.times do |i|
-        nxt = (i + 1) % segments
-        faces << [base + i, base + nxt, top + nxt]
-        faces << [base + i, top + nxt, top + i]
-      end
-    end
-    (1...(segments - 1)).each { |i| faces << [0, i + 1, i] }
-    top_start = (points.length - 1) * segments
-    (1...(segments - 1)).each { |i| faces << [top_start, top_start + i, top_start + i + 1] }
+    segments = curve_segments(operation, radius, 360.0, 8, 3, 96)
+    mesh = tube_mesh_from_path(points, radius, segments, name)
+    vertices = mesh['vertices']
+    faces = mesh['faces']
     add_mesh(parent_entities, 'name' => name, 'vertices' => vertices, 'faces' => faces, 'material' => operation['material'], 'smooth' => operation['smooth'] || 'all', 'transform' => operation['transform'], 'kind' => operation['kind'] || 'swept_path', 'qa' => operation['qa'])
   end
 

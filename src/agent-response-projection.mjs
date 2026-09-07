@@ -269,6 +269,15 @@ export function projectCapabilityValue(value, policy, omissions = { local_paths:
     return policy.effective_capabilities.local_files ? value : redactEmbeddedLocalPaths(value, omissions);
   }
   if (Array.isArray(value)) {
+    // Detailed-model occurrence chains contain model IDs, not local files.
+    // Preserve only a complete chain of conservative IDs; never partially
+    // shorten a malformed chain into a different editable target.
+    if (!policy.effective_capabilities.local_files && ['instance_path', 'persistent_path'].includes(key)) {
+      if (value.every(item => typeof item === 'string'
+        && (/^[A-Za-z0-9_-]+$/.test(item) || isModelEntityPath(item)))) return [...value];
+      omissions.local_paths += 1;
+      return [];
+    }
     return value
       .map((item) => projectCapabilityValue(item, policy, omissions, key))
       .filter((item) => item !== undefined);
@@ -522,6 +531,11 @@ function compactAgentPayload(payload, fullResultHandle) {
       ...common,
       snapshot: compactSnapshot(source.snapshot),
       qa: compactQa(source.qa),
+      report: compactQa(source.report),
+      quality_status: source.quality_status,
+      quality_accepted: source.quality_accepted,
+      evidence_level: source.evidence_level,
+      quality: source.quality ? { quality_status: source.quality.quality_status, specification_hash: source.quality.specification_hash, remaining_count: source.quality.remaining?.length || 0, remaining: source.quality.remaining?.slice(0, 5), ...(source.quality.resource_costs ? { resource_costs: source.quality.resource_costs } : {}) } : undefined,
       compile_allowed: source.compile_allowed,
       verification: source.verification
     };
@@ -558,6 +572,16 @@ function compactAgentPayload(payload, fullResultHandle) {
 
 function minimalAgentPayload(payload, fullResultHandle) {
   const source = payload && typeof payload === 'object' ? payload : {};
+  if (['create_model_result', 'verify_model_result'].includes(source.kind)) {
+    return {
+      kind: source.kind,
+      quality_status: source.quality_status,
+      quality_accepted: source.quality_accepted,
+      evidence_level: source.evidence_level,
+      remaining_count: source.quality?.remaining?.length || 0,
+      full_result_artifact: fullResultHandle
+    };
+  }
   if (source.kind === 'reference_image_correction_result') {
     const overlay = source.image_artifacts?.overlay;
     return {

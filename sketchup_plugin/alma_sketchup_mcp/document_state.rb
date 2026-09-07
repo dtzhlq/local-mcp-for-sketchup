@@ -188,6 +188,7 @@ module AlmaSketchupMCP
       name = page.name.to_s
       scene = (persisted_by_name[name] || {}).dup
       scene['name'] = name
+      scene.merge!(native_scene_appearance(page)) if respond_to?(:native_scene_appearance)
       if !scene.key?('camera') && page.respond_to?(:camera) && page.camera
         scene['camera'] = camera_snapshot(page.camera)
       end

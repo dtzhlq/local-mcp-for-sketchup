@@ -1,0 +1,1358 @@
+{
+  "version": 1,
+  "scene_id": "detailed-kitchen",
+  "detail_level": "detailed",
+  "required_parts": [
+    {
+      "id": "kitchen-wall-inner-lining",
+      "role": "inner-lining",
+      "material": "Detail_Plaster",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        }
+      ],
+      "instance_path": [
+        "id-kitchen-wall",
+        "kitchen-wall-inner-lining"
+      ],
+      "definition_path": [
+        "PG2_kitchen-wall"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "kitchen-wall-service-layer",
+      "role": "service-layer",
+      "material": "Detail_Waterproofing",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        }
+      ],
+      "instance_path": [
+        "id-kitchen-wall",
+        "kitchen-wall-service-layer"
+      ],
+      "definition_path": [
+        "PG2_kitchen-wall"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "kitchen-wall-structure",
+      "role": "structure",
+      "material": "Detail_Concrete",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        }
+      ],
+      "instance_path": [
+        "id-kitchen-wall",
+        "kitchen-wall-structure"
+      ],
+      "definition_path": [
+        "PG2_kitchen-wall"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "kitchen-wall-insulation",
+      "role": "insulation",
+      "material": "Detail_Insulation",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        }
+      ],
+      "instance_path": [
+        "id-kitchen-wall",
+        "kitchen-wall-insulation"
+      ],
+      "definition_path": [
+        "PG2_kitchen-wall"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "kitchen-wall-outer-render",
+      "role": "outer-render",
+      "material": "Detail_Plaster",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        }
+      ],
+      "instance_path": [
+        "id-kitchen-wall",
+        "kitchen-wall-outer-render"
+      ],
+      "definition_path": [
+        "PG2_kitchen-wall"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "kitchen-wall-skirting",
+      "role": "skirting",
+      "material": "Detail_Oak",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 7
+        }
+      ],
+      "instance_path": [
+        "id-kitchen-wall",
+        "kitchen-wall-skirting"
+      ],
+      "definition_path": [
+        "PG2_kitchen-wall"
+      ],
+      "min_faces": 8
+    },
+    {
+      "id": "kitchen-window-outer-frame",
+      "role": "frame",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        },
+        {
+          "type": "profile",
+          "min_vertices": 4
+        }
+      ],
+      "instance_path": [
+        "id-kitchen-window",
+        "kitchen-window-outer-frame"
+      ],
+      "definition_path": [
+        "PG2_kitchen-window"
+      ],
+      "min_faces": 8
+    },
+    {
+      "id": "kitchen-window-thermal-break",
+      "role": "thermal_break",
+      "material": "Detail_Gasket",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        }
+      ],
+      "instance_path": [
+        "id-kitchen-window",
+        "kitchen-window-thermal-break"
+      ],
+      "definition_path": [
+        "PG2_kitchen-window"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "kitchen-window-outer-rebate",
+      "role": "rebate",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        }
+      ],
+      "instance_path": [
+        "id-kitchen-window",
+        "kitchen-window-outer-rebate"
+      ],
+      "definition_path": [
+        "PG2_kitchen-window"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "kitchen-window-sash-frame",
+      "role": "sash_frame",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        }
+      ],
+      "instance_path": [
+        "id-kitchen-window",
+        "kitchen-window-left-sash",
+        "kitchen-window-sash-frame"
+      ],
+      "definition_path": [
+        "PG2_kitchen-window",
+        "PG2_kitchen-window-sash"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "kitchen-window-sash-gasket",
+      "role": "glazing_gasket",
+      "material": "Detail_Gasket",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        }
+      ],
+      "instance_path": [
+        "id-kitchen-window",
+        "kitchen-window-left-sash",
+        "kitchen-window-sash-gasket"
+      ],
+      "definition_path": [
+        "PG2_kitchen-window",
+        "PG2_kitchen-window-sash"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "kitchen-window-glazing-spacer",
+      "role": "spacer",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        }
+      ],
+      "instance_path": [
+        "id-kitchen-window",
+        "kitchen-window-left-sash",
+        "kitchen-window-glazing-spacer"
+      ],
+      "definition_path": [
+        "PG2_kitchen-window",
+        "PG2_kitchen-window-sash"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "kitchen-window-projecting-sill",
+      "role": "sill",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 6
+        }
+      ],
+      "instance_path": [
+        "id-kitchen-window",
+        "kitchen-window-projecting-sill"
+      ],
+      "definition_path": [
+        "PG2_kitchen-window"
+      ],
+      "min_faces": 8
+    },
+    {
+      "id": "kitchen-door-jamb-left",
+      "role": "door_jamb",
+      "material": "Detail_Oak",
+      "bounds_mm": {
+        "size": [
+          60,
+          150,
+          2250
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [],
+      "instance_path": [
+        "id-kitchen-door",
+        "kitchen-door-jamb-left"
+      ],
+      "definition_path": [
+        "PG2_kitchen-door"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "kitchen-door-jamb-right",
+      "role": "door_jamb",
+      "material": "Detail_Oak",
+      "bounds_mm": {
+        "size": [
+          60,
+          150,
+          2250
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [],
+      "instance_path": [
+        "id-kitchen-door",
+        "kitchen-door-jamb-right"
+      ],
+      "definition_path": [
+        "PG2_kitchen-door"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "kitchen-door-threshold",
+      "role": "threshold",
+      "material": "Detail_Aluminium",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 8
+        }
+      ],
+      "instance_path": [
+        "id-kitchen-door",
+        "kitchen-door-threshold"
+      ],
+      "definition_path": [
+        "PG2_kitchen-door"
+      ],
+      "min_faces": 8
+    },
+    {
+      "id": "kitchen-door-leaf-stiles-rails",
+      "role": "door_leaf",
+      "material": "Detail_Oak",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        }
+      ],
+      "instance_path": [
+        "id-kitchen-door",
+        "kitchen-door-leaf-instance",
+        "kitchen-door-leaf-stiles-rails"
+      ],
+      "definition_path": [
+        "PG2_kitchen-door",
+        "PG2_kitchen-door-leaf"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "kitchen-door-leaf-inset-panel",
+      "role": "raised_panel",
+      "material": "Detail_Oak_Endgrain",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 20
+        }
+      ],
+      "instance_path": [
+        "id-kitchen-door",
+        "kitchen-door-leaf-instance",
+        "kitchen-door-leaf-inset-panel"
+      ],
+      "definition_path": [
+        "PG2_kitchen-door",
+        "PG2_kitchen-door-leaf"
+      ],
+      "min_faces": 8
+    },
+    {
+      "id": "kitchen-door-lock-escutcheon",
+      "role": "lock_escutcheon",
+      "material": "Detail_Brass",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        },
+        {
+          "type": "profile",
+          "min_vertices": 20
+        }
+      ],
+      "instance_path": [
+        "id-kitchen-door",
+        "kitchen-door-leaf-instance",
+        "kitchen-door-lock-escutcheon"
+      ],
+      "definition_path": [
+        "PG2_kitchen-door",
+        "PG2_kitchen-door-leaf"
+      ],
+      "min_faces": 8
+    },
+    {
+      "id": "kitchen-cabinet-feature-side-left",
+      "role": "carcass_side",
+      "material": "Detail_Painted_Joinery",
+      "bounds_mm": {
+        "size": [
+          18,
+          620,
+          770
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [],
+      "instance_path": [
+        "id-kitchen-cabinet-feature",
+        "kitchen-cabinet-feature-side-left"
+      ],
+      "definition_path": [
+        "PG2_kitchen-cabinet-feature"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "kitchen-cabinet-feature-side-right",
+      "role": "carcass_side",
+      "material": "Detail_Painted_Joinery",
+      "bounds_mm": {
+        "size": [
+          18,
+          620,
+          770
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [],
+      "instance_path": [
+        "id-kitchen-cabinet-feature",
+        "kitchen-cabinet-feature-side-right"
+      ],
+      "definition_path": [
+        "PG2_kitchen-cabinet-feature"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "kitchen-cabinet-feature-bottom",
+      "role": "carcass_bottom",
+      "material": "Detail_Painted_Joinery",
+      "bounds_mm": {
+        "size": [
+          764,
+          620,
+          18
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [],
+      "instance_path": [
+        "id-kitchen-cabinet-feature",
+        "kitchen-cabinet-feature-bottom"
+      ],
+      "definition_path": [
+        "PG2_kitchen-cabinet-feature"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "kitchen-cabinet-feature-back",
+      "role": "carcass_back",
+      "material": "Detail_Painted_Joinery",
+      "bounds_mm": {
+        "size": [
+          764,
+          9,
+          752
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [],
+      "instance_path": [
+        "id-kitchen-cabinet-feature",
+        "kitchen-cabinet-feature-back"
+      ],
+      "definition_path": [
+        "PG2_kitchen-cabinet-feature"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "kitchen-cabinet-feature-top-stretcher-front",
+      "role": "stretcher",
+      "material": "Detail_Painted_Joinery",
+      "bounds_mm": {
+        "size": [
+          764,
+          65,
+          40
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [],
+      "instance_path": [
+        "id-kitchen-cabinet-feature",
+        "kitchen-cabinet-feature-top-stretcher-front"
+      ],
+      "definition_path": [
+        "PG2_kitchen-cabinet-feature"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "kitchen-cabinet-feature-top-stretcher-back",
+      "role": "stretcher",
+      "material": "Detail_Painted_Joinery",
+      "bounds_mm": {
+        "size": [
+          764,
+          65,
+          40
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [],
+      "instance_path": [
+        "id-kitchen-cabinet-feature",
+        "kitchen-cabinet-feature-top-stretcher-back"
+      ],
+      "definition_path": [
+        "PG2_kitchen-cabinet-feature"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "kitchen-cabinet-feature-toe-kick",
+      "role": "toe_kick",
+      "material": "Detail_Gasket",
+      "bounds_mm": {
+        "size": [
+          760,
+          18,
+          90
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [],
+      "instance_path": [
+        "id-kitchen-cabinet-feature",
+        "kitchen-cabinet-feature-toe-kick"
+      ],
+      "definition_path": [
+        "PG2_kitchen-cabinet-feature"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "kitchen-cabinet-feature-drawer-front",
+      "role": "drawer_front",
+      "material": "Detail_Oak",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 20
+        }
+      ],
+      "instance_path": [
+        "id-kitchen-cabinet-feature",
+        "kitchen-cabinet-feature-drawer-1",
+        "kitchen-cabinet-feature-drawer-front"
+      ],
+      "definition_path": [
+        "PG2_kitchen-cabinet-feature",
+        "PG2_kitchen-cabinet-feature-drawer"
+      ],
+      "min_faces": 8
+    },
+    {
+      "id": "kitchen-cabinet-feature-drawer-bottom",
+      "role": "drawer_bottom",
+      "material": "Detail_Painted_Joinery",
+      "bounds_mm": {
+        "size": [
+          736,
+          530,
+          12
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [],
+      "instance_path": [
+        "id-kitchen-cabinet-feature",
+        "kitchen-cabinet-feature-drawer-1",
+        "kitchen-cabinet-feature-drawer-bottom"
+      ],
+      "definition_path": [
+        "PG2_kitchen-cabinet-feature",
+        "PG2_kitchen-cabinet-feature-drawer"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "kitchen-cabinet-feature-drawer-left-side",
+      "role": "drawer_side",
+      "material": "Detail_Painted_Joinery",
+      "bounds_mm": {
+        "size": [
+          12,
+          530,
+          198.66666666666666
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [],
+      "instance_path": [
+        "id-kitchen-cabinet-feature",
+        "kitchen-cabinet-feature-drawer-1",
+        "kitchen-cabinet-feature-drawer-left-side"
+      ],
+      "definition_path": [
+        "PG2_kitchen-cabinet-feature",
+        "PG2_kitchen-cabinet-feature-drawer"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "kitchen-cabinet-feature-drawer-right-side",
+      "role": "drawer_side",
+      "material": "Detail_Painted_Joinery",
+      "bounds_mm": {
+        "size": [
+          12,
+          530,
+          198.66666666666666
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [],
+      "instance_path": [
+        "id-kitchen-cabinet-feature",
+        "kitchen-cabinet-feature-drawer-1",
+        "kitchen-cabinet-feature-drawer-right-side"
+      ],
+      "definition_path": [
+        "PG2_kitchen-cabinet-feature",
+        "PG2_kitchen-cabinet-feature-drawer"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "kitchen-cabinet-feature-drawer-back",
+      "role": "drawer_back",
+      "material": "Detail_Painted_Joinery",
+      "bounds_mm": {
+        "size": [
+          712,
+          12,
+          198.66666666666666
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [],
+      "instance_path": [
+        "id-kitchen-cabinet-feature",
+        "kitchen-cabinet-feature-drawer-1",
+        "kitchen-cabinet-feature-drawer-back"
+      ],
+      "definition_path": [
+        "PG2_kitchen-cabinet-feature",
+        "PG2_kitchen-cabinet-feature-drawer"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "kitchen-cabinet-feature-runner-0-left",
+      "role": "drawer_runner",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 8
+        }
+      ],
+      "instance_path": [
+        "id-kitchen-cabinet-feature",
+        "kitchen-cabinet-feature-runner-0-left"
+      ],
+      "definition_path": [
+        "PG2_kitchen-cabinet-feature"
+      ],
+      "min_faces": 8
+    },
+    {
+      "id": "kitchen-cabinet-feature-runner-0-right",
+      "role": "drawer_runner",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 8
+        }
+      ],
+      "instance_path": [
+        "id-kitchen-cabinet-feature",
+        "kitchen-cabinet-feature-runner-0-right"
+      ],
+      "definition_path": [
+        "PG2_kitchen-cabinet-feature"
+      ],
+      "min_faces": 8
+    },
+    {
+      "id": "kitchen-cabinet-feature-runner-1-left",
+      "role": "drawer_runner",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 8
+        }
+      ],
+      "instance_path": [
+        "id-kitchen-cabinet-feature",
+        "kitchen-cabinet-feature-runner-1-left"
+      ],
+      "definition_path": [
+        "PG2_kitchen-cabinet-feature"
+      ],
+      "min_faces": 8
+    },
+    {
+      "id": "kitchen-cabinet-feature-runner-1-right",
+      "role": "drawer_runner",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 8
+        }
+      ],
+      "instance_path": [
+        "id-kitchen-cabinet-feature",
+        "kitchen-cabinet-feature-runner-1-right"
+      ],
+      "definition_path": [
+        "PG2_kitchen-cabinet-feature"
+      ],
+      "min_faces": 8
+    },
+    {
+      "id": "kitchen-cabinet-feature-runner-2-left",
+      "role": "drawer_runner",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 8
+        }
+      ],
+      "instance_path": [
+        "id-kitchen-cabinet-feature",
+        "kitchen-cabinet-feature-runner-2-left"
+      ],
+      "definition_path": [
+        "PG2_kitchen-cabinet-feature"
+      ],
+      "min_faces": 8
+    },
+    {
+      "id": "kitchen-cabinet-feature-runner-2-right",
+      "role": "drawer_runner",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 8
+        }
+      ],
+      "instance_path": [
+        "id-kitchen-cabinet-feature",
+        "kitchen-cabinet-feature-runner-2-right"
+      ],
+      "definition_path": [
+        "PG2_kitchen-cabinet-feature"
+      ],
+      "min_faces": 8
+    },
+    {
+      "id": "kitchen-cabinet-common-side-left",
+      "role": "carcass_side",
+      "material": "Detail_Painted_Joinery",
+      "bounds_mm": {
+        "size": [
+          18,
+          620,
+          770
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [],
+      "instance_path": [
+        "id-kitchen-cabinet-common-left",
+        "kitchen-cabinet-common-side-left"
+      ],
+      "definition_path": [
+        "PG2_kitchen-cabinet-common"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "kitchen-cabinet-common-side-right",
+      "role": "carcass_side",
+      "material": "Detail_Painted_Joinery",
+      "bounds_mm": {
+        "size": [
+          18,
+          620,
+          770
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [],
+      "instance_path": [
+        "id-kitchen-cabinet-common-left",
+        "kitchen-cabinet-common-side-right"
+      ],
+      "definition_path": [
+        "PG2_kitchen-cabinet-common"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "kitchen-cabinet-common-bottom",
+      "role": "carcass_bottom",
+      "material": "Detail_Painted_Joinery",
+      "bounds_mm": {
+        "size": [
+          764,
+          620,
+          18
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [],
+      "instance_path": [
+        "id-kitchen-cabinet-common-left",
+        "kitchen-cabinet-common-bottom"
+      ],
+      "definition_path": [
+        "PG2_kitchen-cabinet-common"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "kitchen-cabinet-common-back",
+      "role": "carcass_back",
+      "material": "Detail_Painted_Joinery",
+      "bounds_mm": {
+        "size": [
+          764,
+          9,
+          752
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [],
+      "instance_path": [
+        "id-kitchen-cabinet-common-left",
+        "kitchen-cabinet-common-back"
+      ],
+      "definition_path": [
+        "PG2_kitchen-cabinet-common"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "kitchen-cabinet-common-top-stretcher-front",
+      "role": "stretcher",
+      "material": "Detail_Painted_Joinery",
+      "bounds_mm": {
+        "size": [
+          764,
+          65,
+          40
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [],
+      "instance_path": [
+        "id-kitchen-cabinet-common-left",
+        "kitchen-cabinet-common-top-stretcher-front"
+      ],
+      "definition_path": [
+        "PG2_kitchen-cabinet-common"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "kitchen-cabinet-common-top-stretcher-back",
+      "role": "stretcher",
+      "material": "Detail_Painted_Joinery",
+      "bounds_mm": {
+        "size": [
+          764,
+          65,
+          40
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [],
+      "instance_path": [
+        "id-kitchen-cabinet-common-left",
+        "kitchen-cabinet-common-top-stretcher-back"
+      ],
+      "definition_path": [
+        "PG2_kitchen-cabinet-common"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "kitchen-cabinet-common-toe-kick",
+      "role": "toe_kick",
+      "material": "Detail_Gasket",
+      "bounds_mm": {
+        "size": [
+          760,
+          18,
+          90
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [],
+      "instance_path": [
+        "id-kitchen-cabinet-common-left",
+        "kitchen-cabinet-common-toe-kick"
+      ],
+      "definition_path": [
+        "PG2_kitchen-cabinet-common"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "kitchen-cabinet-common-drawer-front",
+      "role": "drawer_front",
+      "material": "Detail_Oak",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 20
+        }
+      ],
+      "instance_path": [
+        "id-kitchen-cabinet-common-left",
+        "kitchen-cabinet-common-drawer-1",
+        "kitchen-cabinet-common-drawer-front"
+      ],
+      "definition_path": [
+        "PG2_kitchen-cabinet-common",
+        "PG2_kitchen-cabinet-common-drawer"
+      ],
+      "min_faces": 8
+    },
+    {
+      "id": "kitchen-cabinet-common-drawer-bottom",
+      "role": "drawer_bottom",
+      "material": "Detail_Painted_Joinery",
+      "bounds_mm": {
+        "size": [
+          736,
+          530,
+          12
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [],
+      "instance_path": [
+        "id-kitchen-cabinet-common-left",
+        "kitchen-cabinet-common-drawer-1",
+        "kitchen-cabinet-common-drawer-bottom"
+      ],
+      "definition_path": [
+        "PG2_kitchen-cabinet-common",
+        "PG2_kitchen-cabinet-common-drawer"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "kitchen-cabinet-common-drawer-left-side",
+      "role": "drawer_side",
+      "material": "Detail_Painted_Joinery",
+      "bounds_mm": {
+        "size": [
+          12,
+          530,
+          198.66666666666666
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [],
+      "instance_path": [
+        "id-kitchen-cabinet-common-left",
+        "kitchen-cabinet-common-drawer-1",
+        "kitchen-cabinet-common-drawer-left-side"
+      ],
+      "definition_path": [
+        "PG2_kitchen-cabinet-common",
+        "PG2_kitchen-cabinet-common-drawer"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "kitchen-cabinet-common-drawer-right-side",
+      "role": "drawer_side",
+      "material": "Detail_Painted_Joinery",
+      "bounds_mm": {
+        "size": [
+          12,
+          530,
+          198.66666666666666
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [],
+      "instance_path": [
+        "id-kitchen-cabinet-common-left",
+        "kitchen-cabinet-common-drawer-1",
+        "kitchen-cabinet-common-drawer-right-side"
+      ],
+      "definition_path": [
+        "PG2_kitchen-cabinet-common",
+        "PG2_kitchen-cabinet-common-drawer"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "kitchen-cabinet-common-drawer-back",
+      "role": "drawer_back",
+      "material": "Detail_Painted_Joinery",
+      "bounds_mm": {
+        "size": [
+          712,
+          12,
+          198.66666666666666
+        ],
+        "tolerance_mm": 0.5
+      },
+      "geometry_checks": [],
+      "instance_path": [
+        "id-kitchen-cabinet-common-left",
+        "kitchen-cabinet-common-drawer-1",
+        "kitchen-cabinet-common-drawer-back"
+      ],
+      "definition_path": [
+        "PG2_kitchen-cabinet-common",
+        "PG2_kitchen-cabinet-common-drawer"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "kitchen-cabinet-common-runner-0-left",
+      "role": "drawer_runner",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 8
+        }
+      ],
+      "instance_path": [
+        "id-kitchen-cabinet-common-left",
+        "kitchen-cabinet-common-runner-0-left"
+      ],
+      "definition_path": [
+        "PG2_kitchen-cabinet-common"
+      ],
+      "min_faces": 8
+    },
+    {
+      "id": "kitchen-cabinet-common-runner-0-right",
+      "role": "drawer_runner",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 8
+        }
+      ],
+      "instance_path": [
+        "id-kitchen-cabinet-common-left",
+        "kitchen-cabinet-common-runner-0-right"
+      ],
+      "definition_path": [
+        "PG2_kitchen-cabinet-common"
+      ],
+      "min_faces": 8
+    },
+    {
+      "id": "kitchen-cabinet-common-runner-1-left",
+      "role": "drawer_runner",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 8
+        }
+      ],
+      "instance_path": [
+        "id-kitchen-cabinet-common-left",
+        "kitchen-cabinet-common-runner-1-left"
+      ],
+      "definition_path": [
+        "PG2_kitchen-cabinet-common"
+      ],
+      "min_faces": 8
+    },
+    {
+      "id": "kitchen-cabinet-common-runner-1-right",
+      "role": "drawer_runner",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 8
+        }
+      ],
+      "instance_path": [
+        "id-kitchen-cabinet-common-left",
+        "kitchen-cabinet-common-runner-1-right"
+      ],
+      "definition_path": [
+        "PG2_kitchen-cabinet-common"
+      ],
+      "min_faces": 8
+    },
+    {
+      "id": "kitchen-cabinet-common-runner-2-left",
+      "role": "drawer_runner",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 8
+        }
+      ],
+      "instance_path": [
+        "id-kitchen-cabinet-common-left",
+        "kitchen-cabinet-common-runner-2-left"
+      ],
+      "definition_path": [
+        "PG2_kitchen-cabinet-common"
+      ],
+      "min_faces": 8
+    },
+    {
+      "id": "kitchen-cabinet-common-runner-2-right",
+      "role": "drawer_runner",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "profile",
+          "min_vertices": 8
+        }
+      ],
+      "instance_path": [
+        "id-kitchen-cabinet-common-left",
+        "kitchen-cabinet-common-runner-2-right"
+      ],
+      "definition_path": [
+        "PG2_kitchen-cabinet-common"
+      ],
+      "min_faces": 8
+    },
+    {
+      "id": "kitchen-sink-rim",
+      "role": "sink_rim",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        },
+        {
+          "type": "profile",
+          "min_vertices": 24
+        }
+      ],
+      "instance_path": [
+        "id-kitchen-sink",
+        "kitchen-sink-rim"
+      ],
+      "definition_path": [
+        "PG2_kitchen-sink"
+      ],
+      "min_faces": 8
+    },
+    {
+      "id": "kitchen-sink-basin-walls",
+      "role": "basin_wall",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "solid",
+          "expected": true
+        }
+      ],
+      "instance_path": [
+        "id-kitchen-sink",
+        "kitchen-sink-basin-walls"
+      ],
+      "definition_path": [
+        "PG2_kitchen-sink"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "kitchen-sink-basin-bottom",
+      "role": "basin_bottom",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        },
+        {
+          "type": "profile",
+          "min_vertices": 24
+        }
+      ],
+      "instance_path": [
+        "id-kitchen-sink",
+        "kitchen-sink-basin-bottom"
+      ],
+      "definition_path": [
+        "PG2_kitchen-sink"
+      ],
+      "min_faces": 8
+    },
+    {
+      "id": "kitchen-sink-drain-flange",
+      "role": "drain",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        },
+        {
+          "type": "profile",
+          "min_vertices": 32
+        }
+      ],
+      "instance_path": [
+        "id-kitchen-sink",
+        "kitchen-sink-drain-flange"
+      ],
+      "definition_path": [
+        "PG2_kitchen-sink"
+      ],
+      "min_faces": 8
+    },
+    {
+      "id": "kitchen-sink-drain-tail",
+      "role": "drain_pipe",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        }
+      ],
+      "instance_path": [
+        "id-kitchen-sink",
+        "kitchen-sink-drain-tail"
+      ],
+      "definition_path": [
+        "PG2_kitchen-sink"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "kitchen-sink-faucet-aerator",
+      "role": "aerator",
+      "material": "Detail_Stainless",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        }
+      ],
+      "instance_path": [
+        "id-kitchen-sink",
+        "kitchen-sink-faucet-instance",
+        "kitchen-sink-faucet-aerator"
+      ],
+      "definition_path": [
+        "PG2_kitchen-sink",
+        "PG2_kitchen-sink-faucet"
+      ],
+      "min_faces": 6
+    },
+    {
+      "id": "kitchen-worktop-stone",
+      "role": "worktop",
+      "material": "Detail_Stone",
+      "geometry_checks": [
+        {
+          "type": "opening",
+          "min_count": 1
+        },
+        {
+          "type": "profile",
+          "min_vertices": 24
+        }
+      ],
+      "instance_path": [
+        "id-kitchen-worktop",
+        "kitchen-worktop-stone"
+      ],
+      "definition_path": [
+        "PG2_kitchen-worktop"
+      ],
+      "min_faces": 8
+    }
+  ],
+  "required_views": [
+    {
+      "id": "kitchen-overview",
+      "min_width": 1400,
+      "min_height": 900,
+      "kind": "overview"
+    },
+    {
+      "id": "kitchen-front",
+      "min_width": 1400,
+      "min_height": 900,
+      "kind": "overview"
+    },
+    {
+      "id": "kitchen-sink-closeup",
+      "target_id": "kitchen-sink",
+      "min_width": 1400,
+      "min_height": 900,
+      "kind": "closeup"
+    },
+    {
+      "id": "kitchen-cabinet-closeup",
+      "target_id": "kitchen-cabinet-feature",
+      "min_width": 1400,
+      "min_height": 900,
+      "kind": "closeup"
+    },
+    {
+      "id": "kitchen-window-closeup",
+      "target_id": "kitchen-window",
+      "min_width": 1400,
+      "min_height": 900,
+      "kind": "closeup"
+    },
+    {
+      "id": "kitchen-top",
+      "min_width": 1400,
+      "min_height": 900,
+      "kind": "overview"
+    }
+  ],
+  "max_iterations": 6,
+  "source_type": "designed_benchmark_not_measured_project"
+}

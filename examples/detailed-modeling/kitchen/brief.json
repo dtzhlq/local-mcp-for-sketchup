@@ -1,0 +1,22 @@
+{
+  "id": "detailed-kitchen-brief-v1",
+  "scene": "kitchen",
+  "intent": "A joinery-focused kitchen whose basin, cabinet construction, hardware, reveals and window layers remain inspectable at close range.",
+  "dimensions_mm": [
+    4300,
+    3508,
+    2900
+  ],
+  "required_features": [
+    "layered_wall_opening",
+    "double_glazed_window",
+    "hollow_cabinet_with_drawer_boxes",
+    "repeated_drawer_hardware",
+    "basin_walls_and_drain_hole",
+    "countertop_through_opening",
+    "board_thickness",
+    "island_open_shelves"
+  ],
+  "variant_change": "Only the feature cabinet top drawer extends 160 mm and its handle finish changes to brass; all other scene definitions remain unchanged.",
+  "source_type": "designed_benchmark_not_measured_project"
+}

@@ -383,7 +383,9 @@ try {
     ...reviewedExistingEditOperations,
     'uv_project_planar', 'uv_project_box', 'face_uv',
     'reset', 'level', 'component_definition', 'material', 'tag', 'image_reference', 'image_plane',
-    'camera', 'scene', 'style', 'shadow', 'rendering_options', 'selection'
+    'camera', 'scene', 'style', 'shadow', 'rendering_options', 'selection',
+    'environment_define', 'environment_update', 'environment_activate', 'style_load', 'style_activate'
+    , 'section_plane', 'section_plane_activate'
   ]);
   for (const operation of nonCreationOperations) {
     assert.equal(creationPolicy.has(operation), false, `${operation} must not enter the Gateway creation route`);
@@ -438,10 +440,15 @@ try {
     operations: [{ op: 'delete', name: 'Existing_Box' }],
     idempotencyKey: 'gateway-block-target-edit'
   });
-  await blockedGatewayDsl({
-    operations: [{ op: 'component_definition', name: 'Existing_Definition', size: [99, 99, 99] }],
-    idempotencyKey: 'gateway-block-definition-overwrite'
+  const isolatedDefinition = await policyBridge.start_agent_task({
+    intent: 'create_model', instruction: 'Create a fresh definition without replacing the existing one.',
+    idempotency_key: 'gateway-isolate-definition-name',
+    inputs: { runtime: 'mock', code: JSON.stringify({ version: 1, units: 'mm', operations: [{ op: 'component_definition', name: 'Existing_Definition', size: [99, 99, 99] }] }) }
   });
+  assert.equal(isolatedDefinition.ok, true);
+  const preservedDefinitionSnapshot = (await policyBridge.inspect_model({ runtime: 'mock', includeSnapshot: true })).snapshot;
+  assert.equal(preservedDefinitionSnapshot.instances.find(item => item.name === 'Existing_Instance').bounding_box.w, 20, 'same logical definition name must allocate a fresh resource and preserve existing instances');
+  assert.ok(preservedDefinitionSnapshot.component_definitions.some(name => name.startsWith('alma_')), 'new definition must have a server namespace');
   const levelsBeforeBlockedUpsert = (await policyBridge.inspect_model({ runtime: 'mock', includeSnapshot: true })).snapshot.levels;
   await blockedGatewayDsl({
     operations: [{ op: 'level', name: 'Existing_Level', elevation: 9999, height: 1 }],
@@ -454,11 +461,15 @@ try {
     idempotencyKey: 'gateway-block-embedded-material-upsert'
   });
   assert.equal(blockedEmbeddedMaterial.error.details.blocked_operations[0].reason, 'named_material_may_be_updated');
-  const blockedMacro = await blockedGatewayDsl({
-    operations: [{ op: 'material_preset', preset: 'interior_kitchen' }],
-    idempotencyKey: 'gateway-block-expanded-upsert'
+  const isolatedMacro = await policyBridge.start_agent_task({
+    intent: 'create_model', instruction: 'Create isolated preset materials.', idempotency_key: 'gateway-isolate-expanded-materials',
+    inputs: { runtime: 'mock', code: JSON.stringify({ version: 1, units: 'mm', operations: [{ op: 'material_preset', preset: 'interior_kitchen' }] }) }
   });
-  assert.equal(blockedMacro.error.details.blocked_operations[0].op, 'material', 'Gateway must validate expanded operations, not only macro names');
+  assert.equal(isolatedMacro.ok, true);
+  const isolatedMaterials = (await policyBridge.inspect_model({ runtime: 'mock', includeSnapshot: true })).snapshot.materials;
+  assert.equal(isolatedMaterials.find(material => material.name === 'Existing_Material').color, '#123456');
+  assert.equal(isolatedMaterials.find(material => material.name === 'Floor_Oak').color, '#010203');
+  assert.ok(isolatedMaterials.some(material => material.name.startsWith('alma_')), 'macro expansion must allocate new scoped resources');
   await blockedGatewayDsl({
     intent: 'verify_model',
     operations: [{ op: 'transform_object', name: 'Existing_Box', translate: [10, 0, 0] }],
@@ -495,7 +506,7 @@ try {
     }
   });
   assert.equal(roomCreate.ok, true);
-  assert.equal(roomCreate.task_state, 'completed');
+  assert.equal(roomCreate.task_state, roomCreate.result.quality_status === 'pass' ? 'completed' : 'awaiting_input', 'room execution must obey its quality result');
   const roomSnapshot = (await policyBridge.inspect_model({ runtime: 'mock', includeSnapshot: true })).snapshot;
   assert.equal(roomSnapshot.materials.find((material) => material.name === 'Floor_Oak')?.color, '#010203', 'room implicit materials are add-if-missing and must not update an existing material');
 

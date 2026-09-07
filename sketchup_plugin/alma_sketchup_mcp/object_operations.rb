@@ -145,16 +145,13 @@ module AlmaSketchupMCP
     definition = model.definitions[definition_name]
     raise "replace_component_definition definition not found: #{definition_name}" unless definition
 
-    parent_entities = editable_parent_entities(entity)
-    replacement = parent_entities.add_instance(definition, entity.transformation)
-    replacement.name = entity.name
-    replacement.layer = entity.layer if replacement.respond_to?(:layer=)
-    replacement.material = entity.material if replacement.respond_to?(:material=) && entity.material
-    if entity.respond_to?(:attribute_dictionaries) && entity.attribute_dictionaries
-      entity.attribute_dictionaries.each { |dictionary| dictionary.each_pair { |key, value| replacement.set_attribute(dictionary.name, key, value) } }
-    end
-    entity.erase!
-    replacement
+    # Native definition= preserves the instance, its persistent ID, transform,
+    # visibility and attached attributes. Recreating the instance breaks stored
+    # occurrence paths used by DesignIntent and reviewed-edit lineage.
+    raise 'replace_component_definition native setter unavailable' unless entity.respond_to?(:definition=)
+    entity.definition = definition
+    raise 'replace_component_definition native readback mismatch' unless entity.definition == definition
+    entity
   end
 
   def explode_entity(model, operation)
@@ -586,6 +583,7 @@ module AlmaSketchupMCP
       positive_number(operation['scale_u'] || operation['scaleU'], 1, "#{field_name}.scale_u"),
       positive_number(operation['scale_v'] || operation['scaleV'], 1, "#{field_name}.scale_v")
     ]
+    raise "#{field_name}.scale values must be positive" unless scale.all? { |value| value > 0 }
     rotation = finite_number(operation['rotation'] || operation['rotation_degrees'] || operation['rotationDegrees'] || 0, "#{field_name}.rotation")
     payload = {
       'projection' => projection,
@@ -595,10 +593,17 @@ module AlmaSketchupMCP
     }
     material = operation['material'] || operation['material_name'] || operation['materialName']
     payload['material'] = non_empty_string(material, "#{field_name}.material") unless material.nil?
+    payload['texture_size_mm'] = size2(operation['texture_size_mm'], "#{field_name}.texture_size_mm") if operation.key?('texture_size_mm')
+    payload['side'] = operation['side'] || 'front'
+    raise "#{field_name}.side must be front, back, or both" unless %w[front back both].include?(payload['side'])
+    payload['face_selector'] = face_uv_selector(operation['face_selector']) if operation.key?('face_selector')
     payload
   end
 
   def write_texture_transform_attributes(entity, texture_transform)
+    application = apply_native_texture_transform(entity, texture_transform)
+    entity.set_attribute('TextureTransform', 'payload_json', JSON.generate(texture_transform))
+    entity.set_attribute('TextureTransform', 'application_json', JSON.generate(application))
     entity.set_attribute('TextureTransform', 'projection', texture_transform['projection'])
     entity.set_attribute('TextureTransform', 'offset_u', texture_transform['offset'][0])
     entity.set_attribute('TextureTransform', 'offset_v', texture_transform['offset'][1])

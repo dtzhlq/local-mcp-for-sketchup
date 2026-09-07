@@ -1,0 +1,37 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import os from 'node:os';
+import path from 'node:path';
+import {SketchUpBridge} from '../src/bridge.mjs';
+import {buildModelGraph,validateModelGraphSemantics} from '../src/model-graph.mjs';
+import {buildDesignIntentGraph,planDesignParameterChange} from '../src/design-intent-graph.mjs';
+import {prepareAssemblyParameterEdit,applyAssemblyParameterEdit} from '../src/detailed-modeling/assembly-edit.mjs';
+const root=await fs.mkdtemp(path.join(os.tmpdir(),'scoped-assembly-'));
+const bridge=new SketchUpBridge({mock:{sessionPath:path.join(root,'model.json')},agentContract:{rootDir:path.join(root,'tasks')},approval:{stateDir:path.join(root,'approvals'),secret:'scoped-assembly-test-secret-at-least-32'},executionPolicy:{allowed_runtimes:['mock']}});
+const dsl=width=>({version:1,units:'mm',operations:[{op:'component_definition',name:'Lamp',operations:[{op:'box',id:'body',name:'Body',origin:[0,0,0],size:[width,100,100]}]},{op:'component_instance',id:'a',name:'A',definition:'Lamp',origin:[0,0,0]},{op:'component_instance',id:'b',name:'B',definition:'Lamp',origin:[500,0,0]},{op:'box',id:'unrelated',name:'Unrelated',size:[100,100,100],origin:[2000,0,0]}]});
+try{
+ await bridge.build_model({runtime:'mock',code:JSON.stringify(dsl(100))});
+ const full=buildModelGraph(await bridge.adopt_open_model({runtime:'mock',recursive:true,read_only:true,recursive_limit:1000}));
+ const selected=full.nodes.find(n=>n.reference==='a');
+ const roots=[selected.entity_path];
+ const scoped=async()=>buildModelGraph(await bridge.adopt_open_model({runtime:'mock',recursive:true,read_only:true,recursive_limit:30,recursive_roots:roots}));
+ const graph=await scoped();
+ assert.equal(graph.completeness.complete,false);assert.equal(graph.completeness.scope_complete,true);
+ assert.equal(validateModelGraphSemantics(graph),true,JSON.stringify(validateModelGraphSemantics(graph)));
+ assert.ok(graph.nodes.length<full.nodes.length);
+ for(const bad of [[],['pid:999999999999'],[roots[0],roots[0]]])await assert.rejects(()=>bridge.adopt_open_model({runtime:'mock',recursive:true,read_only:true,recursive_roots:bad}));
+ const designGraph=buildDesignIntentGraph({modelKey:`model_${'a'.repeat(32)}`,modelGraph:graph,parametricRecipe:{version:1,id:'lamp',parameters:[{id:'width',value:100,type:'number'}]},entityBindings:[{binding_id:'lamp',part_id:'lamp',entity:{entity_path:roots[0]},parameter_bindings:['width'],rebuild_template:[]}]});
+ const changePlan=planDesignParameterChange({designGraph,currentModelGraph:graph,changes:{width:110},assemblyRebuild:{previousDsl:dsl(100),nextDsl:dsl(110),scope:'single',taskId:`task_${'a'.repeat(32)}`,iteration:1}});
+ assert.deepEqual(changePlan.recursive_roots,roots);
+ await assert.rejects(()=>bridge.prepare_existing_model_edit({runtime:'mock',instruction:'Reject out of scope',recursive_roots:roots,operations:[{op:'delete',target_id:'unrelated'}],targets:[{target_id:'unrelated'}]}));
+ const before=await bridge.selectRuntime('mock').readModel();
+ const prepared=await prepareAssemblyParameterEdit({bridge,designGraph,changePlan,recursiveLimit:30,outputDir:root});
+ assert.equal(prepared.prepared_edit.plan.compile_permission,'ready_for_review',JSON.stringify(prepared));
+ await assert.rejects(()=>applyAssemblyParameterEdit({bridge,designGraph,changePlan,prepared,recursiveLimit:30}),e=>e.code==='APPROVAL_REQUIRED');
+ const approval=await bridge.approvalAuthority.approveChallengeFromTrustedUser(prepared.prepared_edit.approval_challenge,{user_id:'fixture',channel:'local-test',confirmed:true});
+ const applied=await applyAssemblyParameterEdit({bridge,designGraph,changePlan,prepared,recursiveLimit:30,approval_token:approval,outputDir:root});
+ assert.equal(applied.replaced_instance_count,1);
+ const after=await bridge.selectRuntime('mock').readModel();
+ assert.deepEqual(after.instances[1],before.instances[1]);assert.deepEqual(after.groups,before.groups);
+ console.log('scoped-assembly-edit: explicit partial scope, root completeness, ordinary approval, selected replacement and untouched peer passed (mock)');
+}finally{await fs.rm(root,{recursive:true,force:true});}

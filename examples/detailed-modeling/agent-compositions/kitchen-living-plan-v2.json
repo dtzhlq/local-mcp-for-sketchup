@@ -1,0 +1,2910 @@
+{
+  "version": 1,
+  "id": "agent-kitchen-living-20260906-v2",
+  "brief": {
+    "title": "精细厨房与相邻阅读生活区",
+    "intent": "保留厨房基准中的柜体、水槽、双层窗和开放岛台，在右侧延展一个可近看的生活区。家具、灯具与植物使用独立可替换定义。",
+    "dimensions_mm": [
+      7500,
+      3508,
+      2900
+    ],
+    "source": "Agent composed design from the approved modeling brief; not a surveyed project",
+    "decisions": [
+      "厨房保持原有尺寸，便于与旧样例比较；生活区向右延伸3200毫米。",
+      "两把阅读椅共享定义但使用不同朝向，边桌位于两椅前方，保留从厨房通往生活区的通道。",
+      "岛台上方两盏灯共享定义；灯具吊线和顶盘连接局部天花板。",
+      "几何验收先使用中性近景；材质与环境在几何通过后另行应用。",
+      "根据实机局部修正记录，生活区墙体沿 X 镜像，将转角移至最右端；保留全部墙体部件。"
+    ]
+  },
+  "additions": [
+    {
+      "asset_kind": "reading_chair",
+      "id": "living-reading-chair",
+      "parameters": {
+        "width": 760,
+        "depth": 790,
+        "seat_height": 440,
+        "back_height": 960
+      },
+      "instances": [
+        {
+          "id": "living-chair-left",
+          "origin": [
+            4920,
+            1750,
+            0
+          ],
+          "transform": {
+            "rotateZ": 18
+          }
+        },
+        {
+          "id": "living-chair-right",
+          "origin": [
+            6420,
+            1640,
+            0
+          ],
+          "transform": {
+            "rotateZ": -18
+          }
+        }
+      ]
+    },
+    {
+      "asset_kind": "side_table",
+      "id": "living-side-table",
+      "parameters": {
+        "radius": 310,
+        "height": 535
+      },
+      "instances": [
+        {
+          "id": "living-table",
+          "origin": [
+            6000,
+            1250,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "asset_kind": "pendant_light",
+      "id": "island-pendant",
+      "parameters": {
+        "radius": 180,
+        "shade_height": 240,
+        "drop": 1000
+      },
+      "instances": [
+        {
+          "id": "island-pendant-left",
+          "origin": [
+            1330,
+            1450,
+            1900
+          ]
+        },
+        {
+          "id": "island-pendant-right",
+          "origin": [
+            2270,
+            1450,
+            1900
+          ]
+        }
+      ]
+    },
+    {
+      "asset_kind": "potted_plant",
+      "id": "living-plant",
+      "parameters": {
+        "height": 1250,
+        "pot_height": 370,
+        "pot_radius": 195
+      },
+      "instances": [
+        {
+          "id": "living-plant-corner",
+          "origin": [
+            7080,
+            2750,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "family": "wall_junction",
+      "id": "living-wall",
+      "parameters": {
+        "width": 3200,
+        "height": 2900
+      },
+      "instances": [
+        {
+          "id": "living-back-wall",
+          "origin": [
+            7500,
+            3200,
+            0
+          ],
+          "transform": {
+            "mirror": "x"
+          }
+        }
+      ]
+    }
+  ],
+  "explicit_parts": [
+    {
+      "id": "island-light-ceiling",
+      "role": "ceiling_mount",
+      "material": "Detail_Plaster",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            1050,
+            1180,
+            2900
+          ],
+          "size": [
+            1550,
+            540,
+            24
+          ]
+        }
+      }
+    },
+    {
+      "id": "living-floor-underlay",
+      "role": "floor_underlay",
+      "material": "Detail_Gasket",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            4300,
+            0,
+            -26
+          ],
+          "size": [
+            3200,
+            3200,
+            4
+          ]
+        }
+      }
+    },
+    {
+      "id": "living-floor-board-0-0",
+      "role": "floor_board",
+      "material": "Detail_Oak",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            4300,
+            0,
+            -22
+          ],
+          "plane": "xy",
+          "outer": [
+            [
+              1,
+              0
+            ],
+            [
+              795,
+              0
+            ],
+            [
+              796,
+              1
+            ],
+            [
+              796,
+              241
+            ],
+            [
+              795,
+              242
+            ],
+            [
+              1,
+              242
+            ],
+            [
+              0,
+              241
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "depth": 22
+        }
+      }
+    },
+    {
+      "id": "living-floor-board-0-1",
+      "role": "floor_board",
+      "material": "Detail_Oak",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            5100,
+            0,
+            -22
+          ],
+          "plane": "xy",
+          "outer": [
+            [
+              1,
+              0
+            ],
+            [
+              795,
+              0
+            ],
+            [
+              796,
+              1
+            ],
+            [
+              796,
+              241
+            ],
+            [
+              795,
+              242
+            ],
+            [
+              1,
+              242
+            ],
+            [
+              0,
+              241
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "depth": 22
+        }
+      }
+    },
+    {
+      "id": "living-floor-board-0-2",
+      "role": "floor_board",
+      "material": "Detail_Oak",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            5900,
+            0,
+            -22
+          ],
+          "plane": "xy",
+          "outer": [
+            [
+              1,
+              0
+            ],
+            [
+              795,
+              0
+            ],
+            [
+              796,
+              1
+            ],
+            [
+              796,
+              241
+            ],
+            [
+              795,
+              242
+            ],
+            [
+              1,
+              242
+            ],
+            [
+              0,
+              241
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "depth": 22
+        }
+      }
+    },
+    {
+      "id": "living-floor-board-0-3",
+      "role": "floor_board",
+      "material": "Detail_Oak",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            6700,
+            0,
+            -22
+          ],
+          "plane": "xy",
+          "outer": [
+            [
+              1,
+              0
+            ],
+            [
+              795,
+              0
+            ],
+            [
+              796,
+              1
+            ],
+            [
+              796,
+              241
+            ],
+            [
+              795,
+              242
+            ],
+            [
+              1,
+              242
+            ],
+            [
+              0,
+              241
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "depth": 22
+        }
+      }
+    },
+    {
+      "id": "living-floor-board-1-0",
+      "role": "floor_board",
+      "material": "Detail_Oak",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            4300,
+            246,
+            -22
+          ],
+          "plane": "xy",
+          "outer": [
+            [
+              1,
+              0
+            ],
+            [
+              795,
+              0
+            ],
+            [
+              796,
+              1
+            ],
+            [
+              796,
+              241
+            ],
+            [
+              795,
+              242
+            ],
+            [
+              1,
+              242
+            ],
+            [
+              0,
+              241
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "depth": 22
+        }
+      }
+    },
+    {
+      "id": "living-floor-board-1-1",
+      "role": "floor_board",
+      "material": "Detail_Oak",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            5100,
+            246,
+            -22
+          ],
+          "plane": "xy",
+          "outer": [
+            [
+              1,
+              0
+            ],
+            [
+              795,
+              0
+            ],
+            [
+              796,
+              1
+            ],
+            [
+              796,
+              241
+            ],
+            [
+              795,
+              242
+            ],
+            [
+              1,
+              242
+            ],
+            [
+              0,
+              241
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "depth": 22
+        }
+      }
+    },
+    {
+      "id": "living-floor-board-1-2",
+      "role": "floor_board",
+      "material": "Detail_Oak",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            5900,
+            246,
+            -22
+          ],
+          "plane": "xy",
+          "outer": [
+            [
+              1,
+              0
+            ],
+            [
+              795,
+              0
+            ],
+            [
+              796,
+              1
+            ],
+            [
+              796,
+              241
+            ],
+            [
+              795,
+              242
+            ],
+            [
+              1,
+              242
+            ],
+            [
+              0,
+              241
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "depth": 22
+        }
+      }
+    },
+    {
+      "id": "living-floor-board-1-3",
+      "role": "floor_board",
+      "material": "Detail_Oak",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            6700,
+            246,
+            -22
+          ],
+          "plane": "xy",
+          "outer": [
+            [
+              1,
+              0
+            ],
+            [
+              795,
+              0
+            ],
+            [
+              796,
+              1
+            ],
+            [
+              796,
+              241
+            ],
+            [
+              795,
+              242
+            ],
+            [
+              1,
+              242
+            ],
+            [
+              0,
+              241
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "depth": 22
+        }
+      }
+    },
+    {
+      "id": "living-floor-board-2-0",
+      "role": "floor_board",
+      "material": "Detail_Oak",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            4300,
+            492,
+            -22
+          ],
+          "plane": "xy",
+          "outer": [
+            [
+              1,
+              0
+            ],
+            [
+              795,
+              0
+            ],
+            [
+              796,
+              1
+            ],
+            [
+              796,
+              241
+            ],
+            [
+              795,
+              242
+            ],
+            [
+              1,
+              242
+            ],
+            [
+              0,
+              241
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "depth": 22
+        }
+      }
+    },
+    {
+      "id": "living-floor-board-2-1",
+      "role": "floor_board",
+      "material": "Detail_Oak",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            5100,
+            492,
+            -22
+          ],
+          "plane": "xy",
+          "outer": [
+            [
+              1,
+              0
+            ],
+            [
+              795,
+              0
+            ],
+            [
+              796,
+              1
+            ],
+            [
+              796,
+              241
+            ],
+            [
+              795,
+              242
+            ],
+            [
+              1,
+              242
+            ],
+            [
+              0,
+              241
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "depth": 22
+        }
+      }
+    },
+    {
+      "id": "living-floor-board-2-2",
+      "role": "floor_board",
+      "material": "Detail_Oak",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            5900,
+            492,
+            -22
+          ],
+          "plane": "xy",
+          "outer": [
+            [
+              1,
+              0
+            ],
+            [
+              795,
+              0
+            ],
+            [
+              796,
+              1
+            ],
+            [
+              796,
+              241
+            ],
+            [
+              795,
+              242
+            ],
+            [
+              1,
+              242
+            ],
+            [
+              0,
+              241
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "depth": 22
+        }
+      }
+    },
+    {
+      "id": "living-floor-board-2-3",
+      "role": "floor_board",
+      "material": "Detail_Oak",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            6700,
+            492,
+            -22
+          ],
+          "plane": "xy",
+          "outer": [
+            [
+              1,
+              0
+            ],
+            [
+              795,
+              0
+            ],
+            [
+              796,
+              1
+            ],
+            [
+              796,
+              241
+            ],
+            [
+              795,
+              242
+            ],
+            [
+              1,
+              242
+            ],
+            [
+              0,
+              241
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "depth": 22
+        }
+      }
+    },
+    {
+      "id": "living-floor-board-3-0",
+      "role": "floor_board",
+      "material": "Detail_Oak",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            4300,
+            738,
+            -22
+          ],
+          "plane": "xy",
+          "outer": [
+            [
+              1,
+              0
+            ],
+            [
+              795,
+              0
+            ],
+            [
+              796,
+              1
+            ],
+            [
+              796,
+              241
+            ],
+            [
+              795,
+              242
+            ],
+            [
+              1,
+              242
+            ],
+            [
+              0,
+              241
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "depth": 22
+        }
+      }
+    },
+    {
+      "id": "living-floor-board-3-1",
+      "role": "floor_board",
+      "material": "Detail_Oak",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            5100,
+            738,
+            -22
+          ],
+          "plane": "xy",
+          "outer": [
+            [
+              1,
+              0
+            ],
+            [
+              795,
+              0
+            ],
+            [
+              796,
+              1
+            ],
+            [
+              796,
+              241
+            ],
+            [
+              795,
+              242
+            ],
+            [
+              1,
+              242
+            ],
+            [
+              0,
+              241
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "depth": 22
+        }
+      }
+    },
+    {
+      "id": "living-floor-board-3-2",
+      "role": "floor_board",
+      "material": "Detail_Oak",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            5900,
+            738,
+            -22
+          ],
+          "plane": "xy",
+          "outer": [
+            [
+              1,
+              0
+            ],
+            [
+              795,
+              0
+            ],
+            [
+              796,
+              1
+            ],
+            [
+              796,
+              241
+            ],
+            [
+              795,
+              242
+            ],
+            [
+              1,
+              242
+            ],
+            [
+              0,
+              241
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "depth": 22
+        }
+      }
+    },
+    {
+      "id": "living-floor-board-3-3",
+      "role": "floor_board",
+      "material": "Detail_Oak",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            6700,
+            738,
+            -22
+          ],
+          "plane": "xy",
+          "outer": [
+            [
+              1,
+              0
+            ],
+            [
+              795,
+              0
+            ],
+            [
+              796,
+              1
+            ],
+            [
+              796,
+              241
+            ],
+            [
+              795,
+              242
+            ],
+            [
+              1,
+              242
+            ],
+            [
+              0,
+              241
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "depth": 22
+        }
+      }
+    },
+    {
+      "id": "living-floor-board-4-0",
+      "role": "floor_board",
+      "material": "Detail_Oak",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            4300,
+            984,
+            -22
+          ],
+          "plane": "xy",
+          "outer": [
+            [
+              1,
+              0
+            ],
+            [
+              795,
+              0
+            ],
+            [
+              796,
+              1
+            ],
+            [
+              796,
+              241
+            ],
+            [
+              795,
+              242
+            ],
+            [
+              1,
+              242
+            ],
+            [
+              0,
+              241
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "depth": 22
+        }
+      }
+    },
+    {
+      "id": "living-floor-board-4-1",
+      "role": "floor_board",
+      "material": "Detail_Oak",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            5100,
+            984,
+            -22
+          ],
+          "plane": "xy",
+          "outer": [
+            [
+              1,
+              0
+            ],
+            [
+              795,
+              0
+            ],
+            [
+              796,
+              1
+            ],
+            [
+              796,
+              241
+            ],
+            [
+              795,
+              242
+            ],
+            [
+              1,
+              242
+            ],
+            [
+              0,
+              241
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "depth": 22
+        }
+      }
+    },
+    {
+      "id": "living-floor-board-4-2",
+      "role": "floor_board",
+      "material": "Detail_Oak",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            5900,
+            984,
+            -22
+          ],
+          "plane": "xy",
+          "outer": [
+            [
+              1,
+              0
+            ],
+            [
+              795,
+              0
+            ],
+            [
+              796,
+              1
+            ],
+            [
+              796,
+              241
+            ],
+            [
+              795,
+              242
+            ],
+            [
+              1,
+              242
+            ],
+            [
+              0,
+              241
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "depth": 22
+        }
+      }
+    },
+    {
+      "id": "living-floor-board-4-3",
+      "role": "floor_board",
+      "material": "Detail_Oak",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            6700,
+            984,
+            -22
+          ],
+          "plane": "xy",
+          "outer": [
+            [
+              1,
+              0
+            ],
+            [
+              795,
+              0
+            ],
+            [
+              796,
+              1
+            ],
+            [
+              796,
+              241
+            ],
+            [
+              795,
+              242
+            ],
+            [
+              1,
+              242
+            ],
+            [
+              0,
+              241
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "depth": 22
+        }
+      }
+    },
+    {
+      "id": "living-floor-board-5-0",
+      "role": "floor_board",
+      "material": "Detail_Oak",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            4300,
+            1230,
+            -22
+          ],
+          "plane": "xy",
+          "outer": [
+            [
+              1,
+              0
+            ],
+            [
+              795,
+              0
+            ],
+            [
+              796,
+              1
+            ],
+            [
+              796,
+              241
+            ],
+            [
+              795,
+              242
+            ],
+            [
+              1,
+              242
+            ],
+            [
+              0,
+              241
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "depth": 22
+        }
+      }
+    },
+    {
+      "id": "living-floor-board-5-1",
+      "role": "floor_board",
+      "material": "Detail_Oak",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            5100,
+            1230,
+            -22
+          ],
+          "plane": "xy",
+          "outer": [
+            [
+              1,
+              0
+            ],
+            [
+              795,
+              0
+            ],
+            [
+              796,
+              1
+            ],
+            [
+              796,
+              241
+            ],
+            [
+              795,
+              242
+            ],
+            [
+              1,
+              242
+            ],
+            [
+              0,
+              241
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "depth": 22
+        }
+      }
+    },
+    {
+      "id": "living-floor-board-5-2",
+      "role": "floor_board",
+      "material": "Detail_Oak",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            5900,
+            1230,
+            -22
+          ],
+          "plane": "xy",
+          "outer": [
+            [
+              1,
+              0
+            ],
+            [
+              795,
+              0
+            ],
+            [
+              796,
+              1
+            ],
+            [
+              796,
+              241
+            ],
+            [
+              795,
+              242
+            ],
+            [
+              1,
+              242
+            ],
+            [
+              0,
+              241
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "depth": 22
+        }
+      }
+    },
+    {
+      "id": "living-floor-board-5-3",
+      "role": "floor_board",
+      "material": "Detail_Oak",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            6700,
+            1230,
+            -22
+          ],
+          "plane": "xy",
+          "outer": [
+            [
+              1,
+              0
+            ],
+            [
+              795,
+              0
+            ],
+            [
+              796,
+              1
+            ],
+            [
+              796,
+              241
+            ],
+            [
+              795,
+              242
+            ],
+            [
+              1,
+              242
+            ],
+            [
+              0,
+              241
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "depth": 22
+        }
+      }
+    },
+    {
+      "id": "living-floor-board-6-0",
+      "role": "floor_board",
+      "material": "Detail_Oak",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            4300,
+            1476,
+            -22
+          ],
+          "plane": "xy",
+          "outer": [
+            [
+              1,
+              0
+            ],
+            [
+              795,
+              0
+            ],
+            [
+              796,
+              1
+            ],
+            [
+              796,
+              241
+            ],
+            [
+              795,
+              242
+            ],
+            [
+              1,
+              242
+            ],
+            [
+              0,
+              241
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "depth": 22
+        }
+      }
+    },
+    {
+      "id": "living-floor-board-6-1",
+      "role": "floor_board",
+      "material": "Detail_Oak",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            5100,
+            1476,
+            -22
+          ],
+          "plane": "xy",
+          "outer": [
+            [
+              1,
+              0
+            ],
+            [
+              795,
+              0
+            ],
+            [
+              796,
+              1
+            ],
+            [
+              796,
+              241
+            ],
+            [
+              795,
+              242
+            ],
+            [
+              1,
+              242
+            ],
+            [
+              0,
+              241
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "depth": 22
+        }
+      }
+    },
+    {
+      "id": "living-floor-board-6-2",
+      "role": "floor_board",
+      "material": "Detail_Oak",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            5900,
+            1476,
+            -22
+          ],
+          "plane": "xy",
+          "outer": [
+            [
+              1,
+              0
+            ],
+            [
+              795,
+              0
+            ],
+            [
+              796,
+              1
+            ],
+            [
+              796,
+              241
+            ],
+            [
+              795,
+              242
+            ],
+            [
+              1,
+              242
+            ],
+            [
+              0,
+              241
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "depth": 22
+        }
+      }
+    },
+    {
+      "id": "living-floor-board-6-3",
+      "role": "floor_board",
+      "material": "Detail_Oak",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            6700,
+            1476,
+            -22
+          ],
+          "plane": "xy",
+          "outer": [
+            [
+              1,
+              0
+            ],
+            [
+              795,
+              0
+            ],
+            [
+              796,
+              1
+            ],
+            [
+              796,
+              241
+            ],
+            [
+              795,
+              242
+            ],
+            [
+              1,
+              242
+            ],
+            [
+              0,
+              241
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "depth": 22
+        }
+      }
+    },
+    {
+      "id": "living-floor-board-7-0",
+      "role": "floor_board",
+      "material": "Detail_Oak",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            4300,
+            1722,
+            -22
+          ],
+          "plane": "xy",
+          "outer": [
+            [
+              1,
+              0
+            ],
+            [
+              795,
+              0
+            ],
+            [
+              796,
+              1
+            ],
+            [
+              796,
+              241
+            ],
+            [
+              795,
+              242
+            ],
+            [
+              1,
+              242
+            ],
+            [
+              0,
+              241
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "depth": 22
+        }
+      }
+    },
+    {
+      "id": "living-floor-board-7-1",
+      "role": "floor_board",
+      "material": "Detail_Oak",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            5100,
+            1722,
+            -22
+          ],
+          "plane": "xy",
+          "outer": [
+            [
+              1,
+              0
+            ],
+            [
+              795,
+              0
+            ],
+            [
+              796,
+              1
+            ],
+            [
+              796,
+              241
+            ],
+            [
+              795,
+              242
+            ],
+            [
+              1,
+              242
+            ],
+            [
+              0,
+              241
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "depth": 22
+        }
+      }
+    },
+    {
+      "id": "living-floor-board-7-2",
+      "role": "floor_board",
+      "material": "Detail_Oak",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            5900,
+            1722,
+            -22
+          ],
+          "plane": "xy",
+          "outer": [
+            [
+              1,
+              0
+            ],
+            [
+              795,
+              0
+            ],
+            [
+              796,
+              1
+            ],
+            [
+              796,
+              241
+            ],
+            [
+              795,
+              242
+            ],
+            [
+              1,
+              242
+            ],
+            [
+              0,
+              241
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "depth": 22
+        }
+      }
+    },
+    {
+      "id": "living-floor-board-7-3",
+      "role": "floor_board",
+      "material": "Detail_Oak",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            6700,
+            1722,
+            -22
+          ],
+          "plane": "xy",
+          "outer": [
+            [
+              1,
+              0
+            ],
+            [
+              795,
+              0
+            ],
+            [
+              796,
+              1
+            ],
+            [
+              796,
+              241
+            ],
+            [
+              795,
+              242
+            ],
+            [
+              1,
+              242
+            ],
+            [
+              0,
+              241
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "depth": 22
+        }
+      }
+    },
+    {
+      "id": "living-floor-board-8-0",
+      "role": "floor_board",
+      "material": "Detail_Oak",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            4300,
+            1968,
+            -22
+          ],
+          "plane": "xy",
+          "outer": [
+            [
+              1,
+              0
+            ],
+            [
+              795,
+              0
+            ],
+            [
+              796,
+              1
+            ],
+            [
+              796,
+              241
+            ],
+            [
+              795,
+              242
+            ],
+            [
+              1,
+              242
+            ],
+            [
+              0,
+              241
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "depth": 22
+        }
+      }
+    },
+    {
+      "id": "living-floor-board-8-1",
+      "role": "floor_board",
+      "material": "Detail_Oak",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            5100,
+            1968,
+            -22
+          ],
+          "plane": "xy",
+          "outer": [
+            [
+              1,
+              0
+            ],
+            [
+              795,
+              0
+            ],
+            [
+              796,
+              1
+            ],
+            [
+              796,
+              241
+            ],
+            [
+              795,
+              242
+            ],
+            [
+              1,
+              242
+            ],
+            [
+              0,
+              241
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "depth": 22
+        }
+      }
+    },
+    {
+      "id": "living-floor-board-8-2",
+      "role": "floor_board",
+      "material": "Detail_Oak",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            5900,
+            1968,
+            -22
+          ],
+          "plane": "xy",
+          "outer": [
+            [
+              1,
+              0
+            ],
+            [
+              795,
+              0
+            ],
+            [
+              796,
+              1
+            ],
+            [
+              796,
+              241
+            ],
+            [
+              795,
+              242
+            ],
+            [
+              1,
+              242
+            ],
+            [
+              0,
+              241
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "depth": 22
+        }
+      }
+    },
+    {
+      "id": "living-floor-board-8-3",
+      "role": "floor_board",
+      "material": "Detail_Oak",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            6700,
+            1968,
+            -22
+          ],
+          "plane": "xy",
+          "outer": [
+            [
+              1,
+              0
+            ],
+            [
+              795,
+              0
+            ],
+            [
+              796,
+              1
+            ],
+            [
+              796,
+              241
+            ],
+            [
+              795,
+              242
+            ],
+            [
+              1,
+              242
+            ],
+            [
+              0,
+              241
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "depth": 22
+        }
+      }
+    },
+    {
+      "id": "living-floor-board-9-0",
+      "role": "floor_board",
+      "material": "Detail_Oak",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            4300,
+            2214,
+            -22
+          ],
+          "plane": "xy",
+          "outer": [
+            [
+              1,
+              0
+            ],
+            [
+              795,
+              0
+            ],
+            [
+              796,
+              1
+            ],
+            [
+              796,
+              241
+            ],
+            [
+              795,
+              242
+            ],
+            [
+              1,
+              242
+            ],
+            [
+              0,
+              241
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "depth": 22
+        }
+      }
+    },
+    {
+      "id": "living-floor-board-9-1",
+      "role": "floor_board",
+      "material": "Detail_Oak",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            5100,
+            2214,
+            -22
+          ],
+          "plane": "xy",
+          "outer": [
+            [
+              1,
+              0
+            ],
+            [
+              795,
+              0
+            ],
+            [
+              796,
+              1
+            ],
+            [
+              796,
+              241
+            ],
+            [
+              795,
+              242
+            ],
+            [
+              1,
+              242
+            ],
+            [
+              0,
+              241
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "depth": 22
+        }
+      }
+    },
+    {
+      "id": "living-floor-board-9-2",
+      "role": "floor_board",
+      "material": "Detail_Oak",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            5900,
+            2214,
+            -22
+          ],
+          "plane": "xy",
+          "outer": [
+            [
+              1,
+              0
+            ],
+            [
+              795,
+              0
+            ],
+            [
+              796,
+              1
+            ],
+            [
+              796,
+              241
+            ],
+            [
+              795,
+              242
+            ],
+            [
+              1,
+              242
+            ],
+            [
+              0,
+              241
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "depth": 22
+        }
+      }
+    },
+    {
+      "id": "living-floor-board-9-3",
+      "role": "floor_board",
+      "material": "Detail_Oak",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            6700,
+            2214,
+            -22
+          ],
+          "plane": "xy",
+          "outer": [
+            [
+              1,
+              0
+            ],
+            [
+              795,
+              0
+            ],
+            [
+              796,
+              1
+            ],
+            [
+              796,
+              241
+            ],
+            [
+              795,
+              242
+            ],
+            [
+              1,
+              242
+            ],
+            [
+              0,
+              241
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "depth": 22
+        }
+      }
+    },
+    {
+      "id": "living-floor-board-10-0",
+      "role": "floor_board",
+      "material": "Detail_Oak",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            4300,
+            2460,
+            -22
+          ],
+          "plane": "xy",
+          "outer": [
+            [
+              1,
+              0
+            ],
+            [
+              795,
+              0
+            ],
+            [
+              796,
+              1
+            ],
+            [
+              796,
+              241
+            ],
+            [
+              795,
+              242
+            ],
+            [
+              1,
+              242
+            ],
+            [
+              0,
+              241
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "depth": 22
+        }
+      }
+    },
+    {
+      "id": "living-floor-board-10-1",
+      "role": "floor_board",
+      "material": "Detail_Oak",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            5100,
+            2460,
+            -22
+          ],
+          "plane": "xy",
+          "outer": [
+            [
+              1,
+              0
+            ],
+            [
+              795,
+              0
+            ],
+            [
+              796,
+              1
+            ],
+            [
+              796,
+              241
+            ],
+            [
+              795,
+              242
+            ],
+            [
+              1,
+              242
+            ],
+            [
+              0,
+              241
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "depth": 22
+        }
+      }
+    },
+    {
+      "id": "living-floor-board-10-2",
+      "role": "floor_board",
+      "material": "Detail_Oak",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            5900,
+            2460,
+            -22
+          ],
+          "plane": "xy",
+          "outer": [
+            [
+              1,
+              0
+            ],
+            [
+              795,
+              0
+            ],
+            [
+              796,
+              1
+            ],
+            [
+              796,
+              241
+            ],
+            [
+              795,
+              242
+            ],
+            [
+              1,
+              242
+            ],
+            [
+              0,
+              241
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "depth": 22
+        }
+      }
+    },
+    {
+      "id": "living-floor-board-10-3",
+      "role": "floor_board",
+      "material": "Detail_Oak",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            6700,
+            2460,
+            -22
+          ],
+          "plane": "xy",
+          "outer": [
+            [
+              1,
+              0
+            ],
+            [
+              795,
+              0
+            ],
+            [
+              796,
+              1
+            ],
+            [
+              796,
+              241
+            ],
+            [
+              795,
+              242
+            ],
+            [
+              1,
+              242
+            ],
+            [
+              0,
+              241
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "depth": 22
+        }
+      }
+    },
+    {
+      "id": "living-floor-board-11-0",
+      "role": "floor_board",
+      "material": "Detail_Oak",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            4300,
+            2706,
+            -22
+          ],
+          "plane": "xy",
+          "outer": [
+            [
+              1,
+              0
+            ],
+            [
+              795,
+              0
+            ],
+            [
+              796,
+              1
+            ],
+            [
+              796,
+              241
+            ],
+            [
+              795,
+              242
+            ],
+            [
+              1,
+              242
+            ],
+            [
+              0,
+              241
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "depth": 22
+        }
+      }
+    },
+    {
+      "id": "living-floor-board-11-1",
+      "role": "floor_board",
+      "material": "Detail_Oak",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            5100,
+            2706,
+            -22
+          ],
+          "plane": "xy",
+          "outer": [
+            [
+              1,
+              0
+            ],
+            [
+              795,
+              0
+            ],
+            [
+              796,
+              1
+            ],
+            [
+              796,
+              241
+            ],
+            [
+              795,
+              242
+            ],
+            [
+              1,
+              242
+            ],
+            [
+              0,
+              241
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "depth": 22
+        }
+      }
+    },
+    {
+      "id": "living-floor-board-11-2",
+      "role": "floor_board",
+      "material": "Detail_Oak",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            5900,
+            2706,
+            -22
+          ],
+          "plane": "xy",
+          "outer": [
+            [
+              1,
+              0
+            ],
+            [
+              795,
+              0
+            ],
+            [
+              796,
+              1
+            ],
+            [
+              796,
+              241
+            ],
+            [
+              795,
+              242
+            ],
+            [
+              1,
+              242
+            ],
+            [
+              0,
+              241
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "depth": 22
+        }
+      }
+    },
+    {
+      "id": "living-floor-board-11-3",
+      "role": "floor_board",
+      "material": "Detail_Oak",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            6700,
+            2706,
+            -22
+          ],
+          "plane": "xy",
+          "outer": [
+            [
+              1,
+              0
+            ],
+            [
+              795,
+              0
+            ],
+            [
+              796,
+              1
+            ],
+            [
+              796,
+              241
+            ],
+            [
+              795,
+              242
+            ],
+            [
+              1,
+              242
+            ],
+            [
+              0,
+              241
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "depth": 22
+        }
+      }
+    },
+    {
+      "id": "living-floor-board-12-0",
+      "role": "floor_board",
+      "material": "Detail_Oak",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            4300,
+            2952,
+            -22
+          ],
+          "plane": "xy",
+          "outer": [
+            [
+              1,
+              0
+            ],
+            [
+              795,
+              0
+            ],
+            [
+              796,
+              1
+            ],
+            [
+              796,
+              241
+            ],
+            [
+              795,
+              242
+            ],
+            [
+              1,
+              242
+            ],
+            [
+              0,
+              241
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "depth": 22
+        }
+      }
+    },
+    {
+      "id": "living-floor-board-12-1",
+      "role": "floor_board",
+      "material": "Detail_Oak",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            5100,
+            2952,
+            -22
+          ],
+          "plane": "xy",
+          "outer": [
+            [
+              1,
+              0
+            ],
+            [
+              795,
+              0
+            ],
+            [
+              796,
+              1
+            ],
+            [
+              796,
+              241
+            ],
+            [
+              795,
+              242
+            ],
+            [
+              1,
+              242
+            ],
+            [
+              0,
+              241
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "depth": 22
+        }
+      }
+    },
+    {
+      "id": "living-floor-board-12-2",
+      "role": "floor_board",
+      "material": "Detail_Oak",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            5900,
+            2952,
+            -22
+          ],
+          "plane": "xy",
+          "outer": [
+            [
+              1,
+              0
+            ],
+            [
+              795,
+              0
+            ],
+            [
+              796,
+              1
+            ],
+            [
+              796,
+              241
+            ],
+            [
+              795,
+              242
+            ],
+            [
+              1,
+              242
+            ],
+            [
+              0,
+              241
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "depth": 22
+        }
+      }
+    },
+    {
+      "id": "living-floor-board-12-3",
+      "role": "floor_board",
+      "material": "Detail_Oak",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            6700,
+            2952,
+            -22
+          ],
+          "plane": "xy",
+          "outer": [
+            [
+              1,
+              0
+            ],
+            [
+              795,
+              0
+            ],
+            [
+              796,
+              1
+            ],
+            [
+              796,
+              241
+            ],
+            [
+              795,
+              242
+            ],
+            [
+              1,
+              242
+            ],
+            [
+              0,
+              241
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "depth": 22
+        }
+      }
+    }
+  ],
+  "views": [
+    {
+      "id": "kitchen-living-overview",
+      "kind": "overview",
+      "width": 1800,
+      "height": 1100,
+      "camera": {
+        "eye": [
+          10300,
+          -7300,
+          5200
+        ],
+        "target": [
+          3670,
+          1800,
+          1130
+        ],
+        "up": [
+          0,
+          0,
+          1
+        ],
+        "fov": 42
+      }
+    },
+    {
+      "id": "living-joinery-closeup",
+      "kind": "closeup",
+      "width": 1600,
+      "height": 1000,
+      "camera": {
+        "eye": [
+          6030,
+          -600,
+          1510
+        ],
+        "target": [
+          5900,
+          1750,
+          490
+        ],
+        "up": [
+          0,
+          0,
+          1
+        ],
+        "fov": 39
+      }
+    },
+    {
+      "id": "island-pendant-closeup",
+      "kind": "closeup",
+      "width": 1600,
+      "height": 1000,
+      "camera": {
+        "eye": [
+          3080,
+          -300,
+          2270
+        ],
+        "target": [
+          1860,
+          1450,
+          2200
+        ],
+        "up": [
+          0,
+          0,
+          1
+        ],
+        "fov": 38
+      }
+    }
+  ]
+}

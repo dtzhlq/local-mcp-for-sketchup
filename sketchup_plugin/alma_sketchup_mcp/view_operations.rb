@@ -50,6 +50,9 @@ module AlmaSketchupMCP
     scenes << scene
     update_flags = operation['update_flags'] || operation['updateFlags']
     page.update(update_flags.to_i) if update_flags && page.respond_to?(:update)
+    if operation.key?('environment_ref') || operation.key?('use_environment') || operation.key?('style_ref')
+      scene.merge!(apply_scene_native_appearance(model, page, operation))
+    end
     page
   end
 
@@ -238,6 +241,11 @@ module AlmaSketchupMCP
       'draw_hidden' => { key: 'DrawHidden', type: :boolean, alias: 'drawHidden' },
       'draw_ground' => { key: 'DrawGround', type: :boolean, alias: 'drawGround' },
       'draw_horizon' => { key: 'DrawHorizon', type: :boolean, alias: 'drawHorizon' },
+      'ambient_occlusion' => { key: 'AmbientOcclusion', type: :boolean, alias: 'ambientOcclusion' },
+      'ambient_occlusion_distance' => { key: 'AmbientOcclusionDistance', type: :number, range: [0.0, Float::MAX], alias: 'ambientOcclusionDistance' },
+      'ambient_occlusion_intensity' => { key: 'AmbientOcclusionIntensity', type: :number, range: [0.0, Float::MAX], alias: 'ambientOcclusionIntensity' },
+      'ambient_occlusion_multiplier' => { key: 'AmbientOcclusionMultiplier', type: :number, range: [0.0, Float::MAX], alias: 'ambientOcclusionMultiplier' },
+      'ambient_occlusion_color' => { key: 'AmbientOcclusionColor', type: :color, alias: 'ambientOcclusionColor' },
       'render_mode' => { key: 'RenderMode', type: :number, range: [0.0, 10.0], alias: 'renderMode' },
       'face_color_mode' => { key: 'FaceColorMode', type: :number, range: [0.0, 10.0], alias: 'faceColorMode' },
       'model_transparency' => { key: 'ModelTransparency', type: :number, range: [0.0, 3.0], alias: 'modelTransparency' },
