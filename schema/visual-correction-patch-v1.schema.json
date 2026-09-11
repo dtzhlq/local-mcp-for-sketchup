@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local-mcp-for-sketchup.invalid/schema/visual-correction-patch-v1.schema.json",
+  "$id": "https://alma.local/schema/visual-correction-patch-v1.schema.json",
   "title": "VisualCorrectionPatchV1Public",
   "type": "object",
   "additionalProperties": false,

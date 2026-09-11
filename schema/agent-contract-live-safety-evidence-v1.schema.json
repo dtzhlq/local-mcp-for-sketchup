@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local-mcp-for-sketchup.invalid/schema/agent-contract-live-safety-evidence-v1.schema.json",
+  "$id": "https://alma.local/schema/agent-contract-live-safety-evidence-v1.schema.json",
   "title": "Agent Contract live safety evidence v1",
   "type": "object",
   "additionalProperties": false,

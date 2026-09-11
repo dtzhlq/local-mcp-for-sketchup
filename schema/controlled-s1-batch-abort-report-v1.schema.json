@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local-mcp-for-sketchup.invalid/local-mcp-for-sketchup/controlled-s1-batch-abort-report-v1.schema.json",
+  "$id": "https://alma.local/sketchup-mcp-replica/controlled-s1-batch-abort-report-v1.schema.json",
   "title": "Controlled S1 Batch Abort Report v1",
   "type": "object",
   "additionalProperties": false,

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local-mcp-for-sketchup.invalid/local-mcp-for-sketchup/real-model-reliability-live-case-report-v1.schema.json",
+  "$id": "https://alma.local/sketchup-mcp-replica/real-model-reliability-live-case-report-v1.schema.json",
   "title": "Real-model reliability single live case report v1",
   "type": "object",
   "additionalProperties": false,

@@ -6,7 +6,7 @@ import { promisify } from 'node:util';
 
 const execFileAsync = promisify(execFile);
 
-const source = await fs.readFile(new URL('../sketchup_plugin/local_mcp_for_sketchup/bridge.rb', import.meta.url), 'utf8');
+const source = await fs.readFile(new URL('../sketchup_plugin/alma_sketchup_mcp.rb', import.meta.url), 'utf8');
 
 const startAt = source.indexOf('  def start\n');
 const stopAt = source.indexOf('  def stop\n', startAt);
@@ -26,11 +26,11 @@ assert.doesNotMatch(startBody, /UI\.stop_timer/, 'repeated Start must preserve t
 assert.match(startBody, /if @timer_id[\s\S]*already running[\s\S]*return @timer_id/);
 assert.match(startBody, /@timer_id = UI\.start_timer\(1\.0, true\) \{ process_pending_requests \}/);
 assert.ok(
-  startBody.indexOf('@timer_id = UI.start_timer') < startBody.indexOf("announce_bridge_state('Local MCP for SketchUp Bridge is running.')"),
+  startBody.indexOf('@timer_id = UI.start_timer') < startBody.indexOf("announce_bridge_state('Alma SketchUp MCP Bridge is running.')"),
   'the poller must be installed before non-modal status feedback'
 );
 assert.match(stopBody, /return unless @timer_id/);
-assert.match(stopBody, /announce_bridge_state\('Local MCP for SketchUp Bridge stopped\.'\)/);
+assert.match(stopBody, /announce_bridge_state\('Alma SketchUp MCP Bridge stopped\.'\)/);
 assert.match(announceBody, /Sketchup\.status_text = message/);
 assert.match(announceBody, /rescue StandardError/);
 

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local-mcp-for-sketchup.invalid/schemas/real-model-candidate-semantic-mapping-v1.schema.json",
+  "$id": "https://alma.local/schemas/real-model-candidate-semantic-mapping-v1.schema.json",
   "title": "User-confirmed real-model candidate semantic mapping v1",
   "type": "object",
   "additionalProperties": false,

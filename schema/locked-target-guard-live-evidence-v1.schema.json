@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local-mcp-for-sketchup.invalid/schemas/locked-target-guard-live-evidence-v1.schema.json",
+  "$id": "https://alma.local/schemas/locked-target-guard-live-evidence-v1.schema.json",
   "title": "Locked Target Guard Live Evidence v1",
   "type": "object",
   "additionalProperties": false,
@@ -236,20 +236,20 @@
         "scripts/build-locked-target-guard-live-evidence.mjs",
         "scripts/run-real-model-reliability-live-case.mjs",
         "schema/real-model-reliability-live-case-report-v1.schema.json",
-        "sketchup_plugin/local_mcp_for_sketchup/bridge.rb",
-        "sketchup_plugin/local_mcp_for_sketchup/boolean_operations.rb",
-        "sketchup_plugin/local_mcp_for_sketchup/model_revision.rb",
-        "sketchup_plugin/local_mcp_for_sketchup/runtime_source_manifest.rb",
+        "sketchup_plugin/alma_sketchup_mcp.rb",
+        "sketchup_plugin/alma_sketchup_mcp/boolean_operations.rb",
+        "sketchup_plugin/alma_sketchup_mcp/model_revision.rb",
+        "sketchup_plugin/alma_sketchup_mcp/runtime_source_manifest.rb",
         "test/ruby/locked_target_guard_test.rb"
       ],
       "properties": {
         "scripts/build-locked-target-guard-live-evidence.mjs": { "$ref": "#/$defs/sha256" },
         "scripts/run-real-model-reliability-live-case.mjs": { "$ref": "#/$defs/sha256" },
         "schema/real-model-reliability-live-case-report-v1.schema.json": { "$ref": "#/$defs/sha256" },
-        "sketchup_plugin/local_mcp_for_sketchup/bridge.rb": { "$ref": "#/$defs/sha256" },
-        "sketchup_plugin/local_mcp_for_sketchup/boolean_operations.rb": { "$ref": "#/$defs/sha256" },
-        "sketchup_plugin/local_mcp_for_sketchup/model_revision.rb": { "$ref": "#/$defs/sha256" },
-        "sketchup_plugin/local_mcp_for_sketchup/runtime_source_manifest.rb": { "$ref": "#/$defs/sha256" },
+        "sketchup_plugin/alma_sketchup_mcp.rb": { "$ref": "#/$defs/sha256" },
+        "sketchup_plugin/alma_sketchup_mcp/boolean_operations.rb": { "$ref": "#/$defs/sha256" },
+        "sketchup_plugin/alma_sketchup_mcp/model_revision.rb": { "$ref": "#/$defs/sha256" },
+        "sketchup_plugin/alma_sketchup_mcp/runtime_source_manifest.rb": { "$ref": "#/$defs/sha256" },
         "test/ruby/locked_target_guard_test.rb": { "$ref": "#/$defs/sha256" }
       }
     },

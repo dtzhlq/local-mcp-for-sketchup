@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local-mcp-for-sketchup.invalid/local-mcp-for-sketchup/model-revision-v1-archival-lineage-manifest-v1.schema.json",
+  "$id": "https://alma.local/sketchup-mcp-replica/model-revision-v1-archival-lineage-manifest-v1.schema.json",
   "title": "Model Revision v1 archival lineage manifest",
   "type": "object",
   "additionalProperties": false,

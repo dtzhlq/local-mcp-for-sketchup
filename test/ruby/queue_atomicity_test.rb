@@ -6,10 +6,10 @@ require 'tmpdir'
 
 repo_root = File.expand_path('../..', __dir__)
 support_dir = File.join(__dir__, 'support')
-test_home = File.realpath(Dir.mktmpdir('local-mcp-queue-atomicity-'))
+test_home = File.realpath(Dir.mktmpdir('alma-queue-atomicity-'))
 ENV['HOME'] = test_home
 $LOAD_PATH.unshift(support_dir)
-require File.join(repo_root, 'sketchup_plugin', 'local_mcp_for_sketchup', 'bridge')
+require File.join(repo_root, 'sketchup_plugin', 'alma_sketchup_mcp')
 
 def assert_equal(expected, actual, message)
   raise "#{message}: expected #{expected.inspect}, got #{actual.inspect}" unless expected == actual
@@ -73,8 +73,8 @@ end
 
 serialization_model = FakeTransactionModel.new
 serialization_candidate = nil
-serialization_error = assert_raises(LocalMcpForSketchUp::QueueOperationError, 'non-JSON result must fail before commit') do
-  LocalMcpForSketchUp.with_atomic_model_transaction(serialization_model, 'Serialization Probe') do
+serialization_error = assert_raises(AlmaSketchupMCP::QueueOperationError, 'non-JSON result must fail before commit') do
+  AlmaSketchupMCP.with_atomic_model_transaction(serialization_model, 'Serialization Probe') do
     serialization_model.value = 'mutated'
     serialization_candidate = { 'snapshot' => { 'invalid_number' => Float::NAN } }
   end
@@ -86,8 +86,8 @@ assert_equal(true, serialization_error.details['abort_succeeded'], 'serializatio
 assert_equal(false, serialization_candidate.key?('mutation_receipt'), 'precommit failure must not receive a commit receipt')
 
 generic_failure_model = FakeTransactionModel.new
-generic_failure = assert_raises(LocalMcpForSketchUp::QueueOperationError, 'generic precommit errors must retain the existing safe envelope') do
-  LocalMcpForSketchUp.with_atomic_model_transaction(generic_failure_model, 'Generic Failure Probe') do
+generic_failure = assert_raises(AlmaSketchupMCP::QueueOperationError, 'generic precommit errors must retain the existing safe envelope') do
+  AlmaSketchupMCP.with_atomic_model_transaction(generic_failure_model, 'Generic Failure Probe') do
     generic_failure_model.value = 'mutated'
     raise 'SECRET_ENTITY SECRET_MATERIAL /private/model.skp'
   end
@@ -98,10 +98,10 @@ assert_equal(false, generic_failure.response_payload.to_s.include?('SECRET_'), '
 assert_equal([['start', 'Generic Failure Probe', true], ['abort']], generic_failure_model.events, 'generic precommit failure must preserve abort semantics')
 
 boolean_failure_model = FakeTransactionModel.new
-boolean_failure = assert_raises(LocalMcpForSketchUp::QueueOperationError, 'classified Boolean errors must retain the existing safe envelope') do
-  LocalMcpForSketchUp.with_atomic_model_transaction(boolean_failure_model, 'Boolean Failure Probe') do
+boolean_failure = assert_raises(AlmaSketchupMCP::QueueOperationError, 'classified Boolean errors must retain the existing safe envelope') do
+  AlmaSketchupMCP.with_atomic_model_transaction(boolean_failure_model, 'Boolean Failure Probe') do
     boolean_failure_model.value = 'mutated'
-    raise LocalMcpForSketchUp::BooleanOperationFailure.new('boolean_split_result_count_mismatch')
+    raise AlmaSketchupMCP::BooleanOperationFailure.new('boolean_split_result_count_mismatch')
   end
 end
 assert_equal('MUTATION_EXECUTION_FAILED', boolean_failure.code, 'classified Boolean failure must retain the stable queue error code')
@@ -113,8 +113,8 @@ assert_equal(false, boolean_failure.response_payload.to_s.include?('SECRET_'), '
 
 commit_model = FakeTransactionModel.new(commit_result: false)
 commit_candidate = nil
-commit_error = assert_raises(LocalMcpForSketchUp::QueueOperationError, 'false commit result must fail closed') do
-  LocalMcpForSketchUp.with_atomic_model_transaction(commit_model, 'Commit Probe') do
+commit_error = assert_raises(AlmaSketchupMCP::QueueOperationError, 'false commit result must fail closed') do
+  AlmaSketchupMCP.with_atomic_model_transaction(commit_model, 'Commit Probe') do
     commit_model.value = 'mutated'
     commit_candidate = { 'snapshot' => { 'value' => commit_model.value } }
   end
@@ -128,8 +128,8 @@ assert_equal(false, commit_candidate.key?('mutation_receipt'), 'unconfirmed comm
 commit_exception_model = FakeTransactionModel.new
 commit_exception_model.commit_error = RuntimeError.new('/sensitive/path must not escape')
 commit_exception_candidate = nil
-commit_exception = assert_raises(LocalMcpForSketchUp::QueueOperationError, 'commit exception must fail closed without abort') do
-  LocalMcpForSketchUp.with_atomic_model_transaction(commit_exception_model, 'Commit Exception Probe') do
+commit_exception = assert_raises(AlmaSketchupMCP::QueueOperationError, 'commit exception must fail closed without abort') do
+  AlmaSketchupMCP.with_atomic_model_transaction(commit_exception_model, 'Commit Exception Probe') do
     commit_exception_model.value = 'mutated'
     commit_exception_candidate = { 'snapshot' => { 'value' => commit_exception_model.value } }
   end
@@ -140,7 +140,7 @@ assert_equal(false, commit_exception.response_payload.to_s.include?('/sensitive/
 assert_equal(false, commit_exception_candidate.key?('mutation_receipt'), 'commit exception must not receive a commit receipt')
 
 success_model = FakeTransactionModel.new
-result = LocalMcpForSketchUp.with_atomic_model_transaction(success_model, 'Success Probe') do
+result = AlmaSketchupMCP.with_atomic_model_transaction(success_model, 'Success Probe') do
   success_model.value = 'after'
   { 'snapshot' => { 'value' => success_model.value } }
 end
@@ -153,31 +153,31 @@ assert_equal('Success Probe', result.dig('mutation_receipt', 'operation'), 'rece
 assert_equal('committed', result.dig('mutation_receipt', 'commit_state'), 'receipt must exist only for a confirmed commit')
 assert_truthy(result.dig('mutation_receipt', 'committed_at').match?(/\A\d{4}-\d{2}-\d{2}T/), 'receipt must carry a JSON-safe timestamp')
 
-original_active_model_or_new = LocalMcpForSketchUp.method(:active_model_or_new)
-original_persist_document_state = LocalMcpForSketchUp.method(:persist_document_state)
-original_snapshot = LocalMcpForSketchUp.method(:snapshot)
+original_active_model_or_new = AlmaSketchupMCP.method(:active_model_or_new)
+original_persist_document_state = AlmaSketchupMCP.method(:persist_document_state)
+original_snapshot = AlmaSketchupMCP.method(:snapshot)
 save_model = FakeTransactionModel.new(save_result: false, write_saved_file: false)
-LocalMcpForSketchUp.define_singleton_method(:active_model_or_new) { |_method_name| save_model }
-LocalMcpForSketchUp.define_singleton_method(:persist_document_state) { |_model| raise 'save_model must not write sidecar state' }
-LocalMcpForSketchUp.define_singleton_method(:snapshot) { |model| { 'value' => model.value } }
+AlmaSketchupMCP.define_singleton_method(:active_model_or_new) { |_method_name| save_model }
+AlmaSketchupMCP.define_singleton_method(:persist_document_state) { |_model| raise 'save_model must not write sidecar state' }
+AlmaSketchupMCP.define_singleton_method(:snapshot) { |model| { 'value' => model.value } }
 save_target = File.join(test_home, 'saved', 'failure.skp')
-save_error = assert_raises(LocalMcpForSketchUp::QueueOperationError, 'save false must not be reported as success') do
-  LocalMcpForSketchUp.save_model(save_target, true)
+save_error = assert_raises(AlmaSketchupMCP::QueueOperationError, 'save false must not be reported as success') do
+  AlmaSketchupMCP.save_model(save_target, true)
 end
 assert_equal(false, File.exist?(save_target), 'failed save must not fabricate an artifact')
 assert_equal(false, save_error.response_payload.to_s.include?(test_home), 'save error must not echo the sensitive target path')
 assert_equal(false, save_error.response_payload['retryable'], 'save failure must not invite blind retry')
 
 missing_file_model = FakeTransactionModel.new(save_result: true, write_saved_file: false)
-LocalMcpForSketchUp.define_singleton_method(:active_model_or_new) { |_method_name| missing_file_model }
-missing_file_error = assert_raises(LocalMcpForSketchUp::QueueOperationError, 'save true without a file must fail closed') do
-  LocalMcpForSketchUp.save_model(File.join(test_home, 'saved', 'missing.skp'), true)
+AlmaSketchupMCP.define_singleton_method(:active_model_or_new) { |_method_name| missing_file_model }
+missing_file_error = assert_raises(AlmaSketchupMCP::QueueOperationError, 'save true without a file must fail closed') do
+  AlmaSketchupMCP.save_model(File.join(test_home, 'saved', 'missing.skp'), true)
 end
 assert_equal(false, missing_file_error.response_payload.to_s.include?(test_home), 'missing-file save error must not echo the target path')
 
 copy_model = FakeTransactionModel.new
-LocalMcpForSketchUp.define_singleton_method(:active_model_or_new) { |_method_name| copy_model }
-copy_result = LocalMcpForSketchUp.save_model_version(
+AlmaSketchupMCP.define_singleton_method(:active_model_or_new) { |_method_name| copy_model }
+copy_result = AlmaSketchupMCP.save_model_version(
   'path' => File.join(test_home, 'saved', 'identity-preserved.skp'),
   'label' => 'reviewed-edit',
   'keep_session' => true
@@ -187,8 +187,8 @@ assert_equal('copy', copy_result['save_mode'], 'versioned keep-session saves mus
 assert_equal(true, copy_result['active_model_identity_preserved'], 'versioned keep-session saves must preserve active model identity')
 assert_truthy(File.file?(copy_result['file_path']), 'identity-preserving model copy must exist')
 
-existing_copy_error = assert_raises(LocalMcpForSketchUp::QueueOperationError, 'versioned save_copy must refuse an existing target') do
-  LocalMcpForSketchUp.save_model_version(
+existing_copy_error = assert_raises(AlmaSketchupMCP::QueueOperationError, 'versioned save_copy must refuse an existing target') do
+  AlmaSketchupMCP.save_model_version(
     'path' => File.join(test_home, 'saved', 'identity-preserved.skp'),
     'label' => 'reviewed-edit',
     'keep_session' => true
@@ -204,8 +204,8 @@ File.binwrite(symlink_victim, 'do-not-overwrite')
 symlink_base = File.join(test_home, 'saved', 'symlink-target.skp')
 symlink_final = File.join(test_home, 'saved', 'symlink-target-reviewed-edit.skp')
 File.symlink(symlink_victim, symlink_final)
-symlink_copy_error = assert_raises(LocalMcpForSketchUp::QueueOperationError, 'versioned save_copy must refuse a symbolic-link target') do
-  LocalMcpForSketchUp.save_model_version(
+symlink_copy_error = assert_raises(AlmaSketchupMCP::QueueOperationError, 'versioned save_copy must refuse a symbolic-link target') do
+  AlmaSketchupMCP.save_model_version(
     'path' => symlink_base,
     'label' => 'reviewed-edit',
     'keep_session' => true
@@ -220,8 +220,8 @@ ancestor_real_parent = File.join(ancestor_real_root, 'nested')
 FileUtils.mkdir_p(ancestor_real_parent)
 ancestor_link_root = File.join(test_home, 'ancestor-link-root')
 File.symlink(ancestor_real_root, ancestor_link_root)
-ancestor_symlink_error = assert_raises(LocalMcpForSketchUp::QueueOperationError, 'versioned save_copy must refuse a symlink anywhere in its ancestor chain') do
-  LocalMcpForSketchUp.save_model_version(
+ancestor_symlink_error = assert_raises(AlmaSketchupMCP::QueueOperationError, 'versioned save_copy must refuse a symlink anywhere in its ancestor chain') do
+  AlmaSketchupMCP.save_model_version(
     'path' => File.join(ancestor_link_root, 'nested', 'ancestor-target.skp'),
     'label' => 'reviewed-edit',
     'keep_session' => true
@@ -233,9 +233,9 @@ assert_equal(false, File.exist?(File.join(ancestor_real_parent, 'ancestor-target
 assert_equal([['save_copy']], copy_model.events, 'ancestor-symlink refusal must happen before SketchUp save_copy is called')
 
 copy_failure_model = FakeTransactionModel.new(save_result: false, write_saved_file: false)
-LocalMcpForSketchUp.define_singleton_method(:active_model_or_new) { |_method_name| copy_failure_model }
-copy_failure = assert_raises(LocalMcpForSketchUp::QueueOperationError, 'failed save_copy must fail closed') do
-  LocalMcpForSketchUp.save_model_version(
+AlmaSketchupMCP.define_singleton_method(:active_model_or_new) { |_method_name| copy_failure_model }
+copy_failure = assert_raises(AlmaSketchupMCP::QueueOperationError, 'failed save_copy must fail closed') do
+  AlmaSketchupMCP.save_model_version(
     'path' => File.join(test_home, 'saved', 'identity-preserved-failure.skp'),
     'label' => 'reviewed-edit',
     'keep_session' => true
@@ -244,57 +244,57 @@ end
 assert_equal('save_copy', copy_failure.details['phase'], 'copy failure must identify its persistence phase')
 assert_equal(false, copy_failure.response_payload.to_s.include?(test_home), 'copy failure must not echo the sensitive target path')
 
-LocalMcpForSketchUp.define_singleton_method(:active_model_or_new, original_active_model_or_new)
-LocalMcpForSketchUp.define_singleton_method(:persist_document_state, original_persist_document_state)
-LocalMcpForSketchUp.define_singleton_method(:snapshot, original_snapshot)
+AlmaSketchupMCP.define_singleton_method(:active_model_or_new, original_active_model_or_new)
+AlmaSketchupMCP.define_singleton_method(:persist_document_state, original_persist_document_state)
+AlmaSketchupMCP.define_singleton_method(:snapshot, original_snapshot)
 
-FileUtils.mkdir_p(LocalMcpForSketchUp::QUEUE_DIR)
-FileUtils.mkdir_p(LocalMcpForSketchUp::PROCESSING_DIR)
-FileUtils.mkdir_p(LocalMcpForSketchUp::RESPONSE_DIR)
+FileUtils.mkdir_p(AlmaSketchupMCP::QUEUE_DIR)
+FileUtils.mkdir_p(AlmaSketchupMCP::PROCESSING_DIR)
+FileUtils.mkdir_p(AlmaSketchupMCP::RESPONSE_DIR)
 dispatch_count = 0
-original_dispatch = LocalMcpForSketchUp.method(:dispatch)
-LocalMcpForSketchUp.define_singleton_method(:dispatch) do |_method, _params|
+original_dispatch = AlmaSketchupMCP.method(:dispatch)
+AlmaSketchupMCP.define_singleton_method(:dispatch) do |_method, _params|
   dispatch_count += 1
   { 'mutation_count' => dispatch_count }
 end
 
 failed_id = '123-response-failure'
-failed_request = File.join(LocalMcpForSketchUp::QUEUE_DIR, "#{failed_id}.json")
+failed_request = File.join(AlmaSketchupMCP::QUEUE_DIR, "#{failed_id}.json")
 File.write(failed_request, JSON.generate({ 'id' => failed_id, 'method' => 'build_model', 'params' => {} }))
 original_file_rename = File.method(:rename)
 File.define_singleton_method(:rename) do |source, destination|
-  if destination.start_with?("#{LocalMcpForSketchUp::RESPONSE_DIR}#{File::SEPARATOR}")
+  if destination.start_with?("#{AlmaSketchupMCP::RESPONSE_DIR}#{File::SEPARATOR}")
     raise Errno::EIO, 'injected response rename failure'
   end
   original_file_rename.call(source, destination)
 end
 
-LocalMcpForSketchUp.process_pending_requests
-failed_processing = File.join(LocalMcpForSketchUp::PROCESSING_DIR, "#{failed_id}.json")
+AlmaSketchupMCP.process_pending_requests
+failed_processing = File.join(AlmaSketchupMCP::PROCESSING_DIR, "#{failed_id}.json")
 assert_equal(1, dispatch_count, 'response persistence failure must execute the claimed request at most once')
 assert_truthy(File.file?(failed_processing), 'response persistence failure must retain the claimed request')
 assert_equal(false, File.exist?(failed_request), 'claimed request must not be returned to queue for replay')
-assert_equal([], Dir[File.join(LocalMcpForSketchUp::RESPONSE_DIR, '*.json')], 'failed response must not expose a partial final file')
-assert_equal([], Dir[File.join(LocalMcpForSketchUp::RESPONSE_DIR, '.*.tmp')], 'failed response must remove its private temporary file')
+assert_equal([], Dir[File.join(AlmaSketchupMCP::RESPONSE_DIR, '*.json')], 'failed response must not expose a partial final file')
+assert_equal([], Dir[File.join(AlmaSketchupMCP::RESPONSE_DIR, '.*.tmp')], 'failed response must remove its private temporary file')
 
 later_id = '124-must-remain-unclaimed'
-later_request = File.join(LocalMcpForSketchUp::QUEUE_DIR, "#{later_id}.json")
+later_request = File.join(AlmaSketchupMCP::QUEUE_DIR, "#{later_id}.json")
 File.write(later_request, JSON.generate({ 'id' => later_id, 'method' => 'build_model', 'params' => {} }))
-LocalMcpForSketchUp.process_pending_requests
+AlmaSketchupMCP.process_pending_requests
 assert_equal(1, dispatch_count, 'a retained claim must pause later queue execution across timer ticks')
 assert_truthy(File.file?(later_request), 'later request must remain unclaimed while an outcome is unknown')
 
 File.define_singleton_method(:rename, original_file_rename)
 File.delete(failed_processing)
-LocalMcpForSketchUp.process_pending_requests
-successful_response = File.join(LocalMcpForSketchUp::RESPONSE_DIR, "#{later_id}.json")
+AlmaSketchupMCP.process_pending_requests
+successful_response = File.join(AlmaSketchupMCP::RESPONSE_DIR, "#{later_id}.json")
 assert_equal(2, dispatch_count, 'queue may resume only after the retained claim is explicitly cleared')
 assert_truthy(File.file?(successful_response), 'successful response must be atomically visible at its final path')
-assert_equal(false, File.exist?(File.join(LocalMcpForSketchUp::PROCESSING_DIR, "#{later_id}.json")), 'processing marker must be removed only after response persistence')
+assert_equal(false, File.exist?(File.join(AlmaSketchupMCP::PROCESSING_DIR, "#{later_id}.json")), 'processing marker must be removed only after response persistence')
 assert_equal(2, JSON.parse(File.read(successful_response)).dig('result', 'mutation_count'), 'persisted response must contain the completed result')
-assert_equal([], Dir[File.join(LocalMcpForSketchUp::RESPONSE_DIR, '.*.tmp')], 'successful response must leave no temporary file')
+assert_equal([], Dir[File.join(AlmaSketchupMCP::RESPONSE_DIR, '.*.tmp')], 'successful response must leave no temporary file')
 
-LocalMcpForSketchUp.define_singleton_method(:dispatch, original_dispatch)
+AlmaSketchupMCP.define_singleton_method(:dispatch, original_dispatch)
 
 report = {
   ok: true,

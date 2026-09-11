@@ -15,58 +15,45 @@ const SCRIPT_PATH = fileURLToPath(import.meta.url);
 const REPO_ROOT = path.resolve(path.dirname(SCRIPT_PATH), '..');
 
 export const PLUGIN_FILES = Object.freeze([
-  { source: 'sketchup_plugin/local_mcp_for_sketchup.rb', target: 'local_mcp_for_sketchup.rb' },
-  { source: 'sketchup_plugin/local_mcp_for_sketchup/bridge.rb', target: 'local_mcp_for_sketchup/bridge.rb' },
-  { source: 'sketchup_plugin/local_mcp_for_sketchup/operation_registry.rb', target: 'local_mcp_for_sketchup/operation_registry.rb' },
-  { source: 'sketchup_plugin/local_mcp_for_sketchup/document_state.rb', target: 'local_mcp_for_sketchup/document_state.rb' },
-  { source: 'sketchup_plugin/local_mcp_for_sketchup/object_operations.rb', target: 'local_mcp_for_sketchup/object_operations.rb' },
-  { source: 'sketchup_plugin/local_mcp_for_sketchup/materials.rb', target: 'local_mcp_for_sketchup/materials.rb' },
-  { source: 'sketchup_plugin/local_mcp_for_sketchup/appearance_operations.rb', target: 'local_mcp_for_sketchup/appearance_operations.rb' },
-  { source: 'sketchup_plugin/local_mcp_for_sketchup/geometry_operations.rb', target: 'local_mcp_for_sketchup/geometry_operations.rb' },
-  { source: 'sketchup_plugin/local_mcp_for_sketchup/primitive_operations.rb', target: 'local_mcp_for_sketchup/primitive_operations.rb' },
-  { source: 'sketchup_plugin/local_mcp_for_sketchup/product_operations.rb', target: 'local_mcp_for_sketchup/product_operations.rb' },
-  { source: 'sketchup_plugin/local_mcp_for_sketchup/profile_operations.rb', target: 'local_mcp_for_sketchup/profile_operations.rb' },
-  { source: 'sketchup_plugin/local_mcp_for_sketchup/surface_operations.rb', target: 'local_mcp_for_sketchup/surface_operations.rb' },
-  { source: 'sketchup_plugin/local_mcp_for_sketchup/feature_operations.rb', target: 'local_mcp_for_sketchup/feature_operations.rb' },
-  { source: 'sketchup_plugin/local_mcp_for_sketchup/model_revision.rb', target: 'local_mcp_for_sketchup/model_revision.rb' },
-  { source: 'sketchup_plugin/local_mcp_for_sketchup/runtime_source_manifest.rb', target: 'local_mcp_for_sketchup/runtime_source_manifest.rb' },
-  { source: 'sketchup_plugin/local_mcp_for_sketchup/runtime_source_attestation.rb', target: 'local_mcp_for_sketchup/runtime_source_attestation.rb' },
-  { source: 'sketchup_plugin/local_mcp_for_sketchup/boolean_operations.rb', target: 'local_mcp_for_sketchup/boolean_operations.rb' },
-  { source: 'sketchup_plugin/local_mcp_for_sketchup/structural_probe.rb', target: 'local_mcp_for_sketchup/structural_probe.rb' },
-  { source: 'sketchup_plugin/local_mcp_for_sketchup/demo_operations.rb', target: 'local_mcp_for_sketchup/demo_operations.rb' },
-  { source: 'sketchup_plugin/local_mcp_for_sketchup/architecture_operations.rb', target: 'local_mcp_for_sketchup/architecture_operations.rb' },
-  { source: 'sketchup_plugin/local_mcp_for_sketchup/component_operations.rb', target: 'local_mcp_for_sketchup/component_operations.rb' },
-  { source: 'sketchup_plugin/local_mcp_for_sketchup/view_operations.rb', target: 'local_mcp_for_sketchup/view_operations.rb' },
-  { source: 'sketchup_plugin/local_mcp_for_sketchup/snapshot.rb', target: 'local_mcp_for_sketchup/snapshot.rb' }
+  { source: 'sketchup_plugin/alma_sketchup_mcp.rb', target: 'alma_sketchup_mcp.rb' },
+  { source: 'sketchup_plugin/alma_sketchup_mcp/operation_registry.rb', target: 'alma_sketchup_mcp/operation_registry.rb' },
+  { source: 'sketchup_plugin/alma_sketchup_mcp/native_asset_operations.rb', target: 'alma_sketchup_mcp/native_asset_operations.rb' },
+  { source: 'sketchup_plugin/alma_sketchup_mcp/saved_model_lifecycle.rb', target: 'alma_sketchup_mcp/saved_model_lifecycle.rb' },
+  { source: 'sketchup_plugin/alma_sketchup_mcp/document_state.rb', target: 'alma_sketchup_mcp/document_state.rb' },
+  { source: 'sketchup_plugin/alma_sketchup_mcp/object_operations.rb', target: 'alma_sketchup_mcp/object_operations.rb' },
+  { source: 'sketchup_plugin/alma_sketchup_mcp/materials.rb', target: 'alma_sketchup_mcp/materials.rb' },
+  { source: 'sketchup_plugin/alma_sketchup_mcp/environment_operations.rb', target: 'alma_sketchup_mcp/environment_operations.rb' },
+  { source: 'sketchup_plugin/alma_sketchup_mcp/creation_scope.rb', target: 'alma_sketchup_mcp/creation_scope.rb' },
+  { source: 'sketchup_plugin/alma_sketchup_mcp/geometry_evidence.rb', target: 'alma_sketchup_mcp/geometry_evidence.rb' },
+  { source: 'sketchup_plugin/alma_sketchup_mcp/geometry_regions.rb', target: 'alma_sketchup_mcp/geometry_regions.rb' },
+  { source: 'sketchup_plugin/alma_sketchup_mcp/capture_detail_views.rb', target: 'alma_sketchup_mcp/capture_detail_views.rb' },
+  { source: 'sketchup_plugin/alma_sketchup_mcp/section_operations.rb', target: 'alma_sketchup_mcp/section_operations.rb' },
+  { source: 'sketchup_plugin/alma_sketchup_mcp/appearance_operations.rb', target: 'alma_sketchup_mcp/appearance_operations.rb' },
+  { source: 'sketchup_plugin/alma_sketchup_mcp/texture_mapping.rb', target: 'alma_sketchup_mcp/texture_mapping.rb' },
+  { source: 'sketchup_plugin/alma_sketchup_mcp/geometry_operations.rb', target: 'alma_sketchup_mcp/geometry_operations.rb' },
+  { source: 'sketchup_plugin/alma_sketchup_mcp/primitive_operations.rb', target: 'alma_sketchup_mcp/primitive_operations.rb' },
+  { source: 'sketchup_plugin/alma_sketchup_mcp/product_operations.rb', target: 'alma_sketchup_mcp/product_operations.rb' },
+  { source: 'sketchup_plugin/alma_sketchup_mcp/profile_operations.rb', target: 'alma_sketchup_mcp/profile_operations.rb' },
+  { source: 'sketchup_plugin/alma_sketchup_mcp/surface_operations.rb', target: 'alma_sketchup_mcp/surface_operations.rb' },
+  { source: 'sketchup_plugin/alma_sketchup_mcp/feature_operations.rb', target: 'alma_sketchup_mcp/feature_operations.rb' },
+  { source: 'sketchup_plugin/alma_sketchup_mcp/model_revision.rb', target: 'alma_sketchup_mcp/model_revision.rb' },
+  { source: 'sketchup_plugin/alma_sketchup_mcp/runtime_source_manifest.rb', target: 'alma_sketchup_mcp/runtime_source_manifest.rb' },
+  { source: 'sketchup_plugin/alma_sketchup_mcp/runtime_source_attestation.rb', target: 'alma_sketchup_mcp/runtime_source_attestation.rb' },
+  { source: 'sketchup_plugin/alma_sketchup_mcp/boolean_operations.rb', target: 'alma_sketchup_mcp/boolean_operations.rb' },
+  { source: 'sketchup_plugin/alma_sketchup_mcp/structural_probe.rb', target: 'alma_sketchup_mcp/structural_probe.rb' },
+  { source: 'sketchup_plugin/alma_sketchup_mcp/demo_operations.rb', target: 'alma_sketchup_mcp/demo_operations.rb' },
+  { source: 'sketchup_plugin/alma_sketchup_mcp/architecture_operations.rb', target: 'alma_sketchup_mcp/architecture_operations.rb' },
+  { source: 'sketchup_plugin/alma_sketchup_mcp/component_operations.rb', target: 'alma_sketchup_mcp/component_operations.rb' },
+  { source: 'sketchup_plugin/alma_sketchup_mcp/view_operations.rb', target: 'alma_sketchup_mcp/view_operations.rb' },
+  { source: 'sketchup_plugin/alma_sketchup_mcp/snapshot.rb', target: 'alma_sketchup_mcp/snapshot.rb' }
 ].map((entry) => Object.freeze(entry)));
 
-export function defaultSketchUpPluginDir({
-  platform = process.platform,
-  homeDir = homedir(),
-  appData = process.env.APPDATA,
-  sketchUpYear = 2026
-} = {}) {
-  if (platform === 'darwin') {
-    return path.join(homeDir, `Library/Application Support/SketchUp ${sketchUpYear}/SketchUp/Plugins`);
-  }
-  if (platform === 'win32') {
-    if (!appData) {
-      throw codedError('SKETCHUP_APPDATA_REQUIRED', 'APPDATA is required to resolve the SketchUp plugin directory on Windows.');
-    }
-    return path.join(appData, 'SketchUp', `SketchUp ${sketchUpYear}`, 'SketchUp', 'Plugins');
-  }
-  throw codedError('SKETCHUP_PLATFORM_UNSUPPORTED', `Automatic SketchUp plugin installation is not supported on ${platform}.`);
-}
-
-export const DEFAULT_PLUGIN_DIR = ['darwin', 'win32'].includes(process.platform)
-  ? defaultSketchUpPluginDir()
-  : null;
+export const DEFAULT_PLUGIN_DIR = path.join(homedir(), 'Library/Application Support/SketchUp 2026/SketchUp/Plugins');
 const DEFAULT_OUTPUT_DIR = path.join(REPO_ROOT, 'out/releases');
-const MANAGED_LOADER = 'local_mcp_for_sketchup.rb';
-const MANAGED_MODULE_DIR = 'local_mcp_for_sketchup';
-const INSTALL_TRANSACTION_PREFIX = '.local-mcp-for-sketchup-install-';
-const INSTALL_LOCK_NAME = '.local-mcp-for-sketchup.install.lock';
-const REPRODUCIBLE_PACKAGE_TIME = new Date('2026-01-01T00:00:00.000Z');
+const MANAGED_LOADER = 'alma_sketchup_mcp.rb';
+const MANAGED_MODULE_DIR = 'alma_sketchup_mcp';
+const INSTALL_TRANSACTION_PREFIX = '.alma-sketchup-mcp-install-';
+const INSTALL_LOCK_NAME = '.alma-sketchup-mcp.install.lock';
 const RUBY_SYNTAX_VERIFIED_MANIFESTS = new Set();
 
 async function main() {
@@ -127,10 +114,10 @@ async function main() {
 }
 
 async function pluginVersion(sourceRoot) {
-  const source = await fs.readFile(sourceFilePath(sourceRoot, 'sketchup_plugin/local_mcp_for_sketchup.rb'), 'utf8');
+  const source = await fs.readFile(sourceFilePath(sourceRoot, 'sketchup_plugin/alma_sketchup_mcp.rb'), 'utf8');
   return parseUniquePluginVersion(
     source,
-    () => new Error('Could not find one unique PLUGIN_VERSION declaration in sketchup_plugin/local_mcp_for_sketchup.rb')
+    () => new Error('Could not find one unique PLUGIN_VERSION declaration in sketchup_plugin/alma_sketchup_mcp.rb')
   );
 }
 
@@ -330,7 +317,7 @@ async function acquireInstallLock(installRoot) {
   let initializationError = null;
   try {
     await handle.chmod(0o600);
-    await handle.writeFile(`${JSON.stringify({ version: 1, kind: 'local_mcp_for_sketchup_plugin_install_lock', token })}\n`, 'utf8');
+    await handle.writeFile(`${JSON.stringify({ version: 1, kind: 'alma_plugin_install_lock', token })}\n`, 'utf8');
     await handle.sync();
   } catch (error) {
     initializationError = error;
@@ -371,7 +358,7 @@ async function acquireInstallLock(installRoot) {
           throw codedError('PLUGIN_INSTALL_LOCK_OWNERSHIP_LOST', 'The plugin install lock ownership changed unexpectedly.');
         }
         const current = JSON.parse(await verificationHandle.readFile('utf8'));
-        if (current?.kind !== 'local_mcp_for_sketchup_plugin_install_lock' || current?.token !== token) {
+        if (current?.kind !== 'alma_plugin_install_lock' || current?.token !== token) {
           throw codedError('PLUGIN_INSTALL_LOCK_OWNERSHIP_LOST', 'The plugin install lock ownership changed unexpectedly.');
         }
       } catch (error) {
@@ -503,20 +490,18 @@ async function buildAndPublishPackage({
   await fs.mkdir(resolvedOutputDir, { recursive: true });
   await assertNoSymlinkComponents(resolvedOutputDir, { allowMissingTail: false });
   await assertPackageTargetsAbsent(collisionPaths);
-  const stageDir = await fs.mkdtemp(path.join(resolvedOutputDir, '.local-mcp-for-sketchup-package-'));
+  const stageDir = await fs.mkdtemp(path.join(resolvedOutputDir, '.alma-sketchup-mcp-package-'));
   const stagedPackagePath = path.join(stageDir, '.artifact.rbz');
   try {
     for (const file of PLUGIN_FILES) {
       const target = path.join(stageDir, file.target);
       await fs.mkdir(path.dirname(target), { recursive: true });
       await fs.copyFile(sourceFilePath(sourceRoot, file.source), target);
-      await fs.chmod(target, 0o644);
-      await fs.utimes(target, REPRODUCIBLE_PACKAGE_TIME, REPRODUCIBLE_PACKAGE_TIME);
     }
     await verifyPluginTree(path.resolve(stageDir), sourceManifest);
     const stagedVersion = await pluginVersionFromLoaderPath(path.join(stageDir, MANAGED_LOADER));
     if (stagedVersion !== version) throw packageVersionMismatch();
-    const result = spawnSync('zip', ['-qX', stagedPackagePath, ...PLUGIN_FILES.map((file) => file.target)], {
+    const result = spawnSync('zip', ['-qr', stagedPackagePath, ...PLUGIN_FILES.map((file) => file.target)], {
       cwd: stageDir,
       encoding: 'utf8'
     });
@@ -558,8 +543,8 @@ async function buildAndPublishPackage({
       package_path: packagePath,
       package_sha256: sha256(packageBytes),
       package_size_bytes: packageBytes.length,
-      artifact_class: normalizedLabel ? 'non_release_preview' : 'canonical_unsigned_candidate',
-      release_artifact: false,
+      artifact_class: normalizedLabel ? 'non_release_preview' : 'canonical_release_candidate',
+      release_artifact: normalizedLabel === null,
       overwrite_performed: false
     };
   } finally {
@@ -592,8 +577,8 @@ export async function preflightPackageTarget(version, outputDir, {
     ? resolveCanonicalReleaseArtifactSet({ outputDir: resolvedOutputDir, version: versionName })
     : null;
   const artifactStem = normalizedLabel
-    ? `local-mcp-for-sketchup-${versionName}-nonrelease-${normalizedLabel}`
-    : `local-mcp-for-sketchup-${versionName}`;
+    ? `alma-sketchup-mcp-${versionName}-nonrelease-${normalizedLabel}`
+    : `alma-sketchup-mcp-${versionName}`;
   const packagePath = canonicalArtifactSet?.rbzPath
     || path.join(resolvedOutputDir, `${artifactStem}.rbz`);
   const collisionPaths = normalizedLabel
@@ -957,7 +942,7 @@ async function inspectExistingManagedInstall(pluginRoot) {
   const module = moduleStat ? await snapshotFlatDirectory(modulePath) : null;
   if (loader) {
     const loaderSource = await fs.readFile(loaderPath, 'utf8');
-    if (!/module\s+LocalMcpForSketchUp\b/.test(loaderSource) || !/PLUGIN_VERSION\s*=/.test(loaderSource)) {
+    if (!/module\s+AlmaSketchupMCP\b/.test(loaderSource) || !/PLUGIN_VERSION\s*=/.test(loaderSource)) {
       throw codedError('PLUGIN_TARGET_OWNERSHIP_UNVERIFIED', `Refusing to overwrite an unrecognized file: ${loaderPath}`);
     }
   }
@@ -965,7 +950,7 @@ async function inspectExistingManagedInstall(pluginRoot) {
     const markerPath = path.join(modulePath, 'operation_registry.rb');
     const markerStat = await lstatOrNull(markerPath);
     if (!markerStat || markerStat.isSymbolicLink() || !markerStat.isFile()
-      || !/module\s+LocalMcpForSketchUp\b/.test(await fs.readFile(markerPath, 'utf8'))) {
+      || !/module\s+AlmaSketchupMCP\b/.test(await fs.readFile(markerPath, 'utf8'))) {
       throw codedError('PLUGIN_TARGET_OWNERSHIP_UNVERIFIED', `Refusing to overwrite an unrecognized directory: ${modulePath}`);
     }
   }
@@ -1024,7 +1009,7 @@ async function snapshotFlatDirectory(directoryPath) {
       throw codedError('PLUGIN_TARGET_TYPE_REJECTED', `Refusing unexpected non-file inside managed plugin directory: ${entry.name}`);
     }
     const entryPath = path.join(directoryPath, entry.name);
-    if (!entry.name.endsWith('.rb') || !/module\s+LocalMcpForSketchUp\b/.test(await fs.readFile(entryPath, 'utf8'))) {
+    if (!entry.name.endsWith('.rb') || !/module\s+AlmaSketchupMCP\b/.test(await fs.readFile(entryPath, 'utf8'))) {
       throw codedError('PLUGIN_TARGET_OWNERSHIP_UNVERIFIED', `Refusing to replace an unrecognized managed-directory entry: ${entry.name}`);
     }
     files[entry.name] = await snapshotRegularFile(entryPath);

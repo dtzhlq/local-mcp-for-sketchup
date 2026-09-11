@@ -6,7 +6,7 @@ export function resolveCanonicalReleaseArtifactSet({ outputDir, version }) {
   if (!outputDir) throw releaseError('RELEASE_ARTIFACT_OUTPUT_REQUIRED', 'Release artifact output directory is required.');
   const safeVersion = assertSafeSegment(version, 'version');
   const resolvedOutputDir = path.resolve(outputDir);
-  const stem = `local-mcp-for-sketchup-${safeVersion}`;
+  const stem = `alma-sketchup-mcp-${safeVersion}`;
   const artifactSet = {
     outputDir: resolvedOutputDir,
     version: safeVersion,
@@ -51,7 +51,7 @@ export async function acquireReleaseArtifactSetLock({ outputDir, version }) {
     const ownedStat = await handle.stat();
     ownership = { dev: ownedStat.dev, ino: ownedStat.ino };
     await handle.chmod(0o600);
-    await handle.writeFile(`${JSON.stringify({ version: 1, kind: 'local_mcp_for_sketchup_release_artifact_set_lock', token })}\n`, 'utf8');
+    await handle.writeFile(`${JSON.stringify({ version: 1, kind: 'alma_release_artifact_set_lock', token })}\n`, 'utf8');
     await handle.sync();
     initialized = true;
   } catch (error) {
@@ -103,7 +103,7 @@ export async function acquireReleaseArtifactSetLock({ outputDir, version }) {
           throw releaseError('RELEASE_ARTIFACT_LOCK_OWNERSHIP_LOST', 'Release artifact-set lock ownership changed unexpectedly.');
         }
         const current = JSON.parse(await verificationHandle.readFile('utf8'));
-        if (current?.token !== token || current?.kind !== 'local_mcp_for_sketchup_release_artifact_set_lock') {
+        if (current?.token !== token || current?.kind !== 'alma_release_artifact_set_lock') {
           throw releaseError('RELEASE_ARTIFACT_LOCK_OWNERSHIP_LOST', 'Release artifact-set lock ownership changed unexpectedly.');
         }
       } catch (error) {

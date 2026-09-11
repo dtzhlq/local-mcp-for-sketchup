@@ -213,9 +213,9 @@ export function adoptMockModel(model, options = {}) {
     entry.item.id = nextId;
     entry.item.adopted_id = nextId;
     entry.item.attributes ||= {};
-    entry.item.attributes.LocalMcpForSketchUp ||= {};
-    entry.item.attributes.LocalMcpForSketchUp.adopted_id = nextId;
-    entry.item.attributes.LocalMcpForSketchUp.adoption_version = ADOPTION_VERSION;
+    entry.item.attributes.AlmaSketchupMCP ||= {};
+    entry.item.attributes.AlmaSketchupMCP.adopted_id = nextId;
+    entry.item.attributes.AlmaSketchupMCP.adoption_version = ADOPTION_VERSION;
     adopted += 1;
   }
   const snapshot = createSnapshot(model);
@@ -229,6 +229,7 @@ export function adoptMockModel(model, options = {}) {
     recursive: options.recursive === true,
     recursiveIndex
   });
+  if (options.recursive_roots) report.recursive_root_paths = [...options.recursive_roots];
   if (structuralProbe.structural_groups) {
     report.structural_groups = mockStructuralGroupProbe(model, structuralProbe);
   }
@@ -602,6 +603,13 @@ function mockRecursiveIndex(model, options = {}) {
   const entries = [];
   let totalSeen = 0;
   const definitionCounts = countMockDefinitionOccurrences(model);
+  const observedRoots = new Set();
+  const includeRoot = (item, segments) => {
+    const entityPath = mockPersistentEntityPath(segments);
+    observedRoots.add(entityPath);
+    if (options.recursive_roots) push({ ...mockOccurrenceEntry(item, entityPath, null, 1), ...(item.definition ? { entity_definition_occurrence_count: definitionCounts.get(item.definition) || 0 } : {}) });
+    return !options.recursive_roots || options.recursive_roots.includes(entityPath);
+  };
   const push = (entry) => {
     totalSeen += 1;
     if (entries.length < limit) entries.push(entry);
@@ -636,12 +644,15 @@ function mockRecursiveIndex(model, options = {}) {
   };
   for (const [index, group] of (model.groups || []).entries()) {
     const stableReference = ensureMockStableReference(group, prefix, 'model', 'group', index);
-    walkGroupGeometry(group, [{ entity_type: 'group', reference: stableReference }], null, 1);
+    const segments = [{ entity_type: 'group', reference: stableReference }];
+    if (includeRoot(group, segments)) walkGroupGeometry(group, segments, null, 1);
   }
   for (const [index, instance] of (model.instances || []).entries()) {
     const stableReference = ensureMockStableReference(instance, prefix, 'model', 'component_instance', index);
-    walkDefinition(instance.definition, [{ entity_type: 'component_instance', reference: stableReference }]);
+    const segments = [{ entity_type: 'component_instance', reference: stableReference }];
+    if (includeRoot(instance, segments)) walkDefinition(instance.definition, segments);
   }
+  if (options.recursive_roots?.some(root => !observedRoots.has(root))) throw new Error('recursive_roots contains a missing top-level container');
   Object.defineProperties(entries, {
     truncated: { value: totalSeen > limit, enumerable: false },
     total_seen: { value: totalSeen, enumerable: false }
@@ -671,6 +682,7 @@ function mockOccurrenceEntry(item, entityPath, definitionName, affectedInstanceC
     material: item.material || null,
     back_material: item.back_material || null,
     classification: item.classification || null,
+    tag: item.tag || null,
     attributes: structuredClone(item.attributes || null),
     texture_transform: structuredClone(item.texture_transform || null),
     face_uvs: structuredClone(item.face_uvs || null),

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local-mcp-for-sketchup.invalid/local-mcp-for-sketchup/portal-boolean-v8-prepare-evidence-v1.schema.json",
+  "$id": "https://alma.local/sketchup-mcp-replica/portal-boolean-v8-prepare-evidence-v1.schema.json",
   "title": "Portal Boolean v8 prepare public evidence",
   "type": "object",
   "additionalProperties": false,

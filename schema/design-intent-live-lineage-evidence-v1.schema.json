@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local-mcp-for-sketchup.invalid/schemas/design-intent-live-lineage-evidence-v1.schema.json",
+  "$id": "https://alma.local/schemas/design-intent-live-lineage-evidence-v1.schema.json",
   "title": "DesignIntent Live Lineage Evidence v1",
   "type": "object",
   "additionalProperties": false,

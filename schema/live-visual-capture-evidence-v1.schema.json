@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local-mcp-for-sketchup.invalid/schema/live-visual-capture-evidence-v1.schema.json",
+  "$id": "https://alma.local/schema/live-visual-capture-evidence-v1.schema.json",
   "title": "Current-source live visual capture evidence",
   "type": "object",
   "additionalProperties": false,

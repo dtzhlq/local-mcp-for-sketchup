@@ -57,21 +57,41 @@ export function addWall(model, operation = {}) {
   const dy = wallEnd[1] - wallStart[1];
   const length = Math.hypot(dx, dy);
   if (length <= GEOMETRY_EPSILON) throw new Error(`${name}.start and end must not be identical`);
+  if (Math.abs(wallEnd[2]-wallStart[2])>GEOMETRY_EPSILON) throw new Error(`${name} wall endpoints must share an elevation`);
+  const normalizedOpenings = normalizeWallOpenings(openings, length, wallHeight, `${name}.openings`);
+  const panelOpenings = normalizedOpenings.map(o=>({name:o.name,x:o.offset,y:o.sill_height,width:o.width,height:o.height}));
   const isAxisAligned = Math.abs(dx) <= GEOMETRY_EPSILON || Math.abs(dy) <= GEOMETRY_EPSILON;
   if (!isAxisAligned) {
-    const normalizedOpenings = normalizeWallOpenings(openings, length, wallHeight, `${name}.openings`);
-    addWallSegmentMesh(model, { ...objectIdentityFields(operation), name, start: wallStart, end: wallEnd, height: wallHeight, thickness: wallThickness, material, transform: operation.transform, translation: operation.translation, qa: operation.qa, kind: 'wall' });
-    applyOpeningTopology(model.groups[model.groups.length - 1], normalizedOpenings);
+    addPanelWithOpenings(model,{...objectIdentityFields(operation),name,origin:[0,-wallThickness/2,0],plane:'xz',size:[length,wallHeight],thickness:wallThickness,openings:panelOpenings,material});
+    const group=model.groups.at(-1),angle=Math.atan2(dy,dx)*180/Math.PI;
+    const vertices=wallSegmentVertices(wallStart,wallEnd,wallHeight,wallThickness,name);
+    for (const opening of normalizedOpenings) {
+      for (const u of [opening.offset, opening.offset + opening.width]) {
+        for (const z of [opening.sill_height, opening.sill_height + opening.height]) {
+          for (const side of [-wallThickness / 2, wallThickness / 2]) vertices.push([
+            wallStart[0] + u * dx / length - side * dy / length,
+            wallStart[1] + u * dy / length + side * dx / length,
+            wallStart[2] + z
+          ]);
+        }
+      }
+    }
+    group.vertices=applyTransform(vertices,operation,name);
+    group.kind='wall';group.bounding_box=boundingBoxForVertices(group.vertices);
+    group.transform=normalizeTransform(operation,name);group.qa=normalizeQaMetadata(operation.qa);
+    group.wall_frame={origin:wallStart,rotateZ:angle,thickness_alignment:'centered'};
     return;
   }
   if (Math.abs(dx) >= Math.abs(dy)) {
     const origin = [Math.min(wallStart[0], wallEnd[0]), wallStart[1], wallStart[2]];
-    addPanelWithOpenings(model, { ...objectIdentityFields(operation), name, origin, plane: 'xz', size: [Math.abs(dx), wallHeight], thickness: wallThickness, openings, material });
+    addPanelWithOpenings(model, { ...objectIdentityFields(operation), name, origin, plane: 'xz', size: [Math.abs(dx), wallHeight], thickness: wallThickness, openings:panelOpenings, material });
   } else {
     const origin = [wallStart[0], Math.min(wallStart[1], wallEnd[1]), wallStart[2]];
-    addPanelWithOpenings(model, { ...objectIdentityFields(operation), name, origin, plane: 'yz', size: [Math.abs(dy), wallHeight], thickness: wallThickness, openings, material });
+    addPanelWithOpenings(model, { ...objectIdentityFields(operation), name, origin, plane: 'yz', size: [Math.abs(dy), wallHeight], thickness: wallThickness, openings:panelOpenings, material });
   }
-  model.groups[model.groups.length - 1].kind = 'wall';
+  const group=model.groups.at(-1);group.kind='wall';group.qa=normalizeQaMetadata(operation.qa);
+  const box=group.bounding_box,vertices=[];for(const x of [box.min[0],box.max[0]])for(const y of [box.min[1],box.max[1]])for(const z of [box.min[2],box.max[2]])vertices.push([x,y,z]);
+  group.bounding_box=boundingBoxForVertices(applyTransform(vertices,operation,name));group.transform=normalizeTransform(operation,name);
 }
 
 export function addWallPath(model, operation = {}) {
@@ -82,19 +102,11 @@ export function addWallPath(model, operation = {}) {
   assertUnique3dPoints(normalizedPath, `${name}.path`);
   const wallHeight = positiveNumber(height, undefined, `${name}.height`);
   const wallThickness = positiveNumber(thickness, undefined, `${name}.thickness`);
-  const segmentLengths = normalizedPath.slice(0, -1).map((point, index) => distanceBetween(point, normalizedPath[index + 1]));
+  const segmentLengths = normalizedPath.slice(0, -1).map((point, index) => Math.hypot(normalizedPath[index+1][0]-point[0],normalizedPath[index+1][1]-point[1]));
   const normalizedOpenings = normalizeWallPathOpenings(openings, segmentLengths, wallHeight, `${name}.openings`);
-  const vertices = [];
-  const faces = [];
-  for (let index = 0; index < normalizedPath.length - 1; index += 1) {
-    const segment = wallSegmentVertices(normalizedPath[index], normalizedPath[index + 1], wallHeight, wallThickness, `${name}.path[${index}]`);
-    const offset = vertices.length;
-    vertices.push(...segment);
-    faces.push(...cuboidFaces(offset));
-  }
+  const {vertices,faces}=buildJoinedWallMesh(normalizedPath,wallHeight,wallThickness,normalizedOpenings,name);
   addMesh(model, { ...objectIdentityFields(operation), name, vertices, faces, material, transform });
-  model.groups[model.groups.length - 1].kind = 'wall_path';
-  applyOpeningTopology(model.groups[model.groups.length - 1], normalizedOpenings);
+  const group=model.groups.at(-1);group.kind='wall_path';group.openings=normalizedOpenings;group.joinery='mitered_continuous_mesh';
 }
 
 export function addCurvedWall(model, operation = {}) {
@@ -348,7 +360,8 @@ export function addStairs(model, { name, origin = [0, 0, 0], steps, width, tread
   }
 }
 
-export function addRailing(model, { name, path, height = 900, rail_radius, railRadius, post_radius, postRadius, post_spacing, postSpacing, material, smooth = 'all' } = {}) {
+export function addRailing(model, operation = {}) {
+  const { name, path, height = 900, rail_radius, railRadius, post_radius, postRadius, post_spacing, postSpacing, material, smooth = 'all', segments = 32, rail_segments = segments, post_segments = segments, chord_tolerance_mm, max_segments } = operation;
   if (!name || typeof name !== 'string') throw new Error('railing operation requires a string name');
   if (!Array.isArray(path) || path.length < 2) throw new Error(`${name}.path must contain at least 2 [x, y, z] points`);
   const normalizedPath = path.map((point, index) => normalizeVector(point, [0, 0, 0], `${name}.path[${index}]`));
@@ -357,11 +370,11 @@ export function addRailing(model, { name, path, height = 900, rail_radius, railR
   const postRadiusValue = positiveNumber(post_radius ?? postRadius, 35, `${name}.post_radius`);
   const spacing = positiveNumber(post_spacing ?? postSpacing, 900, `${name}.post_spacing`);
   const railPath = normalizedPath.map(([x, y, z]) => [x, y, z + railHeight]);
-  addPipeBetweenPoints(model, { name: `${name}_Top_Rail`, points: railPath, radius: railRadiusValue, segments: 8, material, smooth });
+  addPipeBetweenPoints(model, { name: `${name}_Top_Rail`, points: railPath, radius: railRadiusValue, segments: rail_segments, chord_tolerance_mm, max_segments, material, smooth });
   model.groups[model.groups.length - 1].kind = 'railing_rail';
   const posts = pointsAlongPolyline(normalizedPath, spacing);
   posts.forEach(([px, py, pz], index) => {
-    addCylinder(model, { name: `${name}_Post_${index + 1}`, origin: [px, py, pz], radius: postRadiusValue, height: railHeight, segments: 8, material, smooth });
+    addCylinder(model, { name: `${name}_Post_${index + 1}`, origin: [px, py, pz], radius: postRadiusValue, height: railHeight, segments: post_segments, chord_tolerance_mm, max_segments, material, smooth });
     model.groups[model.groups.length - 1].kind = 'railing_post';
   });
 }
@@ -534,15 +547,6 @@ function addWallSegmentMesh(model, { name, start, end, height, thickness, materi
   model.groups[model.groups.length - 1].kind = kind;
 }
 
-function applyOpeningTopology(group, openings) {
-  if (!openings.length) return;
-  group.openings = openings;
-  group.faces += openings.length * 4;
-  group.edges += openings.length * 12;
-  const currentVertexCount = Array.isArray(group.vertices) ? group.vertices.length : 0;
-  group.vertices = vertexPlaceholders(currentVertexCount + openings.length * 8);
-}
-
 function wallSegmentVertices(start, end, height, thickness, fieldName) {
   const dx = end[0] - start[0];
   const dy = end[1] - start[1];
@@ -558,6 +562,51 @@ function wallSegmentVertices(start, end, height, thickness, fieldName) {
     [end[0] + nx * half, end[1] + ny * half, end[2]]
   ];
   return [...bottom, ...bottom.map(([x, y, z]) => [x, y, z + height])];
+}
+
+export function buildJoinedWallMesh(points,height,thickness,openings=[],name='wall_path') {
+  const half=thickness/2,tangents=[],normals=[],lengths=[];
+  for(let i=0;i<points.length-1;i++){
+    const a=points[i],b=points[i+1],dx=b[0]-a[0],dy=b[1]-a[1],length=Math.hypot(dx,dy);
+    if(length<=GEOMETRY_EPSILON)throw new Error(`${name} has a zero-length plan segment`);
+    if(Math.abs(b[2]-points[0][2])>GEOMETRY_EPSILON || Math.abs(a[2]-points[0][2])>GEOMETRY_EPSILON)throw new Error(`${name} wall path must share one elevation`);
+    lengths.push(length);tangents.push([dx/length,dy/length]);normals.push([-dy/length,dx/length]);
+  }
+  const offsets=points.map((_,i)=>{
+    if(i===0)return normals[0].map(x=>x*half);
+    if(i===points.length-1)return normals.at(-1).map(x=>x*half);
+    const a=normals[i-1],b=normals[i],denom=1+a[0]*b[0]+a[1]*b[1];
+    if(denom<=1e-8)throw new Error(`${name} has a reversing wall corner`);
+    const offset=a.map((x,j)=>(x+b[j])*half/denom);
+    if(Math.hypot(...offset)>thickness*4)throw new Error(`${name} wall corner exceeds the safe miter limit`);
+    return offset;
+  });
+  const left=points.map((p,i)=>[p[0]+offsets[i][0],p[1]+offsets[i][1]]),right=points.map((p,i)=>[p[0]-offsets[i][0],p[1]-offsets[i][1]]);
+  assertSimplePolygon([...left,...right.slice().reverse()],`${name}.joined_outline`);
+  const zCuts=[...new Set([0,height,...openings.flatMap(o=>[o.sill_height,o.sill_height+o.height])])].sort((a,b)=>a-b);
+  const vertices=[],index=new Map(),facesByKey=new Map();
+  const vertex=(p)=>{const key=p.map(x=>Math.round(x*1e8)).join(':');if(!index.has(key)){index.set(key,vertices.length);vertices.push(p);}return index.get(key);};
+  const addFace=(face)=>{const key=[...face].sort((a,b)=>a-b).join(':');if(facesByKey.has(key))facesByKey.delete(key);else facesByKey.set(key,face);};
+  for(let segment=0;segment<lengths.length;segment++){
+    const length=lengths[segment],start=points[segment],t=tangents[segment],n=normals[segment],segmentOpenings=openings.filter(o=>o.segment_index===segment);
+    const startShift=Math.abs(offsets[segment][0]*t[0]+offsets[segment][1]*t[1]);
+    const endShift=Math.abs(offsets[segment+1][0]*t[0]+offsets[segment+1][1]*t[1]);
+    for(const o of segmentOpenings)if(o.offset<startShift-GEOMETRY_EPSILON || o.offset+o.width>length-endShift+GEOMETRY_EPSILON)throw new Error(`${name} opening intersects a mitered corner; move it inside the clear segment`);
+    const xCuts=[...new Set([0,length,...segmentOpenings.flatMap(o=>[o.offset,o.offset+o.width])])].sort((a,b)=>a-b);
+    const cross=(s,side,z)=>{
+      const sign=side===0?1:-1;
+      if(Math.abs(s)<GEOMETRY_EPSILON)return [start[0]+sign*offsets[segment][0],start[1]+sign*offsets[segment][1],start[2]+z];
+      if(Math.abs(s-length)<GEOMETRY_EPSILON){const end=points[segment+1];return [end[0]+sign*offsets[segment+1][0],end[1]+sign*offsets[segment+1][1],end[2]+z];}
+      return [start[0]+t[0]*s+sign*n[0]*half,start[1]+t[1]*s+sign*n[1]*half,start[2]+z];
+    };
+    for(let ix=0;ix<xCuts.length-1;ix++)for(let iz=0;iz<zCuts.length-1;iz++){
+      const x0=xCuts[ix],x1=xCuts[ix+1],z0=zCuts[iz],z1=zCuts[iz+1],cx=(x0+x1)/2,cz=(z0+z1)/2;
+      if(segmentOpenings.some(o=>cx>o.offset-GEOMETRY_EPSILON&&cx<o.offset+o.width+GEOMETRY_EPSILON&&cz>o.sill_height-GEOMETRY_EPSILON&&cz<o.sill_height+o.height+GEOMETRY_EPSILON))continue;
+      const cell=[cross(x0,0,z0),cross(x0,1,z0),cross(x1,1,z0),cross(x1,0,z0),cross(x0,0,z1),cross(x0,1,z1),cross(x1,1,z1),cross(x1,0,z1)].map(vertex);
+      for(const face of cuboidFaces(0))addFace(face.map(i=>cell[i]).reverse());
+    }
+  }
+  return {vertices,faces:[...facesByKey.values()]};
 }
 
 function cuboidFaces(offset) {

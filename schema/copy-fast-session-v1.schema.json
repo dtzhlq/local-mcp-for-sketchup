@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local-mcp-for-sketchup.invalid/schema/copy-fast-session-v1.schema.json",
+  "$id": "https://alma.local/schema/copy-fast-session-v1.schema.json",
   "title": "CopyFastSessionV1",
   "type": "object",
   "additionalProperties": false,

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local-mcp-for-sketchup.invalid/schema/independent-agent-image-summary-probe-response-v1.schema.json",
+  "$id": "https://alma.local/schema/independent-agent-image-summary-probe-response-v1.schema.json",
   "title": "IndependentAgentImageSummaryProbeResponseV1",
   "type": "object",
   "additionalProperties": false,

@@ -5,9 +5,9 @@ require 'tmpdir'
 
 repo_root = File.expand_path('../..', __dir__)
 support_dir = File.join(__dir__, 'support')
-ENV['HOME'] = Dir.mktmpdir('local-mcp-model-revision-')
+ENV['HOME'] = Dir.mktmpdir('alma-model-revision-')
 $LOAD_PATH.unshift(support_dir)
-require File.join(repo_root, 'sketchup_plugin', 'local_mcp_for_sketchup', 'bridge')
+require File.join(repo_root, 'sketchup_plugin', 'alma_sketchup_mcp')
 
 FakeRevisionTransformation = Struct.new(:values) do
   def to_a
@@ -41,7 +41,7 @@ class FakeRevisionDefinition
   end
 
   def get_attribute(dictionary, key)
-    return @reference if dictionary == 'LocalMcpForSketchUp' && key == 'id'
+    return @reference if dictionary == 'AlmaSketchupMCP' && key == 'id'
 
     nil
   end
@@ -67,7 +67,7 @@ class Sketchup::Group
   end
 
   def get_attribute(dictionary, key)
-    return @reference if dictionary == 'LocalMcpForSketchUp' && key == 'id'
+    return @reference if dictionary == 'AlmaSketchupMCP' && key == 'id'
 
     nil
   end
@@ -117,7 +117,7 @@ class Sketchup::ComponentInstance
   end
 
   def get_attribute(dictionary, key)
-    return @reference if dictionary == 'LocalMcpForSketchUp' && key == 'id'
+    return @reference if dictionary == 'AlmaSketchupMCP' && key == 'id'
 
     nil
   end
@@ -179,12 +179,12 @@ root_instances = 1_000.times.map do |index|
 end
 model = FakeRevisionModel.new(root_instances)
 
-first = LocalMcpForSketchUp.session_model_revision_report(model, empty_snapshot)
-second = LocalMcpForSketchUp.session_model_revision_report(model, empty_snapshot)
+first = AlmaSketchupMCP.session_model_revision_report(model, empty_snapshot)
+second = AlmaSketchupMCP.session_model_revision_report(model, empty_snapshot)
 
 tests = 0
 tests += 1; check!(first['strategy'] == 'definition-merkle.v2', 'revision strategy must be versioned')
-tests += 1; check!(LocalMcpForSketchUp::MODEL_REVISION_UNIQUE_ENTITY_LIMIT == 1_000_000, 'default unique-entity safety limit must cover the accepted real-model corpus')
+tests += 1; check!(AlmaSketchupMCP::MODEL_REVISION_UNIQUE_ENTITY_LIMIT == 1_000_000, 'default unique-entity safety limit must cover the accepted real-model corpus')
 tests += 1; check!(first['complete'] == true, 'shared-definition graph must be completely covered')
 tests += 1; check!(first['recursive_total_seen'] == 201_000, 'logical occurrence count must expand shared definitions')
 tests += 1; check!(first['recursive_indexed'] == 201_000, 'complete coverage must bind indexed count to logical count')
@@ -200,8 +200,8 @@ reopened_a = FakeRevisionModel.new([
 reopened_b = FakeRevisionModel.new([
   Sketchup::ComponentInstance.new(persistent_id: 40_001, entity_id: 9_501, definition: reopened_definition_b, name: 'stable-instance')
 ])
-reopened_revision_a = LocalMcpForSketchUp.session_model_revision_report(reopened_a, empty_snapshot)
-reopened_revision_b = LocalMcpForSketchUp.session_model_revision_report(reopened_b, empty_snapshot)
+reopened_revision_a = AlmaSketchupMCP.session_model_revision_report(reopened_a, empty_snapshot)
+reopened_revision_b = AlmaSketchupMCP.session_model_revision_report(reopened_b, empty_snapshot)
 tests += 1; check!(reopened_revision_a['model_revision'] == reopened_revision_b['model_revision'], 'process-local entityID drift must not change a persistent-identity model revision')
 
 custom_reference_entity_a = FakeRevisionModel.new([
@@ -210,8 +210,8 @@ custom_reference_entity_a = FakeRevisionModel.new([
 custom_reference_entity_b = FakeRevisionModel.new([
   Sketchup::ComponentInstance.new(persistent_id: nil, entity_id: 9_801, reference: 'stable-custom-entity', definition: reopened_definition_b)
 ])
-custom_reference_revision_a = LocalMcpForSketchUp.session_model_revision_report(custom_reference_entity_a, empty_snapshot)
-custom_reference_revision_b = LocalMcpForSketchUp.session_model_revision_report(custom_reference_entity_b, empty_snapshot)
+custom_reference_revision_a = AlmaSketchupMCP.session_model_revision_report(custom_reference_entity_a, empty_snapshot)
+custom_reference_revision_b = AlmaSketchupMCP.session_model_revision_report(custom_reference_entity_b, empty_snapshot)
 tests += 1; check!(custom_reference_revision_a['model_revision'] == custom_reference_revision_b['model_revision'], 'process-local entityID drift must not change a custom-reference entity revision')
 
 permuted_definition_a = FakeRevisionDefinition.new(name: 'Permuted', persistent_id: 41, entities: [])
@@ -224,14 +224,14 @@ permuted_b = FakeRevisionModel.new([
   Sketchup::ComponentInstance.new(persistent_id: 41_002, entity_id: 9_602, definition: permuted_definition_b, name: 'second'),
   Sketchup::ComponentInstance.new(persistent_id: 41_001, entity_id: 9_601, definition: permuted_definition_b, name: 'first')
 ])
-permuted_revision_a = LocalMcpForSketchUp.session_model_revision_report(permuted_a, empty_snapshot)
-permuted_revision_b = LocalMcpForSketchUp.session_model_revision_report(permuted_b, empty_snapshot)
+permuted_revision_a = AlmaSketchupMCP.session_model_revision_report(permuted_a, empty_snapshot)
+permuted_revision_b = AlmaSketchupMCP.session_model_revision_report(permuted_b, empty_snapshot)
 tests += 1; check!(permuted_revision_a['model_revision'] == permuted_revision_b['model_revision'], 'enumeration order and process-local entityID drift must not change revision')
 
 missing_identity_model = FakeRevisionModel.new([
   Sketchup::ComponentInstance.new(persistent_id: nil, entity_id: 12_345, definition: reopened_definition_a, name: 'missing-stable-id')
 ])
-missing_identity = LocalMcpForSketchUp.session_model_revision_report(missing_identity_model, empty_snapshot)
+missing_identity = AlmaSketchupMCP.session_model_revision_report(missing_identity_model, empty_snapshot)
 tests += 1; check!(missing_identity['complete'] == false, 'missing persistent/custom entity identity must fail closed')
 tests += 1; check!(missing_identity['blockers'].include?('entity_identity_unavailable'), 'missing stable identity blocker must be machine-readable')
 
@@ -239,7 +239,7 @@ duplicate_reference_model = FakeRevisionModel.new([
   Sketchup::ComponentInstance.new(persistent_id: nil, entity_id: 20_001, reference: 'duplicate-ref', definition: reopened_definition_a),
   Sketchup::ComponentInstance.new(persistent_id: nil, entity_id: 20_002, reference: 'duplicate-ref', definition: reopened_definition_a)
 ])
-duplicate_reference = LocalMcpForSketchUp.session_model_revision_report(duplicate_reference_model, empty_snapshot)
+duplicate_reference = AlmaSketchupMCP.session_model_revision_report(duplicate_reference_model, empty_snapshot)
 tests += 1; check!(duplicate_reference['complete'] == false, 'duplicate fallback references must fail closed')
 tests += 1; check!(duplicate_reference['blockers'].include?('duplicate_entity_identity'), 'duplicate stable identity blocker must be machine-readable')
 
@@ -247,7 +247,7 @@ cross_type_duplicate_reference_model = FakeRevisionModel.new([
   Sketchup::ComponentInstance.new(persistent_id: nil, entity_id: 21_001, reference: 'cross-type-ref', definition: reopened_definition_a),
   Sketchup::Group.new(persistent_id: nil, entity_id: 21_002, reference: 'cross-type-ref', definition: reopened_definition_a)
 ])
-cross_type_duplicate_reference = LocalMcpForSketchUp.session_model_revision_report(cross_type_duplicate_reference_model, empty_snapshot)
+cross_type_duplicate_reference = AlmaSketchupMCP.session_model_revision_report(cross_type_duplicate_reference_model, empty_snapshot)
 tests += 1; check!(cross_type_duplicate_reference['complete'] == false, 'duplicate fallback references across entity types must fail closed')
 tests += 1; check!(cross_type_duplicate_reference['blockers'].include?('duplicate_entity_identity'), 'cross-type duplicate identity blocker must be machine-readable')
 
@@ -259,8 +259,8 @@ custom_definition_model_a = FakeRevisionModel.new([
 custom_definition_model_b = FakeRevisionModel.new([
   Sketchup::ComponentInstance.new(persistent_id: 42_001, entity_id: 9_701, definition: custom_definition_b)
 ])
-custom_definition_revision_a = LocalMcpForSketchUp.session_model_revision_report(custom_definition_model_a, empty_snapshot)
-custom_definition_revision_b = LocalMcpForSketchUp.session_model_revision_report(custom_definition_model_b, empty_snapshot)
+custom_definition_revision_a = AlmaSketchupMCP.session_model_revision_report(custom_definition_model_a, empty_snapshot)
+custom_definition_revision_b = AlmaSketchupMCP.session_model_revision_report(custom_definition_model_b, empty_snapshot)
 tests += 1; check!(custom_definition_revision_a['complete'] == true, 'unique custom definition reference must be accepted as stable identity')
 tests += 1; check!(custom_definition_revision_a['model_revision'] == custom_definition_revision_b['model_revision'], 'custom definition reference must remain stable across process-local identity drift')
 
@@ -268,7 +268,7 @@ missing_definition_identity = FakeRevisionDefinition.new(name: 'Name Is Not Iden
 missing_definition_identity_model = FakeRevisionModel.new([
   Sketchup::ComponentInstance.new(persistent_id: 43_001, definition: missing_definition_identity)
 ])
-missing_definition_identity_revision = LocalMcpForSketchUp.session_model_revision_report(missing_definition_identity_model, empty_snapshot)
+missing_definition_identity_revision = AlmaSketchupMCP.session_model_revision_report(missing_definition_identity_model, empty_snapshot)
 tests += 1; check!(missing_definition_identity_revision['complete'] == false, 'definition name alone must not be accepted as stable identity')
 tests += 1; check!(missing_definition_identity_revision['blockers'].include?('definition_identity_unavailable'), 'missing definition identity blocker must be machine-readable')
 
@@ -278,7 +278,7 @@ duplicate_definition_identity_model = FakeRevisionModel.new([
   Sketchup::ComponentInstance.new(persistent_id: 44_001, definition: duplicate_definition_a),
   Sketchup::ComponentInstance.new(persistent_id: 44_002, definition: duplicate_definition_b)
 ])
-duplicate_definition_identity_revision = LocalMcpForSketchUp.session_model_revision_report(duplicate_definition_identity_model, empty_snapshot)
+duplicate_definition_identity_revision = AlmaSketchupMCP.session_model_revision_report(duplicate_definition_identity_model, empty_snapshot)
 tests += 1; check!(duplicate_definition_identity_revision['complete'] == false, 'duplicate definition identity must fail closed')
 tests += 1; check!(duplicate_definition_identity_revision['blockers'].include?('duplicate_definition_identity'), 'duplicate definition identity blocker must be machine-readable')
 
@@ -290,7 +290,7 @@ attribute_order_b = {
   'a_dictionary' => { 'nested' => { 'a' => false, 'b' => true } },
   'z_dictionary' => { 'first' => 1, 'second' => 2 }
 }
-tests += 1; check!(LocalMcpForSketchUp.revision_json(attribute_order_a) == LocalMcpForSketchUp.revision_json(attribute_order_b), 'attribute dictionary/key enumeration order must not change canonical revision input')
+tests += 1; check!(AlmaSketchupMCP.revision_json(attribute_order_a) == AlmaSketchupMCP.revision_json(attribute_order_b), 'attribute dictionary/key enumeration order must not change canonical revision input')
 
 material_model_a = FakeRevisionModel.new([
   Sketchup::ComponentInstance.new(persistent_id: 45_001, definition: reopened_definition_a, material_name: 'Red')
@@ -298,7 +298,7 @@ material_model_a = FakeRevisionModel.new([
 material_model_b = FakeRevisionModel.new([
   Sketchup::ComponentInstance.new(persistent_id: 45_001, definition: reopened_definition_b, material_name: 'Blue')
 ])
-tests += 1; check!(LocalMcpForSketchUp.session_model_revision(material_model_a, empty_snapshot) != LocalMcpForSketchUp.session_model_revision(material_model_b, empty_snapshot), 'material changes must change model revision')
+tests += 1; check!(AlmaSketchupMCP.session_model_revision(material_model_a, empty_snapshot) != AlmaSketchupMCP.session_model_revision(material_model_b, empty_snapshot), 'material changes must change model revision')
 
 attribute_model_a = FakeRevisionModel.new([
   Sketchup::ComponentInstance.new(
@@ -321,16 +321,16 @@ attribute_model_changed = FakeRevisionModel.new([
     attributes: { 'A' => { 'enabled' => true }, 'Z' => { 'first' => 1, 'second' => 3 } }
   )
 ])
-attribute_revision_a = LocalMcpForSketchUp.session_model_revision(attribute_model_a, empty_snapshot)
-attribute_revision_b = LocalMcpForSketchUp.session_model_revision(attribute_model_b, empty_snapshot)
-attribute_revision_changed = LocalMcpForSketchUp.session_model_revision(attribute_model_changed, empty_snapshot)
+attribute_revision_a = AlmaSketchupMCP.session_model_revision(attribute_model_a, empty_snapshot)
+attribute_revision_b = AlmaSketchupMCP.session_model_revision(attribute_model_b, empty_snapshot)
+attribute_revision_changed = AlmaSketchupMCP.session_model_revision(attribute_model_changed, empty_snapshot)
 tests += 1; check!(attribute_revision_a == attribute_revision_b, 'attribute dictionary/key enumeration order must not change integrated revision')
 tests += 1; check!(attribute_revision_a != attribute_revision_changed, 'attribute value changes must change model revision')
 
 ring = [[0, 0, 0], [10, 0, 0], [10, 10, 0], [0, 10, 0]]
-canonical_ring = LocalMcpForSketchUp.revision_canonical_ring(ring)
-tests += 1; check!(LocalMcpForSketchUp.revision_canonical_ring(ring.rotate(2)) == canonical_ring, 'face loop start vertex drift must not change canonical ring')
-tests += 1; check!(LocalMcpForSketchUp.revision_canonical_ring(ring.reverse.rotate(1)) == canonical_ring, 'face loop enumeration direction drift must not change canonical ring')
+canonical_ring = AlmaSketchupMCP.revision_canonical_ring(ring)
+tests += 1; check!(AlmaSketchupMCP.revision_canonical_ring(ring.rotate(2)) == canonical_ring, 'face loop start vertex drift must not change canonical ring')
+tests += 1; check!(AlmaSketchupMCP.revision_canonical_ring(ring.reverse.rotate(1)) == canonical_ring, 'face loop enumeration direction drift must not change canonical ring')
 
 face_geometry_a = {
   'type' => 'face',
@@ -344,30 +344,47 @@ face_geometry_b = {
   'normal' => [0, 0, 1],
   'type' => 'face'
 }
-canonical_face_a = LocalMcpForSketchUp.revision_canonical_geometry_summary(face_geometry_a)
-canonical_face_b = LocalMcpForSketchUp.revision_canonical_geometry_summary(face_geometry_b)
-tests += 1; check!(LocalMcpForSketchUp.revision_json(canonical_face_a) == LocalMcpForSketchUp.revision_json(canonical_face_b), 'face hole order and loop representation drift must not change canonical geometry')
+canonical_face_a = AlmaSketchupMCP.revision_canonical_geometry_summary(face_geometry_a)
+canonical_face_b = AlmaSketchupMCP.revision_canonical_geometry_summary(face_geometry_b)
+tests += 1; check!(AlmaSketchupMCP.revision_json(canonical_face_a) == AlmaSketchupMCP.revision_json(canonical_face_b), 'face hole order and loop representation drift must not change canonical geometry')
 
 edge_forward = { 'type' => 'edge', 'endpoints' => [[0, 0, 0], [10, 20, 30]], 'length_mm' => 37.416574 }
 edge_reverse = { 'length_mm' => 37.416574, 'endpoints' => edge_forward['endpoints'].reverse, 'type' => 'edge' }
-tests += 1; check!(LocalMcpForSketchUp.revision_json(LocalMcpForSketchUp.revision_canonical_geometry_summary(edge_forward)) == LocalMcpForSketchUp.revision_json(LocalMcpForSketchUp.revision_canonical_geometry_summary(edge_reverse)), 'edge endpoint direction drift must not change canonical geometry')
-tests += 1; check!(LocalMcpForSketchUp.revision_json(LocalMcpForSketchUp.revision_canonical_geometry_summary(edge_forward)) != LocalMcpForSketchUp.revision_json(LocalMcpForSketchUp.revision_canonical_geometry_summary(edge_forward.merge('length_mm' => 40))), 'semantic geometry changes must still change canonical geometry')
+tests += 1; check!(AlmaSketchupMCP.revision_json(AlmaSketchupMCP.revision_canonical_geometry_summary(edge_forward)) == AlmaSketchupMCP.revision_json(AlmaSketchupMCP.revision_canonical_geometry_summary(edge_reverse)), 'edge endpoint direction drift must not change canonical geometry')
+tests += 1; check!(AlmaSketchupMCP.revision_json(AlmaSketchupMCP.revision_canonical_geometry_summary(edge_forward)) != AlmaSketchupMCP.revision_json(AlmaSketchupMCP.revision_canonical_geometry_summary(edge_forward.merge('length_mm' => 40))), 'semantic geometry changes must still change canonical geometry')
+
+zero_definition = FakeRevisionDefinition.new(name: 'SignedZero', persistent_id: 98701, entities: [])
+zero_matrix = [0.8660254037844387, 0.49999999999999994, 0.0, 0.0,
+               -0.49999999999999994, 0.8660254037844387, 0.0, 0.0,
+               0.0, 0.0, 1.0, 0.0, 39.37007874015748, 47.24409448818898, 0.0, 1.0]
+zero_instance = Sketchup::ComponentInstance.new(persistent_id: 98702, definition: zero_definition, transformation: FakeRevisionTransformation.new(zero_matrix.dup))
+zero_model = FakeRevisionModel.new([zero_instance])
+positive_zero_revision = AlmaSketchupMCP.session_model_revision_report(zero_model, empty_snapshot)
+zero_instance.transformation.values[2] = -0.0
+negative_zero_revision = AlmaSketchupMCP.session_model_revision_report(zero_model, empty_snapshot)
+tests += 1; check!(positive_zero_revision['complete'] && negative_zero_revision['complete'], 'signed-zero normalization does not replace complete native graph coverage')
+tests += 1; check!(positive_zero_revision['model_revision'] == negative_zero_revision['model_revision'], 'equal exact zero matrices must produce the same complete Merkle revision')
+zero_instance.transformation.values[2] = 0.0.next_float
+tests += 1; check!(AlmaSketchupMCP.session_model_revision(zero_model, empty_snapshot) != positive_zero_revision['model_revision'], 'the smallest nonzero transformation difference must still change the complete revision')
+zero_instance.transformation.values[2] = 0.0
+zero_instance.transformation.values[0] = zero_matrix[0].next_float
+tests += 1; check!(AlmaSketchupMCP.session_model_revision(zero_model, empty_snapshot) != positive_zero_revision['model_revision'], 'nonzero one-ULP transformation differences must still change the complete revision')
 
 root_instances.first.transformation = FakeRevisionTransformation.new(
   [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 25, 0, 0, 1]
 )
-changed = LocalMcpForSketchUp.session_model_revision_report(model, empty_snapshot)
+changed = AlmaSketchupMCP.session_model_revision_report(model, empty_snapshot)
 tests += 1; check!(changed['model_revision'] != first['model_revision'], 'instance transform changes must change the complete revision')
 tests += 1; check!(changed['recursive_total_seen'] == first['recursive_total_seen'], 'transform changes must not corrupt logical counts')
 
-bounded = LocalMcpForSketchUp.model_revision_merkle_graph(model, empty_snapshot, unique_entity_limit: 100)
+bounded = AlmaSketchupMCP.model_revision_merkle_graph(model, empty_snapshot, unique_entity_limit: 100)
 tests += 1; check!(bounded['complete'] == false, 'unique entity budget exhaustion must fail closed')
 tests += 1; check!(bounded['blockers'].include?('unique_entity_limit_exceeded'), 'budget blocker must be stable and machine-readable')
 
 cycle_definition = FakeRevisionDefinition.new(name: 'Cycle', persistent_id: 30, entities: [])
 cycle_definition.entities << Sketchup::ComponentInstance.new(persistent_id: 30_001, definition: cycle_definition)
 cycle_model = FakeRevisionModel.new([Sketchup::ComponentInstance.new(persistent_id: 30_002, definition: cycle_definition)])
-cycle = LocalMcpForSketchUp.model_revision_merkle_graph(cycle_model, empty_snapshot)
+cycle = AlmaSketchupMCP.model_revision_merkle_graph(cycle_model, empty_snapshot)
 tests += 1; check!(cycle['complete'] == false, 'recursive definition cycles must fail closed')
 tests += 1; check!(cycle['blockers'].include?('recursive_definition_cycle'), 'cycle blocker must be stable and machine-readable')
 
@@ -375,7 +392,7 @@ puts JSON.generate({
   ok: true,
   tests: tests,
   strategy: first['strategy'],
-  unique_entity_limit: LocalMcpForSketchUp::MODEL_REVISION_UNIQUE_ENTITY_LIMIT,
+  unique_entity_limit: AlmaSketchupMCP::MODEL_REVISION_UNIQUE_ENTITY_LIMIT,
   logical_occurrences: first['recursive_total_seen'],
   unique_entities: first['unique_entities'],
   shared_definition_expansion_materialized: false,

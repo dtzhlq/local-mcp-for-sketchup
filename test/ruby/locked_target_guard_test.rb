@@ -6,11 +6,11 @@ require 'tmpdir'
 
 repo_root = File.expand_path('../..', __dir__)
 support_dir = File.join(__dir__, 'support')
-test_home = File.realpath(Dir.mktmpdir('local-mcp-locked-target-guard-'))
+test_home = File.realpath(Dir.mktmpdir('alma-locked-target-guard-'))
 at_exit { FileUtils.rm_rf(test_home) if test_home && File.exist?(test_home) }
 ENV['HOME'] = test_home
 $LOAD_PATH.unshift(support_dir)
-require File.join(repo_root, 'sketchup_plugin', 'local_mcp_for_sketchup', 'bridge')
+require File.join(repo_root, 'sketchup_plugin', 'alma_sketchup_mcp')
 
 def assert_equal(expected, actual, message)
   raise "#{message}: expected #{expected.inspect}, got #{actual.inspect}" unless expected == actual
@@ -40,7 +40,7 @@ class LockedGuardGroup < Sketchup::Group
   end
 
   def get_attribute(dictionary, key)
-    return @id if dictionary == 'LocalMcpForSketchUp' && key == 'id'
+    return @id if dictionary == 'AlmaSketchupMCP' && key == 'id'
 
     nil
   end
@@ -107,26 +107,26 @@ mutating_operations = %w[
 
 mutating_operations.each do |op_name|
   error = assert_raises(RuntimeError, "#{op_name} must reject a locked target") do
-    LocalMcpForSketchUp.find_referenced_entity(model, { 'target_id' => '101' }, op_name)
+    AlmaSketchupMCP.find_referenced_entity(model, { 'target_id' => '101' }, op_name)
   end
   assert_truthy(error.message.include?('locked'), "#{op_name} did not report the locked-target reason")
 end
 
-resolved_unlocked = LocalMcpForSketchUp.find_referenced_entity(model, { 'target_id' => '102' }, 'transform_object')
+resolved_unlocked = AlmaSketchupMCP.find_referenced_entity(model, { 'target_id' => '102' }, 'transform_object')
 assert_equal(unlocked, resolved_unlocked, 'unlocked mutation target should resolve')
 
 invalid_error = assert_raises(RuntimeError, 'invalid targets must fail even for read-only lookup') do
-  LocalMcpForSketchUp.find_referenced_entity(model, { 'target_id' => '103' }, 'set_selection', allow_locked: true)
+  AlmaSketchupMCP.find_referenced_entity(model, { 'target_id' => '103' }, 'set_selection', allow_locked: true)
 end
 assert_truthy(invalid_error.message.include?('invalid'), 'invalid target reason was not retained')
 
-selected_locked = LocalMcpForSketchUp.find_selection_target(model, '101')
+selected_locked = AlmaSketchupMCP.find_selection_target(model, '101')
 assert_equal(locked, selected_locked, 'set_selection must retain read-only access to locked targets')
 
-checked_locked = LocalMcpForSketchUp.manifold_targets(model, { 'target_id' => '101' }, 'manifold_check')
+checked_locked = AlmaSketchupMCP.manifold_targets(model, { 'target_id' => '101' }, 'manifold_check')
 assert_equal([locked], checked_locked, 'manifold_check must retain read-only access to locked targets')
 
-repairable_non_manifold = LocalMcpForSketchUp.manifold_repair_target(
+repairable_non_manifold = AlmaSketchupMCP.manifold_repair_target(
   model,
   { 'target_id' => '102' }
 )
@@ -137,7 +137,7 @@ assert_equal(
 )
 
 repair_error = assert_raises(RuntimeError, 'manifold_repair must reject a locked target') do
-  LocalMcpForSketchUp.manifold_targets(model, { 'target_id' => '101' }, 'manifold_repair')
+  AlmaSketchupMCP.manifold_targets(model, { 'target_id' => '101' }, 'manifold_repair')
 end
 assert_truthy(repair_error.message.include?('locked'), 'manifold_repair did not report the locked-target reason')
 
@@ -150,11 +150,11 @@ path_operation = {
   'instance_policy' => 'definition_wide'
 }
 ancestor_error = assert_raises(RuntimeError, 'a locked occurrence ancestor must block nested mutation') do
-  LocalMcpForSketchUp.find_referenced_entity(path_model, path_operation, 'transform_object')
+  AlmaSketchupMCP.find_referenced_entity(path_model, path_operation, 'transform_object')
 end
 assert_truthy(ancestor_error.message.include?('ancestor[0] is locked'), 'locked ancestor path was not identified')
 
-read_only_leaf = LocalMcpForSketchUp.find_referenced_entity(
+read_only_leaf = AlmaSketchupMCP.find_referenced_entity(
   path_model,
   path_operation,
   'manifold_check',

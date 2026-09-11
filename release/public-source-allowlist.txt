@@ -3,9 +3,7 @@
 # one file to a different public path. Every path is repository-relative.
 
 .gitignore
-.github/
 README.md
-INSTALL_FOR_AGENTS.md
 LICENSE
 NOTICE
 THIRD_PARTY_NOTICES.md
@@ -14,7 +12,7 @@ CONTRIBUTING.md
 SECURITY.md
 PRIVACY.md
 TRADEMARKS.md
-package-lock.json
+release/public-package-lock.json -> package-lock.json
 release/public-package.json -> package.json
 
 bin/
@@ -23,11 +21,9 @@ schema/
 sketchup_plugin/
 
 docs/AGENT_INSTALL.md
-docs/CHINA_DISTRIBUTION.md
 docs/INSTALL.md
 docs/RELEASE_ACCEPTANCE.md
 docs/SIGNING.md
-docs/WINDOWS_ACCEPTANCE.md
 docs/tool-registry.md
 
 examples/demo-room.json
@@ -55,31 +51,26 @@ scripts/run-core-check.mjs
 scripts/validate-agent-install-manifest.mjs
 scripts/validate-mcp-capability-suite.mjs
 
-test/agent-config-merge.mjs
-test/agent-config-writer.mjs
-test/configure-client.mjs
-test/source-preview-install.mjs
 test/agent-contract.mjs
-test/agent-gateway-production-capabilities.mjs
 test/agent-gateway.mjs
-test/agent-install-entry-doc.mjs
-test/agent-install-manifest.mjs
-test/dco-check.mjs
 test/expert-compiler.mjs
 test/image-structured-mcp-adapter.mjs
 test/mcp-server.mjs
 test/operation-contract.mjs
 test/plugin-install-safety.mjs
 test/runtime-source-attestation.mjs
-test/service-bundle-plan.mjs
-test/service-bundle-reproducibility.mjs
 test/sketchup-native-classification-contract.mjs
 test/sketchup-plugin-bridge-lifecycle-contract.mjs
 test/sketchup-plugin-crash-safety.mjs
 test/sketchup-plugin-document-state.mjs
 test/sketchup-plugin-model-graph-contract.mjs
-test/sketchup-plugin-platform-paths.mjs
 test/sketchup-plugin-structural-probe-contract.mjs
 test/tool-input-validator.mjs
 test/version-contract.mjs
 test/ruby/
+release/public-package-lock.json
+docs/IMAGE_STRUCTURE.md
+test/image-structure.mjs
+scripts/image-structure-evidence.mjs
+release/legacy-compatibility-identifiers.json
+scripts/package-image-release-plugin.mjs

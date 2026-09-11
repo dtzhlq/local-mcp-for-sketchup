@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local-mcp-for-sketchup.invalid/local-mcp-for-sketchup/current-source-agent-readonly-live-report-v1.schema.json",
+  "$id": "https://alma.local/sketchup-mcp-replica/current-source-agent-readonly-live-report-v1.schema.json",
   "title": "Current-source Agent Gateway live read-only report v1",
   "type": "object",
   "additionalProperties": false,

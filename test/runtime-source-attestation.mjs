@@ -9,11 +9,11 @@ import { SketchUpBridge } from '../src/bridge.mjs';
 
 const execFileAsync = promisify(execFile);
 const [booleanSource, modelRevisionSource, rubyManifest, rubyAttestation, rubyMain, packageSource] = await Promise.all([
-  fs.readFile('sketchup_plugin/local_mcp_for_sketchup/boolean_operations.rb'),
-  fs.readFile('sketchup_plugin/local_mcp_for_sketchup/model_revision.rb'),
-  fs.readFile('sketchup_plugin/local_mcp_for_sketchup/runtime_source_manifest.rb', 'utf8'),
-  fs.readFile('sketchup_plugin/local_mcp_for_sketchup/runtime_source_attestation.rb', 'utf8'),
-  fs.readFile('sketchup_plugin/local_mcp_for_sketchup/bridge.rb', 'utf8'),
+  fs.readFile('sketchup_plugin/alma_sketchup_mcp/boolean_operations.rb'),
+  fs.readFile('sketchup_plugin/alma_sketchup_mcp/model_revision.rb'),
+  fs.readFile('sketchup_plugin/alma_sketchup_mcp/runtime_source_manifest.rb', 'utf8'),
+  fs.readFile('sketchup_plugin/alma_sketchup_mcp/runtime_source_attestation.rb', 'utf8'),
+  fs.readFile('sketchup_plugin/alma_sketchup_mcp.rb', 'utf8'),
   fs.readFile('scripts/package-sketchup-plugin.mjs', 'utf8')
 ]);
 
@@ -46,8 +46,8 @@ assert.equal(staleModelRevisionCapabilities.runtime.compatibility.ok, false, 'a 
 assert.ok(staleModelRevisionCapabilities.runtime.compatibility.issues.some((issue) =>
   issue.field === 'runtime.model_revision_source_sha256' && issue.severity === 'error'
 ));
-assert.match(rubyMain, /attest_model_revision!\([\s\S]*support_require\.call\('local_mcp_for_sketchup\/model_revision'\)/);
-assert.match(rubyMain, /attest_boolean_operations!\([\s\S]*support_require\.call\('local_mcp_for_sketchup\/boolean_operations'\)/);
+assert.match(rubyMain, /attest_model_revision!\([\s\S]*require_relative 'alma_sketchup_mcp\/model_revision'/);
+assert.match(rubyMain, /attest_boolean_operations!\([\s\S]*require_relative 'alma_sketchup_mcp\/boolean_operations'/);
 assert.match(rubyAttestation, /load_result = yield source_path/);
 assert.match(rubyAttestation, /unless load_result == true/);
 

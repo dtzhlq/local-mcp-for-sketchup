@@ -1,113 +1,16 @@
-# Installation
+# Install 0.2.0 on Apple Silicon
 
-An unsigned plugin preview is publicly available as
-`v0.1.0-rc.4.unsigned.1`. A separate source technical-preview path can install
-and configure the actual MCP stdio service when Node.js 24 is already present.
-Neither path is the final bundled-Node installer. Users who want an Agent to
-perform the bounded preview installation should start with
-[INSTALL_FOR_AGENTS.md](../INSTALL_FOR_AGENTS.md).
+Target: Apple Silicon Mac and SketchUp 2026. Node is included. The released bytes passed independent server installation, native signed-plugin installation, and three-domain creation/save/close/reopen acceptance.
 
-## Source MCP technical preview
+1. Keep the current installation and client configuration as the rollback copy.
+2. Extract `local-mcp-for-sketchup-0.2.0-darwin-arm64.tar.gz` into a new version-specific directory. Do not overlay another version.
+3. Configure the MCP client to execute `<install>/local-mcp-for-sketchup/node/bin/node` with argument `<install>/local-mcp-for-sketchup/app/src/mcp-server.mjs`. Replace both placeholders with absolute paths.
+4. Start with the default offline/mock policy. For authorized SketchUp work, the existing settings are `ALMA_SKETCHUP_AGENT_ALLOWED_RUNTIMES=mock,queue` and `ALMA_SKETCHUP_AGENT_ALLOW_QUEUE_MUTATION=1`; trusted review and fresh session checks still apply. Direct expert mutation need not be enabled.
+5. For formal acceptance, install the returned officially signed RBZ through SketchUp Extension Manager. The unsigned handoff file is not the final release plugin. Preserve the previous plugin first, and avoid loading both the compatibility `alma_sketchup_mcp.rb` entry and the new `local_mcp_for_sketchup.rb` entry simultaneously.
+6. Restart SketchUp, discover/connect through the server, and verify the loaded plugin and source capabilities. Use `docs/IMAGE_STRUCTURE.md` for the new image path.
 
-Use a fresh `main` clone from the official GitHub or Gitee repository. Do not
-reuse a modified checkout.
+The bundle was independently started with its own Node 24.18.0 and dependencies. MCP initialization, tools/list (44 tools), and an actual image_artifact/structure tools/call passed. This does not substitute for signed-plugin acceptance or save/reopen tests.
 
-```text
-npm ci --ignore-scripts
-npm audit --omit=dev --audit-level=high
-npm run source-preview:check
-npm run source-preview:configure -- --client codex
-```
+Rollback: point the MCP client back to the preserved prior server directory, restore the prior plugin through Extension Manager, restart SketchUp and reconnect. Preserve image task artifacts, source photos and user model files. Do not reset models or delete task state to roll back software.
 
-The configuration command is dry-run by default. After reviewing its absolute
-paths, append `--apply` for Codex or Cursor. Claude Desktop and unknown clients
-return a manual snippet without modifying configuration. The checker requires
-Node.js 24, an official clean `main` checkout equal to `origin/main`, a
-supported platform, and a successful 41-tool stdio handshake.
-
-This verifies the MCP service itself, not a live SketchUp queue connection.
-The unsigned plugin must also load and return a fresh queue handshake before
-claiming live SketchUp success.
-
-## Public unsigned preview
-
-The same preview RBZ is available from:
-
-- [Gitee](https://gitee.com/dtzhlq/local-mcp-for-sketchup/releases/tag/v0.1.0-rc.4.unsigned.1)
-- [GitHub](https://github.com/dtzhlq/local-mcp-for-sketchup/releases/tag/v0.1.0-rc.4.unsigned.1)
-
-File:
-`local-mcp-for-sketchup-0.1.0-rc.4-nonrelease-unsigned-preview.rbz`
-
-SHA-256:
-`4d3517ed90654bddc278cf3c099c5c240816b65dcd2e75fe15c8465dd46c398a`
-
-This preview can be downloaded and checked without cloning the repository.
-SketchUp may refuse to load it under a strict Extension Loading Policy. Do not
-lower that policy. Import it through SketchUp Extension Manager only after
-acknowledging that it is an unsigned technical preview.
-
-## Requirements
-
-- SketchUp 2026
-- macOS Apple Silicon or Windows x64
-- Node.js 24 for a source checkout
-- Ruby available to run the extension syntax checks
-
-Official release service bundles are planned to carry their own Node.js
-runtime, so end users will not need a separate Node installation.
-
-## Source review
-
-```text
-npm ci
-npm run core:check
-```
-
-To generate a locally reviewable, explicitly non-release RBZ:
-
-```text
-npm run plugin:package -- \
-  --output-dir out/previews/local-review \
-  --artifact-label local-review
-```
-
-The resulting file is unsigned. In SketchUp, open Extension Manager and choose
-Install Extension. Depending on SketchUp's loading policy, an unsigned extension
-may not load.
-
-Do not upload this preview package to a download channel. The formal release
-flow packages a clean source revision, uploads the exact RBZ to the SketchUp
-Extension Signing Portal without encryption, downloads the signed result, and
-then recalculates all checksums.
-
-Release-candidate service bundles use `--candidate` and canonical file names,
-but their embedded metadata still records `release_artifact=false` and
-`release_acceptance=false`. They become publishable only after the signed RBZ,
-platform acceptance evidence, and final manifest all bind to the same source
-commit.
-
-## Starting the MCP server from source
-
-```text
-node src/mcp-server.mjs
-```
-
-Use an absolute path to both Node and `src/mcp-server.mjs` in the MCP client
-configuration. See [AGENT_INSTALL.md](AGENT_INSTALL.md) for safe merge and
-manual fallback rules.
-
-## Uninstall
-
-Remove `local_mcp_for_sketchup.rb` and the `local_mcp_for_sketchup/` directory
-through SketchUp's extension management workflow, then remove the local service
-directory and its MCP client entry.
-
-Uninstall does not automatically remove:
-
-- user models;
-- MCP client configuration backups;
-- `~/.local-mcp-for-sketchup` local state;
-- generated evidence in a source checkout's `output/` directory.
-
-Inspect and delete those separately only when no longer needed.
+Download files and SHA256SUMS.txt from the [0.2.0 release](https://github.com/dtzhlq/local-mcp-for-sketchup/releases/tag/v0.2.0). Run `shasum -a 256 -c SHA256SUMS.txt` in the directory containing all downloaded assets, or compare the individual downloaded file with its listed hash. The archive retains its build-time candidate flags; promotion uses these exact tested bytes, with final acceptance recorded in the release manifest.

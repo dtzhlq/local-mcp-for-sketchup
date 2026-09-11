@@ -18,7 +18,7 @@ import { PRODUCT_VERSION } from '../src/version.mjs';
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const realTmpRoot = await fs.realpath(os.tmpdir());
-const testRoot = await fs.mkdtemp(path.join(realTmpRoot, 'local-mcp-plugin-install-safety-'));
+const testRoot = await fs.mkdtemp(path.join(realTmpRoot, 'alma-plugin-install-safety-'));
 let assertions = 0;
 
 try {
@@ -60,11 +60,11 @@ try {
       afterBackup() { firstBackupReached = true; }
     }
   });
-  const installLockPath = path.join(concurrentInstallRoot, '.local-mcp-for-sketchup.install.lock');
+  const installLockPath = path.join(concurrentInstallRoot, '.alma-sketchup-mcp.install.lock');
   await stageEntered.promise;
   assert.equal((await fs.lstat(installLockPath)).mode & 0o777, 0o600); assertions += 1;
   const transactionCountBeforeSecond = (await fs.readdir(concurrentInstallRoot))
-    .filter((name) => name.startsWith('.local-mcp-for-sketchup-install-')).length;
+    .filter((name) => name.startsWith('.alma-sketchup-mcp-install-')).length;
   assert.equal(firstBackupReached, false); assertions += 1;
   await assert.rejects(
     installPluginAtomic({
@@ -77,7 +77,7 @@ try {
   ); assertions += 1;
   assert.equal(secondBackupReached, false); assertions += 1;
   assert.equal(
-    (await fs.readdir(concurrentInstallRoot)).filter((name) => name.startsWith('.local-mcp-for-sketchup-install-')).length,
+    (await fs.readdir(concurrentInstallRoot)).filter((name) => name.startsWith('.alma-sketchup-mcp-install-')).length,
     transactionCountBeforeSecond
   ); assertions += 1;
   stageGate.resolve();
@@ -107,13 +107,13 @@ try {
   progress('stage failure rollback');
 
   const alternateSourceRoot = await makeAlternateSource('alternate-source');
-  await appendComment(alternateSourceRoot, 'sketchup_plugin/local_mcp_for_sketchup.rb', '# alternate loader bytes');
-  await appendComment(alternateSourceRoot, 'sketchup_plugin/local_mcp_for_sketchup/snapshot.rb', '# alternate module bytes');
+  await appendComment(alternateSourceRoot, 'sketchup_plugin/alma_sketchup_mcp.rb', '# alternate loader bytes');
+  await appendComment(alternateSourceRoot, 'sketchup_plugin/alma_sketchup_mcp/snapshot.rb', '# alternate module bytes');
   const alternateManifest = await checkSourceFiles(alternateSourceRoot);
   progress('alternate source checked');
   assert.notEqual(
-    alternateManifest['local_mcp_for_sketchup.rb'].sha256,
-    sourceManifest['local_mcp_for_sketchup.rb'].sha256
+    alternateManifest['alma_sketchup_mcp.rb'].sha256,
+    sourceManifest['alma_sketchup_mcp.rb'].sha256
   ); assertions += 1;
 
   const driftInstallRoot = await makeInstallRoot('target-drift-before-backup');
@@ -122,7 +122,7 @@ try {
     allowedPluginRoot: driftInstallRoot,
     sourceRoot: repoRoot
   });
-  const driftLoaderPath = path.join(driftInstallRoot, 'local_mcp_for_sketchup.rb');
+  const driftLoaderPath = path.join(driftInstallRoot, 'alma_sketchup_mcp.rb');
   const externallyChangedLoader = `${await fs.readFile(driftLoaderPath, 'utf8')}\n# external concurrent edit\n`;
   await assert.rejects(
     installPluginAtomic({
@@ -142,8 +142,8 @@ try {
   await assertNoTransactionDebris(driftInstallRoot); assertions += 1;
   progress('target drift preserved before backup');
   assert.notEqual(
-    alternateManifest['local_mcp_for_sketchup/snapshot.rb'].sha256,
-    sourceManifest['local_mcp_for_sketchup/snapshot.rb'].sha256
+    alternateManifest['alma_sketchup_mcp/snapshot.rb'].sha256,
+    sourceManifest['alma_sketchup_mcp/snapshot.rb'].sha256
   ); assertions += 1;
 
   await assert.rejects(
@@ -167,7 +167,7 @@ try {
     allowedPluginRoot: incompleteRollbackRoot,
     sourceRoot: repoRoot
   });
-  const oldLoaderBytes = await fs.readFile(path.join(incompleteRollbackRoot, 'local_mcp_for_sketchup.rb'));
+  const oldLoaderBytes = await fs.readFile(path.join(incompleteRollbackRoot, 'alma_sketchup_mcp.rb'));
   const rollbackBlocker = 'external blocker must not be overwritten\n';
   let incompleteRollbackError = null;
   try {
@@ -178,7 +178,7 @@ try {
       hooks: {
         afterLoaderActivated() { throw new Error('injected failure requiring rollback'); },
         async beforeRollbackRestore({ item }) {
-          if (item.name === 'local_mcp_for_sketchup.rb') {
+          if (item.name === 'alma_sketchup_mcp.rb') {
             await fs.writeFile(item.final, rollbackBlocker, { encoding: 'utf8', flag: 'wx' });
           }
         }
@@ -192,18 +192,18 @@ try {
   assert.equal(typeof incompleteRollbackError?.recovery_path, 'string'); assertions += 1;
   assert.deepEqual(incompleteRollbackError?.rollback_error_codes, ['PLUGIN_ROLLBACK_TARGET_OCCUPIED']); assertions += 1;
   assert.equal(
-    await fs.readFile(path.join(incompleteRollbackRoot, 'local_mcp_for_sketchup.rb'), 'utf8'),
+    await fs.readFile(path.join(incompleteRollbackRoot, 'alma_sketchup_mcp.rb'), 'utf8'),
     rollbackBlocker
   ); assertions += 1;
   const preservedLoaderPath = path.join(
     incompleteRollbackError.recovery_path,
     'backup',
-    'local_mcp_for_sketchup.rb'
+    'alma_sketchup_mcp.rb'
   );
   assert.deepEqual(await fs.readFile(preservedLoaderPath), oldLoaderBytes); assertions += 1;
   assert.equal((await fs.lstat(incompleteRollbackError.recovery_path)).mode & 0o777, 0o700); assertions += 1;
   assert.equal(
-    (await fs.lstat(path.join(incompleteRollbackRoot, '.local-mcp-for-sketchup.install.lock'))).mode & 0o777,
+    (await fs.lstat(path.join(incompleteRollbackRoot, '.alma-sketchup-mcp.install.lock'))).mode & 0o777,
     0o600
   ); assertions += 1;
   assert.equal(incompleteRollbackError.message.includes(rollbackBlocker.trim()), false); assertions += 1;
@@ -232,7 +232,7 @@ try {
       sourceRoot: alternateSourceRoot,
       hooks: {
         async beforePostVerify({ state }) {
-          await fs.appendFile(path.join(state.installRoot, 'local_mcp_for_sketchup', 'snapshot.rb'), '\n# post-activation tamper\n');
+          await fs.appendFile(path.join(state.installRoot, 'alma_sketchup_mcp', 'snapshot.rb'), '\n# post-activation tamper\n');
         }
       }
     });
@@ -244,7 +244,7 @@ try {
   assert.deepEqual(postActivationTamperError?.rollback_error_codes, ['PLUGIN_ROLLBACK_TARGET_CHANGED']); assertions += 1;
   assert.deepEqual(await pluginTreeManifest(installRoot), baseline); assertions += 1;
   assert.equal(
-    await pathExists(path.join(postActivationTamperError.recovery_path, 'failed-activation', 'local_mcp_for_sketchup')),
+    await pathExists(path.join(postActivationTamperError.recovery_path, 'failed-activation', 'alma_sketchup_mcp')),
     true
   ); assertions += 1;
   progress('post-activation tamper preserved for recovery');
@@ -261,15 +261,15 @@ try {
     }),
     /injected first-install activation failure/
   ); assertions += 1;
-  assert.equal(await pathExists(path.join(emptyInstallRoot, 'local_mcp_for_sketchup.rb')), false); assertions += 1;
-  assert.equal(await pathExists(path.join(emptyInstallRoot, 'local_mcp_for_sketchup')), false); assertions += 1;
+  assert.equal(await pathExists(path.join(emptyInstallRoot, 'alma_sketchup_mcp.rb')), false); assertions += 1;
+  assert.equal(await pathExists(path.join(emptyInstallRoot, 'alma_sketchup_mcp')), false); assertions += 1;
   await assertNoTransactionDebris(emptyInstallRoot); assertions += 1;
   progress('first install rollback');
 
   const outsideFile = path.join(testRoot, 'outside-sentinel.rb');
   await fs.writeFile(outsideFile, 'outside must remain unchanged\n', 'utf8');
   const targetSymlinkRoot = await makeInstallRoot('target-symlink-rejection');
-  await fs.symlink(outsideFile, path.join(targetSymlinkRoot, 'local_mcp_for_sketchup.rb'));
+  await fs.symlink(outsideFile, path.join(targetSymlinkRoot, 'alma_sketchup_mcp.rb'));
   await assert.rejects(
     installPluginAtomic({
       pluginDir: targetSymlinkRoot,
@@ -279,7 +279,7 @@ try {
     (error) => error?.code === 'PLUGIN_TARGET_SYMLINK_REJECTED'
   ); assertions += 1;
   assert.equal(await fs.readFile(outsideFile, 'utf8'), 'outside must remain unchanged\n'); assertions += 1;
-  assert.equal(await pathExists(path.join(targetSymlinkRoot, 'local_mcp_for_sketchup')), false); assertions += 1;
+  assert.equal(await pathExists(path.join(targetSymlinkRoot, 'alma_sketchup_mcp')), false); assertions += 1;
   progress('target symlink rejection');
 
   const realAliasTarget = await makeInstallRoot('real-alias-target');
@@ -311,7 +311,7 @@ try {
   progress('allowed root rejection');
 
   const unownedTargetRoot = await makeInstallRoot('unowned-target');
-  const unownedLoader = path.join(unownedTargetRoot, 'local_mcp_for_sketchup.rb');
+  const unownedLoader = path.join(unownedTargetRoot, 'alma_sketchup_mcp.rb');
   await fs.writeFile(unownedLoader, 'unrelated user file\n', 'utf8');
   await assert.rejects(
     installPluginAtomic({
@@ -322,16 +322,16 @@ try {
     (error) => error?.code === 'PLUGIN_TARGET_OWNERSHIP_UNVERIFIED'
   ); assertions += 1;
   assert.equal(await fs.readFile(unownedLoader, 'utf8'), 'unrelated user file\n'); assertions += 1;
-  assert.equal(await pathExists(path.join(unownedTargetRoot, 'local_mcp_for_sketchup')), false); assertions += 1;
+  assert.equal(await pathExists(path.join(unownedTargetRoot, 'alma_sketchup_mcp')), false); assertions += 1;
   progress('unowned loader rejection');
 
   const unownedModuleRoot = await makeInstallRoot('unowned-module-entry');
   await fs.copyFile(
-    path.join(repoRoot, 'sketchup_plugin/local_mcp_for_sketchup.rb'),
-    path.join(unownedModuleRoot, 'local_mcp_for_sketchup.rb')
+    path.join(repoRoot, 'sketchup_plugin/alma_sketchup_mcp.rb'),
+    path.join(unownedModuleRoot, 'alma_sketchup_mcp.rb')
   );
-  await fs.mkdir(path.join(unownedModuleRoot, 'local_mcp_for_sketchup'));
-  const unownedModuleEntry = path.join(unownedModuleRoot, 'local_mcp_for_sketchup', 'notes.txt');
+  await fs.mkdir(path.join(unownedModuleRoot, 'alma_sketchup_mcp'));
+  const unownedModuleEntry = path.join(unownedModuleRoot, 'alma_sketchup_mcp', 'notes.txt');
   await fs.writeFile(unownedModuleEntry, 'user-owned data\n', 'utf8');
   await assert.rejects(
     installPluginAtomic({
@@ -345,7 +345,7 @@ try {
   progress('unowned module rejection');
 
   const wrongTypeRoot = await makeInstallRoot('wrong-target-type');
-  await fs.mkdir(path.join(wrongTypeRoot, 'local_mcp_for_sketchup.rb'));
+  await fs.mkdir(path.join(wrongTypeRoot, 'alma_sketchup_mcp.rb'));
   await assert.rejects(
     installPluginAtomic({
       pluginDir: wrongTypeRoot,
@@ -354,14 +354,14 @@ try {
     }),
     (error) => error?.code === 'PLUGIN_TARGET_TYPE_REJECTED'
   ); assertions += 1;
-  assert.equal((await fs.lstat(path.join(wrongTypeRoot, 'local_mcp_for_sketchup.rb'))).isDirectory(), true); assertions += 1;
+  assert.equal((await fs.lstat(path.join(wrongTypeRoot, 'alma_sketchup_mcp.rb'))).isDirectory(), true); assertions += 1;
   progress('wrong type rejection');
 
   const symlinkSourceRoot = await makeAlternateSource('symlink-source');
-  const symlinkSourceFile = path.join(symlinkSourceRoot, 'sketchup_plugin/local_mcp_for_sketchup/snapshot.rb');
+  const symlinkSourceFile = path.join(symlinkSourceRoot, 'sketchup_plugin/alma_sketchup_mcp/snapshot.rb');
   await fs.rm(symlinkSourceFile);
   await fs.symlink(
-    path.join(repoRoot, 'sketchup_plugin/local_mcp_for_sketchup/snapshot.rb'),
+    path.join(repoRoot, 'sketchup_plugin/alma_sketchup_mcp/snapshot.rb'),
     symlinkSourceFile
   );
   const untouchedRoot = path.join(testRoot, 'source-rejection-does-not-create-target');
@@ -386,19 +386,6 @@ try {
     process.chdir(previousCwd);
   }
   progress('repository-relative canonical output');
-
-  const unsignedCandidateRoot = await makeInstallRoot('canonical-unsigned-candidate');
-  const unsignedCandidate = await packagePlugin(packageVersion, unsignedCandidateRoot, repoRoot, {
-    canonicalOutputDir: unsignedCandidateRoot
-  });
-  assert.equal(unsignedCandidate.artifact_class, 'canonical_unsigned_candidate'); assertions += 1;
-  assert.equal(unsignedCandidate.release_artifact, false); assertions += 1;
-  const repeatedUnsignedCandidateRoot = await makeInstallRoot('canonical-unsigned-candidate-repeat');
-  const repeatedUnsignedCandidate = await packagePlugin(packageVersion, repeatedUnsignedCandidateRoot, repoRoot, {
-    canonicalOutputDir: repeatedUnsignedCandidateRoot
-  });
-  assert.equal(repeatedUnsignedCandidate.package_sha256, unsignedCandidate.package_sha256); assertions += 1;
-  progress('canonical unsigned candidate is not a release artifact');
 
   const versionMismatchRoot = path.join(testRoot, 'version-mismatch-output-not-created');
   await assert.rejects(
@@ -450,25 +437,25 @@ try {
   progress('release lock ownership loss preserves foreign path');
 
   const canonicalPackageRoot = await makeInstallRoot('canonical-package-collision');
-  const canonicalPackagePath = path.join(canonicalPackageRoot, `local-mcp-for-sketchup-${packageVersion}.rbz`);
+  const canonicalPackagePath = path.join(canonicalPackageRoot, `alma-sketchup-mcp-${packageVersion}.rbz`);
   await fs.writeFile(canonicalPackagePath, 'historical signed artifact sentinel\n', 'utf8');
   await assert.rejects(
     packagePlugin(packageVersion, canonicalPackageRoot, repoRoot, { canonicalOutputDir: canonicalPackageRoot }),
     (error) => error?.code === 'PLUGIN_PACKAGE_TARGET_EXISTS'
   ); assertions += 1;
   assert.equal(await fs.readFile(canonicalPackagePath, 'utf8'), 'historical signed artifact sentinel\n'); assertions += 1;
-  assert.deepEqual((await fs.readdir(canonicalPackageRoot)).sort(), [`local-mcp-for-sketchup-${packageVersion}.rbz`]); assertions += 1;
+  assert.deepEqual((await fs.readdir(canonicalPackageRoot)).sort(), [`alma-sketchup-mcp-${packageVersion}.rbz`]); assertions += 1;
   progress('canonical package preserved');
 
   const sidecarCollisionRoot = await makeInstallRoot('sidecar-collision');
-  const sidecarPath = path.join(sidecarCollisionRoot, `local-mcp-for-sketchup-${packageVersion}.sha256`);
+  const sidecarPath = path.join(sidecarCollisionRoot, `alma-sketchup-mcp-${packageVersion}.sha256`);
   await fs.writeFile(sidecarPath, 'historical checksum sentinel\n', 'utf8');
   await assert.rejects(
     packagePlugin(packageVersion, sidecarCollisionRoot, repoRoot, { canonicalOutputDir: sidecarCollisionRoot }),
     (error) => error?.code === 'PLUGIN_PACKAGE_TARGET_EXISTS'
   ); assertions += 1;
   assert.equal(await fs.readFile(sidecarPath, 'utf8'), 'historical checksum sentinel\n'); assertions += 1;
-  assert.equal(await pathExists(path.join(sidecarCollisionRoot, `local-mcp-for-sketchup-${packageVersion}.rbz`)), false); assertions += 1;
+  assert.equal(await pathExists(path.join(sidecarCollisionRoot, `alma-sketchup-mcp-${packageVersion}.rbz`)), false); assertions += 1;
   progress('sidecar preserved');
 
   const manifestCollisionRoot = await makeInstallRoot('release-manifest-collision');
@@ -479,7 +466,7 @@ try {
     (error) => error?.code === 'PLUGIN_PACKAGE_TARGET_EXISTS'
   ); assertions += 1;
   assert.equal(await fs.readFile(releaseManifestPath, 'utf8'), '{"signed":true}\n'); assertions += 1;
-  assert.equal(await pathExists(path.join(manifestCollisionRoot, `local-mcp-for-sketchup-${packageVersion}.rbz`)), false); assertions += 1;
+  assert.equal(await pathExists(path.join(manifestCollisionRoot, `alma-sketchup-mcp-${packageVersion}.rbz`)), false); assertions += 1;
   progress('release manifest preserved');
 
   const unlabeledPreviewRoot = path.join(testRoot, 'unlabeled-preview-not-created');
@@ -496,7 +483,7 @@ try {
   const artifactLabel = 'unique-test';
   const labeledPackagePath = path.join(
     labeledPreviewRoot,
-    `local-mcp-for-sketchup-${packageVersion}-nonrelease-${artifactLabel}.rbz`
+    `alma-sketchup-mcp-${packageVersion}-nonrelease-${artifactLabel}.rbz`
   );
   await fs.writeFile(labeledPackagePath, 'existing non-release artifact sentinel\n', 'utf8');
   await assert.rejects(
@@ -586,8 +573,8 @@ async function pluginTreeManifest(pluginRoot) {
 
 async function assertNoTransactionDebris(pluginRoot) {
   const names = await fs.readdir(pluginRoot);
-  assert.deepEqual(names.filter((name) => name.startsWith('.local-mcp-for-sketchup-install-')), []);
-  assert.equal(names.includes('.local-mcp-for-sketchup.install.lock'), false);
+  assert.deepEqual(names.filter((name) => name.startsWith('.alma-sketchup-mcp-install-')), []);
+  assert.equal(names.includes('.alma-sketchup-mcp.install.lock'), false);
 }
 
 async function pathExists(candidate) {
@@ -601,7 +588,7 @@ async function pathExists(candidate) {
 }
 
 function progress(message) {
-  if (process.env.LOCAL_MCP_FOR_SKETCHUP_PLUGIN_TEST_PROGRESS === '1') process.stderr.write(`[plugin-install-safety] ${message}\n`);
+  if (process.env.ALMA_PLUGIN_TEST_PROGRESS === '1') process.stderr.write(`[plugin-install-safety] ${message}\n`);
 }
 
 function deferred() {

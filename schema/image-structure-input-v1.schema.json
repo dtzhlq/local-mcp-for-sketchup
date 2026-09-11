@@ -1,0 +1,120 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Image structure input v1",
+  "type": "object",
+  "required": [
+    "action"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "action": {
+      "const": "structure"
+    },
+    "domain": {
+      "enum": [
+        "building",
+        "interior",
+        "product"
+      ]
+    },
+    "goal": {
+      "enum": [
+        "understanding",
+        "complete_model"
+      ]
+    },
+    "image_handle": {
+      "type": "string",
+      "pattern": "^image-artifact:sha256:[0-9a-f]{64}$"
+    },
+    "source_understanding": {
+      "type": "object",
+      "required": [
+        "task_id",
+        "artifact_handle",
+        "content_hash"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "task_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "artifact_handle": {
+          "type": "string",
+          "minLength": 1
+        },
+        "content_hash": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "helpers": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "lines",
+          "contours",
+          "boundaries"
+        ]
+      }
+    },
+    "scale_mode": {
+      "enum": [
+        "relative",
+        "known"
+      ]
+    },
+    "scale_reference": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "observations": {
+      "type": "array",
+      "maxItems": 1500,
+      "items": {
+        "type": "object",
+        "required": [
+          "instance_id",
+          "role",
+          "evidence"
+        ],
+        "properties": {
+          "instance_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "role": {
+            "type": "string",
+            "minLength": 1
+          },
+          "evidence": {
+            "type": "object"
+          },
+          "parameters": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "part_graph": {
+      "type": "object"
+    },
+    "assumptions": {
+      "type": "array",
+      "maxItems": 5000,
+      "items": {
+        "type": "object"
+      }
+    },
+    "unknowns": {
+      "type": "array",
+      "maxItems": 500
+    }
+  }
+}

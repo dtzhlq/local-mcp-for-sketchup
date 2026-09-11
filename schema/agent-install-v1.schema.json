@@ -18,29 +18,66 @@
     "acceptance"
   ],
   "properties": {
-    "schema_version": { "const": "agent-install.v1" },
-    "status": { "enum": ["draft", "release"] },
+    "schema_version": {
+      "const": "agent-install.v1"
+    },
+    "status": {
+      "enum": [
+        "draft",
+        "release"
+      ]
+    },
     "product": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["name", "version", "channel", "server_id", "license", "tool_count"],
+      "required": [
+        "name",
+        "version",
+        "channel",
+        "server_id",
+        "license",
+        "tool_count"
+      ],
       "properties": {
-        "name": { "const": "Local MCP for SketchUp" },
-        "version": { "type": "string", "pattern": "^0\\.1\\.0-rc\\.[0-9]+$" },
-        "channel": { "const": "technical-preview" },
-        "server_id": { "const": "local-mcp-for-sketchup" },
-        "license": { "const": "Apache-2.0" },
-        "tool_count": { "const": 41 }
+        "name": {
+          "const": "Local MCP for SketchUp"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^0\\.2\\.0$"
+        },
+        "channel": {
+          "const": "stable"
+        },
+        "server_id": {
+          "const": "local-mcp-for-sketchup"
+        },
+        "license": {
+          "const": "Apache-2.0"
+        },
+        "tool_count": {
+          "const": 44
+        }
       }
     },
     "publisher": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["copyright_holder", "support_email", "independent_project"],
+      "required": [
+        "copyright_holder",
+        "support_email",
+        "independent_project"
+      ],
       "properties": {
-        "copyright_holder": { "const": "zhanglinqi" },
-        "support_email": { "const": "dtzhlq@126.com" },
-        "independent_project": { "const": true }
+        "copyright_holder": {
+          "const": "zhanglinqi"
+        },
+        "support_email": {
+          "const": "dtzhlq@126.com"
+        },
+        "independent_project": {
+          "const": true
+        }
       }
     },
     "runtime_policy": {
@@ -53,42 +90,86 @@
         "mandatory_network"
       ],
       "properties": {
-        "offline_after_install": { "const": true },
-        "telemetry": { "const": false },
-        "runtime_license_check": { "const": false },
-        "mandatory_network": { "const": false }
+        "offline_after_install": {
+          "const": true
+        },
+        "telemetry": {
+          "const": false
+        },
+        "runtime_license_check": {
+          "const": false
+        },
+        "mandatory_network": {
+          "const": false
+        }
       }
     },
     "source": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["canonical_repository", "commit", "tag", "public_tree_sha256"],
+      "required": [
+        "canonical_repository",
+        "commit",
+        "tag",
+        "public_tree_sha256"
+      ],
       "properties": {
-        "canonical_repository": { "type": "string", "format": "uri", "pattern": "^https://github\\.com/" },
-        "commit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
-        "tag": { "type": "string", "pattern": "^v0\\.1\\.0-rc\\.[0-9]+$" },
-        "public_tree_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+        "canonical_repository": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https://github\\.com/"
+        },
+        "commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "tag": {
+          "type": "string",
+          "pattern": "^v0\\.2\\.0$"
+        },
+        "public_tree_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
       }
     },
     "manifest_delivery": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["immutable_url", "sha256_published_separately"],
+      "required": [
+        "immutable_url",
+        "sha256_published_separately"
+      ],
       "properties": {
-        "immutable_url": { "type": "string", "format": "uri", "pattern": "^https://" },
-        "sha256_published_separately": { "const": true },
-        "signature_url": { "type": "string", "format": "uri", "pattern": "^https://" }
+        "immutable_url": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https://"
+        },
+        "sha256_published_separately": {
+          "const": true
+        },
+        "signature_url": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https://"
+        }
       }
     },
     "platforms": {
       "type": "array",
-      "minItems": 2,
-      "items": { "$ref": "#/$defs/platform" }
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/platform"
+      }
     },
     "client_configuration": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["known_clients", "unknown_clients"],
+      "required": [
+        "known_clients",
+        "unknown_clients"
+      ],
       "properties": {
         "known_clients": {
           "type": "array",
@@ -96,23 +177,53 @@
           "items": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["id", "mode", "conflict_policy", "backup_required"],
+            "required": [
+              "id",
+              "mode",
+              "conflict_policy",
+              "backup_required"
+            ],
             "properties": {
-              "id": { "enum": ["codex", "claude-desktop", "cursor"] },
-              "mode": { "enum": ["safe-merge", "manual-or-dxt"] },
-              "conflict_policy": { "const": "refuse-unknown-existing-entry" },
-              "backup_required": { "const": true }
+              "id": {
+                "enum": [
+                  "codex",
+                  "claude-desktop",
+                  "cursor"
+                ]
+              },
+              "mode": {
+                "enum": [
+                  "safe-merge",
+                  "manual-or-dxt"
+                ]
+              },
+              "conflict_policy": {
+                "const": "refuse-unknown-existing-entry"
+              },
+              "backup_required": {
+                "const": true
+              }
             }
           }
         },
         "unknown_clients": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["mode", "emit_stdio_snippet", "modify_configuration"],
+          "required": [
+            "mode",
+            "emit_stdio_snippet",
+            "modify_configuration"
+          ],
           "properties": {
-            "mode": { "const": "manual" },
-            "emit_stdio_snippet": { "const": true },
-            "modify_configuration": { "const": false }
+            "mode": {
+              "const": "manual"
+            },
+            "emit_stdio_snippet": {
+              "const": true
+            },
+            "modify_configuration": {
+              "const": false
+            }
           }
         }
       }
@@ -130,23 +241,43 @@
         "trigger": {
           "type": "array",
           "minItems": 1,
-          "items": { "enum": ["permission-denied", "config-conflict", "unsupported-client"] }
+          "items": {
+            "enum": [
+              "permission-denied",
+              "config-conflict",
+              "unsupported-client"
+            ]
+          }
         },
-        "verify_sha256": { "const": true },
-        "rbz_install_method": { "const": "SketchUp Extension Manager" },
-        "preserve_existing_configuration": { "const": true }
+        "verify_sha256": {
+          "const": true
+        },
+        "rbz_install_method": {
+          "const": "SketchUp Extension Manager"
+        },
+        "preserve_existing_configuration": {
+          "const": true
+        }
       }
     },
     "acceptance": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["release_acceptance", "core_gate", "platforms"],
+      "required": [
+        "release_acceptance",
+        "core_gate",
+        "platforms"
+      ],
       "properties": {
-        "release_acceptance": { "type": "boolean" },
-        "core_gate": { "$ref": "#/$defs/evidence" },
+        "release_acceptance": {
+          "type": "boolean"
+        },
+        "core_gate": {
+          "$ref": "#/$defs/evidence"
+        },
         "platforms": {
           "type": "array",
-          "minItems": 2,
+          "minItems": 1,
           "items": {
             "type": "object",
             "additionalProperties": false,
@@ -159,12 +290,27 @@
               "evidence"
             ],
             "properties": {
-              "id": { "enum": ["darwin-arm64-sketchup-2026", "win32-x64-sketchup-2026"] },
-              "live_sketchup_2026": { "type": "boolean" },
-              "signed_rbz_loaded": { "type": "boolean" },
-              "save_close_reopen_verified": { "type": "boolean" },
-              "offline_after_install_verified": { "type": "boolean" },
-              "evidence": { "$ref": "#/$defs/evidence" }
+              "id": {
+                "enum": [
+                  "darwin-arm64-sketchup-2026",
+                  "win32-x64-sketchup-2026"
+                ]
+              },
+              "live_sketchup_2026": {
+                "type": "boolean"
+              },
+              "signed_rbz_loaded": {
+                "type": "boolean"
+              },
+              "save_close_reopen_verified": {
+                "type": "boolean"
+              },
+              "offline_after_install_verified": {
+                "type": "boolean"
+              },
+              "evidence": {
+                "$ref": "#/$defs/evidence"
+              }
             }
           }
         }
@@ -175,36 +321,91 @@
     "evidence": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["url", "sha256"],
+      "required": [
+        "url",
+        "sha256"
+      ],
       "properties": {
-        "url": { "type": "string", "format": "uri", "pattern": "^https://" },
-        "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https://"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
       }
     },
     "artifact": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["file_name", "url", "sha256", "size_bytes", "media_type"],
+      "required": [
+        "file_name",
+        "url",
+        "sha256",
+        "size_bytes",
+        "media_type"
+      ],
       "properties": {
-        "file_name": { "type": "string", "minLength": 1 },
-        "url": { "type": "string", "format": "uri", "pattern": "^https://" },
-        "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
-        "size_bytes": { "type": "integer", "minimum": 1 },
-        "media_type": { "type": "string", "minLength": 1 },
-        "inventory_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
-        "sketchup_officially_signed": { "type": "boolean" },
-        "encrypted": { "type": "boolean" }
+        "file_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https://"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "size_bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "inventory_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "sketchup_officially_signed": {
+          "type": "boolean"
+        },
+        "encrypted": {
+          "type": "boolean"
+        }
       }
     },
     "upstreamNode": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["version", "archive_url", "archive_sha256", "license"],
+      "required": [
+        "version",
+        "archive_url",
+        "archive_sha256",
+        "license"
+      ],
       "properties": {
-        "version": { "const": "24.18.0" },
-        "archive_url": { "type": "string", "format": "uri", "pattern": "^https://nodejs\\.org/dist/" },
-        "archive_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
-        "license": { "const": "MIT" }
+        "version": {
+          "const": "24.18.0"
+        },
+        "archive_url": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https://nodejs\\.org/dist/"
+        },
+        "archive_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "license": {
+          "const": "MIT"
+        }
       }
     },
     "platform": {
@@ -220,13 +421,36 @@
         "bundled_node"
       ],
       "properties": {
-        "id": { "enum": ["darwin-arm64-sketchup-2026", "win32-x64-sketchup-2026"] },
-        "os": { "enum": ["darwin", "win32"] },
-        "arch": { "enum": ["arm64", "x64"] },
-        "sketchup_major": { "const": 2026 },
-        "service_bundle": { "$ref": "#/$defs/artifact" },
-        "rbz": { "$ref": "#/$defs/artifact" },
-        "bundled_node": { "$ref": "#/$defs/upstreamNode" }
+        "id": {
+          "enum": [
+            "darwin-arm64-sketchup-2026",
+            "win32-x64-sketchup-2026"
+          ]
+        },
+        "os": {
+          "enum": [
+            "darwin",
+            "win32"
+          ]
+        },
+        "arch": {
+          "enum": [
+            "arm64",
+            "x64"
+          ]
+        },
+        "sketchup_major": {
+          "const": 2026
+        },
+        "service_bundle": {
+          "$ref": "#/$defs/artifact"
+        },
+        "rbz": {
+          "$ref": "#/$defs/artifact"
+        },
+        "bundled_node": {
+          "$ref": "#/$defs/upstreamNode"
+        }
       }
     }
   }

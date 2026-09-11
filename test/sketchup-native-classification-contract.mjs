@@ -2,10 +2,10 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 
 const [mainSource, snapshotSource, geometrySource, revisionSource] = await Promise.all([
-  fs.readFile('sketchup_plugin/local_mcp_for_sketchup/bridge.rb', 'utf8'),
-  fs.readFile('sketchup_plugin/local_mcp_for_sketchup/snapshot.rb', 'utf8'),
-  fs.readFile('sketchup_plugin/local_mcp_for_sketchup/geometry_operations.rb', 'utf8'),
-  fs.readFile('sketchup_plugin/local_mcp_for_sketchup/model_revision.rb', 'utf8')
+  fs.readFile('sketchup_plugin/alma_sketchup_mcp.rb', 'utf8'),
+  fs.readFile('sketchup_plugin/alma_sketchup_mcp/snapshot.rb', 'utf8'),
+  fs.readFile('sketchup_plugin/alma_sketchup_mcp/geometry_operations.rb', 'utf8'),
+  fs.readFile('sketchup_plugin/alma_sketchup_mcp/model_revision.rb', 'utf8')
 ]);
 
 const catalog = methodBody(geometrySource, 'classification_schema_catalog', 'def native_definition_classification_summary');

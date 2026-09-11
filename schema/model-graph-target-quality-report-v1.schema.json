@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local-mcp-for-sketchup.invalid/schema/model-graph-target-quality-report-v1.schema.json",
+  "$id": "https://alma.local/schema/model-graph-target-quality-report-v1.schema.json",
   "title": "ModelGraph target-quality report v1",
   "type": "object",
   "additionalProperties": false,

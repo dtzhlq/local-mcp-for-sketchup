@@ -7,13 +7,14 @@ import { AGENT_GATEWAY_TOOL_NAMES, EXPERT_TOOL_NAMES, SESSION_CONTRACT_TOOL_NAME
 import { PRODUCT_VERSION } from '../src/version.mjs';
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const testOutputRoot = path.resolve(process.env.ALMA_SKETCHUP_TEST_OUTPUT_DIR || path.join(repoRoot, 'output'));
 const pythonSdkSource = await fs.readFile(path.join(repoRoot, 'examples/python-sdk-facade-fixture.py'), 'utf8');
-const mcpMockSessionPath = path.join(repoRoot, 'output', 'test-mcp-server-session.json');
+const mcpMockSessionPath = process.env.ALMA_SKETCHUP_MOCK_SESSION_PATH || path.join(repoRoot, 'output', 'test-mcp-server-session.json');
 await fs.rm(mcpMockSessionPath, { force: true });
 await fs.rm(`${mcpMockSessionPath}.lock`, { force: true });
 const server = spawn(process.execPath, [path.join(repoRoot, 'src/mcp-server.mjs')], {
   cwd: repoRoot,
-  env: { ...process.env, LOCAL_MCP_FOR_SKETCHUP_ENABLE_RUBY_EXPERT: '', LOCAL_MCP_FOR_SKETCHUP_MOCK_SESSION_PATH: mcpMockSessionPath },
+  env: { ...process.env, ALMA_SKETCHUP_ENABLE_RUBY_EXPERT: '', ALMA_SKETCHUP_MOCK_SESSION_PATH: mcpMockSessionPath },
   stdio: ['pipe', 'pipe', 'pipe']
 });
 
@@ -44,8 +45,8 @@ try {
   const list = await request({ id: 1, method: 'tools/list' });
   const toolNames = list.result.tools.map((tool) => tool.name);
   const registryToolMap = new Map(list.result.tools.map((tool) => [tool.name, tool]));
-  assert.equal(toolNames.length, 41, 'MCP tools/list should expose 36 expert tools, 4 Agent Gateway tools, and the fresh handshake tool');
-  assert.equal(EXPERT_TOOL_NAMES.length, 36, 'the original 36-tool expert surface must remain available');
+  assert.equal(toolNames.length, 44, 'MCP tools/list includes assets, detail capture and native region inspection');
+  assert.equal(EXPERT_TOOL_NAMES.length, 39, 'the original expert surface remains available with three detail tools');
   assert.equal(AGENT_GATEWAY_TOOL_NAMES.length, 4);
   assert.deepEqual(SESSION_CONTRACT_TOOL_NAMES, ['create_queue_handshake']);
   assert.deepEqual(toolNames, listToolNames(), 'stdio MCP must expose the shared tool registry without drift');
@@ -311,7 +312,7 @@ try {
   assert.equal(selectionGeometry.entities.length, 1);
   assert.equal(selectionGeometry.entities[0].geometry.source, 'bounding_box_approximation');
   assert.ok(selectionGeometry.uncertainties.some((item) => item.type === 'geometry.bbox_only'));
-  const intentDir = path.join(repoRoot, 'output', 'test-mcp-intent');
+  const intentDir = path.join(testOutputRoot, 'test-mcp-intent');
   await fs.rm(intentDir, { recursive: true, force: true });
   const plannedIntent = await callTool('plan_modification_intent', {
     runtime: 'mock',
@@ -335,7 +336,7 @@ try {
   assert.equal(resolvedPanel.ok, true);
   assert.equal(resolvedPanel.selected_targets[0].id, 'mcp-api-panel');
 
-  const iterationDir = path.join(repoRoot, 'output', 'test-mcp-iteration');
+  const iterationDir = path.join(testOutputRoot, 'test-mcp-iteration');
   await fs.rm(iterationDir, { recursive: true, force: true });
   const iterationPatch = JSON.stringify({
     version: 1,
@@ -371,7 +372,7 @@ try {
   await fs.access(iteration.artifacts.after_snapshot);
   await fs.access(iteration.artifacts.snapshot_diff);
 
-  const intentIterationDir = path.join(repoRoot, 'output', 'test-mcp-iteration-from-intent');
+  const intentIterationDir = path.join(testOutputRoot, 'test-mcp-iteration-from-intent');
   await fs.rm(intentIterationDir, { recursive: true, force: true });
   const intentIteration = await callTool('iterate_model', {
     intent: plannedIntent,
@@ -395,7 +396,7 @@ try {
   const blockedIntentIteration = await callTool('iterate_model', {
     intent: blockedIntent,
     runtime: 'mock',
-    output_dir: path.join(repoRoot, 'output', 'test-mcp-blocked-intent-iteration'),
+    output_dir: path.join(testOutputRoot, 'test-mcp-blocked-intent-iteration'),
     validate_model: false,
     save_model: false
   });
@@ -406,7 +407,7 @@ try {
   assert.equal(blockedPython.blocked, true);
   assert.equal(blockedPython.executed, false);
 
-  const reportDir = path.join(repoRoot, 'output', 'test-mcp-build-report');
+  const reportDir = path.join(testOutputRoot, 'test-mcp-build-report');
   await fs.rm(reportDir, { recursive: true, force: true });
   const buildReport = await callTool('build_report', {
     code: apiDsl,

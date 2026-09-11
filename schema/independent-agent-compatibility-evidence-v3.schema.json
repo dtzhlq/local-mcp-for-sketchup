@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local-mcp-for-sketchup.invalid/schema/independent-agent-compatibility-evidence-v3.schema.json",
+  "$id": "https://alma.local/schema/independent-agent-compatibility-evidence-v3.schema.json",
   "title": "IndependentAgentCompatibilityEvidenceV3",
   "type": "object",
   "additionalProperties": false,

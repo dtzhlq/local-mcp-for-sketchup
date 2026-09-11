@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local-mcp-for-sketchup.invalid/local-mcp-for-sketchup/approval-challenge-v1.schema.json",
+  "$id": "https://alma.local/sketchup-mcp-replica/approval-challenge-v1.schema.json",
   "title": "Agent Contract v1 Approval Challenge",
   "type": "object",
   "additionalProperties": false,

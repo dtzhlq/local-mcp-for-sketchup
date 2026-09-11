@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local-mcp-for-sketchup.invalid/local-mcp-for-sketchup/local-approval-host-evidence-v1.schema.json",
+  "$id": "https://alma.local/sketchup-mcp-replica/local-approval-host-evidence-v1.schema.json",
   "title": "Local Approval Host v1 Mock Evidence",
   "type": "object",
   "additionalProperties": false,

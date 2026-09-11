@@ -3,11 +3,11 @@
   "status": "draft",
   "product": {
     "name": "Local MCP for SketchUp",
-    "version": "0.1.0-rc.4",
-    "channel": "technical-preview",
+    "version": "0.2.0",
+    "channel": "stable",
     "server_id": "local-mcp-for-sketchup",
     "license": "Apache-2.0",
-    "tool_count": 41
+    "tool_count": 44
   },
   "publisher": {
     "copyright_holder": "zhanglinqi",
@@ -23,11 +23,11 @@
   "source": {
     "canonical_repository": "https://github.com/example-owner/local-mcp-for-sketchup",
     "commit": "0000000000000000000000000000000000000000",
-    "tag": "v0.1.0-rc.4",
+    "tag": "v0.2.0",
     "public_tree_sha256": "0000000000000000000000000000000000000000000000000000000000000000"
   },
   "manifest_delivery": {
-    "immutable_url": "https://example.invalid/local-mcp-for-sketchup/releases/download/v0.1.0-rc.4/agent-install.v1.json",
+    "immutable_url": "https://example.invalid/local-mcp-for-sketchup/releases/download/v0.2.0/agent-install.v1.json",
     "sha256_published_separately": true
   },
   "platforms": [
@@ -37,16 +37,16 @@
       "arch": "arm64",
       "sketchup_major": 2026,
       "service_bundle": {
-        "file_name": "local-mcp-for-sketchup-0.1.0-rc.4-darwin-arm64.tar.gz",
-        "url": "https://example.invalid/local-mcp-for-sketchup/releases/download/v0.1.0-rc.4/local-mcp-for-sketchup-0.1.0-rc.4-darwin-arm64.tar.gz",
+        "file_name": "local-mcp-for-sketchup-0.2.0-darwin-arm64.tar.gz",
+        "url": "https://example.invalid/local-mcp-for-sketchup/releases/download/v0.2.0/local-mcp-for-sketchup-0.2.0-darwin-arm64.tar.gz",
         "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
         "size_bytes": 1,
         "media_type": "application/gzip",
         "inventory_sha256": "0000000000000000000000000000000000000000000000000000000000000000"
       },
       "rbz": {
-        "file_name": "local-mcp-for-sketchup-0.1.0-rc.4.rbz",
-        "url": "https://example.invalid/local-mcp-for-sketchup/releases/download/v0.1.0-rc.4/local-mcp-for-sketchup-0.1.0-rc.4.rbz",
+        "file_name": "local-mcp-for-sketchup-0.2.0.rbz",
+        "url": "https://example.invalid/local-mcp-for-sketchup/releases/download/v0.2.0/local-mcp-for-sketchup-0.2.0.rbz",
         "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
         "size_bytes": 1,
         "media_type": "application/zip",
@@ -57,35 +57,6 @@
         "version": "24.18.0",
         "archive_url": "https://nodejs.org/dist/v24.18.0/node-v24.18.0-darwin-arm64.tar.gz",
         "archive_sha256": "e1a97e14c99c803e96c7339403282ea05a499c32f8d83defe9ef5ec66f979ed1",
-        "license": "MIT"
-      }
-    },
-    {
-      "id": "win32-x64-sketchup-2026",
-      "os": "win32",
-      "arch": "x64",
-      "sketchup_major": 2026,
-      "service_bundle": {
-        "file_name": "local-mcp-for-sketchup-0.1.0-rc.4-win32-x64.zip",
-        "url": "https://example.invalid/local-mcp-for-sketchup/releases/download/v0.1.0-rc.4/local-mcp-for-sketchup-0.1.0-rc.4-win32-x64.zip",
-        "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
-        "size_bytes": 1,
-        "media_type": "application/zip",
-        "inventory_sha256": "0000000000000000000000000000000000000000000000000000000000000000"
-      },
-      "rbz": {
-        "file_name": "local-mcp-for-sketchup-0.1.0-rc.4.rbz",
-        "url": "https://example.invalid/local-mcp-for-sketchup/releases/download/v0.1.0-rc.4/local-mcp-for-sketchup-0.1.0-rc.4.rbz",
-        "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
-        "size_bytes": 1,
-        "media_type": "application/zip",
-        "sketchup_officially_signed": false,
-        "encrypted": false
-      },
-      "bundled_node": {
-        "version": "24.18.0",
-        "archive_url": "https://nodejs.org/dist/v24.18.0/node-v24.18.0-win-x64.zip",
-        "archive_sha256": "0ae68406b42d7725661da979b1403ec9926da205c6770827f33aac9d8f26e821",
         "license": "MIT"
       }
     }
@@ -130,7 +101,7 @@
   "acceptance": {
     "release_acceptance": false,
     "core_gate": {
-      "url": "https://example.invalid/local-mcp-for-sketchup/releases/download/v0.1.0-rc.4/core-gate.json",
+      "url": "https://example.invalid/local-mcp-for-sketchup/releases/download/v0.2.0/core-gate.json",
       "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
     },
     "platforms": [
@@ -141,18 +112,7 @@
         "save_close_reopen_verified": false,
         "offline_after_install_verified": false,
         "evidence": {
-          "url": "https://example.invalid/local-mcp-for-sketchup/releases/download/v0.1.0-rc.4/acceptance-darwin-arm64.json",
-          "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
-        }
-      },
-      {
-        "id": "win32-x64-sketchup-2026",
-        "live_sketchup_2026": false,
-        "signed_rbz_loaded": false,
-        "save_close_reopen_verified": false,
-        "offline_after_install_verified": false,
-        "evidence": {
-          "url": "https://example.invalid/local-mcp-for-sketchup/releases/download/v0.1.0-rc.4/acceptance-win32-x64.json",
+          "url": "https://example.invalid/local-mcp-for-sketchup/releases/download/v0.2.0/acceptance-darwin-arm64.json",
           "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
         }
       }

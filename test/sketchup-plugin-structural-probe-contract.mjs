@@ -12,15 +12,15 @@ import {
 
 const execFileAsync = promisify(execFile);
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const mainPath = path.join(repoRoot, 'sketchup_plugin', 'local_mcp_for_sketchup', 'bridge.rb');
-const probePath = path.join(repoRoot, 'sketchup_plugin', 'local_mcp_for_sketchup', 'structural_probe.rb');
+const mainPath = path.join(repoRoot, 'sketchup_plugin', 'alma_sketchup_mcp.rb');
+const probePath = path.join(repoRoot, 'sketchup_plugin', 'alma_sketchup_mcp', 'structural_probe.rb');
 const [mainSource, probeSource] = await Promise.all([
   fs.readFile(mainPath, 'utf8'),
   fs.readFile(probePath, 'utf8')
 ]);
 let assertions = 0;
 
-assert.match(mainSource, /support_require\.call\('local_mcp_for_sketchup\/structural_probe'\)/); assertions += 1;
+assert.match(mainSource, /require_relative 'alma_sketchup_mcp\/structural_probe'/); assertions += 1;
 assert.equal(rubyStringConstant(mainSource, 'CAPABILITY_MANIFEST_VERSION'), CAPABILITY_MANIFEST_VERSION); assertions += 1;
 assert.equal(rubyStringConstant(mainSource, 'RUNTIME_CAPABILITY_VERSION'), RUNTIME_CAPABILITY_VERSION); assertions += 1;
 const capabilities = methodBody(mainSource, 'get_capabilities', 'get_session_state');
@@ -172,7 +172,7 @@ shared = FakeDefinition.new('shared')
 first = FakeGroup.new(shared, 'First', '11', 10.0)
 second = FakeGroup.new(shared, 'Second', '11', 20.0)
 calls = 0
-LocalMcpForSketchUp.define_singleton_method(:manifold_report) do |group|
+AlmaSketchupMCP.define_singleton_method(:manifold_report) do |group|
   calls += 1
   {
     'persistent_id' => group.pid,
@@ -195,9 +195,9 @@ state = {
 identity = FakeTransform.new([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1])
 scale_three_x = FakeTransform.new([3, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1])
 revision = 'sha256:' + ('a' * 64)
-left = LocalMcpForSketchUp.structural_manifold_attestation(first, 'pid:100.11', state, revision, identity)
-right = LocalMcpForSketchUp.structural_manifold_attestation(second, 'pid:200.11', state, revision, scale_three_x)
-sanitized = LocalMcpForSketchUp.structural_untrusted_display("bad\\u0000\\n" + ('x' * 250))
+left = AlmaSketchupMCP.structural_manifold_attestation(first, 'pid:100.11', state, revision, identity)
+right = AlmaSketchupMCP.structural_manifold_attestation(second, 'pid:200.11', state, revision, scale_three_x)
+sanitized = AlmaSketchupMCP.structural_untrusted_display("bad\\u0000\\n" + ('x' * 250))
 puts JSON.generate({
   calls: calls,
   paths: state['fresh_matched'].keys,

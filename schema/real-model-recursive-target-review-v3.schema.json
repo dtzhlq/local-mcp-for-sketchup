@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local-mcp-for-sketchup.invalid/schemas/real-model-recursive-target-review-v3.schema.json",
+  "$id": "https://alma.local/schemas/real-model-recursive-target-review-v3.schema.json",
   "title": "Offline recursive structural-group target review v3 decision overlay",
   "type": "object",
   "additionalProperties": false,
@@ -32,14 +32,14 @@
     "live_queue_called": { "const": false },
     "case_id": { "$ref": "#/$defs/case_id" },
     "source": {
-      "$ref": "https://local-mcp-for-sketchup.invalid/schemas/real-model-recursive-target-review-v2.schema.json#/properties/source"
+      "$ref": "https://alma.local/schemas/real-model-recursive-target-review-v2.schema.json#/properties/source"
     },
     "model": {
-      "$ref": "https://local-mcp-for-sketchup.invalid/schemas/real-model-recursive-target-review-v2.schema.json#/properties/model"
+      "$ref": "https://alma.local/schemas/real-model-recursive-target-review-v2.schema.json#/properties/model"
     },
     "runtime_source_hashes": { "$ref": "#/$defs/runtime_source_hashes" },
     "base_review": {
-      "$ref": "https://local-mcp-for-sketchup.invalid/schemas/real-model-recursive-target-review-v2.schema.json"
+      "$ref": "https://alma.local/schemas/real-model-recursive-target-review-v2.schema.json"
     },
     "geometry_attestations": {
       "type": "array",
@@ -50,7 +50,7 @@
     "review": { "$ref": "#/$defs/review" },
     "safety": { "$ref": "#/$defs/safety" },
     "model_data_policy": {
-      "$ref": "https://local-mcp-for-sketchup.invalid/schemas/real-model-recursive-target-review-v2.schema.json#/properties/model_data_policy"
+      "$ref": "https://alma.local/schemas/real-model-recursive-target-review-v2.schema.json#/properties/model_data_policy"
     },
     "next_action": { "$ref": "#/$defs/next_action" }
   },
@@ -473,7 +473,7 @@
         "tool_bbox_fill_ratio": { "$ref": "#/$defs/nullable_fill_ratio" },
         "fill_ratio_assessment": { "$ref": "#/$defs/fill_ratio_assessment" },
         "exact_solid_overlap": {
-          "$ref": "https://local-mcp-for-sketchup.invalid/schemas/real-model-recursive-target-review-v2.schema.json#/$defs/exact_solid_overlap"
+          "$ref": "https://alma.local/schemas/real-model-recursive-target-review-v2.schema.json#/$defs/exact_solid_overlap"
         },
         "exact_overlap_assessment": { "$ref": "#/$defs/exact_overlap_assessment" },
         "negative_atomic_trial": { "$ref": "#/$defs/pair_negative_trial" },

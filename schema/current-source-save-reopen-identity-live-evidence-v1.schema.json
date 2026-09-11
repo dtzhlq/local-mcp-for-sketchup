@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local-mcp-for-sketchup.invalid/local-mcp-for-sketchup/current-source-save-reopen-identity-live-evidence-v1.schema.json",
+  "$id": "https://alma.local/sketchup-mcp-replica/current-source-save-reopen-identity-live-evidence-v1.schema.json",
   "title": "Current-source save/reopen identity live evidence v1",
   "type": "object",
   "additionalProperties": false,
@@ -134,13 +134,13 @@
         "scripts/validate-save-reopen-identity.mjs",
         "schema/save-reopen-identity-report-v2.schema.json",
         "src/bridge.mjs",
-        "sketchup_plugin/local_mcp_for_sketchup/model_revision.rb"
+        "sketchup_plugin/alma_sketchup_mcp/model_revision.rb"
       ],
       "properties": {
         "scripts/validate-save-reopen-identity.mjs": { "$ref": "#/$defs/sha256" },
         "schema/save-reopen-identity-report-v2.schema.json": { "$ref": "#/$defs/sha256" },
         "src/bridge.mjs": { "$ref": "#/$defs/sha256" },
-        "sketchup_plugin/local_mcp_for_sketchup/model_revision.rb": { "$ref": "#/$defs/sha256" }
+        "sketchup_plugin/alma_sketchup_mcp/model_revision.rb": { "$ref": "#/$defs/sha256" }
       }
     },
     "artifact_sha256": {

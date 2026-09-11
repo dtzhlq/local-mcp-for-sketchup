@@ -41,6 +41,7 @@ export async function auditPublicSource({
 } = {}) {
   const resolvedRoot = path.resolve(root);
   const files = await listFiles(resolvedRoot);
+  const compatibility=JSON.parse(await fs.readFile(path.join(resolvedRoot,'release/legacy-compatibility-identifiers.json'),'utf8'));
   const findings = [];
   const manifest = [];
   let treeBytes = 0;
@@ -77,7 +78,7 @@ export async function auditPublicSource({
         const permittedLocation =
           relative.startsWith(`sketchup_plugin${path.sep}local_mcp_for_sketchup${path.sep}`) ||
           relative === path.join('scripts', 'audit-public-source.mjs');
-        const permitted = permittedLocation && permittedLegacyPluginIdentifiers.has(match[0]);
+        const permitted = (permittedLocation && permittedLegacyPluginIdentifiers.has(match[0])) || (compatibility[relative]?.includes(match[0]) === true) || relative === 'release/legacy-compatibility-identifiers.json';
         if (!permitted) {
           findings.push({
             rule: 'legacy-product-identifier',

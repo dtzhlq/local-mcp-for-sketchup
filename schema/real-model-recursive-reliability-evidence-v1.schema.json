@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local-mcp-for-sketchup.invalid/local-mcp-for-sketchup/real-model-recursive-reliability-evidence-v1.schema.json",
+  "$id": "https://alma.local/sketchup-mcp-replica/real-model-recursive-reliability-evidence-v1.schema.json",
   "title": "Real-model recursive review and staged reliability plan v1 mock evidence",
   "type": "object",
   "additionalProperties": false,

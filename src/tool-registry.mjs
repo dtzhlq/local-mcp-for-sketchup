@@ -15,6 +15,8 @@ export const SESSION_CONTRACT_TOOL_NAMES = Object.freeze(['create_queue_handshak
 
 export const TOOL_EFFECT_CONTRACT_VERSION = 'tool-effect.v1';
 const SIDE_EFFECT_FREE_TOOL_NAMES = new Set([
+  'query_assets',
+  'inspect_detail_regions',
   'get_docs',
   'get_workflow_bundle',
   'get_capabilities',

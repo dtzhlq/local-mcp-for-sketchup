@@ -1,0 +1,513 @@
+{
+  ".gitignore": [
+    "alma-snapshots"
+  ],
+  "README.md": [
+    "ALMA_SKETCHUP_AGENT_ALLOWED_RUNTIMES",
+    "ALMA_SKETCHUP_AGENT_ALLOW_QUEUE_MUTATION",
+    "ALMA_SKETCHUP_ALLOW_DIRECT_EXPERT_QUEUE_MUTATION",
+    "ALMA_SKETCHUP_ENABLE_RUBY_EXPERT",
+    "ALMA_SKETCHUP_HTTP_SESSION_SECRET",
+    "ALMA_SKETCHUP_MAX_OPERATIONS",
+    "ALMA_SKETCHUP_QUEUE_LOCK_TIMEOUT_MS",
+    "ALMA_SKETCHUP_TRUSTED_COPY_AUTO_APPROVAL",
+    "ALMA_SKETCHUP_TRUSTED_COPY_ROOTS",
+    "Alma",
+    "alma-skill",
+    "alma_sketchup_mcp"
+  ],
+  "src/modification-intent.mjs": [
+    "AlmaModificationIntent"
+  ],
+  "src/http-server.mjs": [
+    "ALMA_SKETCHUP_HTTP_ALLOWED_ROOTS",
+    "ALMA_SKETCHUP_HTTP_ALLOW_NON_LOOPBACK",
+    "ALMA_SKETCHUP_HTTP_HOST",
+    "ALMA_SKETCHUP_HTTP_MAX_BODY_BYTES",
+    "ALMA_SKETCHUP_HTTP_REQUEST_TIMEOUT_MS",
+    "ALMA_SKETCHUP_HTTP_SESSION_SECRET",
+    "ALMA_SKETCHUP_HTTP_TOOL_TIMEOUT_MS",
+    "ALMA_SKETCHUP_WORKSPACE_ROOT"
+  ],
+  "src/model-accessibility-appearance.mjs": [
+    "ALMA_SKETCHUP_APPEARANCE_CATALOG_PATH",
+    "ALMA_SKETCHUP_APPEARANCE_STYLE_PATH",
+    "alma_appearance_"
+  ],
+  "src/local-approval-host.mjs": [
+    "ALMA_SKETCHUP_APPROVAL_BOOTSTRAP_SECRET",
+    "ALMA_SKETCHUP_APPROVAL_HOST_BIND",
+    "ALMA_SKETCHUP_APPROVAL_HOST_PORT",
+    "alma_approval_preauth",
+    "alma_approval_session"
+  ],
+  "src/docs.mjs": [
+    "ALMA_SKETCHUP_MAX_OPERATIONS",
+    "Alma"
+  ],
+  "src/live-visual-capture.mjs": [
+    "alma-live-visual-captures"
+  ],
+  "src/session-contract.mjs": [
+    "ALMA_SKETCHUP_HANDSHAKE_TTL_MS",
+    "ALMA_SKETCHUP_SESSION_CONTRACT_SECRET"
+  ],
+  "src/python-sdk-compiler.mjs": [
+    "ALMA_SKETCHUP_PYTHON",
+    "AlmaSketchupMCP"
+  ],
+  "src/queue-runtime.mjs": [
+    "ALMA_SKETCHUP_CANCELLATION_DIR",
+    "ALMA_SKETCHUP_PROCESSING_DIR",
+    "ALMA_SKETCHUP_QUEUE_LOCK_TIMEOUT_MS",
+    "ALMA_SKETCHUP_QUEUE_STALE_LOCK_MS",
+    "Alma"
+  ],
+  "src/mock-runtime.mjs": [
+    "ALMA_SKETCHUP_MAX_OPERATIONS",
+    "ALMA_SKETCHUP_MOCK_SESSION_PATH"
+  ],
+  "src/runtime-source-attestation.mjs": [
+    "alma_sketchup_mcp"
+  ],
+  "src/paths.mjs": [
+    "ALMA_SKETCHUP_QUEUE_DIR",
+    "ALMA_SKETCHUP_RESPONSE_DIR",
+    "ALMA_SKETCHUP_STATE_DIR"
+  ],
+  "src/agent-response-projection.mjs": [
+    "ALMA_SKETCHUP_AGENT_EXPERT_MAX_CHARS",
+    "ALMA_SKETCHUP_AGENT_GUIDED_MAX_CHARS",
+    "ALMA_SKETCHUP_AGENT_STANDARD_MAX_CHARS",
+    "ALMA_SKETCHUP_AGENT_TRUSTED_CONTEXT",
+    "ALMA_SKETCHUP_AGENT_TRUSTED_PROFILE",
+    "ALMA_SKETCHUP_AGENT_TRUST_LOCAL_FILES",
+    "ALMA_SKETCHUP_AGENT_TRUST_RAW_VISION"
+  ],
+  "src/mcp-server.mjs": [
+    "ALMA_SKETCHUP_ENABLE_RUBY_EXPERT",
+    "Alma"
+  ],
+  "src/bridge.mjs": [
+    "ALMA_SKETCHUP_AGENT_ALLOWED_RUNTIMES",
+    "ALMA_SKETCHUP_AGENT_ALLOW_QUEUE_MUTATION",
+    "ALMA_SKETCHUP_AGENT_MAX_AFFECTED_INSTANCES",
+    "ALMA_SKETCHUP_AGENT_MAX_OPERATIONS",
+    "ALMA_SKETCHUP_AGENT_MAX_RECURSIVE_ENTITIES",
+    "ALMA_SKETCHUP_ALLOW_DIRECT_EXPERT_QUEUE_MUTATION",
+    "ALMA_SKETCHUP_AUTO_APPROVE_S1",
+    "ALMA_SKETCHUP_AUTO_APPROVE_S1_MAX_AFFECTED_INSTANCES",
+    "ALMA_SKETCHUP_COPY_FAST_ALLOWED_RISKS",
+    "ALMA_SKETCHUP_COPY_FAST_ALLOW_SAVE",
+    "ALMA_SKETCHUP_COPY_FAST_MAX_AFFECTED_INSTANCES",
+    "ALMA_SKETCHUP_COPY_FAST_MODE",
+    "ALMA_SKETCHUP_COPY_FAST_SESSION_TTL_MS",
+    "ALMA_SKETCHUP_COPY_ROOTS",
+    "ALMA_SKETCHUP_ENABLE_RUBY_EXPERT",
+    "ALMA_SKETCHUP_TRUSTED_COPY_ALLOW_SAVE",
+    "ALMA_SKETCHUP_TRUSTED_COPY_AUTO_APPROVAL",
+    "ALMA_SKETCHUP_TRUSTED_COPY_AUTO_APPROVE_RISKS",
+    "ALMA_SKETCHUP_TRUSTED_COPY_MAX_AFFECTED_INSTANCES",
+    "ALMA_SKETCHUP_TRUSTED_COPY_ROOTS"
+  ],
+  "src/approval-tokens.mjs": [
+    "ALMA_SKETCHUP_APPROVAL_HOST_URL",
+    "ALMA_SKETCHUP_APPROVAL_SECRET"
+  ],
+  "src/object-operations.mjs": [
+    "AlmaSketchupMCP"
+  ],
+  "src/capabilities.mjs": [
+    "Alma"
+  ],
+  "src/model-adoption.mjs": [
+    "AlmaSketchupMCP"
+  ],
+  "src/agent-gateway.mjs": [
+    "ALMA_SKETCHUP_VISUAL_ALLOWED_ROOTS"
+  ],
+  "src/cli.mjs": [
+    "ALMA_SKETCHUP_ENABLE_RUBY_EXPERT",
+    "Alma"
+  ],
+  "schema/appearance-scenes-hidden-live-evidence-v1.schema.json": [
+    "ALMA_Reliability_Appearance_Scene",
+    "ALMA_Reliability_Appearance_Texture",
+    "alma_sketchup_mcp"
+  ],
+  "schema/current-source-real-model-reliability-live-evidence-v2.schema.json": [
+    "alma_sketchup_mcp"
+  ],
+  "schema/locked-target-guard-live-evidence-v1.schema.json": [
+    "alma_sketchup_mcp"
+  ],
+  "schema/controlled-product-boolean-live-fixture-v1.schema.json": [
+    "ALMA_Reliability_Product_Boolean_Material",
+    "ALMA_Reliability_Product_Boolean_Target",
+    "ALMA_Reliability_Product_Boolean_Tool",
+    "ALMA_Reliability_Product_Boolean_Tool_Material",
+    "alma-reliability-product-boolean-target",
+    "alma-reliability-product-boolean-tool"
+  ],
+  "schema/current-source-real-model-reliability-live-evidence-v1.schema.json": [
+    "alma_sketchup_mcp"
+  ],
+  "schema/current-source-real-model-reliability-live-evidence-v4.schema.json": [
+    "alma_sketchup_mcp"
+  ],
+  "schema/controlled-appearance-live-fixture-v1.schema.json": [
+    "ALMA_Reliability_Appearance_Hidden_Target",
+    "ALMA_Reliability_Appearance_Scene",
+    "ALMA_Reliability_Appearance_Texture",
+    "ALMA_Reliability_Appearance_UV_Target"
+  ],
+  "schema/controlled-dirty-topology-live-fixture-v1.schema.json": [
+    "ALMA_Reliability_Dirty_Topology_Target",
+    "alma-reliability-dirty-topology-target"
+  ],
+  "schema/controlled-architecture-live-fixture-v1.schema.json": [
+    "ALMA_Reliability_Architecture_Material",
+    "ALMA_Reliability_Architecture_Scene"
+  ],
+  "schema/current-source-real-model-reliability-live-evidence-v3.schema.json": [
+    "alma_sketchup_mcp"
+  ],
+  "schema/architecture-golden-live-evidence-v1.schema.json": [
+    "ALMA_Reliability_Architecture_Material",
+    "ALMA_Reliability_Architecture_Scene",
+    "alma_sketchup_mcp"
+  ],
+  "schema/current-source-real-model-reliability-live-evidence-v6.schema.json": [
+    "alma_sketchup_mcp"
+  ],
+  "schema/release-artifact-drift-evidence-v1.schema.json": [
+    "alma-sketchup-mcp-0"
+  ],
+  "schema/model-revision-merkle-evidence-v2.schema.json": [
+    "alma_custom_reference",
+    "alma_sketchup_mcp"
+  ],
+  "schema/current-source-save-reopen-identity-live-evidence-v1.schema.json": [
+    "alma_sketchup_mcp"
+  ],
+  "schema/current-source-real-model-reliability-live-evidence-v5.schema.json": [
+    "alma_sketchup_mcp"
+  ],
+  "schema/controlled-transform-live-fixture-v1.schema.json": [
+    "ALMA_Reliability_Guard_Target",
+    "ALMA_Reliability_Locked_Target",
+    "ALMA_Reliability_Transform_Target"
+  ],
+  "sketchup_plugin/alma_sketchup_mcp.rb": [
+    "ALMA_SKETCHUP_ENABLE_RUBY_EXPERT",
+    "ALMA_SKETCHUP_MAX_OPERATIONS",
+    "Alma",
+    "AlmaSketchupMCP",
+    "alma-sketchup-model",
+    "alma-sketchup-model-copy",
+    "alma_sketchup_mcp"
+  ],
+  "sketchup_plugin/alma_sketchup_mcp/primitive_operations.rb": [
+    "AlmaSketchupMCP"
+  ],
+  "sketchup_plugin/alma_sketchup_mcp/snapshot.rb": [
+    "AlmaMaterialSource",
+    "AlmaSketchupMCP"
+  ],
+  "sketchup_plugin/alma_sketchup_mcp/view_operations.rb": [
+    "AlmaSketchupMCP"
+  ],
+  "sketchup_plugin/alma_sketchup_mcp/saved_model_lifecycle.rb": [
+    "AlmaSketchupMCP"
+  ],
+  "sketchup_plugin/alma_sketchup_mcp/native_asset_operations.rb": [
+    "AlmaAssetSource",
+    "AlmaSketchupMCP"
+  ],
+  "sketchup_plugin/alma_sketchup_mcp/component_operations.rb": [
+    "AlmaSketchupMCP"
+  ],
+  "sketchup_plugin/alma_sketchup_mcp/appearance_operations.rb": [
+    "AlmaSketchupMCP"
+  ],
+  "sketchup_plugin/alma_sketchup_mcp/demo_operations.rb": [
+    "AlmaSketchupMCP"
+  ],
+  "sketchup_plugin/alma_sketchup_mcp/geometry_operations.rb": [
+    "AlmaSketchupMCP"
+  ],
+  "sketchup_plugin/alma_sketchup_mcp/profile_operations.rb": [
+    "AlmaSketchupMCP"
+  ],
+  "sketchup_plugin/alma_sketchup_mcp/runtime_source_manifest.rb": [
+    "AlmaSketchupMCP"
+  ],
+  "sketchup_plugin/alma_sketchup_mcp/feature_operations.rb": [
+    "AlmaFeatures",
+    "AlmaSketchupMCP"
+  ],
+  "sketchup_plugin/alma_sketchup_mcp/architecture_operations.rb": [
+    "AlmaSketchupMCP"
+  ],
+  "sketchup_plugin/alma_sketchup_mcp/object_operations.rb": [
+    "AlmaSketchupMCP"
+  ],
+  "sketchup_plugin/alma_sketchup_mcp/document_state.rb": [
+    "Alma",
+    "AlmaSketchupMCP"
+  ],
+  "sketchup_plugin/alma_sketchup_mcp/surface_operations.rb": [
+    "AlmaSketchupMCP"
+  ],
+  "sketchup_plugin/alma_sketchup_mcp/product_operations.rb": [
+    "AlmaSketchupMCP"
+  ],
+  "sketchup_plugin/alma_sketchup_mcp/operation_registry.rb": [
+    "AlmaSketchupMCP"
+  ],
+  "sketchup_plugin/alma_sketchup_mcp/runtime_source_attestation.rb": [
+    "AlmaSketchupMCP"
+  ],
+  "sketchup_plugin/alma_sketchup_mcp/materials.rb": [
+    "AlmaMaterialSource",
+    "AlmaSketchupMCP"
+  ],
+  "sketchup_plugin/alma_sketchup_mcp/creation_scope.rb": [
+    "AlmaSketchupMCP"
+  ],
+  "sketchup_plugin/alma_sketchup_mcp/geometry_evidence.rb": [
+    "AlmaSketchupMCP"
+  ],
+  "sketchup_plugin/alma_sketchup_mcp/structural_probe.rb": [
+    "AlmaSketchupMCP"
+  ],
+  "sketchup_plugin/alma_sketchup_mcp/environment_operations.rb": [
+    "AlmaEnvironment",
+    "AlmaSketchupMCP"
+  ],
+  "sketchup_plugin/alma_sketchup_mcp/geometry_regions.rb": [
+    "AlmaSketchupMCP"
+  ],
+  "sketchup_plugin/alma_sketchup_mcp/boolean_operations.rb": [
+    "AlmaBoolean",
+    "AlmaManifold",
+    "AlmaSketchupMCP"
+  ],
+  "sketchup_plugin/alma_sketchup_mcp/section_operations.rb": [
+    "AlmaSketchupMCP"
+  ],
+  "sketchup_plugin/alma_sketchup_mcp/capture_detail_views.rb": [
+    "AlmaSketchupMCP"
+  ],
+  "sketchup_plugin/alma_sketchup_mcp/texture_mapping.rb": [
+    "AlmaSketchupMCP"
+  ],
+  "sketchup_plugin/alma_sketchup_mcp/model_revision.rb": [
+    "AlmaSketchupMCP"
+  ],
+  "docs/tool-registry.md": [
+    "ALMA_SKETCHUP_ENABLE_RUBY_EXPERT",
+    "Alma"
+  ],
+  "scripts/generate-plugin-runtime-source-manifest.mjs": [
+    "AlmaSketchupMCP",
+    "alma_sketchup_mcp"
+  ],
+  "scripts/generate-ruby-operation-registry.mjs": [
+    "AlmaSketchupMCP",
+    "alma_sketchup_mcp"
+  ],
+  "scripts/package-sketchup-plugin.mjs": [
+    "AlmaSketchupMCP",
+    "alma-sketchup-mcp",
+    "alma-sketchup-mcp-install",
+    "alma-sketchup-mcp-package",
+    "alma_plugin_install_lock",
+    "alma_sketchup_mcp"
+  ],
+  "scripts/release-artifact-set.mjs": [
+    "alma-sketchup-mcp",
+    "alma_release_artifact_set_lock"
+  ],
+  "scripts/validate-mcp-capability-suite.mjs": [
+    "ALMA_SKETCHUP_ENABLE_RUBY_EXPERT",
+    "ALMA_SKETCHUP_MOCK_SESSION_PATH",
+    "ALMA_SKETCHUP_QUEUE_DIR",
+    "ALMA_SKETCHUP_RESPONSE_DIR",
+    "ALMA_SKETCHUP_STATE_DIR"
+  ],
+  "test/agent-contract.mjs": [
+    "alma-agent-contract"
+  ],
+  "test/agent-gateway-production-capabilities.mjs": [
+    "ALMA_SKETCHUP_AGENT_TRUSTED_CONTEXT",
+    "ALMA_SKETCHUP_AGENT_TRUSTED_PROFILE",
+    "ALMA_SKETCHUP_AGENT_TRUST_LOCAL_FILES",
+    "ALMA_SKETCHUP_AGENT_TRUST_RAW_VISION",
+    "ALMA_TEST_TRACE",
+    "alma-agent-production-capabilities"
+  ],
+  "test/agent-gateway.mjs": [
+    "alma-agent-gateway"
+  ],
+  "test/mcp-server.mjs": [
+    "ALMA_SKETCHUP_ENABLE_RUBY_EXPERT",
+    "ALMA_SKETCHUP_MOCK_SESSION_PATH",
+    "ALMA_SKETCHUP_TEST_OUTPUT_DIR"
+  ],
+  "test/operation-contract.mjs": [
+    "alma_sketchup_mcp"
+  ],
+  "test/plugin-install-safety.mjs": [
+    "ALMA_PLUGIN_TEST_PROGRESS",
+    "alma-plugin-install-safety",
+    "alma-sketchup-mcp",
+    "alma-sketchup-mcp-install",
+    "alma_sketchup_mcp"
+  ],
+  "test/runtime-source-attestation.mjs": [
+    "alma_sketchup_mcp"
+  ],
+  "test/sketchup-native-classification-contract.mjs": [
+    "alma_sketchup_mcp"
+  ],
+  "test/sketchup-plugin-bridge-lifecycle-contract.mjs": [
+    "Alma",
+    "alma_sketchup_mcp"
+  ],
+  "test/sketchup-plugin-crash-safety.mjs": [
+    "Alma",
+    "alma_sketchup_mcp"
+  ],
+  "test/sketchup-plugin-document-state.mjs": [
+    "AlmaSketchupMCP",
+    "alma_sketchup_mcp"
+  ],
+  "test/sketchup-plugin-model-graph-contract.mjs": [
+    "alma_sketchup_mcp"
+  ],
+  "test/sketchup-plugin-structural-probe-contract.mjs": [
+    "AlmaSketchupMCP",
+    "alma_sketchup_mcp"
+  ],
+  "test/version-contract.mjs": [
+    "alma_sketchup_mcp"
+  ],
+  "test/ruby/revision_snapshot_cost_test.rb": [
+    "AlmaSketchupMCP",
+    "alma_sketchup_mcp"
+  ],
+  "test/ruby/saved_model_lifecycle_test.rb": [
+    "AlmaSketchupMCP",
+    "alma_sketchup_mcp"
+  ],
+  "test/ruby/queue_atomicity_test.rb": [
+    "AlmaSketchupMCP",
+    "alma-queue-atomicity",
+    "alma_sketchup_mcp"
+  ],
+  "test/ruby/build_runtime_profile_test.rb": [
+    "AlmaSketchupMCP",
+    "alma_sketchup_mcp"
+  ],
+  "test/ruby/boolean_postcondition_test.rb": [
+    "AlmaSketchupMCP",
+    "alma-boolean-postcondition",
+    "alma_id",
+    "alma_sketchup_mcp"
+  ],
+  "test/ruby/host_creation_metadata_test.rb": [
+    "AlmaSketchupMCP",
+    "alma_0123456789abcdef0123_",
+    "alma_sketchup_mcp"
+  ],
+  "test/ruby/native_texture_mapping_test.rb": [
+    "AlmaSketchupMCP",
+    "alma_sketchup_mcp"
+  ],
+  "test/ruby/component_definition_replacement_test.rb": [
+    "AlmaSketchupMCP",
+    "alma_sketchup_mcp"
+  ],
+  "test/ruby/scoped_recursive_index_test.rb": [
+    "AlmaSketchupMCP",
+    "alma_sketchup_mcp"
+  ],
+  "test/ruby/detail_pair_separation_test.rb": [
+    "AlmaSketchupMCP",
+    "alma_sketchup_mcp"
+  ],
+  "test/ruby/model_revision_merkle_test.rb": [
+    "AlmaSketchupMCP",
+    "alma-model-revision",
+    "alma_sketchup_mcp"
+  ],
+  "test/ruby/model_revision_canonical_equivalence_test.rb": [
+    "AlmaSketchupMCP",
+    "alma_sketchup_mcp"
+  ],
+  "test/ruby/native_geometry_resources_test.rb": [
+    "AlmaSketchupMCP",
+    "alma_sketchup_mcp"
+  ],
+  "test/ruby/bridge_lifecycle_test.rb": [
+    "alma-bridge-lifecycle",
+    "alma_sketchup_mcp"
+  ],
+  "test/ruby/detail_region_coordinates_test.rb": [
+    "AlmaSketchupMCP",
+    "alma_sketchup_mcp"
+  ],
+  "test/ruby/document_state_test.rb": [
+    "AlmaSketchupMCP",
+    "alma_sketchup_mcp"
+  ],
+  "test/ruby/detail_geometry_evidence_test.rb": [
+    "AlmaSketchupMCP",
+    "alma_sketchup_mcp"
+  ],
+  "test/ruby/runtime_source_attestation_test.rb": [
+    "AlmaSketchupMCP",
+    "alma-model-revision-source-attestation",
+    "alma-runtime-source-attestation",
+    "alma_sketchup_mcp"
+  ],
+  "test/ruby/native_appearance_test.rb": [
+    "AlmaSketchupMCP",
+    "alma_sketchup_mcp"
+  ],
+  "test/ruby/detail_capture_test.rb": [
+    "AlmaSketchupMCP",
+    "alma_sketchup_mcp"
+  ],
+  "test/ruby/constructive_identity_test.rb": [
+    "AlmaSketchupMCP",
+    "alma_sketchup_mcp"
+  ],
+  "test/ruby/locked_target_guard_test.rb": [
+    "AlmaSketchupMCP",
+    "alma-locked-target-guard",
+    "alma_sketchup_mcp"
+  ],
+  "test/ruby/panel_face_replacement_test.rb": [
+    "AlmaSketchupMCP",
+    "alma_sketchup_mcp"
+  ],
+  "test/ruby/panel_edge_opening_test.rb": [
+    "AlmaSketchupMCP",
+    "alma_sketchup_mcp"
+  ],
+  "test/ruby/native_asset_operations_test.rb": [
+    "AlmaAssetSource",
+    "AlmaSketchupMCP",
+    "alma_sketchup_mcp"
+  ],
+  "scripts/package-image-release-plugin.mjs": [
+    "alma_sketchup_mcp"
+  ],
+  "docs/INSTALL.md": [
+    "ALMA_SKETCHUP_AGENT_ALLOWED_RUNTIMES",
+    "ALMA_SKETCHUP_AGENT_ALLOW_QUEUE_MUTATION",
+    "alma_sketchup_mcp"
+  ]
+}

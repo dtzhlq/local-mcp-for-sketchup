@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local-mcp-for-sketchup.invalid/schemas/appearance-scenes-hidden-live-evidence-v1.schema.json",
+  "$id": "https://alma.local/schemas/appearance-scenes-hidden-live-evidence-v1.schema.json",
   "title": "Appearance Scenes Hidden Live Evidence v1",
   "type": "object",
   "additionalProperties": false,
@@ -76,8 +76,8 @@
         "arbitrary_uv_editing_proven"
       ],
       "properties": {
-        "material_name_untrusted": { "const": "LOCAL_MCP_FOR_SKETCHUP_Reliability_Appearance_Texture" },
-        "scene_name_untrusted": { "const": "LOCAL_MCP_FOR_SKETCHUP_Reliability_Appearance_Scene" },
+        "material_name_untrusted": { "const": "ALMA_Reliability_Appearance_Texture" },
+        "scene_name_untrusted": { "const": "ALMA_Reliability_Appearance_Scene" },
         "uv_id": { "const": "reliability-appearance-face-uv" },
         "uv_evidence_kind": { "const": "face_uvs" },
         "face_uv_operation_applied_without_warning": { "const": true },
@@ -170,9 +170,9 @@
         "schema/controlled-appearance-live-fixture-v1.schema.json",
         "schema/real-model-reliability-live-case-report-v1.schema.json",
         "schema/real-model-reliability-live-case-v1.schema.json",
-        "sketchup_plugin/local_mcp_for_sketchup/appearance_operations.rb",
-        "sketchup_plugin/local_mcp_for_sketchup/model_revision.rb",
-        "sketchup_plugin/local_mcp_for_sketchup/snapshot.rb"
+        "sketchup_plugin/alma_sketchup_mcp/appearance_operations.rb",
+        "sketchup_plugin/alma_sketchup_mcp/model_revision.rb",
+        "sketchup_plugin/alma_sketchup_mcp/snapshot.rb"
       ],
       "properties": {
         "scripts/build-appearance-scenes-hidden-live-evidence.mjs": { "$ref": "#/$defs/sha256" },
@@ -183,9 +183,9 @@
         "schema/controlled-appearance-live-fixture-v1.schema.json": { "$ref": "#/$defs/sha256" },
         "schema/real-model-reliability-live-case-report-v1.schema.json": { "$ref": "#/$defs/sha256" },
         "schema/real-model-reliability-live-case-v1.schema.json": { "$ref": "#/$defs/sha256" },
-        "sketchup_plugin/local_mcp_for_sketchup/appearance_operations.rb": { "$ref": "#/$defs/sha256" },
-        "sketchup_plugin/local_mcp_for_sketchup/model_revision.rb": { "$ref": "#/$defs/sha256" },
-        "sketchup_plugin/local_mcp_for_sketchup/snapshot.rb": { "$ref": "#/$defs/sha256" }
+        "sketchup_plugin/alma_sketchup_mcp/appearance_operations.rb": { "$ref": "#/$defs/sha256" },
+        "sketchup_plugin/alma_sketchup_mcp/model_revision.rb": { "$ref": "#/$defs/sha256" },
+        "sketchup_plugin/alma_sketchup_mcp/snapshot.rb": { "$ref": "#/$defs/sha256" }
       }
     },
     "acceptance": {

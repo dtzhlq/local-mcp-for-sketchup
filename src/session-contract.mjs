@@ -18,7 +18,7 @@ export class SessionContractAuthority {
     serverSessionId = `server_${crypto.randomUUID()}`
   } = {}) {
     this.stateDir = path.resolve(stateDir);
-    this.secretOverride = secret || process.env.LOCAL_MCP_FOR_SKETCHUP_SESSION_CONTRACT_SECRET || null;
+    this.secretOverride = secret || process.env.ALMA_SKETCHUP_SESSION_CONTRACT_SECRET || null;
     this.now = now;
     this.serverVersion = serverVersion;
     this.serverSessionId = serverSessionId;
@@ -246,7 +246,7 @@ function boundedExpiry(value) {
 }
 
 function defaultExpiryFromEnvironment() {
-  const raw = process.env.LOCAL_MCP_FOR_SKETCHUP_HANDSHAKE_TTL_MS;
+  const raw = process.env.ALMA_SKETCHUP_HANDSHAKE_TTL_MS;
   if (!raw) return DEFAULT_HANDSHAKE_TTL_MS;
   return Number(raw);
 }

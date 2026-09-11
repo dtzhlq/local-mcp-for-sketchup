@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local-mcp-for-sketchup.invalid/schema/model-graph-live-readonly-evidence-v1.schema.json",
+  "$id": "https://alma.local/schema/model-graph-live-readonly-evidence-v1.schema.json",
   "title": "ModelGraph v1 live read-only evidence",
   "type": "object",
   "additionalProperties": false,

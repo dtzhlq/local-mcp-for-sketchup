@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local-mcp-for-sketchup.invalid/local-mcp-for-sketchup/portal-boolean-v8-readonly-discovery-v1.schema.json",
+  "$id": "https://alma.local/sketchup-mcp-replica/portal-boolean-v8-readonly-discovery-v1.schema.json",
   "title": "Portal Boolean v8 read-only discovery evidence",
   "type": "object",
   "additionalProperties": false,

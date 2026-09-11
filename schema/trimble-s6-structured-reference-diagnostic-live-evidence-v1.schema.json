@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local-mcp-for-sketchup.invalid/schema/trimble-s6-structured-reference-diagnostic-live-evidence-v1.schema.json",
+  "$id": "https://alma.local/schema/trimble-s6-structured-reference-diagnostic-live-evidence-v1.schema.json",
   "title": "Trimble S6 supplemental structured-reference live evidence",
   "type": "object",
   "additionalProperties": false,

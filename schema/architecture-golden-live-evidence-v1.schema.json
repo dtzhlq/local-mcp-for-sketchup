@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local-mcp-for-sketchup.invalid/schemas/architecture-golden-live-evidence-v1.schema.json",
+  "$id": "https://alma.local/schemas/architecture-golden-live-evidence-v1.schema.json",
   "title": "Architecture Golden Live Evidence v1",
   "type": "object",
   "additionalProperties": false,
@@ -73,9 +73,9 @@
         "nested_hidden_occurrence_attestation"
       ],
       "properties": {
-        "material_name_untrusted": { "const": "LOCAL_MCP_FOR_SKETCHUP_Reliability_Architecture_Material" },
+        "material_name_untrusted": { "const": "ALMA_Reliability_Architecture_Material" },
         "material_persisted": { "const": true },
-        "scene_name_untrusted": { "const": "LOCAL_MCP_FOR_SKETCHUP_Reliability_Architecture_Scene" },
+        "scene_name_untrusted": { "const": "ALMA_Reliability_Architecture_Scene" },
         "scene_persisted": { "const": true },
         "existing_material_assignments_in_signature": { "const": true },
         "top_level_visibility_in_signature": { "const": true },
@@ -162,10 +162,10 @@
         "schema/controlled-architecture-live-fixture-v1.schema.json",
         "schema/real-model-reliability-live-case-report-v1.schema.json",
         "schema/real-model-reliability-live-case-v1.schema.json",
-        "sketchup_plugin/local_mcp_for_sketchup/materials.rb",
-        "sketchup_plugin/local_mcp_for_sketchup/model_revision.rb",
-        "sketchup_plugin/local_mcp_for_sketchup/snapshot.rb",
-        "sketchup_plugin/local_mcp_for_sketchup/view_operations.rb"
+        "sketchup_plugin/alma_sketchup_mcp/materials.rb",
+        "sketchup_plugin/alma_sketchup_mcp/model_revision.rb",
+        "sketchup_plugin/alma_sketchup_mcp/snapshot.rb",
+        "sketchup_plugin/alma_sketchup_mcp/view_operations.rb"
       ],
       "properties": {
         "scripts/build-architecture-golden-live-evidence.mjs": { "$ref": "#/$defs/sha256" },
@@ -176,10 +176,10 @@
         "schema/controlled-architecture-live-fixture-v1.schema.json": { "$ref": "#/$defs/sha256" },
         "schema/real-model-reliability-live-case-report-v1.schema.json": { "$ref": "#/$defs/sha256" },
         "schema/real-model-reliability-live-case-v1.schema.json": { "$ref": "#/$defs/sha256" },
-        "sketchup_plugin/local_mcp_for_sketchup/materials.rb": { "$ref": "#/$defs/sha256" },
-        "sketchup_plugin/local_mcp_for_sketchup/model_revision.rb": { "$ref": "#/$defs/sha256" },
-        "sketchup_plugin/local_mcp_for_sketchup/snapshot.rb": { "$ref": "#/$defs/sha256" },
-        "sketchup_plugin/local_mcp_for_sketchup/view_operations.rb": { "$ref": "#/$defs/sha256" }
+        "sketchup_plugin/alma_sketchup_mcp/materials.rb": { "$ref": "#/$defs/sha256" },
+        "sketchup_plugin/alma_sketchup_mcp/model_revision.rb": { "$ref": "#/$defs/sha256" },
+        "sketchup_plugin/alma_sketchup_mcp/snapshot.rb": { "$ref": "#/$defs/sha256" },
+        "sketchup_plugin/alma_sketchup_mcp/view_operations.rb": { "$ref": "#/$defs/sha256" }
       }
     },
     "acceptance": {

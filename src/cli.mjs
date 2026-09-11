@@ -21,6 +21,12 @@ async function main() {
   }
 
   switch (command) {
+    case 'inspect_detail_regions':
+      return output(await bridge.inspect_detail_regions({ queries: JSON.parse(await fs.readFile(options.queriesFile, 'utf8')), runtime: 'queue', timeoutMs: options.timeoutMs }), options);
+    case 'query_assets':
+      return output(await bridge.query_assets({ catalog_path: options.catalogPath, query: options.query, kind: options.kind, limit: options.limit }), options);
+    case 'capture_detail_views':
+      return output(await bridge.capture_detail_views({ views: JSON.parse(await fs.readFile(options.viewsFile, 'utf8')), output_dir: options.outputDir, runtime: 'queue', timeoutMs: options.timeoutMs, ...liveSessionOptions(options) }), options);
     case 'get_docs':
       return output(await bridge.get_docs({ topic: options.topic, detail: options.detail, max_chars: options.maxChars }), options);
     case 'get_workflow_bundle':
@@ -63,7 +69,7 @@ async function main() {
     case 'open_model':
       return output(await bridge.open_model({ path: options.path, runtime: options.runtime || 'queue', timeoutMs: options.timeoutMs, ...liveSessionOptions(options) }), options);
     case 'import_model':
-      return output(await bridge.import_model({ path: options.path, mode: options.mode, prefix: options.prefix, runtime: options.runtime || 'queue', timeoutMs: options.timeoutMs, ...liveSessionOptions(options) }), options);
+      return output(await bridge.import_model({ path: options.path, mode: options.mode, prefix: options.prefix, options: { preserve_root: options.preserveRoot === true }, runtime: options.runtime || 'queue', timeoutMs: options.timeoutMs, ...liveSessionOptions(options) }), options);
     case 'export_model':
       return output(await bridge.export_model({ path: options.path, format: options.exportFormat, runtime: options.runtime || 'queue', timeoutMs: options.timeoutMs, ...liveSessionOptions(options) }), options);
     case 'get_model_info':
@@ -324,6 +330,10 @@ function parseArgs(argv) {
     else if (arg === '--index') options.index = Number(argv[++index]);
     else if (arg === '--query') options.query = argv[++index];
     else if (arg === '--topic') options.topic = argv[++index];
+    else if (arg === '--catalog-file') options.catalogPath = argv[++index];
+    else if (arg === '--views-file') options.viewsFile = argv[++index];
+    else if (arg === '--queries-file') options.queriesFile = argv[++index];
+    else if (arg === '--preserve-root') options.preserveRoot = true;
     else if (arg === '--detail') options.detail = argv[++index];
     else if (arg === '--target-query') options.targetQuery = argv[++index];
     else if (arg === '--assume') options.assume = argv[++index];
@@ -586,7 +596,7 @@ function usage() {
   node src/cli.mjs plan_modification_intent --instruction "paint selected cabinet" --action set_material --parameters-json '{"material":"Oak"}' [--target-query "current selection"] [--output-dir output/intent] [--runtime mock|queue]
   node src/cli.mjs set_selection --target object-id [--target other-id] [--mode replace|add|remove|clear] [--runtime mock|queue]
   node src/cli.mjs capture_view --path output/capture.png [--view current|top|front|right|iso] [--scene Scene_Name] [--width 1280] [--height 720] [--runtime queue]
-  LOCAL_MCP_FOR_SKETCHUP_ENABLE_RUBY_EXPERT=1 node src/cli.mjs run_ruby_expert --code 'Sketchup.active_model.title' [--audit-path output/ruby-expert-audit.json] [--runtime queue]
+  ALMA_SKETCHUP_ENABLE_RUBY_EXPERT=1 node src/cli.mjs run_ruby_expert --code 'Sketchup.active_model.title' [--audit-path output/ruby-expert-audit.json] [--runtime queue]
   node src/cli.mjs evaluate_py --code-file examples/demo-room.json [--input-format json_dsl|python_sdk|restricted_expert|ruby_expert] [--runtime mock|queue]
   node src/cli.mjs build_report --code-file examples/demo-room.json [--output-dir output/build-report] [--model-spec-file examples/model-qa/spec.json] [--reference-spec-file examples/reference-visual-qa/spec.json] [--capture-view] [--runtime mock|queue]
   node src/cli.mjs iterate_model --code-file patch.json [--input-format json_dsl|python_sdk|restricted_expert] [--target object-id] [--target-query "largest cabinet"] [--preview-only] [--label review] [--output-dir output/iterations/review] [--runtime mock|queue]
@@ -597,8 +607,8 @@ function usage() {
   node src/cli.mjs validate_reference_model --code-file examples/acceptance-ambulance-reference.json [--runtime mock|queue] [--spec-file examples/reference-visual-qa/ambulance-reference.json] [--preview-dir output/reference-visual-qa/ambulance-reference] [--format markdown] [--output-file output/reference-visual-qa/ambulance-reference/report.md]
 
 Runtime notes:
-  mock  - deterministic offline runtime for tests and local iteration.
-  queue - sends requests to the SketchUp Ruby plugin through ~/.local-mcp-for-sketchup. Live mutations require --session-contract-file, or explicit same-command --fresh-handshake.
+  mock  - deterministic offline runtime for tests and Alma iteration.
+  queue - sends requests to the SketchUp Ruby plugin through ~/.sketchup-mcp-replica. Live mutations require --session-contract-file, or explicit same-command --fresh-handshake.
 `);
 }
 

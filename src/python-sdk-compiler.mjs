@@ -105,7 +105,7 @@ export function compilePythonSdkScript(source, options = {}) {
 }
 
 function parsePythonAst(source, { timeoutMs, pythonCommand } = {}) {
-  const preferred = pythonCommand || process.env.LOCAL_MCP_FOR_SKETCHUP_PYTHON || 'python3';
+  const preferred = pythonCommand || process.env.ALMA_SKETCHUP_PYTHON || 'python3';
   const attempts = preferred === 'python3' ? ['python3', 'python'] : [preferred];
   let lastError = null;
   for (const command of attempts) {
@@ -2104,7 +2104,7 @@ class SdkEntityRef {
       return;
     }
     if (property === 'locked') {
-      this.pushTargetOperation({ op: 'attribute', dictionary: 'LocalMcpForSketchUp', key: 'locked', value: Boolean(value) });
+      this.pushTargetOperation({ op: 'attribute', dictionary: 'AlmaSketchupMCP', key: 'locked', value: Boolean(value) });
       return;
     }
     throw new PythonSdkCompileError(`Unsupported entity assignment: ${property}`, node);

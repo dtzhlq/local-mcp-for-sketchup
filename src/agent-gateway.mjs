@@ -1,3 +1,6 @@
+import { prepareImageStructure, prepareImageModelCreation, approveImageModelCreation, assertFrozenImageCreation } from './image-structure.mjs';
+import { narrowDetailLayoutQa } from './detail-collision-review.mjs';
+import { prepareNativeAssetEdit } from './model-accessibility-asset-edit.mjs';
 import crypto from 'node:crypto';
 import fs from 'node:fs/promises';
 import path from 'node:path';
@@ -11,7 +14,9 @@ import {
   serverPolicyAutoApprovalMode,
   sha256Canonical
 } from './agent-contract.mjs';
-import { prepareAgentGatewayCreationDsl } from './agent-dsl-policy.mjs';
+import { prepareAgentGatewayCreationDsl, prepareTaskOwnedCreationDsl } from './agent-dsl-policy.mjs';
+import { freezeDetailSpecification, evaluateDetailQuality } from './detail-quality.mjs';
+import { isTrustedAssemblyEditReceipt } from './detailed-modeling/assembly-edit.mjs';
 import {
   capabilitySafeArtifact,
   createAgentResponsePolicy,
@@ -56,8 +61,21 @@ import {
   trustedBridgeReceipt
 } from './task-mutation-receipt-ledger.mjs';
 import { publicCopyFastSessionSummary } from './copy-fast-session.mjs';
+import { compileModelAccessibilityTask, getModelAccessibilityTaskCatalog } from './model-accessibility-tasks.mjs';
+import { accessibilityStatus, discoverCall, FIRST_USE_GUIDE } from './model-accessibility-guidance.mjs';
+import { getModelAccessibilityWorkflowGuide } from './model-accessibility-workflows.mjs';
+import { deliverModelAccessibilityTask } from './model-accessibility-delivery.mjs';
+import { captureDefinitionParameterSource, planDefinitionParameterEdit } from './model-accessibility-parameter-edit.mjs';
+import { continueDefinitionParameterExecution, parameterExecutionError } from './model-accessibility-parameter-execution.mjs';
+import { prepareNativeAppearanceTask, continueNativeAppearanceTask, verifyNativeAppearanceAuthorizationReady, validateNativeAppearanceSubmission } from './model-accessibility-appearance.mjs';
+import { verifyDefinitionParameterResult } from './model-accessibility-parameter-verification.mjs';
+import { resumeSavedDefinitionParameterSource } from './model-accessibility-parameter-reopen.mjs';
+import { reopenDeliveredModelTask, reopenDeliveredModelError, validateReopenDeliveredInput } from './model-accessibility-reopen.mjs';
+import { attachHostCreationPacket, prepareHostCreationDsl, verifyHostCreationCapture } from './model-accessibility-host-provisioning.mjs';
+import { indexCapturedParameterSource, discoverParameterSources, parameterSourceDocumentBinding } from './model-accessibility-parameter-discovery.mjs';
+import { adoptParameterRoots } from './model-accessibility-scoped-readback.mjs';
 
-const SUPPORTED_INTENTS = new Set(['create_model', 'understand_model', 'propose_existing_model_edit', 'modify_design_parameters', 'reconcile_design_intent', 'reference_image_correction', 'visual_correction_qa', 'reviewed_existing_model_edit', 'image_artifact', 'verify_model']);
+const SUPPORTED_INTENTS = new Set(['discover', 'preflight_model', 'deliver_model', 'reopen_delivered_model', 'apply_native_appearance', 'create_model', 'understand_model', 'propose_existing_model_edit', 'modify_design_parameters', 'reconcile_design_intent', 'reference_image_correction', 'visual_correction_qa', 'reviewed_existing_model_edit', 'image_artifact', 'verify_model']);
 
 export class AgentGateway {
   constructor({ bridge, taskStore, modelGraphStore, designIntentStore, imageArtifactStore, liveVisualCaptureService, responsePolicy } = {}) {
@@ -109,6 +127,15 @@ export class AgentGateway {
       throw new AgentContractError('INVALID_ARGUMENT', 'verify_task_authorization_ready requires a valid task_id.');
     }
     const task = await this.taskStore.getTask(taskId, { includePrivate: true });
+    if (task.private?.image_model_creation && task.state === 'awaiting_review') {
+      const {challenge,binding}=task.private.image_model_creation;
+      return this.bridge.approvalAuthority.verifyStoredApprovalAuthorizationReady(challenge,binding);
+    }
+    if (task.intent === 'apply_native_appearance') return verifyNativeAppearanceAuthorizationReady(this, task);
+    if (task.inputs?.parameter_edit && task.private?.parameter_execution?.reviewed_task_id) {
+      const ready = await this.verifyTaskAuthorizationReady({ task_id: task.private.parameter_execution.reviewed_task_id });
+      return { ...ready, task_id: task.task_id, execution_task_id: task.private.parameter_execution.reviewed_task_id };
+    }
     const binding = reviewedTaskAuthorizationBinding(task, this.bridge.executionPolicy);
     const serverAutoApproval = serverPolicyAutoApprovalMode(binding.plan, this.bridge.executionPolicy);
     if (serverAutoApproval) {
@@ -186,7 +213,7 @@ export class AgentGateway {
     const decision = await this.bridge.approvalAuthority.readDecision(challenge.challenge_id, { allowMissing: true });
     if (!decision) {
       const nextAction = this.approvalNextAction(challenge, {
-        required: (task.inputs?.runtime || 'mock') === 'queue' && task.intent === 'reviewed_existing_model_edit'
+        required: task.intent === 'apply_native_appearance' ? ['connection_task_id', 'stable submit idempotency_key'] : (task.inputs?.runtime || 'mock') === 'queue' && task.intent === 'reviewed_existing_model_edit'
           ? ['session_contract']
           : []
       });
@@ -201,7 +228,7 @@ export class AgentGateway {
           then_tool: 'submit_agent_task_input',
           approval_status: decision.status,
           approval_decision_id: decision.decision_id,
-          required: (task.inputs?.runtime || 'mock') === 'queue' && task.intent === 'reviewed_existing_model_edit'
+          required: task.intent === 'apply_native_appearance' ? ['connection_task_id', 'stable submit idempotency_key'] : (task.inputs?.runtime || 'mock') === 'queue' && task.intent === 'reviewed_existing_model_edit'
             ? ['session_contract']
             : []
         }
@@ -228,7 +255,15 @@ export class AgentGateway {
     assertNoPublicApprovalToken(options);
     const { intent, instruction, interface_level = 'guided', client_capabilities = {}, idempotency_key, inputs = {} } = options;
     if (!SUPPORTED_INTENTS.has(intent)) throw new AgentContractError('INVALID_ARGUMENT', 'intent is not supported by Agent Contract v1.');
-    const durableInputs = await this.materializeTransientImageInputs(intent, inputs);
+    if (intent === 'create_model' && inputs.task && !idempotency_key) throw new AgentContractError('INVALID_ARGUMENT', 'Common-task creation requires an idempotency_key retained across retries.', { details: { recovery_class: 'self_correctable', issues: [{ path: '/idempotency_key', message: 'Provide a stable unique request key.' }] } });
+    if (intent === 'deliver_model' && !idempotency_key) throw new AgentContractError('INVALID_ARGUMENT', 'Delivery requires a stable idempotency_key.');
+    if (intent === 'reopen_delivered_model') {
+      if (!idempotency_key) throw new AgentContractError('INVALID_ARGUMENT', 'Saved close/reopen requires a stable idempotency_key.');
+      validateReopenDeliveredInput(inputs);
+    }
+    if (intent === 'apply_native_appearance' && !idempotency_key) throw new AgentContractError('INVALID_ARGUMENT', 'Native appearance requires a stable idempotency_key.');
+    if (intent === 'modify_design_parameters' && inputs.parameter_edit && !idempotency_key) throw new AgentContractError('INVALID_ARGUMENT', 'Parameter replacement requires a stable idempotency_key.');
+    const durableInputs = await this.materializeConnectionInput(await this.materializeTransientImageInputs(intent, inputs));
     const capabilities = normalizeClientCapabilities(client_capabilities);
     const responsePolicy = createAgentResponsePolicy({
       interfaceLevel: interface_level,
@@ -246,6 +281,9 @@ export class AgentGateway {
       inputs: durableInputs,
       idempotencyKey: serverIdempotencyKey
     });
+    // The option brand is only constructible by local host code. It is never
+    // serialized into MCP inputs. Persist its signed source before execution.
+    await attachHostCreationPacket({ options, task: await this.taskStore.getTask(created.task.task_id, { includePrivate: true }), taskStore: this.taskStore });
     const resumeRecoveredCreation = created.replayed && created.recovered_pending === true && created.task.state === 'created';
     if (created.replayed && !resumeRecoveredCreation) {
       const publicTask = await this.taskStore.getTask(created.task.task_id);
@@ -266,6 +304,7 @@ export class AgentGateway {
       task = await this.runIntent(task);
       return createResultEnvelope({
         task: await this.taskStore.getTask(task.task_id),
+        ...(task.inputs?.parameter_edit ? { ok: !task.last_error, error: task.last_error || null } : {}),
         data: responseData(task)
       });
     } catch (error) {
@@ -281,6 +320,50 @@ export class AgentGateway {
 
   async resumeUnprojected({ task_id } = {}) {
     let task = await this.taskStore.getTask(task_id, { includePrivate: true });
+    if (task.intent === 'reopen_delivered_model') {
+      try {
+        task = await reopenDeliveredModelTask(this, task, { resume: true });
+        return createResultEnvelope({ task: await this.taskStore.getTask(task_id), ok: !task.last_error, error: task.last_error || null, data: responseData(task) });
+      } catch (error) { return this.handleTaskError(task, error); }
+    }
+    if (task.intent === 'apply_native_appearance' && task.private?.appearance_plan) {
+      try {
+        task = await continueNativeAppearanceTask(this, task);
+        return createResultEnvelope({ task: await this.taskStore.getTask(task_id), ok: !task.last_error, error: task.last_error || null, data: responseData(task) });
+      } catch (error) { return this.handleTaskError(task, error); }
+    }
+    if (task.inputs?.parameter_edit && task.private?.parameter_execution) return this.continueParameterTaskEnvelope(task, {});
+    if (task.intent === 'verify_model' && task.inputs?.creation_task_id && task.state === 'verifying') {
+      try {
+        task = await verifyDefinitionParameterResult(this, task);
+        return createResultEnvelope({ task: await this.taskStore.getTask(task_id), data: responseData(task), idempotentReplay: true });
+      } catch (error) { return this.handleTaskError(task, error); }
+    }
+    if (task.intent === 'deliver_model' && ['understanding', 'awaiting_input', 'executing', 'verifying'].includes(task.state)) {
+      const receipt = path.join(this.taskStore.rootDir, 'model-deliveries-v1', task_id, 'saved-receipt.json');
+      const present = await fs.lstat(receipt).then(stat => stat.isFile()).catch(error => { if (error.code === 'ENOENT') return false; throw error; });
+      if (present) {
+        // The helper verifies the signed receipt and file bytes. It never
+        // saves again when the unique delivery directory already exists.
+        if (task.state === 'awaiting_input') task = await this.taskStore.transition(task_id, 'understanding', { reason: 'resume_saved_delivery_receipt' });
+        try {
+          task = await this.deliverModeling(task);
+          return createResultEnvelope({ task: await this.taskStore.getTask(task_id), data: responseData(task), idempotentReplay: true });
+        } catch (error) { return this.handleTaskError(task, error); }
+      }
+    }
+    const pendingAssembly = task.private?.creation?.pending_assembly_mapping;
+    if (task.intent === 'create_model' && pendingAssembly
+      && !(task.private.creation.assembly_edit_receipts || []).some(receipt => sha256Canonical(receipt) === sha256Canonical(pendingAssembly.receipt))) {
+      const recovered = await this.resumeTrustedAssemblyEditMapping({ creation_task_id: task_id });
+      task = await this.taskStore.getTask(task_id, { includePrivate: true });
+      return createResultEnvelope({ task: await this.taskStore.getTask(task_id),
+        data: { ...responseData(task), assembly_mapping_recovery: recovered }, idempotentReplay: true });
+    }
+    if (task.intent === 'create_model' && ['executing', 'verifying'].includes(task.state) && task.private?.creation?.round?.snapshot) {
+      task = await this.finalizeCreationQuality(task);
+      return createResultEnvelope({ task: await this.taskStore.getTask(task_id), data: responseData(task), idempotentReplay: true });
+    }
     if (['executing', 'verifying'].includes(task.state) && mutationMayHaveStarted(task)) {
       let recovery;
       try {
@@ -350,6 +433,14 @@ export class AgentGateway {
     let task = await this.taskStore.getTask(task_id, { includePrivate: true });
     try {
       assertNoPublicApprovalToken(options);
+      if (task.intent === 'reopen_delivered_model') {
+        if (!idempotency_key) throw new AgentContractError('INVALID_ARGUMENT', 'Saved close/reopen submission requires a stable idempotency_key.');
+        validateReopenDeliveredInput(input, { previous: task.inputs });
+      }
+      if (task.private?.native_asset_edit && (['asset_edit', 'operations', 'targets', 'source_proposal', 'source_design_change', 'source_visual_correction'].some(key => Object.hasOwn(input, key)) || input.runtime && input.runtime !== 'queue')) throw new AgentContractError('INVALID_ARGUMENT', 'The reviewed native asset source, placement and target are frozen. Start a new reviewed task to change them.');
+      if (((task.intent === 'create_model' && input.task) || task.intent === 'deliver_model') && !idempotency_key) throw new AgentContractError('INVALID_ARGUMENT', 'Submitting common-task creation or delivery requires a stable idempotency_key.');
+      if (task.intent === 'apply_native_appearance' && !idempotency_key) throw new AgentContractError('INVALID_ARGUMENT', 'Submitting native appearance requires a stable idempotency_key.');
+      if (task.intent === 'apply_native_appearance') validateNativeAppearanceSubmission(task, input);
     } catch (error) {
       const publicTask = await this.taskStore.getTask(task_id);
       return createResultEnvelope({
@@ -360,7 +451,20 @@ export class AgentGateway {
         nextAction: error.next_action
       });
     }
-    const durableInput = await this.materializeTransientImageInputs(task.intent, input);
+    const durableInput = await this.materializeConnectionInput(await this.materializeTransientImageInputs(task.intent, input), task.inputs?.runtime);
+    if (task.intent === 'verify_model' && task.inputs?.creation_task_id) {
+      if (Object.keys(durableInput).some(key => !['session_contract', 'connection_task_id', 'runtime', 'timeout_ms', 'reverify'].includes(key))
+        || durableInput.runtime && task.inputs.runtime && durableInput.runtime !== task.inputs.runtime || durableInput.reverify !== undefined && durableInput.reverify !== true) {
+        throw new AgentContractError('INVALID_ARGUMENT', 'Creation-bound verification cannot change its source tasks, snapshots, views or frozen requirements. Submit only a same-runtime connection and reverify:true.');
+      }
+    }
+    if (task.inputs?.parameter_edit && task.private?.creation_parameter_edit?.ready) {
+      if (!idempotency_key) throw new AgentContractError('INVALID_ARGUMENT', 'Parameter replacement submission requires a stable idempotency_key.');
+      if (Object.keys(durableInput).some(key => !['session_contract', 'connection_task_id', 'runtime', 'note'].includes(key))
+        || durableInput.runtime && durableInput.runtime !== task.private.parameter_source_record.runtime) throw new AgentContractError('INVALID_ARGUMENT', 'A prepared parameter change is frozen. Submit only its same-runtime connection and optional review note.');
+      const executionInput = { ...(durableInput.session_contract ? { session_contract: durableInput.session_contract } : {}), ...(durableInput.note ? { note: durableInput.note } : {}) };
+      return this.continueParameterTaskEnvelope(task, { input: executionInput, idempotencyKey: idempotency_key, submit: true });
+    }
     const claim = await this.taskStore.claimTaskOperation({
       taskId: task_id,
       operation: 'submit_agent_task_input',
@@ -396,13 +500,36 @@ export class AgentGateway {
     }
 
     try {
-      if (task.state === 'awaiting_input') {
+      if (task.intent === 'reopen_delivered_model') {
         task = await this.taskStore.update(task_id, { inputs: { ...task.inputs, ...durableInput } });
+        if (task.state === 'awaiting_input') task = await this.taskStore.transition(task_id, 'understanding', { reason: 'reopen_input_received' });
+        task = await reopenDeliveredModelTask(this, task);
+      } else if (task.intent === 'apply_native_appearance' && task.private?.appearance_plan && !['completed', 'failed', 'cancelled', 'expired'].includes(task.state)) {
+        task = await continueNativeAppearanceTask(this, task, { input: durableInput, submit: true });
+      } else if (task.state === 'awaiting_input') {
+        if (task.inputs?.task && ['code', 'detail_spec', 'views', 'spec'].some(key => Object.hasOwn(durableInput, key))) throw new AgentContractError('INVALID_ARGUMENT', 'Common-task compiled code, views and quality requirements are server-owned. Submit a corrected task before execution, or use reviewed editing after creation.');
+        if (task.intent === 'create_model' && task.private?.creation) {
+          if (Object.hasOwn(durableInput, 'task')) throw new AgentContractError('INVALID_ARGUMENT', 'Task dimensions are frozen after creation starts. Use the reviewed edit workflow, then reverify this task.');
+          freezeDetailSpecification(durableInput.detail_spec, task.private.creation.frozen_spec);
+          if (durableInput.runtime !== undefined && durableInput.runtime !== task.private.creation.runtime) throw new AgentContractError('INVALID_ARGUMENT', 'Refinement cannot change runtime.');
+          if (Object.hasOwn(durableInput, 'spec') && sha256Canonical(durableInput.spec) !== task.private.creation.layout_spec_hash) throw new AgentContractError('INVALID_ARGUMENT', 'Layout requirements are frozen.');
+          if (task.private.creation.round?.snapshot && Object.hasOwn(durableInput, 'code')) throw new AgentContractError('INVALID_ARGUMENT', 'Use refinement_code or reverify; the initial creation code is never replayed.');
+        }
+        const priorInputs = { ...task.inputs };
+        if (durableInput.task && !task.private?.common_task && !task.private?.creation) {
+          // A rejected mixed code/task request did not execute. Choosing a
+          // corrected task replaces those unexecuted alternatives so recovery
+          // stays on the same task instead of trapping stale invalid fields.
+          for (const key of ['code', 'detail_spec', 'views', 'spec']) delete priorInputs[key];
+        }
+        task = await this.taskStore.update(task_id, { inputs: { ...priorInputs, ...durableInput } });
         task = await this.taskStore.transition(task_id, 'understanding', {
           reason: 'required_input_received',
           patch: { last_error: null, next_action: { action: 'continue_server_work' } }
         });
         task = await this.runIntent(task);
+      } else if (task.state === 'awaiting_review' && task.intent === 'create_model' && task.private?.image_model_creation) {
+        task = await approveImageModelCreation(this, task, durableInput);
       } else if (task.state === 'awaiting_review'
         && task.intent === 'reviewed_existing_model_edit'
         && task.private?.design_post_apply_reconciliation) {
@@ -455,6 +582,11 @@ export class AgentGateway {
   async presentTaskEnvelope(envelope) {
     if (!envelope?.task_id || envelope.kind !== 'agent_result_envelope') return envelope;
     const task = await this.taskStore.getTask(envelope.task_id, { includePrivate: true });
+    if (['discover', 'preflight_model', 'deliver_model'].includes(task.intent) || task.inputs?.task || task.inputs?.parameter_edit || task.inputs?.creation_task_id) {
+      const result = { ...(envelope.result || {}), status: accessibilityStatus(task, envelope) };
+      if (task.inputs?.parameter_edit && result.geometry_applied === true) result.status.execution_status = result.stage === 'applied' ? 'applied' : 'committed_pending_finalization';
+      envelope = { ...envelope, result, data: result };
+    }
     return presentAgentResultEnvelope({ envelope, task, taskStore: this.taskStore });
   }
 
@@ -579,6 +711,11 @@ export class AgentGateway {
   }
 
   async runIntent(task) {
+    if (task.intent === 'discover') return this.discoverModeling(task);
+    if (task.intent === 'preflight_model') return this.preflightModeling(task);
+    if (task.intent === 'deliver_model') return this.deliverModeling(task);
+    if (task.intent === 'apply_native_appearance') return prepareNativeAppearanceTask(this, task);
+    if (task.intent === 'reopen_delivered_model') return reopenDeliveredModelTask(this, task);
     assertRuntimePolicy(task.inputs?.runtime || 'mock', this.bridge.executionPolicy, task.intent);
     switch (task.intent) {
     case 'understand_model': return this.understandModel(task);
@@ -593,6 +730,129 @@ export class AgentGateway {
     case 'create_model': return this.createModel(task);
     default: throw new AgentContractError('INVALID_ARGUMENT', 'Unsupported task intent.');
     }
+  }
+
+  async discoverModeling(task) {
+    const inputs = task.inputs;
+    const topic = inputs.topic || 'start';
+    if (!['start', 'tasks', 'assets', 'workflows', 'connect', 'parameter_sources'].includes(topic)) throw new AgentContractError('INVALID_ARGUMENT', 'Discovery topic must be start, tasks, assets, workflows, connect, or parameter_sources.');
+    let result = { kind: 'model_accessibility_discovery', version: 'model-accessibility.v1', topic, current_model: 'not_checked', evidence_level: 'preflight_only', ...(topic === 'start' ? { guide: FIRST_USE_GUIDE } : {}) };
+    if (topic === 'tasks') {
+      result.catalog = getModelAccessibilityTaskCatalog({ task: inputs.kind, detail: inputs.detail || 'summary' });
+      if (inputs.kind && inputs.detail === 'examples') {
+        const selected = result.catalog.tasks[0];
+        // The selected example is a complete small entry. Full ranges and
+        // dependency documentation remain available via detail=parameters.
+        result = { kind: result.kind, topic, evidence_level: 'preflight_only',
+          task_input: selected.examples.minimal.arguments.inputs.task,
+          fixed_design: selected.fixed_design,
+          next_step: 'Replace example values with user dimensions. Call preflight_model with inputs.task, then discover/connect runtime=queue and create_model using the same task plus connection_task_id and a stable idempotency_key.',
+          more_constraints: 'discover topic=tasks, kind=' + inputs.kind + ', detail=parameters; preflight also reports exact range/dependency errors.' };
+      }
+      if (inputs.kind && inputs.detail === 'parameters') {
+        const selected = result.catalog.tasks[0];
+        const byAsset = selected.parameters.by_asset_recipe;
+        const recipe = typeof inputs.asset_id === 'string' ? inputs.asset_id.replace(/^detail-/, '') : null;
+        if (byAsset && !byAsset[recipe]) {
+          result = { kind: result.kind, topic, task_kind: inputs.kind, evidence_level: 'preflight_only', asset_ids: Object.keys(byAsset).map(name => `detail-${name}`),
+            next_step: 'Choose an asset_id; repeat discover topic=tasks, kind=asset_placement, detail=parameters, asset_id=<selected>. Or use topic=assets for native file assets.' };
+        } else {
+          const parameters = byAsset ? byAsset[recipe] : selected.parameters;
+          result = { kind: result.kind, topic, task_kind: inputs.kind, evidence_level: 'preflight_only', units: 'mm; angles in degrees',
+            parameter_rules: Object.fromEntries(Object.entries(parameters).map(([name, rule]) => [name, Object.fromEntries(Object.entries(rule).filter(([key]) => ['type', 'minimum', 'maximum', 'default', 'enum', 'required'].includes(key)))])),
+            fixed_design: selected.fixed_design, dependencies: selected.dependencies.slice(3),
+            placement: 'Exactly one of placement:{origin_mm:[x,y,z],rotation_z_deg?} or instances:[{id,origin_mm,rotation_z_deg?}]. World mm; +X width,+Y back,+Z up; rotate then translate. Up to 12 shared instances.',
+            next_step: 'Use these rules with the inline example. Preflight reports all exact range/dependency errors; do not read an artifact before trying preflight.' };
+        }
+      }
+    }
+    if (topic === 'assets') {
+      result.catalog = await this.bridge.query_assets({ query: inputs.query || '', limit: 12, ...(this.bridge.options.assetCatalogPath ? { catalog_path: this.bridge.options.assetCatalogPath } : {}) });
+      const catalogFile = path.join(this.taskStore.rootDir, 'task-artifacts', task.task_id, 'asset-query.json');
+      await atomicWriteJson(catalogFile, result.catalog);
+      result.catalog_artifacts = await this.registerArtifacts(task.task_id, { asset_query: catalogFile });
+    }
+    if (topic === 'workflows') result = getModelAccessibilityWorkflowGuide({ task: inputs.task_name });
+    if (topic === 'parameter_sources') Object.assign(result, await discoverParameterSources({ gateway: this, runtime: inputs.runtime, query: inputs.query }));
+    if (topic === 'connect') {
+      if (!['mock', 'queue'].includes(inputs.runtime)) throw new AgentContractError('INVALID_ARGUMENT', 'Connect requires explicit runtime mock or queue.');
+      assertRuntimePolicy(inputs.runtime, this.bridge.executionPolicy, task.intent);
+      const timeoutMs = boundedQueueTimeoutMs(inputs.timeout_ms, 15_000);
+      // Serial read-only probes. Freshness proves the document binding, not approval.
+      if (inputs.runtime === 'queue') result.queue = await this.bridge.queue_diagnostics({ includeFiles: false, timeoutMs });
+      const capabilities = await this.bridge.get_capabilities({ runtime: inputs.runtime, timeoutMs });
+      result.runtime = capabilities.runtime;
+      const inspected = await this.bridge.inspect_model({ runtime: inputs.runtime, includeSnapshot: false, timeoutMs });
+      result.current_model = markUntrustedData(inspected, 'sketchup_model_entities');
+      if (inputs.runtime === 'queue') {
+        const session_contract = (await this.bridge.create_queue_handshake({ timeoutMs })).session_contract;
+        task = await this.taskStore.update(task.task_id, { private: { ...task.private, connection: { session_contract } } });
+        // Signed payloads cannot pass through no-files projection: removing a
+        // model source path would invalidate the signature. Keep the original
+        // server-side and expose only this task-bound connection reference.
+        result.connection_task_id = task.task_id;
+        result.connection_expires_at = session_contract.expires_at;
+      }
+      result.evidence_level = inputs.runtime === 'queue' ? 'live_read_only' : 'mock_only';
+      result.gateway_creation_allowed = inputs.runtime === 'mock' || this.bridge.executionPolicy.allow_queue_mutation === true;
+    }
+    result.next_steps = topic === 'start' ? [discoverCall({ topic: 'tasks' }), discoverCall({ topic: 'connect', runtime: 'queue' })] : [];
+    return this.taskStore.transition(task.task_id, 'completed', { reason: 'model_accessibility_discovered', patch: { result, next_action: topic === 'start' ? { action: 'discover_tasks', ...discoverCall({ topic: 'tasks' }) } : null } });
+  }
+
+  async materializeConnectionInput(input, fallbackRuntime) {
+    if (!Object.hasOwn(input, 'connection_task_id')) return input;
+    if (input.session_contract !== undefined || (input.runtime || fallbackRuntime) !== 'queue') throw new AgentContractError('INVALID_ARGUMENT', 'connection_task_id requires queue runtime and cannot be combined with session_contract.');
+    const sourceId = String(input.connection_task_id || '');
+    if (!/^task_[0-9a-f-]+$/i.test(sourceId)) throw new AgentContractError('HANDSHAKE_INVALID', 'connection_task_id must refer to a completed queue connection task.');
+    const source = await this.taskStore.getTask(sourceId, { includePrivate: true });
+    const contract = source.private?.connection?.session_contract;
+    if (source.intent !== 'discover' || source.inputs?.topic !== 'connect' || source.inputs?.runtime !== 'queue' || source.state !== 'completed' || !contract) throw new AgentContractError('HANDSHAKE_INVALID', 'The source task does not contain a completed queue connection.');
+    return { ...input, session_contract: structuredClone(contract) };
+  }
+
+  async compileCommonTask(task) {
+    if (!task.inputs.task) throw new AgentContractError('INVALID_ARGUMENT', 'Provide the common-task description in inputs.task.', { details: { recovery_class: 'design_input', issues: [{ path: '/inputs/task', message: 'Read discover topic=tasks for required fields.' }] } });
+    const context = { limits: this.bridge.executionPolicy.resource_limits };
+    // Reject bad dimensions before contacting SketchUp. A runtime-free preflight is
+    // useful, but must not imply that the currently open model was inspected.
+    let compiled = compileModelAccessibilityTask(task.inputs.task, context);
+    const runtime = task.inputs.runtime;
+    if (runtime !== undefined) {
+      if (!['mock', 'queue'].includes(runtime)) throw new AgentContractError('INVALID_ARGUMENT', 'Common-task preflight runtime must be mock or queue.');
+      assertRuntimePolicy(runtime, this.bridge.executionPolicy, task.intent);
+      const timeoutMs = boundedQueueTimeoutMs(task.inputs.timeout_ms, 30_000);
+      const capabilities = (await this.bridge.get_capabilities({ runtime, timeoutMs })).runtime;
+      if (!Array.isArray(capabilities?.supported_operations)) throw new AgentContractError('INVALID_ARGUMENT', 'The runtime did not advertise its generated-operation support; reconnect to a compatible plugin.', { details: { recovery_class: 'runtime_blocked', issues: [{ code: 'CAPABILITY_UNSUPPORTED', path: '/inputs/runtime', message: 'A fresh generated-operation capability list is required.' }] } });
+      const inspected = await this.bridge.inspect_model({ runtime, includeEntities: true, includeSnapshot: true, timeoutMs });
+      const roots = [...(inspected.entities || []), ...(inspected.snapshot?.groups || []), ...(inspected.snapshot?.instances || [])];
+      context.availableOperations = capabilities.supported_operations;
+      context.existingIds = [...new Set(roots.flatMap(entity => [entity.id, entity.name]).filter(value => typeof value === 'string' && value))];
+      compiled = compileModelAccessibilityTask(task.inputs.task, context);
+      compiled.preflight.runtime_observation = { runtime, capability_version: capabilities.capability_version || null, model_revision: inspected.snapshot?.model_revision || null, model_revision_complete: inspected.snapshot?.model_revision_complete === true, root_names_checked: context.existingIds.length, mutates_model: false };
+      compiled.preflight.remaining_runtime_checks = compiled.preflight.remaining_runtime_checks.filter(check => check !== 'fresh runtime capability and session binding');
+      compiled.preflight.remaining_runtime_checks.unshift('fresh session authorization and atomic target/name absence at execution');
+    }
+    return compiled;
+  }
+
+  async preflightModeling(task) {
+    const compiled = await this.compileCommonTask(task);
+    return this.taskStore.transition(task.task_id, 'completed', { reason: 'common_task_preflight_completed', patch: {
+      result: { kind: 'model_accessibility_preflight', evidence_level: 'preflight_only', quality_status: 'not_evaluated', quality_accepted: false, preflight: compiled.preflight, required_before_execution: ['explicit runtime', 'stable idempotency_key', 'fresh connection_task_id or session_contract for queue'], task: task.inputs.task },
+      next_action: null
+    } });
+  }
+
+  async deliverModeling(task) {
+    assertRuntimePolicy('queue', this.bridge.executionPolicy, task.intent);
+    if (!task.inputs.source_task_id || !task.inputs.session_contract) return this.taskStore.transition(task.task_id, 'awaiting_input', {
+      reason: 'delivery_source_and_connection_required', patch: { next_action: { action: 'submit_task_input', then_tool: 'submit_agent_task_input', task_id: task.task_id, required: ['source_task_id', 'connection_task_id from a fresh discover/connect task'] } }
+    });
+    const result = await deliverModelAccessibilityTask({ bridge: this.bridge, taskStore: this.taskStore, taskId: task.task_id,
+      sourceTaskId: task.inputs.source_task_id, sessionContract: task.inputs.session_contract,
+      timeoutMs: boundedQueueTimeoutMs(task.inputs.timeout_ms, 120_000) });
+    return this.taskStore.transition(task.task_id, 'completed', { reason: 'accepted_model_saved_to_unique_file', patch: { result, last_error: null, next_action: null } });
   }
 
   async understandModel(task) {
@@ -616,20 +876,26 @@ export class AgentGateway {
   }
 
   async prepareReviewedExistingEdit(task) {
+    let assetEdit = null;
+    if (task.inputs.asset_edit) {
+      if (['operations', 'targets', 'source_proposal', 'source_design_change', 'source_visual_correction'].some(key => Object.hasOwn(task.inputs, key))) throw new AgentContractError('INVALID_ARGUMENT', 'asset_edit cannot be combined with caller operations, targets or another source plan.');
+      assetEdit = await prepareNativeAssetEdit({ assetEdit: task.inputs.asset_edit, taskId: task.task_id, runtime: task.inputs.runtime || 'mock', catalogPath: this.bridge.options.assetCatalogPath });
+    }
     const sourceProposal = await this.resolveSourceProposal(task);
     const sourceDesignChange = await this.resolveSourceDesignChange(task);
     const sourceVisualCorrection = await this.resolveSourceVisualCorrection(task);
     if ([sourceProposal, sourceDesignChange, sourceVisualCorrection].filter(Boolean).length > 1) {
       throw new AgentContractError('INVALID_ARGUMENT', 'A reviewed edit task cannot combine multiple server source bindings.');
     }
-    const operations = sourceProposal?.proposal.operation_proposal
+      const operations = sourceProposal?.proposal.operation_proposal
       || sourceDesignChange?.change_plan.operations
       || sourceVisualCorrection?.private_patch.operations
-      || task.inputs.operations;
+      || assetEdit?.operations || task.inputs.operations;
     const targets = sourceProposal?.proposal.selected_targets
       || sourceDesignChange?.change_plan.targets
       || sourceVisualCorrection?.private_patch.targets
-      || task.inputs.targets;
+      || assetEdit?.targets || task.inputs.targets;
+    if (!assetEdit && operations?.some(operation => ['place_component_asset', 'replace_component_asset'].includes(operation?.op))) throw new AgentContractError('OPERATION_NOT_ALLOWED', 'Gateway native assets must use asset_edit and the server-configured catalog.');
     const recursiveLimit = task.inputs.recursive_limit
       || sourceProposal?.source_task.inputs?.recursive_limit
       || sourceDesignChange?.source_task.inputs?.recursive_limit
@@ -640,7 +906,7 @@ export class AgentGateway {
       ...(task.inputs.budgets || {}),
       recursive_limit: task.inputs.budgets?.recursive_limit || recursiveLimit
     };
-    if (!Array.isArray(operations) || operations.length === 0 || !Array.isArray(targets) || targets.length === 0) {
+    if (!Array.isArray(operations) || operations.length === 0 || !Array.isArray(targets) || (targets.length === 0 && !(operations.length === 1 && operations[0].op === 'place_component_asset'))) {
       return this.taskStore.transition(task.task_id, 'awaiting_input', {
         reason: 'edit_inputs_required',
         patch: { next_action: { action: 'submit_task_input', required: ['operations', 'targets'] } }
@@ -665,6 +931,9 @@ export class AgentGateway {
       targets,
       budgets,
       recursive_limit: recursiveLimit,
+      ...((sourceDesignChange?.change_plan.recursive_roots || task.inputs.recursive_roots) ? {
+        recursive_roots: sourceDesignChange?.change_plan.recursive_roots || task.inputs.recursive_roots
+      } : {}),
       task_id: task.task_id,
       ...(sourceProposal ? {
         source_proposal_binding: sourceProposal.binding,
@@ -746,6 +1015,7 @@ export class AgentGateway {
         private: {
           ...refreshed.private,
           existing_edit_plan: prepared.plan,
+          ...(assetEdit ? { native_asset_edit: assetEdit } : {}),
           ...(sourceProposal ? { source_proposal: sourceProposal.binding } : {}),
           ...(sourceVisualCorrection ? { source_visual_correction: sourceVisualCorrection.binding } : {}),
           ...(sourceDesignChange ? {
@@ -756,6 +1026,7 @@ export class AgentGateway {
         },
         result: {
           kind: 'reviewed_existing_model_edit_proposal',
+          ...(assetEdit ? { asset: assetEdit.asset_record, asset_verification_required: assetEdit.verification } : {}),
           plan_id: prepared.plan.plan_id,
           plan_hash: prepared.plan.plan_hash,
           model_revision: prepared.plan.model_revision,
@@ -1150,6 +1421,7 @@ export class AgentGateway {
   async modifyDesignParameters(task) {
     const inputs = task.inputs;
     this.assertNoClientModelKey(inputs);
+    if (inputs.parameter_edit) return this.planCreationParameterEdit(task);
     const createsDesignGraph = Boolean(inputs.parametric_recipe && inputs.entity_bindings);
     const resumesDesignGraph = Boolean(inputs.design_task_id);
     if (!inputs.changes || (!createsDesignGraph && !resumesDesignGraph)) {
@@ -1234,6 +1506,111 @@ export class AgentGateway {
         next_action: changePlan.next_action
       }
     });
+  }
+
+  async continueParameterTaskEnvelope(task, options) {
+    try { task = await continueDefinitionParameterExecution(this, task, options); }
+    catch (error) { task = await parameterExecutionError(this, task, error); }
+    return createResultEnvelope({ task: await this.taskStore.getTask(task.task_id), ok: !task.last_error,
+      error: task.last_error || null, data: responseData(task) });
+  }
+
+  // Fresh definitions have a signed one-shot journal. Actual replacement uses
+  // the existing reviewed child task and its durable mutation receipt ledger.
+  async planCreationParameterEdit(task) {
+    if (['changes', 'design_task_id', 'parametric_recipe', 'entity_bindings', 'part_graph', 'feature_mapping_plan', 'assembly_rebuild'].some(key => Object.hasOwn(task.inputs, key))) {
+      throw new AgentContractError('INVALID_ARGUMENT', 'Use inputs.parameter_edit alone for the creation-bound parameter route.');
+    }
+    const request = task.inputs.parameter_edit;
+    if (!request || typeof request !== 'object' || !request.creation_task_id) throw new AgentContractError('INVALID_ARGUMENT', 'parameter_edit requires creation_task_id, scope, targets and changes.');
+    const sourceTask = await this.taskStore.getTask(request.creation_task_id, { includePrivate: true });
+    let record = sourceTask.private?.creation?.parameter_source;
+    const unavailable = sourceTask.private?.creation?.parameter_edit_support;
+    if (sourceTask.intent !== 'create_model' || !record) {
+      return this.taskStore.transition(task.task_id, 'awaiting_input', { reason: 'creation_parameter_baseline_unavailable', patch: {
+        result: { kind: 'modify_design_parameters_result', stage: 'blocked_before_planning', execution_allowed: false, quality_accepted: false,
+          blockers: ['trusted_creation_parameter_baseline_unavailable'], parameter_edit_support: unavailable || null },
+        next_action: { action: 'use_existing_reviewed_edit_workflow', reason: 'A missing creation-time baseline cannot be recreated from the current model.' }
+      } });
+    }
+    const runtime = task.inputs.runtime || record.runtime;
+    if (runtime !== record.runtime) throw new AgentContractError('INVALID_ARGUMENT', 'Parameter editing cannot change the creation runtime.');
+    const recursiveLimit = boundedRecursiveLimit(task.inputs.recursive_limit, this.bridge.executionPolicy, 5000);
+    const sourceTargets = record.entries.map(entry => entry.target);
+    const adoption = sourceTargets.length > 1 ? await adoptParameterRoots({ bridge: this.bridge, runtime, recursiveLimit,
+      timeoutMs: boundedQueueTimeoutMs(task.inputs.timeout_ms, 120_000),
+      ...(sourceTargets.every(target => target.entity_path) ? { rootPaths: sourceTargets.map(target => target.entity_path) } : { rootIds: sourceTargets.map(target => target.target_id) }) })
+      : await this.bridge.adopt_open_model({ runtime, recursive: true, recursive_limit: recursiveLimit, read_only: true,
+        timeoutMs: boundedQueueTimeoutMs(task.inputs.timeout_ms, 120_000) });
+    const graph = buildModelGraph(adoption);
+    const sourceDocument = sourceTask.private.creation.parameter_source_document_binding;
+    if (modelKeyForIdentity(modelIdentityForAdoption(adoption)) !== record.model_key
+      || sourceDocument && sourceDocument !== parameterSourceDocumentBinding(adoption)) {
+      if (!task.inputs.saved_delivery_task_id) throw new AgentContractError('MODEL_IDENTITY_MISMATCH', 'Open model identity differs from the trusted creation baseline. To continue an unchanged server delivery, include inputs.saved_delivery_task_id.');
+      record = await resumeSavedDefinitionParameterSource({ gateway: this, sourceTask, deliveryTaskId: task.inputs.saved_delivery_task_id, adoption, modelGraph: graph });
+    }
+    const edit = planDefinitionParameterEdit({ sourceRecord: record, currentModelGraph: graph, request, taskId: task.task_id,
+      iteration: record.parameter_revision, instruction: task.instruction });
+    const artifactDir = path.join(this.taskStore.rootDir, 'task-artifacts', task.task_id, 'parameter-edit');
+    const artifactPath = await writeDesignArtifact(path.join(artifactDir, 'definition-parameter-edit.v1.json'), edit);
+    await this.registerArtifacts(task.task_id, { definition_parameter_edit: artifactPath });
+    const refreshed = await this.taskStore.getTask(task.task_id, { includePrivate: true });
+    task = await this.taskStore.update(task.task_id, { private: { ...refreshed.private, creation_parameter_edit: edit,
+      parameter_source_record: record, parameter_recursive_limit: recursiveLimit, parameter_timeout_ms: boundedQueueTimeoutMs(task.inputs.timeout_ms, 120_000) },
+      artifacts: refreshed.artifacts });
+    if (!edit.ready) return this.taskStore.transition(task.task_id, 'awaiting_input', { reason: 'parameter_manual_divergence_requires_reconciliation', patch: {
+      result: { kind: 'modify_design_parameters_result', stage: 'blocked_before_staging', plan_ready: false, divergence: edit.divergence, blockers: edit.blockers,
+        definitions_staged: false, execution_allowed: false, quality_accepted: false }, next_action: { action: 'reconcile_design_intent' } } });
+    try { return await continueDefinitionParameterExecution(this, task); }
+    catch (error) { return parameterExecutionError(this, task, error); }
+  }
+
+  // Only invoked immediately after the original committed build. Recovery must
+  // not recapture this baseline from a later model revision or hide manual edits.
+  async captureCreationParameterBaseline(task, prepared) {
+    if (!task.inputs.task || task.private?.creation?.parameter_edit_support) return task;
+    const creation = task.private.creation;
+    let record = null, support, documentBinding, readbackEvidence;
+    try {
+      if (creation.round.iteration !== 0 || task.private.common_task?.source_hash !== sha256Canonical(task.inputs.task)) throw new AgentContractError('INVALID_ARGUMENT', 'Only the unchanged initial common-task source can establish a parameter baseline.');
+      const committedRevision = creation.round.snapshot?.model_revision;
+      if (creation.runtime === 'queue' && (!committedRevision || creation.round.snapshot.model_revision_complete !== true)) throw new AgentContractError('MODEL_REVISION_INCOMPLETE', 'Creation has no complete committed native revision for an immediate parameter baseline.');
+      const rootIds = compileModelAccessibilityTask(task.inputs.task).bundle.part_graph.roots.map(root => creation.identity_map[root.instance_id || root.part_id]);
+      const recursiveLimit = boundedRecursiveLimit(task.inputs.recursive_limit, this.bridge.executionPolicy, 5000);
+      const adoption = rootIds.length > 1 ? await adoptParameterRoots({ bridge: this.bridge, runtime: creation.runtime, recursiveLimit,
+        timeoutMs: boundedQueueTimeoutMs(task.inputs.timeout_ms, 120_000), rootIds })
+        : await this.bridge.adopt_open_model({ runtime: creation.runtime, read_only: true, recursive: true,
+          recursive_limit: recursiveLimit, timeoutMs: boundedQueueTimeoutMs(task.inputs.timeout_ms, 120_000) });
+      const graph = buildModelGraph(adoption);
+      if (creation.runtime === 'queue' && graph.model_revision !== committedRevision) throw new AgentContractError('MODEL_REVISION_MISMATCH', 'Model changed between creation and parameter baseline readback.');
+      if (creation.runtime === 'mock') {
+        // Mock build snapshots have no native revision. Keep this weaker fixture
+        // check explicit; it can never stand in for queue revision attestation.
+        const { runtime: ignoredRuntime, ...committedSnapshot } = creation.round.snapshot;
+        const { runtime: ignoredAdoptionRuntime, ...readbackSnapshot } = adoption.snapshot;
+        if (sha256Canonical(committedSnapshot) !== sha256Canonical(readbackSnapshot)) throw new AgentContractError('MODEL_REVISION_MISMATCH', 'Mock snapshot changed before parameter baseline readback.');
+      }
+      record = captureDefinitionParameterSource({ creationTaskId: task.task_id, modelKey: modelKeyForIdentity(modelIdentityForAdoption(adoption)),
+        modelGraph: graph, sourceTask: task.inputs.task, identityMap: creation.identity_map, materialMap: creation.material_map, creationDocument: prepared.document });
+      await verifyHostCreationCapture({ task, taskStore: this.taskStore, prepared, modelGraph: graph });
+      documentBinding = parameterSourceDocumentBinding(adoption);
+      readbackEvidence = adoption.bounded_readback || null;
+      support = { baseline_captured: true, planning_available: true, execution_available: true, evidence_level: creation.runtime === 'queue' ? 'trusted_immediate_creation_readback' : 'mock_initial_snapshot_match',
+        source_record_hash: record.source_record_hash, blockers: [] };
+    } catch (error) {
+      record = null;
+      support = { baseline_captured: false, planning_available: false, execution_available: false, evidence_level: 'creation_baseline_capture_blocked',
+        blockers: [error.code || 'PARAMETER_BASELINE_CAPTURE_FAILED'], reason: String(error.message) };
+    }
+    const captured = await this.taskStore.update(task.task_id, { private: { ...task.private, creation: { ...creation,
+      parameter_edit_support: support, ...(record ? { parameter_source: record, parameter_source_document_binding: documentBinding,
+        ...(readbackEvidence ? { parameter_source_readback: readbackEvidence } : {}) } : {}) } } });
+    if (record) {
+      try { await indexCapturedParameterSource({ taskStore: this.taskStore, task: captured }); }
+      catch (error) { return this.taskStore.update(task.task_id, { private: { ...captured.private, creation: { ...captured.private.creation,
+        parameter_source_discovery: { available: false, reason: error.code || 'SOURCE_INDEX_WRITE_FAILED' } } } }); }
+    }
+    return captured;
   }
 
   async reconcileDesignIntent(task) {
@@ -1843,6 +2220,33 @@ export class AgentGateway {
 
   async verifyModel(task) {
     const inputs = task.inputs;
+    if (inputs.creation_task_id) return verifyDefinitionParameterResult(this, task);
+    if (Object.hasOwn(inputs, 'task') || Object.hasOwn(inputs, 'source_task_id')) {
+      const source = typeof inputs.source_task_id === 'string'
+        ? await this.taskStore.getTask(inputs.source_task_id, { includePrivate: true }).catch(() => null) : null;
+      const acceptedCreation = source?.intent === 'create_model' && source.state === 'completed' && source.result?.quality_accepted === true && source.result?.evidence_level === 'live_runtime';
+      throw new AgentContractError('INVALID_ARGUMENT', 'verify_model does not accept task or source_task_id. A creation already includes quality verification. Deliver its accepted result; after a parameter edit use creation_task_id and parameter_task_id in a new frozen verification task.', {
+        nextAction: acceptedCreation ? { action: 'connect_for_delivery', ...discoverCall({ topic: 'connect', runtime: 'queue' }), source_task_id: source.task_id,
+          then: { tool: 'start_agent_task', intent: 'deliver_model', inputs: { source_task_id: source.task_id, runtime: 'queue', connection_task_id: '<returned connect task_id>' } } }
+          : source ? { action: 'resume_creation_quality_result', tool: 'resume_agent_task', arguments: { task_id: source.task_id } }
+            : { action: 'discover_verification_contract', ...discoverCall({ topic: 'workflows', task_name: 'save_reopen_resume' }) }
+      });
+    }
+    if (Object.hasOwn(inputs, 'snapshot')) {
+      const snapshot = inputs.snapshot;
+      const object = value => value && typeof value === 'object' && !Array.isArray(value);
+      if (!object(snapshot) || !Array.isArray(snapshot.groups) || !Array.isArray(snapshot.instances)
+        || !object(snapshot.totals) || ['faces', 'edges', 'groups', 'instances'].some(key => !Number.isSafeInteger(snapshot.totals[key]) || snapshot.totals[key] < 0)
+        || snapshot.groups.some(item => !object(item)) || snapshot.instances.some(item => !object(item))
+        || snapshot.totals.groups > snapshot.groups.length || snapshot.totals.instances > snapshot.instances.length
+        || !object(snapshot.bounding_box) || ['min', 'max'].some(key => !Array.isArray(snapshot.bounding_box[key]) || snapshot.bounding_box[key].length !== 3 || snapshot.bounding_box[key].some(value => !Number.isFinite(value)))
+        || snapshot.warnings !== undefined && !Array.isArray(snapshot.warnings)) {
+        throw new AgentContractError('INVALID_ARGUMENT', 'snapshot must be a structured model snapshot with groups, instances, nonnegative integer totals and finite bounding_box; a task id, string, array or empty object is not model evidence.', {
+          nextAction: { action: 'supply_structured_snapshot_or_use_creation_result', accepted_inputs: ['snapshot object from actual inspect_model output', 'creation_task_id plus completed parameter_task_id for frozen verification'],
+            accepted_creation_next_step: 'connect then deliver_model with source_task_id; never put a task id in snapshot' }
+        });
+      }
+    }
     if (!inputs.code && !inputs.snapshot) {
       return this.taskStore.transition(task.task_id, 'awaiting_input', {
         reason: 'verification_input_required',
@@ -1860,19 +2264,26 @@ export class AgentGateway {
     }
     const runtime = inputs.runtime || 'mock';
     let next;
+    let verificationSnapshot = inputs.snapshot || null;
+    let trustedVerificationSnapshot = false;
     const report = await this.bridge.withAgentGatewayExecution({ taskId: task.task_id, intent: task.intent }, async (gatewayBridge) => {
       const verify = async (authorizedBridge) => {
         next = await this.taskStore.transition(task.task_id, 'verifying', {
           reason: 'verification_started',
           patch: { last_error: null, next_action: { action: 'continue_server_work' } }
         });
-        return authorizedBridge.validate_model({
-          code: preparedCode,
-          snapshot: inputs.snapshot,
+        if (inputs.code) {
+          const built = await authorizedBridge.build_model({ code: preparedCode, runtime });
+          verificationSnapshot = built.snapshot || null;
+          trustedVerificationSnapshot = Boolean(verificationSnapshot);
+        }
+        const report = await authorizedBridge.validate_model({
+          snapshot: verificationSnapshot,
           runtime,
           spec: inputs.spec,
           includePreview: inputs.include_preview !== false
         });
+        return report;
       };
       if (runtime === 'queue' && inputs.code) {
         return gatewayBridge.withLiveMutationAuthorization({
@@ -1883,9 +2294,13 @@ export class AgentGateway {
       }
       return verify(gatewayBridge);
     });
+    const frozenSpecification = freezeDetailSpecification(inputs.detail_spec);
+    const regionCheck = trustedVerificationSnapshot ? await this.inspectFrozenDetailRegions(task, { frozen_spec: frozenSpecification, runtime }) : null;
+    const quality = evaluateDetailQuality({ snapshot: verificationSnapshot || {}, layoutQa: report, frozenSpecification, runtime, trustedSnapshot: trustedVerificationSnapshot,
+      regionInspection: regionCheck?.raw_result, trustedRegionInspection: regionCheck?.received_from_server === true });
     next = await this.taskStore.transition(task.task_id, 'completed', {
       reason: 'verification_completed',
-      patch: { result: { kind: 'verify_model_result', report }, next_action: null }
+      patch: { private: { ...next.private, detail_region_inspection: regionCheck }, result: { kind: 'verify_model_result', report, quality, quality_status: quality.quality_status, quality_accepted: quality.quality_accepted, evidence_level: quality.evidence_level }, next_action: null }
     });
     return next;
   }
@@ -1918,6 +2333,7 @@ export class AgentGateway {
     if (inputs.image_base64 !== undefined || inputs.media_type !== undefined) {
       throw new AgentContractError('ARTIFACT_INTEGRITY_ERROR', 'Raw transient image data must never reach persisted task execution.');
     }
+    if (inputs.action === 'structure') return prepareImageStructure(this, task);
     if (inputs.image_handle) {
       const record = await this.imageArtifactStore.inspect(inputs.image_handle);
       const current = await this.taskStore.getTask(task.task_id, { includePrivate: true });
@@ -1965,39 +2381,275 @@ export class AgentGateway {
   }
 
   async createModel(task) {
-    const inputs = task.inputs;
-    if (!inputs.code) {
-      return this.taskStore.transition(task.task_id, 'awaiting_input', {
-        reason: 'safe_dsl_required',
-        patch: { next_action: { action: 'submit_task_input', required: ['code'] } }
+    if (task.inputs.source_image_model && task.private?.image_model_creation?.approved) await assertFrozenImageCreation(this,task);
+    if (task.inputs.source_image_model && !task.private?.image_model_creation?.approved) return prepareImageModelCreation(this, task);
+    if (task.inputs.task && !task.private?.creation) {
+      if (!['mock', 'queue'].includes(task.inputs.runtime)) throw new AgentContractError('INVALID_ARGUMENT', 'Common-task creation requires an explicit runtime: mock or queue.', { details: { recovery_class: 'design_input', issues: [{ path: '/inputs/runtime', message: 'Choose mock for offline checks or queue for SketchUp.' }] } });
+      if (!task.private?.common_task && ['code', 'detail_spec', 'views', 'spec'].some(key => Object.hasOwn(task.inputs, key))) throw new AgentContractError('INVALID_ARGUMENT', 'Use inputs.task alone for common-task geometry and quality. Use the existing code entry for advanced DSL.');
+      const compiled = await this.compileCommonTask(task);
+      task = await this.taskStore.update(task.task_id, {
+        inputs: { ...task.inputs, ...compiled.inputs },
+        private: { ...task.private, common_task: { source_hash: sha256Canonical(task.inputs.task), preflight: compiled.preflight } }
       });
     }
-    const preparedCode = prepareAgentGatewayCreationDsl(inputs.code, { intent: task.intent }).code;
-    if ((inputs.runtime || 'mock') === 'queue' && !this.bridge.executionPolicy.allow_queue_mutation) {
+    const inputs = task.inputs;
+    const previous = task.private?.creation;
+    const frozenSpec = freezeDetailSpecification(inputs.detail_spec, previous?.frozen_spec);
+    const runtime = previous?.runtime || inputs.runtime || 'mock';
+    const hasPreviousBuild = Boolean(previous?.round?.snapshot);
+    const sourceCode = hasPreviousBuild ? inputs.refinement_code : inputs.code;
+    if (hasPreviousBuild && inputs.reverify === true) {
+      const inspected = await this.bridge.inspect_model({ runtime, includeSnapshot: true, timeoutMs: boundedQueueTimeoutMs(inputs.timeout_ms, 120_000) });
+      const snapshot = inspected.snapshot;
+      if (!snapshot) throw new AgentContractError('INVALID_ARGUMENT', 'Reverification requires a fresh server snapshot.');
+      let resetStreaks = false;
+      if (inputs.reviewed_edit_task_id) {
+        const reviewed = await this.taskStore.getTask(inputs.reviewed_edit_task_id, { includePrivate: true });
+        if (reviewed.intent !== 'reviewed_existing_model_edit' || reviewed.state !== 'completed' || !snapshot.model_revision || reviewed.result?.model_revision_after !== snapshot.model_revision || (reviewed.inputs?.runtime || 'mock') !== runtime) throw new AgentContractError('INVALID_ARGUMENT', 'A completed reviewed edit bound to the current revision is required to reset refinement streaks.');
+        resetStreaks = true;
+      }
+      task = await this.taskStore.update(task.task_id, { private: { ...task.private, creation: { ...previous, ...(resetStreaks ? { per_part_failure_streak: {} } : {}), round: { ...previous.round, snapshot } } } });
+      task = await this.taskStore.transition(task.task_id, 'verifying', { reason: 'fresh_creation_reverification' });
+      return this.finalizeCreationQuality(task);
+    }
+    if (!sourceCode) {
+      return this.taskStore.transition(task.task_id, 'awaiting_input', {
+        reason: hasPreviousBuild ? 'refinement_required' : 'safe_dsl_required',
+        patch: { next_action: { action: 'submit_task_input', required: hasPreviousBuild ? ['refinement_code_or_reverify'] : ['code'] } }
+      });
+    }
+    const iteration = previous?.rounds?.length || 0;
+    const refinementParts = inputs.refinement_part_ids || (hasPreviousBuild ? Object.keys(previous.per_part_failure_streak || {}) : []);
+    if (!Array.isArray(refinementParts) || refinementParts.some(id => typeof id !== 'string' || !id)) throw new AgentContractError('INVALID_ARGUMENT', 'refinement_part_ids must contain stable part ids.');
+    const exhaustedParts = Object.entries(previous?.per_part_failure_streak || {}).filter(([, count]) => count >= 3).map(([id]) => id);
+    if (exhaustedParts.length) {
+      return this.taskStore.transition(task.task_id, 'awaiting_input', { reason: 'detail_part_refinement_budget_exhausted', patch: { next_action: { action: 'start_reviewed_existing_model_edit', required: ['reviewed_edit_task_id_then_reverify'], unfinished_parts: exhaustedParts } } });
+    }
+    if (iteration >= (frozenSpec?.specification.max_iterations || 6)) {
+      return this.taskStore.transition(task.task_id, 'awaiting_input', { reason: 'detail_iteration_budget_exhausted', patch: { next_action: { action: 'review_unfinished_model', quality_accepted: false, required: ['reverify_after_reviewed_edit'] } } });
+    }
+    const sourceHash = sha256Canonical(sourceCode);
+    if (previous?.rounds?.some(round => round.source_hash === sourceHash)) throw new AgentContractError('INVALID_ARGUMENT', 'This creation patch already ran; reverify instead of replaying it.');
+    let parsed;
+    try { parsed = JSON.parse(sourceCode); } catch { throw new AgentContractError('INVALID_ARGUMENT', 'Creation requires JSON DSL.'); }
+    const scoped = (parsed.operations || []).some(operation => ['component_definition', 'material', 'cut_hole', 'cut_slot', 'cut_recess', 'material_preset', 'kitchen_component', 'fixture_embed'].includes(operation.op));
+    const hostPrepared = await prepareHostCreationDsl({ task, taskStore: this.taskStore, sourceCode, iteration });
+    const prepared = hostPrepared || (scoped ? prepareTaskOwnedCreationDsl(sourceCode, { taskId: task.task_id, iteration }) : prepareAgentGatewayCreationDsl(sourceCode, { intent: task.intent }));
+    if (scoped && runtime === 'queue') {
+      const capabilities = await this.bridge.get_capabilities({ runtime });
+      if (capabilities.runtime?.creation_scope?.version !== 'creation-scope.v1' || capabilities.runtime.creation_scope.atomic_absence_validation !== true) throw new AgentContractError('POLICY_DENIED', 'The loaded runtime does not attest atomic creation-scope validation.');
+      if (hostPrepared && capabilities.runtime.creation_scope.host_new_root_metadata !== 'new-root-metadata.v1') throw new AgentContractError('POLICY_DENIED', 'The loaded runtime does not attest bounded host new-root metadata.');
+    }
+    if (runtime === 'queue' && !this.bridge.executionPolicy.allow_queue_mutation) {
       throw new AgentContractError('POLICY_DENIED', 'The server execution policy does not allow Agent Gateway queue mutation.');
     }
-    if ((inputs.runtime || 'mock') === 'queue' && !inputs.session_contract) {
+    if (runtime === 'queue' && !inputs.session_contract) {
       throw new AgentContractError('HANDSHAKE_REQUIRED', 'A fresh queue handshake is required before Agent Gateway live model creation.');
     }
-    const runtime = inputs.runtime || 'mock';
-    let next;
-    const { built, qa } = await this.bridge.withAgentGatewayExecution({ taskId: task.task_id, intent: task.intent }, (gatewayBridge) => gatewayBridge.withLiveMutationAuthorization({
+    if (hasPreviousBuild && Object.keys(prepared.identity_map || {}).some(id => previous.identity_map?.[id])) throw new AgentContractError('INVALID_ARGUMENT', 'An existing logical part requires reviewed editing; refinement cannot allocate a duplicate replacement.');
+    const creation = { ...previous, runtime, frozen_spec: frozenSpec, layout_spec: previous?.layout_spec || inputs.spec || {}, layout_spec_hash: previous?.layout_spec_hash || sha256Canonical(inputs.spec || {}), rounds: previous?.rounds || [], identity_map: { ...previous?.identity_map, ...prepared.identity_map }, material_map: { ...previous?.material_map, ...prepared.material_map }, ...(prepared.host_provisioning ? { host_provisioning: prepared.host_provisioning } : {}), round: { source_hash: sourceHash, phase: 'executing', iteration, refinement_part_ids: refinementParts } };
+    task = await this.taskStore.update(task.task_id, { private: { ...task.private, creation } });
+    const built = await this.bridge.withAgentGatewayExecution({ taskId: task.task_id, intent: task.intent }, (gatewayBridge) => gatewayBridge.withLiveMutationAuthorization({
       runtime,
+      timeoutMs: boundedQueueTimeoutMs(inputs.timeout_ms, 120_000),
       session_contract: inputs.session_contract,
       operation: 'build_model'
     }, async (authorizedBridge) => {
-      next = await this.taskStore.transition(task.task_id, 'executing', {
+      task = await this.taskStore.transition(task.task_id, 'executing', {
         reason: 'safe_dsl_build_started',
         patch: { last_error: null, next_action: { action: 'continue_server_work' } }
       });
-      const built = await authorizedBridge.build_model({ code: preparedCode, runtime });
-      const qa = await authorizedBridge.validate_model({ snapshot: built.snapshot, runtime, includePreview: inputs.include_preview !== false });
-      return { built, qa };
+      return authorizedBridge.build_model({ code: prepared.code, runtime, timeoutMs: boundedQueueTimeoutMs(inputs.timeout_ms, 120_000) });
     }));
-    next = await this.taskStore.transition(task.task_id, 'verifying', { reason: 'safe_dsl_build_completed' });
-    return this.taskStore.transition(task.task_id, 'completed', {
-      reason: 'created_model_verified',
-      patch: { result: { kind: 'create_model_result', snapshot: built.snapshot, qa }, next_action: null }
+    // Persist the committed result before QA. Recovery only finalizes this stored
+    // result; an execution with no durable result is never automatically replayed.
+    task = await this.taskStore.update(task.task_id, { private: { ...task.private, creation: { ...creation, round: { ...creation.round, phase: 'built', snapshot: built.snapshot, mutation_receipt: built.mutation_receipt || built.snapshot?.mutation_receipt || null } } } });
+    task = await this.captureCreationParameterBaseline(task, prepared);
+    task = await this.taskStore.transition(task.task_id, 'verifying', { reason: 'safe_dsl_build_completed' });
+    return this.finalizeCreationQuality(task);
+  }
+
+  // Internal handoff only: this method is not an MCP input surface. A receipt
+  // must retain the in-process brand granted after the reviewed native edit.
+  async recordTrustedAssemblyEditMapping({ creation_task_id, receipt } = {}) {
+    if (!isTrustedAssemblyEditReceipt(receipt)) throw new AgentContractError('APPROVAL_INVALID', 'Assembly detail mapping requires a trusted completed edit receipt.');
+    const task = await this.taskStore.getTask(creation_task_id, { includePrivate: true });
+    const creation = task.private?.creation;
+    if (task.intent !== 'create_model' || !creation?.frozen_spec || receipt.runtime !== creation.runtime) throw new AgentContractError('INVALID_ARGUMENT', 'Assembly mapping must belong to a creation task with frozen detail requirements in the same runtime.');
+    // Journal the branded handoff before any slow read. A process restart may
+    // resume this signed server record, but cannot promote a supplied JSON receipt.
+    const core = { version: 'pending-assembly-mapping.v1', task_id: task.task_id,
+      specification_hash: creation.frozen_spec.hash, receipt: structuredClone(receipt) };
+    const pending = { ...core, integrity_hmac: await this.taskStore.mutationReceiptLedger.sign(core) };
+    await this.taskStore.update(task.task_id, { private: { ...task.private,
+      creation: { ...creation, pending_assembly_mapping: pending } } });
+    return this.resumeTrustedAssemblyEditMapping({ creation_task_id });
+  }
+
+  // Internal read-only recovery. It never stages definitions or replays an edit.
+  async resumeTrustedAssemblyEditMapping({ creation_task_id } = {}) {
+    const task = await this.taskStore.getTask(creation_task_id, { includePrivate: true });
+    const creation = task.private?.creation;
+    const pending = creation?.pending_assembly_mapping;
+    if (!pending) throw new AgentContractError('APPROVAL_INVALID', 'No server-journaled assembly mapping is available.');
+    const { integrity_hmac, ...core } = pending;
+    if (core.version !== 'pending-assembly-mapping.v1' || core.task_id !== task.task_id
+      || core.specification_hash !== creation.frozen_spec?.hash
+      || integrity_hmac !== await this.taskStore.mutationReceiptLedger.sign(core)) {
+      throw new AgentContractError('APPROVAL_INVALID', 'The pending assembly mapping failed server integrity verification.');
+    }
+    const receipt = core.receipt;
+    if (task.intent !== 'create_model' || receipt.runtime !== creation.runtime) throw new AgentContractError('INVALID_ARGUMENT', 'Assembly recovery belongs to a different task or runtime.');
+    const timeoutMs = boundedQueueTimeoutMs(task.inputs.timeout_ms, 120_000);
+    const inspected = await this.bridge.inspect_model({ runtime: creation.runtime, timeoutMs, includeSnapshot: true });
+    const snapshot = inspected.snapshot || {};
+    const revision = snapshot.model_revision && (creation.runtime !== 'queue' || snapshot.model_revision_complete === true)
+      ? snapshot.model_revision
+      : buildModelGraph(receipt.recursive_roots?.length > 1
+        ? await adoptParameterRoots({ bridge: this.bridge, runtime: creation.runtime, timeoutMs,
+          recursiveLimit: boundedRecursiveLimit(receipt.recursive_limit, this.bridge.executionPolicy, 5000), rootPaths: receipt.recursive_roots })
+        : await this.bridge.adopt_open_model({ runtime: creation.runtime, timeoutMs, recursive: true,
+          recursive_limit: boundedRecursiveLimit(receipt.recursive_limit, this.bridge.executionPolicy, 5000),
+          ...(receipt.recursive_roots ? { recursive_roots: receipt.recursive_roots } : {}), read_only: true })).model_revision;
+    if (revision !== receipt.model_revision_after) throw new AgentContractError('MODEL_REVISION_MISMATCH', 'The model changed after the trusted assembly receipt.');
+    if ((creation.assembly_edit_receipts || []).some(previous => sha256Canonical(previous) === sha256Canonical(receipt))) {
+      return { kind: 'trusted_assembly_detail_mapping', task_id: task.task_id, mapped_parts: 0, already_recorded: true,
+        specification_hash: creation.frozen_spec.hash, model_revision: revision };
+    }
+    const mapping = { ...creation.occurrence_path_map };
+    const streaks = { ...creation.per_part_failure_streak };
+    const mappedRootPrefixes = [];
+    let mappedParts = 0;
+    const canonicalPath = item => item.persistent_path?.length ? `pid:${item.persistent_path.join('.')}` : item.entity_path;
+    for (const requirement of creation.frozen_spec.specification.required_parts) {
+      if (!requirement.instance_path) continue;
+      const key = JSON.stringify(requirement.instance_path);
+      const oldPath = mapping[key] || requirement.instance_path.map(id => creation.identity_map?.[id] || id);
+      for (const root of receipt.selected_roots || []) {
+        const nativeRoot = (snapshot.geometry_occurrences || []).find(item => canonicalPath(item) === root.entity_path);
+        const prefix = nativeRoot?.instance_path || oldPath.slice(0, oldPath.indexOf(root.reference) + 1);
+        if (!prefix?.length || prefix.some((id, index) => id !== oldPath[index])) continue;
+        const nextPath = [...prefix, ...requirement.instance_path.slice(prefix.length).map(id => receipt.identity_map?.[id] || creation.identity_map?.[id] || id)];
+        const currentOccurrence = (snapshot.geometry_occurrences || []).find(item => canonicalJson(item.instance_path) === canonicalJson(nextPath));
+        const observed = (root.occurrences || []).some(item => currentOccurrence
+          ? item.entity_path === canonicalPath(currentOccurrence)
+          : canonicalJson(item.instance_path) === canonicalJson(nextPath));
+        if (!observed) throw new AgentContractError('MODEL_REVISION_MISMATCH', `Reviewed assembly readback did not contain required descendant ${requirement.id}.`);
+        for (let length = prefix.length; length <= nextPath.length; length++) mapping[JSON.stringify(requirement.instance_path.slice(0, length))] = nextPath.slice(0, length);
+        mappedRootPrefixes.push(prefix);
+        streaks[key] = 0;
+        mappedParts++;
+        break;
+      }
+    }
+    if (!mappedParts) throw new AgentContractError('INVALID_ARGUMENT', 'No frozen detail occurrence belongs to the reviewed assembly roots.');
+    for (const region of creation.frozen_spec.specification.required_voids || []) {
+      const mappedPath = mapping[JSON.stringify(region.instance_path)] || region.instance_path.map(id => creation.identity_map?.[id] || id);
+      if (mappedRootPrefixes.some(prefix => prefix.every((id, index) => mappedPath[index] === id))) streaks[`void:${region.id}`] = 0;
+    }
+    await this.taskStore.update(task.task_id, { private: { ...task.private, creation: { ...creation,
+      occurrence_path_map: mapping, per_part_failure_streak: streaks,
+      assembly_edit_receipts: [...(creation.assembly_edit_receipts || []), structuredClone(receipt)] } } });
+    return { kind: 'trusted_assembly_detail_mapping', task_id: task.task_id, mapped_parts: mappedParts,
+      specification_hash: creation.frozen_spec.hash, model_revision: revision };
+  }
+
+  async inspectFrozenDetailRegions(task, creation) {
+    const requirements = creation.frozen_spec?.specification.required_voids || [];
+    if (!requirements.length) return null;
+    // The query is derived only from persisted frozen requirements. Inputs may
+    // neither replace bounds nor inject a successful native inspection receipt.
+    const queries = requirements.map(requirement => ({ id: requirement.id,
+      instance_path: creation.occurrence_path_map?.[JSON.stringify(requirement.instance_path)] || requirement.instance_path.map(id => creation.identity_map?.[id] || id),
+      bounds_mm: structuredClone(requirement.bounds_mm), search_scope: requirement.search_scope || 'scene',
+      boundary_checks: structuredClone(requirement.boundary_checks || []) }));
+    try {
+      if (typeof this.bridge.inspect_detail_regions !== 'function') throw new Error('Native detail region queries are unavailable.');
+      const raw = await this.bridge.withAgentGatewayExecution({ taskId: task.task_id, intent: task.intent }, gatewayBridge => gatewayBridge.inspect_detail_regions({ queries, runtime: creation.runtime, timeoutMs: boundedQueueTimeoutMs(task.inputs.timeout_ms, 120_000) }));
+      return { queries, raw_result: raw, received_from_server: true, error: null };
+    } catch (error) {
+      return { queries, raw_result: null, received_from_server: false, error: { message: String(error?.message || error), code: error?.code || null } };
+    }
+  }
+
+  async finalizeCreationQuality(task) {
+    if (task.state === 'executing') task = await this.taskStore.transition(task.task_id, 'verifying', { reason: 'recover_creation_quality_without_rebuild' });
+    let creation = task.private.creation;
+    const snapshot = creation.round.snapshot;
+    let qa = await this.bridge.validate_model({ snapshot, runtime: creation.runtime, spec: creation.layout_spec, includePreview: task.inputs.include_preview !== false });
+    const collisionReview = await narrowDetailLayoutQa({ bridge: this.bridge, snapshot, qa, runtime: creation.runtime, timeoutMs: boundedQueueTimeoutMs(task.inputs.timeout_ms, 120_000) });
+    qa = collisionReview.qa;
+    creation = { ...creation, round: { ...creation.round, collision_review: collisionReview.evidence } };
+    task = await this.taskStore.update(task.task_id, { private: { ...task.private, creation } });
+    let captures = creation.round.captures || [];
+    let captureError = null;
+    let captureArtifacts = task.artifacts || [];
+    const requiredViews = creation.frozen_spec?.specification.required_views || [];
+    if (requiredViews.length && !requiredViews.every(view => captures.some(capture => capture.id === view.id && capture.model_revision === snapshot.model_revision && capture.server_verified === true && capture.width >= (view.min_width || 1) && capture.height >= (view.min_height || 1)))) {
+      const captureAttempt = (creation.round.capture_attempts || 0) + 1;
+      creation = { ...creation, round: { ...creation.round, capture_attempts: captureAttempt } };
+      task = await this.taskStore.update(task.task_id, { private: { ...task.private, creation } });
+      let captureRawResult = null;
+      let capturePrivateError = null;
+      try {
+        if (typeof this.bridge.capture_detail_views !== 'function') throw new Error('The runtime does not support server detail capture.');
+        const views = requiredViews.map(requirement => {
+          const view = { ...(task.private?.frozen_creation_verification?.views || task.inputs.views || []).find(candidate => candidate.id === requirement.id), ...requirement };
+          return { ...view, ...(view.target_id ? { target_id: creation.identity_map?.[view.target_id] || view.target_id } : {}), ...(view.instance_path ? { instance_path: creation.occurrence_path_map?.[JSON.stringify(view.instance_path)] || view.instance_path.map(id => creation.identity_map?.[id] || id) } : {}) };
+        });
+        const outputDir = path.join(this.taskStore.rootDir, 'task-artifacts', task.task_id, 'detail-views', `iteration-${creation.round.iteration}`, `attempt-${captureAttempt}`);
+        const captured = await this.bridge.withAgentGatewayExecution({ taskId: task.task_id, intent: task.intent }, async (gatewayBridge) => {
+          const handshake = creation.runtime === 'queue' ? await gatewayBridge.create_queue_handshake({}) : null;
+          return gatewayBridge.capture_detail_views({ views, output_dir: outputDir, runtime: creation.runtime, timeoutMs: boundedQueueTimeoutMs(task.inputs.timeout_ms, 120_000), ...(handshake ? { session_contract: handshake.session_contract } : {}) });
+        });
+        captureRawResult = captured;
+        captures = captured.captures || [];
+        if (captured.restored !== true) throw new Error('Detail capture did not attest restoration of the prior view.');
+        const paths = Object.fromEntries(captures.filter(capture => capture.path).map(capture => [`detail_view_${capture.id}`, capture.path]));
+        if (Object.keys(paths).length) captureArtifacts = [...captureArtifacts, ...await this.registerArtifacts(task.task_id, paths)];
+      } catch (error) {
+        captures = [];
+        capturePrivateError = { message: String(error?.message || error), code: error?.code || null };
+        captureError = { message: 'Required server detail views are not verified.', code: error?.code || 'DETAIL_CAPTURE_UNVERIFIED' };
+      }
+      creation = { ...creation, round: { ...creation.round, captures, capture_error: captureError,
+        capture_diagnostics: [...(creation.round.capture_diagnostics || []), { attempt: captureAttempt, raw_result: captureRawResult, error: capturePrivateError }] } };
+      task = await this.taskStore.update(task.task_id, { artifacts: captureArtifacts, private: { ...task.private, creation } });
+    }
+    const regionCheck = await this.inspectFrozenDetailRegions(task, creation);
+    if (regionCheck) {
+      creation = { ...creation, round: { ...creation.round, region_inspection: regionCheck,
+        region_inspection_attempts: (creation.round.region_inspection_attempts || 0) + 1 } };
+      task = await this.taskStore.update(task.task_id, { private: { ...task.private, creation } });
+    }
+    const quality = evaluateDetailQuality({ snapshot, layoutQa: qa, frozenSpecification: creation.frozen_spec, runtime: creation.runtime, trustedSnapshot: true, identityMap: creation.identity_map, materialMap: creation.material_map, occurrencePathMap: creation.occurrence_path_map, captures,
+      regionInspection: regionCheck?.raw_result, trustedRegionInspection: regionCheck?.received_from_server === true });
+    const newRound = !creation.rounds.some(round => round.source_hash === creation.round.source_hash);
+    const rounds = newRound ? [...creation.rounds, { source_hash: creation.round.source_hash, iteration: creation.round.iteration }] : creation.rounds;
+    const streaks = { ...creation.per_part_failure_streak };
+    const failedParts = new Set(quality.remaining.map(issue => issue.part_key || issue.part_id || (issue.view_id ? `view:${issue.view_id}` : '__layout__')));
+    for (const id of Object.keys(streaks)) if (!failedParts.has(id)) streaks[id] = 0;
+    // A caller's claimed part list cannot suppress a failed measured check.
+    // The initial build records missing requirements; only later committed
+    // refinements consume the three-attempt budget.
+    if (newRound) for (const id of failedParts) streaks[id] = (streaks[id] || 0) + (creation.round.iteration > 0 ? 1 : 0);
+    const nextInputs = { ...task.inputs };
+    delete nextInputs.refinement_code;
+    delete nextInputs.reverify;
+    delete nextInputs.refinement_part_ids;
+    delete nextInputs.reviewed_edit_task_id;
+    return this.taskStore.transition(task.task_id, quality.quality_status === 'pass' ? 'completed' : 'awaiting_input', {
+      reason: quality.quality_status === 'pass' ? 'created_model_quality_passed' : 'created_model_requires_refinement',
+      patch: {
+        last_error: null,
+        inputs: nextInputs,
+        private: { ...task.private, creation: { ...creation, rounds, per_part_failure_streak: streaks, round: { ...creation.round, phase: 'verified', captures, capture_error: captureError } } },
+        result: { ...(task.private?.image_model_creation ? { image_model: { source_image_model:task.inputs.source_image_model, assumptions:task.private.image_model_creation.plan.assumptions, scale_mode:task.private.image_model_creation.plan.scale_mode, complete_model_delivered:false, visual_acceptance:'pending' } } : {}), kind: task.private?.frozen_creation_verification ? 'verify_creation_result' : 'create_model_result', snapshot, qa, quality, quality_status: quality.quality_status, quality_accepted: quality.quality_accepted, evidence_level: quality.evidence_level, iteration: rounds.length, identity_map: creation.identity_map,
+          ...(task.private?.frozen_creation_verification ? { source_creation_task_id: task.private.frozen_creation_verification.creation_task_id,
+            parameter_task_id: task.private.frozen_creation_verification.parameter_task_id, geometry_built: false, specification_hash: creation.frozen_spec.hash } : {}),
+          ...(task.inputs.task ? { parameter_edit_support: creation.parameter_edit_support || { baseline_captured: false, planning_available: false, execution_available: false, blockers: ['trusted_initial_parameter_readback_unavailable'] } } : {}) },
+        next_action: quality.quality_status === 'pass' ? (task.inputs.task && creation.runtime === 'queue' ? { action: 'connect_for_delivery', ...discoverCall({ topic: 'connect', runtime: 'queue' }), source_task_id: task.task_id } : null) : { action: 'submit_task_input', required: ['refinement_code_or_reverify'], existing_edits_route: 'reviewed_existing_model_edit', remaining: quality.remaining }
+      }
     });
   }
 
@@ -2320,6 +2972,35 @@ export class AgentGateway {
 
   async handleTaskError(task, error) {
     let current = await this.taskStore.getTask(task.task_id, { includePrivate: true });
+    if (current.intent === 'reopen_delivered_model') {
+      current = await reopenDeliveredModelError(this, current, error);
+      return createResultEnvelope({ task: await this.taskStore.getTask(current.task_id), ok: false, error: current.last_error, data: responseData(current) });
+    }
+    if (current.intent === 'apply_native_appearance' && current.private?.appearance_execution) {
+      const normalized = normalizeAgentError(error);
+      current = await this.taskStore.update(current.task_id, { last_error: normalized,
+        next_action: { action: 'resume_agent_task', tool: 'resume_agent_task', arguments: { task_id: current.task_id }, reason: 'inspect_same_task_receipt_without_replaying_native_actions' } });
+      return createResultEnvelope({ task: await this.taskStore.getTask(current.task_id), ok: false, error: normalized, data: responseData(current) });
+    }
+    if (current.intent === 'apply_native_appearance' && error.code === 'MODEL_REVISION_INCOMPLETE') {
+      error = new AgentContractError(error.code, error.message, { details: error.details,
+        nextAction: { action: 'inspect_native_connection', ...discoverCall({ topic: 'connect', runtime: 'queue' }),
+          reason: 'Read current native revision completeness. After the runtime is complete, submit the original appearance task with its fresh connection_task_id; action labels are not input fields.' } });
+    }
+    if (current.intent === 'deliver_model' && ['understanding', 'awaiting_input'].includes(current.state)) {
+      const claimed = await fs.lstat(path.join(this.taskStore.rootDir, 'model-deliveries-v1', current.task_id)).then(() => true).catch(cause => { if (cause.code === 'ENOENT') return false; throw cause; });
+      if (claimed) {
+        const normalized = normalizeAgentError(new AgentContractError('MUTATION_RECOVERY_REQUIRED', 'The delivery save was claimed. Resume to verify any completed receipt; do not create another delivery or repeat the save.', { details: { original_code: error.code || 'INTERNAL_ERROR' } }));
+        const next_action = { action: 'resume_agent_task', tool: 'resume_agent_task', arguments: { task_id: current.task_id } };
+        current = current.state === 'awaiting_input' ? await this.taskStore.update(current.task_id, { last_error: normalized, next_action }) : await this.taskStore.transition(current.task_id, 'awaiting_input', { reason: 'delivery_receipt_finalization_required', patch: { last_error: normalized, next_action } });
+        return createResultEnvelope({ task: await this.taskStore.getTask(current.task_id), ok: false, error: normalized, data: responseData(current) });
+      }
+    }
+    if (current.intent === 'create_model' && ['executing', 'verifying'].includes(current.state) && current.private?.creation?.round?.snapshot) {
+      const normalized = normalizeAgentError(error);
+      current = await this.taskStore.update(current.task_id, { last_error: normalized, next_action: { action: 'resume_agent_task', task_id: current.task_id, reason: 'committed_creation_requires_quality_finalization' } });
+      return createResultEnvelope({ task: await this.taskStore.getTask(current.task_id), ok: false, error: normalized, data: responseData(current) });
+    }
     if (isRecoverablePreExecutionError(current, error)) {
       const normalized = normalizeAgentError(error);
       const targetState = recoveryStateFor(current, normalized.code);
@@ -2385,6 +3066,11 @@ const REVIEW_REPLAN_ERROR_CODES = new Set([
 function isRecoverablePreExecutionError(task, error) {
   if (!RECOVERABLE_PRE_EXECUTION_STATES.has(task.state)) return false;
   const code = String(error?.code || '');
+  if (task.intent === 'apply_native_appearance' && (code === 'INVALID_ARGUMENT' || code === 'CAPABILITY_UNSUPPORTED' || code.startsWith('APPROVAL_'))) return true;
+  if (task.intent === 'deliver_model' && code === 'OPERATION_NOT_ALLOWED') return true;
+  if (task.intent === 'verify_model' && code === 'INVALID_ARGUMENT') return true;
+  if ((['discover', 'preflight_model', 'deliver_model'].includes(task.intent) || task.inputs?.task) && code === 'INVALID_ARGUMENT') return true;
+  if (task.intent === 'create_model' && task.private?.creation && code === 'INVALID_ARGUMENT') return true;
   if (task.state === 'awaiting_review'
     && ['reviewed_existing_model_edit', 'reconcile_design_intent'].includes(task.intent)
     && (code.startsWith('APPROVAL_')
@@ -2402,6 +3088,7 @@ function isRecoverablePreExecutionError(task, error) {
 }
 
 function recoveryStateFor(task, code) {
+  if (task.intent === 'apply_native_appearance' && task.private?.appearance_plan) return 'awaiting_review';
   if (task.private?.design_post_apply_reconciliation
     && task.state === 'awaiting_review'
     && (code.startsWith('APPROVAL_') || code === 'INVALID_ARGUMENT')) return 'awaiting_review';
@@ -2889,10 +3576,11 @@ function boundedArtifactReadInteger(value, field, minimum, maximum) {
 function artifactPageLimit(value, responseLimit) {
   const requested = boundedArtifactReadInteger(value ?? 12000, 'max_chars', 256, 100000);
   const boundedResponseLimit = Number.isInteger(responseLimit) ? responseLimit : 4096;
-  // Agent envelopes retain `data` as an alias of canonical `result`, so page
-  // content is serialized twice. A conservative fraction leaves stable room
-  // for handle metadata, next_action, and the presentation contract.
-  return Math.min(requested, Math.max(256, Math.floor(boundedResponseLimit / 8)));
+  // The presenter fits the full serialized envelope, including the data alias,
+  // escaped content and metadata, and recomputes next_offset without skipping.
+  // Reading half the budget lets that exact fitter use the available space;
+  // a fixed one-eighth cap needlessly forced 512-character guided pages.
+  return Math.min(requested, Math.max(256, Math.floor(boundedResponseLimit / 2)));
 }
 
 function taskIdFromArtifactHandle(handle) {
@@ -2945,7 +3633,7 @@ function safeArtifactLabel(value) {
 }
 
 function visualAllowedRoots(stateRoot) {
-  const configured = String(process.env.LOCAL_MCP_FOR_SKETCHUP_VISUAL_ALLOWED_ROOTS || '')
+  const configured = String(process.env.ALMA_SKETCHUP_VISUAL_ALLOWED_ROOTS || '')
     .split(path.delimiter)
     .map((value) => value.trim())
     .filter(Boolean);

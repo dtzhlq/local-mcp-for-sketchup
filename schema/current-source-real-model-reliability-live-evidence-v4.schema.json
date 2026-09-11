@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local-mcp-for-sketchup.invalid/schemas/current-source-real-model-reliability-live-evidence-v4.schema.json",
+  "$id": "https://alma.local/schemas/current-source-real-model-reliability-live-evidence-v4.schema.json",
   "title": "Current Source Real Model Reliability Live Evidence v4",
   "type": "object",
   "additionalProperties": false,
@@ -163,10 +163,10 @@
         "schema/architecture-golden-live-evidence-v1.schema.json",
         "schema/real-model-reliability-live-case-report-v1.schema.json",
         "schema/real-model-reliability-live-case-v1.schema.json",
-        "sketchup_plugin/local_mcp_for_sketchup/materials.rb",
-        "sketchup_plugin/local_mcp_for_sketchup/model_revision.rb",
-        "sketchup_plugin/local_mcp_for_sketchup/runtime_source_manifest.rb",
-        "sketchup_plugin/local_mcp_for_sketchup/view_operations.rb"
+        "sketchup_plugin/alma_sketchup_mcp/materials.rb",
+        "sketchup_plugin/alma_sketchup_mcp/model_revision.rb",
+        "sketchup_plugin/alma_sketchup_mcp/runtime_source_manifest.rb",
+        "sketchup_plugin/alma_sketchup_mcp/view_operations.rb"
       ],
       "properties": {
         "test/reliability-corpus/manifest.json": { "$ref": "#/$defs/sha256" },
@@ -178,10 +178,10 @@
         "schema/architecture-golden-live-evidence-v1.schema.json": { "$ref": "#/$defs/sha256" },
         "schema/real-model-reliability-live-case-report-v1.schema.json": { "$ref": "#/$defs/sha256" },
         "schema/real-model-reliability-live-case-v1.schema.json": { "$ref": "#/$defs/sha256" },
-        "sketchup_plugin/local_mcp_for_sketchup/materials.rb": { "$ref": "#/$defs/sha256" },
-        "sketchup_plugin/local_mcp_for_sketchup/model_revision.rb": { "$ref": "#/$defs/sha256" },
-        "sketchup_plugin/local_mcp_for_sketchup/runtime_source_manifest.rb": { "$ref": "#/$defs/sha256" },
-        "sketchup_plugin/local_mcp_for_sketchup/view_operations.rb": { "$ref": "#/$defs/sha256" }
+        "sketchup_plugin/alma_sketchup_mcp/materials.rb": { "$ref": "#/$defs/sha256" },
+        "sketchup_plugin/alma_sketchup_mcp/model_revision.rb": { "$ref": "#/$defs/sha256" },
+        "sketchup_plugin/alma_sketchup_mcp/runtime_source_manifest.rb": { "$ref": "#/$defs/sha256" },
+        "sketchup_plugin/alma_sketchup_mcp/view_operations.rb": { "$ref": "#/$defs/sha256" }
       }
     },
     "acceptance": {

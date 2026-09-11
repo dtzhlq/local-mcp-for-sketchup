@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local-mcp-for-sketchup.invalid/local-mcp-for-sketchup/controlled-dirty-topology-live-fixture-v1.schema.json",
+  "$id": "https://alma.local/sketchup-mcp-replica/controlled-dirty-topology-live-fixture-v1.schema.json",
   "title": "Controlled imported dirty-topology live fixture v1",
   "type": "object",
   "additionalProperties": false,
@@ -115,9 +115,9 @@
         "repair_performed_during_preparation"
       ],
       "properties": {
-        "public_id": { "const": "local-mcp-reliability-dirty-topology-target" },
+        "public_id": { "const": "alma-reliability-dirty-topology-target" },
         "persistent_id": { "type": "string", "minLength": 1 },
-        "name_untrusted": { "const": "LOCAL_MCP_FOR_SKETCHUP_Reliability_Dirty_Topology_Target" },
+        "name_untrusted": { "const": "ALMA_Reliability_Dirty_Topology_Target" },
         "expected_issue_codes": { "const": ["boundary_edges"] },
         "initial_report": { "$ref": "#/$defs/manifoldReport" },
         "reopened_report": { "$ref": "#/$defs/manifoldReport" },

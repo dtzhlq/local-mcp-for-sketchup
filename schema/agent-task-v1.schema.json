@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local-mcp-for-sketchup.invalid/local-mcp-for-sketchup/agent-task-v1.schema.json",
+  "$id": "https://alma.local/sketchup-mcp-replica/agent-task-v1.schema.json",
   "title": "Agent Contract v1 Task",
   "type": "object",
   "additionalProperties": false,
@@ -11,7 +11,7 @@
     "task_id": { "type": "string", "pattern": "^task_[0-9a-f-]+$" },
     "task_version": { "type": "integer", "minimum": 1 },
     "state": { "$ref": "#/$defs/task_state" },
-    "intent": { "enum": ["create_model", "understand_model", "propose_existing_model_edit", "modify_design_parameters", "reconcile_design_intent", "reference_image_correction", "visual_correction_qa", "reviewed_existing_model_edit", "image_artifact", "verify_model"] },
+    "intent": { "enum": ["discover", "preflight_model", "deliver_model", "reopen_delivered_model", "apply_native_appearance", "create_model", "understand_model", "propose_existing_model_edit", "modify_design_parameters", "reconcile_design_intent", "reference_image_correction", "visual_correction_qa", "reviewed_existing_model_edit", "image_artifact", "verify_model"] },
     "interface_level": { "enum": ["guided", "standard", "expert"] },
     "instruction": { "type": "string", "minLength": 1 },
     "client_capabilities": {

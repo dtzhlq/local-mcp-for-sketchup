@@ -8,8 +8,8 @@ import { fileURLToPath } from 'node:url';
 const execFileAsync = promisify(execFile);
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const pluginDir = path.join(repoRoot, 'sketchup_plugin');
-const mainPath = path.join(pluginDir, 'local_mcp_for_sketchup', 'bridge.rb');
-const moduleDir = path.join(pluginDir, 'local_mcp_for_sketchup');
+const mainPath = path.join(pluginDir, 'alma_sketchup_mcp.rb');
+const moduleDir = path.join(pluginDir, 'alma_sketchup_mcp');
 const statePath = path.join(moduleDir, 'document_state.rb');
 const snapshotPath = path.join(moduleDir, 'snapshot.rb');
 const packagePath = path.join(repoRoot, 'scripts', 'package-sketchup-plugin.mjs');
@@ -22,8 +22,8 @@ const [main, state, snapshot, packageSource] = await Promise.all([
   fs.readFile(packagePath, 'utf8')
 ]);
 
-assert.match(main, /support_require\.call\('local_mcp_for_sketchup\/document_state'\)/);
-assert.match(packageSource, /local_mcp_for_sketchup\/document_state\.rb/);
+assert.match(main, /require_relative 'alma_sketchup_mcp\/document_state'/);
+assert.match(packageSource, /alma_sketchup_mcp\/document_state\.rb/);
 
 const forbiddenSidecarGlobals = /@(warnings|scenes|levels|manifold_checks|view_state|style_state|shadow_state|rendering_options_state)\b/;
 const rubyFiles = [mainPath, ...(await fs.readdir(moduleDir)).filter((name) => name.endsWith('.rb')).map((name) => path.join(moduleDir, name))];
@@ -35,7 +35,7 @@ for (const rubyPath of rubyFiles) {
 assert.match(state, /class DocumentActivationObserver < Sketchup::AppObserver/);
 assert.match(state, /def onActivateModel\(model\)/);
 assert.match(state, /record_activated_model\(model\)/);
-assert.match(state, /def onOpenModel\(model\)\s+LocalMcpForSketchUp\.record_opened_model\(model\)/);
+assert.match(state, /def onOpenModel\(model\)\s+AlmaSketchupMCP\.record_opened_model\(model\)/);
 assert.match(state, /def queue_active_model/);
 const queueActiveBody = methodBody(state, 'queue_active_model', 'reconcile_queue_active_model');
 const reconcileBody = methodBody(state, 'reconcile_queue_active_model', 'document_model_alive?');

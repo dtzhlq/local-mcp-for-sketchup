@@ -3,7 +3,20 @@ import { formatCapabilityMatrixMarkdown, getRuntimeCapabilities } from './capabi
 export const TOOL_DOCS = `
 # SketchUp Modeler Local MVP
 
-This project exposes a reviewed local SketchUp modeling tool surface:
+Start with the current Agent Gateway discovery flow (2026-09-11):
+
+{"tool":"start_agent_task","arguments":{"intent":"discover","instruction":"Discover supported modeling tasks and the next step.","inputs":{"topic":"start"}}}
+
+- get_workflow_bundle() returns first_use guidance. discover topics: tasks (kind and detail=parameters|examples), assets (query), workflows (optional task_name), and connect (runtime=queue). Connection is read-only and never grants mutation permission.
+- For ordinary components, preflight_model checks inputs.task; create_model uses the same task, explicit runtime, and a stable idempotency_key. Queue uses the returned connection_task_id or an expert session_contract. Do not mix task input with expert code/detail_spec/views/spec input.
+- Detailed modeling (2026-09-07) adds frozen detail requirements, atomic creation scopes, assembly recipes, local repairs, native geometry checks, component-preserving assets and PBR/HDR controls. Preserve frozen requirements; execution success does not prove quality.
+- Discover workflows before existing-model edits, modify_design_parameters or apply_native_appearance. Keep trusted approval, fresh connection and target protections. Never replace existing objects via create_model. Array/align and mirror remain expert workflows requiring explicit transforms.
+- Keep task_id and idempotency_key. After uncertain responses, resume_agent_task; never recreate with a new key. Local creation repair is limited to three consecutive failures per part.
+- After required quality review, deliver_model saves an accepted live creation. Deliver the file and stop; reopen_delivered_model is only for an explicit persistence/recovery request. cold_reopen_verified=false means unverified, not a mandatory next test.
+- The 15 workflow categories are not 15 fully live-accepted capabilities. The September 7 delivery covers specified macOS SketchUp 2026 samples; newer parameter-edit, replacement, HDR and reopen paths retain scoped or pending live acceptance. Consult docs/model-accessibility-support-2026-09-11.md and docs/model-accessibility-quickstart.md; tool discovery supplies guidance without local file access.
+- Reconnect after updating the Node service and verify the loaded Ruby plugin with get_capabilities(runtime=queue). Old installed services/plugins do not inherit source updates automatically.
+
+Expert DSL and inspection tools remain available:
 
 - get_docs() -> returns these DSL and runtime notes.
 - build_model({ code, runtime }) -> builds from a safe JSON DSL and returns a snapshot.
@@ -47,8 +60,8 @@ build_model accepts a JSON string, not executable Ruby or shell code. The suppor
     {"op": "engraved_line", "name": "Controller_Split_Line", "points": [[28, 78, 34], [90, 82, 34], [152, 78, 34]], "width": 3, "depth": 1, "material": "Wall_Paint"},
     {"op": "slot", "name": "Speaker_Slot", "center": [90, 72, 34], "length": 68, "width": 8, "depth": 2, "segments": 5, "material": "Wall_Paint"},
     {"op": "boolean_cutout", "name": "USB_Cutout_Panel", "origin": [60, 82, 36], "size": [60, 20, 4], "cutouts": [{"center": [30, 10], "size": [24, 8]}], "material": "Wall_Paint"},
-    {"op": "text_engrave", "name": "Logo_Mark", "center": [90, 58, 34], "text": "LOCAL", "height": 8, "depth": 1, "spacing": 1, "align": "center", "material": "Wall_Paint"},
-    {"op": "text_3d", "name": "Raised_Font_Label", "center": [90, 30, 40], "text": "LOCAL MCP", "height": 14, "extrusion": 2, "font": "Arial", "align": "center", "bold": true, "filled": true, "material": "Wall_Paint"},
+    {"op": "text_engrave", "name": "Logo_Mark", "center": [90, 58, 34], "text": "ALMA", "height": 8, "depth": 1, "spacing": 1, "align": "center", "material": "Wall_Paint"},
+    {"op": "text_3d", "name": "Raised_Font_Label", "center": [90, 30, 40], "text": "ALMA 3D", "height": 14, "extrusion": 2, "font": "Arial", "align": "center", "bold": true, "filled": true, "material": "Wall_Paint"},
     {"op": "pipe_between_points", "name": "Shoulder_Pipe", "points": [[24, 94, 38], [90, 112, 48], [156, 94, 38]], "radius": 4, "segments": 8, "material": "Wall_Paint", "smooth": "all"},
     {"op": "loft_between_profiles", "name": "Grip_Loft", "profiles": [{"origin": [20, 20, 36], "plane": "xy", "points": [[0,0],[44,0],[50,32],[0,28]]}, {"origin": [18, 18, 56], "plane": "xy", "points": [[0,0],[52,0],[60,40],[0,34]]}], "material": "Wall_Paint", "smooth": "all"},
     {"op": "shell_from_front_side_profiles", "name": "Profile_Shell", "origin": [92, 20, 38], "front_profile": [[-22,0],[22,0],[28,20],[0,34],[-28,20]], "side_profile": [[0,5],[18,12],[34,7]], "material": "Wall_Paint", "smooth": "all"},
@@ -241,9 +254,9 @@ Image-derived PartGraphs may include \`parameter_proposals\` on parts and in \`r
 
 ## Runtimes
 
-- mock: local deterministic geometry snapshot, useful for test loops without opening SketchUp.
-- queue: writes requests into ~/.local-mcp-for-sketchup/queue for the SketchUp Ruby plugin to execute; call get_capabilities to verify the installed plugin version, live operation support, and runtime.compatibility before long builds.
-- Safety limit: one build_model request accepts up to 2000 operations by default. Set LOCAL_MCP_FOR_SKETCHUP_MAX_OPERATIONS to a positive integer before starting Node/SketchUp to raise this for trusted large models. Large models can also be appended in multiple build_model calls by omitting reset after the first batch.
+- mock: local deterministic geometry snapshot, useful for Alma/test loops without opening SketchUp.
+- queue: writes requests into ~/.sketchup-mcp-replica/queue for the SketchUp Ruby plugin to execute; call get_capabilities to verify the installed plugin version, live operation support, and runtime.compatibility before long builds.
+- Safety limit: one build_model request accepts up to 2000 operations by default. Set ALMA_SKETCHUP_MAX_OPERATIONS to a positive integer before starting Node/SketchUp to raise this for trusted large models. Large models can also be appended in multiple build_model calls by omitting reset after the first batch.
 `;
 
 const DOC_TOPICS = Object.freeze([

@@ -17,7 +17,7 @@ import {
 } from '../src/agent-contract.mjs';
 import { AgentTaskStore } from '../src/agent-task-store.mjs';
 
-const root = await fs.mkdtemp(path.join(os.tmpdir(), 'local-mcp-agent-contract-'));
+const root = await fs.mkdtemp(path.join(os.tmpdir(), 'alma-agent-contract-'));
 try {
   const capabilities = normalizeClientCapabilities({ vision: true, local_files: false, structured_output: true, context: 'long', parallel: true, admin: true });
   assert.deepEqual(capabilities, { vision: true, local_files: false, structured_output: true, parallel: true, context: 'long' });
@@ -227,7 +227,7 @@ async function validateSchemas({ task, envelope, artifact }) {
   const schemas = await Promise.all(names.map(async (name) => JSON.parse(await fs.readFile(path.join(schemaDir, name), 'utf8'))));
   const ajv = new Ajv2020({ allErrors: true, strict: false, validateFormats: false });
   for (const schema of schemas) ajv.addSchema(schema);
-  assert.equal(ajv.validate('https://local-mcp-for-sketchup.invalid/local-mcp-for-sketchup/artifact-handle-v1.schema.json', artifact), true, JSON.stringify(ajv.errors));
-  assert.equal(ajv.validate('https://local-mcp-for-sketchup.invalid/local-mcp-for-sketchup/agent-task-v1.schema.json', task), true, JSON.stringify(ajv.errors));
-  assert.equal(ajv.validate('https://local-mcp-for-sketchup.invalid/local-mcp-for-sketchup/agent-result-envelope-v1.schema.json', envelope), true, JSON.stringify(ajv.errors));
+  assert.equal(ajv.validate('https://alma.local/sketchup-mcp-replica/artifact-handle-v1.schema.json', artifact), true, JSON.stringify(ajv.errors));
+  assert.equal(ajv.validate('https://alma.local/sketchup-mcp-replica/agent-task-v1.schema.json', task), true, JSON.stringify(ajv.errors));
+  assert.equal(ajv.validate('https://alma.local/sketchup-mcp-replica/agent-result-envelope-v1.schema.json', envelope), true, JSON.stringify(ajv.errors));
 }

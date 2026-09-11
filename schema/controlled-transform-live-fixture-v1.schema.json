@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local-mcp-for-sketchup.invalid/local-mcp-for-sketchup/controlled-transform-live-fixture-v1.schema.json",
+  "$id": "https://alma.local/sketchup-mcp-replica/controlled-transform-live-fixture-v1.schema.json",
   "title": "Controlled transform live fixture v1",
   "oneOf": [
     { "$ref": "#/$defs/preparation" },
@@ -37,9 +37,9 @@
       "additionalProperties": false,
       "required": ["locked_target", "guard_target", "transform_target"],
       "properties": {
-        "locked_target": { "const": "LOCAL_MCP_FOR_SKETCHUP_Reliability_Locked_Target" },
-        "guard_target": { "const": "LOCAL_MCP_FOR_SKETCHUP_Reliability_Guard_Target" },
-        "transform_target": { "const": "LOCAL_MCP_FOR_SKETCHUP_Reliability_Transform_Target" }
+        "locked_target": { "const": "ALMA_Reliability_Locked_Target" },
+        "guard_target": { "const": "ALMA_Reliability_Guard_Target" },
+        "transform_target": { "const": "ALMA_Reliability_Transform_Target" }
       }
     },
     "runtimeAttestation": {
@@ -204,7 +204,7 @@
                 { "$ref": "#/$defs/target" },
                 {
                   "properties": {
-                    "name_untrusted": { "const": "LOCAL_MCP_FOR_SKETCHUP_Reliability_Locked_Target" },
+                    "name_untrusted": { "const": "ALMA_Reliability_Locked_Target" },
                     "locked": { "const": true }
                   }
                 }
@@ -215,7 +215,7 @@
                 { "$ref": "#/$defs/target" },
                 {
                   "properties": {
-                    "name_untrusted": { "const": "LOCAL_MCP_FOR_SKETCHUP_Reliability_Guard_Target" },
+                    "name_untrusted": { "const": "ALMA_Reliability_Guard_Target" },
                     "locked": { "const": false }
                   }
                 }
@@ -226,7 +226,7 @@
                 { "$ref": "#/$defs/target" },
                 {
                   "properties": {
-                    "name_untrusted": { "const": "LOCAL_MCP_FOR_SKETCHUP_Reliability_Transform_Target" },
+                    "name_untrusted": { "const": "ALMA_Reliability_Transform_Target" },
                     "locked": { "const": false }
                   }
                 }

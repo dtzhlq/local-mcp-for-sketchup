@@ -81,6 +81,7 @@ const LIVE_MUTATING_TOOL_NAMES = new Set([
   'adopt_open_model',
   'set_selection',
   'capture_view',
+  'capture_detail_views',
   'run_ruby_expert',
   'evaluate_py',
   'build_report',
@@ -91,6 +92,26 @@ const LIVE_MUTATING_TOOL_NAMES = new Set([
 ]);
 
 const BASE_TOOL_REGISTRY = [
+  {
+    name: 'inspect_detail_regions',
+    description: 'Read actual native geometry to test frozen void regions and construction boundaries in anchor_local or model coordinates. mode: pair_separation with two explicit assembly paths verifies native leaf separation and boundary contacts; enclosing solids, external caps and ambiguous geometry remain unresolved.',
+    inputSchema: { type: 'object', required: ['queries'], additionalProperties: false, properties: {
+      queries: { type: 'array', minItems: 1, maxItems: 128, items: { type: 'object' } }, runtime: { const: 'queue' }, timeoutMs: { type: 'number' }
+    } }
+  },
+  {
+    name: 'query_assets',
+    description: 'Search local component recipes or an explicit asset catalog; check file availability, provenance, license, component hierarchy, material inventory and evidence freshness. Never buys or downloads assets.',
+    inputSchema: { type: 'object', additionalProperties: false, properties: {
+      catalog_path: { type: 'string' }, query: { type: 'string' }, kind: { type: 'string' }, limit: { type: 'integer', minimum: 1, maximum: 200 }
+    } }
+  },
+  {
+    name: 'capture_detail_views',
+    description: 'Capture stable native close-up views for explicit component occurrences. Optional views[].scene_ref performs controlled scene inspection, requiring a selected scene and saved style; otherwise capture is camera-only. Restores camera, scene, environment and style and reports actual modification state.',
+    inputSchema: { type: 'object', required: ['views', 'output_dir'], additionalProperties: false,
+      properties: { views: { type: 'array', minItems: 1, maxItems: 24, items: { type: 'object' } }, output_dir: { type: 'string' }, runtime: { const: 'queue' }, timeoutMs: { type: 'number' } } }
+  },
   {
     name: 'get_docs',
     description: 'Return progressively scoped safe SketchUp documentation by topic and detail level.',
@@ -217,13 +238,13 @@ const BASE_TOOL_REGISTRY = [
   },
   {
     name: 'start_agent_task',
-    description: 'Start a persistent Agent Contract v1 task using guided, standard, or expert presentation. Client capabilities only shape responses and never elevate server execution policy.',
+    description: 'Always supply intent. Start with intent=discover and inputs={topic:"start"}. Discovery topics: tasks (kind, detail=parameters|examples), assets (query, read-only local catalog), workflows (task_name for edits/appearance/save), connect (runtime=queue). Precheck inputs.task with intent=preflight_model; create_model accepts the same task plus explicit inputs.runtime and an idempotency_key. Queue uses connection_task_id from discover/connect (or direct expert session_contract). Save an accepted live creation with intent=deliver_model and inputs={source_task_id,runtime:"queue",connection_task_id}; keep an idempotency_key. Close and disk-reopen that exact saved document with intent=reopen_delivered_model, inputs={saved_delivery_task_id,runtime:"queue",connection_task_id}, and a stable idempotency_key. Keep task_id; resume after uncertain responses, never close again. Native PBR/HDR uses intent=apply_native_appearance with inputs.runtime="queue" and structured appearance; discover workflows first, retain the review task, approve locally, then submit its fresh connection_task_id. Existing JSON DSL code workflows remain available. Client capabilities never elevate server policy.',
     inputSchema: {
       type: 'object',
       additionalProperties: false,
       required: ['intent', 'instruction'],
       properties: {
-        intent: { type: 'string', enum: ['create_model', 'understand_model', 'propose_existing_model_edit', 'modify_design_parameters', 'reconcile_design_intent', 'reference_image_correction', 'visual_correction_qa', 'reviewed_existing_model_edit', 'image_artifact', 'verify_model'] },
+        intent: { type: 'string', enum: ['discover', 'preflight_model', 'deliver_model', 'reopen_delivered_model', 'apply_native_appearance', 'create_model', 'understand_model', 'propose_existing_model_edit', 'modify_design_parameters', 'reconcile_design_intent', 'reference_image_correction', 'visual_correction_qa', 'reviewed_existing_model_edit', 'image_artifact', 'verify_model'] },
         instruction: { type: 'string', minLength: 1 },
         interface_level: { type: 'string', enum: ['guided', 'standard', 'expert'], default: 'guided' },
         client_capabilities: {
@@ -238,7 +259,13 @@ const BASE_TOOL_REGISTRY = [
           }
         },
         idempotency_key: { type: 'string', minLength: 1 },
-        inputs: { type: 'object' }
+        inputs: { type: 'object', description: 'Common task: {task:{version:1,kind,id,units:"mm",parameters:{...},placement:{origin_mm:[x,y,z]}},runtime:"mock"|"queue"}. apply_native_appearance uses runtime=queue and appearance; discover workflows native_pbr/native_hdr for reviewed application, native closeup and unique SKP saving. Advanced inputs remain intent-specific.', properties: { task: { type: 'object' }, runtime: { type: 'string', enum: ['mock', 'queue'] },
+          saved_delivery_task_id: { type: 'string', pattern: '^task_[0-9a-f-]+$' }, connection_task_id: { type: 'string', pattern: '^task_[0-9a-f-]+$' },
+          appearance: { type: 'object', additionalProperties: false, required: ['kind', 'rotation'], properties: {
+            kind: { type: 'string', enum: ['native_pbr', 'native_hdr'] }, target: { type: 'string' }, preset: { type: 'string' },
+            texture_size_mm: { type: 'array', minItems: 2, maxItems: 2, items: { type: 'number', minimum: 0.1, maximum: 100000 } },
+            rotation: { type: 'number', minimum: 0, maximum: 360 }, environment: { type: 'string' }, intensity: { type: 'number', minimum: 0, maximum: 10 }, scene_name: { type: 'string' }, capture_current_display: { type: 'boolean' }
+          } } } }
       }
     }
   },
@@ -459,7 +486,7 @@ const BASE_TOOL_REGISTRY = [
   },
   {
     name: 'adopt_open_model',
-    description: 'Assign stable Local MCP references and recursively index persistent occurrence paths for safe, policy-gated existing-model editing.',
+    description: 'Assign stable Alma references and recursively index persistent occurrence paths for safe, policy-gated existing-model editing.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -607,7 +634,7 @@ const BASE_TOOL_REGISTRY = [
   },
   {
     name: 'run_ruby_expert',
-    description: 'Debug-only queue tool for running arbitrary SketchUp Ruby. Disabled unless LOCAL_MCP_FOR_SKETCHUP_ENABLE_RUBY_EXPERT=1 is set in both Node and SketchUp plugin environments.',
+    description: 'Debug-only queue tool for running arbitrary SketchUp Ruby. Disabled unless ALMA_SKETCHUP_ENABLE_RUBY_EXPERT=1 is set in both Node and SketchUp plugin environments.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -793,7 +820,7 @@ async function handleRequest(request, bridge) {
     return respond(request.id, {
       protocolVersion: request.params?.protocolVersion || '2024-11-05',
       capabilities: { tools: { listChanged: false } },
-      serverInfo: { name: 'local-mcp-for-sketchup', version: PRODUCT_VERSION }
+      serverInfo: { name: 'sketchup-mcp-replica', version: PRODUCT_VERSION }
     });
   }
 

@@ -7,8 +7,8 @@ import { fileURLToPath } from 'node:url';
 
 const execFileAsync = promisify(execFile);
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const pluginPath = path.join(repoRoot, 'sketchup_plugin', 'local_mcp_for_sketchup', 'bridge.rb');
-const booleanPluginPath = path.join(repoRoot, 'sketchup_plugin', 'local_mcp_for_sketchup', 'boolean_operations.rb');
+const pluginPath = path.join(repoRoot, 'sketchup_plugin', 'alma_sketchup_mcp.rb');
+const booleanPluginPath = path.join(repoRoot, 'sketchup_plugin', 'alma_sketchup_mcp', 'boolean_operations.rb');
 const rubyAtomicityPath = path.join(repoRoot, 'test', 'ruby', 'queue_atomicity_test.rb');
 const source = await fs.readFile(pluginPath, 'utf8');
 const booleanSource = await fs.readFile(booleanPluginPath, 'utf8');
@@ -28,18 +28,18 @@ assert.match(claimBody, /Refusing to replay claimed queue request/);
 
 const resetBody = methodBody(source, 'reset_model', 'build_model');
 assert.match(resetBody, /assert_model_reset_preconditions\(model\)/);
-assert.match(resetBody, /with_atomic_model_transaction\(model, 'Local MCP Reset Model'\)/);
+assert.match(resetBody, /with_atomic_model_transaction\(model, 'Alma Reset Model'\)/);
 
 const buildBody = methodBody(source, 'build_model', 'save_model');
-assert.match(buildBody, /with_atomic_model_transaction\(model, 'Local MCP Build Model'\)/);
+assert.match(buildBody, /with_atomic_model_transaction\(model, 'Alma Build Model'\)/);
 assert.ok(buildBody.indexOf('snapshot(model)') < buildBody.indexOf('ensure'), 'build snapshot must be produced inside the transaction block');
 
 const importBody = methodBody(source, 'import_model', 'export_model');
 assert.match(importBody, /OPERATION_NOT_ALLOWED/);
-assert.match(importBody, /with_atomic_model_transaction\(model, 'Local MCP Import Model'\)/);
+assert.match(importBody, /with_atomic_model_transaction\(model, 'Alma Import Model'\)/);
 
 const adoptBody = methodBody(source, 'adopt_open_model', 'adoption_result');
-assert.match(adoptBody, /with_atomic_model_transaction\(model, 'Local MCP Adopt Open Model'\)/);
+assert.match(adoptBody, /with_atomic_model_transaction\(model, 'Alma Adopt Open Model'\)/);
 
 const transactionBody = methodBody(source, 'with_atomic_model_transaction', 'assert_queue_result_serializable!');
 assert.ok(transactionBody.indexOf('assert_queue_result_serializable!(result)') < transactionBody.indexOf('model.commit_operation'), 'result serialization must precede commit');

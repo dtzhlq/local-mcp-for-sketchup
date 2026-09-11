@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local-mcp-for-sketchup.invalid/schemas/real-model-recursive-target-review-v3-evidence-v1.schema.json",
+  "$id": "https://alma.local/schemas/real-model-recursive-target-review-v3-evidence-v1.schema.json",
   "title": "Recursive Target Review v3 portable mock evidence",
   "type": "object",
   "additionalProperties": false,

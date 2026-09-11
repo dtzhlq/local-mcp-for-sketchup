@@ -12,10 +12,10 @@ export class ApprovalAuthority {
   constructor({
     stateDir = path.join(defaultStateDir, 'agent-contract-v1', 'approvals'),
     secret,
-    approvalHostUrl = process.env.LOCAL_MCP_FOR_SKETCHUP_APPROVAL_HOST_URL || DEFAULT_APPROVAL_HOST_URL
+    approvalHostUrl = process.env.ALMA_SKETCHUP_APPROVAL_HOST_URL || DEFAULT_APPROVAL_HOST_URL
   } = {}) {
     this.stateDir = path.resolve(stateDir);
-    this.secretOverride = secret || process.env.LOCAL_MCP_FOR_SKETCHUP_APPROVAL_SECRET || null;
+    this.secretOverride = secret || process.env.ALMA_SKETCHUP_APPROVAL_SECRET || null;
     this.secretPromise = null;
     this.approvalHostUrl = normalizeApprovalHostUrl(approvalHostUrl);
   }

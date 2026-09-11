@@ -8,8 +8,8 @@ import {
 import { BOOLEAN_OPERATIONS_SHA256, MODEL_REVISION_SOURCE_SHA256 } from './runtime-source-attestation.mjs';
 
 export const DSL_VERSION = 1;
-export const CAPABILITY_MANIFEST_VERSION = '2026-07-agent-contract-rc4.1';
-export const RUNTIME_CAPABILITY_VERSION = '0.1.0-rc.4-capabilities.1';
+export const CAPABILITY_MANIFEST_VERSION = '2026-09-detail-modeling-alpha.1';
+export const RUNTIME_CAPABILITY_VERSION = '0.1.0-rc.3-detail-alpha.1';
 export const OCCURRENCE_CONTRACT_VERSION = 'canonical-occurrence-path.v1';
 export const QUEUE_MODEL_REVISION_STRATEGY = 'definition-merkle.v2';
 export const QUEUE_MODEL_REVISION_UNIQUE_ENTITY_LIMIT = 1_000_000;
@@ -30,9 +30,32 @@ export const STABILITY = Object.freeze({
 const objectIdentity = ['id', 'object_id', 'objectId', 'guid'];
 const objectTarget = ['target_id', 'targetId', 'target', 'object'];
 const nestedObjectTarget = ['entity_path', 'entityPath', 'target_path', 'targetPath', 'edit_scope', 'editScope', 'instance_policy', 'instancePolicy', 'instance_id', 'instanceId'];
-const commonPlacement = [...objectIdentity, 'material', 'transform.translate', 'transform.rotateZ'];
+const commonPlacement = [...objectIdentity, 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform'];
 
 const OPERATION_REGISTRY_ENTRIES = [
+  ...['place_component_asset', 'replace_component_asset'].map(op => ({
+    op,
+    description: 'Load a SHA-bound native SKP root and place it or replace exactly one existing root instance in the reviewed atomic transaction.',
+    schema: { required: ['op', 'source_path', 'source_sha256', 'source', 'license', 'origin', 'rotateZ', 'confirmed', ...(op === 'place_component_asset' ? ['id', 'name'] : [])], optional: op === 'replace_component_asset' ? ['entity_path', 'target_id', 'edit_scope', 'instance_policy'] : [] },
+    runtime_support: { mock: SUPPORT_STATUS.unsupported, queue: SUPPORT_STATUS.supported },
+    stability: STABILITY.experimental,
+    notes: 'Reviewed-only; not allowed through additive create_model. Native source SHA is checked before/after load and placement. No explode, delete, scale or source writes; replacement preserves root identity and exact transform. Mock cannot attest SKP geometry.'
+  })),
+  ...[
+    ['section_plane', ['name', 'origin', 'normal'], ['id', 'activate']],
+    ['section_plane_activate', ['section_ref'], []],
+    ['environment_define', ['name', 'path'], ['id', 'description', 'rotation', 'skydome_exposure', 'reflection_exposure', 'use_as_skydome', 'use_for_reflections', 'linked_sun', 'linked_sun_position']],
+    ['environment_update', ['environment_ref'], ['description', 'rotation', 'skydome_exposure', 'reflection_exposure', 'use_as_skydome', 'use_for_reflections', 'linked_sun', 'linked_sun_position']],
+    ['environment_activate', ['environment_ref'], []],
+    ['style_load', ['name', 'path'], ['activate', 'capture_current_display']],
+    ['style_activate', ['style_ref'], []]
+  ].map(([op, required, optional]) => ({
+    op, description: `Apply native SketchUp appearance operation ${op}.`,
+    schema: { required: ['op', ...required], optional },
+    runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.partial },
+    stability: STABILITY.experimental,
+    notes: 'Native environment requires SketchUp 2025+; complete restoration requires 2025.0.2+. Only measured runtime results establish support.'
+  })),
   {
     op: 'reset',
     description: 'Clear the current model session before appending new geometry.',
@@ -44,7 +67,7 @@ const OPERATION_REGISTRY_ENTRIES = [
   {
     op: 'material',
     description: 'Create or update a named material with color, alpha, texture, and optional PBR fields.',
-    schema: { required: ['op', 'name'], optional: ['color', 'alpha', 'texture', 'workflow', 'pbr'] },
+    schema: { required: ['op', 'name'], optional: ['color', 'alpha', 'texture', 'workflow', 'pbr', 'skm_path'] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.partial },
     stability: STABILITY.stable,
     component_definition: true,
@@ -92,11 +115,11 @@ const OPERATION_REGISTRY_ENTRIES = [
   },
   {
     op: 'texture_transform',
-    description: 'Attach texture mapping metadata to a stable Group or ComponentInstance target.',
-    schema: { required: ['op'], optional: ['name', ...objectTarget, ...nestedObjectTarget, 'material', 'projection', 'offset', 'offset_u', 'offsetU', 'offset_v', 'offsetV', 'scale', 'scale_u', 'scaleU', 'scale_v', 'scaleV', 'rotation', 'rotation_degrees', 'rotationDegrees'] },
+    description: 'Apply and read back native face texture placement on explicitly selected direct faces.',
+    schema: { required: ['op'], optional: ['name', ...objectTarget, ...nestedObjectTarget, 'material', 'projection', 'offset', 'offset_u', 'offsetU', 'offset_v', 'offsetV', 'scale', 'scale_u', 'scaleU', 'scale_v', 'scaleV', 'rotation', 'rotation_degrees', 'rotationDegrees', 'texture_size_mm', 'side', 'face_selector'] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
-    notes: 'First texture-mapping slice: records deterministic UV/projection metadata in snapshots and mirrors it to SketchUp attributes.'
+    notes: 'Queue positions real direct-face UVs and verifies native getters. Positive scale controls repeats; texture_size_mm controls physical tile dimensions; planar uses a stable face basis and box requires axis-aligned faces. Does not descend into shared child components. Mock retains requested mapping only.'
   },
   {
     op: 'uv_project_planar',
@@ -514,7 +537,7 @@ const OPERATION_REGISTRY_ENTRIES = [
   {
     op: 'mesh',
     description: 'Create indexed geometry from vertices and faces.',
-    schema: { required: ['op', 'name', 'vertices', 'faces'], optional: ['back_material', 'f_material', 'b_material', 'smooth', ...commonPlacement] },
+    schema: { required: ['op', 'name', 'vertices', 'faces'], optional: ['back_material', 'f_material', 'b_material', 'smooth', 'construction', ...commonPlacement] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
     component_definition: true,
@@ -541,7 +564,7 @@ const OPERATION_REGISTRY_ENTRIES = [
   {
     op: 'arc_curve',
     description: 'Create an arc curve from center, radius, plane, start/end angles, and segment count.',
-    schema: { required: ['op', 'name', 'center', 'radius'], optional: ['start_angle', 'startAngle', 'end_angle', 'endAngle', 'plane', 'segments', 'material', 'smooth', ...commonPlacement] },
+    schema: { required: ['op', 'name', 'center', 'radius'], optional: ['start_angle', 'startAngle', 'end_angle', 'endAngle', 'plane', 'segments', 'chord_tolerance_mm', 'max_segments', 'material', 'smooth', ...commonPlacement] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
     component_definition: true,
@@ -568,7 +591,7 @@ const OPERATION_REGISTRY_ENTRIES = [
   {
     op: 'cylinder',
     description: 'Create a segmented circular solid.',
-    schema: { required: ['op', 'name', 'origin', 'radius', 'height'], optional: ['segments', 'smooth', ...commonPlacement] },
+    schema: { required: ['op', 'name', 'origin', 'radius', 'height'], optional: ['segments', 'chord_tolerance_mm', 'max_segments', 'smooth', ...commonPlacement] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.stable,
     component_definition: true,
@@ -631,7 +654,7 @@ const OPERATION_REGISTRY_ENTRIES = [
   {
     op: 'pipe_between_points',
     description: 'Create a circular pipe along arbitrary 3D points with a local perpendicular frame.',
-    schema: { required: ['op', 'name', 'points', 'radius'], optional: ['path', 'start', 'end', 'segments', 'smooth', ...commonPlacement] },
+    schema: { required: ['op', 'name', 'radius'], optional: ['points', 'path', 'start', 'end', 'segments', 'chord_tolerance_mm', 'max_segments', 'smooth', ...commonPlacement] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
     component_definition: true,
@@ -640,7 +663,7 @@ const OPERATION_REGISTRY_ENTRIES = [
   {
     op: 'swept_path',
     description: 'Sweep a circular tube along a polyline path.',
-    schema: { required: ['op', 'name', 'path', 'radius'], optional: ['segments', 'smooth', ...commonPlacement] },
+    schema: { required: ['op', 'name', 'path', 'radius'], optional: ['segments', 'chord_tolerance_mm', 'max_segments', 'smooth', ...commonPlacement] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.partial },
     stability: STABILITY.beta,
     component_definition: true,
@@ -819,7 +842,7 @@ const OPERATION_REGISTRY_ENTRIES = [
   {
     op: 'railing',
     description: 'Create a swept top rail plus evenly spaced cylindrical posts along a path.',
-    schema: { required: ['op', 'name', 'path'], optional: ['height', 'rail_radius', 'post_radius', 'post_spacing', 'smooth', 'material'] },
+    schema: { required: ['op', 'name', 'path'], optional: ['height', 'rail_radius', 'post_radius', 'post_spacing', 'segments', 'chord_tolerance_mm', 'max_segments', 'smooth', 'material'] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
     component_definition: true,
@@ -840,7 +863,7 @@ const OPERATION_REGISTRY_ENTRIES = [
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.beta,
     component_definition: true,
-    notes: 'Supports translate/rotateZ transforms in the current DSL baseline.'
+    notes: 'Root and nested instances support transform.mirror as x/y/z or an array of distinct axes. Placement applies local reflection (negative scale), then rotateZ, then origin plus translate/translation. Mirror is supported by component placement only, not by every primitive commonPlacement transform.'
   },
   {
     op: 'selection',
@@ -861,7 +884,7 @@ const OPERATION_REGISTRY_ENTRIES = [
   {
     op: 'scene',
     description: 'Store a named camera view and selected Page properties as a scene.',
-    schema: { required: ['op', 'name'], optional: ['camera', 'transition_time', 'transitionTime', 'use_camera', 'useCamera', 'layer_visibility', 'layerVisibility', 'drawingelement_visibility', 'drawingElementVisibility', 'rendering_options', 'renderingOptions', 'shadow', 'shadow_info', 'shadowInfo', 'style', 'update_flags', 'updateFlags'] },
+    schema: { required: ['op', 'name'], optional: ['camera', 'transition_time', 'transitionTime', 'use_camera', 'useCamera', 'layer_visibility', 'layerVisibility', 'drawingelement_visibility', 'drawingElementVisibility', 'rendering_options', 'renderingOptions', 'shadow', 'shadow_info', 'shadowInfo', 'style', 'update_flags', 'updateFlags', 'environment_ref', 'use_environment', 'style_ref'] },
     runtime_support: { mock: SUPPORT_STATUS.supported, queue: SUPPORT_STATUS.supported },
     stability: STABILITY.stable,
     notes: 'Scene camera shape follows camera fields. R3 adds Page transition time, saved layer/object visibility, and per-page rendering/shadow/style intent where SketchUp exposes setters.'
@@ -937,6 +960,10 @@ export function getRuntimeCapabilities(runtime = 'mock') {
     manifest_version: CAPABILITY_MANIFEST_VERSION,
     dsl_version: DSL_VERSION,
     occurrence_contract: OCCURRENCE_CONTRACT_VERSION,
+    creation_scope: { version: 'creation-scope.v1', atomic_absence_validation: true },
+    saved_model_lifecycle: { version: 'saved-model-lifecycle.v1', close_reopen_saved_model: runtime === 'queue', platform: 'macOS',
+      requires_verified_saved_receipt: true, close_ignore_changes: false, application_restart: false, installed_runtime_verification_required: runtime === 'queue' },
+    detail_geometry: { version: 'native-geometry-evidence.v2', nested_occurrences: true, measured: runtime === 'queue', context_void_queries: runtime === 'queue', resource_totals: runtime === 'queue', resource_scope: 'all_native_stored_geometry' },
     ...(runtime === 'queue' ? {
       boolean_operations_sha256: BOOLEAN_OPERATIONS_SHA256,
       model_revision_source_sha256: MODEL_REVISION_SOURCE_SHA256,
@@ -946,6 +973,8 @@ export function getRuntimeCapabilities(runtime = 'mock') {
         logical_occurrence_count: 'complete_definition_graph_expansion'
       }
     } : {}),
+    scoped_recursive_adoption: { version: 'scoped-recursive-roots.v1', max_roots: 32, requires_read_only: true, whole_model_revision: true },
+    detail_pair_separation: { version: 'native_leaf_separation.v1', read_only: true, numerical_tolerance_mm: 0.000001, max_leaf_pairs: 100000 },
     read_only_probes: {
       structural_groups: {
         version: STRUCTURAL_GROUPS_VERSION,
@@ -978,7 +1007,7 @@ export function getRuntimeCapabilities(runtime = 'mock') {
         ])
     ),
     notes: runtime === 'mock'
-      ? 'Deterministic offline runtime for tests, snapshots, and local iteration.'
+      ? 'Deterministic offline runtime for tests, snapshots, and Alma iteration.'
       : 'Bridge-declared queue capabilities; actual execution depends on the installed SketchUp Ruby plugin version.'
   };
 }

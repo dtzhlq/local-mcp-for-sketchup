@@ -197,7 +197,9 @@ export function buildModelGraph(adoption, { lineage = {}, sourceArtifacts = [] }
   const entityPathsPresent = recursivePaths.length === recursiveEntries.length;
   const entityPathsUnique = new Set(recursivePaths).size === recursivePaths.length;
   const pathClosureComplete = [...nodes.values()].every((node) => node.node_type !== 'occurrence' || node.synthetic !== true);
+  const scopedRoots = adoption.recursive_root_paths || null;
   const completeness = {
+    recursive_root_paths: scopedRoots,
     recursive_requested: adoption.recursive === true,
     recursive_truncated: adoption.recursive_truncated === true,
     recursive_total_seen: recursiveTotalSeen,
@@ -220,6 +222,11 @@ export function buildModelGraph(adoption, { lineage = {}, sourceArtifacts = [] }
       ...(pathClosureComplete ? [] : ['occurrence_path_not_closed'])
     ]
   };
+  if (scopedRoots) {
+    completeness.scope_complete = completeness.complete;
+    completeness.complete = false;
+    completeness.blockers.push('partial_geometry_scope');
+  }
   const sourceAdoptionHash = sha256Canonical({
     version: adoption.version,
     runtime: adoption.runtime,
@@ -345,8 +352,9 @@ export function validateModelGraphSemantics(graph) {
     }
   }
 
+  const hierarchyPairs = new Set(graph.relationships.hierarchy.map(entry => `${entry.type}:${entry.from}:${entry.to}`));
   for (const node of graph.nodes.filter((candidate) => candidate.node_type === 'occurrence')) {
-    if (node.parent_id && !graph.relationships.hierarchy.some((entry) => entry.type === 'parent_child' && entry.from === node.parent_id && entry.to === node.node_id)) {
+    if (node.parent_id && !hierarchyPairs.has(`parent_child:${node.parent_id}:${node.node_id}`)) {
       violations.push(`missing_parent_relationship:${node.node_id}`);
     }
     if (node.entity_path && node.parent_entity_path !== parentEntityPath(node.entity_path)) {
@@ -358,11 +366,14 @@ export function validateModelGraphSemantics(graph) {
     }
   }
 
-  const expectedComplete = graph.completeness?.recursive_requested === true
+  const expectedScopeComplete = graph.completeness?.recursive_requested === true
     && graph.completeness?.recursive_truncated === false
     && graph.completeness?.occurrence_contract === 'canonical-occurrence-path.v1'
     && graph.completeness?.recursive_total_seen === graph.completeness?.recursive_indexed
     && !graph.nodes.some((node) => node.node_type === 'occurrence' && (node.synthetic === true || !node.entity_path));
+  const roots = graph.completeness?.recursive_root_paths;
+  if (roots && (!Array.isArray(roots) || !roots.length || new Set(roots).size !== roots.length || roots.some(root => !graph.nodes.some(node => node.node_type === 'occurrence' && !node.parent_id && node.entity_path === root && ['group','component_instance'].includes(node.entity_type))) || graph.completeness.scope_complete !== expectedScopeComplete)) violations.push('scoped_completeness_inconsistent');
+  const expectedComplete = !roots && expectedScopeComplete;
   if (graph.completeness?.complete !== expectedComplete) violations.push('completeness_inconsistent');
   if ((graph.completeness?.complete === true) !== (graph.completeness?.blockers?.length === 0)) violations.push('completeness_blockers_inconsistent');
   validateGraphProjections(graph, violations);
@@ -545,6 +556,7 @@ function occurrenceNode({ key, entity, entityPath, parentId, synthetic, scope, c
     topology_summary: topologySummary(entity, geometrySummary),
     features: structuredClone(entity.features || []),
     shared_definition: entity.shared_definition === true,
+    ...(entity.entity_definition_occurrence_count !== undefined && entity.entity_definition_occurrence_count !== null ? { entity_definition_occurrence_count: entity.entity_definition_occurrence_count } : {}),
     affected_instance_count: Number(entity.affected_instance_count || 1),
     instance_policy_required: entity.instance_policy_required === true,
     warning: entity.warning || null,
@@ -733,8 +745,12 @@ function nodeIdFor(value) {
   return `node_${crypto.createHash('sha256').update(String(value)).digest('hex').slice(0, 24)}`;
 }
 
+const relationshipKeys = new WeakMap();
 function addUniqueRelationship(list, relationship) {
-  if (!list.some((item) => item.type === relationship.type && item.from === relationship.from && item.to === relationship.to)) list.push(relationship);
+  let keys = relationshipKeys.get(list);
+  if (!keys) { keys = new Set(list.map(item => `${item.type}:${item.from}:${item.to}`)); relationshipKeys.set(list, keys); }
+  const key = `${relationship.type}:${relationship.from}:${relationship.to}`;
+  if (!keys.has(key)) { keys.add(key); list.push(relationship); }
 }
 
 function topologySummary(entity, geometrySummary) {

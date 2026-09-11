@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local-mcp-for-sketchup.invalid/schema/existing-model-edit-destructive-side-effects-v1.schema.json",
+  "$id": "https://alma.local/schema/existing-model-edit-destructive-side-effects-v1.schema.json",
   "title": "Existing-model destructive side effects",
   "type": "object",
   "additionalProperties": false,

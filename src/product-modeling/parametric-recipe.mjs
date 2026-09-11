@@ -1,9 +1,24 @@
+import {buildDetailedRecipe, DETAIL_MATERIALS} from '../detailed-modeling/recipes.mjs';
+import {compilePartGraphToSketchUpDsl} from './part-graph-compiler.mjs';
+
 const TARGET_KINDS = new Set(['feature_mapping_plan', 'part_graph', 'safe_json_dsl']);
 const PATCHABLE_PART_GRAPH_PATHS = [
   /^parts\[[^\]]+\]\.shape\.parameters\./,
   /^parts\[[^\]]+\]\.feature_intents$/
 ];
 const REPORT_SHAPE = 'parametric_recipe_compile_report_v1';
+
+// Constructive assembly recipes are an explicit new entrypoint. The established
+// FeatureMappingPlan compiler above remains unchanged for version 1 recipes.
+export function compileDetailedAssemblyRecipe(recipe={}, options={}) {
+  if(!recipe.kind || !recipe.id)throw new Error('Detailed assembly recipe requires kind and id');
+  const parameters={...(recipe.parameters||{}),...(options.parameterValues||{})};
+  const compiled=buildDetailedRecipe(recipe.kind,{id:recipe.id,parameters});
+  const partGraph={version:2,id:`recipe-${recipe.id}`,profile_id:`recipe-${recipe.kind}`,coordinate_system:'part_local',units:'mm',product:{type:recipe.kind,name:recipe.id},parts:compiled.parts,roots:[{part_id:compiled.root_id,instance_id:options.instanceId||`id-${recipe.id}`,origin:options.origin||[0,0,0]}]};
+  const profile={version:1,profile_id:partGraph.profile_id,materials:structuredClone(DETAIL_MATERIALS)};
+  const safeJsonDsl=compilePartGraphToSketchUpDsl(partGraph,profile,options.compileOptions||{});
+  return {partGraph,profile,safeJsonDsl,requirements:compiled.requirements,parameters,recipe_signature:compiled.recipe_signature,report:{artifact:'DetailedAssemblyRecipeCompileReport',version:2,kind:recipe.kind,part_count:compiled.parts.length,definition_count:safeJsonDsl.operations.filter(o=>o.op==='component_definition').length,validation_scope:'constructive_dsl_only',live_geometry_verified:false}};
+}
 
 export function compileParametricRecipe(recipe = {}, options = {}) {
   if (!recipe || typeof recipe !== 'object') throw new Error('ParametricRecipe must be an object');

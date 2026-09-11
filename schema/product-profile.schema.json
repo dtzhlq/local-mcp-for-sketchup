@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local-mcp-for-sketchup.invalid/local-mcp-for-sketchup/product-profile.schema.json",
+  "$id": "https://alma.local/sketchup-mcp-replica/product-profile.schema.json",
   "title": "ProductProfile",
   "type": "object",
   "required": ["version", "profile_id", "product_type", "name", "units", "materials", "required_parts", "allowed_primitives"],

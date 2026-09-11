@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local-mcp-for-sketchup.invalid/schema/real-model-candidate-live-evidence-v1.schema.json",
+  "$id": "https://alma.local/schema/real-model-candidate-live-evidence-v1.schema.json",
   "title": "Real-model candidate live read-only evidence v1",
   "type": "object",
   "additionalProperties": false,

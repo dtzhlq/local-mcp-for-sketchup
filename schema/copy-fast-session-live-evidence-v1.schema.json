@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local-mcp-for-sketchup.invalid/schema/copy-fast-session-live-evidence-v1.schema.json",
+  "$id": "https://alma.local/schema/copy-fast-session-live-evidence-v1.schema.json",
   "title": "Copy Fast session current-source live evidence",
   "type": "object",
   "additionalProperties": false,

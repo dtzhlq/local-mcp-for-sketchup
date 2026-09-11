@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local-mcp-for-sketchup.invalid/local-mcp-for-sketchup/real-model-target-review-v1-archival-lineage-manifest-v1.schema.json",
+  "$id": "https://alma.local/sketchup-mcp-replica/real-model-target-review-v1-archival-lineage-manifest-v1.schema.json",
   "title": "Real-model target review v1 archival lineage manifest",
   "type": "object",
   "additionalProperties": false,

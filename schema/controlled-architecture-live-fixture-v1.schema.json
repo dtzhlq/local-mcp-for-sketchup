@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local-mcp-for-sketchup.invalid/local-mcp-for-sketchup/controlled-architecture-live-fixture-v1.schema.json",
+  "$id": "https://alma.local/sketchup-mcp-replica/controlled-architecture-live-fixture-v1.schema.json",
   "title": "Controlled architecture live fixture v1",
   "type": "object",
   "additionalProperties": false,
@@ -50,9 +50,9 @@
         "operation_count": { "const": 2 },
         "operations": { "const": ["material", "scene"] },
         "geometry_mutation_performed": { "const": false },
-        "material_name_untrusted": { "const": "LOCAL_MCP_FOR_SKETCHUP_Reliability_Architecture_Material" },
+        "material_name_untrusted": { "const": "ALMA_Reliability_Architecture_Material" },
         "material_persisted": { "const": true },
-        "scene_name_untrusted": { "const": "LOCAL_MCP_FOR_SKETCHUP_Reliability_Architecture_Scene" },
+        "scene_name_untrusted": { "const": "ALMA_Reliability_Architecture_Scene" },
         "scene_persisted": { "const": true }
       }
     },

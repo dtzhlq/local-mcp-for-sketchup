@@ -1,0 +1,75 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import os from 'node:os';
+import path from 'node:path';
+import sharp from 'sharp';
+import { validateImageGeometry } from '../src/image-structure-geometry.mjs';
+import { SketchUpBridge } from '../src/bridge.mjs';
+import { mergeImageUnderstanding,compileImageModel,runImageStructureHelper } from '../src/image-structure.mjs';
+const root=await fs.mkdtemp(path.join(os.tmpdir(),'image-structure-'));
+const bridge=new SketchUpBridge({mock:{sessionPath:path.join(root,'model.json')},agentContract:{rootDir:path.join(root,'tasks')},approval:{stateDir:path.join(root,'approvals'),secret:'image-structure-tests-only-32-byte-secret'},executionPolicy:{allowed_runtimes:['mock'],auto_approve_risks:[]}});
+const buffer=await sharp({create:{width:64,height:64,channels:3,background:'#eeeeee'}}).png().toBuffer();
+const image=(await bridge.agentGateway.imageArtifactStore.ingestBuffer(buffer)).record.handle;
+const observation=id=>({instance_id:id,role:'unlisted sculptural fin',evidence:{image_handle:image,description:'Visible separate fin'},parameters:{}});
+const part=id=>({id,shape:{primitive:'box',parameters:{origin:[0,0,0],size:[20,10,30]}},parameter_provenance:{origin:'inferred',size:'assumed'}});
+const assumptions=['a','b'].map(id=>({id:`depth-${id}`,instance_id:id,parameter:'size',value:[20,10,30],reason:'Hidden depth supplied for complete shape; nominal relative dimensions'}));
+const base={action:'structure',domain:'product',image_handle:image,observations:['a','b'].map(observation),assumptions,part_graph:{version:1,parts:['a','b'].map(part)}};
+let seq=0;
+const start=(intent,inputs)=>bridge.start_agent_task({intent,instruction:'Image structure focused integration',interface_level:'expert',idempotency_key:`case-${++seq}`,inputs});
+const groups=[];
+// 1. Direct understanding: roles and independent instances, no CV diagnostics.
+const direct=await start('image_artifact',base);
+assert.equal(direct.ok,true,JSON.stringify(direct.error));assert.equal(direct.task_state,'completed');assert.equal(direct.data.instance_count,2);assert.deepEqual(direct.data.diagnostics,[]);groups.push('direct');
+// 2. Explicit helper selection, followed by reuse without requesting CV again.
+const helpers=await start('image_artifact',{action:'structure',domain:'interior',image_handle:image,helpers:['boundaries']});
+assert.equal(helpers.task_state,'completed');assert.deepEqual(helpers.data.diagnostics.map(d=>d.method),['boundaries']);
+const reuse=await start('image_artifact',{action:'structure',source_understanding:helpers.data.source_understanding,observations:[observation('a')]});
+assert.equal(reuse.data.diagnostics.length,1);assert.equal(reuse.data.instance_count,1);groups.push('helpers');
+bridge.agentGateway.imageStructureHelper=async()=>{throw new Error('injected CV unavailable');};
+const failedCv=await start('image_artifact',{action:'structure',domain:'product',image_handle:image,helpers:['lines']});
+delete bridge.agentGateway.imageStructureHelper;
+assert.equal(failedCv.task_state,'completed');assert.equal(failedCv.data.diagnostics[0].status,'failed');
+const afterCv=await start('image_artifact',{action:'structure',source_understanding:failedCv.data.source_understanding,observations:[observation('a')]});
+assert.equal(afterCv.task_state,'completed');assert.equal(afterCv.data.instance_count,1);assert.equal(afterCv.data.diagnostics[0].status,'failed');
+// 3. Invalid candidate cannot lose previous understanding; replace one instance only.
+const invalid=await start('image_artifact',{...base,goal:'complete_model',part_graph:{parts:[{...part('a'),shape:{primitive:'unknown',parameters:{}}}]}});
+assert.equal(invalid.task_state,'awaiting_input');assert.equal(invalid.data.instance_count,2);
+const corrected=await bridge.submit_agent_task_input({task_id:invalid.task_id,idempotency_key:'correct-once',input:{part_graph:base.part_graph}});
+assert.equal(corrected.task_state,'completed',JSON.stringify(corrected.error));
+const replacement=mergeImageUnderstanding({domain:'product',image_handle:image,observations:[{...observation('a'),role:'revised fin'}]},mergeImageUnderstanding(base));
+assert.equal(replacement.candidates.length,3);assert.ok(replacement.candidates[2].replaces);assert.ok(replacement.active_instances.b);groups.push('recovery');
+// 4. Relative complete shape retains assumptions. Known scale needs source evidence.
+const understanding=mergeImageUnderstanding(base);const plan=compileImageModel(understanding);
+assert.equal(plan.scale_mode,'relative');assert.deepEqual(plan.assumptions,assumptions);assert.ok(plan.document.operations.every(o=>o.op!=='reset'));
+assert.throws(()=>compileImageModel({...understanding,scale_mode:'known'}),/Known scale/);groups.push('scale');
+// 5. Server frozen plan -> trusted review -> existing mock creation path.
+const contact={instance_id:'a',with_instance_id:'b',assumption_id:'fin-contact'};
+assert.throws(()=>compileImageModel({...understanding,part_graph:{...base.part_graph,contacts:[contact]}}),/matching explicit contact assumption/);
+const contactBase={...base,part_graph:{...base.part_graph,contacts:[contact]},assumptions:[...assumptions,{id:'fin-contact',instance_id:'a',parameter:'contact',value:'b',reason:'Two interlocking fins intentionally share this volume in the mock fixture'}]};
+const warped={op:'mesh',name:'warped-panel',vertices:[[0,0,0],[10,0,0],[10,10,1],[0,10,0]],faces:[[0,1,2,3]]};
+assert.throws(()=>validateImageGeometry({operations:[warped]}),/warped-panel.*face 0 is not planar/);
+assert.equal(validateImageGeometry({operations:[{...warped,faces:[[0,1,2],[0,2,3]]}]}).object_count,1);
+const candidate=await start('image_artifact',{...contactBase,goal:'complete_model'});assert.equal(candidate.task_state,'completed');
+const creation=await start('create_model',{runtime:'mock',source_image_model:candidate.data.source_image_model});
+assert.equal(creation.task_state,'awaiting_review',JSON.stringify({creation,candidate}));
+const raw=await bridge.agentGateway.taskStore.getTask(creation.task_id,{includePrivate:true});
+await bridge.approvalAuthority.recordTrustedDecision(raw.private.image_model_creation.challenge,{decision:'approved',user_id:'test-user',channel:'local-user-presence-test',confirmed:true});
+const built=await bridge.submit_agent_task_input({task_id:creation.task_id,idempotency_key:'approve-build',input:{}});
+assert.equal(built.ok,true,JSON.stringify(built.error));assert.equal(built.task_state,'completed',JSON.stringify(built));
+const reviewedReplacement=await start('image_artifact',{action:'structure',source_understanding:candidate.data.source_understanding,observations:[{...observation('a'),role:'new proposed fin'}]});
+const reviewedRaw=await bridge.agentGateway.taskStore.getTask(reviewedReplacement.task_id,{includePrivate:true});
+assert.equal(reviewedRaw.private.image_structure.understanding.review_history.length,1);
+assert.ok(reviewedRaw.private.image_structure.understanding.candidates.some(c=>c.replaces));
+assert.equal(JSON.stringify(reviewedRaw.result).includes('approval_token'),false);
+const model=await bridge.inspect_model({runtime:'mock',includeSnapshot:true});assert.ok(model.snapshot);groups.push('output');
+// 6. Legacy registration and security boundaries.
+const legacy=await start('image_artifact',{image_handle:image});assert.equal(legacy.data.kind,'immutable_image_artifact_result');
+for (const extra of [{operations:[{op:'reset'}]},{parts:[{...part('a'),shape:{primitive:'box',parameters:{op:'reset',size:[1,1,1]}}}]},{parts:[{...part('a'),shape:{primitive:'box',parameters:{origin:[0,0,0],size:[-1,2,3]}}}]}]) assert.throws(()=>compileImageModel({...understanding,part_graph:{...base.part_graph,...extra}}));
+const mismatch=await start('create_model',{runtime:'mock',source_image_model:{...candidate.data.source_image_model,content_hash:'sha256:wrong'}});assert.equal(mismatch.ok,false);
+const alteration=await start('create_model',{runtime:'mock',source_image_model:candidate.data.source_image_model});
+const tampered=await bridge.submit_agent_task_input({task_id:alteration.task_id,idempotency_key:'tampered-review',input:{code:'{}'}});assert.equal(tampered.ok,false);
+const injected=await start('create_model',{runtime:'mock',source_image_model:candidate.data.source_image_model,code:'{}'});assert.equal(injected.ok,false);
+assert.throws(()=>mergeImageUnderstanding({image_handle:'another',domain:'product'},understanding),/another image/);
+await assert.rejects(runImageStructureHelper('boundaries',Buffer.from('invalid')),/./);
+groups.push('boundaries');
+console.log(JSON.stringify({ok:true,scenarios:groups,scope:'offline integration; no live model or release acceptance',evidence_dir:root}));

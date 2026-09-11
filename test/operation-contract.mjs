@@ -35,8 +35,8 @@ const identityOperations = new Set([
 
 const mockRuntimeSource = await fs.readFile(path.join(repoRoot, 'src/mock-runtime.mjs'), 'utf8');
 const componentOperationsSource = await fs.readFile(path.join(repoRoot, 'src/component-operations.mjs'), 'utf8');
-const rubyPluginSource = await fs.readFile(path.join(repoRoot, 'sketchup_plugin/local_mcp_for_sketchup/bridge.rb'), 'utf8');
-const rubyComponentSource = await fs.readFile(path.join(repoRoot, 'sketchup_plugin/local_mcp_for_sketchup/component_operations.rb'), 'utf8');
+const rubyPluginSource = await fs.readFile(path.join(repoRoot, 'sketchup_plugin/alma_sketchup_mcp.rb'), 'utf8');
+const rubyComponentSource = await fs.readFile(path.join(repoRoot, 'sketchup_plugin/alma_sketchup_mcp/component_operations.rb'), 'utf8');
 const packagePluginSource = await fs.readFile(path.join(repoRoot, 'scripts/package-sketchup-plugin.mjs'), 'utf8');
 
 assert.deepEqual(

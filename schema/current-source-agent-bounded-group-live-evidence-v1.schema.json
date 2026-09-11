@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local-mcp-for-sketchup.invalid/local-mcp-for-sketchup/current-source-agent-bounded-group-live-evidence-v1.schema.json",
+  "$id": "https://alma.local/sketchup-mcp-replica/current-source-agent-bounded-group-live-evidence-v1.schema.json",
   "title": "Current-source Agent bounded Group live evidence v1",
   "type": "object",
   "additionalProperties": false,

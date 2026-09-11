@@ -74,7 +74,7 @@ export function assignTag(model, operation) {
 export function setObjectAttribute(model, operation) {
   const target = findModelObject(model, resolveObjectReference(operation, 'attribute'));
   assertUnlocked(target, 'attribute');
-  const dictionary = nonEmptyString(operation.dictionary ?? operation.namespace ?? 'LocalMcpForSketchUp', 'attribute.dictionary');
+  const dictionary = nonEmptyString(operation.dictionary ?? operation.namespace ?? 'AlmaSketchupMCP', 'attribute.dictionary');
   const updates = normalizeAttributeUpdates(operation, dictionary);
   target.item.attributes ||= {};
   target.item.attributes[dictionary] ||= {};
@@ -84,7 +84,7 @@ export function setObjectAttribute(model, operation) {
 export function removeObjectAttribute(model, operation) {
   const target = findModelObject(model, resolveObjectReference(operation, 'remove_attribute'));
   assertUnlocked(target, 'remove_attribute');
-  const dictionary = nonEmptyString(operation.dictionary ?? operation.namespace ?? 'LocalMcpForSketchUp', 'remove_attribute.dictionary');
+  const dictionary = nonEmptyString(operation.dictionary ?? operation.namespace ?? 'AlmaSketchupMCP', 'remove_attribute.dictionary');
   const key = operation.key ?? operation.attr_key ?? operation.attrKey;
   if (!target.item.attributes?.[dictionary]) return;
   if (key === undefined) delete target.item.attributes[dictionary];

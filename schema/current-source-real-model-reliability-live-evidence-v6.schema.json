@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local-mcp-for-sketchup.invalid/schemas/current-source-real-model-reliability-live-evidence-v6.schema.json",
+  "$id": "https://alma.local/schemas/current-source-real-model-reliability-live-evidence-v6.schema.json",
   "title": "Current Source Real Model Reliability Live Evidence v6",
   "type": "object",
   "additionalProperties": false,
@@ -219,9 +219,9 @@
         "schema/real-model-reliability-live-case-v1.schema.json",
         "src/bridge.mjs",
         "src/queue-runtime.mjs",
-        "sketchup_plugin/local_mcp_for_sketchup/boolean_operations.rb",
-        "sketchup_plugin/local_mcp_for_sketchup/model_revision.rb",
-        "sketchup_plugin/local_mcp_for_sketchup/runtime_source_manifest.rb"
+        "sketchup_plugin/alma_sketchup_mcp/boolean_operations.rb",
+        "sketchup_plugin/alma_sketchup_mcp/model_revision.rb",
+        "sketchup_plugin/alma_sketchup_mcp/runtime_source_manifest.rb"
       ],
       "properties": {
         "test/reliability-corpus/manifest.json": { "$ref": "#/$defs/sha256" },
@@ -235,9 +235,9 @@
         "schema/real-model-reliability-live-case-v1.schema.json": { "$ref": "#/$defs/sha256" },
         "src/bridge.mjs": { "$ref": "#/$defs/sha256" },
         "src/queue-runtime.mjs": { "$ref": "#/$defs/sha256" },
-        "sketchup_plugin/local_mcp_for_sketchup/boolean_operations.rb": { "$ref": "#/$defs/sha256" },
-        "sketchup_plugin/local_mcp_for_sketchup/model_revision.rb": { "$ref": "#/$defs/sha256" },
-        "sketchup_plugin/local_mcp_for_sketchup/runtime_source_manifest.rb": { "$ref": "#/$defs/sha256" }
+        "sketchup_plugin/alma_sketchup_mcp/boolean_operations.rb": { "$ref": "#/$defs/sha256" },
+        "sketchup_plugin/alma_sketchup_mcp/model_revision.rb": { "$ref": "#/$defs/sha256" },
+        "sketchup_plugin/alma_sketchup_mcp/runtime_source_manifest.rb": { "$ref": "#/$defs/sha256" }
       }
     },
     "acceptance": {

@@ -1,4 +1,7 @@
 import fs from 'node:fs/promises';
+import { constants as fsConstants } from 'node:fs';
+import { createHash } from 'node:crypto';
+import { queryLocalAssets } from './asset-catalog.mjs';
 import path from 'node:path';
 import { getRuntimeCapabilities } from './capabilities.mjs';
 import { getDocs } from './docs.mjs';
@@ -23,7 +26,8 @@ import { ApprovalAuthority } from './approval-tokens.mjs';
 import { normalizeExecutionPolicy } from './agent-contract.mjs';
 import { AgentTaskStore } from './agent-task-store.mjs';
 import { AgentGateway } from './agent-gateway.mjs';
-import { AgentContractError } from './agent-contract.mjs';
+import { AgentContractError, canonicalJson } from './agent-contract.mjs';
+import { isVerifiedModelAccessibilitySavedReceipt } from './model-accessibility-delivery.mjs';
 import { CopyFastSessionAuthority } from './copy-fast-session.mjs';
 import { SessionContractAuthority } from './session-contract.mjs';
 import { assertStructuralProbeResult, normalizeStructuralProbeOptions } from './model-adoption.mjs';
@@ -67,6 +71,16 @@ export class SketchUpBridge {
   async get_docs(options = {}) {
     const document = getDocs(options);
     return { ...document, docs: document.content };
+  }
+
+  async query_assets(options = {}) {
+    return queryLocalAssets(options);
+  }
+
+  async inspect_detail_regions({ queries, runtime = 'queue', timeoutMs } = {}) {
+    if (runtime !== 'queue') throw new AgentContractError('OPERATION_NOT_ALLOWED', 'Detail region acceptance requires actual native geometry.');
+    if (!Array.isArray(queries) || queries.length < 1 || queries.length > 128) throw new AgentContractError('INVALID_ARGUMENT', 'inspect_detail_regions requires 1..128 frozen region queries.');
+    return this.selectRuntime(runtime, { timeoutMs }).inspectDetailRegions({ queries });
   }
 
   async get_workflow_bundle() {
@@ -228,6 +242,9 @@ export class SketchUpBridge {
     }
     const selectedRuntime = this.selectRuntime(runtime, { timeoutMs });
     const runtimeCapabilities = await this.resolveRuntimeCapabilities(selectedRuntime, runtime);
+    if (prepared.document.creation_scope && (runtimeCapabilities.creation_scope?.version !== 'creation-scope.v1' || runtimeCapabilities.creation_scope?.atomic_absence_validation !== true)) {
+      throw new AgentContractError('OPERATION_NOT_ALLOWED', 'The installed runtime does not support atomic scoped creation; update and restart the bridge.');
+    }
     const snapshot = await selectedRuntime.buildModel(prepared.code);
     return {
       snapshot: this.attachRuntimeCapabilities(snapshot, runtimeCapabilities),
@@ -309,6 +326,50 @@ export class SketchUpBridge {
     return result;
   }
 
+  async close_reopen_saved_model({ saved_receipt, runtime = 'queue', timeoutMs, session_contract, sessionContract } = {}) {
+    if (!isVerifiedModelAccessibilitySavedReceipt(saved_receipt)) throw new AgentContractError('ARTIFACT_INTEGRITY_ERROR', 'Closing requires the original server-verified saved delivery receipt; client JSON and cloned receipts are not accepted.');
+    if (runtime !== 'queue' || this.executionContext?.source !== 'agent_gateway' || this.executionContext?.intent !== 'reopen_delivered_model') {
+      throw new AgentContractError('POLICY_DENIED', 'Saved close/reopen is an internal queue lifecycle for a persisted Gateway delivery task.');
+    }
+    if (!this.liveMutationAuthorization) {
+      return this.withLiveMutationAuthorization({ runtime, timeoutMs, session_contract, sessionContract, operation: 'close_reopen_saved_model' },
+        bridge => bridge.close_reopen_saved_model({ saved_receipt, runtime, timeoutMs }));
+    }
+    if (this.liveMutationAuthorization.operation !== 'close_reopen_saved_model') throw new AgentContractError('HANDSHAKE_INVALID', 'Saved close/reopen requires its own fresh mutation authorization scope.');
+    const selectedRuntime = this.selectRuntime(runtime, { timeoutMs });
+    if (typeof selectedRuntime.closeReopenSavedModel !== 'function' || typeof selectedRuntime.getSessionState !== 'function' || typeof selectedRuntime.getCapabilities !== 'function') {
+      throw new AgentContractError('OPERATION_NOT_ALLOWED', 'The queue runtime does not support verified saved-document close/reopen.');
+    }
+    const capabilities = await this.resolveRuntimeCapabilities(selectedRuntime, runtime, { force: true });
+    if (capabilities.saved_model_lifecycle?.version !== 'saved-model-lifecycle.v1' || capabilities.saved_model_lifecycle.close_reopen_saved_model !== true) {
+      throw new AgentContractError('OPERATION_NOT_ALLOWED', 'The installed native plugin does not attest saved-document close/reopen support. Install and restart the compatible plugin first.');
+    }
+    const before = await selectedRuntime.getSessionState();
+    if (before.runtime !== 'queue' || before.session_id !== saved_receipt.source_binding?.session_id || before.document_id !== saved_receipt.source_binding?.document_id ||
+      canonicalJson(before.model_identity) !== canonicalJson(saved_receipt.after_identity) || before.model_identity?.source_path !== saved_receipt.file_path) {
+      throw new AgentContractError('MODEL_IDENTITY_MISMATCH', 'The active document is not the exact saved delivery document.');
+    }
+    if (before.model_revision_complete !== true || before.model_revision !== saved_receipt.post_save_revision || before.model_modified !== false) {
+      throw new AgentContractError('MODEL_REVISION_MISMATCH', 'Closing requires the unchanged complete saved revision and modified? false.');
+    }
+    await assertSavedLifecycleFile(saved_receipt);
+    const binding = { path: saved_receipt.file_path, source_sha256: saved_receipt.file.sha256, source_bytes: saved_receipt.file.bytes,
+      session_id: before.session_id, document_id: before.document_id, model_identity: structuredClone(saved_receipt.after_identity),
+      model_revision: saved_receipt.post_save_revision, delivery_task_id: saved_receipt.delivery_task_id };
+    // The Gateway claims a durable signed started journal before this call.
+    // Never retry, including when the native response is lost or pending MDI.
+    const result = await selectedRuntime.closeReopenSavedModel(binding);
+    if (result?.kind !== 'close_reopen_saved_model' || result.version !== 'saved-model-lifecycle.v1' || result.delivery_task_id !== binding.delivery_task_id ||
+      result.close_confirmed !== true || result.before_document_id !== binding.document_id || result.close_ignore_changes !== false ||
+      canonicalJson(result.file_after) !== canonicalJson(saved_receipt.file) || result.application_restarted !== false ||
+      !['activated', 'pending_mdi_activation'].includes(result.open_status)) {
+      throw new AgentContractError('MUTATION_RECOVERY_REQUIRED', 'The lifecycle response does not establish the bound close/open result. Inspect the existing request; do not repeat it.',
+        { details: { automatic_retry_allowed: false, delivery_task_id: binding.delivery_task_id } });
+    }
+    if (result.snapshot) result.snapshot = this.attachRuntimeCapabilities(result.snapshot, capabilities);
+    return result;
+  }
+
   async import_model({ path, mode, prefix, options, runtime = 'queue', timeoutMs, session_contract, sessionContract } = {}) {
     if (runtime === 'queue') assertQueueImportModeAllowed(mode);
     if (runtime === 'queue' && !this.liveMutationAuthorization) {
@@ -375,6 +436,8 @@ export class SketchUpBridge {
       sessionContract
     } = options;
     const readOnlyValue = read_only === true || readOnly === true;
+    const roots = options.recursive_roots;
+    if (roots !== undefined && (!readOnlyValue || recursive !== true || !Array.isArray(roots) || !roots.length || roots.length > 32 || new Set(roots).size !== roots.length || roots.some(root => typeof root !== 'string' || !(runtime === 'mock' ? /^mock:(group|component_instance):[A-Za-z0-9_-]+$/ : /^pid:[1-9]\d*$/).test(root)))) throw new Error('recursive_roots requires distinct top-level pid paths, read_only and recursive=true');
     const structuralProbe = normalizeStructuralProbeOptions(options);
     if (runtime === 'queue' && !readOnlyValue && !this.liveMutationAuthorization) {
       return this.withLiveMutationAuthorization({ runtime, timeoutMs, session_contract, sessionContract, operation: 'adopt_open_model' }, (lockedBridge) => lockedBridge.adopt_open_model({ runtime, timeoutMs, recursive, recursive_limit, recursiveLimit, force, prefix, read_only: false }));
@@ -384,6 +447,7 @@ export class SketchUpBridge {
     const runtimeOptions = {
       recursive,
       recursive_limit: recursive_limit ?? recursiveLimit,
+      ...(roots ? { recursive_roots: roots } : {}),
       force,
       prefix,
       read_only: readOnlyValue
@@ -394,6 +458,7 @@ export class SketchUpBridge {
       runtimeOptions.fresh_manifold_paths = structuralProbe.fresh_manifold_paths;
     }
     const result = await selectedRuntime.adoptOpenModel(runtimeOptions);
+    if (roots && JSON.stringify(result.recursive_root_paths) !== JSON.stringify(roots)) throw new AgentContractError('CAPABILITY_MISMATCH', 'Runtime did not attest the exact requested recursive roots');
     return assertStructuralProbeResult(result, structuralProbe, { runtime });
   }
 
@@ -869,14 +934,38 @@ export class SketchUpBridge {
     });
   }
 
+  async capture_detail_views({ views, output_dir, runtime = 'queue', timeoutMs, session_contract, sessionContract } = {}) {
+    if (runtime !== 'queue') throw new AgentContractError('OPERATION_NOT_ALLOWED', 'Detail image evidence requires a live SketchUp runtime.');
+    if (!Array.isArray(views) || !views.length || views.length > 24 || !output_dir) throw new AgentContractError('INVALID_ARGUMENT', 'capture_detail_views requires 1..24 views and output_dir.');
+    if (!this.liveMutationAuthorization) {
+      return this.withLiveMutationAuthorization({ runtime, timeoutMs, session_contract, sessionContract, operation: 'capture_detail_views' }, lockedBridge => lockedBridge.capture_detail_views({ views, output_dir, runtime, timeoutMs }));
+    }
+    const selectedRuntime = this.selectRuntime(runtime, { timeoutMs });
+    const result = await selectedRuntime.captureDetailViews({ views, output_dir });
+    const captures = [];
+    for (const capture of result.captures || []) {
+      const imagePath = path.resolve(capture.path || capture.file_path);
+      if (!imagePath.startsWith(`${path.resolve(output_dir)}${path.sep}`)) throw new Error('Detail capture escaped its output directory.');
+      const bytes = await fs.readFile(imagePath);
+      const png = bytes.subarray(0, 8).equals(Buffer.from([137,80,78,71,13,10,26,10]));
+      const width = png && bytes.length >= 24 ? bytes.readUInt32BE(16) : null;
+      const height = png && bytes.length >= 24 ? bytes.readUInt32BE(20) : null;
+      captures.push({ ...capture, path: imagePath, width, height,
+        sha256: createHash('sha256').update(bytes).digest('hex'),
+        server_verified: Boolean(width && height && capture.model_revision && capture.model_revision_complete === true && capture.evidence === 'native_view_write_image' && capture.camera_stable_during_export === true && result.restored === true),
+        evidence_level: 'live_runtime' });
+    }
+    return { ...result, captures };
+  }
+
   async run_ruby_expert({ code, audit_path, auditPath, runtime = 'queue', timeoutMs, session_contract, sessionContract } = {}) {
-    if (process.env.LOCAL_MCP_FOR_SKETCHUP_ENABLE_RUBY_EXPERT !== '1') {
+    if (process.env.ALMA_SKETCHUP_ENABLE_RUBY_EXPERT !== '1') {
       return {
         kind: 'run_ruby_expert',
         runtime,
         enabled: false,
         blocked: true,
-        reason: 'Set LOCAL_MCP_FOR_SKETCHUP_ENABLE_RUBY_EXPERT=1 in both Node and SketchUp plugin environments to enable this destructive debug-only tool.'
+        reason: 'Set ALMA_SKETCHUP_ENABLE_RUBY_EXPERT=1 in both Node and SketchUp plugin environments to enable this destructive debug-only tool.'
       };
     }
     if (runtime !== 'queue') {
@@ -1107,41 +1196,64 @@ export class SketchUpBridge {
   }
 }
 
+async function assertSavedLifecycleFile(receipt) {
+  const target = receipt.file_path;
+  if (typeof target !== 'string' || !path.isAbsolute(target) || path.extname(target).toLowerCase() !== '.skp' ||
+    !Number.isSafeInteger(receipt.file?.bytes) || receipt.file.bytes < 1 || !/^[0-9a-f]{64}$/.test(receipt.file?.sha256 || '') ||
+    await fs.realpath(target) !== target || (await fs.lstat(target)).isSymbolicLink()) {
+    throw new AgentContractError('ARTIFACT_INTEGRITY_ERROR', 'The saved lifecycle file is not the original real server file.');
+  }
+  const handle = await fs.open(target, fsConstants.O_RDONLY | fsConstants.O_NOFOLLOW);
+  try {
+    const before = await handle.stat();
+    if (!before.isFile() || before.size !== receipt.file.bytes) throw new AgentContractError('ARTIFACT_INTEGRITY_ERROR', 'The saved lifecycle file size changed.');
+    const hash = createHash('sha256');
+    const buffer = Buffer.alloc(1024 * 1024);
+    let read;
+    do { read = await handle.read(buffer, 0, buffer.length, null); hash.update(buffer.subarray(0, read.bytesRead)); } while (read.bytesRead > 0);
+    const after = await handle.stat(), current = await fs.lstat(target);
+    if (hash.digest('hex') !== receipt.file.sha256 || before.size !== after.size || before.mtimeMs !== after.mtimeMs ||
+      before.ino !== current.ino || before.dev !== current.dev || current.isSymbolicLink()) {
+      throw new AgentContractError('ARTIFACT_INTEGRITY_ERROR', 'The saved lifecycle bytes changed after delivery.');
+    }
+  } finally { await handle.close(); }
+}
+
 function policyFromEnvironment() {
-  const allowedRuntimes = process.env.LOCAL_MCP_FOR_SKETCHUP_AGENT_ALLOWED_RUNTIMES
-    ? process.env.LOCAL_MCP_FOR_SKETCHUP_AGENT_ALLOWED_RUNTIMES.split(',').map((item) => item.trim()).filter(Boolean)
+  const allowedRuntimes = process.env.ALMA_SKETCHUP_AGENT_ALLOWED_RUNTIMES
+    ? process.env.ALMA_SKETCHUP_AGENT_ALLOWED_RUNTIMES.split(',').map((item) => item.trim()).filter(Boolean)
     : ['mock'];
-  const trustedCopyRootValue = process.env.LOCAL_MCP_FOR_SKETCHUP_COPY_ROOTS
-    || process.env.LOCAL_MCP_FOR_SKETCHUP_TRUSTED_COPY_ROOTS;
+  const trustedCopyRootValue = process.env.ALMA_SKETCHUP_COPY_ROOTS
+    || process.env.ALMA_SKETCHUP_TRUSTED_COPY_ROOTS;
   const trustedCopyRoots = trustedCopyRootValue
     ? trustedCopyRootValue.split(path.delimiter).map((item) => item.trim()).filter(Boolean)
     : [];
-  const trustedCopyRiskValue = process.env.LOCAL_MCP_FOR_SKETCHUP_COPY_FAST_ALLOWED_RISKS
-    || process.env.LOCAL_MCP_FOR_SKETCHUP_TRUSTED_COPY_AUTO_APPROVE_RISKS;
+  const trustedCopyRiskValue = process.env.ALMA_SKETCHUP_COPY_FAST_ALLOWED_RISKS
+    || process.env.ALMA_SKETCHUP_TRUSTED_COPY_AUTO_APPROVE_RISKS;
   const trustedCopyRisks = trustedCopyRiskValue
     ? trustedCopyRiskValue.split(',').map((item) => item.trim()).filter(Boolean)
     : ['S1', 'S2', 'S3', 'S4'];
   return {
-    auto_approve_risks: process.env.LOCAL_MCP_FOR_SKETCHUP_AUTO_APPROVE_S1 === '1' ? ['S1'] : [],
+    auto_approve_risks: process.env.ALMA_SKETCHUP_AUTO_APPROVE_S1 === '1' ? ['S1'] : [],
     allowed_runtimes: allowedRuntimes,
-    allow_queue_mutation: process.env.LOCAL_MCP_FOR_SKETCHUP_AGENT_ALLOW_QUEUE_MUTATION === '1',
-    allow_direct_expert_queue_mutation: process.env.LOCAL_MCP_FOR_SKETCHUP_ALLOW_DIRECT_EXPERT_QUEUE_MUTATION === '1',
+    allow_queue_mutation: process.env.ALMA_SKETCHUP_AGENT_ALLOW_QUEUE_MUTATION === '1',
+    allow_direct_expert_queue_mutation: process.env.ALMA_SKETCHUP_ALLOW_DIRECT_EXPERT_QUEUE_MUTATION === '1',
     trusted_model_copy_auto_approval: {
-      enabled: process.env.LOCAL_MCP_FOR_SKETCHUP_COPY_FAST_MODE === '1'
-        || process.env.LOCAL_MCP_FOR_SKETCHUP_TRUSTED_COPY_AUTO_APPROVAL === '1',
+      enabled: process.env.ALMA_SKETCHUP_COPY_FAST_MODE === '1'
+        || process.env.ALMA_SKETCHUP_TRUSTED_COPY_AUTO_APPROVAL === '1',
       allowed_roots: trustedCopyRoots,
       allowed_risks: trustedCopyRisks,
-      max_affected_instances: process.env.LOCAL_MCP_FOR_SKETCHUP_COPY_FAST_MAX_AFFECTED_INSTANCES
-        || process.env.LOCAL_MCP_FOR_SKETCHUP_TRUSTED_COPY_MAX_AFFECTED_INSTANCES,
-      allow_save_model: process.env.LOCAL_MCP_FOR_SKETCHUP_COPY_FAST_ALLOW_SAVE === '1'
-        || process.env.LOCAL_MCP_FOR_SKETCHUP_TRUSTED_COPY_ALLOW_SAVE === '1',
-      session_ttl_ms: process.env.LOCAL_MCP_FOR_SKETCHUP_COPY_FAST_SESSION_TTL_MS
+      max_affected_instances: process.env.ALMA_SKETCHUP_COPY_FAST_MAX_AFFECTED_INSTANCES
+        || process.env.ALMA_SKETCHUP_TRUSTED_COPY_MAX_AFFECTED_INSTANCES,
+      allow_save_model: process.env.ALMA_SKETCHUP_COPY_FAST_ALLOW_SAVE === '1'
+        || process.env.ALMA_SKETCHUP_TRUSTED_COPY_ALLOW_SAVE === '1',
+      session_ttl_ms: process.env.ALMA_SKETCHUP_COPY_FAST_SESSION_TTL_MS
     },
     resource_limits: {
-      max_operations: process.env.LOCAL_MCP_FOR_SKETCHUP_AGENT_MAX_OPERATIONS,
-      max_affected_instances: process.env.LOCAL_MCP_FOR_SKETCHUP_AGENT_MAX_AFFECTED_INSTANCES,
-      max_recursive_entities: process.env.LOCAL_MCP_FOR_SKETCHUP_AGENT_MAX_RECURSIVE_ENTITIES,
-      auto_approve_s1_max_affected_instances: process.env.LOCAL_MCP_FOR_SKETCHUP_AUTO_APPROVE_S1_MAX_AFFECTED_INSTANCES
+      max_operations: process.env.ALMA_SKETCHUP_AGENT_MAX_OPERATIONS,
+      max_affected_instances: process.env.ALMA_SKETCHUP_AGENT_MAX_AFFECTED_INSTANCES,
+      max_recursive_entities: process.env.ALMA_SKETCHUP_AGENT_MAX_RECURSIVE_ENTITIES,
+      auto_approve_s1_max_affected_instances: process.env.ALMA_SKETCHUP_AUTO_APPROVE_S1_MAX_AFFECTED_INSTANCES
     }
   };
 }

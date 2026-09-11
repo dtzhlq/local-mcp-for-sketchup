@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local-mcp-for-sketchup.invalid/schemas/real-model-reliability-sidecar-v1.schema.json",
+  "$id": "https://alma.local/schemas/real-model-reliability-sidecar-v1.schema.json",
   "title": "Real-model reliability readiness sidecar v1",
   "type": "object",
   "additionalProperties": false,

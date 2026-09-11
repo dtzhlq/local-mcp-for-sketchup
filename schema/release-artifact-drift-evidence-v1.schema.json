@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local-mcp-for-sketchup.invalid/local-mcp-for-sketchup/release-artifact-drift-evidence-v1.schema.json",
+  "$id": "https://alma.local/sketchup-mcp-replica/release-artifact-drift-evidence-v1.schema.json",
   "title": "Historical signed RC artifact drift evidence",
   "type": "object",
   "additionalProperties": false,
@@ -57,7 +57,7 @@
             {
               "type": "object",
               "properties": {
-                "path": { "const": "out/releases/local-mcp-sketchup-mcp-0.1.0-rc.2.sha256" },
+                "path": { "const": "out/releases/alma-sketchup-mcp-0.1.0-rc.2.sha256" },
                 "size_bytes": { "const": 99 },
                 "sha256": { "const": "sha256:45c39d3e28e705b046700a13f0b525b68634fe28ee1bbf83ee0282d57ec0aac7" },
                 "mtime_observed": { "const": "2026-07-15T05:06:16.826Z" }
@@ -71,7 +71,7 @@
             {
               "type": "object",
               "properties": {
-                "path": { "const": "out/releases/local-mcp-sketchup-mcp-0.1.0-rc.2.rbz" },
+                "path": { "const": "out/releases/alma-sketchup-mcp-0.1.0-rc.2.rbz" },
                 "size_bytes": { "const": 90432 },
                 "sha256": { "const": "sha256:01a95525bd73d48d40e1e50e2fee61d967b72f58752396e01bfdc3897dced34d" },
                 "mtime_observed": { "const": "2026-07-21T05:31:39.099Z" }
@@ -105,7 +105,7 @@
           "additionalProperties": false,
           "required": ["path", "size_bytes", "sha256"],
           "properties": {
-            "path": { "const": "out/releases/local-mcp-sketchup-mcp-0.1.0-rc.2.rbz" },
+            "path": { "const": "out/releases/alma-sketchup-mcp-0.1.0-rc.2.rbz" },
             "size_bytes": { "const": 70724 },
             "sha256": { "const": "sha256:4b20f4d26220d3e7b933b7a27f6eb6f74997fbad0bcb46ef5bc39b0a64e5ed0a" }
           }
@@ -115,8 +115,8 @@
           "additionalProperties": false,
           "required": ["path", "declared_filename", "declared_sha256"],
           "properties": {
-            "path": { "const": "out/releases/local-mcp-sketchup-mcp-0.1.0-rc.2.sha256" },
-            "declared_filename": { "const": "local-mcp-sketchup-mcp-0.1.0-rc.2.rbz" },
+            "path": { "const": "out/releases/alma-sketchup-mcp-0.1.0-rc.2.sha256" },
+            "declared_filename": { "const": "alma-sketchup-mcp-0.1.0-rc.2.rbz" },
             "declared_sha256": { "const": "sha256:4b20f4d26220d3e7b933b7a27f6eb6f74997fbad0bcb46ef5bc39b0a64e5ed0a" }
           }
         }

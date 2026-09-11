@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local-mcp-for-sketchup.invalid/local-mcp-for-sketchup/model-revision-merkle-evidence-v1.schema.json",
+  "$id": "https://alma.local/sketchup-mcp-replica/model-revision-merkle-evidence-v1.schema.json",
   "title": "Model Revision Merkle v1 Mock Evidence",
   "type": "object",
   "additionalProperties": false,

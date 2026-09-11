@@ -33,10 +33,10 @@ export async function validateAgentInstallManifest(manifest, {
 
   const platformIds = (manifest?.platforms || []).map((platform) => platform.id);
   if (new Set(platformIds).size !== platformIds.length) errors.push('platform ids must be unique');
-  for (const expected of ['darwin-arm64-sketchup-2026', 'win32-x64-sketchup-2026']) {
+  for (const expected of ['darwin-arm64-sketchup-2026']) {
     if (!platformIds.includes(expected)) errors.push(`missing required platform ${expected}`);
   }
-  if (platformIds.some((id) => String(id).includes('darwin-x64'))) {
+  if (platformIds.some((id) => id !== 'darwin-arm64-sketchup-2026')) {
     errors.push('Intel macOS is outside the first-release scope');
   }
   const expectedPlatforms = {

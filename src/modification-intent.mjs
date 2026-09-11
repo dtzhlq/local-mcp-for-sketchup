@@ -425,7 +425,7 @@ function buildProposedActions({ action, parameters, targetRefs, selection, geome
       }));
     }
     case 'set_attribute': {
-      const dictionary = parameters.dictionary || parameters.namespace || 'LocalMcpModificationIntent';
+      const dictionary = parameters.dictionary || parameters.namespace || 'AlmaModificationIntent';
       const key = parameters.key || parameters.attr_key || parameters.attrKey || 'intent';
       const value = parameters.value ?? parameters.attributes ?? parameters;
       return refs.map((target) => ({

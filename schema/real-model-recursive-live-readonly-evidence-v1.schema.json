@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local-mcp-for-sketchup.invalid/local-mcp-for-sketchup/real-model-recursive-live-readonly-evidence-v1.schema.json",
+  "$id": "https://alma.local/sketchup-mcp-replica/real-model-recursive-live-readonly-evidence-v1.schema.json",
   "title": "Capability .6 real-model recursive read-only live evidence v1",
   "type": "object",
   "additionalProperties": false,

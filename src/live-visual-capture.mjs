@@ -28,7 +28,7 @@ export class LiveVisualCaptureService {
       throw new Error('LiveVisualCaptureService requires an immutable image artifact store.');
     }
     this.imageArtifactStore = imageArtifactStore;
-    this.tempRoot = path.resolve(String(tempRoot || path.join(process.cwd(), '.local-mcp-live-visual-captures')));
+    this.tempRoot = path.resolve(String(tempRoot || path.join(process.cwd(), '.alma-live-visual-captures')));
   }
 
   async capture({

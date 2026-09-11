@@ -4,9 +4,9 @@ require 'tmpdir'
 
 repo_root = File.expand_path('../..', __dir__)
 support_dir = File.join(__dir__, 'support')
-ENV['HOME'] = Dir.mktmpdir('local-mcp-boolean-postcondition-')
+ENV['HOME'] = Dir.mktmpdir('alma-boolean-postcondition-')
 $LOAD_PATH.unshift(support_dir)
-require File.join(repo_root, 'sketchup_plugin', 'local_mcp_for_sketchup', 'bridge')
+require File.join(repo_root, 'sketchup_plugin', 'alma_sketchup_mcp')
 
 def assert_truthy(value, message)
   raise message unless value
@@ -35,7 +35,7 @@ class FakeBooleanGroup < Sketchup::Group
   def initialize(parent:, name:, id:, erase_error: nil, volume: 1.0)
     @parent = parent
     @name = name
-    @local_mcp_for_sketchup_id = id
+    @alma_id = id
     @entityID = id.hash
     @persistent_id = @entityID.abs
     @erase_error = erase_error
@@ -45,7 +45,7 @@ class FakeBooleanGroup < Sketchup::Group
   end
 
   def get_attribute(dictionary, key)
-    return @local_mcp_for_sketchup_id if dictionary == 'LocalMcpForSketchUp' && key == 'id'
+    return @alma_id if dictionary == 'AlmaSketchupMCP' && key == 'id'
 
     nil
   end
@@ -115,14 +115,14 @@ expected_failure_codes = %w[
   boolean_postcondition_failed
   boolean_internal_failure
 ]
-tests += 1; assert_equal(expected_failure_codes, LocalMcpForSketchUp::BOOLEAN_OPERATION_FAILURE_CODES, 'Boolean failure codes must remain a stable ordered allowlist')
-tests += 1; assert_truthy(LocalMcpForSketchUp::BOOLEAN_OPERATION_FAILURE_CODES.frozen?, 'Boolean failure-code allowlist must be frozen')
+tests += 1; assert_equal(expected_failure_codes, AlmaSketchupMCP::BOOLEAN_OPERATION_FAILURE_CODES, 'Boolean failure codes must remain a stable ordered allowlist')
+tests += 1; assert_truthy(AlmaSketchupMCP::BOOLEAN_OPERATION_FAILURE_CODES.frozen?, 'Boolean failure-code allowlist must be frozen')
 
 secret_error = RuntimeError.new('SECRET_ENTITY SECRET_MATERIAL /private/model.skp')
-internal_failure = LocalMcpForSketchUp.normalize_boolean_operation_failure(secret_error)
+internal_failure = AlmaSketchupMCP.normalize_boolean_operation_failure(secret_error)
 tests += 1; assert_equal('boolean_internal_failure', internal_failure.operation_failure_code, 'unknown Boolean exceptions must use the bounded internal fallback')
 tests += 1; assert_equal(false, internal_failure.message.include?('SECRET_') || internal_failure.message.include?('/private/'), 'internal fallback must not echo an exception message')
-invalid_code_failure = LocalMcpForSketchUp::BooleanOperationFailure.new('SECRET_ENUM')
+invalid_code_failure = AlmaSketchupMCP::BooleanOperationFailure.new('SECRET_ENUM')
 tests += 1; assert_equal('boolean_internal_failure', invalid_code_failure.operation_failure_code, 'unknown failure-code values must fail closed to the internal fallback')
 
 entities = FakeBooleanEntities.new
@@ -131,7 +131,7 @@ tool = FakeBooleanGroup.new(parent: entities, name: 'Tool', id: 'tool')
 collision = FakeBooleanGroup.new(parent: entities, name: 'Result', id: 'result')
 tests += 1
 collision_error = assert_raises('a kept result identity collision must fail closed') do
-  LocalMcpForSketchUp.assert_boolean_result_identity_available(
+  AlmaSketchupMCP.assert_boolean_result_identity_available(
     entities.dup, target, [tool], 'result', 'Result', true, true, 'boolean_difference'
   )
 end
@@ -146,7 +146,7 @@ split_target.split_result = 4.times.map do |index|
 end
 tests += 1
 split_count_error = assert_raises('extra split pieces must never be ignored', /exactly 3 result pieces/) do
-  LocalMcpForSketchUp.solid_difference_result(split_target, split_tool, 'boolean_difference')
+  AlmaSketchupMCP.solid_difference_result(split_target, split_tool, 'boolean_difference')
 end
 tests += 1; assert_equal('boolean_split_result_count_mismatch', split_count_error.operation_failure_code, 'split-piece count mismatch must be classified')
 tests += 1; assert_equal(false, split_count_error.message.include?('SplitTarget') || split_count_error.message.include?('SplitTool'), 'split-piece count failure must not echo entity names')
@@ -158,7 +158,7 @@ difference_other = FakeBooleanGroup.new(parent: exact_parent, name: 'OtherMinusT
 difference = FakeBooleanGroup.new(parent: exact_parent, name: 'TargetMinusOther', id: 'difference', volume: 75.0)
 intersection = FakeBooleanGroup.new(parent: exact_parent, name: 'Intersection', id: 'intersection', volume: 25.0)
 exact_target.split_result = [difference_other, difference, intersection]
-returned = LocalMcpForSketchUp.solid_difference_result(exact_target, exact_tool, 'boolean_difference')
+returned = AlmaSketchupMCP.solid_difference_result(exact_target, exact_tool, 'boolean_difference')
 tests += 1; assert_truthy(returned.equal?(difference), 'the second documented split piece must be the target difference result')
 tests += 1; assert_truthy(difference_other.deleted?, 'Difference2 (other - target) must be strictly erased')
 tests += 1; assert_truthy(intersection.deleted?, 'the intersection piece must be strictly erased')
@@ -172,23 +172,23 @@ no_reduction_intersection = FakeBooleanGroup.new(parent: no_reduction_parent, na
 no_reduction_target.split_result = [no_reduction_other, no_reduction_result, no_reduction_intersection]
 tests += 1
 no_reduction_error = assert_raises('a no-op target difference must fail before commit', /did not reduce target volume/) do
-  LocalMcpForSketchUp.solid_difference_result(no_reduction_target, no_reduction_tool, 'boolean_difference')
+  AlmaSketchupMCP.solid_difference_result(no_reduction_target, no_reduction_tool, 'boolean_difference')
 end
 tests += 1; assert_equal('boolean_target_volume_not_reduced', no_reduction_error.operation_failure_code, 'no-op target difference must be classified')
 
 input_manifold_error = assert_raises('a non-manifold reviewed input must be classified') do
-  LocalMcpForSketchUp.assert_boolean_manifold_report!({ 'is_manifold' => false, 'name' => 'SECRET_ENTITY' }, 'boolean_input_not_manifold')
+  AlmaSketchupMCP.assert_boolean_manifold_report!({ 'is_manifold' => false, 'name' => 'SECRET_ENTITY' }, 'boolean_input_not_manifold')
 end
 tests += 1; assert_equal('boolean_input_not_manifold', input_manifold_error.operation_failure_code, 'input manifold failure must use the input code')
 tests += 1; assert_equal(false, input_manifold_error.message.include?('SECRET_ENTITY'), 'input manifold failure must not echo report data')
 result_manifold_error = assert_raises('a non-manifold Boolean result must be classified') do
-  LocalMcpForSketchUp.assert_boolean_manifold_report!({ 'is_manifold' => false, 'name' => 'SECRET_RESULT' }, 'boolean_result_not_manifold')
+  AlmaSketchupMCP.assert_boolean_manifold_report!({ 'is_manifold' => false, 'name' => 'SECRET_RESULT' }, 'boolean_result_not_manifold')
 end
 tests += 1; assert_equal('boolean_result_not_manifold', result_manifold_error.operation_failure_code, 'result manifold failure must use the result code')
 tests += 1; assert_equal(false, result_manifold_error.message.include?('SECRET_RESULT'), 'result manifold failure must not echo report data')
 
 copy_failure = assert_raises('copy failures must be classified without native error text') do
-  LocalMcpForSketchUp.copy_boolean_group(nil, no_reduction_target, 'SECRET_COPY_NAME')
+  AlmaSketchupMCP.copy_boolean_group(nil, no_reduction_target, 'SECRET_COPY_NAME')
 end
 tests += 1; assert_equal('boolean_input_copy_failed', copy_failure.operation_failure_code, 'copy failure must use the bounded copy code')
 tests += 1; assert_equal(false, copy_failure.message.include?('SECRET_COPY_NAME'), 'copy failure must not echo the requested copy name')
@@ -197,7 +197,7 @@ failing_parent = FakeBooleanEntities.new
 failing_erase = FakeBooleanGroup.new(parent: failing_parent, name: 'SECRET_CANNOT_ERASE', id: 'cannot-erase', erase_error: 'SECRET_NATIVE_ERASE_FAILURE')
 tests += 1
 cleanup_error = assert_raises('cleanup erase errors must propagate to the model transaction') do
-  LocalMcpForSketchUp.erase_entity_strict!(failing_erase, 'boolean.failure_probe')
+  AlmaSketchupMCP.erase_entity_strict!(failing_erase, 'boolean.failure_probe')
 end
 tests += 1; assert_equal('boolean_cleanup_failed', cleanup_error.operation_failure_code, 'cleanup failure must use the bounded cleanup code')
 tests += 1; assert_equal(false, cleanup_error.message.include?('SECRET_'), 'cleanup failure must not echo entity or native exception text')
@@ -209,10 +209,10 @@ before_groups = post_parent.dup
 working_target = FakeBooleanGroup.new(parent: post_parent, name: 'WorkingTarget', id: 'working-target')
 working_tool = FakeBooleanGroup.new(parent: post_parent, name: 'WorkingTool', id: 'working-tool')
 result = FakeBooleanGroup.new(parent: post_parent, name: 'ReviewedResult', id: 'reviewed-result')
-LocalMcpForSketchUp.cleanup_boolean_inputs(
+AlmaSketchupMCP.cleanup_boolean_inputs(
   post_target, [post_tool], working_target, [working_tool], result, true, true
 )
-LocalMcpForSketchUp.assert_boolean_postconditions(
+AlmaSketchupMCP.assert_boolean_postconditions(
   post_parent, before_groups, post_target, [post_tool], working_target, [working_tool], result,
   true, true, 'boolean_difference'
 )
@@ -223,7 +223,7 @@ tests += 1; assert_truthy(working_target.deleted? && working_tool.deleted?, 'wor
 unexpected = FakeBooleanGroup.new(parent: post_parent, name: 'UnexpectedTemp', id: 'unexpected-temp')
 tests += 1
 postcondition_error = assert_raises('an undeclared temporary group must fail the postcondition') do
-  LocalMcpForSketchUp.assert_boolean_postconditions(
+  AlmaSketchupMCP.assert_boolean_postconditions(
     post_parent, before_groups, post_target, [post_tool], working_target, [working_tool], result,
     true, true, 'boolean_difference'
   )
@@ -235,8 +235,8 @@ transaction_model = FakeBooleanTransactionModel.new
 transaction_temp = FakeBooleanGroup.new(parent: post_parent, name: 'TransactionTemp', id: 'transaction-temp')
 tests += 1
 assert_raises('a boolean postcondition failure must abort the SketchUp transaction', /transaction failed before commit/) do
-  LocalMcpForSketchUp.with_atomic_model_transaction(transaction_model, 'Boolean Postcondition Probe') do
-    LocalMcpForSketchUp.assert_boolean_postconditions(
+  AlmaSketchupMCP.with_atomic_model_transaction(transaction_model, 'Boolean Postcondition Probe') do
+    AlmaSketchupMCP.assert_boolean_postconditions(
       post_parent, before_groups, post_target, [post_tool], working_target, [working_tool], result,
       true, true, 'boolean_difference'
     )
@@ -245,11 +245,11 @@ end
 tests += 1; assert_equal(%w[start abort], transaction_model.events, 'postcondition failure must abort and must not attempt commit')
 transaction_temp.erase!
 
-LocalMcpForSketchUp::BOOLEAN_OPERATION_FAILURE_CODES.each do |failure_code|
+AlmaSketchupMCP::BOOLEAN_OPERATION_FAILURE_CODES.each do |failure_code|
   classified_model = FakeBooleanTransactionModel.new
   classified_error = assert_raises("#{failure_code} must retain QueueOperationError semantics") do
-    LocalMcpForSketchUp.with_atomic_model_transaction(classified_model, 'Boolean Classified Failure Probe') do
-      raise LocalMcpForSketchUp::BooleanOperationFailure.new(failure_code)
+    AlmaSketchupMCP.with_atomic_model_transaction(classified_model, 'Boolean Classified Failure Probe') do
+      raise AlmaSketchupMCP::BooleanOperationFailure.new(failure_code)
     end
   end
   tests += 1; assert_equal('MUTATION_EXECUTION_FAILED', classified_error.code, "#{failure_code} must retain the stable queue error code")
@@ -259,7 +259,7 @@ LocalMcpForSketchUp::BOOLEAN_OPERATION_FAILURE_CODES.each do |failure_code|
   tests += 1; assert_equal(%w[start abort], classified_model.events, "#{failure_code} must abort without committing")
 end
 
-source = File.read(File.join(repo_root, 'sketchup_plugin', 'local_mcp_for_sketchup', 'boolean_operations.rb'))
+source = File.read(File.join(repo_root, 'sketchup_plugin', 'alma_sketchup_mcp', 'boolean_operations.rb'))
 tests += 1; assert_truthy(source.include?('produced a non-manifold result'), 'boolean apply must reject a non-manifold result before commit')
 tests += 1; assert_truthy(source.include?('assert_boolean_postconditions('), 'boolean apply must run exact postcondition checks before returning')
 tests += 1; assert_truthy(source.include?('difference_other, difference_self, intersection = pieces'), 'boolean difference must use SketchUp documented split order')
@@ -276,7 +276,7 @@ puts({
   documented_split_order_enforced: true,
   no_op_difference_rejected_before_commit: true,
   cleanup_errors_propagate: true,
-  stable_operation_failure_codes: LocalMcpForSketchUp::BOOLEAN_OPERATION_FAILURE_CODES.length,
+  stable_operation_failure_codes: AlmaSketchupMCP::BOOLEAN_OPERATION_FAILURE_CODES.length,
   untrusted_failure_text_suppressed: true,
   keep_both_exact_result: true,
   result_identity_collision_rejected: true,

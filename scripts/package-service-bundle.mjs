@@ -54,7 +54,7 @@ export function planServiceBundle({
 }) {
   const target = serviceBundleTargets[targetId];
   if (!target) throw codedError('SERVICE_BUNDLE_TARGET_UNSUPPORTED', `Unsupported service bundle target: ${targetId}`);
-  if (!/^0\.1\.0-rc\.[0-9]+$/.test(String(version || ''))) {
+  if (!/^[0-9]+\.[0-9]+\.[0-9]+$/.test(String(version || ''))) {
     throw codedError('SERVICE_BUNDLE_VERSION_INVALID', `Invalid technical-preview version: ${version}`);
   }
   if (candidate && artifactLabel) {
@@ -202,7 +202,7 @@ async function copyRuntimeSource(sourceRoot, bundleRoot) {
     await copyTree(path.join(sourceRoot, directory), path.join(appRoot, directory));
   }
   for (const file of ['package-lock.json']) {
-    await copyFileNew(path.join(sourceRoot, file), path.join(appRoot, file));
+    await copyFileNew(path.join(sourceRoot, file === 'package-lock.json' ? 'release/public-package-lock.json' : file), path.join(appRoot, file));
   }
   await copyFileNew(path.join(sourceRoot, 'release', 'public-package.json'), path.join(appRoot, 'package.json'));
   for (const file of ['LICENSE', 'NOTICE', 'THIRD_PARTY_NOTICES.md', 'PRIVACY.md', 'SECURITY.md', 'TRADEMARKS.md']) {

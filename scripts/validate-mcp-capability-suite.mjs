@@ -29,15 +29,15 @@ const server = spawn(process.execPath, [path.join(repoRoot, 'src/mcp-server.mjs'
   cwd: repoRoot,
   env: {
     ...process.env,
-    LOCAL_MCP_FOR_SKETCHUP_ENABLE_RUBY_EXPERT: '',
-    LOCAL_MCP_FOR_SKETCHUP_MOCK_SESSION_PATH: mockSessionPath,
-    LOCAL_MCP_FOR_SKETCHUP_STATE_DIR: process.env.LOCAL_MCP_FOR_SKETCHUP_STATE_DIR || path.join(outputDir, 'agent-contract-state'),
+    ALMA_SKETCHUP_ENABLE_RUBY_EXPERT: '',
+    ALMA_SKETCHUP_MOCK_SESSION_PATH: mockSessionPath,
+    ALMA_SKETCHUP_STATE_DIR: process.env.ALMA_SKETCHUP_STATE_DIR || path.join(outputDir, 'agent-contract-state'),
     // Keep the live transport bound to the queue directories resolved by this
-    // validation process. LOCAL_MCP_FOR_SKETCHUP_STATE_DIR above isolates contract state;
+    // validation process. ALMA_SKETCHUP_STATE_DIR above isolates contract state;
     // without these explicit overrides it would also silently relocate the
     // child MCP server's queue away from the running SketchUp plugin.
-    LOCAL_MCP_FOR_SKETCHUP_QUEUE_DIR: process.env.LOCAL_MCP_FOR_SKETCHUP_QUEUE_DIR || defaultQueueDir,
-    LOCAL_MCP_FOR_SKETCHUP_RESPONSE_DIR: process.env.LOCAL_MCP_FOR_SKETCHUP_RESPONSE_DIR || defaultResponseDir
+    ALMA_SKETCHUP_QUEUE_DIR: process.env.ALMA_SKETCHUP_QUEUE_DIR || defaultQueueDir,
+    ALMA_SKETCHUP_RESPONSE_DIR: process.env.ALMA_SKETCHUP_RESPONSE_DIR || defaultResponseDir
   },
   stdio: ['pipe', 'pipe', 'pipe']
 });

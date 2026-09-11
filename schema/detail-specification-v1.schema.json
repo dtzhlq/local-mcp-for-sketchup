@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alma.local/sketchup-mcp-replica/detail-specification-v1.schema.json",
+  "title": "Measured detail specification v1",
+  "type": "object",
+  "required": ["version", "required_parts"],
+  "properties": {
+    "version": {"const": 1},
+    "scene_id": {"type": "string"},
+    "coverage_version": {"type": "integer", "minimum": 1},
+    "max_iterations": {"type": "integer", "minimum": 1, "maximum": 6},
+    "resource_budget": {"type": "object", "minProperties": 1, "additionalProperties": false, "properties": {
+      "max_faces": {"type": "integer", "minimum": 1}, "max_edges": {"type": "integer", "minimum": 1}, "max_vertices": {"type": "integer", "minimum": 1}
+    }},
+    "required_parts": {"type": "array", "minItems": 1, "items": {
+      "type": "object", "required": ["id"], "properties": {
+        "id": {"type": "string", "minLength": 1}, "role": {"type": "string"},
+        "instance_path": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "min_faces": {"type": "integer", "minimum": 1},
+        "require_visible": {"type": "boolean"},
+        "bounds_mm": {"type": "object", "required": ["size"], "properties": {
+          "size": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number", "exclusiveMinimum": 0}},
+          "tolerance_mm": {"type": "number", "minimum": 0}
+        }},
+        "geometry_checks": {"type": "array", "items": {"type": "object", "required": ["type"], "properties": {
+          "type": {"enum": ["opening", "hollow", "solid", "thickness", "profile", "min_faces"]},
+          "min_count": {"type": "integer", "minimum": 0}, "min_mm": {"type": "number", "minimum": 0},
+          "min_vertices": {"type": "integer", "minimum": 3}, "min_faces": {"type": "integer", "minimum": 1}, "expected": {"type": "boolean"},
+          "loop": {"enum": ["outer", "any"]}, "max_turn_degrees": {"type": "number", "exclusiveMinimum": 0, "maximum": 180}
+        }}}
+      }
+    }},
+    "required_voids": {"type": "array", "maxItems": 128, "items": {"type": "object", "required": ["id", "instance_path", "bounds_mm"], "properties": {
+      "id": {"type": "string", "minLength": 1},
+      "instance_path": {"type": "array", "items": {"type": "string", "minLength": 1}},
+      "search_scope": {"enum": ["assembly", "scene"]},
+      "bounds_mm": {"type": "object", "required": ["min", "max"], "properties": {
+        "min": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}},
+        "max": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}}
+      }},
+      "boundary_checks": {"type": "array", "maxItems": 6, "items": {"type": "object", "required": ["side", "offset_mm"], "properties": {
+        "side": {"enum": ["min_x", "max_x", "min_y", "max_y", "min_z", "max_z"]},
+        "offset_mm": {"type": "number", "exclusiveMinimum": 0}
+      }}}
+    }, "not": {"required": ["exclude_instance_paths"]}}},
+    "required_views": {"type": "array", "maxItems": 24, "items": {"type": "object", "required": ["id"], "properties": {
+      "id": {"type": "string", "minLength": 1}, "target_id": {"type": "string"}, "min_width": {"type": "integer", "minimum": 1}, "min_height": {"type": "integer", "minimum": 1},
+      "instance_path": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+      "eye": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}},
+      "target": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}},
+      "up": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}},
+      "projection": {"enum": ["perspective", "parallel"]}, "height": {"type": "integer", "minimum": 1}
+    }}}
+  }
+}

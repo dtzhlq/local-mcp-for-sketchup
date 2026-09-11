@@ -19,9 +19,9 @@ const DEFAULT_AUTH_WINDOW_MS = 60 * 1000;
 const DEFAULT_AUTH_LOCK_MS = 30 * 1000;
 const DEFAULT_MAX_AUTH_FAILURES = 5;
 const DEFAULT_BOOTSTRAP_SECRET_BYTES = 32;
-const BOOTSTRAP_SECRET_ENV = 'LOCAL_MCP_FOR_SKETCHUP_APPROVAL_BOOTSTRAP_SECRET';
-const SESSION_COOKIE = 'local_mcp_for_sketchup_approval_session';
-const PREAUTH_COOKIE = 'local_mcp_for_sketchup_approval_preauth';
+const BOOTSTRAP_SECRET_ENV = 'ALMA_SKETCHUP_APPROVAL_BOOTSTRAP_SECRET';
+const SESSION_COOKIE = 'alma_approval_session';
+const PREAUTH_COOKIE = 'alma_approval_preauth';
 const scryptAsync = promisify(crypto.scrypt);
 
 export function createLocalApprovalHost(options = {}) {
@@ -170,19 +170,19 @@ export function createLocalApprovalHost(options = {}) {
   server.requestTimeout = config.requestTimeoutMs;
   server.headersTimeout = Math.min(config.requestTimeoutMs, 30_000);
   server.keepAliveTimeout = 5_000;
-  Object.defineProperty(server, 'localMcpConfig', { value: config, enumerable: false });
+  Object.defineProperty(server, 'almaConfig', { value: config, enumerable: false });
   Object.defineProperty(server, 'approvalAuthority', { value: authority, enumerable: false });
   return server;
 }
 
 export function createLocalApprovalHostConfig(options = {}) {
-  const host = String(options.host || process.env.LOCAL_MCP_FOR_SKETCHUP_APPROVAL_HOST_BIND || '127.0.0.1');
+  const host = String(options.host || process.env.ALMA_SKETCHUP_APPROVAL_HOST_BIND || '127.0.0.1');
   if (!isLoopbackHost(host)) throw new Error('The local approval host may only bind to a loopback address.');
   const approvalStateDir = path.resolve(options.approvalStateDir || path.join(defaultStateDir, 'agent-contract-v1', 'approvals'));
   const credentialPath = path.resolve(options.credentialPath || path.join(approvalStateDir, 'local-host', 'credential.v1.json'));
   return Object.freeze({
     host,
-    port: positiveInteger(options.port ?? process.env.LOCAL_MCP_FOR_SKETCHUP_APPROVAL_HOST_PORT, DEFAULT_PORT),
+    port: positiveInteger(options.port ?? process.env.ALMA_SKETCHUP_APPROVAL_HOST_PORT, DEFAULT_PORT),
     approvalStateDir,
     credentialPath,
     maxBodyBytes: positiveInteger(options.maxBodyBytes, DEFAULT_MAX_BODY_BYTES),
@@ -487,7 +487,7 @@ function challengeListPage(challenges, csrf) {
   const pending = challenges.filter((entry) => !entry.expired && entry.status === 'awaiting_trusted_user' && !entry.decision);
   const decided = challenges.filter((entry) => entry.decision || entry.expired || entry.status !== 'awaiting_trusted_user');
   return layout('本机审批中心', `
-    <header class="hero"><p class="eyebrow">LOCAL MCP · Trusted Local Approval</p><h1>本机审批中心</h1><p>只有你在此页面完成口令复核后，S2–S4 修改才能获得一次性授权。授权 token 不会返回给 Agent。</p></header>
+    <header class="hero"><p class="eyebrow">ALMA · Trusted Local Approval</p><h1>本机审批中心</h1><p>只有你在此页面完成口令复核后，S2–S4 修改才能获得一次性授权。授权 token 不会返回给 Agent。</p></header>
     <section class="panel"><div class="section-title"><h2>等待你的决定</h2><span class="count">${pending.length}</span></div>
       ${pending.length ? pending.map(challengeCard).join('') : '<p class="empty">目前没有待审批任务。</p>'}
     </section>
@@ -611,7 +611,7 @@ function errorPage(code, message) {
 }
 
 function layout(title, body) {
-  return `<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escapeHtml(title)} · Local MCP for SketchUp</title><link rel="stylesheet" href="/approval.css"></head><body><div class="page">${body}</div></body></html>`;
+  return `<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escapeHtml(title)} · ALMA</title><link rel="stylesheet" href="/approval.css"></head><body><div class="page">${body}</div></body></html>`;
 }
 
 function displayStatus(challenge, decision) {
@@ -740,13 +740,13 @@ async function main() {
   let bootstrapSecret = initialized ? null : (configuredBootstrapSecret || generatedBootstrapSecret);
   const server = createLocalApprovalHost({ bootstrapSecret });
   bootstrapSecret = null;
-  const config = server.localMcpConfig;
+  const config = server.almaConfig;
   await new Promise((resolve, reject) => {
     server.once('error', reject);
     server.listen(config.port, config.host, resolve);
   });
   const url = currentOrigin(server, config);
-  process.stderr.write(`Local MCP for SketchUp approval host listening on ${url}\n`);
+  process.stderr.write(`ALMA local approval host listening on ${url}\n`);
   process.stderr.write(`Approval identity: ${initialized ? 'initialized' : 'first-time setup required in the browser'}\n`);
   if (!initialized && generatedBootstrapSecret) {
     process.stderr.write(`One-time setup bootstrap secret (shown once): ${generatedBootstrapSecret}\n`);

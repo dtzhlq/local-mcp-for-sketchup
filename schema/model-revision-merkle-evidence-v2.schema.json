@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local-mcp-for-sketchup.invalid/local-mcp-for-sketchup/model-revision-merkle-evidence-v2.schema.json",
+  "$id": "https://alma.local/sketchup-mcp-replica/model-revision-merkle-evidence-v2.schema.json",
   "title": "Model Revision Merkle v2 Current Mock Evidence",
   "type": "object",
   "additionalProperties": false,
@@ -51,9 +51,9 @@
           "additionalProperties": false,
           "required": ["path", "sha256", "manifest_path", "loaded_source_attestation_required"],
           "properties": {
-            "path": { "const": "sketchup_plugin/local_mcp_for_sketchup/model_revision.rb" },
+            "path": { "const": "sketchup_plugin/alma_sketchup_mcp/model_revision.rb" },
             "sha256": { "const": "b5c4c64c346c5abe1258be32c8027d542a4ccc28e2afc70c48debf3fcb886134" },
-            "manifest_path": { "const": "sketchup_plugin/local_mcp_for_sketchup/runtime_source_manifest.rb" },
+            "manifest_path": { "const": "sketchup_plugin/alma_sketchup_mcp/runtime_source_manifest.rb" },
             "loaded_source_attestation_required": { "const": true }
           }
         },
@@ -83,8 +83,8 @@
       ],
       "properties": {
         "process_local_entity_id_hashed": { "const": false },
-        "stable_entity_identity_sources": { "const": ["persistent_id", "local_mcp_for_sketchup_custom_reference"] },
-        "stable_definition_identity_sources": { "const": ["persistent_id", "local_mcp_for_sketchup_custom_reference"] },
+        "stable_entity_identity_sources": { "const": ["persistent_id", "alma_custom_reference"] },
+        "stable_definition_identity_sources": { "const": ["persistent_id", "alma_custom_reference"] },
         "entity_enumeration_order_independent": { "const": true },
         "attribute_dictionary_and_key_order_independent": { "const": true },
         "face_loop_start_independent": { "const": true },
@@ -185,10 +185,10 @@
       "additionalProperties": { "$ref": "#/$defs/sha256" },
       "propertyNames": { "$ref": "#/$defs/repoPath" },
       "required": [
-        "sketchup_plugin/local_mcp_for_sketchup/model_revision.rb",
-        "sketchup_plugin/local_mcp_for_sketchup/runtime_source_manifest.rb",
-        "sketchup_plugin/local_mcp_for_sketchup/runtime_source_attestation.rb",
-        "sketchup_plugin/local_mcp_for_sketchup/bridge.rb",
+        "sketchup_plugin/alma_sketchup_mcp/model_revision.rb",
+        "sketchup_plugin/alma_sketchup_mcp/runtime_source_manifest.rb",
+        "sketchup_plugin/alma_sketchup_mcp/runtime_source_attestation.rb",
+        "sketchup_plugin/alma_sketchup_mcp.rb",
         "src/runtime-source-attestation.mjs",
         "src/capabilities.mjs",
         "test/ruby/model_revision_merkle_test.rb",

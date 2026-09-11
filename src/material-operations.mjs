@@ -1,10 +1,12 @@
-import { nonEmptyString, normalizeKeyword, optionalNumberInRange, positiveNumber } from './operation-utils.mjs';
+import { nonEmptyString, nonNegativeNumber, normalizeBoolean, normalizeKeyword, optionalNumberInRange, positiveNumber } from './operation-utils.mjs';
+import { normalizeAppearanceAssetPath } from './environment-operations.mjs';
 
 export function ensureMaterial(model, material, options = '#cccccc') {
   const normalized = normalizeMaterialSpec(material, options);
   if (!normalized) return null;
   const { spec, updateExisting } = normalized;
   const existing = model.materials[spec.name];
+  if (spec.skm_path && existing) throw new Error(`material.skm_path requires a new material name: ${spec.name}`);
   if (existing && !updateExisting) return spec.name;
   model.materials[spec.name] = mergeMaterialSpecs(existing, spec);
   return spec.name;
@@ -21,7 +23,12 @@ function normalizeMaterialSpec(material, options) {
         color: typeof options === 'string' ? options : options?.color
       };
   if (!raw.name || typeof raw.name !== 'string') throw new Error('material operation requires a string name');
-  const spec = { name: raw.name, color: raw.color || '#cccccc' };
+  const spec = { name: raw.name };
+  if (raw.skm_path !== undefined) {
+    spec.skm_path = normalizeAppearanceAssetPath(raw.skm_path, ['.skm'], `${raw.name}.skm_path`);
+    spec.native_asset_state = 'unread_mock';
+  }
+  if (raw.color !== undefined || !spec.skm_path) spec.color = raw.color || '#cccccc';
   if (raw.alpha !== undefined) spec.alpha = optionalNumberInRange(raw.alpha, 0, 1, `${raw.name}.alpha`);
   if (raw.workflow !== undefined) spec.workflow = normalizeKeyword(raw.workflow, ['classic', 'pbr_metallic_roughness'], `${raw.name}.workflow`);
   if (raw.colorize_type !== undefined || raw.colorizeType !== undefined) {
@@ -29,6 +36,7 @@ function normalizeMaterialSpec(material, options) {
   }
   if (raw.texture !== undefined) spec.texture = normalizeTextureSpec(raw.texture, `${raw.name}.texture`);
   if (raw.pbr !== undefined) spec.pbr = normalizePbrSpec(raw.pbr, `${raw.name}.pbr`);
+  if (spec.workflow === 'classic' && spec.pbr && Object.keys(spec.pbr).length) throw new Error('classic workflow cannot be combined with PBR settings');
   return { spec, updateExisting: materialIsObject };
 }
 
@@ -62,7 +70,10 @@ function normalizePbrSpec(pbr, fieldName) {
   for (const key of ['metallic_factor', 'roughness_factor', 'ao_strength']) {
     if (pbr[key] !== undefined) normalized[key] = optionalNumberInRange(pbr[key], 0, 1, `${fieldName}.${key}`);
   }
-  if (pbr.normal_scale !== undefined) normalized.normal_scale = positiveNumber(pbr.normal_scale, undefined, `${fieldName}.normal_scale`);
+  if (pbr.normal_scale !== undefined) normalized.normal_scale = nonNegativeNumber(pbr.normal_scale, undefined, `${fieldName}.normal_scale`);
+  for (const field of ['metalness_enabled', 'roughness_enabled', 'normal_enabled', 'ao_enabled']) {
+    if (pbr[field] !== undefined) normalized[field] = normalizeBoolean(pbr[field], `${fieldName}.${field}`);
+  }
   if (pbr.normal_style !== undefined || pbr.normalStyle !== undefined) {
     normalized.normal_style = normalizeKeyword(pbr.normal_style ?? pbr.normalStyle, ['opengl', 'directx'], `${fieldName}.normal_style`);
   }

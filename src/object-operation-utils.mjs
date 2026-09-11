@@ -55,9 +55,19 @@ export function normalizeTextureTransform(operation, fieldName) {
         positiveNumber(operation.scale_v ?? operation.scaleV, 1, `${fieldName}.scale_v`)
       ];
   const rotation = finiteNumber(operation.rotation ?? operation.rotation_degrees ?? operation.rotationDegrees, 0, `${fieldName}.rotation`);
+  if (scale.some(value => value <= 0)) throw new Error(`${fieldName}.scale values must be positive`);
   const result = { projection, offset, scale, rotation };
   const material = operation.material ?? operation.material_name ?? operation.materialName;
   if (material !== undefined) result.material = nonEmptyString(material, `${fieldName}.material`);
+  if (operation.texture_size_mm !== undefined) result.texture_size_mm = normalizeSize2(operation.texture_size_mm, `${fieldName}.texture_size_mm`);
+  if (operation.side !== undefined) result.side = normalizeKeyword(operation.side, ['front', 'back', 'both'], `${fieldName}.side`);
+  if (operation.face_selector !== undefined) {
+    const selector = operation.face_selector;
+    if (typeof selector === 'string' && selector) result.face_selector = { type: 'named', value: selector };
+    else if (Number.isInteger(selector) && selector >= 0) result.face_selector = { type: 'index', value: selector };
+    else if (selector && typeof selector === 'object' && !Array.isArray(selector) && (selector.type === 'all' || selector.type === 'index' && Number.isInteger(selector.value) && selector.value >= 0 || selector.type === 'named' && typeof selector.value === 'string' && selector.value)) result.face_selector = structuredClone(selector);
+    else throw new Error(`${fieldName}.face_selector must select all, a nonnegative face index, or a named face`);
+  }
   return result;
 }
 
@@ -85,6 +95,9 @@ export function textureTransformAttributeSnapshot(textureTransform) {
     scale_u: textureTransform.scale[0],
     scale_v: textureTransform.scale[1],
     rotation: textureTransform.rotation,
+    ...(textureTransform.texture_size_mm ? { texture_size_mm: textureTransform.texture_size_mm } : {}),
+    ...(textureTransform.side ? { side: textureTransform.side } : {}),
+    ...(textureTransform.face_selector ? { face_selector_json: JSON.stringify(textureTransform.face_selector) } : {}),
     ...(textureTransform.material ? { material: textureTransform.material } : {})
   };
 }

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local-mcp-for-sketchup.invalid/schemas/real-model-target-review-v2.schema.json",
+  "$id": "https://alma.local/schemas/real-model-target-review-v2.schema.json",
   "title": "Single-candidate live read-only target review v2",
   "type": "object",
   "additionalProperties": false,

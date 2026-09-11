@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { getRuntimeCapabilities } from '../src/capabilities.mjs';
 
 const repoRoot = path.resolve(fileURLToPath(new URL('..', import.meta.url)));
-const defaultOutputPath = path.join(repoRoot, 'sketchup_plugin/local_mcp_for_sketchup/operation_registry.rb');
+const defaultOutputPath = path.join(repoRoot, 'sketchup_plugin/alma_sketchup_mcp/operation_registry.rb');
 
 async function main() {
   const options = parseArgs(process.argv.slice(2));
@@ -33,7 +33,7 @@ function buildRubyRegistry() {
     '',
     '# Generated from src/capabilities.mjs. Run `npm run registry:sync` after editing the operation registry.',
     '',
-    'module LocalMcpForSketchUp',
+    'module AlmaSketchupMCP',
     `  OPERATION_SUPPORT = ${rubyLiteral(operationSupport, 2)}.freeze`,
     '  SUPPORTED_OPERATIONS = OPERATION_SUPPORT.keys.freeze',
     '',
@@ -88,7 +88,7 @@ function parseArgs(argv) {
 }
 
 function usage() {
-  process.stdout.write(`Usage:\n  node scripts/generate-ruby-operation-registry.mjs [--check] [--output sketchup_plugin/local_mcp_for_sketchup/operation_registry.rb]\n`);
+  process.stdout.write(`Usage:\n  node scripts/generate-ruby-operation-registry.mjs [--check] [--output sketchup_plugin/alma_sketchup_mcp/operation_registry.rb]\n`);
   process.exit(0);
 }
 

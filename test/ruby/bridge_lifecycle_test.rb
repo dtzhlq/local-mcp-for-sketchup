@@ -43,7 +43,7 @@ module Sketchup
   end
 end
 
-plugin_path = File.expand_path('../../sketchup_plugin/local_mcp_for_sketchup/bridge.rb', __dir__)
+plugin_path = File.expand_path('../../sketchup_plugin/alma_sketchup_mcp.rb', __dir__)
 source = File.read(plugin_path)
 start_at = source.index("  def start\n")
 processing_at = source.index("  def process_pending_requests\n", start_at)
@@ -59,7 +59,7 @@ LifecycleHarness = Module.new do
   def process_pending_requests; end
 end
 
-root = Dir.mktmpdir('local-mcp-bridge-lifecycle-')
+root = Dir.mktmpdir('alma-bridge-lifecycle-')
 begin
 LifecycleHarness.const_set(:QUEUE_DIR, File.join(root, 'queue'))
 LifecycleHarness.const_set(:PROCESSING_DIR, File.join(root, 'processing'))

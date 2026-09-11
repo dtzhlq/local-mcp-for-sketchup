@@ -1,4 +1,5 @@
 import { assertObjectIdentityAvailable, objectId, objectIdentityFields } from './object-identity.mjs';
+import { resolveCurveSegments } from './curve-resolution.mjs';
 import { ensureMaterial } from './material-operations.mjs';
 import { applyTransform, integerInRange, normalizeQaMetadata, normalizeTransform, normalizeVector, positiveNumber } from './operation-utils.mjs';
 import { boundingBoxForVertices, mergeBoundingBoxes } from './snapshot.mjs';
@@ -226,9 +227,9 @@ export function addArcCurve(model, operation) {
   if (!name || typeof name !== 'string') throw new Error('arc_curve operation requires a string name');
   const [cx, cy, cz] = normalizeVector(center, [0, 0, 0], `${name}.center`);
   const r = positiveNumber(radius, undefined, `${name}.radius`);
-  const n = integerInRange(segments, 2, 128, `${name}.segments`);
   const start = Number(startAngle ?? start_angle);
   const end = Number(endAngle ?? end_angle);
+  const n = resolveCurveSegments(operation, r, { sweepDegrees: end - start, defaultSegments: 16, minSegments: 2, legacyMax: 128 });
   if (!Number.isFinite(start) || !Number.isFinite(end)) throw new Error(`${name}.start_angle/end_angle must be finite numbers`);
   if (!['xy', 'xz', 'yz'].includes(plane)) throw new Error(`${name}.plane must be one of xy, xz, yz`);
   const points = [];
@@ -469,7 +470,7 @@ export function addCylinder(model, operation) {
   const [x, y, z] = normalizeVector(origin, [0, 0, 0], `${name}.origin`);
   const r = positiveNumber(radius, undefined, `${name}.radius`);
   const h = positiveNumber(height, undefined, `${name}.height`);
-  const n = integerInRange(segments, 3, 96, `${name}.segments`);
+  const n = resolveCurveSegments(operation, r);
   const vertices = [];
   for (let i = 0; i < n; i += 1) {
     const a = (Math.PI * 2 * i) / n;

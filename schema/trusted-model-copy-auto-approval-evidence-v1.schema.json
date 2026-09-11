@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local-mcp-for-sketchup.invalid/schema/trusted-model-copy-auto-approval-evidence-v1.schema.json",
+  "$id": "https://alma.local/schema/trusted-model-copy-auto-approval-evidence-v1.schema.json",
   "title": "Trusted model-copy auto-approval mock evidence",
   "type": "object",
   "additionalProperties": false,

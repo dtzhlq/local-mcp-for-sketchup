@@ -229,6 +229,13 @@ function applyComponentDefinitionOperation(model, operation, componentName) {
   }
 }
 
+export function normalizeComponentMirror(value, label='component_instance.transform.mirror') {
+  if(value===undefined)return [];
+  const axes=Array.isArray(value)?value:[value];
+  if(axes.length>3||new Set(axes).size!==axes.length||axes.some(axis=>!['x','y','z'].includes(axis)))throw new Error(`${label} must contain distinct x, y, or z axes`);
+  return [...axes];
+}
+
 export function addComponentInstance(model, operation) {
   const { name, definition, origin = [0, 0, 0] } = operation;
   if (!name || typeof name !== 'string') throw new Error('component_instance operation requires a string name');
@@ -238,9 +245,12 @@ export function addComponentInstance(model, operation) {
   const box = componentDefinition.bounding_box;
   const corners = boxVertices(box.min, [box.w, box.d, box.h]);
   const transform = operation.transform || {};
+  const mirror=normalizeComponentMirror(transform.mirror,`${name}.transform.mirror`);
+  const factors=['x','y','z'].map(axis=>mirror.includes(axis)?-1:1);
   const extraTranslate = normalizeVector(transform.translate ?? transform.translation ?? operation.translation ?? [0, 0, 0], [0, 0, 0], `${name}.transform.translate`);
   const normalizedTransform = normalizeTransform({ transform: { ...transform, translate: [translation[0] + extraTranslate[0], translation[1] + extraTranslate[1], translation[2] + extraTranslate[2]] } }, name);
-  const transformedVertices = applyTransform(corners, {
+  if(transform.mirror!==undefined)normalizedTransform.mirror=mirror;
+  const transformedVertices = applyTransform(corners.map(point=>point.map((value,axis)=>value*factors[axis])), {
     transform: {
       ...transform,
       translate: [translation[0] + extraTranslate[0], translation[1] + extraTranslate[1], translation[2] + extraTranslate[2]]
@@ -259,7 +269,7 @@ export function addComponentInstance(model, operation) {
     transform: normalizedTransform,
     bounding_box: boundingBox,
     _vertices: transformedVertices,
-    _orientation: rotationZMatrix(normalizedTransform.rotateZ || 0),
+    _orientation: rotationZMatrix(normalizedTransform.rotateZ || 0).map(row=>row.map((value,axis)=>value*factors[axis])),
     qa: normalizeQaMetadata(operation.qa)
   });
 }

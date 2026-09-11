@@ -1,4 +1,5 @@
 import { objectIdentityFields } from './object-identity.mjs';
+import { resolveCurveSegments } from './curve-resolution.mjs';
 import { addMesh } from './primitive-operations.mjs';
 import { finiteNumber, integerInRange, nonNegativeNumber, normalizeKeyword, normalizePlanPoint, normalizeVector, positiveNumber } from './operation-utils.mjs';
 
@@ -229,45 +230,12 @@ export function addPipeBetweenPoints(model, operation) {
   if (!Array.isArray(rawPath) || rawPath.length < 2) throw new Error(`${name}.points must contain at least 2 [x, y, z] points`);
   const path = rawPath.map((point, index) => normalizeVector(point, [0, 0, 0], `${name}.points[${index}]`));
   const pipeRadius = positiveNumber(radius, undefined, `${name}.radius`);
-  const ringCount = integerInRange(n ?? segments, 3, 96, `${name}.segments`);
-  const vertices = [];
-  for (let index = 0; index < path.length; index += 1) {
-    const tangent = pipeTangent(path, index, name);
-    const [u, v] = perpendicularFrame(tangent);
-    const [x, y, z] = path[index];
-    for (let i = 0; i < ringCount; i += 1) {
-      const angle = (Math.PI * 2 * i) / ringCount;
-      const cos = Math.cos(angle) * pipeRadius;
-      const sin = Math.sin(angle) * pipeRadius;
-      vertices.push([x + u[0] * cos + v[0] * sin, y + u[1] * cos + v[1] * sin, z + u[2] * cos + v[2] * sin]);
-    }
-  }
-  const faces = [];
-  for (let ring = 0; ring < path.length - 1; ring += 1) {
-    const base = ring * ringCount;
-    const top = (ring + 1) * ringCount;
-    for (let i = 0; i < ringCount; i += 1) {
-      const next = (i + 1) % ringCount;
-      faces.push([base + i, base + next, top + next]);
-      faces.push([base + i, top + next, top + i]);
-    }
-  }
-  for (let i = 1; i < ringCount - 1; i += 1) faces.push([0, i + 1, i]);
-  const topStart = (path.length - 1) * ringCount;
-  for (let i = 1; i < ringCount - 1; i += 1) faces.push([topStart, topStart + i, topStart + i + 1]);
+  const ringCount = resolveCurveSegments(operation, pipeRadius, { defaultSegments: 8 });
+  const {vertices,faces} = tubeMeshFromPath(path,pipeRadius,ringCount,name);
   addMesh(model, { ...objectIdentityFields(operation), name, vertices, faces, material, smooth, transform });
   const group = model.groups[model.groups.length - 1];
   group.kind = 'pipe_between_points';
   group.segments = ringCount;
-}
-
-function pipeTangent(path, index, name) {
-  const previous = path[Math.max(0, index - 1)];
-  const next = path[Math.min(path.length - 1, index + 1)];
-  const vector = [next[0] - previous[0], next[1] - previous[1], next[2] - previous[2]];
-  const length = Math.hypot(...vector);
-  if (length <= 1e-9) throw new Error(`${name}.points must not contain repeated adjacent points`);
-  return vector.map((value) => value / length);
 }
 
 function perpendicularFrame(tangent) {
@@ -287,33 +255,68 @@ function normalize3(vector) {
   return vector.map((value) => value / length);
 }
 
+const dot3 = (a,b) => a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
+const subtract3 = (a,b) => a.map((v,i)=>v-b[i]);
+function rotateAround(vector,axis,angle) {
+  const c=Math.cos(angle),s=Math.sin(angle),cross=cross3(axis,vector),dot=dot3(axis,vector);
+  return vector.map((v,i)=>v*c+cross[i]*s+axis[i]*dot*(1-c));
+}
+
+export function parallelTransportFrames(path,name='path') {
+  if(!Array.isArray(path)||path.length<2)throw new Error(`${name} needs at least two path points`);
+  const edges=path.slice(1).map((point,i)=>{
+    const delta=subtract3(point,path[i]);
+    if(Math.hypot(...delta)<=1e-9)throw new Error(`${name} must not contain repeated adjacent points`);
+    return normalize3(delta);
+  });
+  const closed=path.length>3 && Math.hypot(...subtract3(path[0],path.at(-1)))<=1e-9;
+  const average=(a,b)=>{
+    const sum=a.map((v,i)=>v+b[i]);
+    if(Math.hypot(...sum)<=1e-8)throw new Error(`${name} contains an unsupported reversing cusp`);
+    return normalize3(sum);
+  };
+  const tangents=path.map((_,i)=>i===0?(closed?average(edges.at(-1),edges[0]):edges[0]):i===path.length-1?(closed?average(edges.at(-1),edges[0]):edges.at(-1)):average(edges[i-1],edges[i]));
+  const [firstU,firstV]=perpendicularFrame(tangents[0]);
+  const frames=[{tangent:tangents[0],u:firstU,v:firstV}];
+  for(let i=1;i<tangents.length;i++){
+    const previous=frames.at(-1),t=tangents[i],axis=cross3(previous.tangent,t),s=Math.hypot(...axis),c=Math.max(-1,Math.min(1,dot3(previous.tangent,t)));
+    if(s<=1e-9 && c<0)throw new Error(`${name} contains a reversing tangent`);
+    let u=s<=1e-9?previous.u:rotateAround(previous.u,axis.map(v=>v/s),Math.atan2(s,c));
+    // Remove numerical drift without selecting a new global reference axis.
+    u=normalize3(u.map((v,j)=>v-t[j]*dot3(u,t)));
+    frames.push({tangent:t,u,v:normalize3(cross3(t,u))});
+  }
+  if(closed){
+    const last=frames.at(-1),angle=Math.atan2(dot3(tangents[0],cross3(last.u,firstU)),dot3(last.u,firstU));
+    const distances=[0];for(let i=1;i<path.length;i++)distances.push(distances.at(-1)+Math.hypot(...subtract3(path[i],path[i-1])));
+    for(let i=1;i<frames.length;i++){const f=frames[i];f.u=rotateAround(f.u,f.tangent,angle*distances[i]/distances.at(-1));f.v=normalize3(cross3(f.tangent,f.u));}
+  }
+  return {frames,closed};
+}
+
+export function tubeMeshFromPath(path,radius,segments,name='tube') {
+  const {frames,closed}=parallelTransportFrames(path,name),ringTotal=closed?path.length-1:path.length,vertices=[],faces=[];
+  for(let ring=0;ring<ringTotal;ring++){
+    const {u,v}=frames[ring];
+    for(let i=0;i<segments;i++){const angle=2*Math.PI*i/segments;vertices.push(path[ring].map((x,j)=>x+radius*(u[j]*Math.cos(angle)+v[j]*Math.sin(angle))));}
+  }
+  const spanTotal=closed?ringTotal:ringTotal-1;
+  for(let ring=0;ring<spanTotal;ring++){
+    const a=ring*segments,b=((ring+1)%ringTotal)*segments;
+    for(let i=0;i<segments;i++){const j=(i+1)%segments;faces.push([a+i,a+j,b+j],[a+i,b+j,b+i]);}
+  }
+  if(!closed){for(let i=1;i<segments-1;i++)faces.push([0,i+1,i]);const top=(ringTotal-1)*segments;for(let i=1;i<segments-1;i++)faces.push([top,top+i,top+i+1]);}
+  return {vertices,faces,frames,closed};
+}
+
 export function addSweptPath(model, operation) {
   const { name, path, radius, segments = 8, n, material, smooth = 'all', transform } = operation;
   if (!name || typeof name !== 'string') throw new Error('swept_path operation requires a string name');
   if (!Array.isArray(path) || path.length < 2) throw new Error(`${name}.path must contain at least 2 [x, y, z] points`);
   const normalizedPath = path.map((point, index) => normalizeVector(point, [0, 0, 0], `${name}.path[${index}]`));
   const tubeRadius = positiveNumber(radius, undefined, `${name}.radius`);
-  const ringCount = integerInRange(n ?? segments, 3, 96, `${name}.segments`);
-  const vertices = [];
-  for (const [x, y, z] of normalizedPath) {
-    for (let i = 0; i < ringCount; i += 1) {
-      const angle = (Math.PI * 2 * i) / ringCount;
-      vertices.push([x, y + tubeRadius * Math.cos(angle), z + tubeRadius * Math.sin(angle)]);
-    }
-  }
-  const faces = [];
-  for (let ring = 0; ring < normalizedPath.length - 1; ring += 1) {
-    const base = ring * ringCount;
-    const top = (ring + 1) * ringCount;
-    for (let i = 0; i < ringCount; i += 1) {
-      const next = (i + 1) % ringCount;
-      faces.push([base + i, base + next, top + next]);
-      faces.push([base + i, top + next, top + i]);
-    }
-  }
-  for (let i = 1; i < ringCount - 1; i += 1) faces.push([0, i + 1, i]);
-  const topStart = (normalizedPath.length - 1) * ringCount;
-  for (let i = 1; i < ringCount - 1; i += 1) faces.push([topStart, topStart + i, topStart + i + 1]);
+  const ringCount = resolveCurveSegments(operation, tubeRadius, { defaultSegments: 8 });
+  const {vertices,faces} = tubeMeshFromPath(normalizedPath,tubeRadius,ringCount,name);
   addMesh(model, { ...objectIdentityFields(operation), name, vertices, faces, material, smooth, transform });
   model.groups[model.groups.length - 1].kind = 'swept_path';
   model.groups[model.groups.length - 1].segments = ringCount;

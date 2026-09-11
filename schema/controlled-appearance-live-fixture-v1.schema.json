@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local-mcp-for-sketchup.invalid/local-mcp-for-sketchup/controlled-appearance-live-fixture-v1.schema.json",
+  "$id": "https://alma.local/sketchup-mcp-replica/controlled-appearance-live-fixture-v1.schema.json",
   "title": "Controlled appearance live fixture v1",
   "type": "object",
   "additionalProperties": false,
@@ -75,7 +75,7 @@
             { "$ref": "#/$defs/target" },
             {
               "properties": {
-                "name_untrusted": { "const": "LOCAL_MCP_FOR_SKETCHUP_Reliability_Appearance_UV_Target" },
+                "name_untrusted": { "const": "ALMA_Reliability_Appearance_UV_Target" },
                 "visible": { "const": true },
                 "face_uv_payload_count": { "const": 1 }
               }
@@ -87,7 +87,7 @@
             { "$ref": "#/$defs/target" },
             {
               "properties": {
-                "name_untrusted": { "const": "LOCAL_MCP_FOR_SKETCHUP_Reliability_Appearance_Hidden_Target" },
+                "name_untrusted": { "const": "ALMA_Reliability_Appearance_Hidden_Target" },
                 "visible": { "const": false },
                 "face_uv_payload_count": { "const": 0 }
               }
@@ -109,8 +109,8 @@
         "hidden_target_persisted"
       ],
       "properties": {
-        "material_name_untrusted": { "const": "LOCAL_MCP_FOR_SKETCHUP_Reliability_Appearance_Texture" },
-        "scene_name_untrusted": { "const": "LOCAL_MCP_FOR_SKETCHUP_Reliability_Appearance_Scene" },
+        "material_name_untrusted": { "const": "ALMA_Reliability_Appearance_Texture" },
+        "scene_name_untrusted": { "const": "ALMA_Reliability_Appearance_Scene" },
         "uv_id": { "const": "reliability-appearance-face-uv" },
         "face_uv_operation_applied_without_warning": { "const": true },
         "face_uv_payload_persisted": { "const": true },

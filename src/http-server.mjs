@@ -64,7 +64,7 @@ export function createHttpServer(options = {}) {
       if (request.method === 'GET' && url.pathname === '/health') {
         return sendJson(response, 200, {
           ok: true,
-          name: 'local-mcp-for-sketchup',
+          name: 'sketchup-mcp-replica',
           version: PRODUCT_VERSION,
           auth_required: true,
           loopback_default: true
@@ -138,25 +138,25 @@ export function createHttpServer(options = {}) {
   server.requestTimeout = config.requestTimeoutMs;
   server.headersTimeout = Math.min(config.requestTimeoutMs, 60_000);
   server.keepAliveTimeout = 5_000;
-  Object.defineProperty(server, 'localMcpConfig', { value: config, enumerable: false });
-  Object.defineProperty(server, 'localMcpRequestHandler', { value: requestHandler, enumerable: false });
+  Object.defineProperty(server, 'almaConfig', { value: config, enumerable: false });
+  Object.defineProperty(server, 'almaRequestHandler', { value: requestHandler, enumerable: false });
   return server;
 }
 
 export function createHttpConfig(options = {}) {
-  const workspaceRoot = path.resolve(options.workspaceRoot || process.env.LOCAL_MCP_FOR_SKETCHUP_WORKSPACE_ROOT || projectRoot);
+  const workspaceRoot = path.resolve(options.workspaceRoot || process.env.ALMA_SKETCHUP_WORKSPACE_ROOT || projectRoot);
   const stateDir = path.resolve(options.stateDir || defaultStateDir);
-  const configuredRoots = options.allowedRoots || splitRoots(process.env.LOCAL_MCP_FOR_SKETCHUP_HTTP_ALLOWED_ROOTS);
+  const configuredRoots = options.allowedRoots || splitRoots(process.env.ALMA_SKETCHUP_HTTP_ALLOWED_ROOTS);
   const allowedRoots = [...new Set([workspaceRoot, stateDir, ...configuredRoots.map((root) => path.resolve(root))])];
-  const host = options.host || process.env.LOCAL_MCP_FOR_SKETCHUP_HTTP_HOST || '127.0.0.1';
-  const allowNonLoopback = options.allowNonLoopback ?? process.env.LOCAL_MCP_FOR_SKETCHUP_HTTP_ALLOW_NON_LOOPBACK === '1';
+  const host = options.host || process.env.ALMA_SKETCHUP_HTTP_HOST || '127.0.0.1';
+  const allowNonLoopback = options.allowNonLoopback ?? process.env.ALMA_SKETCHUP_HTTP_ALLOW_NON_LOOPBACK === '1';
   if (!isLoopbackHost(host) && !allowNonLoopback) {
-    throw new Error('Non-loopback HTTP binding requires LOCAL_MCP_FOR_SKETCHUP_HTTP_ALLOW_NON_LOOPBACK=1.');
+    throw new Error('Non-loopback HTTP binding requires ALMA_SKETCHUP_HTTP_ALLOW_NON_LOOPBACK=1.');
   }
-  const sessionSecret = String(options.sessionSecret || process.env.LOCAL_MCP_FOR_SKETCHUP_HTTP_SESSION_SECRET || crypto.randomBytes(32).toString('hex'));
+  const sessionSecret = String(options.sessionSecret || process.env.ALMA_SKETCHUP_HTTP_SESSION_SECRET || crypto.randomBytes(32).toString('hex'));
   if (Buffer.byteLength(sessionSecret) < 16) throw new Error('HTTP session secret must be at least 16 bytes.');
-  const toolTimeoutMs = positiveInteger(options.toolTimeoutMs ?? process.env.LOCAL_MCP_FOR_SKETCHUP_HTTP_TOOL_TIMEOUT_MS, DEFAULT_TOOL_TIMEOUT_MS);
-  const requestTimeoutMs = positiveInteger(options.requestTimeoutMs ?? process.env.LOCAL_MCP_FOR_SKETCHUP_HTTP_REQUEST_TIMEOUT_MS, DEFAULT_REQUEST_TIMEOUT_MS);
+  const toolTimeoutMs = positiveInteger(options.toolTimeoutMs ?? process.env.ALMA_SKETCHUP_HTTP_TOOL_TIMEOUT_MS, DEFAULT_TOOL_TIMEOUT_MS);
+  const requestTimeoutMs = positiveInteger(options.requestTimeoutMs ?? process.env.ALMA_SKETCHUP_HTTP_REQUEST_TIMEOUT_MS, DEFAULT_REQUEST_TIMEOUT_MS);
   if (requestTimeoutMs <= toolTimeoutMs) {
     throw new Error('HTTP request timeout must be greater than the maximum tool timeout.');
   }
@@ -164,11 +164,11 @@ export function createHttpConfig(options = {}) {
     host,
     port: positiveInteger(options.port ?? process.env.PORT, 3977),
     sessionSecret,
-    generatedSecret: !options.sessionSecret && !process.env.LOCAL_MCP_FOR_SKETCHUP_HTTP_SESSION_SECRET,
+    generatedSecret: !options.sessionSecret && !process.env.ALMA_SKETCHUP_HTTP_SESSION_SECRET,
     workspaceRoot,
     stateDir,
     allowedRoots: Object.freeze(allowedRoots),
-    maxBodyBytes: positiveInteger(options.maxBodyBytes ?? process.env.LOCAL_MCP_FOR_SKETCHUP_HTTP_MAX_BODY_BYTES, DEFAULT_MAX_BODY_BYTES),
+    maxBodyBytes: positiveInteger(options.maxBodyBytes ?? process.env.ALMA_SKETCHUP_HTTP_MAX_BODY_BYTES, DEFAULT_MAX_BODY_BYTES),
     toolTimeoutMs,
     requestTimeoutMs
   });
@@ -678,10 +678,10 @@ class HttpBridgeError extends Error {
 
 async function main() {
   const server = createHttpServer();
-  const config = server.localMcpConfig;
+  const config = server.almaConfig;
   server.listen(config.port, config.host, () => {
     process.stderr.write(`SketchUp MCP replica HTTP bridge listening on http://${config.host}:${config.port}\n`);
-    process.stderr.write(`HTTP auth: Bearer session secret ${config.generatedSecret ? `(generated) ${config.sessionSecret}` : 'loaded from LOCAL_MCP_FOR_SKETCHUP_HTTP_SESSION_SECRET'}\n`);
+    process.stderr.write(`HTTP auth: Bearer session secret ${config.generatedSecret ? `(generated) ${config.sessionSecret}` : 'loaded from ALMA_SKETCHUP_HTTP_SESSION_SECRET'}\n`);
     process.stderr.write(`HTTP limits: body=${config.maxBodyBytes} bytes, tool timeout=${config.toolTimeoutMs}ms\n`);
   });
 }

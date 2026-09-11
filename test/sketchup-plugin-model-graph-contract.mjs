@@ -2,9 +2,9 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 
 const [mainSource, snapshotSource, revisionSource] = await Promise.all([
-  fs.readFile('sketchup_plugin/local_mcp_for_sketchup/bridge.rb', 'utf8'),
-  fs.readFile('sketchup_plugin/local_mcp_for_sketchup/snapshot.rb', 'utf8'),
-  fs.readFile('sketchup_plugin/local_mcp_for_sketchup/model_revision.rb', 'utf8')
+  fs.readFile('sketchup_plugin/alma_sketchup_mcp.rb', 'utf8'),
+  fs.readFile('sketchup_plugin/alma_sketchup_mcp/snapshot.rb', 'utf8'),
+  fs.readFile('sketchup_plugin/alma_sketchup_mcp/model_revision.rb', 'utf8')
 ]);
 
 const adoption = methodBody(mainSource, 'adoption_result', 'def get_selection');
@@ -17,8 +17,8 @@ const sessionState = methodBody(mainSource, 'get_session_state', 'def reset_mode
 const transportGuard = methodBody(mainSource, 'assert_transport_guard!', 'def assert_pending_open_target!');
 
 assert.match(mainSource, /OCCURRENCE_CONTRACT_VERSION\s*=\s*'canonical-occurrence-path\.v1'/);
-assert.match(mainSource, /CAPABILITY_MANIFEST_VERSION\s*=\s*'2026-07-agent-contract-rc4\.1'/);
-assert.match(mainSource, /RUNTIME_CAPABILITY_VERSION\s*=\s*'0\.1\.0-rc\.4-capabilities\.1'/);
+assert.match(mainSource, /CAPABILITY_MANIFEST_VERSION\s*=\s*'2026-07-agent-contract-v1\.4'/);
+assert.match(mainSource, /RUNTIME_CAPABILITY_VERSION\s*=\s*'0\.1\.0-rc\.2-capabilities\.7'/);
 assert.match(revisionSource, /MODEL_REVISION_STRATEGY\s*=\s*'definition-merkle\.v2'/);
 assert.match(revisionSource, /MODEL_REVISION_UNIQUE_ENTITY_LIMIT\s*=\s*1_000_000/);
 assert.match(revisionSource, /entries_digest/);
@@ -92,8 +92,8 @@ process.stdout.write(`${JSON.stringify({
   top_level_fields_checked: 6,
   session_binding_fields_checked: 9,
   loaded_source_attestations_checked: 6,
-  runtime_capability_version: '0.1.0-rc.4-capabilities.1',
-  runtime_manifest_version: '2026-07-agent-contract-rc4.1',
+  runtime_capability_version: '0.1.0-rc.2-capabilities.7',
+  runtime_manifest_version: '2026-07-agent-contract-v1.4',
   model_revision_strategy: 'definition-merkle.v2',
   model_modified_bound: true,
   snapshot_lock_fields: 2,

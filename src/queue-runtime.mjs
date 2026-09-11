@@ -11,18 +11,19 @@ const DEFAULT_STALE_LOCK_MS = 10 * 60 * 1000;
 const DEFAULT_POLL_INTERVAL_MS = 250;
 const QUEUE_REQUEST_ID_PATTERN = /^(?<clientPid>[1-9]\d{0,14})-(?<createdAtMs>\d{13})-(?<uuid>[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})$/;
 const QUEUE_GUARDED_METHODS = new Set([
-  'reset_model', 'build_model', 'save_model', 'save_model_version', 'open_model', 'import_model', 'export_model',
-  'adopt_open_model', 'set_selection', 'capture_view', 'run_ruby_expert'
+  'reset_model', 'build_model', 'save_model', 'save_model_version', 'open_model', 'close_reopen_saved_model', 'import_model', 'export_model',
+  'adopt_open_model', 'set_selection', 'capture_view', 'capture_detail_views', 'run_ruby_expert'
 ]);
 const QUEUE_MODEL_MUTATING_METHODS = new Set([
   'reset_model', 'build_model', 'import_model', 'adopt_open_model', 'run_ruby_expert'
 ]);
-const QUEUE_DOCUMENT_SWITCH_METHODS = new Set(['open_model']);
+const QUEUE_DOCUMENT_SWITCH_METHODS = new Set(['open_model', 'close_reopen_saved_model']);
 const INTERRUPT_SAFE_READ_ONLY_QUEUE_METHODS = new Set([
   'get_capabilities',
   'get_session_state',
   'get_active_model_identity',
   'inspect_model',
+  'inspect_detail_regions',
   'list_entities',
   'get_model_info',
   'get_selection'
@@ -36,13 +37,13 @@ export class QueueRuntime {
   constructor({
     queueDir = defaultQueueDir,
     responseDir = defaultResponseDir,
-    processingDir = process.env.LOCAL_MCP_FOR_SKETCHUP_PROCESSING_DIR || path.join(path.dirname(queueDir), 'processing'),
-    cancellationDir = process.env.LOCAL_MCP_FOR_SKETCHUP_CANCELLATION_DIR || path.join(path.dirname(queueDir), 'read-only-cancellations'),
+    processingDir = process.env.ALMA_SKETCHUP_PROCESSING_DIR || path.join(path.dirname(queueDir), 'processing'),
+    cancellationDir = process.env.ALMA_SKETCHUP_CANCELLATION_DIR || path.join(path.dirname(queueDir), 'read-only-cancellations'),
     repoRoot = process.cwd(),
     timeoutMs = 30000,
     lockPath,
     lockTimeoutMs,
-    staleLockMs = numberFromEnv('LOCAL_MCP_FOR_SKETCHUP_QUEUE_STALE_LOCK_MS', DEFAULT_STALE_LOCK_MS),
+    staleLockMs = numberFromEnv('ALMA_SKETCHUP_QUEUE_STALE_LOCK_MS', DEFAULT_STALE_LOCK_MS),
     pollIntervalMs = DEFAULT_POLL_INTERVAL_MS
   } = {}) {
     this.queueDir = queueDir;
@@ -52,7 +53,7 @@ export class QueueRuntime {
     this.repoRoot = path.resolve(repoRoot);
     this.timeoutMs = timeoutMs;
     this.lockPath = lockPath || path.join(path.dirname(queueDir), 'queue-runtime.lock');
-    this.lockTimeoutMs = lockTimeoutMs ?? numberFromEnv('LOCAL_MCP_FOR_SKETCHUP_QUEUE_LOCK_TIMEOUT_MS', Math.max(timeoutMs || 0, DEFAULT_LOCK_TIMEOUT_MS));
+    this.lockTimeoutMs = lockTimeoutMs ?? numberFromEnv('ALMA_SKETCHUP_QUEUE_LOCK_TIMEOUT_MS', Math.max(timeoutMs || 0, DEFAULT_LOCK_TIMEOUT_MS));
     this.staleLockMs = staleLockMs;
     this.pollIntervalMs = pollIntervalMs;
     this.lockDepth = 0;
@@ -158,6 +159,10 @@ export class QueueRuntime {
     return this.call('open_model', { path: resolvedPath });
   }
 
+  async closeReopenSavedModel(binding) {
+    return this.call('close_reopen_saved_model', binding);
+  }
+
   async importModel({ inputPath, path: requestedPath, mode, prefix, options = {} } = {}) {
     const normalizedMode = assertQueueImportModeAllowed(mode);
     const sourcePath = inputPath || requestedPath;
@@ -182,6 +187,10 @@ export class QueueRuntime {
 
   async inspectModel(options = {}) {
     return this.call('inspect_model', options);
+  }
+
+  async inspectDetailRegions(options = {}) {
+    return this.call('inspect_detail_regions', options);
   }
 
   async listEntities(options = {}) {
@@ -241,6 +250,10 @@ export class QueueRuntime {
       }
     }
     return result;
+  }
+
+  async captureDetailViews({ views, output_dir } = {}) {
+    return this.call('capture_detail_views', { views, output_dir: path.resolve(output_dir) });
   }
 
   async runRubyExpert({ code, auditPath, audit_path } = {}) {
@@ -446,7 +459,7 @@ export class QueueRuntime {
         await sleep(this.pollIntervalMs);
       }
 
-      throw new Error(`Timed out waiting for SketchUp plugin response after ${this.timeoutMs}ms. Open SketchUp and enable Local MCP for SketchUp Bridge.`);
+      throw new Error(`Timed out waiting for SketchUp plugin response after ${this.timeoutMs}ms. Open SketchUp and enable Alma SketchUp MCP Bridge.`);
     } finally {
       await fs.rm(requestPath, { force: true }).catch(() => {});
       if (outcomeObserved) {
@@ -532,7 +545,7 @@ export class QueueRuntime {
     if (context.invalidatedByDocumentSwitch) {
       throw new AgentContractError(
         'HANDSHAKE_DOCUMENT_MISMATCH',
-        'The Session Contract was invalidated when open_model requested a document switch. Inspect the active model and create a fresh handshake before another guarded queue operation.',
+        'The Session Contract was invalidated by a requested document switch. Inspect the active model and create a fresh handshake before another guarded queue operation.',
         {
           details: {
             invalidated_by: context.invalidatedByDocumentSwitch,
@@ -632,9 +645,9 @@ export async function cleanupOwnedQueueArtifacts() {
 
 export async function cleanupQueueArtifactsForPid(pid, {
   queueDir = defaultQueueDir,
-  processingDir = process.env.LOCAL_MCP_FOR_SKETCHUP_PROCESSING_DIR || path.join(path.dirname(queueDir), 'processing'),
+  processingDir = process.env.ALMA_SKETCHUP_PROCESSING_DIR || path.join(path.dirname(queueDir), 'processing'),
   responseDir = defaultResponseDir,
-  cancellationDir = process.env.LOCAL_MCP_FOR_SKETCHUP_CANCELLATION_DIR || path.join(path.dirname(queueDir), 'read-only-cancellations'),
+  cancellationDir = process.env.ALMA_SKETCHUP_CANCELLATION_DIR || path.join(path.dirname(queueDir), 'read-only-cancellations'),
   lockPath = path.join(path.dirname(queueDir), 'queue-runtime.lock'),
   removeReadOnlyProcessing = false
 } = {}) {

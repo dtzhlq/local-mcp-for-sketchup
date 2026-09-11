@@ -9,30 +9,27 @@ import {
 import { PRODUCT_VERSION } from '../src/version.mjs';
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const [packageJson, publicPackageJson, packageLock, pluginLoaderSource, pluginBridgeSource] = await Promise.all([
+const [packageJson, packageLock, pluginSource] = await Promise.all([
   readJson('package.json'),
-  readJson('release/public-package.json'),
   readJson('package-lock.json'),
-  fs.readFile(path.join(repoRoot, 'sketchup_plugin', 'local_mcp_for_sketchup.rb'), 'utf8'),
-  fs.readFile(path.join(repoRoot, 'sketchup_plugin', 'local_mcp_for_sketchup', 'bridge.rb'), 'utf8')
+  fs.readFile(path.join(repoRoot, 'sketchup_plugin', 'alma_sketchup_mcp.rb'), 'utf8')
 ]);
 
-assert.equal(PRODUCT_VERSION, '0.1.0-rc.4');
+assert.equal(PRODUCT_VERSION, '0.1.0-rc.3');
 assert.equal(packageJson.version, PRODUCT_VERSION);
-assert.deepEqual(publicPackageJson, packageJson);
 assert.equal(packageLock.version, PRODUCT_VERSION);
 assert.equal(packageLock.packages?.['']?.version, PRODUCT_VERSION);
-assert.deepEqual(uniqueRubyConstant(pluginLoaderSource, 'PLUGIN_VERSION'), [PRODUCT_VERSION]);
+assert.deepEqual(uniqueRubyConstant(pluginSource, 'PLUGIN_VERSION'), [PRODUCT_VERSION]);
 assert.deepEqual(
-  uniqueRubyConstant(pluginBridgeSource, 'RUNTIME_CAPABILITY_VERSION'),
+  uniqueRubyConstant(pluginSource, 'RUNTIME_CAPABILITY_VERSION'),
   [RUNTIME_CAPABILITY_VERSION]
 );
 assert.deepEqual(
-  uniqueRubyConstant(pluginBridgeSource, 'CAPABILITY_MANIFEST_VERSION'),
+  uniqueRubyConstant(pluginSource, 'CAPABILITY_MANIFEST_VERSION'),
   [CAPABILITY_MANIFEST_VERSION]
 );
-assert.equal(RUNTIME_CAPABILITY_VERSION, '0.1.0-rc.4-capabilities.1');
-assert.equal(CAPABILITY_MANIFEST_VERSION, '2026-07-agent-contract-rc4.1');
+assert.equal(RUNTIME_CAPABILITY_VERSION, '0.1.0-rc.3-capabilities.1');
+assert.equal(CAPABILITY_MANIFEST_VERSION, '2026-07-agent-contract-rc3.1');
 
 process.stdout.write(`${JSON.stringify({
   ok: true,
@@ -40,7 +37,6 @@ process.stdout.write(`${JSON.stringify({
   runtime_capability_version: RUNTIME_CAPABILITY_VERSION,
   capability_manifest_version: CAPABILITY_MANIFEST_VERSION,
   package_lock_bound: true,
-  public_package_template_bound: true,
   plugin_loader_bound: true,
   live_queue_called: false
 }, null, 2)}\n`);

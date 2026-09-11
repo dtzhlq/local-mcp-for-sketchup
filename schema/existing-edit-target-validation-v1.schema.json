@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local-mcp-for-sketchup.invalid/schema/existing-edit-target-validation-v1.schema.json",
+  "$id": "https://alma.local/schema/existing-edit-target-validation-v1.schema.json",
   "title": "Existing Edit Target Validation v1",
   "oneOf": [
     {
