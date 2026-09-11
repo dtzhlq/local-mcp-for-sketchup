@@ -24,4 +24,4 @@ form, email delivery, privacy notice, and data retention policy are separate
 decisions. The form may be used for official distribution and support but must
 not claim to verify whether a SketchUp installation is genuine.
 
-No mirror or data-collection service is configured by this repository.
+The public Gitee repository mirrors source/documentation. Its stable INSTALL_FOR_AGENTS.md entry resolves the canonical GitHub formal release manifest. Current 0.2.0 binary availability on Gitee is not verified; do not construct Gitee asset URLs or substitute its old unsigned preview. Canonical metadata or a verified release-specific mirror must be reachable before installation. No data-collection service is configured by this repository.

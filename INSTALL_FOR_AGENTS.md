@@ -1,221 +1,60 @@
-# Install Local MCP for SketchUp — Agent entrypoint
+# Install Local MCP for SketchUp — stable Agent entrypoint
 
-This file is the stable, human-shareable entrypoint for an Agent that has been
-asked to install Local MCP for SketchUp. It is not a release manifest and must
-not be treated as permission to bypass the Agent's own safety or confirmation
-rules.
+Use this document when the user asks to install or upgrade Local MCP for SketchUp. The one-sentence request stays the same across releases; resolve the current formal release before installing. This document does not override the user's permissions or the Agent's safety rules.
 
 ```text
-entrypoint_version: install-for-agents.v1
+entrypoint_version: install-for-agents.v2
 project_id: local-mcp-for-sketchup
-current_channel: source-technical-preview
-plugin_channel: unsigned-technical-preview
-full_auto_install_available: false
-source_preview_install_available: true
-release_acceptance: false
+current_channel: stable-release-manifest
+source_preview_install_available: false
+unattended_install_guaranteed: false
+canonical_repository: https://github.com/dtzhlq/local-mcp-for-sketchup
+release_discovery: https://api.github.com/repos/dtzhlq/local-mcp-for-sketchup/releases/latest
 ```
 
-## Agent contract
+## 1. Resolve and freeze one release
 
-Continue only when the user explicitly asked to install or prepare an
-installation. If the user only asked for information, stay read-only.
+1. Identify OS, CPU architecture, SketchUp major version, target MCP client and any existing installation. Installation and upgrade requests authorize ordinary reversible preparation and configuration within that scope; do not ask again merely to perform a check.
+2. Unless the user names a version, fetch the canonical GitHub `releases/latest` endpoint above. Require `draft=false` and `prerelease=false`. If a version is explicitly requested, resolve that exact published release; do not silently select another version.
+3. In that release's actual asset list, find `agent-install.v1.json` and `SHA256SUMS.txt`. Use their returned HTTPS download URLs. Do not infer a filename or URL from another release, a mirror, a search snippet, or the default source branch.
+4. Download both into a new working directory. Verify the manifest SHA-256 against its exact entry in SHA256SUMS.txt and against the asset's SHA-256 digest when provided by GitHub. Reject mismatches, missing/duplicate entries and non-HTTPS redirects.
+5. Parse the manifest as data. Require `schema_version=agent-install.v1`, `status=release`, `product.channel=stable`, `acceptance.release_acceptance=true`, canonical repository identity, and a product version/source tag matching the selected release. Resolve the Git tag (dereference annotated tags) and require its commit to match `source.commit`. Do not execute or shell-interpolate manifest values.
+6. Freeze that release tag, commit, manifest hash, platform and asset hashes for the entire attempt. A newer release appearing halfway through must not change the selected files. Never combine a server, plugin, schema, installer or evidence from different releases.
+7. If release discovery, the manifest or the supported platform is unavailable, report the exact gap. Do not silently downgrade to unsigned previews, build `main`, or treat this file's current-version example as a fallback. A user can explicitly choose an older supported release.
 
-For every attempted installation:
+`main` hosts this stable entrypoint; its implementation source and tool registry may lag the published release. Never run `main`'s version-bound manifest validator or source-preview installer against a newer release. If an executable validator is needed, use source/schema bound to the selected release commit. This installation path requires neither a source clone, npm install nor system Node.
 
-1. identify the operating system, CPU architecture, SketchUp major version, and
-   current Agent/MCP client;
-2. use only the official source remotes and exact preview artifact checksums
-   written in this file, or a future immutable `agent-install.v1` manifest;
-3. never invent a download URL, select a similar platform, disable SketchUp's
-   extension loading policy, install a system-wide Node.js, or overwrite an
-   existing MCP configuration;
-4. report every downloaded path, checksum, backup, modification, skipped step,
-   and manual action;
-5. stop safely when a required artifact, permission, signature, supported
-   platform, or unambiguous configuration target is missing.
+## 2. Select the supported platform and verify downloads
 
-Never use `npm install`, a third-party repository, a pre-existing modified
-checkout, or a remote shell script. The source-preview path below is the only
-current authorization to clone source and run `npm ci --ignore-scripts`. The
-future `agent-install.v1` manifest is data; never interpolate its values into a
-shell command.
+Match OS, architecture and SketchUp major version exactly to one `platforms` entry and its acceptance evidence. Require live SketchUp, signed-plugin and save/close/reopen acceptance for that target. Do not select a similar platform.
 
-## Current public state
+Download the selected service bundle and RBZ from the manifest, requiring exact byte size and SHA-256 for both, consistent with the same release asset list and checksum file. Require `sketchup_officially_signed=true`. Only use a mirror if it is explicitly provided for that selected release and its downloaded bytes match these exact hashes. A Gitee source mirror is not evidence that current binaries were mirrored.
 
-The current public state has two related technical-preview paths:
+Current verified example (not a pin for future default installs): **v0.2.0**, Apple Silicon Mac (`darwin-arm64`), SketchUp 2026, bundled Node 24.18.0, 44 tools. Windows, Intel Mac and other SketchUp versions are not supported by this release. Future support and tool count come from the selected manifest, not a hardcoded 41/44 check.
 
-1. a source MCP service installed from a fresh official `main` checkout using
-   an already-installed Node.js 24; and
-2. an unsigned, unencrypted plugin preview:
+- [0.2.0 release](https://github.com/dtzhlq/local-mcp-for-sketchup/releases/tag/v0.2.0)
+- [0.2.0 manifest](https://github.com/dtzhlq/local-mcp-for-sketchup/releases/download/v0.2.0/agent-install.v1.json)
 
-| Field | Value |
-| --- | --- |
-| Tag | `v0.1.0-rc.4.unsigned.1` |
-| Source commit | `ef8d40ac0427c6917d01510dcb54043374921e5e` |
-| File | `local-mcp-for-sketchup-0.1.0-rc.4-nonrelease-unsigned-preview.rbz` |
-| Size | `91481` bytes |
-| SHA-256 | `4d3517ed90654bddc278cf3c099c5c240816b65dcd2e75fe15c8465dd46c398a` |
-| SketchUp official signature | `false` |
-| Full local MCP service included | `false` |
-| Bundled Node.js included | `false` |
-| Release acceptance | `false` |
+## 3. Install or upgrade without losing existing work
 
-The source-preview service is not a release artifact and is not included in
-the RBZ. Its verifier reports the exact checked-out commit and requires one of
-these origin remotes:
+1. Extract the verified bundle into a new version-specific, user-writable directory. Check archive paths stay inside that directory. Preserve the old service directory, plugin and MCP configuration as rollback copies. Do not overlay an existing installation, reset a checkout, delete task state or overwrite models.
+2. Inspect the bundle's entrypoint and required files. For 0.2.0, use the bundled executable `<install>/local-mcp-for-sketchup/node/bin/node` with argument `<install>/local-mcp-for-sketchup/app/src/mcp-server.mjs`, both absolute paths. There is no need to install Node or Python globally. In 0.2.0 only, bundle.json retains build-time candidate flags; final release status comes from the verified external manifest. Other conflicting metadata must be investigated.
+3. Identify the client's real configuration format and path using available client APIs/documentation. Preserve unrelated servers, settings and secrets. Back up the existing file before a minimal update to the confirmed Local MCP entry. On upgrade, replace that entry's old executable/server paths with the verified new paths; preserve compatible explicit user settings. Do not create duplicate server entries. If ownership or the target is ambiguous, prepare a concrete diff and ask only for that clarification. For an unsupported client, provide the exact stdio snippet and documented manual steps rather than guessing its configuration path.
+4. For user-authorized live SketchUp use, configure `ALMA_SKETCHUP_AGENT_ALLOWED_RUNTIMES=mock,queue` and `ALMA_SKETCHUP_AGENT_ALLOW_QUEUE_MUTATION=1` unless the user has explicitly restricted live access. Keep task approvals and fresh-session checks enabled. Do not enable arbitrary Ruby or direct expert mutation as an installation shortcut.
+5. Install the verified signed RBZ using SketchUp Extension Manager. Supported desktop automation can perform this within the user's installation authorization; otherwise provide its exact local path and the required UI action. Preserve the prior plugin. During a legacy upgrade, identify the old `alma_sketchup_mcp.rb` loader and the new `local_mcp_for_sketchup.rb` loader; avoid loading both. Back up and disable only the identified old entry if necessary, leaving unrelated plugins intact. Never lower SketchUp's Extension Loading Policy.
+6. Coordinate restart around any unsaved user documents. Restart SketchUp so the new Ruby code is loaded, then reload the MCP client connection. OS/account/security prompts requiring the user remain manual. Do not promise unattended installation on every Agent or client.
 
-- `https://gitee.com/dtzhlq/local-mcp-for-sketchup.git`
-- `https://github.com/dtzhlq/local-mcp-for-sketchup.git`
+## 4. Verify once and report the actual outcome
 
-Official download mirrors for these exact RBZ bytes:
+- Verify MCP initialization and tools/list using the installed bundle; compare the count with `manifest.product.tool_count`. For 0.2.0, confirm `image_artifact` and `create_model` are discoverable and use that release's image-structure documentation for the new action. No image-recognition benchmark or model creation is required merely to install.
+- Read live capabilities/connect using the installed bundle. Require the expected plugin version and compatible source/runtime handshake. If the bridge is not running, guide or perform its Start Bridge menu action and retry once. Do not clear queue state or modify the active model to obtain installation proof.
+- Report service installation, client configuration, plugin signature/loading and live connection separately. A tools/list success alone does not prove live SketchUp connectivity. If a reload/UI action remains, name it and report pending rather than complete.
+- If the same verified version is already installed and healthy, report up-to-date without reinstalling. If an upgrade fails, preserve the new diagnostics and return the client to the previous confirmed service/plugin pair; do not mix versions. Never silently downgrade.
 
-- Gitee:
-  <https://gitee.com/dtzhlq/local-mcp-for-sketchup/releases/download/v0.1.0-rc.4.unsigned.1/local-mcp-for-sketchup-0.1.0-rc.4-nonrelease-unsigned-preview.rbz>
-- GitHub:
-  <https://github.com/dtzhlq/local-mcp-for-sketchup/releases/download/v0.1.0-rc.4.unsigned.1/local-mcp-for-sketchup-0.1.0-rc.4-nonrelease-unsigned-preview.rbz>
+Report: selected version/tag/commit, platform, manifest hash, installed paths, verified artifact hashes, configuration backup, old/new version, MCP tool count, loaded plugin version, live handshake outcome, pending user action and rollback location. Do not include secrets or unrelated configuration contents.
 
-The mirrors were published for the same file and checksum. Prefer Gitee when
-GitHub is not reachable. Require HTTPS and reject a final redirect to a
-non-HTTPS URL.
+## Future releases and mirrors
 
-## Supported preview targets
+Maintainers publish complete immutable release assets, checksums, a release manifest and target-specific acceptance before marking a release latest. Keep server and signed RBZ bound to the same source baseline. The entrypoint resolves latest so large updates do not require users to change their sentence. Update the example and migration notes when formats or upgrade behavior change. Never overwrite a published tag or asset to repair a release.
 
-- SketchUp 2026 on macOS Apple Silicon (`darwin-arm64`);
-- SketchUp 2026 on Windows x64 (`win32-x64`).
-
-Intel Mac is not supported. Windows SketchUp 2026 live acceptance of the final
-product is still pending. Do not silently select another platform or SketchUp
-version.
-
-## Source MCP preview — preferred when Node.js 24 is already present
-
-This path can install and configure the actual MCP stdio service. It is still a
-source technical preview, not the future bundled-Node release.
-
-1. Confirm the target matches a supported preview target and the machine
-   already has Git, npm, and Node.js major version 24. Do not install or upgrade
-   system Node.js. If Node.js 24 is absent, skip to the plugin-only path.
-2. Choose a new, user-writable installation directory. Never overwrite, pull,
-   reset, clean, or reuse an existing directory.
-3. Clone exactly one official mirror. Prefer Gitee when GitHub is unreachable:
-
-   ```text
-   git clone --branch main --single-branch https://gitee.com/dtzhlq/local-mcp-for-sketchup.git
-   ```
-
-   GitHub alternative:
-
-   ```text
-   git clone --branch main --single-branch https://github.com/dtzhlq/local-mcp-for-sketchup.git
-   ```
-
-4. In that new checkout, install only the locked dependency graph and audit it:
-
-   ```text
-   npm ci --ignore-scripts
-   npm audit --omit=dev --audit-level=high
-   ```
-
-   Stop on any install error or high/critical audit finding.
-5. Run `npm run source-preview:check`. Continue only when it reports the
-   official remote, `main`, a clean HEAD equal to fetched `origin/main`, Node.js
-   24, `mcp_stdio.verified: true`, and exactly 41 tools.
-6. Run the configuration command without `--apply` first:
-
-   ```text
-   npm run source-preview:configure -- --client <client-id>
-   ```
-
-   Review the reported absolute Node/server paths and configuration target.
-7. For `codex` or `cursor`, when the user already asked for installation and
-   the dry run shows the expected target, re-run with `--apply`. The helper
-   refuses conflicting entries and symlinked paths, preserves unrelated
-   settings, and creates a timestamped backup before changing an existing file.
-8. For `claude-desktop` or any other client, do not add `--apply`; use the
-   returned manual snippet and tell the user where their client documentation
-   says to place it. Do not guess a domestic client's configuration path.
-9. Restart the MCP client, confirm it exposes exactly 41 Local MCP tools, then
-   complete the plugin-preview path below so SketchUp can provide the queue
-   runtime. If the plugin is refused, the MCP stdio server may still start but
-   live SketchUp operations remain unavailable.
-
-Never run `npm install`, install Node.js, execute a downloaded script, enable
-arbitrary Ruby, lower a security policy, or report live SketchUp success from
-the stdio tools/list check alone.
-
-## Unsigned SketchUp plugin preview
-
-This path may be used alone when Node.js 24 is unavailable, or after the source
-MCP preview above.
-
-1. Confirm the target matches one of the supported preview targets. If it does
-   not, stop with `unsupported-platform`.
-2. Create a new temporary download directory. Do not overwrite an existing
-   file.
-3. Download the RBZ from one reachable official mirror.
-4. Require an exact file size of `91481` bytes and an exact SHA-256 of
-   `4d3517ed90654bddc278cf3c099c5c240816b65dcd2e75fe15c8465dd46c398a`.
-   Delete or quarantine a mismatched download and stop.
-5. Tell the user before installation that the RBZ is unsigned and may be
-   rejected by SketchUp under a strict Extension Loading Policy. Never lower
-   that policy.
-6. When the Agent has supported desktop control and the user's request already
-   authorizes installation, it may open SketchUp 2026 Extension Manager and
-   choose **Install Extension** for the verified RBZ. Otherwise, show the exact
-   verified local file path and guide the user through that action.
-7. Restart SketchUp completely if it accepted the extension.
-8. When this is the only completed path, report `plugin-preview-only`. When the
-   source service was also configured, report the plugin outcome separately;
-   do not claim a live SketchUp connection until a queue handshake succeeds.
-
-Neither current preview path authorizes the Agent to:
-
-- download or install Node.js;
-- modify Claude Desktop or an unknown client's configuration automatically;
-- disable signature enforcement or another security control;
-- report full success when only the RBZ was imported or stdio tools were listed.
-
-## Full one-line installation
-
-Full automatic installation remains disabled until this file is updated with
-both:
-
-1. an exact immutable URL for a release-status `agent-install.v1` manifest; and
-2. the SHA-256 of that manifest published separately.
-
-The Agent must then validate the manifest and follow
-[docs/AGENT_INSTALL.md](docs/AGENT_INSTALL.md). It may install the signed RBZ
-and matching bundled-Node service, safely merge a known client configuration,
-and use the documented manual fallback. It must not use
-`release/agent-install.v1.template.json`, because that file intentionally
-contains placeholders and `release_acceptance=false`.
-
-Until those two final manifest values appear here, the permitted public
-outcomes are the bounded `source-technical-preview` and unsigned
-`plugin-preview-only` flows above. Neither is the final bundled release.
-
-## Required final report
-
-Return a short report containing:
-
-```text
-project: Local MCP for SketchUp
-platform: <detected OS / architecture / SketchUp version>
-channel: source-technical-preview | unsigned-technical-preview
-source_remote: <official origin or not cloned>
-source_commit: <verified HEAD or not cloned>
-node_version: <24.x or unavailable>
-artifact: <downloaded RBZ path or not downloaded>
-sha256_verified: true | false
-plugin_action: installed | manual-step-required | refused | not-attempted
-mcp_stdio_verified: true | false
-mcp_tools: 41 | not-verified
-mcp_config_modified: true | false
-mcp_config_backup: <path or none>
-live_sketchup_verified: true | false
-result: source-technical-preview | plugin-preview-only | partial-preview | unsupported-platform | stopped-safely
-next_manual_step: <exact action or none>
-```
-
-Do not include secrets, authentication data, unrelated configuration contents,
-or private filesystem history in the report.
+GitHub is canonical. Gitee may mirror this document, but the Agent must resolve the canonical formal release above; stale mirror text or missing connectivity is not authorization to install an old unsigned package. If canonical release metadata cannot be reached and no verified release-specific mirror is available, report the connectivity blocker instead of guessing.

@@ -1,65 +1,18 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
-
-const readme = await fs.readFile('README.md', 'utf8');
-const installDoc = await fs.readFile('docs/INSTALL.md', 'utf8');
-const agentEntry = await fs.readFile('INSTALL_FOR_AGENTS.md', 'utf8');
-
-const guideUrls = [
-  'https://gitee.com/dtzhlq/local-mcp-for-sketchup/blob/main/INSTALL_FOR_AGENTS.md',
-  'https://github.com/dtzhlq/local-mcp-for-sketchup/blob/main/INSTALL_FOR_AGENTS.md'
-];
-for (const url of guideUrls) assert.ok(readme.includes(url), `README missing ${url}`);
-
-const linkFreePrompt =
-  '请在码云搜索用户 dtzhlq 的项目 local-mcp-for-sketchup，读取主分支根目录的';
-assert.ok(readme.includes(linkFreePrompt), 'README missing the link-free Agent prompt');
-assert.match(readme, /INSTALL_FOR_AGENTS\.md 并严格执行；找不到就停止，不要猜测或从第三方下载/);
-assert.ok(
-  readme.indexOf(linkFreePrompt) < readme.indexOf(guideUrls[0]),
-  'README must present the link-free prompt before direct URLs'
-);
-
-const releaseIdentity = [
-  'v0.1.0-rc.4.unsigned.1',
-  'ef8d40ac0427c6917d01510dcb54043374921e5e',
-  'local-mcp-for-sketchup-0.1.0-rc.4-nonrelease-unsigned-preview.rbz',
-  '91481',
-  '4d3517ed90654bddc278cf3c099c5c240816b65dcd2e75fe15c8465dd46c398a'
-];
-for (const value of releaseIdentity) {
-  assert.ok(agentEntry.includes(value), `Agent entry missing release value ${value}`);
-}
-
-for (const mirror of ['gitee.com', 'github.com']) {
-  assert.ok(agentEntry.includes(`https://${mirror}/dtzhlq/local-mcp-for-sketchup/releases/download/`));
-}
-
-assert.match(agentEntry, /full_auto_install_available: false/);
-assert.match(agentEntry, /source_preview_install_available: true/);
-assert.match(agentEntry, /release_acceptance: false/);
-assert.match(agentEntry, /plugin-preview-only/);
-assert.match(agentEntry, /source-technical-preview/);
-assert.match(agentEntry, /npm ci --ignore-scripts/);
-assert.match(agentEntry, /npm run source-preview:check/);
-assert.match(agentEntry, /npm run source-preview:configure -- --client/);
-assert.match(agentEntry, /mcp_stdio_verified: true \| false/);
-assert.match(agentEntry, /mcp_config_modified: true \| false/);
-assert.match(agentEntry, /Never lower\s+that policy/);
-assert.doesNotMatch(agentEntry, /example\.invalid/);
-
-assert.match(readme, /无签名技术预览/);
-assert.match(readme, /源码技术预览/);
-assert.match(readme, /仅安装\s*RBZ 时不能声称 MCP 服务已经安装/);
-assert.match(installDoc, /source technical-preview path can install/);
-
-process.stdout.write(`${JSON.stringify({
-  ok: true,
-  entrypoint: 'INSTALL_FOR_AGENTS.md',
-  customer_prompts: guideUrls.length + 1,
-  primary_prompt: 'link-free-gitee-search',
-  mirrors: 2,
-  current_outcomes: ['source-technical-preview', 'plugin-preview-only'],
-  source_preview_install_available: true,
-  full_auto_install_available: false
-}, null, 2)}\n`);
+const read = file => fs.readFile(file, 'utf8');
+const [entry, readme, install] = await Promise.all(['INSTALL_FOR_AGENTS.md', 'README.md', 'docs/INSTALL.md'].map(read));
+// Regression: a stable shared sentence must resolve a release, not the older main implementation.
+assert.ok(readme.includes('INSTALL_FOR_AGENTS.md'));
+for (const host of ['github.com', 'gitee.com']) assert.ok(readme.includes(`https://${host}/dtzhlq/local-mcp-for-sketchup/blob/main/INSTALL_FOR_AGENTS.md`));
+assert.ok(entry.includes('https://api.github.com/repos/dtzhlq/local-mcp-for-sketchup/releases/latest'));
+assert.match(entry, /draft=false.*prerelease=false/);
+assert.ok(entry.includes('SHA256SUMS.txt') && entry.includes('source.commit') && entry.includes('manifest.product.tool_count'));
+assert.match(entry, /Freeze that release tag/);
+assert.match(entry, /Never combine a server, plugin/);
+assert.match(entry, /Do not silently downgrade/);
+assert.match(entry, /replace that entry's old executable\/server paths/);
+assert.match(entry, /tools\/list success alone does not prove live SketchUp/);
+assert.doesNotMatch(entry, /npm run source-preview:|npm ci --ignore-scripts|releases\/download\/v0\.1\./);
+assert.ok(install.includes('Do not install main source'));
+process.stdout.write('PASS: release discovery, immutable binding, upgrade/rollback, mirror boundaries and removal of legacy installation commands\n');
