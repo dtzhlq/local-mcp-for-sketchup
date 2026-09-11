@@ -1,0 +1,3733 @@
+{
+  "version": 2,
+  "id": "fixture-5903c9f030",
+  "profile_id": "fixture-5903c9f030",
+  "coordinate_system": "part_local",
+  "units": "mm",
+  "product": {
+    "type": "benchmark_fixture",
+    "name": "small_layout"
+  },
+  "parts": [
+    {
+      "id": "fixture-5903c9f030-sentinel",
+      "name": "fixture-5903c9f030-sentinel",
+      "type": "detail_geometry",
+      "role": "template_sentinel",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            0,
+            0,
+            0
+          ],
+          "size": [
+            120,
+            160,
+            200
+          ]
+        }
+      },
+      "material": "fixture-5903c9f030-Detail_Painted_Joinery",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive"
+    },
+    {
+      "id": "fixture-5903c9f030-layout-door-jamb-left",
+      "name": "fixture-5903c9f030-layout-door-jamb-left",
+      "type": "detail_geometry",
+      "role": "door_jamb",
+      "material": "fixture-5903c9f030-Detail_Oak",
+      "material_role": "door_jamb",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            0,
+            0,
+            0
+          ],
+          "size": [
+            60,
+            150,
+            2200
+          ]
+        }
+      },
+      "qa": {
+        "recipe_kind": "door"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-door-jamb-right",
+      "name": "fixture-5903c9f030-layout-door-jamb-right",
+      "type": "detail_geometry",
+      "role": "door_jamb",
+      "material": "fixture-5903c9f030-Detail_Oak",
+      "material_role": "door_jamb",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            840,
+            0,
+            0
+          ],
+          "size": [
+            60,
+            150,
+            2200
+          ]
+        }
+      },
+      "qa": {
+        "recipe_kind": "door"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-door-head",
+      "name": "fixture-5903c9f030-layout-door-head",
+      "type": "detail_geometry",
+      "role": "door_head",
+      "material": "fixture-5903c9f030-Detail_Oak",
+      "material_role": "door_head",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            60,
+            0,
+            2140
+          ],
+          "size": [
+            780,
+            150,
+            60
+          ]
+        }
+      },
+      "qa": {
+        "recipe_kind": "door"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-door-jamb-rebate-left",
+      "name": "fixture-5903c9f030-layout-door-jamb-rebate-left",
+      "type": "detail_geometry",
+      "role": "rebate",
+      "material": "fixture-5903c9f030-Detail_Oak_Endgrain",
+      "material_role": "rebate",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            46,
+            -10,
+            0
+          ],
+          "size": [
+            14,
+            36,
+            2140
+          ]
+        }
+      },
+      "qa": {
+        "recipe_kind": "door"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-door-jamb-rebate-right",
+      "name": "fixture-5903c9f030-layout-door-jamb-rebate-right",
+      "type": "detail_geometry",
+      "role": "rebate",
+      "material": "fixture-5903c9f030-Detail_Oak_Endgrain",
+      "material_role": "rebate",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            840,
+            -10,
+            0
+          ],
+          "size": [
+            14,
+            36,
+            2140
+          ]
+        }
+      },
+      "qa": {
+        "recipe_kind": "door"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-door-threshold",
+      "name": "fixture-5903c9f030-layout-door-threshold",
+      "type": "detail_geometry",
+      "role": "threshold",
+      "material": "fixture-5903c9f030-Detail_Aluminium",
+      "material_role": "threshold",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            50,
+            -30,
+            0
+          ],
+          "plane": "yz",
+          "outer": [
+            [
+              0,
+              0
+            ],
+            [
+              210,
+              0
+            ],
+            [
+              210,
+              18
+            ],
+            [
+              160,
+              18
+            ],
+            [
+              155,
+              27
+            ],
+            [
+              35,
+              27
+            ],
+            [
+              30,
+              12
+            ],
+            [
+              0,
+              12
+            ]
+          ],
+          "depth": 800,
+          "holes": []
+        }
+      },
+      "qa": {
+        "recipe_kind": "door"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-door-leaf-stiles-rails",
+      "name": "fixture-5903c9f030-layout-door-leaf-stiles-rails",
+      "type": "detail_geometry",
+      "role": "door_leaf",
+      "material": "fixture-5903c9f030-Detail_Oak",
+      "material_role": "door_leaf",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            0,
+            0,
+            0
+          ],
+          "plane": "xz",
+          "outer": [
+            [
+              0,
+              0
+            ],
+            [
+              772,
+              0
+            ],
+            [
+              772,
+              2106
+            ],
+            [
+              0,
+              2106
+            ]
+          ],
+          "depth": 46,
+          "holes": [
+            [
+              [
+                88,
+                105
+              ],
+              [
+                684,
+                105
+              ],
+              [
+                684,
+                2001
+              ],
+              [
+                88,
+                2001
+              ]
+            ]
+          ]
+        }
+      },
+      "qa": {
+        "recipe_kind": "door"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-door-leaf-inset-panel",
+      "name": "fixture-5903c9f030-layout-door-leaf-inset-panel",
+      "type": "detail_geometry",
+      "role": "raised_panel",
+      "material": "fixture-5903c9f030-Detail_Oak_Endgrain",
+      "material_role": "raised_panel",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            80,
+            11,
+            97
+          ],
+          "plane": "xz",
+          "outer": [
+            [
+              606,
+              0
+            ],
+            [
+              607.8541019662497,
+              0.29366090222907903
+            ],
+            [
+              609.5267115137549,
+              1.1458980337503153
+            ],
+            [
+              610.8541019662497,
+              2.473288486245161
+            ],
+            [
+              611.7063390977709,
+              4.145898033750315
+            ],
+            [
+              612,
+              6
+            ],
+            [
+              612,
+              1906
+            ],
+            [
+              611.7063390977709,
+              1907.8541019662496
+            ],
+            [
+              610.8541019662497,
+              1909.526711513755
+            ],
+            [
+              609.5267115137549,
+              1910.8541019662496
+            ],
+            [
+              607.8541019662497,
+              1911.706339097771
+            ],
+            [
+              606,
+              1912
+            ],
+            [
+              6,
+              1912
+            ],
+            [
+              4.145898033750316,
+              1911.706339097771
+            ],
+            [
+              2.4732884862451616,
+              1910.8541019662496
+            ],
+            [
+              1.1458980337503162,
+              1909.526711513755
+            ],
+            [
+              0.29366090222907903,
+              1907.8541019662496
+            ],
+            [
+              0,
+              1906
+            ],
+            [
+              0,
+              6.000000000000001
+            ],
+            [
+              0.29366090222907903,
+              4.1458980337503135
+            ],
+            [
+              1.1458980337503153,
+              2.4732884862451616
+            ],
+            [
+              2.4732884862451607,
+              1.1458980337503162
+            ],
+            [
+              4.145898033750314,
+              0.29366090222907903
+            ],
+            [
+              5.999999999999999,
+              0
+            ]
+          ],
+          "depth": 22,
+          "holes": []
+        }
+      },
+      "qa": {
+        "recipe_kind": "door"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-door-leaf-horizontal-rail",
+      "name": "fixture-5903c9f030-layout-door-leaf-horizontal-rail",
+      "type": "detail_geometry",
+      "role": "rail",
+      "material": "fixture-5903c9f030-Detail_Oak",
+      "material_role": "rail",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            60,
+            -4,
+            1018
+          ],
+          "size": [
+            652,
+            12,
+            70
+          ]
+        }
+      },
+      "qa": {
+        "recipe_kind": "door"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-door-door-handle-bar",
+      "name": "fixture-5903c9f030-layout-door-door-handle-bar",
+      "type": "detail_geometry",
+      "role": "door-handle-bar",
+      "material": "fixture-5903c9f030-Detail_Brass",
+      "material_role": "door-handle-bar",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "pipe_between_points",
+        "parameters": {
+          "start": [
+            0,
+            -32,
+            0
+          ],
+          "end": [
+            150,
+            -32,
+            0
+          ],
+          "radius": 6,
+          "segments": 32,
+          "smooth": "all"
+        }
+      },
+      "qa": {
+        "recipe_kind": "door"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-door-door-handle-post-l",
+      "name": "fixture-5903c9f030-layout-door-door-handle-post-l",
+      "type": "detail_geometry",
+      "role": "door-handle-post-l",
+      "material": "fixture-5903c9f030-Detail_Brass",
+      "material_role": "door-handle-post-l",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "pipe_between_points",
+        "parameters": {
+          "start": [
+            12,
+            0,
+            0
+          ],
+          "end": [
+            12,
+            -32,
+            0
+          ],
+          "radius": 5,
+          "segments": 32,
+          "smooth": "all"
+        }
+      },
+      "qa": {
+        "recipe_kind": "door"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-door-door-handle-post-r",
+      "name": "fixture-5903c9f030-layout-door-door-handle-post-r",
+      "type": "detail_geometry",
+      "role": "door-handle-post-r",
+      "material": "fixture-5903c9f030-Detail_Brass",
+      "material_role": "door-handle-post-r",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "pipe_between_points",
+        "parameters": {
+          "start": [
+            138,
+            0,
+            0
+          ],
+          "end": [
+            138,
+            -32,
+            0
+          ],
+          "radius": 5,
+          "segments": 32,
+          "smooth": "all"
+        }
+      },
+      "qa": {
+        "recipe_kind": "door"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-door-door-handle-screw-0",
+      "name": "fixture-5903c9f030-layout-door-door-handle-screw-0",
+      "type": "detail_geometry",
+      "role": "fixing",
+      "material": "fixture-5903c9f030-Detail_Brass",
+      "material_role": "fixing",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            12,
+            -2,
+            -4
+          ],
+          "plane": "xz",
+          "outer": [
+            [
+              4,
+              0
+            ],
+            [
+              3.804226065180614,
+              1.2360679774997896
+            ],
+            [
+              3.23606797749979,
+              2.3511410091698925
+            ],
+            [
+              2.3511410091698925,
+              3.23606797749979
+            ],
+            [
+              1.2360679774997898,
+              3.804226065180614
+            ],
+            [
+              2.4492935982947064e-16,
+              4
+            ],
+            [
+              -1.2360679774997894,
+              3.8042260651806146
+            ],
+            [
+              -2.351141009169892,
+              3.23606797749979
+            ],
+            [
+              -3.2360679774997894,
+              2.351141009169893
+            ],
+            [
+              -3.804226065180614,
+              1.23606797749979
+            ],
+            [
+              -4,
+              4.898587196589413e-16
+            ],
+            [
+              -3.804226065180615,
+              -1.2360679774997876
+            ],
+            [
+              -3.23606797749979,
+              -2.351141009169892
+            ],
+            [
+              -2.351141009169893,
+              -3.2360679774997894
+            ],
+            [
+              -1.2360679774997902,
+              -3.804226065180614
+            ],
+            [
+              -7.347880794884119e-16,
+              -4
+            ],
+            [
+              1.236067977499789,
+              -3.8042260651806146
+            ],
+            [
+              2.3511410091698917,
+              -3.2360679774997902
+            ],
+            [
+              3.2360679774997894,
+              -2.3511410091698934
+            ],
+            [
+              3.804226065180614,
+              -1.2360679774997905
+            ]
+          ],
+          "depth": 3,
+          "holes": []
+        }
+      },
+      "qa": {
+        "recipe_kind": "door"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-door-door-handle-screw-1",
+      "name": "fixture-5903c9f030-layout-door-door-handle-screw-1",
+      "type": "detail_geometry",
+      "role": "fixing",
+      "material": "fixture-5903c9f030-Detail_Brass",
+      "material_role": "fixing",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            138,
+            -2,
+            -4
+          ],
+          "plane": "xz",
+          "outer": [
+            [
+              4,
+              0
+            ],
+            [
+              3.804226065180614,
+              1.2360679774997896
+            ],
+            [
+              3.23606797749979,
+              2.3511410091698925
+            ],
+            [
+              2.3511410091698925,
+              3.23606797749979
+            ],
+            [
+              1.2360679774997898,
+              3.804226065180614
+            ],
+            [
+              2.4492935982947064e-16,
+              4
+            ],
+            [
+              -1.2360679774997894,
+              3.8042260651806146
+            ],
+            [
+              -2.351141009169892,
+              3.23606797749979
+            ],
+            [
+              -3.2360679774997894,
+              2.351141009169893
+            ],
+            [
+              -3.804226065180614,
+              1.23606797749979
+            ],
+            [
+              -4,
+              4.898587196589413e-16
+            ],
+            [
+              -3.804226065180615,
+              -1.2360679774997876
+            ],
+            [
+              -3.23606797749979,
+              -2.351141009169892
+            ],
+            [
+              -2.351141009169893,
+              -3.2360679774997894
+            ],
+            [
+              -1.2360679774997902,
+              -3.804226065180614
+            ],
+            [
+              -7.347880794884119e-16,
+              -4
+            ],
+            [
+              1.236067977499789,
+              -3.8042260651806146
+            ],
+            [
+              2.3511410091698917,
+              -3.2360679774997902
+            ],
+            [
+              3.2360679774997894,
+              -2.3511410091698934
+            ],
+            [
+              3.804226065180614,
+              -1.2360679774997905
+            ]
+          ],
+          "depth": 3,
+          "holes": []
+        }
+      },
+      "qa": {
+        "recipe_kind": "door"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-door-door-handle",
+      "name": "fixture-5903c9f030-layout-door-door-handle",
+      "type": "assembly",
+      "role": "door-handle",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "assembly": {
+        "children": [
+          {
+            "part_id": "fixture-5903c9f030-layout-door-door-handle-bar"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-door-door-handle-post-l"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-door-door-handle-post-r"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-door-door-handle-screw-0"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-door-door-handle-screw-1"
+          }
+        ]
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-door-lock-escutcheon",
+      "name": "fixture-5903c9f030-layout-door-lock-escutcheon",
+      "type": "detail_geometry",
+      "role": "lock_escutcheon",
+      "material": "fixture-5903c9f030-Detail_Brass",
+      "material_role": "lock_escutcheon",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            680,
+            -5,
+            930
+          ],
+          "plane": "xz",
+          "outer": [
+            [
+              23,
+              0
+            ],
+            [
+              25.163118960624633,
+              0.3426043859339254
+            ],
+            [
+              27.11449676604731,
+              1.3368810393753678
+            ],
+            [
+              28.663118960624633,
+              2.8855032339526883
+            ],
+            [
+              29.657395614066075,
+              4.836881039375369
+            ],
+            [
+              30,
+              7
+            ],
+            [
+              30,
+              63
+            ],
+            [
+              29.657395614066075,
+              65.16311896062463
+            ],
+            [
+              28.663118960624633,
+              67.11449676604731
+            ],
+            [
+              27.11449676604731,
+              68.66311896062463
+            ],
+            [
+              25.163118960624633,
+              69.65739561406608
+            ],
+            [
+              23,
+              70
+            ],
+            [
+              7,
+              70
+            ],
+            [
+              4.836881039375369,
+              69.65739561406608
+            ],
+            [
+              2.885503233952689,
+              68.66311896062463
+            ],
+            [
+              1.3368810393753687,
+              67.11449676604731
+            ],
+            [
+              0.3426043859339254,
+              65.16311896062463
+            ],
+            [
+              0,
+              63
+            ],
+            [
+              0,
+              7.000000000000001
+            ],
+            [
+              0.3426043859339254,
+              4.836881039375366
+            ],
+            [
+              1.3368810393753678,
+              2.885503233952689
+            ],
+            [
+              2.8855032339526874,
+              1.3368810393753687
+            ],
+            [
+              4.836881039375367,
+              0.3426043859339254
+            ],
+            [
+              6.999999999999999,
+              0
+            ]
+          ],
+          "depth": 5,
+          "holes": [
+            [
+              [
+                20,
+                28
+              ],
+              [
+                19.755282581475768,
+                29.545084971874736
+              ],
+              [
+                19.045084971874736,
+                30.938926261462367
+              ],
+              [
+                17.938926261462367,
+                32.045084971874736
+              ],
+              [
+                16.545084971874736,
+                32.75528258147577
+              ],
+              [
+                15,
+                33
+              ],
+              [
+                13.454915028125264,
+                32.75528258147577
+              ],
+              [
+                12.061073738537635,
+                32.045084971874736
+              ],
+              [
+                10.954915028125264,
+                30.938926261462367
+              ],
+              [
+                10.244717418524232,
+                29.545084971874736
+              ],
+              [
+                10,
+                28
+              ],
+              [
+                10.244717418524232,
+                26.454915028125264
+              ],
+              [
+                10.954915028125264,
+                25.061073738537637
+              ],
+              [
+                12.061073738537633,
+                23.954915028125264
+              ],
+              [
+                13.454915028125262,
+                23.244717418524232
+              ],
+              [
+                14.999999999999998,
+                23
+              ],
+              [
+                16.545084971874736,
+                23.244717418524232
+              ],
+              [
+                17.938926261462363,
+                23.954915028125264
+              ],
+              [
+                19.045084971874736,
+                25.061073738537633
+              ],
+              [
+                19.755282581475768,
+                26.454915028125264
+              ]
+            ]
+          ]
+        }
+      },
+      "qa": {
+        "recipe_kind": "door"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-door-hinge-0",
+      "name": "fixture-5903c9f030-layout-door-hinge-0",
+      "type": "detail_geometry",
+      "role": "hinge-0",
+      "material": "fixture-5903c9f030-Detail_Brass",
+      "material_role": "hinge-0",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "pipe_between_points",
+        "parameters": {
+          "start": [
+            0,
+            0,
+            220
+          ],
+          "end": [
+            0,
+            0,
+            310
+          ],
+          "radius": 7,
+          "segments": 32,
+          "smooth": "all"
+        }
+      },
+      "qa": {
+        "recipe_kind": "door"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-door-hinge-leaf-0",
+      "name": "fixture-5903c9f030-layout-door-hinge-leaf-0",
+      "type": "detail_geometry",
+      "role": "hinge_plate",
+      "material": "fixture-5903c9f030-Detail_Brass",
+      "material_role": "hinge_plate",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            1,
+            -3,
+            235
+          ],
+          "size": [
+            24,
+            3,
+            58
+          ]
+        }
+      },
+      "qa": {
+        "recipe_kind": "door"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-door-hinge-1",
+      "name": "fixture-5903c9f030-layout-door-hinge-1",
+      "type": "detail_geometry",
+      "role": "hinge-1",
+      "material": "fixture-5903c9f030-Detail_Brass",
+      "material_role": "hinge-1",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "pipe_between_points",
+        "parameters": {
+          "start": [
+            0,
+            0,
+            940
+          ],
+          "end": [
+            0,
+            0,
+            1030
+          ],
+          "radius": 7,
+          "segments": 32,
+          "smooth": "all"
+        }
+      },
+      "qa": {
+        "recipe_kind": "door"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-door-hinge-leaf-1",
+      "name": "fixture-5903c9f030-layout-door-hinge-leaf-1",
+      "type": "detail_geometry",
+      "role": "hinge_plate",
+      "material": "fixture-5903c9f030-Detail_Brass",
+      "material_role": "hinge_plate",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            1,
+            -3,
+            955
+          ],
+          "size": [
+            24,
+            3,
+            58
+          ]
+        }
+      },
+      "qa": {
+        "recipe_kind": "door"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-door-hinge-2",
+      "name": "fixture-5903c9f030-layout-door-hinge-2",
+      "type": "detail_geometry",
+      "role": "hinge-2",
+      "material": "fixture-5903c9f030-Detail_Brass",
+      "material_role": "hinge-2",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "pipe_between_points",
+        "parameters": {
+          "start": [
+            0,
+            0,
+            1660
+          ],
+          "end": [
+            0,
+            0,
+            1750
+          ],
+          "radius": 7,
+          "segments": 32,
+          "smooth": "all"
+        }
+      },
+      "qa": {
+        "recipe_kind": "door"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-door-hinge-leaf-2",
+      "name": "fixture-5903c9f030-layout-door-hinge-leaf-2",
+      "type": "detail_geometry",
+      "role": "hinge_plate",
+      "material": "fixture-5903c9f030-Detail_Brass",
+      "material_role": "hinge_plate",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            1,
+            -3,
+            1675
+          ],
+          "size": [
+            24,
+            3,
+            58
+          ]
+        }
+      },
+      "qa": {
+        "recipe_kind": "door"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-door-leaf",
+      "name": "fixture-5903c9f030-layout-door-leaf",
+      "type": "assembly",
+      "role": "leaf",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "assembly": {
+        "children": [
+          {
+            "part_id": "fixture-5903c9f030-layout-door-leaf-stiles-rails"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-door-leaf-inset-panel"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-door-leaf-horizontal-rail"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-door-door-handle",
+            "instance_id": "fixture-5903c9f030-layout-door-handle",
+            "origin": [
+              572,
+              0,
+              1040
+            ]
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-door-lock-escutcheon"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-door-hinge-0"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-door-hinge-leaf-0"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-door-hinge-1"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-door-hinge-leaf-1"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-door-hinge-2"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-door-hinge-leaf-2"
+          }
+        ]
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-door",
+      "name": "fixture-5903c9f030-layout-door",
+      "type": "assembly",
+      "role": "door",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "assembly": {
+        "children": [
+          {
+            "part_id": "fixture-5903c9f030-layout-door-jamb-left"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-door-jamb-right"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-door-head"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-door-jamb-rebate-left"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-door-jamb-rebate-right"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-door-threshold"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-door-leaf",
+            "instance_id": "fixture-5903c9f030-layout-door-leaf-instance",
+            "origin": [
+              64,
+              -4,
+              30
+            ],
+            "transform": {
+              "rotateZ": -30
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-window-outer-frame",
+      "name": "fixture-5903c9f030-layout-window-outer-frame",
+      "type": "detail_geometry",
+      "role": "frame",
+      "material": "fixture-5903c9f030-Detail_Aluminium",
+      "material_role": "frame",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            0,
+            0,
+            0
+          ],
+          "plane": "xz",
+          "outer": [
+            [
+              0,
+              0
+            ],
+            [
+              1200,
+              0
+            ],
+            [
+              1200,
+              1300
+            ],
+            [
+              0,
+              1300
+            ]
+          ],
+          "depth": 140,
+          "holes": [
+            [
+              [
+                55,
+                55
+              ],
+              [
+                1145,
+                55
+              ],
+              [
+                1145,
+                1245
+              ],
+              [
+                55,
+                1245
+              ]
+            ]
+          ]
+        }
+      },
+      "qa": {
+        "recipe_kind": "window"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-window-thermal-break",
+      "name": "fixture-5903c9f030-layout-window-thermal-break",
+      "type": "detail_geometry",
+      "role": "thermal_break",
+      "material": "fixture-5903c9f030-Detail_Gasket",
+      "material_role": "thermal_break",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            18,
+            18,
+            18
+          ],
+          "plane": "xz",
+          "outer": [
+            [
+              0,
+              0
+            ],
+            [
+              1164,
+              0
+            ],
+            [
+              1164,
+              1264
+            ],
+            [
+              0,
+              1264
+            ]
+          ],
+          "depth": 16,
+          "holes": [
+            [
+              [
+                44,
+                44
+              ],
+              [
+                1120,
+                44
+              ],
+              [
+                1120,
+                1220
+              ],
+              [
+                44,
+                1220
+              ]
+            ]
+          ]
+        }
+      },
+      "qa": {
+        "recipe_kind": "window"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-window-outer-rebate",
+      "name": "fixture-5903c9f030-layout-window-outer-rebate",
+      "type": "detail_geometry",
+      "role": "rebate",
+      "material": "fixture-5903c9f030-Detail_Aluminium",
+      "material_role": "rebate",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            8,
+            -10,
+            8
+          ],
+          "plane": "xz",
+          "outer": [
+            [
+              0,
+              0
+            ],
+            [
+              1184,
+              0
+            ],
+            [
+              1184,
+              1284
+            ],
+            [
+              0,
+              1284
+            ]
+          ],
+          "depth": 12,
+          "holes": [
+            [
+              [
+                43,
+                43
+              ],
+              [
+                1141,
+                43
+              ],
+              [
+                1141,
+                1241
+              ],
+              [
+                43,
+                1241
+              ]
+            ]
+          ]
+        }
+      },
+      "qa": {
+        "recipe_kind": "window"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-window-sash-frame",
+      "name": "fixture-5903c9f030-layout-window-sash-frame",
+      "type": "detail_geometry",
+      "role": "sash_frame",
+      "material": "fixture-5903c9f030-Detail_Aluminium",
+      "material_role": "sash_frame",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            0,
+            0,
+            0
+          ],
+          "plane": "xz",
+          "outer": [
+            [
+              0,
+              0
+            ],
+            [
+              536,
+              0
+            ],
+            [
+              536,
+              1172
+            ],
+            [
+              0,
+              1172
+            ]
+          ],
+          "depth": 58,
+          "holes": [
+            [
+              [
+                32,
+                32
+              ],
+              [
+                504,
+                32
+              ],
+              [
+                504,
+                1140
+              ],
+              [
+                32,
+                1140
+              ]
+            ]
+          ]
+        }
+      },
+      "qa": {
+        "recipe_kind": "window"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-window-sash-gasket",
+      "name": "fixture-5903c9f030-layout-window-sash-gasket",
+      "type": "detail_geometry",
+      "role": "glazing_gasket",
+      "material": "fixture-5903c9f030-Detail_Gasket",
+      "material_role": "glazing_gasket",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            24,
+            -3,
+            24
+          ],
+          "plane": "xz",
+          "outer": [
+            [
+              0,
+              0
+            ],
+            [
+              488,
+              0
+            ],
+            [
+              488,
+              1124
+            ],
+            [
+              0,
+              1124
+            ]
+          ],
+          "depth": 4,
+          "holes": [
+            [
+              [
+                7,
+                7
+              ],
+              [
+                481,
+                7
+              ],
+              [
+                481,
+                1117
+              ],
+              [
+                7,
+                1117
+              ]
+            ]
+          ]
+        }
+      },
+      "qa": {
+        "recipe_kind": "window"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-window-glass-outer",
+      "name": "fixture-5903c9f030-layout-window-glass-outer",
+      "type": "detail_geometry",
+      "role": "glazing",
+      "material": "fixture-5903c9f030-Detail_Glass",
+      "material_role": "glazing",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            32,
+            7,
+            32
+          ],
+          "size": [
+            472,
+            6,
+            1108
+          ]
+        }
+      },
+      "qa": {
+        "recipe_kind": "window"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-window-glass-inner",
+      "name": "fixture-5903c9f030-layout-window-glass-inner",
+      "type": "detail_geometry",
+      "role": "glazing",
+      "material": "fixture-5903c9f030-Detail_Glass",
+      "material_role": "glazing",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            32,
+            31,
+            32
+          ],
+          "size": [
+            472,
+            6,
+            1108
+          ]
+        }
+      },
+      "qa": {
+        "recipe_kind": "window"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-window-glazing-spacer",
+      "name": "fixture-5903c9f030-layout-window-glazing-spacer",
+      "type": "detail_geometry",
+      "role": "spacer",
+      "material": "fixture-5903c9f030-Detail_Stainless",
+      "material_role": "spacer",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            32,
+            13,
+            32
+          ],
+          "plane": "xz",
+          "outer": [
+            [
+              0,
+              0
+            ],
+            [
+              472,
+              0
+            ],
+            [
+              472,
+              1108
+            ],
+            [
+              0,
+              1108
+            ]
+          ],
+          "depth": 18,
+          "holes": [
+            [
+              [
+                8,
+                8
+              ],
+              [
+                464,
+                8
+              ],
+              [
+                464,
+                1100
+              ],
+              [
+                8,
+                1100
+              ]
+            ]
+          ]
+        }
+      },
+      "qa": {
+        "recipe_kind": "window"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-window-window-handle-bar",
+      "name": "fixture-5903c9f030-layout-window-window-handle-bar",
+      "type": "detail_geometry",
+      "role": "window-handle-bar",
+      "material": "fixture-5903c9f030-Detail_Stainless",
+      "material_role": "window-handle-bar",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "pipe_between_points",
+        "parameters": {
+          "start": [
+            0,
+            -32,
+            0
+          ],
+          "end": [
+            110,
+            -32,
+            0
+          ],
+          "radius": 6,
+          "segments": 32,
+          "smooth": "all"
+        }
+      },
+      "qa": {
+        "recipe_kind": "window"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-window-window-handle-post-l",
+      "name": "fixture-5903c9f030-layout-window-window-handle-post-l",
+      "type": "detail_geometry",
+      "role": "window-handle-post-l",
+      "material": "fixture-5903c9f030-Detail_Stainless",
+      "material_role": "window-handle-post-l",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "pipe_between_points",
+        "parameters": {
+          "start": [
+            12,
+            0,
+            0
+          ],
+          "end": [
+            12,
+            -32,
+            0
+          ],
+          "radius": 5,
+          "segments": 32,
+          "smooth": "all"
+        }
+      },
+      "qa": {
+        "recipe_kind": "window"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-window-window-handle-post-r",
+      "name": "fixture-5903c9f030-layout-window-window-handle-post-r",
+      "type": "detail_geometry",
+      "role": "window-handle-post-r",
+      "material": "fixture-5903c9f030-Detail_Stainless",
+      "material_role": "window-handle-post-r",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "pipe_between_points",
+        "parameters": {
+          "start": [
+            98,
+            0,
+            0
+          ],
+          "end": [
+            98,
+            -32,
+            0
+          ],
+          "radius": 5,
+          "segments": 32,
+          "smooth": "all"
+        }
+      },
+      "qa": {
+        "recipe_kind": "window"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-window-window-handle-screw-0",
+      "name": "fixture-5903c9f030-layout-window-window-handle-screw-0",
+      "type": "detail_geometry",
+      "role": "fixing",
+      "material": "fixture-5903c9f030-Detail_Stainless",
+      "material_role": "fixing",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            12,
+            -2,
+            -4
+          ],
+          "plane": "xz",
+          "outer": [
+            [
+              4,
+              0
+            ],
+            [
+              3.804226065180614,
+              1.2360679774997896
+            ],
+            [
+              3.23606797749979,
+              2.3511410091698925
+            ],
+            [
+              2.3511410091698925,
+              3.23606797749979
+            ],
+            [
+              1.2360679774997898,
+              3.804226065180614
+            ],
+            [
+              2.4492935982947064e-16,
+              4
+            ],
+            [
+              -1.2360679774997894,
+              3.8042260651806146
+            ],
+            [
+              -2.351141009169892,
+              3.23606797749979
+            ],
+            [
+              -3.2360679774997894,
+              2.351141009169893
+            ],
+            [
+              -3.804226065180614,
+              1.23606797749979
+            ],
+            [
+              -4,
+              4.898587196589413e-16
+            ],
+            [
+              -3.804226065180615,
+              -1.2360679774997876
+            ],
+            [
+              -3.23606797749979,
+              -2.351141009169892
+            ],
+            [
+              -2.351141009169893,
+              -3.2360679774997894
+            ],
+            [
+              -1.2360679774997902,
+              -3.804226065180614
+            ],
+            [
+              -7.347880794884119e-16,
+              -4
+            ],
+            [
+              1.236067977499789,
+              -3.8042260651806146
+            ],
+            [
+              2.3511410091698917,
+              -3.2360679774997902
+            ],
+            [
+              3.2360679774997894,
+              -2.3511410091698934
+            ],
+            [
+              3.804226065180614,
+              -1.2360679774997905
+            ]
+          ],
+          "depth": 3,
+          "holes": []
+        }
+      },
+      "qa": {
+        "recipe_kind": "window"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-window-window-handle-screw-1",
+      "name": "fixture-5903c9f030-layout-window-window-handle-screw-1",
+      "type": "detail_geometry",
+      "role": "fixing",
+      "material": "fixture-5903c9f030-Detail_Stainless",
+      "material_role": "fixing",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            98,
+            -2,
+            -4
+          ],
+          "plane": "xz",
+          "outer": [
+            [
+              4,
+              0
+            ],
+            [
+              3.804226065180614,
+              1.2360679774997896
+            ],
+            [
+              3.23606797749979,
+              2.3511410091698925
+            ],
+            [
+              2.3511410091698925,
+              3.23606797749979
+            ],
+            [
+              1.2360679774997898,
+              3.804226065180614
+            ],
+            [
+              2.4492935982947064e-16,
+              4
+            ],
+            [
+              -1.2360679774997894,
+              3.8042260651806146
+            ],
+            [
+              -2.351141009169892,
+              3.23606797749979
+            ],
+            [
+              -3.2360679774997894,
+              2.351141009169893
+            ],
+            [
+              -3.804226065180614,
+              1.23606797749979
+            ],
+            [
+              -4,
+              4.898587196589413e-16
+            ],
+            [
+              -3.804226065180615,
+              -1.2360679774997876
+            ],
+            [
+              -3.23606797749979,
+              -2.351141009169892
+            ],
+            [
+              -2.351141009169893,
+              -3.2360679774997894
+            ],
+            [
+              -1.2360679774997902,
+              -3.804226065180614
+            ],
+            [
+              -7.347880794884119e-16,
+              -4
+            ],
+            [
+              1.236067977499789,
+              -3.8042260651806146
+            ],
+            [
+              2.3511410091698917,
+              -3.2360679774997902
+            ],
+            [
+              3.2360679774997894,
+              -2.3511410091698934
+            ],
+            [
+              3.804226065180614,
+              -1.2360679774997905
+            ]
+          ],
+          "depth": 3,
+          "holes": []
+        }
+      },
+      "qa": {
+        "recipe_kind": "window"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-window-window-handle",
+      "name": "fixture-5903c9f030-layout-window-window-handle",
+      "type": "assembly",
+      "role": "window-handle",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "assembly": {
+        "children": [
+          {
+            "part_id": "fixture-5903c9f030-layout-window-window-handle-bar"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-window-window-handle-post-l"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-window-window-handle-post-r"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-window-window-handle-screw-0"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-window-window-handle-screw-1"
+          }
+        ]
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-window-sash",
+      "name": "fixture-5903c9f030-layout-window-sash",
+      "type": "assembly",
+      "role": "sash",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "assembly": {
+        "children": [
+          {
+            "part_id": "fixture-5903c9f030-layout-window-sash-frame"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-window-sash-gasket"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-window-glass-outer"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-window-glass-inner"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-window-glazing-spacer"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-window-window-handle",
+            "instance_id": "fixture-5903c9f030-layout-window-sash-handle",
+            "origin": [
+              481,
+              -8,
+              585
+            ],
+            "transform": {
+              "rotateZ": 0
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-window-central-mullion",
+      "name": "fixture-5903c9f030-layout-window-central-mullion",
+      "type": "detail_geometry",
+      "role": "mullion",
+      "material": "fixture-5903c9f030-Detail_Aluminium",
+      "material_role": "mullion",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            582,
+            0,
+            55
+          ],
+          "size": [
+            36,
+            140,
+            1190
+          ]
+        }
+      },
+      "qa": {
+        "recipe_kind": "window"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-window-projecting-sill",
+      "name": "fixture-5903c9f030-layout-window-projecting-sill",
+      "type": "detail_geometry",
+      "role": "sill",
+      "material": "fixture-5903c9f030-Detail_Stone",
+      "material_role": "sill",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            -35,
+            -120,
+            -25
+          ],
+          "plane": "yz",
+          "outer": [
+            [
+              0,
+              0
+            ],
+            [
+              270,
+              0
+            ],
+            [
+              270,
+              28
+            ],
+            [
+              42,
+              20
+            ],
+            [
+              36,
+              8
+            ],
+            [
+              0,
+              8
+            ]
+          ],
+          "depth": 1270,
+          "holes": []
+        }
+      },
+      "qa": {
+        "recipe_kind": "window"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-window",
+      "name": "fixture-5903c9f030-layout-window",
+      "type": "assembly",
+      "role": "window",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "assembly": {
+        "children": [
+          {
+            "part_id": "fixture-5903c9f030-layout-window-outer-frame"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-window-thermal-break"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-window-outer-rebate"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-window-sash",
+            "instance_id": "fixture-5903c9f030-layout-window-left-sash",
+            "origin": [
+              61,
+              -4,
+              64
+            ]
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-window-sash",
+            "instance_id": "fixture-5903c9f030-layout-window-right-sash",
+            "origin": [
+              603,
+              -4,
+              64
+            ]
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-window-central-mullion"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-window-projecting-sill"
+          }
+        ]
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-cabinets-side-left",
+      "name": "fixture-5903c9f030-layout-cabinets-side-left",
+      "type": "detail_geometry",
+      "role": "carcass_side",
+      "material": "fixture-5903c9f030-Detail_Painted_Joinery",
+      "material_role": "carcass_side",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            0,
+            0,
+            100
+          ],
+          "size": [
+            18,
+            600,
+            800
+          ]
+        }
+      },
+      "qa": {
+        "recipe_kind": "cabinet"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-cabinets-side-right",
+      "name": "fixture-5903c9f030-layout-cabinets-side-right",
+      "type": "detail_geometry",
+      "role": "carcass_side",
+      "material": "fixture-5903c9f030-Detail_Painted_Joinery",
+      "material_role": "carcass_side",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            582,
+            0,
+            100
+          ],
+          "size": [
+            18,
+            600,
+            800
+          ]
+        }
+      },
+      "qa": {
+        "recipe_kind": "cabinet"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-cabinets-bottom",
+      "name": "fixture-5903c9f030-layout-cabinets-bottom",
+      "type": "detail_geometry",
+      "role": "carcass_bottom",
+      "material": "fixture-5903c9f030-Detail_Painted_Joinery",
+      "material_role": "carcass_bottom",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            18,
+            0,
+            100
+          ],
+          "size": [
+            564,
+            600,
+            18
+          ]
+        }
+      },
+      "qa": {
+        "recipe_kind": "cabinet"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-cabinets-back",
+      "name": "fixture-5903c9f030-layout-cabinets-back",
+      "type": "detail_geometry",
+      "role": "carcass_back",
+      "material": "fixture-5903c9f030-Detail_Painted_Joinery",
+      "material_role": "carcass_back",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            18,
+            591,
+            118
+          ],
+          "size": [
+            564,
+            9,
+            782
+          ]
+        }
+      },
+      "qa": {
+        "recipe_kind": "cabinet"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-cabinets-top-stretcher-front",
+      "name": "fixture-5903c9f030-layout-cabinets-top-stretcher-front",
+      "type": "detail_geometry",
+      "role": "stretcher",
+      "material": "fixture-5903c9f030-Detail_Painted_Joinery",
+      "material_role": "stretcher",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            18,
+            0,
+            860
+          ],
+          "size": [
+            564,
+            65,
+            40
+          ]
+        }
+      },
+      "qa": {
+        "recipe_kind": "cabinet"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-cabinets-top-stretcher-back",
+      "name": "fixture-5903c9f030-layout-cabinets-top-stretcher-back",
+      "type": "detail_geometry",
+      "role": "stretcher",
+      "material": "fixture-5903c9f030-Detail_Painted_Joinery",
+      "material_role": "stretcher",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            18,
+            535,
+            860
+          ],
+          "size": [
+            564,
+            65,
+            40
+          ]
+        }
+      },
+      "qa": {
+        "recipe_kind": "cabinet"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-cabinets-toe-kick",
+      "name": "fixture-5903c9f030-layout-cabinets-toe-kick",
+      "type": "detail_geometry",
+      "role": "toe_kick",
+      "material": "fixture-5903c9f030-Detail_Gasket",
+      "material_role": "toe_kick",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            20,
+            70,
+            10
+          ],
+          "size": [
+            560,
+            18,
+            90
+          ]
+        }
+      },
+      "qa": {
+        "recipe_kind": "cabinet"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-cabinets-leg-45-80",
+      "name": "fixture-5903c9f030-layout-cabinets-leg-45-80",
+      "type": "detail_geometry",
+      "role": "adjustable_foot",
+      "material": "fixture-5903c9f030-Detail_Gasket",
+      "material_role": "adjustable_foot",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "cylinder",
+        "parameters": {
+          "origin": [
+            45,
+            80,
+            0
+          ],
+          "radius": 18,
+          "height": 100,
+          "segments": 24
+        }
+      },
+      "qa": {
+        "recipe_kind": "cabinet"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-cabinets-leg-45-530",
+      "name": "fixture-5903c9f030-layout-cabinets-leg-45-530",
+      "type": "detail_geometry",
+      "role": "adjustable_foot",
+      "material": "fixture-5903c9f030-Detail_Gasket",
+      "material_role": "adjustable_foot",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "cylinder",
+        "parameters": {
+          "origin": [
+            45,
+            530,
+            0
+          ],
+          "radius": 18,
+          "height": 100,
+          "segments": 24
+        }
+      },
+      "qa": {
+        "recipe_kind": "cabinet"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-cabinets-leg-555-80",
+      "name": "fixture-5903c9f030-layout-cabinets-leg-555-80",
+      "type": "detail_geometry",
+      "role": "adjustable_foot",
+      "material": "fixture-5903c9f030-Detail_Gasket",
+      "material_role": "adjustable_foot",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "cylinder",
+        "parameters": {
+          "origin": [
+            555,
+            80,
+            0
+          ],
+          "radius": 18,
+          "height": 100,
+          "segments": 24
+        }
+      },
+      "qa": {
+        "recipe_kind": "cabinet"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-cabinets-leg-555-530",
+      "name": "fixture-5903c9f030-layout-cabinets-leg-555-530",
+      "type": "detail_geometry",
+      "role": "adjustable_foot",
+      "material": "fixture-5903c9f030-Detail_Gasket",
+      "material_role": "adjustable_foot",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "cylinder",
+        "parameters": {
+          "origin": [
+            555,
+            530,
+            0
+          ],
+          "radius": 18,
+          "height": 100,
+          "segments": 24
+        }
+      },
+      "qa": {
+        "recipe_kind": "cabinet"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-cabinets-drawer-front",
+      "name": "fixture-5903c9f030-layout-cabinets-drawer-front",
+      "type": "detail_geometry",
+      "role": "drawer_front",
+      "material": "fixture-5903c9f030-Detail_Oak",
+      "material_role": "drawer_front",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            3,
+            -21,
+            0
+          ],
+          "plane": "xz",
+          "outer": [
+            [
+              591,
+              0
+            ],
+            [
+              591.9270509831248,
+              0.14683045111453952
+            ],
+            [
+              592.7633557568774,
+              0.5729490168751576
+            ],
+            [
+              593.4270509831248,
+              1.2366442431225806
+            ],
+            [
+              593.8531695488855,
+              2.0729490168751576
+            ],
+            [
+              594,
+              3
+            ],
+            [
+              594,
+              257.6666666666667
+            ],
+            [
+              593.8531695488855,
+              258.59371764979153
+            ],
+            [
+              593.4270509831248,
+              259.43002242354413
+            ],
+            [
+              592.7633557568774,
+              260.09371764979153
+            ],
+            [
+              591.9270509831248,
+              260.5198362155521
+            ],
+            [
+              591,
+              260.6666666666667
+            ],
+            [
+              3,
+              260.6666666666667
+            ],
+            [
+              2.072949016875158,
+              260.5198362155521
+            ],
+            [
+              1.2366442431225808,
+              260.09371764979153
+            ],
+            [
+              0.5729490168751581,
+              259.43002242354413
+            ],
+            [
+              0.14683045111453952,
+              258.59371764979153
+            ],
+            [
+              0,
+              257.6666666666667
+            ],
+            [
+              0,
+              3.0000000000000004
+            ],
+            [
+              0.14683045111453952,
+              2.0729490168751568
+            ],
+            [
+              0.5729490168751576,
+              1.2366442431225808
+            ],
+            [
+              1.2366442431225804,
+              0.5729490168751581
+            ],
+            [
+              2.072949016875157,
+              0.14683045111453952
+            ],
+            [
+              2.9999999999999996,
+              0
+            ]
+          ],
+          "depth": 21,
+          "holes": []
+        }
+      },
+      "qa": {
+        "recipe_kind": "cabinet"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-cabinets-drawer-bottom",
+      "name": "fixture-5903c9f030-layout-cabinets-drawer-bottom",
+      "type": "detail_geometry",
+      "role": "drawer_bottom",
+      "material": "fixture-5903c9f030-Detail_Painted_Joinery",
+      "material_role": "drawer_bottom",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            32,
+            15,
+            10
+          ],
+          "size": [
+            536,
+            510,
+            12
+          ]
+        }
+      },
+      "qa": {
+        "recipe_kind": "cabinet"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-cabinets-drawer-left-side",
+      "name": "fixture-5903c9f030-layout-cabinets-drawer-left-side",
+      "type": "detail_geometry",
+      "role": "drawer_side",
+      "material": "fixture-5903c9f030-Detail_Painted_Joinery",
+      "material_role": "drawer_side",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            32,
+            15,
+            22
+          ],
+          "size": [
+            12,
+            510,
+            208.66666666666669
+          ]
+        }
+      },
+      "qa": {
+        "recipe_kind": "cabinet"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-cabinets-drawer-right-side",
+      "name": "fixture-5903c9f030-layout-cabinets-drawer-right-side",
+      "type": "detail_geometry",
+      "role": "drawer_side",
+      "material": "fixture-5903c9f030-Detail_Painted_Joinery",
+      "material_role": "drawer_side",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            556,
+            15,
+            22
+          ],
+          "size": [
+            12,
+            510,
+            208.66666666666669
+          ]
+        }
+      },
+      "qa": {
+        "recipe_kind": "cabinet"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-cabinets-drawer-back",
+      "name": "fixture-5903c9f030-layout-cabinets-drawer-back",
+      "type": "detail_geometry",
+      "role": "drawer_back",
+      "material": "fixture-5903c9f030-Detail_Painted_Joinery",
+      "material_role": "drawer_back",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            44,
+            513,
+            22
+          ],
+          "size": [
+            512,
+            12,
+            208.66666666666669
+          ]
+        }
+      },
+      "qa": {
+        "recipe_kind": "cabinet"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-cabinets-drawer-handle-bar",
+      "name": "fixture-5903c9f030-layout-cabinets-drawer-handle-bar",
+      "type": "detail_geometry",
+      "role": "drawer-handle-bar",
+      "material": "fixture-5903c9f030-Detail_Stainless",
+      "material_role": "drawer-handle-bar",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "pipe_between_points",
+        "parameters": {
+          "start": [
+            0,
+            -32,
+            0
+          ],
+          "end": [
+            190,
+            -32,
+            0
+          ],
+          "radius": 6,
+          "segments": 32,
+          "smooth": "all"
+        }
+      },
+      "qa": {
+        "recipe_kind": "cabinet"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-cabinets-drawer-handle-post-l",
+      "name": "fixture-5903c9f030-layout-cabinets-drawer-handle-post-l",
+      "type": "detail_geometry",
+      "role": "drawer-handle-post-l",
+      "material": "fixture-5903c9f030-Detail_Stainless",
+      "material_role": "drawer-handle-post-l",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "pipe_between_points",
+        "parameters": {
+          "start": [
+            12,
+            0,
+            0
+          ],
+          "end": [
+            12,
+            -32,
+            0
+          ],
+          "radius": 5,
+          "segments": 32,
+          "smooth": "all"
+        }
+      },
+      "qa": {
+        "recipe_kind": "cabinet"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-cabinets-drawer-handle-post-r",
+      "name": "fixture-5903c9f030-layout-cabinets-drawer-handle-post-r",
+      "type": "detail_geometry",
+      "role": "drawer-handle-post-r",
+      "material": "fixture-5903c9f030-Detail_Stainless",
+      "material_role": "drawer-handle-post-r",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "pipe_between_points",
+        "parameters": {
+          "start": [
+            178,
+            0,
+            0
+          ],
+          "end": [
+            178,
+            -32,
+            0
+          ],
+          "radius": 5,
+          "segments": 32,
+          "smooth": "all"
+        }
+      },
+      "qa": {
+        "recipe_kind": "cabinet"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-cabinets-drawer-handle-screw-0",
+      "name": "fixture-5903c9f030-layout-cabinets-drawer-handle-screw-0",
+      "type": "detail_geometry",
+      "role": "fixing",
+      "material": "fixture-5903c9f030-Detail_Stainless",
+      "material_role": "fixing",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            12,
+            -2,
+            -4
+          ],
+          "plane": "xz",
+          "outer": [
+            [
+              4,
+              0
+            ],
+            [
+              3.804226065180614,
+              1.2360679774997896
+            ],
+            [
+              3.23606797749979,
+              2.3511410091698925
+            ],
+            [
+              2.3511410091698925,
+              3.23606797749979
+            ],
+            [
+              1.2360679774997898,
+              3.804226065180614
+            ],
+            [
+              2.4492935982947064e-16,
+              4
+            ],
+            [
+              -1.2360679774997894,
+              3.8042260651806146
+            ],
+            [
+              -2.351141009169892,
+              3.23606797749979
+            ],
+            [
+              -3.2360679774997894,
+              2.351141009169893
+            ],
+            [
+              -3.804226065180614,
+              1.23606797749979
+            ],
+            [
+              -4,
+              4.898587196589413e-16
+            ],
+            [
+              -3.804226065180615,
+              -1.2360679774997876
+            ],
+            [
+              -3.23606797749979,
+              -2.351141009169892
+            ],
+            [
+              -2.351141009169893,
+              -3.2360679774997894
+            ],
+            [
+              -1.2360679774997902,
+              -3.804226065180614
+            ],
+            [
+              -7.347880794884119e-16,
+              -4
+            ],
+            [
+              1.236067977499789,
+              -3.8042260651806146
+            ],
+            [
+              2.3511410091698917,
+              -3.2360679774997902
+            ],
+            [
+              3.2360679774997894,
+              -2.3511410091698934
+            ],
+            [
+              3.804226065180614,
+              -1.2360679774997905
+            ]
+          ],
+          "depth": 3,
+          "holes": []
+        }
+      },
+      "qa": {
+        "recipe_kind": "cabinet"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-cabinets-drawer-handle-screw-1",
+      "name": "fixture-5903c9f030-layout-cabinets-drawer-handle-screw-1",
+      "type": "detail_geometry",
+      "role": "fixing",
+      "material": "fixture-5903c9f030-Detail_Stainless",
+      "material_role": "fixing",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            178,
+            -2,
+            -4
+          ],
+          "plane": "xz",
+          "outer": [
+            [
+              4,
+              0
+            ],
+            [
+              3.804226065180614,
+              1.2360679774997896
+            ],
+            [
+              3.23606797749979,
+              2.3511410091698925
+            ],
+            [
+              2.3511410091698925,
+              3.23606797749979
+            ],
+            [
+              1.2360679774997898,
+              3.804226065180614
+            ],
+            [
+              2.4492935982947064e-16,
+              4
+            ],
+            [
+              -1.2360679774997894,
+              3.8042260651806146
+            ],
+            [
+              -2.351141009169892,
+              3.23606797749979
+            ],
+            [
+              -3.2360679774997894,
+              2.351141009169893
+            ],
+            [
+              -3.804226065180614,
+              1.23606797749979
+            ],
+            [
+              -4,
+              4.898587196589413e-16
+            ],
+            [
+              -3.804226065180615,
+              -1.2360679774997876
+            ],
+            [
+              -3.23606797749979,
+              -2.351141009169892
+            ],
+            [
+              -2.351141009169893,
+              -3.2360679774997894
+            ],
+            [
+              -1.2360679774997902,
+              -3.804226065180614
+            ],
+            [
+              -7.347880794884119e-16,
+              -4
+            ],
+            [
+              1.236067977499789,
+              -3.8042260651806146
+            ],
+            [
+              2.3511410091698917,
+              -3.2360679774997902
+            ],
+            [
+              3.2360679774997894,
+              -2.3511410091698934
+            ],
+            [
+              3.804226065180614,
+              -1.2360679774997905
+            ]
+          ],
+          "depth": 3,
+          "holes": []
+        }
+      },
+      "qa": {
+        "recipe_kind": "cabinet"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-cabinets-drawer-handle",
+      "name": "fixture-5903c9f030-layout-cabinets-drawer-handle",
+      "type": "assembly",
+      "role": "drawer-handle",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "assembly": {
+        "children": [
+          {
+            "part_id": "fixture-5903c9f030-layout-cabinets-drawer-handle-bar"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-cabinets-drawer-handle-post-l"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-cabinets-drawer-handle-post-r"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-cabinets-drawer-handle-screw-0"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-cabinets-drawer-handle-screw-1"
+          }
+        ]
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-cabinets-drawer",
+      "name": "fixture-5903c9f030-layout-cabinets-drawer",
+      "type": "assembly",
+      "role": "drawer",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "assembly": {
+        "children": [
+          {
+            "part_id": "fixture-5903c9f030-layout-cabinets-drawer-front"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-cabinets-drawer-bottom"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-cabinets-drawer-left-side"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-cabinets-drawer-right-side"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-cabinets-drawer-back"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-cabinets-drawer-handle",
+            "instance_id": "fixture-5903c9f030-layout-cabinets-drawer-handle-instance",
+            "origin": [
+              205,
+              -21,
+              223.66666666666669
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-cabinets-runner-0-left",
+      "name": "fixture-5903c9f030-layout-cabinets-runner-0-left",
+      "type": "detail_geometry",
+      "role": "drawer_runner",
+      "material": "fixture-5903c9f030-Detail_Stainless",
+      "material_role": "drawer_runner",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            20,
+            12,
+            130
+          ],
+          "plane": "xz",
+          "outer": [
+            [
+              0,
+              0
+            ],
+            [
+              8,
+              0
+            ],
+            [
+              8,
+              25
+            ],
+            [
+              6,
+              25
+            ],
+            [
+              6,
+              3
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              2,
+              25
+            ],
+            [
+              0,
+              25
+            ]
+          ],
+          "depth": 540,
+          "holes": []
+        }
+      },
+      "qa": {
+        "recipe_kind": "cabinet"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-cabinets-runner-0-right",
+      "name": "fixture-5903c9f030-layout-cabinets-runner-0-right",
+      "type": "detail_geometry",
+      "role": "drawer_runner",
+      "material": "fixture-5903c9f030-Detail_Stainless",
+      "material_role": "drawer_runner",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            572,
+            12,
+            130
+          ],
+          "plane": "xz",
+          "outer": [
+            [
+              0,
+              0
+            ],
+            [
+              8,
+              0
+            ],
+            [
+              8,
+              25
+            ],
+            [
+              6,
+              25
+            ],
+            [
+              6,
+              3
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              2,
+              25
+            ],
+            [
+              0,
+              25
+            ]
+          ],
+          "depth": 540,
+          "holes": []
+        }
+      },
+      "qa": {
+        "recipe_kind": "cabinet"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-cabinets-runner-1-left",
+      "name": "fixture-5903c9f030-layout-cabinets-runner-1-left",
+      "type": "detail_geometry",
+      "role": "drawer_runner",
+      "material": "fixture-5903c9f030-Detail_Stainless",
+      "material_role": "drawer_runner",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            20,
+            12,
+            393.6666666666667
+          ],
+          "plane": "xz",
+          "outer": [
+            [
+              0,
+              0
+            ],
+            [
+              8,
+              0
+            ],
+            [
+              8,
+              25
+            ],
+            [
+              6,
+              25
+            ],
+            [
+              6,
+              3
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              2,
+              25
+            ],
+            [
+              0,
+              25
+            ]
+          ],
+          "depth": 540,
+          "holes": []
+        }
+      },
+      "qa": {
+        "recipe_kind": "cabinet"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-cabinets-runner-1-right",
+      "name": "fixture-5903c9f030-layout-cabinets-runner-1-right",
+      "type": "detail_geometry",
+      "role": "drawer_runner",
+      "material": "fixture-5903c9f030-Detail_Stainless",
+      "material_role": "drawer_runner",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            572,
+            12,
+            393.6666666666667
+          ],
+          "plane": "xz",
+          "outer": [
+            [
+              0,
+              0
+            ],
+            [
+              8,
+              0
+            ],
+            [
+              8,
+              25
+            ],
+            [
+              6,
+              25
+            ],
+            [
+              6,
+              3
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              2,
+              25
+            ],
+            [
+              0,
+              25
+            ]
+          ],
+          "depth": 540,
+          "holes": []
+        }
+      },
+      "qa": {
+        "recipe_kind": "cabinet"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-cabinets-runner-2-left",
+      "name": "fixture-5903c9f030-layout-cabinets-runner-2-left",
+      "type": "detail_geometry",
+      "role": "drawer_runner",
+      "material": "fixture-5903c9f030-Detail_Stainless",
+      "material_role": "drawer_runner",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            20,
+            12,
+            657.3333333333334
+          ],
+          "plane": "xz",
+          "outer": [
+            [
+              0,
+              0
+            ],
+            [
+              8,
+              0
+            ],
+            [
+              8,
+              25
+            ],
+            [
+              6,
+              25
+            ],
+            [
+              6,
+              3
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              2,
+              25
+            ],
+            [
+              0,
+              25
+            ]
+          ],
+          "depth": 540,
+          "holes": []
+        }
+      },
+      "qa": {
+        "recipe_kind": "cabinet"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-cabinets-runner-2-right",
+      "name": "fixture-5903c9f030-layout-cabinets-runner-2-right",
+      "type": "detail_geometry",
+      "role": "drawer_runner",
+      "material": "fixture-5903c9f030-Detail_Stainless",
+      "material_role": "drawer_runner",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "shape": {
+        "primitive": "profile_extrude",
+        "parameters": {
+          "origin": [
+            572,
+            12,
+            657.3333333333334
+          ],
+          "plane": "xz",
+          "outer": [
+            [
+              0,
+              0
+            ],
+            [
+              8,
+              0
+            ],
+            [
+              8,
+              25
+            ],
+            [
+              6,
+              25
+            ],
+            [
+              6,
+              3
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              2,
+              25
+            ],
+            [
+              0,
+              25
+            ]
+          ],
+          "depth": 540,
+          "holes": []
+        }
+      },
+      "qa": {
+        "recipe_kind": "cabinet"
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-cabinets",
+      "name": "fixture-5903c9f030-layout-cabinets",
+      "type": "assembly",
+      "role": "cabinet",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive",
+      "assembly": {
+        "children": [
+          {
+            "part_id": "fixture-5903c9f030-layout-cabinets-side-left"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-cabinets-side-right"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-cabinets-bottom"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-cabinets-back"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-cabinets-top-stretcher-front"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-cabinets-top-stretcher-back"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-cabinets-toe-kick"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-cabinets-leg-45-80"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-cabinets-leg-45-530"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-cabinets-leg-555-80"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-cabinets-leg-555-530"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-cabinets-drawer",
+            "instance_id": "fixture-5903c9f030-layout-cabinets-drawer-1",
+            "origin": [
+              0,
+              0,
+              103
+            ]
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-cabinets-runner-0-left"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-cabinets-runner-0-right"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-cabinets-drawer",
+            "instance_id": "fixture-5903c9f030-layout-cabinets-drawer-2",
+            "origin": [
+              0,
+              0,
+              366.6666666666667
+            ]
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-cabinets-runner-1-left"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-cabinets-runner-1-right"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-cabinets-drawer",
+            "instance_id": "fixture-5903c9f030-layout-cabinets-drawer-3",
+            "origin": [
+              0,
+              0,
+              630.3333333333334
+            ]
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-cabinets-runner-2-left"
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-cabinets-runner-2-right"
+          }
+        ]
+      }
+    },
+    {
+      "id": "fixture-5903c9f030-layout-root",
+      "name": "fixture-5903c9f030-layout-root",
+      "type": "assembly",
+      "role": "fixture_assembly",
+      "assembly": {
+        "children": [
+          {
+            "part_id": "fixture-5903c9f030-layout-door",
+            "instance_id": "layout-door",
+            "origin": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-window",
+            "instance_id": "layout-window",
+            "origin": [
+              1200,
+              0,
+              900
+            ]
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-cabinets",
+            "instance_id": "layout-cabinets",
+            "origin": [
+              0,
+              -1800,
+              0
+            ]
+          },
+          {
+            "part_id": "fixture-5903c9f030-layout-cabinets",
+            "instance_id": "layout-cabinet-2",
+            "origin": [
+              1100,
+              -1800,
+              0
+            ]
+          }
+        ]
+      },
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive"
+    },
+    {
+      "id": "fixture-5903c9f030-obstacle",
+      "name": "fixture-5903c9f030-obstacle",
+      "type": "detail_geometry",
+      "role": "unrelated_obstacle",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            0,
+            0,
+            0
+          ],
+          "size": [
+            500,
+            500,
+            700
+          ]
+        }
+      },
+      "material": "fixture-5903c9f030-Detail_Painted_Joinery",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive"
+    }
+  ],
+  "roots": [
+    {
+      "part_id": "fixture-5903c9f030-sentinel",
+      "instance_id": "accessibility-template-sentinel",
+      "origin": [
+        -8000,
+        -8000,
+        0
+      ]
+    },
+    {
+      "part_id": "fixture-5903c9f030-layout-root",
+      "instance_id": "L",
+      "origin": [
+        -4000,
+        0,
+        0
+      ]
+    },
+    {
+      "part_id": "fixture-5903c9f030-obstacle",
+      "instance_id": "Obstacle",
+      "origin": [
+        0,
+        5000,
+        0
+      ]
+    }
+  ]
+}

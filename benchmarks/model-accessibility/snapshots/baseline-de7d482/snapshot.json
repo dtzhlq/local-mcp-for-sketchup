@@ -1,0 +1,16 @@
+{
+  "schema_version": "model-accessibility-tools-snapshot.v1",
+  "source_revision": "de7d482863ca4cc52dba40141f69d3d5ee295967",
+  "source_path": "src/mcp-server.mjs",
+  "source_sha256": "88276e1a34ebbdf157ca9fc57d0eb2548e4a26ff91ec5da17150086338b5ec2d",
+  "mcp_description_sha256": "1deb560bcff1b76984f350037f834215cbcb2d78454795e08199dec762c032b1",
+  "tool_names": [
+    "start_agent_task",
+    "resume_agent_task",
+    "submit_agent_task_input",
+    "read_agent_artifact"
+  ],
+  "source_executed": false,
+  "native_runtime_called": false,
+  "source_checkout_modified": false
+}

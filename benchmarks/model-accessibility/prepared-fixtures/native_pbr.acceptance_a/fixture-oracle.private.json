@@ -1,0 +1,92 @@
+{
+  "schema_version": "model-accessibility-fixture-oracle.v1",
+  "case_id": "native_pbr.acceptance_a",
+  "visibility": "collector_and_independent_assessor_only",
+  "identities": {
+    "accessibility-template-sentinel": {
+      "source": "new_authored_template_sentinel",
+      "preserve": true,
+      "baseline": {
+        "id": "accessibility-template-sentinel",
+        "create": true,
+        "origin_mm": [
+          -8000,
+          -8000,
+          0
+        ],
+        "size_mm": [
+          120,
+          160,
+          200
+        ]
+      }
+    },
+    "P": {
+      "definition_name": "PG2_fixture-c8627f5ff5-panel",
+      "root_part_id": "fixture-c8627f5ff5-panel",
+      "original_origin_mm": [
+        0,
+        0,
+        900
+      ],
+      "original_size_mm": [
+        1800,
+        900,
+        30
+      ],
+      "original_material": "fixture-c8627f5ff5-Detail_Painted_Joinery",
+      "native_identity": "awaiting_native_pid_capture",
+      "original_definition_sha256": "ebc393731b31305c963a5c06642611aa6278314e229f42ec95e5754ab9e0897e"
+    }
+  },
+  "occurrence_mapping": [
+    {
+      "part_id": "fixture-c8627f5ff5-sentinel",
+      "instance_path": [
+        "accessibility-template-sentinel"
+      ],
+      "definition_path": [],
+      "role": "template_sentinel",
+      "material": "fixture-c8627f5ff5-Detail_Painted_Joinery",
+      "primitive": "box",
+      "local_geometry": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "size": [
+          120,
+          160,
+          200
+        ]
+      }
+    },
+    {
+      "part_id": "fixture-c8627f5ff5-panel",
+      "instance_path": [
+        "P"
+      ],
+      "definition_path": [],
+      "role": "material_test_panel",
+      "material": "fixture-c8627f5ff5-Detail_Painted_Joinery",
+      "primitive": "box",
+      "local_geometry": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "size": [
+          1800,
+          900,
+          30
+        ]
+      }
+    }
+  ],
+  "source_type": "authored_constructive_reference",
+  "native_measurements": null,
+  "baseline_dimensions_only": true,
+  "note": "Do not inject this mapping, original dimensions, defect construction or evaluator instructions into model messages. Capture native persistent IDs and measured baseline after preparing the separate document."
+}

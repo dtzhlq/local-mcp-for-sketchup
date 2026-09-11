@@ -1,0 +1,21 @@
+{
+  "schema_version": "model-accessibility-config.v1",
+  "source_revision": null,
+  "source_sha256": null,
+  "sketchup_version": null,
+  "plugin_version": null,
+  "runtime_capabilities_sha256": null,
+  "mcp_server_snapshot_sha256": null,
+  "fixture_snapshots": {},
+  "model_slots": [
+    { "tier": "low_cost", "provider": null, "model_id": null, "model_version": null, "configuration": null },
+    { "tier": "midrange", "provider": null, "model_id": null, "model_version": null, "configuration": null },
+    { "tier": "strong_reference", "provider": null, "model_id": null, "model_version": null, "configuration": null }
+  ],
+  "paths": {
+    "baseline": { "entry_tools": ["start_agent_task", "resume_agent_task", "submit_agent_task_input", "read_agent_artifact"], "description_source_revision": "de7d482", "forbidden_intents": ["discover", "preflight_model"], "forbidden_input_keys": ["task"], "mcp_description_sha256": null },
+    "optimized": { "entry_tools": ["start_agent_task", "resume_agent_task", "submit_agent_task_input", "read_agent_artifact"], "description_source_revision": "working-tree-snapshot", "mcp_description_sha256": null }
+  },
+  "resources": { "currency": null, "model_cost_cap": null, "cost_authorized": false, "live_window": null, "max_open_sketchup_models": 1 },
+  "protocol": { "new_context_each_run": true, "repository_access": false, "hidden_answers": false, "human_tutorial": false, "same_fixture_per_pair": true, "maximum_repairs_per_part": 3 }
+}

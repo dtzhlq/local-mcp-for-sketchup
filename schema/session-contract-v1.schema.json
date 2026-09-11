@@ -81,6 +81,12 @@
               "capability_version": { "const": "0.1.0-rc.3-capabilities.1" },
               "manifest_version": { "const": "2026-07-agent-contract-rc3.1" }
             }
+          },
+          {
+            "properties": {
+              "capability_version": { "const": "0.1.0-rc.3-detail-alpha.1" },
+              "manifest_version": { "const": "2026-09-detail-modeling-alpha.1" }
+            }
           }
         ]
       }

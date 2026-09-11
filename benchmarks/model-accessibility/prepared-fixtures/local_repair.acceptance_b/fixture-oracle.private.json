@@ -1,0 +1,4604 @@
+{
+  "schema_version": "model-accessibility-fixture-oracle.v1",
+  "case_id": "local_repair.acceptance_b",
+  "visibility": "collector_and_independent_assessor_only",
+  "identities": {
+    "accessibility-template-sentinel": {
+      "source": "new_authored_template_sentinel",
+      "preserve": true,
+      "baseline": {
+        "id": "accessibility-template-sentinel",
+        "create": true,
+        "origin_mm": [
+          -8000,
+          -8000,
+          0
+        ],
+        "size_mm": [
+          120,
+          160,
+          200
+        ]
+      }
+    },
+    "A": {
+      "definition_name": "PG2_fixture-9236b59706-unchanged-cabinet",
+      "root_part_id": "fixture-9236b59706-unchanged-cabinet",
+      "kind": "cabinet",
+      "original_parameters_mm": {
+        "width": 600,
+        "depth": 600,
+        "height": 900
+      },
+      "original_origin_mm": [
+        0,
+        0,
+        0
+      ],
+      "original_rotation_z_deg": 0,
+      "source_type": "project_authored_fixture",
+      "native_identity": "awaiting_native_pid_capture",
+      "original_definition_sha256": "1163d8ee6fa369a93d4be3b1afc67087b2f228b3e128325883fc4019d4520c65"
+    },
+    "B": {
+      "definition_name": "PG2_fixture-9236b59706-defective-cabinet",
+      "root_part_id": "fixture-9236b59706-defective-cabinet",
+      "kind": "cabinet",
+      "original_parameters_mm": {
+        "width": 600,
+        "depth": 600,
+        "height": 900
+      },
+      "original_origin_mm": [
+        1600,
+        0,
+        0
+      ],
+      "original_rotation_z_deg": 0,
+      "source_type": "project_authored_fixture",
+      "native_identity": "awaiting_native_pid_capture",
+      "defect": {
+        "kind": "toe_kick_front_intrusion",
+        "leaf_id": "fixture-9236b59706-defective-cabinet-toe-kick",
+        "origin_before_defect_mm": [
+          20,
+          70,
+          10
+        ],
+        "fixture_origin_mm": [
+          20,
+          -51,
+          10
+        ],
+        "drawer_front_plane_y_mm": -21,
+        "measured_by_construction_intrusion_mm": 30,
+        "native_measurement_pending": true
+      },
+      "manual_edit": {
+        "scope": "instance_attributes_and_tag",
+        "dictionary": "BenchmarkManualEdit",
+        "key": "note",
+        "value": "preserve-fixture-9236b59706-B",
+        "must_preserve": true,
+        "represents": "authored manual-edit fixture, not a claim that a person modified a project model"
+      },
+      "original_definition_sha256": "dd3972be938ad9c14086eab9f1b7101d618eace6579cc15987e25b1dee236769"
+    }
+  },
+  "occurrence_mapping": [
+    {
+      "part_id": "fixture-9236b59706-sentinel",
+      "instance_path": [
+        "accessibility-template-sentinel"
+      ],
+      "definition_path": [],
+      "role": "template_sentinel",
+      "material": "fixture-9236b59706-Detail_Painted_Joinery",
+      "primitive": "box",
+      "local_geometry": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "size": [
+          120,
+          160,
+          200
+        ]
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-unchanged-cabinet-side-left",
+      "instance_path": [
+        "A",
+        "fixture-9236b59706-unchanged-cabinet-side-left"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-unchanged-cabinet"
+      ],
+      "role": "carcass_side",
+      "material": "fixture-9236b59706-Detail_Painted_Joinery",
+      "primitive": "box",
+      "local_geometry": {
+        "origin": [
+          0,
+          0,
+          100
+        ],
+        "size": [
+          18,
+          600,
+          800
+        ]
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-unchanged-cabinet-side-right",
+      "instance_path": [
+        "A",
+        "fixture-9236b59706-unchanged-cabinet-side-right"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-unchanged-cabinet"
+      ],
+      "role": "carcass_side",
+      "material": "fixture-9236b59706-Detail_Painted_Joinery",
+      "primitive": "box",
+      "local_geometry": {
+        "origin": [
+          582,
+          0,
+          100
+        ],
+        "size": [
+          18,
+          600,
+          800
+        ]
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-unchanged-cabinet-bottom",
+      "instance_path": [
+        "A",
+        "fixture-9236b59706-unchanged-cabinet-bottom"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-unchanged-cabinet"
+      ],
+      "role": "carcass_bottom",
+      "material": "fixture-9236b59706-Detail_Painted_Joinery",
+      "primitive": "box",
+      "local_geometry": {
+        "origin": [
+          18,
+          0,
+          100
+        ],
+        "size": [
+          564,
+          600,
+          18
+        ]
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-unchanged-cabinet-back",
+      "instance_path": [
+        "A",
+        "fixture-9236b59706-unchanged-cabinet-back"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-unchanged-cabinet"
+      ],
+      "role": "carcass_back",
+      "material": "fixture-9236b59706-Detail_Painted_Joinery",
+      "primitive": "box",
+      "local_geometry": {
+        "origin": [
+          18,
+          591,
+          118
+        ],
+        "size": [
+          564,
+          9,
+          782
+        ]
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-unchanged-cabinet-top-stretcher-front",
+      "instance_path": [
+        "A",
+        "fixture-9236b59706-unchanged-cabinet-top-stretcher-front"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-unchanged-cabinet"
+      ],
+      "role": "stretcher",
+      "material": "fixture-9236b59706-Detail_Painted_Joinery",
+      "primitive": "box",
+      "local_geometry": {
+        "origin": [
+          18,
+          0,
+          860
+        ],
+        "size": [
+          564,
+          65,
+          40
+        ]
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-unchanged-cabinet-top-stretcher-back",
+      "instance_path": [
+        "A",
+        "fixture-9236b59706-unchanged-cabinet-top-stretcher-back"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-unchanged-cabinet"
+      ],
+      "role": "stretcher",
+      "material": "fixture-9236b59706-Detail_Painted_Joinery",
+      "primitive": "box",
+      "local_geometry": {
+        "origin": [
+          18,
+          535,
+          860
+        ],
+        "size": [
+          564,
+          65,
+          40
+        ]
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-unchanged-cabinet-toe-kick",
+      "instance_path": [
+        "A",
+        "fixture-9236b59706-unchanged-cabinet-toe-kick"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-unchanged-cabinet"
+      ],
+      "role": "toe_kick",
+      "material": "fixture-9236b59706-Detail_Gasket",
+      "primitive": "box",
+      "local_geometry": {
+        "origin": [
+          20,
+          70,
+          10
+        ],
+        "size": [
+          560,
+          18,
+          90
+        ]
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-unchanged-cabinet-leg-45-80",
+      "instance_path": [
+        "A",
+        "fixture-9236b59706-unchanged-cabinet-leg-45-80"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-unchanged-cabinet"
+      ],
+      "role": "adjustable_foot",
+      "material": "fixture-9236b59706-Detail_Gasket",
+      "primitive": "cylinder",
+      "local_geometry": {
+        "origin": [
+          45,
+          80,
+          0
+        ],
+        "radius": 18,
+        "height": 100,
+        "segments": 24
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-unchanged-cabinet-leg-45-530",
+      "instance_path": [
+        "A",
+        "fixture-9236b59706-unchanged-cabinet-leg-45-530"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-unchanged-cabinet"
+      ],
+      "role": "adjustable_foot",
+      "material": "fixture-9236b59706-Detail_Gasket",
+      "primitive": "cylinder",
+      "local_geometry": {
+        "origin": [
+          45,
+          530,
+          0
+        ],
+        "radius": 18,
+        "height": 100,
+        "segments": 24
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-unchanged-cabinet-leg-555-80",
+      "instance_path": [
+        "A",
+        "fixture-9236b59706-unchanged-cabinet-leg-555-80"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-unchanged-cabinet"
+      ],
+      "role": "adjustable_foot",
+      "material": "fixture-9236b59706-Detail_Gasket",
+      "primitive": "cylinder",
+      "local_geometry": {
+        "origin": [
+          555,
+          80,
+          0
+        ],
+        "radius": 18,
+        "height": 100,
+        "segments": 24
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-unchanged-cabinet-leg-555-530",
+      "instance_path": [
+        "A",
+        "fixture-9236b59706-unchanged-cabinet-leg-555-530"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-unchanged-cabinet"
+      ],
+      "role": "adjustable_foot",
+      "material": "fixture-9236b59706-Detail_Gasket",
+      "primitive": "cylinder",
+      "local_geometry": {
+        "origin": [
+          555,
+          530,
+          0
+        ],
+        "radius": 18,
+        "height": 100,
+        "segments": 24
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-unchanged-cabinet-drawer-front",
+      "instance_path": [
+        "A",
+        "fixture-9236b59706-unchanged-cabinet-drawer-1",
+        "fixture-9236b59706-unchanged-cabinet-drawer-front"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-unchanged-cabinet",
+        "PG2_fixture-9236b59706-unchanged-cabinet-drawer"
+      ],
+      "role": "drawer_front",
+      "material": "fixture-9236b59706-Detail_Oak",
+      "primitive": "profile_extrude",
+      "local_geometry": {
+        "origin": [
+          3,
+          -21,
+          0
+        ],
+        "plane": "xz",
+        "outer": [
+          [
+            591,
+            0
+          ],
+          [
+            591.9270509831248,
+            0.14683045111453952
+          ],
+          [
+            592.7633557568774,
+            0.5729490168751576
+          ],
+          [
+            593.4270509831248,
+            1.2366442431225806
+          ],
+          [
+            593.8531695488855,
+            2.0729490168751576
+          ],
+          [
+            594,
+            3
+          ],
+          [
+            594,
+            257.6666666666667
+          ],
+          [
+            593.8531695488855,
+            258.59371764979153
+          ],
+          [
+            593.4270509831248,
+            259.43002242354413
+          ],
+          [
+            592.7633557568774,
+            260.09371764979153
+          ],
+          [
+            591.9270509831248,
+            260.5198362155521
+          ],
+          [
+            591,
+            260.6666666666667
+          ],
+          [
+            3,
+            260.6666666666667
+          ],
+          [
+            2.072949016875158,
+            260.5198362155521
+          ],
+          [
+            1.2366442431225808,
+            260.09371764979153
+          ],
+          [
+            0.5729490168751581,
+            259.43002242354413
+          ],
+          [
+            0.14683045111453952,
+            258.59371764979153
+          ],
+          [
+            0,
+            257.6666666666667
+          ],
+          [
+            0,
+            3.0000000000000004
+          ],
+          [
+            0.14683045111453952,
+            2.0729490168751568
+          ],
+          [
+            0.5729490168751576,
+            1.2366442431225808
+          ],
+          [
+            1.2366442431225804,
+            0.5729490168751581
+          ],
+          [
+            2.072949016875157,
+            0.14683045111453952
+          ],
+          [
+            2.9999999999999996,
+            0
+          ]
+        ],
+        "depth": 21,
+        "holes": []
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-unchanged-cabinet-drawer-bottom",
+      "instance_path": [
+        "A",
+        "fixture-9236b59706-unchanged-cabinet-drawer-1",
+        "fixture-9236b59706-unchanged-cabinet-drawer-bottom"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-unchanged-cabinet",
+        "PG2_fixture-9236b59706-unchanged-cabinet-drawer"
+      ],
+      "role": "drawer_bottom",
+      "material": "fixture-9236b59706-Detail_Painted_Joinery",
+      "primitive": "box",
+      "local_geometry": {
+        "origin": [
+          32,
+          15,
+          10
+        ],
+        "size": [
+          536,
+          510,
+          12
+        ]
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-unchanged-cabinet-drawer-left-side",
+      "instance_path": [
+        "A",
+        "fixture-9236b59706-unchanged-cabinet-drawer-1",
+        "fixture-9236b59706-unchanged-cabinet-drawer-left-side"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-unchanged-cabinet",
+        "PG2_fixture-9236b59706-unchanged-cabinet-drawer"
+      ],
+      "role": "drawer_side",
+      "material": "fixture-9236b59706-Detail_Painted_Joinery",
+      "primitive": "box",
+      "local_geometry": {
+        "origin": [
+          32,
+          15,
+          22
+        ],
+        "size": [
+          12,
+          510,
+          208.66666666666669
+        ]
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-unchanged-cabinet-drawer-right-side",
+      "instance_path": [
+        "A",
+        "fixture-9236b59706-unchanged-cabinet-drawer-1",
+        "fixture-9236b59706-unchanged-cabinet-drawer-right-side"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-unchanged-cabinet",
+        "PG2_fixture-9236b59706-unchanged-cabinet-drawer"
+      ],
+      "role": "drawer_side",
+      "material": "fixture-9236b59706-Detail_Painted_Joinery",
+      "primitive": "box",
+      "local_geometry": {
+        "origin": [
+          556,
+          15,
+          22
+        ],
+        "size": [
+          12,
+          510,
+          208.66666666666669
+        ]
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-unchanged-cabinet-drawer-back",
+      "instance_path": [
+        "A",
+        "fixture-9236b59706-unchanged-cabinet-drawer-1",
+        "fixture-9236b59706-unchanged-cabinet-drawer-back"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-unchanged-cabinet",
+        "PG2_fixture-9236b59706-unchanged-cabinet-drawer"
+      ],
+      "role": "drawer_back",
+      "material": "fixture-9236b59706-Detail_Painted_Joinery",
+      "primitive": "box",
+      "local_geometry": {
+        "origin": [
+          44,
+          513,
+          22
+        ],
+        "size": [
+          512,
+          12,
+          208.66666666666669
+        ]
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-unchanged-cabinet-drawer-handle-bar",
+      "instance_path": [
+        "A",
+        "fixture-9236b59706-unchanged-cabinet-drawer-1",
+        "fixture-9236b59706-unchanged-cabinet-drawer-handle-instance",
+        "fixture-9236b59706-unchanged-cabinet-drawer-handle-bar"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-unchanged-cabinet",
+        "PG2_fixture-9236b59706-unchanged-cabinet-drawer",
+        "PG2_fixture-9236b59706-unchanged-cabinet-drawer-handle"
+      ],
+      "role": "drawer-handle-bar",
+      "material": "fixture-9236b59706-Detail_Stainless",
+      "primitive": "pipe_between_points",
+      "local_geometry": {
+        "start": [
+          0,
+          -32,
+          0
+        ],
+        "end": [
+          190,
+          -32,
+          0
+        ],
+        "radius": 6,
+        "segments": 32,
+        "smooth": "all"
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-unchanged-cabinet-drawer-handle-post-l",
+      "instance_path": [
+        "A",
+        "fixture-9236b59706-unchanged-cabinet-drawer-1",
+        "fixture-9236b59706-unchanged-cabinet-drawer-handle-instance",
+        "fixture-9236b59706-unchanged-cabinet-drawer-handle-post-l"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-unchanged-cabinet",
+        "PG2_fixture-9236b59706-unchanged-cabinet-drawer",
+        "PG2_fixture-9236b59706-unchanged-cabinet-drawer-handle"
+      ],
+      "role": "drawer-handle-post-l",
+      "material": "fixture-9236b59706-Detail_Stainless",
+      "primitive": "pipe_between_points",
+      "local_geometry": {
+        "start": [
+          12,
+          0,
+          0
+        ],
+        "end": [
+          12,
+          -32,
+          0
+        ],
+        "radius": 5,
+        "segments": 32,
+        "smooth": "all"
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-unchanged-cabinet-drawer-handle-post-r",
+      "instance_path": [
+        "A",
+        "fixture-9236b59706-unchanged-cabinet-drawer-1",
+        "fixture-9236b59706-unchanged-cabinet-drawer-handle-instance",
+        "fixture-9236b59706-unchanged-cabinet-drawer-handle-post-r"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-unchanged-cabinet",
+        "PG2_fixture-9236b59706-unchanged-cabinet-drawer",
+        "PG2_fixture-9236b59706-unchanged-cabinet-drawer-handle"
+      ],
+      "role": "drawer-handle-post-r",
+      "material": "fixture-9236b59706-Detail_Stainless",
+      "primitive": "pipe_between_points",
+      "local_geometry": {
+        "start": [
+          178,
+          0,
+          0
+        ],
+        "end": [
+          178,
+          -32,
+          0
+        ],
+        "radius": 5,
+        "segments": 32,
+        "smooth": "all"
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-unchanged-cabinet-drawer-handle-screw-0",
+      "instance_path": [
+        "A",
+        "fixture-9236b59706-unchanged-cabinet-drawer-1",
+        "fixture-9236b59706-unchanged-cabinet-drawer-handle-instance",
+        "fixture-9236b59706-unchanged-cabinet-drawer-handle-screw-0"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-unchanged-cabinet",
+        "PG2_fixture-9236b59706-unchanged-cabinet-drawer",
+        "PG2_fixture-9236b59706-unchanged-cabinet-drawer-handle"
+      ],
+      "role": "fixing",
+      "material": "fixture-9236b59706-Detail_Stainless",
+      "primitive": "profile_extrude",
+      "local_geometry": {
+        "origin": [
+          12,
+          -2,
+          -4
+        ],
+        "plane": "xz",
+        "outer": [
+          [
+            4,
+            0
+          ],
+          [
+            3.804226065180614,
+            1.2360679774997896
+          ],
+          [
+            3.23606797749979,
+            2.3511410091698925
+          ],
+          [
+            2.3511410091698925,
+            3.23606797749979
+          ],
+          [
+            1.2360679774997898,
+            3.804226065180614
+          ],
+          [
+            2.4492935982947064e-16,
+            4
+          ],
+          [
+            -1.2360679774997894,
+            3.8042260651806146
+          ],
+          [
+            -2.351141009169892,
+            3.23606797749979
+          ],
+          [
+            -3.2360679774997894,
+            2.351141009169893
+          ],
+          [
+            -3.804226065180614,
+            1.23606797749979
+          ],
+          [
+            -4,
+            4.898587196589413e-16
+          ],
+          [
+            -3.804226065180615,
+            -1.2360679774997876
+          ],
+          [
+            -3.23606797749979,
+            -2.351141009169892
+          ],
+          [
+            -2.351141009169893,
+            -3.2360679774997894
+          ],
+          [
+            -1.2360679774997902,
+            -3.804226065180614
+          ],
+          [
+            -7.347880794884119e-16,
+            -4
+          ],
+          [
+            1.236067977499789,
+            -3.8042260651806146
+          ],
+          [
+            2.3511410091698917,
+            -3.2360679774997902
+          ],
+          [
+            3.2360679774997894,
+            -2.3511410091698934
+          ],
+          [
+            3.804226065180614,
+            -1.2360679774997905
+          ]
+        ],
+        "depth": 3,
+        "holes": []
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-unchanged-cabinet-drawer-handle-screw-1",
+      "instance_path": [
+        "A",
+        "fixture-9236b59706-unchanged-cabinet-drawer-1",
+        "fixture-9236b59706-unchanged-cabinet-drawer-handle-instance",
+        "fixture-9236b59706-unchanged-cabinet-drawer-handle-screw-1"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-unchanged-cabinet",
+        "PG2_fixture-9236b59706-unchanged-cabinet-drawer",
+        "PG2_fixture-9236b59706-unchanged-cabinet-drawer-handle"
+      ],
+      "role": "fixing",
+      "material": "fixture-9236b59706-Detail_Stainless",
+      "primitive": "profile_extrude",
+      "local_geometry": {
+        "origin": [
+          178,
+          -2,
+          -4
+        ],
+        "plane": "xz",
+        "outer": [
+          [
+            4,
+            0
+          ],
+          [
+            3.804226065180614,
+            1.2360679774997896
+          ],
+          [
+            3.23606797749979,
+            2.3511410091698925
+          ],
+          [
+            2.3511410091698925,
+            3.23606797749979
+          ],
+          [
+            1.2360679774997898,
+            3.804226065180614
+          ],
+          [
+            2.4492935982947064e-16,
+            4
+          ],
+          [
+            -1.2360679774997894,
+            3.8042260651806146
+          ],
+          [
+            -2.351141009169892,
+            3.23606797749979
+          ],
+          [
+            -3.2360679774997894,
+            2.351141009169893
+          ],
+          [
+            -3.804226065180614,
+            1.23606797749979
+          ],
+          [
+            -4,
+            4.898587196589413e-16
+          ],
+          [
+            -3.804226065180615,
+            -1.2360679774997876
+          ],
+          [
+            -3.23606797749979,
+            -2.351141009169892
+          ],
+          [
+            -2.351141009169893,
+            -3.2360679774997894
+          ],
+          [
+            -1.2360679774997902,
+            -3.804226065180614
+          ],
+          [
+            -7.347880794884119e-16,
+            -4
+          ],
+          [
+            1.236067977499789,
+            -3.8042260651806146
+          ],
+          [
+            2.3511410091698917,
+            -3.2360679774997902
+          ],
+          [
+            3.2360679774997894,
+            -2.3511410091698934
+          ],
+          [
+            3.804226065180614,
+            -1.2360679774997905
+          ]
+        ],
+        "depth": 3,
+        "holes": []
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-unchanged-cabinet-runner-0-left",
+      "instance_path": [
+        "A",
+        "fixture-9236b59706-unchanged-cabinet-runner-0-left"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-unchanged-cabinet"
+      ],
+      "role": "drawer_runner",
+      "material": "fixture-9236b59706-Detail_Stainless",
+      "primitive": "profile_extrude",
+      "local_geometry": {
+        "origin": [
+          20,
+          12,
+          130
+        ],
+        "plane": "xz",
+        "outer": [
+          [
+            0,
+            0
+          ],
+          [
+            8,
+            0
+          ],
+          [
+            8,
+            25
+          ],
+          [
+            6,
+            25
+          ],
+          [
+            6,
+            3
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            25
+          ],
+          [
+            0,
+            25
+          ]
+        ],
+        "depth": 540,
+        "holes": []
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-unchanged-cabinet-runner-0-right",
+      "instance_path": [
+        "A",
+        "fixture-9236b59706-unchanged-cabinet-runner-0-right"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-unchanged-cabinet"
+      ],
+      "role": "drawer_runner",
+      "material": "fixture-9236b59706-Detail_Stainless",
+      "primitive": "profile_extrude",
+      "local_geometry": {
+        "origin": [
+          572,
+          12,
+          130
+        ],
+        "plane": "xz",
+        "outer": [
+          [
+            0,
+            0
+          ],
+          [
+            8,
+            0
+          ],
+          [
+            8,
+            25
+          ],
+          [
+            6,
+            25
+          ],
+          [
+            6,
+            3
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            25
+          ],
+          [
+            0,
+            25
+          ]
+        ],
+        "depth": 540,
+        "holes": []
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-unchanged-cabinet-drawer-front",
+      "instance_path": [
+        "A",
+        "fixture-9236b59706-unchanged-cabinet-drawer-2",
+        "fixture-9236b59706-unchanged-cabinet-drawer-front"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-unchanged-cabinet",
+        "PG2_fixture-9236b59706-unchanged-cabinet-drawer"
+      ],
+      "role": "drawer_front",
+      "material": "fixture-9236b59706-Detail_Oak",
+      "primitive": "profile_extrude",
+      "local_geometry": {
+        "origin": [
+          3,
+          -21,
+          0
+        ],
+        "plane": "xz",
+        "outer": [
+          [
+            591,
+            0
+          ],
+          [
+            591.9270509831248,
+            0.14683045111453952
+          ],
+          [
+            592.7633557568774,
+            0.5729490168751576
+          ],
+          [
+            593.4270509831248,
+            1.2366442431225806
+          ],
+          [
+            593.8531695488855,
+            2.0729490168751576
+          ],
+          [
+            594,
+            3
+          ],
+          [
+            594,
+            257.6666666666667
+          ],
+          [
+            593.8531695488855,
+            258.59371764979153
+          ],
+          [
+            593.4270509831248,
+            259.43002242354413
+          ],
+          [
+            592.7633557568774,
+            260.09371764979153
+          ],
+          [
+            591.9270509831248,
+            260.5198362155521
+          ],
+          [
+            591,
+            260.6666666666667
+          ],
+          [
+            3,
+            260.6666666666667
+          ],
+          [
+            2.072949016875158,
+            260.5198362155521
+          ],
+          [
+            1.2366442431225808,
+            260.09371764979153
+          ],
+          [
+            0.5729490168751581,
+            259.43002242354413
+          ],
+          [
+            0.14683045111453952,
+            258.59371764979153
+          ],
+          [
+            0,
+            257.6666666666667
+          ],
+          [
+            0,
+            3.0000000000000004
+          ],
+          [
+            0.14683045111453952,
+            2.0729490168751568
+          ],
+          [
+            0.5729490168751576,
+            1.2366442431225808
+          ],
+          [
+            1.2366442431225804,
+            0.5729490168751581
+          ],
+          [
+            2.072949016875157,
+            0.14683045111453952
+          ],
+          [
+            2.9999999999999996,
+            0
+          ]
+        ],
+        "depth": 21,
+        "holes": []
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-unchanged-cabinet-drawer-bottom",
+      "instance_path": [
+        "A",
+        "fixture-9236b59706-unchanged-cabinet-drawer-2",
+        "fixture-9236b59706-unchanged-cabinet-drawer-bottom"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-unchanged-cabinet",
+        "PG2_fixture-9236b59706-unchanged-cabinet-drawer"
+      ],
+      "role": "drawer_bottom",
+      "material": "fixture-9236b59706-Detail_Painted_Joinery",
+      "primitive": "box",
+      "local_geometry": {
+        "origin": [
+          32,
+          15,
+          10
+        ],
+        "size": [
+          536,
+          510,
+          12
+        ]
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-unchanged-cabinet-drawer-left-side",
+      "instance_path": [
+        "A",
+        "fixture-9236b59706-unchanged-cabinet-drawer-2",
+        "fixture-9236b59706-unchanged-cabinet-drawer-left-side"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-unchanged-cabinet",
+        "PG2_fixture-9236b59706-unchanged-cabinet-drawer"
+      ],
+      "role": "drawer_side",
+      "material": "fixture-9236b59706-Detail_Painted_Joinery",
+      "primitive": "box",
+      "local_geometry": {
+        "origin": [
+          32,
+          15,
+          22
+        ],
+        "size": [
+          12,
+          510,
+          208.66666666666669
+        ]
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-unchanged-cabinet-drawer-right-side",
+      "instance_path": [
+        "A",
+        "fixture-9236b59706-unchanged-cabinet-drawer-2",
+        "fixture-9236b59706-unchanged-cabinet-drawer-right-side"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-unchanged-cabinet",
+        "PG2_fixture-9236b59706-unchanged-cabinet-drawer"
+      ],
+      "role": "drawer_side",
+      "material": "fixture-9236b59706-Detail_Painted_Joinery",
+      "primitive": "box",
+      "local_geometry": {
+        "origin": [
+          556,
+          15,
+          22
+        ],
+        "size": [
+          12,
+          510,
+          208.66666666666669
+        ]
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-unchanged-cabinet-drawer-back",
+      "instance_path": [
+        "A",
+        "fixture-9236b59706-unchanged-cabinet-drawer-2",
+        "fixture-9236b59706-unchanged-cabinet-drawer-back"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-unchanged-cabinet",
+        "PG2_fixture-9236b59706-unchanged-cabinet-drawer"
+      ],
+      "role": "drawer_back",
+      "material": "fixture-9236b59706-Detail_Painted_Joinery",
+      "primitive": "box",
+      "local_geometry": {
+        "origin": [
+          44,
+          513,
+          22
+        ],
+        "size": [
+          512,
+          12,
+          208.66666666666669
+        ]
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-unchanged-cabinet-drawer-handle-bar",
+      "instance_path": [
+        "A",
+        "fixture-9236b59706-unchanged-cabinet-drawer-2",
+        "fixture-9236b59706-unchanged-cabinet-drawer-handle-instance",
+        "fixture-9236b59706-unchanged-cabinet-drawer-handle-bar"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-unchanged-cabinet",
+        "PG2_fixture-9236b59706-unchanged-cabinet-drawer",
+        "PG2_fixture-9236b59706-unchanged-cabinet-drawer-handle"
+      ],
+      "role": "drawer-handle-bar",
+      "material": "fixture-9236b59706-Detail_Stainless",
+      "primitive": "pipe_between_points",
+      "local_geometry": {
+        "start": [
+          0,
+          -32,
+          0
+        ],
+        "end": [
+          190,
+          -32,
+          0
+        ],
+        "radius": 6,
+        "segments": 32,
+        "smooth": "all"
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-unchanged-cabinet-drawer-handle-post-l",
+      "instance_path": [
+        "A",
+        "fixture-9236b59706-unchanged-cabinet-drawer-2",
+        "fixture-9236b59706-unchanged-cabinet-drawer-handle-instance",
+        "fixture-9236b59706-unchanged-cabinet-drawer-handle-post-l"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-unchanged-cabinet",
+        "PG2_fixture-9236b59706-unchanged-cabinet-drawer",
+        "PG2_fixture-9236b59706-unchanged-cabinet-drawer-handle"
+      ],
+      "role": "drawer-handle-post-l",
+      "material": "fixture-9236b59706-Detail_Stainless",
+      "primitive": "pipe_between_points",
+      "local_geometry": {
+        "start": [
+          12,
+          0,
+          0
+        ],
+        "end": [
+          12,
+          -32,
+          0
+        ],
+        "radius": 5,
+        "segments": 32,
+        "smooth": "all"
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-unchanged-cabinet-drawer-handle-post-r",
+      "instance_path": [
+        "A",
+        "fixture-9236b59706-unchanged-cabinet-drawer-2",
+        "fixture-9236b59706-unchanged-cabinet-drawer-handle-instance",
+        "fixture-9236b59706-unchanged-cabinet-drawer-handle-post-r"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-unchanged-cabinet",
+        "PG2_fixture-9236b59706-unchanged-cabinet-drawer",
+        "PG2_fixture-9236b59706-unchanged-cabinet-drawer-handle"
+      ],
+      "role": "drawer-handle-post-r",
+      "material": "fixture-9236b59706-Detail_Stainless",
+      "primitive": "pipe_between_points",
+      "local_geometry": {
+        "start": [
+          178,
+          0,
+          0
+        ],
+        "end": [
+          178,
+          -32,
+          0
+        ],
+        "radius": 5,
+        "segments": 32,
+        "smooth": "all"
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-unchanged-cabinet-drawer-handle-screw-0",
+      "instance_path": [
+        "A",
+        "fixture-9236b59706-unchanged-cabinet-drawer-2",
+        "fixture-9236b59706-unchanged-cabinet-drawer-handle-instance",
+        "fixture-9236b59706-unchanged-cabinet-drawer-handle-screw-0"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-unchanged-cabinet",
+        "PG2_fixture-9236b59706-unchanged-cabinet-drawer",
+        "PG2_fixture-9236b59706-unchanged-cabinet-drawer-handle"
+      ],
+      "role": "fixing",
+      "material": "fixture-9236b59706-Detail_Stainless",
+      "primitive": "profile_extrude",
+      "local_geometry": {
+        "origin": [
+          12,
+          -2,
+          -4
+        ],
+        "plane": "xz",
+        "outer": [
+          [
+            4,
+            0
+          ],
+          [
+            3.804226065180614,
+            1.2360679774997896
+          ],
+          [
+            3.23606797749979,
+            2.3511410091698925
+          ],
+          [
+            2.3511410091698925,
+            3.23606797749979
+          ],
+          [
+            1.2360679774997898,
+            3.804226065180614
+          ],
+          [
+            2.4492935982947064e-16,
+            4
+          ],
+          [
+            -1.2360679774997894,
+            3.8042260651806146
+          ],
+          [
+            -2.351141009169892,
+            3.23606797749979
+          ],
+          [
+            -3.2360679774997894,
+            2.351141009169893
+          ],
+          [
+            -3.804226065180614,
+            1.23606797749979
+          ],
+          [
+            -4,
+            4.898587196589413e-16
+          ],
+          [
+            -3.804226065180615,
+            -1.2360679774997876
+          ],
+          [
+            -3.23606797749979,
+            -2.351141009169892
+          ],
+          [
+            -2.351141009169893,
+            -3.2360679774997894
+          ],
+          [
+            -1.2360679774997902,
+            -3.804226065180614
+          ],
+          [
+            -7.347880794884119e-16,
+            -4
+          ],
+          [
+            1.236067977499789,
+            -3.8042260651806146
+          ],
+          [
+            2.3511410091698917,
+            -3.2360679774997902
+          ],
+          [
+            3.2360679774997894,
+            -2.3511410091698934
+          ],
+          [
+            3.804226065180614,
+            -1.2360679774997905
+          ]
+        ],
+        "depth": 3,
+        "holes": []
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-unchanged-cabinet-drawer-handle-screw-1",
+      "instance_path": [
+        "A",
+        "fixture-9236b59706-unchanged-cabinet-drawer-2",
+        "fixture-9236b59706-unchanged-cabinet-drawer-handle-instance",
+        "fixture-9236b59706-unchanged-cabinet-drawer-handle-screw-1"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-unchanged-cabinet",
+        "PG2_fixture-9236b59706-unchanged-cabinet-drawer",
+        "PG2_fixture-9236b59706-unchanged-cabinet-drawer-handle"
+      ],
+      "role": "fixing",
+      "material": "fixture-9236b59706-Detail_Stainless",
+      "primitive": "profile_extrude",
+      "local_geometry": {
+        "origin": [
+          178,
+          -2,
+          -4
+        ],
+        "plane": "xz",
+        "outer": [
+          [
+            4,
+            0
+          ],
+          [
+            3.804226065180614,
+            1.2360679774997896
+          ],
+          [
+            3.23606797749979,
+            2.3511410091698925
+          ],
+          [
+            2.3511410091698925,
+            3.23606797749979
+          ],
+          [
+            1.2360679774997898,
+            3.804226065180614
+          ],
+          [
+            2.4492935982947064e-16,
+            4
+          ],
+          [
+            -1.2360679774997894,
+            3.8042260651806146
+          ],
+          [
+            -2.351141009169892,
+            3.23606797749979
+          ],
+          [
+            -3.2360679774997894,
+            2.351141009169893
+          ],
+          [
+            -3.804226065180614,
+            1.23606797749979
+          ],
+          [
+            -4,
+            4.898587196589413e-16
+          ],
+          [
+            -3.804226065180615,
+            -1.2360679774997876
+          ],
+          [
+            -3.23606797749979,
+            -2.351141009169892
+          ],
+          [
+            -2.351141009169893,
+            -3.2360679774997894
+          ],
+          [
+            -1.2360679774997902,
+            -3.804226065180614
+          ],
+          [
+            -7.347880794884119e-16,
+            -4
+          ],
+          [
+            1.236067977499789,
+            -3.8042260651806146
+          ],
+          [
+            2.3511410091698917,
+            -3.2360679774997902
+          ],
+          [
+            3.2360679774997894,
+            -2.3511410091698934
+          ],
+          [
+            3.804226065180614,
+            -1.2360679774997905
+          ]
+        ],
+        "depth": 3,
+        "holes": []
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-unchanged-cabinet-runner-1-left",
+      "instance_path": [
+        "A",
+        "fixture-9236b59706-unchanged-cabinet-runner-1-left"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-unchanged-cabinet"
+      ],
+      "role": "drawer_runner",
+      "material": "fixture-9236b59706-Detail_Stainless",
+      "primitive": "profile_extrude",
+      "local_geometry": {
+        "origin": [
+          20,
+          12,
+          393.6666666666667
+        ],
+        "plane": "xz",
+        "outer": [
+          [
+            0,
+            0
+          ],
+          [
+            8,
+            0
+          ],
+          [
+            8,
+            25
+          ],
+          [
+            6,
+            25
+          ],
+          [
+            6,
+            3
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            25
+          ],
+          [
+            0,
+            25
+          ]
+        ],
+        "depth": 540,
+        "holes": []
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-unchanged-cabinet-runner-1-right",
+      "instance_path": [
+        "A",
+        "fixture-9236b59706-unchanged-cabinet-runner-1-right"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-unchanged-cabinet"
+      ],
+      "role": "drawer_runner",
+      "material": "fixture-9236b59706-Detail_Stainless",
+      "primitive": "profile_extrude",
+      "local_geometry": {
+        "origin": [
+          572,
+          12,
+          393.6666666666667
+        ],
+        "plane": "xz",
+        "outer": [
+          [
+            0,
+            0
+          ],
+          [
+            8,
+            0
+          ],
+          [
+            8,
+            25
+          ],
+          [
+            6,
+            25
+          ],
+          [
+            6,
+            3
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            25
+          ],
+          [
+            0,
+            25
+          ]
+        ],
+        "depth": 540,
+        "holes": []
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-unchanged-cabinet-drawer-front",
+      "instance_path": [
+        "A",
+        "fixture-9236b59706-unchanged-cabinet-drawer-3",
+        "fixture-9236b59706-unchanged-cabinet-drawer-front"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-unchanged-cabinet",
+        "PG2_fixture-9236b59706-unchanged-cabinet-drawer"
+      ],
+      "role": "drawer_front",
+      "material": "fixture-9236b59706-Detail_Oak",
+      "primitive": "profile_extrude",
+      "local_geometry": {
+        "origin": [
+          3,
+          -21,
+          0
+        ],
+        "plane": "xz",
+        "outer": [
+          [
+            591,
+            0
+          ],
+          [
+            591.9270509831248,
+            0.14683045111453952
+          ],
+          [
+            592.7633557568774,
+            0.5729490168751576
+          ],
+          [
+            593.4270509831248,
+            1.2366442431225806
+          ],
+          [
+            593.8531695488855,
+            2.0729490168751576
+          ],
+          [
+            594,
+            3
+          ],
+          [
+            594,
+            257.6666666666667
+          ],
+          [
+            593.8531695488855,
+            258.59371764979153
+          ],
+          [
+            593.4270509831248,
+            259.43002242354413
+          ],
+          [
+            592.7633557568774,
+            260.09371764979153
+          ],
+          [
+            591.9270509831248,
+            260.5198362155521
+          ],
+          [
+            591,
+            260.6666666666667
+          ],
+          [
+            3,
+            260.6666666666667
+          ],
+          [
+            2.072949016875158,
+            260.5198362155521
+          ],
+          [
+            1.2366442431225808,
+            260.09371764979153
+          ],
+          [
+            0.5729490168751581,
+            259.43002242354413
+          ],
+          [
+            0.14683045111453952,
+            258.59371764979153
+          ],
+          [
+            0,
+            257.6666666666667
+          ],
+          [
+            0,
+            3.0000000000000004
+          ],
+          [
+            0.14683045111453952,
+            2.0729490168751568
+          ],
+          [
+            0.5729490168751576,
+            1.2366442431225808
+          ],
+          [
+            1.2366442431225804,
+            0.5729490168751581
+          ],
+          [
+            2.072949016875157,
+            0.14683045111453952
+          ],
+          [
+            2.9999999999999996,
+            0
+          ]
+        ],
+        "depth": 21,
+        "holes": []
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-unchanged-cabinet-drawer-bottom",
+      "instance_path": [
+        "A",
+        "fixture-9236b59706-unchanged-cabinet-drawer-3",
+        "fixture-9236b59706-unchanged-cabinet-drawer-bottom"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-unchanged-cabinet",
+        "PG2_fixture-9236b59706-unchanged-cabinet-drawer"
+      ],
+      "role": "drawer_bottom",
+      "material": "fixture-9236b59706-Detail_Painted_Joinery",
+      "primitive": "box",
+      "local_geometry": {
+        "origin": [
+          32,
+          15,
+          10
+        ],
+        "size": [
+          536,
+          510,
+          12
+        ]
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-unchanged-cabinet-drawer-left-side",
+      "instance_path": [
+        "A",
+        "fixture-9236b59706-unchanged-cabinet-drawer-3",
+        "fixture-9236b59706-unchanged-cabinet-drawer-left-side"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-unchanged-cabinet",
+        "PG2_fixture-9236b59706-unchanged-cabinet-drawer"
+      ],
+      "role": "drawer_side",
+      "material": "fixture-9236b59706-Detail_Painted_Joinery",
+      "primitive": "box",
+      "local_geometry": {
+        "origin": [
+          32,
+          15,
+          22
+        ],
+        "size": [
+          12,
+          510,
+          208.66666666666669
+        ]
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-unchanged-cabinet-drawer-right-side",
+      "instance_path": [
+        "A",
+        "fixture-9236b59706-unchanged-cabinet-drawer-3",
+        "fixture-9236b59706-unchanged-cabinet-drawer-right-side"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-unchanged-cabinet",
+        "PG2_fixture-9236b59706-unchanged-cabinet-drawer"
+      ],
+      "role": "drawer_side",
+      "material": "fixture-9236b59706-Detail_Painted_Joinery",
+      "primitive": "box",
+      "local_geometry": {
+        "origin": [
+          556,
+          15,
+          22
+        ],
+        "size": [
+          12,
+          510,
+          208.66666666666669
+        ]
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-unchanged-cabinet-drawer-back",
+      "instance_path": [
+        "A",
+        "fixture-9236b59706-unchanged-cabinet-drawer-3",
+        "fixture-9236b59706-unchanged-cabinet-drawer-back"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-unchanged-cabinet",
+        "PG2_fixture-9236b59706-unchanged-cabinet-drawer"
+      ],
+      "role": "drawer_back",
+      "material": "fixture-9236b59706-Detail_Painted_Joinery",
+      "primitive": "box",
+      "local_geometry": {
+        "origin": [
+          44,
+          513,
+          22
+        ],
+        "size": [
+          512,
+          12,
+          208.66666666666669
+        ]
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-unchanged-cabinet-drawer-handle-bar",
+      "instance_path": [
+        "A",
+        "fixture-9236b59706-unchanged-cabinet-drawer-3",
+        "fixture-9236b59706-unchanged-cabinet-drawer-handle-instance",
+        "fixture-9236b59706-unchanged-cabinet-drawer-handle-bar"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-unchanged-cabinet",
+        "PG2_fixture-9236b59706-unchanged-cabinet-drawer",
+        "PG2_fixture-9236b59706-unchanged-cabinet-drawer-handle"
+      ],
+      "role": "drawer-handle-bar",
+      "material": "fixture-9236b59706-Detail_Stainless",
+      "primitive": "pipe_between_points",
+      "local_geometry": {
+        "start": [
+          0,
+          -32,
+          0
+        ],
+        "end": [
+          190,
+          -32,
+          0
+        ],
+        "radius": 6,
+        "segments": 32,
+        "smooth": "all"
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-unchanged-cabinet-drawer-handle-post-l",
+      "instance_path": [
+        "A",
+        "fixture-9236b59706-unchanged-cabinet-drawer-3",
+        "fixture-9236b59706-unchanged-cabinet-drawer-handle-instance",
+        "fixture-9236b59706-unchanged-cabinet-drawer-handle-post-l"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-unchanged-cabinet",
+        "PG2_fixture-9236b59706-unchanged-cabinet-drawer",
+        "PG2_fixture-9236b59706-unchanged-cabinet-drawer-handle"
+      ],
+      "role": "drawer-handle-post-l",
+      "material": "fixture-9236b59706-Detail_Stainless",
+      "primitive": "pipe_between_points",
+      "local_geometry": {
+        "start": [
+          12,
+          0,
+          0
+        ],
+        "end": [
+          12,
+          -32,
+          0
+        ],
+        "radius": 5,
+        "segments": 32,
+        "smooth": "all"
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-unchanged-cabinet-drawer-handle-post-r",
+      "instance_path": [
+        "A",
+        "fixture-9236b59706-unchanged-cabinet-drawer-3",
+        "fixture-9236b59706-unchanged-cabinet-drawer-handle-instance",
+        "fixture-9236b59706-unchanged-cabinet-drawer-handle-post-r"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-unchanged-cabinet",
+        "PG2_fixture-9236b59706-unchanged-cabinet-drawer",
+        "PG2_fixture-9236b59706-unchanged-cabinet-drawer-handle"
+      ],
+      "role": "drawer-handle-post-r",
+      "material": "fixture-9236b59706-Detail_Stainless",
+      "primitive": "pipe_between_points",
+      "local_geometry": {
+        "start": [
+          178,
+          0,
+          0
+        ],
+        "end": [
+          178,
+          -32,
+          0
+        ],
+        "radius": 5,
+        "segments": 32,
+        "smooth": "all"
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-unchanged-cabinet-drawer-handle-screw-0",
+      "instance_path": [
+        "A",
+        "fixture-9236b59706-unchanged-cabinet-drawer-3",
+        "fixture-9236b59706-unchanged-cabinet-drawer-handle-instance",
+        "fixture-9236b59706-unchanged-cabinet-drawer-handle-screw-0"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-unchanged-cabinet",
+        "PG2_fixture-9236b59706-unchanged-cabinet-drawer",
+        "PG2_fixture-9236b59706-unchanged-cabinet-drawer-handle"
+      ],
+      "role": "fixing",
+      "material": "fixture-9236b59706-Detail_Stainless",
+      "primitive": "profile_extrude",
+      "local_geometry": {
+        "origin": [
+          12,
+          -2,
+          -4
+        ],
+        "plane": "xz",
+        "outer": [
+          [
+            4,
+            0
+          ],
+          [
+            3.804226065180614,
+            1.2360679774997896
+          ],
+          [
+            3.23606797749979,
+            2.3511410091698925
+          ],
+          [
+            2.3511410091698925,
+            3.23606797749979
+          ],
+          [
+            1.2360679774997898,
+            3.804226065180614
+          ],
+          [
+            2.4492935982947064e-16,
+            4
+          ],
+          [
+            -1.2360679774997894,
+            3.8042260651806146
+          ],
+          [
+            -2.351141009169892,
+            3.23606797749979
+          ],
+          [
+            -3.2360679774997894,
+            2.351141009169893
+          ],
+          [
+            -3.804226065180614,
+            1.23606797749979
+          ],
+          [
+            -4,
+            4.898587196589413e-16
+          ],
+          [
+            -3.804226065180615,
+            -1.2360679774997876
+          ],
+          [
+            -3.23606797749979,
+            -2.351141009169892
+          ],
+          [
+            -2.351141009169893,
+            -3.2360679774997894
+          ],
+          [
+            -1.2360679774997902,
+            -3.804226065180614
+          ],
+          [
+            -7.347880794884119e-16,
+            -4
+          ],
+          [
+            1.236067977499789,
+            -3.8042260651806146
+          ],
+          [
+            2.3511410091698917,
+            -3.2360679774997902
+          ],
+          [
+            3.2360679774997894,
+            -2.3511410091698934
+          ],
+          [
+            3.804226065180614,
+            -1.2360679774997905
+          ]
+        ],
+        "depth": 3,
+        "holes": []
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-unchanged-cabinet-drawer-handle-screw-1",
+      "instance_path": [
+        "A",
+        "fixture-9236b59706-unchanged-cabinet-drawer-3",
+        "fixture-9236b59706-unchanged-cabinet-drawer-handle-instance",
+        "fixture-9236b59706-unchanged-cabinet-drawer-handle-screw-1"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-unchanged-cabinet",
+        "PG2_fixture-9236b59706-unchanged-cabinet-drawer",
+        "PG2_fixture-9236b59706-unchanged-cabinet-drawer-handle"
+      ],
+      "role": "fixing",
+      "material": "fixture-9236b59706-Detail_Stainless",
+      "primitive": "profile_extrude",
+      "local_geometry": {
+        "origin": [
+          178,
+          -2,
+          -4
+        ],
+        "plane": "xz",
+        "outer": [
+          [
+            4,
+            0
+          ],
+          [
+            3.804226065180614,
+            1.2360679774997896
+          ],
+          [
+            3.23606797749979,
+            2.3511410091698925
+          ],
+          [
+            2.3511410091698925,
+            3.23606797749979
+          ],
+          [
+            1.2360679774997898,
+            3.804226065180614
+          ],
+          [
+            2.4492935982947064e-16,
+            4
+          ],
+          [
+            -1.2360679774997894,
+            3.8042260651806146
+          ],
+          [
+            -2.351141009169892,
+            3.23606797749979
+          ],
+          [
+            -3.2360679774997894,
+            2.351141009169893
+          ],
+          [
+            -3.804226065180614,
+            1.23606797749979
+          ],
+          [
+            -4,
+            4.898587196589413e-16
+          ],
+          [
+            -3.804226065180615,
+            -1.2360679774997876
+          ],
+          [
+            -3.23606797749979,
+            -2.351141009169892
+          ],
+          [
+            -2.351141009169893,
+            -3.2360679774997894
+          ],
+          [
+            -1.2360679774997902,
+            -3.804226065180614
+          ],
+          [
+            -7.347880794884119e-16,
+            -4
+          ],
+          [
+            1.236067977499789,
+            -3.8042260651806146
+          ],
+          [
+            2.3511410091698917,
+            -3.2360679774997902
+          ],
+          [
+            3.2360679774997894,
+            -2.3511410091698934
+          ],
+          [
+            3.804226065180614,
+            -1.2360679774997905
+          ]
+        ],
+        "depth": 3,
+        "holes": []
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-unchanged-cabinet-runner-2-left",
+      "instance_path": [
+        "A",
+        "fixture-9236b59706-unchanged-cabinet-runner-2-left"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-unchanged-cabinet"
+      ],
+      "role": "drawer_runner",
+      "material": "fixture-9236b59706-Detail_Stainless",
+      "primitive": "profile_extrude",
+      "local_geometry": {
+        "origin": [
+          20,
+          12,
+          657.3333333333334
+        ],
+        "plane": "xz",
+        "outer": [
+          [
+            0,
+            0
+          ],
+          [
+            8,
+            0
+          ],
+          [
+            8,
+            25
+          ],
+          [
+            6,
+            25
+          ],
+          [
+            6,
+            3
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            25
+          ],
+          [
+            0,
+            25
+          ]
+        ],
+        "depth": 540,
+        "holes": []
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-unchanged-cabinet-runner-2-right",
+      "instance_path": [
+        "A",
+        "fixture-9236b59706-unchanged-cabinet-runner-2-right"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-unchanged-cabinet"
+      ],
+      "role": "drawer_runner",
+      "material": "fixture-9236b59706-Detail_Stainless",
+      "primitive": "profile_extrude",
+      "local_geometry": {
+        "origin": [
+          572,
+          12,
+          657.3333333333334
+        ],
+        "plane": "xz",
+        "outer": [
+          [
+            0,
+            0
+          ],
+          [
+            8,
+            0
+          ],
+          [
+            8,
+            25
+          ],
+          [
+            6,
+            25
+          ],
+          [
+            6,
+            3
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            25
+          ],
+          [
+            0,
+            25
+          ]
+        ],
+        "depth": 540,
+        "holes": []
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-defective-cabinet-side-left",
+      "instance_path": [
+        "B",
+        "fixture-9236b59706-defective-cabinet-side-left"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-defective-cabinet"
+      ],
+      "role": "carcass_side",
+      "material": "fixture-9236b59706-Detail_Painted_Joinery",
+      "primitive": "box",
+      "local_geometry": {
+        "origin": [
+          0,
+          0,
+          100
+        ],
+        "size": [
+          18,
+          600,
+          800
+        ]
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-defective-cabinet-side-right",
+      "instance_path": [
+        "B",
+        "fixture-9236b59706-defective-cabinet-side-right"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-defective-cabinet"
+      ],
+      "role": "carcass_side",
+      "material": "fixture-9236b59706-Detail_Painted_Joinery",
+      "primitive": "box",
+      "local_geometry": {
+        "origin": [
+          582,
+          0,
+          100
+        ],
+        "size": [
+          18,
+          600,
+          800
+        ]
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-defective-cabinet-bottom",
+      "instance_path": [
+        "B",
+        "fixture-9236b59706-defective-cabinet-bottom"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-defective-cabinet"
+      ],
+      "role": "carcass_bottom",
+      "material": "fixture-9236b59706-Detail_Painted_Joinery",
+      "primitive": "box",
+      "local_geometry": {
+        "origin": [
+          18,
+          0,
+          100
+        ],
+        "size": [
+          564,
+          600,
+          18
+        ]
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-defective-cabinet-back",
+      "instance_path": [
+        "B",
+        "fixture-9236b59706-defective-cabinet-back"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-defective-cabinet"
+      ],
+      "role": "carcass_back",
+      "material": "fixture-9236b59706-Detail_Painted_Joinery",
+      "primitive": "box",
+      "local_geometry": {
+        "origin": [
+          18,
+          591,
+          118
+        ],
+        "size": [
+          564,
+          9,
+          782
+        ]
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-defective-cabinet-top-stretcher-front",
+      "instance_path": [
+        "B",
+        "fixture-9236b59706-defective-cabinet-top-stretcher-front"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-defective-cabinet"
+      ],
+      "role": "stretcher",
+      "material": "fixture-9236b59706-Detail_Painted_Joinery",
+      "primitive": "box",
+      "local_geometry": {
+        "origin": [
+          18,
+          0,
+          860
+        ],
+        "size": [
+          564,
+          65,
+          40
+        ]
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-defective-cabinet-top-stretcher-back",
+      "instance_path": [
+        "B",
+        "fixture-9236b59706-defective-cabinet-top-stretcher-back"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-defective-cabinet"
+      ],
+      "role": "stretcher",
+      "material": "fixture-9236b59706-Detail_Painted_Joinery",
+      "primitive": "box",
+      "local_geometry": {
+        "origin": [
+          18,
+          535,
+          860
+        ],
+        "size": [
+          564,
+          65,
+          40
+        ]
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-defective-cabinet-toe-kick",
+      "instance_path": [
+        "B",
+        "fixture-9236b59706-defective-cabinet-toe-kick"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-defective-cabinet"
+      ],
+      "role": "toe_kick",
+      "material": "fixture-9236b59706-Detail_Gasket",
+      "primitive": "box",
+      "local_geometry": {
+        "origin": [
+          20,
+          -51,
+          10
+        ],
+        "size": [
+          560,
+          18,
+          90
+        ]
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-defective-cabinet-leg-45-80",
+      "instance_path": [
+        "B",
+        "fixture-9236b59706-defective-cabinet-leg-45-80"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-defective-cabinet"
+      ],
+      "role": "adjustable_foot",
+      "material": "fixture-9236b59706-Detail_Gasket",
+      "primitive": "cylinder",
+      "local_geometry": {
+        "origin": [
+          45,
+          80,
+          0
+        ],
+        "radius": 18,
+        "height": 100,
+        "segments": 24
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-defective-cabinet-leg-45-530",
+      "instance_path": [
+        "B",
+        "fixture-9236b59706-defective-cabinet-leg-45-530"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-defective-cabinet"
+      ],
+      "role": "adjustable_foot",
+      "material": "fixture-9236b59706-Detail_Gasket",
+      "primitive": "cylinder",
+      "local_geometry": {
+        "origin": [
+          45,
+          530,
+          0
+        ],
+        "radius": 18,
+        "height": 100,
+        "segments": 24
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-defective-cabinet-leg-555-80",
+      "instance_path": [
+        "B",
+        "fixture-9236b59706-defective-cabinet-leg-555-80"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-defective-cabinet"
+      ],
+      "role": "adjustable_foot",
+      "material": "fixture-9236b59706-Detail_Gasket",
+      "primitive": "cylinder",
+      "local_geometry": {
+        "origin": [
+          555,
+          80,
+          0
+        ],
+        "radius": 18,
+        "height": 100,
+        "segments": 24
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-defective-cabinet-leg-555-530",
+      "instance_path": [
+        "B",
+        "fixture-9236b59706-defective-cabinet-leg-555-530"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-defective-cabinet"
+      ],
+      "role": "adjustable_foot",
+      "material": "fixture-9236b59706-Detail_Gasket",
+      "primitive": "cylinder",
+      "local_geometry": {
+        "origin": [
+          555,
+          530,
+          0
+        ],
+        "radius": 18,
+        "height": 100,
+        "segments": 24
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-defective-cabinet-drawer-front",
+      "instance_path": [
+        "B",
+        "fixture-9236b59706-defective-cabinet-drawer-1",
+        "fixture-9236b59706-defective-cabinet-drawer-front"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-defective-cabinet",
+        "PG2_fixture-9236b59706-defective-cabinet-drawer"
+      ],
+      "role": "drawer_front",
+      "material": "fixture-9236b59706-Detail_Oak",
+      "primitive": "profile_extrude",
+      "local_geometry": {
+        "origin": [
+          3,
+          -21,
+          0
+        ],
+        "plane": "xz",
+        "outer": [
+          [
+            591,
+            0
+          ],
+          [
+            591.9270509831248,
+            0.14683045111453952
+          ],
+          [
+            592.7633557568774,
+            0.5729490168751576
+          ],
+          [
+            593.4270509831248,
+            1.2366442431225806
+          ],
+          [
+            593.8531695488855,
+            2.0729490168751576
+          ],
+          [
+            594,
+            3
+          ],
+          [
+            594,
+            257.6666666666667
+          ],
+          [
+            593.8531695488855,
+            258.59371764979153
+          ],
+          [
+            593.4270509831248,
+            259.43002242354413
+          ],
+          [
+            592.7633557568774,
+            260.09371764979153
+          ],
+          [
+            591.9270509831248,
+            260.5198362155521
+          ],
+          [
+            591,
+            260.6666666666667
+          ],
+          [
+            3,
+            260.6666666666667
+          ],
+          [
+            2.072949016875158,
+            260.5198362155521
+          ],
+          [
+            1.2366442431225808,
+            260.09371764979153
+          ],
+          [
+            0.5729490168751581,
+            259.43002242354413
+          ],
+          [
+            0.14683045111453952,
+            258.59371764979153
+          ],
+          [
+            0,
+            257.6666666666667
+          ],
+          [
+            0,
+            3.0000000000000004
+          ],
+          [
+            0.14683045111453952,
+            2.0729490168751568
+          ],
+          [
+            0.5729490168751576,
+            1.2366442431225808
+          ],
+          [
+            1.2366442431225804,
+            0.5729490168751581
+          ],
+          [
+            2.072949016875157,
+            0.14683045111453952
+          ],
+          [
+            2.9999999999999996,
+            0
+          ]
+        ],
+        "depth": 21,
+        "holes": []
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-defective-cabinet-drawer-bottom",
+      "instance_path": [
+        "B",
+        "fixture-9236b59706-defective-cabinet-drawer-1",
+        "fixture-9236b59706-defective-cabinet-drawer-bottom"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-defective-cabinet",
+        "PG2_fixture-9236b59706-defective-cabinet-drawer"
+      ],
+      "role": "drawer_bottom",
+      "material": "fixture-9236b59706-Detail_Painted_Joinery",
+      "primitive": "box",
+      "local_geometry": {
+        "origin": [
+          32,
+          15,
+          10
+        ],
+        "size": [
+          536,
+          510,
+          12
+        ]
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-defective-cabinet-drawer-left-side",
+      "instance_path": [
+        "B",
+        "fixture-9236b59706-defective-cabinet-drawer-1",
+        "fixture-9236b59706-defective-cabinet-drawer-left-side"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-defective-cabinet",
+        "PG2_fixture-9236b59706-defective-cabinet-drawer"
+      ],
+      "role": "drawer_side",
+      "material": "fixture-9236b59706-Detail_Painted_Joinery",
+      "primitive": "box",
+      "local_geometry": {
+        "origin": [
+          32,
+          15,
+          22
+        ],
+        "size": [
+          12,
+          510,
+          208.66666666666669
+        ]
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-defective-cabinet-drawer-right-side",
+      "instance_path": [
+        "B",
+        "fixture-9236b59706-defective-cabinet-drawer-1",
+        "fixture-9236b59706-defective-cabinet-drawer-right-side"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-defective-cabinet",
+        "PG2_fixture-9236b59706-defective-cabinet-drawer"
+      ],
+      "role": "drawer_side",
+      "material": "fixture-9236b59706-Detail_Painted_Joinery",
+      "primitive": "box",
+      "local_geometry": {
+        "origin": [
+          556,
+          15,
+          22
+        ],
+        "size": [
+          12,
+          510,
+          208.66666666666669
+        ]
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-defective-cabinet-drawer-back",
+      "instance_path": [
+        "B",
+        "fixture-9236b59706-defective-cabinet-drawer-1",
+        "fixture-9236b59706-defective-cabinet-drawer-back"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-defective-cabinet",
+        "PG2_fixture-9236b59706-defective-cabinet-drawer"
+      ],
+      "role": "drawer_back",
+      "material": "fixture-9236b59706-Detail_Painted_Joinery",
+      "primitive": "box",
+      "local_geometry": {
+        "origin": [
+          44,
+          513,
+          22
+        ],
+        "size": [
+          512,
+          12,
+          208.66666666666669
+        ]
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-defective-cabinet-drawer-handle-bar",
+      "instance_path": [
+        "B",
+        "fixture-9236b59706-defective-cabinet-drawer-1",
+        "fixture-9236b59706-defective-cabinet-drawer-handle-instance",
+        "fixture-9236b59706-defective-cabinet-drawer-handle-bar"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-defective-cabinet",
+        "PG2_fixture-9236b59706-defective-cabinet-drawer",
+        "PG2_fixture-9236b59706-defective-cabinet-drawer-handle"
+      ],
+      "role": "drawer-handle-bar",
+      "material": "fixture-9236b59706-Detail_Stainless",
+      "primitive": "pipe_between_points",
+      "local_geometry": {
+        "start": [
+          0,
+          -32,
+          0
+        ],
+        "end": [
+          190,
+          -32,
+          0
+        ],
+        "radius": 6,
+        "segments": 32,
+        "smooth": "all"
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-defective-cabinet-drawer-handle-post-l",
+      "instance_path": [
+        "B",
+        "fixture-9236b59706-defective-cabinet-drawer-1",
+        "fixture-9236b59706-defective-cabinet-drawer-handle-instance",
+        "fixture-9236b59706-defective-cabinet-drawer-handle-post-l"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-defective-cabinet",
+        "PG2_fixture-9236b59706-defective-cabinet-drawer",
+        "PG2_fixture-9236b59706-defective-cabinet-drawer-handle"
+      ],
+      "role": "drawer-handle-post-l",
+      "material": "fixture-9236b59706-Detail_Stainless",
+      "primitive": "pipe_between_points",
+      "local_geometry": {
+        "start": [
+          12,
+          0,
+          0
+        ],
+        "end": [
+          12,
+          -32,
+          0
+        ],
+        "radius": 5,
+        "segments": 32,
+        "smooth": "all"
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-defective-cabinet-drawer-handle-post-r",
+      "instance_path": [
+        "B",
+        "fixture-9236b59706-defective-cabinet-drawer-1",
+        "fixture-9236b59706-defective-cabinet-drawer-handle-instance",
+        "fixture-9236b59706-defective-cabinet-drawer-handle-post-r"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-defective-cabinet",
+        "PG2_fixture-9236b59706-defective-cabinet-drawer",
+        "PG2_fixture-9236b59706-defective-cabinet-drawer-handle"
+      ],
+      "role": "drawer-handle-post-r",
+      "material": "fixture-9236b59706-Detail_Stainless",
+      "primitive": "pipe_between_points",
+      "local_geometry": {
+        "start": [
+          178,
+          0,
+          0
+        ],
+        "end": [
+          178,
+          -32,
+          0
+        ],
+        "radius": 5,
+        "segments": 32,
+        "smooth": "all"
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-defective-cabinet-drawer-handle-screw-0",
+      "instance_path": [
+        "B",
+        "fixture-9236b59706-defective-cabinet-drawer-1",
+        "fixture-9236b59706-defective-cabinet-drawer-handle-instance",
+        "fixture-9236b59706-defective-cabinet-drawer-handle-screw-0"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-defective-cabinet",
+        "PG2_fixture-9236b59706-defective-cabinet-drawer",
+        "PG2_fixture-9236b59706-defective-cabinet-drawer-handle"
+      ],
+      "role": "fixing",
+      "material": "fixture-9236b59706-Detail_Stainless",
+      "primitive": "profile_extrude",
+      "local_geometry": {
+        "origin": [
+          12,
+          -2,
+          -4
+        ],
+        "plane": "xz",
+        "outer": [
+          [
+            4,
+            0
+          ],
+          [
+            3.804226065180614,
+            1.2360679774997896
+          ],
+          [
+            3.23606797749979,
+            2.3511410091698925
+          ],
+          [
+            2.3511410091698925,
+            3.23606797749979
+          ],
+          [
+            1.2360679774997898,
+            3.804226065180614
+          ],
+          [
+            2.4492935982947064e-16,
+            4
+          ],
+          [
+            -1.2360679774997894,
+            3.8042260651806146
+          ],
+          [
+            -2.351141009169892,
+            3.23606797749979
+          ],
+          [
+            -3.2360679774997894,
+            2.351141009169893
+          ],
+          [
+            -3.804226065180614,
+            1.23606797749979
+          ],
+          [
+            -4,
+            4.898587196589413e-16
+          ],
+          [
+            -3.804226065180615,
+            -1.2360679774997876
+          ],
+          [
+            -3.23606797749979,
+            -2.351141009169892
+          ],
+          [
+            -2.351141009169893,
+            -3.2360679774997894
+          ],
+          [
+            -1.2360679774997902,
+            -3.804226065180614
+          ],
+          [
+            -7.347880794884119e-16,
+            -4
+          ],
+          [
+            1.236067977499789,
+            -3.8042260651806146
+          ],
+          [
+            2.3511410091698917,
+            -3.2360679774997902
+          ],
+          [
+            3.2360679774997894,
+            -2.3511410091698934
+          ],
+          [
+            3.804226065180614,
+            -1.2360679774997905
+          ]
+        ],
+        "depth": 3,
+        "holes": []
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-defective-cabinet-drawer-handle-screw-1",
+      "instance_path": [
+        "B",
+        "fixture-9236b59706-defective-cabinet-drawer-1",
+        "fixture-9236b59706-defective-cabinet-drawer-handle-instance",
+        "fixture-9236b59706-defective-cabinet-drawer-handle-screw-1"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-defective-cabinet",
+        "PG2_fixture-9236b59706-defective-cabinet-drawer",
+        "PG2_fixture-9236b59706-defective-cabinet-drawer-handle"
+      ],
+      "role": "fixing",
+      "material": "fixture-9236b59706-Detail_Stainless",
+      "primitive": "profile_extrude",
+      "local_geometry": {
+        "origin": [
+          178,
+          -2,
+          -4
+        ],
+        "plane": "xz",
+        "outer": [
+          [
+            4,
+            0
+          ],
+          [
+            3.804226065180614,
+            1.2360679774997896
+          ],
+          [
+            3.23606797749979,
+            2.3511410091698925
+          ],
+          [
+            2.3511410091698925,
+            3.23606797749979
+          ],
+          [
+            1.2360679774997898,
+            3.804226065180614
+          ],
+          [
+            2.4492935982947064e-16,
+            4
+          ],
+          [
+            -1.2360679774997894,
+            3.8042260651806146
+          ],
+          [
+            -2.351141009169892,
+            3.23606797749979
+          ],
+          [
+            -3.2360679774997894,
+            2.351141009169893
+          ],
+          [
+            -3.804226065180614,
+            1.23606797749979
+          ],
+          [
+            -4,
+            4.898587196589413e-16
+          ],
+          [
+            -3.804226065180615,
+            -1.2360679774997876
+          ],
+          [
+            -3.23606797749979,
+            -2.351141009169892
+          ],
+          [
+            -2.351141009169893,
+            -3.2360679774997894
+          ],
+          [
+            -1.2360679774997902,
+            -3.804226065180614
+          ],
+          [
+            -7.347880794884119e-16,
+            -4
+          ],
+          [
+            1.236067977499789,
+            -3.8042260651806146
+          ],
+          [
+            2.3511410091698917,
+            -3.2360679774997902
+          ],
+          [
+            3.2360679774997894,
+            -2.3511410091698934
+          ],
+          [
+            3.804226065180614,
+            -1.2360679774997905
+          ]
+        ],
+        "depth": 3,
+        "holes": []
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-defective-cabinet-runner-0-left",
+      "instance_path": [
+        "B",
+        "fixture-9236b59706-defective-cabinet-runner-0-left"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-defective-cabinet"
+      ],
+      "role": "drawer_runner",
+      "material": "fixture-9236b59706-Detail_Stainless",
+      "primitive": "profile_extrude",
+      "local_geometry": {
+        "origin": [
+          20,
+          12,
+          130
+        ],
+        "plane": "xz",
+        "outer": [
+          [
+            0,
+            0
+          ],
+          [
+            8,
+            0
+          ],
+          [
+            8,
+            25
+          ],
+          [
+            6,
+            25
+          ],
+          [
+            6,
+            3
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            25
+          ],
+          [
+            0,
+            25
+          ]
+        ],
+        "depth": 540,
+        "holes": []
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-defective-cabinet-runner-0-right",
+      "instance_path": [
+        "B",
+        "fixture-9236b59706-defective-cabinet-runner-0-right"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-defective-cabinet"
+      ],
+      "role": "drawer_runner",
+      "material": "fixture-9236b59706-Detail_Stainless",
+      "primitive": "profile_extrude",
+      "local_geometry": {
+        "origin": [
+          572,
+          12,
+          130
+        ],
+        "plane": "xz",
+        "outer": [
+          [
+            0,
+            0
+          ],
+          [
+            8,
+            0
+          ],
+          [
+            8,
+            25
+          ],
+          [
+            6,
+            25
+          ],
+          [
+            6,
+            3
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            25
+          ],
+          [
+            0,
+            25
+          ]
+        ],
+        "depth": 540,
+        "holes": []
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-defective-cabinet-drawer-front",
+      "instance_path": [
+        "B",
+        "fixture-9236b59706-defective-cabinet-drawer-2",
+        "fixture-9236b59706-defective-cabinet-drawer-front"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-defective-cabinet",
+        "PG2_fixture-9236b59706-defective-cabinet-drawer"
+      ],
+      "role": "drawer_front",
+      "material": "fixture-9236b59706-Detail_Oak",
+      "primitive": "profile_extrude",
+      "local_geometry": {
+        "origin": [
+          3,
+          -21,
+          0
+        ],
+        "plane": "xz",
+        "outer": [
+          [
+            591,
+            0
+          ],
+          [
+            591.9270509831248,
+            0.14683045111453952
+          ],
+          [
+            592.7633557568774,
+            0.5729490168751576
+          ],
+          [
+            593.4270509831248,
+            1.2366442431225806
+          ],
+          [
+            593.8531695488855,
+            2.0729490168751576
+          ],
+          [
+            594,
+            3
+          ],
+          [
+            594,
+            257.6666666666667
+          ],
+          [
+            593.8531695488855,
+            258.59371764979153
+          ],
+          [
+            593.4270509831248,
+            259.43002242354413
+          ],
+          [
+            592.7633557568774,
+            260.09371764979153
+          ],
+          [
+            591.9270509831248,
+            260.5198362155521
+          ],
+          [
+            591,
+            260.6666666666667
+          ],
+          [
+            3,
+            260.6666666666667
+          ],
+          [
+            2.072949016875158,
+            260.5198362155521
+          ],
+          [
+            1.2366442431225808,
+            260.09371764979153
+          ],
+          [
+            0.5729490168751581,
+            259.43002242354413
+          ],
+          [
+            0.14683045111453952,
+            258.59371764979153
+          ],
+          [
+            0,
+            257.6666666666667
+          ],
+          [
+            0,
+            3.0000000000000004
+          ],
+          [
+            0.14683045111453952,
+            2.0729490168751568
+          ],
+          [
+            0.5729490168751576,
+            1.2366442431225808
+          ],
+          [
+            1.2366442431225804,
+            0.5729490168751581
+          ],
+          [
+            2.072949016875157,
+            0.14683045111453952
+          ],
+          [
+            2.9999999999999996,
+            0
+          ]
+        ],
+        "depth": 21,
+        "holes": []
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-defective-cabinet-drawer-bottom",
+      "instance_path": [
+        "B",
+        "fixture-9236b59706-defective-cabinet-drawer-2",
+        "fixture-9236b59706-defective-cabinet-drawer-bottom"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-defective-cabinet",
+        "PG2_fixture-9236b59706-defective-cabinet-drawer"
+      ],
+      "role": "drawer_bottom",
+      "material": "fixture-9236b59706-Detail_Painted_Joinery",
+      "primitive": "box",
+      "local_geometry": {
+        "origin": [
+          32,
+          15,
+          10
+        ],
+        "size": [
+          536,
+          510,
+          12
+        ]
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-defective-cabinet-drawer-left-side",
+      "instance_path": [
+        "B",
+        "fixture-9236b59706-defective-cabinet-drawer-2",
+        "fixture-9236b59706-defective-cabinet-drawer-left-side"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-defective-cabinet",
+        "PG2_fixture-9236b59706-defective-cabinet-drawer"
+      ],
+      "role": "drawer_side",
+      "material": "fixture-9236b59706-Detail_Painted_Joinery",
+      "primitive": "box",
+      "local_geometry": {
+        "origin": [
+          32,
+          15,
+          22
+        ],
+        "size": [
+          12,
+          510,
+          208.66666666666669
+        ]
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-defective-cabinet-drawer-right-side",
+      "instance_path": [
+        "B",
+        "fixture-9236b59706-defective-cabinet-drawer-2",
+        "fixture-9236b59706-defective-cabinet-drawer-right-side"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-defective-cabinet",
+        "PG2_fixture-9236b59706-defective-cabinet-drawer"
+      ],
+      "role": "drawer_side",
+      "material": "fixture-9236b59706-Detail_Painted_Joinery",
+      "primitive": "box",
+      "local_geometry": {
+        "origin": [
+          556,
+          15,
+          22
+        ],
+        "size": [
+          12,
+          510,
+          208.66666666666669
+        ]
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-defective-cabinet-drawer-back",
+      "instance_path": [
+        "B",
+        "fixture-9236b59706-defective-cabinet-drawer-2",
+        "fixture-9236b59706-defective-cabinet-drawer-back"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-defective-cabinet",
+        "PG2_fixture-9236b59706-defective-cabinet-drawer"
+      ],
+      "role": "drawer_back",
+      "material": "fixture-9236b59706-Detail_Painted_Joinery",
+      "primitive": "box",
+      "local_geometry": {
+        "origin": [
+          44,
+          513,
+          22
+        ],
+        "size": [
+          512,
+          12,
+          208.66666666666669
+        ]
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-defective-cabinet-drawer-handle-bar",
+      "instance_path": [
+        "B",
+        "fixture-9236b59706-defective-cabinet-drawer-2",
+        "fixture-9236b59706-defective-cabinet-drawer-handle-instance",
+        "fixture-9236b59706-defective-cabinet-drawer-handle-bar"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-defective-cabinet",
+        "PG2_fixture-9236b59706-defective-cabinet-drawer",
+        "PG2_fixture-9236b59706-defective-cabinet-drawer-handle"
+      ],
+      "role": "drawer-handle-bar",
+      "material": "fixture-9236b59706-Detail_Stainless",
+      "primitive": "pipe_between_points",
+      "local_geometry": {
+        "start": [
+          0,
+          -32,
+          0
+        ],
+        "end": [
+          190,
+          -32,
+          0
+        ],
+        "radius": 6,
+        "segments": 32,
+        "smooth": "all"
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-defective-cabinet-drawer-handle-post-l",
+      "instance_path": [
+        "B",
+        "fixture-9236b59706-defective-cabinet-drawer-2",
+        "fixture-9236b59706-defective-cabinet-drawer-handle-instance",
+        "fixture-9236b59706-defective-cabinet-drawer-handle-post-l"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-defective-cabinet",
+        "PG2_fixture-9236b59706-defective-cabinet-drawer",
+        "PG2_fixture-9236b59706-defective-cabinet-drawer-handle"
+      ],
+      "role": "drawer-handle-post-l",
+      "material": "fixture-9236b59706-Detail_Stainless",
+      "primitive": "pipe_between_points",
+      "local_geometry": {
+        "start": [
+          12,
+          0,
+          0
+        ],
+        "end": [
+          12,
+          -32,
+          0
+        ],
+        "radius": 5,
+        "segments": 32,
+        "smooth": "all"
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-defective-cabinet-drawer-handle-post-r",
+      "instance_path": [
+        "B",
+        "fixture-9236b59706-defective-cabinet-drawer-2",
+        "fixture-9236b59706-defective-cabinet-drawer-handle-instance",
+        "fixture-9236b59706-defective-cabinet-drawer-handle-post-r"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-defective-cabinet",
+        "PG2_fixture-9236b59706-defective-cabinet-drawer",
+        "PG2_fixture-9236b59706-defective-cabinet-drawer-handle"
+      ],
+      "role": "drawer-handle-post-r",
+      "material": "fixture-9236b59706-Detail_Stainless",
+      "primitive": "pipe_between_points",
+      "local_geometry": {
+        "start": [
+          178,
+          0,
+          0
+        ],
+        "end": [
+          178,
+          -32,
+          0
+        ],
+        "radius": 5,
+        "segments": 32,
+        "smooth": "all"
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-defective-cabinet-drawer-handle-screw-0",
+      "instance_path": [
+        "B",
+        "fixture-9236b59706-defective-cabinet-drawer-2",
+        "fixture-9236b59706-defective-cabinet-drawer-handle-instance",
+        "fixture-9236b59706-defective-cabinet-drawer-handle-screw-0"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-defective-cabinet",
+        "PG2_fixture-9236b59706-defective-cabinet-drawer",
+        "PG2_fixture-9236b59706-defective-cabinet-drawer-handle"
+      ],
+      "role": "fixing",
+      "material": "fixture-9236b59706-Detail_Stainless",
+      "primitive": "profile_extrude",
+      "local_geometry": {
+        "origin": [
+          12,
+          -2,
+          -4
+        ],
+        "plane": "xz",
+        "outer": [
+          [
+            4,
+            0
+          ],
+          [
+            3.804226065180614,
+            1.2360679774997896
+          ],
+          [
+            3.23606797749979,
+            2.3511410091698925
+          ],
+          [
+            2.3511410091698925,
+            3.23606797749979
+          ],
+          [
+            1.2360679774997898,
+            3.804226065180614
+          ],
+          [
+            2.4492935982947064e-16,
+            4
+          ],
+          [
+            -1.2360679774997894,
+            3.8042260651806146
+          ],
+          [
+            -2.351141009169892,
+            3.23606797749979
+          ],
+          [
+            -3.2360679774997894,
+            2.351141009169893
+          ],
+          [
+            -3.804226065180614,
+            1.23606797749979
+          ],
+          [
+            -4,
+            4.898587196589413e-16
+          ],
+          [
+            -3.804226065180615,
+            -1.2360679774997876
+          ],
+          [
+            -3.23606797749979,
+            -2.351141009169892
+          ],
+          [
+            -2.351141009169893,
+            -3.2360679774997894
+          ],
+          [
+            -1.2360679774997902,
+            -3.804226065180614
+          ],
+          [
+            -7.347880794884119e-16,
+            -4
+          ],
+          [
+            1.236067977499789,
+            -3.8042260651806146
+          ],
+          [
+            2.3511410091698917,
+            -3.2360679774997902
+          ],
+          [
+            3.2360679774997894,
+            -2.3511410091698934
+          ],
+          [
+            3.804226065180614,
+            -1.2360679774997905
+          ]
+        ],
+        "depth": 3,
+        "holes": []
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-defective-cabinet-drawer-handle-screw-1",
+      "instance_path": [
+        "B",
+        "fixture-9236b59706-defective-cabinet-drawer-2",
+        "fixture-9236b59706-defective-cabinet-drawer-handle-instance",
+        "fixture-9236b59706-defective-cabinet-drawer-handle-screw-1"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-defective-cabinet",
+        "PG2_fixture-9236b59706-defective-cabinet-drawer",
+        "PG2_fixture-9236b59706-defective-cabinet-drawer-handle"
+      ],
+      "role": "fixing",
+      "material": "fixture-9236b59706-Detail_Stainless",
+      "primitive": "profile_extrude",
+      "local_geometry": {
+        "origin": [
+          178,
+          -2,
+          -4
+        ],
+        "plane": "xz",
+        "outer": [
+          [
+            4,
+            0
+          ],
+          [
+            3.804226065180614,
+            1.2360679774997896
+          ],
+          [
+            3.23606797749979,
+            2.3511410091698925
+          ],
+          [
+            2.3511410091698925,
+            3.23606797749979
+          ],
+          [
+            1.2360679774997898,
+            3.804226065180614
+          ],
+          [
+            2.4492935982947064e-16,
+            4
+          ],
+          [
+            -1.2360679774997894,
+            3.8042260651806146
+          ],
+          [
+            -2.351141009169892,
+            3.23606797749979
+          ],
+          [
+            -3.2360679774997894,
+            2.351141009169893
+          ],
+          [
+            -3.804226065180614,
+            1.23606797749979
+          ],
+          [
+            -4,
+            4.898587196589413e-16
+          ],
+          [
+            -3.804226065180615,
+            -1.2360679774997876
+          ],
+          [
+            -3.23606797749979,
+            -2.351141009169892
+          ],
+          [
+            -2.351141009169893,
+            -3.2360679774997894
+          ],
+          [
+            -1.2360679774997902,
+            -3.804226065180614
+          ],
+          [
+            -7.347880794884119e-16,
+            -4
+          ],
+          [
+            1.236067977499789,
+            -3.8042260651806146
+          ],
+          [
+            2.3511410091698917,
+            -3.2360679774997902
+          ],
+          [
+            3.2360679774997894,
+            -2.3511410091698934
+          ],
+          [
+            3.804226065180614,
+            -1.2360679774997905
+          ]
+        ],
+        "depth": 3,
+        "holes": []
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-defective-cabinet-runner-1-left",
+      "instance_path": [
+        "B",
+        "fixture-9236b59706-defective-cabinet-runner-1-left"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-defective-cabinet"
+      ],
+      "role": "drawer_runner",
+      "material": "fixture-9236b59706-Detail_Stainless",
+      "primitive": "profile_extrude",
+      "local_geometry": {
+        "origin": [
+          20,
+          12,
+          393.6666666666667
+        ],
+        "plane": "xz",
+        "outer": [
+          [
+            0,
+            0
+          ],
+          [
+            8,
+            0
+          ],
+          [
+            8,
+            25
+          ],
+          [
+            6,
+            25
+          ],
+          [
+            6,
+            3
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            25
+          ],
+          [
+            0,
+            25
+          ]
+        ],
+        "depth": 540,
+        "holes": []
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-defective-cabinet-runner-1-right",
+      "instance_path": [
+        "B",
+        "fixture-9236b59706-defective-cabinet-runner-1-right"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-defective-cabinet"
+      ],
+      "role": "drawer_runner",
+      "material": "fixture-9236b59706-Detail_Stainless",
+      "primitive": "profile_extrude",
+      "local_geometry": {
+        "origin": [
+          572,
+          12,
+          393.6666666666667
+        ],
+        "plane": "xz",
+        "outer": [
+          [
+            0,
+            0
+          ],
+          [
+            8,
+            0
+          ],
+          [
+            8,
+            25
+          ],
+          [
+            6,
+            25
+          ],
+          [
+            6,
+            3
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            25
+          ],
+          [
+            0,
+            25
+          ]
+        ],
+        "depth": 540,
+        "holes": []
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-defective-cabinet-drawer-front",
+      "instance_path": [
+        "B",
+        "fixture-9236b59706-defective-cabinet-drawer-3",
+        "fixture-9236b59706-defective-cabinet-drawer-front"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-defective-cabinet",
+        "PG2_fixture-9236b59706-defective-cabinet-drawer"
+      ],
+      "role": "drawer_front",
+      "material": "fixture-9236b59706-Detail_Oak",
+      "primitive": "profile_extrude",
+      "local_geometry": {
+        "origin": [
+          3,
+          -21,
+          0
+        ],
+        "plane": "xz",
+        "outer": [
+          [
+            591,
+            0
+          ],
+          [
+            591.9270509831248,
+            0.14683045111453952
+          ],
+          [
+            592.7633557568774,
+            0.5729490168751576
+          ],
+          [
+            593.4270509831248,
+            1.2366442431225806
+          ],
+          [
+            593.8531695488855,
+            2.0729490168751576
+          ],
+          [
+            594,
+            3
+          ],
+          [
+            594,
+            257.6666666666667
+          ],
+          [
+            593.8531695488855,
+            258.59371764979153
+          ],
+          [
+            593.4270509831248,
+            259.43002242354413
+          ],
+          [
+            592.7633557568774,
+            260.09371764979153
+          ],
+          [
+            591.9270509831248,
+            260.5198362155521
+          ],
+          [
+            591,
+            260.6666666666667
+          ],
+          [
+            3,
+            260.6666666666667
+          ],
+          [
+            2.072949016875158,
+            260.5198362155521
+          ],
+          [
+            1.2366442431225808,
+            260.09371764979153
+          ],
+          [
+            0.5729490168751581,
+            259.43002242354413
+          ],
+          [
+            0.14683045111453952,
+            258.59371764979153
+          ],
+          [
+            0,
+            257.6666666666667
+          ],
+          [
+            0,
+            3.0000000000000004
+          ],
+          [
+            0.14683045111453952,
+            2.0729490168751568
+          ],
+          [
+            0.5729490168751576,
+            1.2366442431225808
+          ],
+          [
+            1.2366442431225804,
+            0.5729490168751581
+          ],
+          [
+            2.072949016875157,
+            0.14683045111453952
+          ],
+          [
+            2.9999999999999996,
+            0
+          ]
+        ],
+        "depth": 21,
+        "holes": []
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-defective-cabinet-drawer-bottom",
+      "instance_path": [
+        "B",
+        "fixture-9236b59706-defective-cabinet-drawer-3",
+        "fixture-9236b59706-defective-cabinet-drawer-bottom"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-defective-cabinet",
+        "PG2_fixture-9236b59706-defective-cabinet-drawer"
+      ],
+      "role": "drawer_bottom",
+      "material": "fixture-9236b59706-Detail_Painted_Joinery",
+      "primitive": "box",
+      "local_geometry": {
+        "origin": [
+          32,
+          15,
+          10
+        ],
+        "size": [
+          536,
+          510,
+          12
+        ]
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-defective-cabinet-drawer-left-side",
+      "instance_path": [
+        "B",
+        "fixture-9236b59706-defective-cabinet-drawer-3",
+        "fixture-9236b59706-defective-cabinet-drawer-left-side"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-defective-cabinet",
+        "PG2_fixture-9236b59706-defective-cabinet-drawer"
+      ],
+      "role": "drawer_side",
+      "material": "fixture-9236b59706-Detail_Painted_Joinery",
+      "primitive": "box",
+      "local_geometry": {
+        "origin": [
+          32,
+          15,
+          22
+        ],
+        "size": [
+          12,
+          510,
+          208.66666666666669
+        ]
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-defective-cabinet-drawer-right-side",
+      "instance_path": [
+        "B",
+        "fixture-9236b59706-defective-cabinet-drawer-3",
+        "fixture-9236b59706-defective-cabinet-drawer-right-side"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-defective-cabinet",
+        "PG2_fixture-9236b59706-defective-cabinet-drawer"
+      ],
+      "role": "drawer_side",
+      "material": "fixture-9236b59706-Detail_Painted_Joinery",
+      "primitive": "box",
+      "local_geometry": {
+        "origin": [
+          556,
+          15,
+          22
+        ],
+        "size": [
+          12,
+          510,
+          208.66666666666669
+        ]
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-defective-cabinet-drawer-back",
+      "instance_path": [
+        "B",
+        "fixture-9236b59706-defective-cabinet-drawer-3",
+        "fixture-9236b59706-defective-cabinet-drawer-back"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-defective-cabinet",
+        "PG2_fixture-9236b59706-defective-cabinet-drawer"
+      ],
+      "role": "drawer_back",
+      "material": "fixture-9236b59706-Detail_Painted_Joinery",
+      "primitive": "box",
+      "local_geometry": {
+        "origin": [
+          44,
+          513,
+          22
+        ],
+        "size": [
+          512,
+          12,
+          208.66666666666669
+        ]
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-defective-cabinet-drawer-handle-bar",
+      "instance_path": [
+        "B",
+        "fixture-9236b59706-defective-cabinet-drawer-3",
+        "fixture-9236b59706-defective-cabinet-drawer-handle-instance",
+        "fixture-9236b59706-defective-cabinet-drawer-handle-bar"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-defective-cabinet",
+        "PG2_fixture-9236b59706-defective-cabinet-drawer",
+        "PG2_fixture-9236b59706-defective-cabinet-drawer-handle"
+      ],
+      "role": "drawer-handle-bar",
+      "material": "fixture-9236b59706-Detail_Stainless",
+      "primitive": "pipe_between_points",
+      "local_geometry": {
+        "start": [
+          0,
+          -32,
+          0
+        ],
+        "end": [
+          190,
+          -32,
+          0
+        ],
+        "radius": 6,
+        "segments": 32,
+        "smooth": "all"
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-defective-cabinet-drawer-handle-post-l",
+      "instance_path": [
+        "B",
+        "fixture-9236b59706-defective-cabinet-drawer-3",
+        "fixture-9236b59706-defective-cabinet-drawer-handle-instance",
+        "fixture-9236b59706-defective-cabinet-drawer-handle-post-l"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-defective-cabinet",
+        "PG2_fixture-9236b59706-defective-cabinet-drawer",
+        "PG2_fixture-9236b59706-defective-cabinet-drawer-handle"
+      ],
+      "role": "drawer-handle-post-l",
+      "material": "fixture-9236b59706-Detail_Stainless",
+      "primitive": "pipe_between_points",
+      "local_geometry": {
+        "start": [
+          12,
+          0,
+          0
+        ],
+        "end": [
+          12,
+          -32,
+          0
+        ],
+        "radius": 5,
+        "segments": 32,
+        "smooth": "all"
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-defective-cabinet-drawer-handle-post-r",
+      "instance_path": [
+        "B",
+        "fixture-9236b59706-defective-cabinet-drawer-3",
+        "fixture-9236b59706-defective-cabinet-drawer-handle-instance",
+        "fixture-9236b59706-defective-cabinet-drawer-handle-post-r"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-defective-cabinet",
+        "PG2_fixture-9236b59706-defective-cabinet-drawer",
+        "PG2_fixture-9236b59706-defective-cabinet-drawer-handle"
+      ],
+      "role": "drawer-handle-post-r",
+      "material": "fixture-9236b59706-Detail_Stainless",
+      "primitive": "pipe_between_points",
+      "local_geometry": {
+        "start": [
+          178,
+          0,
+          0
+        ],
+        "end": [
+          178,
+          -32,
+          0
+        ],
+        "radius": 5,
+        "segments": 32,
+        "smooth": "all"
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-defective-cabinet-drawer-handle-screw-0",
+      "instance_path": [
+        "B",
+        "fixture-9236b59706-defective-cabinet-drawer-3",
+        "fixture-9236b59706-defective-cabinet-drawer-handle-instance",
+        "fixture-9236b59706-defective-cabinet-drawer-handle-screw-0"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-defective-cabinet",
+        "PG2_fixture-9236b59706-defective-cabinet-drawer",
+        "PG2_fixture-9236b59706-defective-cabinet-drawer-handle"
+      ],
+      "role": "fixing",
+      "material": "fixture-9236b59706-Detail_Stainless",
+      "primitive": "profile_extrude",
+      "local_geometry": {
+        "origin": [
+          12,
+          -2,
+          -4
+        ],
+        "plane": "xz",
+        "outer": [
+          [
+            4,
+            0
+          ],
+          [
+            3.804226065180614,
+            1.2360679774997896
+          ],
+          [
+            3.23606797749979,
+            2.3511410091698925
+          ],
+          [
+            2.3511410091698925,
+            3.23606797749979
+          ],
+          [
+            1.2360679774997898,
+            3.804226065180614
+          ],
+          [
+            2.4492935982947064e-16,
+            4
+          ],
+          [
+            -1.2360679774997894,
+            3.8042260651806146
+          ],
+          [
+            -2.351141009169892,
+            3.23606797749979
+          ],
+          [
+            -3.2360679774997894,
+            2.351141009169893
+          ],
+          [
+            -3.804226065180614,
+            1.23606797749979
+          ],
+          [
+            -4,
+            4.898587196589413e-16
+          ],
+          [
+            -3.804226065180615,
+            -1.2360679774997876
+          ],
+          [
+            -3.23606797749979,
+            -2.351141009169892
+          ],
+          [
+            -2.351141009169893,
+            -3.2360679774997894
+          ],
+          [
+            -1.2360679774997902,
+            -3.804226065180614
+          ],
+          [
+            -7.347880794884119e-16,
+            -4
+          ],
+          [
+            1.236067977499789,
+            -3.8042260651806146
+          ],
+          [
+            2.3511410091698917,
+            -3.2360679774997902
+          ],
+          [
+            3.2360679774997894,
+            -2.3511410091698934
+          ],
+          [
+            3.804226065180614,
+            -1.2360679774997905
+          ]
+        ],
+        "depth": 3,
+        "holes": []
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-defective-cabinet-drawer-handle-screw-1",
+      "instance_path": [
+        "B",
+        "fixture-9236b59706-defective-cabinet-drawer-3",
+        "fixture-9236b59706-defective-cabinet-drawer-handle-instance",
+        "fixture-9236b59706-defective-cabinet-drawer-handle-screw-1"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-defective-cabinet",
+        "PG2_fixture-9236b59706-defective-cabinet-drawer",
+        "PG2_fixture-9236b59706-defective-cabinet-drawer-handle"
+      ],
+      "role": "fixing",
+      "material": "fixture-9236b59706-Detail_Stainless",
+      "primitive": "profile_extrude",
+      "local_geometry": {
+        "origin": [
+          178,
+          -2,
+          -4
+        ],
+        "plane": "xz",
+        "outer": [
+          [
+            4,
+            0
+          ],
+          [
+            3.804226065180614,
+            1.2360679774997896
+          ],
+          [
+            3.23606797749979,
+            2.3511410091698925
+          ],
+          [
+            2.3511410091698925,
+            3.23606797749979
+          ],
+          [
+            1.2360679774997898,
+            3.804226065180614
+          ],
+          [
+            2.4492935982947064e-16,
+            4
+          ],
+          [
+            -1.2360679774997894,
+            3.8042260651806146
+          ],
+          [
+            -2.351141009169892,
+            3.23606797749979
+          ],
+          [
+            -3.2360679774997894,
+            2.351141009169893
+          ],
+          [
+            -3.804226065180614,
+            1.23606797749979
+          ],
+          [
+            -4,
+            4.898587196589413e-16
+          ],
+          [
+            -3.804226065180615,
+            -1.2360679774997876
+          ],
+          [
+            -3.23606797749979,
+            -2.351141009169892
+          ],
+          [
+            -2.351141009169893,
+            -3.2360679774997894
+          ],
+          [
+            -1.2360679774997902,
+            -3.804226065180614
+          ],
+          [
+            -7.347880794884119e-16,
+            -4
+          ],
+          [
+            1.236067977499789,
+            -3.8042260651806146
+          ],
+          [
+            2.3511410091698917,
+            -3.2360679774997902
+          ],
+          [
+            3.2360679774997894,
+            -2.3511410091698934
+          ],
+          [
+            3.804226065180614,
+            -1.2360679774997905
+          ]
+        ],
+        "depth": 3,
+        "holes": []
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-defective-cabinet-runner-2-left",
+      "instance_path": [
+        "B",
+        "fixture-9236b59706-defective-cabinet-runner-2-left"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-defective-cabinet"
+      ],
+      "role": "drawer_runner",
+      "material": "fixture-9236b59706-Detail_Stainless",
+      "primitive": "profile_extrude",
+      "local_geometry": {
+        "origin": [
+          20,
+          12,
+          657.3333333333334
+        ],
+        "plane": "xz",
+        "outer": [
+          [
+            0,
+            0
+          ],
+          [
+            8,
+            0
+          ],
+          [
+            8,
+            25
+          ],
+          [
+            6,
+            25
+          ],
+          [
+            6,
+            3
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            25
+          ],
+          [
+            0,
+            25
+          ]
+        ],
+        "depth": 540,
+        "holes": []
+      }
+    },
+    {
+      "part_id": "fixture-9236b59706-defective-cabinet-runner-2-right",
+      "instance_path": [
+        "B",
+        "fixture-9236b59706-defective-cabinet-runner-2-right"
+      ],
+      "definition_path": [
+        "PG2_fixture-9236b59706-defective-cabinet"
+      ],
+      "role": "drawer_runner",
+      "material": "fixture-9236b59706-Detail_Stainless",
+      "primitive": "profile_extrude",
+      "local_geometry": {
+        "origin": [
+          572,
+          12,
+          657.3333333333334
+        ],
+        "plane": "xz",
+        "outer": [
+          [
+            0,
+            0
+          ],
+          [
+            8,
+            0
+          ],
+          [
+            8,
+            25
+          ],
+          [
+            6,
+            25
+          ],
+          [
+            6,
+            3
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            25
+          ],
+          [
+            0,
+            25
+          ]
+        ],
+        "depth": 540,
+        "holes": []
+      }
+    }
+  ],
+  "source_type": "authored_constructive_reference",
+  "native_measurements": null,
+  "baseline_dimensions_only": true,
+  "note": "Do not inject this mapping, original dimensions, defect construction or evaluator instructions into model messages. Capture native persistent IDs and measured baseline after preparing the separate document."
+}

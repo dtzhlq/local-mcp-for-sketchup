@@ -1,0 +1,83 @@
+{
+  "version": 2,
+  "id": "fixture-c8627f5ff5",
+  "profile_id": "fixture-c8627f5ff5",
+  "coordinate_system": "part_local",
+  "units": "mm",
+  "product": {
+    "type": "benchmark_fixture",
+    "name": "appearance_assets"
+  },
+  "parts": [
+    {
+      "id": "fixture-c8627f5ff5-sentinel",
+      "name": "fixture-c8627f5ff5-sentinel",
+      "type": "detail_geometry",
+      "role": "template_sentinel",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            0,
+            0,
+            0
+          ],
+          "size": [
+            120,
+            160,
+            200
+          ]
+        }
+      },
+      "material": "fixture-c8627f5ff5-Detail_Painted_Joinery",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive"
+    },
+    {
+      "id": "fixture-c8627f5ff5-panel",
+      "name": "fixture-c8627f5ff5-panel",
+      "type": "detail_geometry",
+      "role": "material_test_panel",
+      "shape": {
+        "primitive": "box",
+        "parameters": {
+          "origin": [
+            0,
+            0,
+            0
+          ],
+          "size": [
+            1800,
+            900,
+            30
+          ]
+        }
+      },
+      "material": "fixture-c8627f5ff5-Detail_Painted_Joinery",
+      "detail_level": "detailed",
+      "evidence_status": "manual_confirmed",
+      "fallback_state": "structured_primitive"
+    }
+  ],
+  "roots": [
+    {
+      "part_id": "fixture-c8627f5ff5-sentinel",
+      "instance_id": "accessibility-template-sentinel",
+      "origin": [
+        -8000,
+        -8000,
+        0
+      ]
+    },
+    {
+      "part_id": "fixture-c8627f5ff5-panel",
+      "instance_id": "P",
+      "origin": [
+        0,
+        0,
+        900
+      ]
+    }
+  ]
+}

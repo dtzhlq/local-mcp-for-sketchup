@@ -1,0 +1,53 @@
+{
+  "schema_version": "model-accessibility-fixture-oracle.v1",
+  "case_id": "asset_query.acceptance_b",
+  "visibility": "collector_and_independent_assessor_only",
+  "identities": {
+    "accessibility-template-sentinel": {
+      "source": "new_authored_template_sentinel",
+      "preserve": true,
+      "baseline": {
+        "id": "accessibility-template-sentinel",
+        "create": true,
+        "origin_mm": [
+          -8000,
+          -8000,
+          0
+        ],
+        "size_mm": [
+          120,
+          160,
+          200
+        ]
+      }
+    }
+  },
+  "occurrence_mapping": [
+    {
+      "part_id": "fixture-2996752875-sentinel",
+      "instance_path": [
+        "accessibility-template-sentinel"
+      ],
+      "definition_path": [],
+      "role": "template_sentinel",
+      "material": "fixture-2996752875-Detail_Painted_Joinery",
+      "primitive": "box",
+      "local_geometry": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "size": [
+          120,
+          160,
+          200
+        ]
+      }
+    }
+  ],
+  "source_type": "authored_constructive_reference",
+  "native_measurements": null,
+  "baseline_dimensions_only": true,
+  "note": "Do not inject this mapping, original dimensions, defect construction or evaluator instructions into model messages. Capture native persistent IDs and measured baseline after preparing the separate document."
+}

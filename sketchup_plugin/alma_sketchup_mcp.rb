@@ -46,6 +46,8 @@ require_relative 'alma_sketchup_mcp/structural_probe'
 require_relative 'alma_sketchup_mcp/demo_operations'
 require_relative 'alma_sketchup_mcp/architecture_operations'
 require_relative 'alma_sketchup_mcp/component_operations'
+require_relative 'alma_sketchup_mcp/native_asset_operations'
+require_relative 'alma_sketchup_mcp/saved_model_lifecycle'
 require_relative 'alma_sketchup_mcp/view_operations'
 require_relative 'alma_sketchup_mcp/snapshot'
 
@@ -66,11 +68,11 @@ module AlmaSketchupMCP
   MODEL_REVISION_SOURCE_SHA256 = RuntimeSourceAttestation.loaded_model_revision_sha256
   DSL_VERSION = 1
   GUARDED_QUEUE_METHODS = %w[
-    reset_model build_model save_model save_model_version open_model import_model export_model
+    reset_model build_model save_model save_model_version open_model close_reopen_saved_model import_model export_model
     adopt_open_model set_selection capture_view capture_detail_views run_ruby_expert
   ].freeze
   MUTATION_UNCERTAIN_QUEUE_METHODS = %w[
-    reset_model build_model save_model save_model_version open_model import_model export_model
+    reset_model build_model save_model save_model_version open_model close_reopen_saved_model import_model export_model
     adopt_open_model set_selection capture_view capture_detail_views run_ruby_expert
   ].freeze
 
@@ -289,6 +291,8 @@ module AlmaSketchupMCP
       save_model_version(params)
     when 'open_model'
       open_model(params['path'])
+    when 'close_reopen_saved_model'
+      close_reopen_saved_model(params)
     when 'import_model'
       import_model(params)
     when 'export_model'
@@ -553,9 +557,11 @@ module AlmaSketchupMCP
       'manifest_version' => CAPABILITY_MANIFEST_VERSION,
       'dsl_version' => DSL_VERSION,
       'occurrence_contract' => OCCURRENCE_CONTRACT_VERSION,
-      'creation_scope' => { 'version' => 'creation-scope.v1', 'atomic_absence_validation' => true },
+      'creation_scope' => { 'version' => 'creation-scope.v1', 'atomic_absence_validation' => true, 'host_new_root_metadata' => 'new-root-metadata.v1' },
       'detail_geometry' => { 'version' => 'native-geometry-evidence.v2', 'nested_occurrences' => true, 'measured' => true, 'context_void_queries' => true, 'resource_totals' => true, 'resource_scope' => 'all_native_stored_geometry' },
       'native_appearance' => native_appearance_capabilities(queue_active_model),
+      'saved_model_lifecycle' => { 'version' => 'saved-model-lifecycle.v1', 'close_reopen_saved_model' => Sketchup.respond_to?(:platform) && Sketchup.platform == :platform_osx,
+                                   'requires_verified_saved_receipt' => true, 'close_ignore_changes' => false, 'application_restart' => false },
       'boolean_operations_sha256' => BOOLEAN_OPERATIONS_SHA256,
       'model_revision_source_sha256' => MODEL_REVISION_SOURCE_SHA256,
       'model_revision' => {
@@ -2059,6 +2065,8 @@ module AlmaSketchupMCP
       duplicate_entity(model, operation)
     when 'replace_component_definition'
       replace_component_definition(model, operation)
+    when 'place_component_asset', 'replace_component_asset'
+      apply_native_component_asset(model, operation)
     when 'explode_entity'
       explode_entity(model, operation)
     when 'erase_entities'
@@ -2223,7 +2231,7 @@ module AlmaSketchupMCP
   def object_reference(operation, op_name)
     raw_entity_path = operation['entity_path'] || operation['entityPath'] || operation['target_path'] || operation['targetPath']
     if raw_entity_path
-      allowed = %w[delete rename set_material set_visibility transform_object assign_tag attribute remove_attribute classification texture_transform set_face_material reverse_face pushpull_face set_edge_properties duplicate_entity replace_component_definition explode_entity erase_entities transform_entities cut_hole cut_slot cut_recess add_boss add_raised_rib boolean_union boolean_difference boolean_intersect manifold_check manifold_repair]
+      allowed = %w[delete rename set_material set_visibility transform_object assign_tag attribute remove_attribute classification texture_transform set_face_material reverse_face pushpull_face set_edge_properties duplicate_entity replace_component_definition replace_component_asset explode_entity erase_entities transform_entities cut_hole cut_slot cut_recess add_boss add_raised_rib boolean_union boolean_difference boolean_intersect manifold_check manifold_repair]
       raise "#{op_name} does not support nested entity_path targets" unless allowed.include?(op_name)
       edit_scope = operation['edit_scope'] || operation['editScope']
       raise "#{op_name}.edit_scope must be component_definition or instance_path for nested targets" unless %w[component_definition instance_path].include?(edit_scope)

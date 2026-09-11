@@ -307,7 +307,15 @@ module AlmaSketchupMCP
     when Array
       value.map { |child| revision_canonical_value(child) }
     when Numeric
-      value.respond_to?(:finite?) && !value.finite? ? value.to_s : value
+      # SketchUp save/reopen can flip the sign bit of an exact zero in a
+      # transformation. JSON distinguishes -0.0 from 0.0 although they denote
+      # the same coordinate. Normalize only floating zero; preserve every
+      # nonzero bit and retain the existing Integer/Float serialization types.
+      if value.is_a?(Float) && value.zero?
+        0.0
+      else
+        value.respond_to?(:finite?) && !value.finite? ? value.to_s : value
+      end
     when Time
       value.utc.iso8601(6)
     when NilClass, String, TrueClass, FalseClass

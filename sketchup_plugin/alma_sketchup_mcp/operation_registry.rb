@@ -4,6 +4,28 @@
 
 module AlmaSketchupMCP
   OPERATION_SUPPORT = {
+    'place_component_asset' => {
+      'status' => 'supported',
+      'stability' => 'experimental',
+      'schema' => {
+        'required' => ['op', 'source_path', 'source_sha256', 'source', 'license', 'origin', 'rotateZ', 'confirmed', 'id', 'name'],
+        'optional' => []
+      },
+      'component_scope' => {
+        'status' => 'unsupported'
+      }
+    },
+    'replace_component_asset' => {
+      'status' => 'supported',
+      'stability' => 'experimental',
+      'schema' => {
+        'required' => ['op', 'source_path', 'source_sha256', 'source', 'license', 'origin', 'rotateZ', 'confirmed'],
+        'optional' => ['entity_path', 'target_id', 'edit_scope', 'instance_policy']
+      },
+      'component_scope' => {
+        'status' => 'unsupported'
+      }
+    },
     'section_plane' => {
       'status' => 'partial',
       'stability' => 'experimental',

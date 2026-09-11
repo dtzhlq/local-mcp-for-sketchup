@@ -1,0 +1,472 @@
+{
+  "version": "local-asset-catalog.v1",
+  "kind": "asset_query",
+  "assets": [
+    {
+      "id": "detail-window",
+      "name": "window",
+      "kind": "parametric_component",
+      "recipe": "window",
+      "path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/src/detailed-modeling/recipes.mjs",
+      "source": "project-authored constructive recipe",
+      "license": "project source terms",
+      "axes": {
+        "units": "mm",
+        "up": "+Z",
+        "coordinate_system": "part_local"
+      },
+      "component_hierarchy": [
+        {
+          "id": "asset-window-window-handle",
+          "children": 5
+        },
+        {
+          "id": "asset-window-sash",
+          "children": 6
+        },
+        {
+          "id": "asset-window",
+          "children": 7
+        }
+      ],
+      "materials": [
+        "Detail_Aluminium",
+        "Detail_Gasket",
+        "Detail_Glass",
+        "Detail_Stainless",
+        "Detail_Stone"
+      ],
+      "geometry_acceptance": "requires_live_instance_check",
+      "recipe_signature": "989575a69aa39e91ecf4687979044d3b165fadbd5501fd6786f95f2eb853a91c",
+      "native_geometry_verified": false,
+      "recorded_evidence_matches_file": false,
+      "evidence_trust": "no_native_receipt",
+      "available": true,
+      "size_bytes": 26812
+    },
+    {
+      "id": "detail-door",
+      "name": "door",
+      "kind": "parametric_component",
+      "recipe": "door",
+      "path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/src/detailed-modeling/recipes.mjs",
+      "source": "project-authored constructive recipe",
+      "license": "project source terms",
+      "axes": {
+        "units": "mm",
+        "up": "+Z",
+        "coordinate_system": "part_local"
+      },
+      "component_hierarchy": [
+        {
+          "id": "asset-door-door-handle",
+          "children": 5
+        },
+        {
+          "id": "asset-door-leaf",
+          "children": 11
+        },
+        {
+          "id": "asset-door",
+          "children": 7
+        }
+      ],
+      "materials": [
+        "Detail_Oak",
+        "Detail_Oak_Endgrain",
+        "Detail_Aluminium",
+        "Detail_Brass"
+      ],
+      "geometry_acceptance": "requires_live_instance_check",
+      "recipe_signature": "a92b2cc9f866096c9979d2baf012291c02c9a4fec2a40f2943c0a83d68395030",
+      "native_geometry_verified": false,
+      "recorded_evidence_matches_file": false,
+      "evidence_trust": "no_native_receipt",
+      "available": true,
+      "size_bytes": 26812
+    },
+    {
+      "id": "detail-cabinet",
+      "name": "cabinet",
+      "kind": "parametric_component",
+      "recipe": "cabinet",
+      "path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/src/detailed-modeling/recipes.mjs",
+      "source": "project-authored constructive recipe",
+      "license": "project source terms",
+      "axes": {
+        "units": "mm",
+        "up": "+Z",
+        "coordinate_system": "part_local"
+      },
+      "component_hierarchy": [
+        {
+          "id": "asset-cabinet-drawer-handle",
+          "children": 5
+        },
+        {
+          "id": "asset-cabinet-drawer",
+          "children": 6
+        },
+        {
+          "id": "asset-cabinet",
+          "children": 20
+        }
+      ],
+      "materials": [
+        "Detail_Painted_Joinery",
+        "Detail_Gasket",
+        "Detail_Oak",
+        "Detail_Stainless"
+      ],
+      "geometry_acceptance": "requires_live_instance_check",
+      "recipe_signature": "01fccd8284c51e94a6714662c5c0b6308e4dcb9caba1a5a02fad07e0ca5625d3",
+      "native_geometry_verified": false,
+      "recorded_evidence_matches_file": false,
+      "evidence_trust": "no_native_receipt",
+      "available": true,
+      "size_bytes": 26812
+    },
+    {
+      "id": "detail-sink",
+      "name": "sink",
+      "kind": "parametric_component",
+      "recipe": "sink",
+      "path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/src/detailed-modeling/recipes.mjs",
+      "source": "project-authored constructive recipe",
+      "license": "project source terms",
+      "axes": {
+        "units": "mm",
+        "up": "+Z",
+        "coordinate_system": "part_local"
+      },
+      "component_hierarchy": [
+        {
+          "id": "asset-sink-faucet",
+          "children": 5
+        },
+        {
+          "id": "asset-sink",
+          "children": 6
+        }
+      ],
+      "materials": [
+        "Detail_Stainless"
+      ],
+      "geometry_acceptance": "requires_live_instance_check",
+      "recipe_signature": "9c0d8cd6e1f0b1d254751f4eec4840fd14849bb6c6c24c09f6a8defc4f89eea7",
+      "native_geometry_verified": false,
+      "recorded_evidence_matches_file": false,
+      "evidence_trust": "no_native_receipt",
+      "available": true,
+      "size_bytes": 26812
+    },
+    {
+      "id": "detail-railing",
+      "name": "railing",
+      "kind": "parametric_component",
+      "recipe": "railing",
+      "path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/src/detailed-modeling/recipes.mjs",
+      "source": "project-authored constructive recipe",
+      "license": "project source terms",
+      "axes": {
+        "units": "mm",
+        "up": "+Z",
+        "coordinate_system": "part_local"
+      },
+      "component_hierarchy": [
+        {
+          "id": "asset-railing-post",
+          "children": 7
+        },
+        {
+          "id": "asset-railing",
+          "children": 20
+        }
+      ],
+      "materials": [
+        "Detail_Stainless",
+        "Detail_Glass"
+      ],
+      "geometry_acceptance": "requires_live_instance_check",
+      "recipe_signature": "a6c86d1b88df43cd9b449fdbd42c6b78612e0e774951ed452dad15b2a7946cfa",
+      "native_geometry_verified": false,
+      "recorded_evidence_matches_file": false,
+      "evidence_trust": "no_native_receipt",
+      "available": true,
+      "size_bytes": 26812
+    },
+    {
+      "id": "detail-wall_junction",
+      "name": "wall_junction",
+      "kind": "parametric_component",
+      "recipe": "wall_junction",
+      "path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/src/detailed-modeling/recipes.mjs",
+      "source": "project-authored constructive recipe",
+      "license": "project source terms",
+      "axes": {
+        "units": "mm",
+        "up": "+Z",
+        "coordinate_system": "part_local"
+      },
+      "component_hierarchy": [
+        {
+          "id": "asset-wall_junction",
+          "children": 11
+        }
+      ],
+      "materials": [
+        "Detail_Plaster",
+        "Detail_Waterproofing",
+        "Detail_Concrete",
+        "Detail_Insulation",
+        "Detail_Oak"
+      ],
+      "geometry_acceptance": "requires_live_instance_check",
+      "recipe_signature": "680364a60632df8189ba685b03215a09a339e9ea0882d2d680054497061bc80d",
+      "native_geometry_verified": false,
+      "recorded_evidence_matches_file": false,
+      "evidence_trust": "no_native_receipt",
+      "available": true,
+      "size_bytes": 26812
+    },
+    {
+      "id": "detail-eaves_drainage",
+      "name": "eaves_drainage",
+      "kind": "parametric_component",
+      "recipe": "eaves_drainage",
+      "path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/src/detailed-modeling/recipes.mjs",
+      "source": "project-authored constructive recipe",
+      "license": "project source terms",
+      "axes": {
+        "units": "mm",
+        "up": "+Z",
+        "coordinate_system": "part_local"
+      },
+      "component_hierarchy": [
+        {
+          "id": "asset-eaves_drainage",
+          "children": 47
+        }
+      ],
+      "materials": [
+        "Detail_Aluminium",
+        "Detail_Oak",
+        "Detail_Stainless"
+      ],
+      "geometry_acceptance": "requires_live_instance_check",
+      "recipe_signature": "24a5f6618ad33641134a1f3572b680dd18e190515046554df5cd3790460a7eb2",
+      "native_geometry_verified": false,
+      "recorded_evidence_matches_file": false,
+      "evidence_trust": "no_native_receipt",
+      "available": true,
+      "size_bytes": 26812
+    },
+    {
+      "id": "detail-paving",
+      "name": "paving",
+      "kind": "parametric_component",
+      "recipe": "paving",
+      "path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/src/detailed-modeling/recipes.mjs",
+      "source": "project-authored constructive recipe",
+      "license": "project source terms",
+      "axes": {
+        "units": "mm",
+        "up": "+Z",
+        "coordinate_system": "part_local"
+      },
+      "component_hierarchy": [
+        {
+          "id": "asset-paving-tile",
+          "children": 1
+        },
+        {
+          "id": "asset-paving-tile-cut-2400",
+          "children": 1
+        },
+        {
+          "id": "asset-paving-grate",
+          "children": 1
+        },
+        {
+          "id": "asset-paving",
+          "children": 78
+        }
+      ],
+      "materials": [
+        "Detail_Concrete",
+        "Detail_Grout",
+        "Detail_Stone",
+        "Detail_Aluminium",
+        "Detail_Stainless"
+      ],
+      "geometry_acceptance": "requires_live_instance_check",
+      "recipe_signature": "7b26136981d5bc0945861eba28330d3b35c2718fc26cf972d70fbf86f344ed1f",
+      "native_geometry_verified": false,
+      "recorded_evidence_matches_file": false,
+      "evidence_trust": "no_native_receipt",
+      "available": true,
+      "size_bytes": 26812
+    },
+    {
+      "id": "detail-reading_chair",
+      "name": "reading_chair",
+      "kind": "parametric_component",
+      "recipe": "reading_chair",
+      "path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/src/detailed-modeling/furnishing-assets.mjs",
+      "source": "project-authored constructive recipe",
+      "license": "project source terms",
+      "axes": {
+        "units": "mm",
+        "up": "+Z",
+        "coordinate_system": "part_local"
+      },
+      "component_hierarchy": [
+        {
+          "id": "asset-reading_chair-leg",
+          "children": 3
+        },
+        {
+          "id": "asset-reading_chair",
+          "children": 15
+        }
+      ],
+      "materials": [
+        "Detail_Oak",
+        "Detail_Gasket",
+        "Detail_Oak_Endgrain",
+        "Detail_Fabric"
+      ],
+      "geometry_acceptance": "requires_live_instance_check",
+      "recipe_signature": "8eef64e9cd143560389d8f2ffdac51582a5ecfaca680d85e2a6dee98c9b7d3a0",
+      "native_geometry_verified": false,
+      "recorded_evidence_matches_file": false,
+      "evidence_trust": "no_native_receipt",
+      "available": true,
+      "size_bytes": 14627
+    },
+    {
+      "id": "detail-side_table",
+      "name": "side_table",
+      "kind": "parametric_component",
+      "recipe": "side_table",
+      "path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/src/detailed-modeling/furnishing-assets.mjs",
+      "source": "project-authored constructive recipe",
+      "license": "project source terms",
+      "axes": {
+        "units": "mm",
+        "up": "+Z",
+        "coordinate_system": "part_local"
+      },
+      "component_hierarchy": [
+        {
+          "id": "asset-side_table-leg",
+          "children": 5
+        },
+        {
+          "id": "asset-side_table",
+          "children": 6
+        }
+      ],
+      "materials": [
+        "Detail_Oak",
+        "Detail_Oak_Endgrain",
+        "Detail_Gasket",
+        "Detail_Stainless"
+      ],
+      "geometry_acceptance": "requires_live_instance_check",
+      "recipe_signature": "129de3eb38a8a9e3b69aafcef5a1b3e68ca2fd54f3b10c211e06374dbf482e84",
+      "native_geometry_verified": false,
+      "recorded_evidence_matches_file": false,
+      "evidence_trust": "no_native_receipt",
+      "available": true,
+      "size_bytes": 14627
+    },
+    {
+      "id": "detail-pendant_light",
+      "name": "pendant_light",
+      "kind": "parametric_component",
+      "recipe": "pendant_light",
+      "path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/src/detailed-modeling/furnishing-assets.mjs",
+      "source": "project-authored constructive recipe",
+      "license": "project source terms",
+      "axes": {
+        "units": "mm",
+        "up": "+Z",
+        "coordinate_system": "part_local"
+      },
+      "component_hierarchy": [
+        {
+          "id": "asset-pendant_light",
+          "children": 11
+        }
+      ],
+      "materials": [
+        "Detail_Fabric",
+        "Detail_Brass",
+        "Detail_Painted_Joinery",
+        "Detail_Gasket"
+      ],
+      "geometry_acceptance": "requires_live_instance_check",
+      "recipe_signature": "062d21a0ebd76d49843751aa7d01560f1adc99a7aa82a231cd6046971df2555e",
+      "native_geometry_verified": false,
+      "recorded_evidence_matches_file": false,
+      "evidence_trust": "no_native_receipt",
+      "available": true,
+      "size_bytes": 14627
+    },
+    {
+      "id": "detail-potted_plant",
+      "name": "potted_plant",
+      "kind": "parametric_component",
+      "recipe": "potted_plant",
+      "path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/src/detailed-modeling/furnishing-assets.mjs",
+      "source": "project-authored constructive recipe",
+      "license": "project source terms",
+      "axes": {
+        "units": "mm",
+        "up": "+Z",
+        "coordinate_system": "part_local"
+      },
+      "component_hierarchy": [
+        {
+          "id": "asset-potted_plant-large-leaf",
+          "children": 2
+        },
+        {
+          "id": "asset-potted_plant-small-leaf",
+          "children": 2
+        },
+        {
+          "id": "asset-potted_plant",
+          "children": 25
+        }
+      ],
+      "materials": [
+        "Detail_Terracotta",
+        "Detail_Gasket",
+        "Detail_Soil",
+        "Detail_Leaf",
+        "Detail_Oak_Endgrain"
+      ],
+      "geometry_acceptance": "requires_live_instance_check",
+      "recipe_signature": "ccbf7161b20c886b85f84f97215a533feb60cf35d26ad8d9d2c1c3264a6528d3",
+      "native_geometry_verified": false,
+      "recorded_evidence_matches_file": false,
+      "evidence_trust": "no_native_receipt",
+      "available": true,
+      "size_bytes": 14627
+    }
+  ],
+  "policy": {
+    "purchases": false,
+    "automatic_downloads": false,
+    "license_unknown_is_usable_proof": false
+  },
+  "fixture_selection": {
+    "requested_kind": "chair",
+    "candidate_ids": [
+      "detail-reading_chair"
+    ],
+    "substitution_allowed": false
+  }
+}

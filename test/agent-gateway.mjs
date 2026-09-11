@@ -375,6 +375,7 @@ try {
   const reviewedExistingEditOperations = [
     'attribute', 'remove_attribute', 'assign_tag', 'classification', 'texture_transform', 'set_material', 'set_face_material',
     'set_visibility', 'set_edge_properties', 'rename', 'transform_object', 'duplicate_entity', 'replace_component_definition',
+    'place_component_asset', 'replace_component_asset',
     'reverse_face', 'pushpull_face', 'transform_entities', 'erase_entities', 'delete', 'explode_entity', 'cut_hole', 'cut_slot',
     'cut_recess', 'add_boss', 'add_raised_rib', 'boolean_union', 'boolean_difference', 'boolean_intersect', 'manifold_repair',
     'manifold_check'

@@ -1,0 +1,83 @@
+{
+  "schema_version": "model-accessibility-prepared-fixtures.v1",
+  "prepared": [
+    {
+      "case_id": "window.acceptance_a",
+      "fixture_family": "empty",
+      "path": "benchmarks/model-accessibility/prepared-fixtures/window.acceptance_a",
+      "dsl_sha256": "487aa7ae8b4ae1d2bd77b608af633f22a4fa4997ed5b179dfcb14c181dcffa3a",
+      "status": "prepared_dsl_awaiting_native_baseline",
+      "blockers": [],
+      "native_ready": false
+    },
+    {
+      "case_id": "asset_query.acceptance_b",
+      "fixture_family": "asset_catalog",
+      "path": "benchmarks/model-accessibility/prepared-fixtures/asset_query.acceptance_b",
+      "dsl_sha256": "a489acc9a7316a6d8fa70b89afcd80352d7f871e93522343ed999f5fca464cc8",
+      "status": "prepared_dsl_with_blockers",
+      "blockers": [
+        "requested_asset_not_present:stool"
+      ],
+      "native_ready": false
+    },
+    {
+      "case_id": "edit_single.acceptance_a",
+      "fixture_family": "shared_cabinets",
+      "path": "benchmarks/model-accessibility/prepared-fixtures/edit_single.acceptance_a",
+      "dsl_sha256": "af265c8e350f4a2a941c4f683b0a0c887818c2b0260e14d84016a190c5bccd0d",
+      "status": "prepared_dsl_awaiting_native_baseline",
+      "blockers": [],
+      "native_ready": false
+    },
+    {
+      "case_id": "asset_replace.acceptance_a",
+      "fixture_family": "asset_layout",
+      "path": "benchmarks/model-accessibility/prepared-fixtures/asset_replace.acceptance_a",
+      "dsl_sha256": "c84335816d52245836dcfb041839b78bb858d09da3649ea9ad2620987d46a651",
+      "status": "prepared_dsl_with_blockers",
+      "blockers": [
+        "native_asset_file_not_prepared:detail-reading_chair"
+      ],
+      "native_ready": false
+    },
+    {
+      "case_id": "mirror_layout.acceptance_b",
+      "fixture_family": "small_layout",
+      "path": "benchmarks/model-accessibility/prepared-fixtures/mirror_layout.acceptance_b",
+      "dsl_sha256": "69e351fdbd4ac01de134dee8278a055f33a24e12fe40c11862503fbbf2d37680",
+      "status": "prepared_dsl_awaiting_native_baseline",
+      "blockers": [],
+      "native_ready": false
+    },
+    {
+      "case_id": "native_pbr.acceptance_a",
+      "fixture_family": "appearance_assets",
+      "path": "benchmarks/model-accessibility/prepared-fixtures/native_pbr.acceptance_a",
+      "dsl_sha256": "e7f6ac85ebde9e55be985da5d59a57fffd9dfa57d73c87a3423fd83f4af6ad82",
+      "status": "prepared_dsl_awaiting_native_baseline",
+      "blockers": [],
+      "native_ready": false
+    },
+    {
+      "case_id": "local_repair.acceptance_b",
+      "fixture_family": "defective_cabinet",
+      "path": "benchmarks/model-accessibility/prepared-fixtures/local_repair.acceptance_b",
+      "dsl_sha256": "5e93e6743abc1711f30c965652105da20cc33d9b8ce89fe472e13d68a3a06107",
+      "status": "prepared_dsl_awaiting_native_baseline",
+      "blockers": [],
+      "native_ready": false
+    },
+    {
+      "case_id": "negative.quality_failure",
+      "fixture_family": "negative_cases",
+      "path": "benchmarks/model-accessibility/prepared-fixtures/negative.quality_failure",
+      "dsl_sha256": "8acd6868945313eefa25acbf6b1d2199bcc87c285fb68af61481631e6a08eca4",
+      "status": "prepared_dsl_awaiting_native_baseline",
+      "blockers": [],
+      "native_ready": false
+    }
+  ],
+  "runtime_called": false,
+  "native_ready": false
+}

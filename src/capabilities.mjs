@@ -33,6 +33,14 @@ const nestedObjectTarget = ['entity_path', 'entityPath', 'target_path', 'targetP
 const commonPlacement = [...objectIdentity, 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform'];
 
 const OPERATION_REGISTRY_ENTRIES = [
+  ...['place_component_asset', 'replace_component_asset'].map(op => ({
+    op,
+    description: 'Load a SHA-bound native SKP root and place it or replace exactly one existing root instance in the reviewed atomic transaction.',
+    schema: { required: ['op', 'source_path', 'source_sha256', 'source', 'license', 'origin', 'rotateZ', 'confirmed', ...(op === 'place_component_asset' ? ['id', 'name'] : [])], optional: op === 'replace_component_asset' ? ['entity_path', 'target_id', 'edit_scope', 'instance_policy'] : [] },
+    runtime_support: { mock: SUPPORT_STATUS.unsupported, queue: SUPPORT_STATUS.supported },
+    stability: STABILITY.experimental,
+    notes: 'Reviewed-only; not allowed through additive create_model. Native source SHA is checked before/after load and placement. No explode, delete, scale or source writes; replacement preserves root identity and exact transform. Mock cannot attest SKP geometry.'
+  })),
   ...[
     ['section_plane', ['name', 'origin', 'normal'], ['id', 'activate']],
     ['section_plane_activate', ['section_ref'], []],
@@ -953,6 +961,8 @@ export function getRuntimeCapabilities(runtime = 'mock') {
     dsl_version: DSL_VERSION,
     occurrence_contract: OCCURRENCE_CONTRACT_VERSION,
     creation_scope: { version: 'creation-scope.v1', atomic_absence_validation: true },
+    saved_model_lifecycle: { version: 'saved-model-lifecycle.v1', close_reopen_saved_model: runtime === 'queue', platform: 'macOS',
+      requires_verified_saved_receipt: true, close_ignore_changes: false, application_restart: false, installed_runtime_verification_required: runtime === 'queue' },
     detail_geometry: { version: 'native-geometry-evidence.v2', nested_occurrences: true, measured: runtime === 'queue', context_void_queries: runtime === 'queue', resource_totals: runtime === 'queue', resource_scope: 'all_native_stored_geometry' },
     ...(runtime === 'queue' ? {
       boolean_operations_sha256: BOOLEAN_OPERATIONS_SHA256,

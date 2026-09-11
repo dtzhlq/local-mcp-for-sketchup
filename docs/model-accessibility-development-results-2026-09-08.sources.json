@@ -1,0 +1,991 @@
+{
+  "version": "model-accessibility-development-results-index.v1",
+  "generated_at": "2026-09-08T02:10:14.734Z",
+  "scope": "five_completed_development_runs_only",
+  "formal_acceptance": false,
+  "complete_delivery_count": 0,
+  "improvement_rate": null,
+  "release_acceptance": false,
+  "source_root": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/model-accessibility-live-2026-09-08",
+  "verified": {
+    "raw_event_sha256_matches_each_summary": true,
+    "provider_request_counts_match_events": true,
+    "tool_call_attempt_counts_match_events": true,
+    "reported_token_sums_match_events": true,
+    "exact_initial_user_message_and_four_gateway_tools": true,
+    "first_request_metrics_recomputed_against_recorded_tool_schemas": true
+  },
+  "totals": {
+    "provider_requests": 51,
+    "gateway_tool_call_attempts": 64,
+    "reported_tokens": 429066,
+    "sum_of_run_wall_seconds": 588.981,
+    "actual_charge": null
+  },
+  "environment": {
+    "alma_version": "0.4.22",
+    "codex_auth_plugin_version": "1.8.8",
+    "existing_subscription_authorized": true,
+    "provider_injected_base_instructions_condition": "Codex plugin adds generic Codex instructions and fixed Alma developer tool-name bridge. No repository history, SketchUp tutorial or hidden answers were found in the injection source. Actual schemas remain caller-supplied four Gateway tools.",
+    "codex_max_output_tokens_enforced_by_proxy": false,
+    "context_source_metadata_caveat": "Historical transport context_source describes caller input; it does not attest absence of provider base instructions.",
+    "model_identity_caveat": "Exact configured provider IDs and requested API model IDs are verified. Proxy model fields echo requests and do not independently attest backend weights; this is an evidence limit, not an additional acceptance criterion."
+  },
+  "gemini_channel": {
+    "included_in_five_runs": false,
+    "provider_id": "gemini",
+    "requested_model": "gemini-3.7-flash",
+    "local_http_status": 500,
+    "upstream_http_status": 400,
+    "status": "FAILED_PRECONDITION",
+    "reason": "User location is not supported for the API use.",
+    "network_or_region_changes_performed": false,
+    "acceptance_result": "not_run_channel_blocked"
+  },
+  "runs": [
+    {
+      "name": "glm-flash-window-development",
+      "run_id": "e161d1c9-87df-4ba0-b6a2-2d6d29820b1c",
+      "case_id": "window.development",
+      "suite_partition": "development",
+      "formal_acceptance": false,
+      "interface_path": "optimized",
+      "source_revision_label": "working-tree",
+      "start_utc": "2026-09-08T01:41:31.610Z",
+      "requested_model": "glm-5.3-flash",
+      "provider_id": "zai-coding-plan",
+      "endpoint": "http://localhost:23001/anthropic-proxy/zai-coding-plan/v1/messages",
+      "response_model_ids": [
+        "glm-5.3-flash"
+      ],
+      "served_model_verified": false,
+      "model_attestation": "request_echo_only",
+      "usage_attestation": "proxy_may_default_missing_to_zero",
+      "provider_request_count": 12,
+      "provider_response_count": 12,
+      "tool_call_attempt_count": 12,
+      "tool_schema_rejected_count": 1,
+      "tool_result_error_codes": [
+        "INVALID_ARGUMENT"
+      ],
+      "reported_usage": {
+        "input_tokens": 88869,
+        "output_tokens": 2479,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0
+      },
+      "total_reported_tokens": 91348,
+      "wall_time_seconds": 98.629,
+      "outcome": "token_limit",
+      "model_claim": "",
+      "independent_quality_assessment": "missing",
+      "complete_delivery_count": 0,
+      "live_runtime_acceptance": false,
+      "release_acceptance": false,
+      "initial_context": {
+        "message_count": 1,
+        "roles": [
+          "user"
+        ],
+        "explicit_system_supplied": false,
+        "tool_names": [
+          "start_agent_task",
+          "resume_agent_task",
+          "submit_agent_task_input",
+          "read_agent_artifact"
+        ],
+        "prompt_sha256": "93e981e1761f09747427e72f6dc6f587ebcc7235cbf021a79bf5668366f7c25b",
+        "tool_descriptions_sha256": "f65d9a2f2fc8c59dd7fe00e84a727fa0a10633c117c8bdf126f178ac7323ef9d"
+      },
+      "limits": {
+        "max_provider_requests": 12,
+        "max_tool_calls": 24,
+        "max_total_tokens": 80000,
+        "max_output_tokens_per_request": 2048,
+        "max_wall_seconds": 600
+      },
+      "tasks": [
+        {
+          "source": "output/model-accessibility-live-2026-09-08/glm-flash-window-development-state/tasks/tasks/task_820c629f-5320-455b-9835-ecaf538029a1.json",
+          "task_id": "task_820c629f-5320-455b-9835-ecaf538029a1",
+          "intent": "discover",
+          "state": "completed",
+          "quality_status": null,
+          "quality_accepted": null,
+          "quality_issues": [],
+          "last_error_code": null
+        },
+        {
+          "source": "output/model-accessibility-live-2026-09-08/glm-flash-window-development-state/tasks/tasks/task_ac8b8b5f-ad54-4c5d-b580-f46f00572d04.json",
+          "task_id": "task_ac8b8b5f-ad54-4c5d-b580-f46f00572d04",
+          "intent": "discover",
+          "state": "completed",
+          "quality_status": null,
+          "quality_accepted": null,
+          "quality_issues": [],
+          "last_error_code": null
+        }
+      ],
+      "first_request_metrics": {
+        "schema_valid": false,
+        "semantically_effective": false,
+        "reason": "schema_or_interface_rejected",
+        "missing_inputs": [],
+        "source": "original_tool_call_and_corresponding_tool_result",
+        "task_acceptance": false,
+        "schema_revalidated_from_recorded_model_input": true
+      }
+    },
+    {
+      "name": "glm-flash-window-development-v2",
+      "run_id": "6ee7e496-824a-4ff4-bd5f-dc9865187fdd",
+      "case_id": "window.development",
+      "suite_partition": "development",
+      "formal_acceptance": false,
+      "interface_path": "optimized",
+      "source_revision_label": "development-v2-inline-example",
+      "start_utc": "2026-09-08T01:43:39.116Z",
+      "requested_model": "glm-5.3-flash",
+      "provider_id": "zai-coding-plan",
+      "endpoint": "http://localhost:23001/anthropic-proxy/zai-coding-plan/v1/messages",
+      "response_model_ids": [
+        "glm-5.3-flash"
+      ],
+      "served_model_verified": false,
+      "model_attestation": "request_echo_only",
+      "usage_attestation": "proxy_may_default_missing_to_zero",
+      "provider_request_count": 12,
+      "provider_response_count": 12,
+      "tool_call_attempt_count": 11,
+      "tool_schema_rejected_count": 0,
+      "tool_result_error_codes": [],
+      "reported_usage": {
+        "input_tokens": 90491,
+        "output_tokens": 1986,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0
+      },
+      "total_reported_tokens": 92477,
+      "wall_time_seconds": 74.832,
+      "outcome": "token_limit",
+      "model_claim": "",
+      "independent_quality_assessment": "missing",
+      "complete_delivery_count": 0,
+      "live_runtime_acceptance": false,
+      "release_acceptance": false,
+      "initial_context": {
+        "message_count": 1,
+        "roles": [
+          "user"
+        ],
+        "explicit_system_supplied": false,
+        "tool_names": [
+          "start_agent_task",
+          "resume_agent_task",
+          "submit_agent_task_input",
+          "read_agent_artifact"
+        ],
+        "prompt_sha256": "93e981e1761f09747427e72f6dc6f587ebcc7235cbf021a79bf5668366f7c25b",
+        "tool_descriptions_sha256": "f65d9a2f2fc8c59dd7fe00e84a727fa0a10633c117c8bdf126f178ac7323ef9d"
+      },
+      "limits": {
+        "max_provider_requests": 12,
+        "max_tool_calls": 24,
+        "max_total_tokens": 80000,
+        "max_output_tokens_per_request": 2048,
+        "max_wall_seconds": 600
+      },
+      "tasks": [
+        {
+          "source": "output/model-accessibility-live-2026-09-08/glm-flash-window-development-v2-state/tasks/tasks/task_6d8d4a7c-6bda-4822-ae6e-b27528317f86.json",
+          "task_id": "task_6d8d4a7c-6bda-4822-ae6e-b27528317f86",
+          "intent": "discover",
+          "state": "completed",
+          "quality_status": null,
+          "quality_accepted": null,
+          "quality_issues": [],
+          "last_error_code": null
+        },
+        {
+          "source": "output/model-accessibility-live-2026-09-08/glm-flash-window-development-v2-state/tasks/tasks/task_e8c09fa8-cf9d-401a-8394-6c447fc6a00e.json",
+          "task_id": "task_e8c09fa8-cf9d-401a-8394-6c447fc6a00e",
+          "intent": "discover",
+          "state": "completed",
+          "quality_status": null,
+          "quality_accepted": null,
+          "quality_issues": [],
+          "last_error_code": null
+        }
+      ],
+      "first_request_metrics": {
+        "schema_valid": true,
+        "semantically_effective": true,
+        "reason": "gateway_confirmed_without_error_or_missing_input",
+        "missing_inputs": [],
+        "source": "original_tool_call_and_corresponding_tool_result",
+        "task_acceptance": false,
+        "schema_revalidated_from_recorded_model_input": true
+      }
+    },
+    {
+      "name": "glm-window-development-v3",
+      "run_id": "f460aeba-6e7f-4ff7-8ba7-dae5164e90b2",
+      "case_id": "window.development",
+      "suite_partition": "development",
+      "formal_acceptance": false,
+      "interface_path": "optimized",
+      "source_revision_label": "development-v3-inline-next-step",
+      "start_utc": "2026-09-08T01:45:27.126Z",
+      "requested_model": "glm-5.3",
+      "provider_id": "zai-coding-plan",
+      "endpoint": "http://localhost:23001/anthropic-proxy/zai-coding-plan/v1/messages",
+      "response_model_ids": [
+        "glm-5.3"
+      ],
+      "served_model_verified": false,
+      "model_attestation": "request_echo_only",
+      "usage_attestation": "proxy_may_default_missing_to_zero",
+      "provider_request_count": 8,
+      "provider_response_count": 8,
+      "tool_call_attempt_count": 23,
+      "tool_schema_rejected_count": 0,
+      "tool_result_error_codes": [],
+      "reported_usage": {
+        "input_tokens": 90641,
+        "output_tokens": 4425,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0
+      },
+      "total_reported_tokens": 95066,
+      "wall_time_seconds": 115.406,
+      "outcome": "token_limit",
+      "model_claim": "",
+      "independent_quality_assessment": "missing",
+      "complete_delivery_count": 0,
+      "live_runtime_acceptance": false,
+      "release_acceptance": false,
+      "initial_context": {
+        "message_count": 1,
+        "roles": [
+          "user"
+        ],
+        "explicit_system_supplied": false,
+        "tool_names": [
+          "start_agent_task",
+          "resume_agent_task",
+          "submit_agent_task_input",
+          "read_agent_artifact"
+        ],
+        "prompt_sha256": "93e981e1761f09747427e72f6dc6f587ebcc7235cbf021a79bf5668366f7c25b",
+        "tool_descriptions_sha256": "f65d9a2f2fc8c59dd7fe00e84a727fa0a10633c117c8bdf126f178ac7323ef9d"
+      },
+      "limits": {
+        "max_provider_requests": 12,
+        "max_tool_calls": 24,
+        "max_total_tokens": 80000,
+        "max_output_tokens_per_request": 2048,
+        "max_wall_seconds": 600
+      },
+      "tasks": [
+        {
+          "source": "output/model-accessibility-live-2026-09-08/glm-window-development-v3-state/tasks/tasks/task_05c29c13-a645-43b5-be85-c04dbd78524f.json",
+          "task_id": "task_05c29c13-a645-43b5-be85-c04dbd78524f",
+          "intent": "create_model",
+          "state": "awaiting_input",
+          "quality_status": "fail",
+          "quality_accepted": false,
+          "quality_issues": [
+            {
+              "type": "quality.layout_failed",
+              "status": "fail"
+            },
+            {
+              "type": "detail.view_unverified",
+              "view_id": "id-window-900x140x1200-overview",
+              "status": "unverified"
+            },
+            {
+              "type": "detail.view_unverified",
+              "view_id": "id-window-900x140x1200-closeup",
+              "status": "unverified"
+            }
+          ],
+          "last_error_code": null
+        },
+        {
+          "source": "output/model-accessibility-live-2026-09-08/glm-window-development-v3-state/tasks/tasks/task_0ff5620f-4100-4bc2-b3d5-38e922150c33.json",
+          "task_id": "task_0ff5620f-4100-4bc2-b3d5-38e922150c33",
+          "intent": "preflight_model",
+          "state": "completed",
+          "quality_status": "not_evaluated",
+          "quality_accepted": false,
+          "quality_issues": [],
+          "last_error_code": null
+        },
+        {
+          "source": "output/model-accessibility-live-2026-09-08/glm-window-development-v3-state/tasks/tasks/task_1d495880-b49e-4b5a-948d-2d6b5c44cd1b.json",
+          "task_id": "task_1d495880-b49e-4b5a-948d-2d6b5c44cd1b",
+          "intent": "discover",
+          "state": "completed",
+          "quality_status": null,
+          "quality_accepted": null,
+          "quality_issues": [],
+          "last_error_code": null
+        },
+        {
+          "source": "output/model-accessibility-live-2026-09-08/glm-window-development-v3-state/tasks/tasks/task_d191ace1-9661-4be5-b33d-bc1ca3237b1e.json",
+          "task_id": "task_d191ace1-9661-4be5-b33d-bc1ca3237b1e",
+          "intent": "discover",
+          "state": "completed",
+          "quality_status": null,
+          "quality_accepted": null,
+          "quality_issues": [],
+          "last_error_code": null
+        },
+        {
+          "source": "output/model-accessibility-live-2026-09-08/glm-window-development-v3-state/tasks/tasks/task_e6335b91-4849-4794-85e0-3de0cb1026f9.json",
+          "task_id": "task_e6335b91-4849-4794-85e0-3de0cb1026f9",
+          "intent": "discover",
+          "state": "completed",
+          "quality_status": null,
+          "quality_accepted": null,
+          "quality_issues": [],
+          "last_error_code": null
+        },
+        {
+          "source": "output/model-accessibility-live-2026-09-08/glm-window-development-v3-state/tasks/tasks/task_f955e636-bc36-491c-85cf-53c43230d5ea.json",
+          "task_id": "task_f955e636-bc36-491c-85cf-53c43230d5ea",
+          "intent": "discover",
+          "state": "completed",
+          "quality_status": null,
+          "quality_accepted": null,
+          "quality_issues": [],
+          "last_error_code": null
+        }
+      ],
+      "first_request_metrics": {
+        "schema_valid": true,
+        "semantically_effective": true,
+        "reason": "gateway_confirmed_without_error_or_missing_input",
+        "missing_inputs": [],
+        "source": "original_tool_call_and_corresponding_tool_result",
+        "task_acceptance": false,
+        "schema_revalidated_from_recorded_model_input": true
+      }
+    },
+    {
+      "name": "glm-flash-window-baseline",
+      "run_id": "3940de53-585d-4596-a49e-69bf01cd16a7",
+      "case_id": "window.development",
+      "suite_partition": "development",
+      "formal_acceptance": false,
+      "interface_path": "baseline",
+      "source_revision_label": "de7d482",
+      "start_utc": "2026-09-08T01:52:06.272Z",
+      "requested_model": "glm-5.3-flash",
+      "provider_id": "zai-coding-plan",
+      "endpoint": "http://localhost:23001/anthropic-proxy/zai-coding-plan/v1/messages",
+      "response_model_ids": [
+        "glm-5.3-flash"
+      ],
+      "served_model_verified": false,
+      "model_attestation": "request_echo_only",
+      "usage_attestation": "proxy_may_default_missing_to_zero",
+      "provider_request_count": 12,
+      "provider_response_count": 12,
+      "tool_call_attempt_count": 12,
+      "tool_schema_rejected_count": 0,
+      "tool_result_error_codes": [
+        "INVALID_ARGUMENT",
+        "TASK_STATE_CONFLICT",
+        "INVALID_ARGUMENT",
+        "INVALID_ARGUMENT",
+        "INVALID_ARGUMENT",
+        "TASK_STATE_CONFLICT",
+        "INVALID_ARGUMENT",
+        "INVALID_ARGUMENT"
+      ],
+      "reported_usage": {
+        "input_tokens": 70321,
+        "output_tokens": 8705,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0
+      },
+      "total_reported_tokens": 79026,
+      "wall_time_seconds": 237.838,
+      "outcome": "provider_request_limit",
+      "model_claim": "",
+      "independent_quality_assessment": "missing",
+      "complete_delivery_count": 0,
+      "live_runtime_acceptance": false,
+      "release_acceptance": false,
+      "initial_context": {
+        "message_count": 1,
+        "roles": [
+          "user"
+        ],
+        "explicit_system_supplied": false,
+        "tool_names": [
+          "start_agent_task",
+          "resume_agent_task",
+          "submit_agent_task_input",
+          "read_agent_artifact"
+        ],
+        "prompt_sha256": "93e981e1761f09747427e72f6dc6f587ebcc7235cbf021a79bf5668366f7c25b",
+        "tool_descriptions_sha256": "1deb560bcff1b76984f350037f834215cbcb2d78454795e08199dec762c032b1"
+      },
+      "limits": {
+        "max_provider_requests": 12,
+        "max_tool_calls": 24,
+        "max_total_tokens": 80000,
+        "max_output_tokens_per_request": 2048,
+        "max_wall_seconds": 600
+      },
+      "tasks": [
+        {
+          "source": "output/model-accessibility-live-2026-09-08/glm-flash-window-baseline-state/tasks/tasks/task_1a0cade2-eb2b-4d40-97ef-27e40ccb14f1.json",
+          "task_id": "task_1a0cade2-eb2b-4d40-97ef-27e40ccb14f1",
+          "intent": "create_model",
+          "state": "failed",
+          "quality_status": null,
+          "quality_accepted": null,
+          "quality_issues": [],
+          "last_error_code": "INVALID_ARGUMENT"
+        },
+        {
+          "source": "output/model-accessibility-live-2026-09-08/glm-flash-window-baseline-state/tasks/tasks/task_231f01b6-52f6-4bca-93f8-2ee67915358f.json",
+          "task_id": "task_231f01b6-52f6-4bca-93f8-2ee67915358f",
+          "intent": "create_model",
+          "state": "failed",
+          "quality_status": null,
+          "quality_accepted": null,
+          "quality_issues": [],
+          "last_error_code": "INVALID_ARGUMENT"
+        },
+        {
+          "source": "output/model-accessibility-live-2026-09-08/glm-flash-window-baseline-state/tasks/tasks/task_73f184f2-2df2-4295-a110-7131c3a86c88.json",
+          "task_id": "task_73f184f2-2df2-4295-a110-7131c3a86c88",
+          "intent": "create_model",
+          "state": "failed",
+          "quality_status": null,
+          "quality_accepted": null,
+          "quality_issues": [],
+          "last_error_code": "INVALID_ARGUMENT"
+        }
+      ],
+      "first_request_metrics": {
+        "schema_valid": true,
+        "semantically_effective": false,
+        "reason": "missing_required_input",
+        "missing_inputs": [
+          "code"
+        ],
+        "source": "original_tool_call_and_corresponding_tool_result",
+        "task_acceptance": false,
+        "schema_revalidated_from_recorded_model_input": true
+      }
+    },
+    {
+      "name": "strong-asset-query-development",
+      "run_id": "529ae167-1765-4ca9-85cf-6f2c7f61bdad",
+      "case_id": "asset_query.development",
+      "suite_partition": "development",
+      "formal_acceptance": false,
+      "interface_path": "optimized",
+      "source_revision_label": "development-readonly-catalog",
+      "start_utc": "2026-09-08T01:59:39.194Z",
+      "requested_model": "gpt-5.6-sol",
+      "provider_id": "plugin:openai-codex-auth:openai-codex",
+      "endpoint": "http://localhost:23001/anthropic-proxy/plugin%3Aopenai-codex-auth%3Aopenai-codex/v1/messages",
+      "response_model_ids": [
+        "gpt-5.6-sol"
+      ],
+      "served_model_verified": false,
+      "model_attestation": "request_echo_only",
+      "usage_attestation": "proxy_may_default_missing_to_zero",
+      "provider_request_count": 7,
+      "provider_response_count": 7,
+      "tool_call_attempt_count": 6,
+      "tool_schema_rejected_count": 0,
+      "tool_result_error_codes": [],
+      "reported_usage": {
+        "input_tokens": 69975,
+        "output_tokens": 1174,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0
+      },
+      "total_reported_tokens": 71149,
+      "wall_time_seconds": 62.276,
+      "outcome": "model_finished",
+      "model_claim": "未能完成资产扫描，也没有导入或改动当前模型。\n\n- 当前可用接口仅支持 `asset_placement` 等建模任务，不提供“预置本地目录只读资产清单/文件系统扫描”能力。\n- 因无法访问本地资产文件，不能可靠报告 `chair` 的可用文件、实际外包尺寸、根组件轴向、原点、来源或许可，也不能确认宽度是否不超过 `900 mm`。\n- 为避免生成未经验证的数据，未伪造或保存结果 JSON。\n- 已确认本次操作仅执行能力发现查询；当前模型状态为 `not_checked`，未发生导入、放置或修改。",
+      "independent_quality_assessment": "missing",
+      "complete_delivery_count": 0,
+      "live_runtime_acceptance": false,
+      "release_acceptance": false,
+      "initial_context": {
+        "message_count": 1,
+        "roles": [
+          "user"
+        ],
+        "explicit_system_supplied": false,
+        "tool_names": [
+          "start_agent_task",
+          "resume_agent_task",
+          "submit_agent_task_input",
+          "read_agent_artifact"
+        ],
+        "prompt_sha256": "3b4afa755e4d20ba6b4d0b69e02de0a6e1f2118627e4fa7ff08d3063edfa8628",
+        "tool_descriptions_sha256": "f65d9a2f2fc8c59dd7fe00e84a727fa0a10633c117c8bdf126f178ac7323ef9d"
+      },
+      "limits": {
+        "max_provider_requests": 12,
+        "max_tool_calls": 24,
+        "max_total_tokens": 80000,
+        "max_output_tokens_per_request": 2048,
+        "max_wall_seconds": 600
+      },
+      "tasks": [
+        {
+          "source": "output/model-accessibility-live-2026-09-08/strong-asset-query-development-state/tasks/tasks/task_1ec92fc9-1ef7-41e6-930a-feb9a59736e8.json",
+          "task_id": "task_1ec92fc9-1ef7-41e6-930a-feb9a59736e8",
+          "intent": "discover",
+          "state": "completed",
+          "quality_status": null,
+          "quality_accepted": null,
+          "quality_issues": [],
+          "last_error_code": null
+        },
+        {
+          "source": "output/model-accessibility-live-2026-09-08/strong-asset-query-development-state/tasks/tasks/task_2caeef32-db8e-4b00-946a-c9c6ec809afe.json",
+          "task_id": "task_2caeef32-db8e-4b00-946a-c9c6ec809afe",
+          "intent": "discover",
+          "state": "completed",
+          "quality_status": null,
+          "quality_accepted": null,
+          "quality_issues": [],
+          "last_error_code": null
+        },
+        {
+          "source": "output/model-accessibility-live-2026-09-08/strong-asset-query-development-state/tasks/tasks/task_7a453cf4-75bb-4ea1-9db4-369023dc980e.json",
+          "task_id": "task_7a453cf4-75bb-4ea1-9db4-369023dc980e",
+          "intent": "discover",
+          "state": "completed",
+          "quality_status": null,
+          "quality_accepted": null,
+          "quality_issues": [],
+          "last_error_code": null
+        },
+        {
+          "source": "output/model-accessibility-live-2026-09-08/strong-asset-query-development-state/tasks/tasks/task_c03d5bee-d0b1-4a8e-ae88-37a1c0b73c01.json",
+          "task_id": "task_c03d5bee-d0b1-4a8e-ae88-37a1c0b73c01",
+          "intent": "discover",
+          "state": "completed",
+          "quality_status": null,
+          "quality_accepted": null,
+          "quality_issues": [],
+          "last_error_code": null
+        },
+        {
+          "source": "output/model-accessibility-live-2026-09-08/strong-asset-query-development-state/tasks/tasks/task_db41fd2c-dae8-4996-8ac8-1376a908867c.json",
+          "task_id": "task_db41fd2c-dae8-4996-8ac8-1376a908867c",
+          "intent": "discover",
+          "state": "completed",
+          "quality_status": null,
+          "quality_accepted": null,
+          "quality_issues": [],
+          "last_error_code": null
+        }
+      ],
+      "first_request_metrics": {
+        "schema_valid": true,
+        "semantically_effective": true,
+        "reason": "gateway_confirmed_without_error_or_missing_input",
+        "missing_inputs": [],
+        "source": "original_tool_call_and_corresponding_tool_result",
+        "task_acceptance": false,
+        "schema_revalidated_from_recorded_model_input": true
+      }
+    }
+  ],
+  "sources": [
+    {
+      "original_path": "/Users/07zhang/.config/alma/plugins/openai-codex-auth/lib/alma-codex-bridge.ts",
+      "repository_relative_path": null,
+      "category": "installed_provider_plugin_source_readonly_audit",
+      "size_bytes": 3545,
+      "sha256": "c6f0eba54a2d12ae986b4d667502b4cfa0c9a185f8beb0d87ad058fb18e5510b"
+    },
+    {
+      "original_path": "/Users/07zhang/.config/alma/plugins/openai-codex-auth/lib/codex-instructions.ts",
+      "repository_relative_path": null,
+      "category": "installed_provider_plugin_source_readonly_audit",
+      "size_bytes": 9091,
+      "sha256": "62860e1e5695e01021ab996fb649652efd15ec3bd2dd0860985e68f5787207ee"
+    },
+    {
+      "original_path": "/Users/07zhang/.config/alma/plugins/openai-codex-auth/main.ts",
+      "repository_relative_path": null,
+      "category": "installed_provider_plugin_source_readonly_audit",
+      "size_bytes": 52280,
+      "sha256": "2d4225bb837ea9a4c4c75daaa262dbc13a14df5cc8cf00ca3fc348de4724f12b"
+    },
+    {
+      "original_path": "/Users/07zhang/.config/alma/plugins/openai-codex-auth/manifest.json",
+      "repository_relative_path": null,
+      "category": "installed_provider_plugin_source_readonly_audit",
+      "size_bytes": 1326,
+      "sha256": "4afec7ced40f7d947e11e44eff8465fe5414d85a687d56d1020997cb21c1bd75"
+    },
+    {
+      "original_path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/model-accessibility-live-2026-09-08/capture-restoration-v2/after.json",
+      "repository_relative_path": "output/model-accessibility-live-2026-09-08/capture-restoration-v2/after.json",
+      "category": "separate_failed_capture_restoration_diagnostic",
+      "size_bytes": 120666,
+      "sha256": "c5bcb5a21f3b6405b9572a3b4d04caaf83cbe96320cea3f0d72f55e3474f3442"
+    },
+    {
+      "original_path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/model-accessibility-live-2026-09-08/capture-restoration-v2/before.json",
+      "repository_relative_path": "output/model-accessibility-live-2026-09-08/capture-restoration-v2/before.json",
+      "category": "separate_failed_capture_restoration_diagnostic",
+      "size_bytes": 120658,
+      "sha256": "d73d6036a955a9817823554f406de4bc2b1303c74746be7e619ee3ef1dee6bdf"
+    },
+    {
+      "original_path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/model-accessibility-live-2026-09-08/capture-restoration-v2/capture.json",
+      "repository_relative_path": "output/model-accessibility-live-2026-09-08/capture-restoration-v2/capture.json",
+      "category": "separate_failed_capture_restoration_diagnostic",
+      "size_bytes": 7863,
+      "sha256": "646c9a2bc3047a8fb2bd8adbb090b9c2b39d9b5f4bf53df47b3fd68d38130830"
+    },
+    {
+      "original_path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/model-accessibility-live-2026-09-08/capture-restoration-v2/images/template-camera-restoration.png",
+      "repository_relative_path": "output/model-accessibility-live-2026-09-08/capture-restoration-v2/images/template-camera-restoration.png",
+      "category": "separate_failed_capture_restoration_diagnostic",
+      "size_bytes": 38932,
+      "sha256": "5f870c65163472c1394c5078fae07d597f6350a3a299b8a3e406142a3d82d8ed"
+    },
+    {
+      "original_path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/model-accessibility-live-2026-09-08/codex-provider.json",
+      "repository_relative_path": "output/model-accessibility-live-2026-09-08/codex-provider.json",
+      "category": "recorded_provider_or_budget_configuration",
+      "size_bytes": 176,
+      "sha256": "c820ae35a6154166bf22f69fd26eb51874d256878df9728489ea466197f550c4"
+    },
+    {
+      "original_path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/model-accessibility-live-2026-09-08/development-limits.json",
+      "repository_relative_path": "output/model-accessibility-live-2026-09-08/development-limits.json",
+      "category": "recorded_provider_or_budget_configuration",
+      "size_bytes": 133,
+      "sha256": "f6f63df0140879b033cbde3e8e11cf26f95d9877622f528dc7367ffbd8493a4b"
+    },
+    {
+      "original_path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/model-accessibility-live-2026-09-08/glm-flash-provider.json",
+      "repository_relative_path": "output/model-accessibility-live-2026-09-08/glm-flash-provider.json",
+      "category": "recorded_provider_or_budget_configuration",
+      "size_bytes": 156,
+      "sha256": "005ce94bfd5364a40c3872c86f3398bdf925b5535f170fd5c530b82e9276a5ae"
+    },
+    {
+      "original_path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/model-accessibility-live-2026-09-08/glm-flash-window-baseline-state/tasks/tasks/task_1a0cade2-eb2b-4d40-97ef-27e40ccb14f1.json",
+      "repository_relative_path": "output/model-accessibility-live-2026-09-08/glm-flash-window-baseline-state/tasks/tasks/task_1a0cade2-eb2b-4d40-97ef-27e40ccb14f1.json",
+      "category": "server_task_state",
+      "size_bytes": 5062,
+      "sha256": "1d13b859f92ce1a8f23db5900b39ff40d5762ba41c8d3f368b7ae85c4b908dfd"
+    },
+    {
+      "original_path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/model-accessibility-live-2026-09-08/glm-flash-window-baseline-state/tasks/tasks/task_231f01b6-52f6-4bca-93f8-2ee67915358f.json",
+      "repository_relative_path": "output/model-accessibility-live-2026-09-08/glm-flash-window-baseline-state/tasks/tasks/task_231f01b6-52f6-4bca-93f8-2ee67915358f.json",
+      "category": "server_task_state",
+      "size_bytes": 5586,
+      "sha256": "32ad85f25e038f670e0df7fc9731e2c674d595314c9535c98dc8ca76c07a4238"
+    },
+    {
+      "original_path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/model-accessibility-live-2026-09-08/glm-flash-window-baseline-state/tasks/tasks/task_73f184f2-2df2-4295-a110-7131c3a86c88.json",
+      "repository_relative_path": "output/model-accessibility-live-2026-09-08/glm-flash-window-baseline-state/tasks/tasks/task_73f184f2-2df2-4295-a110-7131c3a86c88.json",
+      "category": "server_task_state",
+      "size_bytes": 5103,
+      "sha256": "1ae4033bf73381d6e69fe9a30a5e4af531fb2b755b0ecce16d6794c939757f3c"
+    },
+    {
+      "original_path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/model-accessibility-live-2026-09-08/glm-flash-window-baseline/events.jsonl",
+      "repository_relative_path": "output/model-accessibility-live-2026-09-08/glm-flash-window-baseline/events.jsonl",
+      "category": "raw_provider_and_gateway_events",
+      "size_bytes": 368113,
+      "sha256": "c6a13e3ae17128806366b5ead9084f376d6f79d8ad74c4a2e2452e26057e0e3b"
+    },
+    {
+      "original_path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/model-accessibility-live-2026-09-08/glm-flash-window-baseline/model-input.json",
+      "repository_relative_path": "output/model-accessibility-live-2026-09-08/glm-flash-window-baseline/model-input.json",
+      "category": "exact_model_input",
+      "size_bytes": 5441,
+      "sha256": "5fbd8ec52236eaceb259f910f1374ae458ac725a2be046bbba8e1fe6cc384e5e"
+    },
+    {
+      "original_path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/model-accessibility-live-2026-09-08/glm-flash-window-baseline/run-summary.json",
+      "repository_relative_path": "output/model-accessibility-live-2026-09-08/glm-flash-window-baseline/run-summary.json",
+      "category": "run_summary",
+      "size_bytes": 1215,
+      "sha256": "eb0f481c9fa2ee4db660fff34204a63a3692faf74e9d13f9c3b523c9a3459514"
+    },
+    {
+      "original_path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/model-accessibility-live-2026-09-08/glm-flash-window-development-state/tasks/tasks/task_820c629f-5320-455b-9835-ecaf538029a1.json",
+      "repository_relative_path": "output/model-accessibility-live-2026-09-08/glm-flash-window-development-state/tasks/tasks/task_820c629f-5320-455b-9835-ecaf538029a1.json",
+      "category": "server_task_state",
+      "size_bytes": 6468,
+      "sha256": "ce1ae8f56a2c1c8f5d06401d243c8a76c6aa7a35c88f540a3a952b29cdf79031"
+    },
+    {
+      "original_path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/model-accessibility-live-2026-09-08/glm-flash-window-development-state/tasks/tasks/task_ac8b8b5f-ad54-4c5d-b580-f46f00572d04.json",
+      "repository_relative_path": "output/model-accessibility-live-2026-09-08/glm-flash-window-development-state/tasks/tasks/task_ac8b8b5f-ad54-4c5d-b580-f46f00572d04.json",
+      "category": "server_task_state",
+      "size_bytes": 11741,
+      "sha256": "714ffe0a64bdb12c898616a5e6e83792c314f35a371c06a29c52c5e106b1af41"
+    },
+    {
+      "original_path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/model-accessibility-live-2026-09-08/glm-flash-window-development-v2-state/tasks/tasks/task_6d8d4a7c-6bda-4822-ae6e-b27528317f86.json",
+      "repository_relative_path": "output/model-accessibility-live-2026-09-08/glm-flash-window-development-v2-state/tasks/tasks/task_6d8d4a7c-6bda-4822-ae6e-b27528317f86.json",
+      "category": "server_task_state",
+      "size_bytes": 6130,
+      "sha256": "2f1d88993d273733eec3b77262d044bcf43cb66e9509b98b0c3c0a2b7c6cc1db"
+    },
+    {
+      "original_path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/model-accessibility-live-2026-09-08/glm-flash-window-development-v2-state/tasks/tasks/task_e8c09fa8-cf9d-401a-8394-6c447fc6a00e.json",
+      "repository_relative_path": "output/model-accessibility-live-2026-09-08/glm-flash-window-development-v2-state/tasks/tasks/task_e8c09fa8-cf9d-401a-8394-6c447fc6a00e.json",
+      "category": "server_task_state",
+      "size_bytes": 11679,
+      "sha256": "2190b91c5d2689ab1f6d4246d2f3143a9978be7b47a8ebd38089d42c32ad8c95"
+    },
+    {
+      "original_path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/model-accessibility-live-2026-09-08/glm-flash-window-development-v2/events.jsonl",
+      "repository_relative_path": "output/model-accessibility-live-2026-09-08/glm-flash-window-development-v2/events.jsonl",
+      "category": "raw_provider_and_gateway_events",
+      "size_bytes": 398166,
+      "sha256": "2e2b6d87fbe90c7a9475c633617b34a42a0b4c86e7843e72f3257b10e1bd4437"
+    },
+    {
+      "original_path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/model-accessibility-live-2026-09-08/glm-flash-window-development-v2/model-input.json",
+      "repository_relative_path": "output/model-accessibility-live-2026-09-08/glm-flash-window-development-v2/model-input.json",
+      "category": "exact_model_input",
+      "size_bytes": 6710,
+      "sha256": "8f5095e24438dcd2e301b196872815060c326eae129b4752c2d07ee1108516d3"
+    },
+    {
+      "original_path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/model-accessibility-live-2026-09-08/glm-flash-window-development-v2/run-summary.json",
+      "repository_relative_path": "output/model-accessibility-live-2026-09-08/glm-flash-window-development-v2/run-summary.json",
+      "category": "run_summary",
+      "size_bytes": 1204,
+      "sha256": "af8275d2d6b15681a2c1e8da7bb6b451aa785624bbe3c1ba7c7e08610c9a3635"
+    },
+    {
+      "original_path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/model-accessibility-live-2026-09-08/glm-flash-window-development/events.jsonl",
+      "repository_relative_path": "output/model-accessibility-live-2026-09-08/glm-flash-window-development/events.jsonl",
+      "category": "raw_provider_and_gateway_events",
+      "size_bytes": 395141,
+      "sha256": "04696f231abc6a4a4b7c3e42d5ea4210cedcaf1f9732f8235b7676f9f3e235b5"
+    },
+    {
+      "original_path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/model-accessibility-live-2026-09-08/glm-flash-window-development/model-input.json",
+      "repository_relative_path": "output/model-accessibility-live-2026-09-08/glm-flash-window-development/model-input.json",
+      "category": "exact_model_input",
+      "size_bytes": 6710,
+      "sha256": "8f5095e24438dcd2e301b196872815060c326eae129b4752c2d07ee1108516d3"
+    },
+    {
+      "original_path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/model-accessibility-live-2026-09-08/glm-flash-window-development/run-summary.json",
+      "repository_relative_path": "output/model-accessibility-live-2026-09-08/glm-flash-window-development/run-summary.json",
+      "category": "run_summary",
+      "size_bytes": 1204,
+      "sha256": "2f66c677f84a18fefa8d792909d6d1a09db56d3518e162ab3f825f39c645258e"
+    },
+    {
+      "original_path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/model-accessibility-live-2026-09-08/glm-provider.json",
+      "repository_relative_path": "output/model-accessibility-live-2026-09-08/glm-provider.json",
+      "category": "recorded_provider_or_budget_configuration",
+      "size_bytes": 150,
+      "sha256": "419eefc55d88f1ec255b22c0b2e6dc7402a2342b1c15467b9985e885ead359cc"
+    },
+    {
+      "original_path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/model-accessibility-live-2026-09-08/glm-window-development-v3-failed-diagnostic-save.json",
+      "repository_relative_path": "output/model-accessibility-live-2026-09-08/glm-window-development-v3-failed-diagnostic-save.json",
+      "category": "host_diagnostic_save_receipt_not_model_delivery",
+      "size_bytes": 214971,
+      "sha256": "df8b54902f324258c056e633b149657bc2ff6582c0b4c53a414c8a63d71325ae"
+    },
+    {
+      "original_path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/model-accessibility-live-2026-09-08/glm-window-development-v3-failed-diagnostic.skp",
+      "repository_relative_path": "output/model-accessibility-live-2026-09-08/glm-window-development-v3-failed-diagnostic.skp",
+      "category": "host_diagnostic_native_skp_not_model_delivery",
+      "size_bytes": 365585,
+      "sha256": "154f189fd562a42aa9085e277d2eeee0c31a47a2b1d1990f5f19106680e59fb4"
+    },
+    {
+      "original_path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/model-accessibility-live-2026-09-08/glm-window-development-v3-state/tasks/task-artifacts/task_05c29c13-a645-43b5-be85-c04dbd78524f/detail-views/iteration-0/attempt-1/id-window-900x140x1200-closeup.png",
+      "repository_relative_path": "output/model-accessibility-live-2026-09-08/glm-window-development-v3-state/tasks/task-artifacts/task_05c29c13-a645-43b5-be85-c04dbd78524f/detail-views/iteration-0/attempt-1/id-window-900x140x1200-closeup.png",
+      "category": "unverified_native_capture_not_accepted_quality",
+      "size_bytes": 85461,
+      "sha256": "2fdfc9718eda8288baf2b4c832cefdab2f6c90aa122a471e7753e0484873835d"
+    },
+    {
+      "original_path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/model-accessibility-live-2026-09-08/glm-window-development-v3-state/tasks/task-artifacts/task_05c29c13-a645-43b5-be85-c04dbd78524f/detail-views/iteration-0/attempt-1/id-window-900x140x1200-overview.png",
+      "repository_relative_path": "output/model-accessibility-live-2026-09-08/glm-window-development-v3-state/tasks/task-artifacts/task_05c29c13-a645-43b5-be85-c04dbd78524f/detail-views/iteration-0/attempt-1/id-window-900x140x1200-overview.png",
+      "category": "unverified_native_capture_not_accepted_quality",
+      "size_bytes": 99904,
+      "sha256": "1089ce2082c3b4da82fc56bd8df7ac8dd5839f76fbf6acb61bacd81faed6518a"
+    },
+    {
+      "original_path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/model-accessibility-live-2026-09-08/glm-window-development-v3-state/tasks/tasks/task_05c29c13-a645-43b5-be85-c04dbd78524f.json",
+      "repository_relative_path": "output/model-accessibility-live-2026-09-08/glm-window-development-v3-state/tasks/tasks/task_05c29c13-a645-43b5-be85-c04dbd78524f.json",
+      "category": "server_task_state",
+      "size_bytes": 595355,
+      "sha256": "eac102e4b3fcf078ea0ccf9f46426cffb1c7b110820953659c88bd706c3c2655"
+    },
+    {
+      "original_path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/model-accessibility-live-2026-09-08/glm-window-development-v3-state/tasks/tasks/task_0ff5620f-4100-4bc2-b3d5-38e922150c33.json",
+      "repository_relative_path": "output/model-accessibility-live-2026-09-08/glm-window-development-v3-state/tasks/tasks/task_0ff5620f-4100-4bc2-b3d5-38e922150c33.json",
+      "category": "server_task_state",
+      "size_bytes": 7254,
+      "sha256": "f7509caba3da1f0b43b6440b77c6572d5fbccdf9c2ded287442cc062ec301521"
+    },
+    {
+      "original_path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/model-accessibility-live-2026-09-08/glm-window-development-v3-state/tasks/tasks/task_1d495880-b49e-4b5a-948d-2d6b5c44cd1b.json",
+      "repository_relative_path": "output/model-accessibility-live-2026-09-08/glm-window-development-v3-state/tasks/tasks/task_1d495880-b49e-4b5a-948d-2d6b5c44cd1b.json",
+      "category": "server_task_state",
+      "size_bytes": 99205,
+      "sha256": "22742cfe248aea22ca55a76fb945751b36ff1a2ca9f4672fe08a951b190d3976"
+    },
+    {
+      "original_path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/model-accessibility-live-2026-09-08/glm-window-development-v3-state/tasks/tasks/task_d191ace1-9661-4be5-b33d-bc1ca3237b1e.json",
+      "repository_relative_path": "output/model-accessibility-live-2026-09-08/glm-window-development-v3-state/tasks/tasks/task_d191ace1-9661-4be5-b33d-bc1ca3237b1e.json",
+      "category": "server_task_state",
+      "size_bytes": 6098,
+      "sha256": "2331d2c3469f8d46926073edd2ecf18a6b55f34ef9a9892b2b1034dc01d9e35b"
+    },
+    {
+      "original_path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/model-accessibility-live-2026-09-08/glm-window-development-v3-state/tasks/tasks/task_e6335b91-4849-4794-85e0-3de0cb1026f9.json",
+      "repository_relative_path": "output/model-accessibility-live-2026-09-08/glm-window-development-v3-state/tasks/tasks/task_e6335b91-4849-4794-85e0-3de0cb1026f9.json",
+      "category": "server_task_state",
+      "size_bytes": 11645,
+      "sha256": "1e0a0da7b1d5c5d1e90a43efe56ec4e8791a02c8b90dfbcba611ee7342726062"
+    },
+    {
+      "original_path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/model-accessibility-live-2026-09-08/glm-window-development-v3-state/tasks/tasks/task_f955e636-bc36-491c-85cf-53c43230d5ea.json",
+      "repository_relative_path": "output/model-accessibility-live-2026-09-08/glm-window-development-v3-state/tasks/tasks/task_f955e636-bc36-491c-85cf-53c43230d5ea.json",
+      "category": "server_task_state",
+      "size_bytes": 8909,
+      "sha256": "9b90f5e8a3fb7a53e2c667d1886dd4f5f8fdaa753d3894406d5f64b042bc99d0"
+    },
+    {
+      "original_path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/model-accessibility-live-2026-09-08/glm-window-development-v3/events.jsonl",
+      "repository_relative_path": "output/model-accessibility-live-2026-09-08/glm-window-development-v3/events.jsonl",
+      "category": "raw_provider_and_gateway_events",
+      "size_bytes": 442626,
+      "sha256": "fb80df8e1e26d794eb89c9e342e5c14e0ef2179d64a9de4c49c72085835b107a"
+    },
+    {
+      "original_path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/model-accessibility-live-2026-09-08/glm-window-development-v3/model-input.json",
+      "repository_relative_path": "output/model-accessibility-live-2026-09-08/glm-window-development-v3/model-input.json",
+      "category": "exact_model_input",
+      "size_bytes": 6710,
+      "sha256": "8f5095e24438dcd2e301b196872815060c326eae129b4752c2d07ee1108516d3"
+    },
+    {
+      "original_path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/model-accessibility-live-2026-09-08/glm-window-development-v3/run-summary.json",
+      "repository_relative_path": "output/model-accessibility-live-2026-09-08/glm-window-development-v3/run-summary.json",
+      "category": "run_summary",
+      "size_bytes": 1192,
+      "sha256": "b0d7c1012200e1aafe6e7426b5dd7bb84f50b8bb70d534cfb6c95d6ce4130eb0"
+    },
+    {
+      "original_path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/model-accessibility-live-2026-09-08/strong-asset-query-development-state/tasks/tasks/task_1ec92fc9-1ef7-41e6-930a-feb9a59736e8.json",
+      "repository_relative_path": "output/model-accessibility-live-2026-09-08/strong-asset-query-development-state/tasks/tasks/task_1ec92fc9-1ef7-41e6-930a-feb9a59736e8.json",
+      "category": "server_task_state",
+      "size_bytes": 7739,
+      "sha256": "d27c0d456d377edc7b45acf2129c4b85389be63fc62f6d46459fb6ea3b661e0c"
+    },
+    {
+      "original_path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/model-accessibility-live-2026-09-08/strong-asset-query-development-state/tasks/tasks/task_2caeef32-db8e-4b00-946a-c9c6ec809afe.json",
+      "repository_relative_path": "output/model-accessibility-live-2026-09-08/strong-asset-query-development-state/tasks/tasks/task_2caeef32-db8e-4b00-946a-c9c6ec809afe.json",
+      "category": "server_task_state",
+      "size_bytes": 24161,
+      "sha256": "496a1b074a9166744786d269754cd59d4196d20d9dde96f92bba797d9ab81989"
+    },
+    {
+      "original_path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/model-accessibility-live-2026-09-08/strong-asset-query-development-state/tasks/tasks/task_7a453cf4-75bb-4ea1-9db4-369023dc980e.json",
+      "repository_relative_path": "output/model-accessibility-live-2026-09-08/strong-asset-query-development-state/tasks/tasks/task_7a453cf4-75bb-4ea1-9db4-369023dc980e.json",
+      "category": "server_task_state",
+      "size_bytes": 6995,
+      "sha256": "dccb578009332b85a3809d2e1fb355b8d07e8bd32f9a650924091286ec9f8c21"
+    },
+    {
+      "original_path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/model-accessibility-live-2026-09-08/strong-asset-query-development-state/tasks/tasks/task_c03d5bee-d0b1-4a8e-ae88-37a1c0b73c01.json",
+      "repository_relative_path": "output/model-accessibility-live-2026-09-08/strong-asset-query-development-state/tasks/tasks/task_c03d5bee-d0b1-4a8e-ae88-37a1c0b73c01.json",
+      "category": "server_task_state",
+      "size_bytes": 4334,
+      "sha256": "d7c58d33993557b92292f409e66a1c3f476b7eb7555b63a6ef1b6fc11af18917"
+    },
+    {
+      "original_path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/model-accessibility-live-2026-09-08/strong-asset-query-development-state/tasks/tasks/task_db41fd2c-dae8-4996-8ac8-1376a908867c.json",
+      "repository_relative_path": "output/model-accessibility-live-2026-09-08/strong-asset-query-development-state/tasks/tasks/task_db41fd2c-dae8-4996-8ac8-1376a908867c.json",
+      "category": "server_task_state",
+      "size_bytes": 6594,
+      "sha256": "e7f15b1f02784ac5ab4a5031cb75b5890778fc3ac961f557caf0bed739f8714b"
+    },
+    {
+      "original_path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/model-accessibility-live-2026-09-08/strong-asset-query-development/events.jsonl",
+      "repository_relative_path": "output/model-accessibility-live-2026-09-08/strong-asset-query-development/events.jsonl",
+      "category": "raw_provider_and_gateway_events",
+      "size_bytes": 174274,
+      "sha256": "2a332f9bc7ba34db4cd28e86bfd5de95301286452c5eecb9ed504896e93b59bb"
+    },
+    {
+      "original_path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/model-accessibility-live-2026-09-08/strong-asset-query-development/model-input.json",
+      "repository_relative_path": "output/model-accessibility-live-2026-09-08/strong-asset-query-development/model-input.json",
+      "category": "exact_model_input",
+      "size_bytes": 6469,
+      "sha256": "96f7b750072e16c47b21fd148227e42284f9935dcfb8c20186808470551f2840"
+    },
+    {
+      "original_path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/model-accessibility-live-2026-09-08/strong-asset-query-development/run-summary.json",
+      "repository_relative_path": "output/model-accessibility-live-2026-09-08/strong-asset-query-development/run-summary.json",
+      "category": "run_summary",
+      "size_bytes": 1824,
+      "sha256": "bc2c968a599746d29629c6bdf622ecdb57d1ae2223fa1907ec65342292ee86d6"
+    },
+    {
+      "original_path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/model-accessibility-provider-probe-2026-09-08/gemini-3.7-flash.error.json",
+      "repository_relative_path": "output/model-accessibility-provider-probe-2026-09-08/gemini-3.7-flash.error.json",
+      "category": "separate_region_blocked_provider_probe",
+      "size_bytes": 1376,
+      "sha256": "1859b6db277d335f960ca9270e401f512356ee4b59bb5d428eed69d358481174"
+    },
+    {
+      "original_path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/model-accessibility-provider-probe-2026-09-08/glm-5.3-flash.json",
+      "repository_relative_path": "output/model-accessibility-provider-probe-2026-09-08/glm-5.3-flash.json",
+      "category": "separate_provider_connectivity_probe",
+      "size_bytes": 2108,
+      "sha256": "e14b6bde579e956e4f3b9bfc156eef7d04c0fb30343807b1218e291d83824566"
+    },
+    {
+      "original_path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/model-accessibility-provider-probe-2026-09-08/glm-5.3.json",
+      "repository_relative_path": "output/model-accessibility-provider-probe-2026-09-08/glm-5.3.json",
+      "category": "separate_provider_connectivity_probe",
+      "size_bytes": 2075,
+      "sha256": "a44312df54605259bbb500bfe5551e2ead5a4d1b1392281b687dd1c3559609b2"
+    },
+    {
+      "original_path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/model-accessibility-provider-probe-2026-09-08/gpt-5.6-sol.json",
+      "repository_relative_path": "output/model-accessibility-provider-probe-2026-09-08/gpt-5.6-sol.json",
+      "category": "separate_provider_connectivity_probe",
+      "size_bytes": 2192,
+      "sha256": "8ac53e6fe16516c814604353ac23e7798f0167465170373ac6dbcc259db4e1ab"
+    }
+  ],
+  "request_metric_definition": {
+    "version": "schema-and-response-semantics.v2",
+    "schema_is_not_task_effectiveness": true,
+    "missing_inputs_are_not_effective": true,
+    "unknown_response_semantics": null,
+    "not_task_acceptance": true,
+    "no_cross_development_improvement_rate": true
+  }
+}

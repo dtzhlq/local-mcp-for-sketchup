@@ -1,0 +1,229 @@
+{
+  "schema_version": "model-accessibility-appearance-development-sources.v1",
+  "generated_at": "2026-09-08T04:15:58.453272+00:00",
+  "scope": "Independent development run 10 only; no benchmark acceptance record amended.",
+  "repository_root": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica",
+  "run": {
+    "ordinal": 10,
+    "run_id": "36f54854-a9c6-448c-94e5-3c15cbd9d84e",
+    "case_id": "native_pbr.development",
+    "requested_model": "glm-5.3-flash",
+    "response_model_ids": [
+      "glm-5.3-flash"
+    ],
+    "outcome": "token_limit",
+    "provider_request_count": 16,
+    "tool_call_count": 23,
+    "total_reported_tokens": 171184,
+    "usage_complete": true,
+    "wall_time_seconds": 420.37,
+    "approval_pause_count": 0,
+    "approval_wait_seconds": 0,
+    "observed_system_unlocks": 0,
+    "native_mutations": 0,
+    "new_saved_pbr_skp": false,
+    "quality_accepted": false,
+    "formal_acceptance": false,
+    "release_acceptance": false
+  },
+  "verification": {
+    "raw_event_counts": {
+      "session_start": 1,
+      "provider_request": 16,
+      "provider_response": 16,
+      "usage": 16,
+      "tool_call": 23,
+      "tool_result": 23
+    },
+    "raw_usage_sum": 171184,
+    "events_hash_matches_summary": true,
+    "first_appearance_call": {
+      "provider_request_index": 5,
+      "tool_call_ordinal": 12,
+      "call_line": 42,
+      "result_line": 43,
+      "error": "MODEL_REVISION_INCOMPLETE"
+    },
+    "input_poisoning": {
+      "first_invalid_action_call_line": 49,
+      "flattened_input_call_line": 59,
+      "later_correct_nested_input_call_line": 64,
+      "persisted_unrecognized_fields": [
+        "action",
+        "kind",
+        "preset",
+        "rotation",
+        "target",
+        "texture_size_mm"
+      ],
+      "task_state": "awaiting_input",
+      "appearance_plan_present": false,
+      "appearance_execution_present": false
+    },
+    "original_model_revision": "sha256:d7855974e12e9dd098dea13045f89340a26c041d6c048db97aa283191803180a",
+    "original_revision_complete": true,
+    "original_file_sha256": "f19b972a30d03b6bfa255756d28e4223cfa86bb2d3a2d53b94cab7a00134ac17",
+    "before_after_fields_equal": {
+      "session_id": true,
+      "document_id": true,
+      "model_identity": true,
+      "model_revision": true,
+      "model_modified": true,
+      "model_revision_complete": true,
+      "entities": true
+    },
+    "before_after_native_appearance_equal": true,
+    "post_run_model_modified": false,
+    "run_skp_inventory": [],
+    "state_skp_inventory": [],
+    "inventory_scope": [
+      "output/model-accessibility-live-2026-09-08/glm-flash-pbr-development",
+      "output/model-accessibility-live-2026-09-08/glm-flash-pbr-development-state"
+    ],
+    "no_native_mutation_basis": "Appearance task has no private plan/execution, no saved claim/receipt or SKP in run/state, all appearance calls stop before execution, and native before/after complete revision and appearance match. This is scoped to this run, not a claim of no global host activity.",
+    "ui_export_source_restored": {
+      "original_file_unchanged": true,
+      "original_complete_revision": true,
+      "exact_original_path": true
+    },
+    "ui_before_provider": {
+      "photoreal_checkbox_value": 0,
+      "source": "CUA AX observed immediately before native readback"
+    }
+  },
+  "files": [
+    {
+      "path": "output/model-accessibility-live-2026-09-08/glm-flash-pbr-development/run-summary.json",
+      "bytes": 1363,
+      "sha256": "05a3a6664e13bb679a1022b19d4931578a60f685627aff51a6045fb831fb4cb8",
+      "role": "historical development run summary"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/glm-flash-pbr-development/model-input.json",
+      "bytes": 9097,
+      "sha256": "41fec205e1fd50cf8d9766a6c284abaf342118290f4714dced850257f638d765",
+      "role": "exact first model context and four public tool schemas"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/glm-flash-pbr-development/events.jsonl",
+      "bytes": 770205,
+      "sha256": "165d314ba72ab6dabc8413866b5be545697c91251d4fdcc4becbf29009017b2d",
+      "role": "raw provider responses, usage and public tool call/result sequence"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/glm-flash-pbr-development/native-after.json",
+      "bytes": 55510,
+      "sha256": "14b2cb144e05d632c5f0db2b4b1112f0c4edb0872f68368a906f700ca94b0e08",
+      "role": "post-run read-only native adoption"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/glm-flash-pbr-development-state/tasks/tasks/task_be31fac1-8c82-4c58-bf68-0613c907e751.json",
+      "bytes": 6111,
+      "sha256": "9726940298c289f61cae115dc2f283428e8e07c16f67fa6a1f5a5628f17ed12d",
+      "role": "historical failed task; private appearance plan and execution absent"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/appearance-fixture-native-development/native-baseline.json",
+      "bytes": 55471,
+      "sha256": "7653d57cbc17864788f530363329e1f8c73ce31453b0d0e1184d57ea98efdd69",
+      "role": "fixture geometry baseline before initial save"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/appearance-fixture-native-development/save.json",
+      "bytes": 124630,
+      "sha256": "35defccd55ec4078c9d85ec93299abae58421a2f44063a18e8f3bba360747a2b",
+      "role": "host-created source fixture save; not model-run delivery"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/appearance-fixture-native-development/after-save.json",
+      "bytes": 55644,
+      "sha256": "7a144af8764cc170d7398a8d14e2c437c1b6dec3fa635824fd3a5399cd1a25d5",
+      "role": "source fixture after initial save"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/appearance-fixture-native-development/host-disk-reopen.json",
+      "bytes": 228746,
+      "sha256": "f7d6de92ce59370312623a7e057bbea7bde3633a7c112445ae4599f5668d3b67",
+      "role": "source fixture host disk reopen before UI style export"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/appearance-fixture-native-development/before-provider.json",
+      "bytes": 59701,
+      "sha256": "67fed6f2e733a9a49114e8d00ff5794a897ff3838ac9a98954bee79ac3c9472a",
+      "role": "source fixture restoration after UI style export, immediately before provider"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/appearance-fixture-native-development/appearance-fixture.skp",
+      "bytes": 45267,
+      "sha256": "f19b972a30d03b6bfa255756d28e4223cfa86bb2d3a2d53b94cab7a00134ac17",
+      "role": "original source fixture, not a delivered PBR result"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-photoreal-2026.export.json",
+      "bytes": 913,
+      "sha256": "91e7452053bef30cc7dabdc71225b0efa8f5b2ca77dc5ab26b37e2c048851cf4",
+      "role": "native UI style export observation"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-photoreal-2026.style",
+      "bytes": 4276,
+      "sha256": "29463cad1d0c0f8029911324634158690f719f48ece18d5650f2e6362c92a06f",
+      "role": "actual native UI exported style"
+    },
+    {
+      "path": "src/model-accessibility-appearance.mjs",
+      "bytes": 39512,
+      "sha256": "2d485496e141a793f6819bf346b5754dbedb05af9399ec1136d2b137c4e3d4ce",
+      "role": "post-run fix source snapshot; not the code loaded by the historical process"
+    },
+    {
+      "path": "src/agent-gateway.mjs",
+      "bytes": 202808,
+      "sha256": "c7f0ddaeda90af3ac3c3456ab6641b4fb9c85bace28a99f55d3d1771c63284db",
+      "role": "post-run input and recovery routing source snapshot"
+    },
+    {
+      "path": "src/model-accessibility-appearance-receipt.mjs",
+      "bytes": 8423,
+      "sha256": "94dcce2a9b23a3e39c6e79f2c25baddffc638f522b063a9ca69baebb86b5c4f8",
+      "role": "post-run signed appearance save provenance reader"
+    },
+    {
+      "path": "src/model-accessibility-delivery.mjs",
+      "bytes": 23154,
+      "sha256": "8a79f032fc74f0226a92e3bc6d6ec362479e30f22eef2227687c7a9576ae6999",
+      "role": "existing saved receipt brand dispatch for appearance provenance"
+    },
+    {
+      "path": "src/model-accessibility-reopen.mjs",
+      "bytes": 21381,
+      "sha256": "4fad5cc60783cbcceb19df22cb513054c712147f7d22d2e5cc8ad690b96089fb",
+      "role": "public exact saved appearance lifecycle route"
+    },
+    {
+      "path": "test/model-accessibility-appearance.mjs",
+      "bytes": 29728,
+      "sha256": "119aad3f45ce8b257c879aac3a200733d9fc82491cf542c2bc6d66d6b89c73d8",
+      "role": "offline contract and Gateway regression source"
+    },
+    {
+      "path": "test/model-accessibility-appearance-receipt.mjs",
+      "bytes": 7645,
+      "sha256": "97ae5ac67aeb81a17604ea0aea08e6926fcc42b81f74d248bb8f9d4f88608a4a",
+      "role": "offline signed saved provenance negative test source"
+    },
+    {
+      "path": "test/fixtures/model-accessibility/native-appearance-adoption.json",
+      "bytes": 215939,
+      "sha256": "bcf48be5daed36bef40e9d897d435abcc67b83dcd61a693f21133489e2bf29d3",
+      "role": "redacted real captured native adoption shape for regression"
+    }
+  ],
+  "boundaries": [
+    "This is a failed development observation, not formal acceptance or PBR quality pass.",
+    "Source fixture SKP and style export are host provisioning evidence, not model delivery.",
+    "Source hashes capture post-run fixes at report time; they do not rewrite the code provenance of the failed process.",
+    "Offline regression sources and previously completed unit checks are not live runtime evidence.",
+    "PBR v2 has not been started in this stage; fixed appearance runtime behavior remains unverified. No offline suite was repeated for this report."
+  ]
+}

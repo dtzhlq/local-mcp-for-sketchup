@@ -1,5 +1,32 @@
 import { sha256Canonical } from './agent-contract.mjs';
 
+function persistentReference(root) {
+  const value = root?.persistent_id;
+  const id = typeof value === 'string' ? value : Number.isSafeInteger(value) && value > 0 ? String(value) : '';
+  return /^[1-9][0-9]*$/.test(id) ? `pid:${id}` : null;
+}
+
+function rootMatchesReference(root, reference) {
+  return root?.name === reference || root?.id === reference
+    || (/^pid:[1-9][0-9]*$/.test(reference) && persistentReference(root) === reference);
+}
+
+function queryReference(root, roots) {
+  const hasId = typeof root.id === 'string' && root.id.trim();
+  if (!hasId && root.id !== undefined && root.id !== null && root.id !== '') return null;
+  const reference = hasId ? root.id : persistentReference(root);
+  // A query reference is usable only when it identifies exactly this
+  // snapshot root, including potential collisions with named/id aliases.
+  const matches = reference ? roots.filter(candidate => rootMatchesReference(candidate, reference)) : [];
+  return matches.length === 1 && matches[0] === root ? reference : null;
+}
+
+function validRootBounds(root) {
+  const bounds = root?.bounding_box;
+  return ['min', 'max'].every(key => Array.isArray(bounds?.[key]) && bounds[key].length === 3 && bounds[key].every(Number.isFinite))
+    && bounds.max.every((value, axis) => value >= bounds.min[axis]);
+}
+
 // Conservative narrow phase: an empty geometric intersection box on either
 // side proves separation. An occupied box does not prove a collision, so its
 // existing warning remains for further analysis. Touching faces are not waived.
@@ -9,15 +36,16 @@ export async function narrowDetailLayoutQa({ bridge, snapshot, qa, runtime = 'qu
   const pairs = [];
   for (const [index, issue] of (qa.issues || []).entries()) {
     if (issue.type !== 'layout.unexpected_collision') continue;
-    const names = issue.item?.split(' / ');
-    if (names?.length !== 2) continue;
-    const matches = names.map(name => roots.filter(root => root.name === name || root.id === name));
+    const names = typeof issue.item === 'string' ? issue.item.split(' / ') : null;
+    if (names?.length !== 2 || names.some(name => !name)) continue;
+    const matches = names.map(name => roots.filter(root => rootMatchesReference(root, name)));
     if (matches.some(items => items.length !== 1) || matches[0][0] === matches[1][0]) continue;
     const entities = matches.map(items => items[0]);
-    if (entities.some(entity => !entity.id || !entity.bounding_box?.min || !entity.bounding_box?.max)) continue;
+    const references = entities.map(entity => queryReference(entity, roots));
+    if (references.some(reference => !reference) || entities.some(entity => !validRootBounds(entity))) continue;
     const bounds = { min: [0,1,2].map(axis => Math.max(...entities.map(entity => entity.bounding_box.min[axis]))), max: [0,1,2].map(axis => Math.min(...entities.map(entity => entity.bounding_box.max[axis]))) };
     if (![...bounds.min,...bounds.max].every(Number.isFinite) || bounds.max.some((max, axis) => max - bounds.min[axis] < 0.1)) continue;
-    pairs.push({ issue_index: index, queries: entities.map((entity, side) => ({ id: `collision-${index}-${side}`, instance_path: [entity.id], search_scope: 'assembly', coordinate_space: 'model', bounds_mm: bounds, boundary_checks: [] })) });
+    pairs.push({ issue_index: index, queries: entities.map((_entity, side) => ({ id: `collision-${index}-${side}`, instance_path: [references[side]], search_scope: 'assembly', coordinate_space: 'model', bounds_mm: bounds, boundary_checks: [] })) });
   }
   if (!pairs.length || pairs.length > 64) return { qa, evidence: null };
   const queries = pairs.flatMap(pair => pair.queries);

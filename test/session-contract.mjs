@@ -427,6 +427,19 @@ async function validateSchema(contract) {
   const validate = new Ajv2020({ allErrors: true, strict: false, validateFormats: false }).compile(schema);
   assert.equal(validate(contract), true, JSON.stringify(validate.errors));
 
+  const versionPairs = [
+    ['0.1.0-rc.2-capabilities.7', '2026-07-agent-contract-v1.4'],
+    ['0.1.0-rc.3-capabilities.1', '2026-07-agent-contract-rc3.1'],
+    ['0.1.0-rc.3-detail-alpha.1', '2026-09-detail-modeling-alpha.1']
+  ];
+  for (const [capability_version, manifest_version] of versionPairs) {
+    assert.equal(validate({ ...contract, capability_version, manifest_version }), true, 'Exact archival/current v2 version pairs remain schema-readable');
+    for (const [, otherManifest] of versionPairs.filter(([, manifest]) => manifest !== manifest_version)) {
+      assert.equal(validate({ ...contract, capability_version, manifest_version: otherManifest }), false, 'A mixed capability/manifest pair must not become valid');
+    }
+  }
+  assert.equal(validate({ ...contract, capability_version: '0.1.0-rc.3-detail-alpha.2' }), false, 'Unlisted future capability versions must not be accepted implicitly');
+
   const missingCurrentAttestation = structuredClone(contract);
   delete missingCurrentAttestation.model_revision_source_sha256;
   assert.equal(validate(missingCurrentAttestation), false, 'a current v2 contract must include Model Revision loaded-source attestation');

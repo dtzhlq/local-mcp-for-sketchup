@@ -1,0 +1,24 @@
+{
+  "input": {
+    "version": 1,
+    "kind": "cabinet",
+    "id": "example-cabinet",
+    "units": "mm",
+    "parameters": {
+      "depth_mm": 600,
+      "height_mm": 870
+    },
+    "placement": {
+      "origin_mm": [
+        0,
+        0,
+        0
+      ]
+    }
+  },
+  "expected": {
+    "code": "MISSING_INPUT",
+    "path": "task.parameters.width_mm",
+    "recovery_class": "design_input"
+  }
+}

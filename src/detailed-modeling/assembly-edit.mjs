@@ -2,6 +2,7 @@ import path from 'node:path';
 import { AgentContractError, sha256Canonical } from '../agent-contract.mjs';
 import { prepareTaskOwnedCreationDsl, validateTaskOwnedCreationDocument } from '../agent-dsl-policy.mjs';
 import { buildModelGraph } from '../model-graph.mjs';
+import { adoptParameterRoots } from '../model-accessibility-scoped-readback.mjs';
 
 export const ASSEMBLY_REBUILD_VERSION = 'versioned-assembly-rebuild.v1';
 const MATERIAL_FIELDS = new Set(['material', 'back_material', 'backMaterial', 'front_material', 'frontMaterial', 'f_material', 'b_material', 'hole_material', 'holeMaterial', 'frame_material', 'frameMaterial', 'panel_material', 'panelMaterial']);
@@ -110,7 +111,9 @@ function verifyChangePlan(designGraph, changePlan) {
 }
 
 async function currentGraph(bridge, runtime, timeoutMs, recursiveLimit, recursiveRoots) {
-  const graph = buildModelGraph(await bridge.adopt_open_model({ runtime, timeoutMs, recursive: true, recursive_limit: recursiveLimit, recursive_roots: recursiveRoots, read_only: true }));
+  const graph = buildModelGraph(recursiveRoots?.length > 1
+    ? await adoptParameterRoots({ bridge, runtime, timeoutMs, recursiveLimit, rootPaths: recursiveRoots })
+    : await bridge.adopt_open_model({ runtime, timeoutMs, recursive: true, recursive_limit: recursiveLimit, recursive_roots: recursiveRoots, read_only: true }));
   if (!graph.completeness?.complete && !(recursiveRoots && graph.completeness?.scope_complete)) throw new AgentContractError('MODEL_REVISION_INCOMPLETE', 'Assembly edit verification requires a complete occurrence graph; increase recursiveLimit');
   return graph;
 }
@@ -154,6 +157,29 @@ export async function applyAssemblyParameterEdit({ bridge, designGraph, changePl
   const applied = await bridge.apply_reviewed_model_edit({ runtime, timeoutMs, plan: reviewedPlan, approval_token,
     save_model, save_path, session_contract, sessionContract, output_dir: outputDir ? path.join(outputDir, 'apply') : undefined });
   const modelGraph = await currentGraph(bridge, runtime, timeoutMs, recursiveLimit, changePlan.recursive_roots);
+  return finalizeAssemblyReadback({ designGraph, changePlan, applied, modelGraph, runtime, designGraphPath, recursiveLimit });
+}
+
+// This entry has no caller-supplied receipt: it reads and verifies the existing
+// server ledger and its bound reviewed plan before issuing an in-process brand.
+// It performs no geometry mutation and is safe to retry after finalization loss.
+export async function finalizeAssemblyParameterEditFromLedger({ bridge, reviewedTaskId, designGraph, changePlan, runtime = 'mock', timeoutMs, recursiveLimit = 5000, designGraphPath } = {}) {
+  verifyChangePlan(designGraph, changePlan);
+  const ledger = await bridge.taskStore.loadTaskMutationReceipt(reviewedTaskId);
+  const reviewed = await bridge.taskStore.getTask(reviewedTaskId, { includePrivate: true });
+  const plan = reviewed.private?.existing_edit_plan;
+  if (reviewed.intent !== 'reviewed_existing_model_edit' || !plan || ledger.plan_id !== plan.plan_id || ledger.plan_hash !== plan.plan_hash
+    || ledger.model_key !== designGraph.model_key || ledger.runtime !== runtime || ledger.model_revision_before !== plan.model_revision
+    || sha256Canonical(plan.dsl_document.operations) !== sha256Canonical(changePlan.operations)) {
+    throw new AgentContractError('MUTATION_RECEIPT_INVALID', 'Reviewed ledger does not authorize these exact assembly replacements.');
+  }
+  const modelGraph = await currentGraph(bridge, runtime, timeoutMs, recursiveLimit, changePlan.recursive_roots);
+  if (modelGraph.model_revision !== ledger.model_revision_after) throw new AgentContractError('MODEL_REVISION_MISMATCH', 'The model changed after the durably recorded assembly edit.');
+  return finalizeAssemblyReadback({ designGraph, changePlan, applied: ledger.finalizer.applied_result, modelGraph, runtime, designGraphPath, recursiveLimit });
+}
+
+async function finalizeAssemblyReadback({ designGraph, changePlan, applied, modelGraph, runtime, designGraphPath, recursiveLimit }) {
+  const stage = verifyChangePlan(designGraph, changePlan);
   const selectedRoots = [];
   for (const replacement of stage.replacements) {
     const matches = modelGraph.nodes.filter(node => node.node_type === 'occurrence' && (replacement.target.entity_path
@@ -181,6 +207,8 @@ export async function applyAssemblyParameterEdit({ bridge, designGraph, changePl
   if (designGraphPath) await writeDesignArtifact(designGraphPath, updatedDesignGraph);
   const receipt = { version: 'assembly-edit-receipt.v1', runtime, change_plan_id: changePlan.change_plan_id,
     model_revision_before: changePlan.model_revision, model_revision_after: modelGraph.model_revision,
+    recursive_limit: recursiveLimit,
+    ...(changePlan.recursive_roots ? { recursive_roots: structuredClone(changePlan.recursive_roots) } : {}),
     identity_map: structuredClone(stage.identity_map), material_map: structuredClone(stage.material_map), selected_roots: selectedRoots };
   trustedReceipts.set(receipt, sha256Canonical(receipt));
   return { kind: 'apply_assembly_parameter_edit', applied, reconciliation, design_graph: updatedDesignGraph,

@@ -1,0 +1,169 @@
+{
+  "version": 1,
+  "units": "mm",
+  "metadata": {
+    "kind": "product_modeling_dsl",
+    "profile_id": "fixture-017229bbb5",
+    "product_type": "benchmark_fixture",
+    "product_name": "empty",
+    "source": "part_graph_compiler",
+    "part_graph_id": "fixture-017229bbb5",
+    "profile_version": 1,
+    "part_graph_version": 2,
+    "source_type": "authored_benchmark_fixture",
+    "fixture_family": "empty",
+    "case_id": "window.acceptance_a",
+    "additive_only": true,
+    "native_ready": false
+  },
+  "operations": [
+    {
+      "op": "material",
+      "name": "fixture-017229bbb5-Detail_Plaster",
+      "color": "#e6e0d4"
+    },
+    {
+      "op": "material",
+      "name": "fixture-017229bbb5-Detail_Concrete",
+      "color": "#b6b4aa"
+    },
+    {
+      "op": "material",
+      "name": "fixture-017229bbb5-Detail_Oak",
+      "color": "#aa794a"
+    },
+    {
+      "op": "material",
+      "name": "fixture-017229bbb5-Detail_Oak_Endgrain",
+      "color": "#8c603d"
+    },
+    {
+      "op": "material",
+      "name": "fixture-017229bbb5-Detail_Painted_Joinery",
+      "color": "#e8e5db"
+    },
+    {
+      "op": "material",
+      "name": "fixture-017229bbb5-Detail_Aluminium",
+      "color": "#39474c"
+    },
+    {
+      "op": "material",
+      "name": "fixture-017229bbb5-Detail_Stainless",
+      "color": "#aab5b6"
+    },
+    {
+      "op": "material",
+      "name": "fixture-017229bbb5-Detail_Brass",
+      "color": "#b48b45"
+    },
+    {
+      "op": "material",
+      "name": "fixture-017229bbb5-Detail_Gasket",
+      "color": "#292c29"
+    },
+    {
+      "op": "material",
+      "name": "fixture-017229bbb5-Detail_Glass",
+      "color": "#adcbd1",
+      "alpha": 0.32
+    },
+    {
+      "op": "material",
+      "name": "fixture-017229bbb5-Detail_Stone",
+      "color": "#cbc6b8"
+    },
+    {
+      "op": "material",
+      "name": "fixture-017229bbb5-Detail_Grout",
+      "color": "#6a6961"
+    },
+    {
+      "op": "material",
+      "name": "fixture-017229bbb5-Detail_Insulation",
+      "color": "#d6be80"
+    },
+    {
+      "op": "material",
+      "name": "fixture-017229bbb5-Detail_Waterproofing",
+      "color": "#454b47"
+    },
+    {
+      "op": "material",
+      "name": "fixture-017229bbb5-Detail_Terracotta",
+      "color": "#996f55"
+    },
+    {
+      "op": "material",
+      "name": "fixture-017229bbb5-Detail_Soil",
+      "color": "#655343"
+    },
+    {
+      "op": "material",
+      "name": "fixture-017229bbb5-Detail_Leaf",
+      "color": "#6f825b"
+    },
+    {
+      "op": "material",
+      "name": "fixture-017229bbb5-Detail_Fabric",
+      "color": "#c9beb0"
+    },
+    {
+      "op": "component_definition",
+      "name": "PG2_fixture-017229bbb5-sentinel",
+      "operations": [
+        {
+          "op": "box",
+          "id": "fixture-017229bbb5-sentinel",
+          "name": "fixture-017229bbb5-sentinel",
+          "origin": [
+            0,
+            0,
+            0
+          ],
+          "size": [
+            120,
+            160,
+            200
+          ],
+          "material": "fixture-017229bbb5-Detail_Painted_Joinery",
+          "qa": {
+            "role": "template_sentinel",
+            "part_id": "fixture-017229bbb5-sentinel",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive"
+          }
+        }
+      ]
+    },
+    {
+      "op": "component_instance",
+      "id": "accessibility-template-sentinel",
+      "name": "accessibility-template-sentinel",
+      "definition": "PG2_fixture-017229bbb5-sentinel",
+      "origin": [
+        -8000,
+        -8000,
+        0
+      ],
+      "qa": {
+        "role": "template_sentinel",
+        "part_id": "fixture-017229bbb5-sentinel",
+        "intent": "detail_geometry",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "structured_primitive"
+      }
+    },
+    {
+      "op": "attribute",
+      "target_id": "accessibility-template-sentinel",
+      "dictionary": "BenchmarkFixture",
+      "attributes": {
+        "preserve": true,
+        "role": "template_sentinel",
+        "fixture_id": "fixture-017229bbb5"
+      }
+    }
+  ]
+}

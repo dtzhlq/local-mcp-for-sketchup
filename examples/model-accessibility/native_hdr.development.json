@@ -1,0 +1,18 @@
+{
+  "tool": "start_agent_task",
+  "arguments": {
+    "intent": "apply_native_appearance",
+    "instruction": "使用预置 HDR 文件设置当前场景的原生环境，旋转 0 度，强度 1，保存为场景“验收外观”。启用原生 PBR 显示，读取实际原生环境、场景和样式结果；保持所有几何不变。 在预置交付目录保存独立 SKP，并提交必要的近景、实际测量及编辑边界结果。",
+    "idempotency_key": "native_hdr-development-prepare-v1",
+    "inputs": {
+      "runtime": "queue",
+      "appearance": {
+        "kind": "native_hdr",
+        "environment": "studio",
+        "rotation": 0,
+        "intensity": 1,
+        "scene_name": "验收外观"
+      }
+    }
+  }
+}

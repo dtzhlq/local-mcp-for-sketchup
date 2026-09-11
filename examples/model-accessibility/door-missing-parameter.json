@@ -1,0 +1,25 @@
+{
+  "input": {
+    "version": 1,
+    "kind": "door",
+    "id": "example-door",
+    "units": "mm",
+    "parameters": {
+      "depth_mm": 150,
+      "height_mm": 2250,
+      "open_angle_deg": -18
+    },
+    "placement": {
+      "origin_mm": [
+        0,
+        0,
+        0
+      ]
+    }
+  },
+  "expected": {
+    "code": "MISSING_INPUT",
+    "path": "task.parameters.width_mm",
+    "recovery_class": "design_input"
+  }
+}

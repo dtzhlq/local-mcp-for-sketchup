@@ -1,9 +1,20 @@
+import { FIRST_USE_GUIDE, discoverCall } from './model-accessibility-guidance.mjs';
+
 export function getWorkflowBundle() {
   return {
     kind: 'sketchup_mcp_workflow_bundle',
     version: '2026-07-agent-first.6',
     scope: 'mainline_safe_json_dsl',
     default_client_profile: 'lowest_common_capability',
+    first_use: {
+      version: 'model-accessibility.v1',
+      entry: discoverCall({ topic: 'start' }),
+      guide: FIRST_USE_GUIDE,
+      tasks: discoverCall({ topic: 'tasks' }),
+      editing_and_delivery: discoverCall({ topic: 'workflows' }),
+      connect: discoverCall({ topic: 'connect', runtime: 'queue' }),
+      boundary: 'Preflight and mock results are not native geometry, visual, saved-file or cross-model acceptance.'
+    },
     interface_levels: {
       guided: 'Short-context, one-tool-at-a-time clients. Keep state and artifacts on the server and return one next action.',
       standard: 'Clients that can retain structured task state and artifact handles but may not have vision, local files, or parallel calls.',

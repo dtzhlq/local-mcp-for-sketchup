@@ -1,0 +1,376 @@
+{
+  "version": 1,
+  "scope": "Native asset, overview and appearance-fixture development evidence, including unresolved revision verification; not formal acceptance",
+  "sources": [
+    {
+      "path": "output/model-accessibility-live-2026-09-08/appearance-fixture-native-development/after-save.json",
+      "bytes": 55644,
+      "sha256": "7a144af8764cc170d7398a8d14e2c437c1b6dec3fa635824fd3a5399cd1a25d5"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/appearance-fixture-native-development/appearance-fixture.skp",
+      "bytes": 45267,
+      "sha256": "f19b972a30d03b6bfa255756d28e4223cfa86bb2d3a2d53b94cab7a00134ac17"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/appearance-fixture-native-development/before-provider.json",
+      "bytes": 59701,
+      "sha256": "67fed6f2e733a9a49114e8d00ff5794a897ff3838ac9a98954bee79ac3c9472a"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/appearance-fixture-native-development/before.json",
+      "bytes": 8421,
+      "sha256": "89392e082d33e8742f24ab89c3d3ccbd4f68bb585df6545b80ba1826168f2f37"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/appearance-fixture-native-development/build-started.json",
+      "bytes": 302,
+      "sha256": "252bc03c069f5a2a784073dbce2dec9aa800309ece04c6c29ae5e0789edea14e"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/appearance-fixture-native-development/build.json",
+      "bytes": 127976,
+      "sha256": "df9590cc7fe029dd5e20a594950546477e3ec3cab6cacd776a4f82c03355d08e"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/appearance-fixture-native-development/host-disk-reopen.json",
+      "bytes": 228746,
+      "sha256": "f7d6de92ce59370312623a7e057bbea7bde3633a7c112445ae4599f5668d3b67"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/appearance-fixture-native-development/materialization.json",
+      "bytes": 1740,
+      "sha256": "0bf8360d169e750e15169e6caf981c72b27293a0de2f1037b1c18fc6a17565fd"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/appearance-fixture-native-development/native-baseline.json",
+      "bytes": 55471,
+      "sha256": "7653d57cbc17864788f530363329e1f8c73ce31453b0d0e1184d57ea98efdd69"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/appearance-fixture-native-development/save.json",
+      "bytes": 124630,
+      "sha256": "35defccd55ec4078c9d85ec93299abae58421a2f44063a18e8f3bba360747a2b"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/appearance-fixture-prepared-development/fixture-manifest.json",
+      "bytes": 7129,
+      "sha256": "c99e8783242c246095c18dadbdb5a457026304bc6e986c03f4171d1ab74abe17"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/appearance-fixture-prepared-development/fixture-oracle.private.json",
+      "bytes": 2334,
+      "sha256": "2a57601d40101d77c7d73a0baade1829aff50599b4cb70c12f9e6c111b68a82c"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/appearance-fixture-prepared-development/fixture.dsl.json",
+      "bytes": 5357,
+      "sha256": "d1f1ab88c30f569a324b3fbb0097cb95b1a686e008783e055171f52ba2600568"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/appearance-fixture-prepared-development/fixture.part-graph.private.json",
+      "bytes": 1797,
+      "sha256": "b5b8503a50ab7135d98d8c958df7dafb2f719b08a5bc803fde43a979e159cd04"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-armchair-v2/after-save.json",
+      "bytes": 189885,
+      "sha256": "7002865158bd97df9c55df3b0a09689efc0cab752ab2f836e168a7073a09d2f2"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-armchair-v2/armchair.skp",
+      "bytes": 348155,
+      "sha256": "144c37f670fb11881ac293dd9e8602b88268dcaa5fe030cd8dac442d6de122bb"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-armchair-v2/before.json",
+      "bytes": 92726,
+      "sha256": "5a5ecb39208f193172d27005c190d9208239b9f297154273c93db7f1cbdae1ab"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-armchair-v2/build.json",
+      "bytes": 173673,
+      "sha256": "e119801eec4764bea8369baeb245e8b72d1c29356281aa4b804608b0ea41cdb7"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-armchair-v2/catalog-entry.json",
+      "bytes": 1615,
+      "sha256": "adde36edb6af417dbb62e1fbba5981c42045e8c7212c5be7cb8f1e5027039619"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-armchair-v2/native-inspection.json",
+      "bytes": 189826,
+      "sha256": "166cdefd162ab8542a8d02cbe82c30f3b3100ed492d054dcd622449432daf447"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-armchair-v2/save.json",
+      "bytes": 170539,
+      "sha256": "5073e1c19dccddaf33d62c6c8f6c299568f22b3c246dc5c3b16cade529a7eb40"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-asset-place-development/apply-response.json",
+      "bytes": 3106,
+      "sha256": "f7b010325eb2430a6fa16c64ebb40b606ed87a176077d3ca6320425a9546285c"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-asset-place-development/apply-result.json",
+      "bytes": 8752,
+      "sha256": "ac56356f8ddae5eaa35eff9b67bf6239fa80c6e871bcae233a85e3e05b5d66ae"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-asset-place-development/apply-started.json",
+      "bytes": 506,
+      "sha256": "b5d2cae1261f9bd7c45284ab7c026dac0beb2dcf801cbdb58202ecd3f6403d20"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-asset-place-development/asset-model-existing-edit-131dc46730df005cbaa211f8.skp",
+      "bytes": 375219,
+      "sha256": "ebdb2703ef5972001757de3f2c38d1cd962efe8784ef99bebfb473484b25e754"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-asset-place-development/canonical-signed-zero-prediction.json",
+      "bytes": 2344,
+      "sha256": "b7fa8b7b745a80bda88c75761bef4f4c0715b6bd296777121177ce3f5fdea332"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-asset-place-development/capabilities.json",
+      "bytes": 79060,
+      "sha256": "10370e0cf97e7601d9d7892a44c2626f577c1375ccf0dc4de74e62b670a4081d"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-asset-place-development/cold-root-matrix-comparison.json",
+      "bytes": 2932,
+      "sha256": "63815ad449ba77bb14ac6f7b77df6b8e87bfc94bb6dca9a16a7549416850f27f"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-asset-place-development/cold-root-matrix-native.json",
+      "bytes": 131199,
+      "sha256": "323cbd0cd343e3416d0f799be781da5802fbcfcfa46768be8fa150cdeeaf26a5"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-asset-place-development/cold-root-matrix-signbit.json",
+      "bytes": 6478,
+      "sha256": "4826dfc6bbb612f45f920dcf893055aed9f3c1bab83408aed5e3d3218ee2f3b9"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-asset-place-development/connection.json",
+      "bytes": 3897,
+      "sha256": "a3d2f5b0c382549b6ee38e79da82cc0aa21e52284262f9d0c03af29858737445"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-asset-place-development/detail-view/after.json",
+      "bytes": 126968,
+      "sha256": "f5c9cd979c3f0e1cc72336b280201c90e53fa959049a833b9cd51a0f5c53eed6"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-asset-place-development/detail-view/before.json",
+      "bytes": 126968,
+      "sha256": "f5c9cd979c3f0e1cc72336b280201c90e53fa959049a833b9cd51a0f5c53eed6"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-asset-place-development/detail-view/capture.json",
+      "bytes": 7182,
+      "sha256": "72b976fdeec21ecf6ef7d46a4909c445908e0dffdaf751235ff56f63914c2fb7"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-asset-place-development/detail-view/imported-chair-detail.png",
+      "bytes": 99020,
+      "sha256": "c9745f53ea2d05b64d0e4c89cb18e69542b677c273e424cc5e2202914412a8d2"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-asset-place-development/hierarchy-supplement.json",
+      "bytes": 35021,
+      "sha256": "cb6f57ee040ec4f8e5bcaaf1533224bd5e5adb7ff382686b89fa9112984b3347"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-asset-place-development/host-disk-reopen.json",
+      "bytes": 135497,
+      "sha256": "a20fdf7f085a599e013284e9d9898b0cf4ff92f448e40972d66e11a4c6cdae7f"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-asset-place-development/native-after-adoption.json",
+      "bytes": 44124942,
+      "sha256": "a9a172bec36a2068f59cac415a3af0231c12ad0f242e81d451f400cc6d8805aa"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-asset-place-development/native-after.json",
+      "bytes": 127102,
+      "sha256": "af131573ff0d5151bbdcdf3bed7559f2623ee2905ffa713a8068b1b76551cf9e"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-asset-place-development/native-before-apply.json",
+      "bytes": 8420,
+      "sha256": "28f95024e9f8d901c2cbeafa0d88f3eb8eaf3f8353c49c7f07fe42c103c4e0a2"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-asset-place-development/native-before.json",
+      "bytes": 8420,
+      "sha256": "28f95024e9f8d901c2cbeafa0d88f3eb8eaf3f8353c49c7f07fe42c103c4e0a2"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-asset-place-development/prepare-response.json",
+      "bytes": 4707,
+      "sha256": "3bee65ba0bcaa04e49c555220ecc90f148379768e27600943b622460aa9bf391"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-asset-place-development/prepare-started.json",
+      "bytes": 807,
+      "sha256": "ae8fd141ad1d2351c88ae85497d58b666db39cbfe486c6388cf9ec294a4effd8"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-asset-place-development/prepared.json",
+      "bytes": 4123,
+      "sha256": "687e89c6828b18f533b92207d2db7c984fa0d30d4ef3f9afbc1aa78548de5d2f"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-asset-place-development/signed-zero-restart-readback.json",
+      "bytes": 127221,
+      "sha256": "0c0e3b5f0eecf1c1777f9b106de674578b827859248d6eb9a1add84b0ad157d3"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-asset-place-development/signed-zero-restart-verification.json",
+      "bytes": 1011,
+      "sha256": "cee8602608a4092aaefff3664e4c75b38683daf125aac31cb86f5313db9150c2"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-asset-place-development/signed-zero-runtime-capabilities.json",
+      "bytes": 79116,
+      "sha256": "81de4a35b8d8f627b2618a54843b36304a15fe69827deb7ed275f900f227abfe"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-assets-catalog.json",
+      "bytes": 5659,
+      "sha256": "352f8ccba41430ff161e42489792b2d42e2648b45a8c09cee967b2bc3cc84bb7"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-assets-query.json",
+      "bytes": 6829,
+      "sha256": "767e6278636e15d8301979096edba500c8f47b8cfd62636a04783b359d3d0308"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-chair/after-save.json",
+      "bytes": 189146,
+      "sha256": "1f931669196f0784274b5990feb36387ee9700c91961c89327260c96738afa20"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-chair/before.json",
+      "bytes": 92726,
+      "sha256": "cdbb2c46d4d2f5d6f557ccbf5185e91dee860195c81c965876f06a9d9ae5546d"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-chair/build.json",
+      "bytes": 172965,
+      "sha256": "49d282f72f415adc1ee629f6670440b8a1e59e5df8374524f273150de4dfbf9e"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-chair/catalog-entry.json",
+      "bytes": 1594,
+      "sha256": "98d8edffc173ca3c1c50fe0dd93e2185de8c9ebab0fb4bfff8f37de82f9149d3"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-chair/chair.skp",
+      "bytes": 345669,
+      "sha256": "e0cd8200c2a83108a6fa2b202572aafef3e1894fea9816919d7045365b958c21"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-chair/native-inspection.json",
+      "bytes": 189096,
+      "sha256": "6050e294ecb56a0e55ef2bd3c1b00bd50a92c951253a35dfdfc392f0ef6d084d"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-chair/save.json",
+      "bytes": 169831,
+      "sha256": "1f778b43a57cf44a01f0bb394113bb96cc1b47a52b4d3a256f5bc05721646a48"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-photoreal-2026.export.json",
+      "bytes": 913,
+      "sha256": "91e7452053bef30cc7dabdc71225b0efa8f5b2ca77dc5ab26b37e2c048851cf4"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-photoreal-2026.style",
+      "bytes": 4276,
+      "sha256": "29463cad1d0c0f8029911324634158690f719f48ece18d5650f2e6362c92a06f"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-session-closeout.json",
+      "bytes": 331,
+      "sha256": "cbd89f8d2e12cb99f265095bcfcd64f738952f745885dac3c5226ecdff1541ee"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-stool/after-save.json",
+      "bytes": 161833,
+      "sha256": "479f5400acd9796f35aace97aa4c2088789a8d6ac8bac3f3ea1594119a1bc9ea"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-stool/before.json",
+      "bytes": 92726,
+      "sha256": "fa0d92932487a51a2d6ad17c83a083c869e6473960e0716a1bbaafdf2223c0e0"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-stool/build.json",
+      "bytes": 147612,
+      "sha256": "c1a904d18d3fcc3bff0353333f8e6c2b3737dea1f88e6fc9e9c0864a85c90861"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-stool/catalog-entry.json",
+      "bytes": 1548,
+      "sha256": "425690bf7463755540a60caff2eadaa8df390f8b3b6ed84c7f8ea49344a0693d"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-stool/native-inspection.json",
+      "bytes": 161783,
+      "sha256": "2f55aef7c031ce94cb09ab8b98041b0e5904a757306913c8e8fbc8a36a1b2372"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-stool/save.json",
+      "bytes": 144590,
+      "sha256": "2489dcc338d640d8f67804a00382f78b5fa418f9826b9486b9d64ce964ccc1bd"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/native-stool/stool.skp",
+      "bytes": 77155,
+      "sha256": "f2068593e13ae9a56dc48b3ec4603f095cce0d5a120b883e8ef381089831811e"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/overview-native-bounds-v2/after.json",
+      "bytes": 243161,
+      "sha256": "2f8a9fc836fb9f694f2c3bd8d32add8bbf7968fd9806cca24360066a6d6871b0"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/overview-native-bounds-v2/before-fresh.json",
+      "bytes": 243161,
+      "sha256": "2f8a9fc836fb9f694f2c3bd8d32add8bbf7968fd9806cca24360066a6d6871b0"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/overview-native-bounds-v2/before.json",
+      "bytes": 243161,
+      "sha256": "9dde40fc4f2e287a0844f1af9674f5e1004054f482866fbcae0fe6820c7072fb"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/overview-native-bounds-v2/capabilities.json",
+      "bytes": 79059,
+      "sha256": "424fef0bd169e8b626e1232d4ada98b60fd91a62f256d4db276d113b8a5dcd25"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/overview-native-bounds-v2/capture.json",
+      "bytes": 9649,
+      "sha256": "87b9f907b1af45b5b2cc1afef7fe4ef58d809fd94f1fd8f392d5bda8eca98793"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/overview-native-bounds-v2/window-native-bounds-overview.png",
+      "bytes": 68259,
+      "sha256": "6008e3ff53b6b135d7d2c367c0b66c6545c30602042cfbadc764fb1c984d6013"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/plugin-install-native-assets-lifecycle.log",
+      "bytes": 623,
+      "sha256": "b8453ebf4686fdaa8cda841c83292eb1601d15b490b20641337855f57cc749a8"
+    },
+    {
+      "path": "output/model-accessibility-live-2026-09-08/plugin-install-signed-zero-metadata.log",
+      "bytes": 1100,
+      "sha256": "a8d87086afaeaa54d9c0f0288d6758c394871f2c57b8ea085cbc73c16e69815c"
+    }
+  ]
+}

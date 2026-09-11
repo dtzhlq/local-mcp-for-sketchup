@@ -1,0 +1,358 @@
+{
+  "schema_version": "model-accessibility-dry-run.v1",
+  "dry_run": true,
+  "model_invoked": false,
+  "live_queue_invoked": false,
+  "case_id": "window.acceptance_a",
+  "interface_path": "baseline",
+  "suite_sha256": "120a0d403c561cf1265ab7550bbab3e569f2c561f04965c109f6a7f0dc9dd911",
+  "requested_model": null,
+  "source_revision": "de7d482",
+  "model_visible": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "按公开构件目录的参数窗构造，创建外框宽 1200、外框高 1500、框深 140 毫米的窗，包含框、窗扇、玻璃、窗台及明确接缝。外框左下 Y=0 基准点放在世界原点；宽沿 +X、框深沿 +Y、高沿 +Z。窗扇数量和细部采用公开声明的固定构造，保留可独立编辑的部件，准确说明可调整的开启能力。 在预置交付目录保存独立 SKP，并提交必要的近景、实际测量及编辑边界结果。"
+      }
+    ],
+    "tools": [
+      {
+        "name": "start_agent_task",
+        "description": "Start a persistent Agent Contract v1 task using guided, standard, or expert presentation. Client capabilities only shape responses and never elevate server execution policy.",
+        "inputSchema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "intent",
+            "instruction"
+          ],
+          "properties": {
+            "intent": {
+              "type": "string",
+              "enum": [
+                "create_model",
+                "understand_model",
+                "propose_existing_model_edit",
+                "modify_design_parameters",
+                "reconcile_design_intent",
+                "reference_image_correction",
+                "visual_correction_qa",
+                "reviewed_existing_model_edit",
+                "image_artifact",
+                "verify_model"
+              ]
+            },
+            "instruction": {
+              "type": "string",
+              "minLength": 1
+            },
+            "interface_level": {
+              "type": "string",
+              "enum": [
+                "guided",
+                "standard",
+                "expert"
+              ],
+              "default": "guided"
+            },
+            "client_capabilities": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "vision": {
+                  "type": "boolean",
+                  "default": false
+                },
+                "local_files": {
+                  "type": "boolean",
+                  "default": false
+                },
+                "structured_output": {
+                  "type": "boolean",
+                  "default": false
+                },
+                "parallel": {
+                  "type": "boolean",
+                  "default": false
+                },
+                "context": {
+                  "type": "string",
+                  "enum": [
+                    "short",
+                    "standard",
+                    "long"
+                  ],
+                  "default": "short"
+                }
+              }
+            },
+            "idempotency_key": {
+              "type": "string",
+              "minLength": 1
+            },
+            "inputs": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      {
+        "name": "resume_agent_task",
+        "description": "Resume a persistent Agent Contract v1 task by task_id and receive its stable state, next_action, and artifact handles.",
+        "inputSchema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "task_id"
+          ],
+          "properties": {
+            "task_id": {
+              "type": "string",
+              "pattern": "^task_[0-9a-f-]+$"
+            }
+          }
+        }
+      },
+      {
+        "name": "submit_agent_task_input",
+        "description": "Submit the next required non-credential input to a persistent task. Trusted approval is loaded only from the server-private local decision store. Idempotency keys replay durable outcomes; pending or outcome-unknown operations are not automatically executed again.",
+        "inputSchema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "task_id",
+            "input"
+          ],
+          "properties": {
+            "task_id": {
+              "type": "string",
+              "pattern": "^task_[0-9a-f-]+$"
+            },
+            "idempotency_key": {
+              "type": "string",
+              "minLength": 1
+            },
+            "input": {
+              "type": "object",
+              "description": "Task input only. Approval credentials are forbidden and never relayed by the Agent."
+            }
+          }
+        }
+      },
+      {
+        "name": "read_agent_artifact",
+        "description": "Read a server-managed artifact by opaque handle with offset/max_chars pagination under the originating task response policy; local filesystem access is not required and raw image bytes require a trusted vision-capable task profile.",
+        "inputSchema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "handle"
+          ],
+          "properties": {
+            "handle": {
+              "type": "string",
+              "pattern": "^(?:artifact:task_[0-9a-f-]+:[0-9a-f-]+|image-artifact:sha256:[0-9a-f]{64})$"
+            },
+            "task_id": {
+              "type": "string",
+              "pattern": "^task_[0-9a-f-]+$",
+              "description": "Optional task binding; required to obtain raw immutable image bytes under a trusted vision-capable task profile."
+            },
+            "offset": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0
+            },
+            "max_chars": {
+              "type": "integer",
+              "minimum": 256,
+              "maximum": 100000,
+              "default": 12000
+            }
+          }
+        }
+      }
+    ]
+  },
+  "mcp_description_sha256": "1deb560bcff1b76984f350037f834215cbcb2d78454795e08199dec762c032b1",
+  "collector_only": {
+    "transport": "Alma local provider proxy with explicit context only",
+    "endpoint_template": "/anthropic-proxy/<verified-provider-id>/v1/messages",
+    "request_template": {
+      "model": "<configured-model-id>",
+      "max_tokens": "<explicit-run-limit>",
+      "stream": false,
+      "messages": [
+        {
+          "role": "user",
+          "content": "按公开构件目录的参数窗构造，创建外框宽 1200、外框高 1500、框深 140 毫米的窗，包含框、窗扇、玻璃、窗台及明确接缝。外框左下 Y=0 基准点放在世界原点；宽沿 +X、框深沿 +Y、高沿 +Z。窗扇数量和细部采用公开声明的固定构造，保留可独立编辑的部件，准确说明可调整的开启能力。 在预置交付目录保存独立 SKP，并提交必要的近景、实际测量及编辑边界结果。"
+        }
+      ],
+      "tools": [
+        {
+          "name": "start_agent_task",
+          "description": "Start a persistent Agent Contract v1 task using guided, standard, or expert presentation. Client capabilities only shape responses and never elevate server execution policy.",
+          "input_schema": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "intent",
+              "instruction"
+            ],
+            "properties": {
+              "intent": {
+                "type": "string",
+                "enum": [
+                  "create_model",
+                  "understand_model",
+                  "propose_existing_model_edit",
+                  "modify_design_parameters",
+                  "reconcile_design_intent",
+                  "reference_image_correction",
+                  "visual_correction_qa",
+                  "reviewed_existing_model_edit",
+                  "image_artifact",
+                  "verify_model"
+                ]
+              },
+              "instruction": {
+                "type": "string",
+                "minLength": 1
+              },
+              "interface_level": {
+                "type": "string",
+                "enum": [
+                  "guided",
+                  "standard",
+                  "expert"
+                ],
+                "default": "guided"
+              },
+              "client_capabilities": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "vision": {
+                    "type": "boolean",
+                    "default": false
+                  },
+                  "local_files": {
+                    "type": "boolean",
+                    "default": false
+                  },
+                  "structured_output": {
+                    "type": "boolean",
+                    "default": false
+                  },
+                  "parallel": {
+                    "type": "boolean",
+                    "default": false
+                  },
+                  "context": {
+                    "type": "string",
+                    "enum": [
+                      "short",
+                      "standard",
+                      "long"
+                    ],
+                    "default": "short"
+                  }
+                }
+              },
+              "idempotency_key": {
+                "type": "string",
+                "minLength": 1
+              },
+              "inputs": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        {
+          "name": "resume_agent_task",
+          "description": "Resume a persistent Agent Contract v1 task by task_id and receive its stable state, next_action, and artifact handles.",
+          "input_schema": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "task_id"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "pattern": "^task_[0-9a-f-]+$"
+              }
+            }
+          }
+        },
+        {
+          "name": "submit_agent_task_input",
+          "description": "Submit the next required non-credential input to a persistent task. Trusted approval is loaded only from the server-private local decision store. Idempotency keys replay durable outcomes; pending or outcome-unknown operations are not automatically executed again.",
+          "input_schema": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "task_id",
+              "input"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "pattern": "^task_[0-9a-f-]+$"
+              },
+              "idempotency_key": {
+                "type": "string",
+                "minLength": 1
+              },
+              "input": {
+                "type": "object",
+                "description": "Task input only. Approval credentials are forbidden and never relayed by the Agent."
+              }
+            }
+          }
+        },
+        {
+          "name": "read_agent_artifact",
+          "description": "Read a server-managed artifact by opaque handle with offset/max_chars pagination under the originating task response policy; local filesystem access is not required and raw image bytes require a trusted vision-capable task profile.",
+          "input_schema": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "handle"
+            ],
+            "properties": {
+              "handle": {
+                "type": "string",
+                "pattern": "^(?:artifact:task_[0-9a-f-]+:[0-9a-f-]+|image-artifact:sha256:[0-9a-f]{64})$"
+              },
+              "task_id": {
+                "type": "string",
+                "pattern": "^task_[0-9a-f-]+$",
+                "description": "Optional task binding; required to obtain raw immutable image bytes under a trusted vision-capable task profile."
+              },
+              "offset": {
+                "type": "integer",
+                "minimum": 0,
+                "default": 0
+              },
+              "max_chars": {
+                "type": "integer",
+                "minimum": 256,
+                "maximum": 100000,
+                "default": 12000
+              }
+            }
+          }
+        }
+      ]
+    },
+    "retain_raw_events": true,
+    "execution_blockers": [
+      "bind the live fixture and execution authorization",
+      "configure the exact local proxy origin and provider id",
+      "capture actual served model version and usage"
+    ],
+    "note": "The provider proxy skips Alma chat memory/SOUL/skills and executes no tools itself. The separate agent-loop dispatches only the four allowed Gateway tools. This artifact is a reviewable dry-run, not an acceptance result."
+  }
+}

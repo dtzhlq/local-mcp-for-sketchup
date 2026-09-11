@@ -1,6 +1,7 @@
 import { AgentContractError, sha256Canonical } from './agent-contract.mjs';
 import { OPERATION_REGISTRY } from './capabilities.mjs';
 import { expandDslCode } from './dsl-expansion.mjs';
+import { HOST_CREATION_METADATA_OPS, validateHostCreationMetadata } from './host-creation-metadata.mjs';
 
 // Agent Gateway create/verify(code) is deliberately narrower than the expert
 // build_model surface. Every operation must be explicitly classified here;
@@ -260,6 +261,10 @@ export function validateTaskOwnedCreationDocument(document) {
     const objects = new Map();
     for (const operation of operations) {
       if (!operation || typeof operation !== 'object') deny('invalid operation');
+      if (HOST_CREATION_METADATA_OPS.has(operation.op) && scope.host_metadata) {
+        if (nested) deny('host metadata must be top-level');
+        continue; // Strict field/target/order/resource closure is checked below.
+      }
       if (operation.op === 'material') {
         if (nested || !operation.name?.startsWith(scope.namespace) || materials.has(operation.name)) deny('material must be a fresh top-level resource');
         materials.add(operation.name);
@@ -290,7 +295,8 @@ export function validateTaskOwnedCreationDocument(document) {
   };
   visit(document.operations || []);
   if (JSON.stringify([...definitions]) !== JSON.stringify(scope.definitions) || JSON.stringify([...materials]) !== JSON.stringify(scope.materials)) deny('resource declaration mismatch');
-  return { scope, root_objects: rootObjects };
+  const metadata = validateHostCreationMetadata(document, rootObjects);
+  return { scope, root_objects: rootObjects, new_tags: metadata.tags };
 }
 
 // Pass complete runtime state, including unused definitions/materials. A public
@@ -301,11 +307,14 @@ export function validateCreationScopeAgainstModel(document, model) {
   const names = value => new Set(Array.isArray(value) ? value.map(item => typeof item === 'string' ? item : item.name) : Object.keys(value || {}));
   const definitions = names(model.component_definitions);
   const materials = names(model.materials);
+  const tags = names(model.tags);
+  if (validation.new_tags.some(name => tags.has(name))) throw new AgentContractError('OPERATION_NOT_ALLOWED', 'Creation tag already exists.');
   if (validation.scope.definitions.some(name => definitions.has(name)) || validation.scope.materials.some(name => materials.has(name))) throw new AgentContractError('OPERATION_NOT_ALLOWED', 'Creation resource already exists.');
   const declaredMaterials = new Set([...materials, ...validation.scope.materials]);
   const inspectMaterials = value => {
     if (Array.isArray(value)) return value.forEach(inspectMaterials);
     if (!value || typeof value !== 'object') return;
+    if (validation.scope.host_metadata && HOST_CREATION_METADATA_OPS.has(value.op)) return;
     for (const [key, item] of Object.entries(value)) {
       if (MATERIAL_SPEC_FIELDS.has(key) && item !== null && typeof item !== 'string') throw new AgentContractError('OPERATION_NOT_ALLOWED', 'Scoped material references must be strings.');
       if (MATERIAL_SPEC_FIELDS.has(key) && typeof item === 'string' && !declaredMaterials.has(item)) throw new AgentContractError('OPERATION_NOT_ALLOWED', `Creation material is neither declared nor already present: ${item}`);
@@ -314,6 +323,7 @@ export function validateCreationScopeAgainstModel(document, model) {
   };
   inspectMaterials(document.operations);
   const objects = [...(model.groups || []), ...(model.instances || [])];
+  if (validation.scope.host_metadata?.root_ids.some(id => objects.some(item => [item.id, item.adopted_id, item.persistent_id].includes(id)))) throw new AgentContractError('OPERATION_NOT_ALLOWED', 'Host metadata target already exists.');
   for (const operation of validation.root_objects) {
     if (objects.some(item => item.id === operation.id || item.name === operation.name)) throw new AgentContractError('OPERATION_NOT_ALLOWED', 'Creation object already exists.');
   }

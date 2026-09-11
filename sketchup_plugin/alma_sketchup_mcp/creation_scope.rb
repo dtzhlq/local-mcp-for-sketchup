@@ -13,6 +13,8 @@ module AlmaSketchupMCP
     reject = lambda { |reason| raise "Creation scope rejected: #{reason}" }
     reject.call('invalid contract') unless scope['version'] == 'creation-scope.v1' && scope['namespace'].to_s.match?(/\Aalma_[0-9a-f]{20}_\z/)
     namespace = scope['namespace']
+    host_metadata = scope['host_metadata']
+    metadata_operations = %w[attribute tag assign_tag]
     definitions = []
     materials = []
     cuts = %w[cut_hole cut_slot cut_recess]
@@ -25,6 +27,9 @@ module AlmaSketchupMCP
       if value.is_a?(Array)
         value.each { |item| inspect_materials.call(item) }
       elsif value.is_a?(Hash)
+        # These explicitly declared inert dictionaries are not material specs.
+        # Their complete literal-only schema and target closure are checked below.
+        next if host_metadata && metadata_operations.include?(value['op'])
         value.each do |key, item|
           if material_fields.include?(key)
             reject.call('inline mutable material') if item.is_a?(Hash)
@@ -47,6 +52,10 @@ module AlmaSketchupMCP
         reject.call('invalid operation') unless operation.is_a?(Hash)
         op = operation['op']
         name = operation['name']
+        if host_metadata && metadata_operations.include?(op)
+          reject.call('host metadata must be top-level') if nested
+          next
+        end
         if op == 'material'
           reject.call('material must be a fresh top-level resource') if nested || !name.to_s.start_with?(namespace) || materials.include?(name) || model.materials[name]
           materials << name
@@ -79,12 +88,97 @@ module AlmaSketchupMCP
       end
     end
     visit.call(document['operations'], false)
+    validate_creation_host_metadata!(model, document, root_objects, reject)
     reject.call('resource declaration mismatch') unless definitions == scope['definitions'] && materials == scope['materials']
     model.entities.each do |entity|
       next unless entity.respond_to?(:name)
       id = entity.respond_to?(:get_attribute) ? entity.get_attribute('AlmaSketchupMCP', 'id') : nil
       reject.call('root object already exists') if root_objects.any? { |operation| operation['id'] == id || operation['name'] == entity.name }
     end
+    true
+  end
+
+  # This validates closure and literal values, not identity. Host authorization
+  # remains the server-private packet/brand plus guarded build authority; a
+  # declaration by itself never grants permission to alter existing objects.
+  def validate_creation_host_metadata!(model, document, root_objects, reject)
+    scope = document['creation_scope']
+    declaration = scope['host_metadata']
+    return unless declaration
+
+    metadata_ops = %w[attribute tag assign_tag]
+    exact_keys = lambda do |value, allowed|
+      reject.call('unexpected host metadata fields') unless value.is_a?(Hash) && (value.keys - allowed).empty? && (allowed - value.keys).empty?
+    end
+    exact_keys.call(declaration, %w[version root_ids tags])
+    reject.call('invalid host metadata version') unless declaration['version'] == 'new-root-metadata.v1'
+    valid_list = lambda do |items|
+      items.is_a?(Array) && items.length <= 12 && items.all? { |id| id.is_a?(String) && id.start_with?(scope['namespace']) } && items.uniq.length == items.length
+    end
+    roots = declaration['root_ids']
+    tags = declaration['tags']
+    reject.call('invalid host metadata roots or tags') unless valid_list.call(roots) && !roots.empty? && valid_list.call(tags)
+    tag_pattern = /\A#{Regexp.escape(scope['namespace'])}tag_[0-9a-f]{16}\z/
+    reject.call('host tag must use its exact task namespace and 16-hex suffix') unless tags.all? { |name| name.match?(tag_pattern) }
+    actual_roots = root_objects.map { |operation| operation['id'] }
+    reject.call('metadata root is not created in this transaction') unless (roots - actual_roots).empty?
+
+    # Match the real target resolver's candidate scope, including adopted IDs
+    # and the current editing context. A namespace is not absence evidence.
+    collections = [model.entities]
+    collections << model.active_entities if model.respond_to?(:active_entities)
+    collections.compact.uniq.each do |entities|
+      entities.each do |entity|
+        ids = []
+        if entity.respond_to?(:get_attribute)
+          ids << entity.get_attribute('AlmaSketchupMCP', 'id')
+          ids << entity.get_attribute('AlmaSketchupMCP', 'adopted_id')
+        end
+        ids << entity.persistent_id.to_s if entity.respond_to?(:persistent_id)
+        reject.call('metadata root reference already exists') if ids.compact.any? { |id| roots.include?(id.to_s) }
+      end
+    end
+    unless tags.empty?
+      reject.call('native tag inventory unavailable') unless model.respond_to?(:layers) && model.layers.respond_to?(:each)
+      existing_names = []
+      model.layers.each { |layer| existing_names << layer.name.to_s }
+      reject.call('host tag already exists') if tags.any? { |name| existing_names.include?(name) || model.layers[name] }
+    end
+    seen_roots = []
+    created_tags = []
+    document['operations'].each do |operation|
+      op = operation['op']
+      unless metadata_ops.include?(op)
+        seen_roots << operation['id'] if actual_roots.include?(operation['id'])
+        next
+      end
+      if op == 'tag'
+        exact_keys.call(operation, %w[op name visible])
+        name = operation['name']
+        reject.call('host tag must be declared once and visible') unless tags.include?(name) && !created_tags.include?(name) && operation['visible'] == true
+        created_tags << name
+        next
+      end
+      target = operation['target_id']
+      reject.call('metadata target must be an earlier new root') unless roots.include?(target) && seen_roots.include?(target)
+      if op == 'attribute'
+        exact_keys.call(operation, %w[op target_id dictionary attributes])
+        reject.call('host dictionary must be an explicit inert fixture dictionary') unless %w[BenchmarkFixture BenchmarkManualEdit].include?(operation['dictionary'])
+        attributes = operation['attributes']
+        reject.call('host attributes require 1..32 literal entries') unless attributes.is_a?(Hash) && attributes.length.between?(1, 32)
+        attributes.each do |key, value|
+          reject.call('invalid host attribute key') unless key.is_a?(String) && key.match?(/\A[A-Za-z][A-Za-z0-9_]{0,63}\z/) && !%w[__proto__ constructor prototype].include?(key)
+          literal = value.nil? || value == true || value == false ||
+            ((value.is_a?(Integer) || value.is_a?(Float)) && value.to_f.finite?) ||
+            (value.is_a?(String) && value.encode('UTF-16LE').bytesize <= 4096)
+          reject.call('host attributes must be finite scalar literals') unless literal
+        end
+      else
+        exact_keys.call(operation, %w[op target_id tag])
+        reject.call('host assignment must use an earlier new tag') unless created_tags.include?(operation['tag'])
+      end
+    end
+    reject.call('declared host tag has no creation operation') unless created_tags.length == tags.length
     true
   end
 end

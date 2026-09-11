@@ -10,6 +10,7 @@
   "scripts": {
     "get-docs": "node src/cli.mjs get_docs",
     "test:detail-modeling": "node scripts/run-detail-modeling-offline-tests.mjs",
+    "test:model-accessibility": "node scripts/run-model-accessibility-offline-tests.mjs",
     "demo": "node src/cli.mjs build_model --runtime mock --code-file examples/demo-room.json",
     "reset": "node src/cli.mjs reset_model --runtime mock",
     "save": "node src/cli.mjs save_model --runtime mock --path output/mock-model.json",

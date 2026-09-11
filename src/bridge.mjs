@@ -1,4 +1,5 @@
 import fs from 'node:fs/promises';
+import { constants as fsConstants } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { queryLocalAssets } from './asset-catalog.mjs';
 import path from 'node:path';
@@ -25,7 +26,8 @@ import { ApprovalAuthority } from './approval-tokens.mjs';
 import { normalizeExecutionPolicy } from './agent-contract.mjs';
 import { AgentTaskStore } from './agent-task-store.mjs';
 import { AgentGateway } from './agent-gateway.mjs';
-import { AgentContractError } from './agent-contract.mjs';
+import { AgentContractError, canonicalJson } from './agent-contract.mjs';
+import { isVerifiedModelAccessibilitySavedReceipt } from './model-accessibility-delivery.mjs';
 import { CopyFastSessionAuthority } from './copy-fast-session.mjs';
 import { SessionContractAuthority } from './session-contract.mjs';
 import { assertStructuralProbeResult, normalizeStructuralProbeOptions } from './model-adoption.mjs';
@@ -321,6 +323,50 @@ export class SketchUpBridge {
     if (typeof selectedRuntime.openModel !== 'function') throw new Error(`Runtime ${runtime} does not support open_model`);
     const result = await selectedRuntime.openModel({ path });
     if (result.snapshot) result.snapshot = this.attachRuntimeCapabilities(result.snapshot, runtimeCapabilities);
+    return result;
+  }
+
+  async close_reopen_saved_model({ saved_receipt, runtime = 'queue', timeoutMs, session_contract, sessionContract } = {}) {
+    if (!isVerifiedModelAccessibilitySavedReceipt(saved_receipt)) throw new AgentContractError('ARTIFACT_INTEGRITY_ERROR', 'Closing requires the original server-verified saved delivery receipt; client JSON and cloned receipts are not accepted.');
+    if (runtime !== 'queue' || this.executionContext?.source !== 'agent_gateway' || this.executionContext?.intent !== 'reopen_delivered_model') {
+      throw new AgentContractError('POLICY_DENIED', 'Saved close/reopen is an internal queue lifecycle for a persisted Gateway delivery task.');
+    }
+    if (!this.liveMutationAuthorization) {
+      return this.withLiveMutationAuthorization({ runtime, timeoutMs, session_contract, sessionContract, operation: 'close_reopen_saved_model' },
+        bridge => bridge.close_reopen_saved_model({ saved_receipt, runtime, timeoutMs }));
+    }
+    if (this.liveMutationAuthorization.operation !== 'close_reopen_saved_model') throw new AgentContractError('HANDSHAKE_INVALID', 'Saved close/reopen requires its own fresh mutation authorization scope.');
+    const selectedRuntime = this.selectRuntime(runtime, { timeoutMs });
+    if (typeof selectedRuntime.closeReopenSavedModel !== 'function' || typeof selectedRuntime.getSessionState !== 'function' || typeof selectedRuntime.getCapabilities !== 'function') {
+      throw new AgentContractError('OPERATION_NOT_ALLOWED', 'The queue runtime does not support verified saved-document close/reopen.');
+    }
+    const capabilities = await this.resolveRuntimeCapabilities(selectedRuntime, runtime, { force: true });
+    if (capabilities.saved_model_lifecycle?.version !== 'saved-model-lifecycle.v1' || capabilities.saved_model_lifecycle.close_reopen_saved_model !== true) {
+      throw new AgentContractError('OPERATION_NOT_ALLOWED', 'The installed native plugin does not attest saved-document close/reopen support. Install and restart the compatible plugin first.');
+    }
+    const before = await selectedRuntime.getSessionState();
+    if (before.runtime !== 'queue' || before.session_id !== saved_receipt.source_binding?.session_id || before.document_id !== saved_receipt.source_binding?.document_id ||
+      canonicalJson(before.model_identity) !== canonicalJson(saved_receipt.after_identity) || before.model_identity?.source_path !== saved_receipt.file_path) {
+      throw new AgentContractError('MODEL_IDENTITY_MISMATCH', 'The active document is not the exact saved delivery document.');
+    }
+    if (before.model_revision_complete !== true || before.model_revision !== saved_receipt.post_save_revision || before.model_modified !== false) {
+      throw new AgentContractError('MODEL_REVISION_MISMATCH', 'Closing requires the unchanged complete saved revision and modified? false.');
+    }
+    await assertSavedLifecycleFile(saved_receipt);
+    const binding = { path: saved_receipt.file_path, source_sha256: saved_receipt.file.sha256, source_bytes: saved_receipt.file.bytes,
+      session_id: before.session_id, document_id: before.document_id, model_identity: structuredClone(saved_receipt.after_identity),
+      model_revision: saved_receipt.post_save_revision, delivery_task_id: saved_receipt.delivery_task_id };
+    // The Gateway claims a durable signed started journal before this call.
+    // Never retry, including when the native response is lost or pending MDI.
+    const result = await selectedRuntime.closeReopenSavedModel(binding);
+    if (result?.kind !== 'close_reopen_saved_model' || result.version !== 'saved-model-lifecycle.v1' || result.delivery_task_id !== binding.delivery_task_id ||
+      result.close_confirmed !== true || result.before_document_id !== binding.document_id || result.close_ignore_changes !== false ||
+      canonicalJson(result.file_after) !== canonicalJson(saved_receipt.file) || result.application_restarted !== false ||
+      !['activated', 'pending_mdi_activation'].includes(result.open_status)) {
+      throw new AgentContractError('MUTATION_RECOVERY_REQUIRED', 'The lifecycle response does not establish the bound close/open result. Inspect the existing request; do not repeat it.',
+        { details: { automatic_retry_allowed: false, delivery_task_id: binding.delivery_task_id } });
+    }
+    if (result.snapshot) result.snapshot = this.attachRuntimeCapabilities(result.snapshot, capabilities);
     return result;
   }
 
@@ -1148,6 +1194,29 @@ export class SketchUpBridge {
       return callback(lockedBridge);
     }, { method: `${runtime}-runtime-session` });
   }
+}
+
+async function assertSavedLifecycleFile(receipt) {
+  const target = receipt.file_path;
+  if (typeof target !== 'string' || !path.isAbsolute(target) || path.extname(target).toLowerCase() !== '.skp' ||
+    !Number.isSafeInteger(receipt.file?.bytes) || receipt.file.bytes < 1 || !/^[0-9a-f]{64}$/.test(receipt.file?.sha256 || '') ||
+    await fs.realpath(target) !== target || (await fs.lstat(target)).isSymbolicLink()) {
+    throw new AgentContractError('ARTIFACT_INTEGRITY_ERROR', 'The saved lifecycle file is not the original real server file.');
+  }
+  const handle = await fs.open(target, fsConstants.O_RDONLY | fsConstants.O_NOFOLLOW);
+  try {
+    const before = await handle.stat();
+    if (!before.isFile() || before.size !== receipt.file.bytes) throw new AgentContractError('ARTIFACT_INTEGRITY_ERROR', 'The saved lifecycle file size changed.');
+    const hash = createHash('sha256');
+    const buffer = Buffer.alloc(1024 * 1024);
+    let read;
+    do { read = await handle.read(buffer, 0, buffer.length, null); hash.update(buffer.subarray(0, read.bytesRead)); } while (read.bytesRead > 0);
+    const after = await handle.stat(), current = await fs.lstat(target);
+    if (hash.digest('hex') !== receipt.file.sha256 || before.size !== after.size || before.mtimeMs !== after.mtimeMs ||
+      before.ino !== current.ino || before.dev !== current.dev || current.isSymbolicLink()) {
+      throw new AgentContractError('ARTIFACT_INTEGRITY_ERROR', 'The saved lifecycle bytes changed after delivery.');
+    }
+  } finally { await handle.close(); }
 }
 
 function policyFromEnvironment() {

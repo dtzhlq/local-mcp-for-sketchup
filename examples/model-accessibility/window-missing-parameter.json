@@ -1,0 +1,24 @@
+{
+  "input": {
+    "version": 1,
+    "kind": "window",
+    "id": "example-window",
+    "units": "mm",
+    "parameters": {
+      "depth_mm": 130,
+      "height_mm": 1300
+    },
+    "placement": {
+      "origin_mm": [
+        0,
+        0,
+        0
+      ]
+    }
+  },
+  "expected": {
+    "code": "MISSING_INPUT",
+    "path": "task.parameters.width_mm",
+    "recovery_class": "design_input"
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "schema_version": "model-accessibility-fixture.v1",
+  "fixture_family": "asset_layout",
+  "case_id": "asset_replace.acceptance_a",
+  "suite_sha256": "120a0d403c561cf1265ab7550bbab3e569f2c561f04965c109f6a7f0dc9dd911",
+  "status": "prepared_dsl_with_blockers",
+  "dsl_sha256": "c84335816d52245836dcfb041839b78bb858d09da3649ea9ad2620987d46a651",
+  "oracle_sha256": "868035c40b6a1b22115fd35dc5ea8dba0cdb0b46c6d7e72ee789b72194c0d795",
+  "source_manifest_sha256": "4ba19ed4b9e23f07433b1575502fdb170153cdbe3e5910e3577484d97c2bb6a8",
+  "source_files": [
+    {
+      "path": "scripts/model-accessibility/fixtures.mjs",
+      "sha256": "221081b3882afc6ee985e8428d7480d44b9f2b2c3300748038ddc83311b1f75c"
+    },
+    {
+      "path": "benchmarks/model-accessibility/suite.mjs",
+      "sha256": "faef7c8136faac701939e5024b1e0142332cbc98e606fd6c9dfeba587a842d60"
+    },
+    {
+      "path": "src/detailed-modeling/recipes.mjs",
+      "sha256": "c27b4bdc711b7d32778fe8cdecfd7f1ad729c3acbe0b09678a2ef107b8004f43"
+    },
+    {
+      "path": "src/detailed-modeling/furnishing-assets.mjs",
+      "sha256": "760bdd8d69bd685260fc4229eeffe80f3b61d629af07b60049f02bc7207c2fac"
+    },
+    {
+      "path": "src/product-modeling/part-graph-compiler.mjs",
+      "sha256": "0248d4e2ca35455e8271a775a41e9dc6bdb9699367e9c36d97a47565ab1ca691"
+    },
+    {
+      "path": "src/model-accessibility-tasks.mjs",
+      "sha256": "ac6eb284951965e7e7a80c16b655e9bb9b0bb69a91403d0132fd34ac420ab0b7"
+    },
+    {
+      "path": "src/detailed-modeling/scenes.mjs",
+      "sha256": "e3c055c6d6860f998539c43059fae3edee884492bb0c024776a4464e6b109f74"
+    }
+  ],
+  "source_resources": [
+    {
+      "path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/src/detailed-modeling/furnishing-assets.mjs",
+      "bytes": 14627,
+      "sha256": "760bdd8d69bd685260fc4229eeffe80f3b61d629af07b60049f02bc7207c2fac",
+      "expected_sha256": null,
+      "hash_matches_record": null,
+      "status": "file_verified",
+      "native_geometry_verified": false
+    }
+  ],
+  "resource_manifest_sha256": "395a8c5cf7dfe60f4ed0364c42d9107c3565bc60e2568213b916d9fd5e4b0e16",
+  "asset_materializations_sha256": "a64788438883ba2d31dc9b55d257d56ffb57ff0d59c5870e611dc3626c5310e0",
+  "runtime_setups": [],
+  "blockers": [
+    "native_asset_file_not_prepared:detail-reading_chair"
+  ],
+  "preconditions": {
+    "target": "fresh disposable empty model copy",
+    "preserve_existing_template_sentinel": false,
+    "existing_sentinel": null,
+    "reject_other_existing_roots": true,
+    "reject_name_or_definition_collisions": true,
+    "reset_allowed": false,
+    "original_source_model_may_not_be_modified": true
+  },
+  "native_ready": false,
+  "runtime_called": false,
+  "file_delivery_ready": false,
+  "required_next_evidence": [
+    "create separate model without resetting the source",
+    "capture template/source sentinel before and after additive build",
+    "capture actual native persistent IDs, dimensions, shared-definition identity and protected attributes",
+    "verify material and asset files before use",
+    "save, close and reopen the fixture SKP",
+    "hash complete prepared package identically for baseline and optimized"
+  ]
+}

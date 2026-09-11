@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "model-accessibility-asset-edit-v1.schema.json",
+  "title": "Reviewed native asset input from the server-configured catalog",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "mode", "asset", "placement"],
+  "properties": {
+    "version": { "const": 1 },
+    "mode": { "enum": ["place", "replace"] },
+    "asset": { "type": "object", "additionalProperties": false, "required": ["id"], "properties": { "id": { "type": "string", "minLength": 1 } } },
+    "placement": {
+      "type": "object", "additionalProperties": false, "required": ["origin_mm", "rotation_z_deg"],
+      "properties": {
+        "origin_mm": { "type": "array", "minItems": 3, "maxItems": 3, "items": { "type": "number" } },
+        "rotation_z_deg": { "type": "number", "description": "Rigid rotation about world +Z in degrees. Replacement asserts the existing transform; it does not reposition or rescale." }
+      }
+    },
+    "target": {
+      "type": "object", "additionalProperties": false,
+      "properties": { "entity_path": { "type": "string", "pattern": "^pid:[1-9][0-9]*$" }, "target_id": { "type": "string", "minLength": 1 } },
+      "oneOf": [{ "required": ["entity_path"], "not": { "required": ["target_id"] } }, { "required": ["target_id"], "not": { "required": ["entity_path"] } }]
+    }
+  },
+  "allOf": [{ "if": { "properties": { "mode": { "const": "replace" } } }, "then": { "required": ["target"] }, "else": { "not": { "required": ["target"] } } }]
+}

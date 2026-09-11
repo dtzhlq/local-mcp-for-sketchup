@@ -1,0 +1,24 @@
+{
+  "input": {
+    "version": 1,
+    "kind": "asset_placement",
+    "id": "example-asset_placement",
+    "units": "mm",
+    "asset_id": "detail-side_table",
+    "parameters": {
+      "height_mm": 535
+    },
+    "placement": {
+      "origin_mm": [
+        0,
+        0,
+        0
+      ]
+    }
+  },
+  "expected": {
+    "code": "MISSING_INPUT",
+    "path": "task.parameters.radius_mm",
+    "recovery_class": "design_input"
+  }
+}

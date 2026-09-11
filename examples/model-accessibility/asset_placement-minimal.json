@@ -1,0 +1,29 @@
+{
+  "tool": "start_agent_task",
+  "arguments": {
+    "intent": "create_model",
+    "instruction": "Place complete built-in asset roots",
+    "idempotency_key": "example-asset_placement-v1",
+    "inputs": {
+      "runtime": "mock",
+      "task": {
+        "version": 1,
+        "kind": "asset_placement",
+        "id": "example-asset_placement",
+        "units": "mm",
+        "asset_id": "detail-side_table",
+        "parameters": {
+          "radius_mm": 310,
+          "height_mm": 535
+        },
+        "placement": {
+          "origin_mm": [
+            0,
+            0,
+            0
+          ]
+        }
+      }
+    }
+  }
+}

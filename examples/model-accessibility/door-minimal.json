@@ -1,0 +1,30 @@
+{
+  "tool": "start_agent_task",
+  "arguments": {
+    "intent": "create_model",
+    "instruction": "Detailed left hinged door",
+    "idempotency_key": "example-door-v1",
+    "inputs": {
+      "runtime": "mock",
+      "task": {
+        "version": 1,
+        "kind": "door",
+        "id": "example-door",
+        "units": "mm",
+        "parameters": {
+          "width_mm": 1020,
+          "depth_mm": 150,
+          "height_mm": 2250,
+          "open_angle_deg": -18
+        },
+        "placement": {
+          "origin_mm": [
+            0,
+            0,
+            0
+          ]
+        }
+      }
+    }
+  }
+}

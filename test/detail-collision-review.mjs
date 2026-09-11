@@ -42,3 +42,62 @@ for(const mode of ['valid','wrong-peer','stale','duplicate','wrong-tolerance','e
  const report=await narrowDetailLayoutQa({bridge,snapshot,qa});
  assert.equal(report.qa.ok,mode==='valid',`Leaf separation receipt: ${mode}`);
 }
+
+// Offline reconstruction of a native anonymous root: layout uses its canonical
+// pid reference while the second object still has an authored stable id.
+const anonymousSnapshot = () => ({ ...structuredClone(snapshot), instances: [
+ { id: '', name: '', persistent_id: '41159', bounding_box: structuredClone(snapshot.instances[0].bounding_box) },
+ structuredClone(snapshot.instances[1])
+] });
+const anonymousQa = () => ({ ...structuredClone(qa), issues: [{ ...qa.issues[0], item: 'pid:41159 / Right' }] });
+for (const mode of ['string-pid', 'numeric-pid', 'missing-id', 'named-root', 'both-anonymous', 'existing-id', 'unverified']) {
+ const inputSnapshot = anonymousSnapshot(), inputQa = anonymousQa(), calls = [];
+ if (mode === 'numeric-pid') inputSnapshot.instances[0].persistent_id = 41159;
+ if (mode === 'missing-id') delete inputSnapshot.instances[0].id;
+ if (mode === 'named-root') { inputSnapshot.instances[0].name = 'Sree'; inputQa.issues[0].item = 'Sree / Right'; }
+ if (mode === 'both-anonymous') { Object.assign(inputSnapshot.instances[1], { id: '', name: '', persistent_id: '46839' }); inputQa.issues[0].item = 'pid:41159 / pid:46839'; }
+ if (mode === 'existing-id') inputSnapshot.instances[0].id = 'left-native';
+ const expectedLeft = mode === 'existing-id' ? 'left-native' : 'pid:41159';
+ const expectedRight = mode === 'both-anonymous' ? 'pid:46839' : 'right-native';
+ const before = JSON.stringify(inputSnapshot);
+ const bridge = { inspect_detail_regions: async ({ queries, runtime }) => {
+  assert.equal(runtime, 'queue'); calls.push(structuredClone(queries));
+  const pair = queries[0].mode === 'pair_separation';
+  assert.deepEqual(queries[0].instance_path, [expectedLeft]);
+  if (pair) assert.deepEqual(queries[0].comparison_instance_path, [expectedRight]);
+  else { assert.deepEqual(queries[1].instance_path, [expectedRight]); assert.deepEqual(queries[0].bounds_mm, { min: [50, 0, 0], max: [100, 100, 100] }); }
+  return { version: 'native-detail-regions.v1', read_only: true, model_revision_complete: true, model_revision: snapshot.model_revision,
+   results: queries.map(query => ({ ...query, status: pair && mode !== 'unverified' ? 'pass' : 'unverified',
+    evidence_source: 'sketchup_runtime', model_revision: snapshot.model_revision, coordinate_space: 'model',
+    method: 'native_leaf_separation.v1', numerical_tolerance_mm: 0.000001, leaf_counts: [4, 6] })) };
+ } };
+ const report = await narrowDetailLayoutQa({ bridge, snapshot: inputSnapshot, qa: inputQa });
+ assert.equal(calls.length, 2, `${mode}: canonical pid roots must reach both read-only narrow phases`);
+ assert.equal(report.qa.ok, mode !== 'unverified');
+ if (mode === 'unverified') assert.equal(report.qa, inputQa, 'A resolved pid is not itself evidence of separation');
+ assert.equal(JSON.stringify(inputSnapshot), before, 'Persistent-id fallback must not assign ids or alter the snapshot');
+}
+
+for (const mode of ['duplicate-pid', 'name-alias', 'id-alias', 'duplicate-selected-id', 'zero-pid', 'leading-zero-pid', 'negative-pid', 'non-integer-pid', 'unsafe-number-pid', 'missing-pid', 'malformed-id', 'empty-item', 'object-item', 'nested-pid', 'same-root', 'short-bounds', 'string-bounds', 'inverted-bounds']) {
+ const inputSnapshot = anonymousSnapshot(), inputQa = anonymousQa();
+ if (mode === 'duplicate-pid') inputSnapshot.instances.push({ ...structuredClone(inputSnapshot.instances[0]), name: 'Different name' });
+ if (mode === 'name-alias') inputSnapshot.instances.push({ ...structuredClone(snapshot.instances[0]), name: 'pid:41159' });
+ if (mode === 'id-alias') inputSnapshot.instances.push({ ...structuredClone(snapshot.instances[0]), id: 'pid:41159' });
+ if (mode === 'duplicate-selected-id') inputSnapshot.instances.push({ ...structuredClone(snapshot.instances[1]), name: 'Different right name' });
+ const invalidPids = { 'zero-pid': '0', 'leading-zero-pid': '041159', 'negative-pid': '-41159', 'non-integer-pid': '41159.5', 'unsafe-number-pid': Number.MAX_SAFE_INTEGER + 1 };
+ if (Object.hasOwn(invalidPids, mode)) { inputSnapshot.instances[0].persistent_id = invalidPids[mode]; inputQa.issues[0].item = `pid:${invalidPids[mode]} / Right`; }
+ if (mode === 'missing-pid') delete inputSnapshot.instances[0].persistent_id;
+ if (mode === 'malformed-id') inputSnapshot.instances[0].id = '   ';
+ if (mode === 'empty-item') inputQa.issues[0].item = ' / Right';
+ if (mode === 'object-item') inputQa.issues[0].item = {};
+ if (mode === 'nested-pid') inputQa.issues[0].item = 'pid:41159/46839 / Right';
+ if (mode === 'same-root') { inputSnapshot.instances[0].name = 'Sree'; inputQa.issues[0].item = 'pid:41159 / Sree'; }
+ if (mode === 'short-bounds') inputSnapshot.instances[0].bounding_box.min = [0, 0];
+ if (mode === 'string-bounds') inputSnapshot.instances[0].bounding_box.min[0] = '0';
+ if (mode === 'inverted-bounds') inputSnapshot.instances[0].bounding_box.min[0] = 101;
+ let called = false;
+ const report = await narrowDetailLayoutQa({ bridge: { inspect_detail_regions: async () => { called = true; throw new Error('Invalid identity must never be dispatched'); } }, snapshot: inputSnapshot, qa: inputQa });
+ assert.equal(called, false, `${mode}: ambiguous or malformed roots must stay unresolved without native calls`);
+ assert.equal(report.qa, inputQa); assert.equal(report.evidence, null);
+}
+console.log('detail-collision-review: canonical persistent-id fallback, actual pid query paths, preserved stable ids, ambiguity/malformed rejection and unchanged native evidence requirements passed (offline read-only fixtures)');

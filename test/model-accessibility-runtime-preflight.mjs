@@ -1,0 +1,41 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import os from 'node:os';
+import path from 'node:path';
+import { SketchUpBridge } from '../src/bridge.mjs';
+import { getModelAccessibilityTaskCatalog } from '../src/model-accessibility-tasks.mjs';
+
+const root = await fs.mkdtemp(path.join(os.tmpdir(), 'accessibility-runtime-preflight-'));
+try {
+  const bridge = new SketchUpBridge({ mock: { sessionPath: path.join(root, 'model.json') }, agentContract: { rootDir: path.join(root, 'tasks') } });
+  const taskInput = getModelAccessibilityTaskCatalog({ task: 'window', detail: 'examples' }).tasks[0].examples.minimal.arguments.inputs.task;
+  let capabilityReads = 0, inspections = 0, writes = 0;
+  const getCapabilities = bridge.get_capabilities.bind(bridge);
+  const inspect = bridge.inspect_model.bind(bridge);
+  bridge.get_capabilities = async args => { capabilityReads++; return getCapabilities(args); };
+  bridge.inspect_model = async args => { inspections++; return inspect(args); };
+  bridge.build_model = () => { writes++; throw new Error('Preflight must never execute geometry'); };
+  const input = runtime => ({ inputs: { task: structuredClone(taskInput), ...(runtime ? { runtime } : {}) }, intent: 'preflight_model' });
+  const pure = await bridge.agentGateway.compileCommonTask(input());
+  assert.equal(pure.preflight.ok, true);
+  assert.equal(pure.preflight.runtime_observation, undefined);
+  assert.equal(capabilityReads + inspections, 0);
+  const malformed = input('mock'); delete malformed.inputs.task.parameters.width_mm;
+  await assert.rejects(() => bridge.agentGateway.compileCommonTask(malformed), error => error.details.issues.some(issue => issue.code === 'MISSING_INPUT'));
+  assert.equal(capabilityReads + inspections, 0, 'Bad design input is rejected before runtime reads');
+  const fresh = await bridge.agentGateway.compileCommonTask(input('mock'));
+  assert.equal(fresh.preflight.runtime_observation.runtime, 'mock');
+  assert.equal(fresh.preflight.runtime_observation.mutates_model, false);
+  assert.equal(fresh.preflight.quality_accepted, false);
+  assert.equal(capabilityReads, 1);
+  assert.equal(inspections, 1);
+  bridge.get_capabilities = async () => ({ runtime: { supported_operations: [] } });
+  await assert.rejects(() => bridge.agentGateway.compileCommonTask(input('mock')), error => error.details.issues.some(issue => issue.code === 'CAPABILITY_UNSUPPORTED'));
+  bridge.get_capabilities = getCapabilities;
+  bridge.inspect_model = async () => ({ entities: [{ name: `id-${taskInput.id}` }], snapshot: { instances: [], groups: [], model_revision: 'fixture' } });
+  await assert.rejects(() => bridge.agentGateway.compileCommonTask(input('mock')), error => error.details.issues.some(issue => issue.code === 'NAME_CONFLICT'));
+  bridge.get_capabilities = async () => ({ runtime: {} });
+  await assert.rejects(() => bridge.agentGateway.compileCommonTask(input('mock')), error => error.details.issues[0].code === 'CAPABILITY_UNSUPPORTED');
+  assert.equal(writes, 0);
+  console.log('runtime-preflight: dimensions before reads, fresh operations/names, missing capability rejection, no mutation and no quality overclaim passed');
+} finally { await fs.rm(root, { recursive: true, force: true }); }

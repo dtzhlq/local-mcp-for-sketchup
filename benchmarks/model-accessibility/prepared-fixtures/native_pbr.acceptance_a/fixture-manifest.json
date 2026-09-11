@@ -1,0 +1,144 @@
+{
+  "schema_version": "model-accessibility-fixture.v1",
+  "fixture_family": "appearance_assets",
+  "case_id": "native_pbr.acceptance_a",
+  "suite_sha256": "120a0d403c561cf1265ab7550bbab3e569f2c561f04965c109f6a7f0dc9dd911",
+  "status": "prepared_dsl_awaiting_native_baseline",
+  "dsl_sha256": "e7f6ac85ebde9e55be985da5d59a57fffd9dfa57d73c87a3423fd83f4af6ad82",
+  "oracle_sha256": "74c6816ad662b081baca93c58d72f68a2dc3c9998a782d25aebb8b0d1659a87d",
+  "source_manifest_sha256": "4ba19ed4b9e23f07433b1575502fdb170153cdbe3e5910e3577484d97c2bb6a8",
+  "source_files": [
+    {
+      "path": "scripts/model-accessibility/fixtures.mjs",
+      "sha256": "221081b3882afc6ee985e8428d7480d44b9f2b2c3300748038ddc83311b1f75c"
+    },
+    {
+      "path": "benchmarks/model-accessibility/suite.mjs",
+      "sha256": "faef7c8136faac701939e5024b1e0142332cbc98e606fd6c9dfeba587a842d60"
+    },
+    {
+      "path": "src/detailed-modeling/recipes.mjs",
+      "sha256": "c27b4bdc711b7d32778fe8cdecfd7f1ad729c3acbe0b09678a2ef107b8004f43"
+    },
+    {
+      "path": "src/detailed-modeling/furnishing-assets.mjs",
+      "sha256": "760bdd8d69bd685260fc4229eeffe80f3b61d629af07b60049f02bc7207c2fac"
+    },
+    {
+      "path": "src/product-modeling/part-graph-compiler.mjs",
+      "sha256": "0248d4e2ca35455e8271a775a41e9dc6bdb9699367e9c36d97a47565ab1ca691"
+    },
+    {
+      "path": "src/model-accessibility-tasks.mjs",
+      "sha256": "ac6eb284951965e7e7a80c16b655e9bb9b0bb69a91403d0132fd34ac420ab0b7"
+    },
+    {
+      "path": "src/detailed-modeling/scenes.mjs",
+      "sha256": "e3c055c6d6860f998539c43059fae3edee884492bb0c024776a4464e6b109f74"
+    }
+  ],
+  "source_resources": [
+    {
+      "path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/detail-modeling-implementation-2026-09-06/appearance-assets/catalog-v2.json",
+      "bytes": 17161,
+      "sha256": "5626dfa7b271d5133677ec3d43dbc4007143884f1a3ecb0a7591e297f4eddc89",
+      "expected_sha256": null,
+      "hash_matches_record": null,
+      "status": "file_verified",
+      "native_geometry_verified": false
+    },
+    {
+      "path": "/Applications/SketchUp 2026/SketchUp.app/Contents/Resources/Materials/Wood/Wood_Veneer_15_1K.skm",
+      "bytes": 3513433,
+      "sha256": "2d8119632bed28a59ca1a80c53af3cd392f8b356c10d293f1a787d6a7237ea73",
+      "expected_sha256": "2d8119632bed28a59ca1a80c53af3cd392f8b356c10d293f1a787d6a7237ea73",
+      "hash_matches_record": true,
+      "status": "file_verified",
+      "native_geometry_verified": false,
+      "asset_id": "native-wood",
+      "source": "installed SketchUp library",
+      "license": "SketchUp installed library terms; no redistribution license inferred"
+    },
+    {
+      "path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/detail-modeling-implementation-2026-09-06/appearance-assets/wood/Wood_Veneer_15_1K_alb_1.png",
+      "bytes": 1277257,
+      "sha256": "ffa2e3cf9d05f3374c4f211b5ad44981549c224551040ce5c47ad810aee8e7d9",
+      "expected_sha256": null,
+      "hash_matches_record": null,
+      "status": "file_verified",
+      "native_geometry_verified": false,
+      "asset_id": "native-wood",
+      "role": "existing_texture_map"
+    },
+    {
+      "path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/detail-modeling-implementation-2026-09-06/appearance-assets/wood/Wood_Veneer_15_1K_nrm_3.png",
+      "bytes": 1659690,
+      "sha256": "9ac152a82878ccfac82594251aea65fe2fbd1773c1227d774aa972300a08285a",
+      "expected_sha256": null,
+      "hash_matches_record": null,
+      "status": "file_verified",
+      "native_geometry_verified": false,
+      "asset_id": "native-wood",
+      "role": "existing_texture_map"
+    },
+    {
+      "path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/detail-modeling-implementation-2026-09-06/appearance-assets/wood/Wood_Veneer_15_1K_rgh_2.png",
+      "bytes": 521186,
+      "sha256": "a17d1bb845c394993105d034a8d4cbea77bab0380f1a39498ad2d065d678e081",
+      "expected_sha256": null,
+      "hash_matches_record": null,
+      "status": "file_verified",
+      "native_geometry_verified": false,
+      "asset_id": "native-wood",
+      "role": "existing_texture_map"
+    },
+    {
+      "path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/detail-modeling-implementation-2026-09-06/appearance-assets/environments/studio.hdr",
+      "bytes": 6823048,
+      "sha256": "6dcfb19844bba1c14cdf627d63f879a5cd3ab6a0989b1c4e1642987900d600d9",
+      "expected_sha256": "6dcfb19844bba1c14cdf627d63f879a5cd3ab6a0989b1c4e1642987900d600d9",
+      "hash_matches_record": true,
+      "status": "file_verified",
+      "native_geometry_verified": false,
+      "asset_id": "native-studio",
+      "source": "/Applications/SketchUp 2026/SketchUp.app/Contents/Resources/Environments/Old Warehouse 2K IBL.ske",
+      "license": "SketchUp installed library terms; no redistribution license inferred"
+    },
+    {
+      "path": "/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica/output/detail-modeling-implementation-2026-09-06/appearance-assets/environments/daylight.hdr",
+      "bytes": 5451493,
+      "sha256": "5244534e9cf5b606f2ff513aa00ddb161b0a4826ffd88a0d3bd03ac29247d198",
+      "expected_sha256": "5244534e9cf5b606f2ff513aa00ddb161b0a4826ffd88a0d3bd03ac29247d198",
+      "hash_matches_record": true,
+      "status": "file_verified",
+      "native_geometry_verified": false,
+      "asset_id": "native-daylight",
+      "source": "/Applications/SketchUp 2026/SketchUp.app/Contents/Resources/Environments/Sky - Partial Clouds 2K IBL.ske",
+      "license": "SketchUp installed library terms; no redistribution license inferred"
+    }
+  ],
+  "resource_manifest_sha256": "3668241c477553592d105354838619e1f599ee80c3bff4caf090748773a23213",
+  "asset_materializations_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+  "runtime_setups": [],
+  "blockers": [],
+  "preconditions": {
+    "target": "fresh disposable empty model copy",
+    "preserve_existing_template_sentinel": false,
+    "existing_sentinel": null,
+    "reject_other_existing_roots": true,
+    "reject_name_or_definition_collisions": true,
+    "reset_allowed": false,
+    "original_source_model_may_not_be_modified": true
+  },
+  "native_ready": false,
+  "runtime_called": false,
+  "file_delivery_ready": false,
+  "required_next_evidence": [
+    "create separate model without resetting the source",
+    "capture template/source sentinel before and after additive build",
+    "capture actual native persistent IDs, dimensions, shared-definition identity and protected attributes",
+    "verify material and asset files before use",
+    "save, close and reopen the fixture SKP",
+    "hash complete prepared package identically for baseline and optimized"
+  ]
+}

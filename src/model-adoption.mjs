@@ -682,6 +682,7 @@ function mockOccurrenceEntry(item, entityPath, definitionName, affectedInstanceC
     material: item.material || null,
     back_material: item.back_material || null,
     classification: item.classification || null,
+    tag: item.tag || null,
     attributes: structuredClone(item.attributes || null),
     texture_transform: structuredClone(item.texture_transform || null),
     face_uvs: structuredClone(item.face_uvs || null),

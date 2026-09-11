@@ -1,0 +1,35 @@
+{
+  "tool": "start_agent_task",
+  "arguments": {
+    "intent": "create_model",
+    "instruction": "Countertop with real sink opening",
+    "idempotency_key": "example-sink_counter-v1",
+    "inputs": {
+      "runtime": "mock",
+      "task": {
+        "version": 1,
+        "kind": "sink_counter",
+        "id": "example-sink_counter",
+        "units": "mm",
+        "parameters": {
+          "width_mm": 1200,
+          "depth_mm": 650,
+          "height_mm": 900,
+          "thickness_mm": 28,
+          "sink_width_mm": 740,
+          "sink_depth_mm": 440,
+          "sink_height_mm": 180,
+          "sink_offset_x_mm": 230,
+          "sink_offset_y_mm": 60
+        },
+        "placement": {
+          "origin_mm": [
+            0,
+            0,
+            0
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "tool": "start_agent_task",
+  "arguments": {
+    "intent": "apply_native_appearance",
+    "instruction": "只给预置板件 P 应用目录内木材 PBR 素材包，启用原生材质显示；纹理物理重复尺寸 900 × 600 毫米，木纹绕表面法向旋转 0 度。读取原生 base-color、normal、roughness、metallic 和 AO 状态以及真实 UV 结果；保持其他对象材质不变。 在预置交付目录保存独立 SKP，并提交必要的近景、实际测量及编辑边界结果。",
+    "idempotency_key": "native_pbr-development-prepare-v1",
+    "inputs": {
+      "runtime": "queue",
+      "appearance": {
+        "kind": "native_pbr",
+        "target": "P",
+        "preset": "wood",
+        "texture_size_mm": [
+          900,
+          600
+        ],
+        "rotation": 0
+      }
+    }
+  }
+}

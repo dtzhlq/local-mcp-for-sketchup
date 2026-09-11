@@ -1,0 +1,29 @@
+{
+  "tool": "start_agent_task",
+  "arguments": {
+    "intent": "create_model",
+    "instruction": "Detailed double sash window",
+    "idempotency_key": "example-window-v1",
+    "inputs": {
+      "runtime": "mock",
+      "task": {
+        "version": 1,
+        "kind": "window",
+        "id": "example-window",
+        "units": "mm",
+        "parameters": {
+          "width_mm": 1600,
+          "depth_mm": 130,
+          "height_mm": 1300
+        },
+        "placement": {
+          "origin_mm": [
+            0,
+            0,
+            0
+          ]
+        }
+      }
+    }
+  }
+}

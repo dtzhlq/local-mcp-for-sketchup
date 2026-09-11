@@ -1,0 +1,2636 @@
+{
+  "version": 1,
+  "units": "mm",
+  "metadata": {
+    "kind": "product_modeling_dsl",
+    "profile_id": "fixture-388695e167",
+    "product_type": "benchmark_fixture",
+    "product_name": "shared_cabinets",
+    "source": "part_graph_compiler",
+    "part_graph_id": "fixture-388695e167",
+    "profile_version": 1,
+    "part_graph_version": 2,
+    "source_type": "authored_benchmark_fixture",
+    "fixture_family": "shared_cabinets",
+    "case_id": "edit_single.acceptance_a",
+    "additive_only": true,
+    "native_ready": false
+  },
+  "operations": [
+    {
+      "op": "material",
+      "name": "fixture-388695e167-Detail_Plaster",
+      "color": "#e6e0d4"
+    },
+    {
+      "op": "material",
+      "name": "fixture-388695e167-Detail_Concrete",
+      "color": "#b6b4aa"
+    },
+    {
+      "op": "material",
+      "name": "fixture-388695e167-Detail_Oak",
+      "color": "#aa794a"
+    },
+    {
+      "op": "material",
+      "name": "fixture-388695e167-Detail_Oak_Endgrain",
+      "color": "#8c603d"
+    },
+    {
+      "op": "material",
+      "name": "fixture-388695e167-Detail_Painted_Joinery",
+      "color": "#e8e5db"
+    },
+    {
+      "op": "material",
+      "name": "fixture-388695e167-Detail_Aluminium",
+      "color": "#39474c"
+    },
+    {
+      "op": "material",
+      "name": "fixture-388695e167-Detail_Stainless",
+      "color": "#aab5b6"
+    },
+    {
+      "op": "material",
+      "name": "fixture-388695e167-Detail_Brass",
+      "color": "#b48b45"
+    },
+    {
+      "op": "material",
+      "name": "fixture-388695e167-Detail_Gasket",
+      "color": "#292c29"
+    },
+    {
+      "op": "material",
+      "name": "fixture-388695e167-Detail_Glass",
+      "color": "#adcbd1",
+      "alpha": 0.32
+    },
+    {
+      "op": "material",
+      "name": "fixture-388695e167-Detail_Stone",
+      "color": "#cbc6b8"
+    },
+    {
+      "op": "material",
+      "name": "fixture-388695e167-Detail_Grout",
+      "color": "#6a6961"
+    },
+    {
+      "op": "material",
+      "name": "fixture-388695e167-Detail_Insulation",
+      "color": "#d6be80"
+    },
+    {
+      "op": "material",
+      "name": "fixture-388695e167-Detail_Waterproofing",
+      "color": "#454b47"
+    },
+    {
+      "op": "material",
+      "name": "fixture-388695e167-Detail_Terracotta",
+      "color": "#996f55"
+    },
+    {
+      "op": "material",
+      "name": "fixture-388695e167-Detail_Soil",
+      "color": "#655343"
+    },
+    {
+      "op": "material",
+      "name": "fixture-388695e167-Detail_Leaf",
+      "color": "#6f825b"
+    },
+    {
+      "op": "material",
+      "name": "fixture-388695e167-Detail_Fabric",
+      "color": "#c9beb0"
+    },
+    {
+      "op": "component_definition",
+      "name": "PG2_fixture-388695e167-sentinel",
+      "operations": [
+        {
+          "op": "box",
+          "id": "fixture-388695e167-sentinel",
+          "name": "fixture-388695e167-sentinel",
+          "origin": [
+            0,
+            0,
+            0
+          ],
+          "size": [
+            120,
+            160,
+            200
+          ],
+          "material": "fixture-388695e167-Detail_Painted_Joinery",
+          "qa": {
+            "role": "template_sentinel",
+            "part_id": "fixture-388695e167-sentinel",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive"
+          }
+        }
+      ]
+    },
+    {
+      "op": "component_definition",
+      "name": "PG2_fixture-388695e167-shared-cabinet-drawer-handle",
+      "operations": [
+        {
+          "op": "pipe_between_points",
+          "id": "fixture-388695e167-shared-cabinet-drawer-handle-bar",
+          "name": "fixture-388695e167-shared-cabinet-drawer-handle-bar",
+          "start": [
+            0,
+            -32,
+            0
+          ],
+          "end": [
+            190,
+            -32,
+            0
+          ],
+          "radius": 6,
+          "segments": 32,
+          "smooth": "all",
+          "material": "fixture-388695e167-Detail_Stainless",
+          "qa": {
+            "role": "drawer-handle-bar",
+            "part_id": "fixture-388695e167-shared-cabinet-drawer-handle-bar",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        },
+        {
+          "op": "pipe_between_points",
+          "id": "fixture-388695e167-shared-cabinet-drawer-handle-post-l",
+          "name": "fixture-388695e167-shared-cabinet-drawer-handle-post-l",
+          "start": [
+            12,
+            0,
+            0
+          ],
+          "end": [
+            12,
+            -32,
+            0
+          ],
+          "radius": 5,
+          "segments": 32,
+          "smooth": "all",
+          "material": "fixture-388695e167-Detail_Stainless",
+          "qa": {
+            "role": "drawer-handle-post-l",
+            "part_id": "fixture-388695e167-shared-cabinet-drawer-handle-post-l",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        },
+        {
+          "op": "pipe_between_points",
+          "id": "fixture-388695e167-shared-cabinet-drawer-handle-post-r",
+          "name": "fixture-388695e167-shared-cabinet-drawer-handle-post-r",
+          "start": [
+            178,
+            0,
+            0
+          ],
+          "end": [
+            178,
+            -32,
+            0
+          ],
+          "radius": 5,
+          "segments": 32,
+          "smooth": "all",
+          "material": "fixture-388695e167-Detail_Stainless",
+          "qa": {
+            "role": "drawer-handle-post-r",
+            "part_id": "fixture-388695e167-shared-cabinet-drawer-handle-post-r",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        },
+        {
+          "op": "profile_extrude",
+          "id": "fixture-388695e167-shared-cabinet-drawer-handle-screw-0",
+          "name": "fixture-388695e167-shared-cabinet-drawer-handle-screw-0",
+          "origin": [
+            12,
+            -2,
+            -4
+          ],
+          "plane": "xz",
+          "outer": [
+            [
+              4,
+              0
+            ],
+            [
+              3.804226065180614,
+              1.2360679774997896
+            ],
+            [
+              3.23606797749979,
+              2.3511410091698925
+            ],
+            [
+              2.3511410091698925,
+              3.23606797749979
+            ],
+            [
+              1.2360679774997898,
+              3.804226065180614
+            ],
+            [
+              2.4492935982947064e-16,
+              4
+            ],
+            [
+              -1.2360679774997894,
+              3.8042260651806146
+            ],
+            [
+              -2.351141009169892,
+              3.23606797749979
+            ],
+            [
+              -3.2360679774997894,
+              2.351141009169893
+            ],
+            [
+              -3.804226065180614,
+              1.23606797749979
+            ],
+            [
+              -4,
+              4.898587196589413e-16
+            ],
+            [
+              -3.804226065180615,
+              -1.2360679774997876
+            ],
+            [
+              -3.23606797749979,
+              -2.351141009169892
+            ],
+            [
+              -2.351141009169893,
+              -3.2360679774997894
+            ],
+            [
+              -1.2360679774997902,
+              -3.804226065180614
+            ],
+            [
+              -7.347880794884119e-16,
+              -4
+            ],
+            [
+              1.236067977499789,
+              -3.8042260651806146
+            ],
+            [
+              2.3511410091698917,
+              -3.2360679774997902
+            ],
+            [
+              3.2360679774997894,
+              -2.3511410091698934
+            ],
+            [
+              3.804226065180614,
+              -1.2360679774997905
+            ]
+          ],
+          "depth": 3,
+          "holes": [],
+          "material": "fixture-388695e167-Detail_Stainless",
+          "qa": {
+            "role": "fixing",
+            "part_id": "fixture-388695e167-shared-cabinet-drawer-handle-screw-0",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        },
+        {
+          "op": "profile_extrude",
+          "id": "fixture-388695e167-shared-cabinet-drawer-handle-screw-1",
+          "name": "fixture-388695e167-shared-cabinet-drawer-handle-screw-1",
+          "origin": [
+            178,
+            -2,
+            -4
+          ],
+          "plane": "xz",
+          "outer": [
+            [
+              4,
+              0
+            ],
+            [
+              3.804226065180614,
+              1.2360679774997896
+            ],
+            [
+              3.23606797749979,
+              2.3511410091698925
+            ],
+            [
+              2.3511410091698925,
+              3.23606797749979
+            ],
+            [
+              1.2360679774997898,
+              3.804226065180614
+            ],
+            [
+              2.4492935982947064e-16,
+              4
+            ],
+            [
+              -1.2360679774997894,
+              3.8042260651806146
+            ],
+            [
+              -2.351141009169892,
+              3.23606797749979
+            ],
+            [
+              -3.2360679774997894,
+              2.351141009169893
+            ],
+            [
+              -3.804226065180614,
+              1.23606797749979
+            ],
+            [
+              -4,
+              4.898587196589413e-16
+            ],
+            [
+              -3.804226065180615,
+              -1.2360679774997876
+            ],
+            [
+              -3.23606797749979,
+              -2.351141009169892
+            ],
+            [
+              -2.351141009169893,
+              -3.2360679774997894
+            ],
+            [
+              -1.2360679774997902,
+              -3.804226065180614
+            ],
+            [
+              -7.347880794884119e-16,
+              -4
+            ],
+            [
+              1.236067977499789,
+              -3.8042260651806146
+            ],
+            [
+              2.3511410091698917,
+              -3.2360679774997902
+            ],
+            [
+              3.2360679774997894,
+              -2.3511410091698934
+            ],
+            [
+              3.804226065180614,
+              -1.2360679774997905
+            ]
+          ],
+          "depth": 3,
+          "holes": [],
+          "material": "fixture-388695e167-Detail_Stainless",
+          "qa": {
+            "role": "fixing",
+            "part_id": "fixture-388695e167-shared-cabinet-drawer-handle-screw-1",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        }
+      ]
+    },
+    {
+      "op": "component_definition",
+      "name": "PG2_fixture-388695e167-shared-cabinet-drawer",
+      "operations": [
+        {
+          "op": "profile_extrude",
+          "id": "fixture-388695e167-shared-cabinet-drawer-front",
+          "name": "fixture-388695e167-shared-cabinet-drawer-front",
+          "origin": [
+            3,
+            -21,
+            0
+          ],
+          "plane": "xz",
+          "outer": [
+            [
+              591,
+              0
+            ],
+            [
+              591.9270509831248,
+              0.14683045111453952
+            ],
+            [
+              592.7633557568774,
+              0.5729490168751576
+            ],
+            [
+              593.4270509831248,
+              1.2366442431225806
+            ],
+            [
+              593.8531695488855,
+              2.0729490168751576
+            ],
+            [
+              594,
+              3
+            ],
+            [
+              594,
+              257.6666666666667
+            ],
+            [
+              593.8531695488855,
+              258.59371764979153
+            ],
+            [
+              593.4270509831248,
+              259.43002242354413
+            ],
+            [
+              592.7633557568774,
+              260.09371764979153
+            ],
+            [
+              591.9270509831248,
+              260.5198362155521
+            ],
+            [
+              591,
+              260.6666666666667
+            ],
+            [
+              3,
+              260.6666666666667
+            ],
+            [
+              2.072949016875158,
+              260.5198362155521
+            ],
+            [
+              1.2366442431225808,
+              260.09371764979153
+            ],
+            [
+              0.5729490168751581,
+              259.43002242354413
+            ],
+            [
+              0.14683045111453952,
+              258.59371764979153
+            ],
+            [
+              0,
+              257.6666666666667
+            ],
+            [
+              0,
+              3.0000000000000004
+            ],
+            [
+              0.14683045111453952,
+              2.0729490168751568
+            ],
+            [
+              0.5729490168751576,
+              1.2366442431225808
+            ],
+            [
+              1.2366442431225804,
+              0.5729490168751581
+            ],
+            [
+              2.072949016875157,
+              0.14683045111453952
+            ],
+            [
+              2.9999999999999996,
+              0
+            ]
+          ],
+          "depth": 21,
+          "holes": [],
+          "material": "fixture-388695e167-Detail_Oak",
+          "qa": {
+            "role": "drawer_front",
+            "part_id": "fixture-388695e167-shared-cabinet-drawer-front",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        },
+        {
+          "op": "box",
+          "id": "fixture-388695e167-shared-cabinet-drawer-bottom",
+          "name": "fixture-388695e167-shared-cabinet-drawer-bottom",
+          "origin": [
+            32,
+            15,
+            10
+          ],
+          "size": [
+            536,
+            510,
+            12
+          ],
+          "material": "fixture-388695e167-Detail_Painted_Joinery",
+          "qa": {
+            "role": "drawer_bottom",
+            "part_id": "fixture-388695e167-shared-cabinet-drawer-bottom",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        },
+        {
+          "op": "box",
+          "id": "fixture-388695e167-shared-cabinet-drawer-left-side",
+          "name": "fixture-388695e167-shared-cabinet-drawer-left-side",
+          "origin": [
+            32,
+            15,
+            22
+          ],
+          "size": [
+            12,
+            510,
+            208.66666666666669
+          ],
+          "material": "fixture-388695e167-Detail_Painted_Joinery",
+          "qa": {
+            "role": "drawer_side",
+            "part_id": "fixture-388695e167-shared-cabinet-drawer-left-side",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        },
+        {
+          "op": "box",
+          "id": "fixture-388695e167-shared-cabinet-drawer-right-side",
+          "name": "fixture-388695e167-shared-cabinet-drawer-right-side",
+          "origin": [
+            556,
+            15,
+            22
+          ],
+          "size": [
+            12,
+            510,
+            208.66666666666669
+          ],
+          "material": "fixture-388695e167-Detail_Painted_Joinery",
+          "qa": {
+            "role": "drawer_side",
+            "part_id": "fixture-388695e167-shared-cabinet-drawer-right-side",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        },
+        {
+          "op": "box",
+          "id": "fixture-388695e167-shared-cabinet-drawer-back",
+          "name": "fixture-388695e167-shared-cabinet-drawer-back",
+          "origin": [
+            44,
+            513,
+            22
+          ],
+          "size": [
+            512,
+            12,
+            208.66666666666669
+          ],
+          "material": "fixture-388695e167-Detail_Painted_Joinery",
+          "qa": {
+            "role": "drawer_back",
+            "part_id": "fixture-388695e167-shared-cabinet-drawer-back",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        },
+        {
+          "op": "component_instance",
+          "id": "fixture-388695e167-shared-cabinet-drawer-handle-instance",
+          "name": "fixture-388695e167-shared-cabinet-drawer-handle-instance",
+          "definition": "PG2_fixture-388695e167-shared-cabinet-drawer-handle",
+          "origin": [
+            205,
+            -21,
+            223.66666666666669
+          ],
+          "qa": {
+            "role": "drawer-handle",
+            "part_id": "fixture-388695e167-shared-cabinet-drawer-handle",
+            "intent": "assembly",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive"
+          }
+        }
+      ]
+    },
+    {
+      "op": "component_definition",
+      "name": "PG2_fixture-388695e167-shared-cabinet",
+      "operations": [
+        {
+          "op": "box",
+          "id": "fixture-388695e167-shared-cabinet-side-left",
+          "name": "fixture-388695e167-shared-cabinet-side-left",
+          "origin": [
+            0,
+            0,
+            100
+          ],
+          "size": [
+            18,
+            600,
+            800
+          ],
+          "material": "fixture-388695e167-Detail_Painted_Joinery",
+          "qa": {
+            "role": "carcass_side",
+            "part_id": "fixture-388695e167-shared-cabinet-side-left",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        },
+        {
+          "op": "box",
+          "id": "fixture-388695e167-shared-cabinet-side-right",
+          "name": "fixture-388695e167-shared-cabinet-side-right",
+          "origin": [
+            582,
+            0,
+            100
+          ],
+          "size": [
+            18,
+            600,
+            800
+          ],
+          "material": "fixture-388695e167-Detail_Painted_Joinery",
+          "qa": {
+            "role": "carcass_side",
+            "part_id": "fixture-388695e167-shared-cabinet-side-right",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        },
+        {
+          "op": "box",
+          "id": "fixture-388695e167-shared-cabinet-bottom",
+          "name": "fixture-388695e167-shared-cabinet-bottom",
+          "origin": [
+            18,
+            0,
+            100
+          ],
+          "size": [
+            564,
+            600,
+            18
+          ],
+          "material": "fixture-388695e167-Detail_Painted_Joinery",
+          "qa": {
+            "role": "carcass_bottom",
+            "part_id": "fixture-388695e167-shared-cabinet-bottom",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        },
+        {
+          "op": "box",
+          "id": "fixture-388695e167-shared-cabinet-back",
+          "name": "fixture-388695e167-shared-cabinet-back",
+          "origin": [
+            18,
+            591,
+            118
+          ],
+          "size": [
+            564,
+            9,
+            782
+          ],
+          "material": "fixture-388695e167-Detail_Painted_Joinery",
+          "qa": {
+            "role": "carcass_back",
+            "part_id": "fixture-388695e167-shared-cabinet-back",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        },
+        {
+          "op": "box",
+          "id": "fixture-388695e167-shared-cabinet-top-stretcher-front",
+          "name": "fixture-388695e167-shared-cabinet-top-stretcher-front",
+          "origin": [
+            18,
+            0,
+            860
+          ],
+          "size": [
+            564,
+            65,
+            40
+          ],
+          "material": "fixture-388695e167-Detail_Painted_Joinery",
+          "qa": {
+            "role": "stretcher",
+            "part_id": "fixture-388695e167-shared-cabinet-top-stretcher-front",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        },
+        {
+          "op": "box",
+          "id": "fixture-388695e167-shared-cabinet-top-stretcher-back",
+          "name": "fixture-388695e167-shared-cabinet-top-stretcher-back",
+          "origin": [
+            18,
+            535,
+            860
+          ],
+          "size": [
+            564,
+            65,
+            40
+          ],
+          "material": "fixture-388695e167-Detail_Painted_Joinery",
+          "qa": {
+            "role": "stretcher",
+            "part_id": "fixture-388695e167-shared-cabinet-top-stretcher-back",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        },
+        {
+          "op": "box",
+          "id": "fixture-388695e167-shared-cabinet-toe-kick",
+          "name": "fixture-388695e167-shared-cabinet-toe-kick",
+          "origin": [
+            20,
+            70,
+            10
+          ],
+          "size": [
+            560,
+            18,
+            90
+          ],
+          "material": "fixture-388695e167-Detail_Gasket",
+          "qa": {
+            "role": "toe_kick",
+            "part_id": "fixture-388695e167-shared-cabinet-toe-kick",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        },
+        {
+          "op": "cylinder",
+          "id": "fixture-388695e167-shared-cabinet-leg-45-80",
+          "name": "fixture-388695e167-shared-cabinet-leg-45-80",
+          "origin": [
+            45,
+            80,
+            0
+          ],
+          "radius": 18,
+          "height": 100,
+          "segments": 24,
+          "material": "fixture-388695e167-Detail_Gasket",
+          "qa": {
+            "role": "adjustable_foot",
+            "part_id": "fixture-388695e167-shared-cabinet-leg-45-80",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        },
+        {
+          "op": "cylinder",
+          "id": "fixture-388695e167-shared-cabinet-leg-45-530",
+          "name": "fixture-388695e167-shared-cabinet-leg-45-530",
+          "origin": [
+            45,
+            530,
+            0
+          ],
+          "radius": 18,
+          "height": 100,
+          "segments": 24,
+          "material": "fixture-388695e167-Detail_Gasket",
+          "qa": {
+            "role": "adjustable_foot",
+            "part_id": "fixture-388695e167-shared-cabinet-leg-45-530",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        },
+        {
+          "op": "cylinder",
+          "id": "fixture-388695e167-shared-cabinet-leg-555-80",
+          "name": "fixture-388695e167-shared-cabinet-leg-555-80",
+          "origin": [
+            555,
+            80,
+            0
+          ],
+          "radius": 18,
+          "height": 100,
+          "segments": 24,
+          "material": "fixture-388695e167-Detail_Gasket",
+          "qa": {
+            "role": "adjustable_foot",
+            "part_id": "fixture-388695e167-shared-cabinet-leg-555-80",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        },
+        {
+          "op": "cylinder",
+          "id": "fixture-388695e167-shared-cabinet-leg-555-530",
+          "name": "fixture-388695e167-shared-cabinet-leg-555-530",
+          "origin": [
+            555,
+            530,
+            0
+          ],
+          "radius": 18,
+          "height": 100,
+          "segments": 24,
+          "material": "fixture-388695e167-Detail_Gasket",
+          "qa": {
+            "role": "adjustable_foot",
+            "part_id": "fixture-388695e167-shared-cabinet-leg-555-530",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        },
+        {
+          "op": "component_instance",
+          "id": "fixture-388695e167-shared-cabinet-drawer-1",
+          "name": "fixture-388695e167-shared-cabinet-drawer-1",
+          "definition": "PG2_fixture-388695e167-shared-cabinet-drawer",
+          "origin": [
+            0,
+            0,
+            103
+          ],
+          "qa": {
+            "role": "drawer",
+            "part_id": "fixture-388695e167-shared-cabinet-drawer",
+            "intent": "assembly",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive"
+          }
+        },
+        {
+          "op": "profile_extrude",
+          "id": "fixture-388695e167-shared-cabinet-runner-0-left",
+          "name": "fixture-388695e167-shared-cabinet-runner-0-left",
+          "origin": [
+            20,
+            12,
+            130
+          ],
+          "plane": "xz",
+          "outer": [
+            [
+              0,
+              0
+            ],
+            [
+              8,
+              0
+            ],
+            [
+              8,
+              25
+            ],
+            [
+              6,
+              25
+            ],
+            [
+              6,
+              3
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              2,
+              25
+            ],
+            [
+              0,
+              25
+            ]
+          ],
+          "depth": 540,
+          "holes": [],
+          "material": "fixture-388695e167-Detail_Stainless",
+          "qa": {
+            "role": "drawer_runner",
+            "part_id": "fixture-388695e167-shared-cabinet-runner-0-left",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        },
+        {
+          "op": "profile_extrude",
+          "id": "fixture-388695e167-shared-cabinet-runner-0-right",
+          "name": "fixture-388695e167-shared-cabinet-runner-0-right",
+          "origin": [
+            572,
+            12,
+            130
+          ],
+          "plane": "xz",
+          "outer": [
+            [
+              0,
+              0
+            ],
+            [
+              8,
+              0
+            ],
+            [
+              8,
+              25
+            ],
+            [
+              6,
+              25
+            ],
+            [
+              6,
+              3
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              2,
+              25
+            ],
+            [
+              0,
+              25
+            ]
+          ],
+          "depth": 540,
+          "holes": [],
+          "material": "fixture-388695e167-Detail_Stainless",
+          "qa": {
+            "role": "drawer_runner",
+            "part_id": "fixture-388695e167-shared-cabinet-runner-0-right",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        },
+        {
+          "op": "component_instance",
+          "id": "fixture-388695e167-shared-cabinet-drawer-2",
+          "name": "fixture-388695e167-shared-cabinet-drawer-2",
+          "definition": "PG2_fixture-388695e167-shared-cabinet-drawer",
+          "origin": [
+            0,
+            0,
+            366.6666666666667
+          ],
+          "qa": {
+            "role": "drawer",
+            "part_id": "fixture-388695e167-shared-cabinet-drawer",
+            "intent": "assembly",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive"
+          }
+        },
+        {
+          "op": "profile_extrude",
+          "id": "fixture-388695e167-shared-cabinet-runner-1-left",
+          "name": "fixture-388695e167-shared-cabinet-runner-1-left",
+          "origin": [
+            20,
+            12,
+            393.6666666666667
+          ],
+          "plane": "xz",
+          "outer": [
+            [
+              0,
+              0
+            ],
+            [
+              8,
+              0
+            ],
+            [
+              8,
+              25
+            ],
+            [
+              6,
+              25
+            ],
+            [
+              6,
+              3
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              2,
+              25
+            ],
+            [
+              0,
+              25
+            ]
+          ],
+          "depth": 540,
+          "holes": [],
+          "material": "fixture-388695e167-Detail_Stainless",
+          "qa": {
+            "role": "drawer_runner",
+            "part_id": "fixture-388695e167-shared-cabinet-runner-1-left",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        },
+        {
+          "op": "profile_extrude",
+          "id": "fixture-388695e167-shared-cabinet-runner-1-right",
+          "name": "fixture-388695e167-shared-cabinet-runner-1-right",
+          "origin": [
+            572,
+            12,
+            393.6666666666667
+          ],
+          "plane": "xz",
+          "outer": [
+            [
+              0,
+              0
+            ],
+            [
+              8,
+              0
+            ],
+            [
+              8,
+              25
+            ],
+            [
+              6,
+              25
+            ],
+            [
+              6,
+              3
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              2,
+              25
+            ],
+            [
+              0,
+              25
+            ]
+          ],
+          "depth": 540,
+          "holes": [],
+          "material": "fixture-388695e167-Detail_Stainless",
+          "qa": {
+            "role": "drawer_runner",
+            "part_id": "fixture-388695e167-shared-cabinet-runner-1-right",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        },
+        {
+          "op": "component_instance",
+          "id": "fixture-388695e167-shared-cabinet-drawer-3",
+          "name": "fixture-388695e167-shared-cabinet-drawer-3",
+          "definition": "PG2_fixture-388695e167-shared-cabinet-drawer",
+          "origin": [
+            0,
+            0,
+            630.3333333333334
+          ],
+          "qa": {
+            "role": "drawer",
+            "part_id": "fixture-388695e167-shared-cabinet-drawer",
+            "intent": "assembly",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive"
+          }
+        },
+        {
+          "op": "profile_extrude",
+          "id": "fixture-388695e167-shared-cabinet-runner-2-left",
+          "name": "fixture-388695e167-shared-cabinet-runner-2-left",
+          "origin": [
+            20,
+            12,
+            657.3333333333334
+          ],
+          "plane": "xz",
+          "outer": [
+            [
+              0,
+              0
+            ],
+            [
+              8,
+              0
+            ],
+            [
+              8,
+              25
+            ],
+            [
+              6,
+              25
+            ],
+            [
+              6,
+              3
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              2,
+              25
+            ],
+            [
+              0,
+              25
+            ]
+          ],
+          "depth": 540,
+          "holes": [],
+          "material": "fixture-388695e167-Detail_Stainless",
+          "qa": {
+            "role": "drawer_runner",
+            "part_id": "fixture-388695e167-shared-cabinet-runner-2-left",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        },
+        {
+          "op": "profile_extrude",
+          "id": "fixture-388695e167-shared-cabinet-runner-2-right",
+          "name": "fixture-388695e167-shared-cabinet-runner-2-right",
+          "origin": [
+            572,
+            12,
+            657.3333333333334
+          ],
+          "plane": "xz",
+          "outer": [
+            [
+              0,
+              0
+            ],
+            [
+              8,
+              0
+            ],
+            [
+              8,
+              25
+            ],
+            [
+              6,
+              25
+            ],
+            [
+              6,
+              3
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              2,
+              25
+            ],
+            [
+              0,
+              25
+            ]
+          ],
+          "depth": 540,
+          "holes": [],
+          "material": "fixture-388695e167-Detail_Stainless",
+          "qa": {
+            "role": "drawer_runner",
+            "part_id": "fixture-388695e167-shared-cabinet-runner-2-right",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        }
+      ]
+    },
+    {
+      "op": "component_definition",
+      "name": "PG2_fixture-388695e167-independent-cabinet-drawer-handle",
+      "operations": [
+        {
+          "op": "pipe_between_points",
+          "id": "fixture-388695e167-independent-cabinet-drawer-handle-bar",
+          "name": "fixture-388695e167-independent-cabinet-drawer-handle-bar",
+          "start": [
+            0,
+            -32,
+            0
+          ],
+          "end": [
+            190,
+            -32,
+            0
+          ],
+          "radius": 6,
+          "segments": 32,
+          "smooth": "all",
+          "material": "fixture-388695e167-Detail_Stainless",
+          "qa": {
+            "role": "drawer-handle-bar",
+            "part_id": "fixture-388695e167-independent-cabinet-drawer-handle-bar",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        },
+        {
+          "op": "pipe_between_points",
+          "id": "fixture-388695e167-independent-cabinet-drawer-handle-post-l",
+          "name": "fixture-388695e167-independent-cabinet-drawer-handle-post-l",
+          "start": [
+            12,
+            0,
+            0
+          ],
+          "end": [
+            12,
+            -32,
+            0
+          ],
+          "radius": 5,
+          "segments": 32,
+          "smooth": "all",
+          "material": "fixture-388695e167-Detail_Stainless",
+          "qa": {
+            "role": "drawer-handle-post-l",
+            "part_id": "fixture-388695e167-independent-cabinet-drawer-handle-post-l",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        },
+        {
+          "op": "pipe_between_points",
+          "id": "fixture-388695e167-independent-cabinet-drawer-handle-post-r",
+          "name": "fixture-388695e167-independent-cabinet-drawer-handle-post-r",
+          "start": [
+            178,
+            0,
+            0
+          ],
+          "end": [
+            178,
+            -32,
+            0
+          ],
+          "radius": 5,
+          "segments": 32,
+          "smooth": "all",
+          "material": "fixture-388695e167-Detail_Stainless",
+          "qa": {
+            "role": "drawer-handle-post-r",
+            "part_id": "fixture-388695e167-independent-cabinet-drawer-handle-post-r",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        },
+        {
+          "op": "profile_extrude",
+          "id": "fixture-388695e167-independent-cabinet-drawer-handle-screw-0",
+          "name": "fixture-388695e167-independent-cabinet-drawer-handle-screw-0",
+          "origin": [
+            12,
+            -2,
+            -4
+          ],
+          "plane": "xz",
+          "outer": [
+            [
+              4,
+              0
+            ],
+            [
+              3.804226065180614,
+              1.2360679774997896
+            ],
+            [
+              3.23606797749979,
+              2.3511410091698925
+            ],
+            [
+              2.3511410091698925,
+              3.23606797749979
+            ],
+            [
+              1.2360679774997898,
+              3.804226065180614
+            ],
+            [
+              2.4492935982947064e-16,
+              4
+            ],
+            [
+              -1.2360679774997894,
+              3.8042260651806146
+            ],
+            [
+              -2.351141009169892,
+              3.23606797749979
+            ],
+            [
+              -3.2360679774997894,
+              2.351141009169893
+            ],
+            [
+              -3.804226065180614,
+              1.23606797749979
+            ],
+            [
+              -4,
+              4.898587196589413e-16
+            ],
+            [
+              -3.804226065180615,
+              -1.2360679774997876
+            ],
+            [
+              -3.23606797749979,
+              -2.351141009169892
+            ],
+            [
+              -2.351141009169893,
+              -3.2360679774997894
+            ],
+            [
+              -1.2360679774997902,
+              -3.804226065180614
+            ],
+            [
+              -7.347880794884119e-16,
+              -4
+            ],
+            [
+              1.236067977499789,
+              -3.8042260651806146
+            ],
+            [
+              2.3511410091698917,
+              -3.2360679774997902
+            ],
+            [
+              3.2360679774997894,
+              -2.3511410091698934
+            ],
+            [
+              3.804226065180614,
+              -1.2360679774997905
+            ]
+          ],
+          "depth": 3,
+          "holes": [],
+          "material": "fixture-388695e167-Detail_Stainless",
+          "qa": {
+            "role": "fixing",
+            "part_id": "fixture-388695e167-independent-cabinet-drawer-handle-screw-0",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        },
+        {
+          "op": "profile_extrude",
+          "id": "fixture-388695e167-independent-cabinet-drawer-handle-screw-1",
+          "name": "fixture-388695e167-independent-cabinet-drawer-handle-screw-1",
+          "origin": [
+            178,
+            -2,
+            -4
+          ],
+          "plane": "xz",
+          "outer": [
+            [
+              4,
+              0
+            ],
+            [
+              3.804226065180614,
+              1.2360679774997896
+            ],
+            [
+              3.23606797749979,
+              2.3511410091698925
+            ],
+            [
+              2.3511410091698925,
+              3.23606797749979
+            ],
+            [
+              1.2360679774997898,
+              3.804226065180614
+            ],
+            [
+              2.4492935982947064e-16,
+              4
+            ],
+            [
+              -1.2360679774997894,
+              3.8042260651806146
+            ],
+            [
+              -2.351141009169892,
+              3.23606797749979
+            ],
+            [
+              -3.2360679774997894,
+              2.351141009169893
+            ],
+            [
+              -3.804226065180614,
+              1.23606797749979
+            ],
+            [
+              -4,
+              4.898587196589413e-16
+            ],
+            [
+              -3.804226065180615,
+              -1.2360679774997876
+            ],
+            [
+              -3.23606797749979,
+              -2.351141009169892
+            ],
+            [
+              -2.351141009169893,
+              -3.2360679774997894
+            ],
+            [
+              -1.2360679774997902,
+              -3.804226065180614
+            ],
+            [
+              -7.347880794884119e-16,
+              -4
+            ],
+            [
+              1.236067977499789,
+              -3.8042260651806146
+            ],
+            [
+              2.3511410091698917,
+              -3.2360679774997902
+            ],
+            [
+              3.2360679774997894,
+              -2.3511410091698934
+            ],
+            [
+              3.804226065180614,
+              -1.2360679774997905
+            ]
+          ],
+          "depth": 3,
+          "holes": [],
+          "material": "fixture-388695e167-Detail_Stainless",
+          "qa": {
+            "role": "fixing",
+            "part_id": "fixture-388695e167-independent-cabinet-drawer-handle-screw-1",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        }
+      ]
+    },
+    {
+      "op": "component_definition",
+      "name": "PG2_fixture-388695e167-independent-cabinet-drawer",
+      "operations": [
+        {
+          "op": "profile_extrude",
+          "id": "fixture-388695e167-independent-cabinet-drawer-front",
+          "name": "fixture-388695e167-independent-cabinet-drawer-front",
+          "origin": [
+            3,
+            -21,
+            0
+          ],
+          "plane": "xz",
+          "outer": [
+            [
+              591,
+              0
+            ],
+            [
+              591.9270509831248,
+              0.14683045111453952
+            ],
+            [
+              592.7633557568774,
+              0.5729490168751576
+            ],
+            [
+              593.4270509831248,
+              1.2366442431225806
+            ],
+            [
+              593.8531695488855,
+              2.0729490168751576
+            ],
+            [
+              594,
+              3
+            ],
+            [
+              594,
+              257.6666666666667
+            ],
+            [
+              593.8531695488855,
+              258.59371764979153
+            ],
+            [
+              593.4270509831248,
+              259.43002242354413
+            ],
+            [
+              592.7633557568774,
+              260.09371764979153
+            ],
+            [
+              591.9270509831248,
+              260.5198362155521
+            ],
+            [
+              591,
+              260.6666666666667
+            ],
+            [
+              3,
+              260.6666666666667
+            ],
+            [
+              2.072949016875158,
+              260.5198362155521
+            ],
+            [
+              1.2366442431225808,
+              260.09371764979153
+            ],
+            [
+              0.5729490168751581,
+              259.43002242354413
+            ],
+            [
+              0.14683045111453952,
+              258.59371764979153
+            ],
+            [
+              0,
+              257.6666666666667
+            ],
+            [
+              0,
+              3.0000000000000004
+            ],
+            [
+              0.14683045111453952,
+              2.0729490168751568
+            ],
+            [
+              0.5729490168751576,
+              1.2366442431225808
+            ],
+            [
+              1.2366442431225804,
+              0.5729490168751581
+            ],
+            [
+              2.072949016875157,
+              0.14683045111453952
+            ],
+            [
+              2.9999999999999996,
+              0
+            ]
+          ],
+          "depth": 21,
+          "holes": [],
+          "material": "fixture-388695e167-Detail_Oak",
+          "qa": {
+            "role": "drawer_front",
+            "part_id": "fixture-388695e167-independent-cabinet-drawer-front",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        },
+        {
+          "op": "box",
+          "id": "fixture-388695e167-independent-cabinet-drawer-bottom",
+          "name": "fixture-388695e167-independent-cabinet-drawer-bottom",
+          "origin": [
+            32,
+            15,
+            10
+          ],
+          "size": [
+            536,
+            510,
+            12
+          ],
+          "material": "fixture-388695e167-Detail_Painted_Joinery",
+          "qa": {
+            "role": "drawer_bottom",
+            "part_id": "fixture-388695e167-independent-cabinet-drawer-bottom",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        },
+        {
+          "op": "box",
+          "id": "fixture-388695e167-independent-cabinet-drawer-left-side",
+          "name": "fixture-388695e167-independent-cabinet-drawer-left-side",
+          "origin": [
+            32,
+            15,
+            22
+          ],
+          "size": [
+            12,
+            510,
+            208.66666666666669
+          ],
+          "material": "fixture-388695e167-Detail_Painted_Joinery",
+          "qa": {
+            "role": "drawer_side",
+            "part_id": "fixture-388695e167-independent-cabinet-drawer-left-side",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        },
+        {
+          "op": "box",
+          "id": "fixture-388695e167-independent-cabinet-drawer-right-side",
+          "name": "fixture-388695e167-independent-cabinet-drawer-right-side",
+          "origin": [
+            556,
+            15,
+            22
+          ],
+          "size": [
+            12,
+            510,
+            208.66666666666669
+          ],
+          "material": "fixture-388695e167-Detail_Painted_Joinery",
+          "qa": {
+            "role": "drawer_side",
+            "part_id": "fixture-388695e167-independent-cabinet-drawer-right-side",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        },
+        {
+          "op": "box",
+          "id": "fixture-388695e167-independent-cabinet-drawer-back",
+          "name": "fixture-388695e167-independent-cabinet-drawer-back",
+          "origin": [
+            44,
+            513,
+            22
+          ],
+          "size": [
+            512,
+            12,
+            208.66666666666669
+          ],
+          "material": "fixture-388695e167-Detail_Painted_Joinery",
+          "qa": {
+            "role": "drawer_back",
+            "part_id": "fixture-388695e167-independent-cabinet-drawer-back",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        },
+        {
+          "op": "component_instance",
+          "id": "fixture-388695e167-independent-cabinet-drawer-handle-instance",
+          "name": "fixture-388695e167-independent-cabinet-drawer-handle-instance",
+          "definition": "PG2_fixture-388695e167-independent-cabinet-drawer-handle",
+          "origin": [
+            205,
+            -21,
+            223.66666666666669
+          ],
+          "qa": {
+            "role": "drawer-handle",
+            "part_id": "fixture-388695e167-independent-cabinet-drawer-handle",
+            "intent": "assembly",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive"
+          }
+        }
+      ]
+    },
+    {
+      "op": "component_definition",
+      "name": "PG2_fixture-388695e167-independent-cabinet",
+      "operations": [
+        {
+          "op": "box",
+          "id": "fixture-388695e167-independent-cabinet-side-left",
+          "name": "fixture-388695e167-independent-cabinet-side-left",
+          "origin": [
+            0,
+            0,
+            100
+          ],
+          "size": [
+            18,
+            600,
+            800
+          ],
+          "material": "fixture-388695e167-Detail_Painted_Joinery",
+          "qa": {
+            "role": "carcass_side",
+            "part_id": "fixture-388695e167-independent-cabinet-side-left",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        },
+        {
+          "op": "box",
+          "id": "fixture-388695e167-independent-cabinet-side-right",
+          "name": "fixture-388695e167-independent-cabinet-side-right",
+          "origin": [
+            582,
+            0,
+            100
+          ],
+          "size": [
+            18,
+            600,
+            800
+          ],
+          "material": "fixture-388695e167-Detail_Painted_Joinery",
+          "qa": {
+            "role": "carcass_side",
+            "part_id": "fixture-388695e167-independent-cabinet-side-right",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        },
+        {
+          "op": "box",
+          "id": "fixture-388695e167-independent-cabinet-bottom",
+          "name": "fixture-388695e167-independent-cabinet-bottom",
+          "origin": [
+            18,
+            0,
+            100
+          ],
+          "size": [
+            564,
+            600,
+            18
+          ],
+          "material": "fixture-388695e167-Detail_Painted_Joinery",
+          "qa": {
+            "role": "carcass_bottom",
+            "part_id": "fixture-388695e167-independent-cabinet-bottom",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        },
+        {
+          "op": "box",
+          "id": "fixture-388695e167-independent-cabinet-back",
+          "name": "fixture-388695e167-independent-cabinet-back",
+          "origin": [
+            18,
+            591,
+            118
+          ],
+          "size": [
+            564,
+            9,
+            782
+          ],
+          "material": "fixture-388695e167-Detail_Painted_Joinery",
+          "qa": {
+            "role": "carcass_back",
+            "part_id": "fixture-388695e167-independent-cabinet-back",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        },
+        {
+          "op": "box",
+          "id": "fixture-388695e167-independent-cabinet-top-stretcher-front",
+          "name": "fixture-388695e167-independent-cabinet-top-stretcher-front",
+          "origin": [
+            18,
+            0,
+            860
+          ],
+          "size": [
+            564,
+            65,
+            40
+          ],
+          "material": "fixture-388695e167-Detail_Painted_Joinery",
+          "qa": {
+            "role": "stretcher",
+            "part_id": "fixture-388695e167-independent-cabinet-top-stretcher-front",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        },
+        {
+          "op": "box",
+          "id": "fixture-388695e167-independent-cabinet-top-stretcher-back",
+          "name": "fixture-388695e167-independent-cabinet-top-stretcher-back",
+          "origin": [
+            18,
+            535,
+            860
+          ],
+          "size": [
+            564,
+            65,
+            40
+          ],
+          "material": "fixture-388695e167-Detail_Painted_Joinery",
+          "qa": {
+            "role": "stretcher",
+            "part_id": "fixture-388695e167-independent-cabinet-top-stretcher-back",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        },
+        {
+          "op": "box",
+          "id": "fixture-388695e167-independent-cabinet-toe-kick",
+          "name": "fixture-388695e167-independent-cabinet-toe-kick",
+          "origin": [
+            20,
+            70,
+            10
+          ],
+          "size": [
+            560,
+            18,
+            90
+          ],
+          "material": "fixture-388695e167-Detail_Gasket",
+          "qa": {
+            "role": "toe_kick",
+            "part_id": "fixture-388695e167-independent-cabinet-toe-kick",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        },
+        {
+          "op": "cylinder",
+          "id": "fixture-388695e167-independent-cabinet-leg-45-80",
+          "name": "fixture-388695e167-independent-cabinet-leg-45-80",
+          "origin": [
+            45,
+            80,
+            0
+          ],
+          "radius": 18,
+          "height": 100,
+          "segments": 24,
+          "material": "fixture-388695e167-Detail_Gasket",
+          "qa": {
+            "role": "adjustable_foot",
+            "part_id": "fixture-388695e167-independent-cabinet-leg-45-80",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        },
+        {
+          "op": "cylinder",
+          "id": "fixture-388695e167-independent-cabinet-leg-45-530",
+          "name": "fixture-388695e167-independent-cabinet-leg-45-530",
+          "origin": [
+            45,
+            530,
+            0
+          ],
+          "radius": 18,
+          "height": 100,
+          "segments": 24,
+          "material": "fixture-388695e167-Detail_Gasket",
+          "qa": {
+            "role": "adjustable_foot",
+            "part_id": "fixture-388695e167-independent-cabinet-leg-45-530",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        },
+        {
+          "op": "cylinder",
+          "id": "fixture-388695e167-independent-cabinet-leg-555-80",
+          "name": "fixture-388695e167-independent-cabinet-leg-555-80",
+          "origin": [
+            555,
+            80,
+            0
+          ],
+          "radius": 18,
+          "height": 100,
+          "segments": 24,
+          "material": "fixture-388695e167-Detail_Gasket",
+          "qa": {
+            "role": "adjustable_foot",
+            "part_id": "fixture-388695e167-independent-cabinet-leg-555-80",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        },
+        {
+          "op": "cylinder",
+          "id": "fixture-388695e167-independent-cabinet-leg-555-530",
+          "name": "fixture-388695e167-independent-cabinet-leg-555-530",
+          "origin": [
+            555,
+            530,
+            0
+          ],
+          "radius": 18,
+          "height": 100,
+          "segments": 24,
+          "material": "fixture-388695e167-Detail_Gasket",
+          "qa": {
+            "role": "adjustable_foot",
+            "part_id": "fixture-388695e167-independent-cabinet-leg-555-530",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        },
+        {
+          "op": "component_instance",
+          "id": "fixture-388695e167-independent-cabinet-drawer-1",
+          "name": "fixture-388695e167-independent-cabinet-drawer-1",
+          "definition": "PG2_fixture-388695e167-independent-cabinet-drawer",
+          "origin": [
+            0,
+            0,
+            103
+          ],
+          "qa": {
+            "role": "drawer",
+            "part_id": "fixture-388695e167-independent-cabinet-drawer",
+            "intent": "assembly",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive"
+          }
+        },
+        {
+          "op": "profile_extrude",
+          "id": "fixture-388695e167-independent-cabinet-runner-0-left",
+          "name": "fixture-388695e167-independent-cabinet-runner-0-left",
+          "origin": [
+            20,
+            12,
+            130
+          ],
+          "plane": "xz",
+          "outer": [
+            [
+              0,
+              0
+            ],
+            [
+              8,
+              0
+            ],
+            [
+              8,
+              25
+            ],
+            [
+              6,
+              25
+            ],
+            [
+              6,
+              3
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              2,
+              25
+            ],
+            [
+              0,
+              25
+            ]
+          ],
+          "depth": 540,
+          "holes": [],
+          "material": "fixture-388695e167-Detail_Stainless",
+          "qa": {
+            "role": "drawer_runner",
+            "part_id": "fixture-388695e167-independent-cabinet-runner-0-left",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        },
+        {
+          "op": "profile_extrude",
+          "id": "fixture-388695e167-independent-cabinet-runner-0-right",
+          "name": "fixture-388695e167-independent-cabinet-runner-0-right",
+          "origin": [
+            572,
+            12,
+            130
+          ],
+          "plane": "xz",
+          "outer": [
+            [
+              0,
+              0
+            ],
+            [
+              8,
+              0
+            ],
+            [
+              8,
+              25
+            ],
+            [
+              6,
+              25
+            ],
+            [
+              6,
+              3
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              2,
+              25
+            ],
+            [
+              0,
+              25
+            ]
+          ],
+          "depth": 540,
+          "holes": [],
+          "material": "fixture-388695e167-Detail_Stainless",
+          "qa": {
+            "role": "drawer_runner",
+            "part_id": "fixture-388695e167-independent-cabinet-runner-0-right",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        },
+        {
+          "op": "component_instance",
+          "id": "fixture-388695e167-independent-cabinet-drawer-2",
+          "name": "fixture-388695e167-independent-cabinet-drawer-2",
+          "definition": "PG2_fixture-388695e167-independent-cabinet-drawer",
+          "origin": [
+            0,
+            0,
+            366.6666666666667
+          ],
+          "qa": {
+            "role": "drawer",
+            "part_id": "fixture-388695e167-independent-cabinet-drawer",
+            "intent": "assembly",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive"
+          }
+        },
+        {
+          "op": "profile_extrude",
+          "id": "fixture-388695e167-independent-cabinet-runner-1-left",
+          "name": "fixture-388695e167-independent-cabinet-runner-1-left",
+          "origin": [
+            20,
+            12,
+            393.6666666666667
+          ],
+          "plane": "xz",
+          "outer": [
+            [
+              0,
+              0
+            ],
+            [
+              8,
+              0
+            ],
+            [
+              8,
+              25
+            ],
+            [
+              6,
+              25
+            ],
+            [
+              6,
+              3
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              2,
+              25
+            ],
+            [
+              0,
+              25
+            ]
+          ],
+          "depth": 540,
+          "holes": [],
+          "material": "fixture-388695e167-Detail_Stainless",
+          "qa": {
+            "role": "drawer_runner",
+            "part_id": "fixture-388695e167-independent-cabinet-runner-1-left",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        },
+        {
+          "op": "profile_extrude",
+          "id": "fixture-388695e167-independent-cabinet-runner-1-right",
+          "name": "fixture-388695e167-independent-cabinet-runner-1-right",
+          "origin": [
+            572,
+            12,
+            393.6666666666667
+          ],
+          "plane": "xz",
+          "outer": [
+            [
+              0,
+              0
+            ],
+            [
+              8,
+              0
+            ],
+            [
+              8,
+              25
+            ],
+            [
+              6,
+              25
+            ],
+            [
+              6,
+              3
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              2,
+              25
+            ],
+            [
+              0,
+              25
+            ]
+          ],
+          "depth": 540,
+          "holes": [],
+          "material": "fixture-388695e167-Detail_Stainless",
+          "qa": {
+            "role": "drawer_runner",
+            "part_id": "fixture-388695e167-independent-cabinet-runner-1-right",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        },
+        {
+          "op": "component_instance",
+          "id": "fixture-388695e167-independent-cabinet-drawer-3",
+          "name": "fixture-388695e167-independent-cabinet-drawer-3",
+          "definition": "PG2_fixture-388695e167-independent-cabinet-drawer",
+          "origin": [
+            0,
+            0,
+            630.3333333333334
+          ],
+          "qa": {
+            "role": "drawer",
+            "part_id": "fixture-388695e167-independent-cabinet-drawer",
+            "intent": "assembly",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive"
+          }
+        },
+        {
+          "op": "profile_extrude",
+          "id": "fixture-388695e167-independent-cabinet-runner-2-left",
+          "name": "fixture-388695e167-independent-cabinet-runner-2-left",
+          "origin": [
+            20,
+            12,
+            657.3333333333334
+          ],
+          "plane": "xz",
+          "outer": [
+            [
+              0,
+              0
+            ],
+            [
+              8,
+              0
+            ],
+            [
+              8,
+              25
+            ],
+            [
+              6,
+              25
+            ],
+            [
+              6,
+              3
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              2,
+              25
+            ],
+            [
+              0,
+              25
+            ]
+          ],
+          "depth": 540,
+          "holes": [],
+          "material": "fixture-388695e167-Detail_Stainless",
+          "qa": {
+            "role": "drawer_runner",
+            "part_id": "fixture-388695e167-independent-cabinet-runner-2-left",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        },
+        {
+          "op": "profile_extrude",
+          "id": "fixture-388695e167-independent-cabinet-runner-2-right",
+          "name": "fixture-388695e167-independent-cabinet-runner-2-right",
+          "origin": [
+            572,
+            12,
+            657.3333333333334
+          ],
+          "plane": "xz",
+          "outer": [
+            [
+              0,
+              0
+            ],
+            [
+              8,
+              0
+            ],
+            [
+              8,
+              25
+            ],
+            [
+              6,
+              25
+            ],
+            [
+              6,
+              3
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              2,
+              25
+            ],
+            [
+              0,
+              25
+            ]
+          ],
+          "depth": 540,
+          "holes": [],
+          "material": "fixture-388695e167-Detail_Stainless",
+          "qa": {
+            "role": "drawer_runner",
+            "part_id": "fixture-388695e167-independent-cabinet-runner-2-right",
+            "intent": "detail_geometry",
+            "evidence_status": "manual_confirmed",
+            "fallback_state": "structured_primitive",
+            "recipe_kind": "cabinet"
+          }
+        }
+      ]
+    },
+    {
+      "op": "component_instance",
+      "id": "accessibility-template-sentinel",
+      "name": "accessibility-template-sentinel",
+      "definition": "PG2_fixture-388695e167-sentinel",
+      "origin": [
+        -8000,
+        -8000,
+        0
+      ],
+      "qa": {
+        "role": "template_sentinel",
+        "part_id": "fixture-388695e167-sentinel",
+        "intent": "detail_geometry",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "structured_primitive"
+      }
+    },
+    {
+      "op": "component_instance",
+      "id": "A",
+      "name": "A",
+      "definition": "PG2_fixture-388695e167-shared-cabinet",
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "qa": {
+        "role": "cabinet",
+        "part_id": "fixture-388695e167-shared-cabinet",
+        "intent": "assembly",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "structured_primitive"
+      }
+    },
+    {
+      "op": "component_instance",
+      "id": "B",
+      "name": "B",
+      "definition": "PG2_fixture-388695e167-shared-cabinet",
+      "origin": [
+        1600,
+        0,
+        0
+      ],
+      "qa": {
+        "role": "cabinet",
+        "part_id": "fixture-388695e167-shared-cabinet",
+        "intent": "assembly",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "structured_primitive"
+      }
+    },
+    {
+      "op": "component_instance",
+      "id": "C",
+      "name": "C",
+      "definition": "PG2_fixture-388695e167-shared-cabinet",
+      "origin": [
+        3200,
+        0,
+        0
+      ],
+      "qa": {
+        "role": "cabinet",
+        "part_id": "fixture-388695e167-shared-cabinet",
+        "intent": "assembly",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "structured_primitive"
+      }
+    },
+    {
+      "op": "component_instance",
+      "id": "D",
+      "name": "D",
+      "definition": "PG2_fixture-388695e167-independent-cabinet",
+      "origin": [
+        4800,
+        0,
+        0
+      ],
+      "qa": {
+        "role": "cabinet",
+        "part_id": "fixture-388695e167-independent-cabinet",
+        "intent": "assembly",
+        "evidence_status": "manual_confirmed",
+        "fallback_state": "structured_primitive"
+      }
+    },
+    {
+      "op": "attribute",
+      "target_id": "accessibility-template-sentinel",
+      "dictionary": "BenchmarkFixture",
+      "attributes": {
+        "preserve": true,
+        "role": "template_sentinel",
+        "fixture_id": "fixture-388695e167"
+      }
+    },
+    {
+      "op": "attribute",
+      "target_id": "B",
+      "dictionary": "BenchmarkManualEdit",
+      "attributes": {
+        "preserve": true,
+        "fixture_authored_manual_edit_marker": true,
+        "note": "preserve-fixture-388695e167-B",
+        "authored_before_test": true
+      }
+    },
+    {
+      "op": "tag",
+      "name": "fixture-388695e167-preserve-manual",
+      "visible": true
+    },
+    {
+      "op": "assign_tag",
+      "target_id": "B",
+      "tag": "fixture-388695e167-preserve-manual"
+    }
+  ]
+}

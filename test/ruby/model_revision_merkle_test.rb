@@ -353,6 +353,23 @@ edge_reverse = { 'length_mm' => 37.416574, 'endpoints' => edge_forward['endpoint
 tests += 1; check!(AlmaSketchupMCP.revision_json(AlmaSketchupMCP.revision_canonical_geometry_summary(edge_forward)) == AlmaSketchupMCP.revision_json(AlmaSketchupMCP.revision_canonical_geometry_summary(edge_reverse)), 'edge endpoint direction drift must not change canonical geometry')
 tests += 1; check!(AlmaSketchupMCP.revision_json(AlmaSketchupMCP.revision_canonical_geometry_summary(edge_forward)) != AlmaSketchupMCP.revision_json(AlmaSketchupMCP.revision_canonical_geometry_summary(edge_forward.merge('length_mm' => 40))), 'semantic geometry changes must still change canonical geometry')
 
+zero_definition = FakeRevisionDefinition.new(name: 'SignedZero', persistent_id: 98701, entities: [])
+zero_matrix = [0.8660254037844387, 0.49999999999999994, 0.0, 0.0,
+               -0.49999999999999994, 0.8660254037844387, 0.0, 0.0,
+               0.0, 0.0, 1.0, 0.0, 39.37007874015748, 47.24409448818898, 0.0, 1.0]
+zero_instance = Sketchup::ComponentInstance.new(persistent_id: 98702, definition: zero_definition, transformation: FakeRevisionTransformation.new(zero_matrix.dup))
+zero_model = FakeRevisionModel.new([zero_instance])
+positive_zero_revision = AlmaSketchupMCP.session_model_revision_report(zero_model, empty_snapshot)
+zero_instance.transformation.values[2] = -0.0
+negative_zero_revision = AlmaSketchupMCP.session_model_revision_report(zero_model, empty_snapshot)
+tests += 1; check!(positive_zero_revision['complete'] && negative_zero_revision['complete'], 'signed-zero normalization does not replace complete native graph coverage')
+tests += 1; check!(positive_zero_revision['model_revision'] == negative_zero_revision['model_revision'], 'equal exact zero matrices must produce the same complete Merkle revision')
+zero_instance.transformation.values[2] = 0.0.next_float
+tests += 1; check!(AlmaSketchupMCP.session_model_revision(zero_model, empty_snapshot) != positive_zero_revision['model_revision'], 'the smallest nonzero transformation difference must still change the complete revision')
+zero_instance.transformation.values[2] = 0.0
+zero_instance.transformation.values[0] = zero_matrix[0].next_float
+tests += 1; check!(AlmaSketchupMCP.session_model_revision(zero_model, empty_snapshot) != positive_zero_revision['model_revision'], 'nonzero one-ULP transformation differences must still change the complete revision')
+
 root_instances.first.transformation = FakeRevisionTransformation.new(
   [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 25, 0, 0, 1]
 )

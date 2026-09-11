@@ -425,6 +425,51 @@ function presentationSummary(policy, omissions, { projected, fullResultArtifact 
 
 function compactAgentPayload(payload, fullResultHandle) {
   const source = payload && typeof payload === 'object' ? payload : {};
+  if (source.kind === 'parameter_source_discovery') return compactParameterSources(source, fullResultHandle);
+  if (source.topic === 'workflows') return compactWorkflow(source);
+  if (source.kind === 'model_accessibility_appearance') return compactAccessibilityExecution(source, fullResultHandle);
+  if (source.parameter_rules) return compactParameterContract(source, fullResultHandle);
+  const taskExample = compactTaskExample(source, fullResultHandle);
+  if (taskExample) return taskExample;
+  if (source.topic === 'assets' && source.catalog?.assets) {
+    const profiles = [];
+    const assets = source.catalog.assets.slice(0, 3).map(asset => {
+      const profile = { axes: asset.axes, source: asset.source, license: asset.license, measurement: asset.dimensions_evidence?.source };
+      let index = profiles.findIndex(value => JSON.stringify(value) === JSON.stringify(profile));
+      if (index < 0) { index = profiles.length; profiles.push(profile); }
+      return { id: asset.id, file: asset.file_name || null, available: asset.available, dimensions_mm: asset.default_dimensions_mm, profile: index };
+    });
+    return {
+    kind: source.kind, topic: 'assets', evidence_level: 'preflight_only',
+    status: { execution_status: source.status?.execution_status, quality_status: source.status?.quality_status, quality_accepted: false },
+    assets, profiles,
+    units: 'mm', native_geometry_verified: false, inline_count: Math.min(3, source.catalog.assets.length),
+    returned_count: source.catalog.assets.length,
+    note: 'asset.profile indexes profiles (axes/source/license). Recorded bounds; import requires .skp and fresh measurement. JSON already saved.',
+    catalog_handle: source.catalog_artifacts?.[0]?.handle,
+    full_result_artifact: fullResultHandle
+  }; }
+  if (['model_accessibility_discovery', 'model_accessibility_preflight', 'model_accessibility_delivery'].includes(source.kind)) {
+    return { kind: source.kind, topic: source.topic, evidence_level: source.evidence_level, quality_status: source.quality_status,
+      quality_accepted: source.quality_accepted, status: source.status,
+      ...(source.kind === 'model_accessibility_preflight' ? { preflight_ok: source.preflight?.ok === true, execution_started: false, next_step: 'Preflight is complete. Connect to queue, then create_model using the same inputs.task and a stable idempotency_key. Actual geometry and views are checked after execution.' } : {}),
+      ...(source.connection_task_id ? { connection_task_id: source.connection_task_id, connection_expires_at: source.connection_expires_at, gateway_creation_allowed: source.gateway_creation_allowed } : {}),
+      ...(source.kind === 'model_accessibility_delivery' ? { source_task_id: source.source_task_id, saved: source.saved, file: source.file, cold_reopen_verified: false, artifact: source.artifact, remaining: source.remaining, optional_validation: source.optional_validation } : {}),
+      ...(source.topic === 'start' ? { units: 'mm', current_model: 'not_checked', entry: 'Discover topic=tasks; select kind and detail=examples. Preflight before create_model; explicit runtime and stable idempotency_key are required.' } : {}),
+      ...(Array.isArray(source.catalog?.tasks) ? { task_kinds: source.catalog.tasks.map(task => task.kind) } : {}),
+      ...(source.topic === 'assets' ? { assets: (source.catalog?.assets || []).slice(0, 3).map(asset => ({
+        id: asset.id, name: asset.name, kind: asset.kind, available: asset.available,
+        default_dimensions_mm: asset.default_dimensions_mm, source: asset.source, license: asset.license,
+        axes: asset.axes,
+        native_geometry_verified: false, dimensions_source: asset.dimensions_evidence?.source
+      })), returned_count: source.catalog?.assets?.length || 0, catalog_artifacts: source.catalog_artifacts } : {}),
+      summary: source.topic === 'connect' ? 'Connection is ready. Use connection_task_id directly for the next live task; it expires at connection_expires_at.'
+        : source.topic === 'tasks' ? 'Choose one task_kinds value and discover topic=tasks, kind=<selected>, detail=examples.'
+          : source.kind === 'model_accessibility_preflight' ? 'The input passed preflight; no further artifact reading is required to attempt creation.'
+            : 'Additional detail is available through the task-bound artifact.',
+      read_contract: { tool: 'read_agent_artifact', arguments: { task_id: source.status?.resume?.arguments?.task_id, handle: fullResultHandle, offset: 0, max_chars: 1500 } },
+      full_result_artifact: fullResultHandle };
+  }
   const kind = String(source.kind || 'agent_projected_result');
   const common = { kind, full_result_artifact: fullResultHandle };
   if (kind === 'understand_model_result') {
@@ -510,6 +555,7 @@ function compactAgentPayload(payload, fullResultHandle) {
     };
   }
   if (kind === 'modify_design_parameters_result') {
+    if (source.stage) return compactAccessibilityExecution(source, fullResultHandle);
     return {
       ...common,
       design_intent_store: compactDesignIntentStore(source.design_intent_store),
@@ -533,6 +579,7 @@ function compactAgentPayload(payload, fullResultHandle) {
       qa: compactQa(source.qa),
       report: compactQa(source.report),
       quality_status: source.quality_status,
+      status: source.status,
       quality_accepted: source.quality_accepted,
       evidence_level: source.evidence_level,
       quality: source.quality ? { quality_status: source.quality.quality_status, specification_hash: source.quality.specification_hash, remaining_count: source.quality.remaining?.length || 0, remaining: source.quality.remaining?.slice(0, 5), ...(source.quality.resource_costs ? { resource_costs: source.quality.resource_costs } : {}) } : undefined,
@@ -572,13 +619,21 @@ function compactAgentPayload(payload, fullResultHandle) {
 
 function minimalAgentPayload(payload, fullResultHandle) {
   const source = payload && typeof payload === 'object' ? payload : {};
+  if (source.kind === 'parameter_source_discovery') return compactParameterSources(source, fullResultHandle);
+  if (source.topic === 'workflows') return compactWorkflow(source);
+  if (source.parameter_rules) return compactParameterContract(source, fullResultHandle);
+  if ((source.kind === 'modify_design_parameters_result' && source.stage) || source.kind === 'model_accessibility_appearance') return compactAccessibilityExecution(source, fullResultHandle, true);
+  const taskExample = compactTaskExample(source, fullResultHandle);
+  if (taskExample) return taskExample;
   if (['create_model_result', 'verify_model_result'].includes(source.kind)) {
     return {
       kind: source.kind,
+      status: source.status,
       quality_status: source.quality_status,
       quality_accepted: source.quality_accepted,
       evidence_level: source.evidence_level,
       remaining_count: source.quality?.remaining?.length || 0,
+      remaining: (source.quality?.remaining || []).slice(0, 3).map(issue => Object.fromEntries(Object.entries(issue).filter(([key]) => ['type', 'part_id', 'part_key', 'view_id', 'status', 'reason'].includes(key)))),
       full_result_artifact: fullResultHandle
     };
   }
@@ -620,8 +675,65 @@ function minimalAgentPayload(payload, fullResultHandle) {
   }
   return {
     kind: String(source.kind || 'agent_projected_result'),
+    ...(source.status ? { status: source.status } : {}),
     summary: 'The complete capability-safe result is available through the opaque artifact handle.',
     full_result_artifact: fullResultHandle
+  };
+}
+
+function compactParameterSources(source, fullResultHandle) {
+  return { kind: source.kind, topic: 'parameter_sources', current_model: source.current_model, evidence_level: source.evidence_level,
+    sources: (source.sources || []).slice(0, 3).map(item => ({ creation_task_id: item.creation_task_id, kind: item.kind, roots: item.roots,
+      supported_parameters: item.supported_parameters, baseline_captured: item.baseline_captured, parameter_revision: item.parameter_revision, current_geometry_rechecked: false })),
+    saved_source_continuations: (source.saved_source_continuations || []).slice(0, 3),
+    returned_source_count: (source.sources || []).length, note: source.note, full_result_artifact: fullResultHandle };
+}
+
+function compactWorkflow(source) {
+  // Keep selected core inputs in both fallbacks: this is an action contract,
+  // not a long result whose opaque artifact must be paged before continuing.
+  return Object.fromEntries(['kind', 'topic', 'task_name', 'task_names', 'support', 'evidence_level', 'quality_accepted', 'template_only', 'next_call', 'call_template', 'fixed_design', 'next_step', 'limits']
+    .filter(key => source[key] !== undefined).map(key => [key, source[key]]));
+}
+
+function compactParameterContract(source, fullResultHandle) {
+  return { kind: source.kind, task_kind: source.task_kind, units: source.units,
+    parameter_rules: Object.fromEntries(Object.entries(source.parameter_rules).map(([name, rule]) => [name,
+      `${rule.type}; ${rule.enum ? 'one of ' + JSON.stringify(rule.enum) : '[' + rule.minimum + ',' + rule.maximum + ']'}; ${Object.hasOwn(rule, 'default') ? 'default=' + JSON.stringify(rule.default) : 'required'}`])),
+    dependencies: source.dependencies, fixed_design: source.fixed_design,
+    next_step: 'Use the inline example with these rules; try preflight next. It returns exact remaining input errors. The artifact is optional.',
+    full_result_artifact: fullResultHandle };
+}
+
+function compactAccessibilityExecution(source, fullResultHandle, minimal = false) {
+  const keys = ['kind', 'stage', 'reviewed_task_id', 'scope', 'plan_id', 'plan_hash', 'appearance_kind',
+    'definitions_staged', 'geometry_applied', 'outcome_unknown', 'execution_allowed', 'saved',
+    'quality_accepted', 'quality_status', 'evidence_level', 'model_revision', 'replaced_instance_count',
+    'geometry_preserved', 'unrelated_unchanged', 'cold_reopen_verified'];
+  return {
+    ...Object.fromEntries(keys.filter(key => source[key] !== undefined).map(key => [key, source[key]])),
+    ...(source.status ? { status: { execution_status: source.status.execution_status, recovery_class: source.status.recovery_class, resume: source.status.resume } } : {}),
+    blockers: (source.blockers || []).slice(0, minimal ? 2 : 4),
+    ...(source.native_readback ? { native_readback: { ok: source.native_readback.ok } } : {}),
+    ...(source.approval_challenge && !minimal ? { approval_challenge: compactApprovalChallenge(source.approval_challenge) } : {}),
+    ...(source.remaining ? { remaining: source.remaining.slice(0, minimal ? 2 : 4) } : {}),
+    ...(source.optional_validation ? { optional_validation: source.optional_validation } : {}),
+    full_result_artifact: fullResultHandle
+  };
+}
+
+function compactTaskExample(source, handle) {
+  const tasks = source.catalog?.tasks;
+  if (source.kind !== 'model_accessibility_discovery' || tasks?.length !== 1) return null;
+  const selected = tasks[0];
+  const input = selected.examples?.minimal?.arguments?.inputs?.task;
+  if (!input) return null;
+  return {
+    kind: source.kind, topic: 'tasks', evidence_level: source.evidence_level,
+    task_input: input, fixed_design: selected.fixed_design,
+    use: 'All required fields are in task_input. Replace its example values with the user dimensions, then preflight_model with inputs.task; preflight checks ranges/dependencies. No artifact reading is needed to attempt this task. For live creation discover/connect runtime=queue, then create_model with inputs.task, runtime=queue, connection_task_id and a stable idempotency_key.',
+    status: source.status,
+    full_result_artifact: handle
   };
 }
 
@@ -868,9 +980,10 @@ function compactNextAction(value, { minimal = false } = {}) {
     user_action_required: value.user_action_required,
     copy_fast_session_id: value.copy_fast_session_id,
     challenge_id: value.challenge?.challenge_id || value.challenge_id,
-    source_visual_correction: value.source_visual_correction
+    source_visual_correction: value.source_visual_correction,
+    source_task_id: value.source_task_id
   };
-  if (!minimal) next.arguments = compactNextActionArguments(value);
+  if (!minimal || ['discover_tasks', 'connect_for_delivery', 'resume_agent_task'].includes(value?.action)) next.arguments = compactNextActionArguments(value);
   if (!minimal && value.approval_host) {
     next.approval_host = Object.fromEntries(Object.entries({
       version: value.approval_host.version,
@@ -885,6 +998,9 @@ function compactNextAction(value, { minimal = false } = {}) {
 
 function compactNextActionArguments(value) {
   const args = value?.arguments;
+  if (value?.tool === 'start_agent_task' && args?.intent === 'discover' && JSON.stringify(args).length <= 1200) return args;
+  if (value?.tool === 'resume_agent_task' && /^task_[0-9a-f-]+$/i.test(args?.task_id || '')) return { task_id: args.task_id };
+  if (value?.tool === 'read_agent_artifact' && typeof args?.handle === 'string' && JSON.stringify(args).length <= 1200) return args;
   if (value?.action !== 'start_reviewed_existing_model_edit'
     || value?.tool !== 'start_agent_task'
     || !args
@@ -1033,7 +1149,12 @@ function compactError(value, { minimal = false } = {}) {
     code: value.code,
     message: value.message,
     retryable: value.retryable === true,
-    next_action: compactNextAction(value.next_action, { minimal })
+    next_action: compactNextAction(value.next_action, { minimal }),
+    ...(value.details?.issues ? { details: {
+      recovery_class: value.details.recovery_class,
+      issues: value.details.issues.slice(0, minimal ? 1 : 3).map(issue => ({ path: String(issue.path || '').slice(0, 160), message: String(issue.message || issue.reason || '').slice(0, 220) })),
+      issue_count: value.details.issues.length
+    } } : {})
   };
 }
 

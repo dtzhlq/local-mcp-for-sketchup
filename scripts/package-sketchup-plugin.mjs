@@ -17,6 +17,8 @@ const REPO_ROOT = path.resolve(path.dirname(SCRIPT_PATH), '..');
 export const PLUGIN_FILES = Object.freeze([
   { source: 'sketchup_plugin/alma_sketchup_mcp.rb', target: 'alma_sketchup_mcp.rb' },
   { source: 'sketchup_plugin/alma_sketchup_mcp/operation_registry.rb', target: 'alma_sketchup_mcp/operation_registry.rb' },
+  { source: 'sketchup_plugin/alma_sketchup_mcp/native_asset_operations.rb', target: 'alma_sketchup_mcp/native_asset_operations.rb' },
+  { source: 'sketchup_plugin/alma_sketchup_mcp/saved_model_lifecycle.rb', target: 'alma_sketchup_mcp/saved_model_lifecycle.rb' },
   { source: 'sketchup_plugin/alma_sketchup_mcp/document_state.rb', target: 'alma_sketchup_mcp/document_state.rb' },
   { source: 'sketchup_plugin/alma_sketchup_mcp/object_operations.rb', target: 'alma_sketchup_mcp/object_operations.rb' },
   { source: 'sketchup_plugin/alma_sketchup_mcp/materials.rb', target: 'alma_sketchup_mcp/materials.rb' },

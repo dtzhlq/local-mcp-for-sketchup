@@ -11,6 +11,8 @@ import { AGENT_GATEWAY_ADDITIVE_CREATION_OPERATIONS, prepareAgentGatewayCreation
 import { validateExpertDocument } from './expert-compiler.mjs';
 import { modelIdentityForAdoption, modelKeyForIdentity } from './model-identity.mjs';
 import { normalizeTextureTransform } from './object-operation-utils.mjs';
+import { validateNativeAssetOperation } from './model-accessibility-asset-edit.mjs';
+import { adoptParameterRoots } from './model-accessibility-scoped-readback.mjs';
 
 export const EXISTING_MODEL_EDIT_PLAN_VERSION = '2026-07-existing-model-edit-plan.3';
 export const EXISTING_MODEL_EDIT_EXECUTION_TARGET_VALIDATION_VERSION = 'existing-edit-execution-target-validation.v1';
@@ -31,6 +33,8 @@ const RISK_BY_OPERATION = Object.freeze({
   transform_object: 'S2',
   duplicate_entity: 'S2',
   replace_component_definition: 'S2',
+  place_component_asset: 'S3',
+  replace_component_asset: 'S3',
   reverse_face: 'S3',
   pushpull_face: 'S3',
   transform_entities: 'S3',
@@ -50,7 +54,7 @@ const RISK_BY_OPERATION = Object.freeze({
 });
 
 const RISK_ORDER = Object.freeze({ S1: 1, S2: 2, S3: 3, S4: 4 });
-const CONFIRMED_OPERATIONS = new Set(['delete', 'reverse_face', 'pushpull_face', 'replace_component_definition', 'explode_entity', 'erase_entities', 'transform_entities']);
+const CONFIRMED_OPERATIONS = new Set(['delete', 'reverse_face', 'pushpull_face', 'replace_component_definition', 'place_component_asset', 'replace_component_asset', 'explode_entity', 'erase_entities', 'transform_entities']);
 const ADDITIVE_CREATION_OPERATIONS = new Set(AGENT_GATEWAY_ADDITIVE_CREATION_OPERATIONS);
 const RESOURCE_MUTATION_OPERATIONS = new Set(['material']);
 const MULTI_TARGET_OPERATIONS = new Set(['erase_entities']);
@@ -178,7 +182,9 @@ export async function observeExistingModelEditExecutionState({
       structural_groups: true,
       structural_group_limit: policy.structural_group_limit
     })
-    : await bridge.adopt_open_model({
+    : plan.target_validation?.recursive_root_paths?.length > 1
+      ? await adoptParameterRoots({ bridge, runtime, timeoutMs, recursiveLimit: plan.budgets?.recursive_limit || 2000, rootPaths: plan.target_validation.recursive_root_paths })
+      : await bridge.adopt_open_model({
       runtime,
       timeoutMs,
       recursive: true,
@@ -382,6 +388,7 @@ export async function prepareExistingModelEdit({ bridge, runtime = 'mock', timeo
   const normalizedInstruction = nonEmptyString(instruction, 'prepare_existing_model_edit.instruction');
   const operationValidation = validateExistingModelEditOperations(operations);
   const normalizedOperations = operationValidation.operations;
+  if (runtime !== 'queue' && normalizedOperations.some(operation => ['place_component_asset', 'replace_component_asset'].includes(operation.op))) throw new AgentContractError('OPERATION_NOT_ALLOWED', 'Native SKP assets are unsupported by mock runtime.');
   const normalizedBudgets = normalizeBudgets({
     ...budgets,
     recursive_limit: budgets.recursive_limit ?? budgets.recursiveLimit ?? recursive_limit
@@ -403,7 +410,9 @@ export async function prepareExistingModelEdit({ bridge, runtime = 'mock', timeo
       structural_groups: true,
       structural_group_limit: normalizedTargetValidation.structural_group_limit
     })
-    : await bridge.adopt_open_model({ runtime, timeoutMs, recursive: true, recursive_limit: normalizedBudgets.recursive_limit, recursive_roots, read_only: true });
+    : recursive_roots?.length > 1
+      ? await adoptParameterRoots({ bridge, runtime, timeoutMs, recursiveLimit: normalizedBudgets.recursive_limit, rootPaths: recursive_roots })
+      : await bridge.adopt_open_model({ runtime, timeoutMs, recursive: true, recursive_limit: normalizedBudgets.recursive_limit, recursive_roots, read_only: true });
   const indexed = indexedAdoptionTargets(adoption);
   const blockers = [];
   if (recursive_roots && (normalizedOperations.some(operation => operation.op !== 'replace_component_definition') || requestedTargets.some(target => { const matches = (adoption.recursive_index || []).filter(entry => recursive_roots.includes(entry.entity_path) && (target.entity_path ? entry.entity_path === target.entity_path : [entry.id, entry.reference, entry.persistent_id].includes(target.target_id))); return matches.length !== 1; }))) throw new AgentContractError('OPERATION_NOT_ALLOWED', 'Scoped assembly review permits only replacements of the explicitly indexed root instances');
@@ -417,7 +426,7 @@ export async function prepareExistingModelEdit({ bridge, runtime = 'mock', timeo
   }
   const declaredTargetIds = new Set(requestedTargets.map(targetIdentity));
   for (const [index, operation] of normalizedOperations.entries()) {
-    if (ADDITIVE_CREATION_OPERATIONS.has(operation.op) || RESOURCE_MUTATION_OPERATIONS.has(operation.op)) continue;
+    if (ADDITIVE_CREATION_OPERATIONS.has(operation.op) || RESOURCE_MUTATION_OPERATIONS.has(operation.op) || operation.op === 'place_component_asset') continue;
     const primaryTarget = operationTargetReference(operation);
     const auxiliaryTargets = operationAuxiliaryTargetReferences(operation);
     if (!primaryTarget && !MULTI_TARGET_OPERATIONS.has(operation.op)) {
@@ -430,7 +439,7 @@ export async function prepareExistingModelEdit({ bridge, runtime = 'mock', timeo
         blockers.push({ code: 'operation_target_not_declared', operation_index: index, op: operation.op, target: publicTargetReference(primaryTarget), message: 'The operation target is not present in the reviewed target set.' });
       }
       const indexedTarget = indexed.get(primaryId);
-      if (indexedTarget && Array.isArray(indexedTarget.allowed_operations) && !indexedTarget.allowed_operations.includes(operation.op)) {
+      if (indexedTarget && Array.isArray(indexedTarget.allowed_operations) && !(operation.op === 'replace_component_asset' ? indexedTarget.allowed_operations.includes('replace_component_definition') : indexedTarget.allowed_operations.includes(operation.op))) {
         blockers.push({ code: 'operation_not_allowed_for_target', operation_index: index, op: operation.op, target: publicTargetReference(primaryTarget), message: 'The operation is not allowed for this indexed entity type.' });
       }
     }
@@ -451,7 +460,8 @@ export async function prepareExistingModelEdit({ bridge, runtime = 'mock', timeo
     ...requestedTargets,
     ...destructiveSideEffects.expected_absent_targets
   ]);
-  const affectedInstances = affectedTargets.reduce((sum, target) => sum + Number(indexed.get(targetIdentity(target))?.affected_instance_count || target.entity?.affected_instance_count || 1), 0);
+  const affectedInstances = affectedTargets.reduce((sum, target) => sum + Number(indexed.get(targetIdentity(target))?.affected_instance_count || target.entity?.affected_instance_count || 1), 0)
+    + normalizedOperations.filter(operation => operation.op === 'place_component_asset').length;
   if (affectedInstances > normalizedBudgets.max_affected_instances) blockers.push({ code: 'affected_instance_budget_exceeded', actual: affectedInstances, limit: normalizedBudgets.max_affected_instances });
 
   const operationContracts = operationValidation.operation_contracts;
@@ -925,6 +935,10 @@ function validateExistingOperationContract(operation, index) {
   };
 
   switch (operation.op) {
+  case 'place_component_asset':
+  case 'replace_component_asset':
+    validateNativeAssetOperation(operation);
+    break;
   case 'material': {
     requireStringField(['name']);
     if (operation.color !== undefined && (typeof operation.color !== 'string' || !/^#[0-9a-fA-F]{6}$/.test(operation.color))) {
@@ -1129,6 +1143,9 @@ function normalizeSourceProposalBinding(value) {
 
 function normalizeTargets(targets, operations) {
   const raw = targets?.length ? targets : extractTargets(operations);
+  // A single reviewed new-root asset placement has no existing entity target.
+  // It still binds the complete active-model revision, resource budget and approval.
+  if (Array.isArray(raw) && raw.length === 0 && operations.length === 1 && operations[0].op === 'place_component_asset') return [];
   if (!Array.isArray(raw) || !raw.length) throw new Error('prepare_existing_model_edit requires at least one persistent entity target');
   const seen = new Set();
   const normalized = [];
