@@ -1,0 +1,46 @@
+name: Windows installed bundle
+on:
+  push:
+    branches: [codex/windows-install-release-fix]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  package:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 24.18.0
+      - run: node scripts/package-service-bundle.mjs --target win32-x64 --candidate --output-dir dist
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: windows-bundle
+          path: dist/*.zip
+          retention-days: 7
+  installed:
+    needs: package
+    runs-on: windows-2022
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: windows-bundle
+          path: dist
+      - name: Extract independently and check bundled runtime
+        shell: pwsh
+        run: |
+          $installRoot = Join-Path $env:RUNNER_TEMP 'Windows 验收'
+          Expand-Archive -LiteralPath 'dist/local-mcp-for-sketchup-0.2.0-win32-x64.zip' -DestinationPath $installRoot
+          $bundleRoot = Join-Path $installRoot 'local-mcp-for-sketchup'
+          & (Join-Path $bundleRoot 'node/node.exe') scripts/verify-windows-installed-bundle.mjs $bundleRoot 'windows-installed-check.json'
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          Get-FileHash dist/*.zip -Algorithm SHA256 | Format-List
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: windows-verification
+          path: windows-installed-check.json
+          retention-days: 7
