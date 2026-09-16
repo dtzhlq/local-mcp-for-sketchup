@@ -6,7 +6,14 @@ const [entry, readme, install] = await Promise.all(['INSTALL_FOR_AGENTS.md', 'RE
 assert.ok(readme.includes('INSTALL_FOR_AGENTS.md'));
 for (const host of ['github.com', 'gitee.com']) assert.ok(readme.includes(`https://${host}/dtzhlq/local-mcp-for-sketchup/blob/main/INSTALL_FOR_AGENTS.md`));
 assert.ok(entry.includes('https://api.github.com/repos/dtzhlq/local-mcp-for-sketchup/releases/latest'));
-assert.match(entry, /draft=false.*prerelease=false/);
+assert.ok(entry.includes('draft=false') && entry.includes('prerelease=false'));
+assert.ok(entry.includes('releases?per_page=30'));
+assert.ok(entry.includes('windows-install.v1.json'));
+assert.ok(entry.includes('release_acceptance=false'));
+assert.ok(entry.includes('node/node.exe'));
+assert.ok(entry.includes('already explicitly chose the Windows preview'));
+assert.ok(entry.includes('live SketchUp connection/model save/reopen have not been verified'));
+assert.doesNotMatch(entry, /Windows, Intel Mac and other SketchUp versions are not supported/);
 assert.ok(entry.includes('SHA256SUMS.txt') && entry.includes('source.commit') && entry.includes('manifest.product.tool_count'));
 assert.match(entry, /Freeze that release tag/);
 assert.match(entry, /Never combine a server, plugin/);

@@ -6,7 +6,7 @@
 
 把这句话发给 Agent；后续正式更新无需更换口令：
 
-> 请在 GitHub 搜索用户 dtzhlq 的公开项目 local-mcp-for-sketchup，读取 main 分支根目录的 INSTALL_FOR_AGENTS.md，按其中的正式发布清单安装或升级到最新支持版本，保留现有配置和回退文件；找不到就停止，不要猜测或从第三方下载。
+> 请在 GitHub 搜索用户 dtzhlq 的公开项目 local-mcp-for-sketchup，读取 main 分支根目录的 INSTALL_FOR_AGENTS.md，按其中的平台安装清单安装或升级到最新支持版本，保留现有配置和回退文件；找不到就停止，不要猜测或从第三方下载。
 
 直接入口：
 
@@ -21,7 +21,9 @@ Agent 会发现最新正式版，固定该版本清单，校验服务包和签�
 
 0.2.0 支持 Apple Silicon Mac / SketchUp 2026，暴露 44 个工具；建筑、室内、产品共用图片理解及建模接口。真实尺寸未知时使用相对尺度，不可见部分补全仍为假设。
 
-Windows、Intel Mac 和其他 SketchUp 版本不在该正式版验收范围。RBZ 已独立签名，但未上架 Extension Warehouse，不代表官方认可。
+Windows x64 / SketchUp 2026 现有独立的 [0.2.0 Windows 安装预览](https://github.com/dtzhlq/local-mcp-for-sketchup/releases/tag/v0.2.0-windows-preview.1)：内置 Windows Node、依赖及签名 RBZ，已通过 Windows CI 的启动、44 工具发现和图片结构化检查；Windows SketchUp 实机验收尚未完成，因此明确标为预览。Agent 会先匹配平台，向 Windows 用户说明并提供此安装选项，不再直接报告整个项目只支持 M 芯片 Mac。
+
+Intel Mac 和其他 SketchUp 版本暂无对应安装包。RBZ 已独立签名，但未上架 Extension Warehouse，不代表官方认可。
 
 **main 是安装文档入口，不是当前正式版的源码安装目标。** 实现和验收文档请查看 [v0.2.0 标签](https://github.com/dtzhlq/local-mcp-for-sketchup/tree/v0.2.0)。本分支保留的旧源码、41 工具注册表、预览安装脚本及草稿模板不用于安装新版；后续版本按清单自动选择。
 
