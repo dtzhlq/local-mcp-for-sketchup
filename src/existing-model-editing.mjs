@@ -209,6 +209,7 @@ export async function observeExistingModelEditExecutionState({
 
   const requestedTargets = plan.targets.map(({ entity, ...target }) => target);
   const indexed = indexedAdoptionTargets(adoption);
+  addGeometryModelTarget(indexed, plan.dsl_document.operations, adoption);
   const sideEffectTargets = destructiveSideEffectTargets(plan);
   const validationTargets = uniqueTargets([...requestedTargets, ...sideEffectTargets]);
   const exactTargets = validationTargets.filter((target) => indexed.has(targetIdentity(target)));
@@ -416,6 +417,7 @@ export async function prepareExistingModelEdit({ bridge, runtime = 'mock', timeo
       ? await adoptParameterRoots({ bridge, runtime, timeoutMs, recursiveLimit: normalizedBudgets.recursive_limit, rootPaths: recursive_roots })
       : await bridge.adopt_open_model({ runtime, timeoutMs, recursive: true, recursive_limit: normalizedBudgets.recursive_limit, recursive_roots, read_only: true });
   const indexed = indexedAdoptionTargets(adoption);
+  addGeometryModelTarget(indexed, normalizedOperations, adoption);
   const blockers = [];
   if (recursive_roots && (normalizedOperations.some(operation => !['replace_component_definition', 'edit_geometry'].includes(operation.op)) || requestedTargets.some(target => { const matches = (adoption.recursive_index || []).filter(entry => recursive_roots.includes(entry.entity_path) && (target.entity_path ? entry.entity_path === target.entity_path : [entry.id, entry.reference, entry.persistent_id].includes(target.target_id))); return matches.length !== 1; }))) throw new AgentContractError('OPERATION_NOT_ALLOWED', 'Scoped assembly review permits only replacements of the explicitly indexed root instances');
   if (normalizedTargetValidation.mode === 'full_recursive' && adoption.recursive_truncated) {
@@ -708,7 +710,7 @@ export async function applyReviewedExistingModelEdit({ bridge, runtime = 'mock',
   await fs.mkdir(outputDir, { recursive: true });
   const reviewArtifact = path.join(outputDir, 'review-decision.json');
   await writeJson(reviewArtifact, { ...trustedReview, authorization });
-  const trustedNestedTargetValidator = preflight.policy.mode === 'structural_groups' || loadedPlan.target_validation?.recursive_root_paths
+  const trustedNestedTargetValidator = preflight.policy.mode === 'structural_groups' || loadedPlan.target_validation?.recursive_root_paths || loadedPlan.dsl_document.operations.some(op=>op.op==='edit_geometry' && op.entity_path==='model')
     ? async ({ phase, references }) => {
       assertIterationReferencesMatchPlan(references, loadedPlan);
       return observeExistingModelEditExecutionState({
@@ -1622,4 +1624,13 @@ async function readJsonRequired(filePath, fieldName) {
 async function writeJson(filePath, value) {
   await fs.mkdir(path.dirname(filePath), { recursive: true });
   await fs.writeFile(filePath, `${JSON.stringify(value, null, 2)}\n`, 'utf8');
+}
+
+// The document context is an exact target only for geometry batches explicitly
+// scoped to model.entities. It does not grant other operations a root wildcard.
+function addGeometryModelTarget(indexed, operations, adoption) {
+  if (!operations.some(op=>op.op==='edit_geometry' && op.entity_path==='model')) return;
+  if (operations.some(op=>op.entity_path==='model' && (op.op!=='edit_geometry' || op.context_path && op.context_path!=='model'))) throw new AgentContractError('OPERATION_NOT_ALLOWED','Model context permits root geometry edits only');
+  indexed.set('entity_path:model',{entity_path:'model',entity_type:'model_geometry',name:'Model loose geometry',affected_instance_count:1,shared_definition:false,effective_locked:false,allowed_operations:['edit_geometry']});
+  adoption.recursive_index=[...(adoption.recursive_index||[]),indexed.get('entity_path:model')];
 }

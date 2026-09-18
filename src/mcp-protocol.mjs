@@ -42,8 +42,9 @@ export class McpProtocol {
         const name=request.params?.name,args=request.params?.arguments??{};
         this.inputs.validate(name,args);
         try{
-          const value=name==='compare_snapshots'?compareSnapshots(args.expected?.snapshot??args.expected,args.actual?.snapshot??args.actual,args):await callTool(name,args,this.bridge);
-          if(!this.outputs.get(name)(value))throw Object.assign(new Error('Tool output does not match its declared schema'),{code:'OUTPUT_SCHEMA_MISMATCH'});
+          const raw=name==='compare_snapshots'?compareSnapshots(args.expected?.snapshot??args.expected,args.actual?.snapshot??args.actual,args):await callTool(name,args,this.bridge);
+          const value=JSON.parse(JSON.stringify(raw)); // Validate the actual JSON wire value (omit undefined fields).
+          if(!this.outputs.get(name)(value))throw Object.assign(new Error('Tool output does not match its declared schema'),{code:'OUTPUT_SCHEMA_MISMATCH',details:{tool:name,violations:this.outputs.get(name).errors}});
           result={content:await this.content(name,value),structuredContent:value};
         }catch(error){
           result={isError:true,content:[{type:'text',text:JSON.stringify({code:error.code??'TOOL_EXECUTION_FAILED',message:error.message,retryable:error.retryable??false,details:error.details??null,next_action:error.next_action??{action:'inspect_error_before_retry'}})}]};

@@ -56,3 +56,15 @@ node src/cli.mjs run_model_program --input-file examples/modeling-uplift/generat
 ```
 
 `budget` 可进一步限制 max_operations、max_loop_iterations、max_statements、max_output_bytes，不能超过上述服务端上限。
+
+## 补齐的根级编辑与分页
+
+`edit_model_geometry.entity_path` 现在接受 `model`，仅作用于模型根级散线散面，不递归修改子组或组件。仍须提供查询快照、幂等键，并通过既有审查及原子事务。空根级上下文也可添加面/边。
+
+大对象使用 `query_model_geometry({targets:["pid:123"],page_size:1000,detail:"full"})`。返回的 `page.next_cursor` 非空时，以 `{cursor:next_cursor,detail:"full"}` 继续。页内每条记录是一个顶点、边或面；同一上下文可横跨多页，因此邻接引用可能指向其他页。按 entity_path 和 handle 合并，不按数组序号拼接。
+
+所有页面绑定同一份不可变 snapshot_handle/model_revision。`page.snapshot_complete` 表示服务端捕获是否完整，`page.has_more` 表示是否还有页面；末页不等于一次返回了整份快照。模型改变后仍能读旧页，但旧版本不能继续编辑。完整拓扑保存在 geometry 资源中。捕获有两百万顶点、两千上下文及原有完整版本计算预算的上限；超过捕获预算必须缩小范围，不会把截断快照伪装为完整数据。
+
+## 返回合同
+
+旧工具各自的合同集中于 `src/tool-output-contracts.mjs`，由唯一工具注册表引用。模型快照、实体、文件回执、编译结果、任务信封、QA 和审批计划使用共享字段定义；成功、阻塞及可选返回字段保留兼容。任意程序 result/data、SketchUp 自定义属性与版本化能力扩展使用明确的 JSON 扩展映射。MCP 对实际序列化后的 JSON 进行校验，出错会给出工具名和字段路径。

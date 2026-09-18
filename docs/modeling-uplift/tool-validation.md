@@ -1,6 +1,6 @@
 # 48 工具合同与验证状态
 
-注册表为 src/tool-definitions.mjs，经 src/tool-registry.mjs 导出；运行时、输入验证、文档生成共用。全部 input schema 已与真实参数验证器核对，声明 output schema 并在 MCP 返回时验证。旧工具 output schema 保留扩展字段，尚未穷举所有可选嵌套结构。
+注册表为 src/tool-definitions.mjs，经 src/tool-registry.mjs 导出；运行时、输入验证、文档生成共用。全部 input schema 已与真实参数验证器核对，声明 output schema 并在 MCP 返回时验证。旧工具各自定义返回合同，并复用实体、快照、回执、QA 与任务信封类型；程序结果、自定义属性及版本化扩展保留 JSON 映射。
 
 表中原生通过仅代表报告中的指定场景；不宣称 48 工具所有分支均经过本轮原生验收。完整 schema 与 annotations 可从 tools/list 获取。
 

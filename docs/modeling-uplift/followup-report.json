@@ -1,0 +1,252 @@
+{
+  "kind": "modeling-uplift-followup.v1",
+  "generated_at": "2026-09-18T14:23:56.258Z",
+  "status": "local_development_candidate",
+  "release_acceptance": false,
+  "completed": {
+    "root_geometry_editing": true,
+    "immutable_topology_paging": true,
+    "per_tool_output_contracts": 48,
+    "native_nine_edit_operations": true
+  },
+  "offline": {
+    "root_approval_stale_snapshot_paging_and_schema_checks": "passed",
+    "staged_program": "passed",
+    "legacy_mcp_integration": "passed",
+    "protocol_contracts": "passed",
+    "math_geometry": "reused_unchanged"
+  },
+  "native": {
+    "ok": true,
+    "all_nine_edit_operations": true,
+    "root_geometry": true,
+    "material_both_sides": true,
+    "edge_soft_smooth": true,
+    "reverse_native_normal": true,
+    "world_vertex_and_matrix": true,
+    "volume_mm3": 11999.999999999913,
+    "unrelated_contexts_unchanged": true,
+    "pages": 9,
+    "records": 26,
+    "no_duplicates": true
+  },
+  "persistence": {
+    "ok": true,
+    "closed_reopened": true,
+    "all_contexts": 18,
+    "root_attributes_preserved": true,
+    "model_revision": "sha256:ac692b4ef3c50e8c430ba8728bd07ec37b0ef1231c3f6cfdbc3ef3d6e61b3ba0"
+  },
+  "native_output_contracts": {
+    "ok": true,
+    "cases": 6,
+    "tools": [
+      "open_model",
+      "query_model_geometry",
+      "edit_model_geometry",
+      "get_capabilities"
+    ]
+  },
+  "packages": {
+    "service": {
+      "kind": "local_mcp_for_sketchup_service_bundle_preview",
+      "release_candidate": false,
+      "release_artifact": false,
+      "target": "darwin-arm64",
+      "version": "0.3.0",
+      "path": "/Users/07zhang/.codex/worktrees/modeling-api-uplift/sketchup-mcp-replica/out/modeling-uplift/nonrelease-uplift-complete-20260918-local-mcp-for-sketchup-0.3.0-darwin-arm64.tar.gz",
+      "file_name": "nonrelease-uplift-complete-20260918-local-mcp-for-sketchup-0.3.0-darwin-arm64.tar.gz",
+      "media_type": "application/gzip",
+      "sha256": "bd7cfd9d8ad3ed78704b4d0aa980d58be304c1988fe49505770b3b307cf51c8a",
+      "size_bytes": 53864052,
+      "bundled_node": {
+        "version": "24.18.0",
+        "upstream_sha256": "e1a97e14c99c803e96c7339403282ea05a499c32f8d83defe9ef5ec66f979ed1"
+      },
+      "dependency_count": 15,
+      "native_dependencies_verified": true,
+      "live_sketchup_verified": false,
+      "release_acceptance": false
+    },
+    "plugin": {
+      "version": "0.3.0",
+      "checked": true,
+      "installed": false,
+      "packaged": true,
+      "package_path": "/Users/07zhang/.codex/worktrees/modeling-api-uplift/sketchup-mcp-replica/out/modeling-uplift/alma-sketchup-mcp-0.3.0-nonrelease-uplift-complete-20260918.rbz",
+      "package_sha256": "c8573498c2564b024e98a2e7e2bfdd5f20ff1bcd9c79b28fc110dac8a8170fbb",
+      "package_size_bytes": 144485,
+      "package_artifact_class": "non_release_preview",
+      "release_artifact": false
+    },
+    "verification": {
+      "ok": true,
+      "source_bytes_match": true,
+      "source_files": 138,
+      "tools": 48
+    }
+  },
+  "artifact": {
+    "path": "/Users/07zhang/.codex/worktrees/modeling-api-uplift/sketchup-mcp-replica/output/modeling-uplift/native/modeling-uplift.skp",
+    "sha256": "57643ac1bfa992d4becc2045d3f337510cc20e915d0f5291b65c58e557ccf690"
+  },
+  "cross_model": {
+    "provider": "existing Alma subscription proxy",
+    "requested_model": "glm-5.3",
+    "served_model_verified": false,
+    "comparison_kind": "bounded_parameter_generation_and_selected_native_execution",
+    "results": [
+      {
+        "task": "generation",
+        "version": "baseline",
+        "requests": 1,
+        "corrections": 0,
+        "parameter_result": "transport_unknown",
+        "native_executed": false,
+        "usage": null,
+        "served_model_verified": false,
+        "native_status": "not_executed",
+        "geometry_passed": false,
+        "native_task_id": null,
+        "transport_error": "REQUEST_TIMEOUT"
+      },
+      {
+        "task": "generation",
+        "version": "uplift",
+        "requests": 1,
+        "corrections": 0,
+        "parameter_result": "accepted",
+        "native_executed": true,
+        "usage": [
+          {
+            "input_tokens": 337,
+            "output_tokens": 1283
+          }
+        ],
+        "served_model_verified": false,
+        "native_status": "geometry_passed_task_awaiting_quality_review",
+        "geometry_passed": true,
+        "native_task_id": "task_297ffa82-2035-49e7-b63e-98189ca6dd82",
+        "transport_error": null
+      },
+      {
+        "task": "local-edit",
+        "version": "baseline",
+        "requests": 1,
+        "corrections": 0,
+        "parameter_result": "unsupported",
+        "native_executed": false,
+        "usage": [
+          {
+            "input_tokens": 515,
+            "output_tokens": 464
+          }
+        ],
+        "served_model_verified": false,
+        "native_status": "not_executed",
+        "geometry_passed": false,
+        "native_task_id": null,
+        "transport_error": null
+      },
+      {
+        "task": "local-edit",
+        "version": "uplift",
+        "requests": 2,
+        "corrections": 1,
+        "parameter_result": "accepted",
+        "native_executed": true,
+        "usage": [
+          {
+            "input_tokens": 331,
+            "output_tokens": 3483
+          },
+          {
+            "input_tokens": 1094,
+            "output_tokens": 871
+          }
+        ],
+        "served_model_verified": false,
+        "native_status": "geometry_passed",
+        "geometry_passed": true,
+        "native_task_id": "task_c968fc13-efe0-48e7-aadb-ad3d01bad2cc",
+        "transport_error": null
+      },
+      {
+        "task": "readback",
+        "version": "baseline",
+        "requests": 1,
+        "corrections": 0,
+        "parameter_result": "unsupported",
+        "native_executed": false,
+        "usage": [
+          {
+            "input_tokens": 536,
+            "output_tokens": 402
+          }
+        ],
+        "served_model_verified": false,
+        "native_status": "not_executed",
+        "geometry_passed": false,
+        "native_task_id": null,
+        "transport_error": null
+      },
+      {
+        "task": "readback",
+        "version": "uplift",
+        "requests": 1,
+        "corrections": 0,
+        "parameter_result": "accepted",
+        "native_executed": true,
+        "usage": [
+          {
+            "input_tokens": 352,
+            "output_tokens": 4367
+          }
+        ],
+        "served_model_verified": false,
+        "native_status": "awaiting_input",
+        "geometry_passed": false,
+        "native_task_id": "task_dbda0906-5c88-48cd-88d1-47dc30bceff5",
+        "transport_error": null
+      }
+    ],
+    "limits": [
+      "Baseline generation timed out; not retried and not counted as a modeling failure.",
+      "Baseline edit/readback answers declined the supplied API surface; this is not proof every alternative workflow is impossible.",
+      "Uplift generation geometry passed but parent task awaits pre-existing Sweep_Closed layout review.",
+      "Uplift local editing passed after one model correction.",
+      "Uplift readback created its initial face but did not complete later stages because the same pre-existing layout QA gate left creation pending.",
+      "This is not an autonomous client benchmark or a measured general success-rate improvement."
+    ]
+  },
+  "usage": {
+    "source": "local Codex session telemetry",
+    "request_at": "2026-09-18T13:57:13.412Z",
+    "observed_through": "2026-09-18T14:22:40.008Z",
+    "tool_calls": {
+      "exec": 57,
+      "js": 8
+    },
+    "tool_call_count": 65,
+    "token_usage_delta": {
+      "input_tokens": 9387252,
+      "cached_input_tokens": 9155200,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 34503,
+      "reasoning_output_tokens": 8056,
+      "total_tokens": 9421755
+    },
+    "limits": [
+      "Cached input included; not billing cost.",
+      "Outer tool calls only; nested exec operations excluded.",
+      "Final reporting actions after this snapshot excluded."
+    ]
+  },
+  "limits": [
+    "Windows native acceptance not performed.",
+    "Capture remains bounded by vertex/context and complete revision limits; pagination is over an immutable server snapshot.",
+    "Dynamic program results, SketchUp custom attributes and versioned extension metadata are JSON-valued maps.",
+    "Mock splitting/pushpull remain partial; native behavior is the acceptance authority.",
+    "Transport-response loss was not injected; existing offline no-replay and native receipt replay evidence reused."
+  ]
+}

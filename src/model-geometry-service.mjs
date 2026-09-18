@@ -1,4 +1,5 @@
 import fs from 'node:fs/promises';
+import {decodeGeometryCursor,geometryPage} from './geometry-pages.mjs';
 import path from 'node:path';
 import { AgentContractError, sha256Canonical, serverPolicyAutoApprovalMode } from './agent-contract.mjs';
 import { dot, cross, subtract, add, scaleVector } from './geometry-matrix.mjs';
@@ -12,15 +13,20 @@ export class ModelGeometryService {
     if(sha256Canonical(value).slice(7)!==handle.slice(9))fail('ARTIFACT_INTEGRITY_ERROR','Geometry snapshot hash mismatch');return value;
   }
   async query(options={}){
+    const cursor=options.cursor?decodeGeometryCursor(options.cursor):null;
+    if(cursor&&options.snapshot_handle&&cursor.handle!==options.snapshot_handle)fail('INVALID_ARGUMENT','Cursor belongs to another snapshot');
+    if(cursor)options={...options,snapshot_handle:cursor.handle};
+    const paged=!!cursor||options.page_size!==undefined;
     const runtime=options.runtime??'mock';
-    const snapshot=options.snapshot_handle?await this.load(options.snapshot_handle):await this.bridge.selectRuntime(runtime,{timeoutMs:options.timeoutMs}).queryModelGeometry({targets:options.targets,recursive:options.recursive??true,max_vertices:options.max_vertices??10000,max_contexts:options.max_contexts??256});
+    const snapshot=options.snapshot_handle?await this.load(options.snapshot_handle):await this.bridge.selectRuntime(runtime,{timeoutMs:options.timeoutMs}).queryModelGeometry({targets:options.targets,recursive:options.recursive??true,max_vertices:paged?2000000:(options.max_vertices??10000),max_contexts:options.max_contexts??256});
     if(snapshot.runtime==='mock'&&!options.snapshot_handle)snapshot.model_identity={session_path:path.resolve(this.bridge.mockRuntime.sessionPath)};
     const digest=sha256Canonical(snapshot).slice(7),handle=`geometry:${digest}`;
     await fs.mkdir(this.root,{recursive:true,mode:0o700});
     try{await fs.writeFile(path.join(this.root,digest+'.json'),JSON.stringify(snapshot),{flag:'wx',mode:0o600});}catch(e){if(e.code!=='EEXIST')throw e;}
-    return {kind:'query_model_geometry',runtime:snapshot.runtime,snapshot_handle:handle,resource_uri:`geometry://${digest}`,model_revision:snapshot.model_revision,complete:snapshot.complete,units:'mm',frozen:!!options.snapshot_handle,
+    const page=paged?geometryPage(snapshot,handle,options):null;
+    return {kind:'query_model_geometry',runtime:snapshot.runtime,snapshot_handle:handle,resource_uri:`geometry://${digest}`,model_revision:snapshot.model_revision,complete:snapshot.complete&&(!page||!page.page.has_more),units:'mm',frozen:!!options.snapshot_handle,
       contexts:snapshot.contexts.map(c=>({entity_path:c.entity_path,name:c.name,shared_definition:c.shared_definition,vertices:c.vertices.length,edges:c.edges.length,faces:c.faces.length,manifold:c.manifold})),
-      ...(options.detail==='full'?{snapshot}:{}),next_action:snapshot.complete?null:{action:'query_smaller_scope_or_increase_budget'}};
+      ...(page?{page:page.page}:{}),...(options.detail==='full'?{snapshot:page?.snapshot??snapshot}:{}),next_action:page?.page.next_cursor?{action:'query_model_geometry',cursor:page.page.next_cursor}:snapshot.complete?null:{action:'query_smaller_scope_or_increase_budget'}};
   }
   async freshSnapshot(options){const result=await this.query({...options,detail:'full'});return result.snapshot;}
   async measure(options={}){
@@ -42,14 +48,14 @@ export class ModelGeometryService {
     if(!snapshot.complete)fail('MODEL_REVISION_INCOMPLETE','Cannot edit a truncated snapshot');
     if(options.runtime&&options.runtime!==snapshot.runtime)fail('INVALID_ARGUMENT','Snapshot runtime mismatch');
     const context=snapshot.contexts.find(c=>c.entity_path===options.entity_path);
-    if(!context||!/^pid:[1-9]\d*(?:\.[1-9]\d*)*$/.test(context.entity_path))fail('INVALID_ARGUMENT','An exact group or instance context is required');
+    if(!context||! /^(model|pid:[1-9]\d*(?:\.[1-9]\d*)*)$/.test(context.entity_path))fail('INVALID_ARGUMENT','An exact model, group or instance context is required');
     const fresh=await this.freshSnapshot({runtime:snapshot.runtime,targets:[context.entity_path],recursive:false,max_vertices:100000});
     if(fresh.model_revision!==snapshot.model_revision||sha256Canonical(fresh.model_identity)!==sha256Canonical(snapshot.model_identity)||fresh.document_id!==snapshot.document_id)fail('MODEL_REVISION_MISMATCH','Geometry snapshot is stale or belongs to another document');
     const handles=new Set([...context.vertices,...context.edges,...context.faces].map(e=>e.handle));
     for(const e of options.edits)for(const h of [...(e.handles??[]),...(e.moves??[]).map(m=>m.handle),...(e.handle?[e.handle]:[])])if(!handles.has(h))fail('INVALID_ARGUMENT',`Handle is outside the selected context: ${h}`);
     const root=context.review_root??context.entity_path.split('.')[0];
     const operation={op:'edit_geometry',entity_path:root,context_path:context.entity_path,edit_scope:'instance_path',instance_policy:'definition_wide',snapshot_revision:snapshot.model_revision,edits:options.edits};
-    const request={intent:'reviewed_existing_model_edit',instruction:options.instruction||'Apply the specified local geometry edits and preserve other occurrences.',idempotency_key:options.idempotency_key,inputs:{runtime:snapshot.runtime,operations:[operation],targets:[{entity_path:root,edit_scope:'instance_path',instance_policy:'definition_wide'}],recursive_roots:[root],recursive_limit:this.bridge.executionPolicy.resource_limits.max_recursive_entities,save_model:false}};
+    const request={intent:'reviewed_existing_model_edit',instruction:options.instruction||'Apply the specified local geometry edits and preserve other occurrences.',idempotency_key:options.idempotency_key,inputs:{runtime:snapshot.runtime,operations:[operation],targets:[{entity_path:root,edit_scope:'instance_path',instance_policy:'definition_wide'}],...(root==='model'?{}:{recursive_roots:[root]}),recursive_limit:this.bridge.executionPolicy.resource_limits.max_recursive_entities,save_model:false}};
     await fs.mkdir(this.root,{recursive:true,mode:0o700});
     try{await fs.writeFile(journalPath,JSON.stringify({fingerprint,request}),{flag:'wx',mode:0o600});}catch(e){if(e.code!=='EEXIST')throw e;const winner=JSON.parse(await fs.readFile(journalPath,'utf8'));if(winner.fingerprint!==fingerprint)fail('IDEMPOTENCY_CONFLICT','Concurrent edit key conflict');return this.bridge.start_agent_task(winner.request);}
     return this.advanceAutomaticEdit(await this.bridge.start_agent_task(request),options,snapshot.runtime);

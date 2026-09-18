@@ -1,6 +1,6 @@
 {
   "version": "modeling-uplift-acceptance.v1",
-  "generated_at": "2026-09-18T05:58:39.714Z",
+  "generated_at": "2026-09-18T14:23:56.258Z",
   "status": "local_development_candidate",
   "release_acceptance": false,
   "branch": "codex/modeling-api-uplift",
@@ -61,6 +61,27 @@
       "numeric_tolerance": 1e-7,
       "model_revision": "sha256:d6c19c7a5811d6b66cb43fea98db65f7aca916c0bb260dc1364805404c9ada6b",
       "contexts": 16
+    },
+    "followup": {
+      "ok": true,
+      "all_nine_edit_operations": true,
+      "root_geometry": true,
+      "material_both_sides": true,
+      "edge_soft_smooth": true,
+      "reverse_native_normal": true,
+      "world_vertex_and_matrix": true,
+      "volume_mm3": 11999.999999999913,
+      "unrelated_contexts_unchanged": true,
+      "pages": 9,
+      "records": 26,
+      "no_duplicates": true
+    },
+    "latest_persistence": {
+      "ok": true,
+      "closed_reopened": true,
+      "all_contexts": 18,
+      "root_attributes_preserved": true,
+      "model_revision": "sha256:ac692b4ef3c50e8c430ba8728bd07ec37b0ef1231c3f6cfdbc3ef3d6e61b3ba0"
     }
   },
   "packages": {
@@ -70,11 +91,11 @@
       "release_artifact": false,
       "target": "darwin-arm64",
       "version": "0.3.0",
-      "path": "/Users/07zhang/.codex/worktrees/modeling-api-uplift/sketchup-mcp-replica/out/modeling-uplift/nonrelease-uplift-candidate-20260918-local-mcp-for-sketchup-0.3.0-darwin-arm64.tar.gz",
-      "file_name": "nonrelease-uplift-candidate-20260918-local-mcp-for-sketchup-0.3.0-darwin-arm64.tar.gz",
+      "path": "/Users/07zhang/.codex/worktrees/modeling-api-uplift/sketchup-mcp-replica/out/modeling-uplift/nonrelease-uplift-complete-20260918-local-mcp-for-sketchup-0.3.0-darwin-arm64.tar.gz",
+      "file_name": "nonrelease-uplift-complete-20260918-local-mcp-for-sketchup-0.3.0-darwin-arm64.tar.gz",
       "media_type": "application/gzip",
-      "sha256": "f9d5ff4d6a4a6e6f5bdae0ea5d115f7f9f2fa7fcbf813f8d7e0f56c211ac6a59",
-      "size_bytes": 53859100,
+      "sha256": "bd7cfd9d8ad3ed78704b4d0aa980d58be304c1988fe49505770b3b307cf51c8a",
+      "size_bytes": 53864052,
       "bundled_node": {
         "version": "24.18.0",
         "upstream_sha256": "e1a97e14c99c803e96c7339403282ea05a499c32f8d83defe9ef5ec66f979ed1"
@@ -89,29 +110,23 @@
       "checked": true,
       "installed": false,
       "packaged": true,
-      "package_path": "/Users/07zhang/.codex/worktrees/modeling-api-uplift/sketchup-mcp-replica/out/modeling-uplift/alma-sketchup-mcp-0.3.0-nonrelease-uplift-20260918.rbz",
-      "package_sha256": "799b5284d2ace80a85f6220cda93bbe2ba0a17aad16ae0f1bf6722225baa514b",
-      "package_size_bytes": 144428,
+      "package_path": "/Users/07zhang/.codex/worktrees/modeling-api-uplift/sketchup-mcp-replica/out/modeling-uplift/alma-sketchup-mcp-0.3.0-nonrelease-uplift-complete-20260918.rbz",
+      "package_sha256": "c8573498c2564b024e98a2e7e2bfdd5f20ff1bcd9c79b28fc110dac8a8170fbb",
+      "package_size_bytes": 144485,
       "package_artifact_class": "non_release_preview",
       "release_artifact": false
     },
-    "service_verification": {
+    "verification": {
       "ok": true,
-      "node": "v24.18.0",
-      "arch": "arm64",
-      "tools": 48,
       "source_bytes_match": true,
-      "source_files": 119,
-      "live_readback": true,
-      "contexts": 16,
-      "model_revision": "sha256:d6c19c7a5811d6b66cb43fea98db65f7aca916c0bb260dc1364805404c9ada6b"
+      "source_files": 138,
+      "tools": 48
     }
   },
   "artifacts": [
     {
       "path": "output/modeling-uplift/native/modeling-uplift.skp",
-      "sha256": "98b739b53e83bbf354fbaaf29a664152c45956b42afd9d9c89be16d35f33025e",
-      "bytes": 337828
+      "sha256": "57643ac1bfa992d4becc2045d3f337510cc20e915d0f5291b65c58e557ccf690"
     },
     {
       "path": "output/modeling-uplift/native/overview.png",
@@ -143,7 +158,8 @@
       },
       "input_contract_parity": "passed",
       "behavior_validation": "native_selected_scenarios_passed",
-      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool.",
+      "output_contract": "per_tool_typed_contract_with_explicit_json_extension_maps"
     },
     {
       "name": "measure_model_geometry",
@@ -158,7 +174,8 @@
       },
       "input_contract_parity": "passed",
       "behavior_validation": "native_selected_scenarios_passed",
-      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool.",
+      "output_contract": "per_tool_typed_contract_with_explicit_json_extension_maps"
     },
     {
       "name": "edit_model_geometry",
@@ -173,7 +190,8 @@
       },
       "input_contract_parity": "passed",
       "behavior_validation": "native_selected_scenarios_passed",
-      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool.",
+      "output_contract": "per_tool_typed_contract_with_explicit_json_extension_maps"
     },
     {
       "name": "run_model_program",
@@ -188,7 +206,8 @@
       },
       "input_contract_parity": "passed",
       "behavior_validation": "native_selected_scenarios_passed",
-      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool.",
+      "output_contract": "per_tool_typed_contract_with_explicit_json_extension_maps"
     },
     {
       "name": "inspect_detail_regions",
@@ -203,7 +222,8 @@
       },
       "input_contract_parity": "passed",
       "behavior_validation": "not_exhaustively_rerun",
-      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool.",
+      "output_contract": "per_tool_typed_contract_with_explicit_json_extension_maps"
     },
     {
       "name": "query_assets",
@@ -218,7 +238,8 @@
       },
       "input_contract_parity": "passed",
       "behavior_validation": "not_exhaustively_rerun",
-      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool.",
+      "output_contract": "per_tool_typed_contract_with_explicit_json_extension_maps"
     },
     {
       "name": "capture_detail_views",
@@ -233,7 +254,8 @@
       },
       "input_contract_parity": "passed",
       "behavior_validation": "not_exhaustively_rerun",
-      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool.",
+      "output_contract": "per_tool_typed_contract_with_explicit_json_extension_maps"
     },
     {
       "name": "get_docs",
@@ -248,7 +270,8 @@
       },
       "input_contract_parity": "passed",
       "behavior_validation": "not_exhaustively_rerun",
-      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool.",
+      "output_contract": "per_tool_typed_contract_with_explicit_json_extension_maps"
     },
     {
       "name": "get_workflow_bundle",
@@ -263,7 +286,8 @@
       },
       "input_contract_parity": "passed",
       "behavior_validation": "not_exhaustively_rerun",
-      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool.",
+      "output_contract": "per_tool_typed_contract_with_explicit_json_extension_maps"
     },
     {
       "name": "get_capabilities",
@@ -278,7 +302,8 @@
       },
       "input_contract_parity": "passed",
       "behavior_validation": "native_selected_scenarios_passed",
-      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool.",
+      "output_contract": "per_tool_typed_contract_with_explicit_json_extension_maps"
     },
     {
       "name": "create_queue_handshake",
@@ -293,7 +318,8 @@
       },
       "input_contract_parity": "passed",
       "behavior_validation": "native_selected_scenarios_passed",
-      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool.",
+      "output_contract": "per_tool_typed_contract_with_explicit_json_extension_maps"
     },
     {
       "name": "queue_diagnostics",
@@ -308,7 +334,8 @@
       },
       "input_contract_parity": "passed",
       "behavior_validation": "not_exhaustively_rerun",
-      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool.",
+      "output_contract": "per_tool_typed_contract_with_explicit_json_extension_maps"
     },
     {
       "name": "prepare_image_modeling_brief",
@@ -323,7 +350,8 @@
       },
       "input_contract_parity": "passed",
       "behavior_validation": "not_exhaustively_rerun",
-      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool.",
+      "output_contract": "per_tool_typed_contract_with_explicit_json_extension_maps"
     },
     {
       "name": "compile_reviewed_part_graph",
@@ -338,7 +366,8 @@
       },
       "input_contract_parity": "passed",
       "behavior_validation": "not_exhaustively_rerun",
-      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool.",
+      "output_contract": "per_tool_typed_contract_with_explicit_json_extension_maps"
     },
     {
       "name": "prepare_existing_model_edit",
@@ -353,7 +382,8 @@
       },
       "input_contract_parity": "passed",
       "behavior_validation": "not_exhaustively_rerun",
-      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool.",
+      "output_contract": "per_tool_typed_contract_with_explicit_json_extension_maps"
     },
     {
       "name": "apply_reviewed_model_edit",
@@ -368,7 +398,8 @@
       },
       "input_contract_parity": "passed",
       "behavior_validation": "not_exhaustively_rerun",
-      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool.",
+      "output_contract": "per_tool_typed_contract_with_explicit_json_extension_maps"
     },
     {
       "name": "start_agent_task",
@@ -383,7 +414,8 @@
       },
       "input_contract_parity": "passed",
       "behavior_validation": "native_selected_scenarios_passed",
-      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool.",
+      "output_contract": "per_tool_typed_contract_with_explicit_json_extension_maps"
     },
     {
       "name": "resume_agent_task",
@@ -398,7 +430,8 @@
       },
       "input_contract_parity": "passed",
       "behavior_validation": "not_exhaustively_rerun",
-      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool.",
+      "output_contract": "per_tool_typed_contract_with_explicit_json_extension_maps"
     },
     {
       "name": "submit_agent_task_input",
@@ -413,7 +446,8 @@
       },
       "input_contract_parity": "passed",
       "behavior_validation": "native_selected_scenarios_passed",
-      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool.",
+      "output_contract": "per_tool_typed_contract_with_explicit_json_extension_maps"
     },
     {
       "name": "read_agent_artifact",
@@ -428,7 +462,8 @@
       },
       "input_contract_parity": "passed",
       "behavior_validation": "not_exhaustively_rerun",
-      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool.",
+      "output_contract": "per_tool_typed_contract_with_explicit_json_extension_maps"
     },
     {
       "name": "build_model",
@@ -443,7 +478,8 @@
       },
       "input_contract_parity": "passed",
       "behavior_validation": "native_selected_scenarios_passed",
-      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool.",
+      "output_contract": "per_tool_typed_contract_with_explicit_json_extension_maps"
     },
     {
       "name": "compile_expert",
@@ -458,7 +494,8 @@
       },
       "input_contract_parity": "passed",
       "behavior_validation": "not_exhaustively_rerun",
-      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool.",
+      "output_contract": "per_tool_typed_contract_with_explicit_json_extension_maps"
     },
     {
       "name": "compile_python_sdk",
@@ -473,7 +510,8 @@
       },
       "input_contract_parity": "passed",
       "behavior_validation": "not_exhaustively_rerun",
-      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool.",
+      "output_contract": "per_tool_typed_contract_with_explicit_json_extension_maps"
     },
     {
       "name": "build_expert_model",
@@ -488,7 +526,8 @@
       },
       "input_contract_parity": "passed",
       "behavior_validation": "not_exhaustively_rerun",
-      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool.",
+      "output_contract": "per_tool_typed_contract_with_explicit_json_extension_maps"
     },
     {
       "name": "reset_model",
@@ -503,7 +542,8 @@
       },
       "input_contract_parity": "passed",
       "behavior_validation": "not_exhaustively_rerun",
-      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool.",
+      "output_contract": "per_tool_typed_contract_with_explicit_json_extension_maps"
     },
     {
       "name": "save_model",
@@ -518,7 +558,8 @@
       },
       "input_contract_parity": "passed",
       "behavior_validation": "native_selected_scenarios_passed",
-      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool.",
+      "output_contract": "per_tool_typed_contract_with_explicit_json_extension_maps"
     },
     {
       "name": "save_model_version",
@@ -533,7 +574,8 @@
       },
       "input_contract_parity": "passed",
       "behavior_validation": "not_exhaustively_rerun",
-      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool.",
+      "output_contract": "per_tool_typed_contract_with_explicit_json_extension_maps"
     },
     {
       "name": "open_model",
@@ -548,7 +590,8 @@
       },
       "input_contract_parity": "passed",
       "behavior_validation": "native_selected_scenarios_passed",
-      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool.",
+      "output_contract": "per_tool_typed_contract_with_explicit_json_extension_maps"
     },
     {
       "name": "import_model",
@@ -563,7 +606,8 @@
       },
       "input_contract_parity": "passed",
       "behavior_validation": "not_exhaustively_rerun",
-      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool.",
+      "output_contract": "per_tool_typed_contract_with_explicit_json_extension_maps"
     },
     {
       "name": "export_model",
@@ -578,7 +622,8 @@
       },
       "input_contract_parity": "passed",
       "behavior_validation": "not_exhaustively_rerun",
-      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool.",
+      "output_contract": "per_tool_typed_contract_with_explicit_json_extension_maps"
     },
     {
       "name": "get_model_info",
@@ -593,7 +638,8 @@
       },
       "input_contract_parity": "passed",
       "behavior_validation": "native_selected_scenarios_passed",
-      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool.",
+      "output_contract": "per_tool_typed_contract_with_explicit_json_extension_maps"
     },
     {
       "name": "list_entities",
@@ -608,7 +654,8 @@
       },
       "input_contract_parity": "passed",
       "behavior_validation": "not_exhaustively_rerun",
-      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool.",
+      "output_contract": "per_tool_typed_contract_with_explicit_json_extension_maps"
     },
     {
       "name": "inspect_model",
@@ -623,7 +670,8 @@
       },
       "input_contract_parity": "passed",
       "behavior_validation": "not_exhaustively_rerun",
-      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool.",
+      "output_contract": "per_tool_typed_contract_with_explicit_json_extension_maps"
     },
     {
       "name": "adopt_open_model",
@@ -638,7 +686,8 @@
       },
       "input_contract_parity": "passed",
       "behavior_validation": "not_exhaustively_rerun",
-      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool.",
+      "output_contract": "per_tool_typed_contract_with_explicit_json_extension_maps"
     },
     {
       "name": "resolve_model_targets",
@@ -653,7 +702,8 @@
       },
       "input_contract_parity": "passed",
       "behavior_validation": "not_exhaustively_rerun",
-      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool.",
+      "output_contract": "per_tool_typed_contract_with_explicit_json_extension_maps"
     },
     {
       "name": "get_selection",
@@ -668,7 +718,8 @@
       },
       "input_contract_parity": "passed",
       "behavior_validation": "not_exhaustively_rerun",
-      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool.",
+      "output_contract": "per_tool_typed_contract_with_explicit_json_extension_maps"
     },
     {
       "name": "analyze_selection_geometry",
@@ -683,7 +734,8 @@
       },
       "input_contract_parity": "passed",
       "behavior_validation": "not_exhaustively_rerun",
-      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool.",
+      "output_contract": "per_tool_typed_contract_with_explicit_json_extension_maps"
     },
     {
       "name": "plan_modification_intent",
@@ -698,7 +750,8 @@
       },
       "input_contract_parity": "passed",
       "behavior_validation": "not_exhaustively_rerun",
-      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool.",
+      "output_contract": "per_tool_typed_contract_with_explicit_json_extension_maps"
     },
     {
       "name": "set_selection",
@@ -713,7 +766,8 @@
       },
       "input_contract_parity": "passed",
       "behavior_validation": "not_exhaustively_rerun",
-      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool.",
+      "output_contract": "per_tool_typed_contract_with_explicit_json_extension_maps"
     },
     {
       "name": "capture_view",
@@ -728,7 +782,8 @@
       },
       "input_contract_parity": "passed",
       "behavior_validation": "native_selected_scenarios_passed",
-      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool.",
+      "output_contract": "per_tool_typed_contract_with_explicit_json_extension_maps"
     },
     {
       "name": "run_ruby_expert",
@@ -743,7 +798,8 @@
       },
       "input_contract_parity": "passed",
       "behavior_validation": "not_exhaustively_rerun",
-      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool.",
+      "output_contract": "per_tool_typed_contract_with_explicit_json_extension_maps"
     },
     {
       "name": "evaluate_py",
@@ -758,7 +814,8 @@
       },
       "input_contract_parity": "passed",
       "behavior_validation": "not_exhaustively_rerun",
-      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool.",
+      "output_contract": "per_tool_typed_contract_with_explicit_json_extension_maps"
     },
     {
       "name": "build_report",
@@ -773,7 +830,8 @@
       },
       "input_contract_parity": "passed",
       "behavior_validation": "not_exhaustively_rerun",
-      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool.",
+      "output_contract": "per_tool_typed_contract_with_explicit_json_extension_maps"
     },
     {
       "name": "iterate_model",
@@ -788,7 +846,8 @@
       },
       "input_contract_parity": "passed",
       "behavior_validation": "not_exhaustively_rerun",
-      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool.",
+      "output_contract": "per_tool_typed_contract_with_explicit_json_extension_maps"
     },
     {
       "name": "compare_snapshots",
@@ -803,7 +862,8 @@
       },
       "input_contract_parity": "passed",
       "behavior_validation": "not_exhaustively_rerun",
-      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool.",
+      "output_contract": "per_tool_typed_contract_with_explicit_json_extension_maps"
     },
     {
       "name": "compare_model",
@@ -818,7 +878,8 @@
       },
       "input_contract_parity": "passed",
       "behavior_validation": "not_exhaustively_rerun",
-      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool.",
+      "output_contract": "per_tool_typed_contract_with_explicit_json_extension_maps"
     },
     {
       "name": "validate_model",
@@ -833,7 +894,8 @@
       },
       "input_contract_parity": "passed",
       "behavior_validation": "not_exhaustively_rerun",
-      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool.",
+      "output_contract": "per_tool_typed_contract_with_explicit_json_extension_maps"
     },
     {
       "name": "validate_reference_model",
@@ -848,7 +910,8 @@
       },
       "input_contract_parity": "passed",
       "behavior_validation": "not_exhaustively_rerun",
-      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool.",
+      "output_contract": "per_tool_typed_contract_with_explicit_json_extension_maps"
     }
   ],
   "usage": {
@@ -890,20 +953,266 @@
     ]
   },
   "limits": [
-    "Cross-model benefits not empirically tested.",
-    "Windows native acceptance not run.",
-    "Mock topology editing remains partial; native splitting and pushpull require queue.",
-    "Local edits currently require a group/component context; raw model-root loose geometry is queryable but not directly editable by the new tool.",
-    "Runtime no-replay behavior is tested offline and committed receipt replay is tested natively; native transport-response loss was not deliberately injected.",
-    "New additive editing branches such as valid material assignment and edge attributes are not each separately native-tested.",
-    "Legacy output schemas preserve extra fields; they do not exhaustively enumerate every optional nested result variant.",
-    "No arbitrary CPython, NURBS, holes or branching loft topology.",
-    "Over-budget queries return incomplete status and require narrower scope; no vertex-level paging for a single oversized context."
+    "Windows native acceptance not performed.",
+    "Capture remains bounded by vertex/context and complete revision limits; pagination is over an immutable server snapshot.",
+    "Dynamic program results, SketchUp custom attributes and versioned extension metadata are JSON-valued maps.",
+    "Mock splitting/pushpull remain partial; native behavior is the acceptance authority.",
+    "Transport-response loss was not injected; existing offline no-replay and native receipt replay evidence reused."
   ],
   "follow_up": [
-    "Broaden typed output schemas for legacy result variants",
-    "Raw model-root geometry editing with existing approval protections",
-    "Large-context topology paging and additional native edit-branch fixtures",
-    "Optional one-model three-task comparison"
-  ]
+    "Optional broader client-driven comparison with task-scoped QA isolation",
+    "Windows native acceptance"
+  ],
+  "followup": {
+    "kind": "modeling-uplift-followup.v1",
+    "generated_at": "2026-09-18T14:23:56.258Z",
+    "status": "local_development_candidate",
+    "release_acceptance": false,
+    "completed": {
+      "root_geometry_editing": true,
+      "immutable_topology_paging": true,
+      "per_tool_output_contracts": 48,
+      "native_nine_edit_operations": true
+    },
+    "offline": {
+      "root_approval_stale_snapshot_paging_and_schema_checks": "passed",
+      "staged_program": "passed",
+      "legacy_mcp_integration": "passed",
+      "protocol_contracts": "passed",
+      "math_geometry": "reused_unchanged"
+    },
+    "native": {
+      "ok": true,
+      "all_nine_edit_operations": true,
+      "root_geometry": true,
+      "material_both_sides": true,
+      "edge_soft_smooth": true,
+      "reverse_native_normal": true,
+      "world_vertex_and_matrix": true,
+      "volume_mm3": 11999.999999999913,
+      "unrelated_contexts_unchanged": true,
+      "pages": 9,
+      "records": 26,
+      "no_duplicates": true
+    },
+    "persistence": {
+      "ok": true,
+      "closed_reopened": true,
+      "all_contexts": 18,
+      "root_attributes_preserved": true,
+      "model_revision": "sha256:ac692b4ef3c50e8c430ba8728bd07ec37b0ef1231c3f6cfdbc3ef3d6e61b3ba0"
+    },
+    "native_output_contracts": {
+      "ok": true,
+      "cases": 6,
+      "tools": [
+        "open_model",
+        "query_model_geometry",
+        "edit_model_geometry",
+        "get_capabilities"
+      ]
+    },
+    "packages": {
+      "service": {
+        "kind": "local_mcp_for_sketchup_service_bundle_preview",
+        "release_candidate": false,
+        "release_artifact": false,
+        "target": "darwin-arm64",
+        "version": "0.3.0",
+        "path": "/Users/07zhang/.codex/worktrees/modeling-api-uplift/sketchup-mcp-replica/out/modeling-uplift/nonrelease-uplift-complete-20260918-local-mcp-for-sketchup-0.3.0-darwin-arm64.tar.gz",
+        "file_name": "nonrelease-uplift-complete-20260918-local-mcp-for-sketchup-0.3.0-darwin-arm64.tar.gz",
+        "media_type": "application/gzip",
+        "sha256": "bd7cfd9d8ad3ed78704b4d0aa980d58be304c1988fe49505770b3b307cf51c8a",
+        "size_bytes": 53864052,
+        "bundled_node": {
+          "version": "24.18.0",
+          "upstream_sha256": "e1a97e14c99c803e96c7339403282ea05a499c32f8d83defe9ef5ec66f979ed1"
+        },
+        "dependency_count": 15,
+        "native_dependencies_verified": true,
+        "live_sketchup_verified": false,
+        "release_acceptance": false
+      },
+      "plugin": {
+        "version": "0.3.0",
+        "checked": true,
+        "installed": false,
+        "packaged": true,
+        "package_path": "/Users/07zhang/.codex/worktrees/modeling-api-uplift/sketchup-mcp-replica/out/modeling-uplift/alma-sketchup-mcp-0.3.0-nonrelease-uplift-complete-20260918.rbz",
+        "package_sha256": "c8573498c2564b024e98a2e7e2bfdd5f20ff1bcd9c79b28fc110dac8a8170fbb",
+        "package_size_bytes": 144485,
+        "package_artifact_class": "non_release_preview",
+        "release_artifact": false
+      },
+      "verification": {
+        "ok": true,
+        "source_bytes_match": true,
+        "source_files": 138,
+        "tools": 48
+      }
+    },
+    "artifact": {
+      "path": "/Users/07zhang/.codex/worktrees/modeling-api-uplift/sketchup-mcp-replica/output/modeling-uplift/native/modeling-uplift.skp",
+      "sha256": "57643ac1bfa992d4becc2045d3f337510cc20e915d0f5291b65c58e557ccf690"
+    },
+    "cross_model": {
+      "provider": "existing Alma subscription proxy",
+      "requested_model": "glm-5.3",
+      "served_model_verified": false,
+      "comparison_kind": "bounded_parameter_generation_and_selected_native_execution",
+      "results": [
+        {
+          "task": "generation",
+          "version": "baseline",
+          "requests": 1,
+          "corrections": 0,
+          "parameter_result": "transport_unknown",
+          "native_executed": false,
+          "usage": null,
+          "served_model_verified": false,
+          "native_status": "not_executed",
+          "geometry_passed": false,
+          "native_task_id": null,
+          "transport_error": "REQUEST_TIMEOUT"
+        },
+        {
+          "task": "generation",
+          "version": "uplift",
+          "requests": 1,
+          "corrections": 0,
+          "parameter_result": "accepted",
+          "native_executed": true,
+          "usage": [
+            {
+              "input_tokens": 337,
+              "output_tokens": 1283
+            }
+          ],
+          "served_model_verified": false,
+          "native_status": "geometry_passed_task_awaiting_quality_review",
+          "geometry_passed": true,
+          "native_task_id": "task_297ffa82-2035-49e7-b63e-98189ca6dd82",
+          "transport_error": null
+        },
+        {
+          "task": "local-edit",
+          "version": "baseline",
+          "requests": 1,
+          "corrections": 0,
+          "parameter_result": "unsupported",
+          "native_executed": false,
+          "usage": [
+            {
+              "input_tokens": 515,
+              "output_tokens": 464
+            }
+          ],
+          "served_model_verified": false,
+          "native_status": "not_executed",
+          "geometry_passed": false,
+          "native_task_id": null,
+          "transport_error": null
+        },
+        {
+          "task": "local-edit",
+          "version": "uplift",
+          "requests": 2,
+          "corrections": 1,
+          "parameter_result": "accepted",
+          "native_executed": true,
+          "usage": [
+            {
+              "input_tokens": 331,
+              "output_tokens": 3483
+            },
+            {
+              "input_tokens": 1094,
+              "output_tokens": 871
+            }
+          ],
+          "served_model_verified": false,
+          "native_status": "geometry_passed",
+          "geometry_passed": true,
+          "native_task_id": "task_c968fc13-efe0-48e7-aadb-ad3d01bad2cc",
+          "transport_error": null
+        },
+        {
+          "task": "readback",
+          "version": "baseline",
+          "requests": 1,
+          "corrections": 0,
+          "parameter_result": "unsupported",
+          "native_executed": false,
+          "usage": [
+            {
+              "input_tokens": 536,
+              "output_tokens": 402
+            }
+          ],
+          "served_model_verified": false,
+          "native_status": "not_executed",
+          "geometry_passed": false,
+          "native_task_id": null,
+          "transport_error": null
+        },
+        {
+          "task": "readback",
+          "version": "uplift",
+          "requests": 1,
+          "corrections": 0,
+          "parameter_result": "accepted",
+          "native_executed": true,
+          "usage": [
+            {
+              "input_tokens": 352,
+              "output_tokens": 4367
+            }
+          ],
+          "served_model_verified": false,
+          "native_status": "awaiting_input",
+          "geometry_passed": false,
+          "native_task_id": "task_dbda0906-5c88-48cd-88d1-47dc30bceff5",
+          "transport_error": null
+        }
+      ],
+      "limits": [
+        "Baseline generation timed out; not retried and not counted as a modeling failure.",
+        "Baseline edit/readback answers declined the supplied API surface; this is not proof every alternative workflow is impossible.",
+        "Uplift generation geometry passed but parent task awaits pre-existing Sweep_Closed layout review.",
+        "Uplift local editing passed after one model correction.",
+        "Uplift readback created its initial face but did not complete later stages because the same pre-existing layout QA gate left creation pending.",
+        "This is not an autonomous client benchmark or a measured general success-rate improvement."
+      ]
+    },
+    "usage": {
+      "source": "local Codex session telemetry",
+      "request_at": "2026-09-18T13:57:13.412Z",
+      "observed_through": "2026-09-18T14:22:40.008Z",
+      "tool_calls": {
+        "exec": 57,
+        "js": 8
+      },
+      "tool_call_count": 65,
+      "token_usage_delta": {
+        "input_tokens": 9387252,
+        "cached_input_tokens": 9155200,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 34503,
+        "reasoning_output_tokens": 8056,
+        "total_tokens": 9421755
+      },
+      "limits": [
+        "Cached input included; not billing cost.",
+        "Outer tool calls only; nested exec operations excluded.",
+        "Final reporting actions after this snapshot excluded."
+      ]
+    },
+    "limits": [
+      "Windows native acceptance not performed.",
+      "Capture remains bounded by vertex/context and complete revision limits; pagination is over an immutable server snapshot.",
+      "Dynamic program results, SketchUp custom attributes and versioned extension metadata are JSON-valued maps.",
+      "Mock splitting/pushpull remain partial; native behavior is the acceptance authority.",
+      "Transport-response loss was not injected; existing offline no-replay and native receipt replay evidence reused."
+    ]
+  }
 }

@@ -35,7 +35,14 @@ export function mockGeometrySnapshot(model,{targets=['model'],recursive=true,max
       if(def&&(recursive||!selected))walk(def.groups||[],def.instances||[],path,world,depth+1,reviewedRoot);
     }
   }
-  walk(model.groups,model.instances,[],identityMatrix(),0);
+  if(!(targets.length===1&&targets[0]==='model'&&!recursive))walk(model.groups,model.instances,[],identityMatrix(),0);
+  if(targets.includes('model')){
+    const root=model.root_geometry||{id:'root_geometry',name:'Model loose geometry',vertices:[],mesh_faces:[],faces:0,edges:0};
+    // Reuse the same topology materializer, with an isolated synthetic holder.
+    const start=contexts.length;
+    walk([root],[],[],identityMatrix(),0,'model');
+    if(contexts[start]){contexts[start].entity_path='model';contexts[start].review_root='model';}
+  }
   if(targets.some(t=>t!=='model'&&!contexts.some(c=>c.entity_path===t)))throw new Error('Geometry target not found');
   return {version:'model-geometry.v1',runtime:'mock',model_revision:mockGeometryRevision(model),complete:complete&&contexts.every(c=>c.complete),contexts,vertex_count:count,units:'mm'};
 }
@@ -44,7 +51,7 @@ export function editMockGeometry(model,operation){
   validateGeometryEdits(operation.edits);
   const target=operation.context_path||operation.entity_path;
   const before=mockGeometrySnapshot(model,{targets:[target],recursive:false}).contexts[0];
-  const resolved=findModelObject(model,{entity_path:target,instance_policy:'make_unique'},true),item=resolved.item;
+  const item=target==='model'?(model.root_geometry||={id:'root_geometry',name:'Model loose geometry',vertices:[],mesh_faces:[],faces:0,edges:0}):findModelObject(model,{entity_path:target,instance_policy:'make_unique'},true).item;
   if(!item.vertices||!item.mesh_faces)throw new Error('Mock topology edits require an explicit mesh');
   for(const edit of operation.edits){
     const world=edit.coordinate_space==='world',inverse=inverseMatrix(before.transform);

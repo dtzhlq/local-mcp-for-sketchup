@@ -38,27 +38,35 @@
 
 最终交付目录：`out/modeling-uplift/`。
 
-- 插件：`alma-sketchup-mcp-0.3.0-nonrelease-uplift-20260918.rbz`。
-- 服务：`nonrelease-uplift-candidate-20260918-local-mcp-for-sketchup-0.3.0-darwin-arm64.tar.gz`。
-- 同目录早期 nonrelease 包仅是中间检查产物，以带 `uplift-candidate` 的服务包为准。
+- 插件：`alma-sketchup-mcp-0.3.0-nonrelease-uplift-complete-20260918.rbz`。
+- 服务：`nonrelease-uplift-complete-20260918-local-mcp-for-sketchup-0.3.0-darwin-arm64.tar.gz`。
+- 同目录早期 nonrelease 包仅是中间检查产物，以带 `uplift-complete` 的服务包为准。
 
 解压服务包后，MCP stdio 的 command 指向 `local-mcp-for-sketchup/node/bin/node`，args 指向 `local-mcp-for-sketchup/app/src/mcp-server.mjs`，使用绝对路径。可直接运行，不依赖系统 Python。RBZ 可由 SketchUp 扩展程序管理器安装；更新后完整退出并重启 SketchUp，再启动 Bridge。候选包未作官方签名，不修改客户端审批策略。
 
-本机解包验证入口位于 `out/modeling-uplift/verify-candidate/local-mcp-for-sketchup/`。当前用户已有客户端配置未自动改写；测试使用独立服务实例及专用 SKP。
+本机解包验证入口位于 `out/modeling-uplift/verify-complete/local-mcp-for-sketchup/`。当前用户已有客户端配置未自动改写；测试使用独立服务实例及专用 SKP。
 
 验收模型：`output/modeling-uplift/native/modeling-uplift.skp`。
 图片：同目录 overview.png、top.png、front.png。overview 为完整场景；front 是辅助近景，不能独立证明整个场景边界。
 
 ## 限制与后续
 
-- 跨模型收益未实测；Windows 原生验收未运行。
+- GLM 抽测结果单列于 followup-report.json，不能从少量任务推断普遍成功率；Windows 原生验收未运行。
 - mock 局部拓扑操作是部分实现，原生分面/推拉需 queue。
-- 新编辑入口要求组或组件上下文；模型根级散线散面可读取，尚不直接通过新工具编辑。
-- 单个超大上下文没有顶点分页；超预算时返回不完整状态，需缩小范围或提高预算。
-- 旧工具输出合同允许保留扩展字段，没有逐项枚举所有可选嵌套结果。有效材质赋值、边属性等编辑分支没有分别做原生样例验收。
+- 根级散线散面直接编辑已补齐；九类操作均有本轮原生证据。
+- 单个上下文支持冻结快照分页；仍受服务端捕获及模型版本预算限制。
+- 旧工具现有逐工具返回合同及共享嵌套类型；自定义属性、程序结果和能力扩展仍是 JSON 映射。双面材质及软边/平滑属性均已原生验证。
 - 未人为丢弃原生响应；不重放未知状态由离线检查覆盖，已提交回执的重取由原生检查覆盖。
 - 任意曲面倒角、NURBS、带孔/分支放样、通用约束求解和图像完整参数恢复仍在后续清单。
 
 本轮证据支持：以前难以表达的扫掠/放样可生成；已有旋转嵌套模型可准确局部修改；四个新工具提供了明确参数和可恢复流程。普通模型的实际任务成功率是否提高，需要后续跨模型抽测。
 
 实际工具调用、输入缓存/输出 token 及统计口径记录于验收报告 usage 字段；它是交付前的遥测快照，不是账单金额。验证触发的主要修正项共 8 类，详见报告。
+
+## 本轮收尾
+
+同一专用 SKP 内集中完成九类局部编辑、根级编辑、双面材质与软边/平滑回读、分页去重与完整性核验。根级实体解析体积为 12,000 mm³，原有组/组件分区未改变。所有变更集中完成后统一保存、关闭和重新打开，证据见 followup-report.json。
+
+GLM 通过已安装 Alma 的既有套餐代理调用，请求模型名 glm-5.3，代理不提供上游精确版本证明。旧版生成请求超时且没有重发；旧版另两题返回不支持。新版生成和局部编辑有原生几何证据，任务状态及第三题分别记录，不能把参数生成成功等同整个 Agent 流程完成。
+
+补充截图 `native/followup/overview.png` 为辅助视图，边缘有裁切，不作为全场景边界证明；本轮完整性以原生拓扑、属性和重开核验报告为准。

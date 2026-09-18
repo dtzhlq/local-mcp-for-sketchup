@@ -58,7 +58,7 @@ module AlmaSketchupMCP
     roots = params['targets'] || ['model']
     limit = Integer(params['max_vertices'] || 10_000)
     context_limit = Integer(params['max_contexts'] || 256)
-    raise 'Invalid geometry query budget' unless limit.between?(1, 100_000) && context_limit.between?(1, 2000) && roots.is_a?(Array) && roots.length.between?(1, 32)
+    raise 'Invalid geometry query budget' unless limit.between?(1, 2_000_000) && context_limit.between?(1, 2000) && roots.is_a?(Array) && roots.length.between?(1, 32)
     result = []; seen = {}; total = 0; truncated = false
     walk = lambda do |entities, paths, transform, instance, depth|
       key = paths.empty? ? 'model' : "pid:#{paths.map(&:persistent_id).join('.')}"
@@ -142,12 +142,12 @@ module AlmaSketchupMCP
     reviewed_root = operation.fetch('entity_path')
     original_path = operation['context_path'] || reviewed_root
     raise 'Geometry context escapes reviewed root' unless original_path == reviewed_root || original_path.start_with?(reviewed_root + '.')
-    source_path = model.instance_path_from_pid_path(original_path.delete_prefix('pid:'))
-    raise 'Geometry context not found' unless source_path&.valid? && source_path.to_a.last.respond_to?(:definition)
-    source_entities = source_path.to_a.last.definition.entities
+    source_path = original_path == 'model' ? nil : model.instance_path_from_pid_path(original_path.delete_prefix('pid:'))
+    raise 'Geometry context not found' unless original_path == 'model' || (source_path&.valid? && source_path.to_a.last.respond_to?(:definition))
+    source_entities = original_path == 'model' ? model.entities : source_path.to_a.last.definition.entities
     originals = source_entities.grep(Sketchup::Edge) + source_entities.grep(Sketchup::Face) + source_entities.grep(Sketchup::Edge).flat_map(&:vertices).uniq
     signatures = originals.to_h { |e| [geometry_handle(e), geometry_signature(e)] }
-    paths, entities = geometry_isolate_path(model, original_path)
+    paths, entities = original_path == 'model' ? [[], model.entities] : geometry_isolate_path(model, original_path)
     current = entities.grep(Sketchup::Edge) + entities.grep(Sketchup::Face) + entities.grep(Sketchup::Edge).flat_map(&:vertices).uniq
     index = current.group_by { |e| geometry_signature(e) }
     mapped = signatures.to_h do |handle, signature|
@@ -155,11 +155,12 @@ module AlmaSketchupMCP
       raise "Ambiguous topology mapping: #{handle}" unless matches.length == 1
       [handle, matches.first]
     end
-    world = Sketchup::InstancePath.new(paths).transformation
+    world = paths.empty? ? Geom::Transformation.new : Sketchup::InstancePath.new(paths).transformation
     inverse = world.inverse
     resolve = lambda do |handle|
       entity = mapped[handle]
       raise "Stale or unknown topology handle: #{handle}" unless entity&.valid?
+      assert_reference_entity_access!(entity, 'edit_geometry') unless entity.is_a?(Sketchup::Vertex)
       entity
     end
     point = lambda do |value, space|
@@ -225,7 +226,7 @@ module AlmaSketchupMCP
     end
     after_entities = entities.grep(Sketchup::Edge) + entities.grep(Sketchup::Face) + entities.grep(Sketchup::Edge).flat_map(&:vertices).uniq
     new_entities = after_entities.reject { |e| current.include?(e) }.map { |e| geometry_handle(e) }
-    after_path = "pid:#{paths.map(&:persistent_id).join('.')}"
+    after_path = paths.empty? ? 'model' : "pid:#{paths.map(&:persistent_id).join('.')}"
     @geometry_edit_results ||= []
     @geometry_edit_results << { 'entity_path_before' => original_path, 'entity_path_after' => after_path, 'entities' => mapped.transform_values { |e| e.valid? ? geometry_handle(e) : nil }, 'created_entities' => new_entities, 'edits' => edit_results }
   end
