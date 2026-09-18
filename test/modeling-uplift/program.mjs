@@ -11,6 +11,8 @@ const bridge=new SketchUpBridge({approval:{stateDir:path.join(root,'approvals')}
 assert.deepEqual(compileModelProgramSource('const ops=[]; for(let i=0;i<3;i++){ops.push(i+parameters.offset);} ({operations:ops});',{bindings:{parameters:{offset:2}}}),{operations:[2,3,4]});
 assert.throws(()=>compileModelProgramSource('snapshot.contexts.push(1); ({operations:[]});',{bindings:{snapshot:{contexts:[]}}}));
 assert.deepEqual(compileModelProgramSource('({found:[1,2,3].find(x=>x>1), all:[1,2].every(x=>x>0), any:[0,1].some(x=>x===1)})'),{found:2,all:true,any:true});
+assert.deepEqual(compileModelProgramSource('({first:"ababa".indexOf("ba"), later:"ababa".indexOf("ba",2), absent:"ababa".indexOf("z")})'),{first:1,later:3,absent:-1});
+assert.throws(()=>compileModelProgramSource('"x".indexOf({});'));
 const args={idempotency_key:'program-1',stages:[{kind:'create',code:'({operations:[{op:"mesh",name:"test",vertices:[[0,0,0],[100,0,0],[0,100,0]],faces:[[0,1,2]]}],result:{created:"test"}});'},{kind:'edit',code:'({entity_path:snapshot.contexts[0].entity_path,edits:[{op:"move_vertices",moves:[{handle:snapshot.contexts[0].vertices[0].handle,delta:[0,0,10]}]}],result:previous});'}]};
 const result=await bridge.run_model_program(args);assert.equal(result.ok,true,JSON.stringify(result));
 assert.equal(result.task_state,'awaiting_input',JSON.stringify(result));
@@ -18,4 +20,4 @@ const task=await bridge.taskStore.getTask(result.task_id,{includePrivate:true});
 const replay=await bridge.run_model_program(args);assert.equal(replay.task_id,result.task_id);
 assert.equal((await bridge.mockRuntime.readModel()).groups.length,1);
 await assert.rejects(()=>bridge.run_model_program({...args,stages:[...args.stages,args.stages[0],args.stages[0]],idempotency_key:'too-long'}).then(r=>{if(!r.ok)throw new Error(r.error.message);}),/1..3/);
-console.log(JSON.stringify({ok:true,group:'program-recovery',checks:8,task_id:result.task_id}));
+console.log(JSON.stringify({ok:true,group:'program-recovery',checks:10,task_id:result.task_id}));

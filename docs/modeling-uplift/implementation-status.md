@@ -39,8 +39,8 @@
 最终交付目录：`out/modeling-uplift/`。
 
 - 插件：`alma-sketchup-mcp-0.3.0-nonrelease-uplift-complete-20260918.rbz`。
-- 服务：`nonrelease-uplift-complete-20260918-local-mcp-for-sketchup-0.3.0-darwin-arm64.tar.gz`。
-- 同目录早期 nonrelease 包仅是中间检查产物，以带 `uplift-complete` 的服务包为准。
+- 服务：`nonrelease-uplift-qa-fixed-20260918-local-mcp-for-sketchup-0.3.0-darwin-arm64.tar.gz`。
+- 同目录早期 nonrelease 包仅是中间检查产物，以带 `uplift-qa-fixed` 的服务包为准。
 
 解压服务包后，MCP stdio 的 command 指向 `local-mcp-for-sketchup/node/bin/node`，args 指向 `local-mcp-for-sketchup/app/src/mcp-server.mjs`，使用绝对路径。可直接运行，不依赖系统 Python。RBZ 可由 SketchUp 扩展程序管理器安装；更新后完整退出并重启 SketchUp，再启动 Bridge。候选包未作官方签名，不修改客户端审批策略。
 
@@ -70,3 +70,13 @@
 GLM 通过已安装 Alma 的既有套餐代理调用，请求模型名 glm-5.3，代理不提供上游精确版本证明。旧版生成请求超时且没有重发；旧版另两题返回不支持。新版生成和局部编辑有原生几何证据，任务状态及第三题分别记录，不能把参数生成成功等同整个 Agent 流程完成。
 
 补充截图 `native/followup/overview.png` 为辅助视图，边缘有裁切，不作为全场景边界证明；本轮完整性以原生拓扑、属性和重开核验报告为准。
+
+## GLM 问题定位及修复
+
+结论与机器证据见 qa-resolution-report.json。此前 GPT6 的成功任务早于 Sweep_Closed 加入模型；后来的 GLM 任务被该旧悬空警告阻断，不能归因为 GLM 的阶段能力不足。对应 GPT5.6 同条件记录未找到。
+
+创建入口现于执行前由服务端捕获警告及完整几何，执行后比较原有上下文。只有未改变且无歧义的既有局部警告变成 background_issues；新问题、碰撞、错误、明确要求和证据缺失仍保守拦截。审批策略未改变。解释器增加只读 String.indexOf，限制参数为字符串和可选有限数值位置。
+
+原生对照三阶段已一次完成。GLM 用一次修正解决 contexts 引用错误；创建阶段通过后遇到 indexOf 缺口。补齐解释器后，原样执行其剩余两阶段，真实分面后仅右半面推拉 25 mm，左半面及其他几何不变。没有重放创建，原失败任务保留，不能表述为 GLM 单次无中断成功。
+
+本次针对性检查：15 项 QA 范围用例、10 项程序检查、Expert 及 MCP 检查通过。新服务包 139 个源码文件逐字节一致；Ruby 未变，沿用原 RBZ。没有重跑已通过的全量模型矩阵。

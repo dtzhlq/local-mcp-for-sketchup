@@ -68,3 +68,11 @@ node src/cli.mjs run_model_program --input-file examples/modeling-uplift/generat
 ## 返回合同
 
 旧工具各自的合同集中于 `src/tool-output-contracts.mjs`，由唯一工具注册表引用。模型快照、实体、文件回执、编译结果、任务信封、QA 和审批计划使用共享字段定义；成功、阻塞及可选返回字段保留兼容。任意程序 result/data、SketchUp 自定义属性与版本化能力扩展使用明确的 JSON 扩展映射。MCP 对实际序列化后的 JSON 进行校验，出错会给出工具名和字段路径。
+
+## 既有警告与程序恢复
+
+创建回执中的 `qa.background_issues` 保留服务端证明未受影响的既有局部警告，`scope_evidence` 说明依据。它不替代模型整体健康检查；没有完整执行前证据的旧任务不会自动放行。
+
+程序绑定为 `snapshot.contexts`，不存在裸 `contexts` 变量。Expert 支持只读 `string.indexOf(search, position?)`，search 为字符串，position 为有限数值。它仍是受限解释器，不代表支持全部 JavaScript API。
+
+程序已提交前序阶段后发生编译失败时，先检查任务日志的 committed_stages 和真实模型。失败任务不会自动复活；可对已确认的模型状态提交剩余阶段的新请求。不得重新提交包含创建阶段的整份程序造成重复对象。

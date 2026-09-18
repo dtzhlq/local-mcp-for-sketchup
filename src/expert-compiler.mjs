@@ -716,6 +716,10 @@ function getMember(object, property, node) {
     throw new ExpertCompileError(`Unsupported array property: ${property}`, node);
   }
   if (typeof object === 'string') {
+    if (property === 'indexOf') return native('String.indexOf', (search, position = 0) => {
+      if (typeof search !== 'string' || typeof position !== 'number' || !Number.isFinite(position)) throw new ExpertCompileError('String.indexOf requires a string and optional finite position', node);
+      return object.indexOf(search, position);
+    });
     if (property === 'length') return object.length;
     if (Number.isInteger(Number(property))) return object[Number(property)];
     throw new ExpertCompileError(`Unsupported string property: ${property}`, node);

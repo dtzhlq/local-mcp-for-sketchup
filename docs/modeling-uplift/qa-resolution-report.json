@@ -1,0 +1,338 @@
+{
+  "kind": "modeling-uplift-qa-resolution.v1",
+  "generated_at": "2026-09-18T14:59:46.134979+00:00",
+  "release_acceptance": false,
+  "diagnosis": {
+    "mcp_qa_scope": "Whole-model existing Sweep_Closed warning blocked unrelated creation and the next program stage.",
+    "gpt6_control_at": "2026-09-18T05:25:59.773Z",
+    "gpt6_task": "task_40f955f3-404a-4cad-a806-71d58c54604d",
+    "glm_blocked_at": "2026-09-18T14:18:39.840Z",
+    "glm_blocked_task": "task_dbda0906-5c88-48cd-88d1-47dc30bceff5",
+    "comparison_limit": "GPT6 earlier scene did not contain Sweep_Closed; GPT5.6 matching record not found.",
+    "glm_code_error": "undefined contexts; corrected once to snapshot.contexts",
+    "mcp_interpreter_gap": "String.indexOf unsupported; deterministic read-only method added with primitive argument validation"
+  },
+  "fix": {
+    "baseline": "server-captured precreation QA and complete native geometry",
+    "background_only": "identical pre-existing local warn, all preexisting contexts unchanged, unambiguous name, same document and committed revision",
+    "fail_closed": [
+      "explicit requirements",
+      "new warnings",
+      "errors",
+      "collisions",
+      "missing or incomplete evidence",
+      "changed existing geometry",
+      "duplicate names"
+    ],
+    "approval_unchanged": true,
+    "old_tasks_not_migrated": true
+  },
+  "offline": {
+    "qa_scope_cases": 15,
+    "program_checks": 10,
+    "expert_compiler": "passed",
+    "mcp_integration": "passed_before_indexOf_addition_unaffected_contract"
+  },
+  "native": {
+    "control": {
+      "ok": true,
+      "source": "deterministic control program",
+      "task_id": "task_06eb5c00-e1ba-4152-8106-68d47ab8713d",
+      "completed_stages": 3,
+      "native_top_height_mm": 25,
+      "left_half_unchanged": true,
+      "all_preexisting_geometry_unchanged": true,
+      "background_warning_retained": true,
+      "scope_evidence": {
+        "version": "creation-qa-scope.v1",
+        "baseline_available": true,
+        "reason": "unchanged_pre_existing_local_warnings",
+        "background_count": 1,
+        "baseline_revision": "sha256:ac692b4ef3c50e8c430ba8728bd07ec37b0ef1231c3f6cfdbc3ef3d6e61b3ba0",
+        "current_revision": "sha256:91191f9d025408fd4f6fa2aaabec69efff8dfd2962689163d72119527c1fe908"
+      },
+      "result": {
+        "contract_version": "agent-contract.v1",
+        "kind": "agent_result_envelope",
+        "ok": true,
+        "task_id": "task_06eb5c00-e1ba-4152-8106-68d47ab8713d",
+        "task_state": "completed",
+        "task_version": 13,
+        "retryable": false,
+        "idempotent_replay": false,
+        "result": {
+          "kind": "model_program",
+          "full_result_artifact": "artifact:task_06eb5c00-e1ba-4152-8106-68d47ab8713d:2aff30e1-c664-4428-bd3d-51eaf6450b46",
+          "source_hash": "sha256:43be67847e4fabbf13c964edc6ad4525f2bb0c338bc6589a957eb0fbf8861518"
+        },
+        "data": {
+          "kind": "model_program",
+          "full_result_artifact": "artifact:task_06eb5c00-e1ba-4152-8106-68d47ab8713d:2aff30e1-c664-4428-bd3d-51eaf6450b46",
+          "source_hash": "sha256:43be67847e4fabbf13c964edc6ad4525f2bb0c338bc6589a957eb0fbf8861518"
+        },
+        "warnings": [],
+        "error": null,
+        "next_action": null,
+        "artifacts": [
+          {
+            "handle": "artifact:task_06eb5c00-e1ba-4152-8106-68d47ab8713d:2aff30e1-c664-4428-bd3d-51eaf6450b46",
+            "kind": "json",
+            "media_type": "application/json",
+            "label": "agent-response-projection-7d626df94bed33c7.json",
+            "size_bytes": 2588,
+            "created_at": "2026-09-18T14:55:25.086Z"
+          }
+        ],
+        "presentation": {
+          "policy_version": "agent-response-policy.v1",
+          "interface_level": "guided",
+          "context": "short",
+          "max_chars": 4096,
+          "local_files": false,
+          "vision": false,
+          "structured_output": true,
+          "serialization": "json_envelope",
+          "client_structured_output_required": false,
+          "parallel": false,
+          "max_in_flight_per_task": 1,
+          "projected": true,
+          "full_result_artifact": "artifact:task_06eb5c00-e1ba-4152-8106-68d47ab8713d:2aff30e1-c664-4428-bd3d-51eaf6450b46",
+          "omitted_local_paths": 0,
+          "omitted_visual_payloads": 0
+        }
+      }
+    },
+    "glm": {
+      "first_task_id": "task_9b0303f9-ffaa-486c-bfb1-ac42847f9f6d",
+      "creation_child_task_id": "task_84c76288-b771-4547-b41e-813e0a93d607",
+      "creation_completed": true,
+      "creation_scope_evidence": {
+        "version": "creation-qa-scope.v1",
+        "baseline_available": true,
+        "reason": "unchanged_pre_existing_local_warnings",
+        "background_count": 1,
+        "baseline_revision": "sha256:b01eb0b33138f351fe1dc18c32da6696c16192bf2655d865557841a53deff530",
+        "current_revision": "sha256:300414a9df55f920997f7cc5af855cf879b0807ea9aa1a8676cc8f29c00c5cd2"
+      },
+      "failure": "indexOf compilation error before stage 2 mutation",
+      "remaining_stages": {
+        "ok": true,
+        "source": "unmodified GLM corrected stages",
+        "task_id": "task_9b3347a1-5650-4786-9312-547e032faef9",
+        "completed_stages": 2,
+        "prior_committed_stages": 1,
+        "native_top_height_mm": 25,
+        "left_half_unchanged": true,
+        "all_preexisting_geometry_unchanged": true,
+        "background_warning_retained": true,
+        "result": {
+          "contract_version": "agent-contract.v1",
+          "kind": "agent_result_envelope",
+          "ok": true,
+          "task_id": "task_9b3347a1-5650-4786-9312-547e032faef9",
+          "task_state": "completed",
+          "task_version": 9,
+          "retryable": false,
+          "idempotent_replay": false,
+          "result": {
+            "kind": "model_program",
+            "source_hash": "sha256:03aabe1d06f7bb0d9a5e05a72883477e1bcbb7aec348ae404f588e0ad4802e9d",
+            "stages": [
+              {
+                "snapshot_handle": "geometry:4bd2302d25b32f651c4ab7d5bda8eda25f3a098a031c0f6e5df0a74f65d9a4d5",
+                "model_revision": "sha256:300414a9df55f920997f7cc5af855cf879b0807ea9aa1a8676cc8f29c00c5cd2",
+                "output_hash": "sha256:eb4a397fc63d127979e4d41d94b763a1e047dbb8d2705678925993de45b1418b",
+                "idempotency_key": "task_9b3347a1-5650-4786-9312-547e032faef9:stage:0",
+                "child_task_id": "task_1ff1a7d1-f41f-4ba0-98b4-b833c0913fa6",
+                "readback_handle": "geometry:b20740c83a411f75d6925f668c3782e18aa3c7c80a2f916faec770f86967c72e",
+                "model_revision_after": "sha256:90fe0c0af15532d1a742db43464389b45335fc06cdea0b029838d1daa5b542c8",
+                "completed": true
+              },
+              {
+                "snapshot_handle": "geometry:b20740c83a411f75d6925f668c3782e18aa3c7c80a2f916faec770f86967c72e",
+                "model_revision": "sha256:90fe0c0af15532d1a742db43464389b45335fc06cdea0b029838d1daa5b542c8",
+                "output_hash": "sha256:1a12890731ad482e10183514e3a92c15b9aa6a0a5f396f2f44caf814fcb2a721",
+                "idempotency_key": "task_9b3347a1-5650-4786-9312-547e032faef9:stage:1",
+                "child_task_id": "task_c157832a-1e46-497b-b975-d622daf0807d",
+                "readback_handle": "geometry:bd1846a5809f0c8ad6459251f2b8a89473c98c090895032ab7244b5dc9191a24",
+                "model_revision_after": "sha256:41a8fd070ee73665ec2f99e7e2db818a72640d61e2917531abbd360a184e55f5",
+                "completed": true
+              }
+            ],
+            "result": {
+              "faces_total": 2,
+              "face_report": [
+                {
+                  "handle": "f:46083",
+                  "avg_x": 1215,
+                  "min_x": 1200,
+                  "max_x": 1230,
+                  "z": 0,
+                  "normal": [
+                    0,
+                    0,
+                    1
+                  ]
+                },
+                {
+                  "handle": "f:46089",
+                  "avg_x": 1245,
+                  "min_x": 1230,
+                  "max_x": 1260,
+                  "z": 0,
+                  "normal": [
+                    0,
+                    0,
+                    1
+                  ]
+                }
+              ],
+              "pushed_handles": [
+                "f:46089"
+              ],
+              "left_handles_untouched": [
+                "f:46083"
+              ],
+              "lift_mm": 25,
+              "left_z": 0
+            }
+          },
+          "data": {
+            "kind": "model_program",
+            "source_hash": "sha256:03aabe1d06f7bb0d9a5e05a72883477e1bcbb7aec348ae404f588e0ad4802e9d",
+            "stages": [
+              {
+                "snapshot_handle": "geometry:4bd2302d25b32f651c4ab7d5bda8eda25f3a098a031c0f6e5df0a74f65d9a4d5",
+                "model_revision": "sha256:300414a9df55f920997f7cc5af855cf879b0807ea9aa1a8676cc8f29c00c5cd2",
+                "output_hash": "sha256:eb4a397fc63d127979e4d41d94b763a1e047dbb8d2705678925993de45b1418b",
+                "idempotency_key": "task_9b3347a1-5650-4786-9312-547e032faef9:stage:0",
+                "child_task_id": "task_1ff1a7d1-f41f-4ba0-98b4-b833c0913fa6",
+                "readback_handle": "geometry:b20740c83a411f75d6925f668c3782e18aa3c7c80a2f916faec770f86967c72e",
+                "model_revision_after": "sha256:90fe0c0af15532d1a742db43464389b45335fc06cdea0b029838d1daa5b542c8",
+                "completed": true
+              },
+              {
+                "snapshot_handle": "geometry:b20740c83a411f75d6925f668c3782e18aa3c7c80a2f916faec770f86967c72e",
+                "model_revision": "sha256:90fe0c0af15532d1a742db43464389b45335fc06cdea0b029838d1daa5b542c8",
+                "output_hash": "sha256:1a12890731ad482e10183514e3a92c15b9aa6a0a5f396f2f44caf814fcb2a721",
+                "idempotency_key": "task_9b3347a1-5650-4786-9312-547e032faef9:stage:1",
+                "child_task_id": "task_c157832a-1e46-497b-b975-d622daf0807d",
+                "readback_handle": "geometry:bd1846a5809f0c8ad6459251f2b8a89473c98c090895032ab7244b5dc9191a24",
+                "model_revision_after": "sha256:41a8fd070ee73665ec2f99e7e2db818a72640d61e2917531abbd360a184e55f5",
+                "completed": true
+              }
+            ],
+            "result": {
+              "faces_total": 2,
+              "face_report": [
+                {
+                  "handle": "f:46083",
+                  "avg_x": 1215,
+                  "min_x": 1200,
+                  "max_x": 1230,
+                  "z": 0,
+                  "normal": [
+                    0,
+                    0,
+                    1
+                  ]
+                },
+                {
+                  "handle": "f:46089",
+                  "avg_x": 1245,
+                  "min_x": 1230,
+                  "max_x": 1260,
+                  "z": 0,
+                  "normal": [
+                    0,
+                    0,
+                    1
+                  ]
+                }
+              ],
+              "pushed_handles": [
+                "f:46089"
+              ],
+              "left_handles_untouched": [
+                "f:46083"
+              ],
+              "lift_mm": 25,
+              "left_z": 0
+            }
+          },
+          "warnings": [],
+          "error": null,
+          "next_action": null,
+          "artifacts": [],
+          "presentation": {
+            "policy_version": "agent-response-policy.v1",
+            "interface_level": "guided",
+            "context": "short",
+            "max_chars": 4096,
+            "local_files": false,
+            "vision": false,
+            "structured_output": true,
+            "serialization": "json_envelope",
+            "client_structured_output_required": false,
+            "parallel": false,
+            "max_in_flight_per_task": 1,
+            "projected": false,
+            "full_result_artifact": null,
+            "omitted_local_paths": 0,
+            "omitted_visual_payloads": 0
+          }
+        }
+      },
+      "all_three_stages_executed": true,
+      "single_uninterrupted_three_stage_glm_run": false,
+      "recovery": "Fresh two-stage request with unchanged GLM stage source, rebinds current native snapshot; stage 1 not replayed.",
+      "manual_code_changes": 0,
+      "glm_corrections": 1
+    },
+    "saved_model": "output/modeling-uplift/native/modeling-uplift.skp",
+    "saved_model_sha256": "6fc7c34acd1309dd923c7dbd7e631d865b56a8ef62b6e90b9006961824ddf93b"
+  },
+  "cross_model": {
+    "provider": "existing Alma subscription proxy",
+    "requested_model": "glm-5.3",
+    "served_model_verified": false,
+    "requests_this_followup": 1,
+    "proxy_reported_usage": {
+      "input_tokens": 1451,
+      "output_tokens": 1357
+    },
+    "limits": "Not a general model success-rate benchmark; translated fresh test copy; failed task retained."
+  },
+  "package": {
+    "ok": true,
+    "source_bytes_match": true,
+    "source_files": 139,
+    "package": {
+      "kind": "local_mcp_for_sketchup_service_bundle_preview",
+      "release_candidate": false,
+      "release_artifact": false,
+      "target": "darwin-arm64",
+      "version": "0.3.0",
+      "path": "/Users/07zhang/.codex/worktrees/modeling-api-uplift/sketchup-mcp-replica/out/modeling-uplift/nonrelease-uplift-qa-fixed-20260918-local-mcp-for-sketchup-0.3.0-darwin-arm64.tar.gz",
+      "file_name": "nonrelease-uplift-qa-fixed-20260918-local-mcp-for-sketchup-0.3.0-darwin-arm64.tar.gz",
+      "media_type": "application/gzip",
+      "sha256": "9252f9245fff288816a328342001f660ee8fd22ebfa102b1c0e46ef1d453bfc4",
+      "size_bytes": 53865188,
+      "bundled_node": {
+        "version": "24.18.0",
+        "upstream_sha256": "e1a97e14c99c803e96c7339403282ea05a499c32f8d83defe9ef5ec66f979ed1"
+      },
+      "dependency_count": 15,
+      "native_dependencies_verified": true,
+      "live_sketchup_verified": false,
+      "release_acceptance": false
+    }
+  },
+  "reused_plugin": "out/modeling-uplift/alma-sketchup-mcp-0.3.0-nonrelease-uplift-complete-20260918.rbz",
+  "limits": [
+    "Windows native verification not performed",
+    "No automatic revival of failed program tasks; remaining stages submitted explicitly",
+    "No universal cross-model benefit claim",
+    "Previous full geometry and persistence evidence reused; this Node-only fix did not reinstall/restart SketchUp"
+  ]
+}

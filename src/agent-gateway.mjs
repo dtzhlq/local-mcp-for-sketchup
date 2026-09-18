@@ -1,3 +1,4 @@
+import {captureCreationQaBaseline,applyCreationQaScope} from './creation-qa-scope.mjs';
 import { continueModelProgram } from './model-program.mjs';
 import { prepareImageStructure, prepareImageModelCreation, approveImageModelCreation, assertFrozenImageCreation } from './image-structure.mjs';
 import { narrowDetailLayoutQa } from './detail-collision-review.mjs';
@@ -2456,7 +2457,7 @@ export class AgentGateway {
       throw new AgentContractError('HANDSHAKE_REQUIRED', 'A fresh queue handshake is required before Agent Gateway live model creation.');
     }
     if (hasPreviousBuild && Object.keys(prepared.identity_map || {}).some(id => previous.identity_map?.[id])) throw new AgentContractError('INVALID_ARGUMENT', 'An existing logical part requires reviewed editing; refinement cannot allocate a duplicate replacement.');
-    const creation = { ...previous, runtime, frozen_spec: frozenSpec, layout_spec: previous?.layout_spec || inputs.spec || {}, layout_spec_hash: previous?.layout_spec_hash || sha256Canonical(inputs.spec || {}), rounds: previous?.rounds || [], identity_map: { ...previous?.identity_map, ...prepared.identity_map }, material_map: { ...previous?.material_map, ...prepared.material_map }, ...(prepared.host_provisioning ? { host_provisioning: prepared.host_provisioning } : {}), round: { source_hash: sourceHash, phase: 'executing', iteration, refinement_part_ids: refinementParts } };
+    let creation = { ...previous, runtime, frozen_spec: frozenSpec, layout_spec: previous?.layout_spec || inputs.spec || {}, layout_spec_hash: previous?.layout_spec_hash || sha256Canonical(inputs.spec || {}), rounds: previous?.rounds || [], identity_map: { ...previous?.identity_map, ...prepared.identity_map }, material_map: { ...previous?.material_map, ...prepared.material_map }, ...(prepared.host_provisioning ? { host_provisioning: prepared.host_provisioning } : {}), round: { source_hash: sourceHash, phase: 'executing', iteration, refinement_part_ids: refinementParts } };
     task = await this.taskStore.update(task.task_id, { private: { ...task.private, creation } });
     const built = await this.bridge.withAgentGatewayExecution({ taskId: task.task_id, intent: task.intent }, (gatewayBridge) => gatewayBridge.withLiveMutationAuthorization({
       runtime,
@@ -2464,6 +2465,11 @@ export class AgentGateway {
       session_contract: inputs.session_contract,
       operation: 'build_model'
     }, async (authorizedBridge) => {
+      if(!creation.qa_baseline){
+        const qa_baseline=await captureCreationQaBaseline(authorizedBridge,runtime,creation.layout_spec,boundedQueueTimeoutMs(inputs.timeout_ms,120_000));
+        creation={...creation,qa_baseline};
+        task=await this.taskStore.update(task.task_id,{private:{...task.private,creation}});
+      }
       task = await this.taskStore.transition(task.task_id, 'executing', {
         reason: 'safe_dsl_build_started',
         patch: { last_error: null, next_action: { action: 'continue_server_work' } }
@@ -2587,7 +2593,7 @@ export class AgentGateway {
     const snapshot = creation.round.snapshot;
     let qa = await this.bridge.validate_model({ snapshot, runtime: creation.runtime, spec: creation.layout_spec, includePreview: task.inputs.include_preview !== false });
     const collisionReview = await narrowDetailLayoutQa({ bridge: this.bridge, snapshot, qa, runtime: creation.runtime, timeoutMs: boundedQueueTimeoutMs(task.inputs.timeout_ms, 120_000) });
-    qa = collisionReview.qa;
+    qa = await applyCreationQaScope(this.bridge,collisionReview.qa,creation,snapshot,boundedQueueTimeoutMs(task.inputs.timeout_ms,120_000));
     creation = { ...creation, round: { ...creation.round, collision_review: collisionReview.evidence } };
     task = await this.taskStore.update(task.task_id, { private: { ...task.private, creation } });
     let captures = creation.round.captures || [];
