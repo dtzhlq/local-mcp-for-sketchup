@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';import fs from 'node:fs/promises';import Ajv from 'ajv';
+import {computeCadShape,validateCadRecipe} from '../../src/cad-kernel.mjs';import {CAD_RECIPE_SCHEMA} from '../../src/cad-contract.mjs';import {compilePythonSdkScript} from '../../src/python-sdk-compiler.mjs';import {GEOMETRY_EDIT_SCHEMA} from '../../src/model-geometry-contract.mjs';
+const read=async name=>JSON.parse(await fs.readFile('examples/cad-kernel/'+name+'.json'));
+const solid=await read('nurbs-solid'),rounded=await read('nurbs-solid-fillet'),invalid=await read('nurbs-solid-rejected-fillet');
+const validate=new Ajv({strict:false}).compile(CAD_RECIPE_SCHEMA);for(const op of [solid,rounded,invalid])assert.ok(validate(op.recipe),JSON.stringify(validate.errors));
+const body=computeCadShape(solid),fillet=computeCadShape(rounded);assert.ok(Math.abs(body.cad.evidence.volume_mm3-128000)<0.01);assert.ok(fillet.cad.evidence.volume_mm3<body.cad.evidence.volume_mm3);assert.ok(fillet.cad.evidence.valid);
+assert.equal(fillet.cad_faces.length,fillet.faces.length);assert.ok(fillet.cad_faces.every(Number.isInteger));
+await assert.rejects(async()=>computeCadShape(invalid),/CAD topology is invalid/);
+const open=structuredClone(solid);open.recipe.nodes.at(-1).inputs.pop();assert.throws(()=>computeCadShape(open),/open shell/);
+const budget={recipe:{version:1,nodes:[{id:'box',kind:'box',min:[0,0,0],max:[1e6,1e6,1e6]}],output:'box'}};assert.throws(()=>computeCadShape(budget),/complexity budget/);
+const invalidRef=structuredClone(solid.recipe);invalidRef.nodes.at(-1).inputs[0]='missing';assert.throws(()=>validateCadRecipe(invalidRef),/prior faces/);
+const sdk=compilePythonSdkScript('model.cad_shape(parameters["shape"])',{bindings:{parameters:{shape:solid}}});assert.equal(sdk.document.operations[0].op,'cad_shape');
+const edit=new Ajv({strict:false}).compile(GEOMETRY_EDIT_SCHEMA);assert.ok(edit({op:'replace_cad',recipe:rounded.recipe}));assert.equal(edit({op:'replace_cad',recipe:rounded.recipe,mesh:{}}),false);
+console.log(JSON.stringify({ok:true,sewn_nurbs_solid_analytic_volume_mm3:128000,nurbs_curved_boundary_fillet:true,known_four_edge_junction_rejected:true,open_shell_rejected:true,complexity_budget:true,public_schema_rejects_internal_mesh:true,python_sdk:true,mesh_face_mapping:true}));

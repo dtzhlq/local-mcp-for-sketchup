@@ -68,6 +68,7 @@ module AlmaSketchupMCP
         end
         face = (builder || group.entities).add_face(face_points)
         raise "Failed to create face #{face_index} for #{name}" unless face
+        face.set_attribute('AlmaSketchupMCP', 'cad_face', operation['cad_faces'][face_index]) if operation['cad_faces']
         # Entities may orient ground-plane faces downwards, while the bulk
         # builder preserves winding. Honor the input loop in both paths.
         winding = [0.0, 0.0, 0.0]
@@ -106,6 +107,10 @@ module AlmaSketchupMCP
       end
     end
     soften_edges(group, operation['smooth'])
+    if operation['cad']
+      group.set_attribute('AlmaSketchupMCP', 'cad_source', JSON.generate(operation['cad']))
+      group.set_attribute('AlmaSketchupMCP', 'cad_geometry_digest', cad_geometry_digest(group.entities))
+    end
     apply_transform(group, operation)
     group
   end

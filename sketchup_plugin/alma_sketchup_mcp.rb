@@ -2469,6 +2469,12 @@ module AlmaSketchupMCP
     return unless mode
 
     group.entities.grep(Sketchup::Edge).each do |edge|
+      if mode == 'cad'
+        faces = edge.faces
+        next unless faces.length == 2
+        ids = faces.map { |face| face.get_attribute('AlmaSketchupMCP', 'cad_face') }
+        next unless !ids.first.nil? && ids.first == ids.last
+      end
       if mode == 'coplanar'
         faces = edge.faces
         next unless faces.length == 2

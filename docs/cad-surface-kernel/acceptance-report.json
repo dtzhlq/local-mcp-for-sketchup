@@ -1,0 +1,112 @@
+{
+  "schema": "cad-surface-acceptance.v1",
+  "date": "2026-09-18",
+  "branch": "codex/cad-surface-kernel",
+  "base_commit": "d895706",
+  "status": "implemented_native_persistence_recheck_blocked",
+  "release_acceptance": false,
+  "top_level_tool_count": 48,
+  "operations": [
+    "cad_shape",
+    "replace_cad"
+  ],
+  "platform": "macOS Apple Silicon / SketchUp 2026",
+  "offline": {
+    "cad_kernel_core": "passed",
+    "nurbs_sewing_and_fillets": "passed",
+    "program_regression": "passed (10 checks)",
+    "mcp_contract_and_routes": "passed",
+    "local_only_replacement_schema": "passed",
+    "ruby_syntax": "passed",
+    "fingerprint_regression": "passed (2 tests, 4 assertions)",
+    "native_snapshot_fingerprint_regression": "passed"
+  },
+  "native": {
+    "three_stage_program": "passed",
+    "rational_nurbs_analytic_radius": "passed",
+    "parameter_updates": "passed",
+    "curved_cylinder_intersection_fillet": "passed",
+    "sewn_nurbs_solid_curved_edge_fillet": "passed",
+    "invalid_radius_rejection_preserves_model": "passed",
+    "stale_parameter_source_rejection": "passed",
+    "unrelated_geometry_preserved": "passed",
+    "initial_save_close_reopen": "failed: floating-point face-normal drift incorrectly invalidated parameter association",
+    "fingerprint_fix": "v2 rounds normals to 9 decimals; real saved snapshots and actual geometry changes checked offline",
+    "fixture_repair": "Three valid CAD objects received verified v2 metadata only; geometry was unchanged. Deliberately edited control remains stale. Saved to the same dedicated SKP.",
+    "fixed_native_save_reopen": "pending: Mac locked; updated plugin installed on disk but not yet reloaded",
+    "remaining_action": "Unlock Mac, fully restart SketchUp, reopen dedicated SKP, start Bridge, confirm capabilities and run qa-cad-surface-native.mjs persistence. Do not rebuild the scene."
+  },
+  "metrics": {
+    "geometry-checks": {
+      "ok": true,
+      "nurbs_radius_mm": 30,
+      "nurbs_updated_height_mm": 60,
+      "fillet_updated_radius_mm": 4,
+      "closed_native_manifold": true,
+      "native_volume_mm3": 336998.8247798222,
+      "exact_cad_volume_mm3": 337905.5230088566,
+      "relative_volume_error": 0.0026832891660388825,
+      "impossible_radius_preserves_model": true
+    },
+    "nurbs-solid-checks": {
+      "ok": true,
+      "nurbs_patches": 6,
+      "sewn_closed_solid": true,
+      "curved_edges": [
+        6,
+        9
+      ],
+      "fillet_radius_mm": 3,
+      "native_volume_mm3": 127547.32428455925,
+      "exact_cad_volume_mm3": 127709.20359976288,
+      "relative_volume_error": 0.0012675618564732538,
+      "unrelated_geometry_unchanged": true
+    },
+    "stale-checks": {
+      "ok": true,
+      "source_invalidated": true,
+      "stale_regeneration_rejected": true,
+      "unrelated_geometry_unchanged": true
+    }
+  },
+  "packages": {
+    "service_source_files_matched": 142,
+    "plugin_source_files_matched": 32,
+    "artifacts": [
+      {
+        "path": "out/cad-surface-kernel/nonrelease-cad-surfaces-local-20260918-local-mcp-for-sketchup-0.3.0-darwin-arm64.tar.gz",
+        "sha256": "a66f2b6336e4ffba24e8a8dcdc3f3d19a5959dfe8494a33f62788bc8d557ae79",
+        "size_bytes": 70970030
+      },
+      {
+        "path": "out/cad-surface-kernel/alma-sketchup-mcp-0.3.0-nonrelease-cad-surfaces-fixed-20260918.rbz",
+        "sha256": "faac64ae9e448493580038f15707b4ddc841f6517ac90fc1c4d2db87605139ff",
+        "size_bytes": 145116
+      }
+    ]
+  },
+  "packaged_kernel_smoke_check": "passed using bundled Node and OpenCascade WASM",
+  "evidence": {
+    "skp": "output/cad-surface-kernel/native/cad-surfaces.skp",
+    "screenshot": "output/cad-surface-kernel/native/overview.png",
+    "program": "output/cad-surface-kernel/native/program.json",
+    "before_reopen": "output/cad-surface-kernel/native/before-reopen.json",
+    "after_initial_reopen": "output/cad-surface-kernel/native/after-reopen.json",
+    "fingerprint_regression": "output/cad-kernel-probe/fingerprint-regression.json",
+    "fingerprint_rebinding": "output/cad-surface-kernel/native/fingerprint-rebinding.json",
+    "service_packaging": "output/cad-kernel-probe/service-package-current.log"
+  },
+  "limitations": [
+    "Arbitrary surface/radius/corner combinations are not guaranteed. Four-edge NURBS roof corner case is rejected as invalid; two curved roof edges succeed.",
+    "Rectangular clamped nonperiodic NURBS patches; no arbitrary trimming or periodic control grids.",
+    "No reconstruction of arbitrary historical meshes into NURBS.",
+    "SketchUp stores tessellated faces and persistent recipe parameters, not native NURBS geometry.",
+    "No STEP import/export or variable-radius fillets.",
+    "No Windows or cross-model verification in this increment.",
+    "WASM subprocess has a timeout and geometry budgets, not a certified hard memory cap."
+  ],
+  "usage": {
+    "billing_tokens": null,
+    "reason": "No complete per-task billing usage supplied by runtime. Test results reused; no full unrelated suite or model matrix rerun."
+  }
+}

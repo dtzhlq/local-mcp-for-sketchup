@@ -29,7 +29,7 @@ export function mockGeometrySnapshot(model,{targets=['model'],recursive=true,max
           return {handle:h,loops:[{outer:true,vertices:loop.map(j=>`v:${j}`)}],world_normal:worldNormal,normal,area_mm2:triangles.reduce((s,t)=>s+Math.hypot(...cross(subtract(t[1],t[0]),subtract(t[2],t[0])))/2,0),triangles,material:item.material};
         });
         const edges=[...edgeMap.values()];edges.forEach(e=>{const vs=e.vertices.map(h=>vertices[Number(h.slice(2))]);vs.forEach(v=>v.edges.push(e.handle));e.length_mm=Math.hypot(...subtract(vs[0].world_position,vs[1].world_position));});
-        contexts.push({entity_path,review_root:reviewedRoot,name:item.name,transform:world,vertices,edges,faces,manifold:faces.length>0&&edges.every(e=>e.faces.length===2),complete:!(item.faces>0&&!faces.length),shared_definition:type==='component_instance'});count+=vertices.length;
+        contexts.push({entity_path,review_root:reviewedRoot,name:item.name,...(item.cad?{cad:{...item.cad,current:item.cad_mesh_hash===JSON.stringify([item.vertices,item.mesh_faces])}}:{}),transform:world,vertices,edges,faces,manifold:faces.length>0&&edges.every(e=>e.faces.length===2),complete:!(item.faces>0&&!faces.length),shared_definition:type==='component_instance'});count+=vertices.length;
       }
       const def=type==='component_instance'?model.component_definitions?.[item.definition]:item;
       if(def&&(recursive||!selected))walk(def.groups||[],def.instances||[],path,world,depth+1,reviewedRoot);
@@ -48,7 +48,7 @@ export function mockGeometrySnapshot(model,{targets=['model'],recursive=true,max
 }
 export function editMockGeometry(model,operation){
   if(mockGeometryRevision(model)!==operation.snapshot_revision)throw new Error('Stale geometry snapshot');
-  validateGeometryEdits(operation.edits);
+  validateGeometryEdits(operation.edits,{internal:true});
   const target=operation.context_path||operation.entity_path;
   const before=mockGeometrySnapshot(model,{targets:[target],recursive:false}).contexts[0];
   const item=target==='model'?(model.root_geometry||={id:'root_geometry',name:'Model loose geometry',vertices:[],mesh_faces:[],faces:0,edges:0}):findModelObject(model,{entity_path:target,instance_policy:'make_unique'},true).item;
@@ -57,7 +57,8 @@ export function editMockGeometry(model,operation){
     const world=edit.coordinate_space==='world',inverse=inverseMatrix(before.transform);
     const vertex=h=>{if(!/^v:\d+$/.test(h)||!item.vertices[Number(h.slice(2))])throw new Error('Unknown vertex handle');return Number(h.slice(2));};
     const face=h=>{if(!/^f:\d+$/.test(h)||!item.mesh_faces[Number(h.slice(2))])throw new Error('Unknown face handle');return Number(h.slice(2));};
-    if(edit.op==='move_vertices')for(const m of edit.moves){const i=vertex(m.handle),delta=world?transformVector(inverse,m.delta):m.delta;item.vertices[i]=item.vertices[i].map((x,j)=>x+delta[j]);}
+    if(edit.op==='replace_cad'){if(target==='model'||!before.cad?.current)throw new Error('CAD source is unavailable or stale');item.vertices=structuredClone(edit.mesh.vertices);item.mesh_faces=structuredClone(edit.mesh.faces);item.cad=structuredClone(edit.mesh.cad);item.cad_mesh_hash=JSON.stringify([item.vertices,item.mesh_faces]);}
+    else if(edit.op==='move_vertices')for(const m of edit.moves){const i=vertex(m.handle),delta=world?transformVector(inverse,m.delta):m.delta;item.vertices[i]=item.vertices[i].map((x,j)=>x+delta[j]);}
     else if(edit.op==='transform_entities'){
       const indices=new Set(edit.handles.flatMap(h=>h.startsWith('v:')?[vertex(h)]:h.startsWith('f:')?item.mesh_faces[face(h)]:before.edges.find(e=>e.handle===h)?.vertices.map(vertex)??[]));
       const matrix=world?multiplyMatrices(inverse,multiplyMatrices(edit.matrix,before.transform)):edit.matrix;

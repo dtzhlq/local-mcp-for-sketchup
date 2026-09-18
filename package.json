@@ -42,6 +42,8 @@
   "dependencies": {
     "acorn": "^8.16.0",
     "ajv": "^8.20.0",
+    "replicad": "1.1.0",
+    "replicad-opencascadejs": "1.1.0",
     "sharp": "^0.35.3"
   },
   "overrides": {

@@ -1,3 +1,4 @@
+import {expandCadOperation} from './cad-kernel.mjs';
 import { expandProfileOperation } from './profile-geometry.mjs';
 const DEFAULT_TEXTURE_ROOT = null;
 
@@ -98,6 +99,9 @@ export function parseDslDocument(code) {
 function expandOperation(operation, context) {
   if (operation.op === 'component_definition' && Array.isArray(operation.operations)) return [{...operation, operations: operation.operations.flatMap(child=>expandOperation(child, context))}];
   switch (operation.op) {
+    case 'cad_shape':
+      context.macros.push({op:operation.op,generated_operations:1});
+      return [expandCadOperation(operation)];
     case 'sweep_profile':
     case 'loft_profiles_v2':
       context.macros.push({op:operation.op,generated_operations:1});

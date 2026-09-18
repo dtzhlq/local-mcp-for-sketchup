@@ -129,7 +129,7 @@ export async function packageServiceBundle({
       await runChecked(path.join(bundleRoot, ...plan.target.nodeExecutable.split('/')), [
         '--input-type=module',
         '--eval',
-        "await import('./src/runtime-source-attestation.mjs'); const sharp = (await import('sharp')).default; if (!sharp?.versions?.sharp) process.exit(2);"
+        "await import('./src/runtime-source-attestation.mjs'); const sharp = (await import('sharp')).default; if (!sharp?.versions?.sharp) process.exit(2); const {computeCadShape}=await import('./src/cad-kernel.mjs'); const cad=computeCadShape({recipe:{version:1,nodes:[{id:'box',kind:'box',min:[0,0,0],max:[1,1,1]}],output:'box'}}); if (!cad.cad.evidence.valid || Math.abs(cad.cad.evidence.volume_mm3-1)>1e-8) process.exit(3);"
       ], { cwd: path.join(bundleRoot, 'app') });
     }
 
@@ -188,6 +188,7 @@ export async function packageServiceBundle({
       },
       dependency_count: inventory.packages.length,
       native_dependencies_verified: true,
+      cad_kernel_verified: targetId === `${process.platform}-${process.arch}`,
       live_sketchup_verified: false,
       release_acceptance: false
     });

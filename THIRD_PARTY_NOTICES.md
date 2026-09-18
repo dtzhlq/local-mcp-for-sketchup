@@ -1,9 +1,9 @@
 # Third-Party Notices
 
 Local MCP for SketchUp is licensed under Apache License 2.0. It also depends on
-third-party software distributed under compatible licenses.
+third-party software distributed under the licenses identified below.
 
-This file is an inventory for the source tree at version `0.1.0-rc.4`. A
+This file is an inventory for the development source tree at version `0.3.0`. A
 release bundle must additionally contain the license files and the
 artifact-specific dependency inventory produced during that build. This file
 does not replace the license text shipped by any dependency.
@@ -15,6 +15,8 @@ does not replace the license text shipped by any dependency.
 | acorn | 8.16.0 | MIT |
 | ajv | 8.20.0 | MIT |
 | sharp | 0.35.3 | Apache-2.0 |
+| replicad | 1.1.0 | MIT |
+| replicad-opencascadejs | 1.1.0 | LGPL-2.1-only |
 
 Known transitive packages in the locked dependency graph include:
 
@@ -70,3 +72,16 @@ must obtain and license SketchUp separately.
 If you believe an attribution or license file is missing, contact
 <dtzhlq@126.com>. A release must not pass the third-party-license gate while a
 known omission remains unresolved.
+
+## CAD kernel development candidate
+
+The CAD worker uses the unmodified npm `replicad-opencascadejs@1.1.0` WebAssembly
+build and `replicad@1.1.0` wrappers. These remain separately replaceable packages
+in `node_modules`; the app does not inline the kernel into its own source.
+Upstream project: https://github.com/sgenoud/replicad (package gitHead
+`e4b05f67dc4e2393a876ce8c5064a9c93db05bf1`). The kernel package records its build
+image `ghcr.io/taucad/opencascade.js:canary-ebd263f1-single-threaded` and build
+configuration location in its package scripts. Its LGPL license is included in
+the package; the dependency inventory and all bundled license texts must remain
+with the local candidate. Public redistribution and corresponding-source
+packaging have not been qualified as part of this local-only candidate.

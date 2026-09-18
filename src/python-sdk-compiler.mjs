@@ -1202,7 +1202,7 @@ class SdkModel {
   }
 
   call(method, args, kwargs, node) {
-    if (['sweep_profile','loft_profiles_v2'].includes(method)) {
+    if (['sweep_profile','loft_profiles_v2','cad_shape'].includes(method)) {
       if(this.unitScale!==1) throw new PythonSdkCompileError('Profile geometry methods require model units mm',node);
       const operation={...facadePlainValue(args[0]??kwargs),op:method};this.operations.push(operation);return operation;
     }

@@ -4,6 +4,17 @@
 
 module AlmaSketchupMCP
   OPERATION_SUPPORT = {
+    'cad_shape' => {
+      'status' => 'supported',
+      'stability' => 'experimental',
+      'schema' => {
+        'required' => ['op', 'name', 'recipe'],
+        'optional' => ['id', 'material', 'transform', 'tolerance', 'angular_tolerance', 'max_vertices', 'max_faces']
+      },
+      'component_scope' => {
+        'status' => 'supported'
+      }
+    },
     'sweep_profile' => {
       'status' => 'supported',
       'stability' => 'experimental',

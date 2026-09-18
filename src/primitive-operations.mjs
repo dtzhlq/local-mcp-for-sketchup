@@ -37,6 +37,7 @@ export function addMesh(model, operation) {
     id,
     name,
     kind: 'mesh',
+    ...(operation.cad ? {cad: structuredClone(operation.cad), cad_mesh_hash: JSON.stringify([normalizedVertices, normalizedFaces])} : {}),
     faces: normalizedFaces.length,
     edges: countMeshEdges(normalizedFaces),
     material: materialName,

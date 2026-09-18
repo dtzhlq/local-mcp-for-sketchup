@@ -970,7 +970,7 @@ function validateExistingOperationContract(operation, index) {
   case 'edit_geometry':
     requireStringField(['snapshot_revision']);
     requireStringField(['entity_path']);
-    validateGeometryEdits(operation.edits);
+    validateGeometryEdits(operation.edits,{internal:true});
     break;
   case 'set_face_material': {
     requireStringField(['material']);

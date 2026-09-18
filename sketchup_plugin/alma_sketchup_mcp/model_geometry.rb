@@ -25,6 +25,20 @@ module AlmaSketchupMCP
     result.map { |x| x / length }
   end
 
+  def cad_geometry_digest(entities)
+    records = entities.grep(Sketchup::Edge).map { |e| [geometry_signature(e), e.soft?, e.smooth?] }
+    records += entities.grep(Sketchup::Face).map { |f| [geometry_signature(f), f.normal.to_a.map { |n| n.to_f.round(9).zero? ? 0.0 : n.to_f.round(9) }, f.material&.name, f.back_material&.name] }
+    'cad-geometry.v2:' + Digest::SHA256.hexdigest(JSON.generate(records.sort_by(&:to_s)))
+  end
+
+  def cad_source_for(instance, entities)
+    return nil unless instance
+    raw = instance.get_attribute('AlmaSketchupMCP', 'cad_source')
+    return nil unless raw
+    source = JSON.parse(raw)
+    source.merge('current' => instance.get_attribute('AlmaSketchupMCP', 'cad_geometry_digest') == cad_geometry_digest(entities))
+  end
+
   def geometry_context(entities, entity_path, transform, instance = nil)
     edges = entities.grep(Sketchup::Edge)
     faces = entities.grep(Sketchup::Face)
@@ -32,6 +46,7 @@ module AlmaSketchupMCP
     {
       'entity_path' => entity_path,
       'name' => instance&.name,
+      'cad' => cad_source_for(instance, entities),
       'definition_name' => instance&.definition&.name,
       'shared_definition' => instance ? instance.definition.instances.length > 1 : false,
       'transform' => geometry_matrix_mm(transform),
@@ -43,7 +58,7 @@ module AlmaSketchupMCP
           points = polygon.map { |index| geometry_mm(mesh.point_at(index.abs).transform(transform)) }
           (1...(points.length - 1)).map { |i| [points[0], points[i], points[i + 1]] }
         end
-        { 'handle' => geometry_handle(face), 'normal' => face.normal.to_a, 'world_normal' => geometry_normal(face.normal, transform), 'area_mm2' => face.area(transform).to_f * 25.4**2,
+        { 'handle' => geometry_handle(face), 'cad_face' => face.get_attribute('AlmaSketchupMCP', 'cad_face'), 'normal' => face.normal.to_a, 'world_normal' => geometry_normal(face.normal, transform), 'area_mm2' => face.area(transform).to_f * 25.4**2,
           'loops' => face.loops.map { |loop| { 'outer' => loop.outer?, 'vertices' => loop.vertices.map { |v| geometry_handle(v) } } },
           'triangles' => triangles, 'material' => face.material&.name, 'back_material' => face.back_material&.name }
       end,
@@ -175,6 +190,18 @@ module AlmaSketchupMCP
       space = edit.fetch('coordinate_space', 'local')
       raise 'Unsupported coordinate space' unless %w[local world].include?(space)
       case edit.fetch('op')
+      when 'replace_cad'
+        raise 'CAD replacement requires one isolated CAD group' if paths.empty? || !cad_source_for(paths.last, entities)&.fetch('current', false)
+        raise 'CAD replacement only accepts local coordinates' unless space == 'local'
+        raise 'CAD context contains nested instances' if entities.any? { |e| e.respond_to?(:definition) }
+        entities.each { |e| assert_reference_entity_access!(e, 'edit_geometry') }
+        mesh = edit.fetch('mesh')
+        replacement = add_mesh(entities, mesh.merge('name' => '__cad_replacement', 'construction' => 'bulk', 'smooth' => 'cad'))
+        old = entities.to_a.reject { |e| e == replacement }
+        entities.erase_entities(old)
+        replacement.explode
+        paths.last.set_attribute('AlmaSketchupMCP', 'cad_source', JSON.generate(mesh.fetch('cad')))
+        paths.last.set_attribute('AlmaSketchupMCP', 'cad_geometry_digest', cad_geometry_digest(entities))
       when 'add_edges'
         created = entities.add_edges(edit.fetch('points').map { |p| point.call(p, space) })
         edit_results << { 'op' => edit['op'], 'created' => created.map { |e| geometry_handle(e) } }

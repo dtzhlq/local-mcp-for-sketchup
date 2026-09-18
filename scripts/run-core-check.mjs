@@ -11,6 +11,8 @@ const repoRoot = path.resolve(path.dirname(scriptPath), '..');
 const runRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'local-mcp-for-sketchup-core-check-'));
 const stateDir = path.join(runRoot, 'state');
 const steps = [
+  ['CAD kernel geometry and safe editing', ['test/cad-kernel/core.mjs']],
+  ['NURBS surfaces and curved-edge fillets', ['test/cad-kernel/surfaces.mjs']],
   ['version contract', ['test/version-contract.mjs']],
   ['tool registry drift', ['scripts/generate-tool-registry-doc.mjs', '--check']],
   ['Ruby operation registry drift', ['scripts/generate-ruby-operation-registry.mjs', '--check']],

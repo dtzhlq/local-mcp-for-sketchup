@@ -1,0 +1,347 @@
+{
+  "op": "cad_shape",
+  "name": "NURBS_Solid",
+  "recipe": {
+    "version": 1,
+    "nodes": [
+      {
+        "id": "roof",
+        "kind": "nurbs_surface",
+        "poles": [
+          [
+            [
+              0,
+              0,
+              40
+            ],
+            [
+              0,
+              40,
+              40
+            ]
+          ],
+          [
+            [
+              30,
+              0,
+              80
+            ],
+            [
+              30,
+              40,
+              80
+            ]
+          ],
+          [
+            [
+              60,
+              0,
+              40
+            ],
+            [
+              60,
+              40,
+              40
+            ]
+          ]
+        ],
+        "u_degree": 2,
+        "v_degree": 1,
+        "u_knots": [
+          0,
+          1
+        ],
+        "v_knots": [
+          0,
+          1
+        ],
+        "u_multiplicities": [
+          3,
+          3
+        ],
+        "v_multiplicities": [
+          2,
+          2
+        ]
+      },
+      {
+        "id": "floor",
+        "kind": "nurbs_surface",
+        "poles": [
+          [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              40,
+              0
+            ]
+          ],
+          [
+            [
+              60,
+              0,
+              0
+            ],
+            [
+              60,
+              40,
+              0
+            ]
+          ]
+        ],
+        "u_degree": 1,
+        "v_degree": 1,
+        "u_knots": [
+          0,
+          1
+        ],
+        "v_knots": [
+          0,
+          1
+        ],
+        "u_multiplicities": [
+          2,
+          2
+        ],
+        "v_multiplicities": [
+          2,
+          2
+        ]
+      },
+      {
+        "id": "front",
+        "kind": "nurbs_surface",
+        "poles": [
+          [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              40
+            ]
+          ],
+          [
+            [
+              30,
+              0,
+              0
+            ],
+            [
+              30,
+              0,
+              80
+            ]
+          ],
+          [
+            [
+              60,
+              0,
+              0
+            ],
+            [
+              60,
+              0,
+              40
+            ]
+          ]
+        ],
+        "u_degree": 2,
+        "v_degree": 1,
+        "u_knots": [
+          0,
+          1
+        ],
+        "v_knots": [
+          0,
+          1
+        ],
+        "u_multiplicities": [
+          3,
+          3
+        ],
+        "v_multiplicities": [
+          2,
+          2
+        ]
+      },
+      {
+        "id": "back",
+        "kind": "nurbs_surface",
+        "poles": [
+          [
+            [
+              0,
+              40,
+              0
+            ],
+            [
+              0,
+              40,
+              40
+            ]
+          ],
+          [
+            [
+              30,
+              40,
+              0
+            ],
+            [
+              30,
+              40,
+              80
+            ]
+          ],
+          [
+            [
+              60,
+              40,
+              0
+            ],
+            [
+              60,
+              40,
+              40
+            ]
+          ]
+        ],
+        "u_degree": 2,
+        "v_degree": 1,
+        "u_knots": [
+          0,
+          1
+        ],
+        "v_knots": [
+          0,
+          1
+        ],
+        "u_multiplicities": [
+          3,
+          3
+        ],
+        "v_multiplicities": [
+          2,
+          2
+        ]
+      },
+      {
+        "id": "left",
+        "kind": "nurbs_surface",
+        "poles": [
+          [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              40
+            ]
+          ],
+          [
+            [
+              0,
+              40,
+              0
+            ],
+            [
+              0,
+              40,
+              40
+            ]
+          ]
+        ],
+        "u_degree": 1,
+        "v_degree": 1,
+        "u_knots": [
+          0,
+          1
+        ],
+        "v_knots": [
+          0,
+          1
+        ],
+        "u_multiplicities": [
+          2,
+          2
+        ],
+        "v_multiplicities": [
+          2,
+          2
+        ]
+      },
+      {
+        "id": "right",
+        "kind": "nurbs_surface",
+        "poles": [
+          [
+            [
+              60,
+              0,
+              0
+            ],
+            [
+              60,
+              0,
+              40
+            ]
+          ],
+          [
+            [
+              60,
+              40,
+              0
+            ],
+            [
+              60,
+              40,
+              40
+            ]
+          ]
+        ],
+        "u_degree": 1,
+        "v_degree": 1,
+        "u_knots": [
+          0,
+          1
+        ],
+        "v_knots": [
+          0,
+          1
+        ],
+        "u_multiplicities": [
+          2,
+          2
+        ],
+        "v_multiplicities": [
+          2,
+          2
+        ]
+      },
+      {
+        "id": "body",
+        "kind": "sew",
+        "inputs": [
+          "roof",
+          "floor",
+          "front",
+          "back",
+          "left",
+          "right"
+        ],
+        "solid": true
+      }
+    ],
+    "output": "body"
+  }
+}
