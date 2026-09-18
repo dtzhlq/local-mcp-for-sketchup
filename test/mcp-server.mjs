@@ -42,11 +42,12 @@ server.stderr.on('data', (chunk) => {
 try {
   const initialized = await request({ id: 0, method: 'initialize', params: { protocolVersion: '2024-11-05' } });
   assert.equal(initialized.result.serverInfo.version, PRODUCT_VERSION);
+  server.stdin.write(JSON.stringify({jsonrpc: "2.0", method: "notifications/initialized"}) + "\n");
   const list = await request({ id: 1, method: 'tools/list' });
   const toolNames = list.result.tools.map((tool) => tool.name);
   const registryToolMap = new Map(list.result.tools.map((tool) => [tool.name, tool]));
-  assert.equal(toolNames.length, 44, 'MCP tools/list includes assets, detail capture and native region inspection');
-  assert.equal(EXPERT_TOOL_NAMES.length, 39, 'the original expert surface remains available with three detail tools');
+  assert.equal(toolNames.length, 48, 'MCP tools/list includes assets, detail capture and native region inspection');
+  assert.equal(EXPERT_TOOL_NAMES.length, 43, 'the original expert surface remains available with three detail tools');
   assert.equal(AGENT_GATEWAY_TOOL_NAMES.length, 4);
   assert.deepEqual(SESSION_CONTRACT_TOOL_NAMES, ['create_queue_handshake']);
   assert.deepEqual(toolNames, listToolNames(), 'stdio MCP must expose the shared tool registry without drift');
@@ -141,7 +142,8 @@ try {
       }
     }
   });
-  assert.equal(forbiddenGatewayToken.error.data.code, 'APPROVAL_TOKEN_FORBIDDEN');
+  assert.equal(forbiddenGatewayToken.result.isError, true);
+  assert.equal(JSON.parse(forbiddenGatewayToken.result.content[0].text).code, 'APPROVAL_TOKEN_FORBIDDEN');
   const forbiddenExpertToken = await request({
     id: nextId(),
     method: 'tools/call',
@@ -240,10 +242,12 @@ try {
     method: 'tools/call',
     params: { name: 'import_model', arguments: { runtime: 'queue', path: 'must-not-be-read.skp', mode: 'replace' } }
   });
-  assert.equal(blockedQueueReplace.error.data.code, 'OPERATION_NOT_ALLOWED');
-  assert.equal(blockedQueueReplace.error.data.retryable, false);
-  assert.equal(blockedQueueReplace.error.data.next_action.action, 'prepare_new_plan');
-  assert.deepEqual(blockedQueueReplace.error.data.next_action.allowed_queue_modes, ['append']);
+  assert.equal(blockedQueueReplace.result.isError, true);
+  const blockedQueueError = JSON.parse(blockedQueueReplace.result.content[0].text);
+  assert.equal(blockedQueueError.code, 'OPERATION_NOT_ALLOWED');
+  assert.equal(blockedQueueError.retryable, false);
+  assert.equal(blockedQueueError.next_action.action, 'prepare_new_plan');
+  assert.deepEqual(blockedQueueError.next_action.allowed_queue_modes, ['append']);
 
   const expertSource = [
     'const ops = [];',
@@ -489,6 +493,7 @@ async function callTool(name, args) {
     }
   });
   assert.ifError(response.error);
+  assert.notEqual(response.result.isError, true, response.result.content[0]?.text);
   const text = response.result.content[0].text;
   return JSON.parse(text);
 }

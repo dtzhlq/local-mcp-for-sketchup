@@ -2,6 +2,7 @@ import { nonEmptyString } from './object-operation-utils.mjs';
 import { mockStructuralPersistentId, parseCanonicalMockPidPath } from './mock-structural-identity.mjs';
 
 const NESTED_EDIT_OPERATIONS = new Set([
+  'edit_geometry',
   'delete',
   'rename',
   'set_material',

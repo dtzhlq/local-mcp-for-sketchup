@@ -61,6 +61,18 @@ export function compileExpertScript(source, options = {}) {
   };
 }
 
+export function compileModelProgramSource(source, {bindings={}, ...options} = {}) {
+  const limits=normalizeLimits(options);
+  const program=acorn.parse(source,{ecmaVersion:2024,sourceType:'script',locations:true});
+  const interpreter=new ExpertInterpreter({limits,seed:options.seed??1});
+  const freeze=value=>{if(value&&typeof value==='object'){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
+  for(const key of ['snapshot','previous','parameters','stage'])interpreter.globalScope.define(key,freeze(structuredClone(bindings[key]??null)),'const');
+  const value=interpreter.run(program);
+  assertJsonCompatible(value,'program result');
+  if(Buffer.byteLength(JSON.stringify(value))>limits.maxOutputBytes)throw new ExpertCompileError('Program output budget exceeded');
+  return value;
+}
+
 export function normalizeExpertOutput(output, limits = normalizeLimits()) {
   let document;
   if (Array.isArray(output)) {
@@ -645,6 +657,10 @@ function callMember(object, property, args, interpreter, node) {
     if (property === 'push') {
       object.push(...args);
       return object.length;
+    }
+    if (['find', 'findIndex', 'some', 'every'].includes(property)) {
+      if (args.length !== 1 || !(args[0] instanceof ExpertFunction)) throw new ExpertCompileError(`Array.${property} requires one Expert function callback`, node);
+      return object[property]((value, index) => truthy(args[0].call([value, index, object], interpreter, node)));
     }
     if (property === 'map') {
       if (args.length !== 1 || !(args[0] instanceof ExpertFunction)) {

@@ -1,4 +1,4 @@
-import { TOOL_REGISTRY } from './mcp-server.mjs';
+import { TOOL_REGISTRY } from './tool-definitions.mjs';
 
 export { TOOL_REGISTRY };
 
@@ -14,23 +14,7 @@ export const AGENT_GATEWAY_TOOL_NAMES = Object.freeze([
 export const SESSION_CONTRACT_TOOL_NAMES = Object.freeze(['create_queue_handshake']);
 
 export const TOOL_EFFECT_CONTRACT_VERSION = 'tool-effect.v1';
-const SIDE_EFFECT_FREE_TOOL_NAMES = new Set([
-  'query_assets',
-  'inspect_detail_regions',
-  'get_docs',
-  'get_workflow_bundle',
-  'get_capabilities',
-  'queue_diagnostics',
-  'compile_expert',
-  'compile_python_sdk',
-  'get_model_info',
-  'list_entities',
-  'inspect_model',
-  'resolve_model_targets',
-  'get_selection',
-  'analyze_selection_geometry',
-  'compare_snapshots'
-]);
+const SIDE_EFFECT_FREE_TOOL_NAMES = new Set(TOOL_REGISTRY.filter(tool=>tool.annotations.readOnlyHint).map(tool=>tool.name));
 
 export const TOOL_EFFECTS = Object.freeze(Object.fromEntries(TOOL_NAMES.map((name) => [name, Object.freeze({
   version: TOOL_EFFECT_CONTRACT_VERSION,

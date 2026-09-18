@@ -165,6 +165,7 @@ module AlmaSketchupMCP
       factors = %w[x y z].map { |axis| mirror_axes.include?(axis) ? -1 : 1 }
       rotation = rotation * Geom::Transformation.scaling(ORIGIN, *factors)
     end
+    rotation = geometry_edit_matrix(transform['matrix']) if transform['matrix']
     instance = entities.add_instance(definition, rotation)
     instance.name = name
     if instance.respond_to?(:set_attribute)
@@ -189,6 +190,10 @@ module AlmaSketchupMCP
       write_texture_transform_attributes(entity, texture_transform_payload(operation['texture_transform'], "#{operation['name']}.texture_transform"))
     end
     transform = operation['transform'] || {}
+    if transform['matrix']
+      entity.transform!(geometry_edit_matrix(transform['matrix']))
+      return entity
+    end
     translate = transform['translate'] || transform['translation'] || operation['translation']
     if translate
       vector_translate = vector(translate, "#{operation['name']}.transform.translate").map { |value| mm_to_model_units(value) }

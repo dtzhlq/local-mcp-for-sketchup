@@ -23,6 +23,7 @@ const INTERRUPT_SAFE_READ_ONLY_QUEUE_METHODS = new Set([
   'get_session_state',
   'get_active_model_identity',
   'inspect_model',
+  'query_model_geometry',
   'inspect_detail_regions',
   'list_entities',
   'get_model_info',
@@ -59,6 +60,8 @@ export class QueueRuntime {
     this.lockDepth = 0;
     this.mutationGuardContext = null;
   }
+
+  async queryModelGeometry(options = {}) { return this.call('query_model_geometry', options); }
 
   async getCapabilities() {
     return this.call('get_capabilities', {});

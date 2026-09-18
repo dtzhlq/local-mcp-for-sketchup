@@ -1,3 +1,4 @@
+import { matrixFromTransform, inverseMatrix, axesMatrix, rotationMatrix, scalingMatrix, multiplyMatrices, transformPoint, transformVector, transformNormal } from './geometry-matrix.mjs';
 import { spawnSync } from 'node:child_process';
 import { validateExpertDocument } from './expert-compiler.mjs';
 
@@ -73,6 +74,7 @@ export function compilePythonSdkScript(source, options = {}) {
     pythonCommand: options.pythonCommand
   });
   const interpreter = new PythonSdkInterpreter({ limits });
+  for (const key of ['snapshot','previous','parameters','stage']) if(options.bindings && Object.hasOwn(options.bindings,key)) interpreter.scope.set(key, freezeProgramBinding(structuredClone(options.bindings[key])));
   interpreter.executeModule(ast);
   const document = interpreter.model.toDocument();
   validateExpertDocument(document, {
@@ -638,6 +640,7 @@ class PythonSdkInterpreter {
       case 'Sub':
         return Number(left) - Number(right);
       case 'Mult':
+        if (left instanceof SdkTransformation) return right instanceof SdkTransformation ? new SdkTransformation([multiplyMatrices(left.toMatrixArray(), right.toMatrixArray())], {}, node) : transformPoint(left.toMatrixArray(), normalizeRawPoint(right, 'point', node));
         return Number(left) * Number(right);
       case 'Div':
         return Number(left) / Number(right);
@@ -1199,6 +1202,10 @@ class SdkModel {
   }
 
   call(method, args, kwargs, node) {
+    if (['sweep_profile','loft_profiles_v2'].includes(method)) {
+      if(this.unitScale!==1) throw new PythonSdkCompileError('Profile geometry methods require model units mm',node);
+      const operation={...facadePlainValue(args[0]??kwargs),op:method};this.operations.push(operation);return operation;
+    }
     switch (method) {
       case 'reset':
         this.operations.push({ op: 'reset' });
@@ -2540,13 +2547,15 @@ class SdkTransformation {
     if (method === 'translation') return new SdkTransformation([], { translate: args[0] ?? kwargs.vector }, node);
     if (method === 'rotation_z') return new SdkTransformation([], { rotateZ: args[0] ?? kwargs.degrees }, node);
     if (method === 'rotation') {
-      return new SdkTransformation([], {
-        axis: args[1] ?? kwargs.axis ?? kwargs.vector,
-        angle: radiansToDegrees(args[2] ?? kwargs.angle ?? kwargs.radians ?? kwargs.degrees, kwargs.degrees !== undefined)
-      }, node);
+      return new SdkTransformation([rotationMatrix(normalizeRawPoint(args[0] ?? kwargs.origin ?? [0,0,0], 'origin', node), normalizeRawPoint(args[1] ?? kwargs.axis ?? kwargs.vector, 'axis', node), radiansToDegrees(args[2] ?? kwargs.angle ?? kwargs.radians ?? kwargs.degrees, kwargs.degrees !== undefined) * Math.PI / 180)], {}, node);
     }
-    if (method === 'scaling') return new SdkTransformation([], { scale: args[0] ?? kwargs.scale ?? 1 }, node);
-    if (method === 'axes') return new SdkTransformation([], { translate: args[0] ?? kwargs.origin ?? [0, 0, 0] }, node);
+    if (method === 'scaling') {
+      const hasOrigin = args.length > 1 && (Array.isArray(args[0]) || (args[0] && typeof args[0] === 'object'));
+      const origin = hasOrigin ? normalizeRawPoint(args[0], 'origin', node) : [0,0,0];
+      const values = hasOrigin ? args.slice(1) : args;
+      return new SdkTransformation([scalingMatrix(values.length === 3 ? values : values[0] ?? kwargs.scale ?? 1, origin)], {}, node);
+    }
+    if (method === 'axes') return new SdkTransformation([axesMatrix(...[args[0] ?? kwargs.origin ?? [0,0,0], args[1] ?? kwargs.xaxis, args[2] ?? kwargs.yaxis, args[3] ?? kwargs.zaxis].map(v=>normalizeRawPoint(v, 'axis', node)))], {}, node);
     throw new PythonSdkCompileError(`Unsupported SUTransformation static method: ${method}`, node);
   }
 
@@ -2563,26 +2572,23 @@ class SdkTransformation {
       this.scale = args[0] ?? kwargs.scale;
       return this;
     }
-    if (method === 'to_a') return this.matrix ?? this.toMatrixArray();
-    if (method === 'inverse') return new SdkTransformation(this.matrix ? [this.matrix] : [], {}, node);
+    if (method === 'to_a') return this.toMatrixArray();
+    if (method === 'inverse') return new SdkTransformation([inverseMatrix(this.toMatrixArray())], {}, node);
+    if (['transform_point','transform_vector','transform_normal'].includes(method)) return ({transform_point:transformPoint,transform_vector:transformVector,transform_normal:transformNormal})[method](this.toMatrixArray(), normalizeRawPoint(args[0], method, node));
     throw new PythonSdkCompileError(`Unsupported SUTransformation method: ${method}`, node);
   }
 
   toTransform(model) {
-    return {
-      ...(this.matrix ? { matrix: this.matrix } : {}),
-      ...(this.translate ? { translate: normalizePoint(this.translate, model.unitScale, 'transform translate') } : {}),
-      ...(this.rotateX !== undefined ? { rotateX: Number(this.rotateX) } : {}),
-      ...(this.rotateY !== undefined ? { rotateY: Number(this.rotateY) } : {}),
-      ...(this.rotateZ !== undefined ? { rotateZ: Number(this.rotateZ) } : {}),
-      ...(this.axis !== undefined ? { axis: normalizePoint(this.axis, 1, 'transform axis'), angle: Number(this.angle ?? 0) } : {}),
-      ...(this.scale !== undefined ? { scale: Array.isArray(this.scale) ? this.scale : Number(this.scale) } : {})
-    };
+    const matrix = this.toMatrixArray();
+    for (const i of [12,13,14]) matrix[i] *= model.unitScale;
+    return { matrix };
   }
 
   toMatrixArray() {
-    if (this.matrix) return [...this.matrix];
-    return [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
+    return matrixFromTransform({ ...this,
+      ...(this.translate !== undefined ? { translate: normalizeRawPoint(this.translate, 'translation') } : {}),
+      ...(this.axis !== undefined ? { axis: normalizeRawPoint(this.axis, 'axis') } : {})
+    });
   }
 }
 
@@ -3309,4 +3315,12 @@ function positiveInteger(value, fallback, field) {
   const number = Number(value);
   if (!Number.isInteger(number) || number <= 0) throw new PythonSdkCompileError(`${field} must be a positive integer`);
   return number;
+}
+
+function freezeProgramBinding(value) {
+  if (value && typeof value === "object") {
+    for (const child of Object.values(value)) freezeProgramBinding(child);
+    Object.freeze(value);
+  }
+  return value;
 }

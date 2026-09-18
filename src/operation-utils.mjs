@@ -1,3 +1,4 @@
+import { matrixFromTransform, transformPoint } from './geometry-matrix.mjs';
 export function normalizeVector(value, fallback, fieldName) {
   if (!Array.isArray(value) || value.length !== 3) {
     throw new Error(`${fieldName} must be [x, y, z]`);
@@ -42,6 +43,7 @@ export function normalizeCamera({ eye, target, up = [0, 0, 1], fov = 35 }, field
 
 export function normalizeTransform(operation = {}, fieldName = 'transform') {
   const transform = operation.transform || {};
+  if (['matrix','rotateX','rotateY','scale','axis'].some(k=>transform[k]!==undefined)) return {matrix:matrixFromTransform(transform),translate:[0,0,0],rotateZ:0};
   const translate = transform.translate ?? transform.translation ?? operation.translation ?? [0, 0, 0];
   const rotateZ = transform.rotateZ ?? transform.rotationZ ?? transform.rotation?.z ?? operation.rotateZ ?? 0;
   return {
@@ -90,15 +92,8 @@ function isJsonValue(value) {
 }
 
 export function applyTransform(vertices, operation = {}, fieldName = 'transform') {
-  const { translate, rotateZ } = normalizeTransform(operation, fieldName);
-  const radians = (rotateZ * Math.PI) / 180;
-  const cos = Math.cos(radians);
-  const sin = Math.sin(radians);
-  return vertices.map(([x, y, z]) => [
-    x * cos - y * sin + translate[0],
-    x * sin + y * cos + translate[1],
-    z + translate[2]
-  ]);
+  const matrix=matrixFromTransform(normalizeTransform(operation, fieldName));
+  return vertices.map(point=>transformPoint(matrix,point));
 }
 
 export function nonNegativeNumber(value, fallback, fieldName) {

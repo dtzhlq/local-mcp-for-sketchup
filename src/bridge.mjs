@@ -1,3 +1,4 @@
+import { ModelGeometryService } from './model-geometry-service.mjs';
 import fs from 'node:fs/promises';
 import { constants as fsConstants } from 'node:fs';
 import { createHash } from 'node:crypto';
@@ -51,6 +52,7 @@ export class SketchUpBridge {
     this.liveMutationAuthorization = options.liveMutationAuthorization || null;
     this.executionContext = options[INTERNAL_EXECUTION_CONTEXT] || null;
     this.runtimeCapabilitiesCache = new Map();
+    this.geometryService = new ModelGeometryService(this);
   }
 
   addDslDispatchGuard(guard) {
@@ -66,6 +68,20 @@ export class SketchUpBridge {
         : guard
     };
     return this;
+  }
+
+  async query_model_geometry(options={}) { return this.geometryService.query(options); }
+  async measure_model_geometry(options={}) { return this.geometryService.measure(options); }
+  async edit_model_geometry(options={}) { return this.geometryService.edit(options); }
+  async run_model_program(options={}) {
+    if(options.task_id) {
+      const task=await this.taskStore.getTask(options.task_id);
+      if(task.intent!=='program_model')throw new AgentContractError('INVALID_ARGUMENT','task_id must identify a modeling program');
+      return this.resume_agent_task({task_id:options.task_id});
+    }
+    const {instruction='Execute the specified bounded modeling program',idempotency_key,...inputs}=options;
+    if(!idempotency_key)throw new AgentContractError('INVALID_ARGUMENT','Program requires a stable idempotency_key');
+    return this.start_agent_task({intent:'program_model',instruction,idempotency_key,inputs});
   }
 
   async get_docs(options = {}) {

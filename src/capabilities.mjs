@@ -8,8 +8,8 @@ import {
 import { BOOLEAN_OPERATIONS_SHA256, MODEL_REVISION_SOURCE_SHA256 } from './runtime-source-attestation.mjs';
 
 export const DSL_VERSION = 1;
-export const CAPABILITY_MANIFEST_VERSION = '2026-09-detail-modeling-alpha.1';
-export const RUNTIME_CAPABILITY_VERSION = '0.1.0-rc.3-detail-alpha.1';
+export const CAPABILITY_MANIFEST_VERSION = '2026-09-modeling-uplift-alpha.1';
+export const RUNTIME_CAPABILITY_VERSION = '0.3.0-modeling-alpha.1';
 export const OCCURRENCE_CONTRACT_VERSION = 'canonical-occurrence-path.v1';
 export const QUEUE_MODEL_REVISION_STRATEGY = 'definition-merkle.v2';
 export const QUEUE_MODEL_REVISION_UNIQUE_ENTITY_LIMIT = 1_000_000;
@@ -33,6 +33,8 @@ const nestedObjectTarget = ['entity_path', 'entityPath', 'target_path', 'targetP
 const commonPlacement = [...objectIdentity, 'material', 'transform.translate', 'transform.rotateZ', 'texture_transform'];
 
 const OPERATION_REGISTRY_ENTRIES = [
+  ...[['sweep_profile',['name','profile','path']],['loft_profiles_v2',['name','profiles']]].map(([op,required])=>({op,description:'Bounded general profile geometry, expanded once into the shared mesh representation.',schema:{required:['op',...required],optional:['id','material','transform','caps','max_vertices','sample_budget','seam_indices','initial_up','scale_stations','twist_stations']},runtime_support:{mock:SUPPORT_STATUS.supported,queue:SUPPORT_STATUS.supported},stability:STABILITY.experimental,component_definition:true,notes:'Single simple ring; no holes or branching. Self-intersection and compute budgets fail closed.'})),
+  {op:'edit_geometry',description:'Reviewed revision-bound local topology batch in one instance context.',schema:{required:['op','entity_path','snapshot_revision','edits'],optional:['instance_policy','edit_scope','context_path']},runtime_support:{mock:SUPPORT_STATUS.partial,queue:SUPPORT_STATUS.supported},stability:STABILITY.experimental},
   ...['place_component_asset', 'replace_component_asset'].map(op => ({
     op,
     description: 'Load a SHA-bound native SKP root and place it or replace exactly one existing root instance in the reviewed atomic transaction.',

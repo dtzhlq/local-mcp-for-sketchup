@@ -43,6 +43,15 @@ export function getWorkflowBundle() {
       'Run queue commands serially against one SketchUp Bridge session.'
     ],
     workflows: {
+      geometry_edit: {
+        intent: 'Read actual topology, measure it, and submit a revision-bound local edit.',
+        steps: [
+          { tool: 'query_model_geometry', arguments: { runtime: 'queue', targets: ['model'] }, purpose: 'Discover occurrence contexts and immutable geometry snapshot resources.' },
+          { tool: 'measure_model_geometry', arguments: { snapshot_handle: '<query snapshot_handle>', queries: [{kind:'volume',entity_path:'<target pid path>'}] }, purpose: 'Measure selected geometry without transferring full topology into the prompt.' },
+          { tool: 'edit_model_geometry', arguments: {snapshot_handle:'<query snapshot_handle>',entity_path:'<target pid path>',edits:[{op:'move_vertices',moves:[{handle:'<vertex handle>',delta:[0,0,10]}]}],idempotency_key:'<stable edit key>'}, purpose: 'Submit typed edits within one context and follow the returned reviewed task.' },
+          { tool: 'run_model_program', arguments: {idempotency_key:'<stable program key>',stages:[{kind:'create',code:'<bounded stage source>'}]}, purpose: 'For dependent edits, compute at most three stages separated by native readback.' }
+        ]
+      },
       create: {
         intent: 'Create a model through the safe DSL with mock-first verification.',
         guided_entry: { tool: 'start_agent_task', arguments: { intent: 'create_model', instruction: '<user modeling goal>', interface_level: 'guided' } },

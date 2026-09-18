@@ -1,3 +1,4 @@
+import { expandProfileOperation } from './profile-geometry.mjs';
 const DEFAULT_TEXTURE_ROOT = null;
 
 const MATERIAL_PRESETS = {
@@ -95,7 +96,12 @@ export function parseDslDocument(code) {
 }
 
 function expandOperation(operation, context) {
+  if (operation.op === 'component_definition' && Array.isArray(operation.operations)) return [{...operation, operations: operation.operations.flatMap(child=>expandOperation(child, context))}];
   switch (operation.op) {
+    case 'sweep_profile':
+    case 'loft_profiles_v2':
+      context.macros.push({op:operation.op,generated_operations:1});
+      return [expandProfileOperation(operation)];
     case 'material_preset':
       return expandMaterialPreset(operation, context);
     case 'kitchen_component':

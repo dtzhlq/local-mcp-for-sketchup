@@ -400,6 +400,7 @@ export async function runModelIteration(bridge, {
       model_info: afterModelInfo,
       selection: selectionSummary(evaluated.snapshot.selection || [])
     },
+    geometry_edits: evaluated.snapshot.geometry_edits || [],
     change_summary: changeSummary,
     snapshot_diff: diffSummary(snapshotDiff),
     model_qa: qaSummary(modelQa),

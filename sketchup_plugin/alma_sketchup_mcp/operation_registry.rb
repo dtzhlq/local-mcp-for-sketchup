@@ -4,6 +4,39 @@
 
 module AlmaSketchupMCP
   OPERATION_SUPPORT = {
+    'sweep_profile' => {
+      'status' => 'supported',
+      'stability' => 'experimental',
+      'schema' => {
+        'required' => ['op', 'name', 'profile', 'path'],
+        'optional' => ['id', 'material', 'transform', 'caps', 'max_vertices', 'sample_budget', 'seam_indices', 'initial_up', 'scale_stations', 'twist_stations']
+      },
+      'component_scope' => {
+        'status' => 'supported'
+      }
+    },
+    'loft_profiles_v2' => {
+      'status' => 'supported',
+      'stability' => 'experimental',
+      'schema' => {
+        'required' => ['op', 'name', 'profiles'],
+        'optional' => ['id', 'material', 'transform', 'caps', 'max_vertices', 'sample_budget', 'seam_indices', 'initial_up', 'scale_stations', 'twist_stations']
+      },
+      'component_scope' => {
+        'status' => 'supported'
+      }
+    },
+    'edit_geometry' => {
+      'status' => 'supported',
+      'stability' => 'experimental',
+      'schema' => {
+        'required' => ['op', 'entity_path', 'snapshot_revision', 'edits'],
+        'optional' => ['instance_policy', 'edit_scope', 'context_path']
+      },
+      'component_scope' => {
+        'status' => 'unsupported'
+      }
+    },
     'place_component_asset' => {
       'status' => 'supported',
       'stability' => 'experimental',

@@ -1,0 +1,5 @@
+{
+  "runtime": "mock",
+  "idempotency_key": "example-uplift-generate-v1",
+  "stages": [{"kind":"create","language":"expert","code":"const operations=[]; for(let i=0;i<3;i++){operations.push({op:'sweep_profile',name:'Example_'+i,profile:[[-10,-6],[10,-6],[10,6],[-10,6]],path:[[i*60,0,0],[i*60,0,80],[i*60+20,0,120]],initial_up:[1,0,0]});} ({operations,result:{count:operations.length}});"}]
+}

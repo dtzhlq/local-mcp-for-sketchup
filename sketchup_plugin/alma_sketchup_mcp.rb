@@ -29,6 +29,7 @@ require_relative 'alma_sketchup_mcp/section_operations'
 require_relative 'alma_sketchup_mcp/appearance_operations'
 require_relative 'alma_sketchup_mcp/texture_mapping'
 require_relative 'alma_sketchup_mcp/object_operations'
+require_relative 'alma_sketchup_mcp/model_geometry'
 require_relative 'alma_sketchup_mcp/geometry_operations'
 require_relative 'alma_sketchup_mcp/primitive_operations'
 require_relative 'alma_sketchup_mcp/product_operations'
@@ -60,9 +61,9 @@ module AlmaSketchupMCP
   RESPONSE_DIR = File.join(STATE_DIR, 'responses')
   MM_PER_INCH = 25.4
   DEFAULT_OPERATION_LIMIT = 2000
-  PLUGIN_VERSION = '0.2.0'
-  CAPABILITY_MANIFEST_VERSION = '2026-09-detail-modeling-alpha.1'
-  RUNTIME_CAPABILITY_VERSION = '0.1.0-rc.3-detail-alpha.1'
+  PLUGIN_VERSION = '0.3.0'
+  CAPABILITY_MANIFEST_VERSION = '2026-09-modeling-uplift-alpha.1'
+  RUNTIME_CAPABILITY_VERSION = '0.3.0-modeling-alpha.1'
   OCCURRENCE_CONTRACT_VERSION = 'canonical-occurrence-path.v1'
   BOOLEAN_OPERATIONS_SHA256 = RuntimeSourceAttestation.loaded_boolean_operations_sha256
   MODEL_REVISION_SOURCE_SHA256 = RuntimeSourceAttestation.loaded_model_revision_sha256
@@ -303,6 +304,8 @@ module AlmaSketchupMCP
       list_entities(params)
     when 'inspect_model'
       inspect_model(params)
+    when 'query_model_geometry'
+      query_model_geometry(params)
     when 'inspect_detail_regions'
       inspect_detail_regions(params)
     when 'adopt_open_model'
@@ -678,6 +681,7 @@ module AlmaSketchupMCP
     model = nil
     profiling_started = Process.clock_gettime(Process::CLOCK_MONOTONIC)
     operation_timings = []
+    @geometry_edit_results = []
     snapshot_elapsed_ms = nil
     previous_document_state_model = @document_state_model
     document = parse_dsl(code)
@@ -702,6 +706,7 @@ module AlmaSketchupMCP
     end
     revision_started = Process.clock_gettime(Process::CLOCK_MONOTONIC)
     revision = session_model_revision_report(model, built_snapshot)
+    built_snapshot['geometry_edits'] = @geometry_edit_results unless @geometry_edit_results.empty?
     built_snapshot['model_revision'] = revision['model_revision']
     built_snapshot['model_revision_complete'] = revision['complete']
     built_snapshot['runtime_profile'] = {
@@ -1778,7 +1783,7 @@ module AlmaSketchupMCP
     when 'edge'
       %w[set_visibility attribute remove_attribute set_edge_properties erase_entities transform_entities]
     else
-      %w[delete rename set_material set_visibility transform_object assign_tag attribute remove_attribute classification texture_transform duplicate_entity replace_component_definition explode_entity erase_entities transform_entities cut_hole cut_slot cut_recess add_boss add_raised_rib boolean_union boolean_difference boolean_intersect manifold_check manifold_repair]
+      %w[edit_geometry delete rename set_material set_visibility transform_object assign_tag attribute remove_attribute classification texture_transform duplicate_entity replace_component_definition explode_entity erase_entities transform_entities cut_hole cut_slot cut_recess add_boss add_raised_rib boolean_union boolean_difference boolean_intersect manifold_check manifold_repair]
     end
   end
 
@@ -2003,6 +2008,8 @@ module AlmaSketchupMCP
 
   def apply_operation(model, operation)
     case operation['op']
+    when 'edit_geometry'
+      edit_model_geometry_operation(model, operation)
     when 'reset'
       clear_model(model)
       clear_image_references(model)
@@ -2231,7 +2238,7 @@ module AlmaSketchupMCP
   def object_reference(operation, op_name)
     raw_entity_path = operation['entity_path'] || operation['entityPath'] || operation['target_path'] || operation['targetPath']
     if raw_entity_path
-      allowed = %w[delete rename set_material set_visibility transform_object assign_tag attribute remove_attribute classification texture_transform set_face_material reverse_face pushpull_face set_edge_properties duplicate_entity replace_component_definition replace_component_asset explode_entity erase_entities transform_entities cut_hole cut_slot cut_recess add_boss add_raised_rib boolean_union boolean_difference boolean_intersect manifold_check manifold_repair]
+      allowed = %w[edit_geometry delete rename set_material set_visibility transform_object assign_tag attribute remove_attribute classification texture_transform set_face_material reverse_face pushpull_face set_edge_properties duplicate_entity replace_component_definition replace_component_asset explode_entity erase_entities transform_entities cut_hole cut_slot cut_recess add_boss add_raised_rib boolean_union boolean_difference boolean_intersect manifold_check manifold_repair]
       raise "#{op_name} does not support nested entity_path targets" unless allowed.include?(op_name)
       edit_scope = operation['edit_scope'] || operation['editScope']
       raise "#{op_name}.edit_scope must be component_definition or instance_path for nested targets" unless %w[component_definition instance_path].include?(edit_scope)

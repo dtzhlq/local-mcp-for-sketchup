@@ -1,0 +1,909 @@
+{
+  "version": "modeling-uplift-acceptance.v1",
+  "generated_at": "2026-09-18T05:58:39.714Z",
+  "status": "local_development_candidate",
+  "release_acceptance": false,
+  "branch": "codex/modeling-api-uplift",
+  "baseline": "1d27e9c8c4ab34e8b7cdc1ae24d83f4530a855d3",
+  "product_version": "0.3.0",
+  "environment": {
+    "os": "macOS",
+    "arch": "arm64",
+    "sketchup": "26.2.242",
+    "packaged_node": "24.18.0"
+  },
+  "tool_count": 48,
+  "offline": {
+    "math_geometry": "passed",
+    "reading_editing": "passed",
+    "program_recovery": "passed",
+    "tool_protocol": "passed",
+    "legacy_mcp_integration": "passed",
+    "expert_compiler_compatibility": "passed",
+    "version_contract": "passed"
+  },
+  "native": {
+    "space_sweep": "closed_mesh_and_visual_readback_passed",
+    "unequal_and_concave_loft": "passed",
+    "concave_volume_mm3": 336000,
+    "shared_instance_edit": {
+      "target_volume_mm3": 240000,
+      "control_volume_mm3": 192000,
+      "sibling_vertices_unchanged": true
+    },
+    "program": {
+      "stages": 3,
+      "loop_creation": true,
+      "split_then_native_readback_then_pushpull": true,
+      "pushpull_height_mm": 60,
+      "unselected_patch_unchanged": true
+    },
+    "failure": {
+      "rollback": true,
+      "stale_reference_rejected": true,
+      "model_revision": "sha256:1282e36ccae6fe6cf6b3aafca11dc536ed2c6309718bedbccba0277533a8f832"
+    },
+    "generated_geometry_edit": {
+      "generated_loft_edited": true,
+      "still_manifold": true,
+      "receipt_replay_no_mutation": true,
+      "model_revision": "sha256:3ec48228860ebe9a3c34a0423e6d17d18219ba913dcee7321f6645e1889179c3"
+    },
+    "matrix": {
+      "volume_mm3": 18000,
+      "mirror_nonuniform_transform": true,
+      "closed_sweep_manifold": true
+    },
+    "persistence": {
+      "saved_reopened": true,
+      "new_document_id": true,
+      "all_contexts_equivalent": true,
+      "numeric_tolerance": 1e-7,
+      "model_revision": "sha256:d6c19c7a5811d6b66cb43fea98db65f7aca916c0bb260dc1364805404c9ada6b",
+      "contexts": 16
+    }
+  },
+  "packages": {
+    "service": {
+      "kind": "local_mcp_for_sketchup_service_bundle_preview",
+      "release_candidate": false,
+      "release_artifact": false,
+      "target": "darwin-arm64",
+      "version": "0.3.0",
+      "path": "/Users/07zhang/.codex/worktrees/modeling-api-uplift/sketchup-mcp-replica/out/modeling-uplift/nonrelease-uplift-candidate-20260918-local-mcp-for-sketchup-0.3.0-darwin-arm64.tar.gz",
+      "file_name": "nonrelease-uplift-candidate-20260918-local-mcp-for-sketchup-0.3.0-darwin-arm64.tar.gz",
+      "media_type": "application/gzip",
+      "sha256": "f9d5ff4d6a4a6e6f5bdae0ea5d115f7f9f2fa7fcbf813f8d7e0f56c211ac6a59",
+      "size_bytes": 53859100,
+      "bundled_node": {
+        "version": "24.18.0",
+        "upstream_sha256": "e1a97e14c99c803e96c7339403282ea05a499c32f8d83defe9ef5ec66f979ed1"
+      },
+      "dependency_count": 15,
+      "native_dependencies_verified": true,
+      "live_sketchup_verified": false,
+      "release_acceptance": false
+    },
+    "plugin": {
+      "version": "0.3.0",
+      "checked": true,
+      "installed": false,
+      "packaged": true,
+      "package_path": "/Users/07zhang/.codex/worktrees/modeling-api-uplift/sketchup-mcp-replica/out/modeling-uplift/alma-sketchup-mcp-0.3.0-nonrelease-uplift-20260918.rbz",
+      "package_sha256": "799b5284d2ace80a85f6220cda93bbe2ba0a17aad16ae0f1bf6722225baa514b",
+      "package_size_bytes": 144428,
+      "package_artifact_class": "non_release_preview",
+      "release_artifact": false
+    },
+    "service_verification": {
+      "ok": true,
+      "node": "v24.18.0",
+      "arch": "arm64",
+      "tools": 48,
+      "source_bytes_match": true,
+      "source_files": 119,
+      "live_readback": true,
+      "contexts": 16,
+      "model_revision": "sha256:d6c19c7a5811d6b66cb43fea98db65f7aca916c0bb260dc1364805404c9ada6b"
+    }
+  },
+  "artifacts": [
+    {
+      "path": "output/modeling-uplift/native/modeling-uplift.skp",
+      "sha256": "98b739b53e83bbf354fbaaf29a664152c45956b42afd9d9c89be16d35f33025e",
+      "bytes": 337828
+    },
+    {
+      "path": "output/modeling-uplift/native/overview.png",
+      "sha256": "e1e1e924ce7ced09a4148c4046abcd03115e77d0eb278d5c752b9bb7e2124329",
+      "bytes": 32398
+    },
+    {
+      "path": "output/modeling-uplift/native/top.png",
+      "sha256": "771dcdc09655506cd0195116fc5bb97396c434d08f285226e93cacccc2646823",
+      "bytes": 35548
+    },
+    {
+      "path": "output/modeling-uplift/native/front.png",
+      "sha256": "8aca9efccafee6f833cb5d68e0f460e8b7b7713401a944ce1759a0a2adb36a38",
+      "bytes": 37321
+    }
+  ],
+  "tools": [
+    {
+      "name": "query_model_geometry",
+      "description": "Read revision-bound vertices, edges, faces, loops and occurrence transforms for specified model contexts. Returns a compact summary and immutable resource handle; detail=full is explicit. Read-only.",
+      "input_schema_sha256": "beede36f6380244e911eb6ba58ee9215c5d304bd5716b0a51f16b84353ba429a",
+      "output_schema_declared": true,
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "input_contract_parity": "passed",
+      "behavior_validation": "native_selected_scenarios_passed",
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+    },
+    {
+      "name": "measure_model_geometry",
+      "description": "Measure actual geometry length, area, closed volume, minimum distance or direction angle. Returns units, method and revision. Invalid or over-budget measurements are unavailable, never bbox substitutes.",
+      "input_schema_sha256": "72549ad79e0cc9b0e13972af7661f79b4b52c7a80d90803eaf0bd7a860c8f262",
+      "output_schema_declared": true,
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "input_contract_parity": "passed",
+      "behavior_validation": "native_selected_scenarios_passed",
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+    },
+    {
+      "name": "edit_model_geometry",
+      "description": "Submit one revision-bound local topology batch: add edges/faces, move vertices, transform, pushpull, reverse, erase or set properties. Preserves sibling instances through isolation. Uses existing reviewed tasks and receipts; returns approval steps when required.",
+      "input_schema_sha256": "8693b364d6a21e9066b6570677fcc6953e9f214c99ea6897f9be4600509a8ac1",
+      "output_schema_declared": true,
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "input_contract_parity": "passed",
+      "behavior_validation": "native_selected_scenarios_passed",
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+    },
+    {
+      "name": "run_model_program",
+      "description": "Run or resume up to three bounded create/edit stages with real geometry snapshots, computation, reviewed execution and native readback. Expert JS receives snapshot/previous/parameters/stage; Python SDK also receives these bindings. No arbitrary process execution.",
+      "input_schema_sha256": "052b3a3f6c12b46845ce396927249c7e283292bd19aa844fe1949b987171009d",
+      "output_schema_declared": true,
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "input_contract_parity": "passed",
+      "behavior_validation": "native_selected_scenarios_passed",
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+    },
+    {
+      "name": "inspect_detail_regions",
+      "description": "Read actual native geometry to test frozen void regions and construction boundaries in anchor_local or model coordinates. mode: pair_separation with two explicit assembly paths verifies native leaf separation and boundary contacts; enclosing solids, external caps and ambiguous geometry remain unresolved.",
+      "input_schema_sha256": "63bf052908f75f32501f2e0c4ed1527e72dd71175655fb61ef63d1ba11ea4250",
+      "output_schema_declared": true,
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "input_contract_parity": "passed",
+      "behavior_validation": "not_exhaustively_rerun",
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+    },
+    {
+      "name": "query_assets",
+      "description": "Search local component recipes or an explicit asset catalog; check file availability, provenance, license, component hierarchy, material inventory and evidence freshness. Never buys or downloads assets.",
+      "input_schema_sha256": "0c4cab601fd916990b98aa1978c810375e6e08c71ec32efda4db56d7a9c15001",
+      "output_schema_declared": true,
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "input_contract_parity": "passed",
+      "behavior_validation": "not_exhaustively_rerun",
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+    },
+    {
+      "name": "capture_detail_views",
+      "description": "Capture stable native close-up views for explicit component occurrences. Optional views[].scene_ref performs controlled scene inspection, requiring a selected scene and saved style; otherwise capture is camera-only. Restores camera, scene, environment and style and reports actual modification state.",
+      "input_schema_sha256": "7bbe1ac62e7f0a5df095614fa7a4fa92fd1be4e53028a9ea2ddced4d9798a56c",
+      "output_schema_declared": true,
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "input_contract_parity": "passed",
+      "behavior_validation": "not_exhaustively_rerun",
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+    },
+    {
+      "name": "get_docs",
+      "description": "Return progressively scoped safe SketchUp documentation by topic and detail level.",
+      "input_schema_sha256": "166338c23eedb30164c3abd4ebb84939c0812274270ea1498e039d5fe480dd1f",
+      "output_schema_declared": true,
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "input_contract_parity": "passed",
+      "behavior_validation": "not_exhaustively_rerun",
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+    },
+    {
+      "name": "get_workflow_bundle",
+      "description": "Return versioned, registry-backed create, understand, proposal/reviewed existing-model edit, design-parameter, image artifact/correction, and verify workflows for guided, standard, and expert clients.",
+      "input_schema_sha256": "32062bdb9024160d3b9816f12ba2f337808ee107449f8bf08d55b0026944f51e",
+      "output_schema_declared": true,
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "input_contract_parity": "passed",
+      "behavior_validation": "not_exhaustively_rerun",
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+    },
+    {
+      "name": "get_capabilities",
+      "description": "Return runtime capability descriptors, using a read-only live SketchUp plugin handshake for queue runtime. Compatibility is not mutation permission.",
+      "input_schema_sha256": "05a3136740f5e99f6de7549a4cb657a35152b0408288e3b9825e7d179bdddf73",
+      "output_schema_declared": true,
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "input_contract_parity": "passed",
+      "behavior_validation": "native_selected_scenarios_passed",
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+    },
+    {
+      "name": "create_queue_handshake",
+      "description": "Create a short-lived, signed Session Contract from an explicit read-only live queue probe. Fails closed on lock/request/response residue and never creates, resets, opens, or modifies a SketchUp model.",
+      "input_schema_sha256": "a256c4bbdcd3acbde3989f2b662c3a1770fc97e3436773a533c051f986258781",
+      "output_schema_declared": true,
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "input_contract_parity": "passed",
+      "behavior_validation": "native_selected_scenarios_passed",
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+    },
+    {
+      "name": "queue_diagnostics",
+      "description": "Inspect local queue directories, pending requests, orphan responses, and queue lock state without sending a SketchUp request.",
+      "input_schema_sha256": "e35dc3ec042ca19e017c33b5eb6ed4d1def0d30cad4ba25d974b8c99f0c25c50",
+      "output_schema_declared": true,
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "input_contract_parity": "passed",
+      "behavior_validation": "not_exhaustively_rerun",
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+    },
+    {
+      "name": "prepare_image_modeling_brief",
+      "description": "Validate path-based image-structured artifacts and prepare a review-aware MCP modeling brief. Returns compile permission and blockers; it does not call SketchUp.",
+      "input_schema_sha256": "380beed4ffbe8d06981df066118b6610aad48c1cca8637b7514734c16b1423f4",
+      "output_schema_declared": true,
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "input_contract_parity": "passed",
+      "behavior_validation": "not_exhaustively_rerun",
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+    },
+    {
+      "name": "compile_reviewed_part_graph",
+      "description": "Compile schema-valid, review-cleared image artifacts and a reviewed PartGraph to a safe JSON DSL preview. It never executes the DSL or calls the queue runtime.",
+      "input_schema_sha256": "330c93df7f50001031c52444ac2e2fadff914c32e390861816b7f8e7f8730e8b",
+      "output_schema_declared": true,
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "input_contract_parity": "passed",
+      "behavior_validation": "not_exhaustively_rerun",
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+    },
+    {
+      "name": "prepare_existing_model_edit",
+      "description": "Inspect and fingerprint the open model, validate persistent entity targets, classify edit risk, and write a reviewable edit plan without modifying geometry.",
+      "input_schema_sha256": "b3a4dd553f1a5436e9f60e52ab3a9ee0587ad40de31bfb4c899979a29333a688",
+      "output_schema_declared": true,
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "input_contract_parity": "passed",
+      "behavior_validation": "not_exhaustively_rerun",
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+    },
+    {
+      "name": "apply_reviewed_model_edit",
+      "description": "Internal expert apply surface for configured S1 auto-policy. S2-S4 public Agent execution must use Agent Gateway, which loads trusted approval only from the server-private local decision store.",
+      "input_schema_sha256": "c92c53b85a56b7f4e84e281bd7f6732d1084b9a775fc6b2fa2ea618507def93b",
+      "output_schema_declared": true,
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "input_contract_parity": "passed",
+      "behavior_validation": "not_exhaustively_rerun",
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+    },
+    {
+      "name": "start_agent_task",
+      "description": "Always supply intent. Start with intent=discover and inputs={topic:\"start\"}. Discovery topics: tasks (kind, detail=parameters|examples), assets (query, read-only local catalog), workflows (task_name for edits/appearance/save), connect (runtime=queue). Precheck inputs.task with intent=preflight_model; create_model accepts the same task plus explicit inputs.runtime and an idempotency_key. Queue uses connection_task_id from discover/connect (or direct expert session_contract). Save an accepted live creation with intent=deliver_model and inputs={source_task_id,runtime:\"queue\",connection_task_id}; keep an idempotency_key. Close and disk-reopen that exact saved document with intent=reopen_delivered_model, inputs={saved_delivery_task_id,runtime:\"queue\",connection_task_id}, and a stable idempotency_key. Keep task_id; resume after uncertain responses, never close again. Native PBR/HDR uses intent=apply_native_appearance with inputs.runtime=\"queue\" and structured appearance; discover workflows first, retain the review task, approve locally, then submit its fresh connection_task_id. Existing JSON DSL code workflows remain available. Client capabilities never elevate server policy.",
+      "input_schema_sha256": "e0e45f8a010b1e169a5037dfad1a6f6cb272a007625b512977a3bda89b287277",
+      "output_schema_declared": true,
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "input_contract_parity": "passed",
+      "behavior_validation": "native_selected_scenarios_passed",
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+    },
+    {
+      "name": "resume_agent_task",
+      "description": "Resume a persistent Agent Contract v1 task by task_id and receive its stable state, next_action, and artifact handles.",
+      "input_schema_sha256": "9485bab833aabb7f9bf6706433da05cebbdf77576d9cbba5907cf553c5338f8c",
+      "output_schema_declared": true,
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "input_contract_parity": "passed",
+      "behavior_validation": "not_exhaustively_rerun",
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+    },
+    {
+      "name": "submit_agent_task_input",
+      "description": "Submit the next required non-credential input to a persistent task. Trusted approval is loaded only from the server-private local decision store. Idempotency keys replay durable outcomes; pending or outcome-unknown operations are not automatically executed again.",
+      "input_schema_sha256": "6c367153eb807597c96fb512ff8a80db59ecb1c9ad2c72b822726f1159bd1d4e",
+      "output_schema_declared": true,
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "input_contract_parity": "passed",
+      "behavior_validation": "native_selected_scenarios_passed",
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+    },
+    {
+      "name": "read_agent_artifact",
+      "description": "Read a server-managed artifact by opaque handle with offset/max_chars pagination under the originating task response policy; local filesystem access is not required and raw image bytes require a trusted vision-capable task profile.",
+      "input_schema_sha256": "577c126382e00cc999b808b2dab5cd2b0480fcdfeaa9953f8941b470aba1e515",
+      "output_schema_declared": true,
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "input_contract_parity": "passed",
+      "behavior_validation": "not_exhaustively_rerun",
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+    },
+    {
+      "name": "build_model",
+      "description": "Build model geometry from a safe JSON DSL string and return a structured snapshot.",
+      "input_schema_sha256": "2f7f4adfb95554b6180efc61a22d6b03e83cbcd7145d563bd80b5c618392fd89",
+      "output_schema_declared": true,
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "input_contract_parity": "passed",
+      "behavior_validation": "native_selected_scenarios_passed",
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+    },
+    {
+      "name": "compile_expert",
+      "description": "Compile a restricted Expert Mode script into the safe JSON DSL without building geometry.",
+      "input_schema_sha256": "15bd484224670ba506814ebdd6073f97935e23b3cbbc066e327b265b2467b2cb",
+      "output_schema_declared": true,
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "input_contract_parity": "passed",
+      "behavior_validation": "not_exhaustively_rerun",
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+    },
+    {
+      "name": "compile_python_sdk",
+      "description": "Compile restricted official-style Python SDK facade code into the safe JSON DSL without executing Python.",
+      "input_schema_sha256": "df37c5c6311f2e853e4b0fc2e834c899dc6a578a2ae7f702b1d9b194a9dade8b",
+      "output_schema_declared": true,
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "input_contract_parity": "passed",
+      "behavior_validation": "not_exhaustively_rerun",
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+    },
+    {
+      "name": "build_expert_model",
+      "description": "Compile a restricted Expert Mode script into JSON DSL, then build it with the selected runtime.",
+      "input_schema_sha256": "1e350844b9daaa597fe83d33fea083acbba2ddac4b0bd9ea04e18a2afce2c65a",
+      "output_schema_declared": true,
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "input_contract_parity": "passed",
+      "behavior_validation": "not_exhaustively_rerun",
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+    },
+    {
+      "name": "reset_model",
+      "description": "Reset the current model session and return an empty snapshot.",
+      "input_schema_sha256": "e5ef8ad230f6d10d7fae85e4d8bb6e6ab9c31031cb42a51214908dbcc02a8d28",
+      "output_schema_declared": true,
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "input_contract_parity": "passed",
+      "behavior_validation": "not_exhaustively_rerun",
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+    },
+    {
+      "name": "save_model",
+      "description": "Save the current model session and return a file path plus snapshot.",
+      "input_schema_sha256": "0a534b60e9a65ea8ad41b0b7eafd503fda6be840327c89ce66b4ce798f7acde0",
+      "output_schema_declared": true,
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "input_contract_parity": "passed",
+      "behavior_validation": "native_selected_scenarios_passed",
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+    },
+    {
+      "name": "save_model_version",
+      "description": "Save the current model session to a versioned file path without overwriting the requested base path.",
+      "input_schema_sha256": "efa173765a9d3f9b037b2c65f23589686e5294675f107d06086ffb0e2dc09d39",
+      "output_schema_declared": true,
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "input_contract_parity": "passed",
+      "behavior_validation": "not_exhaustively_rerun",
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+    },
+    {
+      "name": "open_model",
+      "description": "Open an existing model into the selected runtime. Queue may return pending_mdi_activation without a snapshot on macOS; focus the target and create a fresh Session Contract before later mutation. Mock opens saved mock JSON artifacts.",
+      "input_schema_sha256": "7b15ba6ae3d733d40de0897899272b34a63d5e652d0447b3257e123420b1337b",
+      "output_schema_declared": true,
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "input_contract_parity": "passed",
+      "behavior_validation": "native_selected_scenarios_passed",
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+    },
+    {
+      "name": "import_model",
+      "description": "Import an external model into the current session and return the updated snapshot. Mock supports append/replace; queue supports append only and rejects replace before queue dispatch to preserve the active model.",
+      "input_schema_sha256": "bb554bed0dfa20c538caddb3a4d7368472f592782469f640dfdb902a01961a12",
+      "output_schema_declared": true,
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "input_contract_parity": "passed",
+      "behavior_validation": "not_exhaustively_rerun",
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+    },
+    {
+      "name": "export_model",
+      "description": "Export the current model session to a runtime-supported file format.",
+      "input_schema_sha256": "e085818e74f5c02752cf82b65f4d4a0916981c38aef4fb98f44f45acce32bbce",
+      "output_schema_declared": true,
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "input_contract_parity": "passed",
+      "behavior_validation": "not_exhaustively_rerun",
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+    },
+    {
+      "name": "get_model_info",
+      "description": "Return active model totals, bounding box, materials, tags, components, scenes, and warning summary.",
+      "input_schema_sha256": "05a3136740f5e99f6de7549a4cb657a35152b0408288e3b9825e7d179bdddf73",
+      "output_schema_declared": true,
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "input_contract_parity": "passed",
+      "behavior_validation": "native_selected_scenarios_passed",
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+    },
+    {
+      "name": "list_entities",
+      "description": "List top-level groups and component instances with stable ids, names, kinds, bbox, material, tag, and metadata.",
+      "input_schema_sha256": "1f30131fe4844bf3d2279b34d238ca6f898924e511e3a6e69332adca28a75d6f",
+      "output_schema_declared": true,
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "input_contract_parity": "passed",
+      "behavior_validation": "not_exhaustively_rerun",
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+    },
+    {
+      "name": "inspect_model",
+      "description": "Inspect the active model and optionally include filtered entity summaries and the full snapshot.",
+      "input_schema_sha256": "f1467e39b59eae5ed48d489f284577c2af07240d2e855c30fcf8641a2f5c1f96",
+      "output_schema_declared": true,
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "input_contract_parity": "passed",
+      "behavior_validation": "not_exhaustively_rerun",
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+    },
+    {
+      "name": "adopt_open_model",
+      "description": "Assign stable Alma references and recursively index persistent occurrence paths for safe, policy-gated existing-model editing.",
+      "input_schema_sha256": "9f9b3c9f765f362e42c2f7c79886225ad8534ee4defcfe40f955542d77bc55fb",
+      "output_schema_declared": true,
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "input_contract_parity": "passed",
+      "behavior_validation": "not_exhaustively_rerun",
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+    },
+    {
+      "name": "resolve_model_targets",
+      "description": "Resolve a natural-language or filtered target request against the active model and return stable target references for selection or iteration.",
+      "input_schema_sha256": "ec9c31891f6dc12bfa0dd118df64797bad73684172fe8c6966c9bede652c86e4",
+      "output_schema_declared": true,
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "input_contract_parity": "passed",
+      "behavior_validation": "not_exhaustively_rerun",
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+    },
+    {
+      "name": "get_selection",
+      "description": "Return the current active selection as stable entity summaries.",
+      "input_schema_sha256": "05a3136740f5e99f6de7549a4cb657a35152b0408288e3b9825e7d179bdddf73",
+      "output_schema_declared": true,
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "input_contract_parity": "passed",
+      "behavior_validation": "not_exhaustively_rerun",
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+    },
+    {
+      "name": "analyze_selection_geometry",
+      "description": "Interpret the current selected Face/Edge/Group geometry into measured primitives, ordered face loops, oriented road graphs, approach/intersection relationships, and semantic hypotheses such as road segment or junction candidate. This is an analysis layer and should not be treated as confirmed domain truth without confidence checks.",
+      "input_schema_sha256": "fa9951d96cc5d3e2260b5ce4efdc6efb9c149514db5870c0e745cb7334d18f0d",
+      "output_schema_declared": true,
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "input_contract_parity": "passed",
+      "behavior_validation": "not_exhaustively_rerun",
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+    },
+    {
+      "name": "plan_modification_intent",
+      "description": "Turn the current target resolution, selection, and interpreted geometry into an auditable ModificationIntent before optional patch execution.",
+      "input_schema_sha256": "b28a2f324e67d8d1c1a4e397dcd69e38bbfc162459d0f65d9eea89b16864d5a6",
+      "output_schema_declared": true,
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "input_contract_parity": "passed",
+      "behavior_validation": "not_exhaustively_rerun",
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+    },
+    {
+      "name": "set_selection",
+      "description": "Set, add to, remove from, or clear the current active selection by stable ids or names.",
+      "input_schema_sha256": "f509c84586dab3131f0b885acc496ec66bebacf2d1077da8cce3498b4a982795",
+      "output_schema_declared": true,
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "input_contract_parity": "passed",
+      "behavior_validation": "not_exhaustively_rerun",
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+    },
+    {
+      "name": "capture_view",
+      "description": "Capture the current live SketchUp viewport to an image artifact and return camera/model metadata.",
+      "input_schema_sha256": "5d043f7172578c6459bf0c7cd76e0c55a2cae237e8773361f25b463c06faf81f",
+      "output_schema_declared": true,
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "input_contract_parity": "passed",
+      "behavior_validation": "native_selected_scenarios_passed",
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+    },
+    {
+      "name": "run_ruby_expert",
+      "description": "Debug-only queue tool for running arbitrary SketchUp Ruby. Disabled unless ALMA_SKETCHUP_ENABLE_RUBY_EXPERT=1 is set in both Node and SketchUp plugin environments.",
+      "input_schema_sha256": "4fbeee40481cba4937fa4d76005d9a4c63a1c3ca59d09cb5ad282c893972424c",
+      "output_schema_declared": true,
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
+      "input_contract_parity": "passed",
+      "behavior_validation": "not_exhaustively_rerun",
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+    },
+    {
+      "name": "evaluate_py",
+      "description": "Official-shaped controlled evaluate_py compatibility layer. Executes JSON DSL, restricted Python SDK facade code, or restricted Expert Mode; arbitrary Python is intentionally blocked.",
+      "input_schema_sha256": "f961540812f55e03241efe0b9574c0b5723169b692238cc83637c2fc133d358e",
+      "output_schema_declared": true,
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "input_contract_parity": "passed",
+      "behavior_validation": "not_exhaustively_rerun",
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+    },
+    {
+      "name": "build_report",
+      "description": "Build or inspect a model and write a bundled artifact report with snapshot, model info, optional QA, save artifact, and optional capture.",
+      "input_schema_sha256": "dbd5a66daf78acc8df58445a68091c3e0cecbe36ec7fd8f751cf02ed5aae7dcc",
+      "output_schema_declared": true,
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "input_contract_parity": "passed",
+      "behavior_validation": "not_exhaustively_rerun",
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+    },
+    {
+      "name": "iterate_model",
+      "description": "Inspect the active model, apply an incremental patch or safe ModificationIntent, then write before/after snapshots, diff, QA, optional saved model, and optional queue capture artifacts.",
+      "input_schema_sha256": "d93713dba7671ddfa33e99a33e98c4a087c94dca53d60bc5b22a493db0ac9544",
+      "output_schema_declared": true,
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "input_contract_parity": "passed",
+      "behavior_validation": "not_exhaustively_rerun",
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+    },
+    {
+      "name": "compare_snapshots",
+      "description": "Compare two structured snapshots and return a diff report.",
+      "input_schema_sha256": "0236c5594daa482bd74b78789f8cd0fb89141962e697fd859f50273dc72ae580",
+      "output_schema_declared": true,
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "input_contract_parity": "passed",
+      "behavior_validation": "not_exhaustively_rerun",
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+    },
+    {
+      "name": "compare_model",
+      "description": "Build the same DSL with two runtimes and return a snapshot parity QA report.",
+      "input_schema_sha256": "7544728a9691d37f953efb2e09b600be11005d44fc78937827bbc05560178969",
+      "output_schema_declared": true,
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "input_contract_parity": "passed",
+      "behavior_validation": "not_exhaustively_rerun",
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+    },
+    {
+      "name": "validate_model",
+      "description": "Build or inspect a model snapshot, run semantic layout QA, and return orthographic SVG/HTML previews plus correction suggestions.",
+      "input_schema_sha256": "3a021952e1bae7debcf91431f5e3a1be7f3ac4e5a6ced4173a0905c4ec36527d",
+      "output_schema_declared": true,
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "input_contract_parity": "passed",
+      "behavior_validation": "not_exhaustively_rerun",
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+    },
+    {
+      "name": "validate_reference_model",
+      "description": "Build or inspect a model snapshot, run reference visual QA against orthographic silhouette/keypoint/area rules, and return PartGraph-targeted correction suggestions.",
+      "input_schema_sha256": "54012b0f0a7fe0a35843158e62bd2947aadb65f317c5ef3f428a04658c83c3ac",
+      "output_schema_declared": true,
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "input_contract_parity": "passed",
+      "behavior_validation": "not_exhaustively_rerun",
+      "scope": "Contract consistency covers all 48 tools. Native evidence covers selected scenarios, not all branches of every tool."
+    }
+  ],
+  "usage": {
+    "source": "local Codex session telemetry",
+    "implementation_request_at": "2026-09-18T04:37:37.288Z",
+    "observed_through": "2026-09-18T05:58:39.147Z",
+    "tool_calls": {
+      "exec": 179,
+      "js": 44
+    },
+    "tool_call_count": 223,
+    "token_usage_delta": {
+      "input_tokens": 34039844,
+      "cached_input_tokens": 33564928,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 105408,
+      "reasoning_output_tokens": 30872,
+      "total_tokens": 34145252
+    },
+    "limitations": [
+      "Snapshot before final response; later actions are not included.",
+      "Counts function_call and custom_tool_call records; nested tools inside an exec call are not counted separately.",
+      "Token telemetry includes cached input; not a billing estimate."
+    ],
+    "uncached_input_tokens": 474916
+  },
+  "validation_corrections": {
+    "count": 8,
+    "count_scope": "Named verification and integration fixes, excluding ordinary implementation edits",
+    "items": [
+      "Python SDK vector to matrix normalization",
+      "Native InstancePath group leaf resolution",
+      "Fresh Session Contract for server-approved geometry edits",
+      "Bounded Expert array predicate helpers",
+      "Native creation matrix application",
+      "Program scope rebinding after make_unique",
+      "Required arguments in discoverable workflow examples",
+      "Persistence comparison tolerances and unordered adjacency"
+    ]
+  },
+  "limits": [
+    "Cross-model benefits not empirically tested.",
+    "Windows native acceptance not run.",
+    "Mock topology editing remains partial; native splitting and pushpull require queue.",
+    "Local edits currently require a group/component context; raw model-root loose geometry is queryable but not directly editable by the new tool.",
+    "Runtime no-replay behavior is tested offline and committed receipt replay is tested natively; native transport-response loss was not deliberately injected.",
+    "New additive editing branches such as valid material assignment and edge attributes are not each separately native-tested.",
+    "Legacy output schemas preserve extra fields; they do not exhaustively enumerate every optional nested result variant.",
+    "No arbitrary CPython, NURBS, holes or branching loft topology.",
+    "Over-budget queries return incomplete status and require narrower scope; no vertex-level paging for a single oversized context."
+  ],
+  "follow_up": [
+    "Broaden typed output schemas for legacy result variants",
+    "Raw model-root geometry editing with existing approval protections",
+    "Large-context topology paging and additional native edit-branch fixtures",
+    "Optional one-model three-task comparison"
+  ]
+}

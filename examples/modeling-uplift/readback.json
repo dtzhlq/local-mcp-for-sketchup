@@ -1,0 +1,9 @@
+{
+  "runtime":"mock",
+  "idempotency_key":"example-uplift-readback-v1",
+  "stages":[
+    {"kind":"create","code":"({operations:[{op:'sweep_profile',name:'ReadbackExample',profile:[[0,0],[40,0],[40,40],[0,40]],path:[[0,0,0],[0,0,80]],initial_up:[1,0,0]}],result:{name:'ReadbackExample'}});"},
+    {"kind":"edit","code":"const c=snapshot.contexts.find(c=>c.name===previous.name); ({entity_path:c.entity_path,edits:[{op:'move_vertices',moves:c.vertices.filter(v=>v.position[2]>79).map(v=>({handle:v.handle,delta:[0,0,20]}))}],result:previous});"},
+    {"kind":"edit","code":"const c=snapshot.contexts.find(c=>c.name===previous.name); ({entity_path:c.entity_path,edits:[{op:'move_vertices',moves:c.vertices.filter(v=>v.position[2]>99).map(v=>({handle:v.handle,delta:[5,0,0]}))}],result:{name:previous.name,readback_revision:snapshot.model_revision}});"}
+  ]
+}

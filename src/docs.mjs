@@ -16,6 +16,14 @@ Start with the current Agent Gateway discovery flow (2026-09-11):
 - The 15 workflow categories are not 15 fully live-accepted capabilities. The September 7 delivery covers specified macOS SketchUp 2026 samples; newer parameter-edit, replacement, HDR and reopen paths retain scoped or pending live acceptance. Consult docs/model-accessibility-support-2026-09-11.md and docs/model-accessibility-quickstart.md; tool discovery supplies guidance without local file access.
 - Reconnect after updating the Node service and verify the loaded Ruby plugin with get_capabilities(runtime=queue). Old installed services/plugins do not inherit source updates automatically.
 
+General modeling candidate (0.3.0):
+- query_model_geometry reads real occurrence topology with revision-bound snapshot_handle and geometry:// resources. Default is a compact summary; use detail=full only when needed.
+- measure_model_geometry measures length, area, closed volume, distance and angle directly. Unavailable measurements include a reason; bounding boxes are never substituted.
+- edit_model_geometry submits one-context atomic edits using snapshot_handle, entity_path, edits and idempotency_key. Existing server approval and Session Contract apply; no client-approved flag.
+- run_model_program executes up to three expert/python_sdk stages. Read-only snapshot, previous, parameters, stage bindings; return operations for creation or entity_path/edits for local editing. Each executed stage is followed by native readback. Resume pending child review before continuing the parent task.
+- sweep_profile and loft_profiles_v2 are shared DSL operations supporting simple single-ring sections; no holes or branching. Matrices are column-major, translations in mm.
+- Defaults use mock. Native topology behaviors such as splitting and pushpull require queue; mock editing is partial. Check actual runtime capabilities before executing.
+
 Expert DSL and inspection tools remain available:
 
 - get_docs() -> returns these DSL and runtime notes.

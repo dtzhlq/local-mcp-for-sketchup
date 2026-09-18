@@ -1,3 +1,4 @@
+import { mockGeometrySnapshot, editMockGeometry } from './mock-model-geometry.mjs';
 import crypto from 'node:crypto';
 import fs from 'node:fs/promises';
 import path from 'node:path';
@@ -45,6 +46,8 @@ export class MockRuntime {
     this.lockTimeoutMs = lockTimeoutMs;
   }
 
+  async queryModelGeometry(options = {}) { return this.withSessionLock(async()=>mockGeometrySnapshot(await this.readModel(), options)); }
+
   async resetModel() {
     return this.withSessionLock(async () => {
       const model = emptyModel();
@@ -68,6 +71,9 @@ export class MockRuntime {
         case 'style_activate': styleActivate(model, operation); break;
         case 'section_plane': sectionPlane(model, operation); break;
         case 'section_plane_activate': sectionPlaneActivate(model, operation); break;
+        case 'edit_geometry':
+          editMockGeometry(model, operation);
+          break;
         case 'reset':
           model = emptyModel();
           break;

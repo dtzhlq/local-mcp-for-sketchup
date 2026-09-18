@@ -15,6 +15,7 @@ const SCRIPT_PATH = fileURLToPath(import.meta.url);
 const REPO_ROOT = path.resolve(path.dirname(SCRIPT_PATH), '..');
 
 export const PLUGIN_FILES = Object.freeze([
+  { source: 'sketchup_plugin/alma_sketchup_mcp/model_geometry.rb', target: 'alma_sketchup_mcp/model_geometry.rb' },
   { source: 'sketchup_plugin/alma_sketchup_mcp.rb', target: 'alma_sketchup_mcp.rb' },
   { source: 'sketchup_plugin/alma_sketchup_mcp/operation_registry.rb', target: 'alma_sketchup_mcp/operation_registry.rb' },
   { source: 'sketchup_plugin/alma_sketchup_mcp/native_asset_operations.rb', target: 'alma_sketchup_mcp/native_asset_operations.rb' },

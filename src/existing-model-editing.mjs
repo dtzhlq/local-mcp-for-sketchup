@@ -1,3 +1,4 @@
+import { validateGeometryEdits } from './model-geometry-contract.mjs';
 import crypto from 'node:crypto';
 import fs from 'node:fs/promises';
 import path from 'node:path';
@@ -19,6 +20,7 @@ export const EXISTING_MODEL_EDIT_EXECUTION_TARGET_VALIDATION_VERSION = 'existing
 
 const RISK_BY_OPERATION = Object.freeze({
   ...Object.fromEntries(AGENT_GATEWAY_ADDITIVE_CREATION_OPERATIONS.map((operation) => [operation, 'S3'])),
+  edit_geometry: 'S4',
   material: 'S2',
   attribute: 'S1',
   remove_attribute: 'S1',
@@ -415,7 +417,7 @@ export async function prepareExistingModelEdit({ bridge, runtime = 'mock', timeo
       : await bridge.adopt_open_model({ runtime, timeoutMs, recursive: true, recursive_limit: normalizedBudgets.recursive_limit, recursive_roots, read_only: true });
   const indexed = indexedAdoptionTargets(adoption);
   const blockers = [];
-  if (recursive_roots && (normalizedOperations.some(operation => operation.op !== 'replace_component_definition') || requestedTargets.some(target => { const matches = (adoption.recursive_index || []).filter(entry => recursive_roots.includes(entry.entity_path) && (target.entity_path ? entry.entity_path === target.entity_path : [entry.id, entry.reference, entry.persistent_id].includes(target.target_id))); return matches.length !== 1; }))) throw new AgentContractError('OPERATION_NOT_ALLOWED', 'Scoped assembly review permits only replacements of the explicitly indexed root instances');
+  if (recursive_roots && (normalizedOperations.some(operation => !['replace_component_definition', 'edit_geometry'].includes(operation.op)) || requestedTargets.some(target => { const matches = (adoption.recursive_index || []).filter(entry => recursive_roots.includes(entry.entity_path) && (target.entity_path ? entry.entity_path === target.entity_path : [entry.id, entry.reference, entry.persistent_id].includes(target.target_id))); return matches.length !== 1; }))) throw new AgentContractError('OPERATION_NOT_ALLOWED', 'Scoped assembly review permits only replacements of the explicitly indexed root instances');
   if (normalizedTargetValidation.mode === 'full_recursive' && adoption.recursive_truncated) {
     blockers.push({ code: 'recursive_index_truncated', message: 'Recursive entity index was truncated; increase recursive_limit before review.' });
   }
@@ -962,6 +964,11 @@ function validateExistingOperationContract(operation, index) {
     break;
   case 'set_material':
     requireStringField(['material']);
+    break;
+  case 'edit_geometry':
+    requireStringField(['snapshot_revision']);
+    requireStringField(['entity_path']);
+    validateGeometryEdits(operation.edits);
     break;
   case 'set_face_material': {
     requireStringField(['material']);

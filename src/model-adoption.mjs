@@ -738,7 +738,7 @@ function decodeMockReference(value) {
 function allowedMockOperations(entityType) {
   if (entityType === 'face') return ['set_material', 'set_face_material', 'set_visibility', 'attribute', 'remove_attribute', 'reverse_face', 'pushpull_face', 'erase_entities', 'transform_entities'];
   if (entityType === 'edge') return ['set_visibility', 'attribute', 'remove_attribute', 'set_edge_properties', 'erase_entities', 'transform_entities'];
-  return ['delete', 'rename', 'set_material', 'set_visibility', 'transform_object', 'assign_tag', 'attribute', 'remove_attribute', 'classification', 'texture_transform', 'duplicate_entity', 'replace_component_definition', 'explode_entity', 'erase_entities', 'transform_entities', 'cut_hole', 'cut_slot', 'cut_recess', 'add_boss', 'add_raised_rib', 'boolean_union', 'boolean_difference', 'boolean_intersect', 'manifold_check', 'manifold_repair'];
+  return ['edit_geometry', 'delete', 'rename', 'set_material', 'set_visibility', 'transform_object', 'assign_tag', 'attribute', 'remove_attribute', 'classification', 'texture_transform', 'duplicate_entity', 'replace_component_definition', 'explode_entity', 'erase_entities', 'transform_entities', 'cut_hole', 'cut_slot', 'cut_recess', 'add_boss', 'add_raised_rib', 'boolean_union', 'boolean_difference', 'boolean_intersect', 'manifold_check', 'manifold_repair'];
 }
 
 function ensureMockStableReference(item, prefix, definitionName, entityType, index) {

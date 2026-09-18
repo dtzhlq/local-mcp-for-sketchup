@@ -1,0 +1,32 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import os from 'node:os';
+import path from 'node:path';
+import { SketchUpBridge } from '../../src/bridge.mjs';
+import { ModelGeometryService } from '../../src/model-geometry-service.mjs';
+import { editMockGeometry } from '../../src/mock-model-geometry.mjs';
+const dir=await fs.mkdtemp(path.join(os.tmpdir(),'modeling-read-edit-'));
+const bridge=new SketchUpBridge({approval:{stateDir:path.join(dir,'approvals')},mock:{sessionPath:path.join(dir,'model.json')},agentContract:{rootDir:path.join(dir,'tasks')}});
+await bridge.build_model({code:JSON.stringify({version:1,units:'mm',operations:[{op:'sweep_profile',name:'bar',profile:[[0,0],[20,0],[20,10],[0,10]],path:[[0,0,0],[0,0,100]],initial_up:[1,0,0]}]})});
+const query=await bridge.query_model_geometry({detail:'full'});assert.equal(query.complete,true);assert.equal(query.snapshot.contexts[0].vertices.length,8);
+const entity_path=query.contexts[0].entity_path;
+const measurements=await bridge.measure_model_geometry({snapshot_handle:query.snapshot_handle,queries:[{kind:'volume',entity_path},{kind:'area',entity_path},{kind:'distance',entity_path,handle:'v:0',other:{entity_path,handle:'v:4'}}]});
+assert.equal(measurements.results[0].status,'available');assert.ok(Math.abs(measurements.results[0].value-20000)<1e-6);assert.ok(Math.abs(measurements.results[2].value-100)<1e-8);
+const args={snapshot_handle:query.snapshot_handle,entity_path,edits:[{op:'move_vertices',moves:[{handle:'v:0',delta:[1,0,0]}]}],idempotency_key:'edit-test'};
+const review=await bridge.edit_model_geometry(args);assert.equal(review.ok,true,JSON.stringify(review));
+assert.ok(['awaiting_review','approved'].includes(review.task_state),JSON.stringify(review));
+assert.equal((await bridge.query_model_geometry()).model_revision,query.model_revision);
+const model=await bridge.mockRuntime.readModel();editMockGeometry(model,{entity_path,snapshot_revision:query.model_revision,edits:args.edits});assert.equal(model.groups[0].vertices[0][0],1);
+assert.throws(()=>editMockGeometry(model,{entity_path,snapshot_revision:query.model_revision,edits:args.edits}),/Stale/);
+await bridge.mockRuntime.writeModel(model);
+const replay=await bridge.edit_model_geometry(args);assert.equal(replay.task_id,review.task_id);
+await assert.rejects(()=>bridge.edit_model_geometry({...args,idempotency_key:'stale-edit'}),/stale/);
+const truncated=await bridge.query_model_geometry({max_vertices:1});assert.equal(truncated.complete,false);
+for(const state of ['executing','verifying','awaiting_input']){
+ let submitted=0;
+ const service=new ModelGeometryService({taskStore:{rootDir:dir,getTask:async()=>({state,private:{existing_edit_plan:{}}})},submit_agent_task_input:async()=>{submitted++;throw new Error('Unknown outcome must not be replayed');}});
+ const pending={task_id:'pending-request',task_state:state,error:{code:'MUTATION_RECOVERY_REQUIRED'}};
+ assert.equal(await service.advanceAutomaticEdit(pending,{idempotency_key:'unknown-outcome'},'queue'),pending);
+ assert.equal(submitted,0);
+}
+console.log(JSON.stringify({ok:true,group:'reading-editing',checks:11,task_id:review.task_id}));

@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { TOOL_REGISTRY } from './tool-registry.mjs';
+import { ToolInputValidator } from './tool-input-validator.mjs';
 import { SketchUpBridge } from './bridge.mjs';
 import { formatModelQaReportMarkdown } from './model-qa.mjs';
 import { formatReferenceVisualQaReportMarkdown } from './reference-visual-qa.mjs';
@@ -21,6 +23,16 @@ async function main() {
   }
 
   switch (command) {
+    case 'query_model_geometry':
+    case 'measure_model_geometry':
+    case 'edit_model_geometry':
+    case 'run_model_program': {
+      const args = options.inputFile ? JSON.parse(await fs.readFile(options.inputFile, 'utf8')) : {};
+      if (options.runtime) args.runtime = options.runtime;
+      if (options.sessionContract) args.session_contract = options.sessionContract;
+      new ToolInputValidator(TOOL_REGISTRY).validate(command, args);
+      return output(await bridge[command](args), options);
+    }
     case 'inspect_detail_regions':
       return output(await bridge.inspect_detail_regions({ queries: JSON.parse(await fs.readFile(options.queriesFile, 'utf8')), runtime: 'queue', timeoutMs: options.timeoutMs }), options);
     case 'query_assets':
@@ -314,6 +326,7 @@ function parseArgs(argv) {
     else if (arg === '--expected-runtime') options.expectedRuntime = argv[++index];
     else if (arg === '--actual-runtime') options.actualRuntime = argv[++index];
     else if (arg === '--code') options.code = argv[++index];
+    else if (arg === '--input-file') options.inputFile = argv[++index];
     else if (arg === '--code-file') options.codeFile = argv[++index];
     else if (arg === '--path') options.path = argv[++index];
     else if (arg === '--base-path') options.basePath = argv[++index];

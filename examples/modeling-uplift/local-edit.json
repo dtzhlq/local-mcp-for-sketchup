@@ -1,0 +1,6 @@
+{
+  "runtime":"mock",
+  "idempotency_key":"example-uplift-local-edit-v1",
+  "parameters":{"name":"Example_0","height":120,"delta":5},
+  "stages":[{"kind":"edit","language":"expert","code":"const target=snapshot.contexts.find(c=>c.name===parameters.name); const moves=target.vertices.filter(v=>v.world_position[2]>=parameters.height-1).map(v=>({handle:v.handle,delta:[0,0,parameters.delta]})); ({entity_path:target.entity_path,edits:[{op:'move_vertices',coordinate_space:'world',moves}],result:{moved:moves.length}});"}]
+}

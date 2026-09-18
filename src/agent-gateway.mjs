@@ -1,3 +1,4 @@
+import { continueModelProgram } from './model-program.mjs';
 import { prepareImageStructure, prepareImageModelCreation, approveImageModelCreation, assertFrozenImageCreation } from './image-structure.mjs';
 import { narrowDetailLayoutQa } from './detail-collision-review.mjs';
 import { prepareNativeAssetEdit } from './model-accessibility-asset-edit.mjs';
@@ -75,7 +76,7 @@ import { attachHostCreationPacket, prepareHostCreationDsl, verifyHostCreationCap
 import { indexCapturedParameterSource, discoverParameterSources, parameterSourceDocumentBinding } from './model-accessibility-parameter-discovery.mjs';
 import { adoptParameterRoots } from './model-accessibility-scoped-readback.mjs';
 
-const SUPPORTED_INTENTS = new Set(['discover', 'preflight_model', 'deliver_model', 'reopen_delivered_model', 'apply_native_appearance', 'create_model', 'understand_model', 'propose_existing_model_edit', 'modify_design_parameters', 'reconcile_design_intent', 'reference_image_correction', 'visual_correction_qa', 'reviewed_existing_model_edit', 'image_artifact', 'verify_model']);
+const SUPPORTED_INTENTS = new Set(['program_model', 'discover', 'preflight_model', 'deliver_model', 'reopen_delivered_model', 'apply_native_appearance', 'create_model', 'understand_model', 'propose_existing_model_edit', 'modify_design_parameters', 'reconcile_design_intent', 'reference_image_correction', 'visual_correction_qa', 'reviewed_existing_model_edit', 'image_artifact', 'verify_model']);
 
 export class AgentGateway {
   constructor({ bridge, taskStore, modelGraphStore, designIntentStore, imageArtifactStore, liveVisualCaptureService, responsePolicy } = {}) {
@@ -255,6 +256,7 @@ export class AgentGateway {
     assertNoPublicApprovalToken(options);
     const { intent, instruction, interface_level = 'guided', client_capabilities = {}, idempotency_key, inputs = {} } = options;
     if (!SUPPORTED_INTENTS.has(intent)) throw new AgentContractError('INVALID_ARGUMENT', 'intent is not supported by Agent Contract v1.');
+    if (intent === 'program_model' && !idempotency_key) throw new AgentContractError('INVALID_ARGUMENT', 'Program requires a stable idempotency_key');
     if (intent === 'create_model' && inputs.task && !idempotency_key) throw new AgentContractError('INVALID_ARGUMENT', 'Common-task creation requires an idempotency_key retained across retries.', { details: { recovery_class: 'self_correctable', issues: [{ path: '/idempotency_key', message: 'Provide a stable unique request key.' }] } });
     if (intent === 'deliver_model' && !idempotency_key) throw new AgentContractError('INVALID_ARGUMENT', 'Delivery requires a stable idempotency_key.');
     if (intent === 'reopen_delivered_model') {
@@ -304,7 +306,7 @@ export class AgentGateway {
       task = await this.runIntent(task);
       return createResultEnvelope({
         task: await this.taskStore.getTask(task.task_id),
-        ...(task.inputs?.parameter_edit ? { ok: !task.last_error, error: task.last_error || null } : {}),
+        ...((task.inputs?.parameter_edit || task.intent==='program_model') ? { ok: !task.last_error && task.state!=='failed', error: task.last_error || null } : {}),
         data: responseData(task)
       });
     } catch (error) {
@@ -320,6 +322,11 @@ export class AgentGateway {
 
   async resumeUnprojected({ task_id } = {}) {
     let task = await this.taskStore.getTask(task_id, { includePrivate: true });
+    if(task.intent==='program_model') {
+      try {task=await continueModelProgram(this,task);return createResultEnvelope({task:await this.taskStore.getTask(task_id),ok:!task.last_error && task.state!=='failed',error:task.last_error||null,data:responseData(task)});}
+      catch(error){return this.handleTaskError(task,error);}
+    }
+
     if (task.intent === 'reopen_delivered_model') {
       try {
         task = await reopenDeliveredModelTask(this, task, { resume: true });
@@ -718,6 +725,7 @@ export class AgentGateway {
     if (task.intent === 'reopen_delivered_model') return reopenDeliveredModelTask(this, task);
     assertRuntimePolicy(task.inputs?.runtime || 'mock', this.bridge.executionPolicy, task.intent);
     switch (task.intent) {
+    case 'program_model': return continueModelProgram(this, task);
     case 'understand_model': return this.understandModel(task);
     case 'propose_existing_model_edit': return this.proposeExistingModelEdit(task);
     case 'modify_design_parameters': return this.modifyDesignParameters(task);
@@ -1376,7 +1384,8 @@ export class AgentGateway {
           model_revision_before: receipt.model_revision_before,
           model_revision_after: receipt.model_revision_after,
           authorization: applied.authorization,
-          qa: applied.iteration?.qa || null,
+          geometry_edits: applied.iteration?.geometry_edits || [],
+    qa: applied.iteration?.qa || null,
           target_validation: plan.target_validation,
           execution_target_validation: executionTargetValidation,
           mutation_receipt: { receipt_id: receipt.receipt_id, status: 'finalized' },
@@ -3312,6 +3321,7 @@ function reviewedEditResult(applied) {
     plan_id: applied.plan_id,
     risk_level: applied.risk_level,
     authorization: applied.authorization,
+    geometry_edits: applied.iteration?.geometry_edits || [],
     qa: applied.iteration?.qa || null
   };
 }

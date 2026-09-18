@@ -1,6 +1,6 @@
 {
   "name": "local-mcp-for-sketchup",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
   "description": "Independent, offline-capable local MCP bridge for reviewed SketchUp modeling workflows.",
