@@ -1,9 +1,9 @@
 {
   "schema": "cad-surface-acceptance.v1",
-  "date": "2026-09-18",
+  "date": "2026-09-19",
   "branch": "codex/cad-surface-kernel",
   "base_commit": "d895706",
-  "status": "implemented_native_persistence_recheck_blocked",
+  "status": "implemented_local_native_acceptance_passed",
   "release_acceptance": false,
   "top_level_tool_count": 48,
   "operations": [
@@ -33,8 +33,26 @@
     "initial_save_close_reopen": "failed: floating-point face-normal drift incorrectly invalidated parameter association",
     "fingerprint_fix": "v2 rounds normals to 9 decimals; real saved snapshots and actual geometry changes checked offline",
     "fixture_repair": "Three valid CAD objects received verified v2 metadata only; geometry was unchanged. Deliberately edited control remains stale. Saved to the same dedicated SKP.",
-    "fixed_native_save_reopen": "pending: Mac locked; updated plugin installed on disk but not yet reloaded",
-    "remaining_action": "Unlock Mac, fully restart SketchUp, reopen dedicated SKP, start Bridge, confirm capabilities and run qa-cad-surface-native.mjs persistence. Do not rebuild the scene."
+    "fixed_native_save_reopen": "passed: full application restart, same saved SKP, new document identity, all five contexts relocated; CAD metadata/current flags and face/vertex counts match before save",
+    "remaining_action": null,
+    "persistence_result": {
+      "ok": true,
+      "new_document": true,
+      "contexts": 5,
+      "parametric_sources_preserved": true
+    },
+    "runtime_compatibility": {
+      "ok": true,
+      "level": "ok",
+      "checked_against": {
+        "manifest_version": "2026-09-modeling-uplift-alpha.1",
+        "capability_version": "0.3.0-modeling-alpha.1",
+        "boolean_operations_sha256": "4e23e8d35603f4d08c9c5c9c9174c99451ffcb3bd94ab233001d331beafb3b4b",
+        "model_revision_source_sha256": "6f604a1ffcab4af37dde937eb975b9d5c734f010d692ff26ac141bde25b963da",
+        "dsl_version": 1
+      },
+      "issues": []
+    }
   },
   "metrics": {
     "geometry-checks": {
@@ -94,7 +112,10 @@
     "after_initial_reopen": "output/cad-surface-kernel/native/after-reopen.json",
     "fingerprint_regression": "output/cad-kernel-probe/fingerprint-regression.json",
     "fingerprint_rebinding": "output/cad-surface-kernel/native/fingerprint-rebinding.json",
-    "service_packaging": "output/cad-kernel-probe/service-package-current.log"
+    "service_packaging": "output/cad-kernel-probe/service-package-current.log",
+    "fixed_persistence": "output/cad-surface-kernel/native/persistence.json",
+    "fixed_persistence_log": "output/cad-kernel-probe/native-persistence-fixed.log",
+    "restarted_runtime": "output/cad-kernel-probe/capabilities-persistence-fixed.json"
   },
   "limitations": [
     "Arbitrary surface/radius/corner combinations are not guaranteed. Four-edge NURBS roof corner case is rejected as invalid; two curved roof edges succeed.",
@@ -108,5 +129,7 @@
   "usage": {
     "billing_tokens": null,
     "reason": "No complete per-task billing usage supplied by runtime. Test results reused; no full unrelated suite or model matrix rerun."
-  }
+  },
+  "local_candidate_acceptance": true,
+  "acceptance_scope": "Local candidate, documented supported NURBS and curved-edge fillet scenarios only. Public release, arbitrary fillets, Windows and cross-model results are not claimed."
 }
