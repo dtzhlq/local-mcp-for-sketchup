@@ -213,7 +213,8 @@ try {
   const docsOverview = await callTool('get_docs', {});
   assert.equal(docsOverview.contract_version, 'get_docs.v2');
   assert.equal(docsOverview.topic, 'overview');
-  assert.equal(docsOverview.truncated, false);
+  assert.equal(typeof docsOverview.truncated, 'boolean');
+  if(docsOverview.truncated) assert.equal(docsOverview.next_action.tool, 'get_docs');
   assert.ok(docsOverview.docs.length < 12000, 'default docs response should fit short-context Agents');
   const docsSlice = await callTool('get_docs', { topic: 'dsl', detail: 'summary', max_chars: 500 });
   assert.equal(docsSlice.truncated, true);

@@ -49,7 +49,27 @@ export const PLUGIN_FILES = Object.freeze([
   { source: 'sketchup_plugin/alma_sketchup_mcp/snapshot.rb', target: 'alma_sketchup_mcp/snapshot.rb' }
 ].map((entry) => Object.freeze(entry)));
 
-export const DEFAULT_PLUGIN_DIR = path.join(homedir(), 'Library/Application Support/SketchUp 2026/SketchUp/Plugins');
+export function defaultSketchUpPluginDir({
+  platform = process.platform,
+  homeDir = homedir(),
+  appData = process.env.APPDATA,
+  sketchUpYear = 2026
+} = {}) {
+  if (platform === 'darwin') {
+    return path.join(homeDir, `Library/Application Support/SketchUp ${sketchUpYear}/SketchUp/Plugins`);
+  }
+  if (platform === 'win32') {
+    if (!appData) {
+      throw codedError('SKETCHUP_APPDATA_REQUIRED', 'APPDATA is required to resolve the SketchUp plugin directory on Windows.');
+    }
+    return path.join(appData, 'SketchUp', `SketchUp ${sketchUpYear}`, 'SketchUp', 'Plugins');
+  }
+  throw codedError('SKETCHUP_PLATFORM_UNSUPPORTED', `Automatic SketchUp plugin installation is not supported on ${platform}.`);
+}
+
+export const DEFAULT_PLUGIN_DIR = ['darwin', 'win32'].includes(process.platform)
+  ? defaultSketchUpPluginDir()
+  : null;
 const DEFAULT_OUTPUT_DIR = path.join(REPO_ROOT, 'out/releases');
 const MANAGED_LOADER = 'alma_sketchup_mcp.rb';
 const MANAGED_MODULE_DIR = 'alma_sketchup_mcp';

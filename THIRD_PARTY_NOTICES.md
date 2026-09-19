@@ -14,7 +14,7 @@ does not replace the license text shipped by any dependency.
 | --- | ---: | --- |
 | acorn | 8.16.0 | MIT |
 | ajv | 8.20.0 | MIT |
-| sharp | 0.35.3 | Apache-2.0 |
+| sharp | 0.35.4 | Apache-2.0 |
 | replicad | 1.1.0 | MIT |
 | replicad-opencascadejs | 1.1.0 | LGPL-2.1-only |
 
@@ -24,11 +24,11 @@ Known transitive packages in the locked dependency graph include:
 | --- | ---: | --- |
 | @emnapi/runtime | 1.11.3 | MIT |
 | @img/colour | 1.1.0 | MIT |
-| @img/sharp-* | 0.35.3 | Apache-2.0, with platform package notices |
-| @img/sharp-libvips-* | 1.3.2 | LGPL-3.0-or-later |
+| @img/sharp-* | 0.35.4 | Apache-2.0, with platform package notices |
+| @img/sharp-libvips-* | 1.3.3 | LGPL-3.0-or-later |
 | detect-libc | 2.1.2 | Apache-2.0 |
 | fast-deep-equal | 3.1.3 | MIT |
-| fast-uri | 3.1.4 | BSD-3-Clause |
+| fast-uri | 3.1.8 | BSD-3-Clause |
 | json-schema-traverse | 1.0.0 | MIT |
 | require-from-string | 2.0.2 | MIT |
 | semver | 7.8.5 | ISC |

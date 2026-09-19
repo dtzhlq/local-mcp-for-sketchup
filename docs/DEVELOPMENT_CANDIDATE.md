@@ -28,6 +28,8 @@ Resolve compatibility errors before editing. Use a disposable model for developm
 
 ## Local packaged candidate
 
+**Security update (2026-09-19):** the previously generated local service archive predates the dependency fixes for fast-uri/sharp and the preparation-response contract fix. Rebuild the service from current source before installation; its new hash will differ from the historical report. The recorded native geometry evidence remains historical evidence, not fresh package acceptance.
+
 The [CAD acceptance report](cad-surface-kernel/acceptance-report.json) identifies the paired service archive/RBZ and SHA-256 hashes. These files were generated locally under `out/cad-surface-kernel/`; they are not downloadable GitHub release assets. The service includes Node and CAD dependencies. Extract into a separate directory, then use absolute paths to `node/bin/node` and `app/src/mcp-server.mjs` under the extracted `local-mcp-for-sketchup/` directory. Update both service and plugin as a pair.
 
 For a new local macOS ARM build:

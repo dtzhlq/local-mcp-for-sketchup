@@ -7,8 +7,7 @@ const draftReport = await validateAgentInstallManifest(draft);
 assert.equal(draftReport.ok, true, JSON.stringify(draftReport.errors));
 assert.equal(draftReport.status, 'draft');
 assert.deepEqual(draftReport.platforms, [
-  'darwin-arm64-sketchup-2026',
-  'win32-x64-sketchup-2026'
+  'darwin-arm64-sketchup-2026'
 ]);
 
 const prematureRelease = structuredClone(draft);

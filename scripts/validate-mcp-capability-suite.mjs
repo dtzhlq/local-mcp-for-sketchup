@@ -4,7 +4,8 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { getOperationNames } from '../src/capabilities.mjs';
+import { TOOL_NAMES } from '../src/tool-registry.mjs';
+import { getOperationNames, getRuntimeCapabilities } from '../src/capabilities.mjs';
 import { defaultQueueDir, defaultResponseDir } from '../src/paths.mjs';
 import { cleanupQueueArtifactsForPid } from '../src/queue-runtime.mjs';
 
@@ -74,10 +75,12 @@ server.stderr.on('data', (chunk) => {
 });
 
 try {
+  await request({method:'initialize',params:{protocolVersion:'2025-11-25',capabilities:{},clientInfo:{name:'capability-suite',version:'1'}}});
+  server.stdin.write(JSON.stringify({jsonrpc:'2.0',method:'notifications/initialized'})+'\n');
   const list = await request({ method: 'tools/list' }, { timeoutMs: 10000 });
   const tools = list.result.tools;
   const toolNames = tools.map((tool) => tool.name).sort();
-  assert.equal(toolNames.length, 41, 'MCP server should expose 36 retained expert tools, 4 Agent Gateway tools, and create_queue_handshake');
+  assert.deepEqual(toolNames, [...TOOL_NAMES].sort(), 'MCP discovery must match the public registry');
   for (const requiredTool of ['prepare_image_modeling_brief', 'compile_reviewed_part_graph', 'prepare_existing_model_edit', 'apply_reviewed_model_edit']) {
     assert.ok(toolNames.includes(requiredTool), `MCP server should expose ${requiredTool}`);
   }
@@ -85,7 +88,7 @@ try {
   await runStep('get_docs', async () => {
     const docs = await callTool('get_docs', {});
     assert.ok(docs.docs.includes('iterate_model'));
-    assert.ok(docs.docs.includes('Capability Baseline'));
+    assert.ok(docs.docs.includes('query_model_geometry'));
     return { chars: docs.docs.length };
   });
 
@@ -138,7 +141,7 @@ try {
   await runStep('get_capabilities:mock', async () => {
     const capabilities = await callTool('get_capabilities', { runtime: 'mock' });
     assert.equal(capabilities.runtime.name, 'mock');
-    assert.equal(capabilities.runtime.supported_operations.length, getOperationNames().length);
+    assert.deepEqual(capabilities.runtime.supported_operations, getRuntimeCapabilities('mock').supported_operations);
     return {
       operations: capabilities.runtime.supported_operations.length,
       component_scope: Object.values(capabilities.runtime.operation_support || {}).filter((item) => item.component_scope?.status === 'supported').length
@@ -539,6 +542,29 @@ try {
     return { blocked: true, enabled: blocked.enabled };
   }, { tool: 'run_ruby_expert' });
 
+  await runStep('query_assets', async () => {
+    const assets=await callTool('query_assets',{limit:1});assert.ok(Array.isArray(assets.assets));return {assets:assets.assets.length};
+  });
+  await callTool('reset_model',{runtime:'mock'});
+  let geometry;
+  await runStep('query_model_geometry', async () => {
+    geometry=await callTool('query_model_geometry',{runtime:'mock',targets:['model'],detail:'full'});
+    assert.ok(geometry.snapshot_handle);return {revision:geometry.model_revision};
+  });
+  await runStep('measure_model_geometry', async () => {
+    const m=await callTool('measure_model_geometry',{runtime:'mock',snapshot_handle:geometry.snapshot_handle,queries:[{kind:'volume',entity_path:'model'}]});
+    assert.equal(m.results.length,1);assert.equal(m.results[0].status,'unavailable');return {root_volume:m.results[0].status};
+  });
+  await runStep('edit_model_geometry', async () => {
+    const e=await callTool('edit_model_geometry',{runtime:'mock',snapshot_handle:geometry.snapshot_handle,entity_path:'model',idempotency_key:'suite-root-edit',edits:[{op:'add_face',points:[[0,0,0],[10,0,0],[10,10,0],[0,10,0]]}]});
+    assert.equal(e.task_state,'awaiting_review');return {state:e.task_state};
+  });
+  await runStep('run_model_program', async () => {
+    const p=await callTool('run_model_program',{runtime:'mock',idempotency_key:'suite-program',stages:[{kind:'edit',code:'({entity_path:"model",edits:[{op:"add_edges",points:[[0,0,0],[10,0,0]]}]});'}]});
+    assert.equal(p.task_state,'awaiting_input');assert.equal(p.next_action.child_next_action.action,'request_user_approval');return {state:p.task_state};
+  });
+  recordSkipped('capture_detail_views','Requires a dedicated native view fixture; not a mock capability.');
+  recordSkipped('inspect_detail_regions','Requires a dedicated native region fixture; not a mock capability.');
   const queue = await maybeRunQueueSuite(baseCode);
   const expectedTools = new Set(toolNames);
   const missingTools = [...expectedTools].filter((tool) => !usedTools.has(tool) && !skippedTools.has(tool));
@@ -734,7 +760,9 @@ async function callTool(name, args) {
     throw error;
   }
   usedTools.add(name);
-  return JSON.parse(response.result.content[0].text);
+  const result=response.result.structuredContent ?? JSON.parse(response.result.content[0].text);
+  if(response.result.isError){const error=new Error(result.error?.message ?? result.message ?? 'Tool failed');Object.assign(error,result.error ?? result);throw error;}
+  return result;
 }
 
 async function freshQueueContract() {

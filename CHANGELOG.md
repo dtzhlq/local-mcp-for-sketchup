@@ -15,6 +15,9 @@ Based on `v0.2.0` (`1d27e9c8`), developed on `codex/modeling-api-uplift` and con
 
 ### Fixed
 
+- CI dependency audit: upgrade `fast-uri` override to 3.1.8 and `sharp` to 0.35.4 (libvips platform packages 1.3.3), synchronized across source and service-bundle locks.
+- Correct the existing-model preparation output schema to validate its plan/approval wrapper; retain nested plan validation and approval gates. Restore platform plugin path resolution and align draft manifest/legacy checks with the current 0.3.0 contracts and 48-tool registry.
+
 - Python facade rotation centers, axes, inversion and transform representation; full matrices and correct point/vector/normal handling.
 - Nested group-ending instance path resolution and actual-result entity mapping.
 - Unrelated unchanged pre-existing warnings blocking new creation and later program stages. New issues and incomplete evidence still block; approval rules are unchanged.

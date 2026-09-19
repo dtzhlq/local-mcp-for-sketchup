@@ -382,6 +382,8 @@ try {
   ];
   const nonCreationOperations = new Set([
     ...reviewedExistingEditOperations,
+    // Generated shapes are expanded to reviewed mesh operations before this policy.
+    'cad_shape', 'sweep_profile', 'loft_profiles_v2', 'edit_geometry',
     'uv_project_planar', 'uv_project_box', 'face_uv',
     'reset', 'level', 'component_definition', 'material', 'tag', 'image_reference', 'image_plane',
     'camera', 'scene', 'style', 'shadow', 'rendering_options', 'selection',

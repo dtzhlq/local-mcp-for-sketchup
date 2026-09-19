@@ -44,9 +44,9 @@
     "ajv": "^8.20.0",
     "replicad": "1.1.0",
     "replicad-opencascadejs": "1.1.0",
-    "sharp": "^0.35.3"
+    "sharp": "^0.35.4"
   },
   "overrides": {
-    "fast-uri": "3.1.4"
+    "fast-uri": "3.1.8"
   }
 }

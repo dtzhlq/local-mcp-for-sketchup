@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
+import {CAPABILITY_MANIFEST_VERSION,RUNTIME_CAPABILITY_VERSION} from '../src/capabilities.mjs';
 
 const [mainSource, snapshotSource, revisionSource] = await Promise.all([
   fs.readFile('sketchup_plugin/alma_sketchup_mcp.rb', 'utf8'),
@@ -17,8 +18,8 @@ const sessionState = methodBody(mainSource, 'get_session_state', 'def reset_mode
 const transportGuard = methodBody(mainSource, 'assert_transport_guard!', 'def assert_pending_open_target!');
 
 assert.match(mainSource, /OCCURRENCE_CONTRACT_VERSION\s*=\s*'canonical-occurrence-path\.v1'/);
-assert.match(mainSource, /CAPABILITY_MANIFEST_VERSION\s*=\s*'2026-07-agent-contract-v1\.4'/);
-assert.match(mainSource, /RUNTIME_CAPABILITY_VERSION\s*=\s*'0\.1\.0-rc\.2-capabilities\.7'/);
+assert.ok(mainSource.includes(`CAPABILITY_MANIFEST_VERSION = '${CAPABILITY_MANIFEST_VERSION}'`));
+assert.ok(mainSource.includes(`RUNTIME_CAPABILITY_VERSION = '${RUNTIME_CAPABILITY_VERSION}'`));
 assert.match(revisionSource, /MODEL_REVISION_STRATEGY\s*=\s*'definition-merkle\.v2'/);
 assert.match(revisionSource, /MODEL_REVISION_UNIQUE_ENTITY_LIMIT\s*=\s*1_000_000/);
 assert.match(revisionSource, /entries_digest/);

@@ -41,7 +41,7 @@ const steps = [
   ['Agent Gateway', ['test/agent-gateway.mjs']],
   ['Agent production capability boundary', ['test/agent-gateway-production-capabilities.mjs']],
   ['reviewed image-brief boundary', ['test/image-structured-mcp-adapter.mjs']],
-  ['41-tool mock capability suite', [
+  ['registered-tool mock capability suite', [
     'scripts/validate-mcp-capability-suite.mjs',
     '--runtime', 'mock',
     '--output-dir', path.join(runRoot, 'mcp-capability-suite')

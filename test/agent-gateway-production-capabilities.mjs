@@ -421,10 +421,10 @@ function checkpoint(label) {
 
 function assertTrustedProfileIntersection() {
   const environmentExpert = trustedAgentResponsePolicyFromEnvironment({
-    LOCAL_MCP_FOR_SKETCHUP_AGENT_TRUSTED_PROFILE: 'expert',
-    LOCAL_MCP_FOR_SKETCHUP_AGENT_TRUSTED_CONTEXT: 'long',
-    LOCAL_MCP_FOR_SKETCHUP_AGENT_TRUST_LOCAL_FILES: '1',
-    LOCAL_MCP_FOR_SKETCHUP_AGENT_TRUST_RAW_VISION: '1'
+    ALMA_SKETCHUP_AGENT_TRUSTED_PROFILE: 'expert',
+    ALMA_SKETCHUP_AGENT_TRUSTED_CONTEXT: 'long',
+    ALMA_SKETCHUP_AGENT_TRUST_LOCAL_FILES: '1',
+    ALMA_SKETCHUP_AGENT_TRUST_RAW_VISION: '1'
   });
   assert.equal(environmentExpert.trusted_caller_profile.interface_level, 'expert');
   assert.equal(environmentExpert.trusted_caller_profile.client_capabilities.context, 'long');
@@ -545,12 +545,12 @@ async function assertSchemas({ task, envelope }) {
   const ajv = new Ajv2020({ allErrors: true, strict: false, validateFormats: false });
   for (const schema of schemas) ajv.addSchema(schema);
   assert.equal(
-    ajv.validate('https://local-mcp-for-sketchup.invalid/local-mcp-for-sketchup/agent-task-v1.schema.json', task),
+    ajv.validate(schemas[1].$id, task),
     true,
     JSON.stringify(ajv.errors)
   );
   assert.equal(
-    ajv.validate('https://local-mcp-for-sketchup.invalid/local-mcp-for-sketchup/agent-result-envelope-v1.schema.json', envelope),
+    ajv.validate(schemas[2].$id, envelope),
     true,
     JSON.stringify(ajv.errors)
   );
