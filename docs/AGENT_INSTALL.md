@@ -1,7 +1,15 @@
-# Agent installation contract
+# Agent installation manifest
 
-> 本文记录 0.2.0 历史发布。0.3.0 的 48 工具与 CAD 曲面开发候选见 [候选说明](DEVELOPMENT_CANDIDATE.md)；旧版签名和发布验收不适用于候选包。
+The stable entrypoint is [INSTALL_FOR_AGENTS.md](../INSTALL_FOR_AGENTS.md). It discovers the latest formal release from the canonical GitHub API and consumes that release's immutable `agent-install.v1.json` plus checksums. The user-facing sentence remains stable across updates.
 
-Version 0.2.0 supports Apple Silicon Mac and SketchUp 2026. Download the release assets and `agent-install.v1.json` from the [release](https://github.com/dtzhlq/local-mcp-for-sketchup/releases/tag/v0.2.0). Verify SHA-256 before installation.
+The release manifest is authoritative for version, source tag/commit, supported platforms, exact asset names/size/hash, bundled runtime, tool count and acceptance. Pin it for the whole installation. Current formal release: v0.2.0, Apple Silicon Mac / SketchUp 2026, 44 tools; these values are an example, not a future version ceiling.
 
-Use bundled `node/bin/node` with `app/src/mcp-server.mjs`, both absolute paths, preserving existing client configuration. See [manual installation and rollback](INSTALL.md). The signed RBZ is installed through SketchUp Extension Manager. The source template is intentionally a draft; the downloadable manifest binds the final commit, files and acceptance evidence.
+This branch also contains 0.3.0 development code. Its schema, draft template and version-bound validator are not authority for a different published release. Do not use them to reject or install another release. If executable validation is needed, use the selected release's source/schema. Preserve client configuration and install each version separately for rollback. See the entrypoint for upgrade and verification steps.
+
+## Windows preview
+
+When the latest stable manifest has no Windows target, inspect matching platform releases rather than rejecting Windows globally. The explicit `v0.2.0-windows-preview.1` prerelease supplies `windows-install.v1.json`, its own Windows archive and signed RBZ hashes. It has Windows CI server evidence, not live SketchUp acceptance; obtain the user's preview choice. Do not feed this preview manifest into the stable-release validator or set release_acceptance=true. See the root entrypoint for exact binding and installation rules.
+
+## 0.3.0 development candidate
+
+For explicitly requested source development, see [candidate setup](DEVELOPMENT_CANDIDATE.md), [changes](../CHANGELOG.md) and [CAD acceptance](cad-surface-kernel/acceptance-report.json). The 48-tool modeling and CAD candidate has bounded macOS native evidence; it is not a signed formal release or a Windows-verified upgrade. Normal installation continues to use the selected published release manifest.

@@ -29,6 +29,25 @@ SketchUp receives editable tessellated faces with retained CAD recipes, not nati
 
 A GLM investigation identified an MCP creation-QA scope issue and missing read-only `String.indexOf` support; both were fixed. Its remaining stages then executed successfully after one model correction, without replaying creation. This is a bounded compatibility result, not a universal model-quality benchmark. Windows and cross-model CAD verification are not claimed.
 
+## 让 Agent 帮你安装或升级
+
+把这句话发给 Agent；后续正式更新无需更换口令：
+
+> 请在 GitHub 搜索用户 dtzhlq 的公开项目 local-mcp-for-sketchup，读取 main 分支根目录的 INSTALL_FOR_AGENTS.md，按其中的平台安装清单安装或升级到最新支持版本，保留现有配置和回退文件；找不到就停止，不要猜测或从第三方下载。
+
+直接入口：
+
+- [GitHub 安装入口](https://github.com/dtzhlq/local-mcp-for-sketchup/blob/main/INSTALL_FOR_AGENTS.md)
+- [Gitee（码云）镜像入口](https://gitee.com/dtzhlq/local-mcp-for-sketchup/blob/main/INSTALL_FOR_AGENTS.md)
+
+旧的“在码云搜索并读取 INSTALL_FOR_AGENTS.md”口令仍可用于读取已同步的入口；最终版本和下载文件以 GitHub 正式 release 的清单为准。不能访问清单时明确报告，不退回旧的未签名预览包。
+
+Agent 会发现最新正式版，固定该版本清单，校验服务包和签名插件，按真实平台安装或升级，再验证客户端工具发现和 SketchUp 连接。无需系统 Node、克隆 main 或运行 npm。SketchUp 安装/重启、系统安全提示等步骤视 Agent 能力可能需要用户操作；“一句话发起”不等于所有客户端无人值守。
+
+## Published platform packages
+
+The signed 0.2.0 release targets Apple Silicon Mac / SketchUp 2026 (44 tools). Windows x64 / SketchUp 2026 has a separate [0.2.0 Windows installation preview](https://github.com/dtzhlq/local-mcp-for-sketchup/releases/tag/v0.2.0-windows-preview.1), with Windows CI server checks but no native Windows SketchUp acceptance. The stable installation entrypoint offers that preview explicitly when no stable Windows target matches. Intel Mac and other SketchUp versions have no matching package in these releases. These older packages do not contain the 0.3.0 candidate capabilities above.
+
 ## Install and documentation
 
 - Development source and local candidate setup: [candidate instructions](docs/DEVELOPMENT_CANDIDATE.md).
@@ -38,3 +57,35 @@ A GLM investigation identified an MCP creation-QA scope issue and missing read-o
 - Third-party components and local distribution boundaries: [notices](THIRD_PARTY_NOTICES.md).
 
 The historical [signed 0.2.0 release](https://github.com/dtzhlq/local-mcp-for-sketchup/releases/tag/v0.2.0) has 44 tools and separate [installation](docs/INSTALL.md) and [acceptance](docs/RELEASE_ACCEPTANCE.md) records. Its signature and acceptance do not apply to this candidate. Extension Warehouse publication was declined; no listing or official endorsement is claimed. Existing ALMA environment variables and Ruby namespaces remain intentional.
+
+## 设计原则
+
+- 安装完成后可在本地运行，不要求持续联网；
+- 不包含遥测、运行时许可证校验或正版识别；
+- 只接受结构化、可审阅的建模输入；
+- 变更模型前执行能力、目标、路径和审批检查；
+- 未知 MCP 客户端只生成手动配置片段，不猜测或覆盖其配置；
+- Mock、离线和实机证据分层记录。
+
+## 隐私和联网
+
+常规运行不上传模型、队列内容或使用记录。下载安装时可以联网；安装完成后
+不设置强制联网。详细的本地数据范围见 [PRIVACY.md](PRIVACY.md)。
+
+未来中国大陆官方安装渠道的登记表单属于独立服务，将在收集数据前单独说明
+字段、用途、保存期限和联系方式。登记不用于验证 SketchUp 是否为正版。
+
+## 开源与贡献
+
+核心代码使用 [Apache License 2.0](LICENSE)。第三方组件见
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。贡献采用 DCO 1.1，请阅读
+[CONTRIBUTING.md](CONTRIBUTING.md)。
+
+安全问题请勿公开披露，按 [SECURITY.md](SECURITY.md) 联系
+<dtzhlq@126.com>。
+
+## 独立项目声明
+
+本项目不是 Trimble Inc. 或 SketchUp 的官方产品，也未获其赞助、认可或合作
+伙伴授权。“SketchUp”仅用于描述兼容对象。详见
+[TRADEMARKS.md](TRADEMARKS.md)。

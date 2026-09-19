@@ -1,18 +1,13 @@
-# Install 0.2.0 on Apple Silicon
+# Install or upgrade the formal release
 
-> 本文记录 0.2.0 历史发布。0.3.0 的 48 工具与 CAD 曲面开发候选见 [候选说明](DEVELOPMENT_CANDIDATE.md)；旧版签名和发布验收不适用于候选包。
+Use the stable [Agent entrypoint](../INSTALL_FOR_AGENTS.md). It resolves the latest non-draft, non-prerelease release, pins its manifest and verifies the exact service/RBZ pair. Do not install main source or use development source-preview helpers for a formal release.
 
-Target: Apple Silicon Mac and SketchUp 2026. Node is included. The released bytes passed independent server installation, native signed-plugin installation, and three-domain creation/save/close/reopen acceptance.
+Current release: [0.2.0](https://github.com/dtzhlq/local-mcp-for-sketchup/releases/tag/v0.2.0), Apple Silicon Mac and SketchUp 2026, bundled Node and signed RBZ. Windows x64 / SketchUp 2026 has a separate `v0.2.0-windows-preview.1` package; offer it with its Windows-CI-versus-live-SketchUp evidence boundary and obtain the user's preview choice. Do not reject Windows merely because the latest stable release is Mac-only. Intel Mac has no matching package. Download INSTALL.md and agent-install.v1.json from the selected release for exact version-specific instructions.
 
-1. Keep the current installation and client configuration as the rollback copy.
-2. Extract `local-mcp-for-sketchup-0.2.0-darwin-arm64.tar.gz` into a new version-specific directory. Do not overlay another version.
-3. Configure the MCP client to execute `<install>/local-mcp-for-sketchup/node/bin/node` with argument `<install>/local-mcp-for-sketchup/app/src/mcp-server.mjs`. Replace both placeholders with absolute paths.
-4. Start with the default offline/mock policy. For authorized SketchUp work, the existing settings are `ALMA_SKETCHUP_AGENT_ALLOWED_RUNTIMES=mock,queue` and `ALMA_SKETCHUP_AGENT_ALLOW_QUEUE_MUTATION=1`; trusted review and fresh session checks still apply. Direct expert mutation need not be enabled.
-5. For formal acceptance, install the returned officially signed RBZ through SketchUp Extension Manager. The unsigned handoff file is not the final release plugin. Preserve the previous plugin first, and avoid loading both the compatibility `alma_sketchup_mcp.rb` entry and the new `local_mcp_for_sketchup.rb` entry simultaneously.
-6. Restart SketchUp, discover/connect through the server, and verify the loaded plugin and source capabilities. Use `docs/IMAGE_STRUCTURE.md` for the new image path.
+Install into a separate versioned directory; preserve the old server/plugin and configuration backup. Upgrade only the confirmed MCP entry's executable and server paths, preserving unrelated settings. Avoid duplicate legacy/new Ruby loaders, then restart around saved user documents and check tools/list and the live plugin handshake. A plugin-only or stdio-only result is not complete live installation.
 
-The bundle was independently started with its own Node 24.18.0 and dependencies. MCP initialization, tools/list (44 tools), and an actual image_artifact/structure tools/call passed. This does not substitute for signed-plugin acceptance or save/reopen tests.
+Rollback restores the previous confirmed server/plugin pair and client configuration. Preserve user models and task state. If latest discovery is unavailable, report the missing metadata; do not silently downgrade to an old unsigned preview or guess a mirror URL.
 
-Rollback: point the MCP client back to the preserved prior server directory, restore the prior plugin through Extension Manager, restart SketchUp and reconnect. Preserve image task artifacts, source photos and user model files. Do not reset models or delete task state to roll back software.
+## 0.3.0 development candidate
 
-Download files and SHA256SUMS.txt from the [0.2.0 release](https://github.com/dtzhlq/local-mcp-for-sketchup/releases/tag/v0.2.0). Run `shasum -a 256 -c SHA256SUMS.txt` in the directory containing all downloaded assets, or compare the individual downloaded file with its listed hash. The archive retains its build-time candidate flags; promotion uses these exact tested bytes, with final acceptance recorded in the release manifest.
+For explicitly requested source development, see [candidate setup](DEVELOPMENT_CANDIDATE.md), [changes](../CHANGELOG.md) and [CAD acceptance](cad-surface-kernel/acceptance-report.json). The 48-tool modeling and CAD candidate has bounded macOS native evidence; it is not a signed formal release or a Windows-verified upgrade. Normal installation continues to use the selected published release manifest.
