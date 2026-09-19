@@ -31,6 +31,8 @@ A GLM investigation identified an MCP creation-QA scope issue and missing read-o
 
 ## 让 Agent 帮你安装或升级
 
+**版本区别：本页介绍的是 0.3.0 源码能力；下面的自动安装入口按已发布的安装清单选择版本。源码合并不会自动更新右侧 Latest Release，也不会把旧版安装包变成新版。**
+
 把这句话发给 Agent；后续正式更新无需更换口令：
 
 > 请在 GitHub 搜索用户 dtzhlq 的公开项目 local-mcp-for-sketchup，读取 main 分支根目录的 INSTALL_FOR_AGENTS.md，按其中的平台安装清单安装或升级到最新支持版本，保留现有配置和回退文件；找不到就停止，不要猜测或从第三方下载。

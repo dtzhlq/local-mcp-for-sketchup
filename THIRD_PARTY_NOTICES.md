@@ -73,7 +73,7 @@ If you believe an attribution or license file is missing, contact
 <dtzhlq@126.com>. A release must not pass the third-party-license gate while a
 known omission remains unresolved.
 
-## CAD kernel development candidate
+## CAD kernel source and replacement
 
 The CAD worker uses the unmodified npm `replicad-opencascadejs@1.1.0` WebAssembly
 build and `replicad@1.1.0` wrappers. These remain separately replaceable packages
@@ -83,5 +83,14 @@ Upstream project: https://github.com/sgenoud/replicad (package gitHead
 image `ghcr.io/taucad/opencascade.js:canary-ebd263f1-single-threaded` and build
 configuration location in its package scripts. Its LGPL license is included in
 the package; the dependency inventory and all bundled license texts must remain
-with the local candidate. Public redistribution and corresponding-source
-packaging have not been qualified as part of this local-only candidate.
+with the service. The 0.3.0 release attachments include a corresponding-source
+archive with the pinned Replicad sources/build configuration, OpenCascade.js
+build scripts and patches, OCCT, RapidJSON and FreeType sources. See the source
+archive's sources.json for exact commits and checksums and BUILDING.md for the
+upstream build procedure. OCCT carries its own LGPL license and exception.
+
+The worker loads the kernel through normal package imports. Users may replace
+or rebuild the kernel package in app/node_modules; this project imposes no
+restriction on modification or reverse engineering for debugging modifications
+to these library components. Application source is provided separately under
+Apache-2.0. No binary reproducibility claim is made for upstream npm artifacts.
