@@ -3,7 +3,7 @@
 状态：本地开发候选。版本 0.3.0；尚未发布，也不宣称完成全部平台或全部工具分支的发布验收。
 
 基线：v0.2.0 / 1d27e9c8c4ab34e8b7cdc1ae24d83f4530a855d3。
-分支：codex/modeling-api-uplift。
+原开发分支：codex/modeling-api-uplift；后续 CAD 集成分支：codex/cad-surface-kernel。
 独立工作树：/Users/07zhang/.codex/worktrees/modeling-api-uplift/sketchup-mcp-replica。
 原 OneDrive 工作树的已有未提交内容保留。
 
@@ -36,7 +36,9 @@
 
 本机候选 Ruby 插件已安装，并通过完整重启激活。旧发布版扩展 loader 因覆盖候选实现而移至 `output/modeling-uplift/plugin-backup/local_mcp_for_sketchup.rb`；同目录 restore.json 记录恢复位置。旧扩展目录没有删除。不要同时启用两个 Bridge loader。
 
-最终交付目录：`out/modeling-uplift/`。
+本节保留建模升级阶段的包记录；当前包含 CAD 能力的最终配对见 [CAD 验收报告](../cad-surface-kernel/acceptance-report.json)。
+
+当时交付目录：`out/modeling-uplift/`。
 
 - 插件：`alma-sketchup-mcp-0.3.0-nonrelease-uplift-complete-20260918.rbz`。
 - 服务：`nonrelease-uplift-qa-fixed-20260918-local-mcp-for-sketchup-0.3.0-darwin-arm64.tar.gz`。
@@ -57,7 +59,7 @@
 - 单个上下文支持冻结快照分页；仍受服务端捕获及模型版本预算限制。
 - 旧工具现有逐工具返回合同及共享嵌套类型；自定义属性、程序结果和能力扩展仍是 JSON 映射。双面材质及软边/平滑属性均已原生验证。
 - 未人为丢弃原生响应；不重放未知状态由离线检查覆盖，已提交回执的重取由原生检查覆盖。
-- 任意曲面倒角、NURBS、带孔/分支放样、通用约束求解和图像完整参数恢复仍在后续清单。
+- 后续 CAD 增量已实现受限 NURBS、曲面缝合和选定曲边圆角，详见 [CAD 说明](../cad-surface-kernel/README.md)。任意曲面/角点圆角、带孔/分支放样、通用约束求解和图像完整参数恢复仍未完成。
 
 本轮证据支持：以前难以表达的扫掠/放样可生成；已有旋转嵌套模型可准确局部修改；四个新工具提供了明确参数和可恢复流程。普通模型的实际任务成功率是否提高，需要后续跨模型抽测。
 

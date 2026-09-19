@@ -66,6 +66,8 @@ macOS Apple Silicon + SketchUp 2026，一个专用 SKP：
 
 ## 安装
 
+源码启动与服务/插件配对步骤见 [开发候选安装说明](../DEVELOPMENT_CANDIDATE.md)。本地 `out/`、`output/` 文件不会随 Git 推送；本目录报告保留路径和校验值，GitHub 尚无本轮二进制发布附件。
+
 最终包位于 `out/cad-surface-kernel/`，以 acceptance-report.json 指定的服务包/RBZ 配对为准。首次中间包缺少 CAD 依赖或使用旧指纹，不要用于部署。SketchUp 需要加载本轮 RBZ；服务包需要同时更新。当前客户端配置未改写。
 
 许可证与内核来源见 THIRD_PARTY_NOTICES.md；本轮只交付本地开发候选，没有执行正式发布或公开分发。

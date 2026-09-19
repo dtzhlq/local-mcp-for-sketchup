@@ -1,5 +1,7 @@
 # 0.2.0 release acceptance
 
+> 本文记录 0.2.0 历史发布。0.3.0 的 48 工具与 CAD 曲面开发候选见 [候选说明](DEVELOPMENT_CANDIDATE.md)；旧版签名和发布验收不适用于候选包。
+
 Runtime: macOS 26.6.2 (25G83), Apple Silicon, SketchUp 26.2.242, Node 24.18.0. Scope is Apple Silicon Mac and SketchUp 2026 only.
 
 | Domain | Unlocked native groups | Final bundle creation QA | Save / document close / disk reopen | Visual review |

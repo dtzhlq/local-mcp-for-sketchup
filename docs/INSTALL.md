@@ -1,5 +1,7 @@
 # Install 0.2.0 on Apple Silicon
 
+> 本文记录 0.2.0 历史发布。0.3.0 的 48 工具与 CAD 曲面开发候选见 [候选说明](DEVELOPMENT_CANDIDATE.md)；旧版签名和发布验收不适用于候选包。
+
 Target: Apple Silicon Mac and SketchUp 2026. Node is included. The released bytes passed independent server installation, native signed-plugin installation, and three-domain creation/save/close/reopen acceptance.
 
 1. Keep the current installation and client configuration as the rollback copy.
