@@ -1,0 +1,54 @@
+{
+  "schema_version": "release-acceptance.v1",
+  "version": "0.3.0",
+  "source_commit": "590e1d480491d90bd5471ff333f338d51f46c58b",
+  "date": "2026-09-19",
+  "platform": "darwin-arm64-sketchup-2026",
+  "release_acceptance": true,
+  "artifacts": {
+    "local-mcp-for-sketchup-0.3.0.rbz": "018797f72f74bbb035d75d88d28d3b0ee5ee850279e06488af477e0eed7b0dff",
+    "local-mcp-for-sketchup-0.3.0-darwin-arm64.tar.gz": "f1919e8d5bd0f161d1b00d8795d94bcd9ae6e39e6f149ad4776cce52cb14c681"
+  },
+  "signed_rbz": {
+    "official_portal_success": true,
+    "extension_manager_signed_enabled": true,
+    "unsigned_payload_33_files_unchanged": true,
+    "encrypted": false
+  },
+  "final_native": {
+    "ok": true,
+    "version": "0.3.0",
+    "contexts": 5,
+    "two_stage_edit_readback": true,
+    "unrelated_vertices_unchanged": true,
+    "native_volume_relative_error": 0.0026832891660388825,
+    "node_network_denied": true
+  },
+  "persistence": {
+    "ok": true,
+    "contexts": 5,
+    "new_document": true,
+    "parametric_sources_preserved": true
+  },
+  "offline_scope": "Final bundled Node service executed under macOS sandbox deny network*. SketchUp application network was not globally disabled. Ruby bridge uses local file queues.",
+  "reused_evidence": [
+    "modeling-acceptance.json",
+    "modeling-followup.json",
+    "glm-qa-resolution.json",
+    "cad-acceptance.json"
+  ],
+  "exceptions": [
+    {
+      "event": "SketchUp crashed during initial document close with simultaneous manual UI activity reported by user",
+      "cause": "unresolved; CEF/AppKit render frames in crash stack; no proven MCP attribution or exclusion",
+      "followup": "saved file recovered, subsequent isolated normal close and disk reopen passed",
+      "code_fix_claimed": false
+    }
+  ],
+  "limits": [
+    "Apple Silicon macOS + SketchUp 2026 only",
+    "No universal model benchmark",
+    "SketchUp geometry is tessellated CAD with retained recipes",
+    "Build-time candidate archive promoted without changing bytes"
+  ]
+}

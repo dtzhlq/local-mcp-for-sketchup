@@ -1,6 +1,6 @@
 # Local MCP for SketchUp
 
-**0.3.0 development candidate — 48 MCP tools.** Native verification covers Apple Silicon Mac and SketchUp 2026. This branch adds general modeling and CAD surface capabilities on the fixed `v0.2.0` baseline; it is not a new signed release.
+**0.3.0 — 48 MCP tools.** The [signed release](https://github.com/dtzhlq/local-mcp-for-sketchup/releases/tag/v0.3.0) adds general modeling and CAD surface capabilities. Native verification covers Apple Silicon Mac and SketchUp 2026; see the [release acceptance](docs/RELEASE_ACCEPTANCE.md).
 
 An independent local MCP server for generating and editing SketchUp models through reviewed operations. Deterministic geometry, native measurement and execution recovery live in the MCP service and are available to any compatible model/client.
 
@@ -31,7 +31,7 @@ A GLM investigation identified an MCP creation-QA scope issue and missing read-o
 
 ## 让 Agent 帮你安装或升级
 
-**版本区别：本页介绍的是 0.3.0 源码能力；下面的自动安装入口按已发布的安装清单选择版本。源码合并不会自动更新右侧 Latest Release，也不会把旧版安装包变成新版。**
+**当前正式版为 0.3.0，包含 48 个工具、官方签名插件与配套服务包。下面的自动安装入口按平台读取已发布清单；旧版安装包不会自动获得新版能力。**
 
 把这句话发给 Agent；后续正式更新无需更换口令：
 
@@ -48,7 +48,7 @@ Agent 会发现最新正式版，固定该版本清单，校验服务包和签�
 
 ## Published platform packages
 
-The signed 0.2.0 release targets Apple Silicon Mac / SketchUp 2026 (44 tools). Windows x64 / SketchUp 2026 has a separate [0.2.0 Windows installation preview](https://github.com/dtzhlq/local-mcp-for-sketchup/releases/tag/v0.2.0-windows-preview.1), with Windows CI server checks but no native Windows SketchUp acceptance. The stable installation entrypoint offers that preview explicitly when no stable Windows target matches. Intel Mac and other SketchUp versions have no matching package in these releases. These older packages do not contain the 0.3.0 candidate capabilities above.
+The [signed 0.3.0 release](https://github.com/dtzhlq/local-mcp-for-sketchup/releases/tag/v0.3.0) targets Apple Silicon Mac / SketchUp 2026 (48 tools). Windows x64 / SketchUp 2026 has a separate [0.2.0 Windows installation preview](https://github.com/dtzhlq/local-mcp-for-sketchup/releases/tag/v0.2.0-windows-preview.1), with Windows CI server checks but no native Windows SketchUp acceptance. The stable installation entrypoint offers that preview explicitly when no stable Windows target matches. Intel Mac and other SketchUp versions have no matching package in these releases. The Windows preview does not contain the 0.3.0 capabilities above.
 
 ## Install and documentation
 
@@ -58,7 +58,7 @@ The signed 0.2.0 release targets Apple Silicon Mac / SketchUp 2026 (44 tools). W
 - Single-image reconstruction: [image structure](docs/IMAGE_STRUCTURE.md). These are approximate reconstructions with explicit scale/hidden-geometry assumptions, not single-photo measured replicas.
 - Third-party components and local distribution boundaries: [notices](THIRD_PARTY_NOTICES.md).
 
-The historical [signed 0.2.0 release](https://github.com/dtzhlq/local-mcp-for-sketchup/releases/tag/v0.2.0) has 44 tools and separate [installation](docs/INSTALL.md) and [acceptance](docs/RELEASE_ACCEPTANCE.md) records. Its signature and acceptance do not apply to this candidate. Extension Warehouse publication was declined; no listing or official endorsement is claimed. Existing ALMA environment variables and Ruby namespaces remain intentional.
+Use the current [installation](docs/INSTALL.md) and [acceptance](docs/RELEASE_ACCEPTANCE.md) records for 0.3.0. Historical 0.2.0 assets and evidence remain available on their original Release. Extension Warehouse publication was declined; no listing or official endorsement is claimed. Existing ALMA environment variables and Ruby namespaces remain intentional.
 
 ## 设计原则
 

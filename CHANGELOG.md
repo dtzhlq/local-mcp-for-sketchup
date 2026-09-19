@@ -1,8 +1,8 @@
 # Changelog
 
-## 0.3.0 development candidate — 2026-09-19
+## 0.3.0 — 2026-09-19
 
-Based on `v0.2.0` (`1d27e9c8`), developed on `codex/modeling-api-uplift` and continued on `codex/cad-surface-kernel`. Local native acceptance is bounded to the documented Apple Silicon / SketchUp 2026 scenarios; no new formal release or signed artifact is implied.
+Based on `v0.2.0` (`1d27e9c8`), developed on `codex/modeling-api-uplift` and continued on `codex/cad-surface-kernel`. The signed release and native acceptance are bounded to the documented Apple Silicon / SketchUp 2026 scenarios. Windows 0.3.0 native acceptance is not claimed.
 
 ### Added
 

@@ -1,33 +1,27 @@
-# 0.2.0 release acceptance
+# 0.3.0 release acceptance
 
-> 本文记录 0.2.0 历史发布。0.3.0 的 48 工具与 CAD 曲面开发候选见 [候选说明](DEVELOPMENT_CANDIDATE.md)；旧版签名和发布验收不适用于候选包。
+Released for Apple Silicon macOS + SketchUp 2026, with 48 tools, bundled Node 24.18.0 and an officially signed, unencrypted RBZ. The release binds source commit `590e1d480491d90bd5471ff333f338d51f46c58b`.
 
-Runtime: macOS 26.6.2 (25G83), Apple Silicon, SketchUp 26.2.242, Node 24.18.0. Scope is Apple Silicon Mac and SketchUp 2026 only.
+## Final package verification
 
-| Domain | Unlocked native groups | Final bundle creation QA | Save / document close / disk reopen | Visual review |
-|---|---:|---|---|---|
-| Building | 1108 | pass | pass | primary form and visible features retained |
-| Interior | 397 | pass | pass | corridor, rails, lights, ceiling/floor grids and terminal door retained |
-| Product | 33 | pass | pass | housing, grip, lens/cap, finder, dials and strap fittings retained |
+- Service SHA-256: `f1919e8d5bd0f161d1b00d8795d94bcd9ae6e39e6f149ad4776cce52cb14c681`.
+- Signed RBZ SHA-256: `018797f72f74bbb035d75d88d28d3b0ee5ee850279e06488af477e0eed7b0dff`.
+- The signing portal returned a signature without changing the 33 source files. SketchUp Extension Manager displayed the extension as signed and enabled after restarting.
+- Extracted bundled Node passed MCP initialization, discovery of 48 tools and a tool call. The exact source commit passed [Core CI](https://github.com/dtzhlq/local-mcp-for-sketchup/actions/runs/35410106378).
+- The final service and signed plugin read the dedicated CAD model, executed two sequential local-edit stages with real intermediate readback, preserved unrelated vertices, measured volume and saved the model.
+- After normal document close and disk reopen, all five contexts retained CAD parameters, vertex and face counts. The deliberate stale-source control remained stale.
+- The Node service completed these native checks under a macOS sandbox denying network access. SketchUp application networking was not globally disabled; this establishes the local service workflow without claiming the entire host was disconnected.
 
-All three final creations used service SHA-256 `62068aa88ba88f1bde0a70c368d7fd25f30911ebc769b056d3f9a21d8723557c` and signed RBZ SHA-256 `360718476ed97555493981aa5ce11a22baa769a7649b3bfd9bf90e4bd2f53b5f`. The product was recreated unchanged in the final bundle to remove a prior mixed-build evidence gap. Saved-file hashes and native revision/identity checks are in the downloadable acceptance evidence and examples. Close/reopen means a real document close and disk open, not a full application restart on each model.
+The prior combined [modeling validation](modeling-uplift/implementation-status.md), [CAD validation](cad-surface-kernel/acceptance-report.json) and GLM investigation are reused. Unchanged geometry algorithms were not retested in a redundant full matrix.
 
-Editability is established by independent unlocked native groups with faces and retained model revisions after reopening. Parameter-continuation baseline rebinding is unavailable in these receipts; native group editing is supported. Visual inspection confirms main forms, not measurement fidelity or photorealistic detail.
+## Recorded exception
 
-The final interior repair moves the alarm 18 nominal mm onto the left wall and the notice 30 nominal mm onto the door, with explicit assumed support contacts; the other 395 parts are unchanged. Product repair triangulates three nonplanar grip faces without changing vertices. Assembly contacts remain assumptions and do not prove exact clearances or solid-intersection correctness.
+The first document-close attempt coincided with manual UI activity and SketchUp crashed. Its stack included CEF/AppKit rendering frames. The cause remains unresolved; neither user fault nor an MCP defect is established. The saved file recovered, and the subsequent isolated normal close, disk reopen and native persistence check passed. No crash-fix claim is made.
 
-## Installation and signing
+## Scope and artifacts
 
-Independent extraction, bundled Node startup, MCP initialization, discovery of 44 tools and image structure entry were verified. The signed plugin was installed through Extension Manager, shown as signed, and SketchUp restarted. The 32 source files reproduce the signed archive byte-for-byte; the signature is the only additional file. No runtime network service or research directory is needed for these image/PartGraph tasks.
+[Release assets](https://github.com/dtzhlq/local-mcp-for-sketchup/releases/tag/v0.3.0) include the exact service/plugin pair, machine-readable installation manifest, SHA-256 checksums, acceptance report, examples, corresponding source and dependency notices. The archive retains build-time candidate flags; the final release manifest promotes those same tested bytes.
 
-Extension Warehouse publication was denied under its external-MCP policy. Independent signing succeeded. No Warehouse listing or endorsement is claimed.
+SketchUp receives tessellated faces and retained CAD recipes, not native NURBS entities. Arbitrary historical mesh reconstruction, trimmed or periodic NURBS, variable-radius fillets and every corner configuration remain unsupported. Windows 0.3.0 native acceptance and a universal cross-model benchmark are not claimed.
 
-## Bounded validation and remaining measurement limits
-
-Six focused integration scenarios passed, plus affected Gateway, legacy adapter, PartGraph/compiler, registry, plugin and delivery-contract checks. The historical full suite was not repeatedly run. Final source/package byte comparison and public-source audit were performed.
-
-The initial fixed comparison used GPT-6 Astra and GPT-5.6 Luna, three domains, direct/assisted: 12 initial tasks. Eight domain envelopes needed normalization; two weak-model assumption omissions were repaired once. All assisted understandings remained consumable. In the fixed interior comparison, Luna assisted retained four separate lights while direct output collapsed them to one. Strong-model submitted instances remained preserved. This is not a general accuracy benchmark.
-
-Exact generated-token counts, elapsed model-call times and resolved model snapshot metadata were not returned by the execution interface. They remain unavailable, not estimated. Model aliases and output budgets were fixed (2500 initial, 1200 correction). These evaluation-report requirements remain incomplete; release capability claims are limited to the concrete installed-path and three-model evidence above. No universal accuracy or token-saving claim is made.
-
-The release promotes the tested candidate archive without changing bytes. Internal bundle build-time flags describe its creation before acceptance; the final release manifest and this evidence record govern release status.
+Historical [0.2.0 acceptance](RELEASE_ACCEPTANCE_0.2.0.md) applies only to its original artifacts.
