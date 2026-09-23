@@ -88,6 +88,7 @@ try {
  const runtime=new QueueRuntime({queueDir:path.join(captureRoot,'queue'),processingDir:path.join(captureRoot,'processing'),responseDir,lockPath:path.join(captureRoot,'runtime.lock')});
  const file=path.join(output,'overview.png'),png=Buffer.alloc(24);Buffer.from([137,80,78,71,13,10,26,10]).copy(png);png.writeUInt32BE(1400,16);png.writeUInt32BE(900,20);await fs.writeFile(file,png);
  const revision=`sha256:${'b'.repeat(64)}`,summary={session_id:'s',document_id:'d',model_revision:revision};
+ runtime.getSessionState=async()=>({session_id:'s',document_id:'d',model_revision:revision,model_revision_complete:true});
  const result={kind:'capture_detail_views',runtime:'queue',status:'captured_and_restored',restored:true,capture_scope:'camera_only',
   captures:[{id:'overview',file_path:file,width:1400,height:900,sha256:createHash('sha256').update(png).digest('hex'),model_revision:revision,model_revision_complete:true,model_revision_binding:'restored_source_revision'}],
   restoration:{model_revision_before:revision,model_revision_after:revision,model_revision_restored:true,camera_restored:true,native_state_restored:true,camera_facing_recovery:{status:'restored_exact_native_matrices'}}};

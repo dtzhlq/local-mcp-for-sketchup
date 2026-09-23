@@ -44,6 +44,10 @@ async function proveTimberOverview({result, view, file, modelRevision}) {
 // Persist an authenticated receipt before consuming the native response.
 export async function recoverTimberOverview({bridge, taskStore, taskId, view, priorOutputDirs, summary, timeoutMs}) {
  const runtime=bridge.selectRuntime('queue',{timeoutMs});
+ const state=await runtime.getSessionState();
+ if(state?.session_id!==summary.session_id||state?.document_id!==summary.document_id
+   ||state?.model_revision_complete!==true||state?.model_revision!==summary.model_revision)
+  throw new AgentContractError('MODEL_REVISION_MISMATCH','Late overview recovery requires the same live document and accepted revision.');
  const paths=priorOutputDirs.map(dir=>path.resolve(dir,`${view.id}.png`));
  const validate=async result=>{
   if(result?.kind!=='capture_detail_views'||!paths.includes(path.resolve(result.captures?.[0]?.file_path||''))
