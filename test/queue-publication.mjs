@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
+import { createHash } from 'node:crypto';
 import { QueueRuntime } from '../src/queue-runtime.mjs';
 
 const root = await fs.mkdtemp(path.join(os.tmpdir(), 'queue-publication-'));
@@ -85,12 +86,14 @@ try {
  const output=path.join(captureRoot,'attempt-1');await fs.mkdir(output);
  const responseDir=path.join(captureRoot,'responses');await fs.mkdir(responseDir);
  const runtime=new QueueRuntime({queueDir:path.join(captureRoot,'queue'),processingDir:path.join(captureRoot,'processing'),responseDir,lockPath:path.join(captureRoot,'runtime.lock')});
- const file=path.join(output,'whole-hall.png'),png=Buffer.alloc(24);Buffer.from([137,80,78,71,13,10,26,10]).copy(png);png.writeUInt32BE(1400,16);png.writeUInt32BE(900,20);await fs.writeFile(file,png);
+ const file=path.join(output,'overview.png'),png=Buffer.alloc(24);Buffer.from([137,80,78,71,13,10,26,10]).copy(png);png.writeUInt32BE(1400,16);png.writeUInt32BE(900,20);await fs.writeFile(file,png);
  const revision=`sha256:${'b'.repeat(64)}`,summary={session_id:'s',document_id:'d',model_revision:revision};
- const result={kind:'capture_view',file_path:file,read_only_attestation:{session_id:'s',document_id:'d',state_unchanged:true,model_revision_complete_before:true,model_revision_complete_after:true,model_revision_before:revision,model_revision_after:revision}};
+ const result={kind:'capture_detail_views',runtime:'queue',status:'captured_and_restored',restored:true,capture_scope:'camera_only',
+  captures:[{id:'overview',file_path:file,width:1400,height:900,sha256:createHash('sha256').update(png).digest('hex'),model_revision:revision,model_revision_complete:true,model_revision_binding:'restored_source_revision'}],
+  restoration:{model_revision_before:revision,model_revision_after:revision,model_revision_restored:true,camera_restored:true,native_state_restored:true,camera_facing_recovery:{status:'restored_exact_native_matrices'}}};
  const response=path.join(responseDir,`12345-${Date.now()}-11111111-1111-4111-8111-111111111111.json`);await fs.writeFile(response,JSON.stringify({result}));
  const opts={bridge:{selectRuntime:()=>runtime},taskStore:{mutationReceiptLedger:{sign:async value=>JSON.stringify(value)}},taskId:'task-test',view:{id:'overview'},priorOutputDirs:[output],summary};
- await assert.rejects(recoverTimberOverview({...opts,summary:{...summary,document_id:'other'}}),/document/);
+ await assert.rejects(recoverTimberOverview({...opts,summary:{...summary,model_revision:`sha256:${'c'.repeat(64)}`}}),/document/);
  assert.ok(await fs.stat(response));
  const recovered=await recoverTimberOverview(opts);assert.equal(recovered.captures.length,1);await assert.rejects(fs.stat(response),{code:'ENOENT'});
  assert.deepEqual(await recoverTimberOverview(opts),recovered);

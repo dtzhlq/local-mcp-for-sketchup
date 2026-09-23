@@ -5,29 +5,38 @@ import path from 'node:path';
 import {createHash} from 'node:crypto';
 
 export const TIMBER_QUALITY_SCOPE='timber-assembly-summary.v1';
-// Whole-hall delivery needs one overview, not the generic multi-view scene
-// restoration protocol. Leave the current user-selected view on screen, and retain
-// complete before/after model revision checks (including unrelated objects).
+// The detail-capture path preserves always-face-camera instances while exporting.
+// A plain View#write_image can rotate SketchUp's template person and change the
+// full native revision even though the hall itself was untouched.
 export async function captureTimberOverview({bridge, view, outputDir, modelRevision, timeoutMs, sessionContract}) {
- const file=path.join(outputDir,'whole-hall.png');
- const result=await bridge.capture_view({runtime:'queue',path:file,view:'current',zoom_extents:false,
-  width:Math.max(1400,view.min_width||0),height:Math.max(900,view.min_height||0),timeoutMs,session_contract:sessionContract});
+ const file=path.join(outputDir,`${view.id}.png`);
+ const result=await bridge.capture_detail_views({runtime:'queue',output_dir:outputDir,
+  views:[{id:view.id,kind:'overview',width:Math.max(1400,view.min_width||0),height:Math.max(900,view.min_height||0)}],
+  timeoutMs,session_contract:sessionContract});
  return proveTimberOverview({result, view, file, modelRevision});
 }
 async function proveTimberOverview({result, view, file, modelRevision}) {
- const a=result.read_only_attestation;
- if(a?.state_unchanged!==true||a.model_revision_complete_before!==true||a.model_revision_complete_after!==true
-   ||a.model_revision_before!==modelRevision||a.model_revision_after!==modelRevision)throw new AgentContractError('MODEL_REVISION_MISMATCH','Overview changed model state; the image is not accepted.',{
-    details:{expected_revision:modelRevision,revision_before:a?.model_revision_before,revision_after:a?.model_revision_after,
-      complete_before:a?.model_revision_complete_before,complete_after:a?.model_revision_complete_after,
-      state_unchanged:a?.state_unchanged,view_unchanged:a?.view_unchanged,
-      modified_before:a?.model_modified_before,modified_after:a?.model_modified_after}});
+ const capture=result?.captures?.[0],restore=result?.restoration;
+ if(result?.kind!=='capture_detail_views'||result?.runtime!=='queue'||result?.status!=='captured_and_restored'
+   ||result?.restored!==true||result?.capture_scope!=='camera_only'||result.captures.length!==1
+   ||capture?.id!==view.id||path.resolve(capture?.file_path||'')!==path.resolve(file)
+   ||capture?.model_revision_binding!=='restored_source_revision'||capture?.model_revision_complete!==true
+   ||capture?.model_revision!==modelRevision||restore?.model_revision_before!==modelRevision
+   ||restore?.model_revision_after!==modelRevision||restore?.model_revision_restored!==true
+   ||restore?.camera_restored!==true||restore?.native_state_restored!==true
+   ||!['not_needed','restored_exact_native_matrices'].includes(restore?.camera_facing_recovery?.status))
+   throw new AgentContractError('MODEL_REVISION_MISMATCH','Overview was not restored to the accepted native revision.',{
+    details:{expected_revision:modelRevision,revision_before:restore?.model_revision_before,
+      revision_after:restore?.model_revision_after,capture_revision:capture?.model_revision,
+      camera_facing_recovery:restore?.camera_facing_recovery?.status,restored:result?.restored}});
  const bytes=await fs.readFile(file);
  if(!bytes.subarray(0,8).equals(Buffer.from([137,80,78,71,13,10,26,10])))throw new Error('Native overview is not a PNG');
  const width=bytes.readUInt32BE(16),height=bytes.readUInt32BE(20);
- return {kind:'timber_overview',view_left_for_delivery:true,captures:[{id:view.id,path:file,width,height,
+ if(width!==capture.width||height!==capture.height||createHash('sha256').update(bytes).digest('hex')!==capture.sha256)
+  throw new AgentContractError('ARTIFACT_INTEGRITY_ERROR','Native overview bytes do not match the restored capture receipt.');
+ return {kind:'timber_overview',restored:true,captures:[{id:view.id,path:file,width,height,
   sha256:createHash('sha256').update(bytes).digest('hex'),model_revision:modelRevision,server_verified:true,
-  evidence:'native_view_write_image',evidence_level:'live_runtime',read_only_attestation:a}]};
+  evidence:'native_view_write_image',evidence_level:'live_runtime',restoration:restore}]};
 }
 
 // A screenshot may finish just after the queue deadline. Recover only this
@@ -35,27 +44,26 @@ async function proveTimberOverview({result, view, file, modelRevision}) {
 // Persist an authenticated receipt before consuming the native response.
 export async function recoverTimberOverview({bridge, taskStore, taskId, view, priorOutputDirs, summary, timeoutMs}) {
  const runtime=bridge.selectRuntime('queue',{timeoutMs});
- const paths=priorOutputDirs.map(dir=>path.resolve(dir,'whole-hall.png'));
+ const paths=priorOutputDirs.map(dir=>path.resolve(dir,`${view.id}.png`));
  const validate=async result=>{
-  const a=result?.read_only_attestation;
-  if(result?.kind!=='capture_view'||!paths.includes(path.resolve(result.file_path||''))
-    ||a?.session_id!==summary.session_id||a?.document_id!==summary.document_id)
+  if(result?.kind!=='capture_detail_views'||!paths.includes(path.resolve(result.captures?.[0]?.file_path||''))
+    ||result?.restoration?.model_revision_before!==summary.model_revision)
    throw new AgentContractError('ARTIFACT_INTEGRITY_ERROR','Late overview is not bound to this task and native document.');
-  return proveTimberOverview({result,view,file:result.file_path,modelRevision:summary.model_revision});
+  return proveTimberOverview({result,view,file:result.captures[0].file_path,modelRevision:summary.model_revision});
  };
  const names=(await fs.readdir(runtime.responseDir)).filter(n=>n.endsWith('.json'));
  if(names.length===1){
   const responsePath=path.join(runtime.responseDir,names[0]),stat=await fs.lstat(responsePath);
   if(stat.isFile()&&!stat.isSymbolicLink()&&stat.size<1024*1024){
    const candidate=JSON.parse(await fs.readFile(responsePath,'utf8'))?.result;
-   if(candidate?.kind==='capture_view'&&paths.includes(path.resolve(candidate.file_path||''))){
+   if(candidate?.kind==='capture_detail_views'&&paths.includes(path.resolve(candidate.captures?.[0]?.file_path||''))){
     let captured;
-    await runtime.recoverOrphanResponse({requestId:names[0].slice(0,-5),expectedResultKind:'capture_view',
+    await runtime.recoverOrphanResponse({requestId:names[0].slice(0,-5),expectedResultKind:'capture_detail_views',
      validate:async result=>{captured=await validate(result);},
      persist:async result=>{
       const body={version:'timber-overview-recovery.v1',task_id:taskId,result,image_sha256:captured.captures[0].sha256};
       const proof={...body,integrity_hmac:await taskStore.mutationReceiptLedger.sign(body)};
-      const receipt=path.join(path.dirname(result.file_path),'native-overview-receipt.json');
+      const receipt=path.join(path.dirname(result.captures[0].file_path),'native-overview-receipt.json');
       const tmp=receipt+'.pending';await fs.writeFile(tmp,JSON.stringify(proof),{mode:0o600});await fs.rename(tmp,receipt);
      }});
     return captured;
