@@ -1,0 +1,429 @@
+{
+  "id": "yf-dian-5bay-10rafter-v1",
+  "version": 1,
+  "status": "frozen",
+  "scope": "Five-bay ten-rafter single-trough dian with four-sided hip roof and subsidiary eaves; visible construction, not conservation certification",
+  "side_elevation": {
+    "edition": "清初影宋抄本",
+    "pdf_page": 404,
+    "title": "殿堂等五鋪作（副階四鋪作）單槽草架側樣第十三",
+    "rafter_bays": 10,
+    "inner_column_line": "one longitudinal line on one side of the ridge, as drawn",
+    "outer": "五鋪作重栱單抄單下昂計心",
+    "inner": "五鋪作重栱雙抄計心",
+    "subsidiary": "四鋪作，依原圖構件次序"
+  },
+  "sources": [
+    {
+      "id": "YF4",
+      "edition": "WYG",
+      "work": "營造法式卷四",
+      "locator": "1b–14a",
+      "url": "https://github.com/kanripo/KR2m0056/blob/master/KR2m0056_004.txt"
+    },
+    {
+      "id": "YF5",
+      "edition": "WYG",
+      "work": "營造法式卷五",
+      "locator": "1b–14b",
+      "url": "https://github.com/kanripo/KR2m0056/blob/master/KR2m0056_005.txt"
+    },
+    {
+      "id": "YF6",
+      "edition": "WYG",
+      "work": "營造法式卷六",
+      "locator": "1b–4a,7b–8b",
+      "url": "https://github.com/kanripo/KR2m0056/blob/master/KR2m0056_006.txt"
+    },
+    {
+      "id": "YF13",
+      "edition": "WYG",
+      "work": "營造法式卷十三",
+      "locator": "2a–7b",
+      "url": "https://github.com/kanripo/KR2m0056/blob/master/KR2m0056_013.txt"
+    },
+    {
+      "id": "FIG13",
+      "edition": "清初影宋抄本",
+      "work": "營造法式",
+      "locator": "扫描PDF404页，图第十三",
+      "use": "topology; not scaled dimensions from raster pixels"
+    },
+    {
+      "id": "FIG1",
+      "edition": "清初影宋抄本",
+      "work": "營造法式",
+      "locator": "扫描PDF378页，栱枓等卷殺第一",
+      "use": "juansha cutting-line construction"
+    },
+    {
+      "id": "FIG_COLUMN",
+      "edition": "清初影宋抄本",
+      "work": "營造法式",
+      "locator": "扫描PDF380页，柱等",
+      "use": "shuttle column profile; not scaled from raster"
+    },
+    {
+      "id": "YF15",
+      "edition": "WYG",
+      "work": "營造法式卷十五",
+      "locator": "8b–10a",
+      "url": "https://github.com/kanripo/KR2m0056/blob/master/KR2m0056_015.txt",
+      "use": "tile-making sections and thickness; manufacturing versus installed dimensions must be distinguished"
+    },
+    {
+      "id": "YF17",
+      "edition": "WYG",
+      "work": "營造法式卷十七",
+      "locator": "3b–9b",
+      "url": "https://github.com/kanripo/KR2m0056/blob/master/KR2m0056_017.txt",
+      "use": "ordinary member types/lengths and riding-beam reduction clause; concealed small joinery is simplified, not an exact bill of historical stock"
+    },
+    {
+      "id": "XU_CONTROL",
+      "work": "徐怡涛：营造法式大木作控制性尺度规律研究",
+      "locator": "39–40页：Hp=12+21T+21；到橑檐枋下皮",
+      "url": "https://img.dpm.org.cn/Uploads/File/2018/06/04/u5b15212a9a148.pdf",
+      "use": "interpretation checked against YF4; no scalar height inferred from scanned pixels"
+    },
+    {
+      "id": "RUIHE",
+      "work": "赵佶《瑞鹤图》右侧正脊端部",
+      "use": "comparative painted silhouette only; not a dimensional survey; local project-drawn outline",
+      "image_reference": "https://media.bjnews.com.cn/fz/html/AttachPubDev/2024/10/mapj20241021640462175954.jpg"
+    },
+    {
+      "id": "YF18",
+      "work": "營造法式卷十八",
+      "locator": "1b–6a: selected five-puzuo corner inventory",
+      "url": "https://github.com/kanripo/KR2m0056/blob/master/KR2m0056_018.txt"
+    },
+    {
+      "id": "CORNER_STUDY",
+      "work": "《营造法式》转角构造新探",
+      "locator": "2022年第1期，24、30–31页，表1及图3–4",
+      "url": "https://www.jgcm.ac.cn/jah/cn/article/pdf/preview/10.12329/20969368.2022.01003.pdf",
+      "use": "a declared scholarly interpretation; not a unique historical prescription"
+    }
+  ],
+  "rules": {
+    "material": {
+      "source": "YF4:1b–3a",
+      "basis": "text",
+      "main_grade": 2,
+      "subsidiary_grade": 3,
+      "main_fen_per_chi": 0.055,
+      "subsidiary_fen_per_chi": 0.05,
+      "height_fen": 15,
+      "width_fen": 10,
+      "qi_height_fen": 6,
+      "qi_width_fen": 4
+    },
+    "gong": {
+      "source": "YF4:3a–5b",
+      "basis": "text",
+      "head_retained_fen": 6,
+      "cut_height_fen": 9,
+      "eye_depth_fen": 3,
+      "types": {
+        "hua": {
+          "length": 72,
+          "facets": 4,
+          "facet_run": 4
+        },
+        "nidao": {
+          "length": 62,
+          "facets": 4,
+          "facet_run": 3.5
+        },
+        "guazi": {
+          "length": 62,
+          "facets": 4,
+          "facet_run": 4
+        },
+        "ling": {
+          "length": 72,
+          "facets": 5,
+          "facet_run": 4
+        },
+        "man": {
+          "length": 92,
+          "facets": 4,
+          "facet_run": 3
+        }
+      }
+    },
+    "dou": {
+      "source": "YF4:10a–11b",
+      "basis": "text",
+      "ludou": {
+        "width": 32,
+        "depth": 32,
+        "height": 20,
+        "ear": 8,
+        "flat": 4,
+        "incline": 8,
+        "inset": 4
+      },
+      "corner_ludou": {
+        "width": 36,
+        "depth": 36,
+        "height": 20,
+        "ear": 8,
+        "flat": 4,
+        "incline": 8,
+        "inset": 4
+      },
+      "jiaohu": {
+        "width": 18,
+        "depth": 16,
+        "height": 10,
+        "ear": 4,
+        "flat": 2,
+        "incline": 4,
+        "inset": 2
+      },
+      "qixin": {
+        "width": 16,
+        "depth": 16,
+        "height": 10,
+        "ear": 4,
+        "flat": 2,
+        "incline": 4,
+        "inset": 2
+      },
+      "san": {
+        "width": 16,
+        "depth": 14,
+        "height": 10,
+        "ear": 4,
+        "flat": 2,
+        "incline": 4,
+        "inset": 2
+      }
+    },
+    "bracket": {
+      "source": "YF4:3b,6a–7b,12a–13a;FIG13",
+      "basis": "text_and_figure",
+      "jump_fen": 30,
+      "outer_jumps": 2,
+      "inner_jumps": 2,
+      "subsidiary_jumps": 1,
+      "ang_tip_drop_fen": 23,
+      "shuatou_projection_fen": 25,
+      "intercolumn_middle": 2,
+      "intercolumn_other": 1
+    },
+    "column": {
+      "source": "YF5:6a–7a",
+      "basis": "text_and_selected_midpoint",
+      "diameter_fen": 43.5,
+      "corner_rise_chi": 0.4,
+      "front_inclination": 0.01,
+      "side_inclination": 0.008
+    },
+    "rafter": {
+      "source": "YF5:11b–13a",
+      "basis": "text_and_selected_midpoint",
+      "diameter_fen": 9.5,
+      "spacing_chi": 0.925,
+      "subsidiary_spacing_chi": 0.875,
+      "fly_width_ratio": 0.8,
+      "fly_depth_ratio": 0.7,
+      "fly_extension_ratio": 0.6,
+      "corner_extension_chi": 0.7
+    },
+    "roof": {
+      "source": "YF5:13b–14b",
+      "basis": "text",
+      "main_rise_ratio": 0.3333333333333333,
+      "subsidiary_rise_ratio": 0.5,
+      "first_fold_ratio": 0.1,
+      "successive_fold_ratio": 0.5
+    },
+    "tiles": {
+      "source": "YF13:2a–3a",
+      "basis": "text",
+      "cover_length_chi": 1.4,
+      "cover_width_chi": 0.65,
+      "pan_length_chi": 1.6,
+      "pan_width_chi": 1,
+      "overlap_ratio": 0.4
+    },
+    "ridge": {
+      "source": "YF13:4b–7b",
+      "basis": "text_and_derivation",
+      "reference_rafter_bays": 6,
+      "reference_layers": 31,
+      "layers_per_two_added_rafter_bays": 2,
+      "main_layers": 35,
+      "hip_layers": 33,
+      "chiwei_height_chi": 7.25,
+      "comment": "31 + (10-6)/2*2; selected midpoint of 7–7.5 chi for chiwei height"
+    },
+    "door": {
+      "source": "YF6:1b–4a",
+      "basis": "text",
+      "min_height_chi": 7,
+      "max_height_chi": 24,
+      "combined_width_height_min": 0.8,
+      "combined_width_height_max": 1
+    },
+    "window": {
+      "source": "YF6:7b–8b",
+      "basis": "text",
+      "name": "破子櫺窓",
+      "min_height_chi": 4,
+      "max_height_chi": 8,
+      "gap_chi": 0.1,
+      "reference_width_chi": 10,
+      "reference_mullions": 17,
+      "additional_mullions_per_chi": 2
+    },
+    "bracket_vertical": {
+      "basis": "published derivation",
+      "source": "XU_CONTROL:39–40;YF4:12b–13a",
+      "ludou_slot_bottom_fen": 12,
+      "jump_increment_fen": 21,
+      "final_slot_to_liaoyan_bottom_fen": 21,
+      "liaoyan_height_fen": 30,
+      "main_liaoyan_bottom_fen": 75,
+      "subsidiary_liaoyan_bottom_fen": 54
+    }
+  },
+  "design_choices": {
+    "layout": "front central double board door, four other front bays po-zi-ling windows, plain rear/side infill, open subsidiary eaves",
+    "dimensions": "explicit design inputs, not the only dimensions prescribed by the text",
+    "hidden_joinery": "simplified; exposed seats, gong eyes and member profiles must remain represented",
+    "ornament": "no optional procession of ridge animals; required ridge terminals and corner attachments retained",
+    "window_panel": {
+      "basis": "project derivation, not a quotation",
+      "nominal_width_chi": 14,
+      "mullions": 25,
+      "height_chi_formula": "(width_chi - (count-1)*0.1)/(count*0.056 + 2*0.12)",
+      "jambs": 2,
+      "gap_policy": "gaps between mullions only; panel sits inside the selected bay",
+      "vertical_convention": {
+        "basis": "project interpretation; not the only reading of nominal window height",
+        "nominal_height": "H is the proportional module derived from the horizontal count/gap equation",
+        "mullion_length": "0.98H",
+        "subframe_section": "0.05H high, 0.04H deep",
+        "embedding": "two thirds of subframe height at each end",
+        "clear_height": "0.98H - 2*(2/3*0.05H)",
+        "outer_height": "clear_height + 2*0.12H",
+        "hidden_joint": "recesses in the head and waist are simplified"
+      }
+    },
+    "ridge_courses": {
+      "basis": "selected construction dimensions, independent of source layer counts",
+      "tile_thickness_chi": 0.08,
+      "mortar_joint_chi": 0.01,
+      "base_width_chi": 0.9,
+      "hip_base_width_chi": 0.7,
+      "main_taper_ratio": 0.2,
+      "hip_taper_ratio": 0.1
+    },
+    "chiwei": {
+      "source": "YF13:6b–7a;RUIHE",
+      "height_chi": 7.25,
+      "width_chi": 4.2,
+      "depth_chi": 1.15,
+      "basis": "text height range; project-selected width/depth and outline from comparative painting",
+      "simplification": "carved relief omitted; iron supports and five-prong deterrent retained; concealed seating simplified"
+    },
+    "ordinary_ang": {
+      "basis": "project-selected reading of the published five-puzuo slope and YF17 member length",
+      "source": "YF17:5a;CORNER_STUDY:24,30",
+      "slope": 0.375,
+      "member_length_fen": 120,
+      "length_datum": "body centerline from outer head shoulder to concealed tail, excluding exposed tip; CORNER_STUDY Fig3 explicit four/five/six-puzuo convention",
+      "knee_and_concealed_bearing": "project reconstruction; no conservation-certification claim"
+    },
+    "column_head_riding": {
+      "source": "YF17:final general reduction clause; FIG13",
+      "basis": "project-selected riding-beam reduction",
+      "retained": "first radial hua and first-jump bearing dou",
+      "replaced_by_mingfu": "inner second radial member and inner crossing gong stacks at the beam only; two sides at inner-column beam junctions",
+      "boundary": "intercolumn assemblies retain the inner double jump; native joint inspection pending"
+    },
+    "subsidiary_wall_bearing": {
+      "source": "FIG13; YF5:subsidiary beams",
+      "basis": "project-selected corbel and dou shoulder supporting the wall end; concealed column tenon simplified"
+    },
+    "corner_rafter_distribution": {
+      "source": "YF5:corner extension and shengtou height",
+      "basis": "project-derived fan interpolation over selected nine-chi corner zone; shared endpoints between round and flying rafters"
+    },
+    "corner_bracket": {
+      "source": "YF18:1b–6a; CORNER_STUDY Fig3",
+      "basis": "project reconstruction following the declared published length/slope reading, not a unique historical prescription",
+      "local_exterior_axes": [
+        "+X",
+        "+Y"
+      ],
+      "diagonal_ang_body_fen": 175,
+      "cross_ang_body_fen": 75,
+      "you_ang_body_fen": 336,
+      "diagonal_slope": "(3/8)/sqrt(2)",
+      "length_convention": "body length excluding the tip",
+      "return_gong_span": "selected extended span to the diagonal bearing, not equated to the source body-length entry",
+      "hidden_joint": "scarf/half-lap solids simplified; exposed diagonal ludou slot retained",
+      "status": "native joints pending"
+    },
+    "angle_beams": {
+      "source": "YF5:7b–8a",
+      "main_section_fen": [
+        29,
+        19
+      ],
+      "child_section_fen": [
+        19,
+        16
+      ],
+      "hidden_section_fen": [
+        15,
+        19
+      ],
+      "basis": "selected dimensions within text ranges; upper supports drive segmented members",
+      "concealed_lap": "child beam embedded inside main beam; concealed mating recess omitted"
+    },
+    "subsidiary_ridge": {
+      "basis": "project-selected nine-course low hip seam; subsidiary has no separate main ridge",
+      "layers": 9,
+      "width_chi": 0.5,
+      "source_comparison": "YF13 gallery ridge counts; selected for this annular subsidiary roof, not prescribed uniquely by FIG13"
+    },
+    "corner_ornaments": {
+      "source": "YF13:7a–10a",
+      "five_bay_main": {
+        "sleeve_diameter_chi": 0.8,
+        "pinga_height_chi": 1.2,
+        "seated_count_per_corner": 4,
+        "seated_height_chi": 0.8,
+        "fire_pearl_height_chi": 0.6,
+        "main_hip_beast_height_chi": 3.5
+      },
+      "subsidiary": "project-selected same small corner terminal set; no large hip beast",
+      "silhouettes": "project-authored plain ceramic head/body/wing/tail masses, not excavated-object replicas; carved facial/feather relief omitted",
+      "position": "derived from roof terminal and ridge cap surfaces; individual spacing selected"
+    },
+    "end_framing": {
+      "source": "YF5:4a",
+      "basis": "selected end dingfu to nearest transverse caofu, crossing mojiao member and short posts following actual purlin underside",
+      "hidden_joints": "simplified; bearing coordinates share column rise and roof fold functions"
+    },
+    "short_beam_profile": {
+      "basis": "project fitting rule for short subsidiary spans",
+      "rule": "upper six-cut and lateral four-cut shoulder runs shorten only if the fixed runs would cross the opposite end"
+    }
+  },
+  "unresolved": [],
+  "known_limitations": [
+    "Frozen means dimensions and declared reconstruction choices are fixed; it does not claim native acceptance or conservation certification.",
+    "The preset uses FIG13 topology, text dimensions and an explicitly selected published corner interpretation. It is not an exact reconstruction of a surviving named building or every historical stock-count entry.",
+    "Concealed mortises, mating recesses, embedded laps and scarves are simplified. Exposed dou slots, beam necks, principal sections and assembly bearings remain represented.",
+    "The extended corner return-gong span, subsidiary ridge courses, short-beam fitting and plain ornament silhouettes are project choices, not unique prescriptions of the text.",
+    "No polychrome painting, complex carving or other dynastic systems. No structural/load calculation is provided."
+  ],
+  "package_version": "0.4.0"
+}

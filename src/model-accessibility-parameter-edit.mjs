@@ -1,3 +1,4 @@
+import { yfRuleBinding, assertYfRuleBinding } from './traditional-timber/yf-rules.mjs';
 import { AgentContractError, sha256Canonical } from './agent-contract.mjs';
 import { compileModelAccessibilityTask, getModelAccessibilityTaskCatalog } from './model-accessibility-tasks.mjs';
 import { buildDesignIntentGraph, compareDesignBindingFingerprints, planDesignParameterChange, reconcileDesignIntentGraph } from './design-intent-graph.mjs';
@@ -21,7 +22,7 @@ function verifyRecord(record) {
   if (source_record_hash !== sha256Canonical(body)) throw new AgentContractError('ARTIFACT_INTEGRITY_ERROR', 'Stored parameter source was modified.');
 }
 function complete(graph) {
-  if (!graph?.completeness?.complete && !graph?.completeness?.scope_complete) throw new AgentContractError('MODEL_REVISION_INCOMPLETE', 'Parameter replacement needs complete selected subtrees and the global definition occurrence counts.');
+  if (!graph?.completeness?.complete && !graph?.completeness?.scope_complete && !graph?.completeness?.assembly_scope_complete) throw new AgentContractError('MODEL_REVISION_INCOMPLETE', 'Parameter replacement needs complete selected subtrees and the global definition occurrence counts.');
 }
 function resolve(graph, target) {
   if (!object(target) || Object.keys(target).some(key => !['target_id', 'entity_path'].includes(key)) || Boolean(target.target_id) === Boolean(target.entity_path)) fail('Each target must provide exactly target_id or entity_path; names and implicit selections are unsupported.');
@@ -43,20 +44,25 @@ function bindingRef(graph, node) {
 }
 function ruleFor(kind) {
   const result = getModelAccessibilityTaskCatalog({ task: kind, detail: 'parameters' }).tasks[0].parameters;
-  if (!result || result.by_asset_recipe) fail('This parameter helper supports the declared window, door, cabinet and sink-counter assemblies only.');
+  if (!result || result.by_asset_recipe) fail('This parameter helper supports the declared catalog-listed parameter assemblies only.');
   return result;
 }
 function sourceDetails(source) {
   if (source.kind === 'common_task') {
-    if (!['window', 'door', 'cabinet', 'sink_counter'].includes(source.task?.kind)) fail('Unsupported common-task parameter recipe.');
-    const compiled = compileModelAccessibilityTask(source.task);
+    if (!['window', 'door', 'cabinet', 'sink_counter', 'traditional_timber'].includes(source.task?.kind)) fail('Unsupported common-task parameter recipe.');
+    if(source.task.kind==='traditional_timber')assertYfRuleBinding(source.rule_binding);
+    const timber=source.task.kind==='traditional_timber';
+    const legacy=timber&&!source.rendering_version;
+    if(timber&&source.rendering_version&&source.rendering_version!=='timber-render.v2')fail('Unsupported stored timber rendering version.');
+    const task=legacy?{...source.task,parameters:{...source.task.parameters,tile_detail:'detailed'}}:source.task;
+    const compiled = compileModelAccessibilityTask(task,{timberLegacyRendering:legacy});
     let bundle = compiled.bundle;
     if (source.part_id_aliases) {
       const remap = value => typeof value === 'string' ? source.part_id_aliases[value] || value : Array.isArray(value) ? value.map(remap)
         : object(value) ? Object.fromEntries(Object.entries(value).map(([key, item]) => [key, remap(item)])) : value;
       bundle = { ...bundle, part_graph: remap(bundle.part_graph), detail_spec: remap(bundle.detail_spec) };
       bundle.dsl = compilePartGraphToSketchUpDsl(bundle.part_graph, bundle.profile, { includeReset: false });
-      bundle.parts_mapping = describeAssemblyOccurrences(bundle.part_graph);
+      bundle.parts_mapping = source.task.kind==='traditional_timber'?[]:describeAssemblyOccurrences(bundle.part_graph);
     }
     return { bundle, parameters: bundle.parameters, rules: ruleFor(source.task.kind) };
   }
@@ -78,7 +84,9 @@ function recompile(source, changes) {
   if (!object(changes) || !Object.keys(changes).length || Object.keys(changes).some(key => !Object.hasOwn(before.rules, key))) fail('changes must use supported explicit parameter names, such as width_mm; transforms and arbitrary DSL are unsupported.');
   const parameters = { ...before.parameters, ...changes };
   if (source.kind === 'common_task') {
-    const nextSource = { kind: source.kind, task: { ...clone(source.task), parameters } };
+    const nextSource = { kind: source.kind, task: { ...clone(source.task), parameters }, ...(source.rule_binding?{rule_binding:clone(source.rule_binding)}:{}),
+      ...(source.rendering_version?{rendering_version:source.rendering_version}:{}),
+      ...(source.task.kind==='traditional_timber'&&Object.hasOwn(changes,'tile_detail')?{rendering_version:'timber-render.v2'}:{}) };
     if (source.task.kind === 'cabinet') {
       // Old recipes encode the leg corner coordinates in IDs. Preserve the four
       // corresponding corners so frozen quality mappings survive width edits.
@@ -115,8 +123,11 @@ export function captureDefinitionParameterSource({ creationTaskId, modelKey, mod
   if (!/^task_[0-9a-f-]+$/i.test(creationTaskId || '')) fail('A server creation task id is required.');
   if (Boolean(sourceTask) === Boolean(sourceBundle)) fail('Provide exactly one trusted sourceTask or sourceBundle.');
   if (!object(identityMap) || !Array.isArray(creationDocument?.operations)) fail('Capture requires the actual server creation document and identity map.');
-  const source = sourceTask ? { kind: 'common_task', task: clone(sourceTask) } : { kind: 'detailed_sample', bundle: clone(sourceBundle) };
+  const source = sourceTask ? { kind: 'common_task', task: clone(sourceTask), ...(sourceTask.kind==='traditional_timber'?{rule_binding:yfRuleBinding(),rendering_version:'timber-render.v2'}:{}) } : { kind: 'detailed_sample', bundle: clone(sourceBundle) };
   const { bundle, parameters, rules } = sourceDetails(source);
+  const logicalDefinitions=definitions(bundle.dsl),nativeDefinitions=definitions(creationDocument);
+  if(logicalDefinitions.length!==nativeDefinitions.length)fail('Creation definition map cannot be reconstructed from different compilation closures.');
+  const definitionMap=Object.fromEntries(logicalDefinitions.map((definition,index)=>[definition.name,nativeDefinitions[index].name]));
   const entries = bundle.part_graph.roots.map(root => {
     const logicalId = root.instance_id || root.part_id;
     const actualId = identityMap[logicalId];
@@ -126,11 +137,12 @@ export function captureDefinitionParameterSource({ creationTaskId, modelKey, mod
     const node = resolve(modelGraph, { target_id: actualId });
     if (actualDefinition(node) !== matches[0].definition) fail('Current target definition does not match its actual creation document.');
     return { logical_instance_id: logicalId, root_part_id: root.part_id, logical_definition: `PG2_${root.part_id}`, target: ref(modelGraph, node),
-      source_definition: actualDefinition(node), source: clone(source) };
+      source_definition: actualDefinition(node), definition_map: clone(definitionMap), identity_map:clone(identityMap), source: clone(source) };
   });
   if (new Set(entries.map(entry => sha256Canonical(entry.target))).size !== entries.length) fail('Creation roots must bind to distinct actual instances.');
   for (const entry of entries) entry.design_graph = designFor({ modelKey, modelGraph, entries: [entry], parameters, rules });
   return seal({ version: VERSION, creation_task_id: creationTaskId, model_key: modelKey, runtime: modelGraph.runtime,
+    readback_projection: modelGraph.completeness.assembly_scope_complete ? 'assembly-merkle.v2' : 'full_geometry',
     initial_model_revision: modelGraph.model_revision, creation_document_hash: sha256Canonical(creationDocument), material_map: clone(materialMap), entries,
     evidence_level: 'trusted_creation_binding_snapshot', initial_geometry_quality_accepted: false, parameter_revision: 0 });
 }
@@ -191,7 +203,10 @@ export function planDefinitionParameterEdit({ sourceRecord, currentModelGraph, r
   if (selected.some(entry => entry.source_definition !== definition)) fail('Actual source definition no longer matches the recorded binding.');
   const designGraph = designFor({ modelKey: sourceRecord.model_key, modelGraph: currentModelGraph, entries: selected, ...compiled.before });
   const changePlan = planDesignParameterChange({ designGraph, currentModelGraph, changes: request.changes, instruction,
-    assemblyRebuild: { previousDsl: compiled.before.bundle.dsl, nextDsl: compiled.next.bundle.dsl, scope: request.scope, taskId, iteration, materialMap: sourceRecord.material_map } });
+    assemblyRebuild: { previousDsl: compiled.before.bundle.dsl, nextDsl: compiled.next.bundle.dsl, scope: request.scope, taskId, iteration, materialMap: sourceRecord.material_map,
+      ...(currentModelGraph.runtime==='queue'&&selected[0].definition_map?{
+        existingDefinitionMap:Object.fromEntries(Object.entries(selected[0].definition_map).filter(([,name])=>currentModelGraph.nodes.some(node=>node.node_type==='definition'&&node.name===name))),
+        existingIdentityMap:clone(selected[0].identity_map||{}), expectedModelRevision:currentModelGraph.model_revision}: {}) } });
   const body = { kind: 'definition_parameter_edit', ready: changePlan.blockers.length === 0, source_record_hash: sourceRecord.source_record_hash,
     selected_instances: selected.map(entry => entry.logical_instance_id), design_graph: designGraph, change_plan: changePlan, next_source: compiled.nextSource,
     blockers: clone(changePlan.blockers), execution_allowed: false, preparation_function: 'prepareAssemblyParameterEdit', application_function: 'applyAssemblyParameterEdit',
@@ -214,6 +229,8 @@ export function acceptDefinitionParameterEdit({ sourceRecord, edit, applied } = 
       const node = resolve(graph, entry.target);
       if (!receipt.selected_roots.some(root => root.entity_path === node.entity_path && root.replacement_definition === actualDefinition(node))) fail('Applied receipt does not cover a selected source root.');
       entry.source = clone(edit.next_source); entry.source_definition = actualDefinition(node);
+      entry.definition_map={...entry.definition_map,...clone(edit.change_plan.assembly_rebuild.definition_map)};
+      entry.identity_map=clone(edit.change_plan.assembly_rebuild.identity_map);
       const detail = sourceDetails(entry.source);
       entry.design_graph = designFor({ modelKey: result.model_key, modelGraph: graph, entries: [entry], ...detail });
     } else {

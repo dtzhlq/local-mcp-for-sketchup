@@ -37,9 +37,11 @@
         "resource_limits": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["max_operations", "max_affected_instances", "max_recursive_entities", "auto_approve_s1_max_affected_instances"],
+          "required": ["max_operations", "max_builtin_preset_operations", "max_builtin_preset_leaf_occurrences", "max_affected_instances", "max_recursive_entities", "auto_approve_s1_max_affected_instances"],
           "properties": {
             "max_operations": { "type": "integer", "minimum": 1 },
+            "max_builtin_preset_operations": { "type": "integer", "minimum": 1 },
+            "max_builtin_preset_leaf_occurrences": { "type": "integer", "minimum": 1 },
             "max_affected_instances": { "type": "integer", "minimum": 1 },
             "max_recursive_entities": { "type": "integer", "minimum": 1 },
             "auto_approve_s1_max_affected_instances": { "type": "integer", "minimum": 1 }

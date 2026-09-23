@@ -114,6 +114,10 @@ export function buildModelGraph(adoption, { lineage = {}, sourceArtifacts = [] }
   }
   applyEffectiveLocks(nodes);
 
+  const occurrenceCounts=new Map();
+  for(const node of nodes.values())if(node.node_type==='occurrence'){
+    const key=definitionKeyForNode(node);occurrenceCounts.set(key,(occurrenceCounts.get(key)||0)+1);
+  }
   const definitions = definitionDescriptors(adoption, recursiveEntries, classificationSchemas);
   for (const descriptor of [...definitions.values()].sort((left, right) => left.key.localeCompare(right.key))) {
     const node = {
@@ -124,7 +128,7 @@ export function buildModelGraph(adoption, { lineage = {}, sourceArtifacts = [] }
       native_classification: descriptor.native_classification,
       trust: 'untrusted_data',
       source: 'sketchup_model',
-      occurrence_count: [...nodes.values()].filter((node) => node.node_type === 'occurrence' && definitionKeyForNode(node) === descriptor.key).length
+      occurrence_count: occurrenceCounts.get(descriptor.key)||0
     };
     nodes.set(node.node_id, node);
   }
@@ -192,7 +196,8 @@ export function buildModelGraph(adoption, { lineage = {}, sourceArtifacts = [] }
   };
 
   const recursiveTotalSeen = Number(adoption.recursive_total_seen ?? recursiveEntries.length);
-  const occurrenceContractMatches = adoption.occurrence_contract === 'canonical-occurrence-path.v1';
+  const assemblyProjection = adoption.recursive_projection === 'assembly-merkle.v2';
+  const occurrenceContractMatches = adoption.occurrence_contract === (assemblyProjection ? 'canonical-assembly-path.v2' : 'canonical-occurrence-path.v1');
   const recursiveCountMatches = recursiveTotalSeen === recursiveEntries.length;
   const entityPathsPresent = recursivePaths.length === recursiveEntries.length;
   const entityPathsUnique = new Set(recursivePaths).size === recursivePaths.length;
@@ -226,6 +231,17 @@ export function buildModelGraph(adoption, { lineage = {}, sourceArtifacts = [] }
     completeness.scope_complete = completeness.complete;
     completeness.complete = false;
     completeness.blockers.push('partial_geometry_scope');
+  }
+  if (assemblyProjection) {
+    const proofComplete = adoption.assembly_summary_depth === 2 && adoption.assembly_projection_complete === true && adoption.model_revision_complete === true
+      && recursiveEntries.filter(entry => ['group', 'component_instance'].includes(entry.entity_type))
+        .every(entry => entry.geometry_summary?.type === 'assembly_merkle' && /^sha256:[a-f0-9]{64}$/.test(entry.geometry_summary.subtree_digest));
+    completeness.projection = 'assembly-merkle.v2';
+    completeness.assembly_scope_complete = Boolean(scopedRoots && completeness.scope_complete && proofComplete);
+    completeness.scope_complete = false;
+    completeness.complete = false;
+    completeness.blockers.push('assembly_projection_has_no_leaf_geometry_index');
+    if (!proofComplete) completeness.blockers.push('assembly_merkle_proof_incomplete');
   }
   const sourceAdoptionHash = sha256Canonical({
     version: adoption.version,
@@ -368,12 +384,14 @@ export function validateModelGraphSemantics(graph) {
 
   const expectedScopeComplete = graph.completeness?.recursive_requested === true
     && graph.completeness?.recursive_truncated === false
-    && graph.completeness?.occurrence_contract === 'canonical-occurrence-path.v1'
+    && graph.completeness?.occurrence_contract === (graph.completeness?.projection === 'assembly-merkle.v2' ? 'canonical-assembly-path.v2' : 'canonical-occurrence-path.v1')
     && graph.completeness?.recursive_total_seen === graph.completeness?.recursive_indexed
     && !graph.nodes.some((node) => node.node_type === 'occurrence' && (node.synthetic === true || !node.entity_path));
   const roots = graph.completeness?.recursive_root_paths;
-  if (roots && (!Array.isArray(roots) || !roots.length || new Set(roots).size !== roots.length || roots.some(root => !graph.nodes.some(node => node.node_type === 'occurrence' && !node.parent_id && node.entity_path === root && ['group','component_instance'].includes(node.entity_type))) || graph.completeness.scope_complete !== expectedScopeComplete)) violations.push('scoped_completeness_inconsistent');
-  const expectedComplete = !roots && expectedScopeComplete;
+  const assemblyProjection = graph.completeness?.projection === 'assembly-merkle.v2';
+  if (assemblyProjection && (graph.completeness.scope_complete !== false || graph.completeness.assembly_scope_complete !== Boolean(roots && expectedScopeComplete && !graph.completeness.blockers.includes('assembly_merkle_proof_incomplete')))) violations.push('assembly_projection_completeness_inconsistent');
+  if (roots && (!Array.isArray(roots) || !roots.length || new Set(roots).size !== roots.length || roots.some(root => !graph.nodes.some(node => node.node_type === 'occurrence' && !node.parent_id && node.entity_path === root && ['group','component_instance'].includes(node.entity_type))) || graph.completeness.scope_complete !== (assemblyProjection ? false : expectedScopeComplete))) violations.push('scoped_completeness_inconsistent');
+  const expectedComplete = !assemblyProjection && !roots && expectedScopeComplete;
   if (graph.completeness?.complete !== expectedComplete) violations.push('completeness_inconsistent');
   if ((graph.completeness?.complete === true) !== (graph.completeness?.blockers?.length === 0)) violations.push('completeness_blockers_inconsistent');
   validateGraphProjections(graph, violations);

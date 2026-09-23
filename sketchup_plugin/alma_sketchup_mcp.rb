@@ -61,9 +61,9 @@ module AlmaSketchupMCP
   RESPONSE_DIR = File.join(STATE_DIR, 'responses')
   MM_PER_INCH = 25.4
   DEFAULT_OPERATION_LIMIT = 2000
-  PLUGIN_VERSION = '0.3.0'
+  PLUGIN_VERSION = '0.4.0'
   CAPABILITY_MANIFEST_VERSION = '2026-09-modeling-uplift-alpha.1'
-  RUNTIME_CAPABILITY_VERSION = '0.3.0-modeling-alpha.1'
+  RUNTIME_CAPABILITY_VERSION = '0.4.0-timber.1'
   OCCURRENCE_CONTRACT_VERSION = 'canonical-occurrence-path.v1'
   BOOLEAN_OPERATIONS_SHA256 = RuntimeSourceAttestation.loaded_boolean_operations_sha256
   MODEL_REVISION_SOURCE_SHA256 = RuntimeSourceAttestation.loaded_model_revision_sha256
@@ -285,9 +285,9 @@ module AlmaSketchupMCP
     when 'reset_model'
       reset_model
     when 'build_model'
-      build_model(params.fetch('code'))
+      build_model(params.fetch('code'), snapshot_detail: params.fetch('snapshot_detail', true))
     when 'save_model'
-      save_model(params['path'], params.fetch('keep_session', true))
+      save_model(params['path'], params.fetch('keep_session', true), snapshot_detail: params.fetch('snapshot_detail', true))
     when 'save_model_version'
       save_model_version(params)
     when 'open_model'
@@ -560,7 +560,7 @@ module AlmaSketchupMCP
       'manifest_version' => CAPABILITY_MANIFEST_VERSION,
       'dsl_version' => DSL_VERSION,
       'occurrence_contract' => OCCURRENCE_CONTRACT_VERSION,
-      'creation_scope' => { 'version' => 'creation-scope.v1', 'atomic_absence_validation' => true, 'host_new_root_metadata' => 'new-root-metadata.v1' },
+      'creation_scope' => { 'version' => 'creation-scope.v1', 'atomic_absence_validation' => true, 'host_new_root_metadata' => 'new-root-metadata.v1', 'immutable_definition_references' => 'immutable-definition-references.v1', 'assembly_projection' => 'assembly-merkle.v2', 'max_scoped_top_level_operations' => (ENV['ALMA_SKETCHUP_MAX_OPERATIONS'].to_s.strip.empty? ? 10_000 : operation_limit) },
       'detail_geometry' => { 'version' => 'native-geometry-evidence.v2', 'nested_occurrences' => true, 'measured' => true, 'context_void_queries' => true, 'resource_totals' => true, 'resource_scope' => 'all_native_stored_geometry' },
       'native_appearance' => native_appearance_capabilities(queue_active_model),
       'saved_model_lifecycle' => { 'version' => 'saved-model-lifecycle.v1', 'close_reopen_saved_model' => Sketchup.respond_to?(:platform) && Sketchup.platform == :platform_osx,
@@ -677,7 +677,7 @@ module AlmaSketchupMCP
     end
   end
 
-  def build_model(code)
+  def build_model(code, snapshot_detail: true)
     model = nil
     profiling_started = Process.clock_gettime(Process::CLOCK_MONOTONIC)
     operation_timings = []
@@ -700,7 +700,7 @@ module AlmaSketchupMCP
       end
       persist_document_state(model)
       snapshot_started = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-      result = snapshot(model)
+      result = snapshot(model, include_detail_evidence: snapshot_detail != false)
       snapshot_elapsed_ms = (Process.clock_gettime(Process::CLOCK_MONOTONIC) - snapshot_started) * 1000
       result
     end
@@ -721,7 +721,7 @@ module AlmaSketchupMCP
     @document_state_model = previous_document_state_model
   end
 
-  def save_model(path, keep_session)
+  def save_model(path, keep_session, snapshot_detail: true)
     model = active_model_or_new('save_model')
     target = path.to_s.strip
     target = File.join(STATE_DIR, 'alma-sketchup-model.skp') if target.empty?
@@ -730,7 +730,7 @@ module AlmaSketchupMCP
     # Mutation paths persist document state inside their own transaction. Save
     # must remain a pure persistence operation so a failed save cannot leave a
     # newly written model attribute behind.
-    result = { 'file_path' => target, 'snapshot' => snapshot(model) }
+    result = { 'file_path' => target, 'snapshot' => snapshot(model, include_detail_evidence: snapshot_detail != false) }
     assert_queue_result_serializable!(result)
     save_ok = model.save(target)
     unless save_ok == true && File.file?(target)
@@ -1025,6 +1025,8 @@ module AlmaSketchupMCP
     force = params['force'] == true
     recursive = params['recursive'] == true
     recursive_roots = params['recursive_roots']
+    assembly_projection = params['assembly_projection'] == true
+    raise 'assembly_projection requires read-only adoption' if assembly_projection && !read_only
     if recursive_roots
       raise 'recursive_roots requires read-only recursive adoption and distinct root pid paths' unless read_only && recursive && recursive_roots.is_a?(Array) && recursive_roots.length.between?(1, 32) && recursive_roots.uniq.length == recursive_roots.length && recursive_roots.all? { |root| root.is_a?(String) && root.match?(/\Apid:[1-9]\d*\z/) }
       available = model.entities.to_a.select { |entity| entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance) }.map { |entity| "pid:#{entity_persistent_id(entity)}" }
@@ -1046,6 +1048,7 @@ module AlmaSketchupMCP
         recursive: recursive,
         recursive_limit: recursive_limit,
         recursive_roots: recursive_roots,
+        assembly_projection: assembly_projection,
         structural_probe_options: structural_probe_options
       )
     end
@@ -1071,13 +1074,15 @@ module AlmaSketchupMCP
         recursive: recursive,
         recursive_limit: recursive_limit,
         recursive_roots: recursive_roots,
+        assembly_projection: assembly_projection,
         structural_probe_options: structural_probe_options
       )
     end
   end
 
-  def adoption_result(model, read_only:, adopted:, existing:, recursive:, recursive_limit:, structural_probe_options:, recursive_roots: nil)
-    model_snapshot = snapshot(model)
+  def adoption_result(model, read_only:, adopted:, existing:, recursive:, recursive_limit:, structural_probe_options:, recursive_roots: nil, assembly_projection: false)
+    model_snapshot = snapshot(model, include_detail_evidence: !assembly_projection)
+    merkle = assembly_projection ? model_revision_merkle_graph(model, model_snapshot) : nil
     entities = filtered_entity_snapshots(model_snapshot, { 'includeHidden' => true }).map do |entity|
       entity.merge(
         'editable' => true,
@@ -1086,9 +1091,9 @@ module AlmaSketchupMCP
         'allowed_operations' => occurrence_allowed_operations(entity['entity_type'])
       )
     end
-    recursive_result = recursive ? recursive_entity_index(model, recursive_limit, roots: recursive_roots) : nil
+    recursive_result = recursive ? recursive_entity_index(model, recursive_limit, roots: recursive_roots, assembly_projection: assembly_projection, definition_reports: merkle && merkle['definition_reports']) : nil
     recursive_index = recursive_result ? recursive_result['entries'] : nil
-    revision = session_model_revision_report(model, model_snapshot)
+    revision = session_model_revision_report(model, model_snapshot, merkle_graph: merkle)
     result = {
       'kind' => 'adopt_open_model',
       'version' => '2026-07-existing-model-editing.1',
@@ -1098,7 +1103,7 @@ module AlmaSketchupMCP
       'existing_count' => existing,
       'entity_count' => entities.length,
       'recursive' => recursive,
-      'occurrence_contract' => OCCURRENCE_CONTRACT_VERSION,
+      'occurrence_contract' => assembly_projection ? 'canonical-assembly-path.v2' : OCCURRENCE_CONTRACT_VERSION,
       'recursive_truncated' => recursive_result ? recursive_result['truncated'] : false,
       'recursive_total_seen' => recursive_result ? recursive_result['total_seen'] : 0,
       'read_only_nested_count' => recursive_index ? recursive_index.count { |entry| entry['editable'] == false } : 0,
@@ -1122,6 +1127,9 @@ module AlmaSketchupMCP
       'entities' => entities,
       'recursive_index' => recursive_index,
       'recursive_root_paths' => recursive_roots,
+      'recursive_projection' => assembly_projection ? 'assembly-merkle.v2' : 'full_geometry',
+      'assembly_summary_depth' => assembly_projection ? 2 : nil,
+      'assembly_projection_complete' => assembly_projection && recursive && revision['complete'] && !recursive_result['truncated'],
       'snapshot' => model_snapshot
     }
     if structural_probe_options['structural_groups']
@@ -1199,7 +1207,7 @@ module AlmaSketchupMCP
     ok = view.write_image(target, width, height, antialias, compression)
     raise "Failed to capture SketchUp view to #{target}" unless ok && File.exist?(target)
 
-    model_snapshot = snapshot(model)
+    model_snapshot = snapshot(model, include_detail_evidence: false)
     revision_after = session_model_revision_report(model, model_snapshot)
     camera_after = camera_snapshot(model.active_view.camera)
     modified_after = model.respond_to?(:modified?) ? model.modified? : nil
@@ -1580,11 +1588,13 @@ module AlmaSketchupMCP
     token.empty? ? 'adopted' : token
   end
 
-  def recursive_entity_index(model, limit, roots: nil)
+  def recursive_entity_index(model, limit, roots: nil, assembly_projection: false, definition_reports: nil)
     state = {
       'entries' => [],
       'total_seen' => 0,
       'recursive_roots' => roots,
+      'assembly_projection' => assembly_projection,
+      'definition_reports' => definition_reports || {},
       'classification_schemas' => classification_schema_catalog(model),
       'native_classification_by_definition' => {}
     }
@@ -1601,11 +1611,17 @@ module AlmaSketchupMCP
     entities.each do |entity|
       next unless selectable_entity?(entity)
 
+      # All top-level objects remain indexed for outside-scope checks. Nested
+      # faces/edges are covered by their native Merkle digest, not serialized.
+      next if state['assembly_projection'] && !ancestors.empty? && !entity.is_a?(Sketchup::Group) && !entity.is_a?(Sketchup::ComponentInstance)
       path_entities = ancestors + [entity]
       state['total_seen'] += 1
       state['entries'] << occurrence_entity_snapshot(entity, path_entities, counts, state) if state['entries'].length < limit
       next unless entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance)
 
+      # Root plus two assembly levels are explicit; every omitted descendant
+      # remains covered by the full native Merkle digest at the boundary.
+      next if state['assembly_projection'] && ancestors.length >= 2
       next if ancestors.empty? && state['recursive_roots'] && !state['recursive_roots'].include?("pid:#{entity_persistent_id(entity)}")
       definition = entity.definition
       definition_key = entity_persistent_id(definition) || definition.name.to_s
@@ -1694,7 +1710,13 @@ module AlmaSketchupMCP
       'locked' => entity.respond_to?(:locked?) ? entity.locked? : false,
       'soft' => entity.is_a?(Sketchup::Edge) ? entity.soft? : nil,
       'smooth' => entity.is_a?(Sketchup::Edge) ? entity.smooth? : nil,
-      'geometry_summary' => occurrence_geometry_summary(entity),
+      'geometry_summary' => if state['assembly_projection'] && entity.respond_to?(:definition)
+                              report = state['definition_reports']["persistent_id:#{entity_persistent_id(entity.definition)}"]
+                              raise 'Assembly Merkle subtree is missing' unless report
+                              { 'type' => 'assembly_merkle', 'version' => 1, 'subtree_digest' => report['digest'], 'expanded_count' => report['expanded_count'], 'leaf_entities_materialized' => false, 'descendants_collapsed' => path_entities.length >= 3 }
+                            else
+                              occurrence_geometry_summary(entity)
+                            end,
       'faces' => geometry_counts['faces'],
       'edges' => geometry_counts['edges'],
       'vertices' => geometry_counts['vertices'],
@@ -1985,6 +2007,11 @@ module AlmaSketchupMCP
     raise 'DSL requires operations array' unless document['operations'].is_a?(Array)
 
     max_operations = operation_limit
+    # A larger declaration list is allowed only for atomic new-resource scopes.
+    # Explicit operator limits still win; arbitrary DSL keeps its old default.
+    if ENV['ALMA_SKETCHUP_MAX_OPERATIONS'].to_s.strip.empty? && document.dig('creation_scope', 'version') == 'creation-scope.v1'
+      max_operations = 10_000
+    end
     if document['operations'].length > max_operations
       raise "DSL operation limit exceeded: max #{max_operations} operations. Set ALMA_SKETCHUP_MAX_OPERATIONS before launching SketchUp to raise this for trusted large models."
     end

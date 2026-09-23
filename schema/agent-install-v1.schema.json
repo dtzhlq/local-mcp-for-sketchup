@@ -44,7 +44,7 @@
         },
         "version": {
           "type": "string",
-          "pattern": "^0\\.3\\.0$"
+          "pattern": "^0\\.[34]\\.0$"
         },
         "channel": {
           "const": "stable"
@@ -125,7 +125,7 @@
         },
         "tag": {
           "type": "string",
-          "pattern": "^v0\\.3\\.0$"
+          "pattern": "^v0\\.[34]\\.0$"
         },
         "public_tree_sha256": {
           "type": "string",
@@ -272,6 +272,9 @@
         "release_acceptance": {
           "type": "boolean"
         },
+        "validation_policy": {
+          "enum": ["legacy-full.v1", "timber-v040-minimal.v1"]
+        },
         "core_gate": {
           "$ref": "#/$defs/evidence"
         },
@@ -308,6 +311,9 @@
               "offline_after_install_verified": {
                 "type": "boolean"
               },
+              "native_create_edit_view_verified": { "type": "boolean" },
+              "target_scope_verified": { "type": "boolean" },
+              "signed_payload_verified": { "type": "boolean" },
               "evidence": {
                 "$ref": "#/$defs/evidence"
               }

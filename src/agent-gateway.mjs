@@ -1,3 +1,5 @@
+import { TIMBER_QUALITY_SCOPE, readTimberQualitySummary, evaluateTimberQuality, captureTimberOverview, recoverTimberOverview } from './traditional-timber/quality.mjs';
+import { adoptAssemblySummary, rootPathsFromCommittedSnapshot } from './model-accessibility-assembly-summary.mjs';
 import {captureCreationQaBaseline,applyCreationQaScope} from './creation-qa-scope.mjs';
 import { continueModelProgram } from './model-program.mjs';
 import { prepareImageStructure, prepareImageModelCreation, approveImageModelCreation, assertFrozenImageCreation } from './image-structure.mjs';
@@ -33,7 +35,8 @@ import {
   existingModelEditApprovalReviewContext,
   existingModelEditPlanHash,
   modelRevisionForAdoption,
-  observeExistingModelEditExecutionState
+  observeExistingModelEditExecutionState,
+  verifyAssemblyReplacementReadback
 } from './existing-model-editing.mjs';
 import { modelIdentityForAdoption, modelKeyForIdentity } from './model-identity.mjs';
 import { buildModelGraph } from './model-graph.mjs';
@@ -323,6 +326,14 @@ export class AgentGateway {
 
   async resumeUnprojected({ task_id } = {}) {
     let task = await this.taskStore.getTask(task_id, { includePrivate: true });
+    if (task.intent === 'create_model' && task.private?.creation?.timber_rule_binding
+      && ['executing', 'failed'].includes(task.state) && !task.private.creation.round.snapshot) {
+      try {
+        task = await this.recoverLateTimberCreation(task);
+        task = await this.finalizeCreationQuality(task);
+        return createResultEnvelope({task: await this.taskStore.getTask(task_id), data: responseData(task), idempotentReplay: true});
+      } catch (error) { return this.mutationRecoveryEnvelope(task, error); }
+    }
     if(task.intent==='program_model') {
       try {task=await continueModelProgram(this,task);return createResultEnvelope({task:await this.taskStore.getTask(task_id),ok:!task.last_error && task.state!=='failed',error:task.last_error||null,data:responseData(task)});}
       catch(error){return this.handleTaskError(task,error);}
@@ -369,6 +380,11 @@ export class AgentGateway {
         data: { ...responseData(task), assembly_mapping_recovery: recovered }, idempotentReplay: true });
     }
     if (task.intent === 'create_model' && ['executing', 'verifying'].includes(task.state) && task.private?.creation?.round?.snapshot) {
+      if (task.private.creation.timber_rule_binding && task.inputs.task
+        && task.private.creation.parameter_edit_support?.baseline_captured !== true) {
+        const prepared = prepareTaskOwnedCreationDsl(task.inputs.code, {taskId: task.task_id, iteration: task.private.creation.round.iteration});
+        task = await this.captureCreationParameterBaseline(task, prepared);
+      }
       task = await this.finalizeCreationQuality(task);
       return createResultEnvelope({ task: await this.taskStore.getTask(task_id), data: responseData(task), idempotentReplay: true });
     }
@@ -786,15 +802,17 @@ export class AgentGateway {
     if (topic === 'connect') {
       if (!['mock', 'queue'].includes(inputs.runtime)) throw new AgentContractError('INVALID_ARGUMENT', 'Connect requires explicit runtime mock or queue.');
       assertRuntimePolicy(inputs.runtime, this.bridge.executionPolicy, task.intent);
-      const timeoutMs = boundedQueueTimeoutMs(inputs.timeout_ms, 15_000);
+      const timeoutMs = boundedQueueTimeoutMs(inputs.timeout_ms, inputs.runtime === 'queue' ? 300_000 : 15_000);
       // Serial read-only probes. Freshness proves the document binding, not approval.
       if (inputs.runtime === 'queue') result.queue = await this.bridge.queue_diagnostics({ includeFiles: false, timeoutMs });
       const capabilities = await this.bridge.get_capabilities({ runtime: inputs.runtime, timeoutMs });
       result.runtime = capabilities.runtime;
-      const inspected = await this.bridge.inspect_model({ runtime: inputs.runtime, includeSnapshot: false, timeoutMs });
-      result.current_model = markUntrustedData(inspected, 'sketchup_model_entities');
+      const inspected = inputs.runtime === 'queue' ? await this.bridge.get_model_info({runtime: inputs.runtime, timeoutMs})
+        : await this.bridge.inspect_model({ runtime: inputs.runtime, includeSnapshot: false, timeoutMs });
+      const currentModel = inputs.runtime === 'queue' ? Object.fromEntries(['kind', 'runtime', 'units', 'source_path', 'model_modified', 'totals', 'bounding_box', 'counts', 'warning_summary'].filter(key => Object.hasOwn(inspected, key)).map(key => [key, inspected[key]])) : inspected;
+      result.current_model = markUntrustedData(currentModel, 'sketchup_model_entities');
       if (inputs.runtime === 'queue') {
-        const session_contract = (await this.bridge.create_queue_handshake({ timeoutMs })).session_contract;
+        const session_contract = (await this.bridge.create_queue_handshake({ timeoutMs, expires_in_ms: Math.min(300000, Math.max(120000, timeoutMs)) })).session_contract;
         task = await this.taskStore.update(task.task_id, { private: { ...task.private, connection: { session_contract } } });
         // Signed payloads cannot pass through no-files projection: removing a
         // model source path would invalidate the signature. Keep the original
@@ -832,8 +850,11 @@ export class AgentGateway {
       assertRuntimePolicy(runtime, this.bridge.executionPolicy, task.intent);
       const timeoutMs = boundedQueueTimeoutMs(task.inputs.timeout_ms, 30_000);
       const capabilities = (await this.bridge.get_capabilities({ runtime, timeoutMs })).runtime;
+      if(runtime==='queue'&&task.inputs.task.kind==='traditional_timber'&&capabilities.creation_scope?.assembly_projection!=='assembly-merkle.v2')throw new AgentContractError('POLICY_DENIED','The timber preset requires the matching plugin with bounded assembly summaries.');
       if (!Array.isArray(capabilities?.supported_operations)) throw new AgentContractError('INVALID_ARGUMENT', 'The runtime did not advertise its generated-operation support; reconnect to a compatible plugin.', { details: { recovery_class: 'runtime_blocked', issues: [{ code: 'CAPABILITY_UNSUPPORTED', path: '/inputs/runtime', message: 'A fresh generated-operation capability list is required.' }] } });
-      const inspected = await this.bridge.inspect_model({ runtime, includeEntities: true, includeSnapshot: true, timeoutMs });
+      const inspected = runtime==='queue'&&task.inputs.task.kind==='traditional_timber'
+        ? await this.bridge.adopt_open_model({runtime,read_only:true,assembly_projection:true,recursive:false,timeoutMs})
+        : await this.bridge.inspect_model({ runtime, includeEntities: true, includeSnapshot: true, timeoutMs });
       const roots = [...(inspected.entities || []), ...(inspected.snapshot?.groups || []), ...(inspected.snapshot?.instances || [])];
       context.availableOperations = capabilities.supported_operations;
       context.existingIds = [...new Set(roots.flatMap(entity => [entity.id, entity.name]).filter(value => typeof value === 'string' && value))];
@@ -940,6 +961,7 @@ export class AgentGateway {
       targets,
       budgets,
       recursive_limit: recursiveLimit,
+      readback_projection: sourceDesignChange?.change_plan.readback_projection || task.inputs.readback_projection,
       ...((sourceDesignChange?.change_plan.recursive_roots || task.inputs.recursive_roots) ? {
         recursive_roots: sourceDesignChange?.change_plan.recursive_roots || task.inputs.recursive_roots
       } : {}),
@@ -1238,6 +1260,13 @@ export class AgentGateway {
         runtime,
         timeoutMs,
         plan,
+        trusted_commit_observer: async ({ applied, model_revision_after }) => {
+          await this.taskStore.recordTaskMutationReceipt({ taskId: task.task_id, claim,
+            binding: { plan_id: plan.plan_id, plan_hash: plan.plan_hash, model_key: plan.model_key,
+              model_revision_before: plan.model_revision, model_revision_after, risk_level: plan.risk_level, runtime },
+            bridgeReceipt: trustedBridgeReceipt({ runtime, nativeReceipt: applied.mutation_receipt }),
+            finalizer: { version: TASK_MUTATION_FINALIZER_VERSION, kind: 'committed_assembly_replacement', applied_result: applied } });
+        },
         approval_token: trustedApproval.approval_token,
         review: input.note ? { plan_id: plan.plan_id, note: input.note } : null,
         output_dir: path.join(this.taskStore.rootDir, 'task-artifacts', task.task_id, 'apply'),
@@ -1260,6 +1289,8 @@ export class AgentGateway {
         post_apply_validation: postApply.summary
       };
     }));
+    const earlyReceipt = await this.taskStore.loadTaskMutationReceipt(task.task_id, { allowMissing: true });
+    if (earlyReceipt) return this.finalizeReviewedMutationReceipt(earlyReceipt);
     const applied = execution.applied;
     applied.execution_target_validation ||= {
       version: 'existing-edit-execution-target-validation.v1',
@@ -1346,11 +1377,16 @@ export class AgentGateway {
       bridge: this.bridge,
       plan,
       runtime: receipt.runtime,
+      timeoutMs: boundedQueueTimeoutMs(task.inputs.timeout_ms, 120_000),
       phase: 'finalization',
       expected_model_key: receipt.model_key,
       expected_model_revision: receipt.model_revision_after
     });
     const applied = receipt.finalizer.applied_result;
+    if (receipt.finalizer.kind === 'committed_assembly_replacement') {
+      verifyAssemblyReplacementReadback(applied, finalization.adoption, plan);
+      applied.ok = true; applied.verification_pending = false;
+    }
     const executionTargetValidation = {
       ...(applied.execution_target_validation || {}),
       phases: {
@@ -1547,7 +1583,8 @@ export class AgentGateway {
     if (runtime !== record.runtime) throw new AgentContractError('INVALID_ARGUMENT', 'Parameter editing cannot change the creation runtime.');
     const recursiveLimit = boundedRecursiveLimit(task.inputs.recursive_limit, this.bridge.executionPolicy, 5000);
     const sourceTargets = record.entries.map(entry => entry.target);
-    const adoption = sourceTargets.length > 1 ? await adoptParameterRoots({ bridge: this.bridge, runtime, recursiveLimit,
+    const adoption = record.readback_projection === 'assembly-merkle.v2' ? await adoptAssemblySummary({ bridge: this.bridge, recursiveLimit,
+      timeoutMs: boundedQueueTimeoutMs(task.inputs.timeout_ms, 120_000), rootPaths: sourceTargets.map(target => target.entity_path) }) : sourceTargets.length > 1 ? await adoptParameterRoots({ bridge: this.bridge, runtime, recursiveLimit,
       timeoutMs: boundedQueueTimeoutMs(task.inputs.timeout_ms, 120_000),
       ...(sourceTargets.every(target => target.entity_path) ? { rootPaths: sourceTargets.map(target => target.entity_path) } : { rootIds: sourceTargets.map(target => target.target_id) }) })
       : await this.bridge.adopt_open_model({ runtime, recursive: true, recursive_limit: recursiveLimit, read_only: true,
@@ -1578,8 +1615,10 @@ export class AgentGateway {
   // Only invoked immediately after the original committed build. Recovery must
   // not recapture this baseline from a later model revision or hide manual edits.
   async captureCreationParameterBaseline(task, prepared) {
-    if (!task.inputs.task || task.private?.creation?.parameter_edit_support) return task;
+    if (!task.inputs.task || task.private?.creation?.parameter_edit_support?.baseline_captured === true) return task;
     const creation = task.private.creation;
+    const attempts = creation.parameter_baseline_attempts || (creation.parameter_edit_support ? 1 : 0);
+    if (attempts >= 2) return task;
     let record = null, support, documentBinding, readbackEvidence;
     try {
       if (creation.round.iteration !== 0 || task.private.common_task?.source_hash !== sha256Canonical(task.inputs.task)) throw new AgentContractError('INVALID_ARGUMENT', 'Only the unchanged initial common-task source can establish a parameter baseline.');
@@ -1587,7 +1626,9 @@ export class AgentGateway {
       if (creation.runtime === 'queue' && (!committedRevision || creation.round.snapshot.model_revision_complete !== true)) throw new AgentContractError('MODEL_REVISION_INCOMPLETE', 'Creation has no complete committed native revision for an immediate parameter baseline.');
       const rootIds = compileModelAccessibilityTask(task.inputs.task).bundle.part_graph.roots.map(root => creation.identity_map[root.instance_id || root.part_id]);
       const recursiveLimit = boundedRecursiveLimit(task.inputs.recursive_limit, this.bridge.executionPolicy, 5000);
-      const adoption = rootIds.length > 1 ? await adoptParameterRoots({ bridge: this.bridge, runtime: creation.runtime, recursiveLimit,
+      const adoption = creation.runtime === 'queue' && task.inputs.task.kind === 'traditional_timber' ? await adoptAssemblySummary({ bridge: this.bridge, recursiveLimit,
+        timeoutMs: Math.max(900_000, boundedQueueTimeoutMs(task.inputs.timeout_ms, 120_000)),
+        rootPaths: rootPathsFromCommittedSnapshot(creation.round.snapshot, rootIds), expectedRevision: committedRevision }) : rootIds.length > 1 ? await adoptParameterRoots({ bridge: this.bridge, runtime: creation.runtime, recursiveLimit,
         timeoutMs: boundedQueueTimeoutMs(task.inputs.timeout_ms, 120_000), rootIds })
         : await this.bridge.adopt_open_model({ runtime: creation.runtime, read_only: true, recursive: true,
           recursive_limit: recursiveLimit, timeoutMs: boundedQueueTimeoutMs(task.inputs.timeout_ms, 120_000) });
@@ -1612,7 +1653,7 @@ export class AgentGateway {
       support = { baseline_captured: false, planning_available: false, execution_available: false, evidence_level: 'creation_baseline_capture_blocked',
         blockers: [error.code || 'PARAMETER_BASELINE_CAPTURE_FAILED'], reason: String(error.message) };
     }
-    const captured = await this.taskStore.update(task.task_id, { private: { ...task.private, creation: { ...creation,
+    const captured = await this.taskStore.update(task.task_id, { private: { ...task.private, creation: { ...creation, parameter_baseline_attempts: attempts + 1,
       parameter_edit_support: support, ...(record ? { parameter_source: record, parameter_source_document_binding: documentBinding,
         ...(readbackEvidence ? { parameter_source_readback: readbackEvidence } : {}) } : {}) } } });
     if (record) {
@@ -2399,7 +2440,7 @@ export class AgentGateway {
       const compiled = await this.compileCommonTask(task);
       task = await this.taskStore.update(task.task_id, {
         inputs: { ...task.inputs, ...compiled.inputs },
-        private: { ...task.private, common_task: { source_hash: sha256Canonical(task.inputs.task), preflight: compiled.preflight } }
+        private: { ...task.private, common_task: { source_hash: sha256Canonical(task.inputs.task), preflight: compiled.preflight, ...(compiled.bundle.rule_binding?{rule_binding:compiled.bundle.rule_binding}: {}) } }
       });
     }
     const inputs = task.inputs;
@@ -2409,8 +2450,10 @@ export class AgentGateway {
     const hasPreviousBuild = Boolean(previous?.round?.snapshot);
     const sourceCode = hasPreviousBuild ? inputs.refinement_code : inputs.code;
     if (hasPreviousBuild && inputs.reverify === true) {
-      const inspected = await this.bridge.inspect_model({ runtime, includeSnapshot: true, timeoutMs: boundedQueueTimeoutMs(inputs.timeout_ms, 120_000) });
-      const snapshot = inspected.snapshot;
+      const inspected = previous.timber_rule_binding && runtime === 'queue'
+        ? await readTimberQualitySummary({ bridge: this.bridge, creation: previous, timeoutMs: boundedQueueTimeoutMs(inputs.timeout_ms, 120_000) })
+        : await this.bridge.inspect_model({ runtime, includeSnapshot: true, timeoutMs: boundedQueueTimeoutMs(inputs.timeout_ms, 120_000) });
+      const snapshot = inspected.snapshot && { ...inspected.snapshot, model_revision: inspected.model_revision || inspected.snapshot.model_revision };
       if (!snapshot) throw new AgentContractError('INVALID_ARGUMENT', 'Reverification requires a fresh server snapshot.');
       let resetStreaks = false;
       if (inputs.reviewed_edit_task_id) {
@@ -2420,7 +2463,7 @@ export class AgentGateway {
       }
       task = await this.taskStore.update(task.task_id, { private: { ...task.private, creation: { ...previous, ...(resetStreaks ? { per_part_failure_streak: {} } : {}), round: { ...previous.round, snapshot } } } });
       task = await this.taskStore.transition(task.task_id, 'verifying', { reason: 'fresh_creation_reverification' });
-      return this.finalizeCreationQuality(task);
+      return this.finalizeCreationQuality(task, { timberSummary: previous.timber_rule_binding && runtime === 'queue' ? inspected : null });
     }
     if (!sourceCode) {
       return this.taskStore.transition(task.task_id, 'awaiting_input', {
@@ -2457,7 +2500,7 @@ export class AgentGateway {
       throw new AgentContractError('HANDSHAKE_REQUIRED', 'A fresh queue handshake is required before Agent Gateway live model creation.');
     }
     if (hasPreviousBuild && Object.keys(prepared.identity_map || {}).some(id => previous.identity_map?.[id])) throw new AgentContractError('INVALID_ARGUMENT', 'An existing logical part requires reviewed editing; refinement cannot allocate a duplicate replacement.');
-    let creation = { ...previous, runtime, frozen_spec: frozenSpec, layout_spec: previous?.layout_spec || inputs.spec || {}, layout_spec_hash: previous?.layout_spec_hash || sha256Canonical(inputs.spec || {}), rounds: previous?.rounds || [], identity_map: { ...previous?.identity_map, ...prepared.identity_map }, material_map: { ...previous?.material_map, ...prepared.material_map }, ...(prepared.host_provisioning ? { host_provisioning: prepared.host_provisioning } : {}), round: { source_hash: sourceHash, phase: 'executing', iteration, refinement_part_ids: refinementParts } };
+    let creation = { ...previous, runtime, frozen_spec: frozenSpec, ...(task.private?.common_task?.rule_binding?{timber_rule_binding:task.private.common_task.rule_binding}:{}), layout_spec: previous?.layout_spec || inputs.spec || {}, layout_spec_hash: previous?.layout_spec_hash || sha256Canonical(inputs.spec || {}), rounds: previous?.rounds || [], identity_map: { ...previous?.identity_map, ...prepared.identity_map }, material_map: { ...previous?.material_map, ...prepared.material_map }, ...(prepared.host_provisioning ? { host_provisioning: prepared.host_provisioning } : {}), round: { source_hash: sourceHash, phase: 'executing', iteration, refinement_part_ids: refinementParts } };
     task = await this.taskStore.update(task.task_id, { private: { ...task.private, creation } });
     const built = await this.bridge.withAgentGatewayExecution({ taskId: task.task_id, intent: task.intent }, (gatewayBridge) => gatewayBridge.withLiveMutationAuthorization({
       runtime,
@@ -2465,7 +2508,7 @@ export class AgentGateway {
       session_contract: inputs.session_contract,
       operation: 'build_model'
     }, async (authorizedBridge) => {
-      if(!creation.qa_baseline){
+      if(!creation.qa_baseline&&!creation.timber_rule_binding){
         const qa_baseline=await captureCreationQaBaseline(authorizedBridge,runtime,creation.layout_spec,boundedQueueTimeoutMs(inputs.timeout_ms,120_000));
         creation={...creation,qa_baseline};
         task=await this.taskStore.update(task.task_id,{private:{...task.private,creation}});
@@ -2474,7 +2517,7 @@ export class AgentGateway {
         reason: 'safe_dsl_build_started',
         patch: { last_error: null, next_action: { action: 'continue_server_work' } }
       });
-      return authorizedBridge.build_model({ code: prepared.code, runtime, timeoutMs: boundedQueueTimeoutMs(inputs.timeout_ms, 120_000) });
+      return authorizedBridge.build_model({ code: prepared.code, runtime, snapshot_detail:!creation.timber_rule_binding, timeoutMs: boundedQueueTimeoutMs(inputs.timeout_ms, 120_000) });
     }));
     // Persist the committed result before QA. Recovery only finalizes this stored
     // result; an execution with no durable result is never automatically replayed.
@@ -2516,16 +2559,19 @@ export class AgentGateway {
     const receipt = core.receipt;
     if (task.intent !== 'create_model' || receipt.runtime !== creation.runtime) throw new AgentContractError('INVALID_ARGUMENT', 'Assembly recovery belongs to a different task or runtime.');
     const timeoutMs = boundedQueueTimeoutMs(task.inputs.timeout_ms, 120_000);
-    const inspected = await this.bridge.inspect_model({ runtime: creation.runtime, timeoutMs, includeSnapshot: true });
-    const snapshot = inspected.snapshot || {};
-    const revision = snapshot.model_revision && (creation.runtime !== 'queue' || snapshot.model_revision_complete === true)
+    const summary = receipt.readback_projection === 'assembly-merkle.v2'
+      ? await adoptAssemblySummary({ bridge: this.bridge, timeoutMs, rootPaths: receipt.recursive_roots,
+        recursiveLimit: boundedRecursiveLimit(receipt.recursive_limit, this.bridge.executionPolicy, 5000) }) : null;
+    const inspected = summary ? null : await this.bridge.inspect_model({ runtime: creation.runtime, timeoutMs, includeSnapshot: true });
+    const snapshot = summary?.snapshot || inspected?.snapshot || {};
+    const revision = summary?.model_revision || (snapshot.model_revision && (creation.runtime !== 'queue' || snapshot.model_revision_complete === true)
       ? snapshot.model_revision
       : buildModelGraph(receipt.recursive_roots?.length > 1
         ? await adoptParameterRoots({ bridge: this.bridge, runtime: creation.runtime, timeoutMs,
           recursiveLimit: boundedRecursiveLimit(receipt.recursive_limit, this.bridge.executionPolicy, 5000), rootPaths: receipt.recursive_roots })
         : await this.bridge.adopt_open_model({ runtime: creation.runtime, timeoutMs, recursive: true,
           recursive_limit: boundedRecursiveLimit(receipt.recursive_limit, this.bridge.executionPolicy, 5000),
-          ...(receipt.recursive_roots ? { recursive_roots: receipt.recursive_roots } : {}), read_only: true })).model_revision;
+          ...(receipt.recursive_roots ? { recursive_roots: receipt.recursive_roots } : {}), read_only: true })).model_revision);
     if (revision !== receipt.model_revision_after) throw new AgentContractError('MODEL_REVISION_MISMATCH', 'The model changed after the trusted assembly receipt.');
     if ((creation.assembly_edit_receipts || []).some(previous => sha256Canonical(previous) === sha256Canonical(receipt))) {
       return { kind: 'trusted_assembly_detail_mapping', task_id: task.task_id, mapped_parts: 0, already_recorded: true,
@@ -2587,13 +2633,46 @@ export class AgentGateway {
     }
   }
 
-  async finalizeCreationQuality(task) {
+  async recoverLateTimberCreation(task) {
+    const creation = task.private.creation;
+    if (sha256Canonical(task.inputs.code) !== creation.round.source_hash) throw new AgentContractError('ARTIFACT_INTEGRITY_ERROR', 'The frozen creation source changed before recovery.');
+    const prepared = prepareTaskOwnedCreationDsl(task.inputs.code, {taskId: task.task_id, iteration: creation.round.iteration});
+    if (!creation.late_commit) {
+      const document = JSON.parse(prepared.code);
+      // A committed timber hall can take longer than the caller's mutation
+      // timeout to calculate its complete native revision. Recovery is read-only
+      // and must wait for that revision rather than abandoning the receipt.
+      const runtime = this.bridge.selectRuntime('queue', {timeoutMs: Math.max(600_000, boundedQueueTimeoutMs(task.inputs.timeout_ms, 120_000))});
+      await runtime.recoverCommittedCreation({
+        roots: document.operations.filter(op => op.op === 'component_instance').map(op => ({id: op.id, definition: op.definition})),
+        definitions: document.creation_scope.definitions,
+        session: task.inputs.session_contract,
+        startedAt: task.history.find(item => item.reason === 'safe_dsl_build_started')?.at || task.created_at,
+        persist: async result => {
+          const record = {task_id: task.task_id, source_hash: creation.round.source_hash, ...result};
+          const late_commit = {...record, integrity_hmac: await this.taskStore.mutationReceiptLedger.sign(record)};
+          task = await this.taskStore.update(task.task_id, {private: {...task.private, creation: {...creation, late_commit}}});
+        }
+      });
+    }
+    task = await this.taskStore.restoreCommittedCreation(task.task_id);
+    return this.captureCreationParameterBaseline(task, prepared);
+  }
+
+  async finalizeCreationQuality(task, { timberSummary = null } = {}) {
     if (task.state === 'executing') task = await this.taskStore.transition(task.task_id, 'verifying', { reason: 'recover_creation_quality_without_rebuild' });
     let creation = task.private.creation;
     const snapshot = creation.round.snapshot;
-    let qa = await this.bridge.validate_model({ snapshot, runtime: creation.runtime, spec: creation.layout_spec, includePreview: task.inputs.include_preview !== false });
-    const collisionReview = await narrowDetailLayoutQa({ bridge: this.bridge, snapshot, qa, runtime: creation.runtime, timeoutMs: boundedQueueTimeoutMs(task.inputs.timeout_ms, 120_000) });
-    qa = await applyCreationQaScope(this.bridge,collisionReview.qa,creation,snapshot,boundedQueueTimeoutMs(task.inputs.timeout_ms,120_000));
+    const timber=Boolean(creation.timber_rule_binding);
+    const timberReadTimeoutMs=timber?Math.max(900_000,boundedQueueTimeoutMs(task.inputs.timeout_ms,120_000)):null;
+    if(timber&&creation.frozen_spec?.specification.coverage_version!==TIMBER_QUALITY_SCOPE)throw new AgentContractError('ARTIFACT_INTEGRITY_ERROR','Timber creation lost its frozen assembly contract.');
+    const summary=timber?(timberSummary || await readTimberQualitySummary({bridge:this.bridge,creation,timeoutMs:timberReadTimeoutMs})):null;
+    if(summary&&summary.model_revision!==snapshot.model_revision)throw new AgentContractError('MODEL_REVISION_MISMATCH','Model changed after the committed timber operation.');
+    let qa = timber?{verdict:'pass',validation_scope:'atomic_creation_and_native_assembly_summary',collision_acceptance:false}
+      :await this.bridge.validate_model({ snapshot, runtime: creation.runtime, spec: creation.layout_spec, includePreview: task.inputs.include_preview !== false });
+    const collisionReview = timber?{qa,evidence:{scope:'visible_joints_reviewed_in_final_whole_hall',full_collision_sweep:false}}
+      :await narrowDetailLayoutQa({ bridge: this.bridge, snapshot, qa, runtime: creation.runtime, timeoutMs: boundedQueueTimeoutMs(task.inputs.timeout_ms, 120_000) });
+    if(!timber)qa = await applyCreationQaScope(this.bridge,collisionReview.qa,creation,snapshot,boundedQueueTimeoutMs(task.inputs.timeout_ms,120_000));
     creation = { ...creation, round: { ...creation.round, collision_review: collisionReview.evidence } };
     task = await this.taskStore.update(task.task_id, { private: { ...task.private, creation } });
     let captures = creation.round.captures || [];
@@ -2614,17 +2693,26 @@ export class AgentGateway {
         });
         const outputDir = path.join(this.taskStore.rootDir, 'task-artifacts', task.task_id, 'detail-views', `iteration-${creation.round.iteration}`, `attempt-${captureAttempt}`);
         const captured = await this.bridge.withAgentGatewayExecution({ taskId: task.task_id, intent: task.intent }, async (gatewayBridge) => {
-          const handshake = creation.runtime === 'queue' ? await gatewayBridge.create_queue_handshake({}) : null;
+          if (timber && captureAttempt > 1) {
+            const recovered = await recoverTimberOverview({bridge: gatewayBridge, taskStore: this.taskStore, taskId: task.task_id,
+              view: requiredViews[0], summary, timeoutMs: timberReadTimeoutMs,
+              priorOutputDirs: Array.from({length: captureAttempt-1}, (_,i)=>path.join(path.dirname(outputDir), `attempt-${i+1}`))});
+            if (recovered) return recovered;
+          }
+          const handshake = creation.runtime === 'queue' ? await gatewayBridge.create_queue_handshake({timeoutMs: timberReadTimeoutMs || boundedQueueTimeoutMs(task.inputs.timeout_ms, 120_000), expires_in_ms: 300000}) : null;
+          if (timber) return captureTimberOverview({bridge: gatewayBridge, view: requiredViews[0], outputDir,
+            modelRevision: snapshot.model_revision, timeoutMs: timberReadTimeoutMs, sessionContract: handshake.session_contract});
           return gatewayBridge.capture_detail_views({ views, output_dir: outputDir, runtime: creation.runtime, timeoutMs: boundedQueueTimeoutMs(task.inputs.timeout_ms, 120_000), ...(handshake ? { session_contract: handshake.session_contract } : {}) });
         });
         captureRawResult = captured;
         captures = captured.captures || [];
-        if (captured.restored !== true) throw new Error('Detail capture did not attest restoration of the prior view.');
+        if (captured.restored !== true && !(timber && captured.view_left_for_delivery === true)) throw new Error('Detail capture did not attest restoration of the prior view.');
         const paths = Object.fromEntries(captures.filter(capture => capture.path).map(capture => [`detail_view_${capture.id}`, capture.path]));
         if (Object.keys(paths).length) captureArtifacts = [...captureArtifacts, ...await this.registerArtifacts(task.task_id, paths)];
       } catch (error) {
         captures = [];
-        capturePrivateError = { message: String(error?.message || error), code: error?.code || null };
+        capturePrivateError = { message: String(error?.message || error), code: error?.code || null,
+          ...(error?.details ? { details: error.details } : {}) };
         captureError = { message: 'Required server detail views are not verified.', code: error?.code || 'DETAIL_CAPTURE_UNVERIFIED' };
       }
       creation = { ...creation, round: { ...creation.round, captures, capture_error: captureError,
@@ -2637,7 +2725,7 @@ export class AgentGateway {
         region_inspection_attempts: (creation.round.region_inspection_attempts || 0) + 1 } };
       task = await this.taskStore.update(task.task_id, { private: { ...task.private, creation } });
     }
-    const quality = evaluateDetailQuality({ snapshot, layoutQa: qa, frozenSpecification: creation.frozen_spec, runtime: creation.runtime, trustedSnapshot: true, identityMap: creation.identity_map, materialMap: creation.material_map, occurrencePathMap: creation.occurrence_path_map, captures,
+    const quality = timber?evaluateTimberQuality({summary,creation,captures}):evaluateDetailQuality({ snapshot, layoutQa: qa, frozenSpecification: creation.frozen_spec, runtime: creation.runtime, trustedSnapshot: true, identityMap: creation.identity_map, materialMap: creation.material_map, occurrencePathMap: creation.occurrence_path_map, captures,
       regionInspection: regionCheck?.raw_result, trustedRegionInspection: regionCheck?.received_from_server === true });
     const newRound = !creation.rounds.some(round => round.source_hash === creation.round.source_hash);
     const rounds = newRound ? [...creation.rounds, { source_hash: creation.round.source_hash, iteration: creation.round.iteration }] : creation.rounds;
@@ -3153,8 +3241,8 @@ function boundedStructuralGroupLimit(value, fallback) {
 
 function boundedQueueTimeoutMs(value, fallback) {
   const parsed = value === undefined || value === null ? fallback : Number(value);
-  if (!Number.isInteger(parsed) || parsed < 5_000 || parsed > 300_000) {
-    throw new AgentContractError('INVALID_ARGUMENT', 'timeout_ms must be an integer from 5000 to 300000.');
+  if (!Number.isInteger(parsed) || parsed < 5_000 || parsed > 900_000) {
+    throw new AgentContractError('INVALID_ARGUMENT', 'timeout_ms must be an integer from 5000 to 900000.');
   }
   return parsed;
 }

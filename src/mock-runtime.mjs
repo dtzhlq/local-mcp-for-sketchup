@@ -28,9 +28,9 @@ const DEFAULT_OPERATION_LIMIT = 2000;
 const DEFAULT_LOCK_TIMEOUT_MS = 30000;
 const STALE_LOCK_MS = 60000;
 
-function operationLimit() {
+function operationLimit(document) {
   const raw = process.env.ALMA_SKETCHUP_MAX_OPERATIONS;
-  if (!raw) return DEFAULT_OPERATION_LIMIT;
+  if (!raw) return document?.creation_scope?.version==='creation-scope.v1'?10000:DEFAULT_OPERATION_LIMIT;
   const parsed = Number(raw);
   if (!Number.isInteger(parsed) || parsed < 1) {
     throw new Error('ALMA_SKETCHUP_MAX_OPERATIONS must be a positive integer');
@@ -823,7 +823,7 @@ export function parseDsl(code) {
   if (!Array.isArray(document.operations)) {
     throw new Error('DSL requires operations array');
   }
-  const maxOperations = operationLimit();
+  const maxOperations = operationLimit(document);
   if (document.operations.length > maxOperations) {
     throw new Error(`DSL operation limit exceeded: max ${maxOperations} operations. Set ALMA_SKETCHUP_MAX_OPERATIONS to raise this for trusted large models.`);
   }

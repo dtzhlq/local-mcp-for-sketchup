@@ -15,7 +15,7 @@ const [packageJson, packageLock, pluginSource] = await Promise.all([
   fs.readFile(path.join(repoRoot, 'sketchup_plugin', 'alma_sketchup_mcp.rb'), 'utf8')
 ]);
 
-assert.equal(PRODUCT_VERSION, '0.3.0');
+assert.equal(PRODUCT_VERSION, '0.4.0');
 assert.equal(packageJson.version, PRODUCT_VERSION);
 assert.equal(packageLock.version, PRODUCT_VERSION);
 assert.equal(packageLock.packages?.['']?.version, PRODUCT_VERSION);
@@ -28,7 +28,7 @@ assert.deepEqual(
   uniqueRubyConstant(pluginSource, 'CAPABILITY_MANIFEST_VERSION'),
   [CAPABILITY_MANIFEST_VERSION]
 );
-assert.equal(RUNTIME_CAPABILITY_VERSION, '0.3.0-modeling-alpha.1');
+assert.equal(RUNTIME_CAPABILITY_VERSION, '0.4.0-timber.1');
 assert.equal(CAPABILITY_MANIFEST_VERSION, '2026-09-modeling-uplift-alpha.1');
 
 process.stdout.write(`${JSON.stringify({

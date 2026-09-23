@@ -18,6 +18,14 @@ assert.ok(releaseReport.errors.some((error) => error.includes('placeholder')));
 assert.ok(releaseReport.errors.some((error) => error.includes('Signing Portal')));
 assert.ok(releaseReport.errors.some((error) => error.includes('release_acceptance')));
 
+// The explicit v0.4.0 policy keeps skipped persistence checks false, while
+// requiring the actual create/edit/view and target-scope evidence instead.
+assert.ok(releaseReport.errors.some(error => error.includes('native_create_edit_view_verified')));
+assert.ok(!releaseReport.errors.some(error => error.includes('save_close_reopen_verified')));
+const legacy = structuredClone(prematureRelease);
+legacy.acceptance.validation_policy = 'legacy-full.v1';
+assert.ok((await validateAgentInstallManifest(legacy, {requireRelease: true})).errors.some(error => error.includes('save_close_reopen_verified')));
+
 const intelMac = structuredClone(draft);
 intelMac.platforms.push({
   ...structuredClone(intelMac.platforms[0]),

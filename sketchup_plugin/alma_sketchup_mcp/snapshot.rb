@@ -270,24 +270,43 @@ module AlmaSketchupMCP
     first_entities_material(group.entities)
   end
 
-  def count_faces(entities)
-    entities.grep(Sketchup::Face).length + nested_geometry_entities(entities).sum { |child| count_faces(child.definition.entities) }
+  # SketchUp can return different Ruby Entities wrappers for the same native
+  # definition. Cache by definition identity, retaining references for this read.
+  def snapshot_definition_key(definition)
+    pid = entity_persistent_id(definition)
+    pid ? [:definition, pid] : definition
   end
 
-  def count_edges(entities)
-    entities.grep(Sketchup::Edge).length + nested_geometry_entities(entities).sum { |child| count_edges(child.definition.entities) }
+  def count_faces(entities, memo = {}, key = entities)
+    return memo[key] if memo.key?(key)
+    memo[key] = entities.grep(Sketchup::Face).length + nested_geometry_entities(entities).sum do |child|
+      definition = child.definition
+      count_faces(definition.entities, memo, snapshot_definition_key(definition))
+    end
   end
 
-  def count_vertices(entities)
+  def count_edges(entities, memo = {}, key = entities)
+    return memo[key] if memo.key?(key)
+    memo[key] = entities.grep(Sketchup::Edge).length + nested_geometry_entities(entities).sum do |child|
+      definition = child.definition
+      count_edges(definition.entities, memo, snapshot_definition_key(definition))
+    end
+  end
+
+  def count_vertices(entities, memo = {}, key = entities)
+    return memo[key] if memo.key?(key)
     points = {}
     entities.grep(Sketchup::Edge).each do |edge|
       edge.vertices.each do |vertex|
         position = vertex.position
-        key = [position.x, position.y, position.z].map { |value| model_units_to_mm(value) }.join(',')
-        points[key] = true
+        position_key = [position.x, position.y, position.z].map { |value| model_units_to_mm(value) }.join(',')
+        points[position_key] = true
       end
     end
-    points.length + nested_geometry_entities(entities).sum { |child| count_vertices(child.definition.entities) }
+    memo[key] = points.length + nested_geometry_entities(entities).sum do |child|
+      definition = child.definition
+      count_vertices(definition.entities, memo, snapshot_definition_key(definition))
+    end
   end
 
   def nested_geometry_entities(entities)

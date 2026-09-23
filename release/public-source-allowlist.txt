@@ -17,6 +17,7 @@ release/public-package.json -> package.json
 
 bin/
 src/
+data/traditional-timber/
 schema/
 sketchup_plugin/
 
@@ -74,3 +75,21 @@ test/image-structure.mjs
 scripts/image-structure-evidence.mjs
 release/legacy-compatibility-identifiers.json
 scripts/package-image-release-plugin.mjs
+
+docs/traditional-timber/
+test/traditional-timber-rules.mjs
+test/assembly-summary.mjs
+test/assembly-commit-recovery.mjs
+test/queue-publication.mjs
+CHANGELOG.md
+INSTALL_FOR_AGENTS.md
+docs/RELEASE_ACCEPTANCE_0.3.0.md
+docs/RELEASE_ACCEPTANCE_0.2.0.md
+docs/release-0.3.0-acceptance.json
+docs/DEVELOPMENT_CANDIDATE.md
+docs/WINDOWS_ACCEPTANCE.md
+docs/modeling-uplift/
+docs/cad-surface-kernel/
+docs/traditional-timber.md
+examples/cad-kernel/
+test/agent-install-manifest.mjs

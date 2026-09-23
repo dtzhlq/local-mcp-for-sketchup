@@ -13,7 +13,7 @@ const scriptPath = fileURLToPath(import.meta.url);
 const repoRoot = path.resolve(path.dirname(scriptPath), '..');
 const productId = 'local-mcp-for-sketchup';
 const nodeVersion = '24.18.0';
-export const serviceBundleRuntimeDirectories = Object.freeze(['src', 'schema', 'sketchup_plugin']);
+export const serviceBundleRuntimeDirectories = Object.freeze(['src', 'schema', 'sketchup_plugin', 'data/traditional-timber']);
 const lgpl = Object.freeze({
   url: 'https://raw.githubusercontent.com/spdx/license-list-data/5bf6d9610255540bfbee6890765a616042bf1e11/text/LGPL-3.0-or-later.txt',
   sha256: '996af0513df21f7496288951c41428a03c174e9e4a9d63665c57d670f845ccb1'

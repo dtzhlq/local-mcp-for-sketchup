@@ -508,6 +508,71 @@
   "docs/INSTALL.md": [
     "ALMA_SKETCHUP_AGENT_ALLOWED_RUNTIMES",
     "ALMA_SKETCHUP_AGENT_ALLOW_QUEUE_MUTATION",
+    "Alma",
     "alma_sketchup_mcp"
+  ],
+  "docs/cad-surface-kernel/acceptance-report.json": [
+    "alma-sketchup-mcp-0"
+  ],
+  "docs/DEVELOPMENT_CANDIDATE.md": [
+    "ALMA_SKETCHUP_AGENT_ALLOWED_RUNTIMES",
+    "ALMA_SKETCHUP_AGENT_ALLOW_QUEUE_MUTATION",
+    "Alma",
+    "alma_sketchup_mcp"
+  ],
+  "docs/modeling-uplift/acceptance-report.json": [
+    "ALMA_SKETCHUP_ENABLE_RUBY_EXPERT",
+    "Alma",
+    "alma-sketchup-mcp-0"
+  ],
+  "docs/modeling-uplift/followup-report.json": [
+    "Alma",
+    "alma-sketchup-mcp-0"
+  ],
+  "docs/modeling-uplift/implementation-status.md": [
+    "Alma",
+    "alma-sketchup-mcp-0"
+  ],
+  "docs/modeling-uplift/qa-resolution-report.json": [
+    "Alma",
+    "alma-sketchup-mcp-0"
+  ],
+  "INSTALL_FOR_AGENTS.md": [
+    "ALMA_SKETCHUP_AGENT_ALLOWED_RUNTIMES",
+    "ALMA_SKETCHUP_AGENT_ALLOW_QUEUE_MUTATION",
+    "alma_sketchup_mcp"
+  ],
+  "sketchup_plugin/alma_sketchup_mcp/model_geometry.rb": [
+    "AlmaSketchupMCP"
+  ],
+  "src/tool-definitions.mjs": [
+    "ALMA_SKETCHUP_ENABLE_RUBY_EXPERT",
+    "Alma"
+  ],
+  "test/queue-publication.mjs": [
+    "Alma"
+  ],
+  "test/ruby/cad_fingerprint_test.rb": [
+    "AlmaSketchupMCP",
+    "alma_sketchup_mcp"
+  ],
+  "scripts/cad-fingerprint-fixture.rb": [
+    "alma_sketchup_mcp",
+    "AlmaSketchupMCP"
+  ],
+  "scripts/qa-cad-surface-native.mjs": [
+    "AlmaSketchupMCP"
+  ],
+  "scripts/qa-modeling-uplift-glm.mjs": [
+    "alma-provider"
+  ],
+  "scripts/qa-modeling-uplift-glm-native.mjs": [
+    "alma-provider"
+  ],
+  "scripts/qa-modeling-uplift-glm-correction.mjs": [
+    "alma-provider"
+  ],
+  "scripts/report-modeling-uplift-followup.mjs": [
+    "Alma"
   ]
 }

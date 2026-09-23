@@ -121,14 +121,14 @@ export class QueueRuntime {
     return this.call('reset_model', {});
   }
 
-  async buildModel(code) {
+  async buildModel(code, { snapshotDetail = true } = {}) {
     const queueReadyCode = materializeDslAssetPaths(code, { repoRoot: this.repoRoot });
-    return this.call('build_model', { code: queueReadyCode });
+    return this.call('build_model', { code: queueReadyCode, snapshot_detail: snapshotDetail });
   }
 
-  async saveModel({ outputPath, keepSession = true } = {}) {
+  async saveModel({ outputPath, keepSession = true, snapshotDetail = true } = {}) {
     const resolvedPath = outputPath ? path.resolve(outputPath) : outputPath;
-    const result = await this.call('save_model', { path: resolvedPath, keep_session: keepSession });
+    const result = await this.call('save_model', { path: resolvedPath, keep_session: keepSession, snapshot_detail:snapshotDetail!==false });
     // Stat the saved file to get size
     if (result && result.file_path) {
       try {
@@ -323,7 +323,7 @@ export class QueueRuntime {
     };
   }
 
-  async recoverOrphanResponse({ requestId, expectedResultKind, expectedClientPid } = {}) {
+  async recoverOrphanResponse({ requestId, expectedResultKind, expectedClientPid, validate, persist } = {}) {
     const expectation = normalizeOrphanResponseExpectation({ requestId, expectedResultKind, expectedClientPid });
     return this.withExclusiveAccess(async () => {
       await assertQueueAndProcessingIdle(this, expectation.request_id);
@@ -359,6 +359,8 @@ export class QueueRuntime {
       const afterRead = await assertRegularRecoveryFile(responsePath, expectation.request_id);
       assertSameRecoveryFile(before, afterRead, expectation.request_id);
       const response = parseRecoveryResponse(raw, expectation);
+      if (validate) await validate(response.result);
+      if (persist) await persist(response.result);
 
       // The SketchUp plugin does not use the Node-side lock. Recheck both
       // request directories after parsing and before consuming the response.
@@ -385,6 +387,76 @@ export class QueueRuntime {
         result: response.result
       };
     }, { method: 'recover_queue_response', failIfLocked: true });
+  }
+
+  // Internal creation recovery: expected identities come from the server's
+  // frozen task DSL, never from a client-supplied snapshot. Persist first so a
+  // crash after consumption can only resume finalization, not replay creation.
+  async recoverCommittedCreation({ roots, definitions, startedAt, session, persist } = {}) {
+    return this.withExclusiveAccess(async () => {
+      await assertQueueAndProcessingIdle(this, 'creation-recovery');
+      const files = (await readDirectoryEntries(this.responseDir)).filter(name => name.endsWith('.json'));
+      if (files.length !== 1 || !QUEUE_REQUEST_ID_PATTERN.test(files[0].slice(0, -5))) throw new AgentContractError('MUTATION_RECOVERY_REQUIRED', 'Exactly one completed native response is required for creation recovery.');
+      const requestId = files[0].slice(0, -5), file = path.join(this.responseDir, files[0]);
+      const before = await assertRegularRecoveryFile(file, requestId);
+      if (before.size > 64 * 1024 * 1024) throw recoveryIntegrityError(requestId, 'response_too_large');
+      const response = JSON.parse(await fs.readFile(file, 'utf8')), snapshot = response.result;
+      const receipt = snapshot?.mutation_receipt;
+      if (Object.keys(response).length !== 1 || !receipt || receipt.version !== 'mutation-receipt.v1' || receipt.kind !== 'sketchup_mutation_receipt' || receipt.commit_state !== 'committed'
+        || receipt.operation !== 'Alma Build Model' || !(Date.parse(receipt.committed_at) >= Date.parse(startedAt))
+        || snapshot.model_revision_complete !== true || !/^sha256:[a-f0-9]{64}$/.test(snapshot.model_revision || '')
+        || !roots?.length || !roots.every(root => snapshot.instances?.filter(item => item.id === root.id && item.definition === root.definition).length === 1)
+        || !definitions?.length || !definitions.every(name => snapshot.component_definitions?.includes(name))) {
+        throw recoveryIntegrityError(requestId, 'committed_creation_identity_mismatch');
+      }
+      const current = await this.getSessionState();
+      if (current.model_revision_complete !== true || current.model_revision !== snapshot.model_revision
+        || !session?.session_id || !session?.document_id || current.session_id !== session.session_id || current.document_id !== session.document_id) {
+        throw new AgentContractError('MODEL_REVISION_MISMATCH', 'The document or model changed after the late creation commit; preserve the response and reconcile first.');
+      }
+      await assertQueueAndProcessingIdle(this, requestId);
+      assertSameRecoveryFile(before, await assertRegularRecoveryFile(file, requestId), requestId);
+      await persist({request_id: requestId, snapshot, recovered_at: new Date().toISOString()});
+      await fs.rm(file);
+      return snapshot;
+    }, {method: 'recover-committed-creation', failIfLocked: true});
+  }
+
+  // A parameter edit stages unused definitions before replacing its one
+  // reviewed root. A late native build return is consumed only after the
+  // original document, visible roots, staged names and complete revision agree.
+  async recoverCommittedParameterStaging({ roots, definitions, startedAt, session, persist } = {}) {
+    return this.withExclusiveAccess(async () => {
+      await assertQueueAndProcessingIdle(this, 'parameter-staging-recovery');
+      const files = (await readDirectoryEntries(this.responseDir)).filter(name => name.endsWith('.json'));
+      if (files.length !== 1 || !QUEUE_REQUEST_ID_PATTERN.test(files[0].slice(0, -5)))
+        throw new AgentContractError('MUTATION_RECOVERY_REQUIRED', 'Exactly one completed native response is required for parameter staging recovery.');
+      const requestId = files[0].slice(0, -5), file = path.join(this.responseDir, files[0]);
+      const before = await assertRegularRecoveryFile(file, requestId);
+      if (before.size > 64 * 1024 * 1024) throw recoveryIntegrityError(requestId, 'response_too_large');
+      const response = JSON.parse(await fs.readFile(file, 'utf8')), snapshot = response.result;
+      const receipt = snapshot?.mutation_receipt;
+      if (Object.keys(response).length !== 1 || !receipt || receipt.version !== 'mutation-receipt.v1'
+        || receipt.kind !== 'sketchup_mutation_receipt' || receipt.commit_state !== 'committed'
+        || receipt.operation !== 'Alma Build Model' || !(Date.parse(receipt.committed_at) >= Date.parse(startedAt))
+        || snapshot.model_revision_complete !== true || !/^sha256:[a-f0-9]{64}$/.test(snapshot.model_revision || '')
+        || !roots?.length || !roots.every(root => snapshot.instances?.filter(item => item.id === root.id
+          && item.persistent_id === root.persistent_id && item.definition === root.definition).length === 1)
+        || !definitions?.length || !definitions.every(name => snapshot.component_definitions?.includes(name))) {
+        throw recoveryIntegrityError(requestId, 'committed_parameter_staging_identity_mismatch');
+      }
+      const current = await this.getSessionState();
+      if (current.model_revision_complete !== true || current.model_revision !== snapshot.model_revision
+        || !session?.session_id || !session?.document_id || current.session_id !== session.session_id
+        || current.document_id !== session.document_id) {
+        throw new AgentContractError('MODEL_REVISION_MISMATCH', 'The document or model changed after the late parameter staging commit; preserve the response and reconcile first.');
+      }
+      await assertQueueAndProcessingIdle(this, requestId);
+      assertSameRecoveryFile(before, await assertRegularRecoveryFile(file, requestId), requestId);
+      await persist({ request_id: requestId, snapshot, recovered_at: new Date().toISOString() });
+      await fs.rm(file);
+      return snapshot;
+    }, { method: 'recover-committed-parameter-staging', failIfLocked: true });
   }
 
   async call(method, params) {
@@ -418,18 +490,26 @@ export class QueueRuntime {
 
     const id = `${process.pid}-${Date.now()}-${crypto.randomUUID()}`;
     const requestPath = path.join(this.queueDir, `${id}.json`);
+    // The plugin claims *.json immediately. Publish only complete bytes, even
+    // when a large assembly takes several filesystem writes to serialize.
+    const stagingPath = path.join(this.queueDir, `.${id}.pending`);
     const processingPath = path.join(this.processingDir, `${id}.json`);
     const responsePath = path.join(this.responseDir, `${id}.json`);
     const guardedParams = this.guardedParams(method, params);
     const request = { id, method, params: guardedParams, client_pid: process.pid, created_at: new Date().toISOString() };
     ownedQueueArtifacts.add(requestPath);
+    ownedQueueArtifacts.add(stagingPath);
     ownedQueueArtifacts.add(processingPath);
     ownedQueueArtifacts.add(responsePath);
     ownedProcessingArtifacts.add(processingPath);
     ownedResponseProcessingPairs.set(responsePath, processingPath);
     try {
-      await fs.writeFile(requestPath, `${JSON.stringify(request, null, 2)}\n`, 'utf8');
+      await fs.writeFile(stagingPath, `${JSON.stringify(request)}\n`, { encoding: 'utf8', flag: 'wx' });
+      await fs.rename(stagingPath, requestPath);
+      ownedQueueArtifacts.delete(stagingPath);
     } catch (error) {
+      await fs.rm(stagingPath, { force: true }).catch(() => {});
+      ownedQueueArtifacts.delete(stagingPath);
       await fs.rm(requestPath, { force: true }).catch(() => {});
       ownedQueueArtifacts.delete(requestPath);
       ownedQueueArtifacts.delete(processingPath);

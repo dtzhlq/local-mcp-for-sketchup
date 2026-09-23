@@ -15,7 +15,7 @@ const verifiedSavedReceipts = new WeakMap();
 /** Server helper. A saved file is not a cold-reopen or cross-model acceptance. */
 export async function deliverModelAccessibilityTask({ bridge, taskStore, taskId, sourceTaskId, sessionContract, timeoutMs = 120000 } = {}) {
   if (!bridge || !taskStore?.mutationReceiptLedger || !TASK_ID.test(taskId || '') || !TASK_ID.test(sourceTaskId || '')) fail('INVALID_ARGUMENT', 'Delivery requires server task storage and valid delivery/source task ids.');
-  if (!Number.isInteger(timeoutMs) || timeoutMs < 1 || timeoutMs > 300000) fail('INVALID_ARGUMENT', 'Delivery timeout must be an integer from 1 to 300000 ms.');
+  if (!Number.isInteger(timeoutMs) || timeoutMs < 1 || timeoutMs > 900000) fail('INVALID_ARGUMENT', 'Delivery timeout must be an integer from 1 to 900000 ms.');
   const destinationTask = await taskStore.getTask(taskId, { includePrivate: true });
   if (destinationTask.intent !== 'deliver_model' || destinationTask.inputs?.source_task_id !== sourceTaskId) fail('INVALID_ARGUMENT', 'Delivery must use its persisted source-task binding.');
   if (Object.keys(destinationTask.inputs || {}).some(key => !INPUT_FIELDS.has(key))) fail('INVALID_ARGUMENT', 'Delivery accepts only a source task and connection; file paths, overwrite and model edits are not accepted.');
@@ -39,11 +39,20 @@ export async function deliverModelAccessibilityTask({ bridge, taskStore, taskId,
       source_task_id: sourceTaskId, source_binding: intent.source_binding, filename: 'model.skp' };
     return replaySaved({ taskStore, directory, target, journalPath, receiptPath, immutable });
   }
+  if (!sessionContract || canonicalJson(destinationTask.inputs.session_contract) !== canonicalJson(sessionContract)) fail('HANDSHAKE_REQUIRED', 'A server-resolved fresh connection must be persisted on the delivery task.');
+  await bridge.sessionContractAuthority.verify(sessionContract, {operation:'save_model'});
   const source = await taskStore.getTask(sourceTaskId, { includePrivate: true });
   const binding = await sourceBinding(source, taskStore, bridge);
   const immutable = { version: MODEL_ACCESSIBILITY_DELIVERY_VERSION, delivery_task_id: taskId,
     source_task_id: sourceTaskId, source_binding: binding, filename: 'model.skp' };
-  if (!sessionContract || canonicalJson(destinationTask.inputs.session_contract) !== canonicalJson(sessionContract)) fail('HANDSHAKE_REQUIRED', 'A server-resolved fresh connection must be persisted on the delivery task.');
+  // Source recovery may take longer than the submitted connection lifetime.
+  // Refresh only after authenticating that connection and matching the accepted
+  // native source; the write guard still checks document and revision again.
+  const fresh = (await bridge.create_queue_handshake({timeoutMs, expires_in_ms:300000})).session_contract;
+  if (fresh.session_id !== sessionContract.session_id || fresh.document_id !== sessionContract.document_id
+    || sha256Canonical(fresh.model_identity) !== sha256Canonical(sessionContract.model_identity)
+    || fresh.model_revision !== binding.model_revision) fail('MODEL_REVISION_MISMATCH', 'Delivery source changed while refreshing its write connection.');
+  sessionContract = fresh;
 
   return bridge.withAgentGatewayExecution({ taskId, intent: 'deliver_model' }, gatewayBridge => gatewayBridge.withLiveMutationAuthorization({
     runtime: 'queue', timeoutMs, session_contract: sessionContract, operation: 'save_model'
@@ -70,7 +79,7 @@ export async function deliverModelAccessibilityTask({ bridge, taskStore, taskId,
     if (await exists(target)) fail('ARTIFACT_INTEGRITY_ERROR', 'The unique delivery target unexpectedly exists; it will not be overwritten.');
     let saved;
     try {
-      saved = await authorizedBridge.save_model({ path: target, keep_session: true, runtime: 'queue', timeoutMs });
+      saved = await authorizedBridge.save_model({ path: target, keep_session: true, runtime: 'queue', timeoutMs, snapshot_detail:!source.private?.creation?.timber_rule_binding });
       if (!saved || path.resolve(saved.file_path || '') !== target) fail('ARTIFACT_INTEGRITY_ERROR', 'The save response is not bound to the unique delivery file.');
       const after = await runtime.getSessionState();
       assertSavedState(after, binding, target);
@@ -194,7 +203,17 @@ async function sourceBinding(source, taskStore, bridge) {
     || quality.specification_hash !== frozen.hash || !frozen.specification.required_parts?.length) {
     fail('ARTIFACT_INTEGRITY_ERROR', 'The source must retain its original frozen detailed-quality specification.');
   }
-  const snapshot = creation.round?.snapshot;
+  let snapshot = creation.round?.snapshot;
+  // Older compact timber snapshots omitted completeness metadata. Recover the
+  // proof from a fresh native summary only for the already accepted revision;
+  // never replace the frozen quality result or accept a changed model.
+  if (snapshot && snapshot.model_revision_complete === undefined && creation.timber_rule_binding) {
+    const { readTimberQualitySummary } = await import('./traditional-timber/quality.mjs');
+    const summary = await readTimberQualitySummary({bridge, creation, timeoutMs:300000});
+    if (summary.model_revision !== snapshot.model_revision || quality.model_revision !== snapshot.model_revision)
+      fail('MODEL_REVISION_MISMATCH', 'Native timber model changed after its accepted quality result.');
+    snapshot = summary.snapshot;
+  }
   if (!SHA.test(snapshot?.model_revision || '') || snapshot.model_revision_complete !== true
     || result.snapshot?.model_revision !== snapshot.model_revision) fail('MODEL_REVISION_INCOMPLETE', 'The accepted source needs a complete native snapshot revision.');
   const contract = source.inputs?.session_contract;

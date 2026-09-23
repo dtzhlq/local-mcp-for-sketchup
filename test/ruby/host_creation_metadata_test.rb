@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 require 'minitest/autorun'
+require 'minitest/mock'
 $LOAD_PATH.unshift(File.join(__dir__, 'support'))
 require_relative '../../sketchup_plugin/alma_sketchup_mcp'
 
@@ -172,4 +173,20 @@ class HostCreationMetadataTest < Minitest::Test
     assert_equal 'existing manual metadata', @original.get_attribute('BenchmarkManualEdit', 'keep')
     assert_equal 'abort', @model.events.last
   end
+  def test_immutable_definition_reuse_requires_native_revision
+    revision = 'sha256:' + 'a' * 64
+    @model.definitions['old-component'] = Object.new
+    doc = { 'version' => 1, 'units' => 'mm', 'creation_scope' => {
+      'version' => 'creation-scope.v1', 'namespace' => NAMESPACE, 'definitions' => [NAMESPACE + 'new'], 'materials' => [],
+      'definition_references' => { 'version' => 'immutable-definition-references.v1', 'names' => ['old-component'], 'model_revision' => revision } },
+      'operations' => [{ 'op' => 'component_definition', 'name' => NAMESPACE + 'new', 'operations' => [
+        { 'op' => 'component_instance', 'id' => NAMESPACE + 'child', 'definition' => 'old-component', 'origin' => [0, 0, 0] }]}] }
+    AlmaSketchupMCP.stub(:session_model_revision_report, { 'complete' => true, 'model_revision' => revision }) { assert validate(doc) }
+    AlmaSketchupMCP.stub(:session_model_revision_report, { 'complete' => true, 'model_revision' => 'sha256:' + 'b' * 64 }) do
+      assert_match(/revision mismatch/, assert_raises(RuntimeError) { validate(doc) }.message)
+    end
+    assert_equal ['old-component'], @model.definitions.keys
+    assert_equal [@original], @model.entities
+  end
+
 end

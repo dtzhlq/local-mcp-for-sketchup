@@ -1,3 +1,4 @@
+import { adoptAssemblySummary } from './model-accessibility-assembly-summary.mjs';
 import { validateGeometryEdits } from './model-geometry-contract.mjs';
 import crypto from 'node:crypto';
 import fs from 'node:fs/promises';
@@ -95,12 +96,29 @@ export function canPrepareExistingModelEditFromStructuralGroups({ operations, ta
     && CANONICAL_PID_PATH_PATTERN.test(target.entity_path));
 }
 
+function assemblyReplacementProjectionEligible(operations, targets, roots) {
+  return Array.isArray(roots) && roots.length > 0 && roots.every(p => /^pid:[1-9]\d*$/.test(p))
+    && Array.isArray(targets) && targets.length > 0 && targets.every(t => roots.includes(t.entity_path))
+    && Array.isArray(operations) && operations.length > 0 && operations.every(op => op.op === 'replace_component_definition'
+      && roots.includes(op.entity_path) && targets.some(t => t.entity_path === op.entity_path)
+      && operationAuxiliaryTargetReferences(op).length === 0);
+}
+
 export function existingModelEditExecutionTargetValidationPolicy(plan) {
   const validation = plan?.target_validation;
   const operations = plan?.dsl_document?.operations;
   const targets = Array.isArray(plan?.targets)
     ? plan.targets.map(({ entity, ...target }) => target)
     : [];
+  if (validation?.mode === 'assembly_merkle') {
+    if (plan.runtime !== 'queue' || validation.complete !== true || validation.truncated !== false
+      || validation.projection_version !== 'assembly-merkle.v2'
+      || !assemblyReplacementProjectionEligible(operations, targets, validation.recursive_root_paths)) {
+      throw new AgentContractError('OPERATION_NOT_ALLOWED', 'The reviewed assembly projection no longer describes bounded root replacements.');
+    }
+    return { version: EXISTING_MODEL_EDIT_EXECUTION_TARGET_VALIDATION_VERSION, mode: 'assembly_merkle',
+      source: 'hash_bound_root_definition_replacement', leaf_entities_materialized: false };
+  }
   const structuralEligible = validation?.version === 'existing-edit-target-validation.v1'
     && validation.mode === 'structural_groups'
     && validation.source === 'server_bound_source_proposal'
@@ -175,7 +193,9 @@ export async function observeExistingModelEditExecutionState({
   if (!bridge) throw new Error('existing model edit execution observation requires a bridge');
   validatePlan(plan);
   const policy = existingModelEditExecutionTargetValidationPolicy(plan);
-  const adoption = policy.mode === 'structural_groups'
+  const adoption = policy.mode === 'assembly_merkle'
+    ? await adoptAssemblySummary({ bridge, timeoutMs, recursiveLimit: plan.budgets?.recursive_limit || 5000, rootPaths: plan.target_validation.recursive_root_paths })
+    : policy.mode === 'structural_groups'
     ? await bridge.adopt_open_model({
       runtime,
       timeoutMs,
@@ -244,7 +264,7 @@ export async function observeExistingModelEditExecutionState({
       }
     });
   }
-  if (policy.mode === 'structural_groups' && lockedTargets.length > 0) {
+  if (['structural_groups', 'assembly_merkle'].includes(policy.mode) && lockedTargets.length > 0) {
     throw new AgentContractError('POLICY_DENIED', 'A hash-bound Group target is locked at execution time.', {
       details: { phase, locked_target_count: lockedTargets.length }
     });
@@ -386,7 +406,7 @@ export function inferExistingModelEditDestructiveSideEffects({ adoption, operati
   };
 }
 
-export async function prepareExistingModelEdit({ bridge, runtime = 'mock', timeoutMs, instruction, operations, targets, output_dir, recursive_limit = 2000, recursive_roots, budgets = {}, task_id = null, approval_expires_ms, source_proposal_binding, expected_model_revision, expected_model_key, execution_contract, target_validation } = {}) {
+export async function prepareExistingModelEdit({ bridge, runtime = 'mock', timeoutMs, instruction, operations, targets, output_dir, recursive_limit = 2000, recursive_roots, readback_projection, budgets = {}, task_id = null, approval_expires_ms, source_proposal_binding, expected_model_revision, expected_model_key, execution_contract, target_validation } = {}) {
   if (!bridge) throw new Error('prepare_existing_model_edit requires a bridge');
   const normalizedInstruction = nonEmptyString(instruction, 'prepare_existing_model_edit.instruction');
   const operationValidation = validateExistingModelEditOperations(operations);
@@ -404,7 +424,13 @@ export async function prepareExistingModelEdit({ bridge, runtime = 'mock', timeo
     operations: normalizedOperations,
     targets: requestedTargets
   });
-  const adoption = normalizedTargetValidation.mode === 'structural_groups'
+  if (readback_projection !== undefined && (readback_projection !== 'assembly-merkle.v2' || runtime !== 'queue'
+    || !assemblyReplacementProjectionEligible(normalizedOperations, requestedTargets, recursive_roots))) {
+    throw new AgentContractError('OPERATION_NOT_ALLOWED', 'Assembly readback permits only explicit top-level instance definition replacements.');
+  }
+  const adoption = readback_projection === 'assembly-merkle.v2'
+    ? await adoptAssemblySummary({ bridge, timeoutMs, recursiveLimit: normalizedBudgets.recursive_limit, rootPaths: recursive_roots })
+    : normalizedTargetValidation.mode === 'structural_groups'
     ? await bridge.adopt_open_model({
       runtime,
       timeoutMs,
@@ -613,7 +639,7 @@ export async function prepareExistingModelEdit({ bridge, runtime = 'mock', timeo
   };
 }
 
-export async function applyReviewedExistingModelEdit({ bridge, runtime = 'mock', timeoutMs, plan, plan_file, review, review_file, approval_token, output_dir, save_model = true, save_path, capture_view = false } = {}) {
+export async function applyReviewedExistingModelEdit({ bridge, runtime = 'mock', timeoutMs, plan, plan_file, review, review_file, approval_token, output_dir, save_model = true, save_path, capture_view = false, trusted_commit_observer } = {}) {
   if (!bridge) throw new Error('apply_reviewed_model_edit requires a bridge');
   const loadedPlan = plan || await readJsonRequired(plan_file, 'apply_reviewed_model_edit.plan_file');
   const suppliedReview = review || (review_file ? await readJsonRequired(review_file, 'apply_reviewed_model_edit.review_file') : null);
@@ -710,6 +736,35 @@ export async function applyReviewedExistingModelEdit({ bridge, runtime = 'mock',
   await fs.mkdir(outputDir, { recursive: true });
   const reviewArtifact = path.join(outputDir, 'review-decision.json');
   await writeJson(reviewArtifact, { ...trustedReview, authorization });
+  if (preflight.policy.mode === 'assembly_merkle' && !save_model && !capture_view) {
+    const built = await bridge.build_model({ runtime, timeoutMs, snapshot_detail: false,
+      code: JSON.stringify({ version: 1, units: 'mm', operations }) });
+    const result = {
+      kind: 'apply_reviewed_model_edit', ok: false, verification_pending: true,
+      plan_id: loadedPlan.plan_id, risk_level: loadedPlan.risk_level, model_key: loadedPlan.model_key,
+      model_revision_before: currentRevision, authorization, review: trustedReview,
+      mutation_receipt: built.mutation_receipt,
+      assembly_scope_baseline: assemblyOutsideState(preflight.adoption, loadedPlan),
+      assembly_root_placement_baseline: assemblyRootPlacements(preflight.adoption, loadedPlan),
+      artifacts: { review: reviewArtifact }, iteration: { artifacts: {}, saved_model: null }
+    };
+    if (!built.snapshot?.model_revision_complete || !built.snapshot.model_revision) {
+      throw new AgentContractError('MODEL_REVISION_INCOMPLETE', 'Committed assembly replacement lacks a full native revision. Do not replay it.');
+    }
+    // Persist the compact commit before another read, save, capture, or report.
+    if (typeof trusted_commit_observer === 'function') await trusted_commit_observer({
+      applied: structuredClone(result), model_revision_after: built.snapshot.model_revision });
+    const after = await observeExistingModelEditExecutionState({ bridge, plan: loadedPlan, runtime, timeoutMs,
+      phase: 'gateway_post_apply', expected_model_key: loadedPlan.model_key, expected_model_revision: built.snapshot.model_revision });
+    verifyAssemblyReplacementReadback(result, after.adoption, loadedPlan);
+    result.ok = true; result.verification_pending = false;
+    result.execution_target_validation = { version: EXISTING_MODEL_EDIT_EXECUTION_TARGET_VALIDATION_VERSION,
+      mode: preflight.policy.mode, leaf_entities_materialized: false, phases: { apply_preflight: preflight.summary, iteration_after: after.summary } };
+    if (save_model) result.iteration.saved_model = await bridge.save_model_version({ runtime, timeoutMs,
+      path: save_path || path.join(outputDir, 'model.skp'), label: loadedPlan.plan_id });
+    if (capture_view) result.iteration.capture = await bridge.capture_view({ runtime, timeoutMs, path: path.join(outputDir, 'overview.png') });
+    return result;
+  }
   const trustedNestedTargetValidator = preflight.policy.mode === 'structural_groups' || loadedPlan.target_validation?.recursive_root_paths || loadedPlan.dsl_document.operations.some(op=>op.op==='edit_geometry' && op.entity_path==='model')
     ? async ({ phase, references }) => {
       assertIterationReferencesMatchPlan(references, loadedPlan);
@@ -1274,6 +1329,15 @@ function normalizePreparationTargetValidation(value, { sourceProposalBinding, op
 }
 
 function preparationTargetValidationRecord(validation, adoption, requestedTargets, indexed) {
+  if (adoption.recursive_projection === 'assembly-merkle.v2') {
+    const exact = requestedTargets.filter(t => indexed.has(targetIdentity(t))).length;
+    return { version: 'existing-edit-target-validation.v1', mode: 'assembly_merkle', source: 'native_assembly_summary',
+      projection_version: 'assembly-merkle.v2', recursive_root_paths: adoption.recursive_root_paths,
+      complete: adoption.assembly_projection_complete === true, truncated: adoption.recursive_truncated,
+      indexed: adoption.recursive_index.length, total_seen: adoption.recursive_total_seen,
+      requested_target_count: requestedTargets.length, exact_target_count: exact,
+      leaf_entities_materialized: false, sufficient_for_review: exact === requestedTargets.length && adoption.assembly_projection_complete === true };
+  }
   if (validation.mode === 'full_recursive') {
     return {
       version: 'existing-edit-target-validation.v1',
@@ -1633,4 +1697,34 @@ function addGeometryModelTarget(indexed, operations, adoption) {
   if (operations.some(op=>op.entity_path==='model' && (op.op!=='edit_geometry' || op.context_path && op.context_path!=='model'))) throw new AgentContractError('OPERATION_NOT_ALLOWED','Model context permits root geometry edits only');
   indexed.set('entity_path:model',{entity_path:'model',entity_type:'model_geometry',name:'Model loose geometry',affected_instance_count:1,shared_definition:false,effective_locked:false,allowed_operations:['edit_geometry']});
   adoption.recursive_index=[...(adoption.recursive_index||[]),indexed.get('entity_path:model')];
+}
+
+function assemblyOutsideState(adoption, plan) {
+  const roots = new Set(plan.dsl_document.operations.map(op => op.entity_path));
+  return Object.fromEntries((adoption.recursive_index || []).filter(row => /^pid:[1-9]\d*$/.test(row.entity_path) && !roots.has(row.entity_path))
+    .map(row => [row.entity_path, sha256Canonical(stableEntity(row))]).sort(([a],[b]) => a.localeCompare(b)));
+}
+function assemblyRootPlacements(adoption, plan) {
+  const roots = new Set(plan.dsl_document.operations.map(op => op.entity_path));
+  return Object.fromEntries((adoption.recursive_index || []).filter(row => roots.has(row.entity_path)).map(row => [row.entity_path,
+    sha256Canonical({ transform: row.transform || null, transformation: row.transformation || null, world_transform: row.world_transform || null })]));
+}
+export function verifyAssemblyReplacementReadback(applied, adoption, plan) {
+  if (existingModelEditExecutionTargetValidationPolicy(plan).mode !== 'assembly_merkle'
+    || adoption.assembly_projection_complete !== true || !applied.assembly_scope_baseline) {
+    throw new AgentContractError('MUTATION_RECEIPT_INVALID', 'Assembly finalization needs its committed scope baseline and complete native projection.');
+  }
+  if (sha256Canonical(applied.assembly_scope_baseline) !== sha256Canonical(assemblyOutsideState(adoption, plan))) {
+    throw new AgentContractError('MODEL_REVISION_MISMATCH', 'Objects outside the selected assembly roots changed.');
+  }
+  if (sha256Canonical(applied.assembly_root_placement_baseline) !== sha256Canonical(assemblyRootPlacements(adoption, plan))) {
+    throw new AgentContractError('MODEL_REVISION_MISMATCH', 'Replacement unexpectedly moved or scaled the selected root.');
+  }
+  for (const op of plan.dsl_document.operations) {
+    const rows = adoption.recursive_index.filter(row => row.entity_path === op.entity_path);
+    if (rows.length !== 1 || (rows[0].entity_definition_name || rows[0].definition_name || rows[0].definition) !== op.definition) {
+      throw new AgentContractError('MODEL_REVISION_MISMATCH', 'The selected root does not reference the reviewed replacement definition.');
+    }
+  }
+  return true;
 }

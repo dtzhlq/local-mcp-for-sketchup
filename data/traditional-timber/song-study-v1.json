@@ -1,0 +1,46 @@
+{
+  "id": "song-study-v1",
+  "status": "research_assembly_not_historical_reconstruction",
+  "units": "caifen converted by explicit fen_mm",
+  "dimensions_fen": {
+    "material_height": 15,
+    "material_thickness": 10,
+    "qi_height": 6,
+    "ludou_width": 32,
+    "nidao_length": 62,
+    "huagong_length": 72,
+    "linggong_length": 72,
+    "mangong_length": 92,
+    "timu_length": 104
+  },
+  "sources": [
+    {
+      "id": "YF4",
+      "file": "research/yingzao-fashi/sources/kanripo/KR2m0056_004.txt",
+      "edition": "WYG",
+      "location": "004-1b..5b",
+      "use": "material ratios, gong lengths and segmented juansha; exceptions retained outside this limited assembly"
+    },
+    {
+      "id": "YF5",
+      "file": "research/yingzao-fashi/sources/kanripo/KR2m0056_005.txt",
+      "edition": "WYG",
+      "location": "005-10a..14b",
+      "use": "support relationships, flying-rafter ratios, purlin reference and folding principles"
+    },
+    {
+      "id": "CTA",
+      "file": "research/yingzao-fashi/analysis-20260921/dougong-detail/asr.txt",
+      "location": "02:12..02:55 plus verified video frames",
+      "use": "32-fen ludou width and explicit scale conversion; not historical accuracy certification"
+    }
+  ],
+  "assumptions": [
+    "The symmetric bracket node is a project-authored connection study, not an authenticated named puzuo type.",
+    "Dou heights, seat clearances, joint simplifications and the selected assembly sequence are explicit design assumptions.",
+    "Corner fan interpolation and the roof surface are project-authored geometric constructions, not recovered CTA algorithms.",
+    "The hall is a symmetric three-bay hipped-roof study; corner bracket taxonomy, hidden mortises, exact historical member sizing and conservation accuracy are not claimed.",
+    "Historical chi conversion and the conflicting seventh-grade transcription are disabled; fen_mm is a modeling scale.",
+    "Rear board packing rails are explicit project-authored support details; hidden lap joints and the per-type juansha construction remain simplified."
+  ]
+}

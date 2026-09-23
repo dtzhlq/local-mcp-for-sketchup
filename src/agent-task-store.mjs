@@ -159,6 +159,25 @@ export class AgentTaskStore {
     });
   }
 
+  async restoreCommittedCreation(taskId) {
+    return this.serialized(async () => {
+      const task = await this.getTask(taskId, {includePrivate: true});
+      const {integrity_hmac, ...record} = task.private?.creation?.late_commit || {};
+      if (task.intent !== 'create_model' || !['failed', 'executing'].includes(task.state)
+        || record.task_id !== taskId || record.source_hash !== task.private.creation.round.source_hash
+        || !record.snapshot?.mutation_receipt || integrity_hmac !== await this.mutationReceiptLedger.sign(record)) {
+        throw new AgentContractError('MUTATION_RECEIPT_INVALID', 'Creation recovery requires its signed server-recorded late commit.');
+      }
+      const now = new Date().toISOString();
+      const next = {...task, state: 'verifying', task_version: task.task_version + 1, updated_at: now, last_error: null,
+        history: [...task.history, {from: task.state, to: 'verifying', at: now, reason: 'verified_late_native_creation_commit_no_replay'}],
+        private: {...task.private, creation: {...task.private.creation, round: {...task.private.creation.round,
+          phase: 'built', snapshot: record.snapshot, mutation_receipt: record.snapshot.mutation_receipt}}}};
+      await this.writeTask(next);
+      return next;
+    });
+  }
+
   async claimTaskOperation({ taskId, operation, idempotencyKey, input }) {
     return this.serialized(async () => {
       const task = await this.getTask(taskId, { includePrivate: true });

@@ -91,7 +91,7 @@
       "release_artifact": false,
       "target": "darwin-arm64",
       "version": "0.3.0",
-      "path": "/Users/07zhang/.codex/worktrees/modeling-api-uplift/sketchup-mcp-replica/out/modeling-uplift/nonrelease-uplift-complete-20260918-local-mcp-for-sketchup-0.3.0-darwin-arm64.tar.gz",
+      "path": "[historical-worktree]/out/modeling-uplift/nonrelease-uplift-complete-20260918-local-mcp-for-sketchup-0.3.0-darwin-arm64.tar.gz",
       "file_name": "nonrelease-uplift-complete-20260918-local-mcp-for-sketchup-0.3.0-darwin-arm64.tar.gz",
       "media_type": "application/gzip",
       "sha256": "bd7cfd9d8ad3ed78704b4d0aa980d58be304c1988fe49505770b3b307cf51c8a",
@@ -110,7 +110,7 @@
       "checked": true,
       "installed": false,
       "packaged": true,
-      "package_path": "/Users/07zhang/.codex/worktrees/modeling-api-uplift/sketchup-mcp-replica/out/modeling-uplift/alma-sketchup-mcp-0.3.0-nonrelease-uplift-complete-20260918.rbz",
+      "package_path": "[historical-worktree]/out/modeling-uplift/alma-sketchup-mcp-0.3.0-nonrelease-uplift-complete-20260918.rbz",
       "package_sha256": "c8573498c2564b024e98a2e7e2bfdd5f20ff1bcd9c79b28fc110dac8a8170fbb",
       "package_size_bytes": 144485,
       "package_artifact_class": "non_release_preview",
@@ -1019,7 +1019,7 @@
         "release_artifact": false,
         "target": "darwin-arm64",
         "version": "0.3.0",
-        "path": "/Users/07zhang/.codex/worktrees/modeling-api-uplift/sketchup-mcp-replica/out/modeling-uplift/nonrelease-uplift-complete-20260918-local-mcp-for-sketchup-0.3.0-darwin-arm64.tar.gz",
+        "path": "[historical-worktree]/out/modeling-uplift/nonrelease-uplift-complete-20260918-local-mcp-for-sketchup-0.3.0-darwin-arm64.tar.gz",
         "file_name": "nonrelease-uplift-complete-20260918-local-mcp-for-sketchup-0.3.0-darwin-arm64.tar.gz",
         "media_type": "application/gzip",
         "sha256": "bd7cfd9d8ad3ed78704b4d0aa980d58be304c1988fe49505770b3b307cf51c8a",
@@ -1038,7 +1038,7 @@
         "checked": true,
         "installed": false,
         "packaged": true,
-        "package_path": "/Users/07zhang/.codex/worktrees/modeling-api-uplift/sketchup-mcp-replica/out/modeling-uplift/alma-sketchup-mcp-0.3.0-nonrelease-uplift-complete-20260918.rbz",
+        "package_path": "[historical-worktree]/out/modeling-uplift/alma-sketchup-mcp-0.3.0-nonrelease-uplift-complete-20260918.rbz",
         "package_sha256": "c8573498c2564b024e98a2e7e2bfdd5f20ff1bcd9c79b28fc110dac8a8170fbb",
         "package_size_bytes": 144485,
         "package_artifact_class": "non_release_preview",
@@ -1052,7 +1052,7 @@
       }
     },
     "artifact": {
-      "path": "/Users/07zhang/.codex/worktrees/modeling-api-uplift/sketchup-mcp-replica/output/modeling-uplift/native/modeling-uplift.skp",
+      "path": "[historical-worktree]/output/modeling-uplift/native/modeling-uplift.skp",
       "sha256": "57643ac1bfa992d4becc2045d3f337510cc20e915d0f5291b65c58e557ccf690"
     },
     "cross_model": {

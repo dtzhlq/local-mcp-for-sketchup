@@ -125,15 +125,18 @@ export async function validateAgentInstallManifest(manifest, {
       }
     }
     for (const acceptance of manifest.acceptance?.platforms || []) {
+      const minimalTimber = manifest.acceptance?.validation_policy === 'timber-v040-minimal.v1';
       for (const booleanField of [
         'live_sketchup_2026',
         'signed_rbz_loaded',
-        'save_close_reopen_verified',
-        'offline_after_install_verified'
+        ...(minimalTimber ? ['native_create_edit_view_verified', 'target_scope_verified', 'signed_payload_verified'] : ['save_close_reopen_verified', 'offline_after_install_verified'])
       ]) {
         if (acceptance[booleanField] !== true) {
           errors.push(`${acceptance.id}.${booleanField} must be true`);
         }
+      }
+      if (minimalTimber && (manifest.product?.version !== '0.4.0' || acceptance.id !== 'darwin-arm64-sketchup-2026')) {
+        errors.push('timber-v040-minimal.v1 is limited to v0.4.0 on Apple Silicon macOS and SketchUp 2026');
       }
     }
 

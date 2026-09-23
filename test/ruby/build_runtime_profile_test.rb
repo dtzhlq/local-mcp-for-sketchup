@@ -15,8 +15,8 @@ module AlmaSketchupMCP
   def session_model_revision_report(*); { 'model_revision' => 'test-revision', 'complete' => true }; end
 end
 source = File.read(File.expand_path('../../sketchup_plugin/alma_sketchup_mcp.rb', __dir__))
-method_source = source.split("  def build_model(code)\n", 2).fetch(1).split("  def save_model(path, keep_session)\n", 2).first
-AlmaSketchupMCP.module_eval("def build_model(code)\n#{method_source}", __FILE__, __LINE__)
+method_source = source.split("  def build_model(code, snapshot_detail: true)\n", 2).fetch(1).split("  def save_model(path, keep_session, snapshot_detail: true)\n", 2).first
+AlmaSketchupMCP.module_eval("def build_model(code, snapshot_detail: true)\n#{method_source}", __FILE__, __LINE__)
 
 class BuildRuntimeProfileTest < Minitest::Test
   def test_profile_keeps_native_operation_order_and_separates_snapshot_cost
@@ -32,6 +32,14 @@ class BuildRuntimeProfileTest < Minitest::Test
     assert_operator profile['total_elapsed_ms'], :>=, durations.sum
     assert_equal false, profile['includes_queue_wait']
     assert_equal false, profile['quality_evidence']
+    AlmaSketchupMCP.stub(:snapshot, ->(_, include_detail_evidence:) {
+      assert_equal false, include_detail_evidence
+      { 'geometry' => 'compact' }
+    }) do
+      compact = AlmaSketchupMCP.build_model(JSON.generate('operations' => []), snapshot_detail: false)
+      assert_equal 'compact', compact['geometry']
+      assert_equal 'test-revision', compact['model_revision']
+    end
   end
 
   def test_failed_operation_is_not_returned_as_a_successful_profile

@@ -221,12 +221,26 @@ module AlmaSketchupMCP
 
   def assert_entity_identity_available(entity, id, name)
     siblings = entity_parent_entities(entity)
-    entities = siblings.grep(Sketchup::Group) + siblings.grep(Sketchup::ComponentInstance)
-    duplicate_id = entities.find { |item| item != entity && [entity_id(item), entity_persistent_id(item)].compact.include?(id) }
-    duplicate_name = entities.find { |item| item != entity && item.name == name }
+    index = @definition_creation_identity_index
+    if index && index[:entities] == siblings
+      duplicate_id = index[:ids][id]
+      duplicate_name = index[:names][name]
+      duplicate_id = nil if duplicate_id == entity
+      duplicate_name = nil if duplicate_name == entity
+    else
+      entities = siblings.grep(Sketchup::Group) + siblings.grep(Sketchup::ComponentInstance)
+      duplicate_id = entities.find { |item| item != entity && [entity_id(item), entity_persistent_id(item)].compact.include?(id) }
+      duplicate_name = entities.find { |item| item != entity && item.name == name }
+    end
     if duplicate_id || duplicate_name
       entity.erase! if entity.respond_to?(:erase!)
       raise(duplicate_id ? "object id already exists: #{id}" : "object name already exists: #{name}")
+    end
+    if index && index[:entities] == siblings
+      index[:ids][id] = entity
+      persistent_id = entity_persistent_id(entity)
+      index[:ids][persistent_id] = entity unless persistent_id.nil?
+      index[:names][name] = entity
     end
   end
 

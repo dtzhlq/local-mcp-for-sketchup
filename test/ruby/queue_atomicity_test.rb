@@ -159,7 +159,7 @@ original_snapshot = AlmaSketchupMCP.method(:snapshot)
 save_model = FakeTransactionModel.new(save_result: false, write_saved_file: false)
 AlmaSketchupMCP.define_singleton_method(:active_model_or_new) { |_method_name| save_model }
 AlmaSketchupMCP.define_singleton_method(:persist_document_state) { |_model| raise 'save_model must not write sidecar state' }
-AlmaSketchupMCP.define_singleton_method(:snapshot) { |model| { 'value' => model.value } }
+AlmaSketchupMCP.define_singleton_method(:snapshot) { |model, include_detail_evidence: true| { 'value' => model.value } }
 save_target = File.join(test_home, 'saved', 'failure.skp')
 save_error = assert_raises(AlmaSketchupMCP::QueueOperationError, 'save false must not be reported as success') do
   AlmaSketchupMCP.save_model(save_target, true)

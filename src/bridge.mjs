@@ -244,9 +244,9 @@ export class SketchUpBridge {
     });
   }
 
-  async build_model({ code, runtime = 'mock', timeoutMs, session_contract, sessionContract } = {}) {
+  async build_model({ code, runtime = 'mock', timeoutMs, session_contract, sessionContract, snapshot_detail = true } = {}) {
     if (runtime === 'queue' && !this.liveMutationAuthorization) {
-      return this.withLiveMutationAuthorization({ runtime, timeoutMs, session_contract, sessionContract, operation: 'build_model' }, (lockedBridge) => lockedBridge.build_model({ code, runtime, timeoutMs }));
+      return this.withLiveMutationAuthorization({ runtime, timeoutMs, session_contract, sessionContract, operation: 'build_model' }, (lockedBridge) => lockedBridge.build_model({ code, runtime, timeoutMs, snapshot_detail }));
     }
     const prepared = this.prepareDslCode(code);
     if (typeof this.options.dslDispatchGuard === 'function') {
@@ -261,7 +261,8 @@ export class SketchUpBridge {
     if (prepared.document.creation_scope && (runtimeCapabilities.creation_scope?.version !== 'creation-scope.v1' || runtimeCapabilities.creation_scope?.atomic_absence_validation !== true)) {
       throw new AgentContractError('OPERATION_NOT_ALLOWED', 'The installed runtime does not support atomic scoped creation; update and restart the bridge.');
     }
-    const snapshot = await selectedRuntime.buildModel(prepared.code);
+    if(prepared.document.creation_scope?.definition_references && runtimeCapabilities.creation_scope?.immutable_definition_references!=='immutable-definition-references.v1') throw new AgentContractError('OPERATION_NOT_ALLOWED','The loaded plugin does not support revision-bound definition reuse.');
+    const snapshot = await selectedRuntime.buildModel(prepared.code, { snapshotDetail: snapshot_detail !== false });
     return {
       snapshot: this.attachRuntimeCapabilities(snapshot, runtimeCapabilities),
       ...(snapshot?.mutation_receipt ? { mutation_receipt: structuredClone(snapshot.mutation_receipt) } : {}),
@@ -299,13 +300,13 @@ export class SketchUpBridge {
     return { snapshot: this.attachRuntimeCapabilities(snapshot, runtimeCapabilities) };
   }
 
-  async save_model({ path, keep_session = true, runtime = 'mock', timeoutMs, session_contract, sessionContract } = {}) {
+  async save_model({ path, keep_session = true, runtime = 'mock', timeoutMs, session_contract, sessionContract, snapshot_detail = true } = {}) {
     if (runtime === 'queue' && !this.liveMutationAuthorization) {
-      return this.withLiveMutationAuthorization({ runtime, timeoutMs, session_contract, sessionContract, operation: 'save_model' }, (lockedBridge) => lockedBridge.save_model({ path, keep_session, runtime, timeoutMs }));
+      return this.withLiveMutationAuthorization({ runtime, timeoutMs, session_contract, sessionContract, operation: 'save_model' }, (lockedBridge) => lockedBridge.save_model({ path, keep_session, runtime, timeoutMs, snapshot_detail }));
     }
     const selectedRuntime = this.selectRuntime(runtime, { timeoutMs });
     const runtimeCapabilities = await this.resolveRuntimeCapabilities(selectedRuntime, runtime);
-    const result = await selectedRuntime.saveModel({ outputPath: path, keepSession: keep_session });
+    const result = await selectedRuntime.saveModel({ outputPath: path, keepSession: keep_session, snapshotDetail:snapshot_detail!==false });
     if (result.snapshot) {
       result.snapshot = this.attachRuntimeCapabilities(result.snapshot, runtimeCapabilities);
     }
@@ -454,6 +455,7 @@ export class SketchUpBridge {
     const readOnlyValue = read_only === true || readOnly === true;
     const roots = options.recursive_roots;
     if (roots !== undefined && (!readOnlyValue || recursive !== true || !Array.isArray(roots) || !roots.length || roots.length > 32 || new Set(roots).size !== roots.length || roots.some(root => typeof root !== 'string' || !(runtime === 'mock' ? /^mock:(group|component_instance):[A-Za-z0-9_-]+$/ : /^pid:[1-9]\d*$/).test(root)))) throw new Error('recursive_roots requires distinct top-level pid paths, read_only and recursive=true');
+    if (options.assembly_projection !== undefined && (options.assembly_projection !== true || !readOnlyValue || runtime !== 'queue')) throw new Error('assembly_projection requires native read-only adoption');
     const structuralProbe = normalizeStructuralProbeOptions(options);
     if (runtime === 'queue' && !readOnlyValue && !this.liveMutationAuthorization) {
       return this.withLiveMutationAuthorization({ runtime, timeoutMs, session_contract, sessionContract, operation: 'adopt_open_model' }, (lockedBridge) => lockedBridge.adopt_open_model({ runtime, timeoutMs, recursive, recursive_limit, recursiveLimit, force, prefix, read_only: false }));
@@ -464,6 +466,7 @@ export class SketchUpBridge {
       recursive,
       recursive_limit: recursive_limit ?? recursiveLimit,
       ...(roots ? { recursive_roots: roots } : {}),
+      ...(options.assembly_projection ? { assembly_projection: true } : {}),
       force,
       prefix,
       read_only: readOnlyValue
@@ -474,6 +477,7 @@ export class SketchUpBridge {
       runtimeOptions.fresh_manifold_paths = structuralProbe.fresh_manifold_paths;
     }
     const result = await selectedRuntime.adoptOpenModel(runtimeOptions);
+    if (options.assembly_projection && result.recursive_projection !== 'assembly-merkle.v2') throw new AgentContractError('CAPABILITY_MISMATCH', 'Runtime did not attest assembly Merkle projection');
     if (roots && JSON.stringify(result.recursive_root_paths) !== JSON.stringify(roots)) throw new AgentContractError('CAPABILITY_MISMATCH', 'Runtime did not attest the exact requested recursive roots');
     return assertStructuralProbeResult(result, structuralProbe, { runtime });
   }

@@ -1,3 +1,4 @@
+import { adoptAssemblySummary } from './model-accessibility-assembly-summary.mjs';
 import { AgentContractError, sha256Canonical } from './agent-contract.mjs';
 import { buildModelGraph } from './model-graph.mjs';
 import { modelIdentityForAdoption, modelKeyForIdentity } from './model-identity.mjs';
@@ -27,28 +28,41 @@ export async function verifyDefinitionParameterResult(gateway, task) {
     next_action: { action: 'connect_then_submit_verification', required: ['connection_task_id from fresh discover/connect'], task_id: task.task_id,
       tool: 'start_agent_task', arguments: { intent: 'discover', instruction: 'Connect for frozen creation verification.', inputs: { topic: 'connect', runtime: 'queue' } } } } });
   const timeoutMs = inputs.timeout_ms ?? 120000;
-  if (!Number.isInteger(timeoutMs) || timeoutMs < 1 || timeoutMs > 300000) throw new AgentContractError('INVALID_ARGUMENT', 'Verification timeout must be within 1..300000 ms.');
+  if (!Number.isInteger(timeoutMs) || timeoutMs < 1 || timeoutMs > 900000) throw new AgentContractError('INVALID_ARGUMENT', 'Verification timeout must be within 1..900000 ms.');
   const roots = parameter.private.creation_parameter_edit.change_plan.recursive_roots;
-  const adoption = roots?.length > 1 ? await adoptParameterRoots({ bridge: gateway.bridge, runtime, timeoutMs,
+  const assembly=record.readback_projection==='assembly-merkle.v2';
+  const adoption = assembly?await adoptAssemblySummary({bridge:gateway.bridge,rootPaths:roots,timeoutMs,
+    recursiveLimit:parameter.private.parameter_recursive_limit||5000,expectedRevision:parameter.result.model_revision}):roots?.length > 1 ? await adoptParameterRoots({ bridge: gateway.bridge, runtime, timeoutMs,
     recursiveLimit: parameter.private.parameter_recursive_limit, rootPaths: roots })
     : await gateway.bridge.adopt_open_model({ runtime, timeoutMs, recursive: true, read_only: true,
       recursive_limit: parameter.private.parameter_recursive_limit, recursive_roots: roots });
   const graph = buildModelGraph(adoption);
-  if (!graph.completeness.complete && !graph.completeness.scope_complete) throw new AgentContractError('MODEL_REVISION_INCOMPLETE', 'Frozen verification requires complete parameter source subtrees.');
+  if (!graph.completeness.complete && !graph.completeness.scope_complete && !(assembly&&graph.completeness.assembly_scope_complete)) throw new AgentContractError('MODEL_REVISION_INCOMPLETE', 'Frozen verification requires complete parameter source subtrees.');
   if (modelKeyForIdentity(modelIdentityForAdoption(adoption)) !== record.model_key || graph.model_revision !== parameter.result.model_revision) throw new AgentContractError('MODEL_REVISION_MISMATCH', 'The current model is not the completed parameter edit; preserve intervening changes and reconcile first.');
-  const inspected = await gateway.bridge.inspect_model({ runtime, timeoutMs, includeSnapshot: true });
-  const snapshot = inspected.snapshot;
+  const inspected = assembly?null:await gateway.bridge.inspect_model({ runtime, timeoutMs, includeSnapshot: true });
+  const snapshot = assembly?{...adoption.snapshot,model_revision:adoption.model_revision,model_revision_complete:adoption.model_revision_complete}:inspected.snapshot;
   if (!snapshot || runtime === 'queue' && (snapshot.model_revision_complete !== true || snapshot.model_revision !== graph.model_revision)) throw new AgentContractError('MODEL_REVISION_INCOMPLETE', 'Verification requires a fresh complete native snapshot of the bound revision.');
   const binding = { version: 'frozen-creation-verification.v1', creation_task_id: source.task_id, parameter_task_id: parameter.task_id,
     specification_hash: creation.frozen_spec.hash, parameter_source_hash: record.source_record_hash, model_key: record.model_key,
     model_revision: graph.model_revision, views: structuredClone(source.inputs.views || []) };
   const signed = { ...binding, integrity_hmac: await gateway.taskStore.mutationReceiptLedger.sign(binding) };
+  const sourceHash = sha256Canonical({ verification_task_id: task.task_id, model_revision: graph.model_revision });
+  const previousRound = task.private?.creation?.round;
+  const sameVerification = Boolean(task.private?.frozen_creation_verification)
+    && sha256Canonical(task.private.frozen_creation_verification) === sha256Canonical(signed)
+    && previousRound?.source_hash === sourceHash
+    && previousRound?.snapshot?.model_revision === graph.model_revision;
   const privateCreation = { ...structuredClone(creation), rounds: [], round: { phase: 'verification_snapshot', iteration: 0,
-    source_hash: sha256Canonical({ verification_task_id: task.task_id, model_revision: graph.model_revision }), snapshot, captures: [] } };
+    source_hash: sourceHash, snapshot,
+    captures: sameVerification ? structuredClone(previousRound.captures || []) : [],
+    ...(sameVerification ? {
+      capture_attempts: previousRound.capture_attempts || 0,
+      capture_diagnostics: structuredClone(previousRound.capture_diagnostics || [])
+    } : {}) } };
   task = await gateway.taskStore.update(task.task_id, { inputs: { ...inputs, runtime }, private: { ...task.private,
     creation: privateCreation, frozen_creation_verification: signed } });
   task = await gateway.taskStore.transition(task.task_id, 'verifying', { reason: 'verify_frozen_creation_after_parameter_edit' });
-  task = await gateway.finalizeCreationQuality(task);
+  task = await gateway.finalizeCreationQuality(task, assembly ? { timberSummary: adoption } : {});
   return gateway.taskStore.update(task.task_id, { result: { ...task.result, kind: 'verify_creation_result', source_creation_task_id: source.task_id,
     parameter_task_id: parameter.task_id, geometry_built: false, specification_hash: creation.frozen_spec.hash },
     next_action: task.result.quality_accepted ? { action: 'connect_for_delivery', source_task_id: task.task_id }
