@@ -45,8 +45,19 @@ export async function verifyDefinitionParameterResult(gateway, task) {
     specification_hash: creation.frozen_spec.hash, parameter_source_hash: record.source_record_hash, model_key: record.model_key,
     model_revision: graph.model_revision, views: structuredClone(source.inputs.views || []) };
   const signed = { ...binding, integrity_hmac: await gateway.taskStore.mutationReceiptLedger.sign(binding) };
+  const sourceHash = sha256Canonical({ verification_task_id: task.task_id, model_revision: graph.model_revision });
+  const previousRound = task.private?.creation?.round;
+  const sameVerification = Boolean(task.private?.frozen_creation_verification)
+    && sha256Canonical(task.private.frozen_creation_verification) === sha256Canonical(signed)
+    && previousRound?.source_hash === sourceHash
+    && previousRound?.snapshot?.model_revision === graph.model_revision;
   const privateCreation = { ...structuredClone(creation), rounds: [], round: { phase: 'verification_snapshot', iteration: 0,
-    source_hash: sha256Canonical({ verification_task_id: task.task_id, model_revision: graph.model_revision }), snapshot, captures: [] } };
+    source_hash: sourceHash, snapshot,
+    captures: sameVerification ? structuredClone(previousRound.captures || []) : [],
+    ...(sameVerification ? {
+      capture_attempts: previousRound.capture_attempts || 0,
+      capture_diagnostics: structuredClone(previousRound.capture_diagnostics || [])
+    } : {}) } };
   task = await gateway.taskStore.update(task.task_id, { inputs: { ...inputs, runtime }, private: { ...task.private,
     creation: privateCreation, frozen_creation_verification: signed } });
   task = await gateway.taskStore.transition(task.task_id, 'verifying', { reason: 'verify_frozen_creation_after_parameter_edit' });
