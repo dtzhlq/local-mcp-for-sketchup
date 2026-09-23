@@ -313,7 +313,7 @@
       "release_artifact": false,
       "target": "darwin-arm64",
       "version": "0.3.0",
-      "path": "/Users/07zhang/.codex/worktrees/modeling-api-uplift/sketchup-mcp-replica/out/modeling-uplift/nonrelease-uplift-qa-fixed-20260918-local-mcp-for-sketchup-0.3.0-darwin-arm64.tar.gz",
+      "path": "[historical-worktree]/out/modeling-uplift/nonrelease-uplift-qa-fixed-20260918-local-mcp-for-sketchup-0.3.0-darwin-arm64.tar.gz",
       "file_name": "nonrelease-uplift-qa-fixed-20260918-local-mcp-for-sketchup-0.3.0-darwin-arm64.tar.gz",
       "media_type": "application/gzip",
       "sha256": "9252f9245fff288816a328342001f660ee8fd22ebfa102b1c0e46ef1d453bfc4",

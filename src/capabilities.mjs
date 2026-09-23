@@ -9,7 +9,7 @@ import { BOOLEAN_OPERATIONS_SHA256, MODEL_REVISION_SOURCE_SHA256 } from './runti
 
 export const DSL_VERSION = 1;
 export const CAPABILITY_MANIFEST_VERSION = '2026-09-modeling-uplift-alpha.1';
-export const RUNTIME_CAPABILITY_VERSION = '0.3.0-modeling-alpha.1';
+export const RUNTIME_CAPABILITY_VERSION = '0.4.0-timber.1';
 export const OCCURRENCE_CONTRACT_VERSION = 'canonical-occurrence-path.v1';
 export const QUEUE_MODEL_REVISION_STRATEGY = 'definition-merkle.v2';
 export const QUEUE_MODEL_REVISION_UNIQUE_ENTITY_LIMIT = 1_000_000;

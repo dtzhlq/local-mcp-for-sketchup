@@ -11,9 +11,9 @@ module AlmaSketchupMCP
     session_model_revision_report(model, model_snapshot)['model_revision']
   end
 
-  def session_model_revision_report(model, model_snapshot = nil)
+  def session_model_revision_report(model, model_snapshot = nil, merkle_graph: nil)
     model_snapshot ||= snapshot(model, include_detail_evidence: false)
-    graph = model_revision_merkle_graph(model, model_snapshot)
+    graph = merkle_graph || model_revision_merkle_graph(model, model_snapshot)
     source = {
       'strategy' => MODEL_REVISION_STRATEGY,
       'root_digest' => graph['root_digest'],
@@ -66,6 +66,7 @@ module AlmaSketchupMCP
     {
       'strategy' => MODEL_REVISION_STRATEGY,
       'root_digest' => root['digest'],
+      'definition_reports' => state['definition_reports'],
       'logical_occurrences' => root['expanded_count'],
       'unique_entities' => state['unique_entities'],
       'reachable_definitions' => state['reachable_definitions'],

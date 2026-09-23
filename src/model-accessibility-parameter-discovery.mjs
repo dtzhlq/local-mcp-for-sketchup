@@ -54,7 +54,7 @@ export async function indexSavedParameterSource({ taskStore, receipt, deliveryTa
 export async function discoverParameterSources({ gateway, runtime, query } = {}) {
   if (!['mock','queue'].includes(runtime)) throw new AgentContractError('INVALID_ARGUMENT', 'Parameter source discovery needs explicit runtime=mock or queue.');
   if (query !== undefined && (typeof query !== 'string' || query.length > 120)) throw new AgentContractError('INVALID_ARGUMENT', 'query must be a short literal root name.');
-  const adoption = await gateway.bridge.adopt_open_model({ runtime, read_only: true, recursive: false });
+  const adoption = await gateway.bridge.adopt_open_model({ runtime, read_only: true, recursive: false, ...(runtime === 'queue' ? {assembly_projection: true, timeoutMs: 300000} : {}) });
   const identity = modelIdentityForAdoption(adoption), modelKey = modelKeyForIdentity(identity), sources = [], documentBinding = parameterSourceDocumentBinding(adoption);
   const entries = await readEntries(gateway.taskStore, modelKey);
   for (const item of entries) {

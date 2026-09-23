@@ -209,10 +209,10 @@ function assertRecordInputs({ task, claim, binding, bridgeReceipt, finalizer }) 
   assertBridgeReceipt(bridgeReceipt, binding.runtime);
   if (!finalizer
     || finalizer.version !== TASK_MUTATION_FINALIZER_VERSION
-    || finalizer.kind !== 'reviewed_existing_model_edit'
+    || !['reviewed_existing_model_edit', 'committed_assembly_replacement'].includes(finalizer.kind)
     || !finalizer.applied_result
     || finalizer.applied_result.kind !== 'apply_reviewed_model_edit'
-    || finalizer.applied_result.ok !== true
+    || !validFinalizerState(finalizer, binding.runtime)
     || finalizer.applied_result.plan_id !== binding.plan_id
     || finalizer.applied_result.model_revision_before !== binding.model_revision_before
     || (finalizer.applied_result.model_key !== undefined
@@ -258,9 +258,9 @@ function assertReceiptShape(record) {
   if (!record.finalizer
     || canonicalJson(Object.keys(record.finalizer).sort()) !== canonicalJson(['applied_result', 'kind', 'version'])
     || record.finalizer.version !== TASK_MUTATION_FINALIZER_VERSION
-    || record.finalizer.kind !== 'reviewed_existing_model_edit'
+    || !['reviewed_existing_model_edit', 'committed_assembly_replacement'].includes(record.finalizer.kind)
     || record.finalizer.applied_result?.kind !== 'apply_reviewed_model_edit'
-    || record.finalizer.applied_result?.ok !== true
+    || !validFinalizerState(record.finalizer, record.runtime)
     || record.finalizer.applied_result?.plan_id !== record.plan_id
     || record.finalizer.applied_result?.model_revision_before !== record.model_revision_before
     || (record.finalizer.applied_result?.model_key !== undefined
@@ -442,4 +442,13 @@ async function syncDirectory(directory) {
   } finally {
     await handle?.close().catch(() => {});
   }
+}
+
+function validFinalizerState(finalizer, runtime) {
+  if (finalizer.kind === 'reviewed_existing_model_edit') return finalizer.applied_result?.ok === true;
+  const result = finalizer.applied_result;
+  return runtime === 'queue' && result?.ok === false && result.verification_pending === true
+    && result.assembly_scope_baseline && !Array.isArray(result.assembly_scope_baseline)
+    && typeof result.assembly_scope_baseline === 'object'
+    && Object.entries(result.assembly_scope_baseline).every(([path, hash]) => /^pid:[1-9]\d*$/.test(path) && SHA256_PATTERN.test(hash));
 }

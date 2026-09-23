@@ -129,7 +129,7 @@ export function planDesignParameterChange({ designGraph, currentModelGraph, chan
 }
 
 function planAssemblyParameterChange({ designGraph, currentModelGraph, normalizedChanges, changedParameterIds, affectedBindings, instruction, assemblyRebuild }) {
-  if (!currentModelGraph.completeness?.complete && !currentModelGraph.completeness?.scope_complete) throw new AgentContractError('MODEL_REVISION_INCOMPLETE', 'Versioned assembly editing requires a complete occurrence graph');
+  if (!currentModelGraph.completeness?.complete && !currentModelGraph.completeness?.scope_complete && !currentModelGraph.completeness?.assembly_scope_complete) throw new AgentContractError('MODEL_REVISION_INCOMPLETE', 'Versioned assembly editing requires a complete occurrence graph');
   if (!['single', 'all'].includes(assemblyRebuild.scope)) throw new Error('assemblyRebuild.scope must explicitly be single or all');
   const selections = new Map();
   for (const binding of affectedBindings) {
@@ -168,7 +168,8 @@ function planAssemblyParameterChange({ designGraph, currentModelGraph, normalize
     source_model_graph_id: currentModelGraph.graph_id, model_revision: currentModelGraph.model_revision,
     instruction: markUntrustedData(instruction, 'agent_instruction'), changes: normalizedChanges,
     affected_subgraph: affectedSubgraph, targets, operations: stage.operations, risk_level: 'S2',
-    divergence: [], blockers: [], execution_allowed: false, execution_route: 'trusted_reviewed_existing_model_edit_only', assembly_rebuild: stage, ...(currentModelGraph.completeness.recursive_root_paths ? { recursive_roots: currentModelGraph.completeness.recursive_root_paths } : {})
+    divergence: [], blockers: [], execution_allowed: false, execution_route: 'trusted_reviewed_existing_model_edit_only', assembly_rebuild: stage,
+    ...(currentModelGraph.completeness.assembly_scope_complete ? { readback_projection: 'assembly-merkle.v2' } : {}), ...(currentModelGraph.completeness.recursive_root_paths ? { recursive_roots: currentModelGraph.completeness.recursive_root_paths } : {})
   };
   return { ...core, change_plan_id: `design-change-${sha256Canonical(core).slice(7, 31)}`,
     next_action: { action: 'prepare_versioned_assembly_edit', arguments: { runtime: currentModelGraph.runtime,

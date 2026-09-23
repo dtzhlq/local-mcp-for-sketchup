@@ -33,4 +33,19 @@ class ScopedRecursiveIndexTest < Minitest::Test
     limited = AlmaSketchupMCP.recursive_entity_index(model, 2, roots: ['pid:1'])
     assert_equal 4, limited['total_seen']; assert limited['truncated']; assert_equal 2, limited['entries'].length
   end
+  def test_assembly_projection_keeps_global_roots_and_nested_containers_without_leaf_expansion
+    leaves = (100..1099).map { |id| Sketchup::Edge.new(id) }
+    deep = Sketchup::ComponentInstance.new(5, Definition.new(50, 'deep', leaves))
+    boundary = Sketchup::ComponentInstance.new(6, Definition.new(60, 'boundary', [deep]))
+    child = Sketchup::ComponentInstance.new(3, Definition.new(30, 'leaf-solid', [boundary]))
+    selected = Sketchup::ComponentInstance.new(1, Definition.new(10, 'selected', [child]))
+    unrelated = Sketchup::ComponentInstance.new(2, Definition.new(20, 'unrelated', leaves))
+    loose = Sketchup::Edge.new(4)
+    model = Model.new([selected, unrelated, loose])
+    report = AlmaSketchupMCP.recursive_entity_index(model, 10, roots: ['pid:1'], assembly_projection: true)
+    assert_equal ['pid:1','pid:1.3','pid:1.3.6','pid:2','pid:4'], report['entries'].map { |e| e['entity_path'] }
+    assert_equal 5, report['total_seen']
+    refute report['truncated']
+  end
+
 end

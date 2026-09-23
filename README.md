@@ -6,6 +6,10 @@ An independent local MCP server for generating and editing SketchUp models throu
 
 [Changes](CHANGELOG.md) · [48 tools](docs/tool-registry.md) · [Modeling guide](docs/modeling-uplift/usage.md) · [NURBS and curved-edge fillets](docs/cad-surface-kernel/README.md) · [Candidate setup](docs/DEVELOPMENT_CANDIDATE.md)
 
+## Chinese timber candidate
+
+v0.4.0 adds a fixed Yingzao Fashi hall preset through the existing task Gateway, explicit historical-unit scale, source-bound parameters and scoped instance updates. See [rules](docs/traditional-timber/RULES.md), [MCP usage](docs/traditional-timber/USAGE.md) and [current implementation status](docs/traditional-timber/implementation-status.md). This candidate has not yet replaced the stable release below.
+
 ## What's new
 
 | Capability | What it enables |

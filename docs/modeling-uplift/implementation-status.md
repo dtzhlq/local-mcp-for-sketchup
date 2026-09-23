@@ -4,7 +4,7 @@
 
 基线：v0.2.0 / 1d27e9c8c4ab34e8b7cdc1ae24d83f4530a855d3。
 原开发分支：codex/modeling-api-uplift；后续 CAD 集成分支：codex/cad-surface-kernel。
-独立工作树：/Users/07zhang/.codex/worktrees/modeling-api-uplift/sketchup-mcp-replica。
+独立工作树：[historical-worktree]。
 原 OneDrive 工作树的已有未提交内容保留。
 
 ## 已交付

@@ -1,3 +1,4 @@
+import { adoptAssemblySummary } from './model-accessibility-assembly-summary.mjs';
 import { AgentContractError, sha256Canonical } from './agent-contract.mjs';
 import { buildModelGraph } from './model-graph.mjs';
 import { modelIdentityForAdoption, modelKeyForIdentity } from './model-identity.mjs';
@@ -25,14 +26,15 @@ async function verifyExecution(gateway, task) {
   return body;
 }
 async function graphFor(gateway, task, edit) {
-  const adoption = edit.change_plan.recursive_roots?.length > 1 ? await adoptParameterRoots({ bridge: gateway.bridge,
+  const adoption = edit.change_plan.readback_projection === 'assembly-merkle.v2' ? await adoptAssemblySummary({ bridge: gateway.bridge,
+    rootPaths: edit.change_plan.recursive_roots, recursiveLimit: task.private.parameter_recursive_limit, timeoutMs: task.private.parameter_timeout_ms }) : edit.change_plan.recursive_roots?.length > 1 ? await adoptParameterRoots({ bridge: gateway.bridge,
     runtime: task.inputs.runtime || task.private.parameter_source_record.runtime, recursiveLimit: task.private.parameter_recursive_limit,
     timeoutMs: task.private.parameter_timeout_ms, rootPaths: edit.change_plan.recursive_roots }) : await gateway.bridge.adopt_open_model({ runtime: task.inputs.runtime || task.private.parameter_source_record.runtime,
     recursive: true, recursive_limit: task.private.parameter_recursive_limit, recursive_roots: edit.change_plan.recursive_roots, read_only: true,
     timeoutMs: task.private.parameter_timeout_ms });
   if (modelKeyForIdentity(modelIdentityForAdoption(adoption)) !== edit.design_graph.model_key) throw new AgentContractError('MODEL_IDENTITY_MISMATCH', 'Parameter execution is bound to a different model.');
   const graph = buildModelGraph(adoption);
-  if (!graph.completeness.complete && !graph.completeness.scope_complete) throw new AgentContractError('MODEL_REVISION_INCOMPLETE', 'Parameter execution requires complete selected subtrees.');
+  if (!graph.completeness.complete && !graph.completeness.scope_complete && !(edit.change_plan.readback_projection === 'assembly-merkle.v2' && graph.completeness.assembly_scope_complete)) throw new AgentContractError('MODEL_REVISION_INCOMPLETE', 'Parameter execution requires complete selected subtrees.');
   return graph;
 }
 async function verifyOriginalBindings(gateway, task, edit, requireRevision) {
@@ -54,9 +56,21 @@ export async function continueDefinitionParameterExecution(gateway, task, { inpu
   if (!execution) {
     if (!edit?.ready) throw new AgentContractError('INVALID_ARGUMENT', 'A ready creation-bound parameter plan is required.');
     if (runtime === 'queue' && (!gateway.bridge.executionPolicy.allow_queue_mutation || !gateway.bridge.executionPolicy.allowed_runtimes.includes('queue'))) throw new AgentContractError('POLICY_DENIED', 'The server does not allow queue parameter mutation.');
-    const session = input.session_contract || task.inputs.session_contract;
+    let session = input.session_contract || task.inputs.session_contract;
     if (runtime === 'queue' && !session) throw new AgentContractError('HANDSHAKE_REQUIRED', 'A fresh queue connection is required for unused-definition staging.');
-    await verifyOriginalBindings(gateway, task, edit, true);
+    // Authenticate the submitted connection before any refresh. A slow native
+    // read may then outlive it, but never supplies authority to change documents.
+    if (runtime === 'queue') await gateway.bridge.sessionContractAuthority.verify(session, { operation: 'parameter_staging' });
+    const stagingGraph = await verifyOriginalBindings(gateway, task, edit, true);
+    if (runtime === 'queue') {
+      const fresh = (await gateway.bridge.create_queue_handshake({ timeoutMs: task.private.parameter_timeout_ms, expires_in_ms: Math.min(300000, Math.max(120000, task.private.parameter_timeout_ms)) })).session_contract;
+      if (fresh.session_id !== session.session_id || fresh.document_id !== session.document_id
+        || sha256Canonical(fresh.model_identity) !== sha256Canonical(session.model_identity)
+        || fresh.model_revision !== stagingGraph.model_revision) {
+        throw new AgentContractError('MODEL_REVISION_MISMATCH', 'The document or model changed while refreshing the parameter staging connection.');
+      }
+      session = fresh;
+    }
     execution = { version: 'parameter-execution.v1', task_id: task.task_id, edit_hash: edit.edit_hash, phase: 'staging_started',
       creation_sha256: edit.change_plan.assembly_rebuild.creation_sha256, source_record_hash: edit.source_record_hash };
     task = await writeExecution(gateway, task.task_id, execution);
@@ -64,7 +78,7 @@ export async function continueDefinitionParameterExecution(gateway, task, { inpu
     task = await gateway.taskStore.transition(task.task_id, 'executing', { reason: 'parameter_fresh_definitions_started' });
     const built = await gateway.bridge.withAgentGatewayExecution({ taskId: task.task_id, intent: task.intent }, scoped => scoped.withLiveMutationAuthorization({
       runtime, timeoutMs: task.private.parameter_timeout_ms, session_contract: session, operation: 'build_model'
-    }, authorized => authorized.build_model({ runtime, timeoutMs: task.private.parameter_timeout_ms, code: JSON.stringify(edit.change_plan.assembly_rebuild.creation_document) })));
+    }, authorized => authorized.build_model({ runtime, timeoutMs: task.private.parameter_timeout_ms, code: JSON.stringify(edit.change_plan.assembly_rebuild.creation_document), snapshot_detail:edit.change_plan.readback_projection!=='assembly-merkle.v2' })));
     const receipt = runtime === 'queue' ? trustedBridgeReceipt({ runtime, nativeReceipt: built.mutation_receipt })
       : { source: 'isolated_mock_build_return', snapshot_hash: sha256Canonical(built.snapshot) };
     execution = { ...execution, phase: 'staging_committed', staging_receipt: receipt, staging_result_hash: sha256Canonical(built),
@@ -80,7 +94,7 @@ export async function continueDefinitionParameterExecution(gateway, task, { inpu
       inputs: { runtime, targets: edit.change_plan.targets, operations: edit.change_plan.operations,
         recursive_limit: task.private.parameter_recursive_limit, timeout_ms: task.private.parameter_timeout_ms,
         ...(edit.change_plan.recursive_roots ? { recursive_roots: edit.change_plan.recursive_roots } : {}),
-        save_model: false, capture_view: false } };
+        readback_projection: edit.change_plan.readback_projection, save_model: false, capture_view: false } };
     const childEnvelope = await gateway.startUnprojected(childArgs);
     const child = await gateway.taskStore.getTask(childEnvelope.task_id, { includePrivate: true });
     const reviewedPlan = child.private?.existing_edit_plan;

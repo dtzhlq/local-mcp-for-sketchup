@@ -196,11 +196,15 @@ const SCOPED_CUT_HOSTS = new Set(['box', 'rounded_box', 'beveled_panel', 'panel_
 
 // Scoped companion to the unchanged additive-only policy. This is a plan, not
 // permission: both runtimes must validate absence and target closure atomically.
-export function prepareTaskOwnedCreationDsl(code, { taskId, iteration = 0 } = {}) {
+export function prepareTaskOwnedCreationDsl(code, { taskId, iteration = 0, existingDefinitions = {}, expectedModelRevision } = {}) {
   if (!/^task_[0-9a-f-]+$/i.test(String(taskId)) || !Number.isInteger(iteration) || iteration < 0) throw new AgentContractError('INVALID_ARGUMENT', 'A server task and creation iteration are required.');
   const expanded = expandDslCode(code);
   if (expanded.document.creation_scope) throw new AgentContractError('INVALID_ARGUMENT', 'Creation scope is server generated.');
   const prefix = `alma_${sha256Canonical({ taskId, iteration }).slice(7, 27)}_`;
+  if (!existingDefinitions || typeof existingDefinitions !== 'object' || Array.isArray(existingDefinitions)
+    || Object.entries(existingDefinitions).some(([key,value])=>!key||typeof value!=='string'||!value)) throw new AgentContractError('INVALID_ARGUMENT','Invalid existing definition bindings.');
+  const reuseNames=[...new Set(Object.values(existingDefinitions))];
+  if(reuseNames.length && !/^sha256:[0-9a-f]{64}$/.test(expectedModelRevision||'')) throw new AgentContractError('INVALID_ARGUMENT','Existing definitions require a complete expected native revision.');
   const identityMap = {};
   const definitions = new Map();
   const materials = new Map();
@@ -208,6 +212,7 @@ export function prepareTaskOwnedCreationDsl(code, { taskId, iteration = 0 } = {}
     if (operation.op === 'component_definition' || operation.op === 'material') {
       const map = operation.op === 'material' ? materials : definitions;
       if (typeof operation.name !== 'string' || !operation.name || map.has(operation.name)) throw new AgentContractError('INVALID_ARGUMENT', 'New resource names must be unique.');
+      if(operation.op==='component_definition'&&Object.hasOwn(existingDefinitions,operation.name)) throw new AgentContractError('INVALID_ARGUMENT','A definition cannot be both reused and created.');
       map.set(operation.name, `${prefix}${operation.op}_${map.size}`);
     }
   }
@@ -227,7 +232,7 @@ export function prepareTaskOwnedCreationDsl(code, { taskId, iteration = 0 } = {}
         delete result.objectId;
       }
     }
-    if (operation.definition) result.definition = definitions.get(operation.definition) || operation.definition;
+    if (operation.definition) result.definition = definitions.get(operation.definition) || existingDefinitions[operation.definition] || operation.definition;
     for (const key of MATERIAL_SPEC_FIELDS) if (typeof result[key] === 'string' && materials.has(result[key])) result[key] = materials.get(result[key]);
     return result;
   };
@@ -244,7 +249,8 @@ export function prepareTaskOwnedCreationDsl(code, { taskId, iteration = 0 } = {}
   patchTargets(operations);
   const document = { ...expanded.document, operations, creation_scope: {
     version: CREATION_SCOPE_VERSION, task_id: taskId, iteration, namespace: prefix,
-    definitions: [...definitions.values()], materials: [...materials.values()]
+    definitions: [...definitions.values()], materials: [...materials.values()],
+    ...(reuseNames.length?{definition_references:{version:'immutable-definition-references.v1',names:reuseNames,model_revision:expectedModelRevision}}:{})
   } };
   validateTaskOwnedCreationDocument(document);
   return { ...expanded, document, code: JSON.stringify(document), identity_map: identityMap, material_map: Object.fromEntries(materials), creation_scope: document.creation_scope };
@@ -254,6 +260,11 @@ export function validateTaskOwnedCreationDocument(document) {
   const scope = document.creation_scope;
   const deny = (reason) => { throw new AgentContractError('OPERATION_NOT_ALLOWED', `Creation scope rejected: ${reason}`); };
   if (scope?.version !== CREATION_SCOPE_VERSION || !/^alma_[0-9a-f]{20}_$/.test(scope.namespace || '')) deny('invalid contract');
+  const reference=scope.definition_references;
+  if(reference && (reference.version!=='immutable-definition-references.v1'||Object.keys(reference).sort().join(',')!=='model_revision,names,version'
+    ||!/^sha256:[0-9a-f]{64}$/.test(reference.model_revision||'')||!Array.isArray(reference.names)||!reference.names.length||reference.names.length>50000
+    ||reference.names.some(name=>typeof name!=='string'||!name)||new Set(reference.names).size!==reference.names.length)) deny('invalid immutable definition references');
+  const reused=new Set(reference?.names||[]),usedReferences=new Set();
   const definitions = new Set();
   const materials = new Set();
   const rootObjects = [];
@@ -271,7 +282,7 @@ export function validateTaskOwnedCreationDocument(document) {
         continue;
       }
       if (operation.op === 'component_definition') {
-        if (nested || !operation.name?.startsWith(scope.namespace) || definitions.has(operation.name)) deny('definition must be fresh and acyclic');
+        if (nested || !operation.name?.startsWith(scope.namespace) || definitions.has(operation.name) || reused.has(operation.name)) deny('definition must be fresh and acyclic');
         if (findMutableMaterialSpecs({ ...operation, operations: undefined }, '').length) deny('inline mutable material');
         visit(operation.operations || [], true);
         definitions.add(operation.name);
@@ -287,7 +298,10 @@ export function validateTaskOwnedCreationDocument(document) {
       if (nested && OPERATION_REGISTRY[operation.op].component_scope?.status !== 'supported') deny('operation is not supported in definitions');
       if (EXISTING_TARGET_FIELDS.some(key => Object.hasOwn(operation, key)) || operation.operations) deny('existing references or hidden operations');
       if (findMutableMaterialSpecs(operation, '').length) deny('inline mutable material');
-      if (operation.op === 'component_instance' && !definitions.has(operation.definition)) deny('instance must refer to an earlier new definition');
+      if (operation.op === 'component_instance' && !definitions.has(operation.definition)) {
+        if(!reused.has(operation.definition)) deny('instance must refer to an earlier new or declared immutable definition');
+        usedReferences.add(operation.definition);
+      }
       if (!operation.id?.startsWith(scope.namespace) || objects.has(operation.id)) deny('fresh unique object id required');
       objects.set(operation.id, operation);
       if (!nested) rootObjects.push(operation);
@@ -295,6 +309,7 @@ export function validateTaskOwnedCreationDocument(document) {
   };
   visit(document.operations || []);
   if (JSON.stringify([...definitions]) !== JSON.stringify(scope.definitions) || JSON.stringify([...materials]) !== JSON.stringify(scope.materials)) deny('resource declaration mismatch');
+  if([...reused].some(name=>!usedReferences.has(name))) deny('unused definition reference');
   const metadata = validateHostCreationMetadata(document, rootObjects);
   return { scope, root_objects: rootObjects, new_tags: metadata.tags };
 }
@@ -308,6 +323,8 @@ export function validateCreationScopeAgainstModel(document, model) {
   const definitions = names(model.component_definitions);
   const materials = names(model.materials);
   const tags = names(model.tags);
+  const references=validation.scope.definition_references;
+  if(references && (model.model_revision!==references.model_revision||references.names.some(name=>!definitions.has(name)))) throw new AgentContractError('MODEL_REVISION_MISMATCH','Immutable definition references require the recorded model revision and existing resources.');
   if (validation.new_tags.some(name => tags.has(name))) throw new AgentContractError('OPERATION_NOT_ALLOWED', 'Creation tag already exists.');
   if (validation.scope.definitions.some(name => definitions.has(name)) || validation.scope.materials.some(name => materials.has(name))) throw new AgentContractError('OPERATION_NOT_ALLOWED', 'Creation resource already exists.');
   const declaredMaterials = new Set([...materials, ...validation.scope.materials]);

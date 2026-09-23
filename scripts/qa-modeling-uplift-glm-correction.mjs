@@ -1,5 +1,6 @@
 import fs from 'node:fs/promises';import path from 'node:path';import {pathToFileURL} from 'node:url';
-const original='/Users/07zhang/Library/CloudStorage/OneDrive-个人/work/项目/sketchup-mcp-replica';
+const original=process.env.SKETCHUP_MCP_RESEARCH_ROOT;
+if(!original) throw new Error('This optional historical research script requires SKETCHUP_MCP_RESEARCH_ROOT. It is not part of the installed service.');
 const {requestAlmaMessage}=await import(pathToFileURL(path.join(original,'scripts/model-accessibility/alma-provider.mjs')));
 const config=JSON.parse(await fs.readFile(path.join(original,'output/model-accessibility-live-2026-09-08/glm-provider.json'),'utf8'));
 const old=JSON.parse(await fs.readFile('output/modeling-uplift/glm/readback-uplift.json'));

@@ -197,6 +197,10 @@ export function normalizeExecutionPolicy(value = {}) {
   const allowQueueMutation = source.allow_queue_mutation === true && allowedRuntimes.includes('queue');
   const resourceLimits = {
     max_operations: boundedPolicyInteger(source.resource_limits?.max_operations ?? source.max_operations, 100, 10_000),
+    // Deterministic built-in architecture presets have many additive leaves.
+    // These do not raise the budgets of reviewed arbitrary model edits.
+    max_builtin_preset_operations: boundedPolicyInteger(source.resource_limits?.max_builtin_preset_operations, 100_000, 200_000),
+    max_builtin_preset_leaf_occurrences: boundedPolicyInteger(source.resource_limits?.max_builtin_preset_leaf_occurrences, 120_000, 240_000),
     max_affected_instances: boundedPolicyInteger(source.resource_limits?.max_affected_instances ?? source.max_affected_instances, 200, 100_000),
     max_recursive_entities: boundedPolicyInteger(source.resource_limits?.max_recursive_entities ?? source.max_recursive_entities, 10_000, 100_000),
     auto_approve_s1_max_affected_instances: boundedPolicyInteger(source.resource_limits?.auto_approve_s1_max_affected_instances ?? source.auto_approve_s1_max_affected_instances, 1, 100_000)

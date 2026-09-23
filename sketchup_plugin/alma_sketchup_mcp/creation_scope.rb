@@ -12,6 +12,17 @@ module AlmaSketchupMCP
 
     reject = lambda { |reason| raise "Creation scope rejected: #{reason}" }
     reject.call('invalid contract') unless scope['version'] == 'creation-scope.v1' && scope['namespace'].to_s.match?(/\Aalma_[0-9a-f]{20}_\z/)
+    reference = scope['definition_references']
+    reused = []
+    used_references = []
+    if reference
+      reject.call('invalid immutable definition references') unless reference.is_a?(Hash) && reference.keys.sort == %w[model_revision names version] && reference['version'] == 'immutable-definition-references.v1' && reference['model_revision'].to_s.match?(/\Asha256:[0-9a-f]{64}\z/)
+      reused = reference['names']
+      reject.call('invalid immutable definition names') unless reused.is_a?(Array) && !reused.empty? && reused.length <= 50_000 && reused.uniq.length == reused.length && reused.all? { |name| name.is_a?(String) && !name.empty? }
+      reject.call('immutable definition missing') unless reused.all? { |name| model.definitions[name] }
+      revision = session_model_revision_report(model)
+      reject.call('immutable definition revision mismatch') unless revision['complete'] == true && revision['model_revision'] == reference['model_revision']
+    end
     namespace = scope['namespace']
     host_metadata = scope['host_metadata']
     metadata_operations = %w[attribute tag assign_tag]
@@ -62,7 +73,7 @@ module AlmaSketchupMCP
           next
         end
         if op == 'component_definition'
-          reject.call('definition must be a fresh top-level resource') if nested || !name.to_s.start_with?(namespace) || definitions.include?(name) || model.definitions[name]
+          reject.call('definition must be a fresh top-level resource') if nested || !name.to_s.start_with?(namespace) || definitions.include?(name) || reused.include?(name) || model.definitions[name]
           reject.call('mutable definition material') if operation['material'].is_a?(Hash)
           visit.call(operation['operations'] || [], true)
           definitions << name
@@ -80,7 +91,10 @@ module AlmaSketchupMCP
         reject.call("unsupported operation #{op}") if forbidden.include?(op) || !allowed.include?(op)
         reject.call('existing references or hidden operations') if targets.any? { |key| operation.key?(key) } || operation.key?('operations')
         reject.call('inline mutable material') if material_fields.any? { |key| operation[key].is_a?(Hash) }
-        reject.call('instance references an existing or forward definition') if op == 'component_instance' && !definitions.include?(operation['definition'])
+        if op == 'component_instance' && !definitions.include?(operation['definition'])
+          reject.call('instance references an undeclared or forward definition') unless reused.include?(operation['definition'])
+          used_references << operation['definition']
+        end
         id = operation['id']
         reject.call('fresh unique object id required') unless id.to_s.start_with?(namespace) && !objects.key?(id)
         objects[id] = operation
@@ -88,6 +102,7 @@ module AlmaSketchupMCP
       end
     end
     visit.call(document['operations'], false)
+    reject.call('unused definition reference') unless (reused - used_references).empty?
     validate_creation_host_metadata!(model, document, root_objects, reject)
     reject.call('resource declaration mismatch') unless definitions == scope['definitions'] && materials == scope['materials']
     model.entities.each do |entity|

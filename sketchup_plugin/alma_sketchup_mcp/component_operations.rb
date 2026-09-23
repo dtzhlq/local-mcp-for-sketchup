@@ -7,6 +7,11 @@ module AlmaSketchupMCP
     name = operation.fetch('name')
     definition = model.definitions[name] || model.definitions.add(name)
     definition.entities.clear!
+    previous_identity_index = @definition_creation_identity_index
+    # This definition has just been cleared and its supported child operations
+    # only add geometry. Index identities as they are added instead of scanning
+    # all earlier siblings for each tile in a large assembly.
+    @definition_creation_identity_index = { entities: definition.entities, ids: {}, names: {} }
 
     if operation.key?('operations')
       operations = operation['operations']
@@ -19,6 +24,8 @@ module AlmaSketchupMCP
     size = vector(operation['size'] || [1000, 1000, 1000], "#{name}.size")
     material = operation['material']
     add_box(definition.entities, 'name' => "#{name}_Geometry", 'origin' => [0, 0, 0], 'size' => size, 'material' => material)
+  ensure
+    @definition_creation_identity_index = previous_identity_index
   end
 
   def apply_component_definition_operation(entities, operation, component_name)

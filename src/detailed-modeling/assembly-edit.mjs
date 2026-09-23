@@ -1,3 +1,4 @@
+import { adoptAssemblySummary } from '../model-accessibility-assembly-summary.mjs';
 import path from 'node:path';
 import { AgentContractError, sha256Canonical } from '../agent-contract.mjs';
 import { prepareTaskOwnedCreationDsl, validateTaskOwnedCreationDocument } from '../agent-dsl-policy.mjs';
@@ -15,13 +16,16 @@ export function isTrustedAssemblyEditReceipt(value) {
 // Only selected assembly definitions and their dependency closure are copied.
 // Every reference in the creation stage points to another new definition; the
 // existing instances are touched only by the later reviewed replacement stage.
-export function compileVersionedAssemblyRebuild({ previousDsl, nextDsl, selections, scope, taskId, iteration = 0, materialMap = {} } = {}) {
+export function compileVersionedAssemblyRebuild({ previousDsl, nextDsl, selections, scope, taskId, iteration = 0, materialMap = {}, existingDefinitionMap = {}, existingIdentityMap = {}, expectedModelRevision } = {}) {
   if (!['single', 'all'].includes(scope)) throw new Error('assemblyRebuild.scope must explicitly be single or all');
   if (!Array.isArray(selections) || !selections.length) throw new Error('Assembly rebuild requires selected instances');
   const previous = definitionIndex(previousDsl), next = definitionIndex(nextDsl);
-  const emitted = new Set(), visiting = new Set(), operations = [];
+  const emitted = new Set(), visiting = new Set(), operations = [], reused = {};
+  const oldHashes=new Map(),newHashes=new Map();
+  const unchanged=name=>previous.has(name)&&definitionClosureHash(previous,name,[],oldHashes)===definitionClosureHash(next,name,[],newHashes);
   const emit = (name) => {
-    if (emitted.has(name)) return;
+    if (emitted.has(name)||reused[name]) return;
+    if(existingDefinitionMap[name]&&unchanged(name)){reused[name]=existingDefinitionMap[name];return;}
     if (visiting.has(name)) throw new Error(`Assembly definition cycle: ${name}`);
     const definition = next.get(name);
     if (!definition) throw new Error(`Recompiled assembly definition missing: ${name}`);
@@ -48,18 +52,18 @@ export function compileVersionedAssemblyRebuild({ previousDsl, nextDsl, selectio
     if (result.operations) result.operations = result.operations.map(remap);
     return result;
   };
-  const creation = prepareTaskOwnedCreationDsl(JSON.stringify({ version: 1, units: 'mm', operations: operations.map(remap) }), { taskId, iteration });
-  const definitionMap = Object.fromEntries(operations.map((operation, index) => [operation.name, creation.document.operations[index].name]));
+  const creation = prepareTaskOwnedCreationDsl(JSON.stringify({ version: 1, units: 'mm', operations: operations.map(remap) }), { taskId, iteration, existingDefinitions:reused, expectedModelRevision });
+  const definitionMap = {...reused,...Object.fromEntries(operations.map((operation, index) => [operation.name, creation.document.operations[index].name]))};
   const replacements = selections.map(selection => ({
     ...structuredClone(selection), replacement_definition: definitionMap[selection.logical_definition]
   }));
   return {
     version: ASSEMBLY_REBUILD_VERSION, scope, task_id: taskId, iteration,
     creation_document: creation.document, creation_sha256: sha256Canonical(creation.document),
-    definition_map: definitionMap, identity_map: creation.identity_map, material_map: structuredClone(materialMap), replacements,
+    definition_map: definitionMap, identity_map: {...existingIdentityMap,...creation.identity_map}, material_map: structuredClone(materialMap), replacements,
     operations: replacements.map(entry => ({ op: 'replace_component_definition', ...entry.target, definition: entry.replacement_definition })),
     changed_definitions: [...emitted].filter(name => !previous.has(name) || sha256Canonical(previous.get(name)) !== sha256Canonical(next.get(name))),
-    copied_definition_count: emitted.size,
+    copied_definition_count: emitted.size, reused_definition_count: Object.keys(reused).length,
     permission: 'fresh_resources_only_then_trusted_reviewed_existing_model_edit',
     source_dsl_hash: sha256Canonical(previousDsl), next_dsl_hash: sha256Canonical(nextDsl)
   };
@@ -90,12 +94,14 @@ function definitionIndex(dsl) {
   return result;
 }
 
-function definitionClosureHash(index, root, stack = []) {
+function definitionClosureHash(index, root, stack = [], memo = new Map()) {
+  if(memo.has(root))return memo.get(root);
   if (stack.includes(root)) throw new Error(`Assembly definition cycle: ${root}`);
   const definition = index.get(root);
   if (!definition) throw new Error(`Assembly definition missing: ${root}`);
-  return sha256Canonical({ definition, dependencies: (definition.operations || []).filter(operation => operation.op === 'component_instance')
-    .map(operation => definitionClosureHash(index, operation.definition, [...stack, root])) });
+  const hash=sha256Canonical({ definition, dependencies: (definition.operations || []).filter(operation => operation.op === 'component_instance')
+    .map(operation => definitionClosureHash(index, operation.definition, [...stack, root],memo)) });
+  memo.set(root,hash);return hash;
 }
 
 function verifyChangePlan(designGraph, changePlan) {
@@ -110,11 +116,11 @@ function verifyChangePlan(designGraph, changePlan) {
   return stage;
 }
 
-async function currentGraph(bridge, runtime, timeoutMs, recursiveLimit, recursiveRoots) {
-  const graph = buildModelGraph(recursiveRoots?.length > 1
+async function currentGraph(bridge, runtime, timeoutMs, recursiveLimit, recursiveRoots, projection) {
+  const graph = buildModelGraph(projection === 'assembly-merkle.v2' ? await adoptAssemblySummary({ bridge, timeoutMs, recursiveLimit, rootPaths: recursiveRoots }) : recursiveRoots?.length > 1
     ? await adoptParameterRoots({ bridge, runtime, timeoutMs, recursiveLimit, rootPaths: recursiveRoots })
     : await bridge.adopt_open_model({ runtime, timeoutMs, recursive: true, recursive_limit: recursiveLimit, recursive_roots: recursiveRoots, read_only: true }));
-  if (!graph.completeness?.complete && !(recursiveRoots && graph.completeness?.scope_complete)) throw new AgentContractError('MODEL_REVISION_INCOMPLETE', 'Assembly edit verification requires a complete occurrence graph; increase recursiveLimit');
+  if (!graph.completeness?.complete && !(recursiveRoots && graph.completeness?.scope_complete) && !(projection === 'assembly-merkle.v2' && graph.completeness?.assembly_scope_complete)) throw new AgentContractError('MODEL_REVISION_INCOMPLETE', 'Assembly edit verification requires a complete occurrence graph; increase recursiveLimit');
   return graph;
 }
 
@@ -123,17 +129,17 @@ async function currentGraph(bridge, runtime, timeoutMs, recursiveLimit, recursiv
 export async function prepareAssemblyParameterEdit({ bridge, designGraph, changePlan, runtime = 'mock', timeoutMs, outputDir,
   recursiveLimit = 5000, budgets, session_contract, sessionContract } = {}) {
   const stage = verifyChangePlan(designGraph, changePlan);
-  const before = await currentGraph(bridge, runtime, timeoutMs, recursiveLimit, changePlan.recursive_roots);
+  const before = await currentGraph(bridge, runtime, timeoutMs, recursiveLimit, changePlan.recursive_roots, changePlan.readback_projection);
   if (before.model_revision !== changePlan.model_revision) throw new AgentContractError('MODEL_REVISION_MISMATCH', 'The model changed before assembly staging');
   validateAssemblyMaterialReferences(stage.creation_document, before);
   const { compareDesignBindingFingerprints } = await import('../design-intent-graph.mjs');
   if (compareDesignBindingFingerprints(designGraph, before).length) throw new AgentContractError('MODEL_REVISION_MISMATCH', 'Manual assembly changes require reconciliation');
-  const creation = await bridge.build_model({ runtime, timeoutMs, code: JSON.stringify(stage.creation_document), session_contract, sessionContract });
-  const staged = await currentGraph(bridge, runtime, timeoutMs, recursiveLimit, changePlan.recursive_roots);
+  const creation = await bridge.build_model({ runtime, timeoutMs, code: JSON.stringify(stage.creation_document), snapshot_detail:changePlan.readback_projection!=='assembly-merkle.v2', session_contract, sessionContract });
+  const staged = await currentGraph(bridge, runtime, timeoutMs, recursiveLimit, changePlan.recursive_roots, changePlan.readback_projection);
   if (compareDesignBindingFingerprints(designGraph, staged).length) throw new AgentContractError('MODEL_REVISION_MISMATCH', 'An existing assembly changed during fresh definition staging');
   const preparedEdit = await bridge.prepare_existing_model_edit({ runtime, timeoutMs,
     instruction: changePlan.instruction.value, targets: changePlan.targets, operations: changePlan.operations,
-    recursive_limit: recursiveLimit, recursive_roots: changePlan.recursive_roots, budgets, expected_model_revision: staged.model_revision, task_id: stage.task_id,
+    recursive_limit: recursiveLimit, recursive_roots: changePlan.recursive_roots, readback_projection: changePlan.readback_projection, budgets, expected_model_revision: staged.model_revision, task_id: stage.task_id,
     output_dir: outputDir ? path.join(outputDir, 'review') : undefined });
   return {
     kind: 'prepare_assembly_parameter_edit', change_plan_id: changePlan.change_plan_id,
@@ -156,7 +162,7 @@ export async function applyAssemblyParameterEdit({ bridge, designGraph, changePl
   if (sha256Canonical(reviewedPlan.dsl_document.operations) !== sha256Canonical(changePlan.operations)) throw new AgentContractError('PLAN_HASH_MISMATCH', 'Reviewed operations differ from the assembly replacements');
   const applied = await bridge.apply_reviewed_model_edit({ runtime, timeoutMs, plan: reviewedPlan, approval_token,
     save_model, save_path, session_contract, sessionContract, output_dir: outputDir ? path.join(outputDir, 'apply') : undefined });
-  const modelGraph = await currentGraph(bridge, runtime, timeoutMs, recursiveLimit, changePlan.recursive_roots);
+  const modelGraph = await currentGraph(bridge, runtime, timeoutMs, recursiveLimit, changePlan.recursive_roots, changePlan.readback_projection);
   return finalizeAssemblyReadback({ designGraph, changePlan, applied, modelGraph, runtime, designGraphPath, recursiveLimit });
 }
 
@@ -173,7 +179,7 @@ export async function finalizeAssemblyParameterEditFromLedger({ bridge, reviewed
     || sha256Canonical(plan.dsl_document.operations) !== sha256Canonical(changePlan.operations)) {
     throw new AgentContractError('MUTATION_RECEIPT_INVALID', 'Reviewed ledger does not authorize these exact assembly replacements.');
   }
-  const modelGraph = await currentGraph(bridge, runtime, timeoutMs, recursiveLimit, changePlan.recursive_roots);
+  const modelGraph = await currentGraph(bridge, runtime, timeoutMs, recursiveLimit, changePlan.recursive_roots, changePlan.readback_projection);
   if (modelGraph.model_revision !== ledger.model_revision_after) throw new AgentContractError('MODEL_REVISION_MISMATCH', 'The model changed after the durably recorded assembly edit.');
   return finalizeAssemblyReadback({ designGraph, changePlan, applied: ledger.finalizer.applied_result, modelGraph, runtime, designGraphPath, recursiveLimit });
 }
@@ -208,6 +214,7 @@ async function finalizeAssemblyReadback({ designGraph, changePlan, applied, mode
   const receipt = { version: 'assembly-edit-receipt.v1', runtime, change_plan_id: changePlan.change_plan_id,
     model_revision_before: changePlan.model_revision, model_revision_after: modelGraph.model_revision,
     recursive_limit: recursiveLimit,
+    ...(changePlan.readback_projection ? { readback_projection: changePlan.readback_projection } : {}),
     ...(changePlan.recursive_roots ? { recursive_roots: structuredClone(changePlan.recursive_roots) } : {}),
     identity_map: structuredClone(stage.identity_map), material_map: structuredClone(stage.material_map), selected_roots: selectedRoots };
   trustedReceipts.set(receipt, sha256Canonical(receipt));

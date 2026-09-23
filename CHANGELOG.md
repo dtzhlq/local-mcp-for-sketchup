@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.0 — release candidate
+
+- Adds a source-bound Yingzao Fashi five-bay, ten-rafter hipped hall with surrounding gallery through the existing task Gateway; explicit chi scale, frozen rules and single-root parameter updates. See [rules](docs/traditional-timber/RULES.md) and [usage](docs/traditional-timber/USAGE.md).
+- Adds compact native assembly summaries, dependency-based definition reuse, atomic queue publication and committed-operation recovery without mutation replay.
+- Retains 48 public tools and the original research preset identity. Apple Silicon macOS / SketchUp 2026 is the release target. Native whole-hall edit acceptance and public publication remain pending; no save/reopen acceptance is required.
+
 ## 0.3.0 — 2026-09-19
 
 Based on `v0.2.0` (`1d27e9c8`), developed on `codex/modeling-api-uplift` and continued on `codex/cad-surface-kernel`. The signed release and native acceptance are bounded to the documented Apple Silicon / SketchUp 2026 scenarios. Windows 0.3.0 native acceptance is not claimed.

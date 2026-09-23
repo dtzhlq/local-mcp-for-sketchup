@@ -26,7 +26,7 @@ release_discovery: https://api.github.com/repos/dtzhlq/local-mcp-for-sketchup/re
 
 ## 2. Select the supported platform and verify downloads
 
-Match OS, architecture and SketchUp major version exactly to one `platforms` entry and its acceptance evidence. Require live SketchUp, signed-plugin and save/close/reopen acceptance for that target. Do not select a similar platform.
+Match OS, architecture and SketchUp major version exactly to one `platforms` entry and its acceptance evidence. Require live SketchUp and signed-plugin acceptance for that target. For `timber-v040-minimal.v1`, also require the recorded whole-hall create/edit/view, target-scope protection and signed-payload checks; save/close/reopen and offline reruns are not required. Releases using the older acceptance policy retain their own requirements. Do not select a similar platform.
 
 Download the selected service bundle and RBZ from the manifest, requiring exact byte size and SHA-256 for both, consistent with the same release asset list and checksum file. Require `sketchup_officially_signed=true`. Only use a mirror if it is explicitly provided for that selected release and its downloaded bytes match these exact hashes. A Gitee source mirror is not evidence that current binaries were mirrored.
 
