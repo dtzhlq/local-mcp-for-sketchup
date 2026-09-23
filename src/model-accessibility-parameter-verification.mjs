@@ -28,10 +28,11 @@ export async function verifyDefinitionParameterResult(gateway, task) {
     next_action: { action: 'connect_then_submit_verification', required: ['connection_task_id from fresh discover/connect'], task_id: task.task_id,
       tool: 'start_agent_task', arguments: { intent: 'discover', instruction: 'Connect for frozen creation verification.', inputs: { topic: 'connect', runtime: 'queue' } } } } });
   const timeoutMs = inputs.timeout_ms ?? 120000;
-  if (!Number.isInteger(timeoutMs) || timeoutMs < 1 || timeoutMs > 300000) throw new AgentContractError('INVALID_ARGUMENT', 'Verification timeout must be within 1..300000 ms.');
+  if (!Number.isInteger(timeoutMs) || timeoutMs < 1 || timeoutMs > 900000) throw new AgentContractError('INVALID_ARGUMENT', 'Verification timeout must be within 1..900000 ms.');
   const roots = parameter.private.creation_parameter_edit.change_plan.recursive_roots;
   const assembly=record.readback_projection==='assembly-merkle.v2';
-  const adoption = assembly?await adoptAssemblySummary({bridge:gateway.bridge,rootPaths:roots,timeoutMs,recursiveLimit:parameter.private.parameter_recursive_limit||5000}):roots?.length > 1 ? await adoptParameterRoots({ bridge: gateway.bridge, runtime, timeoutMs,
+  const adoption = assembly?await adoptAssemblySummary({bridge:gateway.bridge,rootPaths:roots,timeoutMs,
+    recursiveLimit:parameter.private.parameter_recursive_limit||5000,expectedRevision:parameter.result.model_revision}):roots?.length > 1 ? await adoptParameterRoots({ bridge: gateway.bridge, runtime, timeoutMs,
     recursiveLimit: parameter.private.parameter_recursive_limit, rootPaths: roots })
     : await gateway.bridge.adopt_open_model({ runtime, timeoutMs, recursive: true, read_only: true,
       recursive_limit: parameter.private.parameter_recursive_limit, recursive_roots: roots });
