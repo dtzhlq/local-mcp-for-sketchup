@@ -1,14 +1,14 @@
 # Local MCP for SketchUp
 
-**0.3.0 — 48 MCP tools.** The [signed release](https://github.com/dtzhlq/local-mcp-for-sketchup/releases/tag/v0.3.0) adds general modeling and CAD surface capabilities. Native verification covers Apple Silicon Mac and SketchUp 2026; see the [release acceptance](docs/RELEASE_ACCEPTANCE.md).
+**0.4.0 — 48 MCP tools.** The [signed release](https://github.com/dtzhlq/local-mcp-for-sketchup/releases/tag/v0.4.0) adds a source-bound Chinese timber hall preset to the existing modeling and CAD surface capabilities. Native verification covers Apple Silicon Mac and SketchUp 2026; see the [timber acceptance](docs/traditional-timber/implementation-status.md).
 
 An independent local MCP server for generating and editing SketchUp models through reviewed operations. Deterministic geometry, native measurement and execution recovery live in the MCP service and are available to any compatible model/client.
 
 [Changes](CHANGELOG.md) · [48 tools](docs/tool-registry.md) · [Modeling guide](docs/modeling-uplift/usage.md) · [NURBS and curved-edge fillets](docs/cad-surface-kernel/README.md) · [Candidate setup](docs/DEVELOPMENT_CANDIDATE.md)
 
-## Chinese timber candidate
+## Chinese timber modeling
 
-v0.4.0 adds a fixed Yingzao Fashi hall preset through the existing task Gateway, explicit historical-unit scale, source-bound parameters and scoped instance updates. See [rules](docs/traditional-timber/RULES.md), [MCP usage](docs/traditional-timber/USAGE.md) and [current implementation status](docs/traditional-timber/implementation-status.md). This candidate has not yet replaced the stable release below.
+v0.4.0 adds a fixed Yingzao Fashi hall preset through the existing task Gateway, explicit historical-unit scale, source-bound parameters and scoped instance updates. The default light tiles retain visible laps; the optional surface mode omits transverse laps for a quieter distant view. See [rules](docs/traditional-timber/RULES.md), [MCP usage](docs/traditional-timber/USAGE.md) and [native acceptance](docs/traditional-timber/implementation-status.md).
 
 ## What's new
 
@@ -35,7 +35,7 @@ A GLM investigation identified an MCP creation-QA scope issue and missing read-o
 
 ## 让 Agent 帮你安装或升级
 
-**当前正式版为 0.3.0，包含 48 个工具、官方签名插件与配套服务包。下面的自动安装入口按平台读取已发布清单；旧版安装包不会自动获得新版能力。**
+**当前正式版为 0.4.0，包含 48 个工具、官方签名插件与配套服务包。下面的自动安装入口按平台读取已发布清单；旧版安装包不会自动获得新版能力。**
 
 把这句话发给 Agent；后续正式更新无需更换口令：
 
@@ -52,7 +52,7 @@ Agent 会发现最新正式版，固定该版本清单，校验服务包和签�
 
 ## Published platform packages
 
-The [signed 0.3.0 release](https://github.com/dtzhlq/local-mcp-for-sketchup/releases/tag/v0.3.0) targets Apple Silicon Mac / SketchUp 2026 (48 tools). Windows x64 / SketchUp 2026 has a separate [0.2.0 Windows installation preview](https://github.com/dtzhlq/local-mcp-for-sketchup/releases/tag/v0.2.0-windows-preview.1), with Windows CI server checks but no native Windows SketchUp acceptance. The stable installation entrypoint offers that preview explicitly when no stable Windows target matches. Intel Mac and other SketchUp versions have no matching package in these releases. The Windows preview does not contain the 0.3.0 capabilities above.
+The [signed 0.4.0 release](https://github.com/dtzhlq/local-mcp-for-sketchup/releases/tag/v0.4.0) targets Apple Silicon Mac / SketchUp 2026 (48 tools). Windows x64 / SketchUp 2026 has a separate [0.2.0 Windows installation preview](https://github.com/dtzhlq/local-mcp-for-sketchup/releases/tag/v0.2.0-windows-preview.1), with Windows CI server checks but no native Windows SketchUp acceptance. The stable installation entrypoint offers that preview explicitly when no stable Windows target matches. Intel Mac and other SketchUp versions have no matching package in these releases. The Windows preview does not contain the 0.4.0 timber preset.
 
 ## Install and documentation
 
@@ -62,7 +62,7 @@ The [signed 0.3.0 release](https://github.com/dtzhlq/local-mcp-for-sketchup/rele
 - Single-image reconstruction: [image structure](docs/IMAGE_STRUCTURE.md). These are approximate reconstructions with explicit scale/hidden-geometry assumptions, not single-photo measured replicas.
 - Third-party components and local distribution boundaries: [notices](THIRD_PARTY_NOTICES.md).
 
-Use the current [installation](docs/INSTALL.md) and [acceptance](docs/RELEASE_ACCEPTANCE.md) records for 0.3.0. Historical 0.2.0 assets and evidence remain available on their original Release. Extension Warehouse publication was declined; no listing or official endorsement is claimed. Existing ALMA environment variables and Ruby namespaces remain intentional.
+Use the current [installation](docs/INSTALL.md) and [timber acceptance](docs/traditional-timber/implementation-status.md) records for 0.4.0. Historical 0.3.0 and 0.2.0 assets and evidence remain available on their original Releases. Extension Warehouse publication was declined; no listing or official endorsement is claimed. Existing ALMA environment variables and Ruby namespaces remain intentional.
 
 ## 设计原则
 
