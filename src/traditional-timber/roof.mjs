@@ -89,6 +89,26 @@ export function lightTileSkin(point,x0,width,d0,d1,limit,curve,lip,sections){
  }
  return {vertices,faces,cad_faces,smooth:'cad'};
 }
+// Fast display representation: one continuous open flute follows the same
+// shared roof surface from its hip cut to the eave. It deliberately omits the
+// transverse tile laps; use light or detailed when those joints must be seen.
+export function continuousTileSurface(point,x0,width,outer,limit,curve,segments,sections){
+ const vertices=[],faces=[],cad_faces=[];
+ for(let i=0;i<=sections;i++){
+  const t=i/sections,x=x0+width*t,near=limit(x);
+  if(near>=outer-.01)return null;
+  for(let j=0;j<=segments;j++){
+   const d=near+(outer-near)*j/segments;
+   vertices.push(plus(point(x,d),[0,0,curve(t)]));
+  }
+ }
+ const row=segments+1;
+ for(let i=0;i<sections;i++)for(let j=0;j<segments;j++){
+  const a=i*row+j,b=a+row;
+  faces.push([a,b,b+1],[a,b+1,a+1]);cad_faces.push(0,0);
+ }
+ return {vertices,faces,cad_faces,smooth:'cad'};
+}
 function mergeTileSkins(meshes){
  const vertices=[],faces=[],cad_faces=[];
  for(const m of meshes){const offset=vertices.length;vertices.push(...m.vertices);faces.push(...m.faces.map(f=>f.map(i=>i+offset)));cad_faces.push(...m.cad_faces);}
@@ -170,6 +190,22 @@ export function buildRoof(b,p,u,l,{subsidiary=false}={}){
     const point=(x,d)=>plus(face.point(x,d),[0,0,rafter+board+.10*C]);
     for(const type of ['pan','cover']){
       const length=(type==='pan'?1.6:1.4)*C,width=(type==='pan'?1:.65)*C,pitch=.95*C;
+      if(p.tile_detail==='surface'){
+        const ex=face.extent(outer),offset=type==='cover'?pitch/2:0,skins=[];
+        const first=Math.ceil((-ex-width/2-offset)/pitch),last=Math.floor((ex+width/2-offset)/pitch);
+        const curve=type==='pan'?t=>.20*C*(1-Math.sqrt(Math.max(0,1-(2*t-1)**2))):t=>.325*C*Math.sin(Math.PI*t)+.16*C;
+        const segments=Math.max(8,Math.ceil((outer-minimum)/(1.5*C)));
+        for(let j=first;j<=last;j++){
+          const center=j*pitch+offset,start=Math.max(center-width/2,-ex),end=Math.min(center+width/2,ex);
+          if(end-start<.1*C)continue;
+          const mesh=continuousTileSurface(point,start,end-start,outer,x=>Math.max(minimum,face.limit(x)+.005*C),
+            t=>curve(clamp((start+(end-start)*t-center+width/2)/width,0,1)),segments,type==='pan'?2:4);
+          if(mesh)skins.push(mesh);
+        }
+        for(let start=0;start<skins.length;start+=8)children.push(reusable(b,mergeTileSkins(skins.slice(start,start+8)),`${type}_tile_surface`,
+          'Detail_RoofTile','project fast display: continuous tile flutes follow YF roof; transverse laps and hidden backs omitted',`${key}-${type}-surface-${start/8}`));
+        continue;
+      }
       const sections=[...l.supports.map(s=>s.distance),outer];
       let d=outer,row=0;
       while(d>minimum+1e-6){

@@ -16,7 +16,7 @@ export function buildRidges(b,p,u,l){
    const w=layer===0?width+.7*C:width*(1-taper*layer/(layers-1));
    for(let j=1;j<path.length;j++){
     const a=path[j-1],z=path[j],length=Math.hypot(z[0]-a[0],z[1]-a[1]);
-    const n=Math.max(1,(p.tile_detail==='light'?1:Math.ceil(length/(1.3*C))));
+    const n=Math.max(1,(p.tile_detail==='detailed'?Math.ceil(length/(1.3*C)):1));
     const normal=[-(z[1]-a[1])/length,(z[0]-a[0])/length];
     for(let k=0;k<n;k++){
      const point=t=>a.map((v,i)=>v+(z[i]-v)*t);
@@ -31,7 +31,7 @@ export function buildRidges(b,p,u,l){
    const tangent=[(z[0]-a[0])/length,(z[1]-a[1])/length],normal=[-tangent[1],tangent[0]];
    const point=(x,d)=>[a[0]+d*tangent[0]+x*normal[0],a[1]+d*tangent[1]+x*normal[1],a[2]+(z[2]-a[2])*d/length+layers*pitch];
    for(let d=0,k=0;d<length;d+=.84*C,k++){
-    const cap=tileRibbon(point,-.325*C,.65*C,d,Math.min(length,d+1.4*C),()=>0,t=>.325*C*Math.sin(Math.PI*t),.06*C,{smooth:!b.legacyRendering,sections:p.tile_detail==='light'?4:8});
+    const cap=tileRibbon(point,-.325*C,.65*C,d,Math.min(length,d+1.4*C),()=>0,t=>.325*C*Math.sin(Math.PI*t),.06*C,{smooth:!b.legacyRendering,sections:p.tile_detail==='detailed'?8:4});
     if(cap)children.push(reusable(b,cap,'ridge_cap_tile','Detail_RoofTile','YF13:matching cover tile above ridge courses',`${key}-cap-${j}-${k}`));
    }
    for(const [name,level,w]of [['lower',pitch,width+.7*C],['upper',layers*pitch,width*(1-taper)]]){

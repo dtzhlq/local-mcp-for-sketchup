@@ -5,7 +5,7 @@ export const YF_RULES=JSON.parse(bytes);
 export const YF_RULES_HASH=`sha256:${crypto.createHash('sha256').update(bytes).digest('hex')}`;
 export const YF_PRESET=YF_RULES.id;
 export const YF_PARAMETER_RULES=Object.freeze({
- tile_detail:{type:'string',enum:['light','detailed'],default:'light',description:'Visual geometry only: light exposed tile skins grouped by course; detailed individual closed tiles.'},
+ tile_detail:{type:'string',enum:['light','surface','detailed'],default:'light',description:'Visual geometry only: light exposed tile skins with visible laps; surface continuous fluted courses without transverse laps; detailed individual closed tiles.'},
  chi_mm:{type:'number',minimum:200,maximum:400,required:true,description:'Explicit chosen chi in mm; no claim of a unique historical Song chi.'},
  middle_bay_chi:{type:'number',minimum:18,maximum:36,default:27,description:'Selected central bay width in chi.'},
  side_bay_chi:{type:'number',minimum:12,maximum:24,default:18,description:'Each of four remaining bay widths in chi.'},

@@ -36,7 +36,7 @@ for(const [i,q]of stored.vertices.entries())for(let j=0;j<3;j++)assert.ok(Math.a
 
 // The visible skin omits hidden backs; surface groups soften subdivisions while
 // retaining the lap lip boundary. This is geometry, not a display-style trick.
-const {lightTileSkin,tileRibbon}=await import('../src/traditional-timber/roof.mjs');
+const {lightTileSkin,continuousTileSurface,tileRibbon}=await import('../src/traditional-timber/roof.mjs');
 const point=(x,d)=>[x,d,0];
 const skin=lightTileSkin(point,0,300,0,250,()=>0,x=>60*Math.sin(Math.PI*x/300),12,4);
 assert.equal(skin.faces.length,16);
@@ -46,6 +46,10 @@ assert.equal(new Set(skin.cad_faces).size,2);
 assert.equal(tileRibbon(point,0,300,0,250,()=>0,t=>60*Math.sin(Math.PI*t),18).faces.length,68);
 assert.equal(resolveYfParameters({chi_mm:300}).tile_detail,'light');
 assert.equal(resolveYfParameters({chi_mm:300,tile_detail:'detailed'}).tile_detail,'detailed');
+const surface=continuousTileSurface(point,0,300,250,()=>0,t=>60*Math.sin(Math.PI*t),4,2);
+assert.equal(surface.faces.length,16);
+assert.ok(surface.cad_faces.every(id=>id===0));
+assert.equal(resolveYfParameters({chi_mm:300,tile_detail:'surface'}).tile_detail,'surface');
 console.log('Light tile skin keeps lap boundary and grouped curved surfaces with 16 versus 68 faces.');
 
 // A narrow hip-cut first tile must not magnify an entire merged course.
@@ -58,6 +62,9 @@ for(const [i,q] of stored.vertices.entries())for(let j=0;j<3;j++)assert.ok(Math.
 // eave while SketchUp's transformed definition box reached 13 metres beyond.
 const { buildYfRecipe }=await import('../src/traditional-timber/yf-recipe.mjs');
 const hall=buildYfRecipe({parameters:{chi_mm:300,tile_detail:'light',middle_bay_chi:28}});
+const fastHall=buildYfRecipe({parameters:{chi_mm:300,tile_detail:'surface',middle_bay_chi:28}});
+assert.ok(fastHall.parts.length<hall.parts.length,'continuous courses use fewer component definitions');
+assert.ok(fastHall.parts.some(part=>part.role==='pan_tile_surface'),'fast mode emits continuous tile flutes');
 const clippedCourse=hall.parts.flatMap(part=>part.assembly?.children||[])
   .find(child=>child.instance_id?.endsWith('subsidiary-roof-north-pan-course-8-15'));
 assert.ok(clippedCourse,'fixed hall must retain its clipped gallery course');
