@@ -116,8 +116,9 @@ function verifyChangePlan(designGraph, changePlan) {
   return stage;
 }
 
-async function currentGraph(bridge, runtime, timeoutMs, recursiveLimit, recursiveRoots, projection) {
-  const graph = buildModelGraph(projection === 'assembly-merkle.v2' ? await adoptAssemblySummary({ bridge, timeoutMs, recursiveLimit, rootPaths: recursiveRoots }) : recursiveRoots?.length > 1
+async function currentGraph(bridge, runtime, timeoutMs, recursiveLimit, recursiveRoots, projection, expectedRevision) {
+  const graph = buildModelGraph(projection === 'assembly-merkle.v2' ? await adoptAssemblySummary({ bridge, timeoutMs, recursiveLimit, rootPaths: recursiveRoots,
+    ...(expectedRevision ? { expectedRevision } : {}) }) : recursiveRoots?.length > 1
     ? await adoptParameterRoots({ bridge, runtime, timeoutMs, recursiveLimit, rootPaths: recursiveRoots })
     : await bridge.adopt_open_model({ runtime, timeoutMs, recursive: true, recursive_limit: recursiveLimit, recursive_roots: recursiveRoots, read_only: true }));
   if (!graph.completeness?.complete && !(recursiveRoots && graph.completeness?.scope_complete) && !(projection === 'assembly-merkle.v2' && graph.completeness?.assembly_scope_complete)) throw new AgentContractError('MODEL_REVISION_INCOMPLETE', 'Assembly edit verification requires a complete occurrence graph; increase recursiveLimit');
@@ -179,7 +180,8 @@ export async function finalizeAssemblyParameterEditFromLedger({ bridge, reviewed
     || sha256Canonical(plan.dsl_document.operations) !== sha256Canonical(changePlan.operations)) {
     throw new AgentContractError('MUTATION_RECEIPT_INVALID', 'Reviewed ledger does not authorize these exact assembly replacements.');
   }
-  const modelGraph = await currentGraph(bridge, runtime, timeoutMs, recursiveLimit, changePlan.recursive_roots, changePlan.readback_projection);
+  const modelGraph = await currentGraph(bridge, runtime, timeoutMs, recursiveLimit, changePlan.recursive_roots, changePlan.readback_projection,
+    ledger.model_revision_after);
   if (modelGraph.model_revision !== ledger.model_revision_after) throw new AgentContractError('MODEL_REVISION_MISMATCH', 'The model changed after the durably recorded assembly edit.');
   return finalizeAssemblyReadback({ designGraph, changePlan, applied: ledger.finalizer.applied_result, modelGraph, runtime, designGraphPath, recursiveLimit });
 }
