@@ -1,5 +1,5 @@
 import { sha256Canonical, AgentContractError } from '../agent-contract.mjs';
-import { adoptAssemblySummary } from '../model-accessibility-assembly-summary.mjs';
+import { adoptAssemblySummary, rootPathsFromCommittedSnapshot } from '../model-accessibility-assembly-summary.mjs';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {createHash} from 'node:crypto';
@@ -84,7 +84,9 @@ export async function readTimberQualitySummary({bridge,creation,timeoutMs}){
  const spec=creation.frozen_spec?.specification;
  if(spec?.coverage_version!==TIMBER_QUALITY_SCOPE||creation.runtime!=='queue')throw new AgentContractError('INVALID_ARGUMENT','Timber quality requires its frozen native assembly contract.');
  const roots=[...new Set(spec.required_parts.map(part=>(creation.occurrence_path_map?.[JSON.stringify(part.instance_path)]||part.instance_path.map(id=>creation.identity_map[id]||id))[0]))];
- return adoptAssemblySummary({bridge,rootIds:roots,timeoutMs,recursiveLimit:Math.min(5000,bridge.executionPolicy?.resource_limits?.max_recursive_entities||5000)});
+ return adoptAssemblySummary({bridge,rootPaths:rootPathsFromCommittedSnapshot(creation.round.snapshot,roots),
+  expectedRevision:creation.round.snapshot.model_revision,timeoutMs,
+  recursiveLimit:Math.min(5000,bridge.executionPolicy?.resource_limits?.max_recursive_entities||5000)});
 }
 // This deliberately reports only the measured assembly contract. It makes no
 // claim about every face, hidden joinery or collision-free historical accuracy.

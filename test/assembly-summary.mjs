@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { adoptAssemblySummary } from '../src/model-accessibility-assembly-summary.mjs';
+import { adoptAssemblySummary, rootPathsFromCommittedSnapshot } from '../src/model-accessibility-assembly-summary.mjs';
 import { buildModelGraph, validateModelGraphSemantics } from '../src/model-graph.mjs';
 
 const hash = digit => `sha256:${digit.repeat(64)}`;
@@ -36,6 +36,12 @@ const changed=await adoptAssemblySummary({bridge,rootPaths:['pid:1']});
 assert.equal(reads,2,'native revision change cannot reuse previous geometry proof');
 assert.equal(changed.recursive_index[0].geometry_summary.subtree_digest,hash('d'));
 assert.equal(changed.snapshot.model_revision,revision,'delivery snapshot follows the fresh native revision');
+const committedRoots=rootPathsFromCommittedSnapshot({instances:[{id:'house',persistent_id:'1'}]},['house']);
+const beforeSingleRead=reads;
+await adoptAssemblySummary({bridge,rootPaths:committedRoots,expectedRevision:revision});
+assert.equal(reads,beforeSingleRead+1,'committed creation needs one complete native assembly read');
+await assert.rejects(adoptAssemblySummary({bridge,rootPaths:committedRoots,expectedRevision:hash('e')}),
+  error=>error.code==='MODEL_REVISION_MISMATCH');
 console.log('Assembly summary coverage, immutable reuse and native revision invalidation passed.');
 
 const {evaluateTimberQuality,TIMBER_QUALITY_SCOPE}=await import('../src/traditional-timber/quality.mjs');

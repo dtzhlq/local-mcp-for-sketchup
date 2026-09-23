@@ -22,12 +22,39 @@ function header(report) {
 // The cache belongs to a Bridge object. Each reuse still obtains a NEW native
 // global revision. A caller cannot supply a graph or revision to skip this read.
 // Only one revision/root set is retained, and returned values never alias it.
-export async function adoptAssemblySummary({ bridge, rootPaths, rootIds, timeoutMs, recursiveLimit = 10000 } = {}) {
+export function rootPathsFromCommittedSnapshot(snapshot, rootIds) {
+  if (!Array.isArray(snapshot?.instances) || !Array.isArray(rootIds) || !rootIds.length) fail('Committed creation snapshot lacks assembly roots.');
+  return rootIds.map(id => {
+    const matches = snapshot.instances.filter(row => row.id === id && /^[1-9]\d*$/.test(String(row.persistent_id)));
+    if (matches.length !== 1) fail(`Committed creation root is missing or ambiguous: ${id}`);
+    return `pid:${matches[0].persistent_id}`;
+  });
+}
+
+export async function adoptAssemblySummary({ bridge, rootPaths, rootIds, timeoutMs, recursiveLimit = 10000, expectedRevision } = {}) {
   if (!bridge || (rootPaths === undefined) === (rootIds === undefined)) throw new AgentContractError('INVALID_ARGUMENT', 'Supply exactly one explicit assembly root path/id list.');
   const values = rootPaths || rootIds;
   if (!Array.isArray(values) || !values.length || values.length > 12 || new Set(values).size !== values.length
     || values.some(v => typeof v !== 'string' || !v) || !Number.isInteger(recursiveLimit) || recursiveLimit < 1 || recursiveLimit > 50000)
     throw new AgentContractError('INVALID_ARGUMENT', 'Assembly summary needs 1..12 distinct roots and a limit of 1..50000 containers.');
+  if (expectedRevision !== undefined) {
+    if (!rootPaths || !digest(expectedRevision) || rootPaths.some(p => !/^pid:[1-9]\d*$/.test(p)))
+      throw new AgentContractError('INVALID_ARGUMENT', 'A committed-revision summary needs native root paths and a complete expected revision.');
+    const report = await bridge.adopt_open_model({ runtime: 'queue', read_only: true, assembly_projection: true,
+      recursive: true, recursive_roots: rootPaths, recursive_limit: recursiveLimit, timeoutMs });
+    header(report);
+    if (report.model_revision !== expectedRevision) throw new AgentContractError('MODEL_REVISION_MISMATCH', 'Model changed after the committed creation snapshot.');
+    if (report.assembly_projection_complete !== true || report.recursive_truncated !== false
+      || report.occurrence_contract !== 'canonical-assembly-path.v2'
+      || JSON.stringify(report.recursive_root_paths) !== JSON.stringify(rootPaths)
+      || !Array.isArray(report.recursive_index) || report.recursive_total_seen !== report.recursive_index.length
+      || report.recursive_index.length > recursiveLimit) fail('Native assembly summary is truncated or its roots/coverage differ from the request.');
+    const graph = buildModelGraph(report);
+    validateModelGraphSemantics(graph);
+    if (graph.completeness.assembly_scope_complete !== true || graph.completeness.complete || graph.completeness.scope_complete)
+      fail('Assembly projection cannot establish complete container coverage.');
+    return report;
+  }
   const fresh = await bridge.adopt_open_model({ runtime: 'queue', read_only: true, assembly_projection: true, recursive: false, timeoutMs });
   const identity = header(fresh);
   if (rootIds) rootPaths = rootIds.map(id => {
