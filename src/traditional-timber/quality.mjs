@@ -44,10 +44,12 @@ async function proveTimberOverview({result, view, file, modelRevision}) {
 // Persist an authenticated receipt before consuming the native response.
 export async function recoverTimberOverview({bridge, taskStore, taskId, view, priorOutputDirs, summary, timeoutMs}) {
  const runtime=bridge.selectRuntime('queue',{timeoutMs});
- const state=await runtime.getSessionState();
- if(state?.session_id!==summary.session_id||state?.document_id!==summary.document_id
-   ||state?.model_revision_complete!==true||state?.model_revision!==summary.model_revision)
-  throw new AgentContractError('MODEL_REVISION_MISMATCH','Late overview recovery requires the same live document and accepted revision.');
+ const assertLiveSource=async()=>{
+  const state=await runtime.getSessionState();
+  if(state?.session_id!==summary.session_id||state?.document_id!==summary.document_id
+    ||state?.model_revision_complete!==true||state?.model_revision!==summary.model_revision)
+   throw new AgentContractError('MODEL_REVISION_MISMATCH','Late overview recovery requires the same live document and accepted revision.');
+ };
  const paths=priorOutputDirs.map(dir=>path.resolve(dir,`${view.id}.png`));
  const validate=async result=>{
   if(result?.kind!=='capture_detail_views'||!paths.includes(path.resolve(result.captures?.[0]?.file_path||''))
@@ -61,6 +63,7 @@ export async function recoverTimberOverview({bridge, taskStore, taskId, view, pr
   if(stat.isFile()&&!stat.isSymbolicLink()&&stat.size<1024*1024){
    const candidate=JSON.parse(await fs.readFile(responsePath,'utf8'))?.result;
    if(candidate?.kind==='capture_detail_views'&&paths.includes(path.resolve(candidate.captures?.[0]?.file_path||''))){
+    await assertLiveSource();
     let captured;
     await runtime.recoverOrphanResponse({requestId:names[0].slice(0,-5),expectedResultKind:'capture_detail_views',
      validate:async result=>{captured=await validate(result);},
@@ -77,6 +80,7 @@ export async function recoverTimberOverview({bridge, taskStore, taskId, view, pr
  if(names.length) return null;
  for(const dir of priorOutputDirs){
   let proof;try{proof=JSON.parse(await fs.readFile(path.join(dir,'native-overview-receipt.json'),'utf8'));}catch(error){if(error.code==='ENOENT')continue;throw error;}
+  await assertLiveSource();
   const {integrity_hmac,...body}=proof;
   if(body.version!=='timber-overview-recovery.v1'||body.task_id!==taskId||integrity_hmac!==await taskStore.mutationReceiptLedger.sign(body))
    throw new AgentContractError('ARTIFACT_INTEGRITY_ERROR','Saved overview recovery receipt failed authentication.');
