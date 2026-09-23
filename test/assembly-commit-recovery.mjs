@@ -8,7 +8,8 @@ const hash=d=>`sha256:${d.repeat(64)}`; let revision=hash('a');
 const row=(id,name)=>({path:`pid:${id}`,entity_path:`pid:${id}`,parent_entity_path:null,path_segments:[{entity_type:'component_instance',persistent_id:String(id),reference:`root${id}`}],id:`root${id}`,reference:`root${id}`,persistent_id:String(id),entity_type:'component_instance',entity_definition_name:name,definition_name:name,entity_definition_persistent_id:String(id+10),entity_definition_occurrence_count:1,allowed_operations:['replace_component_definition'],geometry_summary:{type:'assembly_merkle',version:1,subtree_digest:hash(String(id)),expanded_count:1000,leaf_entities_materialized:false}});
 let rows=[row(1,'original'),row(2,'original')];const dir=await fs.mkdtemp(path.join(os.tmpdir(),'yf-compact-'));
 const bridge=new SketchUpBridge({agentContract:{rootDir:dir},approval:{stateDir:path.join(dir,'approval'),secret:'test-compact-secret-with-32-characters'},executionPolicy:{allowed_runtimes:['queue'],allow_queue_mutation:true}});
-bridge.adopt_open_model=async options=>({kind:'adopt_open_model',runtime:'queue',read_only:true,assembly_summary_depth:2,recursive_projection:'assembly-merkle.v2',occurrence_contract:'canonical-assembly-path.v2',document_id:'doc1',session_id:'session1',model_identity:{runtime_object_id:'model1'},model_revision:revision,model_revision_complete:true,model_revision_total_seen:2002,model_revision_indexed:2002,entities:structuredClone(rows),snapshot:{groups:[],instances:[],materials:[],tags:[],scenes:[],component_definitions:['original','replacement']},recursive:options.recursive,assembly_projection_complete:options.recursive,recursive_index:options.recursive?structuredClone(rows):null,recursive_total_seen:options.recursive?2:0,recursive_truncated:false,recursive_root_paths:options.recursive_roots||null});
+let lastAdoptOptions;
+bridge.adopt_open_model=async options=>(lastAdoptOptions=options,{kind:'adopt_open_model',runtime:'queue',read_only:true,assembly_summary_depth:2,recursive_projection:'assembly-merkle.v2',occurrence_contract:'canonical-assembly-path.v2',document_id:'doc1',session_id:'session1',model_identity:{runtime_object_id:'model1'},model_revision:revision,model_revision_complete:true,model_revision_total_seen:2002,model_revision_indexed:2002,entities:structuredClone(rows),snapshot:{groups:[],instances:[],materials:[],tags:[],scenes:[],component_definitions:['original','replacement']},recursive:options.recursive,assembly_projection_complete:options.recursive,recursive_index:options.recursive?structuredClone(rows):null,recursive_total_seen:options.recursive?2:0,recursive_truncated:false,recursive_root_paths:options.recursive_roots||null});
 const target={entity_path:'pid:1',edit_scope:'instance_path',instance_policy:'definition_wide'};
 const prepared=await prepareExistingModelEdit({bridge,runtime:'queue',instruction:'Update selected root',targets:[target],operations:[{op:'replace_component_definition',...target,definition:'replacement'}],recursive_roots:['pid:1'],readback_projection:'assembly-merkle.v2',output_dir:dir,execution_contract:{save_model:false,capture_view:false}});
 assert.deepEqual(prepared.plan.blockers, []); assert.equal(prepared.plan.target_validation.leaf_entities_materialized, false);
@@ -17,7 +18,7 @@ let writes=0; bridge.build_model=async(options)=>{assert.equal(options.snapshot_
 
 const taskId='task_12345678-abcd-4321-aaaa-123456789abc';
 const ledger=new TaskMutationReceiptLedger({rootDir:path.join(dir,'ledger')});
-let task={task_id:taskId,state:'executing',intent:'reviewed_existing_model_edit',inputs:{runtime:'queue'},private:{existing_edit_plan:prepared.plan},artifacts:[]};
+let task={task_id:taskId,state:'executing',intent:'reviewed_existing_model_edit',inputs:{runtime:'queue',timeout_ms:300000},private:{existing_edit_plan:prepared.plan},artifacts:[]};
 const claim={filePath:path.join(dir,`${'a'.repeat(64)}.json`),record:{operation:'submit_agent_task_input',fingerprint:hash('c'),task_id:taskId,task_state_at_claim:'awaiting_review',task_version_at_claim:2}};
 await assert.rejects(applyReviewedExistingModelEdit({bridge,runtime:'queue',plan:prepared.plan,approval_token:'fixture',save_model:false,capture_view:false,output_dir:dir,
  trusted_commit_observer:async({applied,model_revision_after})=>{
@@ -43,6 +44,7 @@ rows[1].geometry_summary.subtree_digest=hash('2');
 gateway.bridge={adopt_open_model:bridge.adopt_open_model};
 const done=await AgentGateway.prototype.finalizeReviewedMutationReceipt.call(gateway,receipt);
 assert.equal(done.state,'completed');assert.equal(done.result.ok,true);assert.equal(writes,1,'recovery must not replay the committed replacement');
+assert.equal(lastAdoptOptions.timeoutMs,300000,'post-commit readback must honor the task timeout');
 assert.equal(rows[1].definition_name,'original');
 await fs.rm(dir,{recursive:true});
 console.log('Assembly replacement: compact readback, scope guard, durable early receipt and recovery without replay passed.');

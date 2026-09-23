@@ -4,7 +4,7 @@
 
 1. `intent: "discover"`，`inputs: {"topic":"tasks","kind":"traditional_timber","detail":"parameters"}`：读取固定预设、有效参数、范围和来源边界。
 2. `intent: "preflight_model"`，`inputs.task` 使用下方对象：仅编译并检查依赖，不写模型。
-3. `intent: "discover"`，`inputs: {"topic":"connect","runtime":"queue"}`：取得当前模型的新鲜 `connection_task_id`。
+3. `intent: "discover"`，`inputs: {"topic":"connect","runtime":"queue","timeout_ms":300000}`：取得当前模型的新鲜 `connection_task_id`。大型整屋读取修订可能耗时数分钟。
 4. `intent: "create_model"`，`inputs` 包含 `task`、`runtime: "queue"`、连接任务 ID 和 `timeout_ms: 300000`。只增加自己的根实例，保留模板人物及其他已有对象。
 
 ```json

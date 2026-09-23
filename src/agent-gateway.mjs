@@ -797,7 +797,7 @@ export class AgentGateway {
     if (topic === 'connect') {
       if (!['mock', 'queue'].includes(inputs.runtime)) throw new AgentContractError('INVALID_ARGUMENT', 'Connect requires explicit runtime mock or queue.');
       assertRuntimePolicy(inputs.runtime, this.bridge.executionPolicy, task.intent);
-      const timeoutMs = boundedQueueTimeoutMs(inputs.timeout_ms, 15_000);
+      const timeoutMs = boundedQueueTimeoutMs(inputs.timeout_ms, inputs.runtime === 'queue' ? 300_000 : 15_000);
       // Serial read-only probes. Freshness proves the document binding, not approval.
       if (inputs.runtime === 'queue') result.queue = await this.bridge.queue_diagnostics({ includeFiles: false, timeoutMs });
       const capabilities = await this.bridge.get_capabilities({ runtime: inputs.runtime, timeoutMs });
@@ -1372,6 +1372,7 @@ export class AgentGateway {
       bridge: this.bridge,
       plan,
       runtime: receipt.runtime,
+      timeoutMs: boundedQueueTimeoutMs(task.inputs.timeout_ms, 120_000),
       phase: 'finalization',
       expected_model_key: receipt.model_key,
       expected_model_revision: receipt.model_revision_after

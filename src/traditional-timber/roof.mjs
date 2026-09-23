@@ -26,8 +26,23 @@ export function reusable(b,mesh,role,material,rule,name){
   if(a&&c&&d){
     const cd=cross(c,d),da=cross(d,a),ac=cross(a,c),det=dot(a,cd);
     if(Math.abs(det)>1e-4){
-      vertices=relative.map(v=>[dot(v,cd),dot(v,da),dot(v,ac)].map(x=>x/det*100));
-      transform={matrix:[...a.map(x=>x/100),0,...c.map(x=>x/100),0,...d.map(x=>x/100),0,0,0,0,1]};
+      const canonical=relative.map(v=>[dot(v,cd),dot(v,da),dot(v,ac)].map(x=>x/det*100));
+      // A nearly dependent tile-course basis can turn a short roof segment
+      // into hundreds of metres of local coordinates. SketchUp then loses
+      // enough precision to enlarge the native bounds. Keep those segments
+      // in their original millimetre geometry with translation-only reuse.
+      // SketchUp may transform the definition's axis-aligned box rather than
+      // the occupied mesh. A skewed course can therefore expand its reported
+      // bounds by metres even when every transformed vertex is in place.
+      const span=(points,i)=>Math.max(...points.map(v=>v[i]))-Math.min(...points.map(v=>v[i]));
+      const canonicalSpan=[0,1,2].map(i=>span(canonical,i));
+      const actualSpan=[0,1,2].map(i=>span(relative,i));
+      const boxSpan=[0,1,2].map(i=>(Math.abs(a[i])*canonicalSpan[0]+Math.abs(c[i])*canonicalSpan[1]+Math.abs(d[i])*canonicalSpan[2])/100);
+      if(canonical.every(v=>v.every(x=>Number.isFinite(x)&&Math.abs(x)<=5000))
+        && boxSpan.every((value,i)=>value<=actualSpan[i]+300)){
+        vertices=canonical;
+        transform={matrix:[...a.map(x=>x/100),0,...c.map(x=>x/100),0,...d.map(x=>x/100),0,0,0,0,1]};
+      }
     }
   }
   const local={...mesh,vertices:vertices.map(p=>p.map(v=>Math.round(v*1e6)/1e6))};

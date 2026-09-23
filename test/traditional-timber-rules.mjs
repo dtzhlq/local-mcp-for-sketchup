@@ -51,8 +51,14 @@ console.log('Light tile skin keeps lap boundary and grouped curved surfaces with
 // A narrow hip-cut first tile must not magnify an entire merged course.
 const merged={vertices:[[0,0,0],[0,200,12],[0,200,0],[1,1,0],[1,200,12],[1,200,0],[10000,0,0]],faces:[[0,3,4],[0,4,1]]};
 const course=reusable(builder,merged,'pan_tile_course','tile','hip-course-regression','course');
-for(const [i,q] of stored.vertices.entries())for(let j=0;j<3;j++){const m=course.transform.matrix;assert.ok(Math.abs(course.origin[j]+q[0]*m[j]+q[1]*m[4+j]+q[2]*m[8+j]-merged.vertices[i][j])<1e-5);}
+assert.equal(course.transform,undefined,'ill-conditioned course uses translation only');
+for(const [i,q] of stored.vertices.entries())for(let j=0;j<3;j++)assert.ok(Math.abs(course.origin[j]+q[j]-merged.vertices[i][j])<1e-5);
 
-const originalCourse=structuredClone(stored);
-reusable(builder,{...merged,vertices:merged.vertices.map(([x,y,z])=>[-x,-y,z])},'pan_tile_course','tile','hip-course-regression','opposite-course');
-assert.deepEqual(stored,originalCourse);
+// This real short course previously put its actual vertices near the gallery
+// eave while SketchUp's transformed definition box reached 13 metres beyond.
+const { buildYfRecipe }=await import('../src/traditional-timber/yf-recipe.mjs');
+const hall=buildYfRecipe({parameters:{chi_mm:300,tile_detail:'light',middle_bay_chi:28}});
+const clippedCourse=hall.parts.flatMap(part=>part.assembly?.children||[])
+  .find(child=>child.instance_id?.endsWith('subsidiary-roof-north-pan-course-8-15'));
+assert.ok(clippedCourse,'fixed hall must retain its clipped gallery course');
+assert.equal(clippedCourse.transform,undefined,'short clipped course keeps tight native bounds');
