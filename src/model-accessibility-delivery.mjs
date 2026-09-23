@@ -15,7 +15,7 @@ const verifiedSavedReceipts = new WeakMap();
 /** Server helper. A saved file is not a cold-reopen or cross-model acceptance. */
 export async function deliverModelAccessibilityTask({ bridge, taskStore, taskId, sourceTaskId, sessionContract, timeoutMs = 120000 } = {}) {
   if (!bridge || !taskStore?.mutationReceiptLedger || !TASK_ID.test(taskId || '') || !TASK_ID.test(sourceTaskId || '')) fail('INVALID_ARGUMENT', 'Delivery requires server task storage and valid delivery/source task ids.');
-  if (!Number.isInteger(timeoutMs) || timeoutMs < 1 || timeoutMs > 300000) fail('INVALID_ARGUMENT', 'Delivery timeout must be an integer from 1 to 300000 ms.');
+  if (!Number.isInteger(timeoutMs) || timeoutMs < 1 || timeoutMs > 900000) fail('INVALID_ARGUMENT', 'Delivery timeout must be an integer from 1 to 900000 ms.');
   const destinationTask = await taskStore.getTask(taskId, { includePrivate: true });
   if (destinationTask.intent !== 'deliver_model' || destinationTask.inputs?.source_task_id !== sourceTaskId) fail('INVALID_ARGUMENT', 'Delivery must use its persisted source-task binding.');
   if (Object.keys(destinationTask.inputs || {}).some(key => !INPUT_FIELDS.has(key))) fail('INVALID_ARGUMENT', 'Delivery accepts only a source task and connection; file paths, overwrite and model edits are not accepted.');
