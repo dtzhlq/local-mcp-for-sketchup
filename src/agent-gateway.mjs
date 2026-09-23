@@ -2711,7 +2711,8 @@ export class AgentGateway {
         if (Object.keys(paths).length) captureArtifacts = [...captureArtifacts, ...await this.registerArtifacts(task.task_id, paths)];
       } catch (error) {
         captures = [];
-        capturePrivateError = { message: String(error?.message || error), code: error?.code || null };
+        capturePrivateError = { message: String(error?.message || error), code: error?.code || null,
+          ...(error?.details ? { details: error.details } : {}) };
         captureError = { message: 'Required server detail views are not verified.', code: error?.code || 'DETAIL_CAPTURE_UNVERIFIED' };
       }
       creation = { ...creation, round: { ...creation.round, captures, capture_error: captureError,

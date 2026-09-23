@@ -10,14 +10,18 @@ export const TIMBER_QUALITY_SCOPE='timber-assembly-summary.v1';
 // complete before/after model revision checks (including unrelated objects).
 export async function captureTimberOverview({bridge, view, outputDir, modelRevision, timeoutMs, sessionContract}) {
  const file=path.join(outputDir,'whole-hall.png');
- const result=await bridge.capture_view({runtime:'queue',path:file,view:'current',
+ const result=await bridge.capture_view({runtime:'queue',path:file,view:'current',zoom_extents:false,
   width:Math.max(1400,view.min_width||0),height:Math.max(900,view.min_height||0),timeoutMs,session_contract:sessionContract});
  return proveTimberOverview({result, view, file, modelRevision});
 }
 async function proveTimberOverview({result, view, file, modelRevision}) {
  const a=result.read_only_attestation;
  if(a?.state_unchanged!==true||a.model_revision_complete_before!==true||a.model_revision_complete_after!==true
-   ||a.model_revision_before!==modelRevision||a.model_revision_after!==modelRevision)throw new AgentContractError('MODEL_REVISION_MISMATCH','Overview changed model geometry; the image is not accepted.');
+   ||a.model_revision_before!==modelRevision||a.model_revision_after!==modelRevision)throw new AgentContractError('MODEL_REVISION_MISMATCH','Overview changed model state; the image is not accepted.',{
+    details:{expected_revision:modelRevision,revision_before:a?.model_revision_before,revision_after:a?.model_revision_after,
+      complete_before:a?.model_revision_complete_before,complete_after:a?.model_revision_complete_after,
+      state_unchanged:a?.state_unchanged,view_unchanged:a?.view_unchanged,
+      modified_before:a?.model_modified_before,modified_after:a?.model_modified_after}});
  const bytes=await fs.readFile(file);
  if(!bytes.subarray(0,8).equals(Buffer.from([137,80,78,71,13,10,26,10])))throw new Error('Native overview is not a PNG');
  const width=bytes.readUInt32BE(16),height=bytes.readUInt32BE(20);
