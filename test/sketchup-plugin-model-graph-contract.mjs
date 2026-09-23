@@ -27,7 +27,7 @@ assert.doesNotMatch(revisionSource, /digests\s*=\s*\[\]/);
 assert.match(revisionSource, /child_definition_digest/);
 assert.match(revisionSource, /safe_revision_count_add/);
 assert.doesNotMatch(revisionSource, /recursive_entity_index\(/);
-assert.match(adoption, /'occurrence_contract'\s*=>\s*assembly_projection \? 'canonical-assembly-path\.v1' : OCCURRENCE_CONTRACT_VERSION/);
+assert.match(adoption, /'occurrence_contract'\s*=>\s*assembly_projection \? 'canonical-assembly-path\.v2' : OCCURRENCE_CONTRACT_VERSION/);
 assert.match(capabilities, /'occurrence_contract'\s*=>\s*OCCURRENCE_CONTRACT_VERSION/);
 assert.match(sessionState, /'occurrence_contract'\s*=>\s*OCCURRENCE_CONTRACT_VERSION/);
 for (const source of [capabilities, sessionState, transportGuard]) {
