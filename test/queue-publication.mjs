@@ -62,6 +62,23 @@ try {
   assert.equal(persisted, true);
   await assert.rejects(fs.stat(responseFile), {code: 'ENOENT'});
   console.log('PASS late creation recovery persists before response consumption; no model write');
+  const stagingFile = path.join(responseDir, `12345-${Date.now()}-22222222-2222-4222-8222-222222222222.json`);
+  const staged = {...snapshot, instances: [{id:'task-root', persistent_id:'7', definition:'task-definition'}],
+    component_definitions:['task-definition','staged-definition'], model_revision:`sha256:${'b'.repeat(64)}`};
+  await writeFile(stagingFile, JSON.stringify({result: staged}));
+  runtime.getSessionState = async () => ({model_revision: staged.model_revision, model_revision_complete: true, session_id:'session', document_id:'doc'});
+  const staging = {...recovery, roots:[{id:'task-root', persistent_id:'7', definition:'task-definition'}], definitions:['staged-definition']};
+  await assert.rejects(runtime.recoverCommittedParameterStaging({...staging, definitions:['wrong-definition']}), /expectation/);
+  await fs.stat(stagingFile);
+  let stagingPersisted = false;
+  await runtime.recoverCommittedParameterStaging({...staging, persist: async result => {
+    await fs.stat(stagingFile);
+    assert.deepEqual(result.snapshot, staged);
+    stagingPersisted = true;
+  }});
+  assert.equal(stagingPersisted, true);
+  await assert.rejects(fs.stat(stagingFile), {code:'ENOENT'});
+  console.log('PASS late parameter staging recovery verifies roots and definitions before consumption; no replay');
 const captureRoot=await fs.mkdtemp(path.join(os.tmpdir(),'timber-overview-recovery-'));
 try {
  const {recoverTimberOverview}=await import('../src/traditional-timber/quality.mjs');

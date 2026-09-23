@@ -422,6 +422,43 @@ export class QueueRuntime {
     }, {method: 'recover-committed-creation', failIfLocked: true});
   }
 
+  // A parameter edit stages unused definitions before replacing its one
+  // reviewed root. A late native build return is consumed only after the
+  // original document, visible roots, staged names and complete revision agree.
+  async recoverCommittedParameterStaging({ roots, definitions, startedAt, session, persist } = {}) {
+    return this.withExclusiveAccess(async () => {
+      await assertQueueAndProcessingIdle(this, 'parameter-staging-recovery');
+      const files = (await readDirectoryEntries(this.responseDir)).filter(name => name.endsWith('.json'));
+      if (files.length !== 1 || !QUEUE_REQUEST_ID_PATTERN.test(files[0].slice(0, -5)))
+        throw new AgentContractError('MUTATION_RECOVERY_REQUIRED', 'Exactly one completed native response is required for parameter staging recovery.');
+      const requestId = files[0].slice(0, -5), file = path.join(this.responseDir, files[0]);
+      const before = await assertRegularRecoveryFile(file, requestId);
+      if (before.size > 64 * 1024 * 1024) throw recoveryIntegrityError(requestId, 'response_too_large');
+      const response = JSON.parse(await fs.readFile(file, 'utf8')), snapshot = response.result;
+      const receipt = snapshot?.mutation_receipt;
+      if (Object.keys(response).length !== 1 || !receipt || receipt.version !== 'mutation-receipt.v1'
+        || receipt.kind !== 'sketchup_mutation_receipt' || receipt.commit_state !== 'committed'
+        || receipt.operation !== 'Alma Build Model' || !(Date.parse(receipt.committed_at) >= Date.parse(startedAt))
+        || snapshot.model_revision_complete !== true || !/^sha256:[a-f0-9]{64}$/.test(snapshot.model_revision || '')
+        || !roots?.length || !roots.every(root => snapshot.instances?.filter(item => item.id === root.id
+          && item.persistent_id === root.persistent_id && item.definition === root.definition).length === 1)
+        || !definitions?.length || !definitions.every(name => snapshot.component_definitions?.includes(name))) {
+        throw recoveryIntegrityError(requestId, 'committed_parameter_staging_identity_mismatch');
+      }
+      const current = await this.getSessionState();
+      if (current.model_revision_complete !== true || current.model_revision !== snapshot.model_revision
+        || !session?.session_id || !session?.document_id || current.session_id !== session.session_id
+        || current.document_id !== session.document_id) {
+        throw new AgentContractError('MODEL_REVISION_MISMATCH', 'The document or model changed after the late parameter staging commit; preserve the response and reconcile first.');
+      }
+      await assertQueueAndProcessingIdle(this, requestId);
+      assertSameRecoveryFile(before, await assertRegularRecoveryFile(file, requestId), requestId);
+      await persist({ request_id: requestId, snapshot, recovered_at: new Date().toISOString() });
+      await fs.rm(file);
+      return snapshot;
+    }, { method: 'recover-committed-parameter-staging', failIfLocked: true });
+  }
+
   async call(method, params) {
     return this.withExclusiveAccess(() => this.callUnlocked(method, params), { method });
   }

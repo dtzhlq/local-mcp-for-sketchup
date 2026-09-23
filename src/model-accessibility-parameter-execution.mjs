@@ -85,7 +85,23 @@ export async function continueDefinitionParameterExecution(gateway, task, { inpu
       staged_model_revision: built.snapshot?.model_revision || null };
     task = await writeExecution(gateway, task.task_id, execution);
   } else if (execution.phase === 'staging_started') {
-    throw new AgentContractError('MUTATION_EXECUTION_FAILED', 'Definition staging started but no trusted committed return was recorded. Its outcome is unknown; it will not be replayed.', { details: { outcome_unknown: true, stage: 'definition_staging' } });
+    if (runtime !== 'queue') throw new AgentContractError('MUTATION_EXECUTION_FAILED', 'Definition staging started without a trusted committed return; it will not be replayed.', { details: { outcome_unknown: true, stage: 'definition_staging' } });
+    const sourceTask = await gateway.taskStore.getTask(task.inputs.parameter_edit.creation_task_id, { includePrivate: true });
+    const originalRoots = sourceTask.private.creation.round.snapshot.instances.map(row => ({
+      id: row.id, persistent_id: row.persistent_id, definition: row.definition
+    }));
+    const stagedNames = edit.change_plan.assembly_rebuild.creation_document.creation_scope.definitions;
+    const startedAt = task.history.find(item => item.reason === 'parameter_fresh_definitions_started')?.at;
+    const queue = gateway.bridge.selectRuntime('queue', { timeoutMs: Math.max(900_000, task.private.parameter_timeout_ms) });
+    await queue.recoverCommittedParameterStaging({ roots: originalRoots, definitions: stagedNames, startedAt,
+      session: sourceTask.inputs.session_contract,
+      persist: async ({ request_id, snapshot }) => {
+        const built = { snapshot, mutation_receipt: snapshot.mutation_receipt };
+        execution = { ...execution, phase: 'staging_committed', staging_receipt: trustedBridgeReceipt({ runtime, nativeReceipt: snapshot.mutation_receipt }),
+          staging_result_hash: sha256Canonical(built), staged_model_revision: snapshot.model_revision,
+          late_response_request_id: request_id };
+        task = await writeExecution(gateway, task.task_id, execution);
+      } });
   }
   if (!execution.reviewed_task_id) {
     const graph = await verifyOriginalBindings(gateway, task, edit, false);
