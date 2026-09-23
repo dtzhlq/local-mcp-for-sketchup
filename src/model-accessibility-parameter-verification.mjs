@@ -61,7 +61,7 @@ export async function verifyDefinitionParameterResult(gateway, task) {
   task = await gateway.taskStore.update(task.task_id, { inputs: { ...inputs, runtime }, private: { ...task.private,
     creation: privateCreation, frozen_creation_verification: signed } });
   task = await gateway.taskStore.transition(task.task_id, 'verifying', { reason: 'verify_frozen_creation_after_parameter_edit' });
-  task = await gateway.finalizeCreationQuality(task);
+  task = await gateway.finalizeCreationQuality(task, assembly ? { timberSummary: adoption } : {});
   return gateway.taskStore.update(task.task_id, { result: { ...task.result, kind: 'verify_creation_result', source_creation_task_id: source.task_id,
     parameter_task_id: parameter.task_id, geometry_built: false, specification_hash: creation.frozen_spec.hash },
     next_action: task.result.quality_accepted ? { action: 'connect_for_delivery', source_task_id: task.task_id }
