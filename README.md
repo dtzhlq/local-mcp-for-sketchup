@@ -52,7 +52,7 @@ Agent 会发现最新正式版，固定该版本清单，校验服务包和签�
 
 ## Published platform packages
 
-The [signed 0.4.0 release](https://github.com/dtzhlq/local-mcp-for-sketchup/releases/tag/v0.4.0) targets Apple Silicon Mac / SketchUp 2026 (48 tools). Windows x64 / SketchUp 2026 has a separate [0.4.0 Windows installation preview](https://github.com/dtzhlq/local-mcp-for-sketchup/releases/tag/v0.4.0-windows-preview.1), with the same 0.4.0 runtime and signed RBZ, 48-tool Windows discovery and offline image/CAD/timber checks. Native Windows SketchUp acceptance remains pending. The stable installation entrypoint offers that preview explicitly when no stable Windows target matches. Intel Mac and other SketchUp versions have no matching package in these releases. The Windows preview does not contain the 0.4.0 timber preset.
+The [signed 0.4.0 release](https://github.com/dtzhlq/local-mcp-for-sketchup/releases/tag/v0.4.0) targets Apple Silicon Mac / SketchUp 2026 (48 tools). Windows x64 / SketchUp 2026 has a separate [0.4.0 Windows installation preview](https://github.com/dtzhlq/local-mcp-for-sketchup/releases/tag/v0.4.0-windows-preview.1), with the same 0.4.0 runtime and signed RBZ, 48-tool Windows discovery and offline image/CAD/timber checks. Native Windows SketchUp acceptance remains pending. The stable installation entrypoint offers that preview explicitly when no stable Windows target matches. Intel Mac and other SketchUp versions have no matching package in these releases.
 
 ## Install and documentation
 

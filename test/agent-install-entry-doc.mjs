@@ -6,6 +6,7 @@ const read = file => fs.readFile(file, 'utf8');
 const [entry, readme, install] = await Promise.all(['INSTALL_FOR_AGENTS.md', 'README.md', 'docs/INSTALL.md'].map(read));
 // Regression: a stable shared sentence must resolve a release, not the older main implementation.
 assert.ok(readme.includes('INSTALL_FOR_AGENTS.md'));
+assert.doesNotMatch(readme, /Windows preview does not contain/);
 for (const host of ['github.com', 'gitee.com']) assert.ok(readme.includes(`https://${host}/dtzhlq/local-mcp-for-sketchup/blob/main/INSTALL_FOR_AGENTS.md`));
 assert.ok(entry.includes('https://api.github.com/repos/dtzhlq/local-mcp-for-sketchup/releases/latest'));
 assert.ok(entry.includes('draft=false') && entry.includes('prerelease=false'));
