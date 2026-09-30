@@ -3,6 +3,7 @@
 # one file to a different public path. Every path is repository-relative.
 
 .gitignore
+.gitattributes
 README.md
 LICENSE
 NOTICE

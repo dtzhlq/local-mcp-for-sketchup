@@ -18,6 +18,7 @@ for (const document of [entry, readme, install]) {
   assert.doesNotMatch(document, /v0\.2\.0-windows-preview\.1/);
 }
 const allowlist = await read('release/public-source-allowlist.txt');
+assert.ok(allowlist.includes('.gitattributes'));
 assert.ok(allowlist.includes('.github/workflows/windows-bundle.yml'));
 assert.ok(allowlist.includes('scripts/verify-windows-installed-bundle.mjs'));
 assert.ok(entry.includes('release_acceptance=false'));
