@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { spawn } from 'node:child_process';
+import { spawn, execFileSync } from 'node:child_process';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { PRODUCT_VERSION } from '../src/version.mjs';
 import { TOOL_NAMES } from '../src/tool-registry.mjs';
@@ -14,6 +14,8 @@ assert.ok(bundleArg && reportArg && archiveArg, 'Expected bundle, report and arc
 assert.equal(process.platform, 'win32');
 assert.equal(process.arch, 'x64');
 const sourceRoot = fileURLToPath(new URL('../', import.meta.url));
+const sourceCommit = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: sourceRoot, encoding: 'utf8' }).trim();
+assert.match(sourceCommit, /^[0-9a-f]{40}$/);
 const bundle = path.resolve(bundleArg);
 const app = path.join(bundle, 'app');
 const meta = JSON.parse(await fs.readFile(path.join(bundle, 'bundle.json'), 'utf8'));
@@ -88,7 +90,7 @@ const report = {
   arch: process.arch,
   node: process.version,
   product_version: PRODUCT_VERSION,
-  source_commit: process.env.GITHUB_SHA || null,
+  source_commit: sourceCommit,
   installed_bundled_node: true,
   unicode_space_path: true,
   runtime_source_files_verified: sourceFiles.length,
@@ -183,7 +185,11 @@ function runFixture(fixture) {
       else {
         console.log(output.trim());
         const last = output.trim().split('\n').at(-1);
-        try { resolve({ passed: true, result: JSON.parse(last) }); }
+        try {
+          const result = JSON.parse(last);
+          delete result.evidence_dir;
+          resolve({ passed: true, result });
+        }
         catch { resolve({ passed: true }); }
       }
     });

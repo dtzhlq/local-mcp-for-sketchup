@@ -19,6 +19,8 @@ jobs:
     steps:
       - name: Check out the version being verified
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Use the bundled Node version
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
@@ -40,6 +42,8 @@ jobs:
     steps:
       - name: Check out the matching verification fixtures
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Download the archive without installing source dependencies
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
