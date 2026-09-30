@@ -1,0 +1,2 @@
+# Preserve byte-identical runtime source and Ruby attestation across platforms.
+* text=auto eol=lf

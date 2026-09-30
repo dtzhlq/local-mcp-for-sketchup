@@ -1,7 +1,10 @@
 # Windows x64 / SketchUp 2026 acceptance
 
-Use only the final candidate hashes supplied with the release handoff. Preview
-files containing `nonrelease` do not qualify.
+The current installation preview is `v0.4.0-windows-preview.1`, synchronized with
+the signed 0.4.0 runtime. Its Windows CI report covers the installed server and
+offline image/CAD/timber checks; it does not establish native SketchUp acceptance.
+For stable acceptance, use only the exact final hashes supplied with the release
+handoff. Files containing `nonrelease` do not qualify.
 
 ## Environment record
 
@@ -27,8 +30,9 @@ path, or unrelated machine information in public evidence.
 5. Extract the Windows x64 service bundle to a path containing a space.
 6. Confirm it starts with its bundled `node.exe`; do not rely on a system Node.
 7. Request a fresh `get_capabilities --runtime queue` handshake.
-8. Confirm version `0.1.0-rc.4`, the expected capability manifest, runtime
-   source attestation, and 41 MCP tools.
+8. Confirm the selected manifest's product version (currently `0.4.0`), the
+   expected capability manifest, runtime source attestation and the manifest's
+   tool count (currently 48).
 9. Run a read-only inspection on a disposable model.
 10. Approve one bounded mutation on that disposable model.
 11. Save to a new file, close SketchUp, reopen that exact file, and verify the
@@ -52,5 +56,6 @@ Stop and keep `release_acceptance=false` if:
 - save, close, reopen does not preserve the intended result;
 - unexpected external network traffic or a license prompt appears.
 
-Return the evidence report and hashes to the release maintainer before public
-publication.
+Return the evidence report and hashes to the release maintainer before stable
+Windows publication. Published installation previews retain
+`live_sketchup_verified=false` and `release_acceptance=false`.

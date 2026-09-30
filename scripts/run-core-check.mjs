@@ -19,6 +19,7 @@ const steps = [
   ['plugin structure and Ruby syntax', ['scripts/package-sketchup-plugin.mjs', '--check']],
   ['agent-install manifest', ['scripts/validate-agent-install-manifest.mjs']],
   ['agent-install release blockers', ['test/agent-install-manifest.mjs']],
+  ['platform-aware installation entrypoint', ['test/agent-install-entry-doc.mjs']],
   ['DCO policy parser', ['test/dco-check.mjs']],
   ['agent JSON and TOML merge', ['test/agent-config-merge.mjs']],
   ['agent atomic config writer', ['test/agent-config-writer.mjs']],

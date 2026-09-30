@@ -1,14 +1,27 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
+import { PRODUCT_VERSION } from '../src/version.mjs';
+import { TOOL_NAMES } from '../src/tool-registry.mjs';
 const read = file => fs.readFile(file, 'utf8');
 const [entry, readme, install] = await Promise.all(['INSTALL_FOR_AGENTS.md', 'README.md', 'docs/INSTALL.md'].map(read));
 // Regression: a stable shared sentence must resolve a release, not the older main implementation.
 assert.ok(readme.includes('INSTALL_FOR_AGENTS.md'));
+assert.doesNotMatch(readme, /Windows preview does not contain/);
 for (const host of ['github.com', 'gitee.com']) assert.ok(readme.includes(`https://${host}/dtzhlq/local-mcp-for-sketchup/blob/main/INSTALL_FOR_AGENTS.md`));
 assert.ok(entry.includes('https://api.github.com/repos/dtzhlq/local-mcp-for-sketchup/releases/latest'));
 assert.ok(entry.includes('draft=false') && entry.includes('prerelease=false'));
 assert.ok(entry.includes('releases?per_page=30'));
 assert.ok(entry.includes('windows-install.v1.json'));
+assert.ok(entry.includes(`**v${PRODUCT_VERSION}**`));
+assert.ok(entry.includes(`${TOOL_NAMES.length} tools`));
+for (const document of [entry, readme, install]) {
+  assert.ok(document.includes(`v${PRODUCT_VERSION}-windows-preview.1`));
+  assert.doesNotMatch(document, /v0\.2\.0-windows-preview\.1/);
+}
+const allowlist = await read('release/public-source-allowlist.txt');
+assert.ok(allowlist.includes('.gitattributes'));
+assert.ok(allowlist.includes('.github/workflows/windows-bundle.yml'));
+assert.ok(allowlist.includes('scripts/verify-windows-installed-bundle.mjs'));
 assert.ok(entry.includes('release_acceptance=false'));
 assert.ok(entry.includes('node/node.exe'));
 assert.ok(entry.includes('already explicitly chose the Windows preview'));

@@ -1,0 +1,72 @@
+name: Windows installed bundle
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    if: github.event_name != 'release' || !github.event.release.prerelease
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Check out the version being verified
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Use the bundled Node version
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 24.18.0
+      - name: Build the Windows archive from locked dependencies
+        run: node scripts/package-service-bundle.mjs --target win32-x64 --candidate --output-dir out/windows-bundle
+      - name: Preserve the archive for independent Windows verification
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: windows-bundle
+          path: out/windows-bundle/*.zip
+          if-no-files-found: error
+          retention-days: 30
+
+  installed:
+    needs: package
+    runs-on: windows-2022
+    timeout-minutes: 15
+    steps:
+      - name: Check out the matching verification fixtures
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Download the archive without installing source dependencies
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: windows-bundle
+          path: out/windows-bundle
+      - name: Verify the installed runtime, modeling, CAD and timber rules
+        shell: pwsh
+        run: |
+          $archives = @(Get-ChildItem -LiteralPath 'out/windows-bundle' -Filter '*.zip')
+          if ($archives.Count -ne 1) { throw 'Expected exactly one Windows archive.' }
+          $version = (Get-Content -LiteralPath 'release/public-package.json' -Raw | ConvertFrom-Json).version
+          if ($archives[0].Name -ne "local-mcp-for-sketchup-$version-win32-x64.zip") {
+            throw 'Windows archive does not match the checked-out product version.'
+          }
+          $installRoot = Join-Path $env:RUNNER_TEMP 'Windows 验收'
+          Expand-Archive -LiteralPath $archives[0].FullName -DestinationPath $installRoot
+          $bundleRoot = Join-Path $installRoot 'local-mcp-for-sketchup'
+          & (Join-Path $bundleRoot 'node/node.exe') scripts/verify-windows-installed-bundle.mjs $bundleRoot 'out/windows-installed-check.json' $archives[0].FullName
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Preserve the Windows evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: windows-verification
+          path: out/windows-installed-check.json
+          if-no-files-found: error
+          retention-days: 30

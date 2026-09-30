@@ -574,5 +574,9 @@
   ],
   "scripts/report-modeling-uplift-followup.mjs": [
     "Alma"
+  ],
+  "scripts/verify-windows-installed-bundle.mjs": [
+    "ALMA_SKETCHUP_AGENT_ALLOWED_RUNTIMES",
+    "ALMA_SKETCHUP_AGENT_ALLOW_QUEUE_MUTATION"
   ]
 }

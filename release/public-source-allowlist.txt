@@ -3,6 +3,7 @@
 # one file to a different public path. Every path is repository-relative.
 
 .gitignore
+.gitattributes
 README.md
 LICENSE
 NOTICE
@@ -83,6 +84,9 @@ test/assembly-commit-recovery.mjs
 test/queue-publication.mjs
 CHANGELOG.md
 INSTALL_FOR_AGENTS.md
+.github/workflows/windows-bundle.yml
+scripts/verify-windows-installed-bundle.mjs
+test/agent-install-entry-doc.mjs
 docs/RELEASE_ACCEPTANCE_0.3.0.md
 docs/RELEASE_ACCEPTANCE_0.2.0.md
 docs/release-0.3.0-acceptance.json
