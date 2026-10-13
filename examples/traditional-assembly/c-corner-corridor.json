@@ -1,0 +1,106 @@
+{
+  "version": 1,
+  "kind": "traditional_assembly",
+  "id": "sample-c-corner",
+  "units": "mm",
+  "parameters": {
+    "bay_lengths_mm": [
+      3000,
+      3000
+    ],
+    "width_mm": 2000,
+    "column_height_mm": 2800,
+    "rise_mm": 650,
+    "eave_mm": 450,
+    "return_bays_mm": [
+      3000,
+      3000
+    ]
+  },
+  "assembly": {
+    "version": 1,
+    "mode": "contemporary_chinese",
+    "layout": {
+      "kind": "path",
+      "width_parameter": "width_mm",
+      "segments": [
+        {
+          "id": "run",
+          "direction_deg": 0,
+          "bay_lengths_parameter": "bay_lengths_mm"
+        },
+        {
+          "id": "return",
+          "direction_deg": 90,
+          "bay_lengths_parameter": "return_bays_mm"
+        }
+      ]
+    },
+    "assemblies": [
+      {
+        "id": "frame",
+        "family": "path_frame"
+      },
+      {
+        "id": "roof",
+        "family": "roof_unit",
+        "parameters": {
+          "type": "gable"
+        }
+      },
+      {
+        "id": "eave",
+        "family": "eave_unit"
+      },
+      {
+        "id": "seat",
+        "family": "rail_seat",
+        "parameters": {
+          "type": "seat",
+          "side": 1
+        }
+      }
+    ],
+    "connections": [
+      {
+        "from": "frame.bearing",
+        "to": "roof.bearing",
+        "relation": "contact"
+      },
+      {
+        "from": "roof.roof_surface",
+        "to": "eave.roof_surface",
+        "relation": "alignment"
+      }
+    ],
+    "parameter_bindings": {
+      "frame": {
+        "column_height_mm": "column_height_mm"
+      },
+      "roof": {
+        "rise_mm": "rise_mm",
+        "eave_projection_mm": "eave_mm"
+      }
+    },
+    "parameter_sources": {
+      "bay_lengths_mm": {
+        "basis": "selected",
+        "note": "Four engineering trial bays; change only index 1 to 3300 mm for sample A."
+      }
+    },
+    "representation": {
+      "tile_detail": "surface"
+    },
+    "simplifications": [
+      "Selected contemporary corridor; no historical period claimed.",
+      "Equal-height/width 90-degree roof miter is a project-selected node."
+    ]
+  },
+  "placement": {
+    "origin_mm": [
+      0,
+      0,
+      0
+    ]
+  }
+}

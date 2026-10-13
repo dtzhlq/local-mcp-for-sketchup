@@ -1,4 +1,6 @@
 import { TIMBER_QUALITY_SCOPE, readTimberQualitySummary, evaluateTimberQuality, captureTimberOverview, recoverTimberOverview } from './traditional-timber/quality.mjs';
+import { TRADITIONAL_ASSEMBLY_QUALITY_SCOPE, evaluateTraditionalAssemblyQuality } from './traditional-timber/assembly-quality.mjs';
+import { verifyTraditionalScene, dispatchTraditionalScene, compileTraditionalScenePlan } from './traditional-timber/scene-plan.mjs';
 import { adoptAssemblySummary, rootPathsFromCommittedSnapshot } from './model-accessibility-assembly-summary.mjs';
 import {captureCreationQaBaseline,applyCreationQaScope} from './creation-qa-scope.mjs';
 import { continueModelProgram } from './model-program.mjs';
@@ -165,7 +167,9 @@ export class AgentGateway {
           : 'server_policy_auto_approved',
         approved_by: serverAutoApproval === 'copy_fast_session'
           ? 'execution-policy:copy-fast-session'
-          : 'execution-policy:S1',
+          : serverAutoApproval === 'server_policy_development_models' ? 'execution-policy:development-models' : 'execution-policy:S1',
+        authorization_mode: serverAutoApproval,
+        ...(serverAutoApproval === 'server_policy_development_models' ? { authorization_ref: binding.plan.development_model_auto_approval.authorization_ref } : {}),
         approval_token_exposed: false,
         review_context_hash: binding.reviewContextHash,
         allowed_operations: binding.allowedOperations,
@@ -198,7 +202,7 @@ export class AgentGateway {
 
   async refreshLocalApprovalState(task) {
     if (task?.state !== 'awaiting_review') return task;
-    const challenge = task.result?.approval_challenge
+    let challenge = task.result?.approval_challenge
       || task.private?.design_reconciliation_approval
       || task.private?.approval_challenge;
     if (!challenge?.challenge_id) return task;
@@ -217,6 +221,19 @@ export class AgentGateway {
     }
     const decision = await this.bridge.approvalAuthority.readDecision(challenge.challenge_id, { allowMissing: true });
     if (!decision) {
+      if (task.intent === 'reviewed_existing_model_edit' && Date.parse(challenge.expires_at) <= Date.now()) {
+        const binding = reviewedTaskAuthorizationBinding(task, this.bridge.executionPolicy);
+        // Renew only an undecided, expired review of the intact private plan.
+        // The old page remains expired; this issues no decision or credential.
+        challenge = await this.bridge.approvalAuthority.createChallenge({
+          taskId: task.task_id, planId: binding.plan.plan_id, planHash: binding.plan.plan_hash,
+          modelRevision: binding.plan.model_revision, riskLevel: binding.plan.risk_level,
+          allowedOperations: binding.allowedOperations,
+          reviewContext: existingModelEditApprovalReviewContext(binding.plan),
+          idempotencyKey: `renew-undecided-review:${task.task_id}:${challenge.challenge_id}`
+        });
+        task = await this.taskStore.update(task.task_id, { result: { ...task.result, approval_challenge: challenge } });
+      }
       const nextAction = this.approvalNextAction(challenge, {
         required: task.intent === 'apply_native_appearance' ? ['connection_task_id', 'stable submit idempotency_key'] : (task.inputs?.runtime || 'mock') === 'queue' && task.intent === 'reviewed_existing_model_edit'
           ? ['session_contract']
@@ -261,7 +278,7 @@ export class AgentGateway {
     const { intent, instruction, interface_level = 'guided', client_capabilities = {}, idempotency_key, inputs = {} } = options;
     if (!SUPPORTED_INTENTS.has(intent)) throw new AgentContractError('INVALID_ARGUMENT', 'intent is not supported by Agent Contract v1.');
     if (intent === 'program_model' && !idempotency_key) throw new AgentContractError('INVALID_ARGUMENT', 'Program requires a stable idempotency_key');
-    if (intent === 'create_model' && inputs.task && !idempotency_key) throw new AgentContractError('INVALID_ARGUMENT', 'Common-task creation requires an idempotency_key retained across retries.', { details: { recovery_class: 'self_correctable', issues: [{ path: '/idempotency_key', message: 'Provide a stable unique request key.' }] } });
+    if (intent === 'create_model' && (inputs.task||inputs.scene_plan) && !idempotency_key) throw new AgentContractError('INVALID_ARGUMENT', 'Common-task creation requires an idempotency_key retained across retries.', { details: { recovery_class: 'self_correctable', issues: [{ path: '/idempotency_key', message: 'Provide a stable unique request key.' }] } });
     if (intent === 'deliver_model' && !idempotency_key) throw new AgentContractError('INVALID_ARGUMENT', 'Delivery requires a stable idempotency_key.');
     if (intent === 'reopen_delivered_model') {
       if (!idempotency_key) throw new AgentContractError('INVALID_ARGUMENT', 'Saved close/reopen requires a stable idempotency_key.');
@@ -352,9 +369,13 @@ export class AgentGateway {
       } catch (error) { return this.handleTaskError(task, error); }
     }
     if (task.inputs?.parameter_edit && task.private?.parameter_execution) return this.continueParameterTaskEnvelope(task, {});
-    if (task.intent === 'verify_model' && task.inputs?.creation_task_id && task.state === 'verifying') {
+    if(task.intent==='create_model'&&task.inputs?.scene_plan&&['understanding','awaiting_input'].includes(task.state)) {
+      try {if(task.state==='awaiting_input')task=await this.taskStore.transition(task_id,'understanding',{reason:'resume_recorded_scene'});task=await dispatchTraditionalScene(this,task);return createResultEnvelope({task:await this.taskStore.getTask(task_id),data:responseData(task),idempotentReplay:true});}
+      catch(error){return this.handleTaskError(task,error);}
+    }
+    if (task.intent === 'verify_model' && (task.inputs?.creation_task_id||task.inputs?.scene_id) && task.state === 'verifying') {
       try {
-        task = await verifyDefinitionParameterResult(this, task);
+        task = task.inputs.scene_id?await verifyTraditionalScene(this,task):await verifyDefinitionParameterResult(this, task);
         return createResultEnvelope({ task: await this.taskStore.getTask(task_id), data: responseData(task), idempotentReplay: true });
       } catch (error) { return this.handleTaskError(task, error); }
     }
@@ -850,9 +871,9 @@ export class AgentGateway {
       assertRuntimePolicy(runtime, this.bridge.executionPolicy, task.intent);
       const timeoutMs = boundedQueueTimeoutMs(task.inputs.timeout_ms, 30_000);
       const capabilities = (await this.bridge.get_capabilities({ runtime, timeoutMs })).runtime;
-      if(runtime==='queue'&&task.inputs.task.kind==='traditional_timber'&&capabilities.creation_scope?.assembly_projection!=='assembly-merkle.v2')throw new AgentContractError('POLICY_DENIED','The timber preset requires the matching plugin with bounded assembly summaries.');
+      if(runtime==='queue'&&['traditional_timber','traditional_assembly'].includes(task.inputs.task.kind)&&capabilities.creation_scope?.assembly_projection!=='assembly-merkle.v2')throw new AgentContractError('POLICY_DENIED','Traditional assemblies require the matching plugin with bounded assembly summaries.');
       if (!Array.isArray(capabilities?.supported_operations)) throw new AgentContractError('INVALID_ARGUMENT', 'The runtime did not advertise its generated-operation support; reconnect to a compatible plugin.', { details: { recovery_class: 'runtime_blocked', issues: [{ code: 'CAPABILITY_UNSUPPORTED', path: '/inputs/runtime', message: 'A fresh generated-operation capability list is required.' }] } });
-      const inspected = runtime==='queue'&&task.inputs.task.kind==='traditional_timber'
+      const inspected = runtime==='queue'&&['traditional_timber','traditional_assembly'].includes(task.inputs.task.kind)
         ? await this.bridge.adopt_open_model({runtime,read_only:true,assembly_projection:true,recursive:false,timeoutMs})
         : await this.bridge.inspect_model({ runtime, includeEntities: true, includeSnapshot: true, timeoutMs });
       const roots = [...(inspected.entities || []), ...(inspected.snapshot?.groups || []), ...(inspected.snapshot?.instances || [])];
@@ -867,6 +888,11 @@ export class AgentGateway {
   }
 
   async preflightModeling(task) {
+    if(task.inputs.scene_plan) {
+      if(Object.keys(task.inputs).some(k=>!['scene_plan'].includes(k)))throw new AgentContractError('INVALID_ARGUMENT','Scene preflight accepts only inputs.scene_plan.');
+      const scene=compileTraditionalScenePlan(task.inputs.scene_plan);
+      return this.taskStore.transition(task.task_id,'completed',{reason:'traditional_scene_preflight_completed',patch:{result:{kind:'traditional_scene_preflight',scene_id:scene.scene_id,scene_plan_hash:scene.scene_plan_hash,root_count:scene.jobs.length,resource_estimate:scene.resource_estimate,jobs:scene.jobs.map(j=>({root_id:j.root_id,operation_count:j.operation_count,resource_estimate:j.resource_estimate})),execution_started:false,quality_accepted:false,evidence_level:'preflight_only'},next_action:null}});
+    }
     const compiled = await this.compileCommonTask(task);
     return this.taskStore.transition(task.task_id, 'completed', { reason: 'common_task_preflight_completed', patch: {
       result: { kind: 'model_accessibility_preflight', evidence_level: 'preflight_only', quality_status: 'not_evaluated', quality_accepted: false, preflight: compiled.preflight, required_before_execution: ['explicit runtime', 'stable idempotency_key', 'fresh connection_task_id or session_contract for queue'], task: task.inputs.task },
@@ -1031,9 +1057,10 @@ export class AgentGateway {
     const refreshed = await this.taskStore.getTask(task.task_id, { includePrivate: true });
     const autoApprovalMode = serverPolicyAutoApprovalMode(prepared.plan, this.bridge.executionPolicy);
     const copyFastActive = autoApprovalMode === 'copy_fast_session';
+    const developmentActive = autoApprovalMode === 'server_policy_development_models';
     const targetState = prepared.plan.compile_permission !== 'ready_for_review'
       ? 'failed'
-      : copyFastActive
+      : copyFastActive || developmentActive
         ? 'approved'
         : 'awaiting_review';
     return this.taskStore.transition(task.task_id, targetState, {
@@ -1041,7 +1068,7 @@ export class AgentGateway {
         ? 'edit_plan_blocked'
         : copyFastActive
           ? 'copy_fast_session_active'
-          : 'trusted_review_required',
+          : developmentActive ? 'development_model_authorized_by_user_policy' : 'trusted_review_required',
       patch: {
         private: {
           ...refreshed.private,
@@ -1069,6 +1096,7 @@ export class AgentGateway {
           approval_challenge: prepared.approval_challenge,
           execution_mode: prepared.plan.execution_mode,
           user_action_required: prepared.plan.user_action_required,
+          ...(developmentActive ? { authorization_ref: prepared.plan.development_model_auto_approval.authorization_ref } : {}),
           copy_fast_session: prepared.copy_fast_session,
           source_proposal: sourceProposal?.binding || null,
           source_design_change: sourceDesignChange ? {
@@ -1592,9 +1620,10 @@ export class AgentGateway {
     const graph = buildModelGraph(adoption);
     const sourceDocument = sourceTask.private.creation.parameter_source_document_binding;
     if (modelKeyForIdentity(modelIdentityForAdoption(adoption)) !== record.model_key
-      || sourceDocument && sourceDocument !== parameterSourceDocumentBinding(adoption)) {
-      if (!task.inputs.saved_delivery_task_id) throw new AgentContractError('MODEL_IDENTITY_MISMATCH', 'Open model identity differs from the trusted creation baseline. To continue an unchanged server delivery, include inputs.saved_delivery_task_id.');
-      record = await resumeSavedDefinitionParameterSource({ gateway: this, sourceTask, deliveryTaskId: task.inputs.saved_delivery_task_id, adoption, modelGraph: graph });
+      || sourceDocument && sourceDocument !== parameterSourceDocumentBinding(adoption) || sourceTask.private.creation.saved_scene_identity_rebinding?.pending === true) {
+      const deliveryTaskId = task.inputs.saved_delivery_task_id || sourceTask.private.creation.saved_scene_identity_rebinding?.delivery_task_id;
+      if (!deliveryTaskId) throw new AgentContractError('MODEL_IDENTITY_MISMATCH', 'Open model identity differs from the trusted creation baseline. To continue an unchanged server delivery, include inputs.saved_delivery_task_id.');
+      record = await resumeSavedDefinitionParameterSource({ gateway: this, sourceTask, deliveryTaskId, adoption, modelGraph: graph });
     }
     const edit = planDefinitionParameterEdit({ sourceRecord: record, currentModelGraph: graph, request, taskId: task.task_id,
       iteration: record.parameter_revision, instruction: task.instruction });
@@ -1626,8 +1655,8 @@ export class AgentGateway {
       if (creation.runtime === 'queue' && (!committedRevision || creation.round.snapshot.model_revision_complete !== true)) throw new AgentContractError('MODEL_REVISION_INCOMPLETE', 'Creation has no complete committed native revision for an immediate parameter baseline.');
       const rootIds = compileModelAccessibilityTask(task.inputs.task).bundle.part_graph.roots.map(root => creation.identity_map[root.instance_id || root.part_id]);
       const recursiveLimit = boundedRecursiveLimit(task.inputs.recursive_limit, this.bridge.executionPolicy, 5000);
-      const adoption = creation.runtime === 'queue' && task.inputs.task.kind === 'traditional_timber' ? await adoptAssemblySummary({ bridge: this.bridge, recursiveLimit,
-        timeoutMs: Math.max(900_000, boundedQueueTimeoutMs(task.inputs.timeout_ms, 120_000)),
+      const adoption = creation.runtime === 'queue' && ['traditional_timber','traditional_assembly'].includes(task.inputs.task.kind) ? await adoptAssemblySummary({ bridge: this.bridge, recursiveLimit,
+        timeoutMs: task.inputs.task.kind==='traditional_timber'?Math.max(900_000, boundedQueueTimeoutMs(task.inputs.timeout_ms, 120_000)):boundedQueueTimeoutMs(task.inputs.timeout_ms,120_000),
         rootPaths: rootPathsFromCommittedSnapshot(creation.round.snapshot, rootIds), expectedRevision: committedRevision }) : rootIds.length > 1 ? await adoptParameterRoots({ bridge: this.bridge, runtime: creation.runtime, recursiveLimit,
         timeoutMs: boundedQueueTimeoutMs(task.inputs.timeout_ms, 120_000), rootIds })
         : await this.bridge.adopt_open_model({ runtime: creation.runtime, read_only: true, recursive: true,
@@ -2271,6 +2300,7 @@ export class AgentGateway {
 
   async verifyModel(task) {
     const inputs = task.inputs;
+    if(inputs.scene_id)return verifyTraditionalScene(this,task);
     if (inputs.creation_task_id) return verifyDefinitionParameterResult(this, task);
     if (Object.hasOwn(inputs, 'task') || Object.hasOwn(inputs, 'source_task_id')) {
       const source = typeof inputs.source_task_id === 'string'
@@ -2432,6 +2462,7 @@ export class AgentGateway {
   }
 
   async createModel(task) {
+    if(task.inputs.scene_plan)return dispatchTraditionalScene(this,task);
     if (task.inputs.source_image_model && task.private?.image_model_creation?.approved) await assertFrozenImageCreation(this,task);
     if (task.inputs.source_image_model && !task.private?.image_model_creation?.approved) return prepareImageModelCreation(this, task);
     if (task.inputs.task && !task.private?.creation) {
@@ -2663,14 +2694,15 @@ export class AgentGateway {
     if (task.state === 'executing') task = await this.taskStore.transition(task.task_id, 'verifying', { reason: 'recover_creation_quality_without_rebuild' });
     let creation = task.private.creation;
     const snapshot = creation.round.snapshot;
-    const timber=Boolean(creation.timber_rule_binding);
-    const timberReadTimeoutMs=timber?Math.max(900_000,boundedQueueTimeoutMs(task.inputs.timeout_ms,120_000)):null;
-    if(timber&&creation.frozen_spec?.specification.coverage_version!==TIMBER_QUALITY_SCOPE)throw new AgentContractError('ARTIFACT_INTEGRITY_ERROR','Timber creation lost its frozen assembly contract.');
-    const summary=timber?(timberSummary || await readTimberQualitySummary({bridge:this.bridge,creation,timeoutMs:timberReadTimeoutMs})):null;
+    const generic=creation.frozen_spec?.specification.coverage_version===TRADITIONAL_ASSEMBLY_QUALITY_SCOPE;
+    const timber=Boolean(creation.timber_rule_binding)&&creation.runtime==='queue';
+    const timberReadTimeoutMs=timber?(generic?boundedQueueTimeoutMs(task.inputs.timeout_ms,120_000):Math.max(900_000,boundedQueueTimeoutMs(task.inputs.timeout_ms,120_000))):null;
+    if(timber&&![TIMBER_QUALITY_SCOPE,TRADITIONAL_ASSEMBLY_QUALITY_SCOPE].includes(creation.frozen_spec?.specification.coverage_version))throw new AgentContractError('ARTIFACT_INTEGRITY_ERROR','Timber creation lost its frozen assembly contract.');
+    const summary=timber?(!generic&&timberSummary ? timberSummary : await readTimberQualitySummary({bridge:this.bridge,creation,timeoutMs:timberReadTimeoutMs})):null;
     if(summary&&summary.model_revision!==snapshot.model_revision)throw new AgentContractError('MODEL_REVISION_MISMATCH','Model changed after the committed timber operation.');
     let qa = timber?{verdict:'pass',validation_scope:'atomic_creation_and_native_assembly_summary',collision_acceptance:false}
       :await this.bridge.validate_model({ snapshot, runtime: creation.runtime, spec: creation.layout_spec, includePreview: task.inputs.include_preview !== false });
-    const collisionReview = timber?{qa,evidence:{scope:'visible_joints_reviewed_in_final_whole_hall',full_collision_sweep:false}}
+    const collisionReview = timber?{qa,evidence:{scope:generic?'major_assembly_readback; visible_joint_review_pending':'visible_joints_reviewed_in_final_whole_hall',full_collision_sweep:false}}
       :await narrowDetailLayoutQa({ bridge: this.bridge, snapshot, qa, runtime: creation.runtime, timeoutMs: boundedQueueTimeoutMs(task.inputs.timeout_ms, 120_000) });
     if(!timber)qa = await applyCreationQaScope(this.bridge,collisionReview.qa,creation,snapshot,boundedQueueTimeoutMs(task.inputs.timeout_ms,120_000));
     creation = { ...creation, round: { ...creation.round, collision_review: collisionReview.evidence } };
@@ -2700,8 +2732,8 @@ export class AgentGateway {
             if (recovered) return recovered;
           }
           const handshake = creation.runtime === 'queue' ? await gatewayBridge.create_queue_handshake({timeoutMs: timberReadTimeoutMs || boundedQueueTimeoutMs(task.inputs.timeout_ms, 120_000), expires_in_ms: 300000}) : null;
-          if (timber) return captureTimberOverview({bridge: gatewayBridge, view: requiredViews[0], outputDir,
-            modelRevision: snapshot.model_revision, timeoutMs: timberReadTimeoutMs, sessionContract: handshake.session_contract});
+          if (timber) return captureTimberOverview({bridge: gatewayBridge, view: generic?views[0]:requiredViews[0], outputDir,
+            modelRevision: snapshot.model_revision, timeoutMs: timberReadTimeoutMs, sessionContract: handshake.session_contract, fitToRoot:generic});
           return gatewayBridge.capture_detail_views({ views, output_dir: outputDir, runtime: creation.runtime, timeoutMs: boundedQueueTimeoutMs(task.inputs.timeout_ms, 120_000), ...(handshake ? { session_contract: handshake.session_contract } : {}) });
         });
         captureRawResult = captured;
@@ -2725,7 +2757,7 @@ export class AgentGateway {
         region_inspection_attempts: (creation.round.region_inspection_attempts || 0) + 1 } };
       task = await this.taskStore.update(task.task_id, { private: { ...task.private, creation } });
     }
-    const quality = timber?evaluateTimberQuality({summary,creation,captures}):evaluateDetailQuality({ snapshot, layoutQa: qa, frozenSpecification: creation.frozen_spec, runtime: creation.runtime, trustedSnapshot: true, identityMap: creation.identity_map, materialMap: creation.material_map, occurrencePathMap: creation.occurrence_path_map, captures,
+    const quality = timber?(generic?evaluateTraditionalAssemblyQuality({summary,creation,captures,regionInspection:regionCheck?.raw_result,trustedRegionInspection:regionCheck?.received_from_server===true}):evaluateTimberQuality({summary,creation,captures})):evaluateDetailQuality({ snapshot, layoutQa: qa, frozenSpecification: creation.frozen_spec, runtime: creation.runtime, trustedSnapshot: true, identityMap: creation.identity_map, materialMap: creation.material_map, occurrencePathMap: creation.occurrence_path_map, captures,
       regionInspection: regionCheck?.raw_result, trustedRegionInspection: regionCheck?.received_from_server === true });
     const newRound = !creation.rounds.some(round => round.source_hash === creation.round.source_hash);
     const rounds = newRound ? [...creation.rounds, { source_hash: creation.round.source_hash, iteration: creation.round.iteration }] : creation.rounds;
@@ -3468,6 +3500,7 @@ function serverPolicySubmissionNextAction({ runtime, autoApprovalMode, plan }) {
     then_tool: 'submit_agent_task_input',
     approval_status: 'server_policy_auto_approved',
     authorization_mode: autoApprovalMode,
+    user_action_required: false,
     required: runtime === 'queue' ? ['session_contract'] : []
   };
 }
@@ -3509,6 +3542,13 @@ function reviewedTaskAuthorizationBinding(task, executionPolicy) {
   const allowedOperations = [...new Set(plan.dsl_document.operations.map((operation) => String(operation?.op || '')))]
     .filter(Boolean)
     .sort();
+  if (autoApprovalMode === 'server_policy_development_models') {
+    if (challenge !== null || result.execution_mode !== 'development_authorized' || result.user_action_required !== false
+      || result.authorization_ref !== plan.development_model_auto_approval.authorization_ref) {
+      throw new AgentContractError('APPROVAL_INVALID', 'The public development authorization no longer matches its server-private policy binding.');
+    }
+    return { plan, challenge: null, reviewContextHash, allowedOperations, expectedAuthorization: null, copyFastSession: null };
+  }
   if (autoApprovalMode === 'copy_fast_session') {
     const expectedSummary = publicCopyFastSessionSummary(plan.copy_fast_session);
     const summary = result.copy_fast_session;

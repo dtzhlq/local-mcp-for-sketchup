@@ -64,6 +64,24 @@
           },
           "additionalProperties": false
         },
+        "development_model_auto_approval": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["version", "enabled", "authorization_ref", "allowed_root_count", "allowed_model_key_count", "allowed_risks", "max_affected_instances", "allow_save_model", "scope_fingerprint", "user_action_required_per_edit", "task_input_can_enable"],
+          "properties": {
+            "version": { "const": "development-model-auto-approval-policy.v1" },
+            "enabled": { "type": "boolean" },
+            "authorization_ref": { "type": "string" },
+            "allowed_root_count": { "type": "integer", "minimum": 0 },
+            "allowed_model_key_count": { "type": "integer", "minimum": 0 },
+            "allowed_risks": { "type": "array", "uniqueItems": true, "items": { "enum": ["S1", "S2", "S3", "S4"] } },
+            "max_affected_instances": { "type": "integer", "minimum": 1 },
+            "allow_save_model": { "type": "boolean" },
+            "scope_fingerprint": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+            "user_action_required_per_edit": { "const": false },
+            "task_input_can_enable": { "const": false }
+          }
+        },
         "copy_fast_mode": {
           "type": "object",
           "additionalProperties": false,

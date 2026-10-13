@@ -8,6 +8,7 @@ import { requirementsForOccurrences, DETAIL_COVERAGE_VERSION } from './requireme
 import { compilePartGraphToSketchUpDsl } from '../product-modeling/part-graph-compiler.mjs';
 import { freezeDetailSpecification } from '../detail-quality.mjs';
 import { normalizeComponentMirror } from '../component-operations.mjs';
+import { buildTraditionalAssemblyRecipe } from '../traditional-timber/assembly-compiler.mjs';
 
 const clone=value=>structuredClone(value);
 const named=(value,label)=>{if(typeof value!=='string'||!value.trim())throw new Error(`${label} must be a nonempty string`);return value;};
@@ -66,10 +67,10 @@ export function composeDesign(baseBundle,compositionPlan){
   };
   for(const [index,addition] of (plan.additions||[]).entries()){
     const label=`composition_plan.additions[${index}]`;
-    const family=addition.asset_kind?(addition.family||'furnishing'):'recipe';
+    const family=addition.family==='traditional_assembly'?'traditional_assembly':addition.asset_kind?(addition.family||'furnishing'):'recipe';
     const kind=named(addition.asset_kind||addition.family,`${label}.asset_kind/family`),assetId=named(addition.id,`${label}.id`);
-    if(!['furnishing','recipe'].includes(family))throw new Error(`${label}.family must be furnishing or recipe`);
-    const asset=family==='furnishing'?buildFurnishingAsset(kind,{id:assetId,parameters:addition.parameters||{}}):buildDetailedRecipe(kind,{id:assetId,parameters:addition.parameters||{}});
+    if(!['furnishing','recipe','traditional_assembly'].includes(family))throw new Error(`${label}.family must be furnishing, recipe or traditional_assembly`);
+    const asset=family==='traditional_assembly'?buildTraditionalAssemblyRecipe({id:assetId,assembly:addition.assembly,parameters:addition.parameters||{}}):family==='furnishing'?buildFurnishingAsset(kind,{id:assetId,parameters:addition.parameters||{}}):buildDetailedRecipe(kind,{id:assetId,parameters:addition.parameters||{}});
     addParts(asset.parts,label);mergeMaterials(asset.materials||DETAIL_MATERIALS,label,true);explicitRequirements.push(...clone(asset.requirements||[]));
     const placements=addInstances(asset.root_id,addition.instances,label);
     requiredVoids.push(...bindRecipeVoidsToInstances(asset.required_voids,asset.root_id,placements));
@@ -99,7 +100,8 @@ export function composeDesign(baseBundle,compositionPlan){
     return {...clone(input),id:viewId,name:viewId,kind:input.kind||'overview',width:input.width??1600,height:input.height??1000,camera:{...camera,eye,target,up}};
   });
   const profile={...clone(baseBundle.profile||{}),version:1,profile_id:graph.profile_id,materials:[...materials.values()],review:{...clone(baseBundle.profile?.review||{}),scenes:views.map(view=>({name:view.id,camera:view.camera}))}};
-  const dsl=compilePartGraphToSketchUpDsl(graph,profile);dsl.operations.push({op:'camera',...views[0].camera});
+  const generic=(plan.additions||[]).some(addition=>addition.family==='traditional_assembly')||baseBundle.part_graph.product?.type==='traditional_assembly';
+  const dsl=compilePartGraphToSketchUpDsl(graph,profile,generic?{includeReset:false}:{});dsl.operations.push({op:'camera',...views[0].camera});
   const parts_mapping=describeAssemblyOccurrences(graph);
   requiredVoids.push(...clone(plan.required_voids||[]));
   const detail_spec={...clone(baseBundle.detail_spec||{}),version:1,coverage_version:DETAIL_COVERAGE_VERSION,scene_id:id,required_parts:requirementsForOccurrences(graph.parts,parts_mapping,explicitRequirements),...(requiredVoids.length||plan.required_voids!==undefined||baseBundle.detail_spec?.required_voids!==undefined?{required_voids:requiredVoids}:{}),required_views:views.map(view=>({id:view.id,kind:view.kind,...(view.target_id?{target_id:view.target_id}:{}),min_width:view.min_width??1400,min_height:view.min_height??900})),max_iterations:plan.max_iterations??baseBundle.detail_spec?.max_iterations??6};

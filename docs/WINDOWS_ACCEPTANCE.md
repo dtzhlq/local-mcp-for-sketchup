@@ -1,7 +1,7 @@
 # Windows x64 / SketchUp 2026 acceptance
 
-The current installation preview is `v0.4.0-windows-preview.1`, synchronized with
-the signed 0.4.0 runtime. Its Windows CI report covers the installed server and
+The current installation preview is `v0.4.1-windows-preview.1`, synchronized with
+the signed 0.4.1 runtime. Its Windows CI report covers the installed server and
 offline image/CAD/timber checks; it does not establish native SketchUp acceptance.
 For stable acceptance, use only the exact final hashes supplied with the release
 handoff. Files containing `nonrelease` do not qualify.
@@ -30,7 +30,7 @@ path, or unrelated machine information in public evidence.
 5. Extract the Windows x64 service bundle to a path containing a space.
 6. Confirm it starts with its bundled `node.exe`; do not rely on a system Node.
 7. Request a fresh `get_capabilities --runtime queue` handshake.
-8. Confirm the selected manifest's product version (currently `0.4.0`), the
+8. Confirm the selected manifest's product version (currently `0.4.1`), the
    expected capability manifest, runtime source attestation and the manifest's
    tool count (currently 48).
 9. Run a read-only inspection on a disposable model.

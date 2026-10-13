@@ -1,4 +1,5 @@
 import { buildYfRecipe } from '../traditional-timber/yf-recipe.mjs';
+import { buildTraditionalAssemblyRecipe } from '../traditional-timber/assembly-compiler.mjs';
 import {buildTraditionalTimberRecipe, TIMBER_RECIPE_KINDS} from '../traditional-timber/recipes.mjs';
 import {buildDetailedRecipe, DETAIL_MATERIALS} from '../detailed-modeling/recipes.mjs';
 import {compilePartGraphToSketchUpDsl} from './part-graph-compiler.mjs';
@@ -16,8 +17,8 @@ export function compileDetailedAssemblyRecipe(recipe={}, options={}) {
   if(!recipe.kind || !recipe.id)throw new Error('Detailed assembly recipe requires kind and id');
   const parameters={...(recipe.parameters||{}),...(options.parameterValues||{})};
   const yf=recipe.kind==='traditional_timber';
-  const timber=yf||TIMBER_RECIPE_KINDS.includes(recipe.kind);
-  const compiled=yf?buildYfRecipe({id:recipe.id,parameters}):(timber?buildTraditionalTimberRecipe:buildDetailedRecipe)(recipe.kind,{id:recipe.id,parameters});
+  const generic=recipe.kind==='traditional_assembly',timber=yf||generic||TIMBER_RECIPE_KINDS.includes(recipe.kind);
+  const compiled=generic?buildTraditionalAssemblyRecipe({id:recipe.id,assembly:recipe.assembly,parameters}):yf?buildYfRecipe({id:recipe.id,parameters}):(timber?buildTraditionalTimberRecipe:buildDetailedRecipe)(recipe.kind,{id:recipe.id,parameters});
   const partGraph={version:2,id:`recipe-${recipe.id}`,profile_id:`recipe-${recipe.kind}`,coordinate_system:'part_local',units:'mm',product:{type:recipe.kind,name:recipe.id},parts:compiled.parts,roots:[{part_id:compiled.root_id,instance_id:options.instanceId||`id-${recipe.id}`,origin:options.origin||[0,0,0]}]};
   const profile={version:1,profile_id:partGraph.profile_id,materials:structuredClone(compiled.materials||DETAIL_MATERIALS)};
   const safeJsonDsl=compilePartGraphToSketchUpDsl(partGraph,profile,{...(options.compileOptions||{}),...(timber?{includeReset:false}:{})});

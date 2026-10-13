@@ -61,9 +61,9 @@ module AlmaSketchupMCP
   RESPONSE_DIR = File.join(STATE_DIR, 'responses')
   MM_PER_INCH = 25.4
   DEFAULT_OPERATION_LIMIT = 2000
-  PLUGIN_VERSION = '0.4.0'
+  PLUGIN_VERSION = '0.4.1'
   CAPABILITY_MANIFEST_VERSION = '2026-09-modeling-uplift-alpha.1'
-  RUNTIME_CAPABILITY_VERSION = '0.4.0-timber.1'
+  RUNTIME_CAPABILITY_VERSION = '0.4.1-assembly.1'
   OCCURRENCE_CONTRACT_VERSION = 'canonical-occurrence-path.v1'
   BOOLEAN_OPERATIONS_SHA256 = RuntimeSourceAttestation.loaded_boolean_operations_sha256
   MODEL_REVISION_SOURCE_SHA256 = RuntimeSourceAttestation.loaded_model_revision_sha256

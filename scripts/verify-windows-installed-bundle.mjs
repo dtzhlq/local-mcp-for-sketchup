@@ -69,7 +69,8 @@ try {
     ['image_structure', 'image-structure.mjs'],
     ['cad_geometry_and_editing', 'cad-kernel/core.mjs'],
     ['cad_surfaces_and_fillets', 'cad-kernel/surfaces.mjs'],
-    ['traditional_timber', 'traditional-timber-rules.mjs']
+    ['traditional_timber', 'traditional-timber-rules.mjs'],
+    ['traditional_assembly', 'traditional-assembly.mjs']
   ]) {
     const destination = path.join(testRoot, fixture);
     await fs.mkdir(path.dirname(destination), { recursive: true });

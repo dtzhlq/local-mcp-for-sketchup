@@ -622,7 +622,7 @@ function compactAgentPayload(payload, fullResultHandle) {
 function minimalAgentPayload(payload, fullResultHandle) {
   const source = payload && typeof payload === 'object' ? payload : {};
   if (source.kind === 'image_structure') return { kind: source.kind, goal: source.goal, source_understanding: source.source_understanding, source_image_model: source.source_image_model, plan_hash: source.plan_hash, instance_count: source.instance_count, goal_gaps: source.goal_gaps, complete_model_delivered: false, full_result_artifact: fullResultHandle };
-  if (source.kind === 'parameter_source_discovery') return compactParameterSources(source, fullResultHandle);
+  if (source.kind === 'parameter_source_discovery') return compactParameterSources(source, fullResultHandle, true);
   if (source.topic === 'workflows') return compactWorkflow(source);
   if (source.parameter_rules) return compactParameterContract(source, fullResultHandle);
   if ((source.kind === 'modify_design_parameters_result' && source.stage) || source.kind === 'model_accessibility_appearance') return compactAccessibilityExecution(source, fullResultHandle, true);
@@ -685,12 +685,20 @@ function minimalAgentPayload(payload, fullResultHandle) {
   };
 }
 
-function compactParameterSources(source, fullResultHandle) {
-  return { kind: source.kind, topic: 'parameter_sources', current_model: source.current_model, evidence_level: source.evidence_level,
+function compactParameterSources(source, fullResultHandle, minimal = false) {
+  const summary = { kind: source.kind, topic: 'parameter_sources', current_model: source.current_model, evidence_level: source.evidence_level,
+    returned_source_count: (source.sources || []).length, returned_saved_source_count: (source.saved_source_continuations || []).length,
+    geometry_rechecked: false, full_result_artifact: fullResultHandle };
+  // The final fallback must be smaller than the first compact form. Counts
+  // and an opaque artifact retain every source without repeating long advice.
+  if (minimal) return { ...summary, note: 'Read full_result_artifact for complete source IDs, targets and saved_delivery_task_id.' };
+  return { ...summary,
     sources: (source.sources || []).slice(0, 3).map(item => ({ creation_task_id: item.creation_task_id, kind: item.kind, roots: item.roots,
       supported_parameters: item.supported_parameters, baseline_captured: item.baseline_captured, parameter_revision: item.parameter_revision, current_geometry_rechecked: false })),
-    saved_source_continuations: (source.saved_source_continuations || []).slice(0, 3),
-    returned_source_count: (source.sources || []).length, note: source.note, full_result_artifact: fullResultHandle };
+    saved_source_continuations: (source.saved_source_continuations || []).slice(0, 3).map(item => ({ creation_task_id: item.creation_task_id,
+      saved_delivery_task_id: item.saved_delivery_task_id, roots: item.roots, baseline_rebind_required: item.baseline_rebind_required,
+      current_geometry_rechecked: false })),
+    note: source.note };
 }
 
 function compactWorkflow(source) {

@@ -218,7 +218,8 @@ export function normalizeExecutionPolicy(value = {}) {
     resource_limits: resourceLimits,
     allow_queue_mutation: allowQueueMutation,
     allow_direct_expert_queue_mutation: allowQueueMutation && source.allow_direct_expert_queue_mutation === true,
-    trusted_model_copy_auto_approval: trustedModelCopyAutoApproval
+    trusted_model_copy_auto_approval: trustedModelCopyAutoApproval,
+    development_model_auto_approval: normalizeDevelopmentModelAutoApproval(source.development_model_auto_approval, resourceLimits)
   };
 }
 
@@ -233,7 +234,8 @@ export function publicExecutionPolicy(policy) {
     allow_queue_mutation: normalized.allow_queue_mutation,
     allow_direct_expert_queue_mutation: normalized.allow_direct_expert_queue_mutation,
     trusted_model_copy_auto_approval: publicTrustedModelCopyAutoApproval(normalized.trusted_model_copy_auto_approval),
-    copy_fast_mode: publicCopyFastMode(normalized.trusted_model_copy_auto_approval)
+    copy_fast_mode: publicCopyFastMode(normalized.trusted_model_copy_auto_approval),
+    development_model_auto_approval: publicDevelopmentModelAutoApproval(normalized.development_model_auto_approval)
   };
 }
 
@@ -290,6 +292,28 @@ export function copyFastTrustedScopeBindingHash(binding) {
 
 export function serverPolicyAutoApprovalMode(plan, executionPolicy) {
   if (plan?.auto_approval_eligible !== true) return null;
+  const developmentBinding = plan.development_model_auto_approval;
+  if (developmentBinding) {
+    const policy = executionPolicy?.development_model_auto_approval;
+    const { binding_hash, ...core } = developmentBinding;
+    return policy?.enabled === true
+      && core.version === 'development-model-auto-approval.v1'
+      && core.mode === 'server_user_execution_policy'
+      && core.policy_scope_fingerprint === policy.scope_fingerprint
+      && core.authorization_ref === policy.authorization_ref
+      && core.model_key === plan.model_key
+      && policy.allowed_risks.includes(plan.risk_level)
+      && core.risk_level === plan.risk_level
+      && core.affected_instance_count === plan.affected_instance_count
+      && core.affected_instance_count <= policy.max_affected_instances
+      && core.save_model === (plan.execution_contract?.save_model === true)
+      && core.save_path_fingerprint === developmentSavePathFingerprint(plan.execution_contract?.save_path)
+      && (!core.save_model || policy.allow_save_model === true)
+      && binding_hash === sha256Canonical(core)
+      && plan.execution_mode === 'development_authorized'
+      && plan.review_required === false && plan.user_action_required === false
+      ? 'server_policy_development_models' : null;
+  }
   const binding = plan.trusted_model_copy_auto_approval;
   const policy = executionPolicy?.trusted_model_copy_auto_approval;
   let trustedCopyBindingValid = false;
@@ -318,6 +342,61 @@ export function serverPolicyAutoApprovalMode(plan, executionPolicy) {
     return 'server_policy_s1';
   }
   return null;
+}
+
+// This is server configuration derived from a user's standing instruction.
+// Model content and public task inputs never supply or enable this policy.
+export function developmentModelAutoApprovalBinding({ executionPolicy, modelKey, modelSourcePath,
+  riskLevel, affectedInstanceCount, saveModel = false, savePath = null } = {}) {
+  const policy = executionPolicy?.development_model_auto_approval;
+  if (policy?.enabled !== true || !/^model_[0-9a-f]{32}$/.test(String(modelKey || ''))
+    || !policy.allowed_risks.includes(riskLevel) || !Number.isInteger(affectedInstanceCount)
+    || affectedInstanceCount < 1 || affectedInstanceCount > policy.max_affected_instances) return null;
+  const sourcePath = typeof modelSourcePath === 'string' && modelSourcePath.trim() ? path.resolve(modelSourcePath) : null;
+  const matchedRoot = sourcePath && policy.allowed_roots.find(root => pathIsWithinRoot(sourcePath, root));
+  const keyAllowed = policy.allowed_model_keys.includes(modelKey);
+  if (!matchedRoot && !keyAllowed) return null;
+  const resolvedSavePath = typeof savePath === 'string' && savePath.trim() ? path.resolve(savePath) : null;
+  if (saveModel && (policy.allow_save_model !== true || !resolvedSavePath
+    || !policy.allowed_roots.some(root => pathIsWithinRoot(resolvedSavePath, root)))) return null;
+  const core = { version: 'development-model-auto-approval.v1', mode: 'server_user_execution_policy',
+    policy_scope_fingerprint: policy.scope_fingerprint, authorization_ref: policy.authorization_ref,
+    model_key: modelKey, scope: matchedRoot ? 'project_model_path' : 'development_document',
+    source_path_fingerprint: sourcePath ? sha256Canonical({ kind: 'development_model_path', value: sourcePath }) : null,
+    matched_root_fingerprint: matchedRoot ? sha256Canonical({ kind: 'development_model_root', value: matchedRoot }) : null,
+    risk_level: riskLevel, affected_instance_count: affectedInstanceCount, save_model: saveModel === true,
+    save_path_fingerprint: developmentSavePathFingerprint(savePath) };
+  return { ...core, binding_hash: sha256Canonical(core) };
+}
+
+function developmentSavePathFingerprint(value) {
+  return typeof value === 'string' && value.trim()
+    ? sha256Canonical({ kind: 'development_save_path', value: path.resolve(value) }) : null;
+}
+
+function normalizeDevelopmentModelAutoApproval(value, resourceLimits) {
+  const source = value && typeof value === 'object' && !Array.isArray(value) ? value : {};
+  const allowedRoots = Array.isArray(source.allowed_roots) ? [...new Set(source.allowed_roots
+    .filter(entry => typeof entry === 'string' && entry.trim()).map(entry => path.resolve(entry)))] : [];
+  const allowedModelKeys = Array.isArray(source.allowed_model_keys) ? [...new Set(source.allowed_model_keys
+    .filter(entry => typeof entry === 'string' && /^model_[0-9a-f]{32}$/.test(entry)))] : [];
+  const allowedRisks = Array.isArray(source.allowed_risks) ? [...new Set(source.allowed_risks
+    .filter(risk => ['S1', 'S2', 'S3', 'S4'].includes(risk)))] : [];
+  const authorizationRef = typeof source.authorization_ref === 'string' ? source.authorization_ref.trim() : '';
+  const core = { version: 'development-model-auto-approval-policy.v1',
+    enabled: source.enabled === true && Boolean(authorizationRef) && allowedRisks.length > 0 && (allowedRoots.length > 0 || allowedModelKeys.length > 0),
+    authorization_ref: authorizationRef, allowed_roots: allowedRoots, allowed_model_keys: allowedModelKeys, allowed_risks: allowedRisks,
+    max_affected_instances: Math.min(boundedPolicyInteger(source.max_affected_instances, 1, 100_000), resourceLimits.max_affected_instances),
+    allow_save_model: source.allow_save_model === true };
+  return { ...core, scope_fingerprint: sha256Canonical(core) };
+}
+
+function publicDevelopmentModelAutoApproval(policy) {
+  return { version: policy.version, enabled: policy.enabled, authorization_ref: policy.authorization_ref,
+    allowed_root_count: policy.allowed_roots.length, allowed_model_key_count: policy.allowed_model_keys.length,
+    allowed_risks: policy.allowed_risks, max_affected_instances: policy.max_affected_instances,
+    allow_save_model: policy.allow_save_model, scope_fingerprint: policy.scope_fingerprint,
+    user_action_required_per_edit: false, task_input_can_enable: false };
 }
 
 function copyFastSavePathFingerprint(value) {

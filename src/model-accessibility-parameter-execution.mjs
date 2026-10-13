@@ -1,5 +1,6 @@
 import { adoptAssemblySummary } from './model-accessibility-assembly-summary.mjs';
-import { AgentContractError, sha256Canonical } from './agent-contract.mjs';
+import { AgentContractError, sha256Canonical, developmentModelAutoApprovalBinding, serverPolicyAutoApprovalMode } from './agent-contract.mjs';
+import { existingModelEditPlanHash } from './existing-model-editing.mjs';
 import { buildModelGraph } from './model-graph.mjs';
 import { modelIdentityForAdoption, modelKeyForIdentity } from './model-identity.mjs';
 import { compareDesignBindingFingerprints } from './design-intent-graph.mjs';
@@ -25,7 +26,7 @@ async function verifyExecution(gateway, task) {
   }
   return body;
 }
-async function graphFor(gateway, task, edit) {
+async function graphFor(gateway, task, edit, includeAdoption = false) {
   const adoption = edit.change_plan.readback_projection === 'assembly-merkle.v2' ? await adoptAssemblySummary({ bridge: gateway.bridge,
     rootPaths: edit.change_plan.recursive_roots, recursiveLimit: task.private.parameter_recursive_limit, timeoutMs: task.private.parameter_timeout_ms }) : edit.change_plan.recursive_roots?.length > 1 ? await adoptParameterRoots({ bridge: gateway.bridge,
     runtime: task.inputs.runtime || task.private.parameter_source_record.runtime, recursiveLimit: task.private.parameter_recursive_limit,
@@ -35,14 +36,81 @@ async function graphFor(gateway, task, edit) {
   if (modelKeyForIdentity(modelIdentityForAdoption(adoption)) !== edit.design_graph.model_key) throw new AgentContractError('MODEL_IDENTITY_MISMATCH', 'Parameter execution is bound to a different model.');
   const graph = buildModelGraph(adoption);
   if (!graph.completeness.complete && !graph.completeness.scope_complete && !(edit.change_plan.readback_projection === 'assembly-merkle.v2' && graph.completeness.assembly_scope_complete)) throw new AgentContractError('MODEL_REVISION_INCOMPLETE', 'Parameter execution requires complete selected subtrees.');
-  return graph;
+  return includeAdoption ? { graph, adoption } : graph;
 }
-async function verifyOriginalBindings(gateway, task, edit, requireRevision) {
-  const graph = await graphFor(gateway, task, edit);
+async function verifyOriginalBindings(gateway, task, edit, requireRevision, includeAdoption = false) {
+  const observed = await graphFor(gateway, task, edit, includeAdoption);
+  const graph = includeAdoption ? observed.graph : observed;
   if (requireRevision && graph.model_revision !== edit.change_plan.model_revision) throw new AgentContractError('MODEL_REVISION_MISMATCH', 'Model changed before definition staging.');
   if (compareDesignBindingFingerprints(edit.design_graph, graph).length) throw new AgentContractError('MODEL_REVISION_MISMATCH', 'Manual assembly changes require reconciliation before replacement.');
   validateAssemblyMaterialReferences(edit.change_plan.assembly_rebuild.creation_document, graph);
-  return graph;
+  return observed;
+}
+
+// A standing user policy may replace an undecided review. Only the same child,
+// same staged definitions and same operations can be rebound. Original source
+// fingerprints stay frozen; a signed pending journal covers a process loss
+// between preparing the child and updating its parent's plan hash.
+async function refreshDevelopmentParameterReview(gateway, task, edit, execution, child) {
+  const refreshed = await gateway.withTaskRequestSlot(child.task_id, 'refresh_development_parameter_review', async () => {
+    child = await gateway.taskStore.getTask(child.task_id, { includePrivate: true });
+    const oldPlan = child.private?.existing_edit_plan;
+    const pending = execution.review_refresh_pending;
+    const operationsHash = sha256Canonical(edit.change_plan.operations);
+    if (!oldPlan || oldPlan.plan_hash !== existingModelEditPlanHash(oldPlan) || oldPlan.model_key !== edit.design_graph.model_key
+      || sha256Canonical(oldPlan.dsl_document.operations) !== operationsHash
+      || sha256Canonical(child.inputs.operations) !== operationsHash
+      || sha256Canonical(child.inputs.targets) !== sha256Canonical(edit.change_plan.targets)
+      || (!pending && oldPlan.plan_hash !== execution.reviewed_plan_hash)
+      || (pending && (pending.operations_hash !== operationsHash || pending.old_plan_hash !== execution.reviewed_plan_hash))) {
+      throw new AgentContractError('PLAN_HASH_MISMATCH', 'Development review refresh requires the identical original child and replacement operations.');
+    }
+    if (!['awaiting_review', 'approved', ...(pending ? ['awaiting_input', 'understanding'] : [])].includes(child.state)
+      || await gateway.taskStore.loadTaskMutationReceipt(child.task_id, { allowMissing: true })) {
+      throw new AgentContractError('MUTATION_RECOVERY_REQUIRED', 'An applied or executing replacement cannot be re-prepared.');
+    }
+    const source = await gateway.taskStore.getTask(task.inputs.parameter_edit.creation_task_id, { includePrivate: true });
+    if (source.private.creation.parameter_source.source_record_hash !== edit.source_record_hash) {
+      throw new AgentContractError('MODEL_REVISION_MISMATCH', 'The original parameter source advanced before review refresh.');
+    }
+    const { graph, adoption } = await verifyOriginalBindings(gateway, task, edit, false, true);
+    const developmentBinding = developmentModelAutoApprovalBinding({ executionPolicy: gateway.bridge.executionPolicy,
+      modelKey: edit.design_graph.model_key, modelSourcePath: adoption.model_identity?.source_path || adoption.model_info?.source_path,
+      riskLevel: oldPlan.risk_level, affectedInstanceCount: oldPlan.affected_instance_count,
+      saveModel: oldPlan.execution_contract?.save_model === true, savePath: oldPlan.execution_contract?.save_path });
+    if (!developmentBinding || (pending && (pending.model_revision !== graph.model_revision
+      || pending.policy_scope_fingerprint !== developmentBinding.policy_scope_fingerprint))) {
+      throw new AgentContractError('POLICY_DENIED', 'The current model is outside the user-authorized development scope or changed during refresh.');
+    }
+    if (!pending) {
+      execution = { ...execution, review_refresh_pending: { version: 'parameter-review-refresh.v1',
+        old_plan_hash: oldPlan.plan_hash, old_model_revision: oldPlan.model_revision,
+        model_revision: graph.model_revision, operations_hash: operationsHash, model_key: oldPlan.model_key,
+        policy_scope_fingerprint: developmentBinding.policy_scope_fingerprint, authorization_ref: developmentBinding.authorization_ref } };
+      task = await writeExecution(gateway, task.task_id, execution);
+    }
+    // A newly prepared child can already exist after interruption. Finish that
+    // exact journal; otherwise prepare from the unchanged frozen child inputs.
+    if (oldPlan.plan_hash === execution.reviewed_plan_hash) {
+      if (['awaiting_review', 'approved'].includes(child.state)) child = await gateway.taskStore.transition(child.task_id, 'awaiting_input', { reason: 'development_policy_rebind_same_operations' });
+      if (child.state === 'awaiting_input') child = await gateway.taskStore.transition(child.task_id, 'understanding', { reason: 'development_policy_current_source_verified' });
+      child = await gateway.prepareReviewedExistingEdit(child);
+    }
+    const plan = child.private?.existing_edit_plan;
+    if (child.state !== 'approved' || !plan || plan.model_key !== edit.design_graph.model_key || plan.model_revision !== graph.model_revision
+      || sha256Canonical(plan.dsl_document.operations) !== operationsHash
+      || serverPolicyAutoApprovalMode(plan, gateway.bridge.executionPolicy) !== 'server_policy_development_models'
+      || plan.development_model_auto_approval.binding_hash !== developmentBinding.binding_hash) {
+      throw new AgentContractError('PLAN_HASH_MISMATCH', 'The refreshed child does not match the current source, staged operations and user policy.');
+    }
+    const audit = { ...execution.review_refresh_pending, new_plan_hash: plan.plan_hash, source_fingerprints_unchanged: true };
+    const { review_refresh_pending: ignored, ...body } = execution;
+    execution = { ...body, reviewed_plan_hash: plan.plan_hash, review_refresh_audit: [...(body.review_refresh_audit || []), audit] };
+    task = await writeExecution(gateway, task.task_id, execution);
+    return { task, execution, child };
+  });
+  if (refreshed.error) throw new AgentContractError(refreshed.error.code, refreshed.error.message);
+  return refreshed;
 }
 
 // Staging has one signed started/committed journal under the same server ledger
@@ -120,7 +188,13 @@ export async function continueDefinitionParameterExecution(gateway, task, { inpu
     task = await writeExecution(gateway, task.task_id, execution);
   }
   let child = await gateway.taskStore.getTask(execution.reviewed_task_id, { includePrivate: true });
+  if (execution.review_refresh_pending || (submit && gateway.bridge.executionPolicy.development_model_auto_approval?.enabled === true
+    && ['awaiting_review', 'approved'].includes(child.state)
+    && serverPolicyAutoApprovalMode(child.private?.existing_edit_plan, gateway.bridge.executionPolicy) !== 'server_policy_development_models')) {
+    ({ task, execution, child } = await refreshDevelopmentParameterReview(gateway, task, edit, execution, child));
+  }
   if (child.private?.existing_edit_plan?.plan_hash !== execution.reviewed_plan_hash) throw new AgentContractError('PLAN_HASH_MISMATCH', 'The bound reviewed child plan changed.');
+  if (child.state === 'awaiting_review') child = await gateway.refreshLocalApprovalState(child);
   if (submit && ['awaiting_review', 'approved'].includes(child.state)) {
     if (!idempotencyKey) throw new AgentContractError('INVALID_ARGUMENT', 'Parameter application requires a stable submission idempotency key.');
     const response = await gateway.submitUnprojected({ task_id: child.task_id, idempotency_key: `${task.task_id}:apply:${idempotencyKey}`, input });

@@ -1,6 +1,11 @@
 import { buildYfRecipe } from './traditional-timber/yf-recipe.mjs';
 import { YF_PARAMETER_RULES, YF_RULES, yfRuleBinding, resolveYfParameters } from './traditional-timber/yf-rules.mjs';
 import { timberDetailSpecification } from './traditional-timber/quality.mjs';
+import { traditionalAssemblyDetailSpecification } from './traditional-timber/assembly-quality.mjs';
+import { buildTraditionalAssemblyRecipe } from './traditional-timber/assembly-compiler.mjs';
+import { straightCorridorTask } from './traditional-timber/examples.mjs';
+import { TRADITIONAL_FAMILIES } from './traditional-timber/families.mjs';
+import { traditionalAssemblyRuleBinding } from './traditional-timber/assembly-plan.mjs';
 import { AgentContractError } from './agent-contract.mjs';
 import { buildDetailedRecipe, DETAIL_MATERIALS, DETAILED_RECIPE_KINDS, roundedRectangle } from './detailed-modeling/recipes.mjs';
 import { buildFurnishingAsset, FURNISHING_ASSET_KINDS } from './detailed-modeling/furnishing-assets.mjs';
@@ -11,7 +16,7 @@ import { compilePartGraphToSketchUpDsl } from './product-modeling/part-graph-com
 import { freezeDetailSpecification } from './detail-quality.mjs';
 
 export const MODEL_ACCESSIBILITY_TASK_VERSION = 'model-accessibility-task.v1';
-export const MODEL_ACCESSIBILITY_TASK_KINDS = Object.freeze(['window', 'door', 'cabinet', 'sink_counter', 'asset_placement', 'traditional_timber']);
+export const MODEL_ACCESSIBILITY_TASK_KINDS = Object.freeze(['window', 'door', 'cabinet', 'sink_counter', 'asset_placement', 'traditional_timber', 'traditional_assembly']);
 const clone = value => structuredClone(value);
 const object = value => value !== null && typeof value === 'object' && !Array.isArray(value);
 const compiledPreflights=new WeakMap();
@@ -36,16 +41,18 @@ COMMON_DIMENSIONS.sink_counter = {
 };
 const PARAMETER_NAMES = Object.freeze({ width_mm: 'width', depth_mm: 'depth', height_mm: 'height', sill_back_edge_mm: 'sill_back_edge', open_angle_deg: 'open_angle', front_gap_mm: 'front_gap', handle_length_mm: 'handle_length', drawer_extension_mm: 'drawer_extension', handle_material: 'handle_material', seat_height_mm: 'seat_height', back_height_mm: 'back_height', radius_mm: 'radius', shade_height_mm: 'shade_height', drop_mm: 'drop', pot_height_mm: 'pot_height', pot_radius_mm: 'pot_radius' });
 const DEFAULT_PARAMETERS = Object.freeze({
+  traditional_assembly: straightCorridorTask().parameters,
   traditional_timber: {chi_mm:300},
   window: { width_mm: 1600, depth_mm: 130, height_mm: 1300 }, door: { width_mm: 1020, depth_mm: 150, height_mm: 2250, open_angle_deg: -18 }, cabinet: { width_mm: 800, depth_mm: 600, height_mm: 870 },
   sink_counter: { width_mm: 1200, depth_mm: 650, height_mm: 900, thickness_mm: 28, sink_width_mm: 740, sink_depth_mm: 440, sink_height_mm: 180, sink_offset_x_mm: 230, sink_offset_y_mm: 60 },
   sink: { width_mm: 740, depth_mm: 440, height_mm: 180 }, reading_chair: { width_mm: 760, depth_mm: 790, seat_height_mm: 440, back_height_mm: 960 }, side_table: { radius_mm: 310, height_mm: 535 }, pendant_light: { radius_mm: 235, shade_height_mm: 300, drop_mm: 900 }, potted_plant: { height_mm: 1250, pot_height_mm: 370, pot_radius_mm: 195 }
 });
-const TASK_TITLES = { traditional_timber:'Yingzao Fashi five-bay ten-rafter hip-roof hall with subsidiary eaves', window: 'Detailed double sash window', door: 'Detailed left hinged door', cabinet: 'Three drawer cabinet', sink_counter: 'Countertop with real sink opening', asset_placement: 'Place complete built-in asset roots' };
+const TASK_TITLES = { traditional_assembly:'Source-bound semantic traditional assembly', traditional_timber:'Yingzao Fashi five-bay ten-rafter hip-roof hall with subsidiary eaves', window: 'Detailed double sash window', door: 'Detailed left hinged door', cabinet: 'Three drawer cabinet', sink_counter: 'Countertop with real sink opening', asset_placement: 'Place complete built-in asset roots' };
 const COORDINATES = Object.freeze({ units: 'mm', angles: 'degrees', world: 'SketchUp world X/Y/Z; +Z is up.', local: '+X is width; +Y is depth/back; +Z is up; furniture and joinery face -Y.', origin: 'Window/door: outer frame lower left at Y=0. Cabinet: carcass lower left at Y=0, feet at Z=0. Sink-counter: counter lower left projected to floor. Round assets: center axis; pendant origin is shade lower edge.', transform_order: 'Construct the definition in local mm, rotate about local Z, then translate its origin to world origin_mm. Positive rotation is counterclockwise viewed from +Z.', limits: 'This helper supports Z rotation only. No implicit scaling, mirroring, host wall cutting, or automatic alignment.' });
 const BOUNDARIES = Object.freeze({ preflight_is_quality_acceptance: false, geometry_requires_live_measurement: true, close_views_required: true, approval_policy_unchanged: true, task_requirements_frozen_after_creation: true, max_automatic_refinements_per_part: 3, mock_is_live_acceptance: false });
 
 function exampleTask(kind) {
+  if(kind==='traditional_assembly')return straightCorridorTask('example-traditional-assembly');
   const recipe = kind === 'asset_placement' ? 'side_table' : kind;
   return { version: 1, kind, id: `example-${kind}`, units: 'mm', ...(kind === 'asset_placement' ? { asset_id: 'detail-side_table' } : {}), parameters: clone(DEFAULT_PARAMETERS[recipe]), placement: { origin_mm: [0, 0, 0] } };
 }
@@ -59,10 +66,11 @@ export function getModelAccessibilityTaskCatalog({ task, detail = 'summary', que
   const tasks = kinds.map(kind => {
     const sample = exampleTask(kind), recipe = kind === 'asset_placement' ? 'side_table' : kind;
     const error = clone(sample); delete error.parameters[Object.keys(DEFAULT_PARAMETERS[recipe])[0]];
-    return { kind, title: TASK_TITLES[kind], intent: 'create_model', input_field: 'inputs.task',
+    return { kind, title: kind==='traditional_assembly'?'Source-bound semantic traditional assembly':TASK_TITLES[kind], intent: 'create_model', input_field: 'inputs.task',
+      ...(kind==='traditional_assembly'?{rule_binding:traditionalAssemblyRuleBinding(),schema:'schema/traditional-assembly-v1.schema.json',family_catalog:clone(TRADITIONAL_FAMILIES),parameters_from:'stored assembly.parameter_bindings and layout',creation_available:true,quality_scope:'traditional-assembly-summary.v1',historical_accuracy_certified:false,scene_composition:{input_field:'inputs.scene_plan',version:1,max_roots:8,independent_creation_tasks:true,one_overview:true,verification_intent:'verify_model',verification_input:'inputs.scene_id',edit_scope:'one selected source root',atomic_all_scene_update:false}}:{}),
       ...(kind==='traditional_timber'?{preset:YF_RULES.id,rule_binding:yfRuleBinding(),implementation_status:YF_RULES.status,creation_available:['frozen','released'].includes(YF_RULES.status),units_note:'Geometry and placement use mm. Architectural lengths use explicit chi_mm and named chi parameters; material fen is distinct.'}:{}),
-      required: ['version', 'kind', 'id', 'units', 'parameters', 'placement_or_instances', ...(kind === 'asset_placement' ? ['asset_id'] : [])],
-      ...(expanded ? { parameters: kind === 'asset_placement' ? { by_asset_recipe: clone(Object.fromEntries(Object.entries(COMMON_DIMENSIONS).filter(([name]) => !['sink_counter','traditional_timber'].includes(name)))) } : clone(COMMON_DIMENSIONS[kind]), placement: { required: ['origin_mm'], origin_mm: { type: 'array', length: 3, item_type: 'number', absolute_maximum: 1_000_000 }, rotation_z_deg: { type: 'number', minimum: -360, maximum: 360, default: 0 }, instances: { minimum: 1, maximum: 12, required_per_item: ['id', 'origin_mm'], semantics: 'Every instance shares this one generated definition. Explicit world origins perform placement; existing objects are never moved.' } }, dependencies: dependencyDescriptions(recipe), fixed_design: fixedDesign(recipe) } : {}),
+      required: ['version', 'kind', 'id', 'units', 'parameters', 'placement_or_instances', ...(kind === 'asset_placement' ? ['asset_id'] : []),...(kind==='traditional_assembly'?['assembly']:[])],
+      ...(expanded ? { parameters: kind==='traditional_assembly'?{by_stored_plan:true,layout_arrays:'explicit positive millimeter bays',family_bindings:'assembly.parameter_bindings',discovery:'parameter_sources',example:clone(DEFAULT_PARAMETERS.traditional_assembly)}:kind === 'asset_placement' ? { by_asset_recipe: clone(Object.fromEntries(Object.entries(COMMON_DIMENSIONS).filter(([name]) => !['sink_counter','traditional_timber'].includes(name)))) } : clone(COMMON_DIMENSIONS[kind]), placement: { required: ['origin_mm'], origin_mm: { type: 'array', length: 3, item_type: 'number', absolute_maximum: 1_000_000 }, rotation_z_deg: { type: 'number', minimum: -360, maximum: 360, default: 0 }, instances: { minimum: 1, maximum: 12, required_per_item: ['id', 'origin_mm'], semantics: 'Every instance shares this one generated definition. Explicit world origins perform placement; existing objects are never moved.' } }, dependencies: dependencyDescriptions(recipe), fixed_design: fixedDesign(recipe) } : {}),
       ...(['examples', 'all'].includes(detail) ? { examples: { minimal: { tool: 'start_agent_task', arguments: { intent: 'create_model', instruction: TASK_TITLES[kind], idempotency_key: `example-${kind}-v1`, inputs: { runtime: 'mock', task: sample } } }, common_error: { input: error, expected: { code: 'MISSING_INPUT', path: `task.parameters.${Object.keys(DEFAULT_PARAMETERS[recipe])[0]}`, recovery_class: 'design_input' } } } } : {}) };
   });
   const needle = String(query).toLowerCase();
@@ -74,11 +82,13 @@ export function getModelAccessibilityTaskCatalog({ task, detail = 'summary', que
 }
 
 function dependencyDescriptions(kind) {
+  if(kind==='traditional_assembly')return ['Parameters are finite numbers, positive bay arrays or declared family enums; each value must participate in layout, a family binding or explicit geometry.', 'Grid/path frames, roofs and eaves share one solver and explicit bearing/surface connections. Cardinal paths allow only equal-level 90-degree turns.', 'Placement or shared instances is explicit. Ordinary geometry/operation budgets apply; unknown roof topologies return a non-executing proposal.', 'Frozen source/rule/rendering versions are required for selected-root parameter editing.'];
   const base = ['Every required parameter must be a finite JSON number in the declared range; numeric strings are rejected.', 'Provide placement or instances, never both. At most 12 instances keep required captures within the existing 24-view quality gate.', 'Bounds are helper support limits, not universal construction regulations.'];
   const byKind = { traditional_timber:['chi_mm is required. Other lengths are in chi; main/subsidiary material grades are fixed at 2/3.','The frozen preset has five bays, ten rafter spans and one inner column line.','Creation requires a frozen rule package; native acceptance belongs to the actual generated model. One overview is required; hidden joint simplification and selected dimensions remain explicit.'], cabinet: ['handle_length_mm <= width_mm - 64; drawer_extension_mm <= depth_mm - 90.', '(height_mm - 100 - 3 * front_gap_mm) / 3 > 55; drawer fronts and cavity must remain positive.'], reading_chair: ['back_height_mm >= seat_height_mm + 300.'], pendant_light: ['drop_mm >= shade_height_mm + 150.'], potted_plant: ['height_mm >= pot_height_mm + 400.'], sink_counter: ['sink_offset_x_mm + sink_width_mm <= width_mm - 25.', 'sink_offset_y_mm + sink_depth_mm + 90 <= depth_mm, leaving a supported faucet mount behind the rim.', 'height_mm - sink_height_mm >= 100; thickness_mm < sink_height_mm.', 'The rectangular through opening is sink_width_mm - 36 by sink_depth_mm - 36, inset 18 mm from the sink rim.'] };
   return [...base, ...(byKind[kind] || [])];
 }
 function fixedDesign(kind) {
+  if(kind==='traditional_assembly')return 'No whole-building preset switch. The stored semantic plan declares supported families, layout, connections, selected dimensions and simplifications.';
   return ({ traditional_timber:'Fixed YF five-bay single-trough hip-roof dian with open subsidiary eaves, central double board door and four po-zi-ling windows. Project-selected layout; no other periods or painting.', window: 'Two shared sash assemblies, fixed 55 mm outer frame, 6 mm panes, 270 mm projecting sill; this helper does not change sash count or opening angle.', door: 'Left hinge only, three visible hinges, 60 mm jambs, 46 mm leaf; open_angle_deg is required.', cabinet: 'Three shared drawer boxes, 18 mm carcass boards, 100 mm toe space, only the top drawer extends.', sink_counter: 'Countertop and complete sink are one assembly; no supporting cabinet is inferred. Stone finish, stainless sink, faucet and open drain follow the existing recipe.' })[kind] || 'Uses the complete project-authored asset root and its original constructive subparts and finishes.';
 }
 
@@ -114,9 +124,9 @@ function validatePlacement(value, location, issues, id) {
 /** No runtime calls or user-model writes. Context facts are optional preflight evidence, never permission. */
 export function preflightModelAccessibilityTask(task, context = {}) {
   const issues = [], normalized = {};
-  let bundle = null;
+  let bundle = null,compilationGap=null;
   if (!requireObject(task, 'task', issues)) return result();
-  unknownKeys(task, ['version', 'kind', 'id', 'units', 'asset_id', 'parameters', 'placement', 'instances'], 'task', issues);
+  unknownKeys(task, ['version', 'kind', 'id', 'units', 'asset_id', 'parameters', 'placement', 'instances',...(task.kind==='traditional_assembly'?['assembly']:[])], 'task', issues);
   if (task.version !== 1) issue(issues, 'task.version', task.version === undefined ? 'MISSING_INPUT' : 'UNSUPPORTED_VERSION', 'Task version must be 1.', 'Set version to 1.');
   if (!MODEL_ACCESSIBILITY_TASK_KINDS.includes(task.kind)) issue(issues, 'task.kind', 'UNSUPPORTED_TASK', `Supported task kinds: ${MODEL_ACCESSIBILITY_TASK_KINDS.join(', ')}.`, 'Discover a supported task contract or use the existing reviewed workflow.');
   requireId(task.id, 'task.id', issues);
@@ -129,6 +139,8 @@ export function preflightModelAccessibilityTask(task, context = {}) {
   } else if (task.asset_id !== undefined) issue(issues, 'task.asset_id', 'UNEXPECTED_FIELD', 'asset_id belongs only to asset_placement.', 'Remove asset_id or choose asset_placement.');
   const contract = Object.hasOwn(COMMON_DIMENSIONS, recipeKind || '') ? COMMON_DIMENSIONS[recipeKind] : null;
   const parameters = {};
+  if(task.kind==='traditional_assembly'&&requireObject(task.parameters,'task.parameters',issues))Object.assign(parameters,clone(task.parameters));
+  if(task.kind==='traditional_assembly')requireObject(task.assembly,'task.assembly',issues);
   if (requireObject(task.parameters, 'task.parameters', issues) && contract) {
     unknownKeys(task.parameters, Object.keys(contract), 'task.parameters', issues);
     for (const [key, rule] of Object.entries(contract)) {
@@ -157,7 +169,7 @@ export function preflightModelAccessibilityTask(task, context = {}) {
   const seen = new Set(), existing = new Set(context.existingIds || []);
   for (const [index, instance] of instances.entries()) if (instance) { if (seen.has(instance.instance_id)) issue(issues, `task.instances[${index}].id`, 'DUPLICATE_IDENTIFIER', 'Every root instance id must be distinct.', 'Give each intended occurrence a different stable id.'); seen.add(instance.instance_id); if (existing.has(instance.instance_id)) issue(issues, 'task.id', 'NAME_CONFLICT', `The supplied context already contains ${instance.instance_id}.`, 'Resume the existing task to retry; choose a distinct id only for a genuinely new object.'); }
   if (existing.has(task.id)) issue(issues, 'task.id', 'NAME_CONFLICT', `The supplied context already contains ${task.id}.`, 'Resolve the existing object or supply a new design id.');
-  Object.assign(normalized, { version: 1, kind: task.kind, id: task.id, units: 'mm', recipe_kind: recipeKind, ...(task.kind === 'asset_placement' ? { asset_id: task.asset_id } : {}), parameters, instances: instances.filter(Boolean) });
+  Object.assign(normalized, { version: 1, kind: task.kind, id: task.id, units: 'mm', recipe_kind: recipeKind, ...(task.kind === 'asset_placement' ? { asset_id: task.asset_id } : {}),...(task.kind==='traditional_assembly'?{assembly:clone(task.assembly)}:{}), parameters, instances: instances.filter(Boolean) });
   if (!issues.length) {
     try {
       bundle = buildBundle(normalized, context);
@@ -175,10 +187,14 @@ export function preflightModelAccessibilityTask(task, context = {}) {
       normalized.operation_count = operationCount;
       normalized.leaf_occurrence_count = (bundle.leaf_occurrence_count ?? bundle.parts_mapping.length);
       normalized.required_operations = collectOperations(bundle.dsl.operations);
-    } catch (error) { issue(issues, 'task.parameters', 'RECIPE_COMPILE_FAILED', String(error.message), 'Correct the explicit recipe dimensions; compilation did not execute SketchUp.'); }
+    } catch (error) {
+      const code=error.details?.domain_code||error.code||'RECIPE_COMPILE_FAILED';
+      if(['UNSUPPORTED_TOPOLOGY','NEEDS_REFERENCE'].includes(code))compilationGap={status:code.toLowerCase(),...clone(error.details||{}),execution_started:false};
+      issue(issues, error.details?.path||'task.parameters', code, String(error.message), 'Correct the explicit recipe dimensions; compilation did not execute SketchUp.');
+    }
   }
   return result();
-  function result() { const report={ kind: 'model_accessibility_preflight', version: MODEL_ACCESSIBILITY_TASK_VERSION, ok: issues.length === 0, issues, normalized: issues.length ? null : normalized, evidence_level: 'preflight_only', execution_started: false, quality_accepted: false, boundaries: clone(BOUNDARIES), remaining_runtime_checks: task?.kind==='traditional_timber'?['fresh session and atomic creation scope','native major-assembly summary','one overview and visible joint review']:['fresh runtime capability and session binding', 'atomic target/name absence and execution policy', 'actual geometry, collision and required void measurements', 'native resource totals', 'server close views and file save/reopen'], checked: ['declared dimensions and dependencies', 'units, axes and placement', 'references and names supplied in context', 'all generated operation dependencies when supplied', 'conservative expanded geometry estimate'] }; if(bundle&&!issues.length)compiledPreflights.set(report,bundle);return report; }
+  function result() { const report={ kind: 'model_accessibility_preflight', version: MODEL_ACCESSIBILITY_TASK_VERSION, ok: issues.length === 0, issues, ...(compilationGap?{compilation_gap:compilationGap}:{}), normalized: issues.length ? null : normalized, evidence_level: 'preflight_only', execution_started: false, quality_accepted: false, boundaries: clone(BOUNDARIES), remaining_runtime_checks: ['traditional_timber','traditional_assembly'].includes(task?.kind)?['fresh session and atomic creation scope','native major-assembly summary','one overview and visible joint review']:['fresh runtime capability and session binding', 'atomic target/name absence and execution policy', 'actual geometry, collision and required void measurements', 'native resource totals', 'server close views and file save/reopen'], checked: ['declared dimensions and dependencies', 'units, axes and placement', 'references and names supplied in context', 'all generated operation dependencies when supplied', 'conservative expanded geometry estimate'] }; if(bundle&&!issues.length)compiledPreflights.set(report,bundle);return report; }
 }
 
 /** Compile only; the existing Gateway retains authorization, task storage, frozen QA and execution. */
@@ -195,19 +211,20 @@ export function compileModelAccessibilityTask(task, context = {}) {
 
 function buildBundle(task, context = {}) {
   const parameters = Object.fromEntries(Object.entries(task.parameters).map(([key, value]) => [PARAMETER_NAMES[key] || key, value]));
-  const recipe = task.kind==='traditional_timber'?buildYfRecipe({id:task.id,parameters,legacyRendering:context.timberLegacyRendering===true}):task.kind === 'sink_counter' ? sinkCounterRecipe(task.id, task.parameters) : FURNISHING_ASSET_KINDS.includes(task.recipe_kind) ? buildFurnishingAsset(task.recipe_kind, { id: task.id, parameters }) : buildDetailedRecipe(task.recipe_kind, { id: task.id, parameters });
+  const generic=task.kind==='traditional_assembly';
+  const recipe = generic?buildTraditionalAssemblyRecipe({id:task.id,assembly:task.assembly,parameters:task.parameters}):task.kind==='traditional_timber'?buildYfRecipe({id:task.id,parameters,legacyRendering:context.timberLegacyRendering===true}):task.kind === 'sink_counter' ? sinkCounterRecipe(task.id, task.parameters) : FURNISHING_ASSET_KINDS.includes(task.recipe_kind) ? buildFurnishingAsset(task.recipe_kind, { id: task.id, parameters }) : buildDetailedRecipe(task.recipe_kind, { id: task.id, parameters });
   const graph = { version: 2, id: `accessibility-${task.id}`, profile_id: `accessibility-${task.id}`, units: 'mm', coordinate_system: 'part_local', product: { type: task.kind, name: task.id }, parts: recipe.parts, roots: task.instances.map(instance => ({ part_id: recipe.root_id, ...clone(instance) })) };
   const profile = { version: 1, profile_id: graph.profile_id, materials: clone(recipe.materials || DETAIL_MATERIALS) };
   const dsl = compilePartGraphToSketchUpDsl(graph, profile, { includeReset: false });
-  const timber=task.kind==='traditional_timber';
+  const timber=task.kind==='traditional_timber'||generic;
   const occurrences = timber?[]:describeAssemblyOccurrences(graph);
   const leafCount=timber?countLeafOccurrences(graph):occurrences.length;
   const required_parts = timber?[]:requirementsForOccurrences(graph.parts, occurrences, recipe.requirements);
   const required_voids = bindRecipeVoidsToInstances(recipe.required_voids || [], recipe.root_id, task.instances);
-  const views = timber?[camerasFor(task,task.instances[0])[0]]:task.instances.flatMap(instance => camerasFor(task, instance));
-  const detail_spec = timber?timberDetailSpecification(graph,views,yfRuleBinding()):{ version: 1, coverage_version: DETAIL_COVERAGE_VERSION, scene_id: graph.id, detail_level: 'detailed', resource_budget: clone(DETAIL_SAMPLE_RESOURCE_BUDGET), required_parts, required_voids, required_views: views.map(view => ({ id: view.id, kind: view.kind, instance_path: clone(view.instance_path), min_width: 1400, min_height: 900 })), max_iterations: 6 };
+  const views = generic&&task.assembly.representation?.overview_scope==='scene'?[]:timber?[camerasFor(task,task.instances[0])[0]]:task.instances.flatMap(instance => camerasFor(task, instance));
+  const detail_spec = generic?traditionalAssemblyDetailSpecification(graph,views,recipe,required_voids):timber?timberDetailSpecification(graph,views,yfRuleBinding()):{ version: 1, coverage_version: DETAIL_COVERAGE_VERSION, scene_id: graph.id, detail_level: 'detailed', resource_budget: clone(DETAIL_SAMPLE_RESOURCE_BUDGET), required_parts, required_voids, required_views: views.map(view => ({ id: view.id, kind: view.kind, instance_path: clone(view.instance_path), min_width: 1400, min_height: 900 })), max_iterations: 6 };
   freezeDetailSpecification(detail_spec);
-  return { dsl, part_graph: graph, profile, parts_mapping: occurrences, leaf_occurrence_count:leafCount, detail_spec, views, recipe_signature: recipe.recipe_signature, ...(timber?{rule_binding:yfRuleBinding(),rule_expected_values:recipe.measurements,provenance:recipe.provenance}:{}), parameters: clone(task.parameters), source: 'explicit_task_compilation', evidence_level: 'constructive_dsl_only', live_geometry_verified: false };
+  return { dsl, part_graph: graph, profile, parts_mapping: occurrences, leaf_occurrence_count:leafCount, detail_spec, views, recipe_signature: recipe.recipe_signature, ...(timber?{rule_binding:generic?recipe.rule_binding:yfRuleBinding(),rule_expected_values:recipe.measurements,provenance:recipe.provenance,...(generic?{semantic_connections:recipe.connections,parameter_sources:recipe.parameter_sources}:{} )}:{}), parameters: clone(task.parameters), source: 'explicit_task_compilation', evidence_level: 'constructive_dsl_only', live_geometry_verified: false };
 }
 
 function sinkCounterRecipe(id, p) {

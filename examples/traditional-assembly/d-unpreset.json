@@ -1,0 +1,299 @@
+{
+  "version": 1,
+  "id": "sample-d-unpreset",
+  "units": "mm",
+  "roots": [
+    {
+      "version": 1,
+      "kind": "traditional_assembly",
+      "id": "sample-d-unpreset-pavilion",
+      "units": "mm",
+      "parameters": {
+        "bay_lengths_mm": [
+          3600
+        ],
+        "width_mm": 3600,
+        "column_height_mm": 2800,
+        "rise_mm": 1100,
+        "eave_mm": 500
+      },
+      "assembly": {
+        "version": 1,
+        "mode": "contemporary_chinese",
+        "layout": {
+          "kind": "grid",
+          "x_bays_parameter": "bay_lengths_mm",
+          "depth_parameter": "width_mm"
+        },
+        "assemblies": [
+          {
+            "id": "frame",
+            "family": "frame_grid"
+          },
+          {
+            "id": "roof",
+            "family": "roof_unit",
+            "parameters": {
+              "type": "pyramidal"
+            }
+          },
+          {
+            "id": "eave",
+            "family": "eave_unit"
+          },
+          {
+            "id": "seat",
+            "family": "rail_seat",
+            "parameters": {
+              "type": "seat",
+              "side": 1
+            }
+          },
+          {
+            "id": "rail",
+            "family": "rail_seat",
+            "parameters": {
+              "type": "rail",
+              "side": -1
+            }
+          }
+        ],
+        "connections": [
+          {
+            "from": "frame.bearing",
+            "to": "roof.bearing",
+            "relation": "contact"
+          },
+          {
+            "from": "roof.roof_surface",
+            "to": "eave.roof_surface",
+            "relation": "alignment"
+          }
+        ],
+        "parameter_bindings": {
+          "frame": {
+            "column_height_mm": "column_height_mm"
+          },
+          "roof": {
+            "rise_mm": "rise_mm",
+            "eave_projection_mm": "eave_mm"
+          }
+        },
+        "parameter_sources": {},
+        "representation": {
+          "tile_detail": "surface"
+        },
+        "simplifications": [
+          "Selected contemporary corridor; no historical period claimed."
+        ]
+      },
+      "placement": {
+        "origin_mm": [
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "version": 1,
+      "kind": "traditional_assembly",
+      "id": "sample-d-unpreset-seating-corridor",
+      "units": "mm",
+      "parameters": {
+        "bay_lengths_mm": [
+          3000,
+          3000
+        ],
+        "width_mm": 2000,
+        "column_height_mm": 2800,
+        "rise_mm": 650,
+        "eave_mm": 450
+      },
+      "assembly": {
+        "version": 1,
+        "mode": "contemporary_chinese",
+        "layout": {
+          "kind": "path",
+          "width_parameter": "width_mm",
+          "segments": [
+            {
+              "id": "run",
+              "direction_deg": 0,
+              "bay_lengths_parameter": "bay_lengths_mm"
+            }
+          ]
+        },
+        "assemblies": [
+          {
+            "id": "frame",
+            "family": "path_frame"
+          },
+          {
+            "id": "roof",
+            "family": "roof_unit",
+            "parameters": {
+              "type": "gable"
+            }
+          },
+          {
+            "id": "eave",
+            "family": "eave_unit"
+          },
+          {
+            "id": "seat",
+            "family": "rail_seat",
+            "parameters": {
+              "type": "seat",
+              "side": 1
+            }
+          },
+          {
+            "id": "link-deck",
+            "family": "site_piece",
+            "parameters": {
+              "type": "plinth",
+              "width_mm": 1000,
+              "depth_mm": 2000,
+              "height_mm": 100
+            },
+            "origin_mm": [
+              -1000,
+              -1000,
+              -100
+            ]
+          }
+        ],
+        "connections": [
+          {
+            "from": "frame.bearing",
+            "to": "roof.bearing",
+            "relation": "contact"
+          },
+          {
+            "from": "roof.roof_surface",
+            "to": "eave.roof_surface",
+            "relation": "alignment"
+          }
+        ],
+        "parameter_bindings": {
+          "frame": {
+            "column_height_mm": "column_height_mm"
+          },
+          "roof": {
+            "rise_mm": "rise_mm",
+            "eave_projection_mm": "eave_mm"
+          }
+        },
+        "parameter_sources": {
+          "bay_lengths_mm": {
+            "basis": "selected",
+            "note": "Four engineering trial bays; change only index 1 to 3300 mm for sample A."
+          }
+        },
+        "representation": {
+          "tile_detail": "surface"
+        },
+        "simplifications": [
+          "Selected contemporary corridor; no historical period claimed."
+        ]
+      },
+      "placement": {
+        "origin_mm": [
+          4600,
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "version": 1,
+      "kind": "traditional_assembly",
+      "id": "sample-d-unpreset-moon-wall",
+      "units": "mm",
+      "parameters": {
+        "width_mm": 4200,
+        "opening_mm": 2100
+      },
+      "assembly": {
+        "version": 1,
+        "mode": "contemporary_chinese",
+        "layout": {
+          "kind": "free"
+        },
+        "assemblies": [
+          {
+            "id": "wall",
+            "family": "enclosure_opening",
+            "parameters": {
+              "height_mm": 2600,
+              "thickness_mm": 180,
+              "opening": "circle",
+              "opening_base_mm": 100
+            }
+          }
+        ],
+        "connections": [],
+        "parameter_bindings": {
+          "wall": {
+            "width_mm": "width_mm",
+            "opening_width_mm": "opening_mm"
+          }
+        },
+        "representation": {
+          "tile_detail": "surface"
+        }
+      },
+      "placement": {
+        "origin_mm": [
+          5000,
+          4000,
+          0
+        ]
+      }
+    }
+  ],
+  "connections": [
+    {
+      "from_root": "sample-d-unpreset-pavilion",
+      "to_root": "sample-d-unpreset-seating-corridor",
+      "relation": "walkway",
+      "from_mm": [
+        3600,
+        0,
+        0
+      ],
+      "to_mm": [
+        4600,
+        0,
+        0
+      ],
+      "via_root": "sample-d-unpreset-seating-corridor"
+    }
+  ],
+  "view": {
+    "id": "sample-d-unpreset-overview",
+    "camera": {
+      "eye": [
+        17000,
+        -14000,
+        11000
+      ],
+      "target": [
+        5000,
+        1500,
+        1500
+      ],
+      "up": [
+        0,
+        0,
+        1
+      ],
+      "projection": "perspective"
+    }
+  },
+  "notes": [
+    "方亭接带坐凳的廊，旁设月洞景墙：decomposed into the same public families; no new whole-building preset.",
+    "An explicit open deck bridges the 1000 mm floor gap; the two roof envelopes meet only at their boundary."
+  ]
+}

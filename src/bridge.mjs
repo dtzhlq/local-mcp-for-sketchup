@@ -1258,6 +1258,15 @@ function policyFromEnvironment() {
     allowed_runtimes: allowedRuntimes,
     allow_queue_mutation: process.env.ALMA_SKETCHUP_AGENT_ALLOW_QUEUE_MUTATION === '1',
     allow_direct_expert_queue_mutation: process.env.ALMA_SKETCHUP_ALLOW_DIRECT_EXPERT_QUEUE_MUTATION === '1',
+    development_model_auto_approval: {
+      enabled: process.env.ALMA_SKETCHUP_DEVELOPMENT_MODEL_AUTO_APPROVAL === '1',
+      authorization_ref: process.env.ALMA_SKETCHUP_DEVELOPMENT_AUTHORIZATION_REF,
+      allowed_roots: (process.env.ALMA_SKETCHUP_DEVELOPMENT_MODEL_ROOTS || '').split(path.delimiter).map(value => value.trim()).filter(Boolean),
+      allowed_model_keys: (process.env.ALMA_SKETCHUP_DEVELOPMENT_MODEL_KEYS || '').split(',').map(value => value.trim()).filter(Boolean),
+      allowed_risks: (process.env.ALMA_SKETCHUP_DEVELOPMENT_ALLOWED_RISKS || 'S1,S2,S3,S4').split(',').map(value => value.trim()),
+      max_affected_instances: process.env.ALMA_SKETCHUP_DEVELOPMENT_MAX_AFFECTED_INSTANCES,
+      allow_save_model: process.env.ALMA_SKETCHUP_DEVELOPMENT_ALLOW_SAVE === '1'
+    },
     trusted_model_copy_auto_approval: {
       enabled: process.env.ALMA_SKETCHUP_COPY_FAST_MODE === '1'
         || process.env.ALMA_SKETCHUP_TRUSTED_COPY_AUTO_APPROVAL === '1',

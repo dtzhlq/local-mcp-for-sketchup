@@ -1,0 +1,279 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "traditional-assembly-v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "mode",
+    "layout",
+    "assemblies",
+    "connections"
+  ],
+  "properties": {
+    "version": {
+      "const": 1
+    },
+    "mode": {
+      "enum": [
+        "contemporary_chinese",
+        "song_informed"
+      ]
+    },
+    "rule_bindings": {
+      "type": "array",
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "version"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "hash": {
+            "type": "string",
+            "pattern": "^sha256:[a-f0-9]{64}$"
+          }
+        }
+      }
+    },
+    "layout": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "path",
+            "grid",
+            "free"
+          ]
+        },
+        "segments": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "direction_deg",
+              "bay_lengths_parameter"
+            ],
+            "properties": {
+              "id": {
+                "$ref": "#/definitions/id"
+              },
+              "direction_deg": {
+                "type": "number"
+              },
+              "bay_lengths_parameter": {
+                "$ref": "#/definitions/id"
+              }
+            }
+          }
+        },
+        "width_parameter": {
+          "$ref": "#/definitions/id"
+        },
+        "x_bays_parameter": {
+          "$ref": "#/definitions/id"
+        },
+        "depth_parameter": {
+          "$ref": "#/definitions/id"
+        }
+      }
+    },
+    "assemblies": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 32,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "family"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/definitions/id"
+          },
+          "family": {
+            "enum": [
+              "frame_grid",
+              "path_frame",
+              "beam_purlin",
+              "roof_unit",
+              "eave_unit",
+              "bracket_or_seat",
+              "enclosure_opening",
+              "joinery_panel",
+              "rail_seat",
+              "site_piece",
+              "explicit_geometry"
+            ]
+          },
+          "parameters": {
+            "type": "object"
+          },
+          "origin_mm": {
+            "$ref": "#/definitions/vector"
+          },
+          "rotation_z_deg": {
+            "type": "number",
+            "minimum": -360,
+            "maximum": 360
+          },
+          "ports": {
+            "type": "object"
+          },
+          "shape": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "connections": {
+      "type": "array",
+      "maxItems": 64,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "from",
+          "to"
+        ],
+        "properties": {
+          "from": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+$"
+          },
+          "to": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+$"
+          },
+          "relation": {
+            "enum": [
+              "contact",
+              "lap",
+              "alignment"
+            ]
+          },
+          "tolerance_mm": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 5
+          }
+        }
+      }
+    },
+    "parameter_bindings": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": {
+          "$ref": "#/definitions/id"
+        }
+      }
+    },
+    "parameter_sources": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "basis"
+        ],
+        "properties": {
+          "basis": {
+            "enum": [
+              "documented",
+              "derived",
+              "selected",
+              "simplified"
+            ]
+          },
+          "source_refs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "note": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "representation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "overview_scope": {"enum": ["root", "scene"]},
+        "scene_id": {"$ref": "#/definitions/id"},
+        "tile_detail": {
+          "enum": [
+            "surface",
+            "light",
+            "detailed"
+          ]
+        },
+        "version": {
+          "const": "traditional-render.v1"
+        }
+      }
+    },
+    "simplifications": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 40
+    },
+    "open_questions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 40
+    },
+    "parameter_units": {
+      "type": "object",
+      "additionalProperties": {
+        "enum": [
+          "mm",
+          "fen",
+          "degrees",
+          "dimensionless"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,95}$"
+    },
+    "vector": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "number",
+        "minimum": -1000000,
+        "maximum": 1000000
+      }
+    }
+  }
+}

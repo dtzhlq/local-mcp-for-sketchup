@@ -53,40 +53,17 @@ scripts/run-core-check.mjs
 scripts/validate-agent-install-manifest.mjs
 scripts/validate-mcp-capability-suite.mjs
 
-test/agent-contract.mjs
-test/agent-gateway.mjs
-test/expert-compiler.mjs
-test/image-structured-mcp-adapter.mjs
-test/mcp-server.mjs
-test/operation-contract.mjs
-test/plugin-install-safety.mjs
-test/runtime-source-attestation.mjs
-test/sketchup-native-classification-contract.mjs
-test/sketchup-plugin-bridge-lifecycle-contract.mjs
-test/sketchup-plugin-crash-safety.mjs
-test/sketchup-plugin-document-state.mjs
-test/sketchup-plugin-model-graph-contract.mjs
-test/sketchup-plugin-structural-probe-contract.mjs
-test/tool-input-validator.mjs
-test/version-contract.mjs
-test/ruby/
 release/public-package-lock.json
 docs/IMAGE_STRUCTURE.md
-test/image-structure.mjs
 scripts/image-structure-evidence.mjs
 release/legacy-compatibility-identifiers.json
 scripts/package-image-release-plugin.mjs
 
 docs/traditional-timber/
-test/traditional-timber-rules.mjs
-test/assembly-summary.mjs
-test/assembly-commit-recovery.mjs
-test/queue-publication.mjs
 CHANGELOG.md
 INSTALL_FOR_AGENTS.md
 .github/workflows/windows-bundle.yml
 scripts/verify-windows-installed-bundle.mjs
-test/agent-install-entry-doc.mjs
 docs/RELEASE_ACCEPTANCE_0.3.0.md
 docs/RELEASE_ACCEPTANCE_0.2.0.md
 docs/release-0.3.0-acceptance.json
@@ -96,4 +73,14 @@ docs/modeling-uplift/
 docs/cad-surface-kernel/
 docs/traditional-timber.md
 examples/cad-kernel/
-test/agent-install-manifest.mjs
+
+# v0.4.1 general assembly and regression evidence
+docs/traditional-assembly-v041-status.md
+docs/v0.4.1-traditional-architecture-development-plan.md
+examples/traditional-assembly/
+
+# Complete source fixtures used by the core gate
+test/
+.github/workflows/ci.yml
+.github/workflows/dco.yml
+scripts/traditional-timber/
