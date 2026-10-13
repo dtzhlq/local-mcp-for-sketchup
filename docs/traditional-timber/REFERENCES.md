@@ -26,6 +26,6 @@
 | [90° 转角](diagrams/corner-miter.svg) | 同标高等宽的 45° 收口与共用柱节点；不是命名历史节点的测绘复原 |
 | [C 场地](diagrams/courtyard-plan.svg) | 八个独立根、入口与房廊关系、两段声明通道；不按历史院落比例放样 |
 
-SVG 为项目自绘、非比例工程示意，采用项目 Apache-2.0 许可。索引记录实际文件的 SHA-256。渲染图和原生验收图片留在忽略的 `output/traditional-assembly/v041/`，不作为分发素材包。
+SVG 为项目自绘、非比例工程示意，采用项目 Apache-2.0 许可。索引记录实际文件的 SHA-256。渲染过程图和原生测试图片仅在本地留档，不纳入发布附件。
 
 运行时规则只引用关系资料，默认尺寸见 [contemporary-chinese-v1.json](../../data/traditional-timber/contemporary-chinese-v1.json)。历史参数需要另有可定位的文献依据；`selected`、`derived`、`simplified` 不升级为 `documented`。

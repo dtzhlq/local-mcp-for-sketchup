@@ -75,8 +75,6 @@ docs/traditional-timber.md
 examples/cad-kernel/
 
 # v0.4.1 general assembly and regression evidence
-docs/traditional-assembly-v041-status.md
-docs/v0.4.1-traditional-architecture-development-plan.md
 examples/traditional-assembly/
 
 # Complete source fixtures used by the core gate

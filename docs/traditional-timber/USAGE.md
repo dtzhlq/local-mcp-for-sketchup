@@ -1,6 +1,6 @@
 # 中式古建正式 MCP 入口
 
-以下是已有固定殿堂 `traditional_timber` 的用法。v0.4.1 开发中的通用族装配使用 `traditional_assembly`，直廊、方亭和多根组合见 [通用装配入口](ASSEMBLY.md)，当前验收状态见 [开发记录](../traditional-assembly-v041-status.md)。
+以下是已有固定殿堂 `traditional_timber` 的用法。v0.4.1 的通用族装配使用 `traditional_assembly`，直廊、方亭和多根组合见 [通用装配入口](ASSEMBLY.md)，当前验收状态见 [发布验收](../RELEASE_ACCEPTANCE.md)。
 
 使用现有 `start_agent_task`，无需客户端编写 DSL 或运行研究脚本。每个新任务使用新的稳定 `idempotency_key`；响应不确定时用返回的 `task_id` 调用 `resume_agent_task`，不要重复创建。
 

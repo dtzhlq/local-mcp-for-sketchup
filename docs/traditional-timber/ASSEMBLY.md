@@ -1,6 +1,6 @@
 # 通用中式装配入口（v0.4.1）
 
-`traditional_assembly` 将柱网或路径、构件族、连接和参数编译为 PartGraph，再沿已有原子创建、来源持久化、审阅替换和读回流程执行。旧 `traditional_timber` 固定殿堂保留自己的规则和验收范围。当前证据见 [开发记录](../traditional-assembly-v041-status.md)；示例见 [输入目录](../../examples/traditional-assembly/README.md)。
+`traditional_assembly` 将柱网或路径、构件族、连接和参数编译为 PartGraph，再沿已有原子创建、来源持久化、审阅替换和读回流程执行。旧 `traditional_timber` 固定殿堂保留自己的规则和验收范围。当前证据见 [发布验收](../RELEASE_ACCEPTANCE.md)；示例见 [输入目录](../../examples/traditional-assembly/README.md)。
 
 最小参考和自绘关系示意见 [参考说明](REFERENCES.md)。它们不为默认工程尺寸提供历史精度认证。
 

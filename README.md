@@ -10,7 +10,7 @@ An independent local MCP server for generating and editing SketchUp models throu
 
 v0.4.0 adds a fixed Yingzao Fashi hall preset through the existing task Gateway, explicit historical-unit scale, source-bound parameters and scoped instance updates. The default light tiles retain visible laps; the optional surface mode omits transverse laps for a quieter distant view. See [rules](docs/traditional-timber/RULES.md), [MCP usage](docs/traditional-timber/USAGE.md) and [native acceptance](docs/traditional-timber/implementation-status.md).
 
-v0.4.1 adds a general `traditional_assembly` compiler and independent-root scene workflow. See [usage and limits](docs/traditional-timber/ASSEMBLY.md), [small inputs](examples/traditional-assembly/README.md) and [current evidence](docs/traditional-assembly-v041-status.md). The bounded A/B/C development acceptance and native saves are complete; D composition/gap checks are offline.
+v0.4.1 adds a general `traditional_assembly` compiler and independent-root scene workflow. See [usage and limits](docs/traditional-timber/ASSEMBLY.md), [small inputs](examples/traditional-assembly/README.md) and [release acceptance](docs/RELEASE_ACCEPTANCE.md). The bounded A/B/C development acceptance and native saves are complete; D composition/gap checks are offline.
 
 ## What's new
 
