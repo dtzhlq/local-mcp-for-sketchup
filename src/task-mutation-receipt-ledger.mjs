@@ -438,7 +438,10 @@ async function syncDirectory(directory) {
     handle = await fs.open(directory, 'r');
     await handle.sync();
   } catch (error) {
-    if (!['EINVAL', 'ENOTSUP', 'EISDIR'].includes(error?.code)) throw error;
+    // Windows cannot open directory handles through fs.open for fsync.
+    // The secret/receipt file was already synced; keep real file-write errors fatal.
+    if (!['EINVAL', 'ENOTSUP', 'EISDIR'].includes(error?.code)
+      && !(process.platform === 'win32' && error?.code === 'EPERM')) throw error;
   } finally {
     await handle?.close().catch(() => {});
   }

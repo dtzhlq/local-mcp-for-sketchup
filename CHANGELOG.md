@@ -6,6 +6,7 @@
 - Adds up to eight independent roots per scene, signed aggregate verification and saved-source continuation with bounded public artifact paging. Unsupported topology returns an explicit gap instead of starting execution.
 - Adds opt-in server policy for explicitly authorized development models. Client inputs cannot grant this authority; document/revision/source/scope/budget and recovery checks remain required.
 - Fixes zero-width roof tiles, roof-board clipping, delivery identity after exact camera restoration and unstable camera-facing capture sources.
+- Handles Windows directory-sync EPERM after durable receipt-file writes, restoring signed parameter-source discovery without ignoring file-write errors.
 - Pins sharp 0.35.5 and synchronized platform binaries/libvips 1.3.4 to address [GHSA-wq5f-xc86-pv6w](https://github.com/advisories/GHSA-wq5f-xc86-pv6w).
 - Retains 48 public tools and the existing fixed hall. A/B/C development creation, selected-root edits, bounded native geometry/view checks and SKP delivery passed on Apple Silicon Mac / SketchUp 2026; D composition/gap checks are offline. Final package evidence and limits are recorded in [release acceptance](docs/RELEASE_ACCEPTANCE.md).
 - Synchronizes the Windows x64 installation preview with the same runtime and signed RBZ. Windows installed-server/offline CI is separate from pending Windows SketchUp native acceptance.

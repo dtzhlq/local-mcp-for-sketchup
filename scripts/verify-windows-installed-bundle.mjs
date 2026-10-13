@@ -70,6 +70,7 @@ try {
     ['cad_geometry_and_editing', 'cad-kernel/core.mjs'],
     ['cad_surfaces_and_fillets', 'cad-kernel/surfaces.mjs'],
     ['traditional_timber', 'traditional-timber-rules.mjs'],
+    ['mutation_receipt_durability', 'mutation-receipt-durability.mjs'],
     ['traditional_assembly', 'traditional-assembly.mjs']
   ]) {
     const destination = path.join(testRoot, fixture);

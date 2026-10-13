@@ -39,6 +39,7 @@ const steps = [
   ['bounded expert compiler', ['test/expert-compiler.mjs']],
   ['MCP server protocol', ['test/mcp-server.mjs']],
   ['Agent Contract store', ['test/agent-contract.mjs']],
+  ['Mutation receipt durability across platforms', ['test/mutation-receipt-durability.mjs']],
   ['Traditional assembly geometry and provenance', ['test/traditional-assembly.mjs']],
   ['Development model authorization boundary', ['test/development-model-policy.mjs']],
   ['Traditional assembly review recovery', ['test/traditional-assembly-review-recovery.mjs']],
