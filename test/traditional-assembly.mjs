@@ -92,8 +92,9 @@ try{
  const result=await bridge.start_agent_task({intent:'create_model',instruction:'Test persisted generic source.',idempotency_key:'generic-source',inputs:{runtime:'mock',task:small}});
  const task=await bridge.taskStore.getTask(result.task_id,{includePrivate:true});
  assert.equal(task.private.creation.parameter_edit_support.baseline_captured,true,JSON.stringify(task.private.creation.parameter_edit_support));
+ assert.notEqual(task.private.creation.parameter_source_discovery?.available,false,JSON.stringify(task.private.creation.parameter_source_discovery));
  const discovery=await bridge.start_agent_task({intent:'discover',instruction:'Find stored parameter sources.',inputs:{topic:'parameter_sources',runtime:'mock'}});
- const discoveryTask=await bridge.taskStore.getTask(discovery.task_id,{includePrivate:true});assert.ok(discoveryTask.result.sources[0].supported_parameters.includes('bay_lengths_mm'));
+ const discoveryTask=await bridge.taskStore.getTask(discovery.task_id,{includePrivate:true});assert.equal(discoveryTask.result.sources.length,1,JSON.stringify({state:discoveryTask.state,result:discoveryTask.result}));assert.ok(discoveryTask.result.sources[0].supported_parameters.includes('bay_lengths_mm'));
  const record=task.private.creation.parameter_source,target=record.entries[0].target;
  const model=buildModelGraph(await adoptParameterRoots({bridge,runtime:'mock',recursiveLimit:5000,rootIds:record.entries.map(entry=>entry.target.target_id)}));
  const edit=planDefinitionParameterEdit({sourceRecord:record,currentModelGraph:model,request:{creation_task_id:result.task_id,scope:'single',targets:[target],changes:{bay_lengths_mm:[1800]}},taskId:'task_22222222-2222-4222-8222-222222222222',instruction:'Edit only selected source root.'});
