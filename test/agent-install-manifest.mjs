@@ -18,10 +18,16 @@ assert.ok(releaseReport.errors.some((error) => error.includes('placeholder')));
 assert.ok(releaseReport.errors.some((error) => error.includes('Signing Portal')));
 assert.ok(releaseReport.errors.some((error) => error.includes('release_acceptance')));
 
-// The explicit v0.4.0 policy keeps skipped persistence checks false, while
+// The explicit v0.4.1 policy keeps skipped persistence checks false, while
 // requiring the actual create/edit/view and target-scope evidence instead.
 assert.ok(releaseReport.errors.some(error => error.includes('native_create_edit_view_verified')));
 assert.ok(!releaseReport.errors.some(error => error.includes('save_close_reopen_verified')));
+const mismatchedPolicy = structuredClone(prematureRelease);
+mismatchedPolicy.acceptance.validation_policy = 'timber-v040-minimal.v1';
+assert.ok((await validateAgentInstallManifest(mismatchedPolicy, {requireRelease: true})).errors.some(error => error.includes('limited to v0.4.0')));
+const mismatchedVersion = structuredClone(prematureRelease);
+mismatchedVersion.product.version = '0.4.2';
+assert.ok((await validateAgentInstallManifest(mismatchedVersion, {requireRelease: true})).errors.some(error => error.includes('limited to v0.4.1')));
 const legacy = structuredClone(prematureRelease);
 legacy.acceptance.validation_policy = 'legacy-full.v1';
 assert.ok((await validateAgentInstallManifest(legacy, {requireRelease: true})).errors.some(error => error.includes('save_close_reopen_verified')));

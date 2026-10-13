@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "kind": "traditional_assembly",
+  "id": "sample-a-reference",
+  "units": "mm",
+  "parameters": {},
+  "assembly": {
+    "version": 1,
+    "mode": "contemporary_chinese",
+    "layout": {
+      "kind": "free"
+    },
+    "assemblies": [
+      {
+        "id": "reference",
+        "family": "explicit_geometry",
+        "shape": {
+          "primitive": "box",
+          "parameters": {
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "size": [
+              500,
+              500,
+              500
+            ]
+          }
+        }
+      }
+    ],
+    "connections": []
+  },
+  "placement": {
+    "origin_mm": [
+      -2000,
+      -3000,
+      0
+    ]
+  }
+}

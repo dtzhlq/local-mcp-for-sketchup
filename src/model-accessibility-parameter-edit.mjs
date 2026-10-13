@@ -1,4 +1,5 @@
 import { yfRuleBinding, assertYfRuleBinding } from './traditional-timber/yf-rules.mjs';
+import { assertTraditionalAssemblyRuleBinding, traditionalAssemblyRuleBinding, traditionalParameterContract, TRADITIONAL_RENDER_VERSION } from './traditional-timber/assembly-plan.mjs';
 import { AgentContractError, sha256Canonical } from './agent-contract.mjs';
 import { compileModelAccessibilityTask, getModelAccessibilityTaskCatalog } from './model-accessibility-tasks.mjs';
 import { buildDesignIntentGraph, compareDesignBindingFingerprints, planDesignParameterChange, reconcileDesignIntentGraph } from './design-intent-graph.mjs';
@@ -6,7 +7,7 @@ import { recompileDetailedBundle } from './detailed-modeling/recompile-bundle.mj
 import { isTrustedAssemblyEditReceipt } from './detailed-modeling/assembly-edit.mjs';
 import { compilePartGraphToSketchUpDsl } from './product-modeling/part-graph-compiler.mjs';
 import { describeAssemblyOccurrences } from './detailed-modeling/scenes.mjs';
-import { isVerifiedModelAccessibilitySavedReceipt } from './model-accessibility-delivery.mjs';
+import { isVerifiedModelAccessibilitySavedReceipt, savedParameterBindingForSource } from './model-accessibility-delivery.mjs';
 
 const VERSION = 'model-accessibility-parameter-source.v1';
 const clone = value => structuredClone(value);
@@ -49,7 +50,9 @@ function ruleFor(kind) {
 }
 function sourceDetails(source) {
   if (source.kind === 'common_task') {
-    if (!['window', 'door', 'cabinet', 'sink_counter', 'traditional_timber'].includes(source.task?.kind)) fail('Unsupported common-task parameter recipe.');
+    if (!['window', 'door', 'cabinet', 'sink_counter', 'traditional_timber', 'traditional_assembly'].includes(source.task?.kind)) fail('Unsupported common-task parameter recipe.');
+    const generic=source.task.kind==='traditional_assembly';
+    if(generic){assertTraditionalAssemblyRuleBinding(source.rule_binding);if(source.rendering_version!==TRADITIONAL_RENDER_VERSION)fail('Stored generic rendering version is unavailable; explicit migration is required.');}
     if(source.task.kind==='traditional_timber')assertYfRuleBinding(source.rule_binding);
     const timber=source.task.kind==='traditional_timber';
     const legacy=timber&&!source.rendering_version;
@@ -62,9 +65,9 @@ function sourceDetails(source) {
         : object(value) ? Object.fromEntries(Object.entries(value).map(([key, item]) => [key, remap(item)])) : value;
       bundle = { ...bundle, part_graph: remap(bundle.part_graph), detail_spec: remap(bundle.detail_spec) };
       bundle.dsl = compilePartGraphToSketchUpDsl(bundle.part_graph, bundle.profile, { includeReset: false });
-      bundle.parts_mapping = source.task.kind==='traditional_timber'?[]:describeAssemblyOccurrences(bundle.part_graph);
+      bundle.parts_mapping = ['traditional_timber','traditional_assembly'].includes(source.task.kind)?[]:describeAssemblyOccurrences(bundle.part_graph);
     }
-    return { bundle, parameters: bundle.parameters, rules: ruleFor(source.task.kind) };
+    return { bundle, parameters: bundle.parameters, rules: generic?traditionalParameterContract(source.task.assembly,source.task.parameters):ruleFor(source.task.kind) };
   }
   if (source.kind !== 'detailed_sample' || !['window', 'door', 'cabinet'].includes(source.bundle?.brief?.kind) || source.bundle.composition_plan) fail('Detailed sources must be an existing window, door or cabinet sample; scene composition is outside this adapter.');
   const bundle = source.bundle, kind = bundle.brief.kind, rules = ruleFor(kind);
@@ -83,6 +86,7 @@ function recompile(source, changes) {
   const before = sourceDetails(source);
   if (!object(changes) || !Object.keys(changes).length || Object.keys(changes).some(key => !Object.hasOwn(before.rules, key))) fail('changes must use supported explicit parameter names, such as width_mm; transforms and arbitrary DSL are unsupported.');
   const parameters = { ...before.parameters, ...changes };
+  if(source.task?.kind==='traditional_assembly')for(const [key,value] of Object.entries(changes))if(Array.isArray(before.parameters[key])&&(!Array.isArray(value)||value.length!==before.parameters[key].length))fail('Bay-array length is a topology change; create a separate rebuild proposal rather than a dimensional parameter edit.');
   if (source.kind === 'common_task') {
     const nextSource = { kind: source.kind, task: { ...clone(source.task), parameters }, ...(source.rule_binding?{rule_binding:clone(source.rule_binding)}:{}),
       ...(source.rendering_version?{rendering_version:source.rendering_version}:{}),
@@ -123,7 +127,7 @@ export function captureDefinitionParameterSource({ creationTaskId, modelKey, mod
   if (!/^task_[0-9a-f-]+$/i.test(creationTaskId || '')) fail('A server creation task id is required.');
   if (Boolean(sourceTask) === Boolean(sourceBundle)) fail('Provide exactly one trusted sourceTask or sourceBundle.');
   if (!object(identityMap) || !Array.isArray(creationDocument?.operations)) fail('Capture requires the actual server creation document and identity map.');
-  const source = sourceTask ? { kind: 'common_task', task: clone(sourceTask), ...(sourceTask.kind==='traditional_timber'?{rule_binding:yfRuleBinding(),rendering_version:'timber-render.v2'}:{}) } : { kind: 'detailed_sample', bundle: clone(sourceBundle) };
+  const source = sourceTask ? { kind: 'common_task', task: clone(sourceTask), ...(sourceTask.kind==='traditional_timber'?{rule_binding:yfRuleBinding(),rendering_version:'timber-render.v2'}:sourceTask.kind==='traditional_assembly'?{rule_binding:traditionalAssemblyRuleBinding(),rendering_version:TRADITIONAL_RENDER_VERSION}:{}) } : { kind: 'detailed_sample', bundle: clone(sourceBundle) };
   const { bundle, parameters, rules } = sourceDetails(source);
   const logicalDefinitions=definitions(bundle.dsl),nativeDefinitions=definitions(creationDocument);
   if(logicalDefinitions.length!==nativeDefinitions.length)fail('Creation definition map cannot be reconstructed from different compilation closures.');
@@ -152,17 +156,14 @@ export function captureDefinitionParameterSource({ creationTaskId, modelKey, mod
 export function rebindDefinitionParameterSource({ sourceRecord, currentModelGraph, modelKey, savedReceipt } = {}) {
   verifyRecord(sourceRecord); complete(currentModelGraph);
   if (!isVerifiedModelAccessibilitySavedReceipt(savedReceipt)) throw new AgentContractError('ARTIFACT_INTEGRITY_ERROR', 'Only a server-read signed saved receipt can rebind parameter identity.');
-  const binding = savedReceipt.parameter_binding;
+  const binding = savedParameterBindingForSource(savedReceipt, sourceRecord.creation_task_id);
   if (!binding) throw new AgentContractError('OPERATION_NOT_ALLOWED', 'This delivery has no verifiable saved parameter source binding; current geometry cannot recreate a missing creation baseline.');
   if (binding.creation_task_id !== sourceRecord.creation_task_id || binding.source_record_hash !== sourceRecord.source_record_hash
-    || binding.model_key !== sourceRecord.model_key || binding.runtime !== sourceRecord.runtime || currentModelGraph.runtime !== sourceRecord.runtime
+    || binding.model_key !== sourceRecord.model_key || binding.runtime !== sourceRecord.runtime || binding.parameter_revision !== sourceRecord.parameter_revision || currentModelGraph.runtime !== sourceRecord.runtime
     || savedReceipt.post_save_revision !== currentModelGraph.model_revision || !/^model_[0-9a-f]{32}$/.test(modelKey || '')) {
     throw new AgentContractError('MODEL_REVISION_MISMATCH', 'Saved parameter version or current model revision differs from its creation source.');
   }
-  for (const entry of sourceRecord.entries) {
-    if (actualDefinition(resolve(currentModelGraph, entry.target)) !== entry.source_definition
-      || compareDesignBindingFingerprints(entry.design_graph, currentModelGraph).length) throw new AgentContractError('MODEL_REVISION_MISMATCH', 'Preserve manual or external changes; saved continuation cannot reset a changed parameter baseline.');
-  }
+  assertDefinitionParameterSourceUnchanged({ sourceRecord, currentModelGraph });
   if (modelKey === sourceRecord.model_key) return clone(sourceRecord);
   const { source_record_hash, ...body } = clone(sourceRecord);
   body.model_key = modelKey;
@@ -171,6 +172,15 @@ export function rebindDefinitionParameterSource({ sourceRecord, currentModelGrap
     saved_file_sha256: savedReceipt.file.sha256, model_revision: currentModelGraph.model_revision }];
   for (const entry of body.entries) entry.design_graph = designFor({ modelKey, modelGraph: currentModelGraph, entries: [entry], ...sourceDetails(entry.source) });
   return seal(body);
+}
+
+export function assertDefinitionParameterSourceUnchanged({ sourceRecord, currentModelGraph } = {}) {
+  verifyRecord(sourceRecord); complete(currentModelGraph);
+  if (sourceRecord.runtime !== currentModelGraph.runtime) throw new AgentContractError('MODEL_REVISION_MISMATCH', 'Parameter source runtime changed.');
+  for (const entry of sourceRecord.entries) {
+    if (actualDefinition(resolve(currentModelGraph, entry.target)) !== entry.source_definition
+      || compareDesignBindingFingerprints(entry.design_graph, currentModelGraph).length) throw new AgentContractError('MODEL_REVISION_MISMATCH', 'Preserve manual or external changes; saved continuation cannot reset a changed parameter baseline.');
+  }
 }
 
 /** Pure planning: no runtime call, staging, authorization or geometry mutation.

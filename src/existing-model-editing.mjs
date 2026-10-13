@@ -5,6 +5,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import {
   AgentContractError,
+  developmentModelAutoApprovalBinding,
   serverPolicyAutoApprovalMode,
   sha256Canonical,
   trustedModelCopyAutoApprovalBinding
@@ -522,11 +523,14 @@ export async function prepareExistingModelEdit({ bridge, runtime = 'mock', timeo
       sessionTtlMs: bridge.executionPolicy.trusted_model_copy_auto_approval.session_ttl_ms
     })
     : null;
+  const developmentApproval = developmentModelAutoApprovalBinding({ executionPolicy: bridge.executionPolicy,
+    modelKey, modelSourcePath: modelSourcePathForAdoption(adoption), riskLevel, affectedInstanceCount: affectedInstances,
+    saveModel: requestedExecutionContract?.save_model === true, savePath: requestedExecutionContract?.save_path || null });
   const copyFastSession = copyFastSessionResolution?.binding || null;
   const s1AutoApprovalEligible = riskLevel === 'S1'
     && !trustedScopeApprovalRequired
     && affectedInstances <= bridge.executionPolicy.resource_limits.auto_approve_s1_max_affected_instances;
-  const autoApprovalEligible = s1AutoApprovalEligible || Boolean(copyFastSession);
+  const autoApprovalEligible = s1AutoApprovalEligible || Boolean(copyFastSession) || Boolean(developmentApproval);
   const targetValidationRecord = preparationTargetValidationRecord(normalizedTargetValidation, adoption, requestedTargets, indexed);
   if (expected_model_revision && modelRevision !== expected_model_revision) {
     throw new AgentContractError('MODEL_REVISION_MISMATCH', 'The model changed after the source proposal was created.', {
@@ -547,9 +551,9 @@ export async function prepareExistingModelEdit({ bridge, runtime = 'mock', timeo
     risk_level: riskLevel,
     trusted_scope_approval_required: trustedScopeApprovalRequired,
     auto_approval_eligible: autoApprovalEligible,
-    review_required: !copyFastSession,
+    review_required: !copyFastSession && !developmentApproval,
     user_action_required: !autoApprovalEligible,
-    execution_mode: copyFastSession ? 'copy_fast' : 'reviewed',
+    execution_mode: developmentApproval ? 'development_authorized' : copyFastSession ? 'copy_fast' : 'reviewed',
     targets: requestedTargets.map((target) => ({
       ...target,
       entity: summarizeIndexedTarget(indexed.get(targetIdentity(target)))
@@ -561,6 +565,7 @@ export async function prepareExistingModelEdit({ bridge, runtime = 'mock', timeo
     affected_instance_count: affectedInstances,
     destructive_side_effects: destructiveSideEffects,
     blockers,
+    ...(developmentApproval ? { development_model_auto_approval: developmentApproval } : {}),
     ...(trustedModelCopyAutoApproval ? { trusted_model_copy_auto_approval: trustedModelCopyAutoApproval } : {}),
     ...(copyFastSession ? { copy_fast_session: copyFastSession } : {}),
     ...(requestedExecutionContract ? { execution_contract: requestedExecutionContract } : {}),
@@ -584,7 +589,7 @@ export async function prepareExistingModelEdit({ bridge, runtime = 'mock', timeo
   const outputDir = path.resolve(output_dir || path.join('output', 'existing-model-edits', plan.plan_id, 'prepare'));
   await fs.mkdir(outputDir, { recursive: true });
   const approvalChallengeRequired = plan.compile_permission === 'ready_for_review'
-    && !plan.copy_fast_session;
+    && !plan.copy_fast_session && !developmentApproval;
   const artifacts = {
     plan: path.join(outputDir, 'existing-model-edit-plan.json'),
     adoption_index: path.join(outputDir, 'adoption-index.json'),
@@ -621,7 +626,9 @@ export async function prepareExistingModelEdit({ bridge, runtime = 'mock', timeo
       challenge_id: approvalChallenge.challenge_id,
       expires_at: approvalChallenge.expires_at
     } : null,
-    authorization: plan.copy_fast_session ? {
+    authorization: developmentApproval ? { mode: 'server_policy_development_models',
+      authorization_ref: developmentApproval.authorization_ref, user_action_required: false
+    } : plan.copy_fast_session ? {
       mode: 'copy_fast_session',
       session_id: plan.copy_fast_session.session_id,
       user_action_required: false,
@@ -672,6 +679,15 @@ export async function applyReviewedExistingModelEdit({ bridge, runtime = 'mock',
     expected_model_revision: loadedPlan.model_revision
   });
   const currentRevision = preflight.summary.model_revision;
+  if (autoApprovalMode === 'server_policy_development_models') {
+    const liveBinding = developmentModelAutoApprovalBinding({ executionPolicy: bridge.executionPolicy,
+      modelKey: preflight.summary.model_key, modelSourcePath: modelSourcePathForAdoption(preflight.adoption),
+      riskLevel: loadedPlan.risk_level, affectedInstanceCount: loadedPlan.affected_instance_count,
+      saveModel: loadedPlan.execution_contract?.save_model === true, savePath: loadedPlan.execution_contract?.save_path || null });
+    if (!liveBinding || liveBinding.binding_hash !== loadedPlan.development_model_auto_approval.binding_hash) {
+      throw new AgentContractError('POLICY_DENIED', 'The current native document is outside the user-authorized development model scope.');
+    }
+  }
   if (autoApprovalMode === 'copy_fast_session') {
     const liveBinding = trustedModelCopyAutoApprovalBinding({
       executionPolicy: bridge.executionPolicy,
@@ -701,6 +717,12 @@ export async function applyReviewedExistingModelEdit({ bridge, runtime = 'mock',
       policy_version: bridge.executionPolicy.policy_version,
       policy_scope_fingerprint: loadedPlan.trusted_model_copy_auto_approval.policy_scope_fingerprint,
       copy_fast_session_id: loadedPlan.copy_fast_session.session_id,
+      user_action_required: false
+    } : autoApprovalMode === 'server_policy_development_models' ? {
+      mode: autoApprovalMode, approved_by: 'execution-policy:development-models', approved_at: new Date().toISOString(),
+      authorization_ref: loadedPlan.development_model_auto_approval.authorization_ref,
+      policy_version: bridge.executionPolicy.policy_version,
+      policy_scope_fingerprint: loadedPlan.development_model_auto_approval.policy_scope_fingerprint,
       user_action_required: false
     } : {
       mode: 'server_policy_auto_approval',

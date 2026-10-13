@@ -4,7 +4,8 @@ import crypto from 'node:crypto';
 import { AgentContractError, sha256Canonical } from './agent-contract.mjs';
 import { modelIdentityForAdoption, modelKeyForIdentity } from './model-identity.mjs';
 import { getModelAccessibilityTaskCatalog } from './model-accessibility-tasks.mjs';
-import { isVerifiedModelAccessibilitySavedReceipt, readVerifiedModelAccessibilitySavedReceipt } from './model-accessibility-delivery.mjs';
+import { traditionalParameterContract } from './traditional-timber/assembly-plan.mjs';
+import { isVerifiedModelAccessibilitySavedReceipt, readVerifiedModelAccessibilitySavedReceipt, savedParameterBindingForSource } from './model-accessibility-delivery.mjs';
 
 const VERSION = 'parameter-source-index.v1';
 const fail = message => { throw new AgentContractError('ARTIFACT_INTEGRITY_ERROR', message); };
@@ -46,9 +47,10 @@ export async function indexCapturedParameterSource({ taskStore, task } = {}) {
 export async function indexSavedParameterSource({ taskStore, receipt, deliveryTaskId } = {}) {
   if (!isVerifiedModelAccessibilitySavedReceipt(receipt)) fail('Saved source index needs a server-verified saved receipt.');
   if (!/^task_[a-f0-9-]+$/.test(deliveryTaskId || '') || receipt.delivery_task_id !== deliveryTaskId) fail('Saved source index delivery identity mismatch.');
-  if (!receipt.parameter_binding) return false;
+  const bindings = receipt.parameter_binding ? [receipt.parameter_binding] : receipt.scene_parameter_bindings || [];
+  if (!bindings.length) return false;
   const key = `file_${sha256Canonical(path.resolve(receipt.file_path)).slice(7)}`;
-  await writeEntry(taskStore, key, deliveryTaskId, { creation_task_id: receipt.parameter_binding.creation_task_id, saved_delivery_task_id: deliveryTaskId });
+  await writeEntry(taskStore, key, deliveryTaskId, { creation_task_ids: bindings.map(binding => binding.creation_task_id), saved_delivery_task_id: deliveryTaskId });
   return true;
 }
 export async function discoverParameterSources({ gateway, runtime, query } = {}) {
@@ -66,18 +68,33 @@ export async function discoverParameterSources({ gateway, runtime, query } = {})
     const roots = record.entries.filter(entry => !query || entry.logical_instance_id.toLowerCase().includes(query.toLowerCase())).map(entry => ({ name: entry.logical_instance_id, target: entry.target }));
     if (!roots.length) continue;
     const kind = record.entries[0].source.task?.kind || record.entries[0].source.bundle?.brief?.kind;
-    sources.push({ creation_task_id: task.task_id, kind, roots, supported_parameters: Object.keys(getModelAccessibilityTaskCatalog({ task: kind, detail: 'parameters' }).tasks[0].parameters),
+    const sourceTask=record.entries[0].source.task;
+    sources.push({ creation_task_id: task.task_id, kind, roots, supported_parameters: Object.keys(kind==='traditional_assembly'?traditionalParameterContract(sourceTask.assembly,sourceTask.parameters):getModelAccessibilityTaskCatalog({ task: kind, detail: 'parameters' }).tasks[0].parameters),
       baseline_captured: true, parameter_revision: record.parameter_revision, current_geometry_rechecked: false,
       next_action: 'Use modify_design_parameters with this creation_task_id, explicit single/all targets and changes; fresh edit preflight will enforce manual-change protection.' });
   }
   const reopen = [];
   const sourcePath = adoption.model_identity?.source_path || adoption.model_info?.source_path;
-  if (!sources.length && sourcePath) {
+  if (sourcePath) {
+    const listed = new Set(sources.map(source => source.creation_task_id));
     for (const item of await readEntries(gateway.taskStore, `file_${sha256Canonical(path.resolve(sourcePath)).slice(7)}`)) {
       const receipt = await readVerifiedModelAccessibilitySavedReceipt({ taskStore: gateway.taskStore, deliveryTaskId: item.saved_delivery_task_id });
-      if (receipt.file_path !== path.resolve(sourcePath) || receipt.parameter_binding?.creation_task_id !== item.creation_task_id || receipt.parameter_binding.runtime !== runtime) continue;
-      reopen.push({ creation_task_id: item.creation_task_id, saved_delivery_task_id: item.saved_delivery_task_id,
-        baseline_rebind_required: true, next_action: 'Include saved_delivery_task_id with the parameter edit. The server will compare signed saved bytes, complete current revision and all original subtree fingerprints before rebinding identity.' });
+      if (receipt.file_path !== path.resolve(sourcePath)) continue;
+      for (const creationTaskId of item.creation_task_ids || [item.creation_task_id]) {
+        if (listed.has(creationTaskId)) continue;
+        const binding = savedParameterBindingForSource(receipt, creationTaskId);
+        if (!binding || binding.runtime !== runtime) continue;
+        const task = await gateway.taskStore.getTask(creationTaskId, { includePrivate: true }), record = task.private?.creation?.parameter_source;
+        if (!record || record.source_record_hash !== binding.source_record_hash) continue;
+        const { source_record_hash, ...body } = record;
+        if (source_record_hash !== sha256Canonical(body)) fail('Saved parameter source record integrity mismatch.');
+        const roots = record.entries.filter(entry => !query || entry.logical_instance_id.toLowerCase().includes(query.toLowerCase())).map(entry => ({ name: entry.logical_instance_id, target: entry.target }));
+        if (!roots.length) continue;
+        reopen.push({ creation_task_id: creationTaskId, saved_delivery_task_id: item.saved_delivery_task_id, roots,
+          baseline_rebind_required: true, current_geometry_rechecked: false,
+          next_action: 'Include saved_delivery_task_id with the parameter edit. The server will compare signed saved bytes, complete current revision and all original subtree fingerprints before rebinding identity.' });
+        listed.add(creationTaskId);
+      }
     }
   }
   return { kind: 'parameter_source_discovery', current_model: 'fresh_identity_checked', sources, saved_source_continuations: reopen,

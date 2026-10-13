@@ -169,6 +169,13 @@ module AlmaSketchupMCP
         original: matrix.dup.freeze, observed: matrix.dup, changes: 0 }
     end
     raise 'detail_capture_camera_facing_unsupported: duplicate native instance' unless records.map { |entry| entry[:entity].object_id }.uniq.length == records.length
+    # The stored transform can lag behind the current camera before export.
+    # In that case restoring it exactly still cannot survive a redraw at the
+    # original camera. Reject before any camera assignment, draw or move!;
+    # never settle the source by silently replacing its protected revision.
+    unless records.all? { |record| detail_capture_expected_facing_rotation?(record[:original], record[:original], model.active_view.camera) }
+      raise 'detail_capture_camera_facing_source_unsettled: current camera differs from stored native facing transforms; reconcile the current view and revision before capture'
+    end
     plan = { records: records, modified: modified_before, failure: nil, observations: [] }
     plan[:preservation_signature] = detail_capture_facing_preservation_signature(model, records)
     plan

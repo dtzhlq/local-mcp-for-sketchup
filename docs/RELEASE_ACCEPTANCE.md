@@ -1,27 +1,27 @@
-# 0.3.0 release acceptance
+# 0.4.1 release acceptance
 
-Released for Apple Silicon macOS + SketchUp 2026, with 48 tools, bundled Node 24.18.0 and an officially signed, unencrypted RBZ. The release binds source commit `590e1d480491d90bd5471ff333f338d51f46c58b`.
+The stable target is Apple Silicon macOS with SketchUp 2026. Product `0.4.1`, runtime capability `0.4.1-assembly.1`, 48 tools and bundled Node `24.18.0` are bound by the [release manifest](https://github.com/dtzhlq/local-mcp-for-sketchup/releases/download/v0.4.1/agent-install.v1.json). Validation policy: `assembly-v041-minimal.v1`.
 
-## Final package verification
+## Package and verification summary — 2026-10-13
 
-- Service SHA-256: `f1919e8d5bd0f161d1b00d8795d94bcd9ae6e39e6f149ad4776cce52cb14c681`.
-- Signed RBZ SHA-256: `018797f72f74bbb035d75d88d28d3b0ee5ee850279e06488af477e0eed7b0dff`.
-- The signing portal returned a signature without changing the 33 source files. SketchUp Extension Manager displayed the extension as signed and enabled after restarting.
-- Extracted bundled Node passed MCP initialization, discovery of 48 tools and a tool call. The exact source commit passed [Core CI](https://github.com/dtzhlq/local-mcp-for-sketchup/actions/runs/35410106378).
-- The final service and signed plugin read the dedicated CAD model, executed two sequential local-edit stages with real intermediate readback, preserved unrelated vertices, measured volume and saved the model.
-- After normal document close and disk reopen, all five contexts retained CAD parameters, vertex and face counts. The deliberate stale-source control remained stale.
-- The Node service completed these native checks under a macOS sandbox denying network access. SketchUp application networking was not globally disabled; this establishes the local service workflow without claiming the entire host was disconnected.
+| Artifact | SHA-256 |
+| --- | --- |
+| macOS service (71,219,859 bytes) | `3ac4bfb3b11b0f1da9577ef593cbd2be3bff24e10d286f339f1f04af345a9555` |
+| Signed RBZ (152,481 bytes) | `72701e979df1a65231254660ff4cd5dc972885f51db064feebd4e0e6eeb93978` |
 
-The prior combined [modeling validation](modeling-uplift/implementation-status.md), [CAD validation](cad-surface-kernel/acceptance-report.json) and GLM investigation are reused. Unchanged geometry algorithms were not retested in a redundant full matrix.
+The official signing portal retained all 33 source files unchanged and added only its signature. Extension Manager recognized version 0.4.1 as signed and enabled after a full restart. The extracted service verified 334 runtime files, MCP discovery and an actual tool call using its bundled Node. Its runtime source fingerprint is `60c91f58c4f8fd496d39899cb17e2152fc8f949ac25e2620d9b322f3c5b4ea63`.
 
-## Recorded exception
+The 40-step offline/mock core gate, 22 Ruby capture tests (251 assertions), installed-bundle checks and zero-vulnerability dependency audit passed. sharp is pinned to `0.35.5`. Windows directory-sync handling preserves fatal errors for actual file writes.
 
-The first document-close attempt coincided with manual UI activity and SketchUp crashed. Its stack included CEF/AppKit rendering frames. The cause remains unresolved; neither user fault nor an MCP defect is established. The saved file recovered, and the subsequent isolated normal close, disk reopen and native persistence check passed. No crash-fix claim is made.
+Native SketchUp `26.2.242` verification covers creation of two shared corridors, a selected 1500-to-1800 mm bay edit, unchanged shared 1500 mm geometry, isolation of all other root objects, and a post-edit view with camera/display/revision restoration. The loaded signed plugin also rejected an unsettled camera-facing fixture before any capture or model write.
 
-## Scope and artifacts
+Earlier bounded native checks cover straight corridors, a square pavilion and an eight-root courtyard: selected-root edits, actual opening and junction measurements, accepted views and SKP saves. Unsupported composition checks are offline. Development histories, temporary models, raw logs, task records and test screenshots remain local; they are not release attachments.
 
-[Release assets](https://github.com/dtzhlq/local-mcp-for-sketchup/releases/tag/v0.3.0) include the exact service/plugin pair, machine-readable installation manifest, SHA-256 checksums, acceptance report, examples, corresponding source and dependency notices. The archive retains build-time candidate flags; the final release manifest promotes those same tested bytes.
+## Scope and limits
 
-SketchUp receives tessellated faces and retained CAD recipes, not native NURBS entities. Arbitrary historical mesh reconstruction, trimmed or periodic NURBS, variable-radius fillets and every corner configuration remain unsupported. Windows 0.3.0 native acceptance and a universal cross-model benchmark are not claimed.
+- [Windows x64](https://github.com/dtzhlq/local-mcp-for-sketchup/releases/tag/v0.4.1-windows-preview.1) is an installation preview. Its exact archive is checked on Windows with bundled Node, source fingerprints, the tool registry and image/CAD/timber/assembly fixtures. Native Windows SketchUp loading, queue modeling and save/close/reopen remain unverified; `release_acceptance=false` there.
+- The existing macOS loading policy was **Unrestricted** and was preserved. Signature recognition and restart loading passed; strict identified-extension-only startup was not tested. This is an explicit exception to the preferred signing checklist.
+- This minimal policy adds no cold-reopen or network-denied acceptance. Saved-scene continuation has fixture coverage and native source discovery; native cold-reopen parameter editing remains unverified.
+- [Supported families and limits](traditional-timber/ASSEMBLY.md) exclude arbitrary multi-storey roofs, complex corridor networks, historically certified construction, concealed joinery certification, full collision checking and structural capacity.
 
-Historical [0.2.0 acceptance](RELEASE_ACCEPTANCE_0.2.0.md) applies only to its original artifacts.
+[Release assets](https://github.com/dtzhlq/local-mcp-for-sketchup/releases/tag/v0.4.1) contain installation artifacts, source, checksums, dependency notices and concise verification summaries. Build-time candidate flags remain inside the archives; the release manifest promotes only the verified bytes. Historical [0.3.0 acceptance](RELEASE_ACCEPTANCE_0.3.0.md) applies only to its original artifacts.

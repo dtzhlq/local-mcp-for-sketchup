@@ -1,0 +1,38 @@
+{
+  "id": "contemporary-chinese-v1",
+  "version": 1,
+  "status": "project_selected_visual_assembly",
+  "units": "mm",
+  "historical_accuracy_certified": false,
+  "defaults": {
+    "column_diameter_mm": 160,
+    "beam_width_mm": 160,
+    "beam_height_mm": 200,
+    "purlin_width_mm": 120,
+    "purlin_height_mm": 100,
+    "rafter_width_mm": 50,
+    "rafter_height_mm": 90,
+    "rafter_spacing_mm": 300,
+    "board_thickness_mm": 28,
+    "eave_projection_mm": 450,
+    "eave_lift_mm": 60,
+    "tile_pitch_mm": 180,
+    "tile_length_mm": 300,
+    "tile_thickness_mm": 7,
+    "seat_height_mm": 450,
+    "rail_height_mm": 900,
+    "wall_thickness_mm": 180
+  },
+  "basis": "selected",
+  "sources": [
+    {"id":"pavilion-comparison","url":"https://www.dpm.org.cn/explore/building/236444.html","institution":"故宫博物院","use":"four-column square pavilion and roof/enclosure relationships; no measured dimensions copied"},
+    {"id":"gate-comparison","url":"https://www.beijing.gov.cn/tsbj/tszt/hsbj/chz/chzzpjx/202206/t20220628_2754059.html","institution":"北京市人民政府","use":"gate/wall/leaf relationships only"},
+    {"id":"courtyard-comparison","url":"https://www.ihchina.cn/art/detail/id/21922.html","institution":"中国非物质文化遗产网","use":"courtyard and corridor relationships only"}
+  ],
+  "simplifications": [
+    "Member sizes and roof proportions are explicit engineering selections, not a historical material grade.",
+    "Hidden joints use declared contact or lap regions; no load or structural-safety claim.",
+    "The 90-degree corridor uses a project-selected miter joint, not a reconstructed named historical corner system.",
+    "Surface/light tile skins are open display geometry; painting, carving and concealed mortises are omitted."
+  ]
+}

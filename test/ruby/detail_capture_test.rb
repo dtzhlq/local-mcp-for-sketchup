@@ -160,6 +160,10 @@ class DetailCaptureTest < Minitest::Test
   end
 
   def with_facing_model
+    # A stable source has already faced its original camera. Previous fixtures
+    # used an unrelated camera and therefore hid redraw-after-restore drift.
+    @original.eye = Geom::Point3d.new(SREE_BEFORE[1], -SREE_BEFORE[0], 3)
+    @original.target = Geom::Point3d.new(0, 0, 0)
     @facing_edge = CaptureFacingEdge.new
     definition = CaptureFacingDefinition.new('Sree', 41158, [@facing_edge], [], CaptureFacingBehavior.new(true))
     @model.definitions << definition
@@ -198,6 +202,30 @@ class DetailCaptureTest < Minitest::Test
       assert_equal 'restored_source_revision', capture['model_revision_binding']
       refute_equal before['model_revision'], capture['capture_model_revision']
       assert_equal capture['capture_model_revision_before_export'], capture['capture_model_revision']
+    end
+  end
+
+  def test_unsettled_source_facing_matrix_is_rejected_before_capture_or_native_writes
+    with_facing_model do
+      # The v0.4.1 native under-eave failure began with this camera and a
+      # stored 45-degree Sree transform. A redraw subsequently rotated it to
+      # the camera even after move! acknowledged exact restoration.
+      @original.eye = Geom::Point3d.new(21215.52803, -12391.910443, 3122.588811)
+      @original.target = Geom::Point3d.new(11345.372247, -2791.332928, 1174.867627)
+      stored = [0.7071067917232597, 0.7071067706498353, 0, 0,
+        -0.7071067706498353, 0.7071067917232597, 0, 0, 0, 0, 1, 0,
+        -13.886367731446388, -24.24832049445804, 0, 1]
+      set_facing_matrix(stored)
+      before = AlmaSketchupMCP.session_model_revision_report(@model)
+      error = assert_raises(RuntimeError) { facing_capture('unsettled-source') }
+      assert_match(/detail_capture_camera_facing_source_unsettled/, error.message)
+      assert_equal 0, @view.refreshes
+      assert_empty @facing.moves
+      assert_equal stored, @facing.transformation.to_a
+      assert_equal before['model_revision'], AlmaSketchupMCP.session_model_revision_report(@model)['model_revision']
+      assert_same @original, @view.camera
+      assert_empty Dir.children(@directory)
+      refute @model.modified?
     end
   end
 

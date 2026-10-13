@@ -8,10 +8,11 @@ export const TIMBER_QUALITY_SCOPE='timber-assembly-summary.v1';
 // The detail-capture path preserves always-face-camera instances while exporting.
 // A plain View#write_image can rotate SketchUp's template person and change the
 // full native revision even though the hall itself was untouched.
-export async function captureTimberOverview({bridge, view, outputDir, modelRevision, timeoutMs, sessionContract}) {
+export async function captureTimberOverview({bridge, view, outputDir, modelRevision, timeoutMs, sessionContract, fitToRoot=false}) {
  const file=path.join(outputDir,`${view.id}.png`);
  const result=await bridge.capture_detail_views({runtime:'queue',output_dir:outputDir,
-  views:[{id:view.id,kind:'overview',width:Math.max(1400,view.min_width||0),height:Math.max(900,view.min_height||0)}],
+  views:[{id:view.id,kind:'overview',width:Math.max(1400,view.min_width||0),height:Math.max(900,view.min_height||0),
+    ...(view.camera?{camera:view.camera}:{}),...(fitToRoot&&view.instance_path?{instance_path:view.instance_path}:{})}],
   timeoutMs,session_contract:sessionContract});
  return proveTimberOverview({result, view, file, modelRevision});
 }
@@ -102,17 +103,24 @@ export function timberDetailSpecification(graph,views,ruleBinding){
 }
 export async function readTimberQualitySummary({bridge,creation,timeoutMs}){
  const spec=creation.frozen_spec?.specification;
- if(spec?.coverage_version!==TIMBER_QUALITY_SCOPE||creation.runtime!=='queue')throw new AgentContractError('INVALID_ARGUMENT','Timber quality requires its frozen native assembly contract.');
+ if(![TIMBER_QUALITY_SCOPE,'traditional-assembly-summary.v1'].includes(spec?.coverage_version)||creation.runtime!=='queue')throw new AgentContractError('INVALID_ARGUMENT','Timber quality requires its frozen native assembly contract.');
  const roots=[...new Set(spec.required_parts.map(part=>(creation.occurrence_path_map?.[JSON.stringify(part.instance_path)]||part.instance_path.map(id=>creation.identity_map[id]||id))[0]))];
- return adoptAssemblySummary({bridge,rootPaths:rootPathsFromCommittedSnapshot(creation.round.snapshot,roots),
+ const summary=await adoptAssemblySummary({bridge,rootPaths:rootPathsFromCommittedSnapshot(creation.round.snapshot,roots),
   expectedRevision:creation.round.snapshot.model_revision,timeoutMs,
   recursiveLimit:Math.min(5000,bridge.executionPolicy?.resource_limits?.max_recursive_entities||5000)});
+ if(spec.coverage_version==='traditional-assembly-summary.v1') {
+  const inspected=await bridge.inspect_model({runtime:'queue',includeEntities:false,includeSnapshot:true,timeoutMs});
+  if(inspected.snapshot?.model_revision_complete!==true||inspected.snapshot.model_revision!==summary.model_revision)
+   throw new AgentContractError('MODEL_REVISION_MISMATCH','Resource counts must belong to the same complete native assembly revision.');
+  return {...summary,snapshot:{...summary.snapshot,resource_totals:inspected.snapshot.resource_totals}};
+ }
+ return summary;
 }
 // This deliberately reports only the measured assembly contract. It makes no
 // claim about every face, hidden joinery or collision-free historical accuracy.
 export function evaluateTimberQuality({summary,creation,captures=[]}){
  const spec=creation.frozen_spec?.specification,issues=[],measurements=[];
- if(spec?.coverage_version!==TIMBER_QUALITY_SCOPE||sha256Canonical(spec)!==creation.frozen_spec.hash
+ if(![TIMBER_QUALITY_SCOPE,'traditional-assembly-summary.v1'].includes(spec?.coverage_version)||sha256Canonical(spec)!==creation.frozen_spec.hash
    ||summary?.runtime!=='queue'||summary.read_only!==true||summary.assembly_projection_complete!==true||summary.recursive_truncated!==false
    ||summary.assembly_summary_depth!==2||summary.recursive_projection!=='assembly-merkle.v2'||summary.model_revision_complete!==true){
   throw new AgentContractError('MODEL_REVISION_INCOMPLETE','A complete native timber assembly summary is required.');

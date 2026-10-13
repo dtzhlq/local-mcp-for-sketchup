@@ -5,6 +5,7 @@ import path from 'node:path';
 import { AgentContractError, canonicalJson, sha256Canonical } from './agent-contract.mjs';
 import { freezeDetailSpecification, evaluateDetailQuality } from './detail-quality.mjs';
 import { readNativeAppearanceSavedProvenance } from './model-accessibility-appearance-receipt.mjs';
+import { modelIdentityForAdoption, modelKeyForIdentity } from './model-identity.mjs';
 
 export const MODEL_ACCESSIBILITY_DELIVERY_VERSION = 'model-accessibility-delivery.v1';
 const TASK_ID = /^task_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -43,6 +44,7 @@ export async function deliverModelAccessibilityTask({ bridge, taskStore, taskId,
   await bridge.sessionContractAuthority.verify(sessionContract, {operation:'save_model'});
   const source = await taskStore.getTask(sourceTaskId, { includePrivate: true });
   const binding = await sourceBinding(source, taskStore, bridge);
+  const parameterBindings = await creationParameterBindings(source, taskStore);
   const immutable = { version: MODEL_ACCESSIBILITY_DELIVERY_VERSION, delivery_task_id: taskId,
     source_task_id: sourceTaskId, source_binding: binding, filename: 'model.skp' };
   // Source recovery may take longer than the submitted connection lifetime.
@@ -73,7 +75,7 @@ export async function deliverModelAccessibilityTask({ bridge, taskStore, taskId,
     await assertRealDirectory(directory);
     const intent = { ...immutable, kind: 'save_intent', claimed_at: new Date().toISOString(),
       session_contract_hash: sha256Canonical(sessionContract), before_identity: structuredClone(before.model_identity),
-      ...(creationParameterBinding(source) ? { parameter_binding: creationParameterBinding(source) } : {}) };
+      ...parameterBindings };
     await writeSigned(taskStore, journalPath, intent);
     await syncDirectory(directory);
     if (await exists(target)) fail('ARTIFACT_INTEGRITY_ERROR', 'The unique delivery target unexpectedly exists; it will not be overwritten.');
@@ -87,6 +89,7 @@ export async function deliverModelAccessibilityTask({ bridge, taskStore, taskId,
       const receipt = { ...immutable, kind: 'saved_receipt', saved_at: new Date().toISOString(),
         file, save_confirmed: true, post_save_revision: after.model_revision,
         ...(intent.parameter_binding ? { parameter_binding: intent.parameter_binding } : {}),
+        ...(intent.scene_parameter_bindings ? { scene_parameter_bindings: intent.scene_parameter_bindings } : {}),
         after_identity: structuredClone(after.model_identity), save_intent_hash: sha256Canonical(intent) };
       // Once this immutable receipt exists, artifact registration/finalization
       // can safely recover without repeating the native save.
@@ -105,6 +108,48 @@ function creationParameterBinding(source) {
   if (!record) return null;
   return { creation_task_id: record.creation_task_id, source_record_hash: record.source_record_hash,
     model_key: record.model_key, runtime: record.runtime, parameter_revision: record.parameter_revision };
+}
+
+async function creationParameterBindings(source, taskStore) {
+  const scene = source.private?.traditional_scene_verification;
+  if (!scene) {
+    const binding = creationParameterBinding(source);
+    return binding ? { parameter_binding: binding } : {};
+  }
+  // sourceBinding already authenticated the scene proof and immutable member
+  // list. Freeze each child's current source, rather than the aggregate spec.
+  const bindings = [];
+  for (const member of scene.members) {
+    const child = await taskStore.getTask(member.creation_task_id, { includePrivate: true });
+    const record = child.private?.creation?.parameter_source;
+    const { source_record_hash, ...body } = record || {};
+    if (child.intent !== 'create_model' || record?.version !== 'model-accessibility-parameter-source.v1'
+      || record.creation_task_id !== child.task_id || record.runtime !== 'queue' || record.model_key !== scene.model_key
+      || source_record_hash !== member.source_record_hash || source_record_hash !== sha256Canonical(body)
+      || child.private.creation.parameter_edit_support?.baseline_captured !== true) fail('ARTIFACT_INTEGRITY_ERROR', 'A scene parameter source changed before its save intent was frozen.');
+    bindings.push({ ...creationParameterBinding(child), frozen_specification_hash: child.private.creation.frozen_spec?.hash });
+  }
+  assertSceneParameterBindings(bindings);
+  return { scene_parameter_bindings: bindings };
+}
+
+function assertSceneParameterBindings(bindings) {
+  if (!Array.isArray(bindings) || bindings.length < 1 || bindings.length > 8
+    || new Set(bindings.map(binding => binding?.creation_task_id)).size !== bindings.length
+    || bindings.some(binding => !TASK_ID.test(binding?.creation_task_id || '') || !SHA.test(binding.source_record_hash || '')
+      || !SHA.test(binding.frozen_specification_hash || '') || !/^model_[a-f0-9]{32}$/.test(binding.model_key || '')
+      || binding.runtime !== 'queue' || !Number.isInteger(binding.parameter_revision) || binding.parameter_revision < 0)) {
+    fail('ARTIFACT_INTEGRITY_ERROR', 'Saved scene parameter bindings must contain distinct trusted creation sources.');
+  }
+}
+
+function assertSavedParameterBindings(intent, receipt) {
+  if (canonicalJson(receipt.parameter_binding) !== canonicalJson(intent.parameter_binding)
+    || canonicalJson(receipt.scene_parameter_bindings) !== canonicalJson(intent.scene_parameter_bindings)) fail('ARTIFACT_INTEGRITY_ERROR', 'Saved parameter bindings differ from the signed save intent.');
+  if (receipt.scene_parameter_bindings !== undefined) {
+    assertSceneParameterBindings(receipt.scene_parameter_bindings);
+    if (receipt.parameter_binding) fail('ARTIFACT_INTEGRITY_ERROR', 'A saved scene cannot also claim a single-root parameter binding.');
+  }
 }
 
 /** Internal provenance API for fixed server-owned delivery/appearance saves.
@@ -130,16 +175,16 @@ export async function readVerifiedModelAccessibilitySavedReceipt({ taskStore, de
   assertImmutable(intent, immutable, 'save_intent'); assertImmutable(receipt, immutable, 'saved_receipt');
   if (receipt.save_confirmed !== true || receipt.save_intent_hash !== sha256Canonical(intent)
     || !SHA.test(receipt.post_save_revision || '') || receipt.post_save_revision !== intent.source_binding?.model_revision
-    || path.resolve(receipt.after_identity?.source_path || '') !== target
-    || canonicalJson(receipt.parameter_binding) !== canonicalJson(intent.parameter_binding)) fail('ARTIFACT_INTEGRITY_ERROR', 'Saved-file receipt does not match its fixed file, save intent or parameter binding.');
+    || path.resolve(receipt.after_identity?.source_path || '') !== target) fail('ARTIFACT_INTEGRITY_ERROR', 'Saved-file receipt does not match its fixed file or save intent.');
+  assertSavedParameterBindings(intent, receipt);
   const file = await hashFile(target);
   if (canonicalJson(file) !== canonicalJson(receipt.file)) fail('ARTIFACT_INTEGRITY_ERROR', 'The delivered bytes changed after their confirmed save.');
   // Legacy initial-creation receipts already sign the exact accepted native
   // revision. Only the unchanged creation-time source at parameter revision 0
   // can recover that omitted metadata; later current geometry is never used.
   let parameter_binding = receipt.parameter_binding;
-  let parameter_binding_evidence = parameter_binding ? 'signed_save_intent_and_receipt' : 'unavailable';
-  if (!parameter_binding) {
+  let parameter_binding_evidence = parameter_binding || receipt.scene_parameter_bindings ? 'signed_save_intent_and_receipt' : 'unavailable';
+  if (!parameter_binding && !receipt.scene_parameter_bindings) {
     const source = await taskStore.getTask(receipt.source_task_id, { includePrivate: true });
     const record = source.private?.creation?.parameter_source;
     const { source_record_hash, ...body } = record || {};
@@ -154,7 +199,7 @@ export async function readVerifiedModelAccessibilitySavedReceipt({ taskStore, de
     }
   }
   const proof = { ...receipt, file_path: target, ...(parameter_binding ? { parameter_binding } : {}), parameter_binding_evidence,
-    parameter_continuation_available: Boolean(parameter_binding) };
+    parameter_continuation_available: Boolean(parameter_binding || receipt.scene_parameter_bindings?.length) };
   verifiedSavedReceipts.set(proof, sha256Canonical(proof));
   return proof;
 }
@@ -163,11 +208,22 @@ export function isVerifiedModelAccessibilitySavedReceipt(receipt) {
   return Boolean(receipt && verifiedSavedReceipts.get(receipt) === sha256Canonical(receipt));
 }
 
+export function savedParameterBindingForSource(receipt, creationTaskId) {
+  if (!isVerifiedModelAccessibilitySavedReceipt(receipt)) fail('ARTIFACT_INTEGRITY_ERROR', 'Saved parameter binding requires a server-verified receipt.');
+  const bindings = receipt.parameter_binding ? [receipt.parameter_binding] : receipt.scene_parameter_bindings || [];
+  const binding = bindings.find(item => item.creation_task_id === creationTaskId);
+  return binding ? structuredClone(binding) : null;
+}
+
 async function sourceBinding(source, taskStore, bridge) {
   const creation = source.private?.creation;
   const result = source.result;
   let quality = result?.quality;
   let verifiedCreation = false;
+  if(source.intent==='verify_model'&&result?.kind==='verify_scene_result') {
+    const {assertTraditionalSceneVerification}=await import('./traditional-timber/scene-plan.mjs');
+    verifiedCreation=await assertTraditionalSceneVerification({source,taskStore});
+  }
   if (source.intent === 'verify_model' && result?.kind === 'verify_creation_result') {
     const proof = source.private?.frozen_creation_verification;
     if (!proof) fail('ARTIFACT_INTEGRITY_ERROR', 'Frozen creation verification has no server binding.');
@@ -218,15 +274,27 @@ async function sourceBinding(source, taskStore, bridge) {
     || result.snapshot?.model_revision !== snapshot.model_revision) fail('MODEL_REVISION_INCOMPLETE', 'The accepted source needs a complete native snapshot revision.');
   const contract = source.inputs?.session_contract;
   if (contract?.runtime !== 'queue' || !contract.session_id || !contract.document_id || !contract.model_identity) fail('HANDSHAKE_INVALID', 'The accepted creation has no server-persisted session/document identity binding.');
+  const proofModelKey = source.private?.frozen_creation_verification?.model_key || source.private?.traditional_scene_verification?.model_key;
+  if (proofModelKey && proofModelKey !== deliveryModelKey(contract)) fail('ARTIFACT_INTEGRITY_ERROR', 'The accepted verification connection no longer matches its signed document identity.');
   return { session_id: contract.session_id, document_id: contract.document_id,
-    model_identity_hash: sha256Canonical(contract.model_identity), model_revision: snapshot.model_revision,
+    model_identity_hash: sha256Canonical(contract.model_identity), model_key: deliveryModelKey(contract), model_revision: snapshot.model_revision,
     frozen_specification_hash: frozen.hash, quality_hash: sha256Canonical(quality) };
 }
 
 function assertSourceState(state, binding) {
   if (state?.runtime !== 'queue' || state.session_id !== binding.session_id || state.document_id !== binding.document_id
-    || sha256Canonical(state.model_identity || null) !== binding.model_identity_hash) fail('MODEL_IDENTITY_MISMATCH', 'The active session/document/model is not the accepted creation source.');
+    || (binding.model_key ? deliveryModelKey(state) !== binding.model_key
+      : sha256Canonical(state.model_identity || null) !== binding.model_identity_hash)) fail('MODEL_IDENTITY_MISMATCH', 'The active session/document/model is not the accepted creation source.');
   if (state.model_revision_complete !== true || state.model_revision !== binding.model_revision) fail('MODEL_REVISION_MISMATCH', 'The accepted model changed after quality verification; delivery is blocked.');
+}
+
+function deliveryModelKey(state) {
+  // SketchUp may advance Model#guid during temporary camera-facing writes even
+  // when exact restoration preserves the accepted full revision. Use the same
+  // document/path identity as creation-bound parameter edits, plus the separate
+  // exact session, document and full-revision checks above.
+  return modelKeyForIdentity(modelIdentityForAdoption({ kind: 'adopt_open_model', runtime: state.runtime,
+    document_id: state.document_id, model_identity: state.model_identity }));
 }
 
 function assertSavedState(state, binding, target) {
@@ -245,6 +313,7 @@ async function replaySaved({ taskStore, directory, target, journalPath, receiptP
   assertImmutable(receipt, immutable, 'saved_receipt');
   if (receipt.save_confirmed !== true || receipt.save_intent_hash !== sha256Canonical(intent)
     || receipt.post_save_revision !== immutable.source_binding.model_revision) fail('ARTIFACT_INTEGRITY_ERROR', 'The delivery receipt does not match its save intent.');
+  assertSavedParameterBindings(intent, receipt);
   const file = await hashFile(target);
   if (canonicalJson(file) !== canonicalJson(receipt.file)) fail('ARTIFACT_INTEGRITY_ERROR', 'The delivered file changed after its confirmed save.');
   return publicSavedResult(taskStore, immutable.delivery_task_id, target, receipt, true);

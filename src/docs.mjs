@@ -3,7 +3,7 @@ import { formatCapabilityMatrixMarkdown, getRuntimeCapabilities } from './capabi
 export const TOOL_DOCS = `
 # SketchUp Modeler Local MVP
 
-Start with the current Agent Gateway discovery flow (2026-09-11):
+Start with the current Agent Gateway discovery flow:
 
 {"tool":"start_agent_task","arguments":{"intent":"discover","instruction":"Discover supported modeling tasks and the next step.","inputs":{"topic":"start"}}}
 
@@ -51,6 +51,11 @@ Expert DSL and inspection tools remain available:
 - iterate_model({ code|intent, input_format, targets|target_query, output_dir, runtime }) -> inspects the active session, resolves/selects targets, applies an incremental patch or safe ModificationIntent, then writes before/after snapshots, diff, QA, and a versioned model artifact.
 - validate_model({ code|snapshot, runtime, spec }) -> runs semantic layout QA and returns orthographic SVG/HTML previews plus correction suggestions.
 - validate_reference_model({ code|snapshot, runtime, spec }) -> runs reference visual QA for silhouette/keypoint/extent/area/relative-placement/orientation rules and returns PartGraph-targeted correction suggestions.
+
+Traditional assembly (0.4.1):
+
+- Traditional assembly adds kind=traditional_assembly: explicit semantic families, layout, connections and source-bound parameters. Discover tasks(kind=traditional_assembly,detail=parameters); use inputs.task for one root or shared instances. Ordinary geometry budgets apply. Unsupported roof topology returns a non-executing gap/proposal requiring explicit acceptance; historical accuracy is not certified.
+- A traditional scene uses inputs.scene_plan on preflight_model/create_model: version=1, id, units=mm, 1..8 independent traditional_assembly roots, explicit world connections and one overview camera. Each child retains its own creation_task_id; resume the parent instead of replaying roots. Mock dispatch does not prove quality. Native children defer their view until aggregate verify_model(inputs.scene_id,runtime=queue). After an accepted selected-root edit, start a fresh scene verification with a new key; deliver from that accepted verification_task_id. A scene is not one atomic update of every building. See docs/traditional-timber/ASSEMBLY.md.
 
 ## Safe DSL
 

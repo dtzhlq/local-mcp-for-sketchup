@@ -1,0 +1,92 @@
+{
+  "version": 1,
+  "kind": "traditional_assembly",
+  "id": "sample-b-pavilion",
+  "units": "mm",
+  "parameters": {
+    "bay_lengths_mm": [
+      3600
+    ],
+    "width_mm": 3600,
+    "column_height_mm": 2800,
+    "rise_mm": 1100,
+    "eave_mm": 500
+  },
+  "assembly": {
+    "version": 1,
+    "mode": "contemporary_chinese",
+    "layout": {
+      "kind": "grid",
+      "x_bays_parameter": "bay_lengths_mm",
+      "depth_parameter": "width_mm"
+    },
+    "assemblies": [
+      {
+        "id": "frame",
+        "family": "frame_grid"
+      },
+      {
+        "id": "roof",
+        "family": "roof_unit",
+        "parameters": {
+          "type": "pyramidal"
+        }
+      },
+      {
+        "id": "eave",
+        "family": "eave_unit"
+      },
+      {
+        "id": "seat",
+        "family": "rail_seat",
+        "parameters": {
+          "type": "seat",
+          "side": 1
+        }
+      },
+      {
+        "id": "rail",
+        "family": "rail_seat",
+        "parameters": {
+          "type": "rail",
+          "side": -1
+        }
+      }
+    ],
+    "connections": [
+      {
+        "from": "frame.bearing",
+        "to": "roof.bearing",
+        "relation": "contact"
+      },
+      {
+        "from": "roof.roof_surface",
+        "to": "eave.roof_surface",
+        "relation": "alignment"
+      }
+    ],
+    "parameter_bindings": {
+      "frame": {
+        "column_height_mm": "column_height_mm"
+      },
+      "roof": {
+        "rise_mm": "rise_mm",
+        "eave_projection_mm": "eave_mm"
+      }
+    },
+    "parameter_sources": {},
+    "representation": {
+      "tile_detail": "surface"
+    },
+    "simplifications": [
+      "Selected contemporary corridor; no historical period claimed."
+    ]
+  },
+  "placement": {
+    "origin_mm": [
+      0,
+      0,
+      0
+    ]
+  }
+}
