@@ -427,7 +427,9 @@ function compactAgentPayload(payload, fullResultHandle) {
   const source = payload && typeof payload === 'object' ? payload : {};
   if (source.kind === 'image_structure') return { kind: source.kind, goal: source.goal, source_understanding: source.source_understanding, source_image_model: source.source_image_model, plan_hash: source.plan_hash, instance_count: source.instance_count, goal_gaps: source.goal_gaps, complete_model_delivered: false, full_result_artifact: fullResultHandle };
   if (source.kind === 'parameter_source_discovery') return compactParameterSources(source, fullResultHandle);
-  if (source.topic === 'workflows') return compactWorkflow(source);
+  if (source.topic === 'workflows') return compactWorkflow(source, fullResultHandle);
+  if (source.kind === 'model_accessibility_discovery' && source.topic === 'start') return compactFirstUse(source);
+  if (source.task_kind === 'traditional_assembly' && source.parameters) return compactAssemblyContract(source, fullResultHandle);
   if (source.kind === 'model_accessibility_appearance') return compactAccessibilityExecution(source, fullResultHandle);
   if (source.parameter_rules) return compactParameterContract(source, fullResultHandle);
   const taskExample = compactTaskExample(source, fullResultHandle);
@@ -573,7 +575,7 @@ function compactAgentPayload(payload, fullResultHandle) {
       approval_challenge: compactApprovalChallenge(source.approval_challenge)
     };
   }
-  if (kind === 'create_model_result' || kind === 'verify_model_result') {
+  if (['create_model_result', 'verify_model_result', 'verify_creation_result', 'verify_scene_result'].includes(kind)) {
     return {
       ...common,
       snapshot: compactSnapshot(source.snapshot),
@@ -584,7 +586,7 @@ function compactAgentPayload(payload, fullResultHandle) {
       status: source.status,
       quality_accepted: source.quality_accepted,
       evidence_level: source.evidence_level,
-      quality: source.quality ? { quality_status: source.quality.quality_status, specification_hash: source.quality.specification_hash, remaining_count: source.quality.remaining?.length || 0, remaining: source.quality.remaining?.slice(0, 5), ...(source.quality.resource_costs ? { resource_costs: source.quality.resource_costs } : {}) } : undefined,
+      quality: source.quality ? { quality_status: source.quality.quality_status, specification_hash: source.quality.specification_hash, remaining_count: source.quality.remaining?.length || 0, remaining: source.quality.remaining?.slice(0, 5), ...(source.quality.resource_costs ? { resource_costs: source.quality.resource_costs } : {}), ...compactJointQuality(source.quality) } : undefined,
       compile_allowed: source.compile_allowed,
       verification: source.verification
     };
@@ -623,12 +625,14 @@ function minimalAgentPayload(payload, fullResultHandle) {
   const source = payload && typeof payload === 'object' ? payload : {};
   if (source.kind === 'image_structure') return { kind: source.kind, goal: source.goal, source_understanding: source.source_understanding, source_image_model: source.source_image_model, plan_hash: source.plan_hash, instance_count: source.instance_count, goal_gaps: source.goal_gaps, complete_model_delivered: false, full_result_artifact: fullResultHandle };
   if (source.kind === 'parameter_source_discovery') return compactParameterSources(source, fullResultHandle, true);
-  if (source.topic === 'workflows') return compactWorkflow(source);
+  if (source.topic === 'workflows') return compactWorkflow(source, fullResultHandle, true);
+  if (source.kind === 'model_accessibility_discovery' && source.topic === 'start') return compactFirstUse(source, true);
+  if (source.task_kind === 'traditional_assembly' && source.parameters) return compactAssemblyContract(source, fullResultHandle, true);
   if (source.parameter_rules) return compactParameterContract(source, fullResultHandle);
   if ((source.kind === 'modify_design_parameters_result' && source.stage) || source.kind === 'model_accessibility_appearance') return compactAccessibilityExecution(source, fullResultHandle, true);
-  const taskExample = compactTaskExample(source, fullResultHandle);
+  const taskExample = compactTaskExample(source, fullResultHandle, true);
   if (taskExample) return taskExample;
-  if (['create_model_result', 'verify_model_result'].includes(source.kind)) {
+  if (['create_model_result', 'verify_model_result', 'verify_creation_result', 'verify_scene_result'].includes(source.kind)) {
     return {
       kind: source.kind,
       status: source.status,
@@ -637,7 +641,8 @@ function minimalAgentPayload(payload, fullResultHandle) {
       quality_accepted: source.quality_accepted,
       evidence_level: source.evidence_level,
       remaining_count: source.quality?.remaining?.length || 0,
-      remaining: (source.quality?.remaining || []).slice(0, 3).map(issue => Object.fromEntries(Object.entries(issue).filter(([key]) => ['type', 'part_id', 'part_key', 'view_id', 'status', 'reason'].includes(key)))),
+      remaining: Array.isArray(source.quality?.native_joint_measurements) ? undefined : (source.quality?.remaining || []).slice(0, 3).map(issue => Object.fromEntries(Object.entries(issue).filter(([key]) => ['type', 'part_id', 'part_key', 'view_id', 'status', 'reason'].includes(key)))),
+      ...compactJointQuality(source.quality, true),
       full_result_artifact: fullResultHandle
     };
   }
@@ -685,6 +690,36 @@ function minimalAgentPayload(payload, fullResultHandle) {
   };
 }
 
+function compactJointQuality(quality, minimal = false) {
+  if (!quality || !Array.isArray(quality.native_joint_measurements)) return {};
+  const rows = quality.native_joint_measurements;
+  const counts = { pass: 0, fail: 0, unsupported: 0, unverified: 0 };
+  for (const row of rows) counts[Object.hasOwn(counts, row?.status) ? row.status : 'unverified']++;
+  const summary = {
+    evidence_level: quality.native_joint_evidence_level ?? quality.connection_evidence_level ?? 'unverified',
+    scope: quality.joint_measurement_scope || 'selected_member_pairs_only',
+    counts,
+    penetration_checked: false,
+    bearing_capacity_checked: false
+  };
+  if (!minimal) {
+    summary.model_revision = quality.model_revision;
+    summary.units = 'mm';
+    const priority = { fail: 0, unverified: 1, unsupported: 2, pass: 3 };
+    summary.samples = [...rows].sort((a, b) => (priority[a?.status] ?? 1) - (priority[b?.status] ?? 1)).slice(0, 2).map(row => ({
+      id: String(row?.id || '').slice(0, 96),
+      status: Object.hasOwn(counts, row?.status) ? row.status : 'unverified',
+      evidence_level: row?.evidence_level,
+      measured_distance_mm: Number.isFinite(row?.measured_distance_mm) ? row.measured_distance_mm : null,
+      tolerance_mm: Number.isFinite(row?.tolerance_mm) ? row.tolerance_mm : null,
+      ...(row?.reason ? { reason: String(row.reason).slice(0, 96) } : {})
+    }));
+  }
+  // A zero surface distance may also be an intersection. Preserve that boundary
+  // even when the smallest response cannot include individual measurements.
+  return { joint_summary: summary };
+}
+
 function compactParameterSources(source, fullResultHandle, minimal = false) {
   const summary = { kind: source.kind, topic: 'parameter_sources', current_model: source.current_model, evidence_level: source.evidence_level,
     returned_source_count: (source.sources || []).length, returned_saved_source_count: (source.saved_source_continuations || []).length,
@@ -701,11 +736,46 @@ function compactParameterSources(source, fullResultHandle, minimal = false) {
     note: source.note };
 }
 
-function compactWorkflow(source) {
-  // Keep selected core inputs in both fallbacks: this is an action contract,
-  // not a long result whose opaque artifact must be paged before continuing.
-  return Object.fromEntries(['kind', 'topic', 'task_name', 'task_names', 'support', 'evidence_level', 'quality_accepted', 'template_only', 'next_call', 'call_template', 'fixed_design', 'next_step', 'limits']
+function compactWorkflow(source, fullResultHandle, minimal = false) {
+  // Prefer complete small templates. Larger assembly inputs must degrade to a
+  // task-bound artifact read rather than exceed the caller's context budget.
+  if (minimal) return { kind: source.kind, task_name: source.task_name,
+    next_call: { tool: 'read_agent_artifact', arguments: { task_id: source.status?.resume?.arguments?.task_id, handle: fullResultHandle, offset: 0, max_chars: 1000 } },
+    next_step: 'Read pages to EOF; review and fresh connection remain required.' };
+  if (['traditional_assembly', 'traditional_scene'].includes(source.task_name)) return {
+    kind: source.kind, topic: source.topic, task_name: source.task_name, template_only: true, next_call: source.next_call,
+    next_step: 'Replace example design values; preflight, connect queue and create with the same input and stable key. Scene edits require verify_model(scene_id). Review and quality checks still apply. Save ends delivery; reopen only on explicit request.' };
+  if (['array_align', 'mirror_layout'].includes(source.task_name)) return {
+    kind: source.kind, topic: source.topic, task_name: source.task_name, template_only: true,
+    call_template: source.call_template, ...(source.align_template ? { align_template: source.align_template } : {}),
+    next_step: 'Replace real root identities and world-axis design values. Server prepares a frozen plan; obtain review, reconnect, submit original task. Nested targets rejected; mirror copy requires a plain root ComponentInstance and preserves original. No collision/quality pass implied.' };
+  return Object.fromEntries(['kind', 'topic', 'task_name', 'task_names', 'support', 'evidence_level', 'quality_accepted', 'template_only', 'next_call', 'call_template', 'align_template', 'fixed_design', 'next_step', 'limits']
     .filter(key => source[key] !== undefined).map(key => [key, source[key]]));
+}
+
+function compactFirstUse(source, minimal = false) {
+  if (minimal) return { kind: source.kind, topic: 'start',
+    entry: 'Discover tasks for creation; workflows task_name=traditional_scene|array_align|mirror_layout for scene/layout inputs.',
+    execution: 'Preflight, trusted review and fresh queue connection required. Resume original task after uncertainty.',
+    delivery: 'Review quality, save, deliver and stop. Reopen only on explicit user request.' };
+  return { kind: source.kind, topic: 'start', evidence_level: 'preflight_only', units: 'mm', current_model: 'not_checked',
+    entry: 'Discover topic=tasks for creation kinds, or topic=workflows with task_name for the next template.',
+    scenes: 'Multiple independent assembly roots: workflows task_name=traditional_scene; preflight/create use inputs.scene_plan.',
+    layout: 'Array/align and mirror copies: workflows task_name=array_align|mirror_layout, then reviewed_existing_model_edit inputs.layout_edit.',
+    execution: 'Preflight first; queue needs fresh connection_task_id and trusted approval. Keep task_id/idempotency_key; resume uncertainty without replay.',
+    delivery: 'After required quality review and successful save, deliver and stop. Close/reopen only on explicit user request.' };
+}
+
+function compactAssemblyContract(source, fullResultHandle, minimal = false) {
+  if (minimal) return { kind: source.kind, task_kind: 'traditional_assembly',
+    next_call: { tool: 'read_agent_artifact', arguments: { task_id: source.status?.resume?.arguments?.task_id, handle: fullResultHandle, offset: 0, max_chars: 1000 } },
+    next_step: 'Read pages to EOF for parameters, families and scene inputs.' };
+  return { kind: source.kind, topic: 'tasks', task_kind: 'traditional_assembly', units: source.units, evidence_level: 'preflight_only',
+    parameters: source.parameters, family_names: Object.keys(source.family_catalog || {}),
+    parameter_bindings: 'Each top-level parameter must be used by layout or assembly.parameter_bindings.',
+    scene_composition: source.scene_composition,
+    next_step: 'Discover tasks kind=traditional_assembly detail=examples; replace design values and preflight inputs.task. Multiple independent roots: workflows task_name=traditional_scene. Full per-family parameter/port catalog is in the artifact.',
+    full_result_artifact: fullResultHandle };
 }
 
 function compactParameterContract(source, fullResultHandle) {
@@ -734,18 +804,19 @@ function compactAccessibilityExecution(source, fullResultHandle, minimal = false
   };
 }
 
-function compactTaskExample(source, handle) {
+function compactTaskExample(source, handle, minimal = false) {
   const tasks = source.catalog?.tasks;
-  if (source.kind !== 'model_accessibility_discovery' || tasks?.length !== 1) return null;
-  const selected = tasks[0];
-  const input = selected.examples?.minimal?.arguments?.inputs?.task;
+  if (source.kind !== 'model_accessibility_discovery' || !source.task_input && tasks?.length !== 1) return null;
+  const selected = tasks?.[0];
+  const input = source.task_input || selected?.examples?.minimal?.arguments?.inputs?.task;
   if (!input) return null;
+  if (minimal) return { kind: source.kind, topic: 'tasks', task_kind: input.kind, template_only: true,
+    next_call: { tool: 'read_agent_artifact', arguments: { task_id: source.status?.resume?.arguments?.task_id, handle, offset: 0, max_chars: 1000 } },
+    next_step: 'Read the complete task_input from the paged artifact; replace design values and preflight. No local files are required.' };
   return {
     kind: source.kind, topic: 'tasks', evidence_level: source.evidence_level,
-    task_input: input, fixed_design: selected.fixed_design,
-    use: 'All required fields are in task_input. Replace its example values with the user dimensions, then preflight_model with inputs.task; preflight checks ranges/dependencies. No artifact reading is needed to attempt this task. For live creation discover/connect runtime=queue, then create_model with inputs.task, runtime=queue, connection_task_id and a stable idempotency_key.',
-    status: source.status,
-    full_result_artifact: handle
+    task_input: input,
+    use: 'Replace design values; preflight inputs.task, connect queue, create with the same task and stable key. Resume uncertainty.'
   };
 }
 

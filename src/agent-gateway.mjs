@@ -81,6 +81,9 @@ import { reopenDeliveredModelTask, reopenDeliveredModelError, validateReopenDeli
 import { attachHostCreationPacket, prepareHostCreationDsl, verifyHostCreationCapture } from './model-accessibility-host-provisioning.mjs';
 import { indexCapturedParameterSource, discoverParameterSources, parameterSourceDocumentBinding } from './model-accessibility-parameter-discovery.mjs';
 import { adoptParameterRoots } from './model-accessibility-scoped-readback.mjs';
+import { withTaskTiming } from './execution-timing.mjs';
+import { prepareLayoutEdit } from './model-accessibility-layout-edit.mjs';
+import { readTraditionalAssemblyJointMeasurements } from './traditional-timber/assembly-joint-measurements.mjs';
 
 const SUPPORTED_INTENTS = new Set(['program_model', 'discover', 'preflight_model', 'deliver_model', 'reopen_delivered_model', 'apply_native_appearance', 'create_model', 'understand_model', 'propose_existing_model_edit', 'modify_design_parameters', 'reconcile_design_intent', 'reference_image_correction', 'visual_correction_qa', 'reviewed_existing_model_edit', 'image_artifact', 'verify_model']);
 
@@ -286,6 +289,7 @@ export class AgentGateway {
     }
     if (intent === 'apply_native_appearance' && !idempotency_key) throw new AgentContractError('INVALID_ARGUMENT', 'Native appearance requires a stable idempotency_key.');
     if (intent === 'modify_design_parameters' && inputs.parameter_edit && !idempotency_key) throw new AgentContractError('INVALID_ARGUMENT', 'Parameter replacement requires a stable idempotency_key.');
+    if (inputs.layout_edit && (intent !== 'reviewed_existing_model_edit' || !idempotency_key)) throw new AgentContractError('INVALID_ARGUMENT', 'layout_edit requires reviewed_existing_model_edit and a stable idempotency_key.');
     const durableInputs = await this.materializeConnectionInput(await this.materializeTransientImageInputs(intent, inputs));
     const capabilities = normalizeClientCapabilities(client_capabilities);
     const responsePolicy = createAgentResponsePolicy({
@@ -324,7 +328,7 @@ export class AgentGateway {
       patch: { next_action: { action: 'continue_server_work' } }
     });
     try {
-      task = await this.runIntent(task);
+      task = await withTaskTiming(task.task_id, 'start', () => this.runIntent(task));
       return createResultEnvelope({
         task: await this.taskStore.getTask(task.task_id),
         ...((task.inputs?.parameter_edit || task.intent==='program_model') ? { ok: !task.last_error && task.state!=='failed', error: task.last_error || null } : {}),
@@ -337,7 +341,7 @@ export class AgentGateway {
 
   async resume(options = {}) {
     return this.withTaskRequestSlot(options.task_id, 'resume_agent_task', async () => (
-      this.presentTaskEnvelope(await this.resumeUnprojected(options))
+      this.presentTaskEnvelope(await withTaskTiming(options.task_id, 'resume', () => this.resumeUnprojected(options)))
     ));
   }
 
@@ -469,7 +473,7 @@ export class AgentGateway {
 
   async submit(options = {}) {
     return this.withTaskRequestSlot(options.task_id, 'submit_agent_task_input', async () => (
-      this.presentTaskEnvelope(await this.submitUnprojected(options))
+      this.presentTaskEnvelope(await withTaskTiming(options.task_id, 'submit', () => this.submitUnprojected(options)))
     ));
   }
 
@@ -483,6 +487,14 @@ export class AgentGateway {
         validateReopenDeliveredInput(input, { previous: task.inputs });
       }
       if (task.private?.native_asset_edit && (['asset_edit', 'operations', 'targets', 'source_proposal', 'source_design_change', 'source_visual_correction'].some(key => Object.hasOwn(input, key)) || input.runtime && input.runtime !== 'queue')) throw new AgentContractError('INVALID_ARGUMENT', 'The reviewed native asset source, placement and target are frozen. Start a new reviewed task to change them.');
+      if (task.private?.layout_edit_plan) {
+        if (!idempotency_key) throw new AgentContractError('INVALID_ARGUMENT', 'Layout execution requires a stable submit idempotency_key.');
+        if (!input || typeof input !== 'object' || Array.isArray(input)
+          || Object.keys(input).some(key => !['runtime', 'connection_task_id', 'session_contract', 'note'].includes(key))
+          || input.runtime !== undefined && input.runtime !== (task.inputs.runtime || 'mock')) {
+          throw new AgentContractError('INVALID_ARGUMENT', 'The reviewed layout input, targets and generated operations are frozen. Submit only the same-runtime connection and optional review note; start a new reviewed task to change the design.');
+        }
+      }
       if (((task.intent === 'create_model' && input.task) || task.intent === 'deliver_model') && !idempotency_key) throw new AgentContractError('INVALID_ARGUMENT', 'Submitting common-task creation or delivery requires a stable idempotency_key.');
       if (task.intent === 'apply_native_appearance' && !idempotency_key) throw new AgentContractError('INVALID_ARGUMENT', 'Submitting native appearance requires a stable idempotency_key.');
       if (task.intent === 'apply_native_appearance') validateNativeAppearanceSubmission(task, input);
@@ -799,7 +811,14 @@ export class AgentGateway {
         const selected = result.catalog.tasks[0];
         const byAsset = selected.parameters.by_asset_recipe;
         const recipe = typeof inputs.asset_id === 'string' ? inputs.asset_id.replace(/^detail-/, '') : null;
-        if (byAsset && !byAsset[recipe]) {
+        if (inputs.kind === 'traditional_assembly') {
+          result = { kind: result.kind, topic, task_kind: inputs.kind, evidence_level: 'preflight_only', units: 'geometry/placement mm; angles degrees',
+            parameters: selected.parameters, parameter_bindings: 'Declare assembly.parameter_bindings and layout parameter references; every top-level parameter must be used.',
+            family_catalog: selected.family_catalog, scene_composition: selected.scene_composition,
+            fixed_design: selected.fixed_design, dependencies: selected.dependencies,
+            placement: 'Exactly one placement or explicit shared instances; origins in world mm. Independent roots use scene_plan instead.',
+            next_step: 'Read discover topic=tasks kind=traditional_assembly detail=examples, replace design values and preflight inputs.task. For multiple independent roots use discover topic=workflows task_name=traditional_scene.' };
+        } else if (byAsset && !byAsset[recipe]) {
           result = { kind: result.kind, topic, task_kind: inputs.kind, evidence_level: 'preflight_only', asset_ids: Object.keys(byAsset).map(name => `detail-${name}`),
             next_step: 'Choose an asset_id; repeat discover topic=tasks, kind=asset_placement, detail=parameters, asset_id=<selected>. Or use topic=assets for native file assets.' };
         } else {
@@ -932,6 +951,14 @@ export class AgentGateway {
   }
 
   async prepareReviewedExistingEdit(task) {
+    let layoutEdit = null;
+    if (task.inputs.layout_edit) {
+      const allowed = ['layout_edit', 'runtime', 'timeout_ms', 'recursive_limit', 'budgets', 'save_model', 'save_path', 'capture_view', 'connection_task_id', 'session_contract'];
+      if (Object.keys(task.inputs).some(key => !allowed.includes(key))) throw new AgentContractError('INVALID_ARGUMENT', 'layout_edit cannot be combined with caller operations, targets, snapshots or another source plan.');
+      layoutEdit = await prepareLayoutEdit({ bridge: this.bridge, layoutEdit: task.inputs.layout_edit, taskId: task.task_id,
+        runtime: task.inputs.runtime || 'mock', timeoutMs: boundedQueueTimeoutMs(task.inputs.timeout_ms, 30_000),
+        recursiveLimit: boundedRecursiveLimit(task.inputs.recursive_limit, this.bridge.executionPolicy, 5000), budgets: task.inputs.budgets });
+    }
     let assetEdit = null;
     if (task.inputs.asset_edit) {
       if (['operations', 'targets', 'source_proposal', 'source_design_change', 'source_visual_correction'].some(key => Object.hasOwn(task.inputs, key))) throw new AgentContractError('INVALID_ARGUMENT', 'asset_edit cannot be combined with caller operations, targets or another source plan.');
@@ -946,11 +973,11 @@ export class AgentGateway {
       const operations = sourceProposal?.proposal.operation_proposal
       || sourceDesignChange?.change_plan.operations
       || sourceVisualCorrection?.private_patch.operations
-      || assetEdit?.operations || task.inputs.operations;
+      || assetEdit?.operations || layoutEdit?.operations || task.inputs.operations;
     const targets = sourceProposal?.proposal.selected_targets
       || sourceDesignChange?.change_plan.targets
       || sourceVisualCorrection?.private_patch.targets
-      || assetEdit?.targets || task.inputs.targets;
+      || assetEdit?.targets || layoutEdit?.targets || task.inputs.targets;
     if (!assetEdit && operations?.some(operation => ['place_component_asset', 'replace_component_asset'].includes(operation?.op))) throw new AgentContractError('OPERATION_NOT_ALLOWED', 'Gateway native assets must use asset_edit and the server-configured catalog.');
     const recursiveLimit = task.inputs.recursive_limit
       || sourceProposal?.source_task.inputs?.recursive_limit
@@ -1002,6 +1029,9 @@ export class AgentGateway {
       } : sourceVisualCorrection ? {
         expected_model_revision: sourceVisualCorrection.binding.model_revision,
         expected_model_key: sourceVisualCorrection.binding.model_key
+      } : layoutEdit ? {
+        expected_model_revision: layoutEdit.binding.model_revision,
+        expected_model_key: layoutEdit.binding.model_key
       } : {}),
       output_dir: path.join(this.taskStore.rootDir, 'task-artifacts', task.task_id, 'prepare'),
       execution_contract: {
@@ -1073,6 +1103,7 @@ export class AgentGateway {
         private: {
           ...refreshed.private,
           existing_edit_plan: prepared.plan,
+          ...(layoutEdit ? { layout_edit_plan: layoutEdit } : {}),
           ...(assetEdit ? { native_asset_edit: assetEdit } : {}),
           ...(sourceProposal ? { source_proposal: sourceProposal.binding } : {}),
           ...(sourceVisualCorrection ? { source_visual_correction: sourceVisualCorrection.binding } : {}),
@@ -1084,6 +1115,7 @@ export class AgentGateway {
         },
         result: {
           kind: 'reviewed_existing_model_edit_proposal',
+          ...(layoutEdit ? { layout_edit: layoutEdit.summary, layout_plan_hash: layoutEdit.plan_hash } : {}),
           ...(assetEdit ? { asset: assetEdit.asset_record, asset_verification_required: assetEdit.verification } : {}),
           plan_id: prepared.plan.plan_id,
           plan_hash: prepared.plan.plan_hash,
@@ -2757,7 +2789,13 @@ export class AgentGateway {
         region_inspection_attempts: (creation.round.region_inspection_attempts || 0) + 1 } };
       task = await this.taskStore.update(task.task_id, { private: { ...task.private, creation } });
     }
-    const quality = timber?(generic?evaluateTraditionalAssemblyQuality({summary,creation,captures,regionInspection:regionCheck?.raw_result,trustedRegionInspection:regionCheck?.received_from_server===true}):evaluateTimberQuality({summary,creation,captures})):evaluateDetailQuality({ snapshot, layoutQa: qa, frozenSpecification: creation.frozen_spec, runtime: creation.runtime, trustedSnapshot: true, identityMap: creation.identity_map, materialMap: creation.material_map, occurrencePathMap: creation.occurrence_path_map, captures,
+    let jointMeasurements = null;
+    if (timber && generic) {
+      jointMeasurements = await readTraditionalAssemblyJointMeasurements({bridge:this.bridge,creation,summary,timeoutMs:timberReadTimeoutMs});
+      creation = {...creation,round:{...creation.round,joint_measurements:jointMeasurements}};
+      task = await this.taskStore.update(task.task_id,{private:{...task.private,creation}});
+    }
+    const quality = timber?(generic?evaluateTraditionalAssemblyQuality({summary,creation,captures,regionInspection:regionCheck?.raw_result,trustedRegionInspection:regionCheck?.received_from_server===true,jointMeasurements,trustedJointMeasurements:jointMeasurements!==null}):evaluateTimberQuality({summary,creation,captures})):evaluateDetailQuality({ snapshot, layoutQa: qa, frozenSpecification: creation.frozen_spec, runtime: creation.runtime, trustedSnapshot: true, identityMap: creation.identity_map, materialMap: creation.material_map, occurrencePathMap: creation.occurrence_path_map, captures,
       regionInspection: regionCheck?.raw_result, trustedRegionInspection: regionCheck?.received_from_server === true });
     const newRound = !creation.rounds.some(round => round.source_hash === creation.round.source_hash);
     const rounds = newRound ? [...creation.rounds, { source_hash: creation.round.source_hash, iteration: creation.round.iteration }] : creation.rounds;

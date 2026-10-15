@@ -176,6 +176,8 @@ module AlmaSketchupMCP
 
       request = nil
       request_id = File.basename(processing_path, '.json')
+      dispatch_started = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+      dispatch_started_at_ms = Time.now.to_f * 1000.0
       response_body = begin
         request = JSON.parse(File.read(processing_path))
         request_id = request['id'] unless request['id'].nil?
@@ -183,6 +185,14 @@ module AlmaSketchupMCP
       rescue StandardError => error
         { error: queue_error_payload(error, request) }
       end
+      # Transport diagnostics are outside the result/receipt: timing must not
+      # change geometry hashes, revision identity or mutation acceptance.
+      response_body[:timing] = {
+        'version' => 'native-queue-timing.v1',
+        'started_at_ms' => dispatch_started_at_ms,
+        'finished_at_ms' => Time.now.to_f * 1000.0,
+        'dispatch_elapsed_ms' => (Process.clock_gettime(Process::CLOCK_MONOTONIC) - dispatch_started) * 1000.0
+      }
 
       response_persisted = false
       claim_released = false

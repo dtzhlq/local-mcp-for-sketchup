@@ -687,6 +687,7 @@ function mockOccurrenceEntry(item, entityPath, definitionName, affectedInstanceC
     texture_transform: structuredClone(item.texture_transform || null),
     face_uvs: structuredClone(item.face_uvs || null),
     transform: structuredClone(item.transform || null),
+    ...(typeof item._placement_complete === 'boolean' ? { placement_complete: item._placement_complete } : {}),
     transformation: structuredClone(item.transformation || item.transform || null),
     world_transform: structuredClone(item.world_transform || item.transformation || item.transform || null),
     visible: item.visible !== false && item.hidden !== true,

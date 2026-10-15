@@ -74,6 +74,7 @@ export function createSnapshot(model) {
       boolean_operations: cloneJson(group.boolean_operations),
       manifold: cloneJson(group.manifold),
       transform: group.transform || null,
+      ...(typeof group._placement_complete === 'boolean' ? { placement_complete: group._placement_complete } : {}),
       visible: group.hidden ? false : true,
       locked: group.locked === true,
       qa: group.qa || null
@@ -111,6 +112,7 @@ export function createSnapshot(model) {
       boolean_operations: cloneJson(instance.boolean_operations),
       manifold: cloneJson(instance.manifold),
       transform: instance.transform || null,
+      ...(typeof instance._placement_complete === 'boolean' ? { placement_complete: instance._placement_complete } : {}),
       visible: instance.hidden ? false : true,
       locked: instance.locked === true,
       qa: instance.qa || null

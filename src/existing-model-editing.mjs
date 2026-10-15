@@ -492,7 +492,9 @@ export async function prepareExistingModelEdit({ bridge, runtime = 'mock', timeo
     ...destructiveSideEffects.expected_absent_targets
   ]);
   const affectedInstances = affectedTargets.reduce((sum, target) => sum + Number(indexed.get(targetIdentity(target))?.affected_instance_count || target.entity?.affected_instance_count || 1), 0)
-    + normalizedOperations.filter(operation => operation.op === 'place_component_asset').length;
+    // Additive copies also consume scope: policy and automatic-approval limits
+    // must include every new root, not only their reviewed source targets.
+    + normalizedOperations.filter(operation => ['place_component_asset', 'duplicate_entity', 'component_instance'].includes(operation.op)).length;
   if (affectedInstances > normalizedBudgets.max_affected_instances) blockers.push({ code: 'affected_instance_budget_exceeded', actual: affectedInstances, limit: normalizedBudgets.max_affected_instances });
 
   const operationContracts = operationValidation.operation_contracts;

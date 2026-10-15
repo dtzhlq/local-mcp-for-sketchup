@@ -3,9 +3,12 @@ import { AgentContractError, sha256Canonical } from './agent-contract.mjs';
 import { buildModelGraph } from './model-graph.mjs';
 import { modelIdentityForAdoption, modelKeyForIdentity } from './model-identity.mjs';
 import { adoptParameterRoots } from './model-accessibility-scoped-readback.mjs';
+import { assertDefinitionParameterSourceUnchanged } from './model-accessibility-parameter-edit.mjs';
+import { compileCurrentTraditionalParameterVerification } from './traditional-timber/parameter-verification-spec.mjs';
 
-// A new task verifies the unchanged server-frozen requirements. The original
-// completed creation is never reopened, nor are client snapshots/specs accepted.
+// A new task verifies server-owned requirements. Topology histories recompile
+// every root's current trusted source; the original creation proof stays frozen.
+// Neither route accepts client snapshots/specifications or reopens creation.
 export async function verifyDefinitionParameterResult(gateway, task) {
   const inputs = task.inputs;
   if (Object.keys(inputs).some(key => !['creation_task_id', 'parameter_task_id', 'runtime', 'connection_task_id', 'session_contract', 'timeout_ms', 'reverify'].includes(key))) {
@@ -22,6 +25,10 @@ export async function verifyDefinitionParameterResult(gateway, task) {
   if (!parameter.private?.creation_parameter_edit?.change_plan) throw new AgentContractError('INVALID_ARGUMENT', 'Cannot verify without a completed parameter change_plan.');
   const { integrity_hmac, ...executionBody } = execution;
   if (integrity_hmac !== await gateway.taskStore.mutationReceiptLedger.sign(executionBody)) throw new AgentContractError('MUTATION_RECEIPT_INVALID', 'Parameter verification requires an intact signed execution record.');
+  const edit = parameter.private.creation_parameter_edit;
+  const { edit_hash, ...editBody } = edit;
+  if (execution.edit_hash !== edit_hash || edit_hash !== sha256Canonical(editBody)
+    || execution.parameter_source_hash_after !== record.source_record_hash) throw new AgentContractError('MUTATION_RECEIPT_INVALID', 'Current parameter requirements must match the signed completed edit and source record.');
   const runtime = creation.runtime;
   if (inputs.runtime && inputs.runtime !== runtime) throw new AgentContractError('INVALID_ARGUMENT', 'Verification cannot change the source runtime.');
   if (runtime === 'queue' && !inputs.session_contract) return gateway.taskStore.transition(task.task_id, 'awaiting_input', { reason: 'frozen_verification_connection_required', patch: {
@@ -39,12 +46,19 @@ export async function verifyDefinitionParameterResult(gateway, task) {
   const graph = buildModelGraph(adoption);
   if (!graph.completeness.complete && !graph.completeness.scope_complete && !(assembly&&graph.completeness.assembly_scope_complete)) throw new AgentContractError('MODEL_REVISION_INCOMPLETE', 'Frozen verification requires complete parameter source subtrees.');
   if (modelKeyForIdentity(modelIdentityForAdoption(adoption)) !== record.model_key || graph.model_revision !== parameter.result.model_revision) throw new AgentContractError('MODEL_REVISION_MISMATCH', 'The current model is not the completed parameter edit; preserve intervening changes and reconcile first.');
+  assertDefinitionParameterSourceUnchanged({ sourceRecord: record, currentModelGraph: graph });
+  const currentTopology = record.entries.some(entry => entry.source?.topology_migrations?.length)
+    ? compileCurrentTraditionalParameterVerification({ creation, record, graph }) : null;
+  const frozenSpec = currentTopology?.frozen_spec || creation.frozen_spec;
+  const views = currentTopology?.views || structuredClone(source.inputs.views || []);
   const inspected = assembly?null:await gateway.bridge.inspect_model({ runtime, timeoutMs, includeSnapshot: true });
   const snapshot = assembly?{...adoption.snapshot,model_revision:adoption.model_revision,model_revision_complete:adoption.model_revision_complete}:inspected.snapshot;
   if (!snapshot || runtime === 'queue' && (snapshot.model_revision_complete !== true || snapshot.model_revision !== graph.model_revision)) throw new AgentContractError('MODEL_REVISION_INCOMPLETE', 'Verification requires a fresh complete native snapshot of the bound revision.');
   const binding = { version: 'frozen-creation-verification.v1', creation_task_id: source.task_id, parameter_task_id: parameter.task_id,
-    specification_hash: creation.frozen_spec.hash, parameter_source_hash: record.source_record_hash, model_key: record.model_key,
-    model_revision: graph.model_revision, views: structuredClone(source.inputs.views || []) };
+    specification_hash: frozenSpec.hash, parameter_source_hash: record.source_record_hash, model_key: record.model_key,
+    model_revision: graph.model_revision, views, edit_hash,
+    ...(currentTopology ? { requirement_source: 'current_creation_bound_semantic_plans', verification_scope: currentTopology.verification_scope,
+      original_creation_specification_hash: creation.frozen_spec.hash, root_bindings: currentTopology.root_bindings } : {}) };
   const signed = { ...binding, integrity_hmac: await gateway.taskStore.mutationReceiptLedger.sign(binding) };
   const sourceHash = sha256Canonical({ verification_task_id: task.task_id, model_revision: graph.model_revision });
   const previousRound = task.private?.creation?.round;
@@ -52,7 +66,8 @@ export async function verifyDefinitionParameterResult(gateway, task) {
     && sha256Canonical(task.private.frozen_creation_verification) === sha256Canonical(signed)
     && previousRound?.source_hash === sourceHash
     && previousRound?.snapshot?.model_revision === graph.model_revision;
-  const privateCreation = { ...structuredClone(creation), rounds: [], round: { phase: 'verification_snapshot', iteration: 0,
+  const privateCreation = { ...structuredClone(creation), frozen_spec: frozenSpec,
+    ...(currentTopology ? { occurrence_path_map: currentTopology.occurrence_path_map, per_part_failure_streak: {} } : {}), rounds: [], round: { phase: 'verification_snapshot', iteration: 0,
     source_hash: sourceHash, snapshot,
     captures: sameVerification ? structuredClone(previousRound.captures || []) : [],
     ...(sameVerification ? {
@@ -64,7 +79,8 @@ export async function verifyDefinitionParameterResult(gateway, task) {
   task = await gateway.taskStore.transition(task.task_id, 'verifying', { reason: 'verify_frozen_creation_after_parameter_edit' });
   task = await gateway.finalizeCreationQuality(task, assembly ? { timberSummary: adoption } : {});
   return gateway.taskStore.update(task.task_id, { result: { ...task.result, kind: 'verify_creation_result', source_creation_task_id: source.task_id,
-    parameter_task_id: parameter.task_id, geometry_built: false, specification_hash: creation.frozen_spec.hash },
+    parameter_task_id: parameter.task_id, geometry_built: false, specification_hash: frozenSpec.hash,
+    ...(currentTopology ? { verification_scope: currentTopology.verification_scope, original_creation_specification_hash: creation.frozen_spec.hash } : {}) },
     next_action: task.result.quality_accepted ? { action: 'connect_for_delivery', source_task_id: task.task_id }
       : { action: 'reverify_frozen_creation', tool: 'submit_agent_task_input', arguments: { task_id: task.task_id,
         idempotency_key: `${task.task_id}:reverify`, input: { reverify: true } }, quality_accepted: false, remaining: task.result.quality.remaining } });
