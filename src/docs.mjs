@@ -1,7 +1,7 @@
 import { formatCapabilityMatrixMarkdown, getRuntimeCapabilities } from './capabilities.mjs';
 
 export const TOOL_DOCS = `
-# SketchUp Modeler Local MVP
+# Local MCP for SketchUp — modeling guide
 
 Start with the current Agent Gateway discovery flow:
 
@@ -10,19 +10,21 @@ Start with the current Agent Gateway discovery flow:
 - get_workflow_bundle() returns first_use guidance. discover topics: tasks (kind and detail=parameters|examples), assets (query), workflows (optional task_name), and connect (runtime=queue). Connection is read-only and never grants mutation permission.
 - For ordinary components, preflight_model checks inputs.task; create_model uses the same task, explicit runtime, and a stable idempotency_key. Queue uses the returned connection_task_id or an expert session_contract. Do not mix task input with expert code/detail_spec/views/spec input.
 - Detailed modeling (2026-09-07) adds frozen detail requirements, atomic creation scopes, assembly recipes, local repairs, native geometry checks, component-preserving assets and PBR/HDR controls. Preserve frozen requirements; execution success does not prove quality.
-- Discover workflows before existing-model edits, modify_design_parameters or apply_native_appearance. Keep trusted approval, fresh connection and target protections. Never replace existing objects via create_model. Array/align and mirror remain expert workflows requiring explicit transforms.
+- Discover workflows before existing-model edits, modify_design_parameters or apply_native_appearance. Keep trusted approval, fresh connection and target protections. Never replace existing objects via create_model. Array, native-world-bbox alignment and mirror copies use reviewed_existing_model_edit inputs.layout_edit; discover array_align or mirror_layout for precise root-target restrictions and templates.
+- All creation kinds are available through both tasks and workflows. Discover traditional_scene for 1–8 independent traditional_assembly roots: preflight/create use inputs.scene_plan, selected-root edits retain their own sources, then verify_model inputs.scene_id and deliver the accepted verification.
 - Keep task_id and idempotency_key. After uncertain responses, resume_agent_task; never recreate with a new key. Local creation repair is limited to three consecutive failures per part.
 - After required quality review, deliver_model saves an accepted live creation. Deliver the file and stop; reopen_delivered_model is only for an explicit persistence/recovery request. cold_reopen_verified=false means unverified, not a mandatory next test.
-- The 15 workflow categories are not 15 fully live-accepted capabilities. The September 7 delivery covers specified macOS SketchUp 2026 samples; newer parameter-edit, replacement, HDR and reopen paths retain scoped or pending live acceptance. Consult docs/model-accessibility-support-2026-09-11.md and docs/model-accessibility-quickstart.md; tool discovery supplies guidance without local file access.
+- Task catalogs describe implemented routes, not blanket native acceptance. Consult docs/modeling-uplift/usage.md, docs/traditional-timber/ASSEMBLY.md and docs/RELEASE_ACCEPTANCE.md for current guidance and bounded release evidence. Tool discovery supplies inputs without local file access.
 - Reconnect after updating the Node service and verify the loaded Ruby plugin with get_capabilities(runtime=queue). Old installed services/plugins do not inherit source updates automatically.
+- Expert routes remain available: iterate_model inspects and patches an existing session with target and approval safeguards; query_model_geometry reads frozen native topology. Discover supported inputs before dispatch.
 
-General modeling candidate (0.3.0):
+General geometry API:
 - query_model_geometry reads real occurrence topology with revision-bound snapshot_handle and geometry:// resources. Default is a compact summary; use detail=full only when needed.
 - measure_model_geometry measures length, area, closed volume, distance and angle directly. Unavailable measurements include a reason; bounding boxes are never substituted.
 - edit_model_geometry submits one-context atomic edits using snapshot_handle, entity_path, edits and idempotency_key. Existing server approval and Session Contract apply; no client-approved flag.
 - run_model_program executes up to three expert/python_sdk stages. Read-only snapshot, previous, parameters, stage bindings; return operations for creation or entity_path/edits for local editing. Each executed stage is followed by native readback. Resume pending child review before continuing the parent task.
 - sweep_profile and loft_profiles_v2 are shared DSL operations supporting simple single-ring sections; no holes or branching. Matrices are column-major, translations in mm.
-CAD surface candidate (local OpenCascade WebAssembly):
+CAD surface API (local OpenCascade WebAssembly):
 - cad_shape is an additive DSL operation: {op:"cad_shape",name,recipe:{version:1,nodes:[...],output:"nodeId"},tolerance:0.2,angular_tolerance:0.35}. Units mm; no arbitrary kernel code. Also available as Python model.cad_shape(options).
 - Each node has unique id and kind. box: min/max; cylinder: radius/height, optional origin/axis; nurbs_surface: poles[u][v][xyz], optional positive weights[u][v], u_degree/v_degree, unique u_knots/v_knots and matching u_multiplicities/v_multiplicities. Supports clamped nonperiodic rectangular patches, degrees 1..8, grid 2..32 by 2..32.
 - sew: inputs (prior face/shell node ids), solid boolean; an open shell cannot become a solid. fuse/cut/intersect: input and other prior node ids. fillet: input, radius and optional edges (indices from the exact input recipe's CAD edge inventory). Multi-edge corner blends may fail validity checks; do not reuse indices after changing upstream topology without recomputing the input inventory.

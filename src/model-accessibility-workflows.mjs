@@ -1,5 +1,6 @@
 import { AgentContractError } from './agent-contract.mjs';
-import { getModelAccessibilityTaskCatalog } from './model-accessibility-tasks.mjs';
+import { getModelAccessibilityTaskCatalog, MODEL_ACCESSIBILITY_TASK_KINDS } from './model-accessibility-tasks.mjs';
+import { referenceTask } from './traditional-timber/examples.mjs';
 
 export const MODEL_ACCESSIBILITY_WORKFLOWS_VERSION = 'model-accessibility-workflows.v1';
 
@@ -38,16 +39,16 @@ const WORKFLOWS = [
     limits: ['服务端必须配置真实 SKP 目录；配方源码或缺失的 stool 不能冒充原生资产。源 SHA 不匹配、来源或许可缺失会阻止操作。', '须取得现有 reviewed 批准与新鲜连接；confirmed 不替代主机批准。新 ID 由服务器生成，不爆炸、不写源文件。', '事务完成仍需独立近景、测量、编辑边界和 SKP 交付证据；不能借用 create_model 的质量通过。']
   },
   {
-    task: 'array_align', task_number: 7, title: '排列与对齐构件', support: 'expert_preparation_then_reviewed',
-    semantics: '先定义坐标轴、锚点与间距，再计算每个位置。新实例复用同一 definition；移动已有对象必须限定实际实例目标。',
-    required_design_inputs: ['目标实例或共享定义、数量。', '世界或局部坐标、排列轴、起点、中心距或净距。', '对齐对象及 min/center/max 锚点；明确保留项。'],
+    task: 'array_align', task_number: 7, title: '排列与对齐构件', support: 'guided_layout_review',
+    semantics: 'layout_edit 从当前完整原生索引生成世界轴向排列或包围盒锚点对齐计划，再进入原有审阅事务。',
+    required_design_inputs: ['明确根组或根组件目标；axis 为世界 x/y/z。', 'array：count 包含原件，spacing_mm 为有符号重复位移。', 'align：目标 anchor 与固定 reference.target/reference.anchor 为 min/center/max。'],
     entry_kind: 'inspect', entry: inspect('Inspect component identities, bounds and shared definitions before arranging or aligning them.'),
     execution_route: { tools: [toolContract('start_agent_task', ['intent', 'instruction', 'inputs'])], operations: [
       operation('component_instance', ['id', 'name', 'definition', 'origin', 'transform']),
       operation('duplicate_entity', ['entity_path', 'new_id', 'new_name', 'translate']),
       operation('transform_object', ['entity_path', 'translate', 'pivot'])] },
     verification: ['实测间距、锚点、朝向、共享定义和交叠；确认未选中对象保持。'],
-    limits: ['没有通用 align/array Gateway intent。先计算明确变换，再进入 reviewed_existing_model_edit。', '相同名称不能证明共享定义；净距须从变换后的实际几何计算。']
+    limits: ['使用 reviewed_existing_model_edit 的 inputs.layout_edit，不新增顶级工具。仅支持当前完整索引中的根实例；嵌套目标明确拒绝。', 'spacing_mm 是重复位移，不是净距；包围盒对齐不证明碰撞、实际接触或视觉质量。']
   },
   {
     task: 'resize_single', task_number: 8, title: '修改单个实例尺寸', support: 'guided_parameter_review',
@@ -84,16 +85,16 @@ const WORKFLOWS = [
     limits: ['新资产通过目录 ID 选择；不接收模型任意文件路径，不接受嵌套、锁定、粘接或缩放目标。', 'confirmed 不替代主机批准；源 SHA、既有对象/材料指纹或目标变换不符时原子回滚。', '不同资产局部原点可能影响实物对齐；根原点保持不自动证明桌面中心关系，仍需独立测量和质量验收。']
   },
   {
-    task: 'mirror_layout', task_number: 11, title: '镜像小型布局', support: 'expert_preparation_then_reviewed',
-    semantics: '明确镜像轴及平面原点。新组件放置顺序为局部镜像负比例→Z 旋转→origin 加平移；既有对象使用显式 transform_object。',
-    required_design_inputs: ['全部待镜像实例路径、镜像轴与平面原点。', '移动原对象或创建副本，以及门扇开启与保留要求。'],
+    task: 'mirror_layout', task_number: 11, title: '镜像副本并保留原件', support: 'guided_layout_review',
+    semantics: 'layout_edit.mode=mirror_copy 读取根组件的原生世界矩阵，绕 axis=plane_offset_mm 生成共享定义的新组件，保持原件。',
+    required_design_inputs: ['明确的根 ComponentInstance 路径。', '世界法向轴 axis 和平面位置 plane_offset_mm；原件始终保留。'],
     entry_kind: 'inspect', entry: inspect('Inspect the layout target instances, axes and bounds before preparing a mirror operation.'),
     execution_route: { tools: [toolContract('start_agent_task', ['intent', 'instruction', 'inputs'])], operations: [
       operation('component_instance', ['id', 'name', 'definition', 'origin', 'transform']),
       operation('transform_object', ['entity_path', 'mirror', 'pivot', 'translate', 'rotateZ'])],
       mirror_values: ['x', 'y', 'z'], existing_transform_coordinates: 'model' },
     verification: ['核对门窗开启、正反面、部件朝向、通道及真实交叠，保留无关对象。'],
-    limits: ['transform.mirror 用于 component_instance；不要添加到任意 primitive。', '已有对象的 pivot 必须明确；局部矩阵与世界镜像不能混用。']
+    limits: ['使用 reviewed_existing_model_edit 的 inputs.layout_edit。不接受组或嵌套目标；根级材质、标签、隐藏状态或自定义属性覆盖不能静默丢失，检测到即拒绝。', '新副本复用定义几何与世界矩阵，不复制原参数来源；不证明门扇功能、碰撞或结构质量。']
   },
   {
     task: 'native_pbr', task_number: 12, title: '原生 PBR 与真实纹理尺度', support: 'guided_native_appearance_review',
@@ -150,7 +151,7 @@ const WORKFLOWS = [
         required_source: 'completed queue creation or signed frozen verification with unchanged identity/revision and live quality pass' },
       gateway_reopen: { intent: 'reopen_delivered_model', inputs: ['runtime', 'saved_delivery_task_id', 'connection_task_id'], runtime: 'queue',
         required_source: 'exact server saved receipt; no caller path, snapshot or direct session contract' },
-      steps: ['保存后重新discover/connect，再start reopen_delivered_model。', '若pending_mdi_activation，激活已打开的目标窗口，然后resume只读确认；不要再open/close。', '后续新建modify_design_parameters：inputs.saved_delivery_task_id及parameter_edit.creation_task_id绑定原创建任务；先重新连接。重开本身不声称参数已rebind。'], operations: [] },
+      steps: ['保存成功后交付并结束。仅用户明确要求关闭/重开专项时，重新discover/connect，再start reopen_delivered_model。', '若pending_mdi_activation，激活已打开的目标窗口，然后resume只读确认；不要再open/close。', '后续新建modify_design_parameters：inputs.saved_delivery_task_id及parameter_edit.creation_task_id绑定原创建任务；先重新连接。重开本身不声称参数已rebind。'], operations: [] },
     verification: ['精确旧handle失效、新document及runtimeobject、同文件SHA/字节、完整revision与未修改状态；参数修改及原生外观另行验证。'],
     limits: ['deliver_model 的 cold_reopen_verified=false；单独重开任务只在真实证据齐全时变为true，不代表应用重启、视觉或release通过。',
       '保存无凭据不再保存；重开started无native-return不再close，已完成receipt仅验签与文件恢复。resume不发起首次关闭。',
@@ -169,12 +170,20 @@ export function getModelAccessibilityWorkflows({ task } = {}) {
   const header = { version: MODEL_ACCESSIBILITY_WORKFLOWS_VERSION, kind: 'model_accessibility_workflows', units: 'mm' };
   if (task === undefined || task === 'all') return {
     ...header,
-    workflows: WORKFLOWS.map(({ task, task_number, title, support }) => ({ task, task_number, title, support })),
+    workflows: GUIDED_TASKS.map((name, index) => {
+      const legacy = WORKFLOWS.find(item => item.task_number === index + 1);
+      return legacy ? { task: name, task_number: index + 1, title: legacy.title, support: legacy.support }
+        : { task: name, task_number: index + 1, title: name, support: name === 'traditional_scene' ? 'guided_independent_root_scene' : 'guided_creation' };
+    }),
     selection: 'Request one task for its real entry call, required inputs and execution limits.',
     assurance: 'Workflow contracts do not establish model success rates or live acceptance.'
   };
   if (typeof task !== 'string' || !task.trim()) throw invalidTask();
   const name = task.trim();
+  if (MODEL_ACCESSIBILITY_TASK_KINDS.includes(name) || name === 'traditional_scene') return {
+    ...header, ...getModelAccessibilityWorkflowGuide({ task: name }),
+    execution_allowed_by_this_document: false,
+    authorization: 'A template grants no mutation approval; use the existing reviewed and fresh-session workflow.' };
   const workflow = BY_TASK.get(ALIASES[name] || name) || WORKFLOWS.find(item => String(item.task_number) === name);
   if (!workflow) throw invalidTask();
   return {
@@ -193,7 +202,9 @@ function invalidTask() {
 
 // The four-tool entry uses a separate small, flat contract. The expanded expert
 // reference above remains available without making its artifact a prerequisite.
-const GUIDED_TASKS = Object.freeze(['window', 'door', 'cabinet', 'sink_counter', 'asset_query', 'asset_place', 'array_align', 'edit_single', 'edit_linked', 'asset_replace', 'mirror_layout', 'native_pbr', 'native_hdr', 'local_repair', 'save_reopen_resume']);
+// Retain the original numeric aliases, then derive additions from the creation
+// catalog so newly supported task kinds remain discoverable in both routes.
+const GUIDED_TASKS = Object.freeze(['window', 'door', 'cabinet', 'sink_counter', 'asset_query', 'asset_place', 'array_align', 'edit_single', 'edit_linked', 'asset_replace', 'mirror_layout', 'native_pbr', 'native_hdr', 'local_repair', 'save_reopen_resume', ...MODEL_ACCESSIBILITY_TASK_KINDS.filter(kind => !['window', 'door', 'cabinet', 'sink_counter'].includes(kind)), 'traditional_scene']);
 const GUIDED_ALIASES = Object.freeze({ ...ALIASES, asset_import: 'asset_place', resize_single: 'edit_single', resize_linked: 'edit_linked', replace_asset: 'asset_replace', save_reopen: 'save_reopen_resume' });
 const discover = inputs => ({ tool: 'start_agent_task', arguments: { intent: 'discover', instruction: 'Read the next modeling contract.', inputs } });
 const template = (intent, inputs) => ({ tool: 'start_agent_task', arguments: { intent, instruction: 'Use explicit user design values.', idempotency_key: 'replace-with-stable-key', inputs: { runtime: 'queue', ...inputs } } });
@@ -207,13 +218,26 @@ export function getModelAccessibilityWorkflowGuide({ task } = {}) {
   for (let i = 0; i < 2 && GUIDED_ALIASES[name] && !GUIDED_TASKS.includes(name); i++) name = GUIDED_ALIASES[name];
   if (!GUIDED_TASKS.includes(name)) throw new AgentContractError('INVALID_ARGUMENT', 'Choose a listed workflow task_name.', { details: { field: 'task_name', supported_tasks: [...GUIDED_TASKS] } });
   const common = { ...header, task_name: name, template_only: true };
-  if (GUIDED_TASKS.indexOf(name) < 4) {
+  if (name === 'traditional_assembly') return { ...common, support: 'guided_creation',
+    next_call: discover({ topic: 'tasks', kind: name, detail: 'examples' }),
+    next_step: 'The returned task_input is the complete assembly template. Replace design values, preflight inputs.task, connect queue and create with the same task plus connection_task_id and a stable key. For independent roots select traditional_scene.',
+    limits: 'Supported families/layouts only; explicit mm and parameter sources. Frozen source and reviewed updates preserve peers. Save after quality acceptance; reopen only on explicit request.' };
+  if (MODEL_ACCESSIBILITY_TASK_KINDS.includes(name)) {
     const selected = getModelAccessibilityTaskCatalog({ task: name, detail: 'examples' }).tasks[0];
     return { ...common, support: 'guided_creation',
       next_call: { tool: 'start_agent_task', arguments: { intent: 'preflight_model', instruction: 'Check the explicit dimensions before creation.', inputs: { task: selected.examples.minimal.arguments.inputs.task, runtime: 'queue' } } },
       fixed_design: selected.fixed_design,
       next_step: 'Replace example dimensions/ID/origin; preflight is read-only. Then discover connect runtime=queue; create_model with the same inputs.task, returned connection_task_id and stable idempotency_key. Keep task_id; resume uncertainty.',
       limits: 'mm; +X width,+Y back,+Z up. placement or instances:[{id,origin_mm,rotation_z_deg?}], never both. Actual native geometry/views must pass; requirements freeze after creation.' };
+  }
+  if (name === 'traditional_scene') {
+    const scenePlan = { version: 1, id: 'example-scene', units: 'mm',
+      roots: [referenceTask('example-a'), referenceTask('example-b', [1500, 0, 0])],
+      connections: [], view: { id: 'overview', camera: { eye: [4000, -4500, 3000], target: [1000, 250, 250], up: [0, 0, 1] } } };
+    return { ...common, support: 'guided_independent_root_scene',
+      next_call: { tool: 'start_agent_task', arguments: { intent: 'preflight_model', instruction: 'Preflight the explicit independent-root scene.', inputs: { scene_plan: scenePlan } } },
+      next_step: 'Replace the example scene ID, roots, placements and overview. Preflight scene_plan; connect queue, then create_model with the same scene_plan and a stable key. Retain each creation_task_id. After selected-root edits, verify_model with scene_id; deliver using its accepted verification_task_id as source_task_id and a fresh connection.',
+      limits: '1–8 independent traditional_assembly roots; no atomic all-scene update. The two 500 mm reference blocks demonstrate scene structure only; replace them with the requested assembly roots. One scene overview. Save and deliver; close/reopen only on an explicit user request.' };
   }
   if (name === 'asset_query') return { ...common, template_only: false, support: 'guided_read_only',
     next_call: discover({ topic: 'assets', query: '' }),
@@ -228,23 +252,26 @@ export function getModelAccessibilityWorkflowGuide({ task } = {}) {
   if (['edit_single', 'edit_linked'].includes(name)) return { ...common, support: 'guided_parameter_review',
     next_call: discover({ topic: 'parameter_sources', runtime: 'queue' }),
     call_template: template('modify_design_parameters', { parameter_edit: { creation_task_id: 'actual-creation-task-id', scope: name === 'edit_single' ? 'single' : 'all', targets: [{ target_id: 'actual-root-id' }], changes: { width_mm: 800 } } }),
-    next_step: 'Use returned creation_task_id, root target and supported parameters; replace design values. Connect queue and add inputs.connection_task_id. Retain the returned task for host review/submit; resume uncertainty.',
-    limits: (name === 'edit_single' ? 'Exactly one target; peers unchanged. ' : 'Explicit complete shared-definition instance list; partial/nested coverage rejected. ') + 'No whole-object scale. Missing/stale/manual-diverged baseline blocks. After disk reopen add saved_delivery_task_id. Reverify with creation_task_id+parameter_task_id; original quality is not reused.' };
+    next_step: 'Use real source/targets; review, connect queue and submit the same task. For traditional_assembly straight/rectangular plans, replace changes with parameter_edit.structure_change={operation:"insert_bay"|"remove_bay",segment_id,bay_index,length_mm}; length_mm is insert-only.',
+    limits: (name === 'edit_single' ? 'One target; peers unchanged. ' : 'All explicit shared-definition instances; no partial/nested scope. ') + 'changes and structure_change are exclusive. No scaling or stale/manual-diverged baseline. After reopen add saved_delivery_task_id. Reverify creation_task_id+parameter_task_id.' };
   if (['native_pbr', 'native_hdr'].includes(name)) return { ...common, support: 'guided_native_appearance_review', next_call: connection,
     call_template: template('apply_native_appearance', { appearance: name === 'native_pbr' ? { kind: name, target: 'actual-root-id', preset: 'wood', texture_size_mm: [750, 750], rotation: 30 } : { kind: name, environment: 'studio', rotation: 30, intensity: 1, scene_name: 'new-review-scene' } }),
     next_step: 'Prepare, obtain host review, reconnect, submit same task input:{connection_task_id} with stable key. Review the closeup, deliver saved artifacts and stop. Only on explicit user request use reopen_delivered_model. Resume uncertainty; never replay writes.',
     limits: (name === 'native_pbr' ? 'Unique unshared root; mm repeat size and face-normal degrees. ' : 'New scene only; preserve camera; intensity sets both exposures (0..10). ') + 'Host licensed SHA catalog and actual .style required. Native getter/UV or environment readback, capture restoration and unique SKP save are checked. Visual quality/cold reopen remain unaccepted.' };
   if (name === 'save_reopen_resume') return { ...common, support: 'guided_saved_document_lifecycle', next_call: connection,
     call_template: template('deliver_model', { source_task_id: 'actual-quality-passed-task-id' }),
-    next_step: 'Add inputs.connection_task_id and start. After save reconnect; start reopen_delivered_model with inputs:{runtime:"queue",saved_delivery_task_id:<saved task_id>,connection_task_id:<fresh connect>} and stable key. Already saved appearance skips deliver: use its task_id. Uncertainty/pending activation: resume same task only.',
+    next_step: 'Add inputs.connection_task_id and start. After a successful save, deliver and stop. Only when the user explicitly requests close/reopen validation, reconnect and start reopen_delivered_model with inputs:{runtime:"queue",saved_delivery_task_id:<saved task_id>,connection_task_id:<fresh connect>} and a stable key. Already saved appearance skips deliver. Uncertainty/pending activation: resume same task only.',
     limits: 'Save requires frozen live quality pass. Reopen needs exact saved clean document/file SHA; macOS plugin only. No app restart or parameter rebind claim. Later new modify_design_parameters adds saved_delivery_task_id and parameter_edit.creation_task_id. Never change frozen source or retry first close.' };
   if (name === 'local_repair') return { ...common, support: 'existing_task_recovery_then_reviewed_repair',
     next_call: inspectTargets(),
     call_template: template('reviewed_existing_model_edit', { save_model: false, targets: [{ entity_path: 'pid:123.456', instance_policy: 'make_unique', instance_id: 'actual-root-id' }], operations: [{ op: 'transform_object', entity_path: 'pid:123.456', instance_policy: 'make_unique', instance_id: 'actual-root-id', local_matrix: [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 20, 0, 1] }] }),
     next_step: 'Have task_id? resume_agent_task first. Else replace path/root/matrix with measured local delta; prepare review, connect and submit same task. Keep manual edits/peers.',
     limits: 'Column-major local delta, translation mm; make_unique isolates this root. Example is not a diagnosed repair. Frozen QA/max 3 automatic refinements per part remain; exhaustion/unknown never permits replay.' };
-  return { ...common, support: 'expert_transforms_then_reviewed', next_call: inspectTargets(),
-    call_template: template('reviewed_existing_model_edit', { save_model: false, targets: [{ target_id: 'actual-root-id' }], operations: name === 'array_align' ? [{ op: 'duplicate_entity', target_id: 'actual-root-id', new_id: 'unique-copy-id', new_name: 'Copy', translate: [1000, 0, 0] }] : [{ op: 'transform_object', target_id: 'actual-root-id', scale: 1, mirror: 'x', pivot: [0, 0, 0] }] }),
-    next_step: 'Replace target and design values with measured explicit operations; prepare host review, connect queue, then submit same task input.connection_task_id with stable key.',
-    limits: name === 'array_align' ? 'No generic array/align intent. World-mm translate; compute count-1 distinct copies. Existing alignment uses transform_object translate from measured min/center/max anchor. Check spacing, sharing, peers and collision.' : 'Example mirrors original about world x=0, not a copy. Specify plane/keep-original; mirror x|y|z and pivot mm. A copied layout needs an explicit separately prepared instance plan. Check handedness, door swing, faces and collision; no quality pass implied.' };
+  return { ...common, support: 'guided_layout_review', next_call: inspectTargets(),
+    call_template: template('reviewed_existing_model_edit', { save_model: false, layout_edit: name === 'array_align'
+      ? { version: 1, mode: 'array', targets: [{ target_id: 'actual-root-id' }], axis: 'x', count: 3, spacing_mm: 1000 }
+      : { version: 1, mode: 'mirror_copy', targets: [{ target_id: 'actual-root-component-id' }], axis: 'x', plane_offset_mm: 0 } }),
+    ...(name === 'array_align' ? { align_template: template('reviewed_existing_model_edit', { save_model: false, layout_edit: { version: 1, mode: 'align', targets: [{ target_id: 'actual-moving-root-id' }], axis: 'z', anchor: 'min', reference: { target: { target_id: 'actual-fixed-root-id' }, anchor: 'max' } } }) } : {}),
+    next_step: 'Replace actual root identities and design values. The server reads current world bounds/transforms and prepares a revision-bound plan. Obtain host review, connect queue and submit the same task with its fresh connection_task_id and stable key. Uncertainty: resume only.',
+    limits: name === 'array_align' ? 'Root Groups/ComponentInstances only; nested targets rejected. count includes original; signed spacing is repeated world displacement, not clear gap. align uses native world bbox min/center/max and keeps its distinct reference fixed. No collision/quality pass implied.' : 'Root ComponentInstances only; Groups/nested targets or unsupported root overrides rejected. Plane is world axis=plane_offset_mm. Original is preserved; copy shares definition geometry with a new identity and does not inherit parameter lineage. No collision/quality pass implied.' };
 }

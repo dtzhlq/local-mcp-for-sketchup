@@ -70,6 +70,7 @@ export function entityListFromSnapshot(snapshot, options = {}) {
     face_uvs: item.face_uvs,
     features: item.features,
     transform: item.transform,
+    ...(typeof item.placement_complete === 'boolean' ? { placement_complete: item.placement_complete } : {}),
     image: item.image,
     qa: item.qa
   }));

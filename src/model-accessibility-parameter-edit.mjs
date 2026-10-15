@@ -8,6 +8,7 @@ import { isTrustedAssemblyEditReceipt } from './detailed-modeling/assembly-edit.
 import { compilePartGraphToSketchUpDsl } from './product-modeling/part-graph-compiler.mjs';
 import { describeAssemblyOccurrences } from './detailed-modeling/scenes.mjs';
 import { isVerifiedModelAccessibilitySavedReceipt, savedParameterBindingForSource } from './model-accessibility-delivery.mjs';
+import { planTraditionalBayStructureChange } from './traditional-timber/structure-edit.mjs';
 
 const VERSION = 'model-accessibility-parameter-source.v1';
 const clone = value => structuredClone(value);
@@ -86,9 +87,10 @@ function recompile(source, changes) {
   const before = sourceDetails(source);
   if (!object(changes) || !Object.keys(changes).length || Object.keys(changes).some(key => !Object.hasOwn(before.rules, key))) fail('changes must use supported explicit parameter names, such as width_mm; transforms and arbitrary DSL are unsupported.');
   const parameters = { ...before.parameters, ...changes };
-  if(source.task?.kind==='traditional_assembly')for(const [key,value] of Object.entries(changes))if(Array.isArray(before.parameters[key])&&(!Array.isArray(value)||value.length!==before.parameters[key].length))fail('Bay-array length is a topology change; create a separate rebuild proposal rather than a dimensional parameter edit.');
+  if(source.task?.kind==='traditional_assembly')for(const [key,value] of Object.entries(changes))if(Array.isArray(before.parameters[key])&&(!Array.isArray(value)||value.length!==before.parameters[key].length))fail('Bay-array length is a topology change; use parameter_edit.structure_change with insert_bay or remove_bay instead of changes.');
   if (source.kind === 'common_task') {
     const nextSource = { kind: source.kind, task: { ...clone(source.task), parameters }, ...(source.rule_binding?{rule_binding:clone(source.rule_binding)}:{}),
+      ...(source.topology_migrations ? {topology_migrations:clone(source.topology_migrations)} : {}),
       ...(source.rendering_version?{rendering_version:source.rendering_version}:{}),
       ...(source.task.kind==='traditional_timber'&&Object.hasOwn(changes,'tile_detail')?{rendering_version:'timber-render.v2'}:{}) };
     if (source.task.kind === 'cabinet') {
@@ -109,6 +111,15 @@ function recompile(source, changes) {
   compileModelAccessibilityTask({ version: 1, kind: source.bundle.brief.kind, id: source.bundle.part_graph.roots[0].part_id, units: 'mm', parameters, placement: { origin_mm: [0, 0, 0] } });
   const nextSource = { kind: source.kind, bundle: recompileDetailedBundle(source.bundle, { partId: source.bundle.part_graph.roots[0].part_id, parameters: Object.fromEntries(Object.entries(parameters).map(([key, value]) => [localName(key), value])) }) };
   return { nextSource, next: sourceDetails(nextSource), before };
+}
+function recompileStructure(source, change) {
+  if (source.kind !== 'common_task' || source.task?.kind !== 'traditional_assembly' || source.part_id_aliases) fail('Structure edits require an unaliased stored traditional_assembly source.');
+  const before = sourceDetails(source);
+  const proposal = planTraditionalBayStructureChange(source.task, change);
+  const nextSource = { ...clone(source), task: proposal.task, topology_migrations: [...(source.topology_migrations || []), proposal.migration] };
+  // Compilation validates every migrated attachment, connection, clear span,
+  // roof surface and ordinary resource limit before any definition is staged.
+  return { before, nextSource, next: sourceDetails(nextSource), changes: proposal.changes, migration: proposal.migration };
 }
 function designFor({ modelKey, modelGraph, entries, parameters, rules }) {
   const nodes = entries.map(entry => resolve(modelGraph, entry.target));
@@ -185,10 +196,12 @@ export function assertDefinitionParameterSourceUnchanged({ sourceRecord, current
 
 /** Pure planning: no runtime call, staging, authorization or geometry mutation.
  * Public request: {creation_task_id, scope:'single'|'all', targets:[{target_id}
- * or {entity_path}], changes:{width_mm:...}}. All names every current peer. */
+ * or {entity_path}], changes:{width_mm:...} OR structure_change:{...}}.
+ * All names every current peer. Structure changes use an explicit migration. */
 export function planDefinitionParameterEdit({ sourceRecord, currentModelGraph, request, taskId, iteration = 0, instruction } = {}) {
   verifyRecord(sourceRecord); complete(currentModelGraph);
-  if (!object(request) || Object.keys(request).some(key => !['creation_task_id', 'scope', 'targets', 'changes'].includes(key))) fail('Only creation_task_id, scope, targets and changes belong to the parameter request.');
+  if (!object(request) || Object.keys(request).some(key => !['creation_task_id', 'scope', 'targets', 'changes', 'structure_change'].includes(key))) fail('Only creation_task_id, scope, targets and exactly one of changes or structure_change belong to the parameter request.');
+  if (Object.hasOwn(request, 'changes') === Object.hasOwn(request, 'structure_change')) fail('Provide exactly one of changes or an explicit structure_change; topology cannot be mixed with dimensional edits.');
   if (request.creation_task_id !== sourceRecord.creation_task_id || currentModelGraph.runtime !== sourceRecord.runtime) fail('Parameter source task or runtime does not match.');
   if (!['single', 'all'].includes(request.scope)) fail('scope must explicitly be single or all.');
   if (!Array.isArray(request.targets) || !request.targets.length || request.scope === 'single' && request.targets.length !== 1) fail('single requires exactly one explicit target; all requires the complete explicit target list.');
@@ -207,17 +220,19 @@ export function planDefinitionParameterEdit({ sourceRecord, currentModelGraph, r
     if (currentModelGraph.completeness.recursive_root_paths && nodes.some(node => node.entity_definition_occurrence_count !== peers.length)) fail('all requires exact global definition occurrence coverage.');
   }
   if (selected.some(entry => sha256Canonical(entry.source) !== sha256Canonical(selected[0].source) || entry.logical_definition !== selected[0].logical_definition)) fail('Selected definition bindings disagree on their persisted recipe version.');
-  const compiled = recompile(selected[0].source, request.changes);
+  const structural = Object.hasOwn(request, 'structure_change');
+  const compiled = structural ? recompileStructure(selected[0].source, request.structure_change) : recompile(selected[0].source, request.changes);
   const drift = selected.flatMap(entry => compareDesignBindingFingerprints(entry.design_graph, currentModelGraph));
   if (drift.length) return { kind: 'definition_parameter_edit', ready: false, blockers: ['manual_or_external_divergence_requires_reconciliation'], divergence: drift, operations: [], execution_allowed: false };
   if (selected.some(entry => entry.source_definition !== definition)) fail('Actual source definition no longer matches the recorded binding.');
   const designGraph = designFor({ modelKey: sourceRecord.model_key, modelGraph: currentModelGraph, entries: selected, ...compiled.before });
-  const changePlan = planDesignParameterChange({ designGraph, currentModelGraph, changes: request.changes, instruction,
+  const changePlan = planDesignParameterChange({ designGraph, currentModelGraph, changes: compiled.changes || request.changes, instruction,
     assemblyRebuild: { previousDsl: compiled.before.bundle.dsl, nextDsl: compiled.next.bundle.dsl, scope: request.scope, taskId, iteration, materialMap: sourceRecord.material_map,
       ...(currentModelGraph.runtime==='queue'&&selected[0].definition_map?{
         existingDefinitionMap:Object.fromEntries(Object.entries(selected[0].definition_map).filter(([,name])=>currentModelGraph.nodes.some(node=>node.node_type==='definition'&&node.name===name))),
         existingIdentityMap:clone(selected[0].identity_map||{}), expectedModelRevision:currentModelGraph.model_revision}: {}) } });
   const body = { kind: 'definition_parameter_edit', ready: changePlan.blockers.length === 0, source_record_hash: sourceRecord.source_record_hash,
+    ...(structural ? { structure_change: clone(request.structure_change), topology_migration: compiled.migration } : {}),
     selected_instances: selected.map(entry => entry.logical_instance_id), design_graph: designGraph, change_plan: changePlan, next_source: compiled.nextSource,
     blockers: clone(changePlan.blockers), execution_allowed: false, preparation_function: 'prepareAssemblyParameterEdit', application_function: 'applyAssemblyParameterEdit',
     approval_route: 'existing_reviewed_model_edit', quality_acceptance: false };

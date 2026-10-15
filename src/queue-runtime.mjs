@@ -1,6 +1,8 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import { performance } from 'node:perf_hooks';
+import { recordQueueTiming, queueTimingDiagnostics, summarizeQueueTiming } from './execution-timing.mjs';
 import { defaultQueueDir, defaultResponseDir } from './paths.mjs';
 import { materializeDslAssetPaths } from './dsl-asset-paths.mjs';
 import { AgentContractError } from './agent-contract.mjs';
@@ -319,6 +321,7 @@ export class QueueRuntime {
       processing,
       responses,
       lock,
+      timing: queueTimingDiagnostics(this.queueDir),
       recommendations
     };
   }
@@ -400,9 +403,9 @@ export class QueueRuntime {
       const requestId = files[0].slice(0, -5), file = path.join(this.responseDir, files[0]);
       const before = await assertRegularRecoveryFile(file, requestId);
       if (before.size > 64 * 1024 * 1024) throw recoveryIntegrityError(requestId, 'response_too_large');
-      const response = JSON.parse(await fs.readFile(file, 'utf8')), snapshot = response.result;
+      const response = JSON.parse(await fs.readFile(file, 'utf8')), snapshot = response?.result;
       const receipt = snapshot?.mutation_receipt;
-      if (Object.keys(response).length !== 1 || !receipt || receipt.version !== 'mutation-receipt.v1' || receipt.kind !== 'sketchup_mutation_receipt' || receipt.commit_state !== 'committed'
+      if (!isSuccessfulQueueEnvelope(response) || !receipt || receipt.version !== 'mutation-receipt.v1' || receipt.kind !== 'sketchup_mutation_receipt' || receipt.commit_state !== 'committed'
         || receipt.operation !== 'Alma Build Model' || !(Date.parse(receipt.committed_at) >= Date.parse(startedAt))
         || snapshot.model_revision_complete !== true || !/^sha256:[a-f0-9]{64}$/.test(snapshot.model_revision || '')
         || !roots?.length || !roots.every(root => snapshot.instances?.filter(item => item.id === root.id && item.definition === root.definition).length === 1)
@@ -434,9 +437,9 @@ export class QueueRuntime {
       const requestId = files[0].slice(0, -5), file = path.join(this.responseDir, files[0]);
       const before = await assertRegularRecoveryFile(file, requestId);
       if (before.size > 64 * 1024 * 1024) throw recoveryIntegrityError(requestId, 'response_too_large');
-      const response = JSON.parse(await fs.readFile(file, 'utf8')), snapshot = response.result;
+      const response = JSON.parse(await fs.readFile(file, 'utf8')), snapshot = response?.result;
       const receipt = snapshot?.mutation_receipt;
-      if (Object.keys(response).length !== 1 || !receipt || receipt.version !== 'mutation-receipt.v1'
+      if (!isSuccessfulQueueEnvelope(response) || !receipt || receipt.version !== 'mutation-receipt.v1'
         || receipt.kind !== 'sketchup_mutation_receipt' || receipt.commit_state !== 'committed'
         || receipt.operation !== 'Alma Build Model' || !(Date.parse(receipt.committed_at) >= Date.parse(startedAt))
         || snapshot.model_revision_complete !== true || !/^sha256:[a-f0-9]{64}$/.test(snapshot.model_revision || '')
@@ -460,7 +463,20 @@ export class QueueRuntime {
   }
 
   async call(method, params) {
-    return this.withExclusiveAccess(() => this.callUnlocked(method, params), { method });
+    const started = performance.now();
+    let acquired = false;
+    try {
+      return await this.withExclusiveAccess(() => {
+        acquired = true;
+        return this.callUnlocked(method, params, { lockWaitMs: performance.now() - started });
+      }, { method });
+    } catch (error) {
+      if (!acquired) {
+        const ended = performance.now();
+        recordQueueTiming(this.queueDir, summarizeQueueTiming({ method, started: ended, lockWaitMs: ended - started, outcome: 'blocked_before_enqueue' }));
+      }
+      throw error;
+    }
   }
 
   async withMutationGuard(guard, callback) {
@@ -477,7 +493,8 @@ export class QueueRuntime {
     }
   }
 
-  async callUnlocked(method, params) {
+  async callUnlocked(method, params, { lockWaitMs = null } = {}) {
+    const timingStarted = performance.now();
     if (queueRuntimeShuttingDown) throw new Error('Queue runtime is shutting down.');
     await fs.mkdir(this.queueDir, { recursive: true });
     await fs.mkdir(this.processingDir, { recursive: true });
@@ -503,8 +520,12 @@ export class QueueRuntime {
     ownedQueueArtifacts.add(responsePath);
     ownedProcessingArtifacts.add(processingPath);
     ownedResponseProcessingPairs.set(responsePath, processingPath);
+    let published, publishedAt;
     try {
       await fs.writeFile(stagingPath, `${JSON.stringify(request)}\n`, { encoding: 'utf8', flag: 'wx' });
+      // Timestamp immediately before publication; includes the atomic rename.
+      published = performance.now();
+      publishedAt = Date.now();
       await fs.rename(stagingPath, requestPath);
       ownedQueueArtifacts.delete(stagingPath);
     } catch (error) {
@@ -516,10 +537,12 @@ export class QueueRuntime {
       ownedQueueArtifacts.delete(responsePath);
       ownedProcessingArtifacts.delete(processingPath);
       ownedResponseProcessingPairs.delete(responsePath);
+      recordQueueTiming(this.queueDir, summarizeQueueTiming({ method, requestId: id, started: timingStarted, lockWaitMs, outcome: 'publication_failed' }));
       throw error;
     }
 
     let outcomeObserved = false;
+    let observed, observedAt, nativeTiming, timingOutcome = 'outcome_unknown';
     try {
       const startedAt = Date.now();
       while (Date.now() - startedAt < this.timeoutMs) {
@@ -531,7 +554,11 @@ export class QueueRuntime {
         try {
           const raw = await fs.readFile(responsePath, 'utf8');
           const response = JSON.parse(raw);
+          observed = performance.now();
+          observedAt = Date.now();
+          nativeTiming = response.timing;
           outcomeObserved = true;
+          timingOutcome = response.error ? 'native_error' : 'returned';
           await fs.rm(responsePath, { force: true });
           if (response.error) throw queueResponseError(response.error);
           this.recordSuccessfulGuardedCall(method, guardedParams);
@@ -544,6 +571,7 @@ export class QueueRuntime {
 
       throw new Error(`Timed out waiting for SketchUp plugin response after ${this.timeoutMs}ms. Open SketchUp and enable Alma SketchUp MCP Bridge.`);
     } finally {
+      recordQueueTiming(this.queueDir, summarizeQueueTiming({ method, requestId: id, started: timingStarted, published, publishedAt, observed, observedAt, nativeTiming, lockWaitMs, outcome: timingOutcome }));
       await fs.rm(requestPath, { force: true }).catch(() => {});
       if (outcomeObserved) {
         await fs.rm(processingPath, { force: true }).catch(() => {});
@@ -1029,6 +1057,14 @@ function assertSameRecoveryFile(expected, actual, requestId) {
   }
 }
 
+// Timing is optional diagnostics, never mutation or recovery evidence. Legacy
+// envelopes remain valid; unknown fields and error/result mixtures do not.
+function isSuccessfulQueueEnvelope(response) {
+  return response !== null && typeof response === 'object' && !Array.isArray(response)
+    && Object.hasOwn(response, 'result')
+    && Object.keys(response).every(key => key === 'result' || key === 'timing');
+}
+
 function parseRecoveryResponse(raw, expectation) {
   let response;
   try {
@@ -1042,7 +1078,7 @@ function parseRecoveryResponse(raw, expectation) {
   if (Object.hasOwn(response, 'error')) {
     throw recoveryIntegrityError(expectation.request_id, 'response_contains_error');
   }
-  if (Object.keys(response).length !== 1 || !Object.hasOwn(response, 'result')) {
+  if (!isSuccessfulQueueEnvelope(response)) {
     throw recoveryIntegrityError(expectation.request_id, 'response_envelope_invalid');
   }
   if (!response.result || typeof response.result !== 'object' || Array.isArray(response.result)) {

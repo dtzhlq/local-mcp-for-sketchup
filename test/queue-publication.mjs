@@ -9,6 +9,7 @@ const root = await fs.mkdtemp(path.join(os.tmpdir(), 'queue-publication-'));
 const queueDir = path.join(root, 'queue'), responseDir = path.join(root, 'responses');
 const writeFile = fs.writeFile;
 let partialObserved = false;
+const timing = {version:'native-queue-timing.v1', started_at_ms:1000, finished_at_ms:1012, dispatch_elapsed_ms:12};
 try {
   // Force a filesystem write to pause halfway, as happens for large assemblies.
   fs.writeFile = async function(file, data, options) {
@@ -49,9 +50,15 @@ try {
   const snapshot = {instances: [{id: 'task-root', definition: 'task-definition'}], component_definitions: ['task-definition'],
     model_revision: `sha256:${'a'.repeat(64)}`, model_revision_complete: true,
     mutation_receipt: {version: 'mutation-receipt.v1', kind: 'sketchup_mutation_receipt', operation: 'Alma Build Model', commit_state: 'committed', committed_at: new Date().toISOString()}};
-  await writeFile(responseFile, JSON.stringify({result: snapshot}));
+  await writeFile(responseFile, JSON.stringify({result: snapshot, timing}));
   runtime.getSessionState = async () => ({model_revision: snapshot.model_revision, model_revision_complete: true, session_id: 'session', document_id: 'doc'});
   const recovery = {session: {session_id: 'session', document_id: 'doc'}, roots: [{id: 'task-root', definition: 'task-definition'}], definitions: ['task-definition'], startedAt: new Date(Date.now() - 1000).toISOString()};
+  for (const extra of [{unexpected:true}, {error:{message:'failed'}}]) {
+    await writeFile(responseFile, JSON.stringify({result:snapshot,timing,...extra}));
+    await assert.rejects(runtime.recoverCommittedCreation(recovery), /expectation/);
+    await fs.stat(responseFile);
+  }
+  await writeFile(responseFile, JSON.stringify({result:snapshot,timing}));
   await assert.rejects(runtime.recoverCommittedCreation({...recovery, roots: [{id: 'wrong', definition: 'task-definition'}]}), /expectation/);
   await fs.stat(responseFile);
   let persisted = false;
@@ -62,13 +69,21 @@ try {
   }});
   assert.equal(persisted, true);
   await assert.rejects(fs.stat(responseFile), {code: 'ENOENT'});
+  await writeFile(responseFile, JSON.stringify({result:snapshot}));
+  assert.deepEqual(await runtime.recoverCommittedCreation({...recovery,persist:async () => {}}),snapshot);
   console.log('PASS late creation recovery persists before response consumption; no model write');
   const stagingFile = path.join(responseDir, `12345-${Date.now()}-22222222-2222-4222-8222-222222222222.json`);
   const staged = {...snapshot, instances: [{id:'task-root', persistent_id:'7', definition:'task-definition'}],
     component_definitions:['task-definition','staged-definition'], model_revision:`sha256:${'b'.repeat(64)}`};
-  await writeFile(stagingFile, JSON.stringify({result: staged}));
+  await writeFile(stagingFile, JSON.stringify({result: staged, timing}));
   runtime.getSessionState = async () => ({model_revision: staged.model_revision, model_revision_complete: true, session_id:'session', document_id:'doc'});
   const staging = {...recovery, roots:[{id:'task-root', persistent_id:'7', definition:'task-definition'}], definitions:['staged-definition']};
+  for (const extra of [{unexpected:true}, {error:{message:'failed'}}]) {
+    await writeFile(stagingFile, JSON.stringify({result:staged,timing,...extra}));
+    await assert.rejects(runtime.recoverCommittedParameterStaging(staging), /expectation/);
+    await fs.stat(stagingFile);
+  }
+  await writeFile(stagingFile, JSON.stringify({result:staged,timing}));
   await assert.rejects(runtime.recoverCommittedParameterStaging({...staging, definitions:['wrong-definition']}), /expectation/);
   await fs.stat(stagingFile);
   let stagingPersisted = false;
@@ -79,6 +94,8 @@ try {
   }});
   assert.equal(stagingPersisted, true);
   await assert.rejects(fs.stat(stagingFile), {code:'ENOENT'});
+  await writeFile(stagingFile, JSON.stringify({result:staged}));
+  assert.deepEqual(await runtime.recoverCommittedParameterStaging({...staging,persist:async () => {}}),staged);
   console.log('PASS late parameter staging recovery verifies roots and definitions before consumption; no replay');
 const captureRoot=await fs.mkdtemp(path.join(os.tmpdir(),'timber-overview-recovery-'));
 try {
@@ -92,8 +109,14 @@ try {
  const result={kind:'capture_detail_views',runtime:'queue',status:'captured_and_restored',restored:true,capture_scope:'camera_only',
   captures:[{id:'overview',file_path:file,width:1400,height:900,sha256:createHash('sha256').update(png).digest('hex'),model_revision:revision,model_revision_complete:true,model_revision_binding:'restored_source_revision'}],
   restoration:{model_revision_before:revision,model_revision_after:revision,model_revision_restored:true,camera_restored:true,native_state_restored:true,camera_facing_recovery:{status:'restored_exact_native_matrices'}}};
- const response=path.join(responseDir,`12345-${Date.now()}-11111111-1111-4111-8111-111111111111.json`);await fs.writeFile(response,JSON.stringify({result}));
+ const response=path.join(responseDir,`12345-${Date.now()}-11111111-1111-4111-8111-111111111111.json`);await fs.writeFile(response,JSON.stringify({result,timing}));
  const opts={bridge:{selectRuntime:()=>runtime},taskStore:{mutationReceiptLedger:{sign:async value=>JSON.stringify(value)}},taskId:'task-test',view:{id:'overview'},priorOutputDirs:[output],summary};
+ for (const extra of [{unexpected:true},{error:{message:'failed'}}]) {
+  await fs.writeFile(response,JSON.stringify({result,timing,...extra}));
+  await assert.rejects(recoverTimberOverview(opts),/expectation/);
+  await fs.stat(response);
+ }
+ await fs.writeFile(response,JSON.stringify({result,timing}));
  await assert.rejects(recoverTimberOverview({...opts,summary:{...summary,model_revision:`sha256:${'c'.repeat(64)}`}}),/document/);
  assert.ok(await fs.stat(response));
  const recovered=await recoverTimberOverview(opts);assert.equal(recovered.captures.length,1);await assert.rejects(fs.stat(response),{code:'ENOENT'});

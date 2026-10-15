@@ -181,6 +181,7 @@ export function duplicateEntity(model, operation) {
     clone.bounding_box = boundingBoxForVertices([clone.bounding_box.min, clone.bounding_box.max].map((point) => point.map((value, axis) => value + translate[axis])));
   }
   if (clone._vertices) clone._vertices = clone._vertices.map((point) => point.map((value, axis) => value + translate[axis]));
+  translateStoredPlacement(clone, translate);
   clone.duplicated_from = target.item.id || target.item.persistent_id || target.item.name;
   collection.push(clone);
   return clone;
@@ -271,6 +272,8 @@ export function transformObject(model, operation) {
   object._vertices = applyObjectTransform(vertices, transform);
   object.bounding_box = boundingBoxForVertices(object._vertices);
   object._orientation = applyOrientationTransform(object._orientation || identityMatrix3(), transform);
+  if (isPureWorldTranslation(transform)) translateStoredPlacement(object, transform.translate);
+  else object._placement_complete = false;
   object.transform = mergeObjectTransform(object.transform, transform);
   refreshNestedDefinition(model, target);
 }
@@ -677,10 +680,37 @@ function invertMatrix3(matrix) {
   ];
 }
 
+// Geometry and placement must agree when a later edit reads the occurrence's
+// world transform (for example array -> mirror or align -> mirror).
+function translateStoredPlacement(object, delta) {
+  // Older mock sessions recorded edits only in object_transform, leaving the
+  // placement stale. Never certify that legacy history merely by translating
+  // it once with the new implementation.
+  if (object._placement_complete !== true && object.transform?.object_transform) object._placement_complete = false;
+  else if (object._placement_complete !== false) object._placement_complete = true;
+  for (const key of ['transform', 'world_transform', 'transformation']) {
+    if (key !== 'transform' && object[key] === undefined) continue;
+    const existing = object[key];
+    if (Array.isArray(existing)) {
+      object[key] = [...existing];
+      for (let axis = 0; axis < 3; axis++) object[key][12 + axis] += delta[axis];
+    } else {
+      const translate = existing?.translate || [0, 0, 0];
+      object[key] = {...(existing || {}), translate: translate.map((value, axis) => value + delta[axis])};
+    }
+  }
+}
+
+function isPureWorldTranslation(transform) {
+  return !transform.matrix && !transform.local_matrix && !transform.mirror.length
+    && transform.scale.every(value => value === 1)
+    && ['rotateX', 'rotateY', 'rotateZ', 'angle', 'local_angle'].every(key => transform[key] === 0);
+}
+
 function mergeObjectTransform(existing = {}, transform) {
   const { orientation, ...publicTransform } = transform;
   return {
-    ...(existing || {}),
+    ...(Array.isArray(existing) ? {matrix: existing} : (existing || {})),
     object_transform: publicTransform
   };
 }

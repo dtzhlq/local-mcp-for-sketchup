@@ -168,6 +168,7 @@ export async function verifyTraditionalScene(gateway,task) {
   const spec={...copy(specs[0]),scene_id:compiled.scene_id,deferred_scene_overview:false,
     required_parts:specs.flatMap(s=>s.required_parts),required_voids:specs.flatMap(s=>s.required_voids),
     connection_checks:specs.flatMap(s=>s.connection_checks),compiler_expected_values:specs.map(s=>s.compiler_expected_values),
+    native_joint_checks:specs.flatMap(s=>s.native_joint_checks||[]),
     required_views:[{id:compiled.plan.view.id,kind:'overview',min_width:1400,min_height:900}]};
   const frozen=freezeDetailSpecification(spec),identity_map={},occurrence_path_map={};
   for(const {creation} of sources) {

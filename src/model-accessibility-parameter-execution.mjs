@@ -9,6 +9,43 @@ import { acceptDefinitionParameterEdit } from './model-accessibility-parameter-e
 import { trustedBridgeReceipt } from './task-mutation-receipt-ledger.mjs';
 import { adoptParameterRoots } from './model-accessibility-scoped-readback.mjs';
 
+// Validate before staging any definitions. Explicit budgets are never raised
+// or silently clamped; omitted limits use defaults bounded by the host policy.
+function parameterReviewBudgets(gateway, task, execution) {
+  const value = execution?.review_budgets ?? task.inputs.budgets ?? {};
+  if (!value || typeof value !== 'object' || Array.isArray(value)) throw new AgentContractError('INVALID_ARGUMENT', 'budgets must be an object.');
+  // Generic iteration checks these totals only after mutation; native assembly
+  // replacement bypasses that iteration path. Do not accept a purported hard
+  // cap that cannot be established before committing new definitions.
+  if (value.max_faces !== undefined || value.max_edges !== undefined) throw new AgentContractError('OPERATION_NOT_ALLOWED',
+    'Creation-bound parameter edits cannot enforce max_faces/max_edges before staging. Omit these unsupported budgets and use the independent native resource-quality verification.',
+    { details: { unsupported_fields: ['max_faces', 'max_edges'].filter(field => value[field] !== undefined), mutation_performed: false } });
+  const policy = gateway.bridge.executionPolicy.resource_limits;
+  const limits = { max_operations: policy.max_operations, max_affected_instances: policy.max_affected_instances,
+    recursive_limit: policy.max_recursive_entities };
+  const budgets = {
+    max_operations: value.max_operations ?? value.maxOperations ?? Math.min(100, limits.max_operations),
+    max_affected_instances: value.max_affected_instances ?? value.maxAffectedInstances ?? Math.min(200, limits.max_affected_instances),
+    recursive_limit: value.recursive_limit ?? value.recursiveLimit ?? task.private.parameter_recursive_limit
+  };
+  for (const [field, raw] of Object.entries(budgets)) {
+    const requested = Number(raw);
+    if (!Number.isInteger(requested) || requested < 1) throw new AgentContractError('INVALID_ARGUMENT', `budgets.${field} must be a positive integer.`);
+    if (limits[field] !== undefined && requested > limits[field]) throw new AgentContractError('POLICY_DENIED', `${field} exceeds the trusted server execution-policy limit.`, {
+      details: { field, requested, maximum: limits[field], mutation_performed: false }
+    });
+    budgets[field] = requested;
+  }
+  if (task.private.creation_parameter_edit.change_plan.operations.length > budgets.max_operations) throw new AgentContractError('POLICY_DENIED', 'Parameter replacement exceeds budgets.max_operations.', {
+    details: { field: 'max_operations', requested: task.private.creation_parameter_edit.change_plan.operations.length, maximum: budgets.max_operations, mutation_performed: false }
+  });
+  const affectedInstances = task.private.creation_parameter_edit.change_plan.assembly_rebuild.replacements.length;
+  if (affectedInstances > budgets.max_affected_instances) throw new AgentContractError('POLICY_DENIED', 'Parameter replacement exceeds budgets.max_affected_instances.', {
+    details: { field: 'max_affected_instances', requested: affectedInstances, maximum: budgets.max_affected_instances, mutation_performed: false }
+  });
+  return budgets;
+}
+
 async function writeExecution(gateway, taskId, body) {
   const task = await gateway.taskStore.getTask(taskId, { includePrivate: true });
   const record = { ...body, integrity_hmac: await gateway.taskStore.mutationReceiptLedger.sign(body) };
@@ -27,11 +64,12 @@ async function verifyExecution(gateway, task) {
   return body;
 }
 async function graphFor(gateway, task, edit, includeAdoption = false) {
+  const recursiveLimit = parameterReviewBudgets(gateway, task, task.private?.parameter_execution).recursive_limit;
   const adoption = edit.change_plan.readback_projection === 'assembly-merkle.v2' ? await adoptAssemblySummary({ bridge: gateway.bridge,
-    rootPaths: edit.change_plan.recursive_roots, recursiveLimit: task.private.parameter_recursive_limit, timeoutMs: task.private.parameter_timeout_ms }) : edit.change_plan.recursive_roots?.length > 1 ? await adoptParameterRoots({ bridge: gateway.bridge,
-    runtime: task.inputs.runtime || task.private.parameter_source_record.runtime, recursiveLimit: task.private.parameter_recursive_limit,
+    rootPaths: edit.change_plan.recursive_roots, recursiveLimit, timeoutMs: task.private.parameter_timeout_ms }) : edit.change_plan.recursive_roots?.length > 1 ? await adoptParameterRoots({ bridge: gateway.bridge,
+    runtime: task.inputs.runtime || task.private.parameter_source_record.runtime, recursiveLimit,
     timeoutMs: task.private.parameter_timeout_ms, rootPaths: edit.change_plan.recursive_roots }) : await gateway.bridge.adopt_open_model({ runtime: task.inputs.runtime || task.private.parameter_source_record.runtime,
-    recursive: true, recursive_limit: task.private.parameter_recursive_limit, recursive_roots: edit.change_plan.recursive_roots, read_only: true,
+    recursive: true, recursive_limit: recursiveLimit, recursive_roots: edit.change_plan.recursive_roots, read_only: true,
     timeoutMs: task.private.parameter_timeout_ms });
   if (modelKeyForIdentity(modelIdentityForAdoption(adoption)) !== edit.design_graph.model_key) throw new AgentContractError('MODEL_IDENTITY_MISMATCH', 'Parameter execution is bound to a different model.');
   const graph = buildModelGraph(adoption);
@@ -121,6 +159,7 @@ export async function continueDefinitionParameterExecution(gateway, task, { inpu
   let execution = await verifyExecution(gateway, task);
   if (task.state === 'completed') return task;
   const runtime = task.private.parameter_source_record.runtime;
+  const budgets = parameterReviewBudgets(gateway, task, execution);
   if (!execution) {
     if (!edit?.ready) throw new AgentContractError('INVALID_ARGUMENT', 'A ready creation-bound parameter plan is required.');
     if (runtime === 'queue' && (!gateway.bridge.executionPolicy.allow_queue_mutation || !gateway.bridge.executionPolicy.allowed_runtimes.includes('queue'))) throw new AgentContractError('POLICY_DENIED', 'The server does not allow queue parameter mutation.');
@@ -139,7 +178,7 @@ export async function continueDefinitionParameterExecution(gateway, task, { inpu
       }
       session = fresh;
     }
-    execution = { version: 'parameter-execution.v1', task_id: task.task_id, edit_hash: edit.edit_hash, phase: 'staging_started',
+    execution = { version: 'parameter-execution.v1', task_id: task.task_id, edit_hash: edit.edit_hash, phase: 'staging_started', review_budgets: budgets,
       creation_sha256: edit.change_plan.assembly_rebuild.creation_sha256, source_record_hash: edit.source_record_hash };
     task = await writeExecution(gateway, task.task_id, execution);
     if (task.state === 'awaiting_review') task = await gateway.taskStore.transition(task.task_id, 'approved', { reason: 'parameter_staging_requested' });
@@ -176,7 +215,8 @@ export async function continueDefinitionParameterExecution(gateway, task, { inpu
     const childArgs = { intent: 'reviewed_existing_model_edit', instruction: task.instruction, interface_level: task.interface_level,
       idempotency_key: `${task.task_id}:parameter-definition-replacement:v1`,
       inputs: { runtime, targets: edit.change_plan.targets, operations: edit.change_plan.operations,
-        recursive_limit: task.private.parameter_recursive_limit, timeout_ms: task.private.parameter_timeout_ms,
+        budgets,
+        recursive_limit: budgets.recursive_limit, timeout_ms: task.private.parameter_timeout_ms,
         ...(edit.change_plan.recursive_roots ? { recursive_roots: edit.change_plan.recursive_roots } : {}),
         readback_projection: edit.change_plan.readback_projection, save_model: false, capture_view: false } };
     const childEnvelope = await gateway.startUnprojected(childArgs);
@@ -207,7 +247,7 @@ export async function continueDefinitionParameterExecution(gateway, task, { inpu
   if (child.state !== 'completed') return presentReview(gateway, task, child);
   const applied = await finalizeAssemblyParameterEditFromLedger({ bridge: gateway.bridge, reviewedTaskId: child.task_id,
     designGraph: edit.design_graph, changePlan: edit.change_plan, runtime, timeoutMs: task.private.parameter_timeout_ms,
-    recursiveLimit: task.private.parameter_recursive_limit });
+    recursiveLimit: budgets.recursive_limit });
   const updated = acceptDefinitionParameterEdit({ sourceRecord: task.private.parameter_source_record, edit, applied });
   const sourceTask = await gateway.taskStore.getTask(task.inputs.parameter_edit.creation_task_id, { includePrivate: true });
   const currentHash = sourceTask.private.creation.parameter_source.source_record_hash;

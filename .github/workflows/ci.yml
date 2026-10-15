@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   core:
-    name: Offline and mock core gate
+    name: Offline and mock behavioral regression
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
@@ -33,5 +33,5 @@ jobs:
       - name: Audit production dependencies
         run: npm audit --omit=dev --audit-level=high
 
-      - name: Run core gate
-        run: npm run core:check
+      - name: Run core and behavioral regression
+        run: npm run regression:check
