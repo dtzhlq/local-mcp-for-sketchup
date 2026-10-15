@@ -2,6 +2,8 @@
 
 `traditional_assembly` 将柱网或路径、构件族、连接和参数编译为 PartGraph，再沿已有原子创建、来源持久化、审阅替换和读回流程执行。旧 `traditional_timber` 固定殿堂保留自己的规则和验收范围。当前证据见 [发布验收](../RELEASE_ACCEPTANCE.md)；示例见 [输入目录](../../examples/traditional-assembly/README.md)。
 
+本分支新增的显式插删跨及接头表面间距检查属于开发代码，既有发布验收不自动覆盖这些增量。
+
 最小参考和自绘关系示意见 [参考说明](REFERENCES.md)。它们不为默认工程尺寸提供历史精度认证。
 
 ## 单根与共享实例
@@ -75,7 +77,31 @@
 }
 ```
 
-用 `intent: "modify_design_parameters"` 和稳定幂等键提交。跟随返回的连接和执行动作；授权由服务端信任通道读取，客户端不提交批准凭证。替换选中根的新定义，保留其世界放置、旧定义、共享副本及范围外对象。手工修改、来源/规则/渲染版本漂移会拒绝覆盖。改变数组长度属于拓扑变化，返回重建边界，不当作普通尺寸修改。
+用 `intent: "modify_design_parameters"` 和稳定幂等键提交。跟随返回的连接和执行动作；授权由服务端信任通道读取，客户端不提交批准凭证。替换选中根的新定义，保留其世界放置、旧定义、共享副本及范围外对象。手工修改、来源/规则/渲染版本漂移会拒绝覆盖。普通 `changes` 仍拒绝改变数组长度；插删跨使用下面的显式结构修改。
+
+### 显式插入或删除一跨
+
+在同一 `modify_design_parameters` 入口中，`parameter_edit.structure_change` 与 `changes` 互斥。索引从 0 开始，插入位置允许为原跨数（末端追加），删除位置必须是已有跨。例如在四跨直廊的第二跨之前插入一跨：
+
+```json
+{
+  "runtime":"queue",
+  "parameter_edit":{
+    "creation_task_id":"发现返回的原创建任务 ID",
+    "scope":"single",
+    "targets":[{"entity_path":"发现返回的实际根路径"}],
+    "structure_change":{"operation":"insert_bay","segment_id":"run","bay_index":1,"length_mm":3000}
+  }
+}
+```
+
+删除使用 `{"operation":"remove_bay","segment_id":"run","bay_index":1}`，不传 `length_mm`。`segment_id` 必须取自保存的计划；矩形柱网使用 `"grid"`。一次仅改一处，保留 1–16 跨；新增跨宽用 mm。原有连接、跨度、普通资源预算仍由完整重编译检查，执行继续使用原创建来源、新鲜修订、指定根替换、原审批和任务恢复机制。`scope:"single"` 保留其他共享实例，`scope:"all"` 仍要求显式列出全部同定义实例。
+
+当前支持单一直线路径或矩形柱网，以及双坡/平顶。柱梁、屋顶、檐部和栏杆坐凳随布局重新求解；使用显式 `segment_id` / `bay_index` 的墙洞和门窗保留构件 ID，并将原跨索引迁移到新位置。删除有附属构件的跨会返回具体构件 ID，必须先明确处理附属构件。独立坐标放置的门窗、自定义几何/梁、参数绑定的跨索引、多段转角路径和方攒尖等暂不自动迁移。带 `scene_id` 的场景成员还需要外部连接迁移，当前明确拒绝；普通独立根或同定义共享实例不受此项限制。
+
+`inputs.budgets` 可限制 `max_operations`、`max_affected_instances` 和 `recursive_limit`，不能超过服务端策略；预算会冻结并传给内部审阅任务。实际替换根数超限或递归读回不完整时，在暂存几何前拒绝。该参数修改入口不支持用 `max_faces` / `max_edges` 作为写入前硬上限，传入会明确拒绝；修改后仍须执行独立资源与几何质量验证。
+
+规划产物附 `topology_migration`，列出旧→新跨索引、站点与柱实例 ID，以及保留的构件 ID 和迁移的绑定；生成序号不能作为跨结构修改永久不变的子实体身份。新来源保存完整计划和迁移记录，后续尺寸修改沿新跨数继续。原生修改回执只证明受控替换成功；新的质量核验逐根重编译各自当前来源，未修改的共享根保留自己的结构要求，并以实际根边界生成一张总览。新验证任务签名绑定来源、编辑哈希及新规格，原创建证据保持不变，不能把旧结构验收套到新结构。
 
 用户已明确授权开发测试模型和本项目目录中的开发模型直接修改，无需逐次批准。服务端可配置 `executionPolicy.development_model_auto_approval`：必须有 `authorization_ref`、明确的 `allowed_model_keys`（尚未保存的测试文档）或 `allowed_roots`（项目内模型）、`allowed_risks` 和普通实例预算。默认关闭；普通任务输入和模型内容不能启用。命中范围的计划返回 `execution_mode: "development_authorized"`、`user_action_required: false`，不创建批准凭证或本地批准页。执行仍须新连接、相同文档/修订、完整范围核对和可信提交回执；允许保存时目标路径也必须在配置目录内。
 
@@ -110,6 +136,8 @@ CLI/MCP 启动环境可使用 `ALMA_SKETCHUP_DEVELOPMENT_MODEL_AUTO_APPROVAL=1`�
 双层、六角或歇山等缺少本版求解器的输入返回 `compilation_gap`、`execution_started:false`、`quality_accepted:false` 和需要明确接受的简化提案；不会自动生成替代形制。`song_informed` 模式仅保存用户提供的可定位参数依据，模式名称不产生历史精度认证。
 
 `traditional-assembly-summary.v1` 要求完整原生修订、两层主要装配摘要、边界/路径/指纹、普通资源统计、真实洞口与受信任视图回执。编译器预期尺寸和同源连接不是原生距离量测；隐藏榫卯、结构容量、完整碰撞与任意屋顶拓扑没有得到认证。A/B/C 的限定接头、视觉结果和修改保护检查分别写入开发记录。
+
+质量报告的 `connection_checks` 是声明连接的编译预期，`connection_evidence_level` 保持 `compiler_expected_coordinates`。新增 `native_joint_measurements` 只检查冻结规格选定的柱梁、梁檩、檩椽构件对，其独立的 `native_joint_evidence_level` 才表示这些抽样是否取得原生表面间距证据；缺失或不支持的量测保留 `unverified` / `unsupported`，不能升级全部声明连接。短响应的 `joint_summary` 汇总这组抽样及其证据等级，完整修订、规格哈希和逐项明细通过返回的制品句柄读取。表面距离在容差内只证明选定表面足够接近；距离为零仍可能相交，不证明无穿透、完整碰撞通过或承载能力。
 
 提交后收尾失败继续同一任务和可信回执；结果未知先只读核对。没有可信回执时不自动重写，不自动删除队列锁。源码更新不等于当前已安装服务更新：先连接并检查实际 `assembly-merkle.v2` / 原子创建能力，再运行新入口。
 

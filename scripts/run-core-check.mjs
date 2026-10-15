@@ -7,6 +7,8 @@ import { fileURLToPath } from 'node:url';
 
 const scriptPath = fileURLToPath(import.meta.url);
 const repoRoot = path.resolve(path.dirname(scriptPath), '..');
+const extended = process.argv.includes('--extended');
+if (process.argv.slice(2).some(arg => arg !== '--extended')) throw new Error('Usage: run-core-check.mjs [--extended]');
 
 const runRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'local-mcp-for-sketchup-core-check-'));
 const stateDir = path.join(runRoot, 'state');
@@ -57,12 +59,33 @@ const steps = [
   ]]
 ];
 
+// Keep the quick package/core gate, and make existing behavioral regressions a
+// named CI entrypoint instead of depending on manual one-off invocations.
+if (extended) steps.push(
+  ['First-use discovery and bounded workflow templates', ['test/model-accessibility-onboarding.mjs']],
+  ['Discovered workflows and reviewed layout editing', ['test/model-accessibility-layout-edit.mjs']],
+  ['Native layout QA resume guards (offline fixtures)', ['test/qa-layout-native-resume.mjs']],
+  ['Traditional bay structure migration and current verification', ['test/traditional-assembly-structure-edit.mjs']],
+  ['Native assembly joint measurements and evidence boundaries', ['test/traditional-assembly-joints.mjs']],
+  ['Bounded public native joint measurement results', ['test/traditional-joint-response-projection.mjs']],
+  ['Modeling math and transforms', ['test/modeling-uplift/math-geometry.mjs']],
+  ['Native geometry reading and safe local editing', ['test/modeling-uplift/reading-editing.mjs']],
+  ['Staged program recovery and idempotency', ['test/modeling-uplift/program.mjs']],
+  ['Image structure and reviewed creation', ['test/image-structure.mjs']],
+  ['Atomic queue publication and recovery', ['test/queue-publication.mjs']],
+  ['Queue and task timing', ['test/queue-timing.mjs']],
+  ['Native queue timing envelope', ['test/ruby/queue_timing_test.rb']],
+  ['Native operation runtime profiling', ['test/ruby/build_runtime_profile_test.rb']],
+  ['Revision snapshot cost invariants', ['test/ruby/revision_snapshot_cost_test.rb']],
+  ['Scoped recursive index', ['test/ruby/scoped_recursive_index_test.rb']]
+);
+
 const startedAt = new Date();
 let failedStep = null;
 try {
   for (const [label, args] of steps) {
     process.stdout.write(`\n[core-check] ${label}\n`);
-    const result = await run(process.execPath, args);
+    const result = await run(args[0].endsWith('.rb') ? 'ruby' : process.execPath, args);
     if (result.code !== 0) {
       failedStep = { label, code: result.code || 1 };
       break;
@@ -74,6 +97,7 @@ try {
       kind: 'local_mcp_for_sketchup_core_check',
       status: 'passed',
       layer: 'offline_and_mock_only',
+      suite: extended ? 'extended_behavioral_regression' : 'core',
       isolated_test_state: true,
       live_sketchup_verified: false,
       release_acceptance: false,

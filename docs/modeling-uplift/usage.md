@@ -1,6 +1,46 @@
-# 通用建模 API 开发候选
+# 建模任务与通用几何 API 使用指南
 
-开发分支以发布版 v0.2.0 为基线。运行状态和验收结论见 implementation-status.md；未验证项不等同于已支持。
+本指南覆盖当前源码中的 Agent 任务入口和通用几何 API。正式安装版本以[发布验收](../RELEASE_ACCEPTANCE.md)为准；新源码入口必须同时由实际加载的服务和插件支持。离线检查、已保存文件和原生质量验收分别判断。
+
+## 从一个任务开始
+
+无需读取本地源码，先调用：
+
+```json
+{"tool":"start_agent_task","arguments":{"intent":"discover","instruction":"查看支持的建模任务和下一步","inputs":{"topic":"start"}}}
+```
+
+随后用 `topic=tasks` 发现全部创建种类；`topic=workflows,task_name=<种类>` 返回可调用模板，包括门窗、柜体、内置配方资产、固定古建和通用中式装配。已有对象的排列/对齐、参数修改、外观与保存也从 workflows 发现。
+
+普通单根任务的流程是 `preflight_model(inputs.task)` → `discover/connect(runtime=queue)` → `create_model`。创建使用同一 task、新鲜 `connection_task_id` 和稳定 `idempotency_key`。保留返回的 `task_id`；响应不确定时 `resume_agent_task`，不换键重建。
+
+多个独立中式装配根选择 `task_name=traditional_scene`，用 `inputs.scene_plan` 代替 `inputs.task`。创建后保留各根来源，局部修改后用 `verify_model(inputs.scene_id)` 重新冻结场景验证；它不承诺原子修改整个场景。详见[装配与场景边界](../traditional-timber/ASSEMBLY.md)。
+
+通过必要质量检查后，重新连接，以已接受的创建或验证任务为 `source_task_id` 调用 `deliver_model`。保存成功后交付文件并结束。仅在用户明确要求关闭/重开专项时使用 `reopen_delivered_model`；日常保存不自动追加该验证。
+
+## 排列、对齐与镜像副本
+
+这些助手通过 `reviewed_existing_model_edit` 的 `inputs.layout_edit` 工作，不增加顶级工具。服务器只读当前完整原生索引，计算明确操作并冻结模型身份/修订，之后仍需原有审阅、连接与提交步骤。不要混入自写 `operations`、`targets`、快照或其他来源计划。
+
+```json
+{"version":1,"mode":"array","targets":[{"target_id":"实际根标识"}],"axis":"x","count":4,"spacing_mm":1200}
+```
+
+`count` 包含原件；`spacing_mm` 是沿世界 x/y/z 的有符号重复位移，不表示净距。服务器生成稳定的新标识并保留原件。最多生成 100 个操作。
+
+```json
+{"version":1,"mode":"align","targets":[{"target_id":"待移动根标识"}],"axis":"z","anchor":"min","reference":{"target":{"target_id":"固定参照根标识"},"anchor":"max"}}
+```
+
+对齐使用当前根对象在世界坐标中的真实包围盒；旋转对象仍按世界 min/center/max 计算。参照对象必须与移动目标分开，保持不动。包围盒对齐不等同于实体接触或无碰撞。
+
+```json
+{"version":1,"mode":"mirror_copy","targets":[{"entity_path":"pid:实际根组件路径"}],"axis":"x","plane_offset_mm":1500}
+```
+
+镜像平面为世界 `x=1500 mm`；始终保留原件，新组件共享定义几何并使用镜像后的完整世界矩阵，不继承原参数来源。本版仅支持具名定义的根 ComponentInstance；组、嵌套目标，以及无法保持的根级材质/标签/隐藏或自定义属性覆盖会明确拒绝。排列和对齐支持根 Group 与 ComponentInstance；所有助手拒绝嵌套目标，不自动扩散到共享定义。需要嵌套编辑时使用既有明确实例隔离的专家计划。
+
+生成计划不是执行或质量通过。审阅批准后重新连接并向原任务补交 `connection_task_id`；发生未知结果时只恢复原任务。
 
 ## 四个工具
 
@@ -76,3 +116,13 @@ node src/cli.mjs run_model_program --input-file examples/modeling-uplift/generat
 程序绑定为 `snapshot.contexts`，不存在裸 `contexts` 变量。Expert 支持只读 `string.indexOf(search, position?)`，search 为字符串，position 为有限数值。它仍是受限解释器，不代表支持全部 JavaScript API。
 
 程序已提交前序阶段后发生编译失败时，先检查任务日志的 committed_stages 和真实模型。失败任务不会自动复活；可对已确认的模型状态提交剩余阶段的新请求。不得重新提交包含创建阶段的整份程序造成重复对象。
+
+## 开发诊断与离线回归
+
+`queue_diagnostics` 的 `timing` 提供当前服务进程中有界的 `recent_calls` / `recent_task_requests`，可比较 `lock_wait_ms`、`native_dispatch_ms`、`queue_wait_estimate_ms` 与 `response_return_estimate_ms`。这些是阶段时长及墙钟估计，不是性能验收或已提速的证据；旧插件未返回的字段为 `null`。
+
+`npm run regression:check` 运行扩展离线行为回归，`npm run core:check` 保留较快的检查子集。离线回归不代替实机或发布验收；本轮未运行关闭重开专项。
+
+2026-10-15 本地执行 `npm run regression:check`，55 个检查组全部通过（离线、mock 与隔离 Ruby fixtures）。已接入 CI 配置，但本记录不代表远程 CI、已安装插件或原生模型验收。
+
+随后完成本机安装与定向实测，并修复原生默认属性识别和参数预算继承问题。最终离线回归为 56/56，实机六组布局、三步开间修改及四轮抽样接头间距验证通过。安装、文件与明确边界见[本机验证记录](native-validation-2026-10-15.md)。

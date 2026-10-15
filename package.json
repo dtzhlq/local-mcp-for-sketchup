@@ -34,6 +34,7 @@
     "public-source:export": "node scripts/export-public-source.mjs",
     "public-source:audit": "node scripts/audit-public-source.mjs",
     "core:check": "node scripts/run-core-check.mjs",
+    "regression:check": "node scripts/run-core-check.mjs --extended",
     "dependency:audit": "npm audit --omit=dev --audit-level=high",
     "test:image-structure": "node test/image-structure.mjs"
   },
