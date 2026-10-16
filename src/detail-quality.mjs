@@ -218,9 +218,44 @@ export function evaluateDetailQuality({ snapshot = {}, layoutQa, frozenSpecifica
 }
 
 function collectItems(snapshot) {
-  const result = [...(snapshot.groups || []), ...(snapshot.instances || [])];
-  // Runtime-projected nested occurrences are distinct; do not infer their geometry from definition metadata.
-  for (const item of snapshot.geometry_occurrences || []) if (!result.some(entry => entry.entity_path && entry.entity_path === item.entity_path)) result.push(item);
+  const summaries = [...(snapshot.groups || []), ...(snapshot.instances || [])];
+  const occurrences = snapshot.geometry_occurrences || [];
+  const nativeId = value => typeof value === 'string' && /^[1-9]\d*$/.test(value) ? value : null;
+  const occurrenceId = item => Array.isArray(item.persistent_path) && item.persistent_path.length === 1
+    && Array.isArray(item.instance_path) && item.instance_path.length === 1
+    ? nativeId(item.persistent_path[0]) : null;
+  const indexById = (items, getId) => {
+    const index = new Map();
+    for (const item of items) {
+      const id = getId(item);
+      if (id) index.set(id, [...(index.get(id) || []), item]);
+    }
+    return index;
+  };
+  const summaryIndex = indexById(summaries, item => nativeId(item.persistent_id));
+  const occurrenceIndex = indexById(occurrences, occurrenceId);
+  const paired = new Set();
+  const result = summaries.map(summary => {
+    const id = nativeId(summary.persistent_id);
+    const matches = occurrenceIndex.get(id);
+    if (summaryIndex.get(id)?.length !== 1 || matches?.length !== 1) return summary;
+    const occurrence = matches[0];
+    if (summary.id && summary.id !== occurrence.id) return summary;
+    paired.add(occurrence);
+    return {
+      ...summary, ...occurrence,
+      persistent_id: summary.persistent_id,
+      // Only the native occurrence supplies measured geometry. Summary counts
+      // and bounds must never substitute for missing occurrence evidence.
+      geometry_evidence: occurrence.geometry_evidence,
+      ...(summary.visible === false || occurrence.visible === false ? { visible: false } : {}),
+      ...(summary.hidden === true || occurrence.hidden === true ? { hidden: true } : {}),
+      ...(hasBoundingBoxRepair(summary, snapshot) ? { repair_strategy: 'seal_bbox' } : {})
+    };
+  });
+  // Logical paths can collide between real entities. Keep every unpaired
+  // occurrence, including nested/shared instances, so ambiguity stays visible.
+  for (const occurrence of occurrences) if (!paired.has(occurrence)) result.push(occurrence);
   return result;
 }
 
