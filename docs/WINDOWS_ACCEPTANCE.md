@@ -1,8 +1,11 @@
 # Windows x64 / SketchUp 2026 acceptance
 
-The current installation preview is `v0.4.1-windows-preview.1`, synchronized with
-the signed 0.4.1 runtime. Its Windows CI report covers the installed server and
-offline image/CAD/timber checks; it does not establish native SketchUp acceptance.
+The 0.4.2 installation preview is `v0.4.2-windows-preview.1`, with runtime
+`0.4.2-workflows.1` and the same final signed RBZ as the Mac release. Publication
+requires a passing Windows CI report for the exact installed server bundle and
+offline image/CAD/timber/assembly checks; it does not establish native SketchUp
+acceptance. Use the attached `windows-installed-check.json`, whose exact hash,
+archive and source commit must be bound by `windows-install.v1.json`.
 For stable acceptance, use only the exact final hashes supplied with the release
 handoff. Files containing `nonrelease` do not qualify.
 
@@ -20,7 +23,11 @@ Record:
 Do not include the Windows user name, license key, account token, private model
 path, or unrelated machine information in public evidence.
 
-## Test
+## Future stable Windows test
+
+This checklist is outside the 0.4.2 preview publication scope. The current release
+does not run the user-excluded cold-reopen task; the preview keeps
+`live_sketchup_verified=false` and `release_acceptance=false`.
 
 1. Disconnect or preserve valuable unsaved SketchUp work.
 2. Install the signed, unencrypted RBZ through Extension Manager.
@@ -30,7 +37,7 @@ path, or unrelated machine information in public evidence.
 5. Extract the Windows x64 service bundle to a path containing a space.
 6. Confirm it starts with its bundled `node.exe`; do not rely on a system Node.
 7. Request a fresh `get_capabilities --runtime queue` handshake.
-8. Confirm the selected manifest's product version (currently `0.4.1`), the
+8. Confirm the selected manifest's product version (currently `0.4.2`), the
    expected capability manifest, runtime source attestation and the manifest's
    tool count (currently 48).
 9. Run a read-only inspection on a disposable model.

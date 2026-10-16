@@ -44,7 +44,7 @@
         },
         "version": {
           "type": "string",
-          "pattern": "^0\\.(3\\.0|4\\.[01])$"
+          "pattern": "^0\\.(3\\.0|4\\.[012])$"
         },
         "channel": {
           "const": "stable"
@@ -125,7 +125,7 @@
         },
         "tag": {
           "type": "string",
-          "pattern": "^v0\\.(3\\.0|4\\.[01])$"
+          "pattern": "^v0\\.(3\\.0|4\\.[012])$"
         },
         "public_tree_sha256": {
           "type": "string",
@@ -273,7 +273,7 @@
           "type": "boolean"
         },
         "validation_policy": {
-          "enum": ["legacy-full.v1", "timber-v040-minimal.v1", "assembly-v041-minimal.v1"]
+          "enum": ["legacy-full.v1", "timber-v040-minimal.v1", "assembly-v041-minimal.v1", "workflow-v042-minimal.v1"]
         },
         "core_gate": {
           "$ref": "#/$defs/evidence"

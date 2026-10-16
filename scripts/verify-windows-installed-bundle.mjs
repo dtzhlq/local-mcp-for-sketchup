@@ -71,7 +71,12 @@ try {
     ['cad_surfaces_and_fillets', 'cad-kernel/surfaces.mjs'],
     ['traditional_timber', 'traditional-timber-rules.mjs'],
     ['mutation_receipt_durability', 'mutation-receipt-durability.mjs'],
-    ['traditional_assembly', 'traditional-assembly.mjs']
+    ['traditional_assembly', 'traditional-assembly.mjs'],
+    ['workflow_onboarding', 'model-accessibility-onboarding.mjs'],
+    ['layout_edit', 'model-accessibility-layout-edit.mjs'],
+    ['traditional_structure_edit', 'traditional-assembly-structure-edit.mjs'],
+    ['traditional_joint_evidence', 'traditional-assembly-joints.mjs'],
+    ['traditional_joint_projection', 'traditional-joint-response-projection.mjs']
   ]) {
     const destination = path.join(testRoot, fixture);
     await fs.mkdir(path.dirname(destination), { recursive: true });

@@ -82,3 +82,10 @@ test/
 .github/workflows/ci.yml
 .github/workflows/dco.yml
 scripts/traditional-timber/
+
+# v0.4.2 workflow release documentation and extended regression runners
+docs/RELEASE_ACCEPTANCE_0.4.1.md
+docs/CHINA_DISTRIBUTION.md
+scripts/qa-workflow-improvements-layout.mjs
+scripts/qa-workflow-improvements-native.mjs
+scripts/qa-workflow-improvements-structure.mjs

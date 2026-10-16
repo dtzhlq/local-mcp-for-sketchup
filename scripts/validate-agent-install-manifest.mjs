@@ -127,7 +127,8 @@ export async function validateAgentInstallManifest(manifest, {
     for (const acceptance of manifest.acceptance?.platforms || []) {
       const minimalVersions = {
         'timber-v040-minimal.v1': '0.4.0',
-        'assembly-v041-minimal.v1': '0.4.1'
+        'assembly-v041-minimal.v1': '0.4.1',
+        'workflow-v042-minimal.v1': '0.4.2'
       };
       const minimalVersion = minimalVersions[manifest.acceptance?.validation_policy];
       for (const booleanField of [

@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.4.2 — 2026-10-16
+
+- Adds reviewed root layout helpers through the existing Gateway: arrays and native world-bounds alignment for groups/components, plus mirror copies for supported root components. Original objects, fresh revision checks, host review and idempotent recovery remain required.
+- Adds explicit single-bay insertion/removal for supported straight-path and rectangular-grid traditional assemblies, including stable attachment-ID migration and source-bound follow-up edits. Unsupported topology or attached content returns a specific boundary before execution.
+- Verifies modified roots from their current retained source while preserving original creation evidence and unchanged shared instances. Parameter-review budgets now reach the internal edit; root-count overflow and incomplete recursive readback reject before staging.
+- Adds native sampled column/beam, beam/purlin and purlin/rafter surface-gap evidence and compact joint summaries. Compiler expectations stay distinct; no penetration, full-collision or structural-capacity certification is implied.
+- Expands discovery with callable templates for every creation kind and independent-root scenes. Adds bounded queue/task timing diagnostics and the `regression:check` extended offline gate in CI; timing is not a speedup claim.
+- Fixes mirror rejection caused by SketchUp's empty built-in `SU_InstanceSet` attributes and strengthens native QA continuation without replaying completed edits.
+- Retains 48 public tools. The final signed package and bundled service passed six native layout cases, three bay edits with scope/replay protection, and four rounds of six native joint gaps on Apple Silicon Mac / SketchUp 2026. A post-removal GUID mismatch initially left six measurements unverified; read-only recovery of the original task passed them without changing geometry or frozen evidence. The earlier development regression passed 56 groups; release manifests additionally require successful CI for the exact final commit. See [release acceptance](docs/RELEASE_ACCEPTANCE.md). Windows remains an installation preview and cold-reopen work remains excluded.
+
 ## 0.4.1 — 2026-10-13
 
 - Adds the general `traditional_assembly` compiler: grid/path layouts, semantic families, explicit parameter provenance, gable and square-pyramid roofs, equal-height/equal-width L corridors, real circular/rectangular openings, simplified doors/lattices and site pieces.
@@ -8,7 +18,7 @@
 - Fixes zero-width roof tiles, roof-board clipping, delivery identity after exact camera restoration and unstable camera-facing capture sources.
 - Handles Windows directory-sync EPERM after durable receipt-file writes, restoring signed parameter-source discovery without ignoring file-write errors.
 - Pins sharp 0.35.5 and synchronized platform binaries/libvips 1.3.4 to address [GHSA-wq5f-xc86-pv6w](https://github.com/advisories/GHSA-wq5f-xc86-pv6w).
-- Retains 48 public tools and the existing fixed hall. A/B/C development creation, selected-root edits, bounded native geometry/view checks and SKP delivery passed on Apple Silicon Mac / SketchUp 2026; D composition/gap checks are offline. Final package evidence and limits are recorded in [release acceptance](docs/RELEASE_ACCEPTANCE.md).
+- Retains 48 public tools and the existing fixed hall. A/B/C development creation, selected-root edits, bounded native geometry/view checks and SKP delivery passed on Apple Silicon Mac / SketchUp 2026; D composition/gap checks are offline. Final package evidence and limits are recorded in [0.4.1 release acceptance](docs/RELEASE_ACCEPTANCE_0.4.1.md).
 - Synchronizes the Windows x64 installation preview with the same runtime and signed RBZ. Windows installed-server/offline CI is separate from pending Windows SketchUp native acceptance.
 
 ## 0.4.0 — 2026-09-23

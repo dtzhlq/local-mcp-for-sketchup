@@ -1,6 +1,6 @@
 # Local MCP for SketchUp
 
-**0.4.1 — 48 MCP tools.** The [release](https://github.com/dtzhlq/local-mcp-for-sketchup/releases/tag/v0.4.1) adds general Chinese-style assemblies and independent-root scenes alongside the fixed timber hall preset. Native verification covers Apple Silicon Mac and SketchUp 2026; see the [release acceptance](docs/RELEASE_ACCEPTANCE.md).
+**0.4.2 — 48 MCP tools.** This update adds reviewed array/alignment/mirror helpers, explicit bay insertion/removal, native joint-gap evidence and execution timing. Final macOS package checks, signature loading and bounded native modeling verification cover Apple Silicon Mac and SketchUp 2026; exact artifact evidence and release gates are recorded in [release acceptance](docs/RELEASE_ACCEPTANCE.md).
 
 An independent local MCP server for generating and editing SketchUp models through reviewed operations. Deterministic geometry, native measurement and execution recovery live in the MCP service and are available to any compatible model/client.
 
@@ -10,9 +10,20 @@ An independent local MCP server for generating and editing SketchUp models throu
 
 v0.4.0 adds a fixed Yingzao Fashi hall preset through the existing task Gateway, explicit historical-unit scale, source-bound parameters and scoped instance updates. The default light tiles retain visible laps; the optional surface mode omits transverse laps for a quieter distant view. See [rules](docs/traditional-timber/RULES.md), [MCP usage](docs/traditional-timber/USAGE.md) and [native acceptance](docs/traditional-timber/implementation-status.md).
 
-v0.4.1 adds a general `traditional_assembly` compiler and independent-root scene workflow. See [usage and limits](docs/traditional-timber/ASSEMBLY.md), [small inputs](examples/traditional-assembly/README.md) and [release acceptance](docs/RELEASE_ACCEPTANCE.md). The bounded A/B/C development acceptance and native saves are complete; D composition/gap checks are offline.
+v0.4.1 introduced the general `traditional_assembly` compiler and independent-root scene workflow. See [usage and limits](docs/traditional-timber/ASSEMBLY.md), [small inputs](examples/traditional-assembly/README.md) and [0.4.1 acceptance](docs/RELEASE_ACCEPTANCE_0.4.1.md). The bounded A/B/C development acceptance and native saves are complete; D composition/gap checks are offline.
 
-## What's new
+## What's new in 0.4.2
+
+The existing task Gateway now discovers every creation kind and supplies callable templates. Reviewed layout helpers preserve original objects, explicit structure changes retain source lineage and shared-root isolation, and joint summaries distinguish native sampled measurements from compiler expectations. See the [workflow guide](docs/modeling-uplift/usage.md) and [assembly limits](docs/traditional-timber/ASSEMBLY.md).
+
+| Workflow | What it enables |
+|---|---|
+| `layout_edit` | Root arrays and world-bounds alignment for groups/components; mirror copies for supported root components. |
+| `structure_change` | Insert or remove one bay in supported straight-path or rectangular-grid traditional assemblies, then verify each root from its current source. |
+| `native_joint_measurements` | Surface-gap evidence for selected column/beam, beam/purlin and purlin/rafter pairs, with bounded summaries. |
+| `queue_diagnostics.timing` | Recent lock, dispatch, queue and response-stage diagnostics; no speedup benchmark is implied. |
+
+The existing geometry tools remain available:
 
 | Capability | What it enables |
 |---|---|
@@ -37,7 +48,7 @@ A GLM investigation identified an MCP creation-QA scope issue and missing read-o
 
 ## 让 Agent 帮你安装或升级
 
-**当前正式版为 0.4.1，包含 48 个工具、官方签名插件与配套服务包。下面的自动安装入口按平台读取已发布清单；旧版安装包不会自动获得新版能力。**
+**0.4.2 包含 48 个工具、官方签名插件与配套服务包。下面的自动安装入口按平台读取已发布且完成验收的清单；旧版安装包不会自动获得新版能力。**
 
 把这句话发给 Agent；后续正式更新无需更换口令：
 
@@ -54,7 +65,7 @@ Agent 会发现最新正式版，固定该版本清单，校验服务包和签�
 
 ## Published platform packages
 
-The [signed 0.4.1 release](https://github.com/dtzhlq/local-mcp-for-sketchup/releases/tag/v0.4.1) targets Apple Silicon Mac / SketchUp 2026 (48 tools). Windows x64 / SketchUp 2026 has a separate [0.4.1 Windows installation preview](https://github.com/dtzhlq/local-mcp-for-sketchup/releases/tag/v0.4.1-windows-preview.1), with the same 0.4.1 runtime and signed RBZ, 48-tool Windows discovery and offline image/CAD/timber/assembly checks. Native Windows SketchUp acceptance remains pending. The stable installation entrypoint offers that preview explicitly when no stable Windows target matches. Intel Mac and other SketchUp versions have no matching package in these releases.
+The [0.4.2 release](https://github.com/dtzhlq/local-mcp-for-sketchup/releases/tag/v0.4.2) targets Apple Silicon Mac / SketchUp 2026 (48 tools). The matching Windows x64 / SketchUp 2026 installation preview is [v0.4.2-windows-preview.1](https://github.com/dtzhlq/local-mcp-for-sketchup/releases/tag/v0.4.2-windows-preview.1), using the same runtime baseline and final signed RBZ. Its manifest must bind the exact Windows archive and installed-server CI report. Official signing, installed macOS checks and bounded native evidence are documented in the [release record](docs/RELEASE_ACCEPTANCE.md); final manifests bind source and CI to the selected artifacts. Native Windows SketchUp acceptance remains pending. The stable installation entrypoint offers that preview explicitly when no stable Windows target matches. Intel Mac and other SketchUp versions have no matching package in these releases.
 
 ## Install and documentation
 
@@ -64,7 +75,7 @@ The [signed 0.4.1 release](https://github.com/dtzhlq/local-mcp-for-sketchup/rele
 - Single-image reconstruction: [image structure](docs/IMAGE_STRUCTURE.md). These are approximate reconstructions with explicit scale/hidden-geometry assumptions, not single-photo measured replicas.
 - Third-party components and local distribution boundaries: [notices](THIRD_PARTY_NOTICES.md).
 
-Use the current [installation](docs/INSTALL.md) and [release acceptance](docs/RELEASE_ACCEPTANCE.md) records for 0.4.1. Historical 0.4.0, 0.3.0 and 0.2.0 assets and evidence remain available on their original Releases. Extension Warehouse publication was declined; no listing or official endorsement is claimed. Existing ALMA environment variables and Ruby namespaces remain intentional.
+Use the current [installation](docs/INSTALL.md) and [release acceptance](docs/RELEASE_ACCEPTANCE.md) records for 0.4.2. Historical 0.4.1, 0.4.0, 0.3.0 and 0.2.0 assets and evidence remain available on their original Releases. Extension Warehouse publication was declined; no listing or official endorsement is claimed. Existing ALMA environment variables and Ruby namespaces remain intentional.
 
 ## 设计原则
 

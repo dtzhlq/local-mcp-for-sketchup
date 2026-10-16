@@ -597,5 +597,19 @@
   ],
   "docs/v0.4.1-traditional-architecture-development-plan.md": [
     "alma_sketchup_mcp"
+  ],
+  "docs/modeling-uplift/native-validation-2026-10-15.md": [
+    "Alma"
+  ],
+  "src/model-accessibility-layout-edit.mjs": [
+    "AlmaSketchupMCP"
+  ],
+  "test/qa-layout-native-resume.mjs": [
+    "ALMA_SKETCHUP_STATE_DIR",
+    "ALMA_SKETCHUP_QUEUE_DIR",
+    "ALMA_SKETCHUP_RESPONSE_DIR"
+  ],
+  "test/ruby/queue_timing_test.rb": [
+    "alma_sketchup_mcp"
   ]
 }
